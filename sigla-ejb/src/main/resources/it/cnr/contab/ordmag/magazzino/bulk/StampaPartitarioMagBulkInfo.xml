@@ -133,7 +133,7 @@
 	<formFieldProperty name="findAFornitore" />
 
 	<printForm
-		name="/ordmag/partitatio_magazzino.jasper">
+		name="/ordmag/partitario_magazzino.jasper">
 		<printFieldProperty
 			name="daDataMovimento"
 			parameterPosition="0"
@@ -147,16 +147,16 @@
 				paramNameJR="aDataMOvimento"
 				paramTypeJR="java.util.Date"/>
 		<printFieldProperty
-				name="daDataCompentenza"
+				name="daDataCompetenza"
 				parameterPosition="2"
 				parameterType="DATE"
-				paramNameJR="daDataCompentenza"
+				paramNameJR="daDataCompetenza"
 				paramTypeJR="java.util.Date"/>
 		<printFieldProperty
-				name="aDataCompentenza"
+				name="aDataCompetenza"
 				parameterPosition="3"
 				parameterType="DATE"
-				paramNameJR="aDataCompentenza"
+				paramNameJR="aDataCompetenza"
 				paramTypeJR="java.lang.Date"/>
 		<printFieldProperty
 				name="cdMagazzinoForPrint"

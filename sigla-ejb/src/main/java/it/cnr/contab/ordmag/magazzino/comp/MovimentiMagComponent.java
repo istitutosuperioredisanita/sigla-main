@@ -447,6 +447,11 @@ public class MovimentiMagComponent extends CRUDComponent implements ICRUDMgr, IP
 						.filter(list -> !list.isEmpty())
 						.map(list->list.get(list.indexOfByPrimaryKey(consegna)))
 						.orElseThrow(()->new DetailedRuntimeException("Errore nell'individuazione della consegna "+consegna.getConsegnaOrdineString()+"."));
+
+		if(consegna.getStatoFatt().equals(OrdineAcqConsegnaBulk.STATO_FATT_ASSOCIATA_TOTALMENTE))
+		{
+			throw new ApplicationException("Non è possibile annullare il movimento, la consegna è associata totalmente ad una fattura");
+		}
 		consegna.setStato(OrdineAcqConsegnaBulk.STATO_INSERITA);
 		ordine.setToBeUpdated();
 		ordineRiga.setToBeUpdated();
