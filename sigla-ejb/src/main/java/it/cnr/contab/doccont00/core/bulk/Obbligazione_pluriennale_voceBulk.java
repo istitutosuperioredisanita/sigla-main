@@ -195,4 +195,31 @@ public class Obbligazione_pluriennale_voceBulk extends Obbligazione_pluriennale_
 	public void setCdVoce(String cdVoce)  {
 		this.getElementoVoce().setCd_elemento_voce(cdVoce);
 	}
+
+	public Obbligazione_pluriennale_voceBulk clone(Obbligazione_pluriennale_voceBulk obbligazionePlurVoce, it.cnr.jada.action.ActionContext context){
+		Obbligazione_pluriennale_voceBulk nuovo = null;
+
+		try {
+			nuovo = (Obbligazione_pluriennale_voceBulk)getClass().newInstance();
+		} catch (InstantiationException e) {
+			return null;
+		} catch (IllegalAccessException e) {
+			return null;
+		}
+		nuovo.setObbligazionePluriennale(obbligazionePlurVoce.getObbligazionePluriennale());
+		nuovo.setAnno(obbligazionePlurVoce.getAnno());
+		nuovo.setImporto(obbligazionePlurVoce.getImporto());
+		nuovo.setCdLineaAttivita(obbligazionePlurVoce.getCdLineaAttivita());
+		nuovo.setCdCds(obbligazionePlurVoce.getCdCds());
+		nuovo.setCdVoce(obbligazionePlurVoce.getCdVoce());
+		nuovo.setEsercizio(obbligazionePlurVoce.getEsercizio());
+		nuovo.setEsercizioOriginale(obbligazionePlurVoce.getEsercizioOriginale());
+		nuovo.setEsercizioVoce(obbligazionePlurVoce.getEsercizioVoce());
+		nuovo.setTiAppartenenza(obbligazionePlurVoce.getTiAppartenenza());
+		nuovo.setTiGestione(obbligazionePlurVoce.getTiGestione());
+
+		nuovo.setCrudStatus(TO_BE_CREATED);
+
+		return nuovo;
+	}
 }

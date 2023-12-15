@@ -3,7 +3,10 @@
  * Date 20/09/2021
  */
 package it.cnr.contab.doccont00.core.bulk;
+import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.bulk.BulkCollection;
+import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.action.CRUDBP;
 public class Obbligazione_pluriennaleBulk extends Obbligazione_pluriennaleBase {
@@ -12,6 +15,7 @@ public class Obbligazione_pluriennaleBulk extends Obbligazione_pluriennaleBase {
 	 **/
 	private ObbligazioneBulk obbligazione =  new ObbligazioneBulk();
 	private ObbligazioneBulk obbligazioneRif =  new ObbligazioneBulk();
+	private BulkList<Obbligazione_pluriennale_voceBulk> obbligazione_pluriennale_voceBulkList = new BulkList<Obbligazione_pluriennale_voceBulk>();
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: OBBLIGAZIONE_PLURIENNALE
@@ -26,6 +30,7 @@ public class Obbligazione_pluriennaleBulk extends Obbligazione_pluriennaleBase {
 	public Obbligazione_pluriennaleBulk(String cdCds, Integer esercizio, Integer esercizioOriginale, Long pgObbligazione, Integer anno) {
 		super(cdCds, esercizio, esercizioOriginale, pgObbligazione, anno);
 		setObbligazione( new ObbligazioneBulk(cdCds,esercizio,esercizioOriginale,pgObbligazione) );
+
 	}
 	public ObbligazioneBulk getObbligazione() {
 		return obbligazione;
@@ -199,4 +204,43 @@ public class Obbligazione_pluriennaleBulk extends Obbligazione_pluriennaleBase {
 
 		return nuovo;
 	}
+	public BulkCollection[] getBulkLists() {
+		return new it.cnr.jada.bulk.BulkCollection[] {
+				obbligazione_pluriennale_voceBulkList  };
+	}
+
+	private BulkList<Obbligazione_pluriennale_voceBulk> clonaObbligazioniPluriennali(Obbligazione_pluriennaleBulk obbligazione,it.cnr.jada.action.ActionContext context){
+
+		if ( this.getObbligazione_pluriennale_voceBulkList()==null || this.getObbligazione_pluriennale_voceBulkList().isEmpty())
+			return this.getObbligazione_pluriennale_voceBulkList();
+
+		BulkList<Obbligazione_pluriennale_voceBulk> pluriennaliVoce= new BulkList<Obbligazione_pluriennale_voceBulk>();
+
+		for ( Obbligazione_pluriennale_voceBulk pv:this.getObbligazione_pluriennale_voceBulkList()){
+			Obbligazione_pluriennale_voceBulk n = pv.clone(pv,context);
+			pluriennaliVoce.add( n);
+		}
+		return pluriennaliVoce;
+	}
+
+	public BulkList<Obbligazione_pluriennale_voceBulk> getObbligazione_pluriennale_voceBulkList() {
+		return obbligazione_pluriennale_voceBulkList;
+	}
+
+	public void setObbligazione_pluriennale_voceBulkList(BulkList<Obbligazione_pluriennale_voceBulk> obbligazione_pluriennale_voceBulkList) {
+		this.obbligazione_pluriennale_voceBulkList = obbligazione_pluriennale_voceBulkList;
+	}
+
+	public int addToObbligazione_pluriennale_VoceBulkList(Obbligazione_pluriennale_voceBulk dett){
+		//dett.setObbligazionePluriennale(this);
+		//dett.setElementoVoce(new Elemento_voceBulk());
+		getObbligazione_pluriennale_voceBulkList().add(dett);
+		return getObbligazione_pluriennale_voceBulkList().size()-1;
+	}
+	public Obbligazione_pluriennale_voceBulk removeFromObbligazione_pluriennale_VoceBulkList(int index) {
+		Obbligazione_pluriennale_voceBulk dett = (Obbligazione_pluriennale_voceBulk)getObbligazione_pluriennale_voceBulkList().remove(index);
+		dett.setToBeDeleted();
+		return dett;
+	}
+
 }

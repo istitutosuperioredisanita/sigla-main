@@ -2038,7 +2038,11 @@ public void validateTerzo( it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo ) t
 	}
 
 	public Obbligazione_pluriennaleBulk removeFromObbligazioniPluriennali(int index) {
-		Obbligazione_pluriennaleBulk dett = (Obbligazione_pluriennaleBulk)getObbligazioniPluriennali().remove(index);
+		Obbligazione_pluriennaleBulk dett = (Obbligazione_pluriennaleBulk)getObbligazioniPluriennali().get(index);
+
+		dett.getObbligazione_pluriennale_voceBulkList().removeAll(dett.getObbligazione_pluriennale_voceBulkList());
+
+		getObbligazioniPluriennali().remove(index);
 		return dett;
 	}
 

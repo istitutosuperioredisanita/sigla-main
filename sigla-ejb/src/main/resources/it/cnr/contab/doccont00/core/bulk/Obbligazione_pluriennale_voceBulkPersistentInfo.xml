@@ -6,16 +6,16 @@
 		tableName="OBBLIGAZIONE_PLURIENNALE_VOCE">
 		<columnMapping
 			columnName="CD_CDS"
-			propertyName="obbligazionePluriennale.cd_cds" />
+			propertyName="obbligazionePluriennale.obbligazione.cds.cd_unita_organizzativa" />
 		<columnMapping
 			columnName="ESERCIZIO"
-			propertyName="obbligazionePluriennale.esercizio" />
+			propertyName="obbligazionePluriennale.obbligazione.esercizio" />
 		<columnMapping
 			columnName="ESERCIZIO_ORIGINALE"
-			propertyName="obbligazionePluriennale.esercizio_originale" />
+			propertyName="obbligazionePluriennale.obbligazione.esercizio_originale" />
 		<columnMapping
 			columnName="PG_OBBLIGAZIONE"
-			propertyName="obbligazionePluriennale.pg_obbligazione" />
+			propertyName="obbligazionePluriennale.obbligazione.pg_obbligazione" />
 		<columnMapping
 			columnName="ANNO"
 			propertyName="obbligazionePluriennale.anno" />
@@ -35,6 +35,7 @@
 	<persistentProperty
 		name="obbligazionePluriennale"
 		partOfOid="true" />
+
 	<persistentProperty
 		name="elementoVoce"
 		partOfOid="true" />

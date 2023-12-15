@@ -37,9 +37,11 @@ import it.cnr.contab.missioni00.bp.CRUDAnticipoBP;
 import it.cnr.contab.missioni00.bp.CRUDMissioneBP;
 import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
 import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaBulk;
 import it.cnr.contab.prevent00.bulk.V_assestatoBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
@@ -73,11 +75,33 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
             Obbligazione_pluriennaleBulk riga = (Obbligazione_pluriennaleBulk) getCrudObbligazione_pluriennale().getModel();
             super.validateForDelete(context,riga);
 
+
+        }
+        @Override
+        public OggettoBulk removeDetail(int i) {
+            List list = getDetails();
+            Obbligazione_pluriennaleBulk dettaglio =(Obbligazione_pluriennaleBulk)list.get(i);
+            for (int k=0;k<dettaglio.getObbligazione_pluriennale_voceBulkList().size();k++) {
+                dettaglio.removeFromObbligazione_pluriennale_VoceBulkList(k);
+            }
+            return super.removeDetail(i);
+        }
+    };
+    private final SimpleDetailCRUDController crudObbligazione_pluriennaleVoce = new SimpleDetailCRUDController("ObbligazioniPluriennaliVoce", Obbligazione_pluriennale_voceBulk.class, "obbligazione_pluriennale_voceBulkList", crudObbligazione_pluriennale){
+        public void validateForDelete(ActionContext context, OggettoBulk detail) throws ValidationException {
+            Obbligazione_pluriennale_voceBulk riga = (Obbligazione_pluriennale_voceBulk)  getCrudObbligazione_pluriennaleVoce().getModel();
+            super.validateForDelete(context,riga);
         }
     };
 
+
     public SimpleDetailCRUDController getCrudObbligazione_pluriennale() {
         return crudObbligazione_pluriennale;
+    }
+
+    public SimpleDetailCRUDController getCrudObbligazione_pluriennaleVoce() {
+        return crudObbligazione_pluriennaleVoce;
+
     }
 
     // "editingScadenza" viene messo a True solo quando si modifica una scadenza (bottone "editing scadenza")

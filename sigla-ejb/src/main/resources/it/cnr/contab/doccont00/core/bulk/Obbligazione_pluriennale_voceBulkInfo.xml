@@ -47,9 +47,10 @@
 		inputType="TEXT"
 		inputSize="5"
 		maxLength="5"
-		enabledOnEdit="false"
+		enabledOnEdit="true"
 		enabledOnSearch="false"
 		nullable="false"
+		command="doOnAnnoObbligazionePluriennaleChange"
 		label="Anno Obbligazione Pluriennale" />
 	<fieldProperty
 		name="cdCentroResponsabilita"
@@ -199,4 +200,18 @@
 		name="cdVoce" />
 	<columnFieldProperty
 		name="importo" />
+
+	<columnSet
+			name="ColumnsDettObbPlurVoce">
+		<columnFieldProperty
+				name="cdCds" />
+		<columnFieldProperty
+				name="cdLineaAttivita" />
+		<columnFieldProperty
+				name="cdVoce" />
+		<columnFieldProperty
+				name="anno" />
+		<columnFieldProperty
+				name="importo" />
+	</columnSet>
 </bulkInfo>

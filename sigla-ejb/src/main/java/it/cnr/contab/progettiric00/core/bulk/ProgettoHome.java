@@ -33,10 +33,7 @@ import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceHome;
 import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.doccont00.comp.DateServices;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_mod_voceBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_modificaBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_scad_voceBulk;
+import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk;
 import it.cnr.contab.pdg01.bulk.Pdg_variazione_riga_gestBulk;
 import it.cnr.contab.prevent01.bulk.Pdg_moduloBulk;
@@ -1087,6 +1084,22 @@ public class ProgettoHome extends BulkHome {
 		sql.addSQLClause(FindClause.AND,"TIPO_FINANZIAMENTO.CODICE",SQLBuilder.EQUALS, cdTipoFinanziamento);
 
 		return this.fetchAll(sql);
+	}
+
+	public ProgettoBulk selectProgettoDaLineaAttivita(it.cnr.jada.UserContext aUC, V_pdg_obbligazione_speBulk obbSpe) throws PersistencyException, IntrospectionException{
+		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class);
+		SQLBuilder sql = progettohome.createSQLBuilder();
+
+		sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS,obbSpe.getEsercizio());
+		sql.addSQLClause("AND","CD_PROGETTO",sql.EQUALS,obbSpe.getCd_progetto());
+		sql.addSQLClause("AND","TIPO_FASE",sql.EQUALS,ProgettoBulk.TIPO_FASE_NON_DEFINITA);
+
+		java.util.Collection coll = this.fetchAll(sql);
+		if (coll.size() != 1)
+			return null;
+
+		return  (ProgettoBulk)coll.iterator().next();
+
 	}
 
 }
