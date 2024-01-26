@@ -21,30 +21,11 @@
 		xmlns="https://contab.cnr.it/schema/SIGLA" 
 		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd" shortDescription="Situazione assestato piano economico"
           longDescription="Situazione assestato piano economico">
-	<fieldProperty
-			name="pg_progetto"
-			property="progettoBulk.pg_progetto"
-			inputType="TEXT"
-			inputSize="16"
-			maxLength="16"
-			enabledOnEdit="false"
-			label="PG Progetto" />
-	<fieldProperty
-			name="cd_voce_piano"
-			property="voce_piano_economico.cd_voce_piano"
-			maxLength="10"
-			inputSize="10"
-			inputType="TEXT"
-			nullable="false"
-			enabledOnInsert="true"
-			enabledOnEdit="false"
-			enabledOnSearch="true"
-			enabledOnFreeSearch="true"
-			label="Codice Voce Piano Economico" />
+
 
 	<fieldProperty
 			name="ds_voce_piano"
-			property="voce_piano_economico.ds_voce_piano"
+			property="ds_voce_piano"
 			maxLength="100"
 			inputSize="50"
 			inputType="TEXT"
@@ -56,17 +37,7 @@
 			caseSensitiveSearch="false"
 			nullable="false" />
 
-	<fieldProperty
-			name="cd_progetto"
-			property="progettoBulk.cd_progetto"
-			readonlyProperty="ROCreditore"
-			label="Codice Progetto"
-			inputType="TEXT"
-			maxLength="30"
-			inputSize="30"
-			enabledOnSearch="true"
-			nullable="true"
-	/>
+
 
 	<fieldProperty
 			name="ds_progetto"

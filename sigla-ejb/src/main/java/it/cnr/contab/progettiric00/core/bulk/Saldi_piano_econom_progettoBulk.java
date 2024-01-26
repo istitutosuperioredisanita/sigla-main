@@ -23,8 +23,6 @@
  */
 package it.cnr.contab.progettiric00.core.bulk;
 
-import it.cnr.contab.progettiric00.tabrif.bulk.Voce_piano_economico_prgBulk;
-
 /**
  * @author mspasiano
  *
@@ -36,49 +34,16 @@ public class Saldi_piano_econom_progettoBulk extends V_saldi_piano_econom_proget
 	public Saldi_piano_econom_progettoBulk() {
 		super();
 	}
-	private ProgettoBulk progettoBulk;
-	private Voce_piano_economico_prgBulk voce_piano_economico;
-
-	public ProgettoBulk getProgettoBulk() {
-		return progettoBulk;
-	}
-
-	public void setProgettoBulk(ProgettoBulk progettoBulk) {
-		this.progettoBulk = progettoBulk;
-	}
-
-	public Voce_piano_economico_prgBulk getVoce_piano_economico() {
-		return voce_piano_economico;
-	}
-
-	public void setVoce_piano_economico(Voce_piano_economico_prgBulk voce_piano_economico) {
-		this.voce_piano_economico = voce_piano_economico;
-	}
 
 	private String ds_voce_piano;
 
+	private String ds_progetto;
+
 	public String getDs_voce_piano() {
-		Voce_piano_economico_prgBulk vocePianoEconomico = this.getVoce_piano_economico();
-		if (vocePianoEconomico == null)
-			return null;
-		return getVoce_piano_economico().getDs_voce_piano();
+		return ds_voce_piano;
 	}
 
 	public void setDs_voce_piano(String ds_voce_piano) {
-		this.getVoce_piano_economico().setDs_voce_piano(ds_voce_piano);
-	}
-
-	private String ds_progetto;
-
-	public String getDs_progetto() {
-
-		ProgettoBulk progettoBulk1= this.getProgettoBulk();
-		if ( progettoBulk1==null)
-			return null;
-		return getProgettoBulk().getDs_progetto();
-	}
-
-	public void setDs_progetto(String ds_progetto) {
-		this.getProgettoBulk().setDs_progetto(ds_progetto);
+		this.ds_voce_piano = ds_voce_piano;
 	}
 }
