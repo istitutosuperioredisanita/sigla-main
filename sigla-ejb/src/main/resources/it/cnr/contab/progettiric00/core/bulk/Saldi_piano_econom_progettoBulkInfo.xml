@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd" shortDescription="Situazione assestato piano economico"
+          longDescription="Situazione assestato piano economico">
+	<fieldProperty
+			name="pg_progetto"
+			property="progettoBulk.pg_progetto"
+			inputType="TEXT"
+			inputSize="16"
+			maxLength="16"
+			enabledOnEdit="false"
+			label="PG Progetto" />
+	<fieldProperty
+			name="cd_voce_piano"
+			property="voce_piano_economico.cd_voce_piano"
+			maxLength="10"
+			inputSize="10"
+			inputType="TEXT"
+			nullable="false"
+			enabledOnInsert="true"
+			enabledOnEdit="false"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
+			label="Codice Voce Piano Economico" />
+
+	<fieldProperty
+			name="ds_voce_piano"
+			property="voce_piano_economico.ds_voce_piano"
+			maxLength="100"
+			inputSize="50"
+			inputType="TEXT"
+			enabledOnInsert="true"
+			enabledOnEdit="true"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
+			label="Descrizione Voce Piano Economico"
+			caseSensitiveSearch="false"
+			nullable="false" />
+
+	<fieldProperty
+			name="cd_progetto"
+			property="progettoBulk.cd_progetto"
+			readonlyProperty="ROCreditore"
+			label="Codice Progetto"
+			inputType="TEXT"
+			maxLength="30"
+			inputSize="30"
+			enabledOnSearch="true"
+			nullable="true"
+	/>
+
+	<fieldProperty
+			name="ds_progetto"
+			property="progettoBulk.ds_progetto"
+			maxLength="400"
+			inputType="TEXTAREA"
+			cols="80"
+			rows="3"
+			label="Descrizione"
+			caseSensitiveSearch="false"
+			nullable="false" />
+
+	<findFieldProperty name="cd_progetto" />
+	<findFieldProperty name="ds_progetto" />
+	<findFieldProperty name="esercizio" />
+	<findFieldProperty name="cd_unita_piano" />
+	<findFieldProperty name="cd_voce_piano" />
+	<findFieldProperty name="ti_gestione" />
+
+	<columnFieldProperty name="pg_progetto" enabledOnInsert="false" />
+	<columnFieldProperty name="esercizio" enabledOnInsert="false" />
+	<columnFieldProperty name="cd_unita_piano" enabledOnInsert="false" />
+	<columnFieldProperty name="cd_voce_piano" enabledOnInsert="false" />
+	<columnFieldProperty name="ti_gestione" enabledOnInsert="false" />
+	<columnFieldProperty name="importoFin" enabledOnInsert="false" />
+	<columnFieldProperty name="stanziamentoFin" enabledOnInsert="false" />
+	<columnFieldProperty name="variapiuFin" enabledOnInsert="false" />
+	<columnFieldProperty name="variamenoFin" enabledOnInsert="false" />
+	<columnFieldProperty name="trasfpiuFin" enabledOnInsert="false" />
+	<columnFieldProperty name="trasfmenoFin" enabledOnInsert="false" />
+	<columnFieldProperty name="importoCofin" enabledOnInsert="false" />
+	<columnFieldProperty name="stanziamentoCofin" enabledOnInsert="false" />
+	<columnFieldProperty name="variapiuCofin" enabledOnInsert="false" />
+	<columnFieldProperty name="variamenoCofin" enabledOnInsert="false" />
+	<columnFieldProperty name="trasfpiuCofin" enabledOnInsert="false" />
+	<columnFieldProperty name="trasfmenoCofin" enabledOnInsert="false" />
+	<columnFieldProperty name="impaccFin" enabledOnInsert="false" />
+	<columnFieldProperty name="impaccCofin" enabledOnInsert="false" />
+	<columnFieldProperty name="manrisFin" enabledOnInsert="false" />
+	<columnFieldProperty name="manrisCofin" enabledOnInsert="false" />
+</bulkInfo>
