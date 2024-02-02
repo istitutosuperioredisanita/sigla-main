@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<fieldProperty
+			name="esercizio"
+			property="esercizio"
+			inputType="TEXT"
+			inputSize="4"
+			maxLength="4"
+			nullable="false"
+			command="doOnEsercizioChange"
+			label="Esercizio" />
+	<fieldProperty
+			name="findRaggrMagazzinoRim"
+			property="raggrMagazzino"
+			inputType="searchtool"
+			formName="searchtool_desc"
+			enabledOnSearch="true"
+			label="Raggruppamento di Magazzino" />
+	<fieldProperty
+			name="dataInventario"
+			property="dataInventario"
+			inputType="TEXT"
+			formatName="date_short"
+			nullable="false"
+			command="doOnDataInventarioChange"
+			label="Data Fine Periodo"/>
+	<fieldProperty
+			name="dataInventarioInizio"
+			property="dataInventarioInizio"
+			inputType="ROTEXT"
+			formatName="date_short"
+			nullable="false"
+			label="Data Inizio Periodo"/>
+	<fieldProperty
+			name="dataChiusuraMovimento"
+			property="dataChiusuraMovimento"
+			inputType="ROTEXT"
+			formatName="date_short"
+			nullable="false"
+			label="Data Movimento Chiusura"/>
+
+	<fieldProperty
+			name="ti_operazione"
+			property="ti_operazione"
+			keysProperty="ti_operazioneKeys"
+			label="Tipo Operazione"
+			inputType="RADIOGROUP"
+			enabledOnEdit="false"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="false"
+			layout="HORIZONTAL"
+			command="doOnTi_operazioneChange"/>
+
+	<fieldProperty
+			name="ti_valorizzazione"
+			property="ti_valorizzazione"
+			keysProperty="ti_valorizzazioneKeys"
+			label="C.M.P."
+			inputType="RADIOGROUP"
+			enabledOnEdit="false"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="false"
+			layout="HORIZONTAL"
+			readonlyProperty="calcoloRimanenze"/>
+	<fieldProperty
+			name="findCatGrp"
+			property="catgrp"
+			inputType="SEARCHTOOL"
+			formName="searchtool"
+			enabledOnEdit="true"
+			enabledOnSearch="true"
+			label="Cat./gruppo" />
+
+	<fieldProperty
+			name="flRaggCatGruppo"
+			property="flRaggCatGruppo"
+			inputType="CHECKBOX"
+			enabledOnSearch="true"
+			label="Raggr. Cat. Gruppo" />
+	<fieldProperty
+			name="flDettaglioArticolo"
+			property="flDettaglioArticolo"
+			inputType="CHECKBOX"
+			enabledOnSearch="true"
+			label="Dettaglio Articolo" />
+	<fieldProperty
+			name="ordinamento"
+			property="ordinamento"
+			keysProperty="TIPO_ORDINAMENTO"
+			inputType="RADIOGROUP"
+			layout = "HORIZONTAL"
+			label="Tipo Ordinamento"
+			caseSensitiveSearch="false" />
+
+	<fieldProperty
+			name="cdCatGrpForPrint"
+			property="cdCatGrpForPrint"/>
+
+	<fieldProperty
+			name="cdRaggrMagazzinoForPrint"
+			property="cdRaggrMagazzinoForPrint"/>
+	<fieldProperty
+			name="cdTipoOperazioneForPrint"
+			property="cdTipoOperazioneForPrint"/>
+	<fieldProperty
+			name="cdTipoValorizForPrint"
+			property="cdTipoValorizForPrint"/>
+
+
+	<formFieldProperty
+			name="esercizio" />
+	<formFieldProperty
+			name="findRaggrMagazzinoRim" />
+	<formFieldProperty name="dataInventario" />
+
+	<formFieldProperty name="dataInventarioInizio" />
+
+	<formFieldProperty name="dataChiusuraMovimento" />
+
+	<formFieldProperty
+			name="ti_operazione"/>
+	<formFieldProperty
+			name="ti_valorizzazione"/>
+
+	<formFieldProperty
+			name="findMagazzino" />
+	<formFieldProperty
+			name="findCatGrp" />
+	<formFieldProperty
+			name="flDettaglioArticolo" />
+	<formFieldProperty
+			name="flRaggCatGruppo" />
+	<formFieldProperty
+			name="flDettaglioArticolo" />
+	<formFieldProperty
+			name="ordinamento" />
+
+
+	<printForm
+		name="/ordmag/stampa_chiusura_mag.jasper">
+		<printFieldProperty
+			name="dataInventario"
+			parameterPosition="1"
+			parameterType="DATE"
+			paramNameJR="dataInventario"
+			paramTypeJR="java.util.Date"/>
+		<printFieldProperty
+				name="dataInventarioInizio"
+				parameterPosition="1"
+				parameterType="DATE"
+				paramNameJR="dataInventarioInizio"
+				paramTypeJR="java.util.Date"/>
+		<printFieldProperty
+				name="dataChiusuraMovimento"
+				parameterPosition="1"
+				parameterType="DATE"
+				paramNameJR="dataChiusuraMovimento"
+				paramTypeJR="java.util.Date"/>
+
+		<printFieldProperty
+				name="esercizio"
+				parameterPosition="2"
+				parameterType="STRING"
+				paramNameJR="esercizio"
+				paramTypeJR="java.lang.Integer"/>
+		<printFieldProperty
+				name="cdCatGrpForPrint"
+				parameterPosition="3"
+				parameterType="STRING"
+				paramNameJR="cdCatGrp"
+				paramTypeJR="java.lang.String"/>
+		<printFieldProperty
+				name="cdRaggrMagazzinoForPrint"
+				parameterPosition="3"
+				parameterType="STRING"
+				paramNameJR="cdRaggrMag"
+				paramTypeJR="java.lang.String"/>
+		<printFieldProperty
+				name="flDettaglioArticolo"
+				parameterPosition="3"
+				parameterType="STRING"
+				paramNameJR="flDettaglioArticolo"
+				paramTypeJR="java.lang.Boolean"/>
+		<printFieldProperty
+				name="flRaggCatGruppo"
+				parameterPosition="3"
+				parameterType="STRING"
+				paramNameJR="flRaggCatGruppo"
+				paramTypeJR="java.lang.Boolean"/>
+		<printFieldProperty
+				name="ordinamento"
+				parameterPosition="3"
+				parameterType="STRING"
+				paramNameJR="ordinamento"
+				paramTypeJR="java.lang.String"/>
+		<printFieldProperty
+				name="cdTipoOperazioneForPrint"
+				parameterPosition="3"
+				parameterType="STRING"
+				paramNameJR="tipoOperazione"
+				paramTypeJR="java.lang.String"/>
+		<printFieldProperty
+				name="cdTipoValorizForPrint"
+				parameterPosition="3"
+				parameterType="STRING"
+				paramNameJR="tipoValorizzazione"
+				paramTypeJR="java.lang.String"/>
+	</printForm>
+</bulkInfo>

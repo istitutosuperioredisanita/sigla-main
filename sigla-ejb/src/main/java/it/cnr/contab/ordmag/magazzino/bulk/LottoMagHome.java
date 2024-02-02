@@ -22,8 +22,11 @@
 package it.cnr.contab.ordmag.magazzino.bulk;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
+import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.ordmag.anag00.MagazzinoBulk;
 import it.cnr.contab.ordmag.anag00.NumerazioneMagBulk;
 
@@ -33,6 +36,7 @@ import it.cnr.contab.ordmag.ejb.NumeratoriOrdMagComponentSession;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ApplicationException;
@@ -211,6 +215,55 @@ public class LottoMagHome extends BulkHome {
 			return (LottoMagBulk)lista.get(0);
 		}
 		return null;
+	}
+
+	// ESTRAZIONE DEI LOTTI CON GIACENZA E CON DATA DI CARICO COMPRESA NEL RANGE FORNITO IN INPUT
+	public List<LottoMagBulk> getLottiCompresiTra(UserContext uc, Date dataInizio, Date dataFine, Integer esercizio, String codRaggrMag, String codMag, String catGruppo){
+
+		List<LottoMagBulk> lotti= null;
+		try {
+
+			SQLBuilder sql = createSQLBuilder();
+
+			sql.addColumn("BENE_SERVIZIO.DS_BENE_SERVIZIO");
+			sql.generateJoin(LottoMagBulk.class, Bene_servizioBulk.class, "beneServizio", "BENE_SERVIZIO");
+
+			sql.addTableToHeader("MAGAZZINO", "m");
+			sql.addSQLJoin("m.cd_cds", "LOTTO_MAG.cd_cds_mag");
+			sql.addSQLJoin("m.cd_magazzino", "LOTTO_MAG.cd_magazzino_mag");
+
+			if(codRaggrMag != null && !catGruppo.equals(Valori_magazzinoBulk.TUTTI)) {
+				sql.addSQLClause(FindClause.AND, "m.CD_RAGGR_MAGAZZINO_RIM", SQLBuilder.EQUALS, codRaggrMag);
+				sql.addSQLJoin("m.CD_CDS_RAGGR_RIM", "LOTTO_MAG.cd_cds_mag");
+			}
+
+			if(codMag != null){
+				sql.addSQLClause(FindClause.AND,"LOTTO_MAG.CD_MAGAZZINO_MAG",SQLBuilder.EQUALS, codMag);
+			}
+
+			sql.addTableToHeader("Categoria_Gruppo_Invent","c");
+			sql.addSQLJoin("c.cd_categoria_gruppo","BENE_SERVIZIO.cd_categoria_gruppo(+)");
+
+			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.ESERCIZIO",SQLBuilder.EQUALS, esercizio);
+			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.DT_CARICO",SQLBuilder.LESS_EQUALS, new Timestamp(dataFine.getTime()));
+			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.DT_CARICO",SQLBuilder.GREATER_EQUALS, new Timestamp(dataInizio.getTime()));
+			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.GIACENZA",SQLBuilder.GREATER, 0);
+
+			if(catGruppo != null && !catGruppo.equals(Valori_magazzinoBulk.TUTTI)){
+				sql.addTableToHeader("CATEGORIA_GRUPPO_INVENT","CATEGORIA_GRUPPO_INVENT");
+				sql.addSQLJoin("CATEGORIA_GRUPPO_INVENT.CD_CATEGORIA_GRUPPO","BENE_SERVIZIO.CD_CATEGORIA_GRUPPO");
+				//categoria gruppo uguale a quella in input
+				sql.addSQLClause(FindClause.AND,"CATEGORIA_GRUPPO_INVENT.CD_CATEGORIA_GRUPPO",SQLBuilder.EQUALS, catGruppo);
+			}
+
+
+			lotti=fetchAll(sql);
+			getHomeCache().fetchAll(uc);
+		} catch (PersistencyException e) {
+			e.printStackTrace();
+		}
+		return lotti;
+
 	}
 
 }
