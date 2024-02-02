@@ -75,11 +75,11 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-        /*
-         * Insert the type's description here.
-         * Creation date: (07/02/2002 13.21.21)
-         * @author: Paola sala
-         */
+/*
+ * Insert the type's description here.
+ * Creation date: (07/02/2002 13.21.21)
+ * @author: Paola sala
+ */
 
 public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, MissioneBulk>
         implements IDefferedUpdateSaldiBP, IDocumentoAmministrativoSpesaBP, IValidaDocContBP, IDocAmmEconomicaBP {
@@ -2518,23 +2518,23 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
 
     @Override
     public void delete(ActionContext actioncontext) throws BusinessProcessException {
-    	
+
         if (Optional.ofNullable(getModel())
                 .filter(MissioneBulk.class::isInstance)
                 .map(MissioneBulk.class::cast)
                 .map(el -> {
-                	try {
-                		return el.isMissioneFromGemis() &&  !el.isAbilitatoCancellazioneMissioneFromGemis(actioncontext.getUserContext());
-					} catch (Exception e) {
-						throw new DetailedRuntimeException(e);
-					}
+                    try {
+                        return el.isMissioneFromGemis() &&  !el.isAbilitatoCancellazioneMissioneFromGemis(actioncontext.getUserContext());
+                    } catch (Exception e) {
+                        throw new DetailedRuntimeException(e);
+                    }
                 })
                 .orElse(Boolean.FALSE))
             throw handleException(new ApplicationException("Missione non eliminabile in quanto proveniente da un flusso approvato."));
-        MissioneBulk missioneBulk = (MissioneBulk)getModel(); 
+        MissioneBulk missioneBulk = (MissioneBulk)getModel();
         if (missioneBulk.isMissioneFromGemis()){
             for (AllegatoGenericoBulk allegato : missioneBulk.getArchivioAllegati()) {
-            	allegato.setDaNonEliminare(true);
+                allegato.setDaNonEliminare(true);
             }
         }
 
@@ -2705,29 +2705,31 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
             throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
         if (storageObject.getPropertyValue(StoragePropertyNames.BASE_TYPE_ID.value()).equals(StoragePropertyNames.CMIS_FOLDER.value())) {
             String prop = storageObject.getPropertyValue(StoragePropertyNames.OBJECT_TYPE_ID.value());
-            if (prop.equals("F:missioni_rimborso_dettaglio:main")) {
-                BigInteger rigaString = storageObject.getPropertyValue("missioni_rimborso_dettaglio:riga");
-                List<StorageObject> children = missioniCMISService.getChildren(storageObject.getKey());
-                if (children != null) {
-                    for (StorageObject doc : children) {
-                        if (doc.getPropertyValue(StoragePropertyNames.BASE_TYPE_ID.value()).equals(StoragePropertyNames.CMIS_DOCUMENT.value())) {
-                            AllegatoMissioneDettaglioSpesaBulk allegato = (AllegatoMissioneDettaglioSpesaBulk) Introspector.newInstance(AllegatoMissioneDettaglioSpesaBulk.class, doc);
-                            allegato.setContentType(doc.getPropertyValue(StoragePropertyNames.CONTENT_STREAM_MIME_TYPE.value()));
-                            allegato.setNome(doc.getPropertyValue(StoragePropertyNames.NAME.value()));
-                            allegato.setDescrizione(doc.getPropertyValue(StoragePropertyNames.DESCRIPTION.value()));
-                            allegato.setTitolo(doc.getPropertyValue(StoragePropertyNames.TITLE.value()));
-                            allegato.setCrudStatus(OggettoBulk.NORMAL);
+            //if (prop.equals("F:missioni_rimborso_dettaglio:main")) {
+            //BigInteger rigaString = storageObject.getPropertyValue("missioni_rimborso_dettaglio:riga");
+            BigInteger rigaString = new BigInteger((String)storageObject.getPropertyValue(StoragePropertyNames.NAME.value()));
+            List<StorageObject> children = missioniCMISService.getChildren(storageObject.getKey());
+            if (children != null) {
+                for (StorageObject doc : children) {
+                    if (doc.getPropertyValue(StoragePropertyNames.BASE_TYPE_ID.value()).equals(StoragePropertyNames.CMIS_DOCUMENT.value())) {
+                        AllegatoMissioneDettaglioSpesaBulk allegato = (AllegatoMissioneDettaglioSpesaBulk) Introspector.newInstance(AllegatoMissioneDettaglioSpesaBulk.class, doc);
+                        allegato.setContentType(doc.getPropertyValue(StoragePropertyNames.CONTENT_STREAM_MIME_TYPE.value()));
+                        allegato.setNome(doc.getPropertyValue(StoragePropertyNames.NAME.value()));
+                        allegato.setDescrizione(doc.getPropertyValue(StoragePropertyNames.DESCRIPTION.value()));
+                        allegato.setTitolo(doc.getPropertyValue(StoragePropertyNames.TITLE.value()));
+                        allegato.setCrudStatus(OggettoBulk.NORMAL);
 
-                            for (java.util.Iterator i = allegatoParentBulk.getSpeseMissioneColl().iterator(); i.hasNext(); ) {
-                                Missione_dettaglioBulk spesa = (Missione_dettaglioBulk) i.next();
-                                if (spesa.getPg_riga().compareTo(rigaString.longValue()) == 0) {
-                                    spesa.addToDettaglioSpesaAllegati(allegato);
-                                }
+                        for (java.util.Iterator i = allegatoParentBulk.getSpeseMissioneColl().iterator(); i.hasNext(); ) {
+                            Missione_dettaglioBulk spesa = (Missione_dettaglioBulk) i.next();
+                            if (spesa.getPg_riga().compareTo(rigaString.longValue()) == 0) {
+                                spesa.addToDettaglioSpesaAllegati(allegato);
                             }
                         }
                     }
                 }
-            } else if (prop.equals("F:missioni_dettaglio_sigla:main")) {
+            }
+            // }
+            /*else if (prop.equals("F:missioni_dettaglio_sigla:main")) {
                 BigInteger riga = storageObject.getPropertyValue("missioni_dettaglio_sigla:riga");
                 List<StorageObject> children = missioniCMISService.getChildren(storageObject.getKey());
                 if (children != null) {
@@ -2749,7 +2751,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
                         }
                     }
                 }
-            }
+            }*/
         }
     }
 
@@ -2757,7 +2759,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
     protected void completeAllegato(AllegatoMissioneBulk allegato, StorageObject storageObject) throws ApplicationException {
         allegato.setAspectName(Optional.ofNullable(storageObject.<List<String>>getPropertyValue(StoragePropertyNames.SECONDARY_OBJECT_TYPE_IDS.value()))
                 .map(list -> list.stream().filter(
-                        o -> AllegatoMissioneBulk.aspectNamesKeys.get(o) != null
+                                o -> AllegatoMissioneBulk.aspectNamesKeys.get(o) != null
                         ).findAny().orElse(MissioniCMISService.ASPECT_ALLEGATI_MISSIONE_SIGLA)
                 ).orElse(null));
         super.completeAllegato(allegato, storageObject);
@@ -2831,10 +2833,10 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
     @Override
     protected Boolean isPossibileCancellazione(AllegatoGenericoBulk allegato) {
         return Optional.ofNullable(allegato)
-                    .filter(AllegatoMissioneBulk.class::isInstance)
-                    .map(AllegatoMissioneBulk.class::cast)
-                    .map(allegatoGenericoBulk -> !isDocumentoProvenienteDaGemis(allegatoGenericoBulk))
-                    .orElse(Boolean.TRUE);
+                .filter(AllegatoMissioneBulk.class::isInstance)
+                .map(AllegatoMissioneBulk.class::cast)
+                .map(allegatoGenericoBulk -> !isDocumentoProvenienteDaGemis(allegatoGenericoBulk))
+                .orElse(Boolean.TRUE);
     }
 
     private Boolean isDocumentoProvenienteDaGemis(AllegatoGenericoBulk allegato) {
@@ -2854,11 +2856,11 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
     }
 
     protected Boolean isPossibileCancellazioneDettaglioAllegato(AllegatoGenericoBulk allegato) {
-            return Optional.ofNullable(allegato)
-                    .filter(AllegatoMissioneDettaglioSpesaBulk.class::isInstance)
-                    .map(AllegatoMissioneDettaglioSpesaBulk.class::cast)
-                    .map(allegatoGenericoBulk -> !isDocumentoDettaglioProvenienteDaGemis(allegatoGenericoBulk))
-                    .orElse(Boolean.TRUE);
+        return Optional.ofNullable(allegato)
+                .filter(AllegatoMissioneDettaglioSpesaBulk.class::isInstance)
+                .map(AllegatoMissioneDettaglioSpesaBulk.class::cast)
+                .map(allegatoGenericoBulk -> !isDocumentoDettaglioProvenienteDaGemis(allegatoGenericoBulk))
+                .orElse(Boolean.TRUE);
     }
 
     /**
@@ -2918,7 +2920,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
                 .filter(missioneBulk -> Optional.ofNullable(missioneBulk.getPg_missione()).isPresent())
                 .filter(missioneBulk -> missioneBulk.getPg_missione().compareTo(new Long(0)) > 0)
                 .isPresent()
-                ) {
+        ) {
             pages.put(i++, TAB_ALLEGATI);
         }
         if (attivaEconomicaParallela && optionalMissioneBulk
