@@ -70,6 +70,9 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 		validateDataBolla( usercontext,value);
 		sql.addSQLClause("AND", "MOVIMENTI_MAG.DATA_BOLLA", operator, value);
 	}
+	private void addDataRifMovimentoCondition(UserContext usercontext,SQLBuilder sql,int operator,Object value) throws PersistencyException {
+		sql.addSQLClause("AND", "MOVIMENTI_MAG.DT_RIFERIMENTO", operator, value);
+	}
 	private Timestamp lastDateOfTheYear(int year) {
 		GregorianCalendar dataInizio = (GregorianCalendar)GregorianCalendar.getInstance();
 		dataInizio.setTime((new GregorianCalendar(year, 11, 31)).getTime());
@@ -81,8 +84,8 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 		boolean ricercaAnnullati=false;
 
 		sql.generateJoin(Transito_beni_ordiniBulk.class, MovimentiMagBulk.class, "movimentiMag", "MOVIMENTI_MAG");
-		addDataBollaCondition( usercontext,sql,SQLBuilder.GREATER_EQUALS, DateUtils.firstDateOfTheYear(CNRUserContext.getEsercizio(usercontext)));
-		addDataBollaCondition( usercontext,sql,SQLBuilder.LESS_EQUALS,  lastDateOfTheYear(CNRUserContext.getEsercizio(usercontext)));
+		addDataRifMovimentoCondition( usercontext,sql,SQLBuilder.GREATER_EQUALS, DateUtils.firstDateOfTheYear(CNRUserContext.getEsercizio(usercontext)));
+		addDataRifMovimentoCondition( usercontext,sql,SQLBuilder.LESS_EQUALS,  lastDateOfTheYear(CNRUserContext.getEsercizio(usercontext)));
 		if (compoundfindclause != null && compoundfindclause.getClauses() != null) {
 			Enumeration e = compoundfindclause.getClauses();
 
