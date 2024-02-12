@@ -87,6 +87,13 @@
 		<formFieldProperty
 			name="cdRaggrMagazzino" />
 	</form>
+	<form
+		name="searchtool_desc">
+	<formFieldProperty
+			name="cdRaggrMagazzino" />
+	<formFieldProperty
+			name="dsRaggrMagazzino" />
+	</form>
 	<formFieldProperty
 		name="cdRaggrMagazzino" />
 	<formFieldProperty

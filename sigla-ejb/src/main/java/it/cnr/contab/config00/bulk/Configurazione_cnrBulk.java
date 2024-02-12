@@ -264,7 +264,8 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
         FATTURE_DA_RICEVERE("070_FATTURE_DA_RICEVERE"),
         RATEI_RISCONTI("080_RATEI_RISCONTI"),
         CHIUSURA_PROVVISORIA("090_CHIUSURA_PROVVISORIA"),
-        CHIUSURA_DEFINITIVA("100_CHIUSURA_DEFINITIVA");
+        CHIUSURA_DEFINITIVA("100_CHIUSURA_DEFINITIVA"),
+        CARICHI_SCARICHI_MAG("110_FINE_MOV_MAG");
 
         private final String value;
 
