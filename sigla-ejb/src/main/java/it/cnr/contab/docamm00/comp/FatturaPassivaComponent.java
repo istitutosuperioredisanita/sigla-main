@@ -6130,8 +6130,6 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         if (dettaglio.getFattura_passiva().getDt_a_competenza_coge() != null)
             data_a.setTime(new Date(dettaglio.getFattura_passiva().getDt_a_competenza_coge().getTime()));
 
-        if ((data_da != null && data_da.get(GregorianCalendar.YEAR) < dettaglio.getEsercizio()) || (data_a != null && data_a.get(GregorianCalendar.YEAR) < dettaglio.getEsercizio()))
-            sql.addSQLClause("AND", "FL_GESTIONE_INVENTARIO", SQLBuilder.EQUALS, "N");
         sql.addClause("AND", "ti_bene_servizio", SQLBuilder.EQUALS, dettaglio.getFattura_passiva().getTi_bene_servizio());
         if ((dettaglio.getFattura_passiva().getFl_intra_ue().booleanValue() || dettaglio.getFattura_passiva().getFl_extra_ue().booleanValue() || dettaglio.getFattura_passiva().getFl_san_marino_senza_iva().booleanValue())
                 && dettaglio.getFattura_passiva().isCommerciale() && dettaglio.getFattura_passiva().getTi_bene_servizio().compareTo(Bene_servizioBulk.SERVIZIO) == 0)
