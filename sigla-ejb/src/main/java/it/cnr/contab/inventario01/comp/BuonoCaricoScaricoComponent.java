@@ -29,6 +29,7 @@ import java.math.RoundingMode;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import javax.ejb.EJBException;
@@ -1625,19 +1626,20 @@ public SQLBuilder selectNuovo_bene_padreByClause(UserContext userContext, Invent
 		//sql.addSQLClause("AND","INVENTARIO_BENI.DT_VALIDITA_VARIAZIONE",SQLBuilder.LESS_EQUALS,associa_Bulk.getTest_buono().getData_registrazione());
 		//PER NON VEDERE I BUONI TEMPORANEI GIA' GENERATI
 		sql.addSQLClause("AND","BUONO_CARICO_SCARICO_DETT.PG_BUONO_C_S",SQLBuilder.GREATER,0);
-		sql.addSQLClause("AND","BUONO_CARICO_SCARICO_DETT.ESERCIZIO",SQLBuilder.EQUALS,riga_fattura.getEsercizio());
+		final Integer esercizioDA = Optional.ofNullable(riga_fattura.getDt_da_competenza_coge())
+				 .map(Timestamp::toLocalDateTime)
+				 .map(LocalDateTime::getYear)
+				 .orElse(riga_fattura.getEsercizio());
+		final Integer esercizioA = Optional.ofNullable(riga_fattura.getDt_a_competenza_coge())
+				 .map(Timestamp::toLocalDateTime)
+				 .map(LocalDateTime::getYear)
+				 .orElse(riga_fattura.getEsercizio());
+		sql.openParenthesis(FindClause.AND);
+			sql.addSQLClause(FindClause.OR,"BUONO_CARICO_SCARICO_DETT.ESERCIZIO",SQLBuilder.EQUALS, esercizioDA);
+		 	sql.addSQLClause(FindClause.OR,"BUONO_CARICO_SCARICO_DETT.ESERCIZIO",SQLBuilder.EQUALS, esercizioA);
+		sql.closeParenthesis();
+
 		sql.addSQLClause("AND","BUONO_CARICO_SCARICO_DETT.TI_DOCUMENTO",SQLBuilder.EQUALS,Buono_carico_scaricoBulk.CARICO);
-		/* condizione spostata nella vista associazioni disponibili 
-		SQLBuilder sql_tipo = getHome(userContext, Buono_carico_scaricoBulk.class).createSQLBuilder();
-		sql_tipo.addTableToHeader("TIPO_CARICO_SCARICO");
-		sql_tipo.addSQLJoin("BUONO_CARICO_SCARICO.CD_TIPO_CARICO_SCARICO","TIPO_CARICO_SCARICO.CD_TIPO_CARICO_SCARICO");
-		sql_tipo.addSQLJoin("BUONO_CARICO_SCARICO.PG_INVENTARIO","BUONO_CARICO_SCARICO_DETT.PG_INVENTARIO");
-		sql_tipo.addSQLJoin("BUONO_CARICO_SCARICO.TI_DOCUMENTO","BUONO_CARICO_SCARICO_DETT.TI_DOCUMENTO");
-		sql_tipo.addSQLJoin("BUONO_CARICO_SCARICO.PG_BUONO_C_S","BUONO_CARICO_SCARICO_DETT.PG_BUONO_C_S");
-		sql_tipo.addSQLJoin("BUONO_CARICO_SCARICO.ESERCIZIO","BUONO_CARICO_SCARICO_DETT.ESERCIZIO");
-		sql_tipo.addSQLClause("AND","TIPO_CARICO_SCARICO.FL_FATTURABILE",sql.EQUALS,"Y");
-		sql.addSQLExistsClause("AND",sql_tipo);
-		*/
 		SQLBuilder sql_old_ass = getHome(userContext, Ass_inv_bene_fatturaBulk.class).createSQLBuilder();
 		sql_old_ass.addSQLJoin("BUONO_CARICO_SCARICO_DETT.PG_INVENTARIO","ASS_INV_BENE_FATTURA.PG_INVENTARIO");
 		sql_old_ass.addSQLJoin("BUONO_CARICO_SCARICO_DETT.NR_INVENTARIO","ASS_INV_BENE_FATTURA.NR_INVENTARIO");
