@@ -81,7 +81,7 @@
     </action>
 
     <action
-            path="/SituazioneAmministrativaActio" actionClass="it.cnr.contab.reports.action.ParametricPrintAction">
+            path="/SituazioneAmministrativaAction" actionClass="it.cnr.contab.reports.action.ParametricPrintAction">
     </action>
 
     <businessProcess
@@ -406,8 +406,9 @@
         <forward name="default" path="/util/form.jsp"/>
         <init-param name="bulkClassName" value="it.cnr.contab.prevent01.bulk.SituazioneAmministrativaBulk"/>
         <init-param name="printbp" value="OfflineReportPrintBP"/>
-        <init-param name="defaultAction" value="SituazioneAmministrativaActio"/>
+        <init-param name="defaultAction" value="SituazioneAmministrativaAction"/>
         <init-param name="componentSessionName" value="CNRPREVENT01_EJB_SituazioneAmministrativaComponentSession"/>
+        <init-param name="reportName" value="/cnrdoccont/doccont/situazione_amministrativa_main.jasper" />
 
     </businessProcess>
 

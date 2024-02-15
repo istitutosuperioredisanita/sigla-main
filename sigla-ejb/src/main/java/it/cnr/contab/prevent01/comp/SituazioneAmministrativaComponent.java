@@ -17,6 +17,8 @@
 
 package it.cnr.contab.prevent01.comp;
 
+import it.cnr.contab.prevent01.bulk.SituazioneAmministrativaBulk;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.CRUDComponent;
@@ -34,6 +36,7 @@ public class SituazioneAmministrativaComponent extends CRUDComponent implements 
 
 	@Override
 	public OggettoBulk inizializzaBulkPerStampa(UserContext userContext, OggettoBulk oggettoBulk) throws ComponentException {
+		((SituazioneAmministrativaBulk) oggettoBulk).setEsercizio(CNRUserContext.getEsercizio(userContext));
 		return oggettoBulk;
 	}
 

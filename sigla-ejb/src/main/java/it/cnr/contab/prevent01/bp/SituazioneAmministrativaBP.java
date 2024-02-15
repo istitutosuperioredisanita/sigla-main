@@ -17,7 +17,12 @@
 
 package it.cnr.contab.prevent01.bp;
 
+import it.cnr.contab.prevent01.bulk.Stampa_pdgp_bilancioBulk;
 import it.cnr.contab.reports.bp.ParametricPrintBP;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.bulk.OggettoBulk;
 
 
 public class SituazioneAmministrativaBP extends ParametricPrintBP {
@@ -41,6 +46,17 @@ public class SituazioneAmministrativaBP extends ParametricPrintBP {
      */
     public SituazioneAmministrativaBP(String function) {
         super(function);
+    }
+
+    @Override
+    public OggettoBulk initializeBulkForPrint(ActionContext context, OggettoBulk bulk) throws BusinessProcessException {
+        try {
+            OggettoBulk oggettoBulk = super.initializeBulkForPrint(context, bulk);
+            ((Stampa_pdgp_bilancioBulk) oggettoBulk).setEsercizio(CNRUserContext.getEsercizio(context.getUserContext()));
+            return oggettoBulk;
+        }catch(Throwable e) {
+            throw new BusinessProcessException(e);
+        }
     }
 
 
