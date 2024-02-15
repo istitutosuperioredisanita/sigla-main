@@ -17,15 +17,6 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
-import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.ejb.EJBException;
-
-
 import it.cnr.contab.doccont00.core.bulk.MandatoBulk;
 import it.cnr.contab.doccont00.core.bulk.Mandato_rigaIBulk;
 import it.cnr.contab.doccont00.core.bulk.SospesoBulk;
@@ -33,17 +24,23 @@ import it.cnr.contab.doccont00.intcass.bulk.DistintaCassiere1210Bulk;
 import it.cnr.contab.doccont00.intcass.bulk.StatoTrasmissione;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.spring.service.StorePath;
-import it.cnr.si.spring.storage.StorageDriver;
-import it.cnr.si.spring.storage.annotation.StorageProperty;
-import it.cnr.si.spring.storage.annotation.StorageType;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.*;
-import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.CRUDBP;
+import it.cnr.si.spring.storage.StorageDriver;
+import it.cnr.si.spring.storage.annotation.StorageProperty;
+import it.cnr.si.spring.storage.annotation.StorageType;
+
+import javax.ejb.EJBException;
+import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 @StorageType(name="D:doccont:document")
@@ -102,7 +99,7 @@ public class Lettera_pagam_esteroBulk extends Lettera_pagam_esteroBase implement
 	}
 	public enum Divisa {
 		AED,AUD,BGN,CAD,CHF,CNY,CZK,DKK,EUR,GBP,HKD,HUF,ILS,INR,JPY,KWD,
-		MAD,MXN,NOK,NZD,PLN,QAR,RON,RUB,SAR,SEK,SGD,THB,TND,TRY,USD,ZAR
+		MAD,MXN,NOK,NZD,PLN,QAR,RON,RUB,SAR,SEK,SGD,THB,TND,TRY,USD,ZAR,RLB
 	}
 	public final static java.util.Dictionary ti_divisaKeys = new it.cnr.jada.util.OrderedHashtable();
 	static {
