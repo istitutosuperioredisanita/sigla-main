@@ -80,6 +80,10 @@
             actionClass="it.cnr.contab.pdg00.action.ElaboraStralcioMensileStipendiAction">
     </action>
 
+    <action
+            path="/SituazioneAmministrativaAction" actionClass="it.cnr.contab.reports.action.ParametricPrintAction">
+    </action>
+
     <businessProcess
             name="CRUDSpeDetPdGBP" className="it.cnr.contab.pdg00.bp.CRUDSpeDetPdGBP">
         <forward name="default" path="/pdg00/preventivo_spe.jsp"/>
@@ -395,6 +399,17 @@
         <init-param name="bulkClassName" value="it.cnr.contab.progettiric00.core.bulk.V_saldi_piano_econom_progettoBulk" />
         <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
         <init-param name="defaultAction" value="SaldiPianoEconomicoProgettoAction" />
+    </businessProcess>
+
+    <businessProcess name="SituazioneAmministrativaBP"
+                     className="it.cnr.contab.reports.bp.ParametricPrintBP">
+        <forward name="default" path="/util/form.jsp"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.prevent01.bulk.SituazioneAmministrativaBulk"/>
+        <init-param name="printbp" value="OfflineReportPrintBP"/>
+        <init-param name="defaultAction" value="SituazioneAmministrativaAction"/>
+        <init-param name="componentSessionName" value="CNRPREVENT01_EJB_SituazioneAmministrativaComponentSession"/>
+        <init-param name="reportName" value="/cnrdoccont/doccont/situazione_amministrativa_main.jasper" />
+
     </businessProcess>
 
 </action-mappings>
