@@ -37,6 +37,7 @@ import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.jsp.Button;
 
@@ -1056,5 +1057,9 @@ public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
 
     public boolean isButtonGeneraScritturaVisible() {
         return this.isSupervisore();
+    }
+    @Override
+    public OggettoBulk getEconomicaModel() {
+        return getModel();
     }
 }

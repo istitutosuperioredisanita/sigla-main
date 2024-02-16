@@ -44,7 +44,7 @@ public interface IDocAmmEconomicaBP {
 
     BusinessProcess getParentRoot();
 
-    OggettoBulk getModel();
+    OggettoBulk getEconomicaModel();
 
     void setDirty(boolean dirty);
 

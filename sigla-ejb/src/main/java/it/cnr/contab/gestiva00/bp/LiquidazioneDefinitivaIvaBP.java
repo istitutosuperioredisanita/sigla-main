@@ -17,6 +17,10 @@
 
 package it.cnr.contab.gestiva00.bp;
 
+import it.cnr.contab.coepcoan00.bp.CRUDScritturaPDoppiaBP;
+import it.cnr.contab.coepcoan00.bp.EconomicaAvereDetailCRUDController;
+import it.cnr.contab.coepcoan00.bp.EconomicaDareDetailCRUDController;
+import it.cnr.contab.docamm00.bp.IDocAmmEconomicaBP;
 import it.cnr.contab.doccont00.core.bulk.Mandato_rigaIBulk;
 import it.cnr.contab.gestiva00.core.bulk.*;
 import it.cnr.contab.util.Utility;
@@ -26,6 +30,7 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationRuntimeException;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 
 import java.math.BigDecimal;
@@ -35,7 +40,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
-public class LiquidazioneDefinitivaIvaBP extends LiquidazioneIvaBP {
+public class LiquidazioneDefinitivaIvaBP extends LiquidazioneIvaBP implements IDocAmmEconomicaBP {
 	private final SimpleDetailCRUDController dettaglio_prospetti = new SimpleDetailCRUDController("prospetti_stampati", Liquidazione_ivaBulk.class,"prospetti_stampati",this) {
 		@Override
 		public void setModelIndex(ActionContext actioncontext, int i) {
@@ -71,8 +76,13 @@ public class LiquidazioneDefinitivaIvaBP extends LiquidazioneIvaBP {
 	};
 	private final SimpleDetailCRUDController variazioni_associate = new SimpleDetailCRUDController("Variazioni associate", Liquidazione_iva_variazioniBulk.class,"variazioni_associate",this);
 	private final SimpleDetailCRUDController mandato_righe_associate = new SimpleDetailCRUDController("Mandato Righe associate", Mandato_rigaIBulk.class,"mandato_righe_associate",this);
+	private final CollapsableDetailCRUDController movimentiDare = new EconomicaDareDetailCRUDController(this.getDettaglio_prospetti());
+	private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this.getDettaglio_prospetti());
 
 	private boolean isStanziamentoAccentrato = Boolean.FALSE;
+	private boolean attivaEconomicaParallela = false;
+
+	private boolean supervisore = false;
 
 	public LiquidazioneDefinitivaIvaBP() {
 		this("");
@@ -149,15 +159,15 @@ public class LiquidazioneDefinitivaIvaBP extends LiquidazioneIvaBP {
 	}
 
 	protected void init(it.cnr.jada.action.Config config,it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException {
-
 		super.init(config,context);
-
 		try {
 			String tipoStanziamentoLiquidazioneIva = Utility.createConfigurazioneCnrComponentSession().getTipoStanziamentoLiquidazioneIva(context.getUserContext());
 			setStanziamentoAccentrato(Optional.ofNullable(tipoStanziamentoLiquidazioneIva).map(el->el.equals("STANZIAMENTI_CENTRALIZZATI")).orElse(Boolean.FALSE));
+			attivaEconomicaParallela = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(context.getUserContext());
+			supervisore = Utility.createUtenteComponentSession().isSupervisore(context.getUserContext());
 		} catch (RemoteException | ComponentException e) {
+			throw handleException(e);
 		}
-
 		setStatus(SEARCH);
 		resetTabs();
 		resetForSearch(context);
@@ -195,6 +205,8 @@ public class LiquidazioneDefinitivaIvaBP extends LiquidazioneIvaBP {
 
 	public void resetTabs() {
 		setTab("tab", "tabEsigDetr");
+		setTab("tabLiquidazione", "tabProspettiStampati");
+
 	}
 	public SimpleDetailCRUDController getRipartizione_finanziaria() {
 		return ripartizione_finanziaria;
@@ -225,6 +237,23 @@ public class LiquidazioneDefinitivaIvaBP extends LiquidazioneIvaBP {
 		for (int j = 0; j < i; j++) {
 			tabs[j]=new String[]{hash.get(j)[0],hash.get(j)[1],hash.get(j)[2]};
 		}
+		return tabs;
+	}
+
+	public String[][] getTabsLiquidazione() {
+		TreeMap<Integer, String[]> pages = new TreeMap<Integer, String[]>();
+		int i = 0;
+		pages.put(i++, new String[]{"tabProspettiStampati", "Prospetti stampati", "/gestiva00/tab_liquidazione_definitiva_iva_prospetti_stampati.jsp"});
+		if (Optional.ofNullable(this.getDettaglio_prospetti().getModel())
+				.filter(Liquidazione_ivaBulk.class::isInstance)
+				.map(Liquidazione_ivaBulk.class::cast)
+				.flatMap(liquidazioneIvaBulk -> Optional.ofNullable(liquidazioneIvaBulk.getScrittura_partita_doppia()))
+				.isPresent() && attivaEconomicaParallela) {
+			pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
+		}
+		String[][] tabs = new String[i][3];
+		for (int j = 0; j < i; j++)
+			tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
 		return tabs;
 	}
 
@@ -300,5 +329,29 @@ public class LiquidazioneDefinitivaIvaBP extends LiquidazioneIvaBP {
 
 	private void setStanziamentoAccentrato(boolean stanziamentoAccentrato) {
 		isStanziamentoAccentrato = stanziamentoAccentrato;
+	}
+
+	@Override
+	public CollapsableDetailCRUDController getMovimentiDare() {
+		return movimentiDare;
+	}
+
+	@Override
+	public CollapsableDetailCRUDController getMovimentiAvere() {
+		return movimentiAvere;
+	}
+
+	@Override
+	public OggettoBulk getEconomicaModel() {
+		return getDettaglio_prospetti().getModel();
+	}
+
+	public boolean isSupervisore() {
+		return supervisore;
+	}
+
+	@Override
+	public boolean isButtonGeneraScritturaVisible() {
+		return this.isSupervisore();
 	}
 }

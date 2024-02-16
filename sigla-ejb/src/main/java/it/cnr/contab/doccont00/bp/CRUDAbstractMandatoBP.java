@@ -38,6 +38,7 @@ import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.StatoVariazioneSostituzione;
 import it.cnr.jada.action.*;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
@@ -536,5 +537,10 @@ public abstract class CRUDAbstractMandatoBP extends it.cnr.jada.util.action.Simp
 
 	public boolean isButtonGeneraScritturaVisible() {
 		return this.isSupervisore();
+	}
+
+	@Override
+	public OggettoBulk getEconomicaModel() {
+		return getModel();
 	}
 }

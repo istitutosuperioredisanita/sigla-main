@@ -13,13 +13,13 @@
 <%
     IDocAmmEconomicaBP bp = (IDocAmmEconomicaBP)BusinessProcess.getBusinessProcess(request);
     Scrittura_partita_doppiaBulk scrittura =
-                Optional.ofNullable(bp.getModel())
+                Optional.ofNullable(bp.getEconomicaModel())
                     .filter(IDocumentoCogeBulk.class::isInstance)
                     .map(IDocumentoCogeBulk.class::cast)
                     .map(IDocumentoCogeBulk::getScrittura_partita_doppia)
                     .orElse(new Scrittura_partita_doppiaBulk());
     boolean scritturaNonAttiva =
-                Optional.ofNullable(bp.getModel())
+                Optional.ofNullable(bp.getEconomicaModel())
                     .filter(IDocumentoCogeBulk.class::isInstance)
                     .map(IDocumentoCogeBulk.class::cast)
                     .map(IDocumentoCogeBulk::getScrittura_partita_doppia)
