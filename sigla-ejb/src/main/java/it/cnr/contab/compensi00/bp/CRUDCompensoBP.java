@@ -51,6 +51,7 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
 import it.cnr.jada.action.HttpActionContext;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.AbstractPrintBP;
@@ -1836,4 +1837,10 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
     public boolean isButtonGeneraScritturaVisible() {
         return this.isSupervisore();
     }
+
+    @Override
+    public OggettoBulk getEconomicaModel() {
+        return getModel();
+    }
+
 }

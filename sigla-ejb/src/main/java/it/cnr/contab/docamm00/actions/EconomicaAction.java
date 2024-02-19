@@ -48,12 +48,12 @@ public abstract class EconomicaAction extends CRUDAction {
                 .filter(IDocAmmEconomicaBP.class::isInstance)
                 .map(IDocAmmEconomicaBP.class::cast)
                 .orElseThrow(() -> new BusinessProcessException("Business process non compatibile!"));
-        final IDocumentoCogeBulk documentoCogeBulk = Optional.ofNullable(bp.getModel())
+        final IDocumentoCogeBulk documentoCogeBulk = Optional.ofNullable(bp.getEconomicaModel())
                 .filter(IDocumentoCogeBulk.class::isInstance)
                 .map(IDocumentoCogeBulk.class::cast)
                 .orElseThrow(() -> new BusinessProcessException("Modello di business non compatibile!"));
         try {
-            if (Optional.ofNullable(bp.getModel()).filter(OggettoBulk::isToBeCreated).isPresent())
+            if (Optional.ofNullable(bp.getEconomicaModel()).filter(OggettoBulk::isToBeCreated).isPresent())
                 throw new ApplicationException("Il documento risulta non salvato! Proposta scrittura prima nota non possibile.");
 
             documentoCogeBulk.setScrittura_partita_doppia(Utility.createScritturaPartitaDoppiaComponentSession().proposeScritturaPartitaDoppia(
@@ -81,7 +81,7 @@ public abstract class EconomicaAction extends CRUDAction {
                 .filter(IDocAmmEconomicaBP.class::isInstance)
                 .map(IDocAmmEconomicaBP.class::cast)
                 .orElseThrow(() -> new BusinessProcessException("Business process non compatibile!"));
-        final Optional<IDocumentoAmministrativoBulk> documentoAmministrativoBulk = Optional.ofNullable(bp.getModel())
+        final Optional<IDocumentoAmministrativoBulk> documentoAmministrativoBulk = Optional.ofNullable(bp.getEconomicaModel())
                 .filter(IDocumentoAmministrativoBulk.class::isInstance)
                 .map(IDocumentoAmministrativoBulk.class::cast);
         if (documentoAmministrativoBulk.isPresent()) {
@@ -119,7 +119,7 @@ public abstract class EconomicaAction extends CRUDAction {
             actionContext.addBusinessProcess(consBP);
             return actionContext.findDefaultForward();
         }
-        final Optional<IDocumentoCogeBulk> documentoCogeBulk = Optional.ofNullable(bp.getModel())
+        final Optional<IDocumentoCogeBulk> documentoCogeBulk = Optional.ofNullable(bp.getEconomicaModel())
                 .filter(IDocumentoCogeBulk.class::isInstance)
                 .map(IDocumentoCogeBulk.class::cast);
         if (documentoCogeBulk.isPresent()) {

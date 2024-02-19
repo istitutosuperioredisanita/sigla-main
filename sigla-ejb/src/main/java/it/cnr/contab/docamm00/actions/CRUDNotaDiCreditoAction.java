@@ -325,7 +325,8 @@ public class CRUDNotaDiCreditoAction extends CRUDFatturaPassivaAction {
 
     private Forward basicDoStornaDettagli(
             ActionContext context,
-            it.cnr.jada.util.action.Selection selection)
+            it.cnr.jada.util.action.Selection selection,
+            boolean proponiScelta)
             throws it.cnr.jada.comp.ComponentException {
 
         try {
@@ -366,16 +367,19 @@ public class CRUDNotaDiCreditoAction extends CRUDFatturaPassivaAction {
                     if (notaDiCredito.getAccertamentiHash() != null && !notaDiCredito.getAccertamentiHash().isEmpty()) {
                         throw new it.cnr.jada.comp.ApplicationException("Non è possibile procedere all'inserimento di un impegno, perchè questa nota di credito contiene degli accertamenti!");
                     }
-                    it.cnr.jada.util.action.SelezionatoreListaBP slbp = select(context, ri, it.cnr.jada.bulk.BulkInfo.getBulkInfo(Fattura_passiva_rigaIBulk.class), "default", "doSelezionaDettagli");
-                    HookForward hook = (HookForward) context.findForward("seleziona");
-                    hook.addParameter("dettagliDaStornare", dettagliDaStornare);
-                    forward = slbp;
+                    if (proponiScelta) {
+                        it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context, ri);
+                        OptionBP optionBP = openConfirm(context,"Attenzione! Esistono altre fatture non ancora pagate con cui compensare il creditostatus. Anzichè procedere all'incasso, vuoi associare finanziariamente la nota credito ad altra fattura non ancora pagata?",OptionBP.CONFIRM_YES_NO,"doConfermaCompensazioneCredito");
+                        optionBP.addAttribute("righeSelezionate", selection);
+                        optionBP.addAttribute("dettagliDaStornare", dettagliDaStornare);
+                        forward = optionBP;
+                    } else {
+                        it.cnr.jada.util.action.SelezionatoreListaBP slbp = select(context, ri, it.cnr.jada.bulk.BulkInfo.getBulkInfo(Fattura_passiva_rigaIBulk.class), "default", "doSelezionaDettagli");
+                        HookForward hook = (HookForward) context.findForward("seleziona");
+                        hook.addParameter("dettagliDaStornare", dettagliDaStornare);
+                        forward = slbp;
+                    }
                 } else {
-				/*OptionBP optionBP = (OptionBP)openConfirm(context,"Non sono disponibili scadenze di obbligazioni di altre fatture dello stesso fornitore per i dettagli già pagati. Vuoi creare un accertamento?",OptionBP.CONFIRM_YES_NO,"doConfermaApriAccertamento");
-				 * optionBP.addAttribute("dettagliDaStornare", dettagliDaStornare);
-				forward = optionBP;
-				 * 
-				 */
                     forward = basicDoRicercaAccertamento(context, notaDiCredito, dettagliDaStornare);
                 }
             }
@@ -612,7 +616,7 @@ public class CRUDNotaDiCreditoAction extends CRUDFatturaPassivaAction {
                 CRUDNotaDiCreditoBP bp = (CRUDNotaDiCreditoBP) getBusinessProcess(context);
                 java.util.List dett = ((Nota_di_creditoBulk) bp.getModel()).getFattura_passiva_dettColl();
                 Selection newSelection = getIndexSelectionOn(selection, dett, "stornato");
-                forward = basicDoStornaDettagli(context, newSelection);
+                forward = basicDoStornaDettagli(context, newSelection, Boolean.TRUE);
 
                 if (!(forward instanceof it.cnr.jada.util.action.SelezionatoreListaBP)) {
                     bp.getDettaglio().reset(context);
@@ -645,7 +649,7 @@ public class CRUDNotaDiCreditoAction extends CRUDFatturaPassivaAction {
                 CRUDNotaDiCreditoBP bp = (CRUDNotaDiCreditoBP) getBusinessProcess(context);
                 java.util.List dett = ((Nota_di_creditoBulk) bp.getModel()).getFattura_passiva_dettColl();
                 Selection newSelection = getIndexSelectionOn(selection, dett, "stornato");
-                forward = basicDoStornaDettagli(context, newSelection);
+                forward = basicDoStornaDettagli(context, newSelection, Boolean.TRUE);
 
                 if (!(forward instanceof it.cnr.jada.util.action.SelezionatoreListaBP)) {
                     bp.getDettaglio().reset(context);
@@ -1746,7 +1750,7 @@ public class CRUDNotaDiCreditoAction extends CRUDFatturaPassivaAction {
                 //controllaSelezionePerTitoloCapitolo(context, models.iterator(ndc.getFattura_passiva_dettColl()));
                 List titoloCapitoloValidolist = controllaSelezionePerTitoloCapitoloLista(context, models.iterator(ndc.getFattura_passiva_dettColl()));
 
-                forward = basicDoStornaDettagli(context, models);
+                forward = basicDoStornaDettagli(context, models, Boolean.TRUE);
                 ndc = (Nota_di_creditoBulk) bp.getModel();
 
                 bp.getDettaglio().reset(context);
@@ -1990,5 +1994,15 @@ public class CRUDNotaDiCreditoAction extends CRUDFatturaPassivaAction {
         } catch (Throwable e) {
             return handleException(context, e);
         }
+    }
+
+    public Forward doConfermaCompensazioneCredito(ActionContext context, OptionBP optionBP) throws ComponentException {
+        CRUDNotaDiCreditoBP bp = (CRUDNotaDiCreditoBP) getBusinessProcess(context);
+        if (optionBP.getOption() == it.cnr.jada.util.action.OptionBP.YES_BUTTON) {
+            Selection righeSelezionate = (Selection) optionBP.getAttribute("righeSelezionate");
+            return basicDoStornaDettagli(context, righeSelezionate, Boolean.FALSE);
+        }
+        Nota_di_creditoBulk notaDiCredito = (Nota_di_creditoBulk) bp.getModel();
+        return basicDoRicercaAccertamento(context, (Nota_di_creditoBulk) bp.getModel(), (List)optionBP.getAttribute("dettagliDaStornare"));
     }
 }

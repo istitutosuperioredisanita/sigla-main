@@ -1880,4 +1880,9 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     public boolean isButtonGeneraScritturaVisible() {
         return this.isSupervisore();
     }
+
+    @Override
+    public OggettoBulk getEconomicaModel() {
+        return getModel();
+    }
 }

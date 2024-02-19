@@ -67,7 +67,7 @@ public class ListaBuoniBP
 		abutton[i++] = new Button(Config.getHandler().getProperties(getClass()), "Toolbar.excel");
 		abutton[i++] = new Button(Config.getHandler().getProperties(getClass()), "Toolbar.multiSelection");
 		abutton[i++] = new Button(Config.getHandler().getProperties(getClass()), "Toolbar.selectAll");
-		abutton[i++] = new Button(Config.getHandler().getProperties(getClass()), "Toolbar.freeSearch");		
+		abutton[i++] = new Button(Config.getHandler().getProperties(getClass()), "Toolbar.freeSearchFilter");
 		return abutton;
 	}
 	/* (non-Javadoc)

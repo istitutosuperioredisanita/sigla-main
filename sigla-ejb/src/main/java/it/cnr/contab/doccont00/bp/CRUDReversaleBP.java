@@ -1228,4 +1228,9 @@ public class CRUDReversaleBP extends it.cnr.jada.util.action.SimpleCRUDBP implem
 	public IDefferedUpdateSaldiBP getDefferedUpdateSaldiParentBP() {
 		return this;
 	}
+
+	@Override
+	public OggettoBulk getEconomicaModel() {
+		return getModel();
+	}
 }

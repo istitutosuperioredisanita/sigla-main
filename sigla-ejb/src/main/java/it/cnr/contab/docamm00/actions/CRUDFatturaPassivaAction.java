@@ -77,6 +77,8 @@ import org.springframework.data.util.Pair;
 import javax.ejb.EJBException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -2669,7 +2671,38 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
 
             controllaQuadraturaConti(context, (Fattura_passivaBulk) bp.getModel());
 
-            java.util.List dettagliDaInventariare = getDettagliDaInventariare(context, bp.getDettaglio().getDetails().iterator());
+            java.util.List<Fattura_passiva_rigaIBulk> dettagliDaInventariare = getDettagliDaInventariare(context, bp.getDettaglio().getDetails().iterator());
+            final Optional<Fattura_passiva_rigaIBulk> bulk = dettagliDaInventariare
+                    .stream()
+                    .filter(fatturaPassivaIBulk -> {
+                        return Optional.ofNullable(fatturaPassivaIBulk.getDt_da_competenza_coge())
+                                .map(Timestamp::toLocalDateTime)
+                                .map(LocalDateTime::getYear)
+                                .map(esercizio -> esercizio < fatturaPassivaIBulk.getEsercizio())
+                                .orElse(Boolean.FALSE) ||
+                                Optional.ofNullable(fatturaPassivaIBulk.getDt_a_competenza_coge())
+                                        .map(Timestamp::toLocalDateTime)
+                                        .map(LocalDateTime::getYear)
+                                        .map(esercizio -> esercizio < fatturaPassivaIBulk.getEsercizio())
+                                        .orElse(Boolean.FALSE);
+                    }).findAny();
+            if (bulk.isPresent()) {
+                throw new ApplicationMessageFormatException(
+                        "Non è possibile procedere con l''aumento di valore in quanto uno degli esercizi di competenza [{0},{1}] non coincide con l''esercizio della fattura {2}!",
+                        bulk
+                                .map(Fattura_passiva_rigaIBulk::getDt_da_competenza_coge)
+                                .map(Timestamp::toLocalDateTime)
+                                .map(LocalDateTime::getYear)
+                                .map(String::valueOf).orElse(""),
+                        bulk
+                                .map(Fattura_passiva_rigaIBulk::getDt_a_competenza_coge)
+                                .map(Timestamp::toLocalDateTime)
+                                .map(LocalDateTime::getYear)
+                                .map(String::valueOf).orElse(""),
+                        bulk.map(Fattura_passiva_rigaIBulk::getEsercizio).map(String::valueOf).orElse("")
+
+                );
+            }
             if (dettagliDaInventariare != null && !dettagliDaInventariare.isEmpty()) {
 
                 AssBeneFatturaBP ibp = (AssBeneFatturaBP) context.getUserInfo().createBusinessProcess(context, "AssBeneFatturaBP", new Object[]{"MRSWTh"});
