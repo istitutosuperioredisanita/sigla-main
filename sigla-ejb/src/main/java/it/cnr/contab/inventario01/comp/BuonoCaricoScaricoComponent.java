@@ -2385,7 +2385,7 @@ public RemoteIterator selectBeniAssociatiByClause(
 	if (riga_fattura !=null){
 		sql.addSQLClause("AND","INVENTARIO_BENI_APG.CD_CDS",SQLBuilder.EQUALS,riga_fattura.getCd_cds());
 		sql.addSQLClause("AND","INVENTARIO_BENI_APG.CD_UNITA_ORGANIZZATIVA",SQLBuilder.EQUALS,riga_fattura.getCd_unita_organizzativa());
-		sql.addSQLClause("AND","INVENTARIO_BENI_APG.ESERCIZIO",SQLBuilder.EQUALS,riga_fattura.getEsercizio());
+		sql.addSQLClause("AND","INVENTARIO_BENI_APG.ESERCIZIO",SQLBuilder.LESS_EQUALS,riga_fattura.getEsercizio());
 		sql.addSQLClause("AND","INVENTARIO_BENI_APG.PG_FATTURA",SQLBuilder.EQUALS,riga_fattura.getPg_fattura_passiva());
 		sql.addSQLClause("AND","INVENTARIO_BENI_APG.PROGRESSIVO_RIGA",SQLBuilder.EQUALS,riga_fattura.getProgressivo_riga());
 	}
@@ -3541,7 +3541,7 @@ public void modificaBeniAssociati(UserContext userContext,Ass_inv_bene_fatturaBu
 							if (riga_fattura!=null){
 								new_bene_apg.setCd_cds(riga_fattura.getCd_cds());   				
 								new_bene_apg.setCd_unita_organizzativa(riga_fattura.getCd_unita_organizzativa());  	
-								new_bene_apg.setEsercizio(riga_fattura.getEsercizio());   		
+								new_bene_apg.setEsercizio(buono.getEsercizio());
 								new_bene_apg.setPg_fattura(riga_fattura.getPg_fattura_passiva());  
 								new_bene_apg.setProgressivo_riga(riga_fattura.getProgressivo_riga());
 								if (riga_fattura.getTi_istituz_commerc().equals(TipoIVA.ISTITUZIONALE.value()))
@@ -3553,7 +3553,7 @@ public void modificaBeniAssociati(UserContext userContext,Ass_inv_bene_fatturaBu
 							{
 								new_bene_apg.setCd_cds(nota.getCd_cds());   				
 								new_bene_apg.setCd_unita_organizzativa(nota.getCd_unita_organizzativa());  	
-								new_bene_apg.setEsercizio(nota.getEsercizio());   		
+								new_bene_apg.setEsercizio(nota.getEsercizio());
 								new_bene_apg.setPg_fattura(nota.getPg_fattura_passiva());  
 								new_bene_apg.setProgressivo_riga(nota.getProgressivo_riga());
 								if (nota.getTi_istituz_commerc().equals(TipoIVA.ISTITUZIONALE.value()))
@@ -5346,7 +5346,7 @@ public void validaRiportaAssFattura_Bene(UserContext userContext, Ass_inv_bene_f
 						}else{
 							sql.addSQLClause("AND","INVENTARIO_BENI_APG.CD_CDS",sql.EQUALS,riga_fattura.getCd_cds());
 							sql.addSQLClause("AND","INVENTARIO_BENI_APG.CD_UNITA_ORGANIZZATIVA",sql.EQUALS,riga_fattura.getCd_unita_organizzativa());
-							sql.addSQLClause("AND","INVENTARIO_BENI_APG.ESERCIZIO",sql.EQUALS,riga_fattura.getEsercizio());
+							sql.addSQLClause("AND","INVENTARIO_BENI_APG.ESERCIZIO",sql.LESS_EQUALS,riga_fattura.getEsercizio());
 							sql.addSQLClause("AND","INVENTARIO_BENI_APG.PG_FATTURA",sql.EQUALS,riga_fattura.getPg_fattura_passiva());
 							sql.addSQLClause("AND","INVENTARIO_BENI_APG.PROGRESSIVO_RIGA",sql.EQUALS,riga_fattura.getProgressivo_riga());
 							sql.addSQLClause("AND","INVENTARIO_BENI_APG.LOCAL_TRANSACTION_ID",sql.EQUALS,associaBulk.getLocal_transactionID());
