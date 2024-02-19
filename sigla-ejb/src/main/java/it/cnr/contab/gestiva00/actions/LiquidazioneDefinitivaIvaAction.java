@@ -21,6 +21,9 @@ import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotEnabledException;
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotRequiredException;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
 import it.cnr.contab.docamm00.bp.IDocAmmEconomicaBP;
+import it.cnr.contab.doccont00.bp.CRUDMandatoBP;
+import it.cnr.contab.doccont00.core.bulk.MandatoBulk;
+import it.cnr.contab.doccont00.core.bulk.Mandato_rigaIBulk;
 import it.cnr.contab.gestiva00.bp.LiquidazioneDefinitivaIvaBP;
 import it.cnr.contab.gestiva00.bp.LiquidazioneIvaBP;
 import it.cnr.contab.gestiva00.core.bulk.*;
@@ -28,6 +31,7 @@ import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
+import it.cnr.jada.bulk.FillException;
 import it.cnr.jada.bulk.MTUWrapper;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ApplicationException;
@@ -36,6 +40,7 @@ import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.action.ConsultazioniBP;
 import it.cnr.jada.util.action.FormBP;
+import it.cnr.jada.util.action.NestedFormController;
 
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -369,4 +374,27 @@ public class LiquidazioneDefinitivaIvaAction extends StampaAction {
 		return actionContext.findDefaultForward();
 	}
 
+    public Forward doVisualizzaMandato(ActionContext actionContext) throws BusinessProcessException {
+        try {
+            fillModel(actionContext);
+            Optional<LiquidazioneDefinitivaIvaBP> bp = Optional.ofNullable(actionContext.getBusinessProcess())
+                    .filter(LiquidazioneDefinitivaIvaBP.class::isInstance)
+                    .map(LiquidazioneDefinitivaIvaBP.class::cast);
+            final Optional<MandatoBulk> mandatoBulk = bp
+                    .map(LiquidazioneDefinitivaIvaBP::getMandato_righe_associate)
+                    .flatMap(controller -> Optional.ofNullable(controller.getModel()))
+                    .filter(Mandato_rigaIBulk.class::isInstance)
+                    .map(Mandato_rigaIBulk.class::cast)
+                    .map(Mandato_rigaIBulk::getMandato);
+            if (mandatoBulk.isPresent()) {
+                CRUDMandatoBP mandatoBP = (CRUDMandatoBP) actionContext.getUserInfo().createBusinessProcess(actionContext, "CRUDMandatoBP", new Object[]{"VRSWTh"});
+                mandatoBP.edit(actionContext, mandatoBulk.get());
+                return actionContext.addBusinessProcess(mandatoBP);
+            }
+            bp.get().setMessage("Mandato non trovato!");
+            return actionContext.findDefaultForward();
+        } catch (FillException e) {
+            return handleException(actionContext, e);
+        }
+    }
 }
