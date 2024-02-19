@@ -93,9 +93,11 @@ import java.math.RoundingMode;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumentoComponent
@@ -7415,15 +7417,35 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             it.cnr.contab.inventario00.ejb.IdInventarioComponentSession h = EJBCommonServices.createEJB(
                     "CNRINVENTARIO00_EJB_IdInventarioComponentSession",
                     it.cnr.contab.inventario00.ejb.IdInventarioComponentSession.class);
-            it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk inventario = h.findInventarioFor(
-                    userContext,
-                    fatturaPassiva.getCd_cds_origine(),
-                    fatturaPassiva.getCd_uo_origine(),
-                    false);
-            if (inventario == null)
-                throw new it.cnr.jada.comp.ApplicationException("Attenzione: si informa che non esiste un inventario per questo CDS.\nIn caso di inserimento di dettagli con beni soggetti ad inventario, non sarà permesso il salvataggio della fattura,\nfino alla creazione ed apertura di un nuovo inventario!");
-            else if (!h.isAperto(userContext, inventario, fatturaPassiva.getEsercizio())) {
-                throw new it.cnr.jada.comp.ApplicationException("Attenzione: si informa che l'inventario per questo CDS non è aperto.\nNel caso di inserimento di dettagli con beni soggetti ad inventario, non sarà permesso il salvataggio della fattura\nfino ad apertura di quest'ultimo!");
+            final List<Integer> esercizi = Stream.of(
+                            Optional.ofNullable(fatturaPassiva.getDt_da_competenza_coge())
+                                    .map(Timestamp::toLocalDateTime)
+                                    .map(LocalDateTime::getYear)
+                                    .orElse(CNRUserContext.getEsercizio(userContext)),
+                            Optional.ofNullable(fatturaPassiva.getDt_a_competenza_coge())
+                                    .map(Timestamp::toLocalDateTime)
+                                    .map(LocalDateTime::getYear)
+                                    .orElse(CNRUserContext.getEsercizio(userContext))
+                    )
+                    .distinct()
+                    .collect(Collectors.toList());
+            for (Integer esercizio : esercizi) {
+                it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk inventario = h.findInventarioFor(
+                        userContext,
+                        fatturaPassiva.getCd_cds_origine(),
+                        fatturaPassiva.getCd_uo_origine(),
+                        false);
+                if (inventario == null)
+                    throw new ApplicationMessageFormatException("Attenzione: si informa che non esiste un inventario per questo CDS.\n" +
+                            "In caso di inserimento di dettagli con beni soggetti ad inventario, " +
+                            "non sarà permesso il salvataggio della fattura,\n" +
+                            "fino alla creazione ed apertura di un nuovo inventario!");
+                else if (!h.isAperto(userContext, inventario, esercizio)) {
+                    throw new ApplicationMessageFormatException("Attenzione: si informa che l''inventario per questo CDS non è aperto nel {0}.\n" +
+                            "Nel caso di inserimento di dettagli con beni soggetti ad inventario, " +
+                            "non sarà permesso il salvataggio della fattura\n" +
+                            "fino ad apertura di quest''ultimo!", String.valueOf(esercizio));
+                }
             }
         } catch (Exception e) {
             throw handleException(fatturaPassiva, e);
