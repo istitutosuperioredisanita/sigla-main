@@ -93,6 +93,13 @@
 		enabledOnEdit="false"
 		label="Capitolo" />
 	<fieldProperty
+			name="ds_elemento_voce"
+			property="ds_elemento_voce"
+			inputType="TEXT"
+			inputSize="50"
+			enabledOnEdit="false"
+			label="Capitolo" />
+	<fieldProperty
 		name="cd_modulo"
 		property="cd_modulo"
 		inputType="TEXTAREA"

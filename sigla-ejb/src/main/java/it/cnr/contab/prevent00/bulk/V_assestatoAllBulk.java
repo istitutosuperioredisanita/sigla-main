@@ -121,6 +121,8 @@ public class V_assestatoAllBulk extends V_assestatoBulk {
 	protected Timestamp progetto_dt_fine;
 	
 	protected Timestamp progetto_dt_proroga;
+
+	private String ds_elemento_voce;
 	
 	//    DB_IMP_UTILIZZATO DECIMAL(22,0)
 //    utilizzata per memorizzare il valore iniziale dell'importo dell'oggetto 
@@ -374,5 +376,11 @@ public class V_assestatoAllBulk extends V_assestatoBulk {
 		this.assestato_cassa = assestato_cassa;
 	}
 
+	public String getDs_elemento_voce() {
+		return ds_elemento_voce;
+	}
 
+	public void setDs_elemento_voce(String ds_elemento_voce) {
+		this.ds_elemento_voce = ds_elemento_voce;
+	}
 }

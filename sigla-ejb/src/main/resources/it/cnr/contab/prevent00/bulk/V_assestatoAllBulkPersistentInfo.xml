@@ -195,10 +195,8 @@
 			sqlTypeName="TIMESTAMP"
 			columnSize="7"
 			nullable="true" />
+
 	</defaultColumnMap>
-
-
-
 
 
 	<persistentProperty
