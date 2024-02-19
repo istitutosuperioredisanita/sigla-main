@@ -22,17 +22,15 @@
 package it.cnr.contab.prevent00.bulk;
 
 import it.cnr.contab.util.Utility;
-import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.persistency.KeyedPersistent;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-public class V_assestatoallBulk extends OggettoBulk implements KeyedPersistent {
-	public V_assestatoallBulk() {
+public class V_assestatoAllBulk extends V_assestatoBulk {
+	public V_assestatoAllBulk() {
 		super();
 	}
-	public V_assestatoallBulk(Integer esercizio, Integer esercizio_res, String cd_centro_responsabilita, String cd_linea_attivita, String ti_appartenenza, String ti_gestione, String cd_elemento_voce) {
+	public V_assestatoAllBulk(Integer esercizio, Integer esercizio_res, String cd_centro_responsabilita, String cd_linea_attivita, String ti_appartenenza, String ti_gestione, String cd_elemento_voce) {
 		super();
 		this.esercizio = esercizio;
 		this.esercizio_res = esercizio_res;
@@ -215,8 +213,8 @@ public class V_assestatoallBulk extends OggettoBulk implements KeyedPersistent {
 	}
 	public boolean equalsByPrimaryKey(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof V_assestatoallBulk)) return false;
-		V_assestatoallBulk k = (V_assestatoallBulk)o;
+		if (!(o instanceof V_assestatoAllBulk)) return false;
+		V_assestatoAllBulk k = (V_assestatoAllBulk)o;
 		if(!compareKey(getEsercizio(),k.getEsercizio())) return false;
 		if(!compareKey(getEsercizio_res(),k.getEsercizio_res())) return false;			
 		if(!compareKey(getCd_centro_responsabilita(),k.getCd_centro_responsabilita())) return false;

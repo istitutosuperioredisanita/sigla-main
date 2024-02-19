@@ -20,14 +20,23 @@
 * Date 05/05/2006
 */
 package it.cnr.contab.prevent00.bulk;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.persistency.sql.SQLBuilder;
 
-public class V_assestatoallHome extends BulkHome {
-	public V_assestatoallHome(java.sql.Connection conn) {
-		super(V_assestatoallBulk.class, conn);
+public class V_assestatoAllHome extends BulkHome {
+	public V_assestatoAllHome(java.sql.Connection conn) {
+		super(V_assestatoAllBulk.class, conn);
 	}
-	public V_assestatoallHome(java.sql.Connection conn, PersistentCache persistentCache) {
-		super(V_assestatoallBulk.class, conn, persistentCache);
+	public V_assestatoAllHome(java.sql.Connection conn, PersistentCache persistentCache) {
+		super(V_assestatoAllBulk.class, conn, persistentCache);
+	}
+	public SQLBuilder selectByClause(UserContext usercontext, CompoundFindClause compoundfindclause)
+			throws PersistencyException
+	{
+		return super.selectByClause(usercontext,compoundfindclause);
 	}
 }

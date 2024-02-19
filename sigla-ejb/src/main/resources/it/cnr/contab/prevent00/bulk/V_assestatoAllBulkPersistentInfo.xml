@@ -17,8 +17,8 @@
   -->
 
 <SQLPersistentInfo
-	persistentClassName="it.cnr.contab.prevent00.bulk.V_assestatoallBulk"
-	homeClassName="it.cnr.contab.prevent00.bulk.V_assestatoallHome">
+	persistentClassName="it.cnr.contab.prevent00.bulk.V_assestatoAllBulk"
+	homeClassName="it.cnr.contab.prevent00.bulk.V_assestatoAllHome">
 	<defaultColumnMap
 		tableName="V_ASSESTATO">
 		<columnMapping
