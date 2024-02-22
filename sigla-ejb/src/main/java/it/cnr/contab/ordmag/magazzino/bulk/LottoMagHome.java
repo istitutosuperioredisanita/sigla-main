@@ -246,7 +246,7 @@ public class LottoMagHome extends BulkHome {
 
 			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.ESERCIZIO",SQLBuilder.EQUALS, esercizio);
 			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.DT_CARICO",SQLBuilder.LESS_EQUALS, new Timestamp(dataFine.getTime()));
-			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.DT_CARICO",SQLBuilder.GREATER_EQUALS, new Timestamp(dataInizio.getTime()));
+			//sql.addSQLClause(FindClause.AND,"LOTTO_MAG.DT_CARICO",SQLBuilder.GREATER_EQUALS, new Timestamp(dataInizio.getTime()));
 			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.GIACENZA",SQLBuilder.GREATER, 0);
 
 			if(catGruppo != null && !catGruppo.equals(Valori_magazzinoBulk.TUTTI)){

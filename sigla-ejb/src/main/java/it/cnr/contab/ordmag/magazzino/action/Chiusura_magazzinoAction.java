@@ -26,7 +26,9 @@ public class Chiusura_magazzinoAction extends ParametricPrintAction {
                 java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
                 model.setDataInventario(new java.sql.Timestamp(sdf.parse("31/12/"+model.getEsercizio()).getTime()));
                 model.setDataInventarioInizio(new java.sql.Timestamp(sdf.parse("01/01/"+model.getEsercizio()).getTime()));
-                model.setDataChiusuraMovimento(new java.sql.Timestamp(sdf.parse("01/01/"+model.getEsercizio()+1).getTime()));
+                int annoChiusura = model.getEsercizio().intValue()+1;
+
+                model.setDataChiusuraMovimento(new java.sql.Timestamp(sdf.parse("01/01/"+annoChiusura).getTime()));
             }
             return actioncontext.findDefaultForward();
         } catch (Throwable e) {

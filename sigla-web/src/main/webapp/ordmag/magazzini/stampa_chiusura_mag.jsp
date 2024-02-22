@@ -31,10 +31,11 @@
 
          </tr>
          <tr>
-             <td><% bp.getController().writeFormLabel(out,"dataInventario"); %></td>
-             <td colspan="5"><% bp.getController().writeFormInput(out,"dataInventario"); %></td>
              <td><% bp.getController().writeFormLabel(out,"dataInventarioInizio"); %></td>
              <td colspan="5"><% bp.getController().writeFormInput(out,"dataInventarioInizio"); %></td>
+             <td><% bp.getController().writeFormLabel(out,"dataInventario"); %></td>
+             <td colspan="5"><% bp.getController().writeFormInput(out,"dataInventario"); %></td>
+
          </tr>
 
        <tr>

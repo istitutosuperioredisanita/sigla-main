@@ -21,6 +21,7 @@ package it.cnr.contab.ordmag.magazzino.bulk;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.ordmag.anag00.TipoMovimentoMagBulk;
+import it.cnr.contab.ordmag.magazzino.dto.ImportiTotMagDTO;
 import it.cnr.contab.ordmag.magazzino.dto.StampaInventarioDTO;
 import it.cnr.contab.ordmag.magazzino.dto.StampaInventarioDTOKey;
 import it.cnr.contab.reports.bulk.Print_spoolerBulk;
@@ -34,6 +35,7 @@ import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.Orderable;
+import org.apache.pdfbox.pdmodel.font.encoding.MacExpertEncoding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,10 +165,18 @@ public class Chiusura_magazzinoHome extends Valori_magazzinoHome {
 			Map<StampaInventarioDTOKey,StampaInventarioDTO> stampaChiusuraMagMap=getLottiMagazzino(uc,esercizio,dataInizio,dataFine,dataMovimentoChiusura,codRaggrMag,null,catGruppo);
 
 			Map<String,BigDecimal> cmpArticoloMap = calcolaMediaPonderataAdArticolo(stampaChiusuraMagMap);
-			Map<String,BigDecimal> cmpCatGruppoMap = calcolaMediaPonderataCategoriaGruppo(stampaChiusuraMagMap);
-			Map<String,BigDecimal> cmpRaggrMagMap = calcolaMediaPonderataRaggruppamentoMagazzino(stampaChiusuraMagMap);
+			Map<String, ImportiTotMagDTO> totArticoloMap = calcolaTotAdArticolo(stampaChiusuraMagMap);
 
-			aggiornaInventarioDTOStampaConCMP(stampaChiusuraMagMap,cmpArticoloMap,cmpCatGruppoMap,cmpRaggrMagMap);
+			Map<String,BigDecimal> cmpCatGruppoMap = calcolaMediaPonderataCategoriaGruppo(stampaChiusuraMagMap);
+			Map<String, ImportiTotMagDTO> totCatGruppoMap = calcolaTotACategoriaGruppo(stampaChiusuraMagMap);
+
+			Map<String,BigDecimal> cmpRaggrMagMap = calcolaMediaPonderataRaggruppamentoMagazzino(stampaChiusuraMagMap);
+			Map<String, ImportiTotMagDTO> totRaggrMagMap = calcolaTotARaggruppamentoMag(stampaChiusuraMagMap);
+
+			BigDecimal mediaPonderataTotale = calcolaMediaPonderataTotale(stampaChiusuraMagMap);
+
+			aggiornaInventarioDTOStampaConValoriTotECMP(stampaChiusuraMagMap,cmpArticoloMap,cmpCatGruppoMap,cmpRaggrMagMap,
+														mediaPonderataTotale,totArticoloMap,totCatGruppoMap,totRaggrMagMap);
 
 			inventario = stampaChiusuraMagMap.values().stream().collect(Collectors.toList());
 
@@ -192,20 +202,57 @@ public class Chiusura_magazzinoHome extends Valori_magazzinoHome {
 		return json;
 	}
 
-	private void aggiornaInventarioDTOStampaConCMP(
+	private void aggiornaInventarioDTOStampaConValoriTotECMP(
 			Map<StampaInventarioDTOKey,StampaInventarioDTO> stampaChiusuraMagMap,
 			Map<String,BigDecimal> cmpArticoloMap,
 			Map<String,BigDecimal> cmpCatGruppoMap,
-			Map<String,BigDecimal> cmpRaggrMagMap){
+			Map<String,BigDecimal> cmpRaggrMagMap,
+			BigDecimal mediaPonderataTotale,
+			Map<String, ImportiTotMagDTO> totArticoloMap,
+			Map<String, ImportiTotMagDTO> totCatGruppoMapp,
+			Map<String, ImportiTotMagDTO> totRaggrMagMap){
 
 		for (StampaInventarioDTO stampaInvDto : stampaChiusuraMagMap.values()) {
 			BigDecimal cmpArticolo = cmpArticoloMap.get(stampaInvDto.getCod_articolo());
-			BigDecimal cmpCatGruppo = cmpCatGruppoMap.get(stampaInvDto.getCod_categoria()+"."+stampaInvDto.getCod_gruppo());
+			BigDecimal cmpCatGruppo = cmpCatGruppoMap.get(stampaInvDto.getCod_categoriaGruppo());
 			BigDecimal cmpRaggrMag = cmpRaggrMagMap.get(stampaInvDto.getCdMagRaggr());
+
+			ImportiTotMagDTO totaliArticolo = totArticoloMap.get(stampaInvDto.getCod_articolo());
+			ImportiTotMagDTO totaliCatGruppo = totCatGruppoMapp.get(stampaInvDto.getCod_categoriaGruppo());
+			ImportiTotMagDTO totaliRaggrMag = totRaggrMagMap.get(stampaInvDto.getCdMagRaggr());
+
 
 			stampaInvDto.setMediaPonderataArticolo(cmpArticolo);
 			stampaInvDto.setMediaPonderataCatGruppo(cmpCatGruppo);
 			stampaInvDto.setMediaPonderataRaggrMag(cmpRaggrMag);
+			stampaInvDto.setMediaPonderataTotale(mediaPonderataTotale);
+
+			stampaInvDto.setQtyInizioAnnoTotArt(totaliArticolo.getQtyInizioAnnoTot()); // somma di tutte le qty inizio anno per Articolo
+			stampaInvDto.setValoreInizioAnnoTotArt(totaliArticolo.getValoreInizioAnnoTot()); // somma di tutti valori inizio anno per Articolo
+			stampaInvDto.setQtyCaricataTotArt(totaliArticolo.getQtyCaricataTot()); // somma di tutti i carichi per Articolo
+			stampaInvDto.setImportoCaricoTotArt(totaliArticolo.getImportoCaricoTot()); // somma di tutti gli importi carico per Articolo
+			stampaInvDto.setQtyScaricataTotArt(totaliArticolo.getQtyScaricataTot()); // somma di tutti gli scarichi per Articolo
+			stampaInvDto.setImportoScaricoTotArt(totaliArticolo.getImportoScaricoTot());// somma di tutti gli importi scarico per Articolo
+			stampaInvDto.setGiacenzaTotArt(totaliArticolo.getGiacenzaTot());// somma tutte giacenza per Articolo
+			stampaInvDto.setImportoGiacenzaTotArt(totaliArticolo.getImportoGiacenzaTot());// somma tutti gli importi giacenza per Articolo
+
+			stampaInvDto.setQtyInizioAnnoTotCatGr(totaliCatGruppo.getQtyInizioAnnoTot()); // somma di tutte le qty inizio anno per Cat. Gruppo
+			stampaInvDto.setValoreInizioAnnoTotCatGr(totaliCatGruppo.getValoreInizioAnnoTot()); // somma di tutti valori inizio anno per Cat. Gruppo
+			stampaInvDto.setQtyCaricataTotCatGr(totaliCatGruppo.getQtyCaricataTot()); // somma di tutti i carichi per Cat. Gruppo
+			stampaInvDto.setImportoCaricoTotCatGr(totaliCatGruppo.getImportoCaricoTot()); // somma di tutti gli importi carico per Cat. Gruppo
+			stampaInvDto.setQtyScaricataTotCatGr(totaliCatGruppo.getQtyScaricataTot()); // somma di tutti gli scarichi per Cat. Gruppo
+			stampaInvDto.setImportoScaricoTotCatGr(totaliCatGruppo.getImportoScaricoTot());// somma di tutti gli importi scarico per Cat. Gruppo
+			stampaInvDto.setGiacenzaTotCatGr(totaliCatGruppo.getGiacenzaTot());// somma tutte giacenza per Cat. Gruppo
+			stampaInvDto.setImportoGiacenzaTotCatGr(totaliCatGruppo.getImportoGiacenzaTot());// somma tutti gli importi giacenza per Cat. Gruppo
+
+			stampaInvDto.setQtyInizioAnnoTotRaggrMag(totaliRaggrMag.getQtyInizioAnnoTot()); // somma di tutte le qty inizio anno per Raggruppamento Magazzino
+			stampaInvDto.setValoreInizioAnnoTotRaggrMag(totaliRaggrMag.getValoreInizioAnnoTot()); // somma di tutti valori inizio anno per Raggruppamento Magazzino
+			stampaInvDto.setQtyCaricataTotRaggrMag(totaliRaggrMag.getQtyCaricataTot()); // somma di tutti i carichi per Raggruppamento Magazzino
+			stampaInvDto.setImportoCaricoTotRaggrMag(totaliRaggrMag.getImportoCaricoTot()); // somma di tutti gli importi carico per Raggruppamento Magazzino
+			stampaInvDto.setQtyScaricataTotRaggrMag(totaliRaggrMag.getQtyScaricataTot()); // somma di tutti gli scarichi per Raggruppamento Magazzino
+			stampaInvDto.setImportoScaricoTotRaggrMag(totaliRaggrMag.getImportoScaricoTot());// somma di tutti gli importi scarico per Raggruppamento Magazzino
+			stampaInvDto.setGiacenzaTotRaggrMag(totaliRaggrMag.getGiacenzaTot());// somma tutte giacenza per Raggruppamento Magazzino
+			stampaInvDto.setImportoGiacenzaTotRaggrMag(totaliRaggrMag.getImportoGiacenzaTot());// somma tutti gli importi giacenza per Raggruppamento Magazzino
 
 		}
 	}

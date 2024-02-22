@@ -21,6 +21,7 @@ package it.cnr.contab.ordmag.magazzino.bulk;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.ordmag.anag00.TipoMovimentoMagBulk;
+import it.cnr.contab.ordmag.magazzino.dto.ImportiTotMagDTO;
 import it.cnr.contab.ordmag.magazzino.dto.StampaInventarioDTO;
 import it.cnr.contab.ordmag.magazzino.dto.StampaInventarioDTOKey;
 import it.cnr.contab.reports.bulk.Print_spoolerBulk;
@@ -38,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -124,6 +126,34 @@ public class Valori_magazzinoHome extends BulkHome {
 		return lottiMap;
 	}
 
+	public BigDecimal calcolaMediaPonderataTotale(Map<StampaInventarioDTOKey,StampaInventarioDTO> lottiMap){
+		BigDecimal contatore = new BigDecimal(0);
+		BigDecimal importoTotale = new BigDecimal(0);
+
+		for (StampaInventarioDTO lotto : lottiMap.values()) {
+			contatore = contatore.add(lotto.getQtyCaricataLotto());
+			importoTotale = importoTotale.add(lotto.getImportoCaricoLotto());
+		}
+		// calcolo media ponderata (importo totale articoli / totale articoli)
+		return importoTotale.divide(contatore,6, RoundingMode.HALF_UP);
+	}
+
+	public Map<String,ImportiTotMagDTO> calcolaTotAdArticolo(Map<StampaInventarioDTOKey,StampaInventarioDTO> lottiMap){
+		Map<String,ArrayList<StampaInventarioDTO>> articoliMap = getMappaArticoliDaMappaLotti(lottiMap);
+
+		Map<String, ImportiTotMagDTO> totArticoliMap = new HashMap<String,ImportiTotMagDTO>();
+
+		for (Map.Entry<String,ArrayList<StampaInventarioDTO>> articoloMap : articoliMap.entrySet()) {
+			ArrayList<StampaInventarioDTO> lottiArticoloArray = articoloMap.getValue();
+
+			ImportiTotMagDTO importiTotArticolo = getImportiTotali(lottiArticoloArray);
+
+			totArticoliMap.put(articoloMap.getKey(),importiTotArticolo);
+		}
+
+		return totArticoliMap;
+	}
+
 	public Map<String,BigDecimal> calcolaMediaPonderataAdArticolo(Map<StampaInventarioDTOKey,StampaInventarioDTO> lottiMap){
 
 		Map<String,ArrayList<StampaInventarioDTO>> articoliMap = getMappaArticoliDaMappaLotti(lottiMap);
@@ -141,20 +171,36 @@ public class Valori_magazzinoHome extends BulkHome {
 
 			for(StampaInventarioDTO lottoArticolo:lottiArticoloArray){
 
-				articoloCtr.add(new BigDecimal(1));
-				importoTotaleArticolo.add(lottoArticolo.getImportoUnitario().multiply(lottoArticolo.getGiacenza()));
+				articoloCtr = articoloCtr.add(lottoArticolo.getQtyCaricataLotto());
+				importoTotaleArticolo = importoTotaleArticolo.add(lottoArticolo.getImportoCaricoLotto());
 			}
 
 			if(cmpArticoliMap.get(articoloMap.getKey()) == null){
 				cmpArticoliMap.put(articoloMap.getKey(),new BigDecimal(0));
 			}
 			// calcolo media ponderata (importo totale articoli / totale articoli)
-			BigDecimal cmpArticolo =importoTotaleArticolo.divide(articoloCtr);
+			BigDecimal cmpArticolo =importoTotaleArticolo.divide(articoloCtr,6, RoundingMode.HALF_UP);
 			cmpArticoliMap.put(articoloMap.getKey(),cmpArticolo);
 
 		}
 		return cmpArticoliMap;
 	}
+
+	public Map<String,ImportiTotMagDTO> calcolaTotACategoriaGruppo(Map<StampaInventarioDTOKey,StampaInventarioDTO> lottiMap){
+		Map<String,ArrayList<StampaInventarioDTO>> catGruppoMap = getMappaCatGruppoDaMappaLotti(lottiMap);
+		Map<String, ImportiTotMagDTO> totCatGruppoMap = new HashMap<String,ImportiTotMagDTO>();
+
+		for (Map.Entry<String,ArrayList<StampaInventarioDTO>> catGruppo : catGruppoMap.entrySet()) {
+
+			ArrayList<StampaInventarioDTO> lottiCatGruppoArray = catGruppo.getValue();
+
+			ImportiTotMagDTO importiTotCatGruppo = getImportiTotali(lottiCatGruppoArray);
+
+			totCatGruppoMap.put(catGruppo.getKey(),importiTotCatGruppo);
+		}
+		return totCatGruppoMap;
+	}
+
 
 	public Map<String,BigDecimal> calcolaMediaPonderataCategoriaGruppo(Map<StampaInventarioDTOKey,StampaInventarioDTO> lottiMap){
 
@@ -172,19 +218,36 @@ public class Valori_magazzinoHome extends BulkHome {
 
 			for(StampaInventarioDTO lottoCat:lottiCatGruppoArray){
 
-				catGruppoCtr.add(new BigDecimal(1));
-				importoTotaleCatGruppo.add(lottoCat.getImportoUnitario().multiply(lottoCat.getGiacenza()));
+				catGruppoCtr = catGruppoCtr.add(lottoCat.getQtyCaricataLotto());
+				importoTotaleCatGruppo = importoTotaleCatGruppo.add(lottoCat.getImportoCaricoLotto());
 			}
 
 			if(cmpCatGruppoMap.get(catGruppo.getKey())==null){
 				cmpCatGruppoMap.put(catGruppo.getKey(),new BigDecimal(0));
 			}
 			// calcolo media ponderata (importo totale categoria gruppo / totale articoli)
-			BigDecimal cmpCatGruppo = importoTotaleCatGruppo.divide(catGruppoCtr);
+			BigDecimal cmpCatGruppo = importoTotaleCatGruppo.divide(catGruppoCtr,6, RoundingMode.HALF_UP);
 			cmpCatGruppoMap.put(catGruppo.getKey(),cmpCatGruppo);
 
 		}
 		return cmpCatGruppoMap;
+	}
+
+	public Map<String,ImportiTotMagDTO> calcolaTotARaggruppamentoMag(Map<StampaInventarioDTOKey,StampaInventarioDTO> lottiMap){
+		Map<String,ArrayList<StampaInventarioDTO>> raggrMagMap = getMappaRaggrMagDaMappaLotti(lottiMap);
+		Map<String,ImportiTotMagDTO> cmpRaggrMagMap = new HashMap<String,ImportiTotMagDTO>();
+
+		for (Map.Entry<String,ArrayList<StampaInventarioDTO>> raggrMag : raggrMagMap.entrySet()) {
+
+			ArrayList<StampaInventarioDTO> lottiRaggrMagArray = raggrMag.getValue();
+
+			ImportiTotMagDTO importiTotCatGruppo = getImportiTotali(lottiRaggrMagArray);
+
+			cmpRaggrMagMap.put(raggrMag.getKey(),importiTotCatGruppo);
+		}
+
+
+		return cmpRaggrMagMap;
 	}
 
 	public Map<String,BigDecimal>  calcolaMediaPonderataRaggruppamentoMagazzino(Map<StampaInventarioDTOKey,StampaInventarioDTO> lottiMap){
@@ -203,15 +266,15 @@ public class Valori_magazzinoHome extends BulkHome {
 
 			for(StampaInventarioDTO lottoRaggrMag:lottiRaggrMagArray){
 
-				raggrMagCtr.add(new BigDecimal(1));
-				importoTotaleRaggrMag.add(lottoRaggrMag.getImportoUnitario().multiply(lottoRaggrMag.getGiacenza()));
+				raggrMagCtr=raggrMagCtr.add(lottoRaggrMag.getQtyCaricataLotto());
+				importoTotaleRaggrMag=importoTotaleRaggrMag.add(lottoRaggrMag.getImportoCaricoLotto());
 			}
 
 			if(cmpRaggrMagMap.get(raggrMag.getKey())==null){
 				cmpRaggrMagMap.put(raggrMag.getKey(),new BigDecimal(0));
 			}
 			// calcolo media ponderata (importo totale categoria gruppo / totale articoli)
-			BigDecimal cmpRaggrMag = importoTotaleRaggrMag.divide(raggrMagCtr);
+			BigDecimal cmpRaggrMag = importoTotaleRaggrMag.divide(raggrMagCtr,6, RoundingMode.HALF_UP);
 			cmpRaggrMagMap.put(raggrMag.getKey(),cmpRaggrMag);
 
 		}
@@ -259,6 +322,7 @@ public class Valori_magazzinoHome extends BulkHome {
 	}
 	// MAP COD_RAGGR_MAG / ARRAY DI LOTTI CHE LO CONTENGONO
 	private Map<String,ArrayList<StampaInventarioDTO>>  getMappaRaggrMagDaMappaLotti(Map<StampaInventarioDTOKey,StampaInventarioDTO> lottiMap){
+
 		Map<String,ArrayList<StampaInventarioDTO>> raggrMagMap = new HashMap<String,ArrayList<StampaInventarioDTO>>();
 
 		for (StampaInventarioDTO lotto : lottiMap.values()) {
@@ -300,9 +364,10 @@ public class Valori_magazzinoHome extends BulkHome {
 			inv.setDescCatGrp(m.getBeneServizio().getCategoria_gruppo().getDs_categoria_gruppo());
 			inv.setImportoUnitario(m.getCostoUnitario());
 			inv.setCdCds(m.getCdCds());
-			inv.setQtyInizioAnno(m.getQuantitaInizioAnno());
-			inv.setValoreInizioAnno(m.getCostoUnitario());
+			inv.setQtyInizioAnnoLotto(m.getQuantitaInizioAnno());
+			inv.setValoreInizioAnnoLotto(m.getCostoUnitario());
 			inv.setDataCaricoLotto(m.getDtCarico());
+			inv.setImportoGiacenzaLotto(m.getGiacenza().multiply(m.getCostoUnitario()));
 
 			StampaInventarioDTOKey invKeyDaLotto = new StampaInventarioDTOKey(inv.getCdCds(),inv.getAnnoLotto(),inv.getNumeroLotto(),inv.getCd_magazzino(),inv.getCategoriaGruppo(),inv.getCod_articolo(),inv.getTipoLotto());
 			lottiMap.put(invKeyDaLotto,inv);
@@ -341,8 +406,8 @@ public class Valori_magazzinoHome extends BulkHome {
 				invDto.setDataCaricoLotto(movimento.getLottoMag().getDtCarico());
 			}
 			// salvo la quantità inizio anno presa dal lotto del movimento di chiusura
-			invDto.setQtyInizioAnno(movimento.getLottoMag().getQuantitaInizioAnno());
-			invDto.setValoreInizioAnno(movimento.getPrezzoUnitario());
+			invDto.setQtyInizioAnnoLotto(movimento.getLottoMag().getQuantitaInizioAnno());
+			invDto.setValoreInizioAnnoLotto(movimento.getPrezzoUnitario());
 
 			lottiMap.put(invKeyDaMovimento,invDto);
 
@@ -377,13 +442,26 @@ public class Valori_magazzinoHome extends BulkHome {
 				lottiMap.put(invKey,inv);
 				invDto = lottiMap.get(invKey);
 			}
-			if(movimento.getTipoMovimentoMag().getModAggQtaMagazzino().equals(TipoMovimentoMagBulk.AZIONE_SOTTRAE)){
-				invDto.setQtyScaricata(movimento.getQuantita());
-				invDto.setImportoUnitarioScarico(movimento.getPrezzoUnitario());
-			}
-			if(movimento.getTipoMovimentoMag().getModAggQtaMagazzino().equals(TipoMovimentoMagBulk.AZIONE_SOMMA)){
-				invDto.setQtyCaricata(movimento.getQuantita());
-				invDto.setImportoUnitarioCarico(movimento.getPrezzoUnitario());
+			// se non si tratta di uno storno
+			if(!movimento.getTipoMovimentoMag().getTipo().equals(TipoMovimentoMagBulk.STORNI)) {
+				// se il movimento in esame non ha un movimento che lo ha annullato
+				if(movimento.getMovimentoAnn() == null) {
+					// calcolo scarichi
+					if (movimento.getTipoMovimentoMag().getModAggQtaMagazzino().equals(TipoMovimentoMagBulk.AZIONE_SOTTRAE)) {
+
+						invDto.setQtyScaricataLotto(invDto.getQtyScaricataLotto().add(movimento.getQuantitaEffettiva()));
+						BigDecimal valoreScarico = movimento.getQuantitaEffettiva().multiply(movimento.getPrezzoUnitarioEffettivo());
+						invDto.setImportoScaricoLotto(invDto.getImportoScaricoLotto().add(valoreScarico));
+					}
+					// calcolo carichi
+					if (movimento.getTipoMovimentoMag().getModAggQtaMagazzino().equals(TipoMovimentoMagBulk.AZIONE_SOMMA)) {
+						invDto.setQtyCaricataLotto(invDto.getQtyCaricataLotto().add(movimento.getQuantitaEffettiva()));
+						BigDecimal valoreCarico = movimento.getQuantitaEffettiva().multiply(movimento.getPrezzoUnitarioEffettivo());
+						invDto.setImportoCaricoLotto(invDto.getImportoCaricoLotto().add(valoreCarico));
+
+
+					}
+				}
 			}
 			lottiMap.put(invKey,invDto);
 		}
@@ -423,8 +501,28 @@ public class Valori_magazzinoHome extends BulkHome {
 			if(movimento.getTipoMovimentoMag().getModAggQtaMagazzino().equals(TipoMovimentoMagBulk.AZIONE_SOMMA)){
 				invDto.setGiacenza(invDto.getGiacenza().subtract(movimento.getQuantitaEffettiva()));
 			}
-
+			invDto.setImportoGiacenzaLotto(invDto.getGiacenza().multiply(invDto.getImportoUnitario()));
 			lottiMap.put(invKey,invDto);
 		}
+	}
+
+	private ImportiTotMagDTO getImportiTotali(ArrayList<StampaInventarioDTO> lottiArray){
+
+		ImportiTotMagDTO importiTot = new ImportiTotMagDTO();
+
+		for(StampaInventarioDTO lotto:lottiArray){
+			importiTot.setQtyInizioAnnoTot(importiTot.getQtyInizioAnnoTot().add(lotto.getQtyInizioAnnoLotto()));
+			importiTot.setValoreInizioAnnoTot(importiTot.getValoreInizioAnnoTot().add(lotto.getValoreInizioAnnoLotto()));
+
+			importiTot.setQtyCaricataTot(importiTot.getQtyCaricataTot().add(lotto.getQtyCaricataLotto()));
+			importiTot.setImportoCaricoTot(importiTot.getImportoCaricoTot().add(lotto.getImportoCaricoLotto()));
+
+			importiTot.setGiacenzaTot(importiTot.getGiacenzaTot().add(lotto.getGiacenza()));
+			importiTot.setImportoGiacenzaTot(importiTot.getImportoGiacenzaTot().add(lotto.getImportoGiacenzaLotto()));
+
+			importiTot.setQtyScaricataTot(importiTot.getQtyScaricataTot().add(lotto.getQtyScaricataLotto()));
+			importiTot.setImportoScaricoTot(importiTot.getImportoScaricoTot().add(lotto.getImportoScaricoLotto()));
+		}
+		return importiTot;
 	}
 }
