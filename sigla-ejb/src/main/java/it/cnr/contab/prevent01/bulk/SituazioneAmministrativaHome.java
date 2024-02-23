@@ -38,7 +38,7 @@ public class SituazioneAmministrativaHome extends BulkHome {
 	}
 
 	public SituazioneAmministrativaHome(Connection conn, PersistentCache persistentCache) {
-		super(RiaccertamentoResiduiPassiviBulk.class, conn, persistentCache);
+		super(RiaccertamentoResiduiBulk.class, conn, persistentCache);
 	}
 
 }

@@ -18,9 +18,7 @@
 package it.cnr.contab.prevent01.bp;
 
 import it.cnr.contab.config00.pdcfin.cla.bulk.Parametri_livelliBulk;
-import it.cnr.contab.prevent01.bulk.RiaccertamentoResiduiPassiviBulk;
-import it.cnr.contab.prevent01.bulk.StampaMastroRendicontoFinanziarioBulk;
-import it.cnr.contab.reports.bp.ParametricPrintBP;
+import it.cnr.contab.prevent01.bulk.RiaccertamentoResiduiBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
@@ -31,7 +29,7 @@ import java.util.Enumeration;
 import java.util.Optional;
 
 
-public class RiaccertamentoResiduiPassiviBP extends StampaMastroRendicontoFinanziarioBP {
+public class RiaccertamentoResiduiBP extends StampaMastroRendicontoFinanziarioBP {
 
     /**
      *
@@ -41,7 +39,7 @@ public class RiaccertamentoResiduiPassiviBP extends StampaMastroRendicontoFinanz
     /**
      * StampaRendicontoFinanziarioBP constructor comment.
      */
-    public RiaccertamentoResiduiPassiviBP() {
+    public RiaccertamentoResiduiBP() {
         super();
     }
 
@@ -50,7 +48,7 @@ public class RiaccertamentoResiduiPassiviBP extends StampaMastroRendicontoFinanz
      *
      * @param function java.lang.String
      */
-    public RiaccertamentoResiduiPassiviBP(String function) {
+    public RiaccertamentoResiduiBP(String function) {
         super(function);
     }
 
@@ -59,15 +57,15 @@ public class RiaccertamentoResiduiPassiviBP extends StampaMastroRendicontoFinanz
     public OggettoBulk initializeBulkForPrint(ActionContext context, OggettoBulk bulk) throws BusinessProcessException {
         try {
             OggettoBulk oggettoBulk = super.initializeBulkForPrint(context, bulk);
-            if (oggettoBulk instanceof RiaccertamentoResiduiPassiviBulk) {
-                ((RiaccertamentoResiduiPassiviBulk) oggettoBulk).setEsercizio(CNRUserContext.getEsercizio(context.getUserContext()));
-                ((RiaccertamentoResiduiPassiviBulk) oggettoBulk).setTi_stampa(RiaccertamentoResiduiPassiviBulk.TIPO_GESTIONALE);
-                ((RiaccertamentoResiduiPassiviBulk) oggettoBulk).setTi_aggregazione(RiaccertamentoResiduiPassiviBulk.TIPO_FINANZIARIO);
-                ((RiaccertamentoResiduiPassiviBulk) oggettoBulk).setTi_origine(RiaccertamentoResiduiPassiviBulk.TIPO_REALE);
-                ((RiaccertamentoResiduiPassiviBulk) oggettoBulk).setTi_gestione(RiaccertamentoResiduiPassiviBulk.TIPO_GESTIONE_ENTRATA);
-                ((RiaccertamentoResiduiPassiviBulk) oggettoBulk).setTi_parte(RiaccertamentoResiduiPassiviBulk.TIPO_PARTE_ENTRAMBE);
-                ((RiaccertamentoResiduiPassiviBulk) oggettoBulk).setLivello_stampa(RiaccertamentoResiduiPassiviBulk.TIPO_VOCE);
-                loadModelBulkOptions(context, (RiaccertamentoResiduiPassiviBulk) oggettoBulk);
+            if (oggettoBulk instanceof RiaccertamentoResiduiBulk) {
+                ((RiaccertamentoResiduiBulk) oggettoBulk).setEsercizio(CNRUserContext.getEsercizio(context.getUserContext()));
+                ((RiaccertamentoResiduiBulk) oggettoBulk).setTi_stampa(RiaccertamentoResiduiBulk.TIPO_GESTIONALE);
+                ((RiaccertamentoResiduiBulk) oggettoBulk).setTi_aggregazione(RiaccertamentoResiduiBulk.TIPO_FINANZIARIO);
+                ((RiaccertamentoResiduiBulk) oggettoBulk).setTi_origine(RiaccertamentoResiduiBulk.TIPO_REALE);
+                ((RiaccertamentoResiduiBulk) oggettoBulk).setTi_gestione(RiaccertamentoResiduiBulk.TIPO_GESTIONE_ENTRATA);
+                ((RiaccertamentoResiduiBulk) oggettoBulk).setTi_parte(RiaccertamentoResiduiBulk.TIPO_PARTE_ENTRAMBE);
+                ((RiaccertamentoResiduiBulk) oggettoBulk).setLivello_stampa(RiaccertamentoResiduiBulk.TIPO_VOCE);
+                loadModelBulkOptions(context, (RiaccertamentoResiduiBulk) oggettoBulk);
             }
             return oggettoBulk;
         } catch (Throwable e) {
@@ -78,14 +76,14 @@ public class RiaccertamentoResiduiPassiviBP extends StampaMastroRendicontoFinanz
     public void loadModelBulkOptions(ActionContext context) throws BusinessProcessException {
         try {
             OggettoBulk oggettoBulk = this.getModel();
-            if (oggettoBulk instanceof RiaccertamentoResiduiPassiviBulk)
-                loadModelBulkOptions(context, (RiaccertamentoResiduiPassiviBulk) oggettoBulk);
+            if (oggettoBulk instanceof RiaccertamentoResiduiBulk)
+                loadModelBulkOptions(context, (RiaccertamentoResiduiBulk) oggettoBulk);
         } catch (Throwable e) {
             throw new BusinessProcessException(e);
         }
     }
 
-    private RiaccertamentoResiduiPassiviBulk loadModelBulkOptions(ActionContext context, RiaccertamentoResiduiPassiviBulk stampa) throws BusinessProcessException {
+    private RiaccertamentoResiduiBulk loadModelBulkOptions(ActionContext context, RiaccertamentoResiduiBulk stampa) throws BusinessProcessException {
         try {
             Parametri_livelliBulk parliv = Utility.createClassificazioneVociComponentSession().findParametriLivelli(context.getUserContext(), stampa.getEsercizio());
 
@@ -100,10 +98,10 @@ public class RiaccertamentoResiduiPassiviBP extends StampaMastroRendicontoFinanz
 
 
             if (Optional.ofNullable(stampa)
-                    .filter(RiaccertamentoResiduiPassiviBulk::isTipoGestioneEntrata)
+                    .filter(RiaccertamentoResiduiBulk::isTipoGestioneEntrata)
                     .isPresent()) {
 
-                stampa.setTi_aggregazione(RiaccertamentoResiduiPassiviBulk.TIPO_FINANZIARIO);
+                stampa.setTi_aggregazione(RiaccertamentoResiduiBulk.TIPO_FINANZIARIO);
 
                 if (parliv.getDs_livello1e() != null)
                     livelliOptions.put(index++, parliv.getDs_livello1e());

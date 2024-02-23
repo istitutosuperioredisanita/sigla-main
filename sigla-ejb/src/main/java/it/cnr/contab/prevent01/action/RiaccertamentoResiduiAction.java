@@ -23,7 +23,7 @@
  */
 package it.cnr.contab.prevent01.action;
 
-import it.cnr.contab.prevent01.bp.RiaccertamentoResiduiPassiviBP;
+import it.cnr.contab.prevent01.bp.RiaccertamentoResiduiBP;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
@@ -34,18 +34,18 @@ import it.cnr.jada.action.Forward;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class RiaccertamentoResiduiPassiviAction extends StampaPdgpBilancioAction {
+public class RiaccertamentoResiduiAction extends StampaPdgpBilancioAction {
 
 	/**
 	 *
 	 */
-	public RiaccertamentoResiduiPassiviAction() {
+	public RiaccertamentoResiduiAction() {
 		super();
 	}
 
 	public Forward doOnTipoChange(ActionContext context) {
 		try{
-			RiaccertamentoResiduiPassiviBP bp = (RiaccertamentoResiduiPassiviBP) context.getBusinessProcess();
+			RiaccertamentoResiduiBP bp = (RiaccertamentoResiduiBP) context.getBusinessProcess();
 			fillModel(context);
 			try {
 				bp.loadModelBulkOptions(context);

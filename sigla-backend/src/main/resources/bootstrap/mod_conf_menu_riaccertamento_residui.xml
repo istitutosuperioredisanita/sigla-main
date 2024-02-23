@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="ciro.salvio" id="mod_conf_menu_riaccertamento_residui">
+
+        <update tableName="accesso">
+            <column name="ds_accesso" type="STRING" value="Riaccertamento Residui"/>
+            <where> cd_accesso='CNSRNDFINRIARESPAS'</where>
+        </update>
+
+        <update tableName="ass_bp_accesso">
+            <column name="business_process" type="STRING" value="RiaccertamentoResiduiBP"/>
+            <where> cd_accesso='CNSRNDFINRIARESPAS' and BUSINESS_PROCESS='RiaccertamentoResiduiPassiviBP'</where>
+        </update>
+
+        <update tableName="albero_main">
+            <column name="business_process" type="STRING" value="RiaccertamentoResiduiBP"/>
+            <column name="ds_nodo" type="STRING" value="Riaccertamento Residui"/>
+            <where> CD_NODO='0.CNS.RNDFIN.CNSRNDFINRIARESPAS'</where>
+        </update>
+
+    </changeSet>
+</databaseChangeLog>

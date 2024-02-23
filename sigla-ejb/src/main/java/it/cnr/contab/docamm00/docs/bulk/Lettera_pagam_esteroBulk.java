@@ -99,7 +99,7 @@ public class Lettera_pagam_esteroBulk extends Lettera_pagam_esteroBase implement
 	}
 	public enum Divisa {
 		AED,AUD,BGN,CAD,CHF,CNY,CZK,DKK,EUR,GBP,HKD,HUF,ILS,INR,JPY,KWD,
-		MAD,MXN,NOK,NZD,PLN,QAR,RON,RUB,SAR,SEK,SGD,THB,TND,TRY,USD,ZAR,RLB
+		MAD,MXN,NOK,NZD,PLN,QAR,RON,RUB,SAR,SEK,SGD,THB,TND,TRY,USD,ZAR
 	}
 	public final static java.util.Dictionary ti_divisaKeys = new it.cnr.jada.util.OrderedHashtable();
 	static {

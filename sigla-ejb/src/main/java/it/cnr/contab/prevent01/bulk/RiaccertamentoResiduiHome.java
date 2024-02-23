@@ -35,21 +35,21 @@ import java.sql.Connection;
  * Creation date: (24/10/2023 12.20.00)
  * @author: Piergiorgio Faraglia
  */
-public class RiaccertamentoResiduiPassiviHome extends BulkHome {
+public class RiaccertamentoResiduiHome extends BulkHome {
 
-	public RiaccertamentoResiduiPassiviHome(Class clazz, Connection conn) {
+	public RiaccertamentoResiduiHome(Class clazz, Connection conn) {
 		super(clazz, conn);
 	}
 
-	public RiaccertamentoResiduiPassiviHome(Class clazz, Connection conn, PersistentCache persistentCache) {
+	public RiaccertamentoResiduiHome(Class clazz, Connection conn, PersistentCache persistentCache) {
 		super(clazz, conn, persistentCache);
 	}
 
-	public RiaccertamentoResiduiPassiviHome(Connection conn, PersistentCache persistentCache) {
-		super(RiaccertamentoResiduiPassiviBulk.class, conn, persistentCache);
+	public RiaccertamentoResiduiHome(Connection conn, PersistentCache persistentCache) {
+		super(RiaccertamentoResiduiBulk.class, conn, persistentCache);
 	}
 
-	public SQLBuilder selectVoce_daByClause(UserContext userContext, RiaccertamentoResiduiPassiviBulk parametri,
+	public SQLBuilder selectVoce_daByClause(UserContext userContext, RiaccertamentoResiduiBulk parametri,
 										   Elemento_voceHome elementoVoceHome, Elemento_voceBulk elementoVoceBulk,
 										   CompoundFindClause compoundfindclause) throws PersistencyException, ComponentException {
 		SQLBuilder sql = elementoVoceHome.createSQLBuilder();
@@ -60,7 +60,7 @@ public class RiaccertamentoResiduiPassiviHome extends BulkHome {
 		return sql;
 	}
 
-	public SQLBuilder selectVoce_aByClause(UserContext userContext, RiaccertamentoResiduiPassiviBulk parametri,
+	public SQLBuilder selectVoce_aByClause(UserContext userContext, RiaccertamentoResiduiBulk parametri,
 											Elemento_voceHome elementoVoceHome, Elemento_voceBulk elementoVoceBulk,
 											CompoundFindClause compoundfindclause) throws PersistencyException, ComponentException {
 		SQLBuilder sql = elementoVoceHome.createSQLBuilder();

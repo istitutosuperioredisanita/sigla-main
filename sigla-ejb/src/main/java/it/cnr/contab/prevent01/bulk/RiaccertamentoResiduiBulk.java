@@ -29,6 +29,6 @@ package it.cnr.contab.prevent01.bulk;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class RiaccertamentoResiduiPassiviBulk extends StampaMastroRendicontoFinanziarioBulk {
+public class RiaccertamentoResiduiBulk extends StampaMastroRendicontoFinanziarioBulk {
 
 }

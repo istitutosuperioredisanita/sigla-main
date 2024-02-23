@@ -11,8 +11,8 @@
 <head>
 <% JSPUtils.printBaseUrl(pageContext);%>
 <%
-   RiaccertamentoResiduiPassiviBP bp = (RiaccertamentoResiduiPassiviBP) BusinessProcess.getBusinessProcess(request);
-   RiaccertamentoResiduiPassiviBulk model = (RiaccertamentoResiduiPassiviBulk)bp.getModel();
+   RiaccertamentoResiduiBP bp = (RiaccertamentoResiduiBP) BusinessProcess.getBusinessProcess(request);
+   RiaccertamentoResiduiBulk model = (RiaccertamentoResiduiBulk)bp.getModel();
 %>
 <script language="JavaScript" src="scripts/util.js"></script>
 <script language="javascript" src="scripts/css.js"></script>

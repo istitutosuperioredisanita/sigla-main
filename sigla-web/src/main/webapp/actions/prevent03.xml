@@ -110,7 +110,7 @@
     </action>
 
     <action
-            path="/RiaccertamentoResiduiPassiviAction"
-            actionClass="it.cnr.contab.prevent01.action.RiaccertamentoResiduiPassiviAction">
+            path="/RiaccertamentoResiduiAction"
+            actionClass="it.cnr.contab.prevent01.action.RiaccertamentoResiduiAction">
     </action>
 </action-mappings>

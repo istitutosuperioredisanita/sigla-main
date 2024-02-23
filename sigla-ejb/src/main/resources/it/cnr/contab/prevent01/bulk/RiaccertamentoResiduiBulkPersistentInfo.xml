@@ -16,7 +16,7 @@
   -->
 
 <SQLPersistentInfo
-	persistentClassName="it.cnr.contab.prevent01.bulk.RiaccertamentoResiduiPassiviBulk"
-	homeClassName="it.cnr.contab.prevent01.bulk.RiaccertamentoResiduiPassiviHome" >
+	persistentClassName="it.cnr.contab.prevent01.bulk.RiaccertamentoResiduiBulk"
+	homeClassName="it.cnr.contab.prevent01.bulk.RiaccertamentoResiduiHome" >
 
 </SQLPersistentInfo>
