@@ -4984,14 +4984,15 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 	 * @throws PersistencyException PersistencyException
 	 */
 	private List<Movimento_cogeBulk> findMovimentiPrimaNota(UserContext userContext, IDocumentoCogeBulk docamm) throws ComponentException, PersistencyException {
+		Scrittura_partita_doppiaHome partitaDoppiaHome = Optional.ofNullable(getHome(userContext, Scrittura_partita_doppiaBulk.class))
+				.filter(Scrittura_partita_doppiaHome.class::isInstance)
+				.map(Scrittura_partita_doppiaHome.class::cast)
+				.orElseThrow(() -> new DetailedRuntimeException("Partita doppia Home not found"));
+
 		//Se è attiva l'economica per l'esercizio del documento allora leggo la scrittura, altrimenti ritorno ciò che proporrei dato che negli anni dove
 		//l'economica non è attiva la scrittura è diversa.
 		boolean isAttivaEconomica = ((Configurazione_cnrHome)getHome(userContext, Configurazione_cnrBulk.class)).isAttivaEconomica(docamm.getEsercizio());
 		if (isAttivaEconomica) {
-			Scrittura_partita_doppiaHome partitaDoppiaHome = Optional.ofNullable(getHome(userContext, Scrittura_partita_doppiaBulk.class))
-					.filter(Scrittura_partita_doppiaHome.class::isInstance)
-					.map(Scrittura_partita_doppiaHome.class::cast)
-					.orElseThrow(() -> new DetailedRuntimeException("Partita doppia Home not found"));
 			final Optional<Scrittura_partita_doppiaBulk> scritturaOpt = partitaDoppiaHome.findByDocumentoAmministrativo(docamm);
 			if (scritturaOpt.isPresent()) {
 				Scrittura_partita_doppiaBulk scrittura = scritturaOpt.get();
@@ -5002,7 +5003,43 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 				return scrittura.getAllMovimentiColl();
 			}
 		} else {
-			try {
+            //recupero i movimenti legati alla prima scrittura se esiste... altrimenti risimulo la scrittura della partita
+            final Movimento_cogeHome movimentoCogeHome = (Movimento_cogeHome)getHome(userContext, Movimento_cogeBulk.class);
+            SQLBuilder sqlMc = movimentoCogeHome.createSQLBuilderWithoutJoin();
+			sqlMc.addClause(FindClause.AND, "cd_tipo_documento", SQLBuilder.EQUALS, docamm.getCd_tipo_doc());
+			sqlMc.addClause(FindClause.AND, "cd_cds_documento", SQLBuilder.EQUALS, docamm.getCd_cds());
+			sqlMc.addClause(FindClause.AND, "cd_uo_documento", SQLBuilder.EQUALS, docamm.getCd_uo());
+			sqlMc.addClause(FindClause.AND, "esercizio_documento", SQLBuilder.EQUALS, docamm.getEsercizio());
+			sqlMc.addClause(FindClause.AND, "pg_numero_documento", SQLBuilder.EQUALS, docamm.getPg_doc());
+			sqlMc.addSQLJoin("SCRITTURA_PARTITA_DOPPIA.esercizio","MOVIMENTO_COGE.esercizio");
+			sqlMc.addSQLJoin("SCRITTURA_PARTITA_DOPPIA.cd_cds","MOVIMENTO_COGE.cd_cds");
+			sqlMc.addSQLJoin("SCRITTURA_PARTITA_DOPPIA.cd_unita_organizzativa","MOVIMENTO_COGE.cd_unita_organizzativa");
+			sqlMc.addSQLJoin("SCRITTURA_PARTITA_DOPPIA.pg_scrittura","MOVIMENTO_COGE.pg_scrittura");
+
+			SQLBuilder sqlPd = partitaDoppiaHome.createSQLBuilder();
+			sqlPd.addSQLExistsClause(FindClause.AND, sqlMc);
+
+			List<Scrittura_partita_doppiaBulk> resultPd = partitaDoppiaHome.fetchAll(sqlPd);
+
+			if (!resultPd.isEmpty()) {
+				Optional<Scrittura_partita_doppiaBulk> spdMin = resultPd.stream().min(Comparator.comparing(Scrittura_partita_doppiaBulk::getDt_contabilizzazione));
+				if (spdMin.isPresent()) {
+					sqlMc = movimentoCogeHome.createSQLBuilderWithoutJoin();
+					sqlMc.addClause(FindClause.AND, "cd_tipo_documento", SQLBuilder.EQUALS, docamm.getCd_tipo_doc());
+					sqlMc.addClause(FindClause.AND, "cd_cds_documento", SQLBuilder.EQUALS, docamm.getCd_cds());
+					sqlMc.addClause(FindClause.AND, "cd_uo_documento", SQLBuilder.EQUALS, docamm.getCd_uo());
+					sqlMc.addClause(FindClause.AND, "esercizio_documento", SQLBuilder.EQUALS, docamm.getEsercizio());
+					sqlMc.addClause(FindClause.AND, "pg_numero_documento", SQLBuilder.EQUALS, docamm.getPg_doc());
+					sqlMc.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, spdMin.get().getEsercizio());
+					sqlMc.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, spdMin.get().getCd_cds());
+					sqlMc.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, spdMin.get().getCd_unita_organizzativa());
+					sqlMc.addClause(FindClause.AND, "pg_scrittura", SQLBuilder.EQUALS, spdMin.get().getPg_scrittura());
+
+					return movimentoCogeHome.fetchAll(sqlMc);
+				}
+			}
+			//se non recupera nulla risimulo la scrittura della partita
+ 			try {
 				return proposeScritturaPartitaDoppia(userContext, docamm).getAllMovimentiColl();
 			} catch (ScritturaPartitaDoppiaNotRequiredException | ScritturaPartitaDoppiaNotEnabledException ignored) {
 			}
