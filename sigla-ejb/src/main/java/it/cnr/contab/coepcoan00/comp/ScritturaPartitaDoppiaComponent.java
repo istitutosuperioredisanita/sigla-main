@@ -1998,113 +1998,132 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 								Collectors.groupingBy(DettaglioFinanziario::getDtACompetenzaCoge))));
 
 		mapTerzo.keySet().forEach(aCdTerzo -> mapTerzo.get(aCdTerzo).keySet().forEach(aDtDaCompCoge -> mapTerzo.get(aCdTerzo).get(aDtDaCompCoge).keySet().forEach(aDtACompCoge -> {
-			List<DettaglioFinanziario> righeDettFinTerzo = mapTerzo.get(aCdTerzo).get(aDtDaCompCoge).get(aDtACompCoge);
-			TestataPrimaNota testataPrimaNota = new TestataPrimaNota(aDtDaCompCoge, aDtACompCoge);
-			testataPrimaNotaList.add(testataPrimaNota);
+			try {
+				List<DettaglioFinanziario> righeDettFinTerzo = mapTerzo.get(aCdTerzo).get(aDtDaCompCoge).get(aDtACompCoge);
+				TestataPrimaNota testataPrimaNota = new TestataPrimaNota(aDtDaCompCoge, aDtACompCoge);
+				testataPrimaNotaList.add(testataPrimaNota);
 
-			Map<Integer, Map<String, Map<String, Map<String, List<DettaglioFinanziario>>>>> mapVoce =
-					righeDettFinTerzo.stream().collect(Collectors.groupingBy(rigaDettFin->rigaDettFin.getElementoVoce().getEsercizio(),
-							Collectors.groupingBy(rigaDettFin->rigaDettFin.getElementoVoce().getTi_appartenenza(),
-									Collectors.groupingBy(rigaDettFin->rigaDettFin.getElementoVoce().getTi_gestione(),
-											Collectors.groupingBy(rigaDettFin->rigaDettFin.getElementoVoce().getCd_elemento_voce())))));
+				//Se l'imponibile è tutto concentrato su una sola riga allora utilizzerò come conto costo/ricavo solo quello presente sulla voce su cui l'imponibile è tutto concentrato
+				List<DettaglioFinanziario> righeDettFinCosti = righeDettFinTerzo.stream().filter(el->el.getImImponibile().compareTo(BigDecimal.ZERO)!=0).collect(Collectors.toList());
 
-			mapVoce.keySet().forEach(aEseVoce -> mapVoce.get(aEseVoce).keySet().forEach(aTiAppartenenza -> mapVoce.get(aEseVoce).get(aTiAppartenenza).keySet().forEach(aTiGestione -> mapVoce.get(aEseVoce).get(aTiAppartenenza).get(aTiGestione).keySet().forEach(aCdVoce -> {
-				List<DettaglioFinanziario> righeDettFinVoce = mapVoce.get(aEseVoce).get(aTiAppartenenza).get(aTiGestione).get(aCdVoce);
+				final Pair<Voce_epBulk, Voce_epBulk> pairContoCostoGen;
+				if (righeDettFinCosti.size()==1)
+					pairContoCostoGen = this.findPairCosto(userContext, righeDettFinCosti.get(0));
+				else
+					pairContoCostoGen = null;
 
-				//suddivido per partita.... che potrebbe essere differente come nel caso di note credito/debito
-				Map<String, Map<String, Map<String, Map<Integer, Map<Long, List<DettaglioFinanziario>>>>>> mapPartita =
-						righeDettFinVoce.stream().collect(Collectors.groupingBy(rigaDettFin->rigaDettFin.getPartita().getCd_tipo_doc(),
-								Collectors.groupingBy(rigaDettFin->rigaDettFin.getPartita().getCd_cds(),
-										Collectors.groupingBy(rigaDettFin->rigaDettFin.getPartita().getCd_uo(),
-												Collectors.groupingBy(rigaDettFin->rigaDettFin.getPartita().getEsercizio(),
-														Collectors.groupingBy(rigaDettFin->rigaDettFin.getPartita().getPg_doc()))))));
+				Map<Integer, Map<String, Map<String, Map<String, List<DettaglioFinanziario>>>>> mapVoce =
+						righeDettFinTerzo.stream().collect(Collectors.groupingBy(rigaDettFin->rigaDettFin.getElementoVoce().getEsercizio(),
+								Collectors.groupingBy(rigaDettFin->rigaDettFin.getElementoVoce().getTi_appartenenza(),
+										Collectors.groupingBy(rigaDettFin->rigaDettFin.getElementoVoce().getTi_gestione(),
+												Collectors.groupingBy(rigaDettFin->rigaDettFin.getElementoVoce().getCd_elemento_voce())))));
 
-				mapPartita.keySet().forEach(aCd_tipo_doc ->
-						mapPartita.get(aCd_tipo_doc).keySet().forEach(aCd_cds ->
-								mapPartita.get(aCd_tipo_doc).get(aCd_cds).keySet().forEach(aCd_uo ->
-										mapPartita.get(aCd_tipo_doc).get(aCd_cds).get(aCd_uo).keySet().forEach(aEsercizioDoc ->
-												mapPartita.get(aCd_tipo_doc).get(aCd_cds).get(aCd_uo).get(aEsercizioDoc).keySet().forEach(aPg_doc -> {
-													try {
-														List<DettaglioFinanziario> righeDettFinVocePartita = mapPartita.get(aCd_tipo_doc).get(aCd_cds).get(aCd_uo).get(aEsercizioDoc).get(aPg_doc);
+				mapVoce.keySet().forEach(aEseVoce -> mapVoce.get(aEseVoce).keySet().forEach(aTiAppartenenza -> mapVoce.get(aEseVoce).get(aTiAppartenenza).keySet().forEach(aTiGestione -> mapVoce.get(aEseVoce).get(aTiAppartenenza).get(aTiGestione).keySet().forEach(aCdVoce -> {
+					List<DettaglioFinanziario> righeDettFinVoce = mapVoce.get(aEseVoce).get(aTiAppartenenza).get(aTiGestione).get(aCdVoce);
 
-														BigDecimal imImponibile = righeDettFinVocePartita.stream().map(DettaglioFinanziario::getImImponibile).reduce(BigDecimal.ZERO, BigDecimal::add);
-														BigDecimal imIva = righeDettFinVocePartita.stream()
-																.map(rigaDettFin -> Optional.ofNullable(rigaDettFin.getImImposta()).orElse(BigDecimal.ZERO))
-																.reduce(BigDecimal.ZERO, BigDecimal::add);
+					//suddivido per partita.... che potrebbe essere differente come nel caso di note credito/debito
+					Map<String, Map<String, Map<String, Map<Integer, Map<Long, List<DettaglioFinanziario>>>>>> mapPartita =
+							righeDettFinVoce.stream().collect(Collectors.groupingBy(rigaDettFin->rigaDettFin.getPartita().getCd_tipo_doc(),
+									Collectors.groupingBy(rigaDettFin->rigaDettFin.getPartita().getCd_cds(),
+											Collectors.groupingBy(rigaDettFin->rigaDettFin.getPartita().getCd_uo(),
+													Collectors.groupingBy(rigaDettFin->rigaDettFin.getPartita().getEsercizio(),
+															Collectors.groupingBy(rigaDettFin->rigaDettFin.getPartita().getPg_doc()))))));
 
-														DettaglioFinanziario rigaDettFinVocePartita = righeDettFinVocePartita.stream().findAny().get();
-														IDocumentoAmministrativoBulk partita = rigaDettFinVocePartita.getPartita();
+					mapPartita.keySet().forEach(aCd_tipo_doc ->
+							mapPartita.get(aCd_tipo_doc).keySet().forEach(aCd_cds ->
+									mapPartita.get(aCd_tipo_doc).get(aCd_cds).keySet().forEach(aCd_uo ->
+											mapPartita.get(aCd_tipo_doc).get(aCd_cds).get(aCd_uo).keySet().forEach(aEsercizioDoc ->
+													mapPartita.get(aCd_tipo_doc).get(aCd_cds).get(aCd_uo).get(aEsercizioDoc).keySet().forEach(aPg_doc -> {
+														try {
+															List<DettaglioFinanziario> righeDettFinVocePartita = mapPartita.get(aCd_tipo_doc).get(aCd_cds).get(aCd_uo).get(aEsercizioDoc).get(aPg_doc);
 
-														//Registro Imponibile Fattura
-														Pair<Voce_epBulk, Voce_epBulk> pairContoCosto = this.findPairCosto(userContext, rigaDettFinVocePartita);
+															BigDecimal imImponibile = righeDettFinVocePartita.stream().map(DettaglioFinanziario::getImImponibile).reduce(BigDecimal.ZERO, BigDecimal::add);
+															BigDecimal imIva = righeDettFinVocePartita.stream()
+																	.map(rigaDettFin -> Optional.ofNullable(rigaDettFin.getImImposta()).orElse(BigDecimal.ZERO))
+																	.reduce(BigDecimal.ZERO, BigDecimal::add);
 
-														if (isFatturaPassivaDaOrdini && !listaFatturaOrdini.isEmpty()) {
-															righeDettFinVocePartita.stream().map(DettaglioFinanziario::getRigaDocamm).forEach(rigaDocamm->{
-																final List<FatturaOrdineBulk> listaFatturaOrdiniCollRiga = listaFatturaOrdini.stream()
-																		.filter(el->el.getFatturaPassivaRiga().equalsByPrimaryKey(rigaDocamm)).collect(Collectors.toList());
+															DettaglioFinanziario rigaDettFinVocePartita = righeDettFinVocePartita.stream().findAny().get();
+															IDocumentoAmministrativoBulk partita = rigaDettFinVocePartita.getPartita();
 
-																if (listaFatturaOrdiniCollRiga.isEmpty())
-																	testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, pairContoCosto.getFirst(), rigaDocamm.getIm_imponibile());
-																else {
-																	listaFatturaOrdiniCollRiga.stream()
-																			.forEach(fatturaOrdineBulk -> testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, fatturaOrdineBulk.getOrdineAcqConsegna().getContoBulk(), fatturaOrdineBulk.getImponibilePerRigaFattura()));
-																}
-															});
-														} else
-															testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, pairContoCosto.getFirst(), imImponibile);
+															//Individuazione conto costo....la variabile pairContoCostoGen è valorizzata se l'imponibile è presente tutto su una sola riga di fattura
+															//in quel caso il costo è derivato tutto da quell'unica riga.....
+															Pair<Voce_epBulk, Voce_epBulk> pairContoCosto;
+															if (pairContoCostoGen!=null)
+																pairContoCosto = pairContoCostoGen;
+															else
+																pairContoCosto = this.findPairCosto(userContext, rigaDettFinVocePartita);
 
-														testataPrimaNota.openDettaglioPatrimonialePartita(userContext, docamm, partita, pairContoCosto.getSecond(), imImponibile, aCdTerzo);
+															//Registro Imponibile Fattura
+															if (isFatturaPassivaDaOrdini && !listaFatturaOrdini.isEmpty()) {
+																righeDettFinVocePartita.stream().map(DettaglioFinanziario::getRigaDocamm).forEach(rigaDocamm->{
+																	final List<FatturaOrdineBulk> listaFatturaOrdiniCollRiga = listaFatturaOrdini.stream()
+																			.filter(el->el.getFatturaPassivaRiga().equalsByPrimaryKey(rigaDocamm)).collect(Collectors.toList());
 
-														//Il flag registraIva è sempre impostato a true se fattura istituzionale o isCommercialeWithAutofattura
-														if (imIva.compareTo(BigDecimal.ZERO)!=0 && registraIva) {
-															if (registraIvaACosto) {
-																if (isFatturaPassivaDaOrdini && !listaFatturaOrdini.isEmpty()) {
-																	righeDettFinVocePartita.stream().map(DettaglioFinanziario::getRigaDocamm).forEach(rigaDocamm->{
-																		final List<FatturaOrdineBulk> listaFatturaOrdiniCollRiga = listaFatturaOrdini.stream()
-																				.filter(el->el.getFatturaPassivaRiga().equalsByPrimaryKey(rigaDocamm)).collect(Collectors.toList());
-
-																		if (listaFatturaOrdiniCollRiga.isEmpty())
-																			testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, pairContoCosto.getFirst(), rigaDocamm.getIm_iva());
-																		else {
-																			listaFatturaOrdiniCollRiga
-																					.forEach(fatturaOrdineBulk -> testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, fatturaOrdineBulk.getOrdineAcqConsegna().getContoBulk(), fatturaOrdineBulk.getIvaPerRigaFattura()));
-																		}
-																	});
-																} else
-																	testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, pairContoCosto.getFirst(), imIva);
+																	if (listaFatturaOrdiniCollRiga.isEmpty())
+																		testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, pairContoCosto.getFirst(), rigaDocamm.getIm_imponibile());
+																	else {
+																		listaFatturaOrdiniCollRiga.stream()
+																				.forEach(fatturaOrdineBulk -> testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, fatturaOrdineBulk.getOrdineAcqConsegna().getContoBulk(), fatturaOrdineBulk.getImponibilePerRigaFattura()));
+																	}
+																});
 															} else
-																testataPrimaNota.openDettaglioIva(userContext, docamm, partita, aContoIva, imIva, aCdTerzo, cdCoriIva);
+																testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, pairContoCosto.getFirst(), imImponibile);
 
-															testataPrimaNota.openDettaglioPatrimonialePartita(userContext, docamm, partita, pairContoCosto.getSecond(), imIva, aCdTerzo);
+															testataPrimaNota.openDettaglioPatrimonialePartita(userContext, docamm, partita, pairContoCosto.getSecond(), imImponibile, aCdTerzo);
 
-															//Se intraUE o extraUE sposto l'IVA anzichè darla al Fornitore (quindi chiudo il debito) la rilevo come debito verso Erario
-															if (isIntraUE || isExtraUE || hasAutofattura) {
-																if (optAutofattura.isPresent()) {
-																	Voce_epBulk aContoIvaAutofattura = this.findContoIva(userContext, optAutofattura.get());
+															//Il flag registraIva è sempre impostato a true se fattura istituzionale o isCommercialeWithAutofattura
+															if (imIva.compareTo(BigDecimal.ZERO)!=0 && registraIva) {
+																if (registraIvaACosto) {
+																	if (isFatturaPassivaDaOrdini && !listaFatturaOrdini.isEmpty()) {
+																		righeDettFinVocePartita.stream().map(DettaglioFinanziario::getRigaDocamm).forEach(rigaDocamm->{
+																			final List<FatturaOrdineBulk> listaFatturaOrdiniCollRiga = listaFatturaOrdini.stream()
+																					.filter(el->el.getFatturaPassivaRiga().equalsByPrimaryKey(rigaDocamm)).collect(Collectors.toList());
+
+																			if (listaFatturaOrdiniCollRiga.isEmpty())
+																				testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, pairContoCosto.getFirst(), rigaDocamm.getIm_iva());
+																			else {
+																				listaFatturaOrdiniCollRiga
+																						.forEach(fatturaOrdineBulk -> testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, fatturaOrdineBulk.getOrdineAcqConsegna().getContoBulk(), fatturaOrdineBulk.getIvaPerRigaFattura()));
+																			}
+																		});
+																	} else
+																		testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, pairContoCosto.getFirst(), imIva);
+																} else
+																	testataPrimaNota.openDettaglioIva(userContext, docamm, partita, aContoIva, imIva, aCdTerzo, cdCoriIva);
+
+																testataPrimaNota.openDettaglioPatrimonialePartita(userContext, docamm, partita, pairContoCosto.getSecond(), imIva, aCdTerzo);
+
+																//Se intraUE o extraUE sposto l'IVA anzichè darla al Fornitore (quindi chiudo il debito) la rilevo come debito verso Erario
+																if (isIntraUE || isExtraUE || hasAutofattura) {
+																	if (optAutofattura.isPresent()) {
+																		Voce_epBulk aContoIvaAutofattura = this.findContoIva(userContext, optAutofattura.get());
+																		testataPrimaNota.closeDettaglioPatrimonialePartita(userContext, docamm, partita, pairContoCosto.getSecond(), imIva, aCdTerzo, DEFAULT_MODIFICABILE);
+																		testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.IVA_VENDITE.value(), docamm.getTipoDocumentoEnum().getSezionePatrimoniale(), aContoIvaAutofattura, imIva, aCdTerzo, docamm, cdCoriIva);
+																	}
+																}
+
+																if (isFatturaPassivaIstituzionale) {
+																	if ((isFatturaDiBeni && (isSanMarinoSenzaIva || isIntraUE || isMerceIntraUE)) ||
+																			(isFatturaDiServizi && isServiziNonResidenti)) {
+																		testataPrimaNota.closeDettaglioPatrimonialePartita(userContext, docamm, partita, pairContoCosto.getSecond(), imIva, aCdTerzo, DEFAULT_MODIFICABILE);
+																		testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.IVA_ACQUISTO.value(), docamm.getTipoDocumentoEnum().getSezionePatrimoniale(), aContoIva, imIva, aCdTerzo, docamm, cdCoriIva);
+																	}
+																}
+
+																if (isSplitPayment) {
+																	//Rilevo il conto IVA Credito/Debito di tipo SPLIT (a secondo se doc attivo o passivo) e lo compenso con il debito verso il fornitore
+																	testataPrimaNota.closeDettaglioIvaSplit(userContext, docamm, partita, aContoIvaSplit, imIva, aCdTerzo, cdCoriIvaSplit);
 																	testataPrimaNota.closeDettaglioPatrimonialePartita(userContext, docamm, partita, pairContoCosto.getSecond(), imIva, aCdTerzo, DEFAULT_MODIFICABILE);
-																	testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.IVA_VENDITE.value(), docamm.getTipoDocumentoEnum().getSezionePatrimoniale(), aContoIvaAutofattura, imIva, aCdTerzo, docamm, cdCoriIva);
 																}
 															}
-
-															if (isFatturaPassivaIstituzionale) {
-																if ((isFatturaDiBeni && (isSanMarinoSenzaIva || isIntraUE || isMerceIntraUE)) ||
-																		(isFatturaDiServizi && isServiziNonResidenti)) {
-																	testataPrimaNota.closeDettaglioPatrimonialePartita(userContext, docamm, partita, pairContoCosto.getSecond(), imIva, aCdTerzo, DEFAULT_MODIFICABILE);
-																	testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.IVA_ACQUISTO.value(), docamm.getTipoDocumentoEnum().getSezionePatrimoniale(), aContoIva, imIva, aCdTerzo, docamm, cdCoriIva);
-																}
-															}
-
-															if (isSplitPayment) {
-																//Rilevo il conto IVA Credito/Debito di tipo SPLIT (a secondo se doc attivo o passivo) e lo compenso con il debito verso il fornitore
-																testataPrimaNota.closeDettaglioIvaSplit(userContext, docamm, partita, aContoIvaSplit, imIva, aCdTerzo, cdCoriIvaSplit);
-																testataPrimaNota.closeDettaglioPatrimonialePartita(userContext, docamm, partita, pairContoCosto.getSecond(), imIva, aCdTerzo, DEFAULT_MODIFICABILE);
-															}
+														} catch (ComponentException|PersistencyException|RemoteException e) {
+															throw new ApplicationRuntimeException(e);
 														}
-													} catch (ComponentException|PersistencyException|RemoteException e) {
-														throw new ApplicationRuntimeException(e);
-													}
-												})))));
-			}))));
+													})))));
+				}))));
+			} catch (ComponentException|PersistencyException|RemoteException e) {
+				throw new ApplicationRuntimeException(e);
+			}
 		})));
 
 		//Se intraUe o ExtraUe senza Merce da paesi IntraUE devo controllare lettera pagamento

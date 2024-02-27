@@ -67,5 +67,13 @@ public interface TerzoLocal {
             authorizations = @Authorization(value = "BASIC")
     )
     Response anagraficaInfo(@PathParam("codicefiscale") String codicefiscale) throws Exception;
+    @GET
+    @Path("/infoByCdTerzoAdd /{cd_terzo}")
+    @ApiOperation(value = "Ritorna le informazioni anagrafiche associate al terzo",
+            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.TERZO +"'",
+            response = AnagraficaInfoDTO.class,
+            authorizations = @Authorization(value = "BASIC")
+    )
+    Response anagraficaInfoByCdTerzo(@PathParam("cd_terzo") Integer cd_terzo) throws Exception;
 
 }

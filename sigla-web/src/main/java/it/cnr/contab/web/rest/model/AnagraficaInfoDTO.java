@@ -112,4 +112,10 @@ public class AnagraficaInfoDTO {
     public String getTelefono_comunicazioni(){
         return null;
     }
+
+    public String getCodice_discale() {
+        return Optional.ofNullable(anagraficoBulk)
+                .map(AnagraficoBulk::getCodice_fiscale)
+                .orElse(null);
+    }
 }
