@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo
+	shortDescription="Associazione Conto Gruppo"
+	longDescription="Associazione Conto Gruppo">
+	<fieldProperty
+		name="esercizio"
+		property="esercizio"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Esercizio" />
+	<fieldProperty
+		name="cdPianoGruppi"
+		property="cdPianoGruppi"
+		inputType="SELECT"
+		keysProperty="ti_pianoGruppiKeys"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="true"
+		enabledOnSearch="true"
+		nullable="false"
+		label="Piano Gruppi" />
+	<fieldProperty
+		name="cdGruppoEp"
+		property="cdGruppoEp"
+		inputType="TEXT"
+		maxLength="40"
+		enabledOnEdit="true"
+		enabledOnSearch="true"
+		nullable="false"
+		label="Gruppo" />
+	<fieldProperty
+		name="cdVoceEp"
+		property="cdVoceEp"
+		inputType="TEXT"
+		maxLength="45"
+		enabledOnEdit="true"
+		enabledOnSearch="true"
+		nullable="false"
+		label="Voce Economico/Patrimoniale" />
+	<fieldProperty
+		name="voceEp"
+		property="voceEp"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnSearch="true"
+		completeOnSave="true"
+		label="Voce Economico/Patrimoniale"/>
+
+	<fieldProperty
+		name="sezione"
+		property="sezione"
+		inputType="RADIOGROUP"
+		layout="HORIZONTAL"
+		keysProperty="ti_sezioneKeys"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="true"
+		nullable="true"
+		label="Sezione" />
+	<fieldProperty
+		name="dsAssociazione"
+		property="dsAssociazione"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="200"
+		enabledOnEdit="true"
+		label="Descrizione" />
+	<fieldProperty
+		name="segno"
+		property="segno"
+		inputType="RADIOGROUP"
+		layout="HORIZONTAL"
+		keysProperty="ti_segnoKeys"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="true"
+		label="Segno" />
+	<form
+		name="searchtool">
+		<formFieldProperty
+			name="esercizio" />
+		<formFieldProperty
+			name="cdPianoGruppi" />
+		<formFieldProperty
+			name="cdGruppoEp" />
+		<formFieldProperty
+			name="cdVoceEp" />
+	</form>
+	<formFieldProperty
+		name="cdPianoGruppi" />
+	<formFieldProperty
+		name="cdGruppoEp" />
+	<formFieldProperty
+		name="voceEp" />
+	<formFieldProperty
+		name="sezione" />
+	<formFieldProperty
+		name="dsAssociazione" />
+	<formFieldProperty
+		name="segno" />
+
+	<findFieldProperty
+		name="esercizio" />
+	<findFieldProperty
+		name="cdPianoGruppi" />
+	<findFieldProperty
+		name="cdGruppoEp" />
+	<findFieldProperty
+		name="cdVoceEp" />
+	<findFieldProperty
+		name="sezione" />
+	<findFieldProperty
+		name="dsAssociazione" />
+	<findFieldProperty
+		name="segno" />
+
+	<columnFieldProperty
+		name="esercizio" />
+	<columnFieldProperty
+		name="cdPianoGruppi" />
+	<columnFieldProperty
+		name="cdGruppoEp" />
+	<columnFieldProperty
+		name="cdVoceEp" />
+	<columnFieldProperty
+		name="sezione" />
+	<columnFieldProperty
+		name="dsAssociazione" />
+	<columnFieldProperty
+		name="segno" />
+</bulkInfo>

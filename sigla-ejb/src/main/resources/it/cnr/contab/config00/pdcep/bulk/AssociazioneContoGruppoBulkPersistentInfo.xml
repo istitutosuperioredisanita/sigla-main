@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.config00.pdcep.bulk.AssociazioneContoGruppoBulk"
+	homeClassName="it.cnr.contab.config00.pdcep.bulk.AssociazioneContoGruppoHome">
+	<defaultColumnMap
+		tableName="CNR_ASS_CONTO_GRUPPO_EP">
+		<columnMapping
+			columnName="ESERCIZIO"
+			propertyName="voceEp.esercizio" />
+		<columnMapping
+			columnName="CD_VOCE_EP"
+			propertyName="voceEp.cd_voce_ep" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="voceEp"
+		partOfOid="true" />
+</SQLPersistentInfo>
