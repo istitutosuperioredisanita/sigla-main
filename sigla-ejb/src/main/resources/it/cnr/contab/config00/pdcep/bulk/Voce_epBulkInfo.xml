@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
   ~
@@ -14,9 +15,212 @@
   ~     You should have received a copy of the GNU Affero General Public License
   ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
+<bulkInfo>
+	<fieldProperty
+			name="esercizio"
+			property="esercizio"
+			inputType="TEXT"
+			inputSize="5"
+			maxLength="5"
+			enabledOnEdit="false"
+			enabledOnSearch="false"
+			nullable="false"
+			label="Esercizio" />
+	<fieldProperty
+			name="cd_voce_ep"
+			property="cd_voce_ep"
+			inputType="TEXT"
+			maxLength="45"
+			enabledOnEdit="true"
+			enabledOnSearch="true"
+			nullable="false"
+			label="Codice" />
+	<fieldProperty
+			name="natura_voce"
+			property="natura_voce"
+			inputType="TEXT"
+			inputSize="5"
+			maxLength="5"
+			enabledOnEdit="false"
+			label="Natura" />
+	<fieldProperty
+			name="ti_voce_ep"
+			property="ti_voce_ep"
+			inputType="TEXT"
+			inputSize="1"
+			maxLength="1"
+			enabledOnEdit="false"
+			label="Tipo" />
+	<fieldProperty
+			name="ds_voce_ep"
+			property="ds_voce_ep"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="200"
+			enabledOnSearch="true"
+			enabledOnEdit="true"
+			label="Descrizione" />
+	<fieldProperty
+			name="livello"
+			property="livello"
+			inputType="TEXT"
+			inputSize="5"
+			maxLength="5"
+			enabledOnEdit="false"
+			nullable="false"
+			label="Livello" />
+	<fieldProperty
+			name="cd_proprio_voce_ep"
+			property="cd_proprio_voce_ep"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			enabledOnEdit="false"
+			nullable="false"
+			label="Codice proprio del livello." />
+	<fieldProperty
+			name="fl_mastrino"
+			property="fl_mastrino"
+			inputType="CHECKBOX"
+			enabledOnEdit="false"
+			nullable="false"
+			label="Ultimo livello" />
+	<fieldProperty
+			name="ti_sezione"
+			property="ti_sezione"
+			inputType="TEXT"
+			inputSize="1"
+			maxLength="1"
+			enabledOnEdit="false"
+			label="Sezione" />
+	<fieldProperty
+			name="riepiloga_a"
+			property="riepiloga_a"
+			inputType="TEXT"
+			inputSize="5"
+			maxLength="5"
+			enabledOnEdit="false"
+			label="Indicatore della collocazione della voce nel bilancio, conto economico o stato patrimoniale" />
+	<fieldProperty
+			name="riapre_a_conto_economico"
+			property="riapre_a_conto_economico"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="45"
+			enabledOnEdit="false"
+			label="Utilizzato nelle fasi di apertura del bilancio. Es. Rimanenze finali che si riportano su iniziali." />
+	<fieldProperty
+			name="fl_a_pareggio"
+			property="fl_a_pareggio"
+			inputType="CHECKBOX"
+			enabledOnEdit="false"
+			label="Y=deve pareggiare" />
+	<fieldProperty
+			name="conto_speciale"
+			property="conto_speciale"
+			inputType="TEXT"
+			inputSize="5"
+			maxLength="5"
+			enabledOnEdit="false"
+			label="Tipologia del conto per specifiche gestioni. (Campo cablato e non tabellizzato)." />
+	<fieldProperty
+			name="cd_voce_ep_padre"
+			property="cd_voce_ep_padre"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="45"
+			enabledOnEdit="false"
+			label="Identificativo completo del conto del piano. E' ottenuto per concatenazione, data una certa posizione nella gerarchia della struttura del piano, di chiave radice piano + identificativi delle chiavi proprie di tutti i livelli superiori + il proprio identificativo." />
+	<fieldProperty
+			name="id_classificazione"
+			property="id_classificazione"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="38"
+			enabledOnEdit="false"
+			label="Id della Classificazione Ufficiale e/p associata alla voce e/p" />
+	<fieldProperty
+			name="cd_voce_ep_contr"
+			property="cd_voce_ep_contr"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="45"
+			enabledOnEdit="false"
+			label="Conto del piano di contropartita. Viene utilizzato in presenza di economica pura e proposta per conto." />
+	<form
+			name="searchtool">
+		<formFieldProperty
+				name="cd_voce_ep" />
+		<formFieldProperty
+				name="ds_voce_ep"
+				inputType="TEXT"
+		/>
+	</form>
+	<formFieldProperty
+			name="cd_voce_ep" />
+	<formFieldProperty
+			name="natura_voce" />
+	<formFieldProperty
+			name="ti_voce_ep" />
+	<formFieldProperty
+			name="ds_voce_ep" />
+	<formFieldProperty
+			name="livello" />
+	<formFieldProperty
+			name="cd_proprio_voce_ep" />
+	<formFieldProperty
+			name="fl_mastrino" />
+	<formFieldProperty
+			name="ti_sezione" />
+	<formFieldProperty
+			name="riepiloga_a" />
+	<formFieldProperty
+			name="riapre_a_conto_economico" />
+	<formFieldProperty
+			name="fl_a_pareggio" />
+	<formFieldProperty
+			name="conto_speciale" />
+	<findFieldProperty
+			name="esercizio" />
+	<findFieldProperty
+			name="cd_voce_ep" />
+	<findFieldProperty
+			name="natura_voce" />
+	<findFieldProperty
+			name="ti_voce_ep" />
+	<findFieldProperty
+			name="ds_voce_ep" />
+	<findFieldProperty
+			name="livello" />
+	<findFieldProperty
+			name="cd_proprio_voce_ep" />
+	<findFieldProperty
+			name="fl_mastrino" />
+	<findFieldProperty
+			name="ti_sezione" />
 
-<bulkInfo
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xmlns="https://contab.cnr.it/schema/SIGLA" 
-		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+	<columnFieldProperty
+			name="esercizio" />
+	<columnFieldProperty
+			name="cd_voce_ep" />
+	<columnFieldProperty
+			name="natura_voce" />
+	<columnFieldProperty
+			name="ti_voce_ep" />
+	<columnFieldProperty
+			name="ds_voce_ep" />
+	<columnFieldProperty
+			name="livello" />
+	<columnFieldProperty
+			name="cd_proprio_voce_ep" />
+	<columnFieldProperty
+			name="fl_mastrino" />
+	<columnFieldProperty
+			name="ti_sezione" />
+
 </bulkInfo>

@@ -6078,4 +6078,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_print_priority_stampa_situazione_amministrativa.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunta Schedulazione gestione ammortamento( Calcolo e Annulla Ammortamento) -->
     <include file="bootstrap/add_schedulazione_gest_ammortamento.xml"/>
+    <!-- Autore : MARCO SPASIANO - Aggiunge voce di menu per Associazione Conto Gruppo -->
+    <include file="bootstrap/add_accessi_associazione_conto_gruppo.xml"/>
+
 </databaseChangeLog>
