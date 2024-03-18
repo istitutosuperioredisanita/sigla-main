@@ -6076,4 +6076,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_menu_situazione_amministrativa.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunta in print priority la stampa della Situazione Amministrativa -->
     <include file="bootstrap/add_print_priority_stampa_situazione_amministrativa.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta Schedulazione gestione ammortamento( Calcolo e Annulla Ammortamento) -->
+    <include file="bootstrap/add_schedulazione_gest_ammortamento.xml"/>
 </databaseChangeLog>

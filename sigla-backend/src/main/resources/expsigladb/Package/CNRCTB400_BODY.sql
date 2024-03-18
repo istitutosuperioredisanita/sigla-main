@@ -2,7 +2,7 @@
 --  DDL for Package Body CNRCTB400
 --------------------------------------------------------
 
-  CREATE OR REPLACE PACKAGE BODY "CNRCTB400" AS
+create or replace PACKAGE BODY "CNRCTB400" AS
 
 -- =================================================================================================
 -- Select record di INVENTARIO_BENI
@@ -2232,6 +2232,21 @@ BEGIN
    END IF;
 
 END chkEsisteTipoAmm;
+
+ Procedure job_annull_ammortamentoBeniInv
+      (	job NUMBER,
+      	pg_exec NUMBER,
+   	next_date DATE,
+   	aEs NUMBER,
+   	aCdCds VARCHAR2,
+   	aUser VARCHAR2) is
+    BEGIN
+     IBMUTL210.logStartExecutionUpd(pg_exec, LOG_TIPO_AMMBENI, job, 'Richiesta utente:' || aUser,
+                              'Annulla Ammortamento beni. Start:' || TO_CHAR(sysdate,'YYYY/MM/DD HH-MI-SS'));
+   -------------------------------------------------------------------------------------------------
+   -- La funzione di ammortamento dei beni è attivata come batch
+        annullaAmmortBeniInv(pg_exec,aEs,aCdCds,aUser,Sysdate);
+    END;
 
 -- =================================================================================================
 -- Annullamento ammortamento beni
