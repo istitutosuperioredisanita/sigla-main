@@ -721,7 +721,19 @@
 		enabledOnSearch="true"
 		enabledOnFreeSearch="true"
 		label="Tipo Documento Generico" />
-	
+	<fieldProperty
+		name="cd_tipo_conto_ep"
+		property="cd_tipo_conto_ep"
+		maxLength="25"
+		inputSize="25"
+		inputType="SELECT"
+		nullable="true"
+		keysProperty="ti_tipoContoDocAttivoEnumKeys"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		label="Tipo conto"
+		caseSensitiveSearch="false" />
+
 	<formFieldProperty
 		name="esercizio_lettera" />
 	<formFieldProperty
@@ -856,7 +868,9 @@
 		name="causale"/>	
 	<formFieldProperty
 		name="findTipoDocumentoGenerico" />
-				
+	<formFieldProperty
+		name="cd_tipo_conto_ep" />
+
 	<columnFieldProperty
 		name="cd_tipo_documento_amm" />
 	<columnFieldProperty

@@ -1181,4 +1181,8 @@ public class CRUDDocumentoGenericoAttivoBP
     public OggettoBulk getEconomicaModel() {
         return getModel();
     }
+
+    public boolean isAttivaEconomicaParallela() {
+        return attivaEconomicaParallela;
+    }
 }

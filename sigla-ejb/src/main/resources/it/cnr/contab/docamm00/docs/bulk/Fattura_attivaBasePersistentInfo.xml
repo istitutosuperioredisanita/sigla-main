@@ -415,6 +415,12 @@
 				propertyName="codiceUnivocoUfficioOrdine"
 				sqlTypeName="VARCHAR"
 				columnSize="10" />
+		<columnMapping
+				columnName="CD_TIPO_CONTO_EP"
+				propertyName="cd_tipo_conto_ep"
+				sqlTypeName="VARCHAR"
+				columnSize="3"
+				nullable="true" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="dt_cancellazione" />
@@ -552,4 +558,7 @@
 			name="dt_ordine" />
 	<persistentProperty
 			name="codiceUnivocoUfficioOrdine" />
+	<persistentProperty
+			name="cd_tipo_conto_ep" />
+
 </SQLPersistentInfo>

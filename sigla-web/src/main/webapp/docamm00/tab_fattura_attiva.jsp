@@ -107,7 +107,11 @@
       		<% bp.getController().writeFormInput(out,null,"dt_a_competenza_coge",false,null,"");%>
       	</td>
      </tr>
-      
+	 <% if (bp.isAttivaEconomicaParallela()) { %>
+         <tr>
+            <% bp.getController().writeFormField(out,"cd_tipo_conto_ep");%>
+         </tr>
+     <% } %>
      </table>
    </div>
 
