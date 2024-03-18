@@ -1473,4 +1473,8 @@ public abstract class CRUDFatturaAttivaBP
     public OggettoBulk getEconomicaModel() {
         return getModel();
     }
+
+    public boolean isAttivaEconomicaParallela() {
+        return attivaEconomicaParallela;
+    }
 }

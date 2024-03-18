@@ -901,6 +901,18 @@
 			enabledOnSearch="false"
 			enabledOnInsert="false"
 			enabledOnFreeSearch="false"/>
+	<fieldProperty
+			name="cd_tipo_conto_ep"
+			property="cd_tipo_conto_ep"
+			maxLength="25"
+			inputSize="25"
+			inputType="SELECT"
+			nullable="true"
+			keysProperty="ti_tipoContoDocAttivoEnumKeys"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
+			label="Tipo conto"
+			caseSensitiveSearch="false" />
 
 
 	<findFieldProperty name="pg_fattura_attiva"/>
@@ -1152,7 +1164,9 @@
 		name="importoTotalePerAccertamento" />
 	<formFieldProperty
 		name="fl_congelata" />
-		
+	<formFieldProperty
+		name="cd_tipo_conto_ep" />
+
 	<columnFieldProperty
 		name="esercizio" />
 	<columnFieldProperty

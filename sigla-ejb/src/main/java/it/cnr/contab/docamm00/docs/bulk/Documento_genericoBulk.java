@@ -136,6 +136,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	public final static Dictionary STATO_LIQUIDAZIONE;
 	public final static Dictionary CAUSALE;
 
+	public final static Dictionary ti_tipoContoDocAttivoEnumKeys = TipoContoDocAttivoEnum.ti_tipoContoDocAttivoEnumKeys;
 
 	static {
 		TIPO = new it.cnr.jada.util.OrderedHashtable();

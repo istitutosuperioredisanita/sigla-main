@@ -105,6 +105,7 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
     public final static String TIPO_NOTA_DI_DEBITO = "D";
     public final static Dictionary statoInvioSdiKeys;
     public final static Dictionary tipoFatturaKeys;
+    public final static Dictionary ti_tipoContoDocAttivoEnumKeys = TipoContoDocAttivoEnum.ti_tipoContoDocAttivoEnumKeys;
     /*
     Definizione del motivo di emissione.
 
@@ -2461,4 +2462,5 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
     public Timestamp getDtGenerazioneScrittura() {
         return this.getDt_contabilizzazione();
     }
+
 }
