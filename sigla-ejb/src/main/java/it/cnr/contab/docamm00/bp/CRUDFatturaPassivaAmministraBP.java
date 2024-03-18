@@ -47,4 +47,8 @@ public class CRUDFatturaPassivaAmministraBP extends CRUDFatturaPassivaIBP {
         return super.initializeModelForEdit( actioncontext,oggettobulk);
     }
 
+    @Override
+    public boolean isInputReadonly() {
+        return Boolean.FALSE;
+    }
 }
