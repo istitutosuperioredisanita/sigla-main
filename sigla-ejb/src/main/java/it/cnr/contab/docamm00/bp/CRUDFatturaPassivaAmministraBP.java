@@ -22,6 +22,10 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
 /**
  * Gestisce le catene di elementi correlate con la fattura passiva in uso.
  */
@@ -48,7 +52,16 @@ public class CRUDFatturaPassivaAmministraBP extends CRUDFatturaPassivaIBP {
     }
 
     @Override
-    public boolean isInputReadonly() {
-        return Boolean.FALSE;
+    public boolean isInputReadonlyFieldName(String fieldName) {
+        final List<String> fieldNames = Arrays.asList("dt_da_competenza_coge", "dt_a_competenza_coge");
+        if (Optional.ofNullable(fieldName).filter(s -> fieldNames.contains(s)).isPresent()) {
+            return Boolean.FALSE;
+        }
+        return super.isInputReadonlyFieldName(fieldName);
+    }
+
+    @Override
+    public boolean isSaveButtonEnabled() {
+        return Boolean.TRUE;
     }
 }

@@ -2965,8 +2965,17 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                 if (competenzaA != null && competenzaDa != null)
                     if (!competenzaDa.equals(competenzaA) && !competenzaDa.before(competenzaA))
                         throw new it.cnr.jada.comp.ApplicationException("La data \"competenza da\" deve essere precedente o uguale a \"competenza a\"!");
-                if (((FatturaPassivaComponentSession) bp.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaA, cds) && !fattura.getStato_coge().equals("NON_PROCESSARE_IN_COGE"))
+                if (!(bp instanceof CRUDFatturaPassivaAmministraBP) && ((FatturaPassivaComponentSession) bp.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaA, cds) && !fattura.getStato_coge().equals("NON_PROCESSARE_IN_COGE"))
                     throw new it.cnr.jada.comp.ApplicationException("Le date \"Competenza da\" e \"Competenza a\" non possono appartenere ad un esercizio chiuso");
+                if (bp instanceof CRUDFatturaPassivaAmministraBP) {
+                    fattura
+                            .getFattura_passiva_dettColl()
+                            .stream()
+                            .forEach(fatturaPassivaRigaBulk -> {
+                                fatturaPassivaRigaBulk.setDt_a_competenza_coge(competenzaA);
+                            });
+                }
+
             }
             bp.setModel(context, fattura);
             return context.findDefaultForward();
@@ -3006,8 +3015,16 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                 if (competenzaA != null && competenzaDa != null)
                     if (!competenzaDa.equals(competenzaA) && !competenzaDa.before(competenzaA))
                         throw new it.cnr.jada.comp.ApplicationException("La data \"competenza a\" deve essere successiva o uguale a \"competenza da\"!");
-                if (((FatturaPassivaComponentSession) bp.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaDa, cds) && !fattura.getStato_coge().equals("NON_PROCESSARE_IN_COGE"))
+                if (!(bp instanceof CRUDFatturaPassivaAmministraBP) && ((FatturaPassivaComponentSession) bp.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaDa, cds) && !fattura.getStato_coge().equals("NON_PROCESSARE_IN_COGE"))
                     throw new it.cnr.jada.comp.ApplicationException("Le date \"Competenza da\" e \"Competenza a\" non possono appartenere ad un esercizio chiuso");
+                if (bp instanceof CRUDFatturaPassivaAmministraBP) {
+                    fattura
+                            .getFattura_passiva_dettColl()
+                            .stream()
+                            .forEach(fatturaPassivaRigaBulk -> {
+                                fatturaPassivaRigaBulk.setDt_da_competenza_coge(competenzaDa);
+                            });
+                }
             }
             bp.setModel(context, fattura);
             return context.findDefaultForward();
@@ -4542,7 +4559,12 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                 fillModel(context);
 //			try {
                 if (!bp.isSearching() && !bp.isViewing() && !fattura.isRODateCompetenzaCOGE()){
-                    fattura.validaDateCompetenza();
+                    try {
+                        fattura.validaDateCompetenza();
+                    } catch (ValidationException _ex) {
+                        bp.setMessage(FormBP.WARNING_MESSAGE, _ex.getMessage());
+                        return context.findDefaultForward();
+                    }
                 }
                 if (!bp.isSearching() && !bp.isViewing()){
                 	if ((((FatturaPassivaComponentSession) bp.createComponentSession()).estraeSezionali(context.getUserContext(), fattura)!= null) && ! (((FatturaPassivaComponentSession) bp.createComponentSession()).estraeSezionali(context.getUserContext(), fattura).isEmpty())){ 
