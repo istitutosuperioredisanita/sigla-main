@@ -126,7 +126,7 @@ public class MovimentiMagHome extends BulkHome {
 		return movimenti;
 	}
 
-	public List<MovimentiMagBulk> getMovimentiCompresiTra(UserContext uc,Date dataInizio,Date dataFine,Integer esercizio,String codRaggrMag,String catGruppo) throws PersistencyException {
+	public List<MovimentiMagBulk> getMovimentiCompresiTra(UserContext uc,Date dataInizio,Date dataFine,Integer esercizio,String codRaggrMag,String catGruppo,String codMag) throws PersistencyException {
 
 		SQLBuilder sql = createSQLBuilder();
 
@@ -147,6 +147,10 @@ public class MovimentiMagHome extends BulkHome {
 		sql.addTableToHeader("MAGAZZINO","m");
 		sql.addSQLJoin("m.cd_cds","LOTTO_MAG.cd_cds_mag");
 		sql.addSQLJoin("m.cd_magazzino","LOTTO_MAG.cd_magazzino_mag");
+
+		if(codMag != null){
+			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.CD_MAGAZZINO_MAG",SQLBuilder.EQUALS, codMag);
+		}
 
 		if(codRaggrMag != null && !codRaggrMag.equals(Valori_magazzinoBulk.TUTTI)) {
 			sql.addSQLClause(FindClause.AND, "m.CD_RAGGR_MAGAZZINO_RIM", SQLBuilder.EQUALS, codRaggrMag);

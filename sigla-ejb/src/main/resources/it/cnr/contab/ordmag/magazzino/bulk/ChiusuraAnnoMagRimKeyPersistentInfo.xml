@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.ordmag.magazzino.bulk.ChiusuraAnnoMagRimKey">
+	<defaultColumnMap
+		tableName="CHIUSURA_ANNO_MAG_RIM">
+		<columnMapping
+			columnName="CD_CDS_LOTTO"
+			propertyName="cdCdsLotto"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="CD_MAGAZZINO_LOTTO"
+			propertyName="cdMagazzinoLotto"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="ESERCIZIO_LOTTO"
+			propertyName="esercizioLotto"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="CD_NUMERATORE_LOTTO"
+			propertyName="cdNumeratoreLotto"
+			sqlTypeName="VARCHAR"
+			columnSize="3"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="PG_LOTTO"
+			propertyName="pgLotto"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="false"
+			primary="true" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="cdCdsLotto"
+		partOfOid="true" />
+	<persistentProperty
+		name="cdMagazzinoLotto"
+		partOfOid="true" />
+	<persistentProperty
+		name="esercizioLotto"
+		partOfOid="true" />
+	<persistentProperty
+		name="cdNumeratoreLotto"
+		partOfOid="true" />
+	<persistentProperty
+		name="pgLotto"
+		partOfOid="true" />
+</SQLPersistentInfo>

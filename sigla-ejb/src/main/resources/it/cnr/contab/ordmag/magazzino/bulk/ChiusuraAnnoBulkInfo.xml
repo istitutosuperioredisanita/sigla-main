@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="pgChiusura"
+		property="pgChiusura"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Progressivo record chiusura" />
+	<fieldProperty
+		name="anno"
+		property="anno"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Anno di chiusura" />
+	<fieldProperty
+		name="tipoChiusura"
+		property="tipoChiusura"
+		inputType="TEXT"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="M=Magazzino; I=Inventario" />
+	<fieldProperty
+		name="stato"
+		property="stato"
+		inputType="TEXT"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="false"
+		nullable="false"
+		label="P=Provvisorio; D=Definitivo" />
+	<fieldProperty
+			name="dataCalcolo"
+			property="dataCalcolo"
+			inputType="TEXT"
+			inputSize="10"
+			formatName="date_short"
+			nullable="false"
+			enabledOnEdit="false"
+			enabledOnFreeSearch="true"
+			enabledOnSearch="true"
+			label="Data calcolo" />
+	<form
+		name="searchtool">
+		<formFieldProperty
+			name="pgChiusura" />
+		<formFieldProperty
+			name="anno" />
+		<formFieldProperty
+			name="tipoChiusura" />
+	</form>
+	<formFieldProperty
+		name="pgChiusura" />
+	<formFieldProperty
+		name="anno" />
+	<formFieldProperty
+		name="tipoChiusura" />
+	<formFieldProperty
+		name="stato" />
+	<formFieldProperty
+			name="dataCalcolo" />
+	<findFieldProperty
+		name="pgChiusura" />
+	<findFieldProperty
+		name="anno" />
+	<findFieldProperty
+		name="tipoChiusura" />
+	<findFieldProperty
+		name="stato" />
+	<findFieldProperty
+			name="dataCalcolo" />
+	<columnFieldProperty
+		name="pgChiusura" />
+	<columnFieldProperty
+		name="anno" />
+	<columnFieldProperty
+		name="tipoChiusura" />
+	<columnFieldProperty
+		name="stato" />
+	<columnFieldProperty
+		name="dataCalcolo" />
+</bulkInfo>

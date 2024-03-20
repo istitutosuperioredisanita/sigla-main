@@ -32,21 +32,28 @@ import java.util.Dictionary;
  */
 public class Chiusura_magazzinoBulk extends Stampa_inventarioBulk {
 
-    public final static String CALCOLO_RIMANENZE        = "C";
+    public final static String CALCOLO_RIMANENZE = "C";
     public final static String VALORIZZAZIONE_RIMANENZE = "V";
+
+    public final static String RAGGR_REPORT_CAT_GRUPPO = "G";
+    public final static String RAGGR_REPORT_ARTICOLO = "A";
 
     public final static String VALORIZZAZIONE_RIM_CMP = "CMP";
 
     public final static Dictionary ti_operazioneKeys;
     public final static Dictionary ti_valorizzazioneKeys;
+    public final static Dictionary ti_raggr_reportKeys;
 
     private Integer esercizio;
-    private RaggrMagazzinoBulk raggrMagazzino =  new RaggrMagazzinoBulk();
+    private RaggrMagazzinoBulk raggrMagazzino = new RaggrMagazzinoBulk();
     private Timestamp dataInventarioInizio;
     private Timestamp dataChiusuraMovimento;
-    private boolean calcoloRimanenze=true;
+    private boolean calcoloRimanenze = true;
     private java.lang.String ti_operazione;
     private java.lang.String ti_valorizzazione;
+    private String ti_raggr_report;
+    private boolean nascondiCampiStampa = true;
+    private String tipoChiusura=ChiusuraAnnoBulk.TIPO_CHIUSURA_MAGAZZINO;
 
 
     static {
@@ -54,8 +61,12 @@ public class Chiusura_magazzinoBulk extends Stampa_inventarioBulk {
         ti_operazioneKeys.put(CALCOLO_RIMANENZE, "Calcolo Rimanenze");
         ti_operazioneKeys.put(VALORIZZAZIONE_RIMANENZE, "Valorizzazione Rimanenze");
 
-        ti_valorizzazioneKeys =  new it.cnr.jada.util.OrderedHashtable();
+        ti_valorizzazioneKeys = new it.cnr.jada.util.OrderedHashtable();
         ti_valorizzazioneKeys.put(VALORIZZAZIONE_RIM_CMP, "C.M.P.");
+
+        ti_raggr_reportKeys = new it.cnr.jada.util.OrderedHashtable();
+        ti_raggr_reportKeys.put(RAGGR_REPORT_CAT_GRUPPO, "Categoria Gruppo");
+        ti_raggr_reportKeys.put(RAGGR_REPORT_ARTICOLO, "Codice Articolo");
 
     }
 
@@ -66,9 +77,11 @@ public class Chiusura_magazzinoBulk extends Stampa_inventarioBulk {
     public void setEsercizio(Integer esercizio) {
         this.esercizio = esercizio;
     }
+
     public java.util.Dictionary getTi_operazioneKeys() {
-         return ti_operazioneKeys;
+        return ti_operazioneKeys;
     }
+
     public java.util.Dictionary getTi_valorizzazioneKeys() {
         return ti_valorizzazioneKeys;
     }
@@ -116,25 +129,27 @@ public class Chiusura_magazzinoBulk extends Stampa_inventarioBulk {
 
     public void validate() throws it.cnr.jada.bulk.ValidationException {
 
-        if ( getEsercizio()==null )
+        if (getEsercizio() == null)
             throw new it.cnr.jada.bulk.ValidationException("Imposta l'esercizio!");
 
-        if ( getDataInventario()==null )
+        if (getDataInventario() == null)
             throw new it.cnr.jada.bulk.ValidationException("Imposta la data di riferimento!");
 
-        if ( getRaggrMagazzino()==null )
+        if (getRaggrMagazzino() == null)
             throw new it.cnr.jada.bulk.ValidationException("Imposta il raggruppamento magazzino!");
 
-        if ( getOrdinamento()==null || getOrdinamento().trim().isEmpty())
-            throw new it.cnr.jada.bulk.ValidationException("Selezionare l'ordinamento!");
+        if (getTi_raggr_report() == null )
+            throw new it.cnr.jada.bulk.ValidationException("Selezionare il raggruppamento per il report");
 
+       /* if (getOrdinamento() == null || getOrdinamento().trim().isEmpty())
+            throw new it.cnr.jada.bulk.ValidationException("Selezionare l'ordinamento!");
         if ( getTi_operazione()==null) {
             throw new it.cnr.jada.bulk.ValidationException("Selezionare il tipo operazione!");
         }else if(getTi_operazione().equals(VALORIZZAZIONE_RIMANENZE)){
             if(getTi_valorizzazione() == null){
                 throw new it.cnr.jada.bulk.ValidationException("Impostare il tipo di calcolo!");
             }
-        }
+        }*/
 
     }
 
@@ -147,7 +162,7 @@ public class Chiusura_magazzinoBulk extends Stampa_inventarioBulk {
         return this.getCatgrp().getCd_categoria_gruppo();
     }
 
-    public String getCdRaggrMagazzinoForPrint(){
+    public String getCdRaggrMagazzinoForPrint() {
         if (this.getRaggrMagazzino() == null)
             return Valori_magazzinoBulk.TUTTI;
         if (this.getRaggrMagazzino().getCdRaggrMagazzino() == null)
@@ -155,11 +170,20 @@ public class Chiusura_magazzinoBulk extends Stampa_inventarioBulk {
 
         return this.getRaggrMagazzino().getCdRaggrMagazzino();
     }
+    public String getCdCdsRaggrMagazzinoForPrint() {
+        if (this.getRaggrMagazzino() == null)
+            return Valori_magazzinoBulk.TUTTI;
+        if (this.getRaggrMagazzino().getCdRaggrMagazzino() == null)
+            return Valori_magazzinoBulk.TUTTI;
 
-    public String getCdTipoOperazioneForPrint(){
+        return this.getRaggrMagazzino().getCdCds();
+    }
+
+    public String getCdTipoOperazioneForPrint() {
         return this.getTi_operazione();
     }
-    public String getCdTipoValorizForPrint(){
+
+    public String getCdTipoValorizForPrint() {
         return this.getTi_valorizzazione();
     }
 
@@ -170,4 +194,26 @@ public class Chiusura_magazzinoBulk extends Stampa_inventarioBulk {
     public void setDataChiusuraMovimento(Timestamp dataChiusuraMovimento) {
         this.dataChiusuraMovimento = dataChiusuraMovimento;
     }
+
+    public boolean isNascondiCampiStampa() {
+        return nascondiCampiStampa;
+    }
+
+    public void setNascondiCampiStampa(boolean nascondiCampiStampa) {
+        this.nascondiCampiStampa = nascondiCampiStampa;
+    }
+
+    public String getTipoChiusura() {
+        return tipoChiusura;
+    }
+
+    public String getTi_raggr_report() {
+        return ti_raggr_report;
+    }
+
+    public void setTi_raggr_report(String ti_raggr_report) {
+        this.ti_raggr_report = ti_raggr_report;
+    }
 }
+
+

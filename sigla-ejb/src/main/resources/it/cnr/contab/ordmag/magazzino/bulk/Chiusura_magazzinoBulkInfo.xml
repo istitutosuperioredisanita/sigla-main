@@ -36,7 +36,8 @@
 			inputType="searchtool"
 			formName="searchtool_desc"
 			enabledOnSearch="true"
-			label="Raggruppamento di Magazzino" />
+			label="Raggruppamento di Magazzino"
+			readonlyProperty="nascondiCampiStampa"/>
 	<fieldProperty
 			name="dataInventario"
 			property="dataInventario"
@@ -70,7 +71,8 @@
 			enabledOnSearch="true"
 			enabledOnFreeSearch="false"
 			layout="HORIZONTAL"
-			command="doOnTi_operazioneChange"/>
+			command="doOnTi_operazioneChange"
+			readonlyProperty="nascondiCampiStampa"/>
 
 	<fieldProperty
 			name="ti_valorizzazione"
@@ -90,20 +92,36 @@
 			formName="searchtool"
 			enabledOnEdit="true"
 			enabledOnSearch="true"
-			label="Cat./gruppo" />
+			label="Cat./gruppo"
+			readonlyProperty="nascondiCampiStampa"/>
 
 	<fieldProperty
 			name="flRaggCatGruppo"
 			property="flRaggCatGruppo"
 			inputType="CHECKBOX"
 			enabledOnSearch="true"
-			label="Raggr. Cat. Gruppo" />
+			label="Raggr. Cat. Gruppo"
+			readonlyProperty="nascondiCampiStampa"/>
 	<fieldProperty
 			name="flDettaglioArticolo"
 			property="flDettaglioArticolo"
 			inputType="CHECKBOX"
 			enabledOnSearch="true"
-			label="Dettaglio Articolo" />
+			label="Dettaglio Articolo"
+			readonlyProperty="nascondiCampiStampa"/>
+
+	<fieldProperty
+			name="ti_raggr_report"
+			property="ti_raggr_report"
+			keysProperty="ti_raggr_reportKeys"
+			label="Raggruppamento report"
+			inputType="RADIOGROUP"
+			enabledOnEdit="false"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="false"
+			layout="HORIZONTAL"
+			readonlyProperty="nascondiCampiStampa"
+			command="doOnRaggrReportChange"/>
 	<fieldProperty
 			name="ordinamento"
 			property="ordinamento"
@@ -111,7 +129,17 @@
 			inputType="RADIOGROUP"
 			layout = "HORIZONTAL"
 			label="Tipo Ordinamento"
-			caseSensitiveSearch="false" />
+			caseSensitiveSearch="false"
+			readonlyProperty="nascondiCampiStampa"/>
+	<fieldProperty
+			name="tipoChiusura"
+			property="tipoChiusura"
+			inputType="TEXT"
+			inputSize="1"
+			maxLength="1"
+			nullable="false"
+			label="Tipo Chiusura" />
+
 
 	<fieldProperty
 			name="cdCatGrpForPrint"
@@ -119,6 +147,9 @@
 
 	<fieldProperty
 			name="cdRaggrMagazzinoForPrint"
+			property="cdRaggrMagazzinoForPrint"/>
+	<fieldProperty
+			name="cdCdsRaggrMagazzinoForPrint"
 			property="cdRaggrMagazzinoForPrint"/>
 	<fieldProperty
 			name="cdTipoOperazioneForPrint"
@@ -155,6 +186,13 @@
 			name="flDettaglioArticolo" />
 	<formFieldProperty
 			name="ordinamento" />
+	<formFieldProperty
+			name="ti_raggr_report" />
+
+	<formFieldProperty
+			name="tipoChiusura" />
+
+
 
 
 	<printForm
@@ -165,18 +203,6 @@
 			parameterType="DATE"
 			paramNameJR="dataInventario"
 			paramTypeJR="java.util.Date"/>
-		<printFieldProperty
-				name="dataInventarioInizio"
-				parameterPosition="1"
-				parameterType="DATE"
-				paramNameJR="dataInventarioInizio"
-				paramTypeJR="java.util.Date"/>
-		<printFieldProperty
-				name="dataChiusuraMovimento"
-				parameterPosition="1"
-				parameterType="DATE"
-				paramNameJR="dataChiusuraMovimento"
-				paramTypeJR="java.util.Date"/>
 
 		<printFieldProperty
 				name="esercizio"
@@ -192,39 +218,42 @@
 				paramTypeJR="java.lang.String"/>
 		<printFieldProperty
 				name="cdRaggrMagazzinoForPrint"
-				parameterPosition="3"
+				parameterPosition="4"
 				parameterType="STRING"
 				paramNameJR="cdRaggrMag"
 				paramTypeJR="java.lang.String"/>
 		<printFieldProperty
+				name="cdCdsRaggrMagazzinoForPrint"
+				parameterPosition="5"
+				parameterType="STRING"
+				paramNameJR="cdCdsRaggrMag"
+				paramTypeJR="java.lang.String"/>
+		<printFieldProperty
 				name="flDettaglioArticolo"
-				parameterPosition="3"
+				parameterPosition="6"
 				parameterType="STRING"
 				paramNameJR="flDettaglioArticolo"
 				paramTypeJR="java.lang.Boolean"/>
 		<printFieldProperty
 				name="flRaggCatGruppo"
-				parameterPosition="3"
+				parameterPosition="7"
 				parameterType="STRING"
 				paramNameJR="flRaggCatGruppo"
 				paramTypeJR="java.lang.Boolean"/>
 		<printFieldProperty
 				name="ordinamento"
-				parameterPosition="3"
+				parameterPosition="8"
 				parameterType="STRING"
 				paramNameJR="ordinamento"
 				paramTypeJR="java.lang.String"/>
 		<printFieldProperty
-				name="cdTipoOperazioneForPrint"
-				parameterPosition="3"
+				name="tipoChiusura"
+				parameterPosition="9"
 				parameterType="STRING"
-				paramNameJR="tipoOperazione"
+				paramNameJR="tipoChiusura"
 				paramTypeJR="java.lang.String"/>
-		<printFieldProperty
-				name="cdTipoValorizForPrint"
-				parameterPosition="3"
-				parameterType="STRING"
-				paramNameJR="tipoValorizzazione"
-				paramTypeJR="java.lang.String"/>
+
+
+
 	</printForm>
 </bulkInfo>
