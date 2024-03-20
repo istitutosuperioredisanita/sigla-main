@@ -954,5 +954,7 @@
 		label="Esercizio lettera" />
 	<findFieldProperty
 		name="pg_lettera"
-		inputType="TEXT"/>	
+		inputType="TEXT"/>
+	<findFieldProperty
+			name="cd_tipo_conto_ep" />
 </bulkInfo>
