@@ -81,10 +81,6 @@
 	<bean id="StampaInventarioJsonDataSource"
 		  class="it.cnr.contab.reports.service.dataSource.StampaInventarioJsonDataSource" >
 	</bean>
-	<bean id="StampaChiusuraMagJsonDataSource"
-		  class="it.cnr.contab.reports.service.dataSource.StampaChiusuraMagJsonDataSource" >
-	</bean>
-
 	<bean id="StampaConsumiJsonDataSource"
 		  class="it.cnr.contab.reports.service.dataSource.StampaConsumiJsonDataSource" >
 	</bean>
@@ -97,8 +93,7 @@
 		<entry key="/ordmag/stampa_inventario.jasper" value-ref="StampaInventarioJsonDataSource" />
 		<entry key="/ordmag/stampa_consumi.jasper" value-ref="StampaConsumiJsonDataSource" />
 		<entry key="/ordmag/partitario_magazzino.jasper" value-ref="StampaPartitarioMagJsonDataSource"/>
-		<entry key="/ordmag/stampa_chiusura_mag.jasper" value-ref="StampaChiusuraMagJsonDataSource"/>
-	</util:map>
+		</util:map>
 
 	<bean id="printService" class="it.cnr.contab.reports.service.PrintService">
 		<property name="serverPrint" value="${print.server.name}"/>

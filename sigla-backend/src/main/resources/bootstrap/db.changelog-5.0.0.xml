@@ -6083,4 +6083,10 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <!-- Autore : MARCO SPASIANO - Aggiunge le informazioni sul conto acconto e anticipo sulla parte attiva -->
     <include file="bootstrap/add_column_conto_acconto_anticipo.xml"/>
 
+    <!-- Autore : VALENTINA TOMADA - Nuove tabelle per salvataggio dati chiusura magazzino/inventario -->
+    <include file="bootstrap/add_table_chiusura_anno.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Index unique a chisura_anno -->
+    <include file="bootstrap/add_index_table_chiusura_anno.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Nuove tabelle per salvataggio importo totale catGruppo e VoceEP-->
+    <include file="bootstrap/add_table_chiusura_catgrp_voce_ep.xml"/>
 </databaseChangeLog>

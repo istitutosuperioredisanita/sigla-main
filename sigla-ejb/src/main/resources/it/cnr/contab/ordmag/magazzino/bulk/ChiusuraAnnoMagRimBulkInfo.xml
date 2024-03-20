@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="cdCdsLotto"
+		property="lottoMag.cdCds"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="cds lotto" />
+	<fieldProperty
+		name="cdMagazzinoLotto"
+		property="lottoMag.cdMagazzino"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="cd magazzino lotto" />
+	<fieldProperty
+		name="esercizioLotto"
+		property="lottoMag.esercizio"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="esercizio del Lotto" />
+	<fieldProperty
+		name="cdNumeratoreLotto"
+		property="lottoMag.cdNumeratoreMag"
+		inputType="TEXT"
+		inputSize="3"
+		maxLength="3"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="numeratore del Lotto" />
+	<fieldProperty
+		name="pgLotto"
+		property="lottoMag.pgLotto"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="progressivo del Lotto" />
+
+	<fieldProperty
+		name="pgChiusura"
+		property="chiusuraAnno.pgChiusura"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Progressivo record chiusura" />
+	<fieldProperty
+		name="anno"
+		property="chiusuraAnno.anno"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Anno di chiusura" />
+	<fieldProperty
+		name="tipoChiusura"
+		property="chiusuraAnno.tipoChiusura"
+		inputType="TEXT"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="false"
+		nullable="false"
+		label="M=Magazzino; I=Inventario" />
+
+	<fieldProperty
+		name="cdCdsRaggrMag"
+		property="raggrMagazzino.cdCds"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		nullable="false"
+		label="cds raggruppamento magazzino" />
+	<fieldProperty
+		name="cdRaggrMag"
+		property="raggrMagazzino.cdRaggrMagazzino"
+		inputType="TEXT"
+		inputSize="3"
+		maxLength="3"
+		enabledOnEdit="false"
+		nullable="false"
+		label="codice raggruppamento magazzino" />
+
+	<fieldProperty
+		name="cdCdsMag"
+		property="magazzino.cdCds"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		nullable="false"
+		label="cds magazzino" />
+	<fieldProperty
+		name="cdMagazzino"
+		property="magazzino.cdMagazzino"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		nullable="false"
+		label="codice magazzino" />
+
+	<fieldProperty
+		name="cdCategoriaGruppo"
+		property="categoriaGruppoInvent.cd_categoria_gruppo"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Codice categoria/gruppo" />
+
+	<fieldProperty
+		name="cdBeneServizio"
+		property="beneServizio.cd_bene_servizio"
+		inputType="TEXT"
+		inputSize="15"
+		maxLength="15"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Codice identificativo del bene o servizio" />
+	<fieldProperty
+			name="unitaMisura"
+			property="beneServizio.unita_misura"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			enabledOnEdit="false"
+			nullable="false"
+			label="unita misura" />
+
+	<fieldProperty
+		name="giacenza"
+		property="giacenza"
+		inputType="TEXT"
+		inputSize="12"
+		maxLength="12"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Qta rimanente nel lotto in unita minima." />
+	<fieldProperty
+		name="caricoIniziale"
+		property="caricoIniziale"
+		inputType="TEXT"
+		inputSize="12"
+		maxLength="12"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Qta caricata inizio anno" />
+	<fieldProperty
+		name="caricoAnno"
+		property="caricoAnno"
+		inputType="TEXT"
+		inputSize="12"
+		maxLength="12"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Qta caricata nell'anno" />
+	<fieldProperty
+		name="scaricoAnno"
+		property="scaricoAnno"
+		inputType="TEXT"
+		inputSize="12"
+		maxLength="12"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Qta scaricata nell'anno" />
+	<fieldProperty
+		name="importoUnitarioChi"
+		property="importoUnitarioChi"
+		inputType="TEXT"
+		inputSize="21"
+		maxLength="21"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Valore unitario movimento chiusura" />
+	<fieldProperty
+			name="importoUnitarioLotto"
+			property="importoUnitarioLotto"
+			inputType="TEXT"
+			inputSize="21"
+			maxLength="21"
+			enabledOnEdit="false"
+			nullable="false"
+			label="Valore unitario lotto " />
+	<fieldProperty
+			name="importoCmppArt"
+			property="importoCmppArt"
+			inputType="TEXT"
+			inputSize="21"
+			maxLength="21"
+			enabledOnEdit="false"
+			nullable="false"
+			label="Valore CMPP per articolo" />
+	<form
+		name="searchtool">
+		<formFieldProperty
+			name="cdCdsLotto" />
+		<formFieldProperty
+			name="cdMagazzinoLotto" />
+		<formFieldProperty
+			name="esercizioLotto" />
+		<formFieldProperty
+			name="cdNumeratoreLotto" />
+		<formFieldProperty
+			name="pgLotto" />
+	</form>
+	<formFieldProperty
+		name="giacenza" />
+	<formFieldProperty
+		name="caricoIniziale" />
+	<formFieldProperty
+		name="caricoAnno" />
+	<formFieldProperty
+		name="scaricoAnno" />
+	<formFieldProperty
+		name="importoUnitarioChi" />
+	<formFieldProperty
+			name="importoUnitarioLotto" />
+	<formFieldProperty
+			name="importoCmppArt" />
+
+	<findFieldProperty
+		name="cdCdsLotto" />
+	<findFieldProperty
+		name="cdMagazzinoLotto" />
+	<findFieldProperty
+		name="esercizioLotto" />
+	<findFieldProperty
+		name="cdNumeratoreLotto" />
+	<findFieldProperty
+		name="pgLotto" />
+	<findFieldProperty
+		name="pgChiusura" />
+	<findFieldProperty
+		name="anno" />
+	<findFieldProperty
+		name="tipoChiusura" />
+	<findFieldProperty
+		name="cdCdsRaggrMag" />
+	<findFieldProperty
+		name="cdRaggrMag" />
+	<findFieldProperty
+		name="cdCdsMag" />
+	<findFieldProperty
+		name="cdMagazzino" />
+	<findFieldProperty
+		name="cdCategoriaGruppo" />
+	<findFieldProperty
+		name="cdBeneServizio" />
+	<findFieldProperty
+			name="unitaMisura" />
+
+	<findFieldProperty
+		name="giacenza" />
+	<findFieldProperty
+		name="caricoIniziale" />
+	<findFieldProperty
+		name="caricoAnno" />
+	<findFieldProperty
+		name="scaricoAnno" />
+	<findFieldProperty
+		name="importoUnitarioChi" />
+	<findFieldProperty
+		name="importoUnitarioLotto" />
+	<findFieldProperty
+		name="importoCmppArt" />
+	<columnFieldProperty
+		name="cdCdsLotto" />
+	<columnFieldProperty
+		name="cdMagazzinoLotto" />
+	<columnFieldProperty
+		name="esercizioLotto" />
+	<columnFieldProperty
+		name="cdNumeratoreLotto" />
+	<columnFieldProperty
+		name="pgLotto" />
+	<columnFieldProperty
+		name="pgChiusura" />
+	<columnFieldProperty
+		name="anno" />
+	<columnFieldProperty
+		name="tipoChiusura" />
+	<columnFieldProperty
+		name="cdCdsRaggrMag" />
+	<columnFieldProperty
+		name="cdRaggrMag" />
+	<columnFieldProperty
+		name="cdCdsMag" />
+	<columnFieldProperty
+		name="cdMagazzino" />
+	<columnFieldProperty
+		name="cdCategoriaGruppo" />
+	<columnFieldProperty
+		name="cdBeneServizio" />
+	<columnFieldProperty
+			name="unitaMisura" />
+	<columnFieldProperty
+		name="giacenza" />
+	<columnFieldProperty
+		name="caricoIniziale" />
+	<columnFieldProperty
+		name="caricoAnno" />
+	<columnFieldProperty
+		name="scaricoAnno" />
+	<columnFieldProperty
+		name="importoUnitarioChi" />
+	<columnFieldProperty
+		name="importoUnitarioLotto" />
+	<columnFieldProperty
+		name="importoCmppArt" />
+</bulkInfo>

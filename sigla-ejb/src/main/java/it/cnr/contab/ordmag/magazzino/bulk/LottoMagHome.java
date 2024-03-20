@@ -232,7 +232,7 @@ public class LottoMagHome extends BulkHome {
 			sql.addSQLJoin("m.cd_cds", "LOTTO_MAG.cd_cds_mag");
 			sql.addSQLJoin("m.cd_magazzino", "LOTTO_MAG.cd_magazzino_mag");
 
-			if(codRaggrMag != null && !catGruppo.equals(Valori_magazzinoBulk.TUTTI)) {
+			if(codRaggrMag != null && !codRaggrMag.equals(Valori_magazzinoBulk.TUTTI)) {
 				sql.addSQLClause(FindClause.AND, "m.CD_RAGGR_MAGAZZINO_RIM", SQLBuilder.EQUALS, codRaggrMag);
 				sql.addSQLJoin("m.CD_CDS_RAGGR_RIM", "LOTTO_MAG.cd_cds_mag");
 			}

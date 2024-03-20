@@ -293,7 +293,7 @@
           path="/ChiusuraMagazzinoProvAction" actionClass="it.cnr.contab.ordmag.magazzino.action.Chiusura_magazzinoAction">
   </action>
 
-  <businessProcess name="CRUDChiusuraMagazzinoBP" className="it.cnr.contab.reports.bp.ParametricPrintBP">
+  <businessProcess name="CRUDChiusuraMagazzinoBP" className="it.cnr.contab.ordmag.magazzino.bp.StampaChiusuraMagazzinoBP">
     <forward name="default" path="/ordmag/magazzini/stampa_chiusura_mag.jsp"/>
     <init-param name="bulkClassName" value="it.cnr.contab.ordmag.magazzino.bulk.Chiusura_magazzinoBulk" />
     <init-param name="printbp" value="OfflineReportPrintBP"/>
@@ -301,7 +301,6 @@
     <init-param name="componentSessionName" value="CNRORDMAG00_EJB_MovimentiMagComponentSession"/>
     <init-param name="printbp" value="OfflineReportPrintBP"/>
     <init-param name="reportName" value="/ordmag/stampa_chiusura_mag.jasper" />
-    <init-param name="repotWhitDsOffLine" value="true"/>
   </businessProcess>
 
 </action-mappings>
