@@ -951,6 +951,8 @@
 	<findFieldProperty name="fl_ordine_elettronico" />
 	<findFieldProperty name="codiceUnivocoUfficioOrdine" />
 	<findFieldProperty name="utcr"/>
+	<findFieldProperty
+			name="cd_tipo_conto_ep" />
 
 
 
