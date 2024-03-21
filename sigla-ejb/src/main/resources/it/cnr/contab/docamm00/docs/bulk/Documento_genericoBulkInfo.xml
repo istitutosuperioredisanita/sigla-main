@@ -319,7 +319,6 @@
 		inputType="TEXT"
 		formatName="date_short"
 		nullable="false"
-		readonlyProperty="RODateCompetenzaCOGE"
 		enabledOnInsert="true"
 		enabledOnEdit="true"
 		enabledOnSearch="false"
@@ -333,7 +332,6 @@
 		inputType="TEXT"
 		formatName="date_short"
 		nullable="false"
-		readonlyProperty="RODateCompetenzaCOGE"
 		enabledOnInsert="true"
 		enabledOnEdit="true"
 		enabledOnSearch="false"
@@ -821,9 +819,9 @@
 	<formFieldProperty
 		name="dt_scadenza" />		
 	<formFieldProperty
-		name="dt_da_competenza_coge" />		
+		name="dt_da_competenza_coge" command="doOnDataCompetenzaDaCogeChange"/>
 	<formFieldProperty
-		name="dt_a_competenza_coge" />		
+		name="dt_a_competenza_coge" command="doOnDataCompetenzaACogeChange"/>
 	<formFieldProperty
 		name="flagEnteForSearch" />
 	<formFieldProperty

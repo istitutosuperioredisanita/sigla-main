@@ -32,6 +32,7 @@ import it.cnr.contab.doccont00.bp.IDefferedUpdateSaldiBP;
 import it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk;
 import it.cnr.contab.doccont00.core.bulk.IDefferUpdateSaldi;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
@@ -40,6 +41,7 @@ import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.jsp.JSPUtils;
@@ -47,6 +49,8 @@ import it.cnr.jada.util.jsp.JSPUtils;
 import javax.ejb.EJBException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.TreeMap;
 
 /**
@@ -75,6 +79,7 @@ public class CRUDDocumentoGenericoPassivoBP
     private boolean attivaInventaria = false;
 
     private boolean supervisore = false;
+    private boolean esercizioChiuso = false;
 
     public CRUDDocumentoGenericoPassivoBP() {
         super();
@@ -398,6 +403,7 @@ public class CRUDDocumentoGenericoPassivoBP
         super.init(config, context);
 
         try {
+            DocumentoGenericoComponentSession session = (DocumentoGenericoComponentSession) createComponentSession();
             int solaris = Documento_genericoBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.YEAR);
             int esercizioScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue();
             attivaEconomicaParallela = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(context.getUserContext());
@@ -405,10 +411,10 @@ public class CRUDDocumentoGenericoPassivoBP
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
             setAnnoSolareInScrivania(solaris == esercizioScrivania);
             setRibaltato(initRibaltato(context));
+            esercizioChiuso = session.isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioScrivania, CNRUserContext.getCd_cds(context.getUserContext()));
             if (!isAnnoSolareInScrivania()) {
                 String cds = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(context.getUserContext());
                 try {
-                    DocumentoGenericoComponentSession session = (DocumentoGenericoComponentSession) createComponentSession();
                     boolean esercizioScrivaniaAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, new Integer(esercizioScrivania)));
                     boolean esercizioSuccessivoAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, new Integer(esercizioScrivania + 1)));
                     setRiportaAvantiIndietro(esercizioScrivaniaAperto && esercizioSuccessivoAperto && isRibaltato() && isSupervisore());
@@ -417,7 +423,7 @@ public class CRUDDocumentoGenericoPassivoBP
                 }
             } else
                 setRiportaAvantiIndietro(false);
-        } catch (EJBException | RemoteException | ComponentException e) {
+        } catch (EJBException | RemoteException | ComponentException | PersistencyException e) {
             setAnnoSolareInScrivania(false);
         }
         resetTabs();
@@ -1043,4 +1049,14 @@ public class CRUDDocumentoGenericoPassivoBP
     public OggettoBulk getEconomicaModel() {
         return getModel();
     }
+
+    @Override
+    public boolean isInputReadonlyFieldName(String fieldName) {
+        final List<String> fieldNames = Arrays.asList("dt_da_competenza_coge", "dt_a_competenza_coge");
+        if (Optional.ofNullable(fieldName).filter(s -> fieldNames.contains(s)).isPresent()) {
+            return esercizioChiuso;
+        }
+        return super.isInputReadonlyFieldName(fieldName);
+    }
+
 }
