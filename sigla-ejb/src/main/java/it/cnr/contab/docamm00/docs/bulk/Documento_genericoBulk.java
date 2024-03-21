@@ -1129,16 +1129,6 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	}
 	/**
 	 * Insert the method's description here.
-	 * Creation date: (10/4/2001 2:42:26 PM)
-	 * @return boolean
-	 */
-	public boolean isRODateCompetenzaCOGE() {
-
-		return getDocumento_generico_dettColl() != null &&
-				!getDocumento_generico_dettColl().isEmpty();
-	}
-	/**
-	 * Insert the method's description here.
 	 * Creation date: (22/02/2002 12.50.26)
 	 * @return boolean
 	 */
