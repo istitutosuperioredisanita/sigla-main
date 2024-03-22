@@ -92,6 +92,7 @@ public class AccertamentoPluriennaleComponent extends AccertamentoComponent {
 			AccertamentoBulk newAccertamentoBulk =( AccertamentoBulk) accertamentoBulk.clone();
 			WorkpackageBulk lineaAttivita = (WorkpackageBulk) getHome(uc, WorkpackageBulk.class).findByPrimaryKey(accertamentoPluriennaleBulk.getRigheVoceColl().get(0).getLinea_attivita());
 			newAccertamentoBulk.setCrudStatus(OggettoBulk.TO_BE_CREATED);
+			newAccertamentoBulk.setRiportato("N");
 			newAccertamentoBulk.setPg_accertamento(null);
 			newAccertamentoBulk.setEsercizio(esercizio);
 			newAccertamentoBulk.setEsercizio_originale(esercizio);
