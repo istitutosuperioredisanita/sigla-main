@@ -96,12 +96,14 @@ public class ObbligazionePluriennaleComponent extends ObbligazioneComponent {
 																	pluriennaleBulk.getPgObbligazione()));
 			ObbligazioneBulk obbligazioneBulkNew =( ObbligazioneBulk) obbligazioneBulk.clone();
 			obbligazioneBulkNew.setCrudStatus(OggettoBulk.TO_BE_CREATED);
+			obbligazioneBulkNew.setRiportato("N");
 			//obbligazioneBulkNew.setCreditore(obbligazioneBulk.getCreditore());
 			Elemento_voceBulk voce = new it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk();
 			voce.setEsercizio(esercizio);
 			voce.setTi_appartenenza(obbligazioneBulkNew.getElemento_voce().getTi_appartenenza());
 			voce.setTi_gestione(obbligazioneBulkNew.getElemento_voce().getTi_gestione());
 			voce.setCd_elemento_voce(obbligazioneBulkNew.getElemento_voce().getCd_elemento_voce());
+
 
 			obbligazioneBulkNew.setElemento_voce((Elemento_voceBulk)getHome(uc, Elemento_voceBulk.class).findByPrimaryKey(voce));
 			obbligazioneBulkNew = listaCapitoliPerCdsVoce(uc, obbligazioneBulkNew);
@@ -118,6 +120,7 @@ public class ObbligazionePluriennaleComponent extends ObbligazioneComponent {
 			obbligazioneBulkNew.setPg_ver_rec(null);
 			obbligazioneBulkNew.setStato_obbligazione(ObbligazioneBulk.STATO_OBB_DEFINITIVO);
 			obbligazioneBulkNew.setEsercizio_competenza(esercizio);
+
 
 			obbligazioneBulkNew.setCdrColl( listaCdrPerCapitoli( uc,  obbligazioneBulkNew));
 			obbligazioneBulkNew.setLineeAttivitaColl( listaLineeAttivitaPerCapitoliCdr( uc,  obbligazioneBulkNew));
