@@ -34,10 +34,7 @@ package it.cnr.contab.config00.pdcep.bulk;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.KeyedPersistent;
 public class AssociazioneContoGruppoKey extends OggettoBulk implements KeyedPersistent {
-	private Integer esercizio;
-	private String cdPianoGruppi;
-	private String cdGruppoEp;
-	private String cdVoceEp;
+	private String rowid;
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: CNR_ASS_CONTO_GRUPPO_EP
@@ -45,85 +42,29 @@ public class AssociazioneContoGruppoKey extends OggettoBulk implements KeyedPers
 	public AssociazioneContoGruppoKey() {
 		super();
 	}
-	public AssociazioneContoGruppoKey(Integer esercizio, String cdPianoGruppi, String cdGruppoEp, String cdVoceEp) {
+	public AssociazioneContoGruppoKey(String rowid) {
 		super();
-		this.esercizio=esercizio;
-		this.cdPianoGruppi=cdPianoGruppi;
-		this.cdGruppoEp=cdGruppoEp;
-		this.cdVoceEp=cdVoceEp;
+		this.rowid=rowid;
+	}
+
+	public String getRowid() {
+		return rowid;
+	}
+
+	public void setRowid(String rowid) {
+		this.rowid = rowid;
 	}
 	public boolean equalsByPrimaryKey(Object o) {
 		if (this== o) return true;
 		if (!(o instanceof AssociazioneContoGruppoKey)) return false;
 		AssociazioneContoGruppoKey k = (AssociazioneContoGruppoKey) o;
-		if (!compareKey(getEsercizio(), k.getEsercizio())) return false;
-		if (!compareKey(getCdPianoGruppi(), k.getCdPianoGruppi())) return false;
-		if (!compareKey(getCdGruppoEp(), k.getCdGruppoEp())) return false;
-		if (!compareKey(getCdVoceEp(), k.getCdVoceEp())) return false;
+		if (!compareKey(getRowid(), k.getRowid())) return false;
 		return true;
 	}
 	public int primaryKeyHashCode() {
 		int i = 0;
-		i = i + calculateKeyHashCode(getEsercizio());
-		i = i + calculateKeyHashCode(getCdPianoGruppi());
-		i = i + calculateKeyHashCode(getCdGruppoEp());
-		i = i + calculateKeyHashCode(getCdVoceEp());
+		i = i + calculateKeyHashCode(getRowid());
 		return i;
 	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Restituisce il valore di: [esercizio]
-	 **/
-	public void setEsercizio(Integer esercizio)  {
-		this.esercizio=esercizio;
-	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Setta il valore di: [esercizio]
-	 **/
-	public Integer getEsercizio() {
-		return esercizio;
-	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Restituisce il valore di: [cdPianoGruppi]
-	 **/
-	public void setCdPianoGruppi(String cdPianoGruppi)  {
-		this.cdPianoGruppi=cdPianoGruppi;
-	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Setta il valore di: [cdPianoGruppi]
-	 **/
-	public String getCdPianoGruppi() {
-		return cdPianoGruppi;
-	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Restituisce il valore di: [cdGruppoEp]
-	 **/
-	public void setCdGruppoEp(String cdGruppoEp)  {
-		this.cdGruppoEp=cdGruppoEp;
-	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Setta il valore di: [cdGruppoEp]
-	 **/
-	public String getCdGruppoEp() {
-		return cdGruppoEp;
-	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Restituisce il valore di: [cdVoceEp]
-	 **/
-	public void setCdVoceEp(String cdVoceEp)  {
-		this.cdVoceEp=cdVoceEp;
-	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Setta il valore di: [cdVoceEp]
-	 **/
-	public String getCdVoceEp() {
-		return cdVoceEp;
-	}
+
 }

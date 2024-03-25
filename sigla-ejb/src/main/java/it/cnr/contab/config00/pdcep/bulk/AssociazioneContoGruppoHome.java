@@ -16,17 +16,24 @@
  */
 
 package it.cnr.contab.config00.pdcep.bulk;
+import java.rmi.RemoteException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Optional;
 
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.Persistent;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
+
+import javax.ejb.EJBException;
 
 public class AssociazioneContoGruppoHome extends BulkHome {
 
@@ -37,6 +44,32 @@ public class AssociazioneContoGruppoHome extends BulkHome {
 	}
 	public AssociazioneContoGruppoHome(Connection conn, PersistentCache persistentCache) {
 		super(AssociazioneContoGruppoBulk.class, conn, persistentCache);
+	}
+
+	@Override
+	public Persistent findByPrimaryKey(Object obj) throws PersistencyException {
+		final SQLBuilder sqlBuilder = createSQLBuilder();
+		Optional.ofNullable(obj)
+				.filter(AssociazioneContoGruppoBulk.class::isInstance)
+				.map(AssociazioneContoGruppoBulk.class::cast)
+				.ifPresent(acg -> {
+					sqlBuilder.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, acg.getEsercizio());
+					sqlBuilder.addClause(FindClause.AND, "cdPianoGruppi", SQLBuilder.EQUALS, acg.getCdPianoGruppi());
+					sqlBuilder.addClause(FindClause.AND, "cdGruppoEp", SQLBuilder.EQUALS, acg.getCdGruppoEp());
+					sqlBuilder.addClause(FindClause.AND, "cdVoceEp", SQLBuilder.EQUALS, acg.getCdVoceEp());
+				});
+		final Optional<Persistent> persistent = fetchAll(sqlBuilder)
+				.stream()
+				.filter(Persistent.class::isInstance)
+				.map(Persistent.class::cast)
+				.findAny();
+		return persistent.orElse(null);
+	}
+
+	@Override
+	public void insert(Persistent persistent, UserContext userContext) throws PersistencyException {
+		setColumnMap("INSERT");
+		super.insert(persistent, userContext);
 	}
 
 	@Override
@@ -58,5 +91,9 @@ public class AssociazioneContoGruppoHome extends BulkHome {
 		sqlBuilder.addSQLINClause(FindClause.AND, CD_VOCE_EP, sqlBuilderIN);
 		sqlBuilder.addOrderBy(CD_VOCE_EP);
 		return sqlBuilder;
+	}
+
+	public SQLBuilder selectVoceEpByClause(it.cnr.jada.UserContext userContext, AssociazioneContoGruppoBulk associazioneContoGruppoBulk, Voce_epHome voceEpHome, Voce_epBulk voceEpBulk, CompoundFindClause clause) throws ComponentException, EJBException, RemoteException, PersistencyException {
+		return voceEpHome.selectByClause(userContext, clause);
 	}
 }
