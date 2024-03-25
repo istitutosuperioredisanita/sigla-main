@@ -53,7 +53,40 @@
 			sqlTypeName="DECIMAL"
 			columnSize="38"
 			nullable="false" />
+		<columnMapping
+			columnName="ESERCIZIO"
+			propertyName="esercizio"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="false"/>
+		<columnMapping
+			columnName="CD_PIANO_GRUPPI"
+			propertyName="cdPianoGruppi"
+			sqlTypeName="VARCHAR"
+			columnSize="5"
+			nullable="false" />
+		<columnMapping
+			columnName="CD_GRUPPO_EP"
+			propertyName="cdGruppoEp"
+			sqlTypeName="VARCHAR"
+			columnSize="40"
+			nullable="false"/>
+		<columnMapping
+			columnName="CD_VOCE_EP"
+			propertyName="cdVoceEp"
+			sqlTypeName="VARCHAR"
+			columnSize="45"
+			nullable="false"/>
+
 	</defaultColumnMap>
+	<persistentProperty
+		name="esercizio"/>
+	<persistentProperty
+		name="cdPianoGruppi"/>
+	<persistentProperty
+		name="cdGruppoEp"/>
+	<persistentProperty
+		name="cdVoceEp"/>
 	<persistentProperty
 		name="sezione" />
 	<persistentProperty

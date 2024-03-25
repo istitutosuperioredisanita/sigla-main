@@ -16,7 +16,12 @@
  */
 package it.cnr.contab.config00.pdcep.bulk;
 
+import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.util.action.CRUDBP;
+
 import java.util.Arrays;
+import java.util.UUID;
 
 public class AssociazioneContoGruppoBulk extends AssociazioneContoGruppoBase {
 	public enum PianoGruppi {
@@ -92,9 +97,8 @@ public class AssociazioneContoGruppoBulk extends AssociazioneContoGruppoBase {
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: CNR_ASS_CONTO_GRUPPO_EP
 	 **/
-	public AssociazioneContoGruppoBulk(Integer esercizio, String cdPianoGruppi, String cdGruppoEp, String cdVoceEp) {
-		super(esercizio, cdPianoGruppi, cdGruppoEp, cdVoceEp);
-		setVoceEp( new Voce_epBulk(cdVoceEp,esercizio) );
+	public AssociazioneContoGruppoBulk(String rowid) {
+		super(rowid);
 	}
 	public Voce_epBulk getVoceEp() {
 		return voceEp;
@@ -135,5 +139,11 @@ public class AssociazioneContoGruppoBulk extends AssociazioneContoGruppoBase {
 	 **/
 	public void setCdVoceEp(String cdVoceEp)  {
 		this.getVoceEp().setCd_voce_ep(cdVoceEp);
+	}
+
+	@Override
+	public OggettoBulk initializeForInsert(CRUDBP crudbp, ActionContext actioncontext) {
+		setRowid(UUID.randomUUID().toString());
+		return super.initializeForInsert(crudbp, actioncontext);
 	}
 }
