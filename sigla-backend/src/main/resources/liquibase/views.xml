@@ -2903,6 +2903,8 @@
             t.pg_ver_rec,
             a.codice_fiscale AS codice_fiscale_anagrafico,
             a.partita_iva AS partita_iva_anagrafico,
+            a.nome AS nome_anagrafico,
+            a.cognome AS cognome_anagrafico,
             t.codice_univoco_ufficio_ipa,
             t.codice_univoco_pcc,
             t.denominazione_pcc,

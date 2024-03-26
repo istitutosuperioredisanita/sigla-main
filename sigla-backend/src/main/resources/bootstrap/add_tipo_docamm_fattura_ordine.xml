@@ -39,6 +39,7 @@
         </insert>
     </changeSet>
     <changeSet author="marco.spasiano" id="add_numerazione_doc_amm_fattura_ordine">
+        <validCheckSum>7:6948f92707428ade01472ec2b726d662</validCheckSum>
         <addDefaultValue tableName="numerazione_doc_amm" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="numerazione_doc_amm" columnName="duva" defaultValueDate="${now}"/>
         <addDefaultValue tableName="numerazione_doc_amm" columnName="esercizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
@@ -47,6 +48,7 @@
             select CD_UNITA_PADRE, CD_UNITA_ORGANIZZATIVA, 'FAT_ORDINE', 0, 'SYSTEM','SYSTEM',1
             from UNITA_ORGANIZZATIVA
             where fl_cds = 'N'
+            and exists (select 1 from esercizio where esercizio.cd_cds = UNITA_ORGANIZZATIVA.CD_UNITA_PADRE and esercizio.esercizio = ${liquibase.bootstrap.esercizio})
             <comment>Inserimento numeratori</comment>
         </sql>
         <dropDefaultValue tableName="numerazione_doc_amm" columnName="dacr"/>
