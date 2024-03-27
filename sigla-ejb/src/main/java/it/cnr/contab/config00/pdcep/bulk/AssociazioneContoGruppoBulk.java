@@ -21,6 +21,7 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.action.CRUDBP;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.UUID;
 
 public class AssociazioneContoGruppoBulk extends AssociazioneContoGruppoBase {
@@ -81,6 +82,7 @@ public class AssociazioneContoGruppoBulk extends AssociazioneContoGruppoBase {
 			ti_segnoKeys.put(segno.value(), segno.label());
 		});
 	}
+	private java.util.Collection gruppoEp;
 
 	/**
 	 * [VOCE_EP ]
@@ -141,9 +143,18 @@ public class AssociazioneContoGruppoBulk extends AssociazioneContoGruppoBase {
 		this.getVoceEp().setCd_voce_ep(cdVoceEp);
 	}
 
+	public Collection getGruppoEp() {
+		return gruppoEp;
+	}
+
+	public void setGruppoEp(Collection gruppoEp) {
+		this.gruppoEp = gruppoEp;
+	}
+
 	@Override
 	public OggettoBulk initializeForInsert(CRUDBP crudbp, ActionContext actioncontext) {
 		setRowid(UUID.randomUUID().toString());
+		setCdPianoGruppi(PianoGruppi.CE.name());
 		return super.initializeForInsert(crudbp, actioncontext);
 	}
 }

@@ -20,12 +20,14 @@
 		inputSize="5"
 		maxLength="5"
 		enabledOnSearch="true"
+		command="doRefresh"
 		nullable="false"
 		label="Piano Gruppi" />
 	<fieldProperty
 		name="cdGruppoEp"
 		property="cdGruppoEp"
-		inputType="TEXT"
+		inputType="SELECT"
+		optionsProperty="gruppoEp"
 		maxLength="40"
 		enabledOnSearch="true"
 		nullable="false"
