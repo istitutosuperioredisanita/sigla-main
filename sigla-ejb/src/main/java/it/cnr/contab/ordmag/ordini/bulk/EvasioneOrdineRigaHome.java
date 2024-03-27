@@ -41,7 +41,8 @@ public class EvasioneOrdineRigaHome extends BulkHome {
 	public EvasioneOrdineRigaHome(Connection conn, PersistentCache persistentCache) {
 		super(EvasioneOrdineRigaBulk.class, conn, persistentCache);
 	}
-	public EvasioneOrdineRigaBulk findByConsegna(OrdineAcqConsegnaBulk consegna) throws PersistencyException {
+
+	public List<EvasioneOrdineRigaBulk> findByConsegna(OrdineAcqConsegnaBulk consegna) throws PersistencyException {
 		SQLBuilder sqlBuilder = createSQLBuilder();
 		sqlBuilder.addSQLClause(FindClause.AND, "EVASIONE_ORDINE_RIGA.CD_CDS_ORDINE", SQLBuilder.EQUALS, consegna.getCdCds());
 		sqlBuilder.addSQLClause(FindClause.AND, "EVASIONE_ORDINE_RIGA.CD_UNITA_OPERATIVA", SQLBuilder.EQUALS, consegna.getCdUnitaOperativa());
@@ -51,11 +52,7 @@ public class EvasioneOrdineRigaHome extends BulkHome {
 		sqlBuilder.addSQLClause(FindClause.AND, "EVASIONE_ORDINE_RIGA.RIGA_ORDINE", SQLBuilder.EQUALS, consegna.getRiga());
 		sqlBuilder.addSQLClause(FindClause.AND, "EVASIONE_ORDINE_RIGA.CONSEGNA", SQLBuilder.EQUALS, consegna.getConsegna());
 		sqlBuilder.addSQLClause(FindClause.AND, "EVASIONE_ORDINE_RIGA.STATO", SQLBuilder.EQUALS, OrdineAcqConsegnaBulk.STATO_INSERITA);
-		List lista = fetchAll(sqlBuilder);
-		if (lista != null && !lista.isEmpty()){
-			return (EvasioneOrdineRigaBulk)lista.get(0);
-		}
-		return null;
+		return fetchAll(sqlBuilder);
 	}
 
 

@@ -455,7 +455,7 @@ public class FatturaOrdineBulk extends FatturaOrdineBase {
 		return getImImponibile();
 	}
 	public BigDecimal getIvaPerRigaFattura() {
-		if (getImIvaRettificata() != null && getImIvaRettificata().compareTo(BigDecimal.ZERO) > 0){
+		if (getImIvaRettificata() != null){
 			return getImIvaRettificata();
 		}
 		if (getImportoIvaPerNotaCredito() != null && getImportoIvaPerNotaCredito().compareTo(BigDecimal.ZERO) > 0){

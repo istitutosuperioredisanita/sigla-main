@@ -26,6 +26,7 @@ import it.cnr.contab.docamm00.fatturapa.bulk.DocumentoEleTestataBulk;
 import it.cnr.contab.doccont00.core.bulk.OptionRequestParameter;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
+import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
@@ -179,4 +180,5 @@ public interface FatturaPassivaComponentSession extends it.cnr.contab.docamm00.c
     V_doc_passivo_obbligazioneBulk sdoppiaDettagliInAutomatico(UserContext userContext, V_doc_passivo_obbligazioneBulk docPassivo, BigDecimal newImponibile, BigDecimal newImposta) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
     void aggiornaModalitaPagamento(UserContext userContext, V_doc_passivo_obbligazioneBulk docPassivoObb, Modalita_pagamentoBulk newModalitaPag, BancaBulk newBanca) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
     Boolean  isCompilaFatturaVaziazione(UserContext userContext, DocumentoEleTestataBulk testataBulk) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+    java.util.List<FatturaOrdineBulk> findFatturaOrdini(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException, java.rmi.RemoteException;
 }
