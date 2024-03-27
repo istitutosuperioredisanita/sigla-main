@@ -294,5 +294,9 @@ public class Voce_epHome extends BulkHome {
         return sqlBuilder;
     }
 
-
+    public SQLBuilder selectByClause(UserContext usercontext, CompoundFindClause compoundfindclause) throws PersistencyException {
+        SQLBuilder sql = super.selectByClause(usercontext, compoundfindclause);
+        sql.addClause("AND","esercizio",SQLBuilder.EQUALS, CNRUserContext.getEsercizio(usercontext));
+        return sql;
+    }
 }

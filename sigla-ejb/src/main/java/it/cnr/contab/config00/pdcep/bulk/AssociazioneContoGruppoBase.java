@@ -26,7 +26,11 @@ public class AssociazioneContoGruppoBase extends AssociazioneContoGruppoKey impl
  
 //    SEGNO CHAR(1)
 	private String segno;
- 
+
+	private Integer esercizio;
+	private String cdPianoGruppi;
+	private String cdGruppoEp;
+	private String cdVoceEp;
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: CNR_ASS_CONTO_GRUPPO_EP
@@ -34,8 +38,8 @@ public class AssociazioneContoGruppoBase extends AssociazioneContoGruppoKey impl
 	public AssociazioneContoGruppoBase() {
 		super();
 	}
-	public AssociazioneContoGruppoBase(Integer esercizio, String cdPianoGruppi, String cdGruppoEp, String cdVoceEp) {
-		super(esercizio, cdPianoGruppi, cdGruppoEp, cdVoceEp);
+	public AssociazioneContoGruppoBase(String rowid) {
+		super(rowid);
 	}
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
@@ -78,5 +82,61 @@ public class AssociazioneContoGruppoBase extends AssociazioneContoGruppoKey impl
 	 **/
 	public void setSegno(String segno)  {
 		this.segno=segno;
+	}
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [esercizio]
+	 **/
+	public void setEsercizio(Integer esercizio)  {
+		this.esercizio=esercizio;
+	}
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [esercizio]
+	 **/
+	public Integer getEsercizio() {
+		return esercizio;
+	}
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [cdPianoGruppi]
+	 **/
+	public void setCdPianoGruppi(String cdPianoGruppi)  {
+		this.cdPianoGruppi=cdPianoGruppi;
+	}
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [cdPianoGruppi]
+	 **/
+	public String getCdPianoGruppi() {
+		return cdPianoGruppi;
+	}
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [cdGruppoEp]
+	 **/
+	public void setCdGruppoEp(String cdGruppoEp)  {
+		this.cdGruppoEp=cdGruppoEp;
+	}
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [cdGruppoEp]
+	 **/
+	public String getCdGruppoEp() {
+		return cdGruppoEp;
+	}
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [cdVoceEp]
+	 **/
+	public void setCdVoceEp(String cdVoceEp)  {
+		this.cdVoceEp=cdVoceEp;
+	}
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [cdVoceEp]
+	 **/
+	public String getCdVoceEp() {
+		return cdVoceEp;
 	}
 }

@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE PRT_S_SP_RICLASSIFICATO
  AVERE1 NUMBER(20,3);
  DARE2  NUMBER(20,3);
  AVERE2 NUMBER(20,3);
+ CONTAMOV  NUMBER := 0;
  M1     NUMBER;
  M2     NUMBER;
  M3     NUMBER;
@@ -155,8 +156,9 @@ IF SCHEMA_SP.FL_MASTRINO = 'Y' THEN
 
   IF CONTI_ASS.CD_VOCE_EP = CONTO_AVANZO THEN
         SELECT Nvl(sum(DECODE(D.SEZIONE, 'D', D.im_movimento)), 0),
-               Nvl(sum(DECODE(D.SEZIONE, 'A', D.im_movimento)), 0)
-        INTO   DARE1, AVERE1
+               Nvl(sum(DECODE(D.SEZIONE, 'A', D.im_movimento)), 0),
+               1 --NEL CAMPO CONTA METTO SEMPRE > 0 PER STAMPARE L'AVANZO
+        INTO   DARE1, AVERE1, CONTAMOV
         FROM   MOVIMENTO_COGE D, SCRITTURA_PARTITA_DOPPIA T
         WHERE  T.CD_CDS  = D.CD_CDS   AND
                T.ESERCIZIO = D.ESERCIZIO AND
@@ -182,8 +184,9 @@ IF SCHEMA_SP.FL_MASTRINO = 'Y' THEN
                        M2.cd_voce_ep = STATO_PATR);
   ELSE
         SELECT Nvl(sum(DECODE(D.SEZIONE, 'D', D.im_movimento)), 0),
-               Nvl(sum(DECODE(D.SEZIONE, 'A', D.im_movimento)), 0)
-        INTO   DARE1, AVERE1
+               Nvl(sum(DECODE(D.SEZIONE, 'A', D.im_movimento)), 0),
+               COUNT(0)
+        INTO   DARE1, AVERE1, CONTAMOV
         FROM   MOVIMENTO_COGE D, SCRITTURA_PARTITA_DOPPIA T
         WHERE  T.CD_CDS  = D.CD_CDS   AND
                T.ESERCIZIO = D.ESERCIZIO AND
@@ -202,7 +205,7 @@ IF SCHEMA_SP.FL_MASTRINO = 'Y' THEN
 
   END IF;
 
-If conti_sn = 'Y' Then
+If conti_sn = 'Y' AND CONTAMOV>0 Then
    I := I + 1;
    -- inserimento dello schema di riclassificazione NELLA VIEW (FISSO)
    Insert into PRT_VPG_BIL_RICLASSIFICATO (ID, CHIAVE, TIPO, SEQUENZA,

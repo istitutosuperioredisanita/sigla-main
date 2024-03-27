@@ -19,7 +19,6 @@
 		keysProperty="ti_pianoGruppiKeys"
 		inputSize="5"
 		maxLength="5"
-		enabledOnEdit="false"
 		enabledOnSearch="true"
 		nullable="false"
 		label="Piano Gruppi" />
@@ -28,7 +27,6 @@
 		property="cdGruppoEp"
 		inputType="TEXT"
 		maxLength="40"
-		enabledOnEdit="false"
 		enabledOnSearch="true"
 		nullable="false"
 		label="Gruppo" />
@@ -46,7 +44,6 @@
 		property="voceEp"
 		inputType="SEARCHTOOL"
 		formName="searchtool"
-		enabledOnEdit="false"
 		enabledOnSearch="true"
 		completeOnSave="true"
 		label="Voce Economico/Patrimoniale"/>

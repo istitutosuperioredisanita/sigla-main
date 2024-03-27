@@ -22,7 +22,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
                                        http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-    <changeSet author="marco.spasiano" id="add_column_attributo_long_11_on_tmp_report_generico">
+    <changeSet dbms="oracle" author="marco.spasiano" id="add_column_attributo_long_11_on_tmp_report_generico">
         <addColumn tableName="TMP_REPORT_GENERICO">
             <column name="ATTRIBUTO_LONG_11" type="VARCHAR(1000)"/>
         </addColumn>

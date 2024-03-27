@@ -11,6 +11,14 @@
 			columnName="CD_VOCE_EP"
 			propertyName="voceEp.cd_voce_ep" />
 	</defaultColumnMap>
+	<columnMap
+			name="INSERT"
+			tableName="CNR_ASS_CONTO_GRUPPO_EP"
+			extends="default">
+		<removeColumnMapping
+				columnName="ROWID"
+				propertyName="rowid"/>
+	</columnMap>
 	<persistentProperty
 		name="voceEp"
 		partOfOid="true" />

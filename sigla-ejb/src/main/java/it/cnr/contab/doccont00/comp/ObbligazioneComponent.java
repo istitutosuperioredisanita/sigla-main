@@ -4661,7 +4661,7 @@ public void verificaCoperturaContratto (UserContext aUC,ObbligazioneBulk obbliga
 			}
 		  if (flag == INSERIMENTO)
 		    totale = totale.add(obbligazione.getIm_obbligazione());			  
-		  if (totale != null ){
+		  if (totale != null && obbligazione.getContratto().getIm_contratto_passivo()!=null){
 			  if (totale.compareTo(obbligazione.getContratto().getIm_contratto_passivo()) > 0){
 				  throw handleException( new CheckDisponibilitaContrattoFailed("La somma degli impegni associati supera l'importo definito nel contratto."));
 			  }

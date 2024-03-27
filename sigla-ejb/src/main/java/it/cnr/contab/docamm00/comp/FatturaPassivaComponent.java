@@ -3466,7 +3466,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                 .orElseThrow(() -> new ComponentException("Cannot find EvasioneOrdineRigaHome"));
         EvasioneOrdineRigaBulk evasioneOrdineRigaBulk = null;
         try {
-            evasioneOrdineRigaBulk = home.findByConsegna(consegna);
+            evasioneOrdineRigaBulk = Optional.ofNullable(home.findByConsegna(consegna)).filter(el->!el.isEmpty()).map(el->el.get(0)).orElse(null);
             if (evasioneOrdineRigaBulk != null) {
                 Transito_beni_ordiniHome transito_beni_ordiniHome = Optional.ofNullable(getHome(userContext, Transito_beni_ordiniBulk.class))
                         .filter(Transito_beni_ordiniHome.class::isInstance)
