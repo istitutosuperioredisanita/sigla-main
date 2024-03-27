@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="valentina.tomada" id="chiusura_anno">
+
+        <!-- TABELLA TESTATA CHIUSURA -->
+        <createTable tableName="chiusura_anno" remarks="Rappresenta la chiusura dell'anno contabile per magazzino e inventario" >
+
+            <column name="pg_chiusura" remarks="Progressivo record chiusura" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="anno" remarks="Anno di chiusura" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tipo_chiusura" remarks="M=Magazzino; I=Inventario" type="CHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="stato" remarks="P=Provvisorio; D=Definitivo" type="CHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dt_calcolo" remarks="Data fine range di calcolo" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record: viene incrementato di 1 ad ogni variazione" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+        <addPrimaryKey tableName="chiusura_anno" constraintName="chiusura_anno_pkey" columnNames="pg_chiusura,anno,tipo_chiusura"></addPrimaryKey>
+
+        <!-- TABELLA DETTAGLIO CHIUSURA MAGAZZINO-->
+        <createTable tableName="chiusura_anno_mag_rim" remarks="Rappresenta i dettagli di importi per la chiusura dei magazzini" >
+            <!-- TABELLA LOTTO -->
+            <column name="cd_cds_lotto" remarks="cds lotto" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_magazzino_lotto" remarks="cd magazzino lotto" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="esercizio_lotto" remarks="esercizio del Lotto" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_numeratore_lotto" remarks="numeratore del Lotto" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_lotto" remarks="progressivo del Lotto" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <!-- TABELLA TESTATA CHIUSURA -->
+            <column name="pg_chiusura" remarks="Progressivo record chiusura" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="anno" remarks="Anno di chiusura" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tipo_chiusura" remarks="M=Magazzino; I=Inventario" type="CHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+            <!-- TABELLA RAGGRUPPAMENTO MAGAZZINO -->
+            <column name="cd_cds_raggr_mag" remarks="cds raggruppamento magazzino" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_raggr_mag" remarks="codice raggruppamento magazzino" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <!-- TABELLA MAGAZZINO -->
+            <column name="cd_cds_mag" remarks="cds magazzino" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_magazzino" remarks="codice magazzino" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <!-- TABELLA CATEGORIA GRUPPO -->
+            <column name="cd_categoria_gruppo" remarks="Codice categoria/gruppo" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <!-- TABELLA BENE SERVIZIO -->
+            <column name="cd_bene_servizio" remarks="Codice identificativo del bene o servizio" type="VARCHAR(15)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="unita_misura" remarks="unita di misura" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <!-- CAMPI DETTAGLIO CHIUSURA MAGAZZINO -->
+            <column name="giacenza" remarks="Qta rimanente nel lotto in unita&quot; minima." type="numeric(12, 5)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="carico_iniziale" remarks="Qta caricata inizio anno" type="numeric(12, 5)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="carico_anno" remarks="Qta caricata nell'anno" type="numeric(12, 5)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="scarico_anno" remarks="Qta scaricata nell'anno" type="numeric(12, 5)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="importo_unitario_chiu" remarks="Valore unitario movimento di chiusura (anno precedente)" type="numeric(21, 6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="importo_unitario_lotto" remarks="Valore unitario lotto (prezzo acquisto)" type="numeric(21, 6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="importo_cmpp_art" remarks="CMPP per articolo" type="numeric(21, 6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record: viene incrementato di 1 ad ogni variazione" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="chiusura_anno_mag_rim" constraintName="chiusura_anno_mag_rim_pkey" columnNames="cd_cds_lotto,cd_magazzino_lotto,esercizio_lotto,cd_numeratore_lotto,pg_lotto"></addPrimaryKey>
+
+
+        <addForeignKeyConstraint baseColumnNames="pg_chiusura,anno,tipo_chiusura" baseTableName="chiusura_anno_mag_rim" constraintName="fk_chiusura_anno_mag_rim01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="pg_chiusura,anno,tipo_chiusura" referencedTableName="chiusura_anno"/>
+        <addForeignKeyConstraint baseColumnNames="cd_cds_raggr_mag,cd_raggr_mag" baseTableName="chiusura_anno_mag_rim" constraintName="fk_chiusura_anno_mag_rim02" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cd_cds,cd_raggr_magazzino" referencedTableName="raggr_magazzino"/>
+        <addForeignKeyConstraint baseColumnNames="cd_cds_mag,cd_magazzino" baseTableName="chiusura_anno_mag_rim" constraintName="fk_chiusura_anno_mag_rim03" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cd_cds,cd_magazzino" referencedTableName="magazzino"/>
+        <addForeignKeyConstraint baseColumnNames="cd_categoria_gruppo" baseTableName="chiusura_anno_mag_rim" constraintName="fk_chiusura_anno_mag_rim04" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cd_categoria_gruppo" referencedTableName="categoria_gruppo_invent"/>
+        <addForeignKeyConstraint baseColumnNames="cd_bene_servizio" baseTableName="chiusura_anno_mag_rim" constraintName="fk_chiusura_anno_mag_rim05" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cd_bene_servizio" referencedTableName="bene_servizio"/>
+        <addForeignKeyConstraint baseColumnNames="cd_cds_lotto,cd_magazzino_lotto,esercizio_lotto,cd_numeratore_lotto,pg_lotto" baseTableName="chiusura_anno_mag_rim" constraintName="fk_chiusura_anno_mag_rim06" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cd_cds,cd_magazzino,esercizio,cd_numeratore_mag,pg_lotto" referencedTableName="lotto_mag"/>
+
+    </changeSet>
+</databaseChangeLog>
