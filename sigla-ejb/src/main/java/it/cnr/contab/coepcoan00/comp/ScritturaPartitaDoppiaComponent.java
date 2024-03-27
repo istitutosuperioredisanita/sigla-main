@@ -2044,6 +2044,33 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 		String valueAssociazioneConti = this.findValueByConfigurazioneCNR(userContext, CNRUserContext.getEsercizio(userContext), Configurazione_cnrBulk.PK_ECONOMICO_PATRIMONIALE, Configurazione_cnrBulk.SK_ASSOCIAZIONE_CONTI, 1);
 		final boolean isContoPatrimonialeByTerzo = valueAssociazioneConti.equals("TERZO");
 
+		final boolean isDocumentoAttivoInContoAcconto =
+				Optional.of(docamm).filter(Fattura_attiva_IBulk.class::isInstance).map(Fattura_attiva_IBulk.class::cast)
+						.map(Fattura_attiva_IBulk::isDocumentoInContoAcconto)
+						.orElse(Optional.of(docamm).filter(Nota_di_debito_attivaBulk.class::isInstance).map(Nota_di_debito_attivaBulk.class::cast)
+								.map(Nota_di_debito_attivaBulk::isDocumentoInContoAcconto)
+								.orElse(Optional.of(docamm).filter(Documento_genericoBulk.class::isInstance).map(Documento_genericoBulk.class::cast)
+										.map(Documento_genericoBulk::isDocumentoInContoAcconto)
+										.orElse(Boolean.FALSE)));
+
+
+		final boolean isDocumentoAttivoInContoAnticipo =
+				Optional.of(docamm).filter(Fattura_attiva_IBulk.class::isInstance).map(Fattura_attiva_IBulk.class::cast)
+						.map(Fattura_attiva_IBulk::isDocumentoInContoAnticipo)
+						.orElse(Optional.of(docamm).filter(Nota_di_debito_attivaBulk.class::isInstance).map(Nota_di_debito_attivaBulk.class::cast)
+								.map(Nota_di_debito_attivaBulk::isDocumentoInContoAnticipo)
+								.orElse(Optional.of(docamm).filter(Documento_genericoBulk.class::isInstance).map(Documento_genericoBulk.class::cast)
+										.map(Documento_genericoBulk::isDocumentoInContoAnticipo)
+										.orElse(Boolean.FALSE)));
+
+		final Voce_epBulk aContoAccontoDocatt, aContoAnticipoDocatt;
+		try {
+			aContoAccontoDocatt = isDocumentoAttivoInContoAcconto?this.findContoAccontoDocumentoAttivo(userContext, docamm.getEsercizio()):null;
+			aContoAnticipoDocatt = isDocumentoAttivoInContoAnticipo?this.findContoAnticipoDocumentoAttivo(userContext, docamm.getEsercizio()):null;
+		} catch (ComponentException|RemoteException e) {
+			throw new ApplicationRuntimeException(e);
+		}
+
 		final boolean isFatturaPassivaIstituzionale = Optional.of(docamm).filter(Fattura_passivaBulk.class::isInstance).map(Fattura_passivaBulk.class::cast).map(Fattura_passivaBulk::isIstituzionale).orElse(Boolean.FALSE);
 		final boolean isIntraUE = Optional.of(docamm).filter(Fattura_passivaBulk.class::isInstance).map(Fattura_passivaBulk.class::cast).map(Fattura_passivaBulk::getFl_intra_ue).orElse(Boolean.FALSE);
 		final boolean isExtraUE = Optional.of(docamm).filter(Fattura_passivaBulk.class::isInstance).map(Fattura_passivaBulk.class::cast).map(Fattura_passivaBulk::getFl_extra_ue).orElse(Boolean.FALSE);
@@ -2091,7 +2118,9 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 
 				final Pair<Voce_epBulk, Voce_epBulk> pairContoCostoGen;
 
-				//Per i documenti attivi, se esistono righe con solo imposta, allora quest'ultima sarà scaricata sul primo conto di ricavo individuato
+				//Per i documenti attivi:
+				// 1. se il documento prevede acconto/anticipo allora il costo sarà scaricato sul conto dei parametri
+				// 2. se esistono righe con solo imposta, allora quest'ultima dovrà essere scaricata sul primo conto di ricavo individuato
 				if (docamm.getTipoDocumentoEnum().isDocumentoAmministrativoAttivo() || docamm.getTipoDocumentoEnum().isGenericoEntrata()) {
 					if (righeDettFinTerzo.stream()
 							.filter(el -> Optional.ofNullable(el.getImImponibile()).orElse(BigDecimal.ZERO).compareTo(BigDecimal.ZERO) == 0)
@@ -2142,11 +2171,20 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 
 															//Individuazione conto costo....la variabile pairContoCostoGen è valorizzata se l'imponibile è presente tutto su una sola riga di fattura
 															//in quel caso il costo è derivato tutto da quell'unica riga.....
-															Pair<Voce_epBulk, Voce_epBulk> pairContoCosto;
+															Pair<Voce_epBulk, Voce_epBulk> tmpPairContoCosto;
 															if (pairContoCostoGen!=null)
-																pairContoCosto = pairContoCostoGen;
+																tmpPairContoCosto = pairContoCostoGen;
 															else
-																pairContoCosto = this.findPairCosto(userContext, rigaDettFinVocePartita);
+																tmpPairContoCosto = this.findPairCosto(userContext, rigaDettFinVocePartita);
+
+															//Metto al posto del costo l'eventuale conto acconto/anticipo
+															Pair<Voce_epBulk, Voce_epBulk> pairContoCosto;
+															if (isDocumentoAttivoInContoAcconto)
+																pairContoCosto = Pair.of(aContoAccontoDocatt, tmpPairContoCosto.getSecond());
+															else if (isDocumentoAttivoInContoAnticipo)
+																pairContoCosto = Pair.of(aContoAnticipoDocatt, tmpPairContoCosto.getSecond());
+															else
+																pairContoCosto = tmpPairContoCosto;
 
 															final boolean registraIvaACosto = imIva.compareTo(BigDecimal.ZERO)!=0 && registraIva && ivaDaRegistrareACosto;
 															List<DettaglioScrittura> mapPatrimonialeIva = new ArrayList<>();
@@ -2184,7 +2222,7 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 																				});
 																	}
 																});
-															} else if (docamm instanceof Nota_di_creditoBulk) {
+															} else if (docamm instanceof Nota_di_creditoBulk || docamm instanceof Nota_di_credito_attivaBulk) {
 																Optional<Scrittura_partita_doppiaBulk> scritturaNota = Optional.ofNullable(docamm.getScrittura_partita_doppia())
 																		.map(spd->Optional.of(spd).filter(el->el.getCrudStatus()!=OggettoBulk.UNDEFINED)).orElseGet(()-> {
 																			try {
@@ -2211,16 +2249,17 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 																		//valutando se da ordine o meno
 																		if (scritturaPartita.isPresent()) {
 																			//recupero tutti i movimenti della partita cui è legato la nota credito
-																			Optional<Fattura_passivaBulk> fatturaCollegata = Optional.of(rigaDett.getPartita())
+																			IDocumentoAmministrativoBulk fatturaCollegata = (IDocumentoAmministrativoBulk)loadObject(userContext, (OggettoBulk)rigaDett.getPartita());
+
+																			final boolean isFatturaPassivaNotaDaOrdini = Optional.of(fatturaCollegata)
 																					.filter(Fattura_passivaBulk.class::isInstance)
 																					.map(Fattura_passivaBulk.class::cast)
-																					.map(el->(Fattura_passivaBulk) loadObject(userContext, el));
+																					.filter(Fattura_passivaBulk::isDaOrdini).isPresent();
 
-																			final boolean isFatturaPassivaNotaDaOrdini = fatturaCollegata.filter(Fattura_passivaBulk::isDaOrdini).isPresent();
 																			final List<FatturaOrdineBulk> listaFatturaNotaOrdini = new BulkList();
 
 																			if (isFatturaPassivaNotaDaOrdini) {
-																				listaFatturaNotaOrdini.addAll(Utility.createFatturaPassivaComponentSession().findFatturaOrdini(userContext, fatturaCollegata.get()));
+																				listaFatturaNotaOrdini.addAll(Utility.createFatturaPassivaComponentSession().findFatturaOrdini(userContext, (Fattura_passivaBulk)fatturaCollegata));
 																				for (FatturaOrdineBulk fattordine : listaFatturaNotaOrdini)
 																					fattordine.setOrdineAcqConsegna((OrdineAcqConsegnaBulk) loadObject(userContext, fattordine.getOrdineAcqConsegna()));
 																			}
@@ -2229,12 +2268,36 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 																					.filter(el->el.getFatturaPassivaRiga().equalsByPrimaryKey(((Nota_di_credito_rigaBulk)rigaDett.getRigaDocamm()).getRiga_fattura_associata())).collect(Collectors.toList());
 
 																			if (listaFatturaOrdiniCollRiga.isEmpty()) {
-																				testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, pairContoCosto.getFirst(), rigaDett.getImImponibile());
-																				testataPrimaNota.openDettaglioPatrimonialePartita(userContext, docamm, partita, pairContoCosto.getSecond(), rigaDett.getImImponibile(), aCdTerzo);
+																				final boolean isFatturaCollegataInContoAcconto =
+																						Optional.of(fatturaCollegata).filter(Fattura_attiva_IBulk.class::isInstance).map(Fattura_attiva_IBulk.class::cast)
+																								.map(Fattura_attiva_IBulk::isDocumentoInContoAcconto).orElse(Boolean.FALSE);
+
+																				final boolean isFatturaCollegataInContoAnticipo =
+																						Optional.of(fatturaCollegata).filter(Fattura_attiva_IBulk.class::isInstance).map(Fattura_attiva_IBulk.class::cast)
+																								.map(Fattura_attiva_IBulk::isDocumentoInContoAnticipo).orElse(Boolean.FALSE);
+
+																				final Voce_epBulk aContoAccontoFatturaCollegata, aContoAnticipoFatturaCollegata;
+																				try {
+																					aContoAccontoFatturaCollegata = isFatturaCollegataInContoAcconto?this.findContoAccontoDocumentoAttivo(userContext, fatturaCollegata.getEsercizio()):null;
+																					aContoAnticipoFatturaCollegata = isFatturaCollegataInContoAnticipo?this.findContoAnticipoDocumentoAttivo(userContext, fatturaCollegata.getEsercizio()):null;
+																				} catch (ComponentException|RemoteException e) {
+																					throw new ApplicationRuntimeException(e);
+																				}
+
+																				Pair<Voce_epBulk, Voce_epBulk> pairContoCostoNota;
+																				if (isFatturaCollegataInContoAcconto)
+																					pairContoCostoNota = Pair.of(aContoAccontoFatturaCollegata, pairContoCosto.getSecond());
+																				else if (isFatturaCollegataInContoAnticipo)
+																					pairContoCostoNota = Pair.of(aContoAnticipoFatturaCollegata, pairContoCosto.getSecond());
+																				else
+																					pairContoCostoNota = pairContoCosto;
+
+																				testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, pairContoCostoNota.getFirst(), rigaDett.getImImponibile());
+																				testataPrimaNota.openDettaglioPatrimonialePartita(userContext, docamm, partita, pairContoCostoNota.getSecond(), rigaDett.getImImponibile(), aCdTerzo);
 
 																				if (registraIvaACosto) {
-																					testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, pairContoCosto.getFirst(), rigaDett.getImImposta());
-																					mapPatrimonialeIva.add(new DettaglioScrittura(pairContoCosto.getSecond(), rigaDett.getImImposta()));
+																					testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, pairContoCostoNota.getFirst(), rigaDett.getImImposta());
+																					mapPatrimonialeIva.add(new DettaglioScrittura(pairContoCostoNota.getSecond(), rigaDett.getImImposta()));
 																				}
 																			} else {
 																				FatturaOrdineBulk fatturaOrdineBulk = listaFatturaOrdiniCollRiga.stream().findAny().get();
@@ -4948,6 +5011,14 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 		if (rifModalitaPagamentoBulk.isModalitaBancaItalia())
 			return this.findContoByConfigurazioneCNR(userContext, reversaleRigaBulk.getEsercizio(), Configurazione_cnrBulk.PK_VOCEEP_SPECIALE, Configurazione_cnrBulk.SK_BANCA, 2);
 		return this.findContoByConfigurazioneCNR(userContext, reversaleRigaBulk.getEsercizio(), Configurazione_cnrBulk.PK_VOCEEP_SPECIALE, Configurazione_cnrBulk.SK_BANCA, 1);
+	}
+
+	private Voce_epBulk findContoAccontoDocumentoAttivo(UserContext userContext, Integer esercizio) throws ComponentException, RemoteException {
+		return this.findContoByConfigurazioneCNR(userContext, esercizio, Configurazione_cnrBulk.PK_VOCEEP_SPECIALE, Configurazione_cnrBulk.SK_ACCONTO_ANTICIPO_DOCATT, 1);
+	}
+
+	private Voce_epBulk findContoAnticipoDocumentoAttivo(UserContext userContext, Integer esercizio) throws ComponentException, RemoteException {
+		return this.findContoByConfigurazioneCNR(userContext, esercizio, Configurazione_cnrBulk.PK_VOCEEP_SPECIALE, Configurazione_cnrBulk.SK_ACCONTO_ANTICIPO_DOCATT, 2);
 	}
 
 	private Voce_epBulk findContoCreditoAnticipo(UserContext userContext, Integer esercizio) throws ComponentException, RemoteException {

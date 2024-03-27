@@ -2060,4 +2060,12 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 				Collectors.joining(StorageDriver.SUFFIX)
 		));
 	}
+
+	public boolean isDocumentoInContoAcconto() {
+		return TipoContoDocAttivoEnum.ACC.value().equals(this.getCd_tipo_conto_ep());
+	}
+
+	public boolean isDocumentoInContoAnticipo() {
+		return TipoContoDocAttivoEnum.ANT.value().equals(this.getCd_tipo_conto_ep());
+	}
 }
