@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="cdPianoGruppi"
+		property="cdPianoGruppi"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		nullable="false"
+		label="cdPianoGruppi" />
+	<fieldProperty
+		name="cdGruppoEp"
+		property="cdGruppoEp"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="40"
+		enabledOnEdit="false"
+		nullable="false"
+		label="cdGruppoEp" />
+	<fieldProperty
+		name="cdGruppoPadre"
+		property="cdGruppoPadre"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="40"
+		enabledOnEdit="false"
+		label="cdGruppoPadre" />
+	<fieldProperty
+		name="sequenza"
+		property="sequenza"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		nullable="false"
+		label="sequenza" />
+	<fieldProperty
+		name="nome"
+		property="nome"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="100"
+		enabledOnEdit="false"
+		label="nome" />
+	<fieldProperty
+		name="dsGruppoEp"
+		property="dsGruppoEp"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="200"
+		enabledOnEdit="false"
+		label="dsGruppoEp" />
+	<fieldProperty
+		name="segno"
+		property="segno"
+		inputType="TEXT"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="false"
+		nullable="false"
+		label="segno" />
+	<fieldProperty
+		name="flMastrino"
+		property="flMastrino"
+		inputType="CHECKBOX"
+		enabledOnEdit="false"
+		nullable="false"
+		label="flMastrino" />
+	<fieldProperty
+		name="cdPianoPadre"
+		property="cdPianoPadre"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		label="cdPianoPadre" />
+	<fieldProperty
+		name="formula"
+		property="formula"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="2000"
+		enabledOnEdit="false"
+		label="formula" />
+	<form
+		name="searchtool">
+	</form>
+	<formFieldProperty
+		name="cdPianoGruppi" />
+	<formFieldProperty
+		name="cdGruppoEp" />
+	<formFieldProperty
+		name="cdGruppoPadre" />
+	<formFieldProperty
+		name="sequenza" />
+	<formFieldProperty
+		name="nome" />
+	<formFieldProperty
+		name="dsGruppoEp" />
+	<formFieldProperty
+		name="segno" />
+	<formFieldProperty
+		name="flMastrino" />
+	<formFieldProperty
+		name="cdPianoPadre" />
+	<formFieldProperty
+		name="formula" />
+	<findFieldProperty
+		name="cdPianoGruppi" />
+	<findFieldProperty
+		name="cdGruppoEp" />
+	<findFieldProperty
+		name="cdGruppoPadre" />
+	<findFieldProperty
+		name="sequenza" />
+	<findFieldProperty
+		name="nome" />
+	<findFieldProperty
+		name="dsGruppoEp" />
+	<findFieldProperty
+		name="segno" />
+	<findFieldProperty
+		name="flMastrino" />
+	<findFieldProperty
+		name="cdPianoPadre" />
+	<findFieldProperty
+		name="formula" />
+	<columnFieldProperty
+		name="cdPianoGruppi" />
+	<columnFieldProperty
+		name="cdGruppoEp" />
+	<columnFieldProperty
+		name="cdGruppoPadre" />
+	<columnFieldProperty
+		name="sequenza" />
+	<columnFieldProperty
+		name="nome" />
+	<columnFieldProperty
+		name="dsGruppoEp" />
+	<columnFieldProperty
+		name="segno" />
+	<columnFieldProperty
+		name="flMastrino" />
+	<columnFieldProperty
+		name="cdPianoPadre" />
+	<columnFieldProperty
+		name="formula" />
+</bulkInfo>

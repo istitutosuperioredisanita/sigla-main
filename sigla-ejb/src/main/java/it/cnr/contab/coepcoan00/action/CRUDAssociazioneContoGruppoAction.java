@@ -11,6 +11,7 @@ import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.action.HookForward;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.CRUDAction;
 import it.cnr.jada.util.action.FormBP;
@@ -122,4 +123,15 @@ public class CRUDAssociazioneContoGruppoAction extends CRUDAction {
         return actioncontext.findDefaultForward();
     }
 
+    public Forward doRefresh(ActionContext actioncontext) throws BusinessProcessException {
+        CRUDAssociazioneContoGruppoBP bp = (CRUDAssociazioneContoGruppoBP)actioncontext.getBusinessProcess();
+        try {
+            final AssociazioneContoGruppoBulk model = (AssociazioneContoGruppoBulk)bp.getModel();
+            model.setGruppoEp(null);
+            bp.setModel(actioncontext, bp.createComponentSession().initializeKeysAndOptionsInto(actioncontext.getUserContext(), model));
+        } catch (BusinessProcessException|ComponentException|RemoteException e) {
+            return handleException(actioncontext, e);
+        }
+        return actioncontext.findDefaultForward();
+    }
 }

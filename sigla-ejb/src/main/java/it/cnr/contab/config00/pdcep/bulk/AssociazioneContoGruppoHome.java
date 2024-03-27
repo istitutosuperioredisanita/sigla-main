@@ -19,13 +19,17 @@ package it.cnr.contab.config00.pdcep.bulk;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.Persistent;
 import it.cnr.jada.persistency.PersistentCache;
@@ -96,4 +100,17 @@ public class AssociazioneContoGruppoHome extends BulkHome {
 	public SQLBuilder selectVoceEpByClause(it.cnr.jada.UserContext userContext, AssociazioneContoGruppoBulk associazioneContoGruppoBulk, Voce_epHome voceEpHome, Voce_epBulk voceEpBulk, CompoundFindClause clause) throws ComponentException, EJBException, RemoteException, PersistencyException {
 		return voceEpHome.selectByClause(userContext, clause);
 	}
+
+	public java.util.Collection findGruppoEp(AssociazioneContoGruppoBulk associazioneContoGruppoBulk,
+			GruppoEPHome gruppoEPHome,
+			GruppoEPBulk gruppoEPBulk
+	) throws PersistencyException {
+		gruppoEPHome = Optional.ofNullable(gruppoEPHome)
+				.orElseGet(() -> (GruppoEPHome)getHomeCache().getHome(GruppoEPBulk.class));
+		final SQLBuilder sqlBuilder = gruppoEPHome.createSQLBuilder();
+		sqlBuilder.addClause(FindClause.AND, "cdPianoGruppi", SQLBuilder.EQUALS, associazioneContoGruppoBulk.getCdPianoGruppi());
+		final List<GruppoEPBulk> result = gruppoEPHome.fetchAll(sqlBuilder);
+		return result.stream().map(GruppoEPBase::getCdGruppoEp).collect(Collectors.toList());
+	}
+
 }
