@@ -52,7 +52,10 @@ public class Chiusura_magazzinoBulk extends Stampa_inventarioBulk {
     private java.lang.String ti_operazione;
     private java.lang.String ti_valorizzazione;
     private String ti_raggr_report;
+
     private boolean nascondiCampiStampa = true;
+    private boolean bloccaCampiCalcoloDefinitivo;
+
     private String tipoChiusura=ChiusuraAnnoBulk.TIPO_CHIUSURA_MAGAZZINO;
 
 
@@ -159,7 +162,7 @@ public class Chiusura_magazzinoBulk extends Stampa_inventarioBulk {
         if (this.getCatgrp().getCd_categoria_gruppo() == null)
             return Valori_magazzinoBulk.TUTTI;
 
-        return this.getCatgrp().getCd_categoria_gruppo();
+        return this.getCatgrp().getLivello().equals(new Integer(0))  ? this.getCatgrp().getCd_proprio():this.getCatgrp().getCd_categoria_padre();
     }
 
     public String getCdRaggrMagazzinoForPrint() {
@@ -213,6 +216,14 @@ public class Chiusura_magazzinoBulk extends Stampa_inventarioBulk {
 
     public void setTi_raggr_report(String ti_raggr_report) {
         this.ti_raggr_report = ti_raggr_report;
+    }
+
+    public boolean isBloccaCampiCalcoloDefinitivo() {
+        return bloccaCampiCalcoloDefinitivo;
+    }
+
+    public void setBloccaCampiCalcoloDefinitivo(boolean bloccaCampiCalcoloDefinitivo) {
+        this.bloccaCampiCalcoloDefinitivo = bloccaCampiCalcoloDefinitivo;
     }
 }
 

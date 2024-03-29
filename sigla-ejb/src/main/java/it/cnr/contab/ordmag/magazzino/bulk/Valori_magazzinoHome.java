@@ -41,7 +41,7 @@ public class Valori_magazzinoHome extends BulkHome {
     private final String statementQuantitaAnnoPerLotto =
             " select a.cd_cds,a.pg_lotto,a.esercizio,a.CD_NUMERATORE_MAG,a.cd_magazzino_mag,a.ds_magazzino,a.cd_cds_raggr_rim,a.cd_raggr_magazzino_rim, a.cd_bene_servizio,a.ds_bene_servizio,a.cd_categoria_gruppo,a.cd_categoria_padre,a.cd_proprio,a.unita_misura,NVL(a.prezzo_unitario_chi,0) as prezzo_unitario_chi,NVL(a.prezzo_unitario_lotto,0) as prezzo_unitario_lotto,sum(NVL(giacenza,0)) as giancenzaToday, " +
                     " SUM( NVL(quantita_inizio_anno,0)) as quantita_inizio_anno,sum(NVL(qtCarico,0)) as quantita_carico_anno,sum(NVL(qtSCarico,0)) as quantita_scarico_anno, " +
-                    "( (SUM(  NVL(quantita_inizio_anno,0))+sum(NVL(qtCarico,0))) - sum(NVL(qtSCarico,0))) as giacenza_calcolata " +
+                        "( (SUM(  NVL(quantita_inizio_anno,0))+sum(NVL(qtCarico,0))) - sum(NVL(qtSCarico,0))) as giacenza_calcolata " +
                     " from " +
                     " (select l.CD_CDS,l.CD_MAGAZZINO,l.ESERCIZIO,l.CD_NUMERATORE_MAG,l.PG_LOTTO,l.cd_magazzino_mag,m.ds_magazzino,m.cd_cds_raggr_rim,m.cd_raggr_magazzino_rim,l.cd_bene_servizio,b.ds_bene_servizio,g.cd_categoria_gruppo,g.cd_categoria_padre,g.cd_proprio,b.unita_misura, giacenza,l.valore_unitario, " +
                     "   mov.PREZZO_UNITARIO  as prezzo_unitario_chi, " +

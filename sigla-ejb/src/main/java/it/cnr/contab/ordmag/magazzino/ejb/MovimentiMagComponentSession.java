@@ -21,16 +21,10 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.ejb.Remote;
+import javax.xml.registry.infomodel.User;
 
-import it.cnr.contab.ordmag.magazzino.bulk.AbilitazioneMagazzinoBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.BollaScaricoMagBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.CaricoMagazzinoBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.LottoMagBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagazzinoBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagazzinoRigaBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.ParametriSelezioneMovimentiBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.ScaricoMagazzinoBulk;
+import it.cnr.contab.ordmag.magazzino.bulk.*;
+import it.cnr.contab.ordmag.magazzino.dto.ValoriChiusuraMagRim;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
@@ -56,4 +50,7 @@ public interface MovimentiMagComponentSession extends it.cnr.jada.ejb.CRUDCompon
     public RemoteIterator ricercaMovimenti(UserContext userContext, ParametriSelezioneMovimentiBulk parametri) throws ComponentException, RemoteException;
     public MovimentiMagBulk creaMovimentoRettificaValoreOrdine(UserContext userContext, FatturaOrdineBulk fatturaOrdineBulk) throws ComponentException, RemoteException;
     public ImportoOrdine calcoloImporto(UserContext userContext, ParametriCalcoloImportoOrdine parametri) throws RemoteException,ComponentException;
+    void creaMovimentoChiusura(UserContext userContext, Integer pgChiusura, Integer anno, String tipoChiusura, java.sql.Timestamp dataRiferimentoMovimento) throws RemoteException, ComponentException;
+    void eliminaMovimentoChiusura(UserContext userContext, Integer pgChiusura, Integer anno, String tipoChiusura, java.sql.Timestamp dataRiferimentoMovimento) throws RemoteException, ComponentException;
+
 }

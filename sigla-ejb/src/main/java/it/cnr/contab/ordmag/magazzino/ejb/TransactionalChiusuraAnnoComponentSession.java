@@ -33,6 +33,7 @@ import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.RemoteIterator;
 
 import java.rmi.RemoteException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -58,10 +59,10 @@ public class TransactionalChiusuraAnnoComponentSession extends it.cnr.jada.ejb.T
     }
 
     @Override
-    public ChiusuraAnnoBulk calcolaRimanenzeAnno(UserContext userContext, Integer esercizio, Date dataFinePeriodo) throws RemoteException, ComponentException, PersistencyException {
+    public ChiusuraAnnoBulk calcolaRimanenzeAnno(UserContext userContext, Integer esercizio, Date dataFinePeriodo,String statoChiusura) throws RemoteException, ComponentException, PersistencyException {
         try {
             return ( ChiusuraAnnoBulk)invoke("calcolaRimanenzeAnno",new Object[] {
-                    userContext, esercizio,dataFinePeriodo});
+                    userContext, esercizio,dataFinePeriodo,statoChiusura});
         } catch(RemoteException e) {
             throw e;
         } catch(java.lang.reflect.InvocationTargetException e) {
@@ -79,6 +80,44 @@ public class TransactionalChiusuraAnnoComponentSession extends it.cnr.jada.ejb.T
     public ChiusuraAnnoBulk verificaChiusuraAnno(UserContext userContext, Integer esercizio, String tipoChiusura) throws ComponentException, PersistencyException, RemoteException {
         try {
             return ( ChiusuraAnnoBulk)invoke("verificaChiusuraAnno",new Object[] {
+                    userContext, esercizio,tipoChiusura});
+        } catch(RemoteException e) {
+            throw e;
+        } catch(java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch(ComponentException ex) {
+                throw ex;
+            } catch(Throwable ex) {
+                throw new RemoteException("Uncaugth exception",ex);
+            }
+        }
+    }
+
+
+
+    @Override
+    public ChiusuraAnnoBulk salvaChiusuraDefinitiva(UserContext userContext, Integer esercizio, String tipoChiusura,Date dataFinePeriodo) throws RemoteException, ComponentException,PersistencyException, ParseException {
+        try {
+            return ( ChiusuraAnnoBulk)invoke("salvaChiusuraDefinitiva",new Object[] {
+                    userContext, esercizio,tipoChiusura,dataFinePeriodo});
+        } catch(RemoteException e) {
+            throw e;
+        } catch(java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch(ComponentException ex) {
+                throw ex;
+            } catch(Throwable ex) {
+                throw new RemoteException("Uncaugth exception",ex);
+            }
+        }
+    }
+
+    @Override
+    public void annullaChiusuraDefinitiva(UserContext userContext, Integer esercizio, String tipoChiusura) throws RemoteException, ComponentException, PersistencyException, ParseException {
+        try {
+           invoke("annullaChiusuraDefinitiva",new Object[] {
                     userContext, esercizio,tipoChiusura});
         } catch(RemoteException e) {
             throw e;

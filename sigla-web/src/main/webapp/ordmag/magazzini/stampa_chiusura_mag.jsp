@@ -4,10 +4,14 @@
 			java.util.*,
 			it.cnr.jada.util.action.*,
 			it.cnr.contab.ordmag.magazzino.bp.*,
-			 java.text.*"
+			it.cnr.contab.ordmag.magazzino.bulk.*,
+			 java.text.*,
+			 java.lang.*"
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<%	StampaChiusuraMagazzinoBP bp = (StampaChiusuraMagazzinoBP)BusinessProcess.getBusinessProcess(request);%>
 
 <html>
 <head>
@@ -15,13 +19,11 @@
 <script language="JavaScript" src="scripts/util.js"></script>
 <script language="javascript" src="scripts/css.js"></script>
 </head>
-<title>Chiusura Magazzino</title>
+<title><%=bp.getBulkInfo().getShortDescription()%></title>
 
 <body class="Form">
 
-<%	StampaChiusuraMagazzinoBP bp = (StampaChiusuraMagazzinoBP)BusinessProcess.getBusinessProcess(request);
-	bp.openFormWindow(pageContext);
-	%>
+<%	bp.openFormWindow(pageContext);%>
 
 <table>
   <tr>
@@ -34,6 +36,13 @@
              java.sql.Date duvaDate = new java.sql.Date( duva.getTime() );
              java.sql.Date dataCalcDate = new java.sql.Date( dataCalc.getTime() );
 
+              String stato = "PROVVISORIO";
+              if(bp.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PREDEFINITIVO)){
+                  stato = "PREDISPOSTO DEFINITIVO";
+              }else if(bp.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_DEFINITIVO)){
+                 stato = "DEFINITIVO";
+              }
+
              SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");%>
 
 
@@ -41,20 +50,16 @@
                      <td colspan="5"></td>
                      <td>
                         <span class="FormLabel" style="color:blue">
-                            CALCOLO RIMANENZE AGGIORNATO AL <%=formatter.format(duvaDate)%>
+                            Calcolo rimanenze aggiornato al :  <%=formatter.format(duvaDate)%>
+                            <br>
+                            Data Calcolo :  <%=formatter.format(dataCalcDate) %>
+                            <br>
+                            Stato : <%=stato%>
                         </span>
                     </td>
 
-                <tr>
-                 <tr>
-                     <td colspan="5"></td>
-                     <td>
-                        <span class="FormLabel" style="color:blue">
-                             DATA CALCOLO <%=formatter.format(dataCalcDate) %>
-                        </span>
-                    </td>
+                </tr>
 
-                <tr>
         	<%}%>
         <tr>
             <td><% bp.getController().writeFormLabel(out,"esercizio"); %></td>
@@ -64,7 +69,7 @@
          </tr>
          <tr>
              <td><% bp.getController().writeFormLabel(out,"dataInventarioInizio"); %></td>
-             <td colspan="5"><% bp.getController().writeFormInput(out,"dataInventarioInizio"); %></td>
+             <td><% bp.getController().writeFormInput(out,"dataInventarioInizio"); %></td>
              <td><% bp.getController().writeFormLabel(out,"dataInventario"); %></td>
              <td colspan="5"><% bp.getController().writeFormInput(out,"dataInventario"); %></td>
 

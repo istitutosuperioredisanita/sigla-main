@@ -37,6 +37,7 @@ import it.cnr.jada.util.RemoteIterator;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import java.rmi.RemoteException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -66,10 +67,10 @@ public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws java
 	}
 
 	@Override
-	public ChiusuraAnnoBulk calcolaRimanenzeAnno(UserContext userContext, Integer esercizio, Date dataFinePeriodo) throws RemoteException, ComponentException, PersistencyException {
+	public ChiusuraAnnoBulk calcolaRimanenzeAnno(UserContext userContext, Integer esercizio, Date dataFinePeriodo,String statoChiusura) throws RemoteException, ComponentException, PersistencyException {
 		pre_component_invocation(userContext,componentObj);
 		try {
-			ChiusuraAnnoBulk result = ((ChiusuraAnnoComponent)componentObj).calcolaRimanenzeAnno(userContext, esercizio,dataFinePeriodo);
+			ChiusuraAnnoBulk result = ((ChiusuraAnnoComponent)componentObj).calcolaRimanenzeAnno(userContext, esercizio,dataFinePeriodo,statoChiusura);
 			component_invocation_succes(userContext,componentObj);
 			return result;
 		} catch(RuntimeException e) {
@@ -88,6 +89,36 @@ public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws java
 			ChiusuraAnnoBulk result = ((ChiusuraAnnoComponent)componentObj).verificaChiusuraAnno(userContext, esercizio,tipoChiusura);
 			component_invocation_succes(userContext,componentObj);
 			return result;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(userContext,componentObj,e);
+		}
+	}
+
+
+
+	@Override
+	public ChiusuraAnnoBulk salvaChiusuraDefinitiva(UserContext userContext, Integer esercizio, String tipoChiusura,Date dataFinePeriodo) throws RemoteException, ComponentException,PersistencyException, ParseException {
+		pre_component_invocation(userContext,componentObj);
+		try {
+			ChiusuraAnnoBulk result = ((ChiusuraAnnoComponent)componentObj).salvaChiusuraDefinitiva(userContext, esercizio,tipoChiusura,dataFinePeriodo);
+			component_invocation_succes(userContext,componentObj);
+			return result;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(userContext,componentObj,e);
+		}
+	}
+
+	@Override
+	public void annullaChiusuraDefinitiva(UserContext userContext, Integer esercizio, String tipoChiusura) throws RemoteException, ComponentException, PersistencyException, ParseException {
+		pre_component_invocation(userContext,componentObj);
+		try {
+			((ChiusuraAnnoComponent)componentObj).annullaChiusuraDefinitiva(userContext, esercizio,tipoChiusura);
+			component_invocation_succes(userContext,componentObj);
+
 		} catch(RuntimeException e) {
 			throw uncaughtRuntimeException(userContext,componentObj,e);
 		} catch(Error e) {

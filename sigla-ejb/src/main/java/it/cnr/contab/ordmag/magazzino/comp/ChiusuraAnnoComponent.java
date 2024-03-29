@@ -24,7 +24,9 @@ import it.cnr.contab.inventario00.docs.bulk.Transito_beni_ordiniBulk;
 import it.cnr.contab.ordmag.anag00.*;
 import it.cnr.contab.ordmag.magazzino.bulk.*;
 import it.cnr.contab.ordmag.magazzino.dto.ValoriChiusuraCatGrVoceEP;
+import it.cnr.contab.ordmag.magazzino.dto.ValoriChiusuraMagRim;
 import it.cnr.contab.ordmag.magazzino.dto.ValoriLottoPerAnno;
+import it.cnr.contab.ordmag.magazzino.ejb.MovimentiMagComponentSession;
 import it.cnr.contab.ordmag.ordini.bulk.*;
 import it.cnr.contab.ordmag.ordini.dto.ImportoOrdine;
 import it.cnr.contab.ordmag.ordini.dto.ParametriCalcoloImportoOrdine;
@@ -52,6 +54,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -63,7 +66,8 @@ public class ChiusuraAnnoComponent extends CRUDComponent implements ICRUDMgr, IP
 		return homeChiusuraAnno.getChiusuraAnno(esercizio,tipoChiusura);
 	}
 
-	public ChiusuraAnnoBulk calcolaRimanenzeAnno(UserContext userContext,Integer esercizio, Date dataFinePeriodo) throws RemoteException, ComponentException, PersistencyException, BusyResourceException {
+
+	public ChiusuraAnnoBulk calcolaRimanenzeAnno(UserContext userContext,Integer esercizio, Date dataFinePeriodo,String statoChiusura) throws RemoteException, ComponentException, PersistencyException, BusyResourceException {
 
 		ChiusuraAnnoHome homeChiusuraAnno = (ChiusuraAnnoHome) getHome(userContext, ChiusuraAnnoBulk.class);
 		ChiusuraAnnoBulk chiusuraAnno = verificaChiusuraAnno(userContext,esercizio,ChiusuraAnnoBulk.TIPO_CHIUSURA_MAGAZZINO);
@@ -75,17 +79,18 @@ public class ChiusuraAnnoComponent extends CRUDComponent implements ICRUDMgr, IP
 			chiusuraAnno.setPgChiusura(homeChiusuraAnno.recuperaNuovoProgressivo(userContext,chiusuraAnno));
 			chiusuraAnno.setTipoChiusura(ChiusuraAnnoBulk.TIPO_CHIUSURA_MAGAZZINO);
 			chiusuraAnno.setAnno(esercizio);
-			chiusuraAnno.setStato(ChiusuraAnnoBulk.STATO_CHIUSURA_PROVVISORIO);
+			chiusuraAnno.setStato(statoChiusura);
 			chiusuraAnno.setDataCalcolo(dataFinePeriodo);
 			chiusuraAnno.setCrudStatus(OggettoBulk.TO_BE_CREATED);
 			nuovoCalcoloRimanenze=true;
 
 		}else{
 			// cancella i calcoli dei dettagli lotto legati alla chiusura
-			eliminaRigheChiusuraMagRim(userContext,chiusuraAnno.getPgChiusura(), chiusuraAnno.getAnno());
+			eliminaRigheChiusuraMagRim(userContext,chiusuraAnno.getPgChiusura(), chiusuraAnno.getAnno(), chiusuraAnno.getTipoChiusura());
 			// cancella i calcoli delle catgruppo/voce legati alla chiusura
-			eliminaRigheChiusuraCatGruppoVoceEP(userContext,chiusuraAnno.getPgChiusura(), chiusuraAnno.getAnno());
+			eliminaRigheChiusuraCatGruppoVoceEP(userContext,chiusuraAnno.getPgChiusura(), chiusuraAnno.getAnno(),chiusuraAnno.getTipoChiusura());
 
+			chiusuraAnno.setStato(statoChiusura);
 			chiusuraAnno.setDataCalcolo(dataFinePeriodo);
 			chiusuraAnno.setCrudStatus(OggettoBulk.TO_BE_UPDATED);
 		}
@@ -223,18 +228,20 @@ public class ChiusuraAnnoComponent extends CRUDComponent implements ICRUDMgr, IP
 	public OggettoBulk stampaConBulk(UserContext userContext, OggettoBulk oggettoBulk) throws ComponentException {
 		return oggettoBulk;
 	}
-	protected void eliminaRigheChiusuraMagRim(UserContext userContext, Integer pgChiusura, Integer anno)
+	protected void eliminaRigheChiusuraMagRim(UserContext userContext, Integer pgChiusura, Integer anno, String tipoChiusura)
 			throws ComponentException {
 		try {
 			LoggableStatement ps = new LoggableStatement(
 					getConnection(userContext), "DELETE FROM "
 					+ it.cnr.jada.util.ejb.EJBCommonServices
 					.getDefaultSchema() + "CHIUSURA_ANNO_MAG_RIM "
-					+ "WHERE PG_CHIUSURA = ?  AND ANNO = ? ", true, this.getClass());
+					+ "WHERE PG_CHIUSURA = ?  AND ANNO = ? AND TIPO_CHIUSURA = ?", true, this.getClass());
 
 			try {
 				ps.setObject(1, pgChiusura);
 				ps.setObject(2, anno);
+				ps.setObject(3, tipoChiusura);
+
 				ps.executeUpdate();
 			} finally {
 				try {
@@ -247,18 +254,46 @@ public class ChiusuraAnnoComponent extends CRUDComponent implements ICRUDMgr, IP
 			throw handleException(e);
 		}
 	}
-	protected void eliminaRigheChiusuraCatGruppoVoceEP(UserContext userContext, Integer pgChiusura, Integer anno)
+	protected void eliminaRigheChiusuraCatGruppoVoceEP(UserContext userContext, Integer pgChiusura, Integer anno, String tipoChiusura)
 			throws ComponentException {
 		try {
 			LoggableStatement ps = new LoggableStatement(
 					getConnection(userContext), "DELETE FROM "
 					+ it.cnr.jada.util.ejb.EJBCommonServices
 					.getDefaultSchema() + "CHIUSURA_ANNO_CATGRP_VOCE_EP "
-					+ "WHERE PG_CHIUSURA = ?  AND ANNO = ? ", true, this.getClass());
+					+ "WHERE PG_CHIUSURA = ?  AND ANNO = ? AND TIPO_CHIUSURA = ? ", true, this.getClass());
 
 			try {
 				ps.setObject(1, pgChiusura);
 				ps.setObject(2, anno);
+				ps.setObject(3, tipoChiusura);
+
+				ps.executeUpdate();
+			} finally {
+				try {
+					ps.close();
+				} catch (java.sql.SQLException e) {
+				}
+			}
+
+		} catch (SQLException e) {
+			throw handleException(e);
+		}
+	}
+	protected void eliminaChiusuraAnno(UserContext userContext, Integer pgChiusura, Integer anno, String tipoChiusura)
+			throws ComponentException {
+		try {
+			LoggableStatement ps = new LoggableStatement(
+					getConnection(userContext), "DELETE FROM "
+					+ it.cnr.jada.util.ejb.EJBCommonServices
+					.getDefaultSchema() + "CHIUSURA_ANNO "
+					+ "WHERE PG_CHIUSURA = ?  AND ANNO = ? AND TIPO_CHIUSURA = ? ", true, this.getClass());
+
+			try {
+				ps.setObject(1, pgChiusura);
+				ps.setObject(2, anno);
+				ps.setObject(3, tipoChiusura);
+
 				ps.executeUpdate();
 			} finally {
 				try {
@@ -274,6 +309,48 @@ public class ChiusuraAnnoComponent extends CRUDComponent implements ICRUDMgr, IP
 	void aggiornaChiusuraMagRimConCmpp(UserContext userContext,Integer esercizio) throws ComponentException, PersistencyException {
 		ChiusuraAnnoMagRimHome chiusuraAnnoMagRimHome  = ( ChiusuraAnnoMagRimHome)getHome(userContext,ChiusuraAnnoMagRimBulk.class);
 		chiusuraAnnoMagRimHome.getCmppPerArticolo(userContext,esercizio);
+
+	}
+	public ChiusuraAnnoBulk salvaChiusuraDefinitiva(UserContext userContext,Integer esercizio,String tipoChiusura,Date dataFinePeriodo) throws RemoteException, ComponentException, PersistencyException, ParseException {
+
+		ChiusuraAnnoBulk chiusuraAnnoBulk = verificaChiusuraAnno(userContext, esercizio, tipoChiusura);
+
+			MovimentiMagComponentSession movimentiMagComponent = Utility.createMovimentiMagComponentSession();
+
+		int annoChiusura = chiusuraAnnoBulk.getAnno().intValue()+1;
+		java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+		java.sql.Timestamp dataRifMovChi = (new java.sql.Timestamp(sdf.parse("01/01/"+annoChiusura).getTime()));
+
+		movimentiMagComponent.creaMovimentoChiusura(userContext,chiusuraAnnoBulk.getPgChiusura(), chiusuraAnnoBulk.getAnno(), chiusuraAnnoBulk.getTipoChiusura(),dataRifMovChi);
+
+		chiusuraAnnoBulk.setStato(ChiusuraAnnoBulk.STATO_CHIUSURA_DEFINITIVO);
+		chiusuraAnnoBulk.setDataCalcolo(dataFinePeriodo);
+		chiusuraAnnoBulk.setCrudStatus(OggettoBulk.TO_BE_UPDATED);
+		chiusuraAnnoBulk.setToBeUpdated();
+
+		makeBulkPersistent(userContext, chiusuraAnnoBulk);
+		modificaConBulk(userContext, chiusuraAnnoBulk);
+		return chiusuraAnnoBulk;
+	}
+	public void annullaChiusuraDefinitiva(UserContext userContext,Integer esercizio,String tipoChiusura) throws RemoteException, ComponentException, PersistencyException, ParseException {
+
+		ChiusuraAnnoBulk chiusuraAnnoBulk = verificaChiusuraAnno(userContext, esercizio, tipoChiusura);
+
+		MovimentiMagComponentSession movimentiMagComponent = Utility.createMovimentiMagComponentSession();
+
+		int annoChiusura = chiusuraAnnoBulk.getAnno().intValue()+1;
+		java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+		java.sql.Timestamp dataRifMovChi = (new java.sql.Timestamp(sdf.parse("01/01/"+annoChiusura).getTime()));
+
+		movimentiMagComponent.eliminaMovimentoChiusura(userContext,chiusuraAnnoBulk.getPgChiusura(), chiusuraAnnoBulk.getAnno(), chiusuraAnnoBulk.getTipoChiusura(),dataRifMovChi);
+
+		// cancella i calcoli dei dettagli lotto legati alla chiusura
+		eliminaRigheChiusuraMagRim(userContext,chiusuraAnnoBulk.getPgChiusura(), chiusuraAnnoBulk.getAnno(), chiusuraAnnoBulk.getTipoChiusura());
+		// cancella i calcoli delle catgruppo/voce legati alla chiusura
+		eliminaRigheChiusuraCatGruppoVoceEP(userContext,chiusuraAnnoBulk.getPgChiusura(), chiusuraAnnoBulk.getAnno(),chiusuraAnnoBulk.getTipoChiusura());
+		// cancella chiusura anno
+		eliminaChiusuraAnno(userContext,chiusuraAnnoBulk.getPgChiusura(), chiusuraAnnoBulk.getAnno(),chiusuraAnnoBulk.getTipoChiusura());
+
 
 	}
 }

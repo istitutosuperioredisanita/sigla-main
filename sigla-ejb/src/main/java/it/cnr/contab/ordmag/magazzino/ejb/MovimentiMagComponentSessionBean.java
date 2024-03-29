@@ -17,21 +17,16 @@
 
 package it.cnr.contab.ordmag.magazzino.ejb;
 import java.rmi.RemoteException;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 
-import it.cnr.contab.ordmag.magazzino.bulk.AbilitazioneMagazzinoBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.BollaScaricoMagBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.CaricoMagazzinoBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.LottoMagBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagazzinoBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagazzinoRigaBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.ParametriSelezioneMovimentiBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.ScaricoMagazzinoBulk;
+import it.cnr.contab.ordmag.magazzino.bulk.*;
 import it.cnr.contab.ordmag.magazzino.comp.MovimentiMagComponent;
+import it.cnr.contab.ordmag.magazzino.dto.ValoriChiusuraMagRim;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
@@ -317,6 +312,36 @@ public void annullaMovimento(UserContext userContext, MovimentiMagBulk movimenti
 		} catch(ComponentException e) {
 			component_invocation_failure(userContext,componentObj);
 			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(userContext,componentObj,e);
+		}
+	}
+
+	@Override
+	public void creaMovimentoChiusura(UserContext userContext, Integer pgChiusura, Integer anno, String tipoChiusura, java.sql.Timestamp dataRiferimentoMovimento) throws RemoteException, ComponentException {
+		pre_component_invocation(userContext,componentObj);
+		try {
+			 ((MovimentiMagComponent)componentObj).creaMovimentoChiusura(userContext,pgChiusura,anno, tipoChiusura,dataRiferimentoMovimento);
+			component_invocation_succes(userContext,componentObj);
+
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(userContext,componentObj,e);
+		} catch (SQLException throwables) {
+			throwables.printStackTrace();
+		}
+	}
+
+	@Override
+	public void eliminaMovimentoChiusura(UserContext userContext, Integer pgChiusura, Integer anno, String tipoChiusura, Timestamp dataRiferimentoMovimento) throws RemoteException, ComponentException {
+		pre_component_invocation(userContext,componentObj);
+		try {
+			((MovimentiMagComponent)componentObj).eliminaMovimentoChiusura(userContext,pgChiusura,anno, tipoChiusura,dataRiferimentoMovimento);
+			component_invocation_succes(userContext,componentObj);
+
 		} catch(RuntimeException e) {
 			throw uncaughtRuntimeException(userContext,componentObj,e);
 		} catch(Error e) {

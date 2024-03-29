@@ -32,6 +32,7 @@ import it.cnr.jada.util.RemoteIterator;
 
 import javax.ejb.Remote;
 import java.rmi.RemoteException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +41,11 @@ public interface ChiusuraAnnoComponentSession extends it.cnr.jada.ejb.CRUDCompon
 
    List<ValoriLottoPerAnno> getValoriLottoPerAnno(UserContext userContext, Integer esercizio, Date dataFinePeriodo) throws RemoteException, ComponentException, PersistencyException;
 
-   ChiusuraAnnoBulk calcolaRimanenzeAnno(UserContext userContext, Integer esercizio, Date dataFinePeriodo) throws RemoteException, ComponentException, PersistencyException;
+   ChiusuraAnnoBulk calcolaRimanenzeAnno(UserContext userContext, Integer esercizio, Date dataFinePeriodo,String statoChiusura) throws RemoteException, ComponentException, PersistencyException;
 
    ChiusuraAnnoBulk verificaChiusuraAnno(UserContext userContext,Integer esercizio,String tipoChiusura) throws ComponentException, PersistencyException, RemoteException;
+
+   ChiusuraAnnoBulk salvaChiusuraDefinitiva(UserContext userContext,Integer esercizio,String tipoChiusura,Date dataFinePeriodo) throws RemoteException, ComponentException,PersistencyException, ParseException;
+
+   void annullaChiusuraDefinitiva(UserContext userContext,Integer esercizio,String tipoChiusura) throws RemoteException, ComponentException,PersistencyException, ParseException;
 }

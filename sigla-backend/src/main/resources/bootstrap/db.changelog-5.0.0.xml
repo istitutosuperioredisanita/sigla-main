@@ -6101,4 +6101,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <!-- Autore : CIRO SALVIO - Nuova Tabella chiusura inventario -->
     <include file="bootstrap/add_table_chiusura_anno_inventario.xml"/>
 
+    <!-- Autore : VALENTINA TOMADA - Modifica albero main per accesso a chiusura magazzino definitiva-->
+    <include file="bootstrap/mod_accesso_chiusura_magazzino_def.xml"/>
 </databaseChangeLog>
