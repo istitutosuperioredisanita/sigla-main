@@ -42,6 +42,17 @@ public class ChiusuraAnnoMagRimBulk extends ChiusuraAnnoMagRimBase {
 	public ChiusuraAnnoMagRimBulk() {
 		super();
 	}
+	public ChiusuraAnnoMagRimBulk(boolean create) {
+		super();
+		if(create){
+			lottoMag= new LottoMagBulk();
+			chiusuraAnno = new ChiusuraAnnoBulk();
+			raggrMagazzino = new RaggrMagazzinoBulk();
+			magazzino = new MagazzinoBulk();
+			categoriaGruppoInvent = new Categoria_gruppo_inventBulk();
+			beneServizio=new Bene_servizioBulk();
+		}
+	}
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: CHIUSURA_ANNO_MAG_RIM

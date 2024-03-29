@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="pgChiusura"
+		property="pgChiusura"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Progressivo record chiusura" />
+	<fieldProperty
+		name="anno"
+		property="anno"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Anno di chiusura" />
+	<fieldProperty
+		name="tipoChiusura"
+		property="tipoChiusura"
+		inputType="TEXT"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="M=Magazzino; I=Inventario" />
+	<fieldProperty
+		name="cdCategoriaGruppo"
+		property="cdCategoriaGruppo"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Codice categoria/gruppo" />
+	<fieldProperty
+		name="esercizioVoce"
+		property="esercizioVoce"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Esercizio voce" />
+	<fieldProperty
+		name="cdVoceEp"
+		property="cdVoceEp"
+		inputType="TEXT"
+		inputSize="20"
+		maxLength="20"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Codice Identificativo completo del conto del piano." />
+	<fieldProperty
+		name="cdTipoAmmortamento"
+		property="cdTipoAmmortamento"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Codice Tipo Ammortamento" />
+	<fieldProperty
+		name="tiAmmortamento"
+		property="tiAmmortamento"
+		inputType="TEXT"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Tipo Ammortamento" />
+	<fieldProperty
+		name="esercizioCompetenza"
+		property="esercizioCompetenza"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Esercizio Competenza" />
+	<fieldProperty
+		name="valoreAnnoPrec"
+		property="valoreAnnoPrec"
+		inputType="TEXT"
+		inputSize="12"
+		maxLength="12"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Valori riferiti all'anno precedente" />
+	<fieldProperty
+		name="valoreIncremento"
+		property="valoreIncremento"
+		inputType="TEXT"
+		inputSize="12"
+		maxLength="12"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Nuove acquisizioni e incremento valori bene" />
+	<fieldProperty
+		name="valoreDecremento"
+		property="valoreDecremento"
+		inputType="TEXT"
+		inputSize="12"
+		maxLength="12"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Dismissioni e decremento valori bene" />
+	<fieldProperty
+		name="quotaAmmortamento"
+		property="quotaAmmortamento"
+		inputType="TEXT"
+		inputSize="12"
+		maxLength="12"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Totale ammortamento per l'anno" />
+	<fieldProperty
+		name="totaleAmmortamentoAlienati"
+		property="totaleAmmortamentoAlienati"
+		inputType="TEXT"
+		inputSize="12"
+		maxLength="12"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Totale degli ammortamenti dei beni alienati nell'anno" />
+	<fieldProperty
+		name="quotaAmmortamentoAnnoPrec"
+		property="quotaAmmortamentoAnnoPrec"
+		inputType="TEXT"
+		inputSize="12"
+		maxLength="12"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Totale ammortamento anno precedente" />
+	<form
+		name="searchtool">
+		<formFieldProperty
+			name="pgChiusura" />
+		<formFieldProperty
+			name="anno" />
+		<formFieldProperty
+			name="tipoChiusura" />
+		<formFieldProperty
+			name="cdCategoriaGruppo" />
+	</form>
+	<formFieldProperty
+		name="pgChiusura" />
+	<formFieldProperty
+		name="anno" />
+	<formFieldProperty
+		name="tipoChiusura" />
+	<formFieldProperty
+		name="esercizioCompetenza" />
+	<formFieldProperty
+		name="valoreAnnoPrec" />
+	<formFieldProperty
+		name="valoreIncremento" />
+	<formFieldProperty
+		name="valoreDecremento" />
+	<formFieldProperty
+		name="quotaAmmortamento" />
+	<formFieldProperty
+		name="totaleAmmortamentoAlienati" />
+	<formFieldProperty
+		name="quotaAmmortamentoAnnoPrec" />
+	<findFieldProperty
+		name="pgChiusura" />
+	<findFieldProperty
+		name="anno" />
+	<findFieldProperty
+		name="tipoChiusura" />
+	<findFieldProperty
+		name="cdCategoriaGruppo" />
+	<findFieldProperty
+		name="esercizioVoce" />
+	<findFieldProperty
+		name="cdVoceEp" />
+	<findFieldProperty
+		name="cdTipoAmmortamento" />
+	<findFieldProperty
+		name="tiAmmortamento" />
+	<findFieldProperty
+		name="esercizioCompetenza" />
+	<findFieldProperty
+		name="valoreAnnoPrec" />
+	<findFieldProperty
+		name="valoreIncremento" />
+	<findFieldProperty
+		name="valoreDecremento" />
+	<findFieldProperty
+		name="quotaAmmortamento" />
+	<findFieldProperty
+		name="totaleAmmortamentoAlienati" />
+	<findFieldProperty
+		name="quotaAmmortamentoAnnoPrec" />
+	<columnFieldProperty
+		name="pgChiusura" />
+	<columnFieldProperty
+		name="anno" />
+	<columnFieldProperty
+		name="tipoChiusura" />
+	<columnFieldProperty
+		name="cdCategoriaGruppo" />
+	<columnFieldProperty
+		name="esercizioVoce" />
+	<columnFieldProperty
+		name="cdVoceEp" />
+	<columnFieldProperty
+		name="cdTipoAmmortamento" />
+	<columnFieldProperty
+		name="tiAmmortamento" />
+	<columnFieldProperty
+		name="esercizioCompetenza" />
+	<columnFieldProperty
+		name="valoreAnnoPrec" />
+	<columnFieldProperty
+		name="valoreIncremento" />
+	<columnFieldProperty
+		name="valoreDecremento" />
+	<columnFieldProperty
+		name="quotaAmmortamento" />
+	<columnFieldProperty
+		name="totaleAmmortamentoAlienati" />
+	<columnFieldProperty
+		name="quotaAmmortamentoAnnoPrec" />
+</bulkInfo>

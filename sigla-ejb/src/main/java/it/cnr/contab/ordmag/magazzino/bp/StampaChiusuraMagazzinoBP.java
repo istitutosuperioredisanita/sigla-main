@@ -17,6 +17,7 @@
 
 package it.cnr.contab.ordmag.magazzino.bp;
 
+import it.cnr.contab.compensi00.docs.bulk.EstrazioneINPSBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.ordmag.anag00.UnitaMisuraBulk;
@@ -27,6 +28,7 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
 import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.FillException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
@@ -44,7 +46,7 @@ import java.util.stream.Stream;
 
 public class StampaChiusuraMagazzinoBP extends ParametricPrintBP {
 	private static final long serialVersionUID = 1L;
-	private boolean effettuatoCalcolo;
+
 	private ChiusuraAnnoBulk chiusuraAnno;
 
 	public StampaChiusuraMagazzinoBP() {
@@ -53,8 +55,16 @@ public class StampaChiusuraMagazzinoBP extends ParametricPrintBP {
 
 	protected void init(it.cnr.jada.action.Config config,it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException {
 		try {
+			super.init(config, context);
+
 			setBulkClassName(config.getInitParameter("bulkClassName"));
 			setComponentSessioneName(config.getInitParameter("componentSessionName"));
+
+			if(this.getMapping().getConfig().getInitParameter("CHIUSURA_DEFINITIVA") == null) {
+				this.getBulkInfo().setShortDescription("Chiusura Magazzino Provvisoria");
+			}else{
+				this.getBulkInfo().setShortDescription("Chiusura Magazzino Definitiva");
+			}
 
 		} catch(ClassNotFoundException e) {
 			throw new RuntimeException("Non trovata la classe bulk");
@@ -69,30 +79,74 @@ public class StampaChiusuraMagazzinoBP extends ParametricPrintBP {
 
 	public Button[] createToolbar() {
 		Button[] baseToolbar = super.createToolbar();
-		Button[] toolbar = new Button[3];
+		Button[] toolbar = null;
+		if(this.getMapping().getConfig().getInitParameter("CHIUSURA_DEFINITIVA") == null) {
+			toolbar=new Button[3];
+		}else{
+			toolbar=new Button[5];
+		}
 		int i = 0;
 		for (Button button : baseToolbar) {
 			toolbar[i++] = button;
 		}
-		toolbar[i++] = new Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.calcolaRim");
+		if(this.getMapping().getConfig().getInitParameter("CHIUSURA_DEFINITIVA") == null) {
+			toolbar[i++] = new Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.calcolaRim");
+		}else{
+			toolbar[i++] = new Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.calcolaRimDef");
+			toolbar[i++] = new Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.chiusuraDef");
+			toolbar[i++] = new Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.undochiusuraDef");
+
+		}
 		return toolbar;
 	}
 
 	public boolean isPrintButtonHidden(){
-		return !effettuatoCalcolo;
+		// in fase provvisoria abilitato solo se esiste la chiusua anno, quindi almeno un calcolo effettuato
+		if(this.getMapping().getConfig().getInitParameter("CHIUSURA_DEFINITIVA") == null){
+			if(this.getChiusuraAnno() != null){
+				return false;
+			}
+			// in fase definitiva abilitato se esiste la chiusura in stato diverso da PROVVISORIO
+		}else{
+			if(this.getChiusuraAnno() != null && !this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PROVVISORIO)){
+				return false;
+			}
+		}
+		return true;
 	}
 	public boolean isCalcoloButtonHidden()
 	{
-		return false;
+		// bottone calcolo provvisorio abilitato solo se calcolo ancora non effettuto oppure stato chiusura uguale PROVVISORIO
+		if(this.getChiusuraAnno() == null || this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PROVVISORIO)){
+			return false;
+		}
+		return true;
+	}
+	public boolean isCalcoloDefinitivoButtonHidden(){
+
+		if(this.getChiusuraAnno() != null && this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PROVVISORIO)){
+			return false;
+		}
+		return true;
+	}
+	public boolean isChiusuraDefinitivaButtonHidden()
+	{
+		// bottone salvataggio definitivo abilitato solo se stato uguale PREDEFINITIVO
+		if(this.getChiusuraAnno() != null && this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PREDEFINITIVO)){
+			return false;
+		}
+		return true;
+	}
+	public boolean isAnnullaChiusuraDefinitivaButtonHidden()
+	{
+		// bottone di annulla definitivo abilitato solo se stato uguale DEFINITIVO
+		if(this.getChiusuraAnno() != null && this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_DEFINITIVO)){
+			return false;
+		}
+		return true;
 	}
 
-	public boolean isEffettuatoCalcolo() {
-		return effettuatoCalcolo;
-	}
 
-	public void setEffettuatoCalcolo(boolean effettuatoCalcolo) {
-		this.effettuatoCalcolo = effettuatoCalcolo;
-	}
 
 	public ChiusuraAnnoBulk getChiusuraAnno() {
 		return chiusuraAnno;

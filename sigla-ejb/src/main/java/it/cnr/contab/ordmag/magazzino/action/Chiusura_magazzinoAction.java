@@ -14,11 +14,13 @@ import it.cnr.contab.ordmag.magazzino.ejb.ChiusuraAnnoComponentSession;
 import it.cnr.contab.ordmag.magazzino.ejb.MovimentiMagComponentSession;
 import it.cnr.contab.reports.action.ParametricPrintAction;
 import it.cnr.contab.reports.bp.ParametricPrintBP;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.bulk.FillException;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.bulk.ValidationParseException;
 import it.cnr.jada.comp.ApplicationException;
@@ -28,6 +30,7 @@ import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.jada.util.action.OptionBP;
 
 import java.rmi.RemoteException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -35,17 +38,12 @@ public class Chiusura_magazzinoAction extends ParametricPrintAction {
 
 
 
-    @Override
-    public void init(Config config) {
-        super.init(config);
-
-    }
-
     public Forward doOnEsercizioChange(ActionContext actioncontext) throws FillException, ApplicationException {
         StampaChiusuraMagazzinoBP bp= (StampaChiusuraMagazzinoBP) actioncontext.getBusinessProcess();
         Chiusura_magazzinoBulk model=(Chiusura_magazzinoBulk)bp.getModel();
         fillModel(actioncontext);
         try {
+
 
             if(model.getEsercizio() == null){
                 model.setDataInventario(null);
@@ -60,16 +58,29 @@ public class Chiusura_magazzinoAction extends ParametricPrintAction {
 
                 model.setDataChiusuraMovimento(new java.sql.Timestamp(sdf.parse("01/01/"+annoChiusura).getTime()));
 
-                ChiusuraAnnoComponentSession chiusuraAnnoComponent = (ChiusuraAnnoComponentSession) bp.createComponentSession(
-                        "CNRORDMAG00_EJB_ChiusuraAnnoComponentSession", ChiusuraAnnoComponentSession.class);
-
                 bp.setChiusuraAnno(this.verificaChiusuraAnno(actioncontext, model.getEsercizio()));
+
+                // se presenti dati di chiusura abilita campi per filtri stampa
                 if(bp.getChiusuraAnno()!=null){
-                    bp.setEffettuatoCalcolo(true);
                     model.setNascondiCampiStampa(false);
                 }else{
-                    bp.setEffettuatoCalcolo(false);
                     model.setNascondiCampiStampa(true);
+                }
+                // gestione disabilitazione campi in fase DEFINITIVA
+                if(bp.getMapping().getConfig().getInitParameter("CHIUSURA_DEFINITIVA") != null) {
+                    // nella funzione definitiva sarà possibile stampare solo dopo aver fatto i calcoli definitivi quindi stato PREDEFINITIVO
+                    if(bp.getChiusuraAnno() != null && bp.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PROVVISORIO)){
+                        model.setNascondiCampiStampa(true);
+                    }
+                    model.setBloccaCampiCalcoloDefinitivo(true);
+                }else {
+                    // nella funzione provvisoria sarà possibile modificare i campi del calcolo solo in stato provvisorio altrimenti devono essere
+                    // readonly (es. data fine periodo)
+                    if(bp.getChiusuraAnno() != null && !bp.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PROVVISORIO)){
+                        model.setBloccaCampiCalcoloDefinitivo(true);
+                    }else {
+                        model.setBloccaCampiCalcoloDefinitivo(false);
+                    }
                 }
 
             }
@@ -109,25 +120,11 @@ public class Chiusura_magazzinoAction extends ParametricPrintAction {
             return handleException(actioncontext, e);
         }
     }
-    public Forward doOnTi_operazioneChange(ActionContext actioncontext) throws FillException {
-        ParametricPrintBP bp= (ParametricPrintBP) actioncontext.getBusinessProcess();
-        Chiusura_magazzinoBulk model=(Chiusura_magazzinoBulk)bp.getModel();
-        fillModel(actioncontext);
-        try {
-            if(model.getTi_operazione().equals(Chiusura_magazzinoBulk.CALCOLO_RIMANENZE)){
-                model.setCalcoloRimanenze(true);
-                model.setTi_valorizzazione(null);
-            }else{
-                model.setCalcoloRimanenze(false);
-            }
-            return actioncontext.findDefaultForward();
-        } catch (Throwable e) {
-            return handleException(actioncontext, e);
-        }
-    }
+
     protected ParametricPrintBP getBusinessProcess(ActionContext actioncontext) {
         return (ParametricPrintBP)actioncontext.getBusinessProcess();
     }
+
     public Forward doCalcolaRimanenze(ActionContext context) {
         try {
             fillModel(context);
@@ -142,6 +139,23 @@ public class Chiusura_magazzinoAction extends ParametricPrintAction {
             return handleException(context,e);
         }
     }
+
+
+    public Forward doChiusuraDefinitiva(ActionContext context) {
+        try {
+            fillModel(context);
+            StampaChiusuraMagazzinoBP stampaChiusuraBP = (StampaChiusuraMagazzinoBP) getBusinessProcess(context);
+
+            if(stampaChiusuraBP.getChiusuraAnno() != null) {
+                return openConfirm(context, "Si avvia la chiusura dei magazzini dell'anno contabile selezionato. Procedere?", OptionBP.CONFIRM_YES_NO, "doConfirmChiusuraDefinitiva");
+            }else{
+                return doConfirmChiusuraDefinitiva(context,OptionBP.YES_BUTTON);
+            }
+        } catch(Exception e) {
+            return handleException(context,e);
+        }
+    }
+
     public Forward doOnRaggrReportChange(ActionContext actioncontext) throws FillException{
         ParametricPrintBP bp= (ParametricPrintBP) actioncontext.getBusinessProcess();
         Chiusura_magazzinoBulk model=(Chiusura_magazzinoBulk)bp.getModel();
@@ -159,7 +173,8 @@ public class Chiusura_magazzinoAction extends ParametricPrintAction {
             return handleException(actioncontext, e);
         }
     }
-    public Forward doConfirmCalcolaRimanenze(ActionContext context,int i) throws BusinessProcessException, FillException, ComponentException, PersistencyException, RemoteException, ValidationException {
+
+    public Forward doConfirmChiusuraDefinitiva(ActionContext context,int i) throws BusinessProcessException, FillException, ComponentException, PersistencyException, RemoteException,ValidationException {
 
         if(i == OptionBP.YES_BUTTON) {
 
@@ -168,20 +183,115 @@ public class Chiusura_magazzinoAction extends ParametricPrintAction {
                 Chiusura_magazzinoBulk model = (Chiusura_magazzinoBulk) stampaChiusuraBP.getModel();
                 fillModel(context);
 
-                validaModelPerCalcoloRimanenze(model);
+                if(model.getEsercizio() == null){
+                    throw new it.cnr.jada.bulk.ValidationException("Impostare prima l'esercizio");
+                }
+
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+                model.setDataInventario(new java.sql.Timestamp(sdf.parse("31/12/"+model.getEsercizio()).getTime()));
+
                 ChiusuraAnnoComponentSession chiusuraAnnoComponent = (ChiusuraAnnoComponentSession) stampaChiusuraBP.createComponentSession(
                         "CNRORDMAG00_EJB_ChiusuraAnnoComponentSession", ChiusuraAnnoComponentSession.class);
 
-                ChiusuraAnnoBulk chiusuraAnnoBulk = chiusuraAnnoComponent.calcolaRimanenzeAnno(context.getUserContext(), model.getEsercizio(), model.getDataInventario());
+                ChiusuraAnnoBulk chiusuraAnnoBulk = chiusuraAnnoComponent.salvaChiusuraDefinitiva(context.getUserContext(), model.getEsercizio(),ChiusuraAnnoBulk.TIPO_CHIUSURA_MAGAZZINO,model.getDataInventario());
 
-                stampaChiusuraBP.setEffettuatoCalcolo(true);
+                model.setBloccaCampiCalcoloDefinitivo(true);
                 model.setNascondiCampiStampa(false);
+
                 stampaChiusuraBP.setChiusuraAnno(chiusuraAnnoBulk);
+
+            } catch ( ParseException e) {
+                stampaChiusuraBP.setErrorMessage(e.getMessage());
+            }
+        }
+        return context.findDefaultForward();
+    }
+
+    public Forward doAnnullaChiusuraDefinitiva(ActionContext context){
+        try {
+            fillModel(context);
+            StampaChiusuraMagazzinoBP stampaChiusuraBP = (StampaChiusuraMagazzinoBP) getBusinessProcess(context);
+
+            if(stampaChiusuraBP.getChiusuraAnno() != null) {
+                return openConfirm(context, "Attenzione!Verrà annullata completamente la chiusura magazzino precedentemente effettuata.Procedere?", OptionBP.CONFIRM_YES_NO, "doConfirmAnnullaChiusuraDefinitiva");
+            }else{
+                return doConfirmAnnullaChiusuraDefinitiva(context,OptionBP.YES_BUTTON);
+            }
+        } catch(Exception e) {
+            return handleException(context,e);
+        }
+
+    }
+    public Forward doConfirmAnnullaChiusuraDefinitiva(ActionContext context,int i) {
+
+        if(i == OptionBP.YES_BUTTON) {
+
+            StampaChiusuraMagazzinoBP stampaChiusuraBP = (StampaChiusuraMagazzinoBP) getBusinessProcess(context);
+            try {
+                Chiusura_magazzinoBulk model = (Chiusura_magazzinoBulk) stampaChiusuraBP.getModel();
+                fillModel(context);
+
+                if(model.getEsercizio() == null){
+                    throw new it.cnr.jada.bulk.ValidationException("Impostare prima l'esercizio");
+                }
+
+
+                ChiusuraAnnoComponentSession chiusuraAnnoComponent = (ChiusuraAnnoComponentSession) stampaChiusuraBP.createComponentSession(
+                        "CNRORDMAG00_EJB_ChiusuraAnnoComponentSession", ChiusuraAnnoComponentSession.class);
+
+                chiusuraAnnoComponent.annullaChiusuraDefinitiva(context.getUserContext(), model.getEsercizio(),ChiusuraAnnoBulk.TIPO_CHIUSURA_MAGAZZINO);
+
+                model.setBloccaCampiCalcoloDefinitivo(true);
+                model.setNascondiCampiStampa(true);
+
+                stampaChiusuraBP.setChiusuraAnno(null);
+
+            } catch (ParseException | FillException | ValidationException | BusinessProcessException e) {
+                stampaChiusuraBP.setErrorMessage(e.getMessage());
+            } catch (ComponentException e) {
+                e.printStackTrace();
+            } catch (PersistencyException e) {
+                e.printStackTrace();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return context.findDefaultForward();
+    }
+
+
+    public Forward doConfirmCalcolaRimanenze(ActionContext context,int i) throws BusinessProcessException, FillException, ComponentException, PersistencyException, RemoteException, ValidationException {
+
+       if(i == OptionBP.YES_BUTTON) {
+
+            StampaChiusuraMagazzinoBP stampaChiusuraBP = (StampaChiusuraMagazzinoBP) getBusinessProcess(context);
+
+            try {
+                Chiusura_magazzinoBulk model = (Chiusura_magazzinoBulk) stampaChiusuraBP.getModel();
+                fillModel(context);
+
+                calcolaRimanenzeAnno(context.getUserContext(),stampaChiusuraBP,model);
             } catch (ValidationException e) {
                 stampaChiusuraBP.setErrorMessage(e.getMessage());
             }
         }
         return context.findDefaultForward();
+    }
+    private void calcolaRimanenzeAnno(UserContext userContext,StampaChiusuraMagazzinoBP stampaChiusuraBP,Chiusura_magazzinoBulk model) throws ValidationException, ComponentException, BusinessProcessException, PersistencyException, RemoteException {
+        String statoChiusura=ChiusuraAnnoBulk.STATO_CHIUSURA_PROVVISORIO;
+
+        if(stampaChiusuraBP.getMapping().getConfig().getInitParameter("CHIUSURA_DEFINITIVA") != null){
+            statoChiusura = ChiusuraAnnoBulk.STATO_CHIUSURA_PREDEFINITIVO;
+        }
+
+        validaModelPerCalcoloRimanenze(model);
+        ChiusuraAnnoComponentSession chiusuraAnnoComponent = (ChiusuraAnnoComponentSession) stampaChiusuraBP.createComponentSession(
+                "CNRORDMAG00_EJB_ChiusuraAnnoComponentSession", ChiusuraAnnoComponentSession.class);
+
+        ChiusuraAnnoBulk chiusuraAnnoBulk = chiusuraAnnoComponent.calcolaRimanenzeAnno(userContext, model.getEsercizio(), model.getDataInventario(),statoChiusura);
+
+        model.setNascondiCampiStampa(false);
+        stampaChiusuraBP.setChiusuraAnno(chiusuraAnnoBulk);
     }
 
     private void validaModelPerCalcoloRimanenze(Chiusura_magazzinoBulk model) throws ValidationException, ApplicationException {
@@ -211,22 +321,65 @@ public class Chiusura_magazzinoAction extends ParametricPrintAction {
                 "CNRORDMAG00_EJB_ChiusuraAnnoComponentSession", ChiusuraAnnoComponentSession.class);
 
         return chiusuraAnnoComponent.verificaChiusuraAnno(ac.getUserContext(), esercizio, ChiusuraAnnoBulk.TIPO_CHIUSURA_MAGAZZINO);
-
     }
 
     public Forward doPrint(ActionContext context) {
 
-        StampaChiusuraMagazzinoBP stampaChiusuraBP = (StampaChiusuraMagazzinoBP)getBusinessProcess(context);
+        return super.doPrint(context);
 
-        if(stampaChiusuraBP.isEffettuatoCalcolo()) {
+    }
+    public Forward doCalcolaRimanenzeDefinitive(ActionContext context) {
+        try {
+            fillModel(context);
+            StampaChiusuraMagazzinoBP stampaChiusuraBP = (StampaChiusuraMagazzinoBP) getBusinessProcess(context);
 
-            Forward forward = super.doPrint(context);
-            return forward;
-        }else{
-            stampaChiusuraBP.setErrorMessage("Prima della stampa è necessario effettuare il calcolo delle rimanenze!");
+            if(stampaChiusuraBP.getChiusuraAnno() != null) {
+                return openConfirm(context, "Attenzione!Calcolo delle rimanenze definitivo, non sarà più possibile effettuare nuovi calcoli.Procedere?", OptionBP.CONFIRM_YES_NO, "doConfirmCalcolaRimanenzeDefinitiveConfirm");
+            }else{
+                return doConfirmCalcolaRimanenzeDefinitiveConfirm(context,OptionBP.YES_BUTTON);
+            }
+        } catch(Exception e) {
+            return handleException(context,e);
         }
-        return null;
     }
 
 
+    public Forward doConfirmCalcolaRimanenzeDefinitiveConfirm(ActionContext context,int i) {
+        if(i == OptionBP.YES_BUTTON) {
+            StampaChiusuraMagazzinoBP stampaChiusuraBP = (StampaChiusuraMagazzinoBP) getBusinessProcess(context);
+            Chiusura_magazzinoBulk model = (Chiusura_magazzinoBulk) stampaChiusuraBP.getModel();
+
+            try {
+                fillModel(context);
+                if (stampaChiusuraBP.getMapping().getConfig().getInitParameter("CHIUSURA_DEFINITIVA") != null) {
+
+                    ChiusuraAnnoComponentSession chiusuraAnnoComponent = (ChiusuraAnnoComponentSession) stampaChiusuraBP.createComponentSession(
+                            "CNRORDMAG00_EJB_ChiusuraAnnoComponentSession", ChiusuraAnnoComponentSession.class);
+
+                    ChiusuraAnnoBulk chiusuraAnno = chiusuraAnnoComponent.verificaChiusuraAnno(context.getUserContext(), model.getEsercizio(), ChiusuraAnnoBulk.TIPO_CHIUSURA_MAGAZZINO);
+
+                    if (chiusuraAnno.getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PROVVISORIO)) {
+                        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+                        model.setDataInventario(new java.sql.Timestamp(sdf.parse("31/12/" + model.getEsercizio()).getTime()));
+
+                        calcolaRimanenzeAnno(context.getUserContext(), stampaChiusuraBP, model);
+                    }
+                    model.setBloccaCampiCalcoloDefinitivo(true);
+                }
+            } catch (FillException | BusinessProcessException e) {
+                e.printStackTrace();
+            } catch (ValidationException e) {
+                e.printStackTrace();
+            } catch (ComponentException e) {
+                e.printStackTrace();
+            } catch (PersistencyException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return context.findDefaultForward();
+    }
 }

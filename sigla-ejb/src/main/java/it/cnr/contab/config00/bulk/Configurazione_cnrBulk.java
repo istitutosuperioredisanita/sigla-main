@@ -196,6 +196,7 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     public final static String SK_IVA_CREDITO = "IVA_CREDITO";
     public final static String SK_IVA_DEBITO = "IVA_DEBITO";
     public final static String SK_ERARIO_C_IVA = "ERARIO_C_IVA";
+    public final static String SK_ACCONTO_ANTICIPO_DOCATT = "ACCONTO_ANTICIPO_DOCATT";
     public final static String SK_CREDITO_DEBITO_ANTICIPO = "CREDITO_DEBITO_ANTICIPO";
     public final static String SK_CREDITO_DEBITO_ECONOMO = "CREDITO_DEBITO_ECONOMO";
     public final static String SK_CREDITO_DEBITO_DEFAULT = "CREDITO_DEBITO_DEFAULT";

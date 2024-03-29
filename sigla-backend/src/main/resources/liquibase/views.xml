@@ -3057,4 +3057,7 @@
     <changeSet author="marco.spasiano" runOnChange="true" id="create-view-V_PARTITARIO">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_PARTITARIO.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="ciro.salvio" runOnChange="true" id="create-view-V_INVENTARIO_BENE_DET">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_INVENTARIO_BENE_DET.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
 </databaseChangeLog>

@@ -22,6 +22,7 @@ import it.cnr.contab.docamm00.tabrif.bulk.*;
 import it.cnr.contab.inventario00.docs.bulk.Transito_beni_ordiniBulk;
 import it.cnr.contab.ordmag.anag00.*;
 import it.cnr.contab.ordmag.magazzino.bulk.*;
+import it.cnr.contab.ordmag.magazzino.dto.ValoriChiusuraMagRim;
 import it.cnr.contab.ordmag.ordini.bulk.*;
 
 import it.cnr.contab.ordmag.ordini.dto.ImportoOrdine;
@@ -38,10 +39,7 @@ import it.cnr.jada.bulk.*;
 import it.cnr.jada.comp.*;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.PersistentHome;
-import it.cnr.jada.persistency.sql.SQLBuilder;
+import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.DateUtils;
 import it.cnr.jada.util.RemoteIterator;
 
@@ -49,7 +47,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.rmi.RemoteException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -59,6 +61,131 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 
 	public final static String TIPO_TOTALE_COMPLETO = "C";
     public final static String TIPO_TOTALE_PARZIALE = "P";
+
+    private final static String statmentCreazioneMovimentoChiusuraMagazzino ="( " +
+			" PG_MOVIMENTO, "+
+			" DT_MOVIMENTO, "+
+			" CD_CDS_TIPO_MOVIMENTO, "+
+			" CD_TIPO_MOVIMENTO, "+
+			" DATA_BOLLA, "+
+			" NUMERO_BOLLA, "+
+			" DT_RIFERIMENTO, "+
+			" CD_TERZO, "+
+			" CD_UNITA_MISURA, "+
+			" QUANTITA, "+
+			" COEFF_CONV, "+
+			" CD_UOP, "+
+			" DT_SCADENZA, "+
+			" LOTTO_FORNITORE, "+
+			" CD_CDS_LOTTO, "+
+			" CD_MAGAZZINO_LOTTO, "+
+			" ESERCIZIO_LOTTO, "+
+			" CD_NUMERATORE_LOTTO, "+
+			" PG_LOTTO, "+
+			" SCONTO1, "+
+			" SCONTO2, "+
+			" SCONTO3, "+
+			" CD_CDS_BOLLA_SCA, "+
+			" CD_MAGAZZINO_BOLLA_SCA, "+
+			" ESERCIZIO_BOLLA_SCA, "+
+			" CD_NUMERATORE_BOLLA_SCA, "+
+			" PG_BOLLA_SCA, "+
+			" IMPORTO, "+
+			" IMPORTO_CEFF, "+
+			" IMPORTO_CMP, "+
+			" IMPORTO_FIFO, "+
+			" IMPORTO_LIFO, "+
+			" IMPORTO_CMPP, "+
+			" IMPORTO_CMPIST, "+
+			" CD_DIVISA, "+
+			" CAMBIO, "+
+			" PREZZO_UNITARIO, "+
+			" STATO, "+
+			" DT_CANCELLAZIONE, "+
+			" DACR, "+
+			" UTCR, "+
+			" DUVA, "+
+			" UTUV, "+
+			" PG_VER_REC, "+
+			" PG_MOVIMENTO_RIF, "+
+			" PG_MOVIMENTO_ANN, "+
+			" CD_VOCE_IVA, "+
+			" IM_IVA ) "+
+			" SELECT "+
+			" CNRSEQ00_MOVIMENTI_MAG.NEXTVAL, "+
+			" SYSDATE, "+
+			" c.CD_CDS_LOTTO, "+
+			" ?, "+
+			" null, "+
+			" null, "+
+			" ?, "+
+			" l.CD_TERZO, " +
+			" c.UNITA_MISURA, " +
+			" c.GIACENZA, " +
+			" 1, "+
+			" m.CD_UNITA_OPERATIVA," +
+			" null, "+
+			" null, "+
+			" c.CD_CDS_LOTTO, "+
+			" c.CD_MAGAZZINO_LOTTO,  " +
+			" c.ESERCIZIO_LOTTO, " +
+			" c.CD_NUMERATORE_LOTTO, " +
+			" c.PG_LOTTO, " +
+			" null, "+
+			" null, "+
+			" null, "+
+			" null, "+
+			" null, "+
+			" null, "+
+			" null, "+
+			" null, "+
+			" null, "+
+			" null, "+
+			" null, "+
+			" null, "+
+			" null, "+
+			" null, "+
+			" null, "+
+			" l.CD_DIVISA, " +
+			" l.CAMBIO, " +
+			" c.IMPORTO_CMPP_ART, " +
+			" ?, "+
+			" null, "+
+			" SYSDATE, "+
+			" ?, "+
+			" SYSDATE, "+
+			" ?, "+
+			" 1, "+
+			" null, "+
+			" null, "+
+			" l.CD_VOCE_IVA, " +
+			" null " +
+			" FROM  " +
+			" DUAL CNRSEQ00_MOVIMENTI_MAG, "+
+			" CHIUSURA_ANNO_MAG_RIM c " +
+			"        inner join MAGAZZINO m on c.CD_MAGAZZINO=m.CD_MAGAZZINO and c.CD_CDS_MAG=m.CD_CDS " +
+			"        inner join LOTTO_MAG l on c.CD_CDS_LOTTO = l.cd_cds and c.CD_MAGAZZINO_LOTTO=l.cd_magazzino " +
+			"								and c.ESERCIZIO_LOTTO=l.esercizio and c.CD_NUMERATORE_LOTTO=l.cd_numeratore_mag " +
+			"                               and c.PG_LOTTO=l.pg_lotto " +
+			"  WHERE  " +
+			"  ( c.PG_CHIUSURA = ? ) AND  " +
+			"  ( c.ANNO = ? ) AND " +
+			"  ( c.TIPO_CHIUSURA = ? ) ";
+
+    private final static String statmentUpdateLottoPerMovimentoChiusura= "" +
+			" MERGE into LOTTO_MAG c USING MOVIMENTI_MAG m "+
+				" ON (m.ESERCIZIO_LOTTO=c.ESERCIZIO and m.PG_LOTTO=c.PG_LOTTO and m.CD_MAGAZZINO_LOTTO = c.CD_MAGAZZINO and "+
+				"	  m.CD_CDS_LOTTO = c.CD_CDS and m.CD_NUMERATORE_LOTTO=c.CD_NUMERATORE_MAG) "+
+			    " WHEN MATCHED THEN UPDATE SET c.QUANTITA_INIZIO_ANNO = m.QUANTITA " +
+			    " WHERE m.CD_TIPO_MOVIMENTO = 'CHI' and  m.DT_RIFERIMENTO= ? " ;
+
+	private final static String statmentUpdateLottoPerAnnullaMovimentoChiusura= "" +
+			" MERGE into LOTTO_MAG c USING MOVIMENTI_MAG m "+
+			" ON (m.ESERCIZIO_LOTTO=c.ESERCIZIO and m.PG_LOTTO=c.PG_LOTTO and m.CD_MAGAZZINO_LOTTO = c.CD_MAGAZZINO and "+
+			"	  m.CD_CDS_LOTTO = c.CD_CDS and m.CD_NUMERATORE_LOTTO=c.CD_NUMERATORE_MAG) "+
+			" WHEN MATCHED THEN UPDATE SET c.QUANTITA_INIZIO_ANNO = 0 " +
+			" WHERE m.CD_TIPO_MOVIMENTO = 'CHI' and  m.DT_RIFERIMENTO= ? " ;
+
 
     private MovimentiMagBulk createMovimentoMagazzino(UserContext userContext,
 													  UnitaOperativaOrdBulk unitaOperativa, MagazzinoBulk magazzino, TipoMovimentoMagBulk tipoMovimento,
@@ -182,6 +309,8 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 		lotto.setToBeCreated();
     	return lotto;
     }
+
+
 
     /**
      * Effetta operazione di carico e/o scarico magazzino a fronte di ordine
@@ -339,6 +468,153 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 		return (MovimentiMagBulk) creaConBulk(userContext, movimentoMag);
 	}
 
+	public void creaMovimentoChiusura(UserContext userContext, Integer pgChiusura, Integer anno, String tipoChiusura, java.sql.Timestamp dataRiferimentoMovimento) throws ComponentException, SQLException {
+
+    	try{
+			Connection c =  getConnection( userContext);
+
+			MovimentiMagHome homeMag = (MovimentiMagHome)getHome(userContext, MovimentiMagBulk.class);
+
+			LoggableStatement psInsert =new LoggableStatement(c,
+					"INSERT  INTO " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() + "MOVIMENTI_MAG " +
+					statmentCreazioneMovimentoChiusuraMagazzino	 ,
+					true,this.getClass());
+			try
+			{
+				//ps.setLong( 1, homeMag.recuperoProgressivoMovimento(userContext));
+				psInsert.setString( 1, TipoMovimentoMagBulk.TIPO_MOVIMENTO_CHIUSURA);
+				psInsert.setTimestamp( 2, dataRiferimentoMovimento);
+				psInsert.setString( 3,MovimentiMagBulk.STATO_INSERITO);
+				psInsert.setString( 4, userContext.getUser());
+				psInsert.setString( 5, userContext.getUser());
+				psInsert.setInt(6, pgChiusura);
+				psInsert.setInt(7, anno);
+				psInsert.setString(8, tipoChiusura);
+				psInsert.executeUpdate();
+
+				LoggableStatement psUpdate = new LoggableStatement(c,
+											statmentUpdateLottoPerMovimentoChiusura,
+											true, this.getClass());
+				try {
+
+					psUpdate.setTimestamp(1, dataRiferimentoMovimento);
+					psUpdate.executeQuery();
+
+				} catch (SQLException e) {
+					throw new PersistencyException(e);
+				}
+				finally
+				{
+					try {
+							if (psInsert != null)
+								psInsert.close();
+							if (psUpdate != null)
+								psUpdate.close();
+						}
+						catch (java.sql.SQLException e) {
+						}
+				}
+			}
+			finally
+			{
+				try{
+					if (psInsert != null)
+						psInsert.close();
+
+				}catch( java.sql.SQLException e ){};
+			}
+
+		}
+		catch (Exception e )
+		{
+			throw handleException( e );
+		}
+
+	}
+
+	public void eliminaMovimentoChiusura(UserContext userContext, Integer pgChiusura, Integer anno, String tipoChiusura, Timestamp dataRiferimentoMovimento) throws RemoteException, ComponentException {
+		try {
+			Connection c =  getConnection( userContext);
+
+			// annullo la quantita di inizio anno impostata dai movimenti di chiusura
+			LoggableStatement psUpdate = new LoggableStatement(c,
+					statmentUpdateLottoPerAnnullaMovimentoChiusura,
+					true, this.getClass());
+			try {
+
+				psUpdate.setTimestamp(1, dataRiferimentoMovimento);
+				psUpdate.executeQuery();
+
+				// aggiorno la quantita inziio anno ai lotti con un precedente movimenti di chiusura
+				LoggableStatement psUpdate2 = new LoggableStatement(c,
+						statmentUpdateLottoPerMovimentoChiusura,
+						true, this.getClass());
+				try {
+
+					java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+					java.sql.Timestamp dataRifMovChi = (new java.sql.Timestamp(sdf.parse("01/01/"+anno).getTime()));
+
+
+					psUpdate2.setTimestamp(1, dataRifMovChi);
+					psUpdate2.executeQuery();
+
+					LoggableStatement psDel = new LoggableStatement(
+							c, "DELETE FROM "
+							+ it.cnr.jada.util.ejb.EJBCommonServices
+							.getDefaultSchema() + "MOVIMENTI_MAG "
+							+ "WHERE CD_TIPO_MOVIMENTO = 'CHI'  AND DT_RIFERIMENTO = ? ", true, this.getClass());
+
+					try {
+						psDel.setTimestamp(1, dataRiferimentoMovimento);
+						psDel.executeUpdate();
+					} catch (SQLException e) {
+						throw new PersistencyException(e);
+					}finally
+					{
+						try {
+							if (psDel != null)
+								psDel.close();
+							if (psUpdate2 != null)
+								psUpdate2.close();
+							if (psUpdate != null)
+								psUpdate.close();
+						}
+						catch (java.sql.SQLException e) {
+						}
+					}
+
+				} catch (SQLException e) {
+					throw new PersistencyException(e);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				} finally
+				{
+					try {
+
+						if (psUpdate2 != null)
+							psUpdate2.close();
+						if (psUpdate != null)
+							psUpdate.close();
+					}
+					catch (java.sql.SQLException e) {
+					}
+				}
+			}
+			catch (java.sql.SQLException e) {
+
+			} finally {
+				try {
+
+					if (psUpdate != null)
+						psUpdate.close();
+				} catch (java.sql.SQLException e) {
+				}
+			}
+
+		} catch (SQLException | PersistencyException e) {
+			throw handleException(e);
+		}
+	}
 	private MovimentiMagBulk creaCarico(UserContext userContext, MovimentiMagBulk movimentoCaricoMag)
 			throws ComponentException, PersistencyException {
 		//creo il lotto di magazzino a partire dal movimento di carico

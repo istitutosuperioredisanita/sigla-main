@@ -55,6 +55,16 @@ public class ChiusuraAnnoHome extends BulkHome {
 		List <ChiusuraAnnoBulk> l =  this.fetchAll(sql);
 		return l.stream().findFirst().orElse(null);
 	}
+	public ChiusuraAnnoBulk getStatoChiusuraAnno(Integer anno, String tipoChiusura) throws PersistencyException
+	{
+		SQLBuilder sql = this.createSQLBuilder();
+
+		sql.addClause(FindClause.AND, "anno", SQLBuilder.EQUALS, anno);
+		sql.addClause(FindClause.AND, "tipoChiusura", SQLBuilder.EQUALS, tipoChiusura);
+
+		List <ChiusuraAnnoBulk> l =  this.fetchAll(sql);
+		return l.stream().findFirst().orElse(null);
+	}
 
 
 }

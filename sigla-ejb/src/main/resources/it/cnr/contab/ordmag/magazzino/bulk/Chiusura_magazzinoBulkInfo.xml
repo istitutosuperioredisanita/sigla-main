@@ -45,6 +45,7 @@
 			formatName="date_short"
 			nullable="false"
 			command="doOnDataInventarioChange"
+			readonlyProperty="bloccaCampiCalcoloDefinitivo"
 			label="Data Fine Periodo"/>
 	<fieldProperty
 			name="dataInventarioInizio"
@@ -150,7 +151,7 @@
 			property="cdRaggrMagazzinoForPrint"/>
 	<fieldProperty
 			name="cdCdsRaggrMagazzinoForPrint"
-			property="cdRaggrMagazzinoForPrint"/>
+			property="cdCdsRaggrMagazzinoForPrint"/>
 	<fieldProperty
 			name="cdTipoOperazioneForPrint"
 			property="cdTipoOperazioneForPrint"/>
