@@ -108,8 +108,8 @@ docker run -p 8080:8080  -e THORNTAIL_PROJECT_STAGE="demo-h2" -ti consiglionazio
 ```
 git clone git@github.com:consiglionazionaledellericerche/sigla-main.git
 cd sigla-main
-docker run -d --name sigla-oracle -v $PWD/sigla-backend/initdb-oracle:/etc/entrypoint-initdb.d orangehrm/oracle-xe-11g
-docker run -p 8080:8080 --link sigla-oracle:db -e LC_ALL="it_IT.UTF-8" -e LANG="it_IT.UTF-8" -e LANGUAGE="it_IT:it" -e THORNTAIL_DATASOURCES_DATA-SOURCES_SIGLA_CONNECTION-URL="jdbc:oracle:thin:@db:1521:xe" -e THORNTAIL_PROJECT_STAGE="demo-oracle" -ti consiglionazionalericerche/sigla-main:release
+docker run -d --name sigla-oracle -v $PWD/sigla-backend/initdb-oracle:/opt/oracle/scripts/startup/ container-registry.oracle.com/database/express:21.3.0-xe
+docker run -p 8080:8080 --link sigla-oracle:db -e LC_ALL="it_IT.UTF-8" -e LANG="it_IT.UTF-8" -e LANGUAGE="it_IT:it" -e THORNTAIL_DATASOURCES_DATA-SOURCES_SIGLA_CONNECTION-URL="jdbc:oracle:thin:@db:1521/XEPDB1" -e THORNTAIL_PROJECT_STAGE="demo-oracle" -ti consiglionazionalericerche/sigla-main:release
 ```
 #### _Per avviare una istanza di SIGLA con postgres locale_
 ```
