@@ -55,6 +55,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.pdfbox.cos.COSBase;
+import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.cos.COSString;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -163,6 +165,7 @@ public class FirmaDigitaleDOC1210BP extends AbstractFirmaDigitaleDocContBP {
 
 	private PDField valorizzaField(PDAcroForm pdAcroForm, String fieldName, String fieldValue, boolean autosize) throws IOException, ApplicationException {
         PDField field = pdAcroForm.getField(fieldName);
+
         if (field != null) {
             if (field instanceof PDCheckBox) {
                 if (Boolean.valueOf(fieldValue))
@@ -170,6 +173,7 @@ public class FirmaDigitaleDOC1210BP extends AbstractFirmaDigitaleDocContBP {
                 else
                     ((PDCheckBox)field).unCheck();
             } else {
+				field.getAcroForm().setNeedAppearances(Boolean.TRUE);
                 field.setValue(
                         Optional.ofNullable(fieldValue)
 							.map(s -> s.replace("\r", " "))
@@ -178,11 +182,14 @@ public class FirmaDigitaleDOC1210BP extends AbstractFirmaDigitaleDocContBP {
 								"Predisposizione non possibile. Il valore del campo [{0}] non può essere nullo!", fieldName
 							)));
 				if (autosize) {
+					//{COSName@31542} "COSName{DA}" -> {COSString@31543} "COSString{/TitilliumWeb 12 Tf 0 g}"
+					//{COSName@33368} "COSName{DA}" -> {COSString@33481} "COSString{/LiberationSans 12 Tf 0 g}"
+					///Helv 0 Tf 0 0 0 rg
 					Optional.ofNullable(field)
 						.filter(PDTextField.class::isInstance)
 						.map(PDTextField.class::cast)
 						.ifPresent(pdTextField -> {
-							pdTextField.setDefaultAppearance("/Helv 0 Tf 0 0 0 rg");
+							pdTextField.setDefaultAppearance("/TitilliumWeb 12 Tf 0 rg");
 						});
 				}
             }
@@ -202,6 +209,9 @@ public class FirmaDigitaleDOC1210BP extends AbstractFirmaDigitaleDocContBP {
 
 		List<PDField> fields = new ArrayList<PDField>();
 		try {
+
+			COSBase dic = pdAcroForm.getCOSObject().getItem(COSName.DR);
+
 			// DA GESTIRE!!!! - Se va editata o impostata fissa
 			fields.add(valorizzaField(pdAcroForm, "FILIALE ISS", "", false));
 			// DA GESTIRE!!!! Inserire nel form la scelta fra Bonifico ed Assegno
