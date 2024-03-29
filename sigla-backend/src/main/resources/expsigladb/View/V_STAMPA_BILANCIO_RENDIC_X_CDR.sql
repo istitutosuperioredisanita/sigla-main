@@ -285,13 +285,7 @@
                             a.esercizio_res, 0,
                               NVL (a.stanziamento_iniziale, 0)
                             + NVL (a.importo_ini_residui_propri, 0)
-                            - (SELECT nvl(sum(n.IM_VARIAZIONE),0) FROM OBBLIGAZIONE_PGIRO_MODIFICA n
-                             LEFT JOIN OBBLIGAZIONE_SCAD_VOCE osv ON osv.CD_CDS = n.CD_CDS AND osv.ESERCIZIO = n.ESERCIZIO AND osv.ESERCIZIO_ORIGINALE = n.ESERCIZIO_ORIGINALE AND osv.PG_OBBLIGAZIONE = n.PG_OBBLIGAZIONE
-                             WHERE osv.ESERCIZIO = a.ESERCIZIO
-                             AND   osv.TI_APPARTENENZA = a.TI_APPARTENENZA
-                             AND   osv.TI_GESTIONE = a.TI_GESTIONE
-                             AND   osv.CD_VOCE = a.CD_ELEMENTO_VOCE
-                             AND   osv.CD_CENTRO_RESPONSABILITA = a.CD_CENTRO_RESPONSABILITA)) tot_impacc_res,
+                           ) tot_impacc_res,
                      DECODE (a.esercizio,
                              a.esercizio_res, NVL (a.importo_manrev, 0),
                              0
@@ -307,13 +301,7 @@
                                NVL (a.variazioni_residui_propri, 0)
                              + NVL (a.variazioni_positive, 0)
                              - NVL (a.variazioni_negative, 0))
-                             + (SELECT nvl(sum(n.IM_VARIAZIONE),0) FROM OBBLIGAZIONE_PGIRO_MODIFICA n
-                             LEFT JOIN OBBLIGAZIONE_SCAD_VOCE osv ON osv.CD_CDS = n.CD_CDS AND osv.ESERCIZIO = n.ESERCIZIO AND osv.ESERCIZIO_ORIGINALE = n.ESERCIZIO_ORIGINALE AND osv.PG_OBBLIGAZIONE = n.PG_OBBLIGAZIONE
-                             WHERE osv.ESERCIZIO = a.ESERCIZIO
-                             AND   osv.TI_APPARTENENZA = a.TI_APPARTENENZA
-                             AND   osv.TI_GESTIONE = a.TI_GESTIONE
-                             AND   osv.CD_VOCE = a.CD_ELEMENTO_VOCE
-                             AND   osv.CD_CENTRO_RESPONSABILITA = a.CD_CENTRO_RESPONSABILITA)) tot_mod_impacc_res,
+                            ) tot_mod_impacc_res,
                      DECODE (a.esercizio,
                              a.esercizio_res, NVL (a.assestato_cassa, 0),
                              0
@@ -473,4 +461,4 @@
              c.ds_liv4,
              c.ds_liv5,
              c.ds_liv6,
-             c.ds_liv7);
+             c.ds_liv7) ;
