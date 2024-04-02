@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SQLPersistentInfo
-	persistentClassName="t.cnr.contab.inventario00.docs.bulk.Chiusura_anno_inventarioBase"
-	keyClassName="t.cnr.contab.inventario00.docs.bulk.Chiusura_anno_inventarioKey"
-	homeClassName="t.cnr.contab.inventario00.docs.bulk.Chiusura_anno_inventarioHome">
+	persistentClassName="it.cnr.contab.inventario00.docs.bulk.Chiusura_anno_inventarioBase"
+	keyClassName="it.cnr.contab.inventario00.docs.bulk.Chiusura_anno_inventarioKey"
+	homeClassName="it.cnr.contab.inventario00.docs.bulk.Chiusura_anno_inventarioHome">
 	<defaultColumnMap
 		tableName="CHIUSURA_ANNO_INVENTARIO">
 		<columnMapping
