@@ -6100,7 +6100,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/insert_configurazioneCnr_voceep_acconto_anticipi_docatt.xml"/>
     <!-- Autore : CIRO SALVIO - Nuova Tabella chiusura inventario -->
     <include file="bootstrap/add_table_chiusura_anno_inventario.xml"/>
-
     <!-- Autore : VALENTINA TOMADA - Modifica albero main per accesso a chiusura magazzino definitiva-->
     <include file="bootstrap/mod_accesso_chiusura_magazzino_def.xml"/>
+    <!-- Autore : CIRO SALVI - Aggiunta ai beni migrato l'informazione del piano di ammortamento-->
+    <include file="bootstrap/add_column_piano_amm_bene_migrato.xml"/>
 </databaseChangeLog>
