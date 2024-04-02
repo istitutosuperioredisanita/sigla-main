@@ -391,7 +391,7 @@ thorntail:
   datasources:
     data-sources:
       SIGLA:
-        connection-url: jdbc:oracle:thin:@localhost:1521:xe
+        connection-url: jdbc:oracle:thin:@localhost:1521/XEPDB1
         user-name: SIGLA
         password: siglapw
   deployment:
