@@ -1134,7 +1134,7 @@ If INGEST = 'S' Then
           OMV.IM_MODIFICA < 0 And
           OM.PG_MODIFICA > 0;
 
-   SELECT Nvl(VALORE, 0) + nvl(sum(n.IM_VARIAZIONE),0) --Messo il segno negativo perchè deve aggiungere eventali modifiche
+   SELECT Nvl(VALORE, 0) + ABS(nvl(sum(n.IM_VARIAZIONE),0)) --Messo il segno negativo perchè deve aggiungere eventali modifiche
    INTO VALORE
    FROM OBBLIGAZIONE_PGIRO_MODIFICA n
    LEFT JOIN OBBLIGAZIONE_SCAD_VOCE osv ON osv.CD_CDS = n.CD_CDS AND osv.ESERCIZIO = n.ESERCIZIO AND osv.ESERCIZIO_ORIGINALE = n.ESERCIZIO_ORIGINALE AND osv.PG_OBBLIGAZIONE = n.PG_OBBLIGAZIONE
@@ -1171,7 +1171,7 @@ Elsif INGEST = 'E' Then
           OMV.IM_MODIFICA < 0 And
           OM.PG_MODIFICA > 0;
 
-   SELECT Nvl(VALORE, 0) + nvl(sum(n.IM_VARIAZIONE),0) --Messo il segno negativo perchè deve aggiungere eventali modifiche
+   SELECT Nvl(VALORE, 0) + ABS(nvl(sum(n.IM_VARIAZIONE),0)) --Messo il segno negativo perchè deve aggiungere eventali modifiche
    INTO VALORE
    FROM ACCERTAMENTO_PGIRO_MODIFICA n
    LEFT JOIN ACCERTAMENTO_SCAD_VOCE asv ON asv.CD_CDS = n.CD_CDS AND asv.ESERCIZIO = n.ESERCIZIO AND asv.ESERCIZIO_ORIGINALE = n.ESERCIZIO_ORIGINALE AND asv.PG_ACCERTAMENTO = n.PG_ACCERTAMENTO
