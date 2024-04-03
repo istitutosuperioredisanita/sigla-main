@@ -27,7 +27,7 @@ public class ChiusuraAnnoCatGrpVoceEpHome extends BulkHome {
 					"  from chiusura_anno_mag_rim a " +
 			"		   where anno = ? " +
 			"          group by CD_CATEGORIA_GRUPPO,pg_chiusura, tipo_chiusura, anno) cg " +
-			" where ass.ESERCIZIO = ? and " +
+			" where ass.ESERCIZIO = ? and cg.importoTotCatGrp > 0 and " +
 			" cg.CD_CATEGORIA_GRUPPO = ass.CD_CATEGORIA_GRUPPO " +
 			" group by  ass.CD_CATEGORIA_GRUPPO,ass.cd_voce_ep,ass.ESERCIZIO,cg.pg_chiusura,cg.tipo_chiusura,cg.importoTotCatGrp " +
 			" order by  ass.CD_CATEGORIA_GRUPPO,ass.cd_voce_ep ";
