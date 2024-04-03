@@ -3,27 +3,25 @@
 %>
 <%CRUDScritturaPDoppiaBP bp = (CRUDScritturaPDoppiaBP)BusinessProcess.getBusinessProcess(request);%>
 
-<table class="Panel">
-<tr>
-	<td><% bp.getController().writeFormLabel(out,"dt_contabilizzazione"); %></td>
-	<td><% bp.getController().writeFormInput(out,"dt_contabilizzazione"); %></td>	
-</tr>
-
-<tr>
-	<td><% bp.getController().writeFormLabel(out,"ds_scrittura"); %></td>
-	<td><% bp.getController().writeFormInput(out,"ds_scrittura"); %></td>	
-</tr>
-<tr>
-	<td><% bp.getController().writeFormLabel(out,"cd_terzo"); %></td>
-	<td><% bp.getController().writeFormInput(out,"find_terzo"); %> </td>
-</tr>
-
-<tr>
-	<td><% bp.getController().writeFormLabel(out,"attiva"); %></td>
-	<td><% bp.getController().writeFormInput(out,"attiva"); %>
-		<% bp.getController().writeFormLabel(out,"pg_scrittura_annullata"); %>
-		<% bp.getController().writeFormInput(out,"pg_scrittura_annullata"); %>
-	</td>
-</tr>
-
-</table>
+<div class="Group card p-2 mb-2">
+    <div class="form-row">
+        <div class="col-md-2"><% bp.getController().writeFormField(out, "dt_contabilizzazione", Boolean.FALSE);%></div>
+        <div class="col-md-4"><% bp.getController().writeFormField(out, "origine_scrittura", Boolean.FALSE);%></div>
+        <div class="col-md-3 h-100"><% bp.getController().writeFormField(out, "ti_istituz_commerc", Boolean.FALSE);%></div>
+        <div class="col-md-3 h-100"><% bp.getController().writeFormField(out, "attiva", Boolean.FALSE);%></div>
+    </div>
+     <% if (bp.isInserting()) { %>
+        <div class="form-row">
+            <div class="col-md-3"><% bp.getController().writeFormField(out, "dt_da_competenza_coge", Boolean.FALSE);%></div>
+            <div class="col-md-3"><% bp.getController().writeFormField(out, "dt_a_competenza_coge", Boolean.FALSE);%></div>
+        </div>
+    <% } %>
+    <div class="form-row">
+        <div class="col-md-12"><% bp.getController().writeFormField(out, "ds_scrittura", Boolean.FALSE);%></div>
+    </div>
+     <% if (bp.isScritturaAnnullata()) { %>
+    <div class="form-row">
+        <div class="col-md-3"><% bp.getController().writeFormField(out, "pg_scrittura_annullata", Boolean.FALSE);%></div>
+    </div>
+    <% } %>
+</div>

@@ -3,31 +3,25 @@
 %>
 <%CRUDScritturaPDoppiaBP bp = (CRUDScritturaPDoppiaBP)BusinessProcess.getBusinessProcess(request);%>
 
-<table class="Panel">
-<tr>
-	<td><% bp.getMovimentiAvere().writeHTMLTable(pageContext,"scrittura", bp.isInserting(),false,bp.isInserting(),"100%","100px", true); %></td>
-</tr>
-</table>
-<table class="Panel">
-<tr>
-	<td><% bp.getMovimentiAvere().writeFormLabel(out, "cd_voce_ep"); %></td>
-	<td><% bp.getMovimentiAvere().writeFormInput(out, "cd_voce_ep");
-	       bp.getMovimentiAvere().writeFormInput(out, "ds_voce_ep");
-	       bp.getMovimentiAvere().writeFormInput(out, "find_voce_ep");%></td>	
-</tr>
-<tr>
-	<td><% bp.getMovimentiAvere().writeFormLabel(out, "ti_istituz_commerc");%></td>
-	<td><% bp.getMovimentiAvere().writeFormInput(out, "ti_istituz_commerc");%></td>	
-</tr>
-<tr>
-	<td><% bp.getMovimentiAvere().writeFormLabel(out, "dt_da_competenza_coge"); %></td>
-	<td><% bp.getMovimentiAvere().writeFormInput(out, "dt_da_competenza_coge");
-	       bp.getMovimentiAvere().writeFormLabel(out, "dt_a_competenza_coge");
-	       bp.getMovimentiAvere().writeFormInput(out, "dt_a_competenza_coge");%></td>	
-</tr>
-<tr>
-	<td><% bp.getMovimentiAvere().writeFormLabel(out, "im_movimento"); %></td>
-	<td><% bp.getMovimentiAvere().writeFormInput(out, "im_movimento");%></td>	
-</tr>
-
-</table>
+<div class="Group card p-2 mb-2">
+    <div class="form-row">
+        <div class="col-md-12">
+            <% bp.getMovimentiAvere().writeHTMLTable(pageContext,"scrittura", true, false, true,"100%","auto;max-height:40vh;", true); %>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col-md-3 h-100"><% bp.getMovimentiAvere().writeFormField(out, "ti_riga");%></div>
+        <div class="col-md-9"><% bp.getMovimentiAvere().writeFormField(out, "find_voce_ep_searchtool", Boolean.FALSE);%></div>
+    </div>
+    <div class="form-row">
+        <div class="col-md-3 h-100"><% bp.getMovimentiAvere().writeFormField(out, "ti_istituz_commerc");%></div>
+        <div class="col-md-3"><% bp.getMovimentiAvere().writeFormField(out, "im_movimento");%></div>
+        <div class="col-md-3"><% bp.getMovimentiAvere().writeFormField(out, "dt_da_competenza_coge");%></div>
+        <div class="col-md-3"><% bp.getMovimentiAvere().writeFormField(out, "dt_a_competenza_coge");%></div>
+    </div>
+    <div class="form-row">
+        <div class="col-md-4"><% bp.getMovimentiAvere().writeFormField(out, "partita");%></div>
+        <div class="col-md-6"><% bp.getMovimentiAvere().writeFormField(out, "terzo_movimento");%></div>
+        <div class="col-md-1"><% bp.getMovimentiAvere().writeFormField(out, "cd_contributo_ritenuta");%></div>
+    </div>
+</div>
