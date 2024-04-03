@@ -132,7 +132,7 @@
 		name="dt_firma" />		
 	<findFieldProperty
 		name="pg_variazione_pdg"/>
-	<findFieldPropertyobb
+	<findFieldProperty
 		name="cd_centro_responsabilita"/>	
 	<findFieldProperty
 		name="ds_variazione" />
