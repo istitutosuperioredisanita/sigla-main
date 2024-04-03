@@ -25,10 +25,30 @@ import it.cnr.jada.util.DateUtils;
 public class ChiusuraAnnoMagRimHome extends BulkHome {
 	private final String statmentUpdateCmpp = "" +
 			" update chiusura_anno_mag_rim r" +
-			" set IMPORTO_CMPP_ART=(select DECODE( sum( totGiacenza+totCarcIni),0,0,sum(impTotArtAnno+impTotArtAnnoPrec) /sum( totGiacenza+totCarcIni)) cmpp " +
+			" set IMPORTO_CMPP_ART=(select DECODE( sum( totCarichi+totCarcIni),0,0,sum(impTotArtAnno+impTotArtAnnoPrec) /sum( totCarichi+totCarcIni)) cmpp " +
 			" from (" +
-			" select cd_bene_servizio,SUM(GIACENZA*IMPORTO_UNITARIO_LOTTO) as impTotArtAnno, sum( Giacenza) totGiacenza, sum( a.carico_iniziale*IMPORTO_UNITARIO_CHIU) impTotArtAnnoPrec, " +
-			" sum(a.carico_iniziale) totCarcIni from chiusura_anno_mag_rim a " +
+			" select cd_bene_servizio," +
+			" SUM( " +
+			"   case when esercizio_lotto= ? " +
+			"        then CARICO_ANNO*IMPORTO_UNITARIO_LOTTO " +
+			"        else 0 " +
+			"  end) as impTotArtAnno, " +
+			" SUM( "+
+			"   case when esercizio_lotto= ? " +
+			"       then CARICO_ANNO " +
+			"       else  0 " +
+			"  end)  totCarichi , " +
+			" SUM( " +
+			"    case when esercizio_lotto< ? " +
+			"        then a.carico_iniziale*IMPORTO_UNITARIO_CHIU " +
+			"        else 0" +
+			"  end ) impTotArtAnnoPrec , " +
+			" SUM( " +
+			"   case when esercizio_lotto< ? " +
+			"        then a.carico_iniziale " +
+			"        else 0 " +
+			"  end ) totCarcIni " +
+			" from chiusura_anno_mag_rim a " +
 			" where anno=? " +
 			" group by cd_bene_servizio) x " +
 			" where r.cd_bene_servizio=x.cd_bene_servizio " +
@@ -203,6 +223,10 @@ public class ChiusuraAnnoMagRimHome extends BulkHome {
 			ps = new LoggableStatement(conn, statement, true, this.getClass());
 
 			ps.setInt(1, esercizio);
+			ps.setInt(2, esercizio);
+			ps.setInt(3, esercizio);
+			ps.setInt(4, esercizio);
+			ps.setInt(5, esercizio);
 			rs = ps.executeQuery();
 
 		} catch (SQLException e) {
