@@ -121,6 +121,7 @@
             name="documentoCoge">
         <exclude pattern="*" />
         <include pattern="conto" />
+        <include pattern="terzo" />
         <include pattern="documentoCoge" />
         <exclude pattern="documentoCoge.*" />
     </fetchPolicy>

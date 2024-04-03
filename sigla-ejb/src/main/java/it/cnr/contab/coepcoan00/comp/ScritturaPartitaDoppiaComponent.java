@@ -1117,20 +1117,9 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 	{
 		Scrittura_partita_doppiaBulk scrittura = (Scrittura_partita_doppiaBulk) bulk;
 		scrittura.setIm_scrittura( scrittura.getImTotaleAvere());
-		if ( scrittura.getTerzo() == null || scrittura.getTerzo().getCd_terzo() == null ) {
-			scrittura.setTerzo(getTerzoNullo());
-			scrittura.getAllMovimentiColl().forEach(el->el.setTerzo(scrittura.getTerzo()));
-		}
 		makeBulkPersistent(userContext,scrittura);
 		aggiornaSaldiCoge( userContext, scrittura );
 		return bulk;
-	}
-
-	@Override
-	protected OggettoBulk eseguiModificaConBulk(UserContext usercontext, OggettoBulk oggettobulk) throws ComponentException, PersistencyException {
-		Scrittura_partita_doppiaBulk scrittura = (Scrittura_partita_doppiaBulk) oggettobulk;
-		scrittura.getAllMovimentiColl().forEach(el->el.setTerzo(scrittura.getTerzo()));
-		return super.eseguiModificaConBulk(usercontext, oggettobulk);
 	}
 
 	/**
@@ -1549,11 +1538,12 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 	{
 		SQLBuilder sql = getHome( userContext, conto.getClass()).createSQLBuilder();
 		sql.addClause( clauses );
+		sql.addClause( FindClause.AND, "esercizio", SQLBuilder.EQUALS, movimento.getEsercizio());
 		if ( Movimento_cogeBulk.SEZIONE_AVERE.equals( movimento.getSezione()))
 			sql.addClause( FindClause.AND, "ti_sezione", SQLBuilder.NOT_EQUALS, ContoHome.SEZIONE_DARE);
 		else if ( Movimento_cogeBulk.SEZIONE_DARE.equals( movimento.getSezione()))
 			sql.addClause( FindClause.AND, "ti_sezione", SQLBuilder.NOT_EQUALS, ContoHome.SEZIONE_AVERE);
-		sql.addClause( FindClause.AND, "esercizio", SQLBuilder.EQUALS, movimento.getEsercizio());
+
 		return sql;
 	}
 	/**
