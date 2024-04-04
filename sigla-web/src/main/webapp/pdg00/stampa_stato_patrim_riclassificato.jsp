@@ -20,6 +20,7 @@
 <%	BulkBP bp = (BulkBP)BusinessProcess.getBusinessProcess(request);
 	Stampa_vpg_stato_patrim_riclassVBulk bulk = (Stampa_vpg_stato_patrim_riclassVBulk)bp.getModel();
 	bp.openFormWindow(pageContext); %>
+ <div class="card p-2">
 <table>
   <tr>
 	<td><% bp.getController().writeFormLabel(out,"esercizio"); %></td>
@@ -54,7 +55,7 @@
 	<td><% bp.getController().writeFormInput(out,"dettaglioConti"); %></td>
   </tr>
 </table>
-
+</div>
 <% bp.closeFormWindow(pageContext); %>
 
 </body>

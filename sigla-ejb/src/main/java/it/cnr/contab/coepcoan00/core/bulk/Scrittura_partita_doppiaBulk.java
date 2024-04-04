@@ -28,6 +28,8 @@ import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.OrderedHashtable;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Dictionary;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +40,7 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
 
     public final static String TIPO_COGE = "COGE";
     public final static String ORIGINE_CAUSALE = "CAUSALE";
+    public final static String ORIGINE_PRIMA_NOTA_MANUALE = "Prima Nota manuale";
     public final static String ORIGINE_DOCAMM = "DOCAMM";
     public final static String ORIGINE_DOCCONT = "DOCCONT";
     public final static String ORIGINE_STIPENDI = "STIPENDI";
@@ -52,15 +55,20 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
 
     static {
         STATO_ATTIVA = new it.cnr.jada.util.OrderedHashtable();
-        STATO_ATTIVA.put(ATTIVA_YES, "Y");
-        STATO_ATTIVA.put(ATTIVA_NO, "N");
+        STATO_ATTIVA.put(ATTIVA_YES, "Si");
+        STATO_ATTIVA.put(ATTIVA_NO, "No");
     }
 
     protected BulkList movimentiDareColl = new BulkList();
     protected BulkList movimentiAvereColl = new BulkList();
     protected CdsBulk cds = new CdsBulk();
     protected Unita_organizzativaBulk uo;
+    protected CdsBulk cdsDocumento;
+    protected Unita_organizzativaBulk uoDocumento;
     protected TerzoBulk terzo;
+
+    private Timestamp dt_da_competenza_coge;
+    private Timestamp dt_a_competenza_coge;
 
     public Scrittura_partita_doppiaBulk() {
         super();
@@ -83,6 +91,9 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
         movimento.setScrittura(this);
         movimento.setSezione(Movimento_cogeBulk.SEZIONE_AVERE);
         movimento.setStato(Movimento_cogeBulk.STATO_DEFINITIVO);
+        movimento.setFl_modificabile(Boolean.TRUE);
+        movimento.setDt_da_competenza_coge(getDt_da_competenza_coge());
+        movimento.setDt_a_competenza_coge(getDt_a_competenza_coge());
         return movimentiAvereColl.size() - 1;
     }
 
@@ -98,6 +109,9 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
         movimento.setScrittura(this);
         movimento.setSezione(Movimento_cogeBulk.SEZIONE_DARE);
         movimento.setStato(Movimento_cogeBulk.STATO_DEFINITIVO);
+        movimento.setFl_modificabile(Boolean.TRUE);
+        movimento.setDt_da_competenza_coge(getDt_da_competenza_coge());
+        movimento.setDt_a_competenza_coge(getDt_a_competenza_coge());
         return movimentiDareColl.size() - 1;
     }
 
@@ -166,13 +180,13 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
 
     public java.math.BigDecimal getImTotaleAvere() {
         return getMovimentiAvereColl().stream()
-                        .map(Movimento_cogeBulk::getIm_movimento)
+                .map(mcb -> Optional.ofNullable(mcb.getIm_movimento()).orElse(BigDecimal.ZERO))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public java.math.BigDecimal getImTotaleDare() {
         return getMovimentiDareColl().stream()
-                .map(Movimento_cogeBulk::getIm_movimento)
+                .map(mcb -> Optional.ofNullable(mcb.getIm_movimento()).orElse(BigDecimal.ZERO))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
@@ -250,7 +264,7 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
         setEsercizio(it.cnr.contab.utenze00.bulk.CNRUserInfo.getEsercizio(context));
         setUo(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context));
         setCd_uo_documento(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context).getCd_unita_organizzativa());
-        setOrigine_scrittura(ORIGINE_CAUSALE);
+        setOrigine_scrittura(ORIGINE_PRIMA_NOTA_MANUALE);
         setAttiva(ATTIVA_YES);
         setTi_scrittura(TIPO_PRIMA_SCRITTURA);
         setStato(STATO_DEFINITIVO);
@@ -347,5 +361,63 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
 
     public boolean isScritturaAttiva() {
         return ATTIVA_YES.equals(this.getAttiva());
+    }
+
+    public CdsBulk getCdsDocumento() {
+        return cdsDocumento;
+    }
+
+    public void setCdsDocumento(CdsBulk cdsDocumento) {
+        this.cdsDocumento = cdsDocumento;
+    }
+
+    public Unita_organizzativaBulk getUoDocumento() {
+        return uoDocumento;
+    }
+
+    public void setUoDocumento(Unita_organizzativaBulk uoDocumento) {
+        this.uoDocumento = uoDocumento;
+    }
+
+    @Override
+    public String getCd_cds_documento() {
+        return Optional.ofNullable(getCdsDocumento())
+                .map(CdsBulk::getCd_unita_organizzativa)
+                .orElse(super.getCd_cds_documento());
+    }
+
+    @Override
+    public void setCd_cds_documento(String cd_cds_documento) {
+        CdsBulk cdsBulk = Optional.ofNullable(getCdsDocumento()).orElse(new CdsBulk());
+        cdsBulk.setCd_unita_organizzativa(cd_cds_documento);
+    }
+
+    @Override
+    public String getCd_uo_documento() {
+        return Optional.ofNullable(getUoDocumento())
+                .map(Unita_organizzativaBulk::getCd_unita_organizzativa)
+                .orElse(super.getCd_uo_documento());
+    }
+
+    @Override
+    public void setCd_uo_documento(String cd_uo_documento) {
+        Unita_organizzativaBulk unitaOrganizzativaBulk = Optional.ofNullable(getUoDocumento()).orElse(new Unita_organizzativaBulk());
+        unitaOrganizzativaBulk.setCd_unita_organizzativa(cd_uo_documento);
+    }
+
+    public Timestamp getDt_da_competenza_coge() {
+        return dt_da_competenza_coge;
+    }
+
+    public void setDt_da_competenza_coge(Timestamp dt_da_competenza_coge) {
+        this.dt_da_competenza_coge = dt_da_competenza_coge;
+    }
+
+    public Timestamp getDt_a_competenza_coge() {
+        return dt_a_competenza_coge;
+    }
+
+    public void setDt_a_competenza_coge(Timestamp dt_a_competenza_coge) {
+        this.dt_a_competenza_coge = dt_a_competenza_coge;
     }
 }

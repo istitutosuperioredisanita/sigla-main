@@ -28,6 +28,12 @@
 			columnName="CD_CDS"
 			propertyName="cds.cd_unita_organizzativa"/>
 		<columnMapping
+			columnName="CD_UO_DOCUMENTO"
+			propertyName="uoDocumento.cd_unita_organizzativa"/>
+		<columnMapping
+			columnName="CD_CDS_DOCUMENTO"
+			propertyName="cdsDocumento.cd_unita_organizzativa"/>
+		<columnMapping
 			columnName="CD_TERZO"
 			propertyName="terzo.cd_terzo"/>
 	</defaultColumnMap>
@@ -39,4 +45,9 @@
 		partOfOid="true"/>
 	<persistentProperty
 		name="terzo"/>
+	<persistentProperty
+		name="cdsDocumento"/>
+	<persistentProperty
+		name="uoDocumento"/>
+
 </SQLPersistentInfo>

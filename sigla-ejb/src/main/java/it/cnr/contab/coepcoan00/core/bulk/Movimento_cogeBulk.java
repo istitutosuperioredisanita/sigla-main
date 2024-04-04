@@ -23,9 +23,11 @@ import it.cnr.contab.config00.pdcep.bulk.Voce_epBulk;
 import it.cnr.contab.config00.sto.bulk.CdsBulk;
 import it.cnr.contab.docamm00.docs.bulk.TipoDocumentoEnum;
 import it.cnr.contab.util.enumeration.TipoIVA;
+import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.OrderedHashtable;
+import it.cnr.jada.util.action.CRUDBP;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -451,4 +453,5 @@ public class Movimento_cogeBulk extends Movimento_cogeBase {
                 .flatMap(documentoCogeBulk -> Optional.ofNullable(documentoCogeBulk.getPg_doc()))
                 .orElse(super.getPg_numero_documento());
     }
+
 }
