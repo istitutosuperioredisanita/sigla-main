@@ -4588,8 +4588,9 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 																el.getMandatoRiga().getEsercizio_ori_obbligazione(), el.getMandatoRiga().getPg_obbligazione()));
 												BigDecimal imponibile = riga.getIm_imponibile();
 												BigDecimal imposta = riga.getIm_iva();
-												list.add(new DettaglioFinanziario(docamm, null, cdTerzoDocAmm, obbligazioneDB.getElemento_voce(), null, null,
-														imponibile, imposta));
+												if (imponibile.compareTo(BigDecimal.ZERO)!=0)
+													list.add(new DettaglioFinanziario(docamm, null, cdTerzoDocAmm, obbligazioneDB.getElemento_voce(), null, null,
+															imponibile, imposta));
 											} catch (ComponentException | PersistencyException e) {
 												throw new ApplicationRuntimeException(e);
 											}
