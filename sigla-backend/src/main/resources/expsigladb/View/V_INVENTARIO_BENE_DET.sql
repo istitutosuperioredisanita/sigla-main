@@ -74,7 +74,7 @@
                       0 variazione_meno,
                       b.esercizio esercizio_buono_carico,
                       0 incremento_valore,
-                      d.valore_unitario decremento_valore,
+                      DECODE( t.cd_tipo_carico_scarico,'3',0, d.valore_unitario) decremento_valore,
                       d.PG_BUONO_C_S  PG_BUONO_C_S,
                       DECODE( t.cd_tipo_carico_scarico,'3',a.valore_ammortizzato, 0)  quota_ammo_bene_alienato,
                       null esercizio_ammortanento,
