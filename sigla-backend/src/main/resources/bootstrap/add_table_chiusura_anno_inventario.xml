@@ -57,22 +57,22 @@
             <column name="esercizio_competenza" remarks="Esercizio Competenza" type="SMALLINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="valore_anno_prec" remarks="Valori riferiti all'anno precedente" type="numeric(12, 5)">
+            <column name="valore_anno_prec" remarks="Valori riferiti all'anno precedente" type="numeric(21, 6)">
                 <constraints nullable="false"/>
             </column>
-            <column name="valore_incremento" remarks="Nuove acquisizioni e incremento valori bene" type="numeric(12, 5)">
+            <column name="valore_incremento" remarks="Nuove acquisizioni e incremento valori bene" type="numeric(21, 6)">
                 <constraints nullable="false"/>
             </column>
-            <column name="valore_decremento" remarks="Dismissioni e decremento valori bene" type="numeric(12, 5)">
+            <column name="valore_decremento" remarks="Dismissioni e decremento valori bene" type="numeric(21, 6)">
                 <constraints nullable="false"/>
             </column>
-            <column name="quota_ammortamento" remarks="Totale ammortamento per l'anno" type="numeric(12, 5)">
+            <column name="quota_ammortamento" remarks="Totale ammortamento per l'anno" type="numeric(21, 6)">
                 <constraints nullable="false"/>
             </column>
-            <column name="totale_ammortamento_alienati" remarks="Totale degli ammortamenti dei beni alienati nell'anno" type="numeric(12, 5)">
+            <column name="totale_ammortamento_alienati" remarks="Totale degli ammortamenti dei beni alienati nell'anno" type="numeric(21, 6)">
                 <constraints nullable="false"/>
             </column>
-            <column name="quota_ammortamento_anno_prec" remarks="Totale ammortamento anno precedente" type="numeric(12, 5)">
+            <column name="quota_ammortamento_anno_prec" remarks="Totale ammortamento anno precedente" type="numeric(21, 6)">
                 <constraints nullable="false"/>
             </column>
             <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
