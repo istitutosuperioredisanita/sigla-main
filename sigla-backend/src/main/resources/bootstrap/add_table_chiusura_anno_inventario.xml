@@ -91,7 +91,7 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addPrimaryKey tableName="chiusura_anno_inventario" constraintName="chiusura_anno_inventario_pkey" columnNames="pg_chiusura,anno,tipo_chiusura,cd_categoria_gruppo"></addPrimaryKey>
+        <addPrimaryKey tableName="chiusura_anno_inventario" constraintName="chiusura_anno_inventario_pkey" columnNames="pg_chiusura,anno,tipo_chiusura,cd_categoria_gruppo,ESERCIZIO_VOCE,CD_VOCE_EP"></addPrimaryKey>
 
         <addForeignKeyConstraint baseColumnNames="cd_categoria_gruppo" baseTableName="chiusura_anno_inventario" constraintName="fk_chiusura_anno_inventario_catgrp_01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cd_categoria_gruppo" referencedTableName="categoria_gruppo_invent"/>
         <addForeignKeyConstraint baseColumnNames="esercizio_voce,cd_voce_ep" baseTableName="chiusura_anno_inventario" constraintName="fk_chiusura_anno_inventario_voce_ep_02" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="esercizio,cd_voce_ep" referencedTableName="voce_ep"/>
