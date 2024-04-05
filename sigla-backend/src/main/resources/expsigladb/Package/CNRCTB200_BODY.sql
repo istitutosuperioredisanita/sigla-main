@@ -1444,7 +1444,7 @@ Dbms_Output.PUT_LINE ('INS '||aScrittura.ESERCIZIO||' '||aScrittura.CD_CDS||' '|
     ,aDest.ESERCIZIO
     ,aDest.CD_UNITA_ORGANIZZATIVA
     ,aDest.CD_VOCE_EP
-    ,aDest.CD_TERZO
+    ,nvl(aDest.CD_TERZO, 0)
     ,adest.TI_ISTITUZ_COMMERC
     ,aDest.TOT_DARE
     ,aDest.TOT_AVERE
