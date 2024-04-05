@@ -6104,4 +6104,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/mod_accesso_chiusura_magazzino_def.xml"/>
     <!-- Autore : CIRO SALVI - Aggiunta ai beni migrato l'informazione del piano di ammortamento-->
     <include file="bootstrap/add_column_piano_amm_bene_migrato.xml"/>
+    <!-- Autore : MARCO SPASIANO - Rimuove l'obbligatorietà del terzo su SALDO COGE-->
+    <include file="bootstrap/mod_terzo_saldo_coge.xml"/>
 </databaseChangeLog>
