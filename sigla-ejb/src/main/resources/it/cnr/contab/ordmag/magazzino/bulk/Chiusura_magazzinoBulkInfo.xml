@@ -140,6 +140,14 @@
 			maxLength="1"
 			nullable="false"
 			label="Tipo Chiusura" />
+	<fieldProperty
+			name="tipoReport"
+			property="tipoReport"
+			inputType="TEXT"
+			inputSize="1"
+			maxLength="1"
+			nullable="false"
+			label="Tipo Report" />
 
 
 	<fieldProperty
@@ -192,6 +200,8 @@
 
 	<formFieldProperty
 			name="tipoChiusura" />
+	<formFieldProperty
+			name="tipoReport" />
 
 
 
@@ -252,6 +262,12 @@
 				parameterPosition="9"
 				parameterType="STRING"
 				paramNameJR="tipoChiusura"
+				paramTypeJR="java.lang.String"/>
+		<printFieldProperty
+				name="tipoReport"
+				parameterPosition="10"
+				parameterType="STRING"
+				paramNameJR="tipoReport"
 				paramTypeJR="java.lang.String"/>
 
 

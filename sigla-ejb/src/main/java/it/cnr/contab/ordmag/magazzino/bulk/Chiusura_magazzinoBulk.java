@@ -57,6 +57,7 @@ public class Chiusura_magazzinoBulk extends Stampa_inventarioBulk {
     private boolean bloccaCampiCalcoloDefinitivo;
 
     private String tipoChiusura=ChiusuraAnnoBulk.TIPO_CHIUSURA_MAGAZZINO;
+    private String tipoReport;
 
 
     static {
@@ -224,6 +225,14 @@ public class Chiusura_magazzinoBulk extends Stampa_inventarioBulk {
 
     public void setBloccaCampiCalcoloDefinitivo(boolean bloccaCampiCalcoloDefinitivo) {
         this.bloccaCampiCalcoloDefinitivo = bloccaCampiCalcoloDefinitivo;
+    }
+
+    public String getTipoReport() {
+        return tipoReport;
+    }
+
+    public void setTipoReport(String tipoReport) {
+        this.tipoReport = tipoReport;
     }
 }
 

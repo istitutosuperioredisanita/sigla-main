@@ -324,6 +324,19 @@ public class Chiusura_magazzinoAction extends ParametricPrintAction {
     }
 
     public Forward doPrint(ActionContext context) {
+        StampaChiusuraMagazzinoBP stampaChiusuraBP = (StampaChiusuraMagazzinoBP) getBusinessProcess(context);
+        try {
+            Chiusura_magazzinoBulk model = (Chiusura_magazzinoBulk) stampaChiusuraBP.getModel();
+            fillModel(context);
+
+            if(stampaChiusuraBP.getMapping().getConfig().getInitParameter("CHIUSURA_DEFINITIVA") != null){
+                model.setTipoReport(Chiusura_magazzinoBulk.CALCOLO_RIMANENZE);
+             }else{
+                model.setTipoReport(Chiusura_magazzinoBulk.VALORIZZAZIONE_RIMANENZE);
+            }
+        } catch (FillException e) {
+            stampaChiusuraBP.setErrorMessage(e.getMessage());
+        }
 
         return super.doPrint(context);
 
