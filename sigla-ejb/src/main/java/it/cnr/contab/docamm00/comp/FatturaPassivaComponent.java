@@ -4080,7 +4080,9 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
         sql.addClause("AND", "cd_cds", SQLBuilder.EQUALS, fatturaPassiva.getCd_cds());
         sql.addClause("AND", "esercizio", SQLBuilder.EQUALS, fatturaPassiva.getEsercizio());
         sql.addClause("AND", "cd_unita_organizzativa", SQLBuilder.EQUALS, fatturaPassiva.getCd_unita_organizzativa());
-        return home.fetchAll(sql);
+        final List list = home.fetchAll(sql);
+        getHomeCache(aUC).fetchAll(aUC);
+        return list;
     }
 
 //^^@@
