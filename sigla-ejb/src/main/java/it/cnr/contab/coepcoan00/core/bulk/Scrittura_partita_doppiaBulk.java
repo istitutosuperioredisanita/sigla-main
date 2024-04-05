@@ -388,8 +388,9 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
 
     @Override
     public void setCd_cds_documento(String cd_cds_documento) {
-        CdsBulk cdsBulk = Optional.ofNullable(getCdsDocumento()).orElse(new CdsBulk());
-        cdsBulk.setCd_unita_organizzativa(cd_cds_documento);
+        if (!Optional.ofNullable(getCdsDocumento()).isPresent())
+            setCdsDocumento(new CdsBulk());
+        getCdsDocumento().setCd_unita_organizzativa(cd_cds_documento);
     }
 
     @Override
@@ -401,8 +402,9 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
 
     @Override
     public void setCd_uo_documento(String cd_uo_documento) {
-        Unita_organizzativaBulk unitaOrganizzativaBulk = Optional.ofNullable(getUoDocumento()).orElse(new Unita_organizzativaBulk());
-        unitaOrganizzativaBulk.setCd_unita_organizzativa(cd_uo_documento);
+        if (!Optional.ofNullable(getUoDocumento()).isPresent())
+            setUoDocumento(new Unita_organizzativaBulk());
+        getUoDocumento().setCd_unita_organizzativa(cd_uo_documento);
     }
 
     public Timestamp getDt_da_competenza_coge() {
