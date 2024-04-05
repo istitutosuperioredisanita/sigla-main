@@ -17,7 +17,7 @@
         </div>
     <% } %>
     <div class="form-row">
-        <div class="col-md-12"><% bp.getController().writeFormField(out, "ds_scrittura", Boolean.FALSE);%></div>
+        <div class="col-md-12"><% bp.getController().writeFormField(out, "ds_scrittura_textarea", Boolean.FALSE);%></div>
     </div>
      <% if (bp.isScritturaAnnullata()) { %>
     <div class="form-row">

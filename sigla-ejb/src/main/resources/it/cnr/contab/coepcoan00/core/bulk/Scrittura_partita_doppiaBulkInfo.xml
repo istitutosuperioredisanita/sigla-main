@@ -67,8 +67,7 @@
 		property="ds_scrittura"
 		maxLength="250"
 		inputSize="100"
-		inputType="TEXTAREA"
-		rows="5"
+		inputType="TEXT"
 		inputCssClass="w-100"
 		label="Descrizione"
 		enabledOnSearch="true"		
@@ -439,6 +438,11 @@
 		inputType="TEXT"
 		formatName="date_short"
 		label="Competenza a"/>
+	<formFieldProperty
+		name="ds_scrittura_textarea"
+		extend="ds_scrittura"
+		inputType="TEXTAREA"
+		rows="5"/>
 
 	<columnFieldProperty
 		name="esercizio" />
