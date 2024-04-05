@@ -898,7 +898,7 @@ Dbms_Output.PUT_LINE ('INS '||aScrittura.ESERCIZIO||' '||aScrittura.CD_CDS||' '|
       and esercizio = aMovimento.esercizio
       and cd_unita_organizzativa = aMovimento.cd_unita_organizzativa
       and cd_voce_ep = aMovimento.cd_voce_ep
-      and cd_terzo = aMovimento.cd_terzo
+      and cd_terzo = nvl(aMovimento.cd_terzo,0)
       And TI_ISTITUZ_COMMERC = amovimento.TI_ISTITUZ_COMMERC
     for update nowait;
    exception when NO_DATA_FOUND then
@@ -906,7 +906,7 @@ Dbms_Output.PUT_LINE ('INS '||aScrittura.ESERCIZIO||' '||aScrittura.CD_CDS||' '|
     aSaldo.ESERCIZIO:=aMovimento.esercizio;
     aSaldo.CD_UNITA_ORGANIZZATIVA:=aMovimento.cd_unita_organizzativa;
     aSaldo.CD_VOCE_EP:=aMovimento.cd_voce_ep;
-    aSaldo.CD_TERZO:=aMovimento.cd_terzo;
+    aSaldo.CD_TERZO:=nvl(aMovimento.cd_terzo,0);
     aSaldo.TI_ISTITUZ_COMMERC:=aMovimento.TI_ISTITUZ_COMMERC;
     aSaldo.TOT_DARE:=0;
     aSaldo.TOT_AVERE:=0;
@@ -953,7 +953,7 @@ Dbms_Output.PUT_LINE ('INS '||aScrittura.ESERCIZIO||' '||aScrittura.CD_CDS||' '|
      and esercizio = aMovimento.esercizio
      and cd_unita_organizzativa = aMovimento.cd_unita_organizzativa
      and cd_voce_ep = aMovimento.cd_voce_ep
-     and cd_terzo = aMovimento.cd_terzo
+     and cd_terzo = nvl(aMovimento.cd_terzo,0)
      And TI_ISTITUZ_COMMERC = aMovimento.TI_ISTITUZ_COMMERC;
   end loop;
  end;
@@ -981,7 +981,7 @@ Dbms_Output.PUT_LINE ('INS '||aScrittura.ESERCIZIO||' '||aScrittura.CD_CDS||' '|
       and esercizio = aMovimento.esercizio
       and cd_unita_organizzativa = aMovimento.cd_unita_organizzativa
       and cd_voce_ep = aMovimento.cd_voce_ep
-      and cd_terzo = aMovimento.cd_terzo
+      and cd_terzo = nvl(aMovimento.cd_terzo,0)
       And TI_ISTITUZ_COMMERC = amovimento.TI_ISTITUZ_COMMERC
       for update nowait;
    exception when NO_DATA_FOUND then
@@ -1007,7 +1007,7 @@ Dbms_Output.PUT_LINE ('INS '||aScrittura.ESERCIZIO||' '||aScrittura.CD_CDS||' '|
      and esercizio = aMovimento.esercizio
      and cd_unita_organizzativa = aMovimento.cd_unita_organizzativa
      and cd_voce_ep = aMovimento.cd_voce_ep
-     and cd_terzo = aMovimento.cd_terzo
+     and cd_terzo = nvl(aMovimento.cd_terzo,0)
      And TI_ISTITUZ_COMMERC = aMovimento.TI_ISTITUZ_COMMERC;
   end loop;
  end;
@@ -1444,7 +1444,7 @@ Dbms_Output.PUT_LINE ('INS '||aScrittura.ESERCIZIO||' '||aScrittura.CD_CDS||' '|
     ,aDest.ESERCIZIO
     ,aDest.CD_UNITA_ORGANIZZATIVA
     ,aDest.CD_VOCE_EP
-    ,aDest.CD_TERZO
+    ,nvl(aDest.CD_TERZO, 0)
     ,adest.TI_ISTITUZ_COMMERC
     ,aDest.TOT_DARE
     ,aDest.TOT_AVERE
