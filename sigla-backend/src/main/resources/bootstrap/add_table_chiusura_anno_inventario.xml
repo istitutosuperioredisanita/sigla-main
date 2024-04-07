@@ -40,12 +40,6 @@
             <column name="cd_categoria_gruppo" remarks="Codice categoria/gruppo" type="VARCHAR(10)">
                 <constraints nullable="false"/>
             </column>
-            <column name="esercizio_voce" remarks="Esercizio voce" type="SMALLINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="cd_voce_ep" remarks="Codice Identificativo completo del conto del piano." type="VARCHAR(20)">
-                <constraints nullable="false"/>
-            </column>
 
             <column name="cd_tipo_ammortamento" remarks="Codice Tipo Ammortamento" type="VARCHAR(10)">
                 <constraints nullable="false"/>
@@ -91,10 +85,9 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addPrimaryKey tableName="chiusura_anno_inventario" constraintName="chiusura_anno_inventario_pkey" columnNames="pg_chiusura,anno,tipo_chiusura,cd_categoria_gruppo,ESERCIZIO_VOCE,CD_VOCE_EP"></addPrimaryKey>
+        <addPrimaryKey tableName="chiusura_anno_inventario" constraintName="chiusura_anno_inventario_pkey" columnNames="pg_chiusura,anno,tipo_chiusura,cd_categoria_gruppo,cd_tipo_ammortamento,ti_ammortamento"></addPrimaryKey>
 
         <addForeignKeyConstraint baseColumnNames="cd_categoria_gruppo" baseTableName="chiusura_anno_inventario" constraintName="fk_chiusura_anno_inventario_catgrp_01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cd_categoria_gruppo" referencedTableName="categoria_gruppo_invent"/>
-        <addForeignKeyConstraint baseColumnNames="esercizio_voce,cd_voce_ep" baseTableName="chiusura_anno_inventario" constraintName="fk_chiusura_anno_inventario_voce_ep_02" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="esercizio,cd_voce_ep" referencedTableName="voce_ep"/>
-        <addForeignKeyConstraint baseColumnNames="cd_tipo_ammortamento,ti_ammortamento" baseTableName="chiusura_anno_inventario" constraintName="fk_chiusura_anno_inventario_tipo_amm_03" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cd_tipo_ammortamento,ti_ammortamento" referencedTableName="tipo_ammortamento"/>
+        <addForeignKeyConstraint baseColumnNames="cd_tipo_ammortamento,ti_ammortamento" baseTableName="chiusura_anno_inventario" constraintName="fk_chiusura_anno_inventario_tipo_amm_02" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cd_tipo_ammortamento,ti_ammortamento" referencedTableName="tipo_ammortamento"/>
     </changeSet>
 </databaseChangeLog>
