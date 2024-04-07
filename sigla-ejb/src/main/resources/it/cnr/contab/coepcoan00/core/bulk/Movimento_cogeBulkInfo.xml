@@ -58,7 +58,7 @@
 		property="dt_da_competenza_coge"
 		inputType="TEXT"
 		formatName="date_short"
-		enabledOnSearch="true"				
+		enabledOnSearch="true"
 		label="Competenza da"
 		nullable="false"/>
 	<fieldProperty
@@ -217,6 +217,7 @@
 		property="ti_riga"
 		inputType="SELECT"
 		keysProperty="tipoRigaKeys"
+		command="doOnChangeTipologia"
 		label="Tipologia"
 		enabledOnSearch="true"
 		caseSensitiveSearch="false" />
@@ -225,6 +226,13 @@
 		property="partita"
 		inputType="ROTEXT"
 		label="Partita"	/>
+	<fieldProperty
+		name="partitario"
+		property="partitario"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		label="Partita"	/>
+
 	<fieldProperty
 		name="cd_contributo_ritenuta"
 		property="cd_contributo_ritenuta"
@@ -288,6 +296,8 @@
 		name="ti_riga" />
 	<formFieldProperty
 		name="partita" />
+	<formFieldProperty
+		name="partitario" />
 	<formFieldProperty
 		name="terzo_movimento" />
 	<formFieldProperty

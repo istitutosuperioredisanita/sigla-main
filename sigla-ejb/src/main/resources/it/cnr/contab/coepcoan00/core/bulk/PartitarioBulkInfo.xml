@@ -107,6 +107,13 @@
 				property="differenza"/>
 	</columnSet>
 
+	<form name="searchtool">
+		<formFieldProperty name="cd_tipo_documento" label="Tipo Partita" inputType="TEXT" inputCssClass=" w-40"/>
+		<formFieldProperty name="esercizio_documento" label="Anno Partita" inputType="TEXT" inputCssClass=" w-10"/>
+		<formFieldProperty name="cd_cds_documento" label="CdS" inputType="TEXT" inputCssClass=" w-10"/>
+		<formFieldProperty name="pg_numero_documento" label="Numero Partita" inputType="TEXT" inputCssClass=" w-20"/>
+	</form>
+
 	<freeSearchSet name="default">
 		<findFieldProperty name="esercizio_documento" label="Anno Partita" inputType="TEXT"/>
 		<findFieldProperty name="cd_tipo_documento" label="Tipo Partita"/>

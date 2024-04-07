@@ -25,7 +25,9 @@ import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.util.action.FormController;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 
 import java.rmi.RemoteException;
@@ -39,7 +41,16 @@ public class CRUDScritturaPDoppiaBP extends it.cnr.jada.util.action.SimpleCRUDBP
     public static final String[] TAB_ECONOMICA = new String[]{"tabEconomica", "Economico/Patrimoniale", "/coepcoan00/tab_doc_economica.jsp"};
     private Unita_organizzativaBulk uoScrivania;
 
-    private final SimpleDetailCRUDController movimentiDare = new SimpleDetailCRUDController("MovimentiDare", it.cnr.contab.coepcoan00.core.bulk.Movimento_cogeBulk.class, "movimentiDareColl", this){
+
+    public class EconomicaController extends SimpleDetailCRUDController {
+        public EconomicaController(String s, Class class1, String s1, FormController formcontroller) {
+            super(s, class1, s1, formcontroller);
+        }
+
+        public EconomicaController(String s, Class class1, String s1, FormController formcontroller, boolean flag) {
+            super(s, class1, s1, formcontroller, flag);
+        }
+
         @Override
         public boolean isEnabled() {
             return super.isEnabled() && isModificabile();
@@ -57,9 +68,31 @@ public class CRUDScritturaPDoppiaBP extends it.cnr.jada.util.action.SimpleCRUDBP
                     .map(Movimento_cogeBulk::getFl_modificabile)
                     .orElse(Boolean.TRUE);
         }
-
-    };
-    private final SimpleDetailCRUDController movimentiAvere = new SimpleDetailCRUDController("MovimentiAvere", it.cnr.contab.coepcoan00.core.bulk.Movimento_cogeBulk.class, "movimentiAvereColl", this);
+        public boolean isDebitoCredito() {
+            return Optional.ofNullable(getModel())
+                    .filter(Movimento_cogeBulk.class::isInstance)
+                    .map(Movimento_cogeBulk.class::cast)
+                    .map(Movimento_cogeBulk::isDebitoCredito)
+                    .orElse(Boolean.FALSE);
+        }
+        @Override
+        protected void validate(ActionContext actioncontext, OggettoBulk oggettobulk) throws ValidationException {
+            super.validate(actioncontext, oggettobulk);
+            validaMovimentoCoge(actioncontext, Optional.ofNullable(oggettobulk).map(Movimento_cogeBulk.class::cast).orElse(null));
+        }
+    }
+    private final EconomicaController movimentiDare = new EconomicaController(
+            "MovimentiDare",
+            it.cnr.contab.coepcoan00.core.bulk.Movimento_cogeBulk.class,
+            "movimentiDareColl",
+            this
+    );
+    private final EconomicaController movimentiAvere = new EconomicaController(
+            "MovimentiAvere",
+            it.cnr.contab.coepcoan00.core.bulk.Movimento_cogeBulk.class,
+            "movimentiAvereColl",
+            this
+    );
     private Boolean isBloccoScrittureProposte;
 
     public CRUDScritturaPDoppiaBP() {
@@ -72,12 +105,24 @@ public class CRUDScritturaPDoppiaBP extends it.cnr.jada.util.action.SimpleCRUDBP
         setTab("tab", "tabScrittura");
     }
 
+    protected void validaMovimentoCoge(ActionContext actionContext, Movimento_cogeBulk movimentoCogeBulk) throws ValidationException{
+        if (Optional.ofNullable(movimentoCogeBulk.getDt_da_competenza_coge())
+                .filter(timestamp -> timestamp.after(movimentoCogeBulk.getScrittura().getDt_contabilizzazione()))
+                .isPresent()) {
+            throw new ValidationException("La Data di competenza, deve essere inferiore o uguale alla data scrittura!");
+        }
+        if (Optional.ofNullable(movimentoCogeBulk.getDt_a_competenza_coge())
+                .filter(timestamp -> timestamp.before(movimentoCogeBulk.getDt_da_competenza_coge()))
+                .isPresent()) {
+            throw new ValidationException("La Data a competenza, deve essere superiore o uguale alla data da competenza!");
+        }
+    }
     /**
      * restituisce il Controller che gestisce la lista dei movimenti avere
      *
      * @return it.cnr.jada.util.action.SimpleDetailCRUDController
      */
-    public final it.cnr.jada.util.action.SimpleDetailCRUDController getMovimentiAvere() {
+    public final EconomicaController getMovimentiAvere() {
         return movimentiAvere;
     }
 
@@ -86,13 +131,13 @@ public class CRUDScritturaPDoppiaBP extends it.cnr.jada.util.action.SimpleCRUDBP
      *
      * @return it.cnr.jada.util.action.SimpleDetailCRUDController
      */
-    public final it.cnr.jada.util.action.SimpleDetailCRUDController getMovimentiDare() {
+    public final EconomicaController getMovimentiDare() {
         return movimentiDare;
     }
 
     public boolean isScritturaReadonly() {
         return isBloccoScrittureProposte &&
-                !Scrittura_partita_doppiaBulk.ORIGINE_PRIMA_NOTA_MANUALE.equals(((Scrittura_partita_doppiaBulk) getModel()).getOrigine_scrittura());
+                !Scrittura_partita_doppiaBulk.Origine.PRIMA_NOTA_MANUALE.name().equals(((Scrittura_partita_doppiaBulk) getModel()).getOrigine_scrittura());
     }
 
     @Override
@@ -135,4 +180,5 @@ public class CRUDScritturaPDoppiaBP extends it.cnr.jada.util.action.SimpleCRUDBP
                 .map(scritturaPartitaDoppiaBulk -> Optional.ofNullable(scritturaPartitaDoppiaBulk.getPg_scrittura_annullata()).isPresent())
                 .orElse(Boolean.FALSE);
     }
+
 }

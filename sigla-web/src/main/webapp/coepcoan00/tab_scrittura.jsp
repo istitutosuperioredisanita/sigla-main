@@ -6,7 +6,7 @@
 <div class="Group card p-2 mb-2">
     <div class="form-row">
         <div class="col-md-2"><% bp.getController().writeFormField(out, "dt_contabilizzazione", Boolean.FALSE);%></div>
-        <div class="col-md-4"><% bp.getController().writeFormField(out, "origine_scrittura", Boolean.FALSE);%></div>
+        <div class="col-md-4 h-100"><% bp.getController().writeFormField(out, "origine_scrittura", Boolean.FALSE);%></div>
         <div class="col-md-3 h-100"><% bp.getController().writeFormField(out, "ti_istituz_commerc", Boolean.FALSE);%></div>
         <div class="col-md-3 h-100"><% bp.getController().writeFormField(out, "attiva", Boolean.FALSE);%></div>
     </div>
