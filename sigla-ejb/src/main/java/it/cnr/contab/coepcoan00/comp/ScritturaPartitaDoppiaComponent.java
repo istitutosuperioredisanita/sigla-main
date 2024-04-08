@@ -1266,10 +1266,8 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 			else if ( bulk instanceof Movimento_cogeBulk )
 			{
 				Movimento_cogeBulk mov = (Movimento_cogeBulk) bulk;
-				if ( mov.getCd_terzo().equals( TerzoBulk.TERZO_NULLO))
-					mov.getScrittura().setTerzo( getTerzoNullo());
-				else
-					mov.getScrittura().setTerzo( (TerzoBulk) getHome( userContext, TerzoBulk.class).findByPrimaryKey( mov.getScrittura().getTerzo()));
+				Optional.ofNullable(mov.getTerzo())
+						.ifPresent(terzoBulk -> mov.getScrittura().setTerzo(terzoBulk));
 			}
 
 			if(isEsercizioChiuso(userContext))
@@ -1778,6 +1776,10 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 			throw new ApplicationException( "E' necessario valorizzare il campo 'Attiva'");
 		if ( stampa.gettipologia()==null )
 			throw new ApplicationException( "E' necessario valorizzare il campo 'Tipologia'");
+		if (!stampa.getRagr_causale() && !stampa.getRagr_manuale() && !stampa.getRagr_chiusura() && !stampa.getRagr_stipendi() &&
+			!stampa.getRagr_doc_amm() && !stampa.getRagr_stipendi() && !stampa.getRagr_doc_cont() && !stampa.getRagr_liquid_iva() && !stampa.getRagr_mig_beni())
+			throw new ApplicationException( "E' necessario valorizzare almeno una 'Origine della Scrittura'");
+
 		return stampa;
 	}
 	public SQLBuilder selectContoForPrintByClause (UserContext userContext, Stampa_elenco_movimentiBulk stampa, ContoBulk conto, CompoundFindClause clauses ) throws ComponentException
