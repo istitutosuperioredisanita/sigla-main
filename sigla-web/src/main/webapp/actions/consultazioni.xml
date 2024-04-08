@@ -433,7 +433,7 @@
 
 	<businessProcess name="ConsultazionePartitarioBP"
 					 className="it.cnr.contab.coepcoan00.consultazioni.bp.ConsultazionePartitarioBP">
-		<forward name="default" path="/consultazioni/form_lista.jsp" />
+		<forward name="default" path="/util/form_lista.jsp" />
 		<init-param name="bulkClassName"
 					value="it.cnr.contab.coepcoan00.core.bulk.PartitarioBulk" />
 		<init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />

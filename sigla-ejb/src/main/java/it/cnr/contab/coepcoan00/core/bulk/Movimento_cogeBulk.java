@@ -24,6 +24,7 @@ import it.cnr.contab.config00.sto.bulk.CdsBulk;
 import it.cnr.contab.docamm00.docs.bulk.TipoDocumentoEnum;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.bulk.FieldProperty;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.OrderedHashtable;
@@ -75,7 +76,7 @@ public class Movimento_cogeBulk extends Movimento_cogeBase {
     protected Scrittura_partita_doppiaBulk scrittura = new Scrittura_partita_doppiaBulk();
     protected TerzoBulk terzo;
     protected IDocumentoCogeBulk documentoCoge;
-
+    private PartitarioBulk partitario;
     public Movimento_cogeBulk() {
         super();
     }
@@ -277,7 +278,6 @@ public class Movimento_cogeBulk extends Movimento_cogeBase {
     }
 
     /**
-     *
      * @return La rappresentazione a video della partita
      */
     public String getPartita() {
@@ -292,6 +292,7 @@ public class Movimento_cogeBulk extends Movimento_cogeBase {
                     );
                 }).orElse(null);
     }
+
     /**
      * Effettua una validazione formale del contenuto dello stato dell'oggetto
      * bulk. Viene invocato da <code>CRUDBP</code> in
@@ -372,46 +373,6 @@ public class Movimento_cogeBulk extends Movimento_cogeBase {
         this.terzo = terzo;
     }
 
-    public enum TipoRiga {
-        IVA_ACQUISTO("IVAA", "IVA ACQUISTO"),
-        IVA_ACQUISTO_SPLIT("IVAS", "IVA ACQUISTO SPLIT"),
-        IVA_VENDITE("IVAV", "IVA VENDITA"),
-        IVA_VENDITE_SPLIT("IVVS", "IVA VENDITE SPLIT"),
-        COSTO("COS", "COSTO"),
-        RICAVO("RIC", "RICAVO"),
-        DEBITO("DEB", "DEBITO"),
-        CREDITO("CRE", "CREDITO"),
-        ATTIVITA("ATT", "ATTIVITA'"),
-        PASSIVITA("PAS", "PASSIVITA'"),
-        CESPITE("CSP", "CESPITE"),
-        TESORERIA("BAN", "TESORERIA"),
-        GENERICO("GEN", "GENERICO");
-
-        private final String value;
-        private final String label;
-
-        TipoRiga(String value, String label) {
-            this.value = value;
-            this.label = label;
-        }
-
-        public static TipoRiga getValueFrom(String value) {
-            for (TipoRiga tipoRiga : TipoRiga.values()) {
-                if (tipoRiga.value.equals(value))
-                    return tipoRiga;
-            }
-            throw new IllegalArgumentException("Tipo riga no found for value: " + value);
-        }
-
-        public String value() {
-            return value;
-        }
-
-        public String label() {
-            return label;
-        }
-    }
-
     public IDocumentoCogeBulk getDocumentoCoge() {
         return Optional.ofNullable(this.documentoCoge)
                 .orElseGet(() -> {
@@ -454,4 +415,100 @@ public class Movimento_cogeBulk extends Movimento_cogeBase {
                 .orElse(super.getPg_numero_documento());
     }
 
+    public PartitarioBulk getPartitario() {
+        return Optional.ofNullable(partitario)
+                .orElseGet(() -> {
+                    PartitarioBulk partitarioBulk = new PartitarioBulk();
+                    partitarioBulk.setCd_tipo_documento(getCd_tipo_documento());
+                    partitarioBulk.setEsercizio_documento(getEsercizio_documento());
+                    partitarioBulk.setCd_cds_documento(getCd_cds_documento());
+                    partitarioBulk.setCd_uo_documento(getCd_uo_documento());
+                    partitarioBulk.setPg_numero_documento(getPg_numero_documento());
+                    return partitarioBulk;
+                });
+    }
+
+    public void setPartitario(PartitarioBulk partitario) {
+        this.partitario = partitario;
+        setCd_tipo_documento(Optional.ofNullable(partitario).map(PartitarioBulk::getCd_tipo_documento).orElse(null));
+        setEsercizio_documento(Optional.ofNullable(partitario).map(PartitarioBulk::getEsercizio_documento).orElse(null));
+        setCd_cds_documento(Optional.ofNullable(partitario).map(PartitarioBulk::getCd_cds_documento).orElse(null));
+        setCd_uo_documento(Optional.ofNullable(partitario).map(PartitarioBulk::getCd_uo_documento).orElse(null));
+        setPg_numero_documento(Optional.ofNullable(partitario).map(PartitarioBulk::getPg_numero_documento).orElse(null));
+    }
+
+    public boolean isDebitoCredito() {
+        return Arrays.asList(TipoRiga.CREDITO, TipoRiga.DEBITO)
+                .stream()
+                .filter(tipoRiga -> tipoRiga.value.equals(getTi_riga()))
+                .findAny().isPresent();
+
+    }
+
+    @Override
+    public Boolean isOptionDisabled(FieldProperty fieldProperty, Object key) {
+        if (fieldProperty.getName().equalsIgnoreCase("ti_riga")) {
+            if (Optional.ofNullable(getScrittura())
+                    .flatMap(scritturaPartitaDoppiaBulk -> Optional.ofNullable(scritturaPartitaDoppiaBulk.getOrigine_scrittura()))
+                    .map(s -> s.equalsIgnoreCase(Scrittura_partita_doppiaBulk.Origine.PRIMA_NOTA_MANUALE.name()))
+                    .orElse(Boolean.FALSE)
+            ) {
+                return !Arrays.asList(TipoRiga.COSTO, TipoRiga.RICAVO, TipoRiga.ATTIVITA,
+                                TipoRiga.PASSIVITA, TipoRiga.CREDITO, TipoRiga.DEBITO)
+                        .stream()
+                        .filter(tipoRiga -> tipoRiga.value.equals(key))
+                        .findAny().isPresent();
+            }
+        }
+        return super.isOptionDisabled(fieldProperty, key);
+    }
+
+    public enum TipoRiga {
+        IVA_ACQUISTO("IVAA", "IVA ACQUISTO"),
+        IVA_ACQUISTO_SPLIT("IVAS", "IVA ACQUISTO SPLIT"),
+        IVA_VENDITE("IVAV", "IVA VENDITA"),
+        IVA_VENDITE_SPLIT("IVVS", "IVA VENDITE SPLIT"),
+        COSTO("COS", "COSTO", "EEC"),
+        RICAVO("RIC", "RICAVO", "EER"),
+        DEBITO("DEB", "DEBITO", "NUP"),
+        CREDITO("CRE", "CREDITO", "NUA"),
+        ATTIVITA("ATT", "ATTIVITA'", "NUA"),
+        PASSIVITA("PAS", "PASSIVITA'", "NUP"),
+        CESPITE("CSP", "CESPITE"),
+        TESORERIA("BAN", "TESORERIA"),
+        GENERICO("GEN", "GENERICO");
+
+        private final String value;
+        private final String label;
+        private String naturaConto;
+
+        TipoRiga(String value, String label) {
+            this.value = value;
+            this.label = label;
+        }
+        TipoRiga(String value, String label, String naturaConto) {
+            this(value, label);
+            this.naturaConto = naturaConto;
+        }
+
+        public static TipoRiga getValueFrom(String value) {
+            for (TipoRiga tipoRiga : TipoRiga.values()) {
+                if (tipoRiga.value.equals(value))
+                    return tipoRiga;
+            }
+            throw new IllegalArgumentException("Tipo riga no found for value: " + value);
+        }
+
+        public String value() {
+            return value;
+        }
+
+        public String label() {
+            return label;
+        }
+
+        public String naturaConto() {
+            return naturaConto;
+        }
+    }
 }
