@@ -163,6 +163,15 @@ public class ConsultazionePartitarioBP<T extends IDocumentoAmministrativoBulk> e
     };
     @Override
     public String getRowStyle(Object obj) {
+        if (enableSelection) {
+            if (Optional.ofNullable(obj)
+                    .filter(PartitarioBulk.class::isInstance)
+                    .map(PartitarioBulk.class::cast)
+                    .map(partitarioBulk -> partitarioBulk.isRigaTipoSaldo())
+                    .orElse(Boolean.FALSE)) {
+                return "cursor:pointer";
+            }
+        }
         return null;
     }
 
