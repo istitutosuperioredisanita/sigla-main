@@ -306,6 +306,8 @@ public class Movimento_cogeBulk extends Movimento_cogeBase {
     public void validate() throws ValidationException {
         if (getCd_voce_ep() == null)
             throw new ValidationException("E' necessario selezionare il Conto per ogni movimento inserito");
+        if (getTi_riga() == null)
+            throw new ValidationException("E' necessario selezionare la Tipologia di Riga");
         if (getDt_da_competenza_coge() == null)
             throw new ValidationException("E' necessario inserire il \"Periodo Competenza Da\" per ogni movimento inserito");
         if (getDt_a_competenza_coge() == null)
@@ -454,7 +456,7 @@ public class Movimento_cogeBulk extends Movimento_cogeBase {
                     .orElse(Boolean.FALSE)
             ) {
                 return !Arrays.asList(TipoRiga.COSTO, TipoRiga.RICAVO, TipoRiga.ATTIVITA,
-                                TipoRiga.PASSIVITA, TipoRiga.CREDITO, TipoRiga.DEBITO)
+                                TipoRiga.PASSIVITA, TipoRiga.CREDITO, TipoRiga.DEBITO, TipoRiga.GENERICO)
                         .stream()
                         .filter(tipoRiga -> tipoRiga.value.equals(key))
                         .findAny().isPresent();

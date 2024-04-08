@@ -220,7 +220,8 @@
 		command="doOnChangeTipologia"
 		label="Tipologia"
 		enabledOnSearch="true"
-		caseSensitiveSearch="false" />
+		caseSensitiveSearch="false"
+		nullable="false"/>
 	<fieldProperty
 		name="partita"
 		property="partita"
@@ -322,8 +323,6 @@
 		name="dt_da_competenza_coge" />
 	<columnFieldProperty
 		name="dt_a_competenza_coge" />
-	<columnFieldProperty
-		name="stato" />
 	<columnFieldProperty
 		name="ti_istituz_commerc" />
 		
