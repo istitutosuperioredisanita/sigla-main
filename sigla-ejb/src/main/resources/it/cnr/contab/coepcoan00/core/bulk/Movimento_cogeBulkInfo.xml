@@ -154,7 +154,8 @@
 		name="find_terzo"
 		property="scrittura.terzo"
 		enabledOnSearch="true"		
-		inputType="SEARCHTOOL"/>
+		inputType="SEARCHTOOL"
+		label="Terzo"/>
 	<fieldProperty
 		name="sezione"
 		property="sezione"
@@ -282,6 +283,11 @@
 	<formFieldProperty
 		name="find_terzo" />
 	<formFieldProperty
+		name="find_terzo_searchtool"
+		extend="find_terzo"
+		formName="searchtool"/>
+
+	<formFieldProperty
 		name="sezione" />
 	<formFieldProperty
 		name="pg_scrittura" />
@@ -303,7 +309,28 @@
 		name="terzo_movimento" />
 	<formFieldProperty
 		name="cd_contributo_ritenuta" />
-
+	<formFieldProperty
+		name="cds"
+		property="scrittura.cds"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnSearch="fals"
+		label="Cds"/>
+	<formFieldProperty
+		name="cdsEnte"
+		extend="cds"
+		enabledOnSearch="true"/>
+	<formFieldProperty
+		name="unita_organizzativa"
+		property="scrittura.uo"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnSearch="false"
+		label="Unit&#224; organizzativa"/>
+	<formFieldProperty
+		name="unita_organizzativaEnte"
+		extend="unita_organizzativa"
+		enabledOnSearch="true"/>
 
 	<columnFieldProperty
 		name="esercizio" />

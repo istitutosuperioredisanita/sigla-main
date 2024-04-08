@@ -84,6 +84,7 @@
 		inputType="SEARCHTOOL"
 		completeOnSave="true"
 		enabledOnSearch="true"
+		formName="searchtool"
 		label="Conto" />
 	<fieldProperty
 		name="cd_voce_ep"
@@ -107,8 +108,16 @@
         nullable="false"
         enabledOnSearch="true"
         label="Tipologia" />
-        
-    <fieldProperty
+
+	<fieldProperty
+		name="ragr_manuale"
+		property="ragr_manuale"
+		inputType="CHECKBOX"
+		enabledOnSearch="false"
+		label="Prima Nota Manuale"
+		nullable="false"/>
+
+	<fieldProperty
 		name="ragr_causale"
 		property="ragr_causale"
 		inputType="CHECKBOX"
@@ -167,6 +176,8 @@
 	<fieldProperty
 		name="seleziona"
 		property="esercizio"
+		iconClass="fa fa-fw fa-check-square-o"
+		buttonClass="btn-sm btn-outline-primary"
 		inputType="BUTTON"
 		img="img/check10.gif"
 		href="javascript:submitForm('doSeleziona()')" />
@@ -185,7 +196,8 @@
 	<formFieldProperty name="ds_voce_ep" />	
 	<formFieldProperty name="tipologia"/>
 	<formFieldProperty name="seleziona" />
-	<formFieldProperty name="ragr_causale" /> 
+	<formFieldProperty name="ragr_manuale" />
+	<formFieldProperty name="ragr_causale" />
 	<formFieldProperty name="ragr_chiusura" />
 	<formFieldProperty name="ragr_doc_amm" /> 
 	<formFieldProperty name="ragr_doc_cont" /> 
@@ -347,7 +359,12 @@
 			parameterType="STRING"
 			paramNameJR="Ragr_stipendi"
 			paramTypeJR="java.lang.String" />
-			
+		<printFieldProperty
+			name="ragr_manuale"
+			parameterPosition="14"
+			parameterType="STRING"
+			paramNameJR="Ragr_manuale"
+			paramTypeJR="java.lang.String" />
 	</printForm>
 
 </bulkInfo>
