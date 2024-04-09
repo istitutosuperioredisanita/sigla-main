@@ -924,27 +924,82 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 				});
 		Optional.ofNullable(storageObject.<String>getPropertyValue("sigla_commons_aspect:utente_applicativo"))
 				.ifPresent(s -> allegato.setUtenteSIGLA(s));
+        Optional.ofNullable(storageObject.<GregorianCalendar>getPropertyValue("sigla_commons_aspect:data_cancellazione"))
+                .ifPresent(g -> allegato.setDataCancellazione(Date.from(g.toZonedDateTime().toInstant())));
+
+        Optional.ofNullable(storageObject.<GregorianCalendar>getPropertyValue("sigla_commons_aspect:data_protocollo"))
+                .ifPresent(g -> allegato.setDataProtocollo(Date.from(g.toZonedDateTime().toInstant())));
+        Optional.ofNullable(storageObject.<String>getPropertyValue("sigla_commons_aspect:numero_protocollo"))
+                .ifPresent(s -> allegato.setNumProtocollo(s));
+
 		super.completeAllegato(allegato, storageObject);
 	}
-	
-	@Override
-	public String getAllegatiFormName() {
-		DocumentoEleTestataBulk documentoEleTestata = (DocumentoEleTestataBulk) getModel();
-		String allegatiFormName = super.getAllegatiFormName();
-		if (documentoEleTestata.isRicevutaDecorrenzaTermini() && allegatiFormName.equalsIgnoreCase("default"))
-			return "decorrenzaTermini";
-		return allegatiFormName;
-	}
-	
-	@Override
-	public void save(ActionContext actioncontext) throws ValidationException,
-			BusinessProcessException {
-		boolean esisteAllegato=false;
+
+    @Override
+    public String getAllegatiFormName() {
+        DocumentoEleTestataBulk documentoEleTestata = (DocumentoEleTestataBulk) getModel();
+        String allegatiFormName = super.getAllegatiFormName();
+        if (documentoEleTestata.isRicevutaDecorrenzaTermini() && allegatiFormName.equalsIgnoreCase("default"))
+            allegatiFormName = "decorrenzaTermini";
+        if(Optional.ofNullable(this.getCrudArchivioAllegati().getModel())
+                .filter(AllegatoFatturaBulk.class::isInstance)
+                .map(AllegatoFatturaBulk.class::cast)
+                .flatMap(afb -> Optional.ofNullable(afb.getAspectName()))
+                .filter(s -> s.equalsIgnoreCase(AllegatoFatturaBulk.P_SIGLA_FATTURE_ATTACHMENT_LIQUIDAZIONE))
+                .isPresent()) {
+            return "protocollo";
+        }
+        return allegatiFormName.equalsIgnoreCase("default") ? "base" : allegatiFormName;
+    }
+
+    private CRUDComponentSession getCRUDComponentSession() throws BusinessProcessException {
+        return Optional.ofNullable(createComponentSession("JADAEJB_CRUDComponentSession"))
+                .filter(CRUDComponentSession.class::isInstance)
+                .map(CRUDComponentSession.class::cast)
+                .orElseThrow(() -> new BusinessProcessException("Errore nella creazione dell'EJB"));
+    }
+
+    @Override
+    public void save(ActionContext actioncontext) throws ValidationException,
+            BusinessProcessException {
+        boolean esisteAllegato = false;
+        DocumentoEleTestataBulk testata = ((DocumentoEleTestataBulk) getModel());
+        if (testata.isRegistrata()) {
+            try {
+                final Fattura_passivaBulk fatturaPassivaBulk = ((FatturaElettronicaPassivaComponentSession) createComponentSession()).cercaFatturaPassiva(actioncontext.getUserContext(), testata);
+                final CRUDComponentSession crudComponentSession = getCRUDComponentSession();
+                crudComponentSession.inizializzaBulkPerModifica(actioncontext.getUserContext(),fatturaPassivaBulk);
+                final List<AllegatoFatturaBulk> details = getCrudArchivioAllegati().getDetails();
+                final Optional<AllegatoFatturaBulk> optAllegatoFatturaBulk = details
+                        .stream()
+                        .filter(AllegatoFatturaBulk.class::isInstance)
+                        .map(AllegatoFatturaBulk.class::cast)
+                        .filter(allegatoFatturaBulk -> AllegatoFatturaBulk.P_SIGLA_FATTURE_ATTACHMENT_LIQUIDAZIONE.equalsIgnoreCase(allegatoFatturaBulk.getAspectName()))
+                        .filter(allegatoFatturaBulk -> Optional.ofNullable(allegatoFatturaBulk.getDataProtocollo()).isPresent())
+                        .sorted(Comparator.comparing(AllegatoFatturaBulk::getDataProtocollo).reversed())
+                        .findFirst();
+                if (optAllegatoFatturaBulk.isPresent()) {
+                    fatturaPassivaBulk.setDt_protocollo_liq(
+                            Optional.ofNullable(optAllegatoFatturaBulk.get().getDataProtocollo())
+                                    .map(Date::getTime)
+                                    .map(aLong -> new Timestamp(aLong))
+                                    .orElse(null)
+                    );
+                    fatturaPassivaBulk.setNr_protocollo_liq(optAllegatoFatturaBulk.get().getNumProtocollo());
+                } else {
+                    fatturaPassivaBulk.setDt_protocollo_liq(null);
+                    fatturaPassivaBulk.setNr_protocollo_liq(null);
+                }
+                fatturaPassivaBulk.setToBeUpdated();
+                crudComponentSession.modificaConBulk(actioncontext.getUserContext(),fatturaPassivaBulk);
+            } catch (ComponentException|RemoteException e) {
+                throw handleException(e);
+            };
+        }
 		for (Object obj : getCrudArchivioAllegati().getDetails()) {
 			AllegatoFatturaBulk allegatoFatturaBulk = (AllegatoFatturaBulk)obj;
 			if (allegatoFatturaBulk != null && allegatoFatturaBulk.getAspectName() != null && 
 					allegatoFatturaBulk.getAspectName().equalsIgnoreCase("P:sigla_fatture_attachment:comunicazione_non_registrabilita")) {
-				DocumentoEleTestataBulk testata = ((DocumentoEleTestataBulk) getModel());
 				if (testata.isRegistrata()){
 					throw new ValidationException("La fattura risulta registrata, comunicazione di documento non registrabile non allegabile.");
 				}

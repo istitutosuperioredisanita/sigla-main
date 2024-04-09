@@ -3933,6 +3933,7 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
                         .stream()
                         .forEach(documentoGenericoRigaBulk -> {
                             documentoGenericoRigaBulk.setDt_a_competenza_coge(competenzaA);
+                            documentoGenericoRigaBulk.setToBeUpdated();
                         });
 
             }
@@ -3981,6 +3982,7 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
                             .stream()
                             .forEach(documentoGenericoRigaBulk -> {
                                 documentoGenericoRigaBulk.setDt_da_competenza_coge(competenzaDa);
+                                documentoGenericoRigaBulk.setToBeUpdated();
                             });
             }
             bp.setModel(context, documentoGenericoBulk);

@@ -69,6 +69,7 @@ public class Parametri_cdsBase extends Parametri_cdsKey implements Keyed {
 
 	// ABIL_PROGETTO_STRORG VARCHAR2(3)
 	private java.lang.String abil_progetto_strorg;
+    private Boolean fl_obblig_liq_fatt;
 
 	public Parametri_cdsBase() {
 		super();
@@ -331,4 +332,12 @@ public class Parametri_cdsBase extends Parametri_cdsKey implements Keyed {
 	public void setAbil_progetto_strorg(String abil_progetto_strorg) {
 		this.abil_progetto_strorg = abil_progetto_strorg;
 	}
+
+    public Boolean getFl_obblig_liq_fatt() {
+        return fl_obblig_liq_fatt;
+    }
+
+    public void setFl_obblig_liq_fatt(Boolean fl_obblig_liq_fatt) {
+        this.fl_obblig_liq_fatt = fl_obblig_liq_fatt;
+    }
 }

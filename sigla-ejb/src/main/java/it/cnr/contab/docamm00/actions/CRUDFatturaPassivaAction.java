@@ -2973,6 +2973,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                             .stream()
                             .forEach(fatturaPassivaRigaBulk -> {
                                 fatturaPassivaRigaBulk.setDt_a_competenza_coge(competenzaA);
+                                fatturaPassivaRigaBulk.setToBeUpdated();
                             });
                 }
 
@@ -3023,6 +3024,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                             .stream()
                             .forEach(fatturaPassivaRigaBulk -> {
                                 fatturaPassivaRigaBulk.setDt_da_competenza_coge(competenzaDa);
+                                fatturaPassivaRigaBulk.setToBeUpdated();
                             });
                 }
             }

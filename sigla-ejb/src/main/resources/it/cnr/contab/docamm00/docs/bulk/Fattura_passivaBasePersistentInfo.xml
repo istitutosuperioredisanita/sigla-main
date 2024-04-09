@@ -513,6 +513,17 @@
                 sqlTypeName="NUMERIC"
                 columnSize="5"
                 nullable="false"/>
+
+        <columnMapping
+                columnName="DT_PROTOCOLLO_LIQ"
+                propertyName="dt_protocollo_liq"
+                sqlTypeName="TIMESTAMP"
+                columnSize="7"/>
+        <columnMapping
+                columnName="NR_PROTOCOLLO_LIQ"
+                propertyName="nr_protocollo_liq"
+                sqlTypeName="VARCHAR"
+                columnSize="20"/>
     </defaultColumnMap>
     <persistentProperty
             name="dt_cancellazione"/>
@@ -680,7 +691,10 @@
             name="fl_split_payment"/>
     <persistentProperty
             name="flDaOrdini"/>
-
     <persistentProperty
             name="progRegFattura"/>
+    <persistentProperty
+            name="dt_protocollo_liq"/>
+    <persistentProperty
+            name="nr_protocollo_liq"/>
 </SQLPersistentInfo>

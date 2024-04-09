@@ -331,10 +331,11 @@
 		inputType="TEXT"
 		formatName="date_short"
 		readonlyProperty="RODateCompetenzaCOGE"
+		command="doOnDataCompetenzaDaCogeChange"
 		enabledOnInsert="true"
 		enabledOnEdit="true"
-		enabledOnSearch="false"
-		enabledOnFreeSearch="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
 		nullable="false"
 		label="Competenza al" />		
 	<fieldProperty
@@ -345,10 +346,11 @@
 		inputType="TEXT"
 		formatName="date_short"
 		readonlyProperty="RODateCompetenzaCOGE"
+		command="doOnDataCompetenzaDaCogeChange"
 		enabledOnInsert="true"
 		enabledOnEdit="true"
-		enabledOnSearch="false"
-		enabledOnFreeSearch="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
 		nullable="false"
 		label="Competenza dal" />
 	<fieldProperty

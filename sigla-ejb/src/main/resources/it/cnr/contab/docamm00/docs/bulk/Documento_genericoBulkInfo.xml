@@ -311,13 +311,14 @@
 		enabledOnSearch="true"		
 		enabledOnFreeSearch="true"
 		label="Progressivo" />
-		<fieldProperty
+	<fieldProperty
 		name="dt_a_competenza_coge"
 		property="dt_a_competenza_coge"
 		maxLength="10"
 		inputSize="10"
 		inputType="TEXT"
 		formatName="date_short"
+		readonlyProperty="RODateCompetenzaCOGE"
 		nullable="false"
 		enabledOnInsert="true"
 		enabledOnEdit="true"
@@ -331,6 +332,7 @@
 		inputSize="10"
 		inputType="TEXT"
 		formatName="date_short"
+		readonlyProperty="RODateCompetenzaCOGE"
 		nullable="false"
 		enabledOnInsert="true"
 		enabledOnEdit="true"

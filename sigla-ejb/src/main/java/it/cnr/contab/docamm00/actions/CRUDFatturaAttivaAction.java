@@ -3345,4 +3345,51 @@ public class CRUDFatturaAttivaAction extends EconomicaAction {
             return handleException(context, e);
         }
     }
+    /**
+     * Gestisce il cambiamento della data competenza coge 'a'
+     *
+     * @param context L'ActionContext della richiesta
+     * @return Il Forward alla pagina di risposta
+     */
+    public Forward doOnDataCompetenzaACogeChange(ActionContext context) {
+        CRUDFatturaAttivaIBP bp = (CRUDFatturaAttivaIBP) context.getBusinessProcess();
+        Fattura_attivaBulk fattura = (Fattura_attivaBulk) bp.getModel();
+        try {
+            fillModel(context);
+            fattura
+                    .getFattura_attiva_dettColl()
+                    .stream()
+                    .forEach(fatturaAttivaRigaBulk -> {
+                        fatturaAttivaRigaBulk.setDt_a_competenza_coge(fattura.getDt_a_competenza_coge());
+                        fatturaAttivaRigaBulk.setToBeUpdated();
+                    });
+            return context.findDefaultForward();
+        } catch (Throwable t) {
+            return handleException(context, t);
+        }
+    }
+    /**
+     * Gestisce il cambiamento della data competenza coge 'Da'
+     *
+     * @param context L'ActionContext della richiesta
+     * @return Il Forward alla pagina di risposta
+     */
+    public Forward doOnDataCompetenzaDaCogeChange(ActionContext context) {
+        CRUDFatturaAttivaIBP bp = (CRUDFatturaAttivaIBP) context.getBusinessProcess();
+        Fattura_attivaBulk fattura = (Fattura_attivaBulk) bp.getModel();
+        try {
+            fillModel(context);
+            fattura
+                    .getFattura_attiva_dettColl()
+                    .stream()
+                    .forEach(fatturaAttivaRigaBulk -> {
+                        fatturaAttivaRigaBulk.setDt_da_competenza_coge(fattura.getDt_da_competenza_coge());
+                        fatturaAttivaRigaBulk.setToBeUpdated();
+                    });
+            return context.findDefaultForward();
+        } catch (Throwable t) {
+            return handleException(context, t);
+        }
+    }
+
 }
