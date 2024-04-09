@@ -136,12 +136,14 @@
 		property="origine_scrittura"
 		maxLength="20"
 		inputSize="20"
-		inputType="TEXT"
+		inputType="SELECT"
+		keysProperty="ti_origineKeys"
 		label="Origine scrittura"
 		enabledOnInsert="false"
 		enabledOnEdit="false"
-		enabledOnFreeSearch="false"
-		caseSensitiveSearch="false" />
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		caseSensitiveSearch="true" />
 	<fieldProperty
 		name="cd_comp_documento"
 		property="cd_comp_documento"
@@ -331,11 +333,13 @@
 		maxLength="1"
 		inputSize="1"
 		inputType="SELECT"
-		keysProperty = "tipoKeys"
+		keysProperty="tipoKeys"
 		label="Tipo"
 		enabledOnSearch="false"
+		enabledOnInsert="true"
+		enabledOnEdit="false"
 		caseSensitiveSearch="false"
-		nullable="true"/>
+		nullable="false"/>
 
 	<formFieldProperty
 		name="cd_cds" />
@@ -430,11 +434,13 @@
 		name="dt_da_competenza_coge"
 		property="dt_da_competenza_coge"
 		inputType="TEXT"
+		command="doOnCompetenzaChangeDa"
 		formatName="date_short"
 		label="Competenza da"/>
 	<formFieldProperty
 		name="dt_a_competenza_coge"
 		property="dt_a_competenza_coge"
+		command="doOnCompetenzaChangeA"
 		inputType="TEXT"
 		formatName="date_short"
 		label="Competenza a"/>

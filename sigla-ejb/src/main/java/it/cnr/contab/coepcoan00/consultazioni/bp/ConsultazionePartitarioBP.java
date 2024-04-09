@@ -27,8 +27,6 @@ import it.cnr.jada.bulk.BulkInfo;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.CondizioneComplessaBulk;
 import it.cnr.jada.util.action.SearchProvider;
@@ -51,6 +49,8 @@ public class ConsultazionePartitarioBP<T extends IDocumentoAmministrativoBulk> e
     protected TerzoBulk terzoBulk;
     protected Boolean dettaglioTributi;
     protected String columnSet;
+    protected Boolean enableSelection = false;
+
 
     public ConsultazionePartitarioBP(List<T> documentoAmministrativo) {
         this.documentoAmministrativo = documentoAmministrativo;
@@ -61,10 +61,11 @@ public class ConsultazionePartitarioBP<T extends IDocumentoAmministrativoBulk> e
         this.columnSet = columnSet;
     }
 
-    public ConsultazionePartitarioBP(TerzoBulk terzoBulk, Boolean dettaglioTributi, String columnSet) {
+    public ConsultazionePartitarioBP(TerzoBulk terzoBulk, Boolean dettaglioTributi, String columnSet, Boolean enableSelection) {
         this.terzoBulk = terzoBulk;
         this.dettaglioTributi = dettaglioTributi;
         this.columnSet = columnSet;
+        this.enableSelection = enableSelection;
     }
 
     public ConsultazionePartitarioBP(String s, List<T> documentoAmministrativo) {
@@ -79,7 +80,9 @@ public class ConsultazionePartitarioBP<T extends IDocumentoAmministrativoBulk> e
         setColumns(getBulkInfo().getColumnFieldPropertyDictionary(Optional.ofNullable(columnSet).orElse("partitario")));
         setModel(actioncontext, new PartitarioBulk());
         setMultiSelection(false);
-        disableSelection();
+        if (!enableSelection) {
+            disableSelection();
+        }
     }
 
     public it.cnr.jada.ejb.CRUDComponentSession createComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException, BusinessProcessException {
@@ -160,11 +163,29 @@ public class ConsultazionePartitarioBP<T extends IDocumentoAmministrativoBulk> e
     };
     @Override
     public String getRowStyle(Object obj) {
+        if (enableSelection) {
+            if (Optional.ofNullable(obj)
+                    .filter(PartitarioBulk.class::isInstance)
+                    .map(PartitarioBulk.class::cast)
+                    .map(partitarioBulk -> partitarioBulk.isRigaTipoSaldo())
+                    .orElse(Boolean.FALSE)) {
+                return "cursor:pointer";
+            }
+        }
         return null;
     }
 
     @Override
     public boolean isRowEnabled(Object obj) {
+        if (enableSelection) {
+            if (Optional.ofNullable(obj)
+                    .filter(PartitarioBulk.class::isInstance)
+                    .map(PartitarioBulk.class::cast)
+                    .map(partitarioBulk -> partitarioBulk.isRigaTipoSaldo())
+                    .orElse(Boolean.FALSE)) {
+                return true;
+            }
+        }
         return false;
     }
 

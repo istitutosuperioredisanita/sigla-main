@@ -18,33 +18,28 @@
 package it.cnr.contab.coepcoan00.core.bulk;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.config00.pdcep.bulk.AssociazioneContoGruppoBulk;
 import it.cnr.contab.config00.sto.bulk.CdsBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.util.enumeration.TipoIVA;
+import it.cnr.jada.DetailedRuntimeException;
+import it.cnr.jada.action.MessageToUser;
 import it.cnr.jada.bulk.BulkCollection;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
+import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.util.OrderedHashtable;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.Dictionary;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
 
     public final static String TIPO_COGE = "COGE";
-    public final static String ORIGINE_CAUSALE = "CAUSALE";
-    public final static String ORIGINE_PRIMA_NOTA_MANUALE = "Prima Nota manuale";
-    public final static String ORIGINE_DOCAMM = "DOCAMM";
-    public final static String ORIGINE_DOCCONT = "DOCCONT";
-    public final static String ORIGINE_STIPENDI = "STIPENDI";
-    public final static String ORIGINE_LIQUID_IVA = "LIQUID_IVA";
     public final static String TIPO_PRIMA_SCRITTURA = "P";
     public final static String STATO_DEFINITIVO = "D";
     public final static java.util.Dictionary STATO_ATTIVA;
@@ -59,6 +54,30 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
         STATO_ATTIVA.put(ATTIVA_NO, "No");
     }
 
+    public enum Origine {
+        CAUSALE("Causale"),
+        PRIMA_NOTA_MANUALE("Prima Nota Manuale"),
+        DOCAMM( "Documento Amministrativo"),
+        DOCCONT("Documento Contabile"),
+        STIPENDI("Stipendi"),
+        LIQUID_IVA("Liquidazione IVA");
+        private final String label;
+
+        private Origine(String label) {
+            this.label = label;
+        }
+
+        public String label() {
+            return label;
+        }
+    }
+    public final static java.util.Dictionary ti_origineKeys = new it.cnr.jada.util.OrderedHashtable();
+    static {
+        Arrays.asList(Origine.values()).stream().forEach(origine -> {
+            ti_origineKeys.put(origine.name(), origine.label());
+        });
+    }
+
     protected BulkList movimentiDareColl = new BulkList();
     protected BulkList movimentiAvereColl = new BulkList();
     protected CdsBulk cds = new CdsBulk();
@@ -70,6 +89,7 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
     private Timestamp dt_da_competenza_coge;
     private Timestamp dt_a_competenza_coge;
 
+    private String ti_istituz_commerc;
     public Scrittura_partita_doppiaBulk() {
         super();
     }
@@ -87,11 +107,19 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
      * @return L'indice del movimento con aggiornati i dati relativi alla sezione, stato, scrittura
      */
     public int addToMovimentiAvereColl(Movimento_cogeBulk movimento) {
+        if (!Optional.ofNullable(movimento.getTi_istituz_commerc()).isPresent() &&
+                !Optional.ofNullable(getTi_istituz_commerc()).isPresent()) {
+            throw new MessageToUser("Specificare il Tipo in testata, Istituzionale/Commerciale!");
+        }
         this.movimentiAvereColl.add(movimento);
         movimento.setScrittura(this);
         movimento.setSezione(Movimento_cogeBulk.SEZIONE_AVERE);
         movimento.setStato(Movimento_cogeBulk.STATO_DEFINITIVO);
         movimento.setFl_modificabile(Boolean.TRUE);
+        movimento.setTi_istituz_commerc(
+                Optional.ofNullable(movimento.getTi_istituz_commerc())
+                        .orElse(getTi_istituz_commerc())
+        );
         movimento.setDt_da_competenza_coge(getDt_da_competenza_coge());
         movimento.setDt_a_competenza_coge(getDt_a_competenza_coge());
         return movimentiAvereColl.size() - 1;
@@ -105,11 +133,19 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
      * @return L'indice del movimento con aggiornati i dati relativi alla sezione, stato, scrittura
      */
     public int addToMovimentiDareColl(Movimento_cogeBulk movimento) {
+        if (!Optional.ofNullable(movimento.getTi_istituz_commerc()).isPresent() &&
+                !Optional.ofNullable(getTi_istituz_commerc()).isPresent()) {
+            throw new MessageToUser("Specificare il Tipo in testata, Istituzionale/Commerciale!");
+        }
         this.movimentiDareColl.add(movimento);
         movimento.setScrittura(this);
         movimento.setSezione(Movimento_cogeBulk.SEZIONE_DARE);
         movimento.setStato(Movimento_cogeBulk.STATO_DEFINITIVO);
         movimento.setFl_modificabile(Boolean.TRUE);
+        movimento.setTi_istituz_commerc(
+                Optional.ofNullable(movimento.getTi_istituz_commerc())
+                                .orElse(getTi_istituz_commerc())
+        );
         movimento.setDt_da_competenza_coge(getDt_da_competenza_coge());
         movimento.setDt_a_competenza_coge(getDt_a_competenza_coge());
         return movimentiDareColl.size() - 1;
@@ -264,7 +300,7 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
         setEsercizio(it.cnr.contab.utenze00.bulk.CNRUserInfo.getEsercizio(context));
         setUo(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context));
         setCd_uo_documento(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context).getCd_unita_organizzativa());
-        setOrigine_scrittura(ORIGINE_PRIMA_NOTA_MANUALE);
+        setOrigine_scrittura(Origine.PRIMA_NOTA_MANUALE.name());
         setAttiva(ATTIVA_YES);
         setTi_scrittura(TIPO_PRIMA_SCRITTURA);
         setStato(STATO_DEFINITIVO);
@@ -349,14 +385,21 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
         return list;
     }
 
+    public void setTi_istituz_commerc(String ti_istituz_commerc) {
+        this.ti_istituz_commerc = ti_istituz_commerc;
+    }
+
     public String getTi_istituz_commerc() {
-        return getAllMovimentiColl()
-                .stream()
-                .filter(m -> Optional.ofNullable(m.getTi_istituz_commerc()).isPresent())
-                .map(Movimento_cogeBase::getTi_istituz_commerc)
-                .distinct()
-                .findAny()
-                .orElse(null);
+        return Optional.ofNullable(ti_istituz_commerc)
+                .orElseGet(() -> {
+                    return getAllMovimentiColl()
+                            .stream()
+                            .filter(m -> Optional.ofNullable(m.getTi_istituz_commerc()).isPresent())
+                            .map(Movimento_cogeBase::getTi_istituz_commerc)
+                            .distinct()
+                            .findAny()
+                            .orElse(null);
+                });
     }
 
     public boolean isScritturaAttiva() {

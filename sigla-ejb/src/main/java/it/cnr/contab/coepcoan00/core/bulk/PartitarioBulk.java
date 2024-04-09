@@ -33,10 +33,12 @@ public class PartitarioBulk extends Movimento_cogeBulk {
             tipoRigaKeys = new OrderedHashtable(),
             tipoKeys = TipoIVA.TipoIVAKeys;
 
+    public static final String SALDO = "SALDO";
+
     static {
         for (TipoRiga tipoRiga : TipoRiga.values()) {
             tipoRigaKeys.put(tipoRiga.value(), tipoRiga.label());
-            tipoRigaKeys.put("SALDO", "SALDO");
+            tipoRigaKeys.put(SALDO, SALDO);
         }
     }
 
@@ -143,4 +145,8 @@ public class PartitarioBulk extends Movimento_cogeBulk {
                 .map(s -> super.getConto().getDs_voce_ep())
                 .orElse(null);
     }
+    public boolean isRigaTipoSaldo() {
+        return SALDO.equals(this.getTi_riga());
+    }
+
 }

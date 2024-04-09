@@ -58,7 +58,7 @@
 		property="dt_da_competenza_coge"
 		inputType="TEXT"
 		formatName="date_short"
-		enabledOnSearch="true"				
+		enabledOnSearch="true"
 		label="Competenza da"
 		nullable="false"/>
 	<fieldProperty
@@ -154,7 +154,8 @@
 		name="find_terzo"
 		property="scrittura.terzo"
 		enabledOnSearch="true"		
-		inputType="SEARCHTOOL"/>
+		inputType="SEARCHTOOL"
+		label="Terzo"/>
 	<fieldProperty
 		name="sezione"
 		property="sezione"
@@ -217,14 +218,23 @@
 		property="ti_riga"
 		inputType="SELECT"
 		keysProperty="tipoRigaKeys"
+		command="doOnChangeTipologia"
 		label="Tipologia"
 		enabledOnSearch="true"
-		caseSensitiveSearch="false" />
+		caseSensitiveSearch="false"
+		nullable="false"/>
 	<fieldProperty
 		name="partita"
 		property="partita"
 		inputType="ROTEXT"
 		label="Partita"	/>
+	<fieldProperty
+		name="partitario"
+		property="partitario"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		label="Partita"	/>
+
 	<fieldProperty
 		name="cd_contributo_ritenuta"
 		property="cd_contributo_ritenuta"
@@ -273,6 +283,11 @@
 	<formFieldProperty
 		name="find_terzo" />
 	<formFieldProperty
+		name="find_terzo_searchtool"
+		extend="find_terzo"
+		formName="searchtool"/>
+
+	<formFieldProperty
 		name="sezione" />
 	<formFieldProperty
 		name="pg_scrittura" />
@@ -289,10 +304,33 @@
 	<formFieldProperty
 		name="partita" />
 	<formFieldProperty
+		name="partitario" />
+	<formFieldProperty
 		name="terzo_movimento" />
 	<formFieldProperty
 		name="cd_contributo_ritenuta" />
-
+	<formFieldProperty
+		name="cds"
+		property="scrittura.cds"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnSearch="fals"
+		label="Cds"/>
+	<formFieldProperty
+		name="cdsEnte"
+		extend="cds"
+		enabledOnSearch="true"/>
+	<formFieldProperty
+		name="unita_organizzativa"
+		property="scrittura.uo"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnSearch="false"
+		label="Unit&#224; organizzativa"/>
+	<formFieldProperty
+		name="unita_organizzativaEnte"
+		extend="unita_organizzativa"
+		enabledOnSearch="true"/>
 
 	<columnFieldProperty
 		name="esercizio" />
@@ -312,8 +350,6 @@
 		name="dt_da_competenza_coge" />
 	<columnFieldProperty
 		name="dt_a_competenza_coge" />
-	<columnFieldProperty
-		name="stato" />
 	<columnFieldProperty
 		name="ti_istituz_commerc" />
 		

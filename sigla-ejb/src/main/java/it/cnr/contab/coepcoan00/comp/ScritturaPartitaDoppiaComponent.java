@@ -1266,10 +1266,8 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 			else if ( bulk instanceof Movimento_cogeBulk )
 			{
 				Movimento_cogeBulk mov = (Movimento_cogeBulk) bulk;
-				if ( mov.getCd_terzo().equals( TerzoBulk.TERZO_NULLO))
-					mov.getScrittura().setTerzo( getTerzoNullo());
-				else
-					mov.getScrittura().setTerzo( (TerzoBulk) getHome( userContext, TerzoBulk.class).findByPrimaryKey( mov.getScrittura().getTerzo()));
+				Optional.ofNullable(mov.getTerzo())
+						.ifPresent(terzoBulk -> mov.getScrittura().setTerzo(terzoBulk));
 			}
 
 			if(isEsercizioChiuso(userContext))
@@ -1543,7 +1541,12 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 			sql.addClause( FindClause.AND, "ti_sezione", SQLBuilder.NOT_EQUALS, ContoHome.SEZIONE_DARE);
 		else if ( Movimento_cogeBulk.SEZIONE_DARE.equals( movimento.getSezione()))
 			sql.addClause( FindClause.AND, "ti_sezione", SQLBuilder.NOT_EQUALS, ContoHome.SEZIONE_AVERE);
-
+		final Optional<String> naturaConto = Optional.ofNullable(movimento.getTi_riga())
+				.map(s -> Movimento_cogeBulk.TipoRiga.getValueFrom(s))
+				.map(Movimento_cogeBulk.TipoRiga::naturaConto);
+		if (naturaConto.isPresent()) {
+			sql.addClause( FindClause.AND, "natura_voce", SQLBuilder.EQUALS, naturaConto.get());
+		}
 		return sql;
 	}
 	/**
@@ -1773,6 +1776,10 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 			throw new ApplicationException( "E' necessario valorizzare il campo 'Attiva'");
 		if ( stampa.gettipologia()==null )
 			throw new ApplicationException( "E' necessario valorizzare il campo 'Tipologia'");
+		if (!stampa.getRagr_causale() && !stampa.getRagr_manuale() && !stampa.getRagr_chiusura() && !stampa.getRagr_stipendi() &&
+			!stampa.getRagr_doc_amm() && !stampa.getRagr_stipendi() && !stampa.getRagr_doc_cont() && !stampa.getRagr_liquid_iva() && !stampa.getRagr_mig_beni())
+			throw new ApplicationException( "E' necessario valorizzare almeno una 'Origine della Scrittura'");
+
 		return stampa;
 	}
 	public SQLBuilder selectContoForPrintByClause (UserContext userContext, Stampa_elenco_movimentiBulk stampa, ContoBulk conto, CompoundFindClause clauses ) throws ComponentException
@@ -5575,7 +5582,7 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 		scritturaPartitaDoppia.setCd_cds(doccoge.getCd_cds());
 		scritturaPartitaDoppia.setTi_scrittura(Scrittura_partita_doppiaBulk.TIPO_PRIMA_SCRITTURA);
 		scritturaPartitaDoppia.setStato(Scrittura_partita_doppiaBulk.STATO_DEFINITIVO);
-		if (Scrittura_partita_doppiaBulk.ORIGINE_LIQUID_IVA.equals(doccoge.getCd_tipo_doc())) {
+		if (Scrittura_partita_doppiaBulk.Origine.LIQUID_IVA.name().equals(doccoge.getCd_tipo_doc())) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTimeInMillis(doccoge.getDtInizioLiquid().getTime());
 			scritturaPartitaDoppia.setDs_scrittura(
@@ -5610,15 +5617,15 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 
 		TipoDocumentoEnum tipoDocumento = TipoDocumentoEnum.fromValue(scritturaPartitaDoppia.getCd_tipo_documento());
 		if (tipoDocumento.isGenericoStipendiSpesa())
-			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.ORIGINE_STIPENDI);
+			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.STIPENDI.name());
 		else if (tipoDocumento.isLiquidazioneIva())
-			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.ORIGINE_LIQUID_IVA);
+			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.LIQUID_IVA.name());
 		else if (tipoDocumento.isDocumentoAttivo() || tipoDocumento.isDocumentoPassivo())
-			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.ORIGINE_DOCAMM);
+			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.DOCAMM.name());
 		else if (tipoDocumento.isMandato() || tipoDocumento.isReversale())
-			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.ORIGINE_DOCCONT);
+			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.DOCCONT.name());
 		else
-			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.ORIGINE_CAUSALE);
+			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.CAUSALE.name());
 
 		testataPrimaNota.forEach(testata -> {
 			if (accorpaConti) {

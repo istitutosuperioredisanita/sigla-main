@@ -14,14 +14,14 @@
         <div class="col-md-9"><% bp.getMovimentiDare().writeFormField(out, "find_voce_ep_searchtool", Boolean.FALSE);%></div>
     </div>
     <div class="form-row">
-        <div class="col-md-3 h-100"><% bp.getMovimentiDare().writeFormField(out, "ti_istituz_commerc");%></div>
-        <div class="col-md-3"><% bp.getMovimentiDare().writeFormField(out, "im_movimento");%></div>
+        <div class="col-md-6"><% bp.getMovimentiDare().writeFormField(out, "im_movimento");%></div>
         <div class="col-md-3"><% bp.getMovimentiDare().writeFormField(out, "dt_da_competenza_coge");%></div>
         <div class="col-md-3"><% bp.getMovimentiDare().writeFormField(out, "dt_a_competenza_coge");%></div>
     </div>
+    <% if (bp.getMovimentiDare().isDebitoCredito()) { %>
     <div class="form-row">
-        <div class="col-md-4"><% bp.getMovimentiDare().writeFormField(out, "partita");%></div>
         <div class="col-md-6"><% bp.getMovimentiDare().writeFormField(out, "terzo_movimento");%></div>
-        <div class="col-md-1"><% bp.getMovimentiDare().writeFormField(out, "cd_contributo_ritenuta");%></div>
+        <div class="col-md-6"><% bp.getMovimentiDare().writeFormField(out, "partitario");%></div>
     </div>
+    <% } %>
 </div>
