@@ -61,7 +61,7 @@ public abstract class Fattura_passivaBulk
         implements IDocumentoAmministrativoBulk,
         Voidable,
         IDefferUpdateSaldi,
-        AllegatoParentBulk,
+        IAllegatoFatturaBulk,
         AllegatoStorePath {
 
     public static final char DIVISIONE = '/';
@@ -3710,7 +3710,10 @@ public abstract class Fattura_passivaBulk
                 .map(s -> s.equalsIgnoreCase(LIQ))
                 .orElse(Boolean.FALSE);
     }
-
+    @Override
+    public String getAllegatoLabel() {
+        return Optional.ofNullable(getPg_fattura_passiva()).map(String::valueOf).orElse(null);
+    }
     @Override
     public Timestamp getDtGenerazioneScrittura() {
         return this.getDt_contabilizzazione();

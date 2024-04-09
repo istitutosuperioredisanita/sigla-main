@@ -22,10 +22,7 @@ import it.cnr.contab.anagraf00.ejb.AnagraficoComponentSession;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabter.bulk.NazioneBulk;
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaFromDocumentoComponent;
-import it.cnr.contab.config00.bulk.CigBulk;
-import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
-import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
-import it.cnr.contab.config00.bulk.Parametri_enteBulk;
+import it.cnr.contab.config00.bulk.*;
 import it.cnr.contab.config00.contratto.bulk.Ass_contratto_uoBulk;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
 import it.cnr.contab.config00.contratto.bulk.ContrattoHome;
@@ -6896,8 +6893,18 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         }
         controllaQuadraturaIntrastat(aUC, fatturaPassiva);
         controllaQuadraturaObbligazioni(aUC, fatturaPassiva);
-        // TODO Per ora remmato Marco Spasiano
-        //controllaQuadraturaOrdini(aUC, fatturaPassiva);
+        try {
+            final Parametri_cdsBulk parametriCdsBulk = (Parametri_cdsBulk) getHome(aUC, Parametri_cdsBulk.class).findByPrimaryKey(
+                    new Parametri_cdsBulk(fatturaPassiva.getCd_cds(), fatturaPassiva.getEsercizio())
+            );
+            if (fatturaPassiva.isLiquidabile() &&
+                    Optional.ofNullable(parametriCdsBulk.getFl_obblig_liq_fatt()).orElse(Boolean.FALSE) &&
+                    fatturaPassiva.getDt_protocollo_liq() == null) {
+                throw new it.cnr.jada.comp.ApplicationException("Attenzione è obbligatorio allegare un file di tipo <b>Provvedimento di Liquidazione</b> alla fattura!");
+            }
+        } catch (PersistencyException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void controlliCig(Fattura_passiva_rigaBulk riga) throws ApplicationException {

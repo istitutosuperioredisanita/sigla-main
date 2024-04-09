@@ -6117,4 +6117,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_colums_decrementi_chiu_catgrp_voce_ep.xml"/>
     <!-- Autore : RAFFAELE PAGANO - Schedulazione chiusura bilancio-->
     <include file="bootstrap/add_chiusura_bilancio_schedulazione.xml"/>
+    <include file="bootstrap/add_protocollo_liquidazione_fattura.xml"/>
+
 </databaseChangeLog>

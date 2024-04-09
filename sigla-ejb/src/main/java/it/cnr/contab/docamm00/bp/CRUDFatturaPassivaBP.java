@@ -77,6 +77,11 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.*;
 import java.util.stream.Stream;
 /**
@@ -1096,6 +1101,54 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
 
     public void save(ActionContext context) throws ValidationException,
             BusinessProcessException {
+        Optional.ofNullable(getModel())
+                .filter(Fattura_passivaBulk.class::isInstance)
+                .map(Fattura_passivaBulk.class::cast)
+                .ifPresent(fatturaPassivaBulk -> {
+                    final Optional<AllegatoFatturaBulk> optAllegatoFatturaBulk = fatturaPassivaBulk.getArchivioAllegati()
+                            .stream()
+                            .filter(AllegatoFatturaBulk.class::isInstance)
+                            .map(AllegatoFatturaBulk.class::cast)
+                            .filter(allegatoFatturaBulk -> AllegatoFatturaBulk.P_SIGLA_FATTURE_ATTACHMENT_LIQUIDAZIONE.equalsIgnoreCase(allegatoFatturaBulk.getAspectName()))
+                            .filter(allegatoFatturaBulk -> Optional.ofNullable(allegatoFatturaBulk.getDataProtocollo()).isPresent())
+                            .sorted(Comparator.comparing(AllegatoFatturaBulk::getDataProtocollo).reversed())
+                            .findFirst();
+                    if (optAllegatoFatturaBulk.isPresent()) {
+                        fatturaPassivaBulk.setDt_protocollo_liq(
+                                Optional.ofNullable(optAllegatoFatturaBulk.get().getDataProtocollo())
+                                        .map(Date::getTime)
+                                        .map(aLong -> new Timestamp(aLong))
+                                        .orElse(null)
+                        );
+                        fatturaPassivaBulk.setNr_protocollo_liq(optAllegatoFatturaBulk.get().getNumProtocollo());
+                    } else {
+                        fatturaPassivaBulk.setDt_protocollo_liq(null);
+                        fatturaPassivaBulk.setNr_protocollo_liq(null);
+                    }
+                });
+        Optional.ofNullable(getModel())
+            .filter(Fattura_passivaBulk.class::isInstance)
+            .map(Fattura_passivaBulk.class::cast)
+            .ifPresent(fatturaPassivaBulk -> {
+                final Optional<AllegatoFatturaBulk> optAllegatoFatturaBulk = fatturaPassivaBulk.getArchivioAllegati()
+                        .stream()
+                        .filter(AllegatoFatturaBulk.class::isInstance)
+                        .map(AllegatoFatturaBulk.class::cast)
+                        .filter(allegatoFatturaBulk -> AllegatoFatturaBulk.P_SIGLA_FATTURE_ATTACHMENT_LIQUIDAZIONE.equalsIgnoreCase(allegatoFatturaBulk.getAspectName()))
+                        .findAny();
+                    if (optAllegatoFatturaBulk.isPresent()) {
+                        fatturaPassivaBulk.setDt_protocollo_liq(
+                                Optional.ofNullable(optAllegatoFatturaBulk.get().getDataProtocollo())
+                                        .map(Date::getTime)
+                                        .map(aLong -> new Timestamp(aLong))
+                                        .orElse(null)
+                        );
+                        fatturaPassivaBulk.setNr_protocollo_liq(optAllegatoFatturaBulk.get().getNumProtocollo());
+                    } else {
+                        fatturaPassivaBulk.setDt_protocollo_liq(null);
+                        fatturaPassivaBulk.setNr_protocollo_liq(null);
+                    }
+            });
         super.save(context);
         setCarryingThrough(false);
     }
@@ -1724,6 +1777,26 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
                             .ifPresent(s -> allegato.setAspectName(s));
                 });
         allegato.setUtenteSIGLA(storageObject.getPropertyValue("sigla_commons_aspect:utente_applicativo"));
+
+        Optional.ofNullable(storageObject.getPropertyValue("sigla_commons_aspect:data_protocollo"))
+                .map(o -> {
+                    if (o instanceof Calendar) {
+                        return (Calendar)o;
+                    } else {
+                        try {
+                            final LocalDate localDate = LocalDate.parse(String.valueOf(o), DateTimeFormatter.ofPattern("E MMM d HH:mm:ss 'CEST' yyyy", Locale.ENGLISH));
+                            Calendar gregorianCalendar = Calendar.getInstance();
+                            gregorianCalendar.setTime(Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                            return gregorianCalendar;
+                        } catch (Exception _ex) {
+                            return new GregorianCalendar();
+                        }
+                    }
+                })
+                .ifPresent(g -> allegato.setDataProtocollo(Date.from(g.toInstant())));
+        Optional.ofNullable(storageObject.<String>getPropertyValue("sigla_commons_aspect:numero_protocollo"))
+                .ifPresent(s -> allegato.setNumProtocollo(s));
+
         super.completeAllegato(allegato, storageObject);
     }
 
@@ -1897,5 +1970,19 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     @Override
     public OggettoBulk getEconomicaModel() {
         return getModel();
+    }
+
+    @Override
+    public String getAllegatiFormName() {
+        final String allegatiFormName = super.getAllegatiFormName();
+        if(Optional.ofNullable(this.getCrudArchivioAllegati().getModel())
+                .filter(AllegatoFatturaBulk.class::isInstance)
+                .map(AllegatoFatturaBulk.class::cast)
+                .flatMap(afb -> Optional.ofNullable(afb.getAspectName()))
+                .filter(s -> s.equalsIgnoreCase(AllegatoFatturaBulk.P_SIGLA_FATTURE_ATTACHMENT_LIQUIDAZIONE))
+                .isPresent()) {
+            return "protocollo";
+        }
+        return allegatiFormName.equalsIgnoreCase("default") ? "base" : allegatiFormName;
     }
 }

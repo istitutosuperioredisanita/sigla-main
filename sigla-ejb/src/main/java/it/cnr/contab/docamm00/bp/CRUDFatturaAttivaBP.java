@@ -23,6 +23,7 @@ import it.cnr.contab.coepcoan00.bp.EconomicaAvereDetailCRUDController;
 import it.cnr.contab.coepcoan00.bp.EconomicaDareDetailCRUDController;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.docamm00.docs.bulk.*;
+import it.cnr.contab.docamm00.ejb.DocumentoGenericoComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaAttivaSingolaComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.docamm00.intrastat.bulk.Fattura_attiva_intraBulk;
@@ -35,6 +36,7 @@ import it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk;
 import it.cnr.contab.doccont00.core.bulk.IDefferUpdateSaldi;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.spring.service.StorePath;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
@@ -107,6 +109,7 @@ public abstract class CRUDFatturaAttivaBP
     private DocumentiCollegatiDocAmmService docCollService;
     protected boolean attivaEconomicaParallela = false;
     private boolean supervisore = false;
+    private boolean esercizioChiuso = false;
 
     protected boolean attivaInventaria = true;
     public CRUDFatturaAttivaBP() {
@@ -430,6 +433,7 @@ public abstract class CRUDFatturaAttivaBP
                     FatturaAttivaSingolaComponentSession session = (FatturaAttivaSingolaComponentSession) createComponentSession();
                     boolean esercizioScrivaniaAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, new Integer(esercizioScrivania)));
                     boolean esercizioSuccessivoAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, new Integer(esercizioScrivania + 1)));
+                    esercizioChiuso = session.isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioScrivania, CNRUserContext.getCd_cds(context.getUserContext()));
                     setRiportaAvantiIndietro(esercizioScrivaniaAperto && esercizioSuccessivoAperto && isRibaltato() && isSupervisore());
                 } catch (Throwable t) {
                     handleException(t);
@@ -1476,5 +1480,14 @@ public abstract class CRUDFatturaAttivaBP
 
     public boolean isAttivaEconomicaParallela() {
         return attivaEconomicaParallela;
+    }
+
+    @Override
+    public boolean isInputReadonlyFieldName(String fieldName) {
+        final List<String> fieldNames = Arrays.asList("dt_da_competenza_coge", "dt_a_competenza_coge");
+        if (Optional.ofNullable(fieldName).filter(s -> fieldNames.contains(s)).isPresent()) {
+            return esercizioChiuso;
+        }
+        return super.isInputReadonlyFieldName(fieldName);
     }
 }

@@ -1,57 +1,41 @@
 package it.cnr.contab.docamm00.bp;
 
-import it.cnr.contab.docamm00.ejb.FatturaElettronicaPassivaComponentSession;
-import it.cnr.contab.docamm00.fatturapa.bulk.DocumentoEleTestataBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_IBulk;
+import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
+import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.util.OrderConstants;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.CondizioneComplessaBulk;
-<<<<<<< HEAD
-import it.cnr.jada.util.action.CondizioneSempliceBulk;
-=======
->>>>>>> 0dee0c812 (Subject: [PATCH] Aggiunta nuova funzionalità per allegare il provvedimento di liquidazione in maniera massiva sulle fatture elettroniche.)
 import it.cnr.jada.util.action.SearchProvider;
 import it.cnr.jada.util.action.SelezionatoreListaBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.jada.util.jsp.Button;
 
 import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.Properties;
+import java.sql.Timestamp;
+import java.util.*;
 import java.util.stream.Stream;
 
-public class SelezionatoreFattureElettronicheLiquidazioneBP extends SelezionatoreListaBP  implements SearchProvider {
+public class SelezionatoreFattureLiquidazioneSospesaBP extends SelezionatoreListaBP  implements SearchProvider {
 
     @Override
     protected void init(Config config, ActionContext context)
             throws BusinessProcessException {
         try {
-            setBulkInfo(it.cnr.jada.bulk.BulkInfo.getBulkInfo(DocumentoEleTestataBulk.class));
+            setBulkInfo(it.cnr.jada.bulk.BulkInfo.getBulkInfo(Fattura_passiva_IBulk.class));
             setMultiSelection(true);
-            DocumentoEleTestataBulk model = (DocumentoEleTestataBulk) getBulkInfo().getBulkClass().newInstance();
+            Fattura_passiva_IBulk model = (Fattura_passiva_IBulk) getBulkInfo().getBulkClass().newInstance();
+            model.setStato_liquidazione(IDocumentoAmministrativoBulk.SOSP);
             setModel(context, model);
+            setColumns(getBulkInfo().getColumnFieldPropertyDictionary("liquidazione"));
             super.init(config, context);
-<<<<<<< HEAD
-
-            final CondizioneComplessaBulk condizioneCorrente = new CondizioneComplessaBulk();
-            CondizioneSempliceBulk condizioneSempliceBulk = new CondizioneSempliceBulk(model);
-            condizioneSempliceBulk.setFindFieldProperty(getBulkInfo().getFindFieldProperty("flIrregistrabile"));
-            condizioneSempliceBulk.setOperator(new Integer(8192));
-            condizioneSempliceBulk.setValue("N");
-            condizioneCorrente.aggiungiCondizione(condizioneSempliceBulk);
-            setCondizioneCorrente(condizioneCorrente);
-
-=======
->>>>>>> 0dee0c812 (Subject: [PATCH] Aggiunta nuova funzionalità per allegare il provvedimento di liquidazione in maniera massiva sulle fatture elettroniche.)
             openIterator(context);
-            setOrderBy(context,"documentoEleTrasmissione.dataRicezione", OrderConstants.ORDER_DESC);
-            reset(context);
         } catch (InstantiationException e) {
             throw handleException(e);
         } catch (IllegalAccessException e) {
@@ -84,18 +68,18 @@ public class SelezionatoreFattureElettronicheLiquidazioneBP extends Selezionator
                 ).stream()).toArray(Button[]::new);
     }
 
-    protected FatturaElettronicaPassivaComponentSession getComponentSession() {
-        return (FatturaElettronicaPassivaComponentSession) EJBCommonServices.createEJB("CNRDOCAMM00_EJB_FatturaElettronicaPassivaComponentSession");
+    protected FatturaPassivaComponentSession getComponentSession() {
+        return (FatturaPassivaComponentSession) EJBCommonServices.createEJB("CNRDOCAMM00_EJB_FatturaPassivaComponentSession");
     }
     @Override
     public RemoteIterator search(ActionContext actioncontext, CompoundFindClause compoundfindclause, OggettoBulk oggettobulk) throws BusinessProcessException {
-        DocumentoEleTestataBulk documentoEleTestataBulk = (DocumentoEleTestataBulk) oggettobulk;
+        Fattura_passiva_IBulk fattura = (Fattura_passiva_IBulk) oggettobulk;
         try {
             return getComponentSession().cerca(
                     actioncontext.getUserContext(),
                     compoundfindclause,
-                    documentoEleTestataBulk,
-                    "selectFattureAggiornateComplete");
+                    fattura,
+                    "selectFattureNonPagate");
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
         }
