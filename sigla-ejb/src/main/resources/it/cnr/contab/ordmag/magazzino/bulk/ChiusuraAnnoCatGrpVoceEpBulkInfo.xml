@@ -70,6 +70,24 @@
 		enabledOnEdit="false"
 		nullable="false"
 		label="Importo totale per la categoria gruppo" />
+	<fieldProperty
+			name="impPlusValenze"
+			property="impPlusValenze"
+			inputType="TEXT"
+			inputSize="21"
+			maxLength="21"
+			enabledOnEdit="false"
+			nullable="false"
+			label="Importo totale delle plusvalenze" />
+	<fieldProperty
+			name="impMinusValenze"
+			property="impMinusValenze"
+			inputType="TEXT"
+			inputSize="21"
+			maxLength="21"
+			enabledOnEdit="false"
+			nullable="false"
+			label="Importo totale delle minusvalenze" />
 	<form
 		name="searchtool">
 		<formFieldProperty
@@ -115,4 +133,8 @@
 		name="cdVoceEp" />
 	<columnFieldProperty
 		name="impTotale" />
+	<columnFieldProperty
+			name="impPlusValenze" />
+	<columnFieldProperty
+			name="impMinusValenze" />
 </bulkInfo>
