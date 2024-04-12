@@ -135,12 +135,40 @@ public class TransactionalChiusuraAnnoComponentSession extends it.cnr.jada.ejb.T
 
     @Override
     public OggettoBulk inizializzaBulkPerStampa(UserContext userContext, OggettoBulk oggettoBulk) throws ComponentException, RemoteException {
-        return null;
+        try {
+            return (it.cnr.jada.bulk.OggettoBulk)invoke("inizializzaBulkPerStampa",new Object[] {
+                    userContext,
+                    oggettoBulk });
+        } catch(java.rmi.RemoteException e) {
+            throw e;
+        } catch(java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch(it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch(Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception",ex);
+            }
+        }
     }
 
     @Override
     public OggettoBulk stampaConBulk(UserContext userContext, OggettoBulk oggettoBulk) throws ComponentException, RemoteException {
-        return null;
+        try {
+            return (it.cnr.jada.bulk.OggettoBulk)invoke("stampaConBulk",new Object[] {
+                    userContext,
+                    oggettoBulk });
+        } catch(java.rmi.RemoteException e) {
+            throw e;
+        } catch(java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch(it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch(Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception",ex);
+            }
+        }
     }
 
 

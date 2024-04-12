@@ -31,7 +31,7 @@ public class Chiusura_anno_inventarioBulk extends Chiusura_anno_inventarioBase {
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: CHIUSURA_ANNO_INVENTARIO
 	 **/
-	public Chiusura_anno_inventarioBulk(Long pgChiusura, Integer anno, String tipoChiusura, String cdCategoriaGruppo) {
+	public Chiusura_anno_inventarioBulk(Integer pgChiusura, Integer anno, String tipoChiusura, String cdCategoriaGruppo) {
 		super(pgChiusura, anno, tipoChiusura, cdCategoriaGruppo);
 		setCategoriaGruppoInvent( new Categoria_gruppo_inventBulk(cdCategoriaGruppo) );
 	}

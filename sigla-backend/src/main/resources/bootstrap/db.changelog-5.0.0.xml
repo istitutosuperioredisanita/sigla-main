@@ -6104,9 +6104,14 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/mod_accesso_chiusura_magazzino_def.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunta ai beni migrato l'informazione del piano di ammortamento-->
     <include file="bootstrap/add_column_piano_amm_bene_migrato.xml"/>
-    <include file="bootstrap/add_protocollo_liquidazione_fattura.xml"/>
     <!-- Autore : CIRO SALVIO -Modifica Unique Constraint categoria_gruppo_voce_ep -->
     <include file="bootstrap/mod_unique_constraint_CatGrpVoceEp.xml"/>
+    <!-- Autore : CIRO SALVIO -Aggiunte colone minus e plus valenze per chiusura_anno_catgrp_voce_ep -->
+    <include file="bootstrap/add_colums_plusminus_chiu_catgrp_voce_ep.xml"/>
+    <include file="bootstrap/add_protocollo_liquidazione_fattura.xml"/>
+    <!-- Autore : VALENTINA TOMADA - aggiunto accesso CHIUSURA INVENTARIO  -->
+    <include file="bootstrap/add_accesso_stampa_chiusura_invent.xml"/>
+    <include file="bootstrap/mod_dsnodo_chiusura_inventario.xml"/>
     <!-- Autore : MARCO SPASIANO - Aggiunta della colonna before_statement alla tabella EXCEL_SPOOLER-->
     <include file="bootstrap/add_column_before_statement_excel_spooler.xml"/>
 

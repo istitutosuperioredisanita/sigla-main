@@ -45,7 +45,7 @@ public class Chiusura_anno_inventarioBase extends Chiusura_anno_inventarioKey im
 	public Chiusura_anno_inventarioBase() {
 		super();
 	}
-	public Chiusura_anno_inventarioBase(Long pgChiusura, Integer anno, String tipoChiusura, String cdCategoriaGruppo) {
+	public Chiusura_anno_inventarioBase(Integer pgChiusura, Integer anno, String tipoChiusura, String cdCategoriaGruppo) {
 		super(pgChiusura, anno, tipoChiusura, cdCategoriaGruppo);
 	}
 	/**

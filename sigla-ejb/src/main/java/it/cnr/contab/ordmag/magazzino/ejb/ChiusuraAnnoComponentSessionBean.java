@@ -129,12 +129,32 @@ public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws java
 
 	@Override
 	public OggettoBulk inizializzaBulkPerStampa(UserContext userContext, OggettoBulk oggettoBulk) throws ComponentException, RemoteException {
-		return null;
+		pre_component_invocation(userContext,componentObj);
+		try {
+			OggettoBulk result = ((ChiusuraAnnoComponent)componentObj).inizializzaBulkPerStampa(userContext, oggettoBulk);
+			component_invocation_succes(userContext,componentObj);
+			return result;
+
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(userContext,componentObj,e);
+		}
 	}
 
 	@Override
 	public OggettoBulk stampaConBulk(UserContext userContext, OggettoBulk oggettoBulk) throws ComponentException, RemoteException {
-		return null;
+		pre_component_invocation(userContext,componentObj);
+		try {
+			OggettoBulk result = ((ChiusuraAnnoComponent)componentObj).inizializzaBulkPerStampa(userContext, oggettoBulk);
+			component_invocation_succes(userContext,componentObj);
+			return result;
+
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(userContext,componentObj,e);
+		}
 	}
 
 
