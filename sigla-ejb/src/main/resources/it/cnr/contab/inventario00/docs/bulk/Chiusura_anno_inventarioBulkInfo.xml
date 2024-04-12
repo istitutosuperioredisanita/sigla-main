@@ -231,4 +231,22 @@
 		name="totaleAmmortamentoAlienati" />
 	<columnFieldProperty
 		name="quotaAmmortamentoAnnoPrec" />
+
+	<printForm
+			name="/cnrdocamm/docamm/iss/movimentazione_inventario_main.jasper">
+		<printFieldProperty
+				name="anno"
+				parameterPosition="1"
+				parameterType="INTEGER"
+				paramNameJR="esercizio"
+				paramTypeJR="java.lang.Integer"/>
+		<printFieldProperty
+				name="pgChiusura"
+				parameterPosition="2"
+				parameterType="INTEGER"
+				paramNameJR="pg_chiusura"
+				paramTypeJR="java.lang.Integer"/>
+
+
+	</printForm>
 </bulkInfo>
