@@ -13,7 +13,7 @@ CREATE OR REPLACE FORCE EDITIONABLE VIEW "V_MASTRINO_CONTO" ("PG_SCRITTURA", "DT
     --
     -- Date: 09/08/2023
     -- Version: 1.0
-    -- Creazione
+    -- Creazioneate
     --
     -- Body:
     --
