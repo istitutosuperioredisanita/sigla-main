@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="id"
+		property="id"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		nullable="false"
+		label="id" />
+	<fieldProperty
+		name="chiave"
+		property="chiave"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="100"
+		enabledOnEdit="false"
+		nullable="false"
+		label="chiave" />
+	<fieldProperty
+		name="tipo"
+		property="tipo"
+		inputType="TEXT"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="false"
+		nullable="false"
+		label="tipo" />
+	<fieldProperty
+		name="sequenza"
+		property="sequenza"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		nullable="false"
+		label="SEQUENZA" />
+	<fieldProperty
+		name="ordine"
+		property="ordine"
+		inputType="TEXT"
+		inputSize="20"
+		maxLength="20"
+		enabledOnEdit="false"
+		label="ORDINE" />
+	<fieldProperty
+		name="contoRiclass"
+		property="contoRiclass"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="200"
+		enabledOnEdit="false"
+		label="CONTO RICLASSIFICATO" />
+	<fieldProperty
+		name="i_livello"
+		property="i_livello"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="200"
+		enabledOnEdit="false"
+		label="I LIVELLO" />
+	<fieldProperty
+		name="ii_livello"
+		property="ii_livello"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="200"
+		enabledOnEdit="false"
+		label="II LIVELLO" />
+	<fieldProperty
+		name="iii_livello"
+		property="iii_livello"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="200"
+		enabledOnEdit="false"
+		label="III LIVELLO" />
+	<fieldProperty
+		name="iv_livello"
+		property="iv_livello"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="200"
+		enabledOnEdit="false"
+		label="IV LIVELLO" />
+	<fieldProperty
+		name="descrizione"
+		property="descrizione"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="200"
+		enabledOnEdit="false"
+		label="DESCRIZIONE" />
+	<fieldProperty
+		name="parzialeIAnno"
+		property="parzialeIAnno"
+		inputType="TEXT"
+		inputSize="20"
+		maxLength="20"
+		enabledOnEdit="false"
+		label="PARZIALE PRIMO ANNO" />
+	<fieldProperty
+		name="totaleIAnno"
+		property="totaleIAnno"
+		inputType="TEXT"
+		inputSize="20"
+		maxLength="20"
+		enabledOnEdit="false"
+		label="TOTALE PRIMO ANNO" />
+	<fieldProperty
+		name="parzialeIiAnno"
+		property="parzialeIiAnno"
+		inputType="TEXT"
+		inputSize="20"
+		maxLength="20"
+		enabledOnEdit="false"
+		label="PARZIALE SECONDO ANNO" />
+	<fieldProperty
+		name="totaleIiAnno"
+		property="totaleIiAnno"
+		inputType="TEXT"
+		inputSize="20"
+		maxLength="20"
+		enabledOnEdit="false"
+		label="PARZIALE SECONDO ANNO" />
+	<fieldProperty
+		name="snTotale"
+		property="snTotale"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="200"
+		enabledOnEdit="false"
+		label="TOTALE" />
+	<form
+		name="searchtool">
+	</form>
+	<formFieldProperty
+		name="id" />
+	<formFieldProperty
+		name="chiave" />
+	<formFieldProperty
+		name="tipo" />
+	<formFieldProperty
+		name="sequenza" />
+	<formFieldProperty
+		name="ordine" />
+	<formFieldProperty
+		name="contoRiclass" />
+	<formFieldProperty
+		name="i_livello" />
+	<formFieldProperty
+		name="ii_livello" />
+	<formFieldProperty
+		name="iii_livello" />
+	<formFieldProperty
+		name="iv_livello" />
+	<formFieldProperty
+		name="descrizione" />
+	<formFieldProperty
+		name="parzialeIAnno" />
+	<formFieldProperty
+		name="totaleIAnno" />
+	<formFieldProperty
+		name="parzialeIiAnno" />
+	<formFieldProperty
+		name="totaleIiAnno" />
+	<formFieldProperty
+		name="snTotale" />
+	<findFieldProperty
+		name="id" />
+	<findFieldProperty
+		name="chiave" />
+	<findFieldProperty
+		name="tipo" />
+	<findFieldProperty
+		name="sequenza" />
+	<findFieldProperty
+		name="ordine" />
+	<findFieldProperty
+		name="contoRiclass" />
+	<findFieldProperty
+		name="i_livello" />
+	<findFieldProperty
+		name="ii_livello" />
+	<findFieldProperty
+		name="iii_livello" />
+	<findFieldProperty
+		name="iv_livello" />
+	<findFieldProperty
+		name="descrizione" />
+	<findFieldProperty
+		name="parzialeIAnno" />
+	<findFieldProperty
+		name="totaleIAnno" />
+	<findFieldProperty
+		name="parzialeIiAnno" />
+	<findFieldProperty
+		name="totaleIiAnno" />
+	<findFieldProperty
+		name="snTotale" />
+
+	<columnFieldProperty
+		name="sequenza" />
+	<columnFieldProperty
+		name="ordine" />
+	<columnFieldProperty
+		name="contoRiclass" />
+	<columnFieldProperty
+		name="i_livello" />
+	<columnFieldProperty
+		name="ii_livello" />
+	<columnFieldProperty
+		name="iii_livello" />
+	<columnFieldProperty
+		name="iv_livello" />
+	<columnFieldProperty
+		name="descrizione" />
+	<columnFieldProperty
+		name="parzialeIAnno" />
+	<columnFieldProperty
+		name="totaleIAnno" />
+	<columnFieldProperty
+		name="parzialeIiAnno" />
+	<columnFieldProperty
+		name="totaleIiAnno" />
+	<columnFieldProperty
+		name="snTotale" />
+</bulkInfo>

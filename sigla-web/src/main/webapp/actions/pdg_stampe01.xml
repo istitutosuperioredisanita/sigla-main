@@ -34,11 +34,11 @@
 	</action>
 
 	<action
-		path="/StampaStatoPatrimRiclassAction" actionClass="it.cnr.contab.reports.action.ParametricPrintAction">
+		path="/StampaStatoPatrimRiclassAction" actionClass="it.cnr.contab.pdg00.action.ParametricPrintAndExcelAction">
 	</action>
 
 	<action
-		path="/StampaContoEconomRiclassAction" actionClass="it.cnr.contab.reports.action.ParametricPrintAction">
+		path="/StampaContoEconomRiclassAction" actionClass="it.cnr.contab.pdg00.action.ParametricPrintAndExcelAction">
 	</action>
 	
 	<businessProcess
@@ -85,7 +85,7 @@
     </businessProcess>
 
 	<businessProcess
-      name="StampaStatoPatrimRiclassBP" className="it.cnr.contab.reports.bp.ParametricPrintBP">
+      name="StampaStatoPatrimRiclassBP" className="it.cnr.contab.pdg00.bp.ParametricPrintAndExcelBP">
 	    <forward name="default" path="/pdg00/stampa_stato_patrim_riclassificato.jsp"/>
 	   	<init-param name="printbp" value="OfflineReportPrintBP"/>	
    		<init-param name="bulkClassName" value="it.cnr.contab.pdg00.bulk.Stampa_vpg_stato_patrim_riclassVBulk" />
@@ -95,7 +95,7 @@
     </businessProcess>
 
 	<businessProcess
-      name="StampaContoEconomRiclassBP" className="it.cnr.contab.reports.bp.ParametricPrintBP">
+      name="StampaContoEconomRiclassBP" className="it.cnr.contab.pdg00.bp.ParametricPrintAndExcelBP">
 	    <forward name="default" path="/pdg00/stampa_conto_econom_riclassificato.jsp"/>
 	   	<init-param name="printbp" value="OfflineReportPrintBP"/>	
    		<init-param name="bulkClassName" value="it.cnr.contab.pdg00.bulk.Stampa_vpg_conto_econom_riclassVBulk" />

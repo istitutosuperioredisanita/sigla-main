@@ -20,35 +20,18 @@
 <%	BulkBP bp = (BulkBP)BusinessProcess.getBusinessProcess(request);
 	Stampa_vpg_conto_econom_riclassVBulk bulk = (Stampa_vpg_conto_econom_riclassVBulk)bp.getModel();
 	bp.openFormWindow(pageContext); %>
-<table>
+<table class="card p-2">
+  <tr><% bp.getController().writeFormField(out,"esercizio"); %></tr>
   <tr>
-	<td><% bp.getController().writeFormLabel(out,"esercizio"); %></td>
-	<td><% bp.getController().writeFormInput(out,"esercizio"); %></td>
+    <td><% bp.getController().writeFormLabel(out,"findCDSForPrint"); %></td>
+    <td><% bp.getController().writeFormInput(out,null,"findCDSForPrint",(bulk!=null?!bulk.isCdsForPrintEnabled():false),null,null); %></td>
   </tr>
   <tr>
-	<td><% bp.getController().writeFormLabel(out,"findCDSForPrint"); %></td>
-	<td colspan="5">
-		<% bp.getController().writeFormInput(out,null,"cdCDSForPrint",(bulk!=null?!bulk.isCdsForPrintEnabled():false),null,null); %>
-		<% bp.getController().writeFormInput(out,"dsCDSForPrint"); %>
-		<% bp.getController().writeFormInput(out,null,"findCDSForPrint",(bulk!=null?!bulk.isCdsForPrintEnabled():false),null,null); %>
-	</td>
+    <td><% bp.getController().writeFormLabel(out,"findUOForPrint"); %></td>
+    <td><% bp.getController().writeFormInput(out,null,"findUOForPrint",(bulk!=null?!bulk.isUoForPrintEnabled():false),null,null); %></td>
   </tr>
-  <tr>
-	<td><% bp.getController().writeFormLabel(out,"findUOForPrint"); %></td>
-	<td colspan="5">
-		<% bp.getController().writeFormInput(out,null,"cdUOForPrint",(bulk!=null?!bulk.isUoForPrintEnabled():false),null,null); %>
-		<% bp.getController().writeFormInput(out,"dsUOForPrint"); %>
-		<% bp.getController().writeFormInput(out,null,"findUOForPrint",(bulk!=null?!bulk.isUoForPrintEnabled():false),null,null); %>
-	</td>
-  </tr>
-  <tr>
-	<td><% bp.getController().writeFormLabel(out,"ti_ist_com"); %></td>
-	<td><% bp.getController().writeFormInput(out,"ti_ist_com"); %></td>
-  </tr>
-  <tr>
-	<td><% bp.getController().writeFormLabel(out,"dettaglioConti"); %></td>
-	<td><% bp.getController().writeFormInput(out,"dettaglioConti"); %></td>
-  </tr>
+  <tr><% bp.getController().writeFormField(out,"ti_ist_com"); %></tr>
+  <tr><% bp.getController().writeFormField(out,"dettaglioConti"); %></tr>
 </table>
 <% bp.closeFormWindow(pageContext); %>
 

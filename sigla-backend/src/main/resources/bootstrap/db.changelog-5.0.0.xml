@@ -6111,5 +6111,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <!-- Autore : VALENTINA TOMADA - aggiunto accesso CHIUSURA INVENTARIO  -->
     <include file="bootstrap/add_accesso_stampa_chiusura_invent.xml"/>
     <include file="bootstrap/mod_dsnodo_chiusura_inventario.xml"/>
+    <!-- Autore : MARCO SPASIANO - Aggiunta della colonna before_statement alla tabella EXCEL_SPOOLER-->
+    <include file="bootstrap/add_column_before_statement_excel_spooler.xml"/>
 
 </databaseChangeLog>

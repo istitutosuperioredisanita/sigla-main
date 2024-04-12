@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	homeClassName="it.cnr.contab.pdg00.bulk.VpgBilRiclassificatoHome"
+	persistentClassName="it.cnr.contab.pdg00.bulk.VpgBilRiclassificatoBulk">
+	<defaultColumnMap
+			tableName="PRT_VPG_BIL_RICLASSIFICATO">
+		<columnMapping
+				columnName="ID"
+				propertyName="id"
+				sqlTypeName="DECIMAL"
+				columnSize="0"
+				nullable="false" />
+		<columnMapping
+				columnName="CHIAVE"
+				propertyName="chiave"
+				sqlTypeName="VARCHAR"
+				columnSize="100"
+				nullable="false" />
+		<columnMapping
+				columnName="TIPO"
+				propertyName="tipo"
+				sqlTypeName="CHAR"
+				columnSize="1"
+				nullable="false" />
+		<columnMapping
+				columnName="SEQUENZA"
+				propertyName="sequenza"
+				sqlTypeName="DECIMAL"
+				columnSize="0"
+				nullable="false" />
+		<columnMapping
+				columnName="ORDINE"
+				propertyName="ordine"
+				sqlTypeName="DECIMAL"
+				columnSize="20"
+				columnScale="3"
+				nullable="true" />
+		<columnMapping
+				columnName="CONTO_RICLASS"
+				propertyName="contoRiclass"
+				sqlTypeName="VARCHAR"
+				columnSize="200"
+				nullable="true" />
+		<columnMapping
+				columnName="I_LIVELLO"
+				propertyName="i_livello"
+				sqlTypeName="VARCHAR"
+				columnSize="200"
+				nullable="true" />
+		<columnMapping
+				columnName="II_LIVELLO"
+				propertyName="ii_livello"
+				sqlTypeName="VARCHAR"
+				columnSize="200"
+				nullable="true" />
+		<columnMapping
+				columnName="III_LIVELLO"
+				propertyName="iii_livello"
+				sqlTypeName="VARCHAR"
+				columnSize="200"
+				nullable="true" />
+		<columnMapping
+				columnName="IV_LIVELLO"
+				propertyName="iv_livello"
+				sqlTypeName="VARCHAR"
+				columnSize="200"
+				nullable="true" />
+		<columnMapping
+				columnName="DESCRIZIONE"
+				propertyName="descrizione"
+				sqlTypeName="VARCHAR"
+				columnSize="200"
+				nullable="true" />
+		<columnMapping
+				columnName="PARZIALE_I_ANNO"
+				propertyName="parzialeIAnno"
+				sqlTypeName="DECIMAL"
+				columnSize="20"
+				columnScale="3"
+				nullable="true" />
+		<columnMapping
+				columnName="TOTALE_I_ANNO"
+				propertyName="totaleIAnno"
+				sqlTypeName="DECIMAL"
+				columnSize="20"
+				columnScale="3"
+				nullable="true" />
+		<columnMapping
+				columnName="PARZIALE_II_ANNO"
+				propertyName="parzialeIiAnno"
+				sqlTypeName="DECIMAL"
+				columnSize="20"
+				columnScale="3"
+				nullable="true" />
+		<columnMapping
+				columnName="TOTALE_II_ANNO"
+				propertyName="totaleIiAnno"
+				sqlTypeName="DECIMAL"
+				columnSize="20"
+				columnScale="3"
+				nullable="true" />
+		<columnMapping
+				columnName="SN_TOTALE"
+				propertyName="snTotale"
+				sqlTypeName="VARCHAR"
+				columnSize="200"
+				nullable="true" />
+	</defaultColumnMap>
+	<persistentProperty
+			name="id" />
+	<persistentProperty
+			name="chiave" />
+	<persistentProperty
+			name="tipo" />
+	<persistentProperty
+			name="sequenza" />
+	<persistentProperty
+			name="ordine" />
+	<persistentProperty
+			name="contoRiclass" />
+	<persistentProperty
+			name="i_livello" />
+	<persistentProperty
+			name="ii_livello" />
+	<persistentProperty
+			name="iii_livello" />
+	<persistentProperty
+			name="iv_livello" />
+	<persistentProperty
+			name="descrizione" />
+	<persistentProperty
+			name="parzialeIAnno" />
+	<persistentProperty
+			name="totaleIAnno" />
+	<persistentProperty
+			name="parzialeIiAnno" />
+	<persistentProperty
+			name="totaleIiAnno" />
+	<persistentProperty
+			name="snTotale" />
+</SQLPersistentInfo>

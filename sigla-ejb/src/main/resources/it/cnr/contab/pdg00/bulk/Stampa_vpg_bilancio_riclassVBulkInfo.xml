@@ -27,6 +27,8 @@
 		name="findCDSForPrint"
 		property="cdsForPrint"
 		inputType="SEARCHTOOL"
+		readonlyProperty="ROCdsForPrint"
+		formName="searchtool"
 		label="CDS" />
 	<fieldProperty
 		name="cdCDSForPrint"
@@ -51,7 +53,10 @@
 		name="findUOForPrint"
 		property="uoForPrint"
 		inputType="SEARCHTOOL"
+		readonlyProperty="ROUoForPrint"
+		formName="searchtool"
 		label="Unita Organizzativa" />
+
 	<fieldProperty
 		name="cdUOForPrint"
 		property="uoForPrint.cd_unita_organizzativa"
@@ -89,6 +94,7 @@
 		inputType="CHECKBOX"
 		enabledOnSearch="true"
 		enabledOnEdit="false"
+		command="doDefault"
 		caseSensitiveSearch="false"
 		nullable="false"
 		label="Dettaglio conti" />
@@ -100,7 +106,7 @@
 		name="esercizio"
 		property="esercizio"
 		inputType="ROTEXT"
-		inputSize="2"
+		inputSize="5"
 		label="Esercizio" />
 	<formFieldProperty
 		name="findCDSForPrint" />
