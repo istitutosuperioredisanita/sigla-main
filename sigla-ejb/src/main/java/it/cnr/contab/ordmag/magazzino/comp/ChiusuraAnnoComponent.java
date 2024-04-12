@@ -109,7 +109,7 @@ public class ChiusuraAnnoComponent extends CRUDComponent implements ICRUDMgr, IP
 
 		aggiornaChiusuraMagRimConCmpp(userContext,esercizio);
 
-		salvaImportiPerCatGruppoVoceEP(userContext,esercizio);
+		salvaImportiPerCatGruppoVoceEP(userContext,esercizio,ChiusuraAnnoBulk.TIPO_CHIUSURA_MAGAZZINO);
 
 		return chiusuraAnno;
 	}
@@ -126,10 +126,10 @@ public class ChiusuraAnnoComponent extends CRUDComponent implements ICRUDMgr, IP
 		return list;
 	}
 
-	private void salvaImportiPerCatGruppoVoceEP(UserContext userContext,Integer esercizio) throws ComponentException, PersistencyException {
+	private void salvaImportiPerCatGruppoVoceEP(UserContext userContext,Integer esercizio,String tipoChiusura) throws ComponentException, PersistencyException {
 		ChiusuraAnnoCatGrpVoceEpHome chiusuraAnnoCatGrpVoceEpHome = (ChiusuraAnnoCatGrpVoceEpHome) getHome(userContext, ChiusuraAnnoCatGrpVoceEpBulk.class);
 
-		List<ValoriChiusuraCatGrVoceEP> list = chiusuraAnnoCatGrpVoceEpHome.getImportoChisuraAnnoCatGruppoVoceEP(esercizio);
+		List<ValoriChiusuraCatGrVoceEP> list = chiusuraAnnoCatGrpVoceEpHome.getImportoChisuraAnnoCatGruppoVoceEP(esercizio,tipoChiusura);
 
 		for (ValoriChiusuraCatGrVoceEP valore : list){
 			ChiusuraAnnoCatGrpVoceEpBulk chiusuraCatVoce = new ChiusuraAnnoCatGrpVoceEpBulk();
