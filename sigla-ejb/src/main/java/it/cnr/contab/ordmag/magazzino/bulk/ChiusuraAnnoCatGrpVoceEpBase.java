@@ -4,9 +4,16 @@
  */
 package it.cnr.contab.ordmag.magazzino.bulk;
 import it.cnr.jada.persistency.Keyed;
+
+import java.math.BigDecimal;
+
 public class ChiusuraAnnoCatGrpVoceEpBase extends ChiusuraAnnoCatGrpVoceEpKey implements Keyed {
 //    IMP_TOTALE DECIMAL(21,6) NOT NULL
 	private java.math.BigDecimal impTotale;
+
+	private java.math.BigDecimal impPlusValenze;
+
+	private java.math.BigDecimal impMinusValenze;
  
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
@@ -31,5 +38,21 @@ public class ChiusuraAnnoCatGrpVoceEpBase extends ChiusuraAnnoCatGrpVoceEpKey im
 	 **/
 	public void setImpTotale(java.math.BigDecimal impTotale)  {
 		this.impTotale=impTotale;
+	}
+
+	public BigDecimal getImpPlusValenze() {
+		return impPlusValenze;
+	}
+
+	public void setImpPlusValenze(BigDecimal impPlusValenze) {
+		this.impPlusValenze = impPlusValenze;
+	}
+
+	public BigDecimal getImpMinusValenze() {
+		return impMinusValenze;
+	}
+
+	public void setImpMinusValenze(BigDecimal impMinusValenze) {
+		this.impMinusValenze = impMinusValenze;
 	}
 }

@@ -159,7 +159,7 @@
 		property="cds"
 		inputType="SEARCHTOOL"
 		formName="searchtool"
-		enabledOnSearch="fals"
+		enabledOnSearch="false"
 		label="Cds"/>
 	<formFieldProperty
 		name="cdsEnte"

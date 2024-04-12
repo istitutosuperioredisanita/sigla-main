@@ -13,6 +13,20 @@
 			columnScale="6"
 			nullable="false" />
 		<columnMapping
+				columnName="IMP_PLUSVALENZE"
+				propertyName="impPlusValenze"
+				sqlTypeName="DECIMAL"
+				columnSize="21"
+				columnScale="6"
+				nullable="true" />
+		<columnMapping
+				columnName="IMP_MINUSVALENZE"
+				propertyName="impMinusValenze"
+				sqlTypeName="DECIMAL"
+				columnSize="21"
+				columnScale="6"
+				nullable="true" />
+		<columnMapping
 			columnName="DACR"
 			propertyName="dacr"
 			sqlTypeName="TIMESTAMP"
@@ -55,4 +69,8 @@
 		name="utuv" />
 	<persistentProperty
 		name="pg_ver_rec" />
+	<persistentProperty
+			name="impPlusValenze" />
+	<persistentProperty
+			name="impMinusValenze" />
 </SQLPersistentInfo>
