@@ -25,9 +25,9 @@ public class ChiusuraAnnoCatGrpVoceEpHome extends BulkHome {
 			"  from ASS_CATGRP_INVENT_VOCE_EP ass," +
 			"       (select CD_CATEGORIA_GRUPPO ,SUM(GIACENZA*IMPORTO_CMPP_ART) as importoTotCatGrp, pg_chiusura, tipo_chiusura, anno " +
 					"  from chiusura_anno_mag_rim a " +
-			"		   where anno = ? " +
+			"		   where anno = ? and tipo_chiusura = ? " +
 			"          group by CD_CATEGORIA_GRUPPO,pg_chiusura, tipo_chiusura, anno) cg " +
-			" where ass.ESERCIZIO = ? and cg.importoTotCatGrp > 0 and " +
+			" where ass.ESERCIZIO = ? and cg.importoTotCatGrp > 0 and ass.fl_default = 'Y' and " +
 			" cg.CD_CATEGORIA_GRUPPO = ass.CD_CATEGORIA_GRUPPO " +
 			" group by  ass.CD_CATEGORIA_GRUPPO,ass.cd_voce_ep,ass.ESERCIZIO,cg.pg_chiusura,cg.tipo_chiusura,cg.importoTotCatGrp " +
 			" order by  ass.CD_CATEGORIA_GRUPPO,ass.cd_voce_ep ";
@@ -43,7 +43,7 @@ public class ChiusuraAnnoCatGrpVoceEpHome extends BulkHome {
 		super(ChiusuraAnnoCatGrpVoceEpBulk.class, conn, persistentCache);
 	}
 
-	public List<ValoriChiusuraCatGrVoceEP> getImportoChisuraAnnoCatGruppoVoceEP(Integer esercizio) throws PersistencyException {
+	public List<ValoriChiusuraCatGrVoceEP> getImportoChisuraAnnoCatGruppoVoceEP(Integer esercizio,String tipoChiusura) throws PersistencyException {
 
 		List<ValoriChiusuraCatGrVoceEP> list = null;
 		try {
@@ -58,7 +58,8 @@ public class ChiusuraAnnoCatGrpVoceEpHome extends BulkHome {
 				Date dataRifMovimentoChi = DateUtils.firstDateOfTheYear(esercizio);
 
 				ps.setInt( 1,esercizio);
-				ps.setInt( 2,esercizio);
+				ps.setString( 2,tipoChiusura);
+				ps.setInt( 3,esercizio);
 
 				ResultSet rs = ps.executeQuery();
 

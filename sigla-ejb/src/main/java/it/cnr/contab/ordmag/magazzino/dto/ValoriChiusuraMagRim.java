@@ -1,7 +1,5 @@
 package it.cnr.contab.ordmag.magazzino.dto;
 
-import com.sun.org.apache.xpath.internal.objects.XString;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 

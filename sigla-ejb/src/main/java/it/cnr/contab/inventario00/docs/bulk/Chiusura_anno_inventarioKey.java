@@ -6,7 +6,7 @@ package it.cnr.contab.inventario00.docs.bulk;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.KeyedPersistent;
 public class Chiusura_anno_inventarioKey extends OggettoBulk implements KeyedPersistent {
-	private Long pgChiusura;
+	private Integer pgChiusura;
 	private Integer anno;
 	private String tipoChiusura;
 	private String cdCategoriaGruppo;
@@ -17,7 +17,7 @@ public class Chiusura_anno_inventarioKey extends OggettoBulk implements KeyedPer
 	public Chiusura_anno_inventarioKey() {
 		super();
 	}
-	public Chiusura_anno_inventarioKey(Long pgChiusura, Integer anno, String tipoChiusura, String cdCategoriaGruppo) {
+	public Chiusura_anno_inventarioKey(Integer pgChiusura, Integer anno, String tipoChiusura, String cdCategoriaGruppo) {
 		super();
 		this.pgChiusura=pgChiusura;
 		this.anno=anno;
@@ -46,14 +46,14 @@ public class Chiusura_anno_inventarioKey extends OggettoBulk implements KeyedPer
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Restituisce il valore di: [Progressivo record chiusura]
 	 **/
-	public void setPgChiusura(Long pgChiusura)  {
+	public void setPgChiusura(Integer pgChiusura)  {
 		this.pgChiusura=pgChiusura;
 	}
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Setta il valore di: [Progressivo record chiusura]
 	 **/
-	public Long getPgChiusura() {
+	public Integer getPgChiusura() {
 		return pgChiusura;
 	}
 	/**
