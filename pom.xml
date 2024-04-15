@@ -45,11 +45,7 @@
 		<sdi.fatturapa.version>0.0.1</sdi.fatturapa.version>
 		<ws.client.version>0.0.6</ws.client.version>
 		<spring.version>5.2.5.RELEASE</spring.version>
-<<<<<<< HEAD
-		<jada.version>7.0.55</jada.version>
-=======
 		<jada.version>7.1.1</jada.version>
->>>>>>> c3ad121b3 (Aggiunte le estrazioni Excel per il Conto Economico e lo Stato Patrimoniale riclassificato)
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.directory>target</project.build.directory>
 		<sigla.build.number>${maven.build.timestamp}</sigla.build.number>
