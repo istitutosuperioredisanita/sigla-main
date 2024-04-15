@@ -23,6 +23,7 @@ package it.cnr.contab.ordmag.magazzino.bulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk;
 import it.cnr.contab.ordmag.anag00.MagazzinoBulk;
 import it.cnr.contab.ordmag.anag00.TipoMovimentoMagBulk;
 import it.cnr.contab.ordmag.anag00.UnitaMisuraBulk;
@@ -48,6 +49,10 @@ public class MovimentiMagBulk extends MovimentiMagBase {
 	private Bene_servizioBulk beneServizioUt =  new Bene_servizioBulk();
 	private BollaScaricoMagBulk bollaScaricoMag =  new BollaScaricoMagBulk();
 	private DivisaBulk divisa =  new DivisaBulk();
+	private Voce_ivaBulk voceIva =  new Voce_ivaBulk();
+
+
+
 	public MovimentiMagBulk() {
 		super();
 	}
@@ -324,5 +329,25 @@ public class MovimentiMagBulk extends MovimentiMagBase {
 
 	public boolean isStatoAnnullato() {
 		return STATO_ANNULLATO.equals(this.getStato());
+	}
+
+	public Voce_ivaBulk getVoceIva() {
+		return voceIva;
+	}
+
+	public void setVoceIva(Voce_ivaBulk voceIva) {
+		this.voceIva = voceIva;
+	}
+	@Override
+	public String getCdVoceIva() {
+		Voce_ivaBulk voceIva = this.getVoceIva();
+		if (voceIva == null)
+			return null;
+		return getVoceIva().getCd_voce_iva();
+	}
+
+	@Override
+	public void setCdVoceIva(String cdVoceIva) {
+		this.getVoceIva().setCd_voce_iva(cdVoceIva);
 	}
 }

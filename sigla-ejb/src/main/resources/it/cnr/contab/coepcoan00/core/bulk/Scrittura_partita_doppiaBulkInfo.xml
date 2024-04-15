@@ -110,6 +110,8 @@
 		name="esercizio_documento_amm"
 		property="esercizio_documento_amm"
 		inputType="TEXT"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
 		label="Esercizio documento amm." />
 	<fieldProperty
 		name="esercizio"
@@ -126,16 +128,22 @@
 		inputSize="10"
 		inputType="TEXT"
 		label="Tipo documento"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
 		caseSensitiveSearch="false" />
 	<fieldProperty
 		name="origine_scrittura"
 		property="origine_scrittura"
 		maxLength="20"
 		inputSize="20"
-		inputType="TEXT"
+		inputType="SELECT"
+		keysProperty="ti_origineKeys"
 		label="Origine scrittura"
-		enabledOnFreeSearch="false"
-		caseSensitiveSearch="false" />
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		caseSensitiveSearch="true" />
 	<fieldProperty
 		name="cd_comp_documento"
 		property="cd_comp_documento"
@@ -143,6 +151,8 @@
 		inputSize="50"
 		inputType="TEXT"
 		label="Documento"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
 		caseSensitiveSearch="false" />
 	<fieldProperty
 		name="ti_scrittura"
@@ -211,6 +221,7 @@
 		inputType="SEARCHTOOL"
 		formName="searchtool"
 		enabledOnSearch="true"
+		label="Terzo"
 		/>
 	<fieldProperty
 		name="attiva"
@@ -286,7 +297,17 @@
 		inputSize="10"
 		inputType="TEXT"
 		label="Cds documento"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
 		caseSensitiveSearch="false"/>
+	<fieldProperty
+		name="cds_documento"
+		property="cdsDocumento"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		label="CdS"/>
 	<fieldProperty
 		name="cd_uo_documento"
 		property="cd_uo_documento"
@@ -294,7 +315,17 @@
 		inputSize="10"
 		inputType="TEXT"
 		label="UO documento"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
 		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="uo_documento"
+		property="uoDocumento"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		label="Unit&#224; organizzativa"/>
 
 	<fieldProperty
 		name="ti_istituz_commerc"
@@ -302,11 +333,13 @@
 		maxLength="1"
 		inputSize="1"
 		inputType="SELECT"
-		keysProperty = "tipoKeys"
+		keysProperty="tipoKeys"
 		label="Tipo"
 		enabledOnSearch="false"
+		enabledOnInsert="true"
+		enabledOnEdit="false"
 		caseSensitiveSearch="false"
-		nullable="true"/>
+		nullable="false"/>
 
 	<formFieldProperty
 		name="cd_cds" />
@@ -315,6 +348,13 @@
 	<formFieldProperty
 		name="cds" />
 	<formFieldProperty
+		name="cdsEnte"
+		property="cds"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnSearch="true"
+		label="Cds" />
+	<formFieldProperty
 		name="dt_contabilizzazione" />
 	<formFieldProperty
 		name="pg_numero_documento" />
@@ -322,6 +362,13 @@
 		name="ds_scrittura" />
 	<formFieldProperty
 		name="unita_organizzativa" />
+	<formFieldProperty
+		name="unita_organizzativaEnte"
+		property="uo"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnSearch="true"
+		label="Unit&#224; organizzativa"/>
 	<formFieldProperty
 		name="cd_unita_organizzativa" />
 	<formFieldProperty
@@ -375,10 +422,33 @@
 	<formFieldProperty
 		name="cd_cds_documento" />
 	<formFieldProperty
+		name="cds_documento" />
+	<formFieldProperty
 		name="cd_uo_documento" />
+	<formFieldProperty
+		name="uo_documento" />
 	<formFieldProperty
 		name="ti_istituz_commerc" />
 
+	<formFieldProperty
+		name="dt_da_competenza_coge"
+		property="dt_da_competenza_coge"
+		inputType="TEXT"
+		command="doOnCompetenzaChangeDa"
+		formatName="date_short"
+		label="Competenza da"/>
+	<formFieldProperty
+		name="dt_a_competenza_coge"
+		property="dt_a_competenza_coge"
+		command="doOnCompetenzaChangeA"
+		inputType="TEXT"
+		formatName="date_short"
+		label="Competenza a"/>
+	<formFieldProperty
+		name="ds_scrittura_textarea"
+		extend="ds_scrittura"
+		inputType="TEXTAREA"
+		rows="5"/>
 
 	<columnFieldProperty
 		name="esercizio" />

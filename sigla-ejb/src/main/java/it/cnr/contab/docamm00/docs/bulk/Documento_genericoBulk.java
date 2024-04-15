@@ -136,6 +136,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	public final static Dictionary STATO_LIQUIDAZIONE;
 	public final static Dictionary CAUSALE;
 
+	public final static Dictionary ti_tipoContoDocAttivoEnumKeys = TipoContoDocAttivoEnum.ti_tipoContoDocAttivoEnumKeys;
 
 	static {
 		TIPO = new it.cnr.jada.util.OrderedHashtable();
@@ -1132,7 +1133,6 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	 * @return boolean
 	 */
 	public boolean isRODateCompetenzaCOGE() {
-
 		return getDocumento_generico_dettColl() != null &&
 				!getDocumento_generico_dettColl().isEmpty();
 	}
@@ -2068,5 +2068,13 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 		).stream().collect(
 				Collectors.joining(StorageDriver.SUFFIX)
 		));
+	}
+
+	public boolean isDocumentoInContoAcconto() {
+		return TipoContoDocAttivoEnum.ACC.value().equals(this.getCd_tipo_conto_ep());
+	}
+
+	public boolean isDocumentoInContoAnticipo() {
+		return TipoContoDocAttivoEnum.ANT.value().equals(this.getCd_tipo_conto_ep());
 	}
 }

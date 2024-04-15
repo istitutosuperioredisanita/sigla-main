@@ -26,7 +26,6 @@ import it.cnr.contab.compensi00.docs.bulk.*;
 import it.cnr.contab.compensi00.ejb.CompensoComponentSession;
 import it.cnr.contab.compensi00.tabrif.bulk.Tipo_trattamentoBulk;
 import it.cnr.contab.config00.bulk.CigBulk;
-import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.docamm00.bp.IDocAmmEconomicaBP;
 import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoBP;
@@ -52,17 +51,15 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
 import it.cnr.jada.action.HttpActionContext;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
-import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.AbstractPrintBP;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 
-import javax.ejb.EJBException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
-import java.sql.Timestamp;
 import java.util.Optional;
 import java.util.TreeMap;
 
@@ -743,7 +740,7 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
                     DocumentoGenericoComponentSession session = (DocumentoGenericoComponentSession) createComponentSession("CNRDOCAMM00_EJB_DocumentoGenericoComponentSession", DocumentoGenericoComponentSession.class);
                     boolean esercizioScrivaniaAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, new Integer(compenso.getEsercizioScrivania())));
                     boolean esercizioSuccessivoAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, new Integer(compenso.getEsercizioScrivania() + 1)));
-                    setRiportaAvantiIndietro(esercizioScrivaniaAperto && esercizioSuccessivoAperto && isRibaltato());
+                    setRiportaAvantiIndietro(esercizioScrivaniaAperto && esercizioSuccessivoAperto && isRibaltato() && isSupervisore());
                 } catch (Throwable t) {
                     // handleException(t);
                     throw new BusinessProcessException(t);
@@ -1840,4 +1837,10 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
     public boolean isButtonGeneraScritturaVisible() {
         return this.isSupervisore();
     }
+
+    @Override
+    public OggettoBulk getEconomicaModel() {
+        return getModel();
+    }
+
 }

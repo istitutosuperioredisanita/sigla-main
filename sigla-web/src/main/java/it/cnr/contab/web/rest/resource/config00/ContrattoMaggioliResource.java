@@ -1,13 +1,18 @@
 package it.cnr.contab.web.rest.resource.config00;
 
+import it.cnr.contab.config00.contratto.bulk.Ass_contratto_uoBulk;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
+import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.local.config00.ContrattoMaggioliLocal;
 import it.cnr.contab.web.rest.model.ContrattoDtoBulk;
 import it.cnr.contab.web.rest.model.EnumTypeAttachmentContratti;
 import it.cnr.jada.DetailedRuntimeException;
+import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -22,6 +27,23 @@ import java.util.Optional;
 public class ContrattoMaggioliResource  extends AbstractContrattoResource implements ContrattoMaggioliLocal {
     private final Logger _log = LoggerFactory.getLogger(ContrattoMaggioliResource.class);
 
+    @Override
+    protected ContrattoBulk creaContrattoSigla(ContrattoDtoBulk contrattoBulk, CNRUserContext userContext) throws PersistencyException, ValidationException, ComponentException, RemoteException {
+        // verificare che in associazioneUo ci sia l'unita operativa 000.000 altrimenti inserirla
+        ContrattoBulk contrattoToSave= super.creaContrattoSigla(contrattoBulk, userContext);
+        if (! Optional.ofNullable((( BulkList<Ass_contratto_uoBulk>) contrattoToSave.getAssociazioneUO()).
+                stream().
+                filter(el->"000.000".equalsIgnoreCase(el.getCd_unita_organizzativa())).findFirst().orElse(null)).isPresent()){
+                Ass_contratto_uoBulk ass000000 =new Ass_contratto_uoBulk();
+                    ass000000.setUnita_organizzativa(new Unita_organizzativaBulk());
+                    ass000000.setCd_unita_organizzativa("000.000");
+                    ass000000.setContratto(contrattoToSave);
+                    ass000000.setEsercizio(contrattoToSave.getEsercizio());
+                    ass000000.setStato_contratto(contrattoToSave.getStato());
+                contrattoToSave.addToAssociazioneUO(ass000000);
+        }
+        return contrattoToSave;
+    }
 
     @Override
     public void validateContratto(ContrattoDtoBulk contrattoBulk, CNRUserContext userContext) {

@@ -1126,41 +1126,7 @@ Procedure ripPgiroCdsInt(
  begin
   aTSNow:=sysdate;
 
--- Rospuc 09/03/2017 sospesa contabilizzazione
-
-
---   Se il documento viene riportato nel suo esercizio di competenza (esDoc = esScriv) allora
---   deve essere processato in economica (il client si preoccupa di mettere lo stato da riprocessare)
---   Se invece il riporto avviene in esercizi successivi a quello di origine del documento,
---   allora l'economica Ã¨ giÃ  chiusa quindi il documento non puÃ² essere riprocessato e deve essere riportato
---   il suo stato a "contabilizzato"
-  if (aEsScrivania = aEsDoc) then
-	  -- contabilizzazione in economica del doc amm
-	  CNRCTB205.regDocAmmCOGE(aEsDoc, aCdCdsDoc, aCdUoDoc, aTiDoc, aPgDoc, aUser, aTSNow);
-
-	  -- contabilizzazione in analitica del doc amm
-	  CNRCTB210.regDocAmmCoan(aEsDoc, aCdCdsDoc, aCdUoDoc, aTiDoc, aPgDoc, aUser, aTSNow);
-  else
-    CNRCTB100.UPDATEDOCAMM_NODUVAUTUV(
-				    aTiDoc,
-				    aCdCdsDoc,
-				    aEsDoc,
-				    aCdUoDoc,
-				    aPgDoc,
-				    'stato_coge='''||CNRCTB100.STATO_COEP_CON||'''',
-				    null);
-	CNRCTB100.UPDATEDOCAMM_NODUVAUTUV(
-				    aTiDoc,
-				    aCdCdsDoc,
-				    aEsDoc,
-				    aCdUoDoc,
-				    aPgDoc,
-				    'stato_coan='''||CNRCTB100.STATO_COEP_CON||'''',
-				    null);
-  end if;
- -- fine Rospuc 09/03/2017
-
-   isFoundSpesa:=false;
+  isFoundSpesa:=false;
   for aDoc in (select distinct cd_cds_obbligazione, esercizio_obbligazione, esercizio_ori_obbligazione, pg_obbligazione from V_DOC_AMM_OBB d
 				    where
 					      cd_tipo_documento_amm = aTiDoc

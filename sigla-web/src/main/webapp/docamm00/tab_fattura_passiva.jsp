@@ -64,18 +64,11 @@
 			<% bp.getController().writeFormField(out,"data_protocollo"); %>
        		<% bp.getController().writeFormField(out,"numero_protocollo"); %>
       </tr>
-<% if (!fatturaPassiva.isFromAmministra()){%>
-
-        <tr>
+      <tr>
 			<% bp.getController().writeFormField(out,"identificativoSdi"); %>
        		<% bp.getController().writeFormField(out,"progressivo"); %>
       </tr>
-      <%}else{%>
 
-          <tr>
-             <% bp.getController().writeFormField(out,"findDocumentEleTestata"); %>
-          </tr>
-      <%}%>
       <tr>      	
       	<% bp.getController().writeFormField(out,"protocollo_iva");%>
        	<% bp.getController().writeFormField(out,"protocollo_iva_generale");%>
@@ -169,14 +162,14 @@
 		      		<% bp.getController().writeFormLabel(out,"ti_istituz_commerc");%>
 		      	</td>      	
 		     	<td colspan="10">
-		      		<% bp.getController().writeFormInput(out,null,"ti_istituz_commerc",roOnAutoGen||roForSplit,null,"onChange=\"submitForm('doOnIstituzionaleCommercialeChange')\"");%>
+		      		<% bp.getController().writeFormInput(out,null,"ti_istituz_commerc",roForSplit,null,"onChange=\"submitForm('doOnIstituzionaleCommercialeChange')\"");%>
 		      	</td>
 			<% } else { %>
 		     	<td>
 		      		<% bp.getController().writeFormLabel(out,"ti_istituz_commercSearch");%>
 		      	</td>      	
 		     	<td colspan="10">
-		      		<% bp.getController().writeFormInput(out,null,"ti_istituz_commercSearch",roOnAutoGen||roForSplit,null,"onChange=\"submitForm('doOnIstituzionaleCommercialeChange')\"");%>
+		      		<% bp.getController().writeFormInput(out,null,"ti_istituz_commercSearch",roForSplit,null,"onChange=\"submitForm('doOnIstituzionaleCommercialeChange')\"");%>
 		      	</td>
 			<% } %>
       </tr>

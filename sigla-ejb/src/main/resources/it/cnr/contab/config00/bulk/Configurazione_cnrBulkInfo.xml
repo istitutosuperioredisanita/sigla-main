@@ -38,6 +38,7 @@
 	<fieldProperty
 		name="dt01"
 		property="dt01"
+		formatName="date_short"
 		inputType="TEXT"
 		label="dt01" />
 	<fieldProperty
@@ -174,4 +175,53 @@
 	<findFieldProperty
 		name="val01" />
 
+	<form name="STEP_FINE_ANNO">
+		<formFieldProperty
+				name="val02"
+				keysProperty="TI_STEP_FINE_ANNO"
+				layout="HORIZONTAL"
+				inputType="RADIOGROUP"
+				command="doConferma"
+				label = "Completato"/>
+		<formFieldProperty
+				name="dt01"
+				inputType="TEXT"
+				inputSize="10"
+				formatName="date_short"
+				command="doConferma"
+				label = "Data"/>
+	</form>
+	<freeSearchSet name="STEP_FINE_ANNO">
+		<findFieldProperty
+				name="cd_chiave_secondaria"
+				label = "Codice"/>
+		<findFieldProperty
+				name="val01"
+				label = "Descrizione"/>
+		<findFieldProperty
+				name="val02"
+				inputType="SELECT"
+				keysProperty="TI_STEP_FINE_ANNO"
+				label = "Completato"/>
+		<findFieldProperty
+				name="dt01"
+				formatName="date_short"
+				label = "Data"/>
+	</freeSearchSet>
+	<columnSet name="STEP_FINE_ANNO">
+		<columnFieldProperty
+			name="cd_chiave_secondaria"
+			label = "Codice"/>
+		<columnFieldProperty
+			name="val01"
+			label = "Descrizione"/>
+		<columnFieldProperty
+			name="val02"
+			keysProperty="TI_STEP_FINE_ANNO"
+			label = "Completato"/>
+		<columnFieldProperty
+			name="dt01"
+			formatName="date_short"
+			label = "Data"/>
+	</columnSet>
 </bulkInfo>

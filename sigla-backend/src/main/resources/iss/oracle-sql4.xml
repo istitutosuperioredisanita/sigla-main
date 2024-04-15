@@ -30,12 +30,6 @@
   <changeSet author="sigla" runOnChange="true" id="sigla-stampa-mastro">
     <sqlFile dbms="oracle" path="../isssigladb/Procedure/PRC_LOAD_TABLE_STAMPA_RENDIC.prc" relativeToChangelogFile="true" splitStatements="false" stripComments="true"/>
   </changeSet>
-  <changeSet author="iss" runOnChange="true" id="update-iss-package-CNRMIG100">
-    <sqlFile dbms="oracle" path="../isssigladb/Package/CNRMIG100.sql" relativeToChangelogFile="true" splitStatements="false" stripComments="false"/>
-  </changeSet>
-  <changeSet author="iss" runOnChange="true" id="update-iss-package-CNRMIG100_BODY">
-    <sqlFile dbms="oracle" path="../isssigladb/Package/CNRMIG100_BODY.sql" relativeToChangelogFile="true" splitStatements="false" stripComments="false"/>
-  </changeSet>
   <changeSet author="iss" runOnChange="true" id="update_procedura_x_stampa_mastro_rendiconto_finanziario">
     <sqlFile dbms="oracle" path="../isssigladb/Procedure/PRC_LOAD_TABLE_STAMPA_RENDIC.prc" relativeToChangelogFile="true" splitStatements="false" stripComments="true"/>
   </changeSet>

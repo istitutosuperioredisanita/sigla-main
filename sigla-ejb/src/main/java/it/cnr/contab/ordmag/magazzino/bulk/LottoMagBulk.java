@@ -23,6 +23,7 @@ package it.cnr.contab.ordmag.magazzino.bulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk;
 import it.cnr.contab.ordmag.anag00.MagazzinoBulk;
 import it.cnr.contab.ordmag.anag00.NumerazioneMagBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
@@ -40,6 +41,7 @@ public class LottoMagBulk extends LottoMagBase {
 	private OrdineAcqConsegnaBulk ordineAcqConsegna =  new OrdineAcqConsegnaBulk();
 	private TerzoBulk terzo =  new TerzoBulk();
 	private DivisaBulk divisa =  new DivisaBulk();
+	private Voce_ivaBulk voceIva =  new Voce_ivaBulk();
 	
 	public LottoMagBulk() {
 		super();
@@ -248,5 +250,27 @@ public class LottoMagBulk extends LottoMagBase {
 	}
 	public void setCdDivisa(String cdDivisa)  {
 		this.getDivisa().setCd_divisa(cdDivisa);
+	}
+
+
+	public Voce_ivaBulk getVoceIva() {
+		return voceIva;
+	}
+
+	public void setVoceIva(Voce_ivaBulk voceIva) {
+		this.voceIva = voceIva;
+	}
+
+	@Override
+	public String getCdVoceIva() {
+		Voce_ivaBulk voceIva = this.getVoceIva();
+		if (voceIva == null)
+			return null;
+		return getVoceIva().getCd_voce_iva();
+	}
+
+	@Override
+	public void setCdVoceIva(String cdVoceIva) {
+		this.getVoceIva().setCd_voce_iva(cdVoceIva);
 	}
 }

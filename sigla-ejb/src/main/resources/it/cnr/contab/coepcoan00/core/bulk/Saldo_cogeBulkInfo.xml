@@ -154,6 +154,43 @@
 		name="ds_unita_organizzativa" />
 	<formFieldProperty
 		name="ti_istituz_commerc" />
+	<formFieldProperty
+		name="cds"
+		property="cds"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnSearch="false"
+		label="Cds"/>
+	<formFieldProperty
+		name="cdsEnte"
+		extend="cds"
+		enabledOnSearch="true"/>
+	<formFieldProperty
+		name="unita_organizzativa"
+		property="uo"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnSearch="false"
+		label="Unit&#224; organizzativa"/>
+	<formFieldProperty
+		name="unita_organizzativaEnte"
+		extend="unita_organizzativa"
+		enabledOnSearch="true"/>
+	<formFieldProperty
+		name="find_terzo_searchtool"
+		extend="find_terzo"
+		formName="searchtool"/>
+	<formFieldProperty
+		name="find_voce_ep_searchtool"
+		property="conto"
+		formName="searchtool"
+		inputType="SEARCHTOOL"
+		enabledOnSearch="true"
+		label="Conto"/>
+
+
+
+
 
 	<columnFieldProperty
 		name="cd_cds" />

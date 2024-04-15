@@ -22,9 +22,11 @@ import it.cnr.contab.anagraf00.core.bulk.Modalita_pagamentoBulk;
 import it.cnr.contab.docamm00.comp.FatturaPassivaComponent;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
 import it.cnr.contab.docamm00.docs.bulk.TrovatoBulk;
+import it.cnr.contab.docamm00.fatturapa.bulk.DocumentoEleTestataBulk;
 import it.cnr.contab.doccont00.core.bulk.OptionRequestParameter;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
+import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
@@ -1432,4 +1434,49 @@ public class FatturaPassivaComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
             throw uncaughtError(userContext,componentObj,e);
         }
     }
+
+    @Override
+    public Boolean isCompilaFatturaVaziazione(UserContext userContext, DocumentoEleTestataBulk testataBulk) throws ComponentException, RemoteException {
+        pre_component_invocation(userContext,componentObj);
+        try {
+            Boolean result=((FatturaPassivaComponent)componentObj).isCompilaFatturaVaziazione(userContext,testataBulk);
+            component_invocation_succes(userContext,componentObj);
+            return result;
+        } catch(it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext,componentObj);
+            throw e;
+        } catch(it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(userContext,componentObj);
+            throw e;
+        } catch(RuntimeException e) {
+            throw uncaughtRuntimeException(userContext,componentObj,e);
+        } catch(Error e) {
+            throw uncaughtError(userContext,componentObj,e);
+        }
+    }
+    public java.util.List<FatturaOrdineBulk> findFatturaOrdini(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException, javax.ejb.EJBException {
+        pre_component_invocation(param0, componentObj);
+        try {
+            java.util.List result = ((FatturaPassivaComponent) componentObj).findFatturaOrdini(param0, param1);
+            component_invocation_succes(param0, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(param0, componentObj);
+            throw e;
+        } catch (it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(param0, componentObj);
+            throw e;
+        } catch (it.cnr.jada.persistency.PersistencyException e) {
+            component_invocation_failure(param0, componentObj);
+            throw e;
+        } catch (it.cnr.jada.persistency.IntrospectionException e) {
+            component_invocation_failure(param0, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(param0, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(param0, componentObj, e);
+        }
+    }
+
 }

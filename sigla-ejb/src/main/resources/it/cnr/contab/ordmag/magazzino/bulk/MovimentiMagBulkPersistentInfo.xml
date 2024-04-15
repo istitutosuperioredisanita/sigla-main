@@ -77,6 +77,9 @@
 		<columnMapping
 			columnName="PG_BOLLA_SCA"
 			propertyName="bollaScaricoMag.pgBollaSca" />
+		<columnMapping
+			columnName="CD_VOCE_IVA"
+			propertyName="voceIva.cd_voce_iva" />
 	</defaultColumnMap>
   	<persistentProperty
 		name="tipoMovimentoMag" />
@@ -96,6 +99,8 @@
 		name="movimentoAnn" />
 	<persistentProperty
 		name="bollaScaricoMag" />
+	<persistentProperty
+			name="voceIva" />
 	<fetchPolicy
 			name="it.cnr.contab.ordmag.magazzino.comp.MovimentiMagComponent.recuperoMovimentiDaLotto">
 		<include pattern="tipoMovimentoMag"/>

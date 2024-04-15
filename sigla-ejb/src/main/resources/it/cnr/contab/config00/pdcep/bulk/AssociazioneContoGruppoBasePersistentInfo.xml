@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.config00.pdcep.bulk.AssociazioneContoGruppoBase"
+	keyClassName="it.cnr.contab.config00.pdcep.bulk.AssociazioneContoGruppoKey"
+	homeClassName="it.cnr.contab.config00.pdcep.bulk.AssociazioneContoGruppoHome">
+	<defaultColumnMap
+		tableName="CNR_ASS_CONTO_GRUPPO_EP">
+		<columnMapping
+			columnName="SEZIONE"
+			propertyName="sezione"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false" />
+		<columnMapping
+			columnName="DS_ASSOCIAZIONE"
+			propertyName="dsAssociazione"
+			sqlTypeName="VARCHAR"
+			columnSize="200"
+			nullable="true" />
+		<columnMapping
+			columnName="SEGNO"
+			propertyName="segno"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="true" />
+		<columnMapping
+			columnName="DUVA"
+			propertyName="duva"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="UTUV"
+			propertyName="utuv"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="DACR"
+			propertyName="dacr"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="UTCR"
+			propertyName="utcr"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="PG_VER_REC"
+			propertyName="pg_ver_rec"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="false" />
+		<columnMapping
+			columnName="ESERCIZIO"
+			propertyName="esercizio"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="false"/>
+		<columnMapping
+			columnName="CD_PIANO_GRUPPI"
+			propertyName="cdPianoGruppi"
+			sqlTypeName="VARCHAR"
+			columnSize="5"
+			nullable="false" />
+		<columnMapping
+			columnName="CD_GRUPPO_EP"
+			propertyName="cdGruppoEp"
+			sqlTypeName="VARCHAR"
+			columnSize="40"
+			nullable="false"/>
+		<columnMapping
+			columnName="CD_VOCE_EP"
+			propertyName="cdVoceEp"
+			sqlTypeName="VARCHAR"
+			columnSize="45"
+			nullable="false"/>
+
+	</defaultColumnMap>
+	<persistentProperty
+		name="esercizio"/>
+	<persistentProperty
+		name="cdPianoGruppi"/>
+	<persistentProperty
+		name="cdGruppoEp"/>
+	<persistentProperty
+		name="cdVoceEp"/>
+	<persistentProperty
+		name="sezione" />
+	<persistentProperty
+		name="dsAssociazione" />
+	<persistentProperty
+		name="segno" />
+	<persistentProperty
+		name="duva" />
+	<persistentProperty
+		name="utuv" />
+	<persistentProperty
+		name="dacr" />
+	<persistentProperty
+		name="utcr" />
+	<persistentProperty
+		name="pg_ver_rec" />
+</SQLPersistentInfo>

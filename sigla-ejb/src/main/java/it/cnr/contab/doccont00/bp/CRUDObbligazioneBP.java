@@ -898,8 +898,19 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
      * Abilito il bottone di salvataggio documento solo se non ho scadenze in fase di modifica/inserimento
      */
 
+    private boolean enableButtonToSelectAnnPrec(){
+        if ( !isSelectedAnnoPrec())
+            return Boolean.TRUE;
+        if ( isSupervisore())
+            return true;
+        return false;
+    }
+    public boolean isNewButtonEnabled() {
+        return enableButtonToSelectAnnPrec();
+    }
+
     public boolean isSaveButtonEnabled() {
-        return super.isSaveButtonEnabled() && !isEditingScadenza() && !ObbligazioneBulk.STATO_OBB_STORNATO.equals(((ObbligazioneBulk) getModel()).getStato_obbligazione());
+        return enableButtonToSelectAnnPrec();
     }
 //
 //	Abilito il bottone di RIPORTA documento solo se non ho scadenze in fase di modifica/inserimento

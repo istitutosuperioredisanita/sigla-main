@@ -50,7 +50,7 @@
 		nullable="false"
 		inputSize="40"
 		label="Unit&#224; organizzativa"
-		enabledOnSearch="false"
+		enabledOnSearch="true"
 		enabledOnInsert="false"
 		enabledOnEdit="false"				
 		caseSensitiveSearch="false" />

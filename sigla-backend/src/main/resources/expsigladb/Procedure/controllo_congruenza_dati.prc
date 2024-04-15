@@ -129,13 +129,22 @@ BEGIN
 
 	--CONTROLLO CHE I LEGAMI TRA DOCUMENTI E OBBLIGAZIONI SIANO CORRETTI
 	FOR rec IN (SELECT * FROM V_CONTROLLO_DISP_OBBLIGAZIONE_SCADENZARIO vcdos
-				WHERE TOT_IMPEGNO_ASSOCIATO_CALCOLATO != TOT_IMPEGNO_ASSOCIATO) LOOP
+				WHERE TOT_IMPEGNO_ASSOCIATO_DOCAMM_CALCOLATO != TOT_IMPEGNO_ASSOCIATO_DOCAMM) LOOP
 		contaanomalie := contaanomalie + 1;
 		dbms_output.put_line('Scadenza '||rec.PG_OBBLIGAZIONE_SCADENZARIO||' dell''obbligazione '||
 				rec.CD_CDS_OBBLIGAZIONE||'/'||rec.ESERCIZIO_OBBLIGAZIONE||'/'||rec.ESERCIZIO_ORI_OBBLIGAZIONE||'/'||rec.PG_OBBLIGAZIONE||
-				'. L''importo associato di documenti amministrativi ('||ltrim(rtrim(to_char(rec.TOT_IMPEGNO_ASSOCIATO,'999g999g999g999g990d00')))||
-				') non coincide con il valore calcolato ('||ltrim(rtrim(to_char(rec.TOT_IMPEGNO_ASSOCIATO_CALCOLATO,'999g999g999g999g990d00')))||').');
+				'. L''importo associato di documenti amministrativi ('||ltrim(rtrim(to_char(rec.TOT_IMPEGNO_ASSOCIATO_DOCAMM,'999g999g999g999g990d00')))||
+				') non coincide con il valore calcolato ('||ltrim(rtrim(to_char(rec.TOT_IMPEGNO_ASSOCIATO_DOCAMM_CALCOLATO,'999g999g999g999g990d00')))||').');
 
+	END LOOP;
+
+	FOR rec IN (SELECT * FROM V_CONTROLLO_DISP_OBBLIGAZIONE_SCADENZARIO vcdos
+				WHERE TOT_IMPEGNO_ASSOCIATO_DOCCONT_CALCOLATO != TOT_IMPEGNO_ASSOCIATO_DOCCONT) LOOP
+		contaanomalie := contaanomalie + 1;
+		dbms_output.put_line('Scadenza '||rec.PG_OBBLIGAZIONE_SCADENZARIO||' dell''obbligazione '||
+				rec.CD_CDS_OBBLIGAZIONE||'/'||rec.ESERCIZIO_OBBLIGAZIONE||'/'||rec.ESERCIZIO_ORI_OBBLIGAZIONE||'/'||rec.PG_OBBLIGAZIONE||
+				'. L''importo associato di documenti contabili ('||ltrim(rtrim(to_char(rec.TOT_IMPEGNO_ASSOCIATO_DOCCONT,'999g999g999g999g990d00')))||
+				') non coincide con il valore calcolato ('||ltrim(rtrim(to_char(rec.TOT_IMPEGNO_ASSOCIATO_DOCCONT_CALCOLATO,'999g999g999g999g990d00')))||').');
 	END LOOP;
 
 	--CONTROLLO CHE I LEGAMI TRA DOCUMENTI E ACCERTAMENTI SIANO CORRETTI

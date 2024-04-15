@@ -17,22 +17,12 @@
 
 package it.cnr.contab.inventario00.docs.bulk;
 
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.consultazioni.bulk.ConsultazioniRestHome;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_IBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
-import it.cnr.contab.doccont00.core.bulk.SospesoBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioHome;
-import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk;
-import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
-import it.cnr.contab.inventario01.bulk.Inventario_beni_apgBulk;
-import it.cnr.contab.inventario01.bulk.Inventario_beni_apgHome;
 import it.cnr.contab.ordmag.magazzino.bulk.LottoMagBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagBulk;
-import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaBulk;
@@ -40,17 +30,15 @@ import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.bulk.SimpleBulkList;
-import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.Persistent;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.*;
+import it.cnr.jada.util.DateUtils;
 
 import java.sql.Timestamp;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 
 public class Transito_beni_ordiniHome extends BulkHome {
 
@@ -70,12 +58,35 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 	}
 
 
+	private void validateDataBolla(UserContext usercontext,Object value) throws PersistencyException {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime((Date)value);
+		int yearDateBolla= calendar.get( Calendar.YEAR);
+		if ( yearDateBolla< CNRUserContext.getEsercizio(usercontext)||
+				yearDateBolla>CNRUserContext.getEsercizio(usercontext))
+			throw new ApplicationPersistencyException("La data della Bolla deve essere compresa nell'anno di lavoro selezionato");
+	}
+	private void addDataBollaCondition(UserContext usercontext,SQLBuilder sql,int operator,Object value) throws PersistencyException {
+		validateDataBolla( usercontext,value);
+		sql.addSQLClause("AND", "MOVIMENTI_MAG.DATA_BOLLA", operator, value);
+	}
+	private void addDataRifMovimentoCondition(UserContext usercontext,SQLBuilder sql,int operator,Object value) throws PersistencyException {
+		sql.addSQLClause("AND", "MOVIMENTI_MAG.DT_RIFERIMENTO", operator, value);
+	}
+	private Timestamp lastDateOfTheYear(int year) {
+		GregorianCalendar dataInizio = (GregorianCalendar)GregorianCalendar.getInstance();
+		dataInizio.setTime((new GregorianCalendar(year, 11, 31)).getTime());
+		return new Timestamp(dataInizio.getTimeInMillis());
+	}
 	@Override
 	public SQLBuilder selectByClause(UserContext usercontext, CompoundFindClause compoundfindclause) throws PersistencyException {
 		SQLBuilder sql = super.selectByClause(usercontext, compoundfindclause);
 		boolean ricercaAnnullati=false;
-		if (compoundfindclause != null && compoundfindclause.getClauses() != null) {
 
+		sql.generateJoin(Transito_beni_ordiniBulk.class, MovimentiMagBulk.class, "movimentiMag", "MOVIMENTI_MAG");
+		addDataRifMovimentoCondition( usercontext,sql,SQLBuilder.GREATER_EQUALS, DateUtils.firstDateOfTheYear(CNRUserContext.getEsercizio(usercontext)));
+		addDataRifMovimentoCondition( usercontext,sql,SQLBuilder.LESS_EQUALS,  lastDateOfTheYear(CNRUserContext.getEsercizio(usercontext)));
+		if (compoundfindclause != null && compoundfindclause.getClauses() != null) {
 			Enumeration e = compoundfindclause.getClauses();
 
 			while (e.hasMoreElements()) {
@@ -89,15 +100,11 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 						clause.getPropertyName() != null && clause.getPropertyName().equals("dataBolla") ||
 						clause.getPropertyName() != null && clause.getPropertyName().equals("dtOrdine") ||
 						clause.getPropertyName() != null && clause.getPropertyName().equals("numeratoreOrdine")) {
-
-						sql.generateJoin(Transito_beni_ordiniBulk.class, MovimentiMagBulk.class, "movimentiMag", "MOVIMENTI_MAG");
-
 						if (clause.getPropertyName() != null && clause.getPropertyName().equals("numeroBolla")) {
 							sql.addSQLClause("AND", "MOVIMENTI_MAG.NUMERO_BOLLA", clause.getOperator(), clause.getValue());
 						}
-
 						else if (clause.getPropertyName() != null && clause.getPropertyName().equals("dataBolla")) {
-							sql.addSQLClause("AND", "MOVIMENTI_MAG.DATA_BOLLA", clause.getOperator(), clause.getValue());
+							addDataBollaCondition( usercontext,sql,clause.getOperator(),clause.getValue());
 						}
 						else {
 							sql.generateJoin(MovimentiMagBulk.class, LottoMagBulk.class, "lottoMag", "LOTTO_MAG");
@@ -133,7 +140,9 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 			}
 		}
 		if(ricercaAnnullati){
-			sql.addSQLClause("AND", "stato", SQLBuilder.EQUALS, Transito_beni_ordiniBulk.STATO_ANNULLATO);
+			sql.openParenthesis("AND");
+			sql.addClause("AND", "stato", SQLBuilder.EQUALS, Transito_beni_ordiniBulk.STATO_ANNULLATO);
+			sql.closeParenthesis();
 		}else {
 			sql.openParenthesis("AND");
 
@@ -147,7 +156,7 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 			sql.addClause("AND", "pg_inventario", SQLBuilder.EQUALS, inventario.getPg_inventario());
 		} catch (IntrospectionException e) {
 			throw new PersistencyException(e);
-		}
+			}
 		sql.addOrderBy("id");
 		return sql;
 

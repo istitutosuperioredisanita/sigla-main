@@ -21,6 +21,9 @@
  */
 package it.cnr.contab.ordmag.magazzino.bulk;
 import it.cnr.jada.persistency.Keyed;
+
+import java.math.BigDecimal;
+
 public class LottoMagBase extends LottoMagKey implements Keyed {
 //    CD_BENE_SERVIZIO VARCHAR(15) NOT NULL
 	private String cdBeneServizio;
@@ -93,7 +96,10 @@ public class LottoMagBase extends LottoMagKey implements Keyed {
  
 //    DT_CANCELLAZIONE TIMESTAMP(7)
 	private java.sql.Timestamp dtCancellazione;
- 
+
+	private java.lang.String cdVoceIva;
+	private java.math.BigDecimal imIva;
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: LOTTO_MAG
@@ -439,5 +445,21 @@ public class LottoMagBase extends LottoMagKey implements Keyed {
 	 **/
 	public void setDtCancellazione(java.sql.Timestamp dtCancellazione)  {
 		this.dtCancellazione=dtCancellazione;
+	}
+
+	public String getCdVoceIva() {
+		return cdVoceIva;
+	}
+
+	public void setCdVoceIva(String cdVoceIva) {
+		this.cdVoceIva = cdVoceIva;
+	}
+
+	public BigDecimal getImIva() {
+		return imIva;
+	}
+
+	public void setImIva(BigDecimal imIva) {
+		this.imIva = imIva;
 	}
 }

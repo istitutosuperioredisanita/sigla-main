@@ -22,13 +22,13 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
                                        http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-    <changeSet author="ciro.salvio" id="drop_index_ax_fattura_passiva00">
+    <changeSet dbms="oracle" author="ciro.salvio" id="drop_index_ax_fattura_passiva00">
         <preConditions onFail="MARK_RAN">
             <indexExists indexName="AX_FATTURA_PASSIVA00" />
         </preConditions>
         <dropIndex indexName="AX_FATTURA_PASSIVA00" tableName="fattura_passiva"/>
     </changeSet>
-    <changeSet author="ciro.salvio" id="ricreate_index_ax_fattura_passiva00">
+    <changeSet dbms="oracle" author="ciro.salvio" id="ricreate_index_ax_fattura_passiva00">
         <createIndex indexName="AX_FATTURA_PASSIVA00" tableName="FATTURA_PASSIVA" unique="true">
             <column name="CD_TERZO"/>
             <column name="TI_FATTURA"/>

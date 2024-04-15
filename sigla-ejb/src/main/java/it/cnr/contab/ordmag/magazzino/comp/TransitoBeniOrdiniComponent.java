@@ -17,39 +17,34 @@
 
 package it.cnr.contab.ordmag.magazzino.comp;
 
-import it.cnr.contab.config00.sto.bulk.EnteBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.*;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioHome;
+import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventHome;
 import it.cnr.contab.inventario00.docs.bulk.Transito_beni_ordiniBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.*;
-import it.cnr.contab.ordmag.anag00.*;
-import it.cnr.contab.ordmag.magazzino.bulk.*;
-import it.cnr.contab.ordmag.ordini.bulk.*;
-import it.cnr.contab.ordmag.ordini.dto.ImportoOrdine;
-import it.cnr.contab.ordmag.ordini.dto.ParametriCalcoloImportoOrdine;
-import it.cnr.contab.ordmag.ordini.ejb.OrdineAcqComponentSession;
-import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.ordmag.magazzino.bulk.LottoMagBulk;
+import it.cnr.contab.ordmag.magazzino.bulk.LottoMagHome;
+import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagBulk;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqHome;
 import it.cnr.contab.util.Utility;
-import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.BulkList;
-import it.cnr.jada.bulk.BusyResourceException;
 import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.bulk.OutdatedResourceException;
-import it.cnr.jada.comp.*;
+import it.cnr.jada.comp.ApplicationException;
+import it.cnr.jada.comp.CRUDComponent;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.comp.ICRUDMgr;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.persistency.sql.*;
-import it.cnr.jada.util.DateUtils;
-import it.cnr.jada.util.RemoteIterator;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.persistency.sql.FindClause;
+import it.cnr.jada.persistency.sql.Query;
+import it.cnr.jada.persistency.sql.SimpleFindClause;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.rmi.RemoteException;
-import java.sql.Timestamp;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
+import java.util.Collection;
 
 public class TransitoBeniOrdiniComponent extends CRUDComponent implements ICRUDMgr, Cloneable, Serializable {
 	@Override

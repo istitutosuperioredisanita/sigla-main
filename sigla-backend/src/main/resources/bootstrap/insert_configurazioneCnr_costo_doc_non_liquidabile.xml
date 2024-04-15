@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="raffaele.pagano" id="insert_conf_costo_doc_non_liquidabile">
+        <addDefaultValue tableName="configurazione_cnr" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="configurazione_cnr" columnName="duva" defaultValueDate="${now}"/>
+        <sql>
+            INSERT INTO CONFIGURAZIONE_CNR
+            (ESERCIZIO, CD_UNITA_FUNZIONALE, CD_CHIAVE_PRIMARIA, CD_CHIAVE_SECONDARIA, VAL01, UTCR, UTUV, PG_VER_REC)
+            SELECT ESERCIZIO, '*', 'VOCEEP_SPECIALE', 'COSTO_DOC_NON_LIQUIDABILE', 'C00066', 'SYSTEM', 'SYSTEM', 1
+            FROM ESERCIZIO_BASE
+            WHERE ESERCIZIO >= 2023
+        </sql>
+        <dropDefaultValue tableName="configurazione_cnr" columnName="dacr"/>
+        <dropDefaultValue tableName="configurazione_cnr" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="insert_conf_costo_doc_non_liquidabile_01">
+        <update tableName="voce_ep">
+            <column name="cd_voce_ep_contr" type="STRING" value="P43001"/>
+            <where>esercizio >= 2023 and cd_voce_ep='C00066' and cd_voce_ep_contr is null</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>

@@ -20,5 +20,185 @@
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xmlns="https://contab.cnr.it/schema/SIGLA" 
 		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd" shortDescription="Situazione assestato piano economico"
-          longDescription="Situazione assestato piano economico">    		
+          longDescription="Situazione assestato piano economico">
+	<fieldProperty
+			name="pg_progetto"
+			property="pg_progetto"
+			inputType="TEXT"
+			inputSize="16"
+			maxLength="16"
+			enabledOnEdit="false"
+			label="PG Progetto" />
+	<fieldProperty
+			name="esercizio"
+			property="esercizio"
+			inputType="TEXT"
+			inputSize="4"
+			maxLength="4"
+			enabledOnEdit="false"
+			label="Esercizio" />
+	<fieldProperty
+			name="cd_unita_piano"
+			property="cd_unita_piano"
+			inputType="TEXT"
+			inputSize="30"
+			maxLength="30"
+			enabledOnEdit="false"
+			label="Cd Unita Piano" />
+	<fieldProperty
+			name="cd_voce_piano"
+			property="cd_voce_piano"
+			inputType="TEXT"
+			inputSize="30"
+			maxLength="30"
+			enabledOnEdit="false"
+			label="Cd Voce Piano" />
+	<fieldProperty
+			name="ti_gestione"
+			property="ti_gestione"
+			inputType="TEXT"
+			inputSize="30"
+			maxLength="30"
+			enabledOnEdit="false"
+			label="TI Gestione" />
+	<fieldProperty
+			name="importoFin"
+			property="importoFin"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.EuroFormat"
+			enabledOnEdit="false"
+			label="Importo Finanziario" />
+	<fieldProperty
+			name="stanziamentoFin"
+			property="stanziamentoFin"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.EuroFormat"
+			enabledOnEdit="false"
+			label="Stanziamento Finanziario" />
+	<fieldProperty
+			name="variapiuFin"
+			property="variapiuFin"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.EuroFormat"
+			enabledOnEdit="false"
+			label="Variazioni Positive Finanziario" />
+	<fieldProperty
+			name="variamenoFin"
+			property="variamenoFin"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.EuroFormat"
+			enabledOnEdit="false"
+			label="Variazioni Negative Finanziario" />
+	<fieldProperty
+			name="trasfpiuFin"
+			property="trasfpiuFin"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.EuroFormat"
+			enabledOnEdit="false"
+			label="Variazioni Trasf Positive Finanziario" />
+	<fieldProperty
+			name="trasfmenoFin"
+			property="trasfmenoFin"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.EuroFormat"
+			enabledOnEdit="false"
+			label="Variazioni Trasf Negative Finanziario" />
+	<fieldProperty
+			name="importoCofin"
+			property="importoCofin"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.EuroFormat"
+			enabledOnEdit="false"
+			label="Importo Cofin" />
+	<fieldProperty
+			name="stanziamentoCofin"
+			property="stanziamentoCofin"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.EuroFormat"
+			enabledOnEdit="false"
+			label="Stanziamento Cofin" />
+	<fieldProperty
+			name="variapiuCofin"
+			property="variapiuCofin"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.EuroFormat"
+			enabledOnEdit="false"
+			label="Variazioni positive Cofin" />
+	<fieldProperty
+			name="variamenoCofin"
+			property="variamenoCofin"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.EuroFormat"
+			enabledOnEdit="false"
+			label="Variazioni negative Cofin" />
+	<fieldProperty
+			name="trasfpiuCofin"
+			property="trasfpiuCofin"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.EuroFormat"
+			enabledOnEdit="false"
+			label="Trasf Positivo Cofin" />
+	<fieldProperty
+			name="trasfmenoCofin"
+			property="trasfmenoCofin"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.EuroFormat"
+			enabledOnEdit="false"
+			label="Trasf Negativo Cofin" />
+	<fieldProperty
+			name="impaccFin"
+			property="impaccFin"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.EuroFormat"
+			enabledOnEdit="false"
+			label="Impacc Fin" />
+	<fieldProperty
+			name="impaccCofin"
+			property="impaccCofin"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.EuroFormat"
+			enabledOnEdit="false"
+			label="Impacc Cofin" />
+	<fieldProperty
+			name="manrisFin"
+			property="manrisFin"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.EuroFormat"
+			enabledOnEdit="false"
+			label="ManRis fin" />
+	<fieldProperty
+			name="manrisCofin"
+			property="manrisCofin"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.EuroFormat"
+			enabledOnEdit="false"
+			label="ManRis cofin" />
+
+	<findFieldProperty name="pg_progetto" />
+	<findFieldProperty name="esercizio" />
+	<findFieldProperty name="cd_unita_piano" />
+	<findFieldProperty name="cd_voce_piano" />
+	<findFieldProperty name="ti_gestione" />
+
+	<columnFieldProperty name="pg_progetto" enabledOnInsert="false" />
+	<columnFieldProperty name="esercizio" enabledOnInsert="false" />
+	<columnFieldProperty name="cd_unita_piano" enabledOnInsert="false" />
+	<columnFieldProperty name="cd_voce_piano" enabledOnInsert="false" />
+	<columnFieldProperty name="ti_gestione" enabledOnInsert="false" />
+	<columnFieldProperty name="importoFin" enabledOnInsert="false" />
+	<columnFieldProperty name="stanziamentoFin" enabledOnInsert="false" />
+	<columnFieldProperty name="variapiuFin" enabledOnInsert="false" />
+	<columnFieldProperty name="variamenoFin" enabledOnInsert="false" />
+	<columnFieldProperty name="trasfpiuFin" enabledOnInsert="false" />
+	<columnFieldProperty name="trasfmenoFin" enabledOnInsert="false" />
+	<columnFieldProperty name="importoCofin" enabledOnInsert="false" />
+	<columnFieldProperty name="stanziamentoCofin" enabledOnInsert="false" />
+	<columnFieldProperty name="variapiuCofin" enabledOnInsert="false" />
+	<columnFieldProperty name="variamenoCofin" enabledOnInsert="false" />
+	<columnFieldProperty name="trasfpiuCofin" enabledOnInsert="false" />
+	<columnFieldProperty name="trasfmenoCofin" enabledOnInsert="false" />
+	<columnFieldProperty name="impaccFin" enabledOnInsert="false" />
+	<columnFieldProperty name="impaccCofin" enabledOnInsert="false" />
+	<columnFieldProperty name="manrisFin" enabledOnInsert="false" />
+	<columnFieldProperty name="manrisCofin" enabledOnInsert="false" />
 </bulkInfo>

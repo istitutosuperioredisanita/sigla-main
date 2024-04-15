@@ -41,6 +41,7 @@ public class CaricoMagazzinoRigaBulk extends MovimentiMagazzinoRigaBulk{
 	private String lottoFornitore;
 	private Timestamp dtScadenza;
 	private BigDecimal prezzoUnitario;
+	private BigDecimal impIva;
 	private Voce_ivaBulk voceIva;
 	private List<LottoMagBulk> lottoColl = new BulkList<LottoMagBulk>();
 
@@ -135,5 +136,13 @@ public class CaricoMagazzinoRigaBulk extends MovimentiMagazzinoRigaBulk{
 
 	public void setDtScadenza(Timestamp dtScadenza) {
 		this.dtScadenza = dtScadenza;
+	}
+
+	public BigDecimal getImpIva() {
+		return impIva;
+	}
+
+	public void setImpIva(BigDecimal impIva) {
+		this.impIva = impIva;
 	}
 }

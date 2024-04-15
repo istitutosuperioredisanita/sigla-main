@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="valentina.tomada" id="chiusura_catgrp_voce_ep">
+
+        <!-- TABELLA TESTATA CHIUSURA -->
+        <createTable tableName="chiusura_anno_catgrp_voce_ep" remarks="importi di chiusura per cat.gruppo e voce ep" >
+
+            <!-- TABELLA CHIUSURA_ANNO -->
+            <column name="pg_chiusura" remarks="Progressivo record chiusura" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="anno" remarks="Anno di chiusura" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tipo_chiusura" remarks="M=Magazzino; I=Inventario" type="CHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+            <!-- TABELLA CATEGORIA GRUPPO -->
+            <column name="cd_categoria_gruppo" remarks="Codice categoria/gruppo" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <!-- TABELLA VOCE_EP -->
+            <column name="esercizio" remarks="Esercizio." type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_voce_ep" remarks="Codice Identificativo completo del conto del piano." type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="imp_totale" remarks="Importo totale per la categoria gruppo" type="numeric(21, 6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record: viene incrementato di 1 ad ogni variazione" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+        <addPrimaryKey tableName="chiusura_anno_catgrp_voce_ep" constraintName="chiusura_anno_catgrp_voce_ep_pkey" columnNames="pg_chiusura,anno,tipo_chiusura,cd_categoria_gruppo,esercizio,cd_voce_ep"></addPrimaryKey>
+
+
+
+
+        <addForeignKeyConstraint baseColumnNames="pg_chiusura,anno,tipo_chiusura" baseTableName="chiusura_anno_catgrp_voce_ep" constraintName="fk_chiusura_anno_catgrp_voce_ep_rim01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="pg_chiusura,anno,tipo_chiusura" referencedTableName="chiusura_anno"/>
+        <addForeignKeyConstraint baseColumnNames="cd_categoria_gruppo" baseTableName="chiusura_anno_catgrp_voce_ep" constraintName="fk_chiusura_anno_catgrp_voce_ep_rim02" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cd_categoria_gruppo" referencedTableName="categoria_gruppo_invent"/>
+        <addForeignKeyConstraint baseColumnNames="esercizio,cd_voce_ep" baseTableName="chiusura_anno_catgrp_voce_ep" constraintName="fk_chiusura_anno_catgrp_voce_ep_rim03" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="esercizio,cd_voce_ep" referencedTableName="voce_ep"/>
+
+    </changeSet>
+</databaseChangeLog>

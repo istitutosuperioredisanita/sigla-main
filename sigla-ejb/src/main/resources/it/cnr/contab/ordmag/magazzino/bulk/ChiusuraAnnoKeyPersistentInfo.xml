@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.ordmag.magazzino.bulk.ChiusuraAnnoKey">
+	<defaultColumnMap
+		tableName="CHIUSURA_ANNO">
+		<columnMapping
+			columnName="PG_CHIUSURA"
+			propertyName="pgChiusura"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="ANNO"
+			propertyName="anno"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="TIPO_CHIUSURA"
+			propertyName="tipoChiusura"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false"
+			primary="true" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="pgChiusura"
+		partOfOid="true" />
+	<persistentProperty
+		name="anno"
+		partOfOid="true" />
+	<persistentProperty
+		name="tipoChiusura"
+		partOfOid="true" />
+</SQLPersistentInfo>

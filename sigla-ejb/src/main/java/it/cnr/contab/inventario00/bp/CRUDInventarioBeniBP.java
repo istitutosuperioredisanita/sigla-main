@@ -30,6 +30,7 @@ import java.rmi.RemoteException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.inventario00.docs.bulk.*;
 import it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession;
 import it.cnr.jada.action.*;
@@ -98,6 +99,7 @@ protected void init(it.cnr.jada.action.Config config,it.cnr.jada.action.ActionCo
 
 	super.init(config,context);
 	resetTabs();
+	Configurazione_cnrBulk.stepFineAnno(context.getUserContext(), Configurazione_cnrBulk.StepFineAnno.FINE_INVENTARIAZIONE);
 	try {	
 		BuonoCaricoScaricoComponentSession session = (BuonoCaricoScaricoComponentSession)createComponentSession("CNRINVENTARIO01_EJB_BuonoCaricoScaricoComponentSession",BuonoCaricoScaricoComponentSession.class);
 		setVisualizzazione(session.isEsercizioCOEPChiuso(context.getUserContext()));			

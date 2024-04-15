@@ -411,7 +411,15 @@
 		inputType="TEXT"
 		formatName="date_short"
 		enabledOnEdit="false"
-		label="dtPagamentoRichiesta" />	
+		label="dtPagamentoRichiesta" />
+	<fieldProperty
+			name="intestazioneModPag"
+			property="intestazioneModPag"
+			inputType="TEXT"
+			inputSize="200"
+			maxLength="200"
+			enabledOnEdit="false"
+			label="Intestazione Mod. Pag" />
 	<form
 		name="searchtool">
 	</form>

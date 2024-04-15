@@ -18,7 +18,6 @@
 package it.cnr.contab.doccont00.comp;
 
 import it.cnr.contab.anagraf00.core.bulk.*;
-import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaComponent;
 import it.cnr.contab.config00.bulk.*;
 import it.cnr.contab.config00.contratto.bulk.Ass_contratto_uoBulk;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
@@ -4742,7 +4741,7 @@ public void verificaCoperturaContratto (UserContext aUC,ObbligazioneBulk obbliga
 			}
 		  if (flag == INSERIMENTO)
 		    totale = totale.add(obbligazione.getIm_obbligazione());			  
-		  if (totale != null ){
+		  if (totale != null && obbligazione.getContratto().getIm_contratto_passivo()!=null){
 			  if (totale.compareTo(obbligazione.getContratto().getIm_contratto_passivo()) > 0){
 				  throw handleException( new CheckDisponibilitaContrattoFailed("La somma degli impegni associati supera l'importo definito nel contratto."));
 			  }

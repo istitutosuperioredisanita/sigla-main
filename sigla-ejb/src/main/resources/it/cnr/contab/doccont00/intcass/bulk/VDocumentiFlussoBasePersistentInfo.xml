@@ -263,6 +263,12 @@
 			sqlTypeName="VARCHAR"
 			columnSize="250"
 			nullable="true" />
+		<columnMapping
+				columnName="INTESTAZIONE_MOD_PAG"
+				propertyName="intestazioneModPag"
+				sqlTypeName="VARCHAR"
+				columnSize="200"
+				nullable="true" />
 
 	</defaultColumnMap>
 	
@@ -488,5 +494,7 @@
 		name ="dtPagamentoRichiesta" />
 	<persistentProperty
 		name ="tipoPostalizzazione" />
+	<persistentProperty
+			name ="intestazioneModPag" />
 
 </SQLPersistentInfo>

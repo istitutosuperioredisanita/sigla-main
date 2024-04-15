@@ -42,8 +42,11 @@ public ImpegnoPGiroResiduoHome(java.sql.Connection conn, it.cnr.jada.persistency
 public SQLBuilder createSQLBuilder()
 {
 	SQLBuilder sql = super.createSQLBuilder();
-	sql.addClause( "AND", "fl_pgiro", sql.EQUALS, new Boolean(true));
-	sql.addClause( "AND", "cd_tipo_documento_cont", sql.EQUALS, Numerazione_doc_contBulk.TIPO_IMP_RES );
+	sql.addClause( FindClause.AND, "fl_pgiro", SQLBuilder.EQUALS, new Boolean(true));
+	sql.openParenthesis(FindClause.AND);
+	sql.addClause( FindClause.OR, "cd_tipo_documento_cont", SQLBuilder.EQUALS, Numerazione_doc_contBulk.TIPO_IMP_RES );
+	sql.addClause( FindClause.OR, "cd_tipo_documento_cont", sql.EQUALS, Numerazione_doc_contBulk.TIPO_OBB_PGIR_R );
+	sql.closeParenthesis();
 	return sql;
 }
 }

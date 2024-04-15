@@ -31,6 +31,14 @@
 		<columnMapping
 			columnName="CD_VOCE"
 			propertyName="elementoVoce.cd_elemento_voce" />
+		<columnMapping
+				columnName="CD_CENTRO_RESPONSABILITA"
+				propertyName="linea_attivita.centro_responsabilita.cd_centro_responsabilita"
+		/>
+		<columnMapping
+				columnName="CD_LINEA_ATTIVITA"
+				propertyName="linea_attivita.cd_linea_attivita"
+		/>
 	</defaultColumnMap>
 	<persistentProperty
 		name="obbligazionePluriennale"
@@ -39,4 +47,7 @@
 	<persistentProperty
 		name="elementoVoce"
 		partOfOid="true" />
+	<persistentProperty
+			name="linea_attivita"
+			partOfOid="true" />
 </SQLPersistentInfo>

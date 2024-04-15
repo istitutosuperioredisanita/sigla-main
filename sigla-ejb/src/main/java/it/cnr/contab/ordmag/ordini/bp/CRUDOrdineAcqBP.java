@@ -17,14 +17,18 @@
 
 package it.cnr.contab.ordmag.ordini.bp;
 
+import it.cnr.contab.chiusura00.ejb.RicercaDocContComponentSession;
 import it.cnr.contab.config00.contratto.bulk.Dettaglio_contrattoBulk;
+import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoBP;
 import it.cnr.contab.docamm00.bp.IGenericSearchDocAmmBP;
 import it.cnr.contab.docamm00.bp.ObbligazioniCRUDController;
 import it.cnr.contab.docamm00.bp.VoidableBP;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
 import it.cnr.contab.docamm00.docs.bulk.Voidable;
+import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.doccont00.bp.IDefferedUpdateSaldiBP;
 import it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk;
@@ -37,6 +41,8 @@ import it.cnr.contab.reports.bulk.Print_spoolerBulk;
 import it.cnr.contab.reports.bulk.Report;
 import it.cnr.contab.reports.service.PrintService;
 import it.cnr.contab.service.SpringUtil;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
@@ -88,7 +94,10 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 	protected it.cnr.contab.docamm00.docs.bulk.Risultato_eliminazioneVBulk deleteManager = null;
 	private boolean isDeleting = false;
 	private boolean dettaglioContrattoCollapse = false;
-
+	private Integer esercizioInScrivania;
+	private boolean annoSolareInScrivania = true;
+	private boolean ribaltato;
+	private boolean riportaAvantiIndietro = false;
 	public StoreService getStoreService(){
 		return storeService;
 	}
@@ -104,7 +113,7 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 		OrdineAcqBulk ordine = (OrdineAcqBulk)getModel();
 		if(ordine == null || isSearching())
 			return super.isInputReadonly();
-		return 	super.isInputReadonly() || (ordine.getStato() != null && !ordine.isStatoInserito() && !ordine.isStatoInApprovazione() && ((ordine.isStatoAllaFirma() && !ordine.isToBeUpdated()) || !ordine.isStatoAllaFirma())) ;
+		return 	super.isInputReadonly() || isRibaltato() || (ordine.getStato() != null && !ordine.isStatoInserito() && !ordine.isStatoInApprovazione() && ((ordine.isStatoAllaFirma() && !ordine.isToBeUpdated()) || !ordine.isStatoAllaFirma())) ;
 	}
 
 	private final SimpleDetailCRUDController righe= new OrdineAcqRigaCRUDController("Righe", OrdineAcqRigaBulk.class, "righeOrdineColl", this){
@@ -559,6 +568,15 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 	}
 
 	@Override
+	public boolean isNewButtonEnabled() {
+		return super.isNewButtonEnabled() && !isRibaltato();
+	}
+
+	public boolean isDeleteButtonEnabled() {
+		return super.isDeleteButtonEnabled() && !isRibaltato();
+	}
+
+	@Override
 	public boolean isSaveButtonEnabled() {
 		return super.isSaveButtonEnabled() &&
 				Optional.ofNullable(getModel())
@@ -822,6 +840,16 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 			this.setStatus(FormController.VIEW);
 	}
 
+	public void reset(ActionContext context) throws BusinessProcessException {
+		if (it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(
+				context.getUserContext()).intValue() != Fattura_passivaBulk
+				.getDateCalendar(null).get(java.util.Calendar.YEAR))
+			resetForSearch(context);
+		else {
+			super.reset(context);
+		}
+	}
+
 	@Override
 	protected void resetTabs(ActionContext actioncontext) {
 		super.resetTabs(actioncontext);
@@ -854,6 +882,79 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 			((CRUDComponentSession)createComponentSession("JADAEJB_CRUDComponentSession")).modificaConBulk(context.getUserContext(), ordineAcqConsegnaBulk);
 		} catch (ComponentException|RemoteException e) {
 			throw handleException(e);
+		}
+	}
+
+	public Integer getEsercizioInScrivania() {
+		return esercizioInScrivania;
+	}
+
+	public void setEsercizioInScrivania(Integer esercizioInScrivania) {
+		this.esercizioInScrivania = esercizioInScrivania;
+	}
+
+	public boolean isAnnoSolareInScrivania() {
+		return annoSolareInScrivania;
+	}
+
+	public void setAnnoSolareInScrivania(boolean annoSolareInScrivania) {
+		this.annoSolareInScrivania = annoSolareInScrivania;
+	}
+
+	public boolean isRiportaAvantiIndietro() {
+		return riportaAvantiIndietro;
+	}
+
+	public void setRiportaAvantiIndietro(boolean riportaAvantiIndietro) {
+		this.riportaAvantiIndietro = riportaAvantiIndietro;
+	}
+
+	public boolean isRibaltato() {
+		return ribaltato;
+	}
+
+	public void setRibaltato(boolean ribaltato) {
+		this.ribaltato = ribaltato;
+	}
+
+	public boolean initRibaltato(it.cnr.jada.action.ActionContext context)
+			throws it.cnr.jada.action.BusinessProcessException {
+		try {
+			return (((RicercaDocContComponentSession) createComponentSession(
+					"CNRCHIUSURA00_EJB_RicercaDocContComponentSession",
+					RicercaDocContComponentSession.class)).isRibaltato(context
+					.getUserContext()));
+		} catch (Exception e) {
+			throw handleException(e);
+		}
+	}
+
+	protected void init(it.cnr.jada.action.Config config, it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException {
+		try {
+			super.init(config, context);
+
+			int solaris = Fattura_passivaBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate())
+					.get(java.util.Calendar.YEAR);
+
+			setEsercizioInScrivania(CNRUserContext.getEsercizio(context.getUserContext()).intValue());
+			setAnnoSolareInScrivania(solaris == this.getEsercizioInScrivania());
+			setRibaltato(initRibaltato(context));
+			if (!isAnnoSolareInScrivania()) {
+				String cds = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(context.getUserContext());
+				try {
+					FatturaPassivaComponentSession session = Utility.createFatturaPassivaComponentSession();
+					boolean esercizioScrivaniaAperto = session.verificaStatoEsercizio(context.getUserContext(),
+									new EsercizioBulk(cds, this.getEsercizioInScrivania()));
+					boolean esercizioSuccessivoAperto = session.verificaStatoEsercizio(context.getUserContext(),
+									new EsercizioBulk(cds, this.getEsercizioInScrivania() + 1));
+					setRiportaAvantiIndietro(esercizioScrivaniaAperto && esercizioSuccessivoAperto && isRibaltato());
+				} catch (Throwable t) {
+					throw handleException(t);
+				}
+			} else
+				setRiportaAvantiIndietro(false);
+		} catch (javax.ejb.EJBException e) {
+			setAnnoSolareInScrivania(false);
 		}
 	}
 }

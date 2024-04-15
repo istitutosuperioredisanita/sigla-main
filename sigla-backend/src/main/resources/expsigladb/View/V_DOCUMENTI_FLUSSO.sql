@@ -1,61 +1,8 @@
 --------------------------------------------------------
 --  DDL for View V_DOCUMENTI_FLUSSO
 --------------------------------------------------------
-
- CREATE OR REPLACE FORCE VIEW "V_DOCUMENTI_FLUSSO" (
-    "CD_CDS",
-    "ESERCIZIO",
-    "PG_DOCUMENTO",
-    "CD_UNITA_ORGANIZZATIVA",
-    "CD_CDS_ORIGINE",
-    "CD_UO_ORIGINE",
-    "CD_TIPO_DOCUMENTO_CONT",
-    "TI_DOCUMENTO",
-    "TI_COMPETENZA_RESIDUO",
-    "DS_DOCUMENTO",
-    "STATO",
-    "CD_TIPO_DOCUMENTO_AMM",
-    "PG_DOC_AMM",
-    "DT_EMISSIONE",
-    "DT_TRASMISSIONE",
-    "DT_PAGAMENTO",
-    "DT_ANNULLAMENTO",
-    "IM_DOCUMENTO",
-    "IM_PAGATO",
-    "STATO_TRASMISSIONE",
-    "DT_RITRASMISSIONE",
-    "CD_TERZO",
-    "CD_ANAG",
-    "DENOMINAZIONE_SEDE",
-    "CD_SIOPE",
-    "CD_CUP",
-    "DT_REGISTRAZIONE_SOSP",
-    "TI_ENTRATA_SPESA",
-    "CD_SOSPESO",
-    "IM_SOSPESO",
-    "VIA_SEDE",
-    "CAP_COMUNE_SEDE",
-    "DS_COMUNE",
-    "CD_PROVINCIA",
-    "PARTITA_IVA",
-    "CODICE_FISCALE",
-    "ABI",
-    "CAB",
-    "CIN",
-    "NUMERO_CONTO",
-    "BIC",
-    "CD_ISO",
-    "CODICE_IBAN",
-    "TIPO_POSTALIZZAZIONE",
-    "ASSOGGETTAMENTO_BOLLO",
-    "CAUSALE_BOLLO",
-    "MODALITA_PAGAMENTO",
-    "IM_ASSOCIATO",
-    "IMPORTO_CGE",
-    "IMPORTO_CUP",
-    "DT_PAGAMENTO_RICHIESTA"
-    ) AS
- SELECT   v.cd_cds, v.esercizio, v.pg_reversale, v.cd_unita_organizzativa,
+CREATE OR REPLACE FORCE VIEW "V_DOCUMENTI_FLUSSO" ("CD_CDS", "ESERCIZIO", "PG_DOCUMENTO", "CD_UNITA_ORGANIZZATIVA", "CD_CDS_ORIGINE", "CD_UO_ORIGINE", "CD_TIPO_DOCUMENTO_CONT", "TI_DOCUMENTO", "TI_COMPETENZA_RESIDUO", "DS_DOCUMENTO", "STATO", "CD_TIPO_DOCUMENTO_AMM", "PG_DOC_AMM", "DT_EMISSIONE", "DT_TRASMISSIONE", "DT_PAGAMENTO", "DT_ANNULLAMENTO", "IM_DOCUMENTO", "IM_PAGATO", "STATO_TRASMISSIONE", "DT_RITRASMISSIONE", "CD_TERZO", "CD_ANAG", "DENOMINAZIONE_SEDE", "CD_SIOPE", "CD_CUP", "DT_REGISTRAZIONE_SOSP", "TI_ENTRATA_SPESA", "CD_SOSPESO", "IM_SOSPESO", "VIA_SEDE", "CAP_COMUNE_SEDE", "DS_COMUNE", "CD_PROVINCIA", "PARTITA_IVA", "CODICE_FISCALE", "ABI", "CAB", "CIN", "NUMERO_CONTO", "BIC", "CD_ISO", "CODICE_IBAN", "TIPO_POSTALIZZAZIONE", "ASSOGGETTAMENTO_BOLLO", "CAUSALE_BOLLO", "MODALITA_PAGAMENTO", "IM_ASSOCIATO", "IMPORTO_CGE", "IMPORTO_CUP", "DT_PAGAMENTO_RICHIESTA","INTESTAZIONE_MOD_PAG") AS
+  SELECT   v.cd_cds, v.esercizio, v.pg_reversale, v.cd_unita_organizzativa,
             v.cd_cds_origine, v.cd_uo_origine, v.cd_tipo_documento_cont,
             v.ti_reversale, v.ti_competenza_residuo, v.ds_reversale, v.stato,
             NULL,
@@ -88,7 +35,8 @@
                 AND cge.ti_gestione = reversale_siope.ti_gestione
                 AND cge.cd_siope = reversale_siope.cd_siope) importo_cge,
             null importo_cup,
-            NULL     --dt_pagamento_richiesta
+            NULL,     --dt_pagamento_richiesta,
+            b.intestazione
        FROM v_reversale_terzo v,
             reversale_riga r,
             reversale_siope cge,
@@ -162,7 +110,7 @@
         AND s.cd_sospeso(+) = sosp.cd_sospeso
         AND sosp.ti_sospeso_riscontro(+) = 'S'
         AND sosp.stato(+) = 'N'
-        AND com_ben.pg_nazione = n.pg_nazione       
+        AND com_ben.pg_nazione = n.pg_nazione
    GROUP BY v.cd_cds,
             v.esercizio,
             v.pg_reversale,
@@ -214,7 +162,8 @@
             bollo.ds_tipo_bollo,
             r.cd_modalita_pag,
             sosp.im_associato,
-            com_ben.ti_italiano_estero
+            com_ben.ti_italiano_estero,
+            b.intestazione
 union
 select  v.cd_cds,
         v.esercizio,
@@ -275,7 +224,8 @@ select  v.cd_cds,
             cge.cd_siope= mandato_siope.cd_siope
             ) importo_cge,
         sum(c.importo) importo_cup,
-        mandato.dt_pagamento_richiesta
+        mandato.dt_pagamento_richiesta,
+        b.intestazione
         from v_mandato_terzo v,mandato_riga m, mandato_siope cge,mandato_siope_cup c,terzo,banca b,
          sospeso_det_usc sosp, sospeso s,comune com_ben, terzo t,anagrafico a,nazione n,mandato_terzo mt,tipo_bollo bollo,mandato
               where
@@ -391,4 +341,5 @@ group by v.cd_cds,
         a.ti_italiano_estero,
         sosp.im_associato,
         com_ben.ti_italiano_estero,
-        mandato.dt_pagamento_richiesta;
+        mandato.dt_pagamento_richiesta,
+        b.intestazione;

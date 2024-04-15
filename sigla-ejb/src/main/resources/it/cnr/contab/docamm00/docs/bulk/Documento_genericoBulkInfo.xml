@@ -311,15 +311,15 @@
 		enabledOnSearch="true"		
 		enabledOnFreeSearch="true"
 		label="Progressivo" />
-		<fieldProperty
+	<fieldProperty
 		name="dt_a_competenza_coge"
 		property="dt_a_competenza_coge"
 		maxLength="10"
 		inputSize="10"
 		inputType="TEXT"
 		formatName="date_short"
-		nullable="false"
 		readonlyProperty="RODateCompetenzaCOGE"
+		nullable="false"
 		enabledOnInsert="true"
 		enabledOnEdit="true"
 		enabledOnSearch="false"
@@ -332,8 +332,8 @@
 		inputSize="10"
 		inputType="TEXT"
 		formatName="date_short"
-		nullable="false"
 		readonlyProperty="RODateCompetenzaCOGE"
+		nullable="false"
 		enabledOnInsert="true"
 		enabledOnEdit="true"
 		enabledOnSearch="false"
@@ -721,7 +721,19 @@
 		enabledOnSearch="true"
 		enabledOnFreeSearch="true"
 		label="Tipo Documento Generico" />
-	
+	<fieldProperty
+		name="cd_tipo_conto_ep"
+		property="cd_tipo_conto_ep"
+		maxLength="25"
+		inputSize="25"
+		inputType="SELECT"
+		nullable="true"
+		keysProperty="ti_tipoContoDocAttivoEnumKeys"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		label="Tipo conto"
+		caseSensitiveSearch="false" />
+
 	<formFieldProperty
 		name="esercizio_lettera" />
 	<formFieldProperty
@@ -809,9 +821,9 @@
 	<formFieldProperty
 		name="dt_scadenza" />		
 	<formFieldProperty
-		name="dt_da_competenza_coge" />		
+		name="dt_da_competenza_coge" command="doOnDataCompetenzaDaCogeChange"/>
 	<formFieldProperty
-		name="dt_a_competenza_coge" />		
+		name="dt_a_competenza_coge" command="doOnDataCompetenzaACogeChange"/>
 	<formFieldProperty
 		name="flagEnteForSearch" />
 	<formFieldProperty
@@ -856,7 +868,9 @@
 		name="causale"/>	
 	<formFieldProperty
 		name="findTipoDocumentoGenerico" />
-				
+	<formFieldProperty
+		name="cd_tipo_conto_ep" />
+
 	<columnFieldProperty
 		name="cd_tipo_documento_amm" />
 	<columnFieldProperty
@@ -940,5 +954,7 @@
 		label="Esercizio lettera" />
 	<findFieldProperty
 		name="pg_lettera"
-		inputType="TEXT"/>	
+		inputType="TEXT"/>
+	<findFieldProperty
+			name="cd_tipo_conto_ep" />
 </bulkInfo>

@@ -2,7 +2,7 @@
 <bulkInfo>
 	<fieldProperty
 		name="cdCds"
-		property="cdCds"
+		property="obbligazionePluriennale.accertamento.cd_cds.cd_unita_organizzativa"
 		inputType="TEXT"
 		inputSize="30"
 		maxLength="30"
@@ -12,7 +12,7 @@
 		label="Cds dell'obbligazione" />
 	<fieldProperty
 		name="esercizio"
-		property="esercizio"
+		property="obbligazionePluriennale.accertamento.esercizio"
 		inputType="TEXT"
 		inputSize="5"
 		maxLength="5"
@@ -22,7 +22,7 @@
 		label="Esercizio dell'obbligazione" />
 	<fieldProperty
 		name="esercizioOriginale"
-		property="esercizioOriginale"
+		property="obbligazionePluriennale.accertamento.esercizioOriginale"
 		inputType="TEXT"
 		inputSize="5"
 		maxLength="5"
@@ -32,7 +32,7 @@
 		label="Esercizio Originale dell'obbligazione" />
 	<fieldProperty
 		name="pgObbligazione"
-		property="pgObbligazione"
+		property="obbligazionePluriennale.accertamento.pgObbligazione"
 		inputType="TEXTAREA"
 		cols="60"
 		rows="5"
@@ -43,7 +43,7 @@
 		label="Numero dell'obbligazione" />
 	<fieldProperty
 		name="anno"
-		property="anno"
+		property="obbligazionePluriennale.accertamento.anno"
 		inputType="TEXT"
 		inputSize="5"
 		maxLength="5"
@@ -54,7 +54,7 @@
 		label="Anno Obbligazione Pluriennale" />
 	<fieldProperty
 		name="cdCentroResponsabilita"
-		property="cdCentroResponsabilita"
+		property="linea_attivita.centro_responsabilita.cd_centro_responsabilita"
 		inputType="TEXT"
 		inputSize="30"
 		maxLength="30"
@@ -64,7 +64,7 @@
 		label="Codice identificativo del centro di responsabilità" />
 	<fieldProperty
 		name="cdLineaAttivita"
-		property="cdLineaAttivita"
+		property="linea_attivita.cd_linea_attivita"
 		inputType="TEXT"
 		inputSize="10"
 		maxLength="10"
@@ -74,7 +74,7 @@
 		label="Codice della linea di attivita" />
 	<fieldProperty
 		name="esercizioVoce"
-		property="esercizioVoce"
+		property="elementoVoce.esercizioVoce"
 		inputType="TEXT"
 		inputSize="5"
 		maxLength="5"
@@ -84,7 +84,7 @@
 		label="Esercizio della voce del capitolo" />
 	<fieldProperty
 		name="tiAppartenenza"
-		property="tiAppartenenza"
+		property="elementoVoce.tiAppartenenza"
 		inputType="TEXT"
 		inputSize="1"
 		maxLength="1"
@@ -94,7 +94,7 @@
 		label="Definisce l'appartenenza (CNR o CdS) delle voci del piano finanziario di riferimento dell'obbligazione" />
 	<fieldProperty
 		name="tiGestione"
-		property="tiGestione"
+		property="elementoVoce.tiGestione"
 		inputType="TEXT"
 		inputSize="1"
 		maxLength="1"
@@ -104,7 +104,7 @@
 		label="Definisce la sezione (entrata o spesa) delle voci del piano finanziario di riferimento dell'obbligazione" />
 	<fieldProperty
 		name="cdVoce"
-		property="cdVoce"
+		property="elementoVoce.cd_elemento_voce"
 		inputType="TEXTAREA"
 		cols="60"
 		rows="5"

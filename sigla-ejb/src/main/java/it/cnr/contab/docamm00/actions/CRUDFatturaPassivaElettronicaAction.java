@@ -357,6 +357,12 @@ public class CRUDFatturaPassivaElettronicaAction extends CRUDAction {
     }
 
     public Forward doCompilaFattura(ActionContext context) throws FillException, BusinessProcessException {
+        return innerCompilaFattura( context,false);
+    }
+    public Forward doCompilaFatturaVariazione(ActionContext context) throws FillException, BusinessProcessException {
+        return innerCompilaFattura( context,true);
+    }
+    private Forward innerCompilaFattura(ActionContext context, boolean isFatturaVariazione) throws FillException, BusinessProcessException {
         try {
             CRUDFatturaPassivaElettronicaBP fatturaPassivaElettronicaBP = (CRUDFatturaPassivaElettronicaBP) context.getBusinessProcess();
             DocumentoEleTestataBulk bulk = (DocumentoEleTestataBulk) fatturaPassivaElettronicaBP.getModel();
@@ -460,7 +466,7 @@ public class CRUDFatturaPassivaElettronicaAction extends CRUDAction {
             }
             String message = "La compilazione della Fattura e il suo successivo salvataggio, ";
             message += "comporta l'accettazione del documento elettronico.<br>Si desidera procedere?";
-            return openConfirm(context, message, it.cnr.jada.util.action.OptionBP.CONFIRM_YES_NO, "doConfirmCompilaFattura");
+            return openConfirm(context, message, it.cnr.jada.util.action.OptionBP.CONFIRM_YES_NO, isFatturaVariazione?"doConfirmCompilaFatturaVariazione":"doConfirmCompilaFattura");
         } catch (Exception e) {
             return handleException(context, e);
         }
@@ -481,6 +487,8 @@ public class CRUDFatturaPassivaElettronicaAction extends CRUDAction {
     public Forward doVisualizzaFattura(ActionContext context) throws FillException, BusinessProcessException {
         CRUDFatturaPassivaElettronicaBP fatturaPassivaElettronicaBP = (CRUDFatturaPassivaElettronicaBP) context.getBusinessProcess();
         DocumentoEleTestataBulk bulk = (DocumentoEleTestataBulk) fatturaPassivaElettronicaBP.getModel();
+        bulk.setFromAmministra(fatturaPassivaElettronicaBP instanceof CRUDFatturaPassivaElettronicaAmministraBP);
+
         try {
             CRUDFatturaPassivaBP nbp = (CRUDFatturaPassivaBP) context.createBusinessProcess(bulk.getBusinessProcessFattura(),
                     new Object[]{"M"}
@@ -493,8 +501,13 @@ public class CRUDFatturaPassivaElettronicaAction extends CRUDAction {
             return handleException(context, e);
         }
     }
-
     public Forward doConfirmCompilaFattura(ActionContext context, it.cnr.jada.util.action.OptionBP option) throws FillException, BusinessProcessException {
+        return innerCompilaFattura( context,option,false);
+    }
+    public Forward doConfirmCompilaFatturaVariazione(ActionContext context, it.cnr.jada.util.action.OptionBP option) throws FillException, BusinessProcessException {
+        return innerCompilaFattura( context,option,true);
+    }
+    private  Forward innerCompilaFattura(ActionContext context, it.cnr.jada.util.action.OptionBP option, boolean isFatturaVazione) throws FillException, BusinessProcessException {
         if (option.getOption() == it.cnr.jada.util.action.OptionBP.YES_BUTTON) {
             CRUDFatturaPassivaElettronicaBP fatturaPassivaElettronicaBP = (CRUDFatturaPassivaElettronicaBP) context.getBusinessProcess();
             DocumentoEleTestataBulk bulk = (DocumentoEleTestataBulk) fatturaPassivaElettronicaBP.getModel();
@@ -528,11 +541,11 @@ public class CRUDFatturaPassivaElettronicaAction extends CRUDAction {
                         notaBp = (CRUDFatturaPassivaBP) action.doGeneraNotaDiCredito(context);
                     else if (bulk.getTipoDocumentoSIGLA().equalsIgnoreCase(Fattura_passivaBulk.TIPO_NOTA_DI_DEBITO))
                         notaBp = (CRUDFatturaPassivaBP) action.doGeneraNotaDiDebito(context);
-                    notaBp.setModel(context, fatturaPassivaElettronicaBP.completaFatturaPassiva(context, (Fattura_passivaBulk) notaBp.getModel(), notaBp, fatturaPassivaBulk));
+                    notaBp.setModel(context, fatturaPassivaElettronicaBP.completaFatturaPassiva(context, (Fattura_passivaBulk) notaBp.getModel(), notaBp, fatturaPassivaBulk,false));
                 } else {
                     Fattura_passivaBulk fatturaPassivaBulk = (Fattura_passivaBulk) nbp.getModel();
                     fatturaPassivaBulk.setFromAmministra(nbp instanceof CRUDFatturaPassivaAmministraBP);
-                    nbp.setModel(context, fatturaPassivaElettronicaBP.completaFatturaPassiva(context, fatturaPassivaBulk, nbp, null));
+                    nbp.setModel(context, fatturaPassivaElettronicaBP.completaFatturaPassiva(context, fatturaPassivaBulk, nbp, null,isFatturaVazione));
                 }
                 return nbp;
             } catch (Throwable e) {
@@ -594,4 +607,5 @@ public class CRUDFatturaPassivaElettronicaAction extends CRUDAction {
             }
         }
     }
+
 }

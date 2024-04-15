@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.config00.pdcep.bulk.AssociazioneContoGruppoKey">
+	<defaultColumnMap
+		tableName="CNR_ASS_CONTO_GRUPPO_EP">
+		<columnMapping
+			columnName="ROWID"
+			propertyName="rowid"
+			sqlTypeName="VARCHAR"
+			columnSize="250"
+			nullable="false"
+			primary="true" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="rowid"
+		partOfOid="true" />
+</SQLPersistentInfo>

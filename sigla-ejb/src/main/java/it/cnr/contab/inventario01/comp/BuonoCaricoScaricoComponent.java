@@ -29,6 +29,7 @@ import java.math.RoundingMode;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import javax.ejb.EJBException;
@@ -105,7 +106,7 @@ implements Cloneable,Serializable{
 	public BuonoCaricoScaricoComponent()	
 	{
 	}
-	protected void initializeKeysAndOptionsInto(UserContext usercontext, OggettoBulk oggettobulk) throws ComponentException{
+	public void initializeKeysAndOptionsInto(UserContext usercontext, OggettoBulk oggettobulk) throws ComponentException{
 			try {
 				Tipo_carico_scaricoHome tipoHome = (Tipo_carico_scaricoHome)getHome(usercontext, Tipo_carico_scaricoBulk.class);
 				java.util.Collection tipi;
@@ -1625,19 +1626,20 @@ public SQLBuilder selectNuovo_bene_padreByClause(UserContext userContext, Invent
 		//sql.addSQLClause("AND","INVENTARIO_BENI.DT_VALIDITA_VARIAZIONE",SQLBuilder.LESS_EQUALS,associa_Bulk.getTest_buono().getData_registrazione());
 		//PER NON VEDERE I BUONI TEMPORANEI GIA' GENERATI
 		sql.addSQLClause("AND","BUONO_CARICO_SCARICO_DETT.PG_BUONO_C_S",SQLBuilder.GREATER,0);
-		sql.addSQLClause("AND","BUONO_CARICO_SCARICO_DETT.ESERCIZIO",SQLBuilder.EQUALS,riga_fattura.getEsercizio());
+		final Integer esercizioDA = Optional.ofNullable(riga_fattura.getDt_da_competenza_coge())
+				 .map(Timestamp::toLocalDateTime)
+				 .map(LocalDateTime::getYear)
+				 .orElse(riga_fattura.getEsercizio());
+		final Integer esercizioA = Optional.ofNullable(riga_fattura.getDt_a_competenza_coge())
+				 .map(Timestamp::toLocalDateTime)
+				 .map(LocalDateTime::getYear)
+				 .orElse(riga_fattura.getEsercizio());
+		sql.openParenthesis(FindClause.AND);
+			sql.addSQLClause(FindClause.OR,"BUONO_CARICO_SCARICO_DETT.ESERCIZIO",SQLBuilder.EQUALS, esercizioDA);
+		 	sql.addSQLClause(FindClause.OR,"BUONO_CARICO_SCARICO_DETT.ESERCIZIO",SQLBuilder.EQUALS, esercizioA);
+		sql.closeParenthesis();
+
 		sql.addSQLClause("AND","BUONO_CARICO_SCARICO_DETT.TI_DOCUMENTO",SQLBuilder.EQUALS,Buono_carico_scaricoBulk.CARICO);
-		/* condizione spostata nella vista associazioni disponibili 
-		SQLBuilder sql_tipo = getHome(userContext, Buono_carico_scaricoBulk.class).createSQLBuilder();
-		sql_tipo.addTableToHeader("TIPO_CARICO_SCARICO");
-		sql_tipo.addSQLJoin("BUONO_CARICO_SCARICO.CD_TIPO_CARICO_SCARICO","TIPO_CARICO_SCARICO.CD_TIPO_CARICO_SCARICO");
-		sql_tipo.addSQLJoin("BUONO_CARICO_SCARICO.PG_INVENTARIO","BUONO_CARICO_SCARICO_DETT.PG_INVENTARIO");
-		sql_tipo.addSQLJoin("BUONO_CARICO_SCARICO.TI_DOCUMENTO","BUONO_CARICO_SCARICO_DETT.TI_DOCUMENTO");
-		sql_tipo.addSQLJoin("BUONO_CARICO_SCARICO.PG_BUONO_C_S","BUONO_CARICO_SCARICO_DETT.PG_BUONO_C_S");
-		sql_tipo.addSQLJoin("BUONO_CARICO_SCARICO.ESERCIZIO","BUONO_CARICO_SCARICO_DETT.ESERCIZIO");
-		sql_tipo.addSQLClause("AND","TIPO_CARICO_SCARICO.FL_FATTURABILE",sql.EQUALS,"Y");
-		sql.addSQLExistsClause("AND",sql_tipo);
-		*/
 		SQLBuilder sql_old_ass = getHome(userContext, Ass_inv_bene_fatturaBulk.class).createSQLBuilder();
 		sql_old_ass.addSQLJoin("BUONO_CARICO_SCARICO_DETT.PG_INVENTARIO","ASS_INV_BENE_FATTURA.PG_INVENTARIO");
 		sql_old_ass.addSQLJoin("BUONO_CARICO_SCARICO_DETT.NR_INVENTARIO","ASS_INV_BENE_FATTURA.NR_INVENTARIO");
@@ -2383,7 +2385,7 @@ public RemoteIterator selectBeniAssociatiByClause(
 	if (riga_fattura !=null){
 		sql.addSQLClause("AND","INVENTARIO_BENI_APG.CD_CDS",SQLBuilder.EQUALS,riga_fattura.getCd_cds());
 		sql.addSQLClause("AND","INVENTARIO_BENI_APG.CD_UNITA_ORGANIZZATIVA",SQLBuilder.EQUALS,riga_fattura.getCd_unita_organizzativa());
-		sql.addSQLClause("AND","INVENTARIO_BENI_APG.ESERCIZIO",SQLBuilder.EQUALS,riga_fattura.getEsercizio());
+		sql.addSQLClause("AND","INVENTARIO_BENI_APG.ESERCIZIO",SQLBuilder.LESS_EQUALS,riga_fattura.getEsercizio());
 		sql.addSQLClause("AND","INVENTARIO_BENI_APG.PG_FATTURA",SQLBuilder.EQUALS,riga_fattura.getPg_fattura_passiva());
 		sql.addSQLClause("AND","INVENTARIO_BENI_APG.PROGRESSIVO_RIGA",SQLBuilder.EQUALS,riga_fattura.getProgressivo_riga());
 	}
@@ -3539,7 +3541,7 @@ public void modificaBeniAssociati(UserContext userContext,Ass_inv_bene_fatturaBu
 							if (riga_fattura!=null){
 								new_bene_apg.setCd_cds(riga_fattura.getCd_cds());   				
 								new_bene_apg.setCd_unita_organizzativa(riga_fattura.getCd_unita_organizzativa());  	
-								new_bene_apg.setEsercizio(riga_fattura.getEsercizio());   		
+								new_bene_apg.setEsercizio(buono.getEsercizio());
 								new_bene_apg.setPg_fattura(riga_fattura.getPg_fattura_passiva());  
 								new_bene_apg.setProgressivo_riga(riga_fattura.getProgressivo_riga());
 								if (riga_fattura.getTi_istituz_commerc().equals(TipoIVA.ISTITUZIONALE.value()))
@@ -3551,7 +3553,7 @@ public void modificaBeniAssociati(UserContext userContext,Ass_inv_bene_fatturaBu
 							{
 								new_bene_apg.setCd_cds(nota.getCd_cds());   				
 								new_bene_apg.setCd_unita_organizzativa(nota.getCd_unita_organizzativa());  	
-								new_bene_apg.setEsercizio(nota.getEsercizio());   		
+								new_bene_apg.setEsercizio(nota.getEsercizio());
 								new_bene_apg.setPg_fattura(nota.getPg_fattura_passiva());  
 								new_bene_apg.setProgressivo_riga(nota.getProgressivo_riga());
 								if (nota.getTi_istituz_commerc().equals(TipoIVA.ISTITUZIONALE.value()))
@@ -5344,7 +5346,7 @@ public void validaRiportaAssFattura_Bene(UserContext userContext, Ass_inv_bene_f
 						}else{
 							sql.addSQLClause("AND","INVENTARIO_BENI_APG.CD_CDS",sql.EQUALS,riga_fattura.getCd_cds());
 							sql.addSQLClause("AND","INVENTARIO_BENI_APG.CD_UNITA_ORGANIZZATIVA",sql.EQUALS,riga_fattura.getCd_unita_organizzativa());
-							sql.addSQLClause("AND","INVENTARIO_BENI_APG.ESERCIZIO",sql.EQUALS,riga_fattura.getEsercizio());
+							sql.addSQLClause("AND","INVENTARIO_BENI_APG.ESERCIZIO",sql.LESS_EQUALS,riga_fattura.getEsercizio());
 							sql.addSQLClause("AND","INVENTARIO_BENI_APG.PG_FATTURA",sql.EQUALS,riga_fattura.getPg_fattura_passiva());
 							sql.addSQLClause("AND","INVENTARIO_BENI_APG.PROGRESSIVO_RIGA",sql.EQUALS,riga_fattura.getProgressivo_riga());
 							sql.addSQLClause("AND","INVENTARIO_BENI_APG.LOCAL_TRANSACTION_ID",sql.EQUALS,associaBulk.getLocal_transactionID());

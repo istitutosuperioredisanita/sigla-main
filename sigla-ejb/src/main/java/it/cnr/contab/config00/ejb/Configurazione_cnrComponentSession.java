@@ -26,7 +26,7 @@ import java.rmi.RemoteException;
 import java.sql.Timestamp;
 
 @Remote
-public interface Configurazione_cnrComponentSession extends it.cnr.jada.ejb.GenericComponentSession {
+public interface Configurazione_cnrComponentSession extends it.cnr.jada.ejb.CRUDDetailComponentSession {
     /**
      *
      * @param userContext

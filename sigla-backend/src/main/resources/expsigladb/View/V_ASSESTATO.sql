@@ -223,10 +223,7 @@
                             voce_f_saldi_cdr_linea.ti_gestione,
                             voce_f_saldi_cdr_linea.cd_elemento_voce,
                             voce_f_saldi_cdr_linea.cd_voce,
-                            NVL
-                               (im_stanz_res_improprio,
-                                0
-                               ) stanziamento_iniziale,
+                            0 stanziamento_iniziale,
                             NVL (var_piu_stanz_res_imp,
                                  0) variazioni_positive,
                             NVL (var_meno_stanz_res_imp,
@@ -238,10 +235,7 @@
                                  )
                             - NVL (var_meno_obbl_res_pro, 0)
                                                     variazioni_residui_propri,
-                              NVL (im_stanz_res_improprio,
-                                   0
-                                  )
-                            + NVL (var_piu_stanz_res_imp, 0)
+                              NVL (var_piu_stanz_res_imp, 0)
                             - NVL (var_meno_stanz_res_imp, 0)
                             - NVL (var_piu_obbl_res_pro, 0)
                             + NVL (var_meno_obbl_res_pro, 0)

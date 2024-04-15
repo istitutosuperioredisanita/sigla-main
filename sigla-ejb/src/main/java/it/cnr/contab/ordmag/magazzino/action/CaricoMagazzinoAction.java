@@ -25,6 +25,8 @@ import it.cnr.contab.ordmag.magazzino.bulk.CaricoMagazzinoRigaBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.Forward;
+import it.cnr.jada.bulk.ValidationException;
+import it.cnr.jada.util.DateUtils;
 import it.cnr.jada.util.action.OptionBP;
 
 public class CaricoMagazzinoAction extends it.cnr.jada.util.action.CRUDAction {
@@ -125,7 +127,8 @@ public class CaricoMagazzinoAction extends it.cnr.jada.util.action.CRUDAction {
 	
 		try {
 			fillModel(context);
-			carico.validaDate();
+			validaDate(context,carico.getDataCompetenza());
+
 			return context.findDefaultForward();
 		}
 		catch (Exception ex) {
@@ -139,6 +142,24 @@ public class CaricoMagazzinoAction extends it.cnr.jada.util.action.CRUDAction {
 			{
 				return handleException(context, e);
 			}
+		}
+	}
+	public void validaDate(ActionContext context,java.sql.Timestamp dataCompentenza) throws ValidationException {
+		if (dataCompentenza!=null) {
+			if (DateUtils.truncate(dataCompentenza).after(DateUtils.truncate(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()))) {
+				throw new ValidationException("La \"Data di competenza\" dello scarico non deve essere successiva alla data odierna!");
+			}
+			java.util.Calendar gc = java.util.Calendar.getInstance();
+			gc.setTime(dataCompentenza);
+			int annoCompetenza = gc.get(java.util.Calendar.YEAR);
+			int esScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue();
+
+			if(annoCompetenza!=esScrivania){
+				throw new ValidationException( "La \"Data di competenza\" deve ricadere nell'esercizio selezionato!");
+			}
+		}
+		else{
+			throw new ValidationException("La \"Data di competenza\" non può essere vuota");
 		}
 	}
 }

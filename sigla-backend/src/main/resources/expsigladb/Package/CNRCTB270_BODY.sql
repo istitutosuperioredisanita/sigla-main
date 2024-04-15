@@ -2175,7 +2175,7 @@ aCDRUO.cd_centro_responsabilita||'/'||CNRCTB015.GETVAL01PERCHIAVE(LINEA_ATTIVITA
               -- Estrazione del CDR SAC di versamento iva
               aCDRUOVERSIVA := getCDRUOVERSIVA(aEsDefault);
               -- Estrazione della linea di attività SAC da utilizzare per la creazione della variazione
-              aLASpecVersIvaSac := getLASPECVERSIVASAC(aEsDefault, aCDRUOVERSIVA);
+              aLASpecVersIvaSac := getLASPECVERSIVASAC(aEs, aCDRUOVERSIVA);
 
               impLiqResiduo := Abs(aLiquidIva.iva_da_versare);
 

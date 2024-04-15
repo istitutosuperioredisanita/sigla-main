@@ -22,10 +22,7 @@ import it.cnr.contab.anagraf00.ejb.AnagraficoComponentSession;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabter.bulk.NazioneBulk;
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaFromDocumentoComponent;
-import it.cnr.contab.config00.bulk.CigBulk;
-import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
-import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
-import it.cnr.contab.config00.bulk.Parametri_enteBulk;
+import it.cnr.contab.config00.bulk.*;
 import it.cnr.contab.config00.contratto.bulk.Ass_contratto_uoBulk;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
 import it.cnr.contab.config00.contratto.bulk.ContrattoHome;
@@ -93,9 +90,11 @@ import java.math.RoundingMode;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumentoComponent
@@ -1848,7 +1847,17 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
         sql.addClause("AND", "stato_cofi", SQLBuilder.NOT_EQUALS, Fattura_passiva_IBulk.STATO_ANNULLATO);
         //Escludo le riportate
         //sql.addSQLClause("AND", "ESERCIZIO_OBBLIGAZIONE", sql.EQUALS, fatturaPassiva.getEsercizio());
-
+        //Escludo le righe legate ad ordine
+        final FatturaOrdineHome fatturaOrdineHome = Optional.ofNullable(getHome(context, FatturaOrdineBulk.class, fatturaPassiva.getCd_tipo_doc()))
+                .filter(FatturaOrdineHome.class::isInstance)
+                .map(FatturaOrdineHome.class::cast)
+                .orElseThrow(() -> new ComponentException("Home di FatturaOrdineBulk non trovata!"));
+        SQLBuilder sqlBuilder = fatturaOrdineHome.createSQLBuilder();
+        sqlBuilder.addSQLClause(FindClause.AND, "CD_CDS", SQLBuilder.EQUALS, fatturaPassiva.getCd_cds());
+        sqlBuilder.addSQLClause(FindClause.AND, "CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, fatturaPassiva.getCd_unita_organizzativa());
+        sqlBuilder.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.EQUALS, fatturaPassiva.getEsercizio());
+        sqlBuilder.addSQLClause(FindClause.AND, "PG_FATTURA_PASSIVA", SQLBuilder.EQUALS, fatturaPassiva.getPg_fattura_passiva());
+        sql.addSQLNotExistsClause(FindClause.AND, sqlBuilder);
         try {
             return iterator(
                     context,
@@ -3454,7 +3463,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                 .orElseThrow(() -> new ComponentException("Cannot find EvasioneOrdineRigaHome"));
         EvasioneOrdineRigaBulk evasioneOrdineRigaBulk = null;
         try {
-            evasioneOrdineRigaBulk = home.findByConsegna(consegna);
+            evasioneOrdineRigaBulk = Optional.ofNullable(home.findByConsegna(consegna)).filter(el->!el.isEmpty()).map(el->el.get(0)).orElse(null);
             if (evasioneOrdineRigaBulk != null) {
                 Transito_beni_ordiniHome transito_beni_ordiniHome = Optional.ofNullable(getHome(userContext, Transito_beni_ordiniBulk.class))
                         .filter(Transito_beni_ordiniHome.class::isInstance)
@@ -4068,7 +4077,9 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
         sql.addClause("AND", "cd_cds", SQLBuilder.EQUALS, fatturaPassiva.getCd_cds());
         sql.addClause("AND", "esercizio", SQLBuilder.EQUALS, fatturaPassiva.getEsercizio());
         sql.addClause("AND", "cd_unita_organizzativa", SQLBuilder.EQUALS, fatturaPassiva.getCd_unita_organizzativa());
-        return home.fetchAll(sql);
+        final List list = home.fetchAll(sql);
+        getHomeCache(aUC).fetchAll(aUC);
+        return list;
     }
 
 //^^@@
@@ -5949,17 +5960,24 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         return null;
     }
 
-    private void searchDuplicateFattEleDaAnnistraInDB(UserContext aUC, Fattura_passivaBulk fatturaPassiva) throws ComponentException {
-        if (fatturaPassiva.getNr_fattura_fornitore() == null)
-            throw new it.cnr.jada.comp.ApplicationException("Attenzione: inserire il numero del documento del fornitore.");
-        try {
+    private List<DocumentoEleTestataBulk> getSqlFatturaVariazioneSdi(UserContext aUC, Long identificativoSdi) throws ComponentException, PersistencyException {
+
             DocumentoEleTestataHome  home = Optional.ofNullable(getHome(aUC, DocumentoEleTestataBulk.class))
                     .filter(DocumentoEleTestataHome.class::isInstance)
                     .map(DocumentoEleTestataHome.class::cast)
                     .orElseThrow(() -> new ComponentException("Cannot find DocumentoEleTestataHome"));
-            SQLBuilder sql=querySdiToCreateFattFromAmministra( aUC, fatturaPassiva,null,null);
-            sql.addClause(FindClause.AND,"identificativoSdi",SQLBuilder.EQUALS, fatturaPassiva.getIdentificativoSdi());
-            List occurences = home.fetchAll(sql);
+            SQLBuilder sql=getSqlFattVariazioneSdiDaAnnistra( aUC, null,null);
+            sql.addClause(FindClause.AND,"identificativoSdi",SQLBuilder.EQUALS, identificativoSdi);
+            return home.fetchAll(sql);
+    }
+
+
+    private void searchDuplicateFatturaVariazioneInDB(UserContext aUC, Fattura_passivaBulk fatturaPassiva) throws ComponentException {
+        if (fatturaPassiva.getNr_fattura_fornitore() == null)
+            throw new it.cnr.jada.comp.ApplicationException("Attenzione: inserire il numero del documento del fornitore.");
+        try {
+
+            List occurences = getSqlFatturaVariazioneSdi( aUC,fatturaPassiva.getIdentificativoSdi());
 
             if (occurences == null || occurences.isEmpty()) {
                 throw new it.cnr.jada.comp.ApplicationException("Attenzione duplicazione documento fornitore: il numero di documento " + fatturaPassiva.getNr_fattura_fornitore() + " risulta già registrato");
@@ -5967,7 +5985,6 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         } catch (it.cnr.jada.persistency.PersistencyException e) {
             throw handleException(fatturaPassiva, e);
         }
-
     }
 
     private Boolean isRiferSameFatturaElettroncicaSDI(Fattura_passivaBulk fatturaPassiva, Fattura_passivaBulk fatturaPassivaBulkToCheck )
@@ -6114,8 +6131,6 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         if (dettaglio.getFattura_passiva().getDt_a_competenza_coge() != null)
             data_a.setTime(new Date(dettaglio.getFattura_passiva().getDt_a_competenza_coge().getTime()));
 
-        if ((data_da != null && data_da.get(GregorianCalendar.YEAR) < dettaglio.getEsercizio()) || (data_a != null && data_a.get(GregorianCalendar.YEAR) < dettaglio.getEsercizio()))
-            sql.addSQLClause("AND", "FL_GESTIONE_INVENTARIO", SQLBuilder.EQUALS, "N");
         sql.addClause("AND", "ti_bene_servizio", SQLBuilder.EQUALS, dettaglio.getFattura_passiva().getTi_bene_servizio());
         if ((dettaglio.getFattura_passiva().getFl_intra_ue().booleanValue() || dettaglio.getFattura_passiva().getFl_extra_ue().booleanValue() || dettaglio.getFattura_passiva().getFl_san_marino_senza_iva().booleanValue())
                 && dettaglio.getFattura_passiva().isCommerciale() && dettaglio.getFattura_passiva().getTi_bene_servizio().compareTo(Bene_servizioBulk.SERVIZIO) == 0)
@@ -6814,7 +6829,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         if ( fatturaPassiva.isFromAmministra() && fatturaPassiva.isElettronica() &&
                 Optional.ofNullable(fatturaPassiva.getPg_fattura_passiva()).map(f-> !(f>0)).orElse(Boolean.TRUE))
             //caso di seconda registrazione della fattura elettronica in quanto la prima stornata con nota di Credito con causale Nota Variazione
-            searchDuplicateFattEleDaAnnistraInDB(aUC, fatturaPassiva);
+            searchDuplicateFatturaVariazioneInDB(aUC, fatturaPassiva);
 
         searchDuplicateInDB(aUC, fatturaPassiva);
 
@@ -6870,8 +6885,18 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         }
         controllaQuadraturaIntrastat(aUC, fatturaPassiva);
         controllaQuadraturaObbligazioni(aUC, fatturaPassiva);
-        // TODO Per ora remmato Marco Spasiano
-        //controllaQuadraturaOrdini(aUC, fatturaPassiva);
+        try {
+            final Parametri_cdsBulk parametriCdsBulk = (Parametri_cdsBulk) getHome(aUC, Parametri_cdsBulk.class).findByPrimaryKey(
+                    new Parametri_cdsBulk(fatturaPassiva.getCd_cds(), fatturaPassiva.getEsercizio())
+            );
+            if (fatturaPassiva.isLiquidabile() &&
+                    Optional.ofNullable(parametriCdsBulk.getFl_obblig_liq_fatt()).orElse(Boolean.FALSE) &&
+                    fatturaPassiva.getDt_protocollo_liq() == null) {
+                throw new it.cnr.jada.comp.ApplicationException("Attenzione è obbligatorio allegare un file di tipo <b>Provvedimento di Liquidazione</b> alla fattura!");
+            }
+        } catch (PersistencyException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void controlliCig(Fattura_passiva_rigaBulk riga) throws ApplicationException {
@@ -6936,7 +6961,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             sql.addSQLClause("AND", "ESERCIZIO_FATT_PASS", SQLBuilder.EQUALS, fatturaPassiva.getEsercizio());
             sql.addSQLClause("AND", "PG_FATTURA_PASSIVA", SQLBuilder.EQUALS, fatturaPassiva.getPg_fattura_passiva());
             sql.addSQLJoin("BUONO_CARICO_SCARICO_DETT.PG_INVENTARIO", SQLBuilder.EQUALS, "ASS_INV_BENE_FATTURA.PG_INVENTARIO");
-            sql.addSQLJoin("BUONO_CARICO_SCARICO_DETT.ESERCIZIO", SQLBuilder.EQUALS, "ASS_INV_BENE_FATTURA.ESERCIZIO");
+            sql.addSQLJoin("BUONO_CARICO_SCARICO_DETT.ESERCIZIO", SQLBuilder.LESS_EQUALS, "ASS_INV_BENE_FATTURA.ESERCIZIO");
             sql.addSQLJoin("BUONO_CARICO_SCARICO_DETT.TI_DOCUMENTO", SQLBuilder.EQUALS, "ASS_INV_BENE_FATTURA.TI_DOCUMENTO");
             sql.addSQLJoin("BUONO_CARICO_SCARICO_DETT.NR_INVENTARIO", SQLBuilder.EQUALS, "ASS_INV_BENE_FATTURA.NR_INVENTARIO");
             sql.addSQLJoin("BUONO_CARICO_SCARICO_DETT.PG_BUONO_C_S", SQLBuilder.EQUALS, "ASS_INV_BENE_FATTURA.PG_BUONO_C_S");
@@ -7401,15 +7426,35 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             it.cnr.contab.inventario00.ejb.IdInventarioComponentSession h = EJBCommonServices.createEJB(
                     "CNRINVENTARIO00_EJB_IdInventarioComponentSession",
                     it.cnr.contab.inventario00.ejb.IdInventarioComponentSession.class);
-            it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk inventario = h.findInventarioFor(
-                    userContext,
-                    fatturaPassiva.getCd_cds_origine(),
-                    fatturaPassiva.getCd_uo_origine(),
-                    false);
-            if (inventario == null)
-                throw new it.cnr.jada.comp.ApplicationException("Attenzione: si informa che non esiste un inventario per questo CDS.\nIn caso di inserimento di dettagli con beni soggetti ad inventario, non sarà permesso il salvataggio della fattura,\nfino alla creazione ed apertura di un nuovo inventario!");
-            else if (!h.isAperto(userContext, inventario, fatturaPassiva.getEsercizio())) {
-                throw new it.cnr.jada.comp.ApplicationException("Attenzione: si informa che l'inventario per questo CDS non è aperto.\nNel caso di inserimento di dettagli con beni soggetti ad inventario, non sarà permesso il salvataggio della fattura\nfino ad apertura di quest'ultimo!");
+            final List<Integer> esercizi = Stream.of(
+                            Optional.ofNullable(fatturaPassiva.getDt_da_competenza_coge())
+                                    .map(Timestamp::toLocalDateTime)
+                                    .map(LocalDateTime::getYear)
+                                    .orElse(CNRUserContext.getEsercizio(userContext)),
+                            Optional.ofNullable(fatturaPassiva.getDt_a_competenza_coge())
+                                    .map(Timestamp::toLocalDateTime)
+                                    .map(LocalDateTime::getYear)
+                                    .orElse(CNRUserContext.getEsercizio(userContext))
+                    )
+                    .distinct()
+                    .collect(Collectors.toList());
+            for (Integer esercizio : esercizi) {
+                it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk inventario = h.findInventarioFor(
+                        userContext,
+                        fatturaPassiva.getCd_cds_origine(),
+                        fatturaPassiva.getCd_uo_origine(),
+                        false);
+                if (inventario == null)
+                    throw new ApplicationMessageFormatException("Attenzione: si informa che non esiste un inventario per questo CDS.\n" +
+                            "In caso di inserimento di dettagli con beni soggetti ad inventario, " +
+                            "non sarà permesso il salvataggio della fattura,\n" +
+                            "fino alla creazione ed apertura di un nuovo inventario!");
+                else if (!h.isAperto(userContext, inventario, esercizio)) {
+                    throw new ApplicationMessageFormatException("Attenzione: si informa che l''inventario per questo CDS non è aperto nel {0}.\n" +
+                            "Nel caso di inserimento di dettagli con beni soggetti ad inventario, " +
+                            "non sarà permesso il salvataggio della fattura\n" +
+                            "fino ad apertura di quest''ultimo!", String.valueOf(esercizio));
+                }
             }
         } catch (Exception e) {
             throw handleException(fatturaPassiva, e);
@@ -9206,7 +9251,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         return sqlNotaCredito;
     }
 
-    private SQLBuilder querySdiToCreateFattFromAmministra(UserContext userContext , Fattura_passivaBulk fatturaPassiva,
+    private SQLBuilder getSqlFattVariazioneSdiDaAnnistra(UserContext userContext ,
                                                         DocumentoEleTestataBulk documentoEleTestataBulk, CompoundFindClause findclause) throws ComponentException {
         DocumentoEleTestataHome  home = Optional.ofNullable(getHome(userContext, DocumentoEleTestataBulk.class))
                 .filter(DocumentoEleTestataHome.class::isInstance)
@@ -9235,10 +9280,22 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
 
         return sqlBuilder;
     }
+
     public SQLBuilder selectDocumentoEleTestataByClause(UserContext userContext , Fattura_passiva_IBulk fatturaPassiva,
                                                   DocumentoEleTestataBulk documentoEleTestataBulk, CompoundFindClause findclause) throws ComponentException {
-        return querySdiToCreateFattFromAmministra( userContext,fatturaPassiva,documentoEleTestataBulk,findclause);
+        return getSqlFattVariazioneSdiDaAnnistra( userContext,documentoEleTestataBulk,findclause);
 
+    }
+
+    public Boolean isCompilaFatturaVaziazione(UserContext userContext, DocumentoEleTestataBulk testataBulk)throws ComponentException {
+        try {
+            List l = getSqlFatturaVariazioneSdi( userContext,testataBulk.getIdentificativoSdi());
+            if ( l!=null && !l.isEmpty() && l.size()>0)
+                return Boolean.TRUE;
+        } catch (PersistencyException e) {
+            throw new RuntimeException(e);
+        }
+        return Boolean.FALSE;
     }
 
 

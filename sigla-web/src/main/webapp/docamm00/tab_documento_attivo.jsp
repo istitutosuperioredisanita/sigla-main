@@ -2,12 +2,13 @@
 	import="it.cnr.jada.util.jsp.*,
 		it.cnr.jada.action.*,
 		java.util.*,
+		it.cnr.contab.docamm00.bp.*,
 		it.cnr.contab.docamm00.docs.bulk.*,
 		it.cnr.jada.util.action.*"
 %>
 
 
-<%	CRUDBP bp = (CRUDBP)BusinessProcess.getBusinessProcess(request);
+<%	CRUDDocumentoGenericoAttivoBP bp = (CRUDDocumentoGenericoAttivoBP)BusinessProcess.getBusinessProcess(request);
 	Documento_genericoBulk documento = (Documento_genericoBulk)bp.getModel();
 %>
 
@@ -107,6 +108,11 @@
 			<% bp.getController().writeFormField(out,"dt_da_competenza_coge");%>			  
 			<% bp.getController().writeFormField(out,"dt_a_competenza_coge");%>			  
 		</tr>
+         <% if (bp.isAttivaEconomicaParallela()) { %>
+             <tr>
+                <% bp.getController().writeFormField(out,"cd_tipo_conto_ep");%>
+             </tr>
+         <% } %>
 		<tr>
 			<td><% bp.getController().writeFormLabel(out,"ds_documento_generico");%></td>
 			<td colspan="3">

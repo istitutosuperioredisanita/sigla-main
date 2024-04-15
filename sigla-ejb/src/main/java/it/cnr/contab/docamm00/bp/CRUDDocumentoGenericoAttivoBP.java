@@ -38,6 +38,7 @@ import it.cnr.contab.doccont00.core.bulk.AccertamentoBulk;
 import it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk;
 import it.cnr.contab.doccont00.core.bulk.IDefferUpdateSaldi;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
@@ -47,6 +48,7 @@ import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.jsp.JSPUtils;
@@ -54,6 +56,8 @@ import it.cnr.jada.util.jsp.JSPUtils;
 import javax.ejb.EJBException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.TreeMap;
 
 public class CRUDDocumentoGenericoAttivoBP
@@ -79,6 +83,7 @@ public class CRUDDocumentoGenericoAttivoBP
     private boolean attivaEconomicaParallela = false;
     private boolean supervisore = false;
     private boolean attivaInventaria = false;
+    private boolean esercizioChiuso = false;
 
     public CRUDDocumentoGenericoAttivoBP() {
         super();
@@ -401,6 +406,7 @@ public class CRUDDocumentoGenericoAttivoBP
         super.init(config, context);
 
         try {
+            DocumentoGenericoComponentSession session = (DocumentoGenericoComponentSession) createComponentSession();
             int solaris = Documento_genericoBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.YEAR);
             int esercizioScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue();
             attivaEconomicaParallela = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(context.getUserContext());
@@ -408,19 +414,19 @@ public class CRUDDocumentoGenericoAttivoBP
             setAnnoSolareInScrivania(solaris == esercizioScrivania);
             setRibaltato(initRibaltato(context));
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
+            esercizioChiuso = session.isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioScrivania, CNRUserContext.getCd_cds(context.getUserContext()));
             if (!isAnnoSolareInScrivania()) {
                 String cds = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(context.getUserContext());
                 try {
-                    DocumentoGenericoComponentSession session = (DocumentoGenericoComponentSession) createComponentSession();
                     boolean esercizioScrivaniaAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, new Integer(esercizioScrivania)));
                     boolean esercizioSuccessivoAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, new Integer(esercizioScrivania + 1)));
-                    setRiportaAvantiIndietro(esercizioScrivaniaAperto && esercizioSuccessivoAperto && isRibaltato());
+                    setRiportaAvantiIndietro(esercizioScrivaniaAperto && esercizioSuccessivoAperto && isRibaltato() && isSupervisore());
                 } catch (Throwable t) {
                     handleException(t);
                 }
             } else
                 setRiportaAvantiIndietro(false);
-        } catch (EJBException | RemoteException | ComponentException e) {
+        } catch (EJBException | RemoteException | ComponentException | PersistencyException e) {
             setAnnoSolareInScrivania(false);
         }
 
@@ -1140,7 +1146,7 @@ public class CRUDDocumentoGenericoAttivoBP
     private static final String[] TAB_TESTATA = new String[]{ "tabDocumentoAttivo","Documento Generico","/docamm00/tab_documento_attivo.jsp" };
     private static final String[] TAB_DETTAGLIO = new String[]{ "tabDocumentoAttivoDettaglio","Dettaglio","/docamm00/tab_documento_attivo_dettaglio.jsp" };
     private static final String[] TAB_ACCERTAMENTI = new String[]{ "tabDocumentoGenericoAccertamenti","Accertamenti","/docamm00/tab_documento_generico_accertamenti.jsp" };
-    private static final String[] TAB_ALLEGATI = new String[]{ "tabAllegat","Allegati","/util00/tab_allegati.jsp"};
+    private static final String[] TAB_ALLEGATI = new String[]{ "tabAllegati","Allegati","/util00/tab_allegati.jsp"};
 
     public String[][] getTabs() {
         TreeMap<Integer, String[]> pages = new TreeMap<Integer, String[]>();
@@ -1177,4 +1183,22 @@ public class CRUDDocumentoGenericoAttivoBP
     public boolean isButtonGeneraScritturaVisible() {
         return this.isSupervisore();
     }
+    @Override
+    public OggettoBulk getEconomicaModel() {
+        return getModel();
+    }
+
+    public boolean isAttivaEconomicaParallela() {
+        return attivaEconomicaParallela;
+    }
+
+    @Override
+    public boolean isInputReadonlyFieldName(String fieldName) {
+        final List<String> fieldNames = Arrays.asList("dt_da_competenza_coge", "dt_a_competenza_coge");
+        if (Optional.ofNullable(fieldName).filter(s -> fieldNames.contains(s)).isPresent()) {
+            return esercizioChiuso;
+        }
+        return super.isInputReadonlyFieldName(fieldName);
+    }
+
 }

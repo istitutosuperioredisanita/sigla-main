@@ -290,6 +290,33 @@
 		formatName="date_short"
 		enabledOnEdit="false"
 		label="dtCancellazione" />
+
+	<fieldProperty
+			name="voce_iva"
+			property="voceIva"
+			inputType="SEARCHTOOL"
+			enabledOnSearch="false"
+			formName="searchtool_large"
+			nullable="false"
+			label="I.V.A."
+			enabledOnEdit="true" />
+	<fieldProperty
+			name="cd_voce_iva"
+			property="voceIva.cd_voce_iva"
+			maxLength="30"
+			inputSize="6"
+			inputType="TEXT"
+			nullable="false"
+			label="I.V.A."
+			caseSensitiveSearch="false" />
+	<fieldProperty
+			name="imIva"
+			property="imIva"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.GenericImportoFormat"
+			enabledOnEdit="false"
+			nullable="false"
+			label="Iva" />
 		
 	<form
 		name="searchtool">
@@ -337,6 +364,12 @@
 		name="cambio" />
 	<formFieldProperty
 		name="dtCancellazione" />
+	<formFieldProperty
+			name="voce_iva" />
+	<formFieldProperty
+			name="cd_voce_iva" />
+	<formFieldProperty
+			name="imIva" />
 
 	<findFieldProperty
 		name="cdCds" />
@@ -426,6 +459,10 @@
 		name="valoreUnitario" />
 	<columnFieldProperty
 		name="costoUnitario" />
+	<columnFieldProperty
+		name="cd_voce_iva" />
+	<columnFieldProperty
+		name="imIva" />
 	<columnFieldProperty
 		name="quantitaCarico" />
 	<columnFieldProperty

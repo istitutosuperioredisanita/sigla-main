@@ -31,20 +31,7 @@ import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaHome;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_IBulk;
-import it.cnr.contab.docamm00.fatturapa.bulk.DocumentoEleAcquistoBulk;
-import it.cnr.contab.docamm00.fatturapa.bulk.DocumentoEleAllegatiBulk;
-import it.cnr.contab.docamm00.fatturapa.bulk.DocumentoEleDdtBulk;
-import it.cnr.contab.docamm00.fatturapa.bulk.DocumentoEleIvaBulk;
-import it.cnr.contab.docamm00.fatturapa.bulk.DocumentoEleLineaBulk;
-import it.cnr.contab.docamm00.fatturapa.bulk.DocumentoEleScontoMaggBulk;
-import it.cnr.contab.docamm00.fatturapa.bulk.DocumentoEleTestataBulk;
-import it.cnr.contab.docamm00.fatturapa.bulk.DocumentoEleTestataHome;
-import it.cnr.contab.docamm00.fatturapa.bulk.DocumentoEleTrasmissioneBulk;
-import it.cnr.contab.docamm00.fatturapa.bulk.DocumentoEleTrasmissioneHome;
-import it.cnr.contab.docamm00.fatturapa.bulk.DocumentoEleTributiBulk;
-import it.cnr.contab.docamm00.fatturapa.bulk.StatoDocumentoEleEnum;
-import it.cnr.contab.docamm00.fatturapa.bulk.TipoAcquistoEnum;
-import it.cnr.contab.docamm00.fatturapa.bulk.TipoIntegrazioneSDI;
+import it.cnr.contab.docamm00.fatturapa.bulk.*;
 import it.cnr.contab.docamm00.service.FatturaPassivaElettronicaService;
 import it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaHome;
@@ -53,11 +40,9 @@ import it.cnr.contab.utenze00.bulk.Utente_indirizzi_mailBulk;
 import it.cnr.contab.utenze00.bulk.Utente_indirizzi_mailHome;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.BusyResourceException;
 import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
@@ -70,20 +55,17 @@ import it.cnr.jada.util.SendMail;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1.RegimeFiscaleType;
 import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1.SoggettoEmittenteType;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.mail.internet.InternetAddress;
 import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.mail.internet.InternetAddress;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FatturaElettronicaPassivaComponent extends it.cnr.jada.comp.CRUDComponent 
 	implements Cloneable,Serializable {
@@ -92,7 +74,8 @@ public class FatturaElettronicaPassivaComponent extends it.cnr.jada.comp.CRUDCom
 
 	public  FatturaElettronicaPassivaComponent(){
     }
-	
+
+
 	@Override
 	public OggettoBulk inizializzaBulkPerModifica(UserContext usercontext,
 			OggettoBulk oggettobulk) throws ComponentException {
@@ -122,6 +105,7 @@ public class FatturaElettronicaPassivaComponent extends it.cnr.jada.comp.CRUDCom
 							documentoEleTestata.getDocumentoEleTrasmissione().getRegimefiscale().equals(RegimeFiscaleType.RF_19.name())))){
 				documentoEleTestata.setAttivoSplitPaymentProf(Utility.createFatturaPassivaComponentSession().isAttivoSplitPaymentProf(usercontext, documentoEleTestata.getDataDocumento()));
 			}
+			documentoEleTestata.setCompilaFatturaVariazione(Utility.createFatturaPassivaComponentSession().isCompilaFatturaVaziazione(usercontext,documentoEleTestata));
 			DocumentoEleTestataBulk nota = new DocumentoEleTestataBulk();
 			nota.setFatturaCollegata(documentoEleTestata);
 			documentoEleTestata.setNotaCollegata(

@@ -331,10 +331,11 @@
 		inputType="TEXT"
 		formatName="date_short"
 		readonlyProperty="RODateCompetenzaCOGE"
+		command="doOnDataCompetenzaDaCogeChange"
 		enabledOnInsert="true"
 		enabledOnEdit="true"
-		enabledOnSearch="false"
-		enabledOnFreeSearch="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
 		nullable="false"
 		label="Competenza al" />		
 	<fieldProperty
@@ -345,10 +346,11 @@
 		inputType="TEXT"
 		formatName="date_short"
 		readonlyProperty="RODateCompetenzaCOGE"
+		command="doOnDataCompetenzaDaCogeChange"
 		enabledOnInsert="true"
 		enabledOnEdit="true"
-		enabledOnSearch="false"
-		enabledOnFreeSearch="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
 		nullable="false"
 		label="Competenza dal" />
 	<fieldProperty
@@ -901,6 +903,18 @@
 			enabledOnSearch="false"
 			enabledOnInsert="false"
 			enabledOnFreeSearch="false"/>
+	<fieldProperty
+			name="cd_tipo_conto_ep"
+			property="cd_tipo_conto_ep"
+			maxLength="25"
+			inputSize="25"
+			inputType="SELECT"
+			nullable="true"
+			keysProperty="ti_tipoContoDocAttivoEnumKeys"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
+			label="Tipo conto"
+			caseSensitiveSearch="false" />
 
 
 	<findFieldProperty name="pg_fattura_attiva"/>
@@ -939,6 +953,8 @@
 	<findFieldProperty name="fl_ordine_elettronico" />
 	<findFieldProperty name="codiceUnivocoUfficioOrdine" />
 	<findFieldProperty name="utcr"/>
+	<findFieldProperty
+			name="cd_tipo_conto_ep" />
 
 
 
@@ -1152,7 +1168,9 @@
 		name="importoTotalePerAccertamento" />
 	<formFieldProperty
 		name="fl_congelata" />
-		
+	<formFieldProperty
+		name="cd_tipo_conto_ep" />
+
 	<columnFieldProperty
 		name="esercizio" />
 	<columnFieldProperty

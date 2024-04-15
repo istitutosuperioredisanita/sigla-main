@@ -2,7 +2,7 @@
 --  DDL for View V_STAMPA_BILANCIO_RENDIC_X_CDR
 --------------------------------------------------------
 
-  CREATE OR REPLACE FORCE VIEW "V_STAMPA_BILANCIO_RENDIC_X_CDR" ("FONTE", "ESERCIZIO", "CD_CENTRO_RESPONSABILITA", "TIPO", "CD_ELEMENTO_VOCE", "CD_LIVELLO1", "CD_LIVELLO2", "CD_LIVELLO3", "CD_LIVELLO4", "CD_LIVELLO5", "CD_LIVELLO6", "CD_LIVELLO7", "CD_LIVELLO8", "CD_LIVELLO9", "DS_LIVELLO1", "DS_LIVELLO2", "DS_LIVELLO3", "DS_LIVELLO4", "DS_LIVELLO5", "DS_LIVELLO6", "DS_LIVELLO7", "DS_LIVELLO8", "DS_LIVELLO9", "PREVISIONE_INI", "SALDO_VARIAZIONI", "TOT_IMPACC_COMP", "TOT_IMPACC_RES", "TOT_MANREV_COMP", "TOT_MANREV_RES", "TOT_MOD_IMPACC_RES", "ASSESTATO_CASSA", "PREVISIONE_INI_ES_PREC", "SALDO_VARIAZIONI_ES_PREC", "TOT_IMPACC_COMP_ES_PREC", "TOT_IMPACC_RES_ES_PREC", "TOT_MANREV_COMP_ES_PREC", "TOT_MANREV_RES_ES_PREC", "TOT_MOD_IMPACC_RES_ES_PREC", "ASSESTATO_CASSA_ES_PREC") AS 
+  CREATE OR REPLACE FORCE VIEW "V_STAMPA_BILANCIO_RENDIC_X_CDR" ("FONTE", "ESERCIZIO", "CD_CENTRO_RESPONSABILITA", "TIPO", "CD_ELEMENTO_VOCE", "CD_LIVELLO1", "CD_LIVELLO2", "CD_LIVELLO3", "CD_LIVELLO4", "CD_LIVELLO5", "CD_LIVELLO6", "CD_LIVELLO7", "CD_LIVELLO8", "CD_LIVELLO9", "DS_LIVELLO1", "DS_LIVELLO2", "DS_LIVELLO3", "DS_LIVELLO4", "DS_LIVELLO5", "DS_LIVELLO6", "DS_LIVELLO7", "DS_LIVELLO8", "DS_LIVELLO9", "PREVISIONE_INI", "SALDO_VARIAZIONI", "TOT_IMPACC_COMP", "TOT_IMPACC_RES", "TOT_MANREV_COMP", "TOT_MANREV_RES", "TOT_MOD_IMPACC_RES", "ASSESTATO_CASSA", "PREVISIONE_INI_ES_PREC", "SALDO_VARIAZIONI_ES_PREC", "TOT_IMPACC_COMP_ES_PREC", "TOT_IMPACC_RES_ES_PREC", "TOT_MANREV_COMP_ES_PREC", "TOT_MANREV_RES_ES_PREC", "TOT_MOD_IMPACC_RES_ES_PREC", "ASSESTATO_CASSA_ES_PREC") AS
   (SELECT   e.fonte, e.esercizio, e.cd_centro_responsabilita,
              e.ti_gestione tipo, e.cd_elemento_voce cd_elemento_voce,
              e.cd_missione cd_livello1, e.cd_programma cd_livello2,
@@ -19,12 +19,15 @@
              SUM (e.saldo_variazioni), SUM (e.tot_impacc_comp),
              SUM (e.tot_impacc_res), SUM (e.tot_manrev_comp),
              SUM (e.tot_manrev_res), SUM (e.tot_mod_impacc_res),
-             SUM (e.assestato_cassa), SUM (e.previsione_ini_es_prec),
+             SUM (e.previsione_ini)+SUM (e.saldo_variazioni)+
+             SUM (e.tot_impacc_res),
+             SUM (e.previsione_ini_es_prec),
              SUM (e.saldo_variazioni_es_prec),
              SUM (e.tot_impacc_comp_es_prec), SUM (e.tot_impacc_res_es_prec),
              SUM (e.tot_manrev_comp_es_prec), SUM (e.tot_manrev_res_es_prec),
              SUM (e.tot_mod_impacc_res_es_prec),
-             SUM (e.assestato_cassa_es_prec)
+             SUM (e.previsione_ini_es_prec)+SUM (e.saldo_variazioni_es_prec)+
+             SUM (e.tot_impacc_res_es_prec)
         FROM (                           --PARTE SPESE DECISIONALE SCIENTIFICO
               SELECT 'REASCI' fonte, a.esercizio, a.cd_centro_responsabilita,
                      a.ti_gestione, b.cd_elemento_voce,
@@ -248,12 +251,15 @@
              SUM (e.previsione_ini), SUM (e.saldo_variazioni),
              SUM (e.tot_impacc_comp), SUM (e.tot_impacc_res),
              SUM (e.tot_manrev_comp), SUM (e.tot_manrev_res),
-             SUM (e.tot_mod_impacc_res), SUM (e.assestato_cassa),
+             SUM (e.tot_mod_impacc_res),
+             SUM (e.previsione_ini)+SUM (e.saldo_variazioni)+
+             SUM (e.tot_impacc_res),
              SUM (e.previsione_ini_es_prec), SUM (e.saldo_variazioni_es_prec),
              SUM (e.tot_impacc_comp_es_prec), SUM (e.tot_impacc_res_es_prec),
              SUM (e.tot_manrev_comp_es_prec), SUM (e.tot_manrev_res_es_prec),
              SUM (e.tot_mod_impacc_res_es_prec),
-             SUM (e.assestato_cassa_es_prec)
+             SUM (e.previsione_ini_es_prec)+SUM (e.saldo_variazioni_es_prec)+
+             SUM (e.tot_impacc_res_es_prec)
         FROM (SELECT 'REAFIN' fonte, a.esercizio, a.cd_centro_responsabilita,
                      a.ti_gestione, b.cd_elemento_voce, c.cd_livello1,
                      c.cd_livello2, c.cd_livello3, c.cd_livello4,

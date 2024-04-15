@@ -180,6 +180,9 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 			List<BollaScaricoMagBulk> listaBolleScarico = new ArrayList<>();
 			List<MovimentiMagBulk> listaMovimentiScarico = new ArrayList<>();
 
+			validaEvasioneOrdine(userContext,evasioneOrdine);
+
+
 			final List<OrdineAcqConsegnaBulk> consegneColl = evasioneOrdine.getRigheConsegnaSelezionate();
 			OrdineAcqConsegnaHome consegnaHome = (OrdineAcqConsegnaHome) getHome(userContext, OrdineAcqConsegnaBulk.class);
 
@@ -194,6 +197,7 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 						throw new DetailedRuntimeException("Per la consegna " + consegnaSelected.getConsegnaOrdineString() + " è necessario indicare se bisogna solo sdoppiare la riga o anche evaderla forzatamente");
 					if (consegnaSelected.isQuantitaEvasaMaggioreOrdine())
 						throw new DetailedRuntimeException("La quantità evasa della consegna " + consegnaSelected.getConsegnaOrdineString() + " non può essere maggiore di quella ordinata.");
+
 
 					//Ricarico la consegna dal DB per verificare che non sia stata già evasa
 					OrdineAcqConsegnaBulk consegnaDB = (OrdineAcqConsegnaBulk) findByPrimaryKey(userContext, consegnaSelected);
@@ -309,6 +313,23 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 			return listaBolleScarico;
 		} catch (DetailedRuntimeException|RemoteException e) {
 			throw new ApplicationException(e.getMessage());
+		}
+	}
+
+	private void validaEvasioneOrdine(UserContext userContext,EvasioneOrdineBulk evasioneOrdine) throws ApplicationException {
+		if(evasioneOrdine.getDataConsegna() != null){
+			java.util.Calendar gc = java.util.Calendar.getInstance();
+			gc.setTime(evasioneOrdine.getDataConsegna());
+			int annoCompetenza = gc.get(java.util.Calendar.YEAR);
+			int esScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext).intValue();
+
+			if (annoCompetenza != esScrivania) {
+				throw new ApplicationException("La \"Data Consegna\" deve ricadere nell'esercizio selezionato!");
+			}
+
+			if(evasioneOrdine.getDataBolla() != null && evasioneOrdine.getDataBolla().compareTo(evasioneOrdine.getDataConsegna()) > 0){
+				throw new ApplicationException("La \"Data Bolla\" non può essere maggiore della \"Data Consegna\" ");
+			}
 		}
 	}
 

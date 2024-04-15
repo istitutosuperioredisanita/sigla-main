@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.inventario00.docs.bulk.Chiusura_anno_inventarioBase"
+	keyClassName="it.cnr.contab.inventario00.docs.bulk.Chiusura_anno_inventarioKey"
+	homeClassName="it.cnr.contab.inventario00.docs.bulk.Chiusura_anno_inventarioHome">
+	<defaultColumnMap
+		tableName="CHIUSURA_ANNO_INVENTARIO">
+		<columnMapping
+			columnName="ESERCIZIO_VOCE"
+			propertyName="esercizioVoce"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="false" />
+		<columnMapping
+			columnName="CD_VOCE_EP"
+			propertyName="cdVoceEp"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="CD_TIPO_AMMORTAMENTO"
+			propertyName="cdTipoAmmortamento"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="false" />
+		<columnMapping
+			columnName="TI_AMMORTAMENTO"
+			propertyName="tiAmmortamento"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false" />
+		<columnMapping
+			columnName="ESERCIZIO_COMPETENZA"
+			propertyName="esercizioCompetenza"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="false" />
+		<columnMapping
+			columnName="VALORE_ANNO_PREC"
+			propertyName="valoreAnnoPrec"
+			sqlTypeName="DECIMAL"
+			columnSize="12"
+			columnScale="5"
+			nullable="false" />
+		<columnMapping
+			columnName="VALORE_INCREMENTO"
+			propertyName="valoreIncremento"
+			sqlTypeName="DECIMAL"
+			columnSize="12"
+			columnScale="5"
+			nullable="false" />
+		<columnMapping
+			columnName="VALORE_DECREMENTO"
+			propertyName="valoreDecremento"
+			sqlTypeName="DECIMAL"
+			columnSize="12"
+			columnScale="5"
+			nullable="false" />
+		<columnMapping
+			columnName="QUOTA_AMMORTAMENTO"
+			propertyName="quotaAmmortamento"
+			sqlTypeName="DECIMAL"
+			columnSize="12"
+			columnScale="5"
+			nullable="false" />
+		<columnMapping
+			columnName="TOTALE_AMMORTAMENTO_ALIENATI"
+			propertyName="totaleAmmortamentoAlienati"
+			sqlTypeName="DECIMAL"
+			columnSize="12"
+			columnScale="5"
+			nullable="false" />
+		<columnMapping
+			columnName="QUOTA_AMMORTAMENTO_ANNO_PREC"
+			propertyName="quotaAmmortamentoAnnoPrec"
+			sqlTypeName="DECIMAL"
+			columnSize="12"
+			columnScale="5"
+			nullable="false" />
+		<columnMapping
+			columnName="DACR"
+			propertyName="dacr"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="UTCR"
+			propertyName="utcr"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="DUVA"
+			propertyName="duva"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="UTUV"
+			propertyName="utuv"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="PG_VER_REC"
+			propertyName="pg_ver_rec"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="false" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="esercizioVoce" />
+	<persistentProperty
+		name="cdVoceEp" />
+	<persistentProperty
+		name="cdTipoAmmortamento" />
+	<persistentProperty
+		name="tiAmmortamento" />
+	<persistentProperty
+		name="esercizioCompetenza" />
+	<persistentProperty
+		name="valoreAnnoPrec" />
+	<persistentProperty
+		name="valoreIncremento" />
+	<persistentProperty
+		name="valoreDecremento" />
+	<persistentProperty
+		name="quotaAmmortamento" />
+	<persistentProperty
+		name="totaleAmmortamentoAlienati" />
+	<persistentProperty
+		name="quotaAmmortamentoAnnoPrec" />
+	<persistentProperty
+		name="dacr" />
+	<persistentProperty
+		name="utcr" />
+	<persistentProperty
+		name="duva" />
+	<persistentProperty
+		name="utuv" />
+	<persistentProperty
+		name="pg_ver_rec" />
+</SQLPersistentInfo>

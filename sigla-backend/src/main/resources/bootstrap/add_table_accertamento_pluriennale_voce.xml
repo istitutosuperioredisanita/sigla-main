@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="ciro.salvio" id="add_table_accertamento_pluriennale_voce">
+        <createTable remarks="Rappresenta il dettaglio analitico di un accertamento pluriennale.Per ogni accertamento pluriennale è definita la ripartizione degli importi per CdR e linea di attività.  &#10; &#10;La sommatoria degli importi del dettaglio analitico deve corrispondere all'importo della dell'obbligazione pluriennale" tableName="accertamento_pluriennale_voce">
+            <column name="anno" remarks="Anno Accertamento Pluriennale" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_cds" remarks="Cds dell'accertamento" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="esercizio" remarks="Esercizio dell'accertamento" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="esercizio_originale" remarks="Esercizio Originale dell'accertamento" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_accertamento" remarks="Numero dell'accertamento" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_centro_responsabilita" remarks="Codice identificativo del centro di responsabilità" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_linea_attivita" remarks="Codice della linea di attivita &#10; &#10;Se PROPRIA (TIPO_LINEA_ATTIVITA.TI_TIPO_LA = P)  (es. CD_TIPO_LINEA_ATTIVITA=PROP) &#10;PYY..YY dove YY..YY di lunghezza pari a quella specificata in LUNGHEZZA_CHIAVI per la linea di attivita &#10; &#10;Se di Sistema (TIPO_LINEA_ATTIVITA.TI_TIPO_LA = S)    (es. CD_TIPO_LINEA_ATTIVITA=CSSAC) &#10;SZZ..ZZ dove ZZ..ZZ di lunghezza pari a quella specificata in LUNGHEZZA_CHIAVI per la linea di attivita &#10; &#10;Se Comune (TIPO_LINEA_ATTIVITA.TI_TIPO_LA = C)    (es. CD_TIPO_LINEA_ATTIVITA=XXXXXXX) &#10;CXXXXXXX dove XXXXXXX = Codice tipologia di 7 caratteri (TIPO_LINEA_ATTIVITA.CD_TIPO_LINEA_ATTIVITA)" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="importo" remarks="Importo del dettaglio per la linea attivita" type="numeric(15, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record: viene incrementato di 1 ad ogni variazione" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="accertamento_pluriennale_voce" constraintName="accertamento_pluriennale_voce_pkey" columnNames="cd_cds,esercizio,esercizio_originale,pg_accertamento,anno,cd_centro_responsabilita,cd_linea_attivita"></addPrimaryKey>
+        <addForeignKeyConstraint baseColumnNames="cd_cds,esercizio,esercizio_originale,pg_accertamento,anno" baseTableName="accertamento_pluriennale_voce" constraintName="fk_accertamento_pluriennale_voce01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cd_cds,esercizio,esercizio_originale,pg_accertamento,anno" referencedTableName="accertamento_pluriennale"/>
+        <createIndex indexName="fx_accertamento_pluriennale_voce00" tableName="accertamento_pluriennale_voce">
+            <column name="anno"/>
+            <column name="cd_cds"/>
+            <column name="esercizio"/>
+            <column name="esercizio_originale"/>
+            <column name="pg_accertamento"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

@@ -2282,7 +2282,7 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 				if ( contratto.getCodfisPivaFirmatarioExt()!=null && (!contratto.getCodfisPivaFirmatarioExt().isEmpty())) {
 					contratto.setFirmatario(getPersonaFisicaFromCodiceFiscalePiva(userContext, contratto.getCodfisPivaFirmatarioExt()));
 					if ( !Optional.ofNullable(contratto.getFirmatario()).isPresent()){
-						throw new ComponentException("Il Firmatario con Codice Fiscale/P.Iva "+ contratto.getCodfisPivaRupExt() +" non esiste in SIGLA");
+						throw new ComponentException("Il Firmatario con Codice Fiscale/P.Iva "+ contratto.getCodfisPivaFirmatarioExt() +" non esiste in SIGLA");
 					}
 				}
 

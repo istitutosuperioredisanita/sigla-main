@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="ciro.salvio" id="update_albero_main_view_saldi_piano_eco_prg">
+
+        <update tableName="albero_main">
+            <column name="cd_nodo" type="STRING" value="0.CFG.PROGETTI.CONS.RVIEWSALDO"/>
+            <column name="pg_ordinamento" type="BIGINT" value="2"/>
+            <column name="cd_nodo_padre" type="STRING" value="0.CFG.PROGETTI.CONS"/>
+            <where>CD_NODO='0.CNS.RNDFIN.RVIEWSALDO'</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>

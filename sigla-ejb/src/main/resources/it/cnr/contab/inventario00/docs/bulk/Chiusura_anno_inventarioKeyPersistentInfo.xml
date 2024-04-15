@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.inventario00.docs.bulk.Chiusura_anno_inventarioKey">
+	<defaultColumnMap
+		tableName="CHIUSURA_ANNO_INVENTARIO">
+		<columnMapping
+			columnName="PG_CHIUSURA"
+			propertyName="pgChiusura"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="ANNO"
+			propertyName="anno"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="TIPO_CHIUSURA"
+			propertyName="tipoChiusura"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="CD_CATEGORIA_GRUPPO"
+			propertyName="cdCategoriaGruppo"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="false"
+			primary="true" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="pgChiusura"
+		partOfOid="true" />
+	<persistentProperty
+		name="anno"
+		partOfOid="true" />
+	<persistentProperty
+		name="tipoChiusura"
+		partOfOid="true" />
+	<persistentProperty
+		name="cdCategoriaGruppo"
+		partOfOid="true" />
+</SQLPersistentInfo>

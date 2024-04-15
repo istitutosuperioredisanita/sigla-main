@@ -6036,12 +6036,83 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_accessi_respsiopemandati.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunta possibilità di lanciare da applicazione la procedura per il ribaltamento di inizio anno -->
     <include file="bootstrap/add_prc_ribaltamento_pdg_altro_schedulazione.xml"/>
-     <!-- Autore : CIRO SALVIO - Aggiunta tabella obbligazione_pluriennale_linea_attivita-->
-    <include file="bootstrap/add_table_obbligazione_pluriennale_voce.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta tabella obbligazione_pluriennale_voce-->
+   <include file="bootstrap/add_table_obbligazione_pluriennale_voce.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta tabella accertamento_pluriennale_voce-->
+    <include file="bootstrap/add_table_accertamento_pluriennale_voce.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunta prog_reg_fattura alla tabella FATTURA_PASSIVA -->
     <include file="bootstrap/add_prog_reg_fattura_fattura_passiva.xml"/>
     <!-- Autore : CIRO SALVIO - drop e ricrea indice ax_fattura_passiva00 per aggiungere la colonna prog_reg_fattura all'indice  -->
     <include file="bootstrap/ricreate_index_ax_fattura_passiva00.xml"/>
+    <!-- Autore : MARCO SPASIANO - Aggiunge voce di menu per gli step di fine anno -->
+    <include file="bootstrap/add_accessi_step_fine_anno.xml"/>
+    <!-- Autore : PIERGIORGIO FARAGLIA - Aggiunge estrazione per assetato -->
+    <include file="bootstrap/add_view_assestato.xml" />
+    <!-- Autore : PIERGIORGIO FARAGLIA - Aggiunge estrazione piano economico progetto -->
+    <include file="bootstrap/add_view_saldi_piano_economico_progetto.xml" />
+    <!-- Autore : CIRO SALVIO - Spostata estrazione piano economico progetto sotto consultazione progetti-->
+    <include file="bootstrap/update_albero_main_view_saldi_piano_eco_prg.xml"/>
+    <!-- Autore : VALENTINA TOMADA - aggiunte colonne cod_iva e im_iva in LOTTO_MAG  -->
+    <include file="bootstrap/add_column_voce_iva_in_lotto_mag.xml"/>
+    <!-- Autore : VALENTINA TOMADA - aggiunte colonne cod_iva e im_iva in MOVIMENTI_MAG  -->
+    <include file="bootstrap/add_column_voce_iva_in_movimenti_mag.xml"/>
 
+
+    <!-- Autore : CIRO SALVIO - Schedulazione ribaltamento Obbligazione e Accertamenti Pluriennali-->
+    <include file="bootstrap/add_rib_pluriennali_schedulazione.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta FK linea attivita per tab Accertamenti Obbligazione voce-->
+    <include file="bootstrap/add_fk_linea_attivita_tab_obbligazione_pluriennale_voce.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta FK linea attivita e Accertamento Pluriennale per tab Accertamenti Pluriennali voce-->
+    <include file="bootstrap/add_fk_linea_attivita_tab_accertamento_pluriennale_voce.xml"/>
+
+    <!-- Autore : RAFFAELE PAGANO - Aggiunto conto costo da utilizzare per documenti non liquidabili (privi di impegno) -->
+    <include file="bootstrap/insert_configurazioneCnr_costo_doc_non_liquidabile.xml"></include>
+
+    <!-- Autore : VALENTINA TOMADA - aggiunto accesso CHIUSURA MAGAZZINO  -->
+    <include file="bootstrap/add_accesso_chiusura_magazzino.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunto blocco di carico e scarico manuale del magazzino per fine anno -->
+    <include file="bootstrap/add_accessi_step_fine_anno_car_sca_mag.xml"></include>
+    <!-- Autore : CIRO SALVIO - Situazione Amministrativa -->
+    <include file="bootstrap/add_menu_situazione_amministrativa.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta in print priority la stampa della Situazione Amministrativa -->
+    <include file="bootstrap/add_print_priority_stampa_situazione_amministrativa.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta Schedulazione gestione ammortamento( Calcolo e Annulla Ammortamento) -->
+    <include file="bootstrap/add_schedulazione_gest_ammortamento.xml"/>
+    <!-- Autore : MARCO SPASIANO - Aggiunge voce di menu per Associazione Conto Gruppo -->
+    <include file="bootstrap/add_accessi_associazione_conto_gruppo.xml"/>
+    <!-- Autore : MARCO SPASIANO - Aggiunge le informazioni sul conto acconto e anticipo sulla parte attiva -->
+    <include file="bootstrap/add_column_conto_acconto_anticipo.xml"/>
+
+    <!-- Autore : VALENTINA TOMADA - Nuove tabelle per salvataggio dati chiusura magazzino/inventario -->
+    <include file="bootstrap/add_table_chiusura_anno.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Index unique a chisura_anno -->
+    <include file="bootstrap/add_index_table_chiusura_anno.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Nuove tabelle per salvataggio importo totale catGruppo e VoceEP-->
+    <include file="bootstrap/add_table_chiusura_catgrp_voce_ep.xml"/>
+    <!-- Autore : CIRO SALVIO - Modifiche configurazione funzionalità Riaccertamento Residui -->
+    <include file="bootstrap/mod_ds_priority_riaccertamento_residui.xml"/>
+    <include file="bootstrap/mod_conf_menu_riaccertamento_residui.xml"/>
+    <!-- Autore : MARCO SPASIANO - Aggiunge voce di menu per Associazione Conto Gruppo -->
+    <include file="bootstrap/add_accessi_associazione_conto_gruppo.xml"/>
+    <!-- Autore : MARCO SPASIANO - Aggiunge le informazioni sul conto acconto e anticipo sulla parte attiva -->
+    <include file="bootstrap/add_column_conto_acconto_anticipo.xml"/>
+    <!-- Autore : RAFFAELE PAGANO - Aggiunta configurazione cnr per conto acconto e anticipo -->
+    <include file="bootstrap/insert_configurazioneCnr_voceep_acconto_anticipi_docatt.xml"/>
+    <!-- Autore : CIRO SALVIO - Nuova Tabella chiusura inventario -->
+    <include file="bootstrap/add_table_chiusura_anno_inventario.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Modifica albero main per accesso a chiusura magazzino definitiva-->
+    <include file="bootstrap/mod_accesso_chiusura_magazzino_def.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta ai beni migrato l'informazione del piano di ammortamento-->
+    <include file="bootstrap/add_column_piano_amm_bene_migrato.xml"/>
+    <!-- Autore : CIRO SALVIO -Modifica Unique Constraint categoria_gruppo_voce_ep -->
+    <include file="bootstrap/mod_unique_constraint_CatGrpVoceEp.xml"/>
+    <!-- Autore : CIRO SALVIO -Aggiunte colone minus e plus valenze per chiusura_anno_catgrp_voce_ep -->
+    <include file="bootstrap/add_colums_plusminus_chiu_catgrp_voce_ep.xml"/>
+    <include file="bootstrap/add_protocollo_liquidazione_fattura.xml"/>
+    <!-- Autore : VALENTINA TOMADA - aggiunto accesso CHIUSURA INVENTARIO  -->
+    <include file="bootstrap/add_accesso_stampa_chiusura_invent.xml"/>
+    <include file="bootstrap/mod_dsnodo_chiusura_inventario.xml"/>
+    <!-- Autore : MARCO SPASIANO - Aggiunta della colonna before_statement alla tabella EXCEL_SPOOLER-->
+    <include file="bootstrap/add_column_before_statement_excel_spooler.xml"/>
 
 </databaseChangeLog>

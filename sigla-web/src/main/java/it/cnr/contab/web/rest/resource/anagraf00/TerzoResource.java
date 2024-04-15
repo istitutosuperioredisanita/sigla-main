@@ -17,9 +17,22 @@
 
 package it.cnr.contab.web.rest.resource.anagraf00;
 
-import java.rmi.RemoteException;
-import java.util.List;
-import java.util.Optional;
+import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
+import it.cnr.contab.anagraf00.core.bulk.TelefonoBulk;
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.anagraf00.ejb.AnagraficoComponentSession;
+import it.cnr.contab.anagraf00.ejb.TerzoComponentSession;
+import it.cnr.contab.config00.ejb.Unita_organizzativaComponentSession;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.web.rest.exception.RestException;
+import it.cnr.contab.web.rest.local.anagraf00.TerzoLocal;
+import it.cnr.contab.web.rest.model.AnagraficaInfoDTO;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.ejb.CRUDComponentSession;
+import it.cnr.jada.persistency.PersistencyException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
@@ -29,25 +42,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
-
-import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
-import it.cnr.contab.anagraf00.ejb.AnagraficoComponentSession;
-import it.cnr.contab.web.rest.model.AnagraficaInfoDTO;
-import it.cnr.jada.bulk.OggettoBulk;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import it.cnr.contab.anagraf00.core.bulk.TelefonoBulk;
-import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
-import it.cnr.contab.anagraf00.ejb.TerzoComponentSession;
-import it.cnr.contab.config00.ejb.Unita_organizzativaComponentSession;
-import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.contab.web.rest.exception.RestException;
-import it.cnr.contab.web.rest.local.anagraf00.TerzoLocal;
-import it.cnr.jada.UserContext;
-import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.ejb.CRUDComponentSession;
-import it.cnr.jada.persistency.PersistencyException;
+import java.rmi.RemoteException;
+import java.util.List;
+import java.util.Optional;
 
 @Stateless
 public class TerzoResource implements TerzoLocal {
@@ -121,6 +118,20 @@ public class TerzoResource implements TerzoLocal {
 				new AnagraficaInfoDTO(anagraficoBulk)
 		).build();
 	}
+	public Response anagraficaInfoByCdTerzo(Integer cdTerzo) throws Exception {
+		CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
+		Optional.ofNullable(cdTerzo).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, indicare il codice terzo."));
+
+		TerzoBulk terzoDB = getTerzo(userContext, cdTerzo);
+		Optional.ofNullable(terzoDB).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, il codice terzo indicato "+cdTerzo+" non esiste"));
+
+		final AnagraficoBulk anagraficoBulk = ( AnagraficoBulk) crudComponentSession.findByPrimaryKey(userContext, new AnagraficoBulk(terzoDB.getCd_anag()));
+		Optional.ofNullable(anagraficoBulk).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, nessun anagrafico trovato il codice terzo indicato "+cdTerzo));
+		return Response.status(Status.OK).entity(
+				new AnagraficaInfoDTO(anagraficoBulk)
+		).build();
+	}
+
 
 	private TerzoBulk getTerzo(UserContext userContext, Integer cdTerzo) throws PersistencyException, ComponentException, RemoteException, EJBException {
 		TerzoBulk terzoBulk = new TerzoBulk();

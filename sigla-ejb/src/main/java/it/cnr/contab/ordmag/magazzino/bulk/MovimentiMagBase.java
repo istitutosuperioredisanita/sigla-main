@@ -21,6 +21,9 @@
  */
 package it.cnr.contab.ordmag.magazzino.bulk;
 import it.cnr.jada.persistency.Keyed;
+
+import java.math.BigDecimal;
+
 public class MovimentiMagBase extends MovimentiMagKey implements Keyed {
 	private Long pgMovimentoRif;
 	private Long pgMovimentoAnn;
@@ -114,8 +117,7 @@ public class MovimentiMagBase extends MovimentiMagKey implements Keyed {
 //    CD_TIPO_MOVIMENTO_RIF VARCHAR(3)
 	private String cdTipoMovimentoRif;
  
-//    CD_VOCE_IVA VARCHAR(10)
-	private String cdVoceIva;
+
  
 //    SCONTO1 DECIMAL(5,2)
 	private java.math.BigDecimal sconto1;
@@ -176,6 +178,9 @@ public class MovimentiMagBase extends MovimentiMagKey implements Keyed {
  
 //    DT_CANCELLAZIONE TIMESTAMP(7)
 	private java.sql.Timestamp dtCancellazione;
+
+	private java.lang.String cdVoceIva;
+	private java.math.BigDecimal imIva;
  
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
@@ -912,5 +917,13 @@ public class MovimentiMagBase extends MovimentiMagKey implements Keyed {
 	}
 	public void setPgMovimentoAnn(Long pgMovimentoAnn) {
 		this.pgMovimentoAnn = pgMovimentoAnn;
+	}
+
+	public BigDecimal getImIva() {
+		return imIva;
+	}
+
+	public void setImIva(BigDecimal imIva) {
+		this.imIva = imIva;
 	}
 }

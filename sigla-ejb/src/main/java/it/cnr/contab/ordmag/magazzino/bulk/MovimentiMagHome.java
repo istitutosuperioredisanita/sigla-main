@@ -21,7 +21,9 @@
  */
 package it.cnr.contab.ordmag.magazzino.bulk;
 import java.sql.Connection;
+import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
@@ -45,6 +47,8 @@ import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
+import it.cnr.jada.util.Orderable;
+
 public class MovimentiMagHome extends BulkHome {
 	public MovimentiMagHome(Connection conn) {
 		super(MovimentiMagBulk.class, conn);
@@ -107,5 +111,112 @@ public class MovimentiMagHome extends BulkHome {
 		sql.addClause("AND","id_movimenti_mag",sql.EQUALS, movimento.getPgMovimento());
 
 		return evHome.fetchAll(sql);
+	}
+	public java.util.List getMovimentiDiChiusura(UserContext uc,Date dataChiusura) throws PersistencyException {
+
+		SQLBuilder sql = createSQLBuilder();
+
+		sql.addSQLClause(FindClause.AND,"MOVIMENTI_MAG.CD_TIPO_MOVIMENTO",SQLBuilder.EQUALS, TipoMovimentoMagBulk.CHIUSURE);
+		sql.addSQLClause(FindClause.AND,"MOVIMENTI_MAG.STATO",SQLBuilder.EQUALS, MovimentiMagBulk.STATO_INSERITO);
+		sql.addSQLClause(FindClause.AND,"MOVIMENTI_MAG.DT_RIFERIMENTO",SQLBuilder.EQUALS, new Timestamp(dataChiusura.getTime()));
+
+		final List   movimenti=fetchAll(sql);
+		getHomeCache().fetchAll(uc);
+
+		return movimenti;
+	}
+
+	public List<MovimentiMagBulk> getMovimentiCompresiTra(UserContext uc,Date dataInizio,Date dataFine,Integer esercizio,String codRaggrMag,String catGruppo,String codMag) throws PersistencyException {
+
+		SQLBuilder sql = createSQLBuilder();
+
+		sql.generateJoin(MovimentiMagBulk.class, LottoMagBulk.class, "lottoMag", "LOTTO_MAG");
+		sql.generateJoin(MovimentiMagBulk.class, TipoMovimentoMagBulk.class, "tipoMovimentoMag","TIPO_MOVIMENTO_MAG");
+		sql.addTableToHeader("BENE_SERVIZIO","BENE_SERVIZIO");
+		sql.addSQLJoin("BENE_SERVIZIO.CD_BENE_SERVIZIO","LOTTO_MAG.CD_BENE_SERVIZIO");
+
+		// tipo movimento != CHIUSURE (CH)
+		sql.addSQLClause(FindClause.AND,"TIPO_MOVIMENTO_MAG.TIPO",SQLBuilder.NOT_EQUALS, TipoMovimentoMagBulk.CHIUSURE);
+		// stato movimento = STATO_INSERITO (INS)
+		sql.addSQLClause(FindClause.AND,"MOVIMENTI_MAG.STATO",SQLBuilder.EQUALS, MovimentiMagBulk.STATO_INSERITO);
+
+		// data riferimento maggiore/uguale della data in input
+		sql.addSQLClause(FindClause.AND,"MOVIMENTI_MAG.DT_RIFERIMENTO",SQLBuilder.LESS_EQUALS, new Timestamp(dataFine.getTime()));
+		sql.addSQLClause(FindClause.AND,"MOVIMENTI_MAG.DT_RIFERIMENTO",SQLBuilder.GREATER_EQUALS, new Timestamp(dataInizio.getTime()));
+
+		sql.addTableToHeader("MAGAZZINO","m");
+		sql.addSQLJoin("m.cd_cds","LOTTO_MAG.cd_cds_mag");
+		sql.addSQLJoin("m.cd_magazzino","LOTTO_MAG.cd_magazzino_mag");
+
+		if(codMag != null){
+			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.CD_MAGAZZINO_MAG",SQLBuilder.EQUALS, codMag);
+		}
+
+		if(codRaggrMag != null && !codRaggrMag.equals(Valori_magazzinoBulk.TUTTI)) {
+			sql.addSQLClause(FindClause.AND, "m.CD_RAGGR_MAGAZZINO_RIM", SQLBuilder.EQUALS, codRaggrMag);
+			sql.addSQLJoin("m.CD_CDS_RAGGR_RIM", "LOTTO_MAG.cd_cds_mag");
+		}
+
+		// data carico lotto minore/uguale della data in input
+		sql.addSQLClause(FindClause.AND,"LOTTO_MAG.DT_CARICO",SQLBuilder.LESS_EQUALS, new Timestamp(dataFine.getTime()));
+		sql.addSQLClause(FindClause.AND,"LOTTO_MAG.DT_CARICO",SQLBuilder.GREATER_EQUALS, new Timestamp(dataInizio.getTime()));
+		sql.addSQLClause(FindClause.AND,"LOTTO_MAG.ESERCIZIO",SQLBuilder.EQUALS, esercizio);
+
+		if(catGruppo != null && !catGruppo.equals(Valori_magazzinoBulk.TUTTI)){
+			sql.addTableToHeader("CATEGORIA_GRUPPO_INVENT","CATEGORIA_GRUPPO_INVENT");
+			sql.addSQLJoin("CATEGORIA_GRUPPO_INVENT.CD_CATEGORIA_GRUPPO","BENE_SERVIZIO.CD_CATEGORIA_GRUPPO");
+			//categoria gruppo uguale a quella in input
+			sql.addSQLClause(FindClause.AND,"CATEGORIA_GRUPPO_INVENT.CD_CATEGORIA_GRUPPO",SQLBuilder.EQUALS, catGruppo);
+		}
+
+		List<MovimentiMagBulk> movimenti=fetchAll(sql);
+		getHomeCache().fetchAll(uc);
+
+		return movimenti;
+	}
+
+	public List<MovimentiMagBulk> getMovimentiSuccessiviAData(UserContext uc,Date dataFine,Integer esercizio,String codRaggrMag,String codMag,String catGruppo) throws PersistencyException {
+		SQLBuilder sql = createSQLBuilder();
+
+		sql.generateJoin(MovimentiMagBulk.class, LottoMagBulk.class, "lottoMag", "LOTTO_MAG");
+		sql.generateJoin(MovimentiMagBulk.class, TipoMovimentoMagBulk.class, "tipoMovimentoMag","TIPO_MOVIMENTO_MAG");
+		sql.addTableToHeader("BENE_SERVIZIO","BENE_SERVIZIO");
+		sql.addSQLJoin("BENE_SERVIZIO.CD_BENE_SERVIZIO","LOTTO_MAG.CD_BENE_SERVIZIO");
+
+		// tipo movimento != CHIUSURE (CH)
+		sql.addSQLClause(FindClause.AND,"TIPO_MOVIMENTO_MAG.TIPO",SQLBuilder.NOT_EQUALS, TipoMovimentoMagBulk.CHIUSURE);
+		// stato movimento = STATO_INSERITO (INS)
+		sql.addSQLClause(FindClause.AND,"MOVIMENTI_MAG.STATO",SQLBuilder.EQUALS, MovimentiMagBulk.STATO_INSERITO);
+
+		// data riferimento maggiore/uguale della data in input
+		sql.addSQLClause(FindClause.AND,"MOVIMENTI_MAG.DT_RIFERIMENTO",SQLBuilder.GREATER, new Timestamp(dataFine.getTime()));
+
+		sql.addTableToHeader("MAGAZZINO","m");
+		sql.addSQLJoin("m.cd_cds","LOTTO_MAG.cd_cds_mag");
+		sql.addSQLJoin("m.cd_magazzino","LOTTO_MAG.cd_magazzino_mag");
+
+		if(codRaggrMag != null && !codRaggrMag.equals(Valori_magazzinoBulk.TUTTI)) {
+			sql.addSQLClause(FindClause.AND, "m.CD_RAGGR_MAGAZZINO_RIM", SQLBuilder.EQUALS, codRaggrMag);
+			sql.addSQLJoin("m.CD_CDS_RAGGR_RIM", "LOTTO_MAG.cd_cds_mag");
+		}
+		if(codMag != null && !codMag.equals(Valori_magazzinoBulk.TUTTI)) {
+			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.CD_MAGAZZINO_MAG",SQLBuilder.EQUALS, codMag);
+		}
+
+		// data carico lotto minore/uguale della data in input
+		sql.addSQLClause(FindClause.AND,"LOTTO_MAG.DT_CARICO",SQLBuilder.LESS_EQUALS, new Timestamp(dataFine.getTime()));
+		sql.addSQLClause(FindClause.AND,"LOTTO_MAG.ESERCIZIO",SQLBuilder.EQUALS, esercizio);
+
+		if(catGruppo != null && !catGruppo.equals(Valori_magazzinoBulk.TUTTI)){
+			sql.addTableToHeader("CATEGORIA_GRUPPO_INVENT","CATEGORIA_GRUPPO_INVENT");
+			sql.addSQLJoin("CATEGORIA_GRUPPO_INVENT.CD_CATEGORIA_GRUPPO","BENE_SERVIZIO.CD_CATEGORIA_GRUPPO");
+			//categoria gruppo uguale a quella in input
+			sql.addSQLClause(FindClause.AND,"CATEGORIA_GRUPPO_INVENT.CD_CATEGORIA_GRUPPO",SQLBuilder.EQUALS, catGruppo);
+		}
+
+		List<MovimentiMagBulk> movimenti=fetchAll(sql);
+		getHomeCache().fetchAll(uc);
+
+		return movimenti;
 	}
 }

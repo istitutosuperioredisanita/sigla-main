@@ -43,7 +43,7 @@ public ImpegnoPGiroResiduoBulk(String cd_cds, Integer esercizio, Integer eserciz
 }
 // metodo per inizializzare l'oggetto bulk
 private void initialize () {
-	setCd_tipo_documento_cont( Numerazione_doc_contBulk.TIPO_IMP_RES );
+//	setCd_tipo_documento_cont( Numerazione_doc_contBulk.TIPO_IMP_RES );
 	setFl_pgiro( new Boolean( true ));
 }
 }

@@ -537,7 +537,7 @@ public class DocAmmFatturazioneElettronicaComponent extends CRUDComponent{
 					if (datiGeneraliDocumento.getTipoDocumento()==null)
 						throw new ApplicationException("Impossibile Procedere! Non è stato possibile individuare il tipo documento da imputare nel file XML per il documento elettronico "+autofattura.getTipoDocumentoElettronico()+"-"+autofattura.getEsercizio()+"-"+autofattura.getPg_docamm());
 
-					datiGeneraliDocumento.setImportoTotaleDocumento(autofattura.getFattura_passiva().getIm_totale_fattura().setScale(2));
+					datiGeneraliDocumento.setImportoTotaleDocumento(autofattura.getFattura_passiva().getIm_totale_imponibile().add(autofattura.getFattura_passiva().getIm_totale_iva()).setScale(2));
 					//datiGeneraliDocumento.getCausale().add("");
 					datiGenerali.setDatiGeneraliDocumento(datiGeneraliDocumento);
 
@@ -561,7 +561,7 @@ public class DocAmmFatturazioneElettronicaComponent extends CRUDComponent{
 						rigaFattura.setQuantita(riga.getQuantita().setScale(2));
 						rigaFattura.setDataInizioPeriodo(convertDateToXmlGregorian(riga.getDt_da_competenza_coge()));
 						rigaFattura.setDataFinePeriodo(convertDateToXmlGregorian(riga.getDt_a_competenza_coge()));
-						rigaFattura.setPrezzoUnitario(riga.getPrezzo_unitario().setScale(2));
+						rigaFattura.setPrezzoUnitario(riga.getPrezzo_unitario().multiply(autofattura.getFattura_passiva().getCambio()).setScale(2,java.math.BigDecimal.ROUND_HALF_UP));
 						rigaFattura.setPrezzoTotale(rigaFattura.getPrezzoUnitario().multiply(rigaFattura.getQuantita()).setScale(2));
 						if (riga.getVoce_iva() != null && riga.getVoce_iva().getCd_voce_iva() != null && riga.getVoce_iva().getPercentuale() == null)
 							riga.setVoce_iva((Voce_ivaBulk) findByPrimaryKey(userContext, riga.getVoce_iva()));
@@ -603,7 +603,7 @@ public class DocAmmFatturazioneElettronicaComponent extends CRUDComponent{
 					if (autofattura.getFl_liquidazione_differita() && autofattura.getEsercizio() > 2014) {
 						dettaglioPagamento.setImportoPagamento(autofattura.getFattura_passiva().getIm_totale_imponibile().setScale(2));
 					} else {
-						dettaglioPagamento.setImportoPagamento(autofattura.getFattura_passiva().getIm_totale_fattura().setScale(2));
+						dettaglioPagamento.setImportoPagamento(autofattura.getFattura_passiva().getIm_totale_imponibile().add(autofattura.getFattura_passiva().getIm_totale_iva()).setScale(2));
 					}
 
 					dettaglioPagamento.setCodicePagamento(autofattura.recuperoIdFatturaAsString());

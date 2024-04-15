@@ -26,70 +26,37 @@
 
 <%  
 		CRUDScritturaPDoppiaBP bp = (CRUDScritturaPDoppiaBP)BusinessProcess.getBusinessProcess(request);
-		bp.openFormWindow(pageContext); 
+		bp.openFormWindow(pageContext);
 %>
-
-<table class="Panel card p-2">
-    <tr>
-        <td><% bp.getController().writeFormLabel(out,"cds"); %></td>
-        <td colspan=3><% bp.getController().writeFormInput(out,"cds"); %></td>
-    </tr>
-    <tr>
-        <td><% bp.getController().writeFormLabel(out,"unita_organizzativa"); %></td>
-        <td colspan=3><% bp.getController().writeFormInput(out,"unita_organizzativa"); %></td>
-    </tr>
-    <tr>
-        <td><% bp.getController().writeFormLabel(out,"esercizio"); %></td>
-        <td><% bp.getController().writeFormInput(out,"esercizio"); %></td>
-        <td><% bp.getController().writeFormLabel(out,"pg_scrittura"); %></td>
-        <td><% bp.getController().writeFormInput(out,"pg_scrittura"); %></td>
-    </tr>
-    <tr>
-        <td><% bp.getController().writeFormLabel(out,"imTotaleDare"); %></td>
-        <td><% bp.getController().writeFormInput(out,"imTotaleDare"); %></td>
-        <td><% bp.getController().writeFormLabel(out,"imTotaleAvere"); %></td>
-        <td><% bp.getController().writeFormInput(out,"imTotaleAvere"); %></td>
-    </tr>
-</table>
-<%
-	if (bp.isViewing()){
-%>
-    <br>
-    <table class="Group card p-2">
-        <tr>
-            <td colspan=4>
-                  <span class="FormLabel text-primary">Documento origine</span>
-            </td>
-        </tr>
-        <tr>
-            <td><% bp.getController().writeFormLabel(out,"origine_scrittura"); %></td>
-            <td><% bp.getController().writeFormInput(out,"origine_scrittura"); %></td>
-            <td><% bp.getController().writeFormLabel(out,"cd_tipo_documento"); %></td>
-            <td><% bp.getController().writeFormInput(out,"cd_tipo_documento"); %></td>
-        </tr>
-        <tr>
-            <td><% bp.getController().writeFormLabel(out,"pg_numero_documento"); %></td>
-            <td><% bp.getController().writeFormInput(out,"pg_numero_documento"); %></td>
-            <td><% bp.getController().writeFormLabel(out,"cd_comp_documento"); %></td>
-            <td><% bp.getController().writeFormInput(out,"cd_comp_documento"); %></td>
-        </tr>
-        <tr>
-            <td><% bp.getController().writeFormLabel(out,"cd_cds_documento"); %></td>
-            <td colspan=3><% bp.getController().writeFormInput(out,"cd_cds_documento"); %></td>
-        </tr>
-        <tr>
-            <td><% bp.getController().writeFormLabel(out,"cd_uo_documento"); %></td>
-            <td colspan=3><% bp.getController().writeFormInput(out,"cd_uo_documento"); %></td>
-        </tr>
-        <tr>
-            <td><% bp.getController().writeFormLabel(out,"esercizio_documento_amm"); %></td>
-            <td colspan=3><% bp.getController().writeFormInput(out,"esercizio_documento_amm"); %></td>
-        </tr>
-    </table>
-<br>
-<%
-	}
-%>
+<div class="Group card p-2 mb-2">
+    <div class="form-row">
+        <div class="col-md-2"><% bp.getController().writeFormField(out, "esercizio", Boolean.FALSE);%></div>
+        <div class="col-md-4"><% bp.getController().writeFormField(out, bp.isUoEnte() ? "cdsEnte":"cds", Boolean.FALSE);%></div>
+        <div class="col-md-4"><% bp.getController().writeFormField(out, bp.isUoEnte() ? "unita_organizzativaEnte":"unita_organizzativa", Boolean.FALSE);%></div>
+        <div class="col-md-2"><% bp.getController().writeFormField(out, "pg_scrittura", Boolean.FALSE);%></div>
+    </div>
+    <div class="form-row">
+        <div class="col-md-6"><% bp.getController().writeFormField(out, "imTotaleDare", Boolean.FALSE);%></div>
+        <div class="col-md-6"><% bp.getController().writeFormField(out, "imTotaleAvere", Boolean.FALSE);%></div>
+    </div>
+</div>
+<% if (!bp.isInserting() && bp.isFromDocumentoOrigine()) { %>
+<div class="card my-2">
+  <h3 class="card-header text-info"><i class="fa fa-question-circle fa-fw" aria-hidden="true"></i> Documento origine</h3>
+  <div class="card-block p-2">
+    <div class="form-row">
+        <div class="col-md-4"><% bp.getController().writeFormField(out, "cd_tipo_documento", Boolean.FALSE);%></div>
+        <div class="col-md-4"><% bp.getController().writeFormField(out, "pg_numero_documento", Boolean.FALSE);%></div>
+        <div class="col-md-4"><% bp.getController().writeFormField(out, "cd_comp_documento", Boolean.FALSE);%></div>
+    </div>
+    <div class="form-row">
+        <div class="col-md-2"><% bp.getController().writeFormField(out, "esercizio_documento_amm", Boolean.FALSE);%></div>
+        <div class="col-md-4"><% bp.getController().writeFormField(out, "cds_documento", Boolean.FALSE);%></div>
+        <div class="col-md-6"><% bp.getController().writeFormField(out, "uo_documento", Boolean.FALSE);%></div>
+    </div>
+  </div>
+</div>
+<% } %>
 <%
     JSPUtils.tabbed(
                     pageContext,

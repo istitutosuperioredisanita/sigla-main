@@ -77,6 +77,8 @@ import org.springframework.data.util.Pair;
 import javax.ejb.EJBException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -2669,7 +2671,38 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
 
             controllaQuadraturaConti(context, (Fattura_passivaBulk) bp.getModel());
 
-            java.util.List dettagliDaInventariare = getDettagliDaInventariare(context, bp.getDettaglio().getDetails().iterator());
+            java.util.List<Fattura_passiva_rigaIBulk> dettagliDaInventariare = getDettagliDaInventariare(context, bp.getDettaglio().getDetails().iterator());
+            final Optional<Fattura_passiva_rigaIBulk> bulk = dettagliDaInventariare
+                    .stream()
+                    .filter(fatturaPassivaIBulk -> {
+                        return Optional.ofNullable(fatturaPassivaIBulk.getDt_da_competenza_coge())
+                                .map(Timestamp::toLocalDateTime)
+                                .map(LocalDateTime::getYear)
+                                .map(esercizio -> esercizio < fatturaPassivaIBulk.getEsercizio())
+                                .orElse(Boolean.FALSE) ||
+                                Optional.ofNullable(fatturaPassivaIBulk.getDt_a_competenza_coge())
+                                        .map(Timestamp::toLocalDateTime)
+                                        .map(LocalDateTime::getYear)
+                                        .map(esercizio -> esercizio < fatturaPassivaIBulk.getEsercizio())
+                                        .orElse(Boolean.FALSE);
+                    }).findAny();
+            if (bulk.isPresent()) {
+                throw new ApplicationMessageFormatException(
+                        "Non è possibile procedere con l''aumento di valore in quanto uno degli esercizi di competenza [{0},{1}] non coincide con l''esercizio della fattura {2}!",
+                        bulk
+                                .map(Fattura_passiva_rigaIBulk::getDt_da_competenza_coge)
+                                .map(Timestamp::toLocalDateTime)
+                                .map(LocalDateTime::getYear)
+                                .map(String::valueOf).orElse(""),
+                        bulk
+                                .map(Fattura_passiva_rigaIBulk::getDt_a_competenza_coge)
+                                .map(Timestamp::toLocalDateTime)
+                                .map(LocalDateTime::getYear)
+                                .map(String::valueOf).orElse(""),
+                        bulk.map(Fattura_passiva_rigaIBulk::getEsercizio).map(String::valueOf).orElse("")
+
+                );
+            }
             if (dettagliDaInventariare != null && !dettagliDaInventariare.isEmpty()) {
 
                 AssBeneFatturaBP ibp = (AssBeneFatturaBP) context.getUserInfo().createBusinessProcess(context, "AssBeneFatturaBP", new Object[]{"MRSWTh"});
@@ -2932,8 +2965,18 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                 if (competenzaA != null && competenzaDa != null)
                     if (!competenzaDa.equals(competenzaA) && !competenzaDa.before(competenzaA))
                         throw new it.cnr.jada.comp.ApplicationException("La data \"competenza da\" deve essere precedente o uguale a \"competenza a\"!");
-                if (((FatturaPassivaComponentSession) bp.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaA, cds) && !fattura.getStato_coge().equals("NON_PROCESSARE_IN_COGE"))
+                if (!(bp instanceof CRUDFatturaPassivaAmministraBP) && ((FatturaPassivaComponentSession) bp.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaA, cds) && !fattura.getStato_coge().equals("NON_PROCESSARE_IN_COGE"))
                     throw new it.cnr.jada.comp.ApplicationException("Le date \"Competenza da\" e \"Competenza a\" non possono appartenere ad un esercizio chiuso");
+                if (bp instanceof CRUDFatturaPassivaAmministraBP) {
+                    fattura
+                            .getFattura_passiva_dettColl()
+                            .stream()
+                            .forEach(fatturaPassivaRigaBulk -> {
+                                fatturaPassivaRigaBulk.setDt_a_competenza_coge(competenzaA);
+                                fatturaPassivaRigaBulk.setToBeUpdated();
+                            });
+                }
+
             }
             bp.setModel(context, fattura);
             return context.findDefaultForward();
@@ -2973,8 +3016,17 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                 if (competenzaA != null && competenzaDa != null)
                     if (!competenzaDa.equals(competenzaA) && !competenzaDa.before(competenzaA))
                         throw new it.cnr.jada.comp.ApplicationException("La data \"competenza a\" deve essere successiva o uguale a \"competenza da\"!");
-                if (((FatturaPassivaComponentSession) bp.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaDa, cds) && !fattura.getStato_coge().equals("NON_PROCESSARE_IN_COGE"))
+                if (!(bp instanceof CRUDFatturaPassivaAmministraBP) && ((FatturaPassivaComponentSession) bp.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaDa, cds) && !fattura.getStato_coge().equals("NON_PROCESSARE_IN_COGE"))
                     throw new it.cnr.jada.comp.ApplicationException("Le date \"Competenza da\" e \"Competenza a\" non possono appartenere ad un esercizio chiuso");
+                if (bp instanceof CRUDFatturaPassivaAmministraBP) {
+                    fattura
+                            .getFattura_passiva_dettColl()
+                            .stream()
+                            .forEach(fatturaPassivaRigaBulk -> {
+                                fatturaPassivaRigaBulk.setDt_da_competenza_coge(competenzaDa);
+                                fatturaPassivaRigaBulk.setToBeUpdated();
+                            });
+                }
             }
             bp.setModel(context, fattura);
             return context.findDefaultForward();
@@ -4064,6 +4116,8 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
         iterator.forEachRemaining(index -> {
             try {
                 final FatturaOrdineBulk fatturaOrdineBulk = details.get(index);
+                if (fatturaOrdineBulk.getFatturaPassivaRiga().isPagata())
+                    throw new DetailedRuntimeException(new ApplicationException("La riga non può essere eliminata in quanto asscociata ad un pagamento!"));
                 Optional.ofNullable(fattura.getFattura_passiva_dettColl().indexOf(fatturaOrdineBulk.getFatturaPassivaRiga()))
                         .filter(i -> i != -1)
                         .ifPresent(i -> {
@@ -4507,7 +4561,12 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                 fillModel(context);
 //			try {
                 if (!bp.isSearching() && !bp.isViewing() && !fattura.isRODateCompetenzaCOGE()){
-                    fattura.validaDateCompetenza();
+                    try {
+                        fattura.validaDateCompetenza();
+                    } catch (ValidationException _ex) {
+                        bp.setMessage(FormBP.WARNING_MESSAGE, _ex.getMessage());
+                        return context.findDefaultForward();
+                    }
                 }
                 if (!bp.isSearching() && !bp.isViewing()){
                 	if ((((FatturaPassivaComponentSession) bp.createComponentSession()).estraeSezionali(context.getUserContext(), fattura)!= null) && ! (((FatturaPassivaComponentSession) bp.createComponentSession()).estraeSezionali(context.getUserContext(), fattura).isEmpty())){ 

@@ -20,10 +20,11 @@
  * Date 19/07/2013
  */
 package it.cnr.contab.doccont00.intcass.bulk;
-import java.math.BigDecimal;
 
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.Persistent;
+
+import java.math.BigDecimal;
 public class VDocumentiFlussoBase extends OggettoBulk implements Persistent {
 //    CD_CDS VARCHAR(30)
 	private java.lang.String cdCds;
@@ -170,6 +171,8 @@ public class VDocumentiFlussoBase extends OggettoBulk implements Persistent {
 
 	//    TIPO_POSTALIZZAZIONE VARCHAR(250)
 	private java.lang.String tipoPostalizzazione;
+
+	private String intestazioneModPag;
 
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
@@ -792,5 +795,13 @@ public class VDocumentiFlussoBase extends OggettoBulk implements Persistent {
 
 	public void setTipoPostalizzazione(String tipoPostalizzazione) {
 		this.tipoPostalizzazione = tipoPostalizzazione;
+	}
+
+	public String getIntestazioneModPag() {
+		return intestazioneModPag;
+	}
+
+	public void setIntestazioneModPag(String intestazioneModPag) {
+		this.intestazioneModPag = intestazioneModPag;
 	}
 }

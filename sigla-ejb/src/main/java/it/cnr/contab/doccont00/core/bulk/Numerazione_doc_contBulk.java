@@ -33,6 +33,7 @@ public class Numerazione_doc_contBulk extends Numerazione_doc_contBase {
 	static final public String TIPO_ACR_PLUR  	= "ACR_PLUR";		
 	static final public String TIPO_ACR_RES		= "ACR_RES";	
 	static final public String TIPO_ACR_PGIRO  	= "ACR_PGIRO";
+	static final public String TIPO_OBB_PGIR_R  	= "OBB_PGIR_R";
 	static final public String TIPO_ACR_PGIR_R	= "ACR_PGIR_R";
 	static final public String TIPO_ACR_SIST  	= "ACR_SIST";	
 	static final public String TIPO_MAN  		= "MAN";	

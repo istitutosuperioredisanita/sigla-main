@@ -25,7 +25,9 @@ import java.util.Optional;
 import it.cnr.contab.ordmag.anag00.MagazzinoBulk;
 import it.cnr.contab.ordmag.anag00.UnitaMisuraBulk;
 import it.cnr.contab.ordmag.anag00.UnitaOperativaOrdBulk;
+import it.cnr.contab.ordmag.magazzino.bp.CaricoManualeMagazzinoBP;
 import it.cnr.contab.ordmag.magazzino.bulk.BollaScaricoMagBulk;
+import it.cnr.contab.ordmag.magazzino.bulk.CaricoMagazzinoBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.ScaricoMagazzinoRigaBulk;
 import it.cnr.contab.ordmag.ordini.bp.CRUDEvasioneOrdineBP;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineBulk;
@@ -244,4 +246,64 @@ public class CRUDEvasioneOrdineAction extends it.cnr.jada.util.action.CRUDAction
         bp.setDettConsegneCollapse(!bp.isDettConsegneCollapse());
         return context.findDefaultForward();
     }
+
+	public Forward doOnDtBollaChange(ActionContext context) {
+		CRUDEvasioneOrdineBP bp = (CRUDEvasioneOrdineBP)getBusinessProcess(context);
+		EvasioneOrdineBulk evasioneOrdine= (EvasioneOrdineBulk)bp.getModel();
+
+		try {
+			fillModel(context);
+			validaDateEvasione(evasioneOrdine);
+			return context.findDefaultForward();
+		}
+		catch (Exception ex) {
+			try
+			{
+				return handleException(context, ex);
+			}
+			catch (Exception e)
+			{
+				return handleException(context, e);
+			}
+		}
+	}
+	public Forward doOnDtConsegnaChange(ActionContext context) {
+		CRUDEvasioneOrdineBP bp = (CRUDEvasioneOrdineBP)getBusinessProcess(context);
+		EvasioneOrdineBulk evasioneOrdine= (EvasioneOrdineBulk)bp.getModel();
+
+		try {
+			fillModel(context);
+
+			if(evasioneOrdine.getDataConsegna() != null){
+				java.util.Calendar gc = java.util.Calendar.getInstance();
+				gc.setTime(evasioneOrdine.getDataConsegna());
+				int annoCompetenza = gc.get(java.util.Calendar.YEAR);
+				int esScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue();
+
+				if (annoCompetenza != esScrivania) {
+					throw new ApplicationException("La \"Data Consegna\" deve ricadere nell'esercizio selezionato!");
+				}
+				validaDateEvasione(evasioneOrdine);
+
+			}
+			return context.findDefaultForward();
+		}
+		catch (Exception ex) {
+			try
+			{
+				return handleException(context, ex);
+			}
+			catch (Exception e)
+			{
+				return handleException(context, e);
+			}
+		}
+	}
+	private void validaDateEvasione(EvasioneOrdineBulk evasioneOrdine) throws ApplicationException {
+		if(evasioneOrdine.getDataBolla() != null && evasioneOrdine.getDataConsegna() != null){
+			if(evasioneOrdine.getDataBolla().compareTo(evasioneOrdine.getDataConsegna()) > 0){
+				throw new ApplicationException("La \"Data Bolla\" non può essere maggiore della \"Data Consegna\" ");
+			}
+		}
+	}
 }

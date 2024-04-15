@@ -3,15 +3,17 @@
  * Date 21/09/2021
  */
 package it.cnr.contab.doccont00.core.bulk;
-import it.cnr.jada.action.ActionContext;
-import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.util.action.CRUDBP;
+
+import it.cnr.jada.bulk.BulkCollection;
+import it.cnr.jada.bulk.BulkList;
 public class Accertamento_pluriennaleBulk extends Accertamento_pluriennaleBase {
 	/**
 	 * [ACCERTAMENTO ]
 	 **/
 	private AccertamentoBulk accertamento =  new AccertamentoBulk();
 	private AccertamentoBulk accertamentoRif =  new AccertamentoBulk();
+
+	protected BulkList<Accertamento_pluriennale_voceBulk> righeVoceColl = new BulkList<Accertamento_pluriennale_voceBulk>();
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: ACCERTAMENTO_PLURIENNALE
@@ -26,6 +28,12 @@ public class Accertamento_pluriennaleBulk extends Accertamento_pluriennaleBase {
 	public Accertamento_pluriennaleBulk(String cdCds, Integer esercizio, Integer esercizioOriginale, Long pgAccertamento, Integer anno) {
 		super(cdCds, esercizio, esercizioOriginale, pgAccertamento, anno);
 		setAccertamento( new AccertamentoBulk(cdCds,esercizio,esercizioOriginale,pgAccertamento) );
+	}
+
+	public BulkCollection[] getBulkLists() {
+		// Metti solo le liste di oggetti che devono essere resi persistenti
+		return new it.cnr.jada.bulk.BulkCollection[] {
+				righeVoceColl };
 	}
 	public AccertamentoBulk getAccertamento() {
 		return accertamento;
@@ -186,7 +194,15 @@ public class Accertamento_pluriennaleBulk extends Accertamento_pluriennaleBase {
 		this.getAccertamentoRif().setPg_accertamento(pgAccertamentoRif);
 	}
 
-	public Accertamento_pluriennaleBulk clone( AccertamentoBulk accertamento,it.cnr.jada.action.ActionContext context){
+	public BulkList<Accertamento_pluriennale_voceBulk> getRigheVoceColl() {
+		return righeVoceColl;
+	}
+
+	public void setRigheVoceColl(BulkList<Accertamento_pluriennale_voceBulk> righeVoceColl) {
+		this.righeVoceColl = righeVoceColl;
+	}
+
+	public Accertamento_pluriennaleBulk clone(AccertamentoBulk accertamento, it.cnr.jada.action.ActionContext context){
 		Accertamento_pluriennaleBulk nuovo = null;
 		try {
 			nuovo = (Accertamento_pluriennaleBulk)getClass().newInstance();

@@ -591,6 +591,7 @@
 		inputType="SEARCHTOOL"
 		formName="searchtool"
 		label="Conto EP Credito"
+		completeOnSave = "false"
 		enabledOnSearch="true" />
 	<fieldProperty
 		name="find_conto_debito"
@@ -598,6 +599,7 @@
 		inputType="SEARCHTOOL"
 		formName="searchtool"
 		label="Conto EP Debito"
+		completeOnSave = "false"
 		enabledOnSearch="true" />
 
 	<fieldProperty

@@ -217,7 +217,7 @@ public class OrdineAcqComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
     public ImportoOrdine calcoloImportoOrdine(UserContext userContext, ParametriCalcoloImportoOrdine parametri) throws RemoteException, ComponentException {
         pre_component_invocation(userContext, componentObj);
         try {
-            ImportoOrdine result = ((OrdineAcqComponent) componentObj).calcoloImportoOrdine(parametri);
+            ImportoOrdine result = (ImportoOrdine)((OrdineAcqComponent) componentObj).calcoloImporto(parametri);
             component_invocation_succes(userContext, componentObj);
             return result;
         } catch (it.cnr.jada.comp.ComponentException e) {
@@ -233,7 +233,7 @@ public class OrdineAcqComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
     public ImportoOrdine calcoloImportoOrdinePerMagazzino(UserContext userContext, ParametriCalcoloImportoOrdine parametri) throws RemoteException, ComponentException {
         pre_component_invocation(userContext, componentObj);
         try {
-            ImportoOrdine result = ((OrdineAcqComponent) componentObj).calcoloImportoOrdinePerMagazzino(parametri);
+            ImportoOrdine result = ((OrdineAcqComponent) componentObj).calcoloImportoPerMagazzino(parametri);
             component_invocation_succes(userContext, componentObj);
             return result;
         } catch (it.cnr.jada.comp.ComponentException e) {

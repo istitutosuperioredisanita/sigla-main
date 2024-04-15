@@ -30,13 +30,13 @@
 
 	<% bp.openFormWindow(pageContext); %>
 
-	<div class="Group card p-2" style="width:100%">
-		<table width="100%">
+	<div class="Group card p-2 d-block w-100">
+		<table cellpadding="2">
 			<tr>
 				<td>
 					<% bp.getController().writeFormLabel(out,"tipoSezionaleFlag");%>
 				</td>
-				<td>
+				<td colspan="3">
 					<% bp.getController().writeFormInput(out,null,"tipoSezionaleFlag",false,null,"onChange=\"submitForm('doOnTipoChange')\"");%>
 				</td>
 				<% if (bp.isAggiornaIvaDaVersareEnable()) { %>
@@ -86,20 +86,16 @@
 			</tr>
 		</table>
 	</div>
-	<div class="Group card mt-1 p-2" style="width:100%">
-		<table>
-			<tr>
-				<td>
-					<span class="FormLabel h4 text-primary">Prospetti stampati</span>
-				</td>
-			</tr>
-			<tr>
-				<td>
-				   	<%bp.getDettaglio_prospetti().writeHTMLTable(pageContext,"prospetti_stampati",false,false,false,"100%","100px",true);%>
-			   	</td>
-			</tr>
-		</table>
-    </div>
+    <table class="mt-2">
+        <%JSPUtils.tabbed(
+                pageContext,
+                "tabLiquidazione",
+                bp.getTabsLiquidazione(),
+                bp.getTab("tabLiquidazione"),
+                "center",
+                "100%",
+                null );%>
+    </table>
 	<div class="Group card mt-1 p-2" style="width:100%">
 		<% if (!richiamaChiusuraMode) { %>
 			<table>

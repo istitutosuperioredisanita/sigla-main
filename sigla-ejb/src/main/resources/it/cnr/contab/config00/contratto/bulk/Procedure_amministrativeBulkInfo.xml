@@ -188,4 +188,14 @@
 		name="fl_cancellato" />
 	<columnFieldProperty
 		name="codice_anac" />
+	<columnFieldProperty
+			name="ti_proc_amm" />
+
+	<columnSet name="restService">
+		<columnFieldProperty name="cd_proc_amm" />
+		<columnFieldProperty name="ds_proc_amm" />
+		<columnFieldProperty name="fl_cancellato" />
+		<columnFieldProperty name="ti_proc_amm"/>
+		<columnFieldProperty name="codice_anac" />
+	</columnSet>
 </bulkInfo>

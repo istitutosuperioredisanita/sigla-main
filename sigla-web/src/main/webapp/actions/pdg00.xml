@@ -80,6 +80,10 @@
             actionClass="it.cnr.contab.pdg00.action.ElaboraStralcioMensileStipendiAction">
     </action>
 
+    <action
+            path="/SituazioneAmministrativaAction" actionClass="it.cnr.contab.reports.action.ParametricPrintAction">
+    </action>
+
     <businessProcess
             name="CRUDSpeDetPdGBP" className="it.cnr.contab.pdg00.bp.CRUDSpeDetPdGBP">
         <forward name="default" path="/pdg00/preventivo_spe.jsp"/>
@@ -363,14 +367,49 @@
         <init-param name="reportName" value="/preventivo/preventivo/mastro.jasper"/>
     </businessProcess>
 
-    <businessProcess name="RiaccertamentoResiduiPassiviBP"
-                     className="it.cnr.contab.prevent01.bp.RiaccertamentoResiduiPassiviBP">
-        <forward name="default" path="/prevent01/stampa_riaccertamento_residui_passivi.jsp"/>
-        <init-param name="bulkClassName" value="it.cnr.contab.prevent01.bulk.RiaccertamentoResiduiPassiviBulk"/>
+    <businessProcess name="RiaccertamentoResiduiBP"
+                     className="it.cnr.contab.prevent01.bp.RiaccertamentoResiduiBP">
+        <forward name="default" path="/prevent01/stampa_riaccertamento_residui.jsp"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.prevent01.bulk.RiaccertamentoResiduiBulk"/>
         <init-param name="printbp" value="OfflineReportPrintBP"/>
-        <init-param name="defaultAction" value="RiaccertamentoResiduiPassiviAction"/>
+        <init-param name="defaultAction" value="RiaccertamentoResiduiAction"/>
         <init-param name="componentSessionName" value="CNRPREVENT01_EJB_PdgAggregatoModuloComponentSession"/>
         <init-param name="reportName" value="/preventivo/preventivo/riaccertamento.jasper"/>
+    </businessProcess>
+
+    <action path="/VisualizzazioneVistaAssestatoAction" actionClass="it.cnr.jada.util.action.SelezionatoreListaAction"/>
+    <businessProcess
+            name="VisualizzazioneVistaAssestatoBP"
+            className="it.cnr.contab.util.action.ConsSelezionatoreListaBP"
+    >
+        <forward name="default" path="/util/form_lista.jsp"/>
+        <init-param name="multiSelezione" value="N" />
+        <init-param name="bulkClassName" value="it.cnr.contab.prevent00.bulk.V_assestatoallBulk" />
+        <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
+        <init-param name="defaultAction" value="VisualizzazioneVistaAssestatoAction" />
+    </businessProcess>
+
+    <action path="/SaldiPianoEconomicoProgettoAction" actionClass="it.cnr.jada.util.action.SelezionatoreListaAction"/>
+    <businessProcess
+            name="SaldiPianoEconomicoProgettoBP"
+            className="it.cnr.contab.util.action.ConsSelezionatoreListaBP"
+    >
+        <forward name="default" path="/util/form_lista.jsp"/>
+        <init-param name="multiSelezione" value="N" />
+        <init-param name="bulkClassName" value="it.cnr.contab.progettiric00.core.bulk.V_saldi_piano_econom_progettoBulk" />
+        <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
+        <init-param name="defaultAction" value="SaldiPianoEconomicoProgettoAction" />
+    </businessProcess>
+
+    <businessProcess name="SituazioneAmministrativaBP"
+                     className="it.cnr.contab.reports.bp.ParametricPrintBP">
+        <forward name="default" path="/util/form.jsp"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.prevent01.bulk.SituazioneAmministrativaBulk"/>
+        <init-param name="printbp" value="OfflineReportPrintBP"/>
+        <init-param name="defaultAction" value="SituazioneAmministrativaAction"/>
+        <init-param name="componentSessionName" value="CNRPREVENT01_EJB_SituazioneAmministrativaComponentSession"/>
+        <init-param name="reportName" value="/cnrdoccont/doccont/situazione_amministrativa_main.jasper" />
+
     </businessProcess>
 
 </action-mappings>

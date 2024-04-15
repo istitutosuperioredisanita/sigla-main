@@ -129,7 +129,7 @@ public class LiquidIvaInterfComponent extends CRUDComponent {
 								Liquidazione_ivaBulk liq = (Liquidazione_ivaBulk) iterator.next();
 								Calendar cal = new GregorianCalendar();
 								cal.setTime(liq.getDt_inizio());
-								if (bulk.getMesi_int().get(bulk.getMese()).equals(cal.get(Calendar.MONTH)+1)) {
+								if (bulk.getMesi_int().get(bulk.getMese()).equals((cal.get(Calendar.MONTH)+1)==12?-1:(cal.get(Calendar.MONTH)+1))) {
 									bulk.setMandato_righe_associate( new BulkList( home.findMandatoRigheAssociateList(liq) ));
 									break;
 								}								

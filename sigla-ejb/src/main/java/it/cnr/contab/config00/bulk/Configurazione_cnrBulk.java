@@ -17,6 +17,21 @@
 
 package it.cnr.contab.config00.bulk;
 
+import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.util.ApplicationMessageFormatException;
+import it.cnr.contab.util.Utility;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.util.ejb.EJBCommonServices;
+
+import java.rmi.RemoteException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 public class Configurazione_cnrBulk extends Configurazione_cnrBase {
 
     public final static String SK_SDI = "SDI";
@@ -61,6 +76,7 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
 
     public final static String SK_LINEA_ATTIVITA_ENTRATA_ENTE = "LINEA_ATTIVITA_ENTRATA_ENTE";
     public final static String SK_LINEA_ATTIVITA_SPESA_ENTE = "LINEA_ATTIVITA_SPESA_ENTE";
+    public final static String SK_COSTO_DOC_NON_LIQUIDABILE = "COSTO_DOC_NON_LIQUIDABILE";
 
     public final static String PK_CD_DIVISA = "CD_DIVISA";
     public final static String SK_EURO = "EURO";
@@ -180,6 +196,7 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     public final static String SK_IVA_CREDITO = "IVA_CREDITO";
     public final static String SK_IVA_DEBITO = "IVA_DEBITO";
     public final static String SK_ERARIO_C_IVA = "ERARIO_C_IVA";
+    public final static String SK_ACCONTO_ANTICIPO_DOCATT = "ACCONTO_ANTICIPO_DOCATT";
     public final static String SK_CREDITO_DEBITO_ANTICIPO = "CREDITO_DEBITO_ANTICIPO";
     public final static String SK_CREDITO_DEBITO_ECONOMO = "CREDITO_DEBITO_ECONOMO";
     public final static String SK_CREDITO_DEBITO_DEFAULT = "CREDITO_DEBITO_DEFAULT";
@@ -228,6 +245,47 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     public final static String PK_SOSPESI = "SOSPESI";
     public final static String SK_GESTIONE_STATO_INIZIALE = "GESTIONE_STATO_INIZIALE";
 
+
+    public final static String PK_STEP_FINE_ANNO = "STEP_FINE_ANNO";
+
+    public final static Map<String,String> TI_STEP_FINE_ANNO = new HashMap<String, String>() {{
+        put("N", "No");
+        put("Y", "Si");
+        put("P", "Parziale");
+        put("T", "Totale");
+    }};
+
+    public enum StepFineAnno {
+        APERTURA_PREVISIONE("010_APERTURA_PREVISIONE"),
+        ESERCIZIO_APERTO("020_ESERCIZIO_APERTO"),
+        RIBALTAMENTO_ANAGRAFICHE("030_RIBALTAMENTO_ANAGRAFICHE"),
+        RIBALTAMENTO_RESIDUI("040_RIBALTAMENTO_RESIDUI"),
+        FINE_INVENTARIAZIONE("050_FINE_INVENTARIAZIONE"),
+        FINE_EVASIONE("060_FINE_EVASIONE"),
+        FATTURE_DA_RICEVERE("070_FATTURE_DA_RICEVERE"),
+        RATEI_RISCONTI("080_RATEI_RISCONTI"),
+        CHIUSURA_PROVVISORIA("090_CHIUSURA_PROVVISORIA"),
+        CHIUSURA_DEFINITIVA("100_CHIUSURA_DEFINITIVA"),
+        CARICHI_SCARICHI_MAG("110_FINE_MOV_MAG");
+
+        private final String value;
+
+        private StepFineAnno(String value) {
+            this.value = value;
+        }
+
+        public String value() {
+            return value;
+        }
+
+        public static StepFineAnno getValueFrom(String value) {
+            for (StepFineAnno stepFineAnno : StepFineAnno.values()) {
+                if (stepFineAnno.value.equals(value))
+                    return stepFineAnno;
+            }
+            throw new IllegalArgumentException("StepFineAnno no found for value: " + value);
+        }
+    }
     public Configurazione_cnrBulk(java.lang.String cd_chiave_primaria, java.lang.String cd_chiave_secondaria, java.lang.String cd_unita_funzionale, java.lang.Integer esercizio) {
         super(cd_chiave_primaria, cd_chiave_secondaria, cd_unita_funzionale, esercizio);
     }
@@ -242,5 +300,38 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
         else if (fieldNumber==4)
             return this.getVal04();
         return null;
+    }
+
+    public static void stepFineAnno(UserContext context, StepFineAnno stepFineAnno) throws BusinessProcessException {
+        try {
+            final Configurazione_cnrBulk configurazione = Utility
+                    .createConfigurazioneCnrComponentSession()
+                    .getConfigurazione(
+                            context,
+                            CNRUserContext.getEsercizio(context),
+                            "*",
+                            Configurazione_cnrBulk.PK_STEP_FINE_ANNO,
+                            stepFineAnno.value()
+                    );
+            if (Optional.ofNullable(configurazione).isPresent()) {
+                final Optional<LocalDateTime> dataFineEvasione = Optional.ofNullable(configurazione.getDt01())
+                        .map(timestamp -> timestamp.toLocalDateTime());
+                if (dataFineEvasione.isPresent() && dataFineEvasione
+                        .filter(localDateTime ->
+                                Optional.ofNullable(configurazione.getVal02())
+                                    .filter(s -> s.equalsIgnoreCase("Y") || s.equalsIgnoreCase("T"))
+                                        .isPresent()
+                        )
+                        .map(d -> d.isBefore(EJBCommonServices.getServerTimestamp().toLocalDateTime())).get()) {
+                    throw new ApplicationMessageFormatException(
+                            "La funzione è bloccata per l''anno {0} dal {1}",
+                            String.valueOf(CNRUserContext.getEsercizio(context)),
+                            dataFineEvasione.get().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                    );
+                }
+            }
+        } catch (ComponentException | RemoteException e) {
+            throw new BusinessProcessException(e);
+        }
     }
 }

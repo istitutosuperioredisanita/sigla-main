@@ -17,18 +17,10 @@
 
 package it.cnr.contab.ordmag.magazzino.bp;
 
-import java.math.BigDecimal;
-import java.rmi.RemoteException;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import it.cnr.contab.anagraf00.tabter.bulk.NazioneBulk;
+import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.ordmag.anag00.UnitaMisuraBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.LottoMagBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagazzinoRigaBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.ScaricoMagazzinoBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.ScaricoMagazzinoRigaBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.ScaricoMagazzinoRigaLottoBulk;
@@ -43,6 +35,13 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
+
+import java.math.BigDecimal;
+import java.rmi.RemoteException;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ScaricoManualeMagazzinoBP extends SimpleCRUDBP {
 	private static final long serialVersionUID = 1L;
@@ -92,6 +91,7 @@ public class ScaricoManualeMagazzinoBP extends SimpleCRUDBP {
 	protected void init(Config config, ActionContext actioncontext) throws BusinessProcessException {
 		setTab("tabArticolo","tabBeneServizio");
 		super.init(config, actioncontext);
+		Configurazione_cnrBulk.stepFineAnno(actioncontext.getUserContext(), Configurazione_cnrBulk.StepFineAnno.CARICHI_SCARICHI_MAG);
 	}
 	@Override
 	public boolean isDeleteButtonHidden() {

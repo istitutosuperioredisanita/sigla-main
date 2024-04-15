@@ -182,7 +182,13 @@
 			columnName="ID_TIPO_DOCUMENTO_GENERICO"
 			propertyName="idTipoDocumentoGenerico"
 			sqlTypeName="DECIMAL"
-			columnSize="15" />			
+			columnSize="15" />
+		<columnMapping
+			columnName="CD_TIPO_CONTO_EP"
+			propertyName="cd_tipo_conto_ep"
+			sqlTypeName="VARCHAR"
+			columnSize="3"
+			nullable="true" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="dt_cancellazione" />
@@ -240,4 +246,6 @@
 		name="causale" />									
 	<persistentProperty
 		name="idTipoDocumentoGenerico" />
+	<persistentProperty
+		name="cd_tipo_conto_ep" />
 </SQLPersistentInfo>

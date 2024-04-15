@@ -46,6 +46,7 @@ CREATE OR REPLACE Procedure PRT_S_CE_RICLASSIFICATO_J
  AVERE1 NUMBER(20,3);
  DARE_CONTO  NUMBER(20,3);
  AVERE_CONTO NUMBER(20,3);
+ CONTAMOV  NUMBER := 0;
  M1     NUMBER;
  M2     NUMBER;
  M3     NUMBER;
@@ -226,8 +227,9 @@ Begin
             -- PER CONTI NORMALI
 
                 SELECT Nvl(sum(DECODE(D.SEZIONE, 'D', D.im_movimento)), 0),
-                       Nvl(sum(DECODE(D.SEZIONE, 'A', D.im_movimento)), 0)
-                INTO   DARE_CONTO, AVERE_CONTO
+                       Nvl(sum(DECODE(D.SEZIONE, 'A', D.im_movimento)), 0),
+                       COUNT(0)
+                INTO   DARE_CONTO, AVERE_CONTO, CONTAMOV
                 FROM   MOVIMENTO_COGE D, SCRITTURA_PARTITA_DOPPIA T
                 WHERE  T.CD_CDS  = D.CD_CDS   AND
                        T.ESERCIZIO = D.ESERCIZIO AND
@@ -250,7 +252,7 @@ Begin
                  (Nvl(TO_CHAR(D.DT_DA_COMPETENZA_COGE, 'YYYY'), D.ESERCIZIO) = TO_CHAR(INES+1) And Nvl(TO_CHAR(D.DT_A_COMPETENZA_COGE,  'YYYY'), D.ESERCIZIO) = TO_CHAR(INES+1)) ) And
                                D.TI_ISTITUZ_COMMERC = Decode(IST_COMM, '*', D.TI_ISTITUZ_COMMERC, IST_COMM);
 
-            If conti_sn = 'Y' Then
+            If conti_sn = 'Y' AND CONTAMOV>0 Then
                I := I + 1;
                -- inserimento dello schema di riclassificazione NELLA VIEW (FISSO)
                insert into PRT_VPG_BIL_RICLASSIFICATO (ID, CHIAVE, TIPO, SEQUENZA,
@@ -273,6 +275,7 @@ Begin
         Declare
             DARE_CDS NUMBER(20,3) := 0;
             AVERE_CDS NUMBER(20,3) := 0;
+            CONTAMOV_CDS NUMBER := 0;
         Begin
             For aCDS in (select CD_UNITA_ORGANIZZATIVA
         	     from   v_unita_organizzativa_valida
@@ -286,8 +289,9 @@ Begin
                   FLAG_TOT := 'S';
 
                   SELECT DARE_CDS + NVL(sum(DECODE(D.SEZIONE, 'D', D.im_movimento)), 0),
-                         AVERE_CDS + NVL(sum(DECODE(D.SEZIONE, 'A', D.im_movimento)), 0)
-                  INTO   DARE_CDS, AVERE_CDS
+                         AVERE_CDS + NVL(sum(DECODE(D.SEZIONE, 'A', D.im_movimento)), 0),
+                         CONTAMOV_CDS + 1 --NEL CAMPO CONTA METTO SEMPRE > 0 PER STAMPARE L'AVANZO
+                  INTO   DARE_CDS, AVERE_CDS, CONTAMOV_CDS
                   FROM   MOVIMENTO_COGE D, SCRITTURA_PARTITA_DOPPIA T
                   WHERE  T.CD_CDS  = D.CD_CDS   AND
                          T.ESERCIZIO = D.ESERCIZIO AND
@@ -316,8 +320,9 @@ Begin
                   -- PER CONTI NORMALI
 
                   SELECT DARE_CDS + NVL(sum(DECODE(D.SEZIONE, 'D', D.im_movimento)), 0),
-                         AVERE_CDS + NVL(sum(DECODE(D.SEZIONE, 'A', D.im_movimento)), 0)
-                  INTO   DARE_CDS, AVERE_CDS
+                         AVERE_CDS + NVL(sum(DECODE(D.SEZIONE, 'A', D.im_movimento)), 0),
+                         CONTAMOV_CDS + COUNT(0)
+                  INTO   DARE_CDS, AVERE_CDS, CONTAMOV_CDS
                   FROM   MOVIMENTO_COGE D, SCRITTURA_PARTITA_DOPPIA T
                   WHERE  T.CD_CDS  = D.CD_CDS   AND
                          T.ESERCIZIO = D.ESERCIZIO AND
@@ -355,8 +360,9 @@ Begin
 
                   If CHIUS_COEP.STATO Is Null Or CHIUS_COEP.STATO Not In ('P', 'C') Then
                      SELECT DARE_CDS - NVL(SUM(ROUND(IM_MOVIMENTO*ROUND((D.DT_A_COMPETENZA_COGE-to_date('0101'||TO_CHAR(INES+1),'DDMMYYYY')+1)/(D.DT_A_COMPETENZA_COGE - D.DT_DA_COMPETENZA_COGE+1), 2), 2)), 0),
-                            AVERE_CDS - NVL(SUM(ROUND(IM_MOVIMENTO*ROUND((D.DT_A_COMPETENZA_COGE-to_date('0101'||TO_CHAR(INES+1),'DDMMYYYY')+1)/(D.DT_A_COMPETENZA_COGE - D.DT_DA_COMPETENZA_COGE+1), 2), 2)), 0)
-                     INTO   DARE_CDS, AVERE_CDS
+                            AVERE_CDS - NVL(SUM(ROUND(IM_MOVIMENTO*ROUND((D.DT_A_COMPETENZA_COGE-to_date('0101'||TO_CHAR(INES+1),'DDMMYYYY')+1)/(D.DT_A_COMPETENZA_COGE - D.DT_DA_COMPETENZA_COGE+1), 2), 2)), 0),
+                            CONTAMOV_CDS + COUNT(0)
+                     INTO   DARE_CDS, AVERE_CDS, CONTAMOV_CDS
                      FROM   MOVIMENTO_COGE D, SCRITTURA_PARTITA_DOPPIA T
                      WHERE  T.CD_CDS  = D.CD_CDS   AND
                             T.ESERCIZIO = D.ESERCIZIO AND
@@ -378,7 +384,7 @@ Begin
                END IF;  -- CONTO AVANZO / CONTO NORMALE
             End Loop;  -- FINE CURSORE SU CDS
 
-            If conti_sn = 'Y' Then
+            If conti_sn = 'Y' AND CONTAMOV_CDS>0 Then
                I := I + 1;
                -- inserimento dello schema di riclassificazione NELLA VIEW (FISSO)
                insert into PRT_VPG_BIL_RICLASSIFICATO (ID, CHIAVE, TIPO, SEQUENZA,

@@ -4,6 +4,7 @@
  */
 package it.cnr.contab.doccont00.core.bulk;
 
+import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 public class Obbligazione_pluriennale_voceBulk extends Obbligazione_pluriennale_voceBase {
 	/**
@@ -14,6 +15,8 @@ public class Obbligazione_pluriennale_voceBulk extends Obbligazione_pluriennale_
 	 * [ELEMENTO_VOCE ]
 	 **/
 	private Elemento_voceBulk elementoVoce =  new Elemento_voceBulk();
+
+	private WorkpackageBulk linea_attivita = new WorkpackageBulk();
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: OBBLIGAZIONE_PLURIENNALE_VOCE
@@ -29,6 +32,8 @@ public class Obbligazione_pluriennale_voceBulk extends Obbligazione_pluriennale_
 		super(cdCds, esercizio, esercizioOriginale, pgObbligazione, anno, cdCentroResponsabilita, cdLineaAttivita, esercizioVoce, tiAppartenenza, tiGestione, cdVoce);
 		setObbligazionePluriennale( new Obbligazione_pluriennaleBulk(cdCds,esercizio,esercizioOriginale,pgObbligazione,anno) );
 		setElementoVoce( new Elemento_voceBulk(cdVoce,esercizioVoce,tiAppartenenza,tiGestione) );
+		setLinea_attivita(new it.cnr.contab.config00.latt.bulk.WorkpackageBulk(cdCentroResponsabilita,cdLineaAttivita));
+
 	}
 	public Obbligazione_pluriennaleBulk getObbligazionePluriennale() {
 		return obbligazionePluriennale;
@@ -196,30 +201,32 @@ public class Obbligazione_pluriennale_voceBulk extends Obbligazione_pluriennale_
 		this.getElementoVoce().setCd_elemento_voce(cdVoce);
 	}
 
-	public Obbligazione_pluriennale_voceBulk clone(Obbligazione_pluriennale_voceBulk obbligazionePlurVoce, it.cnr.jada.action.ActionContext context){
-		Obbligazione_pluriennale_voceBulk nuovo = null;
-
-		try {
-			nuovo = (Obbligazione_pluriennale_voceBulk)getClass().newInstance();
-		} catch (InstantiationException e) {
+	public java.lang.String getCd_centro_responsabilita() {
+		it.cnr.contab.config00.latt.bulk.WorkpackageBulk linea_attivita = this.getLinea_attivita();
+		if (linea_attivita == null)
 			return null;
-		} catch (IllegalAccessException e) {
+		it.cnr.contab.config00.sto.bulk.CdrBulk centro_responsabilita = linea_attivita.getCentro_responsabilita();
+		if (centro_responsabilita == null)
 			return null;
-		}
-		nuovo.setObbligazionePluriennale(obbligazionePlurVoce.getObbligazionePluriennale());
-		nuovo.setAnno(obbligazionePlurVoce.getAnno());
-		nuovo.setImporto(obbligazionePlurVoce.getImporto());
-		nuovo.setCdLineaAttivita(obbligazionePlurVoce.getCdLineaAttivita());
-		nuovo.setCdCds(obbligazionePlurVoce.getCdCds());
-		nuovo.setCdVoce(obbligazionePlurVoce.getCdVoce());
-		nuovo.setEsercizio(obbligazionePlurVoce.getEsercizio());
-		nuovo.setEsercizioOriginale(obbligazionePlurVoce.getEsercizioOriginale());
-		nuovo.setEsercizioVoce(obbligazionePlurVoce.getEsercizioVoce());
-		nuovo.setTiAppartenenza(obbligazionePlurVoce.getTiAppartenenza());
-		nuovo.setTiGestione(obbligazionePlurVoce.getTiGestione());
+		return centro_responsabilita.getCd_centro_responsabilita();
+	}
 
-		nuovo.setCrudStatus(TO_BE_CREATED);
-
-		return nuovo;
+	public void setCd_centro_responsabilita(java.lang.String cd_centro_responsabilita) {
+		this.getLinea_attivita().getCentro_responsabilita().setCd_centro_responsabilita(cd_centro_responsabilita);
+	}
+	public WorkpackageBulk getLinea_attivita() {
+		return linea_attivita;
+	}
+	public void setCd_linea_attivita(java.lang.String cd_linea_attivita) {
+		this.getLinea_attivita().setCd_linea_attivita(cd_linea_attivita);
+	}
+	public java.lang.String getCd_linea_attivita() {
+		it.cnr.contab.config00.latt.bulk.WorkpackageBulk linea_attivita = this.getLinea_attivita();
+		if (linea_attivita == null)
+			return null;
+		return linea_attivita.getCd_linea_attivita();
+	}
+	public void setLinea_attivita(WorkpackageBulk linea_attivita) {
+		this.linea_attivita = linea_attivita;
 	}
 }

@@ -36,6 +36,8 @@ public class TipoMovimentoMagBulk extends TipoMovimentoMagBase {
 	public final static String AZIONE_SOTTRAE = "-";
 	public final static String AZIONE_SOMMA = "+";
 
+	public static final String TIPO_MOVIMENTO_CHIUSURA="CHI";
+
 
 	public static final String CARICO_MANUALE = "CM";
 	public static final String CARICO_AUTOMATICO = "CA"; 

@@ -1357,7 +1357,7 @@ public java.util.List findCdr( List capitoliList, AccertamentoBulk accertamento 
         return sql;
     }
 
-    public java.util.Collection findAccertamentiPluriennali(it.cnr.jada.UserContext userContext, AccertamentoBulk bulk) throws IntrospectionException, PersistencyException {
+    public List<Accertamento_pluriennaleBulk> findAccertamentiPluriennali(it.cnr.jada.UserContext userContext, AccertamentoBulk bulk) throws IntrospectionException, PersistencyException {
         PersistentHome dettHome = getHomeCache().getHome(Accertamento_pluriennaleBulk.class);
         SQLBuilder sql = dettHome.createSQLBuilder();
         sql.addSQLClause("AND", "CD_CDS", sql.EQUALS, bulk.getCd_cds());

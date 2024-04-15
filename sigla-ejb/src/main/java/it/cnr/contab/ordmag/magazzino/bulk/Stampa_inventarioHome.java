@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.ordmag.anag00.TipoMovimentoMagBulk;
 import it.cnr.contab.ordmag.magazzino.dto.StampaInventarioDTO;
+import it.cnr.contab.ordmag.magazzino.dto.StampaInventarioDTOKey;
 import it.cnr.contab.reports.bulk.Print_spoolerBulk;
 import it.cnr.contab.reports.bulk.Print_spooler_paramBulk;
 
@@ -121,8 +122,6 @@ public class Stampa_inventarioHome extends BulkHome {
 		Print_spooler_paramBulk ordinamentoParam=params.stream().
 				filter(e->e.getNomeParam().equals(ORDINAMENTO)).findFirst().get();
 
-
-
 		Date dt = null;
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy/MM/dd");
 		try {
@@ -153,16 +152,18 @@ public class Stampa_inventarioHome extends BulkHome {
 		sql.addTableToHeader("Categoria_Gruppo_Invent","c");
 		sql.addSQLJoin("c.cd_categoria_gruppo","BENE_SERVIZIO.cd_categoria_gruppo(+)");
 		sql.addSQLClause(FindClause.AND,"LOTTO_MAG.DT_CARICO",SQLBuilder.LESS_EQUALS, new Timestamp(dt.getTime()));
+		sql.addSQLClause(FindClause.AND,"LOTTO_MAG.GIACENZA",SQLBuilder.GREATER, 0);
 		// codice magazzino uguale a quello in input
 		sql.addSQLClause(FindClause.AND,"LOTTO_MAG.CD_MAGAZZINO_MAG",SQLBuilder.EQUALS, codMag);
-		sql.addSQLClause(FindClause.AND,"LOTTO_MAG.GIACENZA",SQLBuilder.GREATER, 0);
-		if(catGruppo != null && !catGruppo.equals(Stampa_inventarioBulk.TUTTI)){
+		if(catGruppo != null && !catGruppo.equals(Valori_magazzinoBulk.TUTTI)){
 			sql.addTableToHeader("CATEGORIA_GRUPPO_INVENT","CATEGORIA_GRUPPO_INVENT");
 			sql.addSQLJoin("CATEGORIA_GRUPPO_INVENT.CD_CATEGORIA_GRUPPO","BENE_SERVIZIO.CD_CATEGORIA_GRUPPO");
 			//categoria gruppo uguale a quella in input
 			sql.addSQLClause(FindClause.AND,"CATEGORIA_GRUPPO_INVENT.CD_CATEGORIA_GRUPPO",SQLBuilder.EQUALS, catGruppo);
 		}
-		List<StampaInventarioDTO> inventario= new ArrayList<StampaInventarioDTO>();
+		List<StampaInventarioDTO> inventario=null;
+		Map<StampaInventarioDTOKey,StampaInventarioDTO> stampaInvMap= new HashMap<StampaInventarioDTOKey,StampaInventarioDTO>();
+
 		try {
 			List<LottoMagBulk> lotti=lottoMagHome.fetchAll(sql);
 			getHomeCache().fetchAll(uc);
@@ -185,9 +186,11 @@ public class Stampa_inventarioHome extends BulkHome {
 				inv.setDescCatGrp(m.getBeneServizio().getCategoria_gruppo().getDs_categoria_gruppo());
 				inv.setImportoUnitario(m.getCostoUnitario());
 				inv.setCdCds(m.getCdCds());
-				inventario.add(inv);
 
+				StampaInventarioDTOKey invKey = new StampaInventarioDTOKey(inv.getCdCds(),inv.getAnnoLotto(),inv.getNumeroLotto(),inv.getCd_magazzino(),inv.getCategoriaGruppo(),inv.getCod_articolo(),inv.getTipoLotto());
+				stampaInvMap.put(invKey,inv);
 			}
+
 			MovimentiMagHome movimentoMagHome = (MovimentiMagHome)getHomeCache().getHome(MovimentiMagBulk.class);
 
 			sql = movimentoMagHome.createSQLBuilder();
@@ -195,19 +198,17 @@ public class Stampa_inventarioHome extends BulkHome {
 			sql.generateJoin(MovimentiMagBulk.class, TipoMovimentoMagBulk.class, "tipoMovimentoMag","TIPO_MOVIMENTO_MAG");
 			sql.addTableToHeader("BENE_SERVIZIO","BENE_SERVIZIO");
 			sql.addSQLJoin("BENE_SERVIZIO.CD_BENE_SERVIZIO","LOTTO_MAG.CD_BENE_SERVIZIO");
-
 			// tipo movimento != CHIUSURE (CH)
 			sql.addSQLClause(FindClause.AND,"TIPO_MOVIMENTO_MAG.TIPO",SQLBuilder.NOT_EQUALS, TipoMovimentoMagBulk.CHIUSURE);
 			// stato movimento = STATO_INSERITO (INS)
 			sql.addSQLClause(FindClause.AND,"MOVIMENTI_MAG.STATO",SQLBuilder.EQUALS, MovimentiMagBulk.STATO_INSERITO);
-			// data movimento maggiore/uguale della data in input
-			sql.addSQLClause(FindClause.AND,"MOVIMENTI_MAG.DT_MOVIMENTO",SQLBuilder.GREATER, new Timestamp(dt.getTime()));
+			// data riferimento maggiore/uguale della data in input
+			sql.addSQLClause(FindClause.AND,"MOVIMENTI_MAG.DT_RIFERIMENTO",SQLBuilder.GREATER, new Timestamp(dt.getTime()));
 			// codice magazzino uguale a quello in input
 			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.CD_MAGAZZINO_MAG",SQLBuilder.EQUALS, codMag);
 			// data carico lotto minore/uguale della data in input
 			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.DT_CARICO",SQLBuilder.LESS_EQUALS, new Timestamp(dt.getTime()));
-
-			if(catGruppo != null && !catGruppo.equals(Stampa_inventarioBulk.TUTTI)){
+			if(catGruppo != null && !catGruppo.equals(Valori_magazzinoBulk.TUTTI)){
 				sql.addTableToHeader("CATEGORIA_GRUPPO_INVENT","CATEGORIA_GRUPPO_INVENT");
 				sql.addSQLJoin("CATEGORIA_GRUPPO_INVENT.CD_CATEGORIA_GRUPPO","BENE_SERVIZIO.CD_CATEGORIA_GRUPPO");
 				//categoria gruppo uguale a quella in input
@@ -217,29 +218,42 @@ public class Stampa_inventarioHome extends BulkHome {
 			List<MovimentiMagBulk> movimenti=movimentoMagHome.fetchAll(sql);
 			getHomeCache().fetchAll(uc);
 
-
-
-			for(StampaInventarioDTO invDto : inventario){
-				for(MovimentiMagBulk movimento : movimenti){
-					if( invDto.getAnnoLotto().compareTo(movimento.getLottoMag().getEsercizio()) == 0 &&
-						invDto.getNumeroLotto().compareTo(movimento.getLottoMag().getPgLotto()) == 0 &&
-						invDto.getTipoLotto().equals(movimento.getLottoMag().getCdNumeratoreMag()) &&
-						invDto.getCd_magazzino().equals(movimento.getLottoMag().getCdMagazzino()) &&
-						invDto.getCdCds().equals(movimento.getLottoMag().getCdCds()) &&
-						invDto.getCategoriaGruppo().equals(movimento.getLottoMag().getBeneServizio().getCd_categoria_gruppo()) &&
-						invDto.getCod_articolo().equals(movimento.getLottoMag().getCdBeneServizio()) )
-					{
-						if(movimento.getTipoMovimentoMag().getModAggQtaMagazzino().equals(TipoMovimentoMagBulk.AZIONE_SOTTRAE)){
-							invDto.setGiacenza(invDto.getGiacenza().add(movimento.getQuantitaEffettiva()));
-						}
-						if(movimento.getTipoMovimentoMag().getModAggQtaMagazzino().equals(TipoMovimentoMagBulk.AZIONE_SOMMA)){
-							invDto.setGiacenza(invDto.getGiacenza().subtract(movimento.getQuantitaEffettiva()));
-						}
-
-					}
+			for(MovimentiMagBulk movimento : movimenti){
+				StampaInventarioDTOKey invKey = new StampaInventarioDTOKey(movimento.getLottoMag().getCdCds(),movimento.getLottoMag().getEsercizio(),movimento.getLottoMag().getPgLotto(),movimento.getLottoMag().getCdMagazzino(),
+						                                                   movimento.getLottoMag().getBeneServizio().getCd_categoria_gruppo(),movimento.getLottoMag().getCdBeneServizio(),movimento.getLottoMag().getCdNumeratoreMag());
+				StampaInventarioDTO invDto = stampaInvMap.get(invKey);
+				if(invDto==null){
+					StampaInventarioDTO inv  =new StampaInventarioDTO();
+					inv.setCd_magazzino(movimento.getLottoMag().getCdMagazzino());
+					inv.setDesc_magazzino(movimento.getLottoMag().getMagazzino().getDsMagazzino());
+					inv.setCod_articolo(movimento.getLottoMag().getCdBeneServizio());
+					inv.setGiacenza(new BigDecimal(0));
+					inv.setAnnoLotto(movimento.getLottoMag().getEsercizio());
+					inv.setTipoLotto(movimento.getLottoMag().getCdNumeratoreMag());
+					inv.setNumeroLotto(movimento.getLottoMag().getPgLotto());
+					inv.setCategoriaGruppo(movimento.getLottoMag().getBeneServizio().getCd_categoria_gruppo());
+					inv.setDescArticolo(movimento.getLottoMag().getBeneServizio().getDs_bene_servizio());
+					inv.setCod_categoria(movimento.getLottoMag().getBeneServizio().getCategoria_gruppo().getCd_categoria_padre());
+					inv.setCod_gruppo(movimento.getLottoMag().getBeneServizio().getCategoria_gruppo().getCd_proprio());
+					inv.setUm(movimento.getLottoMag().getBeneServizio().getUnitaMisura().getCdUnitaMisura());
+					inv.setDescCatGrp(movimento.getLottoMag().getBeneServizio().getCategoria_gruppo().getDs_categoria_gruppo());
+					inv.setImportoUnitario(movimento.getLottoMag().getCostoUnitario());
+					inv.setCdCds(movimento.getCdCdsLotto());
+					stampaInvMap.put(invKey,inv);
+					invDto = stampaInvMap.get(invKey);
 				}
+				if(movimento.getTipoMovimentoMag().getModAggQtaMagazzino().equals(TipoMovimentoMagBulk.AZIONE_SOTTRAE)){
+					invDto.setGiacenza(invDto.getGiacenza().add(movimento.getQuantitaEffettiva()));
+				}
+				if(movimento.getTipoMovimentoMag().getModAggQtaMagazzino().equals(TipoMovimentoMagBulk.AZIONE_SOMMA)){
+					invDto.setGiacenza(invDto.getGiacenza().subtract(movimento.getQuantitaEffettiva()));
+				}
+				stampaInvMap.put(invKey,invDto);
 			}
+			inventario = stampaInvMap.values().stream().collect(Collectors.toList());
+
 			if(ordinamentoParam!=null){
+
 				if(ordinamentoParam.getValoreParam().equals(Stampa_inventarioBulk.ORD_CODICE)){
 					inventario = inventario.stream().sorted(Comparator.comparing(StampaInventarioDTO::getCod_articolo)).collect(Collectors.toList());
 				}
@@ -247,18 +261,12 @@ public class Stampa_inventarioHome extends BulkHome {
 					inventario = inventario.stream().sorted(Comparator.comparing(StampaInventarioDTO::getDescArticolo)).collect(Collectors.toList());
 				}
 			}
-
-
-
-			// ORDER BY PARAM CON STREAM
-
 		} catch (PersistencyException e) {
 			e.printStackTrace();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		String json=null;
 		try {
 			json=createJsonForPrint( inventario);

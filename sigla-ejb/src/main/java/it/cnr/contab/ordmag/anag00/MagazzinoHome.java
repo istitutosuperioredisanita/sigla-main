@@ -22,9 +22,15 @@
 package it.cnr.contab.ordmag.anag00;
 import java.rmi.RemoteException;
 import java.sql.Connection;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
 
 import it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk;
 import it.cnr.contab.anagraf00.tabter.bulk.ComuneHome;
+import it.cnr.contab.ordmag.magazzino.bulk.LottoMagBulk;
+import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagBulk;
+import it.cnr.contab.ordmag.magazzino.bulk.Valori_magazzinoBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
@@ -215,7 +221,30 @@ public class MagazzinoHome extends BulkHome {
 		sql.addSQLClause("AND", "UNITA_ORGANIZZATIVA.CD_UNITA_PADRE", SQLBuilder.EQUALS, CNRUserContext.getCd_cds(userContext));
 		return sql;
 	}
+	public List<MagazzinoBulk> getMagazziniFromRaggruppamento(UserContext uc, String codRaggrMag) throws PersistencyException {
 
+		SQLBuilder sql = createSQLBuilder();
+
+		sql.addSQLClause(FindClause.AND,"CD_CDS",SQLBuilder.EQUALS, CNRUserContext.getCd_cds(uc));
+		sql.addSQLClause(FindClause.AND, "CD_RAGGR_MAGAZZINO_RIM", SQLBuilder.EQUALS, codRaggrMag);
+
+
+		List<MagazzinoBulk> magazzini=fetchAll(sql);
+		getHomeCache().fetchAll(uc);
+
+		return magazzini;
+	}
+	public List<MagazzinoBulk> getAllRaggruppamentiMagazzini(UserContext uc) throws PersistencyException {
+
+		SQLBuilder sql = createSQLBuilder();
+		sql.setHeader( "SELECT DISTINCT CD_RAGGR_MAGAZZINO_RIM " );
+		sql.addSQLClause("AND","CD_CDS",SQLBuilder.EQUALS, CNRUserContext.getCd_cds(uc));
+
+		List<MagazzinoBulk> magazzini=fetchAll(sql);
+		getHomeCache().fetchAll(uc);
+
+		return magazzini;
+	}
 
 
 }

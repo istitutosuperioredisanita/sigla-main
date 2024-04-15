@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <property name="esercizio_successivo" value="to_number(to_char(SYSDATE, 'YYYY')) + 1" dbms="oracle"/>
+    <property name="esercizio_successivo" value="date_part('year', now()) + 1" dbms="postgresql"/>
+    <property name="esercizio_successivo" value="YEAR(CURRENT_DATE) + 1" dbms="h2"/>
+
+    <changeSet author="marco.spasiano" id="accessi_step_fine_anno">
+        <insert tableName="accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="SERVSTEPFINEANNO"/>
+            <column name="ti_accesso" type="CHAR(1)" value="C"/>
+            <column name="ds_accesso" type="VARCHAR(200)" value="Step di Fine Anno"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="ass_bp_accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="SERVSTEPFINEANNO"/>
+            <column name="business_process" type="VARCHAR(200)" value="SelezionatoreStepFineAnnoBP"/>
+            <column name="ti_funzione" type="CHAR(1)" value=""/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="albero_main">
+            <column name="cd_nodo" type="VARCHAR(100)" value="0.SERV.STEPFINEANNO"/>
+            <column name="ds_nodo" type="VARCHAR(200)" value="Step di Fine Anno"/>
+            <column name="cd_accesso" type="VARCHAR(20)" value="SERVSTEPFINEANNO"/>
+            <column name="business_process" type="VARCHAR(200)" value="SelezionatoreStepFineAnnoBP"/>
+            <column name="pg_ordinamento" type="BIGINT" value="60"/>
+            <column name="fl_terminale" type="CHAR(1)" value="Y"/>
+            <column name="livello" type="SMALLINT" value="2"/>
+            <column name="cd_proprio_nodo" type="VARCHAR(100)" value="STEPFINEANNO"/>
+            <column name="cd_nodo_padre" type="VARCHAR(100)" value="0.SERV"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+    </changeSet>
+    <changeSet author="marco.spasiano" id="configurazione_step_fine_anno">
+        <insert tableName="configurazione_cnr">
+            <column name="esercizio" type="NUMERIC" valueNumeric="${esercizio_successivo}"/>
+            <column name="cd_unita_funzionale" type="STRING" value="*"/>
+            <column name="cd_chiave_primaria" type="STRING" value="STEP_FINE_ANNO"/>
+            <column name="cd_chiave_secondaria" type="STRING" value="010_APERTURA_PREVISIONE"/>
+            <column name="val01" type="STRING" value="Apertura previsione"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="STRING" value="SYSTEM"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="STRING" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="NUMERIC" value="0"/>
+        </insert>
+        <insert tableName="configurazione_cnr">
+            <column name="esercizio" type="NUMERIC" valueNumeric="${esercizio_successivo}"/>
+            <column name="cd_unita_funzionale" type="STRING" value="*"/>
+            <column name="cd_chiave_primaria" type="STRING" value="STEP_FINE_ANNO"/>
+            <column name="cd_chiave_secondaria" type="STRING" value="020_ESERCIZIO_APERTO"/>
+            <column name="val01" type="STRING" value="Esercizio Aperto"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="STRING" value="SYSTEM"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="STRING" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="NUMERIC" value="0"/>
+        </insert>
+        <insert tableName="configurazione_cnr">
+            <column name="esercizio" type="NUMERIC" valueNumeric="${esercizio_successivo}"/>
+            <column name="cd_unita_funzionale" type="STRING" value="*"/>
+            <column name="cd_chiave_primaria" type="STRING" value="STEP_FINE_ANNO"/>
+            <column name="cd_chiave_secondaria" type="STRING" value="030_RIBALTAMENTO_ANAGRAFICHE"/>
+            <column name="val01" type="STRING" value="Ribaltamento Anagrafiche"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="STRING" value="SYSTEM"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="STRING" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="NUMERIC" value="0"/>
+        </insert>
+        <insert tableName="configurazione_cnr">
+            <column name="esercizio" type="NUMERIC" valueNumeric="${esercizio_successivo}"/>
+            <column name="cd_unita_funzionale" type="STRING" value="*"/>
+            <column name="cd_chiave_primaria" type="STRING" value="STEP_FINE_ANNO"/>
+            <column name="cd_chiave_secondaria" type="STRING" value="040_RIBALTAMENTO_RESIDUI"/>
+            <column name="val01" type="STRING" value="Ribaltamento Residui"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="STRING" value="SYSTEM"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="STRING" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="NUMERIC" value="0"/>
+        </insert>
+        <insert tableName="configurazione_cnr">
+            <column name="esercizio" type="NUMERIC" valueNumeric="${esercizio_successivo}"/>
+            <column name="cd_unita_funzionale" type="STRING" value="*"/>
+            <column name="cd_chiave_primaria" type="STRING" value="STEP_FINE_ANNO"/>
+            <column name="cd_chiave_secondaria" type="STRING" value="050_FINE_INVENTARIAZIONE"/>
+            <column name="val01" type="STRING" value="Fine attività di inventariazione"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="STRING" value="SYSTEM"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="STRING" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="NUMERIC" value="0"/>
+        </insert>
+        <insert tableName="configurazione_cnr">
+            <column name="esercizio" type="NUMERIC" valueNumeric="${esercizio_successivo}"/>
+            <column name="cd_unita_funzionale" type="STRING" value="*"/>
+            <column name="cd_chiave_primaria" type="STRING" value="STEP_FINE_ANNO"/>
+            <column name="cd_chiave_secondaria" type="STRING" value="060_FINE_EVASIONE"/>
+            <column name="val01" type="STRING" value="Fine attività di evasione"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="STRING" value="SYSTEM"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="STRING" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="NUMERIC" value="0"/>
+        </insert>
+        <insert tableName="configurazione_cnr">
+            <column name="esercizio" type="NUMERIC" valueNumeric="${esercizio_successivo}"/>
+            <column name="cd_unita_funzionale" type="STRING" value="*"/>
+            <column name="cd_chiave_primaria" type="STRING" value="STEP_FINE_ANNO"/>
+            <column name="cd_chiave_secondaria" type="STRING" value="070_FATTURE_DA_RICEVERE"/>
+            <column name="val01" type="STRING" value="Calcolo fatture da Ricevere"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="STRING" value="SYSTEM"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="STRING" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="NUMERIC" value="0"/>
+        </insert>
+        <insert tableName="configurazione_cnr">
+            <column name="esercizio" type="NUMERIC" valueNumeric="${esercizio_successivo}"/>
+            <column name="cd_unita_funzionale" type="STRING" value="*"/>
+            <column name="cd_chiave_primaria" type="STRING" value="STEP_FINE_ANNO"/>
+            <column name="cd_chiave_secondaria" type="STRING" value="080_RATEI_RISCONTI"/>
+            <column name="val01" type="STRING" value="Calcolo Ratei e Risconti"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="STRING" value="SYSTEM"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="STRING" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="NUMERIC" value="0"/>
+        </insert>
+        <insert tableName="configurazione_cnr">
+            <column name="esercizio" type="NUMERIC" valueNumeric="${esercizio_successivo}"/>
+            <column name="cd_unita_funzionale" type="STRING" value="*"/>
+            <column name="cd_chiave_primaria" type="STRING" value="STEP_FINE_ANNO"/>
+            <column name="cd_chiave_secondaria" type="STRING" value="090_CHIUSURA_PROVVISORIA"/>
+            <column name="val01" type="STRING" value="Chiusura Provvisoria"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="STRING" value="SYSTEM"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="STRING" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="NUMERIC" value="0"/>
+        </insert>
+        <insert tableName="configurazione_cnr">
+            <column name="esercizio" type="NUMERIC" valueNumeric="${esercizio_successivo}"/>
+            <column name="cd_unita_funzionale" type="STRING" value="*"/>
+            <column name="cd_chiave_primaria" type="STRING" value="STEP_FINE_ANNO"/>
+            <column name="cd_chiave_secondaria" type="STRING" value="100_CHIUSURA_DEFINITIVA"/>
+            <column name="val01" type="STRING" value="Chiusura Definitiva"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="STRING" value="SYSTEM"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="STRING" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="NUMERIC" value="0"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

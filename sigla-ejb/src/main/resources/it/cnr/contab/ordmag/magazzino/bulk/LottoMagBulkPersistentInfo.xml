@@ -69,6 +69,9 @@
 		<columnMapping
 			columnName="CD_DIVISA"
 			propertyName="divisa.cd_divisa" />
+		<columnMapping
+				columnName="CD_VOCE_IVA"
+				propertyName="voceIva.cd_voce_iva" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="numerazioneMag"
@@ -83,4 +86,6 @@
 		name="terzo" />
 	<persistentProperty
 		name="divisa" />
+	<persistentProperty
+			name="voceIva" />
 </SQLPersistentInfo>

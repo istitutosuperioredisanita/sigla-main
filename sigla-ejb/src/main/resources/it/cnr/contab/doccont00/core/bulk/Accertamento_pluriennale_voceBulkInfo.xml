@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="cdCds"
+		property="accertamentoPluriennale.accertamento.cds.cd_unita_organizzativa"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Cds dell'accertamento" />
+	<fieldProperty
+		name="esercizio"
+		property="accertamentoPluriennale.accertamento.esercizio"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Esercizio dell'accertamento" />
+	<fieldProperty
+		name="esercizioOriginale"
+		property="accertamentoPluriennale.accertamento.esercizioOriginale"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Esercizio Originale dell'accertamento" />
+	<fieldProperty
+		name="pgAccertamento"
+		property="accertamentoPluriennale.accertamento.pgAccertamento"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Numero dell'accertamento" />
+	<fieldProperty
+		name="anno"
+		property="accertamentoPluriennale.anno"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Anno Accertamento Pluriennale" />
+	<fieldProperty
+		name="cdCentroResponsabilita"
+		property="linea_attivita.centro_responsabilita.cd_centro_responsabilita"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Codice identificativo del centro di responsabilità" />
+	<fieldProperty
+		name="cdLineaAttivita"
+		property="linea_attivita.cd_linea_attivita"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Codice della linea di attivita" />
+	<fieldProperty
+		name="importo"
+		property="importo"
+		inputType="TEXT"
+		formatName="it.cnr.contab.util.EuroFormat"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Importo del dettaglio per la linea attivita" />
+	<form
+		name="searchtool">
+		<formFieldProperty
+			name="cdCds" />
+		<formFieldProperty
+			name="esercizio" />
+		<formFieldProperty
+			name="esercizioOriginale" />
+		<formFieldProperty
+			name="pgAccertamento" />
+		<formFieldProperty
+			name="anno" />
+		<formFieldProperty
+			name="cdCentroResponsabilita" />
+		<formFieldProperty
+			name="cdLineaAttivita" />
+	</form>
+	<formFieldProperty
+		name="cdCentroResponsabilita" />
+	<formFieldProperty
+		name="cdLineaAttivita" />
+	<formFieldProperty
+		name="importo" />
+	<findFieldProperty
+		name="cdCds" />
+	<findFieldProperty
+		name="esercizio" />
+	<findFieldProperty
+		name="esercizioOriginale" />
+	<findFieldProperty
+		name="pgAccertamento" />
+	<findFieldProperty
+		name="anno" />
+	<findFieldProperty
+		name="cdCentroResponsabilita" />
+	<findFieldProperty
+		name="cdLineaAttivita" />
+	<findFieldProperty
+		name="importo" />
+	<columnFieldProperty
+		name="cdCds" />
+	<columnFieldProperty
+		name="esercizio" />
+	<columnFieldProperty
+		name="esercizioOriginale" />
+	<columnFieldProperty
+		name="pgAccertamento" />
+	<columnFieldProperty
+		name="anno" />
+	<columnFieldProperty
+		name="cdCentroResponsabilita" />
+	<columnFieldProperty
+		name="cdLineaAttivita" />
+	<columnFieldProperty
+		name="importo" />
+</bulkInfo>

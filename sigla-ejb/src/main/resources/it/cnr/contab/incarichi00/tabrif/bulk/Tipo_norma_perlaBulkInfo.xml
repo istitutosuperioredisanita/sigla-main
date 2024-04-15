@@ -142,4 +142,14 @@
 			inputType="TEXT"
 			inputSize="30" />
 	</form>
+
+	<columnSet name="restService">
+		<columnFieldProperty name="cd_tipo_norma" />
+		<columnFieldProperty name="ds_tipo_norma" />
+		<columnFieldProperty name="cd_tipo_norma_perla" />
+		<columnFieldProperty name="numero_tipo_norma" />
+		<columnFieldProperty name="dt_tipo_norma" />
+		<columnFieldProperty name="comma_tipo_norma" />
+		<columnFieldProperty name="articolo_tipo_norma"/>
+	</columnSet>
 </bulkInfo>

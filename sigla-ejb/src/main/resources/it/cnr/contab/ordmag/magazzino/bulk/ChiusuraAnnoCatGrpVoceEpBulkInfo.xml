@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="pgChiusura"
+		property="chiusuraAnno.pgChiusura"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Progressivo record chiusura" />
+	<fieldProperty
+		name="anno"
+		property="chiusuraAnno.anno"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Anno di chiusura" />
+	<fieldProperty
+		name="tipoChiusura"
+		property="chiusuraAnno.tipoChiusura"
+		inputType="TEXT"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="M=Magazzino; I=Inventario" />
+	<fieldProperty
+		name="cdCategoriaGruppo"
+		property="categoriaGruppoInvent.cd_categoria_gruppo"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Codice categoria/gruppo" />
+	<fieldProperty
+		name="esercizio"
+		property="voceEp.esercizio"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Esercizio." />
+	<fieldProperty
+		name="cdVoceEp"
+		property="voceEp.cd_voce_ep"
+		inputType="TEXT"
+		inputSize="20"
+		maxLength="20"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Codice Identificativo completo del conto del piano." />
+	<fieldProperty
+		name="impTotale"
+		property="impTotale"
+		inputType="TEXT"
+		inputSize="21"
+		maxLength="21"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Importo totale per la categoria gruppo" />
+	<fieldProperty
+			name="impPlusValenze"
+			property="impPlusValenze"
+			inputType="TEXT"
+			inputSize="21"
+			maxLength="21"
+			enabledOnEdit="false"
+			nullable="false"
+			label="Importo totale delle plusvalenze" />
+	<fieldProperty
+			name="impMinusValenze"
+			property="impMinusValenze"
+			inputType="TEXT"
+			inputSize="21"
+			maxLength="21"
+			enabledOnEdit="false"
+			nullable="false"
+			label="Importo totale delle minusvalenze" />
+	<form
+		name="searchtool">
+		<formFieldProperty
+			name="pgChiusura" />
+		<formFieldProperty
+			name="anno" />
+		<formFieldProperty
+			name="tipoChiusura" />
+		<formFieldProperty
+			name="cdCategoriaGruppo" />
+		<formFieldProperty
+			name="esercizio" />
+		<formFieldProperty
+			name="cdVoceEp" />
+	</form>
+	<formFieldProperty
+		name="impTotale" />
+	<findFieldProperty
+		name="pgChiusura" />
+	<findFieldProperty
+		name="anno" />
+	<findFieldProperty
+		name="tipoChiusura" />
+	<findFieldProperty
+		name="cdCategoriaGruppo" />
+	<findFieldProperty
+		name="esercizio" />
+	<findFieldProperty
+		name="cdVoceEp" />
+	<findFieldProperty
+		name="impTotale" />
+	<columnFieldProperty
+		name="pgChiusura" />
+	<columnFieldProperty
+		name="anno" />
+	<columnFieldProperty
+		name="tipoChiusura" />
+	<columnFieldProperty
+		name="cdCategoriaGruppo" />
+	<columnFieldProperty
+		name="esercizio" />
+	<columnFieldProperty
+		name="cdVoceEp" />
+	<columnFieldProperty
+		name="impTotale" />
+	<columnFieldProperty
+			name="impPlusValenze" />
+	<columnFieldProperty
+			name="impMinusValenze" />
+</bulkInfo>

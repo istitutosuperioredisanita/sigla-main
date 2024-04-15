@@ -22,13 +22,11 @@ import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
-import it.cnr.contab.docamm00.bp.CRUDDocumentoGenericoAttivoBP;
-import it.cnr.contab.docamm00.bp.CRUDDocumentoGenericoPassivoBP;
-import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoBP;
-import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoSpesaBP;
+import it.cnr.contab.docamm00.bp.*;
 import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.docamm00.ejb.DocumentoGenericoComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaAttivaSingolaComponentSession;
+import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.inventario00.bp.AssBeneFatturaBP;
@@ -55,6 +53,7 @@ import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.jada.util.action.SelezionatoreListaBP;
+import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import javax.ejb.EJBException;
@@ -2772,7 +2771,7 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
 
             if (("tabDocumentoAttivo".equalsIgnoreCase(bp.getTab(tabName)) ||
                     "tabDocumentoPassivo".equalsIgnoreCase(bp.getTab(tabName))) &&
-                    !bp.isSearching() && !bp.isViewing() && !documento.isRODateCompetenzaCOGE())
+                    !bp.isSearching() && !bp.isViewing())
                 documento.validaDateCompetenza();
 
             if ("tabDocumentoGenericoObbligazioni".equalsIgnoreCase(bp.getTab(tabName))) {
@@ -3901,4 +3900,102 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
         }
         return context.findDefaultForward();
     }
+
+    /**
+     * Gestisce il cambiamento della data competenza coge 'a'
+     *
+     * @param context L'ActionContext della richiesta
+     * @return Il Forward alla pagina di risposta
+     */
+    public Forward doOnDataCompetenzaACogeChange(ActionContext context) {
+        SimpleCRUDBP bp = (SimpleCRUDBP) getBusinessProcess(context);
+        Documento_genericoBulk documentoGenericoBulk = (Documento_genericoBulk) bp.getModel();
+        java.sql.Timestamp competenzaABck = documentoGenericoBulk.getDt_a_competenza_coge();
+        try {
+            fillModel(context);
+            java.sql.Timestamp competenzaDa = documentoGenericoBulk.getDt_da_competenza_coge();
+            java.sql.Timestamp competenzaA = documentoGenericoBulk.getDt_a_competenza_coge();
+            if (competenzaA != null) {
+                java.util.GregorianCalendar tsOdiernoGregorian = new GregorianCalendar();
+                tsOdiernoGregorian.setTime(new java.util.Date(competenzaA.getTime()));
+
+                Integer esercizioCompetenzaA = new Integer(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
+                String cds = documentoGenericoBulk.getCd_cds();
+
+                if (competenzaA != null && competenzaDa != null)
+                    if (!competenzaDa.equals(competenzaA) && !competenzaDa.before(competenzaA))
+                        throw new it.cnr.jada.comp.ApplicationException("La data \"competenza da\" deve essere precedente o uguale a \"competenza a\"!");
+                if (((DocumentoGenericoComponentSession) bp.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaA, cds) &&
+                        !documentoGenericoBulk.getStato_coge().equals("NON_PROCESSARE_IN_COGE"))
+                    throw new it.cnr.jada.comp.ApplicationException("Le date \"Competenza da\" e \"Competenza a\" non possono appartenere ad un esercizio chiuso");
+                documentoGenericoBulk
+                        .getDocumento_generico_dettColl()
+                        .stream()
+                        .forEach(documentoGenericoRigaBulk -> {
+                            documentoGenericoRigaBulk.setDt_a_competenza_coge(competenzaA);
+                            documentoGenericoRigaBulk.setToBeUpdated();
+                        });
+
+            }
+            bp.setModel(context, documentoGenericoBulk);
+            return context.findDefaultForward();
+        } catch (Throwable t) {
+            documentoGenericoBulk.setDt_a_competenza_coge(competenzaABck);
+            try {
+                bp.setModel(context, documentoGenericoBulk);
+            } catch (BusinessProcessException e) {
+                return handleException(context, e);
+            }
+            return handleException(context, t);
+        }
+    }
+
+    /**
+     * Gestisce il cambiamento della data competenza coge 'da' *
+     *
+     * @param context L'ActionContext della richiesta
+     * @return Il Forward alla pagina di risposta
+     */
+    public Forward doOnDataCompetenzaDaCogeChange(ActionContext context) {
+        SimpleCRUDBP bp = (SimpleCRUDBP) getBusinessProcess(context);
+        Documento_genericoBulk documentoGenericoBulk = (Documento_genericoBulk) bp.getModel();
+        java.sql.Timestamp competenzaDaBck = documentoGenericoBulk.getDt_da_competenza_coge();
+        try {
+            fillModel(context);
+            java.sql.Timestamp competenzaDa = documentoGenericoBulk.getDt_da_competenza_coge();
+            java.sql.Timestamp competenzaA = documentoGenericoBulk.getDt_a_competenza_coge();
+            if (competenzaDa != null) {
+                java.util.GregorianCalendar tsOdiernoGregorian = new GregorianCalendar();
+                tsOdiernoGregorian.setTime(new java.util.Date(competenzaDa.getTime()));
+
+                Integer esercizioCompetenzaDa = new Integer(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
+                String cds = documentoGenericoBulk.getCd_cds();
+
+                if (competenzaA != null && competenzaDa != null)
+                    if (!competenzaDa.equals(competenzaA) && !competenzaDa.before(competenzaA))
+                        throw new it.cnr.jada.comp.ApplicationException("La data \"competenza a\" deve essere successiva o uguale a \"competenza da\"!");
+                if (((DocumentoGenericoComponentSession) bp.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaDa, cds) &&
+                        !documentoGenericoBulk.getStato_coge().equals("NON_PROCESSARE_IN_COGE"))
+                    throw new it.cnr.jada.comp.ApplicationException("Le date \"Competenza da\" e \"Competenza a\" non possono appartenere ad un esercizio chiuso");
+                documentoGenericoBulk
+                            .getDocumento_generico_dettColl()
+                            .stream()
+                            .forEach(documentoGenericoRigaBulk -> {
+                                documentoGenericoRigaBulk.setDt_da_competenza_coge(competenzaDa);
+                                documentoGenericoRigaBulk.setToBeUpdated();
+                            });
+            }
+            bp.setModel(context, documentoGenericoBulk);
+            return context.findDefaultForward();
+        } catch (Throwable t) {
+            documentoGenericoBulk.setDt_da_competenza_coge(competenzaDaBck);
+            try {
+                bp.setModel(context, documentoGenericoBulk);
+            } catch (BusinessProcessException e) {
+                return handleException(context, e);
+            }
+            return handleException(context, t);
+        }
+    }
+
 }

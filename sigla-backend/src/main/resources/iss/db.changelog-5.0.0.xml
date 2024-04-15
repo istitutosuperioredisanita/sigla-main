@@ -112,5 +112,9 @@
     <!-- Autore : CIRO SALVIO - Aggiunta possibilità di lanciare da applicazione la copia del bilancio previsionale su quello decisionale -->
     <include file="iss/add_prc_copia_bil_decisionale_to_gestionale_schedulazione.xml"></include>
 
+    <!-- Autore : CIRO SALVIO - Modifica dicitura bollo con Imposta di bollo assolta virtualemente -->
+    <include file="iss/update_dicitura_bollo_su_report.xml"></include>
+
+
 
 </databaseChangeLog>

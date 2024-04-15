@@ -20,6 +20,7 @@ package it.cnr.contab.ordmag.ordini.bp;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.core.bulk.V_persona_fisicaBulk;
 import it.cnr.contab.config00.bulk.CigBulk;
+import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
 import it.cnr.contab.config00.contratto.bulk.Procedure_amministrativeBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
@@ -83,8 +84,10 @@ public class ParametriSelezioneOrdiniAcqBP extends BulkBP {
     protected void init(it.cnr.jada.action.Config config, ActionContext context) throws BusinessProcessException {
         super.init(config, context);
         try {
-
             this.setTipoSelezione(config.getInitParameter("tipoSelezione"));
+            if (EVA_FORZATA_ORDINI.equalsIgnoreCase(getTipoSelezione())) {
+                Configurazione_cnrBulk.stepFineAnno(context.getUserContext(), Configurazione_cnrBulk.StepFineAnno.FINE_EVASIONE);
+            }
             ParametriSelezioneOrdiniAcqBulk bulk = createEmptyModelForSearch(context);
             bulk = (ParametriSelezioneOrdiniAcqBulk) ((OrdineAcqComponentSession) createComponentSession(context)).initializeAbilitazioneOrdiniAcq(context.getUserContext(), bulk);
             setModel(context, bulk);

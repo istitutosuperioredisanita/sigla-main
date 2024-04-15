@@ -2175,7 +2175,9 @@ public class MandatoComponent extends ScritturaPartitaDoppiaFromDocumentoCompone
 
             ((MandatoIBulk) mandato).addToMandato_rigaColl(riga, docPassivo);
 
-            if (docPassivo.getCd_sospeso() != null && docPassivo.getIm_imponibile_doc_amm().compareTo(BigDecimal.ZERO)>0)
+            if (docPassivo.getCd_sospeso() != null && (docPassivo.getIm_imponibile_doc_amm().compareTo(BigDecimal.ZERO)>0
+                    ||(docPassivo.getCd_tipo_documento_amm().equalsIgnoreCase(Documento_genericoBulk.GENERICO_S)
+                        && docPassivo.getIm_totale_doc_amm().compareTo(BigDecimal.ZERO)>0)))
                 ((MandatoIBulk) mandato).getSospesiDa1210List().add(
                         docPassivo.getCd_sospeso());
 

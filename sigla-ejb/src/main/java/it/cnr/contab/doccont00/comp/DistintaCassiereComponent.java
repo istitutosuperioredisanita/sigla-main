@@ -6179,25 +6179,31 @@ public class DistintaCassiereComponent extends
     }
 
     private String getRiferimentoDocumentoEsternoBOE(V_mandato_reversaleBulk bulk,VDocumentiFlussoBulk  docContabile) throws  ApplicationMessageFormatException{
+
         String iban =Optional.ofNullable(docContabile.getCodiceIban())
-                .orElseThrow(() -> new ApplicationMessageFormatException("Impossibile generare il flusso, manca il codice iban " +
+                .orElse(null);
+        if ( iban!=null) {
+            String bic = Optional.ofNullable(docContabile.getBic())
+                    .filter(s -> Optional.ofNullable(docContabile.getCodiceIban()).isPresent())
+                    .filter(s -> patternBic.matcher(s).find())
+                    .orElseThrow(() -> new ApplicationMessageFormatException("Impossibile generare il flusso, codice BIC: {0} non valido " +
+                            "sul Mandato {1}/{2}/{3}",
+                            docContabile.getBic(),
+                            String.valueOf(bulk.getEsercizio()),
+                            String.valueOf(bulk.getCd_cds()),
+                            String.valueOf(bulk.getPg_documento_cont())
+                    ));
+
+            return "SWIFT CODE:".concat(bic).concat(" ").concat(" IBAN CODE:").concat(iban);
+        }
+        String intestazioneModPag =Optional.ofNullable(docContabile.getIntestazioneModPag())
+                .orElseThrow(() -> new ApplicationMessageFormatException("Impossibile generare il flusso, manca sia il codice iban che l'intestazione" +
                         "sul Mandato {0}/{1}/{2}",
                         String.valueOf(bulk.getEsercizio()),
                         String.valueOf(bulk.getCd_cds()),
                         String.valueOf(bulk.getPg_documento_cont())
                 ));
-        String bic=Optional.ofNullable(docContabile.getBic())
-                .filter(s -> Optional.ofNullable(docContabile.getCodiceIban()).isPresent())
-                .filter(s -> patternBic.matcher(s).find())
-                .orElseThrow(() -> new ApplicationMessageFormatException("Impossibile generare il flusso, codice BIC: {0} non valido " +
-                        "sul Mandato {1}/{2}/{3}",
-                        docContabile.getBic(),
-                        String.valueOf(bulk.getEsercizio()),
-                        String.valueOf(bulk.getCd_cds()),
-                        String.valueOf(bulk.getPg_documento_cont())
-                ));
-
-        return "SWIFT CODE:".concat( bic ) .concat(" ").concat( " IBAN CODE:").concat(iban);
+        return intestazioneModPag;
     }
     private void caricaInformazioniAggiuntive(Mandato.InformazioniBeneficiario infoben,
                                               V_mandato_reversaleBulk bulk,

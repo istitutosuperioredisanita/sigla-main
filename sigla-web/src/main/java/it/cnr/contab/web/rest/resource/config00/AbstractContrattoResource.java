@@ -22,16 +22,11 @@ import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.PersistencyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.util.CollectionUtils;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.text.html.Option;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -111,7 +106,7 @@ public abstract class AbstractContrattoResource {
     public void validateContratto(ContrattoDtoBulk contrattoBulk,CNRUserContext userContext) throws RemoteException, ComponentException {
         //Check valore tipoDettaglioContratto
         if (Optional.ofNullable(contrattoBulk.getTipo_dettaglio_contratto()).isPresent()){
-            if ( Utility.createConfigurazioneCnrComponentSession().isAttivoOrdini(userContext))
+            if ( !Utility.createConfigurazioneCnrComponentSession().isAttivoOrdini(userContext))
                 throw new RestException(Response.Status.BAD_REQUEST,String.format("Il dettaglio del contratto non è previsto su questa installazione SIGLA"));
 
             /*
@@ -206,7 +201,7 @@ public abstract class AbstractContrattoResource {
         return attachments;
     }
 
-    private ContrattoBulk creaContrattoSigla(ContrattoDtoBulk contrattoBulk, CNRUserContext userContext) throws PersistencyException, ValidationException, ComponentException, RemoteException {
+    protected ContrattoBulk creaContrattoSigla(ContrattoDtoBulk contrattoBulk, CNRUserContext userContext) throws PersistencyException, ValidationException, ComponentException, RemoteException {
         ContrattoBulk contrattoBulkSigla = new ContrattoBulk();
         if (Optional.ofNullable(contrattoBulk.getCd_unita_organizzativa()).isPresent()){
             contrattoBulkSigla.setUnita_organizzativa(new Unita_organizzativaBulk());

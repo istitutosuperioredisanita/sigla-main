@@ -101,11 +101,21 @@
 -- Sdoppiati i Ribaltamenti (Per il PDGP e Altro)
 -- Constants:
 --
+-- Date: 10/11/2023
+-- Version: 1.19
+-- Inserito job per lanciare il ribaltamento altro da SIGLA applicazione
+--
+-- Date: 20/11/2023
+-- Version: 1.19
+-- Inserito job per lanciare la copia del bilancio Decisionale al Gestionale
+-- Constants:
+--
 -- Descrizione utente
 cgUtente constant varchar2(20) := '$$$$RIBALTAMENTO$$$$';
 -- Descrizione processo
 dsProcesso_pdgp constant varchar2(300) := 'Ribaltamento configurazione, str.organizzativa, anagrafica capitoli, PdC EP per PDGP';
 dsProcesso_altro constant varchar2(300) := 'Ribaltamento configurazione, str.organizzativa, anagrafica capitoli, PdC EP';
+dsProcesso_prev_gest constant varchar2(300) := 'Ribaltamento bilancio Previsione su Decisionale';
 --
 -- Tipo Log
 TI_LOG_RIBALTAMENTO_PDGP CONSTANT VARCHAR2(20) := 'RIB_CONF_ES00';
@@ -188,4 +198,9 @@ procedure endLogRibaltamentoAltro(aEs number, aPgEsec number, aStato in out char
 procedure ins_RIBALTAMENTO_LOG (aDest RIBALTAMENTO_LOG%rowtype);
 --
 procedure JOB_RIBALTAMENTO_PDGP(job number, pg_exec number, next_date date, aEs number);
+--
+procedure JOB_RIBALTAMENTO_ALTRO_PDGP(job number, pg_exec number, next_date date, aEs number);
+--
+procedure JOB_RIBALTAMENTO_DECIS_GEST(job number, pg_exec number, next_date date, aEs number, aCdCentroResponsabilita VARCHAR2,aCdLineaAttivita VARCHAR2 );
+
 end;

@@ -104,6 +104,7 @@
 		inputType="TEXT"
 		formatName="date_short"
 		nullable="false"
+		command="doOnDtBollaChange"
 		label="Data Bolla" />
 	<fieldProperty
 		name="numeroBolla"
@@ -123,6 +124,7 @@
 		enabledOnEdit="true"
 		enabledOnInsert="true"
 		nullable="false"
+		command="doOnDtConsegnaChange"
 		label="Data Consegna" />
 	<fieldProperty
 		name="stato"

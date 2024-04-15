@@ -45,8 +45,8 @@ public class RestServiceContrattiTest {
         ObjectMapper mapper = new ObjectMapper();
         ContrattoDtoBulk c = new ContrattoDtoBulk();
         c.setEsercizio(2023);
-        c.setCodiceFlussoAcquisti( "G00127");
-        c.setCd_unita_organizzativa("000.000");
+        c.setCodiceFlussoAcquisti( "G00130");
+        c.setCd_unita_organizzativa("000.001");
         c.setCodfisPivaRupExt("RGLNLR52E69Z600O");
         c.setCodfisPivaAggiudicatarioExt("05923561004");
         //c.setCodfisPivaFirmatarioExt("ZNCMRT79E49H501E");
@@ -107,7 +107,8 @@ public class RestServiceContrattiTest {
         HttpPost method = new HttpPost("http://localhost:8080/SIGLA/restapi/contrattoMaggioli");
         method.addHeader("Accept-Language", Locale.getDefault().toString());
         method.setHeader("Content-Type", "application/json;charset=UTF-8");
-        method.setHeader(SIGLASecurityContext.X_SIGLA_CD_CDS,"000");
+        method.setHeader(SIGLASecurityContext.X_SIGLA_CD_CDS,"999");
+        method.setHeader(SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA, "999.999");
         method.setEntity(e);
         HttpResponse response = client.execute(method);//Replace HttpPost with HttpGet if you need to perform a GET to login
         int statusCode = response.getStatusLine().getStatusCode();

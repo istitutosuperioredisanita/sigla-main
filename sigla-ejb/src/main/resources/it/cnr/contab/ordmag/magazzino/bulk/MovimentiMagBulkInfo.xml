@@ -347,13 +347,31 @@
 		nullable="false"
 		label="Ragione Soc." />
 	<fieldProperty
-		name="cdVoceIva"
-		property="lottoMag.ordineAcqConsegna.ordineAcqRiga.voce_iva.cd_voce_iva"
-		inputType="TEXT"
-		inputSize="10"
-		maxLength="10"
-		enabledOnEdit="false"
-		label="Cod. IVA" />
+			name="voce_iva"
+			property="voceIva"
+			inputType="SEARCHTOOL"
+			enabledOnSearch="false"
+			formName="searchtool_large"
+			nullable="false"
+			label="I.V.A."
+			enabledOnEdit="true" />
+	<fieldProperty
+			name="cd_voce_iva"
+			property="voceIva.cd_voce_iva"
+			maxLength="30"
+			inputSize="6"
+			inputType="TEXT"
+			nullable="false"
+			label="I.V.A."
+			caseSensitiveSearch="false" />
+	<fieldProperty
+			name="imIva"
+			property="imIva"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.GenericImportoFormat"
+			enabledOnEdit="false"
+			nullable="false"
+			label="Iva" />
 	<fieldProperty
 		name="sconto1"
 		property="sconto1"
@@ -642,6 +660,12 @@
 		name="stato" />
 	<formFieldProperty
 		name="dtCancellazione" />
+	<formFieldProperty
+			name="voce_iva" />
+	<formFieldProperty
+			name="cd_voce_iva" />
+	<formFieldProperty
+			name="imIva" />
 	<findFieldProperty
 		name="pgMovimento" />
 	<findFieldProperty
@@ -706,8 +730,7 @@
 		name="cdMagazzino" />
 	<findFieldProperty
 		name="cdBeneServizio" />
-	<findFieldProperty
-		name="cdVoceIva" />
+
 	<findFieldProperty
 		name="sconto1" />
 	<findFieldProperty
@@ -774,6 +797,10 @@
 		<columnFieldProperty
 			name="prezzoUnitario"
 			columnStyle="text-align: right"/>
+		<columnFieldProperty
+				name="cd_voce_iva" />
+		<columnFieldProperty
+				name="imIva" />
 		<columnFieldProperty
 			name="cdUop" />
 		<columnFieldProperty

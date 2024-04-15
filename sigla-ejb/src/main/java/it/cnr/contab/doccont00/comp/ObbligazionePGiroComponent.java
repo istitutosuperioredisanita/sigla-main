@@ -1664,18 +1664,18 @@ public OggettoBulk inizializzaBulkPerRicerca (UserContext userContext,OggettoBul
 		if ( !uoEnte.getCd_unita_organizzativa().equals(((CNRUserContext)userContext).getCd_unita_organizzativa()))
 		{
 			Unita_organizzativaBulk uoScrivania = (Unita_organizzativaBulk)getHome( userContext, Unita_organizzativaBulk.class ).findByPrimaryKey( new Unita_organizzativaBulk( ((CNRUserContext)userContext).getCd_unita_organizzativa()));
-			imp_pgiro.setCd_uo_origine( uoScrivania.getCd_unita_organizzativa());		
+			imp_pgiro.setCd_uo_origine( uoScrivania.getCd_unita_organizzativa());
 			imp_pgiro.setCd_cds_origine( uoScrivania.getCd_unita_padre());
 			if ( imp_pgiro.isResiduo() )
 			{
-				imp_pgiro.setCd_cds( uoEnte.getCd_unita_padre());
-				imp_pgiro.setCd_unita_organizzativa( uoEnte.getCd_unita_organizzativa());
+				imp_pgiro.setCds( uoEnte.getUnita_padre());
+				imp_pgiro.setUnita_organizzativa( uoEnte );
 			}	
 		}
 		else
 		{
-			imp_pgiro.setCd_cds( uoEnte.getCd_unita_padre());
-			imp_pgiro.setCd_unita_organizzativa( uoEnte.getCd_unita_organizzativa());					
+			imp_pgiro.setCds( uoEnte.getUnita_padre());
+			imp_pgiro.setUnita_organizzativa( uoEnte );
 		}
 		return imp_pgiro;
 	}

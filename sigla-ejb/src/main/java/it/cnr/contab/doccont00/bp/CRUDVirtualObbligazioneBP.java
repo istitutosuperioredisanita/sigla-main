@@ -17,27 +17,15 @@
 
 package it.cnr.contab.doccont00.bp;
 
-import java.rmi.RemoteException;
-import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import it.cnr.contab.chiusura00.ejb.RicercaDocContComponentSession;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.doccont00.comp.DocumentoContabileComponentSession;
-import it.cnr.contab.doccont00.core.bulk.AllegatoObbligazioneBulk;
-import it.cnr.contab.doccont00.core.bulk.IDefferUpdateSaldi;
-import it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneResBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_modificaBulk;
+import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.doccont00.ejb.ObbligazioneAbstractComponentSession;
 import it.cnr.contab.doccont00.ejb.ObbligazioneComponentSession;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.spring.service.StorePath;
-import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
@@ -49,6 +37,13 @@ import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.util.jsp.Button;
+import it.cnr.si.spring.storage.StorageDriver;
+
+import java.rmi.RemoteException;
+import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public abstract class CRUDVirtualObbligazioneBP 
 	extends AllegatiCRUDBP<AllegatoObbligazioneBulk, ObbligazioneBulk>
@@ -60,7 +55,27 @@ public abstract class CRUDVirtualObbligazioneBP
 	private boolean attivoRegolamento_2006 = false;
 	private boolean ribaltato;
 
-public CRUDVirtualObbligazioneBP() {
+	private boolean supervisore;
+
+	private boolean selectedAnnoPrec;
+
+	public boolean isSupervisore() {
+		return supervisore;
+	}
+
+	public void setSupervisore(boolean newSupervisore) {
+		supervisore = newSupervisore;
+	}
+
+	public boolean isSelectedAnnoPrec() {
+		return selectedAnnoPrec;
+	}
+
+	public void setSelectedAnnoPrec(boolean selectedAnnoPrec) {
+		this.selectedAnnoPrec = selectedAnnoPrec;
+	}
+
+	public CRUDVirtualObbligazioneBP() {
 
 	super();	
 }
@@ -213,8 +228,9 @@ protected void init(it.cnr.jada.action.Config config,it.cnr.jada.action.ActionCo
 		calendar.setTime( today );
 		Integer solaris = new Integer(calendar.get(java.util.Calendar.YEAR));
 		Integer esercizioScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext());
-		setAnnoSolareInScrivania(solaris == esercizioScrivania);
 		setRibaltato(initRibaltato(context));
+		setAnnoSolareInScrivania(solaris.compareTo(esercizioScrivania)==0);
+		setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
 		if (!isAnnoSolareInScrivania()) {
 			String cds = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(context.getUserContext());
 			try 
@@ -222,9 +238,13 @@ protected void init(it.cnr.jada.action.Config config,it.cnr.jada.action.ActionCo
 				ObbligazioneComponentSession session = createObbligazioneComponentSession();
 				EsercizioBulk es = session.verificaStatoEsercizio(context.getUserContext(), cds, esercizioScrivania);
 				EsercizioBulk esSucc = session.verificaStatoEsercizio(context.getUserContext(), cds, new Integer(esercizioScrivania.intValue()+1));
+
+				setSelectedAnnoPrec(es.getSt_apertura_chiusura().equals(es.STATO_APERTO) &&
+						esSucc.getSt_apertura_chiusura().equals(es.STATO_APERTO));
 				if ( es.getSt_apertura_chiusura().equals(es.STATO_APERTO) &&
 					  esSucc.getSt_apertura_chiusura().equals(es.STATO_APERTO) &&
-					  isRibaltato())
+					  isRibaltato() &&
+					isSupervisore())
 					setRiportaAvantiIndietro(true);
 				else
 					setRiportaAvantiIndietro(false);				
@@ -238,6 +258,10 @@ protected void init(it.cnr.jada.action.Config config,it.cnr.jada.action.ActionCo
 	} catch (javax.ejb.EJBException e) 
 	{
 		setAnnoSolareInScrivania(false);
+	} catch (ComponentException e) {
+		throw new RuntimeException(e);
+	} catch (RemoteException e) {
+		throw new RuntimeException(e);
 	}
 }
 /**
