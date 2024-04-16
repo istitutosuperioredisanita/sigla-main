@@ -21,6 +21,9 @@ import javax.ejb.Remote;
 
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ComponentException;
+
+import java.rmi.RemoteException;
 
 @Remote
 public interface EsercizioComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
@@ -30,4 +33,5 @@ boolean isEsercizioChiuso(it.cnr.jada.UserContext userContext)throws it.cnr.jada
 it.cnr.contab.config00.esercizio.bulk.EsercizioBulk getLastEsercizioOpen(it.cnr.jada.UserContext userContext ) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 boolean isEsercizioAperto(it.cnr.jada.UserContext userContext)throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 EsercizioBulk getEsercizio( UserContext userContext ) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+boolean isEsercizioSpecificoChiusoPerAlmenoUnCds(UserContext userContext,Integer esercizio) throws ComponentException, RemoteException;
 }

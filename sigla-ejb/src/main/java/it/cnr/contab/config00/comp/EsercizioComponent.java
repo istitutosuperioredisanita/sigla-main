@@ -647,6 +647,14 @@ public class EsercizioComponent extends it.cnr.jada.comp.CRUDComponent implement
             throw handleException(ex);
         }
     }
+    public boolean isEsercizioSpecificoChiusoPerAlmenoUnCds(UserContext userContext,Integer esercizio) throws ComponentException {
+        try {
+            EsercizioHome home = (EsercizioHome) getHome(userContext, EsercizioBulk.class);
+            return home.isEsercizioSpecificoChiusoPerAlmenoUnCds(userContext,esercizio);
+        } catch (PersistencyException ex) {
+            throw handleException(ex);
+        }
+    }
 
     /**
      * Estrae il bulk dell'esercizio dell'ultimo anno aperto del cds a partire dall'esercizio di scrivania

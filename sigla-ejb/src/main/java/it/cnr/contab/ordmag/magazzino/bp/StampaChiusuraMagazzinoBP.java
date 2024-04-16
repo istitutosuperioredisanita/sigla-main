@@ -48,6 +48,7 @@ public class StampaChiusuraMagazzinoBP extends ParametricPrintBP {
 	private static final long serialVersionUID = 1L;
 
 	private ChiusuraAnnoBulk chiusuraAnno;
+	private boolean isEsercizioChiusoPerAlmenoUnCds;
 
 	public StampaChiusuraMagazzinoBP() {
 	}
@@ -116,34 +117,48 @@ public class StampaChiusuraMagazzinoBP extends ParametricPrintBP {
 	}
 	public boolean isCalcoloButtonHidden()
 	{
+		if(this.isEsercizioChiusoPerAlmenoUnCds){
+			return true;
 		// bottone calcolo provvisorio abilitato solo se calcolo ancora non effettuto oppure stato chiusura uguale PROVVISORIO
-		if(this.getChiusuraAnno() == null || this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PROVVISORIO)){
+		}else if(this.getChiusuraAnno() == null || this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PROVVISORIO)){
 			return false;
 		}
-		return true;
+		else
+			return true;
 	}
 	public boolean isCalcoloDefinitivoButtonHidden(){
-
-		if(this.getChiusuraAnno() != null && this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PROVVISORIO)){
+		if(this.isEsercizioChiusoPerAlmenoUnCds) {
+			return true;
+		}
+		else if(this.getChiusuraAnno() != null && this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PROVVISORIO)){
 			return false;
 		}
-		return true;
+		else
+			return true;
 	}
 	public boolean isChiusuraDefinitivaButtonHidden()
 	{
+		if(this.isEsercizioChiusoPerAlmenoUnCds) {
+			return true;
+		}
 		// bottone salvataggio definitivo abilitato solo se stato uguale PREDEFINITIVO
-		if(this.getChiusuraAnno() != null && this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PREDEFINITIVO)){
+		else if(this.getChiusuraAnno() != null && this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PREDEFINITIVO)){
 			return false;
 		}
-		return true;
+		else
+			return true;
 	}
 	public boolean isAnnullaChiusuraDefinitivaButtonHidden()
 	{
+		if(this.isEsercizioChiusoPerAlmenoUnCds) {
+			return true;
+		}
 		// bottone di annulla definitivo abilitato solo se stato uguale DEFINITIVO
-		if(this.getChiusuraAnno() != null && this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_DEFINITIVO)){
+		else if(this.getChiusuraAnno() != null && this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_DEFINITIVO)){
 			return false;
 		}
-		return true;
+		else
+			return true;
 	}
 
 
@@ -156,5 +171,11 @@ public class StampaChiusuraMagazzinoBP extends ParametricPrintBP {
 		this.chiusuraAnno = chiusuraAnno;
 	}
 
+	public boolean isEsercizioChiusoPerAlmenoUnCds() {
+		return isEsercizioChiusoPerAlmenoUnCds;
+	}
 
+	public void setEsercizioChiusoPerAlmenoUnCds(boolean esercizioChiusoPerAlmenoUnCds) {
+		isEsercizioChiusoPerAlmenoUnCds = esercizioChiusoPerAlmenoUnCds;
+	}
 }

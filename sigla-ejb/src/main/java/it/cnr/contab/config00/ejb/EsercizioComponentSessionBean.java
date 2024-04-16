@@ -21,6 +21,11 @@ import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 
 import it.cnr.contab.config00.comp.EsercizioComponent;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ComponentException;
+
+import java.rmi.RemoteException;
+
 @Stateless(name="CNRCONFIG00_EJB_EsercizioComponentSession")
 public class EsercizioComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements EsercizioComponentSession {
 @PostConstruct
@@ -138,4 +143,26 @@ public it.cnr.contab.config00.esercizio.bulk.EsercizioBulk getEsercizio(it.cnr.j
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
+
+	@Override
+	public boolean isEsercizioSpecificoChiusoPerAlmenoUnCds(UserContext userContext,Integer esercizio) throws ComponentException, RemoteException {
+		pre_component_invocation(userContext,componentObj);
+		try {
+			boolean result = ((EsercizioComponent)componentObj).isEsercizioSpecificoChiusoPerAlmenoUnCds(userContext,esercizio);
+			component_invocation_succes(userContext,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(userContext,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(userContext,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(userContext,componentObj,e);
+		}
+	}
+
+
 }
