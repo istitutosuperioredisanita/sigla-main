@@ -248,6 +248,10 @@ public class EsercizioHome extends BulkHome {
                 it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
     }
 
+    public boolean isEsercizioSpecificoChiusoPerAlmenoUnCds(it.cnr.jada.UserContext userContext, Integer esercizio) throws PersistencyException {
+        return isEsercizioChiusoPerAlmenoUnCds(userContext,esercizio);
+    }
+
     /**
      * Controllo se l'esercizio di scrivania e' aperto
      * <p>
