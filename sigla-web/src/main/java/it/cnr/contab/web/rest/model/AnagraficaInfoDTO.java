@@ -113,7 +113,7 @@ public class AnagraficaInfoDTO {
         return null;
     }
 
-    public String getCodice_discale() {
+    public String getCodice_fiscale() {
         return Optional.ofNullable(anagraficoBulk)
                 .map(AnagraficoBulk::getCodice_fiscale)
                 .orElse(null);
