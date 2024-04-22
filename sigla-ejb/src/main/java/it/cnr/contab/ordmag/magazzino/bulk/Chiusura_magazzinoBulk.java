@@ -19,7 +19,13 @@ package it.cnr.contab.ordmag.magazzino.bulk;
 
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.ordmag.anag00.RaggrMagazzinoBulk;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.util.OrderedHashtable;
+import it.cnr.jada.util.action.BulkBP;
+import it.cnr.jada.util.action.CRUDBP;
 
 import java.sql.Timestamp;
 import java.util.Dictionary;
@@ -58,6 +64,8 @@ public class Chiusura_magazzinoBulk extends Stampa_inventarioBulk {
 
     private String tipoChiusura=ChiusuraAnnoBulk.TIPO_CHIUSURA_MAGAZZINO;
     private String tipoReport;
+
+    private it.cnr.jada.util.OrderedHashtable anniList = new it.cnr.jada.util.OrderedHashtable();
 
 
     static {
@@ -233,6 +241,41 @@ public class Chiusura_magazzinoBulk extends Stampa_inventarioBulk {
 
     public void setTipoReport(String tipoReport) {
         this.tipoReport = tipoReport;
+    }
+
+    public void setTipoChiusura(String tipoChiusura) {
+
+        this.tipoChiusura = tipoChiusura;
+    }
+
+    public OrderedHashtable getAnniList() {
+        return anniList;
+    }
+
+    public void setAnniList(OrderedHashtable anniList) {
+        this.anniList = anniList;
+    }
+    public void caricaAnniList(ActionContext actioncontext) {
+        caricaAnniList(actioncontext.getUserContext());
+    }
+    public void caricaAnniList(UserContext usercontext) {
+        for (int i = CNRUserContext.getEsercizio(usercontext).intValue(); i>=2023; i--)
+            getAnniList().put(new Integer(i), new Integer(i));
+    }
+    public OggettoBulk initialize(CRUDBP crudbp, ActionContext actioncontext) {
+        super.initialize(crudbp, actioncontext);
+        caricaAnniList(actioncontext);
+        return this;
+    }
+    public OggettoBulk initializeForEdit(CRUDBP crudbp, ActionContext actioncontext) {
+        caricaAnniList(actioncontext);
+        return super.initializeForEdit(crudbp, actioncontext);
+    }
+
+    @Override
+    public OggettoBulk initializeForPrint(BulkBP bulkBP, ActionContext actioncontext) {
+        caricaAnniList(actioncontext);
+        return super.initializeForPrint(bulkBP, actioncontext);
     }
 }
 
