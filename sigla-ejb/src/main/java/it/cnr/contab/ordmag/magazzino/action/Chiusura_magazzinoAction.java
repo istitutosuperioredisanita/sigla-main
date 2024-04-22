@@ -1,6 +1,7 @@
 package it.cnr.contab.ordmag.magazzino.action;
 
 import it.cnr.contab.anagraf00.bp.CRUDAnagraficaBP;
+import it.cnr.contab.config00.ejb.EsercizioComponentSession;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioHome;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
@@ -83,6 +84,11 @@ public class Chiusura_magazzinoAction extends ParametricPrintAction {
                     }
                 }
 
+            }
+            bp.setEsercizioChiusoPerAlmenoUnCds(model.getEsercizio() != null ? isEsercizioChiusoPerAlmenoUnCds(actioncontext,model.getEsercizio()) : false);
+
+            if(bp.isEsercizioChiusoPerAlmenoUnCds()){
+                throw new it.cnr.jada.bulk.ValidationException("L'esercizio contabile selezionato risulta chiuso definitivamente.Non è più possibile aggiornare i calcoli");
             }
             return actioncontext.findDefaultForward();
         } catch (ValidationParseException val){
@@ -394,5 +400,13 @@ public class Chiusura_magazzinoAction extends ParametricPrintAction {
             }
         }
         return context.findDefaultForward();
+    }
+
+    private boolean isEsercizioChiusoPerAlmenoUnCds(ActionContext context,Integer esercizio) throws ComponentException, RemoteException, BusinessProcessException {
+        StampaChiusuraMagazzinoBP stampaChiusuraBP = (StampaChiusuraMagazzinoBP) getBusinessProcess(context);
+        EsercizioComponentSession esercizioComponent = (EsercizioComponentSession) stampaChiusuraBP.createComponentSession(
+                "CNRCONFIG00_EJB_EsercizioComponentSession", EsercizioComponentSession.class);
+
+        return esercizioComponent.isEsercizioSpecificoChiusoPerAlmenoUnCds(context.getUserContext(),esercizio);
     }
 }

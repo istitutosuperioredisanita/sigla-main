@@ -63,7 +63,12 @@ public class ChiusuraInventarioAction extends ParametricPrintAction {
 					"CNRORDMAG00_EJB_ChiusuraAnnoComponentSession", ChiusuraAnnoComponentSession.class);
 			ChiusuraAnnoBulk chiusuraAnno =  chiusuraAnnoComponent.verificaChiusuraAnno(context.getUserContext(),model.getAnno(),ChiusuraAnnoBulk.TIPO_CHIUSURA_INVENTARIO);
 
-			model.setPgChiusura(chiusuraAnno.getPgChiusura());
+			if(chiusuraAnno!= null) {
+				model.setPgChiusura(chiusuraAnno.getPgChiusura());
+			}else{
+				bp.setErrorMessage("Nessuna chiusura da stampare per l'anno selezionato");
+				return context.findDefaultForward();
+			}
 
 		} catch (FillException | BusinessProcessException e) {
 			bp.setErrorMessage(e.getMessage());

@@ -149,6 +149,13 @@
               <tr>
                 <td><% bp.getController().writeFormLabel(out,"valore_iniziale"); %></td>
                 <td><% bp.getController().writeFormInput(out,null,"valore_unitario",bp.isROvaloreIniziale(),null,null); %></td>
+
+                <td><% bp.getController().writeFormLabel(out,"variazione_piu"); %></td>
+                <td><% bp.getController().writeFormInput(out,null,"variazione_piu",bp.isROvaloreIniziale(),null,null); %></td>
+
+                <td><% bp.getController().writeFormLabel(out,"variazione_meno"); %></td>
+                <td><% bp.getController().writeFormInput(out,null,"variazione_meno",bp.isROvaloreIniziale(),null,null); %></td>
+
               </tr>
               <tr>
                 <td><% bp.getController().writeFormLabel(out,"valore_bene"); %></td>
@@ -158,14 +165,26 @@
         </div>
         <div class="Group">
             <table>
-              <tr>
-                <td><% bp.getController().writeFormLabel(out,"valore_ammortizzato"); %></td>
-                <td><% bp.getController().writeFormInput(out,"valore_ammortizzato"); %></td>
-              </tr>
-              <tr>
-                <td><% bp.getController().writeFormLabel(out,"imponibile_ammortamento"); %></td>
-                <td><% bp.getController().writeFormInput(out,"imponibile_ammortamento"); %></td>
-              </tr>
+               <tr>
+                   <td>
+                        <% bp.getController().writeFormLabel(out,"imponibile_ammortamento"); %>
+                    </td>
+                   <td>
+                        <% bp.getController().writeFormInput(out,"imponibile_ammortamento"); %>
+                   </td>
+                   <td>
+                        <% bp.getController().writeFormLabel(out,"valore_ammortizzato"); %>
+                    </td>
+                   <td>
+                        <% bp.getController().writeFormInput(out,"valore_ammortizzato"); %>
+                    </td>
+                    <td>
+                        <% bp.getController().writeFormLabel(out,"valore_residuo_da_ammortizzare"); %>
+                    </td>
+                   <td>
+                        <% bp.getController().writeFormInput(out,"valore_residuo_da_ammortizzare"); %>
+                    </td>
+                </tr>
             </table>
         </div>
         <% if (bene != null && bene.isDaOrdini()){ %>

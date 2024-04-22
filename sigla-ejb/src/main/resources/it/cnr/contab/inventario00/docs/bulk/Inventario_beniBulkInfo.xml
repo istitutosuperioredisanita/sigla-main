@@ -105,6 +105,12 @@
 		formatName="it.cnr.contab.util.EuroPositivoFormat"
 		label="Valore ammortizzato" />
 	<fieldProperty
+			name="valore_residuo_da_ammortizzare"
+			property="valore_residuo_da_ammortizzare"
+			inputType="ROTEXT"
+			formatName="it.cnr.contab.util.EuroPositivoFormat"
+			label="Residuo da ammortizzare" />
+	<fieldProperty
 		name="pg_inventario"
 		property="inventario.pg_inventario"
 		inputType="TEXT"
@@ -132,7 +138,7 @@
 		inputType="TEXT"
 		maxLength="20"
 		formatName="it.cnr.contab.util.EuroPositivoFormat"
-		label="Valore Scaricato"
+		label="Totale Decrementi"
 		nullable="false"
 		enabledOnInsert = "true"
 		enabledOnEdit = "true"
@@ -143,7 +149,7 @@
 		inputType="TEXT"
 		maxLength="20"
 		formatName="it.cnr.contab.util.EuroPositivoFormat"
-		label="Valore Caricato"
+		label="Totale Incrementi"
 		nullable="false"
 		enabledOnInsert = "true"
 		enabledOnEdit = "true"
@@ -625,6 +631,8 @@
 		name="nr_inventario" />
 	<formFieldProperty
 		name="valore_ammortizzato" />
+	<formFieldProperty
+			name="valore_residuo_da_ammortizzare" />
 	<formFieldProperty
 		name="pg_inventario" />
 	<formFieldProperty

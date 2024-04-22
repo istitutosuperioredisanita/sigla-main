@@ -24,10 +24,11 @@
 	<fieldProperty
 			name="esercizio"
 			property="esercizio"
-			inputType="TEXT"
+			optionsProperty="anniList"
+			nullable="false"
+			inputType="SELECT"
 			inputSize="4"
 			maxLength="4"
-			nullable="false"
 			command="doOnEsercizioChange"
 			label="Esercizio" />
 	<fieldProperty

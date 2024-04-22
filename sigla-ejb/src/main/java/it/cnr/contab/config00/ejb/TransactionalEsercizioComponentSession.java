@@ -123,4 +123,23 @@ public it.cnr.contab.config00.esercizio.bulk.EsercizioBulk getEsercizio( UserCon
 		}
 	}
 }
+
+	@Override
+	public boolean isEsercizioSpecificoChiusoPerAlmenoUnCds(UserContext userContext,Integer esercizio) throws ComponentException, RemoteException {
+		try {
+
+			return ((Boolean)invoke("isEsercizioSpecificoChiusoPerAlmenoUnCds",new Object[] {
+					userContext,esercizio})).booleanValue();
+		} catch(java.rmi.RemoteException e) {
+			throw e;
+		} catch(java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch(it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch(Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
 }

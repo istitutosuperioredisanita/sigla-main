@@ -48,7 +48,7 @@ public class CRUDChiusuraInventarioBP extends ParametricPrintBP {
         super(function);
     }
 
-    protected void init(it.cnr.jada.action.Config config,it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException {
+    /*protected void init(it.cnr.jada.action.Config config,it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException {
         try {
             super.init(config, context);
 
@@ -67,6 +67,10 @@ public class CRUDChiusuraInventarioBP extends ParametricPrintBP {
             e.printStackTrace();
         }
 
+    }*/
+    @Override
+    protected void initialize(ActionContext context) throws BusinessProcessException {
+        super.initialize(context);
     }
 
 }

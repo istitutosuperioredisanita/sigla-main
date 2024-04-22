@@ -17,12 +17,22 @@
 
 package it.cnr.contab.inventario00.docs.bulk;
 
-import java.util.*;
-
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
-import it.cnr.contab.inventario00.tabrif.bulk.*;
+import it.cnr.contab.inventario00.tabrif.bulk.Condizione_beneBulk;
+import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk;
+import it.cnr.contab.inventario00.tabrif.bulk.Tipo_ammortamentoBulk;
+import it.cnr.contab.inventario00.tabrif.bulk.Ubicazione_beneBulk;
+import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.TipoIVA;
-import it.cnr.jada.bulk.*;
+import it.cnr.jada.bulk.BulkCollection;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.bulk.SimpleBulkList;
+
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Dictionary;
+import java.util.Iterator;
+import java.util.Optional;
 
 public class Inventario_beniBulk extends Inventario_beniBase {
 
@@ -35,6 +45,8 @@ public class Inventario_beniBulk extends Inventario_beniBase {
 	private Transito_beni_ordiniBulk transito_beni_ordini;
 	private Ubicazione_beneBulk ubicazione;
 	private boolean pubblicazione;
+
+	private BigDecimal valore_residuo_da_ammortizzare;
 
 	public Transito_beni_ordiniBulk getTransito_beni_ordini() {
 		return transito_beni_ordini;
@@ -913,4 +925,14 @@ public void setHa_dettagli(Boolean boolean1) {
 	public Boolean isDaOrdini(){
 		return Optional.ofNullable(getTransito_beni_ordini()).isPresent();
 	}
+
+	public BigDecimal getValore_residuo_da_ammortizzare() {
+		return Utility.nvl(this.getValore_iniziale(),BigDecimal.ZERO).subtract(Utility.nvl(this.getValore_ammortizzato(),BigDecimal.ZERO));
+	}
+
+	public void setValore_residuo_da_ammortizzare(BigDecimal valore_residuo_da_ammortizzare) {
+		this.valore_residuo_da_ammortizzare = valore_residuo_da_ammortizzare;
+	}
 }
+
+

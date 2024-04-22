@@ -14,11 +14,10 @@
 	<fieldProperty
 		name="anno"
 		property="anno"
-		inputType="TEXT"
+		optionsProperty="anniList"
+		inputType="SELECT"
 		inputSize="5"
 		maxLength="5"
-		enabledOnEdit="false"
-		enabledOnSearch="false"
 		nullable="false"
 		label="Anno di chiusura" />
 	<fieldProperty
