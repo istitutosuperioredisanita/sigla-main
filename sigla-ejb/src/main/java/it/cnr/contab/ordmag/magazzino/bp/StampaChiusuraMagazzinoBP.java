@@ -73,6 +73,10 @@ public class StampaChiusuraMagazzinoBP extends ParametricPrintBP {
 		super.init(config,context);
 	}
 
+	@Override
+	protected void initialize(ActionContext context) throws BusinessProcessException {
+		super.initialize(context);
+	}
 
 	public StampaChiusuraMagazzinoBP(String function) {
 		super(function);

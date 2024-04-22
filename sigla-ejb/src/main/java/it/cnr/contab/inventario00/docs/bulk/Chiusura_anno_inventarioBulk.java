@@ -7,6 +7,14 @@ package it.cnr.contab.inventario00.docs.bulk;
 import it.cnr.contab.config00.pdcep.bulk.Voce_epBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Tipo_ammortamentoBulk;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.util.OrderedHashtable;
+import it.cnr.jada.util.action.BulkBP;
+import it.cnr.jada.util.action.CRUDBP;
+
 public class Chiusura_anno_inventarioBulk extends Chiusura_anno_inventarioBase {
 	/**
 	 * [CATEGORIA_GRUPPO_INVENT ]
@@ -20,6 +28,8 @@ public class Chiusura_anno_inventarioBulk extends Chiusura_anno_inventarioBase {
 	 * [TIPO_AMMORTAMENTO ]
 	 **/
 	private Tipo_ammortamentoBulk tipoAmmortamento =  new Tipo_ammortamentoBulk();
+
+	private it.cnr.jada.util.OrderedHashtable anniList = new it.cnr.jada.util.OrderedHashtable();
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: CHIUSURA_ANNO_INVENTARIO
@@ -137,5 +147,43 @@ public class Chiusura_anno_inventarioBulk extends Chiusura_anno_inventarioBase {
 	 **/
 	public void setTiAmmortamento(String tiAmmortamento)  {
 		this.getTipoAmmortamento().setTi_ammortamento(tiAmmortamento);
+	}
+
+	public OrderedHashtable getAnniList() {
+		return anniList;
+	}
+
+	public void setAnniList(OrderedHashtable anniList) {
+		this.anniList = anniList;
+	}
+	public void caricaAnniList(ActionContext actioncontext) {
+		caricaAnniList(actioncontext.getUserContext());
+	}
+	public void caricaAnniList(UserContext usercontext) {
+		for (int i = CNRUserContext.getEsercizio(usercontext).intValue(); i>=2023; i--)
+			getAnniList().put(new Integer(i), new Integer(i));
+	}
+
+
+	@Override
+	public OggettoBulk initializeForPrint(BulkBP bulkBP, ActionContext actioncontext) {
+		caricaAnniList(actioncontext);
+		return super.initializeForPrint(bulkBP, actioncontext);
+	}
+	public OggettoBulk initialize(CRUDBP crudbp, ActionContext actioncontext) {
+		super.initialize(crudbp, actioncontext);
+		caricaAnniList(actioncontext);
+		return this;
+	}
+	public OggettoBulk initializeForEdit(CRUDBP crudbp, ActionContext actioncontext) {
+		caricaAnniList(actioncontext);
+		return super.initializeForEdit(crudbp, actioncontext);
+	}
+	public void validate() throws it.cnr.jada.bulk.ValidationException {
+
+		if (getAnno() == null)
+			throw new it.cnr.jada.bulk.ValidationException("Imposta l'anno di chiusura!");
+
+
 	}
 }
