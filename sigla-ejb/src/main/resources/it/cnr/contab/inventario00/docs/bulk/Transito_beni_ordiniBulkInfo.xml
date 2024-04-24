@@ -96,7 +96,75 @@
 			enabledOnInsert = "true"
 			enabledOnEdit = "true"
 			enabledOnSearch="true" />
+	<fieldProperty
+			name="dataOrdine"
+			property="movimentiMag.lottoMag.ordineAcqConsegna.ordineAcqRiga.ordineAcq.dataOrdine"
+			maxLength="50"
+			inputSize="17"
+			inputType="date_short"
+			label="Data Ordine"
+			caseSensitiveSearch="false"
+			enabledOnInsert = "false"
+			enabledOnEdit = "false"
+			enabledOnSearch="false" />
 
+	<fieldProperty
+			name="esercizioOrdine"
+			property="movimentiMag.lottoMag.ordineAcqConsegna.ordineAcqRiga.ordineAcq.numerazioneOrd.esercizio"
+			maxLength="4"
+			inputSize="4"
+			inputType="TEXT"
+			label="Esercizio Ordine"
+			caseSensitiveSearch="false"
+			enabledOnInsert = "false"
+			enabledOnEdit = "false"
+			enabledOnSearch="false" />
+	<fieldProperty
+			name="numeratoreOrdine"
+			property="movimentiMag.lottoMag.ordineAcqConsegna.ordineAcqRiga.ordineAcq.numerazioneOrd.cdNumeratore"
+			maxLength="4"
+			inputSize="4"
+			inputType="TEXT"
+			label="Numeratore Ord."
+			caseSensitiveSearch="false"
+			enabledOnInsert = "false"
+			enabledOnEdit = "false"
+			enabledOnSearch="false" />
+	<fieldProperty
+			name="numeroOrdine"
+			property="movimentiMag.lottoMag.ordineAcqConsegna.ordineAcqRiga.ordineAcq.numero"
+			maxLength="6"
+			inputSize="6"
+			inputType="TEXT"
+			label="Numero Ordine"
+			caseSensitiveSearch="false"
+			enabledOnInsert = "false"
+			enabledOnEdit = "false"
+			enabledOnSearch="false" />
+
+	<fieldProperty
+			name="rigaOrdine"
+			property="movimentiMag.lottoMag.ordineAcqConsegna.ordineAcqRiga.riga"
+			maxLength="6"
+			inputSize="6"
+			inputType="TEXT"
+			label="Riga Ordine"
+			caseSensitiveSearch="false"
+			enabledOnInsert = "false"
+			enabledOnEdit = "false"
+			enabledOnSearch="false" />
+
+	<fieldProperty
+			name="rigaConsegnaOrdine"
+			property="movimentiMag.lottoMag.ordineAcqConsegna.consegna"
+			maxLength="6"
+			inputSize="6"
+			inputType="TEXT"
+			label="Riga Cons."
+			caseSensitiveSearch="false"
+			enabledOnInsert = "false"
+			enabledOnEdit = "false"
+			enabledOnSearch="false" />
 	<fieldProperty
 			name="ordineForFreeSearch"
 			property="numeroOrdine"
@@ -597,34 +665,52 @@
 	<columnFieldProperty
 			name="dtRiferimento"
 			style="width:50px" />
+	<!--
 	<columnFieldProperty
 		name="ds_assegnatario"
-		style="width:300px"/>	
+		style="width:300px"/>
+
 	<columnFieldProperty
 		name="cd_ubicazione"
 		label="Ubicaz."
 		style="width:20px"/>
+
 	<columnFieldProperty
 			name="ds_ubicazione"
 			style="width:80px"/>
+
 	<columnFieldProperty
 		name="collocazione"   
 		style="width:40px"/>
+
 	<columnFieldProperty
 		name="seriale"   
 		style="width:40px"/>
 	<columnFieldProperty
 			name="cd_barre"
 			style="width:40px"/>
+
 	<columnFieldProperty
 			name="targa"
 			style="width:30px"/>
+			-->
 	<columnFieldProperty
 			name="dsUnitaOperativa"/>
 	<columnFieldProperty
 			name="cd_categoria_beneForFreeSearch"/>
 	<columnFieldProperty
 			name="id_movimenti_mag" />
+
+	<columnFieldProperty
+			name="esercizioOrdine"/>
+	<columnFieldProperty
+			name="numeratoreOrdine"/>
+	<columnFieldProperty
+			name="numeroOrdine"/>
+	<columnFieldProperty
+			name="rigaOrdine"/>
+	<columnFieldProperty
+			name="rigaConsegnaOrdine"/>
 
 
 	<!-- Column set per beni in transito cancellati-->
@@ -656,9 +742,11 @@
 		<columnFieldProperty
 				name="dtRiferimento"
 				style="width:50px" />
+		<!--
 		<columnFieldProperty
 				name="ds_assegnatario"
 				style="width:300px"/>
+				-->
 		<columnFieldProperty
 				name="cd_ubicazione"
 				label="Ubicaz."

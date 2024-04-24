@@ -42,7 +42,52 @@
 		<columnMapping
 				columnName="ID_MOVIMENTI_MAG"
 				propertyName="movimentiMag.pgMovimento"/>
+		<columnMapping
+				columnName="ID_MOVIMENTI_MAG"
+				propertyName="movimentiMag.pgMovimento"/>
+
 	</defaultColumnMap>
+
+	<columnMap
+			name="TRANSITO_BENI_ORDINI_DETT"
+			tableName="TRANSITO_BENI_ORDINI"
+			extends="default">
+		<columnMapping
+				columnName="MOVIMENTI_MAG.NUMERO_BOLLA"
+				propertyName="movimentiMag.numeroBolla"
+				sqlTypeName="VARCHAR"
+				columnSize="200"/>
+		<columnMapping
+				columnName="MOVIMENTI_MAG.DATA_BOLLA"
+				propertyName="movimentiMag.dataBolla"
+				sqlTypeName="TIMESTAMP"
+				columnSize="10"/>
+		<columnMapping
+				columnName="NUMERAZIONE_ORD.ESERCIZIO"
+				propertyName="movimentiMag.lottoMag.ordineAcqConsegna.ordineAcqRiga.ordineAcq.numerazioneOrd.esercizio"
+				sqlTypeName="DECIMAL"
+				columnSize="7"/>
+		<columnMapping
+				columnName="NUMERAZIONE_ORD.CD_NUMERATORE"
+				propertyName="movimentiMag.lottoMag.ordineAcqConsegna.ordineAcqRiga.ordineAcq.numerazioneOrd.cd_numeratore"
+				sqlTypeName="VARCHAR"
+				columnSize="7"/>
+		<columnMapping
+				columnName="ORDINE_ACQ.NUMERO"
+				propertyName="movimentiMag.lottoMag.ordineAcqConsegna.ordineAcqRiga.ordineAcq.numero"
+				sqlTypeName="DECIMAL"
+				columnSize="7"/>
+		<columnMapping
+				columnName="ORDINE_ACQ_RIGA.NUMERO"
+				propertyName="movimentiMag.lottoMag.ordineAcqConsegna.ordineAcqRiga.riga"
+				sqlTypeName="DECIMAL"
+				columnSize="7"/>
+		<columnMapping
+				columnName="ORDINE_ACQ_CONSEGNA.CONSEGNA"
+				propertyName="movimentiMag.lottoMag.ordineAcqConsegna.consegna"
+				sqlTypeName="DECIMAL"
+				columnSize="7"/>
+	</columnMap>
 	
 	<persistentProperty
 		name="inventario"/>
