@@ -246,6 +246,18 @@
 		enabledOnSearch="true"
 		readonlyProperty="ROubicazioneBene"
 		caseSensitiveSearch="false"  />
+	<fieldProperty
+			name="ds_ubicazione"
+			property="ubicazione.ds_ubicazione_bene"
+			maxLength="30"
+			inputSize="30"
+			inputType="TEXT"
+			nullable ="false"
+			label="Ubicazione Bene"
+			enabledOnFreeSearch="true"
+			enabledOnSearch="true"
+			readonlyProperty="ROubicazioneBene"
+			caseSensitiveSearch="false"  />
 		
 	/*****************************************************	
 	* Riferimento all'oggetto complesso condizioneBene **/	
@@ -737,17 +749,42 @@
 		name="cd_categoria_bene"  
 		style="width:50px" />
 	<columnFieldProperty
+			name="valore_iniziale"
+			style="width:80px"/>
+	<columnFieldProperty
+			name="variazione_piu"
+			style="width:80px"/>
+	<columnFieldProperty
+			name="variazione_meno"
+			style="width:80px"/>
+	<columnFieldProperty
 		name="valore_bene"   
 		style="width:80px"/>
 	<columnFieldProperty
-		name="ds_condizione_bene"   
+			name="imponibile_ammortamento"
+			style="width:80px"/>
+	<columnFieldProperty
+			name="valore_ammortizzato"
+			style="width:80px"/>
+	<columnFieldProperty
+			name="valore_residuo_da_ammortizzare"
+			style="width:80px"/>
+	<columnFieldProperty
+		name="ds_condizione_bene"
 		style="width:70px"/>
 	<columnFieldProperty
 		name="cd_assegnatario"   
-		style="width:300px"/>	
+		style="width:300px"/>
+	<columnFieldProperty
+			name="ds_assegnatario"
+			style="width:300px"/>
 	<columnFieldProperty
 		name="cd_ubicazione"   
-		style="width:40px"/>		
+		style="width:40px"/>
+	<columnFieldProperty
+			name="ds_ubicazione"
+			style="width:40px"/>
+
 	<columnFieldProperty
 		name="collocazione"   
 		style="width:40px"/>

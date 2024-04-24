@@ -128,6 +128,21 @@
 		extends="default"
 		tableName="V_BENI_BUONI">		
 	</columnMap>
+	<columnMap
+			name="INVENTARIO_BENI_DETT"
+			tableName="INVENTARIO_BENI"
+			extends="default">
+		<columnMapping
+				columnName="TERZO.DENOMINAZIONE_SEDE"
+				propertyName="assegnatario.denominazione_sede"
+				sqlTypeName="VARCHAR"
+				columnSize="200"/>
+		<columnMapping
+				columnName="UBICAZIONE_BENE.DS_UBICAZIONE_BENE"
+				propertyName="ubicazione.ds_ubicazione_bene"
+				sqlTypeName="VARCHAR"
+				columnSize="200"/>
+	</columnMap>
 	
 	<persistentProperty
 		name="inventario"
@@ -161,6 +176,11 @@
 		<exclude pattern="*"/>
 		<include pattern="assegnatario"/>		
 		<include pattern="condizioneBene"/>
-	</fetchPolicy>		
+	</fetchPolicy>
+	<fetchPolicy
+			name="default">
+		<exclude pattern="*" />
+		<include pattern="assegnatario"/>
+	</fetchPolicy>
 
 </SQLPersistentInfo>
