@@ -55,6 +55,7 @@ import it.cnr.contab.util.ApplicationMessageFormatException;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.DetailedRuntimeException;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
@@ -67,6 +68,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.util.DateUtils;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.*;
 import it.cnr.jada.util.ejb.EJBCommonServices;
@@ -2940,6 +2942,19 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
         }
         return context.findDefaultForward();
     }
+    private void setFatturaDaRicevereAnnoPrec(UserContext userContext, Fattura_passivaBulk fattura,CRUDFatturaPassivaBP bp) throws BusinessProcessException, ComponentException, PersistencyException, RemoteException {
+        Date dataCompetenzaCoge = DateUtils.min (
+                fattura.getDt_da_competenza_coge(),fattura.getDt_a_competenza_coge());
+        fattura.setFatturaDaRicevereAnnoPrec( Boolean.FALSE);
+        if ( dataCompetenzaCoge!=null){
+            java.util.GregorianCalendar dataCompetenzaCogeGregorian = new GregorianCalendar();
+            dataCompetenzaCogeGregorian.setTime(new Date(dataCompetenzaCoge.getTime()));
+
+            fattura.setFatturaDaRicevereAnnoPrec(((FatturaPassivaComponentSession) bp.createComponentSession()).
+                    isEsercizioChiusoPerDataCompetenza(userContext, dataCompetenzaCogeGregorian.get( java.util.GregorianCalendar.YEAR), fattura.getCd_cds()) );
+
+        }
+    }
 
     /**
      * Gestisce il cambiamento della data competenza coge 'a'
@@ -2966,7 +2981,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                 if (competenzaA != null && competenzaDa != null)
                     if (!competenzaDa.equals(competenzaA) && !competenzaDa.before(competenzaA))
                         throw new it.cnr.jada.comp.ApplicationException("La data \"competenza da\" deve essere precedente o uguale a \"competenza a\"!");
-                if (!(bp instanceof CRUDFatturaPassivaAmministraBP) && ((FatturaPassivaComponentSession) bp.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaA, cds) && !fattura.getStato_coge().equals("NON_PROCESSARE_IN_COGE"))
+                if (!(bp instanceof CRUDFatturaPassivaAmministraBP) && !((FatturaPassivaComponentSession) bp.createComponentSession()).isEsercizioValidoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaA, cds) && !fattura.getStato_coge().equals("NON_PROCESSARE_IN_COGE"))
                     throw new it.cnr.jada.comp.ApplicationException("Le date \"Competenza da\" e \"Competenza a\" non possono appartenere ad un esercizio chiuso");
                 if (bp instanceof CRUDFatturaPassivaAmministraBP) {
                     fattura
@@ -2978,6 +2993,8 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                 }
 
             }
+            setFatturaDaRicevereAnnoPrec(context.getUserContext(),fattura,bp);
+
             bp.setModel(context, fattura);
             return context.findDefaultForward();
         } catch (Throwable t) {
@@ -2990,6 +3007,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
             return handleException(context, t);
         }
     }
+
 
     /**
      * Gestisce il cambiamento della data competenza coge 'da' *
@@ -3016,7 +3034,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                 if (competenzaA != null && competenzaDa != null)
                     if (!competenzaDa.equals(competenzaA) && !competenzaDa.before(competenzaA))
                         throw new it.cnr.jada.comp.ApplicationException("La data \"competenza a\" deve essere successiva o uguale a \"competenza da\"!");
-                if (!(bp instanceof CRUDFatturaPassivaAmministraBP) && ((FatturaPassivaComponentSession) bp.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaDa, cds) && !fattura.getStato_coge().equals("NON_PROCESSARE_IN_COGE"))
+                if (!(bp instanceof CRUDFatturaPassivaAmministraBP) && !((FatturaPassivaComponentSession) bp.createComponentSession()).isEsercizioValidoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaDa, cds) && !fattura.getStato_coge().equals("NON_PROCESSARE_IN_COGE"))
                     throw new it.cnr.jada.comp.ApplicationException("Le date \"Competenza da\" e \"Competenza a\" non possono appartenere ad un esercizio chiuso");
                 if (bp instanceof CRUDFatturaPassivaAmministraBP) {
                     fattura
@@ -3027,6 +3045,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                             });
                 }
             }
+            setFatturaDaRicevereAnnoPrec(context.getUserContext(),fattura,bp);
             bp.setModel(context, fattura);
             return context.findDefaultForward();
         } catch (Throwable t) {

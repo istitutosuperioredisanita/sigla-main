@@ -97,7 +97,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumentoComponent
@@ -7570,6 +7569,18 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         } catch (java.sql.SQLException e) {
             throw handleSQLException(e);
         }
+    }
+    /*
+    aggiunto per testare l'esercizio della data competenza da/a nel caso sia chiuso verifico che l'esercizio successivo sia aperto necessario
+    per la gestione inizio anno per la gestione delle fatture da ricevere da anno precedente
+    */
+    public boolean isEsercizioValidoPerDataCompetenza(UserContext userContext, Integer esercizio, String cd_cds) throws ComponentException, PersistencyException {
+
+            if ( isEsercizioChiusoPerDataCompetenza(userContext,esercizio,cd_cds))
+                // controlla che l'anno successivo sia aperto
+                return ( !isEsercizioChiusoPerDataCompetenza( userContext , esercizio+1,cd_cds));
+             return Boolean.TRUE;
+
     }
 
     public TerzoBulk findCessionario(UserContext userContext, Fattura_passiva_rigaBulk fattura_riga) throws ComponentException {
