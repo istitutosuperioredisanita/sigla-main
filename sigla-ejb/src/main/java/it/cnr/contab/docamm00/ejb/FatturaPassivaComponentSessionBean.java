@@ -982,6 +982,28 @@ public class FatturaPassivaComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
             throw uncaughtError(param0, componentObj, e);
         }
     }
+    /*
+    aggiunto per testare l'esercizio della data competenza da/a nel caso sia chiuso verifico che l'esercizio successivo sia aperto necessario
+    per la gestione inizio anno per la gestione delle fatture da ricevere da anno precedente
+    */
+    public boolean isEsercizioValidoPerDataCompetenza(it.cnr.jada.UserContext param0, Integer param1, java.lang.String param2) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, RemoteException {
+        pre_component_invocation(param0, componentObj);
+        try {
+            boolean result = ((FatturaPassivaComponent) componentObj).isEsercizioValidoPerDataCompetenza(param0, param1, param2);
+            component_invocation_succes(param0, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(param0, componentObj);
+            throw e;
+        } catch (it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(param0, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(param0, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(param0, componentObj, e);
+        }
+    }
 
     public void rimuoviDaAssociazioniInventario(it.cnr.jada.UserContext param0, it.cnr.contab.inventario00.docs.bulk.Ass_inv_bene_fatturaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
