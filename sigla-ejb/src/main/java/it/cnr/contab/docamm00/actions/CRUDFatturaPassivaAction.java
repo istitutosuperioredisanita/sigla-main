@@ -736,7 +736,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
     public Forward basicDoAssociaDettagli(ActionContext context)
             throws BusinessProcessException,
             ComponentException,
-            java.rmi.RemoteException, PersistencyException, IntrospectionException, EJBException {
+            java.rmi.RemoteException, PersistencyException, IntrospectionException, EJBException, ValidationException {
 
         CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) context.getBusinessProcess();
         Fattura_passivaBulk fattura = (Fattura_passivaBulk) bp.getModel();
@@ -744,6 +744,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
 
         for (java.util.Iterator i = fattura.getFattura_passiva_dettColl().iterator(); i.hasNext(); ) {
             Fattura_passiva_rigaBulk riga = (Fattura_passiva_rigaBulk) i.next();
+            riga.validaDateCompetenza();
             AssociazioniInventarioTable associazioni = fattura.getAssociazioniInventarioHash();
             if ((associazioni != null && !associazioni.isEmpty()) || (riga.getCrudStatus() != OggettoBulk.TO_BE_CREATED)) {
                 Ass_inv_bene_fatturaBulk ass = fattura.getAssociationWithInventarioFor(riga);

@@ -3125,7 +3125,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
             ObbligazioniTable obbligazioniTable = new ObbligazioniTable();
             for (Object obj : fattura.getObbligazioniHash().entrySet()) {
                 Map.Entry<BulkPrimaryKey, List<Fattura_passiva_rigaBulk>> entry = (Map.Entry<BulkPrimaryKey, List<Fattura_passiva_rigaBulk>>)obj;
-                Obbligazione_scadenzarioBulk scadenzarioBulk = (Obbligazione_scadenzarioBulk) findByPrimaryKey(userContext, (Obbligazione_scadenzarioBulk) entry.getKey().getBulk());
+                Obbligazione_scadenzarioBulk scadenzarioBulk = (Obbligazione_scadenzarioBulk) findByPrimaryKey(userContext, entry.getKey().getBulk());
                 final BigDecimal totaleRigheDifattura = calcolaTotaleObbligazionePer(userContext, scadenzarioBulk, fattura);
                 if (scadenzarioBulk.getIm_scadenza().compareTo(totaleRigheDifattura) > 0) {
                     try {
@@ -7442,7 +7442,8 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
                             "In caso di inserimento di dettagli con beni soggetti ad inventario, " +
                             "non sarà permesso il salvataggio della fattura,\n" +
                             "fino alla creazione ed apertura di un nuovo inventario!");
-                else if (!h.isAperto(userContext, inventario, esercizio)) {
+                // nel caso di registrazione fatture da ricevere con inventario dell'anno precedente chiuso allora premettere la registrazione della fattura
+                else if (!h.isAperto(userContext, inventario, esercizio) && !isEsercizioValidoPerDataCompetenza( userContext,esercizio,fatturaPassiva.getCd_cds())) {
                     throw new ApplicationMessageFormatException("Attenzione: si informa che l''inventario per questo CDS non è aperto nel {0}.\n" +
                             "Nel caso di inserimento di dettagli con beni soggetti ad inventario, " +
                             "non sarà permesso il salvataggio della fattura\n" +
@@ -9127,7 +9128,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             BigDecimal newImponibileRigaNuova = rigaOld.getIm_imponibile().subtract(newImponibileRigaVecchia);
             BigDecimal newImpostaRigaNuova = rigaOld.getIm_iva().subtract(newImpostaRigaVecchia);
 
-            BigDecimal newPrezzoRigaVecchia = newImponibileRigaVecchia.divide(rigaOld.getQuantita(),2, BigDecimal.ROUND_HALF_UP);
+            BigDecimal newPrezzoRigaVecchia = newImponibileRigaVecchia.divide(rigaOld.getQuantita(),2, RoundingMode.HALF_UP);
             BigDecimal newPrezzoRigaNuova = rigaOld.getPrezzo_unitario().subtract(newPrezzoRigaVecchia);
 
             //sdoppio riga
