@@ -1299,4 +1299,25 @@
 		<columnFieldProperty name="ti_associato_manrev" />
 		<columnFieldProperty name="stato_cofi" />
 	</columnSet>
+	<columnSet name="fatturazioneElettronicaSet">
+		<columnFieldProperty name="esercizio" />
+		<columnFieldProperty name="cd_uo_origine" />
+		<columnFieldProperty name="pg_fattura_attiva" />
+		<columnFieldProperty name="dt_registrazione" />
+		<columnFieldProperty name="ds_fattura_attiva" />
+		<columnFieldProperty name="cd_cliente" />
+		<columnFieldProperty name="cognome" />
+		<columnFieldProperty name="nome" />
+		<columnFieldProperty name="ragione_sociale" />
+		<columnFieldProperty name="codice_fiscale" />
+		<columnFieldProperty name="partita_iva" />
+		<columnFieldProperty name="protocollo_iva"  label="Registr. IVA"/>
+		<columnFieldProperty name="dt_emissione" />
+		<columnFieldProperty name="im_totale_fattura" />
+		<columnFieldProperty name="codiceUnivocoUfficioIpa" />
+		<columnFieldProperty name="statoInvioSdi"  label="Stato"/>
+		<columnFieldProperty name="ti_fattura"  label="Tipo"/>
+		<!--<columnFieldProperty name="collegamentoDocumentale" label="Documenti"/>-->
+	</columnSet>
+
 </bulkInfo>

@@ -137,6 +137,8 @@ public interface FatturaPassivaComponentSession extends it.cnr.contab.docamm00.c
 
     boolean verificaStatoEsercizio(it.cnr.jada.UserContext param0, it.cnr.contab.config00.esercizio.bulk.EsercizioBulk param1) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
 
+    boolean isEsercizioValidoPerDataCompetenza(it.cnr.jada.UserContext param0, java.lang.Integer param1, java.lang.String param2) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, java.rmi.RemoteException;
+
     boolean isEsercizioChiusoPerDataCompetenza(it.cnr.jada.UserContext param0, java.lang.Integer param1, java.lang.String param2) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, java.rmi.RemoteException;
 
     java.util.Collection findListabanchedett(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaBulk param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, java.rmi.RemoteException;

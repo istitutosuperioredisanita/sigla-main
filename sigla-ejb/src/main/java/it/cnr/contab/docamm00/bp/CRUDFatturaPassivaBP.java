@@ -793,12 +793,25 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
         return isSearching() || isDeleting();
     }
 
+    private boolean enabledInventario ( )  {
+        Date esercizioDataCompetenzaCoge =DateUtils.min (
+                ((Fattura_passivaBulk) getModel()).getDt_da_competenza_coge(),((Fattura_passivaBulk) getModel()).getDt_a_competenza_coge());
+        if ( esercizioDataCompetenzaCoge!=null){
+            return  !((Fattura_passivaBulk) getModel()).isFatturaDaRicevereAnnoPrec();
+
+        }
+        return Boolean.FALSE;
+
+
+
+    }
     public boolean isInventariaPerAumentoButtonEnabled() {
 
         return (isEditing() || isInserting()) && getModel() != null
                 && !getDettaglio().getDetails().isEmpty()
                 && !((Fattura_passivaBulk) getModel()).isGenerataDaCompenso()
-                && (isAnnoDiCompetenza());
+                && (isAnnoDiCompetenza()
+                && enabledInventario() );
     }
 
     public boolean isInventariaPerAumentoButtonHidden() {
