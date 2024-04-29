@@ -23,6 +23,32 @@
  */
 package it.cnr.contab.inventario01.comp;
 
+import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
+import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
+import it.cnr.contab.config00.sto.bulk.*;
+import it.cnr.contab.docamm00.docs.bulk.*;
+import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceHome;
+import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
+import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioHome;
+import it.cnr.contab.inventario00.docs.bulk.*;
+import it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession;
+import it.cnr.contab.inventario00.tabrif.bulk.*;
+import it.cnr.contab.inventario01.bulk.*;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.util.Utility;
+import it.cnr.contab.util.enumeration.TipoIVA;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.bulk.*;
+import it.cnr.jada.comp.ApplicationException;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.IntrospectionException;
+import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.sql.*;
+import it.cnr.jada.util.RemoteIterator;
+
+import javax.ejb.EJBException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -31,67 +57,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
-
-import javax.ejb.EJBException;
-
-import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
-import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
-import it.cnr.contab.config00.sto.bulk.CdrBulk;
-import it.cnr.contab.config00.sto.bulk.Tipo_unita_organizzativaHome;
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativaHome;
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaIBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaIBulk;
-import it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_rigaBulk;
-import it.cnr.contab.docamm00.docs.bulk.Nota_di_debito_rigaBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceHome;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioHome;
-import it.cnr.contab.inventario00.docs.bulk.*;
-import it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession;
-import it.cnr.contab.inventario00.tabrif.bulk.Condizione_beneBulk;
-import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk;
-import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioHome;
-import it.cnr.contab.inventario00.tabrif.bulk.Inventario_ap_chBulk;
-import it.cnr.contab.inventario00.tabrif.bulk.Inventario_ap_chHome;
-import it.cnr.contab.inventario00.tabrif.bulk.Tipo_carico_scaricoBulk;
-import it.cnr.contab.inventario00.tabrif.bulk.Tipo_carico_scaricoHome;
-import it.cnr.contab.inventario00.tabrif.bulk.Ubicazione_beneBulk;
-import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk;
-import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoHome;
-import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
-import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettHome;
-import it.cnr.contab.inventario01.bulk.Inventario_beni_apgBulk;
-import it.cnr.contab.inventario01.bulk.Inventario_beni_apgHome;
-import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagHome;
-import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.contab.util.Utility;
-import it.cnr.contab.util.enumeration.TipoIVA;
-import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.BulkList;
-import it.cnr.jada.bulk.BusyResourceException;
-import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.bulk.OutdatedResourceException;
-import it.cnr.jada.bulk.PrimaryKeyHashtable;
-import it.cnr.jada.bulk.SimpleBulkList;
-import it.cnr.jada.bulk.ValidationException;
-import it.cnr.jada.comp.ApplicationException;
-import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.persistency.IntrospectionException;
-import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.LoggableStatement;
-import it.cnr.jada.persistency.sql.Query;
-import it.cnr.jada.persistency.sql.SQLBuilder;
-import it.cnr.jada.util.RemoteIterator;
 /**
  * @author rpucciarelli
  *
@@ -1167,7 +1132,7 @@ public void eliminaBuoniAssociatiConBulk(UserContext userContext, Ass_inv_bene_f
 			Fattura_passiva_rigaIBulk riga_fattura=(Fattura_passiva_rigaIBulk)oggetto;
 				sql.addSQLClause("AND","CD_CDS",SQLBuilder.EQUALS,riga_fattura.getCd_cds());
 				sql.addSQLClause("AND","CD_UNITA_ORGANIZZATIVA",SQLBuilder.EQUALS,riga_fattura.getCd_unita_organizzativa());
-				sql.addSQLClause("AND","ESERCIZIO",SQLBuilder.EQUALS,riga_fattura.getEsercizio());
+				//sql.addSQLClause("AND","ESERCIZIO",SQLBuilder.EQUALS,riga_fattura.getEsercizio());
 				sql.addSQLClause("AND","PG_FATTURA",SQLBuilder.EQUALS,riga_fattura.getPg_fattura_passiva());
 				sql.addSQLClause("AND","PROGRESSIVO_RIGA",SQLBuilder.EQUALS,riga_fattura.getProgressivo_riga());					
 		}
@@ -1622,7 +1587,7 @@ public SQLBuilder selectNuovo_bene_padreByClause(UserContext userContext, Invent
 		sql.addSQLClause("AND", "INVENTARIO_BENI.TI_COMMERCIALE_ISTITUZIONALE", SQLBuilder.EQUALS, riga_fattura.getTi_istituz_commerc()); // Beni dello stesso tipo della riga di Fattura
 		sql.addSQLClause("AND", "INVENTARIO_BENI.FL_TOTALMENTE_SCARICATO", SQLBuilder.EQUALS, Inventario_beniBulk.ISNOTTOTALMENTESCARICATO); // Non scaricati totalmente
 		sql.addSQLClause("AND", "INVENTARIO_BENI.CD_CATEGORIA_GRUPPO", SQLBuilder.EQUALS, riga_fattura.getBene_servizio().getCd_categoria_gruppo()); // Che sia della stessa Categoria Gruppo
-		sql.addSQLClause("AND", "INVENTARIO_BENI.ESERCIZIO_CARICO_BENE", SQLBuilder.LESS_EQUALS, CNRUserContext.getEsercizio(userContext));
+
 		//sql.addSQLClause("AND","INVENTARIO_BENI.DT_VALIDITA_VARIAZIONE",SQLBuilder.LESS_EQUALS,associa_Bulk.getTest_buono().getData_registrazione());
 		//PER NON VEDERE I BUONI TEMPORANEI GIA' GENERATI
 		sql.addSQLClause("AND","BUONO_CARICO_SCARICO_DETT.PG_BUONO_C_S",SQLBuilder.GREATER,0);
@@ -1634,6 +1599,7 @@ public SQLBuilder selectNuovo_bene_padreByClause(UserContext userContext, Invent
 				 .map(Timestamp::toLocalDateTime)
 				 .map(LocalDateTime::getYear)
 				 .orElse(riga_fattura.getEsercizio());
+		 sql.addSQLClause("AND", "INVENTARIO_BENI.ESERCIZIO_CARICO_BENE", SQLBuilder.EQUALS, esercizioDA);
 		sql.openParenthesis(FindClause.AND);
 			sql.addSQLClause(FindClause.OR,"BUONO_CARICO_SCARICO_DETT.ESERCIZIO",SQLBuilder.EQUALS, esercizioDA);
 		 	sql.addSQLClause(FindClause.OR,"BUONO_CARICO_SCARICO_DETT.ESERCIZIO",SQLBuilder.EQUALS, esercizioA);
@@ -3538,6 +3504,7 @@ public void modificaBeniAssociati(UserContext userContext,Ass_inv_bene_fatturaBu
 							new_bene_apg.setLocal_transaction_id(associaBulk.getLocal_transactionID());
 							new_bene_apg.setTi_documento(buono.getTi_documento());
 							new_bene_apg.setPg_buono_c_s(buono.getPg_buono_c_s());
+							new_bene_apg.setFl_visibile(Boolean.FALSE);
 							if (riga_fattura!=null){
 								new_bene_apg.setCd_cds(riga_fattura.getCd_cds());   				
 								new_bene_apg.setCd_unita_organizzativa(riga_fattura.getCd_unita_organizzativa());  	

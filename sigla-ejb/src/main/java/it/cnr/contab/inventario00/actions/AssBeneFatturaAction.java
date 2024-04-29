@@ -32,20 +32,29 @@ package it.cnr.contab.inventario00.actions;
   * </dl>
   *
 **/
-import java.rmi.RemoteException;
-import java.util.List;
-import java.util.Iterator;
-import it.cnr.contab.inventario00.bp.*;
+
+import it.cnr.contab.docamm00.docs.bulk.*;
+import it.cnr.contab.inventario00.bp.AssBeneFatturaBP;
+import it.cnr.contab.inventario00.bp.ListaBeniBP;
+import it.cnr.contab.inventario00.bp.ListaBuoniBP;
 import it.cnr.contab.inventario00.docs.bulk.Ass_inv_bene_fatturaBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
-import it.cnr.contab.inventario01.bp.CRUDCaricoInventarioBP;
-import it.cnr.contab.inventario01.bulk.*;
-import it.cnr.contab.docamm00.docs.bulk.*;
-import it.cnr.jada.action.*;
+import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
+import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.action.Forward;
+import it.cnr.jada.action.HookForward;
 import it.cnr.jada.bulk.BulkInfo;
 import it.cnr.jada.util.ObjectReplacer;
 import it.cnr.jada.util.RemoteIterator;
-import it.cnr.jada.util.action.*;
+import it.cnr.jada.util.action.CRUDAction;
+import it.cnr.jada.util.action.Selection;
+import it.cnr.jada.util.action.SelectionListener;
+import it.cnr.jada.util.action.SelezionatoreListaBP;
+
+import java.rmi.RemoteException;
+import java.util.Iterator;
+import java.util.List;
  
 public class AssBeneFatturaAction extends CRUDAction {
 
