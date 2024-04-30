@@ -135,7 +135,7 @@
 				sqlTypeName="DECIMAL"
 				columnSize="6"/>
 		<columnMapping
-				columnName="ORDINE_ACQ.STATO STATO_ORDINE"
+				columnName="ORDINE_ACQ.STATO"
 				propertyName="ordineAcqRiga.ordineAcq.stato"
 				sqlTypeName="VARCHAR"
 				columnSize="3"/>
