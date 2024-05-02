@@ -3217,7 +3217,9 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
             validaFatturaElettronica(userContext, fattura_passiva);
 
         try {
-            if (!fattura_passiva.isDaOrdini() && (fattura_passiva instanceof Fattura_passiva_IBulk || fattura_passiva instanceof Nota_di_creditoBulk)) {
+            if (!fattura_passiva.isDaOrdini()
+                    //&& ( fattura_passiva.LIQ.equalsIgnoreCase(fattura_passiva.getStato_liquidazione())) da verificare prima
+            && (fattura_passiva instanceof Fattura_passiva_IBulk || fattura_passiva instanceof Nota_di_creditoBulk)) {
                 if (fattura_passiva.existARowToBeInventoried()) {
                     verificaEsistenzaEdAperturaInventario(userContext, fattura_passiva);
                     if (fattura_passiva.getStato_liquidazione() == null || fattura_passiva.getStato_liquidazione().compareTo(Fattura_passiva_IBulk.LIQ) == 0) {
@@ -5436,7 +5438,9 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         try {
             if (fatturaPassiva instanceof Fattura_passiva_IBulk && !fatturaPassiva.isDaOrdini()) {
                 //if (fatturaPassiva.existARowToBeInventoried()) {
-                if (fatturaPassiva.existARowToBeInventoried() && (fatturaPassiva.getStato_liquidazione() == null || fatturaPassiva.getStato_liquidazione().compareTo(Fattura_passiva_IBulk.LIQ) == 0)) {
+                if (fatturaPassiva.existARowToBeInventoried()
+                        //&& ( fattura_passiva.LIQ.equalsIgnoreCase(fattura_passiva.getStato_liquidazione())) da verificare prima
+                        && (fatturaPassiva.getStato_liquidazione() == null || fatturaPassiva.getStato_liquidazione().compareTo(Fattura_passiva_IBulk.LIQ) == 0)) {
                     if (hasFatturaPassivaARowNotInventoried(aUC, fatturaPassiva))
                         throw new it.cnr.jada.comp.ApplicationException("Attenzione: è necessario inventariare tutti i dettagli.");
                     else {
