@@ -98,11 +98,18 @@
       			<% bp.getController().writeFormLabel(out,"stato_liquidazione");%>
       			<% bp.getController().writeFormInput(out,null,"stato_liquidazione", isInSpesaMode,null,"onChange=\"submitForm('doOnStatoLiquidazioneChange')\"");%>
       		</td>
-      		<td> 
+            <%	if (bp.isSearching() || bp.isLiquidazioneSospesa()) { %>
+      		<td>
       			<% bp.getController().writeFormLabel(out,"causale");%>
       			<% bp.getController().writeFormInput(out,null,"causale",isInSpesaMode,null,"onChange=\"submitForm('doOnCausaleChange')\"");%>
       		</td>
-      	  </tr>	
+      		<% } %>
+      	  </tr>
+          <%	if (bp.isSearching() || bp.isLiquidazioneSospesa()) { %>
+      	  <tr>
+      	    <% bp.getController().writeFormField(out,"dt_inizio_sospensione"); %>
+      	  </tr>
+      	  <% } %>
 	      <%	if (bp instanceof CRUDFatturaPassivaIBP) { %>
 				      <tr>      	
 				     	<td>
@@ -143,13 +150,20 @@
             <td>
                 <% bp.getController().writeFormInput(out,null,"stato_liquidazione",false,null,"onChange=\"submitForm('doOnStatoLiquidazioneChange')\"");%>
             </td>
+            <%	if (bp.isSearching() || bp.isLiquidazioneSospesa()) { %>
             <td>
                 <% bp.getController().writeFormLabel(out,"causale");%>
              </td>
              <td>
                 <% bp.getController().writeFormInput(out,null,"causale",false,null,"onChange=\"submitForm('doOnCausaleChange')\"");%>
             </td>
+            <% } %>
 	      </tr>
+          <%	if (bp.isSearching() || bp.isLiquidazioneSospesa()) { %>
+      	  <tr>
+      	    <% bp.getController().writeFormField(out,"dt_inizio_sospensione"); %>
+      	  </tr>
+      	  <% } %>
 	<% } %>
     </table>
    </div>

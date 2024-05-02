@@ -1199,6 +1199,16 @@
             enabledOnSearch="true"
             keysProperty="stato_liquidazioneKeys"/>
     <fieldProperty
+            name="dt_inizio_sospensione"
+            property="dt_inizio_sospensione"
+            inputType="TEXT"
+            maxLength="10"
+            inputSize="10"
+            formatName="date_short"
+            enabledOnSearch="true"
+            label="Data inizio sospensione"
+            command="doCambiaDataInizioSospensione"/>            
+    <fieldProperty
             name="causale"
             property="causale"
             inputType="SELECT"
@@ -1206,7 +1216,7 @@
             readonlyProperty="ROStato_liquidazione"
             nullable="true"
             enabledOnSearch="true"
-            keysProperty="causaleKeys"/>
+            keysProperty="causaleKeys"/>            
     <fieldProperty
             name="cds_compenso"
             property="cds_compenso"
@@ -1366,6 +1376,7 @@
     <findFieldProperty name="fl_congelata"/>
     <findFieldProperty name="fl_liquidazione_differita"/>
     <findFieldProperty name="stato_liquidazione"/>
+    <findFieldProperty name="dt_inizio_sospensione"/>
     <findFieldProperty name="causale"/>
     <findFieldProperty name="cds_compenso"/>
     <findFieldProperty name="uo_compenso"/>
@@ -1649,6 +1660,8 @@
     <formFieldProperty
             name="stato_liquidazione"/>
     <formFieldProperty
+            name="dt_inizio_sospensione"/>            
+    <formFieldProperty
             name="causale"/>
     <formFieldProperty
             name="cds_compenso"/>
@@ -1747,6 +1760,8 @@
     <columnFieldProperty
             name="stato_liquidazione"/>
     <columnFieldProperty
+            name="dt_inizio_sospensione"/>            
+    <columnFieldProperty
             name="causale"/>
     <columnFieldProperty name="progr_univoco"/>
     <columnFieldProperty name="identificativoSdi"/>
@@ -1795,6 +1810,8 @@
                 name="dt_registrazione"/>
         <columnFieldProperty
                 name="stato_liquidazione"/>
+        <columnFieldProperty
+                name="dt_inizio_sospensione"/>                
         <columnFieldProperty
                 name="causale"/>
         <columnFieldProperty
