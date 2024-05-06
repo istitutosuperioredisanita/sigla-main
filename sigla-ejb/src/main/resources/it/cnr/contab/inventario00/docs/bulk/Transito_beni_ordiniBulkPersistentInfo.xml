@@ -69,7 +69,7 @@
 				columnSize="7"/>
 		<columnMapping
 				columnName="NUMERAZIONE_ORD.CD_NUMERATORE"
-				propertyName="movimentiMag.lottoMag.ordineAcqConsegna.ordineAcqRiga.ordineAcq.numerazioneOrd.cd_numeratore"
+				propertyName="movimentiMag.lottoMag.ordineAcqConsegna.ordineAcqRiga.ordineAcq.numerazioneOrd.cdNumeratore"
 				sqlTypeName="VARCHAR"
 				columnSize="7"/>
 		<columnMapping
@@ -78,7 +78,7 @@
 				sqlTypeName="DECIMAL"
 				columnSize="7"/>
 		<columnMapping
-				columnName="ORDINE_ACQ_RIGA.NUMERO"
+				columnName="ORDINE_ACQ_RIGA.RIGA"
 				propertyName="movimentiMag.lottoMag.ordineAcqConsegna.ordineAcqRiga.riga"
 				sqlTypeName="DECIMAL"
 				columnSize="7"/>

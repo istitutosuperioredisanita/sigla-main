@@ -83,6 +83,7 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 	public SQLBuilder selectByClause(UserContext usercontext, CompoundFindClause compoundfindclause) throws PersistencyException {
 		this.setColumnMap("TRANSITO_BENI_ORDINI_DETT");
 			SQLBuilder sql = this.createSQLBuilder();
+
 			sql.addClause(compoundfindclause);
 		//SQLBuilder sql = super.selectByClause(usercontext, compoundfindclause);
 		boolean ricercaAnnullati=false;
