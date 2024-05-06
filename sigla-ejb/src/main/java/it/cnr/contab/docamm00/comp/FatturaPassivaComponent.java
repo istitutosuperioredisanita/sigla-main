@@ -3296,10 +3296,15 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                     userContext,
                     new EsercizioBulk(
                             fattura_passiva.getCd_cds(),
-                            ((it.cnr.contab.utenze00.bp.CNRUserContext) userContext).getEsercizio())))
+                            ((it.cnr.contab.utenze00.bp.CNRUserContext) userContext).getEsercizio()))
+            && !isEsercizioChiusoPerDataCompetenza( userContext,
+                    ((it.cnr.contab.utenze00.bp.CNRUserContext) userContext).getEsercizio(),
+                    fattura_passiva.getCd_cds()))
                 throw new it.cnr.jada.comp.ApplicationException("Impossibile salvare un documento per un esercizio non aperto!");
         } catch (it.cnr.jada.comp.ApplicationException e) {
             throw handleException(bulk, e);
+        } catch (PersistencyException e) {
+            throw new RuntimeException(e);
         }
         controllaQuadraturaInventario(userContext, fattura_passiva);
         logger.info("Creazione fattura passiva legata al documento elettronico:" + fattura_passiva.getDocumentoEleTestata());
@@ -5602,10 +5607,15 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
                     aUC,
                     new EsercizioBulk(
                             fatturaPassiva.getCd_cds(),
-                            ((it.cnr.contab.utenze00.bp.CNRUserContext) aUC).getEsercizio())))
+                            ((it.cnr.contab.utenze00.bp.CNRUserContext) aUC).getEsercizio()))
+            && !isEsercizioChiusoPerDataCompetenza( aUC,
+                    ((it.cnr.contab.utenze00.bp.CNRUserContext) aUC).getEsercizio(),
+                    fatturaPassiva.getCd_cds()))
                 throw new it.cnr.jada.comp.ApplicationException("Impossibile salvare un documento per un esercizio non aperto!");
         } catch (it.cnr.jada.comp.ApplicationException e) {
             throw handleException(bulk, e);
+        } catch (PersistencyException e) {
+            throw new RuntimeException(e);
         }
         controllaQuadraturaInventario(aUC, fatturaPassiva);
         if (messaggio != null)
