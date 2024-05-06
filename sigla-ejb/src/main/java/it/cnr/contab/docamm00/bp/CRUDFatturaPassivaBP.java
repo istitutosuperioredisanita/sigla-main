@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /*
  * Copyright (C) 2019  Consiglio Nazionale delle Ricerche
  *
@@ -2005,6 +2004,14 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
                 .filter(Fattura_passiva_IBulk.class::isInstance)
                 .map(Fattura_passiva_IBulk.class::cast)
                 .map(fatturaPassivaIBulk -> fatturaPassivaIBulk.isLiquidazioneSospesa())
+                .orElse(Boolean.FALSE);
+    }
+
+    public boolean isNonLiquidabile() {
+        return Optional.ofNullable(getModel())
+                .filter(Fattura_passiva_IBulk.class::isInstance)
+                .map(Fattura_passiva_IBulk.class::cast)
+                .map(fatturaPassivaIBulk -> fatturaPassivaIBulk.isNonLiquidabile())
                 .orElse(Boolean.FALSE);
     }
 
