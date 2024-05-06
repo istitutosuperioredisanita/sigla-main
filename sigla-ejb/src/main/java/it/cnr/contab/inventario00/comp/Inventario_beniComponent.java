@@ -933,6 +933,16 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 	} catch (it.cnr.jada.persistency.IntrospectionException e){
 		throw new it.cnr.jada.comp.ComponentException(e);
 	}
+
+	if (clauses == null) {
+		if (bulk != null) {
+			clauses = bulk.buildFindClauses((Boolean)null);
+		}
+	} else {
+		clauses = CompoundFindClause.and(clauses, bulk.buildFindClauses(Boolean.FALSE));
+	}
+
+
 	Inventario_beniHome home = Optional.ofNullable(getHome(userContext, Inventario_beniBulk.class, "INVENTARIO_BENI_DETT"))
 			.filter(Inventario_beniHome.class::isInstance)
 			.map(Inventario_beniHome.class::cast)
