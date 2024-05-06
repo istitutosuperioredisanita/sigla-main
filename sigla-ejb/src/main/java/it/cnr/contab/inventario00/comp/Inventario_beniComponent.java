@@ -17,52 +17,15 @@
 
 package it.cnr.contab.inventario00.comp;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.rmi.RemoteException;
-import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.ejb.EJBException;
-
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
-import it.cnr.contab.config00.sto.bulk.CdrBulk;
-import it.cnr.contab.config00.sto.bulk.CdrHome;
-import it.cnr.contab.config00.sto.bulk.CdsBulk;
-import it.cnr.contab.config00.sto.bulk.CdsHome;
-import it.cnr.contab.config00.sto.bulk.EnteBulk;
-import it.cnr.contab.config00.sto.bulk.Tipo_unita_organizzativaHome;
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativaHome;
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
+import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.doccont00.comp.DateServices;
-/**
- * Insert the type's description here.
- * Creation date: (07/05/2002 17.44.39)
- * @author: Gennaro Borriello
- */
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.inventario00.consultazioni.bulk.V_cons_registro_inventarioBulk;
 import it.cnr.contab.inventario00.consultazioni.bulk.V_cons_registro_inventarioHome;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniHome;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_utilizzatori_laBulk;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_utilizzatori_laHome;
-import it.cnr.contab.inventario00.docs.bulk.Stampa_beni_senza_utilizVBulk;
-import it.cnr.contab.inventario00.docs.bulk.Stampa_registro_inventarioVBulk;
-import it.cnr.contab.inventario00.docs.bulk.Utilizzatore_CdrVBulk;
-import it.cnr.contab.inventario00.docs.bulk.V_ass_inv_bene_fatturaBulk;
-import it.cnr.contab.inventario00.tabrif.bulk.Condizione_beneBulk;
-import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk;
-import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioHome;
-import it.cnr.contab.inventario00.tabrif.bulk.Tipo_ammortamentoBulk;
-import it.cnr.contab.inventario00.tabrif.bulk.Tipo_ammortamentoHome;
-import it.cnr.contab.inventario00.tabrif.bulk.Tipo_carico_scaricoBulk;
-import it.cnr.contab.inventario00.tabrif.bulk.Tipo_carico_scaricoHome;
-import it.cnr.contab.inventario00.tabrif.bulk.Ubicazione_beneBulk;
+import it.cnr.contab.inventario00.docs.bulk.*;
+import it.cnr.contab.inventario00.tabrif.bulk.*;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettHome;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
@@ -77,13 +40,19 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.ICRUDMgr;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.LoggableStatement;
-import it.cnr.jada.persistency.sql.Query;
-import it.cnr.jada.persistency.sql.SQLBuilder;
+import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.RemoteIterator;
- 
+
+import javax.ejb.EJBException;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.rmi.RemoteException;
+import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+
 public class Inventario_beniComponent 
 		extends it.cnr.jada.comp.CRUDComponent 
 			implements IInventario_beniMgr, ICRUDMgr, Serializable, Cloneable, it.cnr.jada.comp.IPrintMgr {
@@ -964,9 +933,28 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 	} catch (it.cnr.jada.persistency.IntrospectionException e){
 		throw new it.cnr.jada.comp.ComponentException(e);
 	}
+
+	if (clauses == null) {
+		if (bulk != null) {
+			clauses = bulk.buildFindClauses((Boolean)null);
+		}
+	} else {
+		clauses = CompoundFindClause.and(clauses, bulk.buildFindClauses(Boolean.FALSE));
+	}
+
+
+	Inventario_beniHome home = Optional.ofNullable(getHome(userContext, Inventario_beniBulk.class, "INVENTARIO_BENI_DETT"))
+			.filter(Inventario_beniHome.class::isInstance)
+			.map(Inventario_beniHome.class::cast)
+			.orElseThrow(() -> new ComponentException("Cannot find Inventario_beniHome"));
 	
-	SQLBuilder sql = (SQLBuilder)super.select(userContext,clauses, bulk);	
-	Inventario_beniBulk bene = (Inventario_beniBulk)bulk;
+	SQLBuilder sql = home.createSQLBuilder();
+	sql.addClause(clauses);
+
+	sql.setAutoJoins(true);
+	sql.generateJoin("assegnatario", "TERZO");
+	sql.generateJoin("ubicazione", "UBICAZIONE_BENE");
+
 	
 	sql.addSQLClause("AND", "PG_INVENTARIO", sql.EQUALS, inventario.getPg_inventario());
 	// Aggiunta clausola che visualizzi solo i beni che abbiano 

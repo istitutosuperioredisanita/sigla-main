@@ -21,6 +21,7 @@ import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioHome;
+import it.cnr.contab.ordmag.anag00.NumerazioneOrdBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.LottoMagBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk;
@@ -80,10 +81,21 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 	}
 	@Override
 	public SQLBuilder selectByClause(UserContext usercontext, CompoundFindClause compoundfindclause) throws PersistencyException {
-		SQLBuilder sql = super.selectByClause(usercontext, compoundfindclause);
+		this.setColumnMap("TRANSITO_BENI_ORDINI_DETT");
+			SQLBuilder sql = this.createSQLBuilder();
+			sql.addClause(compoundfindclause);
+		//SQLBuilder sql = super.selectByClause(usercontext, compoundfindclause);
 		boolean ricercaAnnullati=false;
 
 		sql.generateJoin(Transito_beni_ordiniBulk.class, MovimentiMagBulk.class, "movimentiMag", "MOVIMENTI_MAG");
+		sql.generateJoin(MovimentiMagBulk.class, LottoMagBulk.class, "lottoMag", "LOTTO_MAG");
+		sql.generateJoin(LottoMagBulk.class, OrdineAcqConsegnaBulk.class, "ordineAcqConsegna", "ORDINE_ACQ_CONSEGNA");
+		sql.generateJoin(LottoMagBulk.class, Bene_servizioBulk.class, "beneServizio", "BENE_SERVIZIO");
+		sql.generateJoin(Bene_servizioBulk.class, Categoria_gruppo_inventBulk.class, "categoria_gruppo", "CATEGORIA_GRUPPO");
+		sql.generateJoin(OrdineAcqConsegnaBulk.class, OrdineAcqRigaBulk.class, "ordineAcqRiga", "ORDINE_ACQ_RIGA");
+		sql.generateJoin(OrdineAcqRigaBulk.class, OrdineAcqBulk.class, "ordineAcq", "ORDINE_ACQ");
+		sql.generateJoin(OrdineAcqBulk.class, NumerazioneOrdBulk.class, "numerazioneOrd", "NUMERAZIONE_ORD");
+
 		addDataRifMovimentoCondition( usercontext,sql,SQLBuilder.GREATER_EQUALS, DateUtils.firstDateOfTheYear(CNRUserContext.getEsercizio(usercontext)));
 		addDataRifMovimentoCondition( usercontext,sql,SQLBuilder.LESS_EQUALS,  lastDateOfTheYear(CNRUserContext.getEsercizio(usercontext)));
 		if (compoundfindclause != null && compoundfindclause.getClauses() != null) {
@@ -107,19 +119,17 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 							addDataBollaCondition( usercontext,sql,clause.getOperator(),clause.getValue());
 						}
 						else {
-							sql.generateJoin(MovimentiMagBulk.class, LottoMagBulk.class, "lottoMag", "LOTTO_MAG");
+
 
 							if(clause.getPropertyName() != null && clause.getPropertyName().equals("cd_categoria_gruppo")){
-								sql.generateJoin(LottoMagBulk.class, Bene_servizioBulk.class, "beneServizio", "BENE_SERVIZIO");
-								sql.generateJoin(Bene_servizioBulk.class, Categoria_gruppo_inventBulk.class, "categoria_gruppo", "CATEGORIA_GRUPPO");
+
 								sql.addSQLClause("AND", "CATEGORIA_GRUPPO.CD_CATEGORIA_GRUPPO", clause.getOperator(), clause.getValue());
 							}else {
 
-								sql.generateJoin(LottoMagBulk.class, OrdineAcqConsegnaBulk.class, "ordineAcqConsegna", "ORDINE_ACQ_CONSEGNA");
+
 
 								if (clause.getPropertyName() != null && clause.getPropertyName().equals("dtOrdine")) {
-									sql.generateJoin(OrdineAcqConsegnaBulk.class, OrdineAcqRigaBulk.class, "ordineAcqRiga", "ORDINE_ACQ_RIGA");
-									sql.generateJoin(OrdineAcqRigaBulk.class, OrdineAcqBulk.class, "ordineAcq", "ORDINE_ACQ");
+
 									sql.addSQLClause("AND", "ORDINE_ACQ.DATA_ORDINE", clause.getOperator(), clause.getValue());
 
 								} else if (clause.getPropertyName() != null && clause.getPropertyName().equals("numeroOrdine")) {

@@ -16,21 +16,23 @@
  */
 
 package it.cnr.contab.inventario00.docs.bulk;
-import java.sql.Timestamp;
-import java.util.List;
+
 import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.contab.inventario01.bulk.Inventario_beni_apgBulk;
 import it.cnr.contab.inventario01.bulk.Inventario_beni_apgHome;
-import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagBulk;
-import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
-import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.persistency.*;
+import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.bulk.SimpleBulkList;
+import it.cnr.jada.persistency.IntrospectionException;
+import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.*;
+
+import java.sql.Timestamp;
+import java.util.List;
 
 public class Inventario_beniHome extends BulkHome {
 	

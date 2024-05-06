@@ -44,7 +44,7 @@
 			columnName="PG_FATTURA"
 			propertyName="pg_fattura"
 			sqlTypeName="DECIMAL"
-			columnSize="10"
+			columnSize="38"
 			nullable="true" />
 		<columnMapping
 			columnName="PROGRESSIVO_RIGA"

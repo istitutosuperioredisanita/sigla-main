@@ -212,6 +212,8 @@ public abstract class Fattura_passivaBulk
 	 */
     private boolean isDetailDoubled = false; //serve per sapere se ? stata sdoppiata una riga di dettaglio
     private boolean isDocumentoModificabile = true; //serve per sapere se il documento ? modificabile o meno
+
+    private boolean isFatturaDaRicevereAnnoPrec = Boolean.FALSE;
     private java.math.BigDecimal im_totale_fattura_calcolato = new java.math.BigDecimal(0);
     /* Le seguenti due collection servono per caricare i Tipi di Sezionale in modo selettivo:
 	 * in sezionaliIstituzionali andr? il Sezionale, (o i Sezionali), che sar? visualizzato
@@ -3715,6 +3717,14 @@ public abstract class Fattura_passivaBulk
     @Override
     public Timestamp getDtGenerazioneScrittura() {
         return this.getDt_contabilizzazione();
+    }
+
+    public boolean isFatturaDaRicevereAnnoPrec() {
+        return isFatturaDaRicevereAnnoPrec;
+    }
+
+    public void setFatturaDaRicevereAnnoPrec(boolean fatturaDaRicevereAnnoPrec) {
+        isFatturaDaRicevereAnnoPrec = fatturaDaRicevereAnnoPrec;
     }
 
 }

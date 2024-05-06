@@ -951,6 +951,28 @@ public class TransactionalFatturaPassivaComponentSession extends it.cnr.jada.ejb
             }
         }
     }
+    /*
+    aggiunto per testare l'esercizio della data competenza da/a nel caso sia chiuso verifico che l'esercizio successivo sia aperto necessario
+    per la gestione inizio anno per la gestione delle fatture da ricevere da anno precedente
+    */
+    public boolean isEsercizioValidoPerDataCompetenza(it.cnr.jada.UserContext param0, Integer param1, java.lang.String param2) throws RemoteException, it.cnr.jada.comp.ComponentException {
+        try {
+            return ((Boolean) invoke("isEsercizioValidoPerDataCompetenza", new Object[]{
+                    param0,
+                    param1,
+                    param2})).booleanValue();
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
 
     public void rimuoviDaAssociazioniInventario(it.cnr.jada.UserContext param0, it.cnr.contab.inventario00.docs.bulk.Ass_inv_bene_fatturaBulk param1) throws RemoteException, it.cnr.jada.comp.ComponentException {
         try {

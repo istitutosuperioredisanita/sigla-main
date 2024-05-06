@@ -94,7 +94,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumentoComponent
@@ -3122,7 +3121,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
             ObbligazioniTable obbligazioniTable = new ObbligazioniTable();
             for (Object obj : fattura.getObbligazioniHash().entrySet()) {
                 Map.Entry<BulkPrimaryKey, List<Fattura_passiva_rigaBulk>> entry = (Map.Entry<BulkPrimaryKey, List<Fattura_passiva_rigaBulk>>)obj;
-                Obbligazione_scadenzarioBulk scadenzarioBulk = (Obbligazione_scadenzarioBulk) findByPrimaryKey(userContext, (Obbligazione_scadenzarioBulk) entry.getKey().getBulk());
+                Obbligazione_scadenzarioBulk scadenzarioBulk = (Obbligazione_scadenzarioBulk) findByPrimaryKey(userContext, entry.getKey().getBulk());
                 final BigDecimal totaleRigheDifattura = calcolaTotaleObbligazionePer(userContext, scadenzarioBulk, fattura);
                 if (scadenzarioBulk.getIm_scadenza().compareTo(totaleRigheDifattura) > 0) {
                     try {
@@ -3218,7 +3217,9 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
             validaFatturaElettronica(userContext, fattura_passiva);
 
         try {
-            if (!fattura_passiva.isDaOrdini() && (fattura_passiva instanceof Fattura_passiva_IBulk || fattura_passiva instanceof Nota_di_creditoBulk)) {
+            if (!fattura_passiva.isDaOrdini()
+                    //&& ( fattura_passiva.LIQ.equalsIgnoreCase(fattura_passiva.getStato_liquidazione())) da verificare prima
+            && (fattura_passiva instanceof Fattura_passiva_IBulk || fattura_passiva instanceof Nota_di_creditoBulk)) {
                 if (fattura_passiva.existARowToBeInventoried()) {
                     verificaEsistenzaEdAperturaInventario(userContext, fattura_passiva);
                     if (fattura_passiva.getStato_liquidazione() == null || fattura_passiva.getStato_liquidazione().compareTo(Fattura_passiva_IBulk.LIQ) == 0) {
@@ -3295,10 +3296,15 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                     userContext,
                     new EsercizioBulk(
                             fattura_passiva.getCd_cds(),
-                            ((it.cnr.contab.utenze00.bp.CNRUserContext) userContext).getEsercizio())))
+                            ((it.cnr.contab.utenze00.bp.CNRUserContext) userContext).getEsercizio()))
+            && !isEsercizioChiusoPerDataCompetenza( userContext,
+                    ((it.cnr.contab.utenze00.bp.CNRUserContext) userContext).getEsercizio(),
+                    fattura_passiva.getCd_cds()))
                 throw new it.cnr.jada.comp.ApplicationException("Impossibile salvare un documento per un esercizio non aperto!");
         } catch (it.cnr.jada.comp.ApplicationException e) {
             throw handleException(bulk, e);
+        } catch (PersistencyException e) {
+            throw new RuntimeException(e);
         }
         controllaQuadraturaInventario(userContext, fattura_passiva);
         logger.info("Creazione fattura passiva legata al documento elettronico:" + fattura_passiva.getDocumentoEleTestata());
@@ -5437,7 +5443,9 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         try {
             if (fatturaPassiva instanceof Fattura_passiva_IBulk && !fatturaPassiva.isDaOrdini()) {
                 //if (fatturaPassiva.existARowToBeInventoried()) {
-                if (fatturaPassiva.existARowToBeInventoried() && (fatturaPassiva.getStato_liquidazione() == null || fatturaPassiva.getStato_liquidazione().compareTo(Fattura_passiva_IBulk.LIQ) == 0)) {
+                if (fatturaPassiva.existARowToBeInventoried()
+                        //&& ( fattura_passiva.LIQ.equalsIgnoreCase(fattura_passiva.getStato_liquidazione())) da verificare prima
+                        && (fatturaPassiva.getStato_liquidazione() == null || fatturaPassiva.getStato_liquidazione().compareTo(Fattura_passiva_IBulk.LIQ) == 0)) {
                     if (hasFatturaPassivaARowNotInventoried(aUC, fatturaPassiva))
                         throw new it.cnr.jada.comp.ApplicationException("Attenzione: è necessario inventariare tutti i dettagli.");
                     else {
@@ -5599,10 +5607,15 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
                     aUC,
                     new EsercizioBulk(
                             fatturaPassiva.getCd_cds(),
-                            ((it.cnr.contab.utenze00.bp.CNRUserContext) aUC).getEsercizio())))
+                            ((it.cnr.contab.utenze00.bp.CNRUserContext) aUC).getEsercizio()))
+            && !isEsercizioChiusoPerDataCompetenza( aUC,
+                    ((it.cnr.contab.utenze00.bp.CNRUserContext) aUC).getEsercizio(),
+                    fatturaPassiva.getCd_cds()))
                 throw new it.cnr.jada.comp.ApplicationException("Impossibile salvare un documento per un esercizio non aperto!");
         } catch (it.cnr.jada.comp.ApplicationException e) {
             throw handleException(bulk, e);
+        } catch (PersistencyException e) {
+            throw new RuntimeException(e);
         }
         controllaQuadraturaInventario(aUC, fatturaPassiva);
         if (messaggio != null)
@@ -7449,7 +7462,8 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
                             "In caso di inserimento di dettagli con beni soggetti ad inventario, " +
                             "non sarà permesso il salvataggio della fattura,\n" +
                             "fino alla creazione ed apertura di un nuovo inventario!");
-                else if (!h.isAperto(userContext, inventario, esercizio)) {
+                // nel caso di registrazione fatture da ricevere con inventario dell'anno precedente chiuso allora premettere la registrazione della fattura
+                else if (!h.isAperto(userContext, inventario, esercizio) && !isEsercizioValidoPerDataCompetenza( userContext,esercizio,fatturaPassiva.getCd_cds())) {
                     throw new ApplicationMessageFormatException("Attenzione: si informa che l''inventario per questo CDS non è aperto nel {0}.\n" +
                             "Nel caso di inserimento di dettagli con beni soggetti ad inventario, " +
                             "non sarà permesso il salvataggio della fattura\n" +
@@ -7576,6 +7590,18 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         } catch (java.sql.SQLException e) {
             throw handleSQLException(e);
         }
+    }
+    /*
+    aggiunto per testare l'esercizio della data competenza da/a nel caso sia chiuso verifico che l'esercizio successivo sia aperto necessario
+    per la gestione inizio anno per la gestione delle fatture da ricevere da anno precedente
+    */
+    public boolean isEsercizioValidoPerDataCompetenza(UserContext userContext, Integer esercizio, String cd_cds) throws ComponentException, PersistencyException {
+
+            if ( isEsercizioChiusoPerDataCompetenza(userContext,esercizio,cd_cds))
+                // controlla che l'anno successivo sia aperto
+                return ( !isEsercizioChiusoPerDataCompetenza( userContext , esercizio+1,cd_cds));
+             return Boolean.TRUE;
+
     }
 
     public TerzoBulk findCessionario(UserContext userContext, Fattura_passiva_rigaBulk fattura_riga) throws ComponentException {

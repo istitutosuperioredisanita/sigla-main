@@ -53,7 +53,7 @@
 		property="pg_fattura"
 		inputType="TEXT"
 		inputSize="10"
-		maxLength="10"
+		maxLength="38"
 		label="Protocollo interno di numerazione delle fatture passive o attive" />
 	<fieldProperty
 		name="progressivo_riga"
