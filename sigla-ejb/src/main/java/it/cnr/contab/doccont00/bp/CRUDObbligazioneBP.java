@@ -81,8 +81,8 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
         public OggettoBulk removeDetail(int i) {
             List list = getDetails();
             Obbligazione_pluriennaleBulk dettaglio =(Obbligazione_pluriennaleBulk)list.get(i);
-            for (int k=0;k<dettaglio.getObbligazione_pluriennale_voceBulkList().size();k++) {
-                dettaglio.removeFromObbligazione_pluriennale_VoceBulkList(k);
+            for (int k=0;k<dettaglio.getRigheVoceColl().size();k++) {
+                dettaglio.removeFromRigheVoceCollBulkList(k);
             }
             return super.removeDetail(i);
         }
@@ -1284,7 +1284,7 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
         pages.put(i++, new String[]{"tabCdrCapitoli", "Cdr", "/doccont00/tab_cdr_capitoli.jsp"});
 
         if(attivaImpegnoPluriennale) {
-            if (!isSearching()) {
+            if (!isSearching() && !(isInserting())) {
                     pages.put(i++, new String[]{"tabObbligazioniPluriennali", "Obbligazioni Pluriennali", "/doccont00/tab_obb_pluriennali.jsp"});
             }
         }

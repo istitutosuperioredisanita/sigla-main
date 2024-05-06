@@ -6,6 +6,12 @@ package it.cnr.contab.doccont00.core.bulk;
 
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
+import it.cnr.contab.progettiric00.core.bulk.Ass_progetto_piaeco_voceBulk;
+import it.cnr.contab.progettiric00.core.bulk.Progetto_piano_economicoBulk;
+import it.cnr.jada.bulk.BulkList;
+
+import java.util.stream.Collectors;
+
 public class Obbligazione_pluriennale_voceBulk extends Obbligazione_pluriennale_voceBase {
 	/**
 	 * [OBBLIGAZIONE_PLURIENNALE ]
@@ -228,5 +234,11 @@ public class Obbligazione_pluriennale_voceBulk extends Obbligazione_pluriennale_
 	}
 	public void setLinea_attivita(WorkpackageBulk linea_attivita) {
 		this.linea_attivita = linea_attivita;
+	}
+
+	@Override
+	public Object clone() {
+		
+		return super.clone();
 	}
 }

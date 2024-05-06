@@ -481,9 +481,10 @@ public class RimodulaProgettoRicercaComponent extends it.cnr.jada.comp.CRUDCompo
 				progettoRimodulazione.setDtProrogaOld(progettoRimodulazione.getProgetto().getOtherField().getDtProroga());
 				progettoRimodulazione.setDtProroga(progettoRimodulazione.getDtProrogaRimodulato());
 	    	}
-	    	
+
+	    	// 23 APRILE 2024
 		    Progetto_rimodulazioneHome rimodHome = (Progetto_rimodulazioneHome)getHome(usercontext, Progetto_rimodulazioneBulk.class);
-		    List<Progetto_rimodulazione_ppeBulk> listRim = rimodHome.getDettagliRimodulazioneAggiornato(usercontext, progettoRimodulazione);
+		   List<Progetto_rimodulazione_ppeBulk> listRim = rimodHome.getDettagliRimodulazioneAggiornato(usercontext, progettoRimodulazione);
 
 		    //Individuo le righe di variazione da creare
 		    listRim.stream()
