@@ -4575,16 +4575,23 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 					.forEach(el -> {
 						try {
 							List<FatturaOrdineBulk> listaFatturaOrdini = Utility.createFatturaPassivaComponentSession().findFatturaOrdini(userContext, (Fattura_passivaBulk) el.getDocamm());
+							List<Fattura_passiva_rigaBulk> listaFattureCalcolate = new ArrayList<>();
 							for (FatturaOrdineBulk fattordine : listaFatturaOrdini) {
-								if (el.getDocammRighe().stream().filter(Fattura_passiva_rigaBulk.class::isInstance).map(Fattura_passiva_rigaBulk.class::cast)
-										.anyMatch(riga->riga.equalsByPrimaryKey(fattordine.getFatturaPassivaRiga()))) {
-									fattordine.setOrdineAcqConsegna((OrdineAcqConsegnaBulk) loadObject(userContext, fattordine.getOrdineAcqConsegna()));
-									list.add(new DettaglioFinanziario(docamm, null, cdTerzoDocAmm, fattordine.getOrdineAcqConsegna().getContoBulk(), null, null,
-											Optional.ofNullable(fattordine.getImImponibileRettificato()).orElse(fattordine.getImImponibile()),
-											Optional.ofNullable(fattordine.getImIvaRettificata()).orElse(fattordine.getImIva())));
-								}
+								el.getDocammRighe().stream().filter(Fattura_passiva_rigaBulk.class::isInstance).map(Fattura_passiva_rigaBulk.class::cast)
+										.filter(riga->riga.equalsByPrimaryKey(fattordine.getFatturaPassivaRiga())).findAny().ifPresent(rigaFattura -> {
+											if (listaFattureCalcolate.stream().anyMatch(rigaFatturaCalcolata->rigaFatturaCalcolata.equalsByPrimaryKey(rigaFattura)))
+												throw new ApplicationRuntimeException("La riga " + rigaFattura.getProgressivo_riga() + " della fattura " +
+														docamm.getCd_tipo_doc()+"/"+docamm.getEsercizio()+"/"+docamm.getCd_uo()+"/"+docamm.getPg_doc()+
+														" associata al mandato " + mandato.getEsercizio() + "/" + mandato.getCd_cds() + "/" + mandato.getPg_mandato() +
+														" risulta essere collegata a più righe di ordine. Non è possibile effettuare la scrittura prima nota.");
+
+											listaFattureCalcolate.add(fattordine.getFatturaPassivaRiga());
+											fattordine.setOrdineAcqConsegna((OrdineAcqConsegnaBulk) loadObject(userContext, fattordine.getOrdineAcqConsegna()));
+											list.add(new DettaglioFinanziario(docamm, null, cdTerzoDocAmm, fattordine.getOrdineAcqConsegna().getContoBulk(), null, null,
+													rigaFattura.getIm_imponibile(), rigaFattura.getIm_iva()));
+										});
 							}
-							//Faccio il controllo per le righe di una fattura da ordine ma con una ria non associata
+							//Faccio il controllo per le righe di una fattura da ordine ma con una riga non associata
 							el.getDocammRighe().stream().filter(Fattura_passiva_rigaBulk.class::isInstance).map(Fattura_passiva_rigaBulk.class::cast)
 									.forEach(riga->{
 										if (listaFatturaOrdini.stream().noneMatch(fatord-> fatord.getFatturaPassivaRiga().equalsByPrimaryKey(riga))) {

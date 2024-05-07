@@ -27,9 +27,7 @@ import it.cnr.contab.anagraf00.ejb.TerzoComponentSession;
 import it.cnr.contab.bollo00.ejb.AttoBolloComponentSession;
 import it.cnr.contab.bollo00.ejb.TipoAttoBolloComponentSession;
 import it.cnr.contab.client.docamm.FatturaAttiva;
-import it.cnr.contab.coepcoan00.ejb.AsyncScritturaPartitaDoppiaFromDocumentoComponentSession;
-import it.cnr.contab.coepcoan00.ejb.ScritturaPartitaDoppiaComponentSession;
-import it.cnr.contab.coepcoan00.ejb.ScritturaPartitaDoppiaFromDocumentoComponentSession;
+import it.cnr.contab.coepcoan00.ejb.*;
 import it.cnr.contab.compensi00.ejb.CompensoComponentSession;
 import it.cnr.contab.config00.ejb.*;
 import it.cnr.contab.docamm00.ejb.AutoFatturaComponentSession;
@@ -611,5 +609,10 @@ public final class Utility {
 	public static AccertamentoPluriennaleComponentSession createAccertamentoPluriennaleComponentSession() throws javax.ejb.EJBException{
 		return (AccertamentoPluriennaleComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_AccertamentoPluriennaleComponentSession", AccertamentoPluriennaleComponentSession.class);
 	}
-
+	public static AsyncScritturaPartitaDoppiaChiusuraComponentSession createAsyncScritturaPartitaDoppiaChiusuraComponentSession() throws javax.ejb.EJBException{
+		return (AsyncScritturaPartitaDoppiaChiusuraComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOEPCOAN00_EJB_AsyncScritturaPartitaDoppiaChiusuraComponentSession", AsyncScritturaPartitaDoppiaChiusuraComponentSession.class);
+	}
+	public static ScritturaPartitaDoppiaChiusuraComponentSession createScritturaPartitaDoppiaChiusuraComponentSession() throws javax.ejb.EJBException{
+		return (ScritturaPartitaDoppiaChiusuraComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOEPCOAN00_EJB_ScritturaPartitaDoppiaChiusuraComponentSession", ScritturaPartitaDoppiaChiusuraComponentSession.class);
+	}
 }

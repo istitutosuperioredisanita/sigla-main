@@ -211,6 +211,9 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     public final static String SK_RATEI_PASSIVI = "RATEI_PASSIVI";
     public final static String SK_RATEI_ATTIVI = "RATEI_ATTIVI";
     public final static String SK_BANCA = "BANCA";
+    public final static String SK_CONTO_ECONOMICO = "CONTO_ECONOMICO";
+    public final static String SK_STATO_PATRIMONIALE = "STATO_PATRIMONIALE";
+    public final static String SK_UTILE_PERDITA_ESERCIZIO = "UTILE_PERDITA_ESERCIZIO";
 
     public final static String PK_VARIAZIONE_AUTOMATICA = "VARIAZIONE_AUTOMATICA";
     public final static String SK_SPESA = "SPESA";
@@ -266,7 +269,8 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
         RATEI_RISCONTI("080_RATEI_RISCONTI"),
         CHIUSURA_PROVVISORIA("090_CHIUSURA_PROVVISORIA"),
         CHIUSURA_DEFINITIVA("100_CHIUSURA_DEFINITIVA"),
-        CARICHI_SCARICHI_MAG("110_FINE_MOV_MAG");
+        CARICHI_SCARICHI_MAG("110_FINE_MOV_MAG"),
+        RIAPERTURA_CONTI("120_RIAPERTURA_CONTI");
 
         private final String value;
 
