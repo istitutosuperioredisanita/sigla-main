@@ -14,7 +14,9 @@ public class ChiusuraAnnoCatGrpVoceEpBase extends ChiusuraAnnoCatGrpVoceEpKey im
 	private java.math.BigDecimal impPlusValenze;
 
 	private java.math.BigDecimal impMinusValenze;
- 
+
+	private java.math.BigDecimal impDecrementi;
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: CHIUSURA_ANNO_CATGRP_VOCE_EP
@@ -54,5 +56,13 @@ public class ChiusuraAnnoCatGrpVoceEpBase extends ChiusuraAnnoCatGrpVoceEpKey im
 
 	public void setImpMinusValenze(BigDecimal impMinusValenze) {
 		this.impMinusValenze = impMinusValenze;
+	}
+
+	public BigDecimal getImpDecrementi() {
+		return impDecrementi;
+	}
+
+	public void setImpDecrementi(BigDecimal impDecrementi) {
+		this.impDecrementi = impDecrementi;
 	}
 }

@@ -3060,4 +3060,10 @@
     <changeSet author="ciro.salvio" runOnChange="true" id="create-view-V_INVENTARIO_BENE_DET">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_INVENTARIO_BENE_DET.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="raffaele.pagano" runOnChange="true" id="create-view-V_CONTROLLO_ORDINE_ACQ_CONSEGNA">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_CONTROLLO_ORDINE_ACQ_CONSEGNA.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_SALDO_COGE">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_SALDO_COGE.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
 </databaseChangeLog>

@@ -9,6 +9,9 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.action.CRUDBP;
 public class ChiusuraAnnoCatGrpVoceEpBulk extends ChiusuraAnnoCatGrpVoceEpBase {
+	public final static String TIPO_CHIUSURA_MAGAZZINO = "M";
+	public final static String TIPO_CHIUSURA_INVENTARIO = "I";
+
 	/**
 	 * [CHIUSURA_ANNO ]
 	 **/

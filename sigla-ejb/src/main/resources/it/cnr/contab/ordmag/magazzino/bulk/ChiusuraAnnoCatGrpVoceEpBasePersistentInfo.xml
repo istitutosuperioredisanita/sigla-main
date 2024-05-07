@@ -13,19 +13,26 @@
 			columnScale="6"
 			nullable="false" />
 		<columnMapping
-				columnName="IMP_PLUSVALENZE"
-				propertyName="impPlusValenze"
-				sqlTypeName="DECIMAL"
-				columnSize="21"
-				columnScale="6"
-				nullable="true" />
+			columnName="IMP_PLUSVALENZE"
+			propertyName="impPlusValenze"
+			sqlTypeName="DECIMAL"
+			columnSize="21"
+			columnScale="6"
+			nullable="true" />
 		<columnMapping
-				columnName="IMP_MINUSVALENZE"
-				propertyName="impMinusValenze"
-				sqlTypeName="DECIMAL"
-				columnSize="21"
-				columnScale="6"
-				nullable="true" />
+			columnName="IMP_MINUSVALENZE"
+			propertyName="impMinusValenze"
+			sqlTypeName="DECIMAL"
+			columnSize="21"
+			columnScale="6"
+			nullable="true" />
+		<columnMapping
+			columnName="IMP_DECREMENTI"
+			propertyName="impDecrementi"
+			sqlTypeName="DECIMAL"
+			columnSize="21"
+			columnScale="6"
+			nullable="true" />
 		<columnMapping
 			columnName="DACR"
 			propertyName="dacr"
@@ -70,7 +77,9 @@
 	<persistentProperty
 		name="pg_ver_rec" />
 	<persistentProperty
-			name="impPlusValenze" />
+		name="impPlusValenze" />
 	<persistentProperty
-			name="impMinusValenze" />
+		name="impMinusValenze" />
+	<persistentProperty
+		name="impDecrementi" />
 </SQLPersistentInfo>
