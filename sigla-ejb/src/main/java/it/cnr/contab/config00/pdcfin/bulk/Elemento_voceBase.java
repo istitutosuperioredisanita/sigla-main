@@ -17,9 +17,9 @@
 
 package it.cnr.contab.config00.pdcfin.bulk;
 
-import java.math.BigDecimal;
+import it.cnr.jada.persistency.Keyed;
 
-import it.cnr.jada.persistency.*;
+import java.math.BigDecimal;
 
 public class Elemento_voceBase extends Elemento_voceKey implements Keyed {
 	// CD_CAPOCONTO_FIN VARCHAR(10) 
@@ -126,6 +126,8 @@ public class Elemento_voceBase extends Elemento_voceKey implements Keyed {
 	private java.lang.Boolean fl_limite_competenza;
 
 	private java.lang.String blocco_impegni_natfin;
+
+	private java.lang.Boolean fl_missioni_presidenza;
 
 	public Elemento_voceBase() {
 	super();
@@ -521,5 +523,13 @@ public void setTi_elemento_voce(java.lang.String ti_elemento_voce) {
 
 	public void setBlocco_impegni_natfin(String blocco_impegni_natfin) {
 		this.blocco_impegni_natfin = blocco_impegni_natfin;
+	}
+
+	public Boolean getFl_missioni_presidenza() {
+		return fl_missioni_presidenza;
+	}
+
+	public void setFl_missioni_presidenza(Boolean fl_missioni_presidenza) {
+		this.fl_missioni_presidenza = fl_missioni_presidenza;
 	}
 }
