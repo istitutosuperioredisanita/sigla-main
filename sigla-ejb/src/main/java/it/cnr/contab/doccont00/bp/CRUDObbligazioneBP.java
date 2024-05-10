@@ -87,7 +87,7 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
             return super.removeDetail(i);
         }
     };
-    private final SimpleDetailCRUDController crudObbligazione_pluriennaleVoce = new SimpleDetailCRUDController("ObbligazioniPluriennaliVoce", Obbligazione_pluriennale_voceBulk.class, "obbligazione_pluriennale_voceBulkList", crudObbligazione_pluriennale){
+    private final SimpleDetailCRUDController crudObbligazione_pluriennaleVoce = new SimpleDetailCRUDController("ObbligazioniPluriennaliVoce", Obbligazione_pluriennale_voceBulk.class, "righeVoceColl", crudObbligazione_pluriennale){
         public void validateForDelete(ActionContext context, OggettoBulk detail) throws ValidationException {
             Obbligazione_pluriennale_voceBulk riga = (Obbligazione_pluriennale_voceBulk)  getCrudObbligazione_pluriennaleVoce().getModel();
             super.validateForDelete(context,riga);
