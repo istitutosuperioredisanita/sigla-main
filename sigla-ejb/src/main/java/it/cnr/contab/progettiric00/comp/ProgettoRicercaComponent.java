@@ -1839,7 +1839,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 				sqlSaldi.addSQLClause(FindClause.OR,"VOCE_F_SALDI_CDR_LINEA.VAR_MENO_OBBL_RES_PRO",SQLBuilder.GREATER,BigDecimal.ZERO);
 
 				sqlSaldi.closeParenthesis();
-				sqlSaldi.setStatement(sqlSaldi.getStatement()+" ) ");
+
 
 				if (!Optional.ofNullable(rimodulazione).isPresent()) {
 					Ass_progetto_piaeco_voceHome assPiaecoHome = (Ass_progetto_piaeco_voceHome)getHome(userContext, Ass_progetto_piaeco_voceBulk.class);
@@ -1852,6 +1852,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 
 					sqlSaldi.addSQLNotExistsClause(FindClause.AND, sqlExist);
 				}
+
 	
 				List<Voce_f_saldi_cdr_lineaBulk> saldiList = new it.cnr.jada.bulk.BulkList(saldiHome.fetchAll(sqlSaldi));
 				Integer currentAnno = saldiList.stream().mapToInt(Voce_f_saldi_cdr_lineaKey::getEsercizio).max().orElse(999);
