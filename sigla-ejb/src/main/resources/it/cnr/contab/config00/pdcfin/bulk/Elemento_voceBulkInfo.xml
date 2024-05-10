@@ -488,6 +488,15 @@
             label="Importo Disponibile Bilancio"
             formatName = "it.cnr.contab.util.EuroFormat"
     />
+    <fieldProperty
+            name="fl_missioni_presidenza"
+            property="fl_missioni_presidenza"
+            label="Utilizzabile per Missioni a carico della presidenza"
+            enabledOnEdit="true"
+            enabledOnInsert="true"
+            inputType="CHECKBOX"
+            enabledOnSearch="false"
+            enabledOnFreeSearch="false"/>
 
     <form
             name="searchtool">
@@ -622,6 +631,10 @@
             name="fl_trovato"
             textTruncate="true"
             headerStyle="max-width: 13ch"/>
+    <columnFieldProperty
+            name="fl_missioni_presidenza"
+            textTruncate="true"
+            headerStyle="max-width: 8ch"/>
 
     <columnSet
             name="restService">
@@ -827,6 +840,9 @@
             name="fl_limite_competenza"/>
     <formFieldProperty
             name="blocco_impegni_natfin"/>
+    <formFieldProperty
+            name="fl_missioni_presidenza"
+    />
 
     <findFieldProperty
             name="esercizio"

@@ -17,6 +17,7 @@
 
 package it.cnr.contab.coepcoan00.core.bulk;
 
+import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
 import it.cnr.contab.docamm00.docs.bulk.TipoDocumentoEnum;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
@@ -193,5 +194,59 @@ public class Scrittura_partita_doppiaHome extends BulkHome {
             return result.stream().findFirst();
         }
         return Optional.empty();
+    }
+
+    public List<Scrittura_partita_doppiaBulk> getScrittureAperturaBilancio(UserContext userContext, Integer esercizio, String pCdCds) throws PersistencyException, ComponentException {
+        SQLBuilder sql = this.createSQLBuilder();
+        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
+        sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, pCdCds);
+        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Origine.APERTURA.name());
+        sql.addClause(FindClause.AND, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.RIAPERTURA_CONTI.name());
+
+        List<Scrittura_partita_doppiaBulk> result = fetchAll(sql);
+        for (Scrittura_partita_doppiaBulk scrittura : result) {
+            scrittura.setMovimentiDareColl(new BulkList(this.findMovimentiDareColl(userContext, scrittura, Boolean.FALSE)));
+            scrittura.setMovimentiAvereColl(new BulkList(this.findMovimentiAvereColl(userContext, scrittura, Boolean.FALSE)));
+        }
+        return result;
+    }
+
+    public List<Scrittura_partita_doppiaBulk> getScrittureChiusuraProvvisoriaBilancio(UserContext userContext, Integer esercizio, String pCdCds) throws PersistencyException, ComponentException {
+        SQLBuilder sql = this.createSQLBuilder();
+        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
+        sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, pCdCds);
+        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Origine.PRECHIUSURA.name());
+        sql.openParenthesis(FindClause.AND);
+        sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.RIMANENZE_MAGAZZINO.name());
+        sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.AMMORTAMENTO.name());
+        sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.DISMISSIONE_BENE_DUREVOLE.name());
+        sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.FATTURE_DA_RICEVERE.name());
+        sql.closeParenthesis();
+
+        List<Scrittura_partita_doppiaBulk> result = fetchAll(sql);
+        for (Scrittura_partita_doppiaBulk scrittura : result) {
+            scrittura.setMovimentiDareColl(new BulkList(this.findMovimentiDareColl(userContext, scrittura, Boolean.FALSE)));
+            scrittura.setMovimentiAvereColl(new BulkList(this.findMovimentiAvereColl(userContext, scrittura, Boolean.FALSE)));
+        }
+        return result;
+    }
+
+    public List<Scrittura_partita_doppiaBulk> getScrittureChiusuraDefinitivaBilancio(UserContext userContext, Integer esercizio, String pCdCds) throws PersistencyException, ComponentException {
+        SQLBuilder sql = this.createSQLBuilder();
+        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
+        sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, pCdCds);
+        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Origine.CHIUSURA.name());
+        sql.openParenthesis(FindClause.AND);
+        sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.CHIUSURA_STATO_PATRIMONIALE.name());
+        sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.CHIUSURA_CONTO_ECONOMICO.name());
+        sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.DETERMINAZIONE_UTILE_PERDITA.name());
+        sql.closeParenthesis();
+
+        List<Scrittura_partita_doppiaBulk> result = fetchAll(sql);
+        for (Scrittura_partita_doppiaBulk scrittura : result) {
+            scrittura.setMovimentiDareColl(new BulkList(this.findMovimentiDareColl(userContext, scrittura, Boolean.FALSE)));
+            scrittura.setMovimentiAvereColl(new BulkList(this.findMovimentiAvereColl(userContext, scrittura, Boolean.FALSE)));
+        }
+        return result;
     }
 }

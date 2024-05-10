@@ -17,7 +17,9 @@
 
 package it.cnr.contab.logs.bp;
 
+import it.cnr.contab.coepcoan00.ejb.AsyncScritturaPartitaDoppiaChiusuraComponentSession;
 import it.cnr.contab.coepcoan00.ejb.AsyncScritturaPartitaDoppiaFromDocumentoComponentSession;
+import it.cnr.contab.coepcoan00.ejb.ScritturaPartitaDoppiaChiusuraComponentSession;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.doccont00.comp.AsyncPluriennaliComponentSession;
 import it.cnr.contab.logs.bulk.Batch_controlBulk;
@@ -78,48 +80,68 @@ public class CRUDBatchControlBP extends SimpleCRUDBP
     public void save(ActionContext actioncontext) throws ValidationException, BusinessProcessException {
         try {
             Batch_controlBulk batch_controlbulk = (Batch_controlBulk) this.getModel();
-            if (batch_controlbulk.getProcedura().isProceduraJava() && "REGISTRACOGECOANJAVA".equals(batch_controlbulk.getProcedura().getCd_procedura())) {
-                AsyncScritturaPartitaDoppiaFromDocumentoComponentSession component = Utility.createAsyncScritturaPartitaDoppiaFromDocumentoComponentSession();
-                BigDecimal esercizio = batch_controlbulk.getParametri().stream()
-                        .filter(el->el.getNome_parametro().equals("AES"))
-                        .findAny()
-                        .map(Batch_procedura_parametroBulk::getValore_number)
-                        .orElseThrow(()->new ValidationException("Valorizzare il parametro Esercizio!"));
 
-                String cdcds = batch_controlbulk.getParametri().stream()
-                        .filter(el->el.getNome_parametro().equals("ACDCDS"))
-                        .findAny()
-                        .map(Batch_procedura_parametroBulk::getValore_varchar)
-                        .orElseThrow(()->new ValidationException("Valorizzare il parametro Centro di Spesa!"));
+            if (batch_controlbulk.getProcedura().isProceduraJava()) {
+                if ("REGISTRACOGECOANJAVA".equals(batch_controlbulk.getProcedura().getCd_procedura())) {
+                    AsyncScritturaPartitaDoppiaFromDocumentoComponentSession component = Utility.createAsyncScritturaPartitaDoppiaFromDocumentoComponentSession();
+                    BigDecimal esercizio = batch_controlbulk.getParametri().stream()
+                            .filter(el -> el.getNome_parametro().equals("AES"))
+                            .findAny()
+                            .map(Batch_procedura_parametroBulk::getValore_number)
+                            .orElseThrow(() -> new ValidationException("Valorizzare il parametro Esercizio!"));
 
-                component.asyncLoadScritturePatrimoniali(actioncontext.getUserContext(), esercizio.intValue(), cdcds);
+                    String cdcds = batch_controlbulk.getParametri().stream()
+                            .filter(el -> el.getNome_parametro().equals("ACDCDS"))
+                            .findAny()
+                            .map(Batch_procedura_parametroBulk::getValore_varchar)
+                            .orElseThrow(() -> new ValidationException("Valorizzare il parametro Centro di Spesa!"));
+
+                    component.asyncLoadScritturePatrimoniali(actioncontext.getUserContext(), esercizio.intValue(), cdcds);
+                } else if ("RIBPLURIENNALIJAVA".equals(batch_controlbulk.getProcedura().getCd_procedura())) {
+                    BigDecimal esercizio = batch_controlbulk.getParametri().stream()
+                            .filter(el -> el.getNome_parametro().equals("AES"))
+                            .findAny()
+                            .map(Batch_procedura_parametroBulk::getValore_number)
+                            .orElseThrow(() -> new ValidationException("Valorizzare il parametro Esercizio!"));
+
+                    String cdcentroresponsabilita = batch_controlbulk.getParametri().stream()
+                            .filter(el -> el.getNome_parametro().equals("ACDCENTRORESPONSABILITA"))
+                            .findAny()
+                            .map(Batch_procedura_parametroBulk::getValore_varchar)
+                            .orElseThrow(() -> new ValidationException("Valorizzare il parametro Centro di Responsabilità della Gae!"));
+
+                    String cdlineaattivita = batch_controlbulk.getParametri().stream()
+                            .filter(el -> el.getNome_parametro().equals("ACDLINEAATTIVITA"))
+                            .findAny()
+                            .map(Batch_procedura_parametroBulk::getValore_varchar)
+                            .orElseThrow(() -> new ValidationException("Valorizzare il parametro della Codice Gae!"));
+                    AsyncPluriennaliComponentSession obbComponent = Utility.createAsyncPluriennaliComponentSession();
+
+                    obbComponent.asyncCreatePluriennali(actioncontext.getUserContext(), esercizio.intValue(), new WorkpackageBulk(cdcentroresponsabilita, cdlineaattivita));
+                } else if ("CHIUSURABILANCIOJAVA".equals(batch_controlbulk.getProcedura().getCd_procedura())) {
+                    BigDecimal esercizio = batch_controlbulk.getParametri().stream()
+                            .filter(el -> el.getNome_parametro().equals("AES"))
+                            .findAny()
+                            .map(Batch_procedura_parametroBulk::getValore_number)
+                            .orElseThrow(() -> new ValidationException("Valorizzare il parametro Esercizio!"));
+
+                    String isDefinitivo = batch_controlbulk.getParametri().stream()
+                            .filter(el -> el.getNome_parametro().equals("ISDEFINITIVO"))
+                            .findAny()
+                            .map(Batch_procedura_parametroBulk::getValore_varchar)
+                            .orElseThrow(() -> new ValidationException("Valorizzare il parametro che definisce se la chiusura è definitiva!"));
+
+                    String isAnnullamento = batch_controlbulk.getParametri().stream()
+                            .filter(el -> el.getNome_parametro().equals("ISANNULLAMENTO"))
+                            .findAny()
+                            .map(Batch_procedura_parametroBulk::getValore_varchar)
+                            .orElseThrow(() -> new ValidationException("Valorizzare il parametro che definisce se si tratta di chiusura o annullamento!"));
+
+                    AsyncScritturaPartitaDoppiaChiusuraComponentSession obbComponent = Utility.createAsyncScritturaPartitaDoppiaChiusuraComponentSession();
+
+                    obbComponent.asyncMakeScrittureChiusura(actioncontext.getUserContext(), esercizio.intValue(), "Y".equals(isAnnullamento), "Y".equals(isDefinitivo));
+                }
             }
-
-            if (batch_controlbulk.getProcedura().isProceduraJava() && "RIBPLURIENNALIJAVA".equals(batch_controlbulk.getProcedura().getCd_procedura())) {
-
-                BigDecimal esercizio = batch_controlbulk.getParametri().stream()
-                        .filter(el->el.getNome_parametro().equals("AES"))
-                        .findAny()
-                        .map(Batch_procedura_parametroBulk::getValore_number)
-                        .orElseThrow(()->new ValidationException("Valorizzare il parametro Esercizio!"));
-
-                String cdcentroresponsabilita = batch_controlbulk.getParametri().stream()
-                        .filter(el->el.getNome_parametro().equals("ACDCENTRORESPONSABILITA"))
-                        .findAny()
-                        .map(Batch_procedura_parametroBulk::getValore_varchar)
-                        .orElseThrow(()->new ValidationException("Valorizzare il parametro Centro di Responsabilità della Gae!"));
-
-                String cdlineaattivita = batch_controlbulk.getParametri().stream()
-                        .filter(el->el.getNome_parametro().equals("ACDLINEAATTIVITA"))
-                        .findAny()
-                        .map(Batch_procedura_parametroBulk::getValore_varchar)
-                        .orElseThrow(()->new ValidationException("Valorizzare il parametro della Codice Gae!"));
-                AsyncPluriennaliComponentSession obbComponent = Utility.createAsyncPluriennaliComponentSession();
-
-                obbComponent.asyncCreatePluriennali(actioncontext.getUserContext(), esercizio.intValue(), new WorkpackageBulk(cdcentroresponsabilita,cdlineaattivita));
-
-            }
-
 
             super.save(actioncontext);
         } catch (ComponentException | PersistencyException | RemoteException e){

@@ -22,6 +22,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import it.cnr.contab.config00.pdcep.bulk.Voce_epBulk;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.*;
@@ -187,7 +188,7 @@ public class Movimento_cogeHome extends BulkHome {
 		return result;
 	}
 
-	public List<Movimento_cogeBulk> getMovimentiCori(IDocumentoAmministrativoBulk docamm, Integer cdTerzo, String cdCori, Optional<Scrittura_partita_doppiaBulk> scritturaToExclude) throws ComponentException, PersistencyException {
+	public List<Movimento_cogeBulk> getMovimentiCori(IDocumentoAmministrativoBulk docamm, Integer cdTerzo, String cdCori, Optional<Scrittura_partita_doppiaBulk> scritturaToExclude) throws PersistencyException {
 		SQLBuilder sql = this.createSQLBuilder();
 		sql.addClause(FindClause.AND,"esercizio_documento",SQLBuilder.EQUALS, docamm.getEsercizio() );
 		sql.addClause(FindClause.AND,"cd_cds_documento",SQLBuilder.EQUALS, docamm.getCd_cds() );

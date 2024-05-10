@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.coepcoan00.core.bulk.V_controllo_ordine_acq_consegnaBulk"
+	homeClassName="it.cnr.contab.coepcoan00.core.bulk.V_controllo_ordine_acq_consegnaHome">
+	<defaultColumnMap
+		tableName="V_CONTROLLO_ORDINE_ACQ_CONSEGNA">
+		<columnMapping
+				columnName="CD_CDS"
+				propertyName="cdCds"
+				sqlTypeName="VARCHAR"
+				columnSize="30"/>
+		<columnMapping
+				columnName="CD_UNITA_OPERATIVA"
+				propertyName="cdUnitaOperativa"
+				sqlTypeName="VARCHAR"
+				columnSize="30"/>
+		<columnMapping
+				columnName="ESERCIZIO"
+				propertyName="esercizio"
+				sqlTypeName="DECIMAL"
+				columnSize="4"/>
+		<columnMapping
+				columnName="CD_NUMERATORE"
+				propertyName="cdNumeratore"
+				sqlTypeName="VARCHAR"
+				columnSize="3" />
+		<columnMapping
+				columnName="NUMERO"
+				propertyName="numero"
+				sqlTypeName="DECIMAL"
+				columnSize="6" />
+		<columnMapping
+				columnName="RIGA"
+				propertyName="riga"
+				sqlTypeName="DECIMAL"
+				columnSize="6" />
+		<columnMapping
+				columnName="CONSEGNA"
+				propertyName="consegna"
+				sqlTypeName="DECIMAL"
+				columnSize="6" />
+		<columnMapping
+				columnName="PREZZO_UNITARIO_CARICO_MAGAZZINO"
+				propertyName="prezzoUnitarioCaricoMagazzino"
+				sqlTypeName="DECIMAL"
+				columnSize="15"
+				columnScale="2" />
+		<columnMapping
+				columnName="QUANTITA_CARICO_MAGAZZINO"
+				propertyName="quantitaCaricoMagazzino"
+				sqlTypeName="DECIMAL"
+				columnSize="12"
+				columnScale="5" />
+		<columnMapping
+				columnName="ESERCIZIO_EVASIONE"
+				propertyName="esercizioEvasione"
+				sqlTypeName="DECIMAL"
+				columnSize="4"/>
+		<columnMapping
+				columnName="STATO_CARICO_MAGAZZINO"
+				propertyName="statoCaricoMagazzino"
+				sqlTypeName="VARCHAR"
+				columnSize="3" />
+		<columnMapping
+				columnName="ESERCIZIO_FATTURA"
+				propertyName="esercizioFattura"
+				sqlTypeName="DECIMAL"
+				columnSize="4"/>
+		<columnMapping
+				columnName="CD_VOCE_EP"
+				propertyName="cdVoceEp"
+				sqlTypeName="VARCHAR"
+				columnSize="45" />
+		<columnMapping
+				columnName="TI_ATTIVITA"
+				propertyName="tiAttivita"
+				sqlTypeName="CHAR"
+				columnSize="1" />
+	</defaultColumnMap>
+
+	<persistentProperty
+			name="esercizio" />
+	<persistentProperty
+			name="cdCds" />
+	<persistentProperty
+			name="cdUnitaOperativa"/>
+	<persistentProperty
+			name="esercizio"/>
+	<persistentProperty
+			name="cdNumeratore"/>
+	<persistentProperty
+			name="numero"/>
+	<persistentProperty
+			name="riga"/>
+	<persistentProperty
+			name="consegna"/>
+	<persistentProperty
+			name="prezzoUnitarioCaricoMagazzino"/>
+	<persistentProperty
+			name="quantitaCaricoMagazzino"/>
+	<persistentProperty
+			name="esercizioEvasione"/>
+	<persistentProperty
+			name="statoCaricoMagazzino" />
+	<persistentProperty
+			name="esercizioFattura"/>
+	<persistentProperty
+			name="cdVoceEp" />
+	<persistentProperty
+			name="tiAttivita" />
+</SQLPersistentInfo>

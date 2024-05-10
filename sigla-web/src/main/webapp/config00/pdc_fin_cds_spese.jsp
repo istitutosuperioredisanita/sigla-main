@@ -123,6 +123,9 @@
 	  <% bp.getController().writeFormField(out,"fl_missioni");%>
 	</tr>
 	<tr>
+    	  <% bp.getController().writeFormField(out,"fl_missioni_presidenza");%>
+    	</tr>
+	<tr>
 	  <% bp.getController().writeFormField(out,"gg_deroga_obbl_comp_prg_scad");%>
 	</tr>
 	<tr>

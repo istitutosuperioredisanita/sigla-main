@@ -25,10 +25,13 @@ import it.cnr.contab.config00.pdcep.bulk.Voce_epBulk;
 import it.cnr.contab.ordmag.anag00.LuogoConsegnaMagBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.persistency.sql.FindClause;
+import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
 import javax.ejb.EJBException;
@@ -38,6 +41,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Home che gestisce i capoconti e i conti.
@@ -45,37 +49,48 @@ import java.util.Hashtable;
 public class AssCatgrpInventVoceEpHome extends BulkHome {
 
 	private static it.cnr.jada.util.OrderedHashtable gruppiKeys;
-protected AssCatgrpInventVoceEpHome(Class clazz, Connection connection) {
-	super(clazz,connection);
-}
-protected AssCatgrpInventVoceEpHome(Class clazz, Connection connection, PersistentCache persistentCache) {
-	super(clazz,connection,persistentCache);
-}
-/**
- * <!-- @TODO: da completare -->
- *
- *
- * @param conn
- */
-public AssCatgrpInventVoceEpHome(Connection conn) {
-	super(Voce_epBulk.class,conn);
-}
-/**
- * <!-- @TODO: da completare -->
- *
- *
- * @param conn
- * @param persistentCache
- */
-public AssCatgrpInventVoceEpHome(Connection conn, PersistentCache persistentCache) {
-	super(AssCatgrpInventVoceEpBulk.class,conn,persistentCache);
-}
+	protected AssCatgrpInventVoceEpHome(Class clazz, Connection connection) {
+		super(clazz,connection);
+	}
+	protected AssCatgrpInventVoceEpHome(Class clazz, Connection connection, PersistentCache persistentCache) {
+		super(clazz,connection,persistentCache);
+	}
+	/**
+	 * <!-- @TODO: da completare -->
+	 *
+	 *
+	 * @param conn
+	 */
+	public AssCatgrpInventVoceEpHome(Connection conn) {
+		super(Voce_epBulk.class,conn);
+	}
+	/**
+	 * <!-- @TODO: da completare -->
+	 *
+	 *
+	 * @param conn
+	 * @param persistentCache
+	 */
+	public AssCatgrpInventVoceEpHome(Connection conn, PersistentCache persistentCache) {
+		super(AssCatgrpInventVoceEpBulk.class,conn,persistentCache);
+	}
 
-public SQLBuilder selectContoByClause(it.cnr.jada.UserContext userContext, AssCatgrpInventVoceEpBulk assCatgrpInventVoceEpBulk, ContoHome contoHome, ContoBulk conto, CompoundFindClause clause)  throws ComponentException, EJBException, RemoteException {
+	public SQLBuilder selectContoByClause(it.cnr.jada.UserContext userContext, AssCatgrpInventVoceEpBulk assCatgrpInventVoceEpBulk, ContoHome contoHome, ContoBulk conto, CompoundFindClause clause)  throws ComponentException, EJBException, RemoteException {
 		SQLBuilder sql = contoHome.createSQLBuilder();
 		sql.addClause(clause);
 		sql.addSQLClause("AND","esercizio",SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
 		sql.addOrderBy("cd_voce_ep");
 		return sql;
+	}
+
+	public AssCatgrpInventVoceEpBulk findDefaultByCategoria(Integer esercizio, String cd_categoria_gruppo ) throws PersistencyException {
+		SQLBuilder sql = this.createSQLBuilder();
+		sql.addClause(FindClause.AND,"esercizio",SQLBuilder.EQUALS, esercizio);
+		sql.addClause(FindClause.AND,"cd_categoria_gruppo",SQLBuilder.EQUALS, cd_categoria_gruppo);
+		sql.addClause(FindClause.AND,"fl_default",SQLBuilder.EQUALS, Boolean.TRUE);
+		List<AssCatgrpInventVoceEpBulk> result = this.fetchAll(sql);
+		if (!result.isEmpty())
+			return result.get(0);
+		return null;
 	}
 }

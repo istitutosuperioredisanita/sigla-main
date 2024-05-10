@@ -3,6 +3,7 @@
  * Date 19/03/2024
  */
 package it.cnr.contab.ordmag.magazzino.bulk;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,11 +12,13 @@ import java.util.Date;
 import java.util.List;
 
 import it.cnr.contab.ordmag.magazzino.dto.ValoriChiusuraCatGrVoceEP;
-import it.cnr.contab.ordmag.magazzino.dto.ValoriLottoPerAnno;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.LoggableStatement;
+import it.cnr.jada.persistency.sql.PersistentHome;
+import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.DateUtils;
 
 public class ChiusuraAnnoCatGrpVoceEpHome extends BulkHome {
@@ -115,4 +118,36 @@ public class ChiusuraAnnoCatGrpVoceEpHome extends BulkHome {
 
 	}
 
+	public java.util.List<ChiusuraAnnoCatGrpVoceEpBulk> findChiusureAnnoMagazzinoList( Integer esercizio ) throws PersistencyException {
+		PersistentHome home = getHomeCache().getHome(ChiusuraAnnoCatGrpVoceEpBulk.class);
+		SQLBuilder sql = home.createSQLBuilder();
+		sql.addClause(FindClause.AND,"anno",SQLBuilder.EQUALS, esercizio);
+		sql.addClause(FindClause.AND,"tipoChiusura",SQLBuilder.EQUALS, ChiusuraAnnoCatGrpVoceEpBulk.TIPO_CHIUSURA_MAGAZZINO);
+
+		sql.openParenthesis(FindClause.AND);
+		sql.addClause(FindClause.OR,"impTotale", SQLBuilder.NOT_EQUALS, BigDecimal.ZERO);
+		sql.addClause(FindClause.OR,"impPlusValenze", SQLBuilder.NOT_EQUALS, BigDecimal.ZERO);
+		sql.addClause(FindClause.OR,"impMinusValenze", SQLBuilder.NOT_EQUALS, BigDecimal.ZERO);
+		sql.closeParenthesis();
+
+		sql.addOrderBy("cd_categoria_gruppo");
+		return home.fetchAll(sql);
+	}
+
+	public java.util.List<ChiusuraAnnoCatGrpVoceEpBulk> findChiusureAnnoInventarioList( Integer esercizio ) throws PersistencyException {
+		PersistentHome home = getHomeCache().getHome(ChiusuraAnnoCatGrpVoceEpBulk.class);
+		SQLBuilder sql = home.createSQLBuilder();
+		sql.addClause(FindClause.AND,"anno",SQLBuilder.EQUALS, esercizio);
+		sql.addClause(FindClause.AND,"tipoChiusura",SQLBuilder.EQUALS, ChiusuraAnnoCatGrpVoceEpBulk.TIPO_CHIUSURA_INVENTARIO);
+
+		sql.openParenthesis(FindClause.AND);
+		sql.addClause(FindClause.OR,"impTotale", SQLBuilder.NOT_EQUALS, BigDecimal.ZERO);
+		sql.addClause(FindClause.OR,"impPlusValenze", SQLBuilder.NOT_EQUALS, BigDecimal.ZERO);
+		sql.addClause(FindClause.OR,"impMinusValenze", SQLBuilder.NOT_EQUALS, BigDecimal.ZERO);
+		sql.addClause(FindClause.OR,"impDecrementi", SQLBuilder.NOT_EQUALS, BigDecimal.ZERO);
+		sql.closeParenthesis();
+
+		sql.addOrderBy("cd_categoria_gruppo");
+		return home.fetchAll(sql);
+	}
 }

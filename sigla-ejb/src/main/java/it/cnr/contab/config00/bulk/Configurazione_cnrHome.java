@@ -18,6 +18,7 @@
 package it.cnr.contab.config00.bulk;
 
 import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.PersistencyException;
@@ -437,5 +438,81 @@ public class Configurazione_cnrHome extends BulkHome {
                         this.getConfigurazione(null,Configurazione_cnrBulk.PK_UO_SPECIALE, Configurazione_cnrBulk.SK_UO_VERSAMENTO_IVA))
                 .map(Configurazione_cnrBulk::getVal02)
                 .orElse(null);
+    }
+
+    /**
+     * @return Indica se per l'esercizio indicato l'attività di evasione ordini è terminata
+     * @throws PersistencyException
+     */
+    public boolean isTerminataAttivitaEvasioneOrdini(Integer esercizio) throws PersistencyException{
+        return Optional.ofNullable(
+                        this.getConfigurazione(esercizio, ASTERISCO,
+                                Configurazione_cnrBulk.PK_STEP_FINE_ANNO,
+                                Configurazione_cnrBulk.StepFineAnno.FINE_EVASIONE.value())
+                )
+                .map(Configurazione_cnrBulk::getVal02)
+                .map(s -> Boolean.valueOf(s.equalsIgnoreCase("Y")))
+                .orElse(Boolean.FALSE);
+    }
+
+    /**
+     * @return Indica se per l'esercizio indicato l'attività di magazzino è terminata
+     * @throws PersistencyException
+     */
+    public boolean isTerminataAttivitaMagazzino(Integer esercizio) throws PersistencyException{
+        return Optional.ofNullable(
+                        this.getConfigurazione(esercizio, ASTERISCO,
+                                Configurazione_cnrBulk.PK_STEP_FINE_ANNO,
+                                Configurazione_cnrBulk.StepFineAnno.CARICHI_SCARICHI_MAG.value())
+                )
+                .map(Configurazione_cnrBulk::getVal02)
+                .map(s -> Boolean.valueOf(s.equalsIgnoreCase("Y")))
+                .orElse(Boolean.FALSE);
+    }
+
+    /**
+     * @return Indica se per l'esercizio indicato è stata effettuata la chiusura di bilancio provvisoria
+     * @throws PersistencyException
+     */
+    public boolean isChiusuraBilancioProvvisoriaEffettuata(Integer esercizio) throws PersistencyException{
+        return getConfigurazioneChiusuraBilancioProvvisoria(esercizio)
+                .map(Configurazione_cnrBulk::getVal02)
+                .map(s -> Boolean.valueOf(s.equalsIgnoreCase("Y")))
+                .orElse(Boolean.FALSE);
+    }
+
+    /**
+     * @return Indica se per l'esercizio indicato è stata effettuata la chiusura di bilancio definitiva
+     * @throws PersistencyException
+     */
+    public boolean isChiusuraBilancioDefinitivaEffettuata(Integer esercizio) throws PersistencyException{
+        return getConfigurazioneChiusuraBilancioDefinitiva(esercizio)
+                .map(Configurazione_cnrBulk::getVal02)
+                .map(s -> Boolean.valueOf(s.equalsIgnoreCase("Y")))
+                .orElse(Boolean.FALSE);
+    }
+
+    public Optional<Configurazione_cnrBulk> getConfigurazioneChiusuraBilancioDefinitiva(Integer esercizio) throws PersistencyException{
+        return Optional.ofNullable(
+                        this.getConfigurazione(esercizio, ASTERISCO,
+                                Configurazione_cnrBulk.PK_STEP_FINE_ANNO,
+                                Configurazione_cnrBulk.StepFineAnno.CHIUSURA_DEFINITIVA.value())
+                );
+    }
+
+    public Optional<Configurazione_cnrBulk> getConfigurazioneChiusuraBilancioProvvisoria(Integer esercizio) throws PersistencyException{
+        return Optional.ofNullable(
+                this.getConfigurazione(esercizio, ASTERISCO,
+                        Configurazione_cnrBulk.PK_STEP_FINE_ANNO,
+                        Configurazione_cnrBulk.StepFineAnno.CHIUSURA_PROVVISORIA.value())
+        );
+    }
+
+    public Optional<Configurazione_cnrBulk> getConfigurazioneRiaperturaConti(Integer esercizio) throws PersistencyException{
+        return Optional.ofNullable(
+                this.getConfigurazione(esercizio, ASTERISCO,
+                        Configurazione_cnrBulk.PK_STEP_FINE_ANNO,
+                        Configurazione_cnrBulk.StepFineAnno.RIAPERTURA_CONTI.value())
+        );
     }
 }

@@ -350,4 +350,21 @@ public class EsercizioHome extends BulkHome {
         sqlBuilder.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, cds);
         return fetchAll(sqlBuilder);
     }
+
+    public boolean isEsercizioApertoPerAlmenoUnCds(Integer esercizio) throws PersistencyException {
+        SQLBuilder sql = createSQLBuilder();
+        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
+        sql.addClause(FindClause.AND, "st_apertura_chiusura", sql.NOT_EQUALS, EsercizioBulk.STATO_CHIUSO_DEF);
+        List<EsercizioBulk> result = fetchAll(sql);
+        return !result.isEmpty();
+    }
+
+    public boolean isEsercizioAperto(Integer esercizio, String cdCds) throws PersistencyException {
+        SQLBuilder sql = createSQLBuilder();
+        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
+        sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, cdCds);
+        sql.addClause(FindClause.AND, "st_apertura_chiusura", sql.NOT_EQUALS, EsercizioBulk.STATO_CHIUSO_DEF);
+        List<EsercizioBulk> result = fetchAll(sql);
+        return !result.isEmpty();
+    }
 }

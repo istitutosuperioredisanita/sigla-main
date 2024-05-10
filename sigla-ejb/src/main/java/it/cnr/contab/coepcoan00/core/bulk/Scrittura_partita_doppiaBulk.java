@@ -60,7 +60,10 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
         DOCAMM( "Documento Amministrativo"),
         DOCCONT("Documento Contabile"),
         STIPENDI("Stipendi"),
-        LIQUID_IVA("Liquidazione IVA");
+        LIQUID_IVA("Liquidazione IVA"),
+        PRECHIUSURA("Prechiusura Bilancio"),
+        CHIUSURA("Chiusura Bilancio"),
+        APERTURA("Apertura Bilancio");
         private final String label;
 
         private Origine(String label) {
@@ -71,6 +74,29 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
             return label;
         }
     }
+
+    public enum Causale {
+        AMMORTAMENTO("Ammortamento"),
+        FATTURE_DA_RICEVERE("Fatture da ricevere"),
+        RIMANENZE_MAGAZZINO("Rimanenze di magazzino"),
+        RIAPERTURA_CONTI( "Riapertura dei conti"),
+        DISMISSIONE_BENE_DUREVOLE("Dismissione di bene durevole"),
+        DETERMINAZIONE_UTILE_PERDITA("Determinazione utile/perdita d'esercizio"),
+        CHIUSURA_STATO_PATRIMONIALE("Chiusura dello stato patrimoniale"),
+        CHIUSURA_CONTO_ECONOMICO("Chiusura del conto economico"),
+        CARICO_BENE_DUREVOLE("Carico di bene durevole"),
+        CARICO_BENE_DUREVOLE_TRASF("Carico di bene durevole da trasferimento");
+        private final String label;
+
+        private Causale(String label) {
+            this.label = label;
+        }
+
+        public String label() {
+            return label;
+        }
+    }
+
     public final static java.util.Dictionary ti_origineKeys = new it.cnr.jada.util.OrderedHashtable();
     static {
         Arrays.asList(Origine.values()).stream().forEach(origine -> {

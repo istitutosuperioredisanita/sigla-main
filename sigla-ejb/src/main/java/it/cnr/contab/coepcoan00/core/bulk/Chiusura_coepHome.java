@@ -21,12 +21,34 @@
 */
 package it.cnr.contab.coepcoan00.core.bulk;
 import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.persistency.sql.FindClause;
+import it.cnr.jada.persistency.sql.SQLBuilder;
+
+import java.util.List;
+
 public class Chiusura_coepHome extends BulkHome {
 	public Chiusura_coepHome(java.sql.Connection conn) {
 		super(Chiusura_coepBulk.class, conn);
 	}
 	public Chiusura_coepHome(java.sql.Connection conn, PersistentCache persistentCache) {
 		super(Chiusura_coepBulk.class, conn, persistentCache);
+	}
+
+	public List<Chiusura_coepBulk> getAllChiusureCoep(Integer esercizio) throws PersistencyException {
+		SQLBuilder sql = this.createSQLBuilder();
+		sql.addClause(FindClause.AND,"esercizio",SQLBuilder.EQUALS, esercizio );
+		return this.fetchAll(sql);
+	}
+
+	public Chiusura_coepBulk getChiusuraCoep(Integer esercizio, String cdCds) throws PersistencyException {
+		SQLBuilder sql = this.createSQLBuilder();
+		sql.addClause(FindClause.AND,"esercizio",SQLBuilder.EQUALS, esercizio );
+		sql.addClause(FindClause.AND,"cd_cds",SQLBuilder.EQUALS, cdCds );
+		List<Chiusura_coepBulk> result = this.fetchAll(sql);
+		if (!result.isEmpty())
+			return result.get(0);
+		return null;
 	}
 }
