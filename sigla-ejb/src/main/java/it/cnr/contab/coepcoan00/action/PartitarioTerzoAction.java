@@ -57,7 +57,7 @@ public class PartitarioTerzoAction extends BulkAction {
         if (terzoBulk.isPresent()) {
             ConsultazionePartitarioBP consBP = (ConsultazionePartitarioBP) context.createBusinessProcess(
                     "ConsultazionePartitarioBP",
-                    new Object[]{terzoBulk.get(), isDettaglioTributi, "partitario"}
+                    new Object[]{terzoBulk.get(), isDettaglioTributi, "partitario",true}
             );
             RemoteIterator ri = consBP.openIterator(context);
             try {
