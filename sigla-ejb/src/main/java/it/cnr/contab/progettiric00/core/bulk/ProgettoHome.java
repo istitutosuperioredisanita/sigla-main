@@ -1090,6 +1090,8 @@ public class ProgettoHome extends BulkHome {
 		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class);
 		SQLBuilder sql = progettohome.createSQLBuilder();
 
+		sql.addTableToHeader("PROGETTO_OTHER_FIELD");
+		sql.addSQLJoin("PROGETTO.PG_PROGETTO", "PROGETTO_OTHER_FIELD.PG_PROGETTO");
 		sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS,obbSpe.getEsercizio());
 		sql.addSQLClause("AND","CD_PROGETTO",sql.EQUALS,obbSpe.getCd_progetto());
 		sql.addSQLClause("AND","TIPO_FASE",sql.EQUALS,ProgettoBulk.TIPO_FASE_NON_DEFINITA);

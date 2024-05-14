@@ -32,5 +32,15 @@ public class Obbligazione_pluriennaleHome extends BulkHome {
 
 		return pluriennaleVoceHome.fetchAll(sql);
 	}
+	public Obbligazione_pluriennaleBulk findObbligazioniPluriennale(it.cnr.jada.UserContext userContext, Obbligazione_pluriennaleBulk bulk) throws  PersistencyException {
 
+		SQLBuilder sql = createSQLBuilder();
+		sql.addSQLClause("AND", "CD_CDS", SQLBuilder.EQUALS, bulk.getCdCds());
+		sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS, bulk.getEsercizio());
+		sql.addSQLClause("AND", "ESERCIZIO_ORIGINALE", SQLBuilder.EQUALS, bulk.getEsercizioOriginale());
+		sql.addSQLClause("AND", "PG_OBBLIGAZIONE", SQLBuilder.EQUALS, bulk.getPgObbligazione());
+		sql.addSQLClause("AND", "ANNO", SQLBuilder.EQUALS, bulk.getAnno());
+
+		return (Obbligazione_pluriennaleBulk) fetchAll(sql).get(0);
+	}
 }
