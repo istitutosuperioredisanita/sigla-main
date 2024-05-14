@@ -1859,6 +1859,8 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
         sqlBuilder.addSQLClause(FindClause.AND, "CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, fatturaPassiva.getCd_unita_organizzativa());
         sqlBuilder.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.EQUALS, fatturaPassiva.getEsercizio());
         sqlBuilder.addSQLClause(FindClause.AND, "PG_FATTURA_PASSIVA", SQLBuilder.EQUALS, fatturaPassiva.getPg_fattura_passiva());
+        sqlBuilder.addSQLJoin( "FATTURA_ORDINE.PROGRESSIVO_RIGA", "FATTURA_PASSIVA_RIGA.PROGRESSIVO_RIGA");
+
         sql.addSQLNotExistsClause(FindClause.AND, sqlBuilder);
         try {
             return iterator(
