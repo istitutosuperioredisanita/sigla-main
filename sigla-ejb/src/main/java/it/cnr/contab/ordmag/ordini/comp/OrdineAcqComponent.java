@@ -1891,10 +1891,10 @@ public class OrdineAcqComponent
     }
 
     private void riduzioneAutomaticaScadenzaModificaOrdine(UserContext userContext, Obbligazione_scadenzarioBulk obbligazione_scadenzario, BigDecimal importoDaTogliere) throws ComponentException, PersistencyException, RemoteException {
-
         BigDecimal nuovoImporto = obbligazione_scadenzario.getIm_scadenza().subtract(importoDaTogliere);
         ObbligazioneComponentSession obbligComp = (ObbligazioneComponentSession) EJBCommonServices.createEJB("CNRDOCCONT00_EJB_ObbligazioneComponentSession");
         if (obbligazione_scadenzario.getEsercizio().compareTo(obbligazione_scadenzario.getEsercizio_originale()) == 0 && existScandenzaLibera(userContext, obbligazione_scadenzario)) {
+            obbligazione_scadenzario.getObbligazione().setCheckDisponibilitaContrattoEseguito(Boolean.TRUE);
             obbligComp.modificaScadenzaInAutomatico(userContext, obbligazione_scadenzario, nuovoImporto, true);
         } else {
             DatiFinanziariScadenzeDTO dati = new DatiFinanziariScadenzeDTO();
