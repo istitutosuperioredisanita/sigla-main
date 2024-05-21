@@ -201,7 +201,10 @@ public class Scrittura_partita_doppiaHome extends BulkHome {
         sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
         sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, pCdCds);
         sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Origine.APERTURA.name());
-        sql.addClause(FindClause.AND, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.RIAPERTURA_CONTI.name());
+        sql.openParenthesis(FindClause.AND);
+        sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.RIMANENZE_MAGAZZINO.name());
+        sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.RIAPERTURA_CONTI.name());
+        sql.closeParenthesis();
 
         List<Scrittura_partita_doppiaBulk> result = fetchAll(sql);
         for (Scrittura_partita_doppiaBulk scrittura : result) {
@@ -241,6 +244,21 @@ public class Scrittura_partita_doppiaHome extends BulkHome {
         sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.CHIUSURA_CONTO_ECONOMICO.name());
         sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.DETERMINAZIONE_UTILE_PERDITA.name());
         sql.closeParenthesis();
+
+        List<Scrittura_partita_doppiaBulk> result = fetchAll(sql);
+        for (Scrittura_partita_doppiaBulk scrittura : result) {
+            scrittura.setMovimentiDareColl(new BulkList(this.findMovimentiDareColl(userContext, scrittura, Boolean.FALSE)));
+            scrittura.setMovimentiAvereColl(new BulkList(this.findMovimentiAvereColl(userContext, scrittura, Boolean.FALSE)));
+        }
+        return result;
+    }
+
+    public List<Scrittura_partita_doppiaBulk> getScrittureChiusuraMagazzino(UserContext userContext, Integer esercizio, String pCdCds) throws PersistencyException, ComponentException {
+        SQLBuilder sql = this.createSQLBuilder();
+        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
+        sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, pCdCds);
+        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Origine.PRECHIUSURA.name());
+        sql.addClause(FindClause.AND, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.RIMANENZE_MAGAZZINO.name());
 
         List<Scrittura_partita_doppiaBulk> result = fetchAll(sql);
         for (Scrittura_partita_doppiaBulk scrittura : result) {
