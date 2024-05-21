@@ -224,6 +224,7 @@ public class ScritturaPartitaDoppiaChiusuraComponent extends CRUDComponent  {
 					makeScrittureChiusuraUtilePerdita(userContext, esercizio);
 					List<Scrittura_partita_doppiaBulk> scrittureStatoPatrimoniale = makeScrittureChiusuraStatoPatrimoniale(userContext, esercizio);
 					makeScrittureAperturaStatoPatrimoniale(userContext, esercizio, scrittureStatoPatrimoniale);
+					makeScrittureAperturaMagazzino(userContext, esercizio);
 
 					Configurazione_cnrBulk configChiusuraDefinitiva = ((Configurazione_cnrHome)getHome(userContext, Configurazione_cnrBulk.class)).getConfigurazioneChiusuraBilancioDefinitiva(esercizio)
 							.orElseThrow(()->new ApplicationException("Manca Record Configurazione Bilancio Definitivo per esercizio "+esercizio));
@@ -500,6 +501,36 @@ public class ScritturaPartitaDoppiaChiusuraComponent extends CRUDComponent  {
 		}
     }
 
+	private void makeScrittureAperturaMagazzino(UserContext userContext, Integer esercizioChiusura) throws ComponentException, RemoteException {
+		try {
+			List<Scrittura_partita_doppiaBulk> result = new ArrayList<>();
+			List<DettaglioScrittura> details = new ArrayList<>();
+
+			Voce_epHome voceEpHome = (Voce_epHome) getHome(userContext, Voce_epBulk.class);
+
+			//Recupero prima la scrittura di chiusura magazzino
+			Unita_organizzativa_enteBulk uoEnte = (Unita_organizzativa_enteBulk) getHome(userContext, Unita_organizzativa_enteBulk.class).findAll().get(0);
+			List<Scrittura_partita_doppiaBulk> scrittureMagazzinoChiusuraList = ((Scrittura_partita_doppiaHome) getHome(userContext, Scrittura_partita_doppiaBulk.class)).getScrittureChiusuraMagazzino(userContext, esercizioChiusura, uoEnte.getCd_cds());
+
+			for (Scrittura_partita_doppiaBulk scritturaMagazzinoChiusura : scrittureMagazzinoChiusuraList) {
+				scritturaMagazzinoChiusura.getAllMovimentiColl().forEach(el -> {
+					try {
+						Voce_epBulk voceEpBulk = Optional.ofNullable((Voce_epBulk) voceEpHome.findByPrimaryKey(new Voce_epBulk(el.getCd_voce_ep(), esercizioChiusura + 1)))
+								.orElseThrow(() -> new ApplicationException("Manca il conto " + el.getCd_voce_ep() + " per l'esercizio " + (esercizioChiusura + 1) + ")."));
+
+						details.add(new DettaglioScrittura(voceEpBulk, el.getSezione().equals(Movimento_cogeBulk.SEZIONE_DARE) ? Movimento_cogeBulk.SEZIONE_AVERE : Movimento_cogeBulk.SEZIONE_DARE, el.getIm_movimento(), el.getTi_istituz_commerc()));
+					} catch (ApplicationException | PersistencyException e) {
+						throw new RuntimeException(e);
+					}
+				});
+			}
+
+			makePersistentScritture(userContext, esercizioChiusura+1, details, Scrittura_partita_doppiaBulk.Origine.APERTURA.name(), Scrittura_partita_doppiaBulk.Causale.RIMANENZE_MAGAZZINO.name(), Scrittura_partita_doppiaBulk.Causale.RIMANENZE_MAGAZZINO.label());
+		} catch (PersistencyException e) {
+			throw handleException(e);
+		}
+	}
+
 	private Movimento_cogeBulk createMovimentoCoge(UserContext userContext, Scrittura_partita_doppiaBulk scritturaPartitaDoppia, String aSezione, Voce_epBulk aConto, BigDecimal aImporto, String tiAttivita) throws ComponentException{
 		try {
 			if (aImporto.compareTo(BigDecimal.ZERO)==0)
@@ -708,8 +739,7 @@ public class ScritturaPartitaDoppiaChiusuraComponent extends CRUDComponent  {
 	private List<Scrittura_partita_doppiaBulk> makePersistentScritture(UserContext userContext, Integer esercizio, List<DettaglioScrittura> details, String origineScrittura, String pCausaleCoge, String pDsScrittura) throws ComponentException, PersistencyException {
 		List<Scrittura_partita_doppiaBulk> result = new ArrayList<>();
 
-		GregorianCalendar aDataComp = new GregorianCalendar();
-
+		GregorianCalendar aDataComp;
 		if (origineScrittura.equals(Scrittura_partita_doppiaBulk.Origine.APERTURA.name()))
 			aDataComp = new GregorianCalendar(esercizio, Calendar.JANUARY, 1);
 		else
