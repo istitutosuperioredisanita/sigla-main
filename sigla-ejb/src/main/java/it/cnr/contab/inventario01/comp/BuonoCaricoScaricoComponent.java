@@ -1599,10 +1599,10 @@ public SQLBuilder selectNuovo_bene_padreByClause(UserContext userContext, Invent
 				 .map(Timestamp::toLocalDateTime)
 				 .map(LocalDateTime::getYear)
 				 .orElse(riga_fattura.getEsercizio());
-		 sql.addSQLClause("AND", "INVENTARIO_BENI.ESERCIZIO_CARICO_BENE", SQLBuilder.EQUALS, esercizioDA);
+		 sql.addSQLClause("AND", "INVENTARIO_BENI.ESERCIZIO_CARICO_BENE", SQLBuilder.LESS_EQUALS, esercizioDA);
 		sql.openParenthesis(FindClause.AND);
-			sql.addSQLClause(FindClause.OR,"BUONO_CARICO_SCARICO_DETT.ESERCIZIO",SQLBuilder.EQUALS, esercizioDA);
-		 	sql.addSQLClause(FindClause.OR,"BUONO_CARICO_SCARICO_DETT.ESERCIZIO",SQLBuilder.EQUALS, esercizioA);
+			sql.addSQLClause(FindClause.OR,"BUONO_CARICO_SCARICO_DETT.ESERCIZIO",SQLBuilder.LESS_EQUALS, esercizioDA);
+		 	sql.addSQLClause(FindClause.OR,"BUONO_CARICO_SCARICO_DETT.ESERCIZIO",SQLBuilder.LESS_EQUALS, esercizioA);
 		sql.closeParenthesis();
 
 		sql.addSQLClause("AND","BUONO_CARICO_SCARICO_DETT.TI_DOCUMENTO",SQLBuilder.EQUALS,Buono_carico_scaricoBulk.CARICO);
