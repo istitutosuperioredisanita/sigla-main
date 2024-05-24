@@ -17,15 +17,29 @@
 
 package it.cnr.contab.docamm00.bp;
 
+import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import org.slf4j.LoggerFactory;
 
 /**
- * Gestisce le catene di elementi correlate con la fattura passiva in uso.
+ * Gestisce le autofatture.
  */
-public abstract class CRUDAutofatturaBP extends SimpleCRUDBP {
+public  class CRUDAutofatturaBP extends SimpleCRUDBP {
 
+    private static final long serialVersionUID = 1L;
     private final static org.slf4j.Logger logger = LoggerFactory.getLogger(CRUDAutofatturaBP.class);
+
+    /**
+     * CRUDAutofatturaBP constructor comment.
+     */
+    public CRUDAutofatturaBP(String function) throws BusinessProcessException {
+        super(function);
+    }
+
+    public CRUDAutofatturaBP() {
+        super();
+    }
+
 
 
 }

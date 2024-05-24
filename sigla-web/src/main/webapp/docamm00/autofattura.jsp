@@ -8,15 +8,17 @@
 		it.cnr.contab.docamm00.bp.*"
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html>
-<head>
-<% JSPUtils.printBaseUrl(pageContext); %>
-<script language="javascript" src="scripts/css.js"></script>
-<script language="JavaScript" src="scripts/util.js"></script>
-<% CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP)BusinessProcess.getBusinessProcess(request); %>
-<title> Autofatture/title>
 
+<head>
+    <% JSPUtils.printBaseUrl(pageContext); %>
+    <script language="javascript" src="scripts/css.js"></script>
+    <script language="JavaScript" src="scripts/util.js"></script>
+    <% CRUDAutofatturaBP bp = (CRUDAutofatturaBP)BusinessProcess.getBusinessProcess(request); %>
+    <title> Autofatture</title>
 </head>
+<html>
 <body class="Form">
-Autofatture
+<%bp.openFormWindow(pageContext);%>
+
 </body>
+</html>
