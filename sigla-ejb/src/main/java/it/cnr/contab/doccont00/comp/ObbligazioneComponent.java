@@ -6320,6 +6320,7 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 			Progetto_rimodulazioneBulk bulk = comp.salvaDefinitivo(uc, rimodulazioneBulk);
 		}
 
+
 	}
 	private BigDecimal  getImportoAggiornatoPluriennale(UserContext uc, Obbligazione_pluriennaleBulk obbPlur) throws ComponentException, PersistencyException {
 
