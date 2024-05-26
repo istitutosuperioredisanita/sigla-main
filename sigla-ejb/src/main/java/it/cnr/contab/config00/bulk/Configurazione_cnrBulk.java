@@ -214,6 +214,8 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     public final static String SK_CONTO_ECONOMICO = "CONTO_ECONOMICO";
     public final static String SK_STATO_PATRIMONIALE = "STATO_PATRIMONIALE";
     public final static String SK_UTILE_PERDITA_ESERCIZIO = "UTILE_PERDITA_ESERCIZIO";
+    public final static String SK_SOPRAVVENIENZE_ATTIVE = "SOPRAVVENIENZE_ATTIVE";
+    public final static String SK_SOPRAVVENIENZE_PASSIVE = "SOPRAVVENIENZE_PASSIVE";
 
     public final static String PK_VARIAZIONE_AUTOMATICA = "VARIAZIONE_AUTOMATICA";
     public final static String SK_SPESA = "SPESA";
