@@ -36,8 +36,8 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 	public final static String STATO_IVA_B = "B";
 	public final static String STATO_IVA_C = "C";
 
-	Fattura_passivaBase fattura_passiva = null;
-	Tipo_sezionaleBulk tipo_sezionale = null;
+	Fattura_passivaBulk fattura_passiva = new Fattura_passiva_IBulk();
+	Tipo_sezionaleBulk tipo_sezionale = new Tipo_sezionaleBulk();
 
 	private java.lang.Boolean fl_extra_ue;
 	private java.lang.Boolean fl_san_marino_con_iva;
@@ -93,6 +93,25 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
         setTi_fattura(fatturaPassiva.getTi_fattura());
         setToBeCreated();
     }
+
+	/**
+
+	 * Setta il valore di: [Esercizio dell'obbligazione]
+	 **/
+	public void setEsercizio(Integer esercizio)  {
+
+		this.getFattura_passiva().setEsercizio(esercizio);
+	}
+	/**
+
+	 * Setta il valore di: [Esercizio dell'obbligazione]
+	 **/
+	public Integer getEsercizio(Integer esercizio)  {
+		Fattura_passivaBulk fatturaPassiva = this.getFattura_passiva();
+		if (fatturaPassiva == null)
+			return null;
+		return fatturaPassiva.getEsercizio();
+	}
     public java.lang.String getCd_cds_ft_passiva() {
         it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBase fattura_passiva = this.getFattura_passiva();
         if (fattura_passiva == null)
@@ -116,7 +135,7 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
      * Creation date: (2/12/2002 4:06:00 PM)
      * @return it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk
      */
-    public Fattura_passivaBase getFattura_passiva() {
+    public Fattura_passivaBulk getFattura_passiva() {
         return fattura_passiva;
     }
     /*
@@ -210,7 +229,7 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 	 * Creation date: (2/12/2002 4:06:00 PM)
 	 * @param newFattura_passiva it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk
 	 */
-	public void setFattura_passiva(Fattura_passivaBase newFattura_passiva) {
+	public void setFattura_passiva(Fattura_passivaBulk newFattura_passiva) {
 		fattura_passiva = newFattura_passiva;
 	}
 	/*

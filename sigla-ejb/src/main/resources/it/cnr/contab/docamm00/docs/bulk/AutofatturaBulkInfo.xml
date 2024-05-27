@@ -75,7 +75,7 @@
 		caseSensitiveSearch="false" />
 	<fieldProperty
 		name="cd_uo_ft_passiva"
-		property="cd_uo_ft_passiva"
+		property="fattura_passiva.cd_unita_organizzativa"
 		maxLength="30"
 		inputSize="30"
 		inputType="TEXT"
@@ -96,12 +96,12 @@
 		caseSensitiveSearch="false" />
 	<fieldProperty
 		name="pg_fattura_passiva"
-		property="pg_fattura_passiva"
+		property="fattura_passiva.pg_fattura_passiva"
 		inputType="TEXT"
 		label="pg_fattura_passiva" />
 	<fieldProperty
 		name="cd_cds_ft_passiva"
-		property="cd_cds_ft_passiva"
+		property="fattura_passiva.cd_cds"
 		maxLength="30"
 		inputSize="30"
 		inputType="TEXT"
@@ -220,9 +220,9 @@
 		name="dt_registrazione" />
 	<formFieldProperty
 		name="ti_fattura" />
-
+<!--
 	<columnFieldProperty
-		name="cd_cds" />
+		name="cd_cds" />-->
 	<columnFieldProperty
 		name="protocollo_iva" />
 	<columnFieldProperty

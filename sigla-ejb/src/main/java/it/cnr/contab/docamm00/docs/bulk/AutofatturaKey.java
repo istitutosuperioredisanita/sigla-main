@@ -17,10 +17,8 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.persistency.KeyedPersistent;
 
 public class AutofatturaKey extends OggettoBulk implements KeyedPersistent {
 	// CD_CDS VARCHAR(30) NOT NULL (PK)
