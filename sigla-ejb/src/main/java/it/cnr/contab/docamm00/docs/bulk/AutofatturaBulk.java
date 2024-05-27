@@ -17,12 +17,16 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk;
 import it.cnr.contab.util.Utility;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.StrServ;
+import it.cnr.jada.util.action.CRUDBP;
 
+import java.util.Dictionary;
 import java.util.Optional;
 
 public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmministrativoElettronicoBulk {
@@ -31,6 +35,35 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 	public final static String STATO_CONTABILIZZATO = "C";
 	public final static String STATO_PARZIALE = "Q";
 	public final static String STATO_PAGATO = "P";
+
+	public final static Dictionary STATO;
+
+
+
+	static {
+
+
+		STATO = new it.cnr.jada.util.OrderedHashtable();
+		STATO.put(STATO_INIZIALE, "Iniziale");
+		STATO.put(STATO_CONTABILIZZATO, "Contabilizzato");
+		STATO.put(STATO_PARZIALE, "Parziale");
+		STATO.put(STATO_PAGATO, "Incassato");
+
+
+	}
+
+	@JsonIgnore
+	public Dictionary getStato_cofiKeys() {
+		return STATO;
+	}
+
+	public Dictionary getTi_istituz_commercKeys() {
+		return fattura_passiva.getTi_istituz_commercKeys();
+	}
+
+	public Dictionary getTi_istituz_commercKeysForSearch() {
+		return fattura_passiva.getTi_istituz_commercKeysForSearch();
+	}
 
 	public final static String STATO_IVA_A = "A";
 	public final static String STATO_IVA_B = "B";
@@ -50,6 +83,17 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 	}
 	public AutofatturaBulk(java.lang.String cd_cds,java.lang.String cd_unita_organizzativa,java.lang.Integer esercizio,java.lang.Long pg_autofattura) {
 		super(cd_cds,cd_unita_organizzativa,esercizio,pg_autofattura);
+	}
+
+	public OggettoBulk initialize(CRUDBP bp, it.cnr.jada.action.ActionContext context) {
+
+
+		super.initialize(bp, context);
+
+		if (getCd_uo_origine() == null)
+			setCd_uo_origine(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context).getCd_unita_organizzativa());
+
+		return this;
 	}
 	/**
 	 * Insert the method's description here.
