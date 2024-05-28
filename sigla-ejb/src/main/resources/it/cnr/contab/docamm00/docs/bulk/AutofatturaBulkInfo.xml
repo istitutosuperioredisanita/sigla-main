@@ -86,6 +86,10 @@
 		name="esercizio"
 		property="esercizio"
 		inputType="TEXT"
+		enabledOnEdit="false"
+		enabledOnInsert="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
 		label="Esercizio"/>
 	<fieldProperty
 		name="ti_istituz_commerc"
@@ -293,6 +297,8 @@
 
 	<findFieldProperty
 		name="cd_cds" />
+	<findFieldProperty
+			name="esercizio" />
 	<findFieldProperty
 		name="protocollo_iva" />
 	<findFieldProperty
