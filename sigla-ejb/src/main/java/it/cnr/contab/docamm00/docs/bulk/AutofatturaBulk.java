@@ -88,6 +88,25 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 		super(cd_cds,cd_unita_organizzativa,esercizio,pg_autofattura);
 	}
 
+	public OggettoBulk initializeForSearch(CRUDBP bp, it.cnr.jada.action.ActionContext context) {
+		super.initializeForSearch(bp,context);
+
+		it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk unita_organizzativa = it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context);
+		setCd_cds_origine(unita_organizzativa.getUnita_padre().getCd_unita_organizzativa());
+
+		if (getEsercizio() == null)
+			setEsercizio(it.cnr.contab.utenze00.bulk.CNRUserInfo.getEsercizio(context));
+
+		setFl_intra_ue(null);
+		setFl_extra_ue(null);
+		setFl_san_marino_con_iva(null);
+		setFl_san_marino_senza_iva(null);
+		setFl_autofattura(Boolean.FALSE);
+		setFl_split_payment(Boolean.FALSE);
+
+		return this;
+	}
+
 	public OggettoBulk initialize(CRUDBP bp, it.cnr.jada.action.ActionContext context) {
 
 

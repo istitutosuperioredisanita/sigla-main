@@ -17,6 +17,7 @@
 
 package it.cnr.contab.docamm00.bp;
 
+import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,15 @@ public  class CRUDAutofatturaBP extends SimpleCRUDBP {
         for (int j = 0; j < i; j++)
             tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
         return tabs;
+    }
+    public void resetForSearch(ActionContext context) throws BusinessProcessException {
+        super.resetForSearch(context);
+        resetTabs();
+    }
+
+
+    public void resetTabs() {
+        setTab("tab", "tabAutofattura");
     }
 
 
