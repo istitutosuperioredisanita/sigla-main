@@ -2021,5 +2021,5 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             return Boolean.FALSE;
         }
         return super.isInputReadonlyFieldName(fieldName);
-    }    
+    }
 }

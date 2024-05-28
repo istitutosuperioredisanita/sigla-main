@@ -3066,4 +3066,7 @@
     <changeSet author="sigla" runOnChange="true" id="create-view-V_SALDO_COGE">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_SALDO_COGE.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="marco.spasiano" runOnChange="true" id="create-view-V_CONTROLLI_PCC">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_CONTROLLI_PCC.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
 </databaseChangeLog>
