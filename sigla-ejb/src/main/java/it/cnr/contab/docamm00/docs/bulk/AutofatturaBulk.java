@@ -72,12 +72,15 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 	Fattura_passivaBulk fattura_passiva = new Fattura_passiva_IBulk();
 	Tipo_sezionaleBulk tipo_sezionale = new Tipo_sezionaleBulk();
 
-	private java.lang.Boolean fl_extra_ue;
-	private java.lang.Boolean fl_san_marino_con_iva;
-	private java.lang.Boolean fl_san_marino_senza_iva;
+
+
 	private java.lang.String ti_bene_servizio = null;
 	private boolean autofatturaNeeded = false;
 	private TerzoBulk terzoDocumentoElettronico;
+
+	@JsonIgnore
+	private java.util.Collection sezionali;
+
 	public AutofatturaBulk() {
 		super();
 	}
@@ -150,9 +153,9 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 
 	 * Setta il valore di: [Esercizio dell'obbligazione]
 	 **/
-	public Integer getEsercizio(Integer esercizio)  {
+	public Integer getEsercizio()  {
 		Fattura_passivaBulk fatturaPassiva = this.getFattura_passiva();
-		if (fatturaPassiva == null)
+			if (fatturaPassiva == null)
 			return null;
 		return fatturaPassiva.getEsercizio();
 	}
@@ -182,28 +185,9 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
     public Fattura_passivaBulk getFattura_passiva() {
         return fattura_passiva;
     }
-    /*
-     * Getter dell'attributo fl_intra_ue
-     */
-    public java.lang.Boolean getFl_extra_ue() {
-        return fl_extra_ue;
-    }
-    /**
-     * Insert the method's description here.
-     * Creation date: (9/20/2002 10:08:36 AM)
-     * @return java.lang.Boolean
-     */
-    public java.lang.Boolean getFl_san_marino_con_iva() {
-        return fl_san_marino_con_iva;
-    }
-    /**
-     * Insert the method's description here.
-     * Creation date: (9/20/2002 10:08:36 AM)
-     * @return java.lang.Boolean
-     */
-    public java.lang.Boolean getFl_san_marino_senza_iva() {
-        return fl_san_marino_senza_iva;
-    }
+
+
+
     public java.lang.Long getPg_fattura_passiva() {
         it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBase fattura_passiva = this.getFattura_passiva();
         if (fattura_passiva == null)
@@ -276,28 +260,8 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 	public void setFattura_passiva(Fattura_passivaBulk newFattura_passiva) {
 		fattura_passiva = newFattura_passiva;
 	}
-	/*
-	 * Setter dell'attributo fl_intra_ue
-	 */
-	public void setFl_extra_ue(java.lang.Boolean fl_extra_ue) {
-		this.fl_extra_ue = fl_extra_ue;
-	}
-	/**
-	 * Insert the method's description here.
-	 * Creation date: (9/20/2002 10:08:36 AM)
-	 * @param newFl_san_marino_con_iva java.lang.Boolean
-	 */
-	public void setFl_san_marino_con_iva(java.lang.Boolean newFl_san_marino_con_iva) {
-		fl_san_marino_con_iva = newFl_san_marino_con_iva;
-	}
-	/**
-	 * Insert the method's description here.
-	 * Creation date: (9/20/2002 10:08:36 AM)
-	 * @param newFl_san_marino_senza_iva java.lang.Boolean
-	 */
-	public void setFl_san_marino_senza_iva(java.lang.Boolean newFl_san_marino_senza_iva) {
-		fl_san_marino_senza_iva = newFl_san_marino_senza_iva;
-	}
+
+
 	public void setPg_fattura_passiva(java.lang.Long pg_fattura_passiva) {
 		this.getFattura_passiva().setPg_fattura_passiva(pg_fattura_passiva);
 	}
@@ -379,5 +343,19 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 
 	public boolean isDocumentoFatturazioneElettronica() {
 		return Optional.ofNullable(getFlFatturaElettronica()).orElse(Boolean.FALSE);
+	}
+
+	@JsonIgnore
+	public java.util.Collection<Tipo_sezionaleBulk> getSezionali() {
+		return sezionali;
+	}
+
+	/**
+	 * Insert the method's description here.
+	 * Creation date: (18/10/2001 14.41.50)
+	 * @param newSezionali java.util.Collection
+	 */
+	public void setSezionali(java.util.Collection newSezionali) {
+		sezionali = newSezionali;
 	}
 }

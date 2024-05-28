@@ -20,7 +20,6 @@ package it.cnr.contab.docamm00.comp;
 import it.cnr.contab.anagraf00.core.bulk.TelefonoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoHome;
-import it.cnr.contab.anagraf00.core.bulk.TerzoKey;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
@@ -48,7 +47,6 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Optional;
 
 public class AutoFatturaComponent 
 	extends CRUDComponent 
@@ -346,7 +344,11 @@ public java.util.Vector estraeSezionali (UserContext aUC, AutofatturaBulk autofa
 		throw handleException(autofattura, t);
 	}
 }
-public java.util.Collection findSezionali(UserContext aUC, AutofatturaBulk autofattura,boolean obbIta) 
+	public java.util.Collection findSezionali(UserContext aUC, AutofatturaBulk autofattura)
+			throws ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException{
+		return findSezionali( aUC,autofattura,true);
+	}
+	public java.util.Collection findSezionali(UserContext aUC, AutofatturaBulk autofattura,boolean obbIta)
 	throws ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException {
 	
 	if (autofattura.getTi_istituz_commerc() == null) return null;

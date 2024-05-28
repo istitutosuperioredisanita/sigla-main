@@ -21,6 +21,8 @@ import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import org.slf4j.LoggerFactory;
 
+import java.util.TreeMap;
+
 /**
  * Gestisce le autofatture.
  */
@@ -38,6 +40,22 @@ public  class CRUDAutofatturaBP extends SimpleCRUDBP {
 
     public CRUDAutofatturaBP() {
         super();
+    }
+
+    private static final String[] TAB_AUTOFATTURA = new String[]{ "tabAutofattura","Testata","/docamm00/tab_autofattura.jsp" };
+    private static final String[] TAB_CLIENTE = new String[]{ "tabCliente","Cliente","/docamm00/tab_autofattura_cliente.jsp" };
+
+    //private static final String[] TAB_ALLEGATI = new String[]{ "tabFatturaAttivaAllegati","Allegati Aggiunti","/docamm00/tab_fattura_attiva_allegati.jsp" };
+
+    public String[][] getTabs() {
+        TreeMap<Integer, String[]> pages = new TreeMap<Integer, String[]>();
+        int i = 0;
+        pages.put(i++, TAB_AUTOFATTURA);
+        pages.put(i++, TAB_CLIENTE);
+    String[][] tabs = new String[i][3];
+        for (int j = 0; j < i; j++)
+            tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
+        return tabs;
     }
 
 

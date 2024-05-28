@@ -8,7 +8,7 @@
 		it.cnr.contab.docamm00.bp.*"
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-
+<html>
 <head>
     <% JSPUtils.printBaseUrl(pageContext); %>
     <script language="javascript" src="scripts/css.js"></script>
@@ -16,9 +16,19 @@
     <% CRUDAutofatturaBP bp = (CRUDAutofatturaBP)BusinessProcess.getBusinessProcess(request); %>
     <title> Autofatture</title>
 </head>
-<html>
-<body class="Form">
-<%bp.openFormWindow(pageContext);%>
 
+<body class="Form">
+<%
+    bp.openFormWindow(pageContext);
+	JSPUtils.tabbed(
+					pageContext,
+					"tab",
+					bp.getTabs(),
+					bp.getTab("tab"),
+					"center",
+					"100%",
+					null );
+	bp.closeFormWindow(pageContext);
+%>
 </body>
 </html>

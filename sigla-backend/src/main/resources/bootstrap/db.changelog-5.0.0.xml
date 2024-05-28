@@ -6122,4 +6122,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_column_fl_missione_pres_elemento_voce.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunta Accesso per visualizzazione Autofatture-->
     <include file="bootstrap/add_accessi_autofattura.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta colonna fl_extra_ue tabella Autofattura-->
+    <include file="bootstrap/add_fl_extraue_autofattura.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta colonna fl_san_marino_con_iva tabella Autofattura-->
+    <include file="bootstrap/add_fl_san_marino_con_iva_autofattura.xml"/>
 </databaseChangeLog>
