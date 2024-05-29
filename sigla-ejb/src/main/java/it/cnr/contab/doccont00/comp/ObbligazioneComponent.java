@@ -37,6 +37,7 @@ import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.doccont00.dto.ObbligazionePluriennaleDto;
 import it.cnr.contab.doccont00.dto.ProgettoObbliPluriennaleDto;
 import it.cnr.contab.doccont00.dto.RimoduzioneObbliPluriennaleDto;
+import it.cnr.contab.doccont00.dto.VocePianoObbliPluriennaleDto;
 import it.cnr.contab.doccont00.ejb.SaldoComponentSession;
 import it.cnr.contab.incarichi00.bulk.Ass_incarico_uoBulk;
 import it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk;
@@ -87,7 +88,7 @@ public class ObbligazioneComponent extends it.cnr.jada.comp.CRUDComponent implem
 {
 	private final static int INSERIMENTO = 1;
 	private final static int MODIFICA    = 2;
-	private final static int CANCELLAZIONE    = 3;		
+	private final static int CANCELLAZIONE    = 3;
 //@@<< CONSTRUCTORCST
     public  ObbligazioneComponent()
     {
@@ -1185,7 +1186,7 @@ public void cancellaObbligazioneProvvisoria (UserContext aUC,ObbligazioneBulk ob
 		// se ci sono obbligazioni pluriennali da eliminare va aggiornata la disponibilità nel progetto
 		if(!obbligazione.getObbligazioniPluriennali().isEmpty()) {
 
-			RimoduzioneObbliPluriennaleDto rimoduzioneObbliPluriennaleDto = getObbligazioniPerRimodulazione(aUC,obbligazione);
+			RimoduzioneObbliPluriennaleDto rimoduzioneObbliPluriennaleDto = getObbligazioniPerRimodulazione(aUC,obbligazione,false);
 			rimodulazioneProgettoPerImpegnoPluriennale(aUC, rimoduzioneObbliPluriennaleDto);
 		}
 
@@ -3304,9 +3305,12 @@ public OggettoBulk modificaConBulk (UserContext aUC,OggettoBulk bulk) throws Com
 		//verifica la correttezza dell'imputazione finanziaria
 		validaImputazioneFinanziaria( aUC, obbligazione );
 
-		RimoduzioneObbliPluriennaleDto rimodulazioneObblPlurDto = getObbligazioniPerRimodulazione( aUC, obbligazione);
-		validaObbligazionePluriennale( aUC, obbligazione,rimodulazioneObblPlurDto);
-		creaObbligazionePluriennaleVoce(aUC, obbligazione);
+		RimoduzioneObbliPluriennaleDto rimodulazioneObblPlurDto = null;
+		if(obbligazione.isPresentiPluriennaliDaGestire()) {
+			rimodulazioneObblPlurDto = getObbligazioniPerRimodulazione(aUC, obbligazione,true);
+			validaObbligazionePluriennale(aUC, obbligazione, rimodulazioneObblPlurDto);
+			creaObbligazionePluriennaleVoce(aUC, obbligazione);
+		}
 
 		updateBulk( aUC, obbligazione);
 		makeBulkListPersistent( aUC, obbligazione.getObbligazione_scadenzarioColl());
@@ -3363,8 +3367,9 @@ public OggettoBulk modificaConBulk (UserContext aUC,OggettoBulk bulk) throws Com
 			Utility.createCRUDPdgVariazioneGestionaleComponentSession().approva(aUC, pdgVariazioneObbl, Boolean.FALSE);
 		}
 		// GESTIONE OBBLIGAZIONE PLURIENNALE
-
-		rimodulazioneProgettoPerImpegnoPluriennale(aUC, rimodulazioneObblPlurDto);
+		if(rimodulazioneObblPlurDto!=null) {
+			rimodulazioneProgettoPerImpegnoPluriennale(aUC, rimodulazioneObblPlurDto);
+		}
 
 
 		return obbligazione;
@@ -6247,11 +6252,11 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 		}
 	}
 
-	private Progetto_piano_economicoBulk getPianoEconomicoObbligazione(UserContext uc,ProgettoBulk progetto,ObbligazioneBulk obbligazione) throws PersistencyException, ComponentException {
+	private Progetto_piano_economicoBulk getPianoEconomicoObbligazione(UserContext uc,ProgettoBulk progetto,Elemento_voceBulk elemento_voceBulk) throws PersistencyException, ComponentException {
 		Progetto_piano_economicoBulk progettoPianoEconomico = null;
 
 		List<Progetto_piano_economicoBulk> progettoPianoElemVoceList = (List<Progetto_piano_economicoBulk>)((Progetto_piano_economicoHome) getHome(uc, Progetto_piano_economicoBulk.class)).findProgettoPianoEconomicoList(progetto.getEsercizio(),
-				progetto.getPg_progetto(), obbligazione.getElemento_voce());
+				progetto.getPg_progetto(), elemento_voceBulk);
 		if(progettoPianoElemVoceList == null || progettoPianoElemVoceList.isEmpty()){
 			throw new ApplicationException("Piano Economico non trovato");
 		}
@@ -6269,42 +6274,46 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 	}
 
 
-	private boolean isDisponibilitaProgettoValida(ArrayList<ProgettoObbliPluriennaleDto> progettoObbliPluriennaleList) throws PersistencyException, ComponentException {
+	private boolean isDisponibilitaProgettoValida(HashMap<String,ProgettoObbliPluriennaleDto> progettoObbliPluriennaleMap) throws PersistencyException, ComponentException {
 
-		for(ProgettoObbliPluriennaleDto progettoObblPlur : progettoObbliPluriennaleList) {
+		for(ProgettoObbliPluriennaleDto progettoObblPlur : progettoObbliPluriennaleMap.values()) {
 
-			BigDecimal importoTotPluriennali = new BigDecimal(0);
-			for (ObbligazionePluriennaleDto obbPlur : progettoObblPlur.getAllObbligazionePluerinnali()) {
-				importoTotPluriennali = importoTotPluriennali.add(obbPlur.getImporto());
-			}
+			for(VocePianoObbliPluriennaleDto vocePianoObblPlur : progettoObblPlur.getVociPianoRimodulaMap().values()) {
+				BigDecimal importoTotPluriennali = new BigDecimal(0);
+				for (ObbligazionePluriennaleDto obbPlur : vocePianoObblPlur.getAllObbligazionePluerinnali()) {
+					importoTotPluriennali = importoTotPluriennali.add(obbPlur.getImporto());
+				}
 
-			BigDecimal importoVociAssociate = new BigDecimal(0);
-			for (Ass_progetto_piaeco_voceBulk assPiaeco : progettoObblPlur.getPianoEconomicoProgetto().getVociBilancioAssociate()) {
-				importoVociAssociate = importoVociAssociate.add(assPiaeco.getSaldoSpesa().getVariapiuFin());
-			}
+				BigDecimal importoVociAssociate = new BigDecimal(0);
+				for (Ass_progetto_piaeco_voceBulk assPiaeco : vocePianoObblPlur.getPianoEconomicoProgetto().getVociBilancioAssociate()) {
+					importoVociAssociate = importoVociAssociate.add(assPiaeco.getSaldoSpesa().getVariapiuFin());
+				}
 
-			BigDecimal importoDispPianoEconomico = progettoObblPlur.getPianoEconomicoProgetto().getIm_spesa_finanziato().subtract(importoVociAssociate);
+				BigDecimal importoDispPianoEconomico = vocePianoObblPlur.getPianoEconomicoProgetto().getIm_spesa_finanziato().subtract(importoVociAssociate);
 
-			if (importoDispPianoEconomico.compareTo(importoTotPluriennali) < 0) {
-				return false;
+				if (importoDispPianoEconomico.compareTo(importoTotPluriennali) < 0) {
+					return false;
 
+				}
 			}
 			return true;
 		}
 		return true;
 	}
 
-	private boolean isAnnoPluriennaleValidoPerProgetto(UserContext uc,ArrayList<ProgettoObbliPluriennaleDto> progettoObblPlurList) throws ComponentException, PersistencyException {
+	private boolean isAnnoPluriennaleValidoPerProgetto(UserContext uc,HashMap<String,ProgettoObbliPluriennaleDto> progettoObbliPluriennaleMap) throws ComponentException, PersistencyException {
 
 		Progetto_other_fieldHome otherFieldHome = (Progetto_other_fieldHome)getHome(uc, Progetto_other_fieldBulk.class);
 
-		for(ProgettoObbliPluriennaleDto progettoObblPlurDto:progettoObblPlurList) {
-			Progetto_other_fieldBulk otherFieldBulk = (Progetto_other_fieldBulk) otherFieldHome.findByPrimaryKey(new Progetto_other_fieldBulk(progettoObblPlurDto.getPg_progetto()));
+		for(ProgettoObbliPluriennaleDto progettoObblPlur : progettoObbliPluriennaleMap.values()) {
+			Progetto_other_fieldBulk otherFieldBulk = (Progetto_other_fieldBulk) otherFieldHome.findByPrimaryKey(new Progetto_other_fieldBulk(progettoObblPlur.getPg_progetto()));
 
-			// controllo solo le obbligazioni in insert o update
-			for (ObbligazionePluriennaleDto obbPlur : progettoObblPlurDto.getObbligazionePlurAdd()) {
-				if (otherFieldBulk.getAnnoFine().compareTo(obbPlur.getAnno()) < 0) {
-					return false;
+			for(VocePianoObbliPluriennaleDto vocePianoObblPlur : progettoObblPlur.getVociPianoRimodulaMap().values()) {
+				// controllo solo le obbligazioni in insert o update
+				for (ObbligazionePluriennaleDto obbPlur : vocePianoObblPlur.getObbligazionePlurAdd()) {
+					if (otherFieldBulk.getAnnoFine().compareTo(obbPlur.getAnno()) < 0) {
+						return false;
+					}
 				}
 			}
 		}
@@ -6313,31 +6322,23 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 
 	public void rimodulazioneProgettoPerImpegnoPluriennale(UserContext uc,RimoduzioneObbliPluriennaleDto rimodulazioneObblPlurDto) throws ComponentException, IntrospectionException, PersistencyException, BusyResourceException, RemoteException {
 
-		ArrayList<Progetto_rimodulazioneBulk> rimodulazioneList = creaOggettoRimodulazione( uc, rimodulazioneObblPlurDto);
+		if(rimodulazioneObblPlurDto.isPresentePluriennalePerRimodulazione()) {
+			ArrayList<Progetto_rimodulazioneBulk> rimodulazioneList = creaOggettoRimodulazione(uc, rimodulazioneObblPlurDto);
 
-		for(Progetto_rimodulazioneBulk rimodulazioneBulk : rimodulazioneList){
-			RimodulaProgettoRicercaComponentSession comp = (RimodulaProgettoRicercaComponentSession) EJBCommonServices.createEJB("CNRPROGETTIRIC00_EJB_RimodulaProgettoRicercaComponentSession",RimodulaProgettoRicercaComponentSession.class);
-			Progetto_rimodulazioneBulk bulk = comp.salvaDefinitivo(uc, rimodulazioneBulk);
+			for (Progetto_rimodulazioneBulk rimodulazioneBulk : rimodulazioneList) {
+				RimodulaProgettoRicercaComponentSession comp = (RimodulaProgettoRicercaComponentSession) EJBCommonServices.createEJB("CNRPROGETTIRIC00_EJB_RimodulaProgettoRicercaComponentSession", RimodulaProgettoRicercaComponentSession.class);
+				Progetto_rimodulazioneBulk bulk = comp.salvaDefinitivo(uc, rimodulazioneBulk);
+			}
 		}
-
-
 	}
-	private BigDecimal  getImportoAggiornatoPluriennale(UserContext uc, Obbligazione_pluriennaleBulk obbPlur) throws ComponentException, PersistencyException {
 
-		Obbligazione_pluriennaleHome obbPlurHome = (Obbligazione_pluriennaleHome)getHome(uc, Obbligazione_pluriennaleBulk.class);
-		Obbligazione_pluriennaleBulk obbPlurBD = obbPlurHome.findObbligazioniPluriennale(uc,obbPlur);
-
-		// l'importo della rimodulazione deve essere uguale all'importo nuovo - l'importo vecchio (se il primo è minore va fatta una rimodulazione negativa sul nuovo anno)
-
-		return obbPlur.getImporto().subtract(obbPlurBD.getImporto());
-	}
 	private ArrayList<Progetto_rimodulazioneBulk> creaOggettoRimodulazione(UserContext uc,RimoduzioneObbliPluriennaleDto rimodulazioneObblPlurDto)
 	 throws ComponentException, PersistencyException, BusyResourceException {
 
 		ProgettoHome progettoHome = (ProgettoHome)getHome(uc, ProgettoBulk.class);
 		ArrayList<Progetto_rimodulazioneBulk> rimodulazioneBulkList = new ArrayList<Progetto_rimodulazioneBulk>();
 
-		for(ProgettoObbliPluriennaleDto progettoObbliPluriennaleDto : rimodulazioneObblPlurDto.getProgettoObbliPluriennaleList()) {
+		for(ProgettoObbliPluriennaleDto progettoObbliPluriennaleDto : rimodulazioneObblPlurDto.getProgettoObbliPluriennaleMap().values()) {
 
 			ProgettoBulk progetto = (ProgettoBulk)progettoHome.findByPrimaryKey(new ProgettoBulk(progettoObbliPluriennaleDto.getEsercizio(),progettoObbliPluriennaleDto.getPg_progetto(),progettoObbliPluriennaleDto.getTipo_fase()));
 			progetto = progettoHome.initializePianoEconomico(uc, new ProgettoBulk(progetto.getEsercizio(), progetto.getPg_progetto(), ProgettoBulk.TIPO_FASE_NON_DEFINITA), true);
@@ -6420,43 +6421,44 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 						el.setImSpesaCofinanziatoRimodulato(el.getIm_spesa_cofinanziato().add(Optional.ofNullable(dett).map(Progetto_rimodulazione_ppeBulk::getImVarSpesaCofinanziato).orElse(BigDecimal.ZERO)));
 					});
 
+			for(VocePianoObbliPluriennaleDto vocePianoObbliPluriennaleDto : progettoObbliPluriennaleDto.getVociPianoRimodulaMap().values()) {
 
-			for (ObbligazionePluriennaleDto obbPlur : progettoObbliPluriennaleDto.getAllObbligazionePluerinnali()) {
+				for (ObbligazionePluriennaleDto obbPlur : vocePianoObbliPluriennaleDto.getAllObbligazionePluerinnali()) {
 
-				// verifica che nelle voci del piano "altri anni" non sia già presente un dettaglio per la voce e l'anno dell'obbligazione pluriennale
-				// in tal caso non deve creare il nuovo dettaglio ma aggiornare l'importo rimodulato di quello esistente
-				AtomicBoolean creaDettaglio = new AtomicBoolean(true);
+					// verifica che nelle voci del piano "altri anni" non sia già presente un dettaglio per la voce e l'anno dell'obbligazione pluriennale
+					// in tal caso non deve creare il nuovo dettaglio ma aggiornare l'importo rimodulato di quello esistente
+					AtomicBoolean creaDettaglio = new AtomicBoolean(true);
 
-				rimodulazioneBulk.getDettagliPianoEconomicoAltriAnni().stream()
+					rimodulazioneBulk.getDettagliPianoEconomicoAltriAnni().stream()
+							.forEach(el -> {
+								if (el.getCd_voce_piano().equals(vocePianoObbliPluriennaleDto.getPianoEconomicoProgetto().getVoce_piano_economico().getCd_voce_piano()) &&
+										el.getEsercizio_piano().equals(obbPlur.getAnno())) {
+									BigDecimal importo = el.getImSpesaFinanziatoRimodulato().add(obbPlur.getImporto());
+									el.setImSpesaFinanziatoRimodulato(importo);
+									creaDettaglio.set(false);
+								}
+							});
+
+					if (creaDettaglio.get()) {
+						// creo il piano economico nuovo per l'obbligazione pluriennale
+						Progetto_piano_economicoBulk ppe = new Progetto_piano_economicoBulk();
+						ppe.setDetailDerivato(Boolean.TRUE);
+						ppe.setProgetto(progetto);
+						ppe.setVoce_piano_economico(vocePianoObbliPluriennaleDto.getPianoEconomicoProgetto().getVoce_piano_economico());
+						ppe.setIm_entrata(BigDecimal.ZERO);
+						ppe.setIm_spesa_finanziato(BigDecimal.ZERO);
+						ppe.setIm_spesa_cofinanziato(BigDecimal.ZERO);
+						ppe.setImSpesaFinanziatoRimodulato(obbPlur.getImporto());
+						ppe.setImSpesaCofinanziatoRimodulato(BigDecimal.ZERO);
+						ppe.setEsercizio_piano(obbPlur.getAnno());
+						ppe.setCrudStatus(OggettoBulk.TO_BE_CREATED);
+
+						rimodulazioneBulk.addToDettagliPianoEconomicoAltriAnni(ppe);
+					}
+					// aggiorna anno corrente per decrementare l'importo rimodulato
+					rimodulazioneBulk.getDettagliPianoEconomicoAnnoCorrente().stream()
 						.forEach(el -> {
-							if (el.getCd_voce_piano().equals(progettoObbliPluriennaleDto.getPianoEconomicoProgetto().getVoce_piano_economico().getCd_voce_piano()) &&
-									el.getEsercizio_piano().equals(obbPlur.getAnno())) {
-								BigDecimal importo = el.getImSpesaFinanziatoRimodulato().add(obbPlur.getImporto());
-								el.setImSpesaFinanziatoRimodulato(importo);
-								creaDettaglio.set(false);
-							}
-						});
-
-				if (creaDettaglio.get()) {
-					// creo il piano economico nuovo per l'obbligazione pluriennale
-					Progetto_piano_economicoBulk ppe = new Progetto_piano_economicoBulk();
-					ppe.setDetailDerivato(Boolean.TRUE);
-					ppe.setProgetto(progetto);
-					ppe.setVoce_piano_economico(progettoObbliPluriennaleDto.getPianoEconomicoProgetto().getVoce_piano_economico());
-					ppe.setIm_entrata(BigDecimal.ZERO);
-					ppe.setIm_spesa_finanziato(BigDecimal.ZERO);
-					ppe.setIm_spesa_cofinanziato(BigDecimal.ZERO);
-					ppe.setImSpesaFinanziatoRimodulato(obbPlur.getImporto());
-					ppe.setImSpesaCofinanziatoRimodulato(BigDecimal.ZERO);
-					ppe.setEsercizio_piano(obbPlur.getAnno());
-					ppe.setCrudStatus(OggettoBulk.TO_BE_CREATED);
-
-					rimodulazioneBulk.addToDettagliPianoEconomicoAltriAnni(ppe);
-				}
-				// aggiorna anno corrente per decrementare l'importo rimodulato
-				rimodulazioneBulk.getDettagliPianoEconomicoAnnoCorrente().stream()
-						.forEach(el -> {
-							if (el.getCd_voce_piano().equals(progettoObbliPluriennaleDto.getPianoEconomicoProgetto().getVoce_piano_economico().getCd_voce_piano())) {
+							if (el.getCd_voce_piano().equals(vocePianoObbliPluriennaleDto.getPianoEconomicoProgetto().getVoce_piano_economico().getCd_voce_piano())) {
 
 								el.setImSpesaFinanziatoRimodulato(el.getImSpesaFinanziatoRimodulato().subtract(obbPlur.getImporto()));
 
@@ -6464,6 +6466,7 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 							}
 
 						});
+				}
 			}
 			rimodulazioneBulkList.add(rimodulazioneBulk);
 		}
@@ -6487,111 +6490,137 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 				throw new ApplicationException("Impostare Importo dell'Obbligazione Pluriennale");
 			}
 		}
-		isDisponibilitaProgettoValida(rimodulazioneObblPlurDto.getProgettoObbliPluriennaleList());
-		isAnnoPluriennaleValidoPerProgetto(uc,rimodulazioneObblPlurDto.getProgettoObbliPluriennaleList());
+		isDisponibilitaProgettoValida(rimodulazioneObblPlurDto.getProgettoObbliPluriennaleMap());
+		isAnnoPluriennaleValidoPerProgetto(uc,rimodulazioneObblPlurDto.getProgettoObbliPluriennaleMap());
 
 
 	}
 
-	private BulkList<Obbligazione_pluriennaleBulk> getObbligazioniPluriennaliDaLiberare(UserContext uc,ObbligazioneBulk obbligazione) throws PersistencyException, ComponentException {
-		BulkList<Obbligazione_pluriennaleBulk> obblPlurCancellateList= new BulkList<Obbligazione_pluriennaleBulk>();
+	private List<Obbligazione_pluriennale_voceBulk> getObbligazioniPluriennaliDaLiberare(UserContext uc,ObbligazioneBulk obbligazione) throws PersistencyException, ComponentException {
+
+		List<Obbligazione_pluriennale_voceBulk> obblPlurCancellateList= new ArrayList<Obbligazione_pluriennale_voceBulk>();
 		Obbligazione_pluriennaleHome obbPlurHome = (Obbligazione_pluriennaleHome)getHome(uc, Obbligazione_pluriennaleBulk.class);
 
 		// Per ogni pluriennale modificato viene estratto dal DB per prelevare il vecchio importo da liberare dal progetto
 		for(Obbligazione_pluriennaleBulk obblPlur : obbligazione.getObbligazioniPluriennali()){
 			if(obblPlur.isToBeUpdated()){
-				if(obblPlurCancellateList==null){
-					obblPlurCancellateList = new BulkList<Obbligazione_pluriennaleBulk>();
-				}
-				Obbligazione_pluriennaleBulk obbPlurBD = obbPlurHome.findObbligazioniPluriennale(uc,obblPlur);
-				obblPlurCancellateList.add(getObbligazionePluriennaleDaEliminare(obbPlurBD,obbligazione));
+				List<Obbligazione_pluriennale_voceBulk> obblPlurVoceList = obbPlurHome.findObbligazioniPluriennaliVoce(uc,obblPlur);
+				obblPlurCancellateList.addAll(getObbligazionePluriennaleDaEliminare(obblPlurVoceList));
 			}
 		}
 		// pluriennali eliminati da form
-		obblPlurCancellateList.addAll(getObbligazioniPluriennaliEliminate(obbligazione));
+		obblPlurCancellateList.addAll(getObbligazioniPluriennaliEliminate(uc,obbligazione));
 		return obblPlurCancellateList;
 	}
-	private RimoduzioneObbliPluriennaleDto getObbligazioniPerRimodulazione(UserContext uc, ObbligazioneBulk obbligazione) throws ComponentException, IntrospectionException, PersistencyException {
-
+	private RimoduzioneObbliPluriennaleDto getObbligazioniPerRimodulazione(UserContext uc, ObbligazioneBulk obbligazione,boolean gestioneAdd) throws ComponentException, IntrospectionException, PersistencyException {
 
 		RimoduzioneObbliPluriennaleDto rimodulaObblPlur=new RimoduzioneObbliPluriennaleDto();
-		//obbligazione pluriennali che rimodulano il progetto
-		if(obbligazione.getObbligazioniPluriennali()!= null && !obbligazione.getObbligazioniPluriennali().isEmpty() ) {
-			rimodulaObblPlur.getProgettoObbliPluriennaleList().addAll(impostaPluriennaliPerRimodulazione(uc, obbligazione, obbligazione.getObbligazioniPluriennali(), true));
-		}
-
-		// obbligazioni pluriennali cancellate o modificate che devono rimettere disponibilità sul progetto
-		BulkList<Obbligazione_pluriennaleBulk> obblPlurCancellateList= getObbligazioniPluriennaliDaLiberare(uc,obbligazione);
-		if(!obblPlurCancellateList.isEmpty() ) {
-			rimodulaObblPlur.getProgettoObbliPluriennaleList().addAll(impostaPluriennaliPerRimodulazione(uc, obbligazione, obblPlurCancellateList, false));
-		}
-		return rimodulaObblPlur;
-
-	}
-	private ArrayList<ProgettoObbliPluriennaleDto> impostaPluriennaliPerRimodulazione(UserContext uc,ObbligazioneBulk obbligazione,BulkList<Obbligazione_pluriennaleBulk> obblPlurList,boolean gestioneAdd) throws ComponentException, IntrospectionException, PersistencyException {
 		ProgettoBulk progetto = null;
 
-		ArrayList<ProgettoObbliPluriennaleDto> progettoObbliPluriennaleList = new ArrayList<ProgettoObbliPluriennaleDto>();
+		// obbligazioni pluriennali cancellate o modificate che devono rimettere disponibilità sul progetto
+		List<Obbligazione_pluriennale_voceBulk> obblPlurVoceCancellateList= getObbligazioniPluriennaliDaLiberare(uc,obbligazione);
 
 		obbligazione = calcolaPercentualeImputazioneObbligazione(uc,obbligazione,false);
 		ProgettoHome progettoHome = (ProgettoHome) getHome(uc, ProgettoBulk.class);
 
 		for (V_pdg_obbligazione_speBulk linea : (Collection<V_pdg_obbligazione_speBulk>)obbligazione.getLineeAttivitaSelezionateColl()) {
 
-
 			progetto = progettoHome.selectProgettoDaLineaAttivita(uc, linea);
 			if (progetto == null) {
 				throw new ApplicationException("Progetto NON trovato");
 			}
+			ProgettoObbliPluriennaleDto progettoObbliPluriennaleDto = new ProgettoObbliPluriennaleDto(progetto.getEsercizio(), progetto.getPg_progetto(), progetto.getTipo_fase());
 
-			ProgettoObbliPluriennaleDto progettoObbliPluriennaleDto = new ProgettoObbliPluriennaleDto(progetto.getEsercizio(),progetto.getPg_progetto(),progetto.getTipo_fase());
+			Progetto_piano_economicoBulk pianoEcoProgetto = getPianoEconomicoObbligazione(uc, progetto, obbligazione.getElemento_voce());
 
-			Progetto_piano_economicoBulk pianoEcoProgetto = getPianoEconomicoObbligazione(uc, progetto, obbligazione);
+			VocePianoObbliPluriennaleDto vocePianoObbliPluriennaleDto = new VocePianoObbliPluriennaleDto();
+			vocePianoObbliPluriennaleDto.setPianoEconomicoProgetto(pianoEcoProgetto);
 
-			progettoObbliPluriennaleDto.setPianoEconomicoProgetto(pianoEcoProgetto);
-
-			for(Obbligazione_pluriennaleBulk obblPluriennale : obblPlurList) {
-
-				if (obblPluriennale.isToBeCreated() || obblPluriennale.isToBeUpdated() || obblPluriennale.isToBeDeleted() ) {
-					ObbligazionePluriennaleDto obblPlurAddDTO = new ObbligazionePluriennaleDto();
-
-					obblPlurAddDTO.setAnno(obblPluriennale.getAnno());
-					obblPlurAddDTO.setImporto(obblPluriennale.getImporto().multiply(linea.getPrcImputazioneFin()).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP));
-
-					if (!gestioneAdd) {
-						obblPlurAddDTO.setImporto(obblPlurAddDTO.getImporto().negate());
-						progettoObbliPluriennaleDto.getObbligazionePlurDel().add(obblPlurAddDTO);
-					}else{
-						progettoObbliPluriennaleDto.getObbligazionePlurAdd().add(obblPlurAddDTO);
-					}
-				}
-
+			//obbligazione pluriennali che rimodulano il progetto
+			if (obbligazione.getObbligazioniPluriennali() != null && !obbligazione.getObbligazioniPluriennali().isEmpty()) {
+				vocePianoObbliPluriennaleDto.getObbligazionePlurAdd().addAll(impostaPluriennaliPerRimodulazione(uc, obbligazione.getObbligazioniPluriennali(), linea.getPrcImputazioneFin(),gestioneAdd));
 			}
-			if((!progettoObbliPluriennaleDto.getObbligazionePlurAdd().isEmpty()) || (!progettoObbliPluriennaleDto.getObbligazionePlurDel().isEmpty())){
-				progettoObbliPluriennaleList.add(progettoObbliPluriennaleDto);
-			}
+
+			progettoObbliPluriennaleDto.getVociPianoRimodulaMap().put(pianoEcoProgetto.getCd_voce_piano(), vocePianoObbliPluriennaleDto);
+			rimodulaObblPlur.getProgettoObbliPluriennaleMap().put(linea.getCd_linea_attivita(),progettoObbliPluriennaleDto);
 		}
-		return progettoObbliPluriennaleList;
+		// obbligazioni da rilasciare dal progetto
+		for(Obbligazione_pluriennale_voceBulk obbPlurVoce : obblPlurVoceCancellateList){
+				ProgettoObbliPluriennaleDto progettoObbliPluriennaleDto = rimodulaObblPlur.getProgettoObbliPluriennaleMap().get(obbPlurVoce.getCdLineaAttivita());
+
+				if (progettoObbliPluriennaleDto == null) {
+					progetto = obbPlurVoce.getLinea_attivita().getProgetto();
+
+					progettoObbliPluriennaleDto = new ProgettoObbliPluriennaleDto(progetto.getEsercizio(), progetto.getPg_progetto(), progetto.getTipo_fase());
+					rimodulaObblPlur.getProgettoObbliPluriennaleMap().put(obbPlurVoce.getCdLineaAttivita(), progettoObbliPluriennaleDto);
+				}
+				Progetto_piano_economicoBulk pianoEcoProgetto = getPianoEconomicoObbligazione(uc, progetto, obbPlurVoce.getElementoVoce());
+
+				VocePianoObbliPluriennaleDto vocePianoObbliPluriennaleDto = progettoObbliPluriennaleDto.getVociPianoRimodulaMap().get(pianoEcoProgetto.getCd_voce_piano());
+
+				if (vocePianoObbliPluriennaleDto == null) {
+					//Progetto_piano_economicoBulk pianoEcoProgetto = getPianoEconomicoObbligazione(uc, progetto, obbligazione.getElemento_voce());
+
+					vocePianoObbliPluriennaleDto = new VocePianoObbliPluriennaleDto();
+					vocePianoObbliPluriennaleDto.setPianoEconomicoProgetto(pianoEcoProgetto);
+					progettoObbliPluriennaleDto.getVociPianoRimodulaMap().put(obbligazione.getElemento_voce().getCd_voce_piano(), vocePianoObbliPluriennaleDto);
+				}
+				ObbligazionePluriennaleDto obblPlurAddDTO = new ObbligazionePluriennaleDto();
+
+				obblPlurAddDTO.setAnno(obbPlurVoce.getAnno());
+				obblPlurAddDTO.setImporto(obbPlurVoce.getImporto().negate());
+				vocePianoObbliPluriennaleDto.getObbligazionePlurDel().add(obblPlurAddDTO);
+
+		}
+		return rimodulaObblPlur;
 	}
 
 
-	private BulkList<Obbligazione_pluriennaleBulk> getObbligazioniPluriennaliEliminate(ObbligazioneBulk obbligazione){
-		BulkList<Obbligazione_pluriennaleBulk> obblPlurList = new BulkList<Obbligazione_pluriennaleBulk>();
+	private ArrayList<ObbligazionePluriennaleDto> impostaPluriennaliPerRimodulazione(UserContext uc,BulkList<Obbligazione_pluriennaleBulk> obblPlurList,BigDecimal prcImputazioneFin,boolean gestioneAdd) throws ComponentException, IntrospectionException, PersistencyException {
+		ArrayList<ObbligazionePluriennaleDto> obbligazionePlurList = new ArrayList<ObbligazionePluriennaleDto>();
+		for(Obbligazione_pluriennaleBulk obblPluriennale : obblPlurList) {
+			if (obblPluriennale.isToBeCreated() || obblPluriennale.isToBeUpdated() || obblPluriennale.isToBeDeleted() ) {
+				ObbligazionePluriennaleDto obblPlurAddDTO = new ObbligazionePluriennaleDto();
+
+				obblPlurAddDTO.setAnno(obblPluriennale.getAnno());
+				obblPlurAddDTO.setImporto(obblPluriennale.getImporto().multiply(prcImputazioneFin).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP));
+				if(!gestioneAdd){
+					obblPlurAddDTO.setImporto(obblPlurAddDTO.getImporto().negate());
+				}
+				obbligazionePlurList.add(obblPlurAddDTO);
+			}
+		}
+		return obbligazionePlurList;
+	}
+
+
+	private List<Obbligazione_pluriennale_voceBulk> getObbligazioniPluriennaliEliminate(UserContext uc,ObbligazioneBulk obbligazione) throws ComponentException, PersistencyException {
+
+		Obbligazione_pluriennaleHome obbPlurHome = (Obbligazione_pluriennaleHome)getHome(uc, Obbligazione_pluriennaleBulk.class);
+
+		List<Obbligazione_pluriennale_voceBulk> obblPlurCancellateList= new ArrayList<Obbligazione_pluriennale_voceBulk>();
+
 		Iterator<Obbligazione_pluriennaleBulk> obbPlurDeleteIt = obbligazione.getObbligazioniPluriennali().deleteIterator();
 
 		while(obbPlurDeleteIt.hasNext()) {
-			if(obblPlurList==null){
-				obblPlurList=new BulkList<Obbligazione_pluriennaleBulk>();
-			}
+
 			Obbligazione_pluriennaleBulk obbDelete = obbPlurDeleteIt.next();
-			obblPlurList.add(getObbligazionePluriennaleDaEliminare(obbDelete,obbligazione));
+			List<Obbligazione_pluriennale_voceBulk> obblPlurVoceList = obbPlurHome.findObbligazioniPluriennaliVoce(uc,obbDelete);
+			obblPlurCancellateList.addAll(getObbligazionePluriennaleDaEliminare(obblPlurVoceList));
 		}
-		return obblPlurList;
+		return obblPlurCancellateList;
 	}
 
-	private Obbligazione_pluriennaleBulk getObbligazionePluriennaleDaEliminare(Obbligazione_pluriennaleBulk obbPlur,ObbligazioneBulk obbligazione){
-		Obbligazione_pluriennaleBulk obbPlurNew = obbPlur.clone(obbligazione,null);
-		obbPlurNew.setToBeDeleted();
-		return obbPlurNew;
+	private List<Obbligazione_pluriennale_voceBulk> getObbligazionePluriennaleDaEliminare( List<Obbligazione_pluriennale_voceBulk> obblPlurVoceList){
+		List<Obbligazione_pluriennale_voceBulk> obbPlurVoceNewList = new ArrayList<Obbligazione_pluriennale_voceBulk>();
+
+		for(Obbligazione_pluriennale_voceBulk obbPlurVoce: obblPlurVoceList) {
+
+			Obbligazione_pluriennale_voceBulk obblVoceNew = new Obbligazione_pluriennale_voceBulk();
+			obblVoceNew = obbPlurVoce.clone();
+			obblVoceNew.setCrudStatus(OggettoBulk.TO_BE_DELETED);
+			obbPlurVoceNewList.add(obblVoceNew);
+		}
+		return obbPlurVoceNewList;
 	}
 }

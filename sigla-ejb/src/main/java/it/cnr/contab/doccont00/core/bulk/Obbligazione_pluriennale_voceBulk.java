@@ -238,8 +238,25 @@ public class Obbligazione_pluriennale_voceBulk extends Obbligazione_pluriennale_
 	}
 
 	@Override
-	public Object clone() {
-		
-		return super.clone();
+	public Obbligazione_pluriennale_voceBulk clone() {
+
+		Obbligazione_pluriennale_voceBulk nuovo = null;
+
+		try {
+			nuovo = (Obbligazione_pluriennale_voceBulk)getClass().newInstance();
+		} catch (InstantiationException e) {
+			return null;
+		} catch (IllegalAccessException e) {
+			return null;
+		}
+		nuovo.setObbligazionePluriennale(this.getObbligazionePluriennale());
+		nuovo.setAnno(this.getAnno());
+		nuovo.setImporto(this.getImporto());
+		nuovo.setLinea_attivita(this.getLinea_attivita());
+		nuovo.setCdVoce(this.getCdVoce());
+
+		nuovo.setCrudStatus(TO_BE_CREATED);
+
+		return nuovo;
 	}
 }
