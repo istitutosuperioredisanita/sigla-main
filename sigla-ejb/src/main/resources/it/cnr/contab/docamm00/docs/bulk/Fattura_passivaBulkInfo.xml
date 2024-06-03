@@ -858,6 +858,7 @@
             maxLength="10"
             inputSize="10"
             formatName="date_short"
+            enabledOnSearch="true"            
             label="Data di scadenza"/>
 
     <fieldProperty

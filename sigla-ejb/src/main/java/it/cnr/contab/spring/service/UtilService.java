@@ -42,6 +42,8 @@ public class UtilService implements InitializingBean {
 
     @Value("${doccont.max.anni.residui}")
     private Integer anniResidui;
+    @Value("${num.giorni.scadenza}")
+    private Integer numGiorniScadenza;
 
     @Value("${help.base.url}")
     private String helpBaseURL;
@@ -96,6 +98,14 @@ public class UtilService implements InitializingBean {
 
     public String getHelpBaseURL() {
         return helpBaseURL;
+    }
+
+    public Integer getNumGiorniScadenza() {
+        return numGiorniScadenza;
+    }
+
+    public void setNumGiorniScadenza(Integer numGiorniScadenza) {
+        this.numGiorniScadenza = numGiorniScadenza;
     }
 
     public SimplePECMail createSimplePECMail(String userName, String password) {

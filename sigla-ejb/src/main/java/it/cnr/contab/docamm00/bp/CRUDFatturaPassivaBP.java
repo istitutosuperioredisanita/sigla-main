@@ -2025,6 +2025,10 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
         return isModificaPCC && isSupervisore;
     }
 
+    public boolean isSupervisore() {
+        return isSupervisore;
+    }
+
     @Override
     public boolean isInputReadonlyFieldName(String fieldName) {
         if (Arrays.asList("stato_liquidazione","causale", "dt_inizio_sospensione").contains(fieldName) && isSupervisore && isModificaPCC) {
