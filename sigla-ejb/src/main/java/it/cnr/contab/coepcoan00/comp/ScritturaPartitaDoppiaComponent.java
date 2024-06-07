@@ -3592,8 +3592,20 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 				.filter(el -> el.compareTo(BigDecimal.ZERO) > 0)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		if (imRitenutePositive.compareTo(mandato.getIm_ritenute()) != 0)
-			throw new ApplicationException("L'importo delle righe ritenute del compenso associato al mandato non corrisponde con l'importo ritenute associato al mandato.");
+		if (imRitenutePositive.compareTo(mandato.getIm_ritenute()) != 0) {
+			//potrebbe trattarsi di caso che la reversale è stata legata in parte al mandato
+			righeCori = findCoriReversaliAssociate(userContext, mandato);
+
+			imRitenute = righeCori.stream().map(Contributo_ritenutaBulk::getAmmontare)
+					.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+			imRitenutePositive = righeCori.stream().map(Contributo_ritenutaBulk::getAmmontare)
+					.filter(el -> el.compareTo(BigDecimal.ZERO) > 0)
+					.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+			if (imRitenutePositive.compareTo(mandato.getIm_ritenute()) != 0)
+				throw new ApplicationException("L'importo delle righe ritenute del compenso associato al mandato non corrisponde con l'importo ritenute associato al mandato.");
+		}
 
 		//Registrazione conto CONTRIBUTI-RITENUTE
 		//Solo ritenute con importo positivo perchè quelle negative generano mandato a parte
@@ -4273,7 +4285,7 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 				throw new ScritturaPartitaDoppiaNotRequiredException("Reversale " + reversale.getEsercizio() + "/" + reversale.getCd_cds() + "/" + reversale.getPg_reversale() +
 						" di regolarizzazione. Registrazione economica non prevista.");
 
-			//Se le righe del mandato non sono valorizzate le riempio io
+			//Se le righe della reversale non sono valorizzate le riempio io
 			if (!Optional.ofNullable(reversale.getReversale_rigaColl()).filter(el->!el.isEmpty()).isPresent()) {
 				reversale.setReversale_rigaColl(new BulkList(((ReversaleHome) getHome(
 						userContext, reversale.getClass())).findReversale_riga(userContext, reversale, false)));
@@ -6496,6 +6508,18 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 			ReversaleIHome revHome = (ReversaleIHome) getHome(userContext, ReversaleIBulk.class);
 			ReversaleBulk reversale = (ReversaleIBulk) revHome.findByPrimaryKey(new ReversaleIBulk(assManRev.getCd_cds_reversale(), assManRev.getEsercizio_reversale(), assManRev.getPg_reversale()));
 
+			//riempio le righe della reversale
+			reversale.setReversale_rigaColl(new BulkList(((ReversaleHome) getHome(
+					userContext, reversale.getClass())).findReversale_riga(userContext, reversale, false)));
+			reversale.getReversale_rigaColl().forEach(el->{
+				try {
+					el.setReversale(reversale);
+					((Reversale_rigaHome)getHome(userContext, Reversale_rigaBulk.class)).initializeElemento_voce(userContext, el);
+				} catch (ComponentException|PersistencyException e) {
+					throw new ApplicationRuntimeException(e);
+				}
+			});
+
 			Collection<V_doc_cont_compBulk> result2 = ((V_doc_cont_compHome) getHomeCache(userContext).getHome(V_doc_cont_compBulk.class)).findByDocumento(assManRev.getEsercizio_reversale(), assManRev.getCd_cds_reversale(), assManRev.getPg_reversale(), V_doc_cont_compBulk.TIPO_DOC_CONT_REVERSALE);
 
 			if (!result2.isEmpty()) {
@@ -6516,23 +6540,28 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 				//Cerco tra le righeCori quella della reversale.... cerco per importo... e se ne esistono di più per descrizione..... se non si individua lancio eccezione
 				List<Contributo_ritenutaBulk> righeCoriReversaleByImporto = righeCoriCompensoReversale.stream()
 						.filter(el -> el.getAmmontare().compareTo(BigDecimal.ZERO) > 0)
-						.filter(el -> el.getAmmontare().abs().compareTo(reversale.getIm_reversale()) == 0)
+						.filter(el -> el.getAmmontare().abs().compareTo(reversale.getIm_reversale()) == 0 ||
+								reversale.getReversale_rigaColl().stream()
+										.anyMatch(riga->riga.getIm_reversale_riga().compareTo(el.getAmmontare())==0))
 						.collect(Collectors.toList());
 
 				if (righeCoriReversaleByImporto.isEmpty())
 					throw new ApplicationException("Il " + this.getDescrizione(mandato) + " risulta avere una ritenuta di importo che non corrisponde a nessuna delle ritenute " +
 							" generate dal compenso associato alla reversale " + this.getDescrizione(compensoReversale) + ". Proposta di prima nota non possibile.");
-				if (righeCoriReversaleByImporto.size() > 1) {
+				if (righeCoriReversaleByImporto.size() != reversale.getReversale_rigaColl().size()) {
 					List<Contributo_ritenutaBulk> righeCoriReversaleByDesc = righeCoriReversaleByImporto.stream()
-							.filter(el -> reversale.getDs_reversale().contains(el.getCd_contributo_ritenuta()))
+							.filter(el -> reversale.getDs_reversale().contains(el.getCd_contributo_ritenuta()) ||
+									reversale.getReversale_rigaColl().stream()
+											.anyMatch(riga->Optional.ofNullable(riga.getDs_reversale_riga())
+													.map(ds->ds.contains(el.getCd_contributo_ritenuta())).orElse(Boolean.FALSE)))
 							.collect(Collectors.toList());
-
-					if (righeCoriReversaleByDesc.size() != 1)
+					//se necessario occorrerà andare a leggere anche la descrizione dei documenti generici della reversale
+					if (righeCoriReversaleByDesc.size() != reversale.getReversale_rigaColl().size())
 						throw new ApplicationException("Il " + this.getDescrizione(mandato) + " risulta avere una ritenuta di importo che corrisponde a più ritenute " +
 								" generate dal conguaglio associato " + this.getDescrizione(compensoReversale) + ". Proposta di prima nota non possibile.");
-					righeCoriReversale.add(righeCoriReversaleByDesc.get(0));
+					righeCoriReversale.addAll(righeCoriReversaleByDesc);
 				} else
-					righeCoriReversale.add(righeCoriReversaleByImporto.get(0));
+					righeCoriReversale.addAll(righeCoriReversaleByImporto);
 			}
 		}
 		return righeCoriReversale;
