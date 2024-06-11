@@ -11,10 +11,7 @@ import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.OrderConstants;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.CondizioneComplessaBulk;
-<<<<<<< HEAD
 import it.cnr.jada.util.action.CondizioneSempliceBulk;
-=======
->>>>>>> 0dee0c812 (Subject: [PATCH] Aggiunta nuova funzionalità per allegare il provvedimento di liquidazione in maniera massiva sulle fatture elettroniche.)
 import it.cnr.jada.util.action.SearchProvider;
 import it.cnr.jada.util.action.SelezionatoreListaBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
@@ -37,7 +34,6 @@ public class SelezionatoreFattureElettronicheLiquidazioneBP extends Selezionator
             DocumentoEleTestataBulk model = (DocumentoEleTestataBulk) getBulkInfo().getBulkClass().newInstance();
             setModel(context, model);
             super.init(config, context);
-<<<<<<< HEAD
 
             final CondizioneComplessaBulk condizioneCorrente = new CondizioneComplessaBulk();
             CondizioneSempliceBulk condizioneSempliceBulk = new CondizioneSempliceBulk(model);
@@ -47,8 +43,6 @@ public class SelezionatoreFattureElettronicheLiquidazioneBP extends Selezionator
             condizioneCorrente.aggiungiCondizione(condizioneSempliceBulk);
             setCondizioneCorrente(condizioneCorrente);
 
-=======
->>>>>>> 0dee0c812 (Subject: [PATCH] Aggiunta nuova funzionalità per allegare il provvedimento di liquidazione in maniera massiva sulle fatture elettroniche.)
             openIterator(context);
             setOrderBy(context,"documentoEleTrasmissione.dataRicezione", OrderConstants.ORDER_DESC);
             reset(context);
