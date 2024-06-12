@@ -19,6 +19,7 @@ package it.cnr.contab.docamm00.docs.bulk;
 
 import it.cnr.contab.docamm00.bp.CRUDFatturaPassivaIBP;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.action.CRUDBP;
 
 import java.math.RoundingMode;
@@ -492,6 +493,7 @@ public class Fattura_passiva_IBulk
     public void setPg_doc_amm(java.lang.Long newPg) {
         setPg_fattura_passiva(newPg);
     }
+
 	public void validate() throws ValidationException {
 		super.validate();
 		if (Optional.ofNullable(getStato_liquidazione())
