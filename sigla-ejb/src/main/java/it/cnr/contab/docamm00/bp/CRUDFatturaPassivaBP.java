@@ -175,7 +175,6 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     private boolean supervisore = false;
 
     private boolean attivaInventaria = false;
-    private boolean isSupervisore;
     private boolean isModificaPCC;
 
 
@@ -579,7 +578,6 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             propostaFatturaDaOrdini = configurazioneCnrComponentSession.propostaFatturaDaOrdini(context.getUserContext());
             attivaEconomicaParallela = configurazioneCnrComponentSession.isAttivaEconomicaParallela(context.getUserContext());
             attivaInventaria= configurazioneCnrComponentSession.isAttivoInventariaDocumenti(context.getUserContext());
-            setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
             isModificaPCC = Optional.ofNullable(
                     configurazioneCnrComponentSession.getConfigurazione(
                     context.getUserContext(),
@@ -591,7 +589,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             super.init(config, context);
             CNRUserInfo ui = (CNRUserInfo) context.getUserInfo();
             UtenteBulk utente = ui.getUtente();
-            isSupervisore = utente.isSupervisore();
+            setSupervisore(utente.isSupervisore());
 
             int solaris = Fattura_passivaBulk.getDateCalendar(
                             it.cnr.jada.util.ejb.EJBCommonServices.getServerDate())
@@ -2022,16 +2020,12 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     }
 
     public boolean isLiquidazioneSospesaView() {
-        return isModificaPCC && isSupervisore;
-    }
-
-    public boolean isSupervisore() {
-        return isSupervisore;
+        return isModificaPCC && isSupervisore();
     }
 
     @Override
     public boolean isInputReadonlyFieldName(String fieldName) {
-        if (Arrays.asList("stato_liquidazione","causale", "dt_inizio_sospensione").contains(fieldName) && isSupervisore && isModificaPCC) {
+        if (Arrays.asList("stato_liquidazione","causale", "dt_inizio_sospensione").contains(fieldName) && isSupervisore() && isModificaPCC) {
             return Boolean.FALSE;
         }
         return super.isInputReadonlyFieldName(fieldName);
