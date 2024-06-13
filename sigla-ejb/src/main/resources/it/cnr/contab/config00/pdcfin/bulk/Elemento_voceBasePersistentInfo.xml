@@ -296,6 +296,13 @@
 			sqlTypeName="CHAR"
 			columnSize="1"
 			nullable="false"/>
+		<columnMapping
+				columnName="FL_MISSIONI_PRESIDENZA"
+				propertyName="fl_missioni_presidenza"
+				sqlTypeName="CHAR"
+				columnSize="1"
+				nullable="false"
+				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
 	</defaultColumnMap>
 
 	<persistentProperty
@@ -388,4 +395,6 @@
 		name="fl_limite_competenza" />
 	<persistentProperty
 		name="blocco_impegni_natfin" />
+	<persistentProperty
+			name="fl_missioni_presidenza" />
 </SQLPersistentInfo>

@@ -17,13 +17,8 @@
 
 package it.cnr.contab.config00.pdcfin.bulk;
 
-import java.math.BigDecimal;
-import java.rmi.RemoteException;
-import java.util.Dictionary;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
 import it.cnr.contab.config00.pdcfin.cla.bulk.V_classificazione_vociBulk;
 import it.cnr.contab.progettiric00.tabrif.bulk.Voce_piano_economico_prgBulk;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
@@ -32,6 +27,10 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
+
+import java.math.BigDecimal;
+import java.rmi.RemoteException;
+import java.util.Dictionary;
 @JsonInclude(value=Include.NON_NULL)
 public class Elemento_voceBulk extends Elemento_voceBase implements IVoceBilancioBulk {
 	private java.util.Hashtable ti_appartenenzaKeys;
@@ -214,6 +213,7 @@ public class Elemento_voceBulk extends Elemento_voceBase implements IVoceBilanci
 		setFl_partita_giro(Boolean.FALSE);
 		setFlComunicaPagamenti(Boolean.FALSE);
 		setFl_limite_competenza(Boolean.FALSE);
+		setFl_missioni_presidenza(Boolean.FALSE);
 		return this;
 	}
 	/**

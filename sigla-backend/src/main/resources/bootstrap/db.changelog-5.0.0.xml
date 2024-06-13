@@ -6108,6 +6108,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/mod_unique_constraint_CatGrpVoceEp.xml"/>
     <!-- Autore : CIRO SALVIO -Aggiunte colone minus e plus valenze per chiusura_anno_catgrp_voce_ep -->
     <include file="bootstrap/add_colums_plusminus_chiu_catgrp_voce_ep.xml"/>
+    <include file="bootstrap/add_protocollo_liquidazione_fattura.xml"/>
     <!-- Autore : VALENTINA TOMADA - aggiunto accesso CHIUSURA INVENTARIO  -->
     <include file="bootstrap/add_accesso_stampa_chiusura_invent.xml"/>
     <include file="bootstrap/mod_dsnodo_chiusura_inventario.xml"/>
@@ -6117,6 +6118,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_colums_decrementi_chiu_catgrp_voce_ep.xml"/>
     <!-- Autore : RAFFAELE PAGANO - Schedulazione chiusura bilancio-->
     <include file="bootstrap/add_chiusura_bilancio_schedulazione.xml"/>
-    <include file="bootstrap/add_protocollo_liquidazione_fattura.xml"/>
-
+    <!-- Autore : CIRO SALVIO - Aggiunta colonna FL_MISSIONI_PRESIDENZA su ELEMENTO_VOCE-->
+    <include file="bootstrap/add_column_fl_missione_pres_elemento_voce.xml"/>
+    <!-- Autore : MARCO SPASIANO - Aggiunto gestione sospensione fattura passiva -->
+    <include file="bootstrap/add_sospensione_fattura_passiva.xml"/>
 </databaseChangeLog>
