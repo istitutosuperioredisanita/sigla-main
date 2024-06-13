@@ -40,7 +40,6 @@ import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
-import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.contab.util00.bulk.storage.AllegatoStorePath;
 import it.cnr.jada.bulk.*;
 import it.cnr.jada.comp.ApplicationException;
@@ -3726,4 +3725,5 @@ public abstract class Fattura_passivaBulk
     public void setFatturaDaRicevereAnnoPrec(boolean fatturaDaRicevereAnnoPrec) {
         isFatturaDaRicevereAnnoPrec = fatturaDaRicevereAnnoPrec;
     }
+
 }
