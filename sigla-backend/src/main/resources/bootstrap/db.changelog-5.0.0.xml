@@ -6126,4 +6126,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_fl_extraue_autofattura.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunta colonna fl_san_marino_con_iva tabella Autofattura-->
     <include file="bootstrap/add_fl_san_marino_con_iva_autofattura.xml"/>
+    <!-- Autore : MARCO SPASIANO - Aggiunto gestione sospensione fattura passiva -->
+    <include file="bootstrap/add_sospensione_fattura_passiva.xml"/>
 </databaseChangeLog>

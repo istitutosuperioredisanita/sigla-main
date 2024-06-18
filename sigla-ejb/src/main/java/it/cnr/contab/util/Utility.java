@@ -74,6 +74,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -309,6 +310,13 @@ public final class Utility {
 		} else {
 			return NumberToTextRicorsiva(parteIntera) + "/" + StringUtils.rightPad(parteDecimale, 2, "0");
 		}
+	}
+
+	public static Timestamp addDays(Timestamp timestamp, int days) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(timestamp);
+		cal.add(Calendar.DAY_OF_YEAR, days);
+		return new Timestamp(cal.getTime().getTime());
 	}
 
 	public static synchronized void loadPersistentInfos() throws ServletException{

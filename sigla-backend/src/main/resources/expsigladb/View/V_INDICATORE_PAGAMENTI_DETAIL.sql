@@ -3,45 +3,50 @@
 --------------------------------------------------------
 
 CREATE OR REPLACE FORCE VIEW "V_INDICATORE_PAGAMENTI_DETAIL" (
-"ESERCIZIO_DOCUMENTO",
-"UO_DOCUMENTO",
-"NUMERO_DOCUMENTO",
-"NUMERO_DOCUMENTO_FORNITORE",
-"IDENTIFICATIVO_SDI",
-"TIPO_DOCUMENTO",
-"IMPORTO_DOCUMENTO",
-"DATA_SCADENZA",
-"DATA_TRASMISSIONE",
-"IMPORTO_PAGATO",
-"IMPORTO_PESATO",
-"CD_ANAG",
-"CD_TERZO",
-"ESERCIZIO_OBBLIGAZIONE",
-"CD_CDS_OBBLIGAZIONE",
-"PG_OBBLIGAZIONE",
-"PG_OBBLIGAZIONE_SCADENZARIO",
-"ESERCIZIO_ORI_OBBLIGAZIONE",
-"ESERCIZIO_CONTRATTO",
-"PG_CONTRATTO",
-"ESERCIZIO_INC",
-"PG_INCARICO",
-"PG_MANDATO"
-) AS
-  (SELECT   f.esercizio esercizio_documento,f.CD_UO_ORIGINE uo_documento, f.PG_FATTURA_PASSIVA numero_documento,
-           f.NR_FATTURA_FORNITORE, f.IDENTIFICATIVO_SDI, 'FATTURA_P' tipo_documento,
+    "ESERCIZIO_DOCUMENTO",
+    "UO_DOCUMENTO",
+    "NUMERO_DOCUMENTO",
+    "TIPO_DOCUMENTO",
+    "IMPORTO_DOCUMENTO",
+    "DATA_SCADENZA",
+    "DATA_TRASMISSIONE",
+    "DATA_RICEZIONE",
+    "DATA_REGISTRAZIONE",
+    "DATA_LIQUIDAZIONE",
+    "IMPORTO_PAGATO",
+    "IMPORTO_PESATO",
+    "CD_ANAG",
+    "CD_TERZO",
+    "ESERCIZIO_OBBLIGAZIONE",
+    "CD_CDS_OBBLIGAZIONE",
+    "PG_OBBLIGAZIONE",
+    "PG_OBBLIGAZIONE_SCADENZARIO",
+    "ESERCIZIO_ORI_OBBLIGAZIONE",
+    "ESERCIZIO_CONTRATTO",
+    "PG_CONTRATTO",
+    "ESERCIZIO_INC",
+    "PG_INCARICO",
+    "IDENTIFICATIVO_SDI"
+) AS (
+    SELECT   f.esercizio esercizio_documento,f.CD_UO_ORIGINE uo_documento, f.PG_FATTURA_PASSIVA numero_documento,
+          'FATTURA_P' tipo_documento,
           sum(decode(f.ti_fattura,'C',(fr.im_imponibile+fr.im_iva)*-1,(fr.im_imponibile+fr.im_iva))) importo_documento,
           nvl(f.dt_scadenza,f.dt_fattura_fornitore+30) data_scadenza, trunc(dt_trasmissione) data_trasmissione,
+          det.data_ricezione, f.dt_registrazione, f.dt_protocollo_liq,
           (mr.im_mandato_riga) importo_pagato,((TRUNC (m.dt_trasmissione) - nvl(f.dt_scadenza,f.dt_fattura_fornitore+30))* mr.im_mandato_riga) importo_pesato,
           a.cd_anag, f.cd_terzo, os.esercizio esercizio_obbligazione, os.cd_cds cd_cds_obbligazione, os.pg_obbligazione, os.pg_obbligazione_scadenzario,
           os.esercizio_originale esercizio_ori_obbligazione,
-          c.esercizio esercizio_contratto, c.pg_contratto, null esercizio_inc, null pg_incarico, m.pg_mandato
+          c.esercizio esercizio_contratto, c.pg_contratto, null esercizio_inc, null pg_incarico, f.identificativo_sdi
                  FROM contratto c,
                       obbligazione o,
                       obbligazione_scadenzario os,
-                      fattura_passiva f,fattura_passiva_riga fr,
+                      fattura_passiva f,
+                      fattura_passiva_riga fr,
                       mandato_riga mr,
                       mandato m,
-                      anagrafico a,terzo t
+                      anagrafico a,
+                      terzo t,
+                      documento_ele_trasmissione det
                 WHERE a.cd_anag=t.cd_anag and t.cd_terzo=f.cd_terzo and
                       c.esercizio(+) = o.esercizio_contratto
                   AND c.stato(+) = o.stato_contratto
@@ -86,18 +91,22 @@ CREATE OR REPLACE FORCE VIEW "V_INDICATORE_PAGAMENTI_DETAIL" (
                   and STATO_PAGAMENTO_FONDO_ECO ='N'
                   --AND decode(f.ti_fattura,'F',NVL (f.stato_liquidazione, 'LIQ'),'LIQ') = 'LIQ'
                   AND NVL (f.stato_liquidazione, 'LIQ') = 'LIQ'
+                  AND f.id_paese = det.id_paese(+)
+                  AND f.id_codice = det.id_codice(+)
+                  AND f.identificativo_sdi = det.identificativo_sdi(+)
                   group by
-                                  f.esercizio,f.CD_UO_ORIGINE,f.PG_FATTURA_PASSIVA,f.NR_FATTURA_FORNITORE, f.IDENTIFICATIVO_SDI,'FATTURA_P',nvl(f.dt_scadenza,f.dt_fattura_fornitore+30),
+                                  f.esercizio,f.CD_UO_ORIGINE,f.PG_FATTURA_PASSIVA,'FATTURA_P',nvl(f.dt_scadenza,f.dt_fattura_fornitore+30),
+                                  det.data_ricezione, f.dt_registrazione, f.dt_protocollo_liq,
                                   trunc(m.dt_trasmissione),mr.im_mandato_riga,a.cd_anag,f.cd_terzo,
                                   os.esercizio,os.cd_cds,os.pg_obbligazione,os.pg_obbligazione_scadenzario,os.esercizio_originale
-                                  ,c.esercizio ,c.pg_contratto,null ,null, m.pg_mandato
+                                  ,c.esercizio ,c.pg_contratto,null ,null, f.identificativo_sdi
          union all
          -- fatture legati a compensi pagate nel periodo sia con contratto che con incarico
-          select comp.esercizio,comp.CD_unita_organizzativa uo,comp.pg_compenso pg_doc,f.NR_FATTURA_FORNITORE, f.IDENTIFICATIVO_SDI, 'COMPENSO'  tipo_doc,sum(comp.im_totale_compenso) tot,
-          comp.dt_scadenza,trunc(m.dt_trasmissione) dt_trasmissione,
+          select comp.esercizio,comp.CD_unita_organizzativa uo,comp.pg_compenso pg_doc,'COMPENSO'  tipo_doc,sum(comp.im_totale_compenso) tot,
+          comp.dt_scadenza,trunc(m.dt_trasmissione) dt_trasmissione,null,null,null,
            (mr.im_mandato_riga) tot_pagato, ((TRUNC (m.dt_trasmissione) - comp.dt_scadenza)* mr.im_mandato_riga) tot_pesato,
-           	a.cd_anag,f.cd_terzo,os.esercizio esercizio_obb,os.cd_cds,os.pg_obbligazione,os.pg_obbligazione_scadenzario,os.esercizio_originale
-                   ,c.esercizio esercizio_contratto,c.pg_contratto,i.esercizio esercizio_inc,i.pg_repertorio pg_incarico, m.pg_mandato
+            a.cd_anag,f.cd_terzo,os.esercizio esercizio_obb,os.cd_cds,os.pg_obbligazione,os.pg_obbligazione_scadenzario,os.esercizio_originale
+                   ,c.esercizio esercizio_contratto,c.pg_contratto,i.esercizio esercizio_inc,i.pg_repertorio pg_incarico, f.identificativo_sdi
                  FROM contratto c,
                       obbligazione o,
                       obbligazione_scadenzario os,
@@ -158,16 +167,16 @@ CREATE OR REPLACE FORCE VIEW "V_INDICATORE_PAGAMENTI_DETAIL" (
                   AND m.dt_trasmissione IS NOT NULL
                   and comp.STATO_PAGAMENTO_FONDO_ECO ='N'
                   AND NVL (comp.stato_liquidazione, 'LIQ') = 'LIQ'
-                 group by   comp.esercizio,comp.CD_unita_organizzativa,comp.pg_compenso,f.NR_FATTURA_FORNITORE, f.IDENTIFICATIVO_SDI,'COMPENSO',comp.dt_scadenza,trunc(dt_trasmissione),mr.im_mandato_riga,a.cd_anag,f.cd_terzo,os.esercizio,os.cd_cds,os.pg_obbligazione,os.pg_obbligazione_scadenzario,os.esercizio_originale
-                           ,c.esercizio ,c.pg_contratto,i.esercizio ,i.pg_repertorio, m.pg_mandato
+                 group by   comp.esercizio,comp.CD_unita_organizzativa,comp.pg_compenso,'COMPENSO',comp.dt_scadenza,trunc(dt_trasmissione),mr.im_mandato_riga,a.cd_anag,f.cd_terzo,os.esercizio,os.cd_cds,os.pg_obbligazione,os.pg_obbligazione_scadenzario,os.esercizio_originale
+                           ,c.esercizio ,c.pg_contratto,i.esercizio ,i.pg_repertorio, f.identificativo_sdi
                   union all
            -- compensi pagati nel periodo sia con contratto che con incarico non da fattura
-                   select comp.esercizio,comp.CD_unita_organizzativa uo,comp.pg_compenso pg_doc,null,null,'COMPENSO'  tipo_doc,
-                   sum(comp.im_totale_compenso) tot,nvl(comp.dt_scadenza,trunc(comp.dt_registrazione)+30),trunc(dt_trasmissione) dt_trasmissione,
+                   select comp.esercizio,comp.CD_unita_organizzativa uo,comp.pg_compenso pg_doc,'COMPENSO'  tipo_doc,
+                   sum(comp.im_totale_compenso) tot,nvl(comp.dt_scadenza,trunc(comp.dt_registrazione)+30),trunc(dt_trasmissione) dt_trasmissione,null,null,null,
                        (mr.im_mandato_riga) tot_pagato,
                         ((TRUNC (m.dt_trasmissione) -nvl(comp.dt_scadenza,trunc(comp.dt_registrazione)+30))* mr.im_mandato_riga) tot_pesato,
                        a.cd_anag,comp.cd_terzo,os.esercizio esercizio_obb,os.cd_cds,os.pg_obbligazione,os.pg_obbligazione_scadenzario,os.esercizio_originale
-                    ,c.esercizio esercizio_contratto,c.pg_contratto,i.esercizio esercizio_inc,i.pg_repertorio pg_incarico, m.pg_mandato
+                    ,c.esercizio esercizio_contratto,c.pg_contratto,i.esercizio esercizio_inc,i.pg_repertorio pg_incarico, null
                  FROM contratto c,
                       obbligazione o,
                       obbligazione_scadenzario os,
@@ -218,7 +227,7 @@ CREATE OR REPLACE FORCE VIEW "V_INDICATORE_PAGAMENTI_DETAIL" (
                   and comp.STATO_PAGAMENTO_FONDO_ECO ='N'
                   AND NVL (comp.stato_liquidazione, 'LIQ') = 'LIQ'
                     group by
-                    comp.esercizio,comp.CD_unita_organizzativa,comp.pg_compenso,null,null,'COMPENSO',nvl(comp.dt_scadenza,trunc(comp.dt_registrazione)+30),trunc(dt_trasmissione),
+                    comp.esercizio,comp.CD_unita_organizzativa,comp.pg_compenso,'COMPENSO',nvl(comp.dt_scadenza,trunc(comp.dt_registrazione)+30),trunc(dt_trasmissione),
                   mr.im_mandato_riga,a.cd_anag,comp.cd_terzo,os.esercizio,os.cd_cds,os.pg_obbligazione,os.pg_obbligazione_scadenzario,os.esercizio_originale
-                  ,c.esercizio ,c.pg_contratto,i.esercizio ,i.pg_repertorio ,comp.dt_registrazione, m.pg_mandato)
+                  ,c.esercizio ,c.pg_contratto,i.esercizio ,i.pg_repertorio ,comp.dt_registrazione)
 /

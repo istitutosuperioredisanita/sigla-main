@@ -37,6 +37,8 @@ import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.spring.service.StorePath;
+import it.cnr.contab.spring.service.UtilService;
+import it.cnr.contab.util.ApplicationMessageFormatException;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
@@ -174,8 +176,10 @@ public abstract class Fattura_passivaBulk
         STATO_LIQUIDAZIONE.put(SOSP, "Liquidazione sospesa");
 
         CAUSALE = new it.cnr.jada.util.OrderedHashtable();
-        CAUSALE.put(ATTLIQ, "In attesa di liquidazione");
-        CAUSALE.put(CONT, "Contenzioso");
+        CAUSALE.put(CONT, "Importo sospeso in Contenzioso");
+        CAUSALE.put(CONT_NORM, "Importo sospeso in contestazione/adempimenti normativi");
+        CAUSALE.put(CONT_CONF, "Importo sospeso per data esito regolare verifica di conformità");
+
         CAUSALE.put(ATTNC, "In attesa di nota credito");
     }
     protected Tipo_sezionaleBulk tipo_sezionale;
@@ -3066,6 +3070,25 @@ public abstract class Fattura_passivaBulk
 //        }
     }
 
+    public void impostaDataScadenza() {
+        if (Optional.ofNullable(getDocumentoEleTestata())
+                .flatMap(documentoEleTestataBulk -> Optional.ofNullable(documentoEleTestataBulk.getIdentificativoSdi()))
+                .isPresent()) {
+            Optional.ofNullable(getData_protocollo())
+                .map(timestamp -> Utility.addDays(timestamp, SpringUtil.getBean(UtilService.class).getNumGiorniScadenza()))
+                .ifPresent(timestamp -> {
+                    setDt_scadenza(timestamp);
+                });
+        } else {
+            Optional.ofNullable(getDt_registrazione())
+                    .map(timestamp -> Utility.addDays(timestamp, SpringUtil.getBean(UtilService.class).getNumGiorniScadenza()))
+                    .ifPresent(timestamp -> {
+                        setDt_scadenza(timestamp);
+                    });
+        }
+
+    }
+
     public void validateDate() throws ValidationException {
 
         if (getDt_registrazione() == null)
@@ -3710,10 +3733,22 @@ public abstract class Fattura_passivaBulk
                 .map(s -> s.equalsIgnoreCase(LIQ))
                 .orElse(Boolean.FALSE);
     }
+    public boolean isLiquidazioneSospesa() {
+        return Optional.ofNullable(getStato_liquidazione())
+                .map(s -> s.equalsIgnoreCase(SOSP))
+                .orElse(Boolean.FALSE);
+    }
+    public boolean isNonLiquidabile() {
+        return Optional.ofNullable(getStato_liquidazione())
+                .map(s -> s.equalsIgnoreCase(NOLIQ))
+                .orElse(Boolean.FALSE);
+    }
+
     @Override
     public String getAllegatoLabel() {
         return Optional.ofNullable(getPg_fattura_passiva()).map(String::valueOf).orElse(null);
     }
+
     @Override
     public Timestamp getDtGenerazioneScrittura() {
         return this.getDt_contabilizzazione();
@@ -3727,4 +3762,14 @@ public abstract class Fattura_passivaBulk
         isFatturaDaRicevereAnnoPrec = fatturaDaRicevereAnnoPrec;
     }
 
+    @Override
+    public Boolean isOptionDisabled(FieldProperty fieldProperty, Object key) {
+        if (fieldProperty.getName().equalsIgnoreCase("causale")) {
+            if (isLiquidazioneSospesa() && key.equals(ATTNC))
+                return true;
+            if (isNonLiquidabile() && (key.equals(CONT) ||key.equals(CONT_CONF) || key.equals(CONT_NORM)))
+                return true;
+        }
+        return super.isOptionDisabled(fieldProperty, key);
+    }
 }
