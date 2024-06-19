@@ -8,6 +8,8 @@ import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaBulk;
 import it.cnr.jada.bulk.BulkCollection;
 import it.cnr.jada.bulk.BulkList;
 
+import java.util.Iterator;
+
 public class Obbligazione_pluriennaleBulk extends Obbligazione_pluriennaleBase {
 	/**
 	 * [OBBLIGAZIONE ]
@@ -243,5 +245,12 @@ public class Obbligazione_pluriennaleBulk extends Obbligazione_pluriennaleBase {
 		dett.setToBeDeleted();
 		return dett;
 	}
+	public void setToBeDeleted() {
+		super.setToBeDeleted();
+		for (Iterator i = righeVoceColl.iterator(); i.hasNext(); )
+			((Obbligazione_pluriennale_voceBulk) i.next()).setToBeDeleted();
+		for (Iterator i = righeVoceColl.deleteIterator(); i.hasNext(); )
+			((Obbligazione_pluriennale_voceBulk) i.next()).setToBeDeleted();
 
+	}
 }

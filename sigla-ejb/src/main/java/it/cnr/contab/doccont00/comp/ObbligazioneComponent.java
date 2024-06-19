@@ -2347,12 +2347,22 @@ protected ObbligazioneBulk generaDettagliScadenzaObbligazione (UserContext aUC,O
 				creaDettagliScadenzaPerNuoveLineeAttivita( aUC, obbligazione, os );
 		}
 	}
+	// se sono state modificate le scadenze è necessario rimodulare i progetti
+	rigeneraObbligazionePluriennale(obbligazione);
 	
 	if ( obbligazione.getFl_calcolo_automatico().booleanValue() && allineaImputazioneFinanziaria)
 		obbligazione = calcolaPercentualeImputazioneObbligazione( aUC, obbligazione );
 
 	return obbligazione;
 }
+
+ private void rigeneraObbligazionePluriennale(ObbligazioneBulk obbligazione){
+	for(Obbligazione_pluriennaleBulk obbPlur : obbligazione.getObbligazioniPluriennali()){
+		if(!obbPlur.isToBeCreated() && !obbPlur.isToBeDeleted()){
+			obbPlur.setCrudStatus(OggettoBulk.TO_BE_UPDATED);
+		}
+	}
+ }
 /** 
   *  creazione prospetto
   *    PreCondition:
@@ -3308,10 +3318,10 @@ public OggettoBulk modificaConBulk (UserContext aUC,OggettoBulk bulk) throws Com
 		RimoduzioneObbliPluriennaleDto rimodulazioneObblPlurDto = null;
 		if(obbligazione.isPresentiPluriennaliDaGestire()) {
 			rimodulazioneObblPlurDto = getObbligazioniPerRimodulazione(aUC, obbligazione,true);
-			validaObbligazionePluriennale(aUC, obbligazione, rimodulazioneObblPlurDto);
-			creaObbligazionePluriennaleVoce(aUC, obbligazione);
-		}
 
+		}
+		validaObbligazionePluriennale(aUC, obbligazione, rimodulazioneObblPlurDto);
+		creaObbligazionePluriennaleVoce(aUC, obbligazione);
 		updateBulk( aUC, obbligazione);
 		makeBulkListPersistent( aUC, obbligazione.getObbligazione_scadenzarioColl());
 		makeBulkListPersistent( aUC, obbligazione.getObbligazioniPluriennali());
@@ -3384,49 +3394,67 @@ public OggettoBulk modificaConBulk (UserContext aUC,OggettoBulk bulk) throws Com
 private void creaObbligazionePluriennaleVoce(UserContext aUC, ObbligazioneBulk obbligazione) throws ComponentException, PersistencyException {
 
 	Obbligazione_pluriennale_voceBulk obblPlurVoce = null;
-	for(Obbligazione_pluriennaleBulk obbPlur : obbligazione .getObbligazioniPluriennali()){
-		if(obbPlur.getCrudStatus() == OggettoBulk.TO_BE_CREATED) {
+	Elemento_voceHome elemVoceHome = (Elemento_voceHome) getHome(aUC, Elemento_voceBulk.class);
 
-			obblPlurVoce = new Obbligazione_pluriennale_voceBulk();
+	Collection<V_pdg_obbligazione_speBulk> lineeAttivita = obbligazione.getLineeAttivitaSelezionateColl();
+	if(!obbligazione .getObbligazioniPluriennali().isEmpty()) {
+		for (Obbligazione_pluriennaleBulk obbPlur : obbligazione.getObbligazioniPluriennali()) {
+			if (obbPlur.getCrudStatus() == OggettoBulk.TO_BE_CREATED) {
+				for (V_pdg_obbligazione_speBulk linea : lineeAttivita) {
+					BigDecimal percentualeGae = getPercentualeLineAttivita(linea, obbligazione);
+					Elemento_voceBulk elemento_voceBulk = (Elemento_voceBulk) elemVoceHome.findByPrimaryKey(
+							new Elemento_voceBulk(linea.getCd_elemento_voce(), linea.getEsercizio(), linea.getTi_appartenenza(), linea.getTi_gestione()));
+					obblPlurVoce = new Obbligazione_pluriennale_voceBulk();
+					obblPlurVoce.setObbligazionePluriennale(obbPlur);
 
-			obblPlurVoce.setObbligazionePluriennale(obbPlur);
-			obblPlurVoce.setImporto(obbPlur.getImporto());
+					obblPlurVoce.setImporto(obbPlur.getImporto().multiply(percentualeGae).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP));
 
-			Collection<V_pdg_obbligazione_speBulk> lineeAttivita = obbligazione.getLineeAttivitaSelezionateColl();
+					obblPlurVoce.setElementoVoce(elemento_voceBulk);
+					obblPlurVoce.setLinea_attivita(new it.cnr.contab.config00.latt.bulk.WorkpackageBulk(linea.getCd_centro_responsabilita(), linea.getCd_linea_attivita()));
+					obblPlurVoce.setCdCentroResponsabilita(linea.getCd_centro_responsabilita());
+					obblPlurVoce.setCdLineaAttivita(linea.getCd_linea_attivita());
+					obblPlurVoce.setCdVoce(elemento_voceBulk.getCd_elemento_voce());
+					obblPlurVoce.setTiGestione(elemento_voceBulk.getTi_gestione());
+					obblPlurVoce.setTiAppartenenza(elemento_voceBulk.getTi_appartenenza());
+					obblPlurVoce.setAnno(obbPlur.getAnno());
+					obblPlurVoce.setCrudStatus(obbPlur.getCrudStatus());
 
-			if (lineeAttivita == null || lineeAttivita.size() > 1) {
-				throw new ApplicationException("Problema su linea attività");
-			}
-			Elemento_voceHome elemVoceHome = (Elemento_voceHome) getHome(aUC, Elemento_voceBulk.class);
+					obbPlur.addToRigheVoceCollBulkList(obblPlurVoce);
+				}
 
-			for (V_pdg_obbligazione_speBulk linea : lineeAttivita) {
+			} else if (obbPlur.getCrudStatus() == OggettoBulk.TO_BE_UPDATED) {
+				for (Obbligazione_pluriennale_voceBulk opv : obbPlur.getRigheVoceColl()) {
+					for (V_pdg_obbligazione_speBulk linea : lineeAttivita) {
 
-				Elemento_voceBulk elemento_voceBulk = (Elemento_voceBulk) elemVoceHome.findByPrimaryKey(
-						new Elemento_voceBulk(linea.getCd_elemento_voce(), linea.getEsercizio(), linea.getTi_appartenenza(), linea.getTi_gestione()));
+						if (linea.getCd_linea_attivita().equals(opv.getCdLineaAttivita())) {
 
-				obblPlurVoce.setElementoVoce(elemento_voceBulk);
-				obblPlurVoce.setLinea_attivita(new it.cnr.contab.config00.latt.bulk.WorkpackageBulk(linea.getCd_centro_responsabilita(),linea.getCd_linea_attivita()));
-				obblPlurVoce.setCdCentroResponsabilita(linea.getCd_centro_responsabilita());
-				obblPlurVoce.setCdLineaAttivita(linea.getCd_linea_attivita());
-				obblPlurVoce.setCdVoce(elemento_voceBulk.getCd_elemento_voce());
-				obblPlurVoce.setTiGestione(elemento_voceBulk.getTi_gestione());
-				obblPlurVoce.setTiAppartenenza(elemento_voceBulk.getTi_appartenenza());
-			}
-			obblPlurVoce.setCrudStatus(obbPlur.getCrudStatus());
+							BigDecimal percentualeGae = getPercentualeLineAttivita(linea, obbligazione);
+							Elemento_voceBulk elemento_voceBulk = (Elemento_voceBulk) elemVoceHome.findByPrimaryKey(
+									new Elemento_voceBulk(linea.getCd_elemento_voce(), linea.getEsercizio(), linea.getTi_appartenenza(), linea.getTi_gestione()));
 
-			obbPlur.addToRigheVoceCollBulkList(obblPlurVoce);
+							opv.setImporto(obbPlur.getImporto().multiply(percentualeGae).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP));
+							opv.setAnno(obbPlur.getAnno());
 
-		}else if(obbPlur.getCrudStatus()==OggettoBulk.TO_BE_UPDATED){
-			for(Obbligazione_pluriennale_voceBulk opv : obbPlur.getRigheVoceColl()){
-				opv.setImporto(obbPlur.getImporto());
-				opv.setAnno(obbPlur.getAnno());
-				opv.setCrudStatus(obbPlur.getCrudStatus());
+							opv.setObbligazionePluriennale(obbPlur);
+							opv.setElementoVoce(elemento_voceBulk);
+							opv.setLinea_attivita(new it.cnr.contab.config00.latt.bulk.WorkpackageBulk(linea.getCd_centro_responsabilita(), linea.getCd_linea_attivita()));
+							opv.setCdCentroResponsabilita(linea.getCd_centro_responsabilita());
+							opv.setCdLineaAttivita(linea.getCd_linea_attivita());
+							opv.setCdVoce(elemento_voceBulk.getCd_elemento_voce());
+							opv.setTiGestione(elemento_voceBulk.getTi_gestione());
+							opv.setTiAppartenenza(elemento_voceBulk.getTi_appartenenza());
+							opv.setAnno(obbPlur.getAnno());
+
+							opv.setCrudStatus(obbPlur.getCrudStatus());
+
+						}
+					}
+				}
 			}
 		}
-
 	}
-
 }
+
 private void makeBulkPluriennaliVoceListPersistent(UserContext aUC,ObbligazioneBulk obbligazione) throws ComponentException, PersistencyException {
 	if(obbligazione.getObbligazioniPluriennali() ==null || obbligazione.getObbligazioniPluriennali().isEmpty()){
 		makeBulkListPersistent(aUC, new BulkList<Obbligazione_pluriennale_voceBulk>());
@@ -6224,33 +6252,7 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 			throw handleException(e);
 		}
 	}
-	private ProgettoBulk getProgettoObbligazione(UserContext uc,ObbligazioneBulk obbligazione) throws ApplicationException {
-		ProgettoBulk progetto = null;
-		try {
-			Collection<V_pdg_obbligazione_speBulk> lineeAttivita = obbligazione.getLineeAttivitaSelezionateColl();
 
-			obbligazione = calcolaPercentualeImputazioneObbligazione(uc,obbligazione,false);
-			// DA GESTIRE MULTIGAE!!!
-			if (lineeAttivita == null || lineeAttivita.size() > 1) {
-				return null;
-			}
-			ProgettoHome progettoHome = (ProgettoHome) getHome(uc, ProgettoBulk.class);
-			for (V_pdg_obbligazione_speBulk linea : lineeAttivita) {
-				progetto = progettoHome.selectProgettoDaLineaAttivita(uc, linea);
-				if (progetto == null) {
-					throw new ApplicationException("Progetto NON trovato");
-				}
-			}
-			progetto = progettoHome.initializePianoEconomico(uc, new ProgettoBulk(progetto.getEsercizio(), progetto.getPg_progetto(), ProgettoBulk.TIPO_FASE_NON_DEFINITA), true);
-			return progetto;
-
-		}catch (ComponentException e){
-			throw new ApplicationException(e.getMessage());
-		}
-		catch (PersistencyException | IntrospectionException e){
-			throw new ApplicationException(e.getMessage());
-		}
-	}
 
 	private Progetto_piano_economicoBulk getPianoEconomicoObbligazione(UserContext uc,ProgettoBulk progetto,Elemento_voceBulk elemento_voceBulk) throws PersistencyException, ComponentException {
 		Progetto_piano_economicoBulk progettoPianoEconomico = null;
@@ -6266,7 +6268,7 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 		}
 
 		progettoPianoEconomico = progettoPianoElemVoceList.get(0);
-		progettoPianoEconomico.getSaldoSpesa();
+
 
 		return progettoPianoEconomico;
 
@@ -6274,18 +6276,36 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 	}
 
 
-	private boolean isDisponibilitaProgettoValida(HashMap<String,ProgettoObbliPluriennaleDto> progettoObbliPluriennaleMap) throws PersistencyException, ComponentException {
+	private boolean isDisponibilitaProgettoValida(UserContext uc,HashMap<String,ProgettoObbliPluriennaleDto> progettoObbliPluriennaleMap) throws PersistencyException, ComponentException {
 
+		ProgettoHome progettoHome = (ProgettoHome)getHome(uc, ProgettoBulk.class);
 		for(ProgettoObbliPluriennaleDto progettoObblPlur : progettoObbliPluriennaleMap.values()) {
 
+			ProgettoBulk progetto = (ProgettoBulk)progettoHome.findByPrimaryKey(new ProgettoBulk(progettoObblPlur.getEsercizio(),progettoObblPlur.getPg_progetto(),progettoObblPlur.getTipo_fase()));
+			progetto = progettoHome.initializePianoEconomico(uc, new ProgettoBulk(progetto.getEsercizio(), progetto.getPg_progetto(), ProgettoBulk.TIPO_FASE_NON_DEFINITA), true);
+
+
 			for(VocePianoObbliPluriennaleDto vocePianoObblPlur : progettoObblPlur.getVociPianoRimodulaMap().values()) {
+				BulkList<Ass_progetto_piaeco_voceBulk> vociPianoEcoList = new BulkList<>();
+
+				progetto.getDettagliPianoEconomicoAnnoCorrente().stream()
+					.forEach(el -> {
+						if (el.getCd_voce_piano().equals(vocePianoObblPlur.getPianoEconomicoProgetto().getVoce_piano_economico().getCd_voce_piano())) {
+							el.getVociBilancioAssociate().stream()
+							.forEach(voce -> {
+								vociPianoEcoList.add(voce);
+							});
+						}
+					});
+
+
 				BigDecimal importoTotPluriennali = new BigDecimal(0);
 				for (ObbligazionePluriennaleDto obbPlur : vocePianoObblPlur.getAllObbligazionePluerinnali()) {
 					importoTotPluriennali = importoTotPluriennali.add(obbPlur.getImporto());
 				}
 
 				BigDecimal importoVociAssociate = new BigDecimal(0);
-				for (Ass_progetto_piaeco_voceBulk assPiaeco : vocePianoObblPlur.getPianoEconomicoProgetto().getVociBilancioAssociate()) {
+				for (Ass_progetto_piaeco_voceBulk assPiaeco : vociPianoEcoList) {
 					importoVociAssociate = importoVociAssociate.add(assPiaeco.getSaldoSpesa().getVariapiuFin());
 				}
 
@@ -6296,7 +6316,6 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 
 				}
 			}
-			return true;
 		}
 		return true;
 	}
@@ -6324,10 +6343,17 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 
 		if(rimodulazioneObblPlurDto.isPresentePluriennalePerRimodulazione()) {
 			ArrayList<Progetto_rimodulazioneBulk> rimodulazioneList = creaOggettoRimodulazione(uc, rimodulazioneObblPlurDto);
+			Progetto_rimodulazioneHome rimodHome = (Progetto_rimodulazioneHome)getHome(uc, Progetto_rimodulazioneBulk.class);
 
 			for (Progetto_rimodulazioneBulk rimodulazioneBulk : rimodulazioneList) {
-				RimodulaProgettoRicercaComponentSession comp = (RimodulaProgettoRicercaComponentSession) EJBCommonServices.createEJB("CNRPROGETTIRIC00_EJB_RimodulaProgettoRicercaComponentSession", RimodulaProgettoRicercaComponentSession.class);
-				Progetto_rimodulazioneBulk bulk = comp.salvaDefinitivo(uc, rimodulazioneBulk);
+
+				// verifico che ci siano dettagli da rimodulare
+				List<Progetto_rimodulazione_ppeBulk> listRim = rimodHome.getDettagliRimodulazioneAggiornato(uc, rimodulazioneBulk);
+
+				if(listRim !=null && !listRim.isEmpty()) {
+					RimodulaProgettoRicercaComponentSession comp = (RimodulaProgettoRicercaComponentSession) EJBCommonServices.createEJB("CNRPROGETTIRIC00_EJB_RimodulaProgettoRicercaComponentSession", RimodulaProgettoRicercaComponentSession.class);
+					Progetto_rimodulazioneBulk bulk = comp.salvaDefinitivo(uc, rimodulazioneBulk);
+				}
 			}
 		}
 	}
@@ -6490,10 +6516,14 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 				throw new ApplicationException("Impostare Importo dell'Obbligazione Pluriennale");
 			}
 		}
-		isDisponibilitaProgettoValida(rimodulazioneObblPlurDto.getProgettoObbliPluriennaleMap());
-		isAnnoPluriennaleValidoPerProgetto(uc,rimodulazioneObblPlurDto.getProgettoObbliPluriennaleMap());
-
-
+		if(rimodulazioneObblPlurDto != null) {
+			if (!isDisponibilitaProgettoValida(uc, rimodulazioneObblPlurDto.getProgettoObbliPluriennaleMap())) {
+				throw new ApplicationException("Attenzione! Disponibilità sul progetto non disponibile");
+			}
+			if (!isAnnoPluriennaleValidoPerProgetto(uc, rimodulazioneObblPlurDto.getProgettoObbliPluriennaleMap())) {
+				throw new ApplicationException("Attenzione! Si sta inserendo un pluriennale per un anno successivo alla scadenza del progetto");
+			}
+		}
 	}
 
 	private List<Obbligazione_pluriennale_voceBulk> getObbligazioniPluriennaliDaLiberare(UserContext uc,ObbligazioneBulk obbligazione) throws PersistencyException, ComponentException {
@@ -6512,6 +6542,19 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 		obblPlurCancellateList.addAll(getObbligazioniPluriennaliEliminate(uc,obbligazione));
 		return obblPlurCancellateList;
 	}
+	private BigDecimal getPercentualeLineAttivita(V_pdg_obbligazione_speBulk linea,ObbligazioneBulk obbligazione){
+
+		BigDecimal totScadenzaVoce = new BigDecimal(0);
+
+		for(Obbligazione_scadenzarioBulk scadenza : obbligazione.getObbligazione_scadenzarioColl()){
+			for(Obbligazione_scad_voceBulk scadVoce : scadenza.getObbligazione_scad_voceColl()){
+				if(scadVoce.getCd_linea_attivita().equals(linea.getCd_linea_attivita())) {
+					totScadenzaVoce = totScadenzaVoce.add(Utility.nvl(scadVoce.getIm_voce()));
+				}
+			}
+		}
+		return (Utility.nvl(totScadenzaVoce).divide(obbligazione.getIm_obbligazione(), 4, java.math.BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)));
+	}
 	private RimoduzioneObbliPluriennaleDto getObbligazioniPerRimodulazione(UserContext uc, ObbligazioneBulk obbligazione,boolean gestioneAdd) throws ComponentException, IntrospectionException, PersistencyException {
 
 		RimoduzioneObbliPluriennaleDto rimodulaObblPlur=new RimoduzioneObbliPluriennaleDto();
@@ -6520,7 +6563,6 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 		// obbligazioni pluriennali cancellate o modificate che devono rimettere disponibilità sul progetto
 		List<Obbligazione_pluriennale_voceBulk> obblPlurVoceCancellateList= getObbligazioniPluriennaliDaLiberare(uc,obbligazione);
 
-		obbligazione = calcolaPercentualeImputazioneObbligazione(uc,obbligazione,false);
 		ProgettoHome progettoHome = (ProgettoHome) getHome(uc, ProgettoBulk.class);
 
 		for (V_pdg_obbligazione_speBulk linea : (Collection<V_pdg_obbligazione_speBulk>)obbligazione.getLineeAttivitaSelezionateColl()) {
@@ -6536,9 +6578,11 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 			VocePianoObbliPluriennaleDto vocePianoObbliPluriennaleDto = new VocePianoObbliPluriennaleDto();
 			vocePianoObbliPluriennaleDto.setPianoEconomicoProgetto(pianoEcoProgetto);
 
+			BigDecimal percentualeGae = getPercentualeLineAttivita(linea,obbligazione);
+
 			//obbligazione pluriennali che rimodulano il progetto
 			if (obbligazione.getObbligazioniPluriennali() != null && !obbligazione.getObbligazioniPluriennali().isEmpty()) {
-				vocePianoObbliPluriennaleDto.getObbligazionePlurAdd().addAll(impostaPluriennaliPerRimodulazione(uc, obbligazione.getObbligazioniPluriennali(), linea.getPrcImputazioneFin(),gestioneAdd));
+				vocePianoObbliPluriennaleDto.getObbligazionePlurAdd().addAll(impostaPluriennaliPerRimodulazione(uc, obbligazione.getObbligazioniPluriennali(), percentualeGae,gestioneAdd));
 			}
 
 			progettoObbliPluriennaleDto.getVociPianoRimodulaMap().put(pianoEcoProgetto.getCd_voce_piano(), vocePianoObbliPluriennaleDto);
@@ -6549,9 +6593,11 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 				ProgettoObbliPluriennaleDto progettoObbliPluriennaleDto = rimodulaObblPlur.getProgettoObbliPluriennaleMap().get(obbPlurVoce.getCdLineaAttivita());
 
 				if (progettoObbliPluriennaleDto == null) {
+
 					progetto = obbPlurVoce.getLinea_attivita().getProgetto();
 
 					progettoObbliPluriennaleDto = new ProgettoObbliPluriennaleDto(progetto.getEsercizio(), progetto.getPg_progetto(), progetto.getTipo_fase());
+
 					rimodulaObblPlur.getProgettoObbliPluriennaleMap().put(obbPlurVoce.getCdLineaAttivita(), progettoObbliPluriennaleDto);
 				}
 				Progetto_piano_economicoBulk pianoEcoProgetto = getPianoEconomicoObbligazione(uc, progetto, obbPlurVoce.getElementoVoce());
@@ -6616,8 +6662,7 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 
 		for(Obbligazione_pluriennale_voceBulk obbPlurVoce: obblPlurVoceList) {
 
-			Obbligazione_pluriennale_voceBulk obblVoceNew = new Obbligazione_pluriennale_voceBulk();
-			obblVoceNew = obbPlurVoce.clone();
+			Obbligazione_pluriennale_voceBulk obblVoceNew = obbPlurVoce.clone();
 			obblVoceNew.setCrudStatus(OggettoBulk.TO_BE_DELETED);
 			obbPlurVoceNewList.add(obblVoceNew);
 		}

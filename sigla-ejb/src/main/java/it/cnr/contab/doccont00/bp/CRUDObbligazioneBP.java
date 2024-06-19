@@ -77,7 +77,7 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
 
 
         }
-        @Override
+  /*     @Override
         public OggettoBulk removeDetail(int i) {
             List list = getDetails();
             Obbligazione_pluriennaleBulk dettaglio =(Obbligazione_pluriennaleBulk)list.get(i);
@@ -85,7 +85,7 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
                 dettaglio.removeFromRigheVoceCollBulkList(k);
             }
             return super.removeDetail(i);
-        }
+        }*/
     };
     private final SimpleDetailCRUDController crudObbligazione_pluriennaleVoce = new SimpleDetailCRUDController("ObbligazioniPluriennaliVoce", Obbligazione_pluriennale_voceBulk.class, "righeVoceColl", crudObbligazione_pluriennale){
         public void validateForDelete(ActionContext context, OggettoBulk detail) throws ValidationException {
