@@ -40,6 +40,8 @@ import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
 import it.cnr.contab.prevent00.bulk.V_assestatoBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
@@ -792,7 +794,52 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
             throw new it.cnr.jada.action.BusinessProcessException(e);
         }
     }
+<<<<<<< HEAD
 //
+=======
+
+    @Override
+    protected void completeAllegato(AllegatoObbligazioneBulk allegato, StorageObject storageObject) throws ApplicationException {
+        super.completeAllegato(allegato, storageObject);
+        if (storeService.hasAspect(storageObject, StorageObbligazioniAspect.SIGLA_OBBLIGAZIONI_DETERMINA.value())) {
+            allegato.setTipoAllegato(AllegatoObbligazioneBulk.TIPO_DETERMINA);
+            GregorianCalendar calendar = storageObject.getPropertyValue("sigla_obbligazioni_aspect:determina_data_protocollo");
+            if (calendar!=null)
+                allegato.setDeterminaDataProtocollo(calendar.getTime());
+        } else
+            allegato.setTipoAllegato(AllegatoObbligazioneBulk.TIPO_ALLEGATO_GENERICO);
+    }
+
+    @Override
+    protected void completeCreateAllegato(AllegatoObbligazioneBulk allegato, StorageObject storageObject) throws ApplicationException {
+        super.completeCreateAllegato(allegato, storageObject);
+        if (allegato.isTipoDetermina()) {
+            storeService.addAspect(storageObject, StorageObbligazioniAspect.SIGLA_OBBLIGAZIONI_DETERMINA.value());
+            Map<String, Object> metadataProperties = new HashMap();
+            metadataProperties.put("sigla_obbligazioni_aspect:determina_data_protocollo", allegato.getDeterminaDataProtocollo());
+            storeService.updateProperties((Map) metadataProperties, storageObject);
+        }
+    }
+
+    @Override
+    protected void completeUpdateAllegato(UserContext userContext, AllegatoObbligazioneBulk allegato) throws ApplicationException {
+        super.completeUpdateAllegato(userContext, allegato);
+        StorageObject storageObject = storeService.getStorageObjectBykey(allegato.getStorageKey());
+
+        if (storageObject!=null) {
+            if (allegato.isTipoDetermina()) {
+                storeService.addAspect(storageObject, StorageObbligazioniAspect.SIGLA_OBBLIGAZIONI_DETERMINA.value());
+                Map<String, Object> metadataProperties = new HashMap();
+                metadataProperties.put("sigla_obbligazioni_aspect:determina_data_protocollo", allegato.getDeterminaDataProtocollo());
+                storeService.updateProperties((Map) metadataProperties, storageObject);
+            } else {
+                storeService.removeAspect(storageObject, StorageObbligazioniAspect.SIGLA_OBBLIGAZIONI_DETERMINA.value());
+            }
+        }
+    }
+
+    //
+>>>>>>> 58fc982cc (Aggiunta nuova funzionalità per la trasmissione della sospensione delle fatture passive in PCC tramite generazione di un file CSV)
 //	Abilito il bottone di ANNULLA RIPORTA documento solo se non ho scadenze in fase di modifica/inserimento
 //
 
