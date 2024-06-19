@@ -4893,6 +4893,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
 //            if (annoSolare != it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext).intValue())
 //                throw new it.cnr.jada.comp.ApplicationException("Non è possibile inserire " + fattura.getDescrizioneEntitaPlurale() + " in esercizi non corrispondenti all'anno solare!");
             fattura.setDt_registrazione(date);
+            fattura.impostaDataScadenza();
         } catch (it.cnr.jada.persistency.PersistencyException e) {
             throw handleException(fattura, e);
         }
@@ -6897,7 +6898,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             final Parametri_cdsBulk parametriCdsBulk = (Parametri_cdsBulk) getHome(aUC, Parametri_cdsBulk.class).findByPrimaryKey(
                     new Parametri_cdsBulk(fatturaPassiva.getCd_cds(), fatturaPassiva.getEsercizio())
             );
-            if (fatturaPassiva.isLiquidabile() &&
+            if (!(fatturaPassiva instanceof Nota_di_creditoBulk) && fatturaPassiva.isLiquidabile() && fatturaPassiva.isElettronica() &&
                     Optional.ofNullable(parametriCdsBulk.getFl_obblig_liq_fatt()).orElse(Boolean.FALSE) &&
                     fatturaPassiva.getDt_protocollo_liq() == null) {
                 throw new it.cnr.jada.comp.ApplicationException("Attenzione è obbligatorio allegare un file di tipo <b>Provvedimento di Liquidazione</b> alla fattura!");

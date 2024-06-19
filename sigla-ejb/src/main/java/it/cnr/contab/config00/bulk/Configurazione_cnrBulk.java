@@ -214,6 +214,8 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     public final static String SK_CONTO_ECONOMICO = "CONTO_ECONOMICO";
     public final static String SK_STATO_PATRIMONIALE = "STATO_PATRIMONIALE";
     public final static String SK_UTILE_PERDITA_ESERCIZIO = "UTILE_PERDITA_ESERCIZIO";
+    public final static String SK_SOPRAVVENIENZE_ATTIVE = "SOPRAVVENIENZE_ATTIVE";
+    public final static String SK_SOPRAVVENIENZE_PASSIVE = "SOPRAVVENIENZE_PASSIVE";
 
     public final static String PK_VARIAZIONE_AUTOMATICA = "VARIAZIONE_AUTOMATICA";
     public final static String SK_SPESA = "SPESA";
@@ -236,14 +238,14 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     public final static String PK_PAGAMENTO_ESTERO = "PAGAMENTO_ESTERO";
     public final static String SK_PAGAMENTO_ESTERO_ISS = "MODULO_PAGAMENTO_ISS";
 
-    public Configurazione_cnrBulk() {
-        super();
-    }
-    public final static String PK_GESTIONE_CONTRATTI = "CONTRATTI";
-    public final static String SK_ATT_REST_STORED_FROM_SIGLA = "ATT_REST_CONTR_STORED_FROM_SIGLA";
-
     public final static String PK_ESERCIZIO_SPECIALE = "ESERCIZIO_SPECIALE";
     public final static String SK_ESERCIZIO_PARTENZA = "ESERCIZIO_PARTENZA";
+
+    public final static String PK_PCC = "PCC";
+    public final static String SK_MODIFICA = "MODIFICA";
+
+    public final static String PK_GESTIONE_CONTRATTI = "CONTRATTI";
+    public final static String SK_ATT_REST_STORED_FROM_SIGLA = "ATT_REST_CONTR_STORED_FROM_SIGLA";
 
     public final static String PK_SOSPESI = "SOSPESI";
     public final static String SK_GESTIONE_STATO_INIZIALE = "GESTIONE_STATO_INIZIALE";
@@ -290,6 +292,11 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
             throw new IllegalArgumentException("StepFineAnno no found for value: " + value);
         }
     }
+
+    public Configurazione_cnrBulk() {
+        super();
+    }
+
     public Configurazione_cnrBulk(java.lang.String cd_chiave_primaria, java.lang.String cd_chiave_secondaria, java.lang.String cd_unita_funzionale, java.lang.Integer esercizio) {
         super(cd_chiave_primaria, cd_chiave_secondaria, cd_unita_funzionale, esercizio);
     }

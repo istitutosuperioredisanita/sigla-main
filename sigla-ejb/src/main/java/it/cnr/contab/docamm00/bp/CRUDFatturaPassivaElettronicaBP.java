@@ -530,18 +530,16 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 	    	fatturaPassivaBulk.setDt_fattura_fornitore(documentoEleTestata.getDataDocumento());
 	    	fatturaPassivaBulk.setEsercizio_fattura_fornitore(CNRUserContext.getEsercizio(context.getUserContext()));//TODO
 	    	fatturaPassivaBulk.setData_protocollo(documentoEleTestata.getDocumentoEleTrasmissione().getDataRicezione());
-
 			if (isBPAmministra && !isFatturaVazione) {
 				fatturaPassivaBulk.setEsercizio(dataRicezione.get(Calendar.YEAR));
 				fatturaPassivaBulk.setEsercizio_fattura_fornitore(dataRicezione.get(Calendar.YEAR));
 				fatturaPassivaBulk.setPg_fattura_passiva(documentoEleTestata.getIdentificativoSdi());
 				fatturaPassivaBulk.setDt_registrazione(documentoEleTestata.getDocumentoEleTrasmissione().getDataRicezione());
 			}
-
-			Calendar date = Calendar.getInstance();
-	    	date.setTimeInMillis(documentoEleTestata.getDataDocumento().getTime());
-	    	date.add(Calendar.MONTH, 1);
-	    	
+            fatturaPassivaBulk.impostaDataScadenza();
+            Calendar date = Calendar.getInstance();
+            date.setTimeInMillis(documentoEleTestata.getDataDocumento().getTime());
+            date.add(Calendar.MONTH, 1);	    	
 	    	fatturaPassivaBulk.setDs_fattura_passiva(documentoEleTestata.getCausale());
 	    	fatturaPassivaBulk.setFl_intra_ue(Boolean.FALSE);
 	    	fatturaPassivaBulk.setFl_extra_ue(Boolean.FALSE);

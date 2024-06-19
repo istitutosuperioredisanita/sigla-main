@@ -252,6 +252,7 @@ public class Fattura_passivaBase extends Fattura_passivaKey implements Keyed {
     private java.lang.Boolean flDaOrdini;
     // PROG_REG_FATTURA NUMBER(5,0)
     private Integer progRegFattura;
+    private java.sql.Timestamp dt_inizio_sospensione;
 
     public Fattura_passivaBase() {
         super();
@@ -1281,5 +1282,13 @@ public class Fattura_passivaBase extends Fattura_passivaKey implements Keyed {
 
     public void setNr_protocollo_liq(String nr_protocollo_liq) {
         this.nr_protocollo_liq = nr_protocollo_liq;
+    }
+
+    public Timestamp getDt_inizio_sospensione() {
+        return dt_inizio_sospensione;
+    }
+
+    public void setDt_inizio_sospensione(Timestamp dt_inizio_sospensione) {
+        this.dt_inizio_sospensione = dt_inizio_sospensione;
     }
 }
