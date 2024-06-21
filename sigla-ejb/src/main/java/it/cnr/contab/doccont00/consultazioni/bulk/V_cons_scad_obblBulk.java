@@ -63,6 +63,8 @@ public class V_cons_scad_obblBulk extends OggettoBulk implements Persistent {
 	private java.lang.String creditore;
 	
 	private java.lang.String ds_obbl;
+
+	private String ds_elemento_voce;
  
 	public V_cons_scad_obblBulk() {
 		super();
@@ -155,5 +157,11 @@ public class V_cons_scad_obblBulk extends OggettoBulk implements Persistent {
 		this.ds_obbl = ds_obbl;
 	}
 
-	
+	public String getDs_elemento_voce() {
+		return ds_elemento_voce;
+	}
+
+	public void setDs_elemento_voce(String ds_elemento_voce) {
+		this.ds_elemento_voce = ds_elemento_voce;
+	}
 }

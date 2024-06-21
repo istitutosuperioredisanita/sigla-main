@@ -121,6 +121,16 @@
 			maxLength="300"
 			inputSize="300"
 			label="Descrizione Accertamento"/>
+
+	<fieldProperty
+			name="ds_elemento_voce"
+			property="ds_elemento_voce"
+			label="Descrizione Voce"
+			inputType="TEXT"
+			maxLength="300"
+			inputSize="60"
+			enabledOnSearch="true"
+	/>
 		
 	<formFieldProperty
 		name="cds" />
@@ -137,6 +147,8 @@
 	<formFieldProperty
 		name="voce_bilancio" />
 	<formFieldProperty
+			name="ds_elemento_voce" />
+	<formFieldProperty
 		name="data_scad" />
 	<formFieldProperty
 			name="acc_desc" />
@@ -150,6 +162,7 @@
 		name="imp_ass_doc_cont" />
 	<formFieldProperty
 		name="debitore" />
+
 
 	<findFieldProperty
 		name="cds" />
@@ -194,6 +207,8 @@
 		name="pg_acc_scad" />
 	<columnFieldProperty
 		name="voce_bilancio" />
+	<columnFieldProperty
+			name="ds_elemento_voce"/>
 	<columnFieldProperty
 		name="data_scad" />
 	<columnFieldProperty
