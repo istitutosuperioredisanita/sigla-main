@@ -133,4 +133,6 @@ public interface Configurazione_cnrComponentSession extends it.cnr.jada.ejb.CRUD
     Boolean isGestioneStatoInizialeSospesiAttivo(UserContext param0) throws ComponentException, RemoteException;
 
     Boolean isAttivoInventariaDocumenti(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
+
+    Boolean isAttivoRegitrazioneFattAnnoPrec(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
 }

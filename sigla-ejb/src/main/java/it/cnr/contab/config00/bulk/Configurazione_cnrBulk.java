@@ -160,6 +160,7 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     public final static String SK_ORDINE_IMPEGNO_UO_DESTINAZIONE = "IMPEGNO_ORDINI_UO_DEST";
     public final static String PK_FATTURA_PASSIVA = "FATTURA_PASSIVA";
     public final static String SK_LIMITE_REG_TARDIVA = "LIMITE_REG_TARDIVA";
+    public final static String SK_REGISTAZIONE_ANNO_PREC= "REGISTAZIONE_ANNO_PREC";
 
     public final static String PK_GESTIONE_PROGETTI = "PROGETTI";
     public final static String SK_PROGETTO_PIANO_ECONOMICO = "PIANO_ECONOMICO";
