@@ -5604,14 +5604,10 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
                     new EsercizioBulk(
                             fatturaPassiva.getCd_cds(),
                             ((it.cnr.contab.utenze00.bp.CNRUserContext) aUC).getEsercizio()))
-            && ( fatturaPassiva.isFromAmministra() &&  !isEsercizioValidoPerDataCompetenza( aUC,
-                    ((it.cnr.contab.utenze00.bp.CNRUserContext) aUC).getEsercizio(),
-                    fatturaPassiva.getCd_cds())))
+            && ( !fatturaPassiva.isFromAmministra()))
                 throw new it.cnr.jada.comp.ApplicationException("Impossibile salvare un documento per un esercizio non aperto!");
         } catch (it.cnr.jada.comp.ApplicationException e) {
             throw handleException(bulk, e);
-        } catch (PersistencyException e) {
-            throw new RuntimeException(e);
         }
         controllaQuadraturaInventario(aUC, fatturaPassiva);
         if (messaggio != null)
@@ -7587,15 +7583,17 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             throw handleSQLException(e);
         }
     }
+
     /*
     aggiunto per testare l'esercizio della data competenza da/a nel caso sia chiuso verifico che l'esercizio successivo sia aperto.Necessario
     per la gestione delle fatture da ricevere da anno precedente
     */
-    public boolean isEsercizioValidoPerDataCompetenza(UserContext userContext, Integer esercizio, String cd_cds) throws ComponentException, PersistencyException {
+    public boolean isEsercizioValidoPerDataCompetenza(UserContext userContext, Integer esercizio, String cd_cds) throws ComponentException, PersistencyException, RemoteException {
 
             if ( isEsercizioChiusoPerDataCompetenza(userContext,esercizio,cd_cds))
                 // controlla che l'anno successivo sia aperto
-                return ( !isEsercizioChiusoPerDataCompetenza( userContext , esercizio+1,cd_cds));
+                return ( Utility.createConfigurazioneCnrComponentSession().isAttivoRegitrazioneFattAnnoPrec(userContext)
+                        && !isEsercizioChiusoPerDataCompetenza( userContext , esercizio+1,cd_cds));
              return Boolean.TRUE;
 
     }

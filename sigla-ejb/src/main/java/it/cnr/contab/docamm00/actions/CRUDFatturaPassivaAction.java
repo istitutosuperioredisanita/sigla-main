@@ -2994,7 +2994,10 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                 if (competenzaA != null && competenzaDa != null)
                     if (!competenzaDa.equals(competenzaA) && !competenzaDa.before(competenzaA))
                         throw new it.cnr.jada.comp.ApplicationException("La data \"competenza da\" deve essere precedente o uguale a \"competenza a\"!");
-                if (!(bp instanceof CRUDFatturaPassivaAmministraBP) && !((FatturaPassivaComponentSession) bp.createComponentSession()).isEsercizioValidoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaA, cds) && !fattura.getStato_coge().equals("NON_PROCESSARE_IN_COGE"))
+                if (!(bp instanceof CRUDFatturaPassivaAmministraBP)
+                        && ( !((FatturaPassivaComponentSession)
+                            bp.createComponentSession()).isEsercizioValidoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaA, cds)
+                        && !fattura.getStato_coge().equals("NON_PROCESSARE_IN_COGE")))
                     throw new it.cnr.jada.comp.ApplicationException("Le date \"Competenza da\" e \"Competenza a\" non possono appartenere ad un esercizio chiuso");
                 if (bp instanceof CRUDFatturaPassivaAmministraBP) {
                     fattura
