@@ -8815,7 +8815,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         sqlBuilder.addSQLClause(FindClause.AND, "EVASIONE_ORDINE_RIGA.STATO", SQLBuilder.EQUALS, OrdineAcqConsegnaBulk.STATO_INSERITA);
 
         sqlBuilder.generateJoin("evasioneOrdine", "EVASIONE_ORDINE");
-        sqlBuilder.addSQLClause(FindClause.AND, "EVASIONE_ORDINE.DATA_BOLLA", SQLBuilder.LESS_EQUALS, fatturaPassiva.getDt_fattura_fornitore());
+        sqlBuilder.addSQLClause(FindClause.AND, "EVASIONE_ORDINE.DATA_BOLLA", SQLBuilder.LESS_EQUALS, fatturaPassiva.getDt_a_competenza_coge());
 
         sqlBuilder.generateJoin("ordineAcqConsegna", "ORDINE_ACQ_CONSEGNA");
         sqlBuilder.addSQLClause(FindClause.AND, "ORDINE_ACQ_CONSEGNA.STATO_FATT", SQLBuilder.NOT_EQUALS, OrdineAcqConsegnaBulk.STATO_FATT_ASSOCIATA_TOTALMENTE);
