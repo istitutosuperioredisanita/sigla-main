@@ -38,7 +38,6 @@ import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.spring.service.UtilService;
-import it.cnr.contab.util.ApplicationMessageFormatException;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
@@ -3042,6 +3041,16 @@ public abstract class Fattura_passivaBulk
 
         validateDate();
         validaDateCompetenza();
+        // Aggiungere controlli sulla data competenza anno precedente
+        if (this.isFatturaDaRicevereAnnoPrec &&
+                ( ( this.getAssociazioniInventarioHash() ==null || this.getAssociazioniInventarioHash().isEmpty())
+            && ( this.getFattura_passiva_ordini()==null || this.getFattura_passiva_ordini().isEmpty()))){
+            throw new ValidationException("Per la registrazione di fatture con competenza nell'anno precedente chiuso bisogna:\n " +
+                    "o associare una riga di un ordine evaso nell'anno di competenza \n o " +
+                    "un bene inserito nell'inventario nell'anno di competenza");
+        }
+
+
         // campi obbligatori dal 01/07/2014
         // controllo eliminato per nuova gestione del protocollo unico
         //  if (getDt_registrazione().after(dataInizioObbligoRegistroUnico) && getDt_fattura_fornitore().before(dataInizioFatturaElettronica)){
