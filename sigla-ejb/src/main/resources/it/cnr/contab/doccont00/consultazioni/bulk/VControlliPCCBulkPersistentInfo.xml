@@ -132,6 +132,12 @@
 				columnSize="0"
 				nullable="true" />
 		<columnMapping
+				columnName="IM_TOTALE_NC"
+				propertyName="imTotaleNC"
+				sqlTypeName="DECIMAL"
+				columnSize="0"
+				nullable="true" />
+		<columnMapping
 				columnName="CD_TIPO_CONTRATTO"
 				propertyName="cdTipoContratto"
 				sqlTypeName="VARCHAR"
@@ -155,7 +161,11 @@
 				columnSize="1"
 				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter"
 				nullable="true" />
-
+		<columnMapping
+				columnName="ESITO_PCC"
+				propertyName="esitoPCC"
+				sqlTypeName="VARCHAR"
+				columnSize="30"/>
 	</defaultColumnMap>
 	<persistentProperty
 			name="identificativoSdi" />
@@ -200,6 +210,8 @@
 	<persistentProperty
 			name="imMandato" />
 	<persistentProperty
+			name="imTotaleNC" />
+	<persistentProperty
 			name="cdTipoContratto" />
 	<persistentProperty
 			name="flIrregistrabile" />
@@ -207,4 +219,6 @@
 			name="cdUoCUU"/>
 	<persistentProperty
 			name="flDaCompenso"/>
+	<persistentProperty
+			name="esitoPCC"/>
 </SQLPersistentInfo>
