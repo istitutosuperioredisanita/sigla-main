@@ -947,8 +947,13 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 						if (!inv.isMigrato()){
 //							 Elimina gli Utilizzatori eventualmente specificati per i beni del Buono di Carico
 							eliminaUtilizzatoriBuono(userContext,inv);
+							// se presente il TRANSITO imposta lo stato a COM
+							if(inv.getId_transito_beni_ordini()!=null && !inv.getFl_dismesso()) {
+								aggiornaTransito(userContext, inv);
+							}
 							inv.setToBeDeleted();							
 							super.eliminaConBulk(userContext,inv);
+
 						}
 					}	
 		}
@@ -7223,6 +7228,24 @@ private void eliminaUtilizzatoriBuono (UserContext userContext,Inventario_beniBu
 		throw handleException(ex);
 	}
 }
+	private void aggiornaTransito (UserContext userContext,Inventario_beniBulk bene) throws ComponentException {
+		try{
+			Transito_beni_ordiniHome trans_invHome =(Transito_beni_ordiniHome)getHome(userContext,Transito_beni_ordiniBulk.class);
+			SQLBuilder sql_la= trans_invHome.createSQLBuilder();
+			sql_la.addSQLClause("AND","ID",SQLBuilder.EQUALS,bene.getId_transito_beni_ordini());
+
+			List LA =trans_invHome.fetchAll(sql_la);
+			for(Iterator i=LA.iterator();i.hasNext();){
+				Transito_beni_ordiniBulk transitoBeni =(Transito_beni_ordiniBulk)i.next();
+				transitoBeni.setStato(Transito_beni_ordiniBulk.STATO_COMPLETO);
+				transitoBeni.setToBeUpdated();
+				super.updateBulk(userContext,transitoBeni);
+			}
+
+		}catch(PersistencyException ex){
+			throw handleException(ex);
+		}
+	}
 /** 
  *  Valida dettaglio per modifica - valore unitario non specificato
  *    PreCondition:
