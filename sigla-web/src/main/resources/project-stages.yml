@@ -518,9 +518,8 @@ thorntail:
         ssl-required: NONE
         public-client: false
         enable-basic-auth: true
-        credentials:
-          secret:
-            value: secret
+        credentials.secret.value: secret
+
 
   deployment:
     sigla.war:
@@ -537,3 +536,5 @@ thorntail:
             roles:
               - "default-roles-cnr"
               - "default-roles-cnr.it"
+keycloak:
+  preferredUsername: username_cnr2

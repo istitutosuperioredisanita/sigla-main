@@ -17,6 +17,7 @@
 
 package it.cnr.contab.web.rest.config;
 
+import it.cnr.contab.spring.service.UtilService;
 import it.cnr.contab.utenze00.bp.RESTUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.web.rest.exception.RestException;
@@ -24,20 +25,11 @@ import it.cnr.contab.web.rest.exception.UnauthorizedException;
 import it.cnr.contab.web.rest.resource.util.AbstractResource;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
-
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.rmi.RemoteException;
-import java.security.Principal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.representations.IDToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
@@ -54,10 +46,13 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.Providers;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.representations.IDToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.rmi.RemoteException;
+import java.security.Principal;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Provider
 public class RESTSecurityInterceptor implements ContainerRequestFilter, ContainerResponseFilter , ExceptionMapper<Exception> {
@@ -85,7 +80,8 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter, Containe
 	public void filter(ContainerRequestContext requestContext) {	
 
 		final Method method = resourceInfo.getResourceMethod();
-		final Class<?> declaring = resourceInfo.getResourceClass();		
+		final Class<?> declaring = resourceInfo.getResourceClass();
+		UtilService us = (UtilService) WebApplicationContextUtils.getRequiredWebApplicationContext(httpServletRequest .getServletContext()).getBean(UtilService.class);
 		String[] rolesAllowed = null;
 		boolean denyAll;
 		boolean permitAll;
@@ -137,7 +133,7 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter, Containe
 					utenteBulk = BasicAuthentication.findUtenteBulk(
 							idToken
 									.flatMap(idToken1 -> Optional.ofNullable(idToken1.getOtherClaims()))
-									.flatMap(stringObjectMap -> Optional.ofNullable(stringObjectMap.get(USERNAME_CNR)))
+									.flatMap(stringObjectMap -> Optional.ofNullable(stringObjectMap.get(us.getPreferredUsername())))
 									.filter(String.class::isInstance)
 									.map(String.class::cast)
 									.orElse(idToken.get().getPreferredUsername())

@@ -58,6 +58,8 @@ public class UtilService implements InitializingBean {
     private Integer smtpPort;
     @Value("${pec.host.startTLSEnabled}")
     private Boolean startTLSEnabled;
+    @Value("${keycloak.preferredUsername}")
+    private String preferredUsername;
 
 
     public void executeAggiornaGECO() {
@@ -117,4 +119,10 @@ public class UtilService implements InitializingBean {
         Optional.ofNullable(startTLSEnabled).ifPresent(b -> simplePECMail.setStartTLSEnabled(b));
         return simplePECMail;
     }
+
+    public String getPreferredUsername() {
+        return preferredUsername;
+    }
+
+
 }
