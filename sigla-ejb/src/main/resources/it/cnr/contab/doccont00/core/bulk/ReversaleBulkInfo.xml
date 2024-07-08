@@ -41,6 +41,16 @@
 		enabledOnInsert="false"
 		enabledOnSearch="true" />
 	<fieldProperty
+			name="dt_incasso"
+			property="dt_incasso"
+			inputType="TEXT"
+			inputSize="10"
+			formatName="date_short"
+			label="Data Incasso"
+			enabledOnEdit="false"
+			enabledOnInsert="false"
+			enabledOnSearch="true" />
+	<fieldProperty
 		name="cd_cds"
 		property="cds.cd_unita_organizzativa"
 		inputType="ROTEXT"
@@ -356,6 +366,8 @@
 	<formFieldProperty
 		name="dt_ritrasmissione" />
 	<formFieldProperty
+			name="dt_incasso"/>
+	<formFieldProperty
 		name="cd_cds" />
 	<formFieldProperty
 		name="ds_cds" />
@@ -450,6 +462,8 @@
 		name="ds_reversale" />
 	<columnFieldProperty
 		name="dt_trasmissione"/>
+	<columnFieldProperty
+			name="dt_incasso"/>
 	
 
 	<findFieldProperty
@@ -489,6 +503,8 @@
 		name="dt_trasmissione"/>
 	<findFieldProperty
 		name="dt_ritrasmissione"/>
+	<findFieldProperty
+			name="dt_incasso"/>
 	<findFieldProperty
 		name="ti_competenza_residuo" />
 	<findFieldProperty

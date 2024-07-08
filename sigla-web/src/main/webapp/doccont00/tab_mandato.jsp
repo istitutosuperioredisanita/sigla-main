@@ -68,6 +68,8 @@
 			<td><% bp.getController().writeFormInput( out, "dt_ritrasmissione"); %></td>
 			<td><% bp.getController().writeFormLabel( out, "stato_trasmissione"); %></td>
 			<td><% bp.getController().writeFormInput( out, "stato_trasmissione"); %></td>
+			<td><% bp.getController().writeFormLabel( out, "dt_pagamento"); %></td>
+            <td><% bp.getController().writeFormInput( out, "dt_pagamento"); %></td>
 	</tr> 
 	<tr> 
 			<td><% bp.getController().writeFormLabel( out, "ds_mandato"); %></td>
