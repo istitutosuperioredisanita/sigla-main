@@ -3394,14 +3394,21 @@ public OggettoBulk modificaConBulk (UserContext aUC,OggettoBulk bulk) throws Com
 private void creaObbligazionePluriennaleVoce(UserContext aUC, ObbligazioneBulk obbligazione) throws ComponentException, PersistencyException {
 
 	Obbligazione_pluriennale_voceBulk obblPlurVoce = null;
-	Elemento_voceHome elemVoceHome = (Elemento_voceHome) getHome(aUC, Elemento_voceBulk.class);
 
 	Collection<V_pdg_obbligazione_speBulk> lineeAttivita = obbligazione.getLineeAttivitaSelezionateColl();
+	Elemento_voceHome elemVoceHome = (Elemento_voceHome) getHome(aUC, Elemento_voceBulk.class);
+
 	if(!obbligazione .getObbligazioniPluriennali().isEmpty()) {
 		for (Obbligazione_pluriennaleBulk obbPlur : obbligazione.getObbligazioniPluriennali()) {
-			if (obbPlur.getCrudStatus() == OggettoBulk.TO_BE_CREATED) {
-				for (V_pdg_obbligazione_speBulk linea : lineeAttivita) {
-					BigDecimal percentualeGae = getPercentualeLineAttivita(linea, obbligazione);
+			if (obbPlur.getCrudStatus() == OggettoBulk.TO_BE_UPDATED) {
+				for (Obbligazione_pluriennale_voceBulk opv : obbPlur.getRigheVoceColl()) {
+					opv.setToBeDeleted();
+				}
+			}
+			for (V_pdg_obbligazione_speBulk linea : lineeAttivita) {
+				BigDecimal percentualeGae = getPercentualeLineAttivita(linea, obbligazione);
+
+				if(percentualeGae.compareTo(new BigDecimal(0))>0) {
 					Elemento_voceBulk elemento_voceBulk = (Elemento_voceBulk) elemVoceHome.findByPrimaryKey(
 							new Elemento_voceBulk(linea.getCd_elemento_voce(), linea.getEsercizio(), linea.getTi_appartenenza(), linea.getTi_gestione()));
 					obblPlurVoce = new Obbligazione_pluriennale_voceBulk();
@@ -3417,38 +3424,8 @@ private void creaObbligazionePluriennaleVoce(UserContext aUC, ObbligazioneBulk o
 					obblPlurVoce.setTiGestione(elemento_voceBulk.getTi_gestione());
 					obblPlurVoce.setTiAppartenenza(elemento_voceBulk.getTi_appartenenza());
 					obblPlurVoce.setAnno(obbPlur.getAnno());
-					obblPlurVoce.setCrudStatus(obbPlur.getCrudStatus());
-
+					obblPlurVoce.setToBeCreated();
 					obbPlur.addToRigheVoceCollBulkList(obblPlurVoce);
-				}
-
-			} else if (obbPlur.getCrudStatus() == OggettoBulk.TO_BE_UPDATED) {
-				for (Obbligazione_pluriennale_voceBulk opv : obbPlur.getRigheVoceColl()) {
-					for (V_pdg_obbligazione_speBulk linea : lineeAttivita) {
-
-						if (linea.getCd_linea_attivita().equals(opv.getCdLineaAttivita())) {
-
-							BigDecimal percentualeGae = getPercentualeLineAttivita(linea, obbligazione);
-							Elemento_voceBulk elemento_voceBulk = (Elemento_voceBulk) elemVoceHome.findByPrimaryKey(
-									new Elemento_voceBulk(linea.getCd_elemento_voce(), linea.getEsercizio(), linea.getTi_appartenenza(), linea.getTi_gestione()));
-
-							opv.setImporto(obbPlur.getImporto().multiply(percentualeGae).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP));
-							opv.setAnno(obbPlur.getAnno());
-
-							opv.setObbligazionePluriennale(obbPlur);
-							opv.setElementoVoce(elemento_voceBulk);
-							opv.setLinea_attivita(new it.cnr.contab.config00.latt.bulk.WorkpackageBulk(linea.getCd_centro_responsabilita(), linea.getCd_linea_attivita()));
-							opv.setCdCentroResponsabilita(linea.getCd_centro_responsabilita());
-							opv.setCdLineaAttivita(linea.getCd_linea_attivita());
-							opv.setCdVoce(elemento_voceBulk.getCd_elemento_voce());
-							opv.setTiGestione(elemento_voceBulk.getTi_gestione());
-							opv.setTiAppartenenza(elemento_voceBulk.getTi_appartenenza());
-							opv.setAnno(obbPlur.getAnno());
-
-							opv.setCrudStatus(obbPlur.getCrudStatus());
-
-						}
-					}
 				}
 			}
 		}
