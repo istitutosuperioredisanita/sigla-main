@@ -7238,6 +7238,7 @@ private void eliminaUtilizzatoriBuono (UserContext userContext,Inventario_beniBu
 			for(Iterator i=LA.iterator();i.hasNext();){
 				Transito_beni_ordiniBulk transitoBeni =(Transito_beni_ordiniBulk)i.next();
 				transitoBeni.setStato(Transito_beni_ordiniBulk.STATO_COMPLETO);
+				transitoBeni.setTarga(null);
 				transitoBeni.setToBeUpdated();
 				super.updateBulk(userContext,transitoBeni);
 			}
