@@ -89,6 +89,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
@@ -5098,7 +5099,7 @@ public class DistintaCassiereComponent extends
                         if (doc.getCdSospeso() != null) {
                             if (Optional.ofNullable(doc.getCdSospeso()).isPresent() && isSospesoFromAccreditamento(userContext, doc)) {
                                 final V_mandato_reversaleBulk mandatoReversale = findMandatoReversale(userContext, findSospeso(userContext, doc).get().getMandatoRiaccredito());
-                                final CtClassificazioneDatiSiopeUscite classificazioneDatiSiope = getClassificazioneDatiSiope(userContext, objectFactory, mandatoReversale, null);
+                                final CtClassificazioneDatiSiopeUscite classificazioneDatiSiope = getClassificazioneDatiSiope(userContext, objectFactory, mandatoReversale, null, null);
                                 final Optional<Reversale.InformazioniVersante.Classificazione> any = infover.getClassificazione().stream().findAny();
                                 final Optional<StTipoDebitoCommerciale> stTipoDebitoCommerciale = classificazioneDatiSiope.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().stream()
                                         .filter(StTipoDebitoCommerciale.class::isInstance)
@@ -5577,7 +5578,7 @@ public class DistintaCassiereComponent extends
                                     clas.setImporto((doc.getImportoCge().multiply(coef)).setScale(2,
                                             BigDecimal.ROUND_HALF_UP));
                                 }
-                                caricaClassificazione(userContext, clas, objectFactory, bulk, doc.getCdSiope());
+                                caricaClassificazione(userContext, clas, objectFactory, bulk, doc.getCdSiope(), null);
                                 totSiope = totSiope.add(clas.getImporto());
                                 infoben.getClassificazione().add(clas);
                             }
@@ -5705,7 +5706,7 @@ public class DistintaCassiereComponent extends
                                     clas.setImporto((doc.getImportoCge().multiply(coef)).setScale(2,
                                             BigDecimal.ROUND_HALF_UP));
                                 }
-                                caricaClassificazione(userContext, clas, objectFactory, bulk, doc.getCdSiope());
+                                caricaClassificazione(userContext, clas, objectFactory, bulk, doc.getCdSiope(), null);
 
                                 totSiope = totSiope.add(clas.getImporto());
                                 infoben.getClassificazione().add(clas);
@@ -5862,7 +5863,7 @@ public class DistintaCassiereComponent extends
                                     clas = objectFactory.createMandatoInformazioniBeneficiarioClassificazione();
                                     clas.setCodiceCgu(oldDoc.getCdSiope());
                                     clas.setImporto((totAssSiope.subtract(totAssCup)).setScale(2, BigDecimal.ROUND_HALF_UP));
-                                    caricaClassificazione(userContext, clas, objectFactory, bulk, oldDoc.getCdSiope());
+                                    caricaClassificazione(userContext, clas, objectFactory, bulk, oldDoc.getCdSiope(), null);
 
                                     totAssCup = BigDecimal.ZERO;
                                     totAssSiope = BigDecimal.ZERO;
@@ -5872,7 +5873,7 @@ public class DistintaCassiereComponent extends
                                     clas = objectFactory.createMandatoInformazioniBeneficiarioClassificazione();
                                     clas.setCodiceCgu(doc.getCdSiope());
                                     clas.setImporto(doc.getImportoCge().setScale(2, BigDecimal.ROUND_HALF_UP));
-                                    caricaClassificazione(userContext, clas, objectFactory, bulk, doc.getCdSiope());
+                                    caricaClassificazione(userContext, clas, objectFactory, bulk, doc.getCdSiope(), null);
                                     infoben.getClassificazione().add(clas);
 
                                 } else {
@@ -5888,7 +5889,7 @@ public class DistintaCassiereComponent extends
                                         clas.setImporto(totAssSiope.subtract(totAssCup)
                                                 .setScale(2, BigDecimal.ROUND_HALF_UP));
 
-                                        caricaClassificazione(userContext, clas, objectFactory, bulk, oldDoc.getCdSiope());
+                                        caricaClassificazione(userContext, clas, objectFactory, bulk, oldDoc.getCdSiope(), clas.getImporto());//TODO passa l'importo
 
                                         totAssCup = BigDecimal.ZERO;
                                         totAssSiope = BigDecimal.ZERO;
@@ -5914,7 +5915,7 @@ public class DistintaCassiereComponent extends
                                                             + "-" + doc.getCdCup());
                                             } else
                                                 infoben.setCausale("CUP " + doc.getCdCup());
-                                            caricaClassificazione(userContext, clas, objectFactory, bulk, doc.getCdSiope());
+                                            caricaClassificazione(userContext, clas, objectFactory, bulk, doc.getCdSiope(), clas.getImporto());
 
                                             infoben.getClassificazione().add(clas);
                                         } else // stesso siope con cup null precedente
@@ -5931,7 +5932,7 @@ public class DistintaCassiereComponent extends
                                                         BigDecimal.ROUND_HALF_UP));
                                                 totAssSiope = BigDecimal.ZERO;
                                                 totAssCup = BigDecimal.ZERO;
-                                                caricaClassificazione(userContext, clas, objectFactory, bulk, doc.getCdSiope());
+                                                caricaClassificazione(userContext, clas, objectFactory, bulk, doc.getCdSiope(), null);
 
                                                 infoben.getClassificazione().add(clas);
                                             } else // diverso siope con cup null e precedente completamente associato a cup
@@ -5947,7 +5948,7 @@ public class DistintaCassiereComponent extends
                                                             BigDecimal.ROUND_HALF_UP));
                                                     totAssSiope = BigDecimal.ZERO;
                                                     totAssCup = BigDecimal.ZERO;
-                                                    caricaClassificazione(userContext, clas, objectFactory, bulk, doc.getCdSiope());
+                                                    caricaClassificazione(userContext, clas, objectFactory, bulk, doc.getCdSiope(), null);
                                                     infoben.getClassificazione().add(clas);
                                                 } else
                                                     // primo inserimento
@@ -5966,7 +5967,7 @@ public class DistintaCassiereComponent extends
                                                         } else {
                                                             infoben.setCausale("CUP " + doc.getCdCup());
                                                         }
-                                                        caricaClassificazione(userContext, clas, objectFactory, bulk, doc.getCdSiope());
+                                                        caricaClassificazione(userContext, clas, objectFactory, bulk, doc.getCdSiope(), clas.getImporto());
 
                                                         infoben.getClassificazione().add(clas);
                                                     } else {
@@ -5975,7 +5976,7 @@ public class DistintaCassiereComponent extends
                                                         clas.setImporto(doc.getImportoCge().setScale(2,
                                                                 BigDecimal.ROUND_HALF_UP));
                                                         totAssSiope = doc.getImportoCge();
-                                                        caricaClassificazione(userContext, clas, objectFactory, bulk, doc.getCdSiope());
+                                                        caricaClassificazione(userContext, clas, objectFactory, bulk, doc.getCdSiope(), null);
                                                         infoben.getClassificazione().add(clas);
                                                     }
                                 }
@@ -6153,10 +6154,47 @@ public class DistintaCassiereComponent extends
                     mandato.getInformazioniBeneficiario().add(infoben);
                 } // end else di multibeneficiario
             }
+            controllaQuadraturaNettoSiope(bulk, mandato);
             return mandato;
         } catch (Exception e) {
             throw handleException(e);
         }
+    }
+
+    private void controllaQuadraturaNettoSiope(V_mandato_reversaleBulk bulk, Mandato mandato) {
+        final List<CtDatiFatturaSiope> ctDatiFatturaSiope = mandato
+                .getInformazioniBeneficiario()
+                .stream()
+                .map(Mandato.InformazioniBeneficiario::getClassificazione)
+                .collect(Collectors.toList())
+                .stream()
+                .flatMap(List::stream)
+                .map(classificazione -> classificazione.getClassificazioneDatiSiopeUscite())
+                .collect(Collectors.toList())
+                .stream()
+                .map(ctClassificazioneDatiSiopeUscite -> ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope())
+                .collect(Collectors.toList())
+                .stream()
+                .flatMap(List::stream)
+                .filter(CtFatturaSiope.class::isInstance)
+                .map(CtFatturaSiope.class::cast)
+                .map(CtFatturaSiope::getDatiFatturaSiope)
+                .collect(Collectors.toList());
+        if (!ctDatiFatturaSiope.isEmpty()) {
+            BigDecimal differenza = bulk.getIm_documento_cont().subtract(bulk.getIm_ritenute()).setScale(2, RoundingMode.HALF_UP).subtract(
+                    ctDatiFatturaSiope.stream()
+                            .map(CtDatiFatturaSiope::getImportoSiope)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_UP));
+            if (differenza.compareTo(BigDecimal.ZERO) != 0) {
+                ctDatiFatturaSiope
+                        .stream()
+                        .findFirst()
+                        .ifPresent(ctDatiFatturaSiope1 -> {
+                            ctDatiFatturaSiope1.setImportoSiope(ctDatiFatturaSiope1.getImportoSiope().add(differenza));
+                        });
+            }
+        }
+
     }
 
     private void caricaTipoPostalizzazione(Mandato.InformazioniBeneficiario infoben, VDocumentiFlussoBulk docContabile, Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus tipoPagamentoSiopePlus) throws ApplicationMessageFormatException {
@@ -6296,14 +6334,15 @@ public class DistintaCassiereComponent extends
                                        Mandato.InformazioniBeneficiario.Classificazione clas,
                                        ObjectFactory objectFactory,
                                        V_mandato_reversaleBulk bulk,
-                                       String codiceSiope) throws ComponentException, PersistencyException, IntrospectionException, DatatypeConfigurationException {
-        clas.setClassificazioneDatiSiopeUscite(getClassificazioneDatiSiope(userContext, objectFactory, bulk, codiceSiope));
+                                       String codiceSiope,
+                                       BigDecimal importo) throws ComponentException, PersistencyException, IntrospectionException, DatatypeConfigurationException {
+        clas.setClassificazioneDatiSiopeUscite(getClassificazioneDatiSiope(userContext, objectFactory, bulk, codiceSiope, importo));
     }
 
     private CtClassificazioneDatiSiopeUscite getClassificazioneDatiSiope(UserContext userContext,
                                        ObjectFactory objectFactory,
                                        V_mandato_reversaleBulk bulk,
-                                       String codiceSiope) throws ComponentException, PersistencyException, IntrospectionException, DatatypeConfigurationException {
+                                       String codiceSiope, BigDecimal importoClas) throws ComponentException, PersistencyException, IntrospectionException, DatatypeConfigurationException {
         CtClassificazioneDatiSiopeUscite ctClassificazioneDatiSiopeUscite = objectFactory.createCtClassificazioneDatiSiopeUscite();
 
         Optional<TipoDebitoSIOPE> tipoDebitoSIOPE = Optional.ofNullable(bulk.getTipo_debito_siope())
@@ -6494,8 +6533,7 @@ public class DistintaCassiereComponent extends
                                 ctDatiFatturaSiope.setNumeroFatturaSiope(fattura_passivaBulk.getNr_fattura_fornitore());
                                 ctDatiFatturaSiope.setNaturaSpesaSiope(CORRENTE);
                                 ctDatiFatturaSiope.setDataScadenzaPagamSiope(convertToXMLGregorianCalendar(fattura_passivaBulk.getDt_scadenza()));
-                                //TODO CONTROLLARE SE NOTA
-                                ctDatiFatturaSiope.setImportoSiope(importo.setScale(2, BigDecimal.ROUND_HALF_UP));
+                                ctDatiFatturaSiope.setImportoSiope(calcolaImportoNettoSiope(fattura_passivaBulk.getFl_split_payment(), bulk, Optional.ofNullable(importoClas).orElse(importo.setScale(2, BigDecimal.ROUND_HALF_UP))));
 
                                 ctFatturaSiope.setDatiFatturaSiope(ctDatiFatturaSiope);
                                 ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(ctFatturaSiope);
@@ -6596,7 +6634,13 @@ public class DistintaCassiereComponent extends
                             ctDatiFatturaSiope.setNaturaSpesaSiope(CORRENTE);
                             ctDatiFatturaSiope.setDataScadenzaPagamSiope(convertToXMLGregorianCalendar(fattura_passivaBulk.get().getDt_scadenza()));
                             //TODO CONTROLLARE SE NOTA
-                            ctDatiFatturaSiope.setImportoSiope(fattura_passivaBulk.get().getIm_totale_fattura().setScale(2, BigDecimal.ROUND_HALF_UP));
+                            ctDatiFatturaSiope.setImportoSiope(
+                                    calcolaImportoNettoSiope(
+                                            fattura_passivaBulk.get().getFl_split_payment(),
+                                            bulk,
+                                            Optional.ofNullable(importoClas).orElse(fattura_passivaBulk.get().getIm_totale_fattura().setScale(2, BigDecimal.ROUND_HALF_UP))
+                                    )
+                            );
                             ctFatturaSiope.setDatiFatturaSiope(ctDatiFatturaSiope);
                             ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(ctFatturaSiope);
                         } else {
@@ -6627,6 +6671,17 @@ public class DistintaCassiereComponent extends
             }
         }
         return ctClassificazioneDatiSiopeUscite;
+    }
+
+    private BigDecimal calcolaImportoNettoSiope(boolean splitpayment, V_mandato_reversaleBulk vMandatoReversaleBulk, BigDecimal importoLordo) {
+        if (importoLordo.equals(BigDecimal.ZERO) || vMandatoReversaleBulk.getIm_ritenute().equals(BigDecimal.ZERO))
+            return BigDecimal.ZERO;
+        if (splitpayment) {
+            final BigDecimal percentuale = importoLordo.multiply(BigDecimal.TEN.multiply(BigDecimal.TEN)).divide(vMandatoReversaleBulk.getIm_documento_cont(), 2, RoundingMode.HALF_UP);
+            final BigDecimal importoNetto = vMandatoReversaleBulk.getIm_documento_cont().subtract(vMandatoReversaleBulk.getIm_ritenute());
+            return importoNetto.multiply(percentuale).divide(BigDecimal.TEN.multiply(BigDecimal.TEN), 2, RoundingMode.HALF_UP);
+        }
+        return importoLordo;
     }
 
     private XMLGregorianCalendar convertToXMLGregorianCalendar(Timestamp timestamp) {
