@@ -82,11 +82,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.*;
 import java.util.stream.Stream;
 /**
@@ -278,6 +276,12 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             setAnnoDiCompetenza(it.cnr.contab.utenze00.bp.CNRUserContext
                     .getEsercizio(context.getUserContext()).intValue() == fp
                     .getEsercizio().intValue());
+            fp.setFatturaDaRicevereAnnoPrec(Boolean.FALSE);
+            if ( fp.getDt_da_competenza_coge()!=null) {
+                java.util.GregorianCalendar dataCompetenzaCogeGregorian = new GregorianCalendar();
+                dataCompetenzaCogeGregorian.setTime(new Date(fp.getDt_da_competenza_coge().getTime()));
+                fp.setFatturaDaRicevereAnnoPrec(dataCompetenzaCogeGregorian.get(java.util.GregorianCalendar.YEAR)!=fp.getEsercizio());
+            }
             super.basicEdit(context, bulk, doInitializeForEdit);
         } catch (Throwable e) {
             throw new it.cnr.jada.action.BusinessProcessException(e);

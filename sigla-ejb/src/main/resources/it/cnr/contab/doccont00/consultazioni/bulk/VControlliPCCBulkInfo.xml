@@ -169,6 +169,15 @@
 		formatName="it.cnr.contab.util.EuroFormat"
 		label="Importo Mandato" />
 	<fieldProperty
+		name="imTotaleNC"
+		property="imTotaleNC"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		formatName="it.cnr.contab.util.EuroFormat"
+		label="Importo Note di Credito" />
+	<fieldProperty
 		name="cdTipoContratto"
 		property="cdTipoContratto"
 		inputType="TEXT"
@@ -199,6 +208,14 @@
 		property="flDaCompenso"
 		inputType="CHECKBOX"
 		label="Da Compenso" />
+	<fieldProperty
+		name="esitoPCC"
+		property="esitoPCC"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		label="Esito PCC" />
 
 	<formFieldProperty
 		name="identificativoSdi" />
@@ -243,6 +260,8 @@
 	<formFieldProperty
 		name="imMandato" />
 	<formFieldProperty
+		name="imTotaleNC" />
+	<formFieldProperty
 		name="cdTipoContratto" />
 	<formFieldProperty
 		name="flIrregistrabile" />
@@ -250,6 +269,8 @@
 		name="cdUoCUU" />
 	<formFieldProperty
 		name="flDaCompenso"/>
+	<formFieldProperty
+		name="esitoPCC"/>
 
 	<findFieldProperty
 		name="identificativoSdi" />
@@ -302,7 +323,11 @@
 	<findFieldProperty
 		name="imMandato" />
 	<findFieldProperty
+		name="imTotaleNC" />
+	<findFieldProperty
 		name="cdTipoContratto" />
+	<findFieldProperty
+		name="esitoPCC"/>
 
 	<columnFieldProperty
 		name="identificativoSdi" />
@@ -353,5 +378,10 @@
 	<columnFieldProperty
 		name="imMandato" />
 	<columnFieldProperty
+		name="imTotaleNC" />
+	<columnFieldProperty
 		name="cdTipoContratto" />
+	<columnFieldProperty
+		name="esitoPCC"/>
+
 </bulkInfo>

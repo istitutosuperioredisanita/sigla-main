@@ -20,6 +20,7 @@ package it.cnr.contab.util00.bp;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.HttpActionContext;
@@ -313,6 +314,7 @@ public abstract class AllegatiCRUDBP<T extends AllegatoGenericoBulk, K extends A
                         }
                         allegato.complete(actioncontext.getUserContext());
                         storeService.updateProperties(allegato, storeService.getStorageObjectBykey(allegato.getStorageKey()));
+                        completeUpdateAllegato(actioncontext.getUserContext(), (T)allegato);
                         allegato.setCrudStatus(OggettoBulk.NORMAL);
                     } catch (FileNotFoundException e) {
                         throw handleException(e);
@@ -325,6 +327,14 @@ public abstract class AllegatiCRUDBP<T extends AllegatoGenericoBulk, K extends A
             }
         }
         gestioneCancellazioneAllegati(allegatoParentBulk);
+    }
+
+    //Metodo utilizzato per effettuare altre operazioni sullo StorageObject creato come aggiungere Aspect.
+    protected void completeCreateAllegato(T allegato, StorageObject storageObject) throws ApplicationException {
+    }
+
+    //Metodo utilizzato per effettuare altre operazioni sullo StorageObject modificato come aggiungere/rimuovere Aspect.
+    protected void completeUpdateAllegato(UserContext userContext, T allegato) throws ApplicationException {
     }
 
     protected void gestioneCancellazioneAllegati(AllegatoParentBulk allegatoParentBulk) throws ApplicationException {

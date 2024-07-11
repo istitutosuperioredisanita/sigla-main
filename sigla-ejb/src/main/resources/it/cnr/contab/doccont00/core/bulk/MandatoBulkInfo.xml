@@ -40,6 +40,16 @@
 		enabledOnInsert="false"
 		enabledOnSearch="true" />
 	<fieldProperty
+			name="dt_pagamento"
+			property="dt_pagamento"
+			inputType="TEXT"
+			inputSize="10"
+			formatName="date_short"
+			label="Data Pagamento"
+			enabledOnEdit="false"
+			enabledOnInsert="false"
+			enabledOnSearch="true" />
+	<fieldProperty
 		name="dt_ritrasmissione"
 		property="dt_ritrasmissione"
 		inputType="TEXT"
@@ -393,6 +403,8 @@
 	<formFieldProperty
 		name="dt_trasmissione" />
 	<formFieldProperty
+			name="dt_pagamento"/>
+	<formFieldProperty
 		name="dt_ritrasmissione" />
 	<formFieldProperty
 		name="cd_cds" />
@@ -493,7 +505,9 @@
 	<columnFieldProperty
 		name="ds_mandato"/>
 	<columnFieldProperty
-		name="dt_trasmissione"/>		
+		name="dt_trasmissione"/>
+	<columnFieldProperty
+			name="dt_pagamento"/>
 		
 	<columnSet name="mandatoAutomatico">
 		<columnFieldProperty
@@ -546,6 +560,8 @@
 		name="cd_cds_origine"/>
 	<findFieldProperty
 		name="dt_trasmissione"/>
+	<findFieldProperty
+			name="dt_pagamento"/>
 	<findFieldProperty
 		name="dt_ritrasmissione"/>
 	<findFieldProperty

@@ -1001,6 +1001,24 @@ public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUD
             throw uncaughtError(param0, componentObj, e);
         }
     }
+    public Boolean isAttivoRegitrazioneFattAnnoPrec(UserContext param0) throws ComponentException, EJBException {
+        pre_component_invocation(param0, componentObj);
+        try {
+            Boolean result = ((Configurazione_cnrComponent)componentObj).isAttivoRegitrazioneFattAnnoPrec(param0);
+            component_invocation_succes(param0, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(param0, componentObj);
+            throw e;
+        } catch (ComponentException e) {
+            component_invocation_failure(param0, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(param0, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(param0, componentObj, e);
+        }
+    }
 
 
 }
