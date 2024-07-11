@@ -24,6 +24,8 @@ import it.cnr.contab.config00.ejb.Parametri_enteComponentSession;
 import it.cnr.contab.config00.sto.bulk.CdrBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.config00.sto.bulk.V_struttura_organizzativaBulk;
+import it.cnr.contab.service.SpringUtil;
+import it.cnr.contab.spring.service.UtilService;
 import it.cnr.contab.utente00.nav.comp.GestioneLoginComponent;
 import it.cnr.contab.utente00.nav.comp.UtenteLdapNuovoException;
 import it.cnr.contab.utente00.nav.comp.UtenteMultiploException;
@@ -369,7 +371,7 @@ public class LoginAction extends it.cnr.jada.util.action.BulkAction {
                     });
             if (idToken.isPresent()) {
                 final String username_cnr = idToken
-                        .flatMap(t -> Optional.ofNullable(t.getOtherClaims().get("username_cnr")).map(String::valueOf))
+                        .flatMap(t -> Optional.ofNullable(t.getOtherClaims().get(SpringUtil.getBean(UtilService.class).getPreferredUsername())).map(String::valueOf))
                         .orElse(idToken.get().getPreferredUsername());
                 utente.setCd_utente(username_cnr);
                 utente.setCd_utente_uid(username_cnr);
