@@ -136,6 +136,7 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 				((DocumentoEleTestataBulk)getModel()).isCompilabile() &&
 				!((DocumentoEleTestataBulk)getModel()).isIrregistrabile() &&
 				uoScrivania.equalsByPrimaryKey(((DocumentoEleTestataBulk)getModel()).getDocumentoEleTrasmissione().getUnitaOrganizzativa()) &&
+				( !((DocumentoEleTestataBulk)getModel()).isTipoDocumentoInAttesaFatturazioneElettronica())  &&
 				this.isEsercizioAperto();
 		
 	}
@@ -158,14 +159,16 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 	
 	public boolean isRifiutaButtonEnabled() {
 		return isEditable() && getModel() != null && ((DocumentoEleTestataBulk)getModel()).getIdentificativoSdi() != null &&
-				((DocumentoEleTestataBulk)getModel()).isRifiutabile();
+				((DocumentoEleTestataBulk)getModel()).isRifiutabile()&&
+		( !((DocumentoEleTestataBulk)getModel()).isTipoDocumentoInAttesaFatturazioneElettronica());
 	}
 
 	public boolean isRifiutaConPECButtonEnabled() {
 		DocumentoEleTestataBulk model = (DocumentoEleTestataBulk)getModel();
 		return isEditable() && model != null &&
 				model.getIdentificativoSdi() != null &&
-				model.isRifiutabile();
+				model.isRifiutabile() &&
+				( !((DocumentoEleTestataBulk)getModel()).isTipoDocumentoInAttesaFatturazioneElettronica());
 	}
 
 	public boolean isCollegaFatturaButtonHidden() {
@@ -352,7 +355,12 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 	protected void resetTabs(ActionContext actioncontext) {
 		setTab( "tab", "tabEleTrasmissione");
 	}
-	
+
+	@Override
+	public boolean isSaveButtonEnabled() {
+		return super.isSaveButtonEnabled() &&  !(((DocumentoEleTestataBulk)getModel()).isTipoDocumentoInAttesaFatturazioneElettronica());
+	}
+
 	@Override
 	public boolean isDeleteButtonHidden() {
 		return true;
