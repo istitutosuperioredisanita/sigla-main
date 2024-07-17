@@ -319,6 +319,7 @@ public class FatturaPassivaElettronicaService implements InitializingBean {
                 }
                 logger.info("PEC SCAN for ricevi Fatture finished at: " + new Date());
                 fatturaAttivaSingolaComponentSession.gestioneAvvisoInvioMailFattureAttive(userContext);
+                fatturaElettronicaPassivaComponentSession.gestioneAssFattElettronicaAutoFattura(userContext);
             }
         } catch (Throwable _ex) {
             logger.error("ScheduleExecutor error", _ex);
