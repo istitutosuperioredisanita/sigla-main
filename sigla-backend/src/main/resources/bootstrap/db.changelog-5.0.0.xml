@@ -6130,4 +6130,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_sospensione_fattura_passiva.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunto flag per gestione anno precedente -->
     <include file="bootstrap/add_flag_gest_fatt_anno_prec.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunto accessi per Consultazione Scadenzario Voce -->
+    <include file="bootstrap/add_accessi_cons_scad_accert_voce.xml"/>
 </databaseChangeLog>
