@@ -27,14 +27,13 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 
+import javax.ejb.EJBException;
+import javax.ejb.Remote;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
-
-import javax.ejb.EJBException;
-import javax.ejb.Remote;
 @Remote
 public interface FatturaElettronicaPassivaComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
     
@@ -71,4 +70,5 @@ public interface FatturaElettronicaPassivaComponentSession extends it.cnr.jada.e
 	Boolean isPartitaIvaGruppoIva(UserContext usercontext, AnagraficoBulk anagrafico, String partitaIva, Timestamp dataDocumento) throws ComponentException,java.rmi.RemoteException;
 	void aggiornaEsitoPCC(UserContext userContext, String identificativoSDI, String esitoPCC) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 	void aggiornaEsitoPCC(UserContext userContext, Map<String,String> esiti) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+	void gestioneAssFattElettronicaAutoFattura( UserContext aUC9 ) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException, java.rmi.RemoteException;
 }

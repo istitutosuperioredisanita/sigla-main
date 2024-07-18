@@ -20,9 +20,9 @@ package it.cnr.contab.compensi00.docs.bulk;
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoHome;
 import it.cnr.contab.anagraf00.core.bulk.RapportoBulk;
-import it.cnr.contab.coepcoan00.core.bulk.Movimento_cogeBulk;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_IBulk;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk;
 import it.cnr.contab.incarichi00.bulk.Incarichi_repertorio_annoBulk;
@@ -31,15 +31,12 @@ import it.cnr.contab.reports.bulk.Print_spoolerBulk;
 import it.cnr.contab.reports.bulk.Report;
 import it.cnr.contab.reports.service.PrintService;
 import it.cnr.contab.service.SpringUtil;
-import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.spring.service.LDAPService;
+import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.util.SIGLAGroups;
-import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
-import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ApplicationRuntimeException;
-import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.Broker;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
@@ -110,8 +107,8 @@ public class CompensoHome extends BulkHome implements
         sql.addTableToHeader("CDR");
         sql.addSQLJoin("V_LINEA_ATTIVITA_VALIDA.CD_CENTRO_RESPONSABILITA",
                 "CDR.CD_CENTRO_RESPONSABILITA");
-        sql.addClause(FindClause.AND,"ti_gestione",SQLBuilder.EQUALS,
-                        it.cnr.contab.config00.pdcfin.bulk.Elemento_voceHome.GESTIONE_ENTRATE);
+        sql.addClause(FindClause.AND, "ti_gestione", SQLBuilder.EQUALS,
+                it.cnr.contab.config00.pdcfin.bulk.Elemento_voceHome.GESTIONE_ENTRATE);
 
         sql.addSQLClause("AND", "V_LINEA_ATTIVITA_VALIDA.ESERCIZIO",
                 SQLBuilder.EQUALS, compenso.getEsercizio());
@@ -195,7 +192,6 @@ public class CompensoHome extends BulkHome implements
                     ps.close();
                 } catch (java.sql.SQLException e) {
                 }
-                ;
             }
         } catch (java.sql.SQLException e) {
             throw it.cnr.jada.persistency.sql.SQLExceptionHandler.getInstance()
@@ -208,19 +204,19 @@ public class CompensoHome extends BulkHome implements
             throws PersistencyException {
         SQLBuilder sql = createSQLBuilder();
         sql.addTableToHeader("TERZO");
-        sql.addSQLClause("AND", "ESERCIZIO", sql.EQUALS, esercizio);
-        sql.addSQLClause("AND", "DT_REGISTRAZIONE", sql.GREATER_EQUALS,
+        sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS, esercizio);
+        sql.addSQLClause("AND", "DT_REGISTRAZIONE", SQLBuilder.GREATER_EQUALS,
                 data_pagamento_esterno);
-        sql.addSQLClause("AND", "DT_CANCELLAZIONE", sql.ISNULL, null);
+        sql.addSQLClause("AND", "DT_CANCELLAZIONE", SQLBuilder.ISNULL, null);
         sql.addSQLJoin("TERZO.CD_TERZO", "COMPENSO.CD_TERZO");
-        sql.addSQLClause("AND", "TERZO.CD_ANAG", sql.EQUALS, cd_anag);
+        sql.addSQLClause("AND", "TERZO.CD_ANAG", SQLBuilder.EQUALS, cd_anag);
 
         Broker broker = createBroker(sql);
         if (broker.next())
-            return new Boolean(true);
+            return Boolean.TRUE;
         broker.close();
 
-        return new Boolean(false);
+        return Boolean.FALSE;
     }
 
     public Boolean findCompensoConDataInferiore(Integer esercizio,
@@ -228,19 +224,19 @@ public class CompensoHome extends BulkHome implements
             throws PersistencyException {
         SQLBuilder sql = createSQLBuilder();
         sql.addTableToHeader("TERZO");
-        sql.addSQLClause("AND", "ESERCIZIO", sql.EQUALS, esercizio);
-        sql.addSQLClause("AND", "DT_REGISTRAZIONE", sql.LESS_EQUALS,
+        sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS, esercizio);
+        sql.addSQLClause("AND", "DT_REGISTRAZIONE", SQLBuilder.LESS_EQUALS,
                 data_pagamento_esterno);
-        sql.addSQLClause("AND", "DT_CANCELLAZIONE", sql.ISNULL, null);
+        sql.addSQLClause("AND", "DT_CANCELLAZIONE", SQLBuilder.ISNULL, null);
         sql.addSQLJoin("TERZO.CD_TERZO", "COMPENSO.CD_TERZO");
-        sql.addSQLClause("AND", "TERZO.CD_ANAG", sql.EQUALS, cd_anag);
+        sql.addSQLClause("AND", "TERZO.CD_ANAG", SQLBuilder.EQUALS, cd_anag);
 
         Broker broker = createBroker(sql);
         if (broker.next())
-            return new Boolean(true);
+            return Boolean.TRUE;
         broker.close();
 
-        return new Boolean(false);
+        return Boolean.FALSE;
     }
 
     public java.util.List findCompensoIncaricoList(
@@ -248,14 +244,14 @@ public class CompensoHome extends BulkHome implements
             Incarichi_repertorio_annoBulk incarico_anno)
             throws IntrospectionException, PersistencyException {
         SQLBuilder sql = createSQLBuilder();
-        sql.addSQLClause("AND", "ESERCIZIO_REP", sql.EQUALS, incarico_anno
+        sql.addSQLClause("AND", "ESERCIZIO_REP", SQLBuilder.EQUALS, incarico_anno
                 .getEsercizio());
-        sql.addSQLClause("AND", "PG_REPERTORIO", sql.EQUALS, incarico_anno
+        sql.addSQLClause("AND", "PG_REPERTORIO", SQLBuilder.EQUALS, incarico_anno
                 .getPg_repertorio());
-        sql.addSQLClause("AND", "ESERCIZIO_LIMITE_REP", sql.EQUALS,
+        sql.addSQLClause("AND", "ESERCIZIO_LIMITE_REP", SQLBuilder.EQUALS,
                 incarico_anno.getEsercizio_limite());
-        sql.addSQLClause("AND", "PG_COMPENSO", sql.GREATER, 0);
-        sql.addSQLClause("AND", "STATO_COFI", sql.NOT_EQUALS,
+        sql.addSQLClause("AND", "PG_COMPENSO", SQLBuilder.GREATER, 0);
+        sql.addSQLClause("AND", "STATO_COFI", SQLBuilder.NOT_EQUALS,
                 CompensoBulk.STATO_ANNULLATO);
         List l = fetchAll(sql);
         getHomeCache().fetchAll(userContext);
@@ -363,7 +359,7 @@ public class CompensoHome extends BulkHome implements
         Collection<V_doc_cont_compBulk> listReversali = listDocContComp.stream().filter(V_doc_cont_compBulk::isTipoDocReversale).collect(Collectors.toList());
 
         Collection<V_doc_cont_compBulk> listDocPrincipale = listDocContComp.stream().filter(V_doc_cont_compBulk::isDocumentoPrincipale).collect(Collectors.toList());
-        if (listDocPrincipale.size()>1)
+        if (listDocPrincipale.size() > 1)
             throw new ApplicationRuntimeException("Errore nell'individuazione del compenso di conguaglio collegato al compenso principale " + compenso.getEsercizio() + "/" + compenso.getCd_cds() +
                     "/" + compenso.getCd_unita_organizzativa() + "/" + compenso.getPg_compenso() + ": il compenso principale risulta collegato a più di un documento definito come principale.");
 
@@ -372,7 +368,7 @@ public class CompensoHome extends BulkHome implements
         if (!listMandati.isEmpty() && docPrincipale.map(V_doc_cont_compBulk::isTipoDocMandato).orElse(Boolean.TRUE)) {
             //Sul compenso deve esserci un solo mandato..... se ce ne sono di più deve esistere un solo mandato principale
             if (listMandati.size() > 1) {
-                if (listMandati.stream().filter(V_doc_cont_compBulk::isDocumentoPrincipale).collect(Collectors.toList()).size()>1)
+                if (listMandati.stream().filter(V_doc_cont_compBulk::isDocumentoPrincipale).collect(Collectors.toList()).size() > 1)
                     throw new ApplicationRuntimeException("Errore nell'individuazione del compenso di conguaglio collegato al compenso principale " + compenso.getEsercizio() + "/" + compenso.getCd_cds() +
                             "/" + compenso.getCd_unita_organizzativa() + "/" + compenso.getPg_compenso() + ": il compenso principale risulta collegato a più di un mandato principale.");
             }
@@ -389,23 +385,23 @@ public class CompensoHome extends BulkHome implements
                     Ass_mandato_reversaleBulk assMandatoReversaleBulk = y.next();
 
                     if (!listReversali.stream()
-                            .filter(el->el.getManRev().getEsercizio().equals(assMandatoReversaleBulk.getEsercizio_reversale()))
-                            .filter(el->el.getManRev().getCd_cds().equals(assMandatoReversaleBulk.getCd_cds_reversale()))
-                            .filter(el->el.getManRev().getPg_doc().equals(assMandatoReversaleBulk.getPg_reversale()))
+                            .filter(el -> el.getManRev().getEsercizio().equals(assMandatoReversaleBulk.getEsercizio_reversale()))
+                            .filter(el -> el.getManRev().getCd_cds().equals(assMandatoReversaleBulk.getCd_cds_reversale()))
+                            .filter(el -> el.getManRev().getPg_doc().equals(assMandatoReversaleBulk.getPg_reversale()))
                             .findAny().isPresent()) {
                         Collection<V_doc_cont_compBulk> result2 = ((V_doc_cont_compHome) getHomeCache().getHome(V_doc_cont_compBulk.class)).findByDocumento(assMandatoReversaleBulk.getEsercizio_reversale(), assMandatoReversaleBulk.getCd_cds_reversale(), assMandatoReversaleBulk.getPg_reversale(), V_doc_cont_compBulk.TIPO_DOC_CONT_REVERSALE);
                         if (result2.isEmpty())
                             throw new ApplicationRuntimeException("Errore nell'individuazione del compenso di conguaglio collegato al compenso principale " + compenso.getEsercizio() + "/" + compenso.getCd_cds() +
-                                    "/" + compenso.getCd_unita_organizzativa() + "/" + compenso.getPg_compenso() + ": la reversale "+assMandatoReversaleBulk.getEsercizio_reversale()+"/"+assMandatoReversaleBulk.getCd_cds_reversale()+"/"+assMandatoReversaleBulk.getPg_reversale()+
+                                    "/" + compenso.getCd_unita_organizzativa() + "/" + compenso.getPg_compenso() + ": la reversale " + assMandatoReversaleBulk.getEsercizio_reversale() + "/" + assMandatoReversaleBulk.getCd_cds_reversale() + "/" + assMandatoReversaleBulk.getPg_reversale() +
                                     ", collegata al mandato del compenso principale, non risulta collegata a nessun compenso.");
-                        if (result2.size()>1)
+                        if (result2.size() > 1)
                             throw new ApplicationRuntimeException("Errore nell'individuazione del compenso di conguaglio collegato al compenso principale " + compenso.getEsercizio() + "/" + compenso.getCd_cds() +
-                                    "/" + compenso.getCd_unita_organizzativa() + "/" + compenso.getPg_compenso() + ": la reversale "+assMandatoReversaleBulk.getEsercizio_reversale()+"/"+assMandatoReversaleBulk.getCd_cds_reversale()+"/"+assMandatoReversaleBulk.getPg_reversale()+
+                                    "/" + compenso.getCd_unita_organizzativa() + "/" + compenso.getPg_compenso() + ": la reversale " + assMandatoReversaleBulk.getEsercizio_reversale() + "/" + assMandatoReversaleBulk.getCd_cds_reversale() + "/" + assMandatoReversaleBulk.getPg_reversale() +
                                     ", collegata al mandato del compenso principale, risulta collegata a troppi compensi.");
 
                         V_doc_cont_compBulk docContCompBulk = result2.stream().findAny().get();
                         final CompensoBulk compensoConguaglio = new CompensoBulk(docContCompBulk.getCd_cds_compenso(), docContCompBulk.getCd_uo_compenso(), docContCompBulk.getEsercizio_compenso(), docContCompBulk.getPg_compenso());
-                        if (compensiSelected.stream().noneMatch(el->el.equalsByPrimaryKey(compensoConguaglio)))
+                        if (compensiSelected.stream().noneMatch(el -> el.equalsByPrimaryKey(compensoConguaglio)))
                             compensiSelected.add(compensoConguaglio);
                     } else
                         existReversaleCompensoPrincipale = Boolean.TRUE;
@@ -415,12 +411,12 @@ public class CompensoHome extends BulkHome implements
             CompensoBulk compensoConguaglio = null;
 
             //Dalla lista deve essere presente un solo compenso... se non ne esistono ma ci sono reversali collegate appartenenti al compenso principale, allora restituisco quello
-            if (compensiSelected.size()>1)
-                throw new ApplicationRuntimeException("Errore nell'individuazione del compenso di conguaglio collegato al compenso principale "+compenso.getEsercizio()+"/"+compenso.getCd_cds()+
-                        "/"+compenso.getCd_unita_organizzativa()+"/"+compenso.getPg_compenso()+
+            if (compensiSelected.size() > 1)
+                throw new ApplicationRuntimeException("Errore nell'individuazione del compenso di conguaglio collegato al compenso principale " + compenso.getEsercizio() + "/" + compenso.getCd_cds() +
+                        "/" + compenso.getCd_unita_organizzativa() + "/" + compenso.getPg_compenso() +
                         ": le reversali, collegate al mandato del compenso principale, risultano collegate a compensi diversi.");
 
-            if (compensiSelected.size()==1)
+            if (compensiSelected.size() == 1)
                 compensoConguaglio = compensiSelected.get(0);
             else if (existReversaleCompensoPrincipale)
                 compensoConguaglio = compenso;
@@ -439,7 +435,7 @@ public class CompensoHome extends BulkHome implements
         List<MandatoBulk> resultMandati = new ArrayList<>();
 
         //Devo recuperare il compenso legato ai mandati di versamento/accantonamento cori
-        Collection<V_doc_cont_compBulk> listCompensi = ((V_doc_cont_compHome)getHomeCache().getHome(V_doc_cont_compBulk.class)).loadAllDocCont(compenso);
+        Collection<V_doc_cont_compBulk> listCompensi = ((V_doc_cont_compHome) getHomeCache().getHome(V_doc_cont_compBulk.class)).loadAllDocCont(compenso);
 
         List<V_doc_cont_compBulk> listMandati = listCompensi.stream().filter(V_doc_cont_compBulk::isTipoDocMandato).collect(Collectors.toList());
         List<V_doc_cont_compBulk> listReversali = listCompensi.stream().filter(V_doc_cont_compBulk::isTipoDocReversale).collect(Collectors.toList());
@@ -462,14 +458,21 @@ public class CompensoHome extends BulkHome implements
                     }
                 }
                 final MandatoBulk mandatoBulk = mandato;
-                if (mandato!=null && resultMandati.stream().noneMatch(el->el.equalsByPrimaryKey(mandatoBulk)))
-                    resultMandati.add((MandatoBulk)getHomeCache().getHome(MandatoIBulk.class).findByPrimaryKey(mandatoBulk));
+                if (mandato != null && resultMandati.stream().noneMatch(el -> el.equalsByPrimaryKey(mandatoBulk)))
+                    resultMandati.add((MandatoBulk) getHomeCache().getHome(MandatoIBulk.class).findByPrimaryKey(mandatoBulk));
             }
         }
 
         if (!listMandati.isEmpty())
-            listMandati.stream().filter(el->resultMandati.stream().noneMatch(el2->el2.equalsByPrimaryKey(el.getManRev()))).forEach(el->resultMandati.add((MandatoBulk)el.getManRev()));
+            listMandati.stream().filter(el -> resultMandati.stream().noneMatch(el2 -> el2.equalsByPrimaryKey(el.getManRev()))).forEach(el -> resultMandati.add((MandatoBulk) el.getManRev()));
 
         return resultMandati;
+    }
+
+    public Optional<Fattura_passiva_IBulk> findFatturaFornitore(UserContext userContext, CompensoBulk compenso) throws PersistencyException {
+        PersistentHome fattura_passivaHome = getHomeCache().getHome(Fattura_passiva_IBulk.class);
+        SQLBuilder sql = fattura_passivaHome.createSQLBuilder();
+        sql.addClause(FindClause.AND, "compenso", SQLBuilder.EQUALS, compenso);
+        return fattura_passivaHome.fetchAll(sql).stream().findAny();
     }
 }
