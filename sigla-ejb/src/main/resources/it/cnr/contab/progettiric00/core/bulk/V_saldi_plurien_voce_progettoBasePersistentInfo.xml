@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.progettiric00.core.bulk.V_saldi_plurien_voce_progettoBase"
+	keyClassName="it.cnr.contab.progettiric00.core.bulk.V_saldi_plurien_voce_progettoKey"
+	homeClassName="it.cnr.contab.progettiric00.core.bulk.V_saldi_plurien_voce_progettoHome">
+	<defaultColumnMap
+		tableName="V_SALDI_PLURIENNALI_VOCE_PROGETTO">
+		<columnMapping
+			columnName="PG_PROGETTO"
+			propertyName="pgProgetto"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="ESERCIZIO_VOCE"
+			propertyName="esercizioVoce"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="false" />
+		<columnMapping
+			columnName="TI_APPARTENENZA"
+			propertyName="tiAppartenenza"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false" />
+		<columnMapping
+			columnName="TI_GESTIONE"
+			propertyName="tiGestione"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false" />
+		<columnMapping
+			columnName="CD_ELEMENTO_VOCE"
+			propertyName="cdElementoVoce"
+			sqlTypeName="VARCHAR"
+			columnSize="50"
+			nullable="false" />
+		<columnMapping
+			columnName="ESERCIZIO_PIANO"
+			propertyName="esercizioPiano"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="false" />
+		<columnMapping
+			columnName="IMPORTO_PLURIENNALE"
+			propertyName="importoPluriennale"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="pgProgetto" />
+	<persistentProperty
+		name="esercizioVoce" />
+	<persistentProperty
+		name="tiAppartenenza" />
+	<persistentProperty
+		name="tiGestione" />
+	<persistentProperty
+		name="cdElementoVoce" />
+	<persistentProperty
+		name="esercizioPiano" />
+	<persistentProperty
+		name="importoPluriennale" />
+</SQLPersistentInfo>

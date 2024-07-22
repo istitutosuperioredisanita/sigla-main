@@ -22,8 +22,14 @@ import javax.ejb.Remote;
 
 import it.cnr.contab.prevent01.bulk.Pdg_esercizioBulk;
 import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
+import it.cnr.contab.progettiric00.core.bulk.Progetto_piano_economicoBulk;
+import it.cnr.contab.progettiric00.core.bulk.V_saldi_piano_econom_progettoBulk;
+import it.cnr.contab.progettiric00.core.bulk.V_saldi_plurien_voce_progettoBulk;
 import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 @Remote
@@ -45,4 +51,5 @@ Pdg_esercizioBulk getPdgEsercizio(it.cnr.jada.UserContext param0) throws it.cnr.
 void removePianoEconomico(it.cnr.jada.UserContext param0,it.cnr.contab.progettiric00.core.bulk.ProgettoBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 it.cnr.jada.bulk.OggettoBulk modificaConBulk(UserContext param0, it.cnr.jada.bulk.OggettoBulk param1, boolean param2) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 List<ProgettoBulk> getAllChildren(it.cnr.jada.UserContext param0, ProgettoBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+    public List<V_saldi_piano_econom_progettoBulk> getPluriennaliProgettoPianoEco(UserContext userContext, Progetto_piano_economicoBulk bulk) throws ComponentException, PersistencyException, RemoteException;
 }

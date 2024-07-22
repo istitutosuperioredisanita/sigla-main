@@ -1795,6 +1795,14 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 				   	    				" non può essere inferiore all'utilizzato spese 'fonti interne' e 'natura reimpiego' ("+
 				   	    				new EuroFormat().format(saldo.getUtilizzatoAssestatoCofinanziamento())+")!");
 							});
+							Optional.ofNullable(ppe.getIm_spesa_finanziato())
+									.filter(el->el.subtract(saldo.getUtilizzatoAssestatoFinanziamento()).subtract(saldo.getImpPluriennale()).compareTo(BigDecimal.ZERO)<0).ifPresent(el->{
+										throw new ApplicationRuntimeException("Attenzione: l'importo finanziato rimodulato del piano economico "+
+												ppe.getEsercizio_piano()+"/"+ppe.getCd_voce_piano()+
+												" non può essere inferiore all'utilizzato spese 'fonti esterne' ("+
+												new EuroFormat().format(saldo.getUtilizzatoAssestatoFinanziamento())+")!");
+									});
+
 		   				} else {
 		   					Optional.ofNullable(saldo.getImportoFin())
 				   				.filter(el->el.subtract(saldo.getAssestatoFinanziamento()).compareTo(BigDecimal.ZERO)<0).ifPresent(el->{
@@ -2491,6 +2499,13 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 		} catch (PersistencyException e) {
 			throw new ComponentException(e);
 		}
+	}
+
+
+	public List<V_saldi_piano_econom_progettoBulk> getPluriennaliProgettoPianoEco(UserContext userContext, Progetto_piano_economicoBulk bulk) throws ComponentException, PersistencyException {
+		V_saldi_piano_econom_progettoHome pluriHome = (V_saldi_piano_econom_progettoHome)getHome(userContext,V_saldi_piano_econom_progettoBulk.class);
+
+		return pluriHome.cercaPluriennaliPianoEconomico(bulk,"S");
 	}
 
 	private void validaAnagraficheProgetto(UserContext uc, ProgettoBulk bulk) throws ComponentException, IntrospectionException, PersistencyException, SQLException{

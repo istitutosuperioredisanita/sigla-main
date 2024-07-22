@@ -3408,7 +3408,7 @@ private void creaObbligazionePluriennaleVoce(UserContext aUC, ObbligazioneBulk o
 			for (V_pdg_obbligazione_speBulk linea : lineeAttivita) {
 				BigDecimal percentualeGae = getPercentualeLineAttivita(linea, obbligazione);
 
-				if(percentualeGae.compareTo(new BigDecimal(0))>0) {
+				//if(percentualeGae.compareTo(new BigDecimal(0))>0) {
 					Elemento_voceBulk elemento_voceBulk = (Elemento_voceBulk) elemVoceHome.findByPrimaryKey(
 							new Elemento_voceBulk(linea.getCd_elemento_voce(), linea.getEsercizio(), linea.getTi_appartenenza(), linea.getTi_gestione()));
 					obblPlurVoce = new Obbligazione_pluriennale_voceBulk();
@@ -3426,7 +3426,7 @@ private void creaObbligazionePluriennaleVoce(UserContext aUC, ObbligazioneBulk o
 					obblPlurVoce.setAnno(obbPlur.getAnno());
 					obblPlurVoce.setToBeCreated();
 					obbPlur.addToRigheVoceCollBulkList(obblPlurVoce);
-				}
+				//}
 			}
 		}
 	}

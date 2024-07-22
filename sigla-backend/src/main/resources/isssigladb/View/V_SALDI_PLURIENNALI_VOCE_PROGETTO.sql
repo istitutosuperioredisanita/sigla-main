@@ -1,3 +1,11 @@
+ CREATE OR REPLACE FORCE EDITIONABLE VIEW "V_SALDI_PLURIENNALI_VOCE_PROGETTO" ("PG_PROGETTO", "ESERCIZIO_VOCE", "TI_APPARTENENZA", "TI_GESTIONE", "CD_ELEMENTO_VOCE", "ESERCIZIO_PIANO", "IMPORTO_PLURIENNALE") AS
+  (SELECT    b.pg_progetto,
+             a.esercizio_voce, a.ti_appartenenza, a.ti_gestione, a.cd_voce,
+             a.anno,
+             SUM (a.importo) importo_pluriennalE
+   FROM obbligazione_pluriennale_voce a inner join v_linea_attivita_valida b on a.cd_centro_responsabilita = b.cd_centro_responsabilita
+                 AND a.cd_linea_attivita = b.cd_linea_attivita
+   GROUP BY b.pg_progetto, a.esercizio_voce, a.ti_appartenenza, a.ti_gestione, a.cd_voce,a.anno);
 CREATE OR REPLACE FORCE EDITIONABLE VIEW "V_SALDI_PIANO_ECONOM_PROGETTO" ("PG_PROGETTO", "ESERCIZIO", "CD_UNITA_PIANO", "CD_VOCE_PIANO", "TI_GESTIONE", "IMPORTO_FIN", "STANZIAMENTO_FIN", "VARIAPIU_FIN", "VARIAMENO_FIN", "TRASFPIU_FIN", "TRASFMENO_FIN", "IMPORTO_COFIN", "STANZIAMENTO_COFIN", "VARIAPIU_COFIN", "VARIAMENO_COFIN", "TRASFPIU_COFIN", "TRASFMENO_COFIN", "IMPACC_FIN", "IMPACC_COFIN", "MANRIS_FIN", "MANRIS_COFIN","IMPORTO_PLURIENNALE") AS
   (SELECT   x.pg_progetto, x.esercizio, x.cd_unita_piano, x.cd_voce_piano,
              x.ti_gestione,
@@ -51,7 +59,7 @@ CREATE OR REPLACE FORCE EDITIONABLE VIEW "V_SALDI_PIANO_ECONOM_PROGETTO" ("PG_PR
                  AND a.ti_appartenenza = b.ti_appartenenza
                  AND a.ti_gestione = b.ti_gestione
                  AND a.cd_elemento_voce = b.cd_elemento_voce
-                 /*pluriennali*/
+                 --pluriennali
                 UNION ALL SELECT a.pg_progetto, b.esercizio_piano, a.cd_unita_organizzativa,
                      a.cd_voce_piano, b.ti_gestione,
                      0 importo_fin,
