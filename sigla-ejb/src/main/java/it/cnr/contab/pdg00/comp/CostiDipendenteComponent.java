@@ -2393,8 +2393,7 @@ public boolean isCostiDipendenteRipartiti (UserContext userContext, String cd_un
 					Optional<Obbligazione_scadenzarioBulk> scadenzario = obbligazione.getObbligazione_scadenzarioColl().stream()
 							.filter(scad -> scad.getIm_associato_doc_amm().compareTo(BigDecimal.ZERO) == 0)
 							.filter(scad -> scad.getIm_associato_doc_contabile().compareTo(BigDecimal.ZERO) == 0)
-							.filter(scad -> scad.getIm_scadenza().compareTo(el.getIm_totale()) >= 0)
-							.min(Comparator.comparing(Obbligazione_scadenzarioBulk::getPg_obbligazione_scadenzario));
+							.max(Comparator.comparing(Obbligazione_scadenzarioBulk::getPg_obbligazione_scadenzario));
 
 					if (!scadenzario.isPresent())
 						throw new ApplicationRuntimeException("Scadenza dell'obbligazione " + obbligazione +
