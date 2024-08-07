@@ -90,6 +90,7 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Stream;
@@ -930,11 +931,16 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 				});
 		Optional.ofNullable(storageObject.<String>getPropertyValue("sigla_commons_aspect:utente_applicativo"))
 				.ifPresent(s -> allegato.setUtenteSIGLA(s));
-        Optional.ofNullable(storageObject.<GregorianCalendar>getPropertyValue("sigla_commons_aspect:data_cancellazione"))
-                .ifPresent(g -> allegato.setDataCancellazione(Date.from(g.toZonedDateTime().toInstant())));
 
-        Optional.ofNullable(storageObject.<GregorianCalendar>getPropertyValue("sigla_commons_aspect:data_protocollo"))
-                .ifPresent(g -> allegato.setDataProtocollo(Date.from(g.toZonedDateTime().toInstant())));
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM d H:mm:ss zzz yyyy", Locale.ENGLISH);
+		Optional.ofNullable(storageObject.<String>getPropertyValue("sigla_commons_aspect:data_cancellazione"))
+                .ifPresent(g ->
+						allegato.setDataCancellazione(Date.from(ZonedDateTime.parse(g, formatter).toInstant())));
+
+        Optional.ofNullable(storageObject.<String>getPropertyValue("sigla_commons_aspect:data_protocollo"))
+                .ifPresent(g ->
+						allegato.setDataProtocollo(Date.from(ZonedDateTime.parse(g, formatter).toInstant())));
         Optional.ofNullable(storageObject.<String>getPropertyValue("sigla_commons_aspect:numero_protocollo"))
                 .ifPresent(s -> allegato.setNumProtocollo(s));
 
