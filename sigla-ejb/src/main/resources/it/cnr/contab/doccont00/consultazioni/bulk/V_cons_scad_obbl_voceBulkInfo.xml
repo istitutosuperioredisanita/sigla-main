@@ -20,6 +20,17 @@
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xmlns="https://contab.cnr.it/schema/SIGLA" 
 		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<fieldProperty
+			name="im_voce"
+			property="im_voce"
+			label="Importo Voce"
+			inputType="TEXT"
+			maxLength="13"
+			inputSize="13"
+			formatName = "it.cnr.contab.util.EuroFormat"
+	/>
+
 	<fieldProperty
 			name="pg_progetto"
 			property="pg_progetto"
@@ -93,6 +104,9 @@
 			caseSensitiveSearch="false" />
 
 	<formFieldProperty
+			name="im_voce" />
+
+	<formFieldProperty
 			name="pg_progetto" />
 	<formFieldProperty
 			name="cd_progetto" />
@@ -108,6 +122,9 @@
 			name="cd_tipo_progetto" />
 	<formFieldProperty
 			name="ds_tipo_progetto" />
+
+	<columnFieldProperty
+			name="im_voce" />
 
 	<columnFieldProperty
 			name="pg_progetto" />
