@@ -48,6 +48,8 @@ public class V_cons_scad_accertHome extends BulkHome {
 		super(clazz, connection, persistentCache);
 	}
 
+
+
 	public SQLBuilder selectByClause(UserContext usercontext, CompoundFindClause compoundfindclause) throws PersistencyException
 	{
 		SQLBuilder sql = super.selectByClause(usercontext, compoundfindclause);

@@ -1956,6 +1956,9 @@
     <changeSet author="sigla" runOnChange="true" id="create-view-V_CONS_SCAD_ACCERT_VOCE">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_CONS_SCAD_ACCERT_VOCE.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_CONS_SCAD_OBBL_VOCE">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_CONS_SCAD_OBBL_VOCE.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
     <changeSet dbms="h2, postgresql" author="sigla" runOnChange="true" id="createView-v_cdr_valido">
         <createView replaceIfExists="true" fullDefinition="false" viewName="v_cdr_valido"> SELECT b.esercizio,
             a.esercizio_inizio,
