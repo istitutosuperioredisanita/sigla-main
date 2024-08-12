@@ -23,6 +23,16 @@
 		longDescription="Consul scad accertamenti voce">
 
 	<fieldProperty
+			name="im_voce"
+			property="im_voce"
+			label="Importo Voce"
+			inputType="TEXT"
+			maxLength="13"
+			inputSize="13"
+			formatName = "it.cnr.contab.util.EuroFormat"
+	/>
+
+	<fieldProperty
 			name="pg_progetto"
 			property="pg_progetto"
 			inputType="TEXT"
@@ -95,6 +105,8 @@
 			caseSensitiveSearch="false" />
 
 	<formFieldProperty
+			name="im_voce" />
+	<formFieldProperty
 		name="pg_progetto" />
 	<formFieldProperty
 		name="cd_progetto" />
@@ -110,6 +122,9 @@
 		name="cd_tipo_progetto" />
 	<formFieldProperty
 			name="ds_tipo_progetto" />
+
+	<columnFieldProperty
+			name="im_voce" />
 
 	<columnFieldProperty
 			name="pg_progetto" />

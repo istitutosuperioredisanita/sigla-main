@@ -22,6 +22,14 @@
 	<defaultColumnMap
 		tableName="V_CONS_SCAD_ACCERT_VOCE">
 		<columnMapping
+				columnName="IM_VOCE"
+				propertyName="im_voce"
+				sqlTypeName="DECIMAL"
+				columnSize="15"
+				columnScale="2"
+				nullable="false" />
+
+		<columnMapping
 				columnName="PG_PROGETTO"
 				propertyName="pg_progetto"
 				sqlTypeName="DECIMAL"
@@ -70,6 +78,8 @@
 				nullable="false"
 				primary="true" />
 	</defaultColumnMap>
+	<persistentProperty
+			name="im_voce" />
 	<persistentProperty
 		name="cd_progetto" />
 	<persistentProperty

@@ -21,9 +21,12 @@
  */
 package it.cnr.contab.doccont00.consultazioni.bulk;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 public class V_cons_scad_accert_voceBulk extends V_cons_scad_accertBulk {
+
+    private java.math.BigDecimal im_voce;
     private java.lang.String cd_progetto;
 
     private java.lang.Integer pg_progetto;
@@ -39,6 +42,13 @@ public class V_cons_scad_accert_voceBulk extends V_cons_scad_accertBulk {
 
     private java.lang.String ds_tipo_progetto;
 
+    public BigDecimal getIm_voce() {
+        return im_voce;
+    }
+
+    public void setIm_voce(BigDecimal im_voce) {
+        this.im_voce = im_voce;
+    }
 
     public String getCd_progetto() {
         return cd_progetto;
