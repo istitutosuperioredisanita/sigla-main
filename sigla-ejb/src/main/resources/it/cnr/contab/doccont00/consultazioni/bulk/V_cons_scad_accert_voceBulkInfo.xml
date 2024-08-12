@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd"
+		longDescription="Consul scad accertamenti voce">
+
+	<fieldProperty
+			name="im_voce"
+			property="im_voce"
+			label="Importo Voce"
+			inputType="TEXT"
+			maxLength="13"
+			inputSize="13"
+			formatName = "it.cnr.contab.util.EuroFormat"
+	/>
+
+	<fieldProperty
+			name="pg_progetto"
+			property="pg_progetto"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			label=" Prog. Progetto" />
+
+	<fieldProperty
+			name="cd_progetto"
+			property="cd_progetto"
+			inputType="TEXT"
+			inputSize="30"
+			maxLength="30"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
+			label="Codice progetto" />
+	<fieldProperty
+			name="ds_progetto"
+			property="ds_progetto"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="400"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
+			label="Descrizione progetto" />
+
+	<fieldProperty
+			name="dtInizio"
+			property="dtInizio"
+			inputType="TEXT"
+			enabledOnSearch="true"
+			formatName="date_short"
+			enabledOnEdit="false"
+			label="Data Inizio"
+			nullable="false" />
+	<fieldProperty
+			name="dtFine"
+			property="dtFine"
+			inputType="TEXT"
+			enabledOnSearch="true"
+			readonlyProperty="RODt_fine"
+			formatName="date_short"
+			label="Data Fine" />
+	<fieldProperty
+			name="dtProroga"
+			property="dtProroga"
+			inputType="TEXT"
+			enabledOnSearch="true"
+			formatName="date_short"
+			label="Data Proroga" />
+	<fieldProperty
+			name="cd_tipo_progetto"
+			property="cd_tipo_progetto"
+			maxLength="10"
+			inputSize="10"
+			inputType="TEXT"
+			enabledOnSearch="true"
+			enabledOnEdit="false"
+			label="Codice" />
+
+	<fieldProperty
+			name="ds_tipo_progetto"
+			property="ds_tipo_progetto"
+			maxLength="100"
+			inputSize="100"
+			inputType="TEXT"
+			label="Descrizione"
+			enabledOnSearch="true"
+			caseSensitiveSearch="false" />
+
+	<formFieldProperty
+			name="im_voce" />
+	<formFieldProperty
+		name="pg_progetto" />
+	<formFieldProperty
+		name="cd_progetto" />
+	<formFieldProperty
+		name="ds_progetto" />
+	<formFieldProperty
+		name="dtInizio" />
+	<formFieldProperty
+		name="dtFine" />
+	<formFieldProperty
+		name="dtProroga" />
+	<formFieldProperty
+		name="cd_tipo_progetto" />
+	<formFieldProperty
+			name="ds_tipo_progetto" />
+
+	<columnFieldProperty
+			name="im_voce" />
+
+	<columnFieldProperty
+			name="pg_progetto" />
+	<columnFieldProperty
+			name="cd_progetto" />
+	<columnFieldProperty
+			name="ds_progetto" />
+	<columnFieldProperty
+			name="dtInizio" />
+	<columnFieldProperty
+			name="dtFine" />
+	<columnFieldProperty
+			name="dtProroga" />
+	<columnFieldProperty
+			name="cd_tipo_progetto" />
+	<columnFieldProperty
+			name="ds_tipo_progetto" />
+
+</bulkInfo>

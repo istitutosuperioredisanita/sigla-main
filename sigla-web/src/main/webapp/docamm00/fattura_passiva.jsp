@@ -23,7 +23,8 @@ function doScaricaFatturaHtml() {
 </script>
 </head>
 <body class="Form">
-<%	bp.openFormWindow(pageContext);
+<%
+    bp.openFormWindow(pageContext);
 	JSPUtils.tabbed(
 					pageContext,
 					"tab",
