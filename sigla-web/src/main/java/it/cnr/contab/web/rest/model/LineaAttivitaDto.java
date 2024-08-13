@@ -4,51 +4,31 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoKey;
 import it.cnr.contab.config00.latt.bulk.CofogKey;
 import it.cnr.contab.config00.latt.bulk.Gruppo_linea_attivitaKey;
 import it.cnr.contab.config00.latt.bulk.Insieme_laKey;
-import it.cnr.contab.config00.latt.bulk.Tipo_linea_attivitaKey;
 import it.cnr.contab.config00.pdcfin.bulk.FunzioneKey;
 import it.cnr.contab.config00.pdcfin.bulk.NaturaKey;
 import it.cnr.contab.config00.sto.bulk.CdrKey;
 import it.cnr.contab.prevent01.bulk.Pdg_missioneKey;
-import it.cnr.contab.prevent01.bulk.Pdg_programmaKey;
 
 import java.io.Serializable;
 
 public class LineaAttivitaDto implements Serializable {
 
     private Integer esercizio_inizio;
-
     private Integer esercizio_fine;
-
     private String cd_linea_attivita;
     private String denominazione;
-
     private String ds_linea_attivita;
-
     private EnumTiGestioneLineaAttivita ti_gestione;
     private Boolean fl_limite_ass_obblig;
-
     private Gruppo_linea_attivitaKey gruppoLineaAttivitaKey;
-
-    private Tipo_linea_attivitaKey tipoLineaAttivitaKey;
-
     private TerzoKey responsabileKey;
-
     private FunzioneKey funzioneKey;
-
     private NaturaKey naturaKey;
-
     private CdrKey centro_responsabilitaKey;
-
     private ProgettoDto progettoKey;
-
     private Insieme_laKey insieme_laKey;
-
     private CofogKey cofogKey;
-
-    private Pdg_programmaKey pdgProgrammaKey;
-
     private Pdg_missioneKey pdgMissioneKey;
-
     public Integer getEsercizio_inizio() {
         return esercizio_inizio;
     }
@@ -113,14 +93,6 @@ public class LineaAttivitaDto implements Serializable {
         this.gruppoLineaAttivitaKey = gruppoLineaAttivitaKey;
     }
 
-    public Tipo_linea_attivitaKey getTipoLineaAttivitaKey() {
-        return tipoLineaAttivitaKey;
-    }
-
-    public void setTipoLineaAttivitaKey(Tipo_linea_attivitaKey tipoLineaAttivitaKey) {
-        this.tipoLineaAttivitaKey = tipoLineaAttivitaKey;
-    }
-
     public TerzoKey getResponsabileKey() {
         return responsabileKey;
     }
@@ -175,14 +147,6 @@ public class LineaAttivitaDto implements Serializable {
 
     public void setCofogKey(CofogKey cofogKey) {
         this.cofogKey = cofogKey;
-    }
-
-    public Pdg_programmaKey getPdgProgrammaKey() {
-        return pdgProgrammaKey;
-    }
-
-    public void setPdgProgrammaKey(Pdg_programmaKey pdgProgrammaKey) {
-        this.pdgProgrammaKey = pdgProgrammaKey;
     }
 
     public Pdg_missioneKey getPdgMissioneKey() {
