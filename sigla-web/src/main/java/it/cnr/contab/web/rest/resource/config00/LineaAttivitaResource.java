@@ -42,7 +42,6 @@ public class LineaAttivitaResource implements LineaAttivitaLocal {
                 new CdrBulk(lineaAttivita.getCentro_responsabilitaKey().getCd_centro_responsabilita()));
         workpackageBulk.setCentro_responsabilita(cdrBulk);
         workpackageBulk.setCd_linea_attivita(lineaAttivita.getCd_linea_attivita());
-       // workpackageBulk.setTipo_linea_attivita(new Tipo_linea_attivitaBulk(Optional.ofNullable(lineaAttivita.getTipoLineaAttivitaKey()).map(Tipo_linea_attivitaKey::getCd_tipo_linea_attivita).orElse("")));
         workpackageBulk.setDenominazione(lineaAttivita.getDenominazione());
         workpackageBulk.setGruppo_linea_attivita(new Gruppo_linea_attivitaBulk(Optional.ofNullable(lineaAttivita.getGruppoLineaAttivitaKey()).map(Gruppo_linea_attivitaKey::getCd_gruppo_linea_attivita).orElse("")));
         workpackageBulk.setFunzione(new FunzioneBulk(lineaAttivita.getFunzioneKey().getCd_funzione()));
@@ -65,7 +64,6 @@ public class LineaAttivitaResource implements LineaAttivitaLocal {
         workpackageBulk.setResponsabile(new TerzoBulk(lineaAttivita.getResponsabileKey().getCd_terzo()));
         workpackageBulk.setFl_limite_ass_obblig(lineaAttivita.getFl_limite_ass_obblig());
         workpackageBulk.setCofog( new CofogBulk(lineaAttivita.getCofogKey().getCd_cofog()));
-        //workpackageBulk.setPdgProgramma( new Pdg_programmaBulk(lineaAttivita.getPdgProgrammaKey().getCd_programma()));
         workpackageBulk.setPdgMissione( new Pdg_missioneBulk(lineaAttivita.getPdgMissioneKey().getCd_missione()));
         workpackageBulk.setToBeCreated();
         workpackageBulk=lineaAttivitaComponentSession.creaLineaAttivitaWs(userContext,workpackageBulk);
