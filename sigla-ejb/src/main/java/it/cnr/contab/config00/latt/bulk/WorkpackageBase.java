@@ -17,10 +17,7 @@
 
 package it.cnr.contab.config00.latt.bulk;
 
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
+import it.cnr.jada.persistency.Keyed;
 
 public class WorkpackageBase extends WorkpackageKey implements Keyed {
 	// CD_CDR_COLLEGATO VARCHAR(30)
