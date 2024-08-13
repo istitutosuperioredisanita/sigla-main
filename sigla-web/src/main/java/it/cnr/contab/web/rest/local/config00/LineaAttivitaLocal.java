@@ -27,10 +27,8 @@ import it.cnr.contab.web.rest.model.LineaAttivitaDto;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.validation.Valid;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -43,8 +41,9 @@ import javax.ws.rs.core.Response;
 @Api("Linea Attivita")
 public interface LineaAttivitaLocal {
 
-	@PUT
-    @ApiOperation(value = "Inserisce un anagrafico ed un terzo",
+	@POST
+    @Valid
+    @ApiOperation(value = "Inserisce Linea Attivita",
             notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.LINEA_ATTIVITA +"'",
             response = LineaAttivitaDto.class,
             authorizations = {

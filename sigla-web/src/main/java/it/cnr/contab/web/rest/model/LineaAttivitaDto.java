@@ -10,7 +10,6 @@ import it.cnr.contab.config00.pdcfin.bulk.NaturaKey;
 import it.cnr.contab.config00.sto.bulk.CdrKey;
 import it.cnr.contab.prevent01.bulk.Pdg_missioneKey;
 import it.cnr.contab.prevent01.bulk.Pdg_programmaKey;
-import it.cnr.contab.progettiric00.core.bulk.ProgettoKey;
 
 import java.io.Serializable;
 
@@ -40,7 +39,7 @@ public class LineaAttivitaDto implements Serializable {
 
     private CdrKey centro_responsabilitaKey;
 
-    private ProgettoKey progettoKey;
+    private ProgettoDto progettoKey;
 
     private Insieme_laKey insieme_laKey;
 
@@ -154,11 +153,11 @@ public class LineaAttivitaDto implements Serializable {
         this.centro_responsabilitaKey = centro_responsabilitaKey;
     }
 
-    public ProgettoKey getProgettoKey() {
+    public ProgettoDto getProgettoKey() {
         return progettoKey;
     }
 
-    public void setProgettoKey(ProgettoKey progettoKey) {
+    public void setProgettoKey(ProgettoDto progettoKey) {
         this.progettoKey = progettoKey;
     }
 
