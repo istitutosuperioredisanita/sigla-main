@@ -25,6 +25,7 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.web.rest.config.SIGLARoles;
 import it.cnr.contab.web.rest.model.AnagraficaInfoDTO;
 
+
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.servlet.http.HttpServletRequest;
@@ -48,6 +49,25 @@ public interface TerzoLocal {
             authorizations = @Authorization(value = "BASIC")
     )
     Response update(@Context HttpServletRequest request, TerzoBulk terzoBulk) throws Exception;
+    @GET
+    @Path("/{cd_terzo}")
+    @ApiOperation(value = "Ritorna il terzo dal codice ",
+            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.TERZO +"'",
+            response = TerzoBulk.class,
+            authorizations = @Authorization(value = "BASIC")
+    )
+    Response get( @PathParam("cd_terzo") Integer cd_terzo) throws Exception;
+
+
+    @GET
+    @Path("/query")
+    @ApiOperation(value = "Ritorna i terzo associati all'angrafico con il codice fiscale passato in input ",
+            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.TERZO +"'",
+            response = TerzoBulk.class,
+            responseContainer = "List",
+            authorizations = @Authorization(value = "BASIC")
+    )
+    Response getList(@QueryParam("codicefiscale")  String codicefiscale) throws Exception;
 
 	@GET
     @Path("/tiporapporto/{codicefiscale}")

@@ -20,9 +20,9 @@ package it.cnr.contab.web.rest.local.config00;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
-import it.cnr.contab.client.docamm.LineaAttivita;
 import it.cnr.contab.web.rest.config.SIGLARoles;
 import it.cnr.contab.web.rest.config.SIGLASecurityContext;
+import it.cnr.contab.web.rest.model.LineaAttivitaDto;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -46,7 +46,7 @@ public interface LineaAttivitaLocal {
 	@PUT
     @ApiOperation(value = "Inserisce un anagrafico ed un terzo",
             notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.LINEA_ATTIVITA +"'",
-            response = LineaAttivita.class,
+            response = LineaAttivitaDto.class,
             authorizations = {
                     @Authorization(value = "BASIC"),
                     @Authorization(value = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
@@ -55,5 +55,5 @@ public interface LineaAttivitaLocal {
                     @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDR)
             }
     )
-    Response insert(@Context HttpServletRequest request, LineaAttivita lineaAttivita) throws Exception;
+    Response insert(@Context HttpServletRequest request, LineaAttivitaDto lineaAttivita) throws Exception;
 }
