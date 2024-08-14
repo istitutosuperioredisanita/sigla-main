@@ -1408,5 +1408,12 @@ public java.util.List findListaGAEFEWS(UserContext userContext,String cdr,Intege
 			throw new ComponentException("La linea Attività indicata gia esiste");
 		}
 	}
+	public Boolean deleteLineaAttivitaWs(it.cnr.jada.UserContext uc, String cd_centro_responsabilita, String cd_linea_attivita) throws ComponentException, PersistencyException {
+		WorkpackageBulk workpackageBulk= ( WorkpackageBulk) this.findByPrimaryKey(uc, new WorkpackageBulk(cd_centro_responsabilita,cd_linea_attivita));
+		if ( !Optional.ofNullable(workpackageBulk).isPresent())
+			return Boolean.FALSE;
+		eliminaConBulk(uc,workpackageBulk);
+		return Boolean.TRUE;
+	}
 
 }
