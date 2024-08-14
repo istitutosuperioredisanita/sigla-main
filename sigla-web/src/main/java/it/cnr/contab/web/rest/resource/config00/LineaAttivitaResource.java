@@ -187,4 +187,19 @@ public class LineaAttivitaResource implements LineaAttivitaLocal {
         }
     }
 
+    @Override
+    public Response delete(String cd_centro_responsabilita, String cd_linea_attivita) throws Exception {
+        try{
+            CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
+                Boolean result=lineaAttivitaComponentSession.deleteLineaAttivitaWs(userContext,cd_centro_responsabilita,cd_linea_attivita);
+                if ( result)
+                    return Response.status(Response.Status.OK).build();
+
+                return Response.status(Response.Status.NO_CONTENT).build();
+
+        }catch (Throwable e){
+            throw new RestException(Response.Status.INTERNAL_SERVER_ERROR,String.format(e.getMessage()));
+        }
+    }
+
 }
