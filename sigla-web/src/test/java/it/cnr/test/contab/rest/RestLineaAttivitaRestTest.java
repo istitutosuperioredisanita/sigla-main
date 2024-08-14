@@ -50,7 +50,6 @@ public class RestLineaAttivitaRestTest {
         c.setProgettoKey(new ProgettoDto(2024,1639));
         c.setPdgMissioneKey(new Pdg_missioneKey("MISS01"));
         c.setCofogKey(new CofogKey("01.4"));
-        c.setFl_limite_ass_obblig(Boolean.TRUE);
         c.setResponsabileKey( new TerzoKey(3942));
         c.setTi_gestione(EnumTiGestioneLineaAttivita.SPESA);
         c.setNaturaKey( new NaturaKey("2"));
