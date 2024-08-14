@@ -218,4 +218,24 @@ public java.util.List findListaGAEFEWS(it.cnr.jada.UserContext param0,String par
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
+	@Override
+	public Boolean deleteLineaAttivitaWs(UserContext param0, String cd_centro_responsabilita, String cd_linea_attivita) throws ComponentException, PersistencyException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			Boolean result =  ((Linea_attivitaComponent)componentObj).deleteLineaAttivitaWs(param0,cd_centro_responsabilita,cd_linea_attivita);
+			component_invocation_succes(param0,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(param0,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(param0,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
 }

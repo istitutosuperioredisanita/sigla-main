@@ -439,4 +439,24 @@ public List findListaGAEFEWS(UserContext userContext, String cdr, Integer modulo
 			}
 		}
 	}
+
+	@Override
+	public Boolean deleteLineaAttivitaWs(UserContext param0, String cd_centro_responsabilita, String cd_linea_attivita) throws ComponentException, RemoteException,PersistencyException {
+		try {
+			return (Boolean) invoke("deleteLineaAttivitaWs",new Object[] {
+					param0,
+					cd_centro_responsabilita,
+					cd_linea_attivita});
+		} catch(java.rmi.RemoteException e) {
+			throw e;
+		} catch(java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch(it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch(Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
 }
