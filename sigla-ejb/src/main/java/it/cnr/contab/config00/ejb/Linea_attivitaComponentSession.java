@@ -23,6 +23,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 
 import javax.ejb.Remote;
+import java.rmi.RemoteException;
 
 @Remote
 public interface Linea_attivitaComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
@@ -37,5 +38,7 @@ WorkpackageBulk completaOggetto(UserContext userContext,WorkpackageBulk linea)th
 java.util.List findListaGAEFEWS(it.cnr.jada.UserContext userContext,String cdr,Integer modulo)throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 
 WorkpackageBulk creaLineaAttivitaWs(it.cnr.jada.UserContext param0,WorkpackageBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException,PersistencyException;
+
+Boolean deleteLineaAttivitaWs(it.cnr.jada.UserContext uc, String cd_centro_responsabilita, String cd_linea_attivita) throws ComponentException, RemoteException,PersistencyException;
 
 }

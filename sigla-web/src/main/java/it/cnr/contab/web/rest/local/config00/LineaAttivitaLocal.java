@@ -67,4 +67,18 @@ public interface LineaAttivitaLocal {
             }
     )
     Response get(@PathParam("cd_centro_responsabilita") String cd_centro_responsabilita,@PathParam("cd_linea_attivita") String cd_linea_attivita) throws Exception;
+    @DELETE
+    @Path("/{cd_centro_responsabilita}/{cd_linea_attivita}")
+    @ApiOperation(value = "Elimina una Linea Attivita",
+            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.LINEA_ATTIVITA +"'",
+            response = String.class,
+            authorizations = {
+                    @Authorization(value = "BASIC"),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDS),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDR)
+            }
+    )
+    Response delete(@PathParam("cd_centro_responsabilita") String cd_centro_responsabilita,@PathParam("cd_linea_attivita") String cd_linea_attivita) throws Exception;
 }
