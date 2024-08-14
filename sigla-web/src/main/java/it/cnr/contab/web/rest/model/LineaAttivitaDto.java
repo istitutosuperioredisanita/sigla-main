@@ -9,17 +9,18 @@ import it.cnr.contab.config00.pdcfin.bulk.NaturaKey;
 import it.cnr.contab.config00.sto.bulk.CdrKey;
 import it.cnr.contab.prevent01.bulk.Pdg_missioneKey;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 public class LineaAttivitaDto implements Serializable {
-
+    @NotNull
     private Integer esercizio_inizio;
     private Integer esercizio_fine;
     private String cd_linea_attivita;
     private String denominazione;
     private String ds_linea_attivita;
     private EnumTiGestioneLineaAttivita ti_gestione;
-    private Boolean fl_limite_ass_obblig;
+
     private Gruppo_linea_attivitaKey gruppoLineaAttivitaKey;
     private TerzoKey responsabileKey;
     private FunzioneKey funzioneKey;
@@ -77,13 +78,7 @@ public class LineaAttivitaDto implements Serializable {
         this.ti_gestione = ti_gestione;
     }
 
-    public Boolean getFl_limite_ass_obblig() {
-        return fl_limite_ass_obblig;
-    }
 
-    public void setFl_limite_ass_obblig(Boolean fl_limite_ass_obblig) {
-        this.fl_limite_ass_obblig = fl_limite_ass_obblig;
-    }
 
     public Gruppo_linea_attivitaKey getGruppoLineaAttivitaKey() {
         return gruppoLineaAttivitaKey;
