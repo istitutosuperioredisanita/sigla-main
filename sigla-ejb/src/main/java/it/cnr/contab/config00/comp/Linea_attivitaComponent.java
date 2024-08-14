@@ -1412,6 +1412,8 @@ public java.util.List findListaGAEFEWS(UserContext userContext,String cdr,Intege
 		WorkpackageBulk workpackageBulk= ( WorkpackageBulk) this.findByPrimaryKey(uc, new WorkpackageBulk(cd_centro_responsabilita,cd_linea_attivita));
 		if ( !Optional.ofNullable(workpackageBulk).isPresent())
 			return Boolean.FALSE;
+		inizializzaBulkPerModifica(uc,workpackageBulk);
+		workpackageBulk.setToBeDeleted();
 		eliminaConBulk(uc,workpackageBulk);
 		return Boolean.TRUE;
 	}
