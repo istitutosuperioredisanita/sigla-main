@@ -422,7 +422,7 @@ public List findListaGAEFEWS(UserContext userContext, String cdr, Integer modulo
 }
 
 	@Override
-	public WorkpackageBulk creaLineaAttivitaWs(UserContext param0, WorkpackageBulk param1) throws ComponentException, RemoteException {
+	public WorkpackageBulk creaLineaAttivitaWs(UserContext param0, WorkpackageBulk param1) throws ComponentException, RemoteException,PersistencyException {
 		try {
 			return (WorkpackageBulk) invoke("creaLineaAttivitaWs",new Object[] {
 					param0,

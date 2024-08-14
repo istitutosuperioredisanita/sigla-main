@@ -200,7 +200,7 @@ public java.util.List findListaGAEFEWS(it.cnr.jada.UserContext param0,String par
 }
 
 	@Override
-	public WorkpackageBulk creaLineaAttivitaWs(UserContext param0,  WorkpackageBulk param1) throws ComponentException, RemoteException {
+	public WorkpackageBulk creaLineaAttivitaWs(UserContext param0,  WorkpackageBulk param1) throws ComponentException, RemoteException,PersistencyException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.config00.latt.bulk.WorkpackageBulk result = (WorkpackageBulk) ((Linea_attivitaComponent)componentObj).creaLineaAttivitaWs(param0,param1);

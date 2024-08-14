@@ -36,6 +36,6 @@ java.util.List findListaGAEWS(it.cnr.jada.UserContext userContext,String cdr,Str
 WorkpackageBulk completaOggetto(UserContext userContext,WorkpackageBulk linea)throws ComponentException, PersistencyException,java.rmi.RemoteException;
 java.util.List findListaGAEFEWS(it.cnr.jada.UserContext userContext,String cdr,Integer modulo)throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 
-WorkpackageBulk creaLineaAttivitaWs(it.cnr.jada.UserContext param0,WorkpackageBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+WorkpackageBulk creaLineaAttivitaWs(it.cnr.jada.UserContext param0,WorkpackageBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException,PersistencyException;
 
 }

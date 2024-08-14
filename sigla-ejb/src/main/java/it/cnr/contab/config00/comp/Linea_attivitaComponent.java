@@ -31,6 +31,7 @@ import it.cnr.contab.config00.pdcfin.bulk.FunzioneHome;
 import it.cnr.contab.config00.pdcfin.bulk.NaturaBulk;
 import it.cnr.contab.config00.pdcfin.bulk.NaturaHome;
 import it.cnr.contab.config00.sto.bulk.CdrBulk;
+import it.cnr.contab.config00.sto.bulk.CdrHome;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
 import it.cnr.contab.docamm00.docs.bulk.VFatturaPassivaSIPBulk;
 import it.cnr.contab.docamm00.docs.bulk.VFatturaPassivaSIPHome;
@@ -1371,8 +1372,41 @@ public java.util.List findListaGAEFEWS(UserContext userContext,String cdr,Intege
 		return sql;
 	}
 
-	public it.cnr.jada.bulk.OggettoBulk creaLineaAttivitaWs(it.cnr.jada.UserContext uc, WorkpackageBulk bulk) throws ComponentException {
-		return creaConBulk(uc,bulk);
+
+	public it.cnr.jada.bulk.OggettoBulk creaLineaAttivitaWs(it.cnr.jada.UserContext uc, WorkpackageBulk workpackageBulk) throws ComponentException, PersistencyException {
+
+		CdrHome cdrHome = (CdrHome)getHome(uc, CdrBulk.class);
+		String errorCdr="Il centro di Responsabilità "+ workpackageBulk.getCentro_responsabilita().getCd_centro_responsabilita() +" non esiste in SIGLA";
+		workpackageBulk.setCentro_responsabilita(
+				( CdrBulk) cdrHome.findByPrimaryKey(uc,workpackageBulk.getCentro_responsabilita()
+				));
+
+		if ( !Optional.ofNullable(workpackageBulk.getCentro_responsabilita()).isPresent())
+			throw new ComponentException(errorCdr);
+
+		ProgettoHome progettoHome = (ProgettoHome)getHome(uc, ProgettoBulk.class);
+		String errorProgetto="Il Progetto "+ workpackageBulk.getProgetto2016().getEsercizio() +"/"+ workpackageBulk.getProgetto2016().getPg_progetto()+" non esiste in SIGLA";
+		workpackageBulk.setProgetto2016(( ProgettoBulk) progettoHome.findByPrimaryKey(uc,
+				workpackageBulk.getProgetto2016()));
+
+		if ( !Optional.ofNullable(workpackageBulk.getProgetto2016()).isPresent())
+			throw new ComponentException(errorProgetto);
+
+		workpackageBulk.getProgetto2016().setProgettopadre(( ProgettoBulk) progettoHome.findByPrimaryKey(uc,
+				        workpackageBulk.getProgetto2016().getProgettopadre()));
+
+		if ( !Optional.ofNullable(Optional.ofNullable(workpackageBulk.getProgetto2016().getProgettopadre()).
+				map( ProgettoBulk::getPdgProgramma).orElse(null)).map(Pdg_programmaBulk::getCd_programma).orElse("").isEmpty())
+		{
+			Pdg_programmaHome pdgProgrammaHome=(Pdg_programmaHome)getHome(uc, Pdg_programmaBulk.class);
+			workpackageBulk.setPdgProgramma((Pdg_programmaBulk)pdgProgrammaHome.findByPrimaryKey(uc, workpackageBulk.getProgetto2016().getProgettopadre().getPdgProgramma()));
+		}
+		try {
+			 return creaConBulk(uc, workpackageBulk);
+
+		}catch (CRUDDuplicateKeyException ex){
+			throw new ComponentException("La linea Attività indicata gia esiste");
+		}
 	}
 
 }

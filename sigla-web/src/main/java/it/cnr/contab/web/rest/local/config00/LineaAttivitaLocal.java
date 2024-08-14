@@ -27,7 +27,6 @@ import it.cnr.contab.web.rest.model.LineaAttivitaDto;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -42,7 +41,6 @@ import javax.ws.rs.core.Response;
 public interface LineaAttivitaLocal {
 
 	@POST
-    @Valid
     @ApiOperation(value = "Inserisce Linea Attivita",
             notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.LINEA_ATTIVITA +"'",
             response = LineaAttivitaDto.class,
@@ -55,4 +53,18 @@ public interface LineaAttivitaLocal {
             }
     )
     Response insert(@Context HttpServletRequest request, LineaAttivitaDto lineaAttivita) throws Exception;
+    @GET
+    @Path("/{cd_centro_responsabilita}/{cd_linea_attivita}")
+    @ApiOperation(value = "Inserisce Linea Attivita",
+            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.LINEA_ATTIVITA +"'",
+            response = LineaAttivitaDto.class,
+            authorizations = {
+                    @Authorization(value = "BASIC"),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDS),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDR)
+            }
+    )
+    Response get(@PathParam("cd_centro_responsabilita") String cd_centro_responsabilita,@PathParam("cd_linea_attivita") String cd_linea_attivita) throws Exception;
 }
