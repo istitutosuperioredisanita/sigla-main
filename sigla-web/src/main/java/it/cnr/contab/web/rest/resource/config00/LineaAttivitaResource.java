@@ -76,10 +76,10 @@ public class LineaAttivitaResource implements LineaAttivitaLocal {
         }
         //Controllo per gae di tipo Solo entrata
         if (EnumTiGestioneLineaAttivita.ENTRATA.getGestione().equals(lineaAttivita.getTi_gestione().getGestione())) {
-            if (Optional.ofNullable(lineaAttivita.getCofogKey()).isPresent() ||
+            if (Optional.ofNullable(lineaAttivita.getCofogKey()).isPresent() &&
                     Optional.ofNullable(lineaAttivita.getCofogKey().getCd_cofog()).isPresent())
                 throw new RestException(Response.Status.BAD_REQUEST, String.format("Il cofog non è permesso per linee Attività di solo entrata"));
-            if ( Optional.ofNullable(lineaAttivita.getFunzioneKey()).isPresent()||
+            if ( Optional.ofNullable(lineaAttivita.getFunzioneKey()).isPresent()&&
                     Optional.ofNullable(lineaAttivita.getFunzioneKey().getCd_funzione()).isPresent())
                 throw new RestException(Response.Status.BAD_REQUEST,String.format("la Funzione non è permesso per linee Attività di solo entrata"));
         }
