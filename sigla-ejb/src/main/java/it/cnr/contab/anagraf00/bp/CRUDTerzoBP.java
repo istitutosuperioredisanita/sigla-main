@@ -17,25 +17,16 @@
 
 package it.cnr.contab.anagraf00.bp;
 
-import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
-import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
-import it.cnr.contab.anagraf00.core.bulk.ContattoBulk;
-import it.cnr.contab.anagraf00.core.bulk.Modalita_pagamentoBulk;
-import it.cnr.contab.anagraf00.core.bulk.TelefonoBulk;
-import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.anagraf00.core.bulk.*;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
-import it.cnr.contab.config00.sto.bulk.Tipo_unita_organizzativaBulk;
-import it.cnr.contab.config00.sto.bulk.Tipo_unita_organizzativaHome;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagHome;
-import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.action.Config;
 import it.cnr.jada.action.MessageToUser;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -43,11 +34,8 @@ import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
-import it.cnr.jada.util.ejb.EJBCommonServices;
 
-import javax.xml.registry.infomodel.User;
 import java.rmi.RemoteException;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -145,10 +133,25 @@ public class CRUDTerzoBP extends SimpleCRUDBP {
 	private it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk anagrafico;
 	private Unita_organizzativaBulk unita_organizzativa;
 	private TerzoBulk terzo_selected;
+	private boolean isAttivoBloccoGestModPag =Boolean.FALSE;
+
+
 
 
 	public CRUDTerzoBP(String function) throws BusinessProcessException {
 		super(function);
+	}
+
+	@Override
+	protected void init(Config config, ActionContext actioncontext) throws BusinessProcessException {
+		try {
+			isAttivoBloccoGestModPag = Utility.createConfigurazioneCnrComponentSession().isAttivoGestModPagDipendenti(actioncontext.getUserContext());
+		} catch (ComponentException e) {
+			throw new RuntimeException(e);
+		} catch (RemoteException e) {
+			throw new RuntimeException(e);
+		}
+		super.init(config, actioncontext);
 	}
 
 	public void validaRiga(ActionContext actioncontext, OggettoBulk oggettobulk)
@@ -557,9 +560,22 @@ public class CRUDTerzoBP extends SimpleCRUDBP {
 		return super.isNewButtonHidden() || getAnagrafico() == null;
 	}
 
+	public boolean isEnableAddBanca(){
+		return !( isAttivoBloccoGestModPag && this.getAnagrafico().isDipendente());
+	}
+	public boolean isEnableRemoveBanca(){
+		if (  isAttivoBloccoGestModPag && this.getAnagrafico().isDipendente())
+			return Boolean.FALSE;
+		return !isOrigineBancaPerStipendi();
+
+	}
+
+	public boolean isEnableManageModPag(){
+		return !( isAttivoBloccoGestModPag && this.getAnagrafico().isDipendente());
+	}
 	public boolean isOrigineBancaPerStipendi() {
 
-		if (getCrudBanche() != null) {
+			if (getCrudBanche() != null) {
 			BancaBulk banca = (BancaBulk) getCrudBanche().getModel();
 			if (banca != null) {
 				return banca.isOrigineStipendi();
