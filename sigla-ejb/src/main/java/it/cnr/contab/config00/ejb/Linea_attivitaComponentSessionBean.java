@@ -238,4 +238,24 @@ public java.util.List findListaGAEFEWS(it.cnr.jada.UserContext param0,String par
 		}
 	}
 
+	@Override
+	public WorkpackageBulk modificaLineaAttivitaWs(UserContext param0, WorkpackageBulk workpackageBulk) throws ComponentException, RemoteException, PersistencyException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			it.cnr.contab.config00.latt.bulk.WorkpackageBulk result= (WorkpackageBulk) ((Linea_attivitaComponent)componentObj).udpateLineaAttivitaWs(param0,workpackageBulk);
+			component_invocation_succes(param0,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(param0,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(param0,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
 }
