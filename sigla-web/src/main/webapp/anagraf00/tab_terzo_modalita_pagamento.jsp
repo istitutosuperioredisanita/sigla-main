@@ -20,7 +20,7 @@
 
 <table border="0" cellspacing="0" cellpadding="2" width="100%">
   <tr>
-	<td colspan="4"><% bp.getCrudModalita_pagamento().writeHTMLTable(pageContext,null,true,false,true,"100%","200px"); %></td>
+	<td colspan="4"><% bp.getCrudModalita_pagamento().writeHTMLTable(pageContext,null,bp.isEnableManageModPag(),false,bp.isEnableManageModPag(),"100%","200px"); %></td>
   </tr>
 </table>
 
@@ -47,7 +47,7 @@
 	  		<td width="100%" valign="top">
 	  		    <table class="Form w-100">
 	  		        <tr>
-	  		            <td><% bp.getCrudBanche().writeHTMLTable(pageContext,ti_pagamento,true,false,!bp.isOrigineBancaPerStipendi(),"100%","200px"); %></td>
+	  		            <td><% bp.getCrudBanche().writeHTMLTable(pageContext,ti_pagamento,bp.isEnableAddBanca(),false,bp.isEnableRemoveBanca(),"100%","200px"); %></td>
 	  		        </tr>
                     <% if (bp.getCrudBanche()!=null && bp.getCrudBanche().getModel() != null &&
                            (ti_pagamento.equals(Rif_modalita_pagamentoBulk.BANCARIO) || ti_pagamento.equals(Rif_modalita_pagamentoBulk.IBAN))) {%>
