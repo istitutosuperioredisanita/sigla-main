@@ -17,16 +17,6 @@
 
 package it.cnr.contab.config00.comp;
 
-import java.io.FileInputStream;
-import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.StringTokenizer;
-
-import org.springframework.expression.spel.ast.BooleanLiteral;
-
 import it.cnr.contab.compensi00.docs.bulk.VCompensoSIPBulk;
 import it.cnr.contab.compensi00.docs.bulk.VCompensoSIPHome;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
@@ -35,19 +25,13 @@ import it.cnr.contab.config00.bulk.Parametri_cdsHome;
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioHome;
-import it.cnr.contab.config00.latt.bulk.Ass_linea_attivita_esercizioBulk;
-import it.cnr.contab.config00.latt.bulk.Ass_linea_attivita_esercizioHome;
-import it.cnr.contab.config00.latt.bulk.Insieme_laBulk;
-import it.cnr.contab.config00.latt.bulk.RisultatoBulk;
-import it.cnr.contab.config00.latt.bulk.RisultatoHome;
-import it.cnr.contab.config00.latt.bulk.Tipo_linea_attivitaBulk;
-import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
-import it.cnr.contab.config00.latt.bulk.WorkpackageHome;
+import it.cnr.contab.config00.latt.bulk.*;
 import it.cnr.contab.config00.pdcfin.bulk.FunzioneBulk;
 import it.cnr.contab.config00.pdcfin.bulk.FunzioneHome;
 import it.cnr.contab.config00.pdcfin.bulk.NaturaBulk;
 import it.cnr.contab.config00.pdcfin.bulk.NaturaHome;
 import it.cnr.contab.config00.sto.bulk.CdrBulk;
+import it.cnr.contab.config00.sto.bulk.CdrHome;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
 import it.cnr.contab.docamm00.docs.bulk.VFatturaPassivaSIPBulk;
 import it.cnr.contab.docamm00.docs.bulk.VFatturaPassivaSIPHome;
@@ -55,23 +39,12 @@ import it.cnr.contab.missioni00.docs.bulk.VMissioneSIPBulk;
 import it.cnr.contab.missioni00.docs.bulk.VMissioneSIPHome;
 import it.cnr.contab.pdg00.cdip.bulk.Ass_cdp_laBulk;
 import it.cnr.contab.pdg00.cdip.bulk.Ass_cdp_laHome;
-import it.cnr.contab.pdg01.bulk.Pdg_modulo_entrate_gestBulk;
-import it.cnr.contab.pdg01.bulk.Pdg_modulo_entrate_gestHome;
-import it.cnr.contab.pdg01.bulk.Pdg_modulo_spese_gestBulk;
-import it.cnr.contab.pdg01.bulk.Pdg_modulo_spese_gestHome;
-import it.cnr.contab.pdg01.bulk.Pdg_variazione_riga_gestBulk;
-import it.cnr.contab.pdg01.bulk.Pdg_variazione_riga_gestHome;
-import it.cnr.contab.prevent01.bulk.Ass_pdg_missione_tipo_uoBulk;
-import it.cnr.contab.prevent01.bulk.Ass_pdg_missione_tipo_uoHome;
-import it.cnr.contab.prevent01.bulk.Pdg_missioneBulk;
-import it.cnr.contab.prevent01.bulk.Pdg_missioneHome;
-import it.cnr.contab.prevent01.bulk.Pdg_programmaBulk;
+import it.cnr.contab.pdg01.bulk.*;
+import it.cnr.contab.prevent01.bulk.*;
 import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
 import it.cnr.contab.progettiric00.core.bulk.ProgettoHome;
 import it.cnr.contab.progettiric00.core.bulk.Progetto_other_fieldBulk;
 import it.cnr.contab.progettiric00.core.bulk.Progetto_other_fieldHome;
-import it.cnr.contab.progettiric00.core.bulk.Progetto_piano_economicoBulk;
-import it.cnr.contab.progettiric00.core.bulk.Progetto_piano_economicoHome;
 import it.cnr.contab.progettiric00.tabrif.bulk.Voce_piano_economico_prgBulk;
 import it.cnr.contab.progettiric00.tabrif.bulk.Voce_piano_economico_prgHome;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
@@ -88,12 +61,14 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.Broker;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.DuplicateKeyException;
-import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.LoggableStatement;
-import it.cnr.jada.persistency.sql.Query;
-import it.cnr.jada.persistency.sql.SQLBuilder;
+import it.cnr.jada.persistency.sql.*;
+
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.Optional;
+import java.util.StringTokenizer;
 
 public class Linea_attivitaComponent extends CRUDComponent implements ILinea_attivitaMgr,Cloneable,Serializable
 {
@@ -1396,4 +1371,56 @@ public java.util.List findListaGAEFEWS(UserContext userContext,String cdr,Intege
 			sql.addClause(clause);
 		return sql;
 	}
+
+
+	public it.cnr.jada.bulk.OggettoBulk creaLineaAttivitaWs(it.cnr.jada.UserContext uc, WorkpackageBulk workpackageBulk) throws ComponentException, PersistencyException {
+
+		CdrHome cdrHome = (CdrHome)getHome(uc, CdrBulk.class);
+		String errorCdr="Il centro di Responsabilità "+ workpackageBulk.getCentro_responsabilita().getCd_centro_responsabilita() +" non esiste in SIGLA";
+		workpackageBulk.setCentro_responsabilita(
+				( CdrBulk) cdrHome.findByPrimaryKey(uc,workpackageBulk.getCentro_responsabilita()
+				));
+
+		if ( !Optional.ofNullable(workpackageBulk.getCentro_responsabilita()).isPresent())
+			throw new ComponentException(errorCdr);
+
+		ProgettoHome progettoHome = (ProgettoHome)getHome(uc, ProgettoBulk.class);
+		String errorProgetto="Il Progetto "+ workpackageBulk.getProgetto2016().getEsercizio() +"/"+ workpackageBulk.getProgetto2016().getPg_progetto()+" non esiste in SIGLA";
+		workpackageBulk.setProgetto2016(( ProgettoBulk) progettoHome.findByPrimaryKey(uc,
+				workpackageBulk.getProgetto2016()));
+
+		if ( !Optional.ofNullable(workpackageBulk.getProgetto2016()).isPresent())
+			throw new ComponentException(errorProgetto);
+
+		workpackageBulk.getProgetto2016().setProgettopadre(( ProgettoBulk) progettoHome.findByPrimaryKey(uc,
+				        workpackageBulk.getProgetto2016().getProgettopadre()));
+
+		if ( !Optional.ofNullable(Optional.ofNullable(workpackageBulk.getProgetto2016().getProgettopadre()).
+				map( ProgettoBulk::getPdgProgramma).orElse(null)).map(Pdg_programmaBulk::getCd_programma).orElse("").isEmpty())
+		{
+			Pdg_programmaHome pdgProgrammaHome=(Pdg_programmaHome)getHome(uc, Pdg_programmaBulk.class);
+			workpackageBulk.setPdgProgramma((Pdg_programmaBulk)pdgProgrammaHome.findByPrimaryKey(uc, workpackageBulk.getProgetto2016().getProgettopadre().getPdgProgramma()));
+		}
+		try {
+			 return creaConBulk(uc, workpackageBulk);
+
+		}catch (CRUDDuplicateKeyException ex){
+			throw new ComponentException("La linea Attività indicata gia esiste");
+		}
+	}
+	public Boolean deleteLineaAttivitaWs(it.cnr.jada.UserContext uc, String cd_centro_responsabilita, String cd_linea_attivita) throws ComponentException, PersistencyException {
+		WorkpackageBulk workpackageBulk= ( WorkpackageBulk) this.findByPrimaryKey(uc, new WorkpackageBulk(cd_centro_responsabilita,cd_linea_attivita));
+		if ( !Optional.ofNullable(workpackageBulk).isPresent())
+			return Boolean.FALSE;
+		inizializzaBulkPerModifica(uc,workpackageBulk);
+		workpackageBulk.setToBeDeleted();
+		eliminaConBulk(uc,workpackageBulk);
+		return Boolean.TRUE;
+	}
+	public it.cnr.jada.bulk.OggettoBulk udpateLineaAttivitaWs(it.cnr.jada.UserContext uc, WorkpackageBulk workpackageBulk) throws ComponentException, PersistencyException {
+
+		updateBulk(uc,workpackageBulk);
+		return ( WorkpackageBulk) findByPrimaryKey(uc,workpackageBulk);
+	}
+
 }

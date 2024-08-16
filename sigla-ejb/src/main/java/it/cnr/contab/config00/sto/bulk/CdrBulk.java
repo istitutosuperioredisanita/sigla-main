@@ -17,6 +17,7 @@
 
 package it.cnr.contab.config00.sto.bulk;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.cnr.contab.prevent01.bulk.Pdg_moduloBulk;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -135,6 +136,7 @@ public class CdrBulk extends CdrBase {
      * Verifica se il ricevente è il CDR dell'Amministrazione Centrale
      * (se livello = 1 e l'unità organizzativa è di tipo ENTE)
      */
+    @JsonIgnore
     public boolean isCdrAC() {
         return
                 getLivello() != null &&
@@ -147,6 +149,7 @@ public class CdrBulk extends CdrBase {
      * Verifica se il ricevente è un CDR SAC (cdr di primo livello
      * appartenente ad un'unità organizzativa di tipo SAC)
      */
+    @JsonIgnore
     public boolean isCdrSAC() {
         return
                 Integer.parseInt(getCd_proprio_cdr()) == 0 &&

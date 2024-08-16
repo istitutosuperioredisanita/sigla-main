@@ -16,14 +16,14 @@
  */
 
 package it.cnr.contab.config00.ejb;
-import java.rmi.*;
-import java.util.List;
 
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.util.ejb.*;
+
+import java.rmi.RemoteException;
+import java.util.List;
 
 public class TransactionalLinea_attivitaComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements Linea_attivitaComponentSession {
 public it.cnr.jada.util.RemoteIterator cerca(it.cnr.jada.UserContext param0,it.cnr.jada.persistency.sql.CompoundFindClause param1,it.cnr.jada.bulk.OggettoBulk param2) throws RemoteException,it.cnr.jada.comp.ComponentException {
@@ -420,4 +420,62 @@ public List findListaGAEFEWS(UserContext userContext, String cdr, Integer modulo
 		}
 	}
 }
+
+	@Override
+	public WorkpackageBulk creaLineaAttivitaWs(UserContext param0, WorkpackageBulk param1) throws ComponentException, RemoteException,PersistencyException {
+		try {
+			return (WorkpackageBulk) invoke("creaLineaAttivitaWs",new Object[] {
+					param0,
+					param1 });
+		} catch(java.rmi.RemoteException e) {
+			throw e;
+		} catch(java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch(it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch(Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
+
+	@Override
+	public Boolean deleteLineaAttivitaWs(UserContext param0, String cd_centro_responsabilita, String cd_linea_attivita) throws ComponentException, RemoteException,PersistencyException {
+		try {
+			return (Boolean) invoke("deleteLineaAttivitaWs",new Object[] {
+					param0,
+					cd_centro_responsabilita,
+					cd_linea_attivita});
+		} catch(java.rmi.RemoteException e) {
+			throw e;
+		} catch(java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch(it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch(Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
+
+	@Override
+	public WorkpackageBulk modificaLineaAttivitaWs(UserContext param0, WorkpackageBulk param1) throws ComponentException, RemoteException, PersistencyException {
+		try {
+			return (WorkpackageBulk) invoke("udpateLineaAttivitaWs",new Object[] {
+					param0,
+					param1 });
+		} catch(java.rmi.RemoteException e) {
+			throw e;
+		} catch(java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch(it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch(Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
 }

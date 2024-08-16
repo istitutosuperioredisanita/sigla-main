@@ -17,22 +17,21 @@
 
 package it.cnr.contab.config00.latt.bulk;
 
-import java.util.Optional;
-
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.config00.pdcfin.bulk.FunzioneBulk;
 import it.cnr.contab.config00.pdcfin.bulk.NaturaBulk;
 import it.cnr.contab.prevent01.bulk.Pdg_missioneBulk;
 import it.cnr.contab.prevent01.bulk.Pdg_programmaBulk;
 import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
-import it.cnr.contab.progettiric00.tabrif.bulk.Voce_piano_economico_prgBulk;
-import it.cnr.contab.util.Utility;
 import it.cnr.jada.bulk.BulkCollection;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 
-public class WorkpackageBulk extends WorkpackageBase implements CostantiTi_gestione {
+import java.io.Serializable;
+import java.util.Optional;
+
+public class WorkpackageBulk extends WorkpackageBase implements CostantiTi_gestione, Serializable {
 	protected Gruppo_linea_attivitaBulk gruppo_linea_attivita;
 	protected Tipo_linea_attivitaBulk tipo_linea_attivita;
 	protected FunzioneBulk funzione;
@@ -77,6 +76,7 @@ public class WorkpackageBulk extends WorkpackageBase implements CostantiTi_gesti
 	private Pdg_programmaBulk pdgProgramma;
 
 	private Pdg_missioneBulk pdgMissione;
+
 
 public WorkpackageBulk() {
 	super();
