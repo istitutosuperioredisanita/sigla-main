@@ -41,4 +41,6 @@ WorkpackageBulk creaLineaAttivitaWs(it.cnr.jada.UserContext param0,WorkpackageBu
 
 Boolean deleteLineaAttivitaWs(it.cnr.jada.UserContext uc, String cd_centro_responsabilita, String cd_linea_attivita) throws ComponentException, RemoteException,PersistencyException;
 
+WorkpackageBulk modificaLineaAttivitaWs(it.cnr.jada.UserContext uc, WorkpackageBulk workpackageBulk) throws ComponentException, RemoteException,PersistencyException;
+
 }
