@@ -5,7 +5,6 @@ import java.io.Serializable;
 public class UpdateLineaAttivitaDto implements Serializable {
 
     private Integer esercizio_fine;
-
     private String denominazione;
     private String ds_linea_attivita;
 
