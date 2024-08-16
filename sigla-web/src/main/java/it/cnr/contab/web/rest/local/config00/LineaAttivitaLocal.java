@@ -23,6 +23,7 @@ import io.swagger.annotations.Authorization;
 import it.cnr.contab.web.rest.config.SIGLARoles;
 import it.cnr.contab.web.rest.config.SIGLASecurityContext;
 import it.cnr.contab.web.rest.model.LineaAttivitaDto;
+import it.cnr.contab.web.rest.model.UpdateLineaAttivitaDto;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -81,4 +82,18 @@ public interface LineaAttivitaLocal {
             }
     )
     Response delete(@PathParam("cd_centro_responsabilita") String cd_centro_responsabilita,@PathParam("cd_linea_attivita") String cd_linea_attivita) throws Exception;
+    @PATCH
+    @Path("/{cd_centro_responsabilita}/{cd_linea_attivita}")
+    @ApiOperation(value = "Elimina una Linea Attivita",
+            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.LINEA_ATTIVITA +"'",
+            response = LineaAttivitaDto.class,
+            authorizations = {
+                    @Authorization(value = "BASIC"),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDS),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDR)
+            }
+    )
+    Response update(@PathParam("cd_centro_responsabilita") String cd_centro_responsabilita, @PathParam("cd_linea_attivita") String cd_linea_attivita, UpdateLineaAttivitaDto updateLineaAttivitaDto) throws Exception;
 }

@@ -1417,5 +1417,10 @@ public java.util.List findListaGAEFEWS(UserContext userContext,String cdr,Intege
 		eliminaConBulk(uc,workpackageBulk);
 		return Boolean.TRUE;
 	}
+	public it.cnr.jada.bulk.OggettoBulk udpateLineaAttivitaWs(it.cnr.jada.UserContext uc, WorkpackageBulk workpackageBulk) throws ComponentException, PersistencyException {
+
+		updateBulk(uc,workpackageBulk);
+		return ( WorkpackageBulk) findByPrimaryKey(uc,workpackageBulk);
+	}
 
 }

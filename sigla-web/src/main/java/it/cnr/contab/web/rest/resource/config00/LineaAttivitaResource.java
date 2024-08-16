@@ -19,6 +19,8 @@ import it.cnr.contab.web.rest.local.config00.LineaAttivitaLocal;
 import it.cnr.contab.web.rest.model.EnumTiGestioneLineaAttivita;
 import it.cnr.contab.web.rest.model.LineaAttivitaDto;
 import it.cnr.contab.web.rest.model.ProgettoDto;
+import it.cnr.contab.web.rest.model.UpdateLineaAttivitaDto;
+import it.cnr.jada.bulk.ROWrapper;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
@@ -157,6 +159,20 @@ public class LineaAttivitaResource implements LineaAttivitaLocal {
         workpackageBulk.setPdgMissione( new Pdg_missioneBulk(lineaAttivita.getPdgMissioneKey().getCd_missione()));
         return workpackageBulk;
     }
+    protected WorkpackageBulk mergeWorkpageBulkUpdateLineaAttiviti(UpdateLineaAttivitaDto updateLineaAttivitaDto, WorkpackageBulk workpackageBulk) throws PersistencyException, ValidationException, ComponentException, RemoteException {
+       if ( !Optional.ofNullable(updateLineaAttivitaDto).isPresent())
+           return workpackageBulk;
+        Optional.ofNullable(updateLineaAttivitaDto.getEsercizio_fine()).ifPresent(e-> {
+            workpackageBulk.setEsercizio_fine(e);
+        });
+        Optional.ofNullable(updateLineaAttivitaDto.getDs_linea_attivita()).ifPresent(e-> {
+            workpackageBulk.setDs_linea_attivita(e);
+        });
+        Optional.ofNullable(updateLineaAttivitaDto.getDenominazione()).ifPresent(e-> {
+            workpackageBulk.setDenominazione(e);
+        });
+        return workpackageBulk;
+    }
     //fine da sosituire MapStruct
     protected WorkpackageBulk creaLineaAttivitaSigla( WorkpackageBulk workpackageBulk, CNRUserContext userContext) throws ComponentException, RemoteException,PersistencyException {
 
@@ -197,6 +213,31 @@ public class LineaAttivitaResource implements LineaAttivitaLocal {
 
                 return Response.status(Response.Status.NO_CONTENT).build();
 
+        }catch (Throwable e){
+            throw new RestException(Response.Status.INTERNAL_SERVER_ERROR,String.format(e.getMessage()));
+        }
+    }
+
+    @Override
+    public Response update(String cd_centro_responsabilita, String cd_linea_attivita, UpdateLineaAttivitaDto updateLineaAttivitaDto) throws Exception {
+        try{
+            CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
+            WorkpackageBulk workpackageBulk = ( WorkpackageBulk) lineaAttivitaComponentSession.findByPrimaryKey(userContext,new WorkpackageBulk(cd_centro_responsabilita,cd_linea_attivita));
+            if ( !Optional.ofNullable(workpackageBulk).isPresent())
+                throw new RestException(Response.Status.NOT_FOUND,String.format("Non esiste la Linea Attivita per centro Responsabilita ".
+                        concat(cd_linea_attivita).
+                        concat(" cd linea attivita").
+                        concat("cd_linea_attivita")));
+
+
+            Object result =  lineaAttivitaComponentSession.inizializzaBulkPerModifica(userContext,workpackageBulk);
+            if ( result instanceof ROWrapper)
+                throw new RestException(Response.Status.BAD_REQUEST,String.format(((ROWrapper)result).getMtu().getMessage()));
+            workpackageBulk= ( WorkpackageBulk ) result;
+            workpackageBulk=mergeWorkpageBulkUpdateLineaAttiviti( updateLineaAttivitaDto,workpackageBulk);
+            workpackageBulk.setToBeUpdated();
+            workpackageBulk = ( WorkpackageBulk) lineaAttivitaComponentSession.modificaLineaAttivitaWs(userContext,workpackageBulk);
+            return Response.status(Response.Status.OK).entity(workpackageBulkToLineAttivitaDto(workpackageBulk)).build();
         }catch (Throwable e){
             throw new RestException(Response.Status.INTERNAL_SERVER_ERROR,String.format(e.getMessage()));
         }
