@@ -111,7 +111,7 @@ public class AllegatiPCCBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Allegato
                         Map<String, String> results = new HashMap<String, String>();
                         for(int i=8; i <= s.getLastRowNum(); i++){
                             final XSSFRow row = s.getRow(i);
-                            final Optional<String> identifictivoSDI = Optional.ofNullable(row).map(cells -> cells.getCell(1)) .map(XSSFCell::getRawValue);
+                            final Optional<String> identifictivoSDI = Optional.ofNullable(row).map(cells -> cells.getCell(1)) .map(XSSFCell::getStringCellValue);
                             if (identifictivoSDI.isPresent()) {
                                 final Optional<String> esito = Optional.ofNullable(row.getCell(20)).map(XSSFCell::getStringCellValue);
                                 if (esito.filter(s1 -> s1.length() > 0).isPresent()) {
