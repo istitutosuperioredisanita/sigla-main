@@ -34,6 +34,7 @@ public class ObbligazioneResource implements ObbligazioneLocal {
         try{
             CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
             ObbligazioneBulk obbligazioneBulk= ( ObbligazioneBulk) obbligazioneComponentSession.findObbligazione(userContext, new ObbligazioneBulk(cd_cds,esercizio,esercizio_originale,pg_obbligazione));
+            obbligazioneBulk= ( ObbligazioneBulk)obbligazioneComponentSession.inizializzaBulkPerModifica(userContext,obbligazioneBulk);
             return Response.status(Response.Status.OK).entity(new ObbligazioneDto( )).build();
         }catch (Throwable e){
             throw new RestException(Response.Status.INTERNAL_SERVER_ERROR,String.format(e.getMessage()));
