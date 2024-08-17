@@ -6,26 +6,23 @@ import it.cnr.contab.config00.latt.bulk.Gruppo_linea_attivitaKey;
 import it.cnr.contab.config00.latt.bulk.Insieme_laKey;
 import it.cnr.contab.config00.pdcfin.bulk.FunzioneKey;
 import it.cnr.contab.config00.pdcfin.bulk.NaturaKey;
-import it.cnr.contab.config00.sto.bulk.CdrKey;
 import it.cnr.contab.prevent01.bulk.Pdg_missioneKey;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
-public class LineaAttivitaDto implements Serializable {
+public class LineaAttivitaDto extends LineaAttivitaKeyDto implements Serializable {
     @NotNull
     private Integer esercizio_inizio;
     private Integer esercizio_fine;
-    private String cd_linea_attivita;
     private String denominazione;
     private String ds_linea_attivita;
     private EnumTiGestioneLineaAttivita ti_gestione;
-
     private Gruppo_linea_attivitaKey gruppoLineaAttivitaKey;
     private TerzoKey responsabileKey;
     private FunzioneKey funzioneKey;
     private NaturaKey naturaKey;
-    private CdrKey centro_responsabilitaKey;
+
     private ProgettoDto progettoKey;
     private Insieme_laKey insieme_laKey;
     private CofogKey cofogKey;
@@ -46,13 +43,6 @@ public class LineaAttivitaDto implements Serializable {
         this.esercizio_fine = esercizio_fine;
     }
 
-    public String getCd_linea_attivita() {
-        return cd_linea_attivita;
-    }
-
-    public void setCd_linea_attivita(String cd_linea_attivita) {
-        this.cd_linea_attivita = cd_linea_attivita;
-    }
 
     public String getDenominazione() {
         return denominazione;
@@ -112,13 +102,6 @@ public class LineaAttivitaDto implements Serializable {
         this.naturaKey = naturaKey;
     }
 
-    public CdrKey getCentro_responsabilitaKey() {
-        return centro_responsabilitaKey;
-    }
-
-    public void setCentro_responsabilitaKey(CdrKey centro_responsabilitaKey) {
-        this.centro_responsabilitaKey = centro_responsabilitaKey;
-    }
 
     public ProgettoDto getProgettoKey() {
         return progettoKey;

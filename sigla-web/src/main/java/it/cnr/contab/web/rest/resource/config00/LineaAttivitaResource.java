@@ -197,7 +197,7 @@ public class LineaAttivitaResource implements LineaAttivitaLocal {
         try{
             CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
             WorkpackageBulk w= ( WorkpackageBulk) lineaAttivitaComponentSession.findByPrimaryKey(userContext, new WorkpackageBulk(cd_centro_responsabilita,cd_linea_attivita));
-            return Response.status(Response.Status.CREATED).entity(workpackageBulkToLineAttivitaDto( w)).build();
+            return Response.status(Response.Status.OK).entity(workpackageBulkToLineAttivitaDto( w)).build();
         }catch (Throwable e){
             throw new RestException(Response.Status.INTERNAL_SERVER_ERROR,String.format(e.getMessage()));
         }
