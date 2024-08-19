@@ -21,15 +21,25 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk;
+import it.cnr.contab.service.SpringUtil;
+import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.util.Utility;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
+import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
+import it.cnr.contab.util00.bulk.storage.AllegatoStorePath;
+import it.cnr.jada.bulk.BulkCollection;
+import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.StrServ;
 import it.cnr.jada.util.action.CRUDBP;
+import it.cnr.si.spring.storage.StorageDriver;
 
-import java.util.Dictionary;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmministrativoElettronicoBulk {
+public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmministrativoElettronicoBulk, AllegatoParentBulk, AllegatoStorePath {
+
+	private BulkList<AllegatoGenericoBulk> archivioAllegati = new BulkList<>();
 
 	public final static String STATO_INIZIALE = "I";
 	public final static String STATO_CONTABILIZZATO = "C";
@@ -52,6 +62,14 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 
 	}
 
+	public BulkCollection[] getBulkLists() {
+
+		// Metti solo le liste di oggetti che devono essere resi persistenti
+
+		return new it.cnr.jada.bulk.BulkCollection[] {
+				archivioAllegati
+		};
+	}
 	@JsonIgnore
 	public Dictionary getStato_cofiKeys() {
 		return STATO;
@@ -81,11 +99,15 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 	@JsonIgnore
 	private java.util.Collection sezionali;
 
+
+
+
 	public AutofatturaBulk() {
 		super();
 	}
 	public AutofatturaBulk(java.lang.String cd_cds,java.lang.String cd_unita_organizzativa,java.lang.Integer esercizio,java.lang.Long pg_autofattura) {
 		super(cd_cds,cd_unita_organizzativa,esercizio,pg_autofattura);
+
 	}
 
 	public OggettoBulk initializeForSearch(CRUDBP bp, it.cnr.jada.action.ActionContext context) {
@@ -376,5 +398,42 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 	 */
 	public void setSezionali(java.util.Collection newSezionali) {
 		sezionali = newSezionali;
+	}
+
+	@Override
+	public int addToArchivioAllegati(AllegatoGenericoBulk allegato) {
+		archivioAllegati.add(allegato);
+		return archivioAllegati.size()-1;
+	}
+
+	@Override
+	public AllegatoGenericoBulk removeFromArchivioAllegati(int index) {
+		return getArchivioAllegati().remove(index);
+	}
+
+	@Override
+	public BulkList<AllegatoGenericoBulk> getArchivioAllegati() {
+		return archivioAllegati;
+	}
+
+	@Override
+	public void setArchivioAllegati(BulkList<AllegatoGenericoBulk> archivioAllegati) {
+		this.archivioAllegati = archivioAllegati;
+	}
+
+	@Override
+	public List<String> getStorePath() {
+		return Collections.singletonList(Arrays.asList(
+				SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
+				Optional.ofNullable(this)
+						.map(s -> this.getCd_uo_origine())
+						.orElse(""),
+				"AutoFatture",
+				this.getEsercizio().toString(),
+					"Autofattura "+ this.getEsercizio().toString() +
+				Utility.lpad(this.getPg_autofattura().toString(),10,'0')
+		).stream().collect(
+				Collectors.joining(StorageDriver.SUFFIX)
+		));
 	}
 }

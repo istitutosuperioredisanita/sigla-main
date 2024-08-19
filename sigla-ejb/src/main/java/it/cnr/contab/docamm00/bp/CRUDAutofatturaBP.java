@@ -17,9 +17,11 @@
 
 package it.cnr.contab.docamm00.bp;
 
+import it.cnr.contab.docamm00.docs.bulk.AutofatturaBulk;
+import it.cnr.contab.util00.bp.AllegatiCRUDBP;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
-import it.cnr.jada.util.action.SimpleCRUDBP;
 import org.slf4j.LoggerFactory;
 
 import java.util.TreeMap;
@@ -27,7 +29,7 @@ import java.util.TreeMap;
 /**
  * Gestisce le autofatture.
  */
-public  class CRUDAutofatturaBP extends SimpleCRUDBP {
+public  class CRUDAutofatturaBP extends AllegatiCRUDBP<AllegatoGenericoBulk, AutofatturaBulk> {
 
     private static final long serialVersionUID = 1L;
     private final static org.slf4j.Logger logger = LoggerFactory.getLogger(CRUDAutofatturaBP.class);
@@ -39,20 +41,30 @@ public  class CRUDAutofatturaBP extends SimpleCRUDBP {
         super(function);
     }
 
+    @Override
+    protected String getStorePath(AutofatturaBulk allegatoParentBulk, boolean create) throws BusinessProcessException {
+        return allegatoParentBulk.getStorePath().get(0);
+    }
+
+    @Override
+    protected Class<AllegatoGenericoBulk> getAllegatoClass() {
+        return AllegatoGenericoBulk.class;
+    }
+
     public CRUDAutofatturaBP() {
         super();
     }
 
-    private static final String[] TAB_AUTOFATTURA = new String[]{ "tabAutofattura","Testata","/docamm00/tab_autofattura.jsp" };
-    private static final String[] TAB_CLIENTE = new String[]{ "tabCliente","Cliente","/docamm00/tab_autofattura_cliente.jsp" };
 
-    //private static final String[] TAB_ALLEGATI = new String[]{ "tabFatturaAttivaAllegati","Allegati Aggiunti","/docamm00/tab_fattura_attiva_allegati.jsp" };
+    private static final String[] TAB_AUTOFATTURA = new String[]{ "tabAutofattura","Testata","/docamm00/tab_autofattura.jsp" };
+    private static final String[] TAB_ALLEGATI = new String[]{ "tabAllegati","Allegati","/util00/tab_allegati.jsp"};
+
 
     public String[][] getTabs() {
         TreeMap<Integer, String[]> pages = new TreeMap<Integer, String[]>();
         int i = 0;
         pages.put(i++, TAB_AUTOFATTURA);
-        pages.put(i++, TAB_CLIENTE);
+        pages.put(i++,TAB_ALLEGATI);
     String[][] tabs = new String[i][3];
         for (int j = 0; j < i; j++)
             tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
