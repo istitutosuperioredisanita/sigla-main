@@ -819,4 +819,90 @@ public class FatturaElettronicaPassivaComponent extends it.cnr.jada.comp.CRUDCom
 				});
 	}
 
+	public void gestioneAssFattElettronicaAutoFattura(UserContext aUC) throws ComponentException {
+		DocumentoEleTestataHome home = (DocumentoEleTestataHome) getHome(aUC, DocumentoEleTestataBulk.class);
+
+		SQLBuilder sql = home.createSQLBuilder();
+		if ( Optional.ofNullable(DocumentoEleTestataBulk.TIPI_DOCUMENTO_IN_ATTESA_FATTURAZIONE_ELETTRONICA).isPresent()){
+			sql.openParenthesis("AND");
+			for( String tipoDocumentoEleEnum:DocumentoEleTestataBulk.TIPI_DOCUMENTO_IN_ATTESA_FATTURAZIONE_ELETTRONICA)
+				sql.addSQLClause("OR", "TIPO_DOCUMENTO", sql.EQUALS, tipoDocumentoEleEnum);
+			sql.closeParenthesis();
+		}
+		sql.addSQLClause("AND", "STATO_DOCUMENTO", sql.NOT_EQUALS, StatoDocumentoEleEnum.REGISTRATO.name());
+		sql.addSQLClause("AND", "STATO_DOCUMENTO", sql.NOT_EQUALS, StatoDocumentoEleEnum.RIFIUTATO.name());
+
+		List fattElettronicheAutofatture;
+		try {
+			fattElettronicheAutofatture = home.fetchAll(sql);
+			for (Iterator i = fattElettronicheAutofatture.iterator(); i.hasNext(); ) {
+				DocumentoEleTestataBulk documentoEleTestata = (DocumentoEleTestataBulk) i.next();
+				documentoEleTestata.setDocEleAcquistoColl(new BulkList<DocumentoEleAcquistoBulk>(
+						getHome(aUC, DocumentoEleAcquistoBulk.class).find(new DocumentoEleAcquistoBulk(documentoEleTestata))));
+				List<DocumentoEleTrasmissioneBulk> lista = recuperoTrasmissione(aUC, documentoEleTestata.getIdentificativoSdi());
+				documentoEleTestata.setDocumentoEleTrasmissione(lista.get(0));
+				cercaAutofatturaForFattElettronica( aUC, documentoEleTestata);
+
+			}
+		} catch (PersistencyException e) {
+			throw handleException(e);
+		}
+	}
+	protected void cercaAutofatturaForFattElettronica( UserContext usercontext, DocumentoEleTestataBulk documentoEleTestataBulk) throws ComponentException {
+		//DocumentoEleAcquistoHome  home = (DocumentoEleAcquistoHome) getHome(usercontext, DocumentoEleAcquistoBulk.class);
+
+		Fattura_passivaHome fatturaPassivaHome = (Fattura_passivaHome) getHome(usercontext, Fattura_passiva_IBulk.class);
+		String numeroFatturaFornitore = null;
+		Timestamp dataFatturaFornitore = null;
+		for (DocumentoEleAcquistoBulk documentoEleAcquistoBulk : documentoEleTestataBulk.getDocEleAcquistoColl()) {
+			if (documentoEleAcquistoBulk.getTipoRifacquisto().equalsIgnoreCase(TipoAcquistoEnum.Fatture_Collegate.name())){
+				numeroFatturaFornitore = documentoEleAcquistoBulk.getAcquistoDocumento();
+				dataFatturaFornitore = documentoEleAcquistoBulk.getAcquistoData();
+				break;
+			}
+		}
+		if (( !Optional.ofNullable(numeroFatturaFornitore).isPresent())  ||
+				( !Optional.ofNullable(dataFatturaFornitore).isPresent() )) {
+			logger.error("Per la fattura elettronica " +
+					"con identificativo_sdi=" + documentoEleTestataBulk.getIdentificativoSdi() + " non sono presenti i dati dell'autofattura");
+			return;
+		}
+		SQLBuilder sqlFatturaPassiva = fatturaPassivaHome.createSQLBuilder();
+		sqlFatturaPassiva.addClause(FindClause.AND, "fornitore", SQLBuilder.EQUALS, documentoEleTestataBulk.getDocumentoEleTrasmissione().getPrestatore());
+		// Rospuc 22/09/2016 consentito registrazione nota credito anche con riferimenti simili alla fattura collegata indicata
+		sqlFatturaPassiva.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, documentoEleTestataBulk.getDocumentoEleTrasmissione().getUnitaOrganizzativa().getCd_unita_organizzativa());
+		sqlFatturaPassiva.addClause(FindClause.AND, "nr_fattura_fornitore", SQLBuilder.EQUALS, numeroFatturaFornitore);
+		sqlFatturaPassiva.addClause(FindClause.AND, "dt_fattura_fornitore", SQLBuilder.EQUALS, dataFatturaFornitore);
+		sqlFatturaPassiva.addClause(FindClause.AND, "fl_autofattura", SQLBuilder.EQUALS, Boolean.TRUE);
+		try {
+			List<Fattura_passivaBulk> fattureCol = fatturaPassivaHome.fetchAll(sqlFatturaPassiva);
+			if (Optional.ofNullable(fattureCol).isPresent()) {
+				if (fattureCol.size() > 1) {
+					logger.error("Per la fattura elettronica " +
+							"con cd_unita_organizzativa" +
+							documentoEleTestataBulk.getDocumentoEleTrasmissione().getUnitaOrganizzativa().getCd_unita_organizzativa() +
+							" nr_fattura_fornitore=" + numeroFatturaFornitore +
+							"dt_fattura_fornitore=" + dataFatturaFornitore +
+							" fl_autofattura=Y esistono più record ");
+					return;
+				}else if(fattureCol.size()==0){
+					logger.error("Per la fattura elettronica " +
+							"con identificativo_sdi=" +documentoEleTestataBulk.getIdentificativoSdi()+ " non sono presenti i dati dell'autofattura");
+					return;
+				}
+			}
+			Fattura_passivaBulk fatturaCollegata=fattureCol.get(0);
+			fatturaCollegata.setDocumentoEleTestata(documentoEleTestataBulk);
+			fatturaCollegata.setToBeUpdated();
+			//Aggiorna Fattura passiva con il riferimento alla fattura elettronica
+			modificaConBulk(usercontext,fatturaCollegata);
+			//aggiorna lo stato del documento della fattura elettronica a registrato
+			fatturaCollegata.getDocumentoEleTestata().setStatoDocumento(StatoDocumentoEleEnum.REGISTRATO.name());
+			fatturaCollegata.getDocumentoEleTestata().setToBeUpdated();
+			super.modificaConBulk(usercontext,fatturaCollegata.getDocumentoEleTestata());
+		} catch (PersistencyException e) {
+			throw handleException(e);
+		}
+	}
+
 }

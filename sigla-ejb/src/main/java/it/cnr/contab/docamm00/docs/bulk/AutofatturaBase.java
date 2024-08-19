@@ -17,10 +17,7 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
+import it.cnr.jada.persistency.Keyed;
 
 import java.sql.Timestamp;
 
@@ -118,6 +115,9 @@ public class AutofatturaBase extends AutofatturaKey implements Keyed {
 	private java.lang.Boolean flFatturaElettronica;
 
 	private java.lang.Boolean flTerzoEnte;
+
+	private java.lang.Boolean fl_extra_ue;
+	private java.lang.Boolean fl_san_marino_con_iva;
 
 	public AutofatturaBase() {
 		super();
@@ -460,5 +460,21 @@ public class AutofatturaBase extends AutofatturaKey implements Keyed {
 
 	public void setFlTerzoEnte(Boolean flTerzoEnte) {
 		this.flTerzoEnte = flTerzoEnte;
+	}
+
+	public Boolean getFl_extra_ue() {
+		return fl_extra_ue;
+	}
+
+	public void setFl_extra_ue(Boolean fl_extra_ue) {
+		this.fl_extra_ue = fl_extra_ue;
+	}
+
+	public Boolean getFl_san_marino_con_iva() {
+		return fl_san_marino_con_iva;
+	}
+
+	public void setFl_san_marino_con_iva(Boolean fl_san_marino_con_iva) {
+		this.fl_san_marino_con_iva = fl_san_marino_con_iva;
 	}
 }

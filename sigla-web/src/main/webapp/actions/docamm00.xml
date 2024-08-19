@@ -456,4 +456,12 @@
         <init-param name="multiSelezione" value="Y"/>
     </businessProcess>
 
+    <businessProcess
+            name="CRUDAutofatturaBP" className="it.cnr.contab.docamm00.bp.CRUDAutofatturaBP">
+        <forward name="default" path="/docamm00/autofattura.jsp"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.docamm00.docs.bulk.AutofatturaBulk"/>
+        <init-param name="componentSessionName" value="CNRDOCAMM00_EJB_AutoFatturaComponentSession"/>
+        <!--<init-param name="defaultAction" value="CRUDFatturaPassivaAction"/>-->
+    </businessProcess>
+
 </action-mappings>

@@ -17,12 +17,16 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk;
 import it.cnr.contab.util.Utility;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.StrServ;
+import it.cnr.jada.util.action.CRUDBP;
 
+import java.util.Dictionary;
 import java.util.Optional;
 
 public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmministrativoElettronicoBulk {
@@ -32,24 +36,86 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 	public final static String STATO_PARZIALE = "Q";
 	public final static String STATO_PAGATO = "P";
 
+	public final static Dictionary STATO;
+
+
+
+	static {
+
+
+		STATO = new it.cnr.jada.util.OrderedHashtable();
+		STATO.put(STATO_INIZIALE, "Iniziale");
+		STATO.put(STATO_CONTABILIZZATO, "Contabilizzato");
+		STATO.put(STATO_PARZIALE, "Parziale");
+		STATO.put(STATO_PAGATO, "Incassato");
+
+
+	}
+
+	@JsonIgnore
+	public Dictionary getStato_cofiKeys() {
+		return STATO;
+	}
+
+	public Dictionary getTi_istituz_commercKeys() {
+		return fattura_passiva.getTi_istituz_commercKeys();
+	}
+
+	public Dictionary getTi_istituz_commercKeysForSearch() {
+		return fattura_passiva.getTi_istituz_commercKeysForSearch();
+	}
+
 	public final static String STATO_IVA_A = "A";
 	public final static String STATO_IVA_B = "B";
 	public final static String STATO_IVA_C = "C";
 
-	Fattura_passivaBase fattura_passiva = null;
-	Tipo_sezionaleBulk tipo_sezionale = null;
+	Fattura_passivaBulk fattura_passiva = new Fattura_passiva_IBulk();
+	Tipo_sezionaleBulk tipo_sezionale = new Tipo_sezionaleBulk();
 
-	private java.lang.Boolean fl_extra_ue;
-	private java.lang.Boolean fl_san_marino_con_iva;
-	private java.lang.Boolean fl_san_marino_senza_iva;
+
+
 	private java.lang.String ti_bene_servizio = null;
 	private boolean autofatturaNeeded = false;
 	private TerzoBulk terzoDocumentoElettronico;
+
+	@JsonIgnore
+	private java.util.Collection sezionali;
+
 	public AutofatturaBulk() {
 		super();
 	}
 	public AutofatturaBulk(java.lang.String cd_cds,java.lang.String cd_unita_organizzativa,java.lang.Integer esercizio,java.lang.Long pg_autofattura) {
 		super(cd_cds,cd_unita_organizzativa,esercizio,pg_autofattura);
+	}
+
+	public OggettoBulk initializeForSearch(CRUDBP bp, it.cnr.jada.action.ActionContext context) {
+		super.initializeForSearch(bp,context);
+
+		it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk unita_organizzativa = it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context);
+		setCd_cds_origine(unita_organizzativa.getUnita_padre().getCd_unita_organizzativa());
+
+		if (getEsercizio() == null)
+			setEsercizio(it.cnr.contab.utenze00.bulk.CNRUserInfo.getEsercizio(context));
+
+		setFl_intra_ue(null);
+		setFl_extra_ue(null);
+		setFl_san_marino_con_iva(null);
+		setFl_san_marino_senza_iva(null);
+		setFl_autofattura(Boolean.FALSE);
+		setFl_split_payment(Boolean.FALSE);
+
+		return this;
+	}
+
+	public OggettoBulk initialize(CRUDBP bp, it.cnr.jada.action.ActionContext context) {
+
+
+		super.initialize(bp, context);
+
+		if (getCd_uo_origine() == null)
+			setCd_uo_origine(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context).getCd_unita_organizzativa());
+
+		return this;
 	}
 	/**
 	 * Insert the method's description here.
@@ -93,6 +159,25 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
         setTi_fattura(fatturaPassiva.getTi_fattura());
         setToBeCreated();
     }
+
+	/**
+
+	 * Setta il valore di: [Esercizio dell'obbligazione]
+	 **/
+	public void setEsercizio(Integer esercizio)  {
+
+		this.getFattura_passiva().setEsercizio(esercizio);
+	}
+	/**
+
+	 * Setta il valore di: [Esercizio dell'obbligazione]
+	 **/
+	public Integer getEsercizio()  {
+		Fattura_passivaBulk fatturaPassiva = this.getFattura_passiva();
+			if (fatturaPassiva == null)
+			return null;
+		return fatturaPassiva.getEsercizio();
+	}
     public java.lang.String getCd_cds_ft_passiva() {
         it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBase fattura_passiva = this.getFattura_passiva();
         if (fattura_passiva == null)
@@ -116,31 +201,12 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
      * Creation date: (2/12/2002 4:06:00 PM)
      * @return it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk
      */
-    public Fattura_passivaBase getFattura_passiva() {
+    public Fattura_passivaBulk getFattura_passiva() {
         return fattura_passiva;
     }
-    /*
-     * Getter dell'attributo fl_intra_ue
-     */
-    public java.lang.Boolean getFl_extra_ue() {
-        return fl_extra_ue;
-    }
-    /**
-     * Insert the method's description here.
-     * Creation date: (9/20/2002 10:08:36 AM)
-     * @return java.lang.Boolean
-     */
-    public java.lang.Boolean getFl_san_marino_con_iva() {
-        return fl_san_marino_con_iva;
-    }
-    /**
-     * Insert the method's description here.
-     * Creation date: (9/20/2002 10:08:36 AM)
-     * @return java.lang.Boolean
-     */
-    public java.lang.Boolean getFl_san_marino_senza_iva() {
-        return fl_san_marino_senza_iva;
-    }
+
+
+
     public java.lang.Long getPg_fattura_passiva() {
         it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBase fattura_passiva = this.getFattura_passiva();
         if (fattura_passiva == null)
@@ -210,31 +276,11 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 	 * Creation date: (2/12/2002 4:06:00 PM)
 	 * @param newFattura_passiva it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk
 	 */
-	public void setFattura_passiva(Fattura_passivaBase newFattura_passiva) {
+	public void setFattura_passiva(Fattura_passivaBulk newFattura_passiva) {
 		fattura_passiva = newFattura_passiva;
 	}
-	/*
-	 * Setter dell'attributo fl_intra_ue
-	 */
-	public void setFl_extra_ue(java.lang.Boolean fl_extra_ue) {
-		this.fl_extra_ue = fl_extra_ue;
-	}
-	/**
-	 * Insert the method's description here.
-	 * Creation date: (9/20/2002 10:08:36 AM)
-	 * @param newFl_san_marino_con_iva java.lang.Boolean
-	 */
-	public void setFl_san_marino_con_iva(java.lang.Boolean newFl_san_marino_con_iva) {
-		fl_san_marino_con_iva = newFl_san_marino_con_iva;
-	}
-	/**
-	 * Insert the method's description here.
-	 * Creation date: (9/20/2002 10:08:36 AM)
-	 * @param newFl_san_marino_senza_iva java.lang.Boolean
-	 */
-	public void setFl_san_marino_senza_iva(java.lang.Boolean newFl_san_marino_senza_iva) {
-		fl_san_marino_senza_iva = newFl_san_marino_senza_iva;
-	}
+
+
 	public void setPg_fattura_passiva(java.lang.Long pg_fattura_passiva) {
 		this.getFattura_passiva().setPg_fattura_passiva(pg_fattura_passiva);
 	}
@@ -316,5 +362,19 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 
 	public boolean isDocumentoFatturazioneElettronica() {
 		return Optional.ofNullable(getFlFatturaElettronica()).orElse(Boolean.FALSE);
+	}
+
+	@JsonIgnore
+	public java.util.Collection<Tipo_sezionaleBulk> getSezionali() {
+		return sezionali;
+	}
+
+	/**
+	 * Insert the method's description here.
+	 * Creation date: (18/10/2001 14.41.50)
+	 * @param newSezionali java.util.Collection
+	 */
+	public void setSezionali(java.util.Collection newSezionali) {
+		sezionali = newSezionali;
 	}
 }

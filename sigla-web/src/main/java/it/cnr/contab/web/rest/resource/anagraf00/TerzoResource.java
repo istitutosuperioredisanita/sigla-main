@@ -20,9 +20,7 @@ package it.cnr.contab.web.rest.resource.anagraf00;
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TelefonoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
-import it.cnr.contab.anagraf00.ejb.AnagraficoComponentSession;
 import it.cnr.contab.anagraf00.ejb.TerzoComponentSession;
-import it.cnr.contab.config00.ejb.Unita_organizzativaComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.local.anagraf00.TerzoLocal;
@@ -52,9 +50,7 @@ public class TerzoResource implements TerzoLocal {
 	@Context SecurityContext securityContext;
 	@EJB CRUDComponentSession crudComponentSession;
 	@EJB TerzoComponentSession terzoComponentSession;
-	@EJB AnagraficoComponentSession anagraficoComponentSession;
-	@EJB Unita_organizzativaComponentSession unita_organizzativaComponentSession;
-	
+
     public Response update(@Context HttpServletRequest request, TerzoBulk terzoBulk) throws Exception {
     	CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
 		Optional.ofNullable(terzoBulk.getCd_terzo()).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, indicare il codice terzo."));
@@ -94,6 +90,30 @@ public class TerzoResource implements TerzoLocal {
     	terzoDB = (TerzoBulk)terzoComponentSession.modificaConBulk(userContext, terzoDB);
     	return Response.status(Status.OK).entity(terzoBulk).build();
     }
+
+
+
+	@Override
+	public Response get( Integer cd_terzo) throws Exception {
+		CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
+		TerzoBulk terzoDB = getTerzo(userContext, cd_terzo);
+		return Response.status(Status.OK).entity(terzoDB).build();
+	}
+
+
+
+	@Override
+	public Response getList( String codicefiscale) throws Exception {
+		CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
+		Optional.ofNullable(codicefiscale).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, indicare il codice fiscale."));
+		final List<AnagraficoBulk> anagraficoBulks = crudComponentSession.find(userContext, AnagraficoBulk.class, "findByCodiceFiscaleOrPartitaIVA", codicefiscale, null);
+		final AnagraficoBulk anagraficoBulk = anagraficoBulks.stream().findAny().orElseThrow(() -> new RestException(Status.NOT_FOUND, "Errore, nessun anagrafico trovato per il codice fiscale indicato."));
+
+		return Response.status(Response.Status.OK).entity(
+				crudComponentSession.find(userContext, TerzoBulk.class, "findTerzi", anagraficoBulk)
+		).build();
+
+	}
 
 	@Override
 	public Response tipoRapporto(String codicefiscale) throws Exception {

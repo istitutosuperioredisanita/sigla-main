@@ -90,6 +90,7 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Stream;
@@ -136,6 +137,7 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 				((DocumentoEleTestataBulk)getModel()).isCompilabile() &&
 				!((DocumentoEleTestataBulk)getModel()).isIrregistrabile() &&
 				uoScrivania.equalsByPrimaryKey(((DocumentoEleTestataBulk)getModel()).getDocumentoEleTrasmissione().getUnitaOrganizzativa()) &&
+				( !((DocumentoEleTestataBulk)getModel()).isTipoDocumentoInAttesaFatturazioneElettronica())  &&
 				this.isEsercizioAperto();
 		
 	}
@@ -158,14 +160,16 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 	
 	public boolean isRifiutaButtonEnabled() {
 		return isEditable() && getModel() != null && ((DocumentoEleTestataBulk)getModel()).getIdentificativoSdi() != null &&
-				((DocumentoEleTestataBulk)getModel()).isRifiutabile();
+				((DocumentoEleTestataBulk)getModel()).isRifiutabile()&&
+		( !((DocumentoEleTestataBulk)getModel()).isTipoDocumentoInAttesaFatturazioneElettronica());
 	}
 
 	public boolean isRifiutaConPECButtonEnabled() {
 		DocumentoEleTestataBulk model = (DocumentoEleTestataBulk)getModel();
 		return isEditable() && model != null &&
 				model.getIdentificativoSdi() != null &&
-				model.isRifiutabile();
+				model.isRifiutabile() &&
+				( !((DocumentoEleTestataBulk)getModel()).isTipoDocumentoInAttesaFatturazioneElettronica());
 	}
 
 	public boolean isCollegaFatturaButtonHidden() {
@@ -352,7 +356,12 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 	protected void resetTabs(ActionContext actioncontext) {
 		setTab( "tab", "tabEleTrasmissione");
 	}
-	
+
+	@Override
+	public boolean isSaveButtonEnabled() {
+		return super.isSaveButtonEnabled() &&  !(((DocumentoEleTestataBulk)getModel()).isTipoDocumentoInAttesaFatturazioneElettronica());
+	}
+
 	@Override
 	public boolean isDeleteButtonHidden() {
 		return true;
@@ -922,11 +931,16 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 				});
 		Optional.ofNullable(storageObject.<String>getPropertyValue("sigla_commons_aspect:utente_applicativo"))
 				.ifPresent(s -> allegato.setUtenteSIGLA(s));
-        Optional.ofNullable(storageObject.<GregorianCalendar>getPropertyValue("sigla_commons_aspect:data_cancellazione"))
-                .ifPresent(g -> allegato.setDataCancellazione(Date.from(g.toZonedDateTime().toInstant())));
 
-        Optional.ofNullable(storageObject.<GregorianCalendar>getPropertyValue("sigla_commons_aspect:data_protocollo"))
-                .ifPresent(g -> allegato.setDataProtocollo(Date.from(g.toZonedDateTime().toInstant())));
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM d H:mm:ss zzz yyyy", Locale.ENGLISH);
+		Optional.ofNullable(storageObject.<String>getPropertyValue("sigla_commons_aspect:data_cancellazione"))
+                .ifPresent(g ->
+						allegato.setDataCancellazione(Date.from(ZonedDateTime.parse(g, formatter).toInstant())));
+
+        Optional.ofNullable(storageObject.<String>getPropertyValue("sigla_commons_aspect:data_protocollo"))
+                .ifPresent(g ->
+						allegato.setDataProtocollo(Date.from(ZonedDateTime.parse(g, formatter).toInstant())));
         Optional.ofNullable(storageObject.<String>getPropertyValue("sigla_commons_aspect:numero_protocollo"))
                 .ifPresent(s -> allegato.setNumProtocollo(s));
 

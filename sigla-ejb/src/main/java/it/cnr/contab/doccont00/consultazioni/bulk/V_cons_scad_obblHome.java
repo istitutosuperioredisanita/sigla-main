@@ -20,7 +20,6 @@
  * Date 09/03/2007
  */
 package it.cnr.contab.doccont00.consultazioni.bulk;
-import java.sql.Connection;
 
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
@@ -31,12 +30,22 @@ import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
+
+import java.sql.Connection;
 public class V_cons_scad_obblHome extends BulkHome {
 	public V_cons_scad_obblHome(Connection conn) {
 		super(V_cons_scad_obblBulk.class, conn);
 	}
 	public V_cons_scad_obblHome(Connection conn, PersistentCache persistentCache) {
 		super(V_cons_scad_obblBulk.class, conn, persistentCache);
+	}
+
+	protected V_cons_scad_obblHome(Class clazz, java.sql.Connection connection) {
+		super(clazz, connection);
+	}
+
+	protected V_cons_scad_obblHome(Class clazz, java.sql.Connection connection, PersistentCache persistentCache) {
+		super(clazz, connection, persistentCache);
 	}
 	
 	public SQLBuilder selectByClause(UserContext usercontext, CompoundFindClause compoundfindclause) throws PersistencyException
