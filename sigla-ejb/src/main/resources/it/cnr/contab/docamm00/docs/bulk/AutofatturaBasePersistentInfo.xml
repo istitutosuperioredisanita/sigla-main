@@ -245,6 +245,21 @@
 			columnSize="1"
 			nullable="false"
 			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+
+		<columnMapping
+				columnName="FL_EXTRA_UE"
+				propertyName="fl_extra_ue"
+				sqlTypeName="CHAR"
+				columnSize="1"
+				nullable="false"
+				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+				columnName="FL_SAN_MARINO_CON_IVA"
+				propertyName="fl_san_marino_con_iva"
+				sqlTypeName="CHAR"
+				columnSize="1"
+				nullable="false"
+				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="protocollo_iva" />
@@ -322,4 +337,8 @@
 		name="flFatturaElettronica" />
 	<persistentProperty
 		name="flTerzoEnte" />
+	<persistentProperty
+			name="fl_extra_ue" />
+	<persistentProperty
+			name="fl_san_marino_con_iva"/>
 </SQLPersistentInfo>

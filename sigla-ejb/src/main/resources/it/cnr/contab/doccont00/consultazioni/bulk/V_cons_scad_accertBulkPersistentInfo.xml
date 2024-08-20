@@ -108,7 +108,11 @@
 			sqlTypeName="VARCHAR"
 			columnSize="200"
 			nullable="false" />
-
+		<columnMapping
+				columnName="DS_ELEMENTO_VOCE"
+				propertyName="ds_elemento_voce"
+				sqlTypeName="VARCHAR"
+				columnSize="300" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="cds" />
@@ -138,7 +142,8 @@
 		name="imp_ass_doc_cont" />
 	<persistentProperty
 		name="debitore" />
-
+	<persistentProperty
+			name="ds_elemento_voce" />
 
 
 </SQLPersistentInfo>

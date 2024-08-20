@@ -26,19 +26,20 @@
 		maxLength="30"
 		inputSize="30"
 		inputType="TEXT"
-		label="cd_cds" />
+		label="Codice CdS" />
 	<fieldProperty
 		name="protocollo_iva"
 		property="protocollo_iva"
 		inputType="TEXT"
-		label="protocollo_iva" />
+		label="N. Registrazione IVA" />
 	<fieldProperty
 		name="stato_cofi"
 		property="stato_cofi"
 		maxLength="1"
 		inputSize="1"
-		inputType="TEXT"
-		label="stato_cofi"
+		inputType="ROTEXT"
+		keysProperty="stato_cofiKeys"
+		label="Stato"
 		caseSensitiveSearch="false" />
 	<fieldProperty
 		name="cd_uo_origine"
@@ -46,66 +47,83 @@
 		maxLength="30"
 		inputSize="30"
 		inputType="TEXT"
-		label="cd_uo_origine"
+		label="UO Origine"
 		caseSensitiveSearch="false" />
 	<fieldProperty
 		name="fl_san_marino_senza_iva"
 		property="fl_san_marino_senza_iva"
 		inputType="CHECKBOX"
-		label="fl_san_marino_senza_iva" />
+		label="S. Marino senza IVA" />
 	<fieldProperty
 		name="fl_san_marino_con_iva"
 		property="fl_san_marino_con_iva"
 		inputType="CHECKBOX"
 		label="fl_san_marino_con_iva" />
 	<fieldProperty
+			name="sezionaliFlagsRadioGroup"
+			property="sezionaliFlag"
+			keysProperty="sezionaliFlags"
+			inputType="RADIOGROUP"
+			layout="VERTICAL"
+			enabledOnInsert="false"
+			enabledOnEdit="false"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="false"
+			label="Opzioni"
+			caseSensitiveSearch="false"/>
+	<fieldProperty
 		name="cd_unita_organizzativa"
 		property="cd_unita_organizzativa"
 		maxLength="30"
 		inputSize="30"
 		inputType="TEXT"
-		label="cd_unita_organizzativa" />
+		label="UO" />
 	<fieldProperty
 		name="cd_tipo_sezionale"
 		property="cd_tipo_sezionale"
 		maxLength="10"
 		inputSize="10"
 		inputType="TEXT"
-		label="cd_tipo_sezionale"
+		label="Cod. Sezionale"
 		caseSensitiveSearch="false" />
 	<fieldProperty
 		name="cd_uo_ft_passiva"
-		property="cd_uo_ft_passiva"
+		property="fattura_passiva.cd_unita_organizzativa"
 		maxLength="30"
 		inputSize="30"
 		inputType="TEXT"
-		label="cd_uo_ft_passiva"
+		label="CDS Fatt. Passiva"
 		caseSensitiveSearch="false" />
 	<fieldProperty
 		name="esercizio"
 		property="esercizio"
 		inputType="TEXT"
-		label="esercizio" />
+		enabledOnEdit="false"
+		enabledOnInsert="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		label="Esercizio"/>
 	<fieldProperty
 		name="ti_istituz_commerc"
 		property="ti_istituz_commerc"
 		maxLength="1"
 		inputSize="1"
 		inputType="TEXT"
-		label="ti_istituz_commerc"
-		caseSensitiveSearch="false" />
+		label="Tipo"
+		caseSensitiveSearch="false"
+		keysProperty="ti_istituz_commercKeys"/>
 	<fieldProperty
 		name="pg_fattura_passiva"
-		property="pg_fattura_passiva"
+		property="fattura_passiva.pg_fattura_passiva"
 		inputType="TEXT"
-		label="pg_fattura_passiva" />
+		label="Prog. documento"/>
 	<fieldProperty
 		name="cd_cds_ft_passiva"
-		property="cd_cds_ft_passiva"
+		property="fattura_passiva.cd_cds"
 		maxLength="30"
 		inputSize="30"
 		inputType="TEXT"
-		label="cd_cds_ft_passiva"
+		label="Cds Fatt.Passiva"
 		caseSensitiveSearch="false" />
 	<fieldProperty
 		name="cd_cds_origine"
@@ -119,22 +137,22 @@
 		name="pg_autofattura"
 		property="pg_autofattura"
 		inputType="TEXT"
-		label="pg_autofattura" />
+		label="Prog. Autofattura" />
 	<fieldProperty
 		name="fl_intra_ue"
 		property="fl_intra_ue"
 		inputType="CHECKBOX"
-		label="fl_intra_ue" />
+		label="Intra U.E." />
 	<fieldProperty
 		name="fl_extra_ue"
 		property="fl_extra_ue"
 		inputType="CHECKBOX"
-		label="fl_extra_ue" />
+		label="Extra U.E." />
 	<fieldProperty
 		name="protocollo_iva_generale"
 		property="protocollo_iva_generale"
 		inputType="TEXT"
-		label="protocollo_iva_generale" />
+		label="N. Registrazione IVA Generale" />
 	<fieldProperty
 		name="data_esigibilita_iva"
 		property="data_esigibilita_iva"
@@ -144,7 +162,7 @@
 		name="fl_liquidazione_differita"
 		property="fl_liquidazione_differita"
 		inputType="CHECKBOX"
-		label="fl_liquidazione_differita" />
+		label="Liquidazione Differita" />
 	<fieldProperty
 		name="fl_autofattura"
 		property="fl_autofattura"
@@ -172,6 +190,19 @@
 		label="ti_fattura"
 		caseSensitiveSearch="false" />
 
+	<fieldProperty
+			name="sezionale"
+			property="tipo_sezionale"
+			printProperty="ds_tipo_sezionale"
+			optionsProperty="sezionali"
+			maxLength="30"
+			inputSize="30"
+			inputType="SELECT"
+			nullable="false"
+			enabledOnSearch="true"
+			enabledOnEdit="false"
+			label="Sezionale"/>
+
 	<formFieldProperty
 		name="cd_cds" />
 	<formFieldProperty
@@ -220,9 +251,13 @@
 		name="dt_registrazione" />
 	<formFieldProperty
 		name="ti_fattura" />
-
+	<formFieldProperty
+			name="sezionale" />
+	<formFieldProperty
+			name="sezionaliFlagsRadioGroup"/>
+<!--
 	<columnFieldProperty
-		name="cd_cds" />
+		name="cd_cds" />-->
 	<columnFieldProperty
 		name="protocollo_iva" />
 	<columnFieldProperty
@@ -233,10 +268,10 @@
 		name="fl_san_marino_senza_iva" />
 	<columnFieldProperty
 		name="fl_san_marino_con_iva" />
-	<columnFieldProperty
+	<!--<columnFieldProperty
 		name="cd_unita_organizzativa" />
 	<columnFieldProperty
-		name="cd_tipo_sezionale" />
+		name="cd_tipo_sezionale" />-->
 	<columnFieldProperty
 		name="cd_uo_ft_passiva" />
 	<columnFieldProperty
@@ -269,9 +304,15 @@
 		name="dt_registrazione" />
 	<columnFieldProperty
 		name="ti_fattura" />
+	<columnFieldProperty
+			name="sezionale"
+			property="tipo_sezionale.ds_tipo_sezionale"
+			printProperty=""/>
 
 	<findFieldProperty
 		name="cd_cds" />
+	<findFieldProperty
+			name="esercizio" />
 	<findFieldProperty
 		name="protocollo_iva" />
 	<findFieldProperty
@@ -284,8 +325,10 @@
 		name="fl_san_marino_con_iva" />
 	<findFieldProperty
 		name="cd_unita_organizzativa" />
+	<!--
 	<findFieldProperty
 		name="cd_tipo_sezionale" />
+		-->
 	<findFieldProperty
 		name="cd_uo_ft_passiva" />
 	<findFieldProperty
@@ -318,5 +361,7 @@
 		name="dt_registrazione" />
 	<findFieldProperty
 		name="ti_fattura" />
+	<findFieldProperty
+			name="sezionaliFlagsRadioGroup"/>
 
-</bulkInfo>
+    </bulkInfo>

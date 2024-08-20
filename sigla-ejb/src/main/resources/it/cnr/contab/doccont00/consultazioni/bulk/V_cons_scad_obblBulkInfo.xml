@@ -120,6 +120,15 @@
 		maxLength="300"
 		inputSize="50"
 		label="Denominazione"/>
+	<fieldProperty
+			name="ds_elemento_voce"
+			property="ds_elemento_voce"
+			label="Descrizione Voce"
+			inputType="TEXT"
+			maxLength="300"
+			inputSize="60"
+			enabledOnSearch="true"
+	/>
 	
 		
 		
@@ -151,6 +160,8 @@
 		name="imp_ass_doc_cont" />
 	<formFieldProperty
 		name="creditore" />
+	<formFieldProperty
+			name="ds_elemento_voce" />
 		
 	<findFieldProperty
 		name="cds" />
@@ -197,6 +208,8 @@
 	<columnFieldProperty
 		name="voce_bilancio" />
 	<columnFieldProperty
+			name="ds_elemento_voce"/>
+	<columnFieldProperty
 		name="data_scad" />
 	<columnFieldProperty
 		name="ds_obbl" />	
@@ -210,4 +223,5 @@
 		name="imp_ass_doc_cont" />
 	<columnFieldProperty
 		name="creditore" />
+
 </bulkInfo>

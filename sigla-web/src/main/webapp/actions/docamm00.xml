@@ -79,6 +79,8 @@
             actionClass="it.cnr.contab.docamm00.actions.CaricaFatturaPassivaElettronicaAction"
             needExistingSession="false">
     </action>
+    <action
+            path="/CRUDAutofatturaAction" actionClass="it.cnr.contab.docamm00.actions.CRUDAutofatturaAction"/>
     <businessProcess name="SelezionatoreFatturaElettronicaBP"
                      className="it.cnr.contab.docamm00.bp.SelezionatoreFatturaElettronicaBP">
         <forward name="default" path="/docamm00/selezionatore_fatt_ele.jsp"/>
@@ -454,6 +456,14 @@
         <init-param name="defaultAction" value="SelezionatoreFattureElettronicheLiquidazioneAction"/>
         <init-param name="componentSessionName" value="CNRDOCAMM00_EJB_FatturaElettronicaPassivaComponentSession"/>
         <init-param name="multiSelezione" value="Y"/>
+    </businessProcess>
+
+    <businessProcess
+            name="CRUDAutofatturaBP" className="it.cnr.contab.docamm00.bp.CRUDAutofatturaBP">
+        <forward name="default" path="/docamm00/autofattura.jsp"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.docamm00.docs.bulk.AutofatturaBulk"/>
+        <init-param name="componentSessionName" value="CNRDOCAMM00_EJB_AutoFatturaComponentSession"/>
+        <init-param name="defaultAction" value="CRUDAutofatturaAction"/>
     </businessProcess>
 
 </action-mappings>
