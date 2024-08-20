@@ -81,5 +81,4 @@ public  class CRUDAutofatturaBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Aut
     }
 
 
-
 }

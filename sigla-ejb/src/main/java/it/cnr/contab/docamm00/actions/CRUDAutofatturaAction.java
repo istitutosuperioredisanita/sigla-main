@@ -10,6 +10,59 @@ import it.cnr.jada.action.Forward;
 public class CRUDAutofatturaAction extends EconomicaAction {
 
     /**
+     * Gestisce il cambiamento del tipo sezionale ricaricandoli
+     *
+     * @param context L'ActionContext della richiesta
+     * @return Il Forward alla pagina di risposta
+     */
+
+    public Forward doOnIstituzionaleCommercialeChange(ActionContext context) {
+        try {
+            CRUDAutofatturaBP bp = (CRUDAutofatturaBP) getBusinessProcess(context);
+            AutofatturaBulk autofattura = (AutofatturaBulk) bp.getModel();
+
+
+
+            java.util.Collection sezionaliOld = autofattura.getSezionali();
+            Boolean intraUE = autofattura.getFl_intra_ue();
+            Boolean extraUE = autofattura.getFl_extra_ue();
+            Boolean sanMarinoCI = autofattura.getFl_san_marino_con_iva();
+            Boolean sanMarinoSI = autofattura.getFl_san_marino_senza_iva();
+            Boolean autof = autofattura.getFl_autofattura();
+            String fattServizi = autofattura.getTi_bene_servizio();
+            Boolean liqDiff = autofattura.getFl_liquidazione_differita();
+            fillModel(context);
+            try {
+                autofattura.setFl_intra_ue(Boolean.FALSE);
+                autofattura.setFl_extra_ue(Boolean.FALSE);
+                autofattura.setFl_san_marino_con_iva(Boolean.FALSE);
+                autofattura.setFl_san_marino_senza_iva(Boolean.FALSE);
+
+                autofattura.setFl_autofattura(Boolean.FALSE);
+                autofattura.setTi_bene_servizio(null);
+                autofattura.setFl_liquidazione_differita(Boolean.FALSE);
+
+                basicDoOnIstituzionaleCommercialeChange(context, autofattura);
+                bp.setModel(context, autofattura);
+                return context.findDefaultForward();
+            } catch (it.cnr.jada.comp.ComponentException e) {
+                autofattura.setSezionali(sezionaliOld);
+                autofattura.setFl_intra_ue(intraUE);
+                autofattura.setFl_extra_ue(extraUE);
+                autofattura.setFl_san_marino_con_iva(sanMarinoCI);
+                autofattura.setFl_san_marino_senza_iva(sanMarinoSI);
+                autofattura.setFl_autofattura(autof);
+                autofattura.setTi_bene_servizio(fattServizi);
+                autofattura.setFl_liquidazione_differita(liqDiff);
+                bp.setModel(context, autofattura);
+                throw e;
+            }
+        } catch (Throwable t) {
+            return handleException(context, t);
+        }
+    }
+
+    /**
      * Viene richiamato nel momento in cui si seleziona una valuta dal combo Valuta nella
      * testata della fattura.
      * Richiama a sua volta il metodo cercaCambio dalla component.
