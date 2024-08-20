@@ -73,7 +73,7 @@
 		label="Codice della linea di attivita" />
 	<fieldProperty
 		name="esercizioVoce"
-		property="elementoVoce.esercizioVoce"
+		property="elementoVoce.esercizio"
 		inputType="TEXT"
 		inputSize="5"
 		maxLength="5"
@@ -83,7 +83,7 @@
 		label="Esercizio della voce del capitolo" />
 	<fieldProperty
 		name="tiAppartenenza"
-		property="elementoVoce.tiAppartenenza"
+		property="elementoVoce.ti_Appartenenza"
 		inputType="TEXT"
 		inputSize="1"
 		maxLength="1"
@@ -93,7 +93,7 @@
 		label="Definisce l'appartenenza (CNR o CdS) delle voci del piano finanziario di riferimento dell'obbligazione" />
 	<fieldProperty
 		name="tiGestione"
-		property="elementoVoce.tiGestione"
+		property="elementoVoce.ti_Gestione"
 		inputType="TEXT"
 		inputSize="1"
 		maxLength="1"
