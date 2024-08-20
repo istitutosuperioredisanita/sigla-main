@@ -60,6 +60,18 @@
 		inputType="CHECKBOX"
 		label="fl_san_marino_con_iva" />
 	<fieldProperty
+			name="sezionaliFlagsRadioGroup"
+			property="sezionaliFlag"
+			keysProperty="sezionaliFlags"
+			inputType="RADIOGROUP"
+			layout="VERTICAL"
+			enabledOnInsert="false"
+			enabledOnEdit="false"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="false"
+			label="Opzioni"
+			caseSensitiveSearch="false"/>
+	<fieldProperty
 		name="cd_unita_organizzativa"
 		property="cd_unita_organizzativa"
 		maxLength="30"
@@ -241,6 +253,8 @@
 		name="ti_fattura" />
 	<formFieldProperty
 			name="sezionale" />
+	<formFieldProperty
+			name="sezionaliFlagsRadioGroup"/>
 <!--
 	<columnFieldProperty
 		name="cd_cds" />-->
@@ -347,5 +361,7 @@
 		name="dt_registrazione" />
 	<findFieldProperty
 		name="ti_fattura" />
+	<findFieldProperty
+			name="sezionaliFlagsRadioGroup"/>
 
-</bulkInfo>
+    </bulkInfo>

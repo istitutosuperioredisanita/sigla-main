@@ -31,6 +31,17 @@
 	 	<% bp.getController().writeFormInput(out,null,"pg_autofattura",false,null,"");%>
 	   </td>
 	 </tr>
+	 <%=bp.isSearching()%>
+	 <% if (bp.isSearching()) { %>
+	 <tr>
+	        <td>
+     			   		<% bp.getController().writeFormLabel(out, "sezionaliFlagsRadioGroup");%>
+     		      	</td>
+     		     	<td colspan="3">
+     			   		<% bp.getController().writeFormInput(out, null, "sezionaliFlagsRadioGroup", false, null, "onClick=\"submitForm('doOnSezionaliFlagsChange')\"");%>
+     		      	</td>
+     </tr>
+     <% }%>
 	 <tr>
 		<% if (!bp.isSearching()) { %>	 
 	   		<td><% bp.getController().writeFormLabel(out,"stato_cofi");%></td>
