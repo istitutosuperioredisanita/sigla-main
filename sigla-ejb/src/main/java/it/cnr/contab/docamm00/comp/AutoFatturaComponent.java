@@ -40,13 +40,16 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.ICRUDMgr;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.LoggableStatement;
+import it.cnr.jada.persistency.sql.SQLBuilder;
 
 import javax.ejb.EJBException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Optional;
 
 public class AutoFatturaComponent 
 	extends CRUDComponent 
@@ -386,24 +389,29 @@ public java.util.Vector estraeSezionali (UserContext aUC, AutofatturaBulk autofa
 //						{ "TIPO_SEZIONALE.TI_BENE_SERVIZIO", autofattura.getTi_bene_servizio(), "OR" }
 					});
 	  Fattura_passivaBulk fatturaPassiva=(Fattura_passivaBulk) findByPrimaryKey(aUC, autofattura.getFattura_passiva());
-	
-	    if ((fatturaPassiva.isCommerciale()) && 
-          	(fatturaPassiva.getFl_split_payment()==null ||
-          	(fatturaPassiva.getFl_split_payment()!=null && !fatturaPassiva.getFl_split_payment().booleanValue())) && 
-          	fatturaPassiva.getData_protocollo()!=null && 
-          	!fatturaPassiva.isEstera() &&
-              !fatturaPassiva.isSanMarinoSenzaIVA() &&
-              !fatturaPassiva.isSanMarinoConIVA()){
-         		Configurazione_cnrBulk conf = getLimitiRitardoDetraibile(aUC, fatturaPassiva);
-         		if(fatturaPassiva.getDt_registrazione() != null && fatturaPassiva.getDt_registrazione().after(conf.getDt01()) && 
-                 		  (fatturaPassiva.getDt_registrazione().before(conf.getDt02())|| fatturaPassiva.getDt_registrazione().equals(conf.getDt02())))
-                	options.add(new String[][]{{"TIPO_SEZIONALE.FL_REG_TARDIVA", "Y", "AND"}});
-           		else
-                	options.add(new String[][]{{"TIPO_SEZIONALE.FL_REG_TARDIVA", "N", "AND"}});
+	 if (Optional.ofNullable(fatturaPassiva).isPresent()) {
+		 if ((fatturaPassiva.isCommerciale()) &&
+				 (fatturaPassiva.getFl_split_payment() == null ||
+						 (fatturaPassiva.getFl_split_payment() != null && !fatturaPassiva.getFl_split_payment().booleanValue())) &&
+				 fatturaPassiva.getData_protocollo() != null &&
+				 !fatturaPassiva.isEstera() &&
+				 !fatturaPassiva.isSanMarinoSenzaIVA() &&
+				 !fatturaPassiva.isSanMarinoConIVA()) {
+			 Configurazione_cnrBulk conf = getLimitiRitardoDetraibile(aUC, fatturaPassiva);
+			 if (fatturaPassiva.getDt_registrazione() != null && fatturaPassiva.getDt_registrazione().after(conf.getDt01()) &&
+					 (fatturaPassiva.getDt_registrazione().before(conf.getDt02()) || fatturaPassiva.getDt_registrazione().equals(conf.getDt02())))
+				 options.add(new String[][]{{"TIPO_SEZIONALE.FL_REG_TARDIVA", "Y", "AND"}});
+			 else
+				 options.add(new String[][]{{"TIPO_SEZIONALE.FL_REG_TARDIVA", "N", "AND"}});
 
-      }else{
-      		options.add(new String[][]{{"TIPO_SEZIONALE.FL_REG_TARDIVA", "N", "AND"}});
-      }
+		 } else {
+			 options.add(new String[][]{{"TIPO_SEZIONALE.FL_REG_TARDIVA", "N", "AND"}});
+		 }
+	 }else{
+		 options.add(new String[][]{{"TIPO_SEZIONALE.FL_REG_TARDIVA", "N", "AND"}});
+		 options.add(new String[][]{{"TIPO_SEZIONALE.FL_REG_TARDIVA", "N", "AND"}});
+	 }
+
 	  
 	//********************************
 	//java.util.Collection result = 
@@ -709,5 +717,33 @@ public Configurazione_cnrBulk getLimitiRitardoDetraibile(UserContext userContext
 		} catch (PersistencyException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private Fattura_passivaBulk getFatturaPassiva(UserContext userContext,AutofatturaBulk autofattura)  throws ComponentException {
+		try {
+			Fattura_passivaHome fatturaPassivaHome = (Fattura_passivaHome) getHome(userContext,Fattura_passiva_IBulk.class);
+			SQLBuilder sqlFatpas = fatturaPassivaHome.createSQLBuilder();
+			sqlFatpas.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, autofattura.getCd_cds_ft_passiva());
+			sqlFatpas.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, autofattura.getCd_uo_ft_passiva());
+			sqlFatpas.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, autofattura.getEsercizio());
+			sqlFatpas.addClause(FindClause.AND, "pg_fattura_passiva", SQLBuilder.EQUALS, autofattura.getPg_fattura_passiva());
+
+			java.util.List resultFatpas = fatturaPassivaHome.fetchAll(sqlFatpas);
+			if (resultFatpas == null || resultFatpas.isEmpty()) return null;
+			if (resultFatpas.size() != 1)
+				throw new PersistencyException("Trovate più autofatture!");
+			return (Fattura_passivaBulk) resultFatpas.get(0);
+		}catch(it.cnr.jada.persistency.PersistencyException ex)
+			{
+				throw handleException(ex);
+			}
+	}
+
+	@Override
+	public OggettoBulk inizializzaBulkPerModifica(UserContext usercontext, OggettoBulk oggettobulk) throws ComponentException {
+
+		AutofatturaBulk autofattura = (AutofatturaBulk)oggettobulk;
+		autofattura.setFattura_passiva( getFatturaPassiva(usercontext,autofattura));
+		return super.inizializzaBulkPerModifica(usercontext, oggettobulk);
 	}
 }

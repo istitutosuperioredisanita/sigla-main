@@ -17,7 +17,9 @@
 
 package it.cnr.contab.dp;
 
-public class DigitalPreservationProperties {
+import java.io.Serializable;
+
+public class DigitalPreservationProperties implements Serializable {
 	private String digitalPreservationCodAmm;
 	private String digitalPreservationCodRegFA;
 	private String digitalPreservationCodRegFP;
