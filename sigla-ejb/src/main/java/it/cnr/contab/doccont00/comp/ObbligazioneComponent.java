@@ -3287,7 +3287,7 @@ public OggettoBulk modificaConBulk (UserContext aUC,OggettoBulk bulk) throws Com
 		verificaCoerenzaGaeContratto(aUC, obbligazione);
 		verificaCoperturaIncaricoRepertorio(aUC, obbligazione);
 		
-		if ( !aUC.isTransactional() )
+		if ( !aUC.isTransactional() || pdgVariazioneObbl!=null)
 		{
 			//aggiorna il capitolo saldo
 			aggiornaCapitoloSaldoObbligazione( aUC, obbligazione, MODIFICA );
