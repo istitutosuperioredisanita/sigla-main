@@ -3,12 +3,15 @@ package it.cnr.contab.web.rest.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class ObbligazioneScadenzarioDto implements Serializable {
 
     private Date dt_scadenza;
     private String ds_scadenza;
     private BigDecimal im_scadenza;
+
+    private List<ObbligazioneScadVoceDto> obbligazioneScadVoce;
 
     public Date getDt_scadenza() {
         return dt_scadenza;
@@ -32,5 +35,13 @@ public class ObbligazioneScadenzarioDto implements Serializable {
 
     public void setIm_scadenza(BigDecimal im_scadenza) {
         this.im_scadenza = im_scadenza;
+    }
+
+    public List<ObbligazioneScadVoceDto> getObbligazioneScadVoce() {
+        return obbligazioneScadVoce;
+    }
+
+    public void setObbligazioneScadVoce(List<ObbligazioneScadVoceDto> obbligazioneScadVoce) {
+        this.obbligazioneScadVoce = obbligazioneScadVoce;
     }
 }
