@@ -63,7 +63,7 @@ public class ObbligazioneResource implements ObbligazioneLocal {
         ObbligazioneBulk obbligazioneBulk = new ObbligazioneBulk();
         obbligazioneBulk.setEsercizio( obbligazioneDto.getEsercizio());
         obbligazioneBulk.setEsercizio_originale(obbligazioneDto.getEsercizio());
-        obbligazioneBulk.setCds(new CdsBulk(obbligazioneDto.getCdsKey().getCd_unita_organizzativa()));
+        obbligazioneBulk.setCds(( CdsBulk) crudComponentSession.findByPrimaryKey( userContext,new CdsBulk(obbligazioneDto.getCdsKey().getCd_unita_organizzativa())));
         obbligazioneBulk.setUnita_organizzativa(new Unita_organizzativaBulk(obbligazioneDto.getUnitaOrganizzativaKey().getCd_unita_organizzativa()));
         obbligazioneBulk.setDt_registrazione(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate());
 
@@ -100,12 +100,13 @@ public class ObbligazioneResource implements ObbligazioneLocal {
         for (ObbligazioneScadenzarioDto scadenza : obbligazioneDto.getScadenze()) {
             Obbligazione_scadenzarioBulk obb_scadenza = new Obbligazione_scadenzarioBulk();
             obb_scadenza.setToBeCreated();
+            obbligazioneBulk.addToObbligazione_scadenzarioColl(obb_scadenza);
             obb_scadenza.setIm_scadenza(scadenza.getIm_scadenza());
             obb_scadenza.setDt_scadenza(new Timestamp(scadenza.getDt_scadenza().getTime()));
             obb_scadenza.setDs_scadenza(scadenza.getDs_scadenza());
-            obb_scadenza.setIm_associato_doc_amm(BigDecimal.ZERO);
-            obb_scadenza.setIm_associato_doc_contabile(BigDecimal.ZERO);
-            obbligazioneBulk.addToObbligazione_scadenzarioColl(obb_scadenza);
+            //obb_scadenza.setIm_associato_doc_amm(BigDecimal.ZERO);
+            //obb_scadenza.setIm_associato_doc_contabile(BigDecimal.ZERO);
+
            // BulkList<Obbligazione_scad_voceBulk> listScadVoce= new BulkList<Obbligazione_scad_voceBulk>();
             for ( ObbligazioneScadVoceDto scad_voce :scadenza.getObbligazioneScadVoce()) {
                 Obbligazione_scad_voceBulk obb_scad_voce = new Obbligazione_scad_voceBulk();
@@ -115,6 +116,8 @@ public class ObbligazioneResource implements ObbligazioneLocal {
                 obb_scad_voce.setCd_voce(voce.getCd_voce());
                 obb_scad_voce.setTi_gestione(voce.getTi_gestione());
                 obb_scad_voce.setTi_appartenenza(voce.getTi_appartenenza());
+
+
                 WorkpackageBulk gaePrelevamentoFondi = (WorkpackageBulk) crudComponentSession.findByPrimaryKey(userContext, new WorkpackageBulk(
                         scad_voce.getLineaAttivitaKeyDto().getCentro_responsabilitaKey().getCd_centro_responsabilita(),
                         scad_voce.getLineaAttivitaKeyDto().getCd_linea_attivita()));
@@ -125,13 +128,12 @@ public class ObbligazioneResource implements ObbligazioneLocal {
                 //Controllo da riattivare
                // if (obb_scad_voce.getLinea_attivita().getTi_gestione().compareTo(obbligazioneBulk.getTi_gestione()) != 0)
                 //    throw new RestException(Response.Status.BAD_REQUEST, "Tipo G.a.e. non coerente con la voce");
-
-
                 Linea_attivitaBulk nuovaLatt = new Linea_attivitaBulk();
                 nuovaLatt.setLinea_att(obb_scad_voce.getLinea_attivita());
                 nuovaLatt.setPrcImputazioneFin(new BigDecimal(100));
                 nuovaLatt.setObbligazione(obbligazioneBulk);
                 obb_scadenza.getObbligazione_scad_voceColl().add((obb_scad_voce));
+                obbligazioneBulk.getNuoveLineeAttivitaColl().add(nuovaLatt);
             }
 
 
