@@ -6147,4 +6147,26 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 			throw handleException(e);
 		}
 	}
+	public ObbligazioneBulk creaObbligazioneWs(UserContext uc,ObbligazioneBulk obbligazione) throws ComponentException {
+		return ( ObbligazioneBulk) creaConBulk(uc,obbligazione);
+	}
+	public ObbligazioneBulk updateObbligazioneWs(UserContext uc,ObbligazioneBulk obbligazione) throws ComponentException {
+		throw new ApplicationException("Fuzionalità non implementata");
+	}
+	public Boolean deleteObbligazioneWs(UserContext uc,String cd_cds,Integer esercizio,Long pg_obbligazione,Integer esercizio_originale) throws ComponentException,PersistencyException {
+
+		ObbligazioneBulk obbligazioneBulk= findObbligazione(uc, new ObbligazioneBulk(cd_cds,esercizio,esercizio_originale,pg_obbligazione));
+		if ( !Optional.ofNullable(obbligazioneBulk).isPresent())
+			return Boolean.FALSE;
+
+		verificaStatoEsercizio(
+				uc,
+				((CNRUserContext)uc).getEsercizio(),
+				obbligazioneBulk.getCd_cds());
+
+		obbligazioneBulk= ( ObbligazioneBulk)inizializzaBulkPerModifica(uc,obbligazioneBulk);
+		eliminaConBulk(uc,obbligazioneBulk);
+		return Boolean.TRUE;
+	}
+
 }

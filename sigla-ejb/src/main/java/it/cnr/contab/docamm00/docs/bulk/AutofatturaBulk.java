@@ -23,6 +23,7 @@ import it.cnr.contab.docamm00.storage.StorageFolderAutofattura;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk;
 import it.cnr.contab.util.Utility;
+import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.contab.util00.bulk.storage.AllegatoStorePath;
@@ -102,7 +103,7 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 
 
 	private java.lang.String ti_bene_servizio = null;
-	private boolean autofatturaNeeded = false;
+	//private boolean autofatturaNeeded = false;
 	private TerzoBulk terzoDocumentoElettronico;
 
 	@JsonIgnore
@@ -123,6 +124,8 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 	public Dictionary getSezionaliFlags() {
 		return SEZIONALI_FLAG_KEYS;
 	}
+
+
 
 	public OggettoBulk initializeForSearch(CRUDBP bp, it.cnr.jada.action.ActionContext context) {
 		super.initializeForSearch(bp,context);
@@ -182,11 +185,11 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 		else
 			setFl_autofattura(Boolean.TRUE);
 
-        setAutofatturaNeeded(
-                fatturaPassiva.isCommerciale() &&
-                        ((getFl_intra_ue() != null && Boolean.TRUE.equals(getFl_intra_ue())) ||
-                                (getFl_san_marino_senza_iva() != null && Boolean.TRUE.equals(getFl_san_marino_senza_iva())))
-        );
+        //setAutofatturaNeeded(
+        //        fatturaPassiva.isCommerciale() &&
+        //                ((getFl_intra_ue() != null && Boolean.TRUE.equals(getFl_intra_ue())) ||
+        //                        (getFl_san_marino_senza_iva() != null && Boolean.TRUE.equals(getFl_san_marino_senza_iva())))
+        //);
 
         setEsercizio(fatturaPassiva.getEsercizio());
         setProtocollo_iva(fatturaPassiva.getProtocollo_iva());
@@ -270,6 +273,10 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
     public it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk getTipo_sezionale() {
         return tipo_sezionale;
     }
+
+	private Boolean isCommerciale(){
+		return TipoIVA.COMMERCIALE.value().equals(getTi_istituz_commerc());
+	}
     /**
      * Insert the method's description here.
      * Creation date: (4/8/2003 3:38:07 PM)
@@ -284,7 +291,9 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
      * @return boolean
      */
     public boolean isAutofatturaNeeded() {
-        return autofatturaNeeded;
+        return isCommerciale() &&
+		            ((getFl_intra_ue() != null && Boolean.TRUE.equals(getFl_intra_ue())) ||
+		                        (getFl_san_marino_senza_iva() != null && Boolean.TRUE.equals(getFl_san_marino_senza_iva())));
     }
     public boolean isStampataSuRegistroIVA() {
         return STATO_IVA_B.equalsIgnoreCase(getStatoIVA()) ||
@@ -295,9 +304,9 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 	 * Creation date: (4/8/2003 3:38:07 PM)
 	 * @param newAutofatturaNeeded boolean
 	 */
-	public void setAutofatturaNeeded(boolean newAutofatturaNeeded) {
-		autofatturaNeeded = newAutofatturaNeeded;
-	}
+	//public void setAutofatturaNeeded(boolean newAutofatturaNeeded) {
+	//	autofatturaNeeded = newAutofatturaNeeded;
+	//}
 	public void setCd_cds_ft_passiva(java.lang.String cd_cds_ft_passiva) {
 		this.getFattura_passiva().setCd_cds(cd_cds_ft_passiva);
 	}

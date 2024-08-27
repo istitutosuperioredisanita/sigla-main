@@ -24,6 +24,7 @@ import it.cnr.contab.doccont00.core.bulk.Obbligazione_pluriennaleBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.PrimaryKeyHashtable;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -938,6 +939,7 @@ public void callRiportaIndietroRequiresNew(UserContext param0, it.cnr.contab.doc
 		}
 	}
 
+
 	@Override
 	public List<Obbligazione_pluriennaleBulk> findObbligazioniPluriennali(UserContext uc, int esercizio) throws ComponentException, RemoteException {
 		try {
@@ -977,4 +979,64 @@ public void callRiportaIndietroRequiresNew(UserContext param0, it.cnr.contab.doc
 			}
 		}
 	}
+	@Override
+	public ObbligazioneBulk creaObbligazioneWs(UserContext uc, ObbligazioneBulk obbligazione) throws ComponentException, RemoteException {
+		try {
+			return (ObbligazioneBulk)invoke("creaObbligazioneWs",new Object[] {
+					uc,
+					obbligazione });
+		} catch(java.rmi.RemoteException e) {
+			throw e;
+		} catch(java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch(it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch(Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
+
+	@Override
+	public ObbligazioneBulk updateObbligazioneWs(UserContext uc, ObbligazioneBulk obbligazione) throws ComponentException, RemoteException {
+		try {
+			return (ObbligazioneBulk)invoke("updateObbligazioneWs",new Object[] {
+					uc,
+					obbligazione });
+		} catch(java.rmi.RemoteException e) {
+			throw e;
+		} catch(java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch(it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch(Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
+
+	@Override
+	public Boolean deleteObbligazioneWs(UserContext uc, String cd_cds, Integer esercizio, Long pg_obbligazione, Integer esercizio_originale) throws ComponentException, RemoteException, PersistencyException {
+		try {
+			return (Boolean)invoke("deleteObbligazioneWs",new Object[] {
+					uc,
+					cd_cds,
+					esercizio,
+					pg_obbligazione,
+					esercizio_originale});
+		} catch(java.rmi.RemoteException e) {
+			throw e;
+		} catch(java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch(it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch(Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
+
 }
