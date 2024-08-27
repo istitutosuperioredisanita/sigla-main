@@ -264,6 +264,7 @@ public class ObbligazioneResource implements ObbligazioneLocal {
             obbligazioneScadenzarioDto.setDs_scadenza(scadenza.getDs_scadenza());
             obbligazioneScadenzarioDto.setIm_scadenza(scadenza.getIm_scadenza());
             obbligazioneScadenzarioDto.setObbligazioneScadVoce(getScadenzeVoce(scadenza.getObbligazione_scad_voceColl()));
+            obbligazioneScadenzarioDto.setPg_obbligazione_scadenzario(scadenza.getPg_obbligazione_scadenzario());
             scadenzeDto.add(obbligazioneScadenzarioDto);
         }
         return scadenzeDto;

@@ -10,6 +10,7 @@ public class ObbligazioneScadenzarioDto implements Serializable {
     private Date dt_scadenza;
     private String ds_scadenza;
     private BigDecimal im_scadenza;
+    private Long pg_obbligazione_scadenzario;
 
     private List<ObbligazioneScadVoceDto> obbligazioneScadVoce;
 
@@ -43,5 +44,13 @@ public class ObbligazioneScadenzarioDto implements Serializable {
 
     public void setObbligazioneScadVoce(List<ObbligazioneScadVoceDto> obbligazioneScadVoce) {
         this.obbligazioneScadVoce = obbligazioneScadVoce;
+    }
+
+    public Long getPg_obbligazione_scadenzario() {
+        return pg_obbligazione_scadenzario;
+    }
+
+    public void setPg_obbligazione_scadenzario(Long pg_obbligazione_scadenzario) {
+        this.pg_obbligazione_scadenzario = pg_obbligazione_scadenzario;
     }
 }
