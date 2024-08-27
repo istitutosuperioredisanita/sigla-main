@@ -19,24 +19,37 @@ package it.cnr.contab.docamm00.docs.bulk;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.docamm00.storage.StorageFolderAutofattura;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk;
 import it.cnr.contab.util.Utility;
+import it.cnr.contab.util.enumeration.TipoIVA;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
+import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
+import it.cnr.contab.util00.bulk.storage.AllegatoStorePath;
+import it.cnr.jada.bulk.BulkCollection;
+import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.StrServ;
 import it.cnr.jada.util.action.CRUDBP;
 
-import java.util.Dictionary;
-import java.util.Optional;
+import java.util.*;
 
-public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmministrativoElettronicoBulk {
+public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmministrativoElettronicoBulk, AllegatoParentBulk, AllegatoStorePath {
+
+	private BulkList<AllegatoGenericoBulk> archivioAllegati = new BulkList<>();
+
+
 
 	public final static String STATO_INIZIALE = "I";
 	public final static String STATO_CONTABILIZZATO = "C";
 	public final static String STATO_PARZIALE = "Q";
 	public final static String STATO_PAGATO = "P";
+	public final static Dictionary SEZIONALI_FLAG_KEYS;
 
 	public final static Dictionary STATO;
+
+	private String sezionaliFlag = Fattura_passivaBulk.SEZIONALI_FLAGS_ALL;
 
 
 
@@ -49,9 +62,24 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 		STATO.put(STATO_PARZIALE, "Parziale");
 		STATO.put(STATO_PAGATO, "Incassato");
 
+		SEZIONALI_FLAG_KEYS = new it.cnr.jada.util.OrderedHashtable();
+		SEZIONALI_FLAG_KEYS.put(Fattura_passivaBulk.SEZIONALI_FLAGS_IUE, "Intra UE");
+		SEZIONALI_FLAG_KEYS.put(Fattura_passivaBulk.SEZIONALI_FLAGS_EUE, "Extra UE");
+		SEZIONALI_FLAG_KEYS.put(Fattura_passivaBulk.SEZIONALI_FLAGS_ALL, "Tutte");
+		SEZIONALI_FLAG_KEYS.put(Fattura_passivaBulk.SEZIONALI_FLAGS_SMC, "S. Marino con IVA");
+		SEZIONALI_FLAG_KEYS.put(Fattura_passivaBulk.SEZIONALI_FLAGS_SMS, "S. Marino senza IVA");
+
 
 	}
 
+	public BulkCollection[] getBulkLists() {
+
+		// Metti solo le liste di oggetti che devono essere resi persistenti
+
+		return new it.cnr.jada.bulk.BulkCollection[] {
+				archivioAllegati
+		};
+	}
 	@JsonIgnore
 	public Dictionary getStato_cofiKeys() {
 		return STATO;
@@ -75,18 +103,29 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 
 
 	private java.lang.String ti_bene_servizio = null;
-	private boolean autofatturaNeeded = false;
+	//private boolean autofatturaNeeded = false;
 	private TerzoBulk terzoDocumentoElettronico;
 
 	@JsonIgnore
 	private java.util.Collection sezionali;
+
+
+
 
 	public AutofatturaBulk() {
 		super();
 	}
 	public AutofatturaBulk(java.lang.String cd_cds,java.lang.String cd_unita_organizzativa,java.lang.Integer esercizio,java.lang.Long pg_autofattura) {
 		super(cd_cds,cd_unita_organizzativa,esercizio,pg_autofattura);
+
+
 	}
+
+	public Dictionary getSezionaliFlags() {
+		return SEZIONALI_FLAG_KEYS;
+	}
+
+
 
 	public OggettoBulk initializeForSearch(CRUDBP bp, it.cnr.jada.action.ActionContext context) {
 		super.initializeForSearch(bp,context);
@@ -146,11 +185,11 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 		else
 			setFl_autofattura(Boolean.TRUE);
 
-        setAutofatturaNeeded(
-                fatturaPassiva.isCommerciale() &&
-                        ((getFl_intra_ue() != null && Boolean.TRUE.equals(getFl_intra_ue())) ||
-                                (getFl_san_marino_senza_iva() != null && Boolean.TRUE.equals(getFl_san_marino_senza_iva())))
-        );
+        //setAutofatturaNeeded(
+        //        fatturaPassiva.isCommerciale() &&
+        //                ((getFl_intra_ue() != null && Boolean.TRUE.equals(getFl_intra_ue())) ||
+        //                        (getFl_san_marino_senza_iva() != null && Boolean.TRUE.equals(getFl_san_marino_senza_iva())))
+        //);
 
         setEsercizio(fatturaPassiva.getEsercizio());
         setProtocollo_iva(fatturaPassiva.getProtocollo_iva());
@@ -234,6 +273,10 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
     public it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk getTipo_sezionale() {
         return tipo_sezionale;
     }
+
+	private Boolean isCommerciale(){
+		return TipoIVA.COMMERCIALE.value().equals(getTi_istituz_commerc());
+	}
     /**
      * Insert the method's description here.
      * Creation date: (4/8/2003 3:38:07 PM)
@@ -248,7 +291,9 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
      * @return boolean
      */
     public boolean isAutofatturaNeeded() {
-        return autofatturaNeeded;
+        return isCommerciale() &&
+		            ((getFl_intra_ue() != null && Boolean.TRUE.equals(getFl_intra_ue())) ||
+		                        (getFl_san_marino_senza_iva() != null && Boolean.TRUE.equals(getFl_san_marino_senza_iva())));
     }
     public boolean isStampataSuRegistroIVA() {
         return STATO_IVA_B.equalsIgnoreCase(getStatoIVA()) ||
@@ -259,9 +304,9 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 	 * Creation date: (4/8/2003 3:38:07 PM)
 	 * @param newAutofatturaNeeded boolean
 	 */
-	public void setAutofatturaNeeded(boolean newAutofatturaNeeded) {
-		autofatturaNeeded = newAutofatturaNeeded;
-	}
+	//public void setAutofatturaNeeded(boolean newAutofatturaNeeded) {
+	//	autofatturaNeeded = newAutofatturaNeeded;
+	//}
 	public void setCd_cds_ft_passiva(java.lang.String cd_cds_ft_passiva) {
 		this.getFattura_passiva().setCd_cds(cd_cds_ft_passiva);
 	}
@@ -376,5 +421,147 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 	 */
 	public void setSezionali(java.util.Collection newSezionali) {
 		sezionali = newSezionali;
+	}
+
+	@Override
+	public int addToArchivioAllegati(AllegatoGenericoBulk allegato) {
+		archivioAllegati.add(allegato);
+		return archivioAllegati.size()-1;
+	}
+
+	@Override
+	public AllegatoGenericoBulk removeFromArchivioAllegati(int index) {
+		return getArchivioAllegati().remove(index);
+	}
+
+	@Override
+	public BulkList<AllegatoGenericoBulk> getArchivioAllegati() {
+		return archivioAllegati;
+	}
+
+	@Override
+	public void setArchivioAllegati(BulkList<AllegatoGenericoBulk> archivioAllegati) {
+		this.archivioAllegati = archivioAllegati;
+	}
+
+	@Override
+	public List<String> getStorePath() {
+		StorageFolderAutofattura storageFolderAutofattura = new StorageFolderAutofattura(this);
+		String path= storageFolderAutofattura.getCMISPathForSearch();
+		return new ArrayList<>( Arrays.asList( path));
+		/*
+		return Collections.singletonList(Arrays.asList(
+				SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
+				Optional.ofNullable(this)
+						.map(s -> this.getCd_uo_origine())
+						.orElse(""),
+				"AutoFatture",
+				this.getEsercizio().toString(),
+					"Autofattura "+ this.getEsercizio().toString() +
+				Utility.lpad(this.getPg_autofattura().toString(),10,'0')
+		).stream().collect(
+				Collectors.joining(StorageDriver.SUFFIX)
+		));*/
+	}
+
+	public String getSezionaliFlag() {
+
+		if (getFl_intra_ue() != null && getFl_intra_ue().booleanValue()) {
+			setFl_extra_ue(Boolean.FALSE);
+			setFl_san_marino_con_iva(Boolean.FALSE);
+			setFl_san_marino_senza_iva(Boolean.FALSE);
+			sezionaliFlag = Fattura_passivaBulk.SEZIONALI_FLAGS_IUE;
+		} else if (getFl_extra_ue() != null && getFl_extra_ue().booleanValue()) {
+			setFl_intra_ue(Boolean.FALSE);
+			setFl_san_marino_con_iva(Boolean.FALSE);
+			setFl_san_marino_senza_iva(Boolean.FALSE);
+			sezionaliFlag = Fattura_passivaBulk.SEZIONALI_FLAGS_EUE;
+		} else if (getFl_san_marino_con_iva() != null && getFl_san_marino_con_iva().booleanValue()) {
+			setFl_intra_ue(Boolean.FALSE);
+			setFl_extra_ue(Boolean.FALSE);
+			setFl_san_marino_senza_iva(Boolean.FALSE);
+			sezionaliFlag = Fattura_passivaBulk.SEZIONALI_FLAGS_SMC;
+		} else if (getFl_san_marino_senza_iva() != null && getFl_san_marino_senza_iva().booleanValue()) {
+			setFl_intra_ue(Boolean.FALSE);
+			setFl_extra_ue(Boolean.FALSE);
+			setFl_san_marino_con_iva(Boolean.FALSE);
+			sezionaliFlag = Fattura_passivaBulk.SEZIONALI_FLAGS_SMS;
+		} else {
+
+			if (getFl_intra_ue() == null &&
+					getFl_extra_ue() == null &&
+					getFl_san_marino_con_iva() == null &&
+					getFl_san_marino_senza_iva() == null) {
+				sezionaliFlag = Fattura_passivaBulk.SEZIONALI_FLAGS_ALL;
+			} else {
+				sezionaliFlag = Fattura_passivaBulk.SEZIONALI_FLAGS_ORD;
+			}
+		}
+
+		return sezionaliFlag;
+	}
+
+	public void setSezionaliFlag(String newSezionaliFlag) {
+		sezionaliFlag = newSezionaliFlag;
+
+		switch (sezionaliFlag == null ? 99 : Integer.valueOf(sezionaliFlag).intValue()) {
+			case 0: {
+				setFl_intra_ue(null);
+				setFl_extra_ue(null);
+				setFl_san_marino_con_iva(null);
+				setFl_san_marino_senza_iva(null);
+
+				break;
+			}
+			case 1: {
+				setFl_intra_ue(Boolean.FALSE);
+				setFl_extra_ue(Boolean.FALSE);
+				setFl_san_marino_con_iva(Boolean.FALSE);
+				setFl_san_marino_senza_iva(Boolean.FALSE);
+
+				break;
+			}
+			case 2: {
+				setFl_intra_ue(Boolean.TRUE);
+				setFl_extra_ue(Boolean.FALSE);
+				setFl_san_marino_con_iva(Boolean.FALSE);
+				setFl_san_marino_senza_iva(Boolean.FALSE);
+				setFl_autofattura(Boolean.TRUE);
+
+				break;
+			}
+			case 3: {
+				setFl_intra_ue(Boolean.FALSE);
+				setFl_extra_ue(Boolean.TRUE);
+				setFl_san_marino_con_iva(Boolean.FALSE);
+				setFl_san_marino_senza_iva(Boolean.FALSE);
+
+				break;
+			}
+			case 4: {
+				setFl_intra_ue(Boolean.FALSE);
+				setFl_extra_ue(Boolean.FALSE);
+				setFl_san_marino_con_iva(Boolean.TRUE);
+				setFl_san_marino_senza_iva(Boolean.FALSE);
+
+				break;
+			}
+			case 5: {
+				setFl_intra_ue(Boolean.FALSE);
+				setFl_extra_ue(Boolean.FALSE);
+				setFl_san_marino_con_iva(Boolean.FALSE);
+				setFl_san_marino_senza_iva(Boolean.TRUE);
+				setFl_autofattura(Boolean.TRUE);
+
+				break;
+			}
+			default: {
+				setFl_intra_ue(null);
+				setFl_extra_ue(null);
+				setFl_san_marino_con_iva(null);
+				setFl_san_marino_senza_iva(null);
+
+			}
+		}
 	}
 }

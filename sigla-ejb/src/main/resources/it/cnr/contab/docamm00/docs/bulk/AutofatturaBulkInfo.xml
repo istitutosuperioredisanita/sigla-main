@@ -60,6 +60,18 @@
 		inputType="CHECKBOX"
 		label="fl_san_marino_con_iva" />
 	<fieldProperty
+			name="sezionaliFlagsRadioGroup"
+			property="sezionaliFlag"
+			keysProperty="sezionaliFlags"
+			inputType="RADIOGROUP"
+			layout="VERTICAL"
+			enabledOnInsert="false"
+			enabledOnEdit="false"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="false"
+			label="Opzioni"
+			caseSensitiveSearch="false"/>
+	<fieldProperty
 		name="cd_unita_organizzativa"
 		property="cd_unita_organizzativa"
 		maxLength="30"
@@ -100,6 +112,14 @@
 		label="Tipo"
 		caseSensitiveSearch="false"
 		keysProperty="ti_istituz_commercKeys"/>
+	<fieldProperty
+			name="ti_istituz_commercSearch"
+			property="ti_istituz_commerc"
+			inputType="SELECT"
+			label="Tipo"
+			nullable="true"
+			enabledOnSearch="true"
+			keysProperty="ti_istituz_commercKeysForSearch"/>
 	<fieldProperty
 		name="pg_fattura_passiva"
 		property="fattura_passiva.pg_fattura_passiva"
@@ -212,6 +232,8 @@
 	<formFieldProperty
 		name="esercizio" />
 	<formFieldProperty
+			name="ti_istituz_commercSearch"/>
+	<formFieldProperty
 		name="ti_istituz_commerc" />
 	<formFieldProperty
 		name="pg_fattura_passiva" />
@@ -241,6 +263,8 @@
 		name="ti_fattura" />
 	<formFieldProperty
 			name="sezionale" />
+	<formFieldProperty
+			name="sezionaliFlagsRadioGroup"/>
 <!--
 	<columnFieldProperty
 		name="cd_cds" />-->
@@ -320,7 +344,7 @@
 	<findFieldProperty
 		name="esercizio" />
 	<findFieldProperty
-		name="ti_istituz_commerc" />
+			name="ti_istituz_commercSearch"/>
 	<findFieldProperty
 		name="pg_fattura_passiva" />
 	<findFieldProperty
@@ -347,5 +371,7 @@
 		name="dt_registrazione" />
 	<findFieldProperty
 		name="ti_fattura" />
+	<findFieldProperty
+			name="sezionaliFlagsRadioGroup"/>
 
-</bulkInfo>
+    </bulkInfo>

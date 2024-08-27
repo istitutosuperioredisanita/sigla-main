@@ -11,6 +11,8 @@
 %>
 <%	CRUDAutofatturaBP bp = (CRUDAutofatturaBP)BusinessProcess.getBusinessProcess(request);
 	AutofatturaBulk autofattura = (AutofatturaBulk)bp.getModel();
+	boolean roForSplit = autofattura!=null && !autofattura.isToBeCreated() &&
+    			             autofattura.getFl_split_payment()!=null && autofattura.getFl_split_payment();
 
 	UserContext uc = HttpActionContext.getUserContext(session);
 
@@ -31,6 +33,36 @@
 	 	<% bp.getController().writeFormInput(out,null,"pg_autofattura",false,null,"");%>
 	   </td>
 	 </tr>
+	</table>
+	  <div class="Group card">
+      	<table>
+    		<tr>
+    			<% if (!bp.isSearching()) { %>
+    		     	<td>
+    		      		<% bp.getController().writeFormLabel(out,"ti_istituz_commerc");%>
+    		      	</td>
+    		     	<td colspan="10">
+    		      		<% bp.getController().writeFormInput(out,null,"ti_istituz_commerc",roForSplit,null,"onChange=\"submitForm('doOnIstituzionaleCommercialeChange')\"");%>
+    		      	</td>
+    			<% } else { %>
+    		     	<td>
+    		      		<% bp.getController().writeFormLabel(out,"ti_istituz_commercSearch");%>
+    		      	</td>
+    		     	<td colspan="10">
+    		      		<% bp.getController().writeFormInput(out,null,"ti_istituz_commercSearch",roForSplit,null,"onChange=\"submitForm('doOnIstituzionaleCommercialeChange')\"");%>
+    		      	</td>
+    			<% } %>
+          </tr>
+	 <% if (bp.isSearching()) { %>
+         <tr>
+                <td>
+                            <% bp.getController().writeFormLabel(out, "sezionaliFlagsRadioGroup");%>
+                        </td>
+                        <td colspan="3">
+                            <% bp.getController().writeFormInput(out, null, "sezionaliFlagsRadioGroup", false, null, "onClick=\"submitForm('doOnSezionaliFlagsChange')\"");%>
+                        </td>
+         </tr>
+         <% }%>
 	 <tr>
 		<% if (!bp.isSearching()) { %>	 
 	   		<td><% bp.getController().writeFormLabel(out,"stato_cofi");%></td>
