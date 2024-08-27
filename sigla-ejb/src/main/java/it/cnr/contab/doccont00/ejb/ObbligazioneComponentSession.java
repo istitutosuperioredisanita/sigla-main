@@ -17,17 +17,13 @@
 
 package it.cnr.contab.doccont00.ejb;
 
-import java.math.BigDecimal;
-import java.rmi.RemoteException;
-import java.sql.Timestamp;
-import java.util.List;
-
-import javax.ejb.Remote;
-
 import it.cnr.contab.doccont00.core.DatiFinanziariScadenzeDTO;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.comp.ComponentException;
+
+import javax.ejb.Remote;
+import java.rmi.RemoteException;
+import java.util.List;
 
 @Remote
 public interface ObbligazioneComponentSession extends it.cnr.jada.ejb.CRUDComponentSession, it.cnr.contab.doccont00.comp.DocumentoContabileComponentSession, it.cnr.jada.ejb.PrintComponentSession {
@@ -66,4 +62,10 @@ boolean existAssElementoVoceNew(it.cnr.jada.UserContext param0, it.cnr.contab.do
 void callRiportaAvantiRequiresNew(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 void callRiportaIndietroRequiresNew(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 ObbligazioneBulk findObbligazione(UserContext uc, ObbligazioneBulk obbligazione) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+ObbligazioneBulk creaObbligazioneWs(UserContext uc, ObbligazioneBulk obbligazione) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+ObbligazioneBulk updateObbligazioneWs(UserContext uc, ObbligazioneBulk obbligazione) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+Boolean deleteObbligazioneWs(UserContext uc,String cd_cds,Integer esercizio,Long pg_obbligazione,Integer esercizio_originale) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException,it.cnr.jada.persistency.PersistencyException;
+
+
+
 }

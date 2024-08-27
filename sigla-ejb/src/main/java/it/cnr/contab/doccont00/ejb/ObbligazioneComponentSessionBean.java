@@ -16,20 +16,22 @@
  */
 
 package it.cnr.contab.doccont00.ejb;
-import java.rmi.RemoteException;
-import java.sql.Timestamp;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 
 import it.cnr.contab.doccont00.comp.ObbligazioneComponent;
 import it.cnr.contab.doccont00.core.DatiFinanziariScadenzeDTO;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.PrimaryKeyHashtable;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import java.rmi.RemoteException;
+import java.util.List;
+
 @Stateless(name="CNRDOCCONT00_EJB_ObbligazioneComponentSession")
 public class ObbligazioneComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements ObbligazioneComponentSession {
 @PostConstruct
@@ -693,6 +695,66 @@ public void callRiportaIndietroRequiresNew(it.cnr.jada.UserContext param0,it.cnr
 			throw uncaughtRuntimeException(param0,componentObj,e);
 		} catch(Error e) {
 			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
+	@Override
+	public ObbligazioneBulk creaObbligazioneWs(UserContext uc, ObbligazioneBulk obbligazione) throws ComponentException {
+		pre_component_invocation(uc,componentObj);
+		try {
+			ObbligazioneBulk result = ((ObbligazioneComponent)componentObj).creaObbligazioneWs(uc,obbligazione);
+			component_invocation_succes(uc,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(uc,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(uc,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(uc,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(uc,componentObj,e);
+		}
+	}
+
+	@Override
+	public ObbligazioneBulk updateObbligazioneWs(UserContext uc, ObbligazioneBulk obbligazione) throws ComponentException {
+		pre_component_invocation(uc,componentObj);
+		try {
+			ObbligazioneBulk result = ((ObbligazioneComponent)componentObj).updateObbligazioneWs(uc,obbligazione);
+			component_invocation_succes(uc,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(uc,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(uc,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(uc,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(uc,componentObj,e);
+		}
+	}
+
+	@Override
+	public Boolean deleteObbligazioneWs(UserContext uc,String cd_cds,Integer esercizio,Long pg_obbligazione,Integer esercizio_originale) throws ComponentException, PersistencyException {
+		pre_component_invocation(uc,componentObj);
+		try {
+			Boolean result = ((ObbligazioneComponent)componentObj).deleteObbligazioneWs(uc,cd_cds,esercizio,pg_obbligazione,esercizio_originale);
+			component_invocation_succes(uc,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(uc,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(uc,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(uc,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(uc,componentObj,e);
 		}
 	}
 }

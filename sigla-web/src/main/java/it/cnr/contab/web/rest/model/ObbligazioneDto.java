@@ -1,45 +1,28 @@
 package it.cnr.contab.web.rest.model;
 
+import it.cnr.contab.anagraf00.core.bulk.TerzoKey;
 import it.cnr.contab.config00.contratto.bulk.ContrattoKey;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceKey;
-import it.cnr.contab.config00.sto.bulk.CdsKey;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaKey;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-public class ObbligazioneDto {
-
-    private Integer esercizio;
-    private CdsKey cdsKey;
+public class ObbligazioneDto extends ObbligazioneKeyDto {
 
     private Unita_organizzativaKey unitaOrganizzativaKey;
     private Boolean fl_gara_in_corso;
     private ContrattoKey contrattoKey;
-    private TerzoDto terzoDto;
+    private TerzoKey terzoKey;
     private Elemento_voceKey elemento_voceKey;
     private String ds_obbligazione;
     private BigDecimal im_obbligazione;
+    private EnumStatoObbligazione statoObbligazione;
 
     private ObbligazioneLineaAttivitaDto obbligazioneLineaAttivitaDto;
     private List<ObbligazioneScadenzarioDto> scadenze;
 
-    public Integer getEsercizio() {
-        return esercizio;
-    }
 
-    public void setEsercizio(Integer esercizio) {
-        this.esercizio = esercizio;
-    }
-
-
-    public CdsKey getCdsKey() {
-        return cdsKey;
-    }
-
-    public void setCdsKey(CdsKey cdsKey) {
-        this.cdsKey = cdsKey;
-    }
 
     public Unita_organizzativaKey getUnitaOrganizzativaKey() {
         return unitaOrganizzativaKey;
@@ -65,12 +48,12 @@ public class ObbligazioneDto {
         this.contrattoKey = contrattoKey;
     }
 
-    public TerzoDto getTerzoDto() {
-        return terzoDto;
+    public TerzoKey getTerzoKey() {
+        return terzoKey;
     }
 
-    public void setTerzoDto(TerzoDto terzoDto) {
-        this.terzoDto = terzoDto;
+    public void setTerzoKey(TerzoKey terzoKey) {
+        this.terzoKey = terzoKey;
     }
 
     public Elemento_voceKey getElemento_voceKey() {
@@ -99,6 +82,14 @@ public class ObbligazioneDto {
 
     public ObbligazioneLineaAttivitaDto getObbligazioneLineaAttivitaDto() {
         return obbligazioneLineaAttivitaDto;
+    }
+
+    public EnumStatoObbligazione getStatoObbligazione() {
+        return statoObbligazione;
+    }
+
+    public void setStatoObbligazione(EnumStatoObbligazione statoObbligazione) {
+        this.statoObbligazione = statoObbligazione;
     }
 
     public void setObbligazioneLineaAttivitaDto(ObbligazioneLineaAttivitaDto obbligazioneLineaAttivitaDto) {

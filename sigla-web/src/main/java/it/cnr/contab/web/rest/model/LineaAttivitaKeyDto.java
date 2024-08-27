@@ -9,6 +9,13 @@ public class LineaAttivitaKeyDto implements Serializable {
     private String cd_linea_attivita;
 
     private CdrKey centro_responsabilitaKey;
+    public LineaAttivitaKeyDto(){
+        super();
+    }
+    public LineaAttivitaKeyDto(String cd_linea_attivita, String centro_responsabilitaKey) {
+        this.cd_linea_attivita = cd_linea_attivita;
+        this.centro_responsabilitaKey = new CdrKey(centro_responsabilitaKey);
+    }
 
     public String getCd_linea_attivita() {
         return cd_linea_attivita;
