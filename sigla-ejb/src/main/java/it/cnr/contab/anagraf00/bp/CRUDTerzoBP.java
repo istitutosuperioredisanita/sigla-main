@@ -561,17 +561,20 @@ public class CRUDTerzoBP extends SimpleCRUDBP {
 	}
 
 	public boolean isEnableAddBanca(){
-		return !( isAttivoBloccoGestModPag && this.getAnagrafico().isDipendente());
+		TerzoBulk terzo = (TerzoBulk) getModel();
+		return !( isAttivoBloccoGestModPag && terzo.isDipendente());
 	}
 	public boolean isEnableRemoveBanca(){
-		if (  isAttivoBloccoGestModPag && this.getAnagrafico().isDipendente())
+		TerzoBulk terzo = (TerzoBulk) getModel();
+		if (  isAttivoBloccoGestModPag && terzo.isDipendente())
 			return Boolean.FALSE;
 		return !isOrigineBancaPerStipendi();
 
 	}
 
 	public boolean isEnableManageModPag(){
-		return !( isAttivoBloccoGestModPag && this.getAnagrafico().isDipendente());
+		TerzoBulk terzo = (TerzoBulk) getModel();
+			return !( isAttivoBloccoGestModPag && terzo.isDipendente());
 	}
 	public boolean isOrigineBancaPerStipendi() {
 
