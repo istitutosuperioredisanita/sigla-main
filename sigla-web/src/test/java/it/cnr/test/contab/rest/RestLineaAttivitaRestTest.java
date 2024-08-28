@@ -68,8 +68,10 @@ public class RestLineaAttivitaRestTest {
         HttpPost method = new HttpPost("http://localhost:8080/SIGLA/restapi/lineaattivita");
         method.addHeader("Accept-Language", Locale.getDefault().toString());
         method.setHeader("Content-Type", "application/json;charset=UTF-8");
+        method.setHeader(SIGLASecurityContext.X_SIGLA_ESERCIZIO,"2024");
         method.setHeader(SIGLASecurityContext.X_SIGLA_CD_CDS,"999");
         method.setHeader(SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA, "999.999");
+        method.setHeader(SIGLASecurityContext.X_SIGLA_CD_CDR, "000.000.000");
         method.setEntity(e);
         HttpResponse response = client.execute(method);//Replace HttpPost with HttpGet if you need to perform a GET to login
         int statusCode = response.getStatusLine().getStatusCode();
