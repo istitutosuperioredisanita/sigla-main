@@ -11,6 +11,8 @@ public class ObbligazioneScadenzarioDto implements Serializable {
     private String ds_scadenza;
     private BigDecimal im_scadenza;
     private Long pg_obbligazione_scadenzario;
+    private BigDecimal im_associato_doc_amm;
+    private BigDecimal im_associato_doc_contabile;
 
     private List<ObbligazioneScadVoceDto> obbligazioneScadVoce;
 
@@ -52,5 +54,21 @@ public class ObbligazioneScadenzarioDto implements Serializable {
 
     public void setPg_obbligazione_scadenzario(Long pg_obbligazione_scadenzario) {
         this.pg_obbligazione_scadenzario = pg_obbligazione_scadenzario;
+    }
+
+    public BigDecimal getIm_associato_doc_amm() {
+        return im_associato_doc_amm;
+    }
+
+    public void setIm_associato_doc_amm(BigDecimal im_associato_doc_amm) {
+        this.im_associato_doc_amm = im_associato_doc_amm;
+    }
+
+    public BigDecimal getIm_associato_doc_contabile() {
+        return im_associato_doc_contabile;
+    }
+
+    public void setIm_associato_doc_contabile(BigDecimal im_associato_doc_contabile) {
+        this.im_associato_doc_contabile = im_associato_doc_contabile;
     }
 }
