@@ -1103,5 +1103,22 @@ public class ProgettoHome extends BulkHome {
 		return  (ProgettoBulk)coll.iterator().next();
 
 	}
+	public ProgettoBulk selectProgettoDaLineaAttivita(it.cnr.jada.UserContext aUC, WorkpackageBulk lineaAtt) throws PersistencyException, IntrospectionException{
+		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class);
+		SQLBuilder sql = progettohome.createSQLBuilder();
+
+		sql.addTableToHeader("PROGETTO_OTHER_FIELD");
+		sql.addSQLJoin("PROGETTO.PG_PROGETTO", "PROGETTO_OTHER_FIELD.PG_PROGETTO");
+		sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS,lineaAtt.getEsercizio());
+		sql.addSQLClause("AND","CD_PROGETTO",sql.EQUALS,lineaAtt.getCd_progetto());
+		sql.addSQLClause("AND","TIPO_FASE",sql.EQUALS,ProgettoBulk.TIPO_FASE_NON_DEFINITA);
+
+		java.util.Collection coll = this.fetchAll(sql);
+		if (coll.size() != 1)
+			return null;
+
+		return  (ProgettoBulk)coll.iterator().next();
+
+	}
 
 }

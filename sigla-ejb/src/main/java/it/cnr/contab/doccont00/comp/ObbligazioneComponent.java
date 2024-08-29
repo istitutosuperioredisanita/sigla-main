@@ -3316,7 +3316,7 @@ public OggettoBulk modificaConBulk (UserContext aUC,OggettoBulk bulk) throws Com
 		validaImputazioneFinanziaria( aUC, obbligazione );
 
 		RimoduzioneObbliPluriennaleDto rimodulazioneObblPlurDto = null;
-		if(obbligazione.isPresentiPluriennaliDaGestire()) {
+		if(isPresentiPluriennaliDaGestire(aUC, obbligazione)) {
 			rimodulazioneObblPlurDto = getObbligazioniPerRimodulazione(aUC, obbligazione,true);
 
 		}
@@ -3390,6 +3390,46 @@ public OggettoBulk modificaConBulk (UserContext aUC,OggettoBulk bulk) throws Com
 	}	
 }
 
+private boolean isPresentiPluriennaliDaGestire(UserContext aUC, ObbligazioneBulk obbligazione) throws ComponentException, PersistencyException {
+	for(Obbligazione_pluriennaleBulk obblPluriennale : obbligazione.getObbligazioniPluriennali()) {
+		if(obblPluriennale.isToBeCreated() ){
+			return true;
+		}
+		if(obblPluriennale.isToBeUpdated()){
+			if(isModificaPluriennaleReale(aUC,obbligazione,obblPluriennale)){
+				return true;
+			}
+		}
+	}
+	Iterator<Obbligazione_pluriennaleBulk> obbPlurDeleteIt = obbligazione.getObbligazioniPluriennali().deleteIterator();
+	while(obbPlurDeleteIt.hasNext()) {
+
+		return true;
+
+	}
+	return false;
+}
+	private boolean isModificaPluriennaleReale(UserContext uc, ObbligazioneBulk obbligazione, Obbligazione_pluriennaleBulk obbPlur ) throws ComponentException, PersistencyException {
+		Obbligazione_pluriennale_voceHome obblPlurVoceHome = (Obbligazione_pluriennale_voceHome) getHome(uc, Obbligazione_pluriennale_voceBulk.class);
+		Collection<V_pdg_obbligazione_speBulk> lineeAttivita = obbligazione.getLineeAttivitaSelezionateColl();
+
+		for (V_pdg_obbligazione_speBulk linea : lineeAttivita) {
+			Obbligazione_pluriennale_voceBulk obbPlurVoce = obblPlurVoceHome.findObbligazioniPluriennaliVoceLinea(obbPlur,linea);
+
+			// se non trovo l'obbligazione pluriennale voce significa che c'è stato un cambio gae
+			if(obbPlurVoce==null){
+				return true;
+			}
+			BigDecimal percentualeGae = getPercentualeLineAttivita(linea, obbligazione);
+			BigDecimal importoPluriennale = obbPlur.getImporto().multiply(percentualeGae).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP);
+
+			// se cambiato importo c'è stato un cambio di percentuale gae
+			if(obbPlurVoce.getImporto().compareTo(importoPluriennale) != 0){
+				return true;
+			}
+		}
+		return false;
+	}
 
 private void creaObbligazionePluriennaleVoce(UserContext aUC, ObbligazioneBulk obbligazione) throws ComponentException, PersistencyException {
 
@@ -6283,7 +6323,9 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 
 				BigDecimal importoVociAssociate = new BigDecimal(0);
 				for (Ass_progetto_piaeco_voceBulk assPiaeco : vociPianoEcoList) {
-					importoVociAssociate = importoVociAssociate.add(assPiaeco.getSaldoSpesa().getVariapiuFin());
+
+					//importoVociAssociate = importoVociAssociate.add(assPiaeco.getSaldoSpesa().getVariapiuFin());
+					importoVociAssociate = importoVociAssociate.add(assPiaeco.getSaldoSpesa().getImpaccFin());
 				}
 
 				BigDecimal importoDispPianoEconomico = vocePianoObblPlur.getPianoEconomicoProgetto().getIm_spesa_finanziato().subtract(importoVociAssociate);
@@ -6355,6 +6397,7 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 			rimodulazioneBulk.setDtInizioRimodulato(Optional.ofNullable(progetto.getOtherField()).map(Progetto_other_fieldBulk::getDtInizio).orElse(null));
 			rimodulazioneBulk.setDtFineRimodulato(Optional.ofNullable(progetto.getOtherField()).map(Progetto_other_fieldBulk::getDtFine).orElse(null));
 			rimodulazioneBulk.setDtProrogaRimodulato(Optional.ofNullable(progetto.getOtherField()).map(Progetto_other_fieldBulk::getDtProroga).orElse(null));
+			rimodulazioneBulk.setStampaReport(false);
 
 			rimodulazioneBulk.setImFinanziatoRimodulato(progetto.getImFinanziato());
 			rimodulazioneBulk.setImCofinanziatoRimodulato(progetto.getImCofinanziato());

@@ -724,7 +724,10 @@ public class RimodulaProgettoRicercaComponent extends it.cnr.jada.comp.CRUDCompo
 			rimodulazione.setDtStatoDefinitivo(EJBCommonServices.getServerTimestamp());
 			rimodulazione.setToBeUpdated();
 			rimodulazione = (Progetto_rimodulazioneBulk)super.modificaConBulk(userContext, rimodulazione);
-			createReportRimodulazione(userContext, rimodulazione);
+
+			if(rimodulazione.getStampaReport()) {
+				createReportRimodulazione(userContext, rimodulazione);
+			}
 
 			//Se la rimodulazione rispetta uno dei seguenti casi:
 			// 1) le condizioni di rapida approvazione nonchè consiste nella sola diversa distribuzione degli importi tra anni rispettando la ripartizione per categorie economiche;

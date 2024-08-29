@@ -2030,9 +2030,6 @@ public void validateTerzo( it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo ) t
 		return dett;
 	}
 
-
-
-
 	public WorkpackageBulk getGaeDestinazioneFinale() {
 		return gaeDestinazioneFinale;
 	}
@@ -2041,18 +2038,6 @@ public void validateTerzo( it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo ) t
 		this.gaeDestinazioneFinale = gaeDestinazioneFinale;
 	}
 
-	public boolean isPresentiPluriennaliDaGestire(){
-		for(Obbligazione_pluriennaleBulk obblPluriennale : this.getObbligazioniPluriennali()) {
-			if(obblPluriennale.isToBeCreated() || obblPluriennale.isToBeUpdated()){
-				return true;
-			}
-		}
-		Iterator<Obbligazione_pluriennaleBulk> obbPlurDeleteIt = this.getObbligazioniPluriennali().deleteIterator();
-		while(obbPlurDeleteIt.hasNext()) {
 
-			return true;
 
-		}
-		return false;
-	}
 }

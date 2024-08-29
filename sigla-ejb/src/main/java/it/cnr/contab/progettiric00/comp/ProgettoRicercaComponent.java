@@ -1795,13 +1795,13 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 				   	    				" non può essere inferiore all'utilizzato spese 'fonti interne' e 'natura reimpiego' ("+
 				   	    				new EuroFormat().format(saldo.getUtilizzatoAssestatoCofinanziamento())+")!");
 							});
-							Optional.ofNullable(ppe.getIm_spesa_finanziato())
-									.filter(el->el.subtract(saldo.getUtilizzatoAssestatoFinanziamento()).subtract(saldo.getImpPluriennale()).compareTo(BigDecimal.ZERO)<0).ifPresent(el->{
-										throw new ApplicationRuntimeException("Attenzione: l'importo finanziato rimodulato del piano economico "+
-												ppe.getEsercizio_piano()+"/"+ppe.getCd_voce_piano()+
-												" non può essere inferiore all'utilizzato spese 'fonti esterne' ("+
-												new EuroFormat().format(saldo.getUtilizzatoAssestatoFinanziamento())+")!");
-									});
+							//Optional.ofNullable(ppe.getIm_spesa_finanziato())
+							//		.filter(el->el.subtract(saldo.getUtilizzatoAssestatoFinanziamento()).subtract(saldo.getImpPluriennale()).compareTo(BigDecimal.ZERO)<0).ifPresent(el->{
+							//			throw new ApplicationRuntimeException("Attenzione: l'importo finanziato rimodulato del piano economico "+
+							//					ppe.getEsercizio_piano()+"/"+ppe.getCd_voce_piano()+
+							//					" non può essere inferiore all'utilizzato spese 'fonti esterne' ("+
+							//					new EuroFormat().format(saldo.getUtilizzatoAssestatoFinanziamento())+")!");
+							//		});
 
 		   				} else {
 		   					Optional.ofNullable(saldo.getImportoFin())
