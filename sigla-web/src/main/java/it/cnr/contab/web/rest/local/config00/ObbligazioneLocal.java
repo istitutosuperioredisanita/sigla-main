@@ -22,8 +22,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import it.cnr.contab.web.rest.config.SIGLARoles;
 import it.cnr.contab.web.rest.config.SIGLASecurityContext;
-import it.cnr.contab.web.rest.model.LineaAttivitaDto;
-import it.cnr.contab.web.rest.model.UpdateLineaAttivitaDto;
+import it.cnr.contab.web.rest.model.ObbligazioneDto;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -34,17 +33,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Local
-@Path("/lineaattivita")
+@Path("/obbligazione")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed(SIGLARoles.LINEA_ATTIVITA)
-@Api("Linea Attivita")
-public interface LineaAttivitaLocal {
+@RolesAllowed(SIGLARoles.OBBLIGAZIONE)
+@Api("Obbligazione")
+public interface ObbligazioneLocal {
 
 	@POST
-    @ApiOperation(value = "Inserisce Linea Attivita",
-            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.LINEA_ATTIVITA +"'",
-            response = LineaAttivitaDto.class,
+    @ApiOperation(value = "Crea un'obbligazione",
+            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.OBBLIGAZIONE +"'",
+            response = ObbligazioneDto.class,
             authorizations = {
                     @Authorization(value = "BASIC"),
                     @Authorization(value = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
@@ -53,12 +52,12 @@ public interface LineaAttivitaLocal {
                     @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDR)
             }
     )
-    Response insert(@Context HttpServletRequest request, LineaAttivitaDto lineaAttivita) throws Exception;
+    Response insert(@Context HttpServletRequest request, ObbligazioneDto obbligazioneDto) throws Exception;
     @GET
-    @Path("/{cd_centro_responsabilita}/{cd_linea_attivita}")
-    @ApiOperation(value = "Ritorna Linea Attivita",
-            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.LINEA_ATTIVITA +"'",
-            response = LineaAttivitaDto.class,
+    @Path("/{cd_cds}/{esercizio}/{pg_obbligazione}/{esercizio_originale}")
+    @ApiOperation(value = "Ritorna un'obbligazione",
+            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.OBBLIGAZIONE +"'",
+            response = ObbligazioneDto.class,
             authorizations = {
                     @Authorization(value = "BASIC"),
                     @Authorization(value = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
@@ -67,11 +66,11 @@ public interface LineaAttivitaLocal {
                     @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDR)
             }
     )
-    Response get(@PathParam("cd_centro_responsabilita") String cd_centro_responsabilita,@PathParam("cd_linea_attivita") String cd_linea_attivita) throws Exception;
+    Response get(@PathParam("cd_cds") String cd_cds,@PathParam("esercizio") Integer esercizio,@PathParam("pg_obbligazione") Long pg_obbligazione ,@PathParam("esercizio_originale") Integer esercizio_originale) throws Exception;
     @DELETE
-    @Path("/{cd_centro_responsabilita}/{cd_linea_attivita}")
-    @ApiOperation(value = "Elimina una Linea Attivita",
-            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.LINEA_ATTIVITA +"'",
+    @Path("/{cd_cds}/{esercizio}/{pg_obbligazione}/{esercizio_originale}")
+    @ApiOperation(value = "Elimina un'obbligazione'",
+            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.OBBLIGAZIONE +"'",
             response = String.class,
             authorizations = {
                     @Authorization(value = "BASIC"),
@@ -81,12 +80,13 @@ public interface LineaAttivitaLocal {
                     @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDR)
             }
     )
-    Response delete(@PathParam("cd_centro_responsabilita") String cd_centro_responsabilita,@PathParam("cd_linea_attivita") String cd_linea_attivita) throws Exception;
+    Response delete(@PathParam("cd_cds") String cd_cds,@PathParam("esercizio") Integer esercizio,@PathParam("pg_obbligazione") Long pg_obbligazione ,@PathParam("esercizio_originale") Integer esercizio_originale) throws Exception;
+
     @PATCH
-    @Path("/{cd_centro_responsabilita}/{cd_linea_attivita}")
-    @ApiOperation(value = "Modifica una Linea Attivita",
-            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.LINEA_ATTIVITA +"'",
-            response = LineaAttivitaDto.class,
+    @Path("/{cd_cds}/{esercizio}/{pg_obbligazione}/{esercizio_originale}")
+    @ApiOperation(value = "Modifica un'obbligazione",
+            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.OBBLIGAZIONE +"'",
+            response = ObbligazioneDto.class,
             authorizations = {
                     @Authorization(value = "BASIC"),
                     @Authorization(value = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
@@ -95,5 +95,5 @@ public interface LineaAttivitaLocal {
                     @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDR)
             }
     )
-    Response update(@PathParam("cd_centro_responsabilita") String cd_centro_responsabilita, @PathParam("cd_linea_attivita") String cd_linea_attivita, UpdateLineaAttivitaDto updateLineaAttivitaDto) throws Exception;
+    Response update(@PathParam("cd_cds") String cd_cds,@PathParam("esercizio") Integer esercizio,@PathParam("pg_obbligazione") Long pg_obbligazione ,@PathParam("esercizio_originale") Integer esercizio_originale) throws Exception;
 }

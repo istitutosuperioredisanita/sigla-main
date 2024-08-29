@@ -34,10 +34,6 @@ import it.cnr.contab.config00.pdcfin.cla.bulk.Classificazione_vociBulk;
 import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.doccont00.core.DatiFinanziariScadenzeDTO;
 import it.cnr.contab.doccont00.core.bulk.*;
-import it.cnr.contab.doccont00.dto.ObbligazionePluriennaleDto;
-import it.cnr.contab.doccont00.dto.ProgettoObbliPluriennaleDto;
-import it.cnr.contab.doccont00.dto.RimoduzioneObbliPluriennaleDto;
-import it.cnr.contab.doccont00.dto.VocePianoObbliPluriennaleDto;
 import it.cnr.contab.doccont00.ejb.SaldoComponentSession;
 import it.cnr.contab.incarichi00.bulk.Ass_incarico_uoBulk;
 import it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk;
@@ -933,7 +929,7 @@ protected ObbligazioneBulk calcolaPercentualeImputazioneObbligazione (UserContex
 {
 	return calcolaPercentualeImputazioneObbligazione ( aUC, obbligazione,true);
 }
-/** 
+/**
   *  riprocessa lo stato coge/coan di documenti associati al doc. contabile
   *    PreCondition:
   *      E' stata inoltrata una richiesta di riprocessare lo stato coge/coan di doc. amm. associati al documento contabile
@@ -2349,7 +2345,7 @@ protected ObbligazioneBulk generaDettagliScadenzaObbligazione (UserContext aUC,O
 	}
 	// se sono state modificate le scadenze è necessario rimodulare i progetti
 	rigeneraObbligazionePluriennale(obbligazione);
-	
+
 	if ( obbligazione.getFl_calcolo_automatico().booleanValue() && allineaImputazioneFinanziaria)
 		obbligazione = calcolaPercentualeImputazioneObbligazione( aUC, obbligazione );
 
@@ -2363,7 +2359,7 @@ protected ObbligazioneBulk generaDettagliScadenzaObbligazione (UserContext aUC,O
 		}
 	}
  }
-/** 
+/**
   *  creazione prospetto
   *    PreCondition:
   *      L'utente richiede la visualizzazione del prospetto spese per una obbligazione.
@@ -6269,6 +6265,28 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 			throw handleException(e);
 		}
 	}
+	public ObbligazioneBulk creaObbligazioneWs(UserContext uc,ObbligazioneBulk obbligazione) throws ComponentException {
+		return ( ObbligazioneBulk) creaConBulk(uc,obbligazione);
+	}
+	public ObbligazioneBulk updateObbligazioneWs(UserContext uc,ObbligazioneBulk obbligazione) throws ComponentException {
+		throw new ApplicationException("Fuzionalità non implementata");
+	}
+	public Boolean deleteObbligazioneWs(UserContext uc,String cd_cds,Integer esercizio,Long pg_obbligazione,Integer esercizio_originale) throws ComponentException,PersistencyException {
+
+		ObbligazioneBulk obbligazioneBulk= findObbligazione(uc, new ObbligazioneBulk(cd_cds,esercizio,esercizio_originale,pg_obbligazione));
+		if ( !Optional.ofNullable(obbligazioneBulk).isPresent())
+			return Boolean.FALSE;
+
+		verificaStatoEsercizio(
+				uc,
+				((CNRUserContext)uc).getEsercizio(),
+				obbligazioneBulk.getCd_cds());
+
+		obbligazioneBulk= ( ObbligazioneBulk)inizializzaBulkPerModifica(uc,obbligazioneBulk);
+		eliminaConBulk(uc,obbligazioneBulk);
+		return Boolean.TRUE;
+	}
+
 
 
 	private Progetto_piano_economicoBulk getPianoEconomicoObbligazione(UserContext uc,ProgettoBulk progetto,Elemento_voceBulk elemento_voceBulk) throws PersistencyException, ComponentException {
