@@ -22,6 +22,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import it.cnr.contab.web.rest.config.SIGLARoles;
 import it.cnr.contab.web.rest.config.SIGLASecurityContext;
+import it.cnr.contab.web.rest.model.DocumentoGenericoAttivoDto;
 import it.cnr.contab.web.rest.model.DocumentoGenericoPassivoDto;
 
 import javax.annotation.security.RolesAllowed;
@@ -33,17 +34,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Local
-@Path("/genericopassivo")
+@Path("/genericoattivo")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed(SIGLARoles.DOCUMENTO_GEN_PASSIVO)
-@Api("Documento Generico Passiva")
-public interface DocumentoGenericoPassivoLocal {
+@RolesAllowed(SIGLARoles.DOCUMENTO_GEN_ATTIVO)
+@Api("Documento Generico Attivo")
+public interface DocumentoGenericoAttivoLocal {
 
 	@POST
     @ApiOperation(value = "Crea documento generico passivo ",
-            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_PASSIVO +"'",
-            response = DocumentoGenericoPassivoDto.class,
+            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_ATTIVO +"'",
+            response = DocumentoGenericoAttivoDto.class,
             authorizations = {
                     @Authorization(value = "BASIC"),
                     @Authorization(value = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
@@ -56,8 +57,8 @@ public interface DocumentoGenericoPassivoLocal {
     @GET
     @Path("/{cd_cds}/{cd_unita_organizzativa}({esercizio}/{pg_documento_generico}")
     @ApiOperation(value = "Ritorna documento generico passivo",
-            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_PASSIVO +"'",
-            response = DocumentoGenericoPassivoDto.class,
+            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_ATTIVO +"'",
+            response = DocumentoGenericoAttivoDto.class,
             authorizations = {
                     @Authorization(value = "BASIC"),
                     @Authorization(value = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
@@ -71,7 +72,7 @@ public interface DocumentoGenericoPassivoLocal {
     @DELETE
     @Path("/{cd_cds}/{cd_unita_organizzativa}({esercizio}/{pg_documento_generico}")
     @ApiOperation(value = "Elimina un'obbligazione'",
-            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_PASSIVO +"'",
+            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_ATTIVO +"'",
             response = String.class,
             authorizations = {
                     @Authorization(value = "BASIC"),
@@ -87,8 +88,8 @@ public interface DocumentoGenericoPassivoLocal {
     @PATCH
     @Path("/{cd_cds}/{cd_unita_organizzativa}({esercizio}/{pg_documento_generico}")
     @ApiOperation(value = "Modifica un'obbligazione",
-            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_PASSIVO +"'",
-            response = DocumentoGenericoPassivoDto.class,
+            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_ATTIVO +"'",
+            response = DocumentoGenericoAttivoDto.class,
             authorizations = {
                     @Authorization(value = "BASIC"),
                     @Authorization(value = SIGLASecurityContext.X_SIGLA_ESERCIZIO),

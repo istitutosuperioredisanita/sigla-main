@@ -1,15 +1,32 @@
 package it.cnr.contab.web.rest.model;
 
 import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
-abstract  public class DocumentoGenericoDto extends DocumentoGenericoKeyDto implements Serializable {
+abstract  public class DocumentoGenericoDto<T> extends DocumentoGenericoKeyDto implements Serializable {
     private java.sql.Timestamp data_registrazione;
     private java.lang.String ds_documento_generico;
     private java.sql.Timestamp dt_a_competenza_coge;
     private java.sql.Timestamp dt_da_competenza_coge;
     private java.sql.Timestamp dt_scadenza;
     private java.sql.Timestamp dt_cancellazione;
+
+    private List<T> righe= new ArrayList<T>();
+
+    public List<T> getRighe() {
+        return righe;
+    }
+
+    public void setRighe(List<T> righe) {
+        this.righe = righe;
+    }
+    public Class reflectClassType() {
+        return ((Class) ((ParameterizedType) getClass()
+                .getGenericSuperclass()).getActualTypeArguments()[0]);
+    }
 
     //stato
     //Associzione man/rev
@@ -24,5 +41,45 @@ abstract  public class DocumentoGenericoDto extends DocumentoGenericoKeyDto impl
 
     public void setData_registrazione(Timestamp data_registrazione) {
         this.data_registrazione = data_registrazione;
+    }
+
+    public String getDs_documento_generico() {
+        return ds_documento_generico;
+    }
+
+    public void setDs_documento_generico(String ds_documento_generico) {
+        this.ds_documento_generico = ds_documento_generico;
+    }
+
+    public Timestamp getDt_a_competenza_coge() {
+        return dt_a_competenza_coge;
+    }
+
+    public void setDt_a_competenza_coge(Timestamp dt_a_competenza_coge) {
+        this.dt_a_competenza_coge = dt_a_competenza_coge;
+    }
+
+    public Timestamp getDt_da_competenza_coge() {
+        return dt_da_competenza_coge;
+    }
+
+    public void setDt_da_competenza_coge(Timestamp dt_da_competenza_coge) {
+        this.dt_da_competenza_coge = dt_da_competenza_coge;
+    }
+
+    public Timestamp getDt_scadenza() {
+        return dt_scadenza;
+    }
+
+    public void setDt_scadenza(Timestamp dt_scadenza) {
+        this.dt_scadenza = dt_scadenza;
+    }
+
+    public Timestamp getDt_cancellazione() {
+        return dt_cancellazione;
+    }
+
+    public void setDt_cancellazione(Timestamp dt_cancellazione) {
+        this.dt_cancellazione = dt_cancellazione;
     }
 }

@@ -3,6 +3,9 @@ package it.cnr.contab.web.rest.model;
 import it.cnr.contab.anagraf00.core.bulk.BancaKey;
 import it.cnr.contab.anagraf00.core.bulk.TerzoKey;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+
 public class DocumentoGenericoRigaDto {
     private Long  progressivo_riga;
     private java.lang.String ds_riga;
@@ -19,5 +22,61 @@ public class DocumentoGenericoRigaDto {
 
     public void setProgressivo_riga(Long progressivo_riga) {
         this.progressivo_riga = progressivo_riga;
+    }
+
+    public String getDs_riga() {
+        return ds_riga;
+    }
+
+    public void setDs_riga(String ds_riga) {
+        this.ds_riga = ds_riga;
+    }
+
+    public Timestamp getDt_a_competenza_coge() {
+        return dt_a_competenza_coge;
+    }
+
+    public void setDt_a_competenza_coge(Timestamp dt_a_competenza_coge) {
+        this.dt_a_competenza_coge = dt_a_competenza_coge;
+    }
+
+    public Timestamp getDt_cancellazione() {
+        return dt_cancellazione;
+    }
+
+    public void setDt_cancellazione(Timestamp dt_cancellazione) {
+        this.dt_cancellazione = dt_cancellazione;
+    }
+
+    public Timestamp getDt_da_competenza_coge() {
+        return dt_da_competenza_coge;
+    }
+
+    public void setDt_da_competenza_coge(Timestamp dt_da_competenza_coge) {
+        this.dt_da_competenza_coge = dt_da_competenza_coge;
+    }
+
+    public BigDecimal getIm_riga() {
+        return im_riga;
+    }
+
+    public void setIm_riga(BigDecimal im_riga) {
+        this.im_riga = im_riga;
+    }
+
+    public TerzoKey getTerzoKey() {
+        return terzoKey;
+    }
+
+    public void setTerzoKey(TerzoKey terzoKey) {
+        this.terzoKey = terzoKey;
+    }
+
+    public BancaKey getBancaKey() {
+        return bancaKey;
+    }
+
+    public void setBancaKey(BancaKey bancaKey) {
+        this.bancaKey = bancaKey;
     }
 }

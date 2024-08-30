@@ -1,4 +1,4 @@
-package it.cnr.contab.web.rest.resource.config00;
+package it.cnr.contab.web.rest.resource.doccont;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoKey;
 import it.cnr.contab.config00.contratto.bulk.ContrattoKey;
