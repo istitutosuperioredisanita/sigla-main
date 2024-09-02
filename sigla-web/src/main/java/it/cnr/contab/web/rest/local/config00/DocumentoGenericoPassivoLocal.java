@@ -37,7 +37,7 @@ import javax.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(SIGLARoles.DOCUMENTO_GEN_PASSIVO)
-@Api("Documento Generico Passiva")
+@Api("Documento Generico Passivo")
 public interface DocumentoGenericoPassivoLocal {
 
 	@POST
