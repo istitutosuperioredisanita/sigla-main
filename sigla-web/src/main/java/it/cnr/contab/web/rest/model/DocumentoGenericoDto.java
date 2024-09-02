@@ -1,5 +1,7 @@
 package it.cnr.contab.web.rest.model;
 
+import it.cnr.contab.docamm00.docs.bulk.Tipo_documento_ammKey;
+
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.sql.Timestamp;
@@ -13,6 +15,7 @@ abstract  public class DocumentoGenericoDto<T> extends DocumentoGenericoKeyDto i
     private java.sql.Timestamp dt_da_competenza_coge;
     private java.sql.Timestamp dt_scadenza;
     private java.sql.Timestamp dt_cancellazione;
+    private Tipo_documento_ammKey tipoDocumentoAmmKey;
 
     EnumStatoDocumentoGenerico stato;
 
@@ -30,7 +33,7 @@ abstract  public class DocumentoGenericoDto<T> extends DocumentoGenericoKeyDto i
                 .getGenericSuperclass()).getActualTypeArguments()[0]);
     }
 
-    //stato
+
     //Associzione man/rev
     //stato Liquidazione
     //causale
@@ -91,5 +94,13 @@ abstract  public class DocumentoGenericoDto<T> extends DocumentoGenericoKeyDto i
 
     public void setStato(EnumStatoDocumentoGenerico stato) {
         this.stato = stato;
+    }
+
+    public Tipo_documento_ammKey getTipoDocumentoAmmKey() {
+        return tipoDocumentoAmmKey;
+    }
+
+    public void setTipoDocumentoAmmKey(Tipo_documento_ammKey tipoDocumentoAmmKey) {
+        this.tipoDocumentoAmmKey = tipoDocumentoAmmKey;
     }
 }
