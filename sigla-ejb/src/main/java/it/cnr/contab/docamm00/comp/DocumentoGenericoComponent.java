@@ -6513,4 +6513,34 @@ public class DocumentoGenericoComponent
             throw handleException(e);
         }
     }
+
+
+    public Boolean deleteDocumentoGenericoWs(it.cnr.jada.UserContext uc,
+                                             String cd_cds,
+                                             String cd_tipo_documento_amm,
+                                             String cd_unita_organizzativa,
+                                             Integer esercizio,
+                                             Long pg_documento_generico) throws ComponentException {
+
+        Documento_genericoBulk documentoGenericoBulk=
+                    ( Documento_genericoBulk) this.findByPrimaryKey(uc, new Documento_genericoBulk(cd_cds,
+                                                                                    cd_tipo_documento_amm,
+                                                                                    cd_unita_organizzativa,
+                                                                                                        esercizio,
+                                                            pg_documento_generico));
+        if ( !Optional.ofNullable(documentoGenericoBulk).isPresent())
+            return Boolean.FALSE;
+        inizializzaBulkPerModifica(uc,documentoGenericoBulk);
+        documentoGenericoBulk.setToBeDeleted();
+        eliminaConBulk(uc,documentoGenericoBulk);
+        return Boolean.TRUE;
+    }
+
+    public Documento_genericoBulk modificaDocumentoGenericoWs(UserContext uc,Documento_genericoBulk documentoGenericoBulk) throws ComponentException{
+        return documentoGenericoBulk;
+    }
+    public Documento_genericoBulk creaDocumentoGenericoWs(UserContext uc,Documento_genericoBulk documentoGenericoBulk) throws ComponentException{
+        return documentoGenericoBulk;
+    }
+
 }

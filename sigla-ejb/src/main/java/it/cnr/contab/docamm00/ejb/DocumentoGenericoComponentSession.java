@@ -17,8 +17,6 @@
 
 package it.cnr.contab.docamm00.ejb;
 
-import javax.ejb.Remote;
-
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.Modalita_pagamentoBulk;
 import it.cnr.contab.docamm00.docs.bulk.DocumentoGenericoWizardBulk;
@@ -30,6 +28,7 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 
+import javax.ejb.Remote;
 import java.math.BigDecimal;
 
 @Remote
@@ -80,4 +79,7 @@ public interface DocumentoGenericoComponentSession extends it.cnr.contab.docamm0
     Documento_genericoBulk creaDocumentoGenericoDaAccertamenti(UserContext userContext, DocumentoGenericoWizardBulk wizard, java.util.Collection<AccertamentoWizard> accertamentiColl) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
     V_doc_passivo_obbligazioneBulk sdoppiaDettagliInAutomatico(UserContext userContext, V_doc_passivo_obbligazioneBulk docPassivo, BigDecimal newImporto) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
     void aggiornaModalitaPagamento(UserContext userContext, V_doc_passivo_obbligazioneBulk docPassivoObb, Modalita_pagamentoBulk newModalitaPag, BancaBulk newBanca) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+    Boolean deleteDocumentoGenericoWs(it.cnr.jada.UserContext uc,String cd_cds,String cd_tipo_documento_amm,String cd_unita_organizzativa,Integer esercizio,Long pg_documento_generico)throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+    Documento_genericoBulk creaDocumentoGenericoWs(it.cnr.jada.UserContext uc,Documento_genericoBulk documentoGenericoBulk) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+    Documento_genericoBulk modificaDocumentoGenericoWs(it.cnr.jada.UserContext uc,Documento_genericoBulk documentoGenericoBulk) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 }

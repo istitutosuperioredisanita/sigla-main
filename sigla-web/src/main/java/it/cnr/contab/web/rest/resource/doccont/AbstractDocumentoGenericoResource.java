@@ -5,7 +5,6 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoKey;
 import it.cnr.contab.config00.sto.bulk.CdsKey;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaKey;
 import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_generico_passivoBulk;
 import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
 import it.cnr.contab.docamm00.ejb.DocumentoGenericoComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
@@ -31,7 +30,8 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
     @EJB
     CRUDComponentSession crudComponentSession;
     @EJB
-    DocumentoGenericoComponentSession documentoGenericoComponentSessione;
+    DocumentoGenericoComponentSession documentoGenericoComponentSession;
+
 
     public Response insertDocumentoGenerico(HttpServletRequest request, T documentoGenericoPassivoDto) throws Exception {
         return null;
@@ -84,12 +84,12 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
     }
 
 
-    public Response getDocumentoGenerico(String cd_cds, String cd_unita_organizzativa, Integer esercizio,Long pg_documento_generico) throws Exception {
+    public Response getDocumentoGenerico( Documento_genericoBulk documentoGenericoBulk) throws Exception {
         try{
             CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
-            Documento_genericoBulk documento_genericoBulk= ( Documento_genericoBulk) documentoGenericoComponentSessione.findByPrimaryKey(userContext, new Documento_generico_passivoBulk(cd_cds,
-                    getCdTipoDocumentoAmm(),cd_unita_organizzativa,esercizio,pg_documento_generico));
-            documento_genericoBulk= ( Documento_genericoBulk)documentoGenericoComponentSessione.inizializzaBulkPerModifica(userContext,documento_genericoBulk);
+            Documento_genericoBulk documento_genericoBulk= ( Documento_genericoBulk) documentoGenericoComponentSession.findByPrimaryKey(userContext,
+                    documentoGenericoBulk);
+            documento_genericoBulk= ( Documento_genericoBulk)documentoGenericoComponentSession.inizializzaBulkPerModifica(userContext,documento_genericoBulk);
             if ( !Optional.ofNullable(documento_genericoBulk).isPresent())
                 throw new RestException(Response.Status.NOT_FOUND,String.format("Documento Generico non presente!"));
             //obbligazioneBulk= ( ObbligazioneBulk)obbligazioneComponentSession.inizializzaBulkPerModifica(userContext,obbligazioneBulk);
@@ -104,7 +104,19 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
 
 
     public Response deleteDocumentoGenerico(String cd_cds, String cd_unita_organizzativa, Integer esercizio,  Long pg_documento_generico) throws Exception {
-        return null;
+        try{
+
+            CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
+            Boolean result=documentoGenericoComponentSession.deleteDocumentoGenericoWs
+                    (userContext,cd_cds,getCdTipoDocumentoAmm(),cd_unita_organizzativa,esercizio,pg_documento_generico);
+            if ( result)
+                return Response.status(Response.Status.OK).build();
+
+            return Response.status(Response.Status.NO_CONTENT).build();
+
+        }catch (Throwable e){
+            throw new RestException(Response.Status.INTERNAL_SERVER_ERROR,String.format(e.getMessage()));
+        }
     }
 
 

@@ -1,6 +1,7 @@
 package it.cnr.contab.web.rest.resource.doccont;
 
 import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
+import it.cnr.contab.docamm00.docs.bulk.Documento_generico_passivoBulk;
 import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
 import it.cnr.contab.docamm00.ejb.DocumentoGenericoComponentSession;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioKey;
@@ -27,11 +28,13 @@ public class DocumentoGenPassivoResource extends AbstractDocumentoGenericoResour
     @EJB
     CRUDComponentSession crudComponentSession;
     @EJB
-    DocumentoGenericoComponentSession documentoGenericoComponentSessione;
+    DocumentoGenericoComponentSession documentoGenericoComponentSession;
     @Override
     public Response insert(HttpServletRequest request, DocumentoGenericoPassivoDto documentoGenericoPassivoDto) throws Exception {
         return null;
     }
+
+
 
     @Override
     String getCdTipoDocumentoAmm() {
@@ -42,7 +45,7 @@ public class DocumentoGenPassivoResource extends AbstractDocumentoGenericoResour
     protected void addInfoContToDocRigheDto(Documento_generico_rigaBulk rigaBulk, DocumentoGenericoRigaDto rigaDto, UserContext userContext){
 
                 DocumentoGenericoPassRigaDto rigaPassDto= (DocumentoGenericoPassRigaDto) rigaDto;
-        rigaPassDto.setObbligazioneScadenzarioKey( new Obbligazione_scadenzarioKey(rigaBulk.getObbligazione_scadenziario().getCd_cds(),
+                rigaPassDto.setObbligazioneScadenzarioKey( new Obbligazione_scadenzarioKey(rigaBulk.getObbligazione_scadenziario().getCd_cds(),
                                             rigaBulk.getObbligazione_scadenziario().getEsercizio(),
                                             rigaBulk.getObbligazione_scadenziario().getEsercizio_originale(),
                                             rigaBulk.getObbligazione_scadenziario().getPg_obbligazione(),
@@ -52,14 +55,20 @@ public class DocumentoGenPassivoResource extends AbstractDocumentoGenericoResour
 
     @Override
     public Response get(String cd_cds, String cd_unita_organizzativa, Integer esercizio,Long pg_documento_generico) throws Exception {
-        return getDocumentoGenerico( cd_cds,cd_unita_organizzativa,esercizio,pg_documento_generico);
+
+        Documento_generico_passivoBulk documentoGenericoPassivoBulk =new Documento_generico_passivoBulk(cd_cds,
+                            Documento_genericoBulk.GENERICO_S,
+                            cd_unita_organizzativa,
+                            esercizio,
+                            pg_documento_generico);
+        return getDocumentoGenerico( documentoGenericoPassivoBulk);
 
 
     }
 
     @Override
     public Response delete(String cd_cds, String cd_unita_organizzativa, Integer esercizio,  Long pg_documento_generico) throws Exception {
-        return null;
+       return deleteDocumentoGenerico(cd_cds,cd_unita_organizzativa,esercizio,pg_documento_generico);
     }
 
     @Override

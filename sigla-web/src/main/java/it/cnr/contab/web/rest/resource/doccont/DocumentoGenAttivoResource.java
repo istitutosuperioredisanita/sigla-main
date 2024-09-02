@@ -1,6 +1,7 @@
 package it.cnr.contab.web.rest.resource.doccont;
 
 import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
+import it.cnr.contab.docamm00.docs.bulk.Documento_generico_attivoBulk;
 import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
 import it.cnr.contab.docamm00.ejb.DocumentoGenericoComponentSession;
 import it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioKey;
@@ -21,7 +22,6 @@ import javax.ws.rs.core.SecurityContext;
 
 @Stateless
 public class DocumentoGenAttivoResource extends AbstractDocumentoGenericoResource<DocumentoGenericoAttivoDto> implements DocumentoGenericoAttivoLocal {
-
 
     @Context
     SecurityContext securityContext;
@@ -53,7 +53,14 @@ public class DocumentoGenAttivoResource extends AbstractDocumentoGenericoResourc
 
     @Override
     public Response get(String cd_cds, String cd_unita_organizzativa, Integer esercizio,Long pg_documento_generico) throws Exception {
-        return getDocumentoGenerico( cd_cds,cd_unita_organizzativa,esercizio,pg_documento_generico);
+
+        Documento_generico_attivoBulk documentoGenericoAttivoBulk = new Documento_generico_attivoBulk(cd_cds,
+                getCdTipoDocumentoAmm(),
+                cd_unita_organizzativa,
+                esercizio,
+                pg_documento_generico
+        );
+        return getDocumentoGenerico( documentoGenericoAttivoBulk);
 
 
     }
