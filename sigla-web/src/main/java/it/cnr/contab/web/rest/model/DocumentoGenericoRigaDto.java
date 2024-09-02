@@ -1,20 +1,16 @@
 package it.cnr.contab.web.rest.model;
 
-import it.cnr.contab.anagraf00.core.bulk.BancaKey;
-import it.cnr.contab.anagraf00.core.bulk.TerzoKey;
-
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-public class DocumentoGenericoRigaDto {
+ public class DocumentoGenericoRigaDto {
     private Long  progressivo_riga;
     private java.lang.String ds_riga;
     private java.sql.Timestamp dt_a_competenza_coge;
     private java.sql.Timestamp dt_cancellazione;
     private java.sql.Timestamp dt_da_competenza_coge;
     private java.math.BigDecimal im_riga;
-    private TerzoKey terzoKey;
-    private BancaKey bancaKey;
+
 
     public Long getProgressivo_riga() {
         return progressivo_riga;
@@ -64,19 +60,5 @@ public class DocumentoGenericoRigaDto {
         this.im_riga = im_riga;
     }
 
-    public TerzoKey getTerzoKey() {
-        return terzoKey;
-    }
 
-    public void setTerzoKey(TerzoKey terzoKey) {
-        this.terzoKey = terzoKey;
-    }
-
-    public BancaKey getBancaKey() {
-        return bancaKey;
-    }
-
-    public void setBancaKey(BancaKey bancaKey) {
-        this.bancaKey = bancaKey;
-    }
-}
+ }

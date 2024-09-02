@@ -14,6 +14,8 @@ abstract  public class DocumentoGenericoDto<T> extends DocumentoGenericoKeyDto i
     private java.sql.Timestamp dt_scadenza;
     private java.sql.Timestamp dt_cancellazione;
 
+    EnumStatoDocumentoGenerico stato;
+
     private List<T> righe= new ArrayList<T>();
 
     public List<T> getRighe() {
@@ -81,5 +83,13 @@ abstract  public class DocumentoGenericoDto<T> extends DocumentoGenericoKeyDto i
 
     public void setDt_cancellazione(Timestamp dt_cancellazione) {
         this.dt_cancellazione = dt_cancellazione;
+    }
+
+    public EnumStatoDocumentoGenerico getStato() {
+        return stato;
+    }
+
+    public void setStato(EnumStatoDocumentoGenerico stato) {
+        this.stato = stato;
     }
 }

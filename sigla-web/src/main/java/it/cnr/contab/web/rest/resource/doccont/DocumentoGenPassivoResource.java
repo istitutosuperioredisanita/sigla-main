@@ -1,34 +1,34 @@
 package it.cnr.contab.web.rest.resource.doccont;
 
-import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_generico_passivoBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
-import it.cnr.contab.docamm00.ejb.DocumentoGenericoComponentSession;
+import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.anagraf00.core.bulk.TerzoKey;
+import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
+import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
+import it.cnr.contab.docamm00.docs.bulk.*;
+import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioKey;
 import it.cnr.contab.web.rest.local.config00.DocumentoGenericoPassivoLocal;
 import it.cnr.contab.web.rest.model.DocumentoGenericoPassRigaDto;
 import it.cnr.contab.web.rest.model.DocumentoGenericoPassivoDto;
 import it.cnr.contab.web.rest.model.DocumentoGenericoRigaDto;
+import it.cnr.contab.web.rest.model.TerzoPagamentoIncasso;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.ejb.CRUDComponentSession;
+import it.cnr.jada.comp.ComponentException;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Stateless
 public class DocumentoGenPassivoResource extends AbstractDocumentoGenericoResource<DocumentoGenericoPassivoDto> implements DocumentoGenericoPassivoLocal {
 
 
-    @Context
-    SecurityContext securityContext;
-    @EJB
-    CRUDComponentSession crudComponentSession;
-    @EJB
-    DocumentoGenericoComponentSession documentoGenericoComponentSession;
+
     @Override
     public Response insert(HttpServletRequest request, DocumentoGenericoPassivoDto documentoGenericoPassivoDto) throws Exception {
         return null;
@@ -45,11 +45,61 @@ public class DocumentoGenPassivoResource extends AbstractDocumentoGenericoResour
     protected void addInfoContToDocRigheDto(Documento_generico_rigaBulk rigaBulk, DocumentoGenericoRigaDto rigaDto, UserContext userContext){
 
                 DocumentoGenericoPassRigaDto rigaPassDto= (DocumentoGenericoPassRigaDto) rigaDto;
+                TerzoPagamentoIncasso terzoDebitore = new TerzoPagamentoIncasso();
+                    terzoDebitore.setTerzoKey(new TerzoKey( rigaBulk.getCd_terzo()));
+                    terzoDebitore.setPg_banca(rigaBulk.getPg_banca());
+                    terzoDebitore.setRifModalitaPagamentoKey( rigaBulk.getModalita_pagamento());
+                    rigaPassDto.setTerzoDebitore(terzoDebitore);
+
                 rigaPassDto.setObbligazioneScadenzarioKey( new Obbligazione_scadenzarioKey(rigaBulk.getObbligazione_scadenziario().getCd_cds(),
                                             rigaBulk.getObbligazione_scadenziario().getEsercizio(),
                                             rigaBulk.getObbligazione_scadenziario().getEsercizio_originale(),
                                             rigaBulk.getObbligazione_scadenziario().getPg_obbligazione(),
                         rigaBulk.getObbligazione_scadenziario().getPg_obbligazione_scadenzario()));
+    }
+
+    @Override
+    protected Documento_genericoBulk initializeDocumentoGenerico(UserContext userContext, DocumentoGenericoPassivoDto documentoGenericoDto) throws ComponentException, RemoteException {
+        Documento_genericoBulk documentoGenericoBulk = new Documento_genericoBulk();
+        documentoGenericoBulk.setTi_entrate_spese(Documento_genericoBulk.SPESE);
+        documentoGenericoBulk.setTipo_documento(new Tipo_documento_ammBulk( Numerazione_doc_ammBulk.TIPO_DOC_GENERICO_S));
+        documentoGenericoComponentSession.inizializzaBulkPerInserimento(userContext,documentoGenericoBulk);
+
+        return documentoGenericoBulk;
+    }
+
+    @Override
+    protected void  addDocumentoGenericoRighe(UserContext userContext, Documento_genericoBulk documentoGenericoBulk,DocumentoGenericoPassivoDto documentoGenericoDto) throws Exception {
+        List<Documento_generico_rigaBulk> righe= new ArrayList<Documento_generico_rigaBulk>();
+       if (!Optional.ofNullable(documentoGenericoDto.getRighe()).isPresent())
+           return;;
+       for ( DocumentoGenericoPassRigaDto rigaDto:documentoGenericoDto.getRighe()){
+           Documento_generico_rigaBulk rigaBulk= new Documento_generico_rigaBulk();
+           rigaBulk.setDocumento_generico(documentoGenericoBulk);
+
+           rigaBulk.setTerzo(new TerzoBulk(rigaDto.getTerzoDebitore().getTerzoKey().getCd_terzo()));
+
+           BancaBulk banca = (BancaBulk)crudComponentSession.findByPrimaryKey(userContext,
+                        new BancaBulk(rigaDto.getTerzoDebitore().getTerzoKey().getCd_terzo(),rigaDto.getTerzoDebitore().getPg_banca()));
+
+           rigaBulk.setModalita_pagamento((Rif_modalita_pagamentoBulk)crudComponentSession.findByPrimaryKey(userContext,
+                                new Rif_modalita_pagamentoBulk(rigaDto.getTerzoDebitore().getRifModalitaPagamentoKey().getCd_modalita_pag())));
+
+           //controlli se il terzo ha quella modalita di pagamento
+           rigaBulk.setBanca(banca);
+            rigaBulk.setDs_riga(rigaDto.getDs_riga());
+            rigaBulk.setDt_a_competenza_coge(rigaDto.getDt_a_competenza_coge());
+            rigaBulk.setDt_da_competenza_coge(rigaDto.getDt_da_competenza_coge());
+
+            rigaBulk.setObbligazione_scadenziario( new Obbligazione_scadenzarioBulk(rigaDto.getObbligazioneScadenzarioKey().getCd_cds(),
+                    rigaDto.getObbligazioneScadenzarioKey().getEsercizio(),
+                    rigaDto.getObbligazioneScadenzarioKey().getEsercizio_originale(),
+                    rigaDto.getObbligazioneScadenzarioKey().getPg_obbligazione(),
+                    rigaDto.getObbligazioneScadenzarioKey().getPg_obbligazione_scadenzario()));
+
+           rigaBulk.setTi_associato_manrev(CompensoBulk.NON_ASSOCIATO_MANREV);
+           documentoGenericoBulk.addToDocumento_generico_dettColl( rigaBulk);
+       }
     }
 
 

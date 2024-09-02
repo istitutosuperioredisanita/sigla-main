@@ -1,17 +1,20 @@
 package it.cnr.contab.web.rest.resource.doccont;
 
-import it.cnr.contab.anagraf00.core.bulk.BancaKey;
-import it.cnr.contab.anagraf00.core.bulk.TerzoKey;
+import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.sto.bulk.CdsKey;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaKey;
 import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
 import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
 import it.cnr.contab.docamm00.ejb.DocumentoGenericoComponentSession;
+import it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.util.Utility;
 import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.model.DocumentoGenericoDto;
 import it.cnr.contab.web.rest.model.DocumentoGenericoRigaDto;
+import it.cnr.contab.web.rest.model.EnumStatoDocumentoGenerico;
 import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 
 import javax.ejb.EJB;
@@ -21,16 +24,18 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.lang.reflect.ParameterizedType;
+import java.math.BigDecimal;
+import java.rmi.RemoteException;
 import java.util.Optional;
 @Stateless
 abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGenericoDto>  {
 
     @Context
-    SecurityContext securityContext;
+    protected SecurityContext securityContext;
     @EJB
-    CRUDComponentSession crudComponentSession;
+    protected CRUDComponentSession crudComponentSession;
     @EJB
-    DocumentoGenericoComponentSession documentoGenericoComponentSession;
+    protected DocumentoGenericoComponentSession documentoGenericoComponentSession;
 
 
     public Response insertDocumentoGenerico(HttpServletRequest request, T documentoGenericoPassivoDto) throws Exception {
@@ -58,8 +63,7 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
                 rigaDto.setDt_a_competenza_coge(riga.getDt_a_competenza_coge());
                 rigaDto.setDt_da_competenza_coge(riga.getDt_da_competenza_coge());
                 rigaDto.setDt_cancellazione(riga.getDt_cancellazione());
-                rigaDto.setTerzoKey(new TerzoKey( riga.getCd_terzo()));
-                rigaDto.setBancaKey(new BancaKey( riga.getCd_terzo(),riga.getPg_banca()));
+
                 addInfoContToDocRigheDto( riga,rigaDto,userContext);
                 documentoGenericoDto.getRighe().add(rigaDto);
             }
@@ -71,16 +75,45 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
         DocumentoGenericoDto documentoGenericoDto = ( DocumentoGenericoDto) reflectClassType().newInstance();
         documentoGenericoDto.setCdsKey( new CdsKey(bulk.getCd_cds()));
         documentoGenericoDto.setUnitaOrganizzativaKey(new Unita_organizzativaKey(bulk.getCd_unita_organizzativa()));
+        documentoGenericoDto.setCd_tipo_documento_amm(bulk.getCd_tipo_documento_amm());
+        documentoGenericoDto.setEsercizio(bulk.getEsercizio());
         documentoGenericoDto.setDs_documento_generico(bulk.getDs_documento_generico());
         documentoGenericoDto.setPg_documento_generico(bulk.getPg_documento_generico());
         documentoGenericoDto.setData_registrazione(bulk.getData_registrazione());
         documentoGenericoDto.setDt_scadenza(bulk.getDt_scadenza());
         documentoGenericoDto.setDt_a_competenza_coge(bulk.getDt_a_competenza_coge());
         documentoGenericoDto.setDt_da_competenza_coge(bulk.getDt_da_competenza_coge());
+        documentoGenericoDto.setStato(EnumStatoDocumentoGenerico.getValueFrom(bulk.getStato_cofi()));
         addRigheToDocumentoGenDto( bulk,documentoGenericoDto,userContext);
 
 
         return ( T) documentoGenericoDto;
+    }
+
+    abstract protected Documento_genericoBulk initializeDocumentoGenerico( UserContext userContext, T documentoGenericoDto) throws ComponentException, RemoteException;
+
+    abstract protected void addDocumentoGenericoRighe (UserContext userContext,Documento_genericoBulk documentoGenericoBulk,T documentoGenericoDto) throws Exception;
+    protected Documento_genericoBulk documentoGenericoDtoToDocumentoGenBulk(UserContext userContext,T documentoGenericoDto) throws Exception {
+        Documento_genericoBulk documentoGenericoBulk = initializeDocumentoGenerico(userContext,documentoGenericoDto);
+        documentoGenericoBulk.setEsercizio(documentoGenericoDto.getEsercizio());
+        documentoGenericoBulk.setCd_tipo_documento_amm( getCdTipoDocumentoAmm());
+        documentoGenericoBulk.setCd_cds( documentoGenericoDto.getCdsKey().getCd_unita_organizzativa());
+        documentoGenericoBulk.setCd_cds( documentoGenericoDto.getUnitaOrganizzativaKey().getCd_unita_organizzativa());
+        documentoGenericoBulk.setDs_documento_generico( documentoGenericoDto.getDs_documento_generico());
+        documentoGenericoBulk.setDs_documento_generico( documentoGenericoDto.getDs_documento_generico());
+
+
+        documentoGenericoBulk.setData_registrazione(documentoGenericoDto.getData_registrazione());
+        documentoGenericoBulk.setDt_scadenza(documentoGenericoDto.getDt_scadenza());
+        documentoGenericoBulk.setDt_da_competenza_coge(documentoGenericoDto.getDt_da_competenza_coge());
+        documentoGenericoBulk.setDt_a_competenza_coge(documentoGenericoDto.getDt_a_competenza_coge());
+        documentoGenericoBulk.setStato_cofi(Documento_genericoBulk.STATO_CONTABILIZZATO);
+        DivisaBulk divisa = new DivisaBulk( Utility.createConfigurazioneCnrComponentSession().getVal01(userContext, new Integer(0), "*", Configurazione_cnrBulk.PK_CD_DIVISA,Configurazione_cnrBulk.SK_EURO ));
+        documentoGenericoBulk.setValuta( divisa );
+        documentoGenericoBulk.setCambio( new BigDecimal(1));
+        documentoGenericoBulk.setToBeCreated();
+        addDocumentoGenericoRighe(userContext,documentoGenericoBulk,documentoGenericoDto);
+        return documentoGenericoBulk;
     }
 
 

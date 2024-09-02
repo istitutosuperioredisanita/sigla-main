@@ -6,7 +6,16 @@ import java.io.Serializable;
 
 public class DocumentoGenericoPassRigaDto extends DocumentoGenericoRigaDto implements Serializable {
 
+    private TerzoPagamentoIncasso terzoDebitore;
     private Obbligazione_scadenzarioKey obbligazioneScadenzarioKey;
+
+    public TerzoPagamentoIncasso getTerzoDebitore() {
+        return terzoDebitore;
+    }
+
+    public void setTerzoDebitore(TerzoPagamentoIncasso terzoDebitore) {
+        this.terzoDebitore = terzoDebitore;
+    }
 
     public Obbligazione_scadenzarioKey getObbligazioneScadenzarioKey() {
         return obbligazioneScadenzarioKey;
