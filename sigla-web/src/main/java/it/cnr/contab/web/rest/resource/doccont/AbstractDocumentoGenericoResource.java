@@ -38,8 +38,19 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
     protected DocumentoGenericoComponentSession documentoGenericoComponentSession;
 
 
-    public Response insertDocumentoGenerico(HttpServletRequest request, T documentoGenericoPassivoDto) throws Exception {
-        return null;
+    public Response insertDocumentoGenerico(HttpServletRequest request, T documentoGenericoDto) throws Exception {
+        try{
+            CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
+            Documento_genericoBulk documentoGenericoBulk=documentoGenericoDtoToDocumentoGenBulk( userContext,documentoGenericoDto );
+
+
+            return Response.status(Response.Status.OK).entity(documentoGenBulkToDocumentoGenDto( documentoGenericoBulk,userContext)).build();
+        }catch (Throwable e){
+            if ( e instanceof RestException)
+                throw e;
+            throw new RestException(Response.Status.INTERNAL_SERVER_ERROR,String.format(e.getMessage()));
+        }
+
     }
 
     abstract String getCdTipoDocumentoAmm();
