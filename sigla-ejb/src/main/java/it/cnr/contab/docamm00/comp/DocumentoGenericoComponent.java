@@ -6563,12 +6563,9 @@ public class DocumentoGenericoComponent
                 documentoGenericoRigaBulk.setAccertamento_scadenziario(caricaAccertamentoPer(uc, documentoGenericoRigaBulk.getAccertamento_scadenziario()));
                 documentoGenericoBulk.addToDocumento_generico_accertamentiHash(documentoGenericoRigaBulk.getAccertamento_scadenziario(), documentoGenericoRigaBulk);
             }
-
-
         }
 
         return ( Documento_genericoBulk) creaConBulk(uc, documentoGenericoBulk);
-
 
     }
 
