@@ -19,12 +19,14 @@ package it.cnr.contab.doccont00.consultazioni.bp;
 
 import com.opencsv.CSVWriter;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
+import it.cnr.contab.doccont00.consultazioni.action.ConsControlliPCCAction;
 import it.cnr.contab.doccont00.consultazioni.bulk.ControlliPCCParams;
 import it.cnr.contab.doccont00.consultazioni.bulk.VControlliPCCBulk;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util00.bulk.storage.AllegatoParentIBulk;
 import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.action.BusinessProcess;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -32,6 +34,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.CondizioneComplessaBulk;
+import it.cnr.jada.util.action.RicercaLiberaBP;
 import it.cnr.jada.util.action.SearchProvider;
 import it.cnr.jada.util.action.SelezionatoreListaBP;
 import it.cnr.jada.util.jsp.Button;
@@ -67,6 +70,21 @@ public class ConsControlliPCCBP extends SelezionatoreListaBP implements SearchPr
         super.table.setOnselect("select");
     }
 
+    @Override
+    public BusinessProcess initBusinessProcess(ActionContext actioncontext) throws BusinessProcessException {
+        BusinessProcess businessProcess = super.initBusinessProcess(actioncontext);
+        ConsControlliPCCAction consControlliPCCAction = new ConsControlliPCCAction();
+        RicercaLiberaBP ricercaLiberaBP = (RicercaLiberaBP) actioncontext.createBusinessProcess("RicercaLibera");
+        ricercaLiberaBP.setSearchProvider(this);
+        ricercaLiberaBP.setShowSearchResult(false);
+        ricercaLiberaBP.setCanPerformSearchWithoutClauses(false);
+        ricercaLiberaBP.setPrototype(getModel());
+        actioncontext.addHookForward("searchResult", consControlliPCCAction, "doRigheSelezionate");
+        actioncontext.addHookForward("close", consControlliPCCAction, "doCloseRicercaLibera");
+        actioncontext.addBusinessProcess(ricercaLiberaBP);
+        return ricercaLiberaBP;
+    }
+
 
     @Override
     protected void init(Config config, ActionContext context)
@@ -81,7 +99,6 @@ public class ConsControlliPCCBP extends SelezionatoreListaBP implements SearchPr
         }
         setColumns(getBulkInfo().getColumnFieldPropertyDictionary());
         super.init(config, context);
-        openIterator(context);
         storeService = SpringUtil.getBean("storeService", StoreService.class);
         esercizio = CNRUserContext.getEsercizio(context.getUserContext());
     }
@@ -156,28 +173,29 @@ public class ConsControlliPCCBP extends SelezionatoreListaBP implements SearchPr
                     CSVWriter.DEFAULT_QUOTE_CHARACTER,
                     CSVWriter.DEFAULT_ESCAPE_CHARACTER,
                     CSVWriter.DEFAULT_LINE_END);
+
             //La prima riga deve essere vuota
-            writer.writeNext(createArray());
-            writer.writeNext(createArray("Codice del modello", "GESTIONE IMPORTI DOCUMENTI", EMPTY, "i campi contrassegnati da * sono obbligatori"));
-            writer.writeNext(createArray("Versione del modello", "1"));
-            writer.writeNext(createArray("Utente che trasmette il file (Codice Fiscale)", controlliPCCParams.getCodiceFiscale()));
+            writer.writeNext(createArray(), true);
+            writer.writeNext(createArray("Codice del modello", "GESTIONE IMPORTI DOCUMENTI", EMPTY, "i campi contrassegnati da * sono obbligatori"), true);
+            writer.writeNext(createArray("Versione del modello", "1"), true);
+            writer.writeNext(createArray("Utente che trasmette il file (Codice Fiscale)", controlliPCCParams.getCodiceFiscale()), true);
             writer.writeNext(createArray("DATI IDENTIFICATIVI FATTURA*", EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
                     "TIPO OPERAZIONE*", "VARIAZIONE IMPORTI DOCUMENTI\n" +
                             "Tutti i campi sono obbligatori\n" +
                             "Sezione da compilare solo per le righe del modello per le quali Azione = 'SID'"
                     , EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, "REGIME IVA\n" +
                             "Sezione da compilare solo per le righe del modello per le quali Azione = 'MI'", "RICEZIONE/RIFIUTO/COMUNICAZIONE SCADENZA \n" +
-                            "Sezione da compilare solo per le righe del modello per le quali Azione  = 'RC' ;  Azione = 'RF'; Azione = 'CS'", EMPTY, "ESITO ELABORAZIONE"));
-            writer.writeNext(createArray("IDENTIFICATIVO 1", EMPTY, "IDENTIFICATIVO 3"));
+                            "Sezione da compilare solo per le righe del modello per le quali Azione  = 'RC' ;  Azione = 'RF'; Azione = 'CS'", EMPTY, "ESITO ELABORAZIONE"), true);
+            writer.writeNext(createArray("IDENTIFICATIVO 1", EMPTY, "IDENTIFICATIVO 3"),true);
             writer.writeNext(createArray("Numero progressivo di registrazione", "IDENTIFICATIVO 2", EMPTY,
                     "Data documento (SDI 2.1.1.3 Data)", "Codice fiscale fornitore", "Codice ufficio", "Azione", "Imponibile", "Imposta",
                     "Importo non commerciale*", "Importo sospeso in Contenzioso*", "Data inizio sospesione in Contenzioso*",
                     "Importo sospeso in contestazione/adempimenti normativi*", "Data inizio sospesione in contestazione /adempimenti normativi*",
                     "Importo sospeso per data esito regolare verifica di conformità*", "Data inizio sospensione per data esito regolare verifica di conformità*",
-                    "Importo non liquidabile*", "Flag split (S/N)", "Data", "Numero protocollo di entrata", "Codice segnalazione", "Descrizione segnalazione"));
-            writer.writeNext(createArray(EMPTY, "Lotto SDI", "Numero fattura \n" + "(SDI 2.1.1.4 Numero)"));
+                    "Importo non liquidabile*", "Flag split (S/N)", "Data", "Numero protocollo di entrata", "Codice segnalazione", "Descrizione segnalazione"), true);
+            writer.writeNext(createArray(EMPTY, "Lotto SDI", "Numero fattura \n" + "(SDI 2.1.1.4 Numero)"),true);
             final boolean isOperazioneSID = controlliPCCParams.getTipoOperazione().equalsIgnoreCase(ControlliPCCParams.TipoOperazioneType.SID.name());
-            final boolean isComunicazioneScadenza = Objects.equals(ControlliPCCParams.TipoOperazioneType.RC.name(), controlliPCCParams.getTipoOperazione());
+            final boolean isComunicazioneScadenza = Objects.equals(ControlliPCCParams.TipoOperazioneType.CS.name(), controlliPCCParams.getTipoOperazione());
             vControlliPCCBulks.stream().forEach(vControlliPCCBulk -> {
                 writer.writeNext(createArray(
                         EMPTY,
@@ -206,7 +224,7 @@ public class ConsControlliPCCBP extends SelezionatoreListaBP implements SearchPr
                                 .orElse(String.valueOf(BigDecimal.ZERO)), // Importo non commerciale*
                         !isOperazioneSID ? EMPTY : Optional.ofNullable(vControlliPCCBulk.getCausale())
                                 .filter(s -> s.equalsIgnoreCase(Fattura_passivaBulk.CONT))
-                                .map(s -> vControlliPCCBulk.getImponibile())
+                                .map(s -> vControlliPCCBulk.getImponibile().subtract(Optional.ofNullable(vControlliPCCBulk.getImTotaleNC()).orElse(BigDecimal.ZERO)))
                                 .map(bigDecimal -> decimalFormat.format(bigDecimal))
                                 .orElse(String.valueOf(BigDecimal.ZERO)), // Importo sospeso in Contenzioso*
                         !isOperazioneSID ? EMPTY : Optional.ofNullable(vControlliPCCBulk.getCausale())
@@ -216,7 +234,7 @@ public class ConsControlliPCCBP extends SelezionatoreListaBP implements SearchPr
                                 .orElse(EMPTY), // Data inizio sospesione in Contenzioso*
                         !isOperazioneSID ? EMPTY : Optional.ofNullable(vControlliPCCBulk.getCausale())
                                 .filter(s -> s.equalsIgnoreCase(Fattura_passivaBulk.CONT_NORM))
-                                .map(s -> vControlliPCCBulk.getImponibile())
+                                .map(s -> vControlliPCCBulk.getImponibile().subtract(Optional.ofNullable(vControlliPCCBulk.getImTotaleNC()).orElse(BigDecimal.ZERO)))
                                 .map(bigDecimal -> decimalFormat.format(bigDecimal))
                                 .orElse(String.valueOf(BigDecimal.ZERO)), // Importo sospeso in contestazione/adempimenti normativi*
                         !isOperazioneSID ? EMPTY : Optional.ofNullable(vControlliPCCBulk.getCausale())
@@ -226,7 +244,7 @@ public class ConsControlliPCCBP extends SelezionatoreListaBP implements SearchPr
                                 .orElse(EMPTY), // Data inizio sospesione in contestazione /adempimenti normativi*
                         !isOperazioneSID ? EMPTY : Optional.ofNullable(vControlliPCCBulk.getCausale())
                                 .filter(s -> s.equalsIgnoreCase(Fattura_passivaBulk.CONT_CONF))
-                                .map(s -> vControlliPCCBulk.getImponibile())
+                                .map(s -> vControlliPCCBulk.getImponibile().subtract(Optional.ofNullable(vControlliPCCBulk.getImTotaleNC()).orElse(BigDecimal.ZERO)))
                                 .map(bigDecimal -> decimalFormat.format(bigDecimal))
                                 .orElse(String.valueOf(BigDecimal.ZERO)), // Importo sospeso per data esito regolare verifica di conformità*
                         !isOperazioneSID ? EMPTY : Optional.ofNullable(vControlliPCCBulk.getCausale())
@@ -242,7 +260,7 @@ public class ConsControlliPCCBP extends SelezionatoreListaBP implements SearchPr
                         !isComunicazioneScadenza ? EMPTY : Optional.ofNullable(vControlliPCCBulk.getDataScadenza())
                                 .map(timestamp -> DateTimeFormatter.ofPattern("dd/MM/yyyy").format(timestamp.toLocalDateTime()))
                                 .orElse(EMPTY) // RICEZIONE/RIFIUTO/COMUNICAZIONE SCADENZA Sezione da compilare solo per le righe del modello per le quali Azione  = 'RC' ;  Azione = 'RF'; Azione = 'CS'
-                ));
+                ),true);
             });
             writer.close();
             final StorageObject storageObject = storeService.storeSimpleDocument(
@@ -264,6 +282,5 @@ public class ConsControlliPCCBP extends SelezionatoreListaBP implements SearchPr
         } catch (IOException e) {
             throw handleException(e);
         }
-
     }
 }
