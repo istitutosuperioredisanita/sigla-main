@@ -5,7 +5,6 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoKey;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoKey;
-import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioKey;
@@ -24,16 +23,10 @@ import java.util.Optional;
 
 @Stateless
 public class DocumentoGenPassivoResource extends AbstractDocumentoGenericoResource<DocumentoGenericoPassivoDto> implements DocumentoGenericoPassivoLocal {
-
-
-
     @Override
     public Response insert(HttpServletRequest request, DocumentoGenericoPassivoDto documentoGenericoPassivoDto) throws Exception {
         return insertDocumentoGenerico( request,documentoGenericoPassivoDto);
     }
-
-
-
     @Override
     String getCdTipoDocumentoAmm() {
         return Documento_genericoBulk.GENERICO_S;
@@ -72,9 +65,9 @@ public class DocumentoGenPassivoResource extends AbstractDocumentoGenericoResour
         documentoGenericoBulk.setTi_entrate_spese(Documento_genericoBulk.SPESE);
         documentoGenericoBulk.setTipo_documento(new Tipo_documento_ammBulk( Numerazione_doc_ammBulk.TIPO_DOC_GENERICO_S));
         documentoGenericoBulk.setCd_uo_origine(documentoGenericoDto.getUnitaOrganizzativaKey().getCd_unita_organizzativa());
-        documentoGenericoComponentSession.inizializzaBulkPerInserimento(userContext,documentoGenericoBulk);
+        return ( Documento_genericoBulk) documentoGenericoComponentSession.inizializzaBulkPerInserimento(userContext,documentoGenericoBulk);
 
-        return documentoGenericoBulk;
+
     }
 
     @Override
@@ -84,7 +77,14 @@ public class DocumentoGenPassivoResource extends AbstractDocumentoGenericoResour
            return;;
        for ( DocumentoGenericoPassRigaDto rigaDto:documentoGenericoDto.getRighe()){
            Documento_generico_rigaBulk rigaBulk= new Documento_generico_rigaBulk();
+           documentoGenericoBulk.addToDocumento_generico_dettColl( rigaBulk);
            rigaBulk.setDocumento_generico(documentoGenericoBulk);
+           rigaBulk.setStato_cofi(EnumStatoDocumentoGenerico.CONTABILIZZATO.getStato());
+            rigaBulk.setIm_riga(rigaDto.getIm_riga());
+            rigaBulk.setIm_riga_divisa(rigaBulk.getIm_riga());
+           rigaBulk.setDs_riga(rigaDto.getDs_riga());
+           rigaBulk.setDt_a_competenza_coge(rigaDto.getDt_a_competenza_coge());
+           rigaBulk.setDt_da_competenza_coge(rigaDto.getDt_da_competenza_coge());
 
            rigaBulk.setTerzo(new TerzoBulk(rigaDto.getTerzoDebitore().getTerzoKey().getCd_terzo()));
 
@@ -93,12 +93,7 @@ public class DocumentoGenPassivoResource extends AbstractDocumentoGenericoResour
 
            rigaBulk.setModalita_pagamento((Rif_modalita_pagamentoBulk)crudComponentSession.findByPrimaryKey(userContext,
                                 new Rif_modalita_pagamentoBulk(rigaDto.getTerzoDebitore().getRifModalitaPagamentoKey().getCd_modalita_pag())));
-
-           //controlli se il terzo ha quella modalita di pagamento
            rigaBulk.setBanca(banca);
-            rigaBulk.setDs_riga(rigaDto.getDs_riga());
-            rigaBulk.setDt_a_competenza_coge(rigaDto.getDt_a_competenza_coge());
-            rigaBulk.setDt_da_competenza_coge(rigaDto.getDt_da_competenza_coge());
 
             rigaBulk.setObbligazione_scadenziario( new Obbligazione_scadenzarioBulk(rigaDto.getObbligazioneScadenzarioKey().getCd_cds(),
                     rigaDto.getObbligazioneScadenzarioKey().getEsercizio(),
@@ -106,10 +101,8 @@ public class DocumentoGenPassivoResource extends AbstractDocumentoGenericoResour
                     rigaDto.getObbligazioneScadenzarioKey().getPg_obbligazione(),
                     rigaDto.getObbligazioneScadenzarioKey().getPg_obbligazione_scadenzario()));
 
-
-           rigaBulk.setTi_associato_manrev(CompensoBulk.NON_ASSOCIATO_MANREV);
+           rigaBulk.setTi_associato_manrev(EnumAssMandRevDocGenRiga.NO_ASSOCIATO_A_MAND_REV.getAssMandRev());
            rigaBulk.setToBeCreated();
-           documentoGenericoBulk.addToDocumento_generico_dettColl( rigaBulk);
        }
     }
 

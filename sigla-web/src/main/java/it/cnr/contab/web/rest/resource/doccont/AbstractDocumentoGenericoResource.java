@@ -12,10 +12,7 @@ import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.contab.web.rest.exception.RestException;
-import it.cnr.contab.web.rest.model.DocumentoGenericoDto;
-import it.cnr.contab.web.rest.model.DocumentoGenericoRigaDto;
-import it.cnr.contab.web.rest.model.EnumAssMandRevDocGen;
-import it.cnr.contab.web.rest.model.EnumStatoDocumentoGenerico;
+import it.cnr.contab.web.rest.model.*;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
@@ -44,8 +41,9 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
     public Response insertDocumentoGenerico(HttpServletRequest request, T documentoGenericoDto) throws Exception {
         try{
             CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
+            //valida
             Documento_genericoBulk documentoGenericoBulk=documentoGenericoDtoToDocumentoGenBulk( userContext,documentoGenericoDto );
-
+            documentoGenericoComponentSession.creaDocumentoGenericoWs(userContext,documentoGenericoBulk);
 
             return Response.status(Response.Status.OK).entity(documentoGenBulkToDocumentoGenDto( documentoGenericoBulk,userContext)).build();
         }catch (Throwable e){
@@ -79,7 +77,7 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
                 rigaDto.setDt_a_competenza_coge(riga.getDt_a_competenza_coge());
                 rigaDto.setDt_da_competenza_coge(riga.getDt_da_competenza_coge());
                 rigaDto.setDt_cancellazione(riga.getDt_cancellazione());
-                rigaDto.setAssMandRev( EnumAssMandRevDocGen.getValueFrom(bulk.getTi_associato_manrev()));
+                rigaDto.setAssMandRev( EnumAssMandRevDocGenRiga.getValueFrom(bulk.getTi_associato_manrev()));
 
                 addInfoContToDocRigheDto( riga,rigaDto,userContext);
                 documentoGenericoDto.getRighe().add(rigaDto);
@@ -104,6 +102,7 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
         documentoGenericoDto.setDt_a_competenza_coge(bulk.getDt_a_competenza_coge());
         documentoGenericoDto.setDt_da_competenza_coge(bulk.getDt_da_competenza_coge());
         documentoGenericoDto.setStato(EnumStatoDocumentoGenerico.getValueFrom(bulk.getStato_cofi()));
+        documentoGenericoDto.setAssMandRev(EnumAssMandRevDocGen.getValueFrom(bulk.getTi_associato_manrev()));
 
         addRigheToDocumentoGenDto( bulk,documentoGenericoDto,userContext);
 
@@ -119,16 +118,23 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
         documentoGenericoBulk.setEsercizio(documentoGenericoDto.getEsercizio());
         documentoGenericoBulk.setCd_tipo_documento_amm( getCdTipoDocumentoAmm());
         documentoGenericoBulk.setCd_cds( documentoGenericoDto.getCdsKey().getCd_unita_organizzativa());
-        documentoGenericoBulk.setCd_cds( documentoGenericoDto.getUnitaOrganizzativaKey().getCd_unita_organizzativa());
-        documentoGenericoBulk.setDs_documento_generico( documentoGenericoDto.getDs_documento_generico());
-        documentoGenericoBulk.setDs_documento_generico( documentoGenericoDto.getDs_documento_generico());
+        documentoGenericoBulk.setCd_cds_origine(documentoGenericoBulk.getCd_cds());
+        documentoGenericoBulk.setCd_unita_organizzativa(documentoGenericoDto.getUnitaOrganizzativaKey().getCd_unita_organizzativa());
 
+        documentoGenericoBulk.setDs_documento_generico( documentoGenericoDto.getDs_documento_generico());
+        documentoGenericoBulk.setDs_documento_generico( documentoGenericoDto.getDs_documento_generico());
+        documentoGenericoBulk.setTi_istituz_commerc(documentoGenericoDto.getTipo().value());
+       documentoGenericoBulk.setTi_associato_manrev(EnumAssMandRevDocGen.NO_ASSOCIATO_A_MAND_REV.getAssMandRev());
+        documentoGenericoBulk.setStato_coge(Documento_genericoBulk.NON_REGISTRATO_IN_COGE);
+        documentoGenericoBulk.setStato_coan(Documento_genericoBulk.NON_CONTABILIZZATO_IN_COAN);
+        documentoGenericoBulk.setStato_cofi(Documento_genericoBulk.STATO_CONTABILIZZATO);
 
         documentoGenericoBulk.setData_registrazione(documentoGenericoDto.getData_registrazione());
         documentoGenericoBulk.setDt_scadenza(documentoGenericoDto.getDt_scadenza());
         documentoGenericoBulk.setDt_da_competenza_coge(documentoGenericoDto.getDt_da_competenza_coge());
         documentoGenericoBulk.setDt_a_competenza_coge(documentoGenericoDto.getDt_a_competenza_coge());
-        documentoGenericoBulk.setStato_cofi(Documento_genericoBulk.STATO_CONTABILIZZATO);
+        documentoGenericoBulk.setStato_liquidazione(EnumStatoLiqDocumentoGen.LIQUIDABILE.getStato_liquidazione());
+
         DivisaBulk divisa = new DivisaBulk( Utility.createConfigurazioneCnrComponentSession().getVal01(userContext, new Integer(0), "*", Configurazione_cnrBulk.PK_CD_DIVISA,Configurazione_cnrBulk.SK_EURO ));
         documentoGenericoBulk.setValuta( divisa );
         documentoGenericoBulk.setCambio( new BigDecimal(1));

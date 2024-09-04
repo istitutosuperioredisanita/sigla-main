@@ -56,10 +56,7 @@ import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.*;
-import it.cnr.jada.comp.ApplicationException;
-import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.comp.ICRUDMgr;
-import it.cnr.jada.comp.IPrintMgr;
+import it.cnr.jada.comp.*;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.*;
@@ -1983,6 +1980,15 @@ public class DocumentoGenericoComponent
             if (obbligazioniHash != null) {
                 for (java.util.Enumeration e = obbligazioniHash.keys(); e.hasMoreElements(); ) {
                     Obbligazione_scadenzarioBulk scadenza = (Obbligazione_scadenzarioBulk) e.nextElement();
+                    if ( scadenza.getIm_associato_doc_amm().compareTo(BigDecimal.ZERO)!=0){
+                        StringBuffer sb = new StringBuffer();
+                        sb.append("Attenzione: La scadenza ");
+                        sb.append(scadenza.getDs_scadenza());
+                        sb.append(" di " + scadenza.getIm_scadenza().doubleValue() + " EUR");
+                        sb.append(" è stata utilizzata ");
+                        throw new it.cnr.jada.comp.ApplicationException(sb.toString());
+                    }
+
 
                     controllaOmogeneitaTraTerzi(aUC, scadenza, (Vector) obbligazioniHash.get(scadenza));
 
@@ -3283,7 +3289,7 @@ public class DocumentoGenericoComponent
 
                 Unita_organizzativa_enteHome uoEnteHome = (Unita_organizzativa_enteHome) getHome(userContext, Unita_organizzativa_enteBulk.class);
                 if (documento.getCd_uo_origine().equals(
-                        ((Unita_organizzativa_enteBulk) uoEnteHome.fetchAll(uoEnteHome.createSQLBuilder()).get(0))
+                            ((Unita_organizzativa_enteBulk) uoEnteHome.fetchAll(uoEnteHome.createSQLBuilder()).get(0))
                                 .getCd_unita_organizzativa()))
                     setEnte(userContext, documento);
             }
@@ -6539,8 +6545,26 @@ public class DocumentoGenericoComponent
     public Documento_genericoBulk modificaDocumentoGenericoWs(UserContext uc,Documento_genericoBulk documentoGenericoBulk) throws ComponentException{
         return documentoGenericoBulk;
     }
-    public Documento_genericoBulk creaDocumentoGenericoWs(UserContext uc,Documento_genericoBulk documentoGenericoBulk) throws ComponentException{
-        return documentoGenericoBulk;
+    public Documento_genericoBulk creaDocumentoGenericoWs(UserContext uc,Documento_genericoBulk documentoGenericoBulk) throws ComponentException, PersistencyException {
+        String errorMessage;
+        if ( !Optional.ofNullable(documentoGenericoBulk).isPresent()){
+            errorMessage="Documento Generico da creare vuoto";
+            throw new ComponentException(errorMessage);
+        }
+        if (   !Optional.ofNullable(documentoGenericoBulk.getDocumento_generico_dettColl()).isPresent()){
+            errorMessage="Non ci sono dettagli per il documento Generico";
+            throw new ComponentException(errorMessage);
+        }
+        for ( Documento_generico_rigaBulk documentoGenericoRigaBulk:documentoGenericoBulk.getDocumento_generico_dettColl()){
+            documentoGenericoRigaBulk.setObbligazione_scadenziario(caricaObbligazionePer( uc,documentoGenericoRigaBulk.getObbligazione_scadenziario()));
+            documentoGenericoBulk.addToDocumento_generico_obbligazioniHash( documentoGenericoRigaBulk.getObbligazione_scadenziario(),documentoGenericoRigaBulk);
+
+
+        }
+
+        return ( Documento_genericoBulk) creaConBulk(uc, documentoGenericoBulk);
+
+
     }
 
 }

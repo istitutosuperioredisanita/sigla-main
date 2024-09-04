@@ -80,6 +80,6 @@ public interface DocumentoGenericoComponentSession extends it.cnr.contab.docamm0
     V_doc_passivo_obbligazioneBulk sdoppiaDettagliInAutomatico(UserContext userContext, V_doc_passivo_obbligazioneBulk docPassivo, BigDecimal newImporto) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
     void aggiornaModalitaPagamento(UserContext userContext, V_doc_passivo_obbligazioneBulk docPassivoObb, Modalita_pagamentoBulk newModalitaPag, BancaBulk newBanca) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
     Boolean deleteDocumentoGenericoWs(it.cnr.jada.UserContext uc,String cd_cds,String cd_tipo_documento_amm,String cd_unita_organizzativa,Integer esercizio,Long pg_documento_generico)throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
-    Documento_genericoBulk creaDocumentoGenericoWs(it.cnr.jada.UserContext uc,Documento_genericoBulk documentoGenericoBulk) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+    Documento_genericoBulk creaDocumentoGenericoWs(it.cnr.jada.UserContext uc,Documento_genericoBulk documentoGenericoBulk) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException, PersistencyException;
     Documento_genericoBulk modificaDocumentoGenericoWs(it.cnr.jada.UserContext uc,Documento_genericoBulk documentoGenericoBulk) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 }

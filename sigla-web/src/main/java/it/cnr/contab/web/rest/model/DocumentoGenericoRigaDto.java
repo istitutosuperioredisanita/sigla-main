@@ -11,7 +11,7 @@ import java.sql.Timestamp;
     private java.sql.Timestamp dt_da_competenza_coge;
     private java.math.BigDecimal im_riga;
 
-    private EnumAssMandRevDocGen assMandRev;
+    private EnumAssMandRevDocGenRiga assMandRev;
 
 
     public Long getProgressivo_riga() {
@@ -62,11 +62,11 @@ import java.sql.Timestamp;
         this.im_riga = im_riga;
     }
 
-     public EnumAssMandRevDocGen getAssMandRev() {
+     public EnumAssMandRevDocGenRiga getAssMandRev() {
          return assMandRev;
      }
 
-     public void setAssMandRev(EnumAssMandRevDocGen assMandRev) {
+     public void setAssMandRev(EnumAssMandRevDocGenRiga assMandRev) {
          this.assMandRev = assMandRev;
      }
  }

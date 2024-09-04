@@ -15,6 +15,8 @@ abstract  public class DocumentoGenericoDto<T> extends DocumentoGenericoKeyDto i
     private java.sql.Timestamp dt_da_competenza_coge;
     private java.sql.Timestamp dt_scadenza;
     private java.sql.Timestamp dt_cancellazione;
+
+    private EnumAssMandRevDocGen assMandRev;
     private TipoIVA tipo;
     EnumStatoDocumentoGenerico stato;
     EnumStatoLiqDocumentoGen statoLiquidazione;
@@ -102,5 +104,13 @@ abstract  public class DocumentoGenericoDto<T> extends DocumentoGenericoKeyDto i
 
     public void setTipo(TipoIVA tipo) {
         this.tipo = tipo;
+    }
+
+    public EnumAssMandRevDocGen getAssMandRev() {
+        return assMandRev;
+    }
+
+    public void setAssMandRev(EnumAssMandRevDocGen assMandRev) {
+        this.assMandRev = assMandRev;
     }
 }

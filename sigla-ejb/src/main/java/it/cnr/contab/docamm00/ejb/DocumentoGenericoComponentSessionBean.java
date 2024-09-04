@@ -923,7 +923,7 @@ public class DocumentoGenericoComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 	}
 
 	@Override
-	public Documento_genericoBulk creaDocumentoGenericoWs(UserContext uc, Documento_genericoBulk documentoGenericoBulk) throws ComponentException, RemoteException {
+	public Documento_genericoBulk creaDocumentoGenericoWs(UserContext uc, Documento_genericoBulk documentoGenericoBulk) throws ComponentException, PersistencyException {
 		pre_component_invocation(uc,componentObj);
 		try {
 			it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk result = ((DocumentoGenericoComponent)componentObj).creaDocumentoGenericoWs(uc,documentoGenericoBulk);
