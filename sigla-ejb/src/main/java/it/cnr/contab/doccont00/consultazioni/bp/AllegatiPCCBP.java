@@ -22,6 +22,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -35,6 +36,13 @@ public class AllegatiPCCBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Allegato
 
     public AllegatiPCCBP(String s) {
         super(s);
+    }
+
+    protected void basicEdit(ActionContext actioncontext, OggettoBulk oggettobulk, boolean flag) throws BusinessProcessException {
+        super.basicEdit(actioncontext, oggettobulk, flag);
+        getCrudArchivioAllegati().setOrderBy(actioncontext, "lastModificationDate", OrderConstants.ORDER_DESC);
+        getCrudArchivioAllegati().setSelection(Collections.emptyEnumeration());
+        getCrudArchivioAllegati().setModelIndex(actioncontext, -1);
     }
 
     @Override
