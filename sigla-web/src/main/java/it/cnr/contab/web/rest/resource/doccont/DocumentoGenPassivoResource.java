@@ -4,15 +4,13 @@ import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoKey;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
+import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoKey;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioKey;
 import it.cnr.contab.web.rest.local.config00.DocumentoGenericoPassivoLocal;
-import it.cnr.contab.web.rest.model.DocumentoGenericoPassRigaDto;
-import it.cnr.contab.web.rest.model.DocumentoGenericoPassivoDto;
-import it.cnr.contab.web.rest.model.DocumentoGenericoRigaDto;
-import it.cnr.contab.web.rest.model.TerzoPagamentoIncasso;
+import it.cnr.contab.web.rest.model.*;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 
@@ -31,7 +29,7 @@ public class DocumentoGenPassivoResource extends AbstractDocumentoGenericoResour
 
     @Override
     public Response insert(HttpServletRequest request, DocumentoGenericoPassivoDto documentoGenericoPassivoDto) throws Exception {
-        return null;
+        return insertDocumentoGenerico( request,documentoGenericoPassivoDto);
     }
 
 
@@ -48,7 +46,7 @@ public class DocumentoGenPassivoResource extends AbstractDocumentoGenericoResour
                 TerzoPagamentoIncasso terzoDebitore = new TerzoPagamentoIncasso();
                     terzoDebitore.setTerzoKey(new TerzoKey( rigaBulk.getCd_terzo()));
                     terzoDebitore.setPg_banca(rigaBulk.getPg_banca());
-                    terzoDebitore.setRifModalitaPagamentoKey( rigaBulk.getModalita_pagamento());
+                    terzoDebitore.setRifModalitaPagamentoKey( new Rif_modalita_pagamentoKey(rigaBulk.getModalita_pagamento().getCd_modalita_pag()));
                     rigaPassDto.setTerzoDebitore(terzoDebitore);
 
                 rigaPassDto.setObbligazioneScadenzarioKey( new Obbligazione_scadenzarioKey(rigaBulk.getObbligazione_scadenziario().getCd_cds(),
@@ -59,10 +57,21 @@ public class DocumentoGenPassivoResource extends AbstractDocumentoGenericoResour
     }
 
     @Override
+    protected DocumentoGenericoPassivoDto completeDocumentoGenDto( Documento_genericoBulk bulk,DocumentoGenericoPassivoDto documentoGenericoDto, UserContext userContext) {
+        documentoGenericoDto.setEnumStatoFondoEcomale( EnumStatoFondoEcomale.getValueFrom(bulk.getStato_pagamento_fondo_eco()));
+        documentoGenericoDto.setStato_liquidazione( EnumStatoLiqDocumentoGen.getValueFrom(bulk.getStato_liquidazione()));
+         Optional.ofNullable(bulk.getCausale()).ifPresent(causale-> {
+            documentoGenericoDto.setCausale(EnumCausaleDocumentoGen.getValueFrom(causale));
+        });
+            return documentoGenericoDto;
+    }
+
+    @Override
     protected Documento_genericoBulk initializeDocumentoGenerico(UserContext userContext, DocumentoGenericoPassivoDto documentoGenericoDto) throws ComponentException, RemoteException {
         Documento_genericoBulk documentoGenericoBulk = new Documento_genericoBulk();
         documentoGenericoBulk.setTi_entrate_spese(Documento_genericoBulk.SPESE);
         documentoGenericoBulk.setTipo_documento(new Tipo_documento_ammBulk( Numerazione_doc_ammBulk.TIPO_DOC_GENERICO_S));
+        documentoGenericoBulk.setCd_uo_origine(documentoGenericoDto.getUnitaOrganizzativaKey().getCd_unita_organizzativa());
         documentoGenericoComponentSession.inizializzaBulkPerInserimento(userContext,documentoGenericoBulk);
 
         return documentoGenericoBulk;
@@ -97,7 +106,9 @@ public class DocumentoGenPassivoResource extends AbstractDocumentoGenericoResour
                     rigaDto.getObbligazioneScadenzarioKey().getPg_obbligazione(),
                     rigaDto.getObbligazioneScadenzarioKey().getPg_obbligazione_scadenzario()));
 
+
            rigaBulk.setTi_associato_manrev(CompensoBulk.NON_ASSOCIATO_MANREV);
+           rigaBulk.setToBeCreated();
            documentoGenericoBulk.addToDocumento_generico_dettColl( rigaBulk);
        }
     }

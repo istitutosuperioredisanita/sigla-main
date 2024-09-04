@@ -1,6 +1,6 @@
 package it.cnr.contab.web.rest.model;
 
-import it.cnr.contab.docamm00.docs.bulk.Tipo_documento_ammKey;
+import it.cnr.contab.util.enumeration.TipoIVA;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
@@ -15,10 +15,9 @@ abstract  public class DocumentoGenericoDto<T> extends DocumentoGenericoKeyDto i
     private java.sql.Timestamp dt_da_competenza_coge;
     private java.sql.Timestamp dt_scadenza;
     private java.sql.Timestamp dt_cancellazione;
-    private Tipo_documento_ammKey tipoDocumentoAmmKey;
-
+    private TipoIVA tipo;
     EnumStatoDocumentoGenerico stato;
-
+    EnumStatoLiqDocumentoGen statoLiquidazione;
     private List<T> righe= new ArrayList<T>();
 
     public List<T> getRighe() {
@@ -32,13 +31,6 @@ abstract  public class DocumentoGenericoDto<T> extends DocumentoGenericoKeyDto i
         return ((Class) ((ParameterizedType) getClass()
                 .getGenericSuperclass()).getActualTypeArguments()[0]);
     }
-
-
-    //Associzione man/rev
-    //stato Liquidazione
-    //causale
-    //tipo documento ( Ist/Comm)
-
 
     public Timestamp getData_registrazione() {
         return data_registrazione;
@@ -96,11 +88,19 @@ abstract  public class DocumentoGenericoDto<T> extends DocumentoGenericoKeyDto i
         this.stato = stato;
     }
 
-    public Tipo_documento_ammKey getTipoDocumentoAmmKey() {
-        return tipoDocumentoAmmKey;
+    public EnumStatoLiqDocumentoGen getStatoLiquidazione() {
+        return statoLiquidazione;
     }
 
-    public void setTipoDocumentoAmmKey(Tipo_documento_ammKey tipoDocumentoAmmKey) {
-        this.tipoDocumentoAmmKey = tipoDocumentoAmmKey;
+    public void setStatoLiquidazione(EnumStatoLiqDocumentoGen statoLiquidazione) {
+        this.statoLiquidazione = statoLiquidazione;
+    }
+
+    public TipoIVA getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoIVA tipo) {
+        this.tipo = tipo;
     }
 }

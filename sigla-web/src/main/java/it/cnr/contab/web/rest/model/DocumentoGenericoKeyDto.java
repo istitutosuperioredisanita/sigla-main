@@ -2,6 +2,7 @@ package it.cnr.contab.web.rest.model;
 
 import it.cnr.contab.config00.sto.bulk.CdsKey;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaKey;
+import it.cnr.contab.docamm00.docs.bulk.Tipo_documento_ammKey;
 
 import java.io.Serializable;
 
@@ -9,7 +10,7 @@ public class DocumentoGenericoKeyDto implements Serializable {
     private CdsKey cdsKey;
     private Unita_organizzativaKey unitaOrganizzativaKey;
     private Integer esercizio;
-    private String cd_tipo_documento_amm;
+    private Tipo_documento_ammKey tipoDocumentoAmmKey;
     private Long pg_documento_generico;
 
     public CdsKey getCdsKey() {
@@ -36,12 +37,12 @@ public class DocumentoGenericoKeyDto implements Serializable {
         this.esercizio = esercizio;
     }
 
-    public String getCd_tipo_documento_amm() {
-        return cd_tipo_documento_amm;
+    public Tipo_documento_ammKey getTipoDocumentoAmmKey() {
+        return tipoDocumentoAmmKey;
     }
 
-    public void setCd_tipo_documento_amm(String cd_tipo_documento_amm) {
-        this.cd_tipo_documento_amm = cd_tipo_documento_amm;
+    public void setTipoDocumentoAmmKey(Tipo_documento_ammKey tipoDocumentoAmmKey) {
+        this.tipoDocumentoAmmKey = tipoDocumentoAmmKey;
     }
 
     public Long getPg_documento_generico() {

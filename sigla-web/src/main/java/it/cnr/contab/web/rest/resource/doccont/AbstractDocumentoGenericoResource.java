@@ -5,13 +5,16 @@ import it.cnr.contab.config00.sto.bulk.CdsKey;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaKey;
 import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
 import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
+import it.cnr.contab.docamm00.docs.bulk.Tipo_documento_ammKey;
 import it.cnr.contab.docamm00.ejb.DocumentoGenericoComponentSession;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
+import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.model.DocumentoGenericoDto;
 import it.cnr.contab.web.rest.model.DocumentoGenericoRigaDto;
+import it.cnr.contab.web.rest.model.EnumAssMandRevDocGen;
 import it.cnr.contab.web.rest.model.EnumStatoDocumentoGenerico;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
@@ -63,6 +66,8 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
 
 
     abstract protected void addInfoContToDocRigheDto(Documento_generico_rigaBulk rigaBulk,  DocumentoGenericoRigaDto  rigaDto,UserContext userContext);
+
+
     protected void addRigheToDocumentoGenDto(Documento_genericoBulk bulk, DocumentoGenericoDto documentoGenericoDto,UserContext userContext) throws InstantiationException, IllegalAccessException {
         if (Optional.ofNullable(bulk.getDocumento_generico_dettColl()).isPresent()){
             for (Documento_generico_rigaBulk riga:bulk.getDocumento_generico_dettColl()){
@@ -74,20 +79,24 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
                 rigaDto.setDt_a_competenza_coge(riga.getDt_a_competenza_coge());
                 rigaDto.setDt_da_competenza_coge(riga.getDt_da_competenza_coge());
                 rigaDto.setDt_cancellazione(riga.getDt_cancellazione());
+                rigaDto.setAssMandRev( EnumAssMandRevDocGen.getValueFrom(bulk.getTi_associato_manrev()));
 
                 addInfoContToDocRigheDto( riga,rigaDto,userContext);
                 documentoGenericoDto.getRighe().add(rigaDto);
             }
         }
     }
+
+    abstract protected T completeDocumentoGenDto( Documento_genericoBulk bulk, T  documentoGenericoDto,UserContext userContext);
     protected T documentoGenBulkToDocumentoGenDto(Documento_genericoBulk bulk, UserContext userContext) throws InstantiationException, IllegalAccessException {
         if ( !Optional.ofNullable(bulk).isPresent())
             return null;
         DocumentoGenericoDto documentoGenericoDto = ( DocumentoGenericoDto) reflectClassType().newInstance();
         documentoGenericoDto.setCdsKey( new CdsKey(bulk.getCd_cds()));
         documentoGenericoDto.setUnitaOrganizzativaKey(new Unita_organizzativaKey(bulk.getCd_unita_organizzativa()));
-        documentoGenericoDto.setCd_tipo_documento_amm(bulk.getCd_tipo_documento_amm());
+        documentoGenericoDto.setTipoDocumentoAmmKey(new Tipo_documento_ammKey(bulk.getCd_tipo_documento_amm()));
         documentoGenericoDto.setEsercizio(bulk.getEsercizio());
+        documentoGenericoDto.setTipo(TipoIVA.getValueFrom(bulk.getTi_istituz_commerc()));
         documentoGenericoDto.setDs_documento_generico(bulk.getDs_documento_generico());
         documentoGenericoDto.setPg_documento_generico(bulk.getPg_documento_generico());
         documentoGenericoDto.setData_registrazione(bulk.getData_registrazione());
@@ -95,10 +104,11 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
         documentoGenericoDto.setDt_a_competenza_coge(bulk.getDt_a_competenza_coge());
         documentoGenericoDto.setDt_da_competenza_coge(bulk.getDt_da_competenza_coge());
         documentoGenericoDto.setStato(EnumStatoDocumentoGenerico.getValueFrom(bulk.getStato_cofi()));
+
         addRigheToDocumentoGenDto( bulk,documentoGenericoDto,userContext);
 
 
-        return ( T) documentoGenericoDto;
+        return  completeDocumentoGenDto( bulk,( T) documentoGenericoDto,userContext);
     }
 
     abstract protected Documento_genericoBulk initializeDocumentoGenerico( UserContext userContext, T documentoGenericoDto) throws ComponentException, RemoteException;

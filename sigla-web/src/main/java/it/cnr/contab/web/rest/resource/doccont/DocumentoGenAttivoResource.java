@@ -54,6 +54,11 @@ public class DocumentoGenAttivoResource extends AbstractDocumentoGenericoResourc
     }
 
     @Override
+    protected DocumentoGenericoAttivoDto completeDocumentoGenDto( Documento_genericoBulk bulk,DocumentoGenericoAttivoDto documentoGenericoDto, UserContext userContext) {
+        return documentoGenericoDto;
+    }
+
+    @Override
     protected Documento_genericoBulk initializeDocumentoGenerico(UserContext userContext, DocumentoGenericoAttivoDto documentoGenericoDto) throws ComponentException, RemoteException {
         Documento_genericoBulk documentoGenericoBulk = new Documento_genericoBulk();
         documentoGenericoBulk.setTi_entrate_spese(Documento_genericoBulk.ENTRATE);
