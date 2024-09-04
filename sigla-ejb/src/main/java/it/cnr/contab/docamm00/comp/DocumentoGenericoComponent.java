@@ -6556,8 +6556,13 @@ public class DocumentoGenericoComponent
             throw new ComponentException(errorMessage);
         }
         for ( Documento_generico_rigaBulk documentoGenericoRigaBulk:documentoGenericoBulk.getDocumento_generico_dettColl()){
-            documentoGenericoRigaBulk.setObbligazione_scadenziario(caricaObbligazionePer( uc,documentoGenericoRigaBulk.getObbligazione_scadenziario()));
-            documentoGenericoBulk.addToDocumento_generico_obbligazioniHash( documentoGenericoRigaBulk.getObbligazione_scadenziario(),documentoGenericoRigaBulk);
+            if ( !documentoGenericoBulk.isGenericoAttivo()) {
+                documentoGenericoRigaBulk.setObbligazione_scadenziario(caricaObbligazionePer(uc, documentoGenericoRigaBulk.getObbligazione_scadenziario()));
+                documentoGenericoBulk.addToDocumento_generico_obbligazioniHash(documentoGenericoRigaBulk.getObbligazione_scadenziario(), documentoGenericoRigaBulk);
+            }else{
+                documentoGenericoRigaBulk.setAccertamento_scadenziario(caricaAccertamentoPer(uc, documentoGenericoRigaBulk.getAccertamento_scadenziario()));
+                documentoGenericoBulk.addToDocumento_generico_accertamentiHash(documentoGenericoRigaBulk.getAccertamento_scadenziario(), documentoGenericoRigaBulk);
+            }
 
 
         }
