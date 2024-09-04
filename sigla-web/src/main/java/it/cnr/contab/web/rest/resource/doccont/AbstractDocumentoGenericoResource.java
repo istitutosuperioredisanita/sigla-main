@@ -43,9 +43,8 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
             CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
             //valida
             Documento_genericoBulk documentoGenericoBulk=documentoGenericoDtoToDocumentoGenBulk( userContext,documentoGenericoDto );
-            documentoGenericoComponentSession.creaDocumentoGenericoWs(userContext,documentoGenericoBulk);
-
-            return Response.status(Response.Status.OK).entity(documentoGenBulkToDocumentoGenDto( documentoGenericoBulk,userContext)).build();
+            return Response.status(Response.Status.OK).entity(documentoGenBulkToDocumentoGenDto(
+                    documentoGenericoComponentSession.creaDocumentoGenericoWs(userContext,documentoGenericoBulk),userContext)).build();
         }catch (Throwable e){
             if ( e instanceof RestException)
                 throw e;
