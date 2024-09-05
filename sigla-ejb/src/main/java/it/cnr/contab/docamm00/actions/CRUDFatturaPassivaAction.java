@@ -17,6 +17,24 @@
 
 package it.cnr.contab.docamm00.actions;
 
+import java.rmi.RemoteException;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.ejb.EJBException;
+
+import it.cnr.contab.anagraf00.core.bulk.TelefonoBulk;
+import it.cnr.contab.docamm00.docs.bulk.*;
+import it.cnr.contab.doccont00.bp.CRUDMandatoBP;
+import it.cnr.contab.doccont00.core.bulk.*;
+import it.cnr.contab.util.enumeration.TipoIVA;
+import it.cnr.jada.ejb.CRUDComponentSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
@@ -28,6 +46,15 @@ import it.cnr.contab.config00.bulk.CigBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.docamm00.bp.*;
 import it.cnr.contab.docamm00.docs.bulk.*;
+import it.cnr.contab.docamm00.bp.CRUDFatturaPassivaBP;
+import it.cnr.contab.docamm00.bp.CRUDFatturaPassivaIBP;
+import it.cnr.contab.docamm00.bp.CRUDNotaDiCreditoBP;
+import it.cnr.contab.docamm00.bp.CRUDNotaDiDebitoBP;
+import it.cnr.contab.docamm00.bp.ContabilizzaOrdineBP;
+import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoBP;
+import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoSpesaBP;
+import it.cnr.contab.docamm00.bp.RisultatoEliminazioneBP;
+import it.cnr.contab.docamm00.bp.TitoloDiCreditoDebitoBP;
 import it.cnr.contab.docamm00.ejb.CategoriaGruppoInventComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.docamm00.ejb.VoceIvaComponentSession;
@@ -5940,6 +5967,46 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
             return context.findDefaultForward();
         } catch(Throwable e) {
             return handleException(context,e);
+        }
+    }
+
+    public Forward doVisualizzaMandato(ActionContext actioncontext) throws BusinessProcessException{
+        CRUDFatturaPassivaBP crudFatturaPassivaBP = Optional.ofNullable(getBusinessProcess(actioncontext))
+                .filter(CRUDFatturaPassivaBP.class::isInstance)
+                .map(CRUDFatturaPassivaBP.class::cast)
+                .orElseThrow(() -> new BusinessProcessException("BP not found!"));
+        Optional<Fattura_passiva_rigaBulk> fattura_passiva_rigaBulk =
+                Optional.ofNullable(crudFatturaPassivaBP.getDettaglio().getDetails().get(crudFatturaPassivaBP.getDettaglio().getSelection().getFocus()))
+                        .filter(Fattura_passiva_rigaBulk.class::isInstance)
+                        .map(Fattura_passiva_rigaBulk.class::cast);
+        final CRUDComponentSession componentSession = (CRUDComponentSession) EJBCommonServices.createEJB("JADAEJB_CRUDComponentSession");
+        try {
+            final List<Mandato_rigaIBulk> mandato_rigaIBulks = Optional.ofNullable(componentSession.find(
+                            actioncontext.getUserContext(), Mandato_rigaBulk.class,
+                            "findRighe", actioncontext.getUserContext(), (IDocumentoAmministrativoSpesaBulk)fattura_passiva_rigaBulk.get().getFattura_passiva()))
+                    .filter(List.class::isInstance)
+                    .map(List.class::cast)
+                    .orElse(Collections.emptyList());
+            final Optional<MandatoBulk> mandatoBulk = mandato_rigaIBulks
+                    .stream()
+                    .filter(mandatoRigaIBulk -> {
+                        return  mandatoRigaIBulk.getEsercizio_obbligazione().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getEsercizio()) &&
+                                mandatoRigaIBulk.getEsercizio_ori_obbligazione().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getEsercizio_originale()) &&
+                                mandatoRigaIBulk.getCd_cds().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getCd_cds()) &&
+                                mandatoRigaIBulk.getPg_obbligazione().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getPg_obbligazione()) &&
+                                mandatoRigaIBulk.getPg_obbligazione_scadenzario().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getPg_obbligazione_scadenzario());
+                    })
+                    .findAny()
+                    .map(Mandato_rigaIBulk::getMandato);
+            if (mandatoBulk.isPresent()) {
+                CRUDMandatoBP mandatoBP = (CRUDMandatoBP) actioncontext.getUserInfo().createBusinessProcess(actioncontext, "CRUDMandatoBP", new Object[]{"V"});
+                mandatoBP.edit(actioncontext, mandatoBulk.get());
+                return actioncontext.addBusinessProcess(mandatoBP);
+            }
+            crudFatturaPassivaBP.setMessage("Mandato non trovato!");
+            return actioncontext.findDefaultForward();
+        } catch (RemoteException|ComponentException e) {
+            return handleException(actioncontext, e);
         }
     }
 }
