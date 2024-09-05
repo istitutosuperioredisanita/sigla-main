@@ -53,6 +53,7 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
@@ -575,8 +576,17 @@ public class RimodulaProgettiRicercaBP extends AllegatiProgettoRimodulazioneCRUD
 	    } catch (ComponentException | RemoteException e) {
 	        throw handleException(e);
 	    }
-	}	
-	
+	}
+	public List <V_saldi_piano_econom_progettoBulk> getSaldiPianoEconomico(ActionContext context, Progetto_piano_economicoBulk progettoPiaeco) throws BusinessProcessException {
+
+		try {
+				return Utility.createProgettoRicercaComponentSession().getPluriennaliProgettoPianoEco(context.getUserContext(), progettoPiaeco);
+
+		} catch (ComponentException | RemoteException | PersistencyException e) {
+			throw handleException(e);
+		}
+	}
+
 	public void setMainProgetto(ProgettoBulk mainProgetto) {
 		this.mainProgetto = mainProgetto;
 	}

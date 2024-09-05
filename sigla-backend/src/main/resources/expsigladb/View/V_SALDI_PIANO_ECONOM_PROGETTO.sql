@@ -82,4 +82,3 @@ CREATE OR REPLACE FORCE EDITIONABLE VIEW "V_SALDI_PIANO_ECONOM_PROGETTO" ("PG_PR
              x.cd_unita_piano,
              x.cd_voce_piano,
              x.ti_gestione);
-

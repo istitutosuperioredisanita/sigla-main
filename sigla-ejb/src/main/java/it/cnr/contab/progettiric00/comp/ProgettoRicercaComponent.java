@@ -1726,7 +1726,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
     private void validaSaldiPianoEconomico(UserContext userContext, ProgettoBulk progetto, Integer annoFrom, Progetto_rimodulazioneBulk rimodulazione) throws ComponentException {
 		try{
 			//SE IL PROGETTO NON HA PIANO ECONOMICO IL CONTROLLO VIENE FATTO SEMPRE E SOLO SUI TOTALI PROGETTO
-			if (!progetto.isPianoEconomicoRequired()) {
+ 			if (!progetto.isPianoEconomicoRequired()) {
 	            BigDecimal assestatoEtrPrg = Utility.createSaldoComponentSession()
 	            		.getStanziamentoAssestatoProgetto(userContext, progetto, Elemento_voceHome.GESTIONE_ENTRATE, null, null, null);
 		
@@ -1795,13 +1795,13 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 				   	    				" non può essere inferiore all'utilizzato spese 'fonti interne' e 'natura reimpiego' ("+
 				   	    				new EuroFormat().format(saldo.getUtilizzatoAssestatoCofinanziamento())+")!");
 							});
-							//Optional.ofNullable(ppe.getIm_spesa_finanziato())
-							//		.filter(el->el.subtract(saldo.getUtilizzatoAssestatoFinanziamento()).subtract(saldo.getImpPluriennale()).compareTo(BigDecimal.ZERO)<0).ifPresent(el->{
-							//			throw new ApplicationRuntimeException("Attenzione: l'importo finanziato rimodulato del piano economico "+
-							//					ppe.getEsercizio_piano()+"/"+ppe.getCd_voce_piano()+
-							//					" non può essere inferiore all'utilizzato spese 'fonti esterne' ("+
-							//					new EuroFormat().format(saldo.getUtilizzatoAssestatoFinanziamento())+")!");
-							//		});
+							Optional.ofNullable(ppe.getIm_spesa_finanziato())
+									.filter(el->el.subtract(saldo.getImpPluriennale()).compareTo(BigDecimal.ZERO)<0).ifPresent(el->{
+										throw new ApplicationRuntimeException("Attenzione: l'importo finanziato rimodulato del piano economico "+
+												ppe.getEsercizio_piano()+"/"+ppe.getCd_voce_piano()+
+												" non può essere inferiore all'importo garantito per l'obbligazione pluriennale ("+
+												new EuroFormat().format(saldo.getImpPluriennale())+")!");
+									});
 
 		   				} else {
 		   					Optional.ofNullable(saldo.getImportoFin())

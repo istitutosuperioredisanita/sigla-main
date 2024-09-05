@@ -20,6 +20,7 @@ package it.cnr.contab.progettiric00.action;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 
 import javax.ejb.RemoveException;
@@ -29,22 +30,20 @@ import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.doccont00.bp.CRUDAccertamentoBP;
 import it.cnr.contab.doccont00.core.bulk.AccertamentoBulk;
+import it.cnr.contab.ordmag.magazzino.bulk.LottoMagBulk;
 import it.cnr.contab.pdg00.bp.PdGVariazioneBP;
 import it.cnr.contab.pdg01.bp.CRUDPdgVariazioneGestionaleBP;
 import it.cnr.contab.progettiric00.bp.RimodulaProgettiRicercaBP;
 import it.cnr.contab.progettiric00.bp.RimodulaProgettoPianoEconomicoCRUDController;
 import it.cnr.contab.progettiric00.bp.RimodulaProgettoPianoEconomicoVoceBilancioCRUDController;
 import it.cnr.contab.progettiric00.bp.TestataProgettiRicercaBP;
-import it.cnr.contab.progettiric00.core.bulk.Ass_progetto_piaeco_voceBulk;
-import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
-import it.cnr.contab.progettiric00.core.bulk.Progetto_piano_economicoBulk;
-import it.cnr.contab.progettiric00.core.bulk.Progetto_rimodulazioneBulk;
-import it.cnr.contab.progettiric00.core.bulk.Progetto_rimodulazione_variazioneBulk;
+import it.cnr.contab.progettiric00.core.bulk.*;
 import it.cnr.contab.progettiric00.ejb.RimodulaProgettoRicercaComponentSession;
 import it.cnr.contab.progettiric00.tabrif.bulk.Voce_piano_economico_prgBulk;
 import it.cnr.contab.utenze00.bulk.CNRUserInfo;
 import it.cnr.contab.varstanz00.bp.CRUDVar_stanz_resBP;
 import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.action.HookForward;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -136,7 +135,25 @@ public class CRUDRimodulaProgettoAction extends CRUDAbstractProgettoAction {
 			return handleException(context, ex);
 		}
 	}
-	
+
+	@Override
+	public Forward doRemoveFromCRUD(ActionContext actioncontext, String s) {
+		RimodulaProgettiRicercaBP bp = (RimodulaProgettiRicercaBP) getBusinessProcess(actioncontext);
+
+		Progetto_piano_economicoBulk optPpe = Optional.ofNullable(bp.getCrudPianoEconomicoAltriAnni().getModel())
+				.filter(Progetto_piano_economicoBulk.class::isInstance).map(Progetto_piano_economicoBulk.class::cast).orElse(null);
+
+		try {
+			List<V_saldi_piano_econom_progettoBulk> saldiList = bp.getSaldiPianoEconomico(actioncontext,optPpe);
+			if(saldiList != null && !saldiList.isEmpty()){
+				return openMessage(actioncontext, "Operazione non concessa per presenza di obbligazioni pluriennali");
+			}
+		} catch (BusinessProcessException e) {
+			e.printStackTrace();
+		}
+		return super.doRemoveFromCRUD(actioncontext, s);
+	}
+
 	public Forward doUndoRemoveFromCRUD(ActionContext actioncontext, String s)
 	{
 		try 
