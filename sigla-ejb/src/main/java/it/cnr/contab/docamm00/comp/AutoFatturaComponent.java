@@ -360,19 +360,19 @@ public java.util.Vector estraeSezionali (UserContext aUC, AutofatturaBulk autofa
 	String[][] autofatturaClause = { { "TIPO_SEZIONALE.FL_AUTOFATTURA", "Y", "AND" } };
 	//String[][] defaultOption = new String[][] { autofatturaClause };
 	
-	if (autofattura.getFl_intra_ue().booleanValue())
+	if (Optional.ofNullable(autofattura.getFl_intra_ue()).orElse(Boolean.FALSE).booleanValue())
 		options.add(new String[][] { { "TIPO_SEZIONALE.FL_INTRA_UE","Y", "AND" } });
-	else if (autofattura.getFl_extra_ue().booleanValue())
+	else if (Optional.ofNullable(autofattura.getFl_extra_ue()).orElse(Boolean.FALSE).booleanValue())
 		options.add(new String[][] { { "TIPO_SEZIONALE.FL_EXTRA_UE","Y", "AND" } });
-	else if (autofattura.getFl_san_marino_con_iva().booleanValue())
+	else if (Optional.ofNullable(autofattura.getFl_san_marino_con_iva()).orElse(Boolean.FALSE).booleanValue())
 		options.add(new String[][] { { "TIPO_SEZIONALE.FL_SAN_MARINO_CON_IVA","Y", "AND" } });
-	else if (autofattura.getFl_san_marino_senza_iva().booleanValue())
+	else if (Optional.ofNullable(autofattura.getFl_san_marino_senza_iva()).orElse(Boolean.FALSE).booleanValue())
 		options.add(new String[][] { { "TIPO_SEZIONALE.FL_SAN_MARINO_SENZA_IVA","Y", "AND" } });
 	else
 		if(!obbIta)
 			options.add(new String[][] { { "TIPO_SEZIONALE.FL_ORDINARIO","Y", "AND" } });
 
-	if (autofattura.getFl_split_payment()!=null && autofattura.getFl_split_payment().booleanValue())
+	if (Optional.ofNullable(autofattura.getFl_split_payment()).orElse(Boolean.FALSE).booleanValue())
 		options.add(new String[][] { { "TIPO_SEZIONALE.FL_SPLIT_PAYMENT","Y", "AND" } });
 	else
 		options.add(autofatturaClause);
