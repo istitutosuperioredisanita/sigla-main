@@ -164,7 +164,7 @@ public class FatturaPassivaRigaCRUDController extends it.cnr.jada.util.action.Si
                 "Contabilizza",
                 "btn-sm btn-outline-primary btn-title",
                 isFromBootstrap);
-
+        Fattura_passiva_rigaBulk riga = (Fattura_passiva_rigaBulk) getModel();
         if (getParentController() instanceof CRUDFatturaPassivaIBP) {
             CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) getParentController();
             if (!Optional.ofNullable(bp.getTab("tab"))
@@ -174,7 +174,6 @@ public class FatturaPassivaRigaCRUDController extends it.cnr.jada.util.action.Si
                         (!(isInputReadonly() || getDetails().isEmpty() || bp.isSearching() || bp.isViewing()) ||
                                 bp.isManualModify());
 
-                Fattura_passiva_rigaBulk riga = (Fattura_passiva_rigaBulk) getModel();
                 enabled = enabled && !(riga == null || riga.getTi_associato_manrev() != null && riga.ASSOCIATO_A_MANDATO.equalsIgnoreCase(riga.getTi_associato_manrev())) &&
                             !riga.getFattura_passiva()
                                     .getFattura_passiva_ordini()
@@ -182,7 +181,6 @@ public class FatturaPassivaRigaCRUDController extends it.cnr.jada.util.action.Si
                                     .filter(fatturaOrdineBulk -> fatturaOrdineBulk.getFatturaPassivaRiga().equalsByPrimaryKey(riga))
                                     .findAny()
                                     .isPresent();
-
 
                 it.cnr.jada.util.jsp.JSPUtils.toolbarButton(
                         context,
@@ -200,6 +198,15 @@ public class FatturaPassivaRigaCRUDController extends it.cnr.jada.util.action.Si
                         "Contabilizza in automatico",
                         "btn-sm btn-outline-info btn-title",
                         isFromBootstrap);
+            }
+            if (isFromBootstrap && riga.getTi_associato_manrev() != null && riga.ASSOCIATO_A_MANDATO.equalsIgnoreCase(riga.getTi_associato_manrev())) {
+                it.cnr.jada.util.jsp.JSPUtils.toolbarButton(
+                        context,
+                        "fa fa-fw fa-eye",
+                        "javascript:submitForm('doVisualizzaMandato');",
+                        true, "Visualizza Mandato",
+                        "btn-sm btn-outline-primary btn-title",
+                        HttpActionContext.isFromBootstrap(context));
             }
         }
         super.closeButtonGROUPToolbar(context);
