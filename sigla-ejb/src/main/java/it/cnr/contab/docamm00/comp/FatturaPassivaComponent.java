@@ -8328,6 +8328,9 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
 
         if (fatturaPassiva.getDocumentoEleTestata() == null)
             throw new it.cnr.jada.comp.ApplicationException("Attenzione: non è possibile recuperare il documento elettronico!");
+        //tali documenti elettronici vengono associati direttamente alle autofatture non registrabili in SIGLA
+        if ( fatturaPassiva.getDocumentoEleTestata().isTipoDocumentoInAttesaFatturazioneElettronica())
+            return;
         boolean noSegno = false;
         TerzoBulk terzoFatturaElettronica = fatturaPassiva.getDocumentoEleTestata().getDocumentoEleTrasmissione().getPrestatore();
         try {
