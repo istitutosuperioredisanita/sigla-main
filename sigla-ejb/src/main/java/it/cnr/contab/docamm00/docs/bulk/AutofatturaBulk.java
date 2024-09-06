@@ -63,9 +63,9 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 		STATO.put(STATO_PAGATO, "Incassato");
 
 		SEZIONALI_FLAG_KEYS = new it.cnr.jada.util.OrderedHashtable();
+		SEZIONALI_FLAG_KEYS.put(Fattura_passivaBulk.SEZIONALI_FLAGS_ALL, "Tutte");
 		SEZIONALI_FLAG_KEYS.put(Fattura_passivaBulk.SEZIONALI_FLAGS_IUE, "Intra UE");
 		SEZIONALI_FLAG_KEYS.put(Fattura_passivaBulk.SEZIONALI_FLAGS_EUE, "Extra UE");
-		SEZIONALI_FLAG_KEYS.put(Fattura_passivaBulk.SEZIONALI_FLAGS_ALL, "Tutte");
 		SEZIONALI_FLAG_KEYS.put(Fattura_passivaBulk.SEZIONALI_FLAGS_SMC, "S. Marino con IVA");
 		SEZIONALI_FLAG_KEYS.put(Fattura_passivaBulk.SEZIONALI_FLAGS_SMS, "S. Marino senza IVA");
 
@@ -487,15 +487,7 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 			setFl_san_marino_con_iva(Boolean.FALSE);
 			sezionaliFlag = Fattura_passivaBulk.SEZIONALI_FLAGS_SMS;
 		} else {
-
-			if (getFl_intra_ue() == null &&
-					getFl_extra_ue() == null &&
-					getFl_san_marino_con_iva() == null &&
-					getFl_san_marino_senza_iva() == null) {
 				sezionaliFlag = Fattura_passivaBulk.SEZIONALI_FLAGS_ALL;
-			} else {
-				sezionaliFlag = Fattura_passivaBulk.SEZIONALI_FLAGS_ORD;
-			}
 		}
 
 		return sezionaliFlag;

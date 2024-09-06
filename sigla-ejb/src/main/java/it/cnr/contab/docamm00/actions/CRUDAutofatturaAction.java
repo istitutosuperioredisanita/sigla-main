@@ -37,7 +37,6 @@ public class CRUDAutofatturaAction extends EconomicaAction {
                 autofattura.setFl_extra_ue(Boolean.FALSE);
                 autofattura.setFl_san_marino_con_iva(Boolean.FALSE);
                 autofattura.setFl_san_marino_senza_iva(Boolean.FALSE);
-
                 autofattura.setFl_autofattura(Boolean.FALSE);
                 autofattura.setTi_bene_servizio(null);
                 autofattura.setFl_liquidazione_differita(Boolean.FALSE);
