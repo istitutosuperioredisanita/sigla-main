@@ -1187,7 +1187,9 @@ public void cancellaObbligazioneProvvisoria (UserContext aUC,ObbligazioneBulk ob
 		if(!obbligazione.getObbligazioniPluriennali().isEmpty()) {
 
 			RimoduzioneObbliPluriennaleDto rimoduzioneObbliPluriennaleDto = getObbligazioniPerRimodulazione(aUC,obbligazione,false);
-			rimodulazioneProgettoPerImpegnoPluriennale(aUC, rimoduzioneObbliPluriennaleDto);
+			if(rimoduzioneObbliPluriennaleDto.getFlAutoRimodulazione()) {
+				rimodulazioneProgettoPerImpegnoPluriennale(aUC, rimoduzioneObbliPluriennaleDto);
+			}
 		}
 
 
@@ -3377,7 +3379,7 @@ public OggettoBulk modificaConBulk (UserContext aUC,OggettoBulk bulk) throws Com
 			Utility.createCRUDPdgVariazioneGestionaleComponentSession().approva(aUC, pdgVariazioneObbl, Boolean.FALSE);
 		}
 		// GESTIONE OBBLIGAZIONE PLURIENNALE
-		if(rimodulazioneObblPlurDto!=null) {
+		if(rimodulazioneObblPlurDto!=null && rimodulazioneObblPlurDto.getFlAutoRimodulazione()) {
 			rimodulazioneProgettoPerImpegnoPluriennale(aUC, rimodulazioneObblPlurDto);
 		}
 
@@ -6558,7 +6560,7 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 				throw new ApplicationException("Impostare Importo dell'Obbligazione Pluriennale");
 			}
 		}
-		if(rimodulazioneObblPlurDto != null) {
+		if(rimodulazioneObblPlurDto != null &&  rimodulazioneObblPlurDto.getFlAutoRimodulazione()) {
 			if (!isDisponibilitaProgettoValida(uc, rimodulazioneObblPlurDto.getProgettoObbliPluriennaleMap())) {
 				throw new ApplicationException("Attenzione! Disponibilità sul progetto non disponibile");
 			}
@@ -6613,6 +6615,12 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 			if (progetto == null) {
 				throw new ApplicationException("Progetto NON trovato");
 			}
+			// se il progetto non è abilitato all'auto rimodulazione
+			if(!progetto.getOtherField().getFlAutoRimodulazioneEnable()){
+				rimodulaObblPlur.setFlAutoRimodulazione(progetto.getOtherField().getFlAutoRimodulazioneEnable());
+				break;
+			}
+
 			ProgettoObbliPluriennaleDto progettoObbliPluriennaleDto = new ProgettoObbliPluriennaleDto(progetto.getEsercizio(), progetto.getPg_progetto(), progetto.getTipo_fase());
 
 			Progetto_piano_economicoBulk pianoEcoProgetto = getPianoEconomicoObbligazione(uc, progetto, obbligazione.getElemento_voce());
@@ -6630,8 +6638,9 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 			progettoObbliPluriennaleDto.getVociPianoRimodulaMap().put(pianoEcoProgetto.getCd_voce_piano(), vocePianoObbliPluriennaleDto);
 			rimodulaObblPlur.getProgettoObbliPluriennaleMap().put(linea.getCd_linea_attivita(),progettoObbliPluriennaleDto);
 		}
-		// obbligazioni da rilasciare dal progetto
-		for(Obbligazione_pluriennale_voceBulk obbPlurVoce : obblPlurVoceCancellateList){
+		if(rimodulaObblPlur.getFlAutoRimodulazione()) {
+			// obbligazioni da rilasciare dal progetto
+			for (Obbligazione_pluriennale_voceBulk obbPlurVoce : obblPlurVoceCancellateList) {
 				ProgettoObbliPluriennaleDto progettoObbliPluriennaleDto = rimodulaObblPlur.getProgettoObbliPluriennaleMap().get(obbPlurVoce.getCdLineaAttivita());
 
 				if (progettoObbliPluriennaleDto == null) {
@@ -6659,6 +6668,7 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 				obblPlurAddDTO.setImporto(obbPlurVoce.getImporto().negate());
 				vocePianoObbliPluriennaleDto.getObbligazionePlurDel().add(obblPlurAddDTO);
 
+			}
 		}
 		return rimodulaObblPlur;
 	}

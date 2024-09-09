@@ -9,6 +9,8 @@ public class RimoduzioneObbliPluriennaleDto {
 
 
    private HashMap<String,ProgettoObbliPluriennaleDto> progettoObbliPluriennaleMap;
+   // viene settato dal progetto e indica se attiva o meno la rimodulazione automatica a fronte di un'obbligazione pluriennale
+   private Boolean flAutoRimodulazione = Boolean.TRUE;
 
     public RimoduzioneObbliPluriennaleDto() {
         this.progettoObbliPluriennaleMap = new HashMap<String,ProgettoObbliPluriennaleDto>();
@@ -32,5 +34,13 @@ public class RimoduzioneObbliPluriennaleDto {
             }
         }
         return false;
+    }
+
+    public Boolean getFlAutoRimodulazione() {
+        return flAutoRimodulazione;
+    }
+
+    public void setFlAutoRimodulazione(Boolean flAutoRimodulazione) {
+        this.flAutoRimodulazione = flAutoRimodulazione;
     }
 }

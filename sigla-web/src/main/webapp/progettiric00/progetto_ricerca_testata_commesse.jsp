@@ -147,6 +147,11 @@
 	  	<td><% bp.getController().writeFormLabel(out,"note");%></td>
 	  	<td colspan="3"><% bp.getController().writeFormInput( out, "default","note", isROField,null,null); %></td>
 	  </tr>
+	  <tr>
+         <td><% bp.getController().writeFormLabel(out,"flAutoRimod");%></td>
+         <td colspan="3"><% bp.getController().writeFormInput(out,"flAutoRimod");%></td>
+      </tr>
+
      </table>
 	 </div> 
 
@@ -296,6 +301,10 @@
 			  	<td><% bp.getController().writeFormLabel(out,"note");%></td>
 			  	<td colspan="3"><% bp.getController().writeFormInput(out,"note");%></td>
 			</tr>
+			<tr>
+                <td><% bp.getController().writeFormLabel(out,"flAutoRimod");%></td>
+                <td colspan="3"><% bp.getController().writeFormInput(out,"flAutoRimod");%></td>
+            </tr>
 		</table>
 	</div>
 	

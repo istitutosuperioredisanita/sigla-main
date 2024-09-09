@@ -868,7 +868,15 @@
 		formatName="it.cnr.contab.util.EuroFormat"
 		enabledOnSearch="true"
 		label="Importo Totale da Ripartire" />
-		
+
+	<fieldProperty
+		name="flAutoRimod"
+		property="otherField.flAutoRimodulazioneEnable"
+		inputType="CHECKBOX"
+		enabledOnEdit="false"
+		enabledOnInsert="false
+"
+		label="Rimodulazione Automatica Abilitata" />
 	<form
 		name="searchtool" >
 		<formFieldProperty
@@ -1067,6 +1075,10 @@
 		name="imCofinanziatoDaRipartire" />
 	<formFieldProperty
 		name="imTotaleDaRipartire" />
+	<formFieldProperty
+			name="flAutoRimod" />
+
+
 
 	<columnFieldProperty
 		name="livello" />
