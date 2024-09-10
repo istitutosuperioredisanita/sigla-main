@@ -3323,7 +3323,7 @@ public OggettoBulk modificaConBulk (UserContext aUC,OggettoBulk bulk) throws Com
 
 		}
 		validaObbligazionePluriennale(aUC, obbligazione, rimodulazioneObblPlurDto);
-		creaObbligazionePluriennaleVoce(aUC, obbligazione);
+		creaObbligazionePluriennaleVoce(aUC, obbligazione,rimodulazioneObblPlurDto.getFlAutoRimodulazione());
 		updateBulk( aUC, obbligazione);
 		makeBulkListPersistent( aUC, obbligazione.getObbligazione_scadenzarioColl());
 		makeBulkListPersistent( aUC, obbligazione.getObbligazioniPluriennali());
@@ -3433,7 +3433,7 @@ private boolean isPresentiPluriennaliDaGestire(UserContext aUC, ObbligazioneBulk
 		return false;
 	}
 
-private void creaObbligazionePluriennaleVoce(UserContext aUC, ObbligazioneBulk obbligazione) throws ComponentException, PersistencyException {
+private void creaObbligazionePluriennaleVoce(UserContext aUC, ObbligazioneBulk obbligazione,boolean autoRimodulazione) throws ComponentException, PersistencyException {
 
 	Obbligazione_pluriennale_voceBulk obblPlurVoce = null;
 
@@ -3466,6 +3466,7 @@ private void creaObbligazionePluriennaleVoce(UserContext aUC, ObbligazioneBulk o
 					obblPlurVoce.setTiGestione(elemento_voceBulk.getTi_gestione());
 					obblPlurVoce.setTiAppartenenza(elemento_voceBulk.getTi_appartenenza());
 					obblPlurVoce.setAnno(obbPlur.getAnno());
+					obblPlurVoce.setAutoRimodulazione(autoRimodulazione);
 					obblPlurVoce.setToBeCreated();
 					obbPlur.addToRigheVoceCollBulkList(obblPlurVoce);
 				//}

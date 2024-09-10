@@ -42,6 +42,14 @@
 				sqlTypeName="DECIMAL"
 				columnSize="38"
 				nullable="false" />
+		<columnMapping
+				columnName="AUTORIMOD"
+				propertyName="autoRimodulazione"
+				sqlTypeName="CHAR"
+				columnSize="1"
+				nullable="false"
+				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+
 	</defaultColumnMap>
 	<persistentProperty
 			name="importo" />
@@ -55,4 +63,7 @@
 			name="utuv" />
 	<persistentProperty
 			name="pg_ver_rec" />
+	<persistentProperty
+			name="autoRimodulazione" />
+
 </SQLPersistentInfo>

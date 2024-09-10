@@ -874,9 +874,8 @@
 		property="otherField.flAutoRimodulazioneEnable"
 		inputType="CHECKBOX"
 		enabledOnEdit="false"
-		enabledOnInsert="false
-"
-		label="Rimodulazione Automatica Abilitata" />
+		enabledOnInsert="false"
+		label="Rimodulazione Automatica" />
 	<form
 		name="searchtool" >
 		<formFieldProperty

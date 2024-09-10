@@ -6139,5 +6139,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_configurazione_gest_modpag_dip.xml"/>
     <!-- Autore : VALENTINA TOMADA - Aggiunto flag in PROGETTO_OTHER_FIELD per abilitare/disabilitare la rimodulazione automatica del progetto in fase di obbligazione pluriennale -->
     <include file="bootstrap/add_flag_enable_auto_rimodulazione.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Aggiunto flag in OBBLIGAZIONE_PLURIENNALE_VOCE che indica se è stata fatta o meno la rimodulazione automatica -->
+    <include file="bootstrap/add_flag_enable_auto_rimod_obbl_plur.xml"/>
+
 
 </databaseChangeLog>

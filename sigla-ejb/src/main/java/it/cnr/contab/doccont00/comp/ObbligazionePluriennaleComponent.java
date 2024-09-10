@@ -198,6 +198,7 @@ public class ObbligazionePluriennaleComponent extends ObbligazioneComponent {
 					newObbligazionePluriennaleVoce.setObbligazionePluriennale( newObbPluriennale);
 					newObbligazionePluriennaleVoce.setLinea_attivita( pluriennaleVoceBulk.getLinea_attivita());
 					newObbligazionePluriennaleVoce.setImporto( pluriennaleVoceBulk.getImporto());
+					newObbligazionePluriennaleVoce.setAutoRimodulazione(pluriennaleVoceBulk.getAutoRimodulazione());
 					newObbligazionePluriennaleVoce.setToBeCreated();
 					newObbPluriennale.getRigheVoceColl().add(newObbligazionePluriennaleVoce);
 				}
