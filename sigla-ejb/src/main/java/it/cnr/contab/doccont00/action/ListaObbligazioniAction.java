@@ -172,10 +172,15 @@ public Forward doRicercaLibera(ActionContext context) {
 public Forward doRiportaSelezione(ActionContext context)  throws java.rmi.RemoteException {
 	try {
 		HookForward caller = (HookForward)context.getCaller();
-		OggettoBulk selezione = (OggettoBulk)caller.getParameter("focusedElement");
+		ObbligazioneBulk selezione = (ObbligazioneBulk)caller.getParameter("focusedElement");
 		if (selezione != null)
-		{	
-			CRUDObbligazioneBP bp = (CRUDObbligazioneBP)context.createBusinessProcess("CRUDObbligazioneResBP");
+		{
+			CRUDObbligazioneBP bp = null;
+			if(selezione.isResiduo()) {
+				bp = (CRUDObbligazioneBP) context.createBusinessProcess("CRUDObbligazioneResBP");
+			}else{
+				bp = (CRUDObbligazioneBP) context.createBusinessProcess("CRUDObbligazioneBP");
+			}
 			bp.setEditable( true );
 			bp.edit( context, selezione);
 			return context.addBusinessProcess(bp);
