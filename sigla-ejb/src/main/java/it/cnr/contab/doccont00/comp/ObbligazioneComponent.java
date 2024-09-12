@@ -3323,7 +3323,7 @@ public OggettoBulk modificaConBulk (UserContext aUC,OggettoBulk bulk) throws Com
 
 		}
 		validaObbligazionePluriennale(aUC, obbligazione, rimodulazioneObblPlurDto);
-		creaObbligazionePluriennaleVoce(aUC, obbligazione,rimodulazioneObblPlurDto.getFlAutoRimodulazione());
+		creaObbligazionePluriennaleVoce(aUC, obbligazione,rimodulazioneObblPlurDto != null ? rimodulazioneObblPlurDto.getFlAutoRimodulazione() : true);
 		updateBulk( aUC, obbligazione);
 		makeBulkListPersistent( aUC, obbligazione.getObbligazione_scadenzarioColl());
 		makeBulkListPersistent( aUC, obbligazione.getObbligazioniPluriennali());
