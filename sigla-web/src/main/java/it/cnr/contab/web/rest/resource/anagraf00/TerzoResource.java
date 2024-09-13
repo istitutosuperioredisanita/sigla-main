@@ -17,9 +17,7 @@
 
 package it.cnr.contab.web.rest.resource.anagraf00;
 
-import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
-import it.cnr.contab.anagraf00.core.bulk.TelefonoBulk;
-import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.anagraf00.core.bulk.*;
 import it.cnr.contab.anagraf00.ejb.TerzoComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.web.rest.exception.RestException;
@@ -149,6 +147,20 @@ public class TerzoResource implements TerzoLocal {
 		Optional.ofNullable(anagraficoBulk).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, nessun anagrafico trovato il codice terzo indicato "+cdTerzo));
 		return Response.status(Status.OK).entity(
 				new AnagraficaInfoDTO(anagraficoBulk)
+		).build();
+	}
+
+	@Override
+	public Response modalitaPagamentoByCdTerzo(Integer cdTerzo) throws Exception {
+		Optional.ofNullable(cdTerzo).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, indicare il codice terzo."));
+		CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
+		TerzoBulk terzoDB = getTerzo(userContext, cdTerzo);
+		Optional.ofNullable(terzoDB).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, il codice terzo indicato "+cdTerzo+" non esiste"));
+		terzoDB= ( TerzoBulk) terzoComponentSession.inizializzaBulkPerModifica(userContext,terzoDB);
+
+
+		return Response.status(Status.OK).entity(
+				terzoDB.getModalita_pagamento()
 		).build();
 	}
 
