@@ -2942,12 +2942,13 @@ public class DistintaCassiereComponent extends
                            OggettoBulk bulk) throws ComponentException,
             PersistencyException {
         SQLBuilder sql = (SQLBuilder) super.select(userContext, clauses, bulk);
-        sql.addClause("AND", "cd_unita_organizzativa", SQLBuilder.EQUALS,
-                ((CNRUserContext) userContext).getCd_unita_organizzativa());
-        sql.addClause("AND", "esercizio", SQLBuilder.EQUALS,
-                ((CNRUserContext) userContext).getEsercizio());
-        sql.addClause("AND", "cd_cds", SQLBuilder.EQUALS,
-                ((CNRUserContext) userContext).getCd_cds());
+        Unita_organizzativaBulk uo = (Unita_organizzativaBulk)getHome(userContext, Unita_organizzativaBulk.class).
+                findByPrimaryKey(new Unita_organizzativaBulk(CNRUserContext.getCd_unita_organizzativa(userContext)));
+        sql.addClause("AND", "esercizio", SQLBuilder.EQUALS, ((CNRUserContext) userContext).getEsercizio());
+        if (!uo.isUoEnte()) {
+            sql.addClause("AND", "cd_unita_organizzativa", SQLBuilder.EQUALS, ((CNRUserContext) userContext).getCd_unita_organizzativa());
+            sql.addClause("AND", "cd_cds", SQLBuilder.EQUALS, ((CNRUserContext) userContext).getCd_cds());
+        }
         // visualizza solo le distinte che non sono state ancora inviate
         if (bulk instanceof V_distinta_cass_im_man_revBulk) {
             verificaStatoEsercizio(userContext);
@@ -6154,7 +6155,9 @@ public class DistintaCassiereComponent extends
                     mandato.getInformazioniBeneficiario().add(infoben);
                 } // end else di multibeneficiario
             }
-            controllaQuadraturaNettoSiope(bulk, mandato);
+            if (bulk.getIm_ritenute().compareTo(BigDecimal.ZERO) != 0) {
+                controllaQuadraturaNettoSiope(bulk, mandato);
+            }
             return mandato;
         } catch (Exception e) {
             throw handleException(e);
@@ -6389,6 +6392,7 @@ public class DistintaCassiereComponent extends
             if (mandatoDaFattura.isPresent()) {
                 final Map<Fattura_passivaBulk, Double> collect = siopeBulks
                         .stream()
+                        .filter(mandatoSiopeBulk -> mandatoSiopeBulk.getCd_tipo_documento_amm().equalsIgnoreCase(Numerazione_doc_ammBulk.TIPO_FATTURA_PASSIVA))
                         .map(mandato_siopeBulk -> {
                             try {
                                 return new AbstractMap.SimpleEntry<Fattura_passivaBulk, BigDecimal>(Optional.ofNullable(
@@ -6572,15 +6576,19 @@ public class DistintaCassiereComponent extends
                         .orElseThrow(() -> new ComponentException("Compenso non trovato!"));
                 getHomeCache(userContext).fetchAll(userContext);
                 final TipoDebitoSIOPE tipoDebitoSIOPETrattamento = Optional.ofNullable(compensoBulk.getTipoTrattamento())
-                        .map(tipo_trattamentoBulk -> {
+                        .flatMap(tipo_trattamentoBulk -> {
                             try {
-                                return (Tipo_trattamentoBulk)tipo_trattamentoHome.findByPrimaryKey(tipo_trattamentoBulk);
+                                return tipo_trattamentoHome.findTipoTrattamento(tipo_trattamentoBulk.getCd_trattamento());
                             } catch (PersistencyException e) {
                                 throw new DetailedRuntimeException(e);
                             }
                         })
-                        .flatMap(tipo_trattamentoBulk -> Optional.ofNullable(tipo_trattamentoBulk.getTipoDebitoSiope()))
-                        .map(s -> TipoDebitoSIOPE.getValueFrom(s))
+                        .flatMap(tipo_trattamentoBulk -> {
+                            return Optional.ofNullable(tipo_trattamentoBulk.getTipoDebitoSiope());
+                        })
+                        .map(s -> {
+                            return TipoDebitoSIOPE.getValueFrom(s);
+                        })
                         .orElse(TipoDebitoSIOPE.NON_COMMERCIALE);
                 switch (tipoDebitoSIOPETrattamento) {
                     case IVA: {
@@ -6592,7 +6600,6 @@ public class DistintaCassiereComponent extends
                         break;
                     }
                     case COMMERCIALE: {
-                        ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(StTipoDebitoCommerciale.COMMERCIALE);
                         final Optional<String> cigCompenso = Optional.ofNullable(compensoBulk.getCig()).map(CigBulk::getCdCig).filter(s -> Optional.ofNullable(s).isPresent());
                         final Optional<String> motivoAssenzaCigCompenso = Optional.ofNullable(compensoBulk.getMotivo_assenza_cig()).filter(s -> Optional.ofNullable(s).isPresent());
                         if (cigCompenso.isPresent() && motivoAssenzaCigCompenso.isPresent()) {
@@ -6616,8 +6623,10 @@ public class DistintaCassiereComponent extends
                         if (motivoAssenzaCigCompenso.isPresent())
                             ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(StMotivoEsclusioneCigSiope.valueOf(motivoAssenzaCigCompenso.get()));
 
-                        final Optional<Fattura_passivaBulk> fattura_passivaBulk = Optional.ofNullable(compensoBulk.getFatturaPassiva());
+                        final Optional<Fattura_passiva_IBulk> fattura_passivaBulk = compensoHome.findFatturaFornitore(userContext, compensoBulk);
+                        getHomeCache(userContext).fetchAll(userContext);
                         if (fattura_passivaBulk.isPresent()) {
+                            ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(StTipoDebitoCommerciale.COMMERCIALE);
                             CtFatturaSiope ctFatturaSiope = objectFactory.createCtFatturaSiope();
                             if (Optional.ofNullable(fattura_passivaBulk.get().getDocumentoEleTestata()).isPresent()) {
                                 ctFatturaSiope.setCodiceIpaEnteSiope(fattura_passivaBulk.get().getDocumentoEleTestata().getDocumentoEleTrasmissione().getCodiceDestinatario());
@@ -6654,12 +6663,7 @@ public class DistintaCassiereComponent extends
                             ctFatturaSiope.setDatiFatturaSiope(ctDatiFatturaSiope);
                             ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(ctFatturaSiope);
                         } else {
-                            CtFatturaSiope ctFatturaSiope = objectFactory.createCtFatturaSiope();
-                            ctFatturaSiope.setTipoDocumentoSiopeA(StTipoDocumentoAnalogico.ANALOGICO);
-                            ctFatturaSiope.setAnnoEmissioneFatturaSiope(compensoBulk.getEsercizio());
-                            ctFatturaSiope.setCodiceFiscaleEmittenteSiope(compensoBulk.getCodice_fiscale());
-                            ctFatturaSiope.setTipoDocumentoAnalogicoSiope(DOC_EQUIVALENTE);
-                            ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(ctFatturaSiope);
+                            ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(StTipoDebitoNonCommerciale.NON_COMMERCIALE);
                         }
                         break;
                     }
@@ -6684,9 +6688,10 @@ public class DistintaCassiereComponent extends
     }
 
     private BigDecimal calcolaImportoNettoSiope(boolean splitpayment, V_mandato_reversaleBulk vMandatoReversaleBulk, BigDecimal importoLordo) {
-        if (importoLordo.equals(BigDecimal.ZERO) || vMandatoReversaleBulk.getIm_ritenute().equals(BigDecimal.ZERO))
-            return BigDecimal.ZERO;
         if (splitpayment) {
+            if (importoLordo.equals(BigDecimal.ZERO) || vMandatoReversaleBulk.getIm_ritenute().equals(BigDecimal.ZERO)) {
+                return BigDecimal.ZERO;
+            }
             final BigDecimal percentuale = importoLordo.multiply(BigDecimal.TEN.multiply(BigDecimal.TEN)).divide(vMandatoReversaleBulk.getIm_documento_cont(), 5, RoundingMode.HALF_UP);
             final BigDecimal importoNetto = vMandatoReversaleBulk.getIm_documento_cont().subtract(vMandatoReversaleBulk.getIm_ritenute());
             return importoNetto.multiply(percentuale).divide(BigDecimal.TEN.multiply(BigDecimal.TEN), 2, RoundingMode.HALF_UP);

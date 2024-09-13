@@ -292,29 +292,33 @@ public abstract class AbstractFirmaDigitaleDocContBP extends SelezionatoreListaB
     }
 
     private void addToZip(DocumentiContabiliService documentiContabiliService, ZipOutputStream zos, String path, StatoTrasmissione statoTrasmissione) {
-        documentiContabiliService.getChildren(documentiContabiliService.getStorageObjectByPath(path).getKey())
-                .stream()
-                .forEach(storageObject -> {
-                    try {
-                        if (!Optional.ofNullable(storageObject.getPropertyValue(StoragePropertyNames.BASE_TYPE_ID.value()))
-                                .map(String.class::cast)
-                                .filter(s -> s.equals(StoragePropertyNames.CMIS_FOLDER.value()))
-                                .isPresent()) {
-                            ZipEntry zipEntryChild = new ZipEntry(statoTrasmissione.getCMISFolderName()
-                                    .concat(
-                                            Optional.ofNullable(storageObject.getPath())
-                                            .map(s -> s.substring(statoTrasmissione.getStorePath().length() - 1))
-                                            .orElse(StorageDriver.SUFFIX)
-                                    ));
-                            zos.putNextEntry(zipEntryChild);
-                            IOUtils.copyLarge(documentiContabiliService.getResource(storageObject), zos);
-                        } else {
-                            addToZip(documentiContabiliService, zos, storageObject.getPath(), statoTrasmissione);
+
+        Optional.ofNullable(documentiContabiliService.getStorageObjectByPath(path)).ifPresent(
+                storageObjectPath -> {
+            documentiContabiliService.getChildren(storageObjectPath.getKey())
+                    .stream()
+                    .forEach(storageObject -> {
+                        try {
+                            if (!Optional.ofNullable(storageObject.getPropertyValue(StoragePropertyNames.BASE_TYPE_ID.value()))
+                                    .map(String.class::cast)
+                                    .filter(s -> s.equals(StoragePropertyNames.CMIS_FOLDER.value()))
+                                    .isPresent()) {
+                                ZipEntry zipEntryChild = new ZipEntry(statoTrasmissione.getCMISFolderName()
+                                        .concat(
+                                                Optional.ofNullable(storageObject.getPath())
+                                                        .map(s -> s.substring(statoTrasmissione.getStorePath().length() - 1))
+                                                        .orElse(StorageDriver.SUFFIX)
+                                        ));
+                                zos.putNextEntry(zipEntryChild);
+                                IOUtils.copyLarge(documentiContabiliService.getResource(storageObject), zos);
+                            } else {
+                                addToZip(documentiContabiliService, zos, storageObject.getPath(), statoTrasmissione);
+                            }
+                        } catch (IOException e) {
+                            throw new DetailedRuntimeException(e);
                         }
-                    } catch (IOException e) {
-                        throw new DetailedRuntimeException(e);
-                    }
-                });
+                    });
+        });
     }
     @SuppressWarnings("unchecked")
     public void scaricaZip(ActionContext actioncontext) throws Exception {

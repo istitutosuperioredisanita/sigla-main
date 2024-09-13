@@ -929,6 +929,14 @@ public class CRUDDocumentoGenericoAttivoBP
 
             if (scadenzaVecchia != null) {
                 dettaglioSelezionato.setAccertamento_scadenziario(scadenzaVecchia);
+                //cerca se la stessa scadenza è su più righe
+                for ( Documento_generico_rigaBulk riga :documento.getDocumento_generico_dettColl()){
+                    if ( !riga.equalsByPrimaryKey(dettaglioSelezionato)){
+                        if ( Optional.ofNullable(riga.getAccertamento_scadenziario()).orElse(new Accertamento_scadenzarioBulk()).equalsByPrimaryKey(scadenzaVecchia))
+                            riga.setAccertamento_scadenziario(scadenzaVecchia);
+                    }
+                }
+
                 documento.addToDefferredSaldi(scadenzaVecchia.getAccertamento(), scadenzaVecchia.getAccertamento().getSaldiInfo());
             }
             if (scadenzaNuova != null) {

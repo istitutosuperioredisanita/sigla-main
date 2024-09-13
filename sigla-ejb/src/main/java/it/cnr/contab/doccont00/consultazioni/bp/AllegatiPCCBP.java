@@ -1,5 +1,8 @@
 package it.cnr.contab.doccont00.consultazioni.bp;
 
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import it.cnr.contab.docamm00.ejb.FatturaElettronicaPassivaComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.ApplicationMessageFormatException;
@@ -14,21 +17,25 @@ import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ApplicationRuntimeException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.OrderConstants;
+import it.cnr.jada.util.action.FormBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class AllegatiPCCBP extends AllegatiCRUDBP<AllegatoGenericoBulk, AllegatoParentIBulk> {
     public static final String COMUNICAZIONI_PCC = "Comunicazioni PCC";
     private Integer esercizio;
+    private static final Logger logger = LoggerFactory.getLogger(AllegatiPCCBP.class);
 
     public AllegatiPCCBP() {
     }
@@ -37,9 +44,11 @@ public class AllegatiPCCBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Allegato
         super(s);
     }
 
-    @Override
-    protected boolean isChildGrowable(boolean isGrowable) {
-        return Boolean.FALSE;
+    protected void basicEdit(ActionContext actioncontext, OggettoBulk oggettobulk, boolean flag) throws BusinessProcessException {
+        super.basicEdit(actioncontext, oggettobulk, flag);
+        getCrudArchivioAllegati().setOrderBy(actioncontext, "lastModificationDate", OrderConstants.ORDER_DESC);
+        getCrudArchivioAllegati().setSelection(Collections.emptyEnumeration());
+        getCrudArchivioAllegati().setModelIndex(actioncontext, -1);
     }
 
     @Override
@@ -110,13 +119,14 @@ public class AllegatiPCCBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Allegato
         try {
             Optional.ofNullable(allegato.getFile())
                 .ifPresent(file -> {
+                    Integer result;
                     try {
                         XSSFWorkbook wb = new XSSFWorkbook(new FileInputStream(file));
                         XSSFSheet s = wb.getSheet(wb.getSheetName(0));
                         Map<String, String> results = new HashMap<String, String>();
                         for(int i=8; i <= s.getLastRowNum(); i++){
                             final XSSFRow row = s.getRow(i);
-                            final Optional<String> identifictivoSDI = Optional.ofNullable(row).map(cells -> cells.getCell(1)) .map(XSSFCell::getRawValue);
+                            final Optional<String> identifictivoSDI = Optional.ofNullable(row).map(cells -> cells.getCell(1)) .map(XSSFCell::getStringCellValue);
                             if (identifictivoSDI.isPresent()) {
                                 final Optional<String> esito = Optional.ofNullable(row.getCell(20)).map(XSSFCell::getStringCellValue);
                                 if (esito.filter(s1 -> s1.length() > 0).isPresent()) {
@@ -124,10 +134,37 @@ public class AllegatiPCCBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Allegato
                                 }
                             }
                         }
-                        component.aggiornaEsitoPCC(userContext, results);
+                        result = component.aggiornaEsitoPCC(userContext, results);
                     } catch (IOException | ComponentException e) {
                         throw new ApplicationRuntimeException(e);
+                    } catch (NotOfficeXmlFileException _ex) {
+                        try {
+                            final CSVReader reader = new CSVReaderBuilder(new FileReader(file))
+                                    .withCSVParser(new CSVParserBuilder()
+                                            .withSeparator(';')
+                                            .build()
+                                    ).build();
+                            reader.skip(13);
+                            Iterator<String[]> iterator = reader.iterator();
+                            Map<String, String> results = new HashMap<String, String>();
+                            while (iterator.hasNext()) {
+                                String[] record = iterator.next();
+                                final Optional<String> identifictivoSDI = Optional.ofNullable(record).map(strings -> strings[1]);
+                                if (identifictivoSDI.isPresent()) {
+                                    final Optional<String> esito = Optional.ofNullable(record).map(strings -> strings[20]);
+                                    if (esito.filter(s1 -> s1.length() > 0).isPresent()) {
+                                        results.put(identifictivoSDI.get(), esito.get());
+                                    }
+                                }
+                            }
+                            reader.close();
+                            results.entrySet().stream().forEach(stringStringEntry -> logger.debug("Aggiornamento IdentificativoSDI: {} con Esito: {}", stringStringEntry.getKey(), stringStringEntry.getValue()));
+                            result = component.aggiornaEsitoPCC(userContext, results);
+                        } catch (IOException|ComponentException e) {
+                            throw new ApplicationRuntimeException(e);
+                        }
                     }
+                    setMessage(FormBP.INFO_MESSAGE, "L'esito è stato aggiornato su " + result + " fatture elettroniche.");
                 });
         } catch (Exception _ex) {
             throw new ApplicationMessageFormatException("Il file non è stato elaborato per il seguente errore: {0}", _ex.getMessage());
