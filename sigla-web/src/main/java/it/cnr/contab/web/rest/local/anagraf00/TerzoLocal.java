@@ -20,12 +20,11 @@ package it.cnr.contab.web.rest.local.anagraf00;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
-import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.RapportoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.web.rest.config.SIGLARoles;
 import it.cnr.contab.web.rest.model.AnagraficaInfoDTO;
-
+import it.cnr.contab.web.rest.model.ModalitaPagamentoDto;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -101,7 +100,7 @@ public interface TerzoLocal {
     @Path("/modalitapagamento/{cd_terzo}")
     @ApiOperation(value = "Ritorna le modalità di pagamento attive per il codice del terzo passato in input ",
             notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.TERZO +"'",
-            response = BancaBulk.class,
+            response = ModalitaPagamentoDto.class,
             responseContainer = "List",
             authorizations = @Authorization(value = "BASIC")
     )

@@ -23,7 +23,10 @@ import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.local.anagraf00.TerzoLocal;
 import it.cnr.contab.web.rest.model.AnagraficaInfoDTO;
+import it.cnr.contab.web.rest.model.DettaglioModalitaPagDto;
+import it.cnr.contab.web.rest.model.ModalitaPagamentoDto;
 import it.cnr.jada.UserContext;
+import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.PersistencyException;
@@ -39,8 +42,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Stateless
 public class TerzoResource implements TerzoLocal {
@@ -150,6 +155,20 @@ public class TerzoResource implements TerzoLocal {
 		).build();
 	}
 
+	private List<DettaglioModalitaPagDto> getDettaglioMOdalitaPagDto(List<BancaBulk> banche){
+		return ( List<DettaglioModalitaPagDto>)Optional.ofNullable( banche).
+				orElse( new ArrayList<BancaBulk>()).stream().map(s->{
+			return new DettaglioModalitaPagDto(s);
+		}).collect(Collectors.toList());
+
+	}
+	private List<ModalitaPagamentoDto> getModalitaPagamentoDto( TerzoBulk terzo){
+
+		return ( List<ModalitaPagamentoDto>) ( Optional.ofNullable(terzo)).map( s->s.getModalita_pagamento()).
+				orElse(new BulkList<Modalita_pagamentoBulk>()).stream().map(modalitaPagamentoBulk -> {
+					return new ModalitaPagamentoDto(modalitaPagamentoBulk,getDettaglioMOdalitaPagDto( terzo.getBanche(modalitaPagamentoBulk)));
+				}).collect(Collectors.toList());
+	}
 	@Override
 	public Response modalitaPagamentoByCdTerzo(Integer cdTerzo) throws Exception {
 		Optional.ofNullable(cdTerzo).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, indicare il codice terzo."));
@@ -157,10 +176,10 @@ public class TerzoResource implements TerzoLocal {
 		TerzoBulk terzoDB = getTerzo(userContext, cdTerzo);
 		Optional.ofNullable(terzoDB).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, il codice terzo indicato "+cdTerzo+" non esiste"));
 		terzoDB= ( TerzoBulk) terzoComponentSession.inizializzaBulkPerModifica(userContext,terzoDB);
-
+		List<ModalitaPagamentoDto> getModalitaPagamentoDto = getModalitaPagamentoDto( terzoDB);
 
 		return Response.status(Status.OK).entity(
-				terzoDB.getModalita_pagamento()
+				getModalitaPagamentoDto( terzoDB)
 		).build();
 	}
 
