@@ -589,14 +589,11 @@ public class TransactionalAccertamentoComponentSession extends it.cnr.jada.ejb.T
     }
 
     @Override
-    public Boolean deleteAccertamentoWs(UserContext uc, String cd_cds, Integer esercizio, Long pg_accertamento, Integer esercizio_originale) throws ComponentException, RemoteException, PersistencyException {
+    public Boolean deleteAccertamentoWs(UserContext uc, AccertamentoBulk accertamento) throws ComponentException, RemoteException, PersistencyException {
         try {
             return (Boolean)invoke("Override",new Object[] {
                     uc,
-                    cd_cds,
-                    esercizio,
-                    pg_accertamento,
-                    esercizio_originale
+                    accertamento
             });
         } catch(java.rmi.RemoteException e) {
             throw e;

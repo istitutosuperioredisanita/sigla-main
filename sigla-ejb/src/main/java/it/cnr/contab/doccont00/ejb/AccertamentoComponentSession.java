@@ -51,6 +51,6 @@ it.cnr.contab.doccont00.core.bulk.AccertamentoBulk aggiornaAccertamentiTemporane
 AccertamentoBulk findAccertamento( UserContext uc, AccertamentoBulk accertamento) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 AccertamentoBulk creaAccertamentoWs(UserContext uc, AccertamentoBulk accertamento) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 AccertamentoBulk updateAccertamentoWs(UserContext uc, AccertamentoBulk accertamento) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
-Boolean deleteAccertamentoWs(UserContext uc,String cd_cds,Integer esercizio,Long pg_accertamento,Integer esercizio_originale) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException,it.cnr.jada.persistency.PersistencyException;
+Boolean deleteAccertamentoWs(UserContext uc,AccertamentoBulk accertamento) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException,it.cnr.jada.persistency.PersistencyException;
 
 }

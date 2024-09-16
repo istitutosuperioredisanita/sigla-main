@@ -550,10 +550,10 @@ public class AccertamentoComponentSessionBean extends it.cnr.jada.ejb.CRUDCompon
 	}
 
 	@Override
-	public Boolean deleteAccertamentoWs(UserContext uc,String cd_cds,Integer esercizio,Long pg_accertamento,Integer esercizio_originale) throws ComponentException, PersistencyException {
+	public Boolean deleteAccertamentoWs(UserContext uc,AccertamentoBulk accertamento) throws ComponentException, PersistencyException {
 		pre_component_invocation(uc,componentObj);
 		try {
-			Boolean result = ((AccertamentoComponent)componentObj).deleteAccertamentoWs(uc,cd_cds,esercizio,pg_accertamento,esercizio_originale);
+			Boolean result = ((AccertamentoComponent)componentObj).deleteAccertamentoWs(uc,accertamento);
 			component_invocation_succes(uc,componentObj);
 			return result;
 		} catch(it.cnr.jada.comp.NoRollbackException e) {

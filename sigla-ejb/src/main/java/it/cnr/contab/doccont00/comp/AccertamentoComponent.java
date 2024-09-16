@@ -5120,18 +5120,12 @@ public SQLBuilder selectVariazioneResiduaByClause (UserContext userContext, Acce
 	public AccertamentoBulk updateAccertamentoWs(UserContext uc,AccertamentoBulk accertamento) throws ComponentException {
 		throw new ApplicationException("Fuzionalità non implementata");
 	}
-	public Boolean deleteAccertamentoWs(UserContext uc,String cd_cds,Integer esercizio,Long pg_accertamento,Integer esercizio_originale) throws ComponentException, PersistencyException {
+	public Boolean deleteAccertamentoWs(UserContext uc,AccertamentoBulk accertamento) throws ComponentException, PersistencyException {
 		try {
-			AccertamentoHome accertHome = (AccertamentoHome)getTempHome(uc, AccertamentoBulk.class);
-			AccertamentoBulk accertamentoBulk= ( AccertamentoBulk) accertHome.findAccertamento( new AccertamentoBulk(cd_cds,esercizio,esercizio_originale,pg_accertamento));
-			if ( !Optional.ofNullable(accertamentoBulk).isPresent())
-				return Boolean.FALSE;
-
-			if (! ((AccertamentoHome)getHome(uc, AccertamentoBulk.class)).verificaStatoEsercizio(accertamentoBulk))
+			if (! ((AccertamentoHome)getHome(uc, AccertamentoBulk.class)).verificaStatoEsercizio(accertamento))
 					throw handleException( new ApplicationException( "Non e' possibile eliminare accertamenti: esercizio del Cds non ancora aperto!") );
-			accertamentoBulk= ( AccertamentoBulk)inizializzaBulkPerModifica(uc,accertamentoBulk);
-
-			annullaAccertamento(uc,accertamentoBulk);
+			accertamento= ( AccertamentoBulk)inizializzaBulkPerModifica(uc,accertamento);
+			annullaAccertamento(uc,accertamento);
 		} catch (IntrospectionException e) {
 			throw new RuntimeException(e);
 		}

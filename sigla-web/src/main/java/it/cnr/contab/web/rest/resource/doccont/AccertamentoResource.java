@@ -342,19 +342,23 @@ public class AccertamentoResource implements AccertamentoLocal {
 
 
     }
+    private AccertamentoBulk getAccertamento(CNRUserContext userContext,String cd_cds, Integer esercizio, Long pg_accertamento, Integer esercizio_originale) throws Exception {
+        AccertamentoBulk accertamentoBulk =new AccertamentoBulk(cd_cds,esercizio,esercizio_originale,pg_accertamento);
+        accertamentoBulk.setCd_cds_origine( userContext.getCd_cds());
+        accertamentoBulk.setCd_uo_origine( userContext.getCd_unita_organizzativa());
+        RemoteIterator iterator =accertamentoComponentSession.cerca(userContext, null, accertamentoBulk);
+        if (iterator == null ||iterator.countElements() != 1)
+            return null;
+        return  ( AccertamentoBulk)iterator.nextElement();
+    }
 
     @Override
     public Response get(String cd_cds, Integer esercizio, Long pg_accertamento, Integer esercizio_originale) throws Exception {
         try{
             CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
             validaContestoAccertamento( userContext,esercizio, userContext.getCd_cds(), userContext.getCd_unita_organizzativa());
-            AccertamentoBulk accertamentoBulk =new AccertamentoBulk(cd_cds,esercizio,esercizio_originale,pg_accertamento);
-            accertamentoBulk.setCd_cds_origine( userContext.getCd_cds());
-            accertamentoBulk.setCd_uo_origine( userContext.getCd_unita_organizzativa());
-            RemoteIterator iterator =accertamentoComponentSession.cerca(userContext, null, accertamentoBulk);
-            if (iterator == null ||iterator.countElements() != 1)
-                throw new RestException(Response.Status.NOT_FOUND,String.format("Accertamento non presente!"));
-            accertamentoBulk= ( AccertamentoBulk)iterator.nextElement();
+            AccertamentoBulk accertamentoBulk =getAccertamento( userContext,cd_cds,esercizio,pg_accertamento,esercizio_originale);
+            Optional.ofNullable(accertamentoBulk).orElseThrow(() ->new RestException(Response.Status.NOT_FOUND,String.format("Accertamento non presente!")));
             return Response.status(Response.Status.OK).entity(accertamentoBulkToAccertamentoDto( accertamentoBulk )).build();
         }catch (Throwable e){
             if ( e instanceof RestException)
@@ -366,11 +370,13 @@ public class AccertamentoResource implements AccertamentoLocal {
     public Response delete(String cd_cds, Integer esercizio, Long pg_accertamento, Integer esercizio_originale) throws Exception {
         try{
             CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
-
-           Boolean result= accertamentoComponentSession.deleteAccertamentoWs(userContext,cd_cds,esercizio,pg_accertamento,esercizio_originale);
-            if ( result)
+            validaContestoAccertamento( userContext,esercizio, userContext.getCd_cds(), userContext.getCd_unita_organizzativa());
+            AccertamentoBulk accertamentoBulk =getAccertamento( userContext,cd_cds,esercizio,pg_accertamento,esercizio_originale);
+            if ( !Optional.ofNullable(accertamentoBulk).isPresent())
+                    return Response.status(Response.Status.NO_CONTENT).build();
+           Boolean result= accertamentoComponentSession.deleteAccertamentoWs(userContext,accertamentoBulk);
+           if ( result)
                 return Response.status(Response.Status.OK).build();
-
             return Response.status(Response.Status.NO_CONTENT).build();
 
         }catch (Throwable e){
