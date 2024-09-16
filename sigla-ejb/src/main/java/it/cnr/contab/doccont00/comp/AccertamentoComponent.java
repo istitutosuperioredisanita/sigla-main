@@ -5102,4 +5102,41 @@ public SQLBuilder selectVariazioneResiduaByClause (UserContext userContext, Acce
 		return sql;
 	}
 
+	public AccertamentoBulk findAccertamento(UserContext uc,AccertamentoBulk accertamento) throws ComponentException {
+		try {
+			AccertamentoBulk acr = null;
+			acr = ((AccertamentoHome) getHome(uc, AccertamentoBulk.class)).findAccertamento(accertamento);
+
+			getHomeCache(uc).fetchAll(uc);
+			return acr;
+		} catch (it.cnr.jada.persistency.PersistencyException | IntrospectionException e) {
+			throw handleException(e);
+		}
+	}
+
+	public AccertamentoBulk creaAccertamentoWs(UserContext uc,AccertamentoBulk accertamento) throws ComponentException {
+		return ( AccertamentoBulk) creaConBulk(uc,accertamento);
+	}
+	public AccertamentoBulk updateAccertamentoWs(UserContext uc,AccertamentoBulk accertamento) throws ComponentException {
+		throw new ApplicationException("Fuzionalità non implementata");
+	}
+	public Boolean deleteAccertamentoWs(UserContext uc,String cd_cds,Integer esercizio,Long pg_accertamento,Integer esercizio_originale) throws ComponentException, PersistencyException {
+		try {
+			AccertamentoHome accertHome = (AccertamentoHome)getTempHome(uc, AccertamentoBulk.class);
+			AccertamentoBulk accertamentoBulk= ( AccertamentoBulk) accertHome.findAccertamento( new AccertamentoBulk(cd_cds,esercizio,esercizio_originale,pg_accertamento));
+			if ( !Optional.ofNullable(accertamentoBulk).isPresent())
+				return Boolean.FALSE;
+
+			if (! ((AccertamentoHome)getHome(uc, AccertamentoBulk.class)).verificaStatoEsercizio(accertamentoBulk))
+					throw handleException( new ApplicationException( "Non e' possibile eliminare accertamenti: esercizio del Cds non ancora aperto!") );
+			accertamentoBulk= ( AccertamentoBulk)inizializzaBulkPerModifica(uc,accertamentoBulk);
+
+			annullaAccertamento(uc,accertamentoBulk);
+		} catch (IntrospectionException e) {
+			throw new RuntimeException(e);
+		}
+
+		return Boolean.TRUE;
+	}
+
 }

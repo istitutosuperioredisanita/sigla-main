@@ -19,7 +19,7 @@ public class ObbligazioneDto extends ObbligazioneKeyDto {
     private BigDecimal im_obbligazione;
     private EnumStatoObbligazione statoObbligazione;
 
-    private ObbligazioneLineaAttivitaDto obbligazioneLineaAttivitaDto;
+   //private ScadenzarioVoceLineaAttivitaDto obbligazioneLineaAttivitaDto;
     private List<ObbligazioneScadenzarioDto> scadenze;
 
 
@@ -80,9 +80,9 @@ public class ObbligazioneDto extends ObbligazioneKeyDto {
         this.im_obbligazione = im_obbligazione;
     }
 
-    public ObbligazioneLineaAttivitaDto getObbligazioneLineaAttivitaDto() {
+    /*public LineaAttivitaDto getObbligazioneLineaAttivitaDto() {
         return obbligazioneLineaAttivitaDto;
-    }
+    }*/
 
     public EnumStatoObbligazione getStatoObbligazione() {
         return statoObbligazione;
@@ -92,9 +92,10 @@ public class ObbligazioneDto extends ObbligazioneKeyDto {
         this.statoObbligazione = statoObbligazione;
     }
 
-    public void setObbligazioneLineaAttivitaDto(ObbligazioneLineaAttivitaDto obbligazioneLineaAttivitaDto) {
+    /*
+    public void setObbligazioneLineaAttivitaDto(LineaAttivitaDto obbligazioneLineaAttivitaDto) {
         this.obbligazioneLineaAttivitaDto = obbligazioneLineaAttivitaDto;
-    }
+    }*/
 
     public List<ObbligazioneScadenzarioDto> getScadenze() {
         return scadenze;

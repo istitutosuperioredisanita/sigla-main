@@ -2,7 +2,7 @@ package it.cnr.contab.web.rest.model;
 
 import java.math.BigDecimal;
 
-public class ObbligazioneLineaAttivitaDto {
+public class ScadenzarioVoceLineaAttivitaDto {
 
     private LineaAttivitaKeyDto lineaAttivitaKeyDto;
 

@@ -1,7 +1,9 @@
 package it.cnr.contab.web.rest.model;
 
-public class ObbligazioneScadVoceDto extends ScadenzarioVoceBaseDto{
-    /*
+import java.io.Serializable;
+import java.math.BigDecimal;
+
+public class ScadenzarioVoceBaseDto implements Serializable {
     private LineaAttivitaKeyDto lineaAttivitaKeyDto;
     private BigDecimal percentuale;
     private BigDecimal im_voce;
@@ -29,6 +31,4 @@ public class ObbligazioneScadVoceDto extends ScadenzarioVoceBaseDto{
     public void setIm_voce(BigDecimal im_voce) {
         this.im_voce = im_voce;
     }
-
-     */
 }

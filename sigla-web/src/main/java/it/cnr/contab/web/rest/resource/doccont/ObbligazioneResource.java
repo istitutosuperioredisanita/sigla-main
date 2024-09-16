@@ -195,7 +195,7 @@ public class ObbligazioneResource implements ObbligazioneLocal {
             obb_scadenza.setDt_scadenza(Optional.ofNullable(scadenza.getDt_scadenza())
                     .map(esercizio -> new Timestamp(scadenza.getDt_scadenza().getTime()))
                     .orElse(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()));
-            obb_scadenza.setDt_scadenza(new Timestamp(scadenza.getDt_scadenza().getTime()));
+
             obb_scadenza.setDs_scadenza(scadenza.getDs_scadenza());
             //obb_scadenza.setIm_associato_doc_amm(BigDecimal.ZERO);
             //obb_scadenza.setIm_associato_doc_contabile(BigDecimal.ZERO);

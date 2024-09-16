@@ -1,6 +1,6 @@
 package it.cnr.contab.web.rest.model;
 
-public class ObbligazioneScadVoceDto extends ScadenzarioVoceBaseDto{
+public class AccertamentoScadVoceDto extends ScadenzarioVoceBaseDto{
     /*
     private LineaAttivitaKeyDto lineaAttivitaKeyDto;
     private BigDecimal percentuale;

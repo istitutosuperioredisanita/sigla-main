@@ -17,9 +17,11 @@
 
 package it.cnr.contab.doccont00.ejb;
 
-import javax.ejb.Remote;
-
+import it.cnr.contab.doccont00.core.bulk.AccertamentoBulk;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.PrimaryKeyHashtable;
+
+import javax.ejb.Remote;
 @Remote
 public interface AccertamentoComponentSession extends it.cnr.jada.ejb.CRUDComponentSession, it.cnr.contab.doccont00.comp.DocumentoContabileComponentSession, it.cnr.jada.ejb.PrintComponentSession {
 void aggiornaCogeCoanInDifferita(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1,java.util.Map param2) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
@@ -45,4 +47,10 @@ it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk sdoppiaScadenz
 PrimaryKeyHashtable getOldRipartizioneCdrVoceLinea(it.cnr.jada.UserContext userContext, it.cnr.contab.doccont00.core.bulk.AccertamentoBulk accertamento) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 it.cnr.contab.doccont00.core.bulk.AccertamentoBulk riportaSelezioneVoci(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.AccertamentoBulk param1, java.util.List param2) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 it.cnr.contab.doccont00.core.bulk.AccertamentoBulk aggiornaAccertamentiTemporanei(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.AccertamentoBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+
+AccertamentoBulk findAccertamento( UserContext uc, AccertamentoBulk accertamento) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+AccertamentoBulk creaAccertamentoWs(UserContext uc, AccertamentoBulk accertamento) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+AccertamentoBulk updateAccertamentoWs(UserContext uc, AccertamentoBulk accertamento) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+Boolean deleteAccertamentoWs(UserContext uc,String cd_cds,Integer esercizio,Long pg_accertamento,Integer esercizio_originale) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException,it.cnr.jada.persistency.PersistencyException;
+
 }

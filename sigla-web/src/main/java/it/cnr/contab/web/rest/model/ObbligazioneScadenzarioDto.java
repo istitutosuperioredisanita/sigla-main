@@ -1,16 +1,26 @@
 package it.cnr.contab.web.rest.model;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
-public class ObbligazioneScadenzarioDto implements Serializable {
+public class ObbligazioneScadenzarioDto extends ScadenzarioBaseDto {
+    private Long pg_obbligazione_scadenzario;
 
+    private List<ObbligazioneScadVoceDto> obbligazioneScadVoce;
+
+
+    public List<ObbligazioneScadVoceDto> getObbligazioneScadVoce() {
+        return obbligazioneScadVoce;
+    }
+
+
+    public void setObbligazioneScadVoce(List<ObbligazioneScadVoceDto> obbligazioneScadVoce) {
+        this.obbligazioneScadVoce = obbligazioneScadVoce;
+    }
+    /*
     private Date dt_scadenza;
     private String ds_scadenza;
     private BigDecimal im_scadenza;
-    private Long pg_obbligazione_scadenzario;
+
     private BigDecimal im_associato_doc_amm;
     private BigDecimal im_associato_doc_contabile;
 
@@ -70,5 +80,15 @@ public class ObbligazioneScadenzarioDto implements Serializable {
 
     public void setIm_associato_doc_contabile(BigDecimal im_associato_doc_contabile) {
         this.im_associato_doc_contabile = im_associato_doc_contabile;
+    }
+    +/
+ */
+
+    public Long getPg_obbligazione_scadenzario() {
+        return pg_obbligazione_scadenzario;
+    }
+
+    public void setPg_obbligazione_scadenzario(Long pg_obbligazione_scadenzario) {
+        this.pg_obbligazione_scadenzario = pg_obbligazione_scadenzario;
     }
 }

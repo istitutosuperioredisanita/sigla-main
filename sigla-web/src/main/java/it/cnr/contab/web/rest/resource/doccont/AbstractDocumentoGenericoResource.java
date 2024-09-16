@@ -37,10 +37,35 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
     @EJB
     protected DocumentoGenericoComponentSession documentoGenericoComponentSession;
 
+    private void validaContestoDocumentoGenerico(CNRUserContext userContext,
+                                            Integer esericizioObbligazione,
+                                            String cdCdsObbligazione,
+                                            String cdUoObbligazione){
+        Optional.ofNullable(userContext.getEsercizio()).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Esercizio del Contesto obbligatorio!"));
+        Optional.ofNullable(userContext.getCd_cds()).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Cds del Contesto obbligatorio !"));
+        Optional.ofNullable(userContext.getCd_unita_organizzativa()).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Uo del Contesto obbligatorio!"));
+
+        Optional.ofNullable(esericizioObbligazione).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Esercizio obbligatorio!"));
+        Optional.ofNullable(cdCdsObbligazione).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Cds  obbligatorio!"));
+        Optional.ofNullable(cdUoObbligazione).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, UO  obbligatoria!"));
+
+        Optional.ofNullable(esericizioObbligazione).filter(x -> userContext.getEsercizio().equals(x)).
+                orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Esercizio del contesto diverso da quello del documento Genercio!"));
+        Optional.ofNullable(cdCdsObbligazione).filter(x -> userContext.getCd_cds().equals(x)).
+                orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "CdS del contesto diverso da quello del documento Generico!"));
+        Optional.ofNullable(cdUoObbligazione).filter(x -> userContext.getCd_unita_organizzativa().equals(x)).
+                orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Unità Organizzativa del contesto diversa da quello del documento Generico!"));
+    }
+
+
+
 
     public Response insertDocumentoGenerico(HttpServletRequest request, T documentoGenericoDto) throws Exception {
         try{
             CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
+            validaContestoDocumentoGenerico(userContext,documentoGenericoDto.getEsercizio(),
+                    documentoGenericoDto.getCdsKey().getCd_unita_organizzativa(),
+                    documentoGenericoDto.getUnitaOrganizzativaKey().getCd_unita_organizzativa());
             //valida
             Documento_genericoBulk documentoGenericoBulk=documentoGenericoDtoToDocumentoGenBulk( userContext,documentoGenericoDto );
             return Response.status(Response.Status.OK).entity(documentoGenBulkToDocumentoGenDto(
@@ -60,6 +85,7 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
         return ((Class) ((ParameterizedType) getClass()
                 .getGenericSuperclass()).getActualTypeArguments()[0]);
     }
+
 
 
     abstract protected void addInfoContToDocRigheDto(Documento_generico_rigaBulk rigaBulk,  DocumentoGenericoRigaDto  rigaDto,UserContext userContext);
@@ -108,6 +134,8 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
 
         return  completeDocumentoGenDto( bulk,( T) documentoGenericoDto,userContext);
     }
+
+
 
     abstract protected Documento_genericoBulk initializeDocumentoGenerico( UserContext userContext, T documentoGenericoDto) throws ComponentException, RemoteException;
 

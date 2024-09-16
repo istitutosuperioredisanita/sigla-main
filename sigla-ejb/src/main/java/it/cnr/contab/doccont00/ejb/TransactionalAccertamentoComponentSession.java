@@ -21,6 +21,7 @@ import it.cnr.contab.doccont00.core.bulk.AccertamentoBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.PrimaryKeyHashtable;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 
 import java.rmi.RemoteException;
 import java.util.Vector;
@@ -509,7 +510,28 @@ public class TransactionalAccertamentoComponentSession extends it.cnr.jada.ejb.T
             }
         }
     }
-	public it.cnr.contab.doccont00.core.bulk.AccertamentoBulk riportaSelezioneVoci(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.AccertamentoBulk param1, java.util.List param2) throws RemoteException,it.cnr.jada.comp.ComponentException {
+
+    @Override
+    public AccertamentoBulk findAccertamento(UserContext uc, AccertamentoBulk accertamento) throws ComponentException, RemoteException {
+        try {
+            return (it.cnr.contab.doccont00.core.bulk.AccertamentoBulk)invoke("findAccertamento",new Object[] {
+                    uc,
+                    accertamento});
+        } catch(java.rmi.RemoteException e) {
+            throw e;
+        } catch(java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch(it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch(Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception",ex);
+            }
+        }
+    }
+
+
+    public it.cnr.contab.doccont00.core.bulk.AccertamentoBulk riportaSelezioneVoci(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.AccertamentoBulk param1, java.util.List param2) throws RemoteException,it.cnr.jada.comp.ComponentException {
 		try {
 			return (it.cnr.contab.doccont00.core.bulk.AccertamentoBulk)invoke("riportaSelezioneVoci",new Object[] {
 					param0,
@@ -527,4 +549,67 @@ public class TransactionalAccertamentoComponentSession extends it.cnr.jada.ejb.T
 			}
 		}
 	}
+
+    @Override
+    public AccertamentoBulk creaAccertamentoWs(UserContext uc, AccertamentoBulk accertamento) throws ComponentException, RemoteException {
+        try {
+            return (it.cnr.contab.doccont00.core.bulk.AccertamentoBulk) invoke("creaAccertamentoWs", new Object[]{
+                    uc,
+                    accertamento});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public AccertamentoBulk updateAccertamentoWs(UserContext uc, AccertamentoBulk accertamento) throws ComponentException, RemoteException {
+        try {
+            return (it.cnr.contab.doccont00.core.bulk.AccertamentoBulk) invoke("updateAccertamentoWs", new Object[]{
+                    uc,
+                    accertamento});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public Boolean deleteAccertamentoWs(UserContext uc, String cd_cds, Integer esercizio, Long pg_accertamento, Integer esercizio_originale) throws ComponentException, RemoteException, PersistencyException {
+        try {
+            return (Boolean)invoke("Override",new Object[] {
+                    uc,
+                    cd_cds,
+                    esercizio,
+                    pg_accertamento,
+                    esercizio_originale
+            });
+        } catch(java.rmi.RemoteException e) {
+            throw e;
+        } catch(java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch(it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch(Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception",ex);
+            }
+        }
+    }
+
+
 }

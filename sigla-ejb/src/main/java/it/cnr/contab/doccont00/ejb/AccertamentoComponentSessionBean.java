@@ -18,11 +18,17 @@
 package it.cnr.contab.doccont00.ejb;
 
 import it.cnr.contab.doccont00.comp.AccertamentoComponent;
+import it.cnr.contab.doccont00.core.bulk.AccertamentoBulk;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.PrimaryKeyHashtable;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Remove;
 import javax.ejb.Stateless;
+import java.rmi.RemoteException;
+
 @Stateless(name="CNRDOCCONT00_EJB_AccertamentoComponentSession")
 public class AccertamentoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements AccertamentoComponentSession{
 @PostConstruct
@@ -480,6 +486,86 @@ public class AccertamentoComponentSessionBean extends it.cnr.jada.ejb.CRUDCompon
 			throw uncaughtRuntimeException(param0,componentObj,e);
 		} catch(Error e) {
 			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
+	@Override
+	public AccertamentoBulk findAccertamento(UserContext uc, AccertamentoBulk accertamento) throws ComponentException, RemoteException {
+		pre_component_invocation(uc,componentObj);
+		try {
+			it.cnr.contab.doccont00.core.bulk.AccertamentoBulk result = ((AccertamentoComponent)componentObj).findAccertamento(uc,accertamento);
+			component_invocation_succes(uc,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(uc,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(uc,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(uc,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(uc,componentObj,e);
+		}
+	}
+
+	@Override
+	public AccertamentoBulk creaAccertamentoWs(UserContext uc, AccertamentoBulk accertamento) throws ComponentException, RemoteException {
+		pre_component_invocation(uc,componentObj);
+		try {
+			it.cnr.contab.doccont00.core.bulk.AccertamentoBulk result = ((AccertamentoComponent)componentObj).creaAccertamentoWs(uc,accertamento);
+			component_invocation_succes(uc,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(uc,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(uc,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(uc,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(uc,componentObj,e);
+		}
+	}
+
+	@Override
+	public AccertamentoBulk updateAccertamentoWs(UserContext uc, AccertamentoBulk accertamento) throws ComponentException, RemoteException {
+		pre_component_invocation(uc,componentObj);
+		try {
+			it.cnr.contab.doccont00.core.bulk.AccertamentoBulk result = ((AccertamentoComponent)componentObj).updateAccertamentoWs(uc,accertamento);
+			component_invocation_succes(uc,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(uc,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(uc,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(uc,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(uc,componentObj,e);
+		}
+	}
+
+	@Override
+	public Boolean deleteAccertamentoWs(UserContext uc,String cd_cds,Integer esercizio,Long pg_accertamento,Integer esercizio_originale) throws ComponentException, PersistencyException {
+		pre_component_invocation(uc,componentObj);
+		try {
+			Boolean result = ((AccertamentoComponent)componentObj).deleteAccertamentoWs(uc,cd_cds,esercizio,pg_accertamento,esercizio_originale);
+			component_invocation_succes(uc,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(uc,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(uc,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(uc,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(uc,componentObj,e);
 		}
 	}
 }
