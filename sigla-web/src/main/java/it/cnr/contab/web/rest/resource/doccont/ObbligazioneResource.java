@@ -2,6 +2,7 @@ package it.cnr.contab.web.rest.resource.doccont;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoKey;
 import it.cnr.contab.config00.contratto.bulk.ContrattoKey;
+import it.cnr.contab.config00.ejb.Unita_organizzativaComponentSession;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceKey;
@@ -43,11 +44,16 @@ public class ObbligazioneResource implements ObbligazioneLocal {
     CRUDComponentSession crudComponentSession;
     @EJB
     ObbligazioneComponentSession obbligazioneComponentSession;
+    @EJB
+    Unita_organizzativaComponentSession unita_organizzativaComponentSession;
 
     private void validaContestoObbligazione(CNRUserContext userContext,
                                                 Integer esericizioObbligazione,
                                                 String cdCdsObbligazione,
-                                                String cdUoObbligazione){
+                                                String cdUoObbligazione) throws ComponentException, RemoteException {
+
+        Unita_organizzativa_enteBulk uoEnte = (Unita_organizzativa_enteBulk) unita_organizzativaComponentSession.getUoEnte( userContext);
+
         Optional.ofNullable(userContext.getEsercizio()).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Esercizio del Contesto obbligatorio!"));
         Optional.ofNullable(userContext.getCd_cds()).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Cds del Contesto obbligatorio !"));
         Optional.ofNullable(userContext.getCd_unita_organizzativa()).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Uo del Contesto obbligatorio!"));
@@ -56,12 +62,24 @@ public class ObbligazioneResource implements ObbligazioneLocal {
         Optional.ofNullable(cdCdsObbligazione).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Cds  obbligatorio!"));
         Optional.ofNullable(cdUoObbligazione).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, UO  obbligatoria!"));
 
+        Unita_organizzativaBulk unitaCds =  (Unita_organizzativaBulk) unita_organizzativaComponentSession.findUOByCodice(userContext, userContext.getCd_unita_organizzativa());
+        Optional.ofNullable(unitaCds).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Unità Operativa non presente!"));
+        Optional.ofNullable(unitaCds).filter(x->x.getUnita_padre().getFl_cds()&& x.getCd_unita_padre().equalsIgnoreCase(userContext.getCd_cds())).
+                orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "UO selezionata non è del Cds"));
+
         Optional.ofNullable(esericizioObbligazione).filter(x -> userContext.getEsercizio().equals(x)).
                 orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Esercizio del contesto diverso da quello dell'Obbligazione!"));
         Optional.ofNullable(cdCdsObbligazione).filter(x -> userContext.getCd_cds().equals(x)).
                 orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "CdS del contesto diverso da quello dell'Obbligazione!"));
         Optional.ofNullable(cdUoObbligazione).filter(x -> userContext.getCd_unita_organizzativa().equals(x)).
                 orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Unità Organizzativa del contesto diversa da quello dell'Obbligazione!"));
+
+
+        Optional.ofNullable(cdUoObbligazione).filter(x -> userContext.getCd_unita_organizzativa().equals(x)).
+                orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Unità Organizzativa del contesto diversa da quello dell'Obbligazione!"));
+
+        Optional.ofNullable(uoEnte).filter(x -> ( !userContext.getCd_unita_organizzativa().equals(x.getCd_unita_organizzativa()))).
+                orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Funzione non consentita per la Uo Ente"));
     }
     private void validaScadenzeVoce(CNRUserContext userContext, List<ObbligazioneScadVoceDto> scadenzeVoce, Integer numScadenza){
         Integer numScadenzaVoce= 0;
@@ -103,7 +121,7 @@ public class ObbligazioneResource implements ObbligazioneLocal {
                 };
 
     }
-    private void validaObbligazioneDto (CNRUserContext userContext, ObbligazioneDto obbligazioneDto) {
+    private void validaObbligazioneDto (CNRUserContext userContext, ObbligazioneDto obbligazioneDto) throws ComponentException, RemoteException {
         validaContestoObbligazione(userContext,obbligazioneDto.getEsercizio(),
                             obbligazioneDto.getCdsKey().getCd_unita_organizzativa(),
                             obbligazioneDto.getUnitaOrganizzativaKey().getCd_unita_organizzativa());
@@ -321,6 +339,7 @@ public class ObbligazioneResource implements ObbligazioneLocal {
     public Response get(String cd_cds, Integer esercizio, Long pg_obbligazione, Integer esercizio_originale) throws Exception {
         try{
             CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
+            validaContestoObbligazione( userContext,esercizio,cd_cds,userContext.getCd_unita_organizzativa());
             ObbligazioneBulk obbligazioneBulk= ( ObbligazioneBulk) obbligazioneComponentSession.findObbligazione(userContext, new ObbligazioneBulk(cd_cds,esercizio,esercizio_originale,pg_obbligazione));
             if ( !Optional.ofNullable(obbligazioneBulk).isPresent())
                 throw new RestException(Response.Status.NOT_FOUND,String.format("Obbligazione non presente!"));
@@ -336,6 +355,7 @@ public class ObbligazioneResource implements ObbligazioneLocal {
     public Response delete(String cd_cds, Integer esercizio, Long pg_obbligazione, Integer esercizio_originale) throws Exception {
         try{
             CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
+            validaContestoObbligazione( userContext,esercizio,cd_cds,userContext.getCd_unita_organizzativa());
 
             Boolean result=obbligazioneComponentSession.deleteObbligazioneWs(userContext,cd_cds,esercizio,pg_obbligazione,esercizio_originale);
             if ( result)

@@ -69,7 +69,7 @@ public class AccertamentoResource implements AccertamentoLocal {
 
         Unita_organizzativaBulk unitaCds =  (Unita_organizzativaBulk) unita_organizzativaComponentSession.findUOByCodice(userContext, userContext.getCd_unita_organizzativa());
         Optional.ofNullable(unitaCds).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Unità Operativa non presente!"));
-        Optional.ofNullable(unitaCds).filter(x->x.getUnita_padre().getFl_cds()&& x.getCd_unita_padre().equalsIgnoreCase(cdCds)).
+        Optional.ofNullable(unitaCds).filter(x->x.getUnita_padre().getFl_cds()&& x.getCd_unita_padre().equalsIgnoreCase(userContext.getCd_cds())).
                 orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "UO selezionata non è del Cds"));
 
         Optional.ofNullable(esercizio).filter(x -> userContext.getEsercizio().equals(x)).
