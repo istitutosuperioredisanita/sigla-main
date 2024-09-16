@@ -356,8 +356,11 @@ public class ObbligazioneResource implements ObbligazioneLocal {
         try{
             CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
             validaContestoObbligazione( userContext,esercizio,cd_cds,userContext.getCd_unita_organizzativa());
+            ObbligazioneBulk obbligazioneBulk= ( ObbligazioneBulk) obbligazioneComponentSession.findObbligazione(userContext, new ObbligazioneBulk(cd_cds,esercizio,esercizio_originale,pg_obbligazione));
+            if ( !Optional.ofNullable(obbligazioneBulk).isPresent())
+                return Response.status(Response.Status.NO_CONTENT).build();
 
-            Boolean result=obbligazioneComponentSession.deleteObbligazioneWs(userContext,cd_cds,esercizio,pg_obbligazione,esercizio_originale);
+            Boolean result=obbligazioneComponentSession.deleteObbligazioneWs(userContext,obbligazioneBulk);
             if ( result)
                 return Response.status(Response.Status.OK).build();
 

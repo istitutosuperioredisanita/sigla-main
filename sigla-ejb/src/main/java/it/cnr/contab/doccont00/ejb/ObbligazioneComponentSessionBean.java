@@ -739,10 +739,10 @@ public void callRiportaIndietroRequiresNew(it.cnr.jada.UserContext param0,it.cnr
 	}
 
 	@Override
-	public Boolean deleteObbligazioneWs(UserContext uc,String cd_cds,Integer esercizio,Long pg_obbligazione,Integer esercizio_originale) throws ComponentException, PersistencyException {
+	public Boolean deleteObbligazioneWs(UserContext uc,ObbligazioneBulk obbligazione) throws ComponentException, PersistencyException {
 		pre_component_invocation(uc,componentObj);
 		try {
-			Boolean result = ((ObbligazioneComponent)componentObj).deleteObbligazioneWs(uc,cd_cds,esercizio,pg_obbligazione,esercizio_originale);
+			Boolean result = ((ObbligazioneComponent)componentObj).deleteObbligazioneWs(uc,obbligazione);
 			component_invocation_succes(uc,componentObj);
 			return result;
 		} catch(it.cnr.jada.comp.NoRollbackException e) {

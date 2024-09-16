@@ -64,7 +64,7 @@ void callRiportaIndietroRequiresNew(it.cnr.jada.UserContext param0,it.cnr.contab
 ObbligazioneBulk findObbligazione(UserContext uc, ObbligazioneBulk obbligazione) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 ObbligazioneBulk creaObbligazioneWs(UserContext uc, ObbligazioneBulk obbligazione) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 ObbligazioneBulk updateObbligazioneWs(UserContext uc, ObbligazioneBulk obbligazione) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
-Boolean deleteObbligazioneWs(UserContext uc,String cd_cds,Integer esercizio,Long pg_obbligazione,Integer esercizio_originale) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException,it.cnr.jada.persistency.PersistencyException;
+Boolean deleteObbligazioneWs(UserContext uc,ObbligazioneBulk obbligazione) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException,it.cnr.jada.persistency.PersistencyException;
 
 
 

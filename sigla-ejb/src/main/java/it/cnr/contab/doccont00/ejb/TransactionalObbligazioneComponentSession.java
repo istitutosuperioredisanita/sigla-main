@@ -938,14 +938,11 @@ public void callRiportaIndietroRequiresNew(it.cnr.jada.UserContext param0,it.cnr
 	}
 
 	@Override
-	public Boolean deleteObbligazioneWs(UserContext uc,String cd_cds,Integer esercizio,Long pg_obbligazione,Integer esercizio_originale) throws ComponentException, RemoteException, PersistencyException {
+	public Boolean deleteObbligazioneWs(UserContext uc,ObbligazioneBulk obbligazione) throws ComponentException, RemoteException, PersistencyException {
 		try {
 			return (Boolean)invoke("deleteObbligazioneWs",new Object[] {
 					uc,
-					cd_cds,
-					esercizio,
-					pg_obbligazione,
-					esercizio_originale
+					obbligazione
 				});
 		} catch(java.rmi.RemoteException e) {
 			throw e;

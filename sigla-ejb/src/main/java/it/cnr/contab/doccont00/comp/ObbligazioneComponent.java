@@ -6153,11 +6153,7 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 	public ObbligazioneBulk updateObbligazioneWs(UserContext uc,ObbligazioneBulk obbligazione) throws ComponentException {
 		throw new ApplicationException("Fuzionalità non implementata");
 	}
-	public Boolean deleteObbligazioneWs(UserContext uc,String cd_cds,Integer esercizio,Long pg_obbligazione,Integer esercizio_originale) throws ComponentException,PersistencyException {
-
-		ObbligazioneBulk obbligazioneBulk= findObbligazione(uc, new ObbligazioneBulk(cd_cds,esercizio,esercizio_originale,pg_obbligazione));
-		if ( !Optional.ofNullable(obbligazioneBulk).isPresent())
-			return Boolean.FALSE;
+	public Boolean deleteObbligazioneWs(UserContext uc,ObbligazioneBulk obbligazioneBulk) throws ComponentException,PersistencyException {
 
 		verificaStatoEsercizio(
 				uc,
