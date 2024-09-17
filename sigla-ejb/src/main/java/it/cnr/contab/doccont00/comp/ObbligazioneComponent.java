@@ -6171,6 +6171,7 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 		} catch (PersistencyException e) {
 			throw new RuntimeException(e);
 		}
+		Optional.ofNullable(lineeAttivitaValide).orElseThrow(() -> new ApplicationException("Non ci sono linee di Attività Valide"));
 
 		if ( Optional.ofNullable(obbligazione.getObbligazione_scadenzarioColl()).isPresent()){
 				for ( Obbligazione_scadenzarioBulk scadenza:obbligazione.getObbligazione_scadenzarioColl()){

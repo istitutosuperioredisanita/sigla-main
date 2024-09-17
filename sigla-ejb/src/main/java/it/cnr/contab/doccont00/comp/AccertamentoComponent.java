@@ -5114,7 +5114,55 @@ public SQLBuilder selectVariazioneResiduaByClause (UserContext userContext, Acce
 		}
 	}
 
+	private void validaElementoVoceAccertamento(UserContext uc,AccertamentoBulk bulk) throws ComponentException {
+		AccertamentoHome accertamentoHome = ( AccertamentoHome) getHome(uc, AccertamentoBulk.class);
+		CompoundFindClause clauses = new CompoundFindClause();
+		clauses.addClause(FindClause.AND, "cd_voce", SQLBuilder.EQUALS, bulk.getCd_voce());
+
+		SQLBuilder sql = null;
+		List<Elemento_voceBulk> checkVoce= null;
+		try {
+			sql = accertamentoHome.selectCapitoloByClause( bulk,null,null,clauses);
+			checkVoce = getHome(uc, V_voce_f_partita_giroBulk.class).fetchAll( sql );
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		Optional.ofNullable(checkVoce).filter(e->!e.isEmpty()).orElseThrow(() -> new ApplicationException("La voce non può essere usata per l'accertamento"));
+
+	}
+	private List<V_assestatoBulk> listaAssestatoEntrate(UserContext userContext, AccertamentoBulk accertamento) throws ComponentException, PersistencyException{
+		SQLBuilder sql = selectAssestatoEntrateByClause(userContext, accertamento, null, null);
+		return getHome(userContext, V_assestatoBulk.class).fetchAll( sql );
+	}
+
+
+	private void validaLineeAttivitaAccertamento(UserContext uc,AccertamentoBulk accertamento)throws ComponentException {
+
+		List<V_assestatoBulk> lineeAttivitaValide = null;
+		try {
+			lineeAttivitaValide = listaAssestatoEntrate(uc,  accertamento);
+		} catch (PersistencyException e) {
+			throw new RuntimeException(e);
+		}
+		Optional.ofNullable(lineeAttivitaValide).orElseThrow(() -> new ApplicationException("Non ci sono linee di Attività Valide"));
+
+		if ( Optional.ofNullable(accertamento.getAccertamento_scadenzarioColl()).isPresent()){
+			for ( Accertamento_scadenzarioBulk scadenza:accertamento.getAccertamento_scadenzarioColl()){
+				for( Accertamento_scad_voceBulk scadVoce:scadenza.getAccertamento_scad_voceColl()){
+					if ( !(lineeAttivitaValide.stream().
+							filter(e->e.getCd_linea_attivita().equalsIgnoreCase(scadVoce.getCd_linea_attivita())).
+							filter(e->e.getCd_centro_responsabilita().equalsIgnoreCase(scadVoce.getCd_centro_responsabilita())).findFirst().isPresent())){
+						throw new ApplicationException("Il GAE" + scadVoce.getCd_centro_responsabilita()+"/"+scadVoce.getCd_linea_attivita()+" non è Utilizzabile");
+					}
+				}
+			}
+		}
+
+	}
+
 	public AccertamentoBulk creaAccertamentoWs(UserContext uc,AccertamentoBulk accertamento) throws ComponentException {
+		validaElementoVoceAccertamento( uc,accertamento);
+		validaLineeAttivitaAccertamento( uc,accertamento);
 		return ( AccertamentoBulk) creaConBulk(uc,accertamento);
 	}
 	public AccertamentoBulk updateAccertamentoWs(UserContext uc,AccertamentoBulk accertamento) throws ComponentException {

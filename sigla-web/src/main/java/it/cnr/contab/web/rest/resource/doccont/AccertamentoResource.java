@@ -88,7 +88,7 @@ public class AccertamentoResource implements AccertamentoLocal {
         Integer numScadenzaVoce= 0;
 
         if ( !Optional.ofNullable(scadenzeVoce).isPresent())
-            throw new RestException(Response.Status.BAD_REQUEST, "Mancano le informazioni scadenze voce!");
+            throw new RestException(Response.Status.BAD_REQUEST, "Mancano le informazioni delle voci per le scadenze!");
         for ( AccertamentoScadVoceDto scadenzaVoce : scadenzeVoce){
                     numScadenzaVoce++;
                     if ( !Optional.ofNullable(scadenzaVoce.getLineaAttivitaKeyDto()).isPresent())
@@ -105,7 +105,7 @@ public class AccertamentoResource implements AccertamentoLocal {
     private void validaScadenze(CNRUserContext userContext, List<AccertamentoScadenzarioDto> scadenze){
         Integer numScadenza= 0;
         if ( !Optional.ofNullable(scadenze).isPresent())
-            throw new RestException(Response.Status.BAD_REQUEST, "Mancano le scademze!");
+            throw new RestException(Response.Status.BAD_REQUEST, "Mancano le scadenze!");
         for ( AccertamentoScadenzarioDto scadenza : scadenze){
                     numScadenza++;
                     if ( !Optional.ofNullable(scadenza.getDs_scadenza()).isPresent())

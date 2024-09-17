@@ -85,7 +85,7 @@ public class ObbligazioneResource implements ObbligazioneLocal {
         Integer numScadenzaVoce= 0;
 
         if ( !Optional.ofNullable(scadenzeVoce).isPresent())
-            throw new RestException(Response.Status.BAD_REQUEST, "Mancano le informazioni scadenze voce!");
+            throw new RestException(Response.Status.BAD_REQUEST, "Mancano le informazioni delle voci per le scadenze!");
         for ( ObbligazioneScadVoceDto scadenzaVoce : scadenzeVoce){
                     numScadenzaVoce++;
                     if ( !Optional.ofNullable(scadenzaVoce.getLineaAttivitaKeyDto()).isPresent())
@@ -102,7 +102,7 @@ public class ObbligazioneResource implements ObbligazioneLocal {
     private void validaScadenze(CNRUserContext userContext, List<ObbligazioneScadenzarioDto> scadenze){
         Integer numScadenza= 0;
         if ( !Optional.ofNullable(scadenze).isPresent())
-            throw new RestException(Response.Status.BAD_REQUEST, "Mancano le scademze!");
+            throw new RestException(Response.Status.BAD_REQUEST, "Mancano le scadenze!");
         for ( ObbligazioneScadenzarioDto scadenza : scadenze){
                     numScadenza++;
                     if ( !Optional.ofNullable(scadenza.getDs_scadenza()).isPresent())
