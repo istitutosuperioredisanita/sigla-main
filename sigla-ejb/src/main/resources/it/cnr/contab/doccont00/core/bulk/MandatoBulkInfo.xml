@@ -135,7 +135,7 @@
 		property="ds_mandato"
 		maxLength="300"
 		inputSize="70"
-		inputType="TEXT"
+		inputType="TEXTAREA"
 		inputCssClass="w-100"
 		label="Causale di Pagamento"
 		caseSensitiveSearch="false"
