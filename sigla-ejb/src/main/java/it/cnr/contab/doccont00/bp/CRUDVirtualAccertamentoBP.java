@@ -543,7 +543,8 @@ public abstract class CRUDVirtualAccertamentoBP
 
 	public String [][] getTabs() {
 		if(attivaAccertamentoPluriennale){
-			if(!isSearching()) {
+			if(!isSearching() && !(isInserting())) {
+
 				return new String[][]{
 						{"tabAccertamento", "Accertamento", "/doccont00/tab_accertamento.jsp"},
 						{"tabImputazioneFin", "Imputazione Finanziaria", "/doccont00/tab_imputazione_fin_accertamento.jsp"},
