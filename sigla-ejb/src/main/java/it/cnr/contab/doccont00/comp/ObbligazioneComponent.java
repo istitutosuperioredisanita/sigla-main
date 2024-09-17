@@ -6147,7 +6147,46 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 			throw handleException(e);
 		}
 	}
+	private void validaElementoVoceObbligazione(UserContext uc,ObbligazioneBulk bulk) throws ComponentException {
+		ObbligazioneHome obbligazioneHome = ( ObbligazioneHome) getHome(uc, ObbligazioneBulk.class);
+		CompoundFindClause clauses = new CompoundFindClause();
+		clauses.addClause(FindClause.AND, "cd_elemento_voce", SQLBuilder.EQUALS, bulk.getElemento_voce().getCd_elemento_voce());
+
+		SQLBuilder sql = null;
+		List<Elemento_voceBulk> checkVoce= null;
+		try {
+			sql = obbligazioneHome.selectElemento_voceByClause( bulk,null,null,clauses);
+			checkVoce = getHome(uc, Elemento_voceBulk.class).fetchAll( sql );
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		Optional.ofNullable(checkVoce).filter(e->!e.isEmpty()).orElseThrow(() -> new ApplicationException("La voce non può essere usata nell'obbligazione"));
+
+	}
+	private void validaLineeAttivitaObbligazione(UserContext uc,ObbligazioneBulk obbligazione)throws ComponentException {
+
+		List<V_assestatoBulk> lineeAttivitaValide = null;
+		try {
+			lineeAttivitaValide = listaAssestatoSpese(uc,  obbligazione);
+		} catch (PersistencyException e) {
+			throw new RuntimeException(e);
+		}
+
+		if ( Optional.ofNullable(obbligazione.getObbligazione_scadenzarioColl()).isPresent()){
+				for ( Obbligazione_scadenzarioBulk scadenza:obbligazione.getObbligazione_scadenzarioColl()){
+						for( Obbligazione_scad_voceBulk scadVoce:scadenza.getObbligazione_scad_voceColl()){
+							if ( !(lineeAttivitaValide.stream().
+									filter(e->e.getCd_linea_attivita().equalsIgnoreCase(scadVoce.getCd_linea_attivita())).
+									filter(e->e.getCd_centro_responsabilita().equalsIgnoreCase(scadVoce.getCd_centro_responsabilita())).findFirst().isPresent())){
+								throw new ApplicationException("Il GAE" + scadVoce.getCd_centro_responsabilita()+"/"+scadVoce.getCd_linea_attivita()+" non è Utilizzabile");
+							}
+						}
+				}
+			}
+	}
 	public ObbligazioneBulk creaObbligazioneWs(UserContext uc,ObbligazioneBulk obbligazione) throws ComponentException {
+		validaElementoVoceObbligazione(uc,obbligazione);
+		validaLineeAttivitaObbligazione( uc,obbligazione);
 		return ( ObbligazioneBulk) creaConBulk(uc,obbligazione);
 	}
 	public ObbligazioneBulk updateObbligazioneWs(UserContext uc,ObbligazioneBulk obbligazione) throws ComponentException {

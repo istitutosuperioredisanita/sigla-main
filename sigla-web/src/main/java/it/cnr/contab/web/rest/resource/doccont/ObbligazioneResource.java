@@ -167,7 +167,7 @@ public class ObbligazioneResource implements ObbligazioneLocal {
     }
     //inizio MapStruct
     private ObbligazioneBulk obbligazioneDtoTodObbligazioneBulk(ObbligazioneDto obbligazioneDto, CNRUserContext userContext) throws ComponentException, RemoteException {
-        ObbligazioneBulk obbligazioneBulk = new ObbligazioneBulk();
+        ObbligazioneOrdBulk obbligazioneBulk = new ObbligazioneOrdBulk();
         obbligazioneBulk.setEsercizio( obbligazioneDto.getEsercizio());
         obbligazioneBulk.setEsercizio_originale(obbligazioneDto.getEsercizio_originale());
         obbligazioneBulk.setCds(( CdsBulk) crudComponentSession.findByPrimaryKey( userContext,new CdsBulk(obbligazioneDto.getCdsKey().getCd_unita_organizzativa())));
@@ -192,7 +192,7 @@ public class ObbligazioneResource implements ObbligazioneLocal {
         voce.setCd_elemento_voce(obbligazioneDto.getElemento_voceKey().getCd_elemento_voce());
         obbligazioneBulk.setElemento_voce((Elemento_voceBulk)crudComponentSession.findByPrimaryKey(userContext,voce));
 
-        obbligazioneBulk = obbligazioneComponentSession.listaCapitoliPerCdsVoce(userContext, obbligazioneBulk);
+        obbligazioneBulk = (ObbligazioneOrdBulk) obbligazioneComponentSession.listaCapitoliPerCdsVoce(userContext, obbligazioneBulk);
         obbligazioneBulk.setCapitoliDiSpesaCdsSelezionatiColl(obbligazioneBulk.getCapitoliDiSpesaCdsColl());
 
         obbligazioneBulk.setFl_gara_in_corso(obbligazioneDto.getFl_gara_in_corso());
