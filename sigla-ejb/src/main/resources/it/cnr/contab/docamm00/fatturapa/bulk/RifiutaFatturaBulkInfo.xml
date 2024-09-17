@@ -25,7 +25,7 @@
             property="messageText"
             label="Richiesta storno:"
             inputType="TEXTAREA"
-            maxLength="250"
+            maxLength="400"
             cols="60"
             rows="5"
             nullable="false"/>
@@ -34,7 +34,7 @@
             property="messageText"
             label="Rifiuto:"
             inputType="TEXTAREA"
-            maxLength="250"
+            maxLength="400"
             cols="60"
             rows="5"
             nullable="false"/>
