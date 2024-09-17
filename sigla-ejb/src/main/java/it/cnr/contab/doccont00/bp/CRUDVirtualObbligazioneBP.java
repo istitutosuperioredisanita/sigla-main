@@ -117,7 +117,9 @@ public void basicEdit(it.cnr.jada.action.ActionContext context,it.cnr.jada.bulk.
 		//	27/02/2004 - BORRIELLO - Segnalazione Interna
 		if ( obb.getStato_obbligazione().equals(ObbligazioneBulk.STATO_OBB_STORNATO)) {
 			setStatus(VIEW);
-			setMessage("Impegno Residuo stornato. Non consentita la modifica.");
+
+				setMessage("Impegno "+ (obb.isObbligazioneResiduo()?"Residuo stornato": "stornato.")+ "Non consentita la modifica.");
+
 		}
 	
 	}
