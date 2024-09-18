@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-abstract  public class DocumentoGenericoDto<T> extends DocumentoGenericoKeyDto implements Serializable {
+abstract  public class DocumentoGenericoDto<T extends DocumentoGenericoRigaDto> extends DocumentoGenericoKeyDto implements Serializable {
     private java.sql.Timestamp data_registrazione;
     private java.lang.String ds_documento_generico;
     private java.sql.Timestamp dt_a_competenza_coge;
@@ -25,6 +25,8 @@ abstract  public class DocumentoGenericoDto<T> extends DocumentoGenericoKeyDto i
     public List<T> getRighe() {
         return righe;
     }
+
+
 
     public void setRighe(List<T> righe) {
         this.righe = righe;

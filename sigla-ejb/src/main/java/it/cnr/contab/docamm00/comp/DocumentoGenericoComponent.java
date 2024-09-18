@@ -6334,7 +6334,6 @@ public class DocumentoGenericoComponent
                 accertamentoScadenzarioDB.setIm_associato_doc_amm( accertamentoScadenzario.getIm_associato_doc_amm().add(riga.getIm_riga()));
                 updateBulk( userContext, accertamentoScadenzarioDB );
             }
-
             AnagraficoBulk anagrafico = (AnagraficoBulk) getHome( userContext, AnagraficoBulk.class ).findByPrimaryKey( riga.getTerzo().getAnagrafico());
             riga.getTerzo().setAnagrafico( anagrafico );
             riga.setRagione_sociale( anagrafico.getRagione_sociale());
@@ -6346,7 +6345,6 @@ public class DocumentoGenericoComponent
 
             riga.setDocumento_generico( documento );
             documento.getDocumento_generico_dettColl().add(  riga );
-
             return riga;
         }
         catch ( Exception e )
@@ -6545,7 +6543,10 @@ public class DocumentoGenericoComponent
     public Documento_genericoBulk modificaDocumentoGenericoWs(UserContext uc,Documento_genericoBulk documentoGenericoBulk) throws ComponentException{
         return documentoGenericoBulk;
     }
+
+
     public Documento_genericoBulk creaDocumentoGenericoWs(UserContext uc,Documento_genericoBulk documentoGenericoBulk) throws ComponentException, PersistencyException {
+        //Controlla se le scadenze già sono impegnate da altro documento di spesa o di incasso
         String errorMessage;
         if ( !Optional.ofNullable(documentoGenericoBulk).isPresent()){
             errorMessage="Documento Generico da creare vuoto";
@@ -6557,13 +6558,55 @@ public class DocumentoGenericoComponent
         }
         for ( Documento_generico_rigaBulk documentoGenericoRigaBulk:documentoGenericoBulk.getDocumento_generico_dettColl()){
             if ( !documentoGenericoBulk.isGenericoAttivo()) {
-                documentoGenericoRigaBulk.setObbligazione_scadenziario(caricaObbligazionePer(uc, documentoGenericoRigaBulk.getObbligazione_scadenziario()));
-                documentoGenericoBulk.addToDocumento_generico_obbligazioniHash(documentoGenericoRigaBulk.getObbligazione_scadenziario(), documentoGenericoRigaBulk);
+
+                Obbligazione_scadenzarioBulk os = null;
+                try {
+                    os = (Obbligazione_scadenzarioBulk)getHome(uc,Obbligazione_scadenzarioBulk.class).
+                            findAndLock(new Obbligazione_scadenzarioBulk(documentoGenericoRigaBulk.getObbligazione_scadenziario().getCd_cds(),
+                                    documentoGenericoRigaBulk.getObbligazione_scadenziario().getEsercizio(),
+                                    documentoGenericoRigaBulk.getObbligazione_scadenziario().getEsercizio_originale(),
+                                    documentoGenericoRigaBulk.getObbligazione_scadenziario().getPg_obbligazione(),
+                                    documentoGenericoRigaBulk.getObbligazione_scadenziario().getPg_obbligazione_scadenzario()));
+                    if (
+                            BigDecimal.ZERO.compareTo(os.getIm_associato_doc_amm())!= 0 ||
+                            BigDecimal.ZERO.compareTo(os.getIm_associato_doc_amm()) !=0 )
+                        throw new ApplicationException("Operazione non possibile! E' stata utilizzata da un altro utente la scadenza nr." + os.getPg_obbligazione_scadenzario() +
+                                    " dell'impegno " + os.getEsercizio_originale() + "/" + os.getPg_obbligazione());
+
+                    documentoGenericoRigaBulk.setObbligazione_scadenziario(caricaObbligazionePer(uc, documentoGenericoRigaBulk.getObbligazione_scadenziario()));
+                    documentoGenericoBulk.addToDocumento_generico_obbligazioniHash(documentoGenericoRigaBulk.getObbligazione_scadenziario(), documentoGenericoRigaBulk);
+                } catch (Exception e) {
+                    throw new ComponentException(e);
+                }
             }else{
-                documentoGenericoRigaBulk.setAccertamento_scadenziario(caricaAccertamentoPer(uc, documentoGenericoRigaBulk.getAccertamento_scadenziario()));
+
+                Accertamento_scadenzarioBulk os = null;
+                try {
+                    os = (Accertamento_scadenzarioBulk)getHome(uc,Accertamento_scadenzarioBulk.class).
+                            findAndLock(new Obbligazione_scadenzarioBulk(documentoGenericoRigaBulk.getObbligazione_scadenziario().getCd_cds(),
+                                    documentoGenericoRigaBulk.getAccertamento_scadenziario().getEsercizio(),
+                                    documentoGenericoRigaBulk.getAccertamento_scadenziario().getEsercizio_originale(),
+                                    documentoGenericoRigaBulk.getAccertamento_scadenziario().getPg_accertamento(),
+                                    documentoGenericoRigaBulk.getAccertamento_scadenziario().getPg_accertamento_scadenzario()));
+                    if (
+                            BigDecimal.ZERO.compareTo(os.getIm_associato_doc_amm())!= 0 ||
+                                    BigDecimal.ZERO.compareTo(os.getIm_associato_doc_amm()) !=0 )
+                        throw new ApplicationException("Operazione non possibile! E' stata utilizzata da un altro utente la scadenza nr." +
+                                os.getPg_accertamento_scadenzario() +
+                                " dell'accertamento " + os.getEsercizio_originale() + "/" + os.getPg_accertamento());
+
+                    documentoGenericoRigaBulk.setAccertamento_scadenziario(caricaAccertamentoPer(uc, documentoGenericoRigaBulk.getAccertamento_scadenziario()));
+                    documentoGenericoBulk.addToDocumento_generico_obbligazioniHash(documentoGenericoRigaBulk.getObbligazione_scadenziario(), documentoGenericoRigaBulk);
+                } catch (Exception e) {
+                    throw new ComponentException(e);
+                }
                 documentoGenericoBulk.addToDocumento_generico_accertamentiHash(documentoGenericoRigaBulk.getAccertamento_scadenziario(), documentoGenericoRigaBulk);
             }
+
+
+
         }
+
 
         return ( Documento_genericoBulk) creaConBulk(uc, documentoGenericoBulk);
 

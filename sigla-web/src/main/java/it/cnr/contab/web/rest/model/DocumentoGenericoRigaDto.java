@@ -3,7 +3,7 @@ package it.cnr.contab.web.rest.model;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
- public class DocumentoGenericoRigaDto {
+ abstract public class DocumentoGenericoRigaDto {
     private Long  progressivo_riga;
     private java.lang.String ds_riga;
     private java.sql.Timestamp dt_a_competenza_coge;
@@ -13,6 +13,8 @@ import java.sql.Timestamp;
 
     private EnumAssMandRevDocGenRiga assMandRev;
 
+
+     abstract public TerzoPagamentoIncasso getTerzo();
 
     public Long getProgressivo_riga() {
         return progressivo_riga;
