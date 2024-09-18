@@ -17,13 +17,6 @@
 
 package it.cnr.contab.doccont00.bp;
 
-import java.math.BigDecimal;
-import java.rmi.RemoteException;
-import java.util.Enumeration;
-import java.util.Iterator;
-
-import javax.ejb.EJBException;
-
 import it.cnr.contab.config00.latt.bulk.CostantiTi_gestione;
 import it.cnr.contab.doccont00.core.bulk.AccertamentoBulk;
 import it.cnr.contab.doccont00.core.bulk.Accertamento_scad_voceBulk;
@@ -46,6 +39,12 @@ import it.cnr.jada.util.Config;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.jada.util.jsp.Button;
+
+import javax.ejb.EJBException;
+import java.math.BigDecimal;
+import java.rmi.RemoteException;
+import java.util.Enumeration;
+import java.util.Iterator;
 
 /**
 * @author rpagano
@@ -208,8 +207,9 @@ public class SelezionatoreAssestatoDocContBP extends SelezionatoreAssestatoBP{
 					for ( Enumeration old = oldHashRipartizione.keys(); old.hasMoreElements(); ) {
 						oldKey = (Accertamento_scad_voceBulk)old.nextElement();
 						if (oldKey.getCd_centro_responsabilita().equals( key.getCd_centro_responsabilita() ) &&
-							oldKey.getCd_linea_attivita().equals( key.getCd_linea_attivita() ) &&
-							oldKey.getCd_voce().equals( key.getCd_voce() )) {
+							oldKey.getCd_linea_attivita().equals( key.getCd_linea_attivita() )) //&&
+							//oldKey.getCd_voce().equals( key.getCd_voce() ))
+							{
 							assestato.setDb_imp_utilizzato( (BigDecimal)oldHashRipartizione.get( oldKey ) );
 							break;
 						}
