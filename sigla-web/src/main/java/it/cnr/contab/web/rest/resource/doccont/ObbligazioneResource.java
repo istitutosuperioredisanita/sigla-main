@@ -37,7 +37,7 @@ import java.util.stream.Stream;
 
 @Stateless
 public class ObbligazioneResource implements ObbligazioneLocal {
-    private final Logger LOGGER = LoggerFactory.getLogger(LineaAttivitaResource.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(ObbligazioneResource.class);
     @Context
     SecurityContext securityContext;
     @EJB

@@ -42,7 +42,7 @@ import java.util.stream.Stream;
 
 @Stateless
 public class AccertamentoResource implements AccertamentoLocal {
-    private final Logger LOGGER = LoggerFactory.getLogger(LineaAttivitaResource.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(AccertamentoResource.class);
     @Context
     SecurityContext securityContext;
     @EJB
@@ -195,6 +195,7 @@ public class AccertamentoResource implements AccertamentoLocal {
             throw new RestException(Response.Status.BAD_REQUEST,String.format("La Voce può essere usata solo per Accrtamenti Residui "));
 
         accertamentoBulk.setCapitolo(new V_voce_f_partita_giroBulk(voce.getCd_voce(), voce.getEsercizio(), voce.getTi_appartenenza(), voce.getTi_gestione()));
+        //accertamentoBulk.setCapitoliDiEntrataCdsSelezionatiColl();
 
         accertamentoBulk.setTi_appartenenza(voce.getTi_appartenenza());
         accertamentoBulk.setTi_gestione(voce.getTi_gestione());
