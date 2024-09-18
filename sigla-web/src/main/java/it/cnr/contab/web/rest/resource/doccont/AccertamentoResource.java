@@ -194,7 +194,11 @@ public class AccertamentoResource implements AccertamentoLocal {
         if (voce.getFl_solo_residuo())
             throw new RestException(Response.Status.BAD_REQUEST,String.format("La Voce può essere usata solo per Accrtamenti Residui "));
 
-        accertamentoBulk.setCapitolo(new V_voce_f_partita_giroBulk(voce.getCd_voce(), voce.getEsercizio(), voce.getTi_appartenenza(), voce.getTi_gestione()));
+        accertamentoBulk.setCapitolo( (V_voce_f_partita_giroBulk) crudComponentSession.findByPrimaryKey(userContext,
+                new V_voce_f_partita_giroBulk(voce.getCd_voce(),
+                        voce.getEsercizio(),
+                        voce.getTi_appartenenza(),
+                        voce.getTi_gestione())));
         //accertamentoBulk.setCapitoliDiEntrataCdsSelezionatiColl();
 
         accertamentoBulk.setTi_appartenenza(voce.getTi_appartenenza());
