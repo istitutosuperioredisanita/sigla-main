@@ -5136,6 +5136,20 @@ public SQLBuilder selectVariazioneResiduaByClause (UserContext userContext, Acce
 	}
 
 
+	private List<WorkpackageBulk> getLineeAttivitaSelezionabili(UserContext userContext, AccertamentoBulk accertamento,WorkpackageBulk workpackageBulk){
+		SQLBuilder sql = null;
+		try {
+			CompoundFindClause clauses = new CompoundFindClause();
+			clauses.addClause(FindClause.AND, "cd_centro_responsabilita", SQLBuilder.EQUALS, workpackageBulk.getCd_centro_responsabilita());
+			clauses.addClause(FindClause.AND, "cd_linea_attivita", SQLBuilder.EQUALS, workpackageBulk.getCd_linea_attivita());
+			sql = selectLinea_attByClause(userContext, accertamento,  clauses );
+			return getHome(userContext, WorkpackageBulk.class).fetchAll( sql );
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+	}
+
 	private void validaLineeAttivitaAccertamento(UserContext uc,AccertamentoBulk accertamento)throws ComponentException {
 
 		List<V_assestatoBulk> lineeAttivitaValide = null;
@@ -5148,11 +5162,21 @@ public SQLBuilder selectVariazioneResiduaByClause (UserContext userContext, Acce
 
 		if ( Optional.ofNullable(accertamento.getAccertamento_scadenzarioColl()).isPresent()){
 			for ( Accertamento_scadenzarioBulk scadenza:accertamento.getAccertamento_scadenzarioColl()){
-				for( Accertamento_scad_voceBulk scadVoce:scadenza.getAccertamento_scad_voceColl()){
-					if ( !(lineeAttivitaValide.stream().
-							filter(e->e.getCd_linea_attivita().equalsIgnoreCase(scadVoce.getCd_linea_attivita())).
-							filter(e->e.getCd_centro_responsabilita().equalsIgnoreCase(scadVoce.getCd_centro_responsabilita())).findFirst().isPresent())){
-						throw new ApplicationException("Il GAE" + scadVoce.getCd_centro_responsabilita()+"/"+scadVoce.getCd_linea_attivita()+" non è Utilizzabile");
+				Map<String,Map<String,List<WorkpackageBulk>>> workpackges=scadenza.getAccertamento_scad_voceColl().stream().
+						map(Accertamento_scad_voceBulk::getLinea_attivita).
+						collect(Collectors.groupingBy(scadVoce->scadVoce.getCd_centro_responsabilita(),
+						Collectors.groupingBy(scadVoce->scadVoce.getCd_linea_attivita())));
+
+				for (Map.Entry<String,Map<String,List<WorkpackageBulk>>> centoResposanbilita : workpackges.entrySet()) {
+					for (Map.Entry<String,List<WorkpackageBulk>> cdLineaAttivita : centoResposanbilita.getValue().entrySet()) {
+						if ( !(lineeAttivitaValide.stream().
+								filter(e->e.getCd_centro_responsabilita().equalsIgnoreCase(centoResposanbilita.getKey())).
+								filter(e->e.getCd_linea_attivita().equalsIgnoreCase(cdLineaAttivita.getKey()))
+								.findFirst().isPresent())){
+								List<WorkpackageBulk> l =getLineeAttivitaSelezionabili( uc,accertamento,new WorkpackageBulk(centoResposanbilita.getKey(),cdLineaAttivita.getKey()));
+								if ( ( !Optional.ofNullable(l).isPresent()) ||l.isEmpty())
+									throw new ApplicationException("Il GAE" + cdLineaAttivita.getKey()+"/"+cdLineaAttivita.getKey()+" non è Utilizzabile");
+						}
 					}
 				}
 			}
