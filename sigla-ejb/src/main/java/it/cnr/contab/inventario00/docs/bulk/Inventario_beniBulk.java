@@ -927,7 +927,7 @@ public void setHa_dettagli(Boolean boolean1) {
 	}
 
 	public BigDecimal getValore_residuo_da_ammortizzare() {
-		return Utility.nvl(this.getValore_iniziale(),BigDecimal.ZERO).subtract(Utility.nvl(this.getValore_ammortizzato(),BigDecimal.ZERO));
+		return Utility.nvl(this.getImponibile_ammortamento(),BigDecimal.ZERO).subtract(Utility.nvl(this.getValore_ammortizzato(),BigDecimal.ZERO));
 	}
 
 	public void setValore_residuo_da_ammortizzare(BigDecimal valore_residuo_da_ammortizzare) {
