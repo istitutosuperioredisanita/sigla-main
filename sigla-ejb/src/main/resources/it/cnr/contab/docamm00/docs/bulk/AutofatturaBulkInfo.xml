@@ -208,7 +208,7 @@
 			inputType="SELECT"
 			nullable="false"
 			enabledOnSearch="true"
-			enabledOnEdit="false"
+			enabledOnFreeSearch="true"
 			label="Sezionale"/>
 
 	<formFieldProperty
@@ -335,10 +335,10 @@
 		name="fl_san_marino_con_iva" />
 	<findFieldProperty
 		name="cd_unita_organizzativa" />
-	<!--
+
 	<findFieldProperty
 		name="cd_tipo_sezionale" />
-		-->
+
 	<findFieldProperty
 		name="cd_uo_ft_passiva" />
 	<findFieldProperty

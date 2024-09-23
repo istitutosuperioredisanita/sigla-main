@@ -18,10 +18,12 @@
 package it.cnr.contab.docamm00.tabrif.bulk;
 
 import it.cnr.contab.util.enumeration.TipoIVA;
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
+import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.persistency.IntrospectionException;
+import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.persistency.sql.SQLBuilder;
 
 public class Tipo_sezionaleHome extends BulkHome {
 public Tipo_sezionaleHome(java.sql.Connection conn) {
@@ -91,6 +93,7 @@ private SQLBuilder selectTipiSezionali(
 	throws PersistencyException, IntrospectionException{
 	
 	SQLBuilder sql = createSQLBuilder();
+	sql.setDistinctClause(true);
 	sql.addTableToHeader("SEZIONALE");
 	sql.addSQLJoin("SEZIONALE.CD_TIPO_SEZIONALE","TIPO_SEZIONALE.CD_TIPO_SEZIONALE");
 	sql.addSQLClause("AND","SEZIONALE.CD_UNITA_ORGANIZZATIVA",sql.EQUALS,unita_organizzativa);

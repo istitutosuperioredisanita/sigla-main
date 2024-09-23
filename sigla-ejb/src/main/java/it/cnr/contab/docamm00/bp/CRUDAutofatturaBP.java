@@ -22,6 +22,7 @@ import it.cnr.contab.util00.bp.AllegatiCRUDBP;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.bulk.OggettoBulk;
 import org.slf4j.LoggerFactory;
 
 import java.util.TreeMap;
@@ -41,6 +42,18 @@ public  class CRUDAutofatturaBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Aut
         super(function);
     }
 
+    protected void init(it.cnr.jada.action.Config config,
+                        it.cnr.jada.action.ActionContext context)
+            throws it.cnr.jada.action.BusinessProcessException {
+
+
+
+        super.init(config, context);
+
+
+        resetTabs();
+
+    }
     @Override
     protected String getStorePath(AutofatturaBulk allegatoParentBulk, boolean create) throws BusinessProcessException {
         return allegatoParentBulk.getStorePath().get(0);
@@ -55,6 +68,12 @@ public  class CRUDAutofatturaBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Aut
         super();
     }
 
+
+    public OggettoBulk createEmptyModelForSearch(it.cnr.jada.action.ActionContext context)
+            throws it.cnr.jada.action.BusinessProcessException {
+
+        return super.createEmptyModelForSearch(context);
+    }
 
     private static final String[] TAB_AUTOFATTURA = new String[]{ "tabAutofattura","Testata","/docamm00/tab_autofattura.jsp" };
     private static final String[] TAB_ALLEGATI = new String[]{ "tabAllegati","Allegati","/util00/tab_allegati.jsp"};

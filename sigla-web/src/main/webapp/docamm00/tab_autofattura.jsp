@@ -63,6 +63,14 @@
                         </td>
          </tr>
          <% }%>
+         <tr>
+               	<td>
+               		<% bp.getController().writeFormLabel(out,"sezionale");%>
+               	</td>
+              	<td colspan="10">
+              		<% bp.getController().writeFormInput(out,null,"sezionale",false,null,"");%>
+              	</td>
+               </tr>
 	 <tr>
 		<% if (!bp.isSearching()) { %>	 
 	   		<td><% bp.getController().writeFormLabel(out,"stato_cofi");%></td>
