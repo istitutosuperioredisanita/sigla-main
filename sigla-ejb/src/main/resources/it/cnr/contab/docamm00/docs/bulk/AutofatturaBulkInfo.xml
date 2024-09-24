@@ -321,6 +321,8 @@
 			name="sezionale"
 			property="tipo_sezionale.ds_tipo_sezionale"
 			printProperty=""/>
+	<columnFieldProperty
+			name="sezionale"/>
 
 	<findFieldProperty
 		name="cd_cds" />
