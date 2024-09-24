@@ -84,6 +84,8 @@
 		maxLength="10"
 		inputSize="10"
 		inputType="TEXT"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
 		label="Cod. Sezionale"
 		caseSensitiveSearch="false" />
 	<fieldProperty
@@ -197,6 +199,7 @@
 		inputType="TEXT"
 		label="ti_fattura"
 		caseSensitiveSearch="false" />
+
 
 	<fieldProperty
 			name="sezionale"

@@ -42,6 +42,8 @@ public  class CRUDAutofatturaBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Aut
         super(function);
     }
 
+    /*
+
     protected void init(it.cnr.jada.action.Config config,
                         it.cnr.jada.action.ActionContext context)
             throws it.cnr.jada.action.BusinessProcessException {
@@ -53,7 +55,7 @@ public  class CRUDAutofatturaBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Aut
 
         resetTabs();
 
-    }
+    }*/
     @Override
     protected String getStorePath(AutofatturaBulk allegatoParentBulk, boolean create) throws BusinessProcessException {
         return allegatoParentBulk.getStorePath().get(0);
@@ -69,10 +71,12 @@ public  class CRUDAutofatturaBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Aut
     }
 
 
-    public OggettoBulk createEmptyModelForSearch(it.cnr.jada.action.ActionContext context)
-            throws it.cnr.jada.action.BusinessProcessException {
-
-        return super.createEmptyModelForSearch(context);
+    public OggettoBulk createNewSearchBulk(ActionContext context)
+            throws BusinessProcessException {
+        AutofatturaBulk fs = (AutofatturaBulk) super
+                .createNewSearchBulk(context);
+        fs.setFl_autofattura(Boolean.TRUE);
+        return fs;
     }
 
     private static final String[] TAB_AUTOFATTURA = new String[]{ "tabAutofattura","Testata","/docamm00/tab_autofattura.jsp" };
@@ -89,15 +93,20 @@ public  class CRUDAutofatturaBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Aut
             tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
         return tabs;
     }
+
     public void resetForSearch(ActionContext context) throws BusinessProcessException {
+
         super.resetForSearch(context);
         resetTabs();
+
     }
 
 
     public void resetTabs() {
         setTab("tab", "tabAutofattura");
     }
+
+
 
 
 }
