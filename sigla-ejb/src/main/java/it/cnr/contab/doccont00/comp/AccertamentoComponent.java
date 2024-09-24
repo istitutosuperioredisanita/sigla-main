@@ -2163,17 +2163,14 @@ public AccertamentoBulk generaDettagliScadenzaAccertamento (UserContext aUC,Acce
 
     private BigDecimal getPercentualeLineAttivita(it.cnr.contab.config00.latt.bulk.WorkpackageKey lineaKey, AccertamentoBulk accertamento) {
 
-        BigDecimal totScadenzaVoce = new BigDecimal(0);
-
-
         for (Accertamento_scadenzarioBulk scadenza : accertamento.getAccertamento_scadenzarioColl()) {
             for (Accertamento_scad_voceBulk scadVoce : scadenza.getAccertamento_scad_voceColl()) {
                 if (scadVoce.getCd_linea_attivita().equals(lineaKey.getCd_linea_attivita()) && scadVoce.getCd_centro_responsabilita().equals(lineaKey.getCd_centro_responsabilita())) {
-                    totScadenzaVoce = totScadenzaVoce.add(Utility.nvl(scadVoce.getIm_voce()));
+                   return scadVoce.getPrc();
                 }
             }
         }
-        return (Utility.nvl(totScadenzaVoce).divide(accertamento.getIm_accertamento(), 4, java.math.BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)));
+        return null;
     }
     /*
      * Modifica l'importo di una scadenza e aggiunge la differenza alla scadenza successiva oppure modifica l'importo di una
