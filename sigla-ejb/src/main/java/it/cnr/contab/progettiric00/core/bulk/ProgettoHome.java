@@ -1103,6 +1103,24 @@ public class ProgettoHome extends BulkHome {
 		return  (ProgettoBulk)coll.iterator().next();
 
 	}
+	public ProgettoBulk selectProgettoDaLineaAttivita(it.cnr.jada.UserContext aUC, V_pdg_accertamento_etrBulk accEnt) throws PersistencyException, IntrospectionException{
+		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class);
+		SQLBuilder sql = progettohome.createSQLBuilder();
+
+		sql.addTableToHeader("PROGETTO_OTHER_FIELD");
+		sql.addSQLJoin("PROGETTO.PG_PROGETTO", "PROGETTO_OTHER_FIELD.PG_PROGETTO");
+		sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS,accEnt.getEsercizio());
+		sql.addSQLClause("AND","CD_PROGETTO",sql.EQUALS,accEnt.getCd_progetto());
+		sql.addSQLClause("AND","TIPO_FASE",sql.EQUALS,ProgettoBulk.TIPO_FASE_NON_DEFINITA);
+
+		java.util.Collection coll = this.fetchAll(sql);
+		if (coll.size() != 1)
+			return null;
+
+		return  (ProgettoBulk)coll.iterator().next();
+
+	}
+
 	public ProgettoBulk selectProgettoDaLineaAttivita(it.cnr.jada.UserContext aUC, WorkpackageBulk lineaAtt) throws PersistencyException, IntrospectionException{
 		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class);
 		SQLBuilder sql = progettohome.createSQLBuilder();
@@ -1120,5 +1138,21 @@ public class ProgettoHome extends BulkHome {
 		return  (ProgettoBulk)coll.iterator().next();
 
 	}
+	public ProgettoBulk selectProgettoDaLineaAttivita(WorkpackageBulk lineaAtt,Integer esercizio) throws PersistencyException, IntrospectionException{
+		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class);
+		SQLBuilder sql = progettohome.createSQLBuilder();
 
+		sql.addTableToHeader("PROGETTO_OTHER_FIELD");
+		sql.addSQLJoin("PROGETTO.PG_PROGETTO", "PROGETTO_OTHER_FIELD.PG_PROGETTO");
+		sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS,esercizio);
+		sql.addSQLClause("AND","PROGETTO.PG_PROGETTO",sql.EQUALS,lineaAtt.getPg_progetto());
+		sql.addSQLClause("AND","TIPO_FASE",sql.EQUALS,ProgettoBulk.TIPO_FASE_NON_DEFINITA);
+
+		java.util.Collection coll = this.fetchAll(sql);
+		if (coll.size() != 1)
+			return null;
+
+		return  (ProgettoBulk)coll.iterator().next();
+
+	}
 }

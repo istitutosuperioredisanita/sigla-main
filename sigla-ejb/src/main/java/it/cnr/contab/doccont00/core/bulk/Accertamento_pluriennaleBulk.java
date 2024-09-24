@@ -6,6 +6,9 @@ package it.cnr.contab.doccont00.core.bulk;
 
 import it.cnr.jada.bulk.BulkCollection;
 import it.cnr.jada.bulk.BulkList;
+
+import java.util.Iterator;
+
 public class Accertamento_pluriennaleBulk extends Accertamento_pluriennaleBase {
 	/**
 	 * [ACCERTAMENTO ]
@@ -218,4 +221,40 @@ public class Accertamento_pluriennaleBulk extends Accertamento_pluriennaleBase {
 		nuovo.setCrudStatus(TO_BE_CREATED);
 		return nuovo;
 	}
+
+
+	private BulkList<Accertamento_pluriennale_voceBulk> clonaRigheVoceColl(Accertamento_pluriennaleBulk accertamento,it.cnr.jada.action.ActionContext context){
+
+		if ( this.getRigheVoceColl()==null || this.getRigheVoceColl().isEmpty())
+			return this.getRigheVoceColl();
+
+		BulkList<Accertamento_pluriennale_voceBulk> pluriennaliVoce= new BulkList<Accertamento_pluriennale_voceBulk>();
+
+		for ( Accertamento_pluriennale_voceBulk pv:this.getRigheVoceColl()){
+			Accertamento_pluriennale_voceBulk n = (Accertamento_pluriennale_voceBulk) pv.clone();
+			pluriennaliVoce.add( n);
+		}
+		return pluriennaliVoce;
+	}
+
+	public int addToRigheVoceCollBulkList(Accertamento_pluriennale_voceBulk dett){
+
+		getRigheVoceColl().add(dett);
+		return getRigheVoceColl().size()-1;
+	}
+
+	public Accertamento_pluriennale_voceBulk removeFromRigheVoceCollBulkList(int index) {
+		Accertamento_pluriennale_voceBulk dett = (Accertamento_pluriennale_voceBulk)getRigheVoceColl().remove(index);
+		dett.setToBeDeleted();
+		return dett;
+	}
+	public void setToBeDeleted() {
+		super.setToBeDeleted();
+		for (Iterator i = righeVoceColl.iterator(); i.hasNext(); )
+			((Accertamento_pluriennale_voceBulk) i.next()).setToBeDeleted();
+		for (Iterator i = righeVoceColl.deleteIterator(); i.hasNext(); )
+			((Accertamento_pluriennale_voceBulk) i.next()).setToBeDeleted();
+
+	}
+
 }

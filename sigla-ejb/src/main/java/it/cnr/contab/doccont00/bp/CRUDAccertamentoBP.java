@@ -61,6 +61,14 @@ public class CRUDAccertamentoBP extends CRUDVirtualAccertamentoBP {
 	private final SimpleDetailCRUDController nuoveLineeDiAttivita = new SimpleDetailCRUDController("NuoveLineeDiAttivita",Linea_attivitaBulk.class,"nuoveLineeAttivitaColl",this);
 	private final SimpleDetailCRUDController crudAccertamento_pluriennale = new SimpleDetailCRUDController("AccertamentiPluriennali", Accertamento_pluriennaleBulk.class,"accertamentiPluriennali",this);
 
+
+	private final SimpleDetailCRUDController crudAccertamento_pluriennaleVoce = new SimpleDetailCRUDController("AccertamentiPluriennaliVoce", Accertamento_pluriennale_voceBulk.class, "righeVoceColl", crudAccertamento_pluriennale){
+		public void validateForDelete(ActionContext context, OggettoBulk detail) throws ValidationException {
+			Accertamento_pluriennale_voceBulk riga = (Accertamento_pluriennale_voceBulk)  getCrudAccertamento_pluriennaleVoce().getModel();
+			super.validateForDelete(context,riga);
+		}
+	};
+
 	// "editingScadenza" viene messo a True solo quando si modifica una scadenza (bottone "editing scadenza")
 	private boolean editingScadenza = false;
 	private boolean siope_attiva = false;
@@ -1044,5 +1052,9 @@ public void caricaCapitoliDiSpesaCDS(it.cnr.jada.action.ActionContext context) t
 		} catch (Exception e) {
 			throw handleException(e);
 		}
+	}
+
+	public SimpleDetailCRUDController getCrudAccertamento_pluriennaleVoce() {
+		return crudAccertamento_pluriennaleVoce;
 	}
 }
