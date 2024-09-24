@@ -140,6 +140,7 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 		setFl_extra_ue(null);
 		setFl_san_marino_con_iva(null);
 		setFl_san_marino_senza_iva(null);
+		setTipo_sezionale(null);
 		return this;
 	}
 

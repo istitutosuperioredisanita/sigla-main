@@ -25,6 +25,7 @@ import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
 import java.util.TreeMap;
 
 /**
@@ -42,7 +43,6 @@ public  class CRUDAutofatturaBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Aut
         super(function);
     }
 
-    /*
 
     protected void init(it.cnr.jada.action.Config config,
                         it.cnr.jada.action.ActionContext context)
@@ -55,7 +55,7 @@ public  class CRUDAutofatturaBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Aut
 
         resetTabs();
 
-    }*/
+    }
     @Override
     protected String getStorePath(AutofatturaBulk allegatoParentBulk, boolean create) throws BusinessProcessException {
         return allegatoParentBulk.getStorePath().get(0);
@@ -87,7 +87,11 @@ public  class CRUDAutofatturaBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Aut
         TreeMap<Integer, String[]> pages = new TreeMap<Integer, String[]>();
         int i = 0;
         pages.put(i++, TAB_AUTOFATTURA);
-        pages.put(i++,TAB_ALLEGATI);
+        AutofatturaBulk autofatturaBulk = ( AutofatturaBulk) this.getModel();
+        if (Optional.ofNullable(autofatturaBulk.getPg_autofattura()).isPresent() && autofatturaBulk.getPg_autofattura()>0) {
+            pages.put(i++,TAB_ALLEGATI);
+        }
+
     String[][] tabs = new String[i][3];
         for (int j = 0; j < i; j++)
             tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};

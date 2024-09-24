@@ -11,8 +11,7 @@
 %>
 <%	CRUDAutofatturaBP bp = (CRUDAutofatturaBP)BusinessProcess.getBusinessProcess(request);
 	AutofatturaBulk autofattura = (AutofatturaBulk)bp.getModel();
-	boolean roForSplit = autofattura!=null && !autofattura.isToBeCreated() &&
-    			             autofattura.getFl_split_payment()!=null && autofattura.getFl_split_payment();
+
 
 	UserContext uc = HttpActionContext.getUserContext(session);
 
@@ -42,14 +41,14 @@
     		      		<% bp.getController().writeFormLabel(out,"ti_istituz_commerc");%>
     		      	</td>
     		     	<td colspan="10">
-    		      		<% bp.getController().writeFormInput(out,null,"ti_istituz_commerc",roForSplit,null,"onChange=\"submitForm('doOnIstituzionaleCommercialeChange')\"");%>
+    		      		<% bp.getController().writeFormInput(out,null,"ti_istituz_commerc",false,null,"onChange=\"submitForm('doOnIstituzionaleCommercialeChange')\"");%>
     		      	</td>
     			<% } else { %>
     		     	<td>
     		      		<% bp.getController().writeFormLabel(out,"ti_istituz_commercSearch");%>
     		      	</td>
     		     	<td colspan="10">
-    		      		<% bp.getController().writeFormInput(out,null,"ti_istituz_commercSearch",roForSplit,null,"onChange=\"submitForm('doOnIstituzionaleCommercialeChange')\"");%>
+    		      		<% bp.getController().writeFormInput(out,null,"ti_istituz_commercSearch",false,null,"onChange=\"submitForm('doOnIstituzionaleCommercialeChange')\"");%>
     		      	</td>
     			<% } %>
           </tr>
