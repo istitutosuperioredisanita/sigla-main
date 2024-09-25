@@ -16,18 +16,18 @@
  */
 
 package it.cnr.contab.docamm00.ejb;
-import java.rmi.RemoteException;
-import java.util.Vector;
+
+import it.cnr.contab.docamm00.comp.AutoFatturaComponent;
+import it.cnr.contab.docamm00.docs.bulk.AutofatturaBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ComponentException;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Remove;
 import javax.ejb.Stateless;
-
-import it.cnr.contab.docamm00.comp.AutoFatturaComponent;
-import it.cnr.contab.docamm00.docs.bulk.AutofatturaBulk;
-import it.cnr.jada.UserContext;
-import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.persistency.PersistencyException;
+import java.rmi.RemoteException;
+import java.util.Vector;
 
 @Stateless(name="CNRDOCAMM00_EJB_AutoFatturaComponentSession")
 public class AutoFatturaComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements AutoFatturaComponentSession {
@@ -316,6 +316,26 @@ public class AutoFatturaComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 		pre_component_invocation(userContext,componentObj);
 		try {
 			AutofatturaBulk result = ((AutoFatturaComponent)componentObj).aggiornaAutofatturaInvioSDI(userContext,autofattura);
+			component_invocation_succes(userContext,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(userContext,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(userContext,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(userContext,componentObj,e);
+		}
+	}
+
+	@Override
+	public Fattura_passivaBulk cercaFatturaPassiva(UserContext userContext, AutofatturaBulk autofattura) throws ComponentException, RemoteException {
+		pre_component_invocation(userContext,componentObj);
+		try {
+			Fattura_passivaBulk result = ((AutoFatturaComponent)componentObj).cercaFatturaPassiva(userContext,autofattura);
 			component_invocation_succes(userContext,componentObj);
 			return result;
 		} catch(it.cnr.jada.comp.NoRollbackException e) {

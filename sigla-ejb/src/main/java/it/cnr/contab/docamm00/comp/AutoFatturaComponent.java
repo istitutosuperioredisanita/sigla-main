@@ -779,4 +779,14 @@ public Configurazione_cnrBulk getLimitiRitardoDetraibile(UserContext userContext
 
 		return autofattura;
 	}
+
+	public Fattura_passivaBulk cercaFatturaPassiva(UserContext usercontext, AutofatturaBulk oggettobulk) throws ComponentException {
+		Fattura_passivaHome fatturaPassivaHome = (Fattura_passivaHome) getHome(usercontext, Fattura_passiva_IBulk.class);
+		try {
+			return (Fattura_passivaBulk) fatturaPassivaHome.findByPrimaryKey(oggettobulk.getFattura_passiva());
+
+		} catch (PersistencyException e) {
+			throw handleException(e);
+		}
+	}
 }

@@ -23,10 +23,10 @@ import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.util.jsp.Button;
 import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Gestisce le autofatture.
@@ -47,14 +47,17 @@ public  class CRUDAutofatturaBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Aut
     protected void init(it.cnr.jada.action.Config config,
                         it.cnr.jada.action.ActionContext context)
             throws it.cnr.jada.action.BusinessProcessException {
-
-
-
         super.init(config, context);
-
-
         resetTabs();
+    }
+    protected it.cnr.jada.util.jsp.Button[] createToolbar() {
+        Button[] buttons = super.createToolbar();
+        List<Button> toolbar = new ArrayList<Button>();
+        toolbar.addAll(Arrays.asList(buttons));
+        toolbar.add(new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config
+                .getHandler().getProperties(getClass()), "Toolbar.visuallizza.fattura"));
 
+        return toolbar.toArray(new Button[toolbar.size()]);
     }
     @Override
     protected String getStorePath(AutofatturaBulk allegatoParentBulk, boolean create) throws BusinessProcessException {
@@ -109,7 +112,12 @@ public  class CRUDAutofatturaBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Aut
     public void resetTabs() {
         setTab("tab", "tabAutofattura");
     }
-
+    public boolean isVisualizzaFatturaButtonEnabled() {
+        AutofatturaBulk model = (AutofatturaBulk)getModel();
+        return (model != null &&
+                Optional.ofNullable(model.getFattura_passiva()).isPresent() &&
+                Optional.ofNullable(model.getFattura_passiva().getPg_fattura_passiva()).isPresent());
+    }
 
 
 
