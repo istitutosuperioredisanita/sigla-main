@@ -26,7 +26,8 @@
 		maxLength="30"
 		inputSize="30"
 		inputType="TEXT"
-		label="Codice CdS" />
+		label="Codice CdS"
+		enabledOnFreeSearch="false"/>
 	<fieldProperty
 		name="protocollo_iva"
 		property="protocollo_iva"
@@ -48,7 +49,8 @@
 		inputSize="30"
 		inputType="TEXT"
 		label="UO Origine"
-		caseSensitiveSearch="false" />
+		caseSensitiveSearch="false"
+		enabledOnFreeSearch="false"/>
 	<fieldProperty
 		name="fl_san_marino_senza_iva"
 		property="fl_san_marino_senza_iva"
@@ -77,6 +79,7 @@
 		maxLength="30"
 		inputSize="30"
 		inputType="TEXT"
+		enabledOnFreeSearch="false"
 		label="UO" />
 	<fieldProperty
 		name="cd_tipo_sezionale"
@@ -95,6 +98,7 @@
 		inputSize="30"
 		inputType="TEXT"
 		label="CDS Fatt. Passiva"
+		enabledOnFreeSearch="true"
 		caseSensitiveSearch="false" />
 	<fieldProperty
 		name="esercizio"
@@ -141,8 +145,9 @@
 		maxLength="30"
 		inputSize="30"
 		inputType="TEXT"
-		label="cd_cds_origine"
-		caseSensitiveSearch="false" />
+		label="Cds Origine"
+		caseSensitiveSearch="false"
+		enabledOnFreeSearch="false"/>
 	<fieldProperty
 		name="pg_autofattura"
 		property="pg_autofattura"
@@ -178,7 +183,7 @@
 		name="fl_autofattura"
 		property="fl_autofattura"
 		inputType="CHECKBOX"
-		label="fl_autofattura" />
+		label="autofattura" />
 	<fieldProperty
 		name="stato_coge"
 		property="stato_coge"
@@ -356,10 +361,11 @@
 			name="ti_istituz_commercSearch"/>
 	<findFieldProperty
 		name="pg_fattura_passiva" />
+	<!--
 	<findFieldProperty
-		name="cd_cds_ft_passiva" />
-	<findFieldProperty
-		name="cd_cds_origine" />
+		name="cd_cds_ft_passiva" />-->
+	<!--<findFieldProperty
+		name="cd_cds_origine" />-->
 	<findFieldProperty
 		name="pg_autofattura" />
 	<findFieldProperty
@@ -372,8 +378,9 @@
 		name="data_esigibilita_iva" />
 	<findFieldProperty
 		name="fl_liquidazione_differita" />
-	<!--<findFieldProperty
+	<findFieldProperty
 		name="fl_autofattura" />
+	<!--
 	<findFieldProperty
 		name="stato_coge" />-->
 	<findFieldProperty
