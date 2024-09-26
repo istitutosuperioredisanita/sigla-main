@@ -191,21 +191,19 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
 
 
 
+
     abstract protected Documento_genericoBulk initializeDocumentoGenerico( CNRUserContext userContext, T documentoGenericoDto) throws ComponentException, RemoteException;
 
     abstract protected void addDocumentoGenericoRighe (CNRUserContext userContext,Documento_genericoBulk documentoGenericoBulk,T documentoGenericoDto) throws Exception;
+
+
     protected Documento_genericoBulk documentoGenericoDtoToDocumentoGenBulk(CNRUserContext userContext,T documentoGenericoDto) throws Exception {
         Documento_genericoBulk documentoGenericoBulk = initializeDocumentoGenerico(userContext,documentoGenericoDto);
-        documentoGenericoBulk.setEsercizio(documentoGenericoDto.getEsercizio());
-        documentoGenericoBulk.setCd_tipo_documento_amm( getCdTipoDocumentoAmm());
-        documentoGenericoBulk.setCd_cds( documentoGenericoDto.getCdsKey().getCd_unita_organizzativa());
-        documentoGenericoBulk.setCd_cds_origine(documentoGenericoBulk.getCd_cds());
-        documentoGenericoBulk.setCd_unita_organizzativa(documentoGenericoDto.getUnitaOrganizzativaKey().getCd_unita_organizzativa());
 
         documentoGenericoBulk.setDs_documento_generico( documentoGenericoDto.getDs_documento_generico());
         documentoGenericoBulk.setDs_documento_generico( documentoGenericoDto.getDs_documento_generico());
         documentoGenericoBulk.setTi_istituz_commerc(documentoGenericoDto.getTipo().value());
-       documentoGenericoBulk.setTi_associato_manrev(EnumAssMandRevDocGen.NO_ASSOCIATO_A_MAND_REV.getAssMandRev());
+        documentoGenericoBulk.setTi_associato_manrev(EnumAssMandRevDocGen.NO_ASSOCIATO_A_MAND_REV.getAssMandRev());
         documentoGenericoBulk.setStato_coge(Documento_genericoBulk.NON_REGISTRATO_IN_COGE);
         documentoGenericoBulk.setStato_coan(Documento_genericoBulk.NON_CONTABILIZZATO_IN_COAN);
         documentoGenericoBulk.setStato_cofi(Documento_genericoBulk.STATO_CONTABILIZZATO);
@@ -214,7 +212,8 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
         documentoGenericoBulk.setDt_scadenza(documentoGenericoDto.getDt_scadenza());
         documentoGenericoBulk.setDt_da_competenza_coge(documentoGenericoDto.getDt_da_competenza_coge());
         documentoGenericoBulk.setDt_a_competenza_coge(documentoGenericoDto.getDt_a_competenza_coge());
-        documentoGenericoBulk.setStato_liquidazione(EnumStatoLiqDocumentoGen.LIQUIDABILE.getStato_liquidazione());
+        if ( !documentoGenericoBulk.isGenericoAttivo())
+            documentoGenericoBulk.setStato_liquidazione(EnumStatoLiqDocumentoGen.LIQUIDABILE.getStato_liquidazione());
 
         DivisaBulk divisa = new DivisaBulk( Utility.createConfigurazioneCnrComponentSession().getVal01(userContext, new Integer(0), "*", Configurazione_cnrBulk.PK_CD_DIVISA,Configurazione_cnrBulk.SK_EURO ));
         documentoGenericoBulk.setValuta( divisa );

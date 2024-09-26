@@ -6583,7 +6583,7 @@ public class DocumentoGenericoComponent
                 Accertamento_scadenzarioBulk os = null;
                 try {
                     os = (Accertamento_scadenzarioBulk)getHome(uc,Accertamento_scadenzarioBulk.class).
-                            findAndLock(new Obbligazione_scadenzarioBulk(documentoGenericoRigaBulk.getObbligazione_scadenziario().getCd_cds(),
+                            findAndLock(new Accertamento_scadenzarioBulk(documentoGenericoRigaBulk.getAccertamento_scadenziario().getCd_cds(),
                                     documentoGenericoRigaBulk.getAccertamento_scadenziario().getEsercizio(),
                                     documentoGenericoRigaBulk.getAccertamento_scadenziario().getEsercizio_originale(),
                                     documentoGenericoRigaBulk.getAccertamento_scadenziario().getPg_accertamento(),
@@ -6596,7 +6596,7 @@ public class DocumentoGenericoComponent
                                 " dell'accertamento " + os.getEsercizio_originale() + "/" + os.getPg_accertamento());
 
                     documentoGenericoRigaBulk.setAccertamento_scadenziario(caricaAccertamentoPer(uc, documentoGenericoRigaBulk.getAccertamento_scadenziario()));
-                    documentoGenericoBulk.addToDocumento_generico_obbligazioniHash(documentoGenericoRigaBulk.getObbligazione_scadenziario(), documentoGenericoRigaBulk);
+                    documentoGenericoBulk.addToDocumento_generico_accertamentiHash(documentoGenericoRigaBulk.getAccertamento_scadenziario(), documentoGenericoRigaBulk);
                 } catch (Exception e) {
                     throw new ComponentException(e);
                 }

@@ -23,7 +23,6 @@ import io.swagger.annotations.Authorization;
 import it.cnr.contab.web.rest.config.SIGLARoles;
 import it.cnr.contab.web.rest.config.SIGLASecurityContext;
 import it.cnr.contab.web.rest.model.DocumentoGenericoAttivoDto;
-import it.cnr.contab.web.rest.model.DocumentoGenericoPassivoDto;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -53,10 +52,10 @@ public interface DocumentoGenericoAttivoLocal {
                     @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDR)
             }
     )
-    Response insert(@Context HttpServletRequest request, DocumentoGenericoPassivoDto documentoGenericoPassivoDto) throws Exception;
+    Response insert(@Context HttpServletRequest request, DocumentoGenericoAttivoDto documentoGenericoAttivoDto) throws Exception;
     @GET
     @Path("/{cd_cds}/{cd_unita_organizzativa}({esercizio}/{pg_documento_generico}")
-    @ApiOperation(value = "Ritorna documento generico passivo",
+    @ApiOperation(value = "Ritorna documento generico attivo",
             notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_ATTIVO +"'",
             response = DocumentoGenericoAttivoDto.class,
             authorizations = {
@@ -71,7 +70,7 @@ public interface DocumentoGenericoAttivoLocal {
                @PathParam("pg_documento_generico") Long pg_documento_generico ) throws Exception;
     @DELETE
     @Path("/{cd_cds}/{cd_unita_organizzativa}({esercizio}/{pg_documento_generico}")
-    @ApiOperation(value = "Elimina un'obbligazione'",
+    @ApiOperation(value = "Elimina un documento Generico Attivo'",
             notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_ATTIVO +"'",
             response = String.class,
             authorizations = {
@@ -87,7 +86,7 @@ public interface DocumentoGenericoAttivoLocal {
 
     @PATCH
     @Path("/{cd_cds}/{cd_unita_organizzativa}({esercizio}/{pg_documento_generico}")
-    @ApiOperation(value = "Modifica un'obbligazione",
+    @ApiOperation(value = "Modifica un documento Generico Attivo",
             notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_ATTIVO +"'",
             response = DocumentoGenericoAttivoDto.class,
             authorizations = {

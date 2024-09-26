@@ -70,7 +70,7 @@ public interface DocumentoGenericoPassivoLocal {
                @PathParam("pg_documento_generico") Long pg_documento_generico ) throws Exception;
     @DELETE
     @Path("/{cd_cds}/{cd_unita_organizzativa}({esercizio}/{pg_documento_generico}")
-    @ApiOperation(value = "Elimina un'obbligazione'",
+    @ApiOperation(value = "Elimina un documento Generico Passivo'",
             notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_PASSIVO +"'",
             response = String.class,
             authorizations = {
@@ -86,7 +86,7 @@ public interface DocumentoGenericoPassivoLocal {
 
     @PATCH
     @Path("/{cd_cds}/{cd_unita_organizzativa}({esercizio}/{pg_documento_generico}")
-    @ApiOperation(value = "Modifica un'obbligazione",
+    @ApiOperation(value = "Modifica documento Generico Passivo",
             notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_PASSIVO +"'",
             response = DocumentoGenericoPassivoDto.class,
             authorizations = {

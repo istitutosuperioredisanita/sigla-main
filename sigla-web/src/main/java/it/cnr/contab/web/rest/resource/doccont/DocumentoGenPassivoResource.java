@@ -60,6 +60,10 @@ public class DocumentoGenPassivoResource extends AbstractDocumentoGenericoResour
     @Override
     protected Documento_genericoBulk initializeDocumentoGenerico(CNRUserContext userContext, DocumentoGenericoPassivoDto documentoGenericoDto) throws ComponentException, RemoteException {
         Documento_genericoBulk documentoGenericoBulk = new Documento_genericoBulk();
+        documentoGenericoBulk.setEsercizio(documentoGenericoDto.getEsercizio());
+        documentoGenericoBulk.setCd_cds( documentoGenericoDto.getCdsKey().getCd_unita_organizzativa());
+        documentoGenericoBulk.setCd_cds_origine(documentoGenericoBulk.getCd_cds());
+        documentoGenericoBulk.setCd_unita_organizzativa(documentoGenericoDto.getUnitaOrganizzativaKey().getCd_unita_organizzativa());
         documentoGenericoBulk.setTi_entrate_spese(Documento_genericoBulk.SPESE);
         documentoGenericoBulk.setTipo_documento(new Tipo_documento_ammBulk( Numerazione_doc_ammBulk.TIPO_DOC_GENERICO_S));
         documentoGenericoBulk.setCd_uo_origine(documentoGenericoDto.getUnitaOrganizzativaKey().getCd_unita_organizzativa());
@@ -88,6 +92,7 @@ public class DocumentoGenPassivoResource extends AbstractDocumentoGenericoResour
            rigaBulk.setToBeCreated();
        }
     }
+
 
 
     @Override

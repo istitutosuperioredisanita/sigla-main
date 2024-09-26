@@ -33,8 +33,8 @@ public class DocumentoGenAttivoResource extends AbstractDocumentoGenericoResourc
     @EJB
     DocumentoGenericoComponentSession documentoGenericoComponentSessione;
     @Override
-    public Response insert(HttpServletRequest request, DocumentoGenericoPassivoDto documentoGenericoPassivoDto) throws Exception {
-        return null;
+    public Response insert(HttpServletRequest request, DocumentoGenericoAttivoDto documentoGenericoAttivoDto) throws Exception {
+        return insertDocumentoGenerico( request,documentoGenericoAttivoDto);
     }
 
     @Override
@@ -71,9 +71,15 @@ public class DocumentoGenAttivoResource extends AbstractDocumentoGenericoResourc
     @Override
     protected Documento_genericoBulk initializeDocumentoGenerico(CNRUserContext userContext, DocumentoGenericoAttivoDto documentoGenericoDto) throws ComponentException, RemoteException {
         Documento_genericoBulk documentoGenericoBulk = new Documento_genericoBulk();
+        documentoGenericoBulk.setEsercizio(documentoGenericoDto.getEsercizio());
+        documentoGenericoBulk.setCd_cds( documentoGenericoDto.getCdsKey().getCd_unita_organizzativa());
+        documentoGenericoBulk.setCd_cds_origine(documentoGenericoBulk.getCd_cds());
+        documentoGenericoBulk.setCd_uo_origine(documentoGenericoDto.getUnitaOrganizzativaKey().getCd_unita_organizzativa());
+        documentoGenericoBulk.setCd_unita_organizzativa(documentoGenericoDto.getUnitaOrganizzativaKey().getCd_unita_organizzativa());
         documentoGenericoBulk.setTi_entrate_spese(Documento_genericoBulk.ENTRATE);
         documentoGenericoBulk.setTipo_documento(new Tipo_documento_ammBulk( Numerazione_doc_ammBulk.TIPO_DOC_GENERICO_E));
-        documentoGenericoComponentSession.inizializzaBulkPerInserimento(userContext,documentoGenericoBulk);
+
+        documentoGenericoBulk = ( Documento_genericoBulk) documentoGenericoComponentSession.inizializzaBulkPerInserimento(userContext,documentoGenericoBulk);
         return documentoGenericoBulk;
     }
 
@@ -98,6 +104,8 @@ public class DocumentoGenAttivoResource extends AbstractDocumentoGenericoResourc
             rigaBulk.setToBeCreated();
         }
     }
+
+
 
 
     @Override
