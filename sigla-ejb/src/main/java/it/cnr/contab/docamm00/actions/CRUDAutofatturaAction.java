@@ -1,11 +1,16 @@
 package it.cnr.contab.docamm00.actions;
 
 import it.cnr.contab.docamm00.bp.CRUDAutofatturaBP;
+import it.cnr.contab.docamm00.bp.CRUDFatturaPassivaBP;
 import it.cnr.contab.docamm00.docs.bulk.AutofatturaBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
 import it.cnr.contab.docamm00.ejb.AutoFatturaComponentSession;
 import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk;
 import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
+
+import java.util.Optional;
 
 public class CRUDAutofatturaAction extends EconomicaAction {
 
@@ -37,7 +42,6 @@ public class CRUDAutofatturaAction extends EconomicaAction {
                 autofattura.setFl_extra_ue(Boolean.FALSE);
                 autofattura.setFl_san_marino_con_iva(Boolean.FALSE);
                 autofattura.setFl_san_marino_senza_iva(Boolean.FALSE);
-
                 autofattura.setFl_autofattura(Boolean.FALSE);
                 autofattura.setTi_bene_servizio(null);
                 autofattura.setFl_liquidazione_differita(Boolean.FALSE);
@@ -108,6 +112,22 @@ public class CRUDAutofatturaAction extends EconomicaAction {
             }
         } catch (Throwable t) {
             return handleException(context, t);
+        }
+    }
+    public Forward doVisualizzaFattura(ActionContext context) throws BusinessProcessException {
+        CRUDAutofatturaBP autofatturaBP = (CRUDAutofatturaBP) context.getBusinessProcess();
+        AutofatturaBulk autofatturaBulk = (AutofatturaBulk) autofatturaBP.getModel();
+        Optional<Fattura_passivaBulk> fatturaCollegata = Optional.ofNullable(autofatturaBulk.getFattura_passiva());
+        try {
+            CRUDFatturaPassivaBP nbp = (CRUDFatturaPassivaBP) context.createBusinessProcess("CRUDFatturaPassivaBP",
+                    new Object[]{"M"}
+            );
+            nbp = (CRUDFatturaPassivaBP) context.addBusinessProcess(nbp);
+            nbp.edit(context, ((AutoFatturaComponentSession) autofatturaBP.createComponentSession()).
+                    cercaFatturaPassiva(context.getUserContext(), autofatturaBulk));
+            return nbp;
+        } catch (Throwable e) {
+            return handleException(context, e);
         }
     }
 }
