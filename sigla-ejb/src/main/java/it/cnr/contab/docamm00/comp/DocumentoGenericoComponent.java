@@ -6568,8 +6568,7 @@ public class DocumentoGenericoComponent
                                     documentoGenericoRigaBulk.getObbligazione_scadenziario().getPg_obbligazione(),
                                     documentoGenericoRigaBulk.getObbligazione_scadenziario().getPg_obbligazione_scadenzario()));
                     if (
-                            BigDecimal.ZERO.compareTo(os.getIm_associato_doc_amm())!= 0 ||
-                            BigDecimal.ZERO.compareTo(os.getIm_associato_doc_amm()) !=0 )
+                            BigDecimal.ZERO.compareTo(os.getIm_associato_doc_amm())!= 0 )
                         throw new ApplicationException("Operazione non possibile! E' stata utilizzata da un altro utente la scadenza nr." + os.getPg_obbligazione_scadenzario() +
                                     " dell'impegno " + os.getEsercizio_originale() + "/" + os.getPg_obbligazione());
 
@@ -6588,12 +6587,23 @@ public class DocumentoGenericoComponent
                                     documentoGenericoRigaBulk.getAccertamento_scadenziario().getEsercizio_originale(),
                                     documentoGenericoRigaBulk.getAccertamento_scadenziario().getPg_accertamento(),
                                     documentoGenericoRigaBulk.getAccertamento_scadenziario().getPg_accertamento_scadenzario()));
-                    if (
-                            BigDecimal.ZERO.compareTo(os.getIm_associato_doc_amm())!= 0 ||
-                                    BigDecimal.ZERO.compareTo(os.getIm_associato_doc_amm()) !=0 )
-                        throw new ApplicationException("Operazione non possibile! E' stata utilizzata da un altro utente la scadenza nr." +
+                    if ( os.getAccertamento().getDt_cancellazione()!=null)
+                        throw new ApplicationException("Operazione non possibile! La scadenza   nr." +
                                 os.getPg_accertamento_scadenzario() +
-                                " dell'accertamento " + os.getEsercizio_originale() + "/" + os.getPg_accertamento());
+                                " dell'accertamento " + os.getEsercizio_originale() + "/" + os.getPg_accertamento()+" non può essere usata in quanto l'accertamento è cancellato ");
+                    if ( !os.getAccertamento().getRiportato().equals("N"))
+                        throw new ApplicationException("Operazione non possibile! La scadenza   nr." +
+                                os.getPg_accertamento_scadenzario() +
+                                " dell'accertamento " + os.getEsercizio_originale() + "/" + os.getPg_accertamento()+" non può essere usata in quanto è una scadenza riportata ");
+                    if ( os.getAccertamento().getCd_terzo()!=documentoGenericoRigaBulk.getTerzo().getCd_terzo())
+                        throw new ApplicationException("Operazione non possibile! La scadenza   nr." +
+                                os.getPg_accertamento_scadenzario() +
+                                " dell'accertamento " + os.getEsercizio_originale() + "/" + os.getPg_accertamento()+" non può essere usata per il terzo ");
+                    if (os.getAccertamento().getIm_accertamento().subtract(os.getIm_associato_doc_amm()).compareTo(documentoGenericoRigaBulk.getIm_riga())>=0 &&
+                                    os.getIm_scadenza().subtract(os.getIm_associato_doc_amm()).compareTo(BigDecimal.ZERO)>0 )
+                        throw new ApplicationException("Operazione non possibile! La scadenza   nr." +
+                                os.getPg_accertamento_scadenzario() +
+                                " dell'accertamento " + os.getEsercizio_originale() + "/" + os.getPg_accertamento()+" non ha disponibilità per copire l'importo della riga");
 
                     documentoGenericoRigaBulk.setAccertamento_scadenziario(caricaAccertamentoPer(uc, documentoGenericoRigaBulk.getAccertamento_scadenziario()));
                     documentoGenericoBulk.addToDocumento_generico_accertamentiHash(documentoGenericoRigaBulk.getAccertamento_scadenziario(), documentoGenericoRigaBulk);
