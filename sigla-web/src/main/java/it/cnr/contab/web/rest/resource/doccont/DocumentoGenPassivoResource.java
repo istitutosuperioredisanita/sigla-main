@@ -6,6 +6,7 @@ import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioKey;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.local.config00.DocumentoGenericoPassivoLocal;
 import it.cnr.contab.web.rest.model.*;
 import it.cnr.jada.UserContext;
@@ -82,6 +83,7 @@ public class DocumentoGenPassivoResource extends AbstractDocumentoGenericoResour
            riga++;
            Documento_generico_rigaBulk rigaBulk= initializeDocumentoGenericoRiga( userContext,documentoGenericoBulk,rigaDto,riga);
 
+
             rigaBulk.setObbligazione_scadenziario( new Obbligazione_scadenzarioBulk(rigaDto.getObbligazioneScadenzarioKey().getCd_cds(),
                     rigaDto.getObbligazioneScadenzarioKey().getEsercizio(),
                     rigaDto.getObbligazioneScadenzarioKey().getEsercizio_originale(),
@@ -115,6 +117,6 @@ public class DocumentoGenPassivoResource extends AbstractDocumentoGenericoResour
 
     @Override
     public Response update(String cd_cds, String cd_unita_organizzativa, Integer esercizio,  Long pg_documento_generico) throws Exception {
-        return null;
+        throw new RestException(Response.Status.METHOD_NOT_ALLOWED,String.format("La Funzione non è implemetata"));
     }
 }

@@ -1,5 +1,7 @@
 package it.cnr.contab.web.rest.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
@@ -13,7 +15,7 @@ import java.sql.Timestamp;
 
     private EnumAssMandRevDocGenRiga assMandRev;
 
-
+    @JsonIgnore
      abstract public TerzoPagamentoIncasso getTerzo();
 
     public Long getProgressivo_riga() {

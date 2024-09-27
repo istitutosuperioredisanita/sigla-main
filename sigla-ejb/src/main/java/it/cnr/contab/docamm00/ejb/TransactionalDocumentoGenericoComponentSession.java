@@ -23,6 +23,7 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.docamm00.docs.bulk.DocumentoGenericoWizardBulk;
 import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
 import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.Tipo_documento_genericoBulk;
 import it.cnr.contab.doccont00.core.AccertamentoWizard;
 import it.cnr.contab.doccont00.core.ObbligazioneWizard;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
@@ -1117,6 +1118,26 @@ public class TransactionalDocumentoGenericoComponentSession extends it.cnr.jada.
 					docPassivoObb,
 					newModalitaPag,
 					newBanca});
+		} catch (java.rmi.RemoteException e) {
+			throw e;
+		} catch (java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch (it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch (Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception", ex);
+			}
+		}
+	}
+
+	@Override
+	public Tipo_documento_genericoBulk findTipoDocumentoGenerico(UserContext uc, String codice, String tipo) throws ComponentException,java.rmi.RemoteException {
+		try {
+			return ( Tipo_documento_genericoBulk) invoke("findTipoDocumentoGenerico", new Object[]{
+					uc,
+					codice,
+					tipo});
 		} catch (java.rmi.RemoteException e) {
 			throw e;
 		} catch (java.lang.reflect.InvocationTargetException e) {

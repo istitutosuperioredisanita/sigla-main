@@ -23,6 +23,7 @@ import io.swagger.annotations.Authorization;
 import it.cnr.contab.web.rest.config.SIGLARoles;
 import it.cnr.contab.web.rest.config.SIGLASecurityContext;
 import it.cnr.contab.web.rest.model.DocumentoGenericoAttivoDto;
+import it.cnr.contab.web.rest.model.TerzoUnitaOrganizzativaDto;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -85,7 +86,7 @@ public interface DocumentoGenericoAttivoLocal {
                    @PathParam("pg_documento_generico") Long pg_documento_generico ) throws Exception;
 
     @PATCH
-    @Path("/{cd_cds}/{cd_unita_organizzativa}({esercizio}/{pg_documento_generico}")
+    @Path("/{cd_cds}/{cd_unita_organizzativa}/{esercizio}/{pg_documento_generico}")
     @ApiOperation(value = "Modifica un documento Generico Attivo",
             notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_ATTIVO +"'",
             response = DocumentoGenericoAttivoDto.class,
@@ -99,4 +100,19 @@ public interface DocumentoGenericoAttivoLocal {
     )
     Response update(@PathParam("cd_cds") String cd_cds,@PathParam("cd_unita_organizzativa") String cd_unita_organizzativa,@PathParam("esercizio")Integer esercizio,
                     @PathParam("pg_documento_generico") Long pg_documento_generico ) throws Exception;
+    @GET
+    @Path("/terzo/{cd_unita_organizzativa}")
+    @ApiOperation(value = "Ritorna il terzo dell'unita organizzativa con le modalità di incassao",
+            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_ATTIVO +"'",
+            response = TerzoUnitaOrganizzativaDto.class,
+            authorizations = {
+                    @Authorization(value = "BASIC"),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDS),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDR)
+            }
+    )
+    Response terzoUnitaOrganizzativa(@PathParam("cd_unita_organizzativa") String cd_unita_organizzativa ) throws Exception;
+
 }

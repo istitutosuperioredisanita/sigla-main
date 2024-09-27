@@ -23,6 +23,7 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.docamm00.comp.DocumentoGenericoComponent;
 import it.cnr.contab.docamm00.docs.bulk.DocumentoGenericoWizardBulk;
 import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.Tipo_documento_genericoBulk;
 import it.cnr.contab.doccont00.core.AccertamentoWizard;
 import it.cnr.contab.doccont00.core.ObbligazioneWizard;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
@@ -899,6 +900,26 @@ public class DocumentoGenericoComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 			throw uncaughtRuntimeException(userContext,componentObj,e);
 		} catch(Error e) {
 			throw uncaughtError(userContext,componentObj,e);
+		}
+	}
+
+	@Override
+	public Tipo_documento_genericoBulk findTipoDocumentoGenerico(UserContext uc, String codice, String tipo) throws ComponentException,RemoteException {
+		pre_component_invocation(uc,componentObj);
+		try {
+			Tipo_documento_genericoBulk result = ((DocumentoGenericoComponent)componentObj).findTipoDocumentoGenerico(uc,codice,tipo);
+			component_invocation_succes(uc,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(uc,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(uc,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(uc,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(uc,componentObj,e);
 		}
 	}
 

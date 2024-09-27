@@ -62,6 +62,16 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
                 orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Unità Organizzativa del contesto diversa da quello del documento Generico!"));
     }
 
+    protected void impostaTerzo(CNRUserContext userContext,TerzoBulk terzoBulk,Documento_generico_rigaBulk rigaBulk)throws ComponentException, RemoteException{
+        AnagraficoBulk anagrafico = (AnagraficoBulk) crudComponentSession.findByPrimaryKey(userContext,new AnagraficoBulk(terzoBulk.getAnagrafico().getCd_anag()));
+        rigaBulk.setTerzo(terzoBulk);
+        rigaBulk.getTerzo().setAnagrafico(anagrafico);
+        rigaBulk.setRagione_sociale( terzoBulk.getAnagrafico().getRagione_sociale());
+        rigaBulk.setNome( terzoBulk.getAnagrafico().getNome());
+        rigaBulk.setCognome( terzoBulk.getAnagrafico().getCognome());
+        rigaBulk.setCodice_fiscale( terzoBulk.getAnagrafico().getCodice_fiscale());
+        rigaBulk.setPartita_iva( terzoBulk.getAnagrafico().getPartita_iva());
+    }
     public Documento_generico_rigaBulk initializeDocumentoGenericoRiga( CNRUserContext userContext,Documento_genericoBulk documentoGenericoBulk,
                                                                             DocumentoGenericoRigaDto rigaDto,Integer riga) throws ComponentException, RemoteException {
         Documento_generico_rigaBulk rigaBulk= new Documento_generico_rigaBulk();
@@ -73,43 +83,49 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
         rigaBulk.setDs_riga(rigaDto.getDs_riga());
         rigaBulk.setDt_a_competenza_coge(rigaDto.getDt_a_competenza_coge());
         rigaBulk.setDt_da_competenza_coge(rigaDto.getDt_da_competenza_coge());
-        TerzoBulk terzoBulk =( TerzoBulk) crudComponentSession.findByPrimaryKey(userContext,new TerzoBulk(rigaDto.getTerzo().getTerzoKey().getCd_terzo()));
+        TerzoBulk terzoBulk =( TerzoBulk) crudComponentSession.findByPrimaryKey(
+                userContext,new TerzoBulk(rigaDto.getTerzo().getTerzoKey().getCd_terzo()));
         if ( !Optional.ofNullable(terzoBulk).isPresent())
             new RestException(Response.Status.BAD_REQUEST, "Il terzo  "+ rigaDto.getTerzo().getTerzoKey().getCd_terzo() +
                     " per la riga "+ riga + " non è presente in Sigla");
-        AnagraficoBulk anagrafico = (AnagraficoBulk) crudComponentSession.findByPrimaryKey(userContext,new AnagraficoBulk(terzoBulk.getAnagrafico().getCd_anag()));
-        rigaBulk.setTerzo(terzoBulk);
-        rigaBulk.getTerzo().setAnagrafico( anagrafico );
-        rigaBulk.setRagione_sociale( terzoBulk.getAnagrafico().getRagione_sociale());
-        rigaBulk.setNome( terzoBulk.getAnagrafico().getNome());
-        rigaBulk.setCognome( terzoBulk.getAnagrafico().getCognome());
-        rigaBulk.setCodice_fiscale( terzoBulk.getAnagrafico().getCodice_fiscale());
-        rigaBulk.setPartita_iva( terzoBulk.getAnagrafico().getPartita_iva());
-        rigaBulk.setTerzo(terzoBulk);
-            rigaBulk.setBanca((BancaBulk)crudComponentSession.findByPrimaryKey(userContext,
-                new BancaBulk(rigaDto.getTerzo().getTerzoKey().getCd_terzo(),rigaDto.getTerzo().getPg_banca())));
+        // Nel caso di passivo il terzo è il creditore
+        if ( !documentoGenericoBulk.isGenericoAttivo())
+            impostaTerzo( userContext,terzoBulk,rigaBulk);
+        else
+            rigaBulk.setTerzo_uo_cds(terzoBulk);
+        BancaBulk bancaBulk = (BancaBulk)crudComponentSession.findByPrimaryKey(userContext,
+                    new BancaBulk(rigaDto.getTerzo().getTerzoKey().getCd_terzo(),rigaDto.getTerzo().getPg_banca()));
 
-        if ( !Optional.ofNullable(rigaBulk.getBanca()).isPresent())
+        if ( !Optional.ofNullable(bancaBulk).isPresent())
             new RestException(Response.Status.BAD_REQUEST, "Identificativo Banca "+ rigaDto.getTerzo().getPg_banca() +
                     " per la riga "+ riga + " non è presente per il terzo "+rigaBulk.getTerzo().getCd_terzo());
-        rigaBulk.setModalita_pagamento((Rif_modalita_pagamentoBulk)crudComponentSession.findByPrimaryKey(userContext,
-                new Rif_modalita_pagamentoBulk(rigaDto.getTerzo().getRifModalitaPagamentoKey().getCd_modalita_pag())));
-        if ( !Optional.ofNullable(rigaBulk.getModalita_pagamento()).isPresent())
+        Rif_modalita_pagamentoBulk rifModalitaPagamentoBulk= (Rif_modalita_pagamentoBulk)crudComponentSession.findByPrimaryKey(userContext,
+                new Rif_modalita_pagamentoBulk(rigaDto.getTerzo().getRifModalitaPagamentoKey().getCd_modalita_pag()));
+        if ( !Optional.ofNullable(rifModalitaPagamentoBulk).isPresent())
             throw new RestException(Response.Status.BAD_REQUEST, "Modalità di pagamento  "+ rigaDto.getTerzo().getRifModalitaPagamentoKey().getCd_modalita_pag() +
                     " riga "+ riga + " non presente in Sigla");
 
-        Modalita_pagamentoBulk modalitaPagamentTerzo = ( Modalita_pagamentoBulk) crudComponentSession.findByPrimaryKey(userContext,
+        if (documentoGenericoBulk.isGenericoAttivo()){
+            rigaBulk.setBanca_uo_cds(bancaBulk);
+            rigaBulk.setModalita_pagamento_uo_cds(rifModalitaPagamentoBulk);
+        }else{
+            rigaBulk.setBanca(bancaBulk);
+            rigaBulk.setModalita_pagamento(rifModalitaPagamentoBulk);
+        }
+        Modalita_pagamentoBulk modalitaPagamentTerzo = modalitaPagamentTerzo=   ( Modalita_pagamentoBulk) crudComponentSession.findByPrimaryKey(userContext,
                 new Modalita_pagamentoBulk(rigaDto.getTerzo().getRifModalitaPagamentoKey().getCd_modalita_pag(),
-                        rigaDto.getTerzo().getTerzoKey().getCd_terzo()));
+                        rigaDto.getTerzo().getTerzoKey().getCd_terzo()));;
 
         if ( !Optional.ofNullable(modalitaPagamentTerzo).isPresent())
             throw new RestException(Response.Status.BAD_REQUEST, "La modalità pagamento  "+ rigaBulk.getModalita_pagamento().getCd_modalita_pag() +
                     " per la riga "+ riga + " non associata al terzo "+rigaBulk.getTerzo().getCd_terzo());
 
-        //controlla se la modalita di pagamento è coerente con quella presente sulla banca
-        if ( rigaBulk.getBanca().getTi_pagamento().compareTo(rigaBulk.getModalita_pagamento().getTi_pagamento())!=0)
-            throw new RestException(Response.Status.BAD_REQUEST, "La modalità pagamento  "+ rigaBulk.getModalita_pagamento().getCd_modalita_pag() +
-                    " per la riga "+ riga + " non associata al terzo "+rigaBulk.getTerzo().getCd_terzo());
+
+            //controlla se la modalita di pagamento è coerente con quella presente sulla banca
+        if (bancaBulk.getTi_pagamento().compareTo(rifModalitaPagamentoBulk.getTi_pagamento()) != 0)
+                throw new RestException(Response.Status.BAD_REQUEST, "La modalità pagamento  " + rigaBulk.getModalita_pagamento().getCd_modalita_pag() +
+                       " per la riga " + riga + " non associata al terzo " + rigaBulk.getTerzo().getCd_terzo());
+
         return rigaBulk;
     }
 
@@ -208,7 +224,7 @@ abstract public class AbstractDocumentoGenericoResource<T extends DocumentoGener
         documentoGenericoBulk.setStato_coan(Documento_genericoBulk.NON_CONTABILIZZATO_IN_COAN);
         documentoGenericoBulk.setStato_cofi(Documento_genericoBulk.STATO_CONTABILIZZATO);
 
-        documentoGenericoBulk.setData_registrazione(documentoGenericoDto.getData_registrazione());
+        documentoGenericoBulk.setData_registrazione(Optional.ofNullable(documentoGenericoDto.getData_registrazione()).orElse(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()));
         documentoGenericoBulk.setDt_scadenza(documentoGenericoDto.getDt_scadenza());
         documentoGenericoBulk.setDt_da_competenza_coge(documentoGenericoDto.getDt_da_competenza_coge());
         documentoGenericoBulk.setDt_a_competenza_coge(documentoGenericoDto.getDt_a_competenza_coge());
