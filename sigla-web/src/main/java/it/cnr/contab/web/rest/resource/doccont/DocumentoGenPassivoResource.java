@@ -11,6 +11,8 @@ import it.cnr.contab.web.rest.local.config00.DocumentoGenericoPassivoLocal;
 import it.cnr.contab.web.rest.model.*;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +24,8 @@ import java.util.Optional;
 
 @Stateless
 public class DocumentoGenPassivoResource extends AbstractDocumentoGenericoResource<DocumentoGenericoPassivoDto> implements DocumentoGenericoPassivoLocal {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(DocumentoGenPassivoResource.class);
     @Override
     public Response insert(HttpServletRequest request, DocumentoGenericoPassivoDto documentoGenericoPassivoDto) throws Exception {
         return insertDocumentoGenerico( request,documentoGenericoPassivoDto);

@@ -54,7 +54,7 @@ public interface DocumentoGenericoPassivoLocal {
     )
     Response insert(@Context HttpServletRequest request, DocumentoGenericoPassivoDto documentoGenericoPassivoDto) throws Exception;
     @GET
-    @Path("/{cd_cds}/{cd_unita_organizzativa}({esercizio}/{pg_documento_generico}")
+    @Path("/{cd_cds}/{cd_unita_organizzativa}/{esercizio}/{pg_documento_generico}")
     @ApiOperation(value = "Ritorna documento generico passivo",
             notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_PASSIVO +"'",
             response = DocumentoGenericoPassivoDto.class,
@@ -69,7 +69,7 @@ public interface DocumentoGenericoPassivoLocal {
     Response get(@PathParam("cd_cds") String cd_cds,@PathParam("cd_unita_organizzativa") String cd_unita_organizzativa,@PathParam("esercizio")Integer esercizio,
                @PathParam("pg_documento_generico") Long pg_documento_generico ) throws Exception;
     @DELETE
-    @Path("/{cd_cds}/{cd_unita_organizzativa}({esercizio}/{pg_documento_generico}")
+    @Path("/{cd_cds}/{cd_unita_organizzativa}/{esercizio}/{pg_documento_generico}")
     @ApiOperation(value = "Elimina un documento Generico Passivo'",
             notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_PASSIVO +"'",
             response = String.class,

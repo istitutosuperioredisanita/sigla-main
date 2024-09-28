@@ -18,6 +18,8 @@ import it.cnr.contab.web.rest.local.config00.DocumentoGenericoAttivoLocal;
 import it.cnr.contab.web.rest.model.*;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -32,6 +34,7 @@ import java.util.stream.Collectors;
 
 @Stateless
 public class DocumentoGenAttivoResource extends AbstractDocumentoGenericoResource<DocumentoGenericoAttivoDto> implements DocumentoGenericoAttivoLocal {
+    private final Logger LOGGER = LoggerFactory.getLogger(DocumentoGenAttivoResource.class);
     @EJB
     TerzoComponentSession terzoComponentSession;
     @Override
@@ -174,8 +177,9 @@ public class DocumentoGenAttivoResource extends AbstractDocumentoGenericoResourc
         return null;
     }
     @Override
-    public Response terzoUnitaOrganizzativa(String cd_unita_organizzativa) throws Exception {
+    public Response terzoUnitaOrganizzativa(Integer esercizio,String cd_unita_organizzativa) throws Exception {
         Optional.ofNullable(cd_unita_organizzativa).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, indicare l'unita organizzativa."));
+        Optional.ofNullable(esercizio).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, indicare l'esercizio."));
         CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
 
         TerzoBulk terzoDB=terzoComponentSession.cercaTerzoPerUnitaOrganizzativa(userContext, new Unita_organizzativaBulk(cd_unita_organizzativa));
@@ -197,9 +201,9 @@ public class DocumentoGenAttivoResource extends AbstractDocumentoGenericoResourc
 
                 Documento_genericoBulk documentoGenericoToSearchBanca = new Documento_genericoBulk();
                 documentoGenericoToSearchBanca.setTi_entrate_spese( Documento_genericoBulk.ENTRATE);
-                documentoGenericoToSearchBanca.setEsercizio(2024);
+                documentoGenericoToSearchBanca.setEsercizio(esercizio);
                 Documento_generico_rigaBulk dettaglioToSearchBanca  =new Documento_generico_rigaBulk();
-                dettaglioToSearchBanca.setEsercizio(2024);
+                dettaglioToSearchBanca.setEsercizio(esercizio);
                 dettaglioToSearchBanca.setModalita_pagamento_uo_cds(modalitaPagamentoBulk.getRif_modalita_pagamento());
                 dettaglioToSearchBanca.setDocumento_generico( documentoGenericoToSearchBanca);
                 documentoGenericoToSearchBanca.getDocumento_generico_dettColl().add(dettaglioToSearchBanca);

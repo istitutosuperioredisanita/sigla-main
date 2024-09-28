@@ -55,7 +55,7 @@ public interface DocumentoGenericoAttivoLocal {
     )
     Response insert(@Context HttpServletRequest request, DocumentoGenericoAttivoDto documentoGenericoAttivoDto) throws Exception;
     @GET
-    @Path("/{cd_cds}/{cd_unita_organizzativa}({esercizio}/{pg_documento_generico}")
+    @Path("/{cd_cds}/{cd_unita_organizzativa}/{esercizio}/{pg_documento_generico}")
     @ApiOperation(value = "Ritorna documento generico attivo",
             notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_ATTIVO +"'",
             response = DocumentoGenericoAttivoDto.class,
@@ -70,7 +70,7 @@ public interface DocumentoGenericoAttivoLocal {
     Response get(@PathParam("cd_cds") String cd_cds,@PathParam("cd_unita_organizzativa") String cd_unita_organizzativa,@PathParam("esercizio")Integer esercizio,
                @PathParam("pg_documento_generico") Long pg_documento_generico ) throws Exception;
     @DELETE
-    @Path("/{cd_cds}/{cd_unita_organizzativa}({esercizio}/{pg_documento_generico}")
+    @Path("/{cd_cds}/{cd_unita_organizzativa}/{esercizio}/{pg_documento_generico}")
     @ApiOperation(value = "Elimina un documento Generico Attivo'",
             notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_ATTIVO +"'",
             response = String.class,
@@ -101,7 +101,7 @@ public interface DocumentoGenericoAttivoLocal {
     Response update(@PathParam("cd_cds") String cd_cds,@PathParam("cd_unita_organizzativa") String cd_unita_organizzativa,@PathParam("esercizio")Integer esercizio,
                     @PathParam("pg_documento_generico") Long pg_documento_generico ) throws Exception;
     @GET
-    @Path("/terzo/{cd_unita_organizzativa}")
+    @Path("/terzo/{esercizio}/{cd_unita_organizzativa}")
     @ApiOperation(value = "Ritorna il terzo dell'unita organizzativa con le modalità di incassao",
             notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.DOCUMENTO_GEN_ATTIVO +"'",
             response = TerzoUnitaOrganizzativaDto.class,
@@ -113,6 +113,6 @@ public interface DocumentoGenericoAttivoLocal {
                     @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDR)
             }
     )
-    Response terzoUnitaOrganizzativa(@PathParam("cd_unita_organizzativa") String cd_unita_organizzativa ) throws Exception;
+    Response terzoUnitaOrganizzativa(@PathParam("esercizio") Integer esercizio,@PathParam("cd_unita_organizzativa") String cd_unita_organizzativa ) throws Exception;
 
 }
