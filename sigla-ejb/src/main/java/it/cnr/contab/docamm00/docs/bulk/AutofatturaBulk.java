@@ -201,24 +201,7 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
         setToBeCreated();
     }
 
-	/**
 
-	 * Setta il valore di: [Esercizio dell'obbligazione]
-	 **/
-	public void setEsercizio(Integer esercizio)  {
-
-		this.getFattura_passiva().setEsercizio(esercizio);
-	}
-	/**
-
-	 * Setta il valore di: [Esercizio dell'obbligazione]
-	 **/
-	public Integer getEsercizio()  {
-		Fattura_passivaBulk fatturaPassiva = this.getFattura_passiva();
-			if (fatturaPassiva == null)
-			return null;
-		return fatturaPassiva.getEsercizio();
-	}
     public java.lang.String getCd_cds_ft_passiva() {
         it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBase fattura_passiva = this.getFattura_passiva();
         if (fattura_passiva == null)
