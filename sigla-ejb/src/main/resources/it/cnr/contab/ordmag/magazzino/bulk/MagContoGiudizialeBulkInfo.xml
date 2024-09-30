@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://contab.cnr.it/schema/SIGLA"
+	xsi:schemaLocation="http://contab.cnr.it/schema/SIGLA http://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd"
+	shortDescription="Conto Giudiziale"
+	longDescription="Conto Giudiziale">
+
+	<fieldProperty
+			name="cdCds"
+			property="magazzino.cdCds"
+			inputType="TEXT"
+			inputSize="30"
+			maxLength="30"
+			enabledOnEdit="false"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
+			nullable="false"
+			label="Cds" />
+	<fieldProperty
+			name="cdMagazzino"
+			property="magazzino.cdMagazzino"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			nullable="false"
+			label="Codice Magazzino" />
+	<fieldProperty
+			name="dsMagazzino"
+			property="magazzino.dsMagazzino"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			nullable="false"
+			label="Codice Magazzino" />
+
+	<fieldProperty
+		name="giacenza"
+		property="giacenza"
+		inputType="TEXT"
+		enabledOnEdit="false"
+		enabledOnInsert="false"
+		label="Giacenza" />
+	<fieldProperty
+			name="qtaInizio"
+			property="qtaInizio"
+			inputType="TEXT"
+			enabledOnEdit="false"
+			enabledOnInsert="false"
+			label="Qta Inizio Anno" />
+	<fieldProperty
+			name="qtaCarico"
+			property="qtaCarico"
+			inputType="TEXT"
+			enabledOnEdit="false"
+			enabledOnInsert="false"
+			label="Qta Inizio Anno" />
+	<fieldProperty
+			name="qtaScarico"
+			property="qtaScarico"
+			inputType="TEXT"
+			enabledOnEdit="false"
+			enabledOnInsert="false"
+			label="Qta Scaricata" />
+	<fieldProperty
+			name="qtaGiacenza"
+			property="qtaGiacenza"
+			inputType="TEXT"
+			enabledOnEdit="false"
+			enabledOnInsert="false"
+			label="Qta Giacenza" />
+
+
+	<formFieldProperty
+		name="giacenza" />
+	<formFieldProperty
+			name="qtaInizio" />
+	<formFieldProperty
+			name="qtaCarico" />
+	<formFieldProperty
+			name="qtaScarico" />
+	<formFieldProperty
+			name="qtaGiacenza" />
+
+</bulkInfo>

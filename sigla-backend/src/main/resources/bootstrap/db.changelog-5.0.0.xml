@@ -6136,4 +6136,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_accessi_cons_scad_obbl_voce.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunta configurazione per abilitare/disabilitare la possibilità di aggiungere modalità di pagamento per i dipendenti -->
     <include file="bootstrap/add_configurazione_gest_modpag_dip.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta configurazione per la nuova voce conto giudiziale-->
+    <include file="bootstrap/add_accessi_conto_giudiziale.xml"/>
 </databaseChangeLog>

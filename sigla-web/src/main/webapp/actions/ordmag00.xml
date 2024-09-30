@@ -313,4 +313,10 @@
     <init-param name="CHIUSURA_DEFINITIVA" value="true" />/>
   </businessProcess>
 
+  <businessProcess name="SelezionatoreListaCntGiudizizaleBP" className="it.cnr.jada.util.action.ConsultazioniBP">
+    <init-param name="bulkClassName" value="it.cnr.contab.ordmag.magazzino.bulk.MagContoGiudizialeBulk" />
+    <!--<init-param name="defaultAction" value="ChiusuraMagazzinoProvAction" />-->
+    <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>
+  </businessProcess>
+
 </action-mappings>
