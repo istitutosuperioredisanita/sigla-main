@@ -16,13 +16,14 @@
  */
 
 package it.cnr.contab.docamm00.ejb;
-import java.rmi.*;
-import java.util.Vector;
 
 import it.cnr.contab.docamm00.docs.bulk.AutofatturaBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.util.ejb.*;
+
+import java.rmi.RemoteException;
+import java.util.Vector;
 
 public class TransactionalAutoFatturaComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements AutoFatturaComponentSession {
 public void aggiornaStatoDocumentiAmministrativi(it.cnr.jada.UserContext param0,java.lang.String param1,java.lang.String param2,java.lang.String param3,java.lang.Integer param4,java.lang.Long param5,java.lang.String param6) throws RemoteException,it.cnr.jada.comp.ComponentException {
@@ -521,6 +522,25 @@ public Vector estraeSezionali(UserContext param0, AutofatturaBulk param1,
 	public AutofatturaBulk aggiornaAutofatturaInvioSDI(UserContext userContext, AutofatturaBulk autofattura) throws ComponentException, RemoteException {
 		try {
 			return (AutofatturaBulk)invoke("aggiornaAutofatturaInvioSDI",new Object[] {
+					userContext,
+					autofattura});
+		} catch(java.rmi.RemoteException e) {
+			throw e;
+		} catch(java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch(it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch(Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
+
+	@Override
+	public Fattura_passivaBulk cercaFatturaPassiva(UserContext userContext, AutofatturaBulk autofattura) throws ComponentException, RemoteException {
+		try {
+			return (Fattura_passivaBulk)invoke("cercaFatturaPassiva",new Object[] {
 					userContext,
 					autofattura});
 		} catch(java.rmi.RemoteException e) {

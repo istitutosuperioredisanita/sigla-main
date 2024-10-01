@@ -1,11 +1,16 @@
 package it.cnr.contab.docamm00.actions;
 
 import it.cnr.contab.docamm00.bp.CRUDAutofatturaBP;
+import it.cnr.contab.docamm00.bp.CRUDFatturaPassivaBP;
 import it.cnr.contab.docamm00.docs.bulk.AutofatturaBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
 import it.cnr.contab.docamm00.ejb.AutoFatturaComponentSession;
 import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk;
 import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
+
+import java.util.Optional;
 
 public class CRUDAutofatturaAction extends EconomicaAction {
 
@@ -21,8 +26,6 @@ public class CRUDAutofatturaAction extends EconomicaAction {
             CRUDAutofatturaBP bp = (CRUDAutofatturaBP) getBusinessProcess(context);
             AutofatturaBulk autofattura = (AutofatturaBulk) bp.getModel();
 
-
-
             java.util.Collection sezionaliOld = autofattura.getSezionali();
             Boolean intraUE = autofattura.getFl_intra_ue();
             Boolean extraUE = autofattura.getFl_extra_ue();
@@ -32,16 +35,8 @@ public class CRUDAutofatturaAction extends EconomicaAction {
             String fattServizi = autofattura.getTi_bene_servizio();
             Boolean liqDiff = autofattura.getFl_liquidazione_differita();
             fillModel(context);
+            autofattura = (AutofatturaBulk) bp.getModel();
             try {
-                autofattura.setFl_intra_ue(Boolean.FALSE);
-                autofattura.setFl_extra_ue(Boolean.FALSE);
-                autofattura.setFl_san_marino_con_iva(Boolean.FALSE);
-                autofattura.setFl_san_marino_senza_iva(Boolean.FALSE);
-
-                autofattura.setFl_autofattura(Boolean.FALSE);
-                autofattura.setTi_bene_servizio(null);
-                autofattura.setFl_liquidazione_differita(Boolean.FALSE);
-
                 basicDoOnIstituzionaleCommercialeChange(context, autofattura);
                 bp.setModel(context, autofattura);
                 return context.findDefaultForward();
@@ -51,7 +46,6 @@ public class CRUDAutofatturaAction extends EconomicaAction {
                 autofattura.setFl_extra_ue(extraUE);
                 autofattura.setFl_san_marino_con_iva(sanMarinoCI);
                 autofattura.setFl_san_marino_senza_iva(sanMarinoSI);
-                autofattura.setFl_autofattura(autof);
                 autofattura.setTi_bene_servizio(fattServizi);
                 autofattura.setFl_liquidazione_differita(liqDiff);
                 bp.setModel(context, autofattura);
@@ -108,6 +102,23 @@ public class CRUDAutofatturaAction extends EconomicaAction {
             }
         } catch (Throwable t) {
             return handleException(context, t);
+        }
+    }
+    public Forward doVisualizzaFattura(ActionContext context) throws BusinessProcessException {
+        CRUDAutofatturaBP autofatturaBP = (CRUDAutofatturaBP) context.getBusinessProcess();
+        AutofatturaBulk autofatturaBulk = (AutofatturaBulk) autofatturaBP.getModel();
+        Optional<Fattura_passivaBulk> fatturaCollegata = Optional.ofNullable(autofatturaBulk.getFattura_passiva());
+        it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk unita_organizzativa = it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context);
+        try {
+            CRUDFatturaPassivaBP nbp = (CRUDFatturaPassivaBP) context.createBusinessProcess("CRUDFatturaPassivaBP",
+                    unita_organizzativa.isUoEnte()?new Object[]{"V"}:new Object[]{"M"}
+            );
+            nbp = (CRUDFatturaPassivaBP) context.addBusinessProcess(nbp);
+            nbp.edit(context, ((AutoFatturaComponentSession) autofatturaBP.createComponentSession()).
+                    cercaFatturaPassiva(context.getUserContext(), autofatturaBulk));
+            return nbp;
+        } catch (Throwable e) {
+            return handleException(context, e);
         }
     }
 }

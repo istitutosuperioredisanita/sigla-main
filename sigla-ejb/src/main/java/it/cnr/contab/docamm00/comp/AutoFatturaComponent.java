@@ -330,9 +330,7 @@ public void eliminaConBulk(UserContext userContext,OggettoBulk bulk) throws it.c
 public java.util.Vector estraeSezionali (UserContext aUC, AutofatturaBulk autofattura) throws ComponentException {
 
 	try {
-		if (autofattura == null || autofattura.getTi_istituz_commerc() == null)
-			return null;
-		return new java.util.Vector(findSezionali(aUC, autofattura, false));
+		return  estraeSezionali(aUC, autofattura, true,true);
 	} catch (Throwable t) {
 		throw handleException(autofattura, t);
 	}
@@ -340,97 +338,108 @@ public java.util.Vector estraeSezionali (UserContext aUC, AutofatturaBulk autofa
 public java.util.Vector estraeSezionali (UserContext aUC, AutofatturaBulk autofattura,boolean obbIta) throws ComponentException {
 
 	try {
-		if (autofattura == null || autofattura.getTi_istituz_commerc() == null)
-			return null;
-		return new java.util.Vector(findSezionali(aUC, autofattura, obbIta));
+		return estraeSezionali(aUC,autofattura,obbIta,false);
 	} catch (Throwable t) {
 		throw handleException(autofattura, t);
 	}
 }
+	private  java.util.Vector estraeSezionali (UserContext aUC, AutofatturaBulk autofattura,boolean obbIta,boolean toSearchFromMap) throws ComponentException {
+
+		try {
+			return new java.util.Vector(findSezionali(aUC, autofattura, obbIta,toSearchFromMap));
+		} catch (Throwable t) {
+			throw handleException(autofattura, t);
+		}
+	}
 	public java.util.Collection findSezionali(UserContext aUC, AutofatturaBulk autofattura)
 			throws ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException{
-		return findSezionali( aUC,autofattura,true);
+		return findSezionali( aUC,autofattura,true,true);
 	}
+	private java.util.Collection findSezionali(UserContext aUC, AutofatturaBulk autofattura,boolean obbIta,boolean toSearchFromMap)
+			throws ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException {
+
+		if (!toSearchFromMap && autofattura.getTi_istituz_commerc() == null) return null;
+
+		java.util.Vector options = new java.util.Vector();
+		String[][] autofatturaClause = { { "TIPO_SEZIONALE.FL_AUTOFATTURA", "Y", "AND" } };
+		//String[][] defaultOption = new String[][] { autofatturaClause };
+
+		if (Optional.ofNullable(autofattura.getFl_intra_ue()).orElse(Boolean.FALSE).booleanValue())
+			options.add(new String[][] { { "TIPO_SEZIONALE.FL_INTRA_UE","Y", "AND" } });
+		else if (Optional.ofNullable(autofattura.getFl_extra_ue()).orElse(Boolean.FALSE).booleanValue())
+			options.add(new String[][] { { "TIPO_SEZIONALE.FL_EXTRA_UE","Y", "AND" } });
+		else if (Optional.ofNullable(autofattura.getFl_san_marino_con_iva()).orElse(Boolean.FALSE).booleanValue())
+			options.add(new String[][] { { "TIPO_SEZIONALE.FL_SAN_MARINO_CON_IVA","Y", "AND" } });
+		else if (Optional.ofNullable(autofattura.getFl_san_marino_senza_iva()).orElse(Boolean.FALSE).booleanValue())
+			options.add(new String[][] { { "TIPO_SEZIONALE.FL_SAN_MARINO_SENZA_IVA","Y", "AND" } });
+		else
+			if(!obbIta)
+				options.add(new String[][] { { "TIPO_SEZIONALE.FL_ORDINARIO","Y", "AND" } });
+
+		if (Optional.ofNullable(autofattura.getFl_split_payment()).orElse(Boolean.FALSE).booleanValue())
+			options.add(new String[][] { { "TIPO_SEZIONALE.FL_SPLIT_PAYMENT","Y", "AND" } });
+		else
+			options.add(autofatturaClause);
+
+		//********************************
+		//Il seguente if è stato richiesto da Paolo espressamente su richiesta CINECA
+		if ( !toSearchFromMap) {
+			if (autofattura.isAutofatturaNeeded() && autofattura.isAutofatturaDiBeni())
+				options.add(new String[][]{
+						{"TIPO_SEZIONALE.TI_BENE_SERVIZIO", autofattura.getTi_bene_servizio(), "AND"}
+				});
+			else
+				options.add(new String[][]{
+						{"TIPO_SEZIONALE.TI_BENE_SERVIZIO", "*", "AND"} //,
+						//						{ "TIPO_SEZIONALE.TI_BENE_SERVIZIO", autofattura.getTi_bene_servizio(), "OR" }
+				});
+		}
+		Fattura_passivaBulk fatturaPassiva=(Fattura_passivaBulk) findByPrimaryKey(aUC, autofattura.getFattura_passiva());
+		if (Optional.ofNullable(fatturaPassiva).isPresent()) {
+			if ((fatturaPassiva.isCommerciale()) &&
+					(fatturaPassiva.getFl_split_payment() == null ||
+							(fatturaPassiva.getFl_split_payment() != null && !fatturaPassiva.getFl_split_payment().booleanValue())) &&
+					fatturaPassiva.getData_protocollo() != null &&
+					!fatturaPassiva.isEstera() &&
+					!fatturaPassiva.isSanMarinoSenzaIVA() &&
+					!fatturaPassiva.isSanMarinoConIVA()) {
+				Configurazione_cnrBulk conf = getLimitiRitardoDetraibile(aUC, fatturaPassiva);
+				if (fatturaPassiva.getDt_registrazione() != null && fatturaPassiva.getDt_registrazione().after(conf.getDt01()) &&
+						(fatturaPassiva.getDt_registrazione().before(conf.getDt02()) || fatturaPassiva.getDt_registrazione().equals(conf.getDt02())))
+					options.add(new String[][]{{"TIPO_SEZIONALE.FL_REG_TARDIVA", "Y", "AND"}});
+				else
+					options.add(new String[][]{{"TIPO_SEZIONALE.FL_REG_TARDIVA", "N", "AND"}});
+
+			} else {
+				options.add(new String[][]{{"TIPO_SEZIONALE.FL_REG_TARDIVA", "N", "AND"}});
+			}
+		}
+
+
+		//********************************
+		//java.util.Collection result =
+		return ((it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleHome)getHome(aUC,it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk.class)).findTipiSezionali(
+				autofattura.getEsercizio(),
+				autofattura.getCd_uo_origine(),
+				autofattura.getTi_istituz_commerc(),
+				it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk.VENDITE,
+				autofattura.getTi_fattura(),
+				options);
+		//if (result == null || result.isEmpty())
+		//result = ((it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleHome)getHome(aUC,it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk.class)).findTipiSezionali(
+		//autofattura.getEsercizio(),
+		//autofattura.getCd_uo_origine(),
+		//autofattura.getTi_istituz_commerc(),
+		//it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk.VENDITE,
+		//autofattura.getTi_fattura(),
+		//defaultOption);
+		//return result;
+
+	}
+
 	public java.util.Collection findSezionali(UserContext aUC, AutofatturaBulk autofattura,boolean obbIta)
 	throws ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException {
-	
-	if (autofattura.getTi_istituz_commerc() == null) return null;
-	
-	java.util.Vector options = new java.util.Vector();
-	String[][] autofatturaClause = { { "TIPO_SEZIONALE.FL_AUTOFATTURA", "Y", "AND" } };
-	//String[][] defaultOption = new String[][] { autofatturaClause };
-	
-	if (autofattura.getFl_intra_ue().booleanValue())
-		options.add(new String[][] { { "TIPO_SEZIONALE.FL_INTRA_UE","Y", "AND" } });
-	else if (autofattura.getFl_extra_ue().booleanValue())
-		options.add(new String[][] { { "TIPO_SEZIONALE.FL_EXTRA_UE","Y", "AND" } });
-	else if (autofattura.getFl_san_marino_con_iva().booleanValue())
-		options.add(new String[][] { { "TIPO_SEZIONALE.FL_SAN_MARINO_CON_IVA","Y", "AND" } });
-	else if (autofattura.getFl_san_marino_senza_iva().booleanValue())
-		options.add(new String[][] { { "TIPO_SEZIONALE.FL_SAN_MARINO_SENZA_IVA","Y", "AND" } });
-	else
-		if(!obbIta)
-			options.add(new String[][] { { "TIPO_SEZIONALE.FL_ORDINARIO","Y", "AND" } });
-
-	if (autofattura.getFl_split_payment()!=null && autofattura.getFl_split_payment().booleanValue())
-		options.add(new String[][] { { "TIPO_SEZIONALE.FL_SPLIT_PAYMENT","Y", "AND" } });
-	else
-		options.add(autofatturaClause);
-
-	//********************************
-	//Il seguente if è stato richiesto da Paolo espressamente su richiesta CINECA
-	if (autofattura.isAutofatturaNeeded() && autofattura.isAutofatturaDiBeni())
-		options.add(new String[][] {
-							{ "TIPO_SEZIONALE.TI_BENE_SERVIZIO", autofattura.getTi_bene_servizio(), "AND" }
-						});
-	else
-		options.add(new String[][] {
-						{ "TIPO_SEZIONALE.TI_BENE_SERVIZIO", "*", "AND" } //,
-//						{ "TIPO_SEZIONALE.TI_BENE_SERVIZIO", autofattura.getTi_bene_servizio(), "OR" }
-					});
-	  Fattura_passivaBulk fatturaPassiva=(Fattura_passivaBulk) findByPrimaryKey(aUC, autofattura.getFattura_passiva());
-	 if (Optional.ofNullable(fatturaPassiva).isPresent()) {
-		 if ((fatturaPassiva.isCommerciale()) &&
-				 (fatturaPassiva.getFl_split_payment() == null ||
-						 (fatturaPassiva.getFl_split_payment() != null && !fatturaPassiva.getFl_split_payment().booleanValue())) &&
-				 fatturaPassiva.getData_protocollo() != null &&
-				 !fatturaPassiva.isEstera() &&
-				 !fatturaPassiva.isSanMarinoSenzaIVA() &&
-				 !fatturaPassiva.isSanMarinoConIVA()) {
-			 Configurazione_cnrBulk conf = getLimitiRitardoDetraibile(aUC, fatturaPassiva);
-			 if (fatturaPassiva.getDt_registrazione() != null && fatturaPassiva.getDt_registrazione().after(conf.getDt01()) &&
-					 (fatturaPassiva.getDt_registrazione().before(conf.getDt02()) || fatturaPassiva.getDt_registrazione().equals(conf.getDt02())))
-				 options.add(new String[][]{{"TIPO_SEZIONALE.FL_REG_TARDIVA", "Y", "AND"}});
-			 else
-				 options.add(new String[][]{{"TIPO_SEZIONALE.FL_REG_TARDIVA", "N", "AND"}});
-
-		 } else {
-			 options.add(new String[][]{{"TIPO_SEZIONALE.FL_REG_TARDIVA", "N", "AND"}});
-		 }
-	 }else{
-		 options.add(new String[][]{{"TIPO_SEZIONALE.FL_REG_TARDIVA", "N", "AND"}});
-		 options.add(new String[][]{{"TIPO_SEZIONALE.FL_REG_TARDIVA", "N", "AND"}});
-	 }
-
-	  
-	//********************************
-	//java.util.Collection result = 
-	return ((it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleHome)getHome(aUC,it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk.class)).findTipiSezionali(
-												autofattura.getEsercizio(),
-												autofattura.getCd_uo_origine(),
-												autofattura.getTi_istituz_commerc(),
-												it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk.VENDITE,
-												autofattura.getTi_fattura(),
-												options);
-	//if (result == null || result.isEmpty())
-		//result = ((it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleHome)getHome(aUC,it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk.class)).findTipiSezionali(
-												//autofattura.getEsercizio(),
-												//autofattura.getCd_uo_origine(),
-												//autofattura.getTi_istituz_commerc(),
-												//it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk.VENDITE,
-												//autofattura.getTi_fattura(),
-												//defaultOption);
-	//return result;
+	 	return findSezionali(aUC,autofattura,obbIta,false);
 		
 }
 
@@ -745,5 +754,39 @@ public Configurazione_cnrBulk getLimitiRitardoDetraibile(UserContext userContext
 		AutofatturaBulk autofattura = (AutofatturaBulk)oggettobulk;
 		autofattura.setFattura_passiva( getFatturaPassiva(usercontext,autofattura));
 		return super.inizializzaBulkPerModifica(usercontext, oggettobulk);
+	}
+
+	public OggettoBulk inizializzaBulkPerRicercaLibera(UserContext userContext, OggettoBulk bulk) throws ComponentException {
+
+		if (bulk == null)
+			throw new ComponentException("Attenzione: non esiste alcuna autofattura corrispondente ai criteri di ricerca!");
+
+		AutofatturaBulk autofattura = (AutofatturaBulk) super.inizializzaBulkPerRicercaLibera(userContext, bulk);
+
+		TerzoBulk fornitore = new TerzoBulk();
+
+
+		autofattura.setFl_liquidazione_differita(null);
+		try {
+			autofattura.setSezionali(findSezionali(userContext, autofattura));
+		} catch (it.cnr.jada.persistency.PersistencyException e) {
+			throw handleException(autofattura, e);
+		} catch (IntrospectionException e) {
+			throw new RuntimeException(e);
+		}
+		autofattura.setSezionaliFlag(null);
+
+
+		return autofattura;
+	}
+
+	public Fattura_passivaBulk cercaFatturaPassiva(UserContext usercontext, AutofatturaBulk oggettobulk) throws ComponentException {
+		Fattura_passivaHome fatturaPassivaHome = (Fattura_passivaHome) getHome(usercontext, Fattura_passiva_IBulk.class);
+		try {
+			return (Fattura_passivaBulk) fatturaPassivaHome.findByPrimaryKey(oggettobulk.getFattura_passiva());
+
+		} catch (PersistencyException e) {
+			throw handleException(e);
+		}
 	}
 }
