@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+ * Copyright (C) 2019  Consiglio Nazionale delle Ricerche
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Affero General Public License as
@@ -16,25 +16,16 @@
  */
 
 /*
- * Created by BulkGenerator 2.0 [07/12/2009]
- * Date 21/09/2017
+ * Created on Jun 23, 2006
+ *
+ * To change the template for this generated file go to
+ * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-package it.cnr.contab.ordmag.magazzino.bulk;
+package it.cnr.contab.ordmag.magazzino.ejb;
 
-import it.cnr.contab.ordmag.anag00.AbilUtenteUopOperBulk;
-import it.cnr.jada.bulk.BulkHome;
-import it.cnr.jada.persistency.PersistentCache;
+import javax.ejb.Remote;
 
-import java.sql.Connection;
-
-public class MagContoGiudizialeHome extends BulkHome {
-	private static final long serialVersionUID = 1L;
-
-	public MagContoGiudizialeHome(Connection conn) {
-		super(AbilUtenteUopOperBulk.class, conn);
-	}
-	public MagContoGiudizialeHome(Connection conn, PersistentCache persistentCache) {
-		super(MagContoGiudizialeBulk.class, conn, persistentCache);
-	}
+@Remote
+public interface MagContoGiudizialeComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
 
 }

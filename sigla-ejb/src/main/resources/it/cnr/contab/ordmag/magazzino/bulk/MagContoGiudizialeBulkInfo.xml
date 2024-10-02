@@ -23,20 +23,10 @@
 	shortDescription="Conto Giudiziale"
 	longDescription="Conto Giudiziale">
 
-	<fieldProperty
-			name="cdCds"
-			property="magazzino.cdCds"
-			inputType="TEXT"
-			inputSize="30"
-			maxLength="30"
-			enabledOnEdit="false"
-			enabledOnSearch="true"
-			enabledOnFreeSearch="true"
-			nullable="false"
-			label="Cds" />
+
 	<fieldProperty
 			name="cdMagazzino"
-			property="magazzino.cdMagazzino"
+			property="cd_magazzino"
 			inputType="TEXT"
 			inputSize="10"
 			maxLength="10"
@@ -50,53 +40,72 @@
 			maxLength="10"
 			nullable="false"
 			label="Codice Magazzino" />
+	<fieldProperty
+			name="cd_elemento_voce"
+			property="cd_elemento_voce"
+			inputType="TEXT"
+			inputSize="20"
+			maxLength="20"
+			enabledOnEdit="false"
+			enabledOnSearch="false"
+			nullable="false"
+			label="elemento voce" />
 
 	<fieldProperty
-		name="giacenza"
-		property="giacenza"
+		name="giacenzaAttuale"
+		property="giacenzaAttuale"
 		inputType="TEXT"
 		enabledOnEdit="false"
 		enabledOnInsert="false"
-		label="Giacenza" />
+		label="Giacenza Attuale" />
+
 	<fieldProperty
-			name="qtaInizio"
-			property="qtaInizio"
+			name="qtaInizioAnno"
+			property="qtaInizioAnno"
 			inputType="TEXT"
 			enabledOnEdit="false"
 			enabledOnInsert="false"
 			label="Qta Inizio Anno" />
 	<fieldProperty
-			name="qtaCarico"
-			property="qtaCarico"
+			name="qtaCaricoAnno"
+			property="qtaCaricoAnno"
 			inputType="TEXT"
 			enabledOnEdit="false"
 			enabledOnInsert="false"
-			label="Qta Inizio Anno" />
+			label="Qta Caricata" />
 	<fieldProperty
-			name="qtaScarico"
-			property="qtaScarico"
+			name="qtaScaricoAnno"
+			property="qtaScaricoAnno"
 			inputType="TEXT"
 			enabledOnEdit="false"
 			enabledOnInsert="false"
 			label="Qta Scaricata" />
 	<fieldProperty
-			name="qtaGiacenza"
-			property="qtaGiacenza"
+			name="qtaGiacenzaInizioAnno"
+			property="qtaGiacenzaInizioAnno"
 			inputType="TEXT"
 			enabledOnEdit="false"
 			enabledOnInsert="false"
 			label="Qta Giacenza" />
+	<columnFieldProperty name="cdMagazzino"/>
+	<columnFieldProperty name="cd_elemento_voce"/>
+	<columnFieldProperty name="qtaInizioAnno"/>
+	<columnFieldProperty name="qtaCaricoAnno"/>
+	<columnFieldProperty name="qtaScaricoAnno"/>
+	<columnFieldProperty name="qtaGiacenzaInizioAnno"/>
 
 
 	<formFieldProperty
-		name="giacenza" />
+		name="cdMagazzino" />
 	<formFieldProperty
-			name="qtaInizio" />
+			name="cd_elemento_voce" />
 	<formFieldProperty
-			name="qtaCarico" />
+			name="qtaInizioAnno" />
 	<formFieldProperty
-			name="qtaScarico" />
+			name="qtaCaricoAnno" />
 	<formFieldProperty
-			name="qtaGiacenza" />
+			name="qtaScaricoAnno" />
+	<formFieldProperty
+			name="qtaGiacenzaInizioAnno" />
 
 </bulkInfo>

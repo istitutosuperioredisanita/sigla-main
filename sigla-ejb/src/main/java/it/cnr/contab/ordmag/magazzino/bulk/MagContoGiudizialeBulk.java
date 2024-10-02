@@ -21,69 +21,80 @@
  */
 package it.cnr.contab.ordmag.magazzino.bulk;
 
-import it.cnr.contab.ordmag.anag00.MagazzinoBulk;
-import it.cnr.jada.persistency.KeyedPersistent;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.persistency.Persistent;
 
-public class MagContoGiudizialeBulk extends AbilitazioneMagazzinoBulk implements KeyedPersistent{
+public class MagContoGiudizialeBulk extends OggettoBulk implements Persistent {
 	private static final long serialVersionUID = 1L;
 
-	private Integer giacenza;
-	private Integer qtaInizio;
-	private Integer qtaCarico;
-	private Integer qtaScarico;
-	private Integer qtaGiacenza;
-	private MagazzinoBulk magazzino = new MagazzinoBulk();
+	private String cd_magazzino;
+
+	private String cd_elemento_voce;
+
+	private Integer giacenzaAttuale;
+	private Integer qtaInizioAnno;
+	private Integer qtaCaricoAnno;
+	private Integer qtaScaricoAnno;
+	private Integer qtaGiacenzaInizioAnno;
 
 
 	public MagContoGiudizialeBulk() {
 		super();
 	}
 
-	public Integer getGiacenza() {
-		return giacenza;
+	public String getCd_magazzino() {
+		return cd_magazzino;
 	}
 
-	public void setGiacenza(Integer giacenza) {
-		this.giacenza = giacenza;
+	public void setCd_magazzino(String cd_magazzino) {
+		this.cd_magazzino = cd_magazzino;
 	}
 
-	public Integer getQtaInizio() {
-		return qtaInizio;
+	public String getCd_elemento_voce() {
+		return cd_elemento_voce;
 	}
 
-	public void setQtaInizio(Integer qtaInizio) {
-		this.qtaInizio = qtaInizio;
+	public void setCd_elemento_voce(String cd_elemento_voce) {
+		this.cd_elemento_voce = cd_elemento_voce;
 	}
 
-	public Integer getQtaCarico() {
-		return qtaCarico;
+	public Integer getGiacenzaAttuale() {
+		return giacenzaAttuale;
 	}
 
-	public void setQtaCarico(Integer qtaCarico) {
-		this.qtaCarico = qtaCarico;
+	public void setGiacenzaAttuale(Integer giacenzaAttuale) {
+		this.giacenzaAttuale = giacenzaAttuale;
 	}
 
-	public Integer getQtaScarico() {
-		return qtaScarico;
+	public Integer getQtaInizioAnno() {
+		return qtaInizioAnno;
 	}
 
-	public void setQtaScarico(Integer qtaScarico) {
-		this.qtaScarico = qtaScarico;
+	public void setQtaInizioAnno(Integer qtaInizioAnno) {
+		this.qtaInizioAnno = qtaInizioAnno;
 	}
 
-	public Integer getQtaGiacenza() {
-		return qtaGiacenza;
+	public Integer getQtaCaricoAnno() {
+		return qtaCaricoAnno;
 	}
 
-	public void setQtaGiacenza(Integer qtaGiacenza) {
-		this.qtaGiacenza = qtaGiacenza;
+	public void setQtaCaricoAnno(Integer qtaCaricoAnno) {
+		this.qtaCaricoAnno = qtaCaricoAnno;
 	}
 
-	public MagazzinoBulk getMagazzino() {
-		return magazzino;
+	public Integer getQtaScaricoAnno() {
+		return qtaScaricoAnno;
 	}
 
-	public void setMagazzino(MagazzinoBulk magazzino) {
-		this.magazzino = magazzino;
+	public void setQtaScaricoAnno(Integer qtaScaricoAnno) {
+		this.qtaScaricoAnno = qtaScaricoAnno;
+	}
+
+	public Integer getQtaGiacenzaInizioAnno() {
+		return qtaGiacenzaInizioAnno;
+	}
+
+	public void setQtaGiacenzaInizioAnno(Integer qtaGiacenzaInizioAnno) {
+		this.qtaGiacenzaInizioAnno = qtaGiacenzaInizioAnno;
 	}
 }

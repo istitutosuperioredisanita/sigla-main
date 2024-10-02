@@ -303,7 +303,7 @@
     <init-param name="reportName" value="/ordmag/stampa_chiusura_mag.jasper" />
   </businessProcess>
 
-  <businessProcess name="CRUDChiusuraMagazzinoDefBP" className="it.cnr.contab.ordmag.magazzino.bp.StampaChiusuraMagazzinoBP">
+  <businessProcess name="CRUDChiusuraMagazzinoDefBP" className="it.cnr.contab.ordmag.magazzino.bp.MagContoGiudizialeBP">
     <forward name="default" path="/ordmag/magazzini/stampa_chiusura_mag.jsp"/>
     <init-param name="bulkClassName" value="it.cnr.contab.ordmag.magazzino.bulk.Chiusura_magazzinoBulk" />
     <init-param name="printbp" value="OfflineReportPrintBP"/>
@@ -313,10 +313,10 @@
     <init-param name="CHIUSURA_DEFINITIVA" value="true" />/>
   </businessProcess>
 
-  <businessProcess name="SelezionatoreListaCntGiudizizaleBP" className="it.cnr.jada.util.action.ConsultazioniBP">
+  <businessProcess name="SelezionatoreListaCntGiudizizaleBP" className="it.cnr.contab.ordmag.magazzino.bp.MagContoGiudizialeBP">
+    <forward name="default" path="/consultazioni/form_lista.jsp" />
     <init-param name="bulkClassName" value="it.cnr.contab.ordmag.magazzino.bulk.MagContoGiudizialeBulk" />
-    <!--<init-param name="defaultAction" value="ChiusuraMagazzinoProvAction" />-->
-    <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>
+    <init-param name="componentSessionName" value="CNRDOCCONT00_EJB_MagContoGiudizialeComponentSession"/>
   </businessProcess>
 
 </action-mappings>
