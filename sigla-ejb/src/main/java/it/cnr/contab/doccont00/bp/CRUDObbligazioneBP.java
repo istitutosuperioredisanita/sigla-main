@@ -51,11 +51,13 @@ import it.cnr.jada.action.MessageToUser;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
+import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.jada.util.jsp.Button;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -525,6 +527,13 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
         int crudStatus = getModel().getCrudStatus();
         try {
             ObbligazioneBulk obbligazione = (ObbligazioneBulk) getModel();
+
+
+            if(obbligazione.getObbligazioniPluriennali() != null && !obbligazione.getObbligazioniPluriennali().isEmpty()){
+                throw new ApplicationException("Non è possibile cancellare l'obbligazione per presenza di obbligazioni pluriennali");
+            }
+
+
             if (obbligazione.getStato_obbligazione().equals(ObbligazioneBulk.STATO_OBB_PROVVISORIO)) {
                 ((ObbligazioneComponentSession) createComponentSession()).cancellaObbligazioneProvvisoria(context.getUserContext(), (ObbligazioneBulk) getModel());
                 reset(context);
@@ -1303,4 +1312,14 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
         return attivoOrdini;
     }
 
+
+    // non posso aggiungere obbligazioni pluriennali se l'importo dell'obbligazione è zero e se non ci sono già pluriennali
+    public boolean isADDPluriennali(){
+        ObbligazioneBulk obbligazione = (ObbligazioneBulk)getModel();
+
+        if(obbligazione.getIm_obbligazione().compareTo(new BigDecimal(0))==0 && (obbligazione.getObbligazioniPluriennali()==null || obbligazione.getObbligazioniPluriennali().isEmpty())){
+            return false;
+        }
+        return true;
+    }
 }

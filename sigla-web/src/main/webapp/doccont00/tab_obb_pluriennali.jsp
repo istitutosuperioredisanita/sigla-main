@@ -10,7 +10,7 @@
 
 <%  
 		CRUDObbligazioneBP bp = (CRUDObbligazioneBP)BusinessProcess.getBusinessProcess(request);
-		bp.getCrudObbligazione_pluriennale().writeHTMLTable(pageContext,"ColumnsDettObbPluriennale",true,false,true,"100%","150px");
+		bp.getCrudObbligazione_pluriennale().writeHTMLTable(pageContext,"ColumnsDettObbPluriennale",bp.isADDPluriennali(),false,bp.isADDPluriennali(),"100%","150px");
 %>
 
 <div class="Group card p-2 mb-2">

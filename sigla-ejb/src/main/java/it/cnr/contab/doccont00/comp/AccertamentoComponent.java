@@ -630,6 +630,9 @@ public class AccertamentoComponent extends CRUDComponent implements IDocumentoCo
             if (accertamento.isAssociataADocAmm())
                 throw new ApplicationException("Impossibile annullare un accertamento con documenti amministrativi collegati");
 
+            if (accertamento.getAccertamentiPluriennali() != null && !accertamento.getAccertamentiPluriennali().isEmpty()) {
+                throw new ApplicationException("Impossibile annullare un accertamento con accertamenti pluriennali collegati");
+            }
             /* simona
         accertamento.setDt_cancellazione(new java.sql.Timestamp(System.currentTimeMillis())); */
             accertamento.setDt_cancellazione(DateServices.getDt_valida(aUC));
@@ -2078,7 +2081,7 @@ public AccertamentoBulk generaDettagliScadenzaAccertamento (UserContext aUC,Acce
             generaDettagliScadenzaAccertamento(aUC, (AccertamentoBulk) bulk, null);
             verificaAccertamento(aUC, (AccertamentoBulk) bulk);
 
-            HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageKey, OggettoBulk> linee = getLineeAttivaValide((AccertamentoBulk) bulk);
+            HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal> linee = getLineeAttivaValide(aUC, (AccertamentoBulk) bulk);
 
             validaAccertamentoPluriennale(aUC, (AccertamentoBulk) bulk, linee);
             // COSTRUZIONE DI ACCERTAMENTO_PLURIENNALE_VOCE
@@ -2123,10 +2126,10 @@ public AccertamentoBulk generaDettagliScadenzaAccertamento (UserContext aUC,Acce
 
     }
 
-    private void creaAccertamentoPluriennaleVoce(UserContext aUC, AccertamentoBulk accertamento, HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageKey, OggettoBulk> linee) {
+    private void creaAccertamentoPluriennaleVoce(UserContext aUC, AccertamentoBulk accertamento, HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal> linee) {
 
         Accertamento_pluriennale_voceBulk accerPlurVoceNew = null;
-        Iterator<Map.Entry<it.cnr.contab.config00.latt.bulk.WorkpackageKey, OggettoBulk>> iterator = linee.entrySet().iterator();
+        Iterator<Map.Entry<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal>> iterator = linee.entrySet().iterator();
 
         if (accertamento.getAccertamentiPluriennali() != null && !accertamento.getAccertamentiPluriennali().isEmpty()) {
 
@@ -2138,35 +2141,53 @@ public AccertamentoBulk generaDettagliScadenzaAccertamento (UserContext aUC,Acce
                 iterator = linee.entrySet().iterator();
 
                 while (iterator.hasNext()) {
-                    Map.Entry<it.cnr.contab.config00.latt.bulk.WorkpackageKey, OggettoBulk> entry = iterator.next();
-                    OggettoBulk linea = entry.getValue();
-                    it.cnr.contab.config00.latt.bulk.WorkpackageKey lineaKey = entry.getKey();
+                    Map.Entry<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal> entry = iterator.next();
+
+                    BigDecimal percentualeLinea = entry.getValue();
+                    it.cnr.contab.config00.latt.bulk.WorkpackageBulk linea = entry.getKey();
 
                     accerPlurVoceNew = new Accertamento_pluriennale_voceBulk();
                     accerPlurVoceNew.setAccertamentoPluriennale(accPlur);
-                    accerPlurVoceNew.setLinea_attivita(new it.cnr.contab.config00.latt.bulk.WorkpackageBulk(lineaKey.getCd_centro_responsabilita(),lineaKey.getCd_linea_attivita()));
-
-                    if(linea instanceof Linea_attivitaBulk)  {
-                        accerPlurVoceNew.setImporto(accPlur.getImporto().multiply(((Linea_attivitaBulk) linea).getPrcImputazioneFin()).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP));
-                    } else if (linea instanceof V_pdg_accertamento_etrBulk) {
-                       accerPlurVoceNew.setImporto(accPlur.getImporto().multiply(((V_pdg_accertamento_etrBulk) linea).getPrcImputazioneFin()).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP));
-
-                    }
+                    accerPlurVoceNew.setLinea_attivita(linea);
+                    accerPlurVoceNew.setImporto(accPlur.getImporto().multiply(percentualeLinea).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP));
                     accerPlurVoceNew.setToBeCreated();
                     accPlur.addToRigheVoceCollBulkList(accerPlurVoceNew);
 
                 }
             }
         }
-
     }
 
-    private BigDecimal getPercentualeLineAttivita(it.cnr.contab.config00.latt.bulk.WorkpackageKey lineaKey, AccertamentoBulk accertamento) {
+    private BigDecimal getPercentualeLineAttivita(UserContext aUC, it.cnr.contab.config00.latt.bulk.WorkpackageKey lineaKey, AccertamentoBulk accertamento) throws ComponentException, IntrospectionException, PersistencyException {
 
+        // se siamo in modifica e l'importo dell'accertamento è zero va ricalcolata la percentuale della GAE partendo dalle voci pluriennali
+        if (accertamento.isToBeUpdated() && accertamento.getIm_accertamento().compareTo(new BigDecimal(0)) == 0) {
+            AccertamentoHome accertamentoHome = (AccertamentoHome) getHome(aUC, AccertamentoBulk.class);
+            List<Accertamento_pluriennaleBulk> pluriennaliList = accertamentoHome.findAccertamentiPluriennali(aUC, accertamento);
+
+            if (pluriennaliList != null && !pluriennaliList.isEmpty()) {
+                Accertamento_pluriennaleHome accertamentoPlurHome = (Accertamento_pluriennaleHome) getHome(aUC, Accertamento_pluriennaleBulk.class);
+
+                for (Accertamento_pluriennaleBulk plur : pluriennaliList) {
+                    List<Accertamento_pluriennale_voceBulk> acclurVoceList = accertamentoPlurHome.findAccertamentiPluriennaliVoce(aUC, plur);
+
+                    // se esiste una sola voce vuol dire che è presente una sola GAE e quindi la percentuale è 100%
+                    if (acclurVoceList.size() == 1) {
+                        return new BigDecimal(100);
+                    }
+                    for (Accertamento_pluriennale_voceBulk plurVoce : acclurVoceList) {
+                        if (plurVoce.getCd_linea_attivita().equals(lineaKey.getCd_linea_attivita()) && plurVoce.getCdCentroResponsabilita().equals(lineaKey.getCd_centro_responsabilita())) {
+
+                            return plurVoce.getImporto().multiply(new BigDecimal(100)).divide(plur.getImporto(), 2, BigDecimal.ROUND_HALF_UP);
+                        }
+                    }
+                }
+            }
+        }
         for (Accertamento_scadenzarioBulk scadenza : accertamento.getAccertamento_scadenzarioColl()) {
             for (Accertamento_scad_voceBulk scadVoce : scadenza.getAccertamento_scad_voceColl()) {
                 if (scadVoce.getCd_linea_attivita().equals(lineaKey.getCd_linea_attivita()) && scadVoce.getCd_centro_responsabilita().equals(lineaKey.getCd_centro_responsabilita())) {
-                   return scadVoce.getPrc();
+                    return scadVoce.getPrc();
                 }
             }
         }
@@ -4577,57 +4598,102 @@ private void modificoDettagliScadenza(UserContext aUC,AccertamentoBulk accertame
         return sql;
     }
 
-    private HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageKey, OggettoBulk> getLineeAttivaValide(AccertamentoBulk accertamento) {
+    private HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal> getLineeAttivaValide(UserContext aUC, AccertamentoBulk accertamento) throws ComponentException, IntrospectionException, PersistencyException {
 
-        HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageKey, OggettoBulk> linee = new HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageKey, OggettoBulk>();
-        Iterator<Map.Entry<it.cnr.contab.config00.latt.bulk.WorkpackageKey, OggettoBulk>> iteratorLinee = linee.entrySet().iterator();
+        // KEY = WorkpackageBulk / VALUE = PercentualeGae
+        HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal> linee = new HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal>();
 
-        for (Iterator lattIterator = accertamento.getLineeAttivitaSelezionateColl().iterator(); lattIterator.hasNext(); ) {
+        Iterator<Map.Entry<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal>> iteratorLinee;
 
-            V_pdg_accertamento_etrBulk ppsd = (V_pdg_accertamento_etrBulk) lattIterator.next();
-            V_pdg_accertamento_etrBulk ppsdNew=null;
+        // se importo accertamento maggiore di 0
+        if (accertamento.getIm_accertamento().compareTo(new BigDecimal(0)) > 0) {
 
-            it.cnr.contab.config00.latt.bulk.WorkpackageKey key = new it.cnr.contab.config00.latt.bulk.WorkpackageKey(ppsd.getCd_centro_responsabilita(), ppsd.getCd_linea_attivita());
+            // Prendo le GAE e calcolo la loro percentuale dalle scadenze
+            for (Accertamento_scadenzarioBulk scadenza : accertamento.getAccertamento_scadenzarioColl()) {
 
-            if(ppsd.getPrcImputazioneFin() == null){
-                BigDecimal percentualeGae = getPercentualeLineAttivita(key,accertamento);
-                ppsdNew=ppsd.clone();
-                ppsdNew.setPrcImputazioneFin(percentualeGae);
-            }else{
-                ppsdNew = ppsd;
-            }
+                for (Accertamento_scad_voceBulk scadVoce : scadenza.getAccertamento_scad_voceColl()) {
 
-            linee.put(key, ppsdNew);
-        }
-        for (Iterator lattIterator = accertamento.getNuoveLineeAttivitaColl().iterator(); lattIterator.hasNext(); ) {
-
-            Linea_attivitaBulk la = (Linea_attivitaBulk) lattIterator.next();
-
-            it.cnr.contab.config00.latt.bulk.WorkpackageKey key = new it.cnr.contab.config00.latt.bulk.WorkpackageKey(la.getLinea_att().getCd_centro_responsabilita(), la.getLinea_att().getCd_linea_attivita());
-
-            iteratorLinee = linee.entrySet().iterator();
-
-            boolean found = false;
-            while (iteratorLinee.hasNext()) {
-
-                Map.Entry<it.cnr.contab.config00.latt.bulk.WorkpackageKey, OggettoBulk> entry = iteratorLinee.next();
-
-                it.cnr.contab.config00.latt.bulk.WorkpackageKey lineaKey = entry.getKey();
-
-                if (lineaKey.equalsByPrimaryKey(key)) {
-                    found = true;
-
+                    linee = salvaLineeAttivita( aUC, linee,scadVoce.getLinea_attivita(),scadVoce.getIm_voce());
                 }
+            }
+            linee =  calcolaPercentualeLineeAttivita(linee,accertamento.getIm_accertamento());
 
+        } else {
+            // Se non ho importo Accertimento prendo le GAE e calcolo la loro percentuale dai pluriennali
+            AccertamentoHome accertamentoHome = (AccertamentoHome) getHome(aUC, AccertamentoBulk.class);
+            List<Accertamento_pluriennaleBulk> pluriennaliList = accertamentoHome.findAccertamentiPluriennali(aUC, accertamento);
+
+            if (pluriennaliList != null && !pluriennaliList.isEmpty()) {
+                Accertamento_pluriennaleHome accertamentoPlurHome = (Accertamento_pluriennaleHome) getHome(aUC, Accertamento_pluriennaleBulk.class);
+
+                for (Accertamento_pluriennaleBulk plur : pluriennaliList) {
+
+                    List<Accertamento_pluriennale_voceBulk> acclurVoceList = accertamentoPlurHome.findAccertamentiPluriennaliVoce(aUC, plur);
+
+                    // se esiste una sola voce vuol dire che è presente una sola GAE e quindi la percentuale è 100%
+                    if (acclurVoceList.size() == 1) {
+                        linee.put(acclurVoceList.get(0).getLinea_attivita(), new BigDecimal(100));
+
+                    }
+                    else {
+                        for (Accertamento_pluriennale_voceBulk plurVoce : acclurVoceList) {
+
+                            linee = salvaLineeAttivita( aUC, linee, plurVoce.getLinea_attivita(), plurVoce.getImporto());
+
+                        }
+                        linee = calcolaPercentualeLineeAttivita(linee, plur.getImporto());
+                    }
+                }
             }
-            if (!found) {
-                linee.put(key, la);
-            }
+
         }
         return linee;
     }
 
-    private void validaAccertamentoPluriennale(UserContext uc, AccertamentoBulk bulk, HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageKey, OggettoBulk> linee) throws ComponentException, IntrospectionException, PersistencyException {
+    private HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal> calcolaPercentualeLineeAttivita(HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal> lineeHM,BigDecimal importoTotale){
+        Iterator<Map.Entry<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal>> iteratorLinee = lineeHM.entrySet().iterator();
+
+        while (iteratorLinee.hasNext()) {
+
+            Map.Entry<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal> entry = iteratorLinee.next();
+
+            BigDecimal percentualeGae = entry.getValue().divide(importoTotale, 4, java.math.BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
+
+            lineeHM.put(entry.getKey(), percentualeGae);
+
+        }
+        return lineeHM;
+    }
+
+    private HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal> salvaLineeAttivita(UserContext aUC, HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal> lineeHM, WorkpackageBulk linea,BigDecimal importo) throws ComponentException {
+        Iterator<Map.Entry<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal>> iteratorLinee = lineeHM.entrySet().iterator();
+
+        boolean found = false;
+
+        WorkpackageBulk lineaCompletaPrg = ((WorkpackageHome)getHome(aUC, WorkpackageBulk.class)).searchGAECompleta(aUC,CNRUserContext.getEsercizio(aUC), linea.getCd_centro_responsabilita(), linea.getCd_linea_attivita());
+
+        while (iteratorLinee.hasNext()) {
+
+            Map.Entry<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal> entry = iteratorLinee.next();
+
+            it.cnr.contab.config00.latt.bulk.WorkpackageBulk lineaHM = entry.getKey();
+
+            if (lineaHM.equalsByPrimaryKey(lineaCompletaPrg)) {
+
+                BigDecimal importoGaeHM = entry.getValue();
+                importoGaeHM = importoGaeHM.add(importo);
+                lineeHM.put(lineaHM, importoGaeHM);
+                found = true;
+            }
+        }
+        if (!found) {
+            lineeHM.put(lineaCompletaPrg, importo);
+        }
+        return lineeHM;
+
+    }
+
+    private void validaAccertamentoPluriennale(UserContext uc, AccertamentoBulk bulk,  HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal> linee) throws ComponentException, IntrospectionException, PersistencyException {
 
         if (bulk.getAccertamentiPluriennali() != null && !bulk.getAccertamentiPluriennali().isEmpty()) {
             for (Accertamento_pluriennaleBulk accPlur : bulk.getAccertamentiPluriennali()) {
@@ -4650,26 +4716,20 @@ private void modificoDettagliScadenza(UserContext aUC,AccertamentoBulk accertame
         }
     }
 
-    private boolean isAnnoPluriennaleMaggioreScadenzaProgetto(UserContext uc, AccertamentoBulk accertamento, HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageKey, OggettoBulk> linee) throws ComponentException, IntrospectionException, PersistencyException {
+    private boolean isAnnoPluriennaleMaggioreScadenzaProgetto(UserContext uc, AccertamentoBulk accertamento, HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal> linee) throws ComponentException, IntrospectionException, PersistencyException {
 
         ProgettoBulk progetto = null;
         ProgettoHome progettoHome = (ProgettoHome) getHome(uc, ProgettoBulk.class);
         Progetto_other_fieldHome otherFieldHome = (Progetto_other_fieldHome) getHome(uc, Progetto_other_fieldBulk.class);
 
-        Iterator<Map.Entry<it.cnr.contab.config00.latt.bulk.WorkpackageKey, OggettoBulk>> iterator = linee.entrySet().iterator();
+        Iterator<Map.Entry<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal> > iterator = linee.entrySet().iterator();
 
         while (iterator.hasNext()) {
 
-            Map.Entry<it.cnr.contab.config00.latt.bulk.WorkpackageKey, OggettoBulk> entry = iterator.next();
-            OggettoBulk linea = entry.getValue();
+            Map.Entry<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal> entry = iterator.next();
+            WorkpackageBulk linea = entry.getKey();
 
-            if (linea instanceof Linea_attivitaBulk) {
-                progetto = progettoHome.selectProgettoDaLineaAttivita( ((Linea_attivitaBulk) linea).getLinea_att(),accertamento.getEsercizio());
-
-
-            } else if(linea instanceof V_pdg_accertamento_etrBulk) {
-                progetto = progettoHome.selectProgettoDaLineaAttivita(uc, ((V_pdg_accertamento_etrBulk) linea));
-            }
+             progetto = progettoHome.selectProgettoDaLineaAttivita(linea, accertamento.getEsercizio());
 
             if (progetto == null) {
                 throw new ApplicationException("Progetto NON trovato");

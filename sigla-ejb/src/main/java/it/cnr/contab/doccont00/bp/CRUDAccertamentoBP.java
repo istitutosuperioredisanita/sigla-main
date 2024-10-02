@@ -42,6 +42,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.jsp.Button;
 
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.Iterator;
@@ -1057,4 +1058,15 @@ public void caricaCapitoliDiSpesaCDS(it.cnr.jada.action.ActionContext context) t
 	public SimpleDetailCRUDController getCrudAccertamento_pluriennaleVoce() {
 		return crudAccertamento_pluriennaleVoce;
 	}
+
+	// non posso aggiungere accertamenti pluriennali se l'importo dell'accertamento è zero e se non ci sono già pluriennali
+	public boolean isADDPluriennali(){
+		AccertamentoBulk accertamento = (AccertamentoBulk)getModel();
+
+		if(accertamento.getIm_accertamento().compareTo(new BigDecimal(0))==0 && (accertamento.getAccertamentiPluriennali()==null || accertamento.getAccertamentiPluriennali().isEmpty())){
+			return false;
+		}
+		return true;
+	}
+
 }

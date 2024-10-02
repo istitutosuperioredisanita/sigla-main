@@ -208,7 +208,7 @@ public class Obbligazione_pluriennale_voceBulk extends Obbligazione_pluriennale_
 	}
 
 
-	public java.lang.String setCdCentroResponsabilita() {
+	public java.lang.String getCdCentroResponsabilita() {
 		it.cnr.contab.config00.latt.bulk.WorkpackageBulk linea_attivita = this.getLinea_attivita();
 		if (linea_attivita == null)
 			return null;
@@ -218,7 +218,7 @@ public class Obbligazione_pluriennale_voceBulk extends Obbligazione_pluriennale_
 		return centro_responsabilita.getCd_centro_responsabilita();
 	}
 
-	public void getCdCentroResponsabilita(java.lang.String cd_centro_responsabilita) {
+	public void setCdCentroResponsabilita(java.lang.String cd_centro_responsabilita) {
 		this.getLinea_attivita().getCentro_responsabilita().setCd_centro_responsabilita(cd_centro_responsabilita);
 	}
 	public WorkpackageBulk getLinea_attivita() {
