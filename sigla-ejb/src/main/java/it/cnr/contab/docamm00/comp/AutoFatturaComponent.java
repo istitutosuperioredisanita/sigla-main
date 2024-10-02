@@ -373,8 +373,8 @@ public java.util.Vector estraeSezionali (UserContext aUC, AutofatturaBulk autofa
 		else if (Optional.ofNullable(autofattura.getFl_san_marino_senza_iva()).orElse(Boolean.FALSE).booleanValue())
 			options.add(new String[][] { { "TIPO_SEZIONALE.FL_SAN_MARINO_SENZA_IVA","Y", "AND" } });
 		else
-		if(!obbIta)
-			options.add(new String[][] { { "TIPO_SEZIONALE.FL_ORDINARIO","Y", "AND" } });
+			if(!obbIta)
+				options.add(new String[][] { { "TIPO_SEZIONALE.FL_ORDINARIO","Y", "AND" } });
 
 		if (Optional.ofNullable(autofattura.getFl_split_payment()).orElse(Boolean.FALSE).booleanValue())
 			options.add(new String[][] { { "TIPO_SEZIONALE.FL_SPLIT_PAYMENT","Y", "AND" } });
