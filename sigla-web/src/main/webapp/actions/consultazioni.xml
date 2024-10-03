@@ -949,7 +949,7 @@
 					value="it.cnr.contab.doccont00.consultazioni.bulk.V_cons_scad_obblBulk" />
 		<init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
 		<init-param name="defaultAction" value="ConsScadObbligazioniAction" />
-		<init-param name="multiSelezione" value="N" />
+		<init-param name="multiSelezione" value="Y" />
 	</businessProcess>
 
 	<action path="/Estrazione_glaAction"
