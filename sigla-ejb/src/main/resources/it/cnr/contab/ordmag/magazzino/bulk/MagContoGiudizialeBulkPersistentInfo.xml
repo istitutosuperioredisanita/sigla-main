@@ -28,8 +28,56 @@
 				columnSize="10"
 				nullable="false" />
 		<columnMapping
+				columnName="DS_MAGAZZINO"
+				propertyName="dsMagazzino"
+				sqlTypeName="VARCHAR"
+				columnSize="15"
+				nullable="false" />
+		<columnMapping
 				columnName="CD_BENE_SERVIZIO"
-				propertyName="cd_elemento_voce"
+				propertyName="cd_bene_servizio"
+				sqlTypeName="VARCHAR"
+				columnSize="15"
+				nullable="false" />
+		<columnMapping
+				columnName="DS_BENE_SERVIZIO"
+				propertyName="ds_bene_servizio"
+				sqlTypeName="VARCHAR"
+				columnSize="300"
+				nullable="false" />
+		<columnMapping
+				columnName="CD_PROPRIO"
+				propertyName="cd_proprio"
+				sqlTypeName="VARCHAR"
+				columnSize="4"
+				nullable="false" />
+		<columnMapping
+				columnName="CD_CATEGORIA_PADRE"
+				propertyName="cd_categoria_padre"
+				sqlTypeName="VARCHAR"
+				columnSize="10" />
+		<columnMapping
+				columnName="UNITA_MISURA"
+				propertyName="unita_misura"
+				sqlTypeName="VARCHAR"
+				columnSize="10"
+				nullable="false" />
+
+		<columnMapping
+				columnName="qtaInizioAnno"
+				propertyName="qtaInizioAnno"
+				sqlTypeName="VARCHAR"
+				columnSize="15"
+				nullable="false" />
+		<columnMapping
+				columnName="qtaCaricoAnno"
+				propertyName="qtaCaricoAnno"
+				sqlTypeName="VARCHAR"
+				columnSize="15"
+				nullable="false" />
+		<columnMapping
+				columnName="qtaScaricoAnno"
+				propertyName="qtaScaricoAnno"
 				sqlTypeName="VARCHAR"
 				columnSize="15"
 				nullable="false" />
@@ -38,9 +86,21 @@
 	<persistentProperty
 			name="cd_magazzino"/>
 	<persistentProperty
-			name="cd_elemento_voce"/>
+			name="dsMagazzino"/>
+	<persistentProperty
+			name="cd_bene_servizio"/>
+	<persistentProperty
+			name="ds_bene_servizio"/>
+	<persistentProperty
+			name="cd_categoria_padre"/>
+	<persistentProperty
+			name="cd_proprio"/>
+	<persistentProperty
+			name="unita_misura"/>
 	<persistentProperty
 			name="qtaInizioAnno"/>
 	<persistentProperty
 			name="qtaCaricoAnno"/>
+	<persistentProperty
+			name="qtaScaricoAnno"/>
 </SQLPersistentInfo>

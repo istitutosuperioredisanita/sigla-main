@@ -24,13 +24,18 @@ package it.cnr.contab.ordmag.magazzino.bulk;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.Persistent;
 
+import java.util.Optional;
+
 public class MagContoGiudizialeBulk extends OggettoBulk implements Persistent {
 	private static final long serialVersionUID = 1L;
 
 	private String cd_magazzino;
-
-	private String cd_elemento_voce;
-
+	private String dsMagazzino;
+	private String cd_bene_servizio;
+	private String ds_bene_servizio;
+	private String cd_categoria_padre;
+	private String cd_proprio;
+	private String unita_misura;
 	private Integer giacenzaAttuale;
 	private Integer qtaInizioAnno;
 	private Integer qtaCaricoAnno;
@@ -50,12 +55,52 @@ public class MagContoGiudizialeBulk extends OggettoBulk implements Persistent {
 		this.cd_magazzino = cd_magazzino;
 	}
 
-	public String getCd_elemento_voce() {
-		return cd_elemento_voce;
+	public String getDsMagazzino() {
+		return dsMagazzino;
 	}
 
-	public void setCd_elemento_voce(String cd_elemento_voce) {
-		this.cd_elemento_voce = cd_elemento_voce;
+	public void setDsMagazzino(String dsMagazzino) {
+		this.dsMagazzino = dsMagazzino;
+	}
+
+	public String getCd_bene_servizio(){
+		return cd_bene_servizio;
+	}
+
+	public void setCd_bene_servizio(String cd_bene_servizio) {
+		this.cd_bene_servizio = cd_bene_servizio;
+	}
+
+	public String getDs_bene_servizio() {
+		return ds_bene_servizio;
+	}
+
+	public void setDs_bene_servizio(String ds_bene_servizio) {
+		this.ds_bene_servizio = ds_bene_servizio;
+	}
+
+	public String getCd_categoria_padre() {
+		return cd_categoria_padre;
+	}
+
+	public void setCd_categoria_padre(String cd_categoria_padre) {
+		this.cd_categoria_padre = cd_categoria_padre;
+	}
+
+	public String getCd_proprio() {
+		return cd_proprio;
+	}
+
+	public void setCd_proprio(String cd_proprio) {
+		this.cd_proprio = cd_proprio;
+	}
+
+	public String getUnita_misura() {
+		return unita_misura;
+	}
+
+	public void setUnita_misura(String unita_misura) {
+		this.unita_misura = unita_misura;
 	}
 
 	public Integer getGiacenzaAttuale() {
@@ -67,7 +112,7 @@ public class MagContoGiudizialeBulk extends OggettoBulk implements Persistent {
 	}
 
 	public Integer getQtaInizioAnno() {
-		return qtaInizioAnno;
+		return Optional.ofNullable(qtaInizioAnno).orElse(0);
 	}
 
 	public void setQtaInizioAnno(Integer qtaInizioAnno) {
@@ -75,7 +120,7 @@ public class MagContoGiudizialeBulk extends OggettoBulk implements Persistent {
 	}
 
 	public Integer getQtaCaricoAnno() {
-		return qtaCaricoAnno;
+		return Optional.ofNullable(qtaCaricoAnno).orElse(0);
 	}
 
 	public void setQtaCaricoAnno(Integer qtaCaricoAnno) {
@@ -83,7 +128,7 @@ public class MagContoGiudizialeBulk extends OggettoBulk implements Persistent {
 	}
 
 	public Integer getQtaScaricoAnno() {
-		return qtaScaricoAnno;
+		return Optional.ofNullable(qtaScaricoAnno).orElse(0);
 	}
 
 	public void setQtaScaricoAnno(Integer qtaScaricoAnno) {
@@ -91,7 +136,7 @@ public class MagContoGiudizialeBulk extends OggettoBulk implements Persistent {
 	}
 
 	public Integer getQtaGiacenzaInizioAnno() {
-		return qtaGiacenzaInizioAnno;
+		return (getQtaInizioAnno()+getQtaCaricoAnno())-getQtaScaricoAnno();
 	}
 
 	public void setQtaGiacenzaInizioAnno(Integer qtaGiacenzaInizioAnno) {

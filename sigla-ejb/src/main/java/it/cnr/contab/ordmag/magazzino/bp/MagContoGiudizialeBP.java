@@ -20,10 +20,12 @@ package it.cnr.contab.ordmag.magazzino.bp;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.doccont00.ejb.ConsConfrontoEntSpeComponentSession;
 import it.cnr.contab.ordmag.magazzino.ejb.MagContoGiudizialeComponentSession;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.ConsultazioniBP;
 
@@ -47,7 +49,7 @@ public class MagContoGiudizialeBP extends ConsultazioniBP {
 		try {
 			setFindclause(compoundfindclause);
 			//CompoundFindClause clause = new CompoundFindClause(getBaseclause(), compoundfindclause);
-			return createMagContoGiudizialeComponentSession().cerca(context.getUserContext(),null,oggettobulk);
+			return createMagContoGiudizialeComponentSession().cerca(context.getUserContext(),this.getBaseclause(),oggettobulk);
 		}catch(Throwable e) {
 			throw new BusinessProcessException(e);
 		}
@@ -58,56 +60,33 @@ public class MagContoGiudizialeBP extends ConsultazioniBP {
 	public void openIterator(ActionContext context) throws BusinessProcessException {
 		try	{
 			OggettoBulk model = (OggettoBulk) getBulkInfo().getBulkClass().newInstance();
-			setIterator(context,createMagContoGiudizialeComponentSession().cerca(context.getUserContext(),null,model));
+			setIterator(context,createMagContoGiudizialeComponentSession().cerca(context.getUserContext(),this.getBaseclause(),model));
 		}catch(Throwable e) {
 			throw new BusinessProcessException(e);
 		}
 
 	}
-
-	/*
+/*
 	protected void init(it.cnr.jada.action.Config config,ActionContext context) throws BusinessProcessException {
-		try {
+		Unita_organizzativa_enteBulk uoEnte = (Unita_organizzativa_enteBulk)( userContext, Unita_organizzativa_enteBulk.class).findAll().get(0);
+		if (!isUoEnte(context))
+			throw new ApplicationException("Funzione consentita solo per utente abilitato a " + uoEnte.getCd_unita_organizzativa() );
+	}
+*/
+
+	protected void init(it.cnr.jada.action.Config config,ActionContext context) throws BusinessProcessException {
 			Integer esercizio = CNRUserContext.getEsercizio(context.getUserContext());
-			Parametri_cnrBulk parCnr = Utility.createParametriCnrComponentSession().getParametriCnr(context.getUserContext(), esercizio); 
-			setFlNuovoPdg(parCnr.getFl_nuovo_pdg().booleanValue());
-
-			String cds = CNRUserContext.getCd_cds(context.getUserContext());
 			CompoundFindClause clauses = new CompoundFindClause();
-			String uo_scrivania = CNRUserContext.getCd_unita_organizzativa(context.getUserContext())+"%";
-		  
+			String uo_scrivania = CNRUserContext.getCd_unita_organizzativa(context.getUserContext());
 		    Unita_organizzativaBulk uo = new Unita_organizzativaBulk(uo_scrivania);
-		   
-			if(!isUoEnte(context) && !uo.isUoCds())	 {					
-				clauses.addClause("AND", "esercizio", SQLBuilder.EQUALS, esercizio);
-				clauses.addClause("AND", "cds",SQLBuilder.EQUALS, cds);
-			}
-
-			if(!isUoEnte(context) && uo.isUoCds())	 {					
-				clauses.addClause("AND", "esercizio", SQLBuilder.EQUALS, esercizio);
-				clauses.addClause("AND", "cds",SQLBuilder.EQUALS, cds);
-			}
-			   
-			if (isUoEnte(context))
-				clauses.addClause("AND", "esercizio", SQLBuilder.EQUALS, esercizio);
-				
-			setBaseclause(clauses);	
-					
-			if (getPathConsultazione()==null) {
-				setPathConsultazione(this.LIV_BASE);					
-				setLivelloConsultazione(this.LIV_BASE);
-			} 
-				
+			clauses.addClause("AND", "esercizio", SQLBuilder.LESS_EQUALS, esercizio);
+			setBaseclause(clauses);
 			super.init(config,context);
-			initVariabili(context,null,getPathConsultazione()); 
-		} catch (ComponentException e) {
-			throw new BusinessProcessException(e);
-		} catch (RemoteException e) {
-			throw new BusinessProcessException(e);
-		} 
+
+
 	}
 
-	   */
+
 	   
 	public boolean isUoEnte(ActionContext context){	
 			Unita_organizzativaBulk uo = it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context);
