@@ -4630,19 +4630,14 @@ private void modificoDettagliScadenza(UserContext aUC,AccertamentoBulk accertame
 
                     List<Accertamento_pluriennale_voceBulk> acclurVoceList = accertamentoPlurHome.findAccertamentiPluriennaliVoce(aUC, plur);
 
-                    // se esiste una sola voce vuol dire che è presente una sola GAE e quindi la percentuale è 100%
-                    if (acclurVoceList.size() == 1) {
-                        linee.put(acclurVoceList.get(0).getLinea_attivita(), new BigDecimal(100));
+
+                    for (Accertamento_pluriennale_voceBulk plurVoce : acclurVoceList) {
+
+                        linee = salvaLineeAttivita( aUC, linee, plurVoce.getLinea_attivita(), plurVoce.getImporto());
 
                     }
-                    else {
-                        for (Accertamento_pluriennale_voceBulk plurVoce : acclurVoceList) {
+                    linee = calcolaPercentualeLineeAttivita(linee, plur.getImporto());
 
-                            linee = salvaLineeAttivita( aUC, linee, plurVoce.getLinea_attivita(), plurVoce.getImporto());
-
-                        }
-                        linee = calcolaPercentualeLineeAttivita(linee, plur.getImporto());
-                    }
                 }
             }
 

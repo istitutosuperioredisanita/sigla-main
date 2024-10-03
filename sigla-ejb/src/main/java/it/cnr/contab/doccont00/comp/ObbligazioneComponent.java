@@ -3294,19 +3294,14 @@ private HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal> ge
 
 				List<Obbligazione_pluriennale_voceBulk> obbPlurVoceList = obbligazionePlurHome.findObbligazioniPluriennaliVoce(aUC, plur);
 
-				// se esiste una sola voce vuol dire che è presente una sola GAE e quindi la percentuale è 100%
-				if (obbPlurVoceList.size() == 1) {
-					linee.put(obbPlurVoceList.get(0).getLinea_attivita(), new BigDecimal(100));
+
+				for (Obbligazione_pluriennale_voceBulk plurVoce : obbPlurVoceList) {
+
+					linee = salvaLineeAttivita(aUC, linee, plurVoce.getLinea_attivita(), plurVoce.getImporto());
 
 				}
-				else {
-					for (Obbligazione_pluriennale_voceBulk plurVoce : obbPlurVoceList) {
+				linee = calcolaPercentualeLineeAttivita(linee, plur.getImporto());
 
-						linee = salvaLineeAttivita(aUC, linee, plurVoce.getLinea_attivita(), plurVoce.getImporto());
-
-					}
-					linee = calcolaPercentualeLineeAttivita(linee, plur.getImporto());
-				}
 			}
 		}
 	}
