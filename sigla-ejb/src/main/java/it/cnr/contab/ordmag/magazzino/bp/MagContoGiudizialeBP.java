@@ -25,7 +25,6 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.ConsultazioniBP;
 
@@ -33,6 +32,8 @@ import java.rmi.RemoteException;
 
 
 public class MagContoGiudizialeBP extends ConsultazioniBP {
+
+	private final String columnMap="CONTOGIUDIZIALE";
 
 	public MagContoGiudizialeBP(String s) {
 		super(s);
@@ -43,52 +44,36 @@ public class MagContoGiudizialeBP extends ConsultazioniBP {
 	public MagContoGiudizialeComponentSession createMagContoGiudizialeComponentSession() throws javax.ejb.EJBException, RemoteException {
 		return (MagContoGiudizialeComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_MagContoGiudizialeComponentSession", ConsConfrontoEntSpeComponentSession.class);
 	}
-	
-	
-	public RemoteIterator select(ActionContext context, CompoundFindClause compoundfindclause, OggettoBulk oggettobulk) throws BusinessProcessException {
+	public RemoteIterator search(ActionContext context, CompoundFindClause compoundfindclause, OggettoBulk oggettobulk) throws BusinessProcessException {
 		try {
 			setFindclause(compoundfindclause);
-			//CompoundFindClause clause = new CompoundFindClause(getBaseclause(), compoundfindclause);
-			return createMagContoGiudizialeComponentSession().cerca(context.getUserContext(),this.getBaseclause(),oggettobulk);
+			CompoundFindClause clause = new CompoundFindClause(getBaseclause(), compoundfindclause);
+			return createMagContoGiudizialeComponentSession().findMagContoGiudiziale(context.getUserContext(),columnMap,getBaseclause(),compoundfindclause);
 		}catch(Throwable e) {
 			throw new BusinessProcessException(e);
 		}
 	}
-
-
 
 	public void openIterator(ActionContext context) throws BusinessProcessException {
 		try	{
 			OggettoBulk model = (OggettoBulk) getBulkInfo().getBulkClass().newInstance();
-			setIterator(context,createMagContoGiudizialeComponentSession().cerca(context.getUserContext(),this.getBaseclause(),model));
+			setIterator(context,createMagContoGiudizialeComponentSession().findMagContoGiudiziale(context.getUserContext(),columnMap,this.getBaseclause(),null));
 		}catch(Throwable e) {
 			throw new BusinessProcessException(e);
 		}
 
 	}
-/*
-	protected void init(it.cnr.jada.action.Config config,ActionContext context) throws BusinessProcessException {
-		Unita_organizzativa_enteBulk uoEnte = (Unita_organizzativa_enteBulk)( userContext, Unita_organizzativa_enteBulk.class).findAll().get(0);
-		if (!isUoEnte(context))
-			throw new ApplicationException("Funzione consentita solo per utente abilitato a " + uoEnte.getCd_unita_organizzativa() );
-	}
-*/
-
 	protected void init(it.cnr.jada.action.Config config,ActionContext context) throws BusinessProcessException {
 			Integer esercizio = CNRUserContext.getEsercizio(context.getUserContext());
 			CompoundFindClause clauses = new CompoundFindClause();
 			String uo_scrivania = CNRUserContext.getCd_unita_organizzativa(context.getUserContext());
 		    Unita_organizzativaBulk uo = new Unita_organizzativaBulk(uo_scrivania);
-			clauses.addClause("AND", "esercizio", SQLBuilder.LESS_EQUALS, esercizio);
-			setBaseclause(clauses);
+
 			super.init(config,context);
-
-
+			setSearchResultColumnSet(columnMap);
+			setFreeSearchSet(columnMap);
 	}
-
-
-	   
-	public boolean isUoEnte(ActionContext context){	
+	public boolean isUoEnte(ActionContext context){
 			Unita_organizzativaBulk uo = it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context);
 			if (uo.getCd_tipo_unita().equals(it.cnr.contab.config00.sto.bulk.Tipo_unita_organizzativaHome.TIPO_UO_ENTE))
 				return true;	
