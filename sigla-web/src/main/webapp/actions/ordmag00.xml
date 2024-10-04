@@ -313,12 +313,12 @@
     <init-param name="CHIUSURA_DEFINITIVA" value="true" />/>
   </businessProcess>
 
-  <action path="/ConsContoGiudizialeAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction"/>
-  <businessProcess name="SelezionatoreListaCntGiudizizaleBP" className="it.cnr.contab.ordmag.magazzino.bp.MagContoGiudizialeBP">
+  <action path="/ContoGiudizialeAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction"/>
+  <businessProcess name="MagContoGiudizizaleBP" className="it.cnr.contab.ordmag.magazzino.bp.MagContoGiudizialeBP">
     <forward name="default" path="/consultazioni/form_lista.jsp" />
-    <init-param name="bulkClassName" value="it.cnr.contab.ordmag.magazzino.bulk.MagContoGiudizialeBulk" />
+    <init-param name="bulkClassName" value="it.cnr.contab.ordmag.magazzino.bulk.V_dettaglio_lotti_magBulk" />
     <init-param name="componentSessionName" value="CNRDOCCONT00_EJB_MagContoGiudizialeComponentSession"/>
-    <init-param name="defaultAction" value="ConsContoGiudizialeAction" />
+    <init-param name="defaultAction" value="ContoGiudizialeAction" />
     <init-param name="multiSelezione" value="N" />
   </businessProcess>
 

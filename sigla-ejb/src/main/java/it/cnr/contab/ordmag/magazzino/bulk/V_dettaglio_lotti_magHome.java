@@ -21,20 +21,19 @@
  */
 package it.cnr.contab.ordmag.magazzino.bulk;
 
-import it.cnr.contab.ordmag.anag00.AbilUtenteUopOperBulk;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.PersistentCache;
 
 import java.sql.Connection;
 
-public class MagContoGiudizialeHome extends BulkHome {
+public class V_dettaglio_lotti_magHome extends BulkHome {
 	private static final long serialVersionUID = 1L;
 
-	public MagContoGiudizialeHome(Connection conn) {
-		super(AbilUtenteUopOperBulk.class, conn);
+	public V_dettaglio_lotti_magHome(Connection conn) {
+		super(V_dettaglio_lotti_magBulk.class, conn);
 	}
-	public MagContoGiudizialeHome(Connection conn, PersistentCache persistentCache) {
-		super(MagContoGiudizialeBulk.class, conn, persistentCache);
+	public V_dettaglio_lotti_magHome(Connection conn, PersistentCache persistentCache) {
+		super(V_dettaglio_lotti_magBulk.class, conn, persistentCache);
 	}
 
 }

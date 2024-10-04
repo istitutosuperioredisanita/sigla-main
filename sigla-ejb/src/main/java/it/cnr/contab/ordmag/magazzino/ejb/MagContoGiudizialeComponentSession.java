@@ -23,9 +23,14 @@
  */
 package it.cnr.contab.ordmag.magazzino.ejb;
 
+import it.cnr.jada.UserContext;
+import it.cnr.jada.persistency.IntrospectionException;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
+
 import javax.ejb.Remote;
+import java.rmi.RemoteException;
 
 @Remote
 public interface MagContoGiudizialeComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
-
+    it.cnr.jada.util.RemoteIterator findMagContoGiudiziale(UserContext userContext,String columnMapName,CompoundFindClause baseClause, CompoundFindClause findClause) throws it.cnr.jada.comp.ComponentException, RemoteException, IntrospectionException;
 }

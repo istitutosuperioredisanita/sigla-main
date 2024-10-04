@@ -24,93 +24,73 @@
 package it.cnr.contab.ordmag.magazzino.comp;
 
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
-import it.cnr.contab.ordmag.anag00.MagazzinoBulk;
-import it.cnr.contab.ordmag.anag00.RaggrMagazzinoBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.LottoMagBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.MagContoGiudizialeBulk;
+import it.cnr.contab.ordmag.magazzino.bulk.V_dettaglio_lotti_magBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.Query;
 import it.cnr.jada.persistency.sql.SQLBuilder;
-import org.apache.commons.lang.StringUtils;
+import it.cnr.jada.util.RemoteIterator;
+
+import java.rmi.RemoteException;
 
 public class MagContoGiudizialeComponent extends it.cnr.jada.comp.CRUDComponent  {
-	protected Query select(UserContext userContext, CompoundFindClause clauses, OggettoBulk bulk) throws ComponentException, it.cnr.jada.persistency.PersistencyException
-	{
-		SQLBuilder sql = getHome(userContext, MagContoGiudizialeBulk.class).createSQLBuilder();
+
+	public RemoteIterator findMagContoGiudiziale(UserContext userContext, String columnMapName,CompoundFindClause baseClause, CompoundFindClause findClause) throws ComponentException, RemoteException, IntrospectionException {
+
+		/*
+		select cd_magazzino_mag,DS_MAGAZZINO,cd_bene_servizio,DS_BENE_SERVIZIO,cd_categoria_padre,cd_proprio,unita_misura,
+    sum( quantita_apertura) qtaInizioAnno,
+    sum ( quantita_carico ) quantita_carico ,
+    sum( quantita_scarico ) quanti_scarico,
+    sum ( quantita_attuale) quantita_attuale from V_DETTAGLIO_LOTTI_MAG l
+    where l.cd_bene_servizio='275058'
+    and esercizio<=2023
+    and ( anno_riferimento_movimento is null or anno_riferimento_movimento=2023)
+    group by cd_magazzino_mag,DS_MAGAZZINO,cd_bene_servizio,DS_BENE_SERVIZIO,cd_categoria_padre,cd_proprio,unita_misura
+		 */
+			SQLBuilder sql = getHome(userContext, V_dettaglio_lotti_magBulk.class,columnMapName).createSQLBuilder();
 		sql.resetColumns();
-		sql.addColumn("LOTTO_MAG.CD_MAGAZZINO_MAG");
-		sql.addColumn("MAGAZZINO.DS_MAGAZZINO");
-		sql.addColumn("LOTTO_MAG.CD_BENE_SERVIZIO");
-		sql.addColumn("BENE_SERVIZIO.DS_BENE_SERVIZIO");
-		sql.addColumn("CATEGORIA_GRUPPO.cd_categoria_padre");
-		sql.addColumn("CATEGORIA_GRUPPO.cd_proprio");
-		sql.addColumn("BENE_SERVIZIO.unita_misura");
-		sql.addColumn("SUM( CASE \n" +
-				"    WHEN esercizio<" + CNRUserContext.getEsercizio(userContext)+"\n"+
-				"        THEN quantita_carico \n" +
-				"    ELSE \n" +
-				"        0 \n" +
-				"  END) qtaInizioAnno " );
-		sql.addColumn( getQueryCaricoScarico( EnumMagazioneOper.CARICO,CNRUserContext.getEsercizio(userContext)).concat( " qtaCaricoAnno"));
-		sql.addColumn( getQueryCaricoScarico( EnumMagazioneOper.SCARICO,CNRUserContext.getEsercizio(userContext)).concat( " qtaScaricoAnno"));
-		sql.setAutoJoins(true);
-		sql.generateJoin(LottoMagBulk.class, MagazzinoBulk.class, "magazzino", "MAGAZZINO");
-		sql.generateJoin(LottoMagBulk.class, Bene_servizioBulk.class, "beneServizio", "BENE_SERVIZIO");
-		sql.generateJoin(Bene_servizioBulk.class, Categoria_gruppo_inventBulk.class, "categoria_gruppo", "CATEGORIA_GRUPPO");
-		sql.generateJoin(MagazzinoBulk.class, RaggrMagazzinoBulk.class, "raggrMagazzinoRim", "RAGGR_MAGAZZINO_RIM");
-
-		sql.addSQLClause(FindClause.AND,"RAGGR_MAGAZZINO_RIM.TIPO",SQLBuilder.EQUALS,RaggrMagazzinoBulk.TIPO_RIM);
-		sql.addSQLClause(FindClause.AND,"LOTTO_MAG.esercizio",SQLBuilder.LESS_EQUALS,CNRUserContext.getEsercizio(userContext));
+		sql.addColumn("CD_MAGAZZINO_MAG");
+		sql.addColumn("DS_MAGAZZINO");
+		sql.addColumn("CD_BENE_SERVIZIO");
+		sql.addColumn("DS_BENE_SERVIZIO");
+		sql.addColumn("cd_categoria_padre");
+		sql.addColumn("cd_proprio");
+		sql.addColumn("unita_misura");
+		sql.addColumn("SUM( quantita_apertura ) qtaInizioAnno " );
+		sql.addColumn( "SUM(quantita_carico)  qtaCaricoAnno");
+		sql.addColumn( "SUM(quantita_scarico)  qtaScaricoAnno");
+		sql.addSQLClause(FindClause.AND,"ESERCIZIO<="+CNRUserContext.getEsercizio(userContext));
 		sql.openParenthesis(FindClause.AND);
-			sql.addClause(FindClause.OR,"cd_magazzino",SQLBuilder.EQUALS, "MV");
-			sql.addClause(FindClause.OR,"cd_magazzino",SQLBuilder.EQUALS, "PC");
-			sql.addClause(FindClause.OR,"cd_magazzino",SQLBuilder.EQUALS, "GG");
-			sql.addClause(FindClause.OR,"cd_magazzino",SQLBuilder.EQUALS, "CS");
-			sql.addClause(FindClause.OR,"cd_magazzino",SQLBuilder.EQUALS, "PT");
+		sql.addSQLClause(FindClause.OR, "anno_riferimento_movimento",SQLBuilder.ISNULL,null);
+		sql.addSQLClause(FindClause.OR, "anno_riferimento_movimento",SQLBuilder.EQUALS,CNRUserContext.getEsercizio(userContext));
 		sql.closeParenthesis();
-		sql.addSQLGroupBy("LOTTO_MAG.cd_magazzino_mag, " +
-					"MAGAZZINO.DS_MAGAZZINO,LOTTO_MAG.cd_bene_servizio," +
-					"BENE_SERVIZIO.DS_BENE_SERVIZIO,CATEGORIA_GRUPPO.cd_categoria_padre,CATEGORIA_GRUPPO.cd_proprio,BENE_SERVIZIO.unita_misura");
-		return sql;
+		sql.openParenthesis(FindClause.AND);
+		sql.addClause(FindClause.OR,"cdMagazzinoMag",SQLBuilder.EQUALS, "MV");
+		sql.addClause(FindClause.OR,"cdMagazzinoMag",SQLBuilder.EQUALS, "PC");
+		sql.addClause(FindClause.OR,"cdMagazzinoMag",SQLBuilder.EQUALS, "GG");
+		sql.addClause(FindClause.OR,"cdMagazzinoMag",SQLBuilder.EQUALS, "CS");
+		sql.addClause(FindClause.OR,"cdMagazzinoMag",SQLBuilder.EQUALS, "PT");
 
+		sql.closeParenthesis();
+		sql.addSQLGroupBy("cd_magazzino_mag, " +
+				"DS_MAGAZZINO,cd_bene_servizio," +
+				"DS_BENE_SERVIZIO,cd_categoria_padre,cd_proprio,unita_misura");
+		return iterator(userContext, completaSQL(sql,baseClause,findClause), V_dettaglio_lotti_magBulk.class,null);
+	}
+	private SQLBuilder completaSQL(SQLBuilder sql, CompoundFindClause baseClause, CompoundFindClause findClause) {
+		sql.addClause(baseClause);
+		if (findClause == null)
+			return sql;
+		else {
+			sql.addClause(findClause);
+			return sql;
+		}
 	}
 
-	private enum EnumMagazioneOper {
-		CARICO,
-		SCARICO
-	}
-	private String getFiltroTipoMov ( EnumMagazioneOper tipoOperazione){
-		if ( EnumMagazioneOper.CARICO.equals(tipoOperazione))
-			return  (" and tmc.tipo in ( 'CM','CA')  \n");
-		if ( EnumMagazioneOper.SCARICO.equals(tipoOperazione))
-			return (" and tmc.tipo in ( 'SM','SA')    \n");
-		return StringUtils.EMPTY;
-	}
-	private String getQueryCaricoScarico(EnumMagazioneOper tipoOperazione,Integer esercizio ){
-		StringBuffer sb = new StringBuffer( "SUM(( select sum(mc.coeff_conv*quantita) from movimenti_mag mc inner join tipo_movimento_mag tmc ");
-		sb.append(" on mc.cd_tipo_movimento=tmc.cd_tipo_movimento  \n").
-		append("  and cd_cds_tipo_movimento=tmc.cd_cds  \n");
-		sb.append (getFiltroTipoMov( tipoOperazione));
-		sb.append( " where mc.stato!='ANN' \n").
-		append(" and mc.dt_riferimento<=to_date('31/12/").append(esercizio).append("','dd/mm/yyyy')  \n").
-		append(" and mc.CD_CDS_LOTTO=LOTTO_MAG.CD_CDS  \n").
-		append(" and mc.CD_MAGAZZINO_LOTTO=LOTTO_MAG.CD_MAGAZZINO  \n").
-		append(" and mc.ESERCIZIO_LOTTO=LOTTO_MAG.ESERCIZIO  \n").
-		append(" and mc.CD_NUMERATORE_LOTTO=LOTTO_MAG.CD_NUMERATORE_MAG  \n").
-		append(" and mc.PG_LOTTO=LOTTO_MAG.PG_LOTTO  \n").
-		append(" and NOT EXISTS  \n").
-		append("( select msc.pg_movimento from movimenti_mag msc  \n").
-		append("where msc.pg_movimento_rif=mc.pg_movimento  \n").
-		append("and msc.cd_tipo_movimento=tmc.cd_tipo_movimento_rif))) ");
-		return sb.toString();
-	}
 	private boolean isCdsEnte(UserContext userContext) throws ComponentException {
 		try {
 			Unita_organizzativa_enteBulk ente = (Unita_organizzativa_enteBulk) getHome( userContext, Unita_organizzativa_enteBulk.class).findAll().get(0);

@@ -22,7 +22,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
                                        http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-    <changeSet id="voce_menu_parametri_sel_vis_mov_mag" author="ciro.salvio">
+    <changeSet id="voce_menu_conto_giudiziale" author="ciro.salvio">
         <insert tableName="accesso">
             <column name="cd_accesso" type="VARCHAR(20)" value="VISCNTGIUDIZ"/>
             <column name="ti_accesso" type="CHAR(1)" value="D"/>
@@ -35,7 +35,7 @@
         </insert>
         <insert tableName="ass_bp_accesso">
             <column name="cd_accesso" type="VARCHAR(20)" value="VISCNTGIUDIZ"/>
-             <column name="business_process" type="VARCHAR(200)" value="SelezionatoreListaCntGiudizizaleBP"/>
+             <column name="business_process" type="VARCHAR(200)" value="MagContoGiudizizaleBP"/>
             <column name="ti_funzione" type="CHAR(1)" value="V"/>
             <column name="duva" type="${date.type}" valueDate="${now}"/>
             <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
@@ -48,7 +48,7 @@
             <column name="cd_nodo" type="VARCHAR(100)" value="0.MAG.CONSULTAZIONI.VISCNTGIUDIZ"/>
             <column name="ds_nodo" type="VARCHAR(200)" value="Visualizzazione Conto Giudiziale"/>
             <column name="cd_accesso" type="VARCHAR(20)" value="VISCNTGIUDIZ"/>
-           <column name="business_process" type="VARCHAR(200)" value="SelezionatoreListaCntGiudizizaleBP"/>
+           <column name="business_process" type="VARCHAR(200)" value="MagContoGiudizizaleBP"/>
             <column name="pg_ordinamento" type="BIGINT" value="1"/>
             <column name="fl_terminale" type="CHAR(1)" value="Y"/>
             <column name="livello" type="SMALLINT" value="3"/>

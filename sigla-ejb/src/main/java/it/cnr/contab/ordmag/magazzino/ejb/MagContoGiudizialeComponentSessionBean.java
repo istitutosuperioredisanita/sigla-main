@@ -24,10 +24,17 @@
 package it.cnr.contab.ordmag.magazzino.ejb;
 
 import it.cnr.contab.ordmag.magazzino.comp.MagContoGiudizialeComponent;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.IntrospectionException;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.util.RemoteIterator;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Remove;
 import javax.ejb.Stateless;
+import java.rmi.RemoteException;
+
 @Stateless(name="CNRDOCCONT00_EJB_MagContoGiudizialeComponentSession")
 public class MagContoGiudizialeComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements MagContoGiudizialeComponentSession {
 	@PostConstruct
@@ -43,4 +50,23 @@ public class MagContoGiudizialeComponentSessionBean extends it.cnr.jada.ejb.CRUD
 		return new MagContoGiudizialeComponentSessionBean();
 	}
 
+	@Override
+	public RemoteIterator findMagContoGiudiziale(UserContext userContext,String columnMapName, CompoundFindClause baseClause, CompoundFindClause findClause) throws ComponentException, RemoteException, IntrospectionException {
+		pre_component_invocation(userContext,componentObj);
+		try {
+			it.cnr.jada.util.RemoteIterator result = (( MagContoGiudizialeComponent)componentObj).findMagContoGiudiziale(userContext,columnMapName,baseClause,findClause);
+			component_invocation_succes(userContext,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(userContext,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(userContext,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(userContext,componentObj,e);
+		}
+	}
 }
