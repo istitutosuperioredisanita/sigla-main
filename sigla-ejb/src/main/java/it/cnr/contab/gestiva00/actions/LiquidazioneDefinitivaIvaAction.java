@@ -40,7 +40,6 @@ import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.action.ConsultazioniBP;
 import it.cnr.jada.util.action.FormBP;
-import it.cnr.jada.util.action.NestedFormController;
 
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -156,7 +155,7 @@ public class LiquidazioneDefinitivaIvaAction extends StampaAction {
             bulk.completeFrom(liqDef);
             bulk.validate();
             bulk.setRistampa(true);
-            ((IPrintable) bulk).setId_report(BigDecimal.valueOf(liqDef.getReport_id().doubleValue()));
+            ((IPrintable) bulk).setId_report(BigDecimal.valueOf(liqDef.getReport_id()));
 
             return doStampa(context, bulk, (MTUWrapper) null);
         }
