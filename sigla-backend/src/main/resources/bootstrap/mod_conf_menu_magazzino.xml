@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="ciro.salvio" id="mod_conf_menu_magazzino">
+        <update tableName="albero_main">
+            <column name="pg_ordinamento" type="BIGINT" value="40"/>
+            <where>CD_NODO = '0.MAG.TABR'</where>
+        </update>
+        <update tableName="albero_main">
+            <column name="pg_ordinamento" type="BIGINT" value="30"/>
+            <where>CD_NODO = '0.MAG.CHIUSURA'</where>
+        </update>
+        <update tableName="albero_main">
+            <column name="pg_ordinamento" type="BIGINT" value="50"/>
+            <where>CD_NODO = '0.MAG.STAMPE'</where>
+        </update>
+        <update tableName="albero_main">
+            <column name="pg_ordinamento" type="BIGINT" value="60"/>
+            <where>CD_NODO = '0.MAG.CONSULTAZIONI'</where>
+        </update>
+
+    </changeSet>
+</databaseChangeLog>

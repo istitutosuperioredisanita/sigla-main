@@ -6143,4 +6143,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_flag_enable_auto_rimod_obbl_plur.xml"/>
 
 
+    <!-- Autore : CIRO SALVIO - Aggiunta configurazione per la nuova voce conto giudiziale-->
+    <include file="bootstrap/add_accessi_conto_giudiziale.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiornamento menu Magazzino-->
+    <include file="bootstrap/mod_conf_menu_magazzino.xml"/>
 </databaseChangeLog>
