@@ -16,9 +16,14 @@
  */
 
 package it.cnr.contab.doccont00.ejb;
+import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.contab.config00.sto.bulk.EnteBulk;
 import it.cnr.contab.doccont00.intcass.giornaliera.MovimentoContoEvidenzaBulk;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 
+import javax.ejb.EJBException;
 import java.rmi.RemoteException;
 
 public class TransactionalSospesoRiscontroComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements SospesoRiscontroComponentSession {
@@ -322,6 +327,25 @@ public it.cnr.jada.util.RemoteIterator cercaSospesiPerStato(it.cnr.jada.UserCont
  	public Integer caricamentoRigaGiornaleCassa(it.cnr.jada.UserContext param0, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws RemoteException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException,it.cnr.jada.comp.ComponentException {
 		try {
 			return (Integer) invoke("caricamentoRigaGiornaleCassa",new Object[] {
+					param0,
+					tesoreriaUnica, cdsEnte,riga });
+		} catch(RemoteException e) {
+			throw e;
+		} catch(java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch(it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch(Throwable ex) {
+				throw new RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
+
+	@Override
+	public Scrittura_partita_doppiaBulk createScritturaPartitaDoppiaRequiresNew(UserContext param0, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws ComponentException, EJBException, PersistencyException, RemoteException {
+		try {
+			return (Scrittura_partita_doppiaBulk) invoke("createScritturaPartitaDoppia",new Object[] {
 					param0,
 					tesoreriaUnica, cdsEnte,riga });
 		} catch(RemoteException e) {
