@@ -1163,15 +1163,19 @@ public class DistintaCassiereComponent extends
         int totaleRighe = 0;
         int contaErrori = 0;
         int righeProcessate = 0;
-        Boolean generaScritturaDoppia = Boolean.FALSE;
         for (Object bulk : listaRigheMovimentoContoEvidenza){
             MovimentoContoEvidenzaBulk riga = (MovimentoContoEvidenzaBulk)bulk;
             try {
                 totaleRighe++;
-                generaScritturaDoppia=Boolean.TRUE;
+
                 righeProcessate = righeProcessate + sess.caricamentoRigaGiornaleCassa(userContext, tesoreriaUnica, cdsEnte, riga);
+                try {
+                    sess.createScritturaPartitaDoppiaRequiresNew( userContext, tesoreriaUnica, cdsEnte, riga);
+                } catch (Exception e) {
+                   System.out.println("Errore");
+                }
             } catch (Exception e) {
-                generaScritturaDoppia=Boolean.FALSE;
+
                 contaErrori++;
                 Batch_log_rigaBulk log_riga = new Batch_log_rigaBulk();
                 log_riga.setPg_esecuzione(log.getPg_esecuzione());
@@ -1237,12 +1241,6 @@ public class DistintaCassiereComponent extends
                 } catch (ComponentException | RemoteException ex) {
                     SendMail.sendErrorMail(subjectError, "Errore durante il recupero dell'errore in Ext_cassiere00_scarti "+ex.getMessage());
                     throw new ComponentException(ex);
-                }
-            }
-            if ( generaScritturaDoppia) {
-                try {
-                    sess.createScritturaPartitaDoppiaRequiresNew( userContext, tesoreriaUnica, cdsEnte, riga);
-                } catch (Exception e) {
                 }
             }
         }
