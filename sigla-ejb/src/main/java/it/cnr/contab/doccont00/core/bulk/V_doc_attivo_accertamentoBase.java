@@ -17,10 +17,8 @@
 
 package it.cnr.contab.doccont00.core.bulk;
 
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.persistency.Persistent;
 
 public class V_doc_attivo_accertamentoBase extends OggettoBulk implements Persistent {
 	// CD_CDS VARCHAR(30)
@@ -124,6 +122,17 @@ public class V_doc_attivo_accertamentoBase extends OggettoBulk implements Persis
 	private java.lang.String statoInvioSdi;
 
 	private java.lang.String codiceUnivocoUfficioIpa;
+
+	private java.lang.String codiceInvioSdi;
+
+	public String getCodiceInvioSdi() {
+		return codiceInvioSdi;
+	}
+
+	public void setCodiceInvioSdi(String codiceInvioSdi) {
+		this.codiceInvioSdi = codiceInvioSdi;
+	}
+
 	public java.lang.String getCodiceUnivocoUfficioIpa() {
 		return codiceUnivocoUfficioIpa;
 	}
