@@ -193,6 +193,15 @@
 		inputType="SELECT"
 		label="Competenza/ Residuo" />
 
+	<fieldProperty
+			name="codiceInvioSdi"
+			property="codiceInvioSdi"
+			maxLength="30"
+			inputSize="30"
+			label="Identificativo SDI"
+			inputType="TEXT"
+	/>
+
 	<formFieldProperty
 		name="cd_cds" />
 	<formFieldProperty
@@ -232,7 +241,9 @@
 	<formFieldProperty
 		name="partita_iva" />
 	<formFieldProperty
-		name="codice_fiscale" />		
+		name="codice_fiscale" />
+	<formFieldProperty
+			name="codiceInvioSdi" />
 
 	<columnFieldProperty
 		name="pg_documento_amm"
@@ -335,6 +346,8 @@
 	<findFieldProperty
 		name="ti_pagamento" />
 	<findFieldProperty
-		name="pg_documento_amm" />	
+		name="pg_documento_amm" />
+	<findFieldProperty
+			name="codiceInvioSdi" />
 
 </bulkInfo>
