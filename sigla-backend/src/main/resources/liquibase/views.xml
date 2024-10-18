@@ -3075,4 +3075,7 @@
     <changeSet author="marco.spasiano" runOnChange="true" id="create-view-V_CONTROLLI_PCC">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_CONTROLLI_PCC.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="ciro.salvio" runOnChange="true" id="create-view-V_DETTAGLIO_LOTTI_MAG">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_DETTAGLIO_LOTTI_MAG.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
 </databaseChangeLog>

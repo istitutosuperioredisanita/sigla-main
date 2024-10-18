@@ -2,9 +2,9 @@
 --  DDL for View V_SALDI_PIANO_ECONOM_PROGETTO
 --------------------------------------------------------
 
-CREATE OR REPLACE FORCE VIEW "V_SALDI_PIANO_ECONOM_PROGETTO" ("PG_PROGETTO", "ESERCIZIO", "CD_UNITA_PIANO", "CD_VOCE_PIANO", "TI_GESTIONE", "IMPORTO_FIN", "STANZIAMENTO_FIN", "VARIAPIU_FIN", "VARIAMENO_FIN", "TRASFPIU_FIN", "TRASFMENO_FIN", "IMPORTO_COFIN", "STANZIAMENTO_COFIN", "VARIAPIU_COFIN", "VARIAMENO_COFIN", "TRASFPIU_COFIN", "TRASFMENO_COFIN", "IMPACC_FIN", "IMPACC_COFIN", "MANRIS_FIN", "MANRIS_COFIN") AS 
+CREATE OR REPLACE FORCE  VIEW "V_SALDI_PIANO_ECONOM_PROGETTO" ("PG_PROGETTO", "ESERCIZIO", "CD_UNITA_PIANO", "CD_VOCE_PIANO", "TI_GESTIONE", "IMPORTO_FIN", "STANZIAMENTO_FIN", "VARIAPIU_FIN", "VARIAMENO_FIN", "TRASFPIU_FIN", "TRASFMENO_FIN", "IMPORTO_COFIN", "STANZIAMENTO_COFIN", "VARIAPIU_COFIN", "VARIAMENO_COFIN", "TRASFPIU_COFIN", "TRASFMENO_COFIN", "IMPACC_FIN", "IMPACC_COFIN", "MANRIS_FIN", "MANRIS_COFIN","IMPORTO_PLURIENNALE") AS
   (SELECT   x.pg_progetto, x.esercizio, x.cd_unita_piano, x.cd_voce_piano,
-             x.ti_gestione, 
+             x.ti_gestione,
              SUM (x.importo_fin) importo_fin,
              SUM (x.stanziamento_fin) stanziamento_fin,
              SUM (x.variapiu_fin) variapiu_fin,
@@ -20,35 +20,64 @@ CREATE OR REPLACE FORCE VIEW "V_SALDI_PIANO_ECONOM_PROGETTO" ("PG_PROGETTO", "ES
              SUM (x.impacc_fin) impacc_fin,
              SUM (x.impacc_cofin) impacc_cofin,
              SUM (x.manris_fin) manris_fin,
-             SUM (x.manris_cofin) manris_cofin
+             SUM (x.manris_cofin) manris_cofin,
+             SUM (x.importo_pluriennale) importo_pluriennale
         FROM (SELECT a.pg_progetto, a.esercizio_piano esercizio,
                      a.cd_unita_organizzativa cd_unita_piano, a.cd_voce_piano,
                      'S' ti_gestione, NVL(a.im_spesa_finanziato, 0) importo_fin,
                      0 stanziamento_fin, 0 variapiu_fin, 0 variameno_fin,
                      0 trasfpiu_fin, 0 trasfmeno_fin,
                      NVL(a.im_spesa_cofinanziato, 0) importo_cofin,
-                     0 stanziamento_cofin, 0 variapiu_cofin, 0 variameno_cofin, 
+                     0 stanziamento_cofin, 0 variapiu_cofin, 0 variameno_cofin,
                      0 trasfpiu_cofin, 0 trasfmeno_cofin,
-                     0 impacc_fin, 0 impacc_cofin, 0 manris_fin, 0 manris_cofin
+                     0 impacc_fin, 0 impacc_cofin, 0 manris_fin, 0 manris_cofin,
+                     0 importo_pluriennale
                 FROM progetto_piano_economico a
               UNION ALL
               SELECT a.pg_progetto, a.esercizio_piano, a.cd_unita_organizzativa,
-                     a.cd_voce_piano, b.ti_gestione, 
-                     0 importo_fin, 
-                     b.stanziamento_fin, 
+                     a.cd_voce_piano, b.ti_gestione,
+                     0 importo_fin,
+                     b.stanziamento_fin,
                      b.variapiu_fin, b.variameno_fin,
                      b.trasfpiu_fin, b.trasfmeno_fin,
                      0 importo_cofin,
-                     b.stanziamento_cofin, 
-                     b.variapiu_cofin, b.variameno_cofin, 
+                     b.stanziamento_cofin,
+                     b.variapiu_cofin, b.variameno_cofin,
                      b.trasfpiu_cofin, b.trasfmeno_cofin,
                      b.impacc_fin, b.impacc_cofin,
-                     b.manris_fin, b.manris_cofin
+                     b.manris_fin, b.manris_cofin,
+                     0 importo_pluriennale
                 FROM ass_progetto_piaeco_voce a,
                      V_SALDI_VOCE_PROGETTO b
                WHERE a.pg_progetto = b.pg_progetto
                  AND a.esercizio_piano = b.esercizio
                  AND a.esercizio_voce = b.esercizio
+                 AND a.ti_appartenenza = b.ti_appartenenza
+                 AND a.ti_gestione = b.ti_gestione
+                 AND a.cd_elemento_voce = b.cd_elemento_voce
+                 /*pluriennali*/
+                UNION ALL SELECT a.pg_progetto, b.esercizio_piano, a.cd_unita_organizzativa,
+                     a.cd_voce_piano, b.ti_gestione,
+                     0 importo_fin,
+                     0 stanziamento_fin,
+                     0 variapiu_fin, 0 variameno_fin,
+                     0 trasfpiu_fin, 0 trasfmeno_fin,
+                     0 importo_cofin,
+                     0 stanziamento_cofin,
+                     0 variapiu_cofin, 0 variameno_cofin,
+                     0 trasfpiu_cofin, 0 trasfmeno_cofin,
+                     0 impacc_fin, 0 impacc_cofin,
+                     0 manris_fin, 0 manris_cofin,
+                     b.IMPORTO_PLURIENNALE importo_pluriennale
+                FROM ass_progetto_piaeco_voce a,
+                    V_SALDI_PLURIENNALI_VOCE_PROGETTO b,
+                    progetto_piano_economico c
+               WHERE a.pg_progetto = b.pg_progetto
+                 AND b.esercizio_piano= c.esercizio_piano
+                 AND a.cd_voce_piano = c.cd_voce_piano
+                 and b.pg_progetto=c.pg_progetto
+                 and a.cd_unita_organizzativa=c.cd_unita_organizzativa
+                 AND a.esercizio_voce = b.esercizio_voce
                  AND a.ti_appartenenza = b.ti_appartenenza
                  AND a.ti_gestione = b.ti_gestione
                  AND a.cd_elemento_voce = b.cd_elemento_voce) x
@@ -57,3 +86,4 @@ CREATE OR REPLACE FORCE VIEW "V_SALDI_PIANO_ECONOM_PROGETTO" ("PG_PROGETTO", "ES
              x.cd_unita_piano,
              x.cd_voce_piano,
              x.ti_gestione);
+
