@@ -17,7 +17,10 @@
 
 package it.cnr.contab.doccont00.comp;
 
-import it.cnr.contab.anagraf00.core.bulk.*;
+import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
+import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.anagraf00.core.bulk.TerzoHome;
 import it.cnr.contab.anagraf00.ejb.AnagraficoComponentSession;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabter.bulk.NazioneBulk;
@@ -1164,8 +1167,15 @@ public class DistintaCassiereComponent extends
             MovimentoContoEvidenzaBulk riga = (MovimentoContoEvidenzaBulk)bulk;
             try {
                 totaleRighe++;
+
                 righeProcessate = righeProcessate + sess.caricamentoRigaGiornaleCassa(userContext, tesoreriaUnica, cdsEnte, riga);
+                try {
+                    sess.createScritturaPartitaDoppiaRequiresNew( userContext, tesoreriaUnica, cdsEnte, riga);
+                } catch (Exception e) {
+                   System.out.println("Errore");
+                }
             } catch (Exception e) {
+
                 contaErrori++;
                 Batch_log_rigaBulk log_riga = new Batch_log_rigaBulk();
                 log_riga.setPg_esecuzione(log.getPg_esecuzione());
@@ -6600,33 +6610,33 @@ public class DistintaCassiereComponent extends
                         break;
                     }
                     case COMMERCIALE: {
-                        final Optional<String> cigCompenso = Optional.ofNullable(compensoBulk.getCig()).map(CigBulk::getCdCig).filter(s -> Optional.ofNullable(s).isPresent());
-                        final Optional<String> motivoAssenzaCigCompenso = Optional.ofNullable(compensoBulk.getMotivo_assenza_cig()).filter(s -> Optional.ofNullable(s).isPresent());
-                        if (cigCompenso.isPresent() && motivoAssenzaCigCompenso.isPresent()) {
-                            throw new ApplicationMessageFormatException("Generazione flusso interrotta in quanto al mandato {0}/{1}/{2} è associato un compenso " +
-                                    "sia con CIG che con motivo di assenza CIG!",
-                                    String.valueOf(bulk.getEsercizio()),
-                                    String.valueOf(bulk.getCd_cds()),
-                                    String.valueOf(bulk.getPg_documento_cont())
-                            );
-                        }
-                        if (!cigCompenso.isPresent() && !motivoAssenzaCigCompenso.isPresent()){
-                            throw new ApplicationMessageFormatException("Generazione flusso interrotta in quanto al mandato {0}/{1}/{2} è associato un compenso " +
-                                    "su cui non è possibile determinare il CIG!",
-                                    String.valueOf(bulk.getEsercizio()),
-                                    String.valueOf(bulk.getCd_cds()),
-                                    String.valueOf(bulk.getPg_documento_cont())
-                            );
-                        }
-                        if (cigCompenso.isPresent())
-                            ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(cigCompenso.get());
-                        if (motivoAssenzaCigCompenso.isPresent())
-                            ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(StMotivoEsclusioneCigSiope.valueOf(motivoAssenzaCigCompenso.get()));
-
                         final Optional<Fattura_passiva_IBulk> fattura_passivaBulk = compensoHome.findFatturaFornitore(userContext, compensoBulk);
                         getHomeCache(userContext).fetchAll(userContext);
                         if (fattura_passivaBulk.isPresent()) {
                             ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(StTipoDebitoCommerciale.COMMERCIALE);
+                            final Optional<String> cigCompenso = Optional.ofNullable(compensoBulk.getCig()).map(CigBulk::getCdCig).filter(s -> Optional.ofNullable(s).isPresent());
+                            final Optional<String> motivoAssenzaCigCompenso = Optional.ofNullable(compensoBulk.getMotivo_assenza_cig()).filter(s -> Optional.ofNullable(s).isPresent());
+                            if (cigCompenso.isPresent() && motivoAssenzaCigCompenso.isPresent()) {
+                                throw new ApplicationMessageFormatException("Generazione flusso interrotta in quanto al mandato {0}/{1}/{2} è associato un compenso " +
+                                        "sia con CIG che con motivo di assenza CIG!",
+                                        String.valueOf(bulk.getEsercizio()),
+                                        String.valueOf(bulk.getCd_cds()),
+                                        String.valueOf(bulk.getPg_documento_cont())
+                                );
+                            }
+                            if (!cigCompenso.isPresent() && !motivoAssenzaCigCompenso.isPresent()){
+                                throw new ApplicationMessageFormatException("Generazione flusso interrotta in quanto al mandato {0}/{1}/{2} è associato un compenso " +
+                                        "su cui non è posssibile determinare il CIG!",
+                                        String.valueOf(bulk.getEsercizio()),
+                                        String.valueOf(bulk.getCd_cds()),
+                                        String.valueOf(bulk.getPg_documento_cont())
+                                );
+                            }
+                            if (cigCompenso.isPresent())
+                                ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(cigCompenso.get());
+                            if (motivoAssenzaCigCompenso.isPresent())
+                                ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(StMotivoEsclusioneCigSiope.valueOf(motivoAssenzaCigCompenso.get()));
+
                             CtFatturaSiope ctFatturaSiope = objectFactory.createCtFatturaSiope();
                             if (Optional.ofNullable(fattura_passivaBulk.get().getDocumentoEleTestata()).isPresent()) {
                                 ctFatturaSiope.setCodiceIpaEnteSiope(fattura_passivaBulk.get().getDocumentoEleTestata().getDocumentoEleTrasmissione().getCodiceDestinatario());

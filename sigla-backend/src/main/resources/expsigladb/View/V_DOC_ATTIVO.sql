@@ -2,7 +2,7 @@
 --  DDL for View V_DOC_ATTIVO
 --------------------------------------------------------
 
-  CREATE OR REPLACE FORCE VIEW "V_DOC_ATTIVO" ("CD_CDS", "CD_UNITA_ORGANIZZATIVA", "ESERCIZIO", "CD_TIPO_DOCUMENTO_AMM", "PG_DOCUMENTO_AMM", "DT_EMISSIONE", "PG_VER_REC", "CD_CDS_ORIGINE", "CD_UO_ORIGINE", "TI_FATTURA", "STATO_COFI", "CD_CDS_ACCERTAMENTO", "ESERCIZIO_ACCERTAMENTO", "ESERCIZIO_ORI_ACCERTAMENTO", "PG_ACCERTAMENTO", "PG_ACCERTAMENTO_SCADENZARIO", "CD_TERZO", "CD_TERZO_UO_CDS", "COGNOME", "NOME", "RAGIONE_SOCIALE", "PG_BANCA", "CD_MODALITA_PAG", "IM_IMPONIBILE_DOC_AMM", "IM_IVA_DOC_AMM", "IM_TOTALE_DOC_AMM", "FL_SELEZIONE", "FL_FATTURA_ELETTRONICA", "STATO_INVIO_SDI", "CODICE_UNIVOCO_UFFICIO_IPA") AS 
+  CREATE OR REPLACE FORCE VIEW "V_DOC_ATTIVO" ("CD_CDS", "CD_UNITA_ORGANIZZATIVA", "ESERCIZIO", "CD_TIPO_DOCUMENTO_AMM", "PG_DOCUMENTO_AMM", "DT_EMISSIONE", "PG_VER_REC", "CD_CDS_ORIGINE", "CD_UO_ORIGINE", "TI_FATTURA", "STATO_COFI", "CD_CDS_ACCERTAMENTO", "ESERCIZIO_ACCERTAMENTO", "ESERCIZIO_ORI_ACCERTAMENTO", "PG_ACCERTAMENTO", "PG_ACCERTAMENTO_SCADENZARIO", "CD_TERZO", "CD_TERZO_UO_CDS", "COGNOME", "NOME", "RAGIONE_SOCIALE", "PG_BANCA", "CD_MODALITA_PAG", "IM_IMPONIBILE_DOC_AMM", "IM_IVA_DOC_AMM", "IM_TOTALE_DOC_AMM", "FL_SELEZIONE", "FL_FATTURA_ELETTRONICA", "STATO_INVIO_SDI", "CODICE_UNIVOCO_UFFICIO_IPA","CODICE_INVIO_SDI") AS
   SELECT
 --==================================================================================================
 --
@@ -70,214 +70,220 @@
 -- Gestione Impegni/Accertamenti Residui:
 -- gestito il nuovo campo ESERCIZIO_ORIGINALE
 --
+-- Date: 17/10/2024
+-- Version: 1.10
+-- Aggiunto il CODICE_INVIO_SDI del documento amministrativo
+--
 -- Body:
 --
 --==================================================================================================
-       A.cd_cds,
-       A.cd_unita_organizzativa,
-       A.esercizio,
-       'FATTURA_A',
-       A.pg_fattura_attiva,
-       A.dt_emissione,
-       A.pg_ver_rec,
-       A.cd_cds_origine,
-       A.cd_uo_origine,
-       A.ti_fattura,
-       B.stato_cofi,
-       B.cd_cds_accertamento,
-       B.esercizio_accertamento,
-       B.esercizio_ori_accertamento,
-       B.pg_accertamento,
-       B.pg_accertamento_scadenzario,
-       A.cd_terzo,
-       A.cd_terzo_uo_cds,
-       A.cognome,
-       A.nome,
-       A.ragione_sociale,
-       A.pg_banca_uo_cds,
-       A.cd_modalita_pag_uo_cds,
-       DECODE(A.ti_fattura, 'C', (B.im_imponibile * -1), B.im_imponibile),
-       decode(FL_LIQUIDAZIONE_DIFFERITA,'Y',0, DECODE(A.ti_fattura, 'C', (B.im_iva * -1), B.im_iva)) iva,
-       DECODE(A.ti_fattura, 'C', decode(FL_LIQUIDAZIONE_DIFFERITA,'Y',B.im_imponibile*-1,((B.im_imponibile + B.im_iva) * -1)),(decode(FL_LIQUIDAZIONE_DIFFERITA,'Y',B.im_imponibile,B.im_imponibile + B.im_iva))),
-       DECODE(A.ti_fattura, 'F', (DECODE(A.FL_CONGELATA, 'Y', 'N', 'Y')), 'N'),
-       FL_FATTURA_ELETTRONICA, STATO_INVIO_SDI, CODICE_UNIVOCO_UFFICIO_IPA
-FROM   FATTURA_ATTIVA A,
-       FATTURA_ATTIVA_RIGA B,
-       CONFIGURAZIONE_CNR C
-WHERE  B.cd_cds = A.cd_cds AND
-       B.cd_unita_organizzativa = A.cd_unita_organizzativa AND
-       B.esercizio = A.esercizio AND
-       B.pg_fattura_attiva = A.pg_fattura_attiva AND
-       B.dt_cancellazione IS NULL
-       and
-       C.ESERCIZIO = 0 AND
-       c.cd_chiave_primaria = 'SPLIT_PAYMENT'
-       AND c.cd_chiave_secondaria = 'ATTIVA'
-       AND c.cd_unita_funzionale = '*'
-       AND nvl(a.dt_emissione,a.dt_registrazione) >=   NVL (c.dt01, nvl(a.dt_emissione,a.dt_registrazione))
-union all
-select
-  A.cd_cds,
-       A.cd_unita_organizzativa,
-       A.esercizio,
-       'FATTURA_A',
-       A.pg_fattura_attiva,
-       A.dt_emissione,
-       A.pg_ver_rec,
-       A.cd_cds_origine,
-       A.cd_uo_origine,
-       A.ti_fattura,
-       B.stato_cofi,
-       B.cd_cds_accertamento,
-       B.esercizio_accertamento,
-       B.esercizio_ori_accertamento,
-       B.pg_accertamento,
-       B.pg_accertamento_scadenzario,
-       A.cd_terzo,
-       A.cd_terzo_uo_cds,
-       A.cognome,
-       A.nome,
-       A.ragione_sociale,
-       A.pg_banca_uo_cds,
-       A.cd_modalita_pag_uo_cds,
-       DECODE(A.ti_fattura, 'C', (B.im_imponibile * -1), B.im_imponibile),
-       DECODE(A.ti_fattura, 'C', (B.im_iva * -1), B.im_iva) iva,
-       DECODE(A.ti_fattura, 'C', ((B.im_imponibile + B.im_iva) * -1),(B.im_imponibile + B.im_iva)),
-       DECODE(A.ti_fattura, 'F', (DECODE(A.FL_CONGELATA, 'Y', 'N', 'Y')), 'N'),
-       FL_FATTURA_ELETTRONICA, STATO_INVIO_SDI,CODICE_UNIVOCO_UFFICIO_IPA
-FROM   FATTURA_ATTIVA A,
-       FATTURA_ATTIVA_RIGA B,
-       CONFIGURAZIONE_CNR C
-WHERE  B.cd_cds = A.cd_cds AND
-       B.cd_unita_organizzativa = A.cd_unita_organizzativa AND
-       B.esercizio = A.esercizio AND
-       B.pg_fattura_attiva = A.pg_fattura_attiva AND
-       B.dt_cancellazione IS NULL and
-       C.ESERCIZIO = 0 AND
-       c.cd_chiave_primaria = 'SPLIT_PAYMENT'
-       AND c.cd_chiave_secondaria = 'ATTIVA'
-       AND c.cd_unita_funzionale = '*'
-       AND nvl(a.dt_emissione,a.dt_registrazione) <   NVL (c.dt01, nvl(a.dt_emissione,a.dt_registrazione))
-UNION ALL
-SELECT A.cd_cds,
-       A.cd_unita_organizzativa,
-       A.esercizio,
-       'FATTURA_P',
-       A.pg_fattura_passiva,
-       to_date(null),
-       A.pg_ver_rec,
-       A.cd_cds_origine,
-       A.cd_uo_origine,
-       A.ti_fattura,
-       B.stato_cofi,
-       B.cd_cds_accertamento,
-       B.esercizio_accertamento,
-       B.esercizio_ori_accertamento,
-       B.pg_accertamento,
-       B.pg_accertamento_scadenzario,
-       A.cd_terzo,
-       A.cd_terzo_uo_cds,
-       A.cognome,
-       A.nome,
-       A.ragione_sociale,
-       A.pg_banca_uo_cds,
-       A.cd_modalita_pag_uo_cds,
-       B.im_imponibile,
-       B.im_iva,
-       decode(a.fl_split_payment,'Y',B.im_imponibile,(B.im_imponibile + B.im_iva)),
-       DECODE(A.FL_CONGELATA, 'Y', 'N', 'Y') --'Y', 
-       ,'N',NULL, NULL
-FROM   FATTURA_PASSIVA A,
-       FATTURA_PASSIVA_RIGA B
-WHERE  A.ti_fattura = 'C' AND
-       B.cd_cds = A.cd_cds AND
-       B.cd_unita_organizzativa = A.cd_unita_organizzativa AND
-       B.esercizio = A.esercizio AND
-       B.pg_fattura_passiva = A.pg_fattura_passiva AND
-       B.cd_cds_accertamento IS NOT NULL AND
-       B.esercizio_accertamento IS NOT NULL AND
-       B.esercizio_ori_accertamento IS NOT NULL AND
-       B.pg_accertamento IS NOT NULL AND
-       B.pg_accertamento_scadenzario IS NOT NULL AND
-       B.dt_cancellazione IS NULL
-UNION ALL
-SELECT A.cd_cds,
-       A.cd_unita_organizzativa,
-       A.esercizio,
-       A.cd_tipo_documento_amm,
-       A.pg_documento_generico,
-       to_date(null),
-       B.pg_ver_rec,
-       B.cd_cds_origine,
-       B.cd_uo_origine,
-       NULL,
-       A.stato_cofi,
-       A.cd_cds_accertamento,
-       A.esercizio_accertamento,
-       A.esercizio_ori_accertamento,
-       A.pg_accertamento,
-       A.pg_accertamento_scadenzario,
-       A.cd_terzo,
-       A.cd_terzo_uo_cds,
-       A.cognome,
-       A.nome,
-       A.ragione_sociale,
-       A.pg_banca_uo_cds,
-       A.cd_modalita_pag_uo_cds,
-       0,
-       0,
-       A.im_riga,
-       'Y', 
-       'N',NULL, NULL
-FROM   DOCUMENTO_GENERICO_RIGA A,
-       DOCUMENTO_GENERICO B
-WHERE  A.dt_cancellazione IS NULL AND
-       A.cd_cds_accertamento IS NOT NULL AND
-       A.esercizio_accertamento IS NOT NULL AND
-       A.esercizio_ori_accertamento IS NOT NULL AND
-       A.pg_accertamento IS NOT NULL AND
-       A.pg_accertamento_scadenzario IS NOT NULL AND
-       B.cd_cds = A.cd_cds AND
-       B.cd_unita_organizzativa = A.cd_unita_organizzativa AND
-       B.esercizio = A.esercizio AND
-       B.cd_tipo_documento_amm = A.cd_tipo_documento_amm AND
-       B.pg_documento_generico = A.pg_documento_generico
-UNION ALL
-SELECT A.cd_cds,
-       A.cd_unita_organizzativa,
-       A.esercizio,
-       'RIMBORSO',
-       A.pg_rimborso,
-       to_date(null),
-       A.pg_ver_rec,
-       A.cd_cds_origine,
-       A.cd_uo_origine,
-       NULL,
-       A.stato_cofi,
-       A.cd_cds_accertamento,
-       A.esercizio_accertamento,
-       A.esercizio_ori_accertamento,
-       A.pg_accertamento,
-       A.pg_accertamento_scadenzario,
-       A.cd_terzo,
-       A.cd_terzo_uo_cds,
-       A.cognome,
-       A.nome,
-       A.ragione_sociale,
-       A.pg_banca_uo_cds,
-       A.cd_modalita_pag_uo_cds,
-       0,
-       0,
-       A.im_rimborso,
-       'Y', 
-       'N',NULL, NULL
-FROM   RIMBORSO A
-WHERE  A.dt_cancellazione IS NULL AND
-       A.cd_cds_accertamento IS NOT NULL AND
-       A.esercizio_accertamento IS NOT NULL AND
-       A.esercizio_ori_accertamento IS NOT NULL AND
-       A.pg_accertamento IS NOT NULL AND
-       A.pg_accertamento_scadenzario IS NOT NULL;
+        A.cd_cds,
+              A.cd_unita_organizzativa,
+              A.esercizio,
+              'FATTURA_A',
+              A.pg_fattura_attiva,
+              A.dt_emissione,
+              A.pg_ver_rec,
+              A.cd_cds_origine,
+              A.cd_uo_origine,
+              A.ti_fattura,
+              B.stato_cofi,
+              B.cd_cds_accertamento,
+              B.esercizio_accertamento,
+              B.esercizio_ori_accertamento,
+              B.pg_accertamento,
+              B.pg_accertamento_scadenzario,
+              A.cd_terzo,
+              A.cd_terzo_uo_cds,
+              A.cognome,
+              A.nome,
+              A.ragione_sociale,
+              A.pg_banca_uo_cds,
+              A.cd_modalita_pag_uo_cds,
+              DECODE(A.ti_fattura, 'C', (B.im_imponibile * -1), B.im_imponibile),
+              decode(FL_LIQUIDAZIONE_DIFFERITA,'Y',0, DECODE(A.ti_fattura, 'C', (B.im_iva * -1), B.im_iva)) iva,
+              DECODE(A.ti_fattura, 'C', decode(FL_LIQUIDAZIONE_DIFFERITA,'Y',B.im_imponibile*-1,((B.im_imponibile + B.im_iva) * -1)),(decode(FL_LIQUIDAZIONE_DIFFERITA,'Y',B.im_imponibile,B.im_imponibile + B.im_iva))),
+              DECODE(A.ti_fattura, 'F', (DECODE(A.FL_CONGELATA, 'Y', 'N', 'Y')), 'N'),
+              FL_FATTURA_ELETTRONICA, STATO_INVIO_SDI, CODICE_UNIVOCO_UFFICIO_IPA,
+              a.CODICE_INVIO_SDI
+       FROM   FATTURA_ATTIVA A,
+              FATTURA_ATTIVA_RIGA B,
+              CONFIGURAZIONE_CNR C
+       WHERE  B.cd_cds = A.cd_cds AND
+              B.cd_unita_organizzativa = A.cd_unita_organizzativa AND
+              B.esercizio = A.esercizio AND
+              B.pg_fattura_attiva = A.pg_fattura_attiva AND
+              B.dt_cancellazione IS NULL
+              and
+              C.ESERCIZIO = 0 AND
+              c.cd_chiave_primaria = 'SPLIT_PAYMENT'
+              AND c.cd_chiave_secondaria = 'ATTIVA'
+              AND c.cd_unita_funzionale = '*'
+              AND nvl(a.dt_emissione,a.dt_registrazione) >=   NVL (c.dt01, nvl(a.dt_emissione,a.dt_registrazione))
+       union all
+       select
+         A.cd_cds,
+              A.cd_unita_organizzativa,
+              A.esercizio,
+              'FATTURA_A',
+              A.pg_fattura_attiva,
+              A.dt_emissione,
+              A.pg_ver_rec,
+              A.cd_cds_origine,
+              A.cd_uo_origine,
+              A.ti_fattura,
+              B.stato_cofi,
+              B.cd_cds_accertamento,
+              B.esercizio_accertamento,
+              B.esercizio_ori_accertamento,
+              B.pg_accertamento,
+              B.pg_accertamento_scadenzario,
+              A.cd_terzo,
+              A.cd_terzo_uo_cds,
+              A.cognome,
+              A.nome,
+              A.ragione_sociale,
+              A.pg_banca_uo_cds,
+              A.cd_modalita_pag_uo_cds,
+              DECODE(A.ti_fattura, 'C', (B.im_imponibile * -1), B.im_imponibile),
+              DECODE(A.ti_fattura, 'C', (B.im_iva * -1), B.im_iva) iva,
+              DECODE(A.ti_fattura, 'C', ((B.im_imponibile + B.im_iva) * -1),(B.im_imponibile + B.im_iva)),
+              DECODE(A.ti_fattura, 'F', (DECODE(A.FL_CONGELATA, 'Y', 'N', 'Y')), 'N'),
+              FL_FATTURA_ELETTRONICA, STATO_INVIO_SDI,CODICE_UNIVOCO_UFFICIO_IPA,
+              a.CODICE_INVIO_SDI
+       FROM   FATTURA_ATTIVA A,
+              FATTURA_ATTIVA_RIGA B,
+              CONFIGURAZIONE_CNR C
+       WHERE  B.cd_cds = A.cd_cds AND
+              B.cd_unita_organizzativa = A.cd_unita_organizzativa AND
+              B.esercizio = A.esercizio AND
+              B.pg_fattura_attiva = A.pg_fattura_attiva AND
+              B.dt_cancellazione IS NULL and
+              C.ESERCIZIO = 0 AND
+              c.cd_chiave_primaria = 'SPLIT_PAYMENT'
+              AND c.cd_chiave_secondaria = 'ATTIVA'
+              AND c.cd_unita_funzionale = '*'
+              AND nvl(a.dt_emissione,a.dt_registrazione) <   NVL (c.dt01, nvl(a.dt_emissione,a.dt_registrazione))
+       UNION ALL
+       SELECT A.cd_cds,
+              A.cd_unita_organizzativa,
+              A.esercizio,
+              'FATTURA_P',
+              A.pg_fattura_passiva,
+              to_date(null),
+              A.pg_ver_rec,
+              A.cd_cds_origine,
+              A.cd_uo_origine,
+              A.ti_fattura,
+              B.stato_cofi,
+              B.cd_cds_accertamento,
+              B.esercizio_accertamento,
+              B.esercizio_ori_accertamento,
+              B.pg_accertamento,
+              B.pg_accertamento_scadenzario,
+              A.cd_terzo,
+              A.cd_terzo_uo_cds,
+              A.cognome,
+              A.nome,
+              A.ragione_sociale,
+              A.pg_banca_uo_cds,
+              A.cd_modalita_pag_uo_cds,
+              B.im_imponibile,
+              B.im_iva,
+              decode(a.fl_split_payment,'Y',B.im_imponibile,(B.im_imponibile + B.im_iva)),
+              DECODE(A.FL_CONGELATA, 'Y', 'N', 'Y') --'Y',
+              ,'N',NULL, NULL,NULL
+       FROM   FATTURA_PASSIVA A,
+              FATTURA_PASSIVA_RIGA B
+       WHERE  A.ti_fattura = 'C' AND
+              B.cd_cds = A.cd_cds AND
+              B.cd_unita_organizzativa = A.cd_unita_organizzativa AND
+              B.esercizio = A.esercizio AND
+              B.pg_fattura_passiva = A.pg_fattura_passiva AND
+              B.cd_cds_accertamento IS NOT NULL AND
+              B.esercizio_accertamento IS NOT NULL AND
+              B.esercizio_ori_accertamento IS NOT NULL AND
+              B.pg_accertamento IS NOT NULL AND
+              B.pg_accertamento_scadenzario IS NOT NULL AND
+              B.dt_cancellazione IS NULL
+       UNION ALL
+       SELECT A.cd_cds,
+              A.cd_unita_organizzativa,
+              A.esercizio,
+              A.cd_tipo_documento_amm,
+              A.pg_documento_generico,
+              to_date(null),
+              B.pg_ver_rec,
+              B.cd_cds_origine,
+              B.cd_uo_origine,
+              NULL,
+              A.stato_cofi,
+              A.cd_cds_accertamento,
+              A.esercizio_accertamento,
+              A.esercizio_ori_accertamento,
+              A.pg_accertamento,
+              A.pg_accertamento_scadenzario,
+              A.cd_terzo,
+              A.cd_terzo_uo_cds,
+              A.cognome,
+              A.nome,
+              A.ragione_sociale,
+              A.pg_banca_uo_cds,
+              A.cd_modalita_pag_uo_cds,
+              0,
+              0,
+              A.im_riga,
+              'Y',
+              'N',NULL, NULL,NULL
+       FROM   DOCUMENTO_GENERICO_RIGA A,
+              DOCUMENTO_GENERICO B
+       WHERE  A.dt_cancellazione IS NULL AND
+              A.cd_cds_accertamento IS NOT NULL AND
+              A.esercizio_accertamento IS NOT NULL AND
+              A.esercizio_ori_accertamento IS NOT NULL AND
+              A.pg_accertamento IS NOT NULL AND
+              A.pg_accertamento_scadenzario IS NOT NULL AND
+              B.cd_cds = A.cd_cds AND
+              B.cd_unita_organizzativa = A.cd_unita_organizzativa AND
+              B.esercizio = A.esercizio AND
+              B.cd_tipo_documento_amm = A.cd_tipo_documento_amm AND
+              B.pg_documento_generico = A.pg_documento_generico
+       UNION ALL
+       SELECT A.cd_cds,
+              A.cd_unita_organizzativa,
+              A.esercizio,
+              'RIMBORSO',
+              A.pg_rimborso,
+              to_date(null),
+              A.pg_ver_rec,
+              A.cd_cds_origine,
+              A.cd_uo_origine,
+              NULL,
+              A.stato_cofi,
+              A.cd_cds_accertamento,
+              A.esercizio_accertamento,
+              A.esercizio_ori_accertamento,
+              A.pg_accertamento,
+              A.pg_accertamento_scadenzario,
+              A.cd_terzo,
+              A.cd_terzo_uo_cds,
+              A.cognome,
+              A.nome,
+              A.ragione_sociale,
+              A.pg_banca_uo_cds,
+              A.cd_modalita_pag_uo_cds,
+              0,
+              0,
+              A.im_rimborso,
+              'Y',
+              'N',NULL, NULL,NULL
+       FROM   RIMBORSO A
+       WHERE  A.dt_cancellazione IS NULL AND
+              A.cd_cds_accertamento IS NOT NULL AND
+              A.esercizio_accertamento IS NOT NULL AND
+              A.esercizio_ori_accertamento IS NOT NULL AND
+              A.pg_accertamento IS NOT NULL AND
+              A.pg_accertamento_scadenzario IS NOT NULL;
 
    COMMENT ON TABLE "V_DOC_ATTIVO"  IS 'Pre view di estrazione delle righe di fatture passive, attive e documenti passivi necessari
 alla selezione nella costruzione di un mandato. La vista è stata scorporata da

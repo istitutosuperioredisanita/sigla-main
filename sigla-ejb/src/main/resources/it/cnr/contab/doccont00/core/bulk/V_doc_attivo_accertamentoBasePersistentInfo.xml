@@ -192,6 +192,12 @@
 			propertyName="codiceUnivocoUfficioIpa"
 			sqlTypeName="VARCHAR"
 			columnSize="6" />
+		<columnMapping
+				columnName="CODICE_INVIO_SDI"
+				propertyName="codiceInvioSdi"
+				sqlTypeName="VARCHAR"
+				columnSize="30" />
+
 	</defaultColumnMap>
 	<persistentProperty
 		name="pg_banca" />
@@ -256,5 +262,7 @@
 	<persistentProperty
 		name="flFatturaElettronica" />
 	<persistentProperty
-		name="codiceUnivocoUfficioIpa" />			
+		name="codiceUnivocoUfficioIpa" />
+	<persistentProperty
+			name="codiceInvioSdi" />
 </SQLPersistentInfo>

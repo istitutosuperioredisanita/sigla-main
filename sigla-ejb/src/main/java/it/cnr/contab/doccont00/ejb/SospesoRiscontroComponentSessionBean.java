@@ -16,22 +16,26 @@
  */
 
 package it.cnr.contab.doccont00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 
+import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.contab.config00.sto.bulk.EnteBulk;
-import it.cnr.contab.docamm00.comp.FatturaAttivaSingolaComponent;
 import it.cnr.contab.doccont00.comp.SospesoRiscontroComponent;
 import it.cnr.contab.doccont00.intcass.giornaliera.MovimentoContoEvidenzaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.NoRollbackException;
+import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJBException;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import java.rmi.RemoteException;
+
 @Stateless(name="CNRDOCCONT00_EJB_SospesoRiscontroComponentSession")
 public class SospesoRiscontroComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements SospesoRiscontroComponentSession{
 @PostConstruct
@@ -119,6 +123,25 @@ public RemoteIterator cercaSospesiPerStato(UserContext usercontext, CompoundFind
 			Integer caricato = ((SospesoRiscontroComponent) componentObj).caricamentoRigaGiornaleCassa(param0, tesoreriaUnica, cdsEnte, riga);
 			component_invocation_succes(param0, componentObj);
 			return caricato;
+		} catch (NoRollbackException e) {
+			component_invocation_succes(param0, componentObj);
+			throw e;
+		} catch (ComponentException e) {
+			component_invocation_failure(param0, componentObj);
+			throw e;
+		} catch (RuntimeException e) {
+			throw uncaughtRuntimeException(param0, componentObj, e);
+		} catch (Error e) {
+			throw uncaughtError(param0, componentObj, e);
+		}
+	}
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public Scrittura_partita_doppiaBulk createScritturaPartitaDoppiaRequiresNew(UserContext param0, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws ComponentException, EJBException, PersistencyException, RemoteException {
+		pre_component_invocation(param0, componentObj);
+		try {
+			Scrittura_partita_doppiaBulk scrittura_partita_doppiaBulk = ((SospesoRiscontroComponent) componentObj).createScritturaPartitaDoppia(param0, tesoreriaUnica, cdsEnte, riga);
+			component_invocation_succes(param0, componentObj);
+			return scrittura_partita_doppiaBulk;
 		} catch (NoRollbackException e) {
 			component_invocation_succes(param0, componentObj);
 			throw e;
