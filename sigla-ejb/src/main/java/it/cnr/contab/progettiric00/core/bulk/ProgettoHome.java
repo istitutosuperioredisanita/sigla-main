@@ -1155,4 +1155,23 @@ public class ProgettoHome extends BulkHome {
 		return  (ProgettoBulk)coll.iterator().next();
 
 	}
+	public java.util.List<Obbligazione_pluriennale_voceBulk> findObbligazioniPluriennaliFromProgetto(Integer pgProgetto,Integer esercizio) throws IntrospectionException, PersistencyException
+	{
+		PersistentHome obbligazionePlurVoceHome = getHomeCache().getHome(Obbligazione_pluriennale_voceBulk.class);
+
+		SQLBuilder sql = obbligazionePlurVoceHome.createSQLBuilder();
+
+		sql.addTableToHeader("PROGETTO_OTHER_FIELD");
+		sql.addTableToHeader("V_LINEA_ATTIVITA_VALIDA");
+
+		sql.addSQLJoin("OBBLIGAZIONE_PLURIENNALE_VOCE.CD_CENTRO_RESPONSABILITA","V_LINEA_ATTIVITA_VALIDA.CD_CENTRO_RESPONSABILITA");
+		sql.addSQLJoin("OBBLIGAZIONE_PLURIENNALE_VOCE.CD_LINEA_ATTIVITA","V_LINEA_ATTIVITA_VALIDA.CD_LINEA_ATTIVITA");
+		sql.addSQLJoin("V_LINEA_ATTIVITA_VALIDA.PG_PROGETTO","PROGETTO_OTHER_FIELD.PG_PROGETTO");
+
+
+		sql.addSQLClause("AND", "OBBLIGAZIONE_PLURIENNALE_VOCE.ESERCIZIO", sql.EQUALS, esercizio);
+		sql.addSQLClause("AND", "PROGETTO_OTHER_FIELD.PG_PROGETTO", sql.EQUALS, pgProgetto);
+
+		return obbligazionePlurVoceHome.fetchAll(sql);
+	}
 }
