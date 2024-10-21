@@ -6,7 +6,8 @@
 		it.cnr.jada.util.jsp.*,
 		java.util.Optional,
 		it.cnr.contab.progettiric00.bp.*,
-		it.cnr.contab.progettiric00.core.bulk.*"
+		it.cnr.contab.progettiric00.core.bulk.*,
+		it.cnr.contab.utenze00.bulk.CNRUserInfo"
 %>
 <%
 	TestataProgettiRicercaBP bp = (TestataProgettiRicercaBP)BusinessProcess.getBusinessProcess(request);
@@ -15,6 +16,7 @@
 	boolean isROFieldInformix = !bp.isSearching()&&isFlInformix;
 	boolean isROField = isROFieldInformix || bp.isROProgettoForStato();
 	boolean isUoEnte = Optional.ofNullable(bp.getUoScrivania()).filter(Unita_organizzativaBulk::isUoEnte).isPresent();
+	boolean isFlAutoRimodROField = bp.isROFlagAutoRimod( (CNRUserInfo)HttpActionContext.getUserInfo(request) );
 	ProgettoBulk bulk = (ProgettoBulk)bp.getModel();
 	boolean isROImporti = !(bp instanceof AmministraTestataProgettiRicercaBP) && Optional.ofNullable(bulk).flatMap(el->Optional.ofNullable(el.getOtherField()))
 			.map(el->el.isStatoAnnullato()||el.isStatoChiuso()||(el.isStatoApprovato() && el.isPianoEconomicoRequired()))
@@ -149,7 +151,7 @@
 	  </tr>
 	  <tr>
          <td><% bp.getController().writeFormLabel(out,"flAutoRimod");%></td>
-         <td colspan="3"><% bp.getController().writeFormInput(out,"flAutoRimod");%></td>
+         <td colspan="3"><% bp.getController().writeFormInput(out,"default","flAutoRimod",isFlAutoRimodROField,null,null);%></td>
       </tr>
 
      </table>
