@@ -32,4 +32,31 @@ public class Progetto_other_fieldHome extends BulkHome {
 	public Progetto_other_fieldHome(java.sql.Connection conn,PersistentCache persistentCache) {
 		super(Progetto_other_fieldBulk.class,conn,persistentCache);
 	}
+
+
+	//TODO da testare
+	/*
+	public java.util.List findObbligazioniFromProgetto(Integer pgProgetto) throws IntrospectionException, PersistencyException
+	{
+		PersistentHome obbligazioneHome = getHomeCache().getHome(ObbligazionePluriannaleVoceBulk.class, "OBBLIGAZIONE_PLURIENNALE_VOCE");
+		SQLBuilder sql = obbligazioneHome.createSQLBuilder();
+
+		sql.addTableToHeader("PROGETTO_OTHER_FIELD");
+		sql.addTableToHeader("V_LINEA_ATTIVITA_VALIDA");
+
+		sql.addSQLJoin("PROGETTO_OTHER_FIELD.PG_PROGETTO", "V_LINEA_ATTIVITA_VALIDA.PG_PROGETTO");
+		sql.addSQLJoin("V_LINEA_ATTIVITA_VALIDA.CD_CENTRO_RESPONSABILITA", "OBBLIGAZIONE_PLURIENNALE_VOCE.CD_CENTRO_RESPONSABILITA");
+		sql.addSQLJoin("V_LINEA_ATTIVITA_VALIDA.CD_LINEA_ATTIVITA", "OBBLIGAZIONE_PLURIENNALE_VOCE.CD_LINEA_ATTIVITA");
+
+		sql.addSQLClause("AND", "OBBLIGAZIONE_PLURIENNALE_VOCE.ESERCIZIO", sql.EQUALS, 2024);
+		sql.addSQLClause("AND", "PROGETTO_OTHER_FIELD.PG_PROGETTO", sql.EQUALS, pgProgetto);
+
+		sql.addParameter(pgProgetto, java.sql.Types.INTEGER, 0);
+
+		// Specifichiamo che vogliamo selezionare tutti i campi di OBBLIGAZIONE_PLURIENNALE_VOCE
+		sql.setDistinctClause(false);
+
+		return obbligazioneHome.fetchAll(sql);
+	}
+	*/
 }
