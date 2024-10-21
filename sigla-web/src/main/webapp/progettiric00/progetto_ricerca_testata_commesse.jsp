@@ -16,7 +16,7 @@
 	boolean isROFieldInformix = !bp.isSearching()&&isFlInformix;
 	boolean isROField = isROFieldInformix || bp.isROProgettoForStato();
 	boolean isUoEnte = Optional.ofNullable(bp.getUoScrivania()).filter(Unita_organizzativaBulk::isUoEnte).isPresent();
-	boolean isFlAutoRimodROField = bp.isROFlagAutoRimod( (CNRUserInfo)HttpActionContext.getUserInfo(request) );
+	boolean isFlAutoRimodROField = (! ( ( (CNRUserInfo)HttpActionContext.getUserInfo(request)).getUtente().isSupervisore() && bp instanceof AmministraTestataProgettiRicercaBP) );
 	ProgettoBulk bulk = (ProgettoBulk)bp.getModel();
 	boolean isROImporti = !(bp instanceof AmministraTestataProgettiRicercaBP) && Optional.ofNullable(bulk).flatMap(el->Optional.ofNullable(el.getOtherField()))
 			.map(el->el.isStatoAnnullato()||el.isStatoChiuso()||(el.isStatoApprovato() && el.isPianoEconomicoRequired()))
