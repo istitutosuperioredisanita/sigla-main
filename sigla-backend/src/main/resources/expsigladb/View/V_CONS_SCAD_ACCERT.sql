@@ -3,14 +3,15 @@
 --------------------------------------------------------
 
 
-  CREATE OR REPLACE FORCE EDITIONABLE VIEW "V_CONS_SCAD_ACCERT" ("CDS", "UO", "ESERCIZIO", "ESERCIZIO_ORIGINALE", "PG_ACC", "PG_ACC_SCAD", "VOCE_BILANCIO", "DATA_SCAD", "ACC_DESC", "DS_SCAD", "IM_SCAD", "IM_ASS_DOC_AMM", "IMP_ASS_DOC_CONT", "DEBITORE", "CD_CDS_ACCERTAMENTO", "DS_ELEMENTO_VOCE") AS
+CREATE OR REPLACE FORCE EDITIONABLE VIEW "V_CONS_SCAD_ACCERT" ("CDS", "UO", "ESERCIZIO", "ESERCIZIO_ORIGINALE", "PG_ACC", "PG_ACC_SCAD", "VOCE_BILANCIO", "DATA_SCAD", "ACC_DESC", "DS_SCAD", "IM_SCAD", "IM_ASS_DOC_AMM", "IMP_ASS_DOC_CONT", "DEBITORE", "CD_CDS_ACCERTAMENTO", "DS_ELEMENTO_VOCE","DACR","DUVA") AS
   SELECT DISTINCT
 --
 -- Version: 1.0
 --
 -- Vista per la consultazione Scadenzario accertamenti
 --
---
+--v.1.1
+-- aggiunti campi DACR e DUVA
 -- Body
 --
                    accertamento.cd_cds_origine,
@@ -28,7 +29,9 @@
                    accertamento_scadenzario.im_associato_doc_contabile,
                    terzo.denominazione_sede,
                    accertamento.cd_cds cd_cds_accertamento,
-                   elemento_voce.ds_elemento_voce
+                   elemento_voce.ds_elemento_voce,
+                   accertamento.dacr,
+                   accertamento.duva
               FROM accertamento_scadenzario,
                    accertamento,
                    terzo

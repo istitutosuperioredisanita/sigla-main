@@ -1,9 +1,9 @@
 --------------------------------------------------------
---  DDL for View V_CONS_SCAD_OBBL
+--  DDL for View V_CONS_SCAD_OBBL_VOCE
 --------------------------------------------------------
 
 
-  CREATE OR REPLACE FORCE EDITIONABLE VIEW "V_CONS_SCAD_OBBL_VOCE" ("CDS", "UO", "ESERCIZIO", "ESERCIZIO_ORIGINALE", "PG_OBBL", "PG_OBBL_SCAD", "VOCE_BILANCIO", "DATA_SCAD", "DS_OBBL", "DS_SCAD", "IM_SCAD", "IM_ASS_DOC_AMM", "IMP_ASS_DOC_CONT", "CREDITORE", "DS_ELEMENTO_VOCE", "IM_VOCE", "PG_PROGETTO", "CD_PROGETTO", "DS_PROGETTO", "DT_INIZIO", "DT_FINE", "DT_PROROGA", "CD_TIPO_PROGETTO", "DS_TIPO_PROGETTO") AS
+  CREATE OR REPLACE FORCE EDITIONABLE VIEW "V_CONS_SCAD_OBBL_VOCE" ("CDS", "UO", "ESERCIZIO", "ESERCIZIO_ORIGINALE", "PG_OBBL", "PG_OBBL_SCAD", "VOCE_BILANCIO", "DATA_SCAD", "DS_OBBL", "DS_SCAD", "IM_SCAD", "IM_ASS_DOC_AMM", "IMP_ASS_DOC_CONT", "CREDITORE", "DS_ELEMENTO_VOCE", "IM_VOCE", "PG_PROGETTO", "CD_PROGETTO", "DS_PROGETTO", "DT_INIZIO", "DT_FINE", "DT_PROROGA", "CD_TIPO_PROGETTO", "DS_TIPO_PROGETTO","DACR","DUVA") AS
   SELECT
     --
     -- Date: 12/08/2024
@@ -11,6 +11,8 @@
     --
     -- Vista per la consultazione Scadenzario Impegni Voce
     --
+    --v.1.1
+    -- aggiunti campi DACR e DUVA
     --
     -- Body
     --
@@ -37,7 +39,9 @@
     po.dt_fine,
     po.dt_proroga,
     tp.cd_tipo_progetto,
-    tp.ds_tipo_progetto
+    tp.ds_tipo_progetto,
+    v.dacr,
+    v.duva
     from v_cons_scad_obbl v
      left outer join obbligazione_scad_voce ov
          on   v.cds= ov.cd_cds
