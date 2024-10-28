@@ -17,10 +17,10 @@
 
 package it.cnr.contab.config00.pdcep.bulk;
 
-import java.util.*;
-import it.cnr.contab.config00.pdcep.bulk.*;
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.util.*;
+import it.cnr.jada.bulk.OggettoBulk;
+
+import java.util.Hashtable;
+import java.util.Optional;
 
 /**
  * Classe che eredita le caratteristiche della classe <code>Voce_epBulk</code>,
@@ -28,7 +28,7 @@ import it.cnr.jada.util.*;
  * In particolare si riferisce ad un'entità di tipo Conto.
  */
 public class ContoBulk extends Voce_epBulk {
-	private CapocontoBulk voce_ep_padre = new CapocontoBulk();
+	private CapocontoBulk voce_ep_padre;
 	private ContoBulk riapre_a_conto;
 	static private java.util.Hashtable associazioni_natura_gruppo;
 	private boolean fl_gruppoNaturaNonCongruiConfermati = false;
@@ -118,8 +118,6 @@ public CapocontoBulk getVoce_ep_padre() {
  */
 public OggettoBulk initializeForInsert(it.cnr.jada.util.action.CRUDBP bp,it.cnr.jada.action.ActionContext context) {
 	setEsercizio(it.cnr.contab.utenze00.bulk.CNRUserInfo.getEsercizio(context));
-	riapre_a_conto = new ContoBulk();
-	contoContropartita = new ContoBulk();
 	setFl_a_pareggio(new Boolean (false));
 	return this;
 }
