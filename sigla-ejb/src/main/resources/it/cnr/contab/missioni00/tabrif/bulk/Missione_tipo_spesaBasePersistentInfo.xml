@@ -124,7 +124,12 @@
 			sqlTypeName="CHAR"
 			columnSize="1"
 			nullable="false"
-			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />	
+			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+				columnName="CD_DIVISA"
+				propertyName="cd_divisa"
+				sqlTypeName="VARCHAR"
+				columnSize="10" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="fl_rimborso_km" />
