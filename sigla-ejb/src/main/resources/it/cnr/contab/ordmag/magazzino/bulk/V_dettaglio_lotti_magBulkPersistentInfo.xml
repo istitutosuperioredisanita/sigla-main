@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.ordmag.magazzino.bulk.V_dettaglio_lotti_magBulk"
+	homeClassName="it.cnr.contab.ordmag.magazzino.bulk.V_dettaglio_lotti_magHome">
+	<defaultColumnMap
+			tableName="V_DETTAGLIO_LOTTI_MAG">
+		<columnMapping
+				columnName="TIPO_RECORD"
+				propertyName="tipoRecord"
+				sqlTypeName="VARCHAR"
+				columnSize="10"
+				nullable="false" />
+		<columnMapping
+				columnName="CD_CDS"
+				propertyName="cdCds"
+				sqlTypeName="VARCHAR"
+				columnSize="30"
+				nullable="false"
+				primary="true" />
+		<columnMapping
+				columnName="CD_MAGAZZINO"
+				propertyName="cdMagazzino"
+				sqlTypeName="VARCHAR"
+				columnSize="10"
+				nullable="false"
+				primary="true" />
+		<columnMapping
+				columnName="ESERCIZIO"
+				propertyName="esercizio"
+				sqlTypeName="DECIMAL"
+				columnSize="4"
+				nullable="false"
+				primary="true" />
+		<columnMapping
+				columnName="CD_NUMERATORE_MAG"
+				propertyName="cdNumeratoreMag"
+				sqlTypeName="VARCHAR"
+				columnSize="3"
+				nullable="false"
+				primary="true" />
+		<columnMapping
+				columnName="PG_LOTTO"
+				propertyName="pgLotto"
+				sqlTypeName="DECIMAL"
+				columnSize="6"
+				nullable="false"
+				primary="true" />
+		<columnMapping
+				columnName="CD_CDS_MAG"
+				propertyName="cdCdsMag"
+				sqlTypeName="VARCHAR"
+				columnSize="30"
+				nullable="false" />
+		<columnMapping
+				columnName="CD_MAGAZZINO_MAG"
+				propertyName="cdMagazzinoMag"
+				sqlTypeName="VARCHAR"
+				columnSize="10"
+				nullable="false" />
+		<columnMapping
+				columnName="DS_MAGAZZINO"
+				propertyName="dsMagazzino"
+				sqlTypeName="VARCHAR"
+				columnSize="15"
+				nullable="false" />
+		<columnMapping
+				columnName="CD_BENE_SERVIZIO"
+				propertyName="cdBeneServizio"
+				sqlTypeName="VARCHAR"
+				columnSize="15"
+				nullable="false" />
+		<columnMapping
+				columnName="DS_BENE_SERVIZIO"
+				propertyName="ds_bene_servizio"
+				sqlTypeName="VARCHAR"
+				columnSize="300"
+				nullable="false" />
+		<columnMapping
+				columnName="CD_CATEGORIA_PADRE"
+				propertyName="cd_categoria_padre"
+				sqlTypeName="VARCHAR"
+				columnSize="10" />
+		<columnMapping
+				columnName="CD_PROPRIO"
+				propertyName="cd_proprio"
+				sqlTypeName="VARCHAR"
+				columnSize="4"
+				nullable="false" />
+		<columnMapping
+				columnName="UNITA_MISURA"
+				propertyName="unita_misura"
+				sqlTypeName="VARCHAR"
+				columnSize="10"
+				nullable="false" />
+		<columnMapping
+				columnName="GIACENZA_ATTUALE"
+				propertyName="giacenzaAttuale"
+				sqlTypeName="DECIMAL"
+				columnSize="12"
+				columnScale="5"
+				nullable="true" />
+		<columnMapping
+				columnName="QUANTITA_CARICO"
+				propertyName="quantitaCarico"
+				sqlTypeName="DECIMAL"
+				columnSize="12"
+				columnScale="5"
+				nullable="true" />
+		<columnMapping
+				columnName="DT_CARICO"
+				propertyName="dtCarico"
+				sqlTypeName="TIMESTAMP"
+				columnSize="7"
+				nullable="true" />
+		<columnMapping
+				columnName="QUANTITA_SCARICO"
+				propertyName="quantitaScarico"
+				sqlTypeName="DECIMAL"
+				columnSize="12"
+				columnScale="5"
+				nullable="true" />
+		<columnMapping
+				columnName="DT_SCARICO"
+				propertyName="dtScarico"
+				sqlTypeName="TIMESTAMP"
+				columnSize="7"
+				nullable="true" />
+		<columnMapping
+				columnName="QUANTITA_APERTURA"
+				propertyName="quantitaApertura"
+				sqlTypeName="DECIMAL"
+				columnSize="12"
+				columnScale="5"
+				nullable="true" />
+		<columnMapping
+				columnName="DT_MOVIMENTO_CHIUSURA"
+				propertyName="dtMovimentoChiusura"
+				sqlTypeName="TIMESTAMP"
+				columnSize="7"
+				nullable="true" />
+		<columnMapping
+				columnName="ANNO_RIFERIMENTO_MOVIMENTO"
+				propertyName="annoRiferimentoMovimento"
+				sqlTypeName="DECIMAL"
+				columnSize="4"
+				nullable="false"
+				primary="true" />
+	</defaultColumnMap>
+
+	<persistentProperty
+			name="tipoRecord"/>
+	<persistentProperty
+			name="esercizio"/>
+	<persistentProperty
+			name="cdCds"/>
+	<persistentProperty
+			name="cdMagazzino"/>
+	<persistentProperty
+			name="cdNumeratoreMag"/>
+	<persistentProperty
+			name="pgLotto"/>
+	<persistentProperty
+			name="cdCdsMag"/>
+	<persistentProperty
+			name="cdMagazzinoMag"/>
+	<persistentProperty
+			name="dsMagazzino"/>
+	<persistentProperty
+			name="cdBeneServizio"/>
+	<persistentProperty
+			name="ds_bene_servizio"/>
+	<persistentProperty
+			name="cd_categoria_padre"/>
+	<persistentProperty
+			name="cd_proprio"/>
+	<persistentProperty
+			name="unita_misura"/>
+	<persistentProperty
+			name="quantitaApertura"/>
+	<persistentProperty
+			name="quantitaCarico"/>
+	<persistentProperty
+			name="quantitaScarico"/>
+	<persistentProperty
+			name="qtaInizioAnno"/>
+	<persistentProperty
+			name="qtaCaricoAnno"/>
+	<persistentProperty
+			name="qtaScaricoAnno"/>
+	<columnMap
+			name="CONTOGIUDIZIALE"
+			tableName="V_DETTAGLIO_LOTTI_MAG">
+		<columnMapping
+				columnName="CD_MAGAZZINO_MAG"
+				propertyName="cdMagazzinoMag"
+				sqlTypeName="VARCHAR"
+				columnSize="10"
+				nullable="false" />
+		<columnMapping
+				columnName="DS_MAGAZZINO"
+				propertyName="dsMagazzino"
+				sqlTypeName="VARCHAR"
+				columnSize="15"
+				nullable="false" />
+		<columnMapping
+				columnName="CD_BENE_SERVIZIO"
+				propertyName="cdBeneServizio"
+				sqlTypeName="VARCHAR"
+				columnSize="15"
+				nullable="false" />
+		<columnMapping
+				columnName="DS_BENE_SERVIZIO"
+				propertyName="ds_bene_servizio"
+				sqlTypeName="VARCHAR"
+				columnSize="300"
+				nullable="false" />
+		<columnMapping
+				columnName="CD_PROPRIO"
+				propertyName="cd_proprio"
+				sqlTypeName="VARCHAR"
+				columnSize="4"
+				nullable="false" />
+		<columnMapping
+				columnName="CD_CATEGORIA_PADRE"
+				propertyName="cd_categoria_padre"
+				sqlTypeName="VARCHAR"
+				columnSize="10" />
+		<columnMapping
+				columnName="UNITA_MISURA"
+				propertyName="unita_misura"
+				sqlTypeName="VARCHAR"
+				columnSize="10"
+				nullable="false" />
+
+		<columnMapping
+				columnName="qtaInizioAnno"
+				propertyName="qtaInizioAnno"
+				sqlTypeName="VARCHAR"
+				columnSize="15"
+				nullable="false" />
+		<columnMapping
+				columnName="qtaCaricoAnno"
+				propertyName="qtaCaricoAnno"
+				sqlTypeName="VARCHAR"
+				columnSize="15"
+				nullable="false" />
+		<columnMapping
+				columnName="qtaScaricoAnno"
+				propertyName="qtaScaricoAnno"
+				sqlTypeName="VARCHAR"
+				columnSize="15"
+				nullable="false" />
+
+	</columnMap>
+
+
+</SQLPersistentInfo>

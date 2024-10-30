@@ -19,6 +19,7 @@ package it.cnr.contab.doccont00.comp;
 
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
+import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
@@ -2577,6 +2578,47 @@ public class SospesoRiscontroComponent extends CRUDComponent implements ISospeso
 
 
     }
+    public Scrittura_partita_doppiaBulk createScritturaPartitaDoppia(UserContext userContext, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws ComponentException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, RemoteException{
+        if (riga.isMandatoReversale()) {
+            if ( riga.isMandato() && ( riga.isTipoOperazioneEseguitoRegolarizzato() || riga.isTipoOperazioneStornato())){
+                MandatoBulk man = new MandatoIBulk();
+                MandatoHome mandatoHomeHome = (MandatoHome) getHome(userContext, man);
+                try {
+                    man = mandatoHomeHome.findAndLockMandatoNonAnnullato(userContext, tesoreriaUnica ? null : cdsEnte.getCd_unita_organizzativa(), riga.getEsercizio(), riga.getNumeroDocumento());
+                } catch (OutdatedResourceException | BusyResourceException e) {
+                    throw  new ComponentException(e);
+                }
+
+                if (man == null){
+                    throw  new ComponentException("Mandato "+ riga.getEsercizio()+"-"+ riga.getNumeroDocumento()+" annullato o non esistente");
+                }
+                try {
+                    return Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().createScrittura(userContext, man);
+                } catch (Exception e) {
+                    LOGGER.error("Il mandato "+man.getIdMandatoAsString()+" presenta un errore in fase di scrittura partita doppia:" + e.getMessage());
+                }
+            }
+            if (riga.isReversale() && riga.isTipoOperazioneEseguitoRegolarizzato()) {
+
+                    ReversaleBulk rev = new ReversaleIBulk();
+                    ReversaleHome reversaleHome = (ReversaleHome) getHome(userContext, rev);
+                    try {
+                        rev = reversaleHome.findAndLockReversaleNonAnnullata(userContext, tesoreriaUnica ? null : cdsEnte.getCd_unita_organizzativa(), riga.getEsercizio(), riga.getNumeroDocumento());
+                    } catch (OutdatedResourceException | BusyResourceException e) {
+                        throw new ComponentException(e);
+                    }
+                    try {
+                        return  Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().createScrittura(userContext, rev);
+                    } catch (Exception e) {
+                        LOGGER.error("La reversale "+rev.getIdReversaleAsString()+" presenta un errore in fase di scrittura partita doppia: " + e.getMessage());
+                    }
+
+            }
+        }
+
+        return null;
+    }
+
     public Integer caricamentoRigaGiornaleCassa(UserContext userContext, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws ComponentException, PersistencyException {
         try {
             SospesoHome homeSospeso = (SospesoHome)getHome(userContext, SospesoBulk.class);
@@ -2666,11 +2708,12 @@ public class SospesoRiscontroComponent extends CRUDComponent implements ISospeso
                             aggiornaSaldiCapitoli(userContext, manRev);
                         }
                         super.updateBulk(userContext,rev);
+                        /*
                         try {
                             Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().createScritturaRequiresNew(userContext, rev);
                         } catch (Exception e) {
                             LOGGER.error("La reversale "+rev.getIdReversaleAsString()+" presenta un errore in fase di scrittura partita doppia: " + e.getMessage());
-                        }
+                        }*/
                         return aggiornaRigaProcessata(userContext, riga);
                     } else if (riga.isMandato()){
                         MandatoBulk man = new MandatoIBulk();
@@ -2756,11 +2799,13 @@ public class SospesoRiscontroComponent extends CRUDComponent implements ISospeso
                             aggiornaSaldiCapitoli(userContext, manRev);
                         }
                         super.updateBulk(userContext, man);
+                        /*
                         try {
                             Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().createScritturaRequiresNew(userContext, man);
                         } catch (Exception e) {
                             LOGGER.error("Il mandato "+man.getIdMandatoAsString()+" presenta un errore in fase di scrittura partita doppia:" + e.getMessage());
                         }
+                         */
                         return aggiornaRigaProcessata(userContext, riga);
                     } else {
                         throw  new ComponentException("Il Tipo Ordinativo "+ riga.getTipoDocumento()+" non è compatibile, può assumere solo i valori R (Reversale) e M (Mandato)");
@@ -2800,13 +2845,14 @@ public class SospesoRiscontroComponent extends CRUDComponent implements ISospeso
                         man.setStato_trasmissione_annullo(MandatoBulk.STATO_TRASMISSIONE_TRASMESSO);
                         man.setToBeUpdated();
                         super.updateBulk(userContext,man);
+                        /*
                         try {
                             Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().createScritturaRequiresNew(userContext, man);
                         } catch (Exception e) {
                             java.io.StringWriter sw = new java.io.StringWriter();
                             e.getCause().printStackTrace(new java.io.PrintWriter(sw));
                             throw new ComponentException("Il mandato annullato "+man.getIdMandatoAsString()+" presenta un errore in fase di scrittura partita doppia: " + sw.toString());
-                        }
+                        }*/
                         return aggiornaRigaProcessata(userContext, riga);
                     }
                 }

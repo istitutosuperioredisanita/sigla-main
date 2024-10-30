@@ -2,9 +2,9 @@
 --  DDL for View V_SALDI_PIANO_ECONOM_PROGETTO
 --------------------------------------------------------
 
-CREATE OR REPLACE FORCE VIEW "V_SALDI_PIANO_ECONOM_PROGETTO" ("PG_PROGETTO", "ESERCIZIO", "CD_UNITA_PIANO", "CD_VOCE_PIANO", "TI_GESTIONE", "IMPORTO_FIN", "STANZIAMENTO_FIN", "VARIAPIU_FIN", "VARIAMENO_FIN", "TRASFPIU_FIN", "TRASFMENO_FIN", "IMPORTO_COFIN", "STANZIAMENTO_COFIN", "VARIAPIU_COFIN", "VARIAMENO_COFIN", "TRASFPIU_COFIN", "TRASFMENO_COFIN", "IMPACC_FIN", "IMPACC_COFIN", "MANRIS_FIN", "MANRIS_COFIN") AS 
+CREATE OR REPLACE FORCE VIEW "V_SALDI_PIANO_ECONOM_PROGETTO" ("PG_PROGETTO", "ESERCIZIO", "CD_UNITA_PIANO", "CD_VOCE_PIANO", "TI_GESTIONE", "IMPORTO_FIN", "STANZIAMENTO_FIN", "VARIAPIU_FIN", "VARIAMENO_FIN", "TRASFPIU_FIN", "TRASFMENO_FIN", "IMPORTO_COFIN", "STANZIAMENTO_COFIN", "VARIAPIU_COFIN", "VARIAMENO_COFIN", "TRASFPIU_COFIN", "TRASFMENO_COFIN", "IMPACC_FIN", "IMPACC_COFIN", "MANRIS_FIN", "MANRIS_COFIN") AS
   (SELECT   x.pg_progetto, x.esercizio, x.cd_unita_piano, x.cd_voce_piano,
-             x.ti_gestione, 
+             x.ti_gestione,
              SUM (x.importo_fin) importo_fin,
              SUM (x.stanziamento_fin) stanziamento_fin,
              SUM (x.variapiu_fin) variapiu_fin,
@@ -27,20 +27,20 @@ CREATE OR REPLACE FORCE VIEW "V_SALDI_PIANO_ECONOM_PROGETTO" ("PG_PROGETTO", "ES
                      0 stanziamento_fin, 0 variapiu_fin, 0 variameno_fin,
                      0 trasfpiu_fin, 0 trasfmeno_fin,
                      NVL(a.im_spesa_cofinanziato, 0) importo_cofin,
-                     0 stanziamento_cofin, 0 variapiu_cofin, 0 variameno_cofin, 
+                     0 stanziamento_cofin, 0 variapiu_cofin, 0 variameno_cofin,
                      0 trasfpiu_cofin, 0 trasfmeno_cofin,
                      0 impacc_fin, 0 impacc_cofin, 0 manris_fin, 0 manris_cofin
                 FROM progetto_piano_economico a
               UNION ALL
               SELECT a.pg_progetto, a.esercizio_piano, a.cd_unita_organizzativa,
-                     a.cd_voce_piano, b.ti_gestione, 
-                     0 importo_fin, 
-                     b.stanziamento_fin, 
+                     a.cd_voce_piano, b.ti_gestione,
+                     0 importo_fin,
+                     b.stanziamento_fin,
                      b.variapiu_fin, b.variameno_fin,
                      b.trasfpiu_fin, b.trasfmeno_fin,
                      0 importo_cofin,
-                     b.stanziamento_cofin, 
-                     b.variapiu_cofin, b.variameno_cofin, 
+                     b.stanziamento_cofin,
+                     b.variapiu_cofin, b.variameno_cofin,
                      b.trasfpiu_cofin, b.trasfmeno_cofin,
                      b.impacc_fin, b.impacc_cofin,
                      b.manris_fin, b.manris_cofin

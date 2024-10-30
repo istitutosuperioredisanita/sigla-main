@@ -175,7 +175,7 @@
 		label="Valuta" />
 	<fieldProperty
 		name="cd_divisa"
-		property="cd_divisa"
+		property="divisa.cd_divisa"
 		readonlyProperty="RODivisa"
 		inputType="TEXT"
 		maxLength="10"

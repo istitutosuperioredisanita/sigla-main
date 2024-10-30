@@ -63,9 +63,9 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 		STATO.put(STATO_PAGATO, "Incassato");
 
 		SEZIONALI_FLAG_KEYS = new it.cnr.jada.util.OrderedHashtable();
+		SEZIONALI_FLAG_KEYS.put(Fattura_passivaBulk.SEZIONALI_FLAGS_ALL, "Tutte");
 		SEZIONALI_FLAG_KEYS.put(Fattura_passivaBulk.SEZIONALI_FLAGS_IUE, "Intra UE");
 		SEZIONALI_FLAG_KEYS.put(Fattura_passivaBulk.SEZIONALI_FLAGS_EUE, "Extra UE");
-		SEZIONALI_FLAG_KEYS.put(Fattura_passivaBulk.SEZIONALI_FLAGS_ALL, "Tutte");
 		SEZIONALI_FLAG_KEYS.put(Fattura_passivaBulk.SEZIONALI_FLAGS_SMC, "S. Marino con IVA");
 		SEZIONALI_FLAG_KEYS.put(Fattura_passivaBulk.SEZIONALI_FLAGS_SMS, "S. Marino senza IVA");
 
@@ -130,9 +130,13 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 	public OggettoBulk initializeForSearch(CRUDBP bp, it.cnr.jada.action.ActionContext context) {
 		super.initializeForSearch(bp,context);
 
-		it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk unita_organizzativa = it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context);
-		setCd_cds_origine(unita_organizzativa.getUnita_padre().getCd_unita_organizzativa());
 
+		it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk unita_organizzativa = it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context);
+		setCd_uo_origine( null);
+		if ( !unita_organizzativa.isUoEnte()) {
+			setCd_cds_origine(unita_organizzativa.getUnita_padre().getCd_unita_organizzativa());
+			setCd_uo_origine( unita_organizzativa.getCd_unita_organizzativa());
+		}
 		if (getEsercizio() == null)
 			setEsercizio(it.cnr.contab.utenze00.bulk.CNRUserInfo.getEsercizio(context));
 
@@ -140,9 +144,7 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 		setFl_extra_ue(null);
 		setFl_san_marino_con_iva(null);
 		setFl_san_marino_senza_iva(null);
-		setFl_autofattura(Boolean.FALSE);
-		setFl_split_payment(Boolean.FALSE);
-
+		setTipo_sezionale(null);
 		return this;
 	}
 
@@ -199,24 +201,7 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
         setToBeCreated();
     }
 
-	/**
 
-	 * Setta il valore di: [Esercizio dell'obbligazione]
-	 **/
-	public void setEsercizio(Integer esercizio)  {
-
-		this.getFattura_passiva().setEsercizio(esercizio);
-	}
-	/**
-
-	 * Setta il valore di: [Esercizio dell'obbligazione]
-	 **/
-	public Integer getEsercizio()  {
-		Fattura_passivaBulk fatturaPassiva = this.getFattura_passiva();
-			if (fatturaPassiva == null)
-			return null;
-		return fatturaPassiva.getEsercizio();
-	}
     public java.lang.String getCd_cds_ft_passiva() {
         it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBase fattura_passiva = this.getFattura_passiva();
         if (fattura_passiva == null)
@@ -487,15 +472,7 @@ public class AutofatturaBulk extends AutofatturaBase implements IDocumentoAmmini
 			setFl_san_marino_con_iva(Boolean.FALSE);
 			sezionaliFlag = Fattura_passivaBulk.SEZIONALI_FLAGS_SMS;
 		} else {
-
-			if (getFl_intra_ue() == null &&
-					getFl_extra_ue() == null &&
-					getFl_san_marino_con_iva() == null &&
-					getFl_san_marino_senza_iva() == null) {
 				sezionaliFlag = Fattura_passivaBulk.SEZIONALI_FLAGS_ALL;
-			} else {
-				sezionaliFlag = Fattura_passivaBulk.SEZIONALI_FLAGS_ORD;
-			}
 		}
 
 		return sezionaliFlag;

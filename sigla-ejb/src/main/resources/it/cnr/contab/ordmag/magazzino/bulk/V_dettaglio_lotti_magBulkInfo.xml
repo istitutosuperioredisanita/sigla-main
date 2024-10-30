@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://contab.cnr.it/schema/SIGLA"
+	xsi:schemaLocation="http://contab.cnr.it/schema/SIGLA http://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd"
+	shortDescription="Conto Giudiziale"
+	longDescription="Conto Giudiziale">
+	<fieldProperty
+			name="tipoRecord"
+			property="tipoRecord"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			nullable="false"
+			label="Tipo Record" />
+	<fieldProperty
+			name="cdCds"
+			property="cdCds"
+			inputType="TEXT"
+			inputSize="30"
+			maxLength="30"
+			nullable="false"
+			label="cdCds" />
+	<fieldProperty
+			name="cdMagazzino"
+			property="cdMagazzino"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			nullable="false"
+			label="Codice Magazzino" />
+	<fieldProperty
+			name="esercizio"
+			property="esercizio"
+			inputType="TEXT"
+			inputSize="4"
+			maxLength="4"
+			nullable="false"
+			label="Esercizio" />
+	<fieldProperty
+			name="cdNumeratoreMag"
+			property="cdNumeratoreMag"
+			inputType="TEXT"
+			inputSize="3"
+			maxLength="3"
+			nullable="false"
+			label="Codice" />
+	<fieldProperty
+			name="pgLotto"
+			property="pgLotto"
+			inputType="TEXT"
+			inputSize="6"
+			maxLength="6"
+			enabledOnEdit="false"
+			enabledOnSearch="false"
+			nullable="false"
+			label="Numero" />
+	<fieldProperty
+			name="cdCdsMag"
+			property="cdCdsMag"
+			inputType="TEXT"
+			inputSize="30"
+			maxLength="30"
+			enabledOnEdit="false"
+			nullable="false"
+			label="cdCdsMag" />
+	<fieldProperty
+			name="cdMagazzinoMag"
+			property="cdMagazzinoMag"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			nullable="false"
+			label="Codice Magazzino" />
+	<fieldProperty
+			name="dsMagazzino"
+			property="dsMagazzino"
+			inputType="TEXT"
+			maxLength="100"
+			inputSize="100"
+			nullable="false"
+			label="Descrizione Magazzino" />
+	<fieldProperty
+			name="cdBeneServizio"
+			property="cdBeneServizio"
+			inputType="TEXT"
+			inputSize="20"
+			maxLength="20"
+			enabledOnEdit="false"
+			enabledOnSearch="false"
+			nullable="false"
+			label="Bene" />
+	<fieldProperty
+			name="ds_bene_servizio"
+			property="ds_bene_servizio"
+			maxLength="300"
+			inputSize="100"
+			inputType="TEXT"
+			label="Descrizione"
+			nullable="false"
+			caseSensitiveSearch="false" />
+	<fieldProperty
+			name="cd_categoria_padre"
+			property="cd_categoria_padre"
+			maxLength="10"
+			inputSize="10"
+			inputType="TEXT"
+			label="cd_categoria_padre"
+			caseSensitiveSearch="false" />
+	<fieldProperty
+			name="cd_proprio"
+			property="cd_proprio"
+			maxLength="4"
+			inputSize="4"
+			inputType="TEXT"
+			label="Codice"
+			caseSensitiveSearch="false" />
+
+	<fieldProperty
+			name="unita_misura"
+			property="unita_misura"
+			maxLength="10"
+			inputSize="6"
+			inputType="TEXT"
+			label="Unita' di misura"
+			nullable="false"
+			caseSensitiveSearch="false" />
+	<fieldProperty
+		name="giacenzaAttuale"
+		property="giacenzaAttuale"
+		inputType="TEXT"
+		enabledOnEdit="false"
+		enabledOnInsert="false"
+		label="Giacenza Attuale" />
+	<fieldProperty
+			name="quantitaCarico"
+			property="quantitaCarico"
+			inputType="TEXT"
+			enabledOnEdit="false"
+			enabledOnInsert="false"
+			label="Giacenza Attuale" />
+	<fieldProperty
+			name="dtCarico"
+			property="dtCarico"
+			inputType="TEXT"
+			enabledOnEdit="false"
+			enabledOnInsert="false"
+			label="Giacenza Attuale" />
+	<fieldProperty
+			name="quantitaScarico"
+			property="quantitaScarico"
+			inputType="TEXT"
+			enabledOnEdit="false"
+			enabledOnInsert="false"
+			label="Giacenza Attuale" />
+	<fieldProperty
+			name="dtScarico"
+			property="dtScarico"
+			inputType="TEXT"
+			enabledOnEdit="false"
+			enabledOnInsert="false"
+			label="Giacenza Attuale" />
+
+	<fieldProperty
+			name="qtaInizioAnno"
+			property="qtaInizioAnno"
+			inputType="TEXT"
+			inputSize="12"
+			maxLength="12"
+			enabledOnEdit="false"
+			enabledOnInsert="false"
+			label="Qta Inizio Anno" />
+	<fieldProperty
+			name="qtaCaricoAnno"
+			property="qtaCaricoAnno"
+			inputType="TEXT"
+			inputSize="12"
+			maxLength="12"
+			enabledOnEdit="false"
+			enabledOnInsert="false"
+			label="Qta Caricata" />
+	<fieldProperty
+			name="qtaScaricoAnno"
+			property="qtaScaricoAnno"
+			inputType="TEXT"
+			inputSize="12"
+			maxLength="12"
+			enabledOnEdit="false"
+			enabledOnInsert="false"
+			label="Qta Scaricata" />
+	<fieldProperty
+			name="qtaGiacenzaAnno"
+			property="qtaGiacenzaAnno"
+			inputType="TEXT"
+			inputSize="12"
+			maxLength="12"
+			enabledOnEdit="false"
+			enabledOnInsert="false"
+			label="Qta Giacenza" />
+	<columnFieldProperty name="tipoRecord"/>
+	<columnFieldProperty name="esercizio"/>
+	<columnFieldProperty name="cdCds"/>
+	<columnFieldProperty name="cdMagazzino"/>
+	<columnFieldProperty name="cdNumeratoreMag"/>
+	<columnFieldProperty name="pgLotto"/>
+	<columnFieldProperty name="cdCdsMag"/>
+	<columnFieldProperty name="cdMagazzinoMag"/>
+	<columnFieldProperty name="dsMagazzino"/>
+	<columnFieldProperty name="cdBeneServizio"/>
+	<columnFieldProperty name="ds_bene_servizio"/>
+	<columnFieldProperty name="cd_categoria_padre"/>
+	<columnFieldProperty name="cd_proprio"/>
+	<columnFieldProperty name="unita_misura"/>
+	<columnFieldProperty name="giacenzaAttuale"/>
+
+	<columnFieldProperty name="quantitaCarico"/>
+	<columnFieldProperty name="quantitaScarico"/>
+	<columnFieldProperty name="qtaInizioAnno"/>
+	<columnFieldProperty name="qtaCaricoAnno"/>
+	<columnFieldProperty name="qtaScaricoAnno"/>
+	<findFieldProperty
+			name="tipoRecord"/>
+	<findFieldProperty
+			name="esercizio"/>
+	<findFieldProperty
+			name="cdCds"/>
+	<findFieldProperty
+			name="cdMagazzino"/>
+	<findFieldProperty
+			name="cdNumeratoreMag"/>
+	<findFieldProperty
+			name="pgLotto"/>
+	<findFieldProperty
+			name="cdCdsMag"/>
+	<findFieldProperty
+			name="cdMagazzinoMag"/>
+	<findFieldProperty
+			name="dsMagazzino"/>
+	<findFieldProperty
+			name="cdBeneServizio"/>
+	<findFieldProperty
+			name="ds_bene_servizio"/>
+	<findFieldProperty
+			name="cd_categoria_padre"/>
+	<findFieldProperty
+			name="cd_proprio"/>
+	<findFieldProperty
+			name="unita_misura"/>
+	<findFieldProperty
+			name="quantitaInizio"/>
+	<findFieldProperty
+			name="quantitaCarico"/>
+	<findFieldProperty
+			name="quantitaScarico"/>
+	<findFieldProperty
+			name="qtaInizioAnno"/>
+	<findFieldProperty
+			name="qtaCaricoAnno"/>
+	<findFieldProperty
+			name="qtaScaricoAnno"/>
+	<formFieldProperty
+			name="tipoRecord"/>
+	<formFieldProperty
+			name="esercizio"/>
+	<formFieldProperty
+			name="cdCds"/>
+	<formFieldProperty
+			name="cdMagazzino"/>
+	<formFieldProperty
+			name="cdNumeratoreMag"/>
+	<formFieldProperty
+			name="pgLotto"/>
+	<formFieldProperty
+			name="cdCdsMag"/>
+	<formFieldProperty
+			name="cdMagazzinoMag"/>
+	<formFieldProperty
+			name="dsMagazzino"/>
+	<formFieldProperty
+			name="cdBeneServizio"/>
+	<formFieldProperty
+			name="ds_bene_servizio"/>
+	<formFieldProperty
+			name="cd_categoria_padre"/>
+	<formFieldProperty
+			name="cd_proprio"/>
+	<formFieldProperty
+			name="unita_misura"/>
+	<formFieldProperty
+			name="quantitaInizio"/>
+	<formFieldProperty
+			name="quantitaCarico"/>
+	<formFieldProperty
+			name="quantitaScarico"/>
+	<formFieldProperty
+			name="qtaInizioAnno"/>
+	<formFieldProperty
+			name="qtaCaricoAnno"/>
+	<formFieldProperty
+			name="qtaScaricoAnno"/>
+
+	<columnSet name="CONTOGIUDIZIALE">
+		<columnFieldProperty name="cdMagazzinoMag"/>
+		<columnFieldProperty name="dsMagazzino"/>
+		<columnFieldProperty name="cdBeneServizio"/>
+		<columnFieldProperty name="ds_bene_servizio"/>
+		<columnFieldProperty name="cd_categoria_padre"/>
+		<columnFieldProperty name="cd_proprio"/>
+		<columnFieldProperty name="unita_misura"/>
+		<columnFieldProperty name="qtaInizioAnno"/>
+		<columnFieldProperty name="qtaCaricoAnno"/>
+		<columnFieldProperty name="qtaScaricoAnno"/>
+		<columnFieldProperty name="qtaGiacenzaAnno"/>
+	</columnSet>
+	<freeSearchSet name="CONTOGIUDIZIALE">
+		<findFieldProperty name="cdMagazzinoMag" />
+		<findFieldProperty name="dsMagazzino" />
+		<findFieldProperty name="cdBeneServizio"/>
+		<findFieldProperty name="ds_bene_servizio"/>
+	</freeSearchSet>
+
+
+
+
+
+
+
+</bulkInfo>
