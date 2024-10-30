@@ -169,7 +169,8 @@ public class ChiusuraAnnoComponent extends CRUDComponent implements ICRUDMgr, IP
 				valoreLotto.getCdMagazzinoLotto(),
 				valoreLotto.getEsercizioLotto(),
 				valoreLotto.getCdNumeratoreMagLotto(),
-				valoreLotto.getPgLotto());
+				valoreLotto.getPgLotto(),
+				chiusura.getAnno());
 
 		Bene_servizioBulk bene = new Bene_servizioBulk();
 		bene.setCd_bene_servizio(valoreLotto.getCdBeneServizio());
