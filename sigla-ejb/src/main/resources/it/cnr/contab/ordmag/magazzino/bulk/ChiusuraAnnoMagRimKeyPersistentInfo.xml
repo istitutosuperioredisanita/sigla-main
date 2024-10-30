@@ -38,6 +38,12 @@
 			columnSize="38"
 			nullable="false"
 			primary="true" />
+		<columnMapping
+			columnName="ANNO"
+			propertyName="anno"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="false" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="cdCdsLotto"
@@ -53,5 +59,8 @@
 		partOfOid="true" />
 	<persistentProperty
 		name="pgLotto"
+		partOfOid="true" />
+	<persistentProperty
+		name="anno"
 		partOfOid="true" />
 </SQLPersistentInfo>

@@ -11,9 +11,6 @@ public class ChiusuraAnnoMagRimBase extends ChiusuraAnnoMagRimKey implements Key
 //    PG_CHIUSURA DECIMAL(38,0) NOT NULL
 	private Integer pgChiusura;
  
-//    ANNO DECIMAL(5,0) NOT NULL
-	private Integer anno;
- 
 //    TIPO_CHIUSURA CHAR(1) NOT NULL
 	private String tipoChiusura;
  
@@ -65,8 +62,8 @@ public class ChiusuraAnnoMagRimBase extends ChiusuraAnnoMagRimKey implements Key
 	public ChiusuraAnnoMagRimBase() {
 		super();
 	}
-	public ChiusuraAnnoMagRimBase(String cdCdsLotto, String cdMagazzinoLotto, Integer esercizioLotto, String cdNumeratoreLotto, Integer pgLotto) {
-		super(cdCdsLotto, cdMagazzinoLotto, esercizioLotto, cdNumeratoreLotto, pgLotto);
+	public ChiusuraAnnoMagRimBase(String cdCdsLotto, String cdMagazzinoLotto, Integer esercizioLotto, String cdNumeratoreLotto, Integer pgLotto,Integer anno) {
+		super(cdCdsLotto, cdMagazzinoLotto, esercizioLotto, cdNumeratoreLotto, pgLotto,anno);
 	}
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
@@ -81,20 +78,6 @@ public class ChiusuraAnnoMagRimBase extends ChiusuraAnnoMagRimKey implements Key
 	 **/
 	public void setPgChiusura(Integer pgChiusura)  {
 		this.pgChiusura=pgChiusura;
-	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Restituisce il valore di: [Anno di chiusura]
-	 **/
-	public Integer getAnno() {
-		return anno;
-	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Setta il valore di: [Anno di chiusura]
-	 **/
-	public void setAnno(Integer anno)  {
-		this.anno=anno;
 	}
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
