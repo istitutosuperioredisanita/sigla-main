@@ -11,6 +11,7 @@ public class ChiusuraAnnoMagRimKey extends OggettoBulk implements KeyedPersisten
 	private Integer esercizioLotto;
 	private String cdNumeratoreLotto;
 	private Integer pgLotto;
+	private Integer anno;
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: CHIUSURA_ANNO_MAG_RIM
@@ -18,13 +19,14 @@ public class ChiusuraAnnoMagRimKey extends OggettoBulk implements KeyedPersisten
 	public ChiusuraAnnoMagRimKey() {
 		super();
 	}
-	public ChiusuraAnnoMagRimKey(String cdCdsLotto, String cdMagazzinoLotto, Integer esercizioLotto, String cdNumeratoreLotto, Integer pgLotto) {
+	public ChiusuraAnnoMagRimKey(String cdCdsLotto, String cdMagazzinoLotto, Integer esercizioLotto, String cdNumeratoreLotto, Integer pgLotto,Integer anno) {
 		super();
 		this.cdCdsLotto=cdCdsLotto;
 		this.cdMagazzinoLotto=cdMagazzinoLotto;
 		this.esercizioLotto=esercizioLotto;
 		this.cdNumeratoreLotto=cdNumeratoreLotto;
 		this.pgLotto=pgLotto;
+		this.anno=anno;
 	}
 	public boolean equalsByPrimaryKey(Object o) {
 		if (this== o) return true;
@@ -35,6 +37,7 @@ public class ChiusuraAnnoMagRimKey extends OggettoBulk implements KeyedPersisten
 		if (!compareKey(getEsercizioLotto(), k.getEsercizioLotto())) return false;
 		if (!compareKey(getCdNumeratoreLotto(), k.getCdNumeratoreLotto())) return false;
 		if (!compareKey(getPgLotto(), k.getPgLotto())) return false;
+		if (!compareKey(getAnno(), k.getAnno())) return false;
 		return true;
 	}
 	public int primaryKeyHashCode() {
@@ -44,6 +47,7 @@ public class ChiusuraAnnoMagRimKey extends OggettoBulk implements KeyedPersisten
 		i = i + calculateKeyHashCode(getEsercizioLotto());
 		i = i + calculateKeyHashCode(getCdNumeratoreLotto());
 		i = i + calculateKeyHashCode(getPgLotto());
+		i = i + calculateKeyHashCode(getAnno());
 		return i;
 	}
 	/**
@@ -115,5 +119,13 @@ public class ChiusuraAnnoMagRimKey extends OggettoBulk implements KeyedPersisten
 	 **/
 	public Integer getPgLotto() {
 		return pgLotto;
+	}
+
+	public Integer getAnno() {
+		return anno;
+	}
+
+	public void setAnno(Integer anno) {
+		this.anno = anno;
 	}
 }

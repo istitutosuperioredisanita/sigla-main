@@ -12,12 +12,6 @@
 			columnSize="38"
 			nullable="false" />
 		<columnMapping
-			columnName="ANNO"
-			propertyName="anno"
-			sqlTypeName="DECIMAL"
-			columnSize="5"
-			nullable="false" />
-		<columnMapping
 			columnName="TIPO_CHIUSURA"
 			propertyName="tipoChiusura"
 			sqlTypeName="CHAR"
@@ -149,8 +143,6 @@
 	</defaultColumnMap>
 	<persistentProperty
 		name="pgChiusura" />
-	<persistentProperty
-		name="anno" />
 	<persistentProperty
 		name="tipoChiusura" />
 	<persistentProperty

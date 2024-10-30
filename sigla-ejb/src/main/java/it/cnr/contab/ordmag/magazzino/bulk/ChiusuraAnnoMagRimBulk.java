@@ -57,8 +57,8 @@ public class ChiusuraAnnoMagRimBulk extends ChiusuraAnnoMagRimBase {
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: CHIUSURA_ANNO_MAG_RIM
 	 **/
-	public ChiusuraAnnoMagRimBulk(String cdCdsLotto, String cdMagazzinoLotto, Integer esercizioLotto, String cdNumeratoreLotto, Integer pgLotto) {
-		super(cdCdsLotto, cdMagazzinoLotto, esercizioLotto, cdNumeratoreLotto, pgLotto);
+	public ChiusuraAnnoMagRimBulk(String cdCdsLotto, String cdMagazzinoLotto, Integer esercizioLotto, String cdNumeratoreLotto, Integer pgLotto,Integer anno) {
+		super(cdCdsLotto, cdMagazzinoLotto, esercizioLotto, cdNumeratoreLotto, pgLotto,anno);
 		setLottoMag( new LottoMagBulk(cdCdsLotto,cdMagazzinoLotto,esercizioLotto,cdNumeratoreLotto,pgLotto) );
 	}
 	public LottoMagBulk getLottoMag() {
