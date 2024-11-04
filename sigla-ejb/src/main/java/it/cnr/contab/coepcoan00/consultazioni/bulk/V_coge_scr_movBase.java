@@ -20,8 +20,8 @@
 * Date 11/07/2005
 */
 package it.cnr.contab.coepcoan00.consultazioni.bulk;
+
 import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.persistency.Keyed;
 import it.cnr.jada.persistency.Persistent;
 public class V_coge_scr_movBase extends OggettoBulk implements Persistent {
 //    CD_CDS VARCHAR(30) NOT NULL
@@ -98,6 +98,7 @@ public class V_coge_scr_movBase extends OggettoBulk implements Persistent {
  
 //    FL_MOV_TERZO CHAR(1)
 	private java.lang.Boolean fl_mov_terzo;
+	private java.lang.String ds_scrittura;
  
 	public V_coge_scr_movBase() {
 		super();
@@ -251,5 +252,11 @@ public class V_coge_scr_movBase extends OggettoBulk implements Persistent {
 	}
 	public void setFl_mov_terzo(java.lang.Boolean fl_mov_terzo)  {
 		this.fl_mov_terzo=fl_mov_terzo;
+	}
+	public String getDs_scrittura() {
+		return ds_scrittura;
+	}
+	public void setDs_scrittura(String ds_scrittura) {
+		this.ds_scrittura = ds_scrittura;
 	}
 }
