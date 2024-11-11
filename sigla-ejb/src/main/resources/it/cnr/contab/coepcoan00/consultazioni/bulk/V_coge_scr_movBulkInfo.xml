@@ -194,6 +194,16 @@
 		property="fl_mov_terzo"
 		inputType="CHECKBOX"
 		label="fl_mov_terzo" />
+	<fieldProperty
+			name="ds_scrittura"
+			property="ds_scrittura"
+			maxLength="250"
+			inputSize="100"
+			inputType="TEXT"
+			label="Descrizione"
+			enabledOnSearch="true"
+			caseSensitiveSearch="false"
+			nullable="false"/>
 
 	<formFieldProperty
 		name="cd_cds" />
@@ -245,6 +255,8 @@
 		name="ti_istituz_commerc" />
 	<formFieldProperty
 		name="fl_mov_terzo" />
+	<formFieldProperty
+			name="ds_scrittura"/>
 
 	<findFieldProperty
 		name="cd_cds" />
@@ -296,6 +308,8 @@
 		name="ti_istituz_commerc" />
 	<findFieldProperty
 		name="fl_mov_terzo" />
+	<findFieldProperty
+			name="ds_scrittura" />
 
 	<columnFieldProperty
 		name="cd_cds" />
@@ -305,6 +319,8 @@
 		name="cd_unita_organizzativa" />
 	<columnFieldProperty
 		name="pg_scrittura" />
+	<columnFieldProperty
+			name="ds_scrittura" />
 	<columnFieldProperty
 		name="cd_terzo" />
 	<columnFieldProperty
@@ -339,4 +355,5 @@
 		name="dt_a_competenza_coge" />
 	<columnFieldProperty
 		name="ti_istituz_commerc" />
+
 </bulkInfo>

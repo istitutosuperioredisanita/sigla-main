@@ -2609,6 +2609,9 @@ begin
 	-- Ribaltamento conti E/P
 	aMessage := 'Ribaltamento del piano dei conti E/P sull''esercizio '||aEsDest||'. Lock tabella VOCE_EP';
 	ibmutl200.loginf(aPgEsec,aMessage,'','');
+	aMessage := 'Disabilitzione FX_VOCE_EP00 per la tabella VOCE_EP';
+    ibmutl200.loginf(aPgEsec,aMessage,'','');
+    EXECUTE IMMEDIATE 'alter table VOCE_EP modify constraint FK_VOCE_EP00 disable';
 	for aVoceEP in (select * from VOCE_EP
 				    where esercizio = aEsOrig
 					order by cd_voce_ep) loop  -- order per RK_VOCE_EP00
@@ -2662,7 +2665,9 @@ begin
 			aStato := 'W';
 		end;
 	end loop;
-
+    aMessage := 'Abilitazione FX_VOCE_EP00 per la tabella VOCE_EP';
+    ibmutl200.loginf(aPgEsec,aMessage,'','');
+    EXECUTE IMMEDIATE 'alter table VOCE_EP modify constraint FK_VOCE_EP00 enable';
 	-- Ribaltamento  delle associazioni entrate-ricavi spese-costi
 	aMessage := 'Ribaltamento  delle associazioni entrate-ricavi spese-costi sull''esercizio '||aEsDest||'. Lock tabella ASS_EV_VOCEEP';
 	ibmutl200.loginf(aPgEsec,aMessage,'','');

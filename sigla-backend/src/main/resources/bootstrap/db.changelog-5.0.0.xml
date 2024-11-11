@@ -6147,4 +6147,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_accessi_conto_giudiziale.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiornamento menu Magazzino-->
     <include file="bootstrap/mod_conf_menu_magazzino.xml"/>
+    <!-- Autore : VALENTINA TOMADA - modica PK CHIUSURA_ANNO_MAG_RIM -->
+    <include file="bootstrap/mod_pk_table_chiusura_anno.xml"/>
 </databaseChangeLog>
