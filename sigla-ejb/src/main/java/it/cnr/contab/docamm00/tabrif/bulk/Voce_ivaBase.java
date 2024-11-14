@@ -30,6 +30,10 @@ public class Voce_ivaBase extends Voce_ivaKey implements Keyed {
 	
 	private java.lang.Boolean fl_obb_dichiarazione_intento;
 
+	private java.lang.Boolean fl_intrastat;
+
+	private java.lang.Boolean fl_intra12;
+
 /* 
  * Getter dell'attributo cd_gruppo_iva
  */
@@ -359,4 +363,19 @@ public void setTi_bollo(java.lang.String ti_bollo) {
 	this.ti_bollo = ti_bollo;
 }
 
+	public Boolean getFl_intrastat() {
+		return fl_intrastat;
+	}
+
+	public void setFl_intrastat(Boolean fl_intrastat) {
+		this.fl_intrastat = fl_intrastat;
+	}
+
+	public Boolean getFl_intra12() {
+		return fl_intra12;
+	}
+
+	public void setFl_intra12(Boolean fl_intra12) {
+		this.fl_intra12 = fl_intra12;
+	}
 }
