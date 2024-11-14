@@ -120,6 +120,8 @@ function escludiPrimo(index){
                 <% bp.getController().writeFormField(out,"fl_intra");%>
                 <% bp.getController().writeFormField(out,"fl_obb_dichiarazione_intento"); %>
                 <% bp.getController().writeFormField(out,"fl_iva_non_recuperabile"); %>
+                <% bp.getController().writeFormField(out,"fl_intrastat"); %>
+                <% bp.getController().writeFormField(out,"fl_intra12"); %>
             </tr>
 		</table>
 		<%	if (voce_iva != null) { %>
