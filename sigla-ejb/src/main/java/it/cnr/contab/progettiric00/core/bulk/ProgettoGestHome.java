@@ -18,6 +18,7 @@
 package it.cnr.contab.progettiric00.core.bulk;
 
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Optional;
 
 import it.cnr.contab.config00.bulk.*;

@@ -4,8 +4,11 @@
  */
 package it.cnr.contab.doccont00.core.bulk;
 
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaBulk;
 import it.cnr.jada.bulk.BulkCollection;
 import it.cnr.jada.bulk.BulkList;
+
+import java.util.Iterator;
 
 public class Obbligazione_pluriennaleBulk extends Obbligazione_pluriennaleBase {
 	/**
@@ -215,5 +218,39 @@ public class Obbligazione_pluriennaleBulk extends Obbligazione_pluriennaleBase {
 		nuovo.setCrudStatus(TO_BE_CREATED);
 
 		return nuovo;
+	}
+	private BulkList<Obbligazione_pluriennale_voceBulk> clonaObbligazioniPluriennali(Obbligazione_pluriennaleBulk obbligazione,it.cnr.jada.action.ActionContext context){
+
+		if ( this.getRigheVoceColl()==null || this.getRigheVoceColl().isEmpty())
+			return this.getRigheVoceColl();
+
+		BulkList<Obbligazione_pluriennale_voceBulk> pluriennaliVoce= new BulkList<Obbligazione_pluriennale_voceBulk>();
+
+		for ( Obbligazione_pluriennale_voceBulk pv:this.getRigheVoceColl()){
+			Obbligazione_pluriennale_voceBulk n = (Obbligazione_pluriennale_voceBulk) pv.clone();
+			pluriennaliVoce.add( n);
+		}
+		return pluriennaliVoce;
+	}
+
+
+
+	public int addToRigheVoceCollBulkList(Obbligazione_pluriennale_voceBulk dett){
+
+		getRigheVoceColl().add(dett);
+		return getRigheVoceColl().size()-1;
+	}
+	public Obbligazione_pluriennale_voceBulk removeFromRigheVoceCollBulkList(int index) {
+		Obbligazione_pluriennale_voceBulk dett = (Obbligazione_pluriennale_voceBulk)getRigheVoceColl().remove(index);
+		dett.setToBeDeleted();
+		return dett;
+	}
+	public void setToBeDeleted() {
+		super.setToBeDeleted();
+		for (Iterator i = righeVoceColl.iterator(); i.hasNext(); )
+			((Obbligazione_pluriennale_voceBulk) i.next()).setToBeDeleted();
+		for (Iterator i = righeVoceColl.deleteIterator(); i.hasNext(); )
+			((Obbligazione_pluriennale_voceBulk) i.next()).setToBeDeleted();
+
 	}
 }

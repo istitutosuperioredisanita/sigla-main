@@ -144,11 +144,5 @@
 				name="anno" />
 		<columnFieldProperty
 				name="importo" />
-		<columnFieldProperty
-				name="esercizioRif" />
-		<columnFieldProperty
-				name="esercizioOriginaleRif" />
-		<columnFieldProperty
-				name="pgAccertamentoRif" />
 	</columnSet>
 </bulkInfo>

@@ -1437,6 +1437,7 @@ public void setCd_cds(java.lang.String cd_cds) {
 
 	public Accertamento_pluriennaleBulk removeFromAccertamentiPluriennali(int index) {
 		Accertamento_pluriennaleBulk dett = (Accertamento_pluriennaleBulk)getAccertamentiPluriennali().remove(index);
+		dett.getRigheVoceColl().removeAll(dett.getRigheVoceColl());
 		return dett;
 	}
 

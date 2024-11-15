@@ -49,8 +49,10 @@ public class V_saldi_piano_econom_progettoHome extends BulkHome {
 
 	public V_saldi_piano_econom_progettoBulk cercaSaldoPianoEconomico(Progetto_piano_economicoBulk bulk, String tiGestione) throws PersistencyException
 	{
-		SQLBuilder sql = this.createSQLBuilder();	
-		
+		SQLBuilder sql = this.createSQLBuilder();
+		sql.addTableToHeader( "CDR" );
+
+
 		sql.addSQLClause(FindClause.AND,"PG_PROGETTO",SQLBuilder.EQUALS,bulk.getPg_progetto());
 		sql.addSQLClause(FindClause.AND,"ESERCIZIO",SQLBuilder.EQUALS,bulk.getEsercizio_piano());
 	    sql.addSQLClause(FindClause.AND,"CD_UNITA_PIANO",SQLBuilder.EQUALS,bulk.getCd_unita_organizzativa());
@@ -61,5 +63,18 @@ public class V_saldi_piano_econom_progettoHome extends BulkHome {
 		if (list!=null && !list.isEmpty())
 			return list.get(0);
 		return null;
+	}
+	public List<V_saldi_piano_econom_progettoBulk> cercaPluriennaliPianoEconomico(Progetto_piano_economicoBulk bulk, String tiGestione) throws PersistencyException
+	{
+		SQLBuilder sql = this.createSQLBuilder();
+
+		sql.addSQLClause(FindClause.AND,"PG_PROGETTO",SQLBuilder.EQUALS,bulk.getPg_progetto());
+		sql.addSQLClause(FindClause.AND,"ESERCIZIO",SQLBuilder.EQUALS,bulk.getEsercizio_piano());
+		sql.addSQLClause(FindClause.AND,"CD_UNITA_PIANO",SQLBuilder.EQUALS,bulk.getCd_unita_organizzativa());
+		sql.addSQLClause(FindClause.AND,"CD_VOCE_PIANO",SQLBuilder.EQUALS,bulk.getCd_voce_piano());
+		sql.addSQLClause(FindClause.AND,"TI_GESTIONE",SQLBuilder.EQUALS,tiGestione);
+
+		return fetchAll(sql);
+
 	}
 }

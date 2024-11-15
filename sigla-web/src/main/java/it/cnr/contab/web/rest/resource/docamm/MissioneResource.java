@@ -26,15 +26,27 @@ import it.cnr.contab.missioni00.ejb.MissioneComponentSession;
 import it.cnr.contab.missioni00.tabrif.bulk.Missione_tipo_pastoBulk;
 import it.cnr.contab.missioni00.tabrif.bulk.Missione_tipo_spesaBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.contab.web.rest.local.docamm.MissioneLocal;
 import it.cnr.contab.web.rest.exception.RestException;
+import it.cnr.contab.web.rest.local.docamm.MissioneLocal;
 import it.cnr.contab.web.rest.model.MassimaleSpesaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.PersistencyException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.ejb.EJB;
+import javax.ejb.EJBException;
+import javax.ejb.Stateless;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.SecurityContext;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -43,21 +55,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.SecurityContext;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Stateless
 public class MissioneResource implements MissioneLocal {
@@ -81,8 +78,8 @@ public class MissioneResource implements MissioneLocal {
 
 			NazioneBulk nazioneBulk = getNazione(userContext, massimaleSpesaBulk.getNazione()); 
         	if (massimaleSpesaBulk.getCdTipoSpesa() != null){
-        		List<?> lista = missioneComponentSession.recuperoTipiSpesa(userContext, dataMissione, massimaleSpesaBulk.getInquadramento(), 
-        				nazioneBulk.getPg_nazione(), false, massimaleSpesaBulk.getCdTipoSpesa());
+        		List<?> lista = missioneComponentSession.recuperoTipiSpesa(userContext, dataMissione,
+        				nazioneBulk.getPg_nazione(), massimaleSpesaBulk.getInquadramento(),false, massimaleSpesaBulk.getCdTipoSpesa());
     			if (lista != null && !lista.isEmpty()){
     	    		tipoSpesa = (Missione_tipo_spesaBulk)lista.get(0);
     			}
@@ -205,9 +202,14 @@ public class MissioneResource implements MissioneLocal {
     	Optional.ofNullable(idRimborsoMissione).
 		orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Id Rimborso missione Obbligatorio"));
         LOGGER.info("Inizio Cancellazione Missione "+idRimborsoMissione);
+		try{
 
     	missioneComponentSession.cancellazioneMissioneDaGemis(userContext, idRimborsoMissione);
-    	return Response.ok("OK").build();
+			return Response.ok("OK").build();
+		}catch (Throwable e){
+			throw new RestException(Response.Status.INTERNAL_SERVER_ERROR,String.format(e.getMessage()));
+		}
+
 
     }
 }

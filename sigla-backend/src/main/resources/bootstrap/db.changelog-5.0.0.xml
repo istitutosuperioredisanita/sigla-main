@@ -6130,14 +6130,23 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_sospensione_fattura_passiva.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunto flag per gestione anno precedente -->
     <include file="bootstrap/add_flag_gest_fatt_anno_prec.xml"/>
+
     <!-- Autore : CIRO SALVIO - Aggiunto accessi per Consultazione Scadenzario Accertamenti Voce -->
     <include file="bootstrap/add_accessi_cons_scad_accert_voce.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunto accessi per Consultazione Scadenzario Obbligazioni Voce -->
     <include file="bootstrap/add_accessi_cons_scad_obbl_voce.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunta configurazione per abilitare/disabilitare la possibilità di aggiungere modalità di pagamento per i dipendenti -->
     <include file="bootstrap/add_configurazione_gest_modpag_dip.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Aggiunto flag in PROGETTO_OTHER_FIELD per abilitare/disabilitare la rimodulazione automatica del progetto in fase di obbligazione pluriennale -->
+    <include file="bootstrap/add_flag_enable_auto_rimodulazione.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Aggiunto flag in OBBLIGAZIONE_PLURIENNALE_VOCE che indica se è stata fatta o meno la rimodulazione automatica -->
+    <include file="bootstrap/add_flag_enable_auto_rimod_obbl_plur.xml"/>
+
+
     <!-- Autore : CIRO SALVIO - Aggiunta configurazione per la nuova voce conto giudiziale-->
     <include file="bootstrap/add_accessi_conto_giudiziale.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiornamento menu Magazzino-->
     <include file="bootstrap/mod_conf_menu_magazzino.xml"/>
+    <!-- Autore : VALENTINA TOMADA - modica PK CHIUSURA_ANNO_MAG_RIM -->
+    <include file="bootstrap/mod_pk_table_chiusura_anno.xml"/>
 </databaseChangeLog>

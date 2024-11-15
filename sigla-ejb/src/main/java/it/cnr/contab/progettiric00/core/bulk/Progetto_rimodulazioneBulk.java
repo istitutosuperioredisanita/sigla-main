@@ -97,6 +97,8 @@ public class Progetto_rimodulazioneBulk extends Progetto_rimodulazioneBase imple
 	//Lista che viene valorizzata dal BP sulle rimodulazioni di tipo definitivo.
 	List<OggettoBulk> variazioniModels = new ArrayList<OggettoBulk>();
 
+	private Boolean stampaReport = Boolean.TRUE;
+
 	public Progetto_rimodulazioneBulk() {
 		super();
 	}
@@ -746,5 +748,13 @@ public class Progetto_rimodulazioneBulk extends Progetto_rimodulazioneBase imple
 	
 	public void setLastEsercizioAperto(Integer lastEsercizioAperto) {
 		this.lastEsercizioAperto = lastEsercizioAperto;
+	}
+
+	public Boolean getStampaReport() {
+		return stampaReport;
+	}
+
+	public void setStampaReport(Boolean stampaReport) {
+		this.stampaReport = stampaReport;
 	}
 }

@@ -7,6 +7,8 @@ import it.cnr.jada.persistency.Keyed;
 public class Obbligazione_pluriennale_voceBase extends Obbligazione_pluriennale_voceKey implements Keyed {
 //    IMPORTO DECIMAL(15,2) NOT NULL
 	private java.math.BigDecimal importo;
+
+	private Boolean autoRimodulazione = Boolean.TRUE;
  
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
@@ -31,5 +33,13 @@ public class Obbligazione_pluriennale_voceBase extends Obbligazione_pluriennale_
 	 **/
 	public void setImporto(java.math.BigDecimal importo)  {
 		this.importo=importo;
+	}
+
+	public Boolean getAutoRimodulazione() {
+		return autoRimodulazione;
+	}
+
+	public void setAutoRimodulazione(Boolean autoRimodulazione) {
+		this.autoRimodulazione = autoRimodulazione;
 	}
 }
