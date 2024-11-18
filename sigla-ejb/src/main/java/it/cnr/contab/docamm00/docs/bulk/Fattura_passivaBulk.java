@@ -438,6 +438,28 @@ public abstract class Fattura_passivaBulk
         return fattura_passiva_dettColl.size() - 1;
     }
 
+    public BigDecimal getImportoTotInstrat( ){
+        BigDecimal totale= BigDecimal.ZERO;
+        for (Iterator i = fattura_passiva_dettColl.iterator(); i.hasNext(); ) {
+            Fattura_passiva_rigaBulk riga = ((Fattura_passiva_rigaBulk) i.next());
+            if (riga.getBene_servizio().getFl_obb_intrastat_acq().booleanValue()
+                    && riga.getVoce_iva().getFl_intrastat().booleanValue())
+                totale=totale.add(riga.getIm_imponibile());
+        }
+        return totale;
+    }
+
+    public Boolean checkImportoDettagliIntrastat(){
+        if ( Optional.ofNullable(getFattura_passiva_intrastatColl()).isPresent()){
+            BigDecimal tot = getImportoTotInstrat();
+            for (Iterator i = getFattura_passiva_intrastatColl().iterator(); i.hasNext(); ) {
+                Fattura_passiva_intraBulk riga = (Fattura_passiva_intraBulk) i.next();
+                if (riga.getAmmontare_euro().compareTo(tot)>0)
+                    return Boolean.TRUE;
+            }
+        }
+        return Boolean.FALSE;
+    }
     public int addToFattura_passiva_intrastatColl(Fattura_passiva_intraBulk dettaglio){
         dettaglio.initialize();
         dettaglio.setFattura_passiva(this);
@@ -461,8 +483,9 @@ public abstract class Fattura_passivaBulk
         //fatturaPassiva.getFl_intra_ue().booleanValue())	{
         for (Iterator i = fattura_passiva_dettColl.iterator(); i.hasNext(); ) {
             Fattura_passiva_rigaBulk riga = ((Fattura_passiva_rigaBulk) i.next());
-            if (riga.getBene_servizio().getFl_obb_intrastat_acq().booleanValue())
-                dettaglio.setAmmontare_euro(dettaglio.getAmmontare_euro().add(riga.getIm_imponibile()));
+            //if (riga.getBene_servizio().getFl_obb_intrastat_acq().booleanValue()
+            //    && riga.getVoce_iva().getFl_intrastat().booleanValue())
+            //    dettaglio.setAmmontare_euro(dettaglio.getAmmontare_euro().add(riga.getIm_imponibile()));
             if (!this.isDefaultValuta() &&
                     ((this.getFornitore() != null &&
                             this.getFornitore().getAnagrafico() != null &&
@@ -474,6 +497,7 @@ public abstract class Fattura_passivaBulk
                 dettaglio.setAmmontare_divisa(dettaglio.getAmmontare_divisa().add(riga.getIm_totale_divisa()));
             }
         }
+        dettaglio.setAmmontare_euro(getImportoTotInstrat());
         dettaglio.setModalita_trasportoColl(getModalita_trasportoColl());
         dettaglio.setCondizione_consegnaColl(getCondizione_consegnaColl());
         dettaglio.setModalita_incassoColl(getModalita_incassoColl());

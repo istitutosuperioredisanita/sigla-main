@@ -2034,4 +2034,23 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
         }
         return super.isInputReadonlyFieldName(fieldName);
     }
+    public void doSelezionaRigaIntrastatDaVerifica(ActionContext actioncontext) throws it.cnr.jada.action.BusinessProcessException {
+        Fattura_passivaBulk fatturaPassivaBulk = (Fattura_passivaBulk) getModel();
+        Fattura_passiva_intraBulk rigaDaCompletare = null;
+        if (fatturaPassivaBulk != null) {
+            for (Iterator i = fatturaPassivaBulk.getFattura_passiva_intrastatColl().iterator(); i.hasNext(); ) {
+                Fattura_passiva_intraBulk riga = (Fattura_passiva_intraBulk) i.next();
+                if (!Boolean.FALSE) {
+                    rigaDaCompletare = riga;
+                    break;
+                }
+            }
+        }
+        if (rigaDaCompletare != null) {
+            dettaglioIntrastatController.getSelection().setFocus(dettaglioIntrastatController.getDetails().indexOf(rigaDaCompletare));
+            dettaglioIntrastatController.setModelIndex(actioncontext, dettaglioIntrastatController.getDetails().indexOf(rigaDaCompletare));
+            resyncChildren(actioncontext);
+        }
+    }
+
 }
