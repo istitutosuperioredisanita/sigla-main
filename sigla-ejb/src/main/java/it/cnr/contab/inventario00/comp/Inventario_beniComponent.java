@@ -1433,6 +1433,9 @@ private void validaBene (UserContext aUC, Inventario_beniBulk bene)
 		// CONTROLLA CHE SIA STATA SPECIFICATA UNA UBICAZIONE PER IL BENE
 		if (bene.getUbicazione()==null || bene.getUbicazione().getCd_ubicazione()==null)
 			throw new it.cnr.jada.comp.ApplicationException("Attenzione: indicare l'Ubicazione del Bene");
+		// CONTROLLA CHE SIA STATA SPECIFICATO L'ASSEGNATARIO PER IL BENE
+		if (bene.getAssegnatario()==null || bene.getAssegnatario().getCd_terzo()==null)
+			throw new ValidationException("Attenzione: indicare l'Assagnatario del Bene");
 		if (bene.getV_utilizzatoriColl().size()==0 && !bene.isBeneAccessorio())
 			throw new ApplicationException("Attenzione: bisogna indicare gli Utilizzatori");				
 		// CONTROLLA CHE SIA STATO INSERITO IL PREZZO UNITARIO PER IL BENE
