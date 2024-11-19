@@ -306,8 +306,11 @@ public class CRUDCaricoInventarioBP extends CRUDCaricoScaricoInventarioBP{
 
 		// CONTROLLA CHE SIA STATA SPECIFICATA UNA UBICAZIONE PER IL BENE
 		if (bene.getUbicazione()==null)
-			throw new ValidationException("Attenzione: indicare l'Ubicazione del Bene");	
-		
+			throw new ValidationException("Attenzione: indicare l'Ubicazione del Bene");
+		// CONTROLLA CHE SIA STATA SPECIFICATO L'ASSEGNATARIO PER IL BENE
+		if (bene.getAssegnatario()==null || bene.getAssegnatario().getCd_terzo()==null)
+			throw new ValidationException("Attenzione: indicare l'Assagnatario del Bene");
+
 		// CONTROLLA CHE SIA STATO INSERITO LA QUANTITA' PER IL BENE
 		if (dett.getQuantita()==null)
 			throw new ValidationException("Attenzione: indicare la Quantita");

@@ -6559,7 +6559,11 @@ private void validaBuonoCarico (UserContext aUC,Buono_carico_scaricoBulk buonoCa
 			// CONTROLLA CHE SIA STATA SPECIFICATA UNA UBICAZIONE PER IL BENE
 			if (bene.getUbicazione()==null || bene.getUbicazione().getCd_ubicazione()==null)
 				throw new it.cnr.jada.comp.ApplicationException("Attenzione: indicare l'Ubicazione del Bene" + (bene.getDs_bene()!=null?"'"+bene.getDs_bene()+"'":""));
-					
+
+			// CONTROLLA CHE SIA STATA SPECIFICATO L'ASSEGNATARIO PER IL BENE
+			if (bene.getAssegnatario()==null || bene.getAssegnatario().getCd_terzo()==null)
+				throw new it.cnr.jada.comp.ApplicationException("Attenzione: indicare l'Assagnatario del Bene"+ (bene.getDs_bene()!=null?"'"+bene.getDs_bene()+"'":""));
+
 			// CONTROLLA CHE SIA STATO INSERITO LA QUANTITA' PER IL BENE
 			if (dett.getQuantita()==null || dett.getQuantita().compareTo(new Long(1))<0)
 				throw new it.cnr.jada.comp.ApplicationException("Attenzione: la Quantita' del Bene " + (bene.getDs_bene()!=null?"'"+bene.getDs_bene()+"'":"") + " non è valida.\n La Quantità deve essere maggiore di 0");
