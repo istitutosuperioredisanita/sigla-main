@@ -4446,7 +4446,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
             CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) context.getBusinessProcess();
             Fattura_passivaBulk fatturaPassivaBulk = (Fattura_passivaBulk) bp.getModel();
        if (fatturaPassivaBulk.checkImportoDettagliIntrastat())
-           return openConfirm(context, "Attenzione! Alcune righe per le informazioni Intrastat superano il totale "+ fatturaPassivaBulk.getImportoTotInstrat().toString()+". Vuoi continuare?", OptionBP.CONFIRM_YES_NO, "doConfirmImportoInstrastat");
+           return openConfirm(context, "Attenzione! Alcune righe relative alle informazioni Intrastat hanno ammontare che supera l'importo massimo  "+ fatturaPassivaBulk.getImportoTotInstrat().toString()+". Vuoi continuare?", OptionBP.CONFIRM_YES_NO, "doConfirmImportoInstrastat");
        return doConfirmImportoInstrastat(context, OptionBP.YES_BUTTON);
         } catch (Throwable e) {
             return super.handleException(context, e);
