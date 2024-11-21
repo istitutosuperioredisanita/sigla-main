@@ -4427,6 +4427,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                 //associati all'obbligazione selezionata
 
                 bp.getObbligazioniController().setModelIndex(context, -1);
+                return fwd;
             }
             return doSelezionaRigaIntrastatDaVerifica(context);
         } catch (Throwable e) {
