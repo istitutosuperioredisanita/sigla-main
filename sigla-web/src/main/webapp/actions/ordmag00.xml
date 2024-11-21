@@ -303,7 +303,7 @@
     <init-param name="reportName" value="/ordmag/stampa_chiusura_mag.jasper" />
   </businessProcess>
 
-  <businessProcess name="CRUDChiusuraMagazzinoDefBP" className="it.cnr.contab.ordmag.magazzino.bp.MagContoGiudizialeBP">
+  <businessProcess name="CRUDChiusuraMagazzinoDefBP" className="it.cnr.contab.ordmag.magazzino.bp.StampaChiusuraMagazzinoBP">
     <forward name="default" path="/ordmag/magazzini/stampa_chiusura_mag.jsp"/>
     <init-param name="bulkClassName" value="it.cnr.contab.ordmag.magazzino.bulk.Chiusura_magazzinoBulk" />
     <init-param name="printbp" value="OfflineReportPrintBP"/>
