@@ -174,6 +174,11 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
 
     private boolean attivaInventaria = false;
     private boolean isModificaPCC;
+    protected boolean attivoCheckImpIntrastat = false;
+
+    public Boolean isAttivoChekcImpIntrastat(){
+        return attivoCheckImpIntrastat;
+    }
 
 
     /**
@@ -582,6 +587,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             propostaFatturaDaOrdini = configurazioneCnrComponentSession.propostaFatturaDaOrdini(context.getUserContext());
             attivaEconomicaParallela = configurazioneCnrComponentSession.isAttivaEconomicaParallela(context.getUserContext());
             attivaInventaria= configurazioneCnrComponentSession.isAttivoInventariaDocumenti(context.getUserContext());
+            attivoCheckImpIntrastat=Utility.createConfigurazioneCnrComponentSession().isCheckImpIntrastatFattPassiva(context.getUserContext());
             isModificaPCC = Optional.ofNullable(
                     configurazioneCnrComponentSession.getConfigurazione(
                     context.getUserContext(),
@@ -1547,6 +1553,8 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
         fp.validate();
         super.validate(actioncontext);
     }
+
+
 
     public void valorizzaInfoDocEle(ActionContext context, Fattura_passivaBulk fp) throws BusinessProcessException {
 

@@ -138,5 +138,8 @@ public interface Configurazione_cnrComponentSession extends it.cnr.jada.ejb.CRUD
 
     Boolean isAttivoGestModPagDipendenti(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
 
+     Boolean isCheckImpIntrastatFattAttiva(UserContext userContext)  throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
+
+    public Boolean isCheckImpIntrastatFattPassiva(UserContext userContext) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
 
 }

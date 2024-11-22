@@ -4394,7 +4394,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
     }
 
 
-    public Forward doConfirmImportoInstrastat(ActionContext actioncontext, int option) {
+    public Forward doConfirmImportoIntrastat(ActionContext actioncontext, int option) {
         try {
             if (option == OptionBP.YES_BUTTON) {
                 return doConfirmSalva(actioncontext, OptionBP.YES_BUTTON);
@@ -4446,9 +4446,9 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
             //Controllo importi
             CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) context.getBusinessProcess();
             Fattura_passivaBulk fatturaPassivaBulk = (Fattura_passivaBulk) bp.getModel();
-       if (fatturaPassivaBulk.checkImportoDettagliIntrastat())
-           return openConfirm(context, "Attenzione! Alcune righe relative alle informazioni Intrastat hanno ammontare che supera l'importo massimo  "+ fatturaPassivaBulk.getImportoTotInstrat().toString()+". Vuoi continuare?", OptionBP.CONFIRM_YES_NO, "doConfirmImportoInstrastat");
-       return doConfirmImportoInstrastat(context, OptionBP.YES_BUTTON);
+       if (bp.isAttivoChekcImpIntrastat() && fatturaPassivaBulk.checkImportoDettagliIntrastat())
+           return openConfirm(context, "Attenzione! Alcune righe relative alle informazioni Intrastat hanno ammontare che supera l'importo massimo  "+ fatturaPassivaBulk.getImportoTotInstrat().toString()+". Vuoi continuare?", OptionBP.CONFIRM_YES_NO, "doConfirmImportoIntrastat");
+       return doConfirmImportoIntrastat(context, OptionBP.YES_BUTTON);
         } catch (Throwable e) {
             return super.handleException(context, e);
         }

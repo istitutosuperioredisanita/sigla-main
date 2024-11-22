@@ -6153,4 +6153,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_flag_intrastat_intra12_voce_iva.xml"/>
     <!-- Autore : CIRO SALVIO - Rename column Intrastat-->
     <include file="bootstrap/rename_flag_intrastat_voce_iva.xml"/>
+    <!-- Autore : CIRO SALVIO - Add parametro per abilitare o meno il controllo degli importo per le infromazioni INTSRATAT-->
+    <include file="bootstrap/add_flag_gest_check_imp_intrastat.xml"/>
 </databaseChangeLog>

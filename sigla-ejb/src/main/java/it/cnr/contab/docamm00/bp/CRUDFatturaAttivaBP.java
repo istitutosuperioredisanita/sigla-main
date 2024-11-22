@@ -111,8 +111,13 @@ public abstract class CRUDFatturaAttivaBP
     private boolean esercizioChiuso = false;
 
     protected boolean attivaInventaria = true;
+    protected boolean attivoCheckImpIntrastat = false;
     public CRUDFatturaAttivaBP() {
         this(Fattura_attiva_rigaBulk.class);
+    }
+
+    public Boolean isAttivoChekcImpIntrastat(){
+        return attivoCheckImpIntrastat;
     }
 
     /**
@@ -423,6 +428,7 @@ public abstract class CRUDFatturaAttivaBP
             int esercizioScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue();
             attivaEconomicaParallela = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(context.getUserContext());
             attivaInventaria= Utility.createConfigurazioneCnrComponentSession().isAttivoInventariaDocumenti(context.getUserContext());
+            attivoCheckImpIntrastat=Utility.createConfigurazioneCnrComponentSession().isCheckImpIntrastatFattAttiva(context.getUserContext());
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
             setAnnoSolareInScrivania(solaris == esercizioScrivania);
             setRibaltato(initRibaltato(context));

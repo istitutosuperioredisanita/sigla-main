@@ -1265,5 +1265,45 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
             throw handleException(e);
         }
     }
+    public Boolean isCheckImpIntrastatFattAttiva(UserContext userContext) throws ComponentException {
+        try {
+            Configurazione_cnrKey configurazioneCnrKey = new Configurazione_cnrKey(
+                    Configurazione_cnrBulk.PK_FATTURA_ATTIVA,
+                    Configurazione_cnrBulk.SK_CHECK_IMP_INTRASTAT,
+                    ASTERISCO,
+                    CNRUserContext.getEsercizio(userContext));
+            return val01YesNo(userContext, configurazioneCnrKey)
+                    .orElseGet(() -> {
+                        try {
+                            return val01YesNo(userContext, configurazioneCnrKey.esercizio(0))
+                                    .orElse(Boolean.FALSE);
+                        } catch (PersistencyException|ComponentException e) {
+                            throw new PersistencyError(e);
+                        }
+                    });
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        }
+    }
+    public Boolean isCheckImpIntrastatFattPassiva(UserContext userContext) throws ComponentException {
+        try {
+            Configurazione_cnrKey configurazioneCnrKey = new Configurazione_cnrKey(
+                    Configurazione_cnrBulk.PK_FATTURA_PASSIVA,
+                    Configurazione_cnrBulk.SK_CHECK_IMP_INTRASTAT,
+                    ASTERISCO,
+                    CNRUserContext.getEsercizio(userContext));
+            return val01YesNo(userContext, configurazioneCnrKey)
+                    .orElseGet(() -> {
+                        try {
+                            return val01YesNo(userContext, configurazioneCnrKey.esercizio(0))
+                                    .orElse(Boolean.FALSE);
+                        } catch (PersistencyException|ComponentException e) {
+                            throw new PersistencyError(e);
+                        }
+                    });
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        }
+    }
 
 }
