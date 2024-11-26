@@ -2158,7 +2158,7 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
                         !getFattura_attiva_dettColl().isEmpty();
     }
 
-    public BigDecimal getImportoTotInstrat( ){
+    public BigDecimal getImportoIntrastatTotRighe( ){
         BigDecimal totale= BigDecimal.ZERO;
         for (Iterator i = fattura_attiva_dettColl.iterator(); i.hasNext(); ) {
             Fattura_attiva_rigaBulk riga = ((Fattura_attiva_rigaBulk) i.next());
@@ -2168,15 +2168,20 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
         }
         return totale;
     }
+    public BigDecimal getImportoTotAmmontareIntrastat( ){
+       if ( Optional.ofNullable(getFattura_attiva_intrastatColl()).isPresent()){
+           BigDecimal totAmmontareIntrastat = BigDecimal.ZERO;
+           for (Iterator i = getFattura_attiva_intrastatColl().iterator(); i.hasNext(); ) {
+               Fattura_attiva_intraBulk riga = (Fattura_attiva_intraBulk) i.next();
+               totAmmontareIntrastat = totAmmontareIntrastat.add(riga.getAmmontare_euro());
+           }
+       }
+       return BigDecimal.ZERO;
+    }
 
-    public Boolean checkImportoDettagliIntrastat(){
+    public Boolean validaImportoDettagliIntrastat(){
         if ( Optional.ofNullable(getFattura_attiva_intrastatColl()).isPresent()){
-            BigDecimal tot = getImportoTotInstrat();
-            for (Iterator i = getFattura_attiva_intrastatColl().iterator(); i.hasNext(); ) {
-                Fattura_attiva_intraBulk riga = (Fattura_attiva_intraBulk) i.next();
-                if (riga.getAmmontare_euro().compareTo(tot)>0)
-                    return Boolean.TRUE;
-            }
+            return ( getImportoTotAmmontareIntrastat().compareTo(getImportoIntrastatTotRighe())>0);
         }
         return Boolean.FALSE;
     }
@@ -2203,7 +2208,7 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
                 dettaglio.setAmmontare_euro(dettaglio.getAmmontare_euro().add(riga.getIm_imponibile()));
         }
          */
-        dettaglio.setAmmontare_euro(getImportoTotInstrat());
+        dettaglio.setAmmontare_euro(getImportoIntrastatTotRighe());
         dettaglio.setModalita_trasportoColl(getModalita_trasportoColl());
         dettaglio.setCondizione_consegnaColl(getCondizione_consegnaColl());
         dettaglio.setModalita_incassoColl(getModalita_incassoColl());

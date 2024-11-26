@@ -26,6 +26,7 @@ import it.cnr.contab.anagraf00.tabter.bulk.NazioneBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.docamm00.fatturapa.bulk.*;
+import it.cnr.contab.docamm00.intrastat.bulk.Fattura_attiva_intraBulk;
 import it.cnr.contab.docamm00.intrastat.bulk.Fattura_passiva_intraBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk;
@@ -438,7 +439,7 @@ public abstract class Fattura_passivaBulk
         return fattura_passiva_dettColl.size() - 1;
     }
 
-    public BigDecimal getImportoTotInstrat( ){
+    public BigDecimal getImportoIntrastatTotDaRighe( ){
         BigDecimal totale= BigDecimal.ZERO;
         for (Iterator i = fattura_passiva_dettColl.iterator(); i.hasNext(); ) {
             Fattura_passiva_rigaBulk riga = ((Fattura_passiva_rigaBulk) i.next());
@@ -449,16 +450,23 @@ public abstract class Fattura_passivaBulk
         return totale;
     }
 
-    public Boolean checkImportoDettagliIntrastat(){
+    public BigDecimal getImportoTotAmmontareIntrastat( ){
         if ( Optional.ofNullable(getFattura_passiva_intrastatColl()).isPresent()){
-            BigDecimal tot = getImportoTotInstrat();
+            BigDecimal totAmmontareIntrastat = BigDecimal.ZERO;
             for (Iterator i = getFattura_passiva_intrastatColl().iterator(); i.hasNext(); ) {
-                Fattura_passiva_intraBulk riga = (Fattura_passiva_intraBulk) i.next();
-                if (riga.getAmmontare_euro().compareTo(tot)>0)
-                    return Boolean.TRUE;
+                Fattura_attiva_intraBulk riga = (Fattura_attiva_intraBulk) i.next();
+                totAmmontareIntrastat = totAmmontareIntrastat.add(riga.getAmmontare_euro());
             }
         }
+        return BigDecimal.ZERO;
+    }
+
+    public Boolean validaImportoDettagliIntrastat(){
+        if ( Optional.ofNullable(getFattura_passiva_intrastatColl()).isPresent()){
+            return ( getImportoTotAmmontareIntrastat().compareTo(getImportoIntrastatTotDaRighe())>0);
+        }
         return Boolean.FALSE;
+
     }
     public int addToFattura_passiva_intrastatColl(Fattura_passiva_intraBulk dettaglio){
         dettaglio.initialize();
@@ -497,7 +505,7 @@ public abstract class Fattura_passivaBulk
                 dettaglio.setAmmontare_divisa(dettaglio.getAmmontare_divisa().add(riga.getIm_totale_divisa()));
             }
         }
-        dettaglio.setAmmontare_euro(getImportoTotInstrat());
+        dettaglio.setAmmontare_euro(getImportoIntrastatTotDaRighe());
         dettaglio.setModalita_trasportoColl(getModalita_trasportoColl());
         dettaglio.setCondizione_consegnaColl(getCondizione_consegnaColl());
         dettaglio.setModalita_incassoColl(getModalita_incassoColl());
