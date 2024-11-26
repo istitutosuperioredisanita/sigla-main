@@ -18,8 +18,11 @@
 package it.cnr.contab.inventario00.ejb;
 import java.rmi.*;
 import java.util.HashMap;
+import java.util.List;
 
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
+import it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invBulk;
+import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.util.ejb.*;
@@ -429,6 +432,20 @@ public Boolean isContab(it.cnr.jada.UserContext param0,it.cnr.contab.inventario0
 			} catch(Throwable ex) {
 				throw new java.rmi.RemoteException("Uncaugth exception",ex);
 			}
+		}
+	}
+
+	@Override
+	public Inventario_beniBulk getBeneInventario(UserContext param0,Long param1,Long param2, Long param3) throws RemoteException {
+		try {
+			return (Inventario_beniBulk)invoke("getBeneInventario",new Object[] {
+						param0,
+						param1,
+					    param2,
+					    param3});
+		}
+		catch(Throwable ex) {
+			throw new java.rmi.RemoteException("Uncaugth exception",ex);
 		}
 	}
 }

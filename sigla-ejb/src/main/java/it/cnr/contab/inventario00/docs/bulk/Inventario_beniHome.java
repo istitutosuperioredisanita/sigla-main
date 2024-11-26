@@ -72,6 +72,16 @@ public Inventario_beniBulk getBenePrincipaleFor(it.cnr.jada.UserContext userCont
 	broker.close();
 	return principale;
 }
+	public Inventario_beniBulk getBeneInventario(Long pgInventario,Long nrInventario, Long progressivo) throws PersistencyException {
+
+		SQLBuilder sql = createSQLBuilder();
+		sql.addSQLClause("AND","PG_INVENTARIO",sql.EQUALS,pgInventario);
+		sql.addSQLClause("AND","NR_INVENTARIO",sql.EQUALS,nrInventario);
+		sql.addSQLClause("AND","PROGRESSIVO",sql.EQUALS,progressivo);
+		return (Inventario_beniBulk)fetchAll(sql).get(0);
+
+	}
+
 /**
  * Insert the method's description here.
  * Creation date: (10/01/2002 16.20.47)

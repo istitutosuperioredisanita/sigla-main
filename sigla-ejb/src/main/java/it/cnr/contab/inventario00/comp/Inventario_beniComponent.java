@@ -1700,4 +1700,14 @@ private void validaUtilizzatori (UserContext aUC,Inventario_beniBulk bene)
 		return resUtilizzatori;
 	}
 
+	public Inventario_beniBulk getBeneInventario(UserContext uc,Long pgInventario,Long nrInventario, Long progressivo) throws RemoteException {
+		try {
+			Inventario_beniHome inventarioBeneInvHome = (Inventario_beniHome) getHome(uc, Inventario_beniBulk.class);
+			return inventarioBeneInvHome.getBeneInventario(pgInventario,nrInventario,progressivo);
+		}catch (ComponentException | PersistencyException ex){
+			throw new RemoteException("Error getBenePerAmmortamento pg_inventario: "+pgInventario
+			+" nr_inventario:"+nrInventario+" progressivo:" +progressivo);
+
+		}
+	}
 }

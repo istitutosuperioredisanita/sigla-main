@@ -20,6 +20,16 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 
 import it.cnr.contab.inventario00.comp.Tipo_ammortamentoComponent;
+import it.cnr.contab.inventario00.comp.V_AmmortamentoBeniComponent;
+import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beniBulk;
+import it.cnr.contab.inventario00.tabrif.bulk.Tipo_ammortamentoBulk;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
+
+import java.rmi.RemoteException;
+import java.util.List;
+
 @Stateless(name="CNRINVENTARIO00_EJB_Tipo_ammortamentoComponentSession")
 public class Tipo_ammortamentoComponentSessionBean extends it.cnr.jada.ejb.CRUDDetailComponentSessionBean implements Tipo_ammortamentoComponentSession {
 @PostConstruct
@@ -244,4 +254,17 @@ public it.cnr.jada.util.RemoteIterator selectGruppiByClause(it.cnr.jada.UserCont
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
+
+	@Override
+	public List<Tipo_ammortamentoBulk> findTipoAmmortamento(UserContext param0, String param1, String param2, Integer param3) throws ComponentException, RemoteException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			List<Tipo_ammortamentoBulk> result = ((Tipo_ammortamentoComponent)componentObj).findTipoAmmortamento(param0,param1,param2,param3);
+			component_invocation_succes(param0,componentObj);
+			return result;
+
+		} catch (RuntimeException  e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		}
+	}
 }

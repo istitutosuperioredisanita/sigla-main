@@ -16,8 +16,15 @@
  */
 
 package it.cnr.contab.inventario00.ejb;
+import java.lang.reflect.InvocationTargetException;
 import java.rmi.*;
+import java.util.List;
 
+import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beniBulk;
+import it.cnr.contab.inventario00.tabrif.bulk.Tipo_ammortamentoBulk;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.ejb.*;
 
 public class TransactionalTipo_ammortamentoComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements Tipo_ammortamentoComponentSession {
@@ -593,4 +600,25 @@ public it.cnr.jada.util.RemoteIterator selectGruppiByClause(it.cnr.jada.UserCont
 		}
 	}
 }
+
+	@Override
+	public List<Tipo_ammortamentoBulk> findTipoAmmortamento(UserContext param0, String param1, String param2, Integer param3)  throws ComponentException, RemoteException {
+		try {
+			return (List<Tipo_ammortamentoBulk>)invoke("findTipoAmmortamento",new Object[] {
+					param0,
+					param1,
+					param2,
+					param3,});
+		} catch (InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch(it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch(Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception",ex);
+			}
+		} catch (RemoteException e) {
+			throw e;
+		}
+	}
 }

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="pgInventario"
+		property="pgInventario"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Codice del'inventario" />
+	<fieldProperty
+		name="nrInventario"
+		property="nrInventario"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Numero che identifica il bene all'interno di un inventario" />
+	<fieldProperty
+		name="progressivo"
+		property="progressivo"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Numero che identifica il bene accesorio all'interno di un inventario e una volta che risulti noto il bene primario" />
+	<fieldProperty
+		name="esercizio"
+		property="esercizio"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Esercizio di riferimento" />
+	<fieldProperty
+		name="cdTipoAmmortamento"
+		property="cdTipoAmmortamento"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Codice del tipo di ammortamento" />
+	<fieldProperty
+		name="pgRiga"
+		property="pgRiga"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Progressivo aggiunto in chiave per inserire anche più quote di storno per lo stesso anno" />
+	<fieldProperty
+		name="tiAmmortamento"
+		property="tiAmmortamento"
+		inputType="TEXT"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Tipologia  dell'ammortamento." />
+	<fieldProperty
+		name="cdCategoriaGruppo"
+		property="cdCategoriaGruppo"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Codice identificativo della categoria-gruppo inventariale o di gestione magazzino di riferimento per un dato bene o servizio. La codifica è organizzata in una struttura ad albero  su due livelli." />
+	<fieldProperty
+		name="esercizioCompetenza"
+		property="esercizioCompetenza"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Anno di validita dell'associazione tra categoria e tipo ammortamento" />
+	<fieldProperty
+		name="imponibileAmmortamento"
+		property="imponibileAmmortamento"
+		inputType="TEXT"
+		formatName="it.jada.stone.util.EuroFormat"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Valore su cui viene applicato l'ammortamento, e che rappresenta il totale da ammorttizzare" />
+	<fieldProperty
+		name="imMovimentoAmmort"
+		property="imMovimentoAmmort"
+		inputType="TEXT"
+		formatName="it.jada.stone.util.EuroFormat"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Importo relativo al movimento di ammortamento" />
+	<fieldProperty
+		name="percAmmortamento"
+		property="percAmmortamento"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Percentuale applicata al campo IMPONIBILE_AMMORTAMENTO per ricavare IM_MOVIMENTO_AMMORT" />
+	<fieldProperty
+		name="numeroAnni"
+		property="numeroAnni"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		label="numeroAnni" />
+	<fieldProperty
+		name="numeroAnno"
+		property="numeroAnno"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		label="numeroAnno" />
+	<fieldProperty
+		name="percPrimoAnno"
+		property="percPrimoAnno"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		label="percPrimoAnno" />
+	<fieldProperty
+		name="percSuccessivi"
+		property="percSuccessivi"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		label="percSuccessivi" />
+	<fieldProperty
+		name="cdCdsUbicazione"
+		property="cdCdsUbicazione"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		label="cdCdsUbicazione" />
+	<fieldProperty
+		name="cdUoUbicazione"
+		property="cdUoUbicazione"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		label="cdUoUbicazione" />
+	<fieldProperty
+		name="flStorno"
+		property="flStorno"
+		inputType="CHECKBOX"
+		enabledOnEdit="false"
+		label="Indica se è una quota di storno, che non deve essere toccata dalle procedure di calcolo ammortamento." />
+	<fieldProperty
+		name="pgBuonoS"
+		property="pgBuonoS"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		label="Progressivo buono scarico che genera quota di storno" />
+	<form
+		name="searchtool">
+		<formFieldProperty
+			name="pgInventario" />
+		<formFieldProperty
+			name="nrInventario" />
+		<formFieldProperty
+			name="progressivo" />
+		<formFieldProperty
+			name="esercizio" />
+		<formFieldProperty
+			name="pgRiga" />
+	</form>
+	<formFieldProperty
+		name="esercizio" />
+	<formFieldProperty
+		name="pgRiga" />
+	<formFieldProperty
+		name="imponibileAmmortamento" />
+	<formFieldProperty
+		name="imMovimentoAmmort" />
+	<formFieldProperty
+		name="percAmmortamento" />
+	<formFieldProperty
+		name="numeroAnni" />
+	<formFieldProperty
+		name="numeroAnno" />
+	<formFieldProperty
+		name="percPrimoAnno" />
+	<formFieldProperty
+		name="percSuccessivi" />
+	<formFieldProperty
+		name="flStorno" />
+	<formFieldProperty
+		name="pgBuonoS" />
+	<findFieldProperty
+		name="pgInventario" />
+	<findFieldProperty
+		name="nrInventario" />
+	<findFieldProperty
+		name="progressivo" />
+	<findFieldProperty
+		name="esercizio" />
+	<findFieldProperty
+		name="cdTipoAmmortamento" />
+	<findFieldProperty
+		name="pgRiga" />
+	<findFieldProperty
+		name="tiAmmortamento" />
+	<findFieldProperty
+		name="cdCategoriaGruppo" />
+	<findFieldProperty
+		name="esercizioCompetenza" />
+	<findFieldProperty
+		name="imponibileAmmortamento" />
+	<findFieldProperty
+		name="imMovimentoAmmort" />
+	<findFieldProperty
+		name="percAmmortamento" />
+	<findFieldProperty
+		name="numeroAnni" />
+	<findFieldProperty
+		name="numeroAnno" />
+	<findFieldProperty
+		name="percPrimoAnno" />
+	<findFieldProperty
+		name="percSuccessivi" />
+	<findFieldProperty
+		name="cdCdsUbicazione" />
+	<findFieldProperty
+		name="cdUoUbicazione" />
+	<findFieldProperty
+		name="flStorno" />
+	<findFieldProperty
+		name="pgBuonoS" />
+	<columnFieldProperty
+		name="pgInventario" />
+	<columnFieldProperty
+		name="nrInventario" />
+	<columnFieldProperty
+		name="progressivo" />
+	<columnFieldProperty
+		name="esercizio" />
+	<columnFieldProperty
+		name="cdTipoAmmortamento" />
+	<columnFieldProperty
+		name="pgRiga" />
+	<columnFieldProperty
+		name="tiAmmortamento" />
+	<columnFieldProperty
+		name="cdCategoriaGruppo" />
+	<columnFieldProperty
+		name="esercizioCompetenza" />
+	<columnFieldProperty
+		name="imponibileAmmortamento" />
+	<columnFieldProperty
+		name="imMovimentoAmmort" />
+	<columnFieldProperty
+		name="percAmmortamento" />
+	<columnFieldProperty
+		name="numeroAnni" />
+	<columnFieldProperty
+		name="numeroAnno" />
+	<columnFieldProperty
+		name="percPrimoAnno" />
+	<columnFieldProperty
+		name="percSuccessivi" />
+	<columnFieldProperty
+		name="cdCdsUbicazione" />
+	<columnFieldProperty
+		name="cdUoUbicazione" />
+	<columnFieldProperty
+		name="flStorno" />
+	<columnFieldProperty
+		name="pgBuonoS" />
+</bulkInfo>

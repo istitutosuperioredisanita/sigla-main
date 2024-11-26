@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="cdTipoAmmortamento"
+		property="cdTipoAmmortamento"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Codice univoco del tipo ammortametno" />
+	<fieldProperty
+		name="tiAmmortamento"
+		property="tiAmmortamento"
+		inputType="TEXT"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Tipologia dell'ammortamento." />
+	<fieldProperty
+		name="cdCategoriaGruppo"
+		property="cdCategoriaGruppo"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Codice identificativo della categoria-gruppo inventariale o di gestione magazzino di riferimento per un dato bene o servizio. La codifica è organizzata in una struttura ad albero  su due livelli." />
+	<fieldProperty
+		name="esercizioCompetenza"
+		property="esercizioCompetenza"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Anno di validita dell'associazione tra categoria e tipo ammortamento" />
+	<fieldProperty
+		name="dtCancellazione"
+		property="dtCancellazione"
+		inputType="TEXT"
+		formatName="date_short"
+		enabledOnEdit="false"
+		label="Data di fine validita dell'associazione tra categoria e tipo ammortamento" />
+	<form
+		name="searchtool">
+		<formFieldProperty
+			name="cdTipoAmmortamento" />
+		<formFieldProperty
+			name="tiAmmortamento" />
+		<formFieldProperty
+			name="cdCategoriaGruppo" />
+		<formFieldProperty
+			name="esercizioCompetenza" />
+	</form>
+	<formFieldProperty
+		name="esercizioCompetenza" />
+	<formFieldProperty
+		name="dtCancellazione" />
+	<findFieldProperty
+		name="cdTipoAmmortamento" />
+	<findFieldProperty
+		name="tiAmmortamento" />
+	<findFieldProperty
+		name="cdCategoriaGruppo" />
+	<findFieldProperty
+		name="esercizioCompetenza" />
+	<findFieldProperty
+		name="dtCancellazione" />
+	<columnFieldProperty
+		name="cdTipoAmmortamento" />
+	<columnFieldProperty
+		name="tiAmmortamento" />
+	<columnFieldProperty
+		name="cdCategoriaGruppo" />
+	<columnFieldProperty
+		name="esercizioCompetenza" />
+	<columnFieldProperty
+		name="dtCancellazione" />
+</bulkInfo>

@@ -21,9 +21,12 @@ import javax.ejb.Stateless;
 
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.inventario00.comp.Inventario_beniComponent;
+import it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invBulk;
+import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.jada.UserContext;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 
 @Stateless(name="CNRINVENTARIO00_EJB_Inventario_beniComponentSession")
@@ -230,6 +233,20 @@ public Boolean isContab(it.cnr.jada.UserContext param0,it.cnr.contab.inventario0
 			component_invocation_failure(param0,componentObj);
 			throw e;
 		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
+	@Override
+	public Inventario_beniBulk getBeneInventario(UserContext param0,Long param1,Long param2, Long param3) throws RemoteException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			Inventario_beniBulk result = ((Inventario_beniComponent)componentObj).getBeneInventario(param0,param1,param2,param3);
+			component_invocation_succes(param0,componentObj);
+			return result;
+		}catch(RuntimeException e) {
 			throw uncaughtRuntimeException(param0,componentObj,e);
 		} catch(Error e) {
 			throw uncaughtError(param0,componentObj,e);
