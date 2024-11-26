@@ -26,7 +26,6 @@ import it.cnr.contab.anagraf00.tabter.bulk.NazioneBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.docamm00.fatturapa.bulk.*;
-import it.cnr.contab.docamm00.intrastat.bulk.Fattura_attiva_intraBulk;
 import it.cnr.contab.docamm00.intrastat.bulk.Fattura_passiva_intraBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk;
@@ -454,9 +453,10 @@ public abstract class Fattura_passivaBulk
         if ( Optional.ofNullable(getFattura_passiva_intrastatColl()).isPresent()){
             BigDecimal totAmmontareIntrastat = BigDecimal.ZERO;
             for (Iterator i = getFattura_passiva_intrastatColl().iterator(); i.hasNext(); ) {
-                Fattura_attiva_intraBulk riga = (Fattura_attiva_intraBulk) i.next();
+                Fattura_passiva_intraBulk riga = (Fattura_passiva_intraBulk) i.next();
                 totAmmontareIntrastat = totAmmontareIntrastat.add(riga.getAmmontare_euro());
             }
+            return totAmmontareIntrastat;
         }
         return BigDecimal.ZERO;
     }

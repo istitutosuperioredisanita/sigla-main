@@ -2664,7 +2664,7 @@ public class CRUDFatturaAttivaAction extends EconomicaAction {
             CRUDFatturaAttivaBP bp = (CRUDFatturaAttivaBP) context.getBusinessProcess();
             Fattura_attivaBulk fatturaAttivaBulk = (Fattura_attivaBulk) bp.getModel();
             if (bp.isAttivoChekcImpIntrastat() && fatturaAttivaBulk.validaImportoDettagliIntrastat())
-                return openConfirm(context, "Attenzione! La somma dell'ammontare dei dettagli Intrastat supera l'importo massimo supera l'importo massimo  "+ fatturaAttivaBulk.getImportoIntrastatTotDaRighe().toString()+". Vuoi continuare?", OptionBP.CONFIRM_YES_NO, "doConfirmImportoIntrastat");
+                return openConfirm(context, "Attenzione! La somma dell'ammontare dei dettagli Intrastat supera l'importo massimo supera l'importo massimo  "+ Utility.NumberToText(fatturaAttivaBulk.getImportoIntrastatTotRighe())+". Vuoi continuare?", OptionBP.CONFIRM_YES_NO, "doConfirmImportoIntrastat");
             return doConfirmImportoIntrastat(context, OptionBP.YES_BUTTON);
         } catch (Throwable e) {
             return super.handleException(context, e);

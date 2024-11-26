@@ -31,7 +31,7 @@ import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.docamm00.ejb.CategoriaGruppoInventComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.docamm00.ejb.VoceIvaComponentSession;
-import it.cnr.contab.docamm00.intrastat.bulk.Fattura_attiva_intraBulk;
+import it.cnr.contab.docamm00.intrastat.bulk.Fattura_passiva_intraBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.*;
 import it.cnr.contab.doccont00.bp.CRUDMandatoBP;
 import it.cnr.contab.doccont00.bp.CRUDVirtualObbligazioneBP;
@@ -4420,12 +4420,13 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
     private void setWarningInstrat(ActionContext context){
         CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) getBusinessProcess(context);
         Fattura_passivaBulk fatturaPassivaBulk = (Fattura_passivaBulk) bp.getModel();
-        if ( bp.isAttivoChekcImpIntrastat() && fatturaPassivaBulk.validaImportoDettagliIntrastat()){
+        if ( bp.isAttivoChekcImpIntrastat() ){
+            Boolean warningInvio=fatturaPassivaBulk.validaImportoDettagliIntrastat();
             if ( Optional.ofNullable(fatturaPassivaBulk.getFattura_passiva_intrastatColl()).isPresent()){
                 BigDecimal totAmmontareIntrastat = BigDecimal.ZERO;
                 for (Iterator i = fatturaPassivaBulk.getFattura_passiva_intrastatColl().iterator(); i.hasNext(); ) {
-                    Fattura_attiva_intraBulk riga = (Fattura_attiva_intraBulk) i.next();
-                    //riga.set
+                    Fattura_passiva_intraBulk riga = (Fattura_passiva_intraBulk) i.next();
+                    riga.setWarningInvio(warningInvio);
                 }
             }
         }
@@ -4433,7 +4434,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
     public Forward doConfirmSalva(ActionContext context, int option) throws java.rmi.RemoteException {
         try {
             if (option == OptionBP.YES_BUTTON) {
-
+                setWarningInstrat(context);
                 Forward fwd = super.doSalva(context);
 
                 CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) getBusinessProcess(context);

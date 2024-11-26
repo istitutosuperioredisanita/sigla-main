@@ -175,7 +175,14 @@
 			propertyName="nr_progressivo"
 			sqlTypeName="DECIMAL"
 			columnSize="5"
-			nullable="true" />			
+			nullable="true" />
+		<columnMapping
+			columnName="WARNING_INVIO"
+			propertyName="warningInvio"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false"
+			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="pg_nazione_provenienza" />
@@ -232,5 +239,7 @@
 	<persistentProperty
 		name="nr_protocollo" />
 	<persistentProperty
-		name="nr_progressivo" />			
+		name="nr_progressivo" />
+	<persistentProperty
+		name="warningInvio" />
 </SQLPersistentInfo>

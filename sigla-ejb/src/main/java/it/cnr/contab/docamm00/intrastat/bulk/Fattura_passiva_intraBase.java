@@ -17,10 +17,7 @@
 
 package it.cnr.contab.docamm00.intrastat.bulk;
 
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
+import it.cnr.jada.persistency.Keyed;
 
 public class Fattura_passiva_intraBase extends Fattura_passiva_intraKey implements Keyed {
 	// AMMONTARE_DIVISA DECIMAL(15,2) NOT NULL
@@ -75,6 +72,8 @@ public class Fattura_passiva_intraBase extends Fattura_passiva_intraKey implemen
 	
 	private java.lang.String nr_protocollo;
 	private java.lang.Integer nr_progressivo;
+
+	private java.lang.Boolean warningInvio;
 	
 
 public Fattura_passiva_intraBase() {
@@ -270,4 +269,12 @@ public java.lang.Integer getNr_progressivo() {
 public void setNr_progressivo(java.lang.Integer nr_progressivo) {
 	this.nr_progressivo = nr_progressivo;
 }
+
+	public Boolean getWarningInvio() {
+		return warningInvio;
+	}
+
+	public void setWarningInvio(Boolean warningInvio) {
+		this.warningInvio = warningInvio;
+	}
 }
