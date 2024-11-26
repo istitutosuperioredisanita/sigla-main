@@ -17,24 +17,6 @@
 
 package it.cnr.contab.docamm00.actions;
 
-import java.rmi.RemoteException;
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.ejb.EJBException;
-
-import it.cnr.contab.anagraf00.core.bulk.TelefonoBulk;
-import it.cnr.contab.docamm00.docs.bulk.*;
-import it.cnr.contab.doccont00.bp.CRUDMandatoBP;
-import it.cnr.contab.doccont00.core.bulk.*;
-import it.cnr.contab.util.enumeration.TipoIVA;
-import it.cnr.jada.ejb.CRUDComponentSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
@@ -46,25 +28,14 @@ import it.cnr.contab.config00.bulk.CigBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.docamm00.bp.*;
 import it.cnr.contab.docamm00.docs.bulk.*;
-import it.cnr.contab.docamm00.bp.CRUDFatturaPassivaBP;
-import it.cnr.contab.docamm00.bp.CRUDFatturaPassivaIBP;
-import it.cnr.contab.docamm00.bp.CRUDNotaDiCreditoBP;
-import it.cnr.contab.docamm00.bp.CRUDNotaDiDebitoBP;
-import it.cnr.contab.docamm00.bp.ContabilizzaOrdineBP;
-import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoBP;
-import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoSpesaBP;
-import it.cnr.contab.docamm00.bp.RisultatoEliminazioneBP;
-import it.cnr.contab.docamm00.bp.TitoloDiCreditoDebitoBP;
 import it.cnr.contab.docamm00.ejb.CategoriaGruppoInventComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.docamm00.ejb.VoceIvaComponentSession;
 import it.cnr.contab.docamm00.tabrif.bulk.*;
+import it.cnr.contab.doccont00.bp.CRUDMandatoBP;
 import it.cnr.contab.doccont00.bp.CRUDVirtualObbligazioneBP;
 import it.cnr.contab.doccont00.comp.DateServices;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
-import it.cnr.contab.doccont00.core.bulk.OptionRequestParameter;
-import it.cnr.contab.doccont00.core.bulk.SospesoBulk;
+import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.doccont00.ejb.ObbligazioneAbstractComponentSession;
 import it.cnr.contab.inventario00.bp.AssBeneFatturaBP;
 import it.cnr.contab.inventario00.docs.bulk.Ass_inv_bene_fatturaBulk;
@@ -92,6 +63,7 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
@@ -4421,21 +4393,67 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
         return super.doRiportaSelezione(context);
     }
 
+
+    public Forward doConfirmImportoIntrastat(ActionContext actioncontext, int option) {
+        try {
+            if (option == OptionBP.YES_BUTTON) {
+                return doConfirmSalva(actioncontext, OptionBP.YES_BUTTON);
+            }
+            return doConfirmSalva(actioncontext, OptionBP.NO_BUTTON);
+        } catch (Throwable e) {
+            return handleException(actioncontext, e);
+        }
+    }
+    public Forward doSelezionaRigaIntrastatDaVerifica(ActionContext actioncontext) {
+        try {
+            fillModel(actioncontext);
+            CRUDFatturaPassivaIBP bp = (CRUDFatturaPassivaIBP) actioncontext.getBusinessProcess();
+            super.doTab(actioncontext, "tab", "tabFatturaPassivaIntrastat");
+            bp.doSelezionaRigaIntrastatDaVerifica(actioncontext);
+            return actioncontext.findDefaultForward();
+        } catch (Exception exception) {
+            return handleException(actioncontext, exception);
+        }
+    }
+
+    public Forward doConfirmSalva(ActionContext context, int option) throws java.rmi.RemoteException {
+        try {
+            if (option == OptionBP.YES_BUTTON) {
+                Forward fwd = super.doSalva(context);
+
+                CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) getBusinessProcess(context);
+
+                //Azzero la selezione del controller obbligazioni per forzare il calcolo dei dettagli
+                //associati all'obbligazione selezionata
+
+                bp.getObbligazioniController().setModelIndex(context, -1);
+                return fwd;
+            }
+            return doSelezionaRigaIntrastatDaVerifica(context);
+        } catch (Throwable e) {
+            return handleException(context, e);
+        }
+    }
+
+
+
+
     /**
      * Gestisce una richiesta di salvataggio. Rimplementato
      */
     public Forward doSalva(ActionContext context) throws java.rmi.RemoteException {
+        try {
+            //Controllo importi
+            CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) context.getBusinessProcess();
+            Fattura_passivaBulk fatturaPassivaBulk = (Fattura_passivaBulk) bp.getModel();
+       if (bp.isAttivoChekcImpIntrastat() && fatturaPassivaBulk.checkImportoDettagliIntrastat())
+           return openConfirm(context, "Attenzione! Alcune righe relative alle informazioni Intrastat hanno ammontare che supera l'importo massimo  "+ fatturaPassivaBulk.getImportoTotInstrat().toString()+". Vuoi continuare?", OptionBP.CONFIRM_YES_NO, "doConfirmImportoIntrastat");
+       return doConfirmImportoIntrastat(context, OptionBP.YES_BUTTON);
+        } catch (Throwable e) {
+            return super.handleException(context, e);
+        }
 
-        Forward fwd = super.doSalva(context);
 
-        CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) getBusinessProcess(context);
-
-        //Azzero la selezione del controller obbligazioni per forzare il calcolo dei dettagli
-        //associati all'obbligazione selezionata
-
-        bp.getObbligazioniController().setModelIndex(context, -1);
-
-        return fwd;
     }
 
     public Forward doConfermaRiscontroAValore(ActionContext context) throws BusinessProcessException {

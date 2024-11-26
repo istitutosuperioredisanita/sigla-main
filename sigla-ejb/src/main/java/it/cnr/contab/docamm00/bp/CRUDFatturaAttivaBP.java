@@ -23,7 +23,6 @@ import it.cnr.contab.coepcoan00.bp.EconomicaAvereDetailCRUDController;
 import it.cnr.contab.coepcoan00.bp.EconomicaDareDetailCRUDController;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.docamm00.docs.bulk.*;
-import it.cnr.contab.docamm00.ejb.DocumentoGenericoComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaAttivaSingolaComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.docamm00.intrastat.bulk.Fattura_attiva_intraBulk;
@@ -112,8 +111,13 @@ public abstract class CRUDFatturaAttivaBP
     private boolean esercizioChiuso = false;
 
     protected boolean attivaInventaria = true;
+    protected boolean attivoCheckImpIntrastat = false;
     public CRUDFatturaAttivaBP() {
         this(Fattura_attiva_rigaBulk.class);
+    }
+
+    public Boolean isAttivoChekcImpIntrastat(){
+        return attivoCheckImpIntrastat;
     }
 
     /**
@@ -424,6 +428,7 @@ public abstract class CRUDFatturaAttivaBP
             int esercizioScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue();
             attivaEconomicaParallela = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(context.getUserContext());
             attivaInventaria= Utility.createConfigurazioneCnrComponentSession().isAttivoInventariaDocumenti(context.getUserContext());
+            attivoCheckImpIntrastat=Utility.createConfigurazioneCnrComponentSession().isCheckImpIntrastatFattAttiva(context.getUserContext());
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
             setAnnoSolareInScrivania(solaris == esercizioScrivania);
             setRibaltato(initRibaltato(context));
@@ -1489,5 +1494,23 @@ public abstract class CRUDFatturaAttivaBP
             return esercizioChiuso;
         }
         return super.isInputReadonlyFieldName(fieldName);
+    }
+    public void doSelezionaRigaIntrastatDaVerifica(ActionContext actioncontext) throws it.cnr.jada.action.BusinessProcessException {
+        Fattura_attivaBulk fatturaAttivaBulk = (Fattura_attivaBulk) getModel();
+        Fattura_attiva_intraBulk rigaDaCompletare = null;
+        if (fatturaAttivaBulk != null) {
+            for (Iterator i = fatturaAttivaBulk.getFattura_attiva_intrastatColl().iterator(); i.hasNext(); ) {
+                Fattura_attiva_intraBulk riga = (Fattura_attiva_intraBulk) i.next();
+                if (!Boolean.FALSE) {
+                    rigaDaCompletare = riga;
+                    break;
+                }
+            }
+        }
+        if (rigaDaCompletare != null) {
+            dettaglioIntrastatController.getSelection().setFocus(dettaglioIntrastatController.getDetails().indexOf(rigaDaCompletare));
+            dettaglioIntrastatController.setModelIndex(actioncontext, dettaglioIntrastatController.getDetails().indexOf(rigaDaCompletare));
+            resyncChildren(actioncontext);
+        }
     }
 }

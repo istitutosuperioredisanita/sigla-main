@@ -115,4 +115,6 @@
     <include file="iss/update_dicitura_bollo_su_report.xml"></include>
     <!-- Autore : CIRO SALVIO -Aggiunta configurazione per disabilitare la possibilità di aggiungere modalità di pagamento per i dipendenti -->
     <include file="iss/update_conf_get_modpap_dip.xml"/>
+    <!-- Autore : CIRO SALVIO -Abilita controllo importo INTRASTAT -->
+    <include file="iss/update_configurazioneCnr_check_intrastat.xml"/>
 </databaseChangeLog>

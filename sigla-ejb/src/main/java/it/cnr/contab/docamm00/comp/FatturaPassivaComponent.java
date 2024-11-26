@@ -6843,6 +6843,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
 
         if (fatturaPassiva instanceof Fattura_passiva_IBulk &&
                 (fatturaPassiva.isBollaDoganale() || fatturaPassiva.isSpedizioniere()) &&
+                (!fatturaPassiva.isFromAmministra()) &&
                 ((Fattura_passiva_IBulk) fatturaPassiva).getFattura_estera() == null)
             throw new it.cnr.jada.comp.ApplicationException("La fattura è definita come bolla doganale o spedizioniere. Specificare la fattura estera collegata!");
 
