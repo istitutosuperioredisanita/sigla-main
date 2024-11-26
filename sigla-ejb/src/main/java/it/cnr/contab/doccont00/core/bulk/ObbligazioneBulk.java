@@ -2022,12 +2022,13 @@ public void validateTerzo( it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo ) t
 	}
 
 	public Obbligazione_pluriennaleBulk removeFromObbligazioniPluriennali(int index) {
-		Obbligazione_pluriennaleBulk dett = (Obbligazione_pluriennaleBulk)getObbligazioniPluriennali().remove(index);
+		Obbligazione_pluriennaleBulk dett = (Obbligazione_pluriennaleBulk)getObbligazioniPluriennali().get(index);
+
+		//dett.getRigheVoceColl().removeAll(dett.getRigheVoceColl());
+
+		getObbligazioniPluriennali().remove(index);
 		return dett;
 	}
-
-
-
 
 	public WorkpackageBulk getGaeDestinazioneFinale() {
 		return gaeDestinazioneFinale;
@@ -2036,4 +2037,7 @@ public void validateTerzo( it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo ) t
 	public void setGaeDestinazioneFinale(WorkpackageBulk gaeDestinazioneFinale) {
 		this.gaeDestinazioneFinale = gaeDestinazioneFinale;
 	}
+
+
+
 }

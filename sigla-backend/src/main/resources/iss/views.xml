@@ -48,4 +48,8 @@
     <changeSet author="valentina.tomada" runOnChange="true" id="create-view-V_INVENTARIO_SGR">
         <sqlFile dbms="oracle" path="../isssigladb/View/V_INVENTARIO_SGR.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="valentina.tomada" runOnChange="true" id="create-view-V_SALDI_PLURIENNALI_VOCE_PROGETTO">
+        <sqlFile dbms="oracle" path="../isssigladb/View/V_SALDI_PLURIENNALI_VOCE_PROGETTO.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+
 </databaseChangeLog>

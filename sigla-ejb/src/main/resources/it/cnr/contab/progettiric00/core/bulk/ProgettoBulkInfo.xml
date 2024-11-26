@@ -18,7 +18,7 @@
 
 <bulkInfo
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xmlns="https://contab.cnr.it/schema/SIGLA"
 		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
 	<fieldProperty
 		name="cd_unita_organizzativa"
@@ -158,7 +158,7 @@
 		inputType="TEXT"
 		enabledOnSearch="true"
 		label="Codice Fiscale"
-		nullable="true"		
+		nullable="true"
 		/>
 	<fieldProperty
 		name="responsabile"
@@ -420,7 +420,7 @@
 		nullable="false"
 		readonlyProperty="RODipartimento"
 		caseSensitiveSearch="true" />
-		
+
 	<fieldProperty
 		name="ds_dipartimento"
 		property="dipartimento.ds_dipartimento"
@@ -616,7 +616,7 @@
 		inputSize="20"
 		maxLength="20"
 		nullable="false"
-		enabledOnFreeSearch="true" />	
+		enabledOnFreeSearch="true" />
 	<fieldProperty
 		name="ds_programma"
 		property="pdgProgramma.ds_programma"
@@ -624,7 +624,7 @@
 		inputType="ROTEXT"
 		inputSize="30"
 		maxLength="30"
-		enabledOnFreeSearch="false" />	
+		enabledOnFreeSearch="false" />
 	<fieldProperty
 		name="desctool_programma"
 		property="pdgProgramma.cd_programma"
@@ -651,7 +651,7 @@
 		inputType="TEXT"
 		inputSize="20"
 		maxLength="20"
-		enabledOnFreeSearch="true" />	
+		enabledOnFreeSearch="true" />
 	<fieldProperty
 		name="ds_missione"
 		property="pdgMissione.ds_missione"
@@ -659,7 +659,7 @@
 		inputType="ROTEXT"
 		inputSize="30"
 		maxLength="30"
-		enabledOnFreeSearch="false" />	
+		enabledOnFreeSearch="false" />
 	<fieldProperty
 		name="desctool_missione"
 		property="pdgMissione.cd_missione"
@@ -670,7 +670,7 @@
 		inputSize="30"
 		maxLength="40"
 		nullable="false"
-		label="Missione" />				
+		label="Missione" />
 	<fieldProperty
 		name="fl_previsione"
 		property="fl_previsione"
@@ -685,7 +685,7 @@
 		property="fl_gestione"
 		label="Gestione"
 		enabledOnEdit="true"
-		enabledOnInsert="true"				
+		enabledOnInsert="true"
 		inputType="CHECKBOX"
 		enabledOnSearch="true"
 		enabledOnFreeSearch="false" />
@@ -868,7 +868,15 @@
 		formatName="it.cnr.contab.util.EuroFormat"
 		enabledOnSearch="true"
 		label="Importo Totale da Ripartire" />
-		
+
+	<fieldProperty
+		name="flAutoRimod"
+		property="otherField.flAutoRimodulazioneEnable"
+		inputType="CHECKBOX"
+		enabledOnEdit="true"
+		enabledOnInsert="false"
+		command="doOnflAutoRimodOfChange"
+		label="Auto Rimodulazione" />
 	<form
 		name="searchtool" >
 		<formFieldProperty
@@ -937,7 +945,7 @@
 	<formFieldProperty
 		name="cd_progetto_padre_commessa" />
 	<formFieldProperty
-		name="ds_progetto_padre" />		
+		name="ds_progetto_padre" />
 	<formFieldProperty
 		name="livello" />
 	<formFieldProperty
@@ -1001,7 +1009,7 @@
 	<formFieldProperty
 		name="ds_programma"/>
 	<formFieldProperty
-		name="desctool_programma" />	
+		name="desctool_programma" />
 
 	<formFieldProperty
 		name="find_missione"/>
@@ -1010,7 +1018,7 @@
 	<formFieldProperty
 		name="ds_missione"/>
 	<formFieldProperty
-		name="desctool_missione" />	
+		name="desctool_missione" />
 
 	<formFieldProperty
 		name="fl_previsione" />
@@ -1052,7 +1060,7 @@
 		name="dtSvincoloFideiussioneOf" />
 	<formFieldProperty
 		name="idEsternoFideiussioneOf" />
-		
+
 	<formFieldProperty
 		name="imTotale" />
 	<formFieldProperty
@@ -1067,6 +1075,10 @@
 		name="imCofinanziatoDaRipartire" />
 	<formFieldProperty
 		name="imTotaleDaRipartire" />
+	<formFieldProperty
+			name="flAutoRimod" />
+
+
 
 	<columnFieldProperty
 		name="livello" />
@@ -1118,7 +1130,7 @@
 		<columnFieldProperty
 			name="cd_progetto" />
 		<columnFieldProperty
-			name="cd_progetto_padre" 
+			name="cd_progetto_padre"
 			label="Codice Commessa"/>
 		<columnFieldProperty
 			name="tipo_fase" />
@@ -1156,7 +1168,7 @@
 		<columnFieldProperty
 			name="note" />
 	</columnSet>
-	
+
 	<columnSet name="nuovoPdg">
 		<columnFieldProperty
 			name="livello2016" />
@@ -1197,7 +1209,7 @@
 		<columnFieldProperty
 			name="note" />
 	</columnSet>
-	
+
 	<columnSet name="nuovoPdgLiv1">
 		<columnFieldProperty
 			name="livello2016" />
@@ -1352,7 +1364,7 @@
 		<columnFieldProperty
 			name="note" />
 	</columnSet>
-	
+
 	<columnSet
 		name="filtro_ricerca_prog2">
 		<columnFieldProperty
@@ -1452,7 +1464,7 @@
 		name="stato" />
 	<findFieldProperty
 		name="durata_progetto" />
-		
+
 	<freeSearchSet
 		name="filtro_ricerca_moduli">
 		<findFieldProperty
@@ -1563,7 +1575,7 @@
 			name="durata_progetto" />
 		<findFieldProperty
 			name="note" />
-	</freeSearchSet>		
+	</freeSearchSet>
 
 	<freeSearchSet
 		name="filtro_ricerca_aree">
@@ -1590,7 +1602,7 @@
 		<findFieldProperty
 			name="note" />
 	</freeSearchSet>
-	
+
 	<freeSearchSet
 		name="filtro_ricerca_prog2">
 		<findFieldProperty
@@ -1599,10 +1611,10 @@
 			name="cd_progetto_padre"
 			label="Area Progettuale"/>
 		<findFieldProperty
-			name="cd_unita_organizzativa" 
+			name="cd_unita_organizzativa"
 			label="UO Coordinatrice"/>
 		<findFieldProperty
-			name="ds_progetto" 
+			name="ds_progetto"
 			label="Descrizione Progetto"/>
 		<findFieldProperty
 			name="imFinanziatoOf" />
@@ -1630,36 +1642,36 @@
 			inputType="ROTEXT"
 			name="ds_progetto"/>
 	</form>
-	
-	
+
+
 	<form
 		name="searchtool_modulo" >
 		<formFieldProperty
 			name="cd_progetto"
-		    inputSize="30" 
+		    inputSize="30"
 		    label="Modulo"/>
 		<formFieldProperty
-			name="ds_progetto" 
+			name="ds_progetto"
 			inputType="ROTEXT"
 		    inputSize="100" />
-		    
+
 	</form>
-		
+
 	<form
 		name="searchtool_commessa" >
 		<formFieldProperty
 			name="cd_progetto"
-		    inputSize="30" 
+		    inputSize="30"
 		    label="Commessa"/>
 		<formFieldProperty
-			name="ds_progetto" 
+			name="ds_progetto"
 			inputType="ROTEXT"
 		    inputSize="100" />
 	</form>
-	
+
 	<columnSet name="filtro_ricerca_aree_short">
 		<columnFieldProperty
-			name="cd_progetto_area" 
+			name="cd_progetto_area"
 			label="Area Progettuale" />
 		<columnFieldProperty
 			name="ds_progetto" />

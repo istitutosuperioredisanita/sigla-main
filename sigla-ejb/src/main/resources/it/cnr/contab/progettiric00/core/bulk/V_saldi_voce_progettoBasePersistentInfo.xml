@@ -49,6 +49,7 @@
 			sqlTypeName="DECIMAL" columnSize="15" columnScale="2" />
 		<columnMapping columnName="MANRIS_COFIN" propertyName="manrisCofin"
 			sqlTypeName="DECIMAL" columnSize="15" columnScale="2" />
+
 	</defaultColumnMap>
 
 	<persistentProperty name="stanziamentoFin" />
@@ -65,4 +66,5 @@
 	<persistentProperty name="impaccCofin" />
 	<persistentProperty name="manrisFin" />
 	<persistentProperty name="manrisCofin" />
+
 </SQLPersistentInfo>

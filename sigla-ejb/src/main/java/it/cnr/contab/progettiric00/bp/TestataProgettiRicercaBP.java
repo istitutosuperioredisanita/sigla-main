@@ -37,6 +37,8 @@ import it.cnr.contab.progettiric00.tabrif.bulk.Voce_piano_economico_prgBulk;
 import it.cnr.contab.reports.bp.OfflineReportPrintBP;
 import it.cnr.contab.reports.bulk.Print_spooler_paramBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.utenze00.bulk.CNRUserInfo;
+import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoTypeBulk;
@@ -1000,6 +1002,12 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
 				.filter(ProgettoBulk.class::isInstance).map(ProgettoBulk.class::cast)
 				.orElse(null));
 	}
+
+	public boolean isROFlagAutoRimod(CNRUserInfo ui){
+        UtenteBulk utente = ui.getUtente();
+
+        return !utente.isSupervisore();
+    }
     
     @Override
     protected String getStorePath(ProgettoBulk allegatoParentBulk, boolean create) throws BusinessProcessException {

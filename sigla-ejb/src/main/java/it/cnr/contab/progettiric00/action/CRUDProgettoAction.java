@@ -20,6 +20,7 @@ package it.cnr.contab.progettiric00.action;
 import it.cnr.contab.config00.bp.CRUDConfigAnagContrattoBP;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
 import it.cnr.contab.config00.contratto.bulk.Dettaglio_contrattoBulk;
+import it.cnr.contab.doccont00.core.bulk.Obbligazione_pluriennale_voceBulk;
 import it.cnr.contab.pdg00.bp.PdGVariazioneBP;
 import it.cnr.contab.progettiric00.bp.AmministraTestataProgettiRicercaBP;
 import it.cnr.contab.progettiric00.bp.ProgettoAlberoBP;
@@ -28,14 +29,17 @@ import it.cnr.contab.progettiric00.bp.TestataProgettiRicercaBP;
 import it.cnr.contab.progettiric00.core.bulk.*;
 import it.cnr.contab.progettiric00.enumeration.StatoProgetto;
 import it.cnr.contab.progettiric00.tabrif.bulk.Voce_piano_economico_prgBulk;
+import it.cnr.contab.utenze00.action.GestioneUtenteAction;
 import it.cnr.contab.utenze00.bulk.CNRUserInfo;
 import it.cnr.jada.action.*;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.FillException;
 import it.cnr.jada.comp.ApplicationException;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.*;
 
 import java.math.BigDecimal;
+import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.List;
@@ -529,6 +533,37 @@ public class CRUDProgettoAction extends CRUDAbstractProgettoAction {
 		}
 	}
 
+	public Forward doOnflAutoRimodOfChange(ActionContext context) throws BusinessProcessException, ComponentException, RemoteException, FillException {
+
+		TestataProgettiRicercaBP bp= (TestataProgettiRicercaBP) getBusinessProcess(context);
+		ProgettoBulk progetto = (ProgettoBulk) bp.getModel();
+
+		boolean checkProgettoOld = progetto.getOtherField().getFlAutoRimodulazioneEnable();
+		try {
+			fillModel(context);
+
+			List<Obbligazione_pluriennale_voceBulk> plurList = bp.createComponentSession().find(context.getUserContext(), ProgettoBulk.class, "findObbligazioniPluriennaliFromProgetto", progetto.getPg_progetto(), progetto.getEsercizio());
+
+			if (plurList != null && !plurList.isEmpty()) {
+				progetto.getOtherField().setFlAutoRimodulazioneEnable(checkProgettoOld);
+				throw new MessageToUser("Non è possibile modificare il campo AUTO RIMODULAZIONE perchè presenti obbligazioni pluriennali");
+			}
+			return context.findDefaultForward();
+		}
+		catch (Throwable ex) {
+
+			progetto.getOtherField().setFlAutoRimodulazioneEnable(checkProgettoOld);
+			try
+			{
+				return handleException(context, ex);
+			}
+			catch (Throwable e)
+			{
+				return handleException(context, e);
+			}
+		}
+	}
+
 	public Forward doOnDtFineFideiussioneOfChange(ActionContext context) {
 		TestataProgettiRicercaBP bp = (TestataProgettiRicercaBP)getBusinessProcess(context);
 		Optional<ProgettoBulk> optProgetto = Optional.ofNullable(bp.getModel())
@@ -539,9 +574,9 @@ public class CRUDProgettoAction extends CRUDAbstractProgettoAction {
 
 		Optional<Timestamp> optData = optOtherField.flatMap(el->Optional.ofNullable(el.getDtFineFideiussione()));
 	
-		java.sql.Timestamp oldDate=null;
+		Timestamp oldDate=null;
 		if (optData.isPresent())
-			oldDate = (java.sql.Timestamp)optData.get().clone();
+			oldDate = (Timestamp)optData.get().clone();
 	
 		try {
 			fillModel(context);
@@ -637,9 +672,9 @@ public class CRUDProgettoAction extends CRUDAbstractProgettoAction {
 
 				RimodulaProgettiRicercaBP newbp = null;
 				// controlliamo prima che abbia l'accesso al BP per dare un messaggio più preciso
-				String mode = it.cnr.contab.utenze00.action.GestioneUtenteAction.getComponentSession().validaBPPerUtente(context.getUserContext(),((CNRUserInfo)context.getUserInfo()).getUtente(),((CNRUserInfo)context.getUserInfo()).getUtente().isUtenteComune() ? ((CNRUserInfo)context.getUserInfo()).getUnita_organizzativa().getCd_unita_organizzativa() : "*","RimodulaProgettiRicercaBP");
+				String mode = GestioneUtenteAction.getComponentSession().validaBPPerUtente(context.getUserContext(),((CNRUserInfo)context.getUserInfo()).getUtente(),((CNRUserInfo)context.getUserInfo()).getUtente().isUtenteComune() ? ((CNRUserInfo)context.getUserInfo()).getUnita_organizzativa().getCd_unita_organizzativa() : "*","RimodulaProgettiRicercaBP");
 				if (mode == null) 
-					throw new it.cnr.jada.action.MessageToUser("Accesso non consentito alla mappa di rimodulazione progetti. Impossibile continuare.");
+					throw new MessageToUser("Accesso non consentito alla mappa di rimodulazione progetti. Impossibile continuare.");
 
 				newbp = (RimodulaProgettiRicercaBP) context.getUserInfo().createBusinessProcess(context,"RimodulaProgettiRicercaBP",new Object[] { function,  progetto});
 				newbp.setBringBack(true);
@@ -682,12 +717,12 @@ public class CRUDProgettoAction extends CRUDAbstractProgettoAction {
 			TestataProgettiRicercaBP bp= (TestataProgettiRicercaBP) getBusinessProcess(context);
 
 			// controlliamo prima che abbia l'accesso al BP per dare un messaggio più preciso
-			String mode = it.cnr.contab.utenze00.action.GestioneUtenteAction.getComponentSession().validaBPPerUtente(context.getUserContext(),((CNRUserInfo)context.getUserInfo()).getUtente(),((CNRUserInfo)context.getUserInfo()).getUtente().isUtenteComune() ? ((CNRUserInfo)context.getUserInfo()).getUnita_organizzativa().getCd_unita_organizzativa() : "*","CRUDConfigAnagContrattoBP");
+			String mode = GestioneUtenteAction.getComponentSession().validaBPPerUtente(context.getUserContext(),((CNRUserInfo)context.getUserInfo()).getUtente(),((CNRUserInfo)context.getUserInfo()).getUtente().isUtenteComune() ? ((CNRUserInfo)context.getUserInfo()).getUnita_organizzativa().getCd_unita_organizzativa() : "*","CRUDConfigAnagContrattoBP");
 			if (mode == null) 
-				throw new it.cnr.jada.action.MessageToUser("Accesso non consentito alla mappa del contratto. Impossibile continuare.");
+				throw new MessageToUser("Accesso non consentito alla mappa del contratto. Impossibile continuare.");
 
 			if (!Optional.ofNullable(crudController.getModel()).isPresent())
-				throw new it.cnr.jada.action.MessageToUser("Selezionare il contratto al quale si vuole accesso.");
+				throw new MessageToUser("Selezionare il contratto al quale si vuole accesso.");
 
 			CRUDConfigAnagContrattoBP newbp = (CRUDConfigAnagContrattoBP) context.getUserInfo().createBusinessProcess(context,"CRUDConfigAnagContrattoBP",new Object[] { "V", (ContrattoBulk)crudController.getModel(), "V"});
 			return context.addBusinessProcess(newbp);
@@ -720,7 +755,7 @@ public class CRUDProgettoAction extends CRUDAbstractProgettoAction {
             if(i == 4)
             {
             	TestataProgettiRicercaBP bulkbp = (TestataProgettiRicercaBP)actioncontext.getBusinessProcess();
-                it.cnr.jada.action.BusinessProcess businessprocess = actioncontext.createBusinessProcess(bulkbp.getPrintbp());
+                BusinessProcess businessprocess = actioncontext.createBusinessProcess(bulkbp.getPrintbp());
                 bulkbp.initializePrintSinteticaBP((AbstractPrintBP)businessprocess);
                 if (bulkbp.getTransactionPolicy()!= BusinessProcess.IGNORE_TRANSACTION)
                 	actioncontext.closeBusinessProcess(bulkbp);

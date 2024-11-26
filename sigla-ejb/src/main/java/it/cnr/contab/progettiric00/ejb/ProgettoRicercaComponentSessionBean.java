@@ -22,8 +22,12 @@ import javax.ejb.Stateless;
 
 import it.cnr.contab.prevent01.bulk.Pdg_esercizioBulk;
 import it.cnr.contab.progettiric00.comp.ProgettoRicercaComponent;
-import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
+import it.cnr.contab.progettiric00.core.bulk.*;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 @Stateless(name="CNRPROGETTIRIC00_EJB_ProgettoRicercaComponentSession")
@@ -372,6 +376,26 @@ public Pdg_esercizioBulk getPdgEsercizio(it.cnr.jada.UserContext param0) throws 
 			throw uncaughtRuntimeException(param0,componentObj,e);
 		} catch(Error e) {
 			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
+	@Override
+	public List<V_saldi_piano_econom_progettoBulk> getPluriennaliProgettoPianoEco(UserContext userContext, Progetto_piano_economicoBulk bulk) throws ComponentException, PersistencyException, RemoteException {
+		pre_component_invocation(userContext,componentObj);
+		try {
+			List<V_saldi_piano_econom_progettoBulk> result = ((ProgettoRicercaComponent)componentObj).getPluriennaliProgettoPianoEco(userContext,bulk);
+			component_invocation_succes(userContext,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(userContext,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(userContext,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(userContext,componentObj,e);
 		}
 	}
 }

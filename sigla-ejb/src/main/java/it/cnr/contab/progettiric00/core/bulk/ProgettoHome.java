@@ -33,10 +33,7 @@ import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceHome;
 import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.doccont00.comp.DateServices;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_mod_voceBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_modificaBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_scad_voceBulk;
+import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk;
 import it.cnr.contab.pdg01.bulk.Pdg_variazione_riga_gestBulk;
 import it.cnr.contab.prevent01.bulk.Pdg_moduloBulk;
@@ -1089,4 +1086,92 @@ public class ProgettoHome extends BulkHome {
 		return this.fetchAll(sql);
 	}
 
+	public ProgettoBulk selectProgettoDaLineaAttivita(it.cnr.jada.UserContext aUC, V_pdg_obbligazione_speBulk obbSpe) throws PersistencyException, IntrospectionException{
+		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class);
+		SQLBuilder sql = progettohome.createSQLBuilder();
+
+		sql.addTableToHeader("PROGETTO_OTHER_FIELD");
+		sql.addSQLJoin("PROGETTO.PG_PROGETTO", "PROGETTO_OTHER_FIELD.PG_PROGETTO");
+		sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS,obbSpe.getEsercizio());
+		sql.addSQLClause("AND","CD_PROGETTO",sql.EQUALS,obbSpe.getCd_progetto());
+		sql.addSQLClause("AND","TIPO_FASE",sql.EQUALS,ProgettoBulk.TIPO_FASE_NON_DEFINITA);
+
+		java.util.Collection coll = this.fetchAll(sql);
+		if (coll.size() != 1)
+			return null;
+
+		return  (ProgettoBulk)coll.iterator().next();
+
+	}
+	public ProgettoBulk selectProgettoDaLineaAttivita(it.cnr.jada.UserContext aUC, V_pdg_accertamento_etrBulk accEnt) throws PersistencyException, IntrospectionException{
+		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class);
+		SQLBuilder sql = progettohome.createSQLBuilder();
+
+		sql.addTableToHeader("PROGETTO_OTHER_FIELD");
+		sql.addSQLJoin("PROGETTO.PG_PROGETTO", "PROGETTO_OTHER_FIELD.PG_PROGETTO");
+		sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS,accEnt.getEsercizio());
+		sql.addSQLClause("AND","CD_PROGETTO",sql.EQUALS,accEnt.getCd_progetto());
+		sql.addSQLClause("AND","TIPO_FASE",sql.EQUALS,ProgettoBulk.TIPO_FASE_NON_DEFINITA);
+
+		java.util.Collection coll = this.fetchAll(sql);
+		if (coll.size() != 1)
+			return null;
+
+		return  (ProgettoBulk)coll.iterator().next();
+
+	}
+
+	public ProgettoBulk selectProgettoDaLineaAttivita(it.cnr.jada.UserContext aUC, WorkpackageBulk lineaAtt) throws PersistencyException, IntrospectionException{
+		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class);
+		SQLBuilder sql = progettohome.createSQLBuilder();
+
+		sql.addTableToHeader("PROGETTO_OTHER_FIELD");
+		sql.addSQLJoin("PROGETTO.PG_PROGETTO", "PROGETTO_OTHER_FIELD.PG_PROGETTO");
+		sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS,lineaAtt.getEsercizio());
+		sql.addSQLClause("AND","CD_PROGETTO",sql.EQUALS,lineaAtt.getCd_progetto());
+		sql.addSQLClause("AND","TIPO_FASE",sql.EQUALS,ProgettoBulk.TIPO_FASE_NON_DEFINITA);
+
+		java.util.Collection coll = this.fetchAll(sql);
+		if (coll.size() != 1)
+			return null;
+
+		return  (ProgettoBulk)coll.iterator().next();
+
+	}
+	public ProgettoBulk selectProgettoDaLineaAttivita(WorkpackageBulk lineaAtt,Integer esercizio) throws PersistencyException, IntrospectionException{
+		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class);
+		SQLBuilder sql = progettohome.createSQLBuilder();
+
+		sql.addTableToHeader("PROGETTO_OTHER_FIELD");
+		sql.addSQLJoin("PROGETTO.PG_PROGETTO", "PROGETTO_OTHER_FIELD.PG_PROGETTO");
+		sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS,esercizio);
+		sql.addSQLClause("AND","PROGETTO.PG_PROGETTO",sql.EQUALS,lineaAtt.getPg_progetto());
+		sql.addSQLClause("AND","TIPO_FASE",sql.EQUALS,ProgettoBulk.TIPO_FASE_NON_DEFINITA);
+
+		java.util.Collection coll = this.fetchAll(sql);
+		if (coll.size() != 1)
+			return null;
+
+		return  (ProgettoBulk)coll.iterator().next();
+
+	}
+	public java.util.List<Obbligazione_pluriennale_voceBulk> findObbligazioniPluriennaliFromProgetto(Integer pgProgetto,Integer esercizio) throws IntrospectionException, PersistencyException
+	{
+		PersistentHome obbligazionePlurVoceHome = getHomeCache().getHome(Obbligazione_pluriennale_voceBulk.class);
+
+		SQLBuilder sql = obbligazionePlurVoceHome.createSQLBuilder();
+
+		sql.addTableToHeader("PROGETTO_OTHER_FIELD");
+		sql.addTableToHeader("V_LINEA_ATTIVITA_VALIDA");
+
+		sql.addSQLJoin("OBBLIGAZIONE_PLURIENNALE_VOCE.CD_CENTRO_RESPONSABILITA","V_LINEA_ATTIVITA_VALIDA.CD_CENTRO_RESPONSABILITA");
+		sql.addSQLJoin("OBBLIGAZIONE_PLURIENNALE_VOCE.CD_LINEA_ATTIVITA","V_LINEA_ATTIVITA_VALIDA.CD_LINEA_ATTIVITA");
+		sql.addSQLJoin("V_LINEA_ATTIVITA_VALIDA.PG_PROGETTO","PROGETTO_OTHER_FIELD.PG_PROGETTO");
+
+
+		sql.addSQLClause("AND", "OBBLIGAZIONE_PLURIENNALE_VOCE.ESERCIZIO", sql.EQUALS, esercizio);
+		sql.addSQLClause("AND", "PROGETTO_OTHER_FIELD.PG_PROGETTO", sql.EQUALS, pgProgetto);
+
+		return obbligazionePlurVoceHome.fetchAll(sql);
+	}
 }

@@ -24,6 +24,9 @@
 package it.cnr.contab.progettiric00.core.bulk;
 
 import it.cnr.jada.persistency.Keyed;
+
+import java.math.BigDecimal;
+
 /**
  * @author rpagano
  *
@@ -80,6 +83,9 @@ public class V_saldi_piano_econom_progettoBase extends V_saldi_piano_econom_prog
 
 	// MANRIS_COFIN DECIMAL(15,2) NOT NULL
 	private java.math.BigDecimal manrisCofin;
+
+	// IMPORTO_PLURIENNALE DECIMAL
+	private java.math.BigDecimal impPluriennale;
 
 	public V_saldi_piano_econom_progettoBase() {
 		super();
@@ -211,6 +217,15 @@ public class V_saldi_piano_econom_progettoBase extends V_saldi_piano_econom_prog
 
 	public void setManrisCofin(java.math.BigDecimal manrisCofin) {
 		this.manrisCofin = manrisCofin;
+	}
+
+	public BigDecimal getImpPluriennale() {
+		return impPluriennale;
+	}
+
+
+	public void setImpPluriennale(BigDecimal impPluriennale) {
+		this.impPluriennale = impPluriennale;
 	}
 }
 

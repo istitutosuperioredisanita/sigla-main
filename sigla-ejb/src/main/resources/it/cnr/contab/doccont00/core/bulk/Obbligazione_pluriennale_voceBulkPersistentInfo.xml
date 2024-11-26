@@ -43,6 +43,7 @@
 	<persistentProperty
 		name="obbligazionePluriennale"
 		partOfOid="true" />
+
 	<persistentProperty
 		name="elementoVoce"
 		partOfOid="true" />

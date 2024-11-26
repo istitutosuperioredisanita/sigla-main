@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="pgProgetto"
+		property="pgProgetto"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="pgProgetto" />
+	<fieldProperty
+		name="esercizioVoce"
+		property="esercizioVoce"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		nullable="false"
+		label="esercizioVoce" />
+	<fieldProperty
+		name="tiAppartenenza"
+		property="tiAppartenenza"
+		inputType="TEXT"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="false"
+		nullable="false"
+		label="tiAppartenenza" />
+	<fieldProperty
+		name="tiGestione"
+		property="tiGestione"
+		inputType="TEXT"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="false"
+		nullable="false"
+		label="tiGestione" />
+	<fieldProperty
+		name="cdElementoVoce"
+		property="cdElementoVoce"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="50"
+		enabledOnEdit="false"
+		nullable="false"
+		label="cdElementoVoce" />
+	<fieldProperty
+		name="esercizioPiano"
+		property="esercizioPiano"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		nullable="false"
+		label="esercizioPiano" />
+	<fieldProperty
+		name="importoPluriennale"
+		property="importoPluriennale"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="importoPluriennale" />
+	<form
+		name="searchtool">
+	</form>
+	<formFieldProperty
+		name="pgProgetto" />
+	<formFieldProperty
+		name="esercizioVoce" />
+	<formFieldProperty
+		name="tiAppartenenza" />
+	<formFieldProperty
+		name="tiGestione" />
+	<formFieldProperty
+		name="cdElementoVoce" />
+	<formFieldProperty
+		name="esercizioPiano" />
+	<formFieldProperty
+		name="importoPluriennale" />
+	<findFieldProperty
+		name="pgProgetto" />
+	<findFieldProperty
+		name="esercizioVoce" />
+	<findFieldProperty
+		name="tiAppartenenza" />
+	<findFieldProperty
+		name="tiGestione" />
+	<findFieldProperty
+		name="cdElementoVoce" />
+	<findFieldProperty
+		name="esercizioPiano" />
+	<findFieldProperty
+		name="importoPluriennale" />
+	<columnFieldProperty
+		name="pgProgetto" />
+	<columnFieldProperty
+		name="esercizioVoce" />
+	<columnFieldProperty
+		name="tiAppartenenza" />
+	<columnFieldProperty
+		name="tiGestione" />
+	<columnFieldProperty
+		name="cdElementoVoce" />
+	<columnFieldProperty
+		name="esercizioPiano" />
+	<columnFieldProperty
+		name="importoPluriennale" />
+</bulkInfo>

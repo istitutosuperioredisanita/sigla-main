@@ -37,11 +37,13 @@ import it.cnr.contab.missioni00.bp.CRUDAnticipoBP;
 import it.cnr.contab.missioni00.bp.CRUDMissioneBP;
 import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
 import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaBulk;
 import it.cnr.contab.prevent00.bulk.V_assestatoBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.UserContext;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
@@ -49,11 +51,13 @@ import it.cnr.jada.action.MessageToUser;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
+import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.jada.util.jsp.Button;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -75,11 +79,33 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
             Obbligazione_pluriennaleBulk riga = (Obbligazione_pluriennaleBulk) getCrudObbligazione_pluriennale().getModel();
             super.validateForDelete(context,riga);
 
+
+        }
+  /*     @Override
+        public OggettoBulk removeDetail(int i) {
+            List list = getDetails();
+            Obbligazione_pluriennaleBulk dettaglio =(Obbligazione_pluriennaleBulk)list.get(i);
+            for (int k=0;k<dettaglio.getRigheVoceColl().size();k++) {
+                dettaglio.removeFromRigheVoceCollBulkList(k);
+            }
+            return super.removeDetail(i);
+        }*/
+    };
+    private final SimpleDetailCRUDController crudObbligazione_pluriennaleVoce = new SimpleDetailCRUDController("ObbligazioniPluriennaliVoce", Obbligazione_pluriennale_voceBulk.class, "righeVoceColl", crudObbligazione_pluriennale){
+        public void validateForDelete(ActionContext context, OggettoBulk detail) throws ValidationException {
+            Obbligazione_pluriennale_voceBulk riga = (Obbligazione_pluriennale_voceBulk)  getCrudObbligazione_pluriennaleVoce().getModel();
+            super.validateForDelete(context,riga);
         }
     };
 
+
     public SimpleDetailCRUDController getCrudObbligazione_pluriennale() {
         return crudObbligazione_pluriennale;
+    }
+
+    public SimpleDetailCRUDController getCrudObbligazione_pluriennaleVoce() {
+        return crudObbligazione_pluriennaleVoce;
+
     }
 
     // "editingScadenza" viene messo a True solo quando si modifica una scadenza (bottone "editing scadenza")
@@ -501,6 +527,13 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
         int crudStatus = getModel().getCrudStatus();
         try {
             ObbligazioneBulk obbligazione = (ObbligazioneBulk) getModel();
+
+
+            if(obbligazione.getObbligazioniPluriennali() != null && !obbligazione.getObbligazioniPluriennali().isEmpty()){
+                throw new ApplicationException("Non è possibile cancellare l'obbligazione per presenza di obbligazioni pluriennali");
+            }
+
+
             if (obbligazione.getStato_obbligazione().equals(ObbligazioneBulk.STATO_OBB_PROVVISORIO)) {
                 ((ObbligazioneComponentSession) createComponentSession()).cancellaObbligazioneProvvisoria(context.getUserContext(), (ObbligazioneBulk) getModel());
                 reset(context);
@@ -794,10 +827,9 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
             throw new it.cnr.jada.action.BusinessProcessException(e);
         }
     }
-
-    //
-    //	Abilito il bottone di ANNULLA RIPORTA documento solo se non ho scadenze in fase di modifica/inserimento
-    //
+//
+//	Abilito il bottone di ANNULLA RIPORTA documento solo se non ho scadenze in fase di modifica/inserimento
+//
 
     public boolean isBringbackButtonEnabled() {
         return super.isBringbackButtonEnabled() && !isEditingScadenza();
@@ -1263,7 +1295,7 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
         pages.put(i++, new String[]{"tabCdrCapitoli", "Cdr", "/doccont00/tab_cdr_capitoli.jsp"});
 
         if(attivaImpegnoPluriennale) {
-            if (!isSearching()) {
+            if (!isSearching() && !(isInserting())) {
                     pages.put(i++, new String[]{"tabObbligazioniPluriennali", "Obbligazioni Pluriennali", "/doccont00/tab_obb_pluriennali.jsp"});
             }
         }
@@ -1280,4 +1312,14 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
         return attivoOrdini;
     }
 
+
+    // non posso aggiungere obbligazioni pluriennali se l'importo dell'obbligazione è zero e se non ci sono già pluriennali
+    public boolean isADDPluriennali(){
+        ObbligazioneBulk obbligazione = (ObbligazioneBulk)getModel();
+
+        if(obbligazione.getIm_obbligazione().compareTo(new BigDecimal(0))==0 && (obbligazione.getObbligazioniPluriennali()==null || obbligazione.getObbligazioniPluriennali().isEmpty())){
+            return false;
+        }
+        return true;
+    }
 }

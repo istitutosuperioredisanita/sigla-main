@@ -202,9 +202,14 @@ public class MissioneResource implements MissioneLocal {
     	Optional.ofNullable(idRimborsoMissione).
 		orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Id Rimborso missione Obbligatorio"));
         LOGGER.info("Inizio Cancellazione Missione "+idRimborsoMissione);
+		try{
 
     	missioneComponentSession.cancellazioneMissioneDaGemis(userContext, idRimborsoMissione);
-    	return Response.ok("OK").build();
+			return Response.ok("OK").build();
+		}catch (Throwable e){
+			throw new RestException(Response.Status.INTERNAL_SERVER_ERROR,String.format(e.getMessage()));
+		}
+
 
     }
 }

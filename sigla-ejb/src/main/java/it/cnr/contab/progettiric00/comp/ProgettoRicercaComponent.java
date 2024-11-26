@@ -1726,7 +1726,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
     private void validaSaldiPianoEconomico(UserContext userContext, ProgettoBulk progetto, Integer annoFrom, Progetto_rimodulazioneBulk rimodulazione) throws ComponentException {
 		try{
 			//SE IL PROGETTO NON HA PIANO ECONOMICO IL CONTROLLO VIENE FATTO SEMPRE E SOLO SUI TOTALI PROGETTO
-			if (!progetto.isPianoEconomicoRequired()) {
+ 			if (!progetto.isPianoEconomicoRequired()) {
 	            BigDecimal assestatoEtrPrg = Utility.createSaldoComponentSession()
 	            		.getStanziamentoAssestatoProgetto(userContext, progetto, Elemento_voceHome.GESTIONE_ENTRATE, null, null, null);
 		
@@ -1795,6 +1795,14 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 				   	    				" non può essere inferiore all'utilizzato spese 'fonti interne' e 'natura reimpiego' ("+
 				   	    				new EuroFormat().format(saldo.getUtilizzatoAssestatoCofinanziamento())+")!");
 							});
+							Optional.ofNullable(ppe.getIm_spesa_finanziato())
+									.filter(el->el.subtract(saldo.getImpPluriennale()).compareTo(BigDecimal.ZERO)<0).ifPresent(el->{
+										throw new ApplicationRuntimeException("Attenzione: l'importo finanziato rimodulato del piano economico "+
+												ppe.getEsercizio_piano()+"/"+ppe.getCd_voce_piano()+
+												" non può essere inferiore all'importo garantito per l'obbligazione pluriennale ("+
+												new EuroFormat().format(saldo.getImpPluriennale())+")!");
+									});
+
 		   				} else {
 		   					Optional.ofNullable(saldo.getImportoFin())
 				   				.filter(el->el.subtract(saldo.getAssestatoFinanziamento()).compareTo(BigDecimal.ZERO)<0).ifPresent(el->{
@@ -1828,6 +1836,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 				sqlSaldi.addSQLClause(FindClause.AND,"V_LINEA_ATTIVITA_VALIDA.PG_PROGETTO",SQLBuilder.EQUALS,progetto.getPg_progetto());
 	
 				sqlSaldi.openParenthesis(FindClause.AND);
+
 				sqlSaldi.addSQLClause(FindClause.OR,"VOCE_F_SALDI_CDR_LINEA.IM_STANZ_INIZIALE_A1",SQLBuilder.GREATER,BigDecimal.ZERO);
 				sqlSaldi.addSQLClause(FindClause.OR,"VOCE_F_SALDI_CDR_LINEA.VARIAZIONI_PIU",SQLBuilder.GREATER,BigDecimal.ZERO);
 				sqlSaldi.addSQLClause(FindClause.OR,"VOCE_F_SALDI_CDR_LINEA.VARIAZIONI_MENO",SQLBuilder.GREATER,BigDecimal.ZERO);
@@ -1836,8 +1845,10 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 				sqlSaldi.addSQLClause(FindClause.OR,"VOCE_F_SALDI_CDR_LINEA.VAR_MENO_STANZ_RES_IMP",SQLBuilder.GREATER,BigDecimal.ZERO);
 				sqlSaldi.addSQLClause(FindClause.OR,"VOCE_F_SALDI_CDR_LINEA.VAR_PIU_OBBL_RES_PRO",SQLBuilder.GREATER,BigDecimal.ZERO);
 				sqlSaldi.addSQLClause(FindClause.OR,"VOCE_F_SALDI_CDR_LINEA.VAR_MENO_OBBL_RES_PRO",SQLBuilder.GREATER,BigDecimal.ZERO);
+
 				sqlSaldi.closeParenthesis();
-				
+
+
 				if (!Optional.ofNullable(rimodulazione).isPresent()) {
 					Ass_progetto_piaeco_voceHome assPiaecoHome = (Ass_progetto_piaeco_voceHome)getHome(userContext, Ass_progetto_piaeco_voceBulk.class);
 					SQLBuilder sqlExist = assPiaecoHome.createSQLBuilder();
@@ -1849,6 +1860,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 
 					sqlSaldi.addSQLNotExistsClause(FindClause.AND, sqlExist);
 				}
+
 	
 				List<Voce_f_saldi_cdr_lineaBulk> saldiList = new it.cnr.jada.bulk.BulkList(saldiHome.fetchAll(sqlSaldi));
 				Integer currentAnno = saldiList.stream().mapToInt(Voce_f_saldi_cdr_lineaKey::getEsercizio).max().orElse(999);
@@ -2487,6 +2499,13 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 		} catch (PersistencyException e) {
 			throw new ComponentException(e);
 		}
+	}
+
+
+	public List<V_saldi_piano_econom_progettoBulk> getPluriennaliProgettoPianoEco(UserContext userContext, Progetto_piano_economicoBulk bulk) throws ComponentException, PersistencyException {
+		V_saldi_piano_econom_progettoHome pluriHome = (V_saldi_piano_econom_progettoHome)getHome(userContext,V_saldi_piano_econom_progettoBulk.class);
+
+		return pluriHome.cercaPluriennaliPianoEconomico(bulk,"S");
 	}
 
 	private void validaAnagraficheProgetto(UserContext uc, ProgettoBulk bulk) throws ComponentException, IntrospectionException, PersistencyException, SQLException{

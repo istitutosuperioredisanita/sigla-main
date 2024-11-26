@@ -125,6 +125,11 @@ public class Accertamento_pluriennale_voceBulk extends Accertamento_pluriennale_
 	public WorkpackageBulk getLinea_attivita() {
 		return linea_attivita;
 	}
+
+	public void setLinea_attivita(WorkpackageBulk linea_attivita) {
+		this.linea_attivita = linea_attivita;
+	}
+
 	public void setCd_linea_attivita(java.lang.String cd_linea_attivita) {
 		this.getLinea_attivita().setCd_linea_attivita(cd_linea_attivita);
 	}
@@ -134,7 +139,14 @@ public class Accertamento_pluriennale_voceBulk extends Accertamento_pluriennale_
 			return null;
 		return linea_attivita.getCd_linea_attivita();
 	}
-	public void setLinea_attivita(WorkpackageBulk linea_attivita) {
-		this.linea_attivita = linea_attivita;
+	public void setCdCentroResponsabilita(String cdCentroResponsabilita)  {
+		this.getLinea_attivita().setCd_centro_responsabilita(cdCentroResponsabilita);
+	}
+
+	public String getCdCentroResponsabilita() {
+		it.cnr.contab.config00.latt.bulk.WorkpackageBulk linea_attivita = this.getLinea_attivita();
+		if (linea_attivita == null)
+			return null;
+		return linea_attivita.getCd_centro_responsabilita();
 	}
 }

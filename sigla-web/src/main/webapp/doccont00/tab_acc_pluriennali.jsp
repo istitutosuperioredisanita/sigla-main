@@ -12,7 +12,7 @@
 
 <%  
 	CRUDAccertamentoBP bp = (CRUDAccertamentoBP)BusinessProcess.getBusinessProcess(request);
-	bp.getCrudAccertamento_pluriennale().writeHTMLTable(pageContext,"ColumnsDettAccPluriennale",true,false,true,"100%","150px");
+	bp.getCrudAccertamento_pluriennale().writeHTMLTable(pageContext,"ColumnsDettAccPluriennale",bp.isADDPluriennali(),false,bp.isADDPluriennali(),"100%","150px");
 %>
 
 <div class="Group card p-2 mb-2">

@@ -42,6 +42,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.jsp.Button;
 
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.Iterator;
@@ -60,6 +61,14 @@ public class CRUDAccertamentoBP extends CRUDVirtualAccertamentoBP {
 	private final SimpleDetailCRUDController lineeDiAttivita = new SimpleDetailCRUDController("LineeDiAttivita",V_pdg_accertamento_etrBulk.class,"lineeAttivitaColl",this);
 	private final SimpleDetailCRUDController nuoveLineeDiAttivita = new SimpleDetailCRUDController("NuoveLineeDiAttivita",Linea_attivitaBulk.class,"nuoveLineeAttivitaColl",this);
 	private final SimpleDetailCRUDController crudAccertamento_pluriennale = new SimpleDetailCRUDController("AccertamentiPluriennali", Accertamento_pluriennaleBulk.class,"accertamentiPluriennali",this);
+
+
+	private final SimpleDetailCRUDController crudAccertamento_pluriennaleVoce = new SimpleDetailCRUDController("AccertamentiPluriennaliVoce", Accertamento_pluriennale_voceBulk.class, "righeVoceColl", crudAccertamento_pluriennale){
+		public void validateForDelete(ActionContext context, OggettoBulk detail) throws ValidationException {
+			Accertamento_pluriennale_voceBulk riga = (Accertamento_pluriennale_voceBulk)  getCrudAccertamento_pluriennaleVoce().getModel();
+			super.validateForDelete(context,riga);
+		}
+	};
 
 	// "editingScadenza" viene messo a True solo quando si modifica una scadenza (bottone "editing scadenza")
 	private boolean editingScadenza = false;
@@ -1045,4 +1054,19 @@ public void caricaCapitoliDiSpesaCDS(it.cnr.jada.action.ActionContext context) t
 			throw handleException(e);
 		}
 	}
+
+	public SimpleDetailCRUDController getCrudAccertamento_pluriennaleVoce() {
+		return crudAccertamento_pluriennaleVoce;
+	}
+
+	// non posso aggiungere accertamenti pluriennali se l'importo dell'accertamento è zero e se non ci sono già pluriennali
+	public boolean isADDPluriennali(){
+		AccertamentoBulk accertamento = (AccertamentoBulk)getModel();
+
+		if(accertamento.getIm_accertamento().compareTo(new BigDecimal(0))==0 && (accertamento.getAccertamentiPluriennali()==null || accertamento.getAccertamentiPluriennali().isEmpty())){
+			return false;
+		}
+		return true;
+	}
+
 }

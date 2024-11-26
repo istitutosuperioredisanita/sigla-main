@@ -6136,6 +6136,12 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_accessi_cons_scad_obbl_voce.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunta configurazione per abilitare/disabilitare la possibilità di aggiungere modalità di pagamento per i dipendenti -->
     <include file="bootstrap/add_configurazione_gest_modpag_dip.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Aggiunto flag in PROGETTO_OTHER_FIELD per abilitare/disabilitare la rimodulazione automatica del progetto in fase di obbligazione pluriennale -->
+    <include file="bootstrap/add_flag_enable_auto_rimodulazione.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Aggiunto flag in OBBLIGAZIONE_PLURIENNALE_VOCE che indica se è stata fatta o meno la rimodulazione automatica -->
+    <include file="bootstrap/add_flag_enable_auto_rimod_obbl_plur.xml"/>
+
+
     <!-- Autore : CIRO SALVIO - Aggiunta configurazione per la nuova voce conto giudiziale-->
     <include file="bootstrap/add_accessi_conto_giudiziale.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiornamento menu Magazzino-->
@@ -6144,4 +6150,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/mod_pk_table_chiusura_anno.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunti flag fl_intrast a fl_intra12 su voce_iva-->
     <include file="bootstrap/add_flag_intrastat_intra12_voce_iva.xml"/>
+    <!-- Autore : CIRO SALVIO - Rename column Intrastat-->
+    <include file="bootstrap/rename_flag_intrastat_voce_iva.xml"/>
+    <!-- Autore : CIRO SALVIO - Add parametro per abilitare o meno il controllo degli importo per le infromazioni INTSRATAT-->
+    <include file="bootstrap/add_flag_gest_check_imp_intrastat.xml"/>
 </databaseChangeLog>

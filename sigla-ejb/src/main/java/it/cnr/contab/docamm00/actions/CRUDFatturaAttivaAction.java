@@ -39,7 +39,6 @@ import it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession;
 import it.cnr.contab.inventario01.ejb.NumerazioneTempBuonoComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
-import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
@@ -60,7 +59,10 @@ import it.cnr.jada.util.ejb.EJBCommonServices;
 import javax.ejb.EJBException;
 import java.rmi.RemoteException;
 import java.sql.Date;
-import java.util.*;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
 public class CRUDFatturaAttivaAction extends EconomicaAction {
     public CRUDFatturaAttivaAction() {
@@ -2615,6 +2617,60 @@ public class CRUDFatturaAttivaAction extends EconomicaAction {
 
     }
 
+    public Forward doConfirmImportoIntrastat(ActionContext actioncontext, int option) {
+        try {
+            if (option == OptionBP.YES_BUTTON) {
+                return doConfirmSalva(actioncontext, OptionBP.YES_BUTTON);
+            }
+            return doConfirmSalva(actioncontext, OptionBP.NO_BUTTON);
+        } catch (Throwable e) {
+            return handleException(actioncontext, e);
+        }
+    }
+    public Forward doSelezionaRigaIntrastatDaVerifica(ActionContext actioncontext) {
+        try {
+            fillModel(actioncontext);
+            CRUDFatturaAttivaIBP bp = (CRUDFatturaAttivaIBP) actioncontext.getBusinessProcess();
+            super.doTab(actioncontext, "tab", "tabFatturaAttivaIntrastat");
+            bp.doSelezionaRigaIntrastatDaVerifica(actioncontext);
+            return actioncontext.findDefaultForward();
+        } catch (Exception exception) {
+            return handleException(actioncontext, exception);
+        }
+    }
+
+    public Forward doConfirmSalva(ActionContext actioncontext, int option) throws java.rmi.RemoteException {
+        try {
+            CRUDFatturaAttivaBP bp = (CRUDFatturaAttivaBP) getBusinessProcess(actioncontext);
+            if (option == OptionBP.YES_BUTTON) {
+                fillModel(actioncontext);
+
+                if (bp.getAccertamentiController() != null)
+                    bp.getAccertamentiController().setModelIndex(actioncontext, -1);
+            //        controlloCodiceIPA((Fattura_attivaBulk)bp.getModel(), ((Fattura_attivaBulk)bp.getModel()).getCliente());
+                bp.save(actioncontext);
+                postSalvataggio(actioncontext);
+                return actioncontext.findDefaultForward();
+            }
+            return doSelezionaRigaIntrastatDaVerifica(actioncontext);
+        } catch (Throwable e) {
+            return handleException(actioncontext, e);
+        }
+    }
+
+    public Forward doSalva(ActionContext context) throws java.rmi.RemoteException {
+        try {
+            //Controllo importi
+            CRUDFatturaAttivaBP bp = (CRUDFatturaAttivaBP) context.getBusinessProcess();
+            Fattura_attivaBulk fatturaAttivaBulk = (Fattura_attivaBulk) bp.getModel();
+            if (bp.isAttivoChekcImpIntrastat() && fatturaAttivaBulk.checkImportoDettagliIntrastat())
+                return openConfirm(context, "Attenzione! Alcune righe relative alle informazioni Intrastat hanno ammontare che supera l'importo massimo  "+ fatturaAttivaBulk.getImportoTotInstrat().toString()+". Vuoi continuare?", OptionBP.CONFIRM_YES_NO, "doConfirmImportoIntrastat");
+            return doConfirmImportoIntrastat(context, OptionBP.YES_BUTTON);
+        } catch (Throwable e) {
+            return super.handleException(context, e);
+        }
+    }
+/*
     public Forward doSalva(ActionContext actioncontext) throws java.rmi.RemoteException {
         CRUDFatturaAttivaBP bp = (CRUDFatturaAttivaBP) getBusinessProcess(actioncontext);
         try {
@@ -2633,6 +2689,8 @@ public class CRUDFatturaAttivaAction extends EconomicaAction {
         }
         return actioncontext.findDefaultForward();
     }
+
+ */
 
     protected void postSalvataggio(ActionContext context) throws BusinessProcessException {
 

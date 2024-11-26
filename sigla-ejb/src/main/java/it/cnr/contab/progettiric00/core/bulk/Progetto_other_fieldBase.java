@@ -56,6 +56,8 @@ public class Progetto_other_fieldBase extends Progetto_other_fieldKey implements
 
 	private Boolean flControlliDateDisabled;
 
+	private Boolean flAutoRimodulazioneEnable = Boolean.TRUE;
+
 	public Progetto_other_fieldBase() {
 		super();
 	}
@@ -206,5 +208,13 @@ public class Progetto_other_fieldBase extends Progetto_other_fieldKey implements
 
 	public void setFlControlliDateDisabled(Boolean flControlliDateDisabled) {
 		this.flControlliDateDisabled = flControlliDateDisabled;
+	}
+
+	public Boolean getFlAutoRimodulazioneEnable() {
+		return flAutoRimodulazioneEnable;
+	}
+
+	public void setFlAutoRimodulazioneEnable(Boolean flAutoRimodulazioneEnable) {
+		this.flAutoRimodulazioneEnable = flAutoRimodulazioneEnable;
 	}
 }

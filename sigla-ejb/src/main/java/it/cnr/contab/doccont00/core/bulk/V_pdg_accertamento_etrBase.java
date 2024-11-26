@@ -22,6 +22,9 @@
 package it.cnr.contab.doccont00.core.bulk;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.Persistent;
+
+import java.math.BigDecimal;
+
 public class V_pdg_accertamento_etrBase extends OggettoBulk implements Persistent {
 //    ESERCIZIO DECIMAL(4,0) NOT NULL
 	private java.lang.Integer esercizio;
@@ -100,7 +103,39 @@ public class V_pdg_accertamento_etrBase extends OggettoBulk implements Persisten
  
 //    CATEGORIA_DETTAGLIO VARCHAR(3) NOT NULL
 	private java.lang.String categoria_dettaglio;
- 
+
+	public V_pdg_accertamento_etrBase() {
+	}
+
+	public V_pdg_accertamento_etrBase(Integer esercizio, Integer esercizio_res, String cd_centro_responsabilita, String ti_appartenenza, String ti_gestione, String cd_elemento_voce, String cd_linea_attivita, String cd_progetto, String cd_progetto_padre, String cd_funzione, String cd_natura, String ds_linea_attivita, BigDecimal im_ra_rce, BigDecimal im_rb_rse, BigDecimal im_rc_esr, BigDecimal im_rd_a2_ricavi, BigDecimal im_re_a2_entrate, BigDecimal im_rf_a3_ricavi, BigDecimal im_rg_a3_entrate, String cd_centro_responsabilita_clgs, String cd_linea_attivita_clgs, String ti_appartenenza_clgs, String ti_gestione_clgs, String cd_elemento_voce_clgs, String stato, String categoria_dettaglio) {
+		this.esercizio = esercizio;
+		this.esercizio_res = esercizio_res;
+		this.cd_centro_responsabilita = cd_centro_responsabilita;
+		this.ti_appartenenza = ti_appartenenza;
+		this.ti_gestione = ti_gestione;
+		this.cd_elemento_voce = cd_elemento_voce;
+		this.cd_linea_attivita = cd_linea_attivita;
+		this.cd_progetto = cd_progetto;
+		this.cd_progetto_padre = cd_progetto_padre;
+		this.cd_funzione = cd_funzione;
+		this.cd_natura = cd_natura;
+		this.ds_linea_attivita = ds_linea_attivita;
+		this.im_ra_rce = im_ra_rce;
+		this.im_rb_rse = im_rb_rse;
+		this.im_rc_esr = im_rc_esr;
+		this.im_rd_a2_ricavi = im_rd_a2_ricavi;
+		this.im_re_a2_entrate = im_re_a2_entrate;
+		this.im_rf_a3_ricavi = im_rf_a3_ricavi;
+		this.im_rg_a3_entrate = im_rg_a3_entrate;
+		this.cd_centro_responsabilita_clgs = cd_centro_responsabilita_clgs;
+		this.cd_linea_attivita_clgs = cd_linea_attivita_clgs;
+		this.ti_appartenenza_clgs = ti_appartenenza_clgs;
+		this.ti_gestione_clgs = ti_gestione_clgs;
+		this.cd_elemento_voce_clgs = cd_elemento_voce_clgs;
+		this.stato = stato;
+		this.categoria_dettaglio = categoria_dettaglio;
+	}
+
 	public java.lang.Integer getEsercizio () {
 		return esercizio;
 	}
