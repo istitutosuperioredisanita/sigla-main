@@ -2686,27 +2686,7 @@ public class CRUDFatturaAttivaAction extends EconomicaAction {
             return super.handleException(context, e);
         }
     }
-/*
-    public Forward doSalva(ActionContext actioncontext) throws java.rmi.RemoteException {
-        CRUDFatturaAttivaBP bp = (CRUDFatturaAttivaBP) getBusinessProcess(actioncontext);
-        try {
-            fillModel(actioncontext);
 
-            if (bp.getAccertamentiController() != null)
-                bp.getAccertamentiController().setModelIndex(actioncontext, -1);
-//        controlloCodiceIPA((Fattura_attivaBulk)bp.getModel(), ((Fattura_attivaBulk)bp.getModel()).getCliente());
-            bp.save(actioncontext);
-            postSalvataggio(actioncontext);
-            return actioncontext.findDefaultForward();
-        } catch (ValidationException validationexception) {
-            getBusinessProcess(actioncontext).setErrorMessage(validationexception.getMessage());
-        } catch (Throwable throwable) {
-            return handleException(actioncontext, throwable);
-        }
-        return actioncontext.findDefaultForward();
-    }
-
- */
 
     protected void postSalvataggio(ActionContext context) throws BusinessProcessException {
 
