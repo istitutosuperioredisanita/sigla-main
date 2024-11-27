@@ -80,6 +80,7 @@ public class Fattura_attiva_intraBase extends Fattura_attiva_intraKey implements
 	private java.lang.Integer nr_progressivo;
 	
 	private java.lang.Boolean fl_inviato;
+	private java.lang.Boolean warningInvio;
 	
 	public Fattura_attiva_intraBase() {
 		super();
@@ -212,5 +213,13 @@ public class Fattura_attiva_intraBase extends Fattura_attiva_intraKey implements
 	}
 	public void setNr_progressivo(java.lang.Integer nr_progressivo) {
 		this.nr_progressivo = nr_progressivo;
+	}
+
+	public Boolean getWarningInvio() {
+		return warningInvio;
+	}
+
+	public void setWarningInvio(Boolean warningInvio) {
+		this.warningInvio = warningInvio;
 	}
 }

@@ -57,12 +57,10 @@ import it.cnr.jada.util.action.SelezionatoreListaBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import javax.ejb.EJBException;
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.Date;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 public class CRUDFatturaAttivaAction extends EconomicaAction {
     public CRUDFatturaAttivaAction() {
@@ -2639,10 +2637,28 @@ public class CRUDFatturaAttivaAction extends EconomicaAction {
         }
     }
 
+
+    private void setWarningInstrat(ActionContext context){
+        CRUDFatturaAttivaBP bp = (CRUDFatturaAttivaBP) getBusinessProcess(context);
+        Fattura_attivaBulk fatturaAttivaBulk = (Fattura_attivaBulk) bp.getModel();
+        if ( bp.isAttivoChekcImpIntrastat() ){
+            Boolean warningInvio=fatturaAttivaBulk.validaImportoDettagliIntrastat();
+            if ( Optional.ofNullable(fatturaAttivaBulk.getFattura_attiva_intrastatColl()).isPresent()){
+                BigDecimal totAmmontareIntrastat = BigDecimal.ZERO;
+                for (Iterator i = fatturaAttivaBulk.getFattura_attiva_intrastatColl().iterator(); i.hasNext(); ) {
+                    Fattura_attiva_intraBulk riga = (Fattura_attiva_intraBulk) i.next();
+                    riga.setWarningInvio(warningInvio);
+                    riga.setToBeUpdated();
+                }
+            }
+        }
+    }
+
     public Forward doConfirmSalva(ActionContext actioncontext, int option) throws java.rmi.RemoteException {
         try {
             CRUDFatturaAttivaBP bp = (CRUDFatturaAttivaBP) getBusinessProcess(actioncontext);
             if (option == OptionBP.YES_BUTTON) {
+                setWarningInstrat( actioncontext);
                 fillModel(actioncontext);
 
                 if (bp.getAccertamentiController() != null)

@@ -448,7 +448,8 @@
 		name="nr_progressivo"
 		property="nr_progressivo"
 		inputType="TEXT"
-		label="Progressivo" />		
+		label="Progressivo" />
+
 	<formFieldProperty
 		name="valore_statistico" />
 	<formFieldProperty

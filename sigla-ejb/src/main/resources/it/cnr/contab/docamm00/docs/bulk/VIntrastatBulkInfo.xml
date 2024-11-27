@@ -303,7 +303,15 @@
 		inputType="TEXT"
 		maxLength="6"
 		enabledOnEdit="true"
-		label="Protocollo Cessioni/Serv. resi "/>		
+		label="Protocollo Cessioni/Serv. resi "/>
+	<fieldProperty
+			name="warning"
+			property="warning"
+			inputType="TEXT"
+			inputSize="40"
+			maxLength="40"
+			enabledOnEdit="false"
+			label="warning" />
 	<formFieldProperty
 		name="esercizio" />
 	<formFieldProperty
@@ -379,8 +387,10 @@
 	<formFieldProperty
 		name="nrProtocolloAcq" />
 	<formFieldProperty
-		name="nrProtocolloVen" />			
-						
+		name="nrProtocolloVen" />
+	<formFieldProperty
+			name="warning" />
+
 	<findFieldProperty
 		name="esercizio" />
 	<findFieldProperty
@@ -438,8 +448,11 @@
 	<findFieldProperty
 		name="ds_tipo" />
 	<findFieldProperty
-		name="uo_origine" />	
-		
+		name="uo_origine" />
+	<findFieldProperty
+			name="warning" />
+	<columnFieldProperty
+			name="warning" />
 	<columnFieldProperty
 		name="esercizio" />
 	<columnFieldProperty

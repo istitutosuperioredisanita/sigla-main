@@ -182,6 +182,13 @@
 			sqlTypeName="DECIMAL"
 			columnSize="5"
 			nullable="true" />
+		<columnMapping
+				columnName="WARNING_INVIO"
+				propertyName="warningInvio"
+				sqlTypeName="CHAR"
+				columnSize="1"
+				nullable="false"
+				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="ammontareEuro" />
@@ -235,4 +242,6 @@
 		name="nrProtocollo" />
 	<persistentProperty
 		name="nrProgressivo" />
+	<persistentProperty
+			name="warningInvio" />
 </SQLPersistentInfo>

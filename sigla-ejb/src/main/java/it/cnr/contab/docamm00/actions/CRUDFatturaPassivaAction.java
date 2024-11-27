@@ -4427,6 +4427,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                 for (Iterator i = fatturaPassivaBulk.getFattura_passiva_intrastatColl().iterator(); i.hasNext(); ) {
                     Fattura_passiva_intraBulk riga = (Fattura_passiva_intraBulk) i.next();
                     riga.setWarningInvio(warningInvio);
+                    riga.setToBeUpdated();
                 }
             }
         }

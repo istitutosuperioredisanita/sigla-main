@@ -2174,6 +2174,7 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
            for (Iterator i = getFattura_attiva_intrastatColl().iterator(); i.hasNext(); ) {
                Fattura_attiva_intraBulk riga = (Fattura_attiva_intraBulk) i.next();
                totAmmontareIntrastat = totAmmontareIntrastat.add(riga.getAmmontare_euro());
+               return totAmmontareIntrastat;
            }
        }
        return BigDecimal.ZERO;
