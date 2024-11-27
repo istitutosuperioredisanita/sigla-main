@@ -50,6 +50,7 @@ import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
+import org.apache.http.Consts;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -177,8 +178,8 @@ public abstract class Fattura_passivaBulk
         CAUSALE.put(CONT, "Importo sospeso in Contenzioso");
         CAUSALE.put(CONT_NORM, "Importo sospeso in contestazione/adempimenti normativi");
         CAUSALE.put(CONT_CONF, "Importo sospeso per data esito regolare verifica di conformità");
-
         CAUSALE.put(ATTNC, "In attesa di nota credito");
+        CAUSALE.put(SPED_BOLDOG, "Importo sospeso per Spedizionarie/Bolla Doganale");
     }
     protected Tipo_sezionaleBulk tipo_sezionale;
     protected DivisaBulk valuta;
@@ -3809,6 +3810,14 @@ public abstract class Fattura_passivaBulk
                 return true;
             if (isNonLiquidabile() && (key.equals(CONT) ||key.equals(CONT_CONF) || key.equals(CONT_NORM)))
                 return true;
+            if (isLiquidazioneSospesa() && (key.equals(Consts.SP) ||key.equals(CONT_CONF) || key.equals(CONT_NORM)))
+                return true;
+            if ( key.equals(SPED_BOLDOG)) {
+                if (isLiquidazioneSospesa() && (getFl_spedizioniere() || getFl_bolla_doganale()))
+                    return super.isOptionDisabled(fieldProperty, key);
+                else return Boolean.TRUE;
+            }
+
         }
         return super.isOptionDisabled(fieldProperty, key);
     }
