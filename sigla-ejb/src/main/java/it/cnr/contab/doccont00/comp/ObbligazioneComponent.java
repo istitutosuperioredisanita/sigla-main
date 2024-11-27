@@ -3301,7 +3301,8 @@ private HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal> ge
 
 				}
 				linee = calcolaPercentualeLineeAttivita(linee, plur.getImporto());
-
+				// esco dal ciclo perchè con i valori del primo pluriennale si è calcolata la percentuale di ogni GAE legata all'obbligazione
+				break;
 			}
 		}
 	}

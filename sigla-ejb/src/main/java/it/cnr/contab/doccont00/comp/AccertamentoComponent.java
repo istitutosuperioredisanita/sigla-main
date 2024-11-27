@@ -4637,6 +4637,8 @@ private void modificoDettagliScadenza(UserContext aUC,AccertamentoBulk accertame
 
                     }
                     linee = calcolaPercentualeLineeAttivita(linee, plur.getImporto());
+                    // esco dal ciclo perchè con i valori del primo pluriennale si è calcolata la percentuale di ogni GAE legata all'accertamento
+                    break;
 
                 }
             }
