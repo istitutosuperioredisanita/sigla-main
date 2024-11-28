@@ -179,7 +179,6 @@ public abstract class Fattura_passivaBulk
         CAUSALE.put(CONT_NORM, "Importo sospeso in contestazione/adempimenti normativi");
         CAUSALE.put(CONT_CONF, "Importo sospeso per data esito regolare verifica di conformità");
         CAUSALE.put(ATTNC, "In attesa di nota credito");
-        //CAUSALE.put(SPED_BOLDOG, "Importo sospeso per Spedizioniere/Bolla Doganale");
     }
     protected Tipo_sezionaleBulk tipo_sezionale;
     protected DivisaBulk valuta;
@@ -3398,8 +3397,8 @@ public abstract class Fattura_passivaBulk
             CAUSALE.put(NVARI,"Nota di Variazione");
         }
         if ( ( this.isNotNew() && SPED_BOLDOG.equalsIgnoreCase(getCausale()))
-        ||this.isLiquidazioneSospesa() && ( getFl_spedizioniere() ||getFl_bolla_doganale() )){
-            CAUSALE.put(SPED_BOLDOG, "Importo sospeso per Spedizioniere/Bolla Doganale");
+        ||(( this.isNonLiquidabile() ||this.isLiquidazioneSospesa()) &&  getFl_bolla_doganale() )){
+            CAUSALE.put(SPED_BOLDOG, "Importo sospeso per Bolla Doganale");
         }
 
         return CAUSALE;
@@ -3819,7 +3818,7 @@ public abstract class Fattura_passivaBulk
             if (isLiquidazioneSospesa() && (key.equals(Consts.SP) ||key.equals(CONT_CONF) || key.equals(CONT_NORM)))
                 return true;
             if ( key.equals(SPED_BOLDOG)) {
-                if (isLiquidazioneSospesa() && (getFl_spedizioniere() || getFl_bolla_doganale()))
+                if (( isNonLiquidabile() ||isLiquidazioneSospesa()) && getFl_bolla_doganale())
                     return super.isOptionDisabled(fieldProperty, key);
                 else return Boolean.TRUE;
             }
