@@ -57,12 +57,10 @@ import it.cnr.jada.util.action.SelezionatoreListaBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import javax.ejb.EJBException;
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.Date;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 public class CRUDFatturaAttivaAction extends EconomicaAction {
     public CRUDFatturaAttivaAction() {
@@ -2639,10 +2637,28 @@ public class CRUDFatturaAttivaAction extends EconomicaAction {
         }
     }
 
+
+    private void setWarningInstrat(ActionContext context){
+        CRUDFatturaAttivaBP bp = (CRUDFatturaAttivaBP) getBusinessProcess(context);
+        Fattura_attivaBulk fatturaAttivaBulk = (Fattura_attivaBulk) bp.getModel();
+        if ( bp.isAttivoChekcImpIntrastat() ){
+            Boolean warningInvio=fatturaAttivaBulk.validaImportoDettagliIntrastat();
+            if ( Optional.ofNullable(fatturaAttivaBulk.getFattura_attiva_intrastatColl()).isPresent()){
+                BigDecimal totAmmontareIntrastat = BigDecimal.ZERO;
+                for (Iterator i = fatturaAttivaBulk.getFattura_attiva_intrastatColl().iterator(); i.hasNext(); ) {
+                    Fattura_attiva_intraBulk riga = (Fattura_attiva_intraBulk) i.next();
+                    riga.setWarningInvio(warningInvio);
+                    riga.setToBeUpdated();
+                }
+            }
+        }
+    }
+
     public Forward doConfirmSalva(ActionContext actioncontext, int option) throws java.rmi.RemoteException {
         try {
             CRUDFatturaAttivaBP bp = (CRUDFatturaAttivaBP) getBusinessProcess(actioncontext);
             if (option == OptionBP.YES_BUTTON) {
+                setWarningInstrat( actioncontext);
                 fillModel(actioncontext);
 
                 if (bp.getAccertamentiController() != null)
@@ -2663,34 +2679,14 @@ public class CRUDFatturaAttivaAction extends EconomicaAction {
             //Controllo importi
             CRUDFatturaAttivaBP bp = (CRUDFatturaAttivaBP) context.getBusinessProcess();
             Fattura_attivaBulk fatturaAttivaBulk = (Fattura_attivaBulk) bp.getModel();
-            if (bp.isAttivoChekcImpIntrastat() && fatturaAttivaBulk.checkImportoDettagliIntrastat())
-                return openConfirm(context, "Attenzione! Alcune righe relative alle informazioni Intrastat hanno ammontare che supera l'importo massimo  "+ fatturaAttivaBulk.getImportoTotInstrat().toString()+". Vuoi continuare?", OptionBP.CONFIRM_YES_NO, "doConfirmImportoIntrastat");
+            if (bp.isAttivoChekcImpIntrastat() && fatturaAttivaBulk.validaImportoDettagliIntrastat())
+                return openConfirm(context, "Attenzione! La somma dell'ammontare dei dettagli Intrastat supera l'importo massimo supera l'importo massimo  "+ Utility.NumberToText(fatturaAttivaBulk.getImportoIntrastatTotRighe())+". Vuoi continuare?", OptionBP.CONFIRM_YES_NO, "doConfirmImportoIntrastat");
             return doConfirmImportoIntrastat(context, OptionBP.YES_BUTTON);
         } catch (Throwable e) {
             return super.handleException(context, e);
         }
     }
-/*
-    public Forward doSalva(ActionContext actioncontext) throws java.rmi.RemoteException {
-        CRUDFatturaAttivaBP bp = (CRUDFatturaAttivaBP) getBusinessProcess(actioncontext);
-        try {
-            fillModel(actioncontext);
 
-            if (bp.getAccertamentiController() != null)
-                bp.getAccertamentiController().setModelIndex(actioncontext, -1);
-//        controlloCodiceIPA((Fattura_attivaBulk)bp.getModel(), ((Fattura_attivaBulk)bp.getModel()).getCliente());
-            bp.save(actioncontext);
-            postSalvataggio(actioncontext);
-            return actioncontext.findDefaultForward();
-        } catch (ValidationException validationexception) {
-            getBusinessProcess(actioncontext).setErrorMessage(validationexception.getMessage());
-        } catch (Throwable throwable) {
-            return handleException(actioncontext, throwable);
-        }
-        return actioncontext.findDefaultForward();
-    }
-
- */
 
     protected void postSalvataggio(ActionContext context) throws BusinessProcessException {
 

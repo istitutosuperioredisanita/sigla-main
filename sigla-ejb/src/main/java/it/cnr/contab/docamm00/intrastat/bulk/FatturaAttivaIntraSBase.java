@@ -84,6 +84,7 @@ public class FatturaAttivaIntraSBase extends FatturaAttivaIntraSKey implements K
  
 //    NR_PROGRESSIVO DECIMAL(5,0)
 	private java.lang.Integer nrProgressivo;
+	private java.lang.Boolean warningInvio;
  
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
@@ -381,5 +382,13 @@ public class FatturaAttivaIntraSBase extends FatturaAttivaIntraSKey implements K
 	}
 	public void setFlInviato(Boolean flInviato) {
 		this.flInviato = flInviato;
+	}
+
+	public Boolean getWarningInvio() {
+		return warningInvio;
+	}
+
+	public void setWarningInvio(Boolean warningInvio) {
+		this.warningInvio = warningInvio;
 	}
 }
