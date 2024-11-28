@@ -179,7 +179,7 @@ public abstract class Fattura_passivaBulk
         CAUSALE.put(CONT_NORM, "Importo sospeso in contestazione/adempimenti normativi");
         CAUSALE.put(CONT_CONF, "Importo sospeso per data esito regolare verifica di conformità");
         CAUSALE.put(ATTNC, "In attesa di nota credito");
-        CAUSALE.put(SPED_BOLDOG, "Importo sospeso per Spedizionarie/Bolla Doganale");
+        //CAUSALE.put(SPED_BOLDOG, "Importo sospeso per Spedizioniere/Bolla Doganale");
     }
     protected Tipo_sezionaleBulk tipo_sezionale;
     protected DivisaBulk valuta;
@@ -3392,10 +3392,16 @@ public abstract class Fattura_passivaBulk
 
     public Dictionary getCausaleKeys() {
         CAUSALE.remove(NVARI);
+        CAUSALE.remove(SPED_BOLDOG);
         if ( ( this.isNotNew() && NVARI.equalsIgnoreCase(getCausale()))
                 ||this.isFromAmministra()){
             CAUSALE.put(NVARI,"Nota di Variazione");
         }
+        if ( ( this.isNotNew() && SPED_BOLDOG.equalsIgnoreCase(getCausale()))
+        ||this.isLiquidazioneSospesa() && ( getFl_spedizioniere() ||getFl_bolla_doganale() )){
+            CAUSALE.put(SPED_BOLDOG, "Importo sospeso per Spedizioniere/Bolla Doganale");
+        }
+
         return CAUSALE;
     }
 
