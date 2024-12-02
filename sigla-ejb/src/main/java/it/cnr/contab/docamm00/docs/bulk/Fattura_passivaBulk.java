@@ -50,6 +50,7 @@ import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
+import org.apache.http.Consts;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -177,7 +178,6 @@ public abstract class Fattura_passivaBulk
         CAUSALE.put(CONT, "Importo sospeso in Contenzioso");
         CAUSALE.put(CONT_NORM, "Importo sospeso in contestazione/adempimenti normativi");
         CAUSALE.put(CONT_CONF, "Importo sospeso per data esito regolare verifica di conformità");
-
         CAUSALE.put(ATTNC, "In attesa di nota credito");
     }
     protected Tipo_sezionaleBulk tipo_sezionale;
@@ -438,7 +438,7 @@ public abstract class Fattura_passivaBulk
         return fattura_passiva_dettColl.size() - 1;
     }
 
-    public BigDecimal getImportoTotInstrat( ){
+    public BigDecimal getImportoIntrastatTotDaRighe( ){
         BigDecimal totale= BigDecimal.ZERO;
         for (Iterator i = fattura_passiva_dettColl.iterator(); i.hasNext(); ) {
             Fattura_passiva_rigaBulk riga = ((Fattura_passiva_rigaBulk) i.next());
@@ -449,16 +449,24 @@ public abstract class Fattura_passivaBulk
         return totale;
     }
 
-    public Boolean checkImportoDettagliIntrastat(){
+    public BigDecimal getImportoTotAmmontareIntrastat( ){
         if ( Optional.ofNullable(getFattura_passiva_intrastatColl()).isPresent()){
-            BigDecimal tot = getImportoTotInstrat();
+            BigDecimal totAmmontareIntrastat = BigDecimal.ZERO;
             for (Iterator i = getFattura_passiva_intrastatColl().iterator(); i.hasNext(); ) {
                 Fattura_passiva_intraBulk riga = (Fattura_passiva_intraBulk) i.next();
-                if (riga.getAmmontare_euro().compareTo(tot)>0)
-                    return Boolean.TRUE;
+                totAmmontareIntrastat = totAmmontareIntrastat.add(riga.getAmmontare_euro());
             }
+            return totAmmontareIntrastat;
+        }
+        return BigDecimal.ZERO;
+    }
+
+    public Boolean validaImportoDettagliIntrastat(){
+        if ( Optional.ofNullable(getFattura_passiva_intrastatColl()).isPresent()){
+            return ( getImportoTotAmmontareIntrastat().compareTo(getImportoIntrastatTotDaRighe())>0);
         }
         return Boolean.FALSE;
+
     }
     public int addToFattura_passiva_intrastatColl(Fattura_passiva_intraBulk dettaglio){
         dettaglio.initialize();
@@ -497,7 +505,7 @@ public abstract class Fattura_passivaBulk
                 dettaglio.setAmmontare_divisa(dettaglio.getAmmontare_divisa().add(riga.getIm_totale_divisa()));
             }
         }
-        dettaglio.setAmmontare_euro(getImportoTotInstrat());
+        dettaglio.setAmmontare_euro(getImportoIntrastatTotDaRighe());
         dettaglio.setModalita_trasportoColl(getModalita_trasportoColl());
         dettaglio.setCondizione_consegnaColl(getCondizione_consegnaColl());
         dettaglio.setModalita_incassoColl(getModalita_incassoColl());
@@ -3383,10 +3391,16 @@ public abstract class Fattura_passivaBulk
 
     public Dictionary getCausaleKeys() {
         CAUSALE.remove(NVARI);
+        CAUSALE.remove(SPED_BOLDOG);
         if ( ( this.isNotNew() && NVARI.equalsIgnoreCase(getCausale()))
                 ||this.isFromAmministra()){
             CAUSALE.put(NVARI,"Nota di Variazione");
         }
+        if ( ( this.isNotNew() && SPED_BOLDOG.equalsIgnoreCase(getCausale()))
+        ||(( this.isNonLiquidabile() ||this.isLiquidazioneSospesa()) &&  getFl_bolla_doganale() )){
+            CAUSALE.put(SPED_BOLDOG, "Importo sospeso per Bolla Doganale");
+        }
+
         return CAUSALE;
     }
 
@@ -3801,6 +3815,14 @@ public abstract class Fattura_passivaBulk
                 return true;
             if (isNonLiquidabile() && (key.equals(CONT) ||key.equals(CONT_CONF) || key.equals(CONT_NORM)))
                 return true;
+            if (isLiquidazioneSospesa() && (key.equals(Consts.SP) ||key.equals(CONT_CONF) || key.equals(CONT_NORM)))
+                return true;
+            if ( key.equals(SPED_BOLDOG)) {
+                if (( isNonLiquidabile() ||isLiquidazioneSospesa()) && getFl_bolla_doganale())
+                    return super.isOptionDisabled(fieldProperty, key);
+                else return Boolean.TRUE;
+            }
+
         }
         return super.isOptionDisabled(fieldProperty, key);
     }
