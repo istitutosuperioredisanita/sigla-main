@@ -3398,7 +3398,7 @@ public abstract class Fattura_passivaBulk
         }
         if ( ( this.isNotNew() && SPED_BOLDOG.equalsIgnoreCase(getCausale()))
         ||(( this.isNonLiquidabile() ||this.isLiquidazioneSospesa()) &&  getFl_bolla_doganale() )){
-            CAUSALE.put(SPED_BOLDOG, "Importo sospeso per Bolla Doganale");
+            CAUSALE.put(SPED_BOLDOG, "Bolla Doganale");
         }
 
         return CAUSALE;
