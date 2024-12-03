@@ -17,12 +17,8 @@
 
 package it.cnr.contab.config00.pdcep.bulk;
 
-import it.cnr.contab.config00.pdcfin.bulk.*;
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
-import it.cnr.jada.util.*;
+import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceHome;
+import it.cnr.jada.bulk.ValidationException;
 
 /**
  * Questa classe eredita le caratteristiche della classe <code>Ass_ev_voceepBulk</code>,
@@ -40,8 +36,9 @@ public Ass_cap_entrata_Cnr_conto_econom_ricavoBulk() {
 	// elemento_voce.setTi_appartenenza( Elemento_voceHome.APPARTENENZA_CNR );
 	// elemento_voce.setTi_gestione( Elemento_voceHome.GESTIONE_ENTRATE );
 }
-public Ass_cap_entrata_Cnr_conto_econom_ricavoBulk(java.lang.String cd_elemento_voce,java.lang.String cd_voce_ep,java.lang.Integer esercizio,java.lang.String ti_appartenenza,java.lang.String ti_gestione) {
-	super(cd_elemento_voce,cd_voce_ep,esercizio,ti_appartenenza,ti_gestione);
+public Ass_cap_entrata_Cnr_conto_econom_ricavoBulk(java.lang.String cd_elemento_voce,java.lang.String cd_voce_ep,java.lang.Integer esercizio,java.lang.String ti_appartenenza,java.lang.String ti_gestione,
+												   Integer pg_ass_ev_voceep) {
+	super(cd_elemento_voce,cd_voce_ep,esercizio,ti_appartenenza,ti_gestione,pg_ass_ev_voceep);
 }
 /**
  * Metodo con cui si verifica la validità di alcuni campi, mediante un 

@@ -6158,4 +6158,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_column_warning_fatt_passiva_intra.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunta colonna warning su fatture passiva-->
     <include file="bootstrap/add_column_warning_fatt_attiva_intra.xml"/>
+    <!-- Autore : CIRO SALVIO - Modifica chiave primaria ass_ev_voceep-->
+    <include file="bootstrap/mod_pk_table_ass_ev_voceep.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta chiave univoca ass_ev_voceep-->
+    <include file="bootstrap/add_uniquekey_table_ass_ev_voceep.xml"/>
 </databaseChangeLog>

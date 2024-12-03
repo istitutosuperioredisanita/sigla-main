@@ -55,6 +55,14 @@
 			columnSize="45"
 			nullable="false"
 			primary="true" />
+		<columnMapping
+				columnName="PG_ASS_EV_VOCEEP"
+				propertyName="pg_ass_ev_voceep"
+				sqlTypeName="DECIMAL"
+				columnSize="7"
+				nullable="true"
+				primary="true" />
+
 	</defaultColumnMap>
 	<persistentProperty
 		name="esercizio"
@@ -71,4 +79,7 @@
 	<persistentProperty
 		name="cd_voce_ep"
 		partOfOid="true" />
+	<persistentProperty
+			name="pg_ass_ev_voceep"
+			partOfOid="true" />
 </SQLPersistentInfo>

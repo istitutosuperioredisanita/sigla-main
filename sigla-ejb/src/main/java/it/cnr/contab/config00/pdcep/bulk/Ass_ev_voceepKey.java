@@ -17,12 +17,12 @@
 
 package it.cnr.contab.config00.pdcep.bulk;
 
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.persistency.KeyedPersistent;
 
 public class Ass_ev_voceepKey extends OggettoBulk implements KeyedPersistent {
+	private Integer pg_ass_ev_voceep;
+
 	// TI_APPARTENENZA CHAR(1) NOT NULL (PK)
 	private java.lang.String ti_appartenenza;
 
@@ -41,13 +41,19 @@ public class Ass_ev_voceepKey extends OggettoBulk implements KeyedPersistent {
 public Ass_ev_voceepKey() {
 	super();
 }
-public Ass_ev_voceepKey(java.lang.String cd_elemento_voce,java.lang.String cd_voce_ep,java.lang.Integer esercizio,java.lang.String ti_appartenenza,java.lang.String ti_gestione) {
+public Ass_ev_voceepKey(java.lang.String cd_elemento_voce,
+						java.lang.String cd_voce_ep,
+						java.lang.Integer esercizio,
+						java.lang.String ti_appartenenza,
+						java.lang.String ti_gestione,
+						Integer pg_ass_ev_voceep) {
 	super();
 	this.cd_elemento_voce = cd_elemento_voce;
 	this.cd_voce_ep = cd_voce_ep;
 	this.esercizio = esercizio;
 	this.ti_appartenenza = ti_appartenenza;
 	this.ti_gestione = ti_gestione;
+	this.pg_ass_ev_voceep = pg_ass_ev_voceep;
 }
 public boolean equalsByPrimaryKey(Object o) {
 	if (this == o) return true;
@@ -58,6 +64,7 @@ public boolean equalsByPrimaryKey(Object o) {
 	if(!compareKey(getEsercizio(),k.getEsercizio())) return false;
 	if(!compareKey(getTi_appartenenza(),k.getTi_appartenenza())) return false;
 	if(!compareKey(getTi_gestione(),k.getTi_gestione())) return false;
+	if(!compareKey(getPg_ass_ev_voceep(),k.getPg_ass_ev_voceep())) return false;
 	return true;
 }
 /* 
@@ -128,4 +135,12 @@ public void setTi_appartenenza(java.lang.String ti_appartenenza) {
 public void setTi_gestione(java.lang.String ti_gestione) {
 	this.ti_gestione = ti_gestione;
 }
+
+	public Integer getPg_ass_ev_voceep() {
+		return pg_ass_ev_voceep;
+	}
+
+	public void setPg_ass_ev_voceep(Integer pg_ass_ev_voceep) {
+		this.pg_ass_ev_voceep = pg_ass_ev_voceep;
+	}
 }

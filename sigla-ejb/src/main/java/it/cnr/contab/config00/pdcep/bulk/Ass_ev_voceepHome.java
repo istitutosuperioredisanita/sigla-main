@@ -19,6 +19,8 @@ package it.cnr.contab.config00.pdcep.bulk;
 
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.FindClause;
@@ -55,6 +57,13 @@ public class Ass_ev_voceepHome extends BulkHome {
      */
     public Ass_ev_voceepHome(java.sql.Connection conn, PersistentCache persistentCache) {
         super(Ass_ev_voceepBulk.class, conn, persistentCache);
+    }
+    public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext, OggettoBulk bulk) throws PersistencyException, ComponentException {
+        Integer max = (Integer)findMax(bulk, "pg_assev_voceep", null);
+        if (max!=null)
+            ((Ass_ev_voceepBulk)bulk).setPg_ass_ev_voceep(new Integer(max.intValue()+1));
+        else
+            ((Ass_ev_voceepBulk)bulk).setPg_ass_ev_voceep(new Integer(1));
     }
 
     public List<Ass_ev_voceepBulk> findVociEpAssociateVoce(Elemento_voceBulk elem) throws PersistencyException {

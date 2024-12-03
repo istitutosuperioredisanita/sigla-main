@@ -18,12 +18,8 @@
 package it.cnr.contab.config00.pdcep.bulk;
 
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
-import it.cnr.contab.config00.pdcep.bulk.Voce_epBulk;
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
-import it.cnr.jada.util.*;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.bulk.ValidationException;
 
 /**
  * Questa classe eredita le caratteristiche della superclasse <code>OggettoBulk<code>.
@@ -39,8 +35,10 @@ public class Ass_ev_voceepBulk extends Ass_ev_voceepBase {
 public Ass_ev_voceepBulk() {
 	super();
 }
-public Ass_ev_voceepBulk(java.lang.String cd_elemento_voce,java.lang.String cd_voce_ep,java.lang.Integer esercizio,java.lang.String ti_appartenenza,java.lang.String ti_gestione) {
-	super(cd_elemento_voce,cd_voce_ep,esercizio,ti_appartenenza,ti_gestione);
+public Ass_ev_voceepBulk(java.lang.String cd_elemento_voce,java.lang.String cd_voce_ep,java.lang.Integer esercizio,
+						 java.lang.String ti_appartenenza,java.lang.String ti_gestione,
+						 Integer pg_ass_ev_voceep) {
+	super(cd_elemento_voce,cd_voce_ep,esercizio,ti_appartenenza,ti_gestione,pg_ass_ev_voceep);
 	setVoce_ep(new it.cnr.contab.config00.pdcep.bulk.ContoBulk(cd_voce_ep,esercizio));
 	setElemento_voce(new it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk(cd_elemento_voce,esercizio,ti_appartenenza,ti_gestione));
 }
