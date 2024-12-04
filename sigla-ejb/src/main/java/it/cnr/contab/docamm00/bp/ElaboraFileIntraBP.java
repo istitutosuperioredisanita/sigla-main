@@ -17,24 +17,6 @@
 
 package it.cnr.contab.docamm00.bp;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.rmi.RemoteException;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-import javax.ejb.EJBException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.PageContext;
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.ejb.AnagraficoComponentSession;
 import it.cnr.contab.anagraf00.tabrif.bulk.EcfBulk;
@@ -43,7 +25,8 @@ import it.cnr.contab.docamm00.docs.bulk.VIntra12Bulk;
 import it.cnr.contab.docamm00.docs.bulk.VIntrastatBulk;
 import it.cnr.contab.docamm00.ejb.ElaboraFileIntraComponentSession;
 import it.cnr.contab.util.Utility;
-import it.cnr.jada.action.*;
+import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
@@ -51,6 +34,19 @@ import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.jada.util.jsp.JSPUtils;
+
+import javax.ejb.EJBException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.PageContext;
+import java.io.*;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.rmi.RemoteException;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
 
 public class ElaboraFileIntraBP extends SimpleCRUDBP {
 	
