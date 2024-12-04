@@ -59,11 +59,12 @@ public class Ass_ev_voceepHome extends BulkHome {
         super(Ass_ev_voceepBulk.class, conn, persistentCache);
     }
     public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext, OggettoBulk bulk) throws PersistencyException, ComponentException {
-        Integer max = (Integer)findMax(bulk, "pg_assev_voceep", null);
+        Ass_cap_spesa_Cds_conto_econom_costoBulk ep= new Ass_cap_spesa_Cds_conto_econom_costoBulk();
+        Integer max = (Integer)findMax(ep, "pg_ass_ev_voceep", null);
         if (max!=null)
-            ((Ass_ev_voceepBulk)bulk).setPg_ass_ev_voceep(new Integer(max.intValue()+1));
+            ((Ass_cap_spesa_Cds_conto_econom_costoBulk)bulk).setPg_ass_ev_voceep(new Integer(max.intValue()+1));
         else
-            ((Ass_ev_voceepBulk)bulk).setPg_ass_ev_voceep(new Integer(1));
+            ((Ass_cap_spesa_Cds_conto_econom_costoBulk)bulk).setPg_ass_ev_voceep(new Integer(1));
     }
 
     public List<Ass_ev_voceepBulk> findVociEpAssociateVoce(Elemento_voceBulk elem) throws PersistencyException {

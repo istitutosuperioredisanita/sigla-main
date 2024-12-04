@@ -24,7 +24,11 @@
 		name="find_elemento_voce"
 		property="elemento_voce"
 		inputType="SEARCHTOOL"
+		readonlyProperty="ROElemento_voce"
+		enabledOnView="true"
+		enabledOnEdit="true"
 		enabledOnSearch="true"
+		enabledOnInsert="true"
 		/>
 	<fieldProperty
 		name="cd_elemento_voce"
@@ -76,6 +80,7 @@
 		property="voce_ep_contr"
 		inputType="SEARCHTOOL"
 		enabledOnSearch="true"
+		completeOnSave="false"
 		/>
 	<fieldProperty
 		name="cd_voce_ep_contr"

@@ -105,14 +105,15 @@ public OggettoBulk initializeForSearch(it.cnr.jada.util.action.CRUDBP bp,it.cnr.
  * @return boolean true quando il campo deve essere disabilitato.
  */
 public boolean isROElemento_voce() {
-	return elemento_voce == null || elemento_voce.getCrudStatus() == NORMAL;
+	return  Boolean.FALSE;//elemento_voce == null || elemento_voce.getCrudStatus() == NORMAL;
 }
 /**
  * Determina quando abilitare o meno nell'interfaccia utente il campo <code>voce_ep</code>.
  * @return boolean true quando il campo deve essere disabilitato.
  */
 public boolean isROVoce_ep() {
-	return voce_ep == null || voce_ep.getCrudStatus() == NORMAL;
+	return Boolean.FALSE;
+	//return voce_ep == null || voce_ep.getCrudStatus() == NORMAL;
 }
 public void setCd_elemento_voce(java.lang.String cd_elemento_voce) {
 	this.getElemento_voce().setCd_elemento_voce(cd_elemento_voce);
