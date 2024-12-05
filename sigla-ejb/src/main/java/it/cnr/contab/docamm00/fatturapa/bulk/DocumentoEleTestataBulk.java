@@ -404,7 +404,8 @@ public class DocumentoEleTestataBulk extends DocumentoEleTestataBase implements 
 	
 	public boolean isCompilabile() {
 		return (getStatoDocumentoEle().equals(StatoDocumentoEleEnum.COMPLETO)
-				||getStatoDocumentoEle().equals(StatoDocumentoEleEnum.DA_STORNARE) && !isIrregistrabile());
+				||(getStatoDocumentoEle().equals(StatoDocumentoEleEnum.DA_STORNARE) && !isIrregistrabile())
+		);
 	}
 
 	public boolean isRegistrata() {
