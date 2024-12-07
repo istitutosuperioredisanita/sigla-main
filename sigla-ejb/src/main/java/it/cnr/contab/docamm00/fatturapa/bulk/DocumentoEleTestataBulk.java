@@ -404,7 +404,10 @@ public class DocumentoEleTestataBulk extends DocumentoEleTestataBase implements 
 	
 	public boolean isCompilabile() {
 		return (getStatoDocumentoEle().equals(StatoDocumentoEleEnum.COMPLETO)
-				||(getStatoDocumentoEle().equals(StatoDocumentoEleEnum.DA_STORNARE) && !isIrregistrabile())
+				||(StatoDocumentoEleEnum.DA_STORNARE.equals(getStatoDocumentoEle()) && !isIrregistrabile())
+				||(Fattura_passivaBulk.TIPO_NOTA_DI_CREDITO.equals(getTipoDocumentoSIGLA())
+					&& (StatoDocumentoEleEnum.RIFIUTATA_CON_PEC.equals(getStatoDocumentoEle()))
+					&& !isIrregistrabile())
 		);
 	}
 

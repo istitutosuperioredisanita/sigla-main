@@ -176,11 +176,12 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 
 	public boolean isCollegaFatturaButtonHidden() {
 		DocumentoEleTestataBulk model = (DocumentoEleTestataBulk)getModel();
-		return !(isEditable() && model != null &&
+					return !(isEditable() && model != null &&
 				model.getIdentificativoSdi() != null &&
 				Optional.ofNullable(model.getTipoDocumento())
 						.map(s -> s.equalsIgnoreCase(TipoDocumentoType.TD_04.value())).orElse(Boolean.FALSE) &&
-				(model.isRifiutabile() || model.getStatoDocumentoEle().equals(StatoDocumentoEleEnum.RIFIUTATA_CON_PEC)));
+				(model.isRifiutabile() || model.getStatoDocumentoEle().equals(StatoDocumentoEleEnum.RIFIUTATA_CON_PEC))
+					&& isAttivoGestFlIrregistrabile);
 	}
 
 	public boolean isMostraFatturaCollegataButtonHidden() {
