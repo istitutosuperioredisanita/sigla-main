@@ -1078,5 +1078,25 @@ public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUD
         }
     }
 
+    @Override
+    public Boolean isAttivoGestFlIrregistrabile(UserContext userContext) throws ComponentException, RemoteException {
+        pre_component_invocation(userContext, componentObj);
+        try {
+            Boolean result = ((Configurazione_cnrComponent)componentObj).isAttivoGestFlIrregistrabile(userContext);
+            component_invocation_succes(userContext, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+        } catch (ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
+
 
 }
