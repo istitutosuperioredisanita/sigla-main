@@ -300,7 +300,7 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 	private void setFlIrregistrabile ( DocumentoEleTestataBulk testata){
 		testata.setFlIrregistrabile( "N");
 		if ( isAttivoGestFlIrregistrabile)
-			setFlIrregistrabile(testata);//testata.setFlIrregistrabile( "Y");
+			testata.setFlIrregistrabile( "Y");
 
 	}
 	private void setUoScrivania(Unita_organizzativaBulk uoScrivania) {
