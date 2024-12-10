@@ -505,6 +505,7 @@ public abstract class Fattura_passivaBulk
                 dettaglio.setAmmontare_divisa(dettaglio.getAmmontare_divisa().add(riga.getIm_totale_divisa()));
             }
         }
+        dettaglio.setWarningInvio(Boolean.FALSE);
         dettaglio.setAmmontare_euro(getImportoIntrastatTotDaRighe());
         dettaglio.setModalita_trasportoColl(getModalita_trasportoColl());
         dettaglio.setCondizione_consegnaColl(getCondizione_consegnaColl());

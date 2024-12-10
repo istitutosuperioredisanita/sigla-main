@@ -2209,6 +2209,7 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
                 dettaglio.setAmmontare_euro(dettaglio.getAmmontare_euro().add(riga.getIm_imponibile()));
         }
          */
+        dettaglio.setWarningInvio(Boolean.FALSE);
         dettaglio.setAmmontare_euro(getImportoIntrastatTotRighe());
         dettaglio.setModalita_trasportoColl(getModalita_trasportoColl());
         dettaglio.setCondizione_consegnaColl(getCondizione_consegnaColl());

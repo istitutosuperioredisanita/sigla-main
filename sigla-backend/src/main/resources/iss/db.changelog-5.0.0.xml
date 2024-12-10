@@ -117,4 +117,7 @@
     <include file="iss/update_conf_get_modpap_dip.xml"/>
     <!-- Autore : CIRO SALVIO -Abilita controllo importo INTRASTAT -->
     <include file="iss/update_configurazioneCnr_check_intrastat.xml"/>
+    <!-- Autore : CIRO SALVIO - Gestione FL_IRREGISTABILE-->
+    <include file="iss/update_conf_fatt_gest_flirregistrabile.xml"/>
+
 </databaseChangeLog>
