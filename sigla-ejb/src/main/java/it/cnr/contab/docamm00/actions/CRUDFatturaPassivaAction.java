@@ -4435,6 +4435,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
     public Forward doConfirmSalva(ActionContext context, int option) throws java.rmi.RemoteException {
         try {
             if (option == OptionBP.YES_BUTTON) {
+                fillModel(context);
                 setWarningInstrat(context);
                 Forward fwd = super.doSalva(context);
 
