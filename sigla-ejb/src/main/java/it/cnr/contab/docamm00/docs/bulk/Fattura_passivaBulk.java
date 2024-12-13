@@ -3398,7 +3398,7 @@ public abstract class Fattura_passivaBulk
             CAUSALE.put(NVARI,"Nota di Variazione");
         }
         if ( ( this.isNotNew() && SPED_BOLDOG.equalsIgnoreCase(getCausale()))
-        ||(( this.isNonLiquidabile() ||this.isLiquidazioneSospesa()) &&  getFl_bolla_doganale() )){
+        ||(( this.isNonLiquidabile() ||this.isLiquidazioneSospesa()) &&  Boolean.TRUE.equals(getFl_bolla_doganale() ))){
             CAUSALE.put(SPED_BOLDOG, "Bolla Doganale");
         }
 
