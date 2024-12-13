@@ -50,7 +50,6 @@ import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
-import org.apache.http.Consts;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -3815,8 +3814,6 @@ public abstract class Fattura_passivaBulk
             if (isLiquidazioneSospesa() && key.equals(ATTNC))
                 return true;
             if (isNonLiquidabile() && (key.equals(CONT) ||key.equals(CONT_CONF) || key.equals(CONT_NORM)))
-                return true;
-            if (isLiquidazioneSospesa() && (key.equals(Consts.SP) ||key.equals(CONT_CONF) || key.equals(CONT_NORM)))
                 return true;
             if ( key.equals(SPED_BOLDOG)) {
                 if (( isNonLiquidabile() ||isLiquidazioneSospesa()) && getFl_bolla_doganale())
