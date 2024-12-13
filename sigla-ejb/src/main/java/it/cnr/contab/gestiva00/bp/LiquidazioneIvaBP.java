@@ -77,10 +77,13 @@ public void inizializzaMese(ActionContext context) throws BusinessProcessExcepti
 		}
 	}
 
+	protected int getMeseIndex(ActionContext context, Stampa_registri_ivaVBulk stampaBulk){
+		return ((Integer)stampaBulk.getMesi_int().get(stampaBulk.getMese())).intValue();
+	}
 	@Override
 	protected void setDataDaA(ActionContext context, Stampa_registri_ivaVBulk stampaBulk) {
 		int esercizio = stampaBulk.getEsercizio().intValue();
-		int meseIndex = ((Integer)stampaBulk.getMesi_int().get(stampaBulk.getMese())).intValue();
+		int meseIndex= getMeseIndex(context,stampaBulk);
 
 		java.util.GregorianCalendar gc = (java.util.GregorianCalendar)java.util.GregorianCalendar.getInstance();
 		gc.set(java.util.Calendar.HOUR, 0);
