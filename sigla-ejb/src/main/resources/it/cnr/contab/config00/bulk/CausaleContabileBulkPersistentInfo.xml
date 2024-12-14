@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.config00.bulk.CausaleContabileBulk"
+	homeClassName="it.cnr.contab.config00.bulk.CausaleContabileHome">
+	<defaultColumnMap
+		tableName="CAUSALE_CONTABILE">
+		<columnMapping
+			columnName="CD_TIPO_DOCUMENTO_AMM"
+			propertyName="tipoDocumentoAmm.cd_tipo_documento_amm" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="tipoDocumentoAmm" />
+</SQLPersistentInfo>
