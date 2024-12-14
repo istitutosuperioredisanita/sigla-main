@@ -300,7 +300,7 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 	private void setFlIrregistrabile ( DocumentoEleTestataBulk testata){
 		testata.setFlIrregistrabile( "N");
 		if ( isAttivoGestFlIrregistrabile)
-			setFlIrregistrabile(testata);//testata.setFlIrregistrabile( "Y");
+			testata.setFlIrregistrabile( "S");
 
 	}
 	private void setUoScrivania(Unita_organizzativaBulk uoScrivania) {
@@ -903,12 +903,15 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 		return Optional.ofNullable(allegato)
 				.filter(AllegatoFatturaBulk.class::isInstance)
 				.map(AllegatoFatturaBulk.class::cast)
-				.map(AllegatoFatturaBulk::getAspect)
-				.filter(strings -> strings.contains(StorageDocAmmAspect.SIGLA_FATTURE_ATTACHMENT_COMUNICAZIONE_NON_REGISTRABILITA.value()))
+				.filter(a->a.isComunicazioneNonRegistabilita())
 				.isPresent();
 	}
+
 	@Override
 	protected Boolean isPossibileCancellazione(AllegatoGenericoBulk allegato) {
+		if ( isComunicazioneNonRegistabilita( allegato)&&
+		!isAttivoGestFlIrregistrabile)
+			return Boolean.FALSE;
 		if (isComunicazioneNonRegistabilita(allegato) &&
 				Optional.ofNullable(getModel())
 					.filter(DocumentoEleTestataBulk.class::isInstance)
@@ -917,7 +920,7 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 					.map(s -> s.equalsIgnoreCase("S"))
 					.orElse(Boolean.TRUE)
 		) {
-			return false;
+			return Boolean.FALSE;
 		}
 		return super.isPossibileCancellazione(allegato);
 	}
@@ -1023,7 +1026,7 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 			AllegatoFatturaBulk allegatoFatturaBulk = (AllegatoFatturaBulk)obj;
 			if (allegatoFatturaBulk != null && allegatoFatturaBulk.getAspectName() != null && 
 					allegatoFatturaBulk.getAspectName().equalsIgnoreCase("P:sigla_fatture_attachment:comunicazione_non_registrabilita")) {
-				if (testata.isRegistrata()){
+				if (testata.isRegistrata() && isAttivoGestFlIrregistrabile){
 					throw new ValidationException("La fattura risulta registrata, comunicazione di documento non registrabile non allegabile.");
 				}
 				//testata.setFlIrregistrabile("S");

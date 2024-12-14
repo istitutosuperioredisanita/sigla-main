@@ -57,7 +57,6 @@ import it.cnr.jada.util.action.SelezionatoreListaBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import javax.ejb.EJBException;
-import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.Date;
 import java.util.*;
@@ -2644,7 +2643,6 @@ public class CRUDFatturaAttivaAction extends EconomicaAction {
         if ( bp.isAttivoChekcImpIntrastat() ){
             Boolean warningInvio=fatturaAttivaBulk.validaImportoDettagliIntrastat();
             if ( Optional.ofNullable(fatturaAttivaBulk.getFattura_attiva_intrastatColl()).isPresent()){
-                BigDecimal totAmmontareIntrastat = BigDecimal.ZERO;
                 for (Iterator i = fatturaAttivaBulk.getFattura_attiva_intrastatColl().iterator(); i.hasNext(); ) {
                     Fattura_attiva_intraBulk riga = (Fattura_attiva_intraBulk) i.next();
                     riga.setWarningInvio(warningInvio);
@@ -2658,9 +2656,8 @@ public class CRUDFatturaAttivaAction extends EconomicaAction {
         try {
             CRUDFatturaAttivaBP bp = (CRUDFatturaAttivaBP) getBusinessProcess(actioncontext);
             if (option == OptionBP.YES_BUTTON) {
-                setWarningInstrat( actioncontext);
                 fillModel(actioncontext);
-
+                setWarningInstrat( actioncontext);
                 if (bp.getAccertamentiController() != null)
                     bp.getAccertamentiController().setModelIndex(actioncontext, -1);
             //        controlloCodiceIPA((Fattura_attivaBulk)bp.getModel(), ((Fattura_attivaBulk)bp.getModel()).getCliente());

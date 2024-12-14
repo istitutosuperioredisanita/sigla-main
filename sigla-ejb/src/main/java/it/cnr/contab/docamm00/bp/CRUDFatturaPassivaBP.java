@@ -48,6 +48,7 @@ import it.cnr.contab.utenze00.bulk.CNRUserInfo;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.HttpActionContext;
@@ -175,6 +176,8 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     private boolean attivaInventaria = false;
     private boolean isModificaPCC;
     protected boolean attivoCheckImpIntrastat = false;
+
+    private Boolean isAttivoGestFlIrregistrabile;
 
     public Boolean isAttivoChekcImpIntrastat(){
         return attivoCheckImpIntrastat;
@@ -588,6 +591,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             attivaEconomicaParallela = configurazioneCnrComponentSession.isAttivaEconomicaParallela(context.getUserContext());
             attivaInventaria= configurazioneCnrComponentSession.isAttivoInventariaDocumenti(context.getUserContext());
             attivoCheckImpIntrastat=Utility.createConfigurazioneCnrComponentSession().isCheckImpIntrastatFattPassiva(context.getUserContext());
+            isAttivoGestFlIrregistrabile=Utility.createConfigurazioneCnrComponentSession().isAttivoGestFlIrregistrabile(context.getUserContext());
             isModificaPCC = Optional.ofNullable(
                     configurazioneCnrComponentSession.getConfigurazione(
                     context.getUserContext(),
@@ -2059,6 +2063,39 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             dettaglioIntrastatController.setModelIndex(actioncontext, dettaglioIntrastatController.getDetails().indexOf(rigaDaCompletare));
             resyncChildren(actioncontext);
         }
+    }
+    private boolean isComunicazioneNonRegistabilita(AllegatoGenericoBulk allegato) {
+        return Optional.ofNullable(allegato)
+                .filter(AllegatoFatturaBulk.class::isInstance)
+                .map(AllegatoFatturaBulk.class::cast)
+                .filter(a->a.isComunicazioneNonRegistabilita())
+                .isPresent();
+    }
+
+    @Override
+    protected Boolean isPossibileCancellazione(AllegatoGenericoBulk allegato) {
+        if ( isComunicazioneNonRegistabilita( allegato)&&
+                !isAttivoGestFlIrregistrabile)
+            return Boolean.FALSE;
+        if (isComunicazioneNonRegistabilita(allegato) &&
+                Optional.ofNullable(getModel())
+                        .filter(DocumentoEleTestataBulk.class::isInstance)
+                        .map(DocumentoEleTestataBulk.class::cast)
+                        .map(DocumentoEleTestataBulk::getFlIrregistrabile)
+                        .map(s -> s.equalsIgnoreCase("S"))
+                        .orElse(Boolean.TRUE)
+        ) {
+            return Boolean.FALSE;
+        }
+        return super.isPossibileCancellazione(allegato);
+    }
+
+    @Override
+    protected Boolean isPossibileModifica(AllegatoGenericoBulk allegato) {
+        if (isComunicazioneNonRegistabilita(allegato)) {
+            return false;
+        }
+        return super.isPossibileModifica(allegato);
     }
 
 }
