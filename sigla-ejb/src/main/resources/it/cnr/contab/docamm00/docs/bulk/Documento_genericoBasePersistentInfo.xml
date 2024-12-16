@@ -189,6 +189,12 @@
 			sqlTypeName="VARCHAR"
 			columnSize="3"
 			nullable="true" />
+		<columnMapping
+			columnName="CD_CAUSALE_CONTABILE"
+			propertyName="cd_causale_contabile"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="true" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="dt_cancellazione" />
@@ -248,4 +254,6 @@
 		name="idTipoDocumentoGenerico" />
 	<persistentProperty
 		name="cd_tipo_conto_ep" />
+	<persistentProperty
+		name="cd_causale_contabile" />
 </SQLPersistentInfo>

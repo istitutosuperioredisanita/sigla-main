@@ -48,7 +48,9 @@ import it.cnr.jada.action.HookForward;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
+import it.cnr.jada.comp.CRUDComponent;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.action.CRUDBP;
@@ -2019,14 +2021,15 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
      */
 
     public Forward doOnTipoDocumentoChange(ActionContext context) {
-
         try {
             fillModel(context);
-
-
-            it.cnr.jada.util.action.CRUDBP bp = getBusinessProcess(context);
+            it.cnr.jada.util.action.SimpleCRUDBP bp = (SimpleCRUDBP) getBusinessProcess(context);
             DocumentoGenericoComponentSession component = null;
             Documento_genericoBulk documentoGenerico = (Documento_genericoBulk) bp.getModel();
+            documentoGenerico.setTiCausaleContabileKeys(null);
+            documentoGenerico =
+                    (Documento_genericoBulk) ((CRUDComponentSession)bp.createComponentSession()).initializeKeysAndOptionsInto(context.getUserContext(), documentoGenerico);
+            bp.setModel(context, documentoGenerico);
             //if (documentoGenerico.isGenericoAttivo())
             //component= (DocumentoGenericoComponentSession) ((CRUDDocumentoGenericoAttivoBP) bp).createComponentSession();
             //else

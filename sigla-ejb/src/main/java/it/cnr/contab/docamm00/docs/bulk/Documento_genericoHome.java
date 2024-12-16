@@ -17,6 +17,7 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
+import it.cnr.contab.config00.bulk.CausaleContabileBulk;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
@@ -29,10 +30,11 @@ import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.LoggableStatement;
 import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
+import it.cnr.jada.util.action.FormController;
+import it.cnr.jada.util.ejb.EJBCommonServices;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Documento_genericoHome extends BulkHome implements
 		IDocumentoAmministrativoSpesaHome {
@@ -189,5 +191,36 @@ public class Documento_genericoHome extends BulkHome implements
 			return home.fetchAll(sql);
 		}
 		return Collections.EMPTY_LIST;
+	}
+
+	public Hashtable loadTiCausaleContabileKeys(Documento_genericoBulk documentoGenericoBulk) throws PersistencyException {
+		SQLBuilder sql = getHomeCache().getHome(CausaleContabileBulk.class).createSQLBuilder();
+		if (Arrays.asList(FormController.EDIT, FormController.INSERT).contains(documentoGenericoBulk.getBpStatus())) {
+			sql.addClause(
+					FindClause.AND,
+					"cdTipoDocumentoAmm",
+					Optional.ofNullable(documentoGenericoBulk.getTipo_documento())
+							.flatMap(tipoDocumentoAmmBulk -> Optional.ofNullable(tipoDocumentoAmmBulk.getCd_tipo_documento_amm()))
+							.map(t -> SQLBuilder.EQUALS).orElse(SQLBuilder.ISNULL),
+					Optional.ofNullable(documentoGenericoBulk.getTipo_documento())
+							.flatMap(tipoDocumentoAmmBulk -> Optional.ofNullable(tipoDocumentoAmmBulk.getCd_tipo_documento_amm()))
+							.orElse(null)
+			);
+		}
+		sql.addClause(FindClause.AND, "dtInizioValidita", SQLBuilder.LESS_EQUALS, EJBCommonServices.getServerDate());
+		sql.openParenthesis(FindClause.AND);
+			sql.addClause(FindClause.AND, "dtFineValidita", SQLBuilder.GREATER_EQUALS, EJBCommonServices.getServerDate());
+			sql.addClause(FindClause.OR, "dtFineValidita", SQLBuilder.ISNULL, null);
+		sql.closeParenthesis();
+
+		List<CausaleContabileBulk> result = getHomeCache().getHome(CausaleContabileBulk.class).fetchAll(sql);
+		return new Hashtable(result
+				.stream()
+				.collect(Collectors.toMap(
+						entry -> entry.getCdCausale(),
+						entry -> entry.getDsCausale(),
+						(key, value) -> value, HashMap::new)
+				));
+
 	}
 }
