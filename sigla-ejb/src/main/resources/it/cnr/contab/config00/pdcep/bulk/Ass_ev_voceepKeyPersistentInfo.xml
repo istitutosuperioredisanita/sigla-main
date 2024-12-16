@@ -27,13 +27,7 @@
 			columnSize="4"
 			nullable="false"
 			primary="true" />
-		<columnMapping
-			columnName="CD_ELEMENTO_VOCE"
-			propertyName="cd_elemento_voce"
-			sqlTypeName="VARCHAR"
-			columnSize="20"
-			nullable="false"
-			primary="true" />
+
 		<columnMapping
 			columnName="TI_GESTIONE"
 			propertyName="ti_gestione"
@@ -48,13 +42,7 @@
 			columnSize="1"
 			nullable="false"
 			primary="true" />
-		<columnMapping
-			columnName="CD_VOCE_EP"
-			propertyName="cd_voce_ep"
-			sqlTypeName="VARCHAR"
-			columnSize="45"
-			nullable="false"
-			primary="true" />
+
 		<columnMapping
 				columnName="PG_ASS_EV_VOCEEP"
 				propertyName="pg_ass_ev_voceep"
@@ -70,14 +58,9 @@
 	<persistentProperty
 		name="ti_gestione"
 		partOfOid="true" />
-	<persistentProperty
-		name="cd_elemento_voce"
-		partOfOid="true" />
+
 	<persistentProperty
 		name="ti_appartenenza"
-		partOfOid="true" />
-	<persistentProperty
-		name="cd_voce_ep"
 		partOfOid="true" />
 	<persistentProperty
 			name="pg_ass_ev_voceep"

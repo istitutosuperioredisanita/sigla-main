@@ -57,7 +57,19 @@
 			propertyName="cd_voce_ep_contr"
 			sqlTypeName="VARCHAR"
 			columnSize="45"
-			nullable="true"/>	
+			nullable="true"/>
+		<columnMapping
+				columnName="CD_ELEMENTO_VOCE"
+				propertyName="cd_elemento_voce"
+				sqlTypeName="VARCHAR"
+				columnSize="20"
+				nullable="false" />
+		<columnMapping
+				columnName="CD_VOCE_EP"
+				propertyName="cd_voce_ep"
+				sqlTypeName="VARCHAR"
+				columnSize="45"
+				nullable="false" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="pg_ver_rec" />
@@ -70,5 +82,9 @@
 	<persistentProperty
 		name="utuv" />
 	<persistentProperty
-		name="cd_voce_ep_contr" />	
+		name="cd_voce_ep_contr" />
+	<persistentProperty
+		name="cd_elemento_voce"/>
+	<persistentProperty
+			name="cd_voce_ep"/>
 </SQLPersistentInfo>

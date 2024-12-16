@@ -32,7 +32,7 @@
 
         <dropPrimaryKey tableName="ass_ev_voceep"></dropPrimaryKey>
 
-        <addPrimaryKey tableName="ass_ev_voceep" constraintName="ass_ev_voceep_pkey" columnNames="pg_ass_ev_voceep,esercizio, ti_appartenenza, ti_gestione, cd_elemento_voce, cd_voce_ep"></addPrimaryKey>
+        <addPrimaryKey tableName="ass_ev_voceep" constraintName="ass_ev_voceep_pkey" columnNames="pg_ass_ev_voceep,esercizio, ti_appartenenza, ti_gestione"></addPrimaryKey>
     </changeSet>
 
 </databaseChangeLog>

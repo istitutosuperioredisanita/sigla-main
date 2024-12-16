@@ -21,12 +21,30 @@ import it.cnr.jada.persistency.Keyed;
 
 public class Ass_ev_voceepBase extends Ass_ev_voceepKey implements Keyed {
 	private java.lang.String cd_voce_ep_contr;
+	private java.lang.String cd_elemento_voce;
+	private java.lang.String cd_voce_ep;
 	public java.lang.String getCd_voce_ep_contr() {
 		return cd_voce_ep_contr;
 	}
 	public void setCd_voce_ep_contr(java.lang.String cd_voce_ep_contr) {
 		this.cd_voce_ep_contr = cd_voce_ep_contr;
 	}
+
+	public String getCd_elemento_voce() {
+		return cd_elemento_voce;
+	}
+
+	public void setCd_elemento_voce(String cd_elemento_voce) {
+		this.cd_elemento_voce = cd_elemento_voce;
+	}
+
+	public String getCd_voce_ep() {
+		return cd_voce_ep;
+	}
+	public void setCd_voce_ep(String cd_voce_ep) {
+		this.cd_voce_ep = cd_voce_ep;
+	}
+
 	public Ass_ev_voceepBase() {
 		super();
 	}
@@ -36,6 +54,6 @@ public class Ass_ev_voceepBase extends Ass_ev_voceepKey implements Keyed {
 							 java.lang.String ti_appartenenza,
 							 java.lang.String ti_gestione,
 							 Integer pg_ass_ev_voceep) {
-		super(cd_elemento_voce,cd_voce_ep,esercizio,ti_appartenenza,ti_gestione,pg_ass_ev_voceep);
+		super(esercizio,ti_appartenenza,ti_gestione,pg_ass_ev_voceep);
 	}
 }
