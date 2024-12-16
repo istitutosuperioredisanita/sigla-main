@@ -6162,4 +6162,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/mod_pk_table_ass_ev_voceep.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunta chiave univoca ass_ev_voceep-->
     <include file="bootstrap/add_uniquekey_table_ass_ev_voceep.xml"/>
+    <!-- Autore : CIRO SALVIO - Gestione FL_IRREGISTABILE-->
+    <include file="bootstrap/add_conf_fatt_gest_flirregistrabile.xml"/>
+    <!-- Autore : MARCO SPASIANO - Gestione Causali Contabili-->
+    <include file="bootstrap/add_table_causali_contabili.xml"/>
 </databaseChangeLog>

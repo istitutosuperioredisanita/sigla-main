@@ -28,7 +28,6 @@ import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
-import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.jada.bulk.BulkCollection;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -404,7 +403,12 @@ public class DocumentoEleTestataBulk extends DocumentoEleTestataBase implements 
 	}
 	
 	public boolean isCompilabile() {
-		return getStatoDocumentoEle().equals(StatoDocumentoEleEnum.COMPLETO);
+		return (getStatoDocumentoEle().equals(StatoDocumentoEleEnum.COMPLETO)
+				||(StatoDocumentoEleEnum.DA_STORNARE.equals(getStatoDocumentoEle()) && !isIrregistrabile())
+				||(Fattura_passivaBulk.TIPO_NOTA_DI_CREDITO.equals(getTipoDocumentoSIGLA())
+					&& (StatoDocumentoEleEnum.RIFIUTATA_CON_PEC.equals(getStatoDocumentoEle()))
+					&& !isIrregistrabile())
+		);
 	}
 
 	public boolean isRegistrata() {

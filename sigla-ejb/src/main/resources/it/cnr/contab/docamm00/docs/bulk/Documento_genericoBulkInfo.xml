@@ -733,6 +733,17 @@
 		enabledOnFreeSearch="true"
 		label="Tipo conto"
 		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="cd_causale_contabile"
+		property="cd_causale_contabile"
+		inputType="SELECT"
+		keysProperty="tiCausaleContabileKeys"
+		enabledOnSearch="true"
+		inputSize="10"
+		maxLength="10"
+		nullable="false"
+		label="Causale Contabile" />
+
 
 	<formFieldProperty
 		name="esercizio_lettera" />
@@ -870,6 +881,8 @@
 		name="findTipoDocumentoGenerico" />
 	<formFieldProperty
 		name="cd_tipo_conto_ep" />
+	<formFieldProperty
+		name="cd_causale_contabile" />
 
 	<columnFieldProperty
 		name="cd_tipo_documento_amm" />
@@ -898,8 +911,10 @@
 	<columnFieldProperty 
 		name="causale"/>		
 	<columnFieldProperty 
-		name="cdTipoDocumentoGenerico"/>		
-			
+		name="cdTipoDocumentoGenerico"/>
+	<columnFieldProperty
+		name="cd_causale_contabile" />
+
 	<columnSet name="filtro_ricerca_documenti">	
 		<columnFieldProperty
 			name="pg_documento_generico" />
@@ -956,5 +971,8 @@
 		name="pg_lettera"
 		inputType="TEXT"/>
 	<findFieldProperty
-			name="cd_tipo_conto_ep" />
+		name="cd_tipo_conto_ep" />
+	<findFieldProperty
+		name="cd_causale_contabile" />
+
 </bulkInfo>

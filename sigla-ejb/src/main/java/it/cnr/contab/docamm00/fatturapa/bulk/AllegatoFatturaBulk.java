@@ -17,20 +17,19 @@
 
 package it.cnr.contab.docamm00.fatturapa.bulk;
 
+import it.cnr.contab.docamm00.storage.StorageDocAmmAspect;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.bulk.ValidationException;
+import it.cnr.jada.util.OrderedHashtable;
+import it.cnr.si.spring.storage.annotation.StoragePolicy;
+import it.cnr.si.spring.storage.annotation.StorageProperty;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
-import it.cnr.contab.docamm00.storage.StorageDocAmmAspect;
-import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.contab.utenze00.bulk.CNRUserInfo;
-import it.cnr.jada.UserContext;
-import it.cnr.si.spring.storage.annotation.StoragePolicy;
-import it.cnr.si.spring.storage.annotation.StorageProperty;
-import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
-import it.cnr.jada.bulk.ValidationException;
-import it.cnr.jada.util.OrderedHashtable;
 
 public class AllegatoFatturaBulk extends AllegatoGenericoBulk {
 	private static final long serialVersionUID = 1L;
@@ -151,5 +150,14 @@ public class AllegatoFatturaBulk extends AllegatoGenericoBulk {
 
 	public void setNumProtocollo(String numProtocollo) {
 		this.numProtocollo = numProtocollo;
+	}
+
+	public boolean isComunicazioneNonRegistabilita() {
+		return Optional.ofNullable(this)
+				.filter(AllegatoFatturaBulk.class::isInstance)
+				.map(AllegatoFatturaBulk.class::cast)
+				.map(AllegatoFatturaBulk::getAspect)
+				.filter(strings -> strings.contains(StorageDocAmmAspect.SIGLA_FATTURE_ATTACHMENT_COMUNICAZIONE_NON_REGISTRABILITA.value()))
+				.isPresent();
 	}
 }
