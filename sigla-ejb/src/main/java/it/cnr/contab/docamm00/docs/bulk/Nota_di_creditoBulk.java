@@ -164,7 +164,8 @@ public void copyFrom(
 	setTi_bene_servizio(fattura_passiva.getTi_bene_servizio());
 	setFl_merce_extra_ue(fattura_passiva.getFl_merce_extra_ue());
 	setFl_merce_intra_ue(fattura_passiva.getFl_merce_intra_ue());
-	setFl_fattura_compenso(fattura_passiva.getFl_fattura_compenso());
+	//setFl_fattura_compenso(fattura_passiva.getFl_fattura_compenso());
+	setFl_fattura_compenso(Boolean.FALSE);
 	setDs_fattura_passiva(fattura_passiva.getDs_fattura_passiva());
 	setFl_split_payment(fattura_passiva.getFl_split_payment());
 	//setDt_fattura_fornitore(fattura_passiva.getDt_fattura_fornitore());
