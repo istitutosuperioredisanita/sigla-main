@@ -22,7 +22,6 @@ import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.bulk.Configurazione_cnrKey;
 import it.cnr.contab.utente00.ejb.RuoloComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.TipoRapportoTesoreriaEnum;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
@@ -1421,6 +1420,6 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
 
         // Verifica delle date di validità
         return isLiqIvaAnticipata && dataFattura != null && dataInizio != null && dataFine != null &&
-                (dataFattura.before(dataInizio) || dataFattura.after(dataFine));
+                (dataFattura.compareTo(dataInizio)>=0 &&  dataFattura.compareTo(dataFine)<=0);
     }
 }
