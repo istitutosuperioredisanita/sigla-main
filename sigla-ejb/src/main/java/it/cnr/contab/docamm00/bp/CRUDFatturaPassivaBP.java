@@ -648,6 +648,8 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
                 Fattura_passivaBulk fp = (Fattura_passivaBulk) bulk;
                 fp.setDettagliCancellati(new java.util.Vector());
                 fp.setDocumentiContabiliCancellati(new java.util.Vector());
+                Boolean liqIvaAnticipataFattPassiva = Utility.createConfigurazioneCnrComponentSession().isLiqIvaAnticipataFattPassiva(context.getUserContext(), fp.getDt_registrazione());
+                fp.setBloccoAttivoDtReg(liqIvaAnticipataFattPassiva);
             }
             FatturaPassivaComponentSession h = (FatturaPassivaComponentSession) createComponentSession();
             if (isEditing()) {

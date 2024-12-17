@@ -298,6 +298,9 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
     @JsonIgnore
     private boolean isAttivoSplitPayment = false;
     private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
+
+    private boolean isBloccoAttivoDtReg =  Boolean.FALSE;
+
     public Fattura_attivaBulk() {
         super();
     }
@@ -1794,7 +1797,7 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
      */
     public boolean isStampataSuRegistroIVA() {
         return STATO_IVA_B.equalsIgnoreCase(getStatoIVA()) ||
-                STATO_IVA_C.equalsIgnoreCase(getStatoIVA());
+                STATO_IVA_C.equalsIgnoreCase(getStatoIVA()) && isBloccoAttivoDtReg();
     }
 
     /**
@@ -2502,5 +2505,13 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
 
     public boolean isDocumentoInContoAnticipo() {
         return TipoContoDocAttivoEnum.ANT.value().equals(this.getCd_tipo_conto_ep());
+    }
+
+    public boolean isBloccoAttivoDtReg() {
+        return isBloccoAttivoDtReg;
+    }
+
+    public void setBloccoAttivoDtReg(boolean bloccoAttivoDtReg) {
+        isBloccoAttivoDtReg = bloccoAttivoDtReg;
     }
 }

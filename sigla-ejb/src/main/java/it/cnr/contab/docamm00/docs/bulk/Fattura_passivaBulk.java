@@ -258,6 +258,8 @@ public abstract class Fattura_passivaBulk
 
     private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
 
+    private boolean isBloccoAttivoDtReg =  Boolean.FALSE;
+
     public Fattura_passivaBulk() {
         super();
     }
@@ -2738,7 +2740,7 @@ public abstract class Fattura_passivaBulk
         return STATO_IVA_B.equalsIgnoreCase(getStatoIVA()) ||
                 STATO_IVA_C.equalsIgnoreCase(getStatoIVA()) ||
                 //A seguito dell'errore segnalato 569 (dovuto alla richiesta 423)
-                (getAutofattura() != null && getAutofattura().isStampataSuRegistroIVA());//||
+                (getAutofattura() != null && getAutofattura().isStampataSuRegistroIVA()) && isBloccoAttivoDtReg();//||
         //(getProgr_univoco()!=null);
     }
 
@@ -3825,4 +3827,11 @@ public abstract class Fattura_passivaBulk
         return super.isOptionDisabled(fieldProperty, key);
     }
 
+    public boolean isBloccoAttivoDtReg() {
+        return isBloccoAttivoDtReg;
+    }
+
+    public void setBloccoAttivoDtReg(boolean bloccoAttivoDtReg) {
+        isBloccoAttivoDtReg = bloccoAttivoDtReg;
+    }
 }
