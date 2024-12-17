@@ -1603,7 +1603,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
             // Verifico le condizioni per la fattura passiva
             Boolean isValidaFattPassiva = configurazioneCnrComponentSession.isLiqIvaAnticipataFattPassiva(userContext, dataFattura);
 
-            if (!isValidaFattPassiva) {
+            if (isValidaFattPassiva) {
                 throw new it.cnr.jada.comp.ApplicationException("Data registrazione inferiore/uguale a ultimo periodo definitivo di stampa registri IVA");
             }
         } catch (ComponentException e) {

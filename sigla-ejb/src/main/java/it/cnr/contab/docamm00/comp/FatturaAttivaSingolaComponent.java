@@ -7234,7 +7234,7 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
             // Verifico le condizioni per la fattura passiva
             Boolean isValidaFattAttiva = configurazioneCnrComponentSession.isLiqIvaAnticipataFattAttiva(userContext, dataFattura);
 
-            if (!isValidaFattAttiva) {
+            if (isValidaFattAttiva) {
                 throw new it.cnr.jada.comp.ApplicationException("Data registrazione inferiore/uguale a ultimo periodo definitivo di stampa registri IVA");
             }
         } catch (ComponentException e) {
