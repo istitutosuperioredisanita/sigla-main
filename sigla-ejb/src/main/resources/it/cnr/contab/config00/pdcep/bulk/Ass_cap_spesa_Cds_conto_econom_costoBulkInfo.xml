@@ -53,7 +53,10 @@
 		name="find_voce_ep"
 		property="voce_ep"
 		inputType="SEARCHTOOL"
+		enabledOnView="true"
+		enabledOnEdit="true"
 		enabledOnSearch="true"
+		enabledOnInsert="true"
 		/>
 	<fieldProperty
 		name="cd_voce_ep"
@@ -79,7 +82,10 @@
 		name="find_voce_ep_contr"
 		property="voce_ep_contr"
 		inputType="SEARCHTOOL"
+		enabledOnView="true"
+		enabledOnEdit="true"
 		enabledOnSearch="true"
+		enabledOnInsert="true"
 		completeOnSave="false"
 		/>
 	<fieldProperty

@@ -18,6 +18,8 @@
 package it.cnr.contab.config00.pdcep.bulk;
 
 import it.cnr.contab.config00.pdcfin.bulk.*;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.*;
 import it.cnr.jada.persistency.sql.*;
 
@@ -31,6 +33,15 @@ public Ass_cap_spesa_Cds_conto_econom_costoHome(java.sql.Connection conn) {
 }
 public Ass_cap_spesa_Cds_conto_econom_costoHome(java.sql.Connection conn, it.cnr.jada.persistency.PersistentCache persistentCache) {
 	super(Ass_cap_spesa_Cds_conto_econom_costoBulk.class,conn,persistentCache);
+}
+
+public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext, OggettoBulk bulk) throws PersistencyException, ComponentException {
+		Ass_cap_spesa_Cds_conto_econom_costoBulk ep= new Ass_cap_spesa_Cds_conto_econom_costoBulk();
+		Integer max = (Integer)findMax(ep, "pg_ass_ev_voceep", null);
+		if (max!=null)
+			((Ass_cap_spesa_Cds_conto_econom_costoBulk)bulk).setPg_ass_ev_voceep(new Integer(max.intValue()+1));
+		else
+			((Ass_cap_spesa_Cds_conto_econom_costoBulk)bulk).setPg_ass_ev_voceep(new Integer(1));
 }
 /**
  * Restituisce il SQLBuilder per selezionare fra tutti gli elementi voce quelli relativi ai capitoli di spesa
