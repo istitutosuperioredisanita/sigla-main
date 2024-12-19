@@ -1420,6 +1420,6 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
 
         // Verifica delle date di validità
         return isLiqIvaAnticipata && dataFattura != null && dataInizio != null && dataFine != null &&
-                (dataFattura.compareTo(dataInizio)>=0 &&  dataFattura.compareTo(dataFine)<=0);
+                (dataFattura.before(dataInizio) || dataFattura.after(dataFine));
     }
 }
