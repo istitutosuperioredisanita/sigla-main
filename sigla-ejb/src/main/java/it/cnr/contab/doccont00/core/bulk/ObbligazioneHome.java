@@ -35,6 +35,7 @@ import it.cnr.contab.doccont00.ejb.NumTempDocContComponentSession;
 import it.cnr.contab.pdg00.bulk.Pdg_preventivo_detBulk;
 import it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk;
 import it.cnr.contab.pdg01.bulk.Pdg_modulo_spese_gestBulk;
+import it.cnr.contab.pdg01.bulk.Pdg_variazione_riga_gestBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.BulkList;
@@ -1647,8 +1648,10 @@ public class ObbligazioneHome extends BulkHome {
         sql.addClause(FindClause.AND, "esercizio_obbligazione", SQLBuilder.EQUALS, bulk.getEsercizio());
         sql.addClause(FindClause.AND, "esercizio_ori_obbligazione", SQLBuilder.EQUALS, bulk.getEsercizio_originale());
         sql.addClause(FindClause.AND, "pg_obbligazione", SQLBuilder.EQUALS, bulk.getPg_obbligazione());
+        sql.setOrderBy("pg_variazione_pdg", OrderConstants.ORDER_ASC);
         return dettHome.fetchAll(sql);
     }
+
 
     public void accorpaScadenzeInAutomatico(UserContext userContext, ObbligazioneBulk obbligazione) throws ComponentException {
         try {
