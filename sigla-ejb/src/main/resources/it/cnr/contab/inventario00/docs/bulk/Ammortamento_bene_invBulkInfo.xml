@@ -93,15 +93,15 @@
 		name="imponibileAmmortamento"
 		property="imponibileAmmortamento"
 		inputType="TEXT"
-		formatName="it.jada.stone.util.EuroFormat"
+		formatName="it.cnr.contab.util.EuroFormat"
 		enabledOnEdit="false"
 		nullable="false"
-		label="Valore su cui viene applicato l'ammortamento, e che rappresenta il totale da ammorttizzare" />
+		label="Valore su cui viene applicato l'ammortamento, e che rappresenta il totale da ammortizzare" />
 	<fieldProperty
 		name="imMovimentoAmmort"
 		property="imMovimentoAmmort"
 		inputType="TEXT"
-		formatName="it.jada.stone.util.EuroFormat"
+		formatName="it.cnr.contab.util.EuroFormat"
 		enabledOnEdit="false"
 		nullable="false"
 		label="Importo relativo al movimento di ammortamento" />

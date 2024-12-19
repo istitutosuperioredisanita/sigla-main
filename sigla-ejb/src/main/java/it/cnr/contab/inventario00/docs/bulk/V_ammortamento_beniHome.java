@@ -25,7 +25,7 @@ public class V_ammortamento_beniHome extends BulkHome {
 					"IMPONIBILE_AMMORTAMENTO,FL_TOTALMENTE_SCARICATO,ESERCIZIO_CARICO_BENE,CD_CDS," +
 					"CD_UNITA_ORGANIZZATIVA,ESERCIZIO_COMPETENZA,CD_TIPO_AMMORTAMENTO,TI_AMMORTAMENTO," +
 					"DT_CANCELLAZIONE,PERC_PRIMO_ANNO,PERC_SUCCESSIVI,NUMERO_ANNI "+
-			"FROM V_AMMORTAMENTO_BENI "+
+			"FROM "+it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+"V_AMMORTAMENTO_BENI "+
 			"WHERE (ESERCIZIO_COMPETENZA = ? OR ESERCIZIO_COMPETENZA is null) AND "+
 			       "ESERCIZIO_CARICO_BENE < = ?";
 
@@ -60,6 +60,7 @@ public class V_ammortamento_beniHome extends BulkHome {
 
 			try {
 				ps.setInt(1, esercizio);
+				ps.setInt(2, esercizio);
 				ResultSet rs = ps.executeQuery();
 
 				try {

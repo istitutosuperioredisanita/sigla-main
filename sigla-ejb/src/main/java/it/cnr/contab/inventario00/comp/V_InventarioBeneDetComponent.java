@@ -43,9 +43,18 @@ public V_InventarioBeneDetComponent() {
 	public NormalizzatoreAmmortamentoDto findNormalizzatoreBene(UserContext uc, Integer esercizio,Long pgInventario,Long nrInventario, Long progressivo)  {
 		try {
 			V_inventario_bene_detHome v_InventarioBeneDetHome = (V_inventario_bene_detHome) getHome(uc, V_inventario_bene_detBulk.class);
-			return v_InventarioBeneDetHome.findBeneDaAmmortizare(esercizio,pgInventario,nrInventario,progressivo);
+			return v_InventarioBeneDetHome.findBeneDaNormalizzarePerAmmortamento(esercizio,pgInventario,nrInventario,progressivo);
 		}catch (ComponentException | PersistencyException ex){
 			throw new RuntimeException("Error findNormalizzatoreBene esercizio : "+esercizio+" pgInventario: "+pgInventario+"nrInventario: "+nrInventario+"progressivo: "+progressivo);
+		}
+
+	}
+	public List<NormalizzatoreAmmortamentoDto> findNormalizzatoreBeniPerAmm(UserContext uc, Integer esercizio)  {
+		try {
+			V_inventario_bene_detHome v_InventarioBeneDetHome = (V_inventario_bene_detHome) getHome(uc, V_inventario_bene_detBulk.class);
+			return v_InventarioBeneDetHome.findAllBeniDaNormalizzarePerAmmortamento(esercizio);
+		}catch (ComponentException | PersistencyException ex){
+			throw new RuntimeException("Error findNormalizzatoreBeniPerAmm esercizio : "+esercizio);
 		}
 
 	}

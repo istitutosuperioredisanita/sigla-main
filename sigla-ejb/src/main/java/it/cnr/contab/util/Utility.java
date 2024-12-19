@@ -624,20 +624,20 @@ public final class Utility {
 	public static ScritturaPartitaDoppiaChiusuraComponentSession createScritturaPartitaDoppiaChiusuraComponentSession() throws javax.ejb.EJBException{
 		return (ScritturaPartitaDoppiaChiusuraComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOEPCOAN00_EJB_ScritturaPartitaDoppiaChiusuraComponentSession", ScritturaPartitaDoppiaChiusuraComponentSession.class);
 	}
-	public static AmmortamentoBeneComponentSessionBean createAmmortamentoBeneComponentSession() throws javax.ejb.EJBException{
-		return (AmmortamentoBeneComponentSessionBean) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_AmmortamentoBeneComponentSession", AmmortamentoBeneComponentSession.class);
+	public static AmmortamentoBeneComponentSession createAmmortamentoBeneComponentSession() throws javax.ejb.EJBException{
+		return (AmmortamentoBeneComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_AmmortamentoBeneComponentSession", AmmortamentoBeneComponentSession.class);
 	}
-	public static Inventario_beniComponentSessionBean createInventario_beniComponentSession() throws javax.ejb.EJBException{
-		return (Inventario_beniComponentSessionBean) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_Inventario_beniComponentSession", Inventario_beniComponentSession.class);
+	public static Inventario_beniComponentSession createInventario_beniComponentSession() throws javax.ejb.EJBException{
+		return (Inventario_beniComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_Inventario_beniComponentSession", Inventario_beniComponentSession.class);
 	}
-	public static V_AmmortamentoBeniComponentSessionBean createV_AmmortamentoBeniComponentSession() throws javax.ejb.EJBException{
-		return (V_AmmortamentoBeniComponentSessionBean) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_V_AmmortamentoBeniComponentSession", V_AmmortamentoBeniComponentSession.class);
+	public static V_AmmortamentoBeniComponentSession createV_AmmortamentoBeniComponentSession() throws javax.ejb.EJBException{
+		return (V_AmmortamentoBeniComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_V_AmmortamentoBeniComponentSession", V_AmmortamentoBeniComponentSession.class);
 	}
-	public static Tipo_ammortamentoComponentSessionBean createTipo_ammortamentoComponentSession() throws javax.ejb.EJBException{
-		return (Tipo_ammortamentoComponentSessionBean) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_Tipo_ammortamentoComponentSession", Tipo_ammortamentoComponentSession.class);
+	public static Tipo_ammortamentoComponentSession createTipo_ammortamentoComponentSession() throws javax.ejb.EJBException{
+		return (Tipo_ammortamentoComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_Tipo_ammortamentoComponentSession", Tipo_ammortamentoComponentSession.class);
 	}
-	public static V_InventarioBeneDetComponentSessionBean createV_InventarioBeneDetComponentSession() throws javax.ejb.EJBException{
-		return (V_InventarioBeneDetComponentSessionBean) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_V_InventarioBeneDetComponentSession", V_InventarioBeneDetComponentSession.class);
+	public static V_InventarioBeneDetComponentSession createV_InventarioBeneDetComponentSession() throws javax.ejb.EJBException{
+		return (V_InventarioBeneDetComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_V_InventarioBeneDetComponentSession", V_InventarioBeneDetComponentSession.class);
 	}
 
 }

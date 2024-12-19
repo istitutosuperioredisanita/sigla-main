@@ -28,12 +28,12 @@ public class Ammortamento_bene_invHome extends BulkHome {
 					"CD_CATEGORIA_GRUPPO,ESERCIZIO_COMPETENZA,IMPONIBILE_AMMORTAMENTO,IM_MOVIMENTO_AMMORT," +
 					"PERC_AMMORTAMENTO,NUMERO_ANNI,NUMERO_ANNO,PERC_PRIMO_ANNO," +
 					"PERC_SUCCESSIVI,CD_CDS_UBICAZIONE,CD_UO_UBICAZIONE,FL_STORNO,PG_RIGA,PG_BUONO_S "+
-			"FROM AMMORTAMENTO_BENE_INV "+
+			"FROM "+it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+"AMMORTAMENTO_BENE_INV "+
 			"WHERE ESERCIZIO = ? AND FL_STORNO='N' ";
 
 	private final String statmentCountNumeroAnno =
 			" SELECT NVL(COUNT(*)+1,1) " +
-			" FROM   AMMORTAMENTO_BENE_INV " +
+			" FROM   "+it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+"AMMORTAMENTO_BENE_INV " +
 			" WHERE  pg_inventario = ? AND " +
 			"        nr_inventario = ? AND" +
 			"        progressivo = ?AND " +
@@ -41,7 +41,7 @@ public class Ammortamento_bene_invHome extends BulkHome {
 
 	private final String statmentProgressivoRiga =
 			"SELECT NVL(Max(PG_RIGA)+1,1)  " +
-			"FROM   AMMORTAMENTO_BENE_INV  " +
+			"FROM   "+it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+"AMMORTAMENTO_BENE_INV  " +
 			"WHERE  pg_inventario = ? AND " +
 			"		nr_inventario = ? AND " +
 			"		progressivo = ? AND " +
@@ -221,5 +221,47 @@ public class Ammortamento_bene_invHome extends BulkHome {
 		} catch (SQLException e) {
 			throw new PersistencyException(e);
 		}
+	}
+
+	public String inserimentoSqlAmmortamentoBene(UserContext uc, Ammortamento_bene_invBulk amm){
+		return " INSERT INTO "+it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+"AMMORTAMENTO_BENE_INV ( "+
+				"PG_INVENTARIO,"+
+				"NR_INVENTARIO,"+
+				"PROGRESSIVO,"+
+				"ESERCIZIO,"+
+				"CD_TIPO_AMMORTAMENTO,"+
+				"TI_AMMORTAMENTO,"+
+				"CD_CATEGORIA_GRUPPO,"+
+				"ESERCIZIO_COMPETENZA,"+
+				"IMPONIBILE_AMMORTAMENTO,"+
+				"IM_MOVIMENTO_AMMORT,"+
+				"PERC_AMMORTAMENTO,"+
+				"DACR,"+
+				"UTCR,"+
+				"DUVA,"+
+				"UTUV,"+
+				"PG_VER_REC,"+
+				"NUMERO_ANNI,"+
+				"NUMERO_ANNO,"+
+				"PERC_PRIMO_ANNO,"+
+				"PERC_SUCCESSIVI,"+
+				"CD_CDS_UBICAZIONE,"+
+				"CD_UO_UBICAZIONE,"+
+				"FL_STORNO,"+
+				"PG_RIGA,"+
+				"PG_BUONO_S ) "+
+				"VALUES ("+amm.getPgInventario()+","+amm.getNrInventario()+","+amm.getProgressivo()+","+amm.getEsercizio()+"," +
+				amm.getCdTipoAmmortamento()+","+amm.getTiAmmortamento()+","+amm.getCdCategoriaGruppo()+","+amm.getEsercizioCompetenza()+"," +
+				amm.getImponibileAmmortamento()+","+amm.getImMovimentoAmmort()+","+amm.getPercAmmortamento()+",SYSDATE,'SI',SYSDATE,SI,1," +
+				amm.getNumeroAnni()+","+amm.getNumeroAnno()+","+amm.getPercPrimoAnno()+","+amm.getPercSuccessivi()+","+amm.getCdCdsUbicazione()+"," +
+				amm.getCdUoUbicazione()+","+amm.getFlStorno()+","+amm.getPgRiga()+","+amm.getPgBuonoS()+")";
+	}
+	public String deleteSqlAmmortamento(UserContext uc, Ammortamento_bene_invBulk amm){
+		return  "DELETE FROM "+it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+"AMMORTAMENTO_BENE_INV "+
+		"WHERE  pg_inventario = "+amm.getPgInventario()+" AND "+
+		"		nr_inventario = "+amm.getNrInventario()+" AND "+
+		"		progressivo = "+amm.getProgressivo()+" AND " +
+		"		esercizio = "+amm.getEsercizio()+ "AND "+
+		"		fl_storno = 'N'";
 	}
 }

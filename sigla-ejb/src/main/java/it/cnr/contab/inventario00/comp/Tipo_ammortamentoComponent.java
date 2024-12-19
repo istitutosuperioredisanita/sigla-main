@@ -19,6 +19,7 @@ package it.cnr.contab.inventario00.comp;
 
 import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beniBulk;
 import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beniHome;
+import it.cnr.contab.inventario00.dto.TipoAmmCatGruppoDto;
 import it.cnr.contab.inventario00.tabrif.bulk.*;
 import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.config00.esercizio.bulk.*;
@@ -1697,6 +1698,14 @@ private void validaTipo_Ammortamento(UserContext userContext, Tipo_ammortamentoB
 			return tipo_ammortamentoHome.findTipoAmmortamento(tipoAmmortamento,catGruppo,esercizio);
 		}catch (ComponentException | PersistencyException ex){
 			throw new RuntimeException("Error findTipoAmmortamento tipo ammortamento : "+tipoAmmortamento+" categoria gruppo: "+catGruppo+" esercizio : "+esercizio);
+		}
+	}
+	public List<TipoAmmCatGruppoDto> findTipoAmmortamento(UserContext uc,  Integer esercizio) {
+		try {
+			Tipo_ammortamentoHome tipo_ammortamentoHome = (Tipo_ammortamentoHome) getHome(uc, Tipo_ammortamentoBulk.class);
+			return tipo_ammortamentoHome.findTipoAmmortamento(esercizio);
+		}catch (ComponentException | PersistencyException ex){
+			throw new RuntimeException("Error findTipoAmmortamento esercizio : "+esercizio);
 		}
 	}
 }

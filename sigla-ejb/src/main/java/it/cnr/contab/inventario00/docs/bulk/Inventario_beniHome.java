@@ -35,13 +35,18 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public class Inventario_beniHome extends BulkHome {
-	
+
+
 public Inventario_beniHome(java.sql.Connection conn) {
 	super(Inventario_beniBulk.class,conn);
 }
 public Inventario_beniHome(java.sql.Connection conn,PersistentCache persistentCache) {
 	super(Inventario_beniBulk.class,conn,persistentCache);
 }
+
+
+
+
 public java.util.Collection findCondizioni(Buono_carico_scaricoBulk buonoCarico, 
 		it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettHome h,
 	Buono_carico_scarico_dettBulk clause) throws PersistencyException, IntrospectionException {
@@ -300,5 +305,17 @@ public java.util.Collection findDettagliBuono(Buono_carico_scaricoBulk buono)thr
 		sql.addSQLClause("AND","INVENTARIO_BENI.ETICHETTA",sql.EQUALS,dett.getEtichetta());
 
 		return sql.executeExistsQuery(getConnection());
+	}
+	public String aggiornamentoSqlInventarioBeneConAmmortamento(UserContext uc, Inventario_beniBulk bene){
+		return " UPDATE "+it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+"INVENTARIO_BENI "+
+				"SET VALORE_AMMORTIZZATO="+bene.getValore_ammortizzato()+" AND " +
+				" DUVA= SYSDATE, " +
+				" UTUV='SI', " +
+				" PG_VER_REC=(PG_VER_REC+1) " +
+				"WHERE PG_INVENTARIO = "+bene.getPg_inventario()+" AND "+
+				" NR_INVENTARIO = "+bene.getNr_inventario()+" AND "+
+				" PROGRESSIVO = "+bene.getProgressivo();
+
+
 	}
 }

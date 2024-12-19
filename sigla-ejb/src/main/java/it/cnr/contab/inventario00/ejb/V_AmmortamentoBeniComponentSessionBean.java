@@ -17,10 +17,9 @@
 
 package it.cnr.contab.inventario00.ejb;
 
-import it.cnr.contab.doccont00.comp.AccertamentoComponent;
-import it.cnr.contab.inventario00.comp.AmmortamentoBeneComponent;
+
 import it.cnr.contab.inventario00.comp.V_AmmortamentoBeniComponent;
-import it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invBulk;
+
 import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beniBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
@@ -36,7 +35,7 @@ import java.util.List;
 public class V_AmmortamentoBeniComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements V_AmmortamentoBeniComponentSession {
 @PostConstruct
 	public void ejbCreate() {
-		componentObj = new AccertamentoComponent();
+		componentObj = new V_AmmortamentoBeniComponent();
 	}
 	@Remove
 	public void ejbRemove() throws javax.ejb.EJBException {

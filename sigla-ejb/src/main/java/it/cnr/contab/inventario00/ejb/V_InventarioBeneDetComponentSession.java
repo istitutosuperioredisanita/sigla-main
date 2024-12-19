@@ -30,5 +30,5 @@ import java.util.List;
 public interface V_InventarioBeneDetComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
 
     NormalizzatoreAmmortamentoDto findNormalizzatoreBene(UserContext uc, Integer esercizio, Long pgInventario, Long nrInventario, Long progressivo) throws ComponentException, RemoteException;
-
+    public List<NormalizzatoreAmmortamentoDto> findNormalizzatoreBeniPerAmm(UserContext uc, Integer esercizio)throws ComponentException, RemoteException;
 }

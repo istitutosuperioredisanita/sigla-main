@@ -17,17 +17,19 @@
 
 package it.cnr.contab.inventario00.ejb;
 
-import it.cnr.contab.doccont00.comp.AccertamentoComponent;
-import it.cnr.contab.doccont00.ejb.AccertamentoComponentSession;
+
 import it.cnr.contab.inventario00.comp.AmmortamentoBeneComponent;
 import it.cnr.contab.inventario00.comp.IdInventarioComponent;
 import it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.PrimaryKeyHashtable;
+import it.cnr.jada.comp.ComponentException;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Remove;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -36,7 +38,7 @@ import java.util.List;
 public class AmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements AmmortamentoBeneComponentSession {
 @PostConstruct
 	public void ejbCreate() {
-		componentObj = new AccertamentoComponent();
+		componentObj = new AmmortamentoBeneComponent();
 	}
 	@Remove
 	public void ejbRemove() throws javax.ejb.EJBException {
@@ -82,6 +84,36 @@ public class AmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.CRUDCo
 			Integer result = ((AmmortamentoBeneComponent)componentObj).getNumeroAnnoAmmortamento(param0,param1,param2,param3);
 			component_invocation_succes(param0,componentObj);
 			return result;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
+	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void inserisciAmmortamentoBene(UserContext param0, Ammortamento_bene_invBulk param1) throws ComponentException, RemoteException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			((AmmortamentoBeneComponent)componentObj).inserisciAmmortamentoBene(param0,param1);
+			component_invocation_succes(param0,componentObj);
+
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
+	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void cancellaiAmmortamentoBene(UserContext param0, Ammortamento_bene_invBulk param1) throws ComponentException, RemoteException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			((AmmortamentoBeneComponent)componentObj).cancellaiAmmortamentoBene(param0,param1);
+			component_invocation_succes(param0,componentObj);
+
 		} catch(RuntimeException e) {
 			throw uncaughtRuntimeException(param0,componentObj,e);
 		} catch(Error e) {

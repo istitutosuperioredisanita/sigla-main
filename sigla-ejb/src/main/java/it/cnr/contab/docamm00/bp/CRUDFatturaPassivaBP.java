@@ -272,7 +272,6 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             }
         };
     }
-
     protected void basicEdit(it.cnr.jada.action.ActionContext context,
                              OggettoBulk bulk, boolean doInitializeForEdit)
             throws it.cnr.jada.action.BusinessProcessException {

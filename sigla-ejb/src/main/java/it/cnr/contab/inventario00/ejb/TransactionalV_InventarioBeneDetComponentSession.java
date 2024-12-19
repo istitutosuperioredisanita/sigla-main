@@ -50,4 +50,23 @@ public class TransactionalV_InventarioBeneDetComponentSession extends it.cnr.jad
             throw e;
         }
     }
+
+    @Override
+    public List<NormalizzatoreAmmortamentoDto> findNormalizzatoreBeniPerAmm(UserContext param0, Integer param1) throws ComponentException, RemoteException {
+        try {
+            return (List<NormalizzatoreAmmortamentoDto>)invoke("findNormalizzatoreBeniPerAmm",new Object[] {
+                    param0,
+                    param1});
+        } catch (InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch(it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch(Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception",ex);
+            }
+        } catch (RemoteException e) {
+            throw e;
+        }
+    }
 }

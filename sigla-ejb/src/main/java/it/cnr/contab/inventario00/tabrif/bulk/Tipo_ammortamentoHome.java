@@ -20,6 +20,7 @@ package it.cnr.contab.inventario00.tabrif.bulk;
 
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invBulk;
+import it.cnr.contab.inventario00.dto.TipoAmmCatGruppoDto;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.*;
 import it.cnr.jada.persistency.*;
@@ -37,10 +38,10 @@ public class Tipo_ammortamentoHome extends BulkHome {
 	private final String statmentSelectTipoAmmNoTipoAmm =
 			"SELECT aTA.CD_TIPO_AMMORTAMENTO,aTA.TI_AMMORTAMENTO,aTA.DS_TIPO_AMMORTAMENTO,aTA.PERC_PRIMO_ANNO," +
 					"aTA.PERC_SUCCESSIVI,aTA.NUMERO_ANNI,aTA.DT_CANCELLAZIONE " +
-			"FROM   TIPO_AMMORTAMENTO aTA "+
+			"FROM   "+it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+"TIPO_AMMORTAMENTO aTA "+
 			"WHERE EXISTS (SELECT 1 " +
-						   "FROM   ASS_TIPO_AMM_CAT_GRUP_INV " +
-			               "WHERE  CD_CATEGORIA_GRUPPO = ? AND" +
+						   "FROM   "+it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+"ASS_TIPO_AMM_CAT_GRUP_INV " +
+			               "WHERE  CD_CATEGORIA_GRUPPO = ? AND " +
 			                      "CD_TIPO_AMMORTAMENTO = aTA.CD_TIPO_AMMORTAMENTO AND " +
 								  "TI_AMMORTAMENTO = aTA.TI_AMMORTAMENTO AND " +
 								  "ESERCIZIO_COMPETENZA = ?)";
@@ -48,14 +49,23 @@ public class Tipo_ammortamentoHome extends BulkHome {
 	private final String statmentSelectTipoAmmConTipoAmm =
 			"SELECT aTA.CD_TIPO_AMMORTAMENTO,aTA.TI_AMMORTAMENTO,aTA.DS_TIPO_AMMORTAMENTO,aTA.PERC_PRIMO_ANNO," +
 			"aTA.PERC_SUCCESSIVI,aTA.NUMERO_ANNI,aTA.DT_CANCELLAZIONE " +
-			"FROM   TIPO_AMMORTAMENTO aTA "+
+			"FROM   "+it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+"TIPO_AMMORTAMENTO aTA "+
 			"WHERE aTA.TI_AMMORTAMENTO = ? AND "+
 			"EXISTS (SELECT 1 " +
-				"FROM   ASS_TIPO_AMM_CAT_GRUP_INV " +
-				"WHERE  CD_CATEGORIA_GRUPPO = ? AND" +
+				"FROM   "+it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+"ASS_TIPO_AMM_CAT_GRUP_INV " +
+				"WHERE  CD_CATEGORIA_GRUPPO = ? AND " +
 				"CD_TIPO_AMMORTAMENTO = aTA.CD_TIPO_AMMORTAMENTO AND " +
 				"TI_AMMORTAMENTO = aTA.TI_AMMORTAMENTO AND " +
 				"ESERCIZIO_COMPETENZA = ?)";
+
+	private final String statmentSelectAllTipoAmm =
+			"SELECT ass.CD_CATEGORIA_GRUPPO,aTA.CD_TIPO_AMMORTAMENTO,aTA.TI_AMMORTAMENTO,aTA.DS_TIPO_AMMORTAMENTO,aTA.PERC_PRIMO_ANNO," +
+			"aTA.PERC_SUCCESSIVI,aTA.NUMERO_ANNI,aTA.DT_CANCELLAZIONE " +
+			"FROM   "+it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+"TIPO_AMMORTAMENTO aTA ," +
+			"		"+it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+"ASS_TIPO_AMM_CAT_GRUP_INV ass " +
+			"WHERE ass.CD_TIPO_AMMORTAMENTO = aTA.CD_TIPO_AMMORTAMENTO AND " +
+			"      ass.TI_AMMORTAMENTO = aTA.TI_AMMORTAMENTO AND " +
+			"      ass.ESERCIZIO_COMPETENZA=?";
 
 	public Tipo_ammortamentoHome(java.sql.Connection conn) {
 	super(Tipo_ammortamentoBulk.class,conn);
@@ -197,6 +207,54 @@ public void makePersistentAssTiAmm_CatBeni(it.cnr.jada.UserContext aUC, Tipo_amm
 			throw new PersistencyException(e);
 		}
 	}
+	public List<TipoAmmCatGruppoDto> findTipoAmmortamento(Integer esercizio) throws PersistencyException {
+		List<TipoAmmCatGruppoDto> list = null;
+		String statement =statmentSelectAllTipoAmm;
+
+		try {
+
+
+			LoggableStatement ps = null;
+			Connection conn = getConnection();
+			ps = new LoggableStatement(conn, statement, true, this.getClass());
+
+			try {
+				ps.setInt(1, esercizio);
+				ResultSet rs = ps.executeQuery();
+
+				try {
+					while (rs.next()) {
+
+						if (list == null) {
+							list = new ArrayList<TipoAmmCatGruppoDto>();
+						}
+						list.add(getTipoAmmortamentoDto(rs));
+
+					}
+					return list;
+				} catch (Exception e) {
+					throw new PersistencyException(e);
+				} finally {
+					try {
+						rs.close();
+					} catch (java.sql.SQLException e) {
+					}
+
+				}
+
+			} catch (SQLException e) {
+				throw new PersistencyException(e);
+			} finally {
+				try {
+					ps.close();
+
+				} catch (java.sql.SQLException e) {
+				}
+			}
+		} catch (SQLException e) {
+			throw new PersistencyException(e);
+		}
+	}
 	private Tipo_ammortamentoBulk getTipoAmmortamento(ResultSet rs) throws SQLException {
 
 		Tipo_ammortamentoBulk tipoAmmortamento = new Tipo_ammortamentoBulk();
@@ -209,6 +267,20 @@ public void makePersistentAssTiAmm_CatBeni(it.cnr.jada.UserContext aUC, Tipo_amm
 		tipoAmmortamento.setDt_cancellazione(rs.getTimestamp(7));
 
 		return tipoAmmortamento;
+	}
+	private TipoAmmCatGruppoDto getTipoAmmortamentoDto(ResultSet rs) throws SQLException {
+
+		TipoAmmCatGruppoDto tipoAmmortamentoDto = new TipoAmmCatGruppoDto();
+		tipoAmmortamentoDto.setCdCatGruppo(rs.getString(1));
+		tipoAmmortamentoDto.setCdTipoAmm(rs.getString(2));
+		tipoAmmortamentoDto.setTipoAmm(rs.getString(3));
+		tipoAmmortamentoDto.setTipoAmmDesc(rs.getString(4));
+		tipoAmmortamentoDto.setPerPrimoAnno(rs.getBigDecimal(5));
+		tipoAmmortamentoDto.setPerAnniSucc(rs.getBigDecimal(6));
+		tipoAmmortamentoDto.setNumAnni(rs.getInt(7));
+		tipoAmmortamentoDto.setDataCanc(rs.getTimestamp(8));
+
+		return tipoAmmortamentoDto;
 	}
 }
 

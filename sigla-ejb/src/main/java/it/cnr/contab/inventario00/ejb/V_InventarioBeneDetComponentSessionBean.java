@@ -17,10 +17,9 @@
 
 package it.cnr.contab.inventario00.ejb;
 
-import it.cnr.contab.doccont00.comp.AccertamentoComponent;
-import it.cnr.contab.inventario00.comp.V_AmmortamentoBeniComponent;
+
 import it.cnr.contab.inventario00.comp.V_InventarioBeneDetComponent;
-import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beniBulk;
+
 import it.cnr.contab.inventario00.dto.NormalizzatoreAmmortamentoDto;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
@@ -35,7 +34,7 @@ import java.util.List;
 public class V_InventarioBeneDetComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements V_InventarioBeneDetComponentSession {
 @PostConstruct
 	public void ejbCreate() {
-		componentObj = new AccertamentoComponent();
+		componentObj = new V_InventarioBeneDetComponent();
 	}
 	@Remove
 	public void ejbRemove() throws javax.ejb.EJBException {
@@ -52,6 +51,19 @@ public class V_InventarioBeneDetComponentSessionBean extends it.cnr.jada.ejb.CRU
 		pre_component_invocation(param0,componentObj);
 		try {
 			NormalizzatoreAmmortamentoDto result = ((V_InventarioBeneDetComponent)componentObj).findNormalizzatoreBene(param0,param1,param2,param3,param4);
+			component_invocation_succes(param0,componentObj);
+			return result;
+
+		} catch (RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		}
+	}
+
+	@Override
+	public List<NormalizzatoreAmmortamentoDto> findNormalizzatoreBeniPerAmm(UserContext param0, Integer param1) throws ComponentException, RemoteException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			List<NormalizzatoreAmmortamentoDto> result = ((V_InventarioBeneDetComponent)componentObj).findNormalizzatoreBeniPerAmm(param0,param1);
 			component_invocation_succes(param0,componentObj);
 			return result;
 

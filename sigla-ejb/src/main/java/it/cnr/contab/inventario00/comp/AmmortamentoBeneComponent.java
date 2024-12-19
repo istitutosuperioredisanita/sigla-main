@@ -40,6 +40,7 @@ import it.cnr.jada.util.RemoteIterator;
 import javax.ejb.EJBException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -82,5 +83,51 @@ public class AmmortamentoBeneComponent
 			throw new RemoteException("Error getProgressivoRigaAmmortamento pgInventario : " + pgInventario + " nrInventario:" + nrInventario + " progressivo:" + progressivo+" esercizio:"+esercizio);
 		}
 
+	}
+	public void inserisciAmmortamentoBene(UserContext uc,Ammortamento_bene_invBulk amm) throws ComponentException {
+		LoggableStatement ps = null;
+		try {
+			//lockBulk(uc, amm);
+
+			Ammortamento_bene_invHome ammHome = (Ammortamento_bene_invHome) getHome(uc, Ammortamento_bene_invBulk.class);
+
+			ps = new LoggableStatement(getConnection(uc),
+					ammHome.inserimentoSqlAmmortamentoBene(uc,amm), true, this.getClass());
+			ps.executeQuery();
+			try {
+				ps.close();
+			} catch (java.sql.SQLException ignored) {
+			}
+		} catch (SQLException | ComponentException e) {
+			throw handleException(e);
+		} finally {
+			if (ps != null) try {
+				ps.close();
+			} catch (java.sql.SQLException ignored) {
+			}
+		}
+	}
+	public void cancellaiAmmortamentoBene(UserContext uc,Ammortamento_bene_invBulk amm) throws ComponentException {
+		LoggableStatement ps = null;
+		try {
+			lockBulk(uc, amm);
+
+			Ammortamento_bene_invHome ammHome = (Ammortamento_bene_invHome) getHome(uc, Ammortamento_bene_invBulk.class);
+
+			ps = new LoggableStatement(getConnection(uc),
+					ammHome.deleteSqlAmmortamento(uc,amm), true, this.getClass());
+			ps.execute();
+			try {
+				ps.close();
+			} catch (java.sql.SQLException ignored) {
+			}
+		} catch (PersistencyException | OutdatedResourceException | BusyResourceException | SQLException | ComponentException e) {
+			throw handleException(e);
+		} finally {
+			if (ps != null) try {
+				ps.close();
+			} catch (java.sql.SQLException ignored) {
+			}
+		}
 	}
 }

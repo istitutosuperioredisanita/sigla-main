@@ -17,6 +17,7 @@
 
 package it.cnr.contab.inventario00.ejb;
 
+import it.cnr.contab.inventario00.dto.TipoAmmCatGruppoDto;
 import it.cnr.contab.inventario00.tabrif.bulk.Tipo_ammortamentoBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
@@ -41,4 +42,5 @@ void inizializzaGruppiPerModifica(it.cnr.jada.UserContext param0) throws it.cnr.
 void modificaGruppi(it.cnr.jada.UserContext param0,it.cnr.contab.inventario00.tabrif.bulk.Tipo_ammortamentoBulk param1,it.cnr.jada.bulk.OggettoBulk[] param2,java.util.BitSet param3,java.util.BitSet param4) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 it.cnr.jada.util.RemoteIterator selectGruppiByClause(it.cnr.jada.UserContext param0,it.cnr.contab.inventario00.tabrif.bulk.Tipo_ammortamentoBulk param1,java.lang.Class param2,it.cnr.jada.persistency.sql.CompoundFindClause param3) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 List<Tipo_ammortamentoBulk> findTipoAmmortamento(UserContext uc, String tipoAmmortamento, String catGruppo, Integer esercizio) throws ComponentException, RemoteException;
+List<TipoAmmCatGruppoDto> findTipoAmmortamento(UserContext uc,  Integer esercizio) throws ComponentException, RemoteException;
 }

@@ -1,8 +1,9 @@
 package it.cnr.contab.inventario00.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class NormalizzatoreAmmortamentoDto {
+public class NormalizzatoreAmmortamentoDto implements Serializable {
 
     private Integer esercizioCaricoBene;
     private Integer pgInventario;

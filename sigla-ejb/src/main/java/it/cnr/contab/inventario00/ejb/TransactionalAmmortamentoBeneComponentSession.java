@@ -19,6 +19,7 @@ package it.cnr.contab.inventario00.ejb;
 
 import it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invBulk;
 import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ComponentException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
@@ -61,6 +62,30 @@ public class TransactionalAmmortamentoBeneComponentSession extends it.cnr.jada.e
                     param2,
                     param3,
                     param4});
+        }
+        catch(Throwable ex) {
+            throw new java.rmi.RemoteException("Uncaugth exception",ex);
+        }
+    }
+
+    @Override
+    public void inserisciAmmortamentoBene(UserContext param0, Ammortamento_bene_invBulk param1) throws ComponentException, RemoteException {
+        try {
+            invoke("inserisciAmmortamentoBene",new Object[] {
+                    param0,
+                    param1});
+        }
+        catch(Throwable ex) {
+            throw new java.rmi.RemoteException("Uncaugth exception",ex);
+        }
+    }
+
+    @Override
+    public void cancellaiAmmortamentoBene(UserContext param0, Ammortamento_bene_invBulk param1) throws ComponentException, RemoteException {
+        try {
+            invoke("cancellaiAmmortamentoBene",new Object[] {
+                    param0,
+                    param1});
         }
         catch(Throwable ex) {
             throw new java.rmi.RemoteException("Uncaugth exception",ex);
