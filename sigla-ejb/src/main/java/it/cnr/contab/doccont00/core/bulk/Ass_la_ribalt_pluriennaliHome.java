@@ -1,0 +1,32 @@
+/*
+ * Created by BulkGenerator 2.0 [07/12/2009]
+ * Date 19/12/2024
+ */
+package it.cnr.contab.doccont00.core.bulk;
+import java.sql.Connection;
+import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.persistency.sql.SQLBuilder;
+
+public class Ass_la_ribalt_pluriennaliHome extends BulkHome {
+	public Ass_la_ribalt_pluriennaliHome(Connection conn) {
+		super(Ass_la_ribalt_pluriennaliBulk.class, conn);
+	}
+	public Ass_la_ribalt_pluriennaliHome(Connection conn, PersistentCache persistentCache) {
+		super(Ass_la_ribalt_pluriennaliBulk.class, conn, persistentCache);
+	}
+
+	public Ass_la_ribalt_pluriennaliBulk getAssLineaAttivita(Integer esercizio,String cd_centro_responsabilita,String cd_linea_attivita) throws PersistencyException {
+
+		SQLBuilder sql = createSQLBuilder();
+		sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS, esercizio);
+		sql.addSQLClause("AND", "CD_CENTRO_RESPONSABILITA", SQLBuilder.EQUALS,cd_centro_responsabilita);
+		sql.addSQLClause("AND", "CD_LINEA_ATTIVITA", SQLBuilder.EQUALS, cd_linea_attivita);
+
+		if(fetchAll(sql).size() == 0){
+			return null;
+		}
+		return (Ass_la_ribalt_pluriennaliBulk) fetchAll(sql).get(0);
+	}
+}
