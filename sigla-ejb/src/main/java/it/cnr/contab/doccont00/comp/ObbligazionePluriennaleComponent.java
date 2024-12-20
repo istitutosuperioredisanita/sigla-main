@@ -103,7 +103,7 @@ public class ObbligazionePluriennaleComponent extends ObbligazioneComponent {
 		return listVariazioni.get(0);
 
 	}
-	private WorkpackageBulk getCurrentGaePrelFondi(UserContext uc,ObbligazioneBulk obbligazione) throws ComponentException, PersistencyException {
+	private WorkpackageBulk getCurrentGaePrelFondi(UserContext uc,Integer esercizio,ObbligazioneBulk obbligazione) throws ComponentException, PersistencyException {
 		Pdg_variazioneBulk pdgVariazioneBulk= getFirstVariazione( uc,obbligazione);
 		Pdg_variazioneHome pdgVariazioneHome =(Pdg_variazioneHome) getHome(uc, Pdg_variazioneBulk.class);
 		List<Pdg_variazione_riga_gestBulk> dettagliVariazione = ( List<Pdg_variazione_riga_gestBulk>) pdgVariazioneHome.findDettagliVariazioneGestionale( pdgVariazioneBulk);
@@ -116,6 +116,13 @@ public class ObbligazionePluriennaleComponent extends ObbligazioneComponent {
 					return new WorkpackageBulk(e.getCd_centro_responsabilita(),e.getCd_linea_attivita());
 				}).orElse(null);
 		//accesso alla nuova tabella
+		Ass_la_ribalt_pluriennaliHome assLaPlurHome =(Ass_la_ribalt_pluriennaliHome) getHome(uc, Ass_la_ribalt_pluriennaliBulk.class);
+		Ass_la_ribalt_pluriennaliBulk assLaPlur = assLaPlurHome.getAssLineaAttivita(esercizio, gaePrelevamento);
+
+		if(assLaPlur!=null){
+			gaePrelevamento = new WorkpackageBulk(assLaPlur.getCdCentroRespRibalt(),assLaPlur.getCdLineaAttivitaRibalt());
+		}
+
 		gaePrelevamento = (WorkpackageBulk) getHome(uc, WorkpackageBulk.class).findByPrimaryKey(gaePrelevamento);
 		gaePrelevamento.setCentro_responsabilita((CdrBulk) getHome(uc, CdrBulk.class).findByPrimaryKey(gaePrelevamento.getCentro_responsabilita()));
 		return gaePrelevamento;
@@ -183,7 +190,7 @@ public class ObbligazionePluriennaleComponent extends ObbligazioneComponent {
 			if ( isObbligazioneVarColl(uc,obbligazioneBulk)) {
 				if ( pluriennaleBulk.getRigheVoceColl().size()>1)
 					throw new ComponentException("Obbligazione Pluriennale con prelevamento con Multigae "+pluriennaleBulk.toString());
-				gaePrelevamentoFondi = getCurrentGaePrelFondi( uc,obbligazioneBulk);
+				gaePrelevamentoFondi = getCurrentGaePrelFondi( uc, esercizio,obbligazioneBulk);
 
 				WorkpackageBulk gaeDestinazione = (WorkpackageBulk) getHome(uc, WorkpackageBulk.class).findByPrimaryKey(pluriennaleBulk.getRigheVoceColl().get(0).getLinea_attivita());
 				gaeDestinazione.setCentro_responsabilita((CdrBulk) getHome(uc, CdrBulk.class).findByPrimaryKey(gaeDestinazione.getCentro_responsabilita()));
