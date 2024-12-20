@@ -1576,7 +1576,8 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
             cs.setTimestamp(5, fatturaPassiva.getDt_registrazione());
 
             cs.executeQuery();
-
+            // //Verifica la validità della data di registrazione tra i 2 range e lo stato del flag
+            callVerifyDataRegistrazioneIsAttivoBlocco(userContext, fatturaPassiva);
         } catch (Throwable e) {
             throw handleException(fatturaPassiva, e);
         } finally {
@@ -1586,6 +1587,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                 throw handleException(fatturaPassiva, e);
             }
         }
+
     }
 
     private void callVerifyDataRegistrazioneIsAttivoBlocco(
@@ -1594,17 +1596,19 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
             throws ComponentException {
 
         try {
-            // Recupero l'oggetto Configurazione_cnrComponent per effettuare le verifiche
-            Configurazione_cnrComponentSession configurazioneCnrComponentSession = Utility.createConfigurazioneCnrComponentSession();
+            if (!fatturaPassiva.isFromAmministra()){
+                    // Recupero l'oggetto Configurazione_cnrComponent per effettuare le verifiche
+                    Configurazione_cnrComponentSession configurazioneCnrComponentSession = Utility.createConfigurazioneCnrComponentSession();
 
-            // Recupero la data di registrazione dalla fattura
-            Timestamp dataFattura = fatturaPassiva.getDt_registrazione();
+                // Recupero la data di registrazione dalla fattura
+                Timestamp dataFattura = fatturaPassiva.getDt_registrazione();
 
-            // Verifico le condizioni per la fattura passiva
-            Boolean isValidaFattPassiva = configurazioneCnrComponentSession.isLiqIvaAnticipataFattPassiva(userContext, dataFattura);
+                // Verifico le condizioni per la fattura passiva
+                Boolean isValidaFattPassiva = configurazioneCnrComponentSession.isLiqIvaAnticipataFattPassiva(userContext, dataFattura);
 
-            if (isValidaFattPassiva) {
-                throw new it.cnr.jada.comp.ApplicationException("Data registrazione inferiore/uguale a ultimo periodo definitivo di stampa registri IVA");
+                if (isValidaFattPassiva) {
+                    throw new it.cnr.jada.comp.ApplicationException("Data registrazione inferiore/uguale a ultimo periodo definitivo di stampa registri IVA");
+                }
             }
         } catch (ComponentException e) {
             throw e; // Rilancio l'eccezione specifica
@@ -7312,8 +7316,8 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             //data di stampa registri IVA
             callVerifyDataRegistrazione(aUC, fatturaPassiva);
 
-            //Verifica la validità della data di registrazione tra i 2 range e lo stato del flag
-            callVerifyDataRegistrazioneIsAttivoBlocco(aUC, fatturaPassiva);
+
+            //callVerifyDataRegistrazioneIsAttivoBlocco(aUC, fatturaPassiva);
 
             //Verifica che il documento rispetti la sequenza data/numero
             //di registrazione
