@@ -4983,7 +4983,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
-        fattura.setBloccoAttivoDtReg(liqIvaAnticipataFattPassivaValid);
+        fattura.setFl_bloccoAttivoDtReg(liqIvaAnticipataFattPassivaValid);
         return fattura;
     }
 

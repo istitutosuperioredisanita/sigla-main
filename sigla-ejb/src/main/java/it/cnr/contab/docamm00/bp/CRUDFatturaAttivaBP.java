@@ -460,7 +460,7 @@ public abstract class CRUDFatturaAttivaBP
                 fa.setDettagliCancellati(new java.util.Vector());
                 fa.setDocumentiContabiliCancellati(new java.util.Vector());
                 Boolean liqIvaAnticipataFattAttiva = Utility.createConfigurazioneCnrComponentSession().isLiqIvaAnticipataFattAttiva(context.getUserContext(), fa.getDt_registrazione());
-                fa.setBloccoAttivoDtReg(liqIvaAnticipataFattAttiva);
+                fa.setFl_bloccoAttivoDtReg(liqIvaAnticipataFattAttiva);
             }
             return super.initializeModelForEdit(context, bulk);
         } catch (Throwable e) {
@@ -839,6 +839,19 @@ public abstract class CRUDFatturaAttivaBP
     }
 
     public void save(it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException, ValidationException {
+
+        Optional.ofNullable(getModel())
+                .filter(Fattura_attivaBulk.class::isInstance)
+                .map(Fattura_attivaBulk.class::cast)
+                .ifPresent(fatturaAttivaBulk -> {
+                    try {
+                        fatturaAttivaBulk.setFl_bloccoAttivoDtReg(Utility.createConfigurazioneCnrComponentSession().isLiqIvaAnticipataFattPassiva(context.getUserContext(), fatturaAttivaBulk.getDt_registrazione()));
+                    } catch (ComponentException e) {
+                        throw new RuntimeException(e);
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
 
         super.save(context);
 

@@ -3795,7 +3795,7 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
-        fattura.setBloccoAttivoDtReg(liqIvaAnticipataFattAttivaValid);
+        fattura.setFl_bloccoAttivoDtReg(liqIvaAnticipataFattAttivaValid);
         return fattura;
     }
 

@@ -649,7 +649,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
                 fp.setDettagliCancellati(new java.util.Vector());
                 fp.setDocumentiContabiliCancellati(new java.util.Vector());
                 Boolean liqIvaAnticipataFattPassiva = Utility.createConfigurazioneCnrComponentSession().isLiqIvaAnticipataFattPassiva(context.getUserContext(), fp.getDt_registrazione());
-                fp.setBloccoAttivoDtReg(liqIvaAnticipataFattPassiva);
+                fp.setFl_bloccoAttivoDtReg(liqIvaAnticipataFattPassiva);
             }
             FatturaPassivaComponentSession h = (FatturaPassivaComponentSession) createComponentSession();
             if (isEditing()) {
@@ -1182,6 +1182,18 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
                         fatturaPassivaBulk.setNr_protocollo_liq(null);
                     }
             });
+        Optional.ofNullable(getModel())
+                .filter(Fattura_passivaBulk.class::isInstance)
+                .map(Fattura_passivaBulk.class::cast)
+                .ifPresent(fatturaPassivaBulk -> {
+                    try {
+                        fatturaPassivaBulk.setFl_bloccoAttivoDtReg(Utility.createConfigurazioneCnrComponentSession().isLiqIvaAnticipataFattPassiva(context.getUserContext(), fatturaPassivaBulk.getDt_registrazione()));
+                    } catch (ComponentException e) {
+                        throw new RuntimeException(e);
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
         super.save(context);
         setCarryingThrough(false);
     }
