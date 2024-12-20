@@ -1797,7 +1797,9 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
      */
     public boolean isStampataSuRegistroIVA() {
         return STATO_IVA_B.equalsIgnoreCase(getStatoIVA()) ||
-                STATO_IVA_C.equalsIgnoreCase(getStatoIVA()) || isBloccoAttivoDtReg();
+                STATO_IVA_C.equalsIgnoreCase(getStatoIVA()) ||
+                //controllo solo per la modifica
+                ( this.getPg_fattura_attiva()!=null && isBloccoAttivoDtReg());
     }
 
     /**
