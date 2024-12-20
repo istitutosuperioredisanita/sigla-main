@@ -42,8 +42,10 @@ import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.contab.util00.bulk.storage.AllegatoStorePath;
+import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.*;
 import it.cnr.jada.comp.ApplicationException;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.DateUtils;
 import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.jada.util.action.CRUDBP;
@@ -52,6 +54,7 @@ import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
 
 import java.math.BigDecimal;
+import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -268,6 +271,19 @@ public abstract class Fattura_passivaBulk
         super(cd_cds, cd_unita_organizzativa, esercizio, pg_fattura_passiva);
     }
 
+    public boolean fillFromActionContext(ActionContext actioncontext, String s, int i,
+                                         FieldValidationMap fieldvalidationmap) throws FillException {
+
+         Boolean ret = super.fillFromActionContext(actioncontext, s, i, fieldvalidationmap);
+        try {
+            fl_bloccoAttivoDtReg=Utility.createConfigurazioneCnrComponentSession().isLiqIvaAnticipataFattPassiva(actioncontext.getUserContext(), this.getDt_registrazione());
+        } catch (ComponentException e) {
+            throw new RuntimeException(e);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+        return ret;
+    }
     public static Calendar getDateCalendar(java.sql.Timestamp date) {
 
         if (date == null)
