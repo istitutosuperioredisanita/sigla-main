@@ -16,13 +16,11 @@
  */
 
 package it.cnr.contab.gestiva00.bp;
-import it.cnr.contab.gestiva00.ejb.*;
-import it.cnr.contab.gestiva00.core.bulk.*;
+
+import it.cnr.contab.gestiva00.core.bulk.Liquidazione_provvisoria_ivaVBulk;
+import it.cnr.contab.gestiva00.core.bulk.Stampa_registri_ivaVBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
-import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.util.action.*;
-import it.cnr.jada.util.ejb.EJBCommonServices;
 
 public class LiquidazioneProvvisoriaIvaBP extends LiquidazioneIvaBP {
 
@@ -108,4 +106,12 @@ public void resetForSearch(it.cnr.jada.action.ActionContext context) throws it.c
 public void resetTabs() {
     setTab("tab", "tabEsigDetr"); 
 }
+
+	@Override
+	protected int getMeseIndex(ActionContext context, Stampa_registri_ivaVBulk stampaBulk) {
+		int meseIndex=super.getMeseIndex(context, stampaBulk);
+		if ( meseIndex<0)
+			meseIndex= 12;
+		return meseIndex;
+	}
 }

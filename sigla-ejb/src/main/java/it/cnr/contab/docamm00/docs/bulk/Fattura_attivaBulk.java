@@ -298,6 +298,9 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
     @JsonIgnore
     private boolean isAttivoSplitPayment = false;
     private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
+
+    private boolean isBloccoAttivoDtReg =  Boolean.FALSE;
+
     public Fattura_attivaBulk() {
         super();
     }
@@ -1794,7 +1797,9 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
      */
     public boolean isStampataSuRegistroIVA() {
         return STATO_IVA_B.equalsIgnoreCase(getStatoIVA()) ||
-                STATO_IVA_C.equalsIgnoreCase(getStatoIVA());
+                STATO_IVA_C.equalsIgnoreCase(getStatoIVA()) ||
+                //controllo solo per la modifica
+                ( this.getPg_fattura_attiva()!=null && isBloccoAttivoDtReg());
     }
 
     /**
@@ -2162,7 +2167,8 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
         BigDecimal totale= BigDecimal.ZERO;
         for (Iterator i = fattura_attiva_dettColl.iterator(); i.hasNext(); ) {
             Fattura_attiva_rigaBulk riga = ((Fattura_attiva_rigaBulk) i.next());
-            if (riga.getBene_servizio().getFl_obb_intrastat_ven().booleanValue()
+            if (riga.getBene_servizio()!=null &&
+                    riga.getBene_servizio().getFl_obb_intrastat_ven().booleanValue()
                     && riga.getVoce_iva().getFl_intrastat().booleanValue())
                 totale=totale.add(riga.getIm_imponibile());
         }
@@ -2502,5 +2508,13 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
 
     public boolean isDocumentoInContoAnticipo() {
         return TipoContoDocAttivoEnum.ANT.value().equals(this.getCd_tipo_conto_ep());
+    }
+
+    public boolean isBloccoAttivoDtReg() {
+        return isBloccoAttivoDtReg;
+    }
+
+    public void setBloccoAttivoDtReg(boolean bloccoAttivoDtReg) {
+        isBloccoAttivoDtReg = bloccoAttivoDtReg;
     }
 }

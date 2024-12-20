@@ -144,4 +144,9 @@ public interface Configurazione_cnrComponentSession extends it.cnr.jada.ejb.CRUD
 
     public Boolean isAttivoGestFlIrregistrabile(UserContext userContext) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
 
+    Boolean isLiqIvaAnticipataFattPassiva(UserContext param0, Timestamp dataFattura) throws ComponentException, RemoteException;
+
+    Boolean isLiqIvaAnticipataFattAttiva(UserContext param0, Timestamp dataFattura) throws ComponentException, RemoteException;
+
+
 }

@@ -6160,4 +6160,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_column_warning_fatt_attiva_intra.xml"/>
     <!-- Autore : CIRO SALVIO - Gestione FL_IRREGISTABILE-->
     <include file="bootstrap/add_conf_fatt_gest_flirregistrabile.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Gestione blocco fatture passive/attive-->
+    <include file="bootstrap/add_accesso_blocco_fatture_passive_attive.xml"/>
+    <!-- Autore : MARCO SPASIANO - Gestione Causali Contabili-->
+    <include file="bootstrap/add_table_causali_contabili.xml"/>
 </databaseChangeLog>

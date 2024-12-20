@@ -37,6 +37,7 @@
 					<% bp.getController().writeFormInput(out, null,"tipo_doc",false,null,"onChange=\"submitForm('doOnTipoDocumentoChange')\"");%>
 				</td>
 			</tr>
+            <tr><% bp.getController().writeFormField(out,"cd_causale_contabile"); %></tr>
 			<tr>
 			 	<% bp.getController().writeFormField(out,"stato_cofi");%>
 				<td colspan="2">

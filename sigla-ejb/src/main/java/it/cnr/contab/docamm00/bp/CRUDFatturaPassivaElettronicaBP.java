@@ -26,6 +26,7 @@ import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.config00.tabnum.ejb.Numerazione_baseComponentSession;
 import it.cnr.contab.docamm00.actions.CRUDFatturaPassivaAction;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
+import it.cnr.contab.docamm00.docs.bulk.Nota_di_creditoBulk;
 import it.cnr.contab.docamm00.ejb.FatturaElettronicaPassivaComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.docamm00.fatturapa.bulk.*;
@@ -300,7 +301,7 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 	private void setFlIrregistrabile ( DocumentoEleTestataBulk testata){
 		testata.setFlIrregistrabile( "N");
 		if ( isAttivoGestFlIrregistrabile)
-			setFlIrregistrabile(testata);//testata.setFlIrregistrabile( "Y");
+			testata.setFlIrregistrabile( "S");
 
 	}
 	private void setUoScrivania(Unita_organizzativaBulk uoScrivania) {
@@ -562,7 +563,8 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 	    	fatturaPassivaBulk.setFl_intra_ue(Boolean.FALSE);
 	    	fatturaPassivaBulk.setFl_extra_ue(Boolean.FALSE);
 	    	fatturaPassivaBulk.setFl_san_marino_senza_iva(Boolean.FALSE);
-	    	fatturaPassivaBulk.setFl_fattura_compenso(existsTributi(documentoEleTestata));
+			if ( !( fatturaPassivaBulk instanceof Nota_di_creditoBulk))
+	    		fatturaPassivaBulk.setFl_fattura_compenso(existsTributi(documentoEleTestata));
 
 	    	//Il flag viene impostato a true se documento splitPayment con iva != 0
 	    	fatturaPassivaBulk.setFl_split_payment(documentoEleTestata.isDocumentoSplitPayment() &&
@@ -903,12 +905,15 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 		return Optional.ofNullable(allegato)
 				.filter(AllegatoFatturaBulk.class::isInstance)
 				.map(AllegatoFatturaBulk.class::cast)
-				.map(AllegatoFatturaBulk::getAspect)
-				.filter(strings -> strings.contains(StorageDocAmmAspect.SIGLA_FATTURE_ATTACHMENT_COMUNICAZIONE_NON_REGISTRABILITA.value()))
+				.filter(a->a.isComunicazioneNonRegistabilita())
 				.isPresent();
 	}
+
 	@Override
 	protected Boolean isPossibileCancellazione(AllegatoGenericoBulk allegato) {
+		if ( isComunicazioneNonRegistabilita( allegato)&&
+		!isAttivoGestFlIrregistrabile)
+			return Boolean.FALSE;
 		if (isComunicazioneNonRegistabilita(allegato) &&
 				Optional.ofNullable(getModel())
 					.filter(DocumentoEleTestataBulk.class::isInstance)
@@ -917,7 +922,7 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 					.map(s -> s.equalsIgnoreCase("S"))
 					.orElse(Boolean.TRUE)
 		) {
-			return false;
+			return Boolean.FALSE;
 		}
 		return super.isPossibileCancellazione(allegato);
 	}
@@ -1023,7 +1028,7 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 			AllegatoFatturaBulk allegatoFatturaBulk = (AllegatoFatturaBulk)obj;
 			if (allegatoFatturaBulk != null && allegatoFatturaBulk.getAspectName() != null && 
 					allegatoFatturaBulk.getAspectName().equalsIgnoreCase("P:sigla_fatture_attachment:comunicazione_non_registrabilita")) {
-				if (testata.isRegistrata()){
+				if (testata.isRegistrata() && isAttivoGestFlIrregistrabile){
 					throw new ValidationException("La fattura risulta registrata, comunicazione di documento non registrabile non allegabile.");
 				}
 				//testata.setFlIrregistrabile("S");

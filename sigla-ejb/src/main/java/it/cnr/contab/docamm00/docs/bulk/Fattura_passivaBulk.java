@@ -50,7 +50,6 @@ import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
-import org.apache.http.Consts;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -259,6 +258,8 @@ public abstract class Fattura_passivaBulk
 
     private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
 
+    private boolean isBloccoAttivoDtReg =  Boolean.FALSE;
+
     public Fattura_passivaBulk() {
         super();
     }
@@ -442,7 +443,8 @@ public abstract class Fattura_passivaBulk
         BigDecimal totale= BigDecimal.ZERO;
         for (Iterator i = fattura_passiva_dettColl.iterator(); i.hasNext(); ) {
             Fattura_passiva_rigaBulk riga = ((Fattura_passiva_rigaBulk) i.next());
-            if (riga.getBene_servizio().getFl_obb_intrastat_acq().booleanValue()
+            if (riga.getBene_servizio()!=null
+                && riga.getBene_servizio().getFl_obb_intrastat_acq().booleanValue()
                     && riga.getVoce_iva().getFl_intrastat().booleanValue())
                 totale=totale.add(riga.getIm_imponibile());
         }
@@ -2739,7 +2741,7 @@ public abstract class Fattura_passivaBulk
         return STATO_IVA_B.equalsIgnoreCase(getStatoIVA()) ||
                 STATO_IVA_C.equalsIgnoreCase(getStatoIVA()) ||
                 //A seguito dell'errore segnalato 569 (dovuto alla richiesta 423)
-                (getAutofattura() != null && getAutofattura().isStampataSuRegistroIVA());//||
+                (getAutofattura() != null && getAutofattura().isStampataSuRegistroIVA()) ||( (!this.isFromAmministra()) && isBloccoAttivoDtReg());//||
         //(getProgr_univoco()!=null);
     }
 
@@ -3398,7 +3400,7 @@ public abstract class Fattura_passivaBulk
             CAUSALE.put(NVARI,"Nota di Variazione");
         }
         if ( ( this.isNotNew() && SPED_BOLDOG.equalsIgnoreCase(getCausale()))
-        ||(( this.isNonLiquidabile() ||this.isLiquidazioneSospesa()) &&  getFl_bolla_doganale() )){
+        ||(( this.isNonLiquidabile() ||this.isLiquidazioneSospesa()) &&  Boolean.TRUE.equals(getFl_bolla_doganale() ))){
             CAUSALE.put(SPED_BOLDOG, "Bolla Doganale");
         }
 
@@ -3816,8 +3818,6 @@ public abstract class Fattura_passivaBulk
                 return true;
             if (isNonLiquidabile() && (key.equals(CONT) ||key.equals(CONT_CONF) || key.equals(CONT_NORM)))
                 return true;
-            if (isLiquidazioneSospesa() && (key.equals(Consts.SP) ||key.equals(CONT_CONF) || key.equals(CONT_NORM)))
-                return true;
             if ( key.equals(SPED_BOLDOG)) {
                 if (( isNonLiquidabile() ||isLiquidazioneSospesa()) && getFl_bolla_doganale())
                     return super.isOptionDisabled(fieldProperty, key);
@@ -3828,4 +3828,11 @@ public abstract class Fattura_passivaBulk
         return super.isOptionDisabled(fieldProperty, key);
     }
 
+    public boolean isBloccoAttivoDtReg() {
+        return isBloccoAttivoDtReg;
+    }
+
+    public void setBloccoAttivoDtReg(boolean bloccoAttivoDtReg) {
+        isBloccoAttivoDtReg = bloccoAttivoDtReg;
+    }
 }

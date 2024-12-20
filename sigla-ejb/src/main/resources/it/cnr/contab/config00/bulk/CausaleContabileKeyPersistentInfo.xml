@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.config00.bulk.CausaleContabileKey">
+	<defaultColumnMap
+		tableName="CAUSALE_CONTABILE">
+		<columnMapping
+			columnName="CD_CAUSALE"
+			propertyName="cdCausale"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="false"
+			primary="true" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="cdCausale"
+		partOfOid="true" />
+</SQLPersistentInfo>

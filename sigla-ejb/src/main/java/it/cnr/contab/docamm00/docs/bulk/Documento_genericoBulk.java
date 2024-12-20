@@ -18,6 +18,7 @@
 package it.cnr.contab.docamm00.docs.bulk;
 
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
+import it.cnr.contab.config00.bulk.CausaleContabileBulk;
 import it.cnr.contab.docamm00.bp.*;
 import it.cnr.contab.docamm00.tabrif.bulk.*;
 import it.cnr.contab.anagraf00.core.bulk.*;
@@ -116,6 +117,9 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	private java.util.Collection tipi_doc_for_search;
 	private Tipo_documento_ammBulk tipo_documento;
 
+	private CausaleContabileBulk causaleContabile;
+	public Dictionary<String, String> tiCausaleContabileKeys;
+
 	protected boolean defaultValuta = false;
 	private java.lang.String riportata = NON_RIPORTATO;
 
@@ -203,6 +207,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	private CarichiInventarioTable carichiInventarioHash = null;
 	private AssociazioniInventarioTable associazioniInventarioHash = null;
 	private Boolean ha_beniColl;
+	private int bpStatus = FormController.UNDEFINED;
 	public Documento_genericoBulk() {
 		super();
 	}
@@ -901,6 +906,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 		setCd_cds(unita_organizzativa.getUnita_padre().getCd_unita_organizzativa());
 		setCd_cds_origine(getCd_cds());
 		setCd_uo_origine(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context).getCd_unita_organizzativa());
+		setBpStatus(bp.getStatus());
 		return super.initialize(bp,context);
 	}
 	public OggettoBulk initializeForFreeSearch(CRUDBP bp,it.cnr.jada.action.ActionContext context) {
@@ -2076,5 +2082,43 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 
 	public boolean isDocumentoInContoAnticipo() {
 		return TipoContoDocAttivoEnum.ANT.value().equals(this.getCd_tipo_conto_ep());
+	}
+
+	public CausaleContabileBulk getCausaleContabile() {
+		return causaleContabile;
+	}
+
+	public void setCausaleContabile(CausaleContabileBulk causaleContabile) {
+		this.causaleContabile = causaleContabile;
+	}
+
+	@Override
+	public String getCd_causale_contabile() {
+		return Optional.ofNullable(causaleContabile)
+				.map(CausaleContabileBulk::getCdCausale)
+				.orElse(null);
+	}
+
+	@Override
+	public void setCd_causale_contabile(String cd_causale_contabile) {
+		CausaleContabileBulk causaleContabileBulk = Optional.ofNullable(causaleContabile).orElse(new CausaleContabileBulk());
+		causaleContabileBulk.setCdCausale(cd_causale_contabile);
+		setCausaleContabile(causaleContabile);
+	}
+
+	public Dictionary<String, String> getTiCausaleContabileKeys() {
+		return tiCausaleContabileKeys;
+	}
+
+	public void setTiCausaleContabileKeys(Dictionary<String, String> tiCausaleContabileKeys) {
+		this.tiCausaleContabileKeys = tiCausaleContabileKeys;
+	}
+
+	public int getBpStatus() {
+		return bpStatus;
+	}
+
+	public void setBpStatus(int bpStatus) {
+		this.bpStatus = bpStatus;
 	}
 }

@@ -46,7 +46,10 @@
 			propertyName="tipoDocumentoGenerico.id"
 			sqlTypeName="DECIMAL"
 			columnSize="15" />
-	</defaultColumnMap>		
+		<columnMapping
+			columnName="CD_CAUSALE_CONTABILE"
+			propertyName="causaleContabile.cdCausale" />
+	</defaultColumnMap>
 
 	<persistentProperty
 		name="valuta" />
@@ -57,4 +60,6 @@
 		name="lettera_pagamento_estero" />
 	<persistentProperty
 		name="tipoDocumentoGenerico" />
+	<persistentProperty
+		name="causaleContabile" />
 </SQLPersistentInfo>
