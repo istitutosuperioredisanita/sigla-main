@@ -648,8 +648,6 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
                 Fattura_passivaBulk fp = (Fattura_passivaBulk) bulk;
                 fp.setDettagliCancellati(new java.util.Vector());
                 fp.setDocumentiContabiliCancellati(new java.util.Vector());
-                Boolean liqIvaAnticipataFattPassiva = Utility.createConfigurazioneCnrComponentSession().isLiqIvaAnticipataFattPassiva(context.getUserContext(), fp.getDt_registrazione());
-                fp.setFl_bloccoAttivoDtReg(liqIvaAnticipataFattPassiva);
             }
             FatturaPassivaComponentSession h = (FatturaPassivaComponentSession) createComponentSession();
             if (isEditing()) {
@@ -665,6 +663,9 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             bulk = super.initializeModelForEdit(context, bulk);
             if ( this instanceof CRUDFatturaPassivaAmministraBP)
                 ((Fattura_passivaBulk)bulk).setFromAmministra(Boolean.TRUE);
+            Boolean liqIvaAnticipataFattPassiva = Utility.createConfigurazioneCnrComponentSession().
+                    isLiqIvaAnticipataFattPassiva(context.getUserContext(), ((Fattura_passivaBulk)bulk).getDt_registrazione());
+            ((Fattura_passivaBulk)bulk).setFl_bloccoAttivoDtReg(liqIvaAnticipataFattPassiva);
             return bulk;
         } catch (Throwable e) {
             throw new it.cnr.jada.action.BusinessProcessException(e);
