@@ -47,9 +47,7 @@ import it.cnr.contab.util.RemoveAccent;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
-import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.*;
-import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.jada.util.StrServ;
 import it.cnr.jada.util.action.CRUDBP;
@@ -57,7 +55,6 @@ import it.cnr.si.spring.storage.StorageObject;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -310,20 +307,6 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
 
     public Fattura_attivaBulk(java.lang.String cd_cds, java.lang.String cd_unita_organizzativa, java.lang.Integer esercizio, java.lang.Long pg_fattura_attiva) {
         super(cd_cds, cd_unita_organizzativa, esercizio, pg_fattura_attiva);
-    }
-
-    public boolean fillFromActionContext(ActionContext actioncontext, String s, int i,
-                                         FieldValidationMap fieldvalidationmap) throws FillException {
-
-        Boolean ret = super.fillFromActionContext(actioncontext, s, i, fieldvalidationmap);
-        try {
-            fl_bloccoAttivoDtReg=Utility.createConfigurazioneCnrComponentSession().isLiqIvaAnticipataFattPassiva(actioncontext.getUserContext(), this.getDt_registrazione());
-        } catch (ComponentException e) {
-            throw new RuntimeException(e);
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
-        return ret;
     }
 
     public static java.util.Dictionary getTipoFatturaKeys() {
