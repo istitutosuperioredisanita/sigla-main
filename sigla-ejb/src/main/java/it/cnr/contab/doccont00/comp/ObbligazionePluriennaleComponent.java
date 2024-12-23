@@ -78,7 +78,7 @@ public class ObbligazionePluriennaleComponent extends ObbligazioneComponent {
 			sql.addSQLJoin("OBBLIGAZIONE.ESERCIZIO_ORIGINALE", "OBBLIGAZIONE_PLURIENNALE.ESERCIZIO_ORIGINALE");
 			sql.addSQLJoin("OBBLIGAZIONE.PG_OBBLIGAZIONE", "OBBLIGAZIONE_PLURIENNALE.PG_OBBLIGAZIONE");
 			sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.DT_CANCELLAZIONE", SQLBuilder.ISNULL,null);
-			sql.addClause(FindClause.AND, "pgObbligazione", SQLBuilder.EQUALS, 76);
+			sql.addClause(FindClause.AND, "pgObbligazione", SQLBuilder.EQUALS, 83);
 			sql.addClause(FindClause.AND, "cdCds", SQLBuilder.EQUALS, "000");
 
 
@@ -103,7 +103,7 @@ public class ObbligazionePluriennaleComponent extends ObbligazioneComponent {
 		return listVariazioni.get(0);
 
 	}
-	private WorkpackageBulk getCurrentGaePrelFondi(UserContext uc,Integer esercizio,ObbligazioneBulk obbligazione) throws ComponentException, PersistencyException {
+	private WorkpackageBulk getCurrentGaePrelFondiVariazione(UserContext uc,Integer esercizio,ObbligazioneBulk obbligazione) throws ComponentException, PersistencyException {
 		Pdg_variazioneBulk pdgVariazioneBulk= getFirstVariazione( uc,obbligazione);
 		Pdg_variazioneHome pdgVariazioneHome =(Pdg_variazioneHome) getHome(uc, Pdg_variazioneBulk.class);
 		List<Pdg_variazione_riga_gestBulk> dettagliVariazione = ( List<Pdg_variazione_riga_gestBulk>) pdgVariazioneHome.findDettagliVariazioneGestionale( pdgVariazioneBulk);
@@ -115,19 +115,33 @@ public class ObbligazionePluriennaleComponent extends ObbligazioneComponent {
 						findFirst().map(e->{
 					return new WorkpackageBulk(e.getCd_centro_responsabilita(),e.getCd_linea_attivita());
 				}).orElse(null);
-		//accesso alla nuova tabella
+		return getAssGaePrelevamento ( uc, esercizio,gaePrelevamento);
+		/*accesso alla nuova tabella
+		Ass_la_ribalt_pluriennaliHome assLaPlurHome =(Ass_la_ribalt_pluriennaliHome) getHome(uc, Ass_la_ribalt_pluriennaliBulk.class);
+		/Ass_la_ribalt_pluriennaliBulk assLaPlur = assLaPlurHome.getAssLineaAttivita(esercizio, gaePrelevamento);
+
+		if(assLaPlur!=null){
+			gaePrelevamento = new WorkpackageBulk(assLaPlur.getCdCentroRespRibalt(),assLaPlur.getCdLineaAttivitaRibalt());
+		}
+		gaePrelevamento = (WorkpackageBulk) getHome(uc, WorkpackageBulk.class).findByPrimaryKey(gaePrelevamento);
+		gaePrelevamento.setCentro_responsabilita((CdrBulk) getHome(uc, CdrBulk.class).findByPrimaryKey(gaePrelevamento.getCentro_responsabilita()));
+		return gaePrelevamento;
+		*/
+	}
+
+	private WorkpackageBulk getAssGaePrelevamento(UserContext uc,Integer esercizio,WorkpackageBulk gaePrelevamento) throws PersistencyException, ComponentException {
 		Ass_la_ribalt_pluriennaliHome assLaPlurHome =(Ass_la_ribalt_pluriennaliHome) getHome(uc, Ass_la_ribalt_pluriennaliBulk.class);
 		Ass_la_ribalt_pluriennaliBulk assLaPlur = assLaPlurHome.getAssLineaAttivita(esercizio, gaePrelevamento);
 
 		if(assLaPlur!=null){
 			gaePrelevamento = new WorkpackageBulk(assLaPlur.getCdCentroRespRibalt(),assLaPlur.getCdLineaAttivitaRibalt());
 		}
-
 		gaePrelevamento = (WorkpackageBulk) getHome(uc, WorkpackageBulk.class).findByPrimaryKey(gaePrelevamento);
 		gaePrelevamento.setCentro_responsabilita((CdrBulk) getHome(uc, CdrBulk.class).findByPrimaryKey(gaePrelevamento.getCentro_responsabilita()));
 		return gaePrelevamento;
-
 	}
+
+
 
 	public ObbligazioneBulk createObbligazioneNew(UserContext uc, Obbligazione_pluriennaleBulk pluriennaleBulk, Integer esercizio,WorkpackageBulk gaeIniziale) throws it.cnr.jada.comp.ComponentException {
 		try {
@@ -187,11 +201,11 @@ public class ObbligazionePluriennaleComponent extends ObbligazioneComponent {
 			obb_scadenza.setIm_associato_doc_contabile(new BigDecimal(0));
 
 			WorkpackageBulk gaePrelevamentoFondi = null;
+
 			if ( isObbligazioneVarColl(uc,obbligazioneBulk)) {
 				if ( pluriennaleBulk.getRigheVoceColl().size()>1)
 					throw new ComponentException("Obbligazione Pluriennale con prelevamento con Multigae "+pluriennaleBulk.toString());
-				gaePrelevamentoFondi = getCurrentGaePrelFondi( uc, esercizio,obbligazioneBulk);
-
+				gaePrelevamentoFondi = getCurrentGaePrelFondiVariazione( uc, esercizio,obbligazioneBulk);
 				WorkpackageBulk gaeDestinazione = (WorkpackageBulk) getHome(uc, WorkpackageBulk.class).findByPrimaryKey(pluriennaleBulk.getRigheVoceColl().get(0).getLinea_attivita());
 				gaeDestinazione.setCentro_responsabilita((CdrBulk) getHome(uc, CdrBulk.class).findByPrimaryKey(gaeDestinazione.getCentro_responsabilita()));
 				gaeDestinazione.setNatura((NaturaBulk) getHome(uc, NaturaBulk.class).findByPrimaryKey(gaeDestinazione.getNatura()));
@@ -218,8 +232,9 @@ public class ObbligazionePluriennaleComponent extends ObbligazioneComponent {
 				if ( Optional.ofNullable(gaePrelevamentoFondi).isPresent())
 					gaeVoce= gaePrelevamentoFondi;
 				else {
-					gaeVoce = (WorkpackageBulk) getHome(uc, WorkpackageBulk.class).findByPrimaryKey(pluriennaleVoceBulk.getLinea_attivita());
-					gaeVoce.setCentro_responsabilita((CdrBulk) getHome(uc, CdrBulk.class).findByPrimaryKey(gaeVoce.getCentro_responsabilita()));
+					gaeVoce = getAssGaePrelevamento(uc,esercizio,pluriennaleVoceBulk.getLinea_attivita());
+					//gaeVoce = (WorkpackageBulk) getHome(uc, WorkpackageBulk.class).findByPrimaryKey(pluriennaleVoceBulk.getLinea_attivita());
+					//gaeVoce.setCentro_responsabilita((CdrBulk) getHome(uc, CdrBulk.class).findByPrimaryKey(gaeVoce.getCentro_responsabilita()));
 				}
 				gaeVoce.setNatura((NaturaBulk) getHome(uc, NaturaBulk.class).findByPrimaryKey(gaeVoce.getNatura()));
 				Linea_attivitaBulk nuovaLatt = new Linea_attivitaBulk();
@@ -230,7 +245,7 @@ public class ObbligazionePluriennaleComponent extends ObbligazioneComponent {
 				nuovaLatt.setObbligazione(obbligazioneBulkNew);
 				if (obbligazioneBulkNew.getNuoveLineeAttivitaColl() == null)
 					obbligazioneBulkNew.setNuoveLineeAttivitaColl(new BulkList());
-				obbligazioneBulkNew.getNuoveLineeAttivitaColl().add(gaeVoce);
+				obbligazioneBulkNew.getNuoveLineeAttivitaColl().add(nuovaLatt);
 				obb_scad_voce.setLinea_attivita(gaeVoce);
 			};
 			//aggiungi pluriennali anni successivi
