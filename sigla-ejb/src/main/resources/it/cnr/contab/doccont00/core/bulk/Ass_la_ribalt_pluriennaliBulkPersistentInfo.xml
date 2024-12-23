@@ -6,13 +6,13 @@
 		tableName="ASS_LA_RIBALT_PLURIENNALI">
 		<columnMapping
 			columnName="CD_CENTRO_RESPONSABILITA"
-			propertyName="lineaAttivita.cd_centro_responsabilita" />
+			propertyName="lineaAttivita.centro_responsabilita.cd_centro_responsabilita" />
 		<columnMapping
 			columnName="CD_LINEA_ATTIVITA"
 			propertyName="lineaAttivita.cd_linea_attivita" />
 		<columnMapping
 			columnName="CD_CENTRO_RESP_RIBALT"
-			propertyName="lineaAttivitaNuovoEser.cd_centro_responsabilita" />
+			propertyName="lineaAttivitaNuovoEser.centro_responsabilita.cd_centro_responsabilita" />
 		<columnMapping
 			columnName="CD_LINEA_ATTIVITA_RIBALT"
 			propertyName="lineaAttivitaNuovoEser.cd_linea_attivita" />
