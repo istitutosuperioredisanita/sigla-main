@@ -6166,4 +6166,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_table_causali_contabili.xml"/>
     <!-- Autore : VALENTINA TOMADA - Creazione tabella ass_la_ribalt_pluriennali -->
     <include file="bootstrap/add_table_ass_la_ribalt_pluriennali.xml"/>
+    <!-- Autore : RAFFAELE PAGANO - creazione tabella voci analitica-->
+    <include file="bootstrap/add_table_voce_analitica.xml"/>
+    <include file="bootstrap/add_accessi_voce_analitica.xml"/>
 </databaseChangeLog>

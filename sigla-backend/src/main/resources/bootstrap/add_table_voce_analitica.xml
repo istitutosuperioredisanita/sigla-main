@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="raffaele.pagano" id="add_table_voce_analitica">
+        <createTable remarks="Dettaglio dell&quot;albero della struttura del piano dei conti analitici di economico/patrimoniale." tableName="voce_analitica">
+            <column name="esercizio" remarks="Esercizio di riferimento" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_voce_ana" remarks="Identificativo completo della voce analitica del piano." type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ds_voce_ana" remarks="Descrizione della voce analitica" type="VARCHAR(200)"/>
+            <column name="esercizio_voce_ep" remarks="Esercizio della voce EP" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_voce_ep" remarks="Voce EP associata." type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fl_default" remarks="Indica se il conto analitico è quello di default da associare al conto ep; Dominio: Y  =  Default; N  =  No Default" type="CHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record: viene incrementato di 1 ad ogni variazione" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="add_table_voce_analitica_01">
+        <addDefaultValue tableName="voce_analitica" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="voce_analitica" columnName="duva" defaultValueDate="${now}"/>
+        <sql>
+            INSERT INTO VOCE_ANALITICA
+            (ESERCIZIO, CD_VOCE_ANA, DS_VOCE_ANA, ESERCIZIO_VOCE_EP, CD_VOCE_EP, FL_DEFAULT, UTUV, UTCR, PG_VER_REC)
+            SELECT ESERCIZIO, CD_VOCE_EP, DS_VOCE_EP, ESERCIZIO, CD_VOCE_EP, 'Y', 'SYSTEM', 'SYSTEM', 1
+            FROM VOCE_EP
+            WHERE NATURA_VOCE='EEC'
+        </sql>
+        <dropDefaultValue tableName="configurazione_cnr" columnName="dacr"/>
+        <dropDefaultValue tableName="configurazione_cnr" columnName="duva"/>
+    </changeSet>
+</databaseChangeLog>

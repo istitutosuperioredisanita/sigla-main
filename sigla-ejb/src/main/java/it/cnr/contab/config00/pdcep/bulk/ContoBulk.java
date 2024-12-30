@@ -17,6 +17,8 @@
 
 package it.cnr.contab.config00.pdcep.bulk;
 
+import it.cnr.jada.bulk.BulkCollection;
+import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 
 import java.util.Hashtable;
@@ -34,6 +36,8 @@ public class ContoBulk extends Voce_epBulk {
 	private boolean fl_gruppoNaturaNonCongruiConfermati = false;
 
 	private ContoBulk contoContropartita;
+	private BulkList<Voce_analiticaBulk> voceAnaliticaColl = new BulkList();
+
 
 	/**
  * Costruttore della classe <code>ContoBulk</code>.
@@ -199,5 +203,34 @@ public void setVoce_ep_padre(CapocontoBulk newVoce_ep_padre) {
 
 	public void setCd_voce_ep_contr(java.lang.String cd_voce_ep) {
 		Optional.ofNullable(this.getContoContropartita()).ifPresent(el->el.setCd_voce_ep(cd_voce_ep));
+	}
+
+	public BulkCollection[] getBulkLists() {
+		return new it.cnr.jada.bulk.BulkCollection[] {
+				voceAnaliticaColl  };
+	}
+
+	public BulkList<Voce_analiticaBulk> getVoceAnaliticaColl() {
+		return voceAnaliticaColl;
+	}
+
+	public void setVoceAnaliticaColl(BulkList<Voce_analiticaBulk> voceAnaliticaColl) {
+		this.voceAnaliticaColl = voceAnaliticaColl;
+	}
+
+	public int addToVoceAnaliticaColl( Voce_analiticaBulk voceAnaliticaBulk )
+	{
+		voceAnaliticaColl.add(voceAnaliticaBulk);
+		voceAnaliticaBulk.setVoce_ep(this);
+		return voceAnaliticaColl.size()-1;
+	}
+
+	public Voce_analiticaBulk removeFromVoceAnaliticaColl(int index)
+	{
+		return voceAnaliticaColl.remove(index);
+	}
+
+	public boolean isAnaliticaEnabled() {
+		return this.isContoCostoEconomicoEsercizio()||this.isContoRicavoEconomicoEsercizio();
 	}
 }
