@@ -900,6 +900,7 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
             throw handleException(e);
         }
     }
+
     public Boolean isAssPrgAnagraficoAttiva(UserContext userContext) throws ComponentException{
         try{
             Configurazione_cnrKey configurazioneCnrKey = new Configurazione_cnrKey(
@@ -1327,4 +1328,15 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
         }
     }
 
+    public Timestamp getFineRegFattPass(UserContext userContext, Integer esercizio) throws ComponentException {
+        try {
+            return Optional.ofNullable(getHome(userContext, Configurazione_cnrBulk.class))
+                    .filter(Configurazione_cnrHome.class::isInstance)
+                    .map(Configurazione_cnrHome.class::cast)
+                    .orElseThrow(() -> new DetailedRuntimeException("Configurazione Home not found"))
+                    .getFineRegFattPass(userContext, esercizio);
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        }
+    }
 }

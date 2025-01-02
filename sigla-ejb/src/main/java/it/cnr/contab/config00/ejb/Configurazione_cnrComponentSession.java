@@ -144,4 +144,6 @@ public interface Configurazione_cnrComponentSession extends it.cnr.jada.ejb.CRUD
 
     public Boolean isAttivoGestFlIrregistrabile(UserContext userContext) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
 
+    Timestamp getFineRegFattPass(UserContext userContext, Integer esercizio) throws ComponentException, RemoteException;
+
 }
