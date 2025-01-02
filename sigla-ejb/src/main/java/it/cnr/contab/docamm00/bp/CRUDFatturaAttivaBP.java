@@ -459,6 +459,8 @@ public abstract class CRUDFatturaAttivaBP
                 Fattura_attivaBulk fa = (Fattura_attivaBulk) bulk;
                 fa.setDettagliCancellati(new java.util.Vector());
                 fa.setDocumentiContabiliCancellati(new java.util.Vector());
+                Boolean liqIvaAnticipataFattAttiva = Utility.createConfigurazioneCnrComponentSession().isLiqIvaAnticipataFattAttiva(context.getUserContext(), fa.getDt_registrazione());
+                fa.setFl_bloccoAttivoDtReg(liqIvaAnticipataFattAttiva);
             }
             return super.initializeModelForEdit(context, bulk);
         } catch (Throwable e) {
@@ -693,7 +695,6 @@ public abstract class CRUDFatturaAttivaBP
      * Attiva oltre al normale reset il metodo di set dei tab di default.
      *
      * @param context <code>ActionContext</code>
-     * @see resetTabs
      */
 
     public void reset(ActionContext context) throws BusinessProcessException {
@@ -712,7 +713,6 @@ public abstract class CRUDFatturaAttivaBP
      * Attiva oltre al normale reset il metodo di set dei tab di default.
      *
      * @param context <code>ActionContext</code>
-     * @see resetTabs
      */
 
     public void resetForSearch(ActionContext context) throws BusinessProcessException {
@@ -725,7 +725,6 @@ public abstract class CRUDFatturaAttivaBP
     /**
      * Imposta come attivi i tab di default.
      *
-     * @param context <code>ActionContext</code>
      */
 
     public void resetTabs() {
@@ -840,6 +839,19 @@ public abstract class CRUDFatturaAttivaBP
     }
 
     public void save(it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException, ValidationException {
+
+        Optional.ofNullable(getModel())
+                .filter(Fattura_attivaBulk.class::isInstance)
+                .map(Fattura_attivaBulk.class::cast)
+                .ifPresent(fatturaAttivaBulk -> {
+                    try {
+                        fatturaAttivaBulk.setFl_bloccoAttivoDtReg(Utility.createConfigurazioneCnrComponentSession().isLiqIvaAnticipataFattPassiva(context.getUserContext(), fatturaAttivaBulk.getDt_registrazione()));
+                    } catch (ComponentException e) {
+                        throw new RuntimeException(e);
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
 
         super.save(context);
 

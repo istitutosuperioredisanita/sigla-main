@@ -269,4 +269,12 @@
         <init-param name="defaultAction" value="ControlliPCCParamsAction"/>
     </businessProcess>
 
+    <businessProcess
+            name="CRUDConfigContoAnaliticoBP" className="it.cnr.jada.util.action.SimpleCRUDBP">
+        <forward name="default" path="/config00/pdc_analitica_conto.jsp"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk"/>
+        <init-param name="componentSessionName" value="CNRCONFIG00_EJB_PDCContoAnaliticoComponentSession"/>
+        <init-param name="defaultAction" value="CRUDAction"/>
+    </businessProcess>
+
 </action-mappings>

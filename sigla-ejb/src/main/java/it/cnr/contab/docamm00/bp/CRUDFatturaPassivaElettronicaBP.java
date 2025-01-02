@@ -26,6 +26,7 @@ import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.config00.tabnum.ejb.Numerazione_baseComponentSession;
 import it.cnr.contab.docamm00.actions.CRUDFatturaPassivaAction;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
+import it.cnr.contab.docamm00.docs.bulk.Nota_di_creditoBulk;
 import it.cnr.contab.docamm00.ejb.FatturaElettronicaPassivaComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.docamm00.fatturapa.bulk.*;
@@ -562,7 +563,8 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 	    	fatturaPassivaBulk.setFl_intra_ue(Boolean.FALSE);
 	    	fatturaPassivaBulk.setFl_extra_ue(Boolean.FALSE);
 	    	fatturaPassivaBulk.setFl_san_marino_senza_iva(Boolean.FALSE);
-	    	fatturaPassivaBulk.setFl_fattura_compenso(existsTributi(documentoEleTestata));
+			if ( !( fatturaPassivaBulk instanceof Nota_di_creditoBulk))
+	    		fatturaPassivaBulk.setFl_fattura_compenso(existsTributi(documentoEleTestata));
 
 	    	//Il flag viene impostato a true se documento splitPayment con iva != 0
 	    	fatturaPassivaBulk.setFl_split_payment(documentoEleTestata.isDocumentoSplitPayment() &&

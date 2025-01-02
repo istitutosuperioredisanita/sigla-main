@@ -258,6 +258,8 @@ public abstract class Fattura_passivaBulk
 
     private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
 
+    private boolean fl_bloccoAttivoDtReg =  Boolean.FALSE;
+
     public Fattura_passivaBulk() {
         super();
     }
@@ -441,7 +443,9 @@ public abstract class Fattura_passivaBulk
         BigDecimal totale= BigDecimal.ZERO;
         for (Iterator i = fattura_passiva_dettColl.iterator(); i.hasNext(); ) {
             Fattura_passiva_rigaBulk riga = ((Fattura_passiva_rigaBulk) i.next());
-            if (riga.getBene_servizio().getFl_obb_intrastat_acq().booleanValue()
+            if (riga.getBene_servizio()!=null
+             && riga.getBene_servizio().getFl_obb_intrastat_acq()!=null
+                && riga.getBene_servizio().getFl_obb_intrastat_acq().booleanValue()
                     && riga.getVoce_iva().getFl_intrastat().booleanValue())
                 totale=totale.add(riga.getIm_imponibile());
         }
@@ -2738,7 +2742,7 @@ public abstract class Fattura_passivaBulk
         return STATO_IVA_B.equalsIgnoreCase(getStatoIVA()) ||
                 STATO_IVA_C.equalsIgnoreCase(getStatoIVA()) ||
                 //A seguito dell'errore segnalato 569 (dovuto alla richiesta 423)
-                (getAutofattura() != null && getAutofattura().isStampataSuRegistroIVA());//||
+                (getAutofattura() != null && getAutofattura().isStampataSuRegistroIVA()) ||( (!this.isFromAmministra()) && isBloccoAttivoDtReg());//||
         //(getProgr_univoco()!=null);
     }
 
@@ -3825,4 +3829,15 @@ public abstract class Fattura_passivaBulk
         return super.isOptionDisabled(fieldProperty, key);
     }
 
+    public boolean isBloccoAttivoDtReg() {
+        return fl_bloccoAttivoDtReg;
+    }
+
+    public boolean isFl_bloccoAttivoDtReg() {
+        return fl_bloccoAttivoDtReg;
+    }
+
+    public void setFl_bloccoAttivoDtReg(boolean fl_bloccoAttivoDtReg) {
+        this.fl_bloccoAttivoDtReg = fl_bloccoAttivoDtReg;
+    }
 }

@@ -27,11 +27,10 @@ import it.cnr.contab.anagraf00.tabter.bulk.ProvinciaHome;
 import it.cnr.contab.bollo00.tabrif.bulk.Tipo_atto_bolloBulk;
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaFromDocumentoComponent;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
-import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaHome;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
-import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
+import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
 import it.cnr.contab.config00.ejb.Parametri_cnrComponentSession;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
@@ -3789,6 +3788,14 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
                 (sezionaliCaricati != null && !sezionaliCaricati.isEmpty())
                         ? (it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk) sezionaliCaricati.iterator().next()
                         : null);
+        //setta boolean del bulk come nel BP
+        Boolean liqIvaAnticipataFattAttivaValid = null;
+        try {
+            liqIvaAnticipataFattAttivaValid = Utility.createConfigurazioneCnrComponentSession().isLiqIvaAnticipataFattAttiva(aUC, fattura.getDt_registrazione());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+        fattura.setFl_bloccoAttivoDtReg(liqIvaAnticipataFattAttivaValid);
         return fattura;
     }
 
@@ -5565,6 +5572,8 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
         controllaContabilizzazioneDiTutteLeRighe(aUC, fatturaAttiva);
         controllaQuadraturaAccertamenti(aUC, fatturaAttiva);
         controllaQuadraturaIntrastat(aUC, fatturaAttiva);
+        //Verifica la validità della data di registrazione tra i 2 range e lo stato del flag
+        callVerifyDataRegistrazioneIsAttivoBlocco(aUC, fatturaAttiva);
     }
 //^^@@
 
@@ -7207,6 +7216,31 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
             throw handleException(fattura, t);
         } catch (ComponentException t) {
             throw handleException(fattura, t);
+        }
+    }
+
+    private void callVerifyDataRegistrazioneIsAttivoBlocco(
+            UserContext userContext,
+            Fattura_attivaBulk fatturaAttiva)
+            throws ComponentException {
+
+        try {
+            // Recupero l'oggetto Configurazione_cnrComponent per effettuare le verifiche
+            Configurazione_cnrComponentSession configurazioneCnrComponentSession = Utility.createConfigurazioneCnrComponentSession();
+
+            // Recupero la data di registrazione dalla fattura
+            Timestamp dataFattura = fatturaAttiva.getDt_registrazione();
+
+            // Verifico le condizioni per la fattura passiva
+            Boolean isValidaFattAttiva = configurazioneCnrComponentSession.isLiqIvaAnticipataFattAttiva(userContext, dataFattura);
+
+            if (isValidaFattAttiva) {
+                throw new it.cnr.jada.comp.ApplicationException("Data registrazione inferiore/uguale a ultimo periodo definitivo di stampa registri IVA");
+            }
+        } catch (ComponentException e) {
+            throw e; // Rilancio l'eccezione specifica
+        } catch (Exception e) {
+            throw new ComponentException(e);
         }
     }
 

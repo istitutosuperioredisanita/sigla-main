@@ -261,6 +261,8 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
 
     public final static String SK_MODALITA_PAGAMENTO = "MODALITA_PAGAMENTO";
 
+    public final static String SK_LIQ_IVA_ANTICIPATA = "LIQ_IVA_ANTICIPATA";
+
     public final static Map<String,String> TI_STEP_FINE_ANNO = new HashMap<String, String>() {{
         put("N", "No");
         put("Y", "Si");

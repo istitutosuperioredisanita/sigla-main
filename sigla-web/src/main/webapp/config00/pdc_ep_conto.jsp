@@ -9,6 +9,7 @@
 	        it.cnr.jada.action.*,
 	        java.util.*, 
 	        it.cnr.contab.config00.bp.*,
+	        it.cnr.contab.config00.pdcep.bulk.*,
 	        it.cnr.jada.util.action.*"
 %>
 
@@ -24,6 +25,7 @@
 <body class="Form">
 
 <% CRUDContoBP bp = (CRUDContoBP)BusinessProcess.getBusinessProcess(request);
+   ContoBulk bulk = (ContoBulk)bp.getModel();
 	 bp.openFormWindow(pageContext); %>
 	<table class="Panel card p-2">
 	<% if (!bp.isFlNuovoPdg()){%>
@@ -53,17 +55,14 @@
         <td><% bp.getController().writeFormLabel( out, "ds_voce_ep"); %></td>
         <td><% bp.getController().writeFormInput( out, "ds_voce_ep"); %></td>
 	</tr>
-	<% if (!bp.isFlNuovoPdg()){%>
-        <tr>
-            <td><% bp.getController().writeFormLabel( out, "natura_voce"); %></td>
-            <td><% bp.getController().writeFormInput( out, "natura_voce"); %></td>
-        </tr>
-    <% }else {%>
-        <tr>
-          <td><% bp.getController().writeFormLabel(out,"find_classificazione_voci_ep");%></td>
-          <td><% bp.getController().writeFormInput(out,"find_classificazione_voci_ep");%></td>
-        </tr>
-	<% }%> 
+    <tr>
+        <td><% bp.getController().writeFormLabel( out, "natura_voce"); %></td>
+        <td><% bp.getController().writeFormInput( out, "natura_voce"); %></td>
+    </tr>
+    <tr>
+        <td><% bp.getController().writeFormLabel(out,"find_classificazione_voci_ep");%></td>
+        <td><% bp.getController().writeFormInput(out,"find_classificazione_voci_ep");%></td>
+    </tr>
 	<tr>
         <td><% bp.getController().writeFormLabel( out, "riepiloga_a"); %></td>
         <td><% bp.getController().writeFormInput( out, "riepiloga_a"); %></td>
@@ -96,6 +95,33 @@
             <% bp.getController().writeFormInput( out, "find_voce_ep_contr"); %>
         </td>
     </tr>
+
+<% if (bulk.isAnaliticaEnabled()) { %>
+<tr><td colspan="3">
+<fieldset class="mt-2">
+    <legend class="GroupLabel text-primary h3 ml-2">Voci di analitica</legend>
+    <% bp.getVociAnalitica().writeHTMLTable(pageContext,"voceep",true,false,true,"100%","auto; max-height: 40vh;"); %>
+	<table class="card p-2">
+        <tr>
+    		<td>
+    			<% bp.getVociAnalitica().writeFormField(out,"cd_voce_ana"); %>
+  			</td>
+  	    </tr>
+  	    <tr>
+    		<td>
+    			<% bp.getVociAnalitica().writeFormField(out,"ds_voce_ana"); %>
+  			</td>
+  		</tr>
+  	    <tr>
+    		<td>
+    			<% bp.getVociAnalitica().writeFormField(out,"fl_default"); %>
+  			</td>
+  		</tr>
+  	</table>
+</fieldset>
+</td></tr>
+<% } %>
 	</table>
+
 <%	bp.closeFormWindow(pageContext); %>
 </body>

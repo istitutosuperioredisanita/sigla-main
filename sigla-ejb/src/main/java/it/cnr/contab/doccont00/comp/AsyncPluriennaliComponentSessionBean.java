@@ -54,7 +54,7 @@ public class AsyncPluriennaliComponentSessionBean extends it.cnr.jada.ejb.CRUDCo
 		logger.info("Inizio Creazioni Obbligazione da Pluriennali".concat("esercizio:").concat(esercizio.toString()));
 		createObbligazioniPluriennali( uc,esercizio,gaeIniziale);
 		logger.info("Inizio Creazioni Accertamenti da Pluriennali".concat("esercizio:").concat(esercizio.toString()));
-		createAcceratmentiPluriennali( uc,esercizio,gaeIniziale);
+		//createAcceratmentiPluriennali( uc,esercizio,gaeIniziale);
 	}
 
 
@@ -218,7 +218,7 @@ public class AsyncPluriennaliComponentSessionBean extends it.cnr.jada.ejb.CRUDCo
 				allAccPluriennali.stream()
 						.forEach(accertamento -> {
 					try {
-						logger.info("Obbligazione in elaborazione: ".
+						logger.info("Accertamenti in elaborazione: ".
 								concat(accertamento.getAnno().toString()).concat("/").
 								concat(accertamento.getCdCds()).concat("/").
 								concat(accertamento.getEsercizio().toString()).concat("/").

@@ -1,0 +1,37 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="davide.mirra" id="add_accesso_blocco_fatture_passive_attive">
+        <insert tableName="configurazione_cnr">
+            <column name="esercizio" type="NUMERIC" valueNumeric="${esercizio_corrente}"/>
+            <column name="cd_unita_funzionale" type="STRING" value="*"/>
+            <column name="cd_chiave_primaria" type="STRING" value="FATTURA_ATTIVA"/>
+            <column name="cd_chiave_secondaria" type="STRING" value="LIQ_IVA_ANTICIPATA"/>
+            <column name="val01" type="STRING" value="Y"/>
+            <column name="dt01" type="${date.type}" valueDate="to_timestamp('2024-12-01','YYYY-mm-DD')"/>
+            <column name="dt02" type="${date.type}" valueDate="to_timestamp('2024-12-23','YYYY-mm-DD')"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="STRING" value="SYSTEM"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="STRING" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="NUMERIC" value="0"/>
+        </insert>
+        <insert tableName="configurazione_cnr">
+            <column name="esercizio" type="NUMERIC" valueNumeric="${esercizio_corrente}"/>
+            <column name="cd_unita_funzionale" type="STRING" value="*"/>
+            <column name="cd_chiave_primaria" type="STRING" value="FATTURA_PASSIVA"/>
+            <column name="cd_chiave_secondaria" type="STRING" value="LIQ_IVA_ANTICIPATA"/>
+            <column name="val01" type="STRING" value="Y"/>
+            <column name="dt01" type="${date.type}" valueDate="to_timestamp('2024-12-01','YYYY-mm-DD')"/>
+            <column name="dt02" type="${date.type}" valueDate="to_timestamp('2024-12-23','YYYY-mm-DD')"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="STRING" value="SYSTEM"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="STRING" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="NUMERIC" value="0"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

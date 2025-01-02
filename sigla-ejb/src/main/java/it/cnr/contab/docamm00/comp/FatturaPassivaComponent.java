@@ -1576,7 +1576,8 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
             cs.setTimestamp(5, fatturaPassiva.getDt_registrazione());
 
             cs.executeQuery();
-
+            // //Verifica la validità della data di registrazione tra i 2 range e lo stato del flag
+            callVerifyDataRegistrazioneIsAttivoBlocco(userContext, fatturaPassiva);
         } catch (Throwable e) {
             throw handleException(fatturaPassiva, e);
         } finally {
@@ -1586,7 +1587,36 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                 throw handleException(fatturaPassiva, e);
             }
         }
+
     }
+
+    private void callVerifyDataRegistrazioneIsAttivoBlocco(
+            UserContext userContext,
+            Fattura_passivaBulk fatturaPassiva)
+            throws ComponentException {
+
+        try {
+            if (!fatturaPassiva.isFromAmministra()){
+                    // Recupero l'oggetto Configurazione_cnrComponent per effettuare le verifiche
+                    Configurazione_cnrComponentSession configurazioneCnrComponentSession = Utility.createConfigurazioneCnrComponentSession();
+
+                // Recupero la data di registrazione dalla fattura
+                Timestamp dataFattura = fatturaPassiva.getDt_registrazione();
+
+                // Verifico le condizioni per la fattura passiva
+                Boolean isValidaFattPassiva = configurazioneCnrComponentSession.isLiqIvaAnticipataFattPassiva(userContext, dataFattura);
+
+                if (isValidaFattPassiva) {
+                    throw new it.cnr.jada.comp.ApplicationException("Data registrazione inferiore/uguale a ultimo periodo definitivo di stampa registri IVA");
+                }
+            }
+        } catch (ComponentException e) {
+            throw e; // Rilancio l'eccezione specifica
+        } catch (Exception e) {
+            throw new ComponentException(e);
+        }
+    }
+
 
     private java.util.List caricaAddebitiExceptFor(
             UserContext userContext,
@@ -4875,7 +4905,6 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
     public OggettoBulk inizializzaBulkPerInserimento(UserContext userContext, OggettoBulk bulk) throws it.cnr.jada.comp.ComponentException {
 
         Fattura_passivaBulk fattura = (Fattura_passivaBulk) bulk;
-
         try {
             Unita_organizzativa_enteBulk ente = findUOEnte(userContext, fattura.getEsercizio());
             if (ente != null && ente.getCd_unita_organizzativa().equalsIgnoreCase(fattura.getCd_unita_organizzativa()))
@@ -4947,7 +4976,14 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
 
         fattura = valorizzaInfoDocEle(userContext, fattura);
         fattura.setDataInizioSplitPayment(getDataInizioSplitPayment(userContext));
-
+        //setta boolean del bulk come nel BP
+        Boolean liqIvaAnticipataFattPassivaValid = null;
+        try {
+            liqIvaAnticipataFattPassivaValid = Utility.createConfigurazioneCnrComponentSession().isLiqIvaAnticipataFattPassiva(userContext, fattura.getDt_registrazione());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+        fattura.setFl_bloccoAttivoDtReg(liqIvaAnticipataFattPassivaValid);
         return fattura;
     }
 
@@ -7280,6 +7316,9 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             //data di stampa registri IVA
             callVerifyDataRegistrazione(aUC, fatturaPassiva);
 
+
+            //callVerifyDataRegistrazioneIsAttivoBlocco(aUC, fatturaPassiva);
+
             //Verifica che il documento rispetti la sequenza data/numero
             //di registrazione
             validaSequenceDateNumber(aUC, fatturaPassiva);
@@ -8196,6 +8235,9 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             //Verifica la validità della data di registrazione rispetto all'ultima
             //data di stampa registri IVA
             callVerifyDataRegistrazione(aUC, fatturaPassiva);
+
+            //Verifica la validità della data di registrazione tra i 2 range e lo stato del flag
+            callVerifyDataRegistrazioneIsAttivoBlocco(aUC, fatturaPassiva);
 
             //Verifica che il documento rispetti la sequenza data/numero
             //di registrazione
