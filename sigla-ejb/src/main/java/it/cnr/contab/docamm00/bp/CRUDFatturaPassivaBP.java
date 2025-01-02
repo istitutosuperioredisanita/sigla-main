@@ -987,15 +987,21 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
      */
 
     public void reset(ActionContext context) throws BusinessProcessException {
-
-        if (it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(
-                context.getUserContext()).intValue() != Fattura_passivaBulk
-                .getDateCalendar(null).get(java.util.Calendar.YEAR))
-            resetForSearch(context);
-        else {
-            setCarryingThrough(false);
-            super.reset(context);
-            resetTabs();
+        try {
+            if ((it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(
+                    context.getUserContext()).intValue() != Fattura_passivaBulk
+                    .getDateCalendar(null).get(java.util.Calendar.YEAR) || !Utility.createConfigurazioneCnrComponentSession().getFineRegFattPass(context.getUserContext(), CNRUserContext.getEsercizio(context.getUserContext()) - 1)
+                    .before(EJBCommonServices.getServerDate()) )  &&
+                    !Utility.createConfigurazioneCnrComponentSession().getFineRegFattPass(context.getUserContext(), CNRUserContext.getEsercizio(context.getUserContext()))
+                            .after(EJBCommonServices.getServerDate())) {
+                resetForSearch(context);
+            } else {
+                setCarryingThrough(false);
+                super.reset(context);
+                resetTabs();
+            }
+        } catch (RemoteException | ComponentException _ex) {
+            throw handleException(_ex);
         }
     }
 
