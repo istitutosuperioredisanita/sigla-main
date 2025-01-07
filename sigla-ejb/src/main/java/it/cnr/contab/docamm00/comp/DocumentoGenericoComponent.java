@@ -6589,10 +6589,12 @@ public class DocumentoGenericoComponent
                 documentoGenericoRigaNew.setPartita_iva(documentoGenericoRigaBulk.getPartita_iva());
                 documentoGenericoRigaNew.setModalita_pagamento(documentoGenericoRigaBulk.getModalita_pagamento());
                 documentoGenericoRigaNew.setTerzo_uo_cds(documentoGenericoRigaBulk.getTerzo_uo_cds());
-
-                documentoGenericoRigaNew.setBanca_uo_cds(new BancaBulk(documentoGenericoRigaBulk.getTerzo_uo_cds().getCd_terzo(), documentoGenericoRigaBulk.getPg_banca_uo_cds()));
-                documentoGenericoRigaNew.setModalita_pagamento_uo_cds(new Rif_modalita_pagamentoBulk(documentoGenericoRigaBulk.getCd_modalita_pag_uo_cds()));
-
+                if (documentoGenericoRigaBulk.getTerzo_uo_cds() != null) {
+                    documentoGenericoRigaNew.setBanca_uo_cds(new BancaBulk(documentoGenericoRigaBulk.getTerzo_uo_cds().getCd_terzo(), documentoGenericoRigaBulk.getPg_banca_uo_cds()));
+                }
+                if (documentoGenericoRigaBulk.getCd_modalita_pag_uo_cds() != null) {
+                    documentoGenericoRigaNew.setModalita_pagamento_uo_cds(new Rif_modalita_pagamentoBulk(documentoGenericoRigaBulk.getCd_modalita_pag_uo_cds()));
+                }
                 documentoGenericoRigaNew.setStato_cofi(Documento_generico_rigaBulk.STATO_CONTABILIZZATO);
                 documentoGenericoRigaNew.setDocumento_generico_riga_storno(documentoGenericoRigaBulk);
                 documentoGenericoRigaNew.setIm_riga(documentoGenericoRigaBulk.getIm_riga());
@@ -6605,8 +6607,8 @@ public class DocumentoGenericoComponent
                                 .subtract(documentoGenericoRigaBulk.getIm_riga())
                     );
                     updateImportoAssociatoDocAmm(userContext, accertamentoScadenziario);
-                    accertamentoSession.modificaScadenzaInAutomatico(userContext, accertamentoScadenziario, accertamentoScadenziario.getIm_scadenza()
-                            .subtract(documentoGenericoRigaBulk.getIm_riga()), Boolean.TRUE, Boolean.TRUE);
+                    accertamentoSession.sdoppiaScadenzaInAutomatico(userContext, accertamentoScadenziario, accertamentoScadenziario.getIm_scadenza()
+                            .subtract(documentoGenericoRigaBulk.getIm_riga()));
                 } else {
                     Obbligazione_scadenzarioBulk obbligazioneScadenziario = documentoGenericoRigaBulk.getObbligazione_scadenziario();
                     documentoGenericoRigaNew.setObbligazione_scadenziario(obbligazioneScadenziario);
@@ -6615,8 +6617,8 @@ public class DocumentoGenericoComponent
                                     .subtract(documentoGenericoRigaBulk.getIm_riga())
                     );
                     updateImportoAssociatoDocAmm(userContext, obbligazioneScadenziario);
-                    obbligazioneSession.modificaScadenzaInAutomatico(userContext, obbligazioneScadenziario, obbligazioneScadenziario.getIm_scadenza()
-                            .subtract(documentoGenericoRigaBulk.getIm_riga()), Boolean.TRUE);
+                    obbligazioneSession.sdoppiaScadenzaInAutomatico(userContext, obbligazioneScadenziario, obbligazioneScadenziario.getIm_scadenza()
+                            .subtract(documentoGenericoRigaBulk.getIm_riga()));
                 }
             }
             return (Documento_genericoBulk) creaConBulk(userContext, documentoGenericoBulk);
