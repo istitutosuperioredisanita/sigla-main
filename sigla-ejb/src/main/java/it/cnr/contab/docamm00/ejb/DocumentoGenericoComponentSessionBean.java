@@ -23,6 +23,8 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.docamm00.comp.DocumentoGenericoComponent;
 import it.cnr.contab.docamm00.docs.bulk.DocumentoGenericoWizardBulk;
 import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
+import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
+import it.cnr.contab.docamm00.docs.bulk.StornaDocumentoGenericoBulk;
 import it.cnr.contab.doccont00.core.AccertamentoWizard;
 import it.cnr.contab.doccont00.core.ObbligazioneWizard;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
@@ -35,6 +37,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
+import java.util.List;
 
 @Stateless(name="CNRDOCAMM00_EJB_DocumentoGenericoComponentSession")
 public class DocumentoGenericoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements DocumentoGenericoComponentSession {
@@ -889,6 +892,26 @@ public class DocumentoGenericoComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 		try {
 			((DocumentoGenericoComponent)componentObj).aggiornaModalitaPagamento(userContext,docPassivoObb,newModalitaPag,newBanca);
 			component_invocation_succes(userContext,componentObj);
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(userContext,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(userContext,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(userContext,componentObj,e);
+		}
+	}
+
+	@Override
+	public Documento_genericoBulk creaDocumentoGenericoDiStorno(UserContext userContext, char tiEntrataSpesa, StornaDocumentoGenericoBulk stornaDocumentoGenericoBulk, List<Documento_generico_rigaBulk> documentoGenericoRigaBulks) throws ComponentException, RemoteException {
+		pre_component_invocation(userContext,componentObj);
+		try {
+			it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk result = ((DocumentoGenericoComponent)componentObj).creaDocumentoGenericoDiStorno(userContext,tiEntrataSpesa,stornaDocumentoGenericoBulk,documentoGenericoRigaBulks);
+			component_invocation_succes(userContext,componentObj);
+			return result;
 		} catch(it.cnr.jada.comp.NoRollbackException e) {
 			component_invocation_succes(userContext,componentObj);
 			throw e;

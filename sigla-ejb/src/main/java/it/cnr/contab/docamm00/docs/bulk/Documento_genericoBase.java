@@ -89,6 +89,8 @@ public class Documento_genericoBase extends Documento_genericoKey implements Key
     private java.lang.String cd_tipo_conto_ep;
     // CD_CAUSALE_CONTABILE VARCHAR(10)
     private java.lang.String cd_causale_contabile;
+    // FL_STORNO CHAR(1)
+    private java.lang.Boolean fl_storno;
 
     public Documento_genericoBase() {
         super();
@@ -416,5 +418,13 @@ public class Documento_genericoBase extends Documento_genericoKey implements Key
 
     public void setCd_causale_contabile(String cd_causale_contabile) {
         this.cd_causale_contabile = cd_causale_contabile;
+    }
+
+    public Boolean getFl_storno() {
+        return fl_storno;
+    }
+
+    public void setFl_storno(Boolean fl_storno) {
+        this.fl_storno = fl_storno;
     }
 }

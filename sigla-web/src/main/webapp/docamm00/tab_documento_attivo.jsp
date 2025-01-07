@@ -40,10 +40,7 @@
             <tr><% bp.getController().writeFormField(out,"cd_causale_contabile"); %></tr>
 			<tr>
 			 	<% bp.getController().writeFormField(out,"stato_cofi");%>
-				<td colspan="2">
-					<% bp.getController().writeFormLabel(out,"ti_associato_manrev");%>
-					<% bp.getController().writeFormInput(out,"ti_associato_manrev");%>
-				</td>
+			 	<% bp.getController().writeFormField(out,"ti_associato_manrev");%>
 			</tr>
 			<tr>
 				<td>
@@ -52,6 +49,7 @@
 				<td>
 					<% bp.getController().writeFormInput(out,null,"flagEnte",false,null,"onClick=\"submitForm('doOnFlagEnteChange')\"");%>
 				</td>
+			 	<% bp.getController().writeFormField(out,"fl_storno");%>
 			</tr>
 		<% } else { %>
 			<tr>
@@ -74,6 +72,7 @@
 				<td>
 					<% bp.getController().writeFormInput(out,null,"flagEnte",false,null,"onClick=\"submitForm('doOnFlagEnteChange')\"");%>
 				</td>
+			 	<% bp.getController().writeFormField(out,"fl_storno");%>
 			</tr>
 		<% } %>
 	</table>

@@ -561,7 +561,7 @@ public class AccertamentoComponent extends CRUDComponent implements IDocumentoCo
         if (delta.doubleValue() == 0) return accertamento;
 
         // L'importo della scadenza successiva va in negativo
-        if ((delta.doubleValue() < 0) && (scadenzaSuccessiva.getIm_scadenza().add(delta).doubleValue() <= 0))
+        if ((delta.doubleValue() < 0) && (scadenzaSuccessiva.getIm_scadenza().add(delta).doubleValue() < 0))
             throw handleException(new ApplicationException("L'importo della scadenza successiva e' inferiore all'importo da aggiornare"));
 
         // Aggiorno importo scadenza successiva
@@ -3580,8 +3580,7 @@ private void modificoDettagliScadenza(UserContext aUC,AccertamentoBulk accertame
                 osv.getLinea_attivita().setCd_natura(ppsd.getCd_natura());
                 osv.setCd_linea_attivita(ppsd.getCd_linea_attivita());
                 osv.setCd_centro_responsabilita(ppsd.getCd_centro_responsabilita());
-
-                osv.setIm_voce(new java.math.BigDecimal(0));
+                osv.setIm_voce(BigDecimal.ZERO);
                 // MITODO - verificare come mai ho dovuto anticipare la valorizzazione rispetto all'obbligazione
                 osv.setAccertamento_scadenzario(scadenzario);
                 osv.setCd_fondo_ricerca(accertamento.getCd_fondo_ricerca());

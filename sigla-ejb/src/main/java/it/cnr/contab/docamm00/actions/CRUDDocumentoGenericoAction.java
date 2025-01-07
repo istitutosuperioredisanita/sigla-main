@@ -54,6 +54,7 @@ import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.action.CRUDBP;
+import it.cnr.jada.util.action.NestedFormController;
 import it.cnr.jada.util.action.SelezionatoreListaBP;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
@@ -4001,4 +4002,27 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
         }
     }
 
+    public Forward doApriDocumentoStornato(ActionContext actionContext) throws BusinessProcessException {
+        CRUDDocumentoGenericoAttivoBP bp = (CRUDDocumentoGenericoAttivoBP) getBusinessProcess(actionContext);
+        Optional<Documento_genericoBulk> documentoGenericoRigaBulk = Optional.ofNullable(bp.getDettaglio())
+                .map(NestedFormController::getModel)
+                .filter(Documento_generico_rigaBulk.class::isInstance)
+                .map(Documento_generico_rigaBulk.class::cast)
+                .map(Documento_generico_rigaBulk::getDocumento_generico_riga_storno)
+                .map(Documento_generico_rigaBulk::getDocumento_generico);
+        if (documentoGenericoRigaBulk.isPresent()) {
+            try {
+                SimpleCRUDBP nbp = (SimpleCRUDBP) actionContext.createBusinessProcess(
+                        "CRUDGenericoAttivoBP",
+                        new Object[]{"M"}
+                );
+                nbp = (SimpleCRUDBP) actionContext.addBusinessProcess(nbp);
+                nbp.edit(actionContext, documentoGenericoRigaBulk.get());
+                return nbp;
+            } catch (Throwable e) {
+                return handleException(actionContext, e);
+            }
+        }
+        return actionContext.findDefaultForward();
+    }
 }

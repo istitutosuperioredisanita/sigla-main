@@ -6169,4 +6169,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <!-- Autore : RAFFAELE PAGANO - creazione tabella voci analitica-->
     <include file="bootstrap/add_table_voce_analitica.xml"/>
     <include file="bootstrap/add_accessi_voce_analitica.xml"/>
+    <!-- Autore : MARCO SPASIANO - Gestione Storno Documenti Generici-->
+    <include file="bootstrap/storna_documenti_generici.xml"/>
+
 </databaseChangeLog>
