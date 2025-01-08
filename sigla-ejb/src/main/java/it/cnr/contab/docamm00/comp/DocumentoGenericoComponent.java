@@ -852,7 +852,7 @@ public class DocumentoGenericoComponent
                 if (rigaSelected.getIm_riga() != null) {
 
                     if (tipoTot.equals(TIPO_TOTALE_COMPLETO))
-                        importo = importo.add(rigaSelected.getIm_riga());
+                        importo = importo.add(rigaSelected.isDocumentoStorno()? rigaSelected.getIm_riga().negate() : rigaSelected.getIm_riga());
                     else {
                         if (rigaSelected.getCrudStatus() == OggettoBulk.TO_BE_CREATED)
                             importo = importo.add(rigaSelected.getIm_riga());
@@ -864,11 +864,14 @@ public class DocumentoGenericoComponent
                                 throw handleException(rigaSelected, e);
                             }
 
-                            importo = importo.add(rigaSelected.getIm_riga()).subtract(oldRiga.getIm_riga());
+                            importo = importo.add(rigaSelected.isDocumentoStorno()? rigaSelected.getIm_riga().negate() : rigaSelected.getIm_riga()).subtract(oldRiga.getIm_riga());
                         }
-
+                    }
+                    if (rigaSelected.isDocumentoStorno()) {
+                        importo = importo.add(rigaSelected.getDocumento_generico_riga_storno().getIm_riga());
                     }
                 }
+
 
             }
         }

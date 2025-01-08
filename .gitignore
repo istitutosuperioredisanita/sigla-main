@@ -14,3 +14,4 @@ log
 /sigla-web/src/main/webapp/tmp/
 /.run/
 .vscode/settings.json
+/sigla.log.*

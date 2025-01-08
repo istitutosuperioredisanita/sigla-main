@@ -4003,7 +4003,7 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
     }
 
     public Forward doApriDocumentoStornato(ActionContext actionContext) throws BusinessProcessException {
-        CRUDDocumentoGenericoAttivoBP bp = (CRUDDocumentoGenericoAttivoBP) getBusinessProcess(actionContext);
+        IDocumentoGenericoBP bp = (IDocumentoGenericoBP) getBusinessProcess(actionContext);
         Optional<Documento_genericoBulk> documentoGenericoRigaBulk = Optional.ofNullable(bp.getDettaglio())
                 .map(NestedFormController::getModel)
                 .filter(Documento_generico_rigaBulk.class::isInstance)

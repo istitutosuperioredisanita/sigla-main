@@ -327,6 +327,7 @@
 		maxLength="15"
 		inputSize="15"		
 		formatName="it.cnr.contab.util.EuroFormat"
+		readonlyProperty="documentoStorno"
 		enabledOnEdit="true"
 		nullable="false"
 		label="In valuta" />	
