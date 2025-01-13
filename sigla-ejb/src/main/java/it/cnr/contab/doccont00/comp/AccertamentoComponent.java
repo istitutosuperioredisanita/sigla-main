@@ -3425,7 +3425,6 @@ private void modificoDettagliScadenza(UserContext aUC,AccertamentoBulk accertame
                 throw new ApplicationException("Workpackages da PdG con ricavi/entrate nulle. Imputazione automatica impossibile!");
         }
 
-
         // non sono ancora state inserite le scadenze
         if (accertamento.getAccertamento_scadenzarioColl().size() == 0)
             return accertamento;

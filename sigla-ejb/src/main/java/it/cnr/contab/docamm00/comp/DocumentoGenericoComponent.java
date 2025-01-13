@@ -206,13 +206,10 @@ public class DocumentoGenericoComponent
                                             importoAssociatoAllaScadenza.add((riga.getIm_riga_iniziale() == null ? riga.getIm_imponibile() : riga.getIm_riga_iniziale()).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
                         }
                         if (documento.isDocumentoStorno()) {
-                            importoAssociatoAllaScadenza = importoAssociatoAllaScadenza.negate();
-                            scadenza.setIm_associato_doc_amm((scadenza.getIm_associato_doc_amm().subtract(importoAssociatoAllaScadenza)).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
+                            AccertamentoHome accertHome = (AccertamentoHome) getHome( userContext, AccertamentoBulk.class);
+                            scadenza = (Accertamento_scadenzarioBulk) accertHome.aumentaImportoScadenzaInAutomatico(userContext, scadenza, scadenza.getIm_scadenza().add(importoAssociatoAllaScadenza));
+                            scadenza.setIm_associato_doc_amm((scadenza.getIm_associato_doc_amm().add(importoAssociatoAllaScadenza)).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
                             updateImportoAssociatoDocAmm(userContext, scadenza);
-                            AccertamentoAbstractComponentSession accertamentoSession =
-                                    (AccertamentoAbstractComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
-                                            "CNRDOCCONT00_EJB_AccertamentoAbstractComponentSession", AccertamentoAbstractComponentSession.class);
-                            accertamentoSession.modificaScadenzaInAutomatico(userContext, scadenza, scadenza.getIm_scadenza().subtract(importoAssociatoAllaScadenza), Boolean.TRUE, Boolean.TRUE);
                         } else {
                             scadenza.setIm_associato_doc_amm((scadenza.getIm_associato_doc_amm().subtract(importoAssociatoAllaScadenza)).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
                             updateImportoAssociatoDocAmm(userContext, scadenza);
@@ -557,13 +554,10 @@ public class DocumentoGenericoComponent
                             scadenza.setIm_associato_doc_amm((scadenza.getIm_associato_doc_amm().subtract(importoAssociatoAllaScadenza)).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
                         }
                         if (documento.isDocumentoStorno()) {
-                            importoAssociatoAllaScadenza = importoAssociatoAllaScadenza.negate();
-                            scadenza.setIm_associato_doc_amm((scadenza.getIm_associato_doc_amm().subtract(importoAssociatoAllaScadenza)).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
+                            ObbligazioneHome obbligHome = (ObbligazioneHome) getHome( userContext, ObbligazioneBulk.class);
+                            scadenza = (Obbligazione_scadenzarioBulk) obbligHome.aumentaImportoScadenzaInAutomatico(userContext, scadenza, scadenza.getIm_scadenza().add(importoAssociatoAllaScadenza));
+                            scadenza.setIm_associato_doc_amm((scadenza.getIm_associato_doc_amm().add(importoAssociatoAllaScadenza)).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
                             updateImportoAssociatoDocAmm(userContext, scadenza);
-                            ObbligazioneAbstractComponentSession obbligazioneSession =
-                                    (ObbligazioneAbstractComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
-                                            "CNRDOCCONT00_EJB_ObbligazioneAbstractComponentSession", ObbligazioneAbstractComponentSession.class);
-                            obbligazioneSession.modificaScadenzaInAutomatico(userContext, scadenza, scadenza.getIm_scadenza().subtract(importoAssociatoAllaScadenza), Boolean.TRUE);
                         } else {
                             updateImportoAssociatoDocAmm(userContext, scadenza);
                         }
