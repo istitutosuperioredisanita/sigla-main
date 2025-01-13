@@ -47,6 +47,18 @@
 			sqlTypeName="DECIMAL"
 			columnSize="38"
 			nullable="false" />
+		<columnMapping
+			columnName="CDR_GAE_PREL_FONDI"
+			propertyName="cdCentroRespGaePrelFondi"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="false" />
+		<columnMapping
+			columnName="GAE_PREL_FONDI"
+			propertyName="cdLineaAttivitaPrelFondi"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="false" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="cdCentroRespRibalt" />
@@ -62,4 +74,8 @@
 		name="utuv" />
 	<persistentProperty
 		name="pg_ver_rec" />
+	<persistentProperty
+		name="cdCentroRespGaePrelFondi" />
+	<persistentProperty
+		name="cdLineaAttivitaPrelFondi" />
 </SQLPersistentInfo>

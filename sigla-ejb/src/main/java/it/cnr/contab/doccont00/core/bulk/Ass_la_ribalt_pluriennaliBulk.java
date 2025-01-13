@@ -11,6 +11,7 @@ public class Ass_la_ribalt_pluriennaliBulk extends Ass_la_ribalt_pluriennaliBase
 	 **/
 	private WorkpackageBulk lineaAttivita =  new WorkpackageBulk();
 	private WorkpackageBulk lineaAttivitaNuovoEser =  new WorkpackageBulk();
+	private WorkpackageBulk lineaAttivitaPrelFondi =  new WorkpackageBulk();
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: ASS_LA_RIBALT_PLURIENNALI
@@ -110,5 +111,37 @@ public class Ass_la_ribalt_pluriennaliBulk extends Ass_la_ribalt_pluriennaliBase
 
 	public void setLineaAttivitaNuovoEser(WorkpackageBulk lineaAttivitaNuovoEser) {
 		this.lineaAttivitaNuovoEser = lineaAttivitaNuovoEser;
+	}
+
+	public WorkpackageBulk getLineaAttivitaPrelFondi() {
+		return lineaAttivitaPrelFondi;
+	}
+
+	public void setLineaAttivitaPrelFondi(WorkpackageBulk lineaAttivitaPrelFondi) {
+		this.lineaAttivitaPrelFondi = lineaAttivitaPrelFondi;
+	}
+
+	public String getCdCentroRespGaePrelFondi() {
+		WorkpackageBulk lineaAttivita = this.getLineaAttivitaPrelFondi();
+		if (lineaAttivita == null)
+			return null;
+		return getLineaAttivitaPrelFondi().getCd_centro_responsabilita();
+
+	}
+
+	public void setCdCentroRespGaePrelFondi(String cdCentroRespGaePrelFondi) {
+		this.getLineaAttivitaPrelFondi().setCd_centro_responsabilita(cdCentroRespGaePrelFondi);
+	}
+
+	public String getCdLineaAttivitaPrelFondi() {
+		WorkpackageBulk lineaAttivita = this.getLineaAttivitaPrelFondi();
+		if (lineaAttivita == null)
+			return null;
+		return getLineaAttivitaPrelFondi().getCd_linea_attivita();
+
+	}
+
+	public void setCdLineaAttivitaPrelFondi(String cdLineaAttivitaPrelFondi) {
+		this.getLineaAttivitaPrelFondi().setCd_linea_attivita(cdLineaAttivitaPrelFondi);
 	}
 }

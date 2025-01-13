@@ -6171,5 +6171,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_accessi_voce_analitica.xml"/>
     <!-- Autore : MARCO SPASIANO - Gestione Storno Documenti Generici-->
     <include file="bootstrap/storna_documenti_generici.xml"/>
-
+    <!-- Autore : VALENTINA TOMADA - aggiunte colonne gae prelevamento fondi tabella ass_la_ribalt_pluriennali -->
+    <include file="bootstrap/add_column_ass_la_ribalt_plur.xml"/>
+    <!-- Autore : VALENTINA TOMADA - aggiunte FK a tabella ass_la_ribalt_pluriennali -->
+    <include file="bootstrap/add_fk_ass_la_ribalt_plur.xml"/>
 </databaseChangeLog>
