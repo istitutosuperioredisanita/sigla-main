@@ -3,18 +3,23 @@
  * Date 12/12/2024
  */
 package it.cnr.contab.config00.bulk;
+import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Tipo_documento_ammBulk;
 import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.bulk.BulkCollection;
+import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+import it.cnr.jada.util.jsp.Button;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class CausaleContabileBulk extends CausaleContabileBase {
 	/**
@@ -23,6 +28,8 @@ public class CausaleContabileBulk extends CausaleContabileBase {
 	private Tipo_documento_ammBulk tipoDocumentoAmm =  new Tipo_documento_ammBulk();
 
 	public Dictionary<String, String> tiDocumentoAmmKeys;
+
+	public BulkList<AssCausaleVoceEPBulk> assCausaleVoceEPBulks = new BulkList<AssCausaleVoceEPBulk>();
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: CAUSALE_CONTABILE
@@ -89,5 +96,28 @@ public class CausaleContabileBulk extends CausaleContabileBase {
 
 	public void setTiDocumentoAmmKeys(Dictionary<String, String> tiDocumentoAmmKeys) {
 		this.tiDocumentoAmmKeys = tiDocumentoAmmKeys;
+	}
+
+	@Override
+	public BulkCollection[] getBulkLists() {
+		return Stream.of(getAssCausaleVoceEPBulks()).toArray(BulkCollection[]::new);
+	}
+
+	public int addToAssCausaleVoceEPBulks( AssCausaleVoceEPBulk assCausaleVoceEPBulk ) {
+		assCausaleVoceEPBulks.add(assCausaleVoceEPBulk);
+		assCausaleVoceEPBulk.setCausaleContabile(this);
+		return assCausaleVoceEPBulks.size()-1;
+	}
+
+	public AssCausaleVoceEPBulk removeFromAssCausaleVoceEPBulks(int index) {
+		return assCausaleVoceEPBulks.remove(index);
+	}
+
+	public BulkList<AssCausaleVoceEPBulk> getAssCausaleVoceEPBulks() {
+		return assCausaleVoceEPBulks;
+	}
+
+	public void setAssCausaleVoceEPBulks(BulkList<AssCausaleVoceEPBulk> assCausaleVoceEPBulks) {
+		this.assCausaleVoceEPBulks = assCausaleVoceEPBulks;
 	}
 }

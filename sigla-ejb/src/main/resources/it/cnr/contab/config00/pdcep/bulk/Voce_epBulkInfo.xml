@@ -152,14 +152,13 @@
 			maxLength="45"
 			enabledOnEdit="false"
 			label="Conto del piano di contropartita. Viene utilizzato in presenza di economica pura e proposta per conto." />
-	<form
-			name="searchtool">
+	<form name="searchtool">
 		<formFieldProperty
-				name="cd_voce_ep" />
+				name="cd_voce_ep"/>
 		<formFieldProperty
 				name="ds_voce_ep"
 				inputType="TEXT"
-		/>
+				inputCssClass="w-60"/>
 	</form>
 	<formFieldProperty
 			name="cd_voce_ep" />
