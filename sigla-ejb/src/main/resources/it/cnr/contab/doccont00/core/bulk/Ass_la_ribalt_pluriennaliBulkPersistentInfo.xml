@@ -16,6 +16,12 @@
 		<columnMapping
 			columnName="CD_LINEA_ATTIVITA_RIBALT"
 			propertyName="lineaAttivitaNuovoEser.cd_linea_attivita" />
+		<columnMapping
+				columnName="CDR_GAE_PREL_FONDI"
+				propertyName="lineaAttivitaPrelFondi.centro_responsabilita.cd_centro_responsabilita" />
+		<columnMapping
+				columnName="GAE_PREL_FONDI"
+				propertyName="lineaAttivitaPrelFondi.cd_linea_attivita" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="lineaAttivita"
@@ -23,4 +29,6 @@
 	<persistentProperty
 		name="lineaAttivitaNuovoEser"
 		partOfOid="true" />
+	<persistentProperty
+		name="lineaAttivitaPrelFondi"/>
 </SQLPersistentInfo>

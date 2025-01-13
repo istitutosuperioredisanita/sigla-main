@@ -10,6 +10,10 @@ public class Ass_la_ribalt_pluriennaliBase extends Ass_la_ribalt_pluriennaliKey 
  
 //    CD_LINEA_ATTIVITA_RIBALT VARCHAR(10) NOT NULL
 	private String cdLineaAttivitaRibalt;
+
+	private String cdCentroRespGaePrelFondi;
+	private String cdLineaAttivitaPrelFondi;
+
  
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
@@ -48,5 +52,21 @@ public class Ass_la_ribalt_pluriennaliBase extends Ass_la_ribalt_pluriennaliKey 
 	 **/
 	public void setCdLineaAttivitaRibalt(String cdLineaAttivitaRibalt)  {
 		this.cdLineaAttivitaRibalt=cdLineaAttivitaRibalt;
+	}
+
+	public String getCdCentroRespGaePrelFondi() {
+		return cdCentroRespGaePrelFondi;
+	}
+
+	public void setCdCentroRespGaePrelFondi(String cdCentroRespGaePrelFondi) {
+		this.cdCentroRespGaePrelFondi = cdCentroRespGaePrelFondi;
+	}
+
+	public String getCdLineaAttivitaPrelFondi() {
+		return cdLineaAttivitaPrelFondi;
+	}
+
+	public void setCdLineaAttivitaPrelFondi(String cdLineaAttivitaPrelFondi) {
+		this.cdLineaAttivitaPrelFondi = cdLineaAttivitaPrelFondi;
 	}
 }

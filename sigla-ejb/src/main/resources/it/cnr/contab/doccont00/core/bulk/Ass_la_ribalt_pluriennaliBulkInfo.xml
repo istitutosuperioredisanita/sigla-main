@@ -48,6 +48,24 @@
 		enabledOnEdit="false"
 		nullable="false"
 		label="Codice della linea di attivita nuovo esercizio" />
+	<fieldProperty
+			name="cdCentroRespGaePrelFondi"
+			property="lineaAttivitaPrelFondi.centro_responsabilita.cd_centro_responsabilita"
+			inputType="TEXT"
+			inputSize="30"
+			maxLength="30"
+			enabledOnEdit="false"
+			nullable="false"
+			label="Codice identificativo del centro di responsabilità della linea di attivita dove verranno prelevati i fondi" />
+	<fieldProperty
+			name="cdLineaAttivitaPrelFondi"
+			property="lineaAttivitaPrelFondi.cd_linea_attivita"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			enabledOnEdit="false"
+			nullable="false"
+			label="Codice della linea di attivita nuovo esercizio dove verranno prelevati i fondi" />
 	<form
 		name="searchtool">
 		<formFieldProperty
@@ -59,6 +77,7 @@
 	</form>
 	<formFieldProperty
 		name="esercizio" />
+
 	<findFieldProperty
 		name="esercizio" />
 	<findFieldProperty
@@ -69,6 +88,11 @@
 		name="cdCentroRespRibalt" />
 	<findFieldProperty
 		name="cdLineaAttivitaRibalt" />
+	<findFieldProperty
+		name="cdCentroRespGaePrelFondi" />
+	<findFieldProperty
+		name="cdLineaAttivitaPrelFondi" />
+
 	<columnFieldProperty
 		name="esercizio" />
 	<columnFieldProperty
@@ -79,4 +103,8 @@
 		name="cdCentroRespRibalt" />
 	<columnFieldProperty
 		name="cdLineaAttivitaRibalt" />
+	<columnFieldProperty
+		name="cdCentroRespGaePrelFondi" />
+	<columnFieldProperty
+		name="cdLineaAttivitaPrelFondi" />
 </bulkInfo>
