@@ -26,19 +26,15 @@ import java.io.Serializable;
 
 import it.cnr.contab.config00.pdcep.bulk.*;
 import it.cnr.contab.config00.pdcep.cla.bulk.V_classificazione_voci_epBulk;
-import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
-import it.cnr.contab.config00.pdcfin.cla.bulk.V_classificazione_vociBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.action.*;
+import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.*;
-import it.cnr.jada.ejb.*;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
-import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
 /**
@@ -73,7 +69,7 @@ public class PDCEconPatrComponent  extends it.cnr.jada.comp.CRUDComponent implem
  * Pre:  La richiesta di ricerca di un Capoconto/Contoè stata generata
  * Post: La lista di Conti/Capoconti che soddisfano i criteri di ricerca sono stati recuperati
  *
- * @param	uc	lo UserContext che ha generato la richiesta
+ * @param	userContext	lo UserContext che ha generato la richiesta
  * @param	clausole eventuali clausole di ricerca specificate dall'utente
  * @param	bulk il ContoBulk o CapocontoBulk che deve essere ricercato
  * @return	la lista di ContoBulk o CapocontoBulk risultante dopo l'operazione di ricerca.
@@ -120,7 +116,7 @@ public it.cnr.jada.util.RemoteIterator cerca(UserContext userContext,it.cnr.jada
  *       dall'utente e' diverso dal codice del Conto stesso
  * Post: La lista di Conti che soddisfano le condizioni imposte dall'utente viene ritornata 
  
- * @param	uc	lo UserContext che ha generato la richiesta
+ * @param	userContext	lo UserContext che ha generato la richiesta
  * @param	clausole eventuali clausole di ricerca specificate dall'utente
  * @param	bulk l'attributo che deve essere ricercato
  * @param	contesto il ContoBulk o CapocontoBulk da utilizzare come contesto della ricerca
@@ -233,7 +229,7 @@ public it.cnr.jada.util.RemoteIterator cerca(UserContext userContext,it.cnr.jada
  * Post: Viene generata una ComponentException che ha come dettaglio l'ApplicationException che descrive l'errore da
  *       visualizzare all'utente
  *
- * @param	uc	lo UserContext che ha generato la richiesta
+ * @param	userContext	lo UserContext che ha generato la richiesta
  * @param	bulk il ContoBulk o CapocontoBulk che deve essere creato
  * @return	il ContoBulk o CapocontoBulk risultante dopo l'operazione di creazione.
  */	
@@ -408,12 +404,22 @@ private it.cnr.contab.config00.ejb.Lunghezza_chiaviComponentSession getLunghezza
 		
 	
 public OggettoBulk inizializzaBulkPerModifica(UserContext userContext,OggettoBulk bulk) throws it.cnr.jada.comp.ComponentException {
-	// 05/09/2003
-	// Aggiunto controllo sulla chiusura dell'esercizio
-	bulk = super.inizializzaBulkPerModifica(userContext,bulk);
-	if (isEsercizioChiuso(userContext))
-		bulk = asRO(bulk,"Non è possibile modificare voci ad esercizio chiuso.");
-	return bulk;
+	try {
+		// 05/09/2003
+		// Aggiunto controllo sulla chiusura dell'esercizio
+		bulk = super.inizializzaBulkPerModifica(userContext,bulk);
+
+		Voce_analiticaHome voceAnaliticaHome = (Voce_analiticaHome) getHome(userContext, Voce_analiticaBulk.class);
+		((ContoBulk)bulk).setVoceAnaliticaColl(new BulkList(voceAnaliticaHome.findVoceAnaliticaList((ContoBulk)bulk)));
+
+		if (isEsercizioChiuso(userContext))
+			bulk = asRO(bulk,"Non è possibile modificare voci ad esercizio chiuso.");
+		return bulk;
+	}
+	catch( Exception e )
+	{
+		throw handleException( e );
+	}
 }
 protected boolean isEsercizioChiuso(UserContext userContext) throws ComponentException {
 	// 05/09/2003
@@ -442,7 +448,7 @@ protected boolean isEsercizioChiuso(UserContext userContext) throws ComponentExc
  * Pre:  La richiesta di modifica di un Conto senza aver specificato il codice del conto su cui riapre è stata generata
  * Post: Il Conto e' stato modificato e il codice del conto su cui riapre e' il codice del conto stesso
  *
- * @param	uc	lo UserContext che ha generato la richiesta
+ * @param	userContext	lo UserContext che ha generato la richiesta
  * @param	bulk il ContoBulk o CapocontoBulk che deve essere modificato
  * @return	il ContoBulk o CapocontoBulk risultante dopo l'operazione di modifica
  */	

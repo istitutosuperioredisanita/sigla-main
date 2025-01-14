@@ -61,6 +61,10 @@
     </action>
 
     <action
+            path="/SelezionatoreStornaDocumentoGenericoAction" actionClass="it.cnr.contab.docamm00.actions.SelezionatoreStornaDocumentoGenericoAction">
+    </action>
+
+    <action
             path="/RicercaAccertamentiAction" actionClass="it.cnr.contab.docamm00.actions.RicercaAccertamentiAction">
     </action>
 
@@ -273,6 +277,34 @@
         <init-param name="bulkClassName" value="it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk"/>
         <init-param name="componentSessionName" value="CNRDOCAMM00_EJB_DocumentoGenericoComponentSession"/>
         <init-param name="defaultAction" value="CRUDDocumentoGenericoAction"/>
+    </businessProcess>
+
+    <businessProcess
+            name="StornaDocumentoGenericoAttivoBP" className="it.cnr.contab.docamm00.bp.SelezionatoreStornaDocumentoGenericoBP">
+        <forward name="default" path="/util/form_lista.jsp"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk"/>
+        <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>
+        <init-param name="defaultAction" value="SelezionatoreStornaDocumentoGenericoAction"/>
+        <init-param name="tiEntrataSpesa" value="E"/>
+    </businessProcess>
+
+    <businessProcess
+            name="StornaDocumentoGenericoPassivoBP" className="it.cnr.contab.docamm00.bp.SelezionatoreStornaDocumentoGenericoBP">
+        <forward name="default" path="/util/form_lista.jsp"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk"/>
+        <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>
+        <init-param name="defaultAction" value="SelezionatoreStornaDocumentoGenericoAction"/>
+        <init-param name="tiEntrataSpesa" value="S"/>
+    </businessProcess>
+
+    <action path="/StornaDocumentoGenericoAction" actionClass="it.cnr.contab.docamm00.actions.StornaDocumentoGenericoAction"/>
+
+    <businessProcess
+            name="StornaDocumentoGenericoBP" className="it.cnr.contab.docamm00.bp.StornaDocumentoGenericoBP">
+        <forward name="default" path="/docamm00/storna_documenti.jsp"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.docamm00.bulk.StornaDocumentoGenericoBulk" />
+        <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
+        <init-param name="defaultAction" value="StornaDocumentoGenericoAction" />
     </businessProcess>
 
     <businessProcess

@@ -482,8 +482,8 @@
             path="/CRUDCausaliContabiliAction" actionClass="it.cnr.jada.util.action.CRUDAction">
     </action>
 
-    <businessProcess name="CRUDCausaliContabiliBP" className="it.cnr.jada.util.action.SimpleCRUDBP">
-        <forward name="default" path="/util/form.jsp"/>
+    <businessProcess name="CRUDCausaliContabiliBP" className="it.cnr.contab.config00.bp.CRUDCausaliContabiliBP">
+        <forward name="default" path="/config00/causali_contabili.jsp"/>
         <init-param name="bulkClassName" value="it.cnr.contab.config00.bulk.CausaleContabileBulk" />
         <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>
         <init-param name="defaultAction" value="CRUDCausaliContabiliAction" />

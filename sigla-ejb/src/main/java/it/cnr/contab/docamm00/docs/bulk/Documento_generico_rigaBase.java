@@ -131,6 +131,23 @@ public class Documento_generico_rigaBase extends Documento_generico_rigaKey impl
     // NUMERO_AVVISO_PAGOPA VARCHAR2(18)
     private java.lang.String numero_avviso_pagopa;
 
+    // CD_CDS_STORNO VARCHAR(30)
+    private java.lang.String cd_cds_storno;
+
+    // CD_TIPO_DOCUMENTO_AMM_STORNO VARCHAR(10)
+    private java.lang.String cd_tipo_documento_amm_storno;
+
+    // CD_UNITA_ORGANIZZATIVA_STORNO VARCHAR(30)
+    private java.lang.String cd_unita_organizzativa_storno;
+
+    // ESERCIZIO_STORNO DECIMAL(4,0)
+    private java.lang.Integer esercizio_storno;
+
+    // PG_DOCUMENTO_GENERICO_STORNO DECIMAL(10,0)
+    private java.lang.Long pg_documento_generico_storno;
+
+    // PROGRESSIVO_RIGA_STORNO DECIMAL(10,0)
+    private java.lang.Long progressivo_riga_storno;
 
     public Documento_generico_rigaBase() {
         super();
@@ -616,5 +633,53 @@ public class Documento_generico_rigaBase extends Documento_generico_rigaKey impl
 
     public void setNumero_avviso_pagopa(String numero_avviso_pagopa) {
         this.numero_avviso_pagopa = numero_avviso_pagopa;
+    }
+
+    public String getCd_cds_storno() {
+        return cd_cds_storno;
+    }
+
+    public void setCd_cds_storno(String cd_cds_storno) {
+        this.cd_cds_storno = cd_cds_storno;
+    }
+
+    public String getCd_tipo_documento_amm_storno() {
+        return cd_tipo_documento_amm_storno;
+    }
+
+    public void setCd_tipo_documento_amm_storno(String cd_tipo_documento_amm_storno) {
+        this.cd_tipo_documento_amm_storno = cd_tipo_documento_amm_storno;
+    }
+
+    public String getCd_unita_organizzativa_storno() {
+        return cd_unita_organizzativa_storno;
+    }
+
+    public void setCd_unita_organizzativa_storno(String cd_unita_organizzativa_storno) {
+        this.cd_unita_organizzativa_storno = cd_unita_organizzativa_storno;
+    }
+
+    public Integer getEsercizio_storno() {
+        return esercizio_storno;
+    }
+
+    public void setEsercizio_storno(Integer esercizio_storno) {
+        this.esercizio_storno = esercizio_storno;
+    }
+
+    public Long getPg_documento_generico_storno() {
+        return pg_documento_generico_storno;
+    }
+
+    public void setPg_documento_generico_storno(Long pg_documento_generico_storno) {
+        this.pg_documento_generico_storno = pg_documento_generico_storno;
+    }
+
+    public Long getProgressivo_riga_storno() {
+        return progressivo_riga_storno;
+    }
+
+    public void setProgressivo_riga_storno(Long progressivo_riga_storno) {
+        this.progressivo_riga_storno = progressivo_riga_storno;
     }
 }

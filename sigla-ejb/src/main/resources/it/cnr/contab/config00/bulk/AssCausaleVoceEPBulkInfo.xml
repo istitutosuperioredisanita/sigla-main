@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="cdCausale"
+		property="cdCausale"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Codice causale" />
+	<fieldProperty
+		name="esercizio"
+		property="esercizio"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Esercizio" />
+	<fieldProperty
+		name="cdVoceEp"
+		property="cdVoceEp"
+		inputType="TEXT"
+		inputSize="20"
+		maxLength="20"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Conto" />
+	<fieldProperty
+		name="dsVoceEp"
+		property="voceEp.ds_voce_ep"
+		inputType="TEXT"
+		maxLength="200"
+		enabledOnSearch="true"
+		enabledOnEdit="true"
+		label="Descrizione" />
+
+	<fieldProperty
+		name="voce"
+		property="voceEp"
+		inputType="searchtool"
+		formName="searchtool"
+		enabledOnSearch="true"
+		enabledOnEdit="true"
+		label="Conto" />
+
+	<fieldProperty
+		name="tiSezione"
+		property="tiSezione"
+		inputType="RADIOGROUP"
+		layout="HORIZONTAL"
+		keysProperty="tiSezioneKeys"
+		readonlyProperty="sezioneEnabled"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="true"
+		nullable="false"
+		label="Sezione" />
+	<form
+		name="searchtool">
+		<formFieldProperty
+			name="cdCausale" />
+		<formFieldProperty
+			name="esercizio" />
+		<formFieldProperty
+			name="cdVoceEp" />
+	</form>
+
+	<formFieldProperty name="voce" />
+	<formFieldProperty name="tiSezione" />
+
+	<findFieldProperty
+		name="cdCausale" />
+	<findFieldProperty
+		name="esercizio" />
+	<findFieldProperty
+		name="cdVoceEp" />
+	<findFieldProperty
+		name="tiSezione" />
+
+	<columnFieldProperty
+		name="cdCausale" />
+	<columnFieldProperty
+		name="esercizio" />
+	<columnFieldProperty
+		name="cdVoceEp" />
+	<columnFieldProperty
+		name="tiSezione" />
+
+	<columnSet name="causale">
+		<columnFieldProperty name="cdVoceEp" />
+		<columnFieldProperty name="dsVoceEp" />
+		<columnFieldProperty name="tiSezione" />
+	</columnSet>
+</bulkInfo>

@@ -33,6 +33,7 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.action.FormController;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -169,8 +170,20 @@ public class Documento_genericoHome extends BulkHome implements
 		sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, generico.getEsercizio());
 		sql.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, generico.getCd_unita_organizzativa());
 		sql.addClause(FindClause.AND, "cd_tipo_documento_amm", SQLBuilder.EQUALS, generico.getCd_tipo_documento_amm());
-
-		return home.fetchAll(sql);
+		List<Documento_generico_rigaBulk> result = home.fetchAll(sql);
+		for (Documento_generico_rigaBulk riga : result) {
+			SQLBuilder sqlStorno = home.createSQLBuilder();
+			sqlStorno.addClause(FindClause.AND, "documento_generico_riga_storno", SQLBuilder.EQUALS, riga);
+			sqlStorno.addClause(FindClause.AND, "stato_cofi", SQLBuilder.NOT_EQUALS, Documento_generico_rigaBulk.STATO_ANNULLATO);
+			List<Documento_generico_rigaBulk> storni = home.fetchAll(sqlStorno);
+			riga.setRigaStornata(!storni.isEmpty());
+			riga.setImportoStornato(
+					BigDecimal.valueOf(storni
+							.stream()
+							.collect(Collectors.summarizingDouble(value -> value.getIm_riga().doubleValue())).getSum())
+			);
+		}
+		return result;
 	}
 
 	public java.util.List<Documento_generico_rigaBulk> findDocumentoGenericoRigheList(V_doc_passivo_obbligazioneBulk docPassivo ) throws PersistencyException {
@@ -195,7 +208,7 @@ public class Documento_genericoHome extends BulkHome implements
 
 	public Hashtable loadTiCausaleContabileKeys(Documento_genericoBulk documentoGenericoBulk) throws PersistencyException {
 		SQLBuilder sql = getHomeCache().getHome(CausaleContabileBulk.class).createSQLBuilder();
-		if (Arrays.asList(FormController.EDIT, FormController.INSERT).contains(documentoGenericoBulk.getBpStatus())) {
+		if (documentoGenericoBulk.getBpStatus() != FormController.SEARCH) {
 			sql.addClause(
 					FindClause.AND,
 					"cdTipoDocumentoAmm",
@@ -207,6 +220,7 @@ public class Documento_genericoHome extends BulkHome implements
 							.orElse(null)
 			);
 		}
+		sql.addClause(FindClause.AND, "flStorno", SQLBuilder.EQUALS, documentoGenericoBulk.getFl_storno());
 		sql.addClause(FindClause.AND, "dtInizioValidita", SQLBuilder.LESS_EQUALS, EJBCommonServices.getServerDate());
 		sql.openParenthesis(FindClause.AND);
 			sql.addClause(FindClause.AND, "dtFineValidita", SQLBuilder.GREATER_EQUALS, EJBCommonServices.getServerDate());

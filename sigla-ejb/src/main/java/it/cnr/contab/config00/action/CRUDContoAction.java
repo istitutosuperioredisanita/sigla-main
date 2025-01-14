@@ -17,8 +17,11 @@
 
 package it.cnr.contab.config00.action;
 
+import it.cnr.contab.config00.bp.CRUDContoBP;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.jada.action.*;
+import it.cnr.jada.bulk.ValidationException;
+
 /**
  * Azione che gestisce le richieste relative alla Gestione Conti Economici Patrimoniali
  */
@@ -87,4 +90,22 @@ public Forward doConfermaGruppoNaturaNonCongrui(ActionContext context,int option
 			return super.handleException(context,e);
 		}
 	}
+
+	public it.cnr.jada.action.Forward doChangeNatura(it.cnr.jada.action.ActionContext context) {
+		try{
+			fillModel(context);
+
+			CRUDContoBP bp = (CRUDContoBP) getBusinessProcess(context);
+			ContoBulk contoBulk = (ContoBulk)bp.getModel();
+			if (!contoBulk.isAnaliticaEnabled())
+				bp.getVociAnalitica().removeAll(context);
+		} catch (it.cnr.jada.bulk.FillException e){
+			return handleException(context,e);
+		} catch (ValidationException | BusinessProcessException e) {
+            throw new RuntimeException(e);
+        }
+
+        return context.findDefaultForward();
+	}
+
 }

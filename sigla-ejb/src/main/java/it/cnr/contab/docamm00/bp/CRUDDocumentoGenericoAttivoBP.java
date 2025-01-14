@@ -49,24 +49,46 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.util.Config;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
+import it.cnr.jada.util.jsp.Button;
 import it.cnr.jada.util.jsp.JSPUtils;
 
 import javax.ejb.EJBException;
 import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class CRUDDocumentoGenericoAttivoBP
         extends AllegatiCRUDBP<AllegatoGenericoBulk, Documento_genericoBulk>
-        implements IDocumentoAmministrativoBP, IGenericSearchDocAmmBP, IDefferedUpdateSaldiBP, VoidableBP, IDocAmmEconomicaBP {
+        implements IDocumentoAmministrativoBP, IGenericSearchDocAmmBP, IDefferedUpdateSaldiBP, VoidableBP, IDocAmmEconomicaBP, IDocumentoGenericoBP {
     private final SimpleDetailCRUDController dettaglio = new DocumentoGenericoAttivoRigaCRUDController("Dettaglio", Documento_generico_rigaBulk.class, "documento_generico_dettColl", this);
 
     private final SimpleDetailCRUDController dettaglioAccertamentoController;
-    private final AccertamentiCRUDController accertamentiController = new AccertamentiCRUDController("Accertamenti", it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk.class, "documento_generico_accertamentiHash", this);
+    private final AccertamentiCRUDController accertamentiController = new AccertamentiCRUDController(
+            "Accertamenti",
+            it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk.class,
+            "documento_generico_accertamentiHash",
+            this){
+
+        private Boolean isDocumentoStorno() {
+            return Optional.ofNullable(getParentModel())
+                    .filter(Documento_genericoBulk.class::isInstance)
+                    .map(Documento_genericoBulk.class::cast)
+                    .map(Documento_genericoBulk::isDocumentoStorno)
+                    .orElse(Boolean.FALSE);
+        }
+        @Override
+        public boolean isGrowable() {
+            return super.isGrowable() && !isDocumentoStorno();
+        }
+
+        @Override
+        public boolean isShrinkable() {
+            return super.isShrinkable() && !isDocumentoStorno();
+        }
+    };
     private final CollapsableDetailCRUDController movimentiDare = new EconomicaDareDetailCRUDController(this);
     private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
 
@@ -102,6 +124,22 @@ public class CRUDDocumentoGenericoAttivoBP
                 }
                 return lista;
             }
+            private Boolean isDocumentoStorno() {
+                return Optional.ofNullable(getModel())
+                        .filter(Documento_generico_rigaBulk.class::isInstance)
+                        .map(Documento_generico_rigaBulk.class::cast)
+                        .map(Documento_generico_rigaBulk::isDocumentoStorno)
+                        .orElse(Boolean.FALSE);
+            }
+            @Override
+            public boolean isGrowable() {
+                return super.isGrowable() && !isDocumentoStorno();
+            }
+
+            @Override
+            public boolean isShrinkable() {
+                return super.isShrinkable() && !isDocumentoStorno();
+            }
         };
 
     }
@@ -121,6 +159,22 @@ public class CRUDDocumentoGenericoAttivoBP
                         lista = (java.util.Vector) h.get(getParentModel());
                 }
                 return lista;
+            }
+            private Boolean isDocumentoStorno() {
+                return Optional.ofNullable(getModel())
+                        .filter(Documento_generico_rigaBulk.class::isInstance)
+                        .map(Documento_generico_rigaBulk.class::cast)
+                        .map(Documento_generico_rigaBulk::isDocumentoStorno)
+                        .orElse(Boolean.FALSE);
+            }
+            @Override
+            public boolean isGrowable() {
+                return super.isGrowable() && !isDocumentoStorno();
+            }
+
+            @Override
+            public boolean isShrinkable() {
+                return super.isShrinkable() && !isDocumentoStorno();
             }
         };
     }
@@ -202,21 +256,13 @@ public class CRUDDocumentoGenericoAttivoBP
     }
 
     protected it.cnr.jada.util.jsp.Button[] createToolbar() {
-        it.cnr.jada.util.jsp.Button[] toolbar = new it.cnr.jada.util.jsp.Button[11];
-        int i = 0;
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(it.cnr.jada.util.action.CRUDBP.class), "CRUDToolbar.search");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(it.cnr.jada.util.action.CRUDBP.class), "CRUDToolbar.startSearch");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(it.cnr.jada.util.action.CRUDBP.class), "CRUDToolbar.freeSearch");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(it.cnr.jada.util.action.CRUDBP.class), "CRUDToolbar.new");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(it.cnr.jada.util.action.CRUDBP.class), "CRUDToolbar.save");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(it.cnr.jada.util.action.CRUDBP.class), "CRUDToolbar.delete");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(it.cnr.jada.util.action.CRUDBP.class), "CRUDToolbar.bringBack");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(it.cnr.jada.util.action.CRUDBP.class), "CRUDToolbar.undoBringBack");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(it.cnr.jada.util.action.CRUDBP.class), "CRUDToolbar.print");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.riportaIndietro");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.riportaAvanti");
+        final Properties properties = Config.getHandler().getProperties(getClass());
+        Button[] toolbar = Stream.concat(Arrays.stream(super.createToolbar()),
+                Stream.of(
+                        new Button(properties, "CRUDToolbar.riportaIndietro"),
+                        new Button(properties, "CRUDToolbar.riportaAvanti")
+                )).toArray(Button[]::new);
         toolbar = IDocAmmEconomicaBP.addPartitario(toolbar, attivaEconomicaParallela, isEditing(), getModel());
-
         return toolbar;
     }
 
@@ -1154,14 +1200,20 @@ public class CRUDDocumentoGenericoAttivoBP
     private static final String[] TAB_TESTATA = new String[]{ "tabDocumentoAttivo","Documento Generico","/docamm00/tab_documento_attivo.jsp" };
     private static final String[] TAB_DETTAGLIO = new String[]{ "tabDocumentoAttivoDettaglio","Dettaglio","/docamm00/tab_documento_attivo_dettaglio.jsp" };
     private static final String[] TAB_ACCERTAMENTI = new String[]{ "tabDocumentoGenericoAccertamenti","Accertamenti","/docamm00/tab_documento_generico_accertamenti.jsp" };
+    private static final String[] TAB_STORNI = new String[]{ "tabDocumentoGenericoAccertamenti","Storni","/docamm00/tab_documento_generico_accertamenti.jsp" };
     private static final String[] TAB_ALLEGATI = new String[]{ "tabAllegati","Allegati","/util00/tab_allegati.jsp"};
 
     public String[][] getTabs() {
+        Documento_genericoBulk documento = Optional.ofNullable(this.getModel())
+                .filter(Documento_genericoBulk.class::isInstance)
+                .map(Documento_genericoBulk.class::cast)
+                .orElse(null);
+
         TreeMap<Integer, String[]> pages = new TreeMap<Integer, String[]>();
         int i = 0;
         pages.put(i++, TAB_TESTATA);
         pages.put(i++, TAB_DETTAGLIO);
-        pages.put(i++, TAB_ACCERTAMENTI);
+        pages.put(i++, documento.isDocumentoStorno() ? TAB_STORNI : TAB_ACCERTAMENTI);
         pages.put(i++, TAB_ALLEGATI);
         if (attivaEconomicaParallela) {
             pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);

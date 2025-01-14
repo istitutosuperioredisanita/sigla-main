@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<bulkInfo>
+	<fieldProperty
+			name="esercizio"
+			property="esercizio"
+			inputType="TEXT"
+			inputSize="5"
+			maxLength="5"
+			enabledOnInsert="false"
+			enabledOnEdit="false"
+			enabledOnSearch="false"
+			nullable="false"
+			label="Esercizio" />
+	<fieldProperty
+			name="cd_voce_ana"
+			property="cd_voce_ana"
+			inputType="TEXT"
+			maxLength="45"
+			enabledOnEdit="true"
+			enabledOnSearch="true"
+			nullable="false"
+			readonlyProperty="ROCdVoceAna"
+			label="Codice" />
+	<fieldProperty
+			name="ds_voce_ana"
+			property="ds_voce_ana"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="200"
+			enabledOnSearch="true"
+			enabledOnEdit="true"
+			nullable="false"
+			label="Descrizione" />
+	<fieldProperty
+			name="find_voce_ep"
+			property="voce_ep"
+			inputType="SEARCHTOOL"
+			label="Conto EP"
+			nullable="false"
+			formName="searchtool"
+			enabledOnSearch="true" />
+	<fieldProperty
+			name="cd_voce_ep"
+			property="voce_ep.cd_voce_ep"
+			label="Conto EP"
+			inputType="TEXT"
+			maxLength="20"
+			inputSize="10"
+			formatName="it.cnr.jada.util.UppercaseStringFormat"
+			enabledOnSearch="true" />
+	<fieldProperty
+			name="ds_voce_ep"
+			property="voce_ep.ds_voce_ep"
+			label=""
+			inputType="ROTEXT"
+			inputSize="20"
+			enabledOnSearch="true" />
+	<fieldProperty
+			name="fl_default"
+			property="fl_default"
+			inputType="CHECKBOX"
+			nullable="false"
+			label="Conto Default" />
+
+	<form name="searchtool">
+		<formFieldProperty
+			name="cd_voce_ana" />
+		<formFieldProperty
+			name="ds_voce_ana"
+			inputType="TEXT" />
+	</form>
+
+	<formFieldProperty
+			name="esercizio" />
+	<formFieldProperty
+			name="cd_voce_ana" />
+	<formFieldProperty
+			name="ds_voce_ana" />
+	<formFieldProperty
+			name="find_voce_ep" />
+	<formFieldProperty
+			name="cd_voce_ep" />
+	<formFieldProperty
+			name="ds_voce_ep" />
+	<formFieldProperty
+			name="fl_default" />
+
+	<findFieldProperty
+			name="esercizio" />
+	<findFieldProperty
+			name="cd_voce_ana" />
+	<findFieldProperty
+			name="ds_voce_ana" />
+	<findFieldProperty
+			name="cd_voce_ep" />
+	<findFieldProperty
+			name="ds_voce_ep" />
+	<findFieldProperty
+			name="fl_default" />
+
+	<columnFieldProperty
+			name="esercizio" />
+	<columnFieldProperty
+			name="cd_voce_ana" />
+	<columnFieldProperty
+			name="ds_voce_ana" />
+	<columnFieldProperty
+			name="cd_voce_ep" />
+	<columnFieldProperty
+			name="ds_voce_ep" />
+	<columnFieldProperty
+			name="fl_default" />
+
+	<columnSet
+		name="voceep">
+		<columnFieldProperty
+			name="cd_voce_ana" />
+		<columnFieldProperty
+			name="ds_voce_ana" />
+		<columnFieldProperty
+			name="fl_default" />
+	</columnSet>
+</bulkInfo>

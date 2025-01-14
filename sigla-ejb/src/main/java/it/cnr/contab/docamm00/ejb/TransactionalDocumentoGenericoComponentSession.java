@@ -18,6 +18,7 @@
 package it.cnr.contab.docamm00.ejb;
 import java.math.BigDecimal;
 import java.rmi.*;
+import java.util.List;
 
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.Modalita_pagamentoBulk;
@@ -25,6 +26,7 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.docamm00.docs.bulk.DocumentoGenericoWizardBulk;
 import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
 import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
+import it.cnr.contab.docamm00.docs.bulk.StornaDocumentoGenericoBulk;
 import it.cnr.contab.doccont00.core.AccertamentoWizard;
 import it.cnr.contab.doccont00.core.ObbligazioneWizard;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
@@ -1129,4 +1131,26 @@ public class TransactionalDocumentoGenericoComponentSession extends it.cnr.jada.
 			}
 		}
 	}
+
+	public Documento_genericoBulk creaDocumentoGenericoDiStorno(UserContext param0, char param1, StornaDocumentoGenericoBulk param2, List<Documento_generico_rigaBulk> param3) throws RemoteException,it.cnr.jada.comp.ComponentException {
+		try {
+			return (it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk)invoke("creaDocumentoGenericoDiStorno",new Object[] {
+					param0,
+					param1,
+					param2,
+					param3
+			});
+		} catch(java.rmi.RemoteException e) {
+			throw e;
+		} catch(java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch(it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch(Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
+
 }

@@ -902,7 +902,6 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
             throw handleException(e);
         }
     }
-
     public Boolean isAssPrgAnagraficoAttiva(UserContext userContext) throws ComponentException{
         try{
             Configurazione_cnrKey configurazioneCnrKey = new Configurazione_cnrKey(
@@ -1422,7 +1421,6 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
         return isLiqIvaAnticipata && dataFattura != null && dataInizio != null && dataFine != null &&
                 (dataFattura.compareTo(dataInizio)>=0 &&  dataFattura.compareTo(dataFine)<=0);
     }
-
     public Timestamp getFineRegFattPass(UserContext userContext, Integer esercizio) throws ComponentException {
         try {
             return Optional.ofNullable(getHome(userContext, Configurazione_cnrBulk.class))
