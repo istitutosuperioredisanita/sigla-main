@@ -1105,6 +1105,9 @@ public class CRUDDocumentoGenericoPassivoBP
         if (Optional.ofNullable(fieldName).filter(s -> fieldNames.contains(s)).isPresent()) {
             return esercizioChiuso;
         }
+        if ("cd_causale_contabile".equalsIgnoreCase(fieldName) ) {
+            return !supervisore;
+        }
         return super.isInputReadonlyFieldName(fieldName);
     }
 

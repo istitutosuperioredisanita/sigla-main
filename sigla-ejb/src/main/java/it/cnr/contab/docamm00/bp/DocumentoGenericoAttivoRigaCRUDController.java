@@ -134,7 +134,8 @@ public class DocumentoGenericoAttivoRigaCRUDController extends it.cnr.jada.util.
                 enabled = enabled && (((IDocumentoAmministrativoBP) bp).isDeleting() || ((IDocumentoAmministrativoBP) bp).isManualModify());
 
             Documento_generico_rigaBulk riga = (Documento_generico_rigaBulk) getModel();
-            enabled = enabled && !(riga == null || riga.getTi_associato_manrev() != null && Documento_generico_rigaBulk.ASSOCIATO_A_MANDATO.equalsIgnoreCase(riga.getTi_associato_manrev())) && !doc.isDocumentoStorno();
+            enabled = enabled && !(riga == null || riga.getTi_associato_manrev() != null && Documento_generico_rigaBulk.ASSOCIATO_A_MANDATO.equalsIgnoreCase(riga.getTi_associato_manrev()))
+                    && !doc.isDocumentoStorno() && !riga.isRigaStornata();
 
             it.cnr.jada.util.jsp.JSPUtils.toolbarButton(
                     context,

@@ -2126,4 +2126,5 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 		return Optional.ofNullable(getFl_storno())
 				.orElse(Boolean.FALSE);
 	}
+
 }
