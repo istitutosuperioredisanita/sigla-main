@@ -79,6 +79,11 @@ public class CRUDDocumentoGenericoAttivoBP
                     .map(Documento_genericoBulk::isDocumentoStorno)
                     .orElse(Boolean.FALSE);
         }
+        private Boolean isRigaStornata() {
+            List<Documento_generico_rigaBulk> details = getDettaglioAccertamentoController().getDetails();
+            return details.stream().anyMatch(Documento_generico_rigaBulk::isRigaStornata);
+        }
+
         @Override
         public boolean isGrowable() {
             return super.isGrowable() && !isDocumentoStorno();
@@ -86,7 +91,7 @@ public class CRUDDocumentoGenericoAttivoBP
 
         @Override
         public boolean isShrinkable() {
-            return super.isShrinkable() && !isDocumentoStorno();
+            return super.isShrinkable() && !isDocumentoStorno() && !isRigaStornata();
         }
     };
     private final CollapsableDetailCRUDController movimentiDare = new EconomicaDareDetailCRUDController(this);
@@ -131,6 +136,10 @@ public class CRUDDocumentoGenericoAttivoBP
                         .map(Documento_generico_rigaBulk::isDocumentoStorno)
                         .orElse(Boolean.FALSE);
             }
+            private Boolean isRigaStornata() {
+                List<Documento_generico_rigaBulk> details = getDetails();
+                return details.stream().anyMatch(Documento_generico_rigaBulk::isRigaStornata);
+            }
             @Override
             public boolean isGrowable() {
                 return super.isGrowable() && !isDocumentoStorno();
@@ -138,7 +147,7 @@ public class CRUDDocumentoGenericoAttivoBP
 
             @Override
             public boolean isShrinkable() {
-                return super.isShrinkable() && !isDocumentoStorno();
+                return super.isShrinkable() && !isDocumentoStorno() && !isRigaStornata();
             }
         };
 
@@ -167,6 +176,12 @@ public class CRUDDocumentoGenericoAttivoBP
                         .map(Documento_generico_rigaBulk::isDocumentoStorno)
                         .orElse(Boolean.FALSE);
             }
+
+            private Boolean isRigaStornata() {
+                List<Documento_generico_rigaBulk> details = getDetails();
+                return details.stream().anyMatch(Documento_generico_rigaBulk::isRigaStornata);
+            }
+
             @Override
             public boolean isGrowable() {
                 return super.isGrowable() && !isDocumentoStorno();
@@ -174,7 +189,7 @@ public class CRUDDocumentoGenericoAttivoBP
 
             @Override
             public boolean isShrinkable() {
-                return super.isShrinkable() && !isDocumentoStorno();
+                return super.isShrinkable() && !isDocumentoStorno() && !isRigaStornata();
             }
         };
     }
@@ -1257,6 +1272,9 @@ public class CRUDDocumentoGenericoAttivoBP
         final List<String> fieldNames = Arrays.asList("dt_da_competenza_coge", "dt_a_competenza_coge");
         if (Optional.ofNullable(fieldName).filter(s -> fieldNames.contains(s)).isPresent()) {
             return esercizioChiuso;
+        }
+        if ("cd_causale_contabile".equalsIgnoreCase(fieldName) ) {
+            return !supervisore;
         }
         return super.isInputReadonlyFieldName(fieldName);
     }

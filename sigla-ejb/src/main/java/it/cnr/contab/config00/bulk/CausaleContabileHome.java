@@ -17,11 +17,13 @@ import it.cnr.contab.docamm00.docs.bulk.Tipo_documento_ammBulk;
 import it.cnr.contab.docamm00.docs.bulk.Tipo_documento_ammKey;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.util.ICancellatoLogicamente;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.Persistent;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.PersistentHome;
@@ -70,4 +72,11 @@ public class CausaleContabileHome extends BulkHome {
 		return list;
 	}
 
+	@Override
+	public void delete(Persistent persistent, UserContext userContext) throws PersistencyException {
+		CausaleContabileBulk causalecontabilebulk = (CausaleContabileBulk)persistent;
+		causalecontabilebulk.cancellaLogicamente();
+		causalecontabilebulk.setToBeUpdated();
+		super.update(persistent, userContext);
+	}
 }
