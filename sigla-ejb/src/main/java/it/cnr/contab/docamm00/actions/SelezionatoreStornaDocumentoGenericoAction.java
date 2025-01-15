@@ -5,6 +5,7 @@ import it.cnr.contab.docamm00.bp.SelezionatoreStornaDocumentoGenericoBP;
 import it.cnr.contab.docamm00.bp.StornaDocumentoGenericoBP;
 import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
 import it.cnr.contab.util.Utility;
+import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
@@ -14,6 +15,7 @@ import it.cnr.jada.util.action.SelezionatoreListaAction;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class SelezionatoreStornaDocumentoGenericoAction extends SelezionatoreListaAction {
@@ -52,8 +54,16 @@ public class SelezionatoreStornaDocumentoGenericoAction extends SelezionatoreLis
     }
 
     public Forward doRefresh(ActionContext actioncontext) throws BusinessProcessException {
-        SelezionatoreStornaDocumentoGenericoBP bp = (SelezionatoreStornaDocumentoGenericoBP) actioncontext.getBusinessProcess();
-        bp.refresh(actioncontext);
+        Optional.ofNullable(actioncontext.getBusinessProcess())
+                .filter(SelezionatoreStornaDocumentoGenericoBP.class::isInstance)
+                .map(SelezionatoreStornaDocumentoGenericoBP.class::cast)
+                .ifPresent(businessProcess -> {
+                    try {
+                        businessProcess.refresh(actioncontext);
+                    } catch (BusinessProcessException e) {
+                        throw new DetailedRuntimeException(e);
+                    }
+                });
         return actioncontext.findDefaultForward();
     }
 }
