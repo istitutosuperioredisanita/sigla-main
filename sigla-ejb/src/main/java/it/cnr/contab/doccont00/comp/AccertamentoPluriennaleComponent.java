@@ -90,7 +90,9 @@ public class AccertamentoPluriennaleComponent extends AccertamentoComponent {
 
 
 			AccertamentoBulk newAccertamentoBulk =( AccertamentoBulk) accertamentoBulk.clone();
-			WorkpackageBulk lineaAttivita = (WorkpackageBulk) getHome(uc, WorkpackageBulk.class).findByPrimaryKey(accertamentoPluriennaleBulk.getRigheVoceColl().get(0).getLinea_attivita());
+
+
+
 			newAccertamentoBulk.setCrudStatus(OggettoBulk.TO_BE_CREATED);
 			newAccertamentoBulk.setRiportato("N");
 			newAccertamentoBulk.setPg_accertamento(null);
@@ -126,19 +128,22 @@ public class AccertamentoPluriennaleComponent extends AccertamentoComponent {
 			acc_scadenza.setIm_associato_doc_contabile(BigDecimal.ZERO);
 			acc_scadenza.setIm_associato_doc_contabile(new BigDecimal(0));
 
+			for(Accertamento_pluriennale_voceBulk plurVoce : accertamentoPluriennaleBulk.getRigheVoceColl()){
+
+				Accertamento_scad_voceBulk acc_scad_voce = new Accertamento_scad_voceBulk();
+
+				acc_scad_voce.setToBeCreated();
+				acc_scad_voce.setAccertamento_scadenzario(acc_scadenza);
+				acc_scad_voce.setIm_voce(plurVoce.getImporto());
+
+				WorkpackageBulk lineaAttivita = (WorkpackageBulk) getHome(uc, WorkpackageBulk.class).findByPrimaryKey(plurVoce.getLinea_attivita());
+				acc_scad_voce.setLinea_attivita(lineaAttivita);
+
+				acc_scadenza.getAccertamento_scad_voceColl().add((acc_scad_voce));
+			}
 			// CICLARE PER TUTTI I PLURIENNALI VOCE
 
-			Accertamento_scad_voceBulk acc_scad_voce = new Accertamento_scad_voceBulk();
-			//acc_scad_voce.setUtcr(testata.getUtcr());
-			acc_scad_voce.setToBeCreated();
-			acc_scad_voce.setAccertamento_scadenzario(acc_scadenza);
-			acc_scad_voce.setIm_voce(newAccertamentoBulk.getIm_accertamento());
 
-
-			// PRENDERLA DALLA ASSOCIATIVA DIRETTAMENTE LA DESTINAZIONE ALTRIMENTI LA VECCHIA
-			acc_scad_voce.setLinea_attivita(lineaAttivita);
-
-			acc_scadenza.getAccertamento_scad_voceColl().add((acc_scad_voce));
 			//aggiungi pluriennali anni successivi
 			List<Accertamento_pluriennaleBulk> accPluriennali =
 					(	( List<Accertamento_pluriennaleBulk>)Optional.ofNullable(accertamentoHome.findAccertamentiPluriennali(uc,accertamentoBulk)).
