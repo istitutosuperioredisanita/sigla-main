@@ -63,6 +63,7 @@ import it.cnr.jada.comp.ICRUDMgr;
 import it.cnr.jada.comp.IPrintMgr;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.Persistent;
 import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.EJBCommonServices;
@@ -6598,6 +6599,11 @@ public class DocumentoGenericoComponent
                 documentoGenericoRigaNew.setIm_riga_divisa(documentoGenericoRigaBulk.getIm_riga_divisa());
                 if (documentoGenericoBulk.isGenericoAttivo()) {
                     Accertamento_scadenzarioBulk accertamentoScadenziario = documentoGenericoRigaBulk.getAccertamento_scadenziario();
+                    /**
+                     * Ricarico la scadenza in caso di storno di più righe legate alla stessa scadenza
+                     */
+                    accertamentoScadenziario = (Accertamento_scadenzarioBulk) findByPrimaryKey(userContext, accertamentoScadenziario);
+                    getHomeCache(userContext).fetchAll(userContext);
                     documentoGenericoRigaNew.setAccertamento_scadenziario(accertamentoScadenziario);
                     accertamentoScadenziario.setIm_associato_doc_amm(
                         accertamentoScadenziario.getIm_associato_doc_amm()
@@ -6608,6 +6614,11 @@ public class DocumentoGenericoComponent
                             .subtract(documentoGenericoRigaBulk.getIm_riga()));
                 } else {
                     Obbligazione_scadenzarioBulk obbligazioneScadenziario = documentoGenericoRigaBulk.getObbligazione_scadenziario();
+                    /**
+                     * Ricarico la scadenza in caso di storno di più righe legate alla stessa scadenza
+                     */
+                    obbligazioneScadenziario = (Obbligazione_scadenzarioBulk) findByPrimaryKey(userContext, obbligazioneScadenziario);
+                    getHomeCache(userContext).fetchAll(userContext);
                     documentoGenericoRigaNew.setObbligazione_scadenziario(obbligazioneScadenziario);
                     obbligazioneScadenziario.setIm_associato_doc_amm(
                             obbligazioneScadenziario.getIm_associato_doc_amm()
