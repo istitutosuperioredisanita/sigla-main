@@ -168,14 +168,19 @@ public class ObbligazionePluriennaleComponent extends ObbligazioneComponent {
 			obbligazioneBulkNew.setCrudStatus(OggettoBulk.TO_BE_CREATED);
 			obbligazioneBulkNew.setRiportato("N");
 			//obbligazioneBulkNew.setCreditore(obbligazioneBulk.getCreditore());
+
+			// Prende l'ElementoVoce dal Pluriennale voce perchè potrebbe essere aggiornato con nuovi valori per il nuovo esercizio
+			Elemento_voceBulk nuovaVoce = pluriennaleBulk.getRigheVoceColl().get(0).getElementoVoce();
+
+			/*
 			Elemento_voceBulk voce = new it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk();
 			voce.setEsercizio(esercizio);
 			voce.setTi_appartenenza(obbligazioneBulkNew.getElemento_voce().getTi_appartenenza());
 			voce.setTi_gestione(obbligazioneBulkNew.getElemento_voce().getTi_gestione());
 			voce.setCd_elemento_voce(obbligazioneBulkNew.getElemento_voce().getCd_elemento_voce());
+			*/
 
-
-			obbligazioneBulkNew.setElemento_voce((Elemento_voceBulk)getHome(uc, Elemento_voceBulk.class).findByPrimaryKey(voce));
+			obbligazioneBulkNew.setElemento_voce((Elemento_voceBulk)getHome(uc, Elemento_voceBulk.class).findByPrimaryKey(nuovaVoce));
 			obbligazioneBulkNew = listaCapitoliPerCdsVoce(uc, obbligazioneBulkNew);
 			obbligazioneBulkNew.setCapitoliDiSpesaCdsSelezionatiColl(obbligazioneBulkNew.getCapitoliDiSpesaCdsColl());
 			if ( Optional.ofNullable(obbligazioneBulkNew.getContratto()).map(ContrattoBulk::getPg_progetto).isPresent())
@@ -289,6 +294,7 @@ public class ObbligazionePluriennaleComponent extends ObbligazioneComponent {
 					Obbligazione_pluriennale_voceBulk newObbligazionePluriennaleVoce = new Obbligazione_pluriennale_voceBulk();
 					newObbligazionePluriennaleVoce.setObbligazionePluriennale( newObbPluriennale);
 					newObbligazionePluriennaleVoce.setElementoVoce(pluriennaleVoceBulk.getElementoVoce());
+					newObbligazionePluriennaleVoce.setEsercizioVoce(esercizio);
 
 					if ( Optional.ofNullable(gaePrelevamentoFondi).isPresent())
 						gaeVoce= gaePrelevamentoFondi;
