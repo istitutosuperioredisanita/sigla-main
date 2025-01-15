@@ -2257,21 +2257,6 @@ public class DocumentoGenericoComponent
                             Documento_generico_rigaBulk riga = (Documento_generico_rigaBulk) obj;
                             if (riga instanceof Voidable && ((Voidable) riga).isVoidable()) {
                                 ((Voidable) riga).setAnnullato(dataAnnullamento);
-                                //if (riga.getDocumento_generico().isGenericoAttivo()) {
-                                //riga.getAccertamento_scadenziario().setIm_associato_doc_amm(new java.math.BigDecimal(0).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
-                                //updateImportoAssociatoDocAmm(userContext, riga.getAccertamento_scadenziario());
-                                //} else {
-                                ////if (!riga.getDocumento_generico().isPassivo_ente())
-                                ////riga.getObbligazione_scadenziario().setIm_associato_doc_amm(new java.math.BigDecimal(0).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
-                                ////else
-                                //if (riga.getDocumento_generico().isPassivo_ente()) {
-                                //riga.getObbligazione_scadenziario().setIm_associato_doc_amm(
-                                //riga.getObbligazione_scadenziario().getIm_associato_doc_amm().subtract((riga.getIm_riga_iniziale() == null ? riga.getIm_imponibile() : riga.getIm_riga_iniziale())).setScale(
-                                //2,
-                                //java.math.BigDecimal.ROUND_HALF_UP));
-                                //updateImportoAssociatoDocAmm(userContext, riga.getObbligazione_scadenziario());
-                                //}
-                                //}
                                 riga.setToBeUpdated();
                                 if (riga.isInventariato()) {
                                     Documento_generico_rigaBulk cloneDettaglio = (Documento_generico_rigaBulk) riga.clone();
@@ -2307,6 +2292,8 @@ public class DocumentoGenericoComponent
                     } else
                         aggiornaAccertamentiSuCancellazione(userContext, documento, documento.getAccertamentiHash().keys(), null, null);
                 }
+                //Aggiorno la scrittura di economica
+                createScrittura(userContext, documento);
                 return;
             } catch (PersistencyException | RemoteException e) {
                 throw handleException(documento, e);
