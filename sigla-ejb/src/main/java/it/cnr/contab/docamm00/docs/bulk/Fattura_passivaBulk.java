@@ -3840,4 +3840,12 @@ public abstract class Fattura_passivaBulk
     public void setFl_bloccoAttivoDtReg(boolean fl_bloccoAttivoDtReg) {
         this.fl_bloccoAttivoDtReg = fl_bloccoAttivoDtReg;
     }
+
+    @Override
+    public Boolean isDocumentoStorno() {
+        return Optional.ofNullable(this.getTipoDocumentoEnum())
+                .map(TipoDocumentoEnum::isNotaCreditoPassiva)
+                .orElse(Boolean.FALSE);
+    }
+
 }
