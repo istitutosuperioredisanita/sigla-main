@@ -4024,7 +4024,7 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
         if (documentoGenericoRigaBulk.isPresent()) {
             try {
                 SimpleCRUDBP nbp = (SimpleCRUDBP) actionContext.createBusinessProcess(
-                        "CRUDGenericoAttivoBP",
+                        documentoGenericoRigaBulk.get().isGenericoAttivo()?"CRUDGenericoAttivoBP":"CRUDGenericoPassivoBP",
                         new Object[]{"M"}
                 );
                 nbp = (SimpleCRUDBP) actionContext.addBusinessProcess(nbp);
