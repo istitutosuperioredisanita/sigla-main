@@ -66,7 +66,7 @@ public class StornaDocumentoGenericoAction extends BulkAction {
             try {
                 SimpleCRUDBP nbp = (SimpleCRUDBP) actioncontext.createBusinessProcess(
                         tiEntrataSpesa.equals('E')?"CRUDGenericoAttivoBP":"CRUDGenericoPassivoBP",
-                        new Object[]{"M"}
+                        new Object[]{"V"}
                 );
                 nbp = (SimpleCRUDBP) actioncontext.addBusinessProcess(nbp);
                 nbp.edit(actioncontext, documentoGenericoBulk);

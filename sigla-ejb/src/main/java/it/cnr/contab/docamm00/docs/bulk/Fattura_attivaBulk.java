@@ -2521,4 +2521,11 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
     public void setFl_bloccoAttivoDtReg(boolean fl_bloccoAttivoDtReg) {
         this.fl_bloccoAttivoDtReg = fl_bloccoAttivoDtReg;
     }
+
+    @Override
+    public Boolean isDocumentoStorno() {
+        return Optional.ofNullable(this.getTipoDocumentoEnum())
+                .map(TipoDocumentoEnum::isNotaCreditoAttiva)
+                .orElse(Boolean.FALSE);
+    }
 }

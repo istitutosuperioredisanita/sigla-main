@@ -51,7 +51,7 @@
 		name="dtFineValidita"
 		property="dtFineValidita"
 		enabledOnSearch="true"
-		inputType="TEXT"
+		inputType="ROTEXT"
 		formatName="date_short"
 		label="Data fine validità" />
 	<form

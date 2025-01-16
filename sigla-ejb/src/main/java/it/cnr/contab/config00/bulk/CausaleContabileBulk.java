@@ -5,6 +5,7 @@
 package it.cnr.contab.config00.bulk;
 import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Tipo_documento_ammBulk;
+import it.cnr.contab.util.ICancellatoLogicamente;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.BulkCollection;
 import it.cnr.jada.bulk.BulkList;
@@ -21,7 +22,7 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class CausaleContabileBulk extends CausaleContabileBase {
+public class CausaleContabileBulk extends CausaleContabileBase implements ICancellatoLogicamente {
 	/**
 	 * [TIPO_DOCUMENTO_AMM ]
 	 **/
@@ -119,5 +120,15 @@ public class CausaleContabileBulk extends CausaleContabileBase {
 
 	public void setAssCausaleVoceEPBulks(BulkList<AssCausaleVoceEPBulk> assCausaleVoceEPBulks) {
 		this.assCausaleVoceEPBulks = assCausaleVoceEPBulks;
+	}
+
+	@Override
+	public boolean isCancellatoLogicamente() {
+		return Optional.ofNullable(getDtFineValidita()).isPresent();
+	}
+
+	@Override
+	public void cancellaLogicamente() {
+		setDtFineValidita(EJBCommonServices.getServerTimestamp());
 	}
 }

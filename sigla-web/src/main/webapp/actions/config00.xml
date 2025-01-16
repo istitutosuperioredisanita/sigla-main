@@ -479,7 +479,7 @@
     </businessProcess>
 
     <action
-            path="/CRUDCausaliContabiliAction" actionClass="it.cnr.jada.util.action.CRUDAction">
+            path="/CRUDCausaliContabiliAction" actionClass="it.cnr.contab.config00.action.CRUDCausaliContabiliAction">
     </action>
 
     <businessProcess name="CRUDCausaliContabiliBP" className="it.cnr.contab.config00.bp.CRUDCausaliContabiliBP">

@@ -2,6 +2,7 @@ package it.cnr.contab.config00.bp;
 
 import it.cnr.contab.config00.bulk.AssCausaleVoceEPBulk;
 import it.cnr.contab.config00.bulk.CausaleContabileBulk;
+import it.cnr.contab.util.ICancellatoLogicamente;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
@@ -53,6 +54,14 @@ public class CRUDCausaliContabiliBP extends SimpleCRUDBP {
         } catch (ComponentException|RemoteException e) {
             throw handleException(e);
         }
-
+        if (getStatus()!=VIEW){
+            if (Optional.ofNullable(getModel())
+                    .filter(ICancellatoLogicamente.class::isInstance)
+                    .map(ICancellatoLogicamente.class::cast)
+                    .map(ICancellatoLogicamente::isCancellatoLogicamente)
+                    .orElse(Boolean.FALSE)) {
+                setStatus(VIEW);
+            }
+        }
     }
 }

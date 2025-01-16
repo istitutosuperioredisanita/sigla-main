@@ -353,6 +353,7 @@ public class AccertamentoComponent extends CRUDComponent implements IDocumentoCo
 
                         if (scadenza.getPg_doc_attivo() != null &&
                                 scadenza.getPg_reversale() == null &&
+                                scadenza.getIm_associato_doc_amm().compareTo(Utility.ZERO) != 0 &&
                                 scadenza.getIm_scadenza().compareTo(Utility.ZERO) == 0) {
 
                             List listaDocAttivi = null;
@@ -395,43 +396,6 @@ public class AccertamentoComponent extends CRUDComponent implements IDocumentoCo
                                 if (!bFound)
                                     throw new ApplicationException("Attenzione! Non è stato trovato il documento attivo a cui è collegato la scadenza da azzerare!");
                             }
-/*
-						if (scadenza.getCd_tipo_documento_amm().equals(Numerazione_doc_ammBulk.TIPO_FATTURA_ATTIVA)) {
-							listaDocAttivi = scadenzaHome.findDocAmm(scadenza, Fattura_attiva_rigaIBulk.class);
-							for(Iterator it=listaDocAttivi.iterator();it.hasNext();)
-							{
-								bFound = true;
-								Fattura_attiva_rigaIBulk docAttivo = (Fattura_attiva_rigaIBulk) it.next();
-								lockBulk(userContext,docAttivo);
-								docAttivo.setStato_cofi(Fattura_attiva_rigaIBulk.STATO_ANNULLATO);
-								updateBulk(userContext,docAttivo);
-							}
-						}
-						if (scadenza.getCd_tipo_documento_amm().equals(Numerazione_doc_ammBulk.TIPO_FATTURA_PASSIVA)) {
-							listaDocAttivi = scadenzaHome.findDocAmm(scadenza, Fattura_passiva_rigaIBulk.class);
-							for(Iterator it=listaDocAttivi.iterator();it.hasNext();)
-							{
-								bFound = true;
-								Fattura_passiva_rigaIBulk docAttivo = (Fattura_passiva_rigaIBulk) it.next();
-								lockBulk(userContext,docAttivo);
-								docAttivo.setStato_cofi(Fattura_passiva_rigaIBulk.STATO_ANNULLATO);
-								updateBulk(userContext,docAttivo);
-							}
-						}
-						if (scadenza.getCd_tipo_documento_amm().equals(Numerazione_doc_ammBulk.TIPO_RIMBORSO)) {
-							listaDocAttivi = scadenzaHome.findDocAmm(scadenza, RimborsoBulk.class);
-							for(Iterator it=listaDocAttivi.iterator();it.hasNext();)
-							{
-								bFound = true;
-								RimborsoBulk docAttivo = (RimborsoBulk) it.next();
-								lockBulk(userContext,docAttivo);
-								docAttivo.setStato_cofi(Fattura_attiva_rigaIBulk.STATO_ANNULLATO);
-								updateBulk(userContext,docAttivo);
-							}
-						}
-						if (!bFound)
-							throw new ApplicationException( "Attenzione! Non è stato trovato il documento attivo a cui è collegato la scadenza da azzerare!");
-*/
                         }
                     }
                 } catch (Exception e) {
