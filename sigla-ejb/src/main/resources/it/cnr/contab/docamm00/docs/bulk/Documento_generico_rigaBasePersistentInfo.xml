@@ -236,6 +236,36 @@
 			propertyName="numero_avviso_pagopa"
 			sqlTypeName="VARCHAR"
 			columnSize="18" />
+		<columnMapping
+			columnName="ESERCIZIO_STORNO"
+			propertyName="esercizio_storno"
+			sqlTypeName="DECIMAL"
+			columnSize="4" />
+		<columnMapping
+			columnName="PROGRESSIVO_RIGA_STORNO"
+			propertyName="progressivo_riga_storno"
+			sqlTypeName="DECIMAL"
+			columnSize="10"/>
+		<columnMapping
+			columnName="CD_TIPO_DOCUMENTO_AMM_STORNO"
+			propertyName="cd_tipo_documento_amm_storno"
+			sqlTypeName="VARCHAR"
+			columnSize="10"/>
+		<columnMapping
+			columnName="CD_UNITA_ORGANIZZATIVA_STORNO"
+			propertyName="cd_unita_organizzativa_storno"
+			sqlTypeName="VARCHAR"
+			columnSize="30"/>
+		<columnMapping
+			columnName="CD_CDS_STORNO"
+			propertyName="cd_cds_storno"
+			sqlTypeName="VARCHAR"
+			columnSize="30"/>
+		<columnMapping
+			columnName="PG_DOCUMENTO_GENERICO_STORNO"
+			propertyName="pg_documento_generico_storno"
+			sqlTypeName="DECIMAL"
+			columnSize="10"/>
 	</defaultColumnMap>
 	<persistentProperty
 		name="dt_cancellazione" />
@@ -317,4 +347,16 @@
 		name="codice_identificativo_ente_pagopa" />
 	<persistentProperty
 		name="numero_avviso_pagopa" />
+	<persistentProperty
+		name="esercizio_storno"/>
+	<persistentProperty
+		name="progressivo_riga_storno"/>
+	<persistentProperty
+		name="cd_tipo_documento_amm_storno"/>
+	<persistentProperty
+		name="cd_unita_organizzativa_storno"/>
+	<persistentProperty
+		name="cd_cds_storno"/>
+	<persistentProperty
+		name="pg_documento_generico_storno"/>
 </SQLPersistentInfo>

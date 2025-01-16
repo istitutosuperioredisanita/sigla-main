@@ -2705,7 +2705,40 @@ begin
 			aStato := 'W';
 		end;
 	end loop;
-
+	-- Ribaltamento  delle associazioni causali voci
+	aMessage := 'Ribaltamento  delle associazioni causali voci sull''esercizio '||aEsDest||'. Lock tabella ASS_CAUSALE_VOCE_EP';
+	ibmutl200.loginf(aPgEsec,aMessage,'','');
+	for assCusaleVoceEp in (select * from ASS_CAUSALE_VOCE_EP
+			 	 where esercizio = aEsOrig) loop
+		begin
+			insert into ASS_CAUSALE_VOCE_EP (
+			 	CD_CAUSALE,
+				ESERCIZIO,
+				CD_VOCE_EP,
+				TI_SEZIONE,
+				DACR,
+				UTCR,
+				DUVA,
+				UTUV,
+				PG_VER_REC)
+			values (
+			 	assCusaleVoceEp.CD_CAUSALE,
+		 		aEsDest,
+				assCusaleVoceEp.CD_VOCE_EP,
+				assCusaleVoceEp.TI_SEZIONE,
+				sysdate,
+				cgUtente,
+			 	sysdate,
+			 	cgUtente,
+			 	1
+			);
+		exception when DUP_VAL_ON_INDEX then
+			ibmutl200.LOGWAR(aPgEsec,'ASS_CAUSALE_VOCE_EP con PK ('||aEsDest||', '
+															 		||assCusaleVoceEp.CD_CAUSALE||', '
+															 		||assCusaleVoceEp.CD_VOCE_EP||') già inserita','','');
+			aStato := 'W';
+		end;
+	end loop;
 	-- Ribaltamento Parametri Livelli
         Begin
 	   aMessage := 'Ribaltamento Parametri Livelli EP sull''esercizio '||aEsDest||'. Lock tabella PARAMETRI_LIVELLI_EP';

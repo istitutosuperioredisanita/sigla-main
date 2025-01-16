@@ -104,6 +104,7 @@
 		keysProperty="natura_voce_Keys"
 		inputType="SELECT"
 		enabledOnSearch="true"
+		command="doChangeNatura"
 		/>
 	<fieldProperty
 		name="riepiloga_a"

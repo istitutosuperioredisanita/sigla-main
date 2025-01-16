@@ -55,6 +55,7 @@ public enum TipoDocumentoEnum {
 	GEN_REINTEGRO_FONDO("GEN_RE_FON", Documento_generico_passivoBulk.class, "Documento generico di reintegro del fondo economale"),
 	GENERICO_S(Numerazione_doc_ammBulk.TIPO_DOC_GENERICO_S, Documento_generico_passivoBulk.class, "Documento generico di spesa"),
 	GENERICO_E(Numerazione_doc_ammBulk.TIPO_DOC_GENERICO_E, Documento_generico_attivoBulk.class, "Documento generico di entrata"),
+ 	GEN_TRASF_E("TRASF_E", Documento_generico_attivoBulk.class, "Documento generico di trasferimento di entrata"),
 	MANDATO(Numerazione_doc_contBulk.TIPO_MAN, MandatoIBulk.class, "Mandato"),
 	REVERSALE(Numerazione_doc_contBulk.TIPO_REV, ReversaleIBulk.class, "Reversale"),
 	GEN_STIPENDI_SPESA("GEN_STIP_S", Documento_generico_passivoBulk.class, "Documento generico di versamento stipendi"),

@@ -356,8 +356,6 @@ public class AccertamentoResiduoComponent extends AccertamentoComponent {
 			}
 		} catch (PersistencyException e) {
 			throw handleException( e );
-		} catch (IntrospectionException e) {
-			throw handleException( e );
 		}
 		return accertamento;
 	}

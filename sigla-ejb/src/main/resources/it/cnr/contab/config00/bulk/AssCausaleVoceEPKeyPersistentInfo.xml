@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.config00.bulk.AssCausaleVoceEPKey">
+	<defaultColumnMap
+		tableName="ASS_CAUSALE_VOCE_EP">
+		<columnMapping
+			columnName="CD_CAUSALE"
+			propertyName="cdCausale"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="ESERCIZIO"
+			propertyName="esercizio"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="CD_VOCE_EP"
+			propertyName="cdVoceEp"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false"
+			primary="true" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="cdCausale"
+		partOfOid="true" />
+	<persistentProperty
+		name="esercizio"
+		partOfOid="true" />
+	<persistentProperty
+		name="cdVoceEp"
+		partOfOid="true" />
+</SQLPersistentInfo>

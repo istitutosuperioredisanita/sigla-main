@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="esercizio"
+		property="esercizio"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Esercizio di ribaltamento" />
+	<fieldProperty
+		name="cdCentroResponsabilita"
+		property="lineaAttivita.centro_responsabilita.cd_centro_responsabilita"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Codice identificativo del centro di responsabilità della linea di attivita vecchio esercizio" />
+	<fieldProperty
+		name="cdLineaAttivita"
+		property="lineaAttivita.cd_linea_attivita"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Codice della linea di attivita vecchio esercizio" />
+	<fieldProperty
+		name="cdCentroRespRibalt"
+		property="lineaAttivitaNuovoEser.centro_responsabilita.cd_centro_responsabilita"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Codice identificativo del centro di responsabilità della linea di attivita nuovo esercizio" />
+	<fieldProperty
+		name="cdLineaAttivitaRibalt"
+		property="lineaAttivitaNuovoEser.cd_linea_attivita"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Codice della linea di attivita nuovo esercizio" />
+	<fieldProperty
+			name="cdCentroRespGaePrelFondi"
+			property="lineaAttivitaPrelFondi.centro_responsabilita.cd_centro_responsabilita"
+			inputType="TEXT"
+			inputSize="30"
+			maxLength="30"
+			enabledOnEdit="false"
+			nullable="false"
+			label="Codice identificativo del centro di responsabilità della linea di attivita dove verranno prelevati i fondi" />
+	<fieldProperty
+			name="cdLineaAttivitaPrelFondi"
+			property="lineaAttivitaPrelFondi.cd_linea_attivita"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			enabledOnEdit="false"
+			nullable="false"
+			label="Codice della linea di attivita nuovo esercizio dove verranno prelevati i fondi" />
+	<form
+		name="searchtool">
+		<formFieldProperty
+			name="esercizio" />
+		<formFieldProperty
+			name="cdCentroResponsabilita" />
+		<formFieldProperty
+			name="cdLineaAttivita" />
+	</form>
+	<formFieldProperty
+		name="esercizio" />
+
+	<findFieldProperty
+		name="esercizio" />
+	<findFieldProperty
+		name="cdCentroResponsabilita" />
+	<findFieldProperty
+		name="cdLineaAttivita" />
+	<findFieldProperty
+		name="cdCentroRespRibalt" />
+	<findFieldProperty
+		name="cdLineaAttivitaRibalt" />
+	<findFieldProperty
+		name="cdCentroRespGaePrelFondi" />
+	<findFieldProperty
+		name="cdLineaAttivitaPrelFondi" />
+
+	<columnFieldProperty
+		name="esercizio" />
+	<columnFieldProperty
+		name="cdCentroResponsabilita" />
+	<columnFieldProperty
+		name="cdLineaAttivita" />
+	<columnFieldProperty
+		name="cdCentroRespRibalt" />
+	<columnFieldProperty
+		name="cdLineaAttivitaRibalt" />
+	<columnFieldProperty
+		name="cdCentroRespGaePrelFondi" />
+	<columnFieldProperty
+		name="cdLineaAttivitaPrelFondi" />
+</bulkInfo>

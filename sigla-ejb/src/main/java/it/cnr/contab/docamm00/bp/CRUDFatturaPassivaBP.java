@@ -647,8 +647,6 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
                 Fattura_passivaBulk fp = (Fattura_passivaBulk) bulk;
                 fp.setDettagliCancellati(new java.util.Vector());
                 fp.setDocumentiContabiliCancellati(new java.util.Vector());
-                Boolean liqIvaAnticipataFattPassiva = Utility.createConfigurazioneCnrComponentSession().isLiqIvaAnticipataFattPassiva(context.getUserContext(), fp.getDt_registrazione());
-                fp.setBloccoAttivoDtReg(liqIvaAnticipataFattPassiva);
             }
             FatturaPassivaComponentSession h = (FatturaPassivaComponentSession) createComponentSession();
             if (isEditing()) {
@@ -664,6 +662,9 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             bulk = super.initializeModelForEdit(context, bulk);
             if ( this instanceof CRUDFatturaPassivaAmministraBP)
                 ((Fattura_passivaBulk)bulk).setFromAmministra(Boolean.TRUE);
+            Boolean liqIvaAnticipataFattPassiva = Utility.createConfigurazioneCnrComponentSession().
+                    isLiqIvaAnticipataFattPassiva(context.getUserContext(), ((Fattura_passivaBulk)bulk).getDt_registrazione());
+            ((Fattura_passivaBulk)bulk).setFl_bloccoAttivoDtReg(liqIvaAnticipataFattPassiva);
             return bulk;
         } catch (Throwable e) {
             throw new it.cnr.jada.action.BusinessProcessException(e);
@@ -985,15 +986,21 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
      */
 
     public void reset(ActionContext context) throws BusinessProcessException {
-
-        if (it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(
-                context.getUserContext()).intValue() != Fattura_passivaBulk
-                .getDateCalendar(null).get(java.util.Calendar.YEAR))
-            resetForSearch(context);
-        else {
-            setCarryingThrough(false);
-            super.reset(context);
-            resetTabs();
+        try {
+            if ((it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(
+                    context.getUserContext()).intValue() != Fattura_passivaBulk
+                    .getDateCalendar(null).get(java.util.Calendar.YEAR) || !Utility.createConfigurazioneCnrComponentSession().getFineRegFattPass(context.getUserContext(), CNRUserContext.getEsercizio(context.getUserContext()) - 1)
+                    .before(EJBCommonServices.getServerDate()) )  &&
+                    !Utility.createConfigurazioneCnrComponentSession().getFineRegFattPass(context.getUserContext(), CNRUserContext.getEsercizio(context.getUserContext()))
+                            .after(EJBCommonServices.getServerDate())) {
+                resetForSearch(context);
+            } else {
+                setCarryingThrough(false);
+                super.reset(context);
+                resetTabs();
+            }
+        } catch (RemoteException | ComponentException _ex) {
+            throw handleException(_ex);
         }
     }
 
@@ -1181,6 +1188,18 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
                         fatturaPassivaBulk.setNr_protocollo_liq(null);
                     }
             });
+        Optional.ofNullable(getModel())
+                .filter(Fattura_passivaBulk.class::isInstance)
+                .map(Fattura_passivaBulk.class::cast)
+                .ifPresent(fatturaPassivaBulk -> {
+                    try {
+                        fatturaPassivaBulk.setFl_bloccoAttivoDtReg(Utility.createConfigurazioneCnrComponentSession().isLiqIvaAnticipataFattPassiva(context.getUserContext(), fatturaPassivaBulk.getDt_registrazione()));
+                    } catch (ComponentException e) {
+                        throw new RuntimeException(e);
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
         super.save(context);
         setCarryingThrough(false);
     }

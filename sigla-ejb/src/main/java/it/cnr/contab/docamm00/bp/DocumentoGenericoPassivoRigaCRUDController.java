@@ -40,7 +40,7 @@ public class DocumentoGenericoPassivoRigaCRUDController extends it.cnr.jada.util
 
 		Documento_genericoBulk doc = (Documento_genericoBulk)getParentModel();
 		return	super.isGrowable() && !((it.cnr.jada.util.action.CRUDBP)getParentController()).isSearching() &&
-				!doc.STATO_PAGATO.equalsIgnoreCase(doc.getStato_cofi()) && 
+				!Documento_genericoBulk.STATO_PAGATO.equalsIgnoreCase(doc.getStato_cofi()) && !doc.isDocumentoStorno() &&
 				(!doc.isDoc1210Associato() || (doc.getLettera_pagamento_estero()!=null && doc.getLettera_pagamento_estero().getStato_trasmissione().compareTo(MandatoBulk.STATO_TRASMISSIONE_TRASMESSO)==0));
 	}
 
@@ -48,7 +48,7 @@ public class DocumentoGenericoPassivoRigaCRUDController extends it.cnr.jada.util
 
 		Documento_genericoBulk doc = (Documento_genericoBulk)getParentModel();
 		return	super.isShrinkable() && !((it.cnr.jada.util.action.CRUDBP)getParentController()).isSearching() &&
-				!doc.STATO_PAGATO.equalsIgnoreCase(doc.getStato_cofi()) &&
+				!Documento_genericoBulk.STATO_PAGATO.equalsIgnoreCase(doc.getStato_cofi()) && !doc.isDocumentoStorno() &&
 				(!doc.isDoc1210Associato() || (doc.getLettera_pagamento_estero()!=null && doc.getLettera_pagamento_estero().getStato_trasmissione().compareTo(MandatoBulk.STATO_TRASMISSIONE_TRASMESSO)==0));
 	}
 
@@ -79,12 +79,18 @@ public class DocumentoGenericoPassivoRigaCRUDController extends it.cnr.jada.util
 	public void validateForDelete(ActionContext context, OggettoBulk detail) throws ValidationException {
 		try {
 			Documento_generico_rigaBulk riga = (Documento_generico_rigaBulk)detail;
-			if (riga.getTi_associato_manrev() != null && riga.ASSOCIATO_A_MANDATO.equalsIgnoreCase(riga.getTi_associato_manrev()))
+			if (riga.getTi_associato_manrev() != null && Documento_generico_rigaBulk.ASSOCIATO_A_MANDATO.equalsIgnoreCase(riga.getTi_associato_manrev()))
 				throw new ValidationException("Impossibile eliminare il dettaglio \"" + 
 						((riga.getDs_riga() != null) ?
 								riga.getDs_riga() :
 									String.valueOf(riga.getProgressivo_riga().longValue())) + 
 									"\" perchè associato a mandato.");
+			if (riga.isRigaStornata())
+				throw new ValidationException("Impossibile eliminare il dettaglio \"" +
+						((riga.getDs_riga() != null) ?
+								riga.getDs_riga() :
+								String.valueOf(riga.getProgressivo_riga().longValue())) +
+						"\" perchè stornato.");
 			((DocumentoGenericoComponentSession)(((SimpleCRUDBP)getParentController()).createComponentSession())).eliminaRiga(context.getUserContext(), (Documento_generico_rigaBulk)detail);
 		} catch (it.cnr.jada.comp.ApplicationException e) {
 			throw new ValidationException(e.getMessage());
@@ -104,16 +110,34 @@ public class DocumentoGenericoPassivoRigaCRUDController extends it.cnr.jada.util
 		super.writeHTMLToolbar(context, reset, find, delete, false);
 
         boolean isFromBootstrap = HttpActionContext.isFromBootstrap(context);
-
-        String command = "javascript:submitForm('doRicercaObbligazione')";
+		it.cnr.jada.util.action.CRUDBP bp = (it.cnr.jada.util.action.CRUDBP) getParentController();
+		Documento_genericoBulk doc = (Documento_genericoBulk) bp.getModel();
+		Documento_generico_rigaBulk riga = (Documento_generico_rigaBulk) getModel();
+		String command = "javascript:submitForm('doRicercaObbligazione')";
 		it.cnr.jada.util.jsp.JSPUtils.toolbarButton(
 				context,
 				isFromBootstrap ? "fa fa-fw fa-bolt" : "img/history16.gif",
-		        !(isInputReadonly() || getDetails().isEmpty() || ((CRUDDocumentoGenericoPassivoBP)getParentController()).isSearching())? command : null,
+		        !(isInputReadonly() || getDetails().isEmpty() || ((CRUDDocumentoGenericoPassivoBP)getParentController()).isSearching()) && !doc.isDocumentoStorno() ? command : null,
 				true,
 				"Contabilizza",
 				"btn-sm btn-outline-primary btn-title",
                 isFromBootstrap);
+		if (riga.isDocumentoStorno()) {
+			it.cnr.jada.util.jsp.JSPUtils.toolbarButton(
+					context,
+					isFromBootstrap ? "fa fa-fw fa-link" : "img/bookmarks16.gif",
+					"javascript:submitForm('doApriDocumentoStornato');",
+					true,
+					String.format("Visualizza documento stornato n. %s/%s/%s/%s/%s",
+							riga.getEsercizio_storno(),
+							riga.getCd_cds_storno(),
+							riga.getCd_unita_organizzativa_storno(),
+							riga.getCd_tipo_documento_amm_storno(),
+							riga.getPg_documento_generico_storno()
+					),
+					"btn-sm btn-outline-primary btn-title",
+					HttpActionContext.isFromBootstrap(context));
+		}
 		super.closeButtonGROUPToolbar(context);
 	}
 	@Override

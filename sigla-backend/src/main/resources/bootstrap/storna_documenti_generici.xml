@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="marco.spasiano" id="flag_storna_documenti_generici">
+        <addColumn tableName="documento_generico">
+            <column name="fl_storno"
+                    defaultValue="N"
+                    remarks="Indica se il documento generico è un documento di storno."
+                    type="CHAR(1)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="marco.spasiano" id="fk_storna_documenti_generici_riga">
+        <addColumn tableName="documento_generico_riga">
+            <column name="cd_cds_storno"
+                    remarks="Codice identificativo del centro di spesa del documento stornato; livello 1 della tabella UNITA_ORGANIZZATIVA.&#10;Rappresenta il CdS sul cui bilancio è registrato il generico."
+                    type="VARCHAR(30)"/>
+            <column name="cd_unita_organizzativa_storno"
+                    remarks="Codice identificativo dell'unità organizzativa del documento stornato; livello 2 della tabella UNITA_ORGANIZZATIVA.&#10;La codifica del livello unità organizzativa è ottenuta per concatenzione del codice del CdS di afferenza con il  proprio codice.&#10;Rappresenta la UO di riferimento alla registrazione del generico."
+                    type="VARCHAR(30)"/>
+            <column name="esercizio_storno"
+                    remarks="Esercizio di riferimento del documento stornato"
+                    type="SMALLINT"/>
+            <column name="cd_tipo_documento_amm_storno"
+                    remarks="Identificativo delle tipologie di  documenti amministrativi gestiti riferito al documento stornato.&#10;&#10;Dominio:&#10;GENERICO_E = Generico di entrata&#10;GENERICO_S = Generico di spesa&#10;TRASF_E =  Generico di entrata per accreditamento CNR --&gt; CdS&#10;TRASF_S = Generico di spesa per accreditamento CNR --&gt; CdS&#10;REGOLA_E = Generico di entrata per mandato di regolarizzazione CNR"
+                    type="VARCHAR(10)"/>
+            <column name="pg_documento_generico_storno"
+                    remarks="Protocollo interno di numerazione dei generici riferito al documento stornato.&#10;Si ricava, per CdS, UO, esercizio e  tipo documento, da NUMERAZIONE_DOC_AMM."
+                    type="BIGINT"/>
+            <column name="progressivo_riga_storno"
+                    remarks="Progressivo numerazione righe all'interno di un documento generico riferito al documento stornato"
+                    type="BIGINT"/>
+        </addColumn>
+        <createIndex indexName="RX_DOCUMENTO_GENERICO_RIGA01" tableName="DOCUMENTO_GENERICO_RIGA">
+            <column name="cd_cds_storno"/>
+            <column name="cd_unita_organizzativa_storno"/>
+            <column name="esercizio_storno"/>
+            <column name="cd_tipo_documento_amm_storno"/>
+            <column name="pg_documento_generico_storno"/>
+            <column name="progressivo_riga_storno"/>
+        </createIndex>
+        <addForeignKeyConstraint
+                baseColumnNames="cd_cds_storno,cd_unita_organizzativa_storno,esercizio_storno,cd_tipo_documento_amm_storno,pg_documento_generico_storno,progressivo_riga_storno"
+                baseTableName="documento_generico_riga"
+                constraintName="sk_documento_generico_riga01"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="cd_cds,cd_unita_organizzativa,esercizio,cd_tipo_documento_amm,pg_documento_generico,progressivo_riga"
+                referencedTableName="documento_generico_riga"/>
+    </changeSet>
+    <changeSet author="marco.spasiano" id="accessi_storna_documenti_generici">
+        <insert tableName="accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMDOCGENSTORNATTIVI"/>
+            <column name="ti_accesso" type="CHAR(1)" value="D"/>
+            <column name="ds_accesso" type="VARCHAR(200)" value="Storna documenti generici attivi"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMDOCGENSTORNPASSIV"/>
+            <column name="ti_accesso" type="CHAR(1)" value="D"/>
+            <column name="ds_accesso" type="VARCHAR(200)" value="Storna documenti generici PASSIVI"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="ass_bp_accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMDOCGENSTORNATTIVI"/>
+            <column name="business_process" type="VARCHAR(200)" value="StornaDocumentoGenericoAttivoBP"/>
+            <column name="ti_funzione" type="CHAR(1)" value="M"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="ass_bp_accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMDOCGENSTORNPASSIV"/>
+            <column name="business_process" type="VARCHAR(200)" value="StornaDocumentoGenericoPassivoBP"/>
+            <column name="ti_funzione" type="CHAR(1)" value="M"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="albero_main">
+            <column name="cd_nodo" type="VARCHAR(100)" value="0.AMM.DOCGEN.GENATT.S"/>
+            <column name="ds_nodo" type="VARCHAR(200)" value="storno"/>
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMDOCGENSTORNATTIVI"/>
+            <column name="business_process" type="VARCHAR(200)" value="StornaDocumentoGenericoAttivoBP"/>
+            <column name="pg_ordinamento" type="BIGINT" value="10"/>
+            <column name="fl_terminale" type="CHAR(1)" value="Y"/>
+            <column name="livello" type="SMALLINT" value="4"/>
+            <column name="cd_proprio_nodo" type="VARCHAR(100)" value="S"/>
+            <column name="cd_nodo_padre" type="VARCHAR(100)" value="0.AMM.DOCGEN.GENATT"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="albero_main">
+            <column name="cd_nodo" type="VARCHAR(100)" value="0.AMM.DOCGEN.GENPAS.S"/>
+            <column name="ds_nodo" type="VARCHAR(200)" value="storno"/>
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMDOCGENSTORNPASSIV"/>
+            <column name="business_process" type="VARCHAR(200)" value="StornaDocumentoGenericoPassivoBP"/>
+            <column name="pg_ordinamento" type="BIGINT" value="10"/>
+            <column name="fl_terminale" type="CHAR(1)" value="Y"/>
+            <column name="livello" type="SMALLINT" value="4"/>
+            <column name="cd_proprio_nodo" type="VARCHAR(100)" value="S"/>
+            <column name="cd_nodo_padre" type="VARCHAR(100)" value="0.AMM.DOCGEN.GENPAS"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

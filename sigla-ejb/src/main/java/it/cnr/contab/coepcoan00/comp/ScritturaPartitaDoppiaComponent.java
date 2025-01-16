@@ -109,12 +109,51 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 		}
 	}
 
+	private static class DettaglioAnalitico {
+		public DettaglioAnalitico(String cdCentroCosto, String cdLineaAttivita, BigDecimal importo) {
+			this.cdCentroCosto = cdCentroCosto;
+			this.cdLineaAttivita = cdLineaAttivita;
+			this.importo = importo;
+		}
+
+		String cdCentroCosto;
+
+		String cdLineaAttivita;
+
+		BigDecimal importo;
+
+		public String getCdCentroCosto() {
+			return cdCentroCosto;
+		}
+
+		public void setCdCentroCosto(String cdCentroCosto) {
+			this.cdCentroCosto = cdCentroCosto;
+		}
+
+		public String getCdLineaAttivita() {
+			return cdLineaAttivita;
+		}
+
+		public void setCdLineaAttivita(String cdLineaAttivita) {
+			this.cdLineaAttivita = cdLineaAttivita;
+		}
+
+		public BigDecimal getImporto() {
+			return importo;
+		}
+
+		public void setImporto(BigDecimal importo) {
+			this.importo = importo;
+		}
+	}
+
 	private static class DettaglioFinanziario {
-		public DettaglioFinanziario(IDocumentoAmministrativoBulk docamm, IDocumentoAmministrativoBulk partita, Integer cdTerzo, Elemento_voceBulk elementoVoce, java.sql.Timestamp dtDaCompetenzaCoge, java.sql.Timestamp dtACompetenzaCoge, BigDecimal imImponibile, BigDecimal imImposta) {
+		public DettaglioFinanziario(IDocumentoAmministrativoBulk docamm, IDocumentoAmministrativoBulk partita, Integer cdTerzo, Elemento_voceBulk elementoVoce, List<DettaglioAnalitico> dettagliAnalitici, java.sql.Timestamp dtDaCompetenzaCoge, java.sql.Timestamp dtACompetenzaCoge, BigDecimal imImponibile, BigDecimal imImposta) {
 			super();
 			this.docamm = docamm;
 			this.partita = partita;
 			this.elementoVoce = elementoVoce;
+			this.dettagliAnalitici = dettagliAnalitici;
 			this.cdTerzo = cdTerzo;
 			this.dtDaCompetenzaCoge = dtDaCompetenzaCoge;
 			this.dtACompetenzaCoge = dtACompetenzaCoge;
@@ -136,13 +175,15 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 			this.imImposta = imImposta;
 			this.rigaDocamm = null;
 			this.elementoVoce = null;
+			this.dettagliAnalitici = Collections.EMPTY_LIST;
 		}
 
-		public DettaglioFinanziario(IDocumentoAmministrativoRigaBulk rigaDocamm, IDocumentoAmministrativoBulk partita, Integer cdTerzo, Elemento_voceBulk elementoVoce) {
+		public DettaglioFinanziario(IDocumentoAmministrativoRigaBulk rigaDocamm, IDocumentoAmministrativoBulk partita, Integer cdTerzo, Elemento_voceBulk elementoVoce, List<DettaglioAnalitico> dettagliAnalitici) {
 			super();
 			this.docamm = rigaDocamm.getFather();
 			this.partita = partita;
 			this.elementoVoce = elementoVoce;
+			this.dettagliAnalitici = dettagliAnalitici;
 			this.cdTerzo = cdTerzo;
 			this.dtDaCompetenzaCoge = rigaDocamm.getDt_da_competenza_coge();
 			this.dtACompetenzaCoge = rigaDocamm.getDt_a_competenza_coge();
@@ -164,6 +205,7 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 			this.imImposta = rigaDocamm.getIm_iva();
 			this.rigaDocamm = rigaDocamm;
 			this.elementoVoce = null;
+			this.dettagliAnalitici = null;
 		}
 
 		private final IDocumentoAmministrativoRigaBulk rigaDocamm;
@@ -173,6 +215,8 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 		private final IDocumentoAmministrativoBulk partita;
 
 		private final Integer cdTerzo;
+
+		private final List dettagliAnalitici;
 
 		private final Elemento_voceBulk elementoVoce;
 
@@ -1972,10 +2016,23 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 								throw new DetailedRuntimeException(e);
 							}
 						});
+
+				List<DettaglioAnalitico> dettagliAnalitici = new ArrayList<>();
+				//carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
+				try {
+					Obbligazione_scadenzarioHome obbligazioneScadenzarioHome = (Obbligazione_scadenzarioHome) getHome(userContext, Obbligazione_scadenzarioBulk.class);
+					List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, (Obbligazione_scadenzarioBulk)rigaDocAmm.getScadenzaDocumentoContabile());
+					for (Obbligazione_scad_voceBulk scadVoce : scadVoceBulks)
+						dettagliAnalitici.add(new DettaglioAnalitico(scadVoce.getCd_centro_responsabilita(), scadVoce.getCd_linea_attivita(), scadVoce.getIm_voce()));
+				} catch (ComponentException | PersistencyException e) {
+					throw new DetailedRuntimeException(e);
+				}
+
 				//Nel caricare la voce di bilancio metto sempre l'esercizio del documento perchè se ribaltato l'anno sarebbe quello successivo con la conseguenza che nel proporre
 				//i conti di costo proporrebbe quelli associati alle voci di anni differenti
 				return new DettaglioFinanziario(rigaDocAmm, partita, rigaDocAmm.getCd_terzo(),
-						new Elemento_voceBulk(obbligazioneDB.getCd_elemento_voce(), rigaDocAmm.getFather().getEsercizio(), obbligazioneDB.getTi_appartenenza(), obbligazioneDB.getTi_gestione()));
+						new Elemento_voceBulk(obbligazioneDB.getCd_elemento_voce(), rigaDocAmm.getFather().getEsercizio(), obbligazioneDB.getTi_appartenenza(), obbligazioneDB.getTi_gestione()),
+						dettagliAnalitici);
 			}
 			if (Optional.ofNullable(rigaDocAmm.getScadenzaDocumentoContabile()).filter(Accertamento_scadenzarioBulk.class::isInstance).isPresent()) {
 				AccertamentoBulk accertamentoDB = Optional.of(rigaDocAmm.getScadenzaDocumentoContabile().getFather()).filter(AccertamentoBulk.class::isInstance).map(AccertamentoBulk.class::cast)
@@ -1987,8 +2044,19 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 								throw new DetailedRuntimeException(e);
 							}
 						});
+				List<DettaglioAnalitico> dettagliAnalitici = new ArrayList<>();
+				//carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
+				try {
+					Accertamento_scadenzarioHome accertamentoScadenzarioHome = (Accertamento_scadenzarioHome) getHome(userContext, Accertamento_scadenzarioBulk.class);
+					List<Accertamento_scad_voceBulk> scadVoceBulks = accertamentoScadenzarioHome.findAccertamento_scad_voceList(userContext, (Accertamento_scadenzarioBulk)rigaDocAmm.getScadenzaDocumentoContabile());
+					for (Accertamento_scad_voceBulk scadVoce : scadVoceBulks)
+						dettagliAnalitici.add(new DettaglioAnalitico(scadVoce.getCd_centro_responsabilita(), scadVoce.getCd_linea_attivita(), scadVoce.getIm_voce()));
+				} catch (ComponentException | PersistencyException e) {
+					throw new DetailedRuntimeException(e);
+				}
 				return new DettaglioFinanziario(rigaDocAmm, partita, terzo.getCd_terzo(),
-						new Elemento_voceBulk(accertamentoDB.getCd_elemento_voce(), rigaDocAmm.getFather().getEsercizio(), accertamentoDB.getTi_appartenenza(), accertamentoDB.getTi_gestione()));
+						new Elemento_voceBulk(accertamentoDB.getCd_elemento_voce(), rigaDocAmm.getFather().getEsercizio(), accertamentoDB.getTi_appartenenza(), accertamentoDB.getTi_gestione()),
+						dettagliAnalitici);
 			}
 			if (!Optional.ofNullable(rigaDocAmm.getScadenzaDocumentoContabile()).isPresent() && docamm instanceof Documento_genericoBulk && docamm.getTipoDocumentoEnum().isGenericoEntrata() &&
 					(((Documento_generico_rigaBulk)rigaDocAmm).getAccertamento_scadenziario()!=null)) {
@@ -2001,12 +2069,24 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 								throw new DetailedRuntimeException(e);
 							}
 						});
+				List<DettaglioAnalitico> dettagliAnalitici = new ArrayList<>();
+				//carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
+				try {
+					Accertamento_scadenzarioHome accertamentoScadenzarioHome = (Accertamento_scadenzarioHome) getHome(userContext, Accertamento_scadenzarioBulk.class);
+					List<Accertamento_scad_voceBulk> scadVoceBulks = accertamentoScadenzarioHome.findAccertamento_scad_voceList(userContext, ((Documento_generico_rigaBulk)rigaDocAmm).getAccertamento_scadenziario());
+					for (Accertamento_scad_voceBulk scadVoce : scadVoceBulks)
+						dettagliAnalitici.add(new DettaglioAnalitico(scadVoce.getCd_centro_responsabilita(), scadVoce.getCd_linea_attivita(), scadVoce.getIm_voce()));
+				} catch (ComponentException | PersistencyException e) {
+					throw new DetailedRuntimeException(e);
+				}
 				return new DettaglioFinanziario(rigaDocAmm, partita, terzo.getCd_terzo(),
-						new Elemento_voceBulk(accertamentoDB.getCd_elemento_voce(), rigaDocAmm.getFather().getEsercizio(), accertamentoDB.getTi_appartenenza(), accertamentoDB.getTi_gestione()));
+						new Elemento_voceBulk(accertamentoDB.getCd_elemento_voce(), rigaDocAmm.getFather().getEsercizio(), accertamentoDB.getTi_appartenenza(), accertamentoDB.getTi_gestione()),
+						dettagliAnalitici);
 			}
 			if (!Optional.ofNullable(rigaDocAmm.getScadenzaDocumentoContabile()).isPresent())
 				return new DettaglioFinanziario(rigaDocAmm, partita, terzo.getCd_terzo(),
-						new Elemento_voceBulk(CD_VOCE_DOCUMENTO_NON_LIQUIDABILE, 1900, "X", "X"));
+						new Elemento_voceBulk(CD_VOCE_DOCUMENTO_NON_LIQUIDABILE, 1900, "X", "X"),
+						new ArrayList<>());
 			return null;
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 
@@ -2221,7 +2301,8 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 																				});
 																	}
 																});
-															} else if (docamm instanceof Nota_di_creditoBulk || docamm instanceof Nota_di_credito_attivaBulk) {
+															} else if (docamm instanceof Nota_di_creditoBulk || docamm instanceof Nota_di_credito_attivaBulk ||
+																	(docamm instanceof Documento_genericoBulk && ((Documento_genericoBulk)docamm).isDocumentoStorno())) {
 																Optional<Scrittura_partita_doppiaBulk> scritturaNota = Optional.ofNullable(docamm.getScrittura_partita_doppia())
 																		.map(spd->Optional.of(spd).filter(el->el.getCrudStatus()!=OggettoBulk.UNDEFINED)).orElseGet(()-> {
 																			try {
@@ -4600,7 +4681,7 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 											el.getMandatoRiga().getEsercizio_ori_obbligazione(), el.getMandatoRiga().getPg_obbligazione()));
 							BigDecimal imponibile = el.getMandatoRiga().getIm_mandato_riga().subtract(el.getMandatoRiga().getIm_ritenute_riga());
 							BigDecimal imposta = el.getMandatoRiga().getIm_ritenute_riga();
-							return new DettaglioFinanziario(docamm, null, cdTerzoDocAmm, obbligazioneDB.getElemento_voce(), null, null,
+							return new DettaglioFinanziario(docamm, null, cdTerzoDocAmm, obbligazioneDB.getElemento_voce(), null,null, null,
 									imponibile, imposta);
 						} catch (ComponentException | PersistencyException e) {
 							throw new ApplicationRuntimeException(e);
@@ -4641,9 +4722,21 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 																el.getMandatoRiga().getEsercizio_ori_obbligazione(), el.getMandatoRiga().getPg_obbligazione()));
 												BigDecimal imponibile = riga.getIm_imponibile();
 												BigDecimal imposta = riga.getIm_iva();
-												if (imponibile.compareTo(BigDecimal.ZERO)!=0)
-													list.add(new DettaglioFinanziario(docamm, null, cdTerzoDocAmm, obbligazioneDB.getElemento_voce(), null, null,
+												if (imponibile.compareTo(BigDecimal.ZERO)!=0) {
+													List<DettaglioAnalitico> dettagliAnalitici = new ArrayList<>();
+													//carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
+													try {
+														Obbligazione_scadenzarioHome obbligazioneScadenzarioHome = (Obbligazione_scadenzarioHome) getHome(userContext, Obbligazione_scadenzarioBulk.class);
+														List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext,new Obbligazione_scadenzarioBulk(el.getMandatoRiga().getCd_cds(), el.getMandatoRiga().getEsercizio_obbligazione(),
+																el.getMandatoRiga().getEsercizio_ori_obbligazione(), el.getMandatoRiga().getPg_obbligazione(), el.getMandatoRiga().getPg_obbligazione_scadenzario()));
+														for (Obbligazione_scad_voceBulk scadVoce : scadVoceBulks)
+															dettagliAnalitici.add(new DettaglioAnalitico(scadVoce.getCd_centro_responsabilita(), scadVoce.getCd_linea_attivita(), scadVoce.getIm_voce()));
+													} catch (ComponentException | PersistencyException e) {
+														throw new DetailedRuntimeException(e);
+													}
+													list.add(new DettaglioFinanziario(docamm, null, cdTerzoDocAmm, obbligazioneDB.getElemento_voce(), dettagliAnalitici, null, null,
 															imponibile, imposta));
+												}
 											} catch (ComponentException | PersistencyException e) {
 												throw new ApplicationRuntimeException(e);
 											}
@@ -5135,7 +5228,7 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 	private Pair<Voce_epBulk, Voce_epBulk> findPairCosto(UserContext userContext, TerzoBulk terzo, Elemento_voceBulk elementoVoce, String tipoContoPatrimoniale) throws ComponentException, RemoteException, PersistencyException {
 		Ass_ev_voceepBulk assEvVoceepBulk = null;
 		Voce_epBulk aContoCosto;
-		if (this.CD_VOCE_DOCUMENTO_NON_LIQUIDABILE.equalsIgnoreCase(elementoVoce.getCd_elemento_voce()))
+		if (CD_VOCE_DOCUMENTO_NON_LIQUIDABILE.equalsIgnoreCase(elementoVoce.getCd_elemento_voce()))
 			aContoCosto = (Voce_epBulk) this.findContoCostoDocumentoNonLiquidabileByConfig(userContext, CNRUserContext.getEsercizio(userContext));
 		else {
 			assEvVoceepBulk = this.findAssEvVoceep(userContext, elementoVoce);

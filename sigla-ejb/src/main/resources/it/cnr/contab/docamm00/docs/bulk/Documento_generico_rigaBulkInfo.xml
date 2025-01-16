@@ -327,6 +327,7 @@
 		maxLength="15"
 		inputSize="15"		
 		formatName="it.cnr.contab.util.EuroFormat"
+		readonlyProperty="documentoStorno"
 		enabledOnEdit="true"
 		nullable="false"
 		label="In valuta" />	
@@ -337,6 +338,7 @@
 		maxLength="15"
 		inputSize="15"
 		formatName="it.cnr.contab.util.EuroFormat"
+		readonlyProperty="documentoStorno"
 		enabledOnEdit="true"
 		nullable="false"
 		label="Importo" />	
@@ -360,7 +362,16 @@
 		formatName="it.cnr.contab.util.EuroFormat"
 		label="Importo in EURO" 
 		enabledOnEdit="false"/>
-		
+	<fieldProperty
+		name="importoStornato"
+		property="importoStornato"
+		inputType="TEXT"
+		maxLength="15"
+		inputSize="15"
+		formatName="it.cnr.contab.util.EuroFormat"
+		label="Importo Stornato"
+		enabledOnEdit="false"/>
+
 <!-- modalita' e termini -->
 	<fieldProperty
 		name="modalita_pagamento"
@@ -664,6 +675,7 @@
 		<columnFieldProperty name="nome" />
 		<columnFieldProperty name="cognome" />
 		<columnFieldProperty name="im_riga"/>
+		<columnFieldProperty name="importoStornato"/>
 		<columnFieldProperty name="dt_da_competenza_coge" />
 		<columnFieldProperty name="dt_a_competenza_coge" />
 		<columnFieldProperty name="stato_cofi" />	
@@ -676,5 +688,47 @@
 		<columnFieldProperty name="ds_riga"/>
 		<columnFieldProperty name="im_riga"
 		label="Associare all'Inventario" />
-	</columnSet>	
+	</columnSet>
+
+	<fieldProperty
+			name="column_cd_tipo_documento_amm"
+			property="cd_tipo_documento_amm"
+			label="Tipo"
+			inputType="SELECT"
+			keysProperty="tiDocumentoAmmKeys"/>
+	<fieldProperty
+			name="causale_contabile"
+			property="documento_generico.causaleContabile.dsCausale"
+			inputType="TEXT"/>
+
+	<columnSet name="storno">
+		<columnFieldProperty name="esercizio" label="Es."/>
+		<columnFieldProperty name="cd_cds_origine" property="documento_generico.cd_cds_origine" label="CdS Origine"/>
+		<columnFieldProperty name="cd_uo_origine" property="documento_generico.cd_uo_origine" label="UO Origine"/>
+		<columnFieldProperty name="column_cd_tipo_documento_amm" />
+		<columnFieldProperty name="pg_documento_generico" label="Progr." />
+		<columnFieldProperty name="progressivo_riga" label="Riga"/>
+		<columnFieldProperty name="causale_contabile" label="Causale contabile"/>
+		<columnFieldProperty name="cognome" />
+		<columnFieldProperty name="nome" />
+		<columnFieldProperty name="ragione_sociale" />
+		<columnFieldProperty name="ds_riga" />
+		<columnFieldProperty name="im_riga" />
+	</columnSet>
+
+	<freeSearchSet name="storno">
+		<findFieldProperty name="esercizio" label="Esercizio"/>
+		<findFieldProperty name="cd_cds_origine" property="documento_generico.cd_cds_origine" label="CdS Origine" inputType="TEXT" enabledOnFreeSearch="true"/>
+		<findFieldProperty name="cd_uo_origine" property="documento_generico.cd_uo_origine" label="UO Origine" inputType="TEXT" enabledOnFreeSearch="true"/>
+		<findFieldProperty name="column_cd_tipo_documento_amm" label="Tpo documento amministrativo"/>
+		<findFieldProperty name="pg_documento_generico" label="Progressivo documento" />
+		<findFieldProperty name="progressivo_riga" label="Riga"/>
+		<findFieldProperty name="causale_contabile" label="Causale Contabile"/>
+		<findFieldProperty name="find_cognome" property="cognome" label="Cognome" inputType="TEXT" enabledOnFreeSearch="true"/>
+		<findFieldProperty name="find_nome" property="nome" label="Nome" inputType="TEXT" enabledOnFreeSearch="true"/>
+		<findFieldProperty name="find_ragione_sociale" property="ragione_sociale" label="Ragione Sociale"  inputType="TEXT" enabledOnFreeSearch="true"/>
+		<findFieldProperty name="ds_riga" />
+		<findFieldProperty name="im_riga" />
+	</freeSearchSet>
+
 </bulkInfo>

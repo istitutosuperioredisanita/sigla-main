@@ -939,13 +939,12 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 		return this;
 	}
 	public OggettoBulk initializeForInsert(CRUDBP bp,it.cnr.jada.action.ActionContext context) {
-
-
 		if (getStato_cofi()==null)
 			setStato_cofi(STATO_INIZIALE);
 		setTi_associato_manrev(this.NON_ASSOCIATO_A_MANDATO);
 		setStato_coan("N");
 		setStato_pagamento_fondo_eco("N");
+		setFl_storno(Boolean.FALSE);
 		setEsercizio(it.cnr.contab.utenze00.bulk.CNRUserInfo.getEsercizio(context));
 		if (bp instanceof CRUDDocumentoGenericoPassivoBP ){
 			if(this.getCd_tipo_documento_amm()!=null && this.getCd_tipo_documento_amm().compareTo(GENERICO_S)==0){
@@ -1067,6 +1066,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 		try{
 			return !(isPagata() ||
 					isAnnullato() ||
+					isDocumentoStorno() ||
 					(!((getEsercizio().intValue() == getEsercizioInScrivania().intValue())&& !isRiportata()) && 
 							!isDeleting()));
 		}catch(NullPointerException e){
@@ -2103,7 +2103,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	public void setCd_causale_contabile(String cd_causale_contabile) {
 		CausaleContabileBulk causaleContabileBulk = Optional.ofNullable(causaleContabile).orElse(new CausaleContabileBulk());
 		causaleContabileBulk.setCdCausale(cd_causale_contabile);
-		setCausaleContabile(causaleContabile);
+		setCausaleContabile(causaleContabileBulk);
 	}
 
 	public Dictionary<String, String> getTiCausaleContabileKeys() {
@@ -2121,4 +2121,10 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	public void setBpStatus(int bpStatus) {
 		this.bpStatus = bpStatus;
 	}
+
+	public Boolean isDocumentoStorno() {
+		return Optional.ofNullable(getFl_storno())
+				.orElse(Boolean.FALSE);
+	}
+
 }

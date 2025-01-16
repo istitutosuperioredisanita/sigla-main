@@ -201,7 +201,7 @@ public java.util.Hashtable loadTipoDocumentoKeys( Accertamento_scadenzarioBulk b
 	return ht;
 }
 
-public java.util.List findAccertamento_scad_voceList( it.cnr.jada.UserContext userContext, Accertamento_scadenzarioBulk os ) throws IntrospectionException,PersistencyException 
+public java.util.List findAccertamento_scad_voceList( it.cnr.jada.UserContext userContext, Accertamento_scadenzarioBulk os ) throws PersistencyException
 {
 //	PersistentHome osvHome = getHomeCache().getHome(Accertamento_scad_voceBulk.class, "default", "it.cnr.contab.doccont00.comp.AccertamentoComponent.edit" );
 	PersistentHome osvHome = getHomeCache().getHome(Accertamento_scad_voceBulk.class );

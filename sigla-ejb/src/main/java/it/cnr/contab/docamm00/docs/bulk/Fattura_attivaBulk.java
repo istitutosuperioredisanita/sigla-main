@@ -299,7 +299,7 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
     private boolean isAttivoSplitPayment = false;
     private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
 
-    private boolean isBloccoAttivoDtReg =  Boolean.FALSE;
+    private boolean fl_bloccoAttivoDtReg =  Boolean.FALSE;
 
     public Fattura_attivaBulk() {
         super();
@@ -2511,10 +2511,14 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
     }
 
     public boolean isBloccoAttivoDtReg() {
-        return isBloccoAttivoDtReg;
+        return fl_bloccoAttivoDtReg;
     }
 
-    public void setBloccoAttivoDtReg(boolean bloccoAttivoDtReg) {
-        isBloccoAttivoDtReg = bloccoAttivoDtReg;
+    public boolean isFl_bloccoAttivoDtReg() {
+        return fl_bloccoAttivoDtReg;
+    }
+
+    public void setFl_bloccoAttivoDtReg(boolean fl_bloccoAttivoDtReg) {
+        this.fl_bloccoAttivoDtReg = fl_bloccoAttivoDtReg;
     }
 }

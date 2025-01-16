@@ -20,8 +20,7 @@
 	homeClassName="it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaHome" >
 
 	<defaultColumnMap
-		tableName="DOCUMENTO_GENERICO_RIGA" >		
-			
+		tableName="DOCUMENTO_GENERICO_RIGA">
 		<columnMapping
 			columnName="CD_TERZO"
 			propertyName="terzo.cd_terzo" />
@@ -107,10 +106,79 @@
 		<columnMapping
 			columnName="PG_ACCERTAMENTO_SCADENZARIO"
 			propertyName="accertamento_scadenziario.pg_accertamento_scadenzario" />
+		<columnMapping
+			columnName="ESERCIZIO_STORNO"
+			propertyName="documento_generico_riga_storno.esercizio"/>
+		<columnMapping
+			columnName="PROGRESSIVO_RIGA_STORNO"
+			propertyName="documento_generico_riga_storno.progressivo_riga"/>
+		<columnMapping
+			columnName="CD_TIPO_DOCUMENTO_AMM_STORNO"
+			propertyName="documento_generico_riga_storno.cd_tipo_documento_amm"/>
+		<columnMapping
+			columnName="CD_UNITA_ORGANIZZATIVA_STORNO"
+			propertyName="documento_generico_riga_storno.cd_unita_organizzativa"/>
+		<columnMapping
+			columnName="CD_CDS_STORNO"
+			propertyName="documento_generico_riga_storno.cd_cds"/>
+		<columnMapping
+			columnName="PG_DOCUMENTO_GENERICO_STORNO"
+			propertyName="documento_generico_riga_storno.pg_documento_generico"/>
+
+		<columnMapping
+				columnName="CD_CDS_STORNO"
+				propertyName="documento_generico_riga_storno.documento_generico.cd_cds"
+				fetchOnly="true" />
+		<columnMapping
+				columnName="CD_UNITA_ORGANIZZATIVA_STORNO"
+				propertyName="documento_generico_riga_storno.documento_generico.cd_unita_organizzativa"
+				fetchOnly="true" />
+		<columnMapping
+				columnName="PG_DOCUMENTO_GENERICO_STORNO"
+				propertyName="documento_generico_riga_storno.documento_generico.pg_documento_generico"
+				fetchOnly="true" />
+		<columnMapping
+				columnName="CD_TIPO_DOCUMENTO_AMM_STORNO"
+				propertyName="documento_generico_riga_storno.documento_generico.tipo_documento.cd_tipo_documento_amm"
+				fetchOnly="true"/>
+		<columnMapping
+				columnName="ESERCIZIO_STORNO"
+				propertyName="documento_generico_riga_storno.documento_generico.esercizio"
+				fetchOnly="true"/>
+
 	</defaultColumnMap>
 
-		
-	
+	<columnMap
+			name="STORNO"
+			tableName="DOCUMENTO_GENERICO_RIGA"
+			extends="default">
+		<columnMapping
+			columnName="CAUSALE_CONTABILE.DS_CAUSALE"
+			propertyName="documento_generico.causaleContabile.dsCausale"
+			sqlTypeName="VARCHAR"
+			columnSize="250"/>
+		<columnMapping
+			columnName="DOCUMENTO_GENERICO.CD_CDS_ORIGINE"
+			propertyName="documento_generico.cd_cds_origine"
+			sqlTypeName="VARCHAR"
+			columnSize="30"/>
+		<columnMapping
+			columnName="DOCUMENTO_GENERICO.CD_UO_ORIGINE"
+			propertyName="documento_generico.cd_uo_origine"
+			sqlTypeName="VARCHAR"
+			columnSize="30"/>
+		<columnMapping
+			columnName="TIPO_DOCUMENTO_AMM.FL_UTILIZZO_DOC_GENERICO"
+			propertyName="documento_generico.tipo_documento.fl_utilizzo_doc_generico"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter"/>
+		<columnMapping
+			columnName="TIPO_DOCUMENTO_AMM.TI_ENTRATA_SPESA"
+			propertyName="documento_generico.tipo_documento.ti_entrata_spesa"
+			sqlTypeName="CHAR"
+			columnSize="1"/>
+	</columnMap>
 
 	<persistentProperty
 		name="obbligazione_scadenziario" />
@@ -131,6 +199,7 @@
 		partOfOid="true"/>
 	<persistentProperty
 		name="cessionario" />
-		
-	
+	<persistentProperty
+		name="documento_generico_riga_storno"/>
+
 </SQLPersistentInfo>

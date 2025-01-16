@@ -52,6 +52,10 @@
 				<td>
 					<% bp.getController().writeFormInput(out,null,"flagEnte",false,null,"onClick=\"submitForm('doOnFlagEnteChange')\"");%>
 				</td>
+                <td colspan="2">
+                    <% bp.getController().writeFormLabel(out,"fl_storno");%>
+                    <% bp.getController().writeFormInput(out,"fl_storno");%>
+                </td>
 			</tr>
 			<tr>
 		     	<td>
@@ -100,6 +104,10 @@
 				<td>
 					<% bp.getController().writeFormInput(out,null,"flagEnte",false,null,"onClick=\"submitForm('doOnFlagEnteChange')\"");%>
 				</td>
+                <td colspan="2">
+                    <% bp.getController().writeFormLabel(out,"fl_storno");%>
+                    <% bp.getController().writeFormInput(out,"fl_storno");%>
+                </td>
 			</tr>
 			<tr>
 		     	<td>
