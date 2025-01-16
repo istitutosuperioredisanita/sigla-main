@@ -126,6 +126,12 @@ public class PartitarioBulk extends Movimento_cogeBulk {
                 .map(s -> super.getScrittura().getDt_contabilizzazione())
                 .orElse(null);
     }
+    public Timestamp getDtCancellazioneColumnValue() {
+        return Optional.ofNullable(getCd_riga())
+                .filter(s -> TipologiaRiga.isDettaglio(s))
+                .map(s -> super.getScrittura().getDt_cancellazione())
+                .orElse(null);
+    }
     public String getDsScritturaColumnValue() {
         return Optional.ofNullable(getCd_riga())
                 .filter(s -> TipologiaRiga.isDettaglio(s))

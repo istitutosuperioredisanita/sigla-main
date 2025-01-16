@@ -36,6 +36,12 @@
 				property="dtContabilizzazioneColumnValue"/>
 		<columnFieldProperty
 				headerLabel="Scrittura"
+				label="Data canc."
+				formatName="date_short"
+				name="dt_cancellazione"
+				property="dtCancellazioneColumnValue"/>
+		<columnFieldProperty
+				headerLabel="Scrittura"
 				label="Desc."
 				name="ds_scrittura"
 				property="dsScritturaColumnValue"/>
@@ -75,9 +81,15 @@
 				name="pg_numero_documento"
 				property="pg_numero_documento"/>
 		<columnFieldProperty
-				label="Terzo"
+				headerLabel="Terzo"
+				label="Cod."
 				name="cd_terzo"
 				property="terzo.cd_terzo"/>
+		<columnFieldProperty
+				headerLabel="Terzo"
+				label="Denom."
+				name="denominazione_sede"
+				property="terzo.denominazione_sede"/>
 		<columnFieldProperty
 				label="Codice CO/RI"
 				name="cd_contributo_ritenuta"
