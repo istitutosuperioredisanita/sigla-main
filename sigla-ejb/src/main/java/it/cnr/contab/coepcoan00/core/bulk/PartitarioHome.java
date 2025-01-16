@@ -52,6 +52,9 @@ public class PartitarioHome extends Movimento_cogeHome {
     ) throws PersistencyException {
         setColumnMap("PARTITARIO");
         SQLBuilder sqlBuilder = super.createSQLBuilderWithoutJoin();
+        sqlBuilder.addTableToHeader("TERZO");
+        sqlBuilder.addSQLJoin( "V_PARTITARIO.CD_TERZO","TERZO.CD_TERZO(+)");
+
         sqlBuilder.openParenthesis(FindClause.AND);
         for (Object obj : objects) {
             Optional<IDocumentoCogeBulk> documentoCogeBulk = Optional.ofNullable(obj)

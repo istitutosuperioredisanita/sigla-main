@@ -43,6 +43,12 @@
                 columnSize="7"
                 fetchOnly="true"/>
         <columnMapping
+                columnName="DT_CANCELLAZIONE"
+                propertyName="scrittura.dt_cancellazione"
+                sqlTypeName="TIMESTAMP"
+                columnSize="7"
+                fetchOnly="true"/>
+        <columnMapping
                 columnName="DS_SCRITTURA"
                 propertyName="scrittura.ds_scrittura"
                 fetchOnly="true"/>
@@ -115,11 +121,20 @@
         <columnMapping
                 columnName="CD_TERZO"
                 propertyName="terzo.cd_terzo"/>
+        <columnMapping
+                columnName="TERZO.DENOMINAZIONE_SEDE"
+                propertyName="terzo.denominazione_sede"/>
 
 
         <columnMapping
                 columnName="DT_CONTABILIZZAZIONE"
                 propertyName="scrittura.dt_contabilizzazione"
+                sqlTypeName="TIMESTAMP"
+                columnSize="7"
+                fetchOnly="true"/>
+        <columnMapping
+                columnName="DT_CANCELLAZIONE"
+                propertyName="scrittura.dt_cancellazione"
                 sqlTypeName="TIMESTAMP"
                 columnSize="7"
                 fetchOnly="true"/>

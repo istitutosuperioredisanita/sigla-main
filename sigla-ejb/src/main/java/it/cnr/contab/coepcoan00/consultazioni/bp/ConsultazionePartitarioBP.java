@@ -163,10 +163,16 @@ public class ConsultazionePartitarioBP<T extends IDocumentoAmministrativoBulk> e
     };
     @Override
     public String getRowStyle(Object obj) {
+        Optional<PartitarioBulk> partitarioBulk1 = Optional.ofNullable(obj)
+                .filter(PartitarioBulk.class::isInstance)
+                .map(PartitarioBulk.class::cast);
+        if (partitarioBulk1
+                .map(partitarioBulk -> Optional.ofNullable(partitarioBulk.getScrittura().getDt_cancellazione()).isPresent())
+                .orElse(Boolean.FALSE)) {
+            return "text-decoration:line-through";
+        }
         if (enableSelection) {
-            if (Optional.ofNullable(obj)
-                    .filter(PartitarioBulk.class::isInstance)
-                    .map(PartitarioBulk.class::cast)
+            if (partitarioBulk1
                     .map(partitarioBulk -> partitarioBulk.isRigaTipoSaldo())
                     .orElse(Boolean.FALSE)) {
                 return "cursor:pointer";
