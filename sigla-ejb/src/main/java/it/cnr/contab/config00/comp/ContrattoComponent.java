@@ -40,6 +40,7 @@ import it.cnr.contab.doccont00.comp.CheckDisponibilitaContrattoFailed;
 import it.cnr.contab.doccont00.core.bulk.AccertamentoBulk;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.contab.incarichi00.tabrif.bulk.Tipo_norma_perlaBulk;
+import it.cnr.contab.incarichi00.tabrif.bulk.Tipo_norma_perlaHome;
 import it.cnr.contab.progettiric00.core.bulk.*;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
@@ -2292,6 +2293,24 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 						throw new ComponentException("La figura giuridica Esterna con Codice Fiscale/P.Iva "+ contratto.getCodfisPivaRupExt() +" non esiste in SIGLA");
 					}
 				}
+				if ( contratto.getCd_proc_amm()!=null && (!contratto.getCd_proc_amm().isEmpty())) {
+					Procedure_amministrativeBulk procedureAmministrativeBulk= getProceduraAmministrativa(userContext,contratto,contratto.getProcedura_amministrativa());
+					if ( !Optional.ofNullable(procedureAmministrativeBulk).isPresent()){
+						throw new ComponentException("La Procedura Amministrativa "+ contratto.getCd_proc_amm() +" non esiste in SIGLA oppure è stata eliminata");
+					}
+				}
+				if ( contratto.getCd_tipo_norma_perla()!=null && (!contratto.getCd_tipo_norma_perla().isEmpty())) {
+					Tipo_norma_perlaBulk tipoNormaPerlaBulk= getTipoNormaPerla(userContext,contratto,contratto.getTipoNormaPerla());
+					if ( !Optional.ofNullable(tipoNormaPerlaBulk).isPresent()){
+						throw new ComponentException("Il tipo Norma Perla "+ contratto.getCd_tipo_norma_perla() +" non esiste in SIGLA");
+					}
+				}
+				if ( contratto.getCd_organo()!=null && (!contratto.getCd_organo().isEmpty())) {
+					OrganoBulk organoBulk= getOrgano(userContext,contratto,contratto.getOrgano());
+					if ( !Optional.ofNullable(organoBulk).isPresent()){
+						throw new ComponentException("Il tipo Organo "+ contratto.getCd_organo() +" non esiste in SIGLA oppure è stato eliminito");
+					}
+				}
 
 				gestioneCigSuContrattoDaFlows(userContext, contratto);
 				contratto = (ContrattoBulk)creaConBulk(userContext, contratto);
@@ -2374,6 +2393,36 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 			} catch (PersistencyException | IntrospectionException e) {
 				throw new ComponentException(e);
 			}
+		}
+
+		private Procedure_amministrativeBulk getProceduraAmministrativa( UserContext userContext, ContrattoBulk contrattoBulk,Procedure_amministrativeBulk procedureAmministrativeBulk) throws ComponentException, PersistencyException {
+			SQLBuilder sql = selectProcedura_amministrativaByClause(userContext,contrattoBulk,procedureAmministrativeBulk,null);
+			Procedure_amministrativeHome home= (Procedure_amministrativeHome) getHome(userContext, procedureAmministrativeBulk);
+			List lista = home.fetchAll(sql);
+			if (lista != null && ( !lista.isEmpty())){
+				return (Procedure_amministrativeBulk) lista.get(0);
+			}
+			return null;
+		}
+
+		private Tipo_norma_perlaBulk getTipoNormaPerla( UserContext userContext, ContrattoBulk contrattoBulk,Tipo_norma_perlaBulk tipoNormaPerlaBulk) throws ComponentException, PersistencyException {
+			SQLBuilder sql = selectTipoNormaPerlaByClause(userContext,contrattoBulk,tipoNormaPerlaBulk,null);
+			Tipo_norma_perlaHome home= (Tipo_norma_perlaHome) getHome(userContext, tipoNormaPerlaBulk);
+			List lista = home.fetchAll(sql);
+			if (lista != null && ( !lista.isEmpty())){
+				return (Tipo_norma_perlaBulk) lista.get(0);
+			}
+			return null;
+		}
+
+		private OrganoBulk getOrgano( UserContext userContext, ContrattoBulk contrattoBulk,OrganoBulk organoBulk) throws ComponentException, PersistencyException {
+			SQLBuilder sql = selectOrganoByClause(userContext,contrattoBulk,organoBulk,null);
+			OrganoHome home= (OrganoHome) getHome(userContext, organoBulk);
+			List lista = home.fetchAll(sql);
+			if (lista != null && ( !lista.isEmpty())){
+				return (OrganoBulk) lista.get(0);
+			}
+			return null;
 		}
  		
 		private V_persona_fisicaBulk getPersonaFisicaFromCodiceFiscalePiva(UserContext userContext, String codFisPiva)throws it.cnr.jada.comp.ComponentException{
