@@ -44,8 +44,8 @@ public class RestServiceContrattiTest {
 
         ObjectMapper mapper = new ObjectMapper();
         ContrattoDtoBulk c = new ContrattoDtoBulk();
-        c.setEsercizio(2023);
-        c.setCodiceFlussoAcquisti( "G00130");
+        c.setEsercizio(2025);
+        c.setCodiceFlussoAcquisti( "G00131");
         c.setCd_unita_organizzativa("000.001");
         c.setCodfisPivaRupExt("RGLNLR52E69Z600O");
         c.setCodfisPivaAggiudicatarioExt("05923561004");
@@ -104,7 +104,7 @@ public class RestServiceContrattiTest {
         UsernamePasswordCredentials credentials = new UsernamePasswordCredentials("MAGGIOLI", "MAGGIOLI");
         provider.setCredentials(AuthScope.ANY, credentials);
         HttpClient client=HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
-        HttpPost method = new HttpPost("http://localhost:8080/SIGLA/restapi/contrattoMaggioli");
+        HttpPost method = new HttpPost("http://sigla-test.iss.it/SIGLA/restapi/contrattoMaggioli");
         method.addHeader("Accept-Language", Locale.getDefault().toString());
         method.setHeader("Content-Type", "application/json;charset=UTF-8");
         method.setHeader(SIGLASecurityContext.X_SIGLA_CD_CDS,"999");
