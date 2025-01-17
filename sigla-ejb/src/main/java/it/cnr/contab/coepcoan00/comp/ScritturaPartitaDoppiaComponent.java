@@ -75,13 +75,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
 public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDComponent implements IScritturaPartitaDoppiaMgr,ICRUDMgr, Serializable,IPrintMgr{
 	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(ScritturaPartitaDoppiaComponent.class);
 
 	private final static Boolean DEFAULT_MODIFICABILE = Boolean.FALSE;
 	private final static Boolean DEFAULT_ACCORPABILE = Boolean.TRUE;
 	private final static String CD_VOCE_DOCUMENTO_NON_LIQUIDABILE = "XXXXXXXXX";
+
+	private final static boolean isAttivaGestioneSopravvenienze = Boolean.FALSE;
 
 	private static class DettaglioScrittura {
 		public DettaglioScrittura(Voce_epBulk conto, BigDecimal importo) {
@@ -466,7 +467,8 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 				if (importoAnnoCorrenteESuccessivi.compareTo(BigDecimal.ZERO)!=0) {
 					//Calcolo il conto economico
 					Voce_epBulk aContoEconomico = conto;
-					if (docamm.isDocumentoStorno() && Optional.ofNullable(partita).map(IDocumentoCogeBulk::getEsercizio)
+					if (isAttivaGestioneSopravvenienze &&
+							docamm.isDocumentoStorno() && Optional.ofNullable(partita).map(IDocumentoCogeBulk::getEsercizio)
 							.map(el->el.compareTo(docamm.getEsercizio())<0).orElse(Boolean.FALSE)) {
 						if (docamm.getTipoDocumentoEnum().isDocumentoAttivo())
 							//Un documento di storno su fattura attiva di anni precedenti movimenta il conto delle sopravvenienze passive
