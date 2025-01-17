@@ -4023,10 +4023,7 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
                 .map(Documento_generico_rigaBulk::getDocumento_generico);
         if (documentoGenericoRigaBulk.isPresent()) {
             try {
-                SimpleCRUDBP nbp = (SimpleCRUDBP) actionContext.createBusinessProcess(
-                        documentoGenericoRigaBulk.get().isGenericoAttivo()?"CRUDGenericoAttivoBP":"CRUDGenericoPassivoBP",
-                        new Object[]{"M"}
-                );
+                SimpleCRUDBP nbp = (SimpleCRUDBP) actionContext.createBusinessProcess(bp.getName(), new Object[]{"M"});
                 nbp = (SimpleCRUDBP) actionContext.addBusinessProcess(nbp);
                 nbp.edit(actionContext, documentoGenericoRigaBulk.get());
                 return nbp;

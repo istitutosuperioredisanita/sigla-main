@@ -21,4 +21,5 @@ import it.cnr.jada.util.action.SimpleDetailCRUDController;
 
 public interface IDocumentoGenericoBP {
     SimpleDetailCRUDController getDettaglio();
+    String getName();
 }
