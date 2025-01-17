@@ -74,6 +74,7 @@ import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DocumentoGenericoComponent
         extends ScritturaPartitaDoppiaFromDocumentoComponent
@@ -2009,6 +2010,15 @@ public class DocumentoGenericoComponent
                     java.math.BigDecimal delta = null;
                     totale = calcolaTotaleObbligazionePer(aUC, scadenza, doc); //.abs();
                     delta = scadenza.getIm_scadenza().subtract(totale);
+
+                    Stream<Documento_generico_rigaBulk> list = Collections.list((((Vector) obbligazioniHash.get(scadenza)).elements()))
+                            .stream()
+                            .filter(Documento_generico_rigaBulk.class::isInstance)
+                            .map(Documento_generico_rigaBulk.class::cast);
+                    BigDecimal importoStornato = BigDecimal.valueOf(list.collect(Collectors.summingDouble(value -> value.getImportoStornato().doubleValue())));
+
+                    delta = delta.add(importoStornato);
+
                     if (delta.compareTo(new java.math.BigDecimal(0)) > 0) {
                         StringBuffer sb = new StringBuffer();
                         sb.append("Attenzione: La scadenza ");
@@ -2389,6 +2399,9 @@ public class DocumentoGenericoComponent
             eliminaDocumento(aUC, documento);
             for (Iterator i = documento.getDocumento_generico_dettColl().iterator(); i.hasNext(); ) {
                 documentoGenericoRiga = (Documento_generico_rigaBulk) i.next();
+                if (documentoGenericoRiga.isRigaStornata()) {
+                    throw new ApplicationException("Non è possibile annullare documenti con righe stornate!");
+                }
                 eliminaRiga(aUC, documentoGenericoRiga);
                 if (documentoGenericoRiga.getDocumento_generico().isGenericoAttivo()) {
                     try {
