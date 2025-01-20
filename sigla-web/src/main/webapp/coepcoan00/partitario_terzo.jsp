@@ -20,15 +20,34 @@
     BulkBP bp = (BulkBP)BusinessProcess.getBusinessProcess(request);
 	bp.openFormWindow(pageContext);
 %>
-	<div class="Group card p-2" style="width:100%">
-        <table width="100%">
-            <tr><% bp.getController().writeFormField(out,"terzo");%></tr>
-            <tr><% bp.getController().writeFormField(out,"cognome");%></tr>
-            <tr><% bp.getController().writeFormField(out,"nome");%></tr>
-            <tr><% bp.getController().writeFormField(out,"codice_fiscale");%></tr>
-            <tr><% bp.getController().writeFormField(out,"partita_iva");%></tr>
-            <tr><% bp.getController().writeFormField(out,"dettaglioTributi");%></tr>
-        </table>
-	</div>
+    <div class="Group card p-2">
+        <div class="form-row">
+            <div class="col-md-12"><% bp.getController().writeFormField(out,"terzo",Boolean.FALSE);%></div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-6"><% bp.getController().writeFormField(out,"cognome", Boolean.FALSE);%></div>
+            <div class="col-md-6"><% bp.getController().writeFormField(out,"nome", Boolean.FALSE);%></div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-6"><% bp.getController().writeFormField(out,"codice_fiscale", Boolean.FALSE);%></div>
+            <div class="col-md-6"><% bp.getController().writeFormField(out,"partita_iva", Boolean.FALSE);%></div>
+        </div>
+    </div>
+    <div class="Group card p-2">
+        <div class="form-inline">
+            <div class="col-md-4">
+                <% bp.getController().writeFormLabel(out,"dettaglioTributi");%>
+                <span class="ml-2"><% bp.getController().writeFormInput(out,"dettaglioTributi");%></span>
+            </div>
+            <div class="col-md-4">
+                <% bp.getController().writeFormLabel(out,"partite");%>
+                <span class="ml-2 w-100"><% bp.getController().writeFormInput(out,"partite");%></span>
+            </div>
+            <div class="col-md-4">
+                <% bp.getController().writeFormLabel(out,"toDataMovimento");%>
+                <span class="ml-2"><% bp.getController().writeFormInput(out,"toDataMovimento");%></span>
+            </div>
+        </div>
+    </div>
 	<% bp.closeFormWindow(pageContext); %>
 </body>

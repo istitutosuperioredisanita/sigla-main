@@ -17,6 +17,7 @@
 
 package it.cnr.contab.coepcoan00.core.bulk;
 
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
 import it.cnr.contab.docamm00.docs.bulk.TipoDocumentoEnum;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.util.OrderedHashtable;
@@ -28,8 +29,10 @@ import java.util.Optional;
 
 public class PartitarioBulk extends Movimento_cogeBulk {
 
-    public final static Dictionary tipoDocAmmKeys = TipoDocumentoEnum.TIPO_DOCAMM_KEYS;
-    public final static Dictionary
+    public final static Dictionary<String, String> tipoDocAmmKeys = TipoDocumentoEnum.TIPO_DOCAMM_KEYS;
+    public final static Dictionary<String, String> stato_liquidazioneKeys = Fattura_passivaBulk.STATO_LIQUIDAZIONE;
+
+    public final static Dictionary<String, String>
             tipoRigaKeys = new OrderedHashtable(),
             tipoKeys = TipoIVA.TipoIVAKeys;
 
@@ -46,9 +49,13 @@ public class PartitarioBulk extends Movimento_cogeBulk {
     private java.math.BigDecimal im_movimento_dare;
     private java.math.BigDecimal im_movimento_avere;
 
+    private String nr_fattura_for_pag;
+    private Timestamp dt_em_pag;
+    private String stato_liquidazione;
+
     private java.math.BigDecimal differenza;
 
-    public static Dictionary getTipoDocAmmKeys() {
+    public static Dictionary<String, String> getTipoDocAmmKeys() {
         return tipoDocAmmKeys;
     }
 
@@ -155,4 +162,27 @@ public class PartitarioBulk extends Movimento_cogeBulk {
         return SALDO.equals(this.getTi_riga());
     }
 
+    public String getNr_fattura_for_pag() {
+        return nr_fattura_for_pag;
+    }
+
+    public void setNr_fattura_for_pag(String nr_fattura_for_pag) {
+        this.nr_fattura_for_pag = nr_fattura_for_pag;
+    }
+
+    public Timestamp getDt_em_pag() {
+        return dt_em_pag;
+    }
+
+    public void setDt_em_pag(Timestamp dt_em_pag) {
+        this.dt_em_pag = dt_em_pag;
+    }
+
+    public String getStato_liquidazione() {
+        return stato_liquidazione;
+    }
+
+    public void setStato_liquidazione(String stato_liquidazione) {
+        this.stato_liquidazione = stato_liquidazione;
+    }
 }
