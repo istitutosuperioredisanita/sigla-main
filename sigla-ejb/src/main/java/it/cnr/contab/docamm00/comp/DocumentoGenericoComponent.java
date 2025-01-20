@@ -63,7 +63,6 @@ import it.cnr.jada.comp.ICRUDMgr;
 import it.cnr.jada.comp.IPrintMgr;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.persistency.Persistent;
 import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.EJBCommonServices;
@@ -2015,7 +2014,7 @@ public class DocumentoGenericoComponent
                             .stream()
                             .filter(Documento_generico_rigaBulk.class::isInstance)
                             .map(Documento_generico_rigaBulk.class::cast);
-                    BigDecimal importoStornato = BigDecimal.valueOf(list.collect(Collectors.summingDouble(value -> value.getImportoStornato().doubleValue())));
+                    BigDecimal importoStornato = BigDecimal.valueOf(list.collect(Collectors.summingDouble(value -> Utility.nvl(value.getImportoStornato()).doubleValue())));
 
                     delta = delta.add(importoStornato);
 
