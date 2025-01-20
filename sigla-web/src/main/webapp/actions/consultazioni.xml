@@ -262,6 +262,8 @@
 	<action path="/ConsultazioneMastrinoContoAction" actionClass="it.cnr.contab.coepcoan00.action.ConsultazioneMastrinoContoAction"/>
 	<action path="/ConsProcedureAmministrativeAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction" needExistingSession="false"/>
 	<action path="/ConsTipoNormaPerlaAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction" needExistingSession="false"/>
+	<action path="/ConsOrganoAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction" needExistingSession="false"/>
+
 
 
 	<businessProcess name="ConsObbligazioniBP"
@@ -1887,6 +1889,14 @@
 		<init-param name="bulkClassName"
 					value="it.cnr.contab.incarichi00.tabrif.bulk.Tipo_norma_perlaBulk" />
 		<init-param name="defaultAction" value="ConsTipoNormaPerlaAction" />
+		<init-param name="searchResultColumnSet" value="restService" />
+	</businessProcess>
+	<businessProcess name="ConsOrganoActionBP"
+					 className="it.cnr.contab.consultazioni.bp.ConsultazioniRestBP">
+		<forward name="default" path="/consultazioni/form_lista.jsp" />
+		<init-param name="bulkClassName"
+					value="it.cnr.contab.config00.contratto.bulk.OrganoBulk" />
+		<init-param name="defaultAction" value="ConsOrganoAction" />
 		<init-param name="searchResultColumnSet" value="restService" />
 	</businessProcess>
 	<action path="/ConsScadAccertamentiVoceAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction"/>

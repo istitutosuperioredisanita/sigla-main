@@ -17,29 +17,22 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
+import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
+import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
+import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
+import it.cnr.jada.DetailedRuntimeException;
+import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.bulk.ValidationException;
+
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Dictionary;
 import java.util.Optional;
-import java.util.OptionalLong;
 import java.util.regex.Pattern;
-/**
- * Insert the type's description here.
- * Creation date: (9/5/2001 5:02:18 PM)
- * @author: Ardire Alfonso
- */
-import it.cnr.contab.anagraf00.core.bulk.*;
-import it.cnr.contab.anagraf00.tabrif.bulk.*;
-import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.jada.DetailedRuntimeException;
-import it.cnr.jada.UserContext;
-import it.cnr.jada.action.ActionContext;
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
-
-import javax.persistence.Transient;
 
 public class Documento_generico_rigaBulk extends Documento_generico_rigaBase implements IDocumentoAmministrativoRigaBulk, Voidable {
     private Documento_genericoBulk documento_generico;
@@ -90,7 +83,7 @@ public class Documento_generico_rigaBulk extends Documento_generico_rigaBase imp
 
 	private Documento_generico_rigaBulk documento_generico_riga_storno;
 	@Transient
-	private BigDecimal importoStornato;
+	private BigDecimal importoStornato=BigDecimal.ZERO;
 	@Transient
 	private Boolean rigaStornata;
 	static{

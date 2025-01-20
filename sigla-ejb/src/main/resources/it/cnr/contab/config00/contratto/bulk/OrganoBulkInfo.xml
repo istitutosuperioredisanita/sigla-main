@@ -122,4 +122,12 @@
 		name="fl_cancellato" />
 	<findFieldProperty
 		name="fl_non_definito" />
+	<columnSet name="restService">
+		<columnFieldProperty name="cd_organo" />
+		<columnFieldProperty name="ds_organo" />
+		<columnFieldProperty name="dt_inizio_validita" />
+		<columnFieldProperty name="dt_fine_validita" />
+		<columnFieldProperty name="fl_cancellato" />
+		<columnFieldProperty name="fl_non_definito" />
+	</columnSet>
 </bulkInfo>
