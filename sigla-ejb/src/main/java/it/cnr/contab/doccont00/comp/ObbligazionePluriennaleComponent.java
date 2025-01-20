@@ -79,8 +79,8 @@ public class ObbligazionePluriennaleComponent extends ObbligazioneComponent {
 			sql.addSQLJoin("OBBLIGAZIONE.ESERCIZIO_ORIGINALE", "OBBLIGAZIONE_PLURIENNALE.ESERCIZIO_ORIGINALE");
 			sql.addSQLJoin("OBBLIGAZIONE.PG_OBBLIGAZIONE", "OBBLIGAZIONE_PLURIENNALE.PG_OBBLIGAZIONE");
 			sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.DT_CANCELLAZIONE", SQLBuilder.ISNULL,null);
-		//	sql.addClause(FindClause.AND, "pgObbligazione", SQLBuilder.EQUALS, 243);
-		//	sql.addClause(FindClause.AND, "cdCds", SQLBuilder.EQUALS, "002");
+			//sql.addClause(FindClause.AND, "pgObbligazione", SQLBuilder.EQUALS, 4557);
+			//sql.addClause(FindClause.AND, "cdCds", SQLBuilder.EQUALS, "000");
 
 			return obbligazionePluriennaleHome.fetchAll(sql);
 		} catch (it.cnr.jada.persistency.PersistencyException e) {
@@ -289,18 +289,17 @@ public class ObbligazionePluriennaleComponent extends ObbligazioneComponent {
 						(	( List<Obbligazione_pluriennale_voceBulk>)Optional.ofNullable(pluriennaleHome.findObbligazioniPluriennaliVoce(uc,pluriennale)).
 								orElse(new ArrayList<Obbligazione_pluriennale_voceBulk>()));
 				for (Obbligazione_pluriennale_voceBulk pluriennaleVoceBulk : obbPluriennaliVoce){
-					WorkpackageBulk gaeVoce = null;
 
 					Obbligazione_pluriennale_voceBulk newObbligazionePluriennaleVoce = new Obbligazione_pluriennale_voceBulk();
 					newObbligazionePluriennaleVoce.setObbligazionePluriennale( newObbPluriennale);
 					newObbligazionePluriennaleVoce.setElementoVoce(pluriennaleVoceBulk.getElementoVoce());
 					newObbligazionePluriennaleVoce.setEsercizioVoce(esercizio);
 
-					if ( Optional.ofNullable(gaePrelevamentoFondi).isPresent())
-						gaeVoce= gaePrelevamentoFondi;
-					else {
-						gaeVoce = getAssGaePrelevamento(uc,esercizio,pluriennaleVoceBulk.getLinea_attivita());
-					}
+					//if ( Optional.ofNullable(gaePrelevamentoFondi).isPresent())
+					//	gaeVoce= gaePrelevamentoFondi;
+					//else {
+					WorkpackageBulk gaeVoce = getAssGaePrelevamento(uc,esercizio,pluriennaleVoceBulk.getLinea_attivita());
+					//}
 					newObbligazionePluriennaleVoce.setLinea_attivita( gaeVoce);
 					newObbligazionePluriennaleVoce.setImporto( pluriennaleVoceBulk.getImporto());
 					newObbligazionePluriennaleVoce.setAutoRimodulazione(pluriennaleVoceBulk.getAutoRimodulazione());
