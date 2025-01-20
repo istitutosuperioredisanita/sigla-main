@@ -5789,18 +5789,15 @@ public class DistintaCassiereComponent extends
                         throw new ApplicationMessageFormatException(
                                 "Impossibile generare il flusso, indicare data richiesta pagamento nel mandato cds {0} n. {1}",
                                 docContabile.getCdCds(), docContabile.getPgDocumento());
-                    // da regole Considerato che l’addebito è registrato direttamente in Banca d’Italia, la valorizzazione del dato
-                        //<data_esecuzione_pagamento> deve corrispondere al giorno lavorativo antecedente alla data di
-                        //scadenza inserita nella delega F24EP.
-                    //} else if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.F24EP)
-                    //        && docContabile.getDtPagamentoRichiesta() != null &&
-                    //        (EJBCommonServices.getServerTimestamp().after(docContabile.getDtPagamentoRichiesta()))) {
-                    //    throw new ApplicationMessageFormatException(
-                    //            "Impossibile generare il flusso, indicare data richiesta pagamento nel mandato cds {0} mandato {1} superiore alla data odierna!",
-                    //            docContabile.getCdCds(), docContabile.getPgDocumento());
+                    } else if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.F24EP)
+                            && docContabile.getDtPagamentoRichiesta() != null &&
+                            (EJBCommonServices.getServerTimestamp().after(docContabile.getDtPagamentoRichiesta()))) {
+                        throw new ApplicationMessageFormatException(
+                                "Impossibile generare il flusso, indicare data richiesta pagamento nel mandato cds {0} mandato {1} superiore alla data odierna!",
+                                docContabile.getCdCds(), docContabile.getPgDocumento());
                     } else if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.F24EP) &&
                             docContabile.getDtPagamentoRichiesta() != null
-                     //       &&(EJBCommonServices.getServerTimestamp().before(docContabile.getDtPagamentoRichiesta()))
+                           &&(EJBCommonServices.getServerTimestamp().before(docContabile.getDtPagamentoRichiesta()))
                     ) {
                         infoben.setTipoPagamento(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.F24EP.value());
                         final XMLGregorianCalendar xmlGregorianCalendar =
