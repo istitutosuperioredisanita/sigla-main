@@ -18,14 +18,45 @@
 package it.cnr.contab.coepcoan00.filter.bulk;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.coepcoan00.core.bulk.Sezione;
 import it.cnr.jada.bulk.OggettoBulk;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class FiltroRicercaTerzoBulk extends OggettoBulk {
+public class FiltroRicercaPartitarioBulk extends OggettoBulk {
     private TerzoBulk terzo;
-
     private Boolean dettaglioTributi;
+    private String partite;
+    private java.sql.Timestamp toDataMovimento;
+    public enum Partite {
+        A("Aperte"), C("Chiuse"), T("Tutte");
+        private final String label;
+
+        Partite(String label) {
+            this.label = label;
+        }
+
+        public String label() {
+            return label;
+        }
+
+        public static Dictionary<String, String> KEYS() {
+            return Stream.of(Partite.values())
+                    .collect(Collectors.toMap(
+                            Partite::name,
+                            Partite::label,
+                            (oldValue, newValue) -> oldValue, Hashtable::new)
+                    );
+        }
+    }
+    public static Dictionary<String, String> tiPartiteKeys = Partite.KEYS();
 
     public Boolean getDettaglioTributi() {
         return dettaglioTributi;
@@ -43,6 +74,21 @@ public class FiltroRicercaTerzoBulk extends OggettoBulk {
         this.terzo = terzo;
     }
 
+    public String getPartite() {
+        return partite;
+    }
+
+    public void setPartite(String partite) {
+        this.partite = partite;
+    }
+
+    public Timestamp getToDataMovimento() {
+        return toDataMovimento;
+    }
+
+    public void setToDataMovimento(Timestamp toDataMovimento) {
+        this.toDataMovimento = toDataMovimento;
+    }
 
     public boolean isROTerzo() {
         return Optional.ofNullable(terzo)
