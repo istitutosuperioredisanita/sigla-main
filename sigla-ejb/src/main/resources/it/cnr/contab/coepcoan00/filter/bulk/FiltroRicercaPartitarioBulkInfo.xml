@@ -85,8 +85,26 @@
 		name="dettaglioTributi"
 		property="dettaglioTributi"
 		inputType="CHECKBOX"
+		inputCssClass="ml-2"
 		label="Visualizza dettaglio Tributi"
 		enabledOnSearch="true" />
+
+	<fieldProperty
+		name="partite"
+		property="partite"
+		inputType="SELECT"
+		label="Partite"
+		keysProperty="tiPartiteKeys"
+		enabledOnSearch="true" />
+
+	<fieldProperty
+		name="toDataMovimento"
+		property="toDataMovimento"
+		inputType="TEXT"
+		formatName="date_short"
+		enabledOnEdit="true"
+		enabledOnInsert="true"
+		label="A Data Movimento" />
 
 	<formFieldProperty
 			name="terzo"/>
@@ -102,5 +120,9 @@
 			name="partita_iva" />
 	<formFieldProperty
 			name="dettaglioTributi" />
+	<formFieldProperty
+			name="partite" />
+	<formFieldProperty
+			name="toDataMovimento" />
 
 </bulkInfo>

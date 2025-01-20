@@ -212,6 +212,22 @@
                 columnSize="15"
                 columnScale="2"/>
 
+        <columnMapping
+                columnName="NR_FATTURA_FOR_PAG"
+                propertyName="nr_fattura_for_pag"
+                sqlTypeName="VARCHAR"
+                columnSize="20"/>
+        <columnMapping
+                columnName="DT_EM_PAG"
+                propertyName="dt_em_pag"
+                sqlTypeName="TIMESTAMP"
+                columnSize="7"/>
+        <columnMapping
+                columnName="STATO_LIQUIDAZIONE"
+                propertyName="stato_liquidazione"
+                sqlTypeName="VARCHAR"
+                columnSize="20"/>
+
         <!-- FETCH Documento Coge -->
         <columnMapping
                 columnName="CD_CDS_DOCUMENTO"
@@ -283,4 +299,11 @@
             name="im_movimento_avere" />
     <persistentProperty
             name="differenza" />
+    <persistentProperty
+            name="nr_fattura_for_pag" />
+    <persistentProperty
+            name="dt_em_pag" />
+    <persistentProperty
+            name="stato_liquidazione" />
+
 </SQLPersistentInfo>
