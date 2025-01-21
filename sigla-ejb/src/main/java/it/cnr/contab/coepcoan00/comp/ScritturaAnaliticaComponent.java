@@ -548,12 +548,11 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
  *
  */
 
-public SQLBuilder selectContoByClause (UserContext userContext, Movimento_coanBulk movimento, ContoBulk conto, CompoundFindClause clauses ) throws ComponentException
+public SQLBuilder selectVoceAnaliticaByClause (UserContext userContext, Movimento_coanBulk movimento, Voce_analiticaBulk voceAnalitica, CompoundFindClause clauses ) throws ComponentException
 {
-	SQLBuilder sql = getHome( userContext, conto.getClass()).createSQLBuilder();
+	SQLBuilder sql = getHome( userContext, voceAnalitica.getClass()).createSQLBuilder();
 	sql.addClause( clauses );
-	sql.addClause( "AND", "esercizio", sql.EQUALS, movimento.getEsercizio());
-    sql.addSQLClause( "AND", "(VOCE_EP.NATURA_VOCE = 'EEC' OR VOCE_EP.NATURA_VOCE = 'EER')");			
+	sql.addClause( FindClause.AND, "esercizio", SQLBuilder.EQUALS, movimento.getEsercizio());
 	return sql;
 }
 /**

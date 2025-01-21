@@ -53,8 +53,8 @@ public class Movimento_coanBase extends Movimento_coanKey implements Keyed {
 public Movimento_coanBase() {
 	super();
 }
-public Movimento_coanBase(java.lang.String cd_cds,java.lang.String cd_unita_organizzativa,java.lang.String cd_voce_ep,java.lang.Integer esercizio,java.lang.Long pg_movimento,java.lang.Long pg_scrittura,java.lang.String sezione) {
-	super(cd_cds,cd_unita_organizzativa,cd_voce_ep,esercizio,pg_movimento,pg_scrittura,sezione);
+public Movimento_coanBase(java.lang.String cd_cds,java.lang.String cd_unita_organizzativa,java.lang.String cd_voce_ana,java.lang.Integer esercizio,java.lang.Long pg_movimento,java.lang.Long pg_scrittura,java.lang.String sezione) {
+	super(cd_cds,cd_unita_organizzativa,cd_voce_ana,esercizio,pg_movimento,pg_scrittura,sezione);
 }
 /* 
  * Getter dell'attributo cd_centro_responsabilita

@@ -71,4 +71,10 @@
         <dropDefaultValue tableName="configurazione_cnr" columnName="dacr"/>
         <dropDefaultValue tableName="configurazione_cnr" columnName="duva"/>
     </changeSet>
+
+    <changeSet author="raffaele.pagano" id="add_table_voce_analitica_02">
+        <addPrimaryKey tableName="voce_analitica"
+                       columnNames="ESERCIZIO,CD_VOCE_ANA"
+                       constraintName="VOCE_ANALITICA_PKEY"/>
+    </changeSet>
 </databaseChangeLog>

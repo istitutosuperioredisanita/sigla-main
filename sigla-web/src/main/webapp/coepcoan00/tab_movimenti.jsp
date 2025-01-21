@@ -10,10 +10,10 @@
 </table>
 <table class="Panel">
 <tr>
-	<td><% bp.getMovimenti().writeFormLabel(out, "cd_voce_ep"); %></td>
-	<td><% bp.getMovimenti().writeFormInput(out, "cd_voce_ep");
-	       bp.getMovimenti().writeFormInput(out, "ds_voce_ep");
-	       bp.getMovimenti().writeFormInput(out,"default", "find_voce_ep", bp.isEditing(), null, null);
+	<td><% bp.getMovimenti().writeFormLabel(out, "cd_voce_ana"); %></td>
+	<td><% bp.getMovimenti().writeFormInput(out, "cd_voce_ana");
+	       bp.getMovimenti().writeFormInput(out, "ds_voce_ana");
+	       bp.getMovimenti().writeFormInput(out,"default", "find_voce_ana", bp.isEditing(), null, null);
 	       bp.getMovimenti().writeFormLabel(out, "sezione");
 	       bp.getMovimenti().writeFormInput(out,"default", "sezione",bp.isEditing(),null,null);%></td>
 </tr>
