@@ -24,6 +24,8 @@ import it.cnr.contab.coepcoan00.tabrif.bulk.Ass_anag_voce_epBulk;
 import it.cnr.contab.coepcoan00.tabrif.bulk.Ass_anag_voce_epHome;
 import it.cnr.contab.compensi00.docs.bulk.*;
 import it.cnr.contab.compensi00.tabrif.bulk.*;
+import it.cnr.contab.config00.bulk.AssCausaleVoceEPBulk;
+import it.cnr.contab.config00.bulk.CausaleContabileBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
@@ -72,6 +74,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -499,7 +502,17 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 
 		private DettaglioPrimaNota addDettaglioCostoRicavo(UserContext userContext, IDocumentoCogeBulk docamm, Voce_epBulk conto, BigDecimal importo, boolean registraPartita, Integer cdTerzo, String cdCori, Timestamp dtDaCompetenzaCoge, Timestamp dtACompetenzaCoge, boolean isOpen) {
 			String mySezione = isOpen?docamm.getTipoDocumentoEnum().getSezioneEconomica():Movimento_cogeBulk.getControSezione(docamm.getTipoDocumentoEnum().getSezioneEconomica());
-			return this.addDettaglio(userContext, null, mySezione, conto, importo, cdTerzo, registraPartita?docamm:null, cdCori, dtDaCompetenzaCoge, dtACompetenzaCoge, DEFAULT_MODIFICABILE, DEFAULT_ACCORPABILE);
+			AtomicReference<Voce_epBulk> myConto = new AtomicReference<>(conto);
+			if (docamm instanceof Documento_genericoBulk) {
+				if (((Documento_genericoBulk)docamm).getCausaleContabile()!=null) {
+					try {
+						List<AssCausaleVoceEPBulk> assCausaleVoce = new BulkList<AssCausaleVoceEPBulk>(find(userContext, CausaleContabileBulk.class, "findAssCausaleVoceEPBulk", userContext, (((Documento_genericoBulk) docamm).getCausaleContabile()).getCdCausale()));
+                        assCausaleVoce.stream().filter(el->el.getTiSezione().equals(mySezione)).findAny().ifPresent(el-> myConto.set(el.getVoceEp()));
+					} catch (ComponentException ex) {
+					}
+				}
+			}
+			return this.addDettaglio(userContext, null, mySezione, myConto.get(), importo, cdTerzo, registraPartita?docamm:null, cdCori, dtDaCompetenzaCoge, dtACompetenzaCoge, DEFAULT_MODIFICABILE, DEFAULT_ACCORPABILE);
 		}
 
 		public void openDettaglioPatrimonialePartita(UserContext userContext, IDocumentoCogeBulk docamm, IDocumentoCogeBulk partita, Voce_epBulk conto, BigDecimal importo, Integer cdTerzo) {
@@ -576,7 +589,17 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 
 		public DettaglioPrimaNota addDettaglioPatrimoniale(UserContext userContext, IDocumentoCogeBulk docamm, Voce_epBulk conto, BigDecimal importo, boolean registraPartita, Integer cdTerzo, String cdCori, boolean isOpen) {
 			String mySezione = isOpen?docamm.getTipoDocumentoEnum().getSezionePatrimoniale():Movimento_cogeBulk.getControSezione(docamm.getTipoDocumentoEnum().getSezionePatrimoniale());
-			return this.addDettaglio(userContext, docamm.getTipoDocumentoEnum().getTipoPatrimoniale(), mySezione, conto, importo, cdTerzo, registraPartita?docamm:null, cdCori);
+			AtomicReference<Voce_epBulk> myConto = new AtomicReference<>(conto);
+			if (docamm instanceof Documento_genericoBulk) {
+				if (((Documento_genericoBulk)docamm).getCausaleContabile()!=null) {
+					try {
+						List<AssCausaleVoceEPBulk> assCausaleVoce = new BulkList<AssCausaleVoceEPBulk>(find(userContext, CausaleContabileBulk.class, "findAssCausaleVoceEPBulk", userContext, (((Documento_genericoBulk) docamm).getCausaleContabile()).getCdCausale()));
+						assCausaleVoce.stream().filter(el->el.getTiSezione().equals(mySezione)).findAny().ifPresent(el-> myConto.set(el.getVoceEp()));
+					} catch (ComponentException ex) {
+					}
+				}
+			}
+			return this.addDettaglio(userContext, docamm.getTipoDocumentoEnum().getTipoPatrimoniale(), mySezione, myConto.get(), importo, cdTerzo, registraPartita?docamm:null, cdCori);
 		}
 
 		public void addDettaglio(UserContext userContext, String tipoDettaglio, String sezione, Voce_epBulk conto, BigDecimal importo) {
