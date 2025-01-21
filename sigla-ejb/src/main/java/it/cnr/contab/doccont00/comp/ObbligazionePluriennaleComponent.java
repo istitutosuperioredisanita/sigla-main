@@ -170,11 +170,11 @@ public class ObbligazionePluriennaleComponent extends ObbligazioneComponent {
 			// Prende l'ElementoVoce dal Pluriennale voce perchè potrebbe essere aggiornato con nuovi valori per il nuovo esercizio
 			Elemento_voceBulk nuovaVoce = pluriennaleBulk.getRigheVoceColl().get(0).getElementoVoce();
 
-			/*
-			Elemento_voceBulk voce = new it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk();
-			voce.setEsercizio(esercizio);
-			voce.setTi_appartenenza(obbligazioneBulkNew.getElemento_voce().getTi_appartenenza());
-			voce.setTi_gestione(obbligazioneBulkNew.getElemento_voce().getTi_gestione());
+
+			//Elemento_voceBulk voce = new it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk();
+			nuovaVoce.setEsercizio(esercizio);
+			/*nuovaVoce.setTi_appartenenza(obbligazioneBulkNew.getElemento_voce().getTi_appartenenza());
+			nuovaVoce.setTi_gestione(obbligazioneBulkNew.getElemento_voce().getTi_gestione());
 			voce.setCd_elemento_voce(obbligazioneBulkNew.getElemento_voce().getCd_elemento_voce());
 			*/
 
