@@ -18,18 +18,17 @@
 package it.cnr.contab.docamm00.docs.bulk;
 
 import it.cnr.contab.config00.bulk.CausaleContabileBulk;
+import it.cnr.contab.config00.bulk.CausaleContabileHome;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazione_wizardBulk;
 import it.cnr.contab.fondecon00.core.bulk.Fondo_spesaBulk;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
-import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.LoggableStatement;
-import it.cnr.jada.persistency.sql.PersistentHome;
-import it.cnr.jada.persistency.sql.SQLBuilder;
+import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.action.FormController;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
@@ -236,5 +235,35 @@ public class Documento_genericoHome extends BulkHome implements
 						(key, value) -> value, HashMap::new)
 				));
 
+	}
+
+	public SQLBuilder selectCausaleContabileByClause(
+			UserContext userContext,
+			Documento_genericoBulk documentoGenericoBulk,
+			CausaleContabileHome causaleContabileHome,
+			CausaleContabileBulk causaleContabileBulk,
+			CompoundFindClause compoundFindClause) {
+		SQLBuilder sql = causaleContabileHome.createSQLBuilder();
+		Optional.ofNullable(compoundFindClause)
+				.ifPresent(sql::addClause);
+		if (documentoGenericoBulk.getBpStatus() != FormController.SEARCH) {
+			sql.addClause(
+					FindClause.AND,
+					"cdTipoDocumentoAmm",
+					Optional.ofNullable(documentoGenericoBulk.getTipo_documento())
+							.flatMap(tipoDocumentoAmmBulk -> Optional.ofNullable(tipoDocumentoAmmBulk.getCd_tipo_documento_amm()))
+							.map(t -> SQLBuilder.EQUALS).orElse(SQLBuilder.ISNULL),
+					Optional.ofNullable(documentoGenericoBulk.getTipo_documento())
+							.flatMap(tipoDocumentoAmmBulk -> Optional.ofNullable(tipoDocumentoAmmBulk.getCd_tipo_documento_amm()))
+							.orElse(null)
+			);
+		}
+		sql.addClause(FindClause.AND, "flStorno", SQLBuilder.EQUALS, documentoGenericoBulk.getFl_storno());
+		sql.addClause(FindClause.AND, "dtInizioValidita", SQLBuilder.LESS_EQUALS, EJBCommonServices.getServerDate());
+		sql.openParenthesis(FindClause.AND);
+		sql.addClause(FindClause.AND, "dtFineValidita", SQLBuilder.GREATER_EQUALS, EJBCommonServices.getServerDate());
+		sql.addClause(FindClause.OR, "dtFineValidita", SQLBuilder.ISNULL, null);
+		sql.closeParenthesis();
+		return sql;
 	}
 }
