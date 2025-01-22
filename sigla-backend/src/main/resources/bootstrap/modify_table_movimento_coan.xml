@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_01">
+        <dropPrimaryKey tableName="MOVIMENTO_COAN" constraintName="MOVIMENTO_COAN_PKEY"/>
+    </changeSet>
+    <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_02">
+        <dropForeignKeyConstraint baseTableName="MOVIMENTO_COAN" constraintName="FK_MOVIMENTO_COAN02"/>
+    </changeSet>
+    <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_03">
+        <renameColumn tableName="MOVIMENTO_COAN" oldColumnName="CD_VOCE_EP" newColumnName="CD_VOCE_ANA"/>
+    </changeSet>
+    <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_04">
+        <addPrimaryKey tableName="MOVIMENTO_COAN"
+                       columnNames="CD_CDS,ESERCIZIO,CD_UNITA_ORGANIZZATIVA,PG_SCRITTURA,CD_VOCE_ANA,PG_MOVIMENTO,SEZIONE,TI_ISTITUZ_COMMERC"
+                       constraintName="MOVIMENTO_COAN_PKEY"/>
+    </changeSet>
+    <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_05">
+        <addForeignKeyConstraint baseTableName="MOVIMENTO_COAN" baseColumnNames="ESERCIZIO, CD_VOCE_ANA"
+                                 constraintName="FK_MOVIMENTO_COAN02" 
+                                 referencedTableName="VOCE_ANALITICA"
+                                 referencedColumnNames="ESERCIZIO, CD_VOCE_ANA"/>
+    </changeSet>
+    <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_06">
+        <dropIndex indexName="FX_MOVIMENTO_COAN02" tableName="MOVIMENTO_COAN"/>
+    </changeSet>
+    <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_07">
+        <createIndex indexName="FX_MOVIMENTO_COAN02" tableName="MOVIMENTO_COAN">
+            <column name="ESERCIZIO"/>
+            <column name="CD_VOCE_ANA"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

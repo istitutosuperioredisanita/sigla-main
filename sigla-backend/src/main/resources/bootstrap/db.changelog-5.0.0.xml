@@ -6175,4 +6175,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_column_ass_la_ribalt_plur.xml"/>
     <!-- Autore : VALENTINA TOMADA - aggiunte FK a tabella ass_la_ribalt_pluriennali -->
     <include file="bootstrap/add_fk_ass_la_ribalt_plur.xml"/>
+    <!-- Autore : RAFFAELE PAGANO - modifica tabella movimento coan-->
+    <include file="bootstrap/modify_table_movimento_coan.xml"/>
+    <include file="bootstrap/modify_table_saldo_coan.xml"/>
 </databaseChangeLog>

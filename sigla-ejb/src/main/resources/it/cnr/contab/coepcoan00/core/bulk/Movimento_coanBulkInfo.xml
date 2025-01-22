@@ -98,8 +98,8 @@
 		label="Importo"
 		nullable="false"/>
 	<fieldProperty
-		name="cd_voce_ep"
-		property="conto.cd_voce_ep"
+		name="cd_voce_ana"
+		property="voceAnalitica.cd_voce_ana"
 		maxLength="45"
 		inputSize="8"
 		inputType="TEXT"
@@ -110,16 +110,16 @@
 		caseSensitiveSearch="false"
 		nullable="false"/>
 	<fieldProperty
-		name="ds_voce_ep"
-		property="conto.ds_voce_ep"
+		name="ds_voce_ana"
+		property="voceAnalitica.ds_voce_ana"
 		maxLength="45"
 		inputSize="40"
 		inputType="ROTEXT"
 		label="Descrizione"
 		caseSensitiveSearch="false" />
 	<fieldProperty
-		name="find_voce_ep"
-		property="conto"
+		name="find_voce_ana"
+		property="voceAnalitica"
 		inputType="SEARCHTOOL"
 		enabledOnSearch="true"
 		label="Conto"
@@ -261,11 +261,11 @@
 	<formFieldProperty
 		name="cd_centro_responsabilita" />
 	<formFieldProperty
-		name="cd_voce_ep" />
+		name="cd_voce_ana" />
 	<formFieldProperty
-		name="ds_voce_ep" />
+		name="ds_voce_ana" />
 	<formFieldProperty
-		name="find_voce_ep" />
+		name="find_voce_ana" />
 	<formFieldProperty
 		name="ds_movimento" />
 	<formFieldProperty
@@ -298,7 +298,7 @@
 	<columnFieldProperty
 		name="im_movimento" />
 	<columnFieldProperty
-		name="cd_voce_ep" />
+		name="cd_voce_ana" />
 	<columnFieldProperty
 		name="cd_unita_organizzativa" />
 	<columnFieldProperty
@@ -311,7 +311,7 @@
 	<columnSet
 		name="latt">
 		<columnFieldProperty
-			name="cd_voce_ep" />
+			name="cd_voce_ana" />
 		<columnFieldProperty
 			name="sezione" />
 		<columnFieldProperty
@@ -340,7 +340,7 @@
 	<findFieldProperty
 		name="cd_terzo" />
 	<findFieldProperty
-		name="cd_voce_ep" />
+		name="cd_voce_ana" />
 	<findFieldProperty
 		name="cd_centro_responsabilita" />
 	<findFieldProperty

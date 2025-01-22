@@ -34,11 +34,11 @@
 			columnName="CD_UNITA_ORGANIZZATIVA"
 			propertyName="scrittura.uo.cd_unita_organizzativa" />			
 		<columnMapping
-			columnName="CD_VOCE_EP"
-			propertyName="conto.cd_voce_ep"/>
+			columnName="CD_VOCE_ANA"
+			propertyName="voceAnalitica.cd_voce_ana"/>
 		<columnMapping
 			columnName="ESERCIZIO"
-			propertyName="conto.esercizio"
+			propertyName="voceAnalitica.esercizio"
 			fetchOnly="true"/>
 		<columnMapping
 			columnName="CD_TERZO"
@@ -60,7 +60,7 @@
 		name="scrittura" 
 		partOfOid="true"/>
 	<persistentProperty
-		name="conto" />
+		name="voceAnalitica" />
 	<persistentProperty
 		name="latt" />
 	<persistentProperty
