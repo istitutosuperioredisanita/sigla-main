@@ -223,6 +223,11 @@
                 sqlTypeName="TIMESTAMP"
                 columnSize="7"/>
         <columnMapping
+                columnName="DT_FATTURA_FORNITORE"
+                propertyName="dt_fattura_fornitore"
+                sqlTypeName="TIMESTAMP"
+                columnSize="7"/>
+        <columnMapping
                 columnName="STATO_LIQUIDAZIONE"
                 propertyName="stato_liquidazione"
                 sqlTypeName="VARCHAR"
@@ -303,6 +308,8 @@
             name="nr_fattura_for_pag" />
     <persistentProperty
             name="dt_em_pag" />
+    <persistentProperty
+            name="dt_fattura_fornitore" />
     <persistentProperty
             name="stato_liquidazione" />
 

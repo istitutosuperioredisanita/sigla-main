@@ -52,6 +52,7 @@ public class PartitarioBulk extends Movimento_cogeBulk {
     private String nr_fattura_for_pag;
     private Timestamp dt_em_pag;
     private String stato_liquidazione;
+    private Timestamp dt_fattura_fornitore;
 
     private java.math.BigDecimal differenza;
 
@@ -184,5 +185,13 @@ public class PartitarioBulk extends Movimento_cogeBulk {
 
     public void setStato_liquidazione(String stato_liquidazione) {
         this.stato_liquidazione = stato_liquidazione;
+    }
+
+    public Timestamp getDt_fattura_fornitore() {
+        return dt_fattura_fornitore;
+    }
+
+    public void setDt_fattura_fornitore(Timestamp dt_fattura_fornitore) {
+        this.dt_fattura_fornitore = dt_fattura_fornitore;
     }
 }

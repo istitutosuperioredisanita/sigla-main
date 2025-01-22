@@ -85,10 +85,15 @@
 				name="nr_fattura_for_pag"
 				property="nr_fattura_for_pag"/>
 		<columnFieldProperty
-				label="Data. Fattura/Pagamento/Incasso"
+				label="Data Emis. Fattura/Pagamento/Incasso"
 				formatName="date_short"
 				name="dt_em_pag"
 				property="dt_em_pag"/>
+		<columnFieldProperty
+				label="Data Fattura Fornitore"
+				formatName="date_short"
+				name="dt_fattura_fornitore"
+				property="dt_fattura_fornitore"/>
 		<columnFieldProperty
 				label="Stato Liq."
 				inputType="SELECT"
