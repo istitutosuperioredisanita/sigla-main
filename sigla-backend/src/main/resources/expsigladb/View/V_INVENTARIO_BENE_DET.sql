@@ -1,7 +1,8 @@
 --------------------------------------------------------
 --  DDL for View V_INVENTARIO_BENE_DET
 --------------------------------------------------------
-  CREATE OR REPLACE FORCE EDITIONABLE VIEW "V_INVENTARIO_BENE_DET" ("TIPORECORD", "ESERCIZIO_CARICO_BENE", "PG_INVENTARIO", "NR_INVENTARIO","PROGRESSIVO", "ETICHETTA", "FL_MIGRATO", "CD_CATEGORIA_GRUPPO", "VALORE_INIZIALE", "VALORE_AMMORTIZZATO","IMPONIBILE_AMMORTAMENTO" ,"VARIAZIONE_PIU", "VARIAZIONE_MENO", "ESERCIZIO_BUONO_CARICO", "INCREMENTO_VALORE", "DECREMENTO_VALORE", "PG_BUONO_C_S", "QUOTA_AMMO_BENE_ALIENATO", "ESERCIZIO_AMMORTANENTO", "QUOTA_AMMORTAMENTO","STORNO","PIANO_AMM_BENE_MIGRATO") AS
+
+  CREATE OR REPLACE FORCE EDITIONABLE VIEW "V_INVENTARIO_BENE_DET" ("TIPORECORD", "ESERCIZIO_CARICO_BENE", "PG_INVENTARIO", "NR_INVENTARIO", "PROGRESSIVO", "ETICHETTA", "FL_MIGRATO", "TI_AMMORTAMENTO", "CD_CATEGORIA_GRUPPO", "VALORE_INIZIALE", "VALORE_AMMORTIZZATO", "IMPONIBILE_AMMORTAMENTO", "VARIAZIONE_PIU", "VARIAZIONE_MENO", "ESERCIZIO_BUONO_CARICO", "INCREMENTO_VALORE", "DECREMENTO_VALORE", "PG_BUONO_C_S", "QUOTA_AMMO_BENE_ALIENATO", "ESERCIZIO_AMMORTANENTO", "QUOTA_AMMORTAMENTO", "STORNO", "PIANO_AMM_BENE_MIGRATO") AS
   SELECT
 --
 -- Date: 22/03/2024
@@ -20,6 +21,7 @@
                       a.progressivo,
                       a.etichetta,
                        a.fl_migrato,
+                       a.TI_AMMORTAMENTO,
                       a.cd_categoria_gruppo,
                       a.valore_iniziale,
                       a.valore_ammortizzato,
@@ -44,6 +46,7 @@
                       a.progressivo,
                       a.etichetta,
                        a.fl_migrato,
+                       a.TI_AMMORTAMENTO,
                       a.cd_categoria_gruppo,
                       0 valore_iniziale ,
                       0 valore_ammortizzato,
@@ -79,6 +82,7 @@
                       a.progressivo,
                       a.etichetta,
                        a.fl_migrato,
+                       a.TI_AMMORTAMENTO,
                       a.cd_categoria_gruppo,
                       0 valore_iniziale ,
                       0 valore_ammortizzato,
@@ -114,6 +118,7 @@
                       a.progressivo,
                       a.etichetta,
                        a.fl_migrato,
+                       a.TI_AMMORTAMENTO,
                       a.cd_categoria_gruppo,
                       0 valore_iniziale ,
                       0 valore_ammortizzato,
@@ -132,4 +137,4 @@
               from inventario_beni a
                       inner join ammortamento_bene_inv i on
                       a.pg_inventario=i.pg_inventario
-                      and a.nr_inventario=i.nr_inventario
+                      and a.nr_inventario=i.nr_inventario;
