@@ -23,12 +23,9 @@ import java.util.*;
 import it.cnr.contab.config00.latt.bulk.*;
 import it.cnr.contab.anagraf00.core.bulk.*;
 import it.cnr.jada.bulk.*;
-import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
 
 public class Movimento_coanBulk extends Movimento_coanBase {
-	protected ContoBulk conto = new ContoBulk();
+	protected Voce_analiticaBulk voceAnalitica = new Voce_analiticaBulk();
 	protected WorkpackageBulk latt = new WorkpackageBulk();
 	protected Scrittura_analiticaBulk scrittura = new Scrittura_analiticaBulk();
 	public java.lang.Long pgScritturaAnnullata;	
@@ -44,8 +41,9 @@ public class Movimento_coanBulk extends Movimento_coanBase {
 		sezioneKeys = new Hashtable();
 		sezioneKeys.put(SEZIONE_DARE,	"Dare");
 		sezioneKeys.put(SEZIONE_AVERE,	"Avere");
-	};
-	public final static Dictionary naturaContoKeys = Voce_epBulk.natura_voce_Keys;	
+	}
+
+    public final static Dictionary naturaContoKeys = Voce_epBulk.natura_voce_Keys;
 
 
 	public final static String STATO_DEFINITIVO = "D";
@@ -130,11 +128,11 @@ public java.lang.String getCd_unita_organizzativa() {
 		return null;
 	return uo.getCd_unita_organizzativa();
 }
-public java.lang.String getCd_voce_ep() {
-	it.cnr.contab.config00.pdcep.bulk.ContoBulk conto = this.getConto();
-	if (conto == null)
+public java.lang.String getCd_voce_ana() {
+	Voce_analiticaBulk contoAnalitico = this.getVoceAnalitica();
+	if (contoAnalitico == null)
 		return null;
-	return conto.getCd_voce_ep();
+	return contoAnalitico.getCd_voce_ep();
 }
 public CdsBulk getCds() {
 	it.cnr.contab.coepcoan00.core.bulk.Scrittura_analiticaBulk scrittura = this.getScrittura();
@@ -142,11 +140,8 @@ public CdsBulk getCds() {
 		return null;
 	return scrittura.getCds();
 }
-/**
- * @return it.cnr.contab.config00.pdcep.bulk.ContoBulk
- */
-public it.cnr.contab.config00.pdcep.bulk.ContoBulk getConto() {
-	return conto;
+public Voce_analiticaBulk getVoceAnalitica() {
+	return voceAnalitica;
 }
 public String getDs_terzo() {
 	if ( getTerzo() != null )
@@ -226,8 +221,8 @@ public OggettoBulk initializeForSearch(it.cnr.jada.util.action.CRUDBP bp,it.cnr.
 	return this;
 }
 public boolean isROConto() {
-	return 	getConto() != null &&
-	       getConto().getCrudStatus() != UNDEFINED;	
+	return 	getVoceAnalitica() != null &&
+			getVoceAnalitica().getCrudStatus() != UNDEFINED;
 
 }
 public boolean isROLatt() {
@@ -267,17 +262,17 @@ public void setCd_terzo(java.lang.Integer cd_terzo) {
 public void setCd_unita_organizzativa(java.lang.String cd_unita_organizzativa) {
 	this.getScrittura().getUo().setCd_unita_organizzativa(cd_unita_organizzativa);
 }
-public void setCd_voce_ep(java.lang.String cd_voce_ep) {
-	this.getConto().setCd_voce_ep(cd_voce_ep);
+public void setCd_voce_ana(java.lang.String cd_voce_ana) {
+	this.getVoceAnalitica().setCd_voce_ep(cd_voce_ana);
 }
 public void setCds(CdsBulk cds) {
 	this.getScrittura().setCds(cds);
 }
 /**
- * @param newConto it.cnr.contab.config00.pdcep.bulk.ContoBulk
+ * @param newContoAnalitico it.cnr.contab.config00.pdcep.bulk.ContoBulk
  */
-public void setConto(it.cnr.contab.config00.pdcep.bulk.ContoBulk newConto) {
-	conto = newConto;
+public void setVoceAnalitica(Voce_analiticaBulk newContoAnalitico) {
+	voceAnalitica = newContoAnalitico;
 }
 public void setEsercizio(java.lang.Integer esercizio) {
 	this.getScrittura().setEsercizio(esercizio);
@@ -323,8 +318,8 @@ public void setTerzo(it.cnr.contab.anagraf00.core.bulk.TerzoBulk newTerzo) {
 public void validate() throws ValidationException 
 {
 	// Controllo sul campo CONTO
-	if ( getCd_voce_ep() == null )
-		throw new ValidationException( "E' necessario selezionare il Conto per ogni movimento inserito");
+	if ( getCd_voce_ana() == null )
+		throw new ValidationException( "E' necessario selezionare il Conto Analitico per ogni movimento inserito");
 		
 	// Controllo sul campo IMPORTO
 	if ( getIm_movimento() == null )

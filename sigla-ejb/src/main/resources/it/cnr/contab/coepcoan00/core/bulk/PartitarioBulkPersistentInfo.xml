@@ -43,6 +43,12 @@
                 columnSize="7"
                 fetchOnly="true"/>
         <columnMapping
+                columnName="DT_CANCELLAZIONE"
+                propertyName="scrittura.dt_cancellazione"
+                sqlTypeName="TIMESTAMP"
+                columnSize="7"
+                fetchOnly="true"/>
+        <columnMapping
                 columnName="DS_SCRITTURA"
                 propertyName="scrittura.ds_scrittura"
                 fetchOnly="true"/>
@@ -115,11 +121,20 @@
         <columnMapping
                 columnName="CD_TERZO"
                 propertyName="terzo.cd_terzo"/>
+        <columnMapping
+                columnName="TERZO.DENOMINAZIONE_SEDE"
+                propertyName="terzo.denominazione_sede"/>
 
 
         <columnMapping
                 columnName="DT_CONTABILIZZAZIONE"
                 propertyName="scrittura.dt_contabilizzazione"
+                sqlTypeName="TIMESTAMP"
+                columnSize="7"
+                fetchOnly="true"/>
+        <columnMapping
+                columnName="DT_CANCELLAZIONE"
+                propertyName="scrittura.dt_cancellazione"
                 sqlTypeName="TIMESTAMP"
                 columnSize="7"
                 fetchOnly="true"/>
@@ -197,6 +212,27 @@
                 columnSize="15"
                 columnScale="2"/>
 
+        <columnMapping
+                columnName="NR_FATTURA_FOR_PAG"
+                propertyName="nr_fattura_for_pag"
+                sqlTypeName="VARCHAR"
+                columnSize="20"/>
+        <columnMapping
+                columnName="DT_EM_PAG"
+                propertyName="dt_em_pag"
+                sqlTypeName="TIMESTAMP"
+                columnSize="7"/>
+        <columnMapping
+                columnName="DT_FATTURA_FORNITORE"
+                propertyName="dt_fattura_fornitore"
+                sqlTypeName="TIMESTAMP"
+                columnSize="7"/>
+        <columnMapping
+                columnName="STATO_LIQUIDAZIONE"
+                propertyName="stato_liquidazione"
+                sqlTypeName="VARCHAR"
+                columnSize="20"/>
+
         <!-- FETCH Documento Coge -->
         <columnMapping
                 columnName="CD_CDS_DOCUMENTO"
@@ -268,4 +304,13 @@
             name="im_movimento_avere" />
     <persistentProperty
             name="differenza" />
+    <persistentProperty
+            name="nr_fattura_for_pag" />
+    <persistentProperty
+            name="dt_em_pag" />
+    <persistentProperty
+            name="dt_fattura_fornitore" />
+    <persistentProperty
+            name="stato_liquidazione" />
+
 </SQLPersistentInfo>

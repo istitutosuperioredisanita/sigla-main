@@ -63,4 +63,8 @@ public interface IDocumentoCogeBulk extends KeyedPersistent{
     int primaryKeyHashCode();
 
     java.sql.Timestamp getDtGenerazioneScrittura();
+
+    default Boolean isDocumentoStorno() {
+        return Boolean.FALSE;
+    }
 }

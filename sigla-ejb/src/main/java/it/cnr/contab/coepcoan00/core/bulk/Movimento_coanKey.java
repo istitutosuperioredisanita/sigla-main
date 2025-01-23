@@ -35,8 +35,8 @@ public class Movimento_coanKey extends OggettoBulk implements KeyedPersistent {
 	// PG_MOVIMENTO DECIMAL(10,0) NOT NULL (PK)
 	private java.lang.Long pg_movimento;
 
-	// CD_VOCE_EP VARCHAR(45) NOT NULL (PK)
-	private java.lang.String cd_voce_ep;
+	// CD_VOCE_ANA VARCHAR(45) NOT NULL (PK)
+	private java.lang.String cd_voce_ana;
 
 	// SEZIONE VARCHAR(1) NOT NULL (PK)
 	private java.lang.String sezione;
@@ -47,11 +47,11 @@ public class Movimento_coanKey extends OggettoBulk implements KeyedPersistent {
 public Movimento_coanKey() {
 	super();
 }
-public Movimento_coanKey(java.lang.String cd_cds,java.lang.String cd_unita_organizzativa,java.lang.String cd_voce_ep,java.lang.Integer esercizio,java.lang.Long pg_movimento,java.lang.Long pg_scrittura,java.lang.String sezione) {
+public Movimento_coanKey(java.lang.String cd_cds,java.lang.String cd_unita_organizzativa,java.lang.String cd_voce_ana,java.lang.Integer esercizio,java.lang.Long pg_movimento,java.lang.Long pg_scrittura,java.lang.String sezione) {
 	super();
 	this.cd_cds = cd_cds;
 	this.cd_unita_organizzativa = cd_unita_organizzativa;
-	this.cd_voce_ep = cd_voce_ep;
+	this.cd_voce_ana = cd_voce_ana;
 	this.esercizio = esercizio;
 	this.pg_movimento = pg_movimento;
 	this.pg_scrittura = pg_scrittura;
@@ -63,7 +63,7 @@ public boolean equalsByPrimaryKey(Object o) {
 	Movimento_coanKey k = (Movimento_coanKey)o;
 	if(!compareKey(getCd_cds(),k.getCd_cds())) return false;
 	if(!compareKey(getCd_unita_organizzativa(),k.getCd_unita_organizzativa())) return false;
-	if(!compareKey(getCd_voce_ep(),k.getCd_voce_ep())) return false;
+	if(!compareKey(getCd_voce_ana(),k.getCd_voce_ana())) return false;
 	if(!compareKey(getEsercizio(),k.getEsercizio())) return false;
 	if(!compareKey(getPg_movimento(),k.getPg_movimento())) return false;
 	if(!compareKey(getPg_scrittura(),k.getPg_scrittura())) return false;
@@ -85,8 +85,8 @@ public java.lang.String getCd_unita_organizzativa() {
 /* 
  * Getter dell'attributo cd_voce_ep
  */
-public java.lang.String getCd_voce_ep() {
-	return cd_voce_ep;
+public java.lang.String getCd_voce_ana() {
+	return cd_voce_ana;
 }
 /* 
  * Getter dell'attributo esercizio
@@ -116,7 +116,7 @@ public int primaryKeyHashCode() {
 	return
 		calculateKeyHashCode(getCd_cds())+
 		calculateKeyHashCode(getCd_unita_organizzativa())+
-		calculateKeyHashCode(getCd_voce_ep())+
+		calculateKeyHashCode(getCd_voce_ana())+
 		calculateKeyHashCode(getEsercizio())+
 		calculateKeyHashCode(getPg_movimento())+
 		calculateKeyHashCode(getPg_scrittura())+
@@ -135,10 +135,10 @@ public void setCd_unita_organizzativa(java.lang.String cd_unita_organizzativa) {
 	this.cd_unita_organizzativa = cd_unita_organizzativa;
 }
 /* 
- * Setter dell'attributo cd_voce_ep
+ * Setter dell'attributo cd_voce_ana
  */
-public void setCd_voce_ep(java.lang.String cd_voce_ep) {
-	this.cd_voce_ep = cd_voce_ep;
+public void setCd_voce_ana(java.lang.String cd_voce_ana) {
+	this.cd_voce_ana = cd_voce_ana;
 }
 /* 
  * Setter dell'attributo esercizio

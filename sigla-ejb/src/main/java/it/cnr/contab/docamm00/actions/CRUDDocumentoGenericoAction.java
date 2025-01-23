@@ -66,6 +66,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 public class CRUDDocumentoGenericoAction extends EconomicaAction {
@@ -2203,9 +2204,19 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
      * @param context L'ActionContext della richiesta
      * @return Il Forward alla pagina di risposta
      */
-    public Forward doRemoveFromCRUDMain_Accertamenti_DettaglioAccertamenti(ActionContext context) {
+    public Forward doRemoveFromCRUDMain_Accertamenti_DettaglioAccertamenti(ActionContext context) throws ValidationException {
 
         CRUDDocumentoGenericoAttivoBP bp = (CRUDDocumentoGenericoAttivoBP) context.getBusinessProcess();
+        Boolean isDocumentoStorno = Optional.ofNullable(bp.getModel())
+                .filter(Documento_genericoBulk.class::isInstance)
+                .map(Documento_genericoBulk.class::cast)
+                .map(Documento_genericoBulk::isDocumentoStorno)
+                .orElse(Boolean.FALSE);
+        List<Documento_generico_rigaBulk> details = bp.getDettaglioAccertamentoController().getDetails();
+        Boolean isRigaStornata = details.stream().anyMatch(Documento_generico_rigaBulk::isRigaStornata);
+        if (isDocumentoStorno || isRigaStornata) {
+            throw new ValidationException("Non è possibile eliminare la riga in quanto legata ad uno storno!");
+        }
         try {
             it.cnr.jada.util.action.Selection selection = bp.getDettaglioAccertamentoController().getSelection();
             if (selection.isEmpty())
@@ -4012,10 +4023,7 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
                 .map(Documento_generico_rigaBulk::getDocumento_generico);
         if (documentoGenericoRigaBulk.isPresent()) {
             try {
-                SimpleCRUDBP nbp = (SimpleCRUDBP) actionContext.createBusinessProcess(
-                        "CRUDGenericoAttivoBP",
-                        new Object[]{"M"}
-                );
+                SimpleCRUDBP nbp = (SimpleCRUDBP) actionContext.createBusinessProcess(bp.getName(), new Object[]{"M"});
                 nbp = (SimpleCRUDBP) actionContext.addBusinessProcess(nbp);
                 nbp.edit(actionContext, documentoGenericoRigaBulk.get());
                 return nbp;
