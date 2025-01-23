@@ -101,6 +101,13 @@
 				name="stato_liquidazione"
 				property="stato_liquidazione"/>
 		<columnFieldProperty
+				name="identificativoSdi"
+				property="identificativoSdi"
+				maxLength="22"
+				inputSize="22"
+				inputType="TEXT"
+				label="Identificativo SDI"/>
+		<columnFieldProperty
 				headerLabel="Terzo"
 				label="Cod."
 				name="cd_terzo"
@@ -153,6 +160,7 @@
 		<findFieldProperty name="cd_uo_documento" label="Unità Organizzativa" inputType="TEXT"/>
 		<findFieldProperty name="pg_numero_documento" label="Numero Partita" inputType="TEXT"/>
 		<findFieldProperty name="cd_contributo_ritenuta" inputType="TEXT"/>
+		<findFieldProperty name="identificativoSdi" inputType="TEXT"/>
 	</freeSearchSet>
 
 </bulkInfo>
