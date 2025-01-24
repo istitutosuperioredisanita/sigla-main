@@ -36,6 +36,7 @@
     </changeSet>
 
     <changeSet author="raffaele.pagano" id="add_column_fl_versamento_on_tipo_contributo_ritenuta_03">
-        <addNotNullConstraint columnName="fl_versamento" tableName="tipo_contributo_ritenuta"/>
+        <validCheckSum>7:55acb34c42de6c61ae8c795aedf1fe54</validCheckSum>
+        <addNotNullConstraint columnName="fl_versamento" tableName="tipo_contributo_ritenuta" columnDataType="CHAR(1)"/>
     </changeSet>
 </databaseChangeLog>

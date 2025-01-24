@@ -53,6 +53,15 @@
         <dropDefaultValue tableName="utente_unita_ruolo" columnName="dacr"/>
         <dropDefaultValue tableName="utente_unita_ruolo" columnName="duva"/>
     </changeSet>
+    <changeSet author="test" id="create-pdg-missione">
+        <addDefaultValue tableName="pdg_missione" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="pdg_missione" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/pdg_missione.csv" quotchar="&quot;" separator="," tableName="pdg_missione"/>
+
+        <dropDefaultValue tableName="pdg_missione" columnName="dacr"/>
+        <dropDefaultValue tableName="pdg_missione" columnName="duva"/>
+    </changeSet>
     <changeSet author="test" id="create-tipo-progetto">
         <addDefaultValue tableName="tipo_progetto" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="tipo_progetto" columnName="duva" defaultValueDate="${now}"/>
@@ -63,5 +72,285 @@
         <dropDefaultValue tableName="tipo_progetto" columnName="dacr"/>
         <dropDefaultValue tableName="tipo_progetto" columnName="duva"/>
     </changeSet>
+    <changeSet author="test" id="create-progetto-other-field">
+        <addDefaultValue tableName="progetto_other_field" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="progetto_other_field" columnName="duva" defaultValueDate="${now}"/>
 
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/progetto_other_field.csv" quotchar="&quot;" separator="," tableName="progetto_other_field">
+        </loadData>
+
+        <dropDefaultValue tableName="progetto_other_field" columnName="dacr"/>
+        <dropDefaultValue tableName="progetto_other_field" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-progetto-sip">
+        <addDefaultValue tableName="progetto_sip" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="progetto_sip" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/progetto_sip.csv" quotchar="&quot;" separator="," tableName="progetto_sip"/>
+
+        <dropDefaultValue tableName="progetto_sip" columnName="dacr"/>
+        <dropDefaultValue tableName="progetto_sip" columnName="duva"/>
+        <sql>
+            select CNRSEQ00_PG_PROGETTO.nextval from dual;
+        </sql>
+        <sql>
+            select CNRSEQ00_PG_PROGETTO.nextval from dual;
+        </sql>
+    </changeSet>
+    <changeSet author="test" id="create-linea-attivita">
+        <addDefaultValue tableName="linea_attivita" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="linea_attivita" columnName="duva" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="linea_attivita" columnName="esercizio_inizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/linea_attivita.csv" quotchar="&quot;" separator="," tableName="linea_attivita">
+        </loadData>
+
+        <dropDefaultValue tableName="linea_attivita" columnName="dacr"/>
+        <dropDefaultValue tableName="linea_attivita" columnName="duva"/>
+        <dropDefaultValue tableName="linea_attivita" columnName="esercizio_inizio"/>
+    </changeSet>
+    <changeSet author="test" id="create-ass-linea-attivita-esercizio">
+        <addDefaultValue tableName="ass_linea_attivita_esercizio" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="ass_linea_attivita_esercizio" columnName="duva" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="ass_linea_attivita_esercizio" columnName="esercizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/ass_linea_attivita_esercizio.csv" quotchar="&quot;" separator="," tableName="ass_linea_attivita_esercizio"/>
+
+        <dropDefaultValue tableName="ass_linea_attivita_esercizio" columnName="dacr"/>
+        <dropDefaultValue tableName="ass_linea_attivita_esercizio" columnName="duva"/>
+        <dropDefaultValue tableName="ass_linea_attivita_esercizio" columnName="esercizio"/>
+    </changeSet>
+    <changeSet author="test" id="create-pdg-modulo">
+        <addDefaultValue tableName="pdg_modulo" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="pdg_modulo" columnName="duva" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="pdg_modulo" columnName="esercizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/pdg_modulo.csv" quotchar="&quot;" separator="," tableName="pdg_modulo"/>
+
+        <dropDefaultValue tableName="pdg_modulo" columnName="dacr"/>
+        <dropDefaultValue tableName="pdg_modulo" columnName="duva"/>
+        <dropDefaultValue tableName="pdg_modulo" columnName="esercizio"/>
+    </changeSet>
+    <changeSet author="test" id="create-pdg-modulo-costi">
+        <addDefaultValue tableName="pdg_modulo_costi" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="pdg_modulo_costi" columnName="duva" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="pdg_modulo_costi" columnName="esercizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/pdg_modulo_costi.csv" quotchar="&quot;" separator="," tableName="pdg_modulo_costi"/>
+
+        <dropDefaultValue tableName="pdg_modulo_costi" columnName="dacr"/>
+        <dropDefaultValue tableName="pdg_modulo_costi" columnName="duva"/>
+        <dropDefaultValue tableName="pdg_modulo_costi" columnName="esercizio"/>
+    </changeSet>
+    <changeSet author="test" id="create-pdg-modulo-entrate">
+        <addDefaultValue tableName="pdg_modulo_entrate" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="pdg_modulo_entrate" columnName="duva" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="pdg_modulo_entrate" columnName="esercizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+        <addDefaultValue tableName="pdg_modulo_entrate" columnName="esercizio_inizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+        <addDefaultValue tableName="pdg_modulo_entrate" columnName="esercizio_fine" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/pdg_modulo_entrate.csv" quotchar="&quot;" separator="," tableName="pdg_modulo_entrate"/>
+
+        <dropDefaultValue tableName="pdg_modulo_entrate" columnName="dacr"/>
+        <dropDefaultValue tableName="pdg_modulo_entrate" columnName="duva"/>
+        <dropDefaultValue tableName="pdg_modulo_entrate" columnName="esercizio"/>
+        <dropDefaultValue tableName="pdg_modulo_entrate" columnName="esercizio_inizio"/>
+        <dropDefaultValue tableName="pdg_modulo_entrate" columnName="esercizio_fine"/>
+    </changeSet>
+    <changeSet author="test" id="create-pdg-modulo-entrate-gest">
+        <addDefaultValue tableName="pdg_modulo_entrate_gest" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="pdg_modulo_entrate_gest" columnName="duva" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="pdg_modulo_entrate_gest" columnName="esercizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/pdg_modulo_entrate_gest.csv" quotchar="&quot;" separator="," tableName="pdg_modulo_entrate_gest"/>
+
+        <dropDefaultValue tableName="pdg_modulo_entrate_gest" columnName="dacr"/>
+        <dropDefaultValue tableName="pdg_modulo_entrate_gest" columnName="duva"/>
+        <dropDefaultValue tableName="pdg_modulo_entrate_gest" columnName="esercizio"/>
+    </changeSet>
+    <changeSet author="test" id="create-pdg-modulo-spese">
+        <addDefaultValue tableName="pdg_modulo_spese" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="pdg_modulo_spese" columnName="duva" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="pdg_modulo_spese" columnName="esercizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/pdg_modulo_spese.csv" quotchar="&quot;" separator="," tableName="pdg_modulo_spese"/>
+
+        <dropDefaultValue tableName="pdg_modulo_spese" columnName="dacr"/>
+        <dropDefaultValue tableName="pdg_modulo_spese" columnName="duva"/>
+        <dropDefaultValue tableName="pdg_modulo_spese" columnName="esercizio"/>
+    </changeSet>
+    <changeSet author="test" id="create-pdg-modulo-spese-gest">
+        <addDefaultValue tableName="pdg_modulo_spese_gest" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="pdg_modulo_spese_gest" columnName="duva" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="pdg_modulo_spese_gest" columnName="esercizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/pdg_modulo_spese_gest.csv" quotchar="&quot;" separator="," tableName="pdg_modulo_spese_gest"/>
+
+        <dropDefaultValue tableName="pdg_modulo_spese_gest" columnName="dacr"/>
+        <dropDefaultValue tableName="pdg_modulo_spese_gest" columnName="duva"/>
+        <dropDefaultValue tableName="pdg_modulo_spese_gest" columnName="esercizio"/>
+    </changeSet>
+    <changeSet author="test" id="create-pdg-esercizio">
+        <addDefaultValue tableName="pdg_esercizio" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="pdg_esercizio" columnName="duva" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="pdg_esercizio" columnName="esercizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/pdg_esercizio.csv" quotchar="&quot;" separator="," tableName="pdg_esercizio"/>
+
+        <dropDefaultValue tableName="pdg_esercizio" columnName="dacr"/>
+        <dropDefaultValue tableName="pdg_esercizio" columnName="duva"/>
+        <dropDefaultValue tableName="pdg_esercizio" columnName="esercizio"/>
+    </changeSet>
+    <changeSet author="test" id="create-saldi-stanziamenti">
+        <addDefaultValue tableName="saldi_stanziamenti" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="saldi_stanziamenti" columnName="duva" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="saldi_stanziamenti" columnName="esercizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+        <addDefaultValue tableName="saldi_stanziamenti" columnName="esercizio_res" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/saldi_stanziamenti.csv" quotchar="&quot;" separator="," tableName="saldi_stanziamenti"/>
+
+        <dropDefaultValue tableName="saldi_stanziamenti" columnName="dacr"/>
+        <dropDefaultValue tableName="saldi_stanziamenti" columnName="duva"/>
+        <dropDefaultValue tableName="saldi_stanziamenti" columnName="esercizio"/>
+        <dropDefaultValue tableName="saldi_stanziamenti" columnName="esercizio_res"/>
+    </changeSet>
+    <changeSet author="test" id="create-saldi-imp_acc">
+        <addDefaultValue tableName="saldi_imp_acc" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="saldi_imp_acc" columnName="duva" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="saldi_imp_acc" columnName="esercizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+        <addDefaultValue tableName="saldi_imp_acc" columnName="esercizio_res" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/saldi_imp_acc.csv" quotchar="&quot;" separator="," tableName="saldi_imp_acc"/>
+
+        <dropDefaultValue tableName="saldi_imp_acc" columnName="dacr"/>
+        <dropDefaultValue tableName="saldi_imp_acc" columnName="duva"/>
+        <dropDefaultValue tableName="saldi_imp_acc" columnName="esercizio"/>
+        <dropDefaultValue tableName="saldi_imp_acc" columnName="esercizio_res"/>
+    </changeSet>
+    <changeSet author="test" id="create-saldi-pag-inc">
+        <addDefaultValue tableName="saldi_pag_inc" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="saldi_pag_inc" columnName="duva" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="saldi_pag_inc" columnName="esercizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+        <addDefaultValue tableName="saldi_pag_inc" columnName="esercizio_res" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/saldi_pag_inc.csv" quotchar="&quot;" separator="," tableName="saldi_pag_inc"/>
+
+        <dropDefaultValue tableName="saldi_pag_inc" columnName="dacr"/>
+        <dropDefaultValue tableName="saldi_pag_inc" columnName="duva"/>
+        <dropDefaultValue tableName="saldi_pag_inc" columnName="esercizio"/>
+        <dropDefaultValue tableName="saldi_pag_inc" columnName="esercizio_res"/>
+    </changeSet>
+    <changeSet author="test" id="create-obbligazione">
+        <addDefaultValue tableName="obbligazione" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="obbligazione" columnName="duva" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="obbligazione" columnName="esercizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+        <addDefaultValue tableName="obbligazione" columnName="esercizio_originale" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+        <addDefaultValue tableName="obbligazione" columnName="esercizio_competenza" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/obbligazione.csv" quotchar="&quot;" separator="," tableName="obbligazione"/>
+
+        <dropDefaultValue tableName="obbligazione" columnName="dacr"/>
+        <dropDefaultValue tableName="obbligazione" columnName="duva"/>
+        <dropDefaultValue tableName="obbligazione" columnName="esercizio"/>
+        <dropDefaultValue tableName="obbligazione" columnName="esercizio_originale"/>
+        <dropDefaultValue tableName="obbligazione" columnName="esercizio_competenza"/>
+    </changeSet>
+    <changeSet author="test" id="create-obbligazione-scadenzario">
+        <addDefaultValue tableName="obbligazione_scadenzario" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="obbligazione_scadenzario" columnName="duva" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="obbligazione_scadenzario" columnName="esercizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+        <addDefaultValue tableName="obbligazione_scadenzario" columnName="esercizio_originale" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/obbligazione_scadenzario.csv" quotchar="&quot;" separator="," tableName="obbligazione_scadenzario"/>
+
+        <dropDefaultValue tableName="obbligazione_scadenzario" columnName="dacr"/>
+        <dropDefaultValue tableName="obbligazione_scadenzario" columnName="duva"/>
+        <dropDefaultValue tableName="obbligazione_scadenzario" columnName="esercizio"/>
+        <dropDefaultValue tableName="obbligazione_scadenzario" columnName="esercizio_originale"/>
+    </changeSet>
+    <changeSet author="test" id="create-obbligazione-scad-voce">
+        <addDefaultValue tableName="obbligazione_scad_voce" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="obbligazione_scad_voce" columnName="duva" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="obbligazione_scad_voce" columnName="esercizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+        <addDefaultValue tableName="obbligazione_scad_voce" columnName="esercizio_originale" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/obbligazione_scad_voce.csv" quotchar="&quot;" separator="," tableName="obbligazione_scad_voce"/>
+
+        <dropDefaultValue tableName="obbligazione_scad_voce" columnName="dacr"/>
+        <dropDefaultValue tableName="obbligazione_scad_voce" columnName="duva"/>
+        <dropDefaultValue tableName="obbligazione_scad_voce" columnName="esercizio"/>
+        <dropDefaultValue tableName="obbligazione_scad_voce" columnName="esercizio_originale"/>
+    </changeSet>
+    <changeSet author="test" id="create-documento-generico">
+        <addDefaultValue tableName="documento_generico" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="documento_generico" columnName="duva" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="documento_generico" columnName="esercizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/documento_generico.csv" quotchar="&quot;" separator="," tableName="documento_generico"/>
+
+        <dropDefaultValue tableName="documento_generico" columnName="dacr"/>
+        <dropDefaultValue tableName="documento_generico" columnName="duva"/>
+        <dropDefaultValue tableName="documento_generico" columnName="esercizio"/>
+    </changeSet>
+    <changeSet author="test" id="create-documento-generico-riga">
+        <addDefaultValue tableName="documento_generico_riga" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="documento_generico_riga" columnName="duva" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="documento_generico_riga" columnName="esercizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+        <addDefaultValue tableName="documento_generico_riga" columnName="esercizio_obbligazione" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+        <addDefaultValue tableName="documento_generico_riga" columnName="esercizio_accertamento" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+        <addDefaultValue tableName="documento_generico_riga" columnName="esercizio_ori_obbligazione" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+        <addDefaultValue tableName="documento_generico_riga" columnName="esercizio_ori_accertamento" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="liquibase/csv/documento_generico_riga.csv" quotchar="&quot;" separator="," tableName="documento_generico_riga"/>
+
+        <dropDefaultValue tableName="documento_generico_riga" columnName="dacr"/>
+        <dropDefaultValue tableName="documento_generico_riga" columnName="duva"/>
+        <dropDefaultValue tableName="documento_generico_riga" columnName="esercizio"/>
+        <dropDefaultValue tableName="documento_generico_riga" columnName="esercizio_obbligazione"/>
+        <dropDefaultValue tableName="documento_generico_riga" columnName="esercizio_accertamento"/>
+        <dropDefaultValue tableName="documento_generico_riga" columnName="esercizio_ori_obbligazione"/>
+        <dropDefaultValue tableName="documento_generico_riga" columnName="esercizio_ori_accertamento"/>
+    </changeSet>
+    <changeSet author="test" id="create-mandato">
+        <addDefaultValue tableName="mandato" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="mandato" columnName="duva" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="mandato" columnName="esercizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+
+        <loadData file="liquibase/csv/mandato.csv" tableName="mandato"/>
+
+        <dropDefaultValue tableName="mandato" columnName="dacr"/>
+        <dropDefaultValue tableName="mandato" columnName="duva"/>
+        <dropDefaultValue tableName="mandato" columnName="esercizio"/>
+    </changeSet>
+    <changeSet author="test" id="create-mandato-riga">
+        <addDefaultValue tableName="mandato_riga" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="mandato_riga" columnName="duva" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="mandato_riga" columnName="esercizio" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+        <addDefaultValue tableName="mandato_riga" columnName="esercizio_doc_amm" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+        <addDefaultValue tableName="mandato_riga" columnName="esercizio_obbligazione" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+        <addDefaultValue tableName="mandato_riga" columnName="esercizio_ori_obbligazione" defaultValueDate="${liquibase.bootstrap.esercizio}"/>
+
+        <loadData file="liquibase/csv/mandato_riga.csv" tableName="mandato_riga"/>
+
+        <dropDefaultValue tableName="mandato_riga" columnName="dacr"/>
+        <dropDefaultValue tableName="mandato_riga" columnName="duva"/>
+        <dropDefaultValue tableName="mandato_riga" columnName="esercizio"/>
+        <dropDefaultValue tableName="mandato_riga" columnName="esercizio_doc_amm"/>
+        <dropDefaultValue tableName="mandato_riga" columnName="esercizio_obbligazione"/>
+        <dropDefaultValue tableName="mandato_riga" columnName="esercizio_ori_obbligazione"/>
+    </changeSet>
+    <changeSet author="test" id="sql-attivazione-economica">
+        <sql>
+            update configurazione_cnr
+            set val01='CONTO'
+            where cd_chiave_primaria='ECONOMICO_PATRIMONIALE'
+            and cd_chiave_secondaria='ASSOCIAZIONE_CONTI';
+        </sql>
+        <sql>
+            update configurazione_cnr
+            set val01='PARALLELA',val02='Y'
+            where cd_chiave_primaria='ECONOMICO_PATRIMONIALE'
+            and cd_chiave_secondaria='TIPO_ECONOMICO_PATRIMONIALE';
+        </sql>
+    </changeSet>
 </databaseChangeLog>

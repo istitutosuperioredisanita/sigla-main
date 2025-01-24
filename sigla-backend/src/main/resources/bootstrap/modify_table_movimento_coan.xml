@@ -21,12 +21,14 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
                                        http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
-
     <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_01">
         <dropPrimaryKey tableName="MOVIMENTO_COAN" constraintName="MOVIMENTO_COAN_PKEY"/>
     </changeSet>
     <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_02">
         <dropForeignKeyConstraint baseTableName="MOVIMENTO_COAN" constraintName="FK_MOVIMENTO_COAN02"/>
+    </changeSet>
+    <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_06">
+        <dropIndex indexName="FX_MOVIMENTO_COAN02" tableName="MOVIMENTO_COAN"/>
     </changeSet>
     <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_03">
         <renameColumn tableName="MOVIMENTO_COAN" oldColumnName="CD_VOCE_EP" newColumnName="CD_VOCE_ANA"/>
@@ -41,9 +43,6 @@
                                  constraintName="FK_MOVIMENTO_COAN02" 
                                  referencedTableName="VOCE_ANALITICA"
                                  referencedColumnNames="ESERCIZIO, CD_VOCE_ANA"/>
-    </changeSet>
-    <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_06">
-        <dropIndex indexName="FX_MOVIMENTO_COAN02" tableName="MOVIMENTO_COAN"/>
     </changeSet>
     <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_07">
         <createIndex indexName="FX_MOVIMENTO_COAN02" tableName="MOVIMENTO_COAN">
