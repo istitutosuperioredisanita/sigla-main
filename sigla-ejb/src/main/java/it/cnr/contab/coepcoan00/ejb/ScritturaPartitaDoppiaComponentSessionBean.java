@@ -21,6 +21,8 @@ import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaComponent;
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotEnabledException;
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotRequiredException;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
+import it.cnr.contab.coepcoan00.core.bulk.Scrittura_analiticaBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
@@ -98,13 +100,51 @@ public class ScritturaPartitaDoppiaComponentSessionBean extends it.cnr.jada.ejb.
 		}
 	}
 
-    public Scrittura_partita_doppiaBulk proposeScritturaPartitaDoppiaAnnullo(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, RemoteException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
+    public Scrittura_partita_doppiaBulk proposeScritturaPartitaDoppiaAnnullo(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, ScritturaPartitaDoppiaNotEnabledException {
         pre_component_invocation(param0, componentObj);
         try {
             Scrittura_partita_doppiaBulk result = ((ScritturaPartitaDoppiaComponent) componentObj).proposeScritturaPartitaDoppiaAnnullo(param0, param1);
             component_invocation_succes(param0, componentObj);
             return result;
         } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(param0, componentObj);
+            throw e;
+        } catch (it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(param0, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(param0, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(param0, componentObj, e);
+        }
+    }
+
+    public Scrittura_analiticaBulk proposeScritturaAnalitica(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
+        pre_component_invocation(param0, componentObj);
+        try {
+            Scrittura_analiticaBulk result = ((ScritturaPartitaDoppiaComponent) componentObj).proposeScritturaAnalitica(param0, param1);
+            component_invocation_succes(param0, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException | ScritturaPartitaDoppiaNotEnabledException | ScritturaPartitaDoppiaNotRequiredException e) {
+            component_invocation_succes(param0, componentObj);
+            throw e;
+        } catch (it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(param0, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(param0, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(param0, componentObj, e);
+        }
+    }
+
+    public ResultScrittureContabili proposeScrittureContabili(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
+        pre_component_invocation(param0, componentObj);
+        try {
+            ResultScrittureContabili result = ((ScritturaPartitaDoppiaComponent) componentObj).proposeScrittureContabili(param0, param1);
+            component_invocation_succes(param0, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException | ScritturaPartitaDoppiaNotEnabledException | ScritturaPartitaDoppiaNotRequiredException e) {
             component_invocation_succes(param0, componentObj);
             throw e;
         } catch (it.cnr.jada.comp.ComponentException e) {
@@ -129,4 +169,6 @@ public class ScritturaPartitaDoppiaComponentSessionBean extends it.cnr.jada.ejb.
             throw uncaughtError(param0, componentObj, e);
         }
     }
+
+
 }

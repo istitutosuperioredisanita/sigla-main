@@ -1234,4 +1234,14 @@ public class MandatoBulk extends MandatoBase implements IManRevBulk, IDefferUpda
         this.stipendiCofiBulk = stipendiCofiBulk;
     }
 
+    @Override
+    public void setStato_coan(String stato_coan) {
+        //TODO Da implementare
+    }
+
+    @Override
+    public String getStato_coan() {
+        //TODO Da implementare
+        return null;
+    }
 }

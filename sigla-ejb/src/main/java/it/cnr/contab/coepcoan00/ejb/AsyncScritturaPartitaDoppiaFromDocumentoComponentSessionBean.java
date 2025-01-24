@@ -18,6 +18,7 @@
 package it.cnr.contab.coepcoan00.ejb;
 
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
 import it.cnr.contab.doccont00.core.bulk.MandatoBulk;
 import it.cnr.contab.logs.bulk.Batch_log_rigaBulk;
 import it.cnr.contab.logs.bulk.Batch_log_tstaBulk;
@@ -90,7 +91,8 @@ public class AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean extend
 
 				allDocuments.stream()
 						.filter(el-> Optional.ofNullable(el.getDtGenerazioneScrittura()).isPresent())
-						.filter(el-> MandatoBulk.STATO_COGE_N.equals(el.getStato_coge()) || MandatoBulk.STATO_COGE_R.equals(el.getStato_coge()))
+						.filter(el-> MandatoBulk.STATO_COGE_N.equals(el.getStato_coge()) || MandatoBulk.STATO_COGE_R.equals(el.getStato_coge())
+						|| MandatoBulk.STATO_COGE_N.equals(el.getStato_coan()) || MandatoBulk.STATO_COGE_R.equals(el.getStato_coan()))
 						.sorted(Comparator.comparing(IDocumentoCogeBulk::getDtGenerazioneScrittura)
 								.thenComparing(el->el.getTipoDocumentoEnum().getOrdineCostruzione())
 								.thenComparing(IDocumentoCogeBulk::getPg_doc))
@@ -99,8 +101,8 @@ public class AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean extend
 						System.out.println("Data: "+documentoCoge.getDtGenerazioneScrittura()+" - Tipo: "+
 								documentoCoge.getTipoDocumentoEnum().getValue() +" - Numero: "+
 								documentoCoge.getPg_doc());
-						logger.info("Documento in elaborazione: "+documentoCoge.getEsercizio()+"/"+documentoCoge.getCd_uo()+"/"+documentoCoge.getCd_tipo_doc()+"/"+documentoCoge.getPg_doc());
-						session.createScritturaRequiresNew(param0, documentoCoge);
+                        logger.info("Documento in elaborazione: {}/{}/{}/{}", documentoCoge.getEsercizio(), documentoCoge.getCd_uo(), documentoCoge.getCd_tipo_doc(), documentoCoge.getPg_doc());
+						session.createScritturaRequiresNew(param0, documentoCoge, ResultScrittureContabili.LOAD_ANALITICA);
 						listInsert.add("X");
 					} catch (Throwable e) {
 						listError.add("X");

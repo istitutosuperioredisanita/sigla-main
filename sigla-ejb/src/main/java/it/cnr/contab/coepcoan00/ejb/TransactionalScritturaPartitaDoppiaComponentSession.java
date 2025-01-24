@@ -18,6 +18,8 @@
 package it.cnr.contab.coepcoan00.ejb;
 
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
+import it.cnr.contab.coepcoan00.core.bulk.Scrittura_analiticaBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
@@ -323,6 +325,44 @@ public class TransactionalScritturaPartitaDoppiaComponentSession extends it.cnr.
     public Scrittura_partita_doppiaBulk proposeScritturaPartitaDoppiaAnnullo(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, RemoteException {
         try {
             return (Scrittura_partita_doppiaBulk) invoke("proposeScritturaPartitaDoppiaAnnullo", new Object[]{
+                    param0,
+                    param1});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public Scrittura_analiticaBulk proposeScritturaAnalitica(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, RemoteException {
+        try {
+            return (Scrittura_analiticaBulk) invoke("proposeScritturaAnalitica", new Object[]{
+                    param0,
+                    param1});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public ResultScrittureContabili proposeScrittureContabili(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, RemoteException {
+        try {
+            return (ResultScrittureContabili) invoke("proposeScrittureContabili", new Object[]{
                     param0,
                     param1});
         } catch (java.rmi.RemoteException e) {
