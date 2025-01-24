@@ -734,6 +734,15 @@
 		label="Tipo conto"
 		caseSensitiveSearch="false" />
 	<fieldProperty
+		name="causale_contabile"
+		property="causaleContabile"
+		inputType="SEARCHTOOL_WITH_LIKE"
+		formName="searchtool"
+		enabledOnSearch="true"
+		nullable="false"
+		label="Causale Contabile" />
+
+	<fieldProperty
 		name="cd_causale_contabile"
 		property="cd_causale_contabile"
 		inputType="SELECT"
@@ -890,6 +899,8 @@
 		name="cd_tipo_conto_ep" />
 	<formFieldProperty
 		name="cd_causale_contabile" />
+	<formFieldProperty
+		name="causale_contabile" />
 	<formFieldProperty
 		name="fl_storno" />
 
