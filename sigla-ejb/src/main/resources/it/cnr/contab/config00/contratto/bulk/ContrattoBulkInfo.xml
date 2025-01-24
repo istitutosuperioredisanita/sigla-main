@@ -359,7 +359,7 @@
                 enabledOnSearch="true"
                 formatName = "it.cnr.contab.util.EuroFormat"
                 nullable="false"
-                label="Importo passivo" />      
+                label="Importo passivo Complessivo" />
         <fieldProperty
                 name="im_contratto_passivo_netto"
                 property="im_contratto_passivo_netto"
@@ -367,7 +367,7 @@
                 enabledOnSearch="true"
                 formatName = "it.cnr.contab.util.EuroFormat"
                 nullable="false"
-                label="Importo passivo netto" />                        
+                label="Importo Passivo" />
         <fieldProperty
                 name="statoText"
                 property="stato"
