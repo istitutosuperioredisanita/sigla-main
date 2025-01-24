@@ -426,7 +426,7 @@
       If cnrutil.isLabelObbligazione() Then
         ibmerr001.RAISE_ERR_GENERICO('L''obbligazione è stata modificata nel nuovo esercizio, non può essere riportata indietro '||CNRCTB035.GETDESC(aObbNext));
       Else
-        ibmerr001.RAISE_ERR_GENERICO('L''impegno è stata modificato nel nuovo esercizio, non può essere riportato indietro '||CNRCTB035.GETDESC(aObbNext));
+        ibmerr001.RAISE_ERR_GENERICO('L''impegno è stato modificato nel nuovo esercizio, non può essere riportato indietro '||CNRCTB035.GETDESC(aObbNext));
       End If;
     end if;
 
