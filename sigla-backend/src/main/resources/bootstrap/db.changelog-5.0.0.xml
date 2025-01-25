@@ -6178,4 +6178,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <!-- Autore : RAFFAELE PAGANO - modifica tabella movimento coan-->
     <include file="bootstrap/modify_table_movimento_coan.xml"/>
     <include file="bootstrap/modify_table_saldo_coan.xml"/>
+
+
 </databaseChangeLog>

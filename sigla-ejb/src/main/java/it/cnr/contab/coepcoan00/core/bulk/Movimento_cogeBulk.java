@@ -451,7 +451,7 @@ public class Movimento_cogeBulk extends Movimento_cogeBase {
         if (fieldProperty.getName().equalsIgnoreCase("ti_riga")) {
             if (Optional.ofNullable(getScrittura())
                     .flatMap(scritturaPartitaDoppiaBulk -> Optional.ofNullable(scritturaPartitaDoppiaBulk.getOrigine_scrittura()))
-                    .map(s -> s.equalsIgnoreCase(Scrittura_partita_doppiaBulk.Origine.PRIMA_NOTA_MANUALE.name()))
+                    .map(s -> s.equalsIgnoreCase(OrigineScritturaEnum.PRIMA_NOTA_MANUALE.name()))
                     .orElse(Boolean.FALSE)
             ) {
                 return !Arrays.asList(TipoRiga.COSTO, TipoRiga.RICAVO, TipoRiga.ATTIVITA,

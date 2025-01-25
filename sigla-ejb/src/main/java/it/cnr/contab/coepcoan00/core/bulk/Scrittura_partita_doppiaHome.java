@@ -17,7 +17,6 @@
 
 package it.cnr.contab.coepcoan00.core.bulk;
 
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
 import it.cnr.contab.docamm00.docs.bulk.TipoDocumentoEnum;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
@@ -25,7 +24,6 @@ import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ApplicationException;
-import it.cnr.jada.comp.ApplicationRuntimeException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.ObjectNotFoundException;
 import it.cnr.jada.persistency.PersistencyException;
@@ -200,7 +198,7 @@ public class Scrittura_partita_doppiaHome extends BulkHome {
         SQLBuilder sql = this.createSQLBuilder();
         sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
         sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, pCdCds);
-        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Origine.APERTURA.name());
+        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, OrigineScritturaEnum.APERTURA.name());
         sql.openParenthesis(FindClause.AND);
         sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.RIMANENZE_MAGAZZINO.name());
         sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.RIAPERTURA_CONTI.name());
@@ -218,7 +216,7 @@ public class Scrittura_partita_doppiaHome extends BulkHome {
         SQLBuilder sql = this.createSQLBuilder();
         sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
         sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, pCdCds);
-        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Origine.PRECHIUSURA.name());
+        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, OrigineScritturaEnum.PRECHIUSURA.name());
         sql.openParenthesis(FindClause.AND);
         sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.RIMANENZE_MAGAZZINO.name());
         sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.AMMORTAMENTO.name());
@@ -238,7 +236,7 @@ public class Scrittura_partita_doppiaHome extends BulkHome {
         SQLBuilder sql = this.createSQLBuilder();
         sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
         sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, pCdCds);
-        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Origine.CHIUSURA.name());
+        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, OrigineScritturaEnum.CHIUSURA.name());
         sql.openParenthesis(FindClause.AND);
         sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.CHIUSURA_STATO_PATRIMONIALE.name());
         sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.CHIUSURA_CONTO_ECONOMICO.name());
@@ -257,7 +255,7 @@ public class Scrittura_partita_doppiaHome extends BulkHome {
         SQLBuilder sql = this.createSQLBuilder();
         sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
         sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, pCdCds);
-        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Origine.PRECHIUSURA.name());
+        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, OrigineScritturaEnum.PRECHIUSURA.name());
         sql.addClause(FindClause.AND, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.RIMANENZE_MAGAZZINO.name());
 
         List<Scrittura_partita_doppiaBulk> result = fetchAll(sql);
