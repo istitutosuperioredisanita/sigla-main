@@ -90,8 +90,4 @@ public class Voce_analiticaBulk extends Voce_analiticaBase {
 		setEsercizio(CNRUserContext.getEsercizio(actioncontext.getUserContext()));
 		return super.initializeForFreeSearch(crudbp, actioncontext);
 	}
-
-	public boolean isROCdVoceAna() {
-		return !this.isToBeCreated();
-	}
 }

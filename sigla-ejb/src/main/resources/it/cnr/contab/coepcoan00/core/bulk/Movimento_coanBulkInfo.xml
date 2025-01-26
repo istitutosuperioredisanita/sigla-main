@@ -40,6 +40,14 @@
 		enabledOnSearch="false"		
 		label="Cds" />
 	<fieldProperty
+		name="cds"
+		property="scrittura.cds"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		label="Cds"/>
+	<fieldProperty
 		name="pg_numero_documento"
 		property="pg_numero_documento"
 		inputType="TEXT"
@@ -57,7 +65,15 @@
 		inputSize="60"
 		inputType="ROTEXT"
 		enabledOnFreeSearch="false"								
-		label="Unit&#224; organizzativa" />	
+		label="Unit&#224; organizzativa" />
+	<fieldProperty
+		name="uo"
+		property="scrittura.uo"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		label="Unit&#224; organizzativa"/>
 	<fieldProperty
 		name="stato"
 		property="stato"
@@ -199,8 +215,10 @@
 	<fieldProperty
 		name="find_terzo"
 		property="terzo"
-		enabledOnSearch="true"		
-		inputType="SEARCHTOOL"/>
+		enabledOnSearch="true"
+		formName="searchtool"
+		inputType="SEARCHTOOL"
+		label="Terzo" />
 	<fieldProperty
 		name="sezione"
 		property="sezione"
@@ -263,9 +281,13 @@
 	<formFieldProperty
 		name="ds_unita_organizzativa" />
 	<formFieldProperty
+		name="uo" />
+	<formFieldProperty
 		name="cd_cds" />
 	<formFieldProperty
 		name="ds_cds" />
+	<formFieldProperty
+		name="cds" />
 	<formFieldProperty
 		name="pg_numero_documento" />
 	<formFieldProperty

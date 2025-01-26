@@ -35,7 +35,6 @@
 			enabledOnEdit="true"
 			enabledOnSearch="true"
 			nullable="false"
-			readonlyProperty="ROCdVoceAna"
 			label="Codice" />
 	<fieldProperty
 			name="ds_voce_ana"
