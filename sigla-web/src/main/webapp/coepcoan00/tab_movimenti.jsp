@@ -2,31 +2,22 @@
 	import="it.cnr.jada.util.jsp.*,it.cnr.jada.action.*,java.util.*,it.cnr.jada.util.action.*,it.cnr.contab.coepcoan00.bp.*,it.cnr.contab.coepcoan00.core.bulk.*"
 %>
 <%CRUDScritturaAnaliticaBP bp = (CRUDScritturaAnaliticaBP)BusinessProcess.getBusinessProcess(request);%>
-
-<table class="Panel">
-<tr>
-	<td><% bp.getMovimenti().writeHTMLTable(pageContext,"latt", bp.isInserting(),false,bp.isInserting(),"100%","100px", true); %></td>
-</tr>
-</table>
-<table class="Panel">
-<tr>
-	<td><% bp.getMovimenti().writeFormLabel(out, "cd_voce_ana"); %></td>
-	<td><% bp.getMovimenti().writeFormInput(out, "cd_voce_ana");
-	       bp.getMovimenti().writeFormInput(out, "ds_voce_ana");
-	       bp.getMovimenti().writeFormInput(out,"default", "find_voce_ana", bp.isEditing(), null, null);
-	       bp.getMovimenti().writeFormLabel(out, "sezione");
-	       bp.getMovimenti().writeFormInput(out,"default", "sezione",bp.isEditing(),null,null);%></td>
-</tr>
-<tr>
-	<td><% bp.getMovimenti().writeFormLabel(out, "cd_linea_attivita"); %></td>
-	<td><% bp.getMovimenti().writeFormInput(out, "cd_centro_responsabilita");
-		   bp.getMovimenti().writeFormInput(out, "cd_linea_attivita");
-		   bp.getMovimenti().writeFormInput(out, "ds_linea_attivita");
-		   bp.getMovimenti().writeFormInput(out,"default", "find_linea_attivita", bp.isEditing(), null, null);%></td>	
-</tr>
-<tr>
-	<td><% bp.getMovimenti().writeFormLabel(out, "im_movimento"); %></td>
-	<td><% bp.getMovimenti().writeFormInput(out,"default", "im_movimento", bp.isEditing(), null,null);%></td>	
-</tr>
-
+<div class="Group card p-2 mb-2">
+    <div class="form-row">
+        <div class="col-md-12">
+            <% bp.getMovimenti().writeHTMLTable(pageContext,"latt", true, false, true,"100%","auto;max-height:40vh;", true); %>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col-md-3 h-100"><% bp.getMovimenti().writeFormField(out, "sezione");%></div>
+        <div class="col-md-9"><% bp.getMovimenti().writeFormField(out, "find_voce_ana_searchtool", Boolean.FALSE);%></div>
+    </div>
+    <div class="form-row">
+        <div class="col-md-6"><% bp.getMovimenti().writeFormField(out, "find_linea_attivita");%></div>
+        <div class="col-md-6"><% bp.getMovimenti().writeFormField(out, "centro_responsabilita");%></div>
+    </div>
+    <div class="form-row">
+        <div class="col-md-6"><% bp.getMovimenti().writeFormField(out, "im_movimento");%></div>
+    </div>
+</div>
 </table>

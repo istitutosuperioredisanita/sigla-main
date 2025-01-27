@@ -5792,7 +5792,7 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 		scritturaPartitaDoppia.setCd_cds(doccoge.getCd_cds());
 		scritturaPartitaDoppia.setTi_scrittura(Scrittura_partita_doppiaBulk.TIPO_PRIMA_SCRITTURA);
 		scritturaPartitaDoppia.setStato(Scrittura_partita_doppiaBulk.STATO_DEFINITIVO);
-		if (Scrittura_partita_doppiaBulk.Origine.LIQUID_IVA.name().equals(doccoge.getCd_tipo_doc())) {
+		if (OrigineScritturaEnum.LIQUID_IVA.name().equals(doccoge.getCd_tipo_doc())) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTimeInMillis(doccoge.getDtInizioLiquid().getTime());
 			scritturaPartitaDoppia.setDs_scrittura(
@@ -5827,15 +5827,15 @@ public class ScritturaPartitaDoppiaComponent extends it.cnr.jada.comp.CRUDCompon
 
 		TipoDocumentoEnum tipoDocumento = TipoDocumentoEnum.fromValue(scritturaPartitaDoppia.getCd_tipo_documento());
 		if (tipoDocumento.isGenericoStipendiSpesa())
-			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.STIPENDI.name());
+			scritturaPartitaDoppia.setOrigine_scrittura(OrigineScritturaEnum.STIPENDI.name());
 		else if (tipoDocumento.isLiquidazioneIva())
-			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.LIQUID_IVA.name());
+			scritturaPartitaDoppia.setOrigine_scrittura(OrigineScritturaEnum.LIQUID_IVA.name());
 		else if (tipoDocumento.isDocumentoAttivo() || tipoDocumento.isDocumentoPassivo())
-			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.DOCAMM.name());
+			scritturaPartitaDoppia.setOrigine_scrittura(OrigineScritturaEnum.DOCAMM.name());
 		else if (tipoDocumento.isMandato() || tipoDocumento.isReversale())
-			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.DOCCONT.name());
+			scritturaPartitaDoppia.setOrigine_scrittura(OrigineScritturaEnum.DOCCONT.name());
 		else
-			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.CAUSALE.name());
+			scritturaPartitaDoppia.setOrigine_scrittura(OrigineScritturaEnum.CAUSALE.name());
 
 		testataPrimaNota.forEach(testata -> {
 			if (accorpaConti) {

@@ -51,4 +51,11 @@
             <column name="CD_VOCE_ANA"/>
         </createIndex>
     </changeSet>
+    <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_08">
+        <addColumn tableName="movimento_coan">
+            <column name="fl_modificabile" type="CHAR(1)" defaultValue="Y" remarks="Indica se la riga e' modificabile dall'utente - Dominio: S = Sì; N = No;.">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

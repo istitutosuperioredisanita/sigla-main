@@ -36,6 +36,14 @@
 		inputType="ROTEXT"
 		label="Cds" />
 	<fieldProperty
+		name="cds"
+		property="cds"
+		inputType="SEARCHTOOL"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		formName="searchtool"
+		label="Cds" />
+	<fieldProperty
 		name="dt_contabilizzazione"
 		property="dt_contabilizzazione"
 		inputType="TEXT"
@@ -81,6 +89,14 @@
 		label="Unit&#224; organizzativa"
 		caseSensitiveSearch="false" />
 	<fieldProperty
+		name="unita_organizzativa"
+		property="uo"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		label="Unit&#224; organizzativa"/>
+	<fieldProperty
 		name="stato"
 		property="stato"
 		maxLength="1"
@@ -114,9 +130,14 @@
 		property="origine_scrittura"
 		maxLength="20"
 		inputSize="20"
-		inputType="TEXT"
+		inputType="SELECT"
+		keysProperty="ti_origineKeys"
 		label="Origine Scrittura"
-		caseSensitiveSearch="false" />
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		caseSensitiveSearch="true" />
 	<fieldProperty
 		name="cd_comp_documento"
 		property="cd_comp_documento"
@@ -215,6 +236,14 @@
 		label="Cds documento"
 		caseSensitiveSearch="false"/>
 	<fieldProperty
+		name="cds_documento"
+		property="cdsDocumento"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		label="CdS"/>
+	<fieldProperty
 		name="cd_uo_documento"
 		property="cd_uo_documento"
 		maxLength="30"
@@ -222,11 +251,34 @@
 		inputType="TEXT"
 		label="UO documento"
 		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="uo_documento"
+		property="uoDocumento"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		label="Unit&#224; organizzativa"/>
+	<fieldProperty
+		name="ti_istituz_commerc"
+		property="ti_istituz_commerc"
+		maxLength="1"
+		inputSize="1"
+		inputType="SELECT"
+		keysProperty="tipoKeys"
+		label="Tipo"
+		enabledOnSearch="false"
+		enabledOnInsert="true"
+		enabledOnEdit="false"
+		caseSensitiveSearch="false"
+		nullable="false"/>
 
 	<formFieldProperty
 		name="cd_cds" />
 	<formFieldProperty
 		name="ds_cds" />
+	<formFieldProperty
+		name="cds" />
 	<formFieldProperty
 		name="dt_contabilizzazione" />
 	<formFieldProperty
@@ -236,7 +288,9 @@
 	<formFieldProperty
 		name="cd_unita_organizzativa" />
 	<formFieldProperty
-		name="ds_unita_organizzativa" />	
+		name="ds_unita_organizzativa" />
+	<formFieldProperty
+		name="unita_organizzativa" />
 	<formFieldProperty
 		name="stato" />
 	<formFieldProperty
@@ -272,7 +326,18 @@
 	<formFieldProperty
 		name="cd_cds_documento" />
 	<formFieldProperty
+		name="cds_documento" />
+	<formFieldProperty
 		name="cd_uo_documento" />
+	<formFieldProperty
+		name="uo_documento" />
+	<formFieldProperty
+		name="ti_istituz_commerc" />
+	<formFieldProperty
+		name="ds_scrittura_textarea"
+		extend="ds_scrittura"
+		inputType="TEXTAREA"
+		rows="5"/>
 
 	<columnFieldProperty
 		name="esercizio" />
