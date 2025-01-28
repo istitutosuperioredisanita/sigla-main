@@ -69,7 +69,7 @@ public class V_inventario_bene_detHome extends BulkHome {
 					"(TIPORECORD = 'VALORE' or TIPORECORD = 'AMMORTAMENTO' or "+
 					"(TIPORECORD = 'INCREMENTO' and esercizio_buono_carico > ?) or "+
 					"(TIPORECORD = 'DECREMENTO' and esercizio_buono_carico > ?) or "+
-					"(TIPORECORD = 'STORNO' and esercizio_buono_carico > ?)) ) norm "+
+					"(TIPORECORD = 'STORNO' and esercizio_ammortanento > ?)) ) norm "+
 					"GROUP BY esercizio_carico_bene,pg_inventario,nr_inventario,progressivo,etichetta,cd_categoria_gruppo";
 
 	public V_inventario_bene_detHome(Connection conn) {
