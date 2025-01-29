@@ -2280,6 +2280,13 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 					}
 				}
 
+				if ( contratto.getTipo_contratto()!=null && (!contratto.getCd_tipo_contratto().isEmpty())) {
+					String cdTipoContrattoInput=contratto.getCd_tipo_contratto();
+					contratto.setTipo_contratto(getTipoContratto(userContext, contratto.getTipo_contratto()));
+					if ( !Optional.ofNullable(contratto.getTipo_contratto()).isPresent()){
+						throw new ComponentException("Il Tipo Contratto "+ cdTipoContrattoInput +" non esiste in SIGLA");
+					}
+				}
 				if ( contratto.getCodfisPivaFirmatarioExt()!=null && (!contratto.getCodfisPivaFirmatarioExt().isEmpty())) {
 					contratto.setFirmatario(getPersonaFisicaFromCodiceFiscalePiva(userContext, contratto.getCodfisPivaFirmatarioExt()));
 					if ( !Optional.ofNullable(contratto.getFirmatario()).isPresent()){
@@ -2404,6 +2411,21 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 			}
 			return null;
 		}
+	private Tipo_contrattoBulk getTipoContratto( UserContext userContext, Tipo_contrattoBulk tipoContratto) throws ComponentException, PersistencyException {
+		try {
+			Tipo_contrattoHome tipoContrattoHome = (Tipo_contrattoHome)getHome(userContext,Tipo_contrattoBulk.class);
+			Tipo_contrattoBulk tipoContrattoBulk = ( Tipo_contrattoBulk) tipoContrattoHome.findByPrimaryKey(tipoContratto);
+			if (tipoContrattoBulk != null ) {
+				if ( Tipo_contrattoBulk.NATURA_CONTABILE_ATTIVO_E_PASSIVO.compareTo(tipoContrattoBulk.getNatura_contabile())==0
+					||Tipo_contrattoBulk.NATURA_CONTABILE_PASSIVO.compareTo(tipoContrattoBulk.getNatura_contabile())==0)
+					return tipoContrattoBulk;
+				return null;
+			}
+			return null;
+		} catch (PersistencyException  e) {
+			throw new ComponentException(e);
+		}
+	}
 
 		private Tipo_norma_perlaBulk getTipoNormaPerla( UserContext userContext, ContrattoBulk contrattoBulk,Tipo_norma_perlaBulk tipoNormaPerlaBulk) throws ComponentException, PersistencyException {
 			SQLBuilder sql = selectTipoNormaPerlaByClause(userContext,contrattoBulk,tipoNormaPerlaBulk,null);
