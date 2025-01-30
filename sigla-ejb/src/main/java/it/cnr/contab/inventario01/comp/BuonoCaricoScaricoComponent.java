@@ -27,6 +27,7 @@ import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.docamm00.docs.bulk.*;
+import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceHome;
@@ -36,6 +37,9 @@ import it.cnr.contab.inventario00.docs.bulk.*;
 import it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession;
 import it.cnr.contab.inventario00.tabrif.bulk.*;
 import it.cnr.contab.inventario01.bulk.*;
+import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
+import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineHome;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.TipoIVA;
@@ -47,6 +51,7 @@ import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.RemoteIterator;
+import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import javax.ejb.EJBException;
 import java.io.Serializable;
@@ -6017,9 +6022,8 @@ private String buildBeniNotChanged_Message(java.util.Vector notChangedBeniKey) {
  * @param buonoC <code>Buono_caricoBulk</code> il Buono di Carico.
  * @param dettagliColl la <code>SimpleBulkList</code> collezione dei dettagli del Buono di Carico.
 **/  
-private void insertBeni (UserContext aUC,Buono_carico_scaricoBulk buonoC, SimpleBulkList dettagliColl) 
-	throws ComponentException
-{
+private void insertBeni (UserContext aUC,Buono_carico_scaricoBulk buonoC, SimpleBulkList dettagliColl)
+		throws ComponentException, PersistencyException, RemoteException {
 
 	Inventario_beniComponentSession inventario_beniComponent = ((it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_Inventario_beniComponentSession",it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession.class));
 	Buono_carico_scarico_dettBulk dett = new Buono_carico_scarico_dettBulk();
@@ -6077,7 +6081,6 @@ private void insertBeni (UserContext aUC,Buono_carico_scaricoBulk buonoC, Simple
 			}
 		}
 
-
 		try{
 			makeBulkPersistent(aUC,bene,false);
 		}catch (Exception pe){
@@ -6091,6 +6094,21 @@ private void insertBeni (UserContext aUC,Buono_carico_scaricoBulk buonoC, Simple
 				inventario_beniComponent.creaUtilizzatori(aUC, os, dett);
 			} catch (PersistencyException | RemoteException e) {
 				throw new ComponentException(e);
+			}
+
+			// Se la consegna dell'ordine risulta associata o associata parzialmente a fattura si deve verificare l'associativa FATTURA/INVENTARIO
+			if(!transito_beni_ordiniBulk.getMovimentiMag().getLottoMag().getOrdineAcqConsegna().getStatoFatt().equals(OrdineAcqConsegnaBulk.STATO_FATT_NON_ASSOCIATA)){
+				FatturaOrdineHome fattHome = (FatturaOrdineHome) getHome(aUC, FatturaOrdineBulk.class);
+				FatturaOrdineBulk fatturaOrd = fattHome.findFatturaByRigaConsegna(transito_beni_ordiniBulk.getMovimentiMag().getLottoMag().getOrdineAcqConsegna());
+				// se consegna ordine collegata a fattura
+				if(fatturaOrd != null){
+					Ass_inv_bene_fatturaHome assHome = (Ass_inv_bene_fatturaHome) getHome(aUC, Ass_inv_bene_fatturaBulk.class);
+					// Se bene non presente in ASS_INV_FATTURA_BENE (caso di riscontro al valore prima dell'inventariazione del bene)
+					if(assHome.findAssociativaFatturaBeneByBene(bene) == null) {
+						FatturaPassivaComponentSession fatturaPassivaComponent = EJBCommonServices.createEJB("CNRDOCAMM00_EJB_FatturaPassivaComponentSession", FatturaPassivaComponentSession.class);
+						fatturaPassivaComponent.creaAssociativaFatturaPassivaInventario(aUC, fatturaOrd, inventario_beniComponent, bene.getValore_iniziale(), transito_beni_ordiniBulk);
+					}
+				}
 			}
 		}
 	}
