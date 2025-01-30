@@ -20,12 +20,13 @@
 * Date 09/05/2005
 */
 package it.cnr.contab.config00.contratto.bulk;
-import java.util.Dictionary;
 
 import it.cnr.contab.config00.file.bulk.Gruppo_fileBulk;
 import it.cnr.contab.util.ICancellatoLogicamente;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.OrderedHashtable;
+
+import java.util.Dictionary;
 public class Procedure_amministrativeBulk extends Procedure_amministrativeBase implements ICancellatoLogicamente{
 	
 	public final static Dictionary ti_proc_ammKeys;
@@ -62,7 +63,9 @@ public class Procedure_amministrativeBulk extends Procedure_amministrativeBase i
 	 * @see it.cnr.contab.util.ICancellatoLogicamente#isCancellatoLogicamente()
 	 */
 	public boolean isCancellatoLogicamente() {
-		return getFl_cancellato().booleanValue();
+		if ( getFl_cancellato()!=null)
+			return getFl_cancellato().booleanValue();
+		return Boolean.FALSE;
 	}
 	/* (non-Javadoc)
 	 * @see it.cnr.contab.util.ICancellatoLogicamente#cancellaLogicamente()

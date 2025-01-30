@@ -20,10 +20,9 @@
 * Date 07/04/2005
 */
 package it.cnr.contab.config00.contratto.bulk;
+
 import it.cnr.contab.util.ICancellatoLogicamente;
-import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.util.action.CRUDBP;
 public class OrganoBulk extends OrganoBase implements ICancellatoLogicamente{
 	
 	public OrganoBulk() {
@@ -45,7 +44,9 @@ public class OrganoBulk extends OrganoBase implements ICancellatoLogicamente{
 	 * @see it.cnr.contab.util.ICancellatoLogicamente#isCancellatoLogicamente()
 	 */
 	public boolean isCancellatoLogicamente() {		
-		return getFl_cancellato().booleanValue();
+		if ( getFl_cancellato()!=null)
+			return getFl_cancellato().booleanValue();
+		return Boolean.FALSE;
 	}
 	/* (non-Javadoc)
 	 * @see it.cnr.contab.util.ICancellatoLogicamente#cancellaLogicamente()
