@@ -3522,7 +3522,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
         }
     }
 
-    private void creaAssociativaFatturaPassivaInventario(UserContext userContext, FatturaOrdineBulk fatturaOrdineBulk, Inventario_beniComponentSession inventario_beniComponent, BigDecimal importoUnitario, Transito_beni_ordiniBulk transito_beni_ordiniBulk) {
+    public void creaAssociativaFatturaPassivaInventario(UserContext userContext, FatturaOrdineBulk fatturaOrdineBulk, Inventario_beniComponentSession inventario_beniComponent, BigDecimal importoUnitario, Transito_beni_ordiniBulk transito_beni_ordiniBulk) {
         try {
             final Inventario_beniHome inventario_beniHome = Optional.ofNullable(getHome(userContext, Inventario_beniBulk.class))
                     .filter(Inventario_beniHome.class::isInstance)
