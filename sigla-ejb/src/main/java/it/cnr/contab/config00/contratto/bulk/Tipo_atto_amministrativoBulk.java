@@ -20,10 +20,12 @@
 * Date 07/04/2005
 */
 package it.cnr.contab.config00.contratto.bulk;
+
 import it.cnr.contab.util.ICancellatoLogicamente;
-import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.util.action.CRUDBP;
+
+import java.util.Optional;
+
 public class Tipo_atto_amministrativoBulk extends Tipo_atto_amministrativoBase implements ICancellatoLogicamente{
 	
 	public Tipo_atto_amministrativoBulk() {
@@ -44,8 +46,10 @@ public class Tipo_atto_amministrativoBulk extends Tipo_atto_amministrativoBase i
 	/* (non-Javadoc)
 	 * @see it.cnr.contab.util.ICancellatoLogicamente#isCancellatoLogicamente()
 	 */
-	public boolean isCancellatoLogicamente() {		
-		return getFl_cancellato().booleanValue();
+	public boolean isCancellatoLogicamente() {
+		return Optional.ofNullable(getFl_cancellato()).
+				orElse(Boolean.FALSE);
+
 	}
 	/* (non-Javadoc)
 	 * @see it.cnr.contab.util.ICancellatoLogicamente#cancellaLogicamente()

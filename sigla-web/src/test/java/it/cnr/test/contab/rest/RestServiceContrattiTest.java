@@ -1,5 +1,6 @@
 package it.cnr.test.contab.rest;
 
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.cnr.contab.web.rest.config.SIGLASecurityContext;
 import it.cnr.contab.web.rest.model.AttachmentContratto;
@@ -23,6 +24,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -45,7 +47,7 @@ public class RestServiceContrattiTest {
         ObjectMapper mapper = new ObjectMapper();
         ContrattoDtoBulk c = new ContrattoDtoBulk();
         c.setEsercizio(2025);
-        c.setCodiceFlussoAcquisti( "G00135");
+        c.setCodiceFlussoAcquisti( "PLUTO10");
         c.setCd_unita_organizzativa("000.001");
         c.setCodfisPivaRupExt("RGLNLR52E69Z600O");
         c.setCodfisPivaAggiudicatarioExt("05923561004");
@@ -63,9 +65,12 @@ public class RestServiceContrattiTest {
         //c.setCd_tipo_contratto
         //c.setCd_proc_amm();
             //c.setCd_organo();
+        c.setCdCigExt("983e989");
+        c.setCdCupExt("test");
         c.setCd_proc_amm("PA");
         c.setCd_tipo_norma_perla("19");
-        c.setCd_organo("PRES");
+        c.setCd_tipo_contratto("UTENZ");
+        c.setCd_organo("DRUE");
 
 
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -79,7 +84,7 @@ public class RestServiceContrattiTest {
         c.setDt_registrazione(new java.sql.Timestamp(dateFormat.parse("20231223").getTime()));
 
 
-        c.setCdCigExt("845fkjnv");
+        c.setCdCigExt("845fktest");
         c.setCdCupExt("983e938");
         //Tipologia
         //Tipo_norma_perlaBulk tipoNormaPerla da aggiungere al contrarroDtoBulk ( tipoNormaPerla)
@@ -92,6 +97,10 @@ public class RestServiceContrattiTest {
         InputStream is = this.getClass().getResourceAsStream("/contratto.pdf");
         byte[] bytes = IOUtils.toByteArray(is);
         byte[] encoded= Base64.getEncoder().encode(bytes);
+        try (FileOutputStream fos = new FileOutputStream("E:\\sigla\\contratto.txt")) {
+            fos.write(encoded);
+            //fos.close(); There is no more need for this line since you had created the instance of "fos" inside the try. And this will automatically close the OutputStream
+        }
 
         a.setTypeAttachment(EnumTypeAttachmentContratti.CONTRATTO_FLUSSO);
         a.setBytes(encoded);
@@ -102,6 +111,10 @@ public class RestServiceContrattiTest {
             myJson = mapper.writeValueAsString(c);
         } catch (Exception ex) {
             throw new ComponentException("Errore nella generazione del file JSON per l'esecuzione della stampa ( errore joson).",ex);
+        }
+        try (FileOutputStream fos = new FileOutputStream("E:\\sigla\\jsonContratto.json")) {
+            fos.write(myJson.getBytes());
+            //fos.close(); There is no more need for this line since you had created the instance of "fos" inside the try. And this will automatically close the OutputStream
         }
         HttpEntity e = new StringEntity(myJson.toString());
         CredentialsProvider provider = new BasicCredentialsProvider();
@@ -116,58 +129,23 @@ public class RestServiceContrattiTest {
         method.setEntity(e);
         HttpResponse response = client.execute(method);//Replace HttpPost with HttpGet if you need to perform a GET to login
         int statusCode = response.getStatusLine().getStatusCode();
-
-
-        System.out.println("Response Code :"+ statusCode);
-
-    }
-
-    @Test
-    public void jsonTest()throws Exception {
-
-        System.out.println(value);
-        /*
-        final String regex = "[0-9A-Z]{3}\\.[0-9A-Z]{3}";
-        final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-        String unita="00.aA1";
-        Boolean b = pattern.matcher(unita).matches();
-        Assert.assertTrue(b);
-
-
-        String text = "2009-10-20";
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-        Date parsedDate = dateFormat.parse("20211122");
-        Timestamp tm=new java.sql.Timestamp(parsedDate.getTime());
-        ContrattoDtoBulk c = new ContrattoDtoBulk();
-        c.setEsercizio(2021);
-        List<AttachmentContratto> l = new ArrayList<AttachmentContratto>();
-        AttachmentContratto a = new AttachmentContratto();
-        a.setNomeFile("contratto.pdf");
-        a.setMimeTypes(MimeTypes.PDF);
-
-
-         //file = new File(classLoader.getResource("contratto.pdf"));
-        InputStream is = this.getClass().getResourceAsStream("/contratto.pdf");
-        byte[] bytes = IOUtils.toByteArray(is);
-        byte[] encoded= Base64.getEncoder().encode(bytes);
-
-        a.setTypeAttachment(EnumTypeAttachmentContratti.CONTRATTO_FLUSSO);
-        a.setBytes(encoded);
-        l.add(a);
-        c.setAttachments(l);
-
-        StampaInventarioDTO dto = new StampaInventarioDTO();
-        dto.setDescCatGrp("ciao");
-        ObjectMapper mapper = new ObjectMapper();
         JsonFactory jsonFactory = new JsonFactory();
-        String myJson = null;
         try {
             myJson = mapper.writeValueAsString(c);
         } catch (Exception ex) {
             throw new ComponentException("Errore nella generazione del file JSON per l'esecuzione della stampa ( errore joson).",ex);
         }
-        System.out.println(myJson);
-    */
+
+
+        System.out.println("Response Code :"+ statusCode);
+        System.out.println("myJson :"+ myJson);
+
     }
 
-}
+
+
+
+
+
+
+    }
