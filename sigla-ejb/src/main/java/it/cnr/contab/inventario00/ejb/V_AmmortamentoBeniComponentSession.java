@@ -15,32 +15,20 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package it.cnr.contab.logs.bulk;
+package it.cnr.contab.inventario00.ejb;
 
-import java.math.BigDecimal;
+import it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invBulk;
+import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beniBulk;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ComponentException;
 
-// Referenced classes of package it.cnr.contab.logs.bulk:
-//            Batch_log_tstaBase
+import javax.ejb.Remote;
+import java.lang.reflect.InvocationTargetException;
+import java.rmi.RemoteException;
+import java.util.List;
 
-public class Batch_log_tstaBulk extends Batch_log_tstaBase
-{
+@Remote
+public interface V_AmmortamentoBeniComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
 
-    public static String  LOG_TIPO_INTERF_CASS00 = "INTERF_CASS00";
-
-    public static String  LOG_TIPO_CONTAB_COGECOAN00 = "CONTAB_COGECOAN00";
-
-    public static String  LOG_TIPO_OBBL_PLURIENNALE = "CONTAB_OBBPLU00";
-
-    public static String  LOG_TIPO_ACC_PLURIENNALE = "CONTAB_ACCPLU00";
-
-    public static String  LOG_TIPO_AMMORT_BENE = "INVENT_AMMORBENE";
-
-    public Batch_log_tstaBulk()
-    {
-    }
-
-    public Batch_log_tstaBulk(BigDecimal bigdecimal)
-    {
-        super(bigdecimal);
-    }
+    List<V_ammortamento_beniBulk> findAllBeniDaAmmortizare(UserContext uc, Integer esercizio) throws ComponentException, RemoteException;
 }

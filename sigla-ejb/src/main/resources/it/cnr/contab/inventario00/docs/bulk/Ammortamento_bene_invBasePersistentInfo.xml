@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invBase"
+	keyClassName="it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invKey"
+	homeClassName="it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invHome">
+	<defaultColumnMap
+		tableName="AMMORTAMENTO_BENE_INV">
+		<columnMapping
+			columnName="CD_TIPO_AMMORTAMENTO"
+			propertyName="cdTipoAmmortamento"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="false" />
+		<columnMapping
+			columnName="TI_AMMORTAMENTO"
+			propertyName="tiAmmortamento"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false" />
+		<columnMapping
+			columnName="CD_CATEGORIA_GRUPPO"
+			propertyName="cdCategoriaGruppo"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="false" />
+		<columnMapping
+			columnName="ESERCIZIO_COMPETENZA"
+			propertyName="esercizioCompetenza"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="false" />
+		<columnMapping
+			columnName="IMPONIBILE_AMMORTAMENTO"
+			propertyName="imponibileAmmortamento"
+			sqlTypeName="DECIMAL"
+			columnSize="15"
+			columnScale="2"
+			nullable="false" />
+		<columnMapping
+			columnName="IM_MOVIMENTO_AMMORT"
+			propertyName="imMovimentoAmmort"
+			sqlTypeName="DECIMAL"
+			columnSize="15"
+			columnScale="2"
+			nullable="false" />
+		<columnMapping
+			columnName="PERC_AMMORTAMENTO"
+			propertyName="percAmmortamento"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			columnScale="2"
+			nullable="false" />
+		<columnMapping
+			columnName="DACR"
+			propertyName="dacr"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="UTCR"
+			propertyName="utcr"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="DUVA"
+			propertyName="duva"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="UTUV"
+			propertyName="utuv"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="PG_VER_REC"
+			propertyName="pg_ver_rec"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="false" />
+		<columnMapping
+			columnName="NUMERO_ANNI"
+			propertyName="numeroAnni"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="true" />
+		<columnMapping
+			columnName="NUMERO_ANNO"
+			propertyName="numeroAnno"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="true" />
+		<columnMapping
+			columnName="PERC_PRIMO_ANNO"
+			propertyName="percPrimoAnno"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			columnScale="2"
+			nullable="true" />
+		<columnMapping
+			columnName="PERC_SUCCESSIVI"
+			propertyName="percSuccessivi"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			columnScale="2"
+			nullable="true" />
+		<columnMapping
+			columnName="CD_CDS_UBICAZIONE"
+			propertyName="cdCdsUbicazione"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="true" />
+		<columnMapping
+			columnName="CD_UO_UBICAZIONE"
+			propertyName="cdUoUbicazione"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="true" />
+		<columnMapping
+			columnName="FL_STORNO"
+			propertyName="flStorno"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="true"
+			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+			columnName="PG_BUONO_S"
+			propertyName="pgBuonoS"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="true" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="cdTipoAmmortamento" />
+	<persistentProperty
+		name="tiAmmortamento" />
+	<persistentProperty
+		name="cdCategoriaGruppo" />
+	<persistentProperty
+		name="esercizioCompetenza" />
+	<persistentProperty
+		name="imponibileAmmortamento" />
+	<persistentProperty
+		name="imMovimentoAmmort" />
+	<persistentProperty
+		name="percAmmortamento" />
+	<persistentProperty
+		name="dacr" />
+	<persistentProperty
+		name="utcr" />
+	<persistentProperty
+		name="duva" />
+	<persistentProperty
+		name="utuv" />
+	<persistentProperty
+		name="pg_ver_rec" />
+	<persistentProperty
+		name="numeroAnni" />
+	<persistentProperty
+		name="numeroAnno" />
+	<persistentProperty
+		name="percPrimoAnno" />
+	<persistentProperty
+		name="percSuccessivi" />
+	<persistentProperty
+		name="cdCdsUbicazione" />
+	<persistentProperty
+		name="cdUoUbicazione" />
+	<persistentProperty
+		name="flStorno" />
+	<persistentProperty
+		name="pgBuonoS" />
+</SQLPersistentInfo>
