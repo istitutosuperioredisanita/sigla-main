@@ -152,9 +152,10 @@ public class CigBulk extends CigBase implements ICancellatoLogicamente {
     }
 
     public boolean isCancellatoLogicamente() {
-        if ( getFlValido()!=null)
-            return Optional.ofNullable(!getFlValido()).orElse(Boolean.FALSE);
-        return Boolean.FALSE;
+        return Optional.ofNullable(getFlValido()).
+                map( s->!s).
+                orElse(Boolean.FALSE);
+
     }
 
     public void cancellaLogicamente() {

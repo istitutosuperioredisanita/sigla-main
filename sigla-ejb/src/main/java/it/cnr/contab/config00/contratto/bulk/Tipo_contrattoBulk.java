@@ -23,6 +23,9 @@ package it.cnr.contab.config00.contratto.bulk;
 
 import it.cnr.contab.util.ICancellatoLogicamente;
 import it.cnr.jada.bulk.OggettoBulk;
+
+import java.util.Optional;
+
 public class Tipo_contrattoBulk extends Tipo_contrattoBase implements ICancellatoLogicamente{
 	private static final java.util.Dictionary ti_natura_contabileKeys = new it.cnr.jada.util.OrderedHashtable();
 
@@ -62,10 +65,9 @@ public class Tipo_contrattoBulk extends Tipo_contrattoBase implements ICancellat
 	/* (non-Javadoc)
 	 * @see it.cnr.contab.util.ICancellatoLogicamente#isCancellatoLogicamente()
 	 */
-	public boolean isCancellatoLogicamente() {		
-		if ( getFl_cancellato()!=null)
-			return getFl_cancellato().booleanValue();
-		return Boolean.FALSE;
+	public boolean isCancellatoLogicamente() {
+		return Optional.ofNullable(getFl_cancellato()).
+				orElse(Boolean.FALSE);
 	}
 	/* (non-Javadoc)
 	 * @see it.cnr.contab.util.ICancellatoLogicamente#cancellaLogicamente()

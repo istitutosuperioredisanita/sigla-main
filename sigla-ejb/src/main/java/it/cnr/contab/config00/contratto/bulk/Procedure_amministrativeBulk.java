@@ -27,6 +27,8 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.OrderedHashtable;
 
 import java.util.Dictionary;
+import java.util.Optional;
+
 public class Procedure_amministrativeBulk extends Procedure_amministrativeBase implements ICancellatoLogicamente{
 	
 	public final static Dictionary ti_proc_ammKeys;
@@ -63,9 +65,8 @@ public class Procedure_amministrativeBulk extends Procedure_amministrativeBase i
 	 * @see it.cnr.contab.util.ICancellatoLogicamente#isCancellatoLogicamente()
 	 */
 	public boolean isCancellatoLogicamente() {
-		if ( getFl_cancellato()!=null)
-			return getFl_cancellato().booleanValue();
-		return Boolean.FALSE;
+		return Optional.ofNullable(getFl_cancellato()).
+				orElse(Boolean.FALSE);
 	}
 	/* (non-Javadoc)
 	 * @see it.cnr.contab.util.ICancellatoLogicamente#cancellaLogicamente()
