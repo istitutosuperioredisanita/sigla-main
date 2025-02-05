@@ -3096,4 +3096,10 @@
     <changeSet author="raffaele.pagano" runOnChange="true" id="create-view-V_CLASSIFICAZIONE_VOCI_H2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_CLASSIFICAZIONE_VOCI.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="raffaele.pagano" runOnChange="true" id="create-view-V_CLASSIFICAZIONE_VOCI_EP_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_CLASSIFICAZIONE_VOCI_EP.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="raffaele.pagano" runOnChange="true" id="create-view-V_DOC_CONT_COMP_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_DOC_CONT_COMP_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
 </databaseChangeLog>
