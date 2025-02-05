@@ -56,14 +56,14 @@ public abstract class EconomicaAction extends CRUDAction {
                 throw new ApplicationException("Il documento risulta non salvato! Proposta scrittura prima nota non possibile.");
 
             if (ResultScrittureContabili.LOAD_ANALITICA) {
-                ResultScrittureContabili result = Utility.createScritturaPartitaDoppiaComponentSession().proposeScrittureContabili(
+                ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
                         actionContext.getUserContext(),
                         documentoCogeBulk);
 
                 documentoCogeBulk.setScrittura_partita_doppia(result.getScritturaPartitaDoppiaBulk());
                 documentoCogeBulk.setScrittura_analitica(result.getScritturaAnaliticaBulk());
             } else {
-                documentoCogeBulk.setScrittura_partita_doppia(Utility.createScritturaPartitaDoppiaComponentSession().proposeScritturaPartitaDoppia(
+                documentoCogeBulk.setScrittura_partita_doppia(Utility.createProposeScritturaComponentSession().proposeScritturaPartitaDoppia(
                         actionContext.getUserContext(),
                         documentoCogeBulk)
                 );
