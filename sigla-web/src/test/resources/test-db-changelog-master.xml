@@ -106,6 +106,60 @@
         <dropDefaultValue tableName="esercizio" columnName="dacr"/>
         <dropDefaultValue tableName="esercizio" columnName="duva"/>
     </changeSet>
+    <changeSet author="test" id="create-classificazione-spese">
+        <addDefaultValue tableName="classificazione_spese" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="classificazione_spese" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/classificazione_spese.csv" tableName="classificazione_spese"/>
+
+        <dropDefaultValue tableName="classificazione_spese" columnName="dacr"/>
+        <dropDefaultValue tableName="classificazione_spese" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-classificazione-voci">
+        <addDefaultValue tableName="classificazione_voci" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="classificazione_voci" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/classificazione_voci.csv" tableName="classificazione_voci"/>
+
+        <dropDefaultValue tableName="classificazione_voci" columnName="dacr"/>
+        <dropDefaultValue tableName="classificazione_voci" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-elemento-voce">
+        <addDefaultValue tableName="elemento_voce" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="elemento_voce" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/elemento_voce.csv" tableName="elemento_voce"/>
+
+        <dropDefaultValue tableName="elemento_voce" columnName="dacr"/>
+        <dropDefaultValue tableName="elemento_voce" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-classificazione-voci-ep">
+        <addDefaultValue tableName="classificazione_voci_ep" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="classificazione_voci_ep" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/classificazione_voci_ep.csv" tableName="classificazione_voci_ep"/>
+
+        <dropDefaultValue tableName="classificazione_voci_ep" columnName="dacr"/>
+        <dropDefaultValue tableName="classificazione_voci_ep" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-voce-ep">
+        <addDefaultValue tableName="voce_ep" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="voce_ep" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/voce_ep.csv" tableName="voce_ep"/>
+
+        <dropDefaultValue tableName="voce_ep" columnName="dacr"/>
+        <dropDefaultValue tableName="voce_ep" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-ass-ev-voceep">
+        <addDefaultValue tableName="ass_ev_voceep" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="ass_ev_voceep" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/ass_ev_voceep.csv" tableName="ass_ev_voceep"/>
+
+        <dropDefaultValue tableName="ass_ev_voceep" columnName="dacr"/>
+        <dropDefaultValue tableName="ass_ev_voceep" columnName="duva"/>
+    </changeSet>
     <changeSet author="test" id="create-numerazione-doc-amm">
         <addDefaultValue tableName="numerazione_doc_amm" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="numerazione_doc_amm" columnName="duva" defaultValueDate="${now}"/>

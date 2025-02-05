@@ -297,12 +297,13 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
         }
     }
 
+    @Test
     @OperateOnDeployment(TEST_H2)
     @InSequence(4)
     public void testDocumentoGenericoResiduo() throws Exception {
         {
             Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
-                            new Documento_genericoBulk("000", "GENERICO_S", "000.000", 2023,
+                            new Documento_genericoBulk("000", "GENERICO_S", "000.000", 2024,
                                     1L)))
                     .filter(Documento_genericoBulk.class::isInstance)
                     .map(Documento_genericoBulk.class::cast)
@@ -313,7 +314,6 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
                         new TestUserContext(),
                         documentoCogeBulk));
         }
-        /*
         {
             MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
                             new MandatoIBulk("000", 2025, 6L)))
@@ -339,7 +339,7 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
 
             Optional<Movimento_cogeBulk> rigaDare = movimentiDare.stream().findAny();
             assertTrue("Riga dare non presente.", rigaDare.isPresent());
-            assertEquals("A21014", rigaDare.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+            assertEquals("P22010", rigaDare.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
             assertEquals(new BigDecimal("1000.00"), rigaDare.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
             BulkList<Movimento_cogeBulk> movimentiAvere = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
@@ -352,6 +352,5 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
             assertEquals("A00053", rigaAvere.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
             assertEquals(new BigDecimal("1000.00"), rigaAvere.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
         }
-         */
     }
 }

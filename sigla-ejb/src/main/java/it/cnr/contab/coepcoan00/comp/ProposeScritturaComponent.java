@@ -1104,30 +1104,42 @@ public class ProposeScritturaComponent extends CRUDComponent {
 	}
 
 	public Scrittura_partita_doppiaBulk proposeScritturaPartitaDoppia(UserContext userContext, IDocumentoCogeBulk doccoge) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
-		return this.proposeScrittureContabili(userContext, doccoge, Boolean.TRUE, Boolean.FALSE).getScritturaPartitaDoppiaBulk();
+		return this.proposeScrittureContabili(userContext, doccoge, Boolean.FALSE).getScritturaPartitaDoppiaBulk();
 	}
 
 	public Scrittura_analiticaBulk proposeScritturaAnalitica(UserContext userContext, IDocumentoCogeBulk doccoge) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
-		return this.proposeScrittureContabili(userContext, doccoge, Boolean.TRUE, Boolean.FALSE).getScritturaAnaliticaBulk();
+		return this.proposeScrittureContabili(userContext, doccoge, Boolean.TRUE).getScritturaAnaliticaBulk();
 	}
 
 	public ResultScrittureContabili proposeScrittureContabili(UserContext userContext, IDocumentoCogeBulk doccoge) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
-		return this.proposeScrittureContabili(userContext, doccoge, Boolean.TRUE, Boolean.FALSE);
+		return this.proposeScrittureContabili(userContext, doccoge, Boolean.TRUE);
 	}
 
-	private Scrittura_partita_doppiaBulk proposeScritturaPartitaDoppia(UserContext userContext, IDocumentoCogeBulk doccoge, boolean isContabilizzaSuInviato) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
-		return this.proposeScrittureContabili(userContext, doccoge, Boolean.FALSE, isContabilizzaSuInviato).getScritturaPartitaDoppiaBulk();
+	private ResultScrittureContabili proposeScrittureContabili(UserContext userContext, IDocumentoCogeBulk doccoge, boolean makeAnalitica) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
+		try {
+			EsercizioHome home = (EsercizioHome) getHome(userContext, EsercizioBulk.class);
+			if (!home.isEsercizioAperto(doccoge.getEsercizio(), doccoge.getCd_cds()))
+				throw new ScritturaPartitaDoppiaNotRequiredException("Scrittura Economica non generabile/modificabile. L'esercizio contabile " + doccoge.getEsercizio() +
+						" per il cds " + doccoge.getCd_cds() + " risulta essere non aperto.");
+		} catch (PersistencyException e) {
+			throw new RuntimeException(e);
+		}
+		return this.innerProposeScrittureContabili(userContext, doccoge, Boolean.FALSE, makeAnalitica);
 	}
 
-	private ResultScrittureContabili proposeScrittureContabili(UserContext userContext, IDocumentoCogeBulk doccoge, boolean makeAnalitica, boolean isContabilizzaSuInviato) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
+	private Scrittura_partita_doppiaBulk innerProposeScritturaPartitaDoppia(UserContext userContext, IDocumentoCogeBulk doccoge) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
+		return this.innerProposeScritturaPartitaDoppia(userContext, doccoge, Boolean.FALSE);
+	}
+
+	private Scrittura_partita_doppiaBulk innerProposeScritturaPartitaDoppia(UserContext userContext, IDocumentoCogeBulk doccoge, boolean isContabilizzaSuInviato) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
+		return this.innerProposeScrittureContabili(userContext, doccoge, isContabilizzaSuInviato, Boolean.FALSE).getScritturaPartitaDoppiaBulk();
+	}
+
+	private ResultScrittureContabili innerProposeScrittureContabili(UserContext userContext, IDocumentoCogeBulk doccoge, boolean isContabilizzaSuInviato, boolean makeAnalitica) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
 		try{
 			try {
 				setSavepoint(userContext, "proposeScritturaPartitaDoppia");
-				EsercizioHome home = (EsercizioHome) getHome(userContext, EsercizioBulk.class);
-				if (!home.isEsercizioAperto(doccoge.getEsercizio(), doccoge.getCd_cds()))
-					throw new ScritturaPartitaDoppiaNotRequiredException("Scrittura Economica non generabile/modificabile. L'esercizio contabile " + doccoge.getEsercizio() +
-							" per il cds " + doccoge.getCd_cds() + " risulta essere non aperto.");
-				else if (doccoge.getTipoDocumentoEnum().isGenericoCoriVersamentoSpesa())
+				if (doccoge.getTipoDocumentoEnum().isGenericoCoriVersamentoSpesa())
 					throw new ScritturaPartitaDoppiaNotRequiredException("Scrittura Economica non prevista per il documento generico di versamento contributi/ritenute. " +
 							"La scrittura principale viene eseguita sul compenso associato.");
 				else if (doccoge.getTipoDocumentoEnum().isChiusuraFondo())
@@ -3564,10 +3576,10 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			}
 		}).orElse(null);
 
-		if (!compenso.getFl_compenso_conguaglio())
-			throw new ApplicationException(descEstesaMandato+" legato a reversali emesse non a fronte di un conguaglio. Proposta di prima nota non possibile.");
+        if (compenso != null && !compenso.getFl_compenso_conguaglio())
+            throw new ApplicationException(descEstesaMandato + " legato a reversali emesse non a fronte di un conguaglio. Proposta di prima nota non possibile.");
 
-		List<Contributo_ritenutaBulk> righeCori = Optional.ofNullable(compenso.getChildren()).orElseGet(()->{
+        List<Contributo_ritenutaBulk> righeCori = Optional.ofNullable(compenso.getChildren()).orElseGet(()->{
 			try {
 				Contributo_ritenutaHome home = (Contributo_ritenutaHome) getHome(userContext, Contributo_ritenutaBulk.class);
 				return (List<Contributo_ritenutaBulk>)home.loadContributiRitenute(compenso);
@@ -4674,7 +4686,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		Map<String, Pair<String, BigDecimal>> result = ((Movimento_cogeHome) getHome(userContext, Movimento_cogeBulk.class)).getSaldiMovimentiPartita(docamm, cdTerzoDocAmm, scritturaToExclude);
 		if (result.isEmpty()) {
 			try {
-				Collection<Movimento_cogeBulk> allMovimentiCoge = proposeScritturaPartitaDoppia(userContext, docamm).getAllMovimentiColl()
+				Collection<Movimento_cogeBulk> allMovimentiCoge = this.innerProposeScritturaPartitaDoppia(userContext, docamm).getAllMovimentiColl()
 						.stream().filter(el->docamm.getEsercizio().equals(el.getEsercizio_documento()))
 						.filter(el->docamm.getCd_cds().equals(el.getCd_cds_documento()))
 						.filter(el->docamm.getCd_uo().equals(el.getCd_uo_documento()))
@@ -4738,7 +4750,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 			docMovimentiCori.forEach(docMov-> {
 				try {
-					allMovimentiCoge.addAll(proposeScritturaPartitaDoppia(userContext, docMov, isContabilizzaSuInviato).getAllMovimentiColl()
+					allMovimentiCoge.addAll(innerProposeScritturaPartitaDoppia(userContext, docMov, isContabilizzaSuInviato).getAllMovimentiColl()
 							.stream().filter(el -> docamm.getEsercizio().equals(el.getEsercizio_documento()))
 							.filter(el -> docamm.getCd_cds().equals(el.getCd_cds_documento()))
 							.filter(el -> docamm.getCd_uo().equals(el.getCd_uo_documento()))
@@ -4838,7 +4850,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
             }
 			//se non recupera nulla risimulo la scrittura della partita
  			try {
-				return proposeScritturaPartitaDoppia(userContext, docamm).getAllMovimentiColl();
+				return innerProposeScritturaPartitaDoppia(userContext, docamm).getAllMovimentiColl();
 			} catch (ScritturaPartitaDoppiaNotRequiredException | ScritturaPartitaDoppiaNotEnabledException ignored) {
 			}
 		}
@@ -6023,7 +6035,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		//Lancio la proposta di prima nota se non attivaEconomica (!isAttivaEconomicaDocamm) o, in caso contrario, se non generata ma viene richiesto di farlo (createIfNotExist && !scritturaOpt.isPresent())
 		if (!isAttivaEconomicaDocamm || (createIfNotExist && !scritturaOpt.isPresent())) {
 			try {
-				scritturaOpt = Optional.ofNullable(proposeScritturaPartitaDoppia(userContext, docamm));
+				scritturaOpt = Optional.ofNullable(innerProposeScritturaPartitaDoppia(userContext, docamm));
 			} catch (ScritturaPartitaDoppiaNotRequiredException | ScritturaPartitaDoppiaNotEnabledException ignored) {
 			} catch (ComponentException e) {
 				throw new ApplicationRuntimeException(e);
