@@ -85,16 +85,28 @@
 				name="nr_fattura_for_pag"
 				property="nr_fattura_for_pag"/>
 		<columnFieldProperty
-				label="Data. Fattura/Pagamento/Incasso"
+				label="Data Emis. Fattura/Pagamento/Incasso"
 				formatName="date_short"
 				name="dt_em_pag"
 				property="dt_em_pag"/>
+		<columnFieldProperty
+				label="Data Fattura Fornitore"
+				formatName="date_short"
+				name="dt_fattura_fornitore"
+				property="dt_fattura_fornitore"/>
 		<columnFieldProperty
 				label="Stato Liq."
 				inputType="SELECT"
 				keysProperty="stato_liquidazioneKeys"
 				name="stato_liquidazione"
 				property="stato_liquidazione"/>
+		<columnFieldProperty
+				name="identificativoSdi"
+				property="identificativoSdi"
+				maxLength="22"
+				inputSize="22"
+				inputType="TEXT"
+				label="Identificativo SDI"/>
 		<columnFieldProperty
 				headerLabel="Terzo"
 				label="Cod."
@@ -148,6 +160,7 @@
 		<findFieldProperty name="cd_uo_documento" label="Unità Organizzativa" inputType="TEXT"/>
 		<findFieldProperty name="pg_numero_documento" label="Numero Partita" inputType="TEXT"/>
 		<findFieldProperty name="cd_contributo_ritenuta" inputType="TEXT"/>
+		<findFieldProperty name="identificativoSdi" inputType="TEXT"/>
 	</freeSearchSet>
 
 </bulkInfo>

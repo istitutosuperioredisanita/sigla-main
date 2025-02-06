@@ -35,7 +35,6 @@
 			enabledOnEdit="true"
 			enabledOnSearch="true"
 			nullable="false"
-			readonlyProperty="ROCdVoceAna"
 			label="Codice" />
 	<fieldProperty
 			name="ds_voce_ana"
@@ -84,7 +83,8 @@
 			name="cd_voce_ana" />
 		<formFieldProperty
 			name="ds_voce_ana"
-			inputType="TEXT" />
+			inputType="TEXT"
+			inputCssClass="w-60"/>
 	</form>
 
 	<formFieldProperty

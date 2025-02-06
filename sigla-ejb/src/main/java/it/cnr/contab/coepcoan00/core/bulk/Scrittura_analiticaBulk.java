@@ -19,17 +19,27 @@ package it.cnr.contab.coepcoan00.core.bulk;
 
 import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.anagraf00.core.bulk.*;
+import it.cnr.contab.util.enumeration.TipoIVA;
+import it.cnr.jada.action.MessageToUser;
 import it.cnr.jada.bulk.*;
+
+import java.util.Arrays;
+import java.util.Dictionary;
+import java.util.Optional;
 
 public class Scrittura_analiticaBulk extends Scrittura_analiticaBase {
 	protected Unita_organizzativaBulk uo = new Unita_organizzativaBulk();
 	protected TerzoBulk terzo = new TerzoBulk();
 	protected CdsBulk cds = new CdsBulk();
+	protected CdsBulk cdsDocumento;
+	protected Unita_organizzativaBulk uoDocumento;
+	private String ti_istituz_commerc;
+
+	public final static Dictionary tipoKeys = TipoIVA.TipoIVAKeys;
 
 	protected BulkList movimentiColl = new BulkList();
 
 	public final static String TIPO_COAN = "COAN";
-	public final static String ORIGINE_CAUSALE = "CAUSALE";
 	public final static String TIPO_PRIMA_SCRITTURA = "P";
 	public final static String STATO_DEFINITIVO = "D";
 
@@ -41,36 +51,51 @@ public class Scrittura_analiticaBulk extends Scrittura_analiticaBase {
 		STATO_ATTIVA = new it.cnr.jada.util.OrderedHashtable();
 		STATO_ATTIVA.put(ATTIVA_YES,"Y");
 		STATO_ATTIVA.put(ATTIVA_NO,"N");
-	}	
-public Scrittura_analiticaBulk() {
+	}
+
+	public final static java.util.Dictionary ti_origineKeys = new it.cnr.jada.util.OrderedHashtable();
+	static {
+		Arrays.stream(OrigineScritturaEnum.values()).forEach(origine -> ti_origineKeys.put(origine.name(), origine.label()));
+	}
+
+	public Scrittura_analiticaBulk() {
 	super();
 }
-public Scrittura_analiticaBulk(java.lang.String cd_cds,java.lang.String cd_unita_organizzativa,java.lang.Integer esercizio,java.lang.Long pg_scrittura) {
-	super(cd_cds,cd_unita_organizzativa,esercizio,pg_scrittura);
-	setCds(new it.cnr.contab.config00.sto.bulk.CdsBulk(cd_cds));
-}
-/**
- * Metodo per l'aggiunta di un elemento <code>Movimento_coanBulk</code> alla <code>Collection</code>
- * dei movimenti 
- * @param movimento Movimento_coanBulk Il movimento
- * @return Il movimento con agguiornati i dati relativi alla sezione, stato, scrittura
- */
-public int addToMovimentiColl( Movimento_coanBulk movimento ) 
-{
-	this.movimentiColl.add(movimento);
-	movimento.setScrittura( this );
-	movimento.setStato( movimento.STATO_DEFINITIVO);
-	return movimentiColl.size()-1;
-}
-/**
- * Restituisce un array di <code>BulkCollection</code> contenenti oggetti
- * bulk da rendere persistenti insieme al ricevente.
- * L'implementazione standard restituisce <code>null</code>.
- */ 
-public BulkCollection[] getBulkLists() {
-	 return new it.cnr.jada.bulk.BulkCollection[] { 
-			movimentiColl };
-}
+	public Scrittura_analiticaBulk(java.lang.String cd_cds,java.lang.String cd_unita_organizzativa,java.lang.Integer esercizio,java.lang.Long pg_scrittura) {
+		super(cd_cds,cd_unita_organizzativa,esercizio,pg_scrittura);
+		setCds(new it.cnr.contab.config00.sto.bulk.CdsBulk(cd_cds));
+	}
+	/**
+	 * Metodo per l'aggiunta di un elemento <code>Movimento_coanBulk</code> alla <code>Collection</code>
+	 * dei movimenti
+	 * @param movimento Movimento_coanBulk Il movimento
+	 * @return Il movimento con agguiornati i dati relativi alla sezione, stato, scrittura
+	 */
+	public int addToMovimentiColl( Movimento_coanBulk movimento ) {
+		if (!Optional.ofNullable(movimento.getTi_istituz_commerc()).isPresent() &&
+				!Optional.ofNullable(getTi_istituz_commerc()).isPresent()) {
+			throw new MessageToUser("Specificare il Tipo in testata, Istituzionale/Commerciale!");
+		}
+		this.movimentiColl.add(movimento);
+		movimento.setScrittura( this );
+		movimento.setStato(Movimento_coanBulk.STATO_DEFINITIVO);
+		movimento.setFl_modificabile(Boolean.TRUE);
+		movimento.setTi_istituz_commerc(
+				Optional.ofNullable(movimento.getTi_istituz_commerc())
+						.orElse(getTi_istituz_commerc())
+		);
+		return movimentiColl.size()-1;
+	}
+	/**
+	 * Restituisce un array di <code>BulkCollection</code> contenenti oggetti
+	 * bulk da rendere persistenti insieme al ricevente.
+	 * L'implementazione standard restituisce <code>null</code>.
+	 */
+	public BulkCollection[] getBulkLists() {
+		 return new it.cnr.jada.bulk.BulkCollection[] {
+				movimentiColl };
+
+	}
 	public java.lang.String getCd_cds() {
 		it.cnr.contab.config00.sto.bulk.CdsBulk cds = this.getCds();
 		if (cds == null)
@@ -100,12 +125,11 @@ public BulkCollection[] getBulkLists() {
 	{
 		Movimento_coanBulk mov;
 		java.math.BigDecimal tot = new java.math.BigDecimal(0);
-		for ( java.util.Iterator i = getMovimentiColl().iterator(); i.hasNext(); )
-		{
-			mov = (Movimento_coanBulk)i.next();
-			if ( mov.getIm_movimento() != null )
-				tot = tot.add(mov.getIm_movimento());
-		}
+        for (Object o : getMovimentiColl()) {
+            mov = (Movimento_coanBulk) o;
+            if (mov.getIm_movimento() != null)
+                tot = tot.add(mov.getIm_movimento());
+        }
 		return tot;
 	}
 	/**
@@ -141,7 +165,7 @@ public BulkCollection[] getBulkLists() {
 		setEsercizio(it.cnr.contab.utenze00.bulk.CNRUserInfo.getEsercizio(context));
 		setUo(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa( context));
 		setCd_uo_documento(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa( context).getCd_unita_organizzativa());
-		setOrigine_scrittura( ORIGINE_CAUSALE );
+		setOrigine_scrittura(OrigineScritturaEnum.PRIMA_NOTA_MANUALE.name());
 		setAttiva( ATTIVA_YES );
 		setTi_scrittura( TIPO_PRIMA_SCRITTURA);
 		setStato( STATO_DEFINITIVO);
@@ -223,7 +247,67 @@ public BulkCollection[] getBulkLists() {
 			throw new ValidationException( "E' necessario inserire la descrizione della scrittura analitica");
 
 		// Controllo sulla validità dei singoli movimenti
-		for ( java.util.Iterator i = getMovimentiColl().iterator(); i.hasNext(); )
-			((Movimento_coanBulk)i.next()).validate();
+        for (Object o : getMovimentiColl()) ((Movimento_coanBulk) o).validate();
+	}
+
+	public CdsBulk getCdsDocumento() {
+		return cdsDocumento;
+	}
+
+	public void setCdsDocumento(CdsBulk cdsDocumento) {
+		this.cdsDocumento = cdsDocumento;
+	}
+
+	@Override
+	public String getCd_cds_documento() {
+		return Optional.ofNullable(getCdsDocumento())
+				.map(CdsBulk::getCd_unita_organizzativa)
+				.orElse(super.getCd_cds_documento());
+	}
+
+	@Override
+	public void setCd_cds_documento(String cd_cds_documento) {
+		if (!Optional.ofNullable(getCdsDocumento()).isPresent())
+			setCdsDocumento(new CdsBulk());
+		getCdsDocumento().setCd_unita_organizzativa(cd_cds_documento);
+	}
+
+	public Unita_organizzativaBulk getUoDocumento() {
+		return uoDocumento;
+	}
+
+	public void setUoDocumento(Unita_organizzativaBulk uoDocumento) {
+		this.uoDocumento = uoDocumento;
+	}
+
+	@Override
+	public String getCd_uo_documento() {
+		return Optional.ofNullable(getUoDocumento())
+				.map(Unita_organizzativaBulk::getCd_unita_organizzativa)
+				.orElse(super.getCd_uo_documento());
+	}
+
+	@Override
+	public void setCd_uo_documento(String cd_uo_documento) {
+		if (!Optional.ofNullable(getUoDocumento()).isPresent())
+			setUoDocumento(new Unita_organizzativaBulk());
+		getUoDocumento().setCd_unita_organizzativa(cd_uo_documento);
+	}
+
+	public void setTi_istituz_commerc(String ti_istituz_commerc) {
+		this.ti_istituz_commerc = ti_istituz_commerc;
+	}
+
+	public String getTi_istituz_commerc() {
+		return Optional.ofNullable(ti_istituz_commerc)
+				.orElseGet(() -> {
+					return getMovimentiColl()
+							.stream()
+							.map(Movimento_coanBase::getTi_istituz_commerc)
+							.filter(tiIstituzCommerc -> Optional.ofNullable(tiIstituzCommerc).isPresent())
+							.distinct()
+							.findAny()
+							.orElse(null);
+				});
 	}
 }

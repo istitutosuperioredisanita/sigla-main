@@ -39,6 +39,7 @@ import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.doccont00.comp.CheckDisponibilitaContrattoFailed;
 import it.cnr.contab.doccont00.core.bulk.AccertamentoBulk;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
+import it.cnr.contab.doccont00.tabrif.bulk.CupBulk;
 import it.cnr.contab.incarichi00.tabrif.bulk.Tipo_norma_perlaBulk;
 import it.cnr.contab.incarichi00.tabrif.bulk.Tipo_norma_perlaHome;
 import it.cnr.contab.progettiric00.core.bulk.*;
@@ -559,11 +560,14 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 		ContrattoBulk contratto = (ContrattoBulk)oggettobulk;
 
 		if (contratto.getCig() != null && contratto.getCig().isToBeCreated()){
-			super.creaConBulk(usercontext, contratto.getCig());
+			CigBulk cig= ( CigBulk) super.creaConBulk(usercontext, contratto.getCig());
+			contratto.setCig(cig);
 		}
 		if (contratto.getCup() != null && contratto.getCup().isToBeCreated()){
-			super.creaConBulk(usercontext, contratto.getCup());
+			CupBulk cup=( CupBulk) super.creaConBulk(usercontext, contratto.getCup());
+			contratto.setCup(cup);
 		}
+
 		return super.creaConBulk(usercontext, oggettobulk);
 	}	
 	public OggettoBulk modificaConBulk(UserContext uc, OggettoBulk bulk) throws ComponentException{
@@ -2259,6 +2263,17 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 				throw handleException(e);
 			}
 		}
+		private Tipo_atto_amministrativoBulk getTipoAttoAmministrativo( UserContext userContext, ContrattoBulk contrattoBulk,Tipo_atto_amministrativoBulk tipoAttoAmministrativoBulk) throws ComponentException, PersistencyException {
+			SQLBuilder sql = selectAttoByClause(userContext,contrattoBulk,tipoAttoAmministrativoBulk,null);
+			Tipo_atto_amministrativoHome home= (Tipo_atto_amministrativoHome) getHome(userContext, tipoAttoAmministrativoBulk);
+			List lista = home.fetchAll(sql);
+			if (lista != null && ( !lista.isEmpty())){
+				return (Tipo_atto_amministrativoBulk) lista.get(0);
+			}
+			return null;
+		}
+
+
 		public ContrattoBulk creaContrattoDaFlussoAcquisti(UserContext userContext, ContrattoBulk contratto, boolean statoDefinitivo) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException {
 			try {
 
@@ -2280,6 +2295,13 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 					}
 				}
 
+				if ( contratto.getTipo_contratto()!=null && (!contratto.getCd_tipo_contratto().isEmpty())) {
+					String cdTipoContrattoInput=contratto.getCd_tipo_contratto();
+					contratto.setTipo_contratto(getTipoContratto(userContext, contratto.getTipo_contratto()));
+					if ( !Optional.ofNullable(contratto.getTipo_contratto()).isPresent()){
+						throw new ComponentException("Il Tipo Contratto "+ cdTipoContrattoInput +" non esiste in SIGLA");
+					}
+				}
 				if ( contratto.getCodfisPivaFirmatarioExt()!=null && (!contratto.getCodfisPivaFirmatarioExt().isEmpty())) {
 					contratto.setFirmatario(getPersonaFisicaFromCodiceFiscalePiva(userContext, contratto.getCodfisPivaFirmatarioExt()));
 					if ( !Optional.ofNullable(contratto.getFirmatario()).isPresent()){
@@ -2293,23 +2315,35 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 						throw new ComponentException("La figura giuridica Esterna con Codice Fiscale/P.Iva "+ contratto.getCodfisPivaRupExt() +" non esiste in SIGLA");
 					}
 				}
+				if ( contratto.getAtto()!=null && (!contratto.getAtto().getCd_tipo_atto().isEmpty())) {
+					Tipo_atto_amministrativoBulk tipoAtto= getTipoAttoAmministrativo( userContext,contratto,contratto.getAtto() );
+
+					if ( !Optional.ofNullable(tipoAtto).isPresent()){
+						throw new ComponentException("Il Tipo Atto Amministrativo "+ contratto.getAtto().getCd_tipo_atto() +" non esiste in SIGLA");
+					}
+					contratto.setAtto(tipoAtto);
+				}
 				if ( contratto.getCd_proc_amm()!=null && (!contratto.getCd_proc_amm().isEmpty())) {
 					Procedure_amministrativeBulk procedureAmministrativeBulk= getProceduraAmministrativa(userContext,contratto,contratto.getProcedura_amministrativa());
 					if ( !Optional.ofNullable(procedureAmministrativeBulk).isPresent()){
 						throw new ComponentException("La Procedura Amministrativa "+ contratto.getCd_proc_amm() +" non esiste in SIGLA oppure è stata eliminata");
 					}
+					contratto.setProcedura_amministrativa(procedureAmministrativeBulk);
 				}
 				if ( contratto.getCd_tipo_norma_perla()!=null && (!contratto.getCd_tipo_norma_perla().isEmpty())) {
 					Tipo_norma_perlaBulk tipoNormaPerlaBulk= getTipoNormaPerla(userContext,contratto,contratto.getTipoNormaPerla());
 					if ( !Optional.ofNullable(tipoNormaPerlaBulk).isPresent()){
 						throw new ComponentException("Il tipo Norma Perla "+ contratto.getCd_tipo_norma_perla() +" non esiste in SIGLA");
 					}
+					contratto.setTipoNormaPerla(tipoNormaPerlaBulk);
 				}
+
 				if ( contratto.getCd_organo()!=null && (!contratto.getCd_organo().isEmpty())) {
 					OrganoBulk organoBulk= getOrgano(userContext,contratto,contratto.getOrgano());
 					if ( !Optional.ofNullable(organoBulk).isPresent()){
 						throw new ComponentException("Il tipo Organo "+ contratto.getCd_organo() +" non esiste in SIGLA oppure è stato eliminito");
 					}
+					contratto.setOrgano(organoBulk);
 				}
 
 				gestioneCigSuContrattoDaFlows(userContext, contratto);
@@ -2320,9 +2354,9 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 					try {
 						return salvaDefinitivo(userContext, contratto);
 					}catch (Exception e){
-						if ( isAttachRestContrStoredFromSigla)
+						//if ( isAttachRestContrStoredFromSigla)
 						//rimuovi Contratto con gli allegati
-						deleteDirectoryAllegatiDaFlusso(userContext,contratto,isAttachRestContrStoredFromSigla);
+						//deleteDirectoryAllegatiDaFlusso(userContext,contratto,isAttachRestContrStoredFromSigla);
 					}
 				}
 
@@ -2404,6 +2438,21 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 			}
 			return null;
 		}
+	private Tipo_contrattoBulk getTipoContratto( UserContext userContext, Tipo_contrattoBulk tipoContratto) throws ComponentException, PersistencyException {
+		try {
+			Tipo_contrattoHome tipoContrattoHome = (Tipo_contrattoHome)getHome(userContext,Tipo_contrattoBulk.class);
+			Tipo_contrattoBulk tipoContrattoBulk = ( Tipo_contrattoBulk) tipoContrattoHome.findByPrimaryKey(tipoContratto);
+			if (tipoContrattoBulk != null ) {
+				if ( Tipo_contrattoBulk.NATURA_CONTABILE_ATTIVO_E_PASSIVO.compareTo(tipoContrattoBulk.getNatura_contabile())==0
+					||Tipo_contrattoBulk.NATURA_CONTABILE_PASSIVO.compareTo(tipoContrattoBulk.getNatura_contabile())==0)
+					return tipoContrattoBulk;
+				return null;
+			}
+			return null;
+		} catch (PersistencyException  e) {
+			throw new ComponentException(e);
+		}
+	}
 
 		private Tipo_norma_perlaBulk getTipoNormaPerla( UserContext userContext, ContrattoBulk contrattoBulk,Tipo_norma_perlaBulk tipoNormaPerlaBulk) throws ComponentException, PersistencyException {
 			SQLBuilder sql = selectTipoNormaPerlaByClause(userContext,contrattoBulk,tipoNormaPerlaBulk,null);
@@ -2415,6 +2464,8 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 			return null;
 		}
 
+
+
 		private OrganoBulk getOrgano( UserContext userContext, ContrattoBulk contrattoBulk,OrganoBulk organoBulk) throws ComponentException, PersistencyException {
 			SQLBuilder sql = selectOrganoByClause(userContext,contrattoBulk,organoBulk,null);
 			OrganoHome home= (OrganoHome) getHome(userContext, organoBulk);
@@ -2424,6 +2475,8 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 			}
 			return null;
 		}
+
+
  		
 		private V_persona_fisicaBulk getPersonaFisicaFromCodiceFiscalePiva(UserContext userContext, String codFisPiva)throws it.cnr.jada.comp.ComponentException{
 			try {

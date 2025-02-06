@@ -40,6 +40,14 @@
 		enabledOnSearch="false"		
 		label="Cds" />
 	<fieldProperty
+		name="cds"
+		property="scrittura.cds"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		label="Cds"/>
+	<fieldProperty
 		name="pg_numero_documento"
 		property="pg_numero_documento"
 		inputType="TEXT"
@@ -57,7 +65,15 @@
 		inputSize="60"
 		inputType="ROTEXT"
 		enabledOnFreeSearch="false"								
-		label="Unit&#224; organizzativa" />	
+		label="Unit&#224; organizzativa" />
+	<fieldProperty
+		name="uo"
+		property="scrittura.uo"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		label="Unit&#224; organizzativa"/>
 	<fieldProperty
 		name="stato"
 		property="stato"
@@ -122,8 +138,14 @@
 		property="voceAnalitica"
 		inputType="SEARCHTOOL"
 		enabledOnSearch="true"
-		label="Conto"
-		/>		
+		label="Conto" />
+	<fieldProperty
+		name="find_voce_ana_searchtool"
+		property="voceAnalitica"
+		formName="searchtool"
+		inputType="SEARCHTOOL"
+		enabledOnSearch="true"
+		label="Conto" />
 	<fieldProperty
 		name="cd_linea_attivita"
 		property="latt.cd_linea_attivita"
@@ -146,8 +168,19 @@
 		name="find_linea_attivita"
 		property="latt"
 		inputType="SEARCHTOOL"
+		formName="searchtool_denominazione"
+		enabledOnEdit="true"
 		enabledOnSearch="true"
-		/>		
+		nullable="false"
+		label="G.a.e." />
+	<fieldProperty
+		name="centro_responsabilita"
+		property="latt.centro_responsabilita"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		label="Centro di Responsabilit&#224; del GAE"/>
 	<fieldProperty
 		name="cd_centro_responsabilita"
 		property="latt.centro_responsabilita.cd_centro_responsabilita"
@@ -182,8 +215,10 @@
 	<fieldProperty
 		name="find_terzo"
 		property="terzo"
-		enabledOnSearch="true"		
-		inputType="SEARCHTOOL"/>
+		enabledOnSearch="true"
+		formName="searchtool"
+		inputType="SEARCHTOOL"
+		label="Terzo" />
 	<fieldProperty
 		name="sezione"
 		property="sezione"
@@ -219,8 +254,7 @@
 		enabledOnInsert="false"
 		enabledOnEdit="false"		
 		enabledOnFreeSearch="true"		
-		enabledOnSearch="true"		
-		/>
+		enabledOnSearch="true" />
 	<fieldProperty
 		name="pg_scrittura_annullata"
 		property="scrittura.pg_scrittura_annullata"
@@ -229,17 +263,31 @@
 		enabledOnInsert="false"
 		enabledOnEdit="false"
 		enabledOnSearch="true"
-		enabledOnFreeSearch="true"		
-		/>
-		
+		enabledOnFreeSearch="true" />
+	<fieldProperty
+		name="ti_istituz_commerc"
+		property="ti_istituz_commerc"
+		maxLength="1"
+		inputSize="1"
+		inputType="SELECT"
+		keysProperty = "tipoKeys"
+		label="Tipo"
+		enabledOnSearch="true"
+		caseSensitiveSearch="false"
+		nullable="false"/>
+
 	<formFieldProperty
 		name="cd_unita_organizzativa" />
 	<formFieldProperty
 		name="ds_unita_organizzativa" />
 	<formFieldProperty
+		name="uo" />
+	<formFieldProperty
 		name="cd_cds" />
 	<formFieldProperty
 		name="ds_cds" />
+	<formFieldProperty
+		name="cds" />
 	<formFieldProperty
 		name="pg_numero_documento" />
 	<formFieldProperty
@@ -259,6 +307,8 @@
 	<formFieldProperty
 		name="find_linea_attivita" />
 	<formFieldProperty
+		name="centro_responsabilita" />
+	<formFieldProperty
 		name="cd_centro_responsabilita" />
 	<formFieldProperty
 		name="cd_voce_ana" />
@@ -266,6 +316,8 @@
 		name="ds_voce_ana" />
 	<formFieldProperty
 		name="find_voce_ana" />
+	<formFieldProperty
+		name="find_voce_ana_searchtool" />
 	<formFieldProperty
 		name="ds_movimento" />
 	<formFieldProperty
@@ -283,7 +335,9 @@
 	<formFieldProperty
 		name="pg_scrittura_annullata" />
 	<formFieldProperty
-		name="attiva" />		
+		name="attiva" />
+	<formFieldProperty
+		name="ti_istituz_commerc" />
 
 	<columnFieldProperty
 		name="esercizio" />
@@ -307,6 +361,8 @@
 		name="cd_linea_attivita" />
 	<columnFieldProperty
 		name="cd_centro_responsabilita" />
+	<columnFieldProperty
+		name="ti_istituz_commerc" />
 
 	<columnSet
 		name="latt">
@@ -347,5 +403,7 @@
 		name="cd_linea_attivita" />
 	<findFieldProperty
 		name="im_movimento" />
+	<findFieldProperty
+		name="ti_istituz_commerc" />
 
 </bulkInfo>

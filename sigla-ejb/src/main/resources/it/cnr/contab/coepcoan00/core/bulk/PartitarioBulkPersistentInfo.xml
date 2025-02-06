@@ -223,10 +223,20 @@
                 sqlTypeName="TIMESTAMP"
                 columnSize="7"/>
         <columnMapping
+                columnName="DT_FATTURA_FORNITORE"
+                propertyName="dt_fattura_fornitore"
+                sqlTypeName="TIMESTAMP"
+                columnSize="7"/>
+        <columnMapping
                 columnName="STATO_LIQUIDAZIONE"
                 propertyName="stato_liquidazione"
                 sqlTypeName="VARCHAR"
                 columnSize="20"/>
+        <columnMapping
+                columnName="IDENTIFICATIVO_SDI"
+                propertyName="identificativoSdi"
+                sqlTypeName="DECIMAL"
+                columnSize="22"/>
 
         <!-- FETCH Documento Coge -->
         <columnMapping
@@ -304,6 +314,9 @@
     <persistentProperty
             name="dt_em_pag" />
     <persistentProperty
+            name="dt_fattura_fornitore" />
+    <persistentProperty
             name="stato_liquidazione" />
-
+    <persistentProperty
+            name="identificativoSdi" />
 </SQLPersistentInfo>

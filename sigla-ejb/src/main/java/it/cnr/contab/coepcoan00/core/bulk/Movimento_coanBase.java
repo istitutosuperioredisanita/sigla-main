@@ -17,7 +17,10 @@
 
 package it.cnr.contab.coepcoan00.core.bulk;
 
+import it.cnr.jada.bulk.*;
 import it.cnr.jada.persistency.*;
+import it.cnr.jada.persistency.beans.*;
+import it.cnr.jada.persistency.sql.*;
 
 public class Movimento_coanBase extends Movimento_coanKey implements Keyed {
 	// CD_CENTRO_RESPONSABILITA VARCHAR(30) NOT NULL
@@ -47,11 +50,15 @@ public class Movimento_coanBase extends Movimento_coanKey implements Keyed {
 	// STATO VARCHAR(1) NOT NULL
 	private java.lang.String stato;
 
+	// TI_ISTITUZ_COMMERC CHAR(1) NOT NULL
 	private java.lang.String ti_istituz_commerc;
 
+	// FL_MODIFICABILE CHAR(1)
+	private java.lang.Boolean fl_modificabile;
+
 	public Movimento_coanBase() {
-		super();
-	}
+	super();
+}
 	public Movimento_coanBase(java.lang.String cd_cds,java.lang.String cd_unita_organizzativa,java.lang.String cd_voce_ana,java.lang.Integer esercizio,java.lang.Long pg_movimento,java.lang.Long pg_scrittura,java.lang.String sezione) {
 		super(cd_cds,cd_unita_organizzativa,cd_voce_ana,esercizio,pg_movimento,pg_scrittura,sezione);
 	}
@@ -170,5 +177,13 @@ public class Movimento_coanBase extends Movimento_coanKey implements Keyed {
 
 	public void setTi_istituz_commerc(String ti_istituz_commerc) {
 		this.ti_istituz_commerc = ti_istituz_commerc;
+	}
+
+	public Boolean getFl_modificabile() {
+		return fl_modificabile;
+	}
+
+	public void setFl_modificabile(Boolean fl_modificabile) {
+		this.fl_modificabile = fl_modificabile;
 	}
 }
