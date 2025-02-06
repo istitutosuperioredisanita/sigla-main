@@ -40,6 +40,7 @@ import it.cnr.contab.inventario01.bulk.*;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineHome;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
+import it.cnr.contab.ordmag.ordini.dto.ImportoOrdine;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.TipoIVA;
@@ -713,6 +714,10 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 							}
 						}
 						buonoCS = (Buono_carico_scaricoBulk) super.creaConBulk(userContext, definitivo);
+
+						verificaAssociazioneFattura(userContext,definitivo);
+
+
 					} catch (it.cnr.jada.persistency.PersistencyException e) {
 						throw handleException(buonoCS, e);
 					} catch (it.cnr.jada.persistency.IntrospectionException e) {
@@ -738,7 +743,71 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 			throw handleException(bulk, e);
 		}
 	}
-	
+
+	private void verificaAssociazioneFattura(UserContext userContext , Buono_carico_scaricoBulk buonoCS) throws ComponentException, PersistencyException {
+		SimpleBulkList<OggettoBulk> dettagli = buonoCS.getBuono_carico_scarico_dettColl();
+
+		Transito_beni_ordiniHome homeTransito = (Transito_beni_ordiniHome)getHome(userContext, Transito_beni_ordiniBulk.class);
+		FatturaOrdineHome fattHome = (FatturaOrdineHome) getHome(userContext, FatturaOrdineBulk.class);
+		Inventario_beniHome invHome = (Inventario_beniHome) getHome(userContext,Inventario_beniBulk.class);
+		Ass_inv_bene_fatturaHome assHome = (Ass_inv_bene_fatturaHome) getHome(userContext, Ass_inv_bene_fatturaBulk.class);
+
+		FatturaPassivaComponentSession fatturaPassivaComponent = EJBCommonServices.createEJB("CNRDOCAMM00_EJB_FatturaPassivaComponentSession", FatturaPassivaComponentSession.class);
+		Inventario_beniComponentSession inventario_beniComponent = ((it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_Inventario_beniComponentSession",it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession.class));
+
+		for (Iterator i = dettagli.iterator(); i.hasNext(); ) {
+			Buono_carico_scarico_dettBulk dettaglio = (Buono_carico_scarico_dettBulk) i.next();
+
+			Transito_beni_ordiniBulk transito_beni_ordiniBulk = new Transito_beni_ordiniBulk();
+			transito_beni_ordiniBulk.setId(dettaglio.getIdTransito());
+			try {
+				transito_beni_ordiniBulk = (Transito_beni_ordiniBulk)homeTransito.findByPrimaryKey(transito_beni_ordiniBulk);
+
+				if (transito_beni_ordiniBulk != null){
+					getHomeCache(userContext).fetchAll(userContext);
+				}else{
+					throw new ComponentException();
+				}
+			} catch (PersistencyException e) {
+				throw new ComponentException(e);
+			}
+			// Se la consegna dell'ordine risulta associata o associata parzialmente a fattura si deve verificare l'associativa FATTURA/INVENTARIO
+			if(!transito_beni_ordiniBulk.getMovimentiMag().getLottoMag().getOrdineAcqConsegna().getStatoFatt().equals(OrdineAcqConsegnaBulk.STATO_FATT_NON_ASSOCIATA)){
+
+				FatturaOrdineBulk fatturaOrd = fattHome.findFatturaByRigaConsegna(transito_beni_ordiniBulk.getMovimentiMag().getLottoMag().getOrdineAcqConsegna());
+				// se consegna ordine collegata a fattura
+				if(fatturaOrd != null){
+					try {
+						List<Inventario_beniBulk> listaInventario=invHome.findByTransito(transito_beni_ordiniBulk);
+						if (listaInventario != null){
+							getHomeCache(userContext).fetchAll(userContext);
+							for(Inventario_beniBulk bene:listaInventario){
+							// Se bene non presente in ASS_INV_FATTURA_BENE (caso di riscontro al valore prima dell'inventariazione del bene)
+								if(assHome.findAssociativaFatturaBeneByBene(bene) == null) {
+
+									ImportoOrdine importo = new ImportoOrdine();
+									importo.setImponibile(fatturaOrd.getImImponibile());
+									importo.setImportoIvaInd(fatturaOrd.getImIvaNd());
+
+									BigDecimal importoUnitarioFattura = fatturaPassivaComponent.getPrezzoUnitarioFattura(userContext,importo);
+									fatturaPassivaComponent.creaAssociativaFatturaPassivaInventario(userContext, fatturaOrd, inventario_beniComponent, importoUnitarioFattura, transito_beni_ordiniBulk);
+								}
+
+							}
+						}else{
+							throw new ComponentException();
+						}
+					} catch (PersistencyException | RemoteException | IntrospectionException e) {
+						throw new ComponentException(e);
+					}
+
+				}
+			}
+		}						/////
+		//if (transito_beni_ordiniBulk != null){
+		//	getHomeCache(aUC).fetchAll(aUC);
+		//}
+	}
 	/** 
 	  *  Validazione dell'operazione di Trasferimento.
 	  *    PreCondition:
@@ -6096,20 +6165,6 @@ private void insertBeni (UserContext aUC,Buono_carico_scaricoBulk buonoC, Simple
 				throw new ComponentException(e);
 			}
 
-			// Se la consegna dell'ordine risulta associata o associata parzialmente a fattura si deve verificare l'associativa FATTURA/INVENTARIO
-			if(!transito_beni_ordiniBulk.getMovimentiMag().getLottoMag().getOrdineAcqConsegna().getStatoFatt().equals(OrdineAcqConsegnaBulk.STATO_FATT_NON_ASSOCIATA)){
-				FatturaOrdineHome fattHome = (FatturaOrdineHome) getHome(aUC, FatturaOrdineBulk.class);
-				FatturaOrdineBulk fatturaOrd = fattHome.findFatturaByRigaConsegna(transito_beni_ordiniBulk.getMovimentiMag().getLottoMag().getOrdineAcqConsegna());
-				// se consegna ordine collegata a fattura
-				if(fatturaOrd != null){
-					Ass_inv_bene_fatturaHome assHome = (Ass_inv_bene_fatturaHome) getHome(aUC, Ass_inv_bene_fatturaBulk.class);
-					// Se bene non presente in ASS_INV_FATTURA_BENE (caso di riscontro al valore prima dell'inventariazione del bene)
-					if(assHome.findAssociativaFatturaBeneByBene(bene) == null) {
-						FatturaPassivaComponentSession fatturaPassivaComponent = EJBCommonServices.createEJB("CNRDOCAMM00_EJB_FatturaPassivaComponentSession", FatturaPassivaComponentSession.class);
-						fatturaPassivaComponent.creaAssociativaFatturaPassivaInventario(aUC, fatturaOrd, inventario_beniComponent, bene.getValore_iniziale(), transito_beni_ordiniBulk);
-					}
-				}
-			}
 		}
 	}
 }

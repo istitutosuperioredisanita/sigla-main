@@ -27,11 +27,14 @@ import it.cnr.contab.doccont00.core.bulk.OptionRequestParameter;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
 import it.cnr.contab.inventario00.docs.bulk.Transito_beni_ordiniBulk;
 import it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession;
+import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
+import it.cnr.contab.ordmag.ordini.dto.ImportoOrdine;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.NoRollbackException;
+import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 
@@ -188,4 +191,5 @@ public interface FatturaPassivaComponentSession extends it.cnr.contab.docamm00.c
     Boolean  isCompilaFatturaVaziazione(UserContext userContext, DocumentoEleTestataBulk testataBulk) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
     java.util.List<FatturaOrdineBulk> findFatturaOrdini(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException, java.rmi.RemoteException;
     void creaAssociativaFatturaPassivaInventario(UserContext userContext, FatturaOrdineBulk fatturaOrdineBulk, Inventario_beniComponentSession inventario_beniComponent, BigDecimal importoUnitario, Transito_beni_ordiniBulk transito_beni_ordiniBulk) throws ComponentException, RemoteException;
+    BigDecimal getPrezzoUnitarioFattura(UserContext param0,ImportoOrdine importo) throws RemoteException, ComponentException, PersistencyException, IntrospectionException;
 }

@@ -47,7 +47,8 @@ public class FatturaOrdineHome extends BulkHome {
 	}
 
 	public FatturaOrdineBulk findFatturaByRigaConsegna(OrdineAcqConsegnaBulk ordineAcqConsegnaBulk) throws PersistencyException {
-		SQLBuilder sql = createSQLBuilder();
+		final PersistentHome persistentHome = getHomeCache().getHome(FatturaOrdineBulk.class, "FATTURA_P");
+		final SQLBuilder sql = persistentHome.createSQLBuilder();
 		sql.addSQLClause("AND", "CD_CDS_ORDINE", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getCdCds());
 		sql.addSQLClause("AND", "CD_UNITA_OPERATIVA", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getCdUnitaOperativa());
 		sql.addSQLClause("AND", "ESERCIZIO_ORDINE", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getEsercizio());
