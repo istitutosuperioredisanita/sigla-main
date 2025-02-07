@@ -44,27 +44,29 @@ public class RestServiceContrattiTest {
         ObjectMapper mapper = new ObjectMapper();
         ContrattoDtoBulk c = new ContrattoDtoBulk();
         c.setEsercizio(2025);
-        c.setCodiceFlussoAcquisti( "PLUTO28");
+        c.setCodiceFlussoAcquisti( "PLUTO30");
         c.setCd_unita_organizzativa("000.001");
         c.setCodfisPivaRupExt("RGLNLR52E69Z600O");
         c.setCodfisPivaAggiudicatarioExt("05923561004");
         //c.setCodfisPivaFirmatarioExt("ZNCMRT79E49H501E");
 
-        c.setTipoDettaglioContratto(EnumTipoDettaglioContratto.DETTAGLIO_CONTRATTO_ARTICOLI);
+        //c.setTipoDettaglioContratto(EnumTipoDettaglioContratto.DETTAGLIO_CONTRATTO_ARTICOLI);
+        c.setTipoDettaglioContratto(EnumTipoDettaglioContratto.DETTAGLIO_CONTRATTO_CATGRP);
         DettaglioContrattoDtoBulk dettaglioContrattoDtoBulk= new DettaglioContrattoDtoBulk();
-        dettaglioContrattoDtoBulk.setCdBeneServizio("AA00107");
-        dettaglioContrattoDtoBulk.setPrezzoUnitario(new BigDecimal(2920));
+        dettaglioContrattoDtoBulk.setCdCategoriaGruppo("0.0.3");
+        //dettaglioContrattoDtoBulk.setCdBeneServizio("AA00107");
+        //dettaglioContrattoDtoBulk.setPrezzoUnitario(new BigDecimal(2920));
         //dettaglioContrattoDtoBulk.setCdCategoriaGruppo("8.0");
-        dettaglioContrattoDtoBulk.setQuantitaMax(new BigDecimal(10));
-        dettaglioContrattoDtoBulk.setQuantitaMax(new BigDecimal(1));
+        //dettaglioContrattoDtoBulk.setQuantitaMax(new BigDecimal(10));
+        //dettaglioContrattoDtoBulk.setQuantitaMax(new BigDecimal(1));
         c.addDettaglioContratto(dettaglioContrattoDtoBulk);
-        dettaglioContrattoDtoBulk= new DettaglioContrattoDtoBulk();
-        dettaglioContrattoDtoBulk.setCdBeneServizio("AA00385");
+        //dettaglioContrattoDtoBulk= new DettaglioContrattoDtoBulk();
+        //dettaglioContrattoDtoBulk.setCdBeneServizio("AA00385");
         //dettaglioContrattoDtoBulk.setCdCategoriaGruppo("0.4");
-        dettaglioContrattoDtoBulk.setPrezzoUnitario(new BigDecimal(110));
-        dettaglioContrattoDtoBulk.setQuantitaMax(new BigDecimal(100));
-        dettaglioContrattoDtoBulk.setQuantitaMax(new BigDecimal(2));
-        c.addDettaglioContratto(dettaglioContrattoDtoBulk);
+       // dettaglioContrattoDtoBulk.setPrezzoUnitario(new BigDecimal(110));
+       // dettaglioContrattoDtoBulk.setQuantitaMax(new BigDecimal(100));
+       // dettaglioContrattoDtoBulk.setQuantitaMax(new BigDecimal(2));
+        //c.addDettaglioContratto(dettaglioContrattoDtoBulk);
 
 
 

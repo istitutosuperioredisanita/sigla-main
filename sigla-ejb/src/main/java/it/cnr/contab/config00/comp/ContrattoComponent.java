@@ -35,7 +35,10 @@ import it.cnr.contab.config00.service.ContrattoService;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaHome;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioHome;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventHome;
 import it.cnr.contab.doccont00.comp.CheckDisponibilitaContrattoFailed;
 import it.cnr.contab.doccont00.core.bulk.AccertamentoBulk;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
@@ -1748,10 +1751,63 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 		archiviaAllegati( userContext,contratto,contrattoService);
 	}
 
-	public ContrattoBulk salvaDefinitivo(UserContext userContext, ContrattoBulk contratto) throws ComponentException{
-		logger.info("Sono in salva definitivo");
-		try {
+ 	private void checkToSalvaDefinitivo(UserContext userContext, ContrattoBulk contratto) throws ComponentException{
+		try{
 			ContrattoService contrattoService = SpringUtil.getBean("contrattoService",
+					ContrattoService.class);
+			Date dataStipulaParametri = ((Parametri_cnrBulk)getHome(userContext, Parametri_cnrBulk.class).
+					findByPrimaryKey(new Parametri_cnrBulk(CNRUserContext.getEsercizio(userContext)))).getData_stipula_contratti();
+			validaModificaConBulk(userContext, contratto);
+			try {
+				validaCampiObbligatori(userContext,contratto);
+				validaDettaglioContratto( userContext,contratto);
+			}catch (IntrospectionException e) {
+				throw new ComponentException(e);
+			} catch (SQLException e) {
+				throw new ComponentException(e);
+			}
+			if(contratto.getDt_inizio_validita() == null)
+				throw new ApplicationException("Valorizzare "+BulkInfo.getBulkInfo(contratto.getClass()).getFieldProperty("dt_inizio_validita").getLabel());
+			if(contratto.getDt_fine_validita() == null)
+				throw new ApplicationException("Valorizzare "+BulkInfo.getBulkInfo(contratto.getClass()).getFieldProperty("dt_fine_validita").getLabel());
+			if (!(contratto.getDt_stipula().before(dataStipulaParametri))){
+				if ((contratto.isPassivo() || contratto.isAttivo_e_Passivo()) && contratto.getFl_mepa() == null)
+					throw new ApplicationException("Valorizzare "+BulkInfo.getBulkInfo(contratto.getClass()).getFieldProperty("fl_mepa").getLabel());
+				if ((contratto.isPassivo() || contratto.isAttivo_e_Passivo()) && contratto.getTipoNormaPerla() == null)
+					throw new ApplicationException("Valorizzare "+BulkInfo.getBulkInfo(contratto.getClass()).getFieldProperty("tipoNormaPerla").getLabel());
+				if (contratto.getTipo_contratto() != null && contratto.getTipo_contratto().getFl_cig() != null  && contratto.getTipo_contratto().getFl_cig() && contratto.getCig() == null)
+					throw new ApplicationException("Valorizzare "+BulkInfo.getBulkInfo(contratto.getClass()).getFieldProperty("cig").getLabel());
+			}
+			if (contratto.isAttivo() || contratto.isAttivo_e_Passivo()) {
+				Optional.ofNullable(contratto.getPg_progetto())
+						.orElseThrow(()->new ApplicationRuntimeException("Valorizzare il progetto a fronte del quale il contratto è stato assunto."));
+
+				controllaProgetti(userContext, contratto.getProgetto(), contratto);
+			}
+			StorageObject storageObject = contrattoService.getFolderContratto(contratto);
+			if (storageObject == null || !contrattoService.isDocumentoContrattoPresent(contratto))
+				throw handleException(new ApplicationException("Bisogna allegare il file del Contratto!"));
+			if (contratto.isPassivo() && contratto.getFl_pubblica_contratto()!=null && contratto.getFl_pubblica_contratto())
+				if (contratto.getDitteInvitate()!=null && contratto.getDitteInvitate().size()==0 )
+					throw handleException(new ApplicationException("Bisogna indicare le ditte invitate!"));
+		} catch (PersistencyException e) {
+			throw handleException(contratto,e);
+
+		} catch (ApplicationRuntimeException e) {
+			throw handleException(e);
+		}
+	}
+	public ContrattoBulk salvaDefinitivo(UserContext userContext, ContrattoBulk contratto) throws ComponentException{
+		try {
+
+			ContrattoService contrattoService = SpringUtil.getBean("contrattoService",
+					ContrattoService.class);
+			Date dataStipulaParametri = ((Parametri_cnrBulk)getHome(userContext, Parametri_cnrBulk.class).
+					findByPrimaryKey(new Parametri_cnrBulk(CNRUserContext.getEsercizio(userContext)))).getData_stipula_contratti();
+			StorageObject storageObject = contrattoService.getFolderContratto(contratto);
+			lockBulk(userContext, contratto);
+			checkToSalvaDefinitivo(userContext,contratto);
+			/*ContrattoService contrattoService = SpringUtil.getBean("contrattoService",
 					ContrattoService.class);
 			Date dataStipulaParametri = ((Parametri_cnrBulk)getHome(userContext, Parametri_cnrBulk.class).
 					findByPrimaryKey(new Parametri_cnrBulk(CNRUserContext.getEsercizio(userContext)))).getData_stipula_contratti();
@@ -1788,6 +1844,11 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 			StorageObject storageObject = contrattoService.getFolderContratto(contratto);
 			if (storageObject == null || !contrattoService.isDocumentoContrattoPresent(contratto))
 				throw handleException(new ApplicationException("Bisogna allegare il file del Contratto!"));
+
+		    if (contratto.isPassivo() && contratto.getFl_pubblica_contratto()!=null && contratto.getFl_pubblica_contratto())
+					if (contratto.getDitteInvitate()!=null && contratto.getDitteInvitate().size()==0 )
+						throw handleException(new ApplicationException("Bisogna indicare le ditte invitate!"));
+			*/
 			boolean pubblica = ((Parametri_cnrBulk)getHome(userContext, Parametri_cnrBulk.class).
 					findByPrimaryKey(new Parametri_cnrBulk(CNRUserContext.getEsercizio(userContext)))).getFl_pubblica_contratto().booleanValue();
 		    if(pubblica){
@@ -1805,9 +1866,6 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 					contratto.setFl_pubblica_contratto(Boolean.FALSE);
 		    }else 
 		    	contratto.setFl_pubblica_contratto(Boolean.FALSE);
-		    if (contratto.isPassivo() && contratto.getFl_pubblica_contratto()!=null && contratto.getFl_pubblica_contratto())  
-					if (contratto.getDitteInvitate()!=null && contratto.getDitteInvitate().size()==0 )
-						throw handleException(new ApplicationException("Bisogna indicare le ditte invitate!"));
 
 		    ContrattoBulk contrattoClone = (ContrattoBulk)contratto.clone();
 			try {
@@ -2272,8 +2330,45 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 			}
 			return null;
 		}
+		private void completaDettaglioContrattoArticoli( UserContext userContext, ContrattoBulk contratto) throws ComponentException, PersistencyException {
+			if ( Optional.ofNullable(contratto.getDettaglio_contratto()).isPresent()) {
+				Bene_servizioHome beneServizioHome= (Bene_servizioHome) getHome(userContext, Bene_servizioBulk.class);
+				for( Dettaglio_contrattoBulk dettaglio:contratto.getDettaglio_contratto()){
+					Bene_servizioBulk beneServizio = (Bene_servizioBulk)beneServizioHome.findByPrimaryKey(userContext, new Bene_servizioBulk( dettaglio.getCdBeneServizio()));
+					if ( !Optional.ofNullable(beneServizio).isPresent())
+						throw new ComponentException("Il Bene con Codice "+ dettaglio.getCdBeneServizio() +" non esiste in SIGLA");
+
+					dettaglio.setContratto( contratto);
+					dettaglio.setBeneServizio( beneServizio);
+					dettaglio.setUnitaMisura(beneServizio.getUnitaMisura());
+					dettaglio.setCoefConv(BigDecimal.ONE);
+					dettaglio.setStato(Dettaglio_contrattoBulk.STATO_VALIDO);
+				}
+			}
+		}
+		private void completaDettaglioContrattoCatGrup( UserContext userContext, ContrattoBulk contratto)throws ComponentException, PersistencyException {
+			if ( Optional.ofNullable(contratto.getDettaglio_contratto()).isPresent()) {
+				Categoria_gruppo_inventHome catGrpHome= (Categoria_gruppo_inventHome) getHome(userContext, Categoria_gruppo_inventBulk.class);
+				for( Dettaglio_contrattoBulk dettaglio:contratto.getDettaglio_contratto()){
+					Categoria_gruppo_inventBulk categoriaGruppoInventBulk = (Categoria_gruppo_inventBulk)catGrpHome.findByPrimaryKey(userContext, new Categoria_gruppo_inventBulk( dettaglio.getCdCategoriaGruppo()));
+					if ( !Optional.ofNullable(categoriaGruppoInventBulk).isPresent())
+						throw new ComponentException("ILa Cat/grp "+ dettaglio.getCdCategoriaGruppo() +" non esiste in SIGLA");
+
+					dettaglio.setContratto( contratto);
+					dettaglio.setCategoriaGruppoInvent( categoriaGruppoInventBulk);
+					dettaglio.setStato(Dettaglio_contrattoBulk.STATO_VALIDO);
+				}
+			}
+		}
+		private void completaDettaglioContratto( UserContext userContext, ContrattoBulk contratto) throws ComponentException, PersistencyException {
+			if ( Optional.ofNullable(contratto.getTipo_dettaglio_contratto()).isPresent()){
+				if ( ContrattoBulk.DETTAGLIO_CONTRATTO_ARTICOLI.equalsIgnoreCase(contratto.getTipo_dettaglio_contratto()))
+					completaDettaglioContrattoArticoli(userContext,contratto);
+				completaDettaglioContrattoCatGrup(userContext,contratto);
+			}
 
 
+		}
 		public ContrattoBulk creaContrattoDaFlussoAcquisti(UserContext userContext, ContrattoBulk contratto, boolean statoDefinitivo) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException {
 			try {
 
@@ -2345,18 +2440,26 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 					}
 					contratto.setOrgano(organoBulk);
 				}
-
+				completaDettaglioContratto( userContext,contratto);
 				gestioneCigSuContrattoDaFlows(userContext, contratto);
 				contratto = (ContrattoBulk)creaConBulk(userContext, contratto);
 				boolean isAttachRestContrStoredFromSigla=Utility.createConfigurazioneCnrComponentSession().isAttachRestContrStoredFromSigla(userContext);
 				archiviaAllegati(userContext,contratto,isAttachRestContrStoredFromSigla);
 				if ( statoDefinitivo) {
+					//controlla i campi obbligatori
+					try {
+						checkToSalvaDefinitivo(userContext, contratto);
+					}catch (Exception e) {
+						return contratto;
+					}
 					try {
 						return salvaDefinitivo(userContext, contratto);
 					}catch (Exception e){
-						//if ( isAttachRestContrStoredFromSigla)
+						logger.error("Error Contratto da Rest Service->",e);
+						if ( isAttachRestContrStoredFromSigla)
 						//rimuovi Contratto con gli allegati
-						//deleteDirectoryAllegatiDaFlusso(userContext,contratto,isAttachRestContrStoredFromSigla);
+							deleteDirectoryAllegatiDaFlusso(userContext,contratto,isAttachRestContrStoredFromSigla);
+						throw new ComponentException(e);
 					}
 				}
 
