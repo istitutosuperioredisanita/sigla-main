@@ -37,13 +37,9 @@ import it.cnr.contab.missioni00.bp.CRUDAnticipoBP;
 import it.cnr.contab.missioni00.bp.CRUDMissioneBP;
 import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
 import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
-import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaBulk;
 import it.cnr.contab.prevent00.bulk.V_assestatoBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
-import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
-import it.cnr.jada.UserContext;
-import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
@@ -921,7 +917,9 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
     }
 
     public boolean isSaveButtonEnabled() {
-        return enableButtonToSelectAnnPrec();
+        return super.isSaveButtonEnabled() &&
+                !isEditingScadenza() && !ObbligazioneBulk.STATO_OBB_STORNATO.equals(((ObbligazioneBulk) getModel()).getStato_obbligazione())
+                && enableButtonToSelectAnnPrec();
     }
 //
 //	Abilito il bottone di RIPORTA documento solo se non ho scadenze in fase di modifica/inserimento
