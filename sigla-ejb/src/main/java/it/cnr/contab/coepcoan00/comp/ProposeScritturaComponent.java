@@ -5036,7 +5036,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		scritturaPartitaDoppia.setCd_cds(doccoge.getCd_cds());
 		scritturaPartitaDoppia.setTi_scrittura(Scrittura_partita_doppiaBulk.TIPO_PRIMA_SCRITTURA);
 		scritturaPartitaDoppia.setStato(Scrittura_partita_doppiaBulk.STATO_DEFINITIVO);
-		if (Scrittura_partita_doppiaBulk.Origine.LIQUID_IVA.name().equals(doccoge.getCd_tipo_doc())) {
+		if (OrigineScritturaEnum.LIQUID_IVA.name().equals(doccoge.getCd_tipo_doc())) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTimeInMillis(doccoge.getDtInizioLiquid().getTime());
 			scritturaPartitaDoppia.setDs_scrittura(
@@ -5071,15 +5071,15 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 		TipoDocumentoEnum tipoDocumento = TipoDocumentoEnum.fromValue(scritturaPartitaDoppia.getCd_tipo_documento());
 		if (tipoDocumento.isGenericoStipendiSpesa())
-			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.STIPENDI.name());
+			scritturaPartitaDoppia.setOrigine_scrittura(OrigineScritturaEnum.STIPENDI.name());
 		else if (tipoDocumento.isLiquidazioneIva())
-			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.LIQUID_IVA.name());
+			scritturaPartitaDoppia.setOrigine_scrittura(OrigineScritturaEnum.LIQUID_IVA.name());
 		else if (tipoDocumento.isDocumentoAttivo() || tipoDocumento.isDocumentoPassivo())
-			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.DOCAMM.name());
+			scritturaPartitaDoppia.setOrigine_scrittura(OrigineScritturaEnum.DOCAMM.name());
 		else if (tipoDocumento.isMandato() || tipoDocumento.isReversale())
-			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.DOCCONT.name());
+			scritturaPartitaDoppia.setOrigine_scrittura(OrigineScritturaEnum.DOCCONT.name());
 		else
-			scritturaPartitaDoppia.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.CAUSALE.name());
+			scritturaPartitaDoppia.setOrigine_scrittura(OrigineScritturaEnum.CAUSALE.name());
 
 		testataPrimaNota.forEach(testata -> {
 			if (accorpaConti) {
@@ -5480,7 +5480,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		scritturaAnalitica.setCd_cds(doccoge.getCd_cds());
 		scritturaAnalitica.setTi_scrittura(Scrittura_partita_doppiaBulk.TIPO_PRIMA_SCRITTURA);
 		scritturaAnalitica.setStato(Scrittura_partita_doppiaBulk.STATO_DEFINITIVO);
-		if (Scrittura_partita_doppiaBulk.Origine.LIQUID_IVA.name().equals(doccoge.getCd_tipo_doc())) {
+		if (OrigineScritturaEnum.LIQUID_IVA.name().equals(doccoge.getCd_tipo_doc())) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTimeInMillis(doccoge.getDtInizioLiquid().getTime());
 			scritturaAnalitica.setDs_scrittura(
@@ -5511,15 +5511,15 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 		TipoDocumentoEnum tipoDocumento = TipoDocumentoEnum.fromValue(scritturaAnalitica.getCd_tipo_documento());
 		if (tipoDocumento.isGenericoStipendiSpesa())
-			scritturaAnalitica.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.STIPENDI.name());
+			scritturaAnalitica.setOrigine_scrittura(OrigineScritturaEnum.STIPENDI.name());
 		else if (tipoDocumento.isLiquidazioneIva())
-			scritturaAnalitica.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.LIQUID_IVA.name());
+			scritturaAnalitica.setOrigine_scrittura(OrigineScritturaEnum.LIQUID_IVA.name());
 		else if (tipoDocumento.isDocumentoAttivo() || tipoDocumento.isDocumentoPassivo())
-			scritturaAnalitica.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.DOCAMM.name());
+			scritturaAnalitica.setOrigine_scrittura(OrigineScritturaEnum.DOCAMM.name());
 		else if (tipoDocumento.isMandato() || tipoDocumento.isReversale())
-			scritturaAnalitica.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.DOCCONT.name());
+			scritturaAnalitica.setOrigine_scrittura(OrigineScritturaEnum.DOCCONT.name());
 		else
-			scritturaAnalitica.setOrigine_scrittura(Scrittura_partita_doppiaBulk.Origine.CAUSALE.name());
+			scritturaAnalitica.setOrigine_scrittura(OrigineScritturaEnum.CAUSALE.name());
 
 		List<DettaglioAnalitico> dettagliAnalitici = new ArrayList<>();
 		testataPrimaNota.forEach(testata -> testata.getDett().stream()
