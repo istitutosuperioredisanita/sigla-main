@@ -85,8 +85,7 @@
 	<action path="/ConsPDGPTitAction"
 			actionClass="it.cnr.contab.prevent01.consultazioni.action.ConsPDGPTitAction">
 	</action>
-	<action path="/ConsProcedureAmministrativeAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction">
-	</action>
+
 	<action path="/ConsRegistroInventarioAction"
 			actionClass="it.cnr.contab.inventario00.actions.ConsRegistroInventarioAction">
 	</action>
@@ -260,8 +259,8 @@
 	<action path="/ConsBeneServizioAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction">
 	</action>
 	<action path="/ConsultazioneMastrinoContoAction" actionClass="it.cnr.contab.coepcoan00.action.ConsultazioneMastrinoContoAction"/>
-	<action path="/ConsProcedureAmministrativeAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction" needExistingSession="false"/>
 	<action path="/ConsProcedureAmmContattiAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction" needExistingSession="false"/>
+	<action path="/ConsProcedureAmministrativeAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction" needExistingSession="false"/>
 	<action path="/ConsTipoNormaPerlaAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction" needExistingSession="false"/>
 	<action path="/ConsTipoNormaPerlaContrattiAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction" needExistingSession="false"/>
 	<action path="/ConsOrganoAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction" needExistingSession="false"/>
@@ -1836,7 +1835,7 @@
 		<init-param name="searchResultColumnSet" value="restService" />
 	</businessProcess>
 	<businessProcess name="ConsProcedureAmministrativeBP"
-					 className="it.cnr.contab.consultazioni.bp.ConsProcedureAmministrativaBP">
+					 className="it.cnr.contab.consultazioni.bp.ConsultazioniRestBP">
 		<forward name="default" path="/consultazioni/form_lista.jsp" />
 		<init-param name="bulkClassName"
 					value="it.cnr.contab.config00.contratto.bulk.Procedure_amministrativeBulk" />
@@ -1844,13 +1843,13 @@
 		<init-param name="defaultAction" value="ConsProcedureAmministrativeAction" />
 	</businessProcess>
 	<businessProcess name="ConsProcedureAmmContrattiBP"
-					 className="it.cnr.contab.consultazioni.bp.ConsProcedureAmministrativaBP">
+					 className="it.cnr.contab.consultazioni.bp.ConsultazioniRestBP">
 		<forward name="default" path="/consultazioni/form_lista.jsp" />
 		<init-param name="bulkClassName"
-					value="it.cnr.contab.config00.contratto.bulk.Procedure_amministrativeBulk" />
+					value="it.cnr.contab.config00.contratto.bulk.Procedure_amministrativeContrattiRestBulk" />
 		<init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
 		<init-param name="defaultAction" value="ConsProcedureAmmContattiAction" />
-		<init-param name="tipoSelezione" value="CTR"/>
+
 	</businessProcess>
 
 	<businessProcess name="ConsTerzoPerCompensoBP"
@@ -1910,7 +1909,7 @@
 		<init-param name="tipoSelezione" value="CTR"/>
 	</businessProcess>
 	<businessProcess name="ConsTipoContrattoActionBP"
-					 className="it.cnr.contab.consultazioni.bp.ConsTipoContrattoBP">
+					 className="it.cnr.contab.consultazioni.bp.ConsultazioniRestBP">
 		<forward name="default" path="/consultazioni/form_lista.jsp" />
 		<init-param name="bulkClassName"
 					value="it.cnr.contab.config00.contratto.bulk.Tipo_contrattoBulk" />

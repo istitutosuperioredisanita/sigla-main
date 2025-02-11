@@ -20,9 +20,17 @@
 * Date 07/04/2005
 */
 package it.cnr.contab.config00.contratto.bulk;
+import it.cnr.contab.consultazioni.bulk.ConsultazioniRestHome;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
-public class Tipo_contrattoHome extends BulkHome {
+import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.persistency.sql.SQLBuilder;
+
+public class Tipo_contrattoHome extends BulkHome implements ConsultazioniRestHome {
 	public Tipo_contrattoHome(Class clazz, java.sql.Connection conn) {
 		super(clazz, conn);
 	}
@@ -39,4 +47,8 @@ public class Tipo_contrattoHome extends BulkHome {
 	}
 
 
+	@Override
+	public SQLBuilder restSelect(UserContext userContext, SQLBuilder sql, CompoundFindClause compoundfindclause, OggettoBulk oggettobulk) throws ComponentException, PersistencyException {
+		return sql;
+	}
 }
