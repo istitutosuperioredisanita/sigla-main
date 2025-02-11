@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.inventario00.docs.bulk.V_inventario_bene_detBase"
+	keyClassName="it.cnr.contab.inventario00.docs.bulk.V_inventario_bene_detKey"
+	homeClassName="it.cnr.contab.inventario00.docs.bulk.V_inventario_bene_detHome">
+	<defaultColumnMap
+		tableName="V_INVENTARIO_BENE_DET">
+		<columnMapping
+			columnName="TIPORECORD"
+			propertyName="tiporecord"
+			sqlTypeName="VARCHAR"
+			columnSize="12"
+			nullable="true" />
+		<columnMapping
+			columnName="ESERCIZIO_CARICO_BENE"
+			propertyName="esercizioCaricoBene"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="true" />
+		<columnMapping
+			columnName="PG_INVENTARIO"
+			propertyName="pgInventario"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="true" />
+		<columnMapping
+			columnName="NR_INVENTARIO"
+			propertyName="nrInventario"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="true" />
+		<columnMapping
+			columnName="PROGRESSIVO"
+			propertyName="progressivo"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="true" />
+		<columnMapping
+			columnName="ETICHETTA"
+			propertyName="etichetta"
+			sqlTypeName="VARCHAR"
+			columnSize="50"
+			nullable="true" />
+		<columnMapping
+			columnName="FL_MIGRATO"
+			propertyName="flMigrato"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="true"
+			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+			columnName="CD_CATEGORIA_GRUPPO"
+			propertyName="cdCategoriaGruppo"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="true" />
+		<columnMapping
+			columnName="VALORE_INIZIALE"
+			propertyName="valoreIniziale"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="VALORE_AMMORTIZZATO"
+			propertyName="valoreAmmortizzato"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="IMPONIBILE_AMMORTAMENTO"
+			propertyName="imponibileAmmortamento"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="VARIAZIONE_PIU"
+			propertyName="variazionePiu"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="VARIAZIONE_MENO"
+			propertyName="variazioneMeno"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="ESERCIZIO_BUONO_CARICO"
+			propertyName="esercizioBuonoCarico"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="INCREMENTO_VALORE"
+			propertyName="incrementoValore"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="DECREMENTO_VALORE"
+			propertyName="decrementoValore"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="PG_BUONO_C_S"
+			propertyName="pgBuonoCS"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="QUOTA_AMMO_BENE_ALIENATO"
+			propertyName="quotaAmmoBeneAlienato"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="ESERCIZIO_AMMORTANENTO"
+			propertyName="esercizioAmmortanento"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="QUOTA_AMMORTAMENTO"
+			propertyName="quotaAmmortamento"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="STORNO"
+			propertyName="storno"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="PIANO_AMM_BENE_MIGRATO"
+			propertyName="pianoAmmBeneMigrato"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="true" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="tiporecord" />
+	<persistentProperty
+		name="esercizioCaricoBene" />
+	<persistentProperty
+		name="pgInventario" />
+	<persistentProperty
+		name="nrInventario" />
+	<persistentProperty
+		name="progressivo" />
+	<persistentProperty
+		name="etichetta" />
+	<persistentProperty
+		name="flMigrato" />
+	<persistentProperty
+		name="cdCategoriaGruppo" />
+	<persistentProperty
+		name="valoreIniziale" />
+	<persistentProperty
+		name="valoreAmmortizzato" />
+	<persistentProperty
+		name="imponibileAmmortamento" />
+	<persistentProperty
+		name="variazionePiu" />
+	<persistentProperty
+		name="variazioneMeno" />
+	<persistentProperty
+		name="esercizioBuonoCarico" />
+	<persistentProperty
+		name="incrementoValore" />
+	<persistentProperty
+		name="decrementoValore" />
+	<persistentProperty
+		name="pgBuonoCS" />
+	<persistentProperty
+		name="quotaAmmoBeneAlienato" />
+	<persistentProperty
+		name="esercizioAmmortanento" />
+	<persistentProperty
+		name="quotaAmmortamento" />
+	<persistentProperty
+		name="storno" />
+	<persistentProperty
+		name="pianoAmmBeneMigrato" />
+</SQLPersistentInfo>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invKey">
+	<defaultColumnMap
+		tableName="AMMORTAMENTO_BENE_INV">
+		<columnMapping
+			columnName="PG_INVENTARIO"
+			propertyName="pgInventario"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="NR_INVENTARIO"
+			propertyName="nrInventario"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="PROGRESSIVO"
+			propertyName="progressivo"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="ESERCIZIO"
+			propertyName="esercizio"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="PG_RIGA"
+			propertyName="pgRiga"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="false"
+			primary="true" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="pgInventario"
+		partOfOid="true" />
+	<persistentProperty
+		name="nrInventario"
+		partOfOid="true" />
+	<persistentProperty
+		name="progressivo"
+		partOfOid="true" />
+	<persistentProperty
+		name="esercizio"
+		partOfOid="true" />
+	<persistentProperty
+		name="pgRiga"
+		partOfOid="true" />
+</SQLPersistentInfo>

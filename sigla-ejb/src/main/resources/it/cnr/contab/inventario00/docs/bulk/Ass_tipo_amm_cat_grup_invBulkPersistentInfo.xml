@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.inventario00.docs.bulk.Ass_tipo_amm_cat_grup_invBulk"
+	homeClassName="it.cnr.contab.inventario00.docs.bulk.Ass_tipo_amm_cat_grup_invHome">
+	<defaultColumnMap
+		tableName="ASS_TIPO_AMM_CAT_GRUP_INV">
+		<columnMapping
+			columnName="CD_TIPO_AMMORTAMENTO"
+			propertyName="tipoAmmortamento.cd_tipo_ammortamento" />
+		<columnMapping
+			columnName="TI_AMMORTAMENTO"
+			propertyName="tipoAmmortamento.ti_ammortamento" />
+		<columnMapping
+			columnName="CD_CATEGORIA_GRUPPO"
+			propertyName="categoriaGruppoInvent.cd_categoria_gruppo" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="tipoAmmortamento"
+		partOfOid="true" />
+	<persistentProperty
+		name="categoriaGruppoInvent"
+		partOfOid="true" />
+</SQLPersistentInfo>

@@ -17,6 +17,9 @@
 
 package it.cnr.contab.inventario00.comp;
 
+import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beniBulk;
+import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beniHome;
+import it.cnr.contab.inventario00.dto.TipoAmmCatGruppoDto;
 import it.cnr.contab.inventario00.tabrif.bulk.*;
 import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.config00.esercizio.bulk.*;
@@ -26,11 +29,13 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.ICRUDMgr;
+import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.RemoteIterator;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.List;
 
 public class Tipo_ammortamentoComponent extends it.cnr.jada.comp.CRUDDetailComponent implements ITipo_ammortamentoMgr,ICRUDMgr,Cloneable,Serializable
 {
@@ -1686,4 +1691,21 @@ private void validaTipo_Ammortamento(UserContext userContext, Tipo_ammortamentoB
 		throw handleException(ti_ammort, t);		
 	}
 }
+
+	public List<Tipo_ammortamentoBulk> findTipoAmmortamento(UserContext uc,String tipoAmmortamento, String catGruppo, Integer esercizio) {
+		try {
+			Tipo_ammortamentoHome tipo_ammortamentoHome = (Tipo_ammortamentoHome) getHome(uc, Tipo_ammortamentoBulk.class);
+			return tipo_ammortamentoHome.findTipoAmmortamento(tipoAmmortamento,catGruppo,esercizio);
+		}catch (ComponentException | PersistencyException ex){
+			throw new RuntimeException("Error findTipoAmmortamento tipo ammortamento : "+tipoAmmortamento+" categoria gruppo: "+catGruppo+" esercizio : "+esercizio);
+		}
+	}
+	public List<TipoAmmCatGruppoDto> findTipoAmmortamento(UserContext uc,  Integer esercizio) {
+		try {
+			Tipo_ammortamentoHome tipo_ammortamentoHome = (Tipo_ammortamentoHome) getHome(uc, Tipo_ammortamentoBulk.class);
+			return tipo_ammortamentoHome.findTipoAmmortamento(esercizio);
+		}catch (ComponentException | PersistencyException ex){
+			throw new RuntimeException("Error findTipoAmmortamento esercizio : "+esercizio);
+		}
+	}
 }
