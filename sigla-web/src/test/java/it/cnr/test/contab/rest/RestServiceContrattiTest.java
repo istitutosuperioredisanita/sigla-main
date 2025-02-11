@@ -1,11 +1,8 @@
 package it.cnr.test.contab.rest;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.cnr.contab.web.rest.config.SIGLASecurityContext;
-import it.cnr.contab.web.rest.model.AttachmentContratto;
-import it.cnr.contab.web.rest.model.ContrattoDtoBulk;
-import it.cnr.contab.web.rest.model.EnumTypeAttachmentContratti;
+import it.cnr.contab.web.rest.model.*;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.si.spring.storage.MimeTypes;
 import org.apache.commons.io.IOUtils;
@@ -47,11 +44,30 @@ public class RestServiceContrattiTest {
         ObjectMapper mapper = new ObjectMapper();
         ContrattoDtoBulk c = new ContrattoDtoBulk();
         c.setEsercizio(2025);
-        c.setCodiceFlussoAcquisti( "PLUTO10");
+        c.setCodiceFlussoAcquisti( "PLUTO30");
         c.setCd_unita_organizzativa("000.001");
         c.setCodfisPivaRupExt("RGLNLR52E69Z600O");
         c.setCodfisPivaAggiudicatarioExt("05923561004");
         //c.setCodfisPivaFirmatarioExt("ZNCMRT79E49H501E");
+
+        //c.setTipoDettaglioContratto(EnumTipoDettaglioContratto.DETTAGLIO_CONTRATTO_ARTICOLI);
+        c.setTipoDettaglioContratto(EnumTipoDettaglioContratto.DETTAGLIO_CONTRATTO_CATGRP);
+        DettaglioContrattoDtoBulk dettaglioContrattoDtoBulk= new DettaglioContrattoDtoBulk();
+        dettaglioContrattoDtoBulk.setCdCategoriaGruppo("0.0.3");
+        //dettaglioContrattoDtoBulk.setCdBeneServizio("AA00107");
+        //dettaglioContrattoDtoBulk.setPrezzoUnitario(new BigDecimal(2920));
+        //dettaglioContrattoDtoBulk.setCdCategoriaGruppo("8.0");
+        //dettaglioContrattoDtoBulk.setQuantitaMax(new BigDecimal(10));
+        //dettaglioContrattoDtoBulk.setQuantitaMax(new BigDecimal(1));
+        c.addDettaglioContratto(dettaglioContrattoDtoBulk);
+        //dettaglioContrattoDtoBulk= new DettaglioContrattoDtoBulk();
+        //dettaglioContrattoDtoBulk.setCdBeneServizio("AA00385");
+        //dettaglioContrattoDtoBulk.setCdCategoriaGruppo("0.4");
+       // dettaglioContrattoDtoBulk.setPrezzoUnitario(new BigDecimal(110));
+       // dettaglioContrattoDtoBulk.setQuantitaMax(new BigDecimal(100));
+       // dettaglioContrattoDtoBulk.setQuantitaMax(new BigDecimal(2));
+        //c.addDettaglioContratto(dettaglioContrattoDtoBulk);
+
 
 
 
@@ -129,12 +145,12 @@ public class RestServiceContrattiTest {
         method.setEntity(e);
         HttpResponse response = client.execute(method);//Replace HttpPost with HttpGet if you need to perform a GET to login
         int statusCode = response.getStatusLine().getStatusCode();
-        JsonFactory jsonFactory = new JsonFactory();
-        try {
-            myJson = mapper.writeValueAsString(c);
-        } catch (Exception ex) {
-            throw new ComponentException("Errore nella generazione del file JSON per l'esecuzione della stampa ( errore joson).",ex);
-        }
+        //JsonFactory jsonFactory = new JsonFactory();
+        //try {
+        //    myJson = mapper.writeValueAsString(response.getEntity());
+        //} catch (Exception ex) {
+        //    throw new ComponentException("Errore nella generazione del file JSON per l'esecuzione della stampa ( errore joson).",ex);
+        //}
 
 
         System.out.println("Response Code :"+ statusCode);

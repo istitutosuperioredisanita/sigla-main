@@ -38,6 +38,12 @@
             <td>
                 <% bp.getController().writeFormInput(out,"nr_inventario"); %>
             </td>
+            <td>
+                <% bp.getController().writeFormLabel(out,"dt_acquisizione"); %>
+             </td>
+             <td>
+                <% bp.getController().writeFormInput(out,"dt_acquisizione"); %>
+             </td>
           </tr>
           <tr>
             <td>

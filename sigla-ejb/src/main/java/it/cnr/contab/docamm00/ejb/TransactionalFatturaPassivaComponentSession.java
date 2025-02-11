@@ -26,11 +26,16 @@ import it.cnr.contab.docamm00.docs.bulk.TrovatoBulk;
 import it.cnr.contab.docamm00.fatturapa.bulk.DocumentoEleTestataBulk;
 import it.cnr.contab.doccont00.core.bulk.OptionRequestParameter;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
+import it.cnr.contab.inventario00.docs.bulk.Transito_beni_ordiniBulk;
+import it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession;
+import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
+import it.cnr.contab.ordmag.ordini.dto.ImportoOrdine;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 
@@ -1469,6 +1474,49 @@ public class TransactionalFatturaPassivaComponentSession extends it.cnr.jada.ejb
         }
     }
 
+    @Override
+    public void creaAssociativaFatturaPassivaInventario(UserContext param0, FatturaOrdineBulk param1, Inventario_beniComponentSession param2, BigDecimal param3, Transito_beni_ordiniBulk param4) throws ComponentException, RemoteException {
+        try {
+            invoke("creaAssociativaFatturaPassivaInventario", new Object[]{
+                    param0,
+                    param1,
+                    param2,
+                    param3,
+                    param4});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public BigDecimal getPrezzoUnitarioFattura(UserContext param0, ImportoOrdine param1) throws RemoteException, ComponentException, PersistencyException, IntrospectionException {
+        try {
+            return (BigDecimal) invoke("getPrezzoUnitarioFattura", new Object[]{
+                     param1});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (it.cnr.jada.persistency.PersistencyException ex) {
+                throw ex;
+            } catch (it.cnr.jada.persistency.IntrospectionException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
 
 
 }

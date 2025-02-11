@@ -30,7 +30,10 @@ import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_IBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaIBulk;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk;
+import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.contab.inventario01.bulk.Inventario_beni_apgBulk;
+import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.*;
 import it.cnr.jada.comp.ApplicationException;
@@ -303,4 +306,17 @@ public String makePersistentAssociaPerAumento(UserContext userContext, Ass_inv_b
 	}
 	return msg;
 }
+	public Ass_inv_bene_fatturaBulk findAssociativaFatturaBeneByBene(Inventario_beniBulk inventarioBeni) throws PersistencyException {
+		SQLBuilder sql = createSQLBuilder();
+		sql.addSQLClause("AND", "PG_INVENTARIO", SQLBuilder.EQUALS, inventarioBeni.getPg_inventario());
+		sql.addSQLClause("AND", "NR_INVENTARIO", SQLBuilder.EQUALS, inventarioBeni.getNr_inventario());
+		sql.addSQLClause("AND", "PROGRESSIVO", SQLBuilder.EQUALS, inventarioBeni.getProgressivo());
+
+
+		if(fetchAll(sql).size() == 0){
+			return null;
+		}
+		return (Ass_inv_bene_fatturaBulk) fetchAll(sql).get(0);
+	}
+
 }

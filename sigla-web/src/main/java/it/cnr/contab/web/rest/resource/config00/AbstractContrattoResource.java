@@ -100,7 +100,7 @@ public abstract class AbstractContrattoResource {
                 ifPresent(stream->stream.forEach(row->{
                    dettaglio.add(getDettaglioContratto(tipoDettaglioContratto,row));
                 }));
-        return Collections.EMPTY_LIST;
+        return dettaglio;
     }
 
     public void validateContratto(ContrattoDtoBulk contrattoBulk,CNRUserContext userContext) throws RemoteException, ComponentException {
@@ -201,6 +201,14 @@ public abstract class AbstractContrattoResource {
         return attachments;
     }
 
+    protected String getTipoDettaglioContratto(EnumTipoDettaglioContratto tipoDettaglioContratto){
+        if (Optional.ofNullable(tipoDettaglioContratto).isPresent()){
+            if ( EnumTipoDettaglioContratto.DETTAGLIO_CONTRATTO_ARTICOLI.equals(tipoDettaglioContratto))
+                return ContrattoBulk.DETTAGLIO_CONTRATTO_ARTICOLI;
+            return ContrattoBulk.DETTAGLIO_CONTRATTO_CATGRP;
+        }
+        return null;
+    }
     protected ContrattoBulk creaContrattoSigla(ContrattoDtoBulk contrattoBulk, CNRUserContext userContext) throws PersistencyException, ValidationException, ComponentException, RemoteException {
         ContrattoBulk contrattoBulkSigla = new ContrattoBulk();
         if (Optional.ofNullable(contrattoBulk.getCd_unita_organizzativa()).isPresent()){
@@ -319,7 +327,7 @@ public abstract class AbstractContrattoResource {
             }
         }
         if ( Optional.ofNullable(contrattoBulk.getTipoDettaglioContratto()).isPresent()){
-            contrattoBulkSigla.setTipo_dettaglio_contratto( contrattoBulk.getTipoDettaglioContratto().name());
+            contrattoBulkSigla.setTipo_dettaglio_contratto( getTipoDettaglioContratto(contrattoBulk.getTipoDettaglioContratto()));
             contrattoBulkSigla.setDettaglio_contratto(new BulkList<Dettaglio_contrattoBulk>(getListaDettagliContratto(contrattoBulk.getTipoDettaglioContratto(),contrattoBulk.getDettaglioContratto())));
         }
         contrattoBulkSigla.setArchivioAllegatiFlusso(new BulkList<AllegatoContrattoFlussoDocumentBulk>(getAllegatiContrattoFlusso(contrattoBulkSigla,contrattoBulk.getAttachments())));

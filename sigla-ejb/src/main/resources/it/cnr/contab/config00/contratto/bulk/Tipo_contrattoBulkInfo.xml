@@ -115,5 +115,15 @@
 		name="fl_cig" />
 	<findFieldProperty
 		name="fl_pubblica_contratto" />
+
+	<columnSet name="restService">
+		<columnFieldProperty name="cd_tipo_contratto" />
+		<columnFieldProperty name="ds_tipo_contratto" />
+		<columnFieldProperty name="fl_cancellato" />
+		<columnFieldProperty name="fl_pubblica_contratto" />
+		<columnFieldProperty name="fl_cig" />
+		<columnFieldProperty name="natura_contabile" />
+
+	</columnSet>
 		
 </bulkInfo>
