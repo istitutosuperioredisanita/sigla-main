@@ -17,7 +17,10 @@
 
 package it.cnr.contab.coepcoan00.core.bulk;
 
+import it.cnr.jada.bulk.*;
 import it.cnr.jada.persistency.*;
+import it.cnr.jada.persistency.beans.*;
+import it.cnr.jada.persistency.sql.*;
 
 public class Movimento_coanBase extends Movimento_coanKey implements Keyed {
 	// CD_CENTRO_RESPONSABILITA VARCHAR(30) NOT NULL

@@ -20,8 +20,7 @@ package it.cnr.contab.docamm00.actions;
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotEnabledException;
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotRequiredException;
 import it.cnr.contab.coepcoan00.consultazioni.bp.ConsultazionePartitarioBP;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.Movimento_cogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.*;
 import it.cnr.contab.docamm00.bp.IDocAmmEconomicaBP;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
 import it.cnr.contab.util.Utility;
@@ -56,10 +55,19 @@ public abstract class EconomicaAction extends CRUDAction {
             if (Optional.ofNullable(bp.getEconomicaModel()).filter(OggettoBulk::isToBeCreated).isPresent())
                 throw new ApplicationException("Il documento risulta non salvato! Proposta scrittura prima nota non possibile.");
 
-            documentoCogeBulk.setScrittura_partita_doppia(Utility.createScritturaPartitaDoppiaComponentSession().proposeScritturaPartitaDoppia(
-                    actionContext.getUserContext(),
-                    documentoCogeBulk)
-            );
+            if (ResultScrittureContabili.LOAD_ANALITICA) {
+                ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+                        actionContext.getUserContext(),
+                        documentoCogeBulk);
+
+                documentoCogeBulk.setScrittura_partita_doppia(result.getScritturaPartitaDoppiaBulk());
+                documentoCogeBulk.setScrittura_analitica(result.getScritturaAnaliticaBulk());
+            } else {
+                documentoCogeBulk.setScrittura_partita_doppia(Utility.createProposeScritturaComponentSession().proposeScritturaPartitaDoppia(
+                        actionContext.getUserContext(),
+                        documentoCogeBulk)
+                );
+            }
             Optional.ofNullable(documentoCogeBulk)
                     .filter(OggettoBulk.class::isInstance)
                     .map(OggettoBulk.class::cast)

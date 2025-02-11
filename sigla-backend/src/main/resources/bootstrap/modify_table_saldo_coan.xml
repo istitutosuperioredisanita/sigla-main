@@ -28,6 +28,9 @@
     <changeSet author="raffaele.pagano" id="modify_table_saldo_coan_02">
         <dropForeignKeyConstraint baseTableName="SALDO_COAN" constraintName="FK_SALDO_COAN02"/>
     </changeSet>
+    <changeSet author="raffaele.pagano" id="modify_table_saldo_coan_06">
+        <dropIndex indexName="FX_SALDO_COAN02" tableName="SALDO_COAN"/>
+    </changeSet>
     <changeSet author="raffaele.pagano" id="modify_table_saldo_coan_03">
         <renameColumn tableName="SALDO_COAN" oldColumnName="CD_VOCE_EP" newColumnName="CD_VOCE_ANA"/>
     </changeSet>
@@ -41,9 +44,6 @@
                                  constraintName="FK_SALDO_COAN02"
                                  referencedTableName="VOCE_ANALITICA"
                                  referencedColumnNames="ESERCIZIO, CD_VOCE_ANA"/>
-    </changeSet>
-    <changeSet author="raffaele.pagano" id="modify_table_saldo_coan_06">
-        <dropIndex indexName="FX_SALDO_COAN02" tableName="SALDO_COAN"/>
     </changeSet>
     <changeSet author="raffaele.pagano" id="modify_table_saldo_coan_07">
         <createIndex indexName="FX_SALDO_COAN02" tableName="SALDO_COAN">
