@@ -323,7 +323,6 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
             return this.getVal04();
         return null;
     }
-
     public static void stepFineAnno(UserContext context, StepFineAnno stepFineAnno) throws BusinessProcessException {
         try {
             final Configurazione_cnrBulk configurazione = Utility
@@ -344,7 +343,7 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
                                     .filter(s -> s.equalsIgnoreCase("Y") || s.equalsIgnoreCase("T"))
                                         .isPresent()
                         )
-                        .map(d -> d.isBefore(EJBCommonServices.getServerTimestamp().toLocalDateTime())).get()) {
+                        .map(d -> ( d!=null && d.isBefore(EJBCommonServices.getServerTimestamp().toLocalDateTime()))).isPresent()) {
                     throw new ApplicationMessageFormatException(
                             "La funzione è bloccata per l''anno {0} dal {1}",
                             String.valueOf(CNRUserContext.getEsercizio(context)),
