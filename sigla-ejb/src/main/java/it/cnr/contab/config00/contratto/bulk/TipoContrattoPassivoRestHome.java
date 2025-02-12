@@ -17,18 +17,13 @@ public class TipoContrattoPassivoRestHome extends Tipo_contrattoHome  {
         super(TipoContrattoPassivoRestBulk.class, conn, persistentCache);
     }
 
-
     @Override
     public SQLBuilder restSelect(UserContext userContext, SQLBuilder sql, CompoundFindClause compoundfindclause, OggettoBulk oggettobulk) throws ComponentException, PersistencyException {
-
         sql.addClause(FindClause.AND, "fl_cancellato", SQLBuilder.EQUALS, Boolean.FALSE);
-       sql.openParenthesis(FindClause.AND);
+        sql.openParenthesis(FindClause.AND);
         sql.addClause(FindClause.OR, "natura_contabile", SQLBuilder.EQUALS, Tipo_contrattoBulk.NATURA_CONTABILE_PASSIVO);
         sql.addClause(FindClause.OR, "natura_contabile", SQLBuilder.EQUALS, Tipo_contrattoBulk.NATURA_CONTABILE_SENZA_FLUSSI_FINANZIARI);
         sql.closeParenthesis();
-
-
         return sql;
-
     }
 }
