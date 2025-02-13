@@ -6179,5 +6179,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/modify_table_movimento_coan.xml"/>
     <include file="bootstrap/modify_table_saldo_coan.xml"/>
 
+    <!-- Autore : CIRO SALVIO - Aggiunta Colonna per indicare se un anagrafico può essere firmatario di un contratto-->
+    <include file="bootstrap/add_column_fl_firmatario_contr_utente.xml"/>
+
 
 </databaseChangeLog>

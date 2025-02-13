@@ -17,11 +17,7 @@
 
 package it.cnr.contab.anagraf00.core.bulk;
 
-import it.cnr.contab.anagraf00.tabrif.bulk.Tipologie_istatBulk;
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
+import it.cnr.jada.persistency.Keyed;
 
 import java.sql.Timestamp;
 
@@ -200,6 +196,8 @@ public class AnagraficoBase extends AnagraficoKey implements Keyed {
 	
 	// FL_PIVA_VERIFICATA CHAR(1)
 	private java.lang.String flPivaVerificata;
+	// FL_FIRMATARIO_CONTRATTO CHAR(1) NOT NULL
+	private java.lang.Boolean flFirmatarioContratto;
 	
 public AnagraficoBase() {
 	super();
@@ -822,4 +820,11 @@ public void setFlPivaVerificata(java.lang.String flPivaVerificata) {
 		this.dtIniValGruppoIva = dtIniValGruppoIva;
 	}
 
+	public Boolean getFlFirmatarioContratto() {
+		return flFirmatarioContratto;
+	}
+
+	public void setFlFirmatarioContratto(Boolean flFirmatarioContratto) {
+		this.flFirmatarioContratto = flFirmatarioContratto;
+	}
 }

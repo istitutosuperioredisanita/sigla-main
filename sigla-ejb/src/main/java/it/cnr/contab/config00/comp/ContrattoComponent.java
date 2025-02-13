@@ -238,6 +238,7 @@ public class ContrattoComponent extends it.cnr.jada.comp.CRUDDetailComponent imp
 			sql.addSQLClause("OR","PARTITA_IVA",sql.EQUALS,contratto.getCodfisPivaFirmatarioExt());
 			sql.closeParenthesis();
 		}
+		sql.addClause( FindClause.AND,"flFirmatarioContratto",sql.EQUALS ,Boolean.TRUE);
 		if (clause != null) 
 		  sql.addClause(clause);
 		return sql;
