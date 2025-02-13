@@ -17,34 +17,11 @@
 
 package it.cnr.contab.inventario00.bp;
 
-import it.cnr.contab.inventario00.docs.bulk.Aggiornamento_inventarioBulk;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_utilizzatori_laBulk;
-import it.cnr.contab.inventario00.docs.bulk.Utilizzatore_CdrVBulk;
-import it.cnr.contab.inventario00.ejb.Aggiornamento_inventarioComponentSession;
-import it.cnr.contab.ordmag.magazzino.bulk.ChiusuraAnnoBulk;
 import it.cnr.contab.reports.bp.ParametricPrintBP;
-import it.cnr.jada.DetailedRuntimeException;
-import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.util.RemoteIterator;
-import it.cnr.jada.util.action.SelectionListener;
-import it.cnr.jada.util.action.SimpleDetailCRUDController;
-import it.cnr.jada.util.jsp.Button;
-
-import java.rmi.RemoteException;
-import java.util.Iterator;
-import java.util.Vector;
 
 public class CRUDChiusuraInventarioBP extends ParametricPrintBP {
-
-    private boolean isEsercizioChiusoPerAlmenoUnCds;
-    private boolean isCalcoloAmmortamentoEffettuato;
-    private boolean abilitaStampa;
 
 
     public CRUDChiusuraInventarioBP() {
@@ -54,83 +31,30 @@ public class CRUDChiusuraInventarioBP extends ParametricPrintBP {
         super(function);
     }
 
-    protected void init(it.cnr.jada.action.Config config,it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException {
+    /*protected void init(it.cnr.jada.action.Config config,it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException {
         try {
             super.init(config, context);
 
             setBulkClassName(config.getInitParameter("bulkClassName"));
             setComponentSessioneName(config.getInitParameter("componentSessionName"));
 
-            this.getBulkInfo().setShortDescription("Chiusura Inventario - calcolo ammortamento");
-
+            OggettoBulk model = (OggettoBulk) getBulkInfo().getBulkClass().newInstance();
+            UserContext userContext = context.getUserContext();
+            setModel(context, model);
 
         } catch(ClassNotFoundException e) {
             throw new RuntimeException("Non trovata la classe bulk");
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
-        super.init(config,context);
-    }
 
+    }*/
     @Override
     protected void initialize(ActionContext context) throws BusinessProcessException {
         super.initialize(context);
     }
-
-    public boolean isPrintButtonHidden(){
-        // se non è stata lanciata la procedura di ammortamento non viene abilitata la stampa
-        if(this.isCalcoloAmmortamentoEffettuato() || this.abilitaStampa){
-            return false;
-        }
-        return true;
-    }
-
-    public Button[] createToolbar() {
-        Button[] baseToolbar = super.createToolbar();
-
-
-        Button[] toolbar = null;
-
-        toolbar=new Button[3];
-
-        int i = 0;
-        for (Button button : baseToolbar) {
-            toolbar[i++] = button;
-        }
-        toolbar[i++] = new Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.calcolaAmm");
-        return toolbar;
-    }
-
-    public boolean isCalcoloButtonHidden()
-    {
-        if(this.isEsercizioChiusoPerAlmenoUnCds){
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isEsercizioChiusoPerAlmenoUnCds() {
-        return isEsercizioChiusoPerAlmenoUnCds;
-    }
-
-    public void setEsercizioChiusoPerAlmenoUnCds(boolean esercizioChiusoPerAlmenoUnCds) {
-        isEsercizioChiusoPerAlmenoUnCds = esercizioChiusoPerAlmenoUnCds;
-    }
-
-    public boolean isCalcoloAmmortamentoEffettuato() {
-        return isCalcoloAmmortamentoEffettuato;
-    }
-
-    public void setCalcoloAmmortamentoEffettuato(boolean calcoloAmmortamentoEffettuato) {
-        isCalcoloAmmortamentoEffettuato = calcoloAmmortamentoEffettuato;
-    }
-
-    public boolean isAbilitaStampa() {
-        return abilitaStampa;
-    }
-
-    public void setAbilitaStampa(boolean abilitaStampa) {
-        this.abilitaStampa = abilitaStampa;
-    }
-
 
 }
 
