@@ -110,6 +110,12 @@
 -- Inserito job per lanciare la copia del bilancio Decisionale al Gestionale
 -- Constants:
 --
+-- Date: 13/02/2025
+-- Version: 1.20
+-- Aggiunto Ribaltamento archivio: CATEGORIA_GRUPPO_VOCE_EP
+--
+
+
 -- Descrizione utente
 cgUtente constant varchar2(20) := '$$$$RIBALTAMENTO$$$$';
 -- Descrizione processo
