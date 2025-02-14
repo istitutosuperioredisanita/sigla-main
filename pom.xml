@@ -261,8 +261,18 @@
 		</developer>
 	</developers>
 	<scm>
-		<connection>scm:git:ssh://git@git.si.cnr.it/dev/sigla-main.git</connection>
-		<developerConnection>scm:git:ssh://git@git.si.cnr.it/dev/sigla-main.git</developerConnection>
-		<tag>6.3.62</tag>
+		<connection>scm:git@github.com:istitutosuperioredisanita/sigla-main.git</connection>
+		<developerConnection>scm:git@github.com:istitutosuperioredisanita/sigla-main.git</developerConnection>
+		<tag>6.5.1</tag>
 	</scm>
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub Packages</name>
+			<url>https://maven.pkg.github.com/istitutosuperioredisanita/sigla-main</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</distributionManagement>
 </project>
