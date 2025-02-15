@@ -19,4 +19,5 @@ jobs:
       - name: Publish package
         run: mvn clean deploy -s .m2/settings.xml --batch-mode --errors --fail-at-end --show-version
         env:
+          GITHUB_USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
