@@ -270,9 +270,14 @@
 			<id>github</id>
 			<name>GitHub Packages</name>
 			<url>https://maven.pkg.github.com/istitutosuperioredisanita/sigla-main</url>
+		</repository>
+		<snapshotRepository>
+			<id>github</id>
+			<name>GitHub Packages</name>
+			<url>https://maven.pkg.github.com/istitutosuperioredisanita/sigla-main</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
-		</repository>
+		</snapshotRepository>
 	</distributionManagement>
 </project>
