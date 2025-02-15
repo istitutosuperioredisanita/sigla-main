@@ -1,4 +1,4 @@
-package it.cnr.test.contab.rest;
+package it.cnr.test.h2.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.cnr.contab.anagraf00.core.bulk.TerzoKey;
@@ -12,6 +12,7 @@ import it.cnr.contab.web.rest.model.EnumTiGestioneLineaAttivita;
 import it.cnr.contab.web.rest.model.LineaAttivitaDto;
 import it.cnr.contab.web.rest.model.ProgettoDto;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.test.h2.utenze.action.ActionDeployments;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
@@ -22,6 +23,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
+import org.jboss.arquillian.container.test.api.RunAsClient;
+import org.jboss.arquillian.junit.InSequence;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -29,14 +33,15 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Locale;
 
-
-@RunWith(JUnit4.class)
-public class RestLineaAttivitaRestTest {
+public class RestLineaAttivitaRestTest extends ActionDeployments {
 
     @Value("${test.value}")
     public String value;
 
     @Test
+    @RunAsClient
+    @OperateOnDeployment(TEST_H2)
+    @InSequence(1)
     public void testLineAttivitaCreazione()throws Exception {
 
         ObjectMapper mapper = new ObjectMapper();
@@ -65,7 +70,7 @@ public class RestLineaAttivitaRestTest {
         UsernamePasswordCredentials credentials = new UsernamePasswordCredentials("ENTE", "2023ENTEISS");
         provider.setCredentials(AuthScope.ANY, credentials);
         HttpClient client=HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
-        HttpPost method = new HttpPost("http://localhost:8080/SIGLA/restapi/lineaattivita");
+        HttpPost method = new HttpPost(deploymentURL.toString().concat("/restapi/lineaattivita"));
         method.addHeader("Accept-Language", Locale.getDefault().toString());
         method.setHeader("Content-Type", "application/json;charset=UTF-8");
         method.setHeader(SIGLASecurityContext.X_SIGLA_ESERCIZIO,"2024");
@@ -82,6 +87,9 @@ public class RestLineaAttivitaRestTest {
     }
 
     @Test
+    @RunAsClient
+    @OperateOnDeployment(TEST_H2)
+    @InSequence(2)
     public void jsonTest()throws Exception {
 
         System.out.println(value);
