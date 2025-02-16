@@ -1,9 +1,9 @@
 name: Publish package to GitHub Packages
 on:
-  push:
-    branches: [master, sviluppo]
+  release:
+    types: [created]
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -15,7 +15,7 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
       - name: Publish package
-        run: mvn clean deploy -s .m2/settings.xml -PAZURE --batch-mode --errors --fail-at-end --show-version
+        run: mvn release:prepare release:perform -s .m2/settings.xml -PAZURE --batch-mode --errors --fail-at-end --show-version -DreleaseVersion=${{ github.event.inputs.releaseVersion }} -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }}
         env:
           GITHUB_USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
