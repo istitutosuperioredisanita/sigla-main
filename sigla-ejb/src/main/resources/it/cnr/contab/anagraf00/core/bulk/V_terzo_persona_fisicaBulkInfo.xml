@@ -129,4 +129,12 @@
 	<findFieldProperty
 		name="ti_sesso" />
 
+	<columnSet name="restService">
+		<columnFieldProperty name="cd_anag" />
+		<columnFieldProperty name="cd_terzo" />
+		<columnFieldProperty name="cognome" />
+		<columnFieldProperty name="nome" />
+		<columnFieldProperty name="codice_fiscale" />
+	</columnSet>
+
 </bulkInfo>

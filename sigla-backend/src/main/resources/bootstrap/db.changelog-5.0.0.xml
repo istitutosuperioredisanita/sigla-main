@@ -6181,6 +6181,10 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
 
     <!-- Autore : CIRO SALVIO - Aggiunta Colonna per indicare se un anagrafico può essere firmatario di un contratto-->
     <include file="bootstrap/add_column_fl_firmatario_contr_utente.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta parametro per abilitari i firmatari tra le persone fisiche-->
+    <include file="bootstrap/add_configurazione_firmatario_contratto.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta rest Service per i firmatari di un contratto-->
+    <include file="bootstrap/add_configurazione_rest_firmatari_contratto.xml"/>
 
 
 </databaseChangeLog>

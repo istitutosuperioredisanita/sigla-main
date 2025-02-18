@@ -21,8 +21,6 @@ import it.cnr.contab.config00.bulk.CigBulk;
 import it.cnr.contab.config00.bulk.RicercaContrattoBulk;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.action.ActionContext;
-import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.RemoteIterator;
 
@@ -42,4 +40,5 @@ RemoteIterator findContrattoByCig(UserContext userContext, ContrattoBulk contrat
 ContrattoBulk calcolaTotDocCont (UserContext userContext,ContrattoBulk contratto) throws ComponentException,java.rmi.RemoteException;
 ContrattoBulk creaContrattoDaFlussoAcquisti(UserContext userContext, ContrattoBulk contratto,boolean statoDefinitivo) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 void archiviaAllegati(UserContext userContext, ContrattoBulk contratto,boolean attFromFlussoStoredInSigla) throws ComponentException;
+    RemoteIterator findListaFirmatariContratti(UserContext userContext, ContrattoBulk contratto)	throws ComponentException;
 }

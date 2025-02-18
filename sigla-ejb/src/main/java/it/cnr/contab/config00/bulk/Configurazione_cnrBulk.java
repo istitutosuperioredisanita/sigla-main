@@ -250,6 +250,7 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
 
     public final static String PK_GESTIONE_CONTRATTI = "CONTRATTI";
     public final static String SK_ATT_REST_STORED_FROM_SIGLA = "ATT_REST_CONTR_STORED_FROM_SIGLA";
+    public final static String SK_GEST_FIRMATARIO_CTR = "GEST_FIRMATARIO_CTR";
 
     public final static String PK_SOSPESI = "SOSPESI";
     public final static String SK_GESTIONE_STATO_INIZIALE = "GESTIONE_STATO_INIZIALE";

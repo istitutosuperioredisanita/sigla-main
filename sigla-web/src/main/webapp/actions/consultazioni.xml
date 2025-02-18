@@ -1958,6 +1958,14 @@
 		<init-param name="multiSelezione" value="N" />
 	</businessProcess>
 
+	<action path="/ConsListaFirmatariContratti" actionClass="it.cnr.jada.util.action.ConsultazioniAction" />
 
-
+	<businessProcess name=""
+					 className="it.cnr.contab.consultazioni.bp.ConsFirmatariContrattiRestBP">
+		<forward name="default" path="/consultazioni/form_lista.jsp" />
+		<init-param name="bulkClassName"
+					value="it.cnr.contab.anagraf00.core.bulk.V_terzo_persona_fisicaBulk" />
+		<init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
+		<init-param name="defaultAction" value="ConsListaFirmatariContratti" />
+	</businessProcess>
 </action-mappings>
