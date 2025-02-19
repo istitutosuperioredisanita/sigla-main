@@ -771,6 +771,7 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 			} catch (PersistencyException e) {
 				throw new ComponentException(e);
 			}
+			/*
 			// Se la consegna dell'ordine risulta associata o associata parzialmente a fattura si deve verificare l'associativa FATTURA/INVENTARIO
 			if(!transito_beni_ordiniBulk.getMovimentiMag().getLottoMag().getOrdineAcqConsegna().getStatoFatt().equals(OrdineAcqConsegnaBulk.STATO_FATT_NON_ASSOCIATA)){
 
@@ -802,7 +803,7 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 					}
 
 				}
-			}
+			} */
 		}						/////
 		//if (transito_beni_ordiniBulk != null){
 		//	getHomeCache(aUC).fetchAll(aUC);
