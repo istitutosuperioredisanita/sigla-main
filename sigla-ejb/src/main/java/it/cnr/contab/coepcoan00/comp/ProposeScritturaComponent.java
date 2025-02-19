@@ -674,7 +674,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			if (!Optional.ofNullable(tipoDettaglio).isPresent() ||
 					Optional.of(tipoDettaglio).filter(el->el.equals(Movimento_cogeBulk.TipoRiga.CREDITO.value()) || el.equals(Movimento_cogeBulk.TipoRiga.DEBITO.value()) ||
 							el.equals(Movimento_cogeBulk.TipoRiga.COSTO.value()) || el.equals(Movimento_cogeBulk.TipoRiga.RICAVO.value())).isPresent()) {
-				myTipoDettaglio = this.getTipoDettaglioByConto(userContext, mySezione, conto, myImporto);
+				myTipoDettaglio = getTipoDettaglioByConto(userContext, mySezione, conto, myImporto);
 
 				//Confronto il tipoDettaglio da inserire con la tipologia del conto
 				if (Optional.ofNullable(tipoDettaglio).isPresent() && !tipoDettaglio.equals(myTipoDettaglio)) {
@@ -687,44 +687,6 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			DettaglioPrimaNota dettPN = new DettaglioPrimaNota(myTipoDettaglio, mySezione, conto.getCd_voce_ep(), myImporto, cdTerzo, partita, cdCori, dtDaCompetenzaCoge, dtACompetenzaCoge, isModificabile, isAccorpabile);
 			dett.add(dettPN);
 			return dettPN;
-		}
-
-		private String getTipoDettaglioByConto(UserContext userContext, String sezione, Voce_epBulk conto, BigDecimal importo) {
-			Voce_epBulk myConto = Optional.of(conto).filter(el->el.getCrudStatus()!=OggettoBulk.UNDEFINED).orElseGet(()-> {
-				try {
-					Voce_epHome voceEpHome = (Voce_epHome) getHome(userContext, Voce_epBulk.class);
-					return (Voce_epBulk) voceEpHome.findByPrimaryKey(new Voce_epBulk(conto.getCd_voce_ep(), conto.getEsercizio()));
-				} catch (ComponentException | PersistencyException ex) {
-					throw new DetailedRuntimeException(ex);
-				}
-			});
-
-			String mySezione = importo.compareTo(BigDecimal.ZERO)<0?Movimento_cogeBulk.getControSezione(sezione):sezione;
-			String myTipoDettaglio;
-			if (myConto.isContoCostoEconomicoEsercizio() || myConto.isContoRicavoEconomicoEsercizio()) {
-				if (myConto.isContoSezioneBifase()) {
-					if (mySezione.equals(Movimento_cogeBulk.SEZIONE_DARE))
-						myTipoDettaglio = Movimento_cogeBulk.TipoRiga.COSTO.value();
-					else
-						myTipoDettaglio = Movimento_cogeBulk.TipoRiga.RICAVO.value();
-				} else if (myConto.isContoCostoEconomicoEsercizio())
-					myTipoDettaglio = Movimento_cogeBulk.TipoRiga.COSTO.value();
-				else
-					myTipoDettaglio = Movimento_cogeBulk.TipoRiga.RICAVO.value();
-			} else if (myConto.isContoNumerarioAttivita() || myConto.isContoNumerarioPassivita()) {
-				if (myConto.isContoSezioneBifase()) {
-					if (mySezione.equals(Movimento_cogeBulk.SEZIONE_DARE))
-						myTipoDettaglio = Movimento_cogeBulk.TipoRiga.ATTIVITA.value();
-					else
-						myTipoDettaglio = Movimento_cogeBulk.TipoRiga.PASSIVITA.value();
-				} else if (myConto.isContoNumerarioAttivita())
-					myTipoDettaglio = Movimento_cogeBulk.TipoRiga.ATTIVITA.value();
-				else
-					myTipoDettaglio = Movimento_cogeBulk.TipoRiga.PASSIVITA.value();
-			} else
-				myTipoDettaglio = Movimento_cogeBulk.TipoRiga.GENERICO.value();
-
-			return myTipoDettaglio;
 		}
 	}
 
@@ -1208,10 +1170,9 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 	private ResultScrittureContabili proposeScritturaPartitaDoppiaDocumento(UserContext userContext, IDocumentoAmministrativoBulk docamm, boolean makeAnalitica) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, RemoteException, IntrospectionException, PersistencyException {
 		List<TestataPrimaNota> testataPrimaNotaList = this.proposeTestataPrimaNotaDocumento(userContext, docamm);
-		Optional<Scrittura_partita_doppiaBulk> spd = Optional.of(testataPrimaNotaList).map(el->this.generaScrittura(userContext, docamm, el, true));
-		Optional<Scrittura_analiticaBulk> sa = Optional.empty();
-		if (makeAnalitica)
-			sa = Optional.of(testataPrimaNotaList).map(el->this.generaScritturaAnalitica(userContext, docamm, el));
+		ResultScrittureContabili resultScrittureContabili = this.generaScritture(userContext, docamm, testataPrimaNotaList, Boolean.TRUE, makeAnalitica);
+		Optional<Scrittura_partita_doppiaBulk> spd = Optional.ofNullable(resultScrittureContabili.getScritturaPartitaDoppiaBulk());
+		Optional<Scrittura_analiticaBulk> sa = Optional.ofNullable(resultScrittureContabili.getScritturaAnaliticaBulk());
 		if (spd.isPresent() || sa.isPresent()) {
 			final Optional<Timestamp> dtCancellazione;
 			if (docamm instanceof Fattura_passivaBulk && ((Fattura_passivaBulk) docamm).isAnnullato())
@@ -1999,7 +1960,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 						}
 					});
 
-			return this.generaScrittura(userContext, compenso, Collections.singletonList(testataPrimaNota), true);
+			return this.generaScrittura(userContext, compenso, Collections.singletonList(testataPrimaNota), Boolean.TRUE);
 		} catch (PersistencyException|RemoteException e) {
 			throw handleException(e);
 		}
@@ -4970,7 +4931,13 @@ public class ProposeScritturaComponent extends CRUDComponent {
 	}
 
 	private Scrittura_partita_doppiaBulk generaScrittura(UserContext userContext, IDocumentoCogeBulk doccoge, List<TestataPrimaNota> testataPrimaNota, boolean accorpaConti) {
-		Scrittura_partita_doppiaBulk scritturaPartitaDoppia = this.makeScritturaEconomica(userContext, doccoge, testataPrimaNota, accorpaConti);
+		return generaScritture(userContext, doccoge, testataPrimaNota, accorpaConti, Boolean.FALSE).getScritturaPartitaDoppiaBulk();
+	}
+
+	private ResultScrittureContabili generaScritture(UserContext userContext, IDocumentoCogeBulk doccoge, List<TestataPrimaNota> testataPrimaNota, boolean accorpaConti, boolean makeAnalitica) {
+		ResultScrittureContabili resultScrittureContabili = this.makeScrittureEconomica(userContext, doccoge, testataPrimaNota, accorpaConti, makeAnalitica);
+		Scrittura_partita_doppiaBulk scritturaPartitaDoppia = resultScrittureContabili.getScritturaPartitaDoppiaBulk();
+		Scrittura_analiticaBulk scritturaAnalitica = resultScrittureContabili.getScritturaAnaliticaBulk();
 
 		//Metto il controllo che Dare=Avere
 		if (scritturaPartitaDoppia!=null && scritturaPartitaDoppia.getImTotaleDare().compareTo(scritturaPartitaDoppia.getImTotaleAvere())!=0)
@@ -5016,18 +4983,15 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			}
 		}
 
-		return scritturaPartitaDoppia;
+		return resultScrittureContabili;
 	}
 
-	private Scrittura_analiticaBulk generaScritturaAnalitica(UserContext userContext, IDocumentoCogeBulk doccoge, List<TestataPrimaNota> testataPrimaNota) {
-        return this.makeScritturaAnalitica(userContext, doccoge, testataPrimaNota);
-	}
-
-	private Scrittura_partita_doppiaBulk makeScritturaEconomica(UserContext userContext, IDocumentoCogeBulk doccoge, List<TestataPrimaNota> testataPrimaNota, boolean accorpaConti) {
+	private ResultScrittureContabili makeScrittureEconomica(UserContext userContext, IDocumentoCogeBulk doccoge, List<TestataPrimaNota> testataPrimaNota, boolean accorpaConti, boolean makeAnalitica) {
 		if (!testataPrimaNota.stream().flatMap(el->el.getDett().stream()).findAny().isPresent())
 			return null;
 
 		Scrittura_partita_doppiaBulk scritturaPartitaDoppia = new Scrittura_partita_doppiaBulk();
+		Scrittura_analiticaBulk scritturaAnalitica;
 
 		scritturaPartitaDoppia.setToBeCreated();
 		scritturaPartitaDoppia.setDt_contabilizzazione(doccoge.getDt_contabilizzazione());
@@ -5081,7 +5045,29 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		else
 			scritturaPartitaDoppia.setOrigine_scrittura(OrigineScritturaEnum.CAUSALE.name());
 
-		testataPrimaNota.forEach(testata -> {
+		if (makeAnalitica) {
+			scritturaAnalitica = new Scrittura_analiticaBulk();
+			scritturaAnalitica.setToBeCreated();
+			scritturaAnalitica.setDt_contabilizzazione(scritturaPartitaDoppia.getDt_contabilizzazione());
+			scritturaAnalitica.setUser(userContext.getUser());
+			scritturaAnalitica.setCd_unita_organizzativa(scritturaPartitaDoppia.getCd_unita_organizzativa());
+			scritturaAnalitica.setCd_cds(scritturaPartitaDoppia.getCd_cds());
+			scritturaAnalitica.setTi_scrittura(scritturaPartitaDoppia.getTi_scrittura());
+			scritturaAnalitica.setStato(scritturaPartitaDoppia.getStato());
+			scritturaAnalitica.setDs_scrittura(scritturaPartitaDoppia.getDs_scrittura());
+			scritturaAnalitica.setEsercizio(scritturaPartitaDoppia.getEsercizio());
+			scritturaAnalitica.setEsercizio_documento_amm(scritturaPartitaDoppia.getEsercizio());
+			scritturaAnalitica.setCd_cds_documento(scritturaPartitaDoppia.getCd_cds());
+			scritturaAnalitica.setCd_uo_documento(scritturaPartitaDoppia.getCd_uo_documento());
+			scritturaAnalitica.setCd_tipo_documento(scritturaPartitaDoppia.getCd_tipo_documento());
+			scritturaAnalitica.setPg_numero_documento(scritturaPartitaDoppia.getPg_numero_documento());
+			scritturaAnalitica.setAttiva(scritturaPartitaDoppia.getAttiva());
+			scritturaAnalitica.setOrigine_scrittura(scritturaPartitaDoppia.getOrigine_scrittura());
+		} else {
+            scritturaAnalitica = null;
+        }
+
+        testataPrimaNota.forEach(testata -> {
 			if (accorpaConti) {
 				//Prima analizzo i conti patrimoniali con partita senza cori
 				//I conti patrimoniali devono essere accorpati per partita e distinti tra modificabili e non
@@ -5212,34 +5198,32 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 				//Poi analizzo i conti COSTO/RICAVO distinguendoli tra modificabili e non
 				{
-					Map<String, Map<Boolean, Map<String, Map<String, Map<String, List<DettaglioPrimaNota>>>>>> mapTipoDettCostoRicavo = testata.getDett().stream()
+					Map<Boolean, Map<String, Map<String, Map<String, List<DettaglioPrimaNota>>>>> mapModificabile = testata.getDett().stream()
 							.filter(DettaglioPrimaNota::isAccorpabile)
 							.filter(DettaglioPrimaNota::isDettaglioCostoRicavo)
-							.collect(Collectors.groupingBy(DettaglioPrimaNota::getTipoDett,
-									Collectors.groupingBy(DettaglioPrimaNota::isModificabile,
+							.collect(Collectors.groupingBy(DettaglioPrimaNota::isModificabile,
 											Collectors.groupingBy(dett->Optional.ofNullable(dett.getDtDaCompetenzaCoge()).map(Timestamp::toString).orElse("NO_VALUE"),
 													Collectors.groupingBy(dett->Optional.ofNullable(dett.getDtACompetenzaCoge()).map(Timestamp::toString).orElse("NO_VALUE"),
-															Collectors.groupingBy(DettaglioPrimaNota::getCdConto))))));
+															Collectors.groupingBy(DettaglioPrimaNota::getCdConto)))));
 
-					mapTipoDettCostoRicavo.keySet().forEach(aTipoDett -> {
-						Map<Boolean, Map<String, Map<String, Map<String, List<DettaglioPrimaNota>>>>> mapModificabile = mapTipoDettCostoRicavo.get(aTipoDett);
-						mapModificabile.keySet().forEach(aTipoModific -> {
-							Map<String, Map<String, Map<String, List<DettaglioPrimaNota>>>> mapDataDaCompetenza = mapModificabile.get(aTipoModific);
-							mapDataDaCompetenza.keySet().forEach(aDataDaCompetenza -> {
-								final Timestamp tmsDataDaCompetenza = aDataDaCompetenza.equals("NO_VALUE")?null:Timestamp.valueOf(aDataDaCompetenza);
-								Map<String, Map<String, List<DettaglioPrimaNota>>> mapDataACompetenza = mapDataDaCompetenza.get(aDataDaCompetenza);
-								mapDataACompetenza.keySet().forEach(aDataACompetenza -> {
-									final Timestamp tmsDataACompetenza = aDataACompetenza.equals("NO_VALUE")?null:Timestamp.valueOf(aDataDaCompetenza);
-									Map<String, List<DettaglioPrimaNota>> mapContiCostoRicavo = mapDataACompetenza.get(aDataACompetenza);
-									mapContiCostoRicavo.keySet().forEach(aContoCostoRicavo -> {
-										try {
-											Pair<String, BigDecimal> saldoCostoRicavo = this.getSaldo(mapContiCostoRicavo.get(aContoCostoRicavo));
-											Movimento_cogeBulk movcoge = addMovimentoCoge(userContext, scritturaPartitaDoppia, doccoge, testata, aTipoDett, saldoCostoRicavo.getFirst(), aContoCostoRicavo, saldoCostoRicavo.getSecond(), tmsDataDaCompetenza, tmsDataACompetenza);
-											Optional.ofNullable(movcoge).ifPresent(el -> el.setFl_modificabile(aTipoModific));
-										} catch (ComponentException e) {
-											throw new ApplicationRuntimeException(e);
-										}
-									});
+					mapModificabile.keySet().forEach(aTipoModific -> {
+						Map<String, Map<String, Map<String, List<DettaglioPrimaNota>>>> mapDataDaCompetenza = mapModificabile.get(aTipoModific);
+						mapDataDaCompetenza.keySet().forEach(aDataDaCompetenza -> {
+							final Timestamp tmsDataDaCompetenza = aDataDaCompetenza.equals("NO_VALUE")?null:Timestamp.valueOf(aDataDaCompetenza);
+							Map<String, Map<String, List<DettaglioPrimaNota>>> mapDataACompetenza = mapDataDaCompetenza.get(aDataDaCompetenza);
+							mapDataACompetenza.keySet().forEach(aDataACompetenza -> {
+								final Timestamp tmsDataACompetenza = aDataACompetenza.equals("NO_VALUE")?null:Timestamp.valueOf(aDataDaCompetenza);
+								Map<String, List<DettaglioPrimaNota>> mapContiCostoRicavo = mapDataACompetenza.get(aDataACompetenza);
+								mapContiCostoRicavo.keySet().forEach(aContoCostoRicavo -> {
+									try {
+										Pair<String, BigDecimal> saldoCostoRicavo = this.getSaldo(mapContiCostoRicavo.get(aContoCostoRicavo));
+										Movimento_cogeBulk movcoge = addMovimentoCoge(userContext, scritturaPartitaDoppia, doccoge, testata, null, saldoCostoRicavo.getFirst(), aContoCostoRicavo, saldoCostoRicavo.getSecond(), tmsDataDaCompetenza, tmsDataACompetenza);
+										Optional.ofNullable(movcoge).ifPresent(el -> el.setFl_modificabile(aTipoModific));
+										if (makeAnalitica)
+											addMovimentiCoan(userContext, scritturaAnalitica, doccoge, movcoge, mapContiCostoRicavo.get(aContoCostoRicavo));
+									} catch (ComponentException e) {
+										throw new ApplicationRuntimeException(e);
+									}
 								});
 							});
 						});
@@ -5393,14 +5377,24 @@ public class ProposeScritturaComponent extends CRUDComponent {
 											BigDecimal imDare = mapContiCostoRicavo.get(aConto).stream()
 													.filter(DettaglioPrimaNota::isSezioneDare)
 													.map(DettaglioPrimaNota::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
-											Optional.ofNullable(addMovimentoCoge(userContext, scritturaPartitaDoppia, doccoge, testata, aTipoDett, Movimento_cogeBulk.SEZIONE_DARE, aConto, imDare))
-													.ifPresent(el -> el.setFl_modificabile(aTipoModific));
+											Optional<Movimento_cogeBulk> movDareCoge = Optional.ofNullable(addMovimentoCoge(userContext, scritturaPartitaDoppia, doccoge, testata, aTipoDett, Movimento_cogeBulk.SEZIONE_DARE, aConto, imDare));
+											if (movDareCoge.isPresent()) {
+												movDareCoge.get().setFl_modificabile(aTipoModific);
+												if (makeAnalitica)
+													addMovimentiCoan(userContext, scritturaAnalitica, doccoge, movDareCoge.get(), mapContiCostoRicavo.get(aConto).stream()
+															.filter(DettaglioPrimaNota::isSezioneDare).collect(Collectors.toList()));
+											}
 
 											BigDecimal imAvere = mapContiCostoRicavo.get(aConto).stream()
 													.filter(DettaglioPrimaNota::isSezioneAvere)
 													.map(DettaglioPrimaNota::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
-											Optional.ofNullable(addMovimentoCoge(userContext, scritturaPartitaDoppia, doccoge, testata, aTipoDett, Movimento_cogeBulk.SEZIONE_AVERE, aConto, imAvere))
-													.ifPresent(el -> el.setFl_modificabile(aTipoModific));
+											Optional<Movimento_cogeBulk> movAvereCoge = Optional.ofNullable(addMovimentoCoge(userContext, scritturaPartitaDoppia, doccoge, testata, aTipoDett, Movimento_cogeBulk.SEZIONE_AVERE, aConto, imAvere));
+											if (movAvereCoge.isPresent()) {
+												movAvereCoge.get().setFl_modificabile(aTipoModific);
+												if (makeAnalitica)
+													addMovimentiCoan(userContext, scritturaAnalitica, doccoge, movDareCoge.get(), mapContiCostoRicavo.get(aConto).stream()
+															.filter(DettaglioPrimaNota::isSezioneAvere).collect(Collectors.toList()));
+											}
 										} catch (ComponentException e) {
 											throw new ApplicationRuntimeException(e);
 										}
@@ -5458,123 +5452,11 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			});
 		});
 		scritturaPartitaDoppia.setIm_scrittura(scritturaPartitaDoppia.getImTotaleAvere());
-		return scritturaPartitaDoppia;
-	}
-
-	private Scrittura_analiticaBulk makeScritturaAnalitica(UserContext userContext, IDocumentoCogeBulk doccoge, List<TestataPrimaNota> testataPrimaNota) {
-		if (testataPrimaNota.stream()
-				.flatMap(el->el.getDett().stream())
-				.filter(DettaglioPrimaNota::isDettaglioCostoRicavo)
-				.map(DettaglioPrimaNota::getDettaglioFinanziario)
-				.map(DettaglioFinanziario::getDettagliAnalitici)
-				.filter(dettagliAnalitici ->Optional.ofNullable(dettagliAnalitici).isPresent())
-				.allMatch(List::isEmpty))
-			return null;
-
-		Scrittura_analiticaBulk scritturaAnalitica = new Scrittura_analiticaBulk();
-
-		scritturaAnalitica.setToBeCreated();
-		scritturaAnalitica.setDt_contabilizzazione(doccoge.getDt_contabilizzazione());
-		scritturaAnalitica.setUser(userContext.getUser());
-		scritturaAnalitica.setCd_unita_organizzativa(doccoge.getCd_uo());
-		scritturaAnalitica.setCd_cds(doccoge.getCd_cds());
-		scritturaAnalitica.setTi_scrittura(Scrittura_partita_doppiaBulk.TIPO_PRIMA_SCRITTURA);
-		scritturaAnalitica.setStato(Scrittura_partita_doppiaBulk.STATO_DEFINITIVO);
-		if (OrigineScritturaEnum.LIQUID_IVA.name().equals(doccoge.getCd_tipo_doc())) {
-			Calendar cal = Calendar.getInstance();
-			cal.setTimeInMillis(doccoge.getDtInizioLiquid().getTime());
-			scritturaAnalitica.setDs_scrittura(
-					"Contabilizzazione "
-							.concat(doccoge.getCd_tipo_doc()).concat(" ")
-							.concat(new SimpleDateFormat("MM/yyyy").format(cal.getTime())).concat(": ")
-							.concat(doccoge.getCd_cds()).concat("/")
-							.concat(doccoge.getCd_uo()).concat("/")
-							.concat(String.valueOf(doccoge.getEsercizio()))
-			);
-		} else {
-			scritturaAnalitica.setDs_scrittura(
-					"Contabilizzazione "
-							.concat(doccoge.getCd_tipo_doc()).concat(": ")
-							.concat(doccoge.getCd_cds()).concat("/")
-							.concat(doccoge.getCd_uo()).concat("/")
-							.concat(String.valueOf(doccoge.getEsercizio())).concat("/")
-							.concat(String.valueOf(doccoge.getPg_doc()))
-			);
-		}
-		scritturaAnalitica.setEsercizio(doccoge.getEsercizio());
-		scritturaAnalitica.setEsercizio_documento_amm(doccoge.getEsercizio());
-		scritturaAnalitica.setCd_cds_documento(doccoge.getCd_cds());
-		scritturaAnalitica.setCd_uo_documento(doccoge.getCd_uo());
-		scritturaAnalitica.setCd_tipo_documento(doccoge.getCd_tipo_doc());
-		scritturaAnalitica.setPg_numero_documento(doccoge.getPg_doc());
-		scritturaAnalitica.setAttiva(Scrittura_partita_doppiaBulk.ATTIVA_YES);
-
-		TipoDocumentoEnum tipoDocumento = TipoDocumentoEnum.fromValue(scritturaAnalitica.getCd_tipo_documento());
-		if (tipoDocumento.isGenericoStipendiSpesa())
-			scritturaAnalitica.setOrigine_scrittura(OrigineScritturaEnum.STIPENDI.name());
-		else if (tipoDocumento.isLiquidazioneIva())
-			scritturaAnalitica.setOrigine_scrittura(OrigineScritturaEnum.LIQUID_IVA.name());
-		else if (tipoDocumento.isDocumentoAttivo() || tipoDocumento.isDocumentoPassivo())
-			scritturaAnalitica.setOrigine_scrittura(OrigineScritturaEnum.DOCAMM.name());
-		else if (tipoDocumento.isMandato() || tipoDocumento.isReversale())
-			scritturaAnalitica.setOrigine_scrittura(OrigineScritturaEnum.DOCCONT.name());
-		else
-			scritturaAnalitica.setOrigine_scrittura(OrigineScritturaEnum.CAUSALE.name());
-
-		List<DettaglioAnalitico> dettagliAnalitici = new ArrayList<>();
-		testataPrimaNota.forEach(testata -> testata.getDett().stream()
-            .filter(DettaglioPrimaNota::isDettaglioCostoRicavo)
-            .filter(el->Optional.ofNullable(el.getDettaglioFinanziario()).isPresent())
-            .forEach(dettaglioPrimaNota -> {
-                BigDecimal totDettaglioFinanziario = dettaglioPrimaNota.getDettaglioFinanziario().getDettagliAnalitici()
-                        .stream().map(DettaglioAnalitico::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
-
-                List<DettaglioAnalitico> innerDettagliAnalitici = new ArrayList<>();
-                dettaglioPrimaNota.getDettaglioFinanziario().getDettagliAnalitici().forEach(el->{
-                    try {
-                        BigDecimal newImporto = dettaglioPrimaNota.getImporto().multiply(el.getImporto()).divide(totDettaglioFinanziario, 2, RoundingMode.HALF_UP);
-                        ContoBulk contoBulk = (ContoBulk)(getHome(userContext, ContoBulk.class)).findByPrimaryKey(new ContoBulk(dettaglioPrimaNota.getCdConto(), CNRUserContext.getEsercizio(userContext)));
-                        List<Voce_analiticaBulk> voceAnaliticaList = ((Voce_analiticaHome)getHome(userContext, Voce_analiticaBulk.class)).findVoceAnaliticaList(contoBulk);
-                        Voce_analiticaBulk voceAnaliticaDef = voceAnaliticaList.stream()
-                                .filter(Voce_analiticaBulk::getFl_default).findAny()
-                                .orElse(voceAnaliticaList.stream().findAny().orElse(null));
-                        if (Optional.ofNullable(voceAnaliticaDef).isPresent())
-                            innerDettagliAnalitici.add(new DettaglioAnalitico(dettaglioPrimaNota, voceAnaliticaDef, el.getCdCentroCosto(), el.getCdLineaAttivita(), newImporto));
-                    } catch (ComponentException | PersistencyException e) {
-                        throw new ApplicationRuntimeException(e);
-                    }
-                });
-                BigDecimal totInnerDettagliAnalitici = innerDettagliAnalitici.stream().map(DettaglioAnalitico::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
-                if (totInnerDettagliAnalitici.compareTo(dettaglioPrimaNota.getImporto())!=0)
-                    innerDettagliAnalitici.stream().max(Comparator.comparing(DettaglioAnalitico::getImporto))
-                            .ifPresent(el->el.setImporto(el.getImporto().add(dettaglioPrimaNota.getImporto().subtract(totInnerDettagliAnalitici))));
-                dettagliAnalitici.addAll(innerDettagliAnalitici);
-            }));
-
-		//Poi analizzo i conti COSTO/RICAVO distinguendoli tra modificabili e non
-		{
-			Map<String, Map<String, Map<String, List<DettaglioAnalitico>>>> mapTipoDettCostoRicavo = dettagliAnalitici.stream()
-				.collect(Collectors.groupingBy(DettaglioAnalitico::getCdCentroCosto,
-					Collectors.groupingBy(DettaglioAnalitico::getCdLineaAttivita,
-						Collectors.groupingBy(el->el.getVoceAnalitica().getCd_voce_ana()))));
-
-			mapTipoDettCostoRicavo.keySet().forEach(aCdCentroCosto -> {
-				Map<String, Map<String, List<DettaglioAnalitico>>> mapCdLineaAttivita = mapTipoDettCostoRicavo.get(aCdCentroCosto);
-				mapCdLineaAttivita.keySet().forEach(aCdLineaAttivita -> {
-					Map<String, List<DettaglioAnalitico>> mapCdVoceAna = mapCdLineaAttivita.get(aCdLineaAttivita);
-					mapCdVoceAna.keySet().forEach(aCdVoceAna -> {
-						try {
-							Pair<String, BigDecimal> saldoVoceAnalitica = this.getSaldoAnalitico(mapCdVoceAna.get(aCdVoceAna));
-							addMovimentoCoan(userContext, scritturaAnalitica, doccoge, saldoVoceAnalitica.getFirst(), aCdVoceAna, aCdCentroCosto, aCdLineaAttivita, saldoVoceAnalitica.getSecond());
-						} catch (ComponentException e) {
-							throw new ApplicationRuntimeException(e);
-						}
-					});
-				});
-			});
-		}
-		scritturaAnalitica.setIm_scrittura(scritturaAnalitica.getImTotaleMov());
-		return scritturaAnalitica;
+		if (makeAnalitica)
+			scritturaAnalitica.setIm_scrittura(scritturaAnalitica.getImTotaleMov());
+		return new ResultScrittureContabili(scritturaPartitaDoppia, Optional.ofNullable(scritturaAnalitica)
+				.filter(el->Optional.ofNullable(el.getMovimentiColl()).map(el2->!el2.isEmpty()).orElse(Boolean.FALSE))
+				.orElse(null));
 	}
 
 	private Movimento_cogeBulk addMovimentoCoge(UserContext userContext, Scrittura_partita_doppiaBulk scritturaPartitaDoppia, IDocumentoCogeBulk doccoge, TestataPrimaNota testata, String aTipoDett, String aSezione, String aCdConto, BigDecimal aImporto) throws ComponentException {
@@ -5687,6 +5569,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 				movimentoCoge.setPg_numero_documento(aPartita.getPg_doc());
 			}
 
+			String myTipoDett = Optional.ofNullable(aTipoDett).orElse(this.getTipoDettaglioByConto(userContext, aSezione, movimentoCoge.getConto(), movimentoCoge.getIm_movimento()));
 			movimentoCoge.setTi_riga(aTipoDett);
 
 			if (aSezione.equals(Movimento_cogeBulk.SEZIONE_DARE))
@@ -5704,7 +5587,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		}
 	}
 
-	private void addMovimentoCoan(UserContext userContext, Scrittura_analiticaBulk scritturaAnalitica, IDocumentoCogeBulk doccoge, String aSezione, String aCdContoAna, String aCdCentroCosto, String aCdLineaAttivita, BigDecimal aImporto) throws ComponentException{
+	private void addMovimentoCoan(UserContext userContext, Scrittura_analiticaBulk scritturaAnalitica, IDocumentoCogeBulk doccoge, Movimento_cogeBulk movimentoCoge, String aSezione, String aCdContoAna, String aCdCentroCosto, String aCdLineaAttivita, BigDecimal aImporto) throws ComponentException{
 		try {
 			if (aImporto.compareTo(BigDecimal.ZERO)==0)
 				return;
@@ -5786,6 +5669,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 				movimentoCoan.setTi_istituz_commerc(TipoIVA.ISTITUZIONALE.value());
 			}
 
+			movimentoCoan.setMovimentoCoge(movimentoCoge);
 			scritturaAnalitica.addToMovimentiColl(movimentoCoan);
 		} catch (PersistencyException e) {
 			throw handleException(e);
@@ -6228,5 +6112,94 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 		return TimeUnit.MILLISECONDS.toDays(
 				Math.abs(end.getTimeInMillis() - start.getTimeInMillis()));
+	}
+
+	private void addMovimentiCoan(UserContext userContext, Scrittura_analiticaBulk scritturaAnalitica, IDocumentoCogeBulk doccoge, Movimento_cogeBulk movimentoCoge, List<DettaglioPrimaNota> dettaglioPrimaNotaList) throws ComponentException {
+		List<DettaglioAnalitico> dettagliAnalitici = new ArrayList<>();
+		dettaglioPrimaNotaList.forEach(dettaglioPrimaNota->{
+			BigDecimal totDettaglioFinanziario = dettaglioPrimaNota.getDettaglioFinanziario().getDettagliAnalitici()
+					.stream().map(DettaglioAnalitico::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+			List<DettaglioAnalitico> innerDettagliAnalitici = new ArrayList<>();
+			dettaglioPrimaNota.getDettaglioFinanziario().getDettagliAnalitici().forEach(el->{
+				try {
+					BigDecimal newImporto = dettaglioPrimaNota.getImporto().multiply(el.getImporto()).divide(totDettaglioFinanziario, 2, RoundingMode.HALF_UP);
+					ContoBulk contoBulk = (ContoBulk)(getHome(userContext, ContoBulk.class)).findByPrimaryKey(new ContoBulk(dettaglioPrimaNota.getCdConto(), CNRUserContext.getEsercizio(userContext)));
+					List<Voce_analiticaBulk> voceAnaliticaList = ((Voce_analiticaHome)getHome(userContext, Voce_analiticaBulk.class)).findVoceAnaliticaList(contoBulk);
+					Voce_analiticaBulk voceAnaliticaDef = voceAnaliticaList.stream()
+							.filter(Voce_analiticaBulk::getFl_default).findAny()
+							.orElse(voceAnaliticaList.stream().findAny().orElse(null));
+					if (Optional.ofNullable(voceAnaliticaDef).isPresent())
+						innerDettagliAnalitici.add(new DettaglioAnalitico(dettaglioPrimaNota, voceAnaliticaDef, el.getCdCentroCosto(), el.getCdLineaAttivita(), newImporto));
+				} catch (ComponentException | PersistencyException e) {
+					throw new ApplicationRuntimeException(e);
+				}
+			});
+			BigDecimal totInnerDettagliAnalitici = innerDettagliAnalitici.stream().map(DettaglioAnalitico::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
+			if (totInnerDettagliAnalitici.compareTo(dettaglioPrimaNota.getImporto())!=0)
+				innerDettagliAnalitici.stream().max(Comparator.comparing(DettaglioAnalitico::getImporto))
+						.ifPresent(el->el.setImporto(el.getImporto().add(dettaglioPrimaNota.getImporto().subtract(totInnerDettagliAnalitici))));
+			dettagliAnalitici.addAll(innerDettagliAnalitici);
+		});
+		//Poi analizzo i conti COSTO/RICAVO distinguendoli tra modificabili e non
+		{
+			Map<String, Map<String, Map<String, List<DettaglioAnalitico>>>> mapTipoDettCostoRicavo = dettagliAnalitici.stream()
+					.collect(Collectors.groupingBy(DettaglioAnalitico::getCdCentroCosto,
+							Collectors.groupingBy(DettaglioAnalitico::getCdLineaAttivita,
+									Collectors.groupingBy(el->el.getVoceAnalitica().getCd_voce_ana()))));
+
+			mapTipoDettCostoRicavo.keySet().forEach(aCdCentroCosto -> {
+				Map<String, Map<String, List<DettaglioAnalitico>>> mapCdLineaAttivita = mapTipoDettCostoRicavo.get(aCdCentroCosto);
+				mapCdLineaAttivita.keySet().forEach(aCdLineaAttivita -> {
+					Map<String, List<DettaglioAnalitico>> mapCdVoceAna = mapCdLineaAttivita.get(aCdLineaAttivita);
+					mapCdVoceAna.keySet().forEach(aCdVoceAna -> {
+						try {
+							Pair<String, BigDecimal> saldoVoceAnalitica = this.getSaldoAnalitico(mapCdVoceAna.get(aCdVoceAna));
+							addMovimentoCoan(userContext, scritturaAnalitica, doccoge, movimentoCoge, saldoVoceAnalitica.getFirst(), aCdVoceAna, aCdCentroCosto, aCdLineaAttivita, saldoVoceAnalitica.getSecond());
+						} catch (ComponentException e) {
+							throw new ApplicationRuntimeException(e);
+						}
+					});
+				});
+			});
+		}
+	}
+
+	private String getTipoDettaglioByConto(UserContext userContext, String sezione, Voce_epBulk conto, BigDecimal importo) {
+		Voce_epBulk myConto = Optional.of(conto).filter(el->el.getCrudStatus()!=OggettoBulk.UNDEFINED).orElseGet(()-> {
+			try {
+				Voce_epHome voceEpHome = (Voce_epHome) getHome(userContext, Voce_epBulk.class);
+				return (Voce_epBulk) voceEpHome.findByPrimaryKey(new Voce_epBulk(conto.getCd_voce_ep(), conto.getEsercizio()));
+			} catch (ComponentException | PersistencyException ex) {
+				throw new DetailedRuntimeException(ex);
+			}
+		});
+
+		String mySezione = importo.compareTo(BigDecimal.ZERO)<0?Movimento_cogeBulk.getControSezione(sezione):sezione;
+		String myTipoDettaglio;
+		if (myConto.isContoCostoEconomicoEsercizio() || myConto.isContoRicavoEconomicoEsercizio()) {
+			if (myConto.isContoSezioneBifase()) {
+				if (mySezione.equals(Movimento_cogeBulk.SEZIONE_DARE))
+					myTipoDettaglio = Movimento_cogeBulk.TipoRiga.COSTO.value();
+				else
+					myTipoDettaglio = Movimento_cogeBulk.TipoRiga.RICAVO.value();
+			} else if (myConto.isContoCostoEconomicoEsercizio())
+				myTipoDettaglio = Movimento_cogeBulk.TipoRiga.COSTO.value();
+			else
+				myTipoDettaglio = Movimento_cogeBulk.TipoRiga.RICAVO.value();
+		} else if (myConto.isContoNumerarioAttivita() || myConto.isContoNumerarioPassivita()) {
+			if (myConto.isContoSezioneBifase()) {
+				if (mySezione.equals(Movimento_cogeBulk.SEZIONE_DARE))
+					myTipoDettaglio = Movimento_cogeBulk.TipoRiga.ATTIVITA.value();
+				else
+					myTipoDettaglio = Movimento_cogeBulk.TipoRiga.PASSIVITA.value();
+			} else if (myConto.isContoNumerarioAttivita())
+				myTipoDettaglio = Movimento_cogeBulk.TipoRiga.ATTIVITA.value();
+			else
+				myTipoDettaglio = Movimento_cogeBulk.TipoRiga.PASSIVITA.value();
+		} else
+			myTipoDettaglio = Movimento_cogeBulk.TipoRiga.GENERICO.value();
+
+		return myTipoDettaglio;
 	}
 }

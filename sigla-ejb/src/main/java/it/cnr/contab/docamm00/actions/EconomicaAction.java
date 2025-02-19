@@ -21,6 +21,7 @@ import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotEnabledException;
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotRequiredException;
 import it.cnr.contab.coepcoan00.consultazioni.bp.ConsultazionePartitarioBP;
 import it.cnr.contab.coepcoan00.core.bulk.*;
+import it.cnr.contab.docamm00.bp.IDocAmmAnaliticaBP;
 import it.cnr.contab.docamm00.bp.IDocAmmEconomicaBP;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
 import it.cnr.contab.util.Utility;
@@ -55,7 +56,7 @@ public abstract class EconomicaAction extends CRUDAction {
             if (Optional.ofNullable(bp.getEconomicaModel()).filter(OggettoBulk::isToBeCreated).isPresent())
                 throw new ApplicationException("Il documento risulta non salvato! Proposta scrittura prima nota non possibile.");
 
-            if (ResultScrittureContabili.LOAD_ANALITICA) {
+            if (Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(actionContext.getUserContext())) {
                 ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
                         actionContext.getUserContext(),
                         documentoCogeBulk);
@@ -68,13 +69,45 @@ public abstract class EconomicaAction extends CRUDAction {
                         documentoCogeBulk)
                 );
             }
-            Optional.ofNullable(documentoCogeBulk)
+            Optional.of(documentoCogeBulk)
                     .filter(OggettoBulk.class::isInstance)
                     .map(OggettoBulk.class::cast)
-                    .ifPresent(oggettoBulk -> oggettoBulk.setToBeUpdated());
+                    .ifPresent(OggettoBulk::setToBeUpdated);
             bp.getMovimentiAvere().reset(actionContext);
             bp.getMovimentiDare().reset(actionContext);
             bp.setMessage(FormBP.INFO_MESSAGE, "Scrittura di economica generata correttamente.");
+            bp.setDirty(true);
+        } catch (ScritturaPartitaDoppiaNotRequiredException | ScritturaPartitaDoppiaNotEnabledException e) {
+            bp.setMessage(FormBP.INFO_MESSAGE, e.getMessage());
+        } catch (ComponentException | RemoteException e) {
+            return handleException(actionContext, e);
+        }
+        return actionContext.findDefaultForward();
+    }
+
+    public Forward doGeneraScritturaAnalitica(ActionContext actionContext) throws BusinessProcessException {
+        IDocAmmAnaliticaBP bp = Optional.ofNullable(actionContext.getBusinessProcess())
+                .filter(IDocAmmAnaliticaBP.class::isInstance)
+                .map(IDocAmmAnaliticaBP.class::cast)
+                .orElseThrow(() -> new BusinessProcessException("Business process non compatibile!"));
+        final IDocumentoCogeBulk documentoCogeBulk = Optional.ofNullable(bp.getAnaliticaModel())
+                .filter(IDocumentoCogeBulk.class::isInstance)
+                .map(IDocumentoCogeBulk.class::cast)
+                .orElseThrow(() -> new BusinessProcessException("Modello di business non compatibile!"));
+        try {
+            if (Optional.ofNullable(bp.getAnaliticaModel()).filter(OggettoBulk::isToBeCreated).isPresent())
+                throw new ApplicationException("Il documento risulta non salvato! Proposta scrittura analitica non possibile.");
+
+            documentoCogeBulk.setScrittura_analitica(Utility.createProposeScritturaComponentSession().proposeScritturaAnalitica(
+                    actionContext.getUserContext(),
+                    documentoCogeBulk));
+
+            Optional.of(documentoCogeBulk)
+                    .filter(OggettoBulk.class::isInstance)
+                    .map(OggettoBulk.class::cast)
+                    .ifPresent(OggettoBulk::setToBeUpdated);
+            bp.getMovimentiAnalitici().reset(actionContext);
+            bp.setMessage(FormBP.INFO_MESSAGE, "Scrittura di analitica generata correttamente.");
             bp.setDirty(true);
         } catch (ScritturaPartitaDoppiaNotRequiredException | ScritturaPartitaDoppiaNotEnabledException e) {
             bp.setMessage(FormBP.INFO_MESSAGE, e.getMessage());

@@ -18,7 +18,6 @@
 package it.cnr.contab.coepcoan00.ejb;
 
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
 import it.cnr.contab.doccont00.core.bulk.MandatoBulk;
 import it.cnr.contab.logs.bulk.Batch_log_rigaBulk;
 import it.cnr.contab.logs.bulk.Batch_log_tstaBulk;
@@ -89,6 +88,8 @@ public class AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean extend
 				List<String> listInsert = new ArrayList<>();
 				List<String> listError = new ArrayList<>();
 
+				boolean loadAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(param0);
+
 				allDocuments.stream()
 						.filter(el-> Optional.ofNullable(el.getDtGenerazioneScrittura()).isPresent())
 						.filter(el-> MandatoBulk.STATO_COGE_N.equals(el.getStato_coge()) || MandatoBulk.STATO_COGE_R.equals(el.getStato_coge())
@@ -102,7 +103,7 @@ public class AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean extend
 								documentoCoge.getTipoDocumentoEnum().getValue() +" - Numero: "+
 								documentoCoge.getPg_doc());
                         logger.info("Documento in elaborazione: {}/{}/{}/{}", documentoCoge.getEsercizio(), documentoCoge.getCd_uo(), documentoCoge.getCd_tipo_doc(), documentoCoge.getPg_doc());
-						session.createScritturaRequiresNew(param0, documentoCoge, ResultScrittureContabili.LOAD_ANALITICA);
+						session.createScritturaRequiresNew(param0, documentoCoge, loadAnalitica);
 						listInsert.add("X");
 					} catch (Throwable e) {
 						listError.add("X");

@@ -33,6 +33,7 @@ import java.util.Optional;
  * Business Process che gestisce le attività di CRUD per l'entita' Scrittura Analitica
  */
 public class CRUDScritturaAnaliticaBP extends it.cnr.jada.util.action.SimpleCRUDBP {
+	public static final String[] TAB_ANALITICA = new String[]{"tabAnalitica", "Analitica", "/coepcoan00/tab_doc_analitica.jsp"};
 	private Unita_organizzativaBulk uoScrivania;
 	private Boolean isBloccoScrittureProposte;
 
