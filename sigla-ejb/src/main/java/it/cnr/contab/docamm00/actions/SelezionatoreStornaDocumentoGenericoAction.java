@@ -3,7 +3,7 @@ package it.cnr.contab.docamm00.actions;
 import it.cnr.contab.config00.bulk.CausaleContabileBulk;
 import it.cnr.contab.docamm00.bp.SelezionatoreStornaDocumentoGenericoBP;
 import it.cnr.contab.docamm00.bp.StornaDocumentoGenericoBP;
-import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
+import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.action.ActionContext;
@@ -24,20 +24,21 @@ public class SelezionatoreStornaDocumentoGenericoAction extends SelezionatoreLis
         try {
             fillModel(context);
             bp.setSelection(context);
-            List<Documento_generico_rigaBulk> selectedElements = bp.getSelectedElements(context);
+            List<IDocumentoAmministrativoRigaBulk> selectedElements = bp.getSelectedElements(context);
             if (selectedElements == null || selectedElements.isEmpty())
                 throw new ApplicationException("Selezionare almeno una documento da stornare!");
             List<CausaleContabileBulk> causaliStorno = Utility.createCRUDComponentSession().find(
                     context.getUserContext(),
                     CausaleContabileBulk.class,
                     "findCausaliStorno",
-                    context.getUserContext()
+                    context.getUserContext(),
+                    bp.getTiEntrataSpesa(),
+                    bp.isTiFattura()
             );
-            StornaDocumentoGenericoBP allegatiMultipliFatturaPassivaBP =
+            StornaDocumentoGenericoBP stornaDocumentoGenericoBP =
                     (StornaDocumentoGenericoBP) context.createBusinessProcess(
                             "StornaDocumentoGenericoBP", new Object[]{
                                     Character.valueOf(bp.getTiEntrataSpesa()),
-                                    selectedElements,
                                     new Hashtable<>(causaliStorno
                                             .stream()
                                             .collect(Collectors.toMap(
@@ -46,8 +47,10 @@ public class SelezionatoreStornaDocumentoGenericoAction extends SelezionatoreLis
                                             ))
                             }
                     );
+            stornaDocumentoGenericoBP.setDocumentoGenericoRigaBulks(selectedElements);
+            stornaDocumentoGenericoBP.setDaFattura(bp.isTiFattura());
             context.addHookForward("close", this, "doRefresh");
-            return context.addBusinessProcess(allegatiMultipliFatturaPassivaBP);
+            return context.addBusinessProcess(stornaDocumentoGenericoBP);
         } catch (Exception e) {
             return handleException(context, e);
         }

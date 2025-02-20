@@ -19,7 +19,8 @@
 <bulkInfo
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xmlns="https://contab.cnr.it/schema/SIGLA" 
-		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd"
+		shortDescription="Fattura Attiva Riga">
 
 	<fieldProperty
 		name="im_totale_storni"
@@ -106,4 +107,32 @@
 		<columnFieldProperty
 			name="ti_associato_manrev" />
 	</columnSet>
+	<columnSet name="storno">
+		<columnFieldProperty name="esercizio" label="Esercizio"/>
+		<columnFieldProperty name="pg_fattura_attiva" label="Progressivo"/>
+		<columnFieldProperty name="progressivo_riga" label="Riga"/>
+		<columnFieldProperty name="ds_riga_fattura"/>
+		<columnFieldProperty name="im_imponibile"/>
+		<columnFieldProperty name="im_iva"/>
+		<columnFieldProperty name="im_totale_divisa" />
+		<columnFieldProperty name="stato_cofi" />
+		<columnFieldProperty name="cd_bene_servizio" />
+		<columnFieldProperty
+				name="cliente"
+				property="fattura_attivaI.cliente.cd_terzo"
+				inputType="TEXT"
+				label="Cliente"/>
+	</columnSet>
+	<freeSearchSet name="storno">
+		<findFieldProperty name="esercizio" label="Esercizio"/>
+		<findFieldProperty name="pg_fattura_attiva" label="Progressivo"/>
+		<findFieldProperty name="progressivo_riga" label="Riga"/>
+		<findFieldProperty name="ds_riga_fattura"/>
+		<findFieldProperty name="im_imponibile"/>
+		<findFieldProperty name="im_iva"/>
+		<findFieldProperty name="im_totale_divisa" />
+		<findFieldProperty name="stato_cofi" />
+		<findFieldProperty name="cd_bene_servizio" />
+	</freeSearchSet>
+
 </bulkInfo>

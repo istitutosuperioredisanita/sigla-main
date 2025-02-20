@@ -19,7 +19,8 @@
 <bulkInfo
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xmlns="https://contab.cnr.it/schema/SIGLA" 
-		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd"
+		shortDescription="Fattura Passiva Riga">
 
 	<fieldProperty
 		name="im_totale_storni"
@@ -109,4 +110,43 @@
 		<columnFieldProperty
 			name="modalita_pagamento" />			
 	</columnSet>
+	<columnSet name="storno">
+		<columnFieldProperty name="esercizio" label="Esercizio"/>
+		<columnFieldProperty name="pg_fattura_passiva" label="Progressivo"/>
+		<columnFieldProperty name="progressivo_riga" label="Riga"/>
+		<columnFieldProperty
+				name="cd_terzo"
+				property="fattura_passivaI.fornitore.cd_terzo"
+				inputType="TEXT"
+				headerLabel="Fornitore"
+				label="Codice"/>
+		<columnFieldProperty
+				name="nr_fattura_fornitore"
+				property="fattura_passivaI.nr_fattura_fornitore"
+				inputType="TEXT"
+				headerLabel="Fornitore"
+				label="Num. Fatt."/>
+		<columnFieldProperty
+				name="dt_fattura_fornitore"
+				property="fattura_passivaI.dt_fattura_fornitore"
+				inputType="TEXT"
+				formatName="date_short"
+				headerLabel="Fornitore"
+				label="Data Fatt."/>
+		<columnFieldProperty name="ds_riga_fattura"/>
+		<columnFieldProperty name="im_iva"/>
+		<columnFieldProperty name="im_imponibile"/>
+		<columnFieldProperty name="stato_cofi" />
+		<columnFieldProperty name="cd_bene_servizio" />
+	</columnSet>
+	<freeSearchSet name="storno">
+		<findFieldProperty name="esercizio" label="Esercizio"/>
+		<findFieldProperty name="pg_fattura_passiva" label="Progressivo"/>
+		<findFieldProperty name="progressivo_riga" label="Riga"/>
+		<findFieldProperty name="ds_riga_fattura"/>
+		<findFieldProperty name="im_iva"/>
+		<findFieldProperty name="im_imponibile"/>
+		<findFieldProperty name="stato_cofi" />
+		<findFieldProperty name="cd_bene_servizio" />
+	</freeSearchSet>
 </bulkInfo>

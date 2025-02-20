@@ -1373,6 +1373,15 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                                 dettagliAddebitati,
                                 quadraturaInDeroga));
         }
+        Documento_generico_rigaHome documentoGenericoRigaHome = (Documento_generico_rigaHome)getHome(userContext, Documento_generico_rigaBulk.class);
+        for (Iterator i = dettagli.iterator(); i.hasNext(); ) {
+            Fattura_passiva_rigaIBulk rigaFattura = (Fattura_passiva_rigaIBulk) i.next();
+            impTotaleStornati = impTotaleStornati.add(
+                    documentoGenericoRigaHome.findRigaStorno(userContext, rigaFattura)
+                            .map(Documento_generico_rigaBase::getIm_riga)
+                            .orElse(BigDecimal.ZERO)
+            );
+        }
         return impTotaleDettagli.add(impTotaleAddebitati).subtract(impTotaleStornati);
     }
 
@@ -5755,6 +5764,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
     }
 
     private void rebuildObbligazioni(UserContext aUC, Fattura_passivaBulk fatturaPassiva) throws ComponentException {
+        Documento_generico_rigaHome documentoGenericoRigaHome = (Documento_generico_rigaHome)getHome(aUC, Documento_generico_rigaBulk.class);
 
         if (fatturaPassiva == null) return;
 
@@ -5790,8 +5800,13 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
                         java.math.BigDecimal impAddebiti = new java.math.BigDecimal(0).setScale(2, RoundingMode.HALF_UP);
                         if (storniHashMap != null) {
                             impStorni = calcolaTotalePer((Vector) storniHashMap.get(riga), false);
-                            rigaFP.setIm_totale_storni(impStorni);
                         }
+                        impStorni = impStorni.add(
+                                documentoGenericoRigaHome.findRigaStorno(aUC, rigaFP)
+                                        .map(Documento_generico_rigaBase::getIm_riga)
+                                        .orElse(BigDecimal.ZERO)
+                        );
+                        rigaFP.setIm_totale_storni(impStorni);
                         if (addebitiHashMap != null) {
                             impAddebiti = calcolaTotalePer((Vector) addebitiHashMap.get(riga), false);
                             rigaFP.setIm_totale_addebiti(impAddebiti);

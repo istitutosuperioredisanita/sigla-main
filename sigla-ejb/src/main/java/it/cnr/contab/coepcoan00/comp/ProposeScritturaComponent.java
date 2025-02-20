@@ -229,7 +229,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 		private final IDocumentoAmministrativoBulk docamm;
 
-		private final IDocumentoAmministrativoBulk partita;
+		private final IDocumentoAmministrativoBulk 	partita;
 
 		private final Integer cdTerzo;
 
@@ -507,13 +507,17 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			AtomicReference<Voce_epBulk> myConto = new AtomicReference<>(conto);
 			if (docamm instanceof Documento_genericoBulk) {
 				IDocumentoCogeBulk documentoCausale = docamm.isDocumentoStorno()?dettFin.getPartita():docamm;
-				if (((Documento_genericoBulk)documentoCausale).getCausaleContabile()!=null) {
-					try {
-						List<AssCausaleVoceEPBulk> assCausaleVoce = new BulkList<>(find(userContext, CausaleContabileBulk.class, "findAssCausaleVoceEPBulk", userContext, (((Documento_genericoBulk) documentoCausale).getCausaleContabile()).getCdCausale()));
-						assCausaleVoce.stream().filter(el->el.getTiSezione().equals(docamm.isDocumentoStorno()?Movimento_cogeBulk.getControSezione(mySezione):mySezione)).findAny().ifPresent(el-> myConto.set(el.getVoceEp()));
-					} catch (ComponentException ignored) {
-					}
-				}
+				Optional.ofNullable(documentoCausale)
+						.filter(Documento_genericoBulk.class::isInstance)
+						.map(Documento_genericoBulk.class::cast)
+						.flatMap(documentoGenericoBulk -> Optional.ofNullable(documentoGenericoBulk.getCausaleContabile()))
+						.ifPresent(causaleContabileBulk -> {
+							try {
+								List<AssCausaleVoceEPBulk> assCausaleVoce = new BulkList<>(find(userContext, CausaleContabileBulk.class, "findAssCausaleVoceEPBulk", userContext, causaleContabileBulk.getCdCausale()));
+								assCausaleVoce.stream().filter(el->el.getTiSezione().equals(docamm.isDocumentoStorno()?Movimento_cogeBulk.getControSezione(mySezione):mySezione)).findAny().ifPresent(el-> myConto.set(el.getVoceEp()));
+							} catch (ComponentException ignored) {
+							}
+						});
 			}
 			DettaglioPrimaNota dettaglioPrimaNota = this.addDettaglio(userContext, null, mySezione, myConto.get(), importo, null, null, null, dtDaCompetenzaCoge, dtACompetenzaCoge, DEFAULT_MODIFICABILE, DEFAULT_ACCORPABILE);
 			dettaglioPrimaNota.setDettaglioFinanziario(dettFin);
@@ -532,14 +536,18 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			AtomicReference<Voce_epBulk> myConto = new AtomicReference<>(conto);
 			if (docamm instanceof Documento_genericoBulk) {
 				IDocumentoCogeBulk documentoCausale = docamm.isDocumentoStorno()?partita:docamm;
-				if (((Documento_genericoBulk)documentoCausale).getCausaleContabile()!=null) {
-					String mySezione = docamm.getTipoDocumentoEnum().getSezionePatrimoniale();
-					try {
-						List<AssCausaleVoceEPBulk> assCausaleVoce = new BulkList<>(find(userContext, CausaleContabileBulk.class, "findAssCausaleVoceEPBulk", userContext, (((Documento_genericoBulk) documentoCausale).getCausaleContabile()).getCdCausale()));
-						assCausaleVoce.stream().filter(el->el.getTiSezione().equals(docamm.isDocumentoStorno()?Movimento_cogeBulk.getControSezione(mySezione):mySezione)).findAny().ifPresent(el-> myConto.set(el.getVoceEp()));
-					} catch (ComponentException ignored) {
-					}
-				}
+				Optional.ofNullable(documentoCausale)
+						.filter(Documento_genericoBulk.class::isInstance)
+						.map(Documento_genericoBulk.class::cast)
+						.flatMap(documentoGenericoBulk -> Optional.ofNullable(documentoGenericoBulk.getCausaleContabile()))
+						.ifPresent(causaleContabileBulk -> {
+							String mySezione = docamm.getTipoDocumentoEnum().getSezionePatrimoniale();
+							try {
+								List<AssCausaleVoceEPBulk> assCausaleVoce = new BulkList<>(find(userContext, CausaleContabileBulk.class, "findAssCausaleVoceEPBulk", userContext, causaleContabileBulk.getCdCausale()));
+								assCausaleVoce.stream().filter(el->el.getTiSezione().equals(docamm.isDocumentoStorno()?Movimento_cogeBulk.getControSezione(mySezione):mySezione)).findAny().ifPresent(el-> myConto.set(el.getVoceEp()));
+							} catch (ComponentException ignored) {
+							}
+						});
 			}
 			DettaglioPrimaNota dettPN = openDettaglioPatrimoniale(userContext, docamm, myConto.get(), importo, Boolean.TRUE, cdTerzo, null, isModificabile, isAccorpabile);
 			dettPN.setPartita(partita);
@@ -1238,8 +1246,8 @@ public class ProposeScritturaComponent extends CRUDComponent {
 				partita = Optional.ofNullable(rigaDocAmm)
 						.filter(Documento_generico_rigaBulk.class::isInstance)
 						.map(Documento_generico_rigaBulk.class::cast)
-						.flatMap(documentoGenericoRigaBulk -> Optional.ofNullable(documentoGenericoRigaBulk.getDocumento_generico_riga_storno()))
-						.map(Documento_generico_rigaBulk::getDocumento_generico)
+						.flatMap(Documento_generico_rigaBulk::getRigaStorno)
+						.map(IDocumentoAmministrativoRigaBulk::getFather)
 						.orElse(null);
 			} else if (docamm instanceof Fattura_attivaBulk) {
 				terzo = ((Fattura_attivaBulk) docamm).getCliente();
@@ -6121,19 +6129,24 @@ public class ProposeScritturaComponent extends CRUDComponent {
 					.stream().map(DettaglioAnalitico::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
 
 			List<DettaglioAnalitico> innerDettagliAnalitici = new ArrayList<>();
-			dettaglioPrimaNota.getDettaglioFinanziario().getDettagliAnalitici().forEach(el->{
-				try {
-					BigDecimal newImporto = dettaglioPrimaNota.getImporto().multiply(el.getImporto()).divide(totDettaglioFinanziario, 2, RoundingMode.HALF_UP);
-					ContoBulk contoBulk = (ContoBulk)(getHome(userContext, ContoBulk.class)).findByPrimaryKey(new ContoBulk(dettaglioPrimaNota.getCdConto(), CNRUserContext.getEsercizio(userContext)));
-					List<Voce_analiticaBulk> voceAnaliticaList = ((Voce_analiticaHome)getHome(userContext, Voce_analiticaBulk.class)).findVoceAnaliticaList(contoBulk);
-					Voce_analiticaBulk voceAnaliticaDef = voceAnaliticaList.stream()
-							.filter(Voce_analiticaBulk::getFl_default).findAny()
-							.orElse(voceAnaliticaList.stream().findAny().orElse(null));
-					if (Optional.ofNullable(voceAnaliticaDef).isPresent())
-						innerDettagliAnalitici.add(new DettaglioAnalitico(dettaglioPrimaNota, voceAnaliticaDef, el.getCdCentroCosto(), el.getCdLineaAttivita(), newImporto));
-				} catch (ComponentException | PersistencyException e) {
-					throw new ApplicationRuntimeException(e);
-				}
+			dettaglioPrimaNota
+					.getDettaglioFinanziario()
+					.getDettagliAnalitici()
+					.stream()
+					.filter(dettaglioAnalitico -> totDettaglioFinanziario.compareTo(BigDecimal.ZERO) != 0)
+					.forEach(el-> {
+						try {
+							BigDecimal newImporto = dettaglioPrimaNota.getImporto().multiply(el.getImporto()).divide(totDettaglioFinanziario, 2, RoundingMode.HALF_UP);
+							ContoBulk contoBulk = (ContoBulk)(getHome(userContext, ContoBulk.class)).findByPrimaryKey(new ContoBulk(dettaglioPrimaNota.getCdConto(), CNRUserContext.getEsercizio(userContext)));
+							List<Voce_analiticaBulk> voceAnaliticaList = ((Voce_analiticaHome)getHome(userContext, Voce_analiticaBulk.class)).findVoceAnaliticaList(contoBulk);
+							Voce_analiticaBulk voceAnaliticaDef = voceAnaliticaList.stream()
+									.filter(Voce_analiticaBulk::getFl_default).findAny()
+									.orElse(voceAnaliticaList.stream().findAny().orElse(null));
+							if (Optional.ofNullable(voceAnaliticaDef).isPresent())
+								innerDettagliAnalitici.add(new DettaglioAnalitico(dettaglioPrimaNota, voceAnaliticaDef, el.getCdCentroCosto(), el.getCdLineaAttivita(), newImporto));
+						} catch (ComponentException | PersistencyException e) {
+							throw new ApplicationRuntimeException(e);
+						}
 			});
 			BigDecimal totInnerDettagliAnalitici = innerDettagliAnalitici.stream().map(DettaglioAnalitico::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
 			if (totInnerDettagliAnalitici.compareTo(dettaglioPrimaNota.getImporto())!=0)

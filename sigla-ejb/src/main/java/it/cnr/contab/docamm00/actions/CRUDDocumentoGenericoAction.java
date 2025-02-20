@@ -26,7 +26,6 @@ import it.cnr.contab.docamm00.bp.*;
 import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.docamm00.ejb.DocumentoGenericoComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaAttivaSingolaComponentSession;
-import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.inventario00.bp.AssBeneFatturaBP;
@@ -48,7 +47,6 @@ import it.cnr.jada.action.HookForward;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
-import it.cnr.jada.comp.CRUDComponent;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.IntrospectionException;
@@ -4015,17 +4013,23 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
 
     public Forward doApriDocumentoStornato(ActionContext actionContext) throws BusinessProcessException {
         IDocumentoGenericoBP bp = (IDocumentoGenericoBP) getBusinessProcess(actionContext);
-        Optional<Documento_genericoBulk> documentoGenericoRigaBulk = Optional.ofNullable(bp.getDettaglio())
+        Optional<IDocumentoAmministrativoBulk> iDocumentoAmministrativoBulk = Optional.ofNullable(bp.getDettaglio())
                 .map(NestedFormController::getModel)
                 .filter(Documento_generico_rigaBulk.class::isInstance)
                 .map(Documento_generico_rigaBulk.class::cast)
-                .map(Documento_generico_rigaBulk::getDocumento_generico_riga_storno)
-                .map(Documento_generico_rigaBulk::getDocumento_generico);
-        if (documentoGenericoRigaBulk.isPresent()) {
+                .flatMap(Documento_generico_rigaBulk::getRigaStorno)
+                .map(IDocumentoAmministrativoRigaBulk::getFather);
+        String bpName = bp.getName();
+        if (iDocumentoAmministrativoBulk.filter(Fattura_passiva_IBulk.class::isInstance).isPresent()) {
+            bpName = "CRUDFatturaPassivaBP";
+        } else if (iDocumentoAmministrativoBulk.filter(Fattura_attiva_IBulk.class::isInstance).isPresent()) {
+            bpName = "CRUDFatturaAttivaBP";
+        }
+        if (iDocumentoAmministrativoBulk.isPresent()) {
             try {
-                SimpleCRUDBP nbp = (SimpleCRUDBP) actionContext.createBusinessProcess(bp.getName(), new Object[]{"M"});
+                SimpleCRUDBP nbp = (SimpleCRUDBP) actionContext.createBusinessProcess(bpName, new Object[]{"M"});
                 nbp = (SimpleCRUDBP) actionContext.addBusinessProcess(nbp);
-                nbp.edit(actionContext, documentoGenericoRigaBulk.get());
+                nbp.edit(actionContext, (OggettoBulk) iDocumentoAmministrativoBulk.get());
                 return nbp;
             } catch (Throwable e) {
                 return handleException(actionContext, e);

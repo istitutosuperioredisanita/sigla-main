@@ -27,6 +27,7 @@ import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public class Configurazione_cnrHome extends BulkHome {
@@ -551,5 +552,18 @@ public class Configurazione_cnrHome extends BulkHome {
                     .map(Configurazione_cnrBase::getDt01)
                     .orElse(serverDate);
         }
+    }
+
+
+    public java.sql.Timestamp getDataStornoFatture(UserContext userContext, Integer esercizio, Configurazione_cnrBulk.StepFineAnno stepFineAnno) throws PersistencyException {
+        Optional<Configurazione_cnrBulk> configurazioneCdS = Optional.ofNullable(
+                this.getConfigurazione(esercizio,
+                        ASTERISCO,
+                        Configurazione_cnrBulk.PK_STEP_FINE_ANNO,
+                        stepFineAnno.value())
+        );
+        return configurazioneCdS.map(Configurazione_cnrBase::getDt01).orElse(
+                Timestamp.valueOf(LocalDateTime.of(esercizio - 1, 3, 1, 0, 0, 0, 0))
+        );
     }
 }
