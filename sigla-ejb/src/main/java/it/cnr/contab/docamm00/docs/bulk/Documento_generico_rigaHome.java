@@ -140,6 +140,7 @@ public class Documento_generico_rigaHome extends BulkHome {
     public Optional<Documento_generico_rigaBulk> findRigaStorno(UserContext userContext, Fattura_attiva_rigaIBulk fatturaAttivaRigaIBulk) throws ComponentException {
         SQLBuilder sqlBuilder = createSQLBuilder();
         sqlBuilder.addClause(FindClause.AND, "fattura_attiva_riga_storno", SQLBuilder.EQUALS, fatturaAttivaRigaIBulk);
+        sqlBuilder.addClause(FindClause.AND, "stato_cofi", SQLBuilder.NOT_EQUALS, Documento_generico_rigaBulk.STATO_ANNULLATO);
         try {
             List<Documento_generico_rigaBulk> result = fetchAll(sqlBuilder);
             return result.stream().findAny();
@@ -151,6 +152,7 @@ public class Documento_generico_rigaHome extends BulkHome {
     public Optional<Documento_generico_rigaBulk> findRigaStorno(UserContext userContext, Fattura_passiva_rigaIBulk fatturaPassivaRigaIBulk) throws ComponentException {
         SQLBuilder sqlBuilder = createSQLBuilder();
         sqlBuilder.addClause(FindClause.AND, "fattura_passiva_riga_storno", SQLBuilder.EQUALS, fatturaPassivaRigaIBulk);
+        sqlBuilder.addClause(FindClause.AND, "stato_cofi", SQLBuilder.NOT_EQUALS, Documento_generico_rigaBulk.STATO_ANNULLATO);
         try {
             List<Documento_generico_rigaBulk> result = fetchAll(sqlBuilder);
             return result.stream().findAny();
