@@ -17,13 +17,10 @@
 
 package it.cnr.contab.config00.action;
 
-import it.cnr.contab.config00.bp.*;
-import it.cnr.contab.anagraf00.core.bulk.*;
-import it.cnr.contab.config00.sto.bulk.CdsBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
-import it.cnr.jada.action.*;
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.util.action.*;
+import it.cnr.contab.anagraf00.core.bulk.V_terzo_persona_fisicaBulk;
+import it.cnr.contab.config00.sto.bulk.CdsBulk;
+import it.cnr.jada.action.MessageToUser;
 /**
  * Azione che gestisce le richieste relative alla Gestione Unita' Organizzativa
  */
@@ -58,9 +55,11 @@ public it.cnr.jada.action.Forward doBlankSearchFind_responsabile(it.cnr.jada.act
 		return context.findDefaultForward();
 	}
 	public it.cnr.jada.action.Forward doBringBackSearchFind_responsabile(it.cnr.jada.action.ActionContext context,CdsBulk cds,V_terzo_persona_fisicaBulk terzo) {
-		if (!terzo.getAnagrafico().isPersonaFisica())
-			throw new MessageToUser("Il responsabile deve essere una persona fisica");
-		cds.setResponsabile(terzo);
+		if ( terzo!=null) {
+			if (!terzo.getAnagrafico().isPersonaFisica())
+				throw new MessageToUser("Il responsabile deve essere una persona fisica");
+			cds.setResponsabile(terzo);
+		}
 		return context.findDefaultForward();
 	}
 }
