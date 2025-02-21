@@ -40,6 +40,8 @@ import it.cnr.jada.persistency.sql.CompoundFindClause;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -1507,18 +1509,7 @@ public class FatturaPassivaComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
         }
     }
 
-    @Override
-    public void creaAssociativaFatturaPassivaInventario(UserContext param0, FatturaOrdineBulk param1, Inventario_beniComponentSession param2, BigDecimal param3, Transito_beni_ordiniBulk param4) throws ComponentException,RemoteException {
-        pre_component_invocation(param0,componentObj);
-        try {
-            ((FatturaPassivaComponent)componentObj).creaAssociativaFatturaPassivaInventario(param0,param1,param2,param3,param4);
-            component_invocation_succes(param0,componentObj);
-        } catch(RuntimeException e) {
-            throw uncaughtRuntimeException(param0,componentObj,e);
-        } catch(Error e) {
-            throw uncaughtError(param0,componentObj,e);
-        }
-    }
+
 
     @Override
     public BigDecimal getPrezzoUnitarioFattura(UserContext param0,ImportoOrdine param1) throws RemoteException, ComponentException, PersistencyException, IntrospectionException   {
