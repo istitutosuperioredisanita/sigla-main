@@ -5578,14 +5578,14 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			}
 
 			String myTipoDett = Optional.ofNullable(aTipoDett).orElse(this.getTipoDettaglioByConto(userContext, aSezione, movimentoCoge.getConto(), movimentoCoge.getIm_movimento()));
-			movimentoCoge.setTi_riga(aTipoDett);
+			movimentoCoge.setTi_riga(myTipoDett);
 
 			if (aSezione.equals(Movimento_cogeBulk.SEZIONE_DARE))
 				scritturaPartitaDoppia.addToMovimentiDareColl(movimentoCoge);
 			else
 				scritturaPartitaDoppia.addToMovimentiAvereColl(movimentoCoge);
 /*
-			logger.info("TipoRiga: " + aTipoDett + " - Conto: " + aCdConto + " - Sezione: " + aSezione + " - Importo: " + aImporto +
+			logger.info("TipoRiga: " + myTipoDett + " - Conto: " + aCdConto + " - Sezione: " + aSezione + " - Importo: " + aImporto +
 					(aPartita!=null?" - Partita: " +
 							aPartita.getCd_tipo_doc() + "/" + aPartita.getCd_cds() + "/" + aPartita.getCd_uo() + "/" + aPartita.getEsercizio() + "/" + aPartita.getPg_doc():""));
 */
@@ -6190,27 +6190,15 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 		String mySezione = importo.compareTo(BigDecimal.ZERO)<0?Movimento_cogeBulk.getControSezione(sezione):sezione;
 		String myTipoDettaglio;
-		if (myConto.isContoCostoEconomicoEsercizio() || myConto.isContoRicavoEconomicoEsercizio()) {
-			if (myConto.isContoSezioneBifase()) {
-				if (mySezione.equals(Movimento_cogeBulk.SEZIONE_DARE))
-					myTipoDettaglio = Movimento_cogeBulk.TipoRiga.COSTO.value();
-				else
-					myTipoDettaglio = Movimento_cogeBulk.TipoRiga.RICAVO.value();
-			} else if (myConto.isContoCostoEconomicoEsercizio())
-				myTipoDettaglio = Movimento_cogeBulk.TipoRiga.COSTO.value();
-			else
-				myTipoDettaglio = Movimento_cogeBulk.TipoRiga.RICAVO.value();
-		} else if (myConto.isContoNumerarioAttivita() || myConto.isContoNumerarioPassivita()) {
-			if (myConto.isContoSezioneBifase()) {
-				if (mySezione.equals(Movimento_cogeBulk.SEZIONE_DARE))
-					myTipoDettaglio = Movimento_cogeBulk.TipoRiga.ATTIVITA.value();
-				else
-					myTipoDettaglio = Movimento_cogeBulk.TipoRiga.PASSIVITA.value();
-			} else if (myConto.isContoNumerarioAttivita())
-				myTipoDettaglio = Movimento_cogeBulk.TipoRiga.ATTIVITA.value();
-			else
-				myTipoDettaglio = Movimento_cogeBulk.TipoRiga.PASSIVITA.value();
-		} else
+		if (myConto.isContoCostoEconomicoEsercizio())
+			myTipoDettaglio = Movimento_cogeBulk.TipoRiga.COSTO.value();
+		else if (myConto.isContoRicavoEconomicoEsercizio())
+			myTipoDettaglio = Movimento_cogeBulk.TipoRiga.RICAVO.value();
+		else if (myConto.isContoNumerarioAttivita())
+			myTipoDettaglio = Movimento_cogeBulk.TipoRiga.ATTIVITA.value();
+		else if (myConto.isContoNumerarioPassivita())
+			myTipoDettaglio = Movimento_cogeBulk.TipoRiga.PASSIVITA.value();
+		else
 			myTipoDettaglio = Movimento_cogeBulk.TipoRiga.GENERICO.value();
 
 		return myTipoDettaglio;

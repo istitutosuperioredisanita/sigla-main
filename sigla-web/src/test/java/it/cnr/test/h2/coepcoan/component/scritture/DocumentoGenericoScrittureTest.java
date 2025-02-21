@@ -43,6 +43,28 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
     @EJB
     private CRUDComponentSession crudComponentSession;
 
+    /**
+     * {@code Documento Generico Semplice} su mono voce con mandato di pagamento:
+     * <p><b>Dati Documento Generico</b>
+     * <pre>
+     * Voce Bilancio: 22010 - Attrezzature scientifiche
+     * Importo:     1000,00
+     * </pre></p>
+     * <b>Scrittura Economica Documento Generico</b>
+     * <pre>
+     *     Sezione   Importo      Conto
+     *        D      1000,00      A22010 - Attrezzature scientifiche
+     *        A      1000,00      P22010 - Debiti verso fornitori per acquisto di
+     *                                     attrezzature scientifiche
+     * </pre>
+     * <b>Scrittura Economica Mandato</b>
+     * <pre>
+     *     Sezione   Importo      Conto
+     *        D      1000,00      P22010 - Debiti verso fornitori per acquisto di
+     *                                     attrezzature scientifiche
+     *        A      1000,00      A00053 - Istituto tesoriere/cassiere
+     * </pre>
+     */
     @Test
     @OperateOnDeployment(TEST_H2)
     @InSequence(1)
@@ -129,6 +151,33 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
                 .isPresent());
     }
 
+    /**
+     * {@code Documento Generico con Causale} su mono voce con mandato di pagamento:
+     * <p><b>Dati Documento Generico</b>
+     * <pre>
+     * Voce Bilancio: 22010 - Attrezzature scientifiche
+     * Importo: 1000,00
+     * Causale: Rimborso01
+     * Configurazione Causale:
+     *       D - P22034
+     *       A - A21014
+     * </pre></p>
+     * <b>Scrittura Economica Documento Generico</b>
+     * <pre>
+     *     Sezione   Importo      Conto
+     *        D      1000,00      P22034 - Debiti verso fornitori per acquisto o
+     *                                     costruzione di fabbricati strumentali
+     *        A      1000,00      A21014 - Crediti per altri finanziamenti e
+     *                                     contributi ministeriali
+     * </pre>
+     * <b>Scrittura Economica Mandato</b>
+     * <pre>
+     *     Sezione   Importo      Conto
+     *        D      1000,00      A21014 - Crediti per altri finanziamenti e
+     *                                     contributi ministeriali
+     *        A      1000,00      A00053 - Istituto tesoriere/cassiere
+     * </pre>
+     */
     @Test
     @OperateOnDeployment(TEST_H2)
     @InSequence(2)
@@ -212,6 +261,33 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
         }
     }
 
+    /**
+     * {@code Documento Generico Storno con Causale} su mono voce con mandato di pagamento:
+     * <p><b>Dati Documento Generico</b>
+     * <pre>
+     * Voce Bilancio: 22010 - Attrezzature scientifiche
+     * Importo: 1000,00
+     * Causale: Rimborso02
+     * Configurazione Causale:
+     *       D - P22035
+     *       A - A21015
+     * </pre></p>
+     * <b>Scrittura Economica Documento Generico</b>
+     * <pre>
+     *     Sezione   Importo      Conto
+     *        D      1000,00      P22035 - Debiti verso fornitori per acquisto o
+     *                                     costruzione di fabbricati strumentali
+     *        A      1000,00      A21015 - Crediti per altri finanziamenti e
+     *                                     contributi ministeriali
+     * </pre>
+     * <b>Scrittura Economica Mandato</b>
+     * <pre>
+     *     Sezione   Importo      Conto
+     *        D      1000,00      A21015 - Crediti per altri finanziamenti e
+     *                                     contributi ministeriali
+     *        A      1000,00      A00053 - Istituto tesoriere/cassiere
+     * </pre>
+     */
     @Test
     @OperateOnDeployment(TEST_H2)
     @InSequence(3)
@@ -297,6 +373,28 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
         }
     }
 
+    /**
+     * {@code Documento Generico Residuo} su mono voce con mandato di pagamento:
+     * <p><b>Dati Documento Generico</b>
+     * <pre>
+     * Esercizio: 2023
+     * Esercizio contabile chiuso
+     * Voce Bilancio: 22010 - Attrezzature scientifiche
+     * Importo: 1000,00
+     * </pre></p>
+     * <b>Scrittura Economica Documento Generico</b>
+     * <pre>
+     *     Errore: Scrittura Economica non generabile/modificabile.
+     *     L'esercizio contabile 2023 per il cds 000 risulta essere non aperto
+     * </pre>
+     * <b>Scrittura Economica Mandato</b>
+     * <pre>
+     *     Sezione   Importo      Conto
+     *        D      1000,00      P22010 - Crediti per altri finanziamenti e
+     *                                     contributi ministeriali
+     *        A      1000,00      A00053 - Istituto tesoriere/cassiere
+     * </pre>
+     */
     @Test
     @OperateOnDeployment(TEST_H2)
     @InSequence(4)
