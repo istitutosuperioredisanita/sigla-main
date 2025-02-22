@@ -33,10 +33,7 @@ import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceHome;
 import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.cori00.docs.bulk.*;
 import it.cnr.contab.docamm00.docs.bulk.*;
-import it.cnr.contab.docamm00.tabrif.bulk.SezionaleBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.SezionaleHome;
-import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleHome;
+import it.cnr.contab.docamm00.tabrif.bulk.*;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.fondecon00.core.bulk.Fondo_economaleBulk;
 import it.cnr.contab.fondecon00.core.bulk.Fondo_economaleHome;
@@ -1691,12 +1688,20 @@ public class ProposeScritturaComponent extends CRUDComponent {
                                                                 });
 															} else {
 																righeDettFinVocePartita.forEach(rigaDettFin-> {
-																	testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, rigaDettFin, partita, pairContoCosto.getFirst(), rigaDettFin.getRigaDocamm().getIm_imponibile());
-																	testataPrimaNota.openDettaglioPatrimonialePartita(userContext, docamm, partita, pairContoCosto.getSecond(), rigaDettFin.getRigaDocamm().getIm_imponibile(), aCdTerzo);
+																	//verifico se sulla riga del docamm ci sia un bene invemtariabile
+																	Voce_epBulk aContoBeneServizio = this.getContoByBeneServizio(userContext, rigaDettFin.getRigaDocamm());
+																	Pair<Voce_epBulk, Voce_epBulk> myPairContoCosto;
+																	if (Optional.ofNullable(aContoBeneServizio).isPresent())
+																		myPairContoCosto = Pair.of(aContoBeneServizio, this.findContoContropartita(userContext, aContoBeneServizio));
+																	else
+																		myPairContoCosto = pairContoCosto;
+
+																	testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, rigaDettFin, partita, myPairContoCosto.getFirst(), rigaDettFin.getRigaDocamm().getIm_imponibile());
+																	testataPrimaNota.openDettaglioPatrimonialePartita(userContext, docamm, partita, myPairContoCosto.getSecond(), rigaDettFin.getRigaDocamm().getIm_imponibile(), aCdTerzo);
 
 																	if (registraIvaACosto) {
-																		testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, rigaDettFin, partita, pairContoCosto.getFirst(), rigaDettFin.getRigaDocamm().getIm_iva());
-																		mapPatrimonialeIva.add(new DettaglioScrittura(pairContoCosto.getSecond(), rigaDettFin.getRigaDocamm().getIm_iva()));
+																		testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, rigaDettFin, partita, myPairContoCosto.getFirst(), rigaDettFin.getRigaDocamm().getIm_iva());
+																		mapPatrimonialeIva.add(new DettaglioScrittura(myPairContoCosto.getSecond(), rigaDettFin.getRigaDocamm().getIm_iva()));
 																	}
 																});
 															}
@@ -3937,23 +3942,23 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			contiPatrimonialiDaChiudere.put(cdVocePatrimoniale, Pair.of(Movimento_cogeBulk.SEZIONE_DARE, Pair.of(imponibile, imRitenuteRigheMandato)));
 		} else {
 			//Analizzo prima i dettagli non da ordini
-			List<DettaglioFinanziario> list = mandatoRigaCompleteList.stream()
+			List<DettaglioFinanziario> list = new ArrayList<>();
+			mandatoRigaCompleteList.stream()
 					.filter(el->!(el.getDocamm() instanceof Fattura_passivaBulk && ((Fattura_passivaBulk)docamm).isDaOrdini()))
-					.map(el -> {
-						try {
-							ObbligazioneHome obbligazionehome = (ObbligazioneHome) getHome(userContext, ObbligazioneBulk.class);
-							ObbligazioneBulk obbligazioneDB = (ObbligazioneBulk) obbligazionehome.findByPrimaryKey(
+					.forEach(el -> {
+							ObbligazioneBulk obbligazioneDB = (ObbligazioneBulk) loadObject(userContext,
 									new ObbligazioneBulk(el.getMandatoRiga().getCd_cds(), el.getMandatoRiga().getEsercizio_obbligazione(),
 											el.getMandatoRiga().getEsercizio_ori_obbligazione(), el.getMandatoRiga().getPg_obbligazione()));
-							BigDecimal imponibile = el.getMandatoRiga().getIm_mandato_riga().subtract(el.getMandatoRiga().getIm_ritenute_riga());
-							BigDecimal imposta = el.getMandatoRiga().getIm_ritenute_riga();
-							return new DettaglioFinanziario(docamm, null, cdTerzoDocAmm, obbligazioneDB.getElemento_voce(), null,null, null,
-									imponibile, imposta);
-						} catch (ComponentException | PersistencyException e) {
-							throw new ApplicationRuntimeException(e);
-						}
-					})
-					.collect(Collectors.toList());
+							el.docammRighe.forEach(docammRiga->{
+								//verifico se sulla riga del docamm ci sia un bene invemtariabile
+								Voce_epBulk aContoBeneServizio = this.getContoByBeneServizio(userContext, docammRiga);
+								Pair<Voce_epBulk, Voce_epBulk> myPairContoCosto;
+								if (Optional.ofNullable(aContoBeneServizio).isPresent())
+									list.add(new DettaglioFinanziario(docammRiga, null, cdTerzoDocAmm, aContoBeneServizio));
+								else
+									list.add(new DettaglioFinanziario(docammRiga, null, cdTerzoDocAmm, obbligazioneDB.getElemento_voce(), null));
+							});
+					});
 
 			//e poi analizzo i dettagli da ordini
 			mandatoRigaCompleteList.stream()
@@ -6203,4 +6208,21 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 		return myTipoDettaglio;
 	}
+
+	private Voce_epBulk getContoByBeneServizio(UserContext userContext, IDocumentoAmministrativoRigaBulk rigaDocamm) {
+		try {
+			//verifico se sulla riga del docamm ci sia un bene inventariabile
+			if (rigaDocamm instanceof Fattura_passiva_rigaBulk) {
+				Bene_servizioBulk myBeneServizio = (Bene_servizioBulk)this.loadObject(userContext, ((Fattura_passiva_rigaBulk)rigaDocamm).getBene_servizio());
+				if (myBeneServizio.getFl_gestione_inventario() && Optional.ofNullable(myBeneServizio.getCd_categoria_gruppo()).isPresent()) {
+					AssCatgrpInventVoceEpHome assCatgrpInventVoceEpHome = (AssCatgrpInventVoceEpHome) getHome(userContext, AssCatgrpInventVoceEpBulk.class);
+					AssCatgrpInventVoceEpBulk result = assCatgrpInventVoceEpHome.findDefaultByCategoria(((Fattura_passiva_rigaBulk) rigaDocamm).getEsercizio(), myBeneServizio.getCd_categoria_gruppo());
+					return result.getConto();
+				}
+			}
+			return null;
+		} catch (ComponentException | PersistencyException e) {
+			throw new DetailedRuntimeException(e);
+		}
+    }
 }
