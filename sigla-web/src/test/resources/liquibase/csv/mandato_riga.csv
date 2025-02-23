@@ -7,3 +7,5 @@ ESERCIZIO,CD_CDS,PG_MANDATO,ESERCIZIO_OBBLIGAZIONE,ESERCIZIO_ORI_OBBLIGAZIONE,PG
 2025,"000",6,2025,2024,1,1,2024,"000","000.000","GENERICO_S",1,"Mandato di pagamento documento generico residuo spesa","P","15","1","BO",1000,"N",0,NULL,"SYSTEM","SYSTEM","1"
 2025,"000",7,2025,2025,1,7,2025,"000","000.000","FATTURA_P",4,"Mandato di pagamento fattura commerciale no split","P","15","1","BO",18.67,"N",0,NULL,"SYSTEM","SYSTEM","1"
 2025,"000",8,2025,2025,1,9,2025,"000","000.000","FATTURA_P",9,"Mandato di pagamento fattura istituzionale","P","15","1","BO",28.67,"N",1.7,NULL,"SYSTEM","SYSTEM","1"
+2025,"000",9,2025,2025,1,10,2025,"000","000.000","FATTURA_P",10,"Mandato di pagamento fattura istituzionale","P","15","1","BO",28.67,"N",1.7,NULL,"SYSTEM","SYSTEM","1"
+2025,"000",10,2025,2025,1,11,2025,"000","000.000","FATTURA_P",10,"Mandato di pagamento fattura istituzionale","P","15","1","BO",10,"N",0,NULL,"SYSTEM","SYSTEM","1"

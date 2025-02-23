@@ -459,6 +459,12 @@
             and cd_chiave_secondaria='BANCA';
         </sql>
         <sql>
+            update configurazione_cnr
+            set val01='P00047'
+            where cd_chiave_primaria='VOCEEP_SPECIALE'
+            and cd_chiave_secondaria='FATTURE_DA_RICEVERE';
+        </sql>
+        <sql>
             UPDATE VOCE_EP
             SET NATURA_VOCE = 'EEC'
             WHERE CD_VOCE_EP LIKE 'C%';
