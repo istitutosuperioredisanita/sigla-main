@@ -119,7 +119,7 @@
 		maxLength="45"
 		inputSize="8"
 		inputType="TEXT"
-		label="Conto"
+		label="Conto Analitico"
 		readonlyProperty="ROConto"
 		enabledOnSearch="true"						
 		formatName="it.cnr.jada.util.UppercaseStringFormat"		
@@ -275,6 +275,14 @@
 		enabledOnSearch="true"
 		caseSensitiveSearch="false"
 		nullable="false"/>
+	<fieldProperty
+		name="cd_voce_eco"
+		property="movimentoCoge.conto.cd_voce_ep"
+		maxLength="45"
+		inputSize="8"
+		inputType="TEXT"
+		formatName="it.cnr.jada.util.UppercaseStringFormat"
+		label="Conto Economico" />
 
 	<formFieldProperty
 		name="cd_unita_organizzativa" />
@@ -338,6 +346,8 @@
 		name="attiva" />
 	<formFieldProperty
 		name="ti_istituz_commerc" />
+	<formFieldProperty
+		name="cd_voce_eco" />
 
 	<columnFieldProperty
 		name="esercizio" />
@@ -374,6 +384,33 @@
 			name="cd_centro_responsabilita" />
 		<columnFieldProperty
 			name="cd_linea_attivita" />
+		<columnFieldProperty
+			name="im_movimento" />
+	</columnSet>
+
+	<columnSet
+		name="scrittura">
+		<columnFieldProperty
+			name="cd_voce_eco"
+			label="Conto Economico"/>
+		<columnFieldProperty
+			name="sezione"
+			label="Sezione"
+			headerLabel="Analitica"/>
+		<columnFieldProperty
+			name="cd_voce_ana"
+			label="Conto"
+			headerLabel="Analitica"/>
+		<columnFieldProperty
+			name="ds_voce_ana"
+			label="Descrizione"
+			headerLabel="Analitica"/>
+		<columnFieldProperty
+			name="cd_centro_responsabilita" />
+		<columnFieldProperty
+			name="cd_linea_attivita" />
+		<columnFieldProperty
+			name="stato" />
 		<columnFieldProperty
 			name="im_movimento" />
 	</columnSet>

@@ -100,6 +100,8 @@ public interface Configurazione_cnrComponentSession extends it.cnr.jada.ejb.CRUD
 
     Boolean isAttivaEconomicaParallela(UserContext userContext) throws ComponentException, RemoteException;
 
+    Boolean isAttivaAnalitica(UserContext userContext) throws ComponentException, RemoteException;
+
     Boolean isBloccoScrittureProposte(UserContext userContext) throws ComponentException, RemoteException;
 
     Boolean isAssPrgAnagraficoAttiva(UserContext param0) throws ComponentException, RemoteException;

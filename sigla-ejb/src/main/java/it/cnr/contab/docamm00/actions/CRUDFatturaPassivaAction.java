@@ -6032,11 +6032,15 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
             final Optional<MandatoBulk> mandatoBulk = mandato_rigaIBulks
                     .stream()
                     .filter(mandatoRigaIBulk -> {
-                        return  mandatoRigaIBulk.getEsercizio_obbligazione().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getEsercizio()) &&
-                                mandatoRigaIBulk.getEsercizio_ori_obbligazione().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getEsercizio_originale()) &&
-                                mandatoRigaIBulk.getCd_cds().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getCd_cds()) &&
-                                mandatoRigaIBulk.getPg_obbligazione().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getPg_obbligazione()) &&
-                                mandatoRigaIBulk.getPg_obbligazione_scadenzario().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getPg_obbligazione_scadenzario());
+                        return fattura_passiva_rigaBulk
+                                .flatMap(fatturaPassivaRigaBulk -> Optional.ofNullable(fatturaPassivaRigaBulk.getObbligazione_scadenziario()))
+                                .filter(obbligazioneScadenzarioBulk -> {
+                                    return  mandatoRigaIBulk.getEsercizio_obbligazione().equals(obbligazioneScadenzarioBulk.getEsercizio()) &&
+                                            mandatoRigaIBulk.getEsercizio_ori_obbligazione().equals(obbligazioneScadenzarioBulk.getEsercizio_originale()) &&
+                                            mandatoRigaIBulk.getCd_cds().equals(obbligazioneScadenzarioBulk.getCd_cds()) &&
+                                            mandatoRigaIBulk.getPg_obbligazione().equals(obbligazioneScadenzarioBulk.getPg_obbligazione()) &&
+                                            mandatoRigaIBulk.getPg_obbligazione_scadenzario().equals(obbligazioneScadenzarioBulk.getPg_obbligazione_scadenzario());
+                                }).isPresent();
                     })
                     .findAny()
                     .map(Mandato_rigaIBulk::getMandato);

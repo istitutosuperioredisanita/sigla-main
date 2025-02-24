@@ -863,7 +863,7 @@ public class DocumentoGenericoComponent
                         }
                     }
                     if (rigaSelected.isDocumentoStorno()) {
-                        importo = importo.add(rigaSelected.getDocumento_generico_riga_storno().getIm_riga());
+                        importo = importo.add(rigaSelected.getRigaStorno().map(IDocumentoAmministrativoRigaBulk::getIm_riga).orElse(BigDecimal.ZERO));
                     }
                 }
 
@@ -6531,15 +6531,16 @@ public class DocumentoGenericoComponent
      * @param userContext
      * @param tiEntrataSpesa
      * @param stornaDocumentoGenericoBulk
-     * @param documentoGenericoRigaBulks
+     * @param rigaBulks
      * @return Documento_genericoBulk.class
      * @throws ComponentException
      */
     public Documento_genericoBulk creaDocumentoGenericoDiStorno(
             UserContext userContext,
             char tiEntrataSpesa,
+            boolean isDaFattura,
             StornaDocumentoGenericoBulk stornaDocumentoGenericoBulk,
-            List<Documento_generico_rigaBulk> documentoGenericoRigaBulks
+            List<IDocumentoAmministrativoRigaBulk> rigaBulks
     ) throws ComponentException {
         try {
             ObbligazioneAbstractComponentSession obbligazioneSession =
@@ -6565,39 +6566,100 @@ public class DocumentoGenericoComponent
             documentoGenericoBulk.setTipoDocumentoGenerico(stornaDocumentoGenericoBulk.getTipoDocumentoGenerico());
             documentoGenericoBulk = (Documento_genericoBulk) inizializzaBulkPerInserimento(userContext, documentoGenericoBulk);
             documentoGenericoBulk.setCausaleContabile(causaleContabileBulk);
-
-            documentoGenericoBulk.setTipo_documento(causaleContabileBulk.getTipoDocumentoAmm());
-
+            if (tiEntrataSpesa == 'E') {
+                documentoGenericoBulk.setTipo_documento(new Tipo_documento_ammBulk(Numerazione_doc_ammBulk.TIPO_DOC_GENERICO_E));
+            } else {
+                documentoGenericoBulk.setTipo_documento(new Tipo_documento_ammBulk(Numerazione_doc_ammBulk.TIPO_DOC_GENERICO_S));
+            }
             documentoGenericoBulk.setDs_documento_generico(stornaDocumentoGenericoBulk.getDescrizione());
             documentoGenericoBulk.setData_registrazione(stornaDocumentoGenericoBulk.getDt_registrazione());
             documentoGenericoBulk.setDt_da_competenza_coge(stornaDocumentoGenericoBulk.getDt_da_competenza_coge());
             documentoGenericoBulk.setDt_a_competenza_coge(stornaDocumentoGenericoBulk.getDt_a_competenza_coge());
-            for (Documento_generico_rigaBulk documentoGenericoRigaBulk : documentoGenericoRigaBulks) {
+            for (IDocumentoAmministrativoRigaBulk rigaBulk : rigaBulks) {
                 Documento_generico_rigaBulk documentoGenericoRigaNew = new Documento_generico_rigaBulk();
                 documentoGenericoRigaNew.setToBeCreated();
                 documentoGenericoBulk.addToDocumento_generico_dettColl(documentoGenericoRigaNew);
-                documentoGenericoRigaNew.setTerzo(documentoGenericoRigaBulk.getTerzo());
-                documentoGenericoRigaNew.setBanca(documentoGenericoRigaBulk.getBanca());
-                documentoGenericoRigaNew.setDs_riga(documentoGenericoRigaBulk.getDs_riga());
-                documentoGenericoRigaNew.setRagione_sociale(documentoGenericoRigaBulk.getRagione_sociale());
-                documentoGenericoRigaNew.setNome(documentoGenericoRigaBulk.getNome());
-                documentoGenericoRigaNew.setCognome(documentoGenericoRigaBulk.getCognome());
-                documentoGenericoRigaNew.setCodice_fiscale(documentoGenericoRigaBulk.getCodice_fiscale());
-                documentoGenericoRigaNew.setPartita_iva(documentoGenericoRigaBulk.getPartita_iva());
-                documentoGenericoRigaNew.setModalita_pagamento(documentoGenericoRigaBulk.getModalita_pagamento());
-                documentoGenericoRigaNew.setTerzo_uo_cds(documentoGenericoRigaBulk.getTerzo_uo_cds());
-                if (documentoGenericoRigaBulk.getTerzo_uo_cds() != null) {
-                    documentoGenericoRigaNew.setBanca_uo_cds(new BancaBulk(documentoGenericoRigaBulk.getTerzo_uo_cds().getCd_terzo(), documentoGenericoRigaBulk.getPg_banca_uo_cds()));
-                }
-                if (documentoGenericoRigaBulk.getCd_modalita_pag_uo_cds() != null) {
-                    documentoGenericoRigaNew.setModalita_pagamento_uo_cds(new Rif_modalita_pagamentoBulk(documentoGenericoRigaBulk.getCd_modalita_pag_uo_cds()));
-                }
+                documentoGenericoRigaNew.setDs_riga(
+                        Optional.ofNullable(rigaBulk.getDs_riga())
+                                .map(s -> s.substring(0, Math.min(200, s.length())))
+                                .orElse(null)
+                );
+                Optional.ofNullable(rigaBulk.getTerzo())
+                    .flatMap(terzoBulk -> Optional.ofNullable(terzoBulk.getAnagrafico()))
+                    .ifPresent(anagraficoBulk -> {
+                        documentoGenericoRigaNew.setRagione_sociale(anagraficoBulk.getRagione_sociale());
+                        documentoGenericoRigaNew.setNome(anagraficoBulk.getNome());
+                        documentoGenericoRigaNew.setCognome(anagraficoBulk.getCognome());
+                        documentoGenericoRigaNew.setCodice_fiscale(anagraficoBulk.getCodice_fiscale());
+                        documentoGenericoRigaNew.setPartita_iva(anagraficoBulk.getPartita_iva());
+                    });
                 documentoGenericoRigaNew.setStato_cofi(Documento_generico_rigaBulk.STATO_CONTABILIZZATO);
-                documentoGenericoRigaNew.setDocumento_generico_riga_storno(documentoGenericoRigaBulk);
-                documentoGenericoRigaNew.setIm_riga(documentoGenericoRigaBulk.getIm_riga());
-                documentoGenericoRigaNew.setIm_riga_divisa(documentoGenericoRigaBulk.getIm_riga_divisa());
-                if (documentoGenericoBulk.isGenericoAttivo()) {
-                    Accertamento_scadenzarioBulk accertamentoScadenziario = documentoGenericoRigaBulk.getAccertamento_scadenziario();
+                if (rigaBulk instanceof Documento_generico_rigaBulk) {
+                    Documento_generico_rigaBulk documentoGenericoRigaBulk = (Documento_generico_rigaBulk)rigaBulk;
+                    documentoGenericoRigaNew.setTerzo(documentoGenericoRigaBulk.getTerzo());
+                    documentoGenericoRigaNew.setBanca(documentoGenericoRigaBulk.getBanca());
+                    documentoGenericoRigaNew.setModalita_pagamento(documentoGenericoRigaBulk.getModalita_pagamento());
+                    documentoGenericoRigaNew.setTerzo_uo_cds(documentoGenericoRigaBulk.getTerzo_uo_cds());
+                    if (documentoGenericoRigaBulk.getTerzo_uo_cds() != null) {
+                        documentoGenericoRigaNew.setBanca_uo_cds(new BancaBulk(documentoGenericoRigaBulk.getTerzo_uo_cds().getCd_terzo(), documentoGenericoRigaBulk.getPg_banca_uo_cds()));
+                    }
+                    if (documentoGenericoRigaBulk.getCd_modalita_pag_uo_cds() != null) {
+                        documentoGenericoRigaNew.setModalita_pagamento_uo_cds(new Rif_modalita_pagamentoBulk(documentoGenericoRigaBulk.getCd_modalita_pag_uo_cds()));
+                    }
+                    documentoGenericoRigaNew.setIm_riga(documentoGenericoRigaBulk.getIm_riga());
+                    documentoGenericoRigaNew.setIm_riga_divisa(documentoGenericoRigaBulk.getIm_riga_divisa());
+                    documentoGenericoRigaNew.setDocumento_generico_riga_storno(documentoGenericoRigaBulk);
+                    if (documentoGenericoBulk.isGenericoAttivo()) {
+                        Accertamento_scadenzarioBulk accertamentoScadenziario = documentoGenericoRigaBulk.getAccertamento_scadenziario();
+                        /**
+                         * Ricarico la scadenza in caso di storno di più righe legate alla stessa scadenza
+                         */
+                        accertamentoScadenziario = (Accertamento_scadenzarioBulk) findByPrimaryKey(userContext, accertamentoScadenziario);
+                        getHomeCache(userContext).fetchAll(userContext);
+                        documentoGenericoRigaNew.setAccertamento_scadenziario(accertamentoScadenziario);
+                        accertamentoScadenziario.setIm_associato_doc_amm(
+                                accertamentoScadenziario.getIm_associato_doc_amm()
+                                        .subtract(documentoGenericoRigaBulk.getIm_riga())
+                        );
+                        updateImportoAssociatoDocAmm(userContext, accertamentoScadenziario);
+                        accertamentoSession.sdoppiaScadenzaInAutomatico(userContext, accertamentoScadenziario, accertamentoScadenziario.getIm_scadenza()
+                                .subtract(documentoGenericoRigaBulk.getIm_riga()));
+                    } else {
+                        Obbligazione_scadenzarioBulk obbligazioneScadenziario = documentoGenericoRigaBulk.getObbligazione_scadenziario();
+                        /**
+                         * Ricarico la scadenza in caso di storno di più righe legate alla stessa scadenza
+                         */
+                        obbligazioneScadenziario = (Obbligazione_scadenzarioBulk) findByPrimaryKey(userContext, obbligazioneScadenziario);
+                        getHomeCache(userContext).fetchAll(userContext);
+                        documentoGenericoRigaNew.setObbligazione_scadenziario(obbligazioneScadenziario);
+                        obbligazioneScadenziario.setIm_associato_doc_amm(
+                                obbligazioneScadenziario.getIm_associato_doc_amm()
+                                        .subtract(documentoGenericoRigaBulk.getIm_riga())
+                        );
+                        updateImportoAssociatoDocAmm(userContext, obbligazioneScadenziario);
+                        obbligazioneSession.sdoppiaScadenzaInAutomatico(userContext, obbligazioneScadenziario, obbligazioneScadenziario.getIm_scadenza()
+                                .subtract(documentoGenericoRigaBulk.getIm_riga()));
+                    }
+                }
+                if (rigaBulk instanceof Fattura_attiva_rigaIBulk) {
+                    Fattura_attiva_rigaIBulk fatturaAttivaRigaIBulk = (Fattura_attiva_rigaIBulk)rigaBulk;
+                    documentoGenericoRigaNew.setTerzo(fatturaAttivaRigaIBulk.getTerzo());
+                    documentoGenericoRigaNew.setBanca(new BancaBulk(fatturaAttivaRigaIBulk.getTerzo().getCd_terzo(), fatturaAttivaRigaIBulk.getFattura_attivaI().getPg_banca()));
+                    documentoGenericoRigaNew.setModalita_pagamento(new Rif_modalita_pagamentoBulk(fatturaAttivaRigaIBulk.getFattura_attivaI().getCd_modalita_pag()));
+                    documentoGenericoRigaNew.setTerzo_uo_cds(fatturaAttivaRigaIBulk.getFattura_attivaI().getTerzo_uo());
+                    if (fatturaAttivaRigaIBulk.getFattura_attivaI().getTerzo_uo() != null) {
+                        documentoGenericoRigaNew.setBanca_uo_cds(new BancaBulk(
+                                fatturaAttivaRigaIBulk.getFattura_attivaI().getTerzo_uo().getCd_terzo(),
+                                fatturaAttivaRigaIBulk.getFattura_attivaI().getPg_banca_uo_cds()
+                        ));
+                    }
+                    if (fatturaAttivaRigaIBulk.getFattura_attivaI().getCd_modalita_pag_uo_cds() != null) {
+                        documentoGenericoRigaNew.setModalita_pagamento_uo_cds(new Rif_modalita_pagamentoBulk(fatturaAttivaRigaIBulk.getFattura_attivaI().getCd_modalita_pag_uo_cds()));
+                    }
+                    documentoGenericoRigaNew.setIm_riga(fatturaAttivaRigaIBulk.getIm_riga());
+                    documentoGenericoRigaNew.setIm_riga_divisa(fatturaAttivaRigaIBulk.getIm_riga());
+                    documentoGenericoRigaNew.setFattura_attiva_riga_storno(fatturaAttivaRigaIBulk);
+                    Accertamento_scadenzarioBulk accertamentoScadenziario = fatturaAttivaRigaIBulk.getAccertamento_scadenzario();
                     /**
                      * Ricarico la scadenza in caso di storno di più righe legate alla stessa scadenza
                      */
@@ -6605,14 +6667,33 @@ public class DocumentoGenericoComponent
                     getHomeCache(userContext).fetchAll(userContext);
                     documentoGenericoRigaNew.setAccertamento_scadenziario(accertamentoScadenziario);
                     accertamentoScadenziario.setIm_associato_doc_amm(
-                        accertamentoScadenziario.getIm_associato_doc_amm()
-                                .subtract(documentoGenericoRigaBulk.getIm_riga())
+                            accertamentoScadenziario.getIm_associato_doc_amm()
+                                    .subtract(fatturaAttivaRigaIBulk.getIm_riga())
                     );
                     updateImportoAssociatoDocAmm(userContext, accertamentoScadenziario);
                     accertamentoSession.sdoppiaScadenzaInAutomatico(userContext, accertamentoScadenziario, accertamentoScadenziario.getIm_scadenza()
-                            .subtract(documentoGenericoRigaBulk.getIm_riga()));
-                } else {
-                    Obbligazione_scadenzarioBulk obbligazioneScadenziario = documentoGenericoRigaBulk.getObbligazione_scadenziario();
+                            .subtract(fatturaAttivaRigaIBulk.getIm_riga()));
+                }
+                if (rigaBulk instanceof Fattura_passiva_rigaIBulk) {
+                    Fattura_passiva_rigaIBulk fatturaPassivaRigaIBulk = (Fattura_passiva_rigaIBulk)rigaBulk;
+                    documentoGenericoRigaNew.setTerzo(fatturaPassivaRigaIBulk.getTerzo());
+                    documentoGenericoRigaNew.setBanca(new BancaBulk(fatturaPassivaRigaIBulk.getTerzo().getCd_terzo(), fatturaPassivaRigaIBulk.getFattura_passivaI().getPg_banca()));
+                    documentoGenericoRigaNew.setModalita_pagamento(new Rif_modalita_pagamentoBulk(fatturaPassivaRigaIBulk.getFattura_passivaI().getCd_modalita_pag()));
+                    documentoGenericoRigaNew.setTerzo_uo_cds(new TerzoBulk(fatturaPassivaRigaIBulk.getFattura_passivaI().getCd_terzo_uo_cds()));
+                    if (fatturaPassivaRigaIBulk.getFattura_passivaI().getCd_terzo_uo_cds() != null) {
+                        documentoGenericoRigaNew.setBanca_uo_cds(new BancaBulk(
+                                fatturaPassivaRigaIBulk.getFattura_passivaI().getCd_terzo_uo_cds(),
+                                fatturaPassivaRigaIBulk.getFattura_passivaI().getPg_banca_uo_cds()
+                        ));
+                    }
+                    if (fatturaPassivaRigaIBulk.getFattura_passivaI().getCd_modalita_pag_uo_cds() != null) {
+                        documentoGenericoRigaNew.setModalita_pagamento_uo_cds(new Rif_modalita_pagamentoBulk(fatturaPassivaRigaIBulk.getFattura_passivaI().getCd_modalita_pag_uo_cds()));
+                    }
+
+                    documentoGenericoRigaNew.setIm_riga(fatturaPassivaRigaIBulk.getIm_riga());
+                    documentoGenericoRigaNew.setIm_riga_divisa(fatturaPassivaRigaIBulk.getIm_riga());
+                    documentoGenericoRigaNew.setFattura_passiva_riga_storno(fatturaPassivaRigaIBulk);
+                    Obbligazione_scadenzarioBulk obbligazioneScadenziario = fatturaPassivaRigaIBulk.getObbligazione_scadenziario();
                     /**
                      * Ricarico la scadenza in caso di storno di più righe legate alla stessa scadenza
                      */
@@ -6621,11 +6702,11 @@ public class DocumentoGenericoComponent
                     documentoGenericoRigaNew.setObbligazione_scadenziario(obbligazioneScadenziario);
                     obbligazioneScadenziario.setIm_associato_doc_amm(
                             obbligazioneScadenziario.getIm_associato_doc_amm()
-                                    .subtract(documentoGenericoRigaBulk.getIm_riga())
+                                    .subtract(fatturaPassivaRigaIBulk.getIm_riga())
                     );
                     updateImportoAssociatoDocAmm(userContext, obbligazioneScadenziario);
                     obbligazioneSession.sdoppiaScadenzaInAutomatico(userContext, obbligazioneScadenziario, obbligazioneScadenziario.getIm_scadenza()
-                            .subtract(documentoGenericoRigaBulk.getIm_riga()));
+                            .subtract(fatturaPassivaRigaIBulk.getIm_riga()));
                 }
             }
             return (Documento_genericoBulk) creaConBulk(userContext, documentoGenericoBulk);

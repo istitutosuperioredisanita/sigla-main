@@ -17,10 +17,7 @@
 
 package it.cnr.contab.coepcoan00.core.bulk;
 
-import it.cnr.jada.bulk.*;
 import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
 
 public class Movimento_coanBase extends Movimento_coanKey implements Keyed {
 	// CD_CENTRO_RESPONSABILITA VARCHAR(30) NOT NULL
@@ -55,6 +52,16 @@ public class Movimento_coanBase extends Movimento_coanKey implements Keyed {
 
 	// FL_MODIFICABILE CHAR(1)
 	private java.lang.Boolean fl_modificabile;
+
+	private java.lang.String cd_cds_movcoge;
+
+	private java.lang.String cd_uo_movcoge;
+
+	private java.lang.Integer esercizio_movcoge;
+
+	private java.lang.Long pg_movimento_movcoge;
+
+	private java.lang.Long pg_scrittura_movcoge;
 
 	public Movimento_coanBase() {
 	super();
@@ -185,5 +192,45 @@ public class Movimento_coanBase extends Movimento_coanKey implements Keyed {
 
 	public void setFl_modificabile(Boolean fl_modificabile) {
 		this.fl_modificabile = fl_modificabile;
+	}
+
+	public String getCd_cds_movcoge() {
+		return cd_cds_movcoge;
+	}
+
+	public void setCd_cds_movcoge(String cd_cds_movcoge) {
+		this.cd_cds_movcoge = cd_cds_movcoge;
+	}
+
+	public String getCd_uo_movcoge() {
+		return cd_uo_movcoge;
+	}
+
+	public void setCd_uo_movcoge(String cd_uo_movcoge) {
+		this.cd_uo_movcoge = cd_uo_movcoge;
+	}
+
+	public Integer getEsercizio_movcoge() {
+		return esercizio_movcoge;
+	}
+
+	public void setEsercizio_movcoge(Integer esercizio_movcoge) {
+		this.esercizio_movcoge = esercizio_movcoge;
+	}
+
+	public Long getPg_movimento_movcoge() {
+		return pg_movimento_movcoge;
+	}
+
+	public void setPg_movimento_movcoge(Long pg_movimento_movcoge) {
+		this.pg_movimento_movcoge = pg_movimento_movcoge;
+	}
+
+	public Long getPg_scrittura_movcoge() {
+		return pg_scrittura_movcoge;
+	}
+
+	public void setPg_scrittura_movcoge(Long pg_scrittura_movcoge) {
+		this.pg_scrittura_movcoge = pg_scrittura_movcoge;
 	}
 }

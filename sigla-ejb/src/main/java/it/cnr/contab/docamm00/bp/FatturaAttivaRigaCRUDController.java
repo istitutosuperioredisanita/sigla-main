@@ -169,7 +169,7 @@ public class FatturaAttivaRigaCRUDController extends it.cnr.jada.util.action.Sim
                             bp.isManualModify());
 
             Fattura_attiva_rigaBulk riga = (Fattura_attiva_rigaBulk) getModel();
-            enabled = enabled && !(riga == null || riga.getTi_associato_manrev() != null && riga.ASSOCIATO_A_MANDATO.equalsIgnoreCase(riga.getTi_associato_manrev()));
+            enabled = enabled && !(riga == null || riga.getTi_associato_manrev() != null && Fattura_attiva_rigaBulk.ASSOCIATO_A_MANDATO.equalsIgnoreCase(riga.getTi_associato_manrev()));
 
             it.cnr.jada.util.jsp.JSPUtils.toolbarButton(
                     context,

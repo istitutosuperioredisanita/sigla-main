@@ -23,9 +23,12 @@ import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.action.MessageToUser;
 import it.cnr.jada.bulk.*;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Dictionary;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Scrittura_analiticaBulk extends Scrittura_analiticaBase {
 	protected Unita_organizzativaBulk uo = new Unita_organizzativaBulk();
@@ -310,4 +313,33 @@ public class Scrittura_analiticaBulk extends Scrittura_analiticaBase {
 							.orElse(null);
 				});
 	}
+
+	public boolean isScritturaAttiva() {
+		return ATTIVA_YES.equals(this.getAttiva());
+	}
+
+	public List<Movimento_coanBulk> getMovimentiDareColl() {
+		return this.getMovimentiColl().stream().filter(Movimento_coanBulk::isSezioneDare).collect(Collectors.toList());
+	}
+
+	public List<Movimento_coanBulk> getMovimentiAvereColl() {
+		return this.getMovimentiColl().stream().filter(Movimento_coanBulk::isSezioneAvere).collect(Collectors.toList());
+	}
+
+	public java.math.BigDecimal getImTotaleAvere() {
+		return getMovimentiAvereColl().stream()
+				.map(mcb -> Optional.ofNullable(mcb.getIm_movimento()).orElse(BigDecimal.ZERO))
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	public java.math.BigDecimal getImTotaleDare() {
+		return getMovimentiDareColl().stream()
+				.map(mcb -> Optional.ofNullable(mcb.getIm_movimento()).orElse(BigDecimal.ZERO))
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	public java.math.BigDecimal getDifferenza() {
+		return getImTotaleDare().subtract(this.getImTotaleAvere()).abs();
+	}
+
 }

@@ -1,6 +1,5 @@
---select * from INVENTARIO_BENI where utcr='MIGRAZIONE' and VARIAZIONE_PIU>0 or VARIAZIONE_MENO>0 ;
-CREATE OR REPLACE FORCE VIEW "PRT_STAMPA_REGISTRO_INVENTARIO" ("CD_UNITA_ORGANIZZATIVA", "CD_CDS", "ESERCIZIO_CARICO_BENE", "ETICHETTA", "DS_BENE", "VALORE_INIZIALE", "CATEGORIA", "CD_CATEGORIA_GRUPPO", "DS_CATEGORIA", "DS_CATEGORIA_GRUPPO", "DS_UBICAZIONE_BENE", "CD_ASSEGNATARIO", "DENOMINAZIONE_SEDE", "DATA_REGISTRAZIONE", "CD_TIPO_CARICO_SCARICO", "DS_TIPO_CARICO_SCARICO", "VARIAZIONE_PIU", "VARIAZIONE_MENO", "QUANTITA", "VALORE_UNITARIO", "IMPONIBILE_AMMORTAMENTO", "VALORE_AMMORTIZZATO", "NUMERO_ANNI", "PERC_AMMORTAMENTO", "PERC_PRIMO_ANNO", "PERC_SUCCESSIVI", "NR_INVENTARIO", "TIPO", "FL_AMMORTAMENTO", "PROGRESSIVO") AS
-SELECT inventario_beni.cd_unita_organizzativa, inventario_beni.cd_cds,
+CREATE OR REPLACE FORCE VIEW "PRT_STAMPA_REGISTRO_INVENTARIO" ("CD_UNITA_ORGANIZZATIVA", "CD_CDS", "ESERCIZIO_CARICO_BENE", "ETICHETTA", "DS_BENE", "VALORE_INIZIALE", "CATEGORIA", "CD_CATEGORIA_GRUPPO", "DS_CATEGORIA", "DS_CATEGORIA_GRUPPO", "DS_UBICAZIONE_BENE", "CD_ASSEGNATARIO", "DENOMINAZIONE_SEDE", "DATA_REGISTRAZIONE", "CD_TIPO_CARICO_SCARICO", "DS_TIPO_CARICO_SCARICO", "VARIAZIONE_PIU", "VARIAZIONE_MENO", "QUANTITA", "VALORE_UNITARIO", "IMPONIBILE_AMMORTAMENTO", "VALORE_AMMORTIZZATO", "NUMERO_ANNI", "PERC_AMMORTAMENTO", "PERC_PRIMO_ANNO", "PERC_SUCCESSIVI", "NR_INVENTARIO", "TIPO", "FL_AMMORTAMENTO", "PROGRESSIVO", "RIF_FATTURA") AS
+  SELECT inventario_beni.cd_unita_organizzativa, inventario_beni.cd_cds,
        inventario_beni.esercizio_carico_bene, inventario_beni.etichetta,
        inventario_beni.ds_bene,
        Decode (buono_carico_scarico_dett.ti_documento,'C',
@@ -27,7 +26,16 @@ SELECT inventario_beni.cd_unita_organizzativa, inventario_beni.cd_cds,
        inventario_beni.nr_inventario,
        INVENTARIO_BENI.TI_COMMERCIALE_ISTITUZIONALE,
        inventario_beni.FL_AMMORTAMENTO,
-       inventario_beni.progressivo
+       inventario_beni.progressivo,
+        ( select esercizio_fatt_pass||'/'||cd_uo_fatt_pass||'/'||pg_fattura_passiva from ass_inv_bene_fattura
+        where  ass_inv_bene_fattura.pg_inventario=buono_carico_scarico_dett.pg_inventario
+  and ass_inv_bene_fattura.nr_inventario=buono_carico_scarico_dett.nr_inventario
+  and ass_inv_bene_fattura.progressivo=buono_carico_scarico_dett.progressivo
+  and ass_inv_bene_fattura.PG_BUONO_C_S=buono_carico_scarico_dett.PG_BUONO_C_S
+  and ass_inv_bene_fattura.esercizio=buono_carico_scarico_dett.esercizio
+  and ass_inv_bene_fattura.ti_documento=buono_carico_scarico_dett.ti_documento
+    and  ass_inv_bene_fattura.ti_documento='C'
+    group by esercizio_fatt_pass,cd_uo_fatt_pass,pg_fattura_passiva) rifrimento_fattura
   FROM inventario_beni,
        ubicazione_bene,
        categoria_gruppo_invent,
@@ -89,7 +97,12 @@ SELECT inventario_beni.cd_unita_organizzativa, inventario_beni.cd_cds,
        inventario_beni.nr_inventario,
        INVENTARIO_BENI.TI_COMMERCIALE_ISTITUZIONALE,
        inventario_beni.FL_AMMORTAMENTO,
-       inventario_beni.progressivo
+       inventario_beni.progressivo,
+        ( select esercizio_fatt_pass||'/'||cd_uo_fatt_pass||'/'||pg_fattura_passiva||'/'||progressivo_riga_fatt_pass from ass_inv_bene_fattura
+        where  ass_inv_bene_fattura.pg_inventario=inventario_beni.pg_inventario
+  and ass_inv_bene_fattura.nr_inventario=inventario_beni.nr_inventario
+  and ass_inv_bene_fattura.progressivo=inventario_beni.progressivo
+    group by esercizio_fatt_pass,cd_uo_fatt_pass,pg_fattura_passiva,progressivo_riga_fatt_pass) rifrimento_fattura
   FROM inventario_beni,
        ubicazione_bene,
        categoria_gruppo_invent,

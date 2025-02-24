@@ -19,6 +19,7 @@ package it.cnr.contab.docamm00.bp;
 
 import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
 import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
+import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk;
 import it.cnr.contab.docamm00.docs.bulk.StornaDocumentoGenericoBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
@@ -41,17 +42,33 @@ import java.util.Optional;
 
 public class StornaDocumentoGenericoBP extends BulkBP {
     private final char tiEntrataSpesa;
-    private final List<Documento_generico_rigaBulk> documentoGenericoRigaBulks;
+    private boolean isDaFattura;
+    private List<IDocumentoAmministrativoRigaBulk> documentoGenericoRigaBulks;
     private final Dictionary<String, String> tiCausaleContabileKeys;
-    public StornaDocumentoGenericoBP(Character tiEntrataSpesa, List<Documento_generico_rigaBulk> documentoGenericoRigaBulks, Dictionary<String, String> tiCausaleContabileKeys) {
+    public StornaDocumentoGenericoBP(Character tiEntrataSpesa, Dictionary<String, String> tiCausaleContabileKeys) {
         super();
         this.tiEntrataSpesa = tiEntrataSpesa;
-        this.documentoGenericoRigaBulks = documentoGenericoRigaBulks;
         this.tiCausaleContabileKeys = tiCausaleContabileKeys;
+    }
+
+    public List<IDocumentoAmministrativoRigaBulk> getDocumentoGenericoRigaBulks() {
+        return documentoGenericoRigaBulks;
+    }
+
+    public void setDocumentoGenericoRigaBulks(List<IDocumentoAmministrativoRigaBulk> documentoGenericoRigaBulks) {
+        this.documentoGenericoRigaBulks = documentoGenericoRigaBulks;
     }
 
     public char getTiEntrataSpesa() {
         return tiEntrataSpesa;
+    }
+
+    public boolean isDaFattura() {
+        return isDaFattura;
+    }
+
+    public void setDaFattura(boolean daFattura) {
+        isDaFattura = daFattura;
     }
 
     @Override
@@ -102,6 +119,7 @@ public class StornaDocumentoGenericoBP extends BulkBP {
             return Utility.createDocumentoGenericoComponentSession().creaDocumentoGenericoDiStorno(
                     actioncontext.getUserContext(),
                     tiEntrataSpesa,
+                    isDaFattura,
                     stornaDocumentoGenericoBulk,
                     documentoGenericoRigaBulks
             );
