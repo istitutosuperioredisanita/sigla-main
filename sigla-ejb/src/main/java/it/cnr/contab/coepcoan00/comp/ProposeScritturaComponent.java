@@ -160,40 +160,40 @@ public class ProposeScritturaComponent extends CRUDComponent {
 	}
 
 	private static class DettaglioFinanziario {
-		public DettaglioFinanziario(IDocumentoAmministrativoBulk docamm, IDocumentoAmministrativoBulk partita, Integer cdTerzo, Elemento_voceBulk elementoVoce, List<DettaglioAnalitico> dettagliAnalitici, Timestamp dtDaCompetenzaCoge, Timestamp dtACompetenzaCoge, BigDecimal imImponibile, BigDecimal imImposta) {
+		public DettaglioFinanziario(IDocumentoAmministrativoBulk docamm, Integer cdTerzo, Elemento_voceBulk elementoVoce, List<DettaglioAnalitico> dettagliAnalitici, BigDecimal imImponibile, BigDecimal imImposta) {
 			super();
 			this.docamm = docamm;
-			this.partita = partita;
 			this.elementoVoce = elementoVoce;
 			this.dettagliAnalitici = dettagliAnalitici;
 			this.cdTerzo = cdTerzo;
-			this.dtDaCompetenzaCoge = dtDaCompetenzaCoge;
-			this.dtACompetenzaCoge = dtACompetenzaCoge;
 			this.imImponibile = imImponibile;
 			this.imImposta = imImposta;
 			this.rigaDocamm = null;
+			this.rigaPartita = null;
+			this.dtDaCompetenzaCoge = null;
+			this.dtACompetenzaCoge = null;
 			this.voceEp = null;
 		}
 
-		public DettaglioFinanziario(IDocumentoAmministrativoBulk docamm, IDocumentoAmministrativoBulk partita, Integer cdTerzo, Voce_epBulk voceEp, Timestamp dtDaCompetenzaCoge, Timestamp dtACompetenzaCoge, BigDecimal imImponibile, BigDecimal imImposta) {
+		public DettaglioFinanziario(IDocumentoAmministrativoBulk docamm, Integer cdTerzo, Voce_epBulk voceEp, BigDecimal imImponibile, BigDecimal imImposta) {
 			super();
 			this.docamm = docamm;
-			this.partita = partita;
             this.voceEp = voceEp;
 			this.cdTerzo = cdTerzo;
-			this.dtDaCompetenzaCoge = dtDaCompetenzaCoge;
-			this.dtACompetenzaCoge = dtACompetenzaCoge;
 			this.imImponibile = imImponibile;
 			this.imImposta = imImposta;
 			this.rigaDocamm = null;
+			this.rigaPartita = null;
 			this.elementoVoce = null;
+			this.dtDaCompetenzaCoge = null;
+			this.dtACompetenzaCoge = null;
 			this.dettagliAnalitici = Collections.EMPTY_LIST;
 		}
 
-		public DettaglioFinanziario(IDocumentoAmministrativoRigaBulk rigaDocamm, IDocumentoAmministrativoBulk partita, Integer cdTerzo, Elemento_voceBulk elementoVoce, List<DettaglioAnalitico> dettagliAnalitici) {
+		public DettaglioFinanziario(IDocumentoAmministrativoRigaBulk rigaDocamm, IDocumentoAmministrativoRigaBulk rigaPartita, Integer cdTerzo, Elemento_voceBulk elementoVoce, List<DettaglioAnalitico> dettagliAnalitici) {
 			super();
 			this.docamm = rigaDocamm.getFather();
-			this.partita = partita;
+			this.rigaPartita = rigaPartita;
 			this.elementoVoce = elementoVoce;
 			this.dettagliAnalitici = dettagliAnalitici;
 			this.cdTerzo = cdTerzo;
@@ -205,10 +205,9 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			this.voceEp = null;
 		}
 
-		public DettaglioFinanziario(IDocumentoAmministrativoRigaBulk rigaDocamm, IDocumentoAmministrativoBulk partita, Integer cdTerzo, Voce_epBulk voceEp) {
+		public DettaglioFinanziario(IDocumentoAmministrativoRigaBulk rigaDocamm, Integer cdTerzo, Voce_epBulk voceEp) {
 			super();
 			this.docamm = rigaDocamm.getFather();
-			this.partita = partita;
 			this.voceEp = voceEp;
 			this.cdTerzo = cdTerzo;
 			this.dtDaCompetenzaCoge = rigaDocamm.getDt_da_competenza_coge();
@@ -216,6 +215,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			this.imImponibile = rigaDocamm.getIm_imponibile();
 			this.imImposta = rigaDocamm.getIm_iva();
 			this.rigaDocamm = rigaDocamm;
+			this.rigaPartita = null;
 			this.elementoVoce = null;
 			this.dettagliAnalitici = null;
 		}
@@ -224,7 +224,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 		private final IDocumentoAmministrativoBulk docamm;
 
-		private final IDocumentoAmministrativoBulk 	partita;
+		private final IDocumentoAmministrativoRigaBulk rigaPartita;
 
 		private final Integer cdTerzo;
 
@@ -250,8 +250,8 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			return docamm;
 		}
 
-		public IDocumentoAmministrativoBulk getPartita() {
-			return partita;
+		public IDocumentoAmministrativoRigaBulk getRigaPartita() {
+			return rigaPartita;
 		}
 
 		protected Integer getCdTerzo() {
@@ -284,6 +284,10 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 		public List<DettaglioAnalitico> getDettagliAnalitici() {
 			return dettagliAnalitici;
+		}
+
+		public IDocumentoAmministrativoBulk getPartita() {
+			return Optional.ofNullable(this.getRigaPartita()).map(IDocumentoAmministrativoRigaBulk::getFather).orElse(null);
 		}
 	}
 
@@ -424,24 +428,29 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		public void openDettaglioCostoRicavo(UserContext userContext, IDocumentoCogeBulk docamm, DettaglioFinanziario dettFin, IDocumentoCogeBulk partita, Voce_epBulk conto, BigDecimal importo) {
 			BigDecimal importoAnniPrecedenti = BigDecimal.ZERO;
 			BigDecimal importoAnnoCorrenteESuccessivi = BigDecimal.ZERO;
-			BigDecimal delta;
 
-			long giorniAnniPrecedenti = this.getGiorniCompetenzaAnniPrecedenti(docamm.getEsercizio());
-			long giorniAnnoCorrenteESuccessivi = this.getGiorniCompetenzaAnnoCorrenteESuccessivi(docamm.getEsercizio());
-			long giorniTotali = giorniAnniPrecedenti + giorniAnnoCorrenteESuccessivi;
+			//Se documento di storno il conto passato è già quello giusto.... quindi non faccio il controllo della competenza
+			if (docamm.isDocumentoStorno())
+				importoAnnoCorrenteESuccessivi = importo;
+			else {
+				BigDecimal delta;
+				long giorniAnniPrecedenti = this.getGiorniCompetenzaAnniPrecedenti(docamm.getEsercizio());
+				long giorniAnnoCorrenteESuccessivi = this.getGiorniCompetenzaAnnoCorrenteESuccessivi(docamm.getEsercizio());
+				long giorniTotali = giorniAnniPrecedenti + giorniAnnoCorrenteESuccessivi;
 
-			if (giorniAnniPrecedenti > 0)
-				importoAnniPrecedenti = importo.multiply(BigDecimal.valueOf(giorniAnniPrecedenti)).divide(BigDecimal.valueOf(giorniTotali), 2, RoundingMode.HALF_UP);
-			if (giorniAnnoCorrenteESuccessivi > 0)
-				importoAnnoCorrenteESuccessivi = importo.multiply(BigDecimal.valueOf(giorniAnnoCorrenteESuccessivi)).divide(BigDecimal.valueOf(giorniTotali), 2, RoundingMode.HALF_UP);
+				if (giorniAnniPrecedenti > 0)
+					importoAnniPrecedenti = importo.multiply(BigDecimal.valueOf(giorniAnniPrecedenti)).divide(BigDecimal.valueOf(giorniTotali), 2, RoundingMode.HALF_UP);
+				if (giorniAnnoCorrenteESuccessivi > 0)
+					importoAnnoCorrenteESuccessivi = importo.multiply(BigDecimal.valueOf(giorniAnnoCorrenteESuccessivi)).divide(BigDecimal.valueOf(giorniTotali), 2, RoundingMode.HALF_UP);
 
-			//Scarico il delta prodotto fdall'arrotondamento sulla competenza anno in corso....altrimenti su quella anno precedente... altrimenti su quella successiva
-			delta = importo.subtract(importoAnniPrecedenti).subtract(importoAnnoCorrenteESuccessivi);
-			if (delta.compareTo(BigDecimal.ZERO)!=0) {
-				if (importoAnnoCorrenteESuccessivi.compareTo(BigDecimal.ZERO)!=0)
-					importoAnnoCorrenteESuccessivi = importoAnnoCorrenteESuccessivi.add(delta);
-				else
-					importoAnniPrecedenti = importoAnniPrecedenti.add(delta);
+				//Scarico il delta prodotto dall'arrotondamento sulla competenza anno in corso....altrimenti su quella anno precedente... altrimenti su quella successiva
+				delta = importo.subtract(importoAnniPrecedenti).subtract(importoAnnoCorrenteESuccessivi);
+				if (delta.compareTo(BigDecimal.ZERO) != 0) {
+					if (importoAnnoCorrenteESuccessivi.compareTo(BigDecimal.ZERO) != 0)
+						importoAnnoCorrenteESuccessivi = importoAnnoCorrenteESuccessivi.add(delta);
+					else
+						importoAnniPrecedenti = importoAnniPrecedenti.add(delta);
+				}
 			}
 
 			try {
@@ -1218,137 +1227,11 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			throw new ScritturaPartitaDoppiaNotRequiredException("Scrittura Economica non necessaria in quanto fattura collegata a compenso. La scrittura di prima nota viene creata direttamente dal compenso stesso.");
 
 		List<IDocumentoAmministrativoRigaBulk> righeDocamm = this.getRigheDocamm(userContext, docamm);
-		List<DettaglioFinanziario> righeDettFin = righeDocamm.stream().map(rigaDocAmm-> {
-			//Attenzione: recupero il terzo dal docamm perchè sulle righe potrebbe non essere valorizzato
-			TerzoBulk terzo;
-			IDocumentoAmministrativoBulk partita = docamm;
-			if (docamm instanceof Fattura_passivaBulk) {
-				terzo = ((Fattura_passivaBulk) docamm).getFornitore();
-				if (rigaDocAmm instanceof Nota_di_credito_rigaBulk)
-					partita = Optional.ofNullable(rigaDocAmm)
-							.filter(Nota_di_credito_rigaBulk.class::isInstance)
-							.map(Nota_di_credito_rigaBulk.class::cast)
-							.flatMap(notaDiCreditoRigaBulk -> Optional.ofNullable(notaDiCreditoRigaBulk.getRiga_fattura_origine()))
-							.flatMap(fatturaPassivaRigaIBulk -> Optional.ofNullable(fatturaPassivaRigaIBulk.getFather()))
-							.orElse(null);
-			} else if (Optional.ofNullable(docamm)
-							.filter(Documento_genericoBulk.class::isInstance)
-							.map(Documento_genericoBulk.class::cast)
-							.map(Documento_genericoBulk::isDocumentoStorno)
-							.orElse(Boolean.FALSE)
-			) {
-				terzo = rigaDocAmm.getTerzo();
-				partita = Optional.ofNullable(rigaDocAmm)
-						.filter(Documento_generico_rigaBulk.class::isInstance)
-						.map(Documento_generico_rigaBulk.class::cast)
-						.flatMap(Documento_generico_rigaBulk::getRigaStorno)
-						.map(IDocumentoAmministrativoRigaBulk::getFather)
-						.orElse(null);
-			} else if (docamm instanceof Fattura_attivaBulk) {
-				terzo = ((Fattura_attivaBulk) docamm).getCliente();
-				if (rigaDocAmm instanceof Nota_di_credito_attiva_rigaBulk)
-					partita = Optional.ofNullable(rigaDocAmm)
-							.filter(Nota_di_credito_attiva_rigaBulk.class::isInstance)
-							.map(Nota_di_credito_attiva_rigaBulk.class::cast)
-							.flatMap(notaDiCreditoRigaBulk -> Optional.ofNullable(notaDiCreditoRigaBulk.getRiga_fattura_associata()))
-							.flatMap(fatturaPassivaRigaIBulk -> Optional.ofNullable(fatturaPassivaRigaIBulk.getFather()))
-							.orElse(null);
-			} else if (docamm instanceof OrdineAcqBulk)
-				terzo = ((OrdineAcqBulk) docamm).getFornitore();
-			else {
-				terzo = rigaDocAmm.getTerzo();
-				if (TipoDocumentoEnum.fromValue(docamm.getCd_tipo_doc()).isDocumentoGenericoAttivo()) {
-					((Documento_genericoBulk) docamm).setTi_entrate_spese(Documento_genericoBulk.ENTRATE);
-					((Documento_generico_rigaBulk) rigaDocAmm).setDocumento_generico((Documento_genericoBulk)docamm);
-				} else if (TipoDocumentoEnum.fromValue(docamm.getCd_tipo_doc()).isDocumentoGenericoPassivo()) {
-					((Documento_genericoBulk) docamm).setTi_entrate_spese(Documento_genericoBulk.SPESE);
-					((Documento_generico_rigaBulk) rigaDocAmm).setDocumento_generico((Documento_genericoBulk)docamm);
-				}
-			}
-
-			if (Optional.ofNullable(rigaDocAmm.getScadenzaDocumentoContabile()).filter(Obbligazione_scadenzarioBulk.class::isInstance).isPresent()) {
-				ObbligazioneBulk obbligazioneDB = Optional.of(rigaDocAmm.getScadenzaDocumentoContabile().getFather()).filter(ObbligazioneBulk.class::isInstance).map(ObbligazioneBulk.class::cast)
-						.filter(el -> el.getCd_elemento_voce() != null).orElseGet(() -> {
-							try {
-								ObbligazioneHome obbligazionehome = (ObbligazioneHome) getHome(userContext, ObbligazioneBulk.class);
-								return (ObbligazioneBulk) obbligazionehome.findByPrimaryKey((ObbligazioneBulk) rigaDocAmm.getScadenzaDocumentoContabile().getFather());
-							} catch (ComponentException | PersistencyException e) {
-								throw new DetailedRuntimeException(e);
-							}
-						});
-
-				List<DettaglioAnalitico> dettagliAnalitici = new ArrayList<>();
-				//carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
-				try {
-					Obbligazione_scadenzarioHome obbligazioneScadenzarioHome = (Obbligazione_scadenzarioHome) getHome(userContext, Obbligazione_scadenzarioBulk.class);
-					List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, (Obbligazione_scadenzarioBulk)rigaDocAmm.getScadenzaDocumentoContabile());
-					for (Obbligazione_scad_voceBulk scadVoce : scadVoceBulks)
-						dettagliAnalitici.add(new DettaglioAnalitico(scadVoce.getCd_centro_responsabilita(), scadVoce.getCd_linea_attivita(), scadVoce.getIm_voce()));
-				} catch (ComponentException | PersistencyException e) {
-					throw new DetailedRuntimeException(e);
-				}
-
-				//Nel caricare la voce di bilancio metto sempre l'esercizio del documento perchè se ribaltato l'anno sarebbe quello successivo con la conseguenza che nel proporre
-				//i conti di costo proporrebbe quelli associati alle voci di anni differenti
-				return new DettaglioFinanziario(rigaDocAmm, partita, rigaDocAmm.getCd_terzo(),
-						new Elemento_voceBulk(obbligazioneDB.getCd_elemento_voce(), rigaDocAmm.getFather().getEsercizio(), obbligazioneDB.getTi_appartenenza(), obbligazioneDB.getTi_gestione()),
-						dettagliAnalitici);
-			}
-			if (Optional.ofNullable(rigaDocAmm.getScadenzaDocumentoContabile()).filter(Accertamento_scadenzarioBulk.class::isInstance).isPresent()) {
-				AccertamentoBulk accertamentoDB = Optional.of(rigaDocAmm.getScadenzaDocumentoContabile().getFather()).filter(AccertamentoBulk.class::isInstance).map(AccertamentoBulk.class::cast)
-						.filter(el -> el.getCd_elemento_voce() != null).orElseGet(() -> {
-							try {
-								AccertamentoHome home = (AccertamentoHome) getHome(userContext, AccertamentoBulk.class);
-								return (AccertamentoBulk) home.findByPrimaryKey((AccertamentoBulk) rigaDocAmm.getScadenzaDocumentoContabile().getFather());
-							} catch (ComponentException | PersistencyException e) {
-								throw new DetailedRuntimeException(e);
-							}
-						});
-				List<DettaglioAnalitico> dettagliAnalitici = new ArrayList<>();
-				//carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
-				try {
-					Accertamento_scadenzarioHome accertamentoScadenzarioHome = (Accertamento_scadenzarioHome) getHome(userContext, Accertamento_scadenzarioBulk.class);
-					List<Accertamento_scad_voceBulk> scadVoceBulks = accertamentoScadenzarioHome.findAccertamento_scad_voceList(userContext, (Accertamento_scadenzarioBulk)rigaDocAmm.getScadenzaDocumentoContabile());
-					for (Accertamento_scad_voceBulk scadVoce : scadVoceBulks)
-						dettagliAnalitici.add(new DettaglioAnalitico(scadVoce.getCd_centro_responsabilita(), scadVoce.getCd_linea_attivita(), scadVoce.getIm_voce()));
-				} catch (ComponentException | PersistencyException e) {
-					throw new DetailedRuntimeException(e);
-				}
-				return new DettaglioFinanziario(rigaDocAmm, partita, terzo.getCd_terzo(),
-						new Elemento_voceBulk(accertamentoDB.getCd_elemento_voce(), rigaDocAmm.getFather().getEsercizio(), accertamentoDB.getTi_appartenenza(), accertamentoDB.getTi_gestione()),
-						dettagliAnalitici);
-			}
-			if (!Optional.ofNullable(rigaDocAmm.getScadenzaDocumentoContabile()).isPresent() && docamm instanceof Documento_genericoBulk && docamm.getTipoDocumentoEnum().isGenericoEntrata() &&
-					(((Documento_generico_rigaBulk)rigaDocAmm).getAccertamento_scadenziario()!=null)) {
-				AccertamentoBulk accertamentoDB = Optional.of((((Documento_generico_rigaBulk)rigaDocAmm).getAccertamento_scadenziario().getAccertamento()))
-						.filter(el -> el.getCd_elemento_voce() != null).orElseGet(() -> {
-							try {
-								AccertamentoHome home = (AccertamentoHome) getHome(userContext, AccertamentoBulk.class);
-								return (AccertamentoBulk) home.findByPrimaryKey((((Documento_generico_rigaBulk)rigaDocAmm).getAccertamento_scadenziario().getAccertamento()));
-							} catch (ComponentException | PersistencyException e) {
-								throw new DetailedRuntimeException(e);
-							}
-						});
-				List<DettaglioAnalitico> dettagliAnalitici = new ArrayList<>();
-				//carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
-				try {
-					Accertamento_scadenzarioHome accertamentoScadenzarioHome = (Accertamento_scadenzarioHome) getHome(userContext, Accertamento_scadenzarioBulk.class);
-					List<Accertamento_scad_voceBulk> scadVoceBulks = accertamentoScadenzarioHome.findAccertamento_scad_voceList(userContext, ((Documento_generico_rigaBulk)rigaDocAmm).getAccertamento_scadenziario());
-					for (Accertamento_scad_voceBulk scadVoce : scadVoceBulks)
-						dettagliAnalitici.add(new DettaglioAnalitico(scadVoce.getCd_centro_responsabilita(), scadVoce.getCd_linea_attivita(), scadVoce.getIm_voce()));
-				} catch (ComponentException | PersistencyException e) {
-					throw new DetailedRuntimeException(e);
-				}
-				return new DettaglioFinanziario(rigaDocAmm, partita, terzo.getCd_terzo(),
-						new Elemento_voceBulk(accertamentoDB.getCd_elemento_voce(), rigaDocAmm.getFather().getEsercizio(), accertamentoDB.getTi_appartenenza(), accertamentoDB.getTi_gestione()),
-						dettagliAnalitici);
-			}
-			if (!Optional.ofNullable(rigaDocAmm.getScadenzaDocumentoContabile()).isPresent())
-				return new DettaglioFinanziario(rigaDocAmm, partita, terzo.getCd_terzo(),
-						new Elemento_voceBulk(CD_VOCE_DOCUMENTO_NON_LIQUIDABILE, 1900, "X", "X"),
-						new ArrayList<>());
-			return null;
-		}).filter(Objects::nonNull).collect(Collectors.toList());
+		//Creo un oggetto con i dettagli finanziari che mi servono per creare la prima nota
+		List<DettaglioFinanziario> righeDettFin = righeDocamm.stream()
+				.map(rigaDocAmm->this.convertToRigaDettFin(userContext, rigaDocAmm))
+				.filter(Objects::nonNull)
+				.collect(Collectors.toList());
 
 		/*
 		  Le fatture Commerciali con autofattura sono praticamente tutte le fatture Commerciali con Iva positiva
@@ -1382,33 +1265,6 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 		String valueAssociazioneConti = this.findValueByConfigurazioneCNR(userContext, CNRUserContext.getEsercizio(userContext), Configurazione_cnrBulk.PK_ECONOMICO_PATRIMONIALE, Configurazione_cnrBulk.SK_ASSOCIAZIONE_CONTI, 1);
 		final boolean isContoPatrimonialeByTerzo = valueAssociazioneConti.equals("TERZO");
-
-		final boolean isDocumentoAttivoInContoAcconto =
-				Optional.of(docamm).filter(Fattura_attiva_IBulk.class::isInstance).map(Fattura_attiva_IBulk.class::cast)
-						.map(Fattura_attiva_IBulk::isDocumentoInContoAcconto)
-						.orElse(Optional.of(docamm).filter(Nota_di_debito_attivaBulk.class::isInstance).map(Nota_di_debito_attivaBulk.class::cast)
-								.map(Nota_di_debito_attivaBulk::isDocumentoInContoAcconto)
-								.orElse(Optional.of(docamm).filter(Documento_genericoBulk.class::isInstance).map(Documento_genericoBulk.class::cast)
-										.map(Documento_genericoBulk::isDocumentoInContoAcconto)
-										.orElse(Boolean.FALSE)));
-
-
-		final boolean isDocumentoAttivoInContoAnticipo =
-				Optional.of(docamm).filter(Fattura_attiva_IBulk.class::isInstance).map(Fattura_attiva_IBulk.class::cast)
-						.map(Fattura_attiva_IBulk::isDocumentoInContoAnticipo)
-						.orElse(Optional.of(docamm).filter(Nota_di_debito_attivaBulk.class::isInstance).map(Nota_di_debito_attivaBulk.class::cast)
-								.map(Nota_di_debito_attivaBulk::isDocumentoInContoAnticipo)
-								.orElse(Optional.of(docamm).filter(Documento_genericoBulk.class::isInstance).map(Documento_genericoBulk.class::cast)
-										.map(Documento_genericoBulk::isDocumentoInContoAnticipo)
-										.orElse(Boolean.FALSE)));
-
-		final Voce_epBulk aContoAccontoDocatt, aContoAnticipoDocatt;
-		try {
-			aContoAccontoDocatt = isDocumentoAttivoInContoAcconto?this.findContoAccontoDocumentoAttivo(userContext, docamm.getEsercizio()):null;
-			aContoAnticipoDocatt = isDocumentoAttivoInContoAnticipo?this.findContoAnticipoDocumentoAttivo(userContext, docamm.getEsercizio()):null;
-		} catch (ComponentException|RemoteException e) {
-			throw new ApplicationRuntimeException(e);
-		}
 
 		final boolean isFatturaPassivaIstituzionale = Optional.of(docamm).filter(Fattura_passivaBulk.class::isInstance).map(Fattura_passivaBulk.class::cast).map(Fattura_passivaBulk::isIstituzionale).orElse(Boolean.FALSE);
 		final boolean isIntraUE = Optional.of(docamm).filter(Fattura_passivaBulk.class::isInstance).map(Fattura_passivaBulk.class::cast).map(Fattura_passivaBulk::getFl_intra_ue).orElse(Boolean.FALSE);
@@ -1512,20 +1368,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 																for (DettaglioFinanziario rigaDettFin:righeDettFinVocePartita) {
 																	//Individuazione conto costo....la variabile pairContoCostoGen è valorizzata se l'imponibile è presente tutto su una sola riga di fattura
 																	//in quel caso il costo è derivato tutto da quell'unica riga.....
-																	Pair<Voce_epBulk, Voce_epBulk> tmpPairContoCosto;
-																	if (pairContoCostoGen!=null)
-																		tmpPairContoCosto = pairContoCostoGen;
-																	else
-																		tmpPairContoCosto = this.findPairCosto(userContext, rigaDettFin);
-
-																	//Metto al posto del costo l'eventuale conto acconto/anticipo
-																	Pair<Voce_epBulk, Voce_epBulk> pairContoCosto;
-																	if (isDocumentoAttivoInContoAcconto)
-																		pairContoCosto = Pair.of(aContoAccontoDocatt, tmpPairContoCosto.getSecond());
-																	else if (isDocumentoAttivoInContoAnticipo)
-																		pairContoCosto = Pair.of(aContoAnticipoDocatt, tmpPairContoCosto.getSecond());
-																	else
-																		pairContoCosto = tmpPairContoCosto;
+																	Pair<Voce_epBulk, Voce_epBulk> pairContoCosto = this.findPairCostoRigaDocumento(userContext, rigaDettFin, pairContoCostoGen);
 																	IDocumentoAmministrativoBulk partita = rigaDettFin.getPartita();
 
 																	IDocumentoAmministrativoRigaBulk rigaDocamm = rigaDettFin.getRigaDocamm();
@@ -1575,21 +1418,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 																	try {
 																		//Individuazione conto costo....la variabile pairContoCostoGen è valorizzata se l'imponibile è presente tutto su una sola riga di fattura
 																		//in quel caso il costo è derivato tutto da quell'unica riga.....
-																		Pair<Voce_epBulk, Voce_epBulk> tmpPairContoCosto;
-																		if (pairContoCostoGen!=null)
-																			tmpPairContoCosto = pairContoCostoGen;
-																		else
-																			tmpPairContoCosto = this.findPairCosto(userContext, rigaDettFin);
-
-																		//Metto al posto del costo l'eventuale conto acconto/anticipo
-																		Pair<Voce_epBulk, Voce_epBulk> pairContoCosto;
-																		if (isDocumentoAttivoInContoAcconto)
-																			pairContoCosto = Pair.of(aContoAccontoDocatt, tmpPairContoCosto.getSecond());
-																		else if (isDocumentoAttivoInContoAnticipo)
-																			pairContoCosto = Pair.of(aContoAnticipoDocatt, tmpPairContoCosto.getSecond());
-																		else
-																			pairContoCosto = tmpPairContoCosto;
-
+																		Pair<Voce_epBulk, Voce_epBulk> pairContoCosto = this.findPairCostoRigaDocumento(userContext, rigaDettFin, pairContoCostoGen);
 																		IDocumentoAmministrativoBulk partita = rigaDettFin.getPartita();
 
 																		Optional<Scrittura_partita_doppiaBulk> scritturaPartita = Optional.ofNullable(rigaDettFin.getPartita().getScrittura_partita_doppia())
@@ -1625,29 +1454,20 @@ public class ProposeScritturaComponent extends CRUDComponent {
 																					.filter(el->el.getFatturaPassivaRiga().equalsByPrimaryKey(((Nota_di_credito_rigaBulk)rigaDettFin.getRigaDocamm()).getRiga_fattura_associata())).collect(Collectors.toList());
 
 																			if (listaFatturaOrdiniCollRiga.isEmpty()) {
-																				final boolean isFatturaCollegataInContoAcconto =
-																						Optional.of(fatturaCollegata).filter(Fattura_attiva_IBulk.class::isInstance).map(Fattura_attiva_IBulk.class::cast)
-																								.map(Fattura_attiva_IBulk::isDocumentoInContoAcconto).orElse(Boolean.FALSE);
+																				DettaglioFinanziario rigaDettFinCollegata = this.convertToRigaDettFin(userContext, rigaDettFin.getRigaPartita());
+																				Pair<Voce_epBulk, Voce_epBulk> pairContoCostoNota = this.findPairCostoRigaDocumento(userContext, rigaDettFinCollegata, null);
 
-																				final boolean isFatturaCollegataInContoAnticipo =
-																						Optional.of(fatturaCollegata).filter(Fattura_attiva_IBulk.class::isInstance).map(Fattura_attiva_IBulk.class::cast)
-																								.map(Fattura_attiva_IBulk::isDocumentoInContoAnticipo).orElse(Boolean.FALSE);
+																				//Se fattura originaria è di residuo metto come conto di costo il fatture da ricevere
+																				GregorianCalendar calDataDa = new GregorianCalendar();
+																				calDataDa.setTimeInMillis(rigaDettFin.getRigaPartita().getDt_da_competenza_coge().getTime());
 
-																				final Voce_epBulk aContoAccontoFatturaCollegata, aContoAnticipoFatturaCollegata;
-																				try {
-																					aContoAccontoFatturaCollegata = isFatturaCollegataInContoAcconto?this.findContoAccontoDocumentoAttivo(userContext, fatturaCollegata.getEsercizio()):null;
-																					aContoAnticipoFatturaCollegata = isFatturaCollegataInContoAnticipo?this.findContoAnticipoDocumentoAttivo(userContext, fatturaCollegata.getEsercizio()):null;
-																				} catch (ComponentException|RemoteException e) {
-																					throw new ApplicationRuntimeException(e);
-																				}
+																				GregorianCalendar calDataA = new GregorianCalendar();
+																				calDataA.setTimeInMillis(rigaDettFin.getRigaPartita().getDt_a_competenza_coge().getTime());
 
-																				Pair<Voce_epBulk, Voce_epBulk> pairContoCostoNota;
-																				if (isFatturaCollegataInContoAcconto)
-																					pairContoCostoNota = Pair.of(aContoAccontoFatturaCollegata, pairContoCosto.getSecond());
-																				else if (isFatturaCollegataInContoAnticipo)
-																					pairContoCostoNota = Pair.of(aContoAnticipoFatturaCollegata, pairContoCosto.getSecond());
-																				else
-																					pairContoCostoNota = pairContoCosto;
+																				//Se residuo metto il conto fatture da ricevere
+																				if (rigaDettFin.getPartita().getEsercizio().equals(rigaDettFin.getDocamm().getEsercizio()) &&
+																						(calDataDa.get(Calendar.YEAR)<rigaDettFin.getPartita().getEsercizio() || calDataA.get(Calendar.YEAR)<rigaDettFin.getPartita().getEsercizio()))
+																					pairContoCostoNota = Pair.of(findContoFattureDaRicevere(userContext, docamm.getEsercizio()), pairContoCostoNota.getSecond());
 
 																				testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, rigaDettFin, partita, pairContoCostoNota.getFirst(), rigaDettFin.getImImponibile());
 																				testataPrimaNota.openDettaglioPatrimonialePartita(userContext, docamm, partita, pairContoCostoNota.getSecond(), rigaDettFin.getImImponibile(), aCdTerzo);
@@ -1704,21 +1524,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 																for (DettaglioFinanziario rigaDettFin:righeDettFinVocePartita) {
 																	//Individuazione conto costo....la variabile pairContoCostoGen è valorizzata se l'imponibile è presente tutto su una sola riga di fattura
 																	//in quel caso il costo è derivato tutto da quell'unica riga.....
-																	Pair<Voce_epBulk, Voce_epBulk> tmpPairContoCosto;
-																	if (pairContoCostoGen!=null)
-																		tmpPairContoCosto = pairContoCostoGen;
-																	else
-																		tmpPairContoCosto = this.findPairCosto(userContext, rigaDettFin);
-
-																	//Metto al posto del costo l'eventuale conto acconto/anticipo
-																	Pair<Voce_epBulk, Voce_epBulk> pairContoCosto;
-																	if (isDocumentoAttivoInContoAcconto)
-																		pairContoCosto = Pair.of(aContoAccontoDocatt, tmpPairContoCosto.getSecond());
-																	else if (isDocumentoAttivoInContoAnticipo)
-																		pairContoCosto = Pair.of(aContoAnticipoDocatt, tmpPairContoCosto.getSecond());
-																	else
-																		pairContoCosto = tmpPairContoCosto;
-
+																	Pair<Voce_epBulk, Voce_epBulk> pairContoCosto = this.findPairCostoRigaDocumento(userContext, rigaDettFin, pairContoCostoGen);
 																	IDocumentoAmministrativoBulk partita = rigaDettFin.getPartita();
 
 																	testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, rigaDettFin, partita, pairContoCosto.getFirst(), rigaDettFin.getRigaDocamm().getIm_imponibile());
@@ -1736,33 +1542,16 @@ public class ProposeScritturaComponent extends CRUDComponent {
 																righeDettFinVocePartita.stream()
 																		.filter(rigaDettFin -> Optional.ofNullable(rigaDettFin.getImImposta()).orElse(BigDecimal.ZERO).compareTo(BigDecimal.ZERO)!=0)
 																		.forEach(rigaDettFin->{
-																	try {
-																		//Individuazione conto costo....la variabile pairContoCostoGen è valorizzata se l'imponibile è presente tutto su una sola riga di fattura
-																		//in quel caso il costo è derivato tutto da quell'unica riga.....
-																		Pair<Voce_epBulk, Voce_epBulk> tmpPairContoCosto;
-																		if (pairContoCostoGen != null)
-																			tmpPairContoCosto = pairContoCostoGen;
-																		else
-																			tmpPairContoCosto = this.findPairCosto(userContext, rigaDettFin);
+																	//Individuazione conto costo....la variabile pairContoCostoGen è valorizzata se l'imponibile è presente tutto su una sola riga di fattura
+																	//in quel caso il costo è derivato tutto da quell'unica riga.....
+																	Pair<Voce_epBulk, Voce_epBulk> pairContoCosto = this.findPairCostoRigaDocumento(userContext, rigaDettFin, pairContoCostoGen);
+																	IDocumentoAmministrativoBulk partita = rigaDettFin.getPartita();
 
-																		//Metto al posto del costo l'eventuale conto acconto/anticipo
-																		Pair<Voce_epBulk, Voce_epBulk> pairContoCosto;
-																		if (isDocumentoAttivoInContoAcconto)
-																			pairContoCosto = Pair.of(aContoAccontoDocatt, tmpPairContoCosto.getSecond());
-																		else if (isDocumentoAttivoInContoAnticipo)
-																			pairContoCosto = Pair.of(aContoAnticipoDocatt, tmpPairContoCosto.getSecond());
-																		else
-																			pairContoCosto = tmpPairContoCosto;
+																	BigDecimal imIva = rigaDettFin.getImImposta();
 
-																		IDocumentoAmministrativoBulk partita = rigaDettFin.getPartita();
-																		BigDecimal imIva = rigaDettFin.getImImposta();
-
-																		if (!ivaDaRegistrareACosto) {
-																			testataPrimaNota.openDettaglioIva(userContext, docamm, partita, aContoIva, imIva, aCdTerzo, cdCoriIva);
-																			mapPatrimonialeIva.add(new DettaglioScrittura(pairContoCosto.getSecond(), partita, imIva));
-																		}
-																	} catch (ComponentException|PersistencyException|RemoteException e) {
-																		throw new ApplicationRuntimeException(e);
+																	if (!ivaDaRegistrareACosto) {
+																		testataPrimaNota.openDettaglioIva(userContext, docamm, partita, aContoIva, imIva, aCdTerzo, cdCoriIva);
+																		mapPatrimonialeIva.add(new DettaglioScrittura(pairContoCosto.getSecond(), partita, imIva));
 																	}
 																});
 
@@ -2356,9 +2145,15 @@ public class ProposeScritturaComponent extends CRUDComponent {
 								List<Mandato_rigaBulk> listRigheMandato = mapCdUoDocamm.get(aPgDocamm);
 
 								IDocumentoAmministrativoBulk docamm;
-								if (TipoDocumentoEnum.fromValue(aTipoDocamm).isDocumentoAmministrativoPassivo()) {
-									docamm = (Documento_amministrativo_passivoBulk) getHome(userContext, Documento_amministrativo_passivoBulk.class)
-											.findByPrimaryKey(new Documento_amministrativo_passivoBulk(aCdCdsDocamm, aCdUoDocamm, aEsercizioDocamm, aPgDocamm));
+								if (TipoDocumentoEnum.fromValue(aTipoDocamm).isFatturaPassiva()) {
+									docamm = (Fattura_passiva_IBulk) getHome(userContext, Fattura_passiva_IBulk.class)
+											.findByPrimaryKey(new Fattura_passiva_IBulk(aCdCdsDocamm, aCdUoDocamm, aEsercizioDocamm, aPgDocamm));
+								} else if (TipoDocumentoEnum.fromValue(aTipoDocamm).isNotaDebitoPassiva()) {
+									docamm = (Nota_di_debitoBulk) getHome(userContext, Nota_di_debitoBulk.class)
+												.findByPrimaryKey(new Nota_di_debitoBulk(aCdCdsDocamm, aCdUoDocamm, aEsercizioDocamm, aPgDocamm));
+								} else if (TipoDocumentoEnum.fromValue(aTipoDocamm).isNotaCreditoPassiva()) {
+									docamm = (Nota_di_creditoBulk) getHome(userContext, Nota_di_creditoBulk.class)
+											.findByPrimaryKey(new Nota_di_creditoBulk(aCdCdsDocamm, aCdUoDocamm, aEsercizioDocamm, aPgDocamm));
 								} else if (TipoDocumentoEnum.fromValue(aTipoDocamm).isDocumentoGenericoPassivo()) {
 									Documento_genericoHome home = (Documento_genericoHome) getHome(userContext, Documento_genericoBulk.class);
 									docamm = (IDocumentoAmministrativoBulk)home.findByPrimaryKey(new Documento_genericoBulk(aCdCdsDocamm, aTipoDocamm, aCdUoDocamm, aEsercizioDocamm, aPgDocamm));
@@ -4007,7 +3802,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 								Voce_epBulk aContoBeneServizio = this.getContoByBeneServizio(userContext, docammRiga);
 								Pair<Voce_epBulk, Voce_epBulk> myPairContoCosto;
 								if (Optional.ofNullable(aContoBeneServizio).isPresent())
-									list.add(new DettaglioFinanziario(docammRiga, null, cdTerzoDocAmm, aContoBeneServizio));
+									list.add(new DettaglioFinanziario(docammRiga, cdTerzoDocAmm, aContoBeneServizio));
 								else
 									list.add(new DettaglioFinanziario(docammRiga, null, cdTerzoDocAmm, obbligazioneDB.getElemento_voce(), null));
 							});
@@ -4031,8 +3826,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 											listaFattureCalcolate.add(fattordine.getFatturaPassivaRiga());
 											fattordine.setOrdineAcqConsegna((OrdineAcqConsegnaBulk) loadObject(userContext, fattordine.getOrdineAcqConsegna()));
-											list.add(new DettaglioFinanziario(docamm, null, cdTerzoDocAmm, fattordine.getOrdineAcqConsegna().getContoBulk(), null, null,
-													rigaFattura.getIm_imponibile(), rigaFattura.getIm_iva()));
+											list.add(new DettaglioFinanziario(docamm, cdTerzoDocAmm, fattordine.getOrdineAcqConsegna().getContoBulk(), rigaFattura.getIm_imponibile(), rigaFattura.getIm_iva()));
 										});
 							}
 							//Faccio il controllo per le righe di una fattura da ordine ma con una riga non associata
@@ -4058,8 +3852,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 													} catch (ComponentException | PersistencyException e) {
 														throw new DetailedRuntimeException(e);
 													}
-													list.add(new DettaglioFinanziario(docamm, null, cdTerzoDocAmm, obbligazioneDB.getElemento_voce(), dettagliAnalitici, null, null,
-															imponibile, imposta));
+													list.add(new DettaglioFinanziario(docamm, cdTerzoDocAmm, obbligazioneDB.getElemento_voce(), dettagliAnalitici, imponibile, imposta));
 												}
 											} catch (ComponentException | PersistencyException e) {
 												throw new ApplicationRuntimeException(e);
@@ -5881,12 +5674,15 @@ public class ProposeScritturaComponent extends CRUDComponent {
 				if (docamm instanceof Documento_genericoBulk) {
 					Documento_genericoHome home = (Documento_genericoHome) getHome(userContext, Documento_genericoBulk.class);
 					result = home.findDocumentoGenericoRigheList((Documento_genericoBulk) docamm);
+					result.stream().map(Documento_generico_rigaBulk.class::cast).forEach(el->el.setDocumento_generico((Documento_genericoBulk) docamm));
 					((Documento_genericoBulk)docamm).setDocumento_generico_dettColl(new BulkList(result));
 				} else if (docamm instanceof Fattura_passivaBulk) {
 					result = Utility.createFatturaPassivaComponentSession().findDettagli(userContext, (Fattura_passivaBulk) docamm);
+					result.stream().map(Fattura_passiva_rigaBulk.class::cast).forEach(el->el.setFattura_passiva((Fattura_passivaBulk) docamm));
 					((Fattura_passivaBulk)docamm).setFattura_passiva_dettColl(new BulkList(result));
 				} else if (docamm instanceof Fattura_attivaBulk) {
 					result = Utility.createFatturaAttivaSingolaComponentSession().findDettagli(userContext, (Fattura_attivaBulk) docamm);
+					result.stream().map(Fattura_attiva_rigaBulk.class::cast).forEach(el->el.setFattura_attiva((Fattura_attivaBulk) docamm));
 					((Fattura_attivaBulk) docamm).setFattura_attiva_dettColl(new BulkList(result));
 				} else
 					throw new ApplicationException("Scrittura Economica non possibile. Non risulta gestito il recupero delle righe di dettaglio di un documento di tipo "+ docamm.getCd_tipo_doc()+".");
@@ -6282,4 +6078,185 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			throw new DetailedRuntimeException(e);
 		}
     }
+
+	private Pair<Voce_epBulk, Voce_epBulk> findPairCostoRigaDocumento(UserContext userContext, DettaglioFinanziario rigaDettFin, Pair<Voce_epBulk, Voce_epBulk> pairContoCostoGen) {
+		IDocumentoAmministrativoBulk docamm = rigaDettFin.getDocamm();
+		final boolean isDocumentoAttivoInContoAcconto =
+				Optional.of(docamm).filter(Fattura_attiva_IBulk.class::isInstance).map(Fattura_attiva_IBulk.class::cast)
+						.map(Fattura_attiva_IBulk::isDocumentoInContoAcconto)
+						.orElse(Optional.of(docamm).filter(Nota_di_debito_attivaBulk.class::isInstance).map(Nota_di_debito_attivaBulk.class::cast)
+								.map(Nota_di_debito_attivaBulk::isDocumentoInContoAcconto)
+								.orElse(Optional.of(docamm).filter(Documento_genericoBulk.class::isInstance).map(Documento_genericoBulk.class::cast)
+										.map(Documento_genericoBulk::isDocumentoInContoAcconto)
+										.orElse(Boolean.FALSE)));
+
+
+		final boolean isDocumentoAttivoInContoAnticipo =
+				Optional.of(docamm).filter(Fattura_attiva_IBulk.class::isInstance).map(Fattura_attiva_IBulk.class::cast)
+						.map(Fattura_attiva_IBulk::isDocumentoInContoAnticipo)
+						.orElse(Optional.of(docamm).filter(Nota_di_debito_attivaBulk.class::isInstance).map(Nota_di_debito_attivaBulk.class::cast)
+								.map(Nota_di_debito_attivaBulk::isDocumentoInContoAnticipo)
+								.orElse(Optional.of(docamm).filter(Documento_genericoBulk.class::isInstance).map(Documento_genericoBulk.class::cast)
+										.map(Documento_genericoBulk::isDocumentoInContoAnticipo)
+										.orElse(Boolean.FALSE)));
+
+		final Voce_epBulk aContoAccontoDocatt, aContoAnticipoDocatt;
+		try {
+			aContoAccontoDocatt = isDocumentoAttivoInContoAcconto?this.findContoAccontoDocumentoAttivo(userContext, docamm.getEsercizio()):null;
+			aContoAnticipoDocatt = isDocumentoAttivoInContoAnticipo?this.findContoAnticipoDocumentoAttivo(userContext, docamm.getEsercizio()):null;
+
+			//Individuazione conto costo....la variabile pairContoCostoGen è valorizzata se l'imponibile è presente tutto su una sola riga di fattura
+			//in quel caso il costo è derivato tutto da quell'unica riga.....
+			Pair<Voce_epBulk, Voce_epBulk> tmpPairContoCosto;
+			if (pairContoCostoGen!=null)
+				tmpPairContoCosto = pairContoCostoGen;
+			else
+				tmpPairContoCosto = this.findPairCosto(userContext, rigaDettFin);
+
+			//Metto al posto del costo l'eventuale conto acconto/anticipo
+			Pair<Voce_epBulk, Voce_epBulk> pairContoCosto;
+			if (isDocumentoAttivoInContoAcconto)
+				pairContoCosto = Pair.of(aContoAccontoDocatt, tmpPairContoCosto.getSecond());
+			else if (isDocumentoAttivoInContoAnticipo)
+				pairContoCosto = Pair.of(aContoAnticipoDocatt, tmpPairContoCosto.getSecond());
+			else
+				pairContoCosto = tmpPairContoCosto;
+			return pairContoCosto;
+		} catch (ComponentException | RemoteException | PersistencyException e) {
+			throw new ApplicationRuntimeException(e);
+		}
+	}
+
+	private DettaglioFinanziario convertToRigaDettFin(UserContext userContext, IDocumentoAmministrativoRigaBulk rigaDocAmm) {
+		//Attenzione: recupero il terzo dal docamm perchè sulle righe potrebbe non essere valorizzato
+		TerzoBulk terzo;
+		IDocumentoAmministrativoBulk docamm = rigaDocAmm.getFather();
+		IDocumentoAmministrativoRigaBulk rigaPartita = null;
+		if (docamm instanceof Fattura_passivaBulk) {
+			terzo = ((Fattura_passivaBulk) docamm).getFornitore();
+			if (rigaDocAmm instanceof Nota_di_credito_rigaBulk)
+				rigaPartita = Optional.of(rigaDocAmm)
+						.map(Nota_di_credito_rigaBulk.class::cast)
+						.flatMap(notaDiCreditoRigaBulk -> Optional.ofNullable(notaDiCreditoRigaBulk.getRiga_fattura_origine()))
+						.orElse(null);
+		} else if (Optional.ofNullable(docamm)
+				.filter(Documento_genericoBulk.class::isInstance)
+				.map(Documento_genericoBulk.class::cast)
+				.map(Documento_genericoBulk::isDocumentoStorno)
+				.orElse(Boolean.FALSE)) {
+			terzo = rigaDocAmm.getTerzo();
+			rigaPartita = Optional.of(rigaDocAmm)
+					.filter(Documento_generico_rigaBulk.class::isInstance)
+					.map(Documento_generico_rigaBulk.class::cast)
+					.flatMap(Documento_generico_rigaBulk::getRigaStorno)
+					.orElse(null);
+		} else if (docamm instanceof Fattura_attivaBulk) {
+			terzo = ((Fattura_attivaBulk) docamm).getCliente();
+			if (rigaDocAmm instanceof Nota_di_credito_attiva_rigaBulk)
+				rigaPartita = Optional.of(rigaDocAmm)
+						.map(Nota_di_credito_attiva_rigaBulk.class::cast)
+						.flatMap(notaDiCreditoRigaBulk -> Optional.ofNullable(notaDiCreditoRigaBulk.getRiga_fattura_associata()))
+						.orElse(null);
+		} else if (docamm instanceof OrdineAcqBulk)
+			terzo = ((OrdineAcqBulk) docamm).getFornitore();
+		else {
+			terzo = rigaDocAmm.getTerzo();
+			if (TipoDocumentoEnum.fromValue(docamm.getCd_tipo_doc()).isDocumentoGenericoAttivo()) {
+				((Documento_genericoBulk) docamm).setTi_entrate_spese(Documento_genericoBulk.ENTRATE);
+				((Documento_generico_rigaBulk) rigaDocAmm).setDocumento_generico((Documento_genericoBulk)docamm);
+			} else if (TipoDocumentoEnum.fromValue(docamm.getCd_tipo_doc()).isDocumentoGenericoPassivo()) {
+				((Documento_genericoBulk) docamm).setTi_entrate_spese(Documento_genericoBulk.SPESE);
+				((Documento_generico_rigaBulk) rigaDocAmm).setDocumento_generico((Documento_genericoBulk)docamm);
+			}
+		}
+		//Setto la rigaPartita con la riga del documento selezionato se non valorizzato
+		rigaPartita = Optional.ofNullable(rigaPartita).orElse(rigaDocAmm);
+
+		if (Optional.ofNullable(rigaDocAmm.getScadenzaDocumentoContabile()).filter(Obbligazione_scadenzarioBulk.class::isInstance).isPresent()) {
+			ObbligazioneBulk obbligazioneDB = Optional.of(rigaDocAmm.getScadenzaDocumentoContabile().getFather()).filter(ObbligazioneBulk.class::isInstance).map(ObbligazioneBulk.class::cast)
+					.filter(el -> el.getCd_elemento_voce() != null).orElseGet(() -> {
+						try {
+							ObbligazioneHome obbligazionehome = (ObbligazioneHome) getHome(userContext, ObbligazioneBulk.class);
+							return (ObbligazioneBulk) obbligazionehome.findByPrimaryKey((ObbligazioneBulk) rigaDocAmm.getScadenzaDocumentoContabile().getFather());
+						} catch (ComponentException | PersistencyException e) {
+							throw new DetailedRuntimeException(e);
+						}
+					});
+
+			List<DettaglioAnalitico> dettagliAnalitici = new ArrayList<>();
+			//carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
+			try {
+				Obbligazione_scadenzarioHome obbligazioneScadenzarioHome = (Obbligazione_scadenzarioHome) getHome(userContext, Obbligazione_scadenzarioBulk.class);
+				List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, (Obbligazione_scadenzarioBulk)rigaDocAmm.getScadenzaDocumentoContabile());
+				for (Obbligazione_scad_voceBulk scadVoce : scadVoceBulks)
+					dettagliAnalitici.add(new DettaglioAnalitico(scadVoce.getCd_centro_responsabilita(), scadVoce.getCd_linea_attivita(), scadVoce.getIm_voce()));
+			} catch (ComponentException | PersistencyException e) {
+				throw new DetailedRuntimeException(e);
+			}
+
+			//Nel caricare la voce di bilancio metto sempre l'esercizio del documento perchè se ribaltato l'anno sarebbe quello successivo con la conseguenza che nel proporre
+			//i conti di costo proporrebbe quelli associati alle voci di anni differenti
+			return new DettaglioFinanziario(rigaDocAmm, rigaPartita, rigaDocAmm.getCd_terzo(),
+					new Elemento_voceBulk(obbligazioneDB.getCd_elemento_voce(), rigaDocAmm.getFather().getEsercizio(), obbligazioneDB.getTi_appartenenza(), obbligazioneDB.getTi_gestione()),
+					dettagliAnalitici);
+		}
+
+		if (Optional.ofNullable(rigaDocAmm.getScadenzaDocumentoContabile()).filter(Accertamento_scadenzarioBulk.class::isInstance).isPresent()) {
+			AccertamentoBulk accertamentoDB = Optional.of(rigaDocAmm.getScadenzaDocumentoContabile().getFather())
+					.filter(AccertamentoBulk.class::isInstance).map(AccertamentoBulk.class::cast)
+					.filter(el -> el.getCd_elemento_voce() != null).orElseGet(() -> {
+						try {
+							AccertamentoHome home = (AccertamentoHome) getHome(userContext, AccertamentoBulk.class);
+							return (AccertamentoBulk) home.findByPrimaryKey((AccertamentoBulk) rigaDocAmm.getScadenzaDocumentoContabile().getFather());
+						} catch (ComponentException | PersistencyException e) {
+							throw new DetailedRuntimeException(e);
+						}
+					});
+			List<DettaglioAnalitico> dettagliAnalitici = new ArrayList<>();
+			//carico i dettagli analitici recuperandoli dall'accertamento_scad_voce
+			try {
+				Accertamento_scadenzarioHome accertamentoScadenzarioHome = (Accertamento_scadenzarioHome) getHome(userContext, Accertamento_scadenzarioBulk.class);
+				List<Accertamento_scad_voceBulk> scadVoceBulks = accertamentoScadenzarioHome.findAccertamento_scad_voceList(userContext, (Accertamento_scadenzarioBulk)rigaDocAmm.getScadenzaDocumentoContabile());
+				for (Accertamento_scad_voceBulk scadVoce : scadVoceBulks)
+					dettagliAnalitici.add(new DettaglioAnalitico(scadVoce.getCd_centro_responsabilita(), scadVoce.getCd_linea_attivita(), scadVoce.getIm_voce()));
+			} catch (ComponentException | PersistencyException e) {
+				throw new DetailedRuntimeException(e);
+			}
+			return new DettaglioFinanziario(rigaDocAmm, rigaPartita, terzo.getCd_terzo(),
+					new Elemento_voceBulk(accertamentoDB.getCd_elemento_voce(), rigaDocAmm.getFather().getEsercizio(), accertamentoDB.getTi_appartenenza(), accertamentoDB.getTi_gestione()),
+					dettagliAnalitici);
+		}
+
+		if (!Optional.ofNullable(rigaDocAmm.getScadenzaDocumentoContabile()).isPresent() && docamm instanceof Documento_genericoBulk && docamm.getTipoDocumentoEnum().isGenericoEntrata() &&
+				(((Documento_generico_rigaBulk)rigaDocAmm).getAccertamento_scadenziario()!=null)) {
+			AccertamentoBulk accertamentoDB = Optional.of((((Documento_generico_rigaBulk)rigaDocAmm).getAccertamento_scadenziario().getAccertamento()))
+					.filter(el -> el.getCd_elemento_voce() != null).orElseGet(() -> {
+						try {
+							AccertamentoHome home = (AccertamentoHome) getHome(userContext, AccertamentoBulk.class);
+							return (AccertamentoBulk) home.findByPrimaryKey((((Documento_generico_rigaBulk)rigaDocAmm).getAccertamento_scadenziario().getAccertamento()));
+						} catch (ComponentException | PersistencyException e) {
+							throw new DetailedRuntimeException(e);
+						}
+					});
+			List<DettaglioAnalitico> dettagliAnalitici = new ArrayList<>();
+			//carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
+			try {
+				Accertamento_scadenzarioHome accertamentoScadenzarioHome = (Accertamento_scadenzarioHome) getHome(userContext, Accertamento_scadenzarioBulk.class);
+				List<Accertamento_scad_voceBulk> scadVoceBulks = accertamentoScadenzarioHome.findAccertamento_scad_voceList(userContext, ((Documento_generico_rigaBulk)rigaDocAmm).getAccertamento_scadenziario());
+				for (Accertamento_scad_voceBulk scadVoce : scadVoceBulks)
+					dettagliAnalitici.add(new DettaglioAnalitico(scadVoce.getCd_centro_responsabilita(), scadVoce.getCd_linea_attivita(), scadVoce.getIm_voce()));
+			} catch (ComponentException | PersistencyException e) {
+				throw new DetailedRuntimeException(e);
+			}
+			return new DettaglioFinanziario(rigaDocAmm, rigaPartita, terzo.getCd_terzo(),
+					new Elemento_voceBulk(accertamentoDB.getCd_elemento_voce(), rigaDocAmm.getFather().getEsercizio(), accertamentoDB.getTi_appartenenza(), accertamentoDB.getTi_gestione()),
+					dettagliAnalitici);
+		}
+
+		if (!Optional.ofNullable(rigaDocAmm.getScadenzaDocumentoContabile()).isPresent())
+			return new DettaglioFinanziario(rigaDocAmm, rigaPartita, terzo.getCd_terzo(),
+					new Elemento_voceBulk(CD_VOCE_DOCUMENTO_NON_LIQUIDABILE, 1900, "X", "X"),
+					new ArrayList<>());
+		return null;
+	}
 }
