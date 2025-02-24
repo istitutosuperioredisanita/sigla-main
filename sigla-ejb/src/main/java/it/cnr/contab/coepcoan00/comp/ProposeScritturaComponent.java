@@ -33,10 +33,7 @@ import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceHome;
 import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.cori00.docs.bulk.*;
 import it.cnr.contab.docamm00.docs.bulk.*;
-import it.cnr.contab.docamm00.tabrif.bulk.SezionaleBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.SezionaleHome;
-import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleHome;
+import it.cnr.contab.docamm00.tabrif.bulk.*;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.fondecon00.core.bulk.Fondo_economaleBulk;
 import it.cnr.contab.fondecon00.core.bulk.Fondo_economaleHome;
@@ -89,28 +86,26 @@ public class ProposeScritturaComponent extends CRUDComponent {
 	private final static boolean isAttivaGestioneSopravvenienze = Boolean.FALSE;
 
 	private static class DettaglioScrittura {
-		public DettaglioScrittura(Voce_epBulk conto, BigDecimal importo) {
+		public DettaglioScrittura(Voce_epBulk conto, IDocumentoAmministrativoBulk partita, BigDecimal importo) {
 			this.conto = conto;
+			this.partita = partita;
 			this.importo = importo;
 		}
 
 		Voce_epBulk conto;
+		IDocumentoAmministrativoBulk partita;
 		BigDecimal importo;
 
 		public Voce_epBulk getConto() {
 			return conto;
 		}
 
-		public void setConto(Voce_epBulk conto) {
-			this.conto = conto;
+		public IDocumentoAmministrativoBulk getPartita() {
+			return partita;
 		}
 
 		public BigDecimal getImporto() {
 			return importo;
-		}
-
-		public void setImporto(BigDecimal importo) {
-			this.importo = importo;
 		}
 	}
 
@@ -1505,37 +1500,34 @@ public class ProposeScritturaComponent extends CRUDComponent {
 														try {
 															List<DettaglioFinanziario> righeDettFinVocePartita = mapPartita.get(aCd_tipo_doc).get(aCd_cds).get(aCd_uo).get(aEsercizioDoc).get(aPg_doc);
 
-															BigDecimal imImponibile = righeDettFinVocePartita.stream().map(DettaglioFinanziario::getImImponibile).reduce(BigDecimal.ZERO, BigDecimal::add);
-															BigDecimal imIva = righeDettFinVocePartita.stream()
+															BigDecimal importoIva = righeDettFinVocePartita.stream()
 																	.map(rigaDettFin -> Optional.ofNullable(rigaDettFin.getImImposta()).orElse(BigDecimal.ZERO))
 																	.reduce(BigDecimal.ZERO, BigDecimal::add);
 
-															DettaglioFinanziario rigaDettFinVocePartita = righeDettFinVocePartita.stream().findAny().get();
-															IDocumentoAmministrativoBulk partita = rigaDettFinVocePartita.getPartita();
-
-															//Individuazione conto costo....la variabile pairContoCostoGen è valorizzata se l'imponibile è presente tutto su una sola riga di fattura
-															//in quel caso il costo è derivato tutto da quell'unica riga.....
-															Pair<Voce_epBulk, Voce_epBulk> tmpPairContoCosto;
-															if (pairContoCostoGen!=null)
-																tmpPairContoCosto = pairContoCostoGen;
-															else
-																tmpPairContoCosto = this.findPairCosto(userContext, rigaDettFinVocePartita);
-
-															//Metto al posto del costo l'eventuale conto acconto/anticipo
-															Pair<Voce_epBulk, Voce_epBulk> pairContoCosto;
-															if (isDocumentoAttivoInContoAcconto)
-																pairContoCosto = Pair.of(aContoAccontoDocatt, tmpPairContoCosto.getSecond());
-															else if (isDocumentoAttivoInContoAnticipo)
-																pairContoCosto = Pair.of(aContoAnticipoDocatt, tmpPairContoCosto.getSecond());
-															else
-																pairContoCosto = tmpPairContoCosto;
-
-															final boolean registraIvaACosto = imIva.compareTo(BigDecimal.ZERO)!=0 && registraIva && ivaDaRegistrareACosto;
+															final boolean registraIvaACosto = importoIva.compareTo(BigDecimal.ZERO)!=0 && registraIva && ivaDaRegistrareACosto;
 															List<DettaglioScrittura> mapPatrimonialeIva = new ArrayList<>();
 
 															//Registro Imponibile Fattura e iva a costo se previsto
 															if (isFatturaPassivaDaOrdini && !listaFatturaOrdini.isEmpty()) {
-																righeDettFinVocePartita.forEach(rigaDettFin-> {
+																for (DettaglioFinanziario rigaDettFin:righeDettFinVocePartita) {
+																	//Individuazione conto costo....la variabile pairContoCostoGen è valorizzata se l'imponibile è presente tutto su una sola riga di fattura
+																	//in quel caso il costo è derivato tutto da quell'unica riga.....
+																	Pair<Voce_epBulk, Voce_epBulk> tmpPairContoCosto;
+																	if (pairContoCostoGen!=null)
+																		tmpPairContoCosto = pairContoCostoGen;
+																	else
+																		tmpPairContoCosto = this.findPairCosto(userContext, rigaDettFin);
+
+																	//Metto al posto del costo l'eventuale conto acconto/anticipo
+																	Pair<Voce_epBulk, Voce_epBulk> pairContoCosto;
+																	if (isDocumentoAttivoInContoAcconto)
+																		pairContoCosto = Pair.of(aContoAccontoDocatt, tmpPairContoCosto.getSecond());
+																	else if (isDocumentoAttivoInContoAnticipo)
+																		pairContoCosto = Pair.of(aContoAnticipoDocatt, tmpPairContoCosto.getSecond());
+																	else
+																		pairContoCosto = tmpPairContoCosto;
+																	IDocumentoAmministrativoBulk partita = rigaDettFin.getPartita();
+
 																	IDocumentoAmministrativoRigaBulk rigaDocamm = rigaDettFin.getRigaDocamm();
 																	final List<FatturaOrdineBulk> listaFatturaOrdiniCollRiga = listaFatturaOrdini.stream()
 																			.filter(el->el.getFatturaPassivaRiga().equalsByPrimaryKey(rigaDocamm)).collect(Collectors.toList());
@@ -1546,7 +1538,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 																		if (registraIvaACosto) {
 																			testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, rigaDettFin, partita, pairContoCosto.getFirst(), rigaDocamm.getIm_iva());
-																			mapPatrimonialeIva.add(new DettaglioScrittura(pairContoCosto.getSecond(), rigaDocamm.getIm_iva()));
+																			mapPatrimonialeIva.add(new DettaglioScrittura(pairContoCosto.getSecond(), partita, rigaDocamm.getIm_iva()));
 																		}
 																	} else {
 																		listaFatturaOrdiniCollRiga
@@ -1562,11 +1554,11 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 																					if (registraIvaACosto) {
 																						testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, rigaDettFin, partita, fatturaOrdineBulk, fatturaOrdineBulk.getIvaPerRigaFattura());
-																						mapPatrimonialeIva.add(new DettaglioScrittura(aContoContropartita, fatturaOrdineBulk.getIvaPerRigaFattura()));
+																						mapPatrimonialeIva.add(new DettaglioScrittura(aContoContropartita, partita, fatturaOrdineBulk.getIvaPerRigaFattura()));
 																					}
 																				});
 																	}
-																});
+																}
 															} else if (docamm instanceof Nota_di_creditoBulk || docamm instanceof Nota_di_credito_attivaBulk ||
 																	(docamm instanceof Documento_genericoBulk && docamm.isDocumentoStorno())) {
 																Optional<Scrittura_partita_doppiaBulk> scritturaNota = Optional.ofNullable(docamm.getScrittura_partita_doppia())
@@ -1581,6 +1573,25 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 																righeDettFinVocePartita.forEach(rigaDettFin->{
 																	try {
+																		//Individuazione conto costo....la variabile pairContoCostoGen è valorizzata se l'imponibile è presente tutto su una sola riga di fattura
+																		//in quel caso il costo è derivato tutto da quell'unica riga.....
+																		Pair<Voce_epBulk, Voce_epBulk> tmpPairContoCosto;
+																		if (pairContoCostoGen!=null)
+																			tmpPairContoCosto = pairContoCostoGen;
+																		else
+																			tmpPairContoCosto = this.findPairCosto(userContext, rigaDettFin);
+
+																		//Metto al posto del costo l'eventuale conto acconto/anticipo
+																		Pair<Voce_epBulk, Voce_epBulk> pairContoCosto;
+																		if (isDocumentoAttivoInContoAcconto)
+																			pairContoCosto = Pair.of(aContoAccontoDocatt, tmpPairContoCosto.getSecond());
+																		else if (isDocumentoAttivoInContoAnticipo)
+																			pairContoCosto = Pair.of(aContoAnticipoDocatt, tmpPairContoCosto.getSecond());
+																		else
+																			pairContoCosto = tmpPairContoCosto;
+
+																		IDocumentoAmministrativoBulk partita = rigaDettFin.getPartita();
+
 																		Optional<Scrittura_partita_doppiaBulk> scritturaPartita = Optional.ofNullable(rigaDettFin.getPartita().getScrittura_partita_doppia())
 																			.map(spd->Optional.of(spd).filter(el->el.getCrudStatus()!=OggettoBulk.UNDEFINED)).orElseGet(()-> {
 																				try {
@@ -1643,7 +1654,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 																				if (registraIvaACosto) {
 																					testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, rigaDettFin, partita, pairContoCostoNota.getFirst(), rigaDettFin.getImImposta());
-																					mapPatrimonialeIva.add(new DettaglioScrittura(pairContoCostoNota.getSecond(), rigaDettFin.getImImposta()));
+																					mapPatrimonialeIva.add(new DettaglioScrittura(pairContoCostoNota.getSecond(), partita, rigaDettFin.getImImposta()));
 																				}
 																			} else {
 																				FatturaOrdineBulk fatturaOrdineBulk = listaFatturaOrdiniCollRiga.stream().findAny().get();
@@ -1658,7 +1669,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 																				if (registraIvaACosto) {
 																					testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, rigaDettFin, partita, fatturaOrdineBulk, rigaDettFin.getImImposta());
-																					mapPatrimonialeIva.add(new DettaglioScrittura(aContoContropartita, rigaDettFin.getImImposta()));
+																					mapPatrimonialeIva.add(new DettaglioScrittura(aContoContropartita, partita, rigaDettFin.getImImposta()));
 																				}
 																			}
 																		} else {
@@ -1682,7 +1693,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 																			if (registraIvaACosto) {
 																				testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, rigaDettFin, partita, pairContoCosto.getFirst(), rigaDettFin.getImImposta());
-																				mapPatrimonialeIva.add(new DettaglioScrittura(vocePatrimoniale, rigaDettFin.getImImposta()));
+																				mapPatrimonialeIva.add(new DettaglioScrittura(vocePatrimoniale, partita, rigaDettFin.getImImposta()));
 																			}
 																		}
 																	} catch (ComponentException | PersistencyException | RemoteException | IntrospectionException e) {
@@ -1690,27 +1701,74 @@ public class ProposeScritturaComponent extends CRUDComponent {
 																	}
                                                                 });
 															} else {
-																righeDettFinVocePartita.forEach(rigaDettFin-> {
+																for (DettaglioFinanziario rigaDettFin:righeDettFinVocePartita) {
+																	//Individuazione conto costo....la variabile pairContoCostoGen è valorizzata se l'imponibile è presente tutto su una sola riga di fattura
+																	//in quel caso il costo è derivato tutto da quell'unica riga.....
+																	Pair<Voce_epBulk, Voce_epBulk> tmpPairContoCosto;
+																	if (pairContoCostoGen!=null)
+																		tmpPairContoCosto = pairContoCostoGen;
+																	else
+																		tmpPairContoCosto = this.findPairCosto(userContext, rigaDettFin);
+
+																	//Metto al posto del costo l'eventuale conto acconto/anticipo
+																	Pair<Voce_epBulk, Voce_epBulk> pairContoCosto;
+																	if (isDocumentoAttivoInContoAcconto)
+																		pairContoCosto = Pair.of(aContoAccontoDocatt, tmpPairContoCosto.getSecond());
+																	else if (isDocumentoAttivoInContoAnticipo)
+																		pairContoCosto = Pair.of(aContoAnticipoDocatt, tmpPairContoCosto.getSecond());
+																	else
+																		pairContoCosto = tmpPairContoCosto;
+
+																	IDocumentoAmministrativoBulk partita = rigaDettFin.getPartita();
+
 																	testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, rigaDettFin, partita, pairContoCosto.getFirst(), rigaDettFin.getRigaDocamm().getIm_imponibile());
 																	testataPrimaNota.openDettaglioPatrimonialePartita(userContext, docamm, partita, pairContoCosto.getSecond(), rigaDettFin.getRigaDocamm().getIm_imponibile(), aCdTerzo);
 
 																	if (registraIvaACosto) {
 																		testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, rigaDettFin, partita, pairContoCosto.getFirst(), rigaDettFin.getRigaDocamm().getIm_iva());
-																		mapPatrimonialeIva.add(new DettaglioScrittura(pairContoCosto.getSecond(), rigaDettFin.getRigaDocamm().getIm_iva()));
+																		mapPatrimonialeIva.add(new DettaglioScrittura(pairContoCosto.getSecond(), partita, rigaDettFin.getRigaDocamm().getIm_iva()));
 																	}
-																});
+																}
 															}
 
 															//Il flag registraIva è sempre impostato a true se fattura istituzionale o isCommercialeWithAutofattura
-															if (imIva.compareTo(BigDecimal.ZERO)!=0 && registraIva) {
-																if (!ivaDaRegistrareACosto) {
-																	testataPrimaNota.openDettaglioIva(userContext, docamm, partita, aContoIva, imIva, aCdTerzo, cdCoriIva);
-																	mapPatrimonialeIva.add(new DettaglioScrittura(pairContoCosto.getSecond(), imIva));
-																}
+															if (importoIva.compareTo(BigDecimal.ZERO)!=0 && registraIva) {
+																righeDettFinVocePartita.stream()
+																		.filter(rigaDettFin -> Optional.ofNullable(rigaDettFin.getImImposta()).orElse(BigDecimal.ZERO).compareTo(BigDecimal.ZERO)!=0)
+																		.forEach(rigaDettFin->{
+																	try {
+																		//Individuazione conto costo....la variabile pairContoCostoGen è valorizzata se l'imponibile è presente tutto su una sola riga di fattura
+																		//in quel caso il costo è derivato tutto da quell'unica riga.....
+																		Pair<Voce_epBulk, Voce_epBulk> tmpPairContoCosto;
+																		if (pairContoCostoGen != null)
+																			tmpPairContoCosto = pairContoCostoGen;
+																		else
+																			tmpPairContoCosto = this.findPairCosto(userContext, rigaDettFin);
+
+																		//Metto al posto del costo l'eventuale conto acconto/anticipo
+																		Pair<Voce_epBulk, Voce_epBulk> pairContoCosto;
+																		if (isDocumentoAttivoInContoAcconto)
+																			pairContoCosto = Pair.of(aContoAccontoDocatt, tmpPairContoCosto.getSecond());
+																		else if (isDocumentoAttivoInContoAnticipo)
+																			pairContoCosto = Pair.of(aContoAnticipoDocatt, tmpPairContoCosto.getSecond());
+																		else
+																			pairContoCosto = tmpPairContoCosto;
+
+																		IDocumentoAmministrativoBulk partita = rigaDettFin.getPartita();
+																		BigDecimal imIva = rigaDettFin.getImImposta();
+
+																		if (!ivaDaRegistrareACosto) {
+																			testataPrimaNota.openDettaglioIva(userContext, docamm, partita, aContoIva, imIva, aCdTerzo, cdCoriIva);
+																			mapPatrimonialeIva.add(new DettaglioScrittura(pairContoCosto.getSecond(), partita, imIva));
+																		}
+																	} catch (ComponentException|PersistencyException|RemoteException e) {
+																		throw new ApplicationRuntimeException(e);
+																	}
+																});
 
 																//registro il patrimoniale dell'iva
 																mapPatrimonialeIva.forEach(el->
-																	testataPrimaNota.openDettaglioPatrimonialePartita(userContext, docamm, partita, el.getConto(), el.getImporto(), aCdTerzo)
+																	testataPrimaNota.openDettaglioPatrimonialePartita(userContext, docamm, el.getPartita(), el.getConto(), el.getImporto(), aCdTerzo)
 																);
 
 																//Se intraUE o extraUE sposto l'IVA anzichè darla al Fornitore (quindi chiudo il debito) la rilevo come debito verso Erario
@@ -1718,7 +1776,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 																	if (optAutofattura.isPresent()) {
 																		Voce_epBulk aContoIvaAutofattura = this.findContoIva(userContext, optAutofattura.get());
 																		mapPatrimonialeIva.forEach(el-> {
-																			testataPrimaNota.closeDettaglioPatrimonialePartita(userContext, docamm, partita, el.getConto(), el.getImporto(), aCdTerzo, DEFAULT_MODIFICABILE);
+																			testataPrimaNota.closeDettaglioPatrimonialePartita(userContext, docamm, el.getPartita(), el.getConto(), el.getImporto(), aCdTerzo, DEFAULT_MODIFICABILE);
 																			testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.IVA_VENDITE.value(), docamm.getTipoDocumentoEnum().getSezionePatrimoniale(), aContoIvaAutofattura, el.getImporto(), aCdTerzo, docamm, cdCoriIva);
 																		});
 																	}
@@ -1728,7 +1786,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 																	if ((isFatturaDiBeni && (isSanMarinoSenzaIva || isIntraUE || isMerceIntraUE)) ||
 																			(isFatturaDiServizi && isServiziNonResidenti)) {
 																		mapPatrimonialeIva.forEach(el-> {
-																			testataPrimaNota.closeDettaglioPatrimonialePartita(userContext, docamm, partita, el.getConto(), el.getImporto(), aCdTerzo, DEFAULT_MODIFICABILE);
+																			testataPrimaNota.closeDettaglioPatrimonialePartita(userContext, docamm, el.getPartita(), el.getConto(), el.getImporto(), aCdTerzo, DEFAULT_MODIFICABILE);
 																			testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.IVA_ACQUISTO.value(), docamm.getTipoDocumentoEnum().getSezionePatrimoniale(), aContoIva, el.getImporto(), aCdTerzo, docamm, cdCoriIva);
 																		});
 																	}
@@ -1737,8 +1795,8 @@ public class ProposeScritturaComponent extends CRUDComponent {
 																if (isSplitPayment) {
 																	//Rilevo il conto IVA Credito/Debito di tipo SPLIT (a secondo se doc attivo o passivo) e lo compenso con il debito verso il fornitore
 																	mapPatrimonialeIva.forEach(el-> {
-																		testataPrimaNota.closeDettaglioIvaSplit(userContext, docamm, partita, aContoIvaSplit, el.getImporto(), aCdTerzo, cdCoriIvaSplit);
-																		testataPrimaNota.closeDettaglioPatrimonialePartita(userContext, docamm, partita, el.getConto(), el.getImporto(), aCdTerzo, DEFAULT_MODIFICABILE);
+																		testataPrimaNota.closeDettaglioIvaSplit(userContext, docamm, el.getPartita(), aContoIvaSplit, el.getImporto(), aCdTerzo, cdCoriIvaSplit);
+																		testataPrimaNota.closeDettaglioPatrimonialePartita(userContext, docamm, el.getPartita(), el.getConto(), el.getImporto(), aCdTerzo, DEFAULT_MODIFICABILE);
 																	});
 																}
 															}
@@ -3937,23 +3995,23 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			contiPatrimonialiDaChiudere.put(cdVocePatrimoniale, Pair.of(Movimento_cogeBulk.SEZIONE_DARE, Pair.of(imponibile, imRitenuteRigheMandato)));
 		} else {
 			//Analizzo prima i dettagli non da ordini
-			List<DettaglioFinanziario> list = mandatoRigaCompleteList.stream()
+			List<DettaglioFinanziario> list = new ArrayList<>();
+			mandatoRigaCompleteList.stream()
 					.filter(el->!(el.getDocamm() instanceof Fattura_passivaBulk && ((Fattura_passivaBulk)docamm).isDaOrdini()))
-					.map(el -> {
-						try {
-							ObbligazioneHome obbligazionehome = (ObbligazioneHome) getHome(userContext, ObbligazioneBulk.class);
-							ObbligazioneBulk obbligazioneDB = (ObbligazioneBulk) obbligazionehome.findByPrimaryKey(
+					.forEach(el -> {
+							ObbligazioneBulk obbligazioneDB = (ObbligazioneBulk) loadObject(userContext,
 									new ObbligazioneBulk(el.getMandatoRiga().getCd_cds(), el.getMandatoRiga().getEsercizio_obbligazione(),
 											el.getMandatoRiga().getEsercizio_ori_obbligazione(), el.getMandatoRiga().getPg_obbligazione()));
-							BigDecimal imponibile = el.getMandatoRiga().getIm_mandato_riga().subtract(el.getMandatoRiga().getIm_ritenute_riga());
-							BigDecimal imposta = el.getMandatoRiga().getIm_ritenute_riga();
-							return new DettaglioFinanziario(docamm, null, cdTerzoDocAmm, obbligazioneDB.getElemento_voce(), null,null, null,
-									imponibile, imposta);
-						} catch (ComponentException | PersistencyException e) {
-							throw new ApplicationRuntimeException(e);
-						}
-					})
-					.collect(Collectors.toList());
+							el.docammRighe.forEach(docammRiga->{
+								//verifico se sulla riga del docamm ci sia un bene invemtariabile
+								Voce_epBulk aContoBeneServizio = this.getContoByBeneServizio(userContext, docammRiga);
+								Pair<Voce_epBulk, Voce_epBulk> myPairContoCosto;
+								if (Optional.ofNullable(aContoBeneServizio).isPresent())
+									list.add(new DettaglioFinanziario(docammRiga, null, cdTerzoDocAmm, aContoBeneServizio));
+								else
+									list.add(new DettaglioFinanziario(docammRiga, null, cdTerzoDocAmm, obbligazioneDB.getElemento_voce(), null));
+							});
+					});
 
 			//e poi analizzo i dettagli da ordini
 			mandatoRigaCompleteList.stream()
@@ -4492,6 +4550,10 @@ public class ProposeScritturaComponent extends CRUDComponent {
 	}
 
 	private Pair<Voce_epBulk, Voce_epBulk> findPairCosto(UserContext userContext, DettaglioFinanziario dettaglioFinanziario) throws ComponentException, RemoteException, PersistencyException {
+		//verifico se sulla riga del docamm ci sia un bene invemtariabile
+		Voce_epBulk aContoBeneServizio = this.getContoByBeneServizio(userContext, dettaglioFinanziario.getRigaDocamm());
+		if (Optional.ofNullable(aContoBeneServizio).isPresent())
+			return Pair.of(aContoBeneServizio, this.findContoContropartita(userContext, aContoBeneServizio));
 		if (Optional.ofNullable(dettaglioFinanziario.getElementoVoce()).isPresent())
 			return this.findPairCosto(userContext, new TerzoBulk(dettaglioFinanziario.getCdTerzo()), dettaglioFinanziario.getElementoVoce(),
 					dettaglioFinanziario.getDocamm().getTipoDocumentoEnum().getTipoPatrimoniale());
@@ -5578,14 +5640,14 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			}
 
 			String myTipoDett = Optional.ofNullable(aTipoDett).orElse(this.getTipoDettaglioByConto(userContext, aSezione, movimentoCoge.getConto(), movimentoCoge.getIm_movimento()));
-			movimentoCoge.setTi_riga(aTipoDett);
+			movimentoCoge.setTi_riga(myTipoDett);
 
 			if (aSezione.equals(Movimento_cogeBulk.SEZIONE_DARE))
 				scritturaPartitaDoppia.addToMovimentiDareColl(movimentoCoge);
 			else
 				scritturaPartitaDoppia.addToMovimentiAvereColl(movimentoCoge);
 /*
-			logger.info("TipoRiga: " + aTipoDett + " - Conto: " + aCdConto + " - Sezione: " + aSezione + " - Importo: " + aImporto +
+			logger.info("TipoRiga: " + myTipoDett + " - Conto: " + aCdConto + " - Sezione: " + aSezione + " - Importo: " + aImporto +
 					(aPartita!=null?" - Partita: " +
 							aPartita.getCd_tipo_doc() + "/" + aPartita.getCd_cds() + "/" + aPartita.getCd_uo() + "/" + aPartita.getEsercizio() + "/" + aPartita.getPg_doc():""));
 */
@@ -6190,29 +6252,34 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 		String mySezione = importo.compareTo(BigDecimal.ZERO)<0?Movimento_cogeBulk.getControSezione(sezione):sezione;
 		String myTipoDettaglio;
-		if (myConto.isContoCostoEconomicoEsercizio() || myConto.isContoRicavoEconomicoEsercizio()) {
-			if (myConto.isContoSezioneBifase()) {
-				if (mySezione.equals(Movimento_cogeBulk.SEZIONE_DARE))
-					myTipoDettaglio = Movimento_cogeBulk.TipoRiga.COSTO.value();
-				else
-					myTipoDettaglio = Movimento_cogeBulk.TipoRiga.RICAVO.value();
-			} else if (myConto.isContoCostoEconomicoEsercizio())
-				myTipoDettaglio = Movimento_cogeBulk.TipoRiga.COSTO.value();
-			else
-				myTipoDettaglio = Movimento_cogeBulk.TipoRiga.RICAVO.value();
-		} else if (myConto.isContoNumerarioAttivita() || myConto.isContoNumerarioPassivita()) {
-			if (myConto.isContoSezioneBifase()) {
-				if (mySezione.equals(Movimento_cogeBulk.SEZIONE_DARE))
-					myTipoDettaglio = Movimento_cogeBulk.TipoRiga.ATTIVITA.value();
-				else
-					myTipoDettaglio = Movimento_cogeBulk.TipoRiga.PASSIVITA.value();
-			} else if (myConto.isContoNumerarioAttivita())
-				myTipoDettaglio = Movimento_cogeBulk.TipoRiga.ATTIVITA.value();
-			else
-				myTipoDettaglio = Movimento_cogeBulk.TipoRiga.PASSIVITA.value();
-		} else
+		if (myConto.isContoCostoEconomicoEsercizio())
+			myTipoDettaglio = Movimento_cogeBulk.TipoRiga.COSTO.value();
+		else if (myConto.isContoRicavoEconomicoEsercizio())
+			myTipoDettaglio = Movimento_cogeBulk.TipoRiga.RICAVO.value();
+		else if (myConto.isContoNumerarioAttivita())
+			myTipoDettaglio = Movimento_cogeBulk.TipoRiga.ATTIVITA.value();
+		else if (myConto.isContoNumerarioPassivita())
+			myTipoDettaglio = Movimento_cogeBulk.TipoRiga.PASSIVITA.value();
+		else
 			myTipoDettaglio = Movimento_cogeBulk.TipoRiga.GENERICO.value();
 
 		return myTipoDettaglio;
 	}
+
+	private Voce_epBulk getContoByBeneServizio(UserContext userContext, IDocumentoAmministrativoRigaBulk rigaDocamm) {
+		try {
+			//verifico se sulla riga del docamm ci sia un bene inventariabile
+			if (Optional.ofNullable(rigaDocamm).filter(Fattura_passiva_rigaBulk.class::isInstance).isPresent()) {
+				Bene_servizioBulk myBeneServizio = (Bene_servizioBulk)this.loadObject(userContext, ((Fattura_passiva_rigaBulk)rigaDocamm).getBene_servizio());
+				if (myBeneServizio.getFl_gestione_inventario() && Optional.ofNullable(myBeneServizio.getCd_categoria_gruppo()).isPresent()) {
+					AssCatgrpInventVoceEpHome assCatgrpInventVoceEpHome = (AssCatgrpInventVoceEpHome) getHome(userContext, AssCatgrpInventVoceEpBulk.class);
+					AssCatgrpInventVoceEpBulk result = assCatgrpInventVoceEpHome.findDefaultByCategoria(((Fattura_passiva_rigaBulk) rigaDocamm).getEsercizio(), myBeneServizio.getCd_categoria_gruppo());
+					return result.getConto();
+				}
+			}
+			return null;
+		} catch (ComponentException | PersistencyException e) {
+			throw new DetailedRuntimeException(e);
+		}
+    }
 }
