@@ -67,7 +67,7 @@ public class Fattura_passiva_rigaIHome extends Fattura_passiva_rigaHome {
 		sqlBuilder.generateJoin(Fattura_passiva_rigaIBulk.class, Fattura_passiva_IBulk.class, "fattura_passivaI", "FATTURA_PASSIVA");
 		sqlBuilder.addSQLClause(FindClause.AND, "FATTURA_PASSIVA.DT_REGISTRAZIONE", SQLBuilder.LESS, dataStornoFatture);
 		sqlBuilder.addSQLClause(FindClause.AND, "FATTURA_PASSIVA.TI_FATTURA", SQLBuilder.EQUALS, Fattura_passiva_IBulk.TIPO_FATTURA_PASSIVA);
-		Stream.of("FL_FATTURA_COMPENSO", "FL_INTRA_UE", "FL_EXTRA_UE", "FL_SAN_MARINO_CON_IVA", "FL_SAN_MARINO_SENZA_IVA").forEach(s -> {
+		Stream.of("FL_DA_ORDINI", "FL_FATTURA_COMPENSO", "FL_INTRA_UE", "FL_EXTRA_UE", "FL_SAN_MARINO_CON_IVA", "FL_SAN_MARINO_SENZA_IVA").forEach(s -> {
 			sqlBuilder.addSQLClause(FindClause.AND, "FATTURA_PASSIVA." + s, SQLBuilder.EQUALS, "N");
 		});
 		sqlBuilder.addClause(FindClause.AND, "esercizio", SQLBuilder.LESS_EQUALS, CNRUserContext.getEsercizio(usercontext));

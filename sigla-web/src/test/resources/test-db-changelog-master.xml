@@ -160,6 +160,33 @@
         <dropDefaultValue tableName="ass_ev_voceep" columnName="dacr"/>
         <dropDefaultValue tableName="ass_ev_voceep" columnName="duva"/>
     </changeSet>
+    <changeSet author="test" id="create-categoria-gruppo-invent">
+        <addDefaultValue tableName="categoria_gruppo_invent" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="categoria_gruppo_invent" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/categoria_gruppo_invent.csv" tableName="categoria_gruppo_invent"/>
+
+        <dropDefaultValue tableName="categoria_gruppo_invent" columnName="dacr"/>
+        <dropDefaultValue tableName="categoria_gruppo_invent" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-bene-servizio">
+        <addDefaultValue tableName="bene_servizio" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="bene_servizio" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/bene_servizio.csv" tableName="bene_servizio"/>
+
+        <dropDefaultValue tableName="bene_servizio" columnName="dacr"/>
+        <dropDefaultValue tableName="bene_servizio" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-ass-catgrp-invent-voce-ep">
+        <addDefaultValue tableName="ass_catgrp_invent_voce_ep" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="ass_catgrp_invent_voce_ep" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/ass_catgrp_invent_voce_ep.csv" tableName="ass_catgrp_invent_voce_ep"/>
+
+        <dropDefaultValue tableName="ass_catgrp_invent_voce_ep" columnName="dacr"/>
+        <dropDefaultValue tableName="ass_catgrp_invent_voce_ep" columnName="duva"/>
+    </changeSet>
     <changeSet author="test" id="create-numerazione-doc-amm">
         <addDefaultValue tableName="numerazione_doc_amm" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="numerazione_doc_amm" columnName="duva" defaultValueDate="${now}"/>
@@ -432,6 +459,12 @@
             and cd_chiave_secondaria='BANCA';
         </sql>
         <sql>
+            update configurazione_cnr
+            set val01='P00047'
+            where cd_chiave_primaria='VOCEEP_SPECIALE'
+            and cd_chiave_secondaria='FATTURE_DA_RICEVERE';
+        </sql>
+        <sql>
             UPDATE VOCE_EP
             SET NATURA_VOCE = 'EEC'
             WHERE CD_VOCE_EP LIKE 'C%';
@@ -450,6 +483,11 @@
             UPDATE VOCE_EP
             SET NATURA_VOCE = 'NUP'
             WHERE CD_VOCE_EP LIKE 'P%';
+        </sql>
+        <sql>
+            UPDATE VOCE_EP
+            SET CD_VOCE_EP_CONTR = 'P22012'
+            WHERE CD_VOCE_EP LIKE 'A22012';
         </sql>
     </changeSet>
 </databaseChangeLog>
