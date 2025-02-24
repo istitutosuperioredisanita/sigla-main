@@ -774,7 +774,8 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 			}
 
 			// Se la consegna dell'ordine risulta associata o associata parzialmente a fattura si deve verificare l'associativa FATTURA/INVENTARIO
-			if(!transito_beni_ordiniBulk.getMovimentiMag().getLottoMag().getOrdineAcqConsegna().getStatoFatt().equals(OrdineAcqConsegnaBulk.STATO_FATT_NON_ASSOCIATA)){
+
+			/*if(!transito_beni_ordiniBulk.getMovimentiMag().getLottoMag().getOrdineAcqConsegna().getStatoFatt().equals(OrdineAcqConsegnaBulk.STATO_FATT_NON_ASSOCIATA)){
 
 				FatturaOrdineBulk fatturaOrd = fattHome.findFatturaByRigaConsegna(transito_beni_ordiniBulk.getMovimentiMag().getLottoMag().getOrdineAcqConsegna());
 				// se consegna ordine collegata a fattura
@@ -824,6 +825,8 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 
 				}
 			}
+			*/
+
 		}						/////
 		//if (transito_beni_ordiniBulk != null){
 		//	getHomeCache(aUC).fetchAll(aUC);
