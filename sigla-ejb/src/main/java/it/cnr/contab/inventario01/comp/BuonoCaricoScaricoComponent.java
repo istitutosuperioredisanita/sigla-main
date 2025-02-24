@@ -37,11 +37,8 @@ import it.cnr.contab.inventario00.docs.bulk.*;
 import it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession;
 import it.cnr.contab.inventario00.tabrif.bulk.*;
 import it.cnr.contab.inventario01.bulk.*;
-import it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineHome;
-import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
-import it.cnr.contab.ordmag.ordini.dto.ImportoOrdine;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.TipoIVA;
@@ -716,7 +713,7 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 						}
 						buonoCS = (Buono_carico_scaricoBulk) super.creaConBulk(userContext, definitivo);
 
-						verificaAssociazioneFattura(userContext,definitivo);
+						//verificaAssociazioneFattura(userContext,definitivo);
 
 
 					} catch (it.cnr.jada.persistency.PersistencyException e) {
