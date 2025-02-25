@@ -1,5 +1,6 @@
 package it.cnr.contab.config00.contratto.bulk;
 
+import it.cnr.contab.consultazioni.bulk.ConsultazioniRestHome;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
