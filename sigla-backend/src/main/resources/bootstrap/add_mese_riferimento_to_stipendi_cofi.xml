@@ -35,7 +35,8 @@
         </sql>
     </changeSet>
     <changeSet author="raffaele.pagano" id="add_mese_riferimento_to_stipendi_cofi_03">
-        <addNotNullConstraint columnName="mese_reale" tableName="stipendi_cofi"/>
-        <addNotNullConstraint columnName="prog_flusso" tableName="stipendi_cofi"/>
+        <validCheckSum>7:f9ccc321c336f588f23a3f8d656fdf89</validCheckSum>
+        <addNotNullConstraint columnName="mese_reale" tableName="stipendi_cofi" columnDataType="SMALLINT"/>
+        <addNotNullConstraint columnName="prog_flusso" tableName="stipendi_cofi" columnDataType="SMALLINT"/>
     </changeSet>
 </databaseChangeLog>

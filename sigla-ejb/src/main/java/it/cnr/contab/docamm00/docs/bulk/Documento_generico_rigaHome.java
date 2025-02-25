@@ -30,6 +30,7 @@ import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.*;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.*;
 import it.cnr.jada.persistency.sql.*;
 
@@ -134,5 +135,29 @@ public class Documento_generico_rigaHome extends BulkHome {
         sqlNotExists.addSQLClause(FindClause.AND, "TESTATA_STORNO.STATO_COFI", SQLBuilder.NOT_EQUALS, Documento_genericoBulk.STATO_ANNULLATO);
         sqlBuilder.addSQLNotExistsClause(FindClause.AND, sqlNotExists);
         return sqlBuilder;
+    }
+
+    public Optional<Documento_generico_rigaBulk> findRigaStorno(UserContext userContext, Fattura_attiva_rigaIBulk fatturaAttivaRigaIBulk) throws ComponentException {
+        SQLBuilder sqlBuilder = createSQLBuilder();
+        sqlBuilder.addClause(FindClause.AND, "fattura_attiva_riga_storno", SQLBuilder.EQUALS, fatturaAttivaRigaIBulk);
+        sqlBuilder.addClause(FindClause.AND, "stato_cofi", SQLBuilder.NOT_EQUALS, Documento_generico_rigaBulk.STATO_ANNULLATO);
+        try {
+            List<Documento_generico_rigaBulk> result = fetchAll(sqlBuilder);
+            return result.stream().findAny();
+        } catch (PersistencyException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Optional<Documento_generico_rigaBulk> findRigaStorno(UserContext userContext, Fattura_passiva_rigaIBulk fatturaPassivaRigaIBulk) throws ComponentException {
+        SQLBuilder sqlBuilder = createSQLBuilder();
+        sqlBuilder.addClause(FindClause.AND, "fattura_passiva_riga_storno", SQLBuilder.EQUALS, fatturaPassivaRigaIBulk);
+        sqlBuilder.addClause(FindClause.AND, "stato_cofi", SQLBuilder.NOT_EQUALS, Documento_generico_rigaBulk.STATO_ANNULLATO);
+        try {
+            List<Documento_generico_rigaBulk> result = fetchAll(sqlBuilder);
+            return result.stream().findAny();
+        } catch (PersistencyException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

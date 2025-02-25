@@ -21,10 +21,7 @@ import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.Modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.docamm00.comp.DocumentoGenericoComponent;
-import it.cnr.contab.docamm00.docs.bulk.DocumentoGenericoWizardBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
-import it.cnr.contab.docamm00.docs.bulk.StornaDocumentoGenericoBulk;
+import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.doccont00.core.AccertamentoWizard;
 import it.cnr.contab.doccont00.core.ObbligazioneWizard;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
@@ -906,10 +903,10 @@ public class DocumentoGenericoComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 	}
 
 	@Override
-	public Documento_genericoBulk creaDocumentoGenericoDiStorno(UserContext userContext, char tiEntrataSpesa, StornaDocumentoGenericoBulk stornaDocumentoGenericoBulk, List<Documento_generico_rigaBulk> documentoGenericoRigaBulks) throws ComponentException, RemoteException {
+	public Documento_genericoBulk creaDocumentoGenericoDiStorno(UserContext userContext, char tiEntrataSpesa, boolean isDaFattura, StornaDocumentoGenericoBulk stornaDocumentoGenericoBulk, List<IDocumentoAmministrativoRigaBulk> documentoGenericoRigaBulks) throws ComponentException, RemoteException {
 		pre_component_invocation(userContext,componentObj);
 		try {
-			it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk result = ((DocumentoGenericoComponent)componentObj).creaDocumentoGenericoDiStorno(userContext,tiEntrataSpesa,stornaDocumentoGenericoBulk,documentoGenericoRigaBulks);
+			it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk result = ((DocumentoGenericoComponent)componentObj).creaDocumentoGenericoDiStorno(userContext,tiEntrataSpesa,isDaFattura,stornaDocumentoGenericoBulk,documentoGenericoRigaBulks);
 			component_invocation_succes(userContext,componentObj);
 			return result;
 		} catch(it.cnr.jada.comp.NoRollbackException e) {

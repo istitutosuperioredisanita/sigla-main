@@ -283,7 +283,9 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
         CHIUSURA_DEFINITIVA("100_CHIUSURA_DEFINITIVA"),
         CARICHI_SCARICHI_MAG("110_FINE_MOV_MAG"),
         RIAPERTURA_CONTI("120_RIAPERTURA_CONTI"),
-        REGISTRAZIONE_FATT_PASS("130_REG_FATT_PAS");
+        REGISTRAZIONE_FATT_PASS("130_REG_FATT_PAS"),
+        STORNO_FATT_PAS("140_STORNO_FATT_PAS"),
+        STORNO_FATT_ATT("150_STORNO_FATT_ATT");
 
         private final String value;
 

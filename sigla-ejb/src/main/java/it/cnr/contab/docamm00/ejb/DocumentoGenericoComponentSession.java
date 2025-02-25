@@ -21,10 +21,7 @@ import javax.ejb.Remote;
 
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.Modalita_pagamentoBulk;
-import it.cnr.contab.docamm00.docs.bulk.DocumentoGenericoWizardBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
-import it.cnr.contab.docamm00.docs.bulk.StornaDocumentoGenericoBulk;
+import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.doccont00.core.AccertamentoWizard;
 import it.cnr.contab.doccont00.core.ObbligazioneWizard;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
@@ -83,5 +80,5 @@ public interface DocumentoGenericoComponentSession extends it.cnr.contab.docamm0
     Documento_genericoBulk creaDocumentoGenericoDaAccertamenti(UserContext userContext, DocumentoGenericoWizardBulk wizard, java.util.Collection<AccertamentoWizard> accertamentiColl) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
     V_doc_passivo_obbligazioneBulk sdoppiaDettagliInAutomatico(UserContext userContext, V_doc_passivo_obbligazioneBulk docPassivo, BigDecimal newImporto) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
     void aggiornaModalitaPagamento(UserContext userContext, V_doc_passivo_obbligazioneBulk docPassivoObb, Modalita_pagamentoBulk newModalitaPag, BancaBulk newBanca) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
-    Documento_genericoBulk creaDocumentoGenericoDiStorno(UserContext userContext, char tiEntrataSpesa, StornaDocumentoGenericoBulk stornaDocumentoGenericoBulk, List<Documento_generico_rigaBulk> documentoGenericoRigaBulks) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+    Documento_genericoBulk creaDocumentoGenericoDiStorno(UserContext userContext, char tiEntrataSpesa, boolean isDaFattura, StornaDocumentoGenericoBulk stornaDocumentoGenericoBulk, List<IDocumentoAmministrativoRigaBulk> documentoGenericoRigaBulks) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 }

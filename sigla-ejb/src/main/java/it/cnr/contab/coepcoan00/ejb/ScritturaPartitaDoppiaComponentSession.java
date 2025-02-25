@@ -17,20 +17,13 @@
 
 package it.cnr.contab.coepcoan00.ejb;
 
-import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotEnabledException;
-import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotRequiredException;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.comp.ComponentException;
 
 import javax.ejb.Remote;
 import java.rmi.RemoteException;
-import java.sql.Timestamp;
 
 @Remote
 public interface ScritturaPartitaDoppiaComponentSession extends it.cnr.jada.ejb.CRUDComponentSession, it.cnr.jada.ejb.PrintComponentSession {
-    Scrittura_partita_doppiaBulk proposeScritturaPartitaDoppia(UserContext userContext, IDocumentoCogeBulk docamm) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException;
-    Scrittura_partita_doppiaBulk proposeScritturaPartitaDoppiaAnnullo(UserContext userContext, IDocumentoCogeBulk docamm) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException;
-    Scrittura_partita_doppiaBulk proposeStornoScritturaPartitaDoppia(UserContext userContext, Scrittura_partita_doppiaBulk scritturaPartitaDoppiaDaStornare, Timestamp dataStorno) throws RemoteException;
+    Long getNextProgressivo(UserContext userContext, Scrittura_partita_doppiaBulk scritturaPartitaDoppia) throws it.cnr.jada.comp.ComponentException,RemoteException;
 }

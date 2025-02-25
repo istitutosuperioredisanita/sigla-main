@@ -146,6 +146,37 @@
 				propertyName="documento_generico_riga_storno.documento_generico.esercizio"
 				fetchOnly="true"/>
 
+		<columnMapping
+				columnName="ESERCIZIO_STORNO_FA"
+				propertyName="fattura_attiva_riga_storno.fattura_attivaI.esercizio"/>
+		<columnMapping
+				columnName="PROGRESSIVO_RIGA_STORNO_FA"
+				propertyName="fattura_attiva_riga_storno.progressivo_riga"/>
+		<columnMapping
+				columnName="CD_UNITA_ORGANIZZATIVA_STORNO_FA"
+				propertyName="fattura_attiva_riga_storno.fattura_attivaI.cd_unita_organizzativa"/>
+		<columnMapping
+				columnName="CD_CDS_STORNO_FA"
+				propertyName="fattura_attiva_riga_storno.fattura_attivaI.cd_cds"/>
+		<columnMapping
+				columnName="PG_FATTURA_ATTIVA_STORNO"
+				propertyName="fattura_attiva_riga_storno.fattura_attivaI.pg_fattura_attiva"/>
+
+		<columnMapping
+				columnName="ESERCIZIO_STORNO_FP"
+				propertyName="fattura_passiva_riga_storno.fattura_passivaI.esercizio"/>
+		<columnMapping
+				columnName="PROGRESSIVO_RIGA_STORNO_FP"
+				propertyName="fattura_passiva_riga_storno.progressivo_riga"/>
+		<columnMapping
+				columnName="CD_UNITA_ORGANIZZATIVA_STORNO_FP"
+				propertyName="fattura_passiva_riga_storno.fattura_passivaI.cd_unita_organizzativa"/>
+		<columnMapping
+				columnName="CD_CDS_STORNO_FP"
+				propertyName="fattura_passiva_riga_storno.fattura_passivaI.cd_cds"/>
+		<columnMapping
+				columnName="PG_FATTURA_PASSIVA_STORNO"
+				propertyName="fattura_passiva_riga_storno.fattura_passivaI.pg_fattura_passiva"/>
 	</defaultColumnMap>
 
 	<columnMap
@@ -201,5 +232,9 @@
 		name="cessionario" />
 	<persistentProperty
 		name="documento_generico_riga_storno"/>
+	<persistentProperty
+		name="fattura_attiva_riga_storno"/>
+	<persistentProperty
+		name="fattura_passiva_riga_storno"/>
 
 </SQLPersistentInfo>

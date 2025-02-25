@@ -9,7 +9,7 @@ import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
-public class TipoContrattoPassivoRestHome extends Tipo_contrattoHome  {
+public class TipoContrattoPassivoRestHome extends Tipo_contrattoHome implements ConsultazioniRestHome {
     public TipoContrattoPassivoRestHome(java.sql.Connection conn) {
         super(TipoContrattoPassivoRestBulk.class, conn);
     }
@@ -19,8 +19,9 @@ public class TipoContrattoPassivoRestHome extends Tipo_contrattoHome  {
 
     @Override
     public SQLBuilder restSelect(UserContext userContext, SQLBuilder sql, CompoundFindClause compoundfindclause, OggettoBulk oggettobulk) throws ComponentException, PersistencyException {
+
         sql.addClause(FindClause.AND, "fl_cancellato", SQLBuilder.EQUALS, Boolean.FALSE);
-        sql.openParenthesis(FindClause.AND);
+       sql.openParenthesis(FindClause.AND);
         sql.addClause(FindClause.OR, "natura_contabile", SQLBuilder.EQUALS, Tipo_contrattoBulk.NATURA_CONTABILE_PASSIVO);
         sql.addClause(FindClause.OR, "natura_contabile", SQLBuilder.EQUALS, Tipo_contrattoBulk.NATURA_CONTABILE_SENZA_FLUSSI_FINANZIARI);
         sql.closeParenthesis();

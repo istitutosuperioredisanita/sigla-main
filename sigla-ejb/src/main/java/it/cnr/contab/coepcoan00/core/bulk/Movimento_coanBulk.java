@@ -24,13 +24,13 @@ import it.cnr.contab.config00.latt.bulk.*;
 import it.cnr.contab.anagraf00.core.bulk.*;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.bulk.*;
-import it.cnr.jada.util.OrderedHashtable;
 
 public class Movimento_coanBulk extends Movimento_coanBase {
 	protected Voce_analiticaBulk voceAnalitica = new Voce_analiticaBulk();
 	protected WorkpackageBulk latt = new WorkpackageBulk();
 	protected Scrittura_analiticaBulk scrittura = new Scrittura_analiticaBulk();
-	public java.lang.Long pgScritturaAnnullata;	
+	protected Movimento_cogeBulk movimentoCoge = new Movimento_cogeBulk();
+	public java.lang.Long pgScritturaAnnullata;
 	
 	protected TerzoBulk terzo = new TerzoBulk();
 
@@ -330,5 +330,71 @@ public class Movimento_coanBulk extends Movimento_coanBase {
 
 		if ( getIm_movimento().compareTo( new java.math.BigDecimal(0)) <= 0 )
 			throw new ValidationException( "L'Importo movimento deve essere maggiore di zero");
+	}
+
+	public boolean isSezioneDare() {
+		return Movimento_coanBulk.SEZIONE_DARE.equalsIgnoreCase(this.getSezione());
+	}
+
+	public boolean isSezioneAvere() {
+		return Movimento_coanBulk.SEZIONE_AVERE.equalsIgnoreCase(this.getSezione());
+	}
+
+	public Movimento_cogeBulk getMovimentoCoge() {
+		return movimentoCoge;
+	}
+
+	public void setMovimentoCoge(Movimento_cogeBulk movimentoCoge) {
+		this.movimentoCoge = movimentoCoge;
+	}
+
+	@Override
+	public Integer getEsercizio_movcoge() {
+		return Optional.ofNullable(this.getMovimentoCoge()).map(Movimento_cogeBulk::getEsercizio).orElse(null);
+	}
+
+	@Override
+	public void setEsercizio_movcoge(Integer esercizio_movcoge) {
+		Optional.ofNullable(this.getMovimentoCoge()).ifPresent(el->el.setEsercizio(esercizio_movcoge));
+	}
+
+	@Override
+	public String getCd_cds_movcoge() {
+		return Optional.ofNullable(this.getMovimentoCoge()).map(Movimento_cogeBulk::getCd_cds).orElse(null);
+	}
+
+	@Override
+	public void setCd_cds_movcoge(String cd_cds_movcoge) {
+		Optional.ofNullable(this.getMovimentoCoge()).ifPresent(el->el.setCd_cds(cd_cds_movcoge));
+	}
+
+	@Override
+	public String getCd_uo_movcoge() {
+		return Optional.ofNullable(this.getMovimentoCoge()).map(Movimento_cogeBulk::getCd_unita_organizzativa).orElse(null);
+	}
+
+	@Override
+	public void setCd_uo_movcoge(String cd_uo_movcoge) {
+		Optional.ofNullable(this.getMovimentoCoge()).ifPresent(el->el.setCd_unita_organizzativa(cd_uo_movcoge));
+	}
+
+	@Override
+	public Long getPg_movimento_movcoge() {
+		return Optional.ofNullable(this.getMovimentoCoge()).map(Movimento_cogeBulk::getPg_movimento).orElse(null);
+	}
+
+	@Override
+	public void setPg_movimento_movcoge(Long pg_movimento_movcoge) {
+		Optional.ofNullable(this.getMovimentoCoge()).ifPresent(el->el.setPg_movimento(pg_movimento_movcoge));
+	}
+
+	@Override
+	public Long getPg_scrittura_movcoge() {
+		return Optional.ofNullable(this.getMovimentoCoge()).map(Movimento_cogeBulk::getPg_scrittura).orElse(null);
+	}
+
+	@Override
+	public void setPg_scrittura_movcoge(Long pg_scrittura_movcoge) {
+		Optional.ofNullable(this.getMovimentoCoge()).ifPresent(el->el.setPg_scrittura(pg_scrittura_movcoge));
 	}
 }

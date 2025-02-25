@@ -22,9 +22,7 @@ package it.cnr.contab.docamm00.bp;
  */
 
 import it.cnr.contab.chiusura00.ejb.RicercaDocContComponentSession;
-import it.cnr.contab.coepcoan00.bp.CRUDScritturaPDoppiaBP;
-import it.cnr.contab.coepcoan00.bp.EconomicaAvereDetailCRUDController;
-import it.cnr.contab.coepcoan00.bp.EconomicaDareDetailCRUDController;
+import it.cnr.contab.coepcoan00.bp.*;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.docamm00.ejb.DocumentoGenericoComponentSession;
@@ -58,7 +56,7 @@ import java.util.stream.Stream;
  */
 public class CRUDDocumentoGenericoPassivoBP
         extends AllegatiCRUDBP<AllegatoGenericoBulk, Documento_genericoBulk>
-        implements IDocumentoAmministrativoBP, IGenericSearchDocAmmBP, IDefferedUpdateSaldiBP, VoidableBP, IDocumentoAmministrativoSpesaBP, IDocAmmEconomicaBP, IDocumentoGenericoBP {
+        implements IDocumentoAmministrativoBP, IGenericSearchDocAmmBP, IDefferedUpdateSaldiBP, VoidableBP, IDocumentoAmministrativoSpesaBP, IDocAmmEconomicaBP, IDocAmmAnaliticaBP, IDocumentoGenericoBP {
 
     private final SimpleDetailCRUDController dettaglio = new DocumentoGenericoPassivoRigaCRUDController("Dettaglio", Documento_generico_rigaBulk.class, "documento_generico_dettColl", this);
     private final ObbligazioniCRUDController obbligazioniController =
@@ -87,6 +85,8 @@ public class CRUDDocumentoGenericoPassivoBP
     private final CollapsableDetailCRUDController movimentiDare = new EconomicaDareDetailCRUDController(this);
     private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
 
+    private final CollapsableDetailCRUDController movimentiAnalitici = new AnaliticaDetailCRUDController(this);
+
     protected it.cnr.contab.docamm00.docs.bulk.Risultato_eliminazioneVBulk deleteManager = null;
     private boolean isDeleting = false;
     private it.cnr.contab.doccont00.core.bulk.OptionRequestParameter userConfirm = null;
@@ -96,6 +96,7 @@ public class CRUDDocumentoGenericoPassivoBP
     private boolean carryingThrough = false;
     private boolean ribaltato;
     private boolean attivaEconomicaParallela = false;
+    private boolean attivaAnalitica = false;
     private boolean attivaInventaria = false;
 
     private boolean supervisore = false;
@@ -450,6 +451,7 @@ public class CRUDDocumentoGenericoPassivoBP
             int solaris = Documento_genericoBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.YEAR);
             int esercizioScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue();
             attivaEconomicaParallela = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(context.getUserContext());
+            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
             attivaInventaria = Utility.createConfigurazioneCnrComponentSession().isAttivoInventariaDocumenti(context.getUserContext());
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
             setAnnoSolareInScrivania(solaris == esercizioScrivania);
@@ -686,7 +688,6 @@ public class CRUDDocumentoGenericoPassivoBP
      * Attiva oltre al normale reset il metodo di set dei tab di default.
      *
      * @param context <code>ActionContext</code>
-     * @see resetTabs
      */
 
     public void reset(ActionContext context) throws BusinessProcessException {
@@ -700,7 +701,6 @@ public class CRUDDocumentoGenericoPassivoBP
      * Attiva oltre al normale reset il metodo di set dei tab di default.
      *
      * @param context <code>ActionContext</code>
-     * @see resetTabs
      */
 
     public void resetForSearch(ActionContext context) throws BusinessProcessException {
@@ -712,8 +712,6 @@ public class CRUDDocumentoGenericoPassivoBP
 
     /**
      * Imposta come attivi i tab di default.
-     *
-     * @param context <code>ActionContext</code>
      */
 
     public void resetTabs() {
@@ -1052,7 +1050,6 @@ public class CRUDDocumentoGenericoPassivoBP
     private static final String[] TAB_LETTERA_PAGAMENTO_ESTERO = new String[]{ "tabLetteraPagamentoEstero","Documento 1210","/docamm00/tab_generico_lettera_pagam_estero.jsp"};
     private static final String[] TAB_ALLEGATI = new String[]{ "tabAllegati","Allegati","/util00/tab_allegati.jsp"};
 
-
     public String[][] getTabs() {
         Documento_genericoBulk documento = Optional.ofNullable(this.getModel())
                 .filter(Documento_genericoBulk.class::isInstance)
@@ -1066,9 +1063,10 @@ public class CRUDDocumentoGenericoPassivoBP
         pages.put(i++, documento.isDocumentoStorno() ? TAB_STORNI : TAB_OBBLIGAZIONE);
         pages.put(i++, TAB_LETTERA_PAGAMENTO_ESTERO);
         pages.put(i++, TAB_ALLEGATI);
-        if (attivaEconomicaParallela) {
+        if (attivaEconomicaParallela)
             pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
-        }
+        if (attivaAnalitica)
+            pages.put(i++, CRUDScritturaAnaliticaBP.TAB_ANALITICA);
         String[][] tabs = new String[i][3];
         for (int j = 0; j < i; j++)
             tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
@@ -1083,6 +1081,10 @@ public class CRUDDocumentoGenericoPassivoBP
 		return movimentiAvere;
 	}
 
+    public CollapsableDetailCRUDController getMovimentiAnalitici() {
+        return movimentiAnalitici;
+    }
+
     public boolean isSupervisore() {
         return supervisore;
     }
@@ -1096,6 +1098,14 @@ public class CRUDDocumentoGenericoPassivoBP
     }
     @Override
     public OggettoBulk getEconomicaModel() {
+        return getModel();
+    }
+
+    public boolean isButtonGeneraScritturaAnaliticaVisible() {
+        return Boolean.FALSE;
+    }
+    @Override
+    public OggettoBulk getAnaliticaModel() {
         return getModel();
     }
 

@@ -1001,4 +1001,14 @@ public class ReversaleBulk extends ReversaleBase implements IManRevBulk, IDeffer
         return reversale_rigaColl.size() - 1;
     }
 
+    @Override
+    public void setStato_coan(String stato_coan) {
+        //TODO Da implementare
+    }
+
+    @Override
+    public String getStato_coan() {
+        //TODO Da implementare
+        return null;
+    }
 }

@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="pgInventario"
+		property="pgInventario"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		nullable="false"
+		label="pgInventario" />
+	<fieldProperty
+		name="nrInventario"
+		property="nrInventario"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		nullable="false"
+		label="nrInventario" />
+	<fieldProperty
+		name="progressivo"
+		property="progressivo"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		nullable="false"
+		label="progressivo" />
+	<fieldProperty
+		name="cdCategoriaGruppo"
+		property="cdCategoriaGruppo"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		nullable="false"
+		label="cdCategoriaGruppo" />
+	<fieldProperty
+		name="tiAmmortamentoBene"
+		property="tiAmmortamentoBene"
+		inputType="TEXT"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="false"
+		label="tiAmmortamentoBene" />
+	<fieldProperty
+		name="flAmmortamento"
+		property="flAmmortamento"
+		inputType="CHECKBOX"
+		enabledOnEdit="false"
+		label="flAmmortamento" />
+	<fieldProperty
+		name="valoreIniziale"
+		property="valoreIniziale"
+		inputType="TEXT"
+		inputSize="20"
+		maxLength="20"
+		enabledOnEdit="false"
+		nullable="false"
+		label="valoreIniziale" />
+	<fieldProperty
+		name="valoreAmmortizzato"
+		property="valoreAmmortizzato"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="valoreAmmortizzato" />
+	<fieldProperty
+		name="variazionePiu"
+		property="variazionePiu"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="variazionePiu" />
+	<fieldProperty
+		name="variazioneMeno"
+		property="variazioneMeno"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="variazioneMeno" />
+	<fieldProperty
+		name="imponibileAmmortamento"
+		property="imponibileAmmortamento"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="imponibileAmmortamento" />
+	<fieldProperty
+		name="flTotalmenteScaricato"
+		property="flTotalmenteScaricato"
+		inputType="CHECKBOX"
+		enabledOnEdit="false"
+		nullable="false"
+		label="flTotalmenteScaricato" />
+	<fieldProperty
+		name="esercizioCaricoBene"
+		property="esercizioCaricoBene"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		nullable="false"
+		label="esercizioCaricoBene" />
+	<fieldProperty
+		name="cdCds"
+		property="cdCds"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		nullable="false"
+		label="cdCds" />
+	<fieldProperty
+		name="cdUnitaOrganizzativa"
+		property="cdUnitaOrganizzativa"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		nullable="false"
+		label="cdUnitaOrganizzativa" />
+	<fieldProperty
+		name="esercizioCompetenza"
+		property="esercizioCompetenza"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		label="esercizioCompetenza" />
+	<fieldProperty
+		name="cdTipoAmmortamento"
+		property="cdTipoAmmortamento"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		label="cdTipoAmmortamento" />
+	<fieldProperty
+		name="tiAmmortamento"
+		property="tiAmmortamento"
+		inputType="TEXT"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="false"
+		label="tiAmmortamento" />
+	<fieldProperty
+		name="dtCancellazione"
+		property="dtCancellazione"
+		inputType="TEXT"
+		formatName="date_short"
+		enabledOnEdit="false"
+		label="dtCancellazione" />
+	<fieldProperty
+		name="percPrimoAnno"
+		property="percPrimoAnno"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		label="percPrimoAnno" />
+	<fieldProperty
+		name="percSuccessivi"
+		property="percSuccessivi"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		label="percSuccessivi" />
+	<fieldProperty
+		name="numeroAnni"
+		property="numeroAnni"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		label="numeroAnni" />
+	<form
+		name="searchtool">
+	</form>
+	<formFieldProperty
+		name="pgInventario" />
+	<formFieldProperty
+		name="nrInventario" />
+	<formFieldProperty
+		name="progressivo" />
+	<formFieldProperty
+		name="cdCategoriaGruppo" />
+	<formFieldProperty
+		name="tiAmmortamentoBene" />
+	<formFieldProperty
+		name="flAmmortamento" />
+	<formFieldProperty
+		name="valoreIniziale" />
+	<formFieldProperty
+		name="valoreAmmortizzato" />
+	<formFieldProperty
+		name="variazionePiu" />
+	<formFieldProperty
+		name="variazioneMeno" />
+	<formFieldProperty
+		name="imponibileAmmortamento" />
+	<formFieldProperty
+		name="flTotalmenteScaricato" />
+	<formFieldProperty
+		name="esercizioCaricoBene" />
+	<formFieldProperty
+		name="cdCds" />
+	<formFieldProperty
+		name="cdUnitaOrganizzativa" />
+	<formFieldProperty
+		name="esercizioCompetenza" />
+	<formFieldProperty
+		name="cdTipoAmmortamento" />
+	<formFieldProperty
+		name="tiAmmortamento" />
+	<formFieldProperty
+		name="dtCancellazione" />
+	<formFieldProperty
+		name="percPrimoAnno" />
+	<formFieldProperty
+		name="percSuccessivi" />
+	<formFieldProperty
+		name="numeroAnni" />
+	<findFieldProperty
+		name="pgInventario" />
+	<findFieldProperty
+		name="nrInventario" />
+	<findFieldProperty
+		name="progressivo" />
+	<findFieldProperty
+		name="cdCategoriaGruppo" />
+	<findFieldProperty
+		name="tiAmmortamentoBene" />
+	<findFieldProperty
+		name="flAmmortamento" />
+	<findFieldProperty
+		name="valoreIniziale" />
+	<findFieldProperty
+		name="valoreAmmortizzato" />
+	<findFieldProperty
+		name="variazionePiu" />
+	<findFieldProperty
+		name="variazioneMeno" />
+	<findFieldProperty
+		name="imponibileAmmortamento" />
+	<findFieldProperty
+		name="flTotalmenteScaricato" />
+	<findFieldProperty
+		name="esercizioCaricoBene" />
+	<findFieldProperty
+		name="cdCds" />
+	<findFieldProperty
+		name="cdUnitaOrganizzativa" />
+	<findFieldProperty
+		name="esercizioCompetenza" />
+	<findFieldProperty
+		name="cdTipoAmmortamento" />
+	<findFieldProperty
+		name="tiAmmortamento" />
+	<findFieldProperty
+		name="dtCancellazione" />
+	<findFieldProperty
+		name="percPrimoAnno" />
+	<findFieldProperty
+		name="percSuccessivi" />
+	<findFieldProperty
+		name="numeroAnni" />
+	<columnFieldProperty
+		name="pgInventario" />
+	<columnFieldProperty
+		name="nrInventario" />
+	<columnFieldProperty
+		name="progressivo" />
+	<columnFieldProperty
+		name="cdCategoriaGruppo" />
+	<columnFieldProperty
+		name="tiAmmortamentoBene" />
+	<columnFieldProperty
+		name="flAmmortamento" />
+	<columnFieldProperty
+		name="valoreIniziale" />
+	<columnFieldProperty
+		name="valoreAmmortizzato" />
+	<columnFieldProperty
+		name="variazionePiu" />
+	<columnFieldProperty
+		name="variazioneMeno" />
+	<columnFieldProperty
+		name="imponibileAmmortamento" />
+	<columnFieldProperty
+		name="flTotalmenteScaricato" />
+	<columnFieldProperty
+		name="esercizioCaricoBene" />
+	<columnFieldProperty
+		name="cdCds" />
+	<columnFieldProperty
+		name="cdUnitaOrganizzativa" />
+	<columnFieldProperty
+		name="esercizioCompetenza" />
+	<columnFieldProperty
+		name="cdTipoAmmortamento" />
+	<columnFieldProperty
+		name="tiAmmortamento" />
+	<columnFieldProperty
+		name="dtCancellazione" />
+	<columnFieldProperty
+		name="percPrimoAnno" />
+	<columnFieldProperty
+		name="percSuccessivi" />
+	<columnFieldProperty
+		name="numeroAnni" />
+</bulkInfo>

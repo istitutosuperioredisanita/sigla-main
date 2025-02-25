@@ -21,12 +21,14 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
                                        http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
-
     <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_01">
         <dropPrimaryKey tableName="MOVIMENTO_COAN" constraintName="MOVIMENTO_COAN_PKEY"/>
     </changeSet>
     <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_02">
         <dropForeignKeyConstraint baseTableName="MOVIMENTO_COAN" constraintName="FK_MOVIMENTO_COAN02"/>
+    </changeSet>
+    <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_06">
+        <dropIndex indexName="FX_MOVIMENTO_COAN02" tableName="MOVIMENTO_COAN"/>
     </changeSet>
     <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_03">
         <renameColumn tableName="MOVIMENTO_COAN" oldColumnName="CD_VOCE_EP" newColumnName="CD_VOCE_ANA"/>
@@ -42,9 +44,6 @@
                                  referencedTableName="VOCE_ANALITICA"
                                  referencedColumnNames="ESERCIZIO, CD_VOCE_ANA"/>
     </changeSet>
-    <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_06">
-        <dropIndex indexName="FX_MOVIMENTO_COAN02" tableName="MOVIMENTO_COAN"/>
-    </changeSet>
     <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_07">
         <createIndex indexName="FX_MOVIMENTO_COAN02" tableName="MOVIMENTO_COAN">
             <column name="ESERCIZIO"/>
@@ -57,5 +56,28 @@
                 <constraints nullable="false"/>
             </column>
         </addColumn>
+    </changeSet>
+    <changeSet author="raffaele.pagano" id="modify_table_movimento_coan_09">
+        <addColumn tableName="movimento_coan">
+            <column name="cd_cds_movcoge" remarks="Codice identificativo del centro di spesa; livello 1 della tabella UNITA_ORGANIZZATIVA." type="VARCHAR(30)"/>
+            <column name="esercizio_movcoge" remarks="Esercizio di riferimento" type="SMALLINT"/>
+            <column name="cd_uo_movcoge" remarks="Codice identificativo dell'unità organizzativa. La codifica è organizzata in una struttura ad albero  su più livelli.&#10;Livello 1 = rappresenta il centro di spesa&#10;Livello 2 = rappresenta l'unità organizzativa.&#10;La codifica del livello unità organizzativa è ottenuta per concatenzione del codice del CdS di afferenza con il  proprio codice" type="VARCHAR(30)"/>
+            <column name="pg_scrittura_movcoge" remarks="Progressivo della scrittura" type="BIGINT"/>
+            <column name="pg_movimento_movcoge" remarks="Progressivo del movimento" type="BIGINT"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="cd_cds_movcoge,esercizio_movcoge,cd_uo_movcoge,pg_scrittura_movcoge,pg_movimento_movcoge"
+                                 baseTableName="movimento_coan"
+                                 constraintName="fk_movimento_coan04"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="cd_cds,esercizio,cd_unita_organizzativa,pg_scrittura,pg_movimento"
+                                 referencedTableName="movimento_coge"/>
+
+        <createIndex indexName="FX_MOVIMENTO_COAN04" tableName="MOVIMENTO_COAN">
+            <column name="cd_cds_movcoge"/>
+            <column name="esercizio_movcoge"/>
+            <column name="cd_uo_movcoge"/>
+            <column name="pg_scrittura_movcoge"/>
+            <column name="pg_movimento_movcoge"/>
+        </createIndex>
     </changeSet>
 </databaseChangeLog>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invBulk"
+	homeClassName="it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invHome">
+	<defaultColumnMap
+		tableName="AMMORTAMENTO_BENE_INV">
+		<columnMapping
+			columnName="PG_INVENTARIO"
+			propertyName="inventarioBeni.pg_inventario" />
+		<columnMapping
+			columnName="NR_INVENTARIO"
+			propertyName="inventarioBeni.nr_inventario" />
+		<columnMapping
+			columnName="PROGRESSIVO"
+			propertyName="inventarioBeni.progressivo" />
+		<columnMapping
+			columnName="CD_TIPO_AMMORTAMENTO"
+			propertyName="assTipoAmmCatGrupInv.cd_tipo_ammortamento" />
+		<columnMapping
+			columnName="TI_AMMORTAMENTO"
+			propertyName="assTipoAmmCatGrupInv.ti_ammortamento" />
+		<columnMapping
+			columnName="CD_CATEGORIA_GRUPPO"
+			propertyName="assTipoAmmCatGrupInv.cd_categoria_gruppo" />
+		<columnMapping
+			columnName="ESERCIZIO_COMPETENZA"
+			propertyName="assTipoAmmCatGrupInv.esercizio_competenza" />
+		<columnMapping
+			columnName="CD_CDS_UBICAZIONE"
+			propertyName="unitaOrganizzativa.cd_unita_organizzativa" />
+		<columnMapping
+			columnName="CD_UO_UBICAZIONE"
+			propertyName="unitaOrganizzativa.cd_unita_organizzativa" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="inventarioBeni"
+		partOfOid="true" />
+	<persistentProperty
+		name="assTipoAmmCatGrupInv" />
+	<persistentProperty
+		name="unitaOrganizzativa" />
+</SQLPersistentInfo>

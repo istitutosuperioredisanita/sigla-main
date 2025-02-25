@@ -517,4 +517,9 @@ public abstract class Fattura_attiva_rigaBulk extends Fattura_attiva_rigaBase im
 	public void setModalita_pagamento(Rif_modalita_pagamentoBulk modalita_pagamento) {
 		getFattura_attiva().setModalita_pagamento_uo(modalita_pagamento);
 	}
+	@Override
+	public String getDs_riga() {
+		return getDs_riga_fattura();
+	}
+
 }

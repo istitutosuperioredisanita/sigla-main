@@ -4,17 +4,12 @@
  */
 package it.cnr.contab.config00.bulk;
 import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import it.cnr.contab.config00.pdcep.bulk.Voce_epBulk;
 import it.cnr.contab.config00.pdcep.bulk.Voce_epHome;
-import it.cnr.contab.docamm00.docs.bulk.Tipo_documento_ammBase;
-import it.cnr.contab.docamm00.docs.bulk.Tipo_documento_ammBulk;
-import it.cnr.contab.docamm00.docs.bulk.Tipo_documento_ammKey;
+import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.ICancellatoLogicamente;
@@ -51,8 +46,22 @@ public class CausaleContabileHome extends BulkHome {
 
 	}
 
-	public List<CausaleContabileBulk> findCausaliStorno(UserContext userContext) throws PersistencyException {
+	public List<CausaleContabileBulk> findCausaliStorno(UserContext userContext, char tiEntrataSpesa, boolean isDaFattura) throws PersistencyException {
 		SQLBuilder sqlBuilder = super.createSQLBuilder();
+		sqlBuilder.setAutoJoins(true);
+		sqlBuilder.generateJoin(CausaleContabileBulk.class, Tipo_documento_ammBulk.class, "tipoDocumentoAmm", "TIPO_DOC_AMM");
+		sqlBuilder.addSQLClause(FindClause.AND, "TIPO_DOC_AMM.TI_ENTRATA_SPESA", SQLBuilder.EQUALS, String.valueOf(tiEntrataSpesa));
+		if (isDaFattura) {
+			sqlBuilder.addSQLClause(
+					FindClause.AND,
+					"TIPO_DOC_AMM.CD_TIPO_DOCUMENTO_AMM",
+					SQLBuilder.EQUALS,
+					tiEntrataSpesa == 'E' ? Numerazione_doc_ammBulk.TIPO_FATTURA_ATTIVA : Numerazione_doc_ammBulk.TIPO_FATTURA_PASSIVA
+			);
+		} else {
+			sqlBuilder.addSQLClause(FindClause.AND, "TIPO_DOC_AMM.FL_UTILIZZO_DOC_GENERICO", SQLBuilder.EQUALS, "Y");
+			sqlBuilder.addSQLClause(FindClause.AND, "TIPO_DOC_AMM.FL_DOC_GENERICO", SQLBuilder.EQUALS, "Y");
+		}
 		sqlBuilder.addClause(FindClause.AND, "flStorno", SQLBuilder.EQUALS, Boolean.TRUE);
 		sqlBuilder.addClause(FindClause.AND, "dtInizioValidita", SQLBuilder.LESS_EQUALS, EJBCommonServices.getServerDate());
 		sqlBuilder.openParenthesis(FindClause.AND);

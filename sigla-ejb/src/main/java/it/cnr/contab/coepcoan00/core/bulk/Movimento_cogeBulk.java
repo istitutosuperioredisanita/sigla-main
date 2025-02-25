@@ -331,6 +331,18 @@ public class Movimento_cogeBulk extends Movimento_cogeBase {
         return TipoRiga.DEBITO.value().equals(this.getTi_riga());
     }
 
+    public boolean isRigaTipoAttivita() {
+        return TipoRiga.ATTIVITA.value().equals(this.getTi_riga());
+    }
+
+    public boolean isRigaTipoPassivita() {
+        return TipoRiga.PASSIVITA.value().equals(this.getTi_riga());
+    }
+
+    public boolean isRigaTipoCosto() {
+        return TipoRiga.COSTO.value().equals(this.getTi_riga());
+    }
+
     public boolean isRigaTipoTesoreria() {
         return TipoRiga.TESORERIA.value().equals(this.getTi_riga());
     }

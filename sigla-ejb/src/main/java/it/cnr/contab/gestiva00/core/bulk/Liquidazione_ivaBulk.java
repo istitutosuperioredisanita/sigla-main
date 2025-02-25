@@ -22,7 +22,6 @@ import it.cnr.contab.docamm00.docs.bulk.TipoDocumentoEnum;
 import it.cnr.jada.bulk.ValidationException;
 
 import java.sql.Timestamp;
-import java.util.Optional;
 
 public class Liquidazione_ivaBulk extends Liquidazione_ivaBase implements IDocumentoCogeBulk {
 	private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
@@ -143,5 +142,16 @@ public class Liquidazione_ivaBulk extends Liquidazione_ivaBase implements IDocum
 	@Override
 	public Timestamp getDtGenerazioneScrittura() {
 		return this.getDt_contabilizzazione();
+	}
+
+	@Override
+	public void setStato_coan(String stato_coan) {
+		//TODO Da implementare
+	}
+
+	@Override
+	public String getStato_coan() {
+		//TODO Da implementare
+		return null;
 	}
 }

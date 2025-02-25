@@ -21,7 +21,10 @@ import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.doccont00.comp.DateServices;
+import it.cnr.contab.doccont00.core.DatiFinanziariScadenzeDTO;
 import it.cnr.contab.doccont00.core.bulk.*;
+import it.cnr.contab.fondecon00.core.bulk.Fondo_spesaBulk;
+import it.cnr.contab.fondecon00.core.bulk.Fondo_spesaHome;
 import it.cnr.contab.inventario00.consultazioni.bulk.V_cons_registro_inventarioBulk;
 import it.cnr.contab.inventario00.consultazioni.bulk.V_cons_registro_inventarioHome;
 import it.cnr.contab.inventario00.docs.bulk.*;
@@ -29,12 +32,10 @@ import it.cnr.contab.inventario00.tabrif.bulk.*;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettHome;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.util.EuroFormat;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.BulkList;
-import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.bulk.SimpleBulkList;
-import it.cnr.jada.bulk.ValidationException;
+import it.cnr.jada.bulk.*;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.ICRUDMgr;
@@ -47,6 +48,7 @@ import javax.ejb.EJBException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1700,4 +1702,38 @@ private void validaUtilizzatori (UserContext aUC,Inventario_beniBulk bene)
 		return resUtilizzatori;
 	}
 
+	public Inventario_beniBulk getBeneInventario(UserContext uc,Long pgInventario,Long nrInventario, Long progressivo) throws RemoteException {
+		try {
+			Inventario_beniHome inventarioBeneInvHome = (Inventario_beniHome) getHome(uc, Inventario_beniBulk.class);
+			return inventarioBeneInvHome.getBeneInventario(pgInventario,nrInventario,progressivo);
+		}catch (ComponentException | PersistencyException ex){
+			throw new RemoteException("Error getBenePerAmmortamento pg_inventario: "+pgInventario
+			+" nr_inventario:"+nrInventario+" progressivo:" +progressivo);
+
+		}
+	}
+	public void aggiornamentoInventarioBeneConAmmortamento(UserContext uc,Inventario_beniBulk bene) throws ComponentException {
+		LoggableStatement ps = null;
+		try {
+			//lockBulk(uc, bene);
+
+			Inventario_beniHome invHome = (Inventario_beniHome) getHome(uc, Inventario_beniBulk.class);
+
+			ps = new LoggableStatement(getConnection(uc),
+					invHome.aggiornamentoSqlInventarioBeneConAmmortamento(uc,bene), true, this.getClass());
+			ps.executeQuery();
+			try {
+				ps.close();
+			} catch (java.sql.SQLException ignored) {
+				throw handleException(ignored);
+			}
+		} catch (SQLException | ComponentException e) {
+			throw handleException(e);
+		} finally {
+			if (ps != null) try {
+				ps.close();
+			} catch (java.sql.SQLException ignored) {
+			}
+		}
+	}
 }

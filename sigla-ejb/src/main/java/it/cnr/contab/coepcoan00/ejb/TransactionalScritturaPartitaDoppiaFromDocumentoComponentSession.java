@@ -320,11 +320,12 @@ public class TransactionalScritturaPartitaDoppiaFromDocumentoComponentSession ex
     }
 
     @Override
-    public Scrittura_partita_doppiaBulk createScritturaRequiresNew(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, RemoteException {
+    public void createScritturaRequiresNew(UserContext param0, IDocumentoCogeBulk param1, boolean param2) throws ComponentException, RemoteException {
         try {
-            return (Scrittura_partita_doppiaBulk)invoke("createScritturaRequiresNew", new Object[]{
+            invoke("createScritturaRequiresNew", new Object[]{
                     param0,
-                    param1});
+                    param1,
+                    param2});
         } catch (RemoteException e) {
             throw e;
         } catch (java.lang.reflect.InvocationTargetException e) {

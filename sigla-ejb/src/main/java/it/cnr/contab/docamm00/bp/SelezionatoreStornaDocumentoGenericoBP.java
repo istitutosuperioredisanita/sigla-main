@@ -18,6 +18,8 @@
 package it.cnr.contab.docamm00.bp;
 
 import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaIBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaIBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
@@ -42,6 +44,7 @@ import java.util.stream.Stream;
 public class SelezionatoreStornaDocumentoGenericoBP extends SelezionatoreListaBP implements SearchProvider {
 	private static final long serialVersionUID = 1L;
 	private char tiEntrataSpesa;
+	private boolean tiFattura;
 
 	public SelezionatoreStornaDocumentoGenericoBP() {
 	}
@@ -54,19 +57,51 @@ public class SelezionatoreStornaDocumentoGenericoBP extends SelezionatoreListaBP
 		return tiEntrataSpesa;
 	}
 
+	public boolean isTiFattura() {
+		return tiFattura;
+	}
+
 	@Override
 	protected void init(Config config, ActionContext actioncontext) throws BusinessProcessException {
 		try {
 			tiEntrataSpesa = config.getInitParameter("tiEntrataSpesa").charAt(0);
-			setModel(actioncontext, new Documento_generico_rigaBulk());
-			setBulkInfo(BulkInfo.getBulkInfo(Documento_generico_rigaBulk.class));
+			tiFattura = Optional.ofNullable(config.getInitParameter("tiFattura"))
+							.map(s -> s.equalsIgnoreCase("Y"))
+							.orElse(Boolean.FALSE);
+			Optional.ofNullable(config.getInitParameter("bulkClassName"))
+					.map(s -> {
+                        try {
+                            return Class.forName(s);
+                        } catch (ClassNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+					.map(aClass -> {
+                        try {
+                            return aClass.newInstance();
+                        } catch (InstantiationException|IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+					.filter(OggettoBulk.class::isInstance)
+					.map(OggettoBulk.class::cast)
+					.ifPresent(oggettoBulk -> {
+                        try {
+                            setModel(actioncontext, oggettoBulk);
+                        } catch (BusinessProcessException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+			Optional.ofNullable(getModel())
+					.map(OggettoBulk::getBulkInfo)
+					.ifPresent(this::setBulkInfo);
 			setColumns(getBulkInfo().getColumnFieldPropertyDictionary("storno"));
+			Utility.createCRUDComponentSession().initializeKeysAndOptionsInto(actioncontext.getUserContext(), getModel());
 			setMultiSelection(Boolean.TRUE);
-            Utility.createCRUDComponentSession().initializeKeysAndOptionsInto(actioncontext.getUserContext(), getModel());
 			super.init(config, actioncontext);
 			this.openIterator(actioncontext);
 			Stream.of("documento_generico.cd_cds_origine","documento_generico.cd_uo_origine","esercizio",
-					"cd_tipo_documento_amm", "pg_documento_generico", "progressivo_riga").forEach(s -> {
+					"cd_tipo_documento_amm", "pg_documento_generico", "pg_fattura_passiva", "pg_fattura_attiva", "progressivo_riga").forEach(s -> {
 				setOrderBy(actioncontext, s, OrderConstants.ORDER_ASC);
 			});
 			reset(actioncontext);

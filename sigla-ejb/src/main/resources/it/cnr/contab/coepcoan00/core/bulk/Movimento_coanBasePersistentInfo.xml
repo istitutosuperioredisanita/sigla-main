@@ -110,6 +110,31 @@
 			sqlTypeName="CHAR"
 			columnSize="1"
 			nullable="false" />
+		<columnMapping
+			columnName="ESERCIZIO_MOVCOGE"
+			propertyName="esercizio_movcoge"
+			sqlTypeName="DECIMAL"
+			columnSize="4"/>
+		<columnMapping
+			columnName="CD_CDS_MOVCOGE"
+			propertyName="cd_cds_movcoge"
+			sqlTypeName="VARCHAR"
+			columnSize="30"/>
+		<columnMapping
+			columnName="CD_UO_MOVCOGE"
+			propertyName="cd_uo_movcoge"
+			sqlTypeName="VARCHAR"
+			columnSize="30"/>
+		<columnMapping
+			columnName="PG_MOVIMENTO_MOVCOGE"
+			propertyName="pg_movimento_movcoge"
+			sqlTypeName="DECIMAL"
+			columnSize="10"/>
+		<columnMapping
+			columnName="PG_SCRITTURA_MOVCOGE"
+			propertyName="pg_scrittura_movcoge"
+			sqlTypeName="DECIMAL"
+			columnSize="10"/>
 	</defaultColumnMap>
 	<persistentProperty
 		name="pg_ver_rec" />
@@ -141,4 +166,14 @@
 		name="cd_linea_attivita" />
 	<persistentProperty
 		name="ti_istituz_commerc" />
+	<persistentProperty
+		name="esercizio_movcoge" />
+	<persistentProperty
+		name="cd_uo_movcoge" />
+	<persistentProperty
+		name="cd_cds_movcoge" />
+	<persistentProperty
+		name="pg_movimento_movcoge" />
+	<persistentProperty
+		name="pg_scrittura_movcoge" />
 </SQLPersistentInfo>

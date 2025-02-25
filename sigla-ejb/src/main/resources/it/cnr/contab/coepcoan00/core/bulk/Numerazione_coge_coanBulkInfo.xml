@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+	<fieldProperty
+		name="cd_cds"
+		property="cd_cds"
+		maxLength="30"
+		inputSize="30"
+		inputType="TEXT"
+		label="cd_cds" />
+	<fieldProperty
+		name="ti_documento"
+		property="ti_documento"
+		maxLength="10"
+		inputSize="10"
+		inputType="TEXT"
+		label="ti_documento" />
+	<fieldProperty
+		name="cd_unita_organizzativa"
+		property="cd_unita_organizzativa"
+		maxLength="30"
+		inputSize="30"
+		inputType="TEXT"
+		label="cd_unita_organizzativa" />
+	<fieldProperty
+		name="esercizio"
+		property="esercizio"
+		inputType="TEXT"
+		label="esercizio" />
+	<fieldProperty
+		name="primo"
+		property="primo"
+		inputType="TEXT"
+		label="primo" />
+	<fieldProperty
+		name="corrente"
+		property="corrente"
+		inputType="TEXT"
+		label="corrente" />
+	<fieldProperty
+		name="ultimo"
+		property="ultimo"
+		inputType="TEXT"
+		label="ultimo" />
+
+	<formFieldProperty
+		name="cd_cds" />
+	<formFieldProperty
+		name="ti_documento" />
+	<formFieldProperty
+		name="cd_unita_organizzativa" />
+	<formFieldProperty
+		name="esercizio" />
+	<formFieldProperty
+		name="primo" />
+	<formFieldProperty
+		name="corrente" />
+	<formFieldProperty
+		name="ultimo" />
+
+	<columnFieldProperty
+		name="cd_cds" />
+	<columnFieldProperty
+		name="ti_documento" />
+	<columnFieldProperty
+		name="cd_unita_organizzativa" />
+	<columnFieldProperty
+		name="esercizio" />
+	<columnFieldProperty
+		name="primo" />
+	<columnFieldProperty
+		name="corrente" />
+	<columnFieldProperty
+		name="ultimo" />
+
+	<findFieldProperty
+		name="cd_cds" />
+	<findFieldProperty
+		name="ti_documento" />
+	<findFieldProperty
+		name="cd_unita_organizzativa" />
+	<findFieldProperty
+		name="esercizio" />
+	<findFieldProperty
+		name="primo" />
+	<findFieldProperty
+		name="corrente" />
+	<findFieldProperty
+		name="ultimo" />
+
+</bulkInfo>
