@@ -17,18 +17,20 @@
 
 package it.cnr.contab.gestiva00.ejb;
 
+import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk;
 import it.cnr.contab.gestiva00.comp.ConsRegIvaComponent;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.comp.NoRollbackException;
-import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.util.RemoteIterator;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
 import javax.ejb.Remove;
 import javax.ejb.Stateless;
+import java.rmi.RemoteException;
+import java.util.List;
 
 @Stateless(name="CNRGESTIVA00_EJB_ConsRegIvaComponentSession")
 public class ConsRegIvaComponentSessionBean extends it.cnr.jada.ejb.RicercaComponentSessionBean implements ConsRegIvaComponentSession {
@@ -45,4 +47,63 @@ public class ConsRegIvaComponentSessionBean extends it.cnr.jada.ejb.RicercaCompo
 		return new ConsRegIvaComponentSessionBean();
 	}
 
+
+	public java.util.Collection selectTipi_sezionaliByClause(UserContext userContext,
+												  OggettoBulk model, Tipo_sezionaleBulk prototype, CompoundFindClause clause)
+			throws ComponentException, RemoteException, PersistencyException {
+
+		pre_component_invocation(userContext, componentObj);
+		try {
+			java.util.Collection result = ((ConsRegIvaComponent)componentObj).selectTipi_sezionaliByClause(
+					userContext, model, prototype, clause);
+			component_invocation_succes(userContext, componentObj);
+			return result;
+		} catch(ComponentException e) {
+			component_invocation_failure(userContext, componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext, componentObj, e);
+		} catch(Error e) {
+			throw uncaughtError(userContext, componentObj, e);
+		}
+	}
+
+
+//	public java.util.Collection queryDettRegIva(UserContext userContext, String cdTipoSezionale)
+//			throws ComponentException {
+//
+//		pre_component_invocation(userContext, componentObj);
+//		try {
+//			java.util.Collection result = ((ConsRegIvaComponent)componentObj).queryDettRegIva(
+//					userContext, cdTipoSezionale);
+//			component_invocation_succes(userContext, componentObj);
+//			return result;
+//		} catch(ComponentException e) {
+//			component_invocation_failure(userContext, componentObj);
+//			throw e;
+//		} catch(RuntimeException e) {
+//			throw uncaughtRuntimeException(userContext, componentObj, e);
+//		} catch(Error e) {
+//			throw uncaughtError(userContext, componentObj, e);
+//		}
+//	}
+
+	public RemoteIterator cercaDettRegIva(UserContext userContext, String cdTipoSezionale)
+			throws ComponentException {
+
+		pre_component_invocation(userContext, componentObj);
+		try {
+			RemoteIterator result = ((ConsRegIvaComponent)componentObj).cercaDettRegIva(
+					userContext, cdTipoSezionale);
+			component_invocation_succes(userContext, componentObj);
+			return result;
+		} catch(ComponentException e) {
+			component_invocation_failure(userContext, componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext, componentObj, e);
+		} catch(Error e) {
+			throw uncaughtError(userContext, componentObj, e);
+		}
+	}
 }

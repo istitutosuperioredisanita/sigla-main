@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+    <fieldProperty
+            name="esercizio"
+            property="esercizio"
+            inputType="TEXT"
+            inputSize="5"
+            maxLength="5"
+            enabledOnEdit="false"
+            label="Esercizio"/>
+
+    <fieldProperty
+            name="mese"
+            property="mese"
+            inputType="TEXT"
+            inputSize="2"
+            maxLength="2"
+            enabledOnEdit="false"
+            label="Mese"/>
+
+    <fieldProperty
+            name="cd_tipo_sezionale"
+            property="tipo_sezionale.cd_tipo_sezionale"
+            inputType="TEXT"
+            inputSize="10"
+            maxLength="10"
+            enabledOnEdit="false"
+            label="Tipo Sezionale"/>
+
+    <fieldProperty
+            name="sp_n"
+            property="sp_n"
+            inputType="TEXT"
+            inputSize="15"
+            maxLength="15"
+            enabledOnEdit="false"
+            label="Split Payment No"/>
+
+    <fieldProperty
+            name="sp_y"
+            property="sp_y"
+            inputType="TEXT"
+            inputSize="15"
+            maxLength="15"
+            enabledOnEdit="false"
+            label="Split Payment Si"/>
+
+    <fieldProperty
+            name="tot_iva"
+            property="tot_iva"
+            inputType="TEXT"
+            inputSize="15"
+            maxLength="15"
+            enabledOnEdit="false"
+            label="Totale IVA"/>
+
+    <fieldProperty
+            name="tipo_sezionale"
+            property="tipo_sezionale"
+            printProperty="cd_ds_tipo_sezionale"
+            optionsProperty="tipi_sezionali"
+            maxLength="30"
+            inputSize="30"
+            inputType="SELECT"
+            nullable="false"
+            enabledOnFreeSearch="true"
+            enabledOnSearch="true"
+            enabledOnEdit="true"
+            enabledOnInsert="true"
+            label="Tipo Sezionale"/>
+
+
+    <form name="searchtool"/>
+
+    <formFieldProperty name="esercizio" />
+    <formFieldProperty name="mese" />
+    <formFieldProperty name="cd_tipo_sezionale" />
+    <formFieldProperty name="sp_n" />
+    <formFieldProperty name="sp_y" />
+    <formFieldProperty name="tot_iva" />
+
+    <formFieldProperty name="tipo_sezionale" />
+
+    <findFieldProperty name="esercizio" />
+    <findFieldProperty name="mese" />
+    <findFieldProperty name="cd_tipo_sezionale" />
+    <findFieldProperty name="sp_n" />
+    <findFieldProperty name="sp_y" />
+    <findFieldProperty name="tot_iva" />
+
+    <columnFieldProperty name="esercizio" />
+    <columnFieldProperty name="mese" />
+    <columnFieldProperty name="cd_tipo_sezionale" />
+    <columnFieldProperty name="sp_n" />
+    <columnFieldProperty name="sp_y" />
+    <columnFieldProperty name="tot_iva" />
+</bulkInfo>

@@ -17,14 +17,26 @@
 
 package it.cnr.contab.gestiva00.ejb;
 
+import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk;
 import it.cnr.jada.UserContext;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.persistency.IntrospectionException;
+import it.cnr.jada.ejb.CRUDComponentSession;
+import it.cnr.jada.ejb.RicercaComponentSession;
 import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.util.RemoteIterator;
 
 import javax.ejb.Remote;
 import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.List;
 
 @Remote
-public interface ConsRegIvaComponentSession extends it.cnr.jada.ejb.RicercaComponentSession {
+public interface ConsRegIvaComponentSession extends RicercaComponentSession {
+java.util.Collection selectTipi_sezionaliByClause(UserContext userContext, OggettoBulk model, Tipo_sezionaleBulk prototype, CompoundFindClause clause) throws ComponentException, RemoteException, PersistencyException;
+
+RemoteIterator cercaDettRegIva(UserContext userContext, String cdTipoSezionale) throws ComponentException, RemoteException;
+
+//Collection queryDettRegIva(UserContext userContext, String cdTipoSezionale) throws ComponentException, RemoteException, PersistencyException;
 }
