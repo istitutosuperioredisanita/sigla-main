@@ -3,8 +3,6 @@ package it.cnr.contab.coepcoan00.core.bulk;
 import java.io.Serializable;
 
 public class ResultScrittureContabili implements Serializable {
-    public static final boolean LOAD_ANALITICA = true;
-
     public ResultScrittureContabili(Scrittura_partita_doppiaBulk scritturaPartitaDoppiaBulk, Scrittura_analiticaBulk scritturaAnaliticaBulk) {
         this.scritturaPartitaDoppiaBulk = scritturaPartitaDoppiaBulk;
         this.scritturaAnaliticaBulk = scritturaAnaliticaBulk;

@@ -27,9 +27,7 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
 import it.cnr.contab.chiusura00.ejb.RicercaDocContComponentSession;
-import it.cnr.contab.coepcoan00.bp.CRUDScritturaPDoppiaBP;
-import it.cnr.contab.coepcoan00.bp.EconomicaAvereDetailCRUDController;
-import it.cnr.contab.coepcoan00.bp.EconomicaDareDetailCRUDController;
+import it.cnr.contab.coepcoan00.bp.*;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.docamm00.ejb.DocumentoGenericoComponentSession;
@@ -62,7 +60,7 @@ import java.util.stream.Stream;
 
 public class CRUDDocumentoGenericoAttivoBP
         extends AllegatiCRUDBP<AllegatoGenericoBulk, Documento_genericoBulk>
-        implements IDocumentoAmministrativoBP, IGenericSearchDocAmmBP, IDefferedUpdateSaldiBP, VoidableBP, IDocAmmEconomicaBP, IDocumentoGenericoBP {
+        implements IDocumentoAmministrativoBP, IGenericSearchDocAmmBP, IDefferedUpdateSaldiBP, VoidableBP, IDocAmmEconomicaBP, IDocAmmAnaliticaBP, IDocumentoGenericoBP {
     private final SimpleDetailCRUDController dettaglio = new DocumentoGenericoAttivoRigaCRUDController("Dettaglio", Documento_generico_rigaBulk.class, "documento_generico_dettColl", this);
 
     private final SimpleDetailCRUDController dettaglioAccertamentoController;
@@ -97,6 +95,8 @@ public class CRUDDocumentoGenericoAttivoBP
     private final CollapsableDetailCRUDController movimentiDare = new EconomicaDareDetailCRUDController(this);
     private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
 
+    private final CollapsableDetailCRUDController movimentiAnalitici = new AnaliticaDetailCRUDController(this);
+
     protected it.cnr.contab.docamm00.docs.bulk.Risultato_eliminazioneVBulk deleteManager = null;
     private boolean isDeleting = false;
     private boolean isDetailDoubling = false;
@@ -108,6 +108,7 @@ public class CRUDDocumentoGenericoAttivoBP
     private boolean ribaltato;
     private boolean contoEnte;
     private boolean attivaEconomicaParallela = false;
+    private boolean attivaAnalitica = false;
     private boolean supervisore = false;
     private boolean attivaInventaria = false;
     private boolean esercizioChiuso = false;
@@ -471,6 +472,7 @@ public class CRUDDocumentoGenericoAttivoBP
             int solaris = Documento_genericoBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.YEAR);
             int esercizioScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue();
             attivaEconomicaParallela = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(context.getUserContext());
+            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
             attivaInventaria= Utility.createConfigurazioneCnrComponentSession().isAttivoInventariaDocumenti(context.getUserContext());
             setAnnoSolareInScrivania(solaris == esercizioScrivania);
             setRibaltato(initRibaltato(context));
@@ -1230,9 +1232,10 @@ public class CRUDDocumentoGenericoAttivoBP
         pages.put(i++, TAB_DETTAGLIO);
         pages.put(i++, documento.isDocumentoStorno() ? TAB_STORNI : TAB_ACCERTAMENTI);
         pages.put(i++, TAB_ALLEGATI);
-        if (attivaEconomicaParallela) {
+        if (attivaEconomicaParallela)
             pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
-        }
+        if (attivaAnalitica)
+            pages.put(i++, CRUDScritturaAnaliticaBP.TAB_ANALITICA);
         String[][] tabs = new String[i][3];
         for (int j = 0; j < i; j++)
             tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
@@ -1245,6 +1248,10 @@ public class CRUDDocumentoGenericoAttivoBP
 
     public CollapsableDetailCRUDController getMovimentiAvere() {
         return movimentiAvere;
+    }
+
+    public CollapsableDetailCRUDController getMovimentiAnalitici() {
+        return movimentiAnalitici;
     }
 
     public boolean isSupervisore() {
@@ -1265,6 +1272,14 @@ public class CRUDDocumentoGenericoAttivoBP
 
     public boolean isAttivaEconomicaParallela() {
         return attivaEconomicaParallela;
+    }
+
+    public boolean isButtonGeneraScritturaAnaliticaVisible() {
+        return Boolean.FALSE;
+    }
+    @Override
+    public OggettoBulk getAnaliticaModel() {
+        return getModel();
     }
 
     @Override

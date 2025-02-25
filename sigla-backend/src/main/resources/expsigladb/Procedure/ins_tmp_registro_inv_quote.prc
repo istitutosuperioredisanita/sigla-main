@@ -22,10 +22,12 @@ Select Inventario_Beni.Cd_Unita_Organizzativa, Inventario_Beni.Cd_Cds,
        Categoria_Gruppo_Invent.cd_categoria_padre Categoria,
        Inventario_Beni.Cd_Categoria_Gruppo,
        Inventario_Beni.Cd_Assegnatario,
-       Buono_Carico_Scarico.Data_Registrazione,
-       Tipo_Carico_Scarico.Cd_Tipo_Carico_Scarico,
-       Tipo_Carico_Scarico.Ds_Tipo_Carico_Scarico,
-       Decode(Buono_Carico_Scarico.Ti_Documento,'C',Amm.Im_Movimento_Ammort,(-1)*Amm.Im_Movimento_Ammort) Im_Movimento_Ammort,
+       --Buono_Carico_Scarico.Data_Registrazione,
+       NVL(Buono_Carico_Scarico.Data_Registrazione,inventario_beni.dt_acquisizione) Data_Registrazione,
+       NVL(Tipo_Carico_Scarico.Cd_Tipo_Carico_Scarico,'C') Cd_Tipo_Carico_Scarico,
+       NVL(Tipo_Carico_Scarico.Ds_Tipo_Carico_Scarico,NVL(Ds_Tipo,'*')) Ds_Tipo_Carico_Scarico,
+       --Decode(Buono_Carico_Scarico.Ti_Documento,'C',Amm.Im_Movimento_Ammort,(-1)*Amm.Im_Movimento_Ammort) Im_Movimento_Ammort,
+       Decode(NVL(Buono_Carico_Scarico.Ti_Documento,'C'),'C',Amm.Im_Movimento_Ammort,(-1)*Amm.Im_Movimento_Ammort)Im_Movimento_Ammort,
        Amm.Imponibile_Ammortamento 	Imponibile_Ammortamento,
        Amm.Esercizio Esercizio_Amm,
        (Select Numero_Anni
@@ -33,7 +35,8 @@ Select Inventario_Beni.Cd_Unita_Organizzativa, Inventario_Beni.Cd_Cds,
          Where Inventario_Beni.Pg_Inventario = Ammortamento_Bene_Inv.Pg_Inventario
            And Inventario_Beni.Nr_Inventario = Ammortamento_Bene_Inv.Nr_Inventario
            And Inventario_Beni.Progressivo   = Ammortamento_Bene_Inv.Progressivo
-           And Ammortamento_Bene_Inv.Numero_Anno = 1
+            And ((  Inventario_Beni.fl_migrato='N' and Ammortamento_Bene_Inv.Numero_Anno =1)
+            or (  Inventario_Beni.fl_migrato='Y' and Ammortamento_Bene_Inv.Numero_Anno >=1))
            And Rownum =1) Numero_Anni,
        (Select Perc_Ammortamento
           From Ammortamento_Bene_Inv
@@ -47,14 +50,16 @@ Select Inventario_Beni.Cd_Unita_Organizzativa, Inventario_Beni.Cd_Cds,
          Where Inventario_Beni.Pg_Inventario = Ammortamento_Bene_Inv.Pg_Inventario
            And Inventario_Beni.Nr_Inventario = Ammortamento_Bene_Inv.Nr_Inventario
            And Inventario_Beni.Progressivo = Ammortamento_Bene_Inv.Progressivo
-           And Ammortamento_Bene_Inv.Numero_Anno = 1
+            And ((  Inventario_Beni.fl_migrato='N' and Ammortamento_Bene_Inv.Numero_Anno =1)
+            or (  Inventario_Beni.fl_migrato='Y' and Ammortamento_Bene_Inv.Numero_Anno >=1))
            And Rownum =1) Perc_Primo_Anno,
        (Select Perc_Successivi
           From Ammortamento_Bene_Inv
          Where Inventario_Beni.Pg_Inventario = Ammortamento_Bene_Inv.Pg_Inventario
            And Inventario_Beni.Nr_Inventario = Ammortamento_Bene_Inv.Nr_Inventario
            And Inventario_Beni.Progressivo   = Ammortamento_Bene_Inv.Progressivo
-           And Ammortamento_Bene_Inv.Numero_Anno = 1
+            And ((  Inventario_Beni.fl_migrato='N' and Ammortamento_Bene_Inv.Numero_Anno =1)
+            or (  Inventario_Beni.fl_migrato='Y' and Ammortamento_Bene_Inv.Numero_Anno >=1))
            And Rownum =1) Perc_Successivi,
        Inventario_Beni.Nr_Inventario,Inventario_Beni.Fl_Ammortamento,
        Inventario_Beni.Ti_Commerciale_Istituzionale,
@@ -70,14 +75,16 @@ Select Inventario_Beni.Cd_Unita_Organizzativa, Inventario_Beni.Cd_Cds,
  Where
       Inventario_Beni.Cd_Unita_Organizzativa 		= Nvl(Uo,Inventario_Beni.Cd_Unita_Organizzativa)		   And
       Inventario_Beni.Cd_Cds		   		= Nvl(Cds,Inventario_Beni.Cd_Cds)  		                   And
-      Buono_Carico_Scarico.Data_Registrazione	 	Between Data_Da And Data_A	                                   And
+      --Buono_Carico_Scarico.Data_Registrazione	 	Between Data_Da And Data_A	                                   And
+      NVL(Buono_Carico_Scarico.Data_Registrazione,inventario_beni.dt_acquisizione) Between Data_Da And Data_A	                                   And
       Inventario_Beni.Esercizio_Carico_Bene     	<= 	To_Char(Data_A,'yyyy') 					   And
       Categoria_Gruppo_Invent.cd_categoria_padre  	= Nvl(Categoria, Categoria_Gruppo_Invent.cd_categoria_padre)  And
       Inventario_Beni.Cd_Categoria_Gruppo	  	= Nvl(Gruppo ,Inventario_Beni.Cd_Categoria_Gruppo)          	   And
       Inventario_Beni.Nr_Inventario   			>= Da_Codice_Bene 						   And
       Inventario_Beni.Nr_Inventario   			<= A_Codice_Bene						   And
-      Buono_Carico_Scarico.Cd_Tipo_Carico_Scarico 	= Nvl(Ds_Tipo, Buono_Carico_Scarico.Cd_Tipo_Carico_Scarico)	   And
-      Inventario_Beni.Ti_Commerciale_Istituzionale	= Nvl(Tipo,Inventario_Beni.Ti_Commerciale_Istituzionale)	   And
+      --Buono_Carico_Scarico.Cd_Tipo_Carico_Scarico 	= Nvl(Ds_Tipo, Buono_Carico_Scarico.Cd_Tipo_Carico_Scarico)	   And
+      NVL( Buono_Carico_Scarico.Cd_Tipo_Carico_Scarico,'C') = Nvl(null,  NVL( Buono_Carico_Scarico.Cd_Tipo_Carico_Scarico,'C'))	   And
+      Inventario_Beni.Ti_Commerciale_Istituzionale	= Nvl(Tipo,Inventario_Beni.Ti_Commerciale_Istituzionale)	   And      
        Inventario_Beni.Cd_Cds = Ubicazione_Bene.Cd_Cds
    And Inventario_Beni.Cd_Unita_Organizzativa 	= Ubicazione_Bene.Cd_Unita_Organizzativa
    And Inventario_Beni.Cd_Ubicazione 		= Ubicazione_Bene.Cd_Ubicazione
@@ -87,16 +94,16 @@ Select Inventario_Beni.Cd_Unita_Organizzativa, Inventario_Beni.Cd_Cds,
    where
 	 t.cd_unita_organizzativa = Inventario_Beni.Cd_Unita_Organizzativa
 	 and t.dt_fine_rapporto is null)
-   And Buono_Carico_Scarico_Dett.Pg_Inventario 	= Inventario_Beni.Pg_Inventario
-   And Buono_Carico_Scarico_Dett.Nr_Inventario 	= Inventario_Beni.Nr_Inventario
-   And Buono_Carico_Scarico_Dett.Progressivo 	= Inventario_Beni.Progressivo
-   And Buono_Carico_Scarico.Pg_Inventario 	= Buono_Carico_Scarico_Dett.Pg_Inventario
-   And Buono_Carico_Scarico.Ti_Documento 	= Buono_Carico_Scarico_Dett.Ti_Documento
-   And Buono_Carico_Scarico.Esercizio 		= Buono_Carico_Scarico_Dett.Esercizio
-   And Buono_Carico_Scarico.Pg_Buono_C_S 	= Buono_Carico_Scarico_Dett.Pg_Buono_C_S
-   And Tipo_Carico_Scarico.Cd_Tipo_Carico_Scarico = Buono_Carico_Scarico.Cd_Tipo_Carico_Scarico
-   And(( Tipo_Carico_Scarico.Ti_Documento = 'C'
-   And Tipo_Carico_Scarico.Fl_Aumento_Valore = 'N'))
+   And Buono_Carico_Scarico_Dett.Pg_Inventario(+) 	= Inventario_Beni.Pg_Inventario
+   And Buono_Carico_Scarico_Dett.Nr_Inventario(+) 	= Inventario_Beni.Nr_Inventario
+   And Buono_Carico_Scarico_Dett.Progressivo(+) 	= Inventario_Beni.Progressivo
+   And Buono_Carico_Scarico.Pg_Inventario(+) 	= Buono_Carico_Scarico_Dett.Pg_Inventario
+   And Buono_Carico_Scarico.Ti_Documento(+) 	= Buono_Carico_Scarico_Dett.Ti_Documento
+   And Buono_Carico_Scarico.Esercizio 	(+)	= Buono_Carico_Scarico_Dett.Esercizio
+   And Buono_Carico_Scarico.Pg_Buono_C_S (+)	= Buono_Carico_Scarico_Dett.Pg_Buono_C_S
+   And Tipo_Carico_Scarico.Cd_Tipo_Carico_Scarico(+) = Buono_Carico_Scarico.Cd_Tipo_Carico_Scarico
+   And(( Tipo_Carico_Scarico.Ti_Documento(+) = 'C'
+   And Tipo_Carico_Scarico.Fl_Aumento_Valore(+) = 'N'))
    And Inventario_Beni.Pg_Inventario =  Amm.Pg_Inventario
    And Inventario_Beni.Nr_Inventario =	Amm.Nr_Inventario
    And Inventario_Beni.Progressivo  = 	Amm.Progressivo

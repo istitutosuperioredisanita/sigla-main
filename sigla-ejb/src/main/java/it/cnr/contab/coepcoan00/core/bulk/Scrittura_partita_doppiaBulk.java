@@ -224,7 +224,7 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
     }
 
     public java.math.BigDecimal getDifferenza() {
-        return getImTotaleDare().subtract(getTotaleAvere()).abs();
+        return getImTotaleDare().subtract(getImTotaleAvere()).abs();
     }
     /**
      * @return it.cnr.jada.bulk.BulkList
@@ -365,14 +365,6 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
         for (java.util.Iterator i = getMovimentiDareColl().iterator(); i.hasNext(); )
             ((Movimento_cogeBulk) i.next()).validate();
 
-    }
-
-    public BigDecimal getTotaleDare() {
-        return this.getMovimentiDareColl().stream().map(el -> el.getIm_movimento()).reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    public BigDecimal getTotaleAvere() {
-        return this.getMovimentiAvereColl().stream().map(el -> el.getIm_movimento()).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public List<Movimento_cogeBulk> getAllMovimentiColl() {

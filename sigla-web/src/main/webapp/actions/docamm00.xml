@@ -285,6 +285,7 @@
         <init-param name="bulkClassName" value="it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk"/>
         <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>
         <init-param name="defaultAction" value="SelezionatoreStornaDocumentoGenericoAction"/>
+        <init-param name="tiFattura" value="N"/>
         <init-param name="tiEntrataSpesa" value="E"/>
     </businessProcess>
 
@@ -294,6 +295,27 @@
         <init-param name="bulkClassName" value="it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk"/>
         <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>
         <init-param name="defaultAction" value="SelezionatoreStornaDocumentoGenericoAction"/>
+        <init-param name="tiFattura" value="N"/>
+        <init-param name="tiEntrataSpesa" value="S"/>
+    </businessProcess>
+
+    <businessProcess
+            name="StornaFattureAttiveBP" className="it.cnr.contab.docamm00.bp.SelezionatoreStornaDocumentoGenericoBP">
+        <forward name="default" path="/util/form_lista.jsp"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaIBulk"/>
+        <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>
+        <init-param name="defaultAction" value="SelezionatoreStornaDocumentoGenericoAction"/>
+        <init-param name="tiFattura" value="Y"/>
+        <init-param name="tiEntrataSpesa" value="E"/>
+    </businessProcess>
+
+    <businessProcess
+            name="StornaFatturePassiveBP" className="it.cnr.contab.docamm00.bp.SelezionatoreStornaDocumentoGenericoBP">
+        <forward name="default" path="/util/form_lista.jsp"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaIBulk"/>
+        <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>
+        <init-param name="defaultAction" value="SelezionatoreStornaDocumentoGenericoAction"/>
+        <init-param name="tiFattura" value="Y"/>
         <init-param name="tiEntrataSpesa" value="S"/>
     </businessProcess>
 

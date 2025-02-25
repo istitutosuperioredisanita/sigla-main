@@ -1,10 +1,11 @@
-package it.cnr.test.contab.rest;
+package it.cnr.test.h2.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.cnr.contab.web.rest.config.SIGLASecurityContext;
 import it.cnr.contab.web.rest.model.*;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.si.spring.storage.MimeTypes;
+import it.cnr.test.h2.utenze.action.ActionDeployments;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -16,6 +17,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
+import org.jboss.arquillian.container.test.api.RunAsClient;
+import org.jboss.arquillian.junit.InSequence;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -31,14 +35,15 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
 
-
-@RunWith(JUnit4.class)
-public class RestServiceContrattiTest {
+public class RestServiceContrattiTest extends ActionDeployments {
 
     @Value("${test.value}")
     public String value;
 
     @Test
+    @RunAsClient
+    @OperateOnDeployment(TEST_H2)
+    @InSequence(1)
     public void testContrattiMaggioli()throws Exception {
 
         ObjectMapper mapper = new ObjectMapper();
@@ -137,7 +142,7 @@ public class RestServiceContrattiTest {
         UsernamePasswordCredentials credentials = new UsernamePasswordCredentials("MAGGIOLI", "MAGGIOLI");
         provider.setCredentials(AuthScope.ANY, credentials);
         HttpClient client=HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
-        HttpPost method = new HttpPost("http://localhost:8080/SIGLA/restapi/contrattoMaggioli");
+        HttpPost method = new HttpPost(deploymentURL.toString().concat("/restapi/contrattoMaggioli"));
         method.addHeader("Accept-Language", Locale.getDefault().toString());
         method.setHeader("Content-Type", "application/json;charset=UTF-8");
         method.setHeader(SIGLASecurityContext.X_SIGLA_CD_CDS,"999");

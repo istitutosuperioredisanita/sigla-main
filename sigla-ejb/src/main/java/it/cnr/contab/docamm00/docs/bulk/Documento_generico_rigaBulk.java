@@ -82,6 +82,9 @@ public class Documento_generico_rigaBulk extends Documento_generico_rigaBase imp
 	private boolean inventariato = false;
 
 	private Documento_generico_rigaBulk documento_generico_riga_storno;
+	private Fattura_attiva_rigaIBulk fattura_attiva_riga_storno;
+	private Fattura_passiva_rigaIBulk fattura_passiva_riga_storno;
+
 	@Transient
 	private BigDecimal importoStornato=BigDecimal.ZERO;
 	@Transient
@@ -986,5 +989,184 @@ public class Documento_generico_rigaBulk extends Documento_generico_rigaBase imp
 
 	public void setRigaStornata(Boolean rigaStornata) {
 		this.rigaStornata = rigaStornata;
+	}
+
+	public Fattura_attiva_rigaIBulk getFattura_attiva_riga_storno() {
+		return fattura_attiva_riga_storno;
+	}
+
+	public void setFattura_attiva_riga_storno(Fattura_attiva_rigaIBulk fattura_attiva_riga_storno) {
+		this.fattura_attiva_riga_storno = fattura_attiva_riga_storno;
+	}
+
+	public Fattura_passiva_rigaIBulk getFattura_passiva_riga_storno() {
+		return fattura_passiva_riga_storno;
+	}
+
+	public void setFattura_passiva_riga_storno(Fattura_passiva_rigaIBulk fattura_passiva_riga_storno) {
+		this.fattura_passiva_riga_storno = fattura_passiva_riga_storno;
+	}
+
+	@Override
+	public Integer getEsercizio_storno_fa() {
+		return Optional.ofNullable(getFattura_attiva_riga_storno())
+				.map(Fattura_attiva_rigaIBulk::getEsercizio)
+				.orElse(null);
+	}
+
+	@Override
+	public void setEsercizio_storno_fa(Integer esercizio_storno_fa) {
+		Optional.ofNullable(getFattura_attiva_riga_storno())
+				.ifPresent(
+						fatturaAttivaRigaIBulk -> fatturaAttivaRigaIBulk.setEsercizio(esercizio_storno_fa)
+				);
+	}
+
+	@Override
+	public Long getProgressivo_riga_storno_fa() {
+		return Optional.ofNullable(getFattura_attiva_riga_storno())
+				.map(Fattura_attiva_rigaIBulk::getProgressivo_riga)
+				.orElse(null);
+	}
+
+	@Override
+	public void setProgressivo_riga_storno_fa(Long progressivo_riga_storno_fa) {
+		Optional.ofNullable(getFattura_attiva_riga_storno())
+				.ifPresent(
+						fatturaAttivaRigaIBulk -> fatturaAttivaRigaIBulk.setProgressivo_riga(progressivo_riga_storno_fa)
+				);
+	}
+
+	@Override
+	public String getCd_unita_organizzativa_storno_fa() {
+		return Optional.ofNullable(getFattura_attiva_riga_storno())
+				.map(Fattura_attiva_rigaIBulk::getCd_unita_organizzativa)
+				.orElse(null);
+	}
+
+	@Override
+	public void setCd_unita_organizzativa_storno_fa(String cd_unita_organizzativa_storno_fa) {
+		Optional.ofNullable(getFattura_attiva_riga_storno())
+				.ifPresent(
+						fatturaAttivaRigaIBulk -> fatturaAttivaRigaIBulk.setCd_unita_organizzativa(cd_unita_organizzativa_storno_fa)
+				);
+	}
+
+	@Override
+	public String getCd_cds_storno_fa() {
+		return Optional.ofNullable(getFattura_attiva_riga_storno())
+				.map(Fattura_attiva_rigaIBulk::getCd_cds)
+				.orElse(null);
+	}
+
+	@Override
+	public void setCd_cds_storno_fa(String cd_cds_storno_fa) {
+		Optional.ofNullable(getFattura_attiva_riga_storno())
+				.ifPresent(
+						fatturaAttivaRigaIBulk -> fatturaAttivaRigaIBulk.setCd_cds(cd_cds_storno_fa)
+				);
+	}
+
+	@Override
+	public Long getPg_fattura_attiva_storno() {
+		return Optional.ofNullable(getFattura_attiva_riga_storno())
+				.map(Fattura_attiva_rigaIBulk::getPg_fattura_attiva)
+				.orElse(null);
+	}
+
+	@Override
+	public void setPg_fattura_attiva_storno(Long pg_fattura_attiva_storno) {
+		Optional.ofNullable(getFattura_attiva_riga_storno())
+				.ifPresent(
+						fatturaAttivaRigaIBulk -> fatturaAttivaRigaIBulk.setPg_fattura_attiva(pg_fattura_attiva_storno)
+				);
+	}
+
+	@Override
+	public Integer getEsercizio_storno_fp() {
+		return Optional.ofNullable(getFattura_passiva_riga_storno())
+				.map(Fattura_passiva_rigaIBulk::getEsercizio)
+				.orElse(null);
+	}
+
+	@Override
+	public void setEsercizio_storno_fp(Integer esercizio_storno_fp) {
+		Optional.ofNullable(getFattura_passiva_riga_storno())
+				.ifPresent(
+						fatturaPassivaRigaIBulk -> fatturaPassivaRigaIBulk.setEsercizio(esercizio_storno_fp)
+				);
+	}
+
+	@Override
+	public Long getProgressivo_riga_storno_fp() {
+		return Optional.ofNullable(getFattura_passiva_riga_storno())
+				.map(Fattura_passiva_rigaIBulk::getProgressivo_riga)
+				.orElse(null);
+	}
+
+	@Override
+	public void setProgressivo_riga_storno_fp(Long progressivo_riga_storno_fp) {
+		Optional.ofNullable(getFattura_passiva_riga_storno())
+				.ifPresent(
+						fatturaPassivaRigaIBulk -> fatturaPassivaRigaIBulk.setProgressivo_riga(progressivo_riga_storno_fp)
+				);
+	}
+
+	@Override
+	public String getCd_unita_organizzativa_storno_fp() {
+		return Optional.ofNullable(getFattura_passiva_riga_storno())
+				.map(Fattura_passiva_rigaIBulk::getCd_unita_organizzativa)
+				.orElse(null);
+	}
+
+	@Override
+	public void setCd_unita_organizzativa_storno_fp(String cd_unita_organizzativa_storno_fp) {
+		Optional.ofNullable(getFattura_passiva_riga_storno())
+				.ifPresent(
+						fatturaPassivaRigaIBulk -> fatturaPassivaRigaIBulk.setCd_unita_organizzativa(cd_unita_organizzativa_storno_fp)
+				);
+	}
+
+	@Override
+	public String getCd_cds_storno_fp() {
+		return Optional.ofNullable(getFattura_passiva_riga_storno())
+				.map(Fattura_passiva_rigaIBulk::getCd_cds)
+				.orElse(null);
+	}
+
+	@Override
+	public void setCd_cds_storno_fp(String cd_cds_storno_fp) {
+		Optional.ofNullable(getFattura_passiva_riga_storno())
+				.ifPresent(
+						fatturaPassivaRigaIBulk -> fatturaPassivaRigaIBulk.setCd_cds(cd_cds_storno_fp)
+				);
+	}
+
+	@Override
+	public Long getPg_fattura_passiva_storno() {
+		return Optional.ofNullable(getFattura_passiva_riga_storno())
+				.map(Fattura_passiva_rigaIBulk::getPg_fattura_passiva)
+				.orElse(null);
+	}
+
+	@Override
+	public void setPg_fattura_passiva_storno(Long pg_fattura_passiva_storno) {
+		Optional.ofNullable(getFattura_passiva_riga_storno())
+				.ifPresent(
+						fatturaPassivaRigaIBulk -> fatturaPassivaRigaIBulk.setPg_fattura_passiva(pg_fattura_passiva_storno)
+				);
+	}
+
+	public Optional<IDocumentoAmministrativoRigaBulk> getRigaStorno() {
+		Optional<IDocumentoAmministrativoRigaBulk> documentoGenericoRigaStorno =
+				Optional.ofNullable(getDocumento_generico_riga_storno());
+		Optional<IDocumentoAmministrativoRigaBulk> fattura_attiva_riga_storno =
+				Optional.ofNullable(getFattura_attiva_riga_storno());
+		Optional<IDocumentoAmministrativoRigaBulk> fattura_passiva_riga_storno =
+				Optional.ofNullable(getFattura_passiva_riga_storno());
+		return Optional.ofNullable(documentoGenericoRigaStorno
+					.orElse(fattura_attiva_riga_storno
+							.orElse(fattura_passiva_riga_storno
+									.orElse(null))));
 	}
 }

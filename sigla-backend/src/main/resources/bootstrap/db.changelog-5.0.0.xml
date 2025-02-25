@@ -6178,8 +6178,11 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <!-- Autore : RAFFAELE PAGANO - modifica tabella movimento coan-->
     <include file="bootstrap/modify_table_movimento_coan.xml"/>
     <include file="bootstrap/modify_table_saldo_coan.xml"/>
+    <!-- Autore : CIRO SALVIO - add column valora netto anno prec CHIUSURA_ANNO_INVENTARIO-->
+    <include file="bootstrap/add_column_val_netto_anno_prec_chiu_inv.xml"/>
     <!-- Autore : DAVIDE MIRRA - nuova voce di menù Consultazioni x GESTIONE IVA/ISS -->
     <include file="bootstrap/insert_gestione_iva_iss_consultazioni.xml"/>
+
     <!-- Autore : DAVIDE MIRRA - nuova voce di menù Consultazioni x GESTIONE IVA/ISS -->
     <include file="bootstrap/insert_cons_dettaglio_reg_iva.xml"/>
 

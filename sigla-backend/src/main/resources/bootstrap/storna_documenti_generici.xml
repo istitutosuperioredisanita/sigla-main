@@ -22,6 +22,9 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
                                        http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
+    <property name="data_storno_fatture" value="TO_DATE(to_char(${esercizio_corrente}-1,'9999')||'-03-01','YYYY-mm-DD')" dbms="oracle"/>
+    <property name="data_storno_fatture" value="TO_TIMESTAMP(to_char(${esercizio_corrente}-1,'9999')||'-03-01','YYYY-mm-DD')" dbms="postgresql,h2"/>
+
     <changeSet author="marco.spasiano" id="flag_storna_documenti_generici">
         <addColumn tableName="documento_generico">
             <column name="fl_storno"
@@ -144,4 +147,180 @@
             <column name="pg_ver_rec" type="BIGINT" value="0"/>
         </insert>
     </changeSet>
+    <!-- STORNO DI RIGHE DI FATTURA ATTIVA E PASSIVA -->
+    <changeSet author="marco.spasiano" id="fk_storna_fatture_riga">
+        <addColumn tableName="documento_generico_riga">
+            <column name="cd_cds_storno_fa"
+                    remarks="Codice identificativo del centro di spesa del documento stornato; livello 1 della tabella UNITA_ORGANIZZATIVA.&#10;Rappresenta il CdS sul cui bilancio è registrato il generico."
+                    type="VARCHAR(30)"/>
+            <column name="cd_unita_organizzativa_storno_fa"
+                    remarks="Codice identificativo dell'unità organizzativa del documento stornato; livello 2 della tabella UNITA_ORGANIZZATIVA.&#10;La codifica del livello unità organizzativa è ottenuta per concatenzione del codice del CdS di afferenza con il  proprio codice.&#10;Rappresenta la UO di riferimento alla registrazione del generico."
+                    type="VARCHAR(30)"/>
+            <column name="esercizio_storno_fa"
+                    remarks="Esercizio di riferimento del documento stornato"
+                    type="SMALLINT"/>
+            <column name="pg_fattura_attiva_storno"
+                    remarks="Protocollo interno di numerazione delle fatture attive riferito al documento stornato."
+                    type="BIGINT"/>
+            <column name="progressivo_riga_storno_fa"
+                    remarks="Progressivo numerazione righe all'interno di una fattura attiva riferito al documento stornato"
+                    type="BIGINT"/>
+        </addColumn>
+
+        <addColumn tableName="documento_generico_riga">
+            <column name="cd_cds_storno_fp"
+                    remarks="Codice identificativo del centro di spesa del documento stornato; livello 1 della tabella UNITA_ORGANIZZATIVA.&#10;Rappresenta il CdS sul cui bilancio è registrato il generico."
+                    type="VARCHAR(30)"/>
+            <column name="cd_unita_organizzativa_storno_fp"
+                    remarks="Codice identificativo dell'unità organizzativa del documento stornato; livello 2 della tabella UNITA_ORGANIZZATIVA.&#10;La codifica del livello unità organizzativa è ottenuta per concatenzione del codice del CdS di afferenza con il  proprio codice.&#10;Rappresenta la UO di riferimento alla registrazione del generico."
+                    type="VARCHAR(30)"/>
+            <column name="esercizio_storno_fp"
+                    remarks="Esercizio di riferimento del documento stornato"
+                    type="SMALLINT"/>
+            <column name="pg_fattura_passiva_storno"
+                    remarks="Protocollo interno di numerazione delle fatture passive riferito al documento stornato."
+                    type="BIGINT"/>
+            <column name="progressivo_riga_storno_fp"
+                    remarks="Progressivo numerazione righe all'interno di una fattura passiva riferito al documento stornato"
+                    type="BIGINT"/>
+        </addColumn>
+
+        <createIndex indexName="RK_DOCUMENTO_GENERICO_RIGA10" tableName="DOCUMENTO_GENERICO_RIGA">
+            <column name="cd_cds_storno_fa"/>
+            <column name="cd_unita_organizzativa_storno_fa"/>
+            <column name="esercizio_storno_fa"/>
+            <column name="pg_fattura_attiva_storno"/>
+            <column name="progressivo_riga_storno_fa"/>
+        </createIndex>
+        <createIndex indexName="RK_DOCUMENTO_GENERICO_RIGA11" tableName="DOCUMENTO_GENERICO_RIGA">
+            <column name="cd_cds_storno_fp"/>
+            <column name="cd_unita_organizzativa_storno_fp"/>
+            <column name="esercizio_storno_fp"/>
+            <column name="pg_fattura_passiva_storno"/>
+            <column name="progressivo_riga_storno_fp"/>
+        </createIndex>
+        <addForeignKeyConstraint
+                baseColumnNames="cd_cds_storno_fa,cd_unita_organizzativa_storno_fa,esercizio_storno_fa,pg_fattura_attiva_storno,progressivo_riga_storno_fa"
+                baseTableName="documento_generico_riga"
+                constraintName="fk_documento_generico_riga10"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="cd_cds,cd_unita_organizzativa,esercizio,pg_fattura_attiva,progressivo_riga"
+                referencedTableName="fattura_attiva_riga"/>
+        <addForeignKeyConstraint
+                baseColumnNames="cd_cds_storno_fp,cd_unita_organizzativa_storno_fp,esercizio_storno_fp,pg_fattura_passiva_storno,progressivo_riga_storno_fp"
+                baseTableName="documento_generico_riga"
+                constraintName="fk_documento_generico_riga11"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="cd_cds,cd_unita_organizzativa,esercizio,pg_fattura_passiva,progressivo_riga"
+                referencedTableName="fattura_passiva_riga"/>
+    </changeSet>
+    <changeSet author="marco.spasiano" id="accessi_storna_fatture">
+        <insert tableName="accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMDOCGENSTORNAFAATT"/>
+            <column name="ti_accesso" type="CHAR(1)" value="D"/>
+            <column name="ds_accesso" type="VARCHAR(200)" value="Storna fatture attive"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMDOCGENSTORNAFAPAS"/>
+            <column name="ti_accesso" type="CHAR(1)" value="D"/>
+            <column name="ds_accesso" type="VARCHAR(200)" value="Storna fatture passive"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="ass_bp_accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMDOCGENSTORNAFAATT"/>
+            <column name="business_process" type="VARCHAR(200)" value="StornaFattureAttiveBP"/>
+            <column name="ti_funzione" type="CHAR(1)" value="M"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="ass_bp_accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMDOCGENSTORNAFAPAS"/>
+            <column name="business_process" type="VARCHAR(200)" value="StornaFatturePassiveBP"/>
+            <column name="ti_funzione" type="CHAR(1)" value="M"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="albero_main">
+            <column name="cd_nodo" type="VARCHAR(100)" value="0.AMM.FATTUR.FATATT.S"/>
+            <column name="ds_nodo" type="VARCHAR(200)" value="storno"/>
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMDOCGENSTORNAFAATT"/>
+            <column name="business_process" type="VARCHAR(200)" value="StornaFattureAttiveBP"/>
+            <column name="pg_ordinamento" type="BIGINT" value="3"/>
+            <column name="fl_terminale" type="CHAR(1)" value="Y"/>
+            <column name="livello" type="SMALLINT" value="4"/>
+            <column name="cd_proprio_nodo" type="VARCHAR(100)" value="S"/>
+            <column name="cd_nodo_padre" type="VARCHAR(100)" value="0.AMM.FATTUR.FATATT"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="albero_main">
+            <column name="cd_nodo" type="VARCHAR(100)" value="0.AMM.FATTUR.FATPAS.S"/>
+            <column name="ds_nodo" type="VARCHAR(200)" value="storno"/>
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMDOCGENSTORNAFAPAS"/>
+            <column name="business_process" type="VARCHAR(200)" value="StornaFatturePassiveBP"/>
+            <column name="pg_ordinamento" type="BIGINT" value="30"/>
+            <column name="fl_terminale" type="CHAR(1)" value="Y"/>
+            <column name="livello" type="SMALLINT" value="4"/>
+            <column name="cd_proprio_nodo" type="VARCHAR(100)" value="S"/>
+            <column name="cd_nodo_padre" type="VARCHAR(100)" value="0.AMM.FATTUR.FATPAS"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+    </changeSet>
+    <changeSet author="marco.spasiano" id="configurazione_step_fine_anno_storno">
+        <insert tableName="configurazione_cnr">
+            <column name="esercizio" type="NUMERIC" valueNumeric="${esercizio_corrente}"/>
+            <column name="cd_unita_funzionale" type="STRING" value="*"/>
+            <column name="cd_chiave_primaria" type="STRING" value="STEP_FINE_ANNO"/>
+            <column name="cd_chiave_secondaria" type="STRING" value="140_STORNO_FATT_PAS"/>
+            <column name="val01" type="STRING" value="Data limite storno fatture passive"/>
+            <column name="dt01" type="${date.type}" valueDate="${data_storno_fatture}"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="STRING" value="SYSTEM"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="STRING" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="NUMERIC" value="0"/>
+        </insert>
+        <insert tableName="configurazione_cnr">
+            <column name="esercizio" type="NUMERIC" valueNumeric="${esercizio_corrente}"/>
+            <column name="cd_unita_funzionale" type="STRING" value="*"/>
+            <column name="cd_chiave_primaria" type="STRING" value="STEP_FINE_ANNO"/>
+            <column name="cd_chiave_secondaria" type="STRING" value="150_STORNO_FATT_ATT"/>
+            <column name="val01" type="STRING" value="Data limite storno fatture attive"/>
+            <column name="dt01" type="${date.type}" valueDate="${data_storno_fatture}"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="STRING" value="SYSTEM"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="STRING" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="NUMERIC" value="0"/>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>

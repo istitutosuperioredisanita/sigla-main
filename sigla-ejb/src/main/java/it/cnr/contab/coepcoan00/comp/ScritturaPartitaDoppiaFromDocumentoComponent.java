@@ -69,7 +69,7 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
     private Optional<Scrittura_analiticaBulk> getScritturaAnalitica(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk) throws ComponentException {
         try {
             Optional<Scrittura_analiticaBulk> scritturaOpt = Optional.empty();
-            if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(userContext)) {
+            if (Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(userContext)) {
                 Scrittura_analiticaHome analiticaHome = Optional.ofNullable(getHome(userContext, Scrittura_analiticaBulk.class))
                         .filter(Scrittura_analiticaHome.class::isInstance)
                         .map(Scrittura_analiticaHome.class::cast)
@@ -100,6 +100,7 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
 
     protected void caricaScrittura(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk) throws ComponentException {
         this.getScrittura(userContext, documentoCogeBulk).ifPresent(documentoCogeBulk::setScrittura_partita_doppia);
+        this.getScritturaAnalitica(userContext, documentoCogeBulk).ifPresent(documentoCogeBulk::setScrittura_analitica);
     }
 
     @Override
@@ -454,7 +455,7 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
             Optional<Scrittura_partita_doppiaBulk> optionalScritturaPartitaDoppiaPropostaBulk1;
             Optional<Scrittura_analiticaBulk> optionalScritturaAnaliticaPropostaBulk1;
             try {
-                if (ResultScrittureContabili.LOAD_ANALITICA) {
+                if (Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(userContext)) {
                     ResultScrittureContabili pair = this.proposeScrittureContabiliWithSavepoint(userContext, documentoCoge);
                     optionalScritturaPartitaDoppiaPropostaBulk1 = Optional.ofNullable(pair.getScritturaPartitaDoppiaBulk());
                     optionalScritturaAnaliticaPropostaBulk1 = Optional.ofNullable(pair.getScritturaAnaliticaBulk());
@@ -469,19 +470,9 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
                 optionalScritturaPartitaDoppiaPropostaBulk1 = Optional.empty();
                 optionalScritturaAnaliticaPropostaBulk1 = Optional.empty();
                 documentoCoge.setStato_coge(Fattura_passivaBulk.NON_PROCESSARE_IN_COGE);
+            } catch (RemoteException e) {
+                throw new DetailedRuntimeException(e);
             }
-
-            final Optional<Scrittura_partita_doppiaBulk> optionalScritturaPartitaDoppiaPropostaBulk = optionalScritturaPartitaDoppiaPropostaBulk1;
-
-            optionalScritturaPartitaDoppiaOldBulk.ifPresent(oldScrittura->{
-                //Elimino vecchia scrittura
-                try {
-                    optionalScritturaPartitaDoppiaPropostaBulk.ifPresent(prop->prop.setPg_scrittura(oldScrittura.getPg_scrittura()));
-                    this.removeScrittura(userContext, oldScrittura);
-                } catch (ComponentException e) {
-                    throw new DetailedRuntimeException(e);
-                }
-            });
 
             final Optional<Scrittura_analiticaBulk> optionalScritturaAnaliticaPropostaBulk = optionalScritturaAnaliticaPropostaBulk1;
 
@@ -490,6 +481,18 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
                 try {
                     optionalScritturaAnaliticaPropostaBulk.ifPresent(prop->prop.setPg_scrittura(oldScrittura.getPg_scrittura()));
                     this.removeScritturaAnalitica(userContext, oldScrittura);
+                } catch (ComponentException e) {
+                    throw new DetailedRuntimeException(e);
+                }
+            });
+
+            final Optional<Scrittura_partita_doppiaBulk> optionalScritturaPartitaDoppiaPropostaBulk = optionalScritturaPartitaDoppiaPropostaBulk1;
+
+            optionalScritturaPartitaDoppiaOldBulk.ifPresent(oldScrittura->{
+                //Elimino vecchia scrittura
+                try {
+                    optionalScritturaPartitaDoppiaPropostaBulk.ifPresent(prop->prop.setPg_scrittura(oldScrittura.getPg_scrittura()));
+                    this.removeScrittura(userContext, oldScrittura);
                 } catch (ComponentException e) {
                     throw new DetailedRuntimeException(e);
                 }

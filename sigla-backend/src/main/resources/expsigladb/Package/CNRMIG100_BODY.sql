@@ -942,6 +942,55 @@ begin
 			end;
 		end loop;
 
+		-- ribaltamento tabella associativa tra le categorie gruppi e i conti di economica
+        aMessage := 'Ribaltamento associazione tra la categoria gruppo e voce di economica sull''esercizio '||aEs||'. Lock tabella CATEGORIA_GRUPPO_VOCE_EP';
+        ibmutl200.loginf(aPgEsec,aMessage,'','');
+        for aCatGrpVoceEp in (select * from CATEGORIA_GRUPPO_VOCE_EP
+                           where esercizio = aEsPrec) loop
+            begin
+                insert into CATEGORIA_GRUPPO_VOCE_EP (
+                    CD_CATEGORIA_GRUPPO,
+                    ESERCIZIO,
+                    SEZIONE,
+                    CD_VOCE_EP,
+                    CD_VOCE_EP_CONTR,
+                    DACR,
+                    UTCR,
+                    DUVA,
+                    UTUV,
+                    PG_VER_REC,
+                    TI_APPARTENENZA,
+                    TI_GESTIONE,
+                    CD_ELEMENTO_VOCE,
+                    CD_VOCE_EP_PLUS,
+                    CD_VOCE_EP_MINUS,
+                    FL_DEFAULT)
+                values (aCatGrpVoceEp.CD_CATEGORIA_GRUPPO,
+                        aEs,
+                        aCatGrpVoceEp.SEZIONE,
+                        aCatGrpVoceEp.CD_VOCE_EP,
+                        aCatGrpVoceEp.CD_VOCE_EP_CONTR,
+                        sysdate,
+                        cgUtente,
+                        sysdate,
+                        cgUtente,
+                        1,
+                        aCatGrpVoceEp.TI_APPARTENENZA,
+                        aCatGrpVoceEp.TI_GESTIONE,
+                        aCatGrpVoceEp.CD_ELEMENTO_VOCE,
+                        aCatGrpVoceEp.CD_VOCE_EP_PLUS,
+                        aCatGrpVoceEp.CD_VOCE_EP_MINUS,
+                        aCatGrpVoceEp.FL_DEFAULT);
+
+
+            exception when dup_val_on_index then
+                ibmutl200.logwar(aPgEsec,'Associazione cat Grp voceEp con PK('||aCatGrpVoceEp.CD_CATEGORIA_GRUPPO||', '
+                                                       ||aEs||', '
+                                                       ||aCatGrpVoceEp.SEZIONE||') già inserita','','');
+                stato_fine := 'W';
+            end;
+        end loop;
+
 		-- ribaltamento associazioni tra CODICE SIA in interfaccia di ritorno cassiere e codice CDS CIR
  		aMessage := 'Ribaltamento associazioni tra CODICE SIA in interfaccia di ritorno cassiere e codice CDS CIR sull''esercizio '||aEs||'. Lock tabella EXT_CASSIERE_CDS';
  		ibmutl200.loginf(aPgEsec,aMessage,'','');

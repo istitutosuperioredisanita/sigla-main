@@ -693,9 +693,11 @@ public abstract class Fattura_passiva_rigaBulk
     }
 
     public boolean isROModalita_pagamento_dett() {
-
-        return (this.getStato_cofi().equals(this.STATO_PAGATO)
-                || !this.getFattura_passiva().getTi_fattura().equals(this.getFattura_passiva().TIPO_FATTURA_PASSIVA));
+        return (STATO_PAGATO.equals(this.getStato_cofi())
+                || !Optional.ofNullable(getFattura_passiva())
+                .map(Fattura_passivaBulk::getTi_fattura)
+                .filter(u -> u.equals(Fattura_passivaBulk.TIPO_FATTURA_PASSIVA))
+                .isPresent());
     }
 
     public boolean isAbledToInsertBank() {
@@ -777,4 +779,10 @@ public abstract class Fattura_passiva_rigaBulk
             throw new ValidationException(_ex.getMessage());
         }
     }
+
+    @Override
+    public String getDs_riga() {
+        return getDs_riga_fattura();
+    }
+
 }

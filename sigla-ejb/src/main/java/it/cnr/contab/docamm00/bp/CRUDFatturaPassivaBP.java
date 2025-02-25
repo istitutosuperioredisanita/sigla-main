@@ -18,9 +18,7 @@
 package it.cnr.contab.docamm00.bp;
 
 import it.cnr.contab.chiusura00.ejb.RicercaDocContComponentSession;
-import it.cnr.contab.coepcoan00.bp.CRUDScritturaPDoppiaBP;
-import it.cnr.contab.coepcoan00.bp.EconomicaAvereDetailCRUDController;
-import it.cnr.contab.coepcoan00.bp.EconomicaDareDetailCRUDController;
+import it.cnr.contab.coepcoan00.bp.*;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBase;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
@@ -93,7 +91,7 @@ import java.util.stream.Stream;
  */
 public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFatturaBulk, Fattura_passivaBulk> implements
         IDocumentoAmministrativoBP, IGenericSearchDocAmmBP, VoidableBP,
-        IDefferedUpdateSaldiBP, FatturaPassivaElettronicaBP, IDocAmmEconomicaBP {
+        IDefferedUpdateSaldiBP, FatturaPassivaElettronicaBP, IDocAmmEconomicaBP, IDocAmmAnaliticaBP {
 
     private final static org.slf4j.Logger logger = LoggerFactory.getLogger(CRUDFatturaPassivaBP.class);
 
@@ -154,6 +152,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     private final CollapsableDetailCRUDController movimentiDare = new EconomicaDareDetailCRUDController(this);
     private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
 
+    private final CollapsableDetailCRUDController movimentiAnalitici = new AnaliticaDetailCRUDController(this);
 
     //variabile inizializzata in fase di caricamento Nota da fattura elettronica
     //utilizzata per ritornare sulla fattura elettronica
@@ -171,6 +170,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     private boolean attivoOrdini = false;
     private boolean propostaFatturaDaOrdini = false;
     protected boolean attivaEconomicaParallela = false;
+    private boolean attivaAnalitica = false;
     private boolean supervisore = false;
 
     private boolean attivaInventaria = false;
@@ -588,6 +588,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             attivoOrdini = configurazioneCnrComponentSession.isAttivoOrdini(context.getUserContext());
             propostaFatturaDaOrdini = configurazioneCnrComponentSession.propostaFatturaDaOrdini(context.getUserContext());
             attivaEconomicaParallela = configurazioneCnrComponentSession.isAttivaEconomicaParallela(context.getUserContext());
+            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
             attivaInventaria= configurazioneCnrComponentSession.isAttivoInventariaDocumenti(context.getUserContext());
             attivoCheckImpIntrastat=Utility.createConfigurazioneCnrComponentSession().isCheckImpIntrastatFattPassiva(context.getUserContext());
             isAttivoGestFlIrregistrabile=Utility.createConfigurazioneCnrComponentSession().isAttivoGestFlIrregistrabile(context.getUserContext());
@@ -1761,9 +1762,10 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             pages.put(i++, TAB_FATTURA_PASSIVA_DOCUMENTI_1210);
             pages.put(i++, TAB_FATTURA_PASSIVA_INTRASTAT);
         }
-        if (attivaEconomicaParallela) {
+        if (attivaEconomicaParallela)
             pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
-        }
+        if (attivaAnalitica)
+            pages.put(i++, CRUDScritturaAnaliticaBP.TAB_ANALITICA);
         if (Optional.ofNullable(fattura.getDocumentoEleTestata()).isPresent()) {
             pages.put(i++, TAB_FATTURA_PASSIVA_ALLEGATI_RICEVUTI);
             pages.put(i++, TAB_FATTURA_PASSIVA_ALLEGATI_AGGIUNTI);
@@ -1917,6 +1919,11 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     public CollapsableDetailCRUDController getMovimentiAvere() {
         return movimentiAvere;
     }
+
+    public CollapsableDetailCRUDController getMovimentiAnalitici() {
+        return movimentiAnalitici;
+    }
+
     public FatturaOrdineBulk calcolaRettificaOrdine(ActionContext context, FatturaOrdineBulk fatturaOrdineBulk) throws BusinessProcessException {
         try {
             FatturaOrdineBulk fatturaOrdine =  Utility.createOrdineAcqComponentSession().calcolaImportoOrdine(context.getUserContext(), fatturaOrdineBulk);
@@ -2022,6 +2029,14 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
 
     @Override
     public OggettoBulk getEconomicaModel() {
+        return getModel();
+    }
+
+    public boolean isButtonGeneraScritturaAnaliticaVisible() {
+        return Boolean.FALSE;
+    }
+    @Override
+    public OggettoBulk getAnaliticaModel() {
         return getModel();
     }
 

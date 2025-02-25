@@ -123,18 +123,31 @@ public class DocumentoGenericoPassivoRigaCRUDController extends it.cnr.jada.util
 				"btn-sm btn-outline-primary btn-title",
                 isFromBootstrap);
 		if (riga.isDocumentoStorno()) {
+			String descrizione = null;
+			if (riga.getDocumento_generico_riga_storno() != null) {
+				descrizione = String.format("Visualizza documento stornato n. %s/%s/%s/%s/%s",
+						riga.getEsercizio_storno(),
+						riga.getCd_cds_storno(),
+						riga.getCd_unita_organizzativa_storno(),
+						riga.getCd_tipo_documento_amm_storno(),
+						riga.getPg_documento_generico_storno()
+				);
+			}
+			if (riga.getFattura_passiva_riga_storno() != null) {
+				descrizione = String.format("Visualizza Fattura Passiva n. %s/%s/%s/%s",
+						riga.getEsercizio_storno_fp(),
+						riga.getCd_cds_storno_fp(),
+						riga.getCd_unita_organizzativa_storno_fp(),
+						riga.getPg_fattura_passiva_storno()
+				);
+			}
+
 			it.cnr.jada.util.jsp.JSPUtils.toolbarButton(
 					context,
 					isFromBootstrap ? "fa fa-fw fa-link" : "img/bookmarks16.gif",
 					"javascript:submitForm('doApriDocumentoStornato');",
 					true,
-					String.format("Visualizza documento stornato n. %s/%s/%s/%s/%s",
-							riga.getEsercizio_storno(),
-							riga.getCd_cds_storno(),
-							riga.getCd_unita_organizzativa_storno(),
-							riga.getCd_tipo_documento_amm_storno(),
-							riga.getPg_documento_generico_storno()
-					),
+					descrizione,
 					"btn-sm btn-outline-primary btn-title",
 					HttpActionContext.isFromBootstrap(context));
 		}
