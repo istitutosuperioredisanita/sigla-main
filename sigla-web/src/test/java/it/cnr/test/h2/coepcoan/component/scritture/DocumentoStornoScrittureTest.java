@@ -153,9 +153,8 @@ public class DocumentoStornoScrittureTest extends DeploymentsH2 {
         }
     }
 
-
     /**
-     * {@code 2 Documenti Generici Stornati} con un unico {@code Documento di Storno}.
+     * {@code 2} Documenti Generici {@code Stornati} da altri {@code 2} Documenti di Storno:
      * <p><b>Dati Primo Documento Generico (A)</b>
      * <pre>
      *     <b>Riga 1A</b>
@@ -164,12 +163,29 @@ public class DocumentoStornoScrittureTest extends DeploymentsH2 {
      *     <b>Riga 2A</b>
      *        Voce Bilancio: 22010 - Attrezzature scientifiche
      *        Importo:       70,00
+     * </pre>
+     * <b>Scrittura Economica</b>
+     * <pre>
+     *     Sezione   Importo      Conto
+     *        D        30,00      A22011 - Attrezzature sanitarie
+     *        D        70,00      A22010 - Attrezzature scientifiche
+     *        A        30,00      P22011 - Debiti verso fornitori per acquisto di
+     *                                     attrezzature sanitarie
+     *        A        70,00      P22010 - Debiti verso fornitori per acquisto di
+     *                                     attrezzature scientifiche
      * </pre></p>
      * <p><b>Dati Secondo Documento Generico (B)</b>
      * <pre>
      *     <b>Riga 1B</b>
      *        Voce Bilancio: 22011 - Attrezzature sanitarie
      *        Importo:      100,00
+     * </pre>
+     * <b>Scrittura Economica</b>
+     * <pre>
+     *     Sezione   Importo      Conto
+     *        D       100,00      A22011 - Attrezzature sanitarie
+     *        A       100,00      P22011 - Debiti verso fornitori per acquisto di
+     *                                     attrezzature sanitarie
      * </pre></p>
      * <p><b>Dati Primo Documento Generico di Storno (C)</b>
      * <pre>
@@ -179,31 +195,8 @@ public class DocumentoStornoScrittureTest extends DeploymentsH2 {
      *     <b>Riga 2C - storna riga 1B</b>
      *        Voce Bilancio: 22011 - Attrezzature sanitarie
      *        Importo:      100,00
-     * </pre></p>
-     * <p><b>Dati Secondo Documento Generico di Storno (D)</b>
-     * <pre>
-     *     <b>Riga 1D - storna riga 1A</b>
-     *        Voce Bilancio: 22011 - Attrezzature sanitarie
-     *        Importo:       30,00
-     * </pre></p>
-     * <b>Scrittura Economica Primo Documento Generico</b>
-     * <pre>
-     *     Sezione   Importo      Conto
-     *        D        30,00      A22011 - Attrezzature sanitarie
-     *        D        70,00      A22010 - Attrezzature scientifiche
-     *        A        30,00      P22011 - Debiti verso fornitori per acquisto di
-     *                                     attrezzature sanitarie
-     *        A        70,00      P22010 - Debiti verso fornitori per acquisto di
-     *                                     attrezzature scientifiche
      * </pre>
-     * <b>Scrittura Economica Secondo Documento Generico</b>
-     * <pre>
-     *     Sezione   Importo      Conto
-     *        D       100,00      A22011 - Attrezzature sanitarie
-     *        A       100,00      P22011 - Debiti verso fornitori per acquisto di
-     *                                     attrezzature sanitarie
-     * </pre>
-     * <b>Scrittura Economica Primo Documento di Storno</b>
+     * <b>Scrittura Economica</b>
      * <pre>
      *     Sezione   Importo      Conto
      *        D        70,00      P22010 - Debiti verso fornitori per acquisto di
@@ -213,13 +206,21 @@ public class DocumentoStornoScrittureTest extends DeploymentsH2 {
      *        A        70,00      A22010 - Attrezzature scientifiche
      *        A       100,00      A22011 - Attrezzature sanitarie
      * </pre>
-     * <b>Scrittura Economica Secondo Documento di Storno</b>
+     * </p>
+     * <p><b>Dati Secondo Documento Generico di Storno (D)</b>
+     * <pre>
+     *     <b>Riga 1D - storna riga 1A</b>
+     *        Voce Bilancio: 22011 - Attrezzature sanitarie
+     *        Importo:       30,00
+     * </pre>
+     * <b>Scrittura Economica</b>
      * <pre>
      *     Sezione   Importo      Conto
      *        D        30,00      P22011 - Debiti verso fornitori per acquisto di
      *                                     attrezzature sanitarie
      *        A        30,00      A22011 - Attrezzature sanitarie
      * </pre>
+     * </p>
      */
     @Test
     @OperateOnDeployment(TEST_H2)
@@ -402,5 +403,4 @@ public class DocumentoStornoScrittureTest extends DeploymentsH2 {
             Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), documentoCogeBulk);
         }
     }
-
 }
