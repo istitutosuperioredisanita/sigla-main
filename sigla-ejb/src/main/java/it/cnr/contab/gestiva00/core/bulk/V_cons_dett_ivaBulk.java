@@ -2,12 +2,11 @@ package it.cnr.contab.gestiva00.core.bulk;
 
 import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk;
 import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.SQLBuilder;
+import it.cnr.jada.persistency.Persistent;
 
 import java.math.BigDecimal;
 
-public class V_cons_dett_ivaBulk extends OggettoBulk {
+public class V_cons_dett_ivaBulk extends OggettoBulk implements Persistent {
     private Integer esercizio;
     private String mese;
     private String cd_tipo_sezionale;

@@ -17,17 +17,11 @@
 
 package it.cnr.contab.gestiva00.comp;
 
-import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleHome;
-import it.cnr.contab.doccont00.intcass.bulk.Ext_cassiere00_logsBulk;
 import it.cnr.contab.gestiva00.core.bulk.V_cons_dett_ivaBulk;
 import it.cnr.contab.gestiva00.core.bulk.V_cons_dett_ivaHome;
-import it.cnr.contab.gestiva00.core.bulk.V_cons_reg_ivaBulk;
-import it.cnr.contab.gestiva00.core.bulk.V_cons_reg_ivaHome;
-import it.cnr.contab.pagopa.bulk.PagamentoPagopaBulk;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.RicercaComponent;
@@ -35,9 +29,6 @@ import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Insert the type's description here.
@@ -218,13 +209,13 @@ public class ConsRegIvaComponent extends RicercaComponent {
             // SQLBuilder sql = SQLBuilder.newBuilder(getConnection(userContext));
 
             sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
-            sql.addSQLClause("AND", "TIPO_SEZIONALE", SQLBuilder.EQUALS, cdTipoSezionale);
+            sql.addSQLClause("AND", "CD_TIPO_SEZIONALE", SQLBuilder.EQUALS, cdTipoSezionale);
 
             // Imposta la query SELECT...
             StringBuilder selectClause = new StringBuilder(
                     "SELECT ESERCIZIO, " +
                             "SUBSTR(DATA_REGISTRAZIONE,6,2) AS MESE, " +
-                            "NVL(CD_TIPO_SEZIONALE,'Tot') AS TIPO_SEZIONALE"
+                            "NVL(CD_TIPO_SEZIONALE,'Tot') AS CD_TIPO_SEZIONALE"
             );
 
             if (cdTipoSezionale.equals("a/com") || cdTipoSezionale.equals("v/com")) {
