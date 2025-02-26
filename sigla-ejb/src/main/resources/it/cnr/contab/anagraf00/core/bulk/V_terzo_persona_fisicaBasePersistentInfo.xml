@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.anagraf00.core.bulk.V_terzo_persona_fisicaBulk"
+	keyClassName="it.cnr.contab.anagraf00.core.bulk.V_terzo_persona_fisicaKey"
+	homeClassName="it.cnr.contab.anagraf00.core.bulk.V_terzo_persona_fisicaHome" >
+	<defaultColumnMap
+		tableName="V_TERZO_PERSONA_FISICA" >
+		<columnMapping
+			columnName="CD_ANAG"
+			propertyName="cd_anag"
+			sqlTypeName="DECIMAL"
+			columnSize="8"
+			nullable="false" />
+		<columnMapping
+			columnName="FRAZIONE_SEDE"
+			propertyName="frazione_sede"
+			sqlTypeName="VARCHAR"
+			columnSize="100" />
+		<columnMapping
+			columnName="DT_FINE_RAPPORTO"
+			propertyName="dt_fine_rapporto"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7" />
+		<columnMapping
+			columnName="TI_TERZO"
+			propertyName="ti_terzo"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false" />
+		<columnMapping
+				columnName="CD_PRECEDENTE"
+				propertyName="cd_precedente"
+				sqlTypeName="VARCHAR"
+				columnSize="20" />
+		<columnMapping
+				columnName="DENOMINAZIONE_SEDE"
+				propertyName="denominazione_sede"
+				sqlTypeName="VARCHAR"
+				columnSize="200"
+				nullable="false" />
+		<columnMapping
+				columnName="VIA_SEDE"
+				propertyName="via_sede"
+				sqlTypeName="VARCHAR"
+				columnSize="100"
+				nullable="false" />
+		<columnMapping
+				columnName="NUMERO_CIVICO_SEDE"
+				propertyName="numero_civico_sede"
+				sqlTypeName="VARCHAR"
+				columnSize="5" />
+		<columnMapping
+				columnName="PG_COMUNE_SEDE"
+				propertyName="pg_comune_sede"
+				sqlTypeName="DECIMAL"
+				columnSize="10"
+				nullable="false" />
+		<columnMapping
+				columnName="CAP_COMUNE_SEDE"
+				propertyName="cap_comune_sede"
+				sqlTypeName="VARCHAR"
+				columnSize="20" />
+		<columnMapping
+				columnName="PG_RAPP_LEGALE"
+				propertyName="pg_rapp_legale"
+				sqlTypeName="DECIMAL"
+				columnSize="10" />
+		<columnMapping
+				columnName="CD_UNITA_ORGANIZZATIVA"
+				propertyName="cd_unita_organizzativa"
+				sqlTypeName="VARCHAR"
+				columnSize="60" />
+		<columnMapping
+				columnName="NOME_UNITA_ORGANIZZATIVA"
+				propertyName="nome_unita_organizzativa"
+				sqlTypeName="VARCHAR"
+				columnSize="300" />
+		<columnMapping
+				columnName="NOTE"
+				propertyName="note"
+				sqlTypeName="VARCHAR"
+				columnSize="300" />
+		<columnMapping
+				columnName="DT_CANC"
+				propertyName="dt_canc"
+				sqlTypeName="TIMESTAMP"
+				columnSize="7" />
+		<columnMapping
+				columnName="DACR"
+				propertyName="dacr"
+				sqlTypeName="TIMESTAMP"
+				columnSize="7"
+				nullable="false" />
+		<columnMapping
+				columnName="UTCR"
+				propertyName="utcr"
+				sqlTypeName="VARCHAR"
+				columnSize="20"
+				nullable="false" />
+		<columnMapping
+				columnName="DUVA"
+				propertyName="duva"
+				sqlTypeName="TIMESTAMP"
+				columnSize="7"
+				nullable="false" />
+		<columnMapping
+				columnName="UTUV"
+				propertyName="utuv"
+				sqlTypeName="VARCHAR"
+				columnSize="20"
+				nullable="false" />
+		<columnMapping
+				columnName="PG_VER_REC"
+				propertyName="pg_ver_rec"
+				sqlTypeName="DECIMAL"
+				columnSize="22"
+				nullable="false" />
+		<columnMapping
+				columnName="CODICE_FISCALE"
+				propertyName="codice_fiscale"
+				sqlTypeName="VARCHAR"
+				columnSize="20" />
+		<columnMapping
+				columnName="NOME"
+				propertyName="nome"
+				sqlTypeName="VARCHAR"
+				columnSize="50" />
+		<columnMapping
+				columnName="COGNOME"
+				propertyName="cognome"
+				sqlTypeName="VARCHAR"
+				columnSize="50" />
+		<columnMapping
+				columnName="TI_SESSO"
+				propertyName="ti_sesso"
+				sqlTypeName="CHAR"
+				columnSize="1" />
+		<columnMapping
+				columnName="DT_NASCITA"
+				propertyName="dt_nascita"
+				sqlTypeName="TIMESTAMP"
+				columnSize="7" />
+		<columnMapping
+				columnName="CODICE_UNIVOCO_UFFICIO_IPA"
+				propertyName="codiceUnivocoUfficioIpa"
+				sqlTypeName="VARCHAR"
+				columnSize="6" />
+		<columnMapping
+				columnName="CODICE_UNIVOCO_PCC"
+				propertyName="codiceUnivocoPcc"
+				sqlTypeName="VARCHAR"
+				columnSize="6" />
+		<columnMapping
+				columnName="DENOMINAZIONE_PCC"
+				propertyName="denominazionePcc"
+				sqlTypeName="VARCHAR"
+				columnSize="150" />
+		<columnMapping
+				columnName="CODICE_DESTINATARIO_FATT"
+				propertyName="codiceDestinatarioFatt"
+				sqlTypeName="VARCHAR"
+				columnSize="7" />
+		<columnMapping
+				columnName="FL_SBLOCCO_FATTURA_ELETTRONICA"
+				propertyName="flSbloccoFatturaElettronica"
+				sqlTypeName="CHAR"
+				columnSize="1"
+				nullable="false"
+				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+				columnName="FL_FIRMATARIO_CONTRATTO"
+				propertyName="flFirmatarioContratto"
+				sqlTypeName="CHAR"
+				nullable="false"
+				columnSize="1"
+				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+	</defaultColumnMap>
+	<persistentProperty
+			name="cd_anag"/>
+	<persistentProperty
+			name="frazione_sede"/>
+	<persistentProperty
+			name="dt_fine_rapporto"/>
+	<persistentProperty
+			name="ti_terzo"/>
+	<persistentProperty
+			name="cd_precedente"/>
+	<persistentProperty
+			name="denominazione_sede"/>
+	<persistentProperty
+			name="via_sede"/>
+	<persistentProperty
+			name="numero_civico_sede"/>
+	<persistentProperty
+			name="pg_comune_sede"/>
+	<persistentProperty
+			name="cap_comune_sede"/>
+	<persistentProperty
+			name="pg_rapp_legale"/>
+	<persistentProperty
+			name="cd_unita_organizzativa"/>
+	<persistentProperty
+			name="nome_unita_organizzativa"/>
+	<persistentProperty
+			name="note"/>
+	<persistentProperty
+			name="dt_canc"/>
+	<persistentProperty
+			name="dacr"/>
+	<persistentProperty
+			name="utcr"/>
+	<persistentProperty
+			name="duva"/>
+	<persistentProperty
+			name="utuv"/>
+	<persistentProperty
+			name="pg_ver_rec"/>
+	<persistentProperty
+			name="codice_fiscale"/>
+	<persistentProperty
+			name="nome"/>
+	<persistentProperty
+			name="cognome"/>
+	<persistentProperty
+			name="ti_sesso"/>
+	<persistentProperty
+			name="dt_nascita"/>
+	<persistentProperty
+			name="codiceUnivocoUfficioIpa"/>
+	<persistentProperty
+			name="codiceUnivocoPcc"/>
+	<persistentProperty
+			name="denominazionePcc"/>
+	<persistentProperty
+			name="codiceDestinatarioFatt"/>
+	<persistentProperty
+			name="flSbloccoFatturaElettronica"/>
+	<persistentProperty
+			name="flFirmatarioContratto"/>
+
+</SQLPersistentInfo>

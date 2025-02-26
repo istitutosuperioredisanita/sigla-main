@@ -19,4 +19,5 @@
 <SQLPersistentInfo
 	persistentClassName="it.cnr.contab.anagraf00.core.bulk.V_persona_fisicaBulk"
 	homeClassName="it.cnr.contab.anagraf00.core.bulk.V_persona_fisicaHome" >
+
 </SQLPersistentInfo>

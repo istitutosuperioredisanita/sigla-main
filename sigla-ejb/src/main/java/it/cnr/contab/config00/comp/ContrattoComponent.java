@@ -231,10 +231,7 @@ public class ContrattoComponent extends it.cnr.jada.comp.CRUDDetailComponent imp
 	public RemoteIterator findListaFirmatariContratti(UserContext userContext, ContrattoBulk contratto)	throws ComponentException
 	{
 		try {
-			V_persona_fisicaHome home = (V_persona_fisicaHome)getHome(userContext,V_persona_fisicaBulk.class);
-		SQLBuilder sql = null;
-
-			sql = selectFirmatarioByClause( userContext,contratto,new V_persona_fisicaBulk(),null);
+			SQLBuilder sql = selectFirmatarioByClause( userContext,contratto,new V_persona_fisicaBulk(),null);
 			return iterator(userContext, sql, V_terzo_persona_fisicaBulk.class, null);
 		} catch (PersistencyException e) {
 			throw new RuntimeException(e);
