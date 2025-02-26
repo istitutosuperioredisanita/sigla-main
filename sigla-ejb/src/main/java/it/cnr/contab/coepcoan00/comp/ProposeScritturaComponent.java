@@ -166,8 +166,8 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			this.elementoVoce = elementoVoce;
 			this.dettagliAnalitici = dettagliAnalitici;
 			this.cdTerzo = cdTerzo;
-			this.imImponibile = imImponibile;
-			this.imImposta = imImposta;
+			this.imImponibile = Optional.ofNullable(imImponibile).orElse(BigDecimal.ZERO);
+			this.imImposta = Optional.ofNullable(imImposta).orElse(BigDecimal.ZERO);
 			this.rigaDocamm = null;
 			this.rigaPartita = null;
 			this.dtDaCompetenzaCoge = null;
@@ -180,8 +180,8 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			this.docamm = docamm;
             this.voceEp = voceEp;
 			this.cdTerzo = cdTerzo;
-			this.imImponibile = imImponibile;
-			this.imImposta = imImposta;
+			this.imImponibile = Optional.ofNullable(imImponibile).orElse(BigDecimal.ZERO);
+			this.imImposta = Optional.ofNullable(imImposta).orElse(BigDecimal.ZERO);
 			this.rigaDocamm = null;
 			this.rigaPartita = null;
 			this.elementoVoce = null;
@@ -199,8 +199,8 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			this.cdTerzo = cdTerzo;
 			this.dtDaCompetenzaCoge = rigaDocamm.getDt_da_competenza_coge();
 			this.dtACompetenzaCoge = rigaDocamm.getDt_a_competenza_coge();
-			this.imImponibile = rigaDocamm.getIm_imponibile();
-			this.imImposta = rigaDocamm.getIm_iva();
+			this.imImponibile = Optional.ofNullable(rigaDocamm.getIm_imponibile()).orElse(BigDecimal.ZERO);
+			this.imImposta = Optional.ofNullable(rigaDocamm.getIm_iva()).orElse(BigDecimal.ZERO);
 			this.rigaDocamm = rigaDocamm;
 			this.voceEp = null;
 		}
@@ -212,8 +212,8 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			this.cdTerzo = cdTerzo;
 			this.dtDaCompetenzaCoge = rigaDocamm.getDt_da_competenza_coge();
 			this.dtACompetenzaCoge = rigaDocamm.getDt_a_competenza_coge();
-			this.imImponibile = rigaDocamm.getIm_imponibile();
-			this.imImposta = rigaDocamm.getIm_iva();
+			this.imImponibile = Optional.ofNullable(rigaDocamm.getIm_imponibile()).orElse(BigDecimal.ZERO);
+			this.imImposta = Optional.ofNullable(rigaDocamm.getIm_iva()).orElse(BigDecimal.ZERO);
 			this.rigaDocamm = rigaDocamm;
 			this.rigaPartita = null;
 			this.elementoVoce = null;
@@ -6170,7 +6170,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			}
 		}
 		//Setto la rigaPartita con la riga del documento selezionato se non valorizzato
-		rigaPartita = Optional.ofNullable(rigaPartita).orElse(rigaDocAmm);
+		rigaPartita = (IDocumentoAmministrativoRigaBulk) this.loadObject(userContext, (OggettoBulk)Optional.ofNullable(rigaPartita).orElse(rigaDocAmm));
 
 		if (Optional.ofNullable(rigaDocAmm.getScadenzaDocumentoContabile()).filter(Obbligazione_scadenzarioBulk.class::isInstance).isPresent()) {
 			ObbligazioneBulk obbligazioneDB = Optional.of(rigaDocAmm.getScadenzaDocumentoContabile().getFather()).filter(ObbligazioneBulk.class::isInstance).map(ObbligazioneBulk.class::cast)
