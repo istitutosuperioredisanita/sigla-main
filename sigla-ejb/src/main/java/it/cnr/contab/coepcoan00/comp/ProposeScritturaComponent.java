@@ -4851,7 +4851,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 	private ResultScrittureContabili makeScrittureEconomica(UserContext userContext, IDocumentoCogeBulk doccoge, List<TestataPrimaNota> testataPrimaNota, boolean accorpaConti, boolean makeAnalitica) {
 		if (!testataPrimaNota.stream().flatMap(el->el.getDett().stream()).findAny().isPresent())
-			return null;
+			return new ResultScrittureContabili(null,null);
 
 		Scrittura_partita_doppiaBulk scritturaPartitaDoppia = new Scrittura_partita_doppiaBulk();
 		Scrittura_analiticaBulk scritturaAnalitica;
