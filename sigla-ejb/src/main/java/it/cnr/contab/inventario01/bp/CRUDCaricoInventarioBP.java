@@ -39,6 +39,7 @@ import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util.Utility;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
@@ -168,7 +169,12 @@ public class CRUDCaricoInventarioBP extends CRUDCaricoScaricoInventarioBP{
 		buonoCS.setByOrdini(new Boolean(b));
 
 	}
-
+	public boolean isValoreUnitarioReadOnly(UserContext uc) throws ComponentException, RemoteException {
+		if(!isBy_ordini() || Utility.createUtenteComponentSession().isSupervisore(uc) ){
+			return false;
+		}
+		return true;
+	}
 
 	public void resetForSearch(ActionContext context) throws BusinessProcessException {
 		super.resetForSearch(context);
