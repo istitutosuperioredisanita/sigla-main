@@ -7615,10 +7615,7 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
                 }
                 if (totaleDaSottrarre.compareTo(BigDecimal.ZERO) != 0) {
                     try {
-                        Accertamento_scadenzarioBulk sca = (Accertamento_scadenzarioBulk) h.modificaScadenzaInAutomatico(userContext,
-                                scadenza,
-                                scadenza.getIm_scadenza().subtract(totaleDaSottrarre),
-                                false, true);
+                        Accertamento_scadenzarioBulk sca =(Accertamento_scadenzarioBulk)h.sdoppiaScadenzaInAutomatico(userContext,scadenza,scadenza.getIm_scadenza().subtract(totaleDaSottrarre));
                         for (Iterator<Fattura_attiva_rigaBulk> iterator2 = ((java.util.List) accertamentiHash.get(scadenza)).iterator(); iterator2.hasNext(); ) {
                             Fattura_attiva_rigaBulk rigaFattura = iterator2.next();
                             rigaFattura.setAccertamento_scadenzario(sca);

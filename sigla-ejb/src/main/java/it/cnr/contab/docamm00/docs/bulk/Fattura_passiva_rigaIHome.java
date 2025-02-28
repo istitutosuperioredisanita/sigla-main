@@ -20,12 +20,14 @@ package it.cnr.contab.docamm00.docs.bulk;
 import it.cnr.contab.config00.bulk.CausaleContabileBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
+import it.cnr.contab.inventario00.docs.bulk.Ass_inv_bene_fatturaBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
+import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
 import java.math.BigDecimal;
@@ -76,6 +78,17 @@ public class Fattura_passiva_rigaIHome extends Fattura_passiva_rigaHome {
 		Stream.of(Fattura_passivaBulk.STATO_ANNULLATO, Fattura_passivaBulk.STATO_PAGATO).forEach(s -> {
 			sqlBuilder.addClause(FindClause.AND, "stato_cofi", SQLBuilder.NOT_EQUALS, s);
 		});
+
+		PersistentHome assInvBeneFatturaHome = getHomeCache().getHome(Ass_inv_bene_fatturaBulk.class);
+		SQLBuilder sqlBuilderAssInvBeneFattura = assInvBeneFatturaHome.createSQLBuilder();
+		sqlBuilderAssInvBeneFattura.resetColumns();
+		sqlBuilderAssInvBeneFattura.addColumn("1");
+		sqlBuilderAssInvBeneFattura.addSQLJoin("ASS_INV_BENE_FATTURA.CD_CDS_FATT_PASS", "FATTURA_PASSIVA_RIGA.CD_CDS");
+		sqlBuilderAssInvBeneFattura.addSQLJoin("ASS_INV_BENE_FATTURA.CD_UO_FATT_PASS", "FATTURA_PASSIVA_RIGA.CD_UNITA_ORGANIZZATIVA");
+		sqlBuilderAssInvBeneFattura.addSQLJoin("ASS_INV_BENE_FATTURA.ESERCIZIO_FATT_PASS", "FATTURA_PASSIVA_RIGA.ESERCIZIO");
+		sqlBuilderAssInvBeneFattura.addSQLJoin("ASS_INV_BENE_FATTURA.PG_FATTURA_PASSIVA", "FATTURA_PASSIVA_RIGA.PG_FATTURA_PASSIVA");
+		sqlBuilderAssInvBeneFattura.addSQLJoin("ASS_INV_BENE_FATTURA.PROGRESSIVO_RIGA_FATT_PASS", "FATTURA_PASSIVA_RIGA.PROGRESSIVO_RIGA");
+		sqlBuilder.addSQLNotExistsClause(FindClause.AND, sqlBuilderAssInvBeneFattura);
 
 		SQLBuilder sqlNotExists = createSQLBuilder();
 		sqlNotExists.setFromClause(new StringBuffer("DOCUMENTO_GENERICO_RIGA STORNO, DOCUMENTO_GENERICO TESTATA_STORNO"));
