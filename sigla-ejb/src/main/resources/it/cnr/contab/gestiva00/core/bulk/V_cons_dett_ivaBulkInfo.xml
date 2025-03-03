@@ -20,7 +20,7 @@
 
     <fieldProperty
             name="cd_tipo_sezionale"
-            property="tipo_sezionale.cd_tipo_sezionale"
+            property="cd_tipo_sezionale"
             inputType="TEXT"
             inputSize="10"
             maxLength="10"
@@ -72,26 +72,26 @@
 
     <form name="searchtool"/>
 
-    <formFieldProperty name="esercizio" />
-    <formFieldProperty name="mese" />
-    <formFieldProperty name="cd_tipo_sezionale" />
-    <formFieldProperty name="sp_n" />
-    <formFieldProperty name="sp_y" />
-    <formFieldProperty name="tot_iva" />
+    <formFieldProperty name="esercizio"/>
+    <formFieldProperty name="mese"/>
+    <formFieldProperty name="cd_tipo_sezionale"/>
+    <formFieldProperty name="sp_n"/>
+    <formFieldProperty name="sp_y"/>
+    <formFieldProperty name="tot_iva"/>
 
-    <formFieldProperty name="tipo_sezionale" />
+    <formFieldProperty name="tipo_sezionale"/>
 
-    <findFieldProperty name="esercizio" />
-    <findFieldProperty name="mese" />
-    <findFieldProperty name="cd_tipo_sezionale" />
-    <findFieldProperty name="sp_n" />
-    <findFieldProperty name="sp_y" />
-    <findFieldProperty name="tot_iva" />
+    <findFieldProperty name="esercizio"/>
+    <findFieldProperty name="mese"/>
+    <findFieldProperty name="cd_tipo_sezionale"/>
+    <findFieldProperty name="sp_n"/>
+    <findFieldProperty name="sp_y"/>
+    <findFieldProperty name="tot_iva"/>
 
-    <columnFieldProperty name="esercizio" />
-    <columnFieldProperty name="mese" />
-    <columnFieldProperty name="cd_tipo_sezionale" />
-    <columnFieldProperty name="sp_n" />
-    <columnFieldProperty name="sp_y" />
-    <columnFieldProperty name="tot_iva" />
+    <columnFieldProperty name="esercizio"/>
+    <columnFieldProperty name="mese"/>
+    <columnFieldProperty name="cd_tipo_sezionale"/>
+    <columnFieldProperty name="sp_n"/>
+    <columnFieldProperty name="sp_y"/>
+    <columnFieldProperty name="tot_iva"/>
 </bulkInfo>

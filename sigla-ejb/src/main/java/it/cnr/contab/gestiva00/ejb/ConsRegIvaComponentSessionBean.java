@@ -30,80 +30,61 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Remove;
 import javax.ejb.Stateless;
 import java.rmi.RemoteException;
-import java.util.List;
 
-@Stateless(name="CNRGESTIVA00_EJB_ConsRegIvaComponentSession")
+@Stateless(name = "CNRGESTIVA00_EJB_ConsRegIvaComponentSession")
 public class ConsRegIvaComponentSessionBean extends it.cnr.jada.ejb.RicercaComponentSessionBean implements ConsRegIvaComponentSession {
-@PostConstruct
-	public void ejbCreate() {
-		componentObj = new ConsRegIvaComponent();
-	}
-	@Remove
-	public void ejbRemove() throws javax.ejb.EJBException {
-		componentObj.release();
-	}
+    @PostConstruct
+    public void ejbCreate() {
+        componentObj = new ConsRegIvaComponent();
+    }
 
-	public static it.cnr.jada.ejb.RicercaComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new ConsRegIvaComponentSessionBean();
-	}
+    @Remove
+    public void ejbRemove() throws javax.ejb.EJBException {
+        componentObj.release();
+    }
 
-
-	public java.util.Collection selectTipi_sezionaliByClause(UserContext userContext,
-												  OggettoBulk model, Tipo_sezionaleBulk prototype, CompoundFindClause clause)
-			throws ComponentException, RemoteException, PersistencyException {
-
-		pre_component_invocation(userContext, componentObj);
-		try {
-			java.util.Collection result = ((ConsRegIvaComponent)componentObj).selectTipi_sezionaliByClause(
-					userContext, model, prototype, clause);
-			component_invocation_succes(userContext, componentObj);
-			return result;
-		} catch(ComponentException e) {
-			component_invocation_failure(userContext, componentObj);
-			throw e;
-		} catch(RuntimeException e) {
-			throw uncaughtRuntimeException(userContext, componentObj, e);
-		} catch(Error e) {
-			throw uncaughtError(userContext, componentObj, e);
-		}
-	}
+    public static it.cnr.jada.ejb.RicercaComponentSessionBean newInstance() throws javax.ejb.EJBException {
+        return new ConsRegIvaComponentSessionBean();
+    }
 
 
-//	public java.util.Collection queryDettRegIva(UserContext userContext, String cdTipoSezionale)
-//			throws ComponentException {
-//
-//		pre_component_invocation(userContext, componentObj);
-//		try {
-//			java.util.Collection result = ((ConsRegIvaComponent)componentObj).queryDettRegIva(
-//					userContext, cdTipoSezionale);
-//			component_invocation_succes(userContext, componentObj);
-//			return result;
-//		} catch(ComponentException e) {
-//			component_invocation_failure(userContext, componentObj);
-//			throw e;
-//		} catch(RuntimeException e) {
-//			throw uncaughtRuntimeException(userContext, componentObj, e);
-//		} catch(Error e) {
-//			throw uncaughtError(userContext, componentObj, e);
-//		}
-//	}
+    public java.util.Collection selectTipi_sezionaliByClause(UserContext userContext,
+                                                             OggettoBulk model, Tipo_sezionaleBulk prototype, CompoundFindClause clause)
+            throws ComponentException, RemoteException, PersistencyException {
 
-	public RemoteIterator cercaDettRegIva(UserContext userContext, String cdTipoSezionale)
-			throws ComponentException {
+        pre_component_invocation(userContext, componentObj);
+        try {
+            java.util.Collection result = ((ConsRegIvaComponent) componentObj).selectTipi_sezionaliByClause(
+                    userContext, model, prototype, clause);
+            component_invocation_succes(userContext, componentObj);
+            return result;
+        } catch (ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
 
-		pre_component_invocation(userContext, componentObj);
-		try {
-			RemoteIterator result = ((ConsRegIvaComponent)componentObj).cercaDettRegIva(
-					userContext, cdTipoSezionale);
-			component_invocation_succes(userContext, componentObj);
-			return result;
-		} catch(ComponentException e) {
-			component_invocation_failure(userContext, componentObj);
-			throw e;
-		} catch(RuntimeException e) {
-			throw uncaughtRuntimeException(userContext, componentObj, e);
-		} catch(Error e) {
-			throw uncaughtError(userContext, componentObj, e);
-		}
-	}
+
+    public RemoteIterator cercaDettRegIva(UserContext userContext, String cdTipoSezionale)
+            throws ComponentException {
+
+        pre_component_invocation(userContext, componentObj);
+        try {
+            RemoteIterator result = ((ConsRegIvaComponent) componentObj).cercaDettRegIva(
+                    userContext, cdTipoSezionale);
+            component_invocation_succes(userContext, componentObj);
+            return result;
+        } catch (ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
 }

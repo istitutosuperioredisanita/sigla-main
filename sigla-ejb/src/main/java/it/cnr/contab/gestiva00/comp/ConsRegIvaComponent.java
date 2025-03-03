@@ -44,7 +44,7 @@ public class ConsRegIvaComponent extends RicercaComponent {
 
 
     public java.util.Collection selectTipi_sezionaliByClause(UserContext userContext,
-                                                  OggettoBulk model, Tipo_sezionaleBulk prototype, CompoundFindClause clause)
+                                                             OggettoBulk model, Tipo_sezionaleBulk prototype, CompoundFindClause clause)
             throws ComponentException, PersistencyException {
 
         try {
@@ -99,143 +99,54 @@ public class ConsRegIvaComponent extends RicercaComponent {
             sql.addOrderBy("TIPO_SEZIONALE.ORDINA");
 
             return home.fetchAll(sql);
-        } catch(PersistencyException e) {
+        } catch (PersistencyException e) {
             throw handleException(e);
         }
     }
 
-//
-//    // This method should be in your component interface (ConsRegIvaComponentSession)
-//    public Collection queryDettRegIva(UserContext userContext, String cdTipoSezionale)
-//            throws ComponentException {
-//        try {
-//            // Crea direttamente un'istanza della home usando il costruttore con PersistentCache
-//            PersistentCache persistentCache = getComponentSession().getPersistentCache();
-//            V_cons_dett_ivaHome home = new V_cons_dett_ivaHome(getConnection(userContext), persistentCache);
-//
-//            // Crea SQLBuilder manualmente
-//            SQLBuilder sql = home.createSQLBuilder();
-//
-//            // Aggiungi le condizioni
-//            Integer esercizio = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext);
-//            sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS, esercizio);
-//            sql.addSQLClause("AND", "CD_TIPO_SEZIONALE", SQLBuilder.EQUALS, cdTipoSezionale);
-//
-//            // Costruisci la query come nel metodo originale
-//            StringBuilder selectClause = new StringBuilder(
-//                    "SELECT ESERCIZIO, " +
-//                            "SUBSTR(DATA_REGISTRAZIONE,6,2) AS MESE, " +
-//                            "NVL(CD_TIPO_SEZIONALE,'Tot') AS TIPO_SEZIONALE");
-//
-//            if (cdTipoSezionale.equals("a/com") || cdTipoSezionale.equals("v/com")) {
-//                selectClause.append(", SUM(DECODE(SP,'N',IVA_D,0)) AS SP_N")
-//                        .append(", SUM(DECODE(SP,'Y',IVA_D,0)) AS SP_Y")
-//                        .append(", SUM(IVA_D) AS TOT_IVA");
-//            } else {
-//                selectClause.append(", SUM(IVA_D) AS TOT_IVA");
-//            }
-//
-//            sql.setHeader(selectClause.toString());
-//
-//            sql.addSQLGroupBy("ESERCIZIO");
-//            sql.addSQLGroupBy("DATA_REGISTRAZIONE");
-//            sql.addSQLGroupBy("CD_TIPO_SEZIONALE");
-//
-//            sql.addOrderBy("DATA_REGISTRAZIONE");
-//            sql.addOrderBy("CD_TIPO_SEZIONALE");
-//
-//            // Esegui la query e restituisci i risultati
-//            return home.fetchAll(sql);
-//        } catch (PersistencyException e) {
-//            throw new ComponentException(e);
-//        }
-//    }
-
-//
-//    // Private method with the logic from selectByClause
-//    private SQLBuilder createSQLBuilder(UserContext userContext, V_cons_dett_ivaHome home,
-//                                        String cdTipoSezionale) throws PersistencyException {
-//        // Base SQL builder
-//        SQLBuilder sql = home.createSQLBuilder();
-//
-//        // Add exercise condition
-//        Integer esercizio = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext);
-//        sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS, esercizio);
-//
-//        if (cdTipoSezionale != null) {
-//
-//            // Build the select clause
-//            StringBuilder selectClause = new StringBuilder(
-//                    "SELECT ESERCIZIO, " +
-//                            "SUBSTR(DATA_REGISTRAZIONE,6,2) AS MESE, " +
-//                            "NVL(CD_TIPO_SEZIONALE,'Tot') AS TIPO_SEZIONALE"
-//            );
-//
-//            if (cdTipoSezionale.equals("a/com") || cdTipoSezionale.equals("v/com")) {
-//                selectClause.append(", SUM(DECODE(SP,'N',IVA_D,0)) AS SP_N")
-//                        .append(", SUM(DECODE(SP,'Y',IVA_D,0)) AS SP_Y")
-//                        .append(", SUM(IVA_D) AS TOT_IVA");
-//            } else {
-//                selectClause.append(", SUM(IVA_D) AS TOT_IVA");
-//            }
-//
-//            sql.setHeader(selectClause.toString());
-//
-//            // Add the tipo_sezionale condition
-//            sql.addSQLClause("AND", "CD_TIPO_SEZIONALE", SQLBuilder.EQUALS, cdTipoSezionale);
-//
-//            // Add GROUP BY clauses
-//            sql.addSQLGroupBy("ESERCIZIO");
-//            sql.addSQLGroupBy("DATA_REGISTRAZIONE");
-//            sql.addSQLGroupBy("CD_TIPO_SEZIONALE");
-//
-//            // Add ORDER BY clauses
-//            sql.addOrderBy("DATA_REGISTRAZIONE");
-//            sql.addOrderBy("CD_TIPO_SEZIONALE");
-//        }
-//
-//        return sql;
-//    }
-
-
-
+    //funzionante, vedo tutti i record. prova a spostare metodo nella home perche quando nell'action apre l'iterator va nella home
     public RemoteIterator cercaDettRegIva(UserContext userContext, String cdTipoSezionale) throws ComponentException {
         try {
             // Usa il costruttore corretto per SQLBuilder
             V_cons_dett_ivaHome home = (V_cons_dett_ivaHome) getHome(userContext, V_cons_dett_ivaBulk.class);
             SQLBuilder sql = home.createSQLBuilder();
 
-            // Oppure, se esiste un metodo factory o un altro costruttore
-            // SQLBuilder sql = SQLBuilder.newBuilder(getConnection(userContext));
-
-            sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
-            sql.addSQLClause("AND", "CD_TIPO_SEZIONALE", SQLBuilder.EQUALS, cdTipoSezionale);
-
-            // Imposta la query SELECT...
+            // Costruisci la query SELECT con il join a TIPO_SEZIONALE
             StringBuilder selectClause = new StringBuilder(
-                    "SELECT ESERCIZIO, " +
-                            "SUBSTR(DATA_REGISTRAZIONE,6,2) AS MESE, " +
-                            "NVL(CD_TIPO_SEZIONALE,'Tot') AS CD_TIPO_SEZIONALE"
-            );
+                    "SELECT V_CONS_REG_IVA.ESERCIZIO, " +
+                            "SUBSTR(V_CONS_REG_IVA.DATA_REGISTRAZIONE,6,2) AS MESE, " +
+                            "V_CONS_REG_IVA.CD_TIPO_SEZIONALE");
 
             if (cdTipoSezionale.equals("a/com") || cdTipoSezionale.equals("v/com")) {
-                selectClause.append(", SUM(DECODE(SP,'N',IVA_D,0)) AS SP_N")
-                        .append(", SUM(DECODE(SP,'Y',IVA_D,0)) AS SP_Y")
-                        .append(", SUM(IVA_D) AS TOT_IVA");
+                selectClause.append(", SUM(DECODE(V_CONS_REG_IVA.SP,'N',V_CONS_REG_IVA.IVA_D,0)) AS SP_N")
+                        .append(", SUM(DECODE(V_CONS_REG_IVA.SP,'Y',V_CONS_REG_IVA.IVA_D,0)) AS SP_Y")
+                        .append(", SUM(V_CONS_REG_IVA.IVA_D) AS TOT_IVA");
             } else {
-                selectClause.append(", SUM(IVA_D) AS TOT_IVA");
+                selectClause.append(", 0 AS SP_N, 0 AS SP_Y, SUM(V_CONS_REG_IVA.IVA_D) AS TOT_IVA");
             }
 
             sql.setHeader(selectClause.toString());
 
-            sql.addSQLGroupBy("ESERCIZIO");
-            sql.addSQLGroupBy("DATA_REGISTRAZIONE");
-            sql.addSQLGroupBy("CD_TIPO_SEZIONALE");
+            // Aggiungi la tabella TIPO_SEZIONALE per il JOIN
+            sql.addTableToHeader("TIPO_SEZIONALE");
 
-            sql.addOrderBy("DATA_REGISTRAZIONE");
-            sql.addOrderBy("CD_TIPO_SEZIONALE");
+            // Aggiungi la condizione di JOIN
+            sql.addSQLJoin("V_CONS_REG_IVA.CD_TIPO_SEZIONALE", "TIPO_SEZIONALE.CD_TIPO_SEZIONALE");
 
-            // Esegui la query direttamente
+            // Aggiungi le condizioni di filtro
+            sql.addSQLClause("AND", "V_CONS_REG_IVA.ESERCIZIO", SQLBuilder.EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
+            sql.addSQLClause("AND", "V_CONS_REG_IVA.CD_TIPO_SEZIONALE", SQLBuilder.EQUALS, cdTipoSezionale);
+
+            // Aggiungi GROUP BY
+            sql.addSQLGroupBy("V_CONS_REG_IVA.ESERCIZIO");
+            sql.addSQLGroupBy("SUBSTR(V_CONS_REG_IVA.DATA_REGISTRAZIONE,6,2)");
+            sql.addSQLGroupBy("V_CONS_REG_IVA.CD_TIPO_SEZIONALE");
+
+            // Aggiungi ORDER BY
+            sql.addOrderBy("SUBSTR(V_CONS_REG_IVA.DATA_REGISTRAZIONE,6,2)");
+            sql.addOrderBy("V_CONS_REG_IVA.CD_TIPO_SEZIONALE");
+
+            // Esegui la query utilizzando iterator standard di JADA
             return iterator(userContext, sql, V_cons_dett_ivaBulk.class, "default");
         } catch (Throwable t) {
             throw handleException(t);
