@@ -45,9 +45,6 @@
 			propertyName="ti_sesso"
 			sqlTypeName="CHAR"
 			columnSize="1" />
-		<columnMapping
-				columnName="PG_COMUNE_SEDE"
-				propertyName="comune_sede.pg_comune" />
 	</defaultColumnMap>
 
 	<persistentProperty
