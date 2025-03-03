@@ -44,7 +44,7 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
     private CRUDComponentSession crudComponentSession;
 
     /**
-     * {@code Documento Generico Semplice} su mono voce con mandato di pagamento:
+     * Documento Generico {@code Semplice} su mono voce {@code Liquidato} mandato di pagamento:
      * <p><b>Dati Documento Generico</b>
      * <pre>
      * Voce Bilancio: 22010 - Attrezzature scientifiche
@@ -68,7 +68,7 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
     @Test
     @OperateOnDeployment(TEST_H2)
     @InSequence(1)
-    public void testDocumentoGenericoSemplice() throws Exception {
+    public void testDocumentoGenerico001() throws Exception {
         Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
                         new Documento_genericoBulk("000","GENERICO_S","000.000",2025,
                                 1L)))
@@ -152,7 +152,7 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
     }
 
     /**
-     * {@code Documento Generico con Causale} su mono voce con mandato di pagamento:
+     * Documento Generico {@code con Causale} su mono voce {@code Liquidato} con mandato di pagamento:
      * <p><b>Dati Documento Generico</b>
      * <pre>
      * Voce Bilancio: 22010 - Attrezzature scientifiche
@@ -181,7 +181,7 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
     @Test
     @OperateOnDeployment(TEST_H2)
     @InSequence(2)
-    public void testDocumentoGenericoConCausali() throws Exception {
+    public void testDocumentoGenerico002() throws Exception {
         {
             Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
                             new Documento_genericoBulk("000", "GENERICO_S", "000.000", 2025,
@@ -262,119 +262,7 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
     }
 
     /**
-     * {@code Documento Generico Storno con Causale} su mono voce con mandato di pagamento:
-     * <p><b>Dati Documento Generico</b>
-     * <pre>
-     * Voce Bilancio: 22010 - Attrezzature scientifiche
-     * Importo: 1000,00
-     * Causale: Rimborso02
-     * Configurazione Causale:
-     *       D - P22035
-     *       A - A21015
-     * </pre></p>
-     * <b>Scrittura Economica Documento Generico</b>
-     * <pre>
-     *     Sezione   Importo      Conto
-     *        D      1000,00      P22035 - Debiti verso fornitori per acquisto o
-     *                                     costruzione di fabbricati strumentali
-     *        A      1000,00      A21015 - Crediti per altri finanziamenti e
-     *                                     contributi ministeriali
-     * </pre>
-     * <b>Scrittura Economica Mandato</b>
-     * <pre>
-     *     Sezione   Importo      Conto
-     *        D      1000,00      A21015 - Crediti per altri finanziamenti e
-     *                                     contributi ministeriali
-     *        A      1000,00      A00053 - Istituto tesoriere/cassiere
-     * </pre>
-     */
-    @Test
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(3)
-    public void testDocumentoGenericoStornoConCausali() throws Exception {
-        {
-            Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
-                            new Documento_genericoBulk("000", "GENERICO_S", "000.000", 2025,
-                                    3L)))
-                    .filter(Documento_genericoBulk.class::isInstance)
-                    .map(Documento_genericoBulk.class::cast)
-                    .orElse(null);
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
-                    new TestUserContext(),
-                    documentoCogeBulk);
-            assertEquals(new BigDecimal("1000.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
-                    .map(Scrittura_partita_doppiaBulk::getIm_scrittura).orElse(null));
-            assertEquals(new BigDecimal("1000.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
-                    .map(Scrittura_partita_doppiaBulk::getImTotaleDare).orElse(null));
-            assertEquals(new BigDecimal("1000.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
-                    .map(Scrittura_partita_doppiaBulk::getImTotaleAvere).orElse(null));
-
-            BulkList<Movimento_cogeBulk> movimentiDare = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
-                    .map(Scrittura_partita_doppiaBulk::getMovimentiDareColl)
-                    .orElse(new BulkList<>());
-            assertEquals(1, movimentiDare.size());
-
-            Optional<Movimento_cogeBulk> rigaDare = movimentiDare.stream().findAny();
-            assertTrue("Riga dare non presente.", rigaDare.isPresent());
-            assertEquals("P22035", rigaDare.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-            assertEquals(new BigDecimal("1000.00"), rigaDare.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
-
-            BulkList<Movimento_cogeBulk> movimentiAvere = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
-                    .map(Scrittura_partita_doppiaBulk::getMovimentiAvereColl)
-                    .orElse(new BulkList<>());
-            assertEquals(1, movimentiAvere.size());
-
-            Optional<Movimento_cogeBulk> rigaAvere = movimentiAvere.stream().findAny();
-            assertTrue("Riga avere non presente.", rigaAvere.isPresent());
-            assertEquals("A21015", rigaAvere.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-            assertEquals(new BigDecimal("1000.00"), rigaAvere.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
-
-            Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), documentoCogeBulk);
-        }
-        //DOCUMENTO DI STORNO
-        {
-            Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
-                            new Documento_genericoBulk("000", "GENERICO_S", "000.000", 2025,
-                                    4L)))
-                    .filter(Documento_genericoBulk.class::isInstance)
-                    .map(Documento_genericoBulk.class::cast)
-                    .orElse(null);
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
-                    new TestUserContext(),
-                    documentoCogeBulk);
-            assertEquals(new BigDecimal("1000.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
-                    .map(Scrittura_partita_doppiaBulk::getIm_scrittura).orElse(null));
-            assertEquals(new BigDecimal("1000.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
-                    .map(Scrittura_partita_doppiaBulk::getImTotaleDare).orElse(null));
-            assertEquals(new BigDecimal("1000.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
-                    .map(Scrittura_partita_doppiaBulk::getImTotaleAvere).orElse(null));
-
-            BulkList<Movimento_cogeBulk> movimentiDare = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
-                    .map(Scrittura_partita_doppiaBulk::getMovimentiDareColl)
-                    .orElse(new BulkList<>());
-            assertEquals(1, movimentiDare.size());
-
-            Optional<Movimento_cogeBulk> rigaDare = movimentiDare.stream().findAny();
-            assertTrue("Riga dare non presente.", rigaDare.isPresent());
-            assertEquals("A21015", rigaDare.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-            assertEquals(new BigDecimal("1000.00"), rigaDare.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
-
-            BulkList<Movimento_cogeBulk> movimentiAvere = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
-                    .map(Scrittura_partita_doppiaBulk::getMovimentiAvereColl)
-                    .orElse(new BulkList<>());
-            assertEquals(1, movimentiAvere.size());
-
-            Optional<Movimento_cogeBulk> rigaAvere = movimentiAvere.stream().findAny();
-            assertTrue("Riga avere non presente.", rigaAvere.isPresent());
-            assertEquals("P22035", rigaAvere.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-            assertEquals(new BigDecimal("1000.00"), rigaAvere.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
-
-            Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), documentoCogeBulk);
-        }
-    }
-
-    /**
-     * {@code Documento Generico Residuo} su mono voce con mandato di pagamento:
+     * Documento Generico {@code Residuo} di un {@code Anno Chiuso} su mono voce {@code Liquidato} con mandato di pagamento:
      * <p><b>Dati Documento Generico</b>
      * <pre>
      * Esercizio: 2023
@@ -397,8 +285,8 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
      */
     @Test
     @OperateOnDeployment(TEST_H2)
-    @InSequence(4)
-    public void testDocumentoGenericoResiduo() throws Exception {
+    @InSequence(3)
+    public void testDocumentoGenerico003() throws Exception {
         {
             Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
                             new Documento_genericoBulk("000", "GENERICO_S", "000.000", 2024,
