@@ -37,6 +37,7 @@ import it.cnr.contab.inventario00.docs.bulk.*;
 import it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession;
 import it.cnr.contab.inventario00.tabrif.bulk.*;
 import it.cnr.contab.inventario01.bulk.*;
+import it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineHome;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
