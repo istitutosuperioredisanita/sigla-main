@@ -785,8 +785,6 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 						if (listaInventario != null){
 							getHomeCache(userContext).fetchAll(userContext);
 							for(Inventario_beniBulk bene:listaInventario){
-
-
 									ImportoOrdine importo = new ImportoOrdine();
 									importo.setImponibile(fatturaOrd.getImImponibile());
 									importo.setImportoIvaInd(fatturaOrd.getImIvaNd());
