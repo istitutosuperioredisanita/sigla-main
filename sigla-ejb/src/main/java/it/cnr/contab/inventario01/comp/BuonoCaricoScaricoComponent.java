@@ -37,8 +37,11 @@ import it.cnr.contab.inventario00.docs.bulk.*;
 import it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession;
 import it.cnr.contab.inventario00.tabrif.bulk.*;
 import it.cnr.contab.inventario01.bulk.*;
+import it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineHome;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
+import it.cnr.contab.ordmag.ordini.dto.ImportoOrdine;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.TipoIVA;
@@ -713,7 +716,7 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 						}
 						buonoCS = (Buono_carico_scaricoBulk) super.creaConBulk(userContext, definitivo);
 
-						//verificaAssociazioneFattura(userContext,definitivo);
+						verificaAssociazioneFattura(userContext,definitivo);
 
 
 					} catch (it.cnr.jada.persistency.PersistencyException e) {
@@ -772,7 +775,7 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 
 			// Se la consegna dell'ordine risulta associata o associata parzialmente a fattura si deve verificare l'associativa FATTURA/INVENTARIO
 
-			/*if(!transito_beni_ordiniBulk.getMovimentiMag().getLottoMag().getOrdineAcqConsegna().getStatoFatt().equals(OrdineAcqConsegnaBulk.STATO_FATT_NON_ASSOCIATA)){
+			if(!transito_beni_ordiniBulk.getMovimentiMag().getLottoMag().getOrdineAcqConsegna().getStatoFatt().equals(OrdineAcqConsegnaBulk.STATO_FATT_NON_ASSOCIATA)){
 
 				FatturaOrdineBulk fatturaOrd = fattHome.findFatturaByRigaConsegna(transito_beni_ordiniBulk.getMovimentiMag().getLottoMag().getOrdineAcqConsegna());
 				// se consegna ordine collegata a fattura
@@ -789,10 +792,11 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 									importo.setImportoIvaInd(fatturaOrd.getImIvaNd());
 
 									BigDecimal importoUnitarioFattura = fatturaPassivaComponent.getPrezzoUnitarioFattura(userContext,importo);
-									if (bene.getValore_iniziale().compareTo(importoUnitarioFattura) != 0) {
-										bene.setValore_iniziale(importoUnitarioFattura);
-										bene.setToBeUpdated();
-									}
+									/*da verificare */
+									//if (bene.getValore_iniziale().compareTo(importoUnitarioFattura) != 0) {
+									//	bene.setValore_iniziale(importoUnitarioFattura);
+									//	bene.setToBeUpdated();
+									//}
 									try {
 										Ass_inv_bene_fatturaBulk ass = new Ass_inv_bene_fatturaBulk();
 										ass.setRiga_fatt_pass((Fattura_passiva_rigaIBulk) fatturaOrd.getFatturaPassivaRiga());
@@ -822,7 +826,6 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 
 				}
 			}
-			*/
 
 		}						/////
 		//if (transito_beni_ordiniBulk != null){
