@@ -201,15 +201,26 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			this.dtACompetenzaCoge = rigaDocamm.getDt_a_competenza_coge();
 			this.rigaDocamm = rigaDocamm;
 			this.voceEp = null;
+
+			BigDecimal pImImponibile = Optional.ofNullable(rigaDocamm.getIm_imponibile()).orElse(BigDecimal.ZERO);
+			BigDecimal pImImposta = Optional.ofNullable(rigaDocamm.getIm_iva()).orElse(BigDecimal.ZERO);
+
 			if (Optional.of(rigaDocamm).map(IDocumentoAmministrativoRigaBulk::getFather)
 					.filter(Fattura_passiva_IBulk.class::isInstance)
 					.map(Fattura_passiva_IBulk.class::cast)
 					.filter(el->el.getFl_extra_ue()||el.getFl_intra_ue())
-					.isPresent()) {
-				this.imImponibile = Optional.ofNullable(rigaDocamm.getScadenzaDocumentoContabile())
-						.map(IScadenzaDocumentoContabileBulk::getIm_associato_doc_amm)
-						.orElse(Optional.ofNullable(rigaDocamm.getIm_imponibile()).orElse(BigDecimal.ZERO));
-				this.imImposta = BigDecimal.ZERO;
+					.filter(el->Optional.ofNullable(el.getPg_lettera()).isPresent())
+					.isPresent() && (pImImponibile.compareTo(BigDecimal.ZERO)==0 || pImImposta.compareTo(BigDecimal.ZERO)==0)) {
+				//Questa gestione funziona solo per ISS perchè mette sempre una riga di imponibile (con iva=0) ed un'altra di iva (con imponibile=0)
+				if (pImImponibile.compareTo(BigDecimal.ZERO) != 0) {
+					this.imImponibile = Optional.ofNullable(rigaDocamm.getScadenzaDocumentoContabile())
+							.map(IScadenzaDocumentoContabileBulk::getIm_associato_doc_amm)
+							.orElse(Optional.ofNullable(rigaDocamm.getIm_imponibile()).orElse(BigDecimal.ZERO));
+					this.imImposta = BigDecimal.ZERO;
+				} else {
+					this.imImponibile = BigDecimal.ZERO;
+					this.imImposta = Optional.ofNullable(rigaDocamm.getIm_iva()).orElse(BigDecimal.ZERO);
+				}
 			} else {
 				this.imImponibile = Optional.ofNullable(rigaDocamm.getIm_imponibile()).orElse(BigDecimal.ZERO);
 				this.imImposta = Optional.ofNullable(rigaDocamm.getIm_iva()).orElse(BigDecimal.ZERO);
