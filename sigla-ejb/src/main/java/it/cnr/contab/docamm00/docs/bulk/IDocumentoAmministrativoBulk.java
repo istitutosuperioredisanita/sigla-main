@@ -200,4 +200,6 @@ public interface IDocumentoAmministrativoBulk extends IDocumentoCogeBulk {
     int removeFromDocumentiContabiliCancellati(IScadenzaDocumentoContabileBulk dettaglio);
 
     void setIsDeleting(boolean deletingStatus);
+
+    boolean isAnnullato();
 }
