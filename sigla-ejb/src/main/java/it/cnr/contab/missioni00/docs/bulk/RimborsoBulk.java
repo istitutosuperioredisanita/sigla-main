@@ -364,4 +364,8 @@ public class RimborsoBulk extends RimborsoBase implements IDocumentoCogeBulk, ID
     public Timestamp getDtGenerazioneScrittura() {
         return this.getDt_contabilizzazione();
     }
+
+    public boolean isAnnullato() {
+        return Fattura_passivaBulk.STATO_ANNULLATO.equalsIgnoreCase(getStato_cofi());
+    }
 }
