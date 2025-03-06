@@ -449,8 +449,8 @@ public abstract class Fattura_passivaBulk
             if (riga.getBene_servizio()!=null
              && riga.getBene_servizio().getFl_obb_intrastat_acq()!=null
                 && riga.getBene_servizio().getFl_obb_intrastat_acq().booleanValue()
-                    && (( riga.getVoce_iva()!=null && riga.getVoce_iva().getFl_intrastat().booleanValue())
-                            ||( riga.getVoce_iva() == null)))
+                    && (( !Optional.ofNullable(riga.getVoce_iva()).isPresent())|| riga.getVoce_iva().getFl_intrastat().booleanValue())
+            )
                 totale=totale.add(riga.getIm_imponibile());
         }
         return totale;
