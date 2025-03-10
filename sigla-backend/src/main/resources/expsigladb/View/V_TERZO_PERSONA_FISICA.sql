@@ -2,7 +2,7 @@
 --  DDL for View V_TERZO_PERSONA_FISICA
 --------------------------------------------------------
 
-  CREATE OR REPLACE FORCE VIEW "V_TERZO_PERSONA_FISICA" ("CD_TERZO", "FRAZIONE_SEDE", "CD_ANAG", "DT_FINE_RAPPORTO", "TI_TERZO", "CD_PRECEDENTE", "DENOMINAZIONE_SEDE", "VIA_SEDE", "NUMERO_CIVICO_SEDE", "PG_COMUNE_SEDE", "CAP_COMUNE_SEDE", "PG_RAPP_LEGALE", "CD_UNITA_ORGANIZZATIVA", "NOME_UNITA_ORGANIZZATIVA", "NOTE", "DT_CANC", "DACR", "UTCR", "DUVA", "UTUV", "PG_VER_REC", "CODICE_FISCALE", "NOME", "COGNOME", "TI_SESSO", "DT_NASCITA", "CODICE_UNIVOCO_UFFICIO_IPA", "CODICE_UNIVOCO_PCC", "DENOMINAZIONE_PCC","CODICE_DESTINATARIO_FATT","FL_SBLOCCO_FATTURA_ELETTRONICA") AS 
+  CREATE OR REPLACE FORCE VIEW "V_TERZO_PERSONA_FISICA" ("CD_TERZO", "FRAZIONE_SEDE", "CD_ANAG", "DT_FINE_RAPPORTO", "TI_TERZO", "CD_PRECEDENTE", "DENOMINAZIONE_SEDE", "VIA_SEDE", "NUMERO_CIVICO_SEDE", "PG_COMUNE_SEDE", "CAP_COMUNE_SEDE", "PG_RAPP_LEGALE", "CD_UNITA_ORGANIZZATIVA", "NOME_UNITA_ORGANIZZATIVA", "NOTE", "DT_CANC", "DACR", "UTCR", "DUVA", "UTUV", "PG_VER_REC", "CODICE_FISCALE", "NOME", "COGNOME", "TI_SESSO", "DT_NASCITA", "CODICE_UNIVOCO_UFFICIO_IPA", "CODICE_UNIVOCO_PCC", "DENOMINAZIONE_PCC","CODICE_DESTINATARIO_FATT","FL_SBLOCCO_FATTURA_ELETTRONICA","FL_FIRMATARIO_CONTRATTO") AS
   SELECT
 --
 -- Date: 31/05/2001
@@ -16,6 +16,10 @@
 -- Version: 1.0
 -- Creazione
 --
+-- History:
+-- Date: 13/02/2025
+-- Version: 1.0
+-- Aggiunto fl_firmatario_contratto
 -- Body:
 --
           terzo.cd_terzo, terzo.frazione_sede, terzo.cd_anag,
@@ -26,7 +30,8 @@
           terzo.note, terzo.dt_canc, terzo.dacr, terzo.utcr, terzo.duva,
           terzo.utuv, terzo.pg_ver_rec, anagrafico.codice_fiscale,
           anagrafico.nome, anagrafico.cognome, anagrafico.ti_sesso,
-          anagrafico.dt_nascita, terzo.codice_univoco_ufficio_ipa,terzo.codice_univoco_pcc,terzo.denominazione_pcc,CODICE_DESTINATARIO_FATT,FL_SBLOCCO_FATTURA_ELETTRONICA
+          anagrafico.dt_nascita, terzo.codice_univoco_ufficio_ipa,terzo.codice_univoco_pcc,terzo.denominazione_pcc,CODICE_DESTINATARIO_FATT,FL_SBLOCCO_FATTURA_ELETTRONICA,
+          fl_firmatario_contratto
      FROM terzo, anagrafico
     WHERE terzo.cd_anag = anagrafico.cd_anag AND anagrafico.ti_entita = 'F';
 

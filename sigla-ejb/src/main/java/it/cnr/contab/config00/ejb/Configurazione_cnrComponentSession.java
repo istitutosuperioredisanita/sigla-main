@@ -152,4 +152,6 @@ public interface Configurazione_cnrComponentSession extends it.cnr.jada.ejb.CRUD
 
     Timestamp getFineRegFattPass(UserContext userContext, Integer esercizio) throws ComponentException, RemoteException;
 
+    Boolean isAttivoGestFirmatariCont(UserContext userContext) throws ComponentException, RemoteException;
+
 }

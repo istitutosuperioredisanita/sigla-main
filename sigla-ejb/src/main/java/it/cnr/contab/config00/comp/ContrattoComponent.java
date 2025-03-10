@@ -227,20 +227,42 @@ public class ContrattoComponent extends it.cnr.jada.comp.CRUDDetailComponent imp
 		return sql;
 	}
 
+
+	public RemoteIterator findListaFirmatariContratti(UserContext userContext, ContrattoBulk contratto)	throws ComponentException
+	{
+		try {
+			SQLBuilder sql = selectFirmatarioByClause( userContext,contratto,new V_persona_fisicaBulk(),null);
+			return iterator(userContext, sql, V_persona_fisicaBulk.class, null);
+		} catch (PersistencyException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	public SQLBuilder selectFirmatarioByClause (UserContext userContext, ContrattoBulk contratto, V_persona_fisicaBulk firmatario,CompoundFindClause clause)	throws ComponentException, PersistencyException
 	{
-		if (clause == null) 
-		  clause = firmatario.buildFindClauses(null);
-		SQLBuilder sql = getHome(userContext, firmatario).createSQLBuilder();
-		if (contratto.getCodfisPivaAggiudicatarioExt() != null){
-			sql.openParenthesis("AND");
-			sql.addSQLClause("AND","CODICE_FISCALE",sql.EQUALS,contratto.getCodfisPivaFirmatarioExt());
-			sql.addSQLClause("OR","PARTITA_IVA",sql.EQUALS,contratto.getCodfisPivaFirmatarioExt());
-			sql.closeParenthesis();
+
+		boolean isAttivoGestFirmatariCont = false;
+		try {
+			isAttivoGestFirmatariCont = Utility.createConfigurazioneCnrComponentSession().isAttivoGestFirmatariCont(userContext);
+
+
+		if (clause == null)
+				clause = firmatario.buildFindClauses(null);
+			SQLBuilder sql = getHome(userContext, firmatario).createSQLBuilder();
+			if ( !isAttivoGestFirmatariCont) {
+				if (contratto.getCodfisPivaAggiudicatarioExt() != null) {
+					sql.openParenthesis("AND");
+					sql.addSQLClause("AND", "CODICE_FISCALE", sql.EQUALS, contratto.getCodfisPivaFirmatarioExt());
+					sql.addSQLClause("OR", "PARTITA_IVA", sql.EQUALS, contratto.getCodfisPivaFirmatarioExt());
+					sql.closeParenthesis();
+				}
+			}else
+				sql.addClause(FindClause.AND, "flFirmatarioContratto", sql.EQUALS, Boolean.TRUE);
+			if (clause != null)
+				sql.addClause(clause);
+			return sql;
+		} catch (RemoteException e) {
+			throw new RuntimeException(e);
 		}
-		if (clause != null) 
-		  sql.addClause(clause);
-		return sql;
 	}
 
 	
