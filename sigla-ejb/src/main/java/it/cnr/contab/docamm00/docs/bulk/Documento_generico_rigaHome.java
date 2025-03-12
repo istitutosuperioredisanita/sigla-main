@@ -26,6 +26,7 @@ package it.cnr.contab.docamm00.docs.bulk;
 import it.cnr.contab.anagraf00.core.bulk.Termini_pagamentoBulk;
 import it.cnr.contab.coepcoan00.core.bulk.PartitarioBulk;
 import it.cnr.contab.config00.bulk.CausaleContabileBulk;
+import it.cnr.contab.config00.latt.bulk.CostantiTi_gestione;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
@@ -110,12 +111,22 @@ public class Documento_generico_rigaHome extends BulkHome {
         sqlBuilder.addClause(FindClause.AND, "documento_generico.fl_storno", SQLBuilder.NOT_EQUALS, Boolean.TRUE);
         sqlBuilder.generateJoin(Documento_genericoBulk.class, Tipo_documento_ammBulk.class,  "tipo_documento", "TIPO_DOCUMENTO_AMM");
         sqlBuilder.addClause(FindClause.AND, "documento_generico.tipo_documento.fl_utilizzo_doc_generico", SQLBuilder.EQUALS, Boolean.TRUE);
+        String tiEntrataSpesa = Arrays.stream(objects).map(String::valueOf).findFirst().orElse(null);
         sqlBuilder.addClause(
                 FindClause.AND,
                 "documento_generico.tipo_documento.ti_entrata_spesa",
                 SQLBuilder.EQUALS,
-                Arrays.stream(objects).map(String::valueOf).findFirst().orElse(null)
+                tiEntrataSpesa
         );
+        /*
+		Devo escludere dalla selezione delle fatture quelle non riportate
+		 */
+        String esercizio = Objects.equals(tiEntrataSpesa, CostantiTi_gestione.TI_GESTIONE_SPESE) ? "ESERCIZIO_OBBLIGAZIONE" : "ESERCIZIO_ACCERTAMENTO";
+        sqlBuilder.openParenthesis(FindClause.AND);
+        sqlBuilder.addSQLClause(FindClause.AND, esercizio, SQLBuilder.EQUALS, CNRUserContext.getEsercizio(usercontext));
+        sqlBuilder.addSQLClause(FindClause.OR, esercizio, SQLBuilder.ISNULL, null);
+        sqlBuilder.closeParenthesis();
+
         SQLBuilder sqlNotExists = createSQLBuilder();
         sqlNotExists.setFromClause(new StringBuffer("DOCUMENTO_GENERICO_RIGA STORNO, DOCUMENTO_GENERICO TESTATA_STORNO"));
         sqlNotExists.resetColumns();
