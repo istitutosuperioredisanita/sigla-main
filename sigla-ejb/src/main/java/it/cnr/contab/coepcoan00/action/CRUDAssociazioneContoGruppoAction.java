@@ -10,6 +10,7 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.action.HookForward;
+import it.cnr.jada.bulk.FillException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.RemoteIterator;
@@ -126,10 +127,11 @@ public class CRUDAssociazioneContoGruppoAction extends CRUDAction {
     public Forward doRefresh(ActionContext actioncontext) throws BusinessProcessException {
         CRUDAssociazioneContoGruppoBP bp = (CRUDAssociazioneContoGruppoBP)actioncontext.getBusinessProcess();
         try {
+            fillModel(actioncontext);
             final AssociazioneContoGruppoBulk model = (AssociazioneContoGruppoBulk)bp.getModel();
             model.setGruppoEp(null);
             bp.setModel(actioncontext, bp.createComponentSession().initializeKeysAndOptionsInto(actioncontext.getUserContext(), model));
-        } catch (BusinessProcessException|ComponentException|RemoteException e) {
+        } catch (BusinessProcessException | ComponentException | RemoteException | FillException e) {
             return handleException(actioncontext, e);
         }
         return actioncontext.findDefaultForward();
