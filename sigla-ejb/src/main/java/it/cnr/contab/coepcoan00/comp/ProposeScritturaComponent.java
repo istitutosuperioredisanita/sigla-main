@@ -1382,7 +1382,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 																	.map(rigaDettFin -> Optional.ofNullable(rigaDettFin.getImImposta()).orElse(BigDecimal.ZERO))
 																	.reduce(BigDecimal.ZERO, BigDecimal::add);
 
-															final boolean registraIvaACosto = importoIva.compareTo(BigDecimal.ZERO)!=0 && registraIva && ivaDaRegistrareACosto;
+															//final boolean registraIvaACosto = importoIva.compareTo(BigDecimal.ZERO)!=0 && registraIva && ivaDaRegistrareACosto;
 															List<DettaglioScrittura> mapPatrimonialeIva = new ArrayList<>();
 
 															//Registro Imponibile Fattura e iva a costo se previsto
@@ -1394,6 +1394,11 @@ public class ProposeScritturaComponent extends CRUDComponent {
 																	IDocumentoAmministrativoBulk partita = rigaDettFin.getPartita();
 
 																	IDocumentoAmministrativoRigaBulk rigaDocamm = rigaDettFin.getRigaDocamm();
+
+																	final boolean registraIvaACosto = Optional.ofNullable(rigaDocamm.getIm_iva()).orElse(BigDecimal.ZERO).compareTo(BigDecimal.ZERO)!=0 &&
+																			registraIva && (ivaDaRegistrareACosto ||
+																			!Optional.ofNullable(rigaDocamm.getVoce_iva()).map(Voce_ivaBulk::isDetraibile).orElse(Boolean.FALSE));
+
 																	final List<FatturaOrdineBulk> listaFatturaOrdiniCollRiga = listaFatturaOrdini.stream()
 																			.filter(el->el.getFatturaPassivaRiga().equalsByPrimaryKey(rigaDocamm)).collect(Collectors.toList());
 
@@ -1452,6 +1457,10 @@ public class ProposeScritturaComponent extends CRUDComponent {
 																					throw new DetailedRuntimeException(e);
 																				}
 																			});
+
+																		final boolean registraIvaACosto = Optional.ofNullable(rigaDettFin.getImImposta()).orElse(BigDecimal.ZERO).compareTo(BigDecimal.ZERO)!=0 &&
+																				registraIva && (ivaDaRegistrareACosto ||
+																				!Optional.ofNullable(rigaDettFin.getRigaDocamm().getVoce_iva()).map(Voce_ivaBulk::isDetraibile).orElse(Boolean.FALSE));
 
 																		//se esiste scrittura partita vuol dire che non si tratta di partita migrata....recupero i conti patrimoniali leggendo la fattura originaria
 																		//valutando se da ordine o meno
@@ -1552,6 +1561,10 @@ public class ProposeScritturaComponent extends CRUDComponent {
 																	testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, rigaDettFin, partita, pairContoCosto.getFirst(), rigaDettFin.getRigaDocamm().getIm_imponibile());
 																	testataPrimaNota.openDettaglioPatrimonialePartita(userContext, docamm, partita, pairContoCosto.getSecond(), rigaDettFin.getRigaDocamm().getIm_imponibile(), aCdTerzo);
 
+																	final boolean registraIvaACosto = Optional.ofNullable(rigaDettFin.getRigaDocamm().getIm_iva()).orElse(BigDecimal.ZERO).compareTo(BigDecimal.ZERO)!=0 &&
+																			registraIva && (ivaDaRegistrareACosto ||
+																			!Optional.ofNullable(rigaDettFin.getRigaDocamm().getVoce_iva()).map(Voce_ivaBulk::isDetraibile).orElse(Boolean.FALSE));
+
 																	if (registraIvaACosto) {
 																		testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, rigaDettFin, partita, pairContoCosto.getFirst(), rigaDettFin.getRigaDocamm().getIm_iva());
 																		mapPatrimonialeIva.add(new DettaglioScrittura(pairContoCosto.getSecond(), partita, rigaDettFin.getRigaDocamm().getIm_iva()));
@@ -1571,7 +1584,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 																	BigDecimal imIva = rigaDettFin.getImImposta();
 
-																	if (!ivaDaRegistrareACosto) {
+																	if (!(ivaDaRegistrareACosto || !rigaDettFin.getRigaDocamm().getVoce_iva().isDetraibile())) {
 																		testataPrimaNota.openDettaglioIva(userContext, docamm, partita, aContoIva, imIva, aCdTerzo, cdCoriIva);
 																		mapPatrimonialeIva.add(new DettaglioScrittura(pairContoCosto.getSecond(), partita, imIva));
 																	}
