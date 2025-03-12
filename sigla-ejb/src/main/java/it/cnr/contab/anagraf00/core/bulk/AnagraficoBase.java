@@ -197,7 +197,7 @@ public class AnagraficoBase extends AnagraficoKey implements Keyed {
 	// FL_PIVA_VERIFICATA CHAR(1)
 	private java.lang.String flPivaVerificata;
 	// FL_FIRMATARIO_CONTRATTO CHAR(1) NOT NULL
-	private java.lang.Boolean flFirmatarioContratto;
+	private java.lang.Boolean flFirmatarioContratto = Boolean.FALSE;
 	
 public AnagraficoBase() {
 	super();
