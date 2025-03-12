@@ -70,6 +70,13 @@ public class Fattura_attiva_rigaIHome extends Fattura_attiva_rigaHome {
 		Stream.of("FL_INTRA_UE", "FL_EXTRA_UE", "FL_SAN_MARINO").forEach(s -> {
 			sqlBuilder.addSQLClause(FindClause.AND, "FATTURA_ATTIVA." + s, SQLBuilder.EQUALS, "N");
 		});
+		/*
+		Devo escludere dalla selezione delle fatture quelle non riportate
+		 */
+		sqlBuilder.openParenthesis(FindClause.AND);
+		sqlBuilder.addSQLClause(FindClause.AND, "ESERCIZIO_ACCERTAMENTO", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(usercontext));
+		sqlBuilder.addSQLClause(FindClause.OR, "ESERCIZIO_ACCERTAMENTO", SQLBuilder.ISNULL, null);
+		sqlBuilder.closeParenthesis();
 
 		sqlBuilder.addClause(FindClause.AND, "esercizio", SQLBuilder.LESS_EQUALS, CNRUserContext.getEsercizio(usercontext));
 		sqlBuilder.addClause(FindClause.AND, "im_diponibile_nc", SQLBuilder.NOT_EQUALS, BigDecimal.ZERO);

@@ -79,6 +79,14 @@ public class Fattura_passiva_rigaIHome extends Fattura_passiva_rigaHome {
 			sqlBuilder.addClause(FindClause.AND, "stato_cofi", SQLBuilder.NOT_EQUALS, s);
 		});
 
+		/*
+		Devo escludere dalla selezione delle fatture quelle non riportate
+		 */
+		sqlBuilder.openParenthesis(FindClause.AND);
+		sqlBuilder.addSQLClause(FindClause.AND, "ESERCIZIO_OBBLIGAZIONE", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(usercontext));
+		sqlBuilder.addSQLClause(FindClause.OR, "ESERCIZIO_OBBLIGAZIONE", SQLBuilder.ISNULL, null);
+		sqlBuilder.closeParenthesis();
+
 		PersistentHome assInvBeneFatturaHome = getHomeCache().getHome(Ass_inv_bene_fatturaBulk.class);
 		SQLBuilder sqlBuilderAssInvBeneFattura = assInvBeneFatturaHome.createSQLBuilder();
 		sqlBuilderAssInvBeneFattura.resetColumns();
