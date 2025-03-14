@@ -1,6 +1,7 @@
 package it.cnr.contab.coepcoan00.bp;
 
 import it.cnr.contab.config00.pdcep.bulk.AssociazioneContoGruppoBulk;
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.pdcep.bulk.Voce_epBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
@@ -36,7 +37,7 @@ public class CRUDAssociazioneContoGruppoBP extends SimpleCRUDBP {
     public RemoteIterator cercaContiDaAssociare(ActionContext actioncontext) throws BusinessProcessException {
         final CRUDComponentSession componentSession = createComponentSession();
         try {
-            return componentSession.cerca(actioncontext.getUserContext(), null, new Voce_epBulk(), "selectContiNonAssociati");
+            return componentSession.cerca(actioncontext.getUserContext(), null, new ContoBulk(), "selectContiNonAssociati");
         } catch (ComponentException|RemoteException e) {
             throw handleException(e);
         }
