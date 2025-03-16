@@ -49,16 +49,17 @@ public class ParametricPrintAndExcelAction extends ParametricPrintAction {
                     .map(Stampa_vpg_stato_patrim_riclassVBulk.class::cast);
 
             StringBuffer beforeStatement = new StringBuffer();
-            String apice = "'", virgola=",", apicevirgola = apice + virgola;
+            final String APICE = "'", VIROLA=",", APICE_VIROLA = APICE + VIROLA;
             beforeStatement.append("BEGIN ");
             beforeStatement.append(stampaVpgContoEconomRiclassVBulk.isPresent() ? "PRT_S_CE_RICLASSIFICATO_J":"PRT_S_SP_RICLASSIFICATO");
             beforeStatement.append("(");
-            beforeStatement.append(stampaVpgStatoPatrimRiclassVBulk.isPresent() ? apice + stampaVpgStatoPatrimRiclassVBulk.get().getTi_att_pass() + apicevirgola:"");
-            beforeStatement.append(apice + stampaVpgBilancioRiclassVBulk.getTi_ist_com() + apicevirgola);
-            beforeStatement.append(stampaVpgBilancioRiclassVBulk.getEsercizio() + virgola);
-            beforeStatement.append(apice + stampaVpgBilancioRiclassVBulk.getCdCDSCRForPrint() + apicevirgola);
-            beforeStatement.append(apice + stampaVpgBilancioRiclassVBulk.getCdUOCRForPrint() + apicevirgola);
-            beforeStatement.append(apice + stampaVpgBilancioRiclassVBulk.getDettaglioContiYN() + apice);
+            beforeStatement.append(stampaVpgStatoPatrimRiclassVBulk.isPresent() ? APICE + stampaVpgStatoPatrimRiclassVBulk.get().getTi_att_pass() + APICE_VIROLA:"");
+            beforeStatement.append(APICE + stampaVpgBilancioRiclassVBulk.getTi_ist_com() + APICE_VIROLA);
+            beforeStatement.append(stampaVpgBilancioRiclassVBulk.getEsercizio() + VIROLA);
+            beforeStatement.append(APICE + stampaVpgBilancioRiclassVBulk.getCdCDSCRForPrint() + APICE_VIROLA);
+            beforeStatement.append(APICE + stampaVpgBilancioRiclassVBulk.getCdUOCRForPrint() + APICE_VIROLA);
+            beforeStatement.append(APICE + stampaVpgBilancioRiclassVBulk.getDettaglioContiYN() + APICE_VIROLA);
+            beforeStatement.append(APICE + stampaVpgBilancioRiclassVBulk.getTipoBilancio().getCdTipoBilancio() + APICE);
             beforeStatement.append("); END;");
 
             OrderedHashtable columnLabel = new OrderedHashtable();

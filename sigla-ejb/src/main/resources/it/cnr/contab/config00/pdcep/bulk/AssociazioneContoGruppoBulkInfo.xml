@@ -13,6 +13,18 @@
 		nullable="false"
 		label="Esercizio" />
 	<fieldProperty
+		name="tipoBilancio"
+		property="tipoBilancio"
+		inputType="SELECT"
+		printProperty="dsTipoBilancio"
+		optionsProperty="tipoBilanci"
+		maxLength="40"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		command="doRefresh"
+		nullable="false"
+		label="Tipo bilancio" />
+	<fieldProperty
 		name="cdPianoGruppi"
 		property="cdPianoGruppi"
 		inputType="SELECT"
@@ -92,6 +104,8 @@
 			name="cdVoceEp" />
 	</form>
 	<formFieldProperty
+		name="tipoBilancio"/>
+	<formFieldProperty
 		name="cdPianoGruppi" />
 	<formFieldProperty
 		name="cdGruppoEp" />
@@ -104,6 +118,8 @@
 	<formFieldProperty
 		name="segno" />
 
+	<findFieldProperty
+		name="tipoBilancio"/>
 	<findFieldProperty
 		name="esercizio" />
 	<findFieldProperty
@@ -119,6 +135,8 @@
 	<findFieldProperty
 		name="segno" />
 
+	<columnFieldProperty
+		name="tipoBilancio"/>
 	<columnFieldProperty
 		name="esercizio" />
 	<columnFieldProperty

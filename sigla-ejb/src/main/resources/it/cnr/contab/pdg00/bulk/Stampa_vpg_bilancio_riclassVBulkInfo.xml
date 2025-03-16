@@ -24,6 +24,26 @@
 		name="tc"
 		property="tc" />
 	<fieldProperty
+		name="tipoBilancio"
+		property="tipoBilancio"
+		inputType="SELECT"
+		printProperty="dsTipoBilancio"
+		optionsProperty="tipoBilanci"
+		maxLength="40"
+		enabledOnEdit="true"
+		enabledOnSearch="true"
+		nullable="false"
+		label="Tipo bilancio" />
+	<fieldProperty
+		name="cdTipoBilancio"
+		property="tipoBilancio.cdTipoBilancio"
+		inputType="ROTEXT"
+		maxLength="40"
+		enabledOnEdit="true"
+		enabledOnSearch="true"
+		nullable="false"
+		label="Codice tipo bilancio" />
+	<fieldProperty
 		name="findCDSForPrint"
 		property="cdsForPrint"
 		inputType="SEARCHTOOL"
@@ -108,6 +128,8 @@
 		inputType="ROTEXT"
 		inputSize="5"
 		label="Esercizio" />
+	<formFieldProperty
+		name="tipoBilancio" />
 	<formFieldProperty
 		name="findCDSForPrint" />
 	<formFieldProperty
