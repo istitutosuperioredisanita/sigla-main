@@ -43,7 +43,7 @@ public class AssociazioneContoGruppoBulk extends AssociazioneContoGruppoBase {
 		D("Dare"), A("Avere");
 		private final String label;
 
-		private Sezione(String label) {
+		Sezione(String label) {
 			this.label = label;
 		}
 
@@ -56,7 +56,7 @@ public class AssociazioneContoGruppoBulk extends AssociazioneContoGruppoBase {
 		private final String value;
 		private final String label;
 
-		private Segno(String value, String label) {
+		Segno(String value, String label) {
 			this.label = label;
 			this.value = value;
 		}
@@ -85,9 +85,9 @@ public class AssociazioneContoGruppoBulk extends AssociazioneContoGruppoBase {
 	private java.util.Collection gruppoEp;
 
 	/**
-	 * [VOCE_EP ]
+	 * [VOCE_EP]
 	 **/
-	private Voce_epBulk voceEp =  new Voce_epBulk();
+	private ContoBulk voceEp;
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: CNR_ASS_CONTO_GRUPPO_EP
@@ -102,10 +102,10 @@ public class AssociazioneContoGruppoBulk extends AssociazioneContoGruppoBase {
 	public AssociazioneContoGruppoBulk(String rowid) {
 		super(rowid);
 	}
-	public Voce_epBulk getVoceEp() {
+	public ContoBulk getVoceEp() {
 		return voceEp;
 	}
-	public void setVoceEp(Voce_epBulk voceEp)  {
+	public void setVoceEp(ContoBulk voceEp)  {
 		this.voceEp=voceEp;
 	}
 	/**
