@@ -1005,7 +1005,8 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 				isPagata() ||
 				isPagataParzialmente() || //richiesta 02449A
 				isByFondoEconomale() ||
-				!controllaCompatibilitaPer1210();
+				!controllaCompatibilitaPer1210() ||
+				isDefaultValuta();
 	}
 	/**
 	 * Insert the method's description here.
