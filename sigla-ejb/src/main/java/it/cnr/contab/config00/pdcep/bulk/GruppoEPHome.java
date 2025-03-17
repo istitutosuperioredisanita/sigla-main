@@ -74,4 +74,14 @@ public class GruppoEPHome extends BulkHome {
 		sqlBuilder.addClause(FindClause.AND, "cdGruppoEp", SQLBuilder.EQUALS, gruppoEPBulk.getCdGruppoPadre());
 		return fetchAll(sqlBuilder);
 	}
- }
+
+	public List<GruppoEPBulk> findGruppoEp(AssociazioneContoGruppoBulk associazioneContoGruppoBulk) throws PersistencyException {
+		GruppoEPHome gruppoEPHome = (GruppoEPHome) getHomeCache().getHome(GruppoEPBulk.class);
+		final SQLBuilder sqlBuilder = gruppoEPHome.createSQLBuilder();
+		sqlBuilder.addClause(FindClause.AND, "cdTipoBilancio", SQLBuilder.EQUALS, associazioneContoGruppoBulk.getCdTipoBilancio());
+		sqlBuilder.addClause(FindClause.AND, "cdPianoGruppi", SQLBuilder.EQUALS, associazioneContoGruppoBulk.getCdPianoGruppi());
+		sqlBuilder.addClause(FindClause.AND, "flMastrino", SQLBuilder.EQUALS, Boolean.TRUE);
+		sqlBuilder.addClause(FindClause.AND, "formula", SQLBuilder.ISNULL, null);
+		return gruppoEPHome.fetchAll(sqlBuilder);
+	}
+}

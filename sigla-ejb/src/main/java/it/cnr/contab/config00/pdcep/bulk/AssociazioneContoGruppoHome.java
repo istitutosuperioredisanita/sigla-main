@@ -109,10 +109,7 @@ public class AssociazioneContoGruppoHome extends BulkHome {
 	) throws PersistencyException {
 		gruppoEPHome = Optional.ofNullable(gruppoEPHome)
 				.orElseGet(() -> (GruppoEPHome)getHomeCache().getHome(GruppoEPBulk.class));
-		final SQLBuilder sqlBuilder = gruppoEPHome.createSQLBuilder();
-		sqlBuilder.addClause(FindClause.AND, "cdTipoBilancio", SQLBuilder.EQUALS, associazioneContoGruppoBulk.getCdTipoBilancio());
-		sqlBuilder.addClause(FindClause.AND, "cdPianoGruppi", SQLBuilder.EQUALS, associazioneContoGruppoBulk.getCdPianoGruppi());
-		final List<GruppoEPBulk> result = gruppoEPHome.fetchAll(sqlBuilder);
+		final List<GruppoEPBulk> result = gruppoEPHome.findGruppoEp(associazioneContoGruppoBulk);
 		return result.stream().map(GruppoEPBase::getCdGruppoEp).collect(Collectors.toList());
 	}
 

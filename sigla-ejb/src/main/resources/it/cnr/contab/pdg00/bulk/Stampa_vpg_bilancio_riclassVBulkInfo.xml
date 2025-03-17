@@ -32,6 +32,7 @@
 		maxLength="40"
 		enabledOnEdit="true"
 		enabledOnSearch="true"
+		command="doDefault"
 		nullable="false"
 		label="Tipo bilancio" />
 	<fieldProperty

@@ -1,5 +1,6 @@
 package it.cnr.contab.coepcoan00.bp;
 
+import it.cnr.contab.config00.pdcep.bulk.GruppoEPBase;
 import it.cnr.contab.config00.pdcep.bulk.GruppoEPBulk;
 import it.cnr.contab.config00.pdcep.bulk.TipoBilancioBulk;
 import it.cnr.jada.DetailedRuntimeException;
@@ -45,7 +46,9 @@ public class SelezionatoreGruppoEpBP extends SelezionatoreListaAlberoBP {
                         new Button(properties, "Toolbar.new"),
                         new Button(properties, "Toolbar.newChildren"),
                         new Button(properties, "Toolbar.edit"),
-                        new Button(properties, "Toolbar.delete")
+                        new Button(properties, "Toolbar.delete"),
+                        new Button(properties, "Toolbar.associaConti"),
+                        new Button(properties, "Toolbar.visualizzaConti")
                 ).toArray(Button[]::new);
     }
 
@@ -67,6 +70,7 @@ public class SelezionatoreGruppoEpBP extends SelezionatoreListaAlberoBP {
             selezione_tipo_bilancio.setTipoBilancio(selezione_tipo_bilancio.getTipoBilanci().stream().findFirst().orElse(null));
             selezioneTipoBilancioController.setModel(actioncontext, selezione_tipo_bilancio);
             setBulkInfo(it.cnr.jada.bulk.BulkInfo.getBulkInfo(GruppoEPBulk.class));
+            refreshRemoteBulkTree(actioncontext);
         } catch (RemoteException | ComponentException e) {
             throw handleException(e);
         }
@@ -179,6 +183,15 @@ public class SelezionatoreGruppoEpBP extends SelezionatoreListaAlberoBP {
         return Optional.ofNullable(getParentElement()).isPresent();
     }
 
+    public boolean isContiHidden() {
+        return !Optional.ofNullable(getFocusedElement())
+                .filter(GruppoEPBulk.class::isInstance)
+                .map(GruppoEPBulk.class::cast)
+                .filter(gruppoEPBulk -> !Optional.ofNullable(gruppoEPBulk.getFormula()).isPresent())
+                .filter(GruppoEPBulk::getFlMastrino)
+                .isPresent();
+    }
+
     public boolean isNuovoRamoFiglioHidden() {
         return !Optional.ofNullable(getFocusedElement())
                 .filter(GruppoEPBulk.class::isInstance)
@@ -187,6 +200,7 @@ public class SelezionatoreGruppoEpBP extends SelezionatoreListaAlberoBP {
                 .filter(gruppoEPBulk -> !gruppoEPBulk.getFlMastrino())
                 .isPresent();
     }
+
     public boolean isCancellaRamoHidden() {
         return !Optional.ofNullable(getFocusedElement())
                 .filter(GruppoEPBulk.class::isInstance)

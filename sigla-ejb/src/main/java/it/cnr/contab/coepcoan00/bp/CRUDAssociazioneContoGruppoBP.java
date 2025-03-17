@@ -58,7 +58,8 @@ public class CRUDAssociazioneContoGruppoBP extends SimpleCRUDBP {
     public OggettoBulk initializeModelForInsert(ActionContext actioncontext, OggettoBulk oggettobulk) throws BusinessProcessException {
         try {
             AssociazioneContoGruppoBulk associazioneContoGruppoBulk = (AssociazioneContoGruppoBulk)super.initializeModelForInsert(actioncontext, oggettobulk);
-            associazioneContoGruppoBulk.setTipoBilancio(associazioneContoGruppoBulk.getTipoBilanci().stream().findFirst().orElse(null));
+            if (associazioneContoGruppoBulk.getTipoBilancio() == null)
+                associazioneContoGruppoBulk.setTipoBilancio(associazioneContoGruppoBulk.getTipoBilanci().stream().findFirst().orElse(null));
             associazioneContoGruppoBulk.setGruppoEp(null);
             associazioneContoGruppoBulk = (AssociazioneContoGruppoBulk) createComponentSession().initializeKeysAndOptionsInto(actioncontext.getUserContext(), associazioneContoGruppoBulk);
             return associazioneContoGruppoBulk;
