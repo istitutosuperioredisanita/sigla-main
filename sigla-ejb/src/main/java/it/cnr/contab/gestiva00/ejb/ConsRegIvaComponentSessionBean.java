@@ -68,23 +68,4 @@ public class ConsRegIvaComponentSessionBean extends it.cnr.jada.ejb.RicercaCompo
         }
     }
 
-
-    public RemoteIterator cercaDettRegIva(UserContext userContext, String cdTipoSezionale)
-            throws ComponentException {
-
-        pre_component_invocation(userContext, componentObj);
-        try {
-            RemoteIterator result = ((ConsRegIvaComponent) componentObj).cercaDettRegIva(
-                    userContext, cdTipoSezionale);
-            component_invocation_succes(userContext, componentObj);
-            return result;
-        } catch (ComponentException e) {
-            component_invocation_failure(userContext, componentObj);
-            throw e;
-        } catch (RuntimeException e) {
-            throw uncaughtRuntimeException(userContext, componentObj, e);
-        } catch (Error e) {
-            throw uncaughtError(userContext, componentObj, e);
-        }
-    }
 }

@@ -32,6 +32,4 @@ import java.rmi.RemoteException;
 @Remote
 public interface ConsRegIvaComponentSession extends RicercaComponentSession {
     java.util.Collection selectTipi_sezionaliByClause(UserContext userContext, OggettoBulk model, Tipo_sezionaleBulk prototype, CompoundFindClause clause) throws ComponentException, RemoteException, PersistencyException;
-
-    RemoteIterator cercaDettRegIva(UserContext userContext, String cdTipoSezionale) throws ComponentException, RemoteException;
 }

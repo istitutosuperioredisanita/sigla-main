@@ -43,22 +43,4 @@ public class TransactionalConsRegIvaComponentSession extends it.cnr.jada.ejb.Tra
         }
     }
 
-
-    public it.cnr.jada.util.RemoteIterator cercaDettRegIva(it.cnr.jada.UserContext param0, String param1)
-            throws it.cnr.jada.comp.ComponentException, RemoteException {
-        try {
-            return (it.cnr.jada.util.RemoteIterator) invoke("cercaDettRegIva", new Object[]{
-                    param0,
-                    param1});
-        } catch (java.lang.reflect.InvocationTargetException e) {
-            try {
-                throw e.getTargetException();
-            } catch (it.cnr.jada.comp.ComponentException ex) {
-                throw ex;
-            } catch (Throwable ex) {
-                throw new java.rmi.RemoteException("Uncaught exception", ex);
-            }
-        }
-    }
-
 }
