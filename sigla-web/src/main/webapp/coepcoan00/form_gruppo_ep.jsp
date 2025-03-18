@@ -18,7 +18,11 @@
     <div class="col-md-8 mx-auto">
         <div class="card card-shadow">
           <h3 class="card-header">
-            <i class="fa fa-edit fa-fw fa-2x text-info" aria-hidden="true"></i> Inserire le informazioni del ramo
+            <i class="fa fa-edit fa-fw fa-2x text-info" aria-hidden="true"></i>
+            <span>Inserire le informazioni del ramo</span>
+            <% if (bp.getModel() != null && bp.getModel().isToBeCreated() && ((GruppoEPBulk)bp.getModel()).getCdGruppoPadre() != null ) {%>
+                <span class="pl-1">figlio di </span><span class="text-primary h2"><%=GruppoEPBulk.ti_pianoGruppiKeys.get(((GruppoEPBulk)bp.getModel()).getCdPianoPadre())%> > <%=((GruppoEPBulk)bp.getModel()).getCdGruppoPadre()%>
+            <% } %>
           </h3>
           <div class="card-block p-3">
             <% if (bp.getModel().isToBeCreated() && ((GruppoEPBulk)bp.getModel()).getCdGruppoPadre() == null ) {%>

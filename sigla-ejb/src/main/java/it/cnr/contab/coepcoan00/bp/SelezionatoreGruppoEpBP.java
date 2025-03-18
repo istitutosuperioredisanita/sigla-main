@@ -78,6 +78,8 @@ public class SelezionatoreGruppoEpBP extends SelezionatoreListaAlberoBP {
 
     public void refreshRemoteBulkTree(ActionContext actionContext) throws BusinessProcessException {
         try {
+            OggettoBulk model = getModel();
+            int focus = getSelection().getFocus();
             if (getParentElement() != null) {
                 RemoteIterator children = getRemoteBulkTree().getChildren(actionContext, getParentElement());
                 children.refresh();
@@ -90,6 +92,8 @@ public class SelezionatoreGruppoEpBP extends SelezionatoreListaAlberoBP {
                 orderRemoteIterator(roots);
                 setRemoteBulkTree(actionContext, getGruppoEPTree(), roots);
             }
+            getSelection().setFocus(focus);
+            setFocusedElement(actionContext, model);
         } catch (RemoteException | ComponentException e) {
             throw handleException(e);
         }

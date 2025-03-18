@@ -4,7 +4,6 @@ import it.cnr.contab.coepcoan00.bp.SelezionatoreGruppoEpBP;
 import it.cnr.contab.config00.pdcep.bulk.AssociazioneContoGruppoBulk;
 import it.cnr.contab.config00.pdcep.bulk.GruppoEPBase;
 import it.cnr.contab.config00.pdcep.bulk.GruppoEPBulk;
-import it.cnr.contab.doccont00.bp.CRUDMandatoBP;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
@@ -166,7 +165,6 @@ public class SelezionatoreGruppoEpAction extends SelezionatoreListaAlberoAction 
                 SelezionatoreListaBP nbp = (SelezionatoreListaBP) actionContext.createBusinessProcess("Selezionatore");
                 nbp.setIterator(actionContext, ri);
                 nbp.setBulkInfo(BulkInfo.getBulkInfo(AssociazioneContoGruppoBulk.class));
-                //nbp.setColumns(bp.getSearchResultColumns());
                 return actionContext.addBusinessProcess(nbp);
             }
         } catch (ComponentException|RemoteException e) {
