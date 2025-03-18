@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SQLPersistentInfo
-	persistentClassName="it.cnr.contab.gestiva00.core.bulk.V_cons_reg_ivaBulk"
-	homeClassName="it.cnr.contab.gestiva00.core.bulk.V_cons_reg_ivaHome">
+	persistentClassName="it.cnr.contab.gestiva00.core.bulk.V_cons_reg_ivaKey">
 	<defaultColumnMap
 		tableName="V_CONS_REG_IVA">
 	</defaultColumnMap>

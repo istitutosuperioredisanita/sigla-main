@@ -17,12 +17,30 @@
 
 package it.cnr.contab.gestiva00.ejb;
 
-import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.BulkList;
-import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.persistency.PersistencyException;
-
 import java.rmi.RemoteException;
 
 public class TransactionalConsRegIvaComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements ConsRegIvaComponentSession {
+
+    public java.util.Collection selectTipi_sezionaliByClause(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1, it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk param2, it.cnr.jada.persistency.sql.CompoundFindClause param3) throws RemoteException, it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException {
+        try {
+            return (java.util.Collection) invoke("selectTipi_sezionaliByClause", new Object[]{
+                    param0,
+                    param1,
+                    param2,
+                    param3});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (it.cnr.jada.persistency.PersistencyException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
 }

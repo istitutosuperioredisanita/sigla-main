@@ -215,4 +215,26 @@
     </businessProcess>
 
 
+    <action
+            path="/ConsDettRegIvaAction" actionClass="it.cnr.contab.gestiva00.actions.ConsDettRegIvaAction">
+    </action>
+    <businessProcess
+            name="ConsDettRegIvaBP" className="it.cnr.contab.gestiva00.bp.ConsDettRegIvaBP">
+        <forward name="default" path="/gestiva00/dett_reg_iva.jsp"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.gestiva00.core.bulk.V_cons_dett_ivaBulk"/>
+        <init-param name="componentSessionName" value="CNRGESTIVA00_EJB_ConsRegIvaComponentSession"/>
+        <init-param name="defaultAction" value="ConsDettRegIvaAction"/>
+    </businessProcess>
+
+
+    <businessProcess
+            name="VisualTableDettRegIvaBP"
+            className="it.cnr.jada.util.action.ConsultazioniBP">
+        <forward name="default" path="/consultazioni/form_lista.jsp"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.gestiva00.core.bulk.V_cons_dett_ivaBulk"/>
+        <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>
+        <init-param name="defaultAction" value="ConsultazioniAction"/>
+    </businessProcess>
+
+
 </action-mappings>

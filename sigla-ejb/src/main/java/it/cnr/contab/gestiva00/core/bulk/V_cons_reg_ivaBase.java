@@ -1,364 +1,678 @@
+/*
+ * Created by BulkGenerator 2.0 [07/12/2009]
+ * Date 19/02/2025
+ */
 package it.cnr.contab.gestiva00.core.bulk;
-
-import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.persistency.Persistent;
-
-import java.math.BigDecimal;
-
-public class V_cons_reg_ivaBase extends OggettoBulk implements Persistent {
-
+import it.cnr.jada.persistency.Keyed;
+public class V_cons_reg_ivaBase extends V_cons_reg_ivaKey implements Keyed {
+//    ESERCIZIO DECIMAL(5,0)
 	private Integer esercizio;
+ 
+//    TIPO VARCHAR(13)
 	private String tipo;
-	private String data_registrazione;
-	private String dt_emissione;
-	private String dt_emiss_amm;
-	private String ti_bene_servizio;
-	private String cd_tipo_sezionale;
-	private String cd_unita_organizzativa;
-	private String cd_cds_origine;
-	private String cd_uo_origine;
-	private Long pg_fattura;
-	private Long prot_iva;
-	private String nrgreg_iva;
-	private Long pgr_u;
-	private String ds_fattura;
-	private BigDecimal imp;
-	private BigDecimal iva;
-	private BigDecimal tot;
-	private String cd_forn;
-	private String deno_forn;
-	private String cf_piva;
-	private String nr_fattura;
+ 
+//    DATA_REGISTRAZIONE VARCHAR(7)
+	private String dataRegistrazione;
+ 
+//    DT_EMISSIONE VARCHAR(10)
+	private String dtEmissione;
+ 
+//    DT_EMISS_AMM VARCHAR(7)
+	private String dtEmissAmm;
+ 
+//    TI_BENE_SERVIZIO CHAR(1)
+	private String tiBeneServizio;
+ 
+//    CD_TIPO_SEZIONALE VARCHAR(10)
+	private String cdTipoSezionale;
+ 
+//    CD_UNITA_ORGANIZZATIVA VARCHAR(30)
+	private String cdUnitaOrganizzativa;
+ 
+//    CD_CDS_ORIGINE VARCHAR(30)
+	private String cdCdsOrigine;
+ 
+//    CD_UO_ORIGINE VARCHAR(30)
+	private String cdUoOrigine;
+ 
+//    PG_FATTURA DECIMAL(38,0)
+	private Long pgFattura;
+ 
+//    PROT_IVA DECIMAL(0,-127)
+	private java.math.BigDecimal protIva;
+ 
+//    NRGREG_IVA VARCHAR(81)
+	private String nrgregIva;
+ 
+//    PGR_U DECIMAL(38,0)
+	private Long pgrU;
+ 
+//    DS_FATTURA VARCHAR(1000)
+	private String dsFattura;
+ 
+//    IMP DECIMAL(0,-127)
+	private java.math.BigDecimal imp;
+ 
+//    IVA DECIMAL(0,-127)
+	private java.math.BigDecimal iva;
+ 
+//    TOT DECIMAL(0,-127)
+	private java.math.BigDecimal tot;
+ 
+//    CD_FORN DECIMAL(38,0)
+	private Long cdForn;
+ 
+//    DENO_FORN VARCHAR(100)
+	private String denoForn;
+ 
+//    CF_PIVA VARCHAR(41)
+	private String cfPiva;
+ 
+//    NR_FATTURA VARCHAR(40)
+	private String nrFattura;
+ 
+//    UE CHAR(1)
 	private String ue;
-	private String tipo_fattura;
-	private Long pgr_d;
-	private BigDecimal imp_d;
-	private BigDecimal iva_d;
-	private BigDecimal tot_d;
-	private String cd_voce_iva;
-	private String cd_gruppo_iva;
-	private String ds_gruppo_iva;
-	private BigDecimal percentuale;
+ 
+//    TIPO_FATTURA CHAR(1)
+	private String tipoFattura;
+ 
+//    PGR_D DECIMAL(38,0)
+	private Long pgrD;
+ 
+//    IMP_D DECIMAL(0,-127)
+	private java.math.BigDecimal impD;
+ 
+//    IVA_D DECIMAL(0,-127)
+	private java.math.BigDecimal ivaD;
+ 
+//    TOT_D DECIMAL(0,-127)
+	private java.math.BigDecimal totD;
+ 
+//    CD_VOCE_IVA VARCHAR(10)
+	private String cdVoceIva;
+ 
+//    CD_GRUPPO_IVA VARCHAR(10)
+	private String cdGruppoIva;
+ 
+//    DS_GRUPPO_IVA VARCHAR(100)
+	private String dsGruppoIva;
+ 
+//    PERCENTUALE DECIMAL(5,2)
+	private java.math.BigDecimal percentuale;
+ 
+//    D CHAR(1)
 	private String d;
-	private BigDecimal perc_d;
+ 
+//    PERC_D DECIMAL(5,2)
+	private java.math.BigDecimal percD;
+ 
+//    SP CHAR(1)
 	private String sp;
-	private String tipo_documento;
-	private String fl_autofattura;
-	private String fl_spedizioniere;
-	private String fl_bolla_doganale;
-
+ 
+//    TIPO_DOCUMENTO VARCHAR(7)
+	private String tipoDocumento;
+ 
+//    FL_AUTOFATTURA CHAR(1)
+	private Boolean flAutofattura;
+ 
+//    FL_SPEDIZIONIERE CHAR(1)
+	private Boolean flSpedizioniere;
+ 
+//    FL_BOLLA_DOGANALE CHAR(1)
+	private Boolean flBollaDoganale;
+ 
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Table name: V_CONS_REG_IVA
+	 **/
 	public V_cons_reg_ivaBase() {
+		super();
 	}
-
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [esercizio]
+	 **/
 	public Integer getEsercizio() {
 		return esercizio;
 	}
-
-	public void setEsercizio(Integer esercizio) {
-		this.esercizio = esercizio;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [esercizio]
+	 **/
+	public void setEsercizio(Integer esercizio)  {
+		this.esercizio=esercizio;
 	}
-
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [tipo]
+	 **/
 	public String getTipo() {
 		return tipo;
 	}
-
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [tipo]
+	 **/
+	public void setTipo(String tipo)  {
+		this.tipo=tipo;
 	}
-
-	public String getData_registrazione() {
-		return data_registrazione;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [dataRegistrazione]
+	 **/
+	public String getDataRegistrazione() {
+		return dataRegistrazione;
 	}
-
-	public void setData_registrazione(String data_registrazione) {
-		this.data_registrazione = data_registrazione;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [dataRegistrazione]
+	 **/
+	public void setDataRegistrazione(String dataRegistrazione)  {
+		this.dataRegistrazione=dataRegistrazione;
 	}
-
-	public String getDt_emissione() {
-		return dt_emissione;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [dtEmissione]
+	 **/
+	public String getDtEmissione() {
+		return dtEmissione;
 	}
-
-	public void setDt_emissione(String dt_emissione) {
-		this.dt_emissione = dt_emissione;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [dtEmissione]
+	 **/
+	public void setDtEmissione(String dtEmissione)  {
+		this.dtEmissione=dtEmissione;
 	}
-
-	public String getDt_emiss_amm() {
-		return dt_emiss_amm;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [dtEmissAmm]
+	 **/
+	public String getDtEmissAmm() {
+		return dtEmissAmm;
 	}
-
-	public void setDt_emiss_amm(String dt_emiss_amm) {
-		this.dt_emiss_amm = dt_emiss_amm;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [dtEmissAmm]
+	 **/
+	public void setDtEmissAmm(String dtEmissAmm)  {
+		this.dtEmissAmm=dtEmissAmm;
 	}
-
-	public String getTi_bene_servizio() {
-		return ti_bene_servizio;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [tiBeneServizio]
+	 **/
+	public String getTiBeneServizio() {
+		return tiBeneServizio;
 	}
-
-	public void setTi_bene_servizio(String ti_bene_servizio) {
-		this.ti_bene_servizio = ti_bene_servizio;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [tiBeneServizio]
+	 **/
+	public void setTiBeneServizio(String tiBeneServizio)  {
+		this.tiBeneServizio=tiBeneServizio;
 	}
-
-	public String getCd_tipo_sezionale() {
-		return cd_tipo_sezionale;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [cdTipoSezionale]
+	 **/
+	public String getCdTipoSezionale() {
+		return cdTipoSezionale;
 	}
-
-	public void setCd_tipo_sezionale(String cd_tipo_sezionale) {
-		this.cd_tipo_sezionale = cd_tipo_sezionale;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [cdTipoSezionale]
+	 **/
+	public void setCdTipoSezionale(String cdTipoSezionale)  {
+		this.cdTipoSezionale=cdTipoSezionale;
 	}
-
-	public String getCd_unita_organizzativa() {
-		return cd_unita_organizzativa;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [cdUnitaOrganizzativa]
+	 **/
+	public String getCdUnitaOrganizzativa() {
+		return cdUnitaOrganizzativa;
 	}
-
-	public void setCd_unita_organizzativa(String cd_unita_organizzativa) {
-		this.cd_unita_organizzativa = cd_unita_organizzativa;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [cdUnitaOrganizzativa]
+	 **/
+	public void setCdUnitaOrganizzativa(String cdUnitaOrganizzativa)  {
+		this.cdUnitaOrganizzativa=cdUnitaOrganizzativa;
 	}
-
-	public String getCd_cds_origine() {
-		return cd_cds_origine;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [cdCdsOrigine]
+	 **/
+	public String getCdCdsOrigine() {
+		return cdCdsOrigine;
 	}
-
-	public void setCd_cds_origine(String cd_cds_origine) {
-		this.cd_cds_origine = cd_cds_origine;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [cdCdsOrigine]
+	 **/
+	public void setCdCdsOrigine(String cdCdsOrigine)  {
+		this.cdCdsOrigine=cdCdsOrigine;
 	}
-
-	public String getCd_uo_origine() {
-		return cd_uo_origine;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [cdUoOrigine]
+	 **/
+	public String getCdUoOrigine() {
+		return cdUoOrigine;
 	}
-
-	public void setCd_uo_origine(String cd_uo_origine) {
-		this.cd_uo_origine = cd_uo_origine;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [cdUoOrigine]
+	 **/
+	public void setCdUoOrigine(String cdUoOrigine)  {
+		this.cdUoOrigine=cdUoOrigine;
 	}
-
-	public Long getPg_fattura() {
-		return pg_fattura;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [pgFattura]
+	 **/
+	public Long getPgFattura() {
+		return pgFattura;
 	}
-
-	public void setPg_fattura(Long pg_fattura) {
-		this.pg_fattura = pg_fattura;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [pgFattura]
+	 **/
+	public void setPgFattura(Long pgFattura)  {
+		this.pgFattura=pgFattura;
 	}
-
-	public Long getProt_iva() {
-		return prot_iva;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [protIva]
+	 **/
+	public java.math.BigDecimal getProtIva() {
+		return protIva;
 	}
-
-	public void setProt_iva(Long prot_iva) {
-		this.prot_iva = prot_iva;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [protIva]
+	 **/
+	public void setProtIva(java.math.BigDecimal protIva)  {
+		this.protIva=protIva;
 	}
-
-	public String getNrgreg_iva() {
-		return nrgreg_iva;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [nrgregIva]
+	 **/
+	public String getNrgregIva() {
+		return nrgregIva;
 	}
-
-	public void setNrgreg_iva(String nrgreg_iva) {
-		this.nrgreg_iva = nrgreg_iva;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [nrgregIva]
+	 **/
+	public void setNrgregIva(String nrgregIva)  {
+		this.nrgregIva=nrgregIva;
 	}
-
-	public Long getPgr_u() {
-		return pgr_u;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [pgrU]
+	 **/
+	public Long getPgrU() {
+		return pgrU;
 	}
-
-	public void setPgr_u(Long pgr_u) {
-		this.pgr_u = pgr_u;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [pgrU]
+	 **/
+	public void setPgrU(Long pgrU)  {
+		this.pgrU=pgrU;
 	}
-
-	public String getDs_fattura() {
-		return ds_fattura;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [dsFattura]
+	 **/
+	public String getDsFattura() {
+		return dsFattura;
 	}
-
-	public void setDs_fattura(String ds_fattura) {
-		this.ds_fattura = ds_fattura;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [dsFattura]
+	 **/
+	public void setDsFattura(String dsFattura)  {
+		this.dsFattura=dsFattura;
 	}
-
-	public BigDecimal getImp() {
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [imp]
+	 **/
+	public java.math.BigDecimal getImp() {
 		return imp;
 	}
-
-	public void setImp(BigDecimal imp) {
-		this.imp = imp;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [imp]
+	 **/
+	public void setImp(java.math.BigDecimal imp)  {
+		this.imp=imp;
 	}
-
-	public BigDecimal getIva() {
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [iva]
+	 **/
+	public java.math.BigDecimal getIva() {
 		return iva;
 	}
-
-	public void setIva(BigDecimal iva) {
-		this.iva = iva;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [iva]
+	 **/
+	public void setIva(java.math.BigDecimal iva)  {
+		this.iva=iva;
 	}
-
-	public BigDecimal getTot() {
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [tot]
+	 **/
+	public java.math.BigDecimal getTot() {
 		return tot;
 	}
-
-	public void setTot(BigDecimal tot) {
-		this.tot = tot;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [tot]
+	 **/
+	public void setTot(java.math.BigDecimal tot)  {
+		this.tot=tot;
 	}
-
-	public String getCd_forn() {
-		return cd_forn;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [cdForn]
+	 **/
+	public Long getCdForn() {
+		return cdForn;
 	}
-
-	public void setCd_forn(String cd_forn) {
-		this.cd_forn = cd_forn;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [cdForn]
+	 **/
+	public void setCdForn(Long cdForn)  {
+		this.cdForn=cdForn;
 	}
-
-	public String getDeno_forn() {
-		return deno_forn;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [denoForn]
+	 **/
+	public String getDenoForn() {
+		return denoForn;
 	}
-
-	public void setDeno_forn(String deno_forn) {
-		this.deno_forn = deno_forn;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [denoForn]
+	 **/
+	public void setDenoForn(String denoForn)  {
+		this.denoForn=denoForn;
 	}
-
-	public String getCf_piva() {
-		return cf_piva;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [cfPiva]
+	 **/
+	public String getCfPiva() {
+		return cfPiva;
 	}
-
-	public void setCf_piva(String cf_piva) {
-		this.cf_piva = cf_piva;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [cfPiva]
+	 **/
+	public void setCfPiva(String cfPiva)  {
+		this.cfPiva=cfPiva;
 	}
-
-	public String getNr_fattura() {
-		return nr_fattura;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [nrFattura]
+	 **/
+	public String getNrFattura() {
+		return nrFattura;
 	}
-
-	public void setNr_fattura(String nr_fattura) {
-		this.nr_fattura = nr_fattura;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [nrFattura]
+	 **/
+	public void setNrFattura(String nrFattura)  {
+		this.nrFattura=nrFattura;
 	}
-
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [ue]
+	 **/
 	public String getUe() {
 		return ue;
 	}
-
-	public void setUe(String ue) {
-		this.ue = ue;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [ue]
+	 **/
+	public void setUe(String ue)  {
+		this.ue=ue;
 	}
-
-	public String getTipo_fattura() {
-		return tipo_fattura;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [tipoFattura]
+	 **/
+	public String getTipoFattura() {
+		return tipoFattura;
 	}
-
-	public void setTipo_fattura(String tipo_fattura) {
-		this.tipo_fattura = tipo_fattura;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [tipoFattura]
+	 **/
+	public void setTipoFattura(String tipoFattura)  {
+		this.tipoFattura=tipoFattura;
 	}
-
-	public Long getPgr_d() {
-		return pgr_d;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [pgrD]
+	 **/
+	public Long getPgrD() {
+		return pgrD;
 	}
-
-	public void setPgr_d(Long pgr_d) {
-		this.pgr_d = pgr_d;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [pgrD]
+	 **/
+	public void setPgrD(Long pgrD)  {
+		this.pgrD=pgrD;
 	}
-
-	public BigDecimal getImp_d() {
-		return imp_d;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [impD]
+	 **/
+	public java.math.BigDecimal getImpD() {
+		return impD;
 	}
-
-	public void setImp_d(BigDecimal imp_d) {
-		this.imp_d = imp_d;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [impD]
+	 **/
+	public void setImpD(java.math.BigDecimal impD)  {
+		this.impD=impD;
 	}
-
-	public BigDecimal getIva_d() {
-		return iva_d;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [ivaD]
+	 **/
+	public java.math.BigDecimal getIvaD() {
+		return ivaD;
 	}
-
-	public void setIva_d(BigDecimal iva_d) {
-		this.iva_d = iva_d;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [ivaD]
+	 **/
+	public void setIvaD(java.math.BigDecimal ivaD)  {
+		this.ivaD=ivaD;
 	}
-
-	public BigDecimal getTot_d() {
-		return tot_d;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [totD]
+	 **/
+	public java.math.BigDecimal getTotD() {
+		return totD;
 	}
-
-	public void setTot_d(BigDecimal tot_d) {
-		this.tot_d = tot_d;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [totD]
+	 **/
+	public void setTotD(java.math.BigDecimal totD)  {
+		this.totD=totD;
 	}
-
-	public String getCd_voce_iva() {
-		return cd_voce_iva;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [cdVoceIva]
+	 **/
+	public String getCdVoceIva() {
+		return cdVoceIva;
 	}
-
-	public void setCd_voce_iva(String cd_voce_iva) {
-		this.cd_voce_iva = cd_voce_iva;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [cdVoceIva]
+	 **/
+	public void setCdVoceIva(String cdVoceIva)  {
+		this.cdVoceIva=cdVoceIva;
 	}
-
-	public String getCd_gruppo_iva() {
-		return cd_gruppo_iva;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [cdGruppoIva]
+	 **/
+	public String getCdGruppoIva() {
+		return cdGruppoIva;
 	}
-
-	public void setCd_gruppo_iva(String cd_gruppo_iva) {
-		this.cd_gruppo_iva = cd_gruppo_iva;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [cdGruppoIva]
+	 **/
+	public void setCdGruppoIva(String cdGruppoIva)  {
+		this.cdGruppoIva=cdGruppoIva;
 	}
-
-	public String getDs_gruppo_iva() {
-		return ds_gruppo_iva;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [dsGruppoIva]
+	 **/
+	public String getDsGruppoIva() {
+		return dsGruppoIva;
 	}
-
-	public void setDs_gruppo_iva(String ds_gruppo_iva) {
-		this.ds_gruppo_iva = ds_gruppo_iva;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [dsGruppoIva]
+	 **/
+	public void setDsGruppoIva(String dsGruppoIva)  {
+		this.dsGruppoIva=dsGruppoIva;
 	}
-
-	public BigDecimal getPercentuale() {
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [percentuale]
+	 **/
+	public java.math.BigDecimal getPercentuale() {
 		return percentuale;
 	}
-
-	public void setPercentuale(BigDecimal percentuale) {
-		this.percentuale = percentuale;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [percentuale]
+	 **/
+	public void setPercentuale(java.math.BigDecimal percentuale)  {
+		this.percentuale=percentuale;
 	}
-
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [d]
+	 **/
 	public String getD() {
 		return d;
 	}
-
-	public void setD(String d) {
-		this.d = d;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [d]
+	 **/
+	public void setD(String d)  {
+		this.d=d;
 	}
-
-	public BigDecimal getPerc_d() {
-		return perc_d;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [percD]
+	 **/
+	public java.math.BigDecimal getPercD() {
+		return percD;
 	}
-
-	public void setPerc_d(BigDecimal perc_d) {
-		this.perc_d = perc_d;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [percD]
+	 **/
+	public void setPercD(java.math.BigDecimal percD)  {
+		this.percD=percD;
 	}
-
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [sp]
+	 **/
 	public String getSp() {
 		return sp;
 	}
-
-	public void setSp(String sp) {
-		this.sp = sp;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [sp]
+	 **/
+	public void setSp(String sp)  {
+		this.sp=sp;
 	}
-
-	public String getTipo_documento() {
-		return tipo_documento;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [tipoDocumento]
+	 **/
+	public String getTipoDocumento() {
+		return tipoDocumento;
 	}
-
-	public void setTipo_documento(String tipo_documento) {
-		this.tipo_documento = tipo_documento;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [tipoDocumento]
+	 **/
+	public void setTipoDocumento(String tipoDocumento)  {
+		this.tipoDocumento=tipoDocumento;
 	}
-
-	public String getFl_autofattura() {
-		return fl_autofattura;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [flAutofattura]
+	 **/
+	public Boolean getFlAutofattura() {
+		return flAutofattura;
 	}
-
-	public void setFl_autofattura(String fl_autofattura) {
-		this.fl_autofattura = fl_autofattura;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [flAutofattura]
+	 **/
+	public void setFlAutofattura(Boolean flAutofattura)  {
+		this.flAutofattura=flAutofattura;
 	}
-
-	public String getFl_spedizioniere() {
-		return fl_spedizioniere;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [flSpedizioniere]
+	 **/
+	public Boolean getFlSpedizioniere() {
+		return flSpedizioniere;
 	}
-
-	public void setFl_spedizioniere(String fl_spedizioniere) {
-		this.fl_spedizioniere = fl_spedizioniere;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [flSpedizioniere]
+	 **/
+	public void setFlSpedizioniere(Boolean flSpedizioniere)  {
+		this.flSpedizioniere=flSpedizioniere;
 	}
-
-	public String getFl_bolla_doganale() {
-		return fl_bolla_doganale;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Restituisce il valore di: [flBollaDoganale]
+	 **/
+	public Boolean getFlBollaDoganale() {
+		return flBollaDoganale;
 	}
-
-	public void setFl_bolla_doganale(String fl_bolla_doganale) {
-		this.fl_bolla_doganale = fl_bolla_doganale;
+	/**
+	 * Created by BulkGenerator 2.0 [07/12/2009]
+	 * Setta il valore di: [flBollaDoganale]
+	 **/
+	public void setFlBollaDoganale(Boolean flBollaDoganale)  {
+		this.flBollaDoganale=flBollaDoganale;
 	}
 }
