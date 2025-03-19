@@ -1115,7 +1115,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		try {
 			EsercizioHome home = (EsercizioHome) getHome(userContext, EsercizioBulk.class);
 			if (!home.isEsercizioAperto(doccoge.getEsercizio(), doccoge.getCd_cds()))
-				throw new ScritturaPartitaDoppiaNotRequiredException("Scrittura Economica non generabile/modificabile. L'esercizio contabile " + doccoge.getEsercizio() +
+				throw new ScritturaPartitaDoppiaNotEnabledException("Scrittura Economica non generabile/modificabile. L'esercizio contabile " + doccoge.getEsercizio() +
 						" per il cds " + doccoge.getCd_cds() + " risulta essere non aperto.");
 		} catch (PersistencyException e) {
 			throw new RuntimeException(e);

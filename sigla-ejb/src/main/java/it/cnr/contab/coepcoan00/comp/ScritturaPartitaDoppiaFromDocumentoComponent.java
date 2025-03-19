@@ -447,8 +447,6 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
 
     private Scrittura_partita_doppiaBulk loadScritturaPatrimoniale(UserContext userContext, IDocumentoCogeBulk documentoCoge) throws ComponentException {
         try {
-            documentoCoge.setStato_coge(Fattura_passivaBulk.NON_REGISTRATO_IN_COGE);
-
             final Optional<Scrittura_partita_doppiaBulk> optionalScritturaPartitaDoppiaOldBulk = this.getScrittura(userContext, documentoCoge);
             final Optional<Scrittura_analiticaBulk> optionalScritturaAnaliticaOldBulk = this.getScritturaAnalitica(userContext, documentoCoge);
 
@@ -463,13 +461,15 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
                     optionalScritturaPartitaDoppiaPropostaBulk1 = this.proposeScritturaPartitaDoppiaWithSavepoint(userContext, documentoCoge);
                     optionalScritturaAnaliticaPropostaBulk1 = Optional.empty();
                 }
+                documentoCoge.setStato_coge(Fattura_passivaBulk.NON_REGISTRATO_IN_COGE);
+                documentoCoge.setStato_coan(Fattura_passivaBulk.NON_REGISTRATO_IN_COGE);
             } catch (ScritturaPartitaDoppiaNotEnabledException e) {
-                optionalScritturaPartitaDoppiaPropostaBulk1 = Optional.empty();
-                optionalScritturaAnaliticaPropostaBulk1 = Optional.empty();
+                return null;
             } catch (ScritturaPartitaDoppiaNotRequiredException e) {
                 optionalScritturaPartitaDoppiaPropostaBulk1 = Optional.empty();
                 optionalScritturaAnaliticaPropostaBulk1 = Optional.empty();
                 documentoCoge.setStato_coge(Fattura_passivaBulk.NON_PROCESSARE_IN_COGE);
+                documentoCoge.setStato_coan(Fattura_passivaBulk.NON_PROCESSARE_IN_COAN);
             } catch (RemoteException e) {
                 throw new DetailedRuntimeException(e);
             }
