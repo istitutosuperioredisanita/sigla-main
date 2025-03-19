@@ -17,7 +17,7 @@
 
 package it.cnr.test.h2.coepcoan.component.scritture;
 
-import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotRequiredException;
+import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotEnabledException;
 import it.cnr.contab.coepcoan00.core.bulk.Movimento_cogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
@@ -296,7 +296,7 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
                     .orElse(null);
 
             assertThrows("Scrittura Economica non generabile/modificabile. L'esercizio contabile 2023 per il cds 000 risulta essere non aperto.",
-                        ScritturaPartitaDoppiaNotRequiredException.class, () ->Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+                        ScritturaPartitaDoppiaNotEnabledException.class, () ->Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
                         new TestUserContext(),
                         documentoCogeBulk));
         }
