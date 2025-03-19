@@ -18,13 +18,11 @@
 package it.cnr.contab.inventario00.ejb;
 
 import it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invBulk;
-
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beniBulk;
 import it.cnr.contab.inventario00.dto.NormalizzatoreAmmortamentoDto;
 import it.cnr.contab.inventario00.dto.TipoAmmCatGruppoDto;
 import it.cnr.contab.inventario00.tabrif.bulk.Tipo_ammortamentoBulk;
-
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
@@ -34,7 +32,6 @@ import it.cnr.jada.util.SendMail;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -152,7 +149,7 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                         else{
                             // Gestione ammortamento del bene
                             BigDecimal percAmmortamento  = bene.getEsercizioCaricoBene()==esercizio ? bene.getPercPrimoAnno() : bene.getPercSuccessivi();
-                            BigDecimal rataAmmortamento = null;
+                            BigDecimal rataAmmortamento = BigDecimal.ZERO;
 
                             //Controllare se il bene può essere ammortizzato dell'importo della rata calcolata precedentemente.
                             //Si posssono verificare i seguenti casi:
@@ -168,18 +165,19 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                             //   2) inserire un movimento di ammortamento relativo alla rata.
 
                             if(bene.getImponibileAmmortamento().compareTo(zero) > 0 && !bene.getFlTotalmenteScaricato() &&
-                                    bene.getValoreAmmortizzato().compareTo(bene.getImponibileAmmortamento()) < 0){
+                                    Utility.nvl(bene.getValoreAmmortizzato()).compareTo(bene.getImponibileAmmortamento()) < 0){
                                 rataAmmortamento=((bene.getImponibileAmmortamento().multiply(percAmmortamento)).divide(cento));
                             }
 
-                            if((rataAmmortamento.add(bene.getValoreAmmortizzato())).compareTo(bene.getImponibileAmmortamento()) > 0){
-                                rataAmmortamento = bene.getImponibileAmmortamento().add(bene.getValoreAmmortizzato().multiply(menoUno));
+                            if((rataAmmortamento.add(Utility.nvl(bene.getValoreAmmortizzato()))).compareTo(bene.getImponibileAmmortamento()) > 0){
+                                rataAmmortamento = bene.getImponibileAmmortamento().add(Utility.nvl(bene.getValoreAmmortizzato()).multiply(menoUno));
                             }
 
 
                             Inventario_beniBulk inv=null;
 
                             // aggiorna il valore ammortizzato
+                            /*
                             inv= aggiornaInventarioBeni(uc,inventarioBeniComponent,bene.getPgInventario(),bene.getNrInventario(),bene.getProgressivo(),rataAmmortamento);
 
                             if(inv == null){
@@ -198,6 +196,8 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                                         " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo()+" - Error:"+e.getMessage());
 
                             }
+
+                             */
                             Ammortamento_bene_invBulk amm = null;
                             // inserisce riga ammortamento
                             amm = creaAmmortamentoBene(uc,ammortamentoBeneComponent,bene,esercizio,rataAmmortamento,percAmmortamento);
@@ -253,7 +253,9 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
     private Integer eliminaAmmortamentiPrecedentiDellEsercizio(UserContext uc,  AmmortamentoBeneComponentSession ammortamentoBeneComponent,
                                                                                 Inventario_beniComponentSession inventarioBeniComponent,Integer esercizio, String subjectError) {
         List<Ammortamento_bene_invBulk> listaAmmortamenti = null;
+
         try {
+
             listaAmmortamenti = ammortamentoBeneComponent.findAllAmmortamenti(uc, esercizio);
 
         } catch (RemoteException | InvocationTargetException ex) {
@@ -338,10 +340,11 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
             TipoAmmCatGruppoDto tipoAmmBene = null;
 
             String keyHM = v_ammortamentoBene.getCdCategoriaGruppo()+SEPARATORE+v_ammortamentoBene.getCdTipoAmmortamento();
-            if(v_ammortamentoBene.getTiAmmortamento()!=null){
-                keyHM=keyHM+SEPARATORE+v_ammortamentoBene.getTiAmmortamento();
+            if(v_ammortamentoBene.getTiAmmortamentoBene()!=null){
+                keyHM=keyHM+SEPARATORE+v_ammortamentoBene.getTiAmmortamentoBene();
                 tipoAmmBene=tipoAmmortHM.get(keyHM);
             }else{
+                keyHM=v_ammortamentoBene.getCdCategoriaGruppo()+SEPARATORE;
                 for (Map.Entry<String, TipoAmmCatGruppoDto> tipoAmmCatGruppo : tipoAmmortHM.entrySet()) {
                     String key = tipoAmmCatGruppo.getKey();
                     if(key.startsWith(keyHM)){
@@ -518,12 +521,13 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
             Integer progRigaAmm = ammortamentoComponent.getProgressivoRigaAmmortamento(uc, bene.getPgInventario(),bene.getNrInventario(),bene.getProgressivo(),esercizio);
 
             ammortamento = new Ammortamento_bene_invBulk();
-            ammortamento.setPgInventario(bene.getPgInventario());
-            ammortamento.setNrInventario(bene.getNrInventario());
-            ammortamento.setProgressivo(bene.getProgressivo());
+            ammortamento.setInventarioBeni( new Inventario_beniBulk(bene.getNrInventario(),bene.getPgInventario(),bene.getProgressivo()));
+           // ammortamento.setPgInventario(bene.getPgInventario());
+           // ammortamento.setNrInventario(bene.getNrInventario());
+           // ammortamento.setProgressivo(bene.getProgressivo());
             ammortamento.setEsercizio(esercizio);
             ammortamento.setCdTipoAmmortamento(bene.getCdTipoAmmortamento());
-            ammortamento.setTiAmmortamento(bene.getTiAmmortamento());
+            ammortamento.setTiAmmortamento(bene.getTiAmmortamentoBene());
             ammortamento.setCdCategoriaGruppo(bene.getCdCategoriaGruppo());
             ammortamento.setEsercizioCompetenza(bene.getEsercizioCompetenza());
             ammortamento.setImponibileAmmortamento(bene.getImponibileAmmortamento());

@@ -3,23 +3,18 @@
  * Date 20/11/2024
  */
 package it.cnr.contab.inventario00.docs.bulk;
+
+import it.cnr.jada.UserContext;
+import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.persistency.sql.LoggableStatement;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_pluriennaleBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_pluriennaleHome;
-import it.cnr.contab.ordmag.magazzino.dto.ValoriChiusuraMagRim;
-import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.BulkHome;
-import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.persistency.PersistentCache;
-import it.cnr.jada.persistency.sql.ApplicationPersistencyException;
-import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.LoggableStatement;
-import it.cnr.jada.persistency.sql.SQLBuilder;
 
 public class Ammortamento_bene_invHome extends BulkHome {
 
@@ -148,7 +143,7 @@ public class Ammortamento_bene_invHome extends BulkHome {
 
 				try {
 					while (rs.next()) {
-						numeroAnno=rs.getInt(0);
+						numeroAnno=rs.getInt(1);
 						break;
 					}
 					return numeroAnno;
@@ -250,11 +245,13 @@ public class Ammortamento_bene_invHome extends BulkHome {
 				"FL_STORNO,"+
 				"PG_RIGA,"+
 				"PG_BUONO_S ) "+
-				"VALUES ("+amm.getPgInventario()+","+amm.getNrInventario()+","+amm.getProgressivo()+","+amm.getEsercizio()+"," +
-				amm.getCdTipoAmmortamento()+","+amm.getTiAmmortamento()+","+amm.getCdCategoriaGruppo()+","+amm.getEsercizioCompetenza()+"," +
-				amm.getImponibileAmmortamento()+","+amm.getImMovimentoAmmort()+","+amm.getPercAmmortamento()+",SYSDATE,'SI',SYSDATE,SI,1," +
+				"VALUES ("+amm.getPgInventario()+","+amm.getNrInventario()+","+amm.getProgressivo()+","+amm.getEsercizio()+",'" +
+				amm.getCdTipoAmmortamento()+"','"+amm.getTiAmmortamento()+"','"+amm.getCdCategoriaGruppo()+"',"+amm.getEsercizioCompetenza()+"," +
+				amm.getImponibileAmmortamento()+","+amm.getImMovimentoAmmort()+","+amm.getPercAmmortamento()+",SYSDATE,'SI',SYSDATE,'SI',1," +
 				amm.getNumeroAnni()+","+amm.getNumeroAnno()+","+amm.getPercPrimoAnno()+","+amm.getPercSuccessivi()+","+amm.getCdCdsUbicazione()+"," +
-				amm.getCdUoUbicazione()+","+amm.getFlStorno()+","+amm.getPgRiga()+","+amm.getPgBuonoS()+")";
+				amm.getCdUoUbicazione()+","+ (amm.getFlStorno()?"'S'":"'N'") +","+amm.getPgRiga()+","+amm.getPgBuonoS()+")";
+
+
 	}
 	public String deleteSqlAmmortamento(UserContext uc, Ammortamento_bene_invBulk amm){
 		return  "DELETE FROM "+it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+"AMMORTAMENTO_BENE_INV "+

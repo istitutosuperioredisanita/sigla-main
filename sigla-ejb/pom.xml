@@ -329,7 +329,7 @@
         <dependency>
             <groupId>it.cnr.si</groupId>
             <artifactId>firmadigitale</artifactId>
-            <version>1.15</version>
+            <version>1.17</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
