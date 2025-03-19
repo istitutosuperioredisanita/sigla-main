@@ -32,7 +32,10 @@
                 <% bp.getController().writeFormInput(
                     out,
                     null,
-                    "tipo_sezionale"
+                    "tipo_sezionale",
+                    false,
+                    null,
+                    "onChange=\"submitForm('doOnTipoSezionaleChange')\""
                 );%>
             </td>
         </tr>

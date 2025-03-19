@@ -54,20 +54,31 @@
             enabledOnEdit="false"
             label="Totale IVA"/>
 
+<!--    <fieldProperty-->
+<!--            name="tipo_sezionale"-->
+<!--            property="tipo_sezionale"-->
+<!--            printProperty="cd_ds_tipo_sezionale"-->
+<!--            optionsProperty="tipi_sezionali"-->
+<!--            maxLength="30"-->
+<!--            inputSize="30"-->
+<!--            inputType="SELECT"-->
+<!--            nullable="false"-->
+<!--            enabledOnFreeSearch="true"-->
+<!--            enabledOnSearch="true"-->
+<!--            enabledOnEdit="true"-->
+<!--            enabledOnInsert="true"-->
+<!--            label="Tipo Sezionale"/>-->
+
+
     <fieldProperty
             name="tipo_sezionale"
-            property="tipo_sezionale"
-            printProperty="cd_ds_tipo_sezionale"
-            optionsProperty="tipi_sezionali"
-            maxLength="30"
-            inputSize="30"
+            property="cd_tipo_sezionale"
             inputType="SELECT"
-            nullable="false"
-            enabledOnFreeSearch="true"
+            label="Tipi sezionali"
+            readonlyProperty="ROCd_tipo_sezionale"
+            nullable="true"
             enabledOnSearch="true"
-            enabledOnEdit="true"
-            enabledOnInsert="true"
-            label="Tipo Sezionale"/>
+            keysProperty="tipo_sezionaleKeys"/>
 
 
     <form name="searchtool"/>
