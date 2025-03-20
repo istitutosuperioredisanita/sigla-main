@@ -229,7 +229,7 @@
 
     <businessProcess
             name="VisualTableDettRegIvaBP"
-            className="it.cnr.jada.util.action.ConsultazioniBP">
+            className="it.cnr.contab.gestiva00.bp.VisualTableDettRegIvaBP">
         <forward name="default" path="/consultazioni/form_lista.jsp"/>
         <init-param name="bulkClassName" value="it.cnr.contab.gestiva00.core.bulk.V_cons_dett_ivaBulk"/>
         <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>

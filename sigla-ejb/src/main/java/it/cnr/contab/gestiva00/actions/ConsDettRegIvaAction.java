@@ -72,16 +72,5 @@ public class ConsDettRegIvaAction extends BulkAction {
         return context.findDefaultForward();
     }
 
-
-    public Forward doCloseForm(ActionContext actioncontext)
-            throws BusinessProcessException {
-        try {
-            return doConfirmCloseForm(actioncontext, 4);
-        } catch (Throwable throwable) {
-            return handleException(actioncontext, throwable);
-        }
-    }
-
-
 }
 

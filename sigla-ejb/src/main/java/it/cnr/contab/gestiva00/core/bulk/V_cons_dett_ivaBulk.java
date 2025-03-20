@@ -18,10 +18,6 @@ public class V_cons_dett_ivaBulk extends OggettoBulk implements Persistent  {
     private BigDecimal sp_y;
     private BigDecimal tot_iva;
 
-    // Riferimento a tipo_sezionale solo per la fase di ricerca
-    private Tipo_sezionaleBulk tipo_sezionale;
-    private java.util.Collection tipi_sezionali;
-
     static String AISPP = "a/ispp";
     static String ACOM_VCOM = "a/com - v/com";
     static String AIUE_AISNR = "a/iue - a/isnr";
@@ -89,25 +85,6 @@ public class V_cons_dett_ivaBulk extends OggettoBulk implements Persistent  {
 
     public void setTot_iva(BigDecimal tot_iva) {
         this.tot_iva = tot_iva;
-    }
-
-    public Tipo_sezionaleBulk getTipo_sezionale() {
-        return tipo_sezionale;
-    }
-
-    public void setTipo_sezionale(Tipo_sezionaleBulk tipo_sezionale) {
-        this.tipo_sezionale = tipo_sezionale;
-        if (tipo_sezionale != null) {
-            this.cd_tipo_sezionale = tipo_sezionale.getCd_tipo_sezionale();
-        }
-    }
-
-    public java.util.Collection getTipi_sezionali() {
-        return tipi_sezionali;
-    }
-
-    public void setTipi_sezionali(java.util.Collection tipi_sezionali) {
-        this.tipi_sezionali = tipi_sezionali;
     }
 
     public Dictionary getTipo_sezionaleKeys() {
