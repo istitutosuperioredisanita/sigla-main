@@ -1,12 +1,16 @@
 package it.cnr.contab.gestiva00.core.bulk;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk;
+import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.Persistent;
 
 import java.math.BigDecimal;
+import java.util.Dictionary;
+import java.util.Optional;
 
-public class V_cons_dett_ivaBulk extends OggettoBulk implements Persistent {
+public class V_cons_dett_ivaBulk extends OggettoBulk implements Persistent  {
     private Integer esercizio;
     private String mese;
     private String cd_tipo_sezionale;
@@ -14,9 +18,20 @@ public class V_cons_dett_ivaBulk extends OggettoBulk implements Persistent {
     private BigDecimal sp_y;
     private BigDecimal tot_iva;
 
-    // Riferimento a tipo_sezionale solo per la fase di ricerca
-    private Tipo_sezionaleBulk tipo_sezionale;
-    private java.util.Collection tipi_sezionali;
+    static String AISPP = "a/ispp";
+    static String ACOM_VCOM = "a/com - v/com";
+    static String AIUE_AISNR = "a/iue - a/isnr";
+
+    public final static Dictionary TIPI_SEZIONALI;
+
+    static {
+        TIPI_SEZIONALI = new it.cnr.jada.util.OrderedHashtable();
+        TIPI_SEZIONALI.put(AISPP, AISPP);
+        TIPI_SEZIONALI.put(ACOM_VCOM, ACOM_VCOM);
+        TIPI_SEZIONALI.put(AIUE_AISNR, AIUE_AISNR);
+
+    }
+
 
     // Costruttori
     public V_cons_dett_ivaBulk() {
@@ -72,22 +87,29 @@ public class V_cons_dett_ivaBulk extends OggettoBulk implements Persistent {
         this.tot_iva = tot_iva;
     }
 
-    public Tipo_sezionaleBulk getTipo_sezionale() {
-        return tipo_sezionale;
+    public Dictionary getTipo_sezionaleKeys() {
+        return TIPI_SEZIONALI;
     }
 
-    public void setTipo_sezionale(Tipo_sezionaleBulk tipo_sezionale) {
-        this.tipo_sezionale = tipo_sezionale;
-        if (tipo_sezionale != null) {
-            this.cd_tipo_sezionale = tipo_sezionale.getCd_tipo_sezionale();
-        }
+    public boolean isROCd_tipo_sezionale() {
+        return Boolean.FALSE;
     }
 
-    public java.util.Collection getTipi_sezionali() {
-        return tipi_sezionali;
+    public boolean isTipoSezionaleAispp() {
+        return Optional.ofNullable(getCd_tipo_sezionale())
+                .map(s -> s.equalsIgnoreCase(AISPP))
+                .orElse(Boolean.FALSE);
     }
 
-    public void setTipi_sezionali(java.util.Collection tipi_sezionali) {
-        this.tipi_sezionali = tipi_sezionali;
+    public boolean isTipoSezionaleAcomVcom() {
+        return Optional.ofNullable(getCd_tipo_sezionale())
+                .map(s -> s.equalsIgnoreCase(ACOM_VCOM))
+                .orElse(Boolean.FALSE);
+    }
+
+    public boolean isTipoSezionaleAiueAisnr() {
+        return Optional.ofNullable(getCd_tipo_sezionale())
+                .map(s -> s.equalsIgnoreCase(AIUE_AISNR))
+                .orElse(Boolean.FALSE);
     }
 }
