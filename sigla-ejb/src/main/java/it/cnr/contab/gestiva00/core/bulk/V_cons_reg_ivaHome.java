@@ -24,4 +24,18 @@ public class V_cons_reg_ivaHome extends BulkHome {
 		super(V_cons_reg_ivaBulk.class, conn, persistentCache);
 	}
 
+	public SQLBuilder selectByClause(UserContext usercontext, CompoundFindClause compoundfindclause) throws PersistencyException {
+		try {
+			SQLBuilder sql = super.selectByClause(usercontext, compoundfindclause);
+
+			// Aggiungo solo la condizione per l'esercizio
+			sql.addSQLClause("AND", "V_CONS_REG_IVA.ESERCIZIO", SQLBuilder.EQUALS,
+					it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(usercontext));
+
+			return sql;
+		} catch (Throwable t) {
+			throw new PersistencyException(t);
+		}
+	}
+
 }
