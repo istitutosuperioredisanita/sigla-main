@@ -354,21 +354,6 @@
 			inputType="CHECKBOX"
 			enabledOnEdit="false"
 			label="Bolla Doganale"/>
-
-	<fieldProperty
-			name="tipo_sezionale"
-			property="tipo_sezionale"
-			printProperty="cd_ds_tipo_sezionale"
-			optionsProperty="tipi_sezionali"
-			maxLength="30"
-			inputSize="30"
-			inputType="SELECT"
-			nullable="false"
-			enabledOnFreeSearch="true"
-			enabledOnSearch="true"
-			enabledOnEdit="true"
-			enabledOnInsert="true"
-			label="Tipo Sezionale"/>
 	<form
 		name="searchtool">
 	</form>
@@ -450,7 +435,6 @@
 		name="flSpedizioniere" />
 	<formFieldProperty
 		name="flBollaDoganale" />
-	<formFieldProperty name="tipo_sezionale" />
 	<findFieldProperty
 		name="esercizio" />
 	<findFieldProperty
