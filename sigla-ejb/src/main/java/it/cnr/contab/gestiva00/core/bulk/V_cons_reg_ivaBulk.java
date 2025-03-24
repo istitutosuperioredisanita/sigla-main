@@ -16,6 +16,9 @@ package it.cnr.contab.gestiva00.core.bulk;/*
  */
 
 
+import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk;
+import it.cnr.jada.bulk.ValidationException;
+
 public class V_cons_reg_ivaBulk extends V_cons_reg_ivaBase {
 
 	public V_cons_reg_ivaBulk() {

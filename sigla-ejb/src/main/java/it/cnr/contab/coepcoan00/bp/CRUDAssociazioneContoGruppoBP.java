@@ -5,6 +5,7 @@ import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.pdcep.bulk.Voce_epBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.util.RemoteIterator;
@@ -37,7 +38,8 @@ public class CRUDAssociazioneContoGruppoBP extends SimpleCRUDBP {
     public RemoteIterator cercaContiDaAssociare(ActionContext actioncontext) throws BusinessProcessException {
         final CRUDComponentSession componentSession = createComponentSession();
         try {
-            return componentSession.cerca(actioncontext.getUserContext(), null, new ContoBulk(), "selectContiNonAssociati");
+            AssociazioneContoGruppoBulk associazioneContoGruppoBulk = (AssociazioneContoGruppoBulk)getModel();
+            return componentSession.cerca(actioncontext.getUserContext(), null, new ContoBulk(), "selectContiNonAssociati", associazioneContoGruppoBulk.getTipoBilancio());
         } catch (ComponentException|RemoteException e) {
             throw handleException(e);
         }
@@ -45,7 +47,22 @@ public class CRUDAssociazioneContoGruppoBP extends SimpleCRUDBP {
     public RemoteIterator cercaContiMultipli(ActionContext actioncontext) throws BusinessProcessException {
         final CRUDComponentSession componentSession = createComponentSession();
         try {
-            return componentSession.cerca(actioncontext.getUserContext(), null, new AssociazioneContoGruppoBulk(), "selectAssociazioniMultiple");
+            AssociazioneContoGruppoBulk associazioneContoGruppoBulk = (AssociazioneContoGruppoBulk)getModel();
+            return componentSession.cerca(actioncontext.getUserContext(), null, associazioneContoGruppoBulk, "selectAssociazioniMultiple");
+        } catch (ComponentException|RemoteException e) {
+            throw handleException(e);
+        }
+    }
+
+    @Override
+    public OggettoBulk initializeModelForInsert(ActionContext actioncontext, OggettoBulk oggettobulk) throws BusinessProcessException {
+        try {
+            AssociazioneContoGruppoBulk associazioneContoGruppoBulk = (AssociazioneContoGruppoBulk)super.initializeModelForInsert(actioncontext, oggettobulk);
+            if (associazioneContoGruppoBulk.getTipoBilancio() == null)
+                associazioneContoGruppoBulk.setTipoBilancio(associazioneContoGruppoBulk.getTipoBilanci().stream().findFirst().orElse(null));
+            associazioneContoGruppoBulk.setGruppoEp(null);
+            associazioneContoGruppoBulk = (AssociazioneContoGruppoBulk) createComponentSession().initializeKeysAndOptionsInto(actioncontext.getUserContext(), associazioneContoGruppoBulk);
+            return associazioneContoGruppoBulk;
         } catch (ComponentException|RemoteException e) {
             throw handleException(e);
         }

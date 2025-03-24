@@ -110,14 +110,9 @@ public class CRUDAssociazioneContoGruppoAction extends CRUDAction {
     public Forward doSelezionaConto(ActionContext actioncontext, ContoBulk voceEp) throws BusinessProcessException {
         Optional.ofNullable(voceEp)
                 .ifPresent(voceEpBulk -> {
-                    try {
-                        CRUDAssociazioneContoGruppoBP bp = (CRUDAssociazioneContoGruppoBP)actioncontext.getBusinessProcess();
-                        bp.reset(actioncontext);
-                        final AssociazioneContoGruppoBulk model = (AssociazioneContoGruppoBulk) bp.getModel();
-                        model.setVoceEp(voceEpBulk);
-                    } catch (BusinessProcessException e) {
-                        throw new DetailedRuntimeException(e);
-                    }
+                    CRUDAssociazioneContoGruppoBP bp = (CRUDAssociazioneContoGruppoBP)actioncontext.getBusinessProcess();
+                    final AssociazioneContoGruppoBulk model = (AssociazioneContoGruppoBulk) bp.getModel();
+                    model.setVoceEp(voceEpBulk);
                 });
         return actioncontext.findDefaultForward();
     }

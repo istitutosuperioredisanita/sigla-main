@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.config00.pdcep.bulk.TipoBilancioKey">
+	<defaultColumnMap
+		tableName="TIPO_BILANCIO">
+		<columnMapping
+			columnName="CD_TIPO_BILANCIO"
+			propertyName="cdTipoBilancio"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="false"
+			primary="true" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="cdTipoBilancio"
+		partOfOid="true" />
+</SQLPersistentInfo>

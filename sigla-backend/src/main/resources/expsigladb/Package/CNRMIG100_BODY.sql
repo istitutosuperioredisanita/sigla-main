@@ -3077,7 +3077,7 @@ begin
 		end;
 	end loop;
 
-		-- Ribaltamento associazione CNR_ASS_CONTO_GRUPPO_EP
+	-- Ribaltamento associazione CNR_ASS_CONTO_GRUPPO_EP
 	aMessage := 'Ribaltamento associazione CNR_ASS_CONTO_GRUPPO_EP';
 	ibmutl200.loginf(aPgEsec,aMessage,'','');
 	for aAssContoGruppoEp in (select * from CNR_ASS_CONTO_GRUPPO_EP
@@ -3094,19 +3094,21 @@ begin
                             UTUV,
                             DACR,
                             UTCR,
-                            PG_VER_REC)
+                            PG_VER_REC,
+                            CD_TIPO_BILANCIO)
 			 values (aEsDest,
 					     aAssContoGruppoEp.CD_PIANO_GRUPPI,
-               aAssContoGruppoEp.CD_GRUPPO_EP,
-               aAssContoGruppoEp.CD_VOCE_EP,
-               aAssContoGruppoEp.SEZIONE,
-               aAssContoGruppoEp.DS_ASSOCIAZIONE,
-               aAssContoGruppoEp.SEGNO,
-               sysdate,
+                         aAssContoGruppoEp.CD_GRUPPO_EP,
+                         aAssContoGruppoEp.CD_VOCE_EP,
+                         aAssContoGruppoEp.SEZIONE,
+                         aAssContoGruppoEp.DS_ASSOCIAZIONE,
+                         aAssContoGruppoEp.SEGNO,
+                         sysdate,
 					     cgUtente,
 					     sysdate,
 					     cgUtente,
-					     1);
+					     1,
+					     aAssContoGruppoEp.CD_TIPO_BILANCIO);
 		exception when DUP_VAL_ON_INDEX then
 			ibmutl200.LOGWAR(aPgEsec,'CNR_ASS_CONTO_GRUPPO_EP con PK (' ||aEsDest||', '
 																 ||aAssContoGruppoEp.CD_PIANO_GRUPPI||', '

@@ -5,36 +5,39 @@
 package it.cnr.contab.config00.pdcep.bulk;
 import it.cnr.jada.persistency.Keyed;
 public class GruppoEPBase extends GruppoEPKey implements Keyed {
-//    CD_PIANO_GRUPPI VARCHAR(5) NOT NULL
+	//    CD_PIANO_GRUPPI VARCHAR(5) NOT NULL
 	private String cdPianoGruppi;
- 
-//    CD_GRUPPO_EP VARCHAR(40) NOT NULL
+
+	//    CD_GRUPPO_EP VARCHAR(40) NOT NULL
 	private String cdGruppoEp;
- 
-//    CD_GRUPPO_PADRE VARCHAR(40)
+
+	//    CD_GRUPPO_PADRE VARCHAR(40)
 	private String cdGruppoPadre;
- 
-//    SEQUENZA DECIMAL(38,0) NOT NULL
+
+	//    SEQUENZA DECIMAL(38,0) NOT NULL
 	private Long sequenza;
- 
-//    NOME VARCHAR(100)
+
+	//    NOME VARCHAR(100)
 	private String nome;
- 
-//    DS_GRUPPO_EP VARCHAR(200)
+
+	//    DS_GRUPPO_EP VARCHAR(200)
 	private String dsGruppoEp;
- 
-//    SEGNO CHAR(1) NOT NULL
+
+	//    SEGNO CHAR(1) NOT NULL
 	private String segno;
- 
-//    FL_MASTRINO CHAR(1) NOT NULL
+
+	//    FL_MASTRINO CHAR(1) NOT NULL
 	private Boolean flMastrino;
- 
-//    CD_PIANO_PADRE VARCHAR(5)
+
+	//    CD_PIANO_PADRE VARCHAR(5)
 	private String cdPianoPadre;
- 
-//    FORMULA VARCHAR(2000)
+
+	//    FORMULA VARCHAR(2000)
 	private String formula;
- 
+
+	//    CD_TIPO_BILANCIO VARCHAR(10)
+	private String cdTipoBilancio;
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: CNR_GRUPPO_EP
@@ -42,9 +45,11 @@ public class GruppoEPBase extends GruppoEPKey implements Keyed {
 	public GruppoEPBase() {
 		super();
 	}
+
 	public GruppoEPBase(String rowid) {
 		super(rowid);
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Restituisce il valore di: [cdPianoGruppi]
@@ -52,13 +57,15 @@ public class GruppoEPBase extends GruppoEPKey implements Keyed {
 	public String getCdPianoGruppi() {
 		return cdPianoGruppi;
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Setta il valore di: [cdPianoGruppi]
 	 **/
-	public void setCdPianoGruppi(String cdPianoGruppi)  {
-		this.cdPianoGruppi=cdPianoGruppi;
+	public void setCdPianoGruppi(String cdPianoGruppi) {
+		this.cdPianoGruppi = cdPianoGruppi;
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Restituisce il valore di: [cdGruppoEp]
@@ -66,13 +73,15 @@ public class GruppoEPBase extends GruppoEPKey implements Keyed {
 	public String getCdGruppoEp() {
 		return cdGruppoEp;
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Setta il valore di: [cdGruppoEp]
 	 **/
-	public void setCdGruppoEp(String cdGruppoEp)  {
-		this.cdGruppoEp=cdGruppoEp;
+	public void setCdGruppoEp(String cdGruppoEp) {
+		this.cdGruppoEp = cdGruppoEp;
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Restituisce il valore di: [cdGruppoPadre]
@@ -80,13 +89,15 @@ public class GruppoEPBase extends GruppoEPKey implements Keyed {
 	public String getCdGruppoPadre() {
 		return cdGruppoPadre;
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Setta il valore di: [cdGruppoPadre]
 	 **/
-	public void setCdGruppoPadre(String cdGruppoPadre)  {
-		this.cdGruppoPadre=cdGruppoPadre;
+	public void setCdGruppoPadre(String cdGruppoPadre) {
+		this.cdGruppoPadre = cdGruppoPadre;
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Restituisce il valore di: [sequenza]
@@ -94,13 +105,15 @@ public class GruppoEPBase extends GruppoEPKey implements Keyed {
 	public Long getSequenza() {
 		return sequenza;
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Setta il valore di: [sequenza]
 	 **/
-	public void setSequenza(Long sequenza)  {
-		this.sequenza=sequenza;
+	public void setSequenza(Long sequenza) {
+		this.sequenza = sequenza;
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Restituisce il valore di: [nome]
@@ -108,13 +121,15 @@ public class GruppoEPBase extends GruppoEPKey implements Keyed {
 	public String getNome() {
 		return nome;
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Setta il valore di: [nome]
 	 **/
-	public void setNome(String nome)  {
-		this.nome=nome;
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Restituisce il valore di: [dsGruppoEp]
@@ -122,13 +137,15 @@ public class GruppoEPBase extends GruppoEPKey implements Keyed {
 	public String getDsGruppoEp() {
 		return dsGruppoEp;
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Setta il valore di: [dsGruppoEp]
 	 **/
-	public void setDsGruppoEp(String dsGruppoEp)  {
-		this.dsGruppoEp=dsGruppoEp;
+	public void setDsGruppoEp(String dsGruppoEp) {
+		this.dsGruppoEp = dsGruppoEp;
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Restituisce il valore di: [segno]
@@ -136,13 +153,15 @@ public class GruppoEPBase extends GruppoEPKey implements Keyed {
 	public String getSegno() {
 		return segno;
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Setta il valore di: [segno]
 	 **/
-	public void setSegno(String segno)  {
-		this.segno=segno;
+	public void setSegno(String segno) {
+		this.segno = segno;
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Restituisce il valore di: [flMastrino]
@@ -150,13 +169,15 @@ public class GruppoEPBase extends GruppoEPKey implements Keyed {
 	public Boolean getFlMastrino() {
 		return flMastrino;
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Setta il valore di: [flMastrino]
 	 **/
-	public void setFlMastrino(Boolean flMastrino)  {
-		this.flMastrino=flMastrino;
+	public void setFlMastrino(Boolean flMastrino) {
+		this.flMastrino = flMastrino;
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Restituisce il valore di: [cdPianoPadre]
@@ -164,13 +185,15 @@ public class GruppoEPBase extends GruppoEPKey implements Keyed {
 	public String getCdPianoPadre() {
 		return cdPianoPadre;
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Setta il valore di: [cdPianoPadre]
 	 **/
-	public void setCdPianoPadre(String cdPianoPadre)  {
-		this.cdPianoPadre=cdPianoPadre;
+	public void setCdPianoPadre(String cdPianoPadre) {
+		this.cdPianoPadre = cdPianoPadre;
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Restituisce il valore di: [formula]
@@ -178,11 +201,20 @@ public class GruppoEPBase extends GruppoEPKey implements Keyed {
 	public String getFormula() {
 		return formula;
 	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Setta il valore di: [formula]
 	 **/
-	public void setFormula(String formula)  {
-		this.formula=formula;
+	public void setFormula(String formula) {
+		this.formula = formula;
+	}
+
+	public String getCdTipoBilancio() {
+		return cdTipoBilancio;
+	}
+
+	public void setCdTipoBilancio(String cdTipoBilancio) {
+		this.cdTipoBilancio = cdTipoBilancio;
 	}
 }

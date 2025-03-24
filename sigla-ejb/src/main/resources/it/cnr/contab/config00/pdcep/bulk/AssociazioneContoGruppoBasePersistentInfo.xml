@@ -77,7 +77,12 @@
 			sqlTypeName="VARCHAR"
 			columnSize="45"
 			nullable="false"/>
-
+		<columnMapping
+			columnName="CD_TIPO_BILANCIO"
+			propertyName="cdTipoBilancio"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="true"/>
 	</defaultColumnMap>
 	<persistentProperty
 		name="esercizio"/>
@@ -103,4 +108,6 @@
 		name="utcr" />
 	<persistentProperty
 		name="pg_ver_rec" />
+	<persistentProperty
+		name="cdTipoBilancio" />
 </SQLPersistentInfo>

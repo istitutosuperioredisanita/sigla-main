@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet id="add_gestione_gruppi_stampa" author="marco.spasiano">
+        <insert tableName="accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMCOEPCNGESTIONEGRU"/>
+            <column name="ti_accesso" type="CHAR(1)" value="C"/>
+            <column name="ds_accesso" type="VARCHAR(200)" value="Gestione gruppi per stampa Economico Patrimoniale"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="1"/>
+        </insert>
+        <insert tableName="ass_bp_accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMCOEPCNGESTIONEGRU"/>
+            <column name="business_process" type="VARCHAR(200)" value="SelezionatoreGruppoEpBP"/>
+            <column name="ti_funzione" type="CHAR(1)" value="M"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="1"/>
+        </insert>
+        <insert tableName="albero_main">
+            <column name="cd_nodo" type="VARCHAR(100)" value="0.COANCOEP.CNASSC.GESGRU"/>
+            <column name="ds_nodo" type="VARCHAR(200)" value="gestione gruppi stampa"/>
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMCOEPCNGESTIONEGRU"/>
+            <column name="business_process" type="VARCHAR(200)" value="SelezionatoreGruppoEpBP"/>
+            <column name="pg_ordinamento" type="BIGINT" value="0"/>
+            <column name="fl_terminale" type="CHAR(1)" value="Y"/>
+            <column name="livello" type="SMALLINT" value="3"/>
+            <column name="cd_proprio_nodo" type="VARCHAR(100)" value="GESGRU"/>
+            <column name="cd_nodo_padre" type="VARCHAR(100)" value="0.COANCOEP.CNASSC"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="1"/>
+        </insert>
+    </changeSet>
+    <changeSet id="add_table_tipo_bilancio" author="marco.spasiano">
+        <createTable tableName="tipo_bilancio">
+            <column name="cd_tipo_bilancio" remarks="Codice del bilancio" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ds_tipo_bilancio" remarks="Descrizione del bilancio" type="VARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record: viene incrementato di 1 ad ogni variazione" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="tipo_bilancio" constraintName="tipo_bilancio_pkey" columnNames="cd_tipo_bilancio"/>
+    </changeSet>
+    <changeSet id="insert_tipo_bilancio" author="marco.spasiano">
+        <insert tableName="tipo_bilancio">
+            <column name="cd_tipo_bilancio" type="VARCHAR(30)" value="CIVILISTICO"/>
+            <column name="ds_tipo_bilancio" type="VARCHAR(250)" value="Bilancio Civilistico"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="1"/>
+        </insert>
+    </changeSet>
+    <changeSet id="add_column_tipo_bil_gruppo_ep" author="marco.spasiano">
+        <addColumn tableName="cnr_gruppo_ep">
+            <column name="cd_tipo_bilancio" remarks="Codice del bilancio" type="VARCHAR(30)"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="cnr_gruppo_ep" baseColumnNames="cd_tipo_bilancio" constraintName="cnr_gruppo_ep_fk01"
+                                 referencedTableName="tipo_bilancio" referencedColumnNames="cd_tipo_bilancio"/>
+        <update tableName="cnr_gruppo_ep">
+            <column name="cd_tipo_bilancio" type="STRING" value="CIVILISTICO"/>
+        </update>
+        <update tableName="cnr_gruppo_ep">
+            <column name="cd_tipo_bilancio" type="STRING" value="CIVILISTICO"/>
+        </update>
+    </changeSet>
+    <changeSet id="add_column_tipo_bil_ass_conto_gruppo_ep" author="marco.spasiano">
+        <addColumn tableName="cnr_ass_conto_gruppo_ep">
+            <column name="cd_tipo_bilancio" remarks="Codice del bilancio" type="VARCHAR(30)"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="cnr_ass_conto_gruppo_ep" baseColumnNames="cd_tipo_bilancio" constraintName="cnr_ass_conto_gruppo_ep_fk01"
+                                 referencedTableName="tipo_bilancio" referencedColumnNames="cd_tipo_bilancio"/>
+        <update tableName="cnr_ass_conto_gruppo_ep">
+            <column name="cd_tipo_bilancio" type="STRING" value="CIVILISTICO"/>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>

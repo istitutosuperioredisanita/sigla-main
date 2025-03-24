@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="cdTipoBilancio"
+		property="cdTipoBilancio"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Codice del bilancio" />
+	<fieldProperty
+		name="dsTipoBilancio"
+		property="dsTipoBilancio"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="250"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Descrizione del bilancio" />
+	<form
+		name="searchtool">
+		<formFieldProperty
+			name="cdTipoBilancio" />
+	</form>
+	<formFieldProperty
+		name="cdTipoBilancio" />
+	<formFieldProperty
+		name="dsTipoBilancio" />
+	<findFieldProperty
+		name="cdTipoBilancio" />
+	<findFieldProperty
+		name="dsTipoBilancio" />
+	<columnFieldProperty
+		name="cdTipoBilancio" />
+	<columnFieldProperty
+		name="dsTipoBilancio" />
+</bulkInfo>

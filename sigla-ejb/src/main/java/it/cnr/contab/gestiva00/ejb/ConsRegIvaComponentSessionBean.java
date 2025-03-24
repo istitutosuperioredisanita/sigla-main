@@ -17,32 +17,34 @@
 
 package it.cnr.contab.gestiva00.ejb;
 
+import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk;
 import it.cnr.contab.gestiva00.comp.ConsRegIvaComponent;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.comp.NoRollbackException;
-import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.util.RemoteIterator;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
 import javax.ejb.Remove;
 import javax.ejb.Stateless;
+import java.rmi.RemoteException;
 
-@Stateless(name="CNRGESTIVA00_EJB_ConsRegIvaComponentSession")
+@Stateless(name = "CNRGESTIVA00_EJB_ConsRegIvaComponentSession")
 public class ConsRegIvaComponentSessionBean extends it.cnr.jada.ejb.RicercaComponentSessionBean implements ConsRegIvaComponentSession {
-@PostConstruct
-	public void ejbCreate() {
-		componentObj = new ConsRegIvaComponent();
-	}
-	@Remove
-	public void ejbRemove() throws javax.ejb.EJBException {
-		componentObj.release();
-	}
+    @PostConstruct
+    public void ejbCreate() {
+        componentObj = new ConsRegIvaComponent();
+    }
 
-	public static it.cnr.jada.ejb.RicercaComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new ConsRegIvaComponentSessionBean();
-	}
+    @Remove
+    public void ejbRemove() throws javax.ejb.EJBException {
+        componentObj.release();
+    }
+
+    public static it.cnr.jada.ejb.RicercaComponentSessionBean newInstance() throws javax.ejb.EJBException {
+        return new ConsRegIvaComponentSessionBean();
+    }
 
 }

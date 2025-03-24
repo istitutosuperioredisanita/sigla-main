@@ -20,10 +20,10 @@ public class ParametricPrintAndExcelBP extends ParametricPrintBP {
     @Override
     public Button[] createToolbar() {
         final Properties properties = it.cnr.jada.util.Config.getHandler().getProperties(getClass());
-        return Stream.concat(Arrays.asList(super.createToolbar()).stream(),
-                Arrays.asList(
+        return Stream.concat(Arrays.stream(super.createToolbar()),
+                Stream.of(
                         new Button(properties, "Toolbar.excel")
-                ).stream()).toArray(Button[]::new);
+                )).toArray(Button[]::new);
     }
 
     public boolean isExcelButtonHidden() {

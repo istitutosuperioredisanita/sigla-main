@@ -6183,6 +6183,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <!-- Autore : DAVIDE MIRRA - nuova voce di menù Consultazioni x GESTIONE IVA/ISS -->
     <include file="bootstrap/insert_gestione_iva_iss_consultazioni.xml"/>
 
+    <!-- Autore : DAVIDE MIRRA - nuova voce di menù Consultazioni x GESTIONE IVA/ISS -->
+    <include file="bootstrap/insert_cons_dettaglio_reg_iva.xml"/>
 
     <!-- Autore : CIRO SALVIO - Aggiunta Colonna per indicare se un anagrafico può essere firmatario di un contratto-->
     <include file="bootstrap/add_column_fl_firmatario_contr_utente.xml"/>
@@ -6191,5 +6193,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <!-- Autore : CIRO SALVIO - Aggiunta rest Service per i firmatari di un contratto-->
     <include file="bootstrap/add_configurazione_rest_firmatari_contratto.xml"/>
 
+    <!-- Autore : MARCO SPASIANO - nuova voce di menù gestione gruppi stampa -->
+    <include file="bootstrap/insert_gestione_gruppi_stampa.xml"/>
 
 </databaseChangeLog>

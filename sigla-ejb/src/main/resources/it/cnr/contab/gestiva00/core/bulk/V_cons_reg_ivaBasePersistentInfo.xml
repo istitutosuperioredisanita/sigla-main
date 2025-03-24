@@ -1,86 +1,326 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SQLPersistentInfo
-        persistentClassName="it.cnr.contab.gestiva00.core.bulk.V_cons_reg_ivaBase"
-        homeClassName="it.cnr.contab.gestiva00.core.bulk.V_cons_reg_ivaHome">
-    <defaultColumnMap tableName="V_CONS_REG_IVA">
-        <columnMapping columnName="ESERCIZIO" propertyName="esercizio" sqlTypeName="DECIMAL" columnSize="4" nullable="false" />
-        <columnMapping columnName="TIPO" propertyName="tipo" sqlTypeName="VARCHAR" columnSize="50" nullable="true" />
-        <columnMapping columnName="DATA_REGISTRAZIONE" propertyName="data_registrazione" sqlTypeName="VARCHAR" columnSize="7" nullable="true" />
-        <columnMapping columnName="DT_EMISSIONE" propertyName="dt_emissione" sqlTypeName="VARCHAR" columnSize="10" nullable="true" />
-        <columnMapping columnName="DT_EMISS_AMM" propertyName="dt_emiss_amm" sqlTypeName="VARCHAR" columnSize="7" nullable="true" />
-        <columnMapping columnName="TI_BENE_SERVIZIO" propertyName="ti_bene_servizio" sqlTypeName="CHAR" columnSize="1" nullable="true" />
-        <columnMapping columnName="CD_TIPO_SEZIONALE" propertyName="cd_tipo_sezionale" sqlTypeName="VARCHAR" columnSize="10" nullable="true" />
-        <columnMapping columnName="CD_UNITA_ORGANIZZATIVA" propertyName="cd_unita_organizzativa" sqlTypeName="VARCHAR" columnSize="30" nullable="true" />
-        <columnMapping columnName="CD_CDS_ORIGINE" propertyName="cd_cds_origine" sqlTypeName="VARCHAR" columnSize="30" nullable="true" />
-        <columnMapping columnName="CD_UO_ORIGINE" propertyName="cd_uo_origine" sqlTypeName="VARCHAR" columnSize="30" nullable="true" />
-        <columnMapping columnName="PG_FATTURA" propertyName="pg_fattura" sqlTypeName="DECIMAL" columnSize="10" nullable="true" />
-        <columnMapping columnName="PROT_IVA" propertyName="prot_iva" sqlTypeName="DECIMAL" columnSize="10" nullable="true" />
-        <columnMapping columnName="NRGREG_IVA" propertyName="nrgreg_iva" sqlTypeName="VARCHAR" columnSize="50" nullable="true" />
-        <columnMapping columnName="PGR_U" propertyName="pgr_u" sqlTypeName="DECIMAL" columnSize="10" nullable="true" />
-        <columnMapping columnName="DS_FATTURA" propertyName="ds_fattura" sqlTypeName="VARCHAR" columnSize="200" nullable="true" />
-        <columnMapping columnName="IMP" propertyName="imp" sqlTypeName="DECIMAL" columnSize="15" columnScale="2" nullable="true" />
-        <columnMapping columnName="IVA" propertyName="iva" sqlTypeName="DECIMAL" columnSize="15" columnScale="2" nullable="true" />
-        <columnMapping columnName="TOT" propertyName="tot" sqlTypeName="DECIMAL" columnSize="15" columnScale="2" nullable="true" />
-        <columnMapping columnName="CD_FORN" propertyName="cd_forn" sqlTypeName="DECIMAL" columnSize="8" nullable="true" />
-        <columnMapping columnName="DENO_FORN" propertyName="deno_forn" sqlTypeName="VARCHAR" columnSize="200" nullable="true" />
-        <columnMapping columnName="CF_PIVA" propertyName="cf_piva" sqlTypeName="VARCHAR" columnSize="100" nullable="true" />
-        <columnMapping columnName="NR_FATTURA" propertyName="nr_fattura" sqlTypeName="VARCHAR" columnSize="50" nullable="true" />
-        <columnMapping columnName="UE" propertyName="ue" sqlTypeName="CHAR" columnSize="1" nullable="true" />
-        <columnMapping columnName="TIPO_FATTURA" propertyName="tipo_fattura" sqlTypeName="CHAR" columnSize="1" nullable="true" />
-        <columnMapping columnName="PGR_D" propertyName="pgr_d" sqlTypeName="DECIMAL" columnSize="10" nullable="true" />
-        <columnMapping columnName="IMP_D" propertyName="imp_d" sqlTypeName="DECIMAL" columnSize="15" columnScale="2" nullable="true" />
-        <columnMapping columnName="IVA_D" propertyName="iva_d" sqlTypeName="DECIMAL" columnSize="15" columnScale="2" nullable="true" />
-        <columnMapping columnName="TOT_D" propertyName="tot_d" sqlTypeName="DECIMAL" columnSize="15" columnScale="2" nullable="true" />
-        <columnMapping columnName="CD_VOCE_IVA" propertyName="cd_voce_iva" sqlTypeName="VARCHAR" columnSize="10" nullable="true" />
-        <columnMapping columnName="CD_GRUPPO_IVA" propertyName="cd_gruppo_iva" sqlTypeName="VARCHAR" columnSize="10" nullable="true" />
-        <columnMapping columnName="DS_GRUPPO_IVA" propertyName="ds_gruppo_iva" sqlTypeName="VARCHAR" columnSize="200" nullable="true" />
-        <columnMapping columnName="PERCENTUALE" propertyName="percentuale" sqlTypeName="DECIMAL" columnSize="5" columnScale="2" nullable="true" />
-        <columnMapping columnName="D" propertyName="d" sqlTypeName="CHAR" columnSize="1" nullable="true" />
-        <columnMapping columnName="PERC_D" propertyName="perc_d" sqlTypeName="DECIMAL" columnSize="5" columnScale="2" nullable="true" />
-        <columnMapping columnName="SP" propertyName="sp" sqlTypeName="CHAR" columnSize="1" nullable="true" />
-        <columnMapping columnName="TIPO_DOCUMENTO" propertyName="tipo_documento" sqlTypeName="VARCHAR" columnSize="20" nullable="true" />
-        <columnMapping columnName="FL_AUTOFATTURA" propertyName="fl_autofattura" sqlTypeName="CHAR" columnSize="1" nullable="true" />
-        <columnMapping columnName="FL_SPEDIZIONIERE" propertyName="fl_spedizioniere" sqlTypeName="CHAR" columnSize="1" nullable="true" />
-        <columnMapping columnName="FL_BOLLA_DOGANALE" propertyName="fl_bolla_doganale" sqlTypeName="CHAR" columnSize="1" nullable="true" />
-    </defaultColumnMap>
-
-    <persistentProperty name="esercizio" />
-    <persistentProperty name="tipo" />
-    <persistentProperty name="data_registrazione" />
-    <persistentProperty name="dt_emissione" />
-    <persistentProperty name="dt_emiss_amm" />
-    <persistentProperty name="ti_bene_servizio" />
-    <persistentProperty name="cd_tipo_sezionale" />
-    <persistentProperty name="cd_unita_organizzativa" />
-    <persistentProperty name="cd_cds_origine" />
-    <persistentProperty name="cd_uo_origine" />
-    <persistentProperty name="pg_fattura" />
-    <persistentProperty name="prot_iva" />
-    <persistentProperty name="nrgreg_iva" />
-    <persistentProperty name="pgr_u" />
-    <persistentProperty name="ds_fattura" />
-    <persistentProperty name="imp" />
-    <persistentProperty name="iva" />
-    <persistentProperty name="tot" />
-    <persistentProperty name="cd_forn" />
-    <persistentProperty name="deno_forn" />
-    <persistentProperty name="cf_piva" />
-    <persistentProperty name="nr_fattura" />
-    <persistentProperty name="ue" />
-    <persistentProperty name="tipo_fattura" />
-    <persistentProperty name="pgr_d" />
-    <persistentProperty name="imp_d" />
-    <persistentProperty name="iva_d" />
-    <persistentProperty name="tot_d" />
-    <persistentProperty name="cd_voce_iva" />
-    <persistentProperty name="cd_gruppo_iva" />
-    <persistentProperty name="ds_gruppo_iva" />
-    <persistentProperty name="percentuale" />
-    <persistentProperty name="d" />
-    <persistentProperty name="perc_d" />
-    <persistentProperty name="sp" />
-    <persistentProperty name="tipo_documento" />
-    <persistentProperty name="fl_autofattura" />
-    <persistentProperty name="fl_spedizioniere" />
-    <persistentProperty name="fl_bolla_doganale" />
+	persistentClassName="it.cnr.contab.gestiva00.core.bulk.V_cons_reg_ivaBase"
+	keyClassName="it.cnr.contab.gestiva00.core.bulk.V_cons_reg_ivaKey"
+	homeClassName="it.cnr.contab.gestiva00.core.bulk.V_cons_reg_ivaHome">
+	<defaultColumnMap
+		tableName="V_CONS_REG_IVA">
+		<columnMapping
+			columnName="ESERCIZIO"
+			propertyName="esercizio"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="true" />
+		<columnMapping
+			columnName="TIPO"
+			propertyName="tipo"
+			sqlTypeName="VARCHAR"
+			columnSize="13"
+			nullable="true" />
+		<columnMapping
+			columnName="DATA_REGISTRAZIONE"
+			propertyName="dataRegistrazione"
+			sqlTypeName="VARCHAR"
+			columnSize="7"
+			nullable="true" />
+		<columnMapping
+			columnName="DT_EMISSIONE"
+			propertyName="dtEmissione"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="true" />
+		<columnMapping
+			columnName="DT_EMISS_AMM"
+			propertyName="dtEmissAmm"
+			sqlTypeName="VARCHAR"
+			columnSize="7"
+			nullable="true" />
+		<columnMapping
+			columnName="TI_BENE_SERVIZIO"
+			propertyName="tiBeneServizio"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="true" />
+		<columnMapping
+			columnName="CD_TIPO_SEZIONALE"
+			propertyName="cdTipoSezionale"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="true" />
+		<columnMapping
+			columnName="CD_UNITA_ORGANIZZATIVA"
+			propertyName="cdUnitaOrganizzativa"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="true" />
+		<columnMapping
+			columnName="CD_CDS_ORIGINE"
+			propertyName="cdCdsOrigine"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="true" />
+		<columnMapping
+			columnName="CD_UO_ORIGINE"
+			propertyName="cdUoOrigine"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="true" />
+		<columnMapping
+			columnName="PG_FATTURA"
+			propertyName="pgFattura"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="true" />
+		<columnMapping
+			columnName="PROT_IVA"
+			propertyName="protIva"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="NRGREG_IVA"
+			propertyName="nrgregIva"
+			sqlTypeName="VARCHAR"
+			columnSize="81"
+			nullable="true" />
+		<columnMapping
+			columnName="PGR_U"
+			propertyName="pgrU"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="true" />
+		<columnMapping
+			columnName="DS_FATTURA"
+			propertyName="dsFattura"
+			sqlTypeName="VARCHAR"
+			columnSize="1000"
+			nullable="true" />
+		<columnMapping
+			columnName="IMP"
+			propertyName="imp"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="IVA"
+			propertyName="iva"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="TOT"
+			propertyName="tot"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="CD_FORN"
+			propertyName="cdForn"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="true" />
+		<columnMapping
+			columnName="DENO_FORN"
+			propertyName="denoForn"
+			sqlTypeName="VARCHAR"
+			columnSize="100"
+			nullable="true" />
+		<columnMapping
+			columnName="CF_PIVA"
+			propertyName="cfPiva"
+			sqlTypeName="VARCHAR"
+			columnSize="41"
+			nullable="true" />
+		<columnMapping
+			columnName="NR_FATTURA"
+			propertyName="nrFattura"
+			sqlTypeName="VARCHAR"
+			columnSize="40"
+			nullable="true" />
+		<columnMapping
+			columnName="UE"
+			propertyName="ue"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="true" />
+		<columnMapping
+			columnName="TIPO_FATTURA"
+			propertyName="tipoFattura"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="true" />
+		<columnMapping
+			columnName="PGR_D"
+			propertyName="pgrD"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="true" />
+		<columnMapping
+			columnName="IMP_D"
+			propertyName="impD"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="IVA_D"
+			propertyName="ivaD"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="TOT_D"
+			propertyName="totD"
+			sqlTypeName="DECIMAL"
+			columnSize="0"
+			nullable="true" />
+		<columnMapping
+			columnName="CD_VOCE_IVA"
+			propertyName="cdVoceIva"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="true" />
+		<columnMapping
+			columnName="CD_GRUPPO_IVA"
+			propertyName="cdGruppoIva"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="true" />
+		<columnMapping
+			columnName="DS_GRUPPO_IVA"
+			propertyName="dsGruppoIva"
+			sqlTypeName="VARCHAR"
+			columnSize="100"
+			nullable="true" />
+		<columnMapping
+			columnName="PERCENTUALE"
+			propertyName="percentuale"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			columnScale="2"
+			nullable="true" />
+		<columnMapping
+			columnName="D"
+			propertyName="d"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="true" />
+		<columnMapping
+			columnName="PERC_D"
+			propertyName="percD"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			columnScale="2"
+			nullable="true" />
+		<columnMapping
+			columnName="SP"
+			propertyName="sp"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="true" />
+		<columnMapping
+			columnName="TIPO_DOCUMENTO"
+			propertyName="tipoDocumento"
+			sqlTypeName="VARCHAR"
+			columnSize="7"
+			nullable="true" />
+		<columnMapping
+			columnName="FL_AUTOFATTURA"
+			propertyName="flAutofattura"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="true"
+			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+			columnName="FL_SPEDIZIONIERE"
+			propertyName="flSpedizioniere"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="true"
+			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+			columnName="FL_BOLLA_DOGANALE"
+			propertyName="flBollaDoganale"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="true"
+			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="esercizio" />
+	<persistentProperty
+		name="tipo" />
+	<persistentProperty
+		name="dataRegistrazione" />
+	<persistentProperty
+		name="dtEmissione" />
+	<persistentProperty
+		name="dtEmissAmm" />
+	<persistentProperty
+		name="tiBeneServizio" />
+	<persistentProperty
+		name="cdTipoSezionale" />
+	<persistentProperty
+		name="cdUnitaOrganizzativa" />
+	<persistentProperty
+		name="cdCdsOrigine" />
+	<persistentProperty
+		name="cdUoOrigine" />
+	<persistentProperty
+		name="pgFattura" />
+	<persistentProperty
+		name="protIva" />
+	<persistentProperty
+		name="nrgregIva" />
+	<persistentProperty
+		name="pgrU" />
+	<persistentProperty
+		name="dsFattura" />
+	<persistentProperty
+		name="imp" />
+	<persistentProperty
+		name="iva" />
+	<persistentProperty
+		name="tot" />
+	<persistentProperty
+		name="cdForn" />
+	<persistentProperty
+		name="denoForn" />
+	<persistentProperty
+		name="cfPiva" />
+	<persistentProperty
+		name="nrFattura" />
+	<persistentProperty
+		name="ue" />
+	<persistentProperty
+		name="tipoFattura" />
+	<persistentProperty
+		name="pgrD" />
+	<persistentProperty
+		name="impD" />
+	<persistentProperty
+		name="ivaD" />
+	<persistentProperty
+		name="totD" />
+	<persistentProperty
+		name="cdVoceIva" />
+	<persistentProperty
+		name="cdGruppoIva" />
+	<persistentProperty
+		name="dsGruppoIva" />
+	<persistentProperty
+		name="percentuale" />
+	<persistentProperty
+		name="d" />
+	<persistentProperty
+		name="percD" />
+	<persistentProperty
+		name="sp" />
+	<persistentProperty
+		name="tipoDocumento" />
+	<persistentProperty
+		name="flAutofattura" />
+	<persistentProperty
+		name="flSpedizioniere" />
+	<persistentProperty
+		name="flBollaDoganale" />
 </SQLPersistentInfo>
