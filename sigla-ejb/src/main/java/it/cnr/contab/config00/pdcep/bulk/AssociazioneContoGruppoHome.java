@@ -58,6 +58,7 @@ public class AssociazioneContoGruppoHome extends BulkHome {
 				.map(AssociazioneContoGruppoBulk.class::cast)
 				.ifPresent(acg -> {
 					sqlBuilder.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, acg.getEsercizio());
+					sqlBuilder.addClause(FindClause.AND, "cdTipoBilancio", SQLBuilder.EQUALS, acg.getCdTipoBilancio());
 					sqlBuilder.addClause(FindClause.AND, "cdPianoGruppi", SQLBuilder.EQUALS, acg.getCdPianoGruppi());
 					sqlBuilder.addClause(FindClause.AND, "cdGruppoEp", SQLBuilder.EQUALS, acg.getCdGruppoEp());
 					sqlBuilder.addClause(FindClause.AND, "cdVoceEp", SQLBuilder.EQUALS, acg.getCdVoceEp());
@@ -85,9 +86,10 @@ public class AssociazioneContoGruppoHome extends BulkHome {
 	}
 
 	public SQLBuilder selectAssociazioniMultiple(UserContext usercontext, AssociazioneContoGruppoBulk associazioneContoGruppoBulk, CompoundFindClause compoundfindclause) throws PersistencyException {
-		final SQLBuilder sqlBuilder = selectByClause(usercontext, compoundfindclause);
+		final SQLBuilder sqlBuilder = selectByClause(usercontext, null);
 		final SQLBuilder sqlBuilderIN = createSQLBuilder();
 		sqlBuilderIN.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(usercontext));
+		sqlBuilderIN.addClause(FindClause.AND, "tipoBilancio", SQLBuilder.EQUALS, associazioneContoGruppoBulk.getTipoBilancio());
 		sqlBuilderIN.resetColumns();
 		sqlBuilderIN.addColumn(CD_VOCE_EP);
 		sqlBuilderIN.addSQLGroupBy(CD_VOCE_EP);
@@ -107,9 +109,7 @@ public class AssociazioneContoGruppoHome extends BulkHome {
 	) throws PersistencyException {
 		gruppoEPHome = Optional.ofNullable(gruppoEPHome)
 				.orElseGet(() -> (GruppoEPHome)getHomeCache().getHome(GruppoEPBulk.class));
-		final SQLBuilder sqlBuilder = gruppoEPHome.createSQLBuilder();
-		sqlBuilder.addClause(FindClause.AND, "cdPianoGruppi", SQLBuilder.EQUALS, associazioneContoGruppoBulk.getCdPianoGruppi());
-		final List<GruppoEPBulk> result = gruppoEPHome.fetchAll(sqlBuilder);
+		final List<GruppoEPBulk> result = gruppoEPHome.findGruppoEp(associazioneContoGruppoBulk);
 		return result.stream().map(GruppoEPBase::getCdGruppoEp).collect(Collectors.toList());
 	}
 

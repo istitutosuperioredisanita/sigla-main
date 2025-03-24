@@ -48,9 +48,9 @@ public class ContrattoMaggioliResource  extends AbstractContrattoResource implem
     @Override
     public void validateContratto(ContrattoDtoBulk contrattoBulk, CNRUserContext userContext) {
         //Check valore tipoDettaglioContratto
-        if (Optional.ofNullable(contrattoBulk.getTipo_dettaglio_contratto()).isPresent()){
-            if ( !contrattoBulk.getTipo_dettaglio_contratto().equals(ContrattoBulk.DETTAGLIO_CONTRATTO_ARTICOLI) &&
-                    contrattoBulk.getTipo_dettaglio_contratto().equals(ContrattoBulk.DETTAGLIO_CONTRATTO_CATGRP))
+        if (Optional.ofNullable(contrattoBulk.getTipoDettaglioContratto()).isPresent()){
+            if ( !contrattoBulk.getTipoDettaglioContratto().equals(ContrattoBulk.DETTAGLIO_CONTRATTO_ARTICOLI) &&
+                    contrattoBulk.getTipoDettaglioContratto().equals(ContrattoBulk.DETTAGLIO_CONTRATTO_CATGRP))
                 throw new RestException(Response.Status.BAD_REQUEST, String.format("Per Il Tipo Dettaglio Contratto sono previsti i seguenti valori:{ vuoto,"
                         + ContrattoBulk.DETTAGLIO_CONTRATTO_ARTICOLI)+"}");
         }

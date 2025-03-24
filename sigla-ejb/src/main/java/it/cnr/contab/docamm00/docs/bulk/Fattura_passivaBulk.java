@@ -23,6 +23,7 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabter.bulk.NazioneBulk;
+import it.cnr.contab.coepcoan00.core.bulk.Scrittura_analiticaBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.docamm00.fatturapa.bulk.*;
@@ -259,6 +260,10 @@ public abstract class Fattura_passivaBulk
 
     private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
 
+    private Scrittura_analiticaBulk scrittura_analitica;
+
+    private boolean fl_bloccoAttivoDtReg =  Boolean.FALSE;
+
     public Fattura_passivaBulk() {
         super();
     }
@@ -442,8 +447,11 @@ public abstract class Fattura_passivaBulk
         BigDecimal totale= BigDecimal.ZERO;
         for (Iterator i = fattura_passiva_dettColl.iterator(); i.hasNext(); ) {
             Fattura_passiva_rigaBulk riga = ((Fattura_passiva_rigaBulk) i.next());
-            if (riga.getBene_servizio().getFl_obb_intrastat_acq().booleanValue()
-                    && riga.getVoce_iva().getFl_intrastat().booleanValue())
+            if (riga.getBene_servizio()!=null
+             && riga.getBene_servizio().getFl_obb_intrastat_acq()!=null
+                && riga.getBene_servizio().getFl_obb_intrastat_acq().booleanValue()
+                    && (( !Optional.ofNullable(riga.getVoce_iva()).isPresent())|| riga.getVoce_iva().getFl_intrastat().booleanValue())
+            )
                 totale=totale.add(riga.getIm_imponibile());
         }
         return totale;
@@ -2196,9 +2204,9 @@ public abstract class Fattura_passivaBulk
                 getLettera_pagamento_estero() != null ||
                 isPagata() ||
                 isPagataParzialmente() ||
-                (getObbligazioniHash() == null || getObbligazioniHash().isEmpty());
-        //Come da richiesta 108 gestione errori CNR elimino il controllo sulla valuta (09/09/2002 RP)
-        //|| isDefaultValuta();
+                (getObbligazioniHash() == null || getObbligazioniHash().isEmpty())
+        //Come da richiesta 108 gestione errori CNR elimino il controllo sulla valuta (09/09/2002 RP)-Rimesso controllo 17/03/2025
+        || isDefaultValuta();
     }
 
     /**
@@ -2739,7 +2747,7 @@ public abstract class Fattura_passivaBulk
         return STATO_IVA_B.equalsIgnoreCase(getStatoIVA()) ||
                 STATO_IVA_C.equalsIgnoreCase(getStatoIVA()) ||
                 //A seguito dell'errore segnalato 569 (dovuto alla richiesta 423)
-                (getAutofattura() != null && getAutofattura().isStampataSuRegistroIVA());//||
+                (getAutofattura() != null && getAutofattura().isStampataSuRegistroIVA()) ||( (!this.isFromAmministra()) && isBloccoAttivoDtReg());//||
         //(getProgr_univoco()!=null);
     }
 
@@ -3649,6 +3657,15 @@ public abstract class Fattura_passivaBulk
         this.scrittura_partita_doppia = scrittura_partita_doppia;
     }
 
+    @Override
+    public Scrittura_analiticaBulk getScrittura_analitica() {
+        return scrittura_analitica;
+    }
+    @Override
+    public void setScrittura_analitica(Scrittura_analiticaBulk scrittura_analitica) {
+        this.scrittura_analitica = scrittura_analitica;
+    }
+
     public TipoDocumentoEnum getTipoDocumentoEnum() {
         if ("C".equals(this.getTi_fattura()))
             return TipoDocumentoEnum.fromValue(TipoDocumentoEnum.TIPO_NOTA_CREDITO_PASSIVA);
@@ -3824,6 +3841,25 @@ public abstract class Fattura_passivaBulk
 
         }
         return super.isOptionDisabled(fieldProperty, key);
+    }
+
+    public boolean isBloccoAttivoDtReg() {
+        return fl_bloccoAttivoDtReg;
+    }
+
+    public boolean isFl_bloccoAttivoDtReg() {
+        return fl_bloccoAttivoDtReg;
+    }
+
+    public void setFl_bloccoAttivoDtReg(boolean fl_bloccoAttivoDtReg) {
+        this.fl_bloccoAttivoDtReg = fl_bloccoAttivoDtReg;
+    }
+
+    @Override
+    public Boolean isDocumentoStorno() {
+        return Optional.ofNullable(this.getTipoDocumentoEnum())
+                .map(TipoDocumentoEnum::isNotaCreditoPassiva)
+                .orElse(Boolean.FALSE);
     }
 
 }

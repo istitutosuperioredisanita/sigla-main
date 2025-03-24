@@ -18,6 +18,7 @@
 package it.cnr.contab.coepcoan00.bp;
 
 import it.cnr.contab.coepcoan00.core.bulk.Movimento_cogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.OrigineScritturaEnum;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.utenze00.bulk.CNRUserInfo;
@@ -137,7 +138,7 @@ public class CRUDScritturaPDoppiaBP extends it.cnr.jada.util.action.SimpleCRUDBP
 
     public boolean isScritturaReadonly() {
         return isBloccoScrittureProposte &&
-                !Scrittura_partita_doppiaBulk.Origine.PRIMA_NOTA_MANUALE.name().equals(((Scrittura_partita_doppiaBulk) getModel()).getOrigine_scrittura());
+                !OrigineScritturaEnum.PRIMA_NOTA_MANUALE.name().equals(((Scrittura_partita_doppiaBulk) getModel()).getOrigine_scrittura());
     }
 
     @Override

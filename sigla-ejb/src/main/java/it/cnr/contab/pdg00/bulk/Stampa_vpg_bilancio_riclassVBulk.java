@@ -17,7 +17,11 @@
 
 package it.cnr.contab.pdg00.bulk;
 
+import it.cnr.contab.config00.pdcep.bulk.TipoBilancioBulk;
 import it.cnr.contab.util.enumeration.TipoIVA;
+import it.cnr.jada.bulk.ValidationException;
+
+import java.util.Collection;
 
 /**
  * Insert the type's description here.
@@ -45,7 +49,10 @@ public class Stampa_vpg_bilancio_riclassVBulk extends it.cnr.jada.bulk.OggettoBu
 	public final static String TIPO_IST_COM = "*";
 
 	public final static java.util.Dictionary ti_ist_comKeys;
-	
+
+	private TipoBilancioBulk tipoBilancio;
+	private java.util.Collection<TipoBilancioBulk> tipoBilanci;
+
 	static {		
 		ti_ist_comKeys = new it.cnr.jada.util.OrderedHashtable();
 		ti_ist_comKeys.put(TIPO_IST_COM,"Tutto");
@@ -220,4 +227,26 @@ public void setUoForPrintEnabled(boolean newUoForPrintEnabled) {
 		this.dettaglioConti = dettaglioConti;
 	}
 
+	public TipoBilancioBulk getTipoBilancio() {
+		return tipoBilancio;
+	}
+
+	public void setTipoBilancio(TipoBilancioBulk tipoBilancio) {
+		this.tipoBilancio = tipoBilancio;
+	}
+
+	public void setTipoBilanci(Collection<TipoBilancioBulk> tipoBilanci) {
+		this.tipoBilanci = tipoBilanci;
+	}
+
+	public Collection<TipoBilancioBulk> getTipoBilanci() {
+		return tipoBilanci;
+	}
+
+	@Override
+	public void validate() throws ValidationException {
+		super.validate();
+		if (getTipoBilancio() == null)
+			throw new ValidationException("Valorizzare il Tipo bilancio!");
+	}
 }

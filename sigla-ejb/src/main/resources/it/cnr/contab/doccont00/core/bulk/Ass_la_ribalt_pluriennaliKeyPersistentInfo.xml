@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.doccont00.core.bulk.Ass_la_ribalt_pluriennaliKey">
+	<defaultColumnMap
+		tableName="ASS_LA_RIBALT_PLURIENNALI">
+		<columnMapping
+			columnName="ESERCIZIO"
+			propertyName="esercizio"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="CD_CENTRO_RESPONSABILITA"
+			propertyName="cdCentroResponsabilita"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="CD_LINEA_ATTIVITA"
+			propertyName="cdLineaAttivita"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="false"
+			primary="true" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="esercizio"
+		partOfOid="true" />
+	<persistentProperty
+		name="cdCentroResponsabilita"
+		partOfOid="true" />
+	<persistentProperty
+		name="cdLineaAttivita"
+		partOfOid="true" />
+</SQLPersistentInfo>

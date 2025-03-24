@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.inventario00.docs.bulk.Ass_tipo_amm_cat_grup_invKey">
+	<defaultColumnMap
+		tableName="ASS_TIPO_AMM_CAT_GRUP_INV">
+		<columnMapping
+			columnName="CD_TIPO_AMMORTAMENTO"
+			propertyName="cdTipoAmmortamento"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="TI_AMMORTAMENTO"
+			propertyName="tiAmmortamento"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="CD_CATEGORIA_GRUPPO"
+			propertyName="cdCategoriaGruppo"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="ESERCIZIO_COMPETENZA"
+			propertyName="esercizioCompetenza"
+			sqlTypeName="DECIMAL"
+			columnSize="5"
+			nullable="false"
+			primary="true" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="cdTipoAmmortamento"
+		partOfOid="true" />
+	<persistentProperty
+		name="tiAmmortamento"
+		partOfOid="true" />
+	<persistentProperty
+		name="cdCategoriaGruppo"
+		partOfOid="true" />
+	<persistentProperty
+		name="esercizioCompetenza"
+		partOfOid="true" />
+</SQLPersistentInfo>

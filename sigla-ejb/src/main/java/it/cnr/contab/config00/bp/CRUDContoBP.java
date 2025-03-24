@@ -19,18 +19,22 @@ package it.cnr.contab.config00.bp;
 
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBase;
+import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
+import it.cnr.jada.util.action.SimpleDetailCRUDController;
 
 public class CRUDContoBP extends it.cnr.jada.util.action.SimpleCRUDBP {
 	private static final long serialVersionUID = 1L;
 
 	private boolean flNuovoPdg = false;
-    
+	private final SimpleDetailCRUDController vociAnalitica = new SimpleDetailCRUDController("VociAnalitica", Voce_analiticaBulk.class, "voceAnaliticaColl", this);
+
 	/**
 	 * Primo costruttore della classe <code>CRUDConfigPdcCDSSpeseBP</code>.
 	 */
@@ -49,6 +53,15 @@ public class CRUDContoBP extends it.cnr.jada.util.action.SimpleCRUDBP {
 	public void validate(ActionContext actioncontext) throws ValidationException {
 		super.validate(actioncontext);
 		ContoBulk bulk = (ContoBulk)getModel();
+
+		if (!bulk.getVoceAnaliticaColl().isEmpty()) {
+			long contaVociAnaDefault = bulk.getVoceAnaliticaColl().stream().filter(Voce_analiticaBase::getFl_default).count();
+			if (contaVociAnaDefault == 0)
+				throw new ValidationException("E' necessario impostare almeno una voce analitica di default.");
+			if (contaVociAnaDefault == 2)
+				throw new ValidationException("E' possibile impostare al massimo una voce analitica di default.");
+		}
+
 		if (!isFlNuovoPdg()) {
 			if ( bulk==null || bulk.getVoce_ep_padre() == null || OggettoBulk.isNullOrEmpty( bulk.getVoce_ep_padre().getCd_voce_ep()))
 				throw new ValidationException( "Il CODICE del CAPOCONTO deve essere inserito." );
@@ -114,5 +127,17 @@ public class CRUDContoBP extends it.cnr.jada.util.action.SimpleCRUDBP {
 	    {
 	        throw new BusinessProcessException(throwable);
 	    }
+	}
+
+	public SimpleDetailCRUDController getVociAnalitica() {
+		return vociAnalitica;
+	}
+
+	@Override
+	public void saveChildren(ActionContext actioncontext) throws ValidationException, BusinessProcessException {
+		ContoBulk bulk = (ContoBulk)getModel();
+		if (!bulk.isAnaliticaEnabled())
+			bulk.getVoceAnaliticaColl().forEach(OggettoBulk::setToBeDeleted);
+		super.saveChildren(actioncontext);
 	}
 }

@@ -48,6 +48,7 @@ import it.cnr.contab.inventario01.ejb.NumerazioneTempBuonoComponentSession;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.CNRUserInfo;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util.ApplicationMessageFormatException;
@@ -603,11 +604,16 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
         //if (fp.isRiportata() && !fp.COMPLETAMENTE_RIPORTATO.equalsIgnoreCase(fp.getRiportata()))
         //throw new it.cnr.jada.comp.ApplicationException("Non è possibile generare note di credito per fatture non riportate completamente!");
         try {
-            java.sql.Timestamp date = it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
-            int annoSolare = fp.getDateCalendar(date).get(java.util.Calendar.YEAR);
-            if (annoSolare != esercizioScrivania.intValue())
+            if ((it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(
+                    context.getUserContext()).intValue() != Fattura_passivaBulk
+                    .getDateCalendar(null).get(java.util.Calendar.YEAR) ||
+                    !Utility.createConfigurazioneCnrComponentSession().getFineRegFattPass(context.getUserContext(), CNRUserContext.getEsercizio(context.getUserContext()) - 1)
+                        .before(EJBCommonServices.getServerDate()) )  &&
+                    !Utility.createConfigurazioneCnrComponentSession().getFineRegFattPass(context.getUserContext(), CNRUserContext.getEsercizio(context.getUserContext()))
+                        .after(EJBCommonServices.getServerDate())) {
                 throw new it.cnr.jada.comp.ApplicationException("Non è possibile inserire note di credito in esercizi non corrispondenti all'anno solare!");
-        } catch (javax.ejb.EJBException e) {
+            }
+        } catch (EJBException | RemoteException e) {
             return handleException(context, e);
         }
 
@@ -6026,11 +6032,15 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
             final Optional<MandatoBulk> mandatoBulk = mandato_rigaIBulks
                     .stream()
                     .filter(mandatoRigaIBulk -> {
-                        return  mandatoRigaIBulk.getEsercizio_obbligazione().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getEsercizio()) &&
-                                mandatoRigaIBulk.getEsercizio_ori_obbligazione().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getEsercizio_originale()) &&
-                                mandatoRigaIBulk.getCd_cds().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getCd_cds()) &&
-                                mandatoRigaIBulk.getPg_obbligazione().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getPg_obbligazione()) &&
-                                mandatoRigaIBulk.getPg_obbligazione_scadenzario().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getPg_obbligazione_scadenzario());
+                        return fattura_passiva_rigaBulk
+                                .flatMap(fatturaPassivaRigaBulk -> Optional.ofNullable(fatturaPassivaRigaBulk.getObbligazione_scadenziario()))
+                                .filter(obbligazioneScadenzarioBulk -> {
+                                    return  mandatoRigaIBulk.getEsercizio_obbligazione().equals(obbligazioneScadenzarioBulk.getEsercizio()) &&
+                                            mandatoRigaIBulk.getEsercizio_ori_obbligazione().equals(obbligazioneScadenzarioBulk.getEsercizio_originale()) &&
+                                            mandatoRigaIBulk.getCd_cds().equals(obbligazioneScadenzarioBulk.getCd_cds()) &&
+                                            mandatoRigaIBulk.getPg_obbligazione().equals(obbligazioneScadenzarioBulk.getPg_obbligazione()) &&
+                                            mandatoRigaIBulk.getPg_obbligazione_scadenzario().equals(obbligazioneScadenzarioBulk.getPg_obbligazione_scadenzario());
+                                }).isPresent();
                     })
                     .findAny()
                     .map(Mandato_rigaIBulk::getMandato);

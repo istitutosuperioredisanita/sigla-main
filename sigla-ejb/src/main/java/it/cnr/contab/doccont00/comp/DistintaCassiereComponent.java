@@ -125,7 +125,6 @@ public class DistintaCassiereComponent extends
     public static final int MAX_LENGTH_CAUSALE = 140;
     public static final String FATT_ANALOGICA = "FATT_ANALOGICA";
     public static final String DOC_EQUIVALENTE = "DOC_EQUIVALENTE";
-    public static final String REGOLARIZZAZIONE_ACCREDITO_BANCA_D_ITALIA = "REGOLARIZZAZIONE ACCREDITO BANCA D'ITALIA";
     public static final String ACCREDITO_BANCA_D_ITALIA = "ACCREDITO BANCA D'ITALIA";
     public static final String SCOSTAMENTO = "0.03";
     public static final String VARIAZIONE = "VARIAZIONE";
@@ -5012,7 +5011,7 @@ public class DistintaCassiereComponent extends
                 }else if (docContabile.getTiDocumento().compareTo(ReversaleBulk.TIPO_REGOLAM_SOSPESO) == 0) {
                     if (Optional.ofNullable(bulk.getTi_cc_bi()).filter(s -> s.equals("B")).isPresent() &&
                             Optional.ofNullable(rif_modalita_pagamentoBulk.getTi_pagamento()).filter(s -> s.equals(Rif_modalita_pagamentoBulk.BANCA_ITALIA)).isPresent() ) {
-                        infover.setTipoRiscossione(REGOLARIZZAZIONE_ACCREDITO_BANCA_D_ITALIA);
+                        infover.setTipoRiscossione(REGOLARIZZAZIONE);
                     } else {
                         infover.setTipoRiscossione(REGOLARIZZAZIONE);
                     }
@@ -5435,7 +5434,7 @@ public class DistintaCassiereComponent extends
                             (!TipoRapportoTesoreriaEnum.TESORERIA_UNICA.equals(getConfigurazioneTipoRapportoTesoreria(userContext))))) {
                         infoben.setTipoPagamento(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.F24EP.value());
                         infoben.setDestinazione(LIBERA);
-                        infoben.setNumeroContoBancaItaliaEnteRicevente(NUMERO_CONTO_BANCA_ITALIA_ENTE_RICEVENTE);
+                       // infoben.setNumeroContoBancaItaliaEnteRicevente(NUMERO_CONTO_BANCA_ITALIA_ENTE_RICEVENTE);
                         infoben.setTipoContabilitaEnteRicevente(TIPO_CONTABILITA_ENTE_RICEVENTE);
                     } else if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.F24EP)
                             && docContabile.getDtPagamentoRichiesta() == null) {
@@ -5462,12 +5461,13 @@ public class DistintaCassiereComponent extends
                                         );
                         infoben.setDataEsecuzionePagamento(xmlGregorianCalendar);
                         infoben.setDestinazione(LIBERA);
-                        infoben.setNumeroContoBancaItaliaEnteRicevente(NUMERO_CONTO_BANCA_ITALIA_ENTE_RICEVENTE);
+                        //infoben.setNumeroContoBancaItaliaEnteRicevente(NUMERO_CONTO_BANCA_ITALIA_ENTE_RICEVENTE);
                         infoben.setTipoContabilitaEnteRicevente(TIPO_CONTABILITA_ENTE_RICEVENTE);
                     } else {
                         infoben.setTipoPagamento(tipoPagamentoSiopePlus.value());
                     }
                     if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.ACCREDITOTESORERIAPROVINCIALESTATOPERTABA)) {
+                        /*
                         infoben.setNumeroContoBancaItaliaEnteRicevente(
                                 Optional.ofNullable(docContabile.getNumeroConto())
                                         .filter(s -> s.length() == 7)
@@ -5478,7 +5478,7 @@ public class DistintaCassiereComponent extends
                                                 String.valueOf(bulk.getPg_documento_cont()),
                                                 docContabile.getNumeroConto()
                                         ))
-                        );
+                        );*/
                         infoben.setTipoContabilitaEnteRicevente(TIPO_CONTABILITA_ENTE_RICEVENTE);
                     }
                     if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.AVVISOPAGOPA)) {
@@ -5784,20 +5784,11 @@ public class DistintaCassiereComponent extends
                         infoben.setTipoPagamento(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.COMPENSAZIONE.value());
                     } else if (docContabile.getTiDocumento().compareTo(MandatoBulk.TIPO_REGOLAM_SOSPESO) == 0) {
                         infoben.setTipoPagamento(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.REGOLARIZZAZIONE.value());
-                    } else if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.F24EP)// caso BI
-                            && docContabile.getDtPagamentoRichiesta() == null
-                            && (rif_modalita_pagamentoBulk.getTi_pagamento().equalsIgnoreCase(Rif_modalita_pagamentoBulk.BANCA_ITALIA) &&
-                            (!TipoRapportoTesoreriaEnum.TESORERIA_UNICA.equals(getConfigurazioneTipoRapportoTesoreria(userContext))))) {
-                        infoben.setTipoPagamento(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.F24EP.value());
-                        infoben.setDestinazione(LIBERA);
-                        infoben.setNumeroContoBancaItaliaEnteRicevente(NUMERO_CONTO_BANCA_ITALIA_ENTE_RICEVENTE);
-                        infoben.setTipoContabilitaEnteRicevente(TIPO_CONTABILITA_ENTE_RICEVENTE);
-                    } else if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.F24EP)
+                        } else if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.F24EP)
                             && docContabile.getDtPagamentoRichiesta() == null) {
                         throw new ApplicationMessageFormatException(
                                 "Impossibile generare il flusso, indicare data richiesta pagamento nel mandato cds {0} n. {1}",
                                 docContabile.getCdCds(), docContabile.getPgDocumento());
-
                     } else if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.F24EP)
                             && docContabile.getDtPagamentoRichiesta() != null &&
                             (EJBCommonServices.getServerTimestamp().after(docContabile.getDtPagamentoRichiesta()))) {
@@ -5805,8 +5796,9 @@ public class DistintaCassiereComponent extends
                                 "Impossibile generare il flusso, indicare data richiesta pagamento nel mandato cds {0} mandato {1} superiore alla data odierna!",
                                 docContabile.getCdCds(), docContabile.getPgDocumento());
                     } else if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.F24EP) &&
-                            docContabile.getDtPagamentoRichiesta() != null &&
-                            (EJBCommonServices.getServerTimestamp().before(docContabile.getDtPagamentoRichiesta()))) {
+                            docContabile.getDtPagamentoRichiesta() != null
+                           &&(EJBCommonServices.getServerTimestamp().before(docContabile.getDtPagamentoRichiesta()))
+                    ) {
                         infoben.setTipoPagamento(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.F24EP.value());
                         final XMLGregorianCalendar xmlGregorianCalendar =
                                 DatatypeFactory.newInstance()
@@ -5817,13 +5809,13 @@ public class DistintaCassiereComponent extends
                                         );
                         infoben.setDataEsecuzionePagamento(xmlGregorianCalendar);
                         infoben.setDestinazione(LIBERA);
-                        infoben.setNumeroContoBancaItaliaEnteRicevente(NUMERO_CONTO_BANCA_ITALIA_ENTE_RICEVENTE);
+                        //infoben.setNumeroContoBancaItaliaEnteRicevente(NUMERO_CONTO_BANCA_ITALIA_ENTE_RICEVENTE);
                         infoben.setTipoContabilitaEnteRicevente(TIPO_CONTABILITA_ENTE_RICEVENTE);
                     } else {
                         infoben.setTipoPagamento(tipoPagamentoSiopePlus.value());
                     }
                     if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.ACCREDITOTESORERIAPROVINCIALESTATOPERTABA)) {
-                        infoben.setNumeroContoBancaItaliaEnteRicevente(
+                        /*infoben.setNumeroContoBancaItaliaEnteRicevente(
                                 Optional.ofNullable(docContabile.getNumeroConto())
                                         .filter(s -> s.length() == 7)
                                         .orElseThrow(() -> new ApplicationMessageFormatException("Impossibile generare il flusso, manca il numero conto " +
@@ -5833,7 +5825,7 @@ public class DistintaCassiereComponent extends
                                                 String.valueOf(bulk.getPg_documento_cont()),
                                                 docContabile.getNumeroConto()
                                         ))
-                        );
+                        );*/
                         infoben.setTipoContabilitaEnteRicevente(TIPO_CONTABILITA_ENTE_RICEVENTE);
                     }
                     if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.AVVISOPAGOPA)) {

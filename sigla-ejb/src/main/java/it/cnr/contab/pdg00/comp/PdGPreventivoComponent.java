@@ -24,6 +24,7 @@ import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
+import it.cnr.contab.config00.pdcep.bulk.TipoBilancioBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Classificazione_speseBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Classificazione_speseHome;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
@@ -2278,7 +2279,6 @@ private void inizializzaBulkPerStampa(UserContext userContext, Stampa_vpg_bilanc
 
 	stampa.setEsercizio(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
 	//stampa.setCd_cds(it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext));
-	
 	stampa.setTi_ist_com(Stampa_vpg_bilancio_riclassVBulk.TIPO_IST_COM);
 
 	if (stampa instanceof Stampa_vpg_stato_patrim_riclassVBulk){
@@ -2287,7 +2287,8 @@ private void inizializzaBulkPerStampa(UserContext userContext, Stampa_vpg_bilanc
 	
 	try{
 		String cd_cds_scrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext);
-		
+		stampa.setTipoBilanci(getHome(userContext, TipoBilancioBulk.class).findAll(userContext));
+
 		CdsHome cdsHome = (CdsHome)getHome(userContext, CdsBulk.class);
 		CdsBulk cds = (CdsBulk)cdsHome.findByPrimaryKey(new CdsBulk(cd_cds_scrivania));
 		Unita_organizzativa_enteBulk ente = (Unita_organizzativa_enteBulk) getHome( userContext, Unita_organizzativa_enteBulk.class).findAll().get(0);

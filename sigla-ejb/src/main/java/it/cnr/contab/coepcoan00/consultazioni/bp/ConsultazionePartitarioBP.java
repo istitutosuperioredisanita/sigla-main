@@ -39,6 +39,7 @@ import javax.servlet.jsp.PageContext;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -48,6 +49,9 @@ public class ConsultazionePartitarioBP<T extends IDocumentoAmministrativoBulk> e
     protected List<T> documentoAmministrativo;
     protected TerzoBulk terzoBulk;
     protected Boolean dettaglioTributi;
+    protected String partite;
+    protected java.sql.Timestamp toDataMovimento;
+
     protected String columnSet;
     protected Boolean enableSelection = false;
 
@@ -61,9 +65,11 @@ public class ConsultazionePartitarioBP<T extends IDocumentoAmministrativoBulk> e
         this.columnSet = columnSet;
     }
 
-    public ConsultazionePartitarioBP(TerzoBulk terzoBulk, Boolean dettaglioTributi, String columnSet, Boolean enableSelection) {
+    public ConsultazionePartitarioBP(TerzoBulk terzoBulk, Boolean dettaglioTributi, String partite, Timestamp toDataMovimento, String columnSet, Boolean enableSelection) {
         this.terzoBulk = terzoBulk;
         this.dettaglioTributi = dettaglioTributi;
+        this.partite = partite;
+        this.toDataMovimento = toDataMovimento;
         this.columnSet = columnSet;
         this.enableSelection = enableSelection;
     }
@@ -101,7 +107,12 @@ public class ConsultazionePartitarioBP<T extends IDocumentoAmministrativoBulk> e
                         compoundfindclause,
                         (OggettoBulk) getBulkInfo().getBulkClass().newInstance(),
                         "selectByClauseForPartitario",
-                        Arrays.asList(terzoBulk, dettaglioTributi).toArray()
+                        Arrays.asList(
+                                terzoBulk,
+                                dettaglioTributi,
+                                partite,
+                                toDataMovimento
+                        ).toArray()
                 );
             } else {
                 return createComponentSession().cerca(
@@ -163,10 +174,16 @@ public class ConsultazionePartitarioBP<T extends IDocumentoAmministrativoBulk> e
     };
     @Override
     public String getRowStyle(Object obj) {
+        Optional<PartitarioBulk> partitarioBulk1 = Optional.ofNullable(obj)
+                .filter(PartitarioBulk.class::isInstance)
+                .map(PartitarioBulk.class::cast);
+        if (partitarioBulk1
+                .map(partitarioBulk -> Optional.ofNullable(partitarioBulk.getScrittura().getDt_cancellazione()).isPresent())
+                .orElse(Boolean.FALSE)) {
+            return "text-decoration:line-through";
+        }
         if (enableSelection) {
-            if (Optional.ofNullable(obj)
-                    .filter(PartitarioBulk.class::isInstance)
-                    .map(PartitarioBulk.class::cast)
+            if (partitarioBulk1
                     .map(partitarioBulk -> partitarioBulk.isRigaTipoSaldo())
                     .orElse(Boolean.FALSE)) {
                 return "cursor:pointer";

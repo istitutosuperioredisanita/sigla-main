@@ -96,6 +96,13 @@
 			sqlTypeName="VARCHAR"
 			columnSize="2000"
 			nullable="true" />
+		<columnMapping
+			columnName="CD_TIPO_BILANCIO"
+			propertyName="cdTipoBilancio"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="true"/>
+
 	</defaultColumnMap>
 	<persistentProperty
 		name="cdPianoGruppi" />
@@ -127,4 +134,6 @@
 		name="cdPianoPadre" />
 	<persistentProperty
 		name="formula" />
+	<persistentProperty
+		name="cdTipoBilancio" />
 </SQLPersistentInfo>

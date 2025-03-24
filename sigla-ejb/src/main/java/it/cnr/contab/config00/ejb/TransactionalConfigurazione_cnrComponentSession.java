@@ -611,6 +611,24 @@ public class TransactionalConfigurazione_cnrComponentSession extends it.cnr.jada
     }
 
     @Override
+    public Boolean isAttivaAnalitica(UserContext userContext) throws ComponentException, RemoteException {
+        try {
+            return (java.lang.Boolean) invoke("isAttivaAnalitica", new Object[]{
+                    userContext});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
     public Boolean isBloccoScrittureProposte(UserContext userContext) throws ComponentException, RemoteException {
         try {
             return (java.lang.Boolean) invoke("isBloccoScrittureProposte", new Object[]{
@@ -1596,4 +1614,74 @@ public class TransactionalConfigurazione_cnrComponentSession extends it.cnr.jada
             }
         }
     }
+
+    @Override
+    public Boolean isLiqIvaAnticipataFattAttiva(UserContext param0, Timestamp dataFattura) throws ComponentException, RemoteException {
+        try {
+            return (Boolean) invoke("isLiqIvaAnticipataFattAttiva", new Object[]{param0,dataFattura});
+        } catch (RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public Boolean isLiqIvaAnticipataFattPassiva(UserContext param0, Timestamp dataFattura) throws ComponentException, RemoteException {
+        try {
+            return (Boolean) invoke("isLiqIvaAnticipataFattPassiva", new Object[]{param0,dataFattura});
+        } catch (RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    public Timestamp getFineRegFattPass(UserContext userContext, Integer esercizio)  throws RemoteException, it.cnr.jada.comp.ComponentException {
+        try {
+            return (Timestamp) invoke("getFineRegFattPass", new Object[]{
+                    userContext, esercizio});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public Boolean isAttivoGestFirmatariCont(UserContext userContext) throws ComponentException, RemoteException {
+        try {
+            return (java.lang.Boolean) invoke("isAttivoGestFirmatariCont", new Object[]{
+                    userContext});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
 }

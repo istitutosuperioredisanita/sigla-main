@@ -250,6 +250,7 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
 
     public final static String PK_GESTIONE_CONTRATTI = "CONTRATTI";
     public final static String SK_ATT_REST_STORED_FROM_SIGLA = "ATT_REST_CONTR_STORED_FROM_SIGLA";
+    public final static String SK_GEST_FIRMATARIO_CTR = "GEST_FIRMATARIO_CTR";
 
     public final static String PK_SOSPESI = "SOSPESI";
     public final static String SK_GESTIONE_STATO_INIZIALE = "GESTIONE_STATO_INIZIALE";
@@ -260,6 +261,8 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     public final static String PK_DIPENDENTI = "DIPENDENTI";
 
     public final static String SK_MODALITA_PAGAMENTO = "MODALITA_PAGAMENTO";
+
+    public final static String SK_LIQ_IVA_ANTICIPATA = "LIQ_IVA_ANTICIPATA";
 
     public final static Map<String,String> TI_STEP_FINE_ANNO = new HashMap<String, String>() {{
         put("N", "No");
@@ -280,7 +283,10 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
         CHIUSURA_PROVVISORIA("090_CHIUSURA_PROVVISORIA"),
         CHIUSURA_DEFINITIVA("100_CHIUSURA_DEFINITIVA"),
         CARICHI_SCARICHI_MAG("110_FINE_MOV_MAG"),
-        RIAPERTURA_CONTI("120_RIAPERTURA_CONTI");
+        RIAPERTURA_CONTI("120_RIAPERTURA_CONTI"),
+        REGISTRAZIONE_FATT_PASS("130_REG_FATT_PAS"),
+        STORNO_FATT_PAS("140_STORNO_FATT_PAS"),
+        STORNO_FATT_ATT("150_STORNO_FATT_ATT");
 
         private final String value;
 
@@ -320,7 +326,6 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
             return this.getVal04();
         return null;
     }
-
     public static void stepFineAnno(UserContext context, StepFineAnno stepFineAnno) throws BusinessProcessException {
         try {
             final Configurazione_cnrBulk configurazione = Utility
@@ -341,7 +346,7 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
                                     .filter(s -> s.equalsIgnoreCase("Y") || s.equalsIgnoreCase("T"))
                                         .isPresent()
                         )
-                        .map(d -> d.isBefore(EJBCommonServices.getServerTimestamp().toLocalDateTime())).get()) {
+                        .map(d -> ( d!=null && d.isBefore(EJBCommonServices.getServerTimestamp().toLocalDateTime()))).isPresent()) {
                     throw new ApplicationMessageFormatException(
                             "La funzione è bloccata per l''anno {0} dal {1}",
                             String.valueOf(CNRUserContext.getEsercizio(context)),

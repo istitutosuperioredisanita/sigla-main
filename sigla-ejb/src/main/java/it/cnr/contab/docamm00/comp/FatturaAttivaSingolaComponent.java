@@ -27,11 +27,10 @@ import it.cnr.contab.anagraf00.tabter.bulk.ProvinciaHome;
 import it.cnr.contab.bollo00.tabrif.bulk.Tipo_atto_bolloBulk;
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaFromDocumentoComponent;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
-import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaHome;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
-import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
+import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
 import it.cnr.contab.config00.ejb.Parametri_cnrComponentSession;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
@@ -1076,6 +1075,15 @@ public class FatturaAttivaSingolaComponent
             }
             if (dettagliAddebitati != null)
                 impTotaleAddebitati = impTotaleAddebitati.add(calcolaTotalePer(dettagliAddebitati, quadraturaInDeroga));
+        }
+        Documento_generico_rigaHome documentoGenericoRigaHome = (Documento_generico_rigaHome)getHome(userContext, Documento_generico_rigaBulk.class);
+        for (Iterator i = dettagli.iterator(); i.hasNext(); ) {
+            Fattura_attiva_rigaIBulk rigaFattura = (Fattura_attiva_rigaIBulk) i.next();
+            impTotaleStornati = impTotaleStornati.add(
+                    documentoGenericoRigaHome.findRigaStorno(userContext, rigaFattura)
+                            .map(Documento_generico_rigaBase::getIm_riga)
+                            .orElse(BigDecimal.ZERO)
+            );
         }
         return impTotaleDettagli.add(impTotaleAddebitati).subtract(impTotaleStornati);
     }
@@ -2420,10 +2428,7 @@ public class FatturaAttivaSingolaComponent
                         StringBuffer sb = new StringBuffer();
                         sb.append("Attenzione: La scadenza ");
                         sb.append(scadenza.getDs_scadenza());
-                        sb.
-
-
-                                append(" di " + scadenza.getIm_scadenza().doubleValue() + " EUR");
+                        sb.append(" di " + scadenza.getIm_scadenza().doubleValue() + " EUR");
                         sb.append(" è stata coperta solo per ");
                         sb.append(totale.doubleValue() + " EUR!");
                         throw new it.cnr.jada.comp.ApplicationException(sb.toString());
@@ -3789,6 +3794,14 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
                 (sezionaliCaricati != null && !sezionaliCaricati.isEmpty())
                         ? (it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk) sezionaliCaricati.iterator().next()
                         : null);
+        //setta boolean del bulk come nel BP
+        Boolean liqIvaAnticipataFattAttivaValid = null;
+        try {
+            liqIvaAnticipataFattAttivaValid = Utility.createConfigurazioneCnrComponentSession().isLiqIvaAnticipataFattAttiva(aUC, fattura.getDt_registrazione());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+        fattura.setFl_bloccoAttivoDtReg(liqIvaAnticipataFattAttivaValid);
         return fattura;
     }
 
@@ -4630,6 +4643,7 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
     }
 
     private void rebuildAccertamenti(UserContext aUC, Fattura_attivaBulk fatturaAttiva) throws ComponentException {
+        Documento_generico_rigaHome documentoGenericoRigaHome = (Documento_generico_rigaHome)getHome(aUC, Documento_generico_rigaBulk.class);
 
         BulkList righeFattura = fatturaAttiva.getFattura_attiva_dettColl();
         if (righeFattura != null) {
@@ -4655,10 +4669,15 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
                         Fattura_attiva_rigaIBulk rigaFP = (Fattura_attiva_rigaIBulk) riga;
                         java.math.BigDecimal impStorni = new java.math.BigDecimal(0).setScale(2, java.math.BigDecimal.ROUND_HALF_UP);
                         java.math.BigDecimal impAddebiti = new java.math.BigDecimal(0).setScale(2, java.math.BigDecimal.ROUND_HALF_UP);
+                        impStorni = impStorni.add(
+                                documentoGenericoRigaHome.findRigaStorno(aUC, (Fattura_attiva_rigaIBulk)riga)
+                                        .map(Documento_generico_rigaBase::getIm_riga)
+                                        .orElse(BigDecimal.ZERO)
+                        );
                         if (storniHashMap != null) {
-                            impStorni = calcolaTotalePer((Vector) storniHashMap.get(riga), false);
-                            rigaFP.setIm_totale_storni(impStorni);
+                            impStorni = impStorni.add(calcolaTotalePer((Vector) storniHashMap.get(riga), false));
                         }
+                        rigaFP.setIm_totale_storni(impStorni);
                         if (addebitiHashMap != null) {
                             impAddebiti = calcolaTotalePer((Vector) addebitiHashMap.get(riga), false);
                             rigaFP.setIm_totale_addebiti(impAddebiti);
@@ -5565,6 +5584,8 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
         controllaContabilizzazioneDiTutteLeRighe(aUC, fatturaAttiva);
         controllaQuadraturaAccertamenti(aUC, fatturaAttiva);
         controllaQuadraturaIntrastat(aUC, fatturaAttiva);
+        //Verifica la validità della data di registrazione tra i 2 range e lo stato del flag
+        callVerifyDataRegistrazioneIsAttivoBlocco(aUC, fatturaAttiva);
     }
 //^^@@
 
@@ -7210,6 +7231,31 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
         }
     }
 
+    private void callVerifyDataRegistrazioneIsAttivoBlocco(
+            UserContext userContext,
+            Fattura_attivaBulk fatturaAttiva)
+            throws ComponentException {
+
+        try {
+            // Recupero l'oggetto Configurazione_cnrComponent per effettuare le verifiche
+            Configurazione_cnrComponentSession configurazioneCnrComponentSession = Utility.createConfigurazioneCnrComponentSession();
+
+            // Recupero la data di registrazione dalla fattura
+            Timestamp dataFattura = fatturaAttiva.getDt_registrazione();
+
+            // Verifico le condizioni per la fattura passiva
+            Boolean isValidaFattAttiva = configurazioneCnrComponentSession.isLiqIvaAnticipataFattAttiva(userContext, dataFattura);
+
+            if (isValidaFattAttiva) {
+                throw new it.cnr.jada.comp.ApplicationException("Data registrazione inferiore/uguale a ultimo periodo definitivo di stampa registri IVA");
+            }
+        } catch (ComponentException e) {
+            throw e; // Rilancio l'eccezione specifica
+        } catch (Exception e) {
+            throw new ComponentException(e);
+        }
+    }
+
     private java.util.List findDettagliIntrastat(UserContext aUC, Fattura_attivaBulk fattura) throws ComponentException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException {
 
         if (fattura == null &&
@@ -7569,10 +7615,7 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
                 }
                 if (totaleDaSottrarre.compareTo(BigDecimal.ZERO) != 0) {
                     try {
-                        Accertamento_scadenzarioBulk sca = (Accertamento_scadenzarioBulk) h.modificaScadenzaInAutomatico(userContext,
-                                scadenza,
-                                scadenza.getIm_scadenza().subtract(totaleDaSottrarre),
-                                false, true);
+                        Accertamento_scadenzarioBulk sca =(Accertamento_scadenzarioBulk)h.sdoppiaScadenzaInAutomatico(userContext,scadenza,scadenza.getIm_scadenza().subtract(totaleDaSottrarre));
                         for (Iterator<Fattura_attiva_rigaBulk> iterator2 = ((java.util.List) accertamentiHash.get(scadenza)).iterator(); iterator2.hasNext(); ) {
                             Fattura_attiva_rigaBulk rigaFattura = iterator2.next();
                             rigaFattura.setAccertamento_scadenzario(sca);

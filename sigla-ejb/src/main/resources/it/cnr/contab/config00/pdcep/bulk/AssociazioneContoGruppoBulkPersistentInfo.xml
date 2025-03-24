@@ -10,6 +10,9 @@
 		<columnMapping
 			columnName="CD_VOCE_EP"
 			propertyName="voceEp.cd_voce_ep" />
+		<columnMapping
+			columnName="CD_TIPO_BILANCIO"
+			propertyName="tipoBilancio.cdTipoBilancio" />
 	</defaultColumnMap>
 	<columnMap
 			name="INSERT"
@@ -22,4 +25,6 @@
 	<persistentProperty
 		name="voceEp"
 		partOfOid="true" />
+	<persistentProperty
+		name="tipoBilancio" />
 </SQLPersistentInfo>

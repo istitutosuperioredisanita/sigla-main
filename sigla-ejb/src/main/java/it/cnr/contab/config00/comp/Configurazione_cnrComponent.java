@@ -36,11 +36,13 @@ import it.cnr.jada.util.ejb.EJBCommonServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ejb.EJBException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
 
 public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComponent implements IConfigurazione_cnrMgr, Cloneable, Serializable {
@@ -831,6 +833,23 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
 
     /**
      * @param userContext
+     * @return É attiva la gestione dell'analitica
+     * @throws PersistencyException
+     */
+    public boolean isAttivaAnalitica(UserContext userContext) throws ComponentException {
+        try {
+            return Optional.ofNullable(getHome(userContext, Configurazione_cnrBulk.class))
+                    .filter(Configurazione_cnrHome.class::isInstance)
+                    .map(Configurazione_cnrHome.class::cast)
+                    .orElseThrow(() -> new DetailedRuntimeException("Configurazione Home not found"))
+                    .isAttivaAnalitica(userContext);
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        }
+    }
+
+    /**
+     * @param userContext
      * @return É attivo il blocco delle scritture di economica
      * @throws PersistencyException
      */
@@ -1311,6 +1330,130 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
             Configurazione_cnrKey configurazioneCnrKey = new Configurazione_cnrKey(
                     Configurazione_cnrBulk.PK_FATTURA_PASSIVA,
                     Configurazione_cnrBulk.SK_GEST_IRREGISTABILE,
+                    ASTERISCO,
+                    CNRUserContext.getEsercizio(userContext));
+            return val01YesNo(userContext, configurazioneCnrKey)
+                    .orElseGet(() -> {
+                        try {
+                            return val01YesNo(userContext, configurazioneCnrKey.esercizio(0))
+                                    .orElse(Boolean.FALSE);
+                        } catch (PersistencyException|ComponentException e) {
+                            throw new PersistencyError(e);
+                        }
+                    });
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        }
+    }
+
+
+    public Boolean isLiqIvaAnticipataFattAttiva(UserContext userContext, Timestamp dataFattura) throws ComponentException {
+        Date dataInizio;
+        Date dataFine;
+        boolean isLiqIvaAnticipata;
+
+        try {
+            // Controllo dello stato "val01" per FATTURA_ATTIVA e LIQ_IVA_ANTICIPATA
+            Configurazione_cnrKey configurazioneCnrKey = new Configurazione_cnrKey(
+                    Configurazione_cnrBulk.PK_FATTURA_ATTIVA,
+                    Configurazione_cnrBulk.SK_LIQ_IVA_ANTICIPATA,
+                    ASTERISCO,
+                    CNRUserContext.getEsercizio(userContext));
+            isLiqIvaAnticipata = val01YesNo(userContext, configurazioneCnrKey)
+                    .orElseGet(() -> {
+                        try {
+                            return val01YesNo(userContext, configurazioneCnrKey.esercizio(0))
+                                    .orElse(Boolean.FALSE);
+                        } catch (PersistencyException | ComponentException e) {
+                            throw new PersistencyError(e);
+                        }
+                    });
+
+            // Recupero delle date di validità
+            dataInizio = getDt01(
+                    userContext,
+                    CNRUserContext.getEsercizio(userContext),
+                    null,
+                    Configurazione_cnrBulk.PK_FATTURA_ATTIVA,
+                    Configurazione_cnrBulk.SK_LIQ_IVA_ANTICIPATA
+            );
+            dataFine = getDt02(
+                    userContext,
+                    CNRUserContext.getEsercizio(userContext),
+                    null,
+                    Configurazione_cnrBulk.PK_FATTURA_ATTIVA,
+                    Configurazione_cnrBulk.SK_LIQ_IVA_ANTICIPATA
+            );
+        } catch (PersistencyException | ComponentException | EJBException e) {
+            throw new it.cnr.jada.comp.ApplicationException(e.getMessage());
+        }
+
+        // Verifica delle date di validità
+        return isLiqIvaAnticipata && dataFattura != null && dataInizio != null && dataFine != null &&
+                (dataFattura.compareTo(dataInizio)>=0 &&  dataFattura.compareTo(dataFine)<=0);
+    }
+
+    public Boolean isLiqIvaAnticipataFattPassiva(UserContext userContext, Timestamp dataFattura) throws ComponentException {
+        Date dataInizio;
+        Date dataFine;
+        boolean isLiqIvaAnticipata;
+
+        try {
+            // Controllo dello stato "val01" per FATTURA_PASSIVA e LIQ_IVA_ANTICIPATA
+            Configurazione_cnrKey configurazioneCnrKey = new Configurazione_cnrKey(
+                    Configurazione_cnrBulk.PK_FATTURA_PASSIVA,
+                    Configurazione_cnrBulk.SK_LIQ_IVA_ANTICIPATA,
+                    ASTERISCO,
+                    CNRUserContext.getEsercizio(userContext));
+            isLiqIvaAnticipata = val01YesNo(userContext, configurazioneCnrKey)
+                    .orElseGet(() -> {
+                        try {
+                            return val01YesNo(userContext, configurazioneCnrKey.esercizio(0))
+                                    .orElse(Boolean.FALSE);
+                        } catch (PersistencyException | ComponentException e) {
+                            throw new PersistencyError(e);
+                        }
+                    });
+
+            // Recupero delle date di validità
+            dataInizio = getDt01(
+                    userContext,
+                    CNRUserContext.getEsercizio(userContext),
+                    null,
+                    Configurazione_cnrBulk.PK_FATTURA_PASSIVA,
+                    Configurazione_cnrBulk.SK_LIQ_IVA_ANTICIPATA
+            );
+            dataFine = getDt02(
+                    userContext,
+                    CNRUserContext.getEsercizio(userContext),
+                    null,
+                    Configurazione_cnrBulk.PK_FATTURA_PASSIVA,
+                    Configurazione_cnrBulk.SK_LIQ_IVA_ANTICIPATA
+            );
+        } catch (PersistencyException | ComponentException | EJBException e) {
+            throw new it.cnr.jada.comp.ApplicationException(e.getMessage());
+        }
+
+        // Verifica delle date di validità
+        return isLiqIvaAnticipata && dataFattura != null && dataInizio != null && dataFine != null &&
+                (dataFattura.compareTo(dataInizio)>=0 &&  dataFattura.compareTo(dataFine)<=0);
+    }
+    public Timestamp getFineRegFattPass(UserContext userContext, Integer esercizio) throws ComponentException {
+        try {
+            return Optional.ofNullable(getHome(userContext, Configurazione_cnrBulk.class))
+                    .filter(Configurazione_cnrHome.class::isInstance)
+                    .map(Configurazione_cnrHome.class::cast)
+                    .orElseThrow(() -> new DetailedRuntimeException("Configurazione Home not found"))
+                    .getFineRegFattPass(userContext, esercizio);
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        }
+    }
+    public Boolean isAttivoGestFirmatariCont(UserContext userContext) throws ComponentException {
+        try {
+            Configurazione_cnrKey configurazioneCnrKey = new Configurazione_cnrKey(
+                    Configurazione_cnrBulk.PK_GESTIONE_CONTRATTI,
+                    Configurazione_cnrBulk.SK_GEST_FIRMATARIO_CTR,
                     ASTERISCO,
                     CNRUserContext.getEsercizio(userContext));
             return val01YesNo(userContext, configurazioneCnrKey)

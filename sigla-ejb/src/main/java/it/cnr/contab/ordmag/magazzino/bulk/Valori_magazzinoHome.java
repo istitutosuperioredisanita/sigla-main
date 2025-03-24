@@ -52,7 +52,7 @@ public class Valori_magazzinoHome extends BulkHome {
                     "       	 and cd_cds_tipo_movimento=tmc.cd_cds " +
                     "       	 and tmc.tipo in ( 'CM','CA') " +
                     "       	 where mc.stato!='ANN' " +
-                    "      		 and mc.dt_riferimento<=? " +
+                    "      		and mc.dt_riferimento BETWEEN ? and ?" +
                     "        	 and mc.CD_CDS_LOTTO=l.CD_CDS " +
                     "        	 and mc.CD_MAGAZZINO_LOTTO=l.CD_MAGAZZINO " +
                     "        	 and mc.ESERCIZIO_LOTTO=l.ESERCIZIO " +
@@ -64,7 +64,7 @@ public class Valori_magazzinoHome extends BulkHome {
                     "      		and cd_cds_tipo_movimento=tmc.cd_cds " +
                     "      		and tmc.tipo in ('SA','SM') " +
                     "      		where mc.stato!='ANN' " +
-                    "      		and mc.dt_riferimento<=? " +
+                    "      		and mc.dt_riferimento BETWEEN ? and ?" +
                     "      		and mc.CD_CDS_LOTTO=l.CD_CDS " +
                     "      		and mc.CD_MAGAZZINO_LOTTO=l.CD_MAGAZZINO " +
                     "      		and mc.ESERCIZIO_LOTTO=l.ESERCIZIO " +
@@ -112,11 +112,13 @@ public class Valori_magazzinoHome extends BulkHome {
                 Date dataRifMovimentoChi = DateUtils.firstDateOfTheYear(esercizio);
 
 
-                ps.setDate(1, new java.sql.Date(dataFinePeriodo.getTime()));
+                ps.setDate(1, new java.sql.Date(DateUtils.firstDateOfTheYear(esercizio).getTime()));
                 ps.setDate(2, new java.sql.Date(dataFinePeriodo.getTime()));
-                ps.setDate(3, new java.sql.Date(dataRifMovimentoChi.getTime()));
-                ps.setInt(4, esercizio);
-                ps.setDate(5, new java.sql.Date(dataFinePeriodo.getTime()));
+                ps.setDate(3, new java.sql.Date(DateUtils.firstDateOfTheYear(esercizio).getTime()));
+                ps.setDate(4, new java.sql.Date(dataFinePeriodo.getTime()));
+                ps.setDate(5, new java.sql.Date(dataRifMovimentoChi.getTime()));
+                ps.setInt(6, esercizio);
+                ps.setDate(7, new java.sql.Date(dataFinePeriodo.getTime()));
 
 
                 ResultSet rs = ps.executeQuery();

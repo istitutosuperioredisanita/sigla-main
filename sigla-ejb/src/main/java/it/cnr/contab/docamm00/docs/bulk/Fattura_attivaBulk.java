@@ -33,6 +33,7 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabter.bulk.NazioneBulk;
+import it.cnr.contab.coepcoan00.core.bulk.Scrittura_analiticaBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.contab.docamm00.intrastat.bulk.Fattura_attiva_intraBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.*;
@@ -298,6 +299,11 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
     @JsonIgnore
     private boolean isAttivoSplitPayment = false;
     private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
+
+    private Scrittura_analiticaBulk scrittura_analitica;
+
+    private boolean fl_bloccoAttivoDtReg =  Boolean.FALSE;
+
     public Fattura_attivaBulk() {
         super();
     }
@@ -1794,7 +1800,9 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
      */
     public boolean isStampataSuRegistroIVA() {
         return STATO_IVA_B.equalsIgnoreCase(getStatoIVA()) ||
-                STATO_IVA_C.equalsIgnoreCase(getStatoIVA());
+                STATO_IVA_C.equalsIgnoreCase(getStatoIVA()) ||
+                //controllo solo per la modifica
+                ( this.getPg_fattura_attiva()!=null && isBloccoAttivoDtReg());
     }
 
     /**
@@ -2162,7 +2170,8 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
         BigDecimal totale= BigDecimal.ZERO;
         for (Iterator i = fattura_attiva_dettColl.iterator(); i.hasNext(); ) {
             Fattura_attiva_rigaBulk riga = ((Fattura_attiva_rigaBulk) i.next());
-            if (riga.getBene_servizio().getFl_obb_intrastat_ven().booleanValue()
+            if (riga.getBene_servizio()!=null &&
+                    riga.getBene_servizio().getFl_obb_intrastat_ven().booleanValue()
                     && riga.getVoce_iva().getFl_intrastat().booleanValue())
                 totale=totale.add(riga.getIm_imponibile());
         }
@@ -2394,6 +2403,15 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
         this.scrittura_partita_doppia = scrittura_partita_doppia;
     }
 
+    @Override
+    public Scrittura_analiticaBulk getScrittura_analitica() {
+        return scrittura_analitica;
+    }
+    @Override
+    public void setScrittura_analitica(Scrittura_analiticaBulk scrittura_analitica) {
+        this.scrittura_analitica = scrittura_analitica;
+    }
+
     public TipoDocumentoEnum getTipoDocumentoEnum() {
         if ("C".equals(this.getTi_fattura()))
             return TipoDocumentoEnum.fromValue(TipoDocumentoEnum.TIPO_NOTA_CREDITO_ATTIVA);
@@ -2502,5 +2520,24 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
 
     public boolean isDocumentoInContoAnticipo() {
         return TipoContoDocAttivoEnum.ANT.value().equals(this.getCd_tipo_conto_ep());
+    }
+
+    public boolean isBloccoAttivoDtReg() {
+        return fl_bloccoAttivoDtReg;
+    }
+
+    public boolean isFl_bloccoAttivoDtReg() {
+        return fl_bloccoAttivoDtReg;
+    }
+
+    public void setFl_bloccoAttivoDtReg(boolean fl_bloccoAttivoDtReg) {
+        this.fl_bloccoAttivoDtReg = fl_bloccoAttivoDtReg;
+    }
+
+    @Override
+    public Boolean isDocumentoStorno() {
+        return Optional.ofNullable(this.getTipoDocumentoEnum())
+                .map(TipoDocumentoEnum::isNotaCreditoAttiva)
+                .orElse(Boolean.FALSE);
     }
 }

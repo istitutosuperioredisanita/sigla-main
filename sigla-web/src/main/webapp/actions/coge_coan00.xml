@@ -92,7 +92,7 @@
 	<businessProcess
 			name="PartitarioTerzoBP" className="it.cnr.contab.coepcoan00.bp.PartitarioTerzoBP">
 		<forward name="default" path="/coepcoan00/partitario_terzo.jsp"/>
-		<init-param name="bulkClassName" value="it.cnr.contab.coepcoan00.filter.bulk.FiltroRicercaTerzoBulk"/>
+		<init-param name="bulkClassName" value="it.cnr.contab.coepcoan00.filter.bulk.FiltroRicercaPartitarioBulk"/>
 		<init-param name="defaultAction" value="PartitarioTerzoAction"/>
 	</businessProcess>
 
@@ -114,6 +114,26 @@
 		<init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>
 		<init-param name="defaultAction" value="CRUDAssociazioneContoGruppoAction"/>
 	</businessProcess>
+	<action
+			path="/SelezionatoreGruppoEpAction"
+			actionClass="it.cnr.contab.coepcoan00.action.SelezionatoreGruppoEpAction" />
 
+	<businessProcess
+			name="SelezionatoreGruppoEpBP" className="it.cnr.contab.coepcoan00.bp.SelezionatoreGruppoEpBP">
+		<forward name="default" path="/coepcoan00/gruppo_albero.jsp"/>
+		<init-param name="defaultAction" value="SelezionatoreGruppoEpAction" />
+	</businessProcess>
+
+	<action
+			path="/CRUDGruppoEPAction"
+			actionClass="it.cnr.contab.coepcoan00.action.CRUDGruppoEPAction" />
+
+	<businessProcess
+			name="CRUDGruppoEPBP" className="it.cnr.jada.util.action.SimpleCRUDBP">
+		<forward name="default" path="/coepcoan00/form_gruppo_ep.jsp"/>
+		<init-param name="bulkClassName" value="it.cnr.contab.config00.pdcep.bulk.GruppoEPBulk"/>
+		<init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>
+		<init-param name="defaultAction" value="CRUDGruppoEPAction"/>
+	</businessProcess>
 
 </action-mappings>

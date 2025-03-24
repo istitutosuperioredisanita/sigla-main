@@ -88,9 +88,12 @@ public class AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean extend
 				List<String> listInsert = new ArrayList<>();
 				List<String> listError = new ArrayList<>();
 
+				boolean loadAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(param0);
+
 				allDocuments.stream()
 						.filter(el-> Optional.ofNullable(el.getDtGenerazioneScrittura()).isPresent())
-						.filter(el-> MandatoBulk.STATO_COGE_N.equals(el.getStato_coge()) || MandatoBulk.STATO_COGE_R.equals(el.getStato_coge()))
+						.filter(el-> MandatoBulk.STATO_COGE_N.equals(el.getStato_coge()) || MandatoBulk.STATO_COGE_R.equals(el.getStato_coge())
+						|| MandatoBulk.STATO_COGE_N.equals(el.getStato_coan()) || MandatoBulk.STATO_COGE_R.equals(el.getStato_coan()))
 						.sorted(Comparator.comparing(IDocumentoCogeBulk::getDtGenerazioneScrittura)
 								.thenComparing(el->el.getTipoDocumentoEnum().getOrdineCostruzione())
 								.thenComparing(IDocumentoCogeBulk::getPg_doc))
@@ -99,8 +102,8 @@ public class AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean extend
 						System.out.println("Data: "+documentoCoge.getDtGenerazioneScrittura()+" - Tipo: "+
 								documentoCoge.getTipoDocumentoEnum().getValue() +" - Numero: "+
 								documentoCoge.getPg_doc());
-						logger.info("Documento in elaborazione: "+documentoCoge.getEsercizio()+"/"+documentoCoge.getCd_uo()+"/"+documentoCoge.getCd_tipo_doc()+"/"+documentoCoge.getPg_doc());
-						session.createScritturaRequiresNew(param0, documentoCoge);
+                        logger.info("Documento in elaborazione: {}/{}/{}/{}", documentoCoge.getEsercizio(), documentoCoge.getCd_uo(), documentoCoge.getCd_tipo_doc(), documentoCoge.getPg_doc());
+						session.createScritturaRequiresNew(param0, documentoCoge, loadAnalitica);
 						listInsert.add("X");
 					} catch (Throwable e) {
 						listError.add("X");

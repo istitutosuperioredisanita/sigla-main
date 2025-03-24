@@ -22,6 +22,7 @@ import it.cnr.jada.util.action.CRUDBP;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 
 public class AssociazioneContoGruppoBulk extends AssociazioneContoGruppoBase {
@@ -43,7 +44,7 @@ public class AssociazioneContoGruppoBulk extends AssociazioneContoGruppoBase {
 		D("Dare"), A("Avere");
 		private final String label;
 
-		private Sezione(String label) {
+		Sezione(String label) {
 			this.label = label;
 		}
 
@@ -56,7 +57,7 @@ public class AssociazioneContoGruppoBulk extends AssociazioneContoGruppoBase {
 		private final String value;
 		private final String label;
 
-		private Segno(String value, String label) {
+		Segno(String value, String label) {
 			this.label = label;
 			this.value = value;
 		}
@@ -84,10 +85,13 @@ public class AssociazioneContoGruppoBulk extends AssociazioneContoGruppoBase {
 	}
 	private java.util.Collection gruppoEp;
 
+	private TipoBilancioBulk tipoBilancio;
+	private java.util.Collection<TipoBilancioBulk> tipoBilanci;
+
 	/**
-	 * [VOCE_EP ]
+	 * [VOCE_EP]
 	 **/
-	private Voce_epBulk voceEp =  new Voce_epBulk();
+	private ContoBulk voceEp;
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: CNR_ASS_CONTO_GRUPPO_EP
@@ -102,10 +106,10 @@ public class AssociazioneContoGruppoBulk extends AssociazioneContoGruppoBase {
 	public AssociazioneContoGruppoBulk(String rowid) {
 		super(rowid);
 	}
-	public Voce_epBulk getVoceEp() {
+	public ContoBulk getVoceEp() {
 		return voceEp;
 	}
-	public void setVoceEp(Voce_epBulk voceEp)  {
+	public void setVoceEp(ContoBulk voceEp)  {
 		this.voceEp=voceEp;
 	}
 	/**
@@ -157,4 +161,35 @@ public class AssociazioneContoGruppoBulk extends AssociazioneContoGruppoBase {
 		setCdPianoGruppi(PianoGruppi.CE.name());
 		return super.initializeForInsert(crudbp, actioncontext);
 	}
+
+	public TipoBilancioBulk getTipoBilancio() {
+		return tipoBilancio;
+	}
+
+	public void setTipoBilancio(TipoBilancioBulk tipoBilancio) {
+		this.tipoBilancio = tipoBilancio;
+	}
+
+	@Override
+	public void setCdTipoBilancio(String cd_tipo_bilancio) {
+		Optional.ofNullable(tipoBilancio).ifPresent(
+				tipoBilancioBulk -> tipoBilancioBulk.setCdTipoBilancio(cd_tipo_bilancio)
+		);
+	}
+
+	@Override
+	public String getCdTipoBilancio() {
+		return Optional.ofNullable(tipoBilancio)
+				.map(TipoBilancioKey::getCdTipoBilancio)
+				.orElse(null);
+	}
+
+	public Collection<TipoBilancioBulk> getTipoBilanci() {
+		return tipoBilanci;
+	}
+
+	public void setTipoBilanci(Collection<TipoBilancioBulk> tipoBilanci) {
+		this.tipoBilanci = tipoBilanci;
+	}
+
 }

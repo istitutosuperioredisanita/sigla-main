@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBase;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonInclude(value= JsonInclude.Include.NON_NULL)
@@ -87,6 +88,12 @@ public class ContrattoDtoBulk extends ContrattoBase  implements Serializable {
 
     public void setDettaglioContratto(List<DettaglioContrattoDtoBulk> dettaglioContratto) {
         this.dettaglioContratto = dettaglioContratto;
+    }
+
+    public void addDettaglioContratto( DettaglioContrattoDtoBulk dettaglioContratto){
+        if ( this.getDettaglioContratto()==null)
+            this.setDettaglioContratto(new ArrayList<DettaglioContrattoDtoBulk>());
+        getDettaglioContratto().add(dettaglioContratto);
     }
 
     public List<AttachmentContratto> getAttachments() {

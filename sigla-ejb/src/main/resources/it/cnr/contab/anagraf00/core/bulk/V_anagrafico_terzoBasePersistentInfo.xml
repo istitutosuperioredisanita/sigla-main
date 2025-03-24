@@ -391,6 +391,13 @@
 			propertyName="ti_sesso"
 			sqlTypeName="CHAR"
 			columnSize="1" />
+		<columnMapping
+				columnName="FL_FIRMATARIO_CONTRATTO"
+				propertyName="flFirmatarioContratto"
+				sqlTypeName="CHAR"
+				nullable="false"
+				columnSize="1"
+				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="cd_anag" />
@@ -530,4 +537,6 @@
 		name="fl_fatturazione_differita" />
 	<persistentProperty
 		name="ti_sesso" />
+	<persistentProperty
+			name="flFirmatarioContratto" />
 </SQLPersistentInfo>

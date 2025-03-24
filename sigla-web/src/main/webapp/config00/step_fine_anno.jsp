@@ -21,7 +21,7 @@
 <% bp.getDetail().writeHTMLTable(pageContext,"STEP_FINE_ANNO",false,true,false,"100%","auto;max-height:50vh"); %>
 <div class="card p-3 mt-2 w-100">
     <table class="Panel w-30">
-      <% bp.getDetail().writeForm(out,"STEP_FINE_ANNO");%>
+      <% bp.getDetail().writeForm(out,bp.getFormName());%>
     </table>
 </div>
 <%bp.closeFormWindow(pageContext); %>

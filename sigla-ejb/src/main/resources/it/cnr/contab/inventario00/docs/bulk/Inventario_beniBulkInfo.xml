@@ -51,6 +51,7 @@
 		inputType="ROTEXT"
 		maxLength="10"
 		inputSize="10"
+		label="Data Acquiszione"
 		formatName="date_short"/>	
 	<fieldProperty
 		name="ds_bene"

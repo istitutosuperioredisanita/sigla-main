@@ -19,20 +19,20 @@ package it.cnr.contab.coepcoan00.bp;
 
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
-import it.cnr.contab.coepcoan00.filter.bulk.FiltroRicercaTerzoBulk;
+import it.cnr.contab.coepcoan00.filter.bulk.FiltroRicercaPartitarioBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.BulkBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.jada.util.jsp.Button;
 
-import java.util.Arrays;
-import java.util.Optional;
+import java.rmi.RemoteException;
 import java.util.Properties;
 import java.util.stream.Stream;
 
@@ -41,19 +41,20 @@ public class PartitarioTerzoBP extends BulkBP {
     @Override
     protected Button[] createToolbar() {
         final Properties properties = it.cnr.jada.util.Config.getHandler().getProperties(getClass());
-        return Arrays.asList(
-                        new Button(properties, "CRUDToolbar.startSearch")
-                ).stream().toArray(Button[]::new);
+        return Stream.of(
+                new Button(properties, "CRUDToolbar.startSearch")
+        ).toArray(Button[]::new);
     }
 
     @Override
     protected void init(Config config, ActionContext actioncontext) throws BusinessProcessException {
         super.init(config, actioncontext);
-        final FiltroRicercaTerzoBulk filtroRicercaTerzoBulk = new FiltroRicercaTerzoBulk();
+        final FiltroRicercaPartitarioBulk filtroRicercaPartitarioBulk = new FiltroRicercaPartitarioBulk();
         final TerzoBulk terzoBulk = new TerzoBulk();
         terzoBulk.setAnagrafico(new AnagraficoBulk());
-        filtroRicercaTerzoBulk.setTerzo(terzoBulk);
-        setModel(actioncontext, filtroRicercaTerzoBulk);
+        filtroRicercaPartitarioBulk.setTerzo(terzoBulk);
+        filtroRicercaPartitarioBulk.setPartite(FiltroRicercaPartitarioBulk.Partite.T.name());
+        setModel(actioncontext, filtroRicercaPartitarioBulk);
     }
 
     @Override
@@ -62,13 +63,9 @@ public class PartitarioTerzoBP extends BulkBP {
     }
 
     public boolean isStartSearchButtonEnabled() {
-        return Optional.ofNullable(getModel())
-                .filter(FiltroRicercaTerzoBulk.class::isInstance)
-                .map(FiltroRicercaTerzoBulk.class::cast)
-                .flatMap(filtroRicercaTerzoBulk -> Optional.ofNullable(filtroRicercaTerzoBulk.getTerzo()))
-                .filter(terzoBulk -> terzoBulk.getCrudStatus() == OggettoBulk.NORMAL)
-                .isPresent();
+        return Boolean.TRUE;
     }
+
     @Override
     public RemoteIterator find(ActionContext actioncontext, CompoundFindClause compoundfindclause, OggettoBulk oggettobulk, OggettoBulk oggettobulk1, String s) throws BusinessProcessException {
         try {
@@ -77,9 +74,7 @@ public class PartitarioTerzoBP extends BulkBP {
             return EJBCommonServices.openRemoteIterator(
                     actioncontext,
                     cs.cerca(actioncontext.getUserContext(), compoundfindclause, oggettobulk));
-        } catch (it.cnr.jada.comp.ComponentException e) {
-            throw handleException(e);
-        } catch (java.rmi.RemoteException e) {
+        } catch (ComponentException | RemoteException e) {
             throw handleException(e);
         }
     }

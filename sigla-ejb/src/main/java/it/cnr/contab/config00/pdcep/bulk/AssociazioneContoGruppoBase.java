@@ -31,6 +31,9 @@ public class AssociazioneContoGruppoBase extends AssociazioneContoGruppoKey impl
 	private String cdPianoGruppi;
 	private String cdGruppoEp;
 	private String cdVoceEp;
+	//    CD_TIPO_BILANCIO VARCHAR(10)
+	private String cdTipoBilancio;
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: CNR_ASS_CONTO_GRUPPO_EP
@@ -139,4 +142,12 @@ public class AssociazioneContoGruppoBase extends AssociazioneContoGruppoKey impl
 	public String getCdVoceEp() {
 		return cdVoceEp;
 	}
+	public String getCdTipoBilancio() {
+		return cdTipoBilancio;
+	}
+
+	public void setCdTipoBilancio(String cdTipoBilancio) {
+		this.cdTipoBilancio = cdTipoBilancio;
+	}
+
 }

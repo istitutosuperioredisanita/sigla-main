@@ -17,33 +17,20 @@
 
 package it.cnr.contab.inventario00.actions;
 
-import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.inventario00.bp.CRUDChiusuraInventarioBP;
-import it.cnr.contab.inventario00.bp.CRUDInventarioBeniBP;
-import it.cnr.contab.inventario00.consultazioni.bulk.V_cons_registro_inventarioBulk;
 import it.cnr.contab.inventario00.docs.bulk.Chiusura_anno_inventarioBulk;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
-import it.cnr.contab.inventario00.docs.bulk.Utilizzatore_CdrVBulk;
-import it.cnr.contab.inventario00.docs.bulk.V_ass_inv_bene_fatturaBulk;
-import it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession;
-import it.cnr.contab.inventario00.tabrif.bulk.Tipo_ammortamentoBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.ChiusuraAnnoBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.Chiusura_magazzinoBulk;
 import it.cnr.contab.ordmag.magazzino.ejb.ChiusuraAnnoComponentSession;
 import it.cnr.contab.reports.action.ParametricPrintAction;
 import it.cnr.contab.reports.bp.ParametricPrintBP;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
-import it.cnr.jada.action.HookForward;
 import it.cnr.jada.bulk.FillException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.util.action.CRUDAction;
-import it.cnr.jada.util.action.SelezionatoreListaBP;
 
 import java.rmi.RemoteException;
-import java.util.Iterator;
 
 /**
  * Insert the type's description here.

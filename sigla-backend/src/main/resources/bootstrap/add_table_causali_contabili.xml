@@ -174,4 +174,57 @@
                 referencedColumnNames="cd_causale"
                 referencedTableName="causale_contabile"/>
     </changeSet>
+
+    <changeSet author="marco.spasiano" id="add_table_ass_causali_voce_ep">
+        <createTable tableName="ass_causale_voce_ep" remarks="Associazione tra le causali contabili e le voci di economica" >
+            <column name="cd_causale" remarks="Codice causale" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="esercizio" remarks="Esercizio" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_voce_ep" remarks="Codice Identificativo completo del conto del piano." type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ti_sezione" remarks="Sezione del conto.&#10;&#10;Dominio:&#10;A = Avere&#10;D = Dare" type="CHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record: viene incrementato di 1 ad ogni variazione" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="ass_causale_voce_ep" constraintName="ass_causale_voce_ep_pkey" columnNames="cd_causale,esercizio,cd_voce_ep"/>
+        <addForeignKeyConstraint
+                baseColumnNames="cd_causale"
+                baseTableName="ass_causale_voce_ep"
+                constraintName="fk_ass_causale_voce_ep_01"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="cd_causale"
+                referencedTableName="causale_contabile"/>
+        <addForeignKeyConstraint
+                baseColumnNames="esercizio,cd_voce_ep"
+                baseTableName="ass_causale_voce_ep"
+                constraintName="fk_ass_causale_voce_ep_02"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="esercizio,cd_voce_ep"
+                referencedTableName="voce_ep"/>
+    </changeSet>
 </databaseChangeLog>

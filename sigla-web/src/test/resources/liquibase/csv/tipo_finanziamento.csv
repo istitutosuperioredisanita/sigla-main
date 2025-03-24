@@ -2,3 +2,4 @@ ID,CODICE,DESCRIZIONE,FL_PIANO_ECO_FIN,FL_ASS_CAT_VOCI_IND,FL_ASS_CAT_VOCI_DET,F
 1,"FOE","FOE","N","N","N","N","Y","Y","N","N","N","N","N","N","N","N","SYSTEM","SYSTEM","1"
 2,"FOE_PRO","FOE progetti","Y","Y","N","Y","N","Y","N","Y","N","N","N","N","N","N","SYSTEM","SYSTEM","1"
 3,"AUT","Autofinanziamento","Y","Y","N","Y","N","Y","N","Y","N","N","N","N","N","N","SYSTEM","SYSTEM","1"
+4,"ATT_COM","Attività Commerciale pura","Y","Y","N","Y","Y","Y","Y","Y","N","N","N","Y","N","Y","SYSTEM","SYSTEM","1"

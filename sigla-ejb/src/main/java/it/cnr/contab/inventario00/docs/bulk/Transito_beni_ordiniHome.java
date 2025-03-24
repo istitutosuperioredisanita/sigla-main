@@ -153,6 +153,7 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 		if(ricercaAnnullati){
 			sql.openParenthesis("AND");
 			sql.addClause("AND", "stato", SQLBuilder.EQUALS, Transito_beni_ordiniBulk.STATO_ANNULLATO);
+			sql.addClause("AND", "nota_canc", SQLBuilder.ISNOTNULL,null);
 			sql.closeParenthesis();
 		}else {
 			sql.openParenthesis("AND");

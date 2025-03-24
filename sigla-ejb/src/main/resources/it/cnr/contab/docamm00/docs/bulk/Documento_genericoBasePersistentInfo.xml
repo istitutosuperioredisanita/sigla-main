@@ -195,6 +195,13 @@
 			sqlTypeName="VARCHAR"
 			columnSize="10"
 			nullable="true" />
+		<columnMapping
+			columnName="FL_STORNO"
+			propertyName="fl_storno"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="true"
+			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="dt_cancellazione" />
@@ -256,4 +263,6 @@
 		name="cd_tipo_conto_ep" />
 	<persistentProperty
 		name="cd_causale_contabile" />
+	<persistentProperty
+		name="fl_storno" />
 </SQLPersistentInfo>

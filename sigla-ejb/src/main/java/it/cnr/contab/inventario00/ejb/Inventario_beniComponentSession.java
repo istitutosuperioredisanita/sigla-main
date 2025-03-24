@@ -18,11 +18,15 @@
 package it.cnr.contab.inventario00.ejb;
 
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
+import it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invBulk;
+import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 
 import javax.ejb.Remote;
+import javax.xml.registry.infomodel.User;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 
 @Remote
@@ -35,4 +39,6 @@ it.cnr.jada.util.RemoteIterator selectBuonoFor(it.cnr.jada.UserContext param0,it
 it.cnr.jada.util.RemoteIterator selectFatturaFor(it.cnr.jada.UserContext param0,it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 Boolean isContab(it.cnr.jada.UserContext param0,it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 HashMap<Obbligazione_scadenzarioBulk, Boolean> creaUtilizzatori(UserContext userContext, Obbligazione_scadenzarioBulk obbligazione_scadenzarioBulk, Buono_carico_scarico_dettBulk buono) throws ComponentException,java.rmi.RemoteException;
+Inventario_beniBulk getBeneInventario(UserContext uc,Long pgInventario,Long nrInventario, Long progressivo) throws RemoteException;
+void aggiornamentoInventarioBeneConAmmortamento(UserContext uc,Inventario_beniBulk bene) throws ComponentException, RemoteException;
 }

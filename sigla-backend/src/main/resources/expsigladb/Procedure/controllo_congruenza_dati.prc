@@ -372,8 +372,8 @@ BEGIN
                 WHERE STATO_CONSEGNA='EVA'
                 AND NOT (ESERCIZIO < 2023 AND STATO_CONSEGNA = 'EVA' AND STATO_FATTURA_CONSEGNA = 'ASS'
                          AND PREZZO_UNITARIO_SCONTATO_FATTURA IS NULL)
-                AND ((TIPO_CONSEGNA = 'TRA' AND PG_SCARICO_MAGAZZINO IS NULL) OR
-                     (TIPO_CONSEGNA != 'TRA' AND PG_SCARICO_MAGAZZINO IS NOT NULL))) LOOP
+                AND ((TIPO_CONSEGNA in ( 'TRA','FMA') AND PG_SCARICO_MAGAZZINO IS NULL) OR
+                     (TIPO_CONSEGNA  not in ( 'TRA','FMA') AND PG_SCARICO_MAGAZZINO IS NOT NULL))) LOOP
 		contaanomalie := contaanomalie + 1;
 		dbms_output.put_line('Consegna '||rec.CD_CDS||'/'||rec.CD_UNITA_OPERATIVA||'/'||rec.ESERCIZIO||'/'||rec.CD_NUMERATORE||'/'||rec.NUMERO||'/'||
 		rec.RIGA||'/'||rec.CONSEGNA||'. Valorizzazione movimento di scarico magazzino non coerente con il tipo di consegna.');
@@ -426,7 +426,7 @@ BEGIN
                                AND mm.PG_LOTTO = vcoac.PG_LOTTO)) LOOP
 		contaanomalie := contaanomalie + 1;
 		dbms_output.put_line('Consegna '||rec.CD_CDS||'/'||rec.CD_UNITA_OPERATIVA||'/'||rec.ESERCIZIO||'/'||rec.CD_NUMERATORE||'/'||rec.NUMERO||'/'||
-		rec.RIGA||'/'||rec.CONSEGNA||'. Non risulta essere presente il movimento di magazzino C20 anche se in fase di associazione fattura è cambiato il prezzo.');
+		rec.RIGA||'/'||rec.CONSEGNA||'. Non risulta essere presente il movimento di magazzino C19 0 C20 anche se in fase di associazione fattura è cambiato il prezzo.');
     END LOOP;
 
 	--controllo lotti tranne quelli migrati

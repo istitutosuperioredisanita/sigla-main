@@ -4,6 +4,9 @@
  */
 package it.cnr.contab.inventario00.docs.bulk;
 import it.cnr.jada.persistency.Keyed;
+
+import java.math.BigDecimal;
+
 public class Chiusura_anno_inventarioBase extends Chiusura_anno_inventarioKey implements Keyed {
 //    ESERCIZIO_VOCE DECIMAL(5,0) NOT NULL
 	private Integer esercizioVoce;
@@ -37,6 +40,8 @@ public class Chiusura_anno_inventarioBase extends Chiusura_anno_inventarioKey im
  
 //    QUOTA_AMMORTAMENTO_ANNO_PREC DECIMAL(12,5) NOT NULL
 	private java.math.BigDecimal quotaAmmortamentoAnnoPrec;
+
+	private java.math.BigDecimal valoreNettoAnnoPrec;
  
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
@@ -201,5 +206,13 @@ public class Chiusura_anno_inventarioBase extends Chiusura_anno_inventarioKey im
 	 **/
 	public void setQuotaAmmortamentoAnnoPrec(java.math.BigDecimal quotaAmmortamentoAnnoPrec)  {
 		this.quotaAmmortamentoAnnoPrec=quotaAmmortamentoAnnoPrec;
+	}
+
+	public BigDecimal getValoreNettoAnnoPrec() {
+		return valoreNettoAnnoPrec;
+	}
+
+	public void setValoreNettoAnnoPrec(BigDecimal valoreNettoAnnoPrec) {
+		this.valoreNettoAnnoPrec = valoreNettoAnnoPrec;
 	}
 }

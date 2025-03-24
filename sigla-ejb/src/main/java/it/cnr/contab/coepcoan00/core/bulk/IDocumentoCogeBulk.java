@@ -60,7 +60,21 @@ public interface IDocumentoCogeBulk extends KeyedPersistent{
 
     java.lang.String getStato_coge();
 
+    void setStato_coan(java.lang.String stato_coan);
+
+    java.lang.String getStato_coan();
+
     int primaryKeyHashCode();
 
     java.sql.Timestamp getDtGenerazioneScrittura();
+
+    default Boolean isDocumentoStorno() {
+        return Boolean.FALSE;
+    }
+
+    default Scrittura_analiticaBulk getScrittura_analitica() {
+        return null;
+    };
+
+    default void setScrittura_analitica(Scrittura_analiticaBulk scrittura_analitica) {};
 }

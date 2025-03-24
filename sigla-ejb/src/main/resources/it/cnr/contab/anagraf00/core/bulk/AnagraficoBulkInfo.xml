@@ -690,6 +690,11 @@
 		inputType="TEXT"
 		inputSize="8"
 		formatName="date_short" />
+	<fieldProperty
+			name="flFirmatarioContratto"
+			property="flFirmatarioContratto"
+			label="Firmatario"
+			inputType="CHECKBOX" />
 
 	<columnSet name="gesVisAnagrafica">
 		<columnFieldProperty

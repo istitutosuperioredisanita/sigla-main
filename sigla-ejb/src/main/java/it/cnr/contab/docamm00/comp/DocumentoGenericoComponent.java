@@ -23,6 +23,7 @@ import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
 import it.cnr.contab.bollo00.tabrif.bulk.Tipo_atto_bolloBulk;
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaFromDocumentoComponent;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
+import it.cnr.contab.config00.bulk.CausaleContabileBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
@@ -72,6 +73,7 @@ import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DocumentoGenericoComponent
         extends ScritturaPartitaDoppiaFromDocumentoComponent
@@ -124,15 +126,16 @@ public class DocumentoGenericoComponent
                                     scadenza.getAccertamento().getCd_tipo_documento_cont().equals(Numerazione_doc_contBulk.TIPO_ACR_RES)))
                             // e se la scadenza non è stata associata per tutto l'importo
                             && (scadenza.getIm_scadenza().compareTo(calcolaTotaleAccertamentoPer(userContext, scadenza, documento, TIPO_TOTALE_COMPLETO)) != 0)
-                            && !isDettaglioAnnullatoConScadResNulla(scadenza, documento))
+                            && !isDettaglioAnnullatoConScadResNulla(scadenza, documento) && !documento.isDocumentoStorno())
                         throw new it.cnr.jada.comp.ApplicationException("Impossibile continuare. L'importo sulla scadenza " + scadenza.getDs_scadenza() + " deve essere coperto interamente.");
+                    if (!documento.isDocumentoStorno()) {
+                        final BigDecimal totaleAccertamentoPer = calcolaTotaleAccertamentoPer(userContext, scadenza, documento, TIPO_TOTALE_PARZIALE);
+                        if (scadenza.getIm_associato_doc_amm().add(totaleAccertamentoPer).compareTo(scadenza.getIm_scadenza()) > 0)
+                            throw new it.cnr.jada.comp.ApplicationException("Impossibile continuare. L'importo sulla scadenza " + scadenza.getDs_scadenza() + " è minore del totale associato.");
+                        scadenza.setIm_associato_doc_amm(scadenza.getIm_associato_doc_amm().add(totaleAccertamentoPer));
 
-                    final BigDecimal totaleAccertamentoPer = calcolaTotaleAccertamentoPer(userContext, scadenza, documento, TIPO_TOTALE_PARZIALE);
-                    if (scadenza.getIm_associato_doc_amm().add(totaleAccertamentoPer).compareTo(scadenza.getIm_scadenza()) > 0)
-                        throw new it.cnr.jada.comp.ApplicationException("Impossibile continuare. L'importo sulla scadenza " + scadenza.getDs_scadenza() + " è minore del totale associato.");
-                    scadenza.setIm_associato_doc_amm(scadenza.getIm_associato_doc_amm().add(totaleAccertamentoPer));
-
-                    updateImportoAssociatoDocAmm(userContext, scadenza);
+                        updateImportoAssociatoDocAmm(userContext, scadenza);
+                    }
                 }
             }
         }
@@ -171,7 +174,7 @@ public class DocumentoGenericoComponent
             java.util.Enumeration scadenzeDaCancellare,
             java.util.Collection scadenzeConfermate,
             OptionRequestParameter status)
-            throws ComponentException {
+            throws ComponentException, RemoteException {
 
         if (scadenzeDaCancellare != null) {
 
@@ -203,8 +206,15 @@ public class DocumentoGenericoComponent
                                     importoAssociatoAllaScadenza =
                                             importoAssociatoAllaScadenza.add((riga.getIm_riga_iniziale() == null ? riga.getIm_imponibile() : riga.getIm_riga_iniziale()).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
                         }
-                        scadenza.setIm_associato_doc_amm((scadenza.getIm_associato_doc_amm().subtract(importoAssociatoAllaScadenza)).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
-                        updateImportoAssociatoDocAmm(userContext, scadenza);
+                        if (documento.isDocumentoStorno()) {
+                            AccertamentoHome accertHome = (AccertamentoHome) getHome( userContext, AccertamentoBulk.class);
+                            scadenza = (Accertamento_scadenzarioBulk) accertHome.aumentaImportoScadenzaInAutomatico(userContext, scadenza, scadenza.getIm_scadenza().add(importoAssociatoAllaScadenza));
+                            scadenza.setIm_associato_doc_amm((scadenza.getIm_associato_doc_amm().add(importoAssociatoAllaScadenza)).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
+                            updateImportoAssociatoDocAmm(userContext, scadenza);
+                        } else {
+                            scadenza.setIm_associato_doc_amm((scadenza.getIm_associato_doc_amm().subtract(importoAssociatoAllaScadenza)).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
+                            updateImportoAssociatoDocAmm(userContext, scadenza);
+                        }
                     }
                 }
             }
@@ -507,7 +517,7 @@ public class DocumentoGenericoComponent
             java.util.Enumeration scadenzeDaCancellare,
             java.util.Collection scadenzeConfermate,
             OptionRequestParameter status)
-            throws ComponentException {
+            throws ComponentException, RemoteException {
 
         if (scadenzeDaCancellare != null) {
             BigDecimal importoAssociatoAllaScadenza = new BigDecimal(0);
@@ -542,10 +552,16 @@ public class DocumentoGenericoComponent
                                         importoAssociatoAllaScadenza =
                                                 importoAssociatoAllaScadenza.add((riga.getIm_riga_iniziale() == null ? riga.getIm_imponibile() : riga.getIm_riga_iniziale()).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
                             }
-
                             scadenza.setIm_associato_doc_amm((scadenza.getIm_associato_doc_amm().subtract(importoAssociatoAllaScadenza)).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
                         }
-                        updateImportoAssociatoDocAmm(userContext, scadenza);
+                        if (documento.isDocumentoStorno()) {
+                            ObbligazioneHome obbligHome = (ObbligazioneHome) getHome( userContext, ObbligazioneBulk.class);
+                            scadenza = (Obbligazione_scadenzarioBulk) obbligHome.aumentaImportoScadenzaInAutomatico(userContext, scadenza, scadenza.getIm_scadenza().add(importoAssociatoAllaScadenza));
+                            scadenza.setIm_associato_doc_amm((scadenza.getIm_associato_doc_amm().add(importoAssociatoAllaScadenza)).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
+                            updateImportoAssociatoDocAmm(userContext, scadenza);
+                        } else {
+                            updateImportoAssociatoDocAmm(userContext, scadenza);
+                        }
                     }
                     /**
                      * Devo aggiornare i Saldi per quelle scadenze modificate e riportate
@@ -831,7 +847,7 @@ public class DocumentoGenericoComponent
                 if (rigaSelected.getIm_riga() != null) {
 
                     if (tipoTot.equals(TIPO_TOTALE_COMPLETO))
-                        importo = importo.add(rigaSelected.getIm_riga());
+                        importo = importo.add(rigaSelected.isDocumentoStorno()? rigaSelected.getIm_riga().negate() : rigaSelected.getIm_riga());
                     else {
                         if (rigaSelected.getCrudStatus() == OggettoBulk.TO_BE_CREATED)
                             importo = importo.add(rigaSelected.getIm_riga());
@@ -843,11 +859,14 @@ public class DocumentoGenericoComponent
                                 throw handleException(rigaSelected, e);
                             }
 
-                            importo = importo.add(rigaSelected.getIm_riga()).subtract(oldRiga.getIm_riga());
+                            importo = importo.add(rigaSelected.isDocumentoStorno()? rigaSelected.getIm_riga().negate() : rigaSelected.getIm_riga()).subtract(oldRiga.getIm_riga());
                         }
-
+                    }
+                    if (rigaSelected.isDocumentoStorno()) {
+                        importo = importo.add(rigaSelected.getRigaStorno().map(IDocumentoAmministrativoRigaBulk::getIm_riga).orElse(BigDecimal.ZERO));
                     }
                 }
+
 
             }
         }
@@ -1990,6 +2009,15 @@ public class DocumentoGenericoComponent
                     java.math.BigDecimal delta = null;
                     totale = calcolaTotaleObbligazionePer(aUC, scadenza, doc); //.abs();
                     delta = scadenza.getIm_scadenza().subtract(totale);
+
+                    Stream<Documento_generico_rigaBulk> list = Collections.list((((Vector) obbligazioniHash.get(scadenza)).elements()))
+                            .stream()
+                            .filter(Documento_generico_rigaBulk.class::isInstance)
+                            .map(Documento_generico_rigaBulk.class::cast);
+                    BigDecimal importoStornato = BigDecimal.valueOf(list.collect(Collectors.summingDouble(value -> Utility.nvl(value.getImportoStornato()).doubleValue())));
+
+                    delta = delta.add(importoStornato);
+
                     if (delta.compareTo(new java.math.BigDecimal(0)) > 0) {
                         StringBuffer sb = new StringBuffer();
                         sb.append("Attenzione: La scadenza ");
@@ -2194,7 +2222,7 @@ public class DocumentoGenericoComponent
 
             controllaQuadraturaInventario(userContext, documento);
 
-        } catch (it.cnr.jada.persistency.PersistencyException ex) {
+        } catch (PersistencyException | RemoteException ex) {
             throw handleException(ex);
         }
         return documento;
@@ -2238,21 +2266,6 @@ public class DocumentoGenericoComponent
                             Documento_generico_rigaBulk riga = (Documento_generico_rigaBulk) obj;
                             if (riga instanceof Voidable && ((Voidable) riga).isVoidable()) {
                                 ((Voidable) riga).setAnnullato(dataAnnullamento);
-                                //if (riga.getDocumento_generico().isGenericoAttivo()) {
-                                //riga.getAccertamento_scadenziario().setIm_associato_doc_amm(new java.math.BigDecimal(0).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
-                                //updateImportoAssociatoDocAmm(userContext, riga.getAccertamento_scadenziario());
-                                //} else {
-                                ////if (!riga.getDocumento_generico().isPassivo_ente())
-                                ////riga.getObbligazione_scadenziario().setIm_associato_doc_amm(new java.math.BigDecimal(0).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
-                                ////else
-                                //if (riga.getDocumento_generico().isPassivo_ente()) {
-                                //riga.getObbligazione_scadenziario().setIm_associato_doc_amm(
-                                //riga.getObbligazione_scadenziario().getIm_associato_doc_amm().subtract((riga.getIm_riga_iniziale() == null ? riga.getIm_imponibile() : riga.getIm_riga_iniziale())).setScale(
-                                //2,
-                                //java.math.BigDecimal.ROUND_HALF_UP));
-                                //updateImportoAssociatoDocAmm(userContext, riga.getObbligazione_scadenziario());
-                                //}
-                                //}
                                 riga.setToBeUpdated();
                                 if (riga.isInventariato()) {
                                     Documento_generico_rigaBulk cloneDettaglio = (Documento_generico_rigaBulk) riga.clone();
@@ -2288,8 +2301,10 @@ public class DocumentoGenericoComponent
                     } else
                         aggiornaAccertamentiSuCancellazione(userContext, documento, documento.getAccertamentiHash().keys(), null, null);
                 }
+                //Aggiorno la scrittura di economica
+                createScrittura(userContext, documento);
                 return;
-            } catch (it.cnr.jada.persistency.PersistencyException e) {
+            } catch (PersistencyException | RemoteException e) {
                 throw handleException(documento, e);
             }
         }
@@ -2383,6 +2398,9 @@ public class DocumentoGenericoComponent
             eliminaDocumento(aUC, documento);
             for (Iterator i = documento.getDocumento_generico_dettColl().iterator(); i.hasNext(); ) {
                 documentoGenericoRiga = (Documento_generico_rigaBulk) i.next();
+                if (documentoGenericoRiga.isRigaStornata()) {
+                    throw new ApplicationException("Non è possibile annullare documenti con righe stornate!");
+                }
                 eliminaRiga(aUC, documentoGenericoRiga);
                 if (documentoGenericoRiga.getDocumento_generico().isGenericoAttivo()) {
                     try {
@@ -3346,17 +3364,7 @@ public class DocumentoGenericoComponent
             // imposta il tipo di documento
             if (generico.getCd_tipo_documento_amm() == null && generico.getTipo_documento().getCd_tipo_documento_amm() != null)
                 generico.setCd_tipo_documento_amm(generico.getTipo_documento().getCd_tipo_documento_amm());
-            //generico.setCd_tipo_documento_amm(generico.getTipo_documento().getCd_tipo_documento_amm());
-            //it.cnr.jada.bulk.BulkHome homeTD= getHome(userContext, Tipo_documento_ammBulk.class);
-            //it.cnr.jada.persistency.sql.SQLBuilder sqlTD= homeTD.createSQLBuilder();
-            //sqlTD.addClause("AND", "cd_tipo_documento_amm", sqlTD.EQUALS, generico.getCd_tipo_documento_amm());
-            //it.cnr.jada.persistency.Broker brokerTD= homeTD.createBroker(sqlTD);
 
-            //generico.setTipo_documento((Tipo_documento_ammBulk) brokerTD.fetch(Tipo_documento_ammBulk.class));
-
-            //brokerTD.close();
-            //}
-            //generico =(Documento_genericoBulk) super.inizializzaBulkPerModifica(userContext, generico);
             Documento_genericoHome home = (Documento_genericoHome)getHome(userContext, Documento_genericoBulk.class);
             generico.setDocumento_generico_dettColl(new it.cnr.jada.bulk.BulkList(home.findDocumentoGenericoRigheList(generico)));
 
@@ -3740,7 +3748,7 @@ public class DocumentoGenericoComponent
             UserContext userContext,
             Documento_genericoBulk documento,
             OptionRequestParameter status)
-            throws ComponentException {
+            throws ComponentException, RemoteException {
 
         if (documento.isGenericoAttivo())
             manageDocumentiContabiliCancellatiPerGenericoAttivo(userContext, documento, status);
@@ -3759,7 +3767,7 @@ public class DocumentoGenericoComponent
             UserContext userContext,
             Documento_genericoBulk documentoAttivo,
             OptionRequestParameter status)
-            throws ComponentException {
+            throws ComponentException, RemoteException {
 
         if (documentoAttivo != null) {
             if (documentoAttivo.getDocumentiContabiliCancellati() != null &&
@@ -3788,7 +3796,7 @@ public class DocumentoGenericoComponent
             UserContext userContext,
             Documento_genericoBulk documentoPassivo,
             OptionRequestParameter status)
-            throws ComponentException {
+            throws ComponentException, RemoteException {
 
         if (documentoPassivo != null) {
             if (documentoPassivo.getDocumentiContabiliCancellati() != null &&
@@ -3876,7 +3884,11 @@ public class DocumentoGenericoComponent
         if (documento.getDefferredSaldi() != null)
             aTempDiffSaldi = (PrimaryKeyHashMap) documento.getDefferredSaldi().clone();
 
-        manageDeletedElements(aUC, documento, status);
+        try {
+            manageDeletedElements(aUC, documento, status);
+        } catch (RemoteException e) {
+            throw handleException(e);
+        }
 
         if (!documento.isGenericoAttivo()) {
             aggiornaObbligazioni(aUC, documento, status);
@@ -6511,6 +6523,195 @@ public class DocumentoGenericoComponent
             }
         } catch (Exception e) {
             throw handleException(e);
+        }
+    }
+
+    /**
+     * Metodo che permette di creare un documento generico di storno, stornando tutte le righe passate in input
+     * @param userContext
+     * @param tiEntrataSpesa
+     * @param stornaDocumentoGenericoBulk
+     * @param rigaBulks
+     * @return Documento_genericoBulk.class
+     * @throws ComponentException
+     */
+    public Documento_genericoBulk creaDocumentoGenericoDiStorno(
+            UserContext userContext,
+            char tiEntrataSpesa,
+            boolean isDaFattura,
+            StornaDocumentoGenericoBulk stornaDocumentoGenericoBulk,
+            List<IDocumentoAmministrativoRigaBulk> rigaBulks
+    ) throws ComponentException {
+        try {
+            ObbligazioneAbstractComponentSession obbligazioneSession =
+                    (ObbligazioneAbstractComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
+                            "CNRDOCCONT00_EJB_ObbligazioneAbstractComponentSession", ObbligazioneAbstractComponentSession.class);
+            AccertamentoAbstractComponentSession accertamentoSession =
+                    (AccertamentoAbstractComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
+                            "CNRDOCCONT00_EJB_AccertamentoAbstractComponentSession", AccertamentoAbstractComponentSession.class);
+            CausaleContabileBulk causaleContabileBulk = new CausaleContabileBulk(stornaDocumentoGenericoBulk.getCausaleContabile());
+            causaleContabileBulk = (CausaleContabileBulk) getHome(userContext, CausaleContabileBulk.class).findByPrimaryKey(causaleContabileBulk);
+
+            Documento_genericoBulk documentoGenericoBulk = new Documento_genericoBulk();
+            documentoGenericoBulk.setToBeCreated();
+            documentoGenericoBulk.setEsercizio(CNRUserContext.getEsercizio(userContext));
+            documentoGenericoBulk.setStato_coge(Documento_generico_rigaBulk.NON_REGISTRATO_IN_COGE);
+            documentoGenericoBulk.setStato_coan(Documento_generico_rigaBulk.NON_REGISTRATO_IN_COGE);
+            documentoGenericoBulk.setFl_storno(Boolean.TRUE);
+            documentoGenericoBulk.setTi_associato_manrev(Documento_genericoBulk.NON_ASSOCIATO_A_MANDATO);
+            documentoGenericoBulk.setCd_cds(CNRUserContext.getCd_cds(userContext));
+            documentoGenericoBulk.setCd_cds_origine(documentoGenericoBulk.getCd_cds());
+            documentoGenericoBulk.setCd_uo_origine(CNRUserContext.getCd_unita_organizzativa(userContext));
+            documentoGenericoBulk.setTi_entrate_spese(tiEntrataSpesa);
+            documentoGenericoBulk.setTipoDocumentoGenerico(stornaDocumentoGenericoBulk.getTipoDocumentoGenerico());
+            documentoGenericoBulk = (Documento_genericoBulk) inizializzaBulkPerInserimento(userContext, documentoGenericoBulk);
+            documentoGenericoBulk.setCausaleContabile(causaleContabileBulk);
+            if (tiEntrataSpesa == 'E') {
+                documentoGenericoBulk.setTipo_documento(new Tipo_documento_ammBulk(Numerazione_doc_ammBulk.TIPO_DOC_GENERICO_E));
+            } else {
+                documentoGenericoBulk.setTipo_documento(new Tipo_documento_ammBulk(Numerazione_doc_ammBulk.TIPO_DOC_GENERICO_S));
+            }
+            documentoGenericoBulk.setDs_documento_generico(stornaDocumentoGenericoBulk.getDescrizione());
+            documentoGenericoBulk.setData_registrazione(stornaDocumentoGenericoBulk.getDt_registrazione());
+            documentoGenericoBulk.setDt_da_competenza_coge(stornaDocumentoGenericoBulk.getDt_da_competenza_coge());
+            documentoGenericoBulk.setDt_a_competenza_coge(stornaDocumentoGenericoBulk.getDt_a_competenza_coge());
+            for (IDocumentoAmministrativoRigaBulk rigaBulk : rigaBulks) {
+                Documento_generico_rigaBulk documentoGenericoRigaNew = new Documento_generico_rigaBulk();
+                documentoGenericoRigaNew.setToBeCreated();
+                documentoGenericoBulk.addToDocumento_generico_dettColl(documentoGenericoRigaNew);
+                documentoGenericoRigaNew.setDs_riga(
+                        Optional.ofNullable(rigaBulk.getDs_riga())
+                                .map(s -> s.substring(0, Math.min(200, s.length())))
+                                .orElse(null)
+                );
+                Optional.ofNullable(rigaBulk.getTerzo())
+                    .flatMap(terzoBulk -> Optional.ofNullable(terzoBulk.getAnagrafico()))
+                    .ifPresent(anagraficoBulk -> {
+                        documentoGenericoRigaNew.setRagione_sociale(anagraficoBulk.getRagione_sociale());
+                        documentoGenericoRigaNew.setNome(anagraficoBulk.getNome());
+                        documentoGenericoRigaNew.setCognome(anagraficoBulk.getCognome());
+                        documentoGenericoRigaNew.setCodice_fiscale(anagraficoBulk.getCodice_fiscale());
+                        documentoGenericoRigaNew.setPartita_iva(anagraficoBulk.getPartita_iva());
+                    });
+                documentoGenericoRigaNew.setStato_cofi(Documento_generico_rigaBulk.STATO_CONTABILIZZATO);
+                if (rigaBulk instanceof Documento_generico_rigaBulk) {
+                    Documento_generico_rigaBulk documentoGenericoRigaBulk = (Documento_generico_rigaBulk)rigaBulk;
+                    documentoGenericoRigaNew.setTerzo(documentoGenericoRigaBulk.getTerzo());
+                    documentoGenericoRigaNew.setBanca(documentoGenericoRigaBulk.getBanca());
+                    documentoGenericoRigaNew.setModalita_pagamento(documentoGenericoRigaBulk.getModalita_pagamento());
+                    documentoGenericoRigaNew.setTerzo_uo_cds(documentoGenericoRigaBulk.getTerzo_uo_cds());
+                    if (documentoGenericoRigaBulk.getTerzo_uo_cds() != null) {
+                        documentoGenericoRigaNew.setBanca_uo_cds(new BancaBulk(documentoGenericoRigaBulk.getTerzo_uo_cds().getCd_terzo(), documentoGenericoRigaBulk.getPg_banca_uo_cds()));
+                    }
+                    if (documentoGenericoRigaBulk.getCd_modalita_pag_uo_cds() != null) {
+                        documentoGenericoRigaNew.setModalita_pagamento_uo_cds(new Rif_modalita_pagamentoBulk(documentoGenericoRigaBulk.getCd_modalita_pag_uo_cds()));
+                    }
+                    documentoGenericoRigaNew.setIm_riga(documentoGenericoRigaBulk.getIm_riga());
+                    documentoGenericoRigaNew.setIm_riga_divisa(documentoGenericoRigaBulk.getIm_riga_divisa());
+                    documentoGenericoRigaNew.setDocumento_generico_riga_storno(documentoGenericoRigaBulk);
+                    if (documentoGenericoBulk.isGenericoAttivo()) {
+                        Accertamento_scadenzarioBulk accertamentoScadenziario = documentoGenericoRigaBulk.getAccertamento_scadenziario();
+                        /**
+                         * Ricarico la scadenza in caso di storno di più righe legate alla stessa scadenza
+                         */
+                        accertamentoScadenziario = (Accertamento_scadenzarioBulk) findByPrimaryKey(userContext, accertamentoScadenziario);
+                        getHomeCache(userContext).fetchAll(userContext);
+                        documentoGenericoRigaNew.setAccertamento_scadenziario(accertamentoScadenziario);
+                        accertamentoScadenziario.setIm_associato_doc_amm(
+                                accertamentoScadenziario.getIm_associato_doc_amm()
+                                        .subtract(documentoGenericoRigaBulk.getIm_riga())
+                        );
+                        updateImportoAssociatoDocAmm(userContext, accertamentoScadenziario);
+                        accertamentoSession.sdoppiaScadenzaInAutomatico(userContext, accertamentoScadenziario, accertamentoScadenziario.getIm_scadenza()
+                                .subtract(documentoGenericoRigaBulk.getIm_riga()));
+                    } else {
+                        Obbligazione_scadenzarioBulk obbligazioneScadenziario = documentoGenericoRigaBulk.getObbligazione_scadenziario();
+                        /**
+                         * Ricarico la scadenza in caso di storno di più righe legate alla stessa scadenza
+                         */
+                        obbligazioneScadenziario = (Obbligazione_scadenzarioBulk) findByPrimaryKey(userContext, obbligazioneScadenziario);
+                        getHomeCache(userContext).fetchAll(userContext);
+                        documentoGenericoRigaNew.setObbligazione_scadenziario(obbligazioneScadenziario);
+                        obbligazioneScadenziario.setIm_associato_doc_amm(
+                                obbligazioneScadenziario.getIm_associato_doc_amm()
+                                        .subtract(documentoGenericoRigaBulk.getIm_riga())
+                        );
+                        updateImportoAssociatoDocAmm(userContext, obbligazioneScadenziario);
+                        obbligazioneSession.sdoppiaScadenzaInAutomatico(userContext, obbligazioneScadenziario, obbligazioneScadenziario.getIm_scadenza()
+                                .subtract(documentoGenericoRigaBulk.getIm_riga()));
+                    }
+                }
+                if (rigaBulk instanceof Fattura_attiva_rigaIBulk) {
+                    Fattura_attiva_rigaIBulk fatturaAttivaRigaIBulk = (Fattura_attiva_rigaIBulk)rigaBulk;
+                    documentoGenericoRigaNew.setTerzo(fatturaAttivaRigaIBulk.getTerzo());
+                    documentoGenericoRigaNew.setBanca(new BancaBulk(fatturaAttivaRigaIBulk.getTerzo().getCd_terzo(), fatturaAttivaRigaIBulk.getFattura_attivaI().getPg_banca()));
+                    documentoGenericoRigaNew.setModalita_pagamento(new Rif_modalita_pagamentoBulk(fatturaAttivaRigaIBulk.getFattura_attivaI().getCd_modalita_pag()));
+                    documentoGenericoRigaNew.setTerzo_uo_cds(fatturaAttivaRigaIBulk.getFattura_attivaI().getTerzo_uo());
+                    if (fatturaAttivaRigaIBulk.getFattura_attivaI().getTerzo_uo() != null) {
+                        documentoGenericoRigaNew.setBanca_uo_cds(new BancaBulk(
+                                fatturaAttivaRigaIBulk.getFattura_attivaI().getTerzo_uo().getCd_terzo(),
+                                fatturaAttivaRigaIBulk.getFattura_attivaI().getPg_banca_uo_cds()
+                        ));
+                    }
+                    if (fatturaAttivaRigaIBulk.getFattura_attivaI().getCd_modalita_pag_uo_cds() != null) {
+                        documentoGenericoRigaNew.setModalita_pagamento_uo_cds(new Rif_modalita_pagamentoBulk(fatturaAttivaRigaIBulk.getFattura_attivaI().getCd_modalita_pag_uo_cds()));
+                    }
+                    documentoGenericoRigaNew.setIm_riga(fatturaAttivaRigaIBulk.getIm_riga());
+                    documentoGenericoRigaNew.setIm_riga_divisa(fatturaAttivaRigaIBulk.getIm_riga());
+                    documentoGenericoRigaNew.setFattura_attiva_riga_storno(fatturaAttivaRigaIBulk);
+                    Accertamento_scadenzarioBulk accertamentoScadenziario = fatturaAttivaRigaIBulk.getAccertamento_scadenzario();
+                    /**
+                     * Ricarico la scadenza in caso di storno di più righe legate alla stessa scadenza
+                     */
+                    accertamentoScadenziario = (Accertamento_scadenzarioBulk) findByPrimaryKey(userContext, accertamentoScadenziario);
+                    getHomeCache(userContext).fetchAll(userContext);
+                    documentoGenericoRigaNew.setAccertamento_scadenziario(accertamentoScadenziario);
+                    accertamentoScadenziario.setIm_associato_doc_amm(
+                            accertamentoScadenziario.getIm_associato_doc_amm()
+                                    .subtract(fatturaAttivaRigaIBulk.getIm_riga())
+                    );
+                    updateImportoAssociatoDocAmm(userContext, accertamentoScadenziario);
+                    accertamentoSession.sdoppiaScadenzaInAutomatico(userContext, accertamentoScadenziario, accertamentoScadenziario.getIm_scadenza()
+                            .subtract(fatturaAttivaRigaIBulk.getIm_riga()));
+                }
+                if (rigaBulk instanceof Fattura_passiva_rigaIBulk) {
+                    Fattura_passiva_rigaIBulk fatturaPassivaRigaIBulk = (Fattura_passiva_rigaIBulk)rigaBulk;
+                    documentoGenericoRigaNew.setTerzo(fatturaPassivaRigaIBulk.getTerzo());
+                    documentoGenericoRigaNew.setBanca(new BancaBulk(fatturaPassivaRigaIBulk.getTerzo().getCd_terzo(), fatturaPassivaRigaIBulk.getFattura_passivaI().getPg_banca()));
+                    documentoGenericoRigaNew.setModalita_pagamento(new Rif_modalita_pagamentoBulk(fatturaPassivaRigaIBulk.getFattura_passivaI().getCd_modalita_pag()));
+                    documentoGenericoRigaNew.setTerzo_uo_cds(new TerzoBulk(fatturaPassivaRigaIBulk.getFattura_passivaI().getCd_terzo_uo_cds()));
+                    if (fatturaPassivaRigaIBulk.getFattura_passivaI().getCd_terzo_uo_cds() != null) {
+                        documentoGenericoRigaNew.setBanca_uo_cds(new BancaBulk(
+                                fatturaPassivaRigaIBulk.getFattura_passivaI().getCd_terzo_uo_cds(),
+                                fatturaPassivaRigaIBulk.getFattura_passivaI().getPg_banca_uo_cds()
+                        ));
+                    }
+                    if (fatturaPassivaRigaIBulk.getFattura_passivaI().getCd_modalita_pag_uo_cds() != null) {
+                        documentoGenericoRigaNew.setModalita_pagamento_uo_cds(new Rif_modalita_pagamentoBulk(fatturaPassivaRigaIBulk.getFattura_passivaI().getCd_modalita_pag_uo_cds()));
+                    }
+
+                    documentoGenericoRigaNew.setIm_riga(fatturaPassivaRigaIBulk.getIm_riga());
+                    documentoGenericoRigaNew.setIm_riga_divisa(fatturaPassivaRigaIBulk.getIm_riga());
+                    documentoGenericoRigaNew.setFattura_passiva_riga_storno(fatturaPassivaRigaIBulk);
+                    Obbligazione_scadenzarioBulk obbligazioneScadenziario = fatturaPassivaRigaIBulk.getObbligazione_scadenziario();
+                    /**
+                     * Ricarico la scadenza in caso di storno di più righe legate alla stessa scadenza
+                     */
+                    obbligazioneScadenziario = (Obbligazione_scadenzarioBulk) findByPrimaryKey(userContext, obbligazioneScadenziario);
+                    getHomeCache(userContext).fetchAll(userContext);
+                    documentoGenericoRigaNew.setObbligazione_scadenziario(obbligazioneScadenziario);
+                    obbligazioneScadenziario.setIm_associato_doc_amm(
+                            obbligazioneScadenziario.getIm_associato_doc_amm()
+                                    .subtract(fatturaPassivaRigaIBulk.getIm_riga())
+                    );
+                    updateImportoAssociatoDocAmm(userContext, obbligazioneScadenziario);
+                    obbligazioneSession.sdoppiaScadenzaInAutomatico(userContext, obbligazioneScadenziario, obbligazioneScadenziario.getIm_scadenza()
+                            .subtract(fatturaPassivaRigaIBulk.getIm_riga()));
+                }
+            }
+            return (Documento_genericoBulk) creaConBulk(userContext, documentoGenericoBulk);
+        } catch (RemoteException|PersistencyException _ex) {
+            throw handleException(_ex);
         }
     }
 }

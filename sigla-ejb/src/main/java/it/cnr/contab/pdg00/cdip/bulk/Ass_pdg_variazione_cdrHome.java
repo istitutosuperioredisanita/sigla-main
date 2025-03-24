@@ -20,27 +20,18 @@
 * Date 25/05/2005
 */
 package it.cnr.contab.pdg00.cdip.bulk;
+
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceHome;
 import it.cnr.contab.config00.sto.bulk.DipartimentoBulk;
 import it.cnr.contab.pdg00.bulk.Pdg_preventivo_etr_detBulk;
 import it.cnr.contab.pdg00.bulk.Pdg_preventivo_spe_detBulk;
 import it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk;
-import it.cnr.contab.pdg01.bulk.Pdg_modulo_entrate_gestBulk;
-import it.cnr.contab.pdg01.bulk.Pdg_modulo_spese_gestBulk;
-import it.cnr.contab.pdg01.bulk.Pdg_variazione_riga_entrata_gestBulk;
-import it.cnr.contab.pdg01.bulk.Pdg_variazione_riga_gestBulk;
-import it.cnr.contab.pdg01.bulk.Pdg_variazione_riga_gestHome;
-import it.cnr.contab.pdg01.bulk.Pdg_variazione_riga_spesa_gestBulk;
-import it.cnr.contab.progettiric00.core.bulk.Progetto_sipBulk;
-import it.cnr.contab.progettiric00.core.bulk.Progetto_sipHome;
-import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.contab.varstanz00.bulk.Var_stanz_resBulk;
-import it.cnr.contab.varstanz00.bulk.Var_stanz_res_rigaBulk;
+import it.cnr.contab.pdg00.bulk.Pdg_variazioneHome;
+import it.cnr.contab.pdg01.bulk.*;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
-import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 public class Ass_pdg_variazione_cdrHome extends BulkHome {
@@ -202,10 +193,7 @@ public class Ass_pdg_variazione_cdrHome extends BulkHome {
 		return home.fetchAll(sql);
 	}
 	public java.util.Collection<Pdg_variazione_riga_gestBulk> findDettagli(Pdg_variazioneBulk testata) throws IntrospectionException, PersistencyException {
-		PersistentHome dettHome = getHomeCache().getHome(Pdg_variazione_riga_gestBulk.class);
-		SQLBuilder sql = dettHome.createSQLBuilder();
-		sql.addSQLClause(FindClause.AND,"ESERCIZIO",SQLBuilder.EQUALS,testata.getEsercizio());
-		sql.addSQLClause(FindClause.AND,"PG_VARIAZIONE_PDG",SQLBuilder.EQUALS,testata.getPg_variazione_pdg());
-		return dettHome.fetchAll(sql);
+		Pdg_variazioneHome dettHome = ( Pdg_variazioneHome) getHomeCache().getHome(Pdg_variazioneBulk.class);
+		return dettHome.findDettagliVariazioneGestionale(testata);
 	}
 }

@@ -18,24 +18,18 @@
 package it.cnr.contab.coepcoan00.core.bulk;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
-import it.cnr.contab.config00.pdcep.bulk.AssociazioneContoGruppoBulk;
 import it.cnr.contab.config00.sto.bulk.CdsBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.util.enumeration.TipoIVA;
-import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.action.MessageToUser;
 import it.cnr.jada.bulk.BulkCollection;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
-import it.cnr.jada.comp.ApplicationException;
-import it.cnr.jada.util.OrderedHashtable;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
 
@@ -52,27 +46,6 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
         STATO_ATTIVA = new it.cnr.jada.util.OrderedHashtable();
         STATO_ATTIVA.put(ATTIVA_YES, "Si");
         STATO_ATTIVA.put(ATTIVA_NO, "No");
-    }
-
-    public enum Origine {
-        CAUSALE("Causale"),
-        PRIMA_NOTA_MANUALE("Prima Nota Manuale"),
-        DOCAMM( "Documento Amministrativo"),
-        DOCCONT("Documento Contabile"),
-        STIPENDI("Stipendi"),
-        LIQUID_IVA("Liquidazione IVA"),
-        PRECHIUSURA("Prechiusura Bilancio"),
-        CHIUSURA("Chiusura Bilancio"),
-        APERTURA("Apertura Bilancio");
-        private final String label;
-
-        private Origine(String label) {
-            this.label = label;
-        }
-
-        public String label() {
-            return label;
-        }
     }
 
     public enum Causale {
@@ -99,9 +72,7 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
 
     public final static java.util.Dictionary ti_origineKeys = new it.cnr.jada.util.OrderedHashtable();
     static {
-        Arrays.asList(Origine.values()).stream().forEach(origine -> {
-            ti_origineKeys.put(origine.name(), origine.label());
-        });
+        Arrays.asList(OrigineScritturaEnum.values()).forEach(origine -> ti_origineKeys.put(origine.name(), origine.label()));
     }
 
     protected BulkList movimentiDareColl = new BulkList();
@@ -253,7 +224,7 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
     }
 
     public java.math.BigDecimal getDifferenza() {
-        return getImTotaleDare().subtract(getTotaleAvere()).abs();
+        return getImTotaleDare().subtract(getImTotaleAvere()).abs();
     }
     /**
      * @return it.cnr.jada.bulk.BulkList
@@ -326,7 +297,7 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
         setEsercizio(it.cnr.contab.utenze00.bulk.CNRUserInfo.getEsercizio(context));
         setUo(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context));
         setCd_uo_documento(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context).getCd_unita_organizzativa());
-        setOrigine_scrittura(Origine.PRIMA_NOTA_MANUALE.name());
+        setOrigine_scrittura(OrigineScritturaEnum.PRIMA_NOTA_MANUALE.name());
         setAttiva(ATTIVA_YES);
         setTi_scrittura(TIPO_PRIMA_SCRITTURA);
         setStato(STATO_DEFINITIVO);
@@ -394,14 +365,6 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
         for (java.util.Iterator i = getMovimentiDareColl().iterator(); i.hasNext(); )
             ((Movimento_cogeBulk) i.next()).validate();
 
-    }
-
-    public BigDecimal getTotaleDare() {
-        return this.getMovimentiDareColl().stream().map(el -> el.getIm_movimento()).reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    public BigDecimal getTotaleAvere() {
-        return this.getMovimentiAvereColl().stream().map(el -> el.getIm_movimento()).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public List<Movimento_cogeBulk> getAllMovimentiColl() {

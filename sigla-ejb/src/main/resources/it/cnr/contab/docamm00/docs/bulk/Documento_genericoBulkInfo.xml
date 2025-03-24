@@ -384,7 +384,7 @@
 		enabledOnSearch="true"
 		keysProperty="flagEnteKeys"
 		label="Generico su Ente"/>
-		<fieldProperty
+	<fieldProperty
 		name="esercizio_lettera"
 		property="lettera_pagamento_estero.esercizio"
 		inputType="ROTEXT"
@@ -734,6 +734,15 @@
 		label="Tipo conto"
 		caseSensitiveSearch="false" />
 	<fieldProperty
+		name="causale_contabile"
+		property="causaleContabile"
+		inputType="SEARCHTOOL_WITH_LIKE"
+		formName="searchtool"
+		enabledOnSearch="true"
+		nullable="false"
+		label="Causale Contabile" />
+
+	<fieldProperty
 		name="cd_causale_contabile"
 		property="cd_causale_contabile"
 		inputType="SELECT"
@@ -743,7 +752,14 @@
 		maxLength="10"
 		nullable="false"
 		label="Causale Contabile" />
-
+	<fieldProperty
+		name="fl_storno"
+		property="fl_storno"
+		inputType="CHECKBOX"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		label="Documento di Storno"/>
 
 	<formFieldProperty
 		name="esercizio_lettera" />
@@ -883,6 +899,10 @@
 		name="cd_tipo_conto_ep" />
 	<formFieldProperty
 		name="cd_causale_contabile" />
+	<formFieldProperty
+		name="causale_contabile" />
+	<formFieldProperty
+		name="fl_storno" />
 
 	<columnFieldProperty
 		name="cd_tipo_documento_amm" />
@@ -974,5 +994,7 @@
 		name="cd_tipo_conto_ep" />
 	<findFieldProperty
 		name="cd_causale_contabile" />
+	<findFieldProperty
+		name="fl_storno" />
 
 </bulkInfo>

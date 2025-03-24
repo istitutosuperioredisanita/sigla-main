@@ -21,7 +21,6 @@ import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaFromDocumentoComponen
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 
@@ -62,12 +61,11 @@ public class ScritturaPartitaDoppiaFromDocumentoComponentSessionBean extends it.
 		}
 	}
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Scrittura_partita_doppiaBulk createScritturaRequiresNew(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, RemoteException {
+	public void createScritturaRequiresNew(UserContext param0, IDocumentoCogeBulk param1, boolean loadAnalitica) throws ComponentException, RemoteException {
 		pre_component_invocation(param0, componentObj);
 		try {
-			Scrittura_partita_doppiaBulk result = ((ScritturaPartitaDoppiaFromDocumentoComponent) componentObj).createScrittura(param0, param1);
+			((ScritturaPartitaDoppiaFromDocumentoComponent) componentObj).createScrittura(param0, param1);
 			component_invocation_succes(param0, componentObj);
-			return result;
 		} catch (it.cnr.jada.comp.NoRollbackException e) {
 			component_invocation_succes(param0, componentObj);
 			throw e;

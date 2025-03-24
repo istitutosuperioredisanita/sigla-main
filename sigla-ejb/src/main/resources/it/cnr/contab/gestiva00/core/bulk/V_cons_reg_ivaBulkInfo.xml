@@ -1,0 +1,610 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+			name="esercizio"
+			property="esercizio"
+			inputType="TEXT"
+			inputSize="5"
+			maxLength="5"
+			enabledOnEdit="false"
+			label="Esercizio"/>
+
+	<fieldProperty
+			name="tipo"
+			property="tipo"
+			inputType="TEXT"
+			inputSize="13"
+			maxLength="13"
+			enabledOnEdit="false"
+			label="Tipo Movimento"/>
+
+	<fieldProperty
+			name="dataRegistrazione"
+			property="dataRegistrazione"
+			inputType="TEXT"
+			inputSize="7"
+			maxLength="7"
+			enabledOnEdit="false"
+			label="Data Registrazione"/>
+
+	<fieldProperty
+			name="dtEmissione"
+			property="dtEmissione"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			enabledOnEdit="false"
+			label="Data Emissione"/>
+
+	<fieldProperty
+			name="dtEmissAmm"
+			property="dtEmissAmm"
+			inputType="TEXT"
+			inputSize="7"
+			maxLength="7"
+			enabledOnEdit="false"
+			label="Emissione Amm.va"/>
+
+	<fieldProperty
+			name="tiBeneServizio"
+			property="tiBeneServizio"
+			inputType="TEXT"
+			inputSize="1"
+			maxLength="1"
+			enabledOnEdit="false"
+			label="Tipo Bene/Servizio"/>
+
+	<fieldProperty
+			name="cdTipoSezionale"
+			property="cdTipoSezionale"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			enabledOnEdit="false"
+			label="Tipo Sezionale"/>
+
+	<fieldProperty
+			name="cdUnitaOrganizzativa"
+			property="cdUnitaOrganizzativa"
+			inputType="TEXT"
+			inputSize="30"
+			maxLength="30"
+			enabledOnEdit="false"
+			label="Codice UO"/>
+
+	<fieldProperty
+			name="cdCdsOrigine"
+			property="cdCdsOrigine"
+			inputType="TEXT"
+			inputSize="30"
+			maxLength="30"
+			enabledOnEdit="false"
+			label="CdS Origine"/>
+
+	<fieldProperty
+			name="cdUoOrigine"
+			property="cdUoOrigine"
+			inputType="TEXT"
+			inputSize="30"
+			maxLength="30"
+			enabledOnEdit="false"
+			label="UO Origine"/>
+
+	<fieldProperty
+			name="pgFattura"
+			property="pgFattura"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="38"
+			enabledOnEdit="false"
+			label="Prog. Fattura"/>
+
+	<fieldProperty
+			name="protIva"
+			property="protIva"
+			inputType="TEXT"
+			inputSize="0"
+			maxLength="0"
+			enabledOnEdit="false"
+			label="Prot. IVA"/>
+
+	<fieldProperty
+			name="nrgregIva"
+			property="nrgregIva"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="81"
+			enabledOnEdit="false"
+			label="Reg. IVA"/>
+
+	<fieldProperty
+			name="pgrU"
+			property="pgrU"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="38"
+			enabledOnEdit="false"
+			label="Prog. Unico"/>
+
+	<fieldProperty
+			name="dsFattura"
+			property="dsFattura"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="1000"
+			enabledOnEdit="false"
+			label="Descrizione Fattura"/>
+
+	<fieldProperty
+			name="imp"
+			property="imp"
+			inputType="TEXT"
+			inputSize="0"
+			maxLength="0"
+			enabledOnEdit="false"
+			label="Imponibile"/>
+
+	<fieldProperty
+			name="iva"
+			property="iva"
+			inputType="TEXT"
+			inputSize="0"
+			maxLength="0"
+			enabledOnEdit="false"
+			label="IVA"/>
+
+	<fieldProperty
+			name="tot"
+			property="tot"
+			inputType="TEXT"
+			inputSize="0"
+			maxLength="0"
+			enabledOnEdit="false"
+			label="Totale"/>
+
+	<fieldProperty
+			name="cdForn"
+			property="cdForn"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="38"
+			enabledOnEdit="false"
+			label="Cod. Fornitore"/>
+
+	<fieldProperty
+			name="denoForn"
+			property="denoForn"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="100"
+			enabledOnEdit="false"
+			label="Fornitore"/>
+
+	<fieldProperty
+			name="cfPiva"
+			property="cfPiva"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="41"
+			enabledOnEdit="false"
+			label="CF/P.IVA"/>
+
+	<fieldProperty
+			name="nrFattura"
+			property="nrFattura"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="40"
+			enabledOnEdit="false"
+			label="N. Fattura"/>
+
+	<fieldProperty
+			name="ue"
+			property="ue"
+			inputType="TEXT"
+			inputSize="1"
+			maxLength="1"
+			enabledOnEdit="false"
+			label="Intra/Extra UE"/>
+
+	<fieldProperty
+			name="tipoFattura"
+			property="tipoFattura"
+			inputType="TEXT"
+			inputSize="1"
+			maxLength="1"
+			enabledOnEdit="false"
+			label="Tipo Fattura"/>
+
+	<fieldProperty
+			name="pgrD"
+			property="pgrD"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="38"
+			enabledOnEdit="false"
+			label="Prog. Dettaglio"/>
+
+	<fieldProperty
+			name="impD"
+			property="impD"
+			inputType="TEXT"
+			inputSize="0"
+			maxLength="0"
+			enabledOnEdit="false"
+			label="Imp. Dettaglio"/>
+
+	<fieldProperty
+			name="ivaD"
+			property="ivaD"
+			inputType="TEXT"
+			inputSize="0"
+			maxLength="0"
+			enabledOnEdit="false"
+			label="IVA Dettaglio"/>
+
+	<fieldProperty
+			name="totD"
+			property="totD"
+			inputType="TEXT"
+			inputSize="0"
+			maxLength="0"
+			enabledOnEdit="false"
+			label="Totale Dettaglio"/>
+
+	<fieldProperty
+			name="cdVoceIva"
+			property="cdVoceIva"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			enabledOnEdit="false"
+			label="Voce IVA"/>
+
+	<fieldProperty
+			name="cdGruppoIva"
+			property="cdGruppoIva"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			enabledOnEdit="false"
+			label="Gruppo IVA"/>
+
+	<fieldProperty
+			name="dsGruppoIva"
+			property="dsGruppoIva"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="100"
+			enabledOnEdit="false"
+			label="Descr. Gruppo"/>
+
+	<fieldProperty
+			name="percentuale"
+			property="percentuale"
+			inputType="TEXT"
+			inputSize="5"
+			maxLength="5"
+			enabledOnEdit="false"
+			label="% Applicata"/>
+
+	<fieldProperty
+			name="d"
+			property="d"
+			inputType="TEXT"
+			inputSize="1"
+			maxLength="1"
+			enabledOnEdit="false"
+			label="Detraibilità"/>
+
+	<fieldProperty
+			name="percD"
+			property="percD"
+			inputType="TEXT"
+			inputSize="5"
+			maxLength="5"
+			enabledOnEdit="false"
+			label="% Detraibile"/>
+
+	<fieldProperty
+			name="sp"
+			property="sp"
+			inputType="TEXT"
+			inputSize="1"
+			maxLength="1"
+			enabledOnEdit="false"
+			label="Split Payment"/>
+
+	<fieldProperty
+			name="tipoDocumento"
+			property="tipoDocumento"
+			inputType="TEXT"
+			inputSize="7"
+			maxLength="7"
+			enabledOnEdit="false"
+			label="Tipo Doc."/>
+
+	<fieldProperty
+			name="flAutofattura"
+			property="flAutofattura"
+			inputType="CHECKBOX"
+			enabledOnEdit="false"
+			label="Autofattura"/>
+
+	<fieldProperty
+			name="flSpedizioniere"
+			property="flSpedizioniere"
+			inputType="CHECKBOX"
+			enabledOnEdit="false"
+			label="Spedizioniere"/>
+
+	<fieldProperty
+			name="flBollaDoganale"
+			property="flBollaDoganale"
+			inputType="CHECKBOX"
+			enabledOnEdit="false"
+			label="Bolla Doganale"/>
+
+	<fieldProperty
+			name="tipo_sezionale"
+			property="tipo_sezionale"
+			printProperty="cd_ds_tipo_sezionale"
+			optionsProperty="tipi_sezionali"
+			maxLength="30"
+			inputSize="30"
+			inputType="SELECT"
+			nullable="false"
+			enabledOnFreeSearch="true"
+			enabledOnSearch="true"
+			enabledOnEdit="true"
+			enabledOnInsert="true"
+			label="Tipo Sezionale"/>
+	<form
+		name="searchtool">
+	</form>
+	<formFieldProperty
+		name="esercizio" />
+	<formFieldProperty
+		name="tipo" />
+	<formFieldProperty
+		name="dataRegistrazione" />
+	<formFieldProperty
+		name="dtEmissione" />
+	<formFieldProperty
+		name="dtEmissAmm" />
+	<formFieldProperty
+		name="tiBeneServizio" />
+	<formFieldProperty
+		name="cdTipoSezionale" />
+	<formFieldProperty
+		name="cdUnitaOrganizzativa" />
+	<formFieldProperty
+		name="cdCdsOrigine" />
+	<formFieldProperty
+		name="cdUoOrigine" />
+	<formFieldProperty
+		name="pgFattura" />
+	<formFieldProperty
+		name="protIva" />
+	<formFieldProperty
+		name="nrgregIva" />
+	<formFieldProperty
+		name="pgrU" />
+	<formFieldProperty
+		name="dsFattura" />
+	<formFieldProperty
+		name="imp" />
+	<formFieldProperty
+		name="iva" />
+	<formFieldProperty
+		name="tot" />
+	<formFieldProperty
+		name="cdForn" />
+	<formFieldProperty
+		name="denoForn" />
+	<formFieldProperty
+		name="cfPiva" />
+	<formFieldProperty
+		name="nrFattura" />
+	<formFieldProperty
+		name="ue" />
+	<formFieldProperty
+		name="tipoFattura" />
+	<formFieldProperty
+		name="pgrD" />
+	<formFieldProperty
+		name="impD" />
+	<formFieldProperty
+		name="ivaD" />
+	<formFieldProperty
+		name="totD" />
+	<formFieldProperty
+		name="cdVoceIva" />
+	<formFieldProperty
+		name="cdGruppoIva" />
+	<formFieldProperty
+		name="dsGruppoIva" />
+	<formFieldProperty
+		name="percentuale" />
+	<formFieldProperty
+		name="d" />
+	<formFieldProperty
+		name="percD" />
+	<formFieldProperty
+		name="sp" />
+	<formFieldProperty
+		name="tipoDocumento" />
+	<formFieldProperty
+		name="flAutofattura" />
+	<formFieldProperty
+		name="flSpedizioniere" />
+	<formFieldProperty
+		name="flBollaDoganale" />
+	<formFieldProperty name="tipo_sezionale" />
+	<findFieldProperty
+		name="esercizio" />
+	<findFieldProperty
+		name="tipo" />
+	<findFieldProperty
+		name="dataRegistrazione" />
+	<findFieldProperty
+		name="dtEmissione" />
+	<findFieldProperty
+		name="dtEmissAmm" />
+	<findFieldProperty
+		name="tiBeneServizio" />
+	<findFieldProperty
+		name="cdTipoSezionale" />
+	<findFieldProperty
+		name="cdUnitaOrganizzativa" />
+	<findFieldProperty
+		name="cdCdsOrigine" />
+	<findFieldProperty
+		name="cdUoOrigine" />
+	<findFieldProperty
+		name="pgFattura" />
+	<findFieldProperty
+		name="protIva" />
+	<findFieldProperty
+		name="nrgregIva" />
+	<findFieldProperty
+		name="pgrU" />
+	<findFieldProperty
+		name="dsFattura" />
+	<findFieldProperty
+		name="imp" />
+	<findFieldProperty
+		name="iva" />
+	<findFieldProperty
+		name="tot" />
+	<findFieldProperty
+		name="cdForn" />
+	<findFieldProperty
+		name="denoForn" />
+	<findFieldProperty
+		name="cfPiva" />
+	<findFieldProperty
+		name="nrFattura" />
+	<findFieldProperty
+		name="ue" />
+	<findFieldProperty
+		name="tipoFattura" />
+	<findFieldProperty
+		name="pgrD" />
+	<findFieldProperty
+		name="impD" />
+	<findFieldProperty
+		name="ivaD" />
+	<findFieldProperty
+		name="totD" />
+	<findFieldProperty
+		name="cdVoceIva" />
+	<findFieldProperty
+		name="cdGruppoIva" />
+	<findFieldProperty
+		name="dsGruppoIva" />
+	<findFieldProperty
+		name="percentuale" />
+	<findFieldProperty
+		name="d" />
+	<findFieldProperty
+		name="percD" />
+	<findFieldProperty
+		name="sp" />
+	<findFieldProperty
+		name="tipoDocumento" />
+	<findFieldProperty
+		name="flAutofattura" />
+	<findFieldProperty
+		name="flSpedizioniere" />
+	<findFieldProperty
+		name="flBollaDoganale" />
+	<columnFieldProperty
+		name="esercizio" />
+	<columnFieldProperty
+		name="tipo" />
+	<columnFieldProperty
+		name="dataRegistrazione" />
+	<columnFieldProperty
+		name="dtEmissione" />
+	<columnFieldProperty
+		name="dtEmissAmm" />
+	<columnFieldProperty
+		name="tiBeneServizio" />
+	<columnFieldProperty
+		name="cdTipoSezionale" />
+	<columnFieldProperty
+		name="cdUnitaOrganizzativa" />
+	<columnFieldProperty
+		name="cdCdsOrigine" />
+	<columnFieldProperty
+		name="cdUoOrigine" />
+	<columnFieldProperty
+		name="pgFattura" />
+	<columnFieldProperty
+		name="protIva" />
+	<columnFieldProperty
+		name="nrgregIva" />
+	<columnFieldProperty
+		name="pgrU" />
+	<columnFieldProperty
+		name="dsFattura" />
+	<columnFieldProperty
+		name="imp" />
+	<columnFieldProperty
+		name="iva" />
+	<columnFieldProperty
+		name="tot" />
+	<columnFieldProperty
+		name="cdForn" />
+	<columnFieldProperty
+		name="denoForn" />
+	<columnFieldProperty
+		name="cfPiva" />
+	<columnFieldProperty
+		name="nrFattura" />
+	<columnFieldProperty
+		name="ue" />
+	<columnFieldProperty
+		name="tipoFattura" />
+	<columnFieldProperty
+		name="pgrD" />
+	<columnFieldProperty
+		name="impD" />
+	<columnFieldProperty
+		name="ivaD" />
+	<columnFieldProperty
+		name="totD" />
+	<columnFieldProperty
+		name="cdVoceIva" />
+	<columnFieldProperty
+		name="cdGruppoIva" />
+	<columnFieldProperty
+		name="dsGruppoIva" />
+	<columnFieldProperty
+		name="percentuale" />
+	<columnFieldProperty
+		name="d" />
+	<columnFieldProperty
+		name="percD" />
+	<columnFieldProperty
+		name="sp" />
+	<columnFieldProperty
+		name="tipoDocumento" />
+	<columnFieldProperty
+		name="flAutofattura" />
+	<columnFieldProperty
+		name="flSpedizioniere" />
+	<columnFieldProperty
+		name="flBollaDoganale" />
+</bulkInfo>

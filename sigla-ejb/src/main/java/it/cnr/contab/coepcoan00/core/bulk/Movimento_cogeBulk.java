@@ -23,12 +23,10 @@ import it.cnr.contab.config00.pdcep.bulk.Voce_epBulk;
 import it.cnr.contab.config00.sto.bulk.CdsBulk;
 import it.cnr.contab.docamm00.docs.bulk.TipoDocumentoEnum;
 import it.cnr.contab.util.enumeration.TipoIVA;
-import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.FieldProperty;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.OrderedHashtable;
-import it.cnr.jada.util.action.CRUDBP;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -286,6 +284,7 @@ public class Movimento_cogeBulk extends Movimento_cogeBase {
                     return Arrays.asList(
                             TipoDocumentoEnum.fromValue(s).getLabel(),
                             Optional.ofNullable(getEsercizio_documento()).map(String::valueOf).orElse(null),
+                            Optional.ofNullable(getCd_cds_documento()).orElse(null),
                             Optional.ofNullable(getPg_numero_documento()).map(String::valueOf).orElse(null)
                     ).stream().filter(Objects::nonNull).collect(
                             Collectors.joining("/")
@@ -330,6 +329,18 @@ public class Movimento_cogeBulk extends Movimento_cogeBase {
 
     public boolean isRigaTipoDebito() {
         return TipoRiga.DEBITO.value().equals(this.getTi_riga());
+    }
+
+    public boolean isRigaTipoAttivita() {
+        return TipoRiga.ATTIVITA.value().equals(this.getTi_riga());
+    }
+
+    public boolean isRigaTipoPassivita() {
+        return TipoRiga.PASSIVITA.value().equals(this.getTi_riga());
+    }
+
+    public boolean isRigaTipoCosto() {
+        return TipoRiga.COSTO.value().equals(this.getTi_riga());
     }
 
     public boolean isRigaTipoTesoreria() {
@@ -452,7 +463,7 @@ public class Movimento_cogeBulk extends Movimento_cogeBase {
         if (fieldProperty.getName().equalsIgnoreCase("ti_riga")) {
             if (Optional.ofNullable(getScrittura())
                     .flatMap(scritturaPartitaDoppiaBulk -> Optional.ofNullable(scritturaPartitaDoppiaBulk.getOrigine_scrittura()))
-                    .map(s -> s.equalsIgnoreCase(Scrittura_partita_doppiaBulk.Origine.PRIMA_NOTA_MANUALE.name()))
+                    .map(s -> s.equalsIgnoreCase(OrigineScritturaEnum.PRIMA_NOTA_MANUALE.name()))
                     .orElse(Boolean.FALSE)
             ) {
                 return !Arrays.asList(TipoRiga.COSTO, TipoRiga.RICAVO, TipoRiga.ATTIVITA,

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="valentina.tomada" id="add_table_ass_la_ribalt_pluriennali">
+        <createTable remarks="Rappresenta l'associazione GAE in fase di Ribaltamento Pluriennali" tableName="ass_la_ribalt_pluriennali">
+            <column name="esercizio" remarks="Esercizio di ribaltamento" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_centro_responsabilita" remarks="Codice identificativo del centro di responsabilità della linea di attivita vecchio esercizio" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_linea_attivita" remarks="Codice della linea di attivita vecchio esercizio" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_centro_resp_ribalt" remarks="Codice identificativo del centro di responsabilità della linea di attivita nuovo esercizio" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_linea_attivita_ribalt" remarks="Codice della linea di attivita nuovo esercizio" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record: viene incrementato di 1 ad ogni variazione" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="ass_la_ribalt_pluriennali" constraintName="ass_la_ribalt_pluriennali_pkey" columnNames="esercizio,cd_centro_responsabilita,cd_linea_attivita"></addPrimaryKey>
+        <addForeignKeyConstraint baseColumnNames="cd_centro_responsabilita,cd_linea_attivita" baseTableName="ass_la_ribalt_pluriennali" constraintName="fk_ass_la_ribalt_pluriennali01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cd_centro_responsabilita,cd_linea_attivita" referencedTableName="linea_attivita"/>
+        <addForeignKeyConstraint baseColumnNames="cd_centro_resp_ribalt,cd_linea_attivita_ribalt" baseTableName="ass_la_ribalt_pluriennali" constraintName="fk_ass_la_ribalt_pluriennali02" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cd_centro_responsabilita,cd_linea_attivita" referencedTableName="linea_attivita"/>
+
+    </changeSet>
+</databaseChangeLog>

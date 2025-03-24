@@ -611,6 +611,11 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 		getOrdineAcq().setModalitaPagamento(modalita_pagamento);
 	}
 
+	@Override
+	public String getDs_riga() {
+		return getNotaRiga();
+	}
+
 	public Dettaglio_contrattoBulk getDettaglioContratto() {
 		return dettaglioContratto;
 	}

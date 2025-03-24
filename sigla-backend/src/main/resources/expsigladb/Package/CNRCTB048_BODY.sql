@@ -426,7 +426,7 @@
       If cnrutil.isLabelObbligazione() Then
         ibmerr001.RAISE_ERR_GENERICO('L''obbligazione è stata modificata nel nuovo esercizio, non può essere riportata indietro '||CNRCTB035.GETDESC(aObbNext));
       Else
-        ibmerr001.RAISE_ERR_GENERICO('L''impegno è stata modificato nel nuovo esercizio, non può essere riportato indietro '||CNRCTB035.GETDESC(aObbNext));
+        ibmerr001.RAISE_ERR_GENERICO('L''impegno è stato modificato nel nuovo esercizio, non può essere riportato indietro '||CNRCTB035.GETDESC(aObbNext));
       End If;
     end if;
 
@@ -444,18 +444,26 @@
     end;
 
     -- verifica se esiste un pluriennale creato sull'obbligazione originale(quando era di competenza)
+     /*
+        bloccare da web la modifica/cancellazione dei pluriennali che sono stati già ribalatati nel nuovo anno
     begin
     	   select 1 into aNum from dual
   	   where exists (select 1 from obbligazione_pluriennale
   	   		 		 where cd_cds = aObbNext.cd_cds
   					   and esercizio = aObbNext.esercizio_originale
   					   and esercizio_originale = aObbNext.esercizio_originale
-  					   and pg_obbligazione = aObbNext.pg_obbligazione);
+  					   and pg_obbligazione = aObbNext.pg_obbligazione
+                       and cd_cds_rif is not null
+                       and esercizio_rif is not null
+                       and esercizio_originale_rif is not null
+                       and pg_obbligazione_rif is not null);
   	   ibmerr001.RAISE_ERR_GENERICO('Esiste un pluriennale emesso sull'''||cnrutil.getLabelObbligazioneMin()||' '||CNRCTB035.getDesc(aObbNext));
     exception when NO_DATA_FOUND then
       null;
     end;
+    */
    end;
+
 
    procedure checkDeRiportaScadEsNext(aAcc accertamento%rowtype, aAccScad accertamento_scadenzario%rowtype, aAccNext accertamento%rowtype, aAccScadNext accertamento_scadenzario%rowtype) is
    begin
@@ -585,17 +593,24 @@
     end;
 
     -- verifica se esiste un pluriennale creato sull'pg_accertamento originale(quando era di competenza)
+    /*
+        bloccare da web la modifica/cancellazione dei pluriennali che sono stati già ribalatati nel nuovo anno
     begin
   	   select 1 into aNum from dual
     	   where exists (select 1 from accertamento_pluriennale
     	   		 		 where cd_cds = aAccNext.cd_cds
     					   and esercizio = aAccNext.esercizio_originale
     					   and esercizio_originale = aAccNext.esercizio_originale
-    					   and pg_accertamento = aAccNext.pg_accertamento);
+    					   and pg_accertamento = aAccNext.pg_accertamento
+                           and cd_cds_rif is not null
+                           and esercizio_rif is not null
+                           and esercizio_originale_rif is not null
+                           and pg_accertamento_rif is not null);
     	   --ibmerr001.RAISE_ERR_GENERICO('Esiste un pluriennale emesso sull''accertamento '||CNRCTB035.getDesc(aAccNext));
     exception when NO_DATA_FOUND then
       null;
     end;
+    */
 
     -- verifico se il documento è stato modificato nel nuovo esercizio
     -- rispetto a quanto riportato

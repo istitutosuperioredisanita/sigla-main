@@ -34,11 +34,11 @@
 			columnName="CD_UNITA_ORGANIZZATIVA"
 			propertyName="scrittura.uo.cd_unita_organizzativa" />			
 		<columnMapping
-			columnName="CD_VOCE_EP"
-			propertyName="conto.cd_voce_ep"/>
+			columnName="CD_VOCE_ANA"
+			propertyName="voceAnalitica.cd_voce_ana"/>
 		<columnMapping
 			columnName="ESERCIZIO"
-			propertyName="conto.esercizio"
+			propertyName="voceAnalitica.esercizio"
 			fetchOnly="true"/>
 		<columnMapping
 			columnName="CD_TERZO"
@@ -55,14 +55,31 @@
 		<columnMapping
 			columnName="CD_NATURA"
 			propertyName="latt.cd_natura" />
+		<columnMapping
+			columnName="ESERCIZIO_MOVCOGE"
+			propertyName="movimentoCoge.scrittura.esercizio" />
+		<columnMapping
+			columnName="CD_CDS_MOVCOGE"
+			propertyName="movimentoCoge.scrittura.cds.cd_unita_organizzativa" />
+		<columnMapping
+			columnName="CD_UO_MOVCOGE"
+			propertyName="movimentoCoge.scrittura.uo.cd_unita_organizzativa" />
+		<columnMapping
+			columnName="PG_SCRITTURA_MOVCOGE"
+			propertyName="movimentoCoge.scrittura.pg_scrittura" />
+		<columnMapping
+			columnName="PG_MOVIMENTO_MOVCOGE"
+			propertyName="movimentoCoge.pg_movimento" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="scrittura" 
 		partOfOid="true"/>
 	<persistentProperty
-		name="conto" />
+		name="voceAnalitica" />
 	<persistentProperty
 		name="latt" />
 	<persistentProperty
-		name="terzo" />		
+		name="terzo" />
+	<persistentProperty
+		name="movimentoCoge" />
 </SQLPersistentInfo>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.doccont00.core.bulk.Ass_la_ribalt_pluriennaliBulk"
+	homeClassName="it.cnr.contab.doccont00.core.bulk.Ass_la_ribalt_pluriennaliHome">
+	<defaultColumnMap
+		tableName="ASS_LA_RIBALT_PLURIENNALI">
+		<columnMapping
+			columnName="CD_CENTRO_RESPONSABILITA"
+			propertyName="lineaAttivita.centro_responsabilita.cd_centro_responsabilita" />
+		<columnMapping
+			columnName="CD_LINEA_ATTIVITA"
+			propertyName="lineaAttivita.cd_linea_attivita" />
+		<columnMapping
+			columnName="CD_CENTRO_RESP_RIBALT"
+			propertyName="lineaAttivitaNuovoEser.centro_responsabilita.cd_centro_responsabilita" />
+		<columnMapping
+			columnName="CD_LINEA_ATTIVITA_RIBALT"
+			propertyName="lineaAttivitaNuovoEser.cd_linea_attivita" />
+		<columnMapping
+				columnName="CDR_GAE_PREL_FONDI"
+				propertyName="lineaAttivitaPrelFondi.centro_responsabilita.cd_centro_responsabilita" />
+		<columnMapping
+				columnName="GAE_PREL_FONDI"
+				propertyName="lineaAttivitaPrelFondi.cd_linea_attivita" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="lineaAttivita"
+		partOfOid="true" />
+	<persistentProperty
+		name="lineaAttivitaNuovoEser"
+		partOfOid="true" />
+	<persistentProperty
+		name="lineaAttivitaPrelFondi"/>
+</SQLPersistentInfo>

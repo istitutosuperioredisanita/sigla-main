@@ -21,8 +21,7 @@ import javax.ejb.Remote;
 
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.Modalita_pagamentoBulk;
-import it.cnr.contab.docamm00.docs.bulk.DocumentoGenericoWizardBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
+import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.doccont00.core.AccertamentoWizard;
 import it.cnr.contab.doccont00.core.ObbligazioneWizard;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
@@ -31,6 +30,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Remote
 public interface DocumentoGenericoComponentSession extends it.cnr.contab.docamm00.comp.DocumentoAmministrativoComponentSession, it.cnr.jada.ejb.CRUDComponentSession, it.cnr.jada.ejb.PrintComponentSession, IDocumentoAmministrativoSpesaComponentSession, IDocumentoAmministrativoEntrataComponentSession {
@@ -80,4 +80,5 @@ public interface DocumentoGenericoComponentSession extends it.cnr.contab.docamm0
     Documento_genericoBulk creaDocumentoGenericoDaAccertamenti(UserContext userContext, DocumentoGenericoWizardBulk wizard, java.util.Collection<AccertamentoWizard> accertamentiColl) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
     V_doc_passivo_obbligazioneBulk sdoppiaDettagliInAutomatico(UserContext userContext, V_doc_passivo_obbligazioneBulk docPassivo, BigDecimal newImporto) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
     void aggiornaModalitaPagamento(UserContext userContext, V_doc_passivo_obbligazioneBulk docPassivoObb, Modalita_pagamentoBulk newModalitaPag, BancaBulk newBanca) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+    Documento_genericoBulk creaDocumentoGenericoDiStorno(UserContext userContext, char tiEntrataSpesa, boolean isDaFattura, StornaDocumentoGenericoBulk stornaDocumentoGenericoBulk, List<IDocumentoAmministrativoRigaBulk> documentoGenericoRigaBulks) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 }
