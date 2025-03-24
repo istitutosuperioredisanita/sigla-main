@@ -299,13 +299,17 @@ public java.util.Collection findDettagliBuono(Buono_carico_scaricoBulk buono)thr
 		sqlBuilder.addSQLClause(FindClause.AND, "ID_TRANSITO_BENI_ORDINI", SQLBuilder.EQUALS, transito_beni_ordiniBulk.getId());
 		return fetchAll(sqlBuilder);
 	}
-	public boolean IsEtichettaBeneAlreadyExist(Buono_carico_scarico_dettBulk dett) throws java.sql.SQLException{
 
+	public boolean IsEtichettaBeneAlreadyExist(Buono_carico_scarico_dettBulk dett) throws java.sql.SQLException {
 		SQLBuilder sql = createSQLBuilder();
-		sql.addSQLClause("AND","INVENTARIO_BENI.ETICHETTA",sql.EQUALS,dett.getEtichetta());
+
+		sql.addSQLClause("AND", "INVENTARIO_BENI.ETICHETTA", sql.EQUALS, dett.getBene().getEtichetta());
+		// Aggiungi condizione per il progressivo
+		sql.addSQLClause("AND", "INVENTARIO_BENI.PROGRESSIVO", sql.EQUALS, dett.getProgressivo());
 
 		return sql.executeExistsQuery(getConnection());
 	}
+
 	public String aggiornamentoSqlInventarioBeneConAmmortamento(UserContext uc, Inventario_beniBulk bene){
 		return " UPDATE "+it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+"INVENTARIO_BENI "+
 				"SET VALORE_AMMORTIZZATO="+bene.getValore_ammortizzato()+" AND " +
