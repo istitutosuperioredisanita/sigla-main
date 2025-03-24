@@ -37,24 +37,12 @@ public class ConsDettRegIvaBP extends BulkBP {
     }
 
     protected void init(Config config, ActionContext context) throws BusinessProcessException {
-        // Prima chiama super.init per inizializzare il BulkInfo
+        // Inizializza il BulkInfo
         super.init(config, context);
 
-        // Poi crea il bulk e imposta il modello
+        // Crea il bulk e imposta il modello
         V_cons_dett_ivaBulk bulk = new V_cons_dett_ivaBulk();
-        try {
-            bulk.setTipi_sezionali(createComponentSession().selectTipi_sezionaliByClause(
-                    context.getUserContext(),
-                    bulk,
-                    new Tipo_sezionaleBulk(),
-                    null
-            ));
-
-            // Imposta il modello DOPO aver chiamato super.init
-            setModel(context, bulk);
-        } catch (ComponentException | PersistencyException | RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        setModel(context, bulk);
     }
 
     public boolean isRicercaButtonEnabled() {

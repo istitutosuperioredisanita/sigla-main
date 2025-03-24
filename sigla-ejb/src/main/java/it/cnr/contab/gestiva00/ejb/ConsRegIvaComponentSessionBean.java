@@ -47,25 +47,4 @@ public class ConsRegIvaComponentSessionBean extends it.cnr.jada.ejb.RicercaCompo
         return new ConsRegIvaComponentSessionBean();
     }
 
-
-    public java.util.Collection selectTipi_sezionaliByClause(UserContext userContext,
-                                                             OggettoBulk model, Tipo_sezionaleBulk prototype, CompoundFindClause clause)
-            throws ComponentException, RemoteException, PersistencyException {
-
-        pre_component_invocation(userContext, componentObj);
-        try {
-            java.util.Collection result = ((ConsRegIvaComponent) componentObj).selectTipi_sezionaliByClause(
-                    userContext, model, prototype, clause);
-            component_invocation_succes(userContext, componentObj);
-            return result;
-        } catch (ComponentException e) {
-            component_invocation_failure(userContext, componentObj);
-            throw e;
-        } catch (RuntimeException e) {
-            throw uncaughtRuntimeException(userContext, componentObj, e);
-        } catch (Error e) {
-            throw uncaughtError(userContext, componentObj, e);
-        }
-    }
-
 }

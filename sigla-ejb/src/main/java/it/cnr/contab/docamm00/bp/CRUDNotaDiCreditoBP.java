@@ -65,7 +65,9 @@ public class CRUDNotaDiCreditoBP
 				Nota_di_credito_rigaBulk ndcr = (Nota_di_credito_rigaBulk)getModel();
 				Nota_di_creditoBulk ndc = (Nota_di_creditoBulk)getParentModel();
 				if (ndc.getFl_split_payment())
-					if(ndcr.getIm_iva().compareTo(BigDecimal.ZERO)!=0 && ndcr.getRiga_fattura_origine().getFattura_passivaI().getFl_split_payment() &&
+					if(ndcr.getIm_iva().compareTo(BigDecimal.ZERO)!=0 &&
+							ndcr.getRiga_fattura_origine() != null &&
+							ndcr.getRiga_fattura_origine().getFattura_passivaI().getFl_split_payment() &&
 							ndcr.getRiga_fattura_origine().getIm_iva().compareTo(BigDecimal.ZERO)==0)
 							throw new ValidationException("L'iva sulla riga di nota credito "+ndcr.getDs_riga_fattura()+" non è compatibile con l'iva della riga di fattura di origine.");
 			};
