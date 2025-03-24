@@ -201,6 +201,38 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 		return ((getBuono_cs().isByFattura() && isAccessorioContestuale())||(getBuono_cs().isByDocumento() && isAccessorioContestuale()));
 	}
 
+	/**
+	 * Disabilita l'etichetta se il bene è accessorio
+	 */
+	public boolean isROEtichetta() {
+		return isBeneAccessorio();
+	}
+
+
+	/**
+	 * Restituisce l'etichetta del bene.
+	 * Se il bene è accessorio, restituisce l'etichetta del bene principale se disponibile.
+	 */
+	public String getEtichetta() {
+		// Se è un bene accessorio
+		if (isBeneAccessorio()) {
+			// Se ha un bene principale associato con etichetta valida
+			if (getBene() != null &&
+					getBene().getBene_principale() != null &&
+					getBene().getBene_principale().getEtichetta() != null) {
+				// Restituisce l'etichetta del bene principale
+				return getBene().getBene_principale().getEtichetta();
+			}
+
+			// Se non c'è un bene principale o la sua etichetta è nulla, restituisce stringa vuota
+			return "";
+		}
+
+		// Altrimenti restituisce l'etichetta normale del bene (o stringa vuota se null)
+		return getBene().getBene_principale() != null &&
+				getBene().getBene_principale().getEtichetta() != null ? getBene().getBene_principale().getEtichetta() : "";
+	}
+
 	public Boolean getFl_accessorio_contestuale() {
 		return fl_accessorio_contestuale;
 	}
@@ -319,9 +351,9 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 	public it.cnr.contab.anagraf00.core.bulk.TerzoBulk getAssegnatario() {
 		return bene.getAssegnatario();
 	}
-	public String getEtichetta() {
-		return bene.getEtichetta();
-	}
+//	public String getEtichetta() {
+//		return bene.getEtichetta();
+//	}
 	public String getCollocazione() {
 		return  bene.getCollocazione();
 	}

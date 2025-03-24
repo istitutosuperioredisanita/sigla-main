@@ -7730,11 +7730,25 @@ public RemoteIterator cercaBeniAssociabili(UserContext userContext,Ass_inv_bene_
 			sql.addSQLClause("AND","LIVELLO",sql.GREATER, "0");
 			return sql;		
 	}
-	public boolean checkEtichettaBeneAlreadyExist(UserContext userContext, Buono_carico_scarico_dettBulk dett)  throws ComponentException, RemoteException{
-		try{
+	public boolean checkEtichettaBeneAlreadyExist(UserContext userContext, Buono_carico_scarico_dettBulk dett) throws ComponentException, RemoteException {
+		try {
+			// Crea l'hashtable per i progressivi se non esiste
+			java.util.Hashtable progressivi = new java.util.Hashtable();
+
+			// Gestione del progressivo prima di chiamare la home
+			if (dett.isBeneAccessorio()) {
+				// Se è un bene accessorio, ottiene il progressivo
+				dett.setProgressivo(
+						getProgressivoDaBenePrincipale(userContext, dett.getBene().getBene_principale(), progressivi).intValue()
+				);
+			} else {
+				// Bene SENZA Accessori
+				dett.setProgressivo(new Integer(0));
+			}
+
 			Inventario_beniHome invBeniHome = (Inventario_beniHome)getHome(userContext, Inventario_beniBulk.class);
 			return invBeniHome.IsEtichettaBeneAlreadyExist(dett);
-		}catch (SQLException ex) {
+		} catch (SQLException ex) {
 			throw handleException(ex);
 		}
 	}
