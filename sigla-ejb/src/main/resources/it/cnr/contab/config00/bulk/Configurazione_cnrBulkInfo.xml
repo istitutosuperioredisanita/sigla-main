@@ -191,6 +191,15 @@
 				command="doConferma"
 				label = "Data"/>
 	</form>
+	<form name="STEP_FINE_ANNO_ONLY_DATE">
+		<formFieldProperty
+				name="dt01"
+				inputType="TEXT"
+				inputSize="10"
+				formatName="date_short"
+				command="doConferma"
+				label = "Data"/>
+	</form>
 	<freeSearchSet name="STEP_FINE_ANNO">
 		<findFieldProperty
 				name="cd_chiave_secondaria"

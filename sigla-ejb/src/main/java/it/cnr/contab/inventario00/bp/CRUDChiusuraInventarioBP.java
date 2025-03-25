@@ -17,26 +17,9 @@
 
 package it.cnr.contab.inventario00.bp;
 
-import it.cnr.contab.inventario00.docs.bulk.Aggiornamento_inventarioBulk;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_utilizzatori_laBulk;
-import it.cnr.contab.inventario00.docs.bulk.Utilizzatore_CdrVBulk;
-import it.cnr.contab.inventario00.ejb.Aggiornamento_inventarioComponentSession;
 import it.cnr.contab.reports.bp.ParametricPrintBP;
-import it.cnr.jada.DetailedRuntimeException;
-import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.util.RemoteIterator;
-import it.cnr.jada.util.action.SelectionListener;
-import it.cnr.jada.util.action.SimpleDetailCRUDController;
-
-import java.rmi.RemoteException;
-import java.util.Iterator;
-import java.util.Vector;
 
 public class CRUDChiusuraInventarioBP extends ParametricPrintBP {
 

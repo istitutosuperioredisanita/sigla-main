@@ -478,6 +478,15 @@
         <init-param name="defaultAction" value="SelezionatoreStepFineAnnoAction"/>
     </businessProcess>
 
+    <action
+            path="/CRUDCausaliContabiliAction" actionClass="it.cnr.contab.config00.action.CRUDCausaliContabiliAction">
+    </action>
 
+    <businessProcess name="CRUDCausaliContabiliBP" className="it.cnr.contab.config00.bp.CRUDCausaliContabiliBP">
+        <forward name="default" path="/config00/causali_contabili.jsp"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.config00.bulk.CausaleContabileBulk" />
+        <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>
+        <init-param name="defaultAction" value="CRUDCausaliContabiliAction" />
+    </businessProcess>
 
 </action-mappings>

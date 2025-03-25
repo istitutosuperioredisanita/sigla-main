@@ -36,6 +36,12 @@
 				property="dtContabilizzazioneColumnValue"/>
 		<columnFieldProperty
 				headerLabel="Scrittura"
+				label="Data canc."
+				formatName="date_short"
+				name="dt_cancellazione"
+				property="dtCancellazioneColumnValue"/>
+		<columnFieldProperty
+				headerLabel="Scrittura"
 				label="Desc."
 				name="ds_scrittura"
 				property="dsScritturaColumnValue"/>
@@ -75,9 +81,42 @@
 				name="pg_numero_documento"
 				property="pg_numero_documento"/>
 		<columnFieldProperty
-				label="Terzo"
+				label="Num. Fattura/Pagamento/Incasso"
+				name="nr_fattura_for_pag"
+				property="nr_fattura_for_pag"/>
+		<columnFieldProperty
+				label="Data Emis. Fattura/Pagamento/Incasso"
+				formatName="date_short"
+				name="dt_em_pag"
+				property="dt_em_pag"/>
+		<columnFieldProperty
+				label="Data Fattura Fornitore"
+				formatName="date_short"
+				name="dt_fattura_fornitore"
+				property="dt_fattura_fornitore"/>
+		<columnFieldProperty
+				label="Stato Liq."
+				inputType="SELECT"
+				keysProperty="stato_liquidazioneKeys"
+				name="stato_liquidazione"
+				property="stato_liquidazione"/>
+		<columnFieldProperty
+				name="identificativoSdi"
+				property="identificativoSdi"
+				maxLength="22"
+				inputSize="22"
+				inputType="TEXT"
+				label="Identificativo SDI"/>
+		<columnFieldProperty
+				headerLabel="Terzo"
+				label="Cod."
 				name="cd_terzo"
 				property="terzo.cd_terzo"/>
+		<columnFieldProperty
+				headerLabel="Terzo"
+				label="Denom."
+				name="denominazione_sede"
+				property="terzo.denominazione_sede"/>
 		<columnFieldProperty
 				label="Codice CO/RI"
 				name="cd_contributo_ritenuta"
@@ -121,6 +160,7 @@
 		<findFieldProperty name="cd_uo_documento" label="Unità Organizzativa" inputType="TEXT"/>
 		<findFieldProperty name="pg_numero_documento" label="Numero Partita" inputType="TEXT"/>
 		<findFieldProperty name="cd_contributo_ritenuta" inputType="TEXT"/>
+		<findFieldProperty name="identificativoSdi" inputType="TEXT"/>
 	</freeSearchSet>
 
 </bulkInfo>

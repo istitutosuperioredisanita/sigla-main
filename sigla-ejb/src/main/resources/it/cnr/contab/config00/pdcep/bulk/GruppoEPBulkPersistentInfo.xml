@@ -4,7 +4,11 @@
 	homeClassName="it.cnr.contab.config00.pdcep.bulk.GruppoEPHome">
 	<defaultColumnMap
 		tableName="CNR_GRUPPO_EP">
+		<columnMapping
+				columnName="CD_TIPO_BILANCIO"
+				propertyName="tipoBilancio.cdTipoBilancio" />
 	</defaultColumnMap>
+
 	<columnMap
 			name="INSERT"
 			tableName="CNR_GRUPPO_EP"
@@ -14,4 +18,6 @@
 				propertyName="rowid"/>
 	</columnMap>
 
+	<persistentProperty
+			name="tipoBilancio" />
 </SQLPersistentInfo>

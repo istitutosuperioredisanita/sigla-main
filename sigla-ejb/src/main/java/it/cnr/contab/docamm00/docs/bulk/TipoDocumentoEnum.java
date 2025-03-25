@@ -53,8 +53,11 @@ public enum TipoDocumentoEnum {
 	GEN_CH_FON(Numerazione_doc_ammBulk.TIPO_GEN_CH_FON, Documento_generico_attivoBulk.class, "Documento generico di chiusura del fondo economale"),
 	GEN_AP_FON(Numerazione_doc_ammBulk.TIPO_GEN_AP_FON, Documento_generico_passivoBulk.class, "Documento generico di apertura del fondo economale"),
 	GEN_REINTEGRO_FONDO("GEN_RE_FON", Documento_generico_passivoBulk.class, "Documento generico di reintegro del fondo economale"),
+	GEN_STORNO_S(TipoDocumentoEnum.TIPO_DOCGEN_STORNO_PASSIVO, Documento_generico_passivoBulk.class, "Documento generico storno di spesa"),
+	GEN_STORNO_E(TipoDocumentoEnum.TIPO_DOCGEN_STORNO_ATTIVO, Documento_generico_attivoBulk.class, "Documento generico storno di entrata"),
 	GENERICO_S(Numerazione_doc_ammBulk.TIPO_DOC_GENERICO_S, Documento_generico_passivoBulk.class, "Documento generico di spesa"),
 	GENERICO_E(Numerazione_doc_ammBulk.TIPO_DOC_GENERICO_E, Documento_generico_attivoBulk.class, "Documento generico di entrata"),
+ 	GEN_TRASF_E("TRASF_E", Documento_generico_attivoBulk.class, "Documento generico di trasferimento di entrata"),
 	MANDATO(Numerazione_doc_contBulk.TIPO_MAN, MandatoIBulk.class, "Mandato"),
 	REVERSALE(Numerazione_doc_contBulk.TIPO_REV, ReversaleIBulk.class, "Reversale"),
 	GEN_STIPENDI_SPESA("GEN_STIP_S", Documento_generico_passivoBulk.class, "Documento generico di versamento stipendi"),
@@ -70,6 +73,9 @@ public enum TipoDocumentoEnum {
 	public final static String TIPO_NOTA_DEBITO_PASSIVA = "NOTA_DEBITO_P";
 	public final static String TIPO_NOTA_CREDITO_ATTIVA = "NOTA_CREDITO_A";
 	public final static String TIPO_NOTA_DEBITO_ATTIVA = "NOTA_DEBITO_A";
+
+	public final static String TIPO_DOCGEN_STORNO_PASSIVO = "DOCGEN_STORNO_P";
+	public final static String TIPO_DOCGEN_STORNO_ATTIVO = "DOCGEN_STORNO_A";
 
 	TipoDocumentoEnum(String value, Class<?> documentoCogeBulk, String label) {
 		this.value = value;
@@ -101,12 +107,10 @@ public enum TipoDocumentoEnum {
 	public IDocumentoCogeBulk getDocumentoCogeBulk() {
 		try {
 			return (IDocumentoCogeBulk) documentoCogeBulk.newInstance();
-		} catch (InstantiationException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
+		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
-	}
+    }
 
 	public IDocumentoAmministrativoBulk getDocumentoAmministrativoBulk() {
 		return Optional.ofNullable(getDocumentoCogeBulk())
@@ -155,6 +159,14 @@ public enum TipoDocumentoEnum {
 		return TipoDocumentoEnum.NOTA_DEBITO_ATTIVA.equals(this);
 	}
 
+	public boolean isGenericoStornoAttivo() {
+		return TipoDocumentoEnum.GEN_STORNO_E.equals(this);
+	}
+
+	public boolean isGenericoStornoPassivo() {
+		return TipoDocumentoEnum.GEN_STORNO_S.equals(this);
+	}
+
 	/**
 	 * Indica se il tipo di documento rientra tra quelli amministrativi passivi (fattura, nota credito e nota debito)
 	 * @return true se il tipo di documento rientra tra quelli amministrativi passivi (fattura, nota credito e nota debito)
@@ -177,7 +189,8 @@ public enum TipoDocumentoEnum {
 	 */
 	public boolean isDocumentoGenericoPassivo() {
 		return this.isGenericoSpesa() || this.isAperturaFondo() || this.isGenericoCoriAccantonamentoSpesa() ||
-				this.isGenericoCoriVersamentoSpesa() || this.isReintegroFondo() || this.isGenericoStipendiSpesa();
+				this.isGenericoCoriVersamentoSpesa() || this.isReintegroFondo() || this.isGenericoStipendiSpesa() ||
+				this.isGenericoStornoPassivo();
 	}
 
 	/**
@@ -186,7 +199,8 @@ public enum TipoDocumentoEnum {
 	 */
 	public boolean isDocumentoGenericoAttivo() {
 		return this.isGenericoEntrata() || this.isChiusuraFondo() || this.isGenericoCoriAccantonamentoEntrata() ||
-				this.isGenericoCoriVersamentoEntrata() || this.isGenericoEntrataIncassoIva() || this.isGenericoMandatoRegolarizzazione();
+				this.isGenericoCoriVersamentoEntrata() || this.isGenericoEntrataIncassoIva() || this.isGenericoMandatoRegolarizzazione() ||
+				this.isGenericoStornoAttivo();
 	}
 
 	/**
@@ -331,7 +345,7 @@ public enum TipoDocumentoEnum {
 		//Lw fatture passive, incluse le note credito, movimentano sempre un debito (le note credito in diminuzione)
 		if (this.isDocumentoPassivo())
 			return Movimento_cogeBulk.TipoRiga.DEBITO.value();
-		//I documenti attivi, incluse le note credito attive, movimentano sempre un crebito (le note credito in aumento)
+		//I documenti attivi, incluse le note credito attive, movimentano sempre un credito (le note credito in aumento)
 		if (this.isDocumentoAttivo())
 			return Movimento_cogeBulk.TipoRiga.CREDITO.value();
 		if (this.isRimborso())
@@ -343,14 +357,14 @@ public enum TipoDocumentoEnum {
 	 * Indica quale sezione (Dare/Avere) per il conto di tipo economica viene movimentato dalla scrittura PN del tipo documento
 	 */
 	public String getSezioneEconomica() {
-		if (this.isFatturaPassiva()||this.isGenericoSpesa()||this.isGenericoStipendiSpesa())
-			return Movimento_cogeBulk.SEZIONE_DARE;
-		if (this.isNotaCreditoPassiva())
+		if (this.isNotaCreditoPassiva() || this.isGenericoStornoPassivo())
 			return Movimento_cogeBulk.SEZIONE_AVERE;
-		if (this.isFatturaAttiva()||this.isGenericoEntrata()||this.isGenericoCoriAccantonamentoEntrata())
-			return Movimento_cogeBulk.SEZIONE_AVERE;
-		if (this.isNotaCreditoAttiva())
+		if (this.isFatturaPassiva() || this.isGenericoSpesa() || this.isGenericoStipendiSpesa())
 			return Movimento_cogeBulk.SEZIONE_DARE;
+		if (this.isNotaCreditoAttiva() || this.isGenericoStornoAttivo())
+			return Movimento_cogeBulk.SEZIONE_DARE;
+		if (this.isFatturaAttiva() || this.isGenericoEntrata() || this.isGenericoCoriAccantonamentoEntrata())
+			return Movimento_cogeBulk.SEZIONE_AVERE;
 		if (this.isCompenso())
 			return Movimento_cogeBulk.SEZIONE_DARE;
 		if (this.isAnticipo())
@@ -370,14 +384,14 @@ public enum TipoDocumentoEnum {
 	 * Indica quale sezione (Dare/Avere) per il conto di tipo iva viene movimentato dalla scrittura PN del tipo documento
 	 */
 	public String getSezioneIva() {
+		if (this.isNotaCreditoPassiva() || this.isGenericoStornoPassivo())
+			return Movimento_cogeBulk.SEZIONE_AVERE;
 		if (this.isFatturaPassiva() || this.isNotaDebitoPassiva())
 			return Movimento_cogeBulk.SEZIONE_DARE;
-		if (this.isNotaCreditoPassiva())
-			return Movimento_cogeBulk.SEZIONE_AVERE;
+		if (this.isNotaCreditoAttiva() || this.isGenericoStornoAttivo())
+			return Movimento_cogeBulk.SEZIONE_DARE;
 		if (this.isFatturaAttiva() || this.isNotaDebitoAttiva())
 			return Movimento_cogeBulk.SEZIONE_AVERE;
-		if (this.isNotaCreditoAttiva())
-			return Movimento_cogeBulk.SEZIONE_DARE;
 		if (this.isCompenso())
 			return Movimento_cogeBulk.SEZIONE_DARE;
 		return null;
@@ -387,14 +401,14 @@ public enum TipoDocumentoEnum {
 	 * Indica quale sezione (Dare/Avere) per il conto di tipo patrimoniale viene movimentato dalla scrittura PN del tipo documento
 	 */
 	public String getSezionePatrimoniale() {
+		if (this.isNotaCreditoPassiva() || this.isGenericoStornoPassivo())
+			return Movimento_cogeBulk.SEZIONE_DARE;
 		if (this.isFatturaPassiva() || this.isNotaDebitoPassiva())
 			return Movimento_cogeBulk.SEZIONE_AVERE;
-		if (this.isNotaCreditoPassiva())
-			return Movimento_cogeBulk.SEZIONE_DARE;
+		if (this.isNotaCreditoAttiva() || this.isGenericoStornoAttivo())
+			return Movimento_cogeBulk.SEZIONE_AVERE;
 		if (this.isFatturaAttiva() || this.isNotaDebitoAttiva())
 			return Movimento_cogeBulk.SEZIONE_DARE;
-		if (this.isNotaCreditoAttiva())
-			return Movimento_cogeBulk.SEZIONE_AVERE;
 		if (this.isCompenso())
 			return Movimento_cogeBulk.SEZIONE_AVERE;
 		if (this.isAnticipo())

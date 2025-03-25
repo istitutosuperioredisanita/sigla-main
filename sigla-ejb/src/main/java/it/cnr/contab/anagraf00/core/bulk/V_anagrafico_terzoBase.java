@@ -17,10 +17,7 @@
 
 package it.cnr.contab.anagraf00.core.bulk;
 
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
+import it.cnr.jada.persistency.Keyed;
 
 public class V_anagrafico_terzoBase extends V_anagrafico_terzoKey implements Keyed {
 	// ALIQUOTA_FISCALE DECIMAL(6,3)
@@ -207,6 +204,8 @@ public class V_anagrafico_terzoBase extends V_anagrafico_terzoKey implements Key
 	private java.lang.String via_sede;
 
 	private Integer cd_anag;
+	// FL_FIRMATARIO_CONTRATTO CHAR(1) NOT NULL
+	private java.lang.Boolean flFirmatarioContratto;
 
 public V_anagrafico_terzoBase() {
 	super();
@@ -956,4 +955,13 @@ public void setVia_fiscale(java.lang.String via_fiscale) {
 public void setVia_sede(java.lang.String via_sede) {
 	this.via_sede = via_sede;
 }
+
+	public Boolean getFlFirmatarioContratto() {
+		return flFirmatarioContratto;
+	}
+
+	public void setFlFirmatarioContratto(Boolean flFirmatarioContratto) {
+		this.flFirmatarioContratto = flFirmatarioContratto;
+	}
 }
+

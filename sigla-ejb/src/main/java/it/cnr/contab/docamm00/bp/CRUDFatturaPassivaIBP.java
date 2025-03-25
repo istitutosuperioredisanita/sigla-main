@@ -24,7 +24,9 @@ import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.bulk.FieldProperty;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.Config;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.jada.util.jsp.JSPUtils;
@@ -418,6 +420,17 @@ public class CRUDFatturaPassivaIBP extends CRUDFatturaPassivaBP implements IDocu
 	public boolean isSelezionaOrdiniButtonHidden() {
 
 		return isSearching() || isDeleting();
+	}
+	@Override
+	public void completeSearchTool(ActionContext actioncontext, OggettoBulk oggettobulk, FieldProperty fieldproperty) throws BusinessProcessException, ValidationException {
+
+		if ( fieldproperty.getName().equals("fatturaEstera")) {
+			if ( !(( Fattura_passiva_IBulk) oggettobulk ).isFromAmministra() || ((( Fattura_passiva_IBulk) oggettobulk ).isFromAmministra() &&
+					(( Fattura_passiva_IBulk) oggettobulk ).getFattura_estera()!=null)
+					&& (( Fattura_passiva_IBulk) oggettobulk ).getFattura_estera().getPg_fattura_passiva()!=null)
+				super.completeSearchTool(actioncontext, oggettobulk, fieldproperty);
+		}else
+			super.completeSearchTool(actioncontext, oggettobulk, fieldproperty);
 	}
 
 

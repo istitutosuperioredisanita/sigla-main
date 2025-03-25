@@ -20,7 +20,7 @@ package it.cnr.contab.coepcoan00.action;
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.coepcoan00.consultazioni.bp.ConsultazionePartitarioBP;
-import it.cnr.contab.coepcoan00.filter.bulk.FiltroRicercaTerzoBulk;
+import it.cnr.contab.coepcoan00.filter.bulk.FiltroRicercaPartitarioBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
@@ -31,54 +31,77 @@ import it.cnr.jada.util.action.BulkBP;
 import it.cnr.jada.util.action.FormBP;
 
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.Optional;
 
 public class PartitarioTerzoAction extends BulkAction {
 
-    public Forward doBlankSearchTerzo(ActionContext context, FiltroRicercaTerzoBulk filtroRicercaTerzoBulk) {
+    public Forward doBlankSearchTerzo(ActionContext context, FiltroRicercaPartitarioBulk filtroRicercaPartitarioBulk) {
         final TerzoBulk terzoBulk = new TerzoBulk();
         terzoBulk.setAnagrafico(new AnagraficoBulk());
-        filtroRicercaTerzoBulk.setTerzo(terzoBulk);
+        filtroRicercaPartitarioBulk.setTerzo(terzoBulk);
         return context.findDefaultForward();
     }
 
-    public Forward doPartitario(ActionContext context) throws BusinessProcessException, FillException {
+    public Forward doPartitario(ActionContext context) throws BusinessProcessException {
         final BulkBP bulkBP = (BulkBP) context.getBusinessProcess();
-        bulkBP.fillModel(context);
-        final Optional<TerzoBulk> terzoBulk = Optional.ofNullable(bulkBP.getModel())
-                .filter(FiltroRicercaTerzoBulk.class::isInstance)
-                .map(FiltroRicercaTerzoBulk.class::cast)
-                .flatMap(filtroRicercaTerzoBulk -> Optional.ofNullable(filtroRicercaTerzoBulk.getTerzo()));
-        final Boolean isDettaglioTributi = Optional.ofNullable(bulkBP.getModel())
-                .filter(FiltroRicercaTerzoBulk.class::isInstance)
-                .map(FiltroRicercaTerzoBulk.class::cast)
-                .flatMap(filtroRicercaTerzoBulk -> Optional.ofNullable(filtroRicercaTerzoBulk.getDettaglioTributi()))
-                .orElse(Boolean.FALSE);
-        if (terzoBulk.isPresent()) {
-            ConsultazionePartitarioBP consBP = (ConsultazionePartitarioBP) context.createBusinessProcess(
-                    "ConsultazionePartitarioBP",
-                    new Object[]{terzoBulk.get(), isDettaglioTributi, "partitario",true}
-            );
-            RemoteIterator ri = consBP.openIterator(context);
-            try {
-                if (!Optional.ofNullable(ri).filter(remoteIterator -> {
-                    try {
-                        return remoteIterator.countElements() > 0;
-                    } catch (RemoteException e) {
-                        throw new RuntimeException(e);
+        try {
+            bulkBP.fillModel(context);
+
+            final Optional<TerzoBulk> terzoBulk = Optional.ofNullable(bulkBP.getModel())
+                    .filter(FiltroRicercaPartitarioBulk.class::isInstance)
+                    .map(FiltroRicercaPartitarioBulk.class::cast)
+                    .flatMap(filtroRicercaPartitarioBulk -> Optional.ofNullable(filtroRicercaPartitarioBulk.getTerzo()));
+            final Boolean isDettaglioTributi = Optional.ofNullable(bulkBP.getModel())
+                    .filter(FiltroRicercaPartitarioBulk.class::isInstance)
+                    .map(FiltroRicercaPartitarioBulk.class::cast)
+                    .flatMap(filtroRicercaPartitarioBulk -> Optional.ofNullable(filtroRicercaPartitarioBulk.getDettaglioTributi()))
+                    .orElse(Boolean.FALSE);
+            final String partite = Optional.ofNullable(bulkBP.getModel())
+                    .filter(FiltroRicercaPartitarioBulk.class::isInstance)
+                    .map(FiltroRicercaPartitarioBulk.class::cast)
+                    .flatMap(filtroRicercaPartitarioBulk -> Optional.ofNullable(filtroRicercaPartitarioBulk.getPartite()))
+                    .orElse(FiltroRicercaPartitarioBulk.Partite.T.name());
+            final Timestamp toDataMovimento = Optional.ofNullable(bulkBP.getModel())
+                    .filter(FiltroRicercaPartitarioBulk.class::isInstance)
+                    .map(FiltroRicercaPartitarioBulk.class::cast)
+                    .flatMap(filtroRicercaPartitarioBulk -> Optional.ofNullable(filtroRicercaPartitarioBulk.getToDataMovimento()))
+                    .orElse(null);
+            if (terzoBulk.isPresent()) {
+                ConsultazionePartitarioBP consBP = (ConsultazionePartitarioBP) context.createBusinessProcess(
+                        "ConsultazionePartitarioBP",
+                        new Object[]{
+                                terzoBulk.get(),
+                                isDettaglioTributi,
+                                partite,
+                                toDataMovimento,
+                                "partitario",
+                                true
+                        }
+                );
+                RemoteIterator ri = consBP.openIterator(context);
+                try {
+                    if (!Optional.ofNullable(ri).filter(remoteIterator -> {
+                        try {
+                            return remoteIterator.countElements() > 0;
+                        } catch (RemoteException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }).isPresent()) {
+                        it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context, ri);
+                        bulkBP.setMessage("La ricerca non ha fornito alcun risultato.");
+                        return context.findDefaultForward();
                     }
-                }).isPresent()) {
-                    it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context, ri);
-                    bulkBP.setMessage("La ricerca non ha fornito alcun risultato.");
-                    return context.findDefaultForward();
+                } catch (Exception _ex) {
+                    handleException(context, _ex);
                 }
-            } catch (Exception _ex) {
-                handleException(context, _ex);
+                context.addBusinessProcess(consBP);
+                return context.findDefaultForward();
             }
-            context.addBusinessProcess(consBP);
+            setMessage(context, FormBP.WARNING_MESSAGE, "Valorizzare il Tezo!");
             return context.findDefaultForward();
+        } catch (FillException e) {
+            return handleException(context, e);
         }
-        setMessage(context, FormBP.WARNING_MESSAGE, "Valorizzare il Tezo!");
-        return context.findDefaultForward();
     }
 }

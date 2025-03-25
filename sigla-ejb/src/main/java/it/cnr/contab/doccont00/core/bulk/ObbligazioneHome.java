@@ -35,6 +35,7 @@ import it.cnr.contab.doccont00.ejb.NumTempDocContComponentSession;
 import it.cnr.contab.pdg00.bulk.Pdg_preventivo_detBulk;
 import it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk;
 import it.cnr.contab.pdg01.bulk.Pdg_modulo_spese_gestBulk;
+import it.cnr.contab.util.EuroFormat;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.BulkList;
@@ -1647,6 +1648,7 @@ public class ObbligazioneHome extends BulkHome {
         sql.addClause(FindClause.AND, "esercizio_obbligazione", SQLBuilder.EQUALS, bulk.getEsercizio());
         sql.addClause(FindClause.AND, "esercizio_ori_obbligazione", SQLBuilder.EQUALS, bulk.getEsercizio_originale());
         sql.addClause(FindClause.AND, "pg_obbligazione", SQLBuilder.EQUALS, bulk.getPg_obbligazione());
+        sql.setOrderBy("pg_variazione_pdg", OrderConstants.ORDER_ASC);
         return dettHome.fetchAll(sql);
     }
 
@@ -1748,6 +1750,140 @@ public class ObbligazioneHome extends BulkHome {
                 }
             }
             return scadGood;
+        } catch (PersistencyException e) {
+            throw new ComponentException( e );
+        }
+    }
+
+    public IScadenzaDocumentoContabileBulk aumentaImportoScadenzaInAutomatico(UserContext userContext, Obbligazione_scadenzarioBulk scadenza, BigDecimal newImporto) throws ComponentException {
+        try {
+            Obbligazione_scadenzarioHome osHome = (Obbligazione_scadenzarioHome)getHomeCache().getHome(Obbligazione_scadenzarioBulk.class);
+            Obbligazione_scad_voceHome osvHome = (Obbligazione_scad_voceHome)getHomeCache().getHome(Obbligazione_scad_voceBulk.class);
+
+            ObbligazioneBulk obbligazione = this.findObbligazione(scadenza.getObbligazione());
+            obbligazione.setObbligazione_scadenzarioColl(new BulkList(this.findObbligazione_scadenzarioList(obbligazione)));
+
+            //cerco nell'obbligazione riletto la scadenza indicata
+            Obbligazione_scadenzarioBulk scadenzaModel = obbligazione.getObbligazione_scadenzarioColl().stream().filter(el->el.equalsByPrimaryKey(scadenza)).findFirst()
+                    .orElseThrow(()->new ApplicationException("Scadenza da aggiornare non trovata nell'impegno indicato!"));
+
+            if (scadenzaModel.getIm_associato_doc_amm().compareTo(BigDecimal.ZERO)>0)
+                throw new ApplicationException("Scadenza da aggiornare collegata a documenti amministrativi. Aggiornamento non possibile!");
+
+            BigDecimal diffImporto = newImporto.subtract(scadenzaModel.getIm_scadenza());
+
+            if (diffImporto.compareTo(BigDecimal.ZERO)<0)
+                throw new ApplicationException("Scadenza da aggiornare di importo ("+ new EuroFormat().format(scadenzaModel.getIm_scadenza())+") superiore al nuovo valore da impostare ("
+                        + new EuroFormat().format(newImporto) + "). Aggiornamento non possibile!");
+
+            // Creo la lista delle scadenze libere da cui prelevare risorse
+            // cerco prima le scadenze con stessa data e descrizione
+            List<Obbligazione_scadenzarioBulk> scadenzeDisponibili = obbligazione.getObbligazione_scadenzarioColl().stream()
+                    .filter(el->el.getDs_scadenza().equals(scadenzaModel.getDs_scadenza()))
+                    .filter(el->el.getDt_scadenza().equals(scadenzaModel.getDt_scadenza()))
+                    .filter(el->el.getIm_associato_doc_amm().compareTo(BigDecimal.ZERO)==0)
+                    .filter(el->el.getIm_associato_doc_contabile().compareTo(BigDecimal.ZERO)==0)
+                    .filter(el->!el.equalsByPrimaryKey(scadenzaModel))
+                    .sorted(Comparator.comparing(Obbligazione_scadenzarioBulk::getIm_scadenza))
+                    .sorted(Comparator.comparing(Obbligazione_scadenzarioBulk::getPg_obbligazione_scadenzario).reversed())
+                    .collect(Collectors.toList());
+
+            // quindi tutte le altre
+            scadenzeDisponibili.addAll(obbligazione.getObbligazione_scadenzarioColl().stream()
+                    .filter(el->!el.getDs_scadenza().equals(scadenzaModel.getDs_scadenza()) || !el.getDt_scadenza().equals(scadenzaModel.getDt_scadenza()))
+                    .filter(el->el.getIm_associato_doc_amm().compareTo(BigDecimal.ZERO)==0)
+                    .filter(el->el.getIm_associato_doc_contabile().compareTo(BigDecimal.ZERO)==0)
+                    .filter(el->!el.equalsByPrimaryKey(scadenzaModel))
+                    .sorted(Comparator.comparing(Obbligazione_scadenzarioBulk::getIm_scadenza))
+                    .sorted(Comparator.comparing(Obbligazione_scadenzarioBulk::getPg_obbligazione_scadenzario).reversed())
+                    .collect(Collectors.toList()));
+
+            BigDecimal totImportoDisponibile = scadenzeDisponibili.stream().map(Obbligazione_scadenzarioBulk::getIm_scadenza).reduce(BigDecimal.ZERO, BigDecimal::add);
+            if (totImportoDisponibile.compareTo(diffImporto)<0)
+                throw new ApplicationException("L'importo disponibile dell'obbligazione ("+ new EuroFormat().format(totImportoDisponibile)+") è inferiore alla variazione richiesta ("
+                        + new EuroFormat().format(diffImporto) + "). Aggiornamento non possibile!");
+
+            scadenzaModel.setObbligazione_scad_voceColl(new BulkList(osHome.findObbligazione_scad_voceList(userContext, scadenzaModel, Boolean.FALSE)));
+
+            for (Obbligazione_scadenzarioBulk scadDisponibile : scadenzeDisponibili) {
+                if (diffImporto.compareTo(BigDecimal.ZERO)<=0)
+                    break;
+
+                scadDisponibile.setObbligazione_scad_voceColl(new BulkList(osHome.findObbligazione_scad_voceList(userContext, scadDisponibile, Boolean.FALSE)));
+                BigDecimal newImportoScadDisponibile;
+                //Se l'importo della scadenza disponibile è inferiore allora la azzero e la accorpo alla precedente
+                if (scadDisponibile.getIm_scadenza().compareTo(diffImporto)<0) {
+                    diffImporto=diffImporto.subtract(scadDisponibile.getIm_scadenza());
+                    newImportoScadDisponibile = BigDecimal.ZERO;
+                } else {
+                    newImportoScadDisponibile = scadDisponibile.getIm_scadenza().subtract(diffImporto);
+                    diffImporto=BigDecimal.ZERO;
+                }
+
+                BigDecimal newImportoScadModel = scadenzaModel.getIm_scadenza().add(scadDisponibile.getIm_scadenza().subtract(newImportoScadDisponibile));
+
+                for (Obbligazione_scad_voceBulk scadVoceDisponibile : scadDisponibile.getObbligazione_scad_voceColl()) {
+                    BigDecimal newImportoScadVoceDisponibile = scadVoceDisponibile.getIm_voce().multiply(newImportoScadDisponibile).divide(scadDisponibile.getIm_scadenza(),2, RoundingMode.HALF_UP);
+                    BigDecimal importoScadVoceDisponibileTrasferito = scadVoceDisponibile.getIm_voce().subtract(newImportoScadVoceDisponibile);
+
+                    //Cerco la corrispondente nella scadGood
+                    Obbligazione_scad_voceBulk scadVoceGood = scadenzaModel.getObbligazione_scad_voceColl()
+                            .stream()
+                            .filter(el -> el.getLinea_attivita().equalsByPrimaryKey(scadVoceDisponibile.getLinea_attivita()))
+                            .findFirst().orElse(null);
+                    if (scadVoceGood != null) {
+                        scadVoceGood.setIm_voce(scadVoceGood.getIm_voce().add(importoScadVoceDisponibileTrasferito));
+                        scadVoceGood.setToBeUpdated();
+                        osvHome.update(scadVoceGood, userContext);
+                    } else {
+                        scadVoceGood = new Obbligazione_scad_voceBulk();
+                        scadVoceGood.setObbligazione_scadenzario(scadenzaModel);
+                        scadVoceGood.setIm_voce(importoScadVoceDisponibileTrasferito);
+                        scadVoceGood.setToBeCreated();
+                        osvHome.update(scadVoceGood, userContext);
+                        scadenzaModel.getObbligazione_scad_voceColl().add(scadVoceGood);
+                    }
+                    if (newImportoScadVoceDisponibile.compareTo(BigDecimal.ZERO)==0) {
+                        scadVoceDisponibile.setToBeDeleted();
+                        osvHome.delete(scadVoceDisponibile,userContext);
+                    } else {
+                        scadVoceDisponibile.setIm_voce(newImportoScadVoceDisponibile);
+                        scadVoceDisponibile.setToBeUpdated();
+                        osvHome.update(scadVoceDisponibile, userContext);
+                    }
+                }
+                //Aggiorno la scadenza disponibile da cui ho prelevato l'importo
+                if (newImportoScadDisponibile.compareTo(BigDecimal.ZERO)==0) {
+                    scadDisponibile.setToBeDeleted();
+                    osHome.delete(scadDisponibile,userContext);
+                } else {
+                    BigDecimal totScadVoceDisponibile = scadDisponibile.getObbligazione_scad_voceColl().stream().map(Obbligazione_scad_voceBulk::getIm_voce).reduce(BigDecimal.ZERO, BigDecimal::add);
+                    if (!totScadVoceDisponibile.equals(newImportoScadDisponibile)) {
+                        Obbligazione_scad_voceBulk scadVoceBulk = scadDisponibile.getObbligazione_scad_voceColl().stream().max(Comparator.comparing(Obbligazione_scad_voceBulk::getIm_voce))
+                                .orElseThrow(() -> new ApplicationException("Errore nel recupero della scadenza"));
+                        scadVoceBulk.setIm_voce(scadVoceBulk.getIm_voce().add(newImportoScadDisponibile.subtract(totScadVoceDisponibile)));
+                        scadVoceBulk.setToBeUpdated();
+                        osvHome.update(scadVoceBulk, userContext);
+                    }
+                    scadDisponibile.setIm_scadenza(newImportoScadDisponibile);
+                    scadDisponibile.setToBeUpdated();
+                    osHome.update(scadDisponibile,userContext);
+                }
+
+                //Aggiorno la scadenza model
+                BigDecimal totScadVoceModel = scadenzaModel.getObbligazione_scad_voceColl().stream().map(Obbligazione_scad_voceBulk::getIm_voce).reduce(BigDecimal.ZERO, BigDecimal::add);
+                if (!totScadVoceModel.equals(newImportoScadModel)) {
+                   Obbligazione_scad_voceBulk scadVoceBulk = scadenzaModel.getObbligazione_scad_voceColl().stream().max(Comparator.comparing(Obbligazione_scad_voceBulk::getIm_voce))
+                           .orElseThrow(() -> new ApplicationException("Errore nel recupero della scadenza"));
+                   scadVoceBulk.setIm_voce(scadVoceBulk.getIm_voce().add(newImportoScadModel.subtract(totScadVoceModel)));
+                   scadVoceBulk.setToBeUpdated();
+                   osvHome.update(scadVoceBulk, userContext);
+                }
+                scadenzaModel.setIm_scadenza(newImportoScadModel);
+                scadenzaModel.setToBeUpdated();
+                osHome.update(scadenzaModel,userContext);
+            }
+            return scadenzaModel;
         } catch (PersistencyException e) {
             throw new ComponentException( e );
         }

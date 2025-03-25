@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo shortDescription="Causale contabile">
+	<fieldProperty
+		name="cdCausale"
+		property="cdCausale"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		nullable="false"
+		label="Codice" />
+	<fieldProperty
+		name="dsCausale"
+		property="dsCausale"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		enabledOnSearch="true"
+		maxLength="250"
+		nullable="false"
+		label="Descrizione" />
+	<fieldProperty
+		name="cdTipoDocumentoAmm"
+		property="cdTipoDocumentoAmm"
+		inputType="SELECT"
+		keysProperty="tiDocumentoAmmKeys"
+		enabledOnSearch="true"
+		inputSize="10"
+		maxLength="10"
+		nullable="false"
+		label="Tipo documento amministrativo" />
+	<fieldProperty
+		name="flStorno"
+		property="flStorno"
+		inputType="CHECKBOX"
+		enabledOnSearch="true"
+		inputSize="1"
+		maxLength="1"
+		nullable="false"
+		label="Documento di Storno" />
+	<fieldProperty
+		name="dtInizioValidita"
+		property="dtInizioValidita"
+		inputType="TEXT"
+		enabledOnSearch="true"
+		formatName="date_short"
+		nullable="false"
+		label="Data inizio validità" />
+	<fieldProperty
+		name="dtFineValidita"
+		property="dtFineValidita"
+		enabledOnSearch="true"
+		inputType="ROTEXT"
+		formatName="date_short"
+		label="Data fine validità" />
+	<form
+		name="searchtool">
+		<formFieldProperty
+			name="cdCausale" />
+		<formFieldProperty
+			inputType="TEXT"
+			name="dsCausale" />
+	</form>
+	<formFieldProperty
+		name="cdCausale" />
+	<formFieldProperty
+		name="dsCausale" />
+	<formFieldProperty
+		name="cdTipoDocumentoAmm" />
+	<formFieldProperty
+		name="flStorno" />
+	<formFieldProperty
+		name="dtInizioValidita" />
+	<formFieldProperty
+		name="dtFineValidita" />
+
+	<findFieldProperty
+		name="cdCausale" />
+	<findFieldProperty
+		name="dsCausale" />
+	<findFieldProperty
+		name="cdTipoDocumentoAmm" />
+	<findFieldProperty
+		name="flStorno" />
+	<findFieldProperty
+		name="dtInizioValidita" />
+	<findFieldProperty
+		name="dtFineValidita" />
+	<columnFieldProperty
+		name="cdCausale" />
+	<columnFieldProperty
+		name="dsCausale" />
+	<columnFieldProperty
+		name="cdTipoDocumentoAmm" />
+	<columnFieldProperty
+		name="flStorno" />
+	<columnFieldProperty
+		name="dtInizioValidita" />
+	<columnFieldProperty
+		name="dtFineValidita" />
+</bulkInfo>

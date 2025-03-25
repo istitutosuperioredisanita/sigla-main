@@ -17,7 +17,6 @@
 
 package it.cnr.contab.coepcoan00.core.bulk;
 
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
 import it.cnr.contab.docamm00.docs.bulk.TipoDocumentoEnum;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
@@ -25,13 +24,11 @@ import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ApplicationException;
-import it.cnr.jada.comp.ApplicationRuntimeException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.ObjectNotFoundException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.LoggableStatement;
 import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
@@ -123,28 +120,8 @@ public class Scrittura_partita_doppiaHome extends BulkHome {
         try {
             Scrittura_partita_doppiaBulk scrittura = (Scrittura_partita_doppiaBulk) bulk;
 
-            if (scrittura.getPg_scrittura()==null) {
-                LoggableStatement cs = new LoggableStatement(getConnection(),
-                        "{ ? = call " +
-                                it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() +
-                                "CNRCTB200.getNextProgressivo(?, ?, ?, ?, ?)}", false, this.getClass());
-                try {
-                    cs.registerOutParameter(1, java.sql.Types.NUMERIC);
-                    cs.setObject(2, scrittura.getEsercizio());
-                    cs.setString(3, scrittura.getCd_cds());
-                    cs.setString(4, scrittura.getCd_unita_organizzativa());
-                    cs.setString(5, Scrittura_partita_doppiaBulk.TIPO_COGE);
-                    cs.setString(6, scrittura.getUser());
-                    cs.executeQuery();
-
-                    Long result = cs.getLong(1);
-                    scrittura.setPg_scrittura(result);
-                } catch (java.lang.Exception e) {
-                    throw new ComponentException(e);
-                } finally {
-                    cs.close();
-                }
-            }
+            if (scrittura.getPg_scrittura()==null)
+                scrittura.setPg_scrittura(Utility.createScritturaPartitaDoppiaComponentSession().getNextProgressivo(userContext, scrittura));
         } catch (java.lang.Exception e) {
             throw new ComponentException(e);
         }
@@ -200,7 +177,7 @@ public class Scrittura_partita_doppiaHome extends BulkHome {
         SQLBuilder sql = this.createSQLBuilder();
         sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
         sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, pCdCds);
-        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Origine.APERTURA.name());
+        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, OrigineScritturaEnum.APERTURA.name());
         sql.openParenthesis(FindClause.AND);
         sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.RIMANENZE_MAGAZZINO.name());
         sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.RIAPERTURA_CONTI.name());
@@ -218,7 +195,7 @@ public class Scrittura_partita_doppiaHome extends BulkHome {
         SQLBuilder sql = this.createSQLBuilder();
         sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
         sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, pCdCds);
-        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Origine.PRECHIUSURA.name());
+        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, OrigineScritturaEnum.PRECHIUSURA.name());
         sql.openParenthesis(FindClause.AND);
         sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.RIMANENZE_MAGAZZINO.name());
         sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.AMMORTAMENTO.name());
@@ -238,7 +215,7 @@ public class Scrittura_partita_doppiaHome extends BulkHome {
         SQLBuilder sql = this.createSQLBuilder();
         sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
         sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, pCdCds);
-        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Origine.CHIUSURA.name());
+        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, OrigineScritturaEnum.CHIUSURA.name());
         sql.openParenthesis(FindClause.AND);
         sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.CHIUSURA_STATO_PATRIMONIALE.name());
         sql.addClause(FindClause.OR, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.CHIUSURA_CONTO_ECONOMICO.name());
@@ -257,7 +234,7 @@ public class Scrittura_partita_doppiaHome extends BulkHome {
         SQLBuilder sql = this.createSQLBuilder();
         sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
         sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, pCdCds);
-        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Origine.PRECHIUSURA.name());
+        sql.addClause(FindClause.AND, "origine_scrittura", SQLBuilder.EQUALS, OrigineScritturaEnum.PRECHIUSURA.name());
         sql.addClause(FindClause.AND, "cd_causale_coge", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.RIMANENZE_MAGAZZINO.name());
 
         List<Scrittura_partita_doppiaBulk> result = fetchAll(sql);

@@ -131,6 +131,46 @@ public class Documento_generico_rigaBase extends Documento_generico_rigaKey impl
     // NUMERO_AVVISO_PAGOPA VARCHAR2(18)
     private java.lang.String numero_avviso_pagopa;
 
+    // CD_CDS_STORNO VARCHAR(30)
+    private java.lang.String cd_cds_storno;
+
+    // CD_TIPO_DOCUMENTO_AMM_STORNO VARCHAR(10)
+    private java.lang.String cd_tipo_documento_amm_storno;
+
+    // CD_UNITA_ORGANIZZATIVA_STORNO VARCHAR(30)
+    private java.lang.String cd_unita_organizzativa_storno;
+
+    // ESERCIZIO_STORNO DECIMAL(4,0)
+    private java.lang.Integer esercizio_storno;
+
+    // PG_DOCUMENTO_GENERICO_STORNO DECIMAL(10,0)
+    private java.lang.Long pg_documento_generico_storno;
+
+    // PROGRESSIVO_RIGA_STORNO DECIMAL(10,0)
+    private java.lang.Long progressivo_riga_storno;
+
+    // ESERCIZIO_STORNO_FA DECIMAL(4,0)
+    private java.lang.Integer esercizio_storno_fa;
+    // PROGRESSIVO_RIGA_STORNO_FA DECIMAL(10,0)
+    private java.lang.Long progressivo_riga_storno_fa;
+    // CD_UNITA_ORGANIZZATIVA_STORNO_FA VARCHAR(30)
+    private java.lang.String cd_unita_organizzativa_storno_fa;
+    // CD_CDS_STORNO_FA VARCHAR(30)
+    private java.lang.String cd_cds_storno_fa;
+    // PG_FATTURA_ATTIVA_STORNO DECIMAL(10,0)
+    private java.lang.Long pg_fattura_attiva_storno;
+
+    // ESERCIZIO_STORNO_FP DECIMAL(4,0)
+    private java.lang.Integer esercizio_storno_fp;
+    // PROGRESSIVO_RIGA_STORNO_FP DECIMAL(10,0)
+    private java.lang.Long progressivo_riga_storno_fp;
+    // CD_UNITA_ORGANIZZATIVA_STORNO_FP VARCHAR(30)
+    private java.lang.String cd_unita_organizzativa_storno_fp;
+    // CD_CDS_STORNO_FP VARCHAR(30)
+    private java.lang.String cd_cds_storno_fp;
+    // PG_FATTURA_ATTIVA_STORNO DECIMAL(10,0)
+    private java.lang.Long pg_fattura_passiva_storno;
+
 
     public Documento_generico_rigaBase() {
         super();
@@ -616,5 +656,133 @@ public class Documento_generico_rigaBase extends Documento_generico_rigaKey impl
 
     public void setNumero_avviso_pagopa(String numero_avviso_pagopa) {
         this.numero_avviso_pagopa = numero_avviso_pagopa;
+    }
+
+    public String getCd_cds_storno() {
+        return cd_cds_storno;
+    }
+
+    public void setCd_cds_storno(String cd_cds_storno) {
+        this.cd_cds_storno = cd_cds_storno;
+    }
+
+    public String getCd_tipo_documento_amm_storno() {
+        return cd_tipo_documento_amm_storno;
+    }
+
+    public void setCd_tipo_documento_amm_storno(String cd_tipo_documento_amm_storno) {
+        this.cd_tipo_documento_amm_storno = cd_tipo_documento_amm_storno;
+    }
+
+    public String getCd_unita_organizzativa_storno() {
+        return cd_unita_organizzativa_storno;
+    }
+
+    public void setCd_unita_organizzativa_storno(String cd_unita_organizzativa_storno) {
+        this.cd_unita_organizzativa_storno = cd_unita_organizzativa_storno;
+    }
+
+    public Integer getEsercizio_storno() {
+        return esercizio_storno;
+    }
+
+    public void setEsercizio_storno(Integer esercizio_storno) {
+        this.esercizio_storno = esercizio_storno;
+    }
+
+    public Long getPg_documento_generico_storno() {
+        return pg_documento_generico_storno;
+    }
+
+    public void setPg_documento_generico_storno(Long pg_documento_generico_storno) {
+        this.pg_documento_generico_storno = pg_documento_generico_storno;
+    }
+
+    public Long getProgressivo_riga_storno() {
+        return progressivo_riga_storno;
+    }
+
+    public void setProgressivo_riga_storno(Long progressivo_riga_storno) {
+        this.progressivo_riga_storno = progressivo_riga_storno;
+    }
+
+    public Integer getEsercizio_storno_fa() {
+        return esercizio_storno_fa;
+    }
+
+    public void setEsercizio_storno_fa(Integer esercizio_storno_fa) {
+        this.esercizio_storno_fa = esercizio_storno_fa;
+    }
+
+    public Long getProgressivo_riga_storno_fa() {
+        return progressivo_riga_storno_fa;
+    }
+
+    public void setProgressivo_riga_storno_fa(Long progressivo_riga_storno_fa) {
+        this.progressivo_riga_storno_fa = progressivo_riga_storno_fa;
+    }
+
+    public String getCd_unita_organizzativa_storno_fa() {
+        return cd_unita_organizzativa_storno_fa;
+    }
+
+    public void setCd_unita_organizzativa_storno_fa(String cd_unita_organizzativa_storno_fa) {
+        this.cd_unita_organizzativa_storno_fa = cd_unita_organizzativa_storno_fa;
+    }
+
+    public String getCd_cds_storno_fa() {
+        return cd_cds_storno_fa;
+    }
+
+    public void setCd_cds_storno_fa(String cd_cds_storno_fa) {
+        this.cd_cds_storno_fa = cd_cds_storno_fa;
+    }
+
+    public Long getPg_fattura_attiva_storno() {
+        return pg_fattura_attiva_storno;
+    }
+
+    public void setPg_fattura_attiva_storno(Long pg_fattura_attiva_storno) {
+        this.pg_fattura_attiva_storno = pg_fattura_attiva_storno;
+    }
+
+    public Integer getEsercizio_storno_fp() {
+        return esercizio_storno_fp;
+    }
+
+    public void setEsercizio_storno_fp(Integer esercizio_storno_fp) {
+        this.esercizio_storno_fp = esercizio_storno_fp;
+    }
+
+    public Long getProgressivo_riga_storno_fp() {
+        return progressivo_riga_storno_fp;
+    }
+
+    public void setProgressivo_riga_storno_fp(Long progressivo_riga_storno_fp) {
+        this.progressivo_riga_storno_fp = progressivo_riga_storno_fp;
+    }
+
+    public String getCd_unita_organizzativa_storno_fp() {
+        return cd_unita_organizzativa_storno_fp;
+    }
+
+    public void setCd_unita_organizzativa_storno_fp(String cd_unita_organizzativa_storno_fp) {
+        this.cd_unita_organizzativa_storno_fp = cd_unita_organizzativa_storno_fp;
+    }
+
+    public String getCd_cds_storno_fp() {
+        return cd_cds_storno_fp;
+    }
+
+    public void setCd_cds_storno_fp(String cd_cds_storno_fp) {
+        this.cd_cds_storno_fp = cd_cds_storno_fp;
+    }
+
+    public Long getPg_fattura_passiva_storno() {
+        return pg_fattura_passiva_storno;
+    }
+
+    public void setPg_fattura_passiva_storno(Long pg_fattura_passiva_storno) {
+        this.pg_fattura_passiva_storno = pg_fattura_passiva_storno;
     }
 }

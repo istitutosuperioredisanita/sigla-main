@@ -39,7 +39,6 @@ import it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession;
 import it.cnr.contab.inventario01.ejb.NumerazioneTempBuonoComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
-import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
@@ -2615,24 +2614,76 @@ public class CRUDFatturaAttivaAction extends EconomicaAction {
 
     }
 
-    public Forward doSalva(ActionContext actioncontext) throws java.rmi.RemoteException {
-        CRUDFatturaAttivaBP bp = (CRUDFatturaAttivaBP) getBusinessProcess(actioncontext);
+    public Forward doConfirmImportoIntrastat(ActionContext actioncontext, int option) {
+        try {
+            if (option == OptionBP.YES_BUTTON) {
+                return doConfirmSalva(actioncontext, OptionBP.YES_BUTTON);
+            }
+            return doConfirmSalva(actioncontext, OptionBP.NO_BUTTON);
+        } catch (Throwable e) {
+            return handleException(actioncontext, e);
+        }
+    }
+    public Forward doSelezionaRigaIntrastatDaVerifica(ActionContext actioncontext) {
         try {
             fillModel(actioncontext);
-
-            if (bp.getAccertamentiController() != null)
-                bp.getAccertamentiController().setModelIndex(actioncontext, -1);
-//        controlloCodiceIPA((Fattura_attivaBulk)bp.getModel(), ((Fattura_attivaBulk)bp.getModel()).getCliente());
-            bp.save(actioncontext);
-            postSalvataggio(actioncontext);
+            CRUDFatturaAttivaIBP bp = (CRUDFatturaAttivaIBP) actioncontext.getBusinessProcess();
+            super.doTab(actioncontext, "tab", "tabFatturaAttivaIntrastat");
+            bp.doSelezionaRigaIntrastatDaVerifica(actioncontext);
             return actioncontext.findDefaultForward();
-        } catch (ValidationException validationexception) {
-            getBusinessProcess(actioncontext).setErrorMessage(validationexception.getMessage());
-        } catch (Throwable throwable) {
-            return handleException(actioncontext, throwable);
+        } catch (Exception exception) {
+            return handleException(actioncontext, exception);
         }
-        return actioncontext.findDefaultForward();
     }
+
+
+    private void setWarningInstrat(ActionContext context){
+        CRUDFatturaAttivaBP bp = (CRUDFatturaAttivaBP) getBusinessProcess(context);
+        Fattura_attivaBulk fatturaAttivaBulk = (Fattura_attivaBulk) bp.getModel();
+        if ( bp.isAttivoChekcImpIntrastat() ){
+            Boolean warningInvio=fatturaAttivaBulk.validaImportoDettagliIntrastat();
+            if ( Optional.ofNullable(fatturaAttivaBulk.getFattura_attiva_intrastatColl()).isPresent()){
+                for (Iterator i = fatturaAttivaBulk.getFattura_attiva_intrastatColl().iterator(); i.hasNext(); ) {
+                    Fattura_attiva_intraBulk riga = (Fattura_attiva_intraBulk) i.next();
+                    riga.setWarningInvio(warningInvio);
+                    riga.setToBeUpdated();
+                }
+            }
+        }
+    }
+
+    public Forward doConfirmSalva(ActionContext actioncontext, int option) throws java.rmi.RemoteException {
+        try {
+            CRUDFatturaAttivaBP bp = (CRUDFatturaAttivaBP) getBusinessProcess(actioncontext);
+            if (option == OptionBP.YES_BUTTON) {
+                fillModel(actioncontext);
+                setWarningInstrat( actioncontext);
+                if (bp.getAccertamentiController() != null)
+                    bp.getAccertamentiController().setModelIndex(actioncontext, -1);
+            //        controlloCodiceIPA((Fattura_attivaBulk)bp.getModel(), ((Fattura_attivaBulk)bp.getModel()).getCliente());
+                bp.save(actioncontext);
+                postSalvataggio(actioncontext);
+                return actioncontext.findDefaultForward();
+            }
+            return doSelezionaRigaIntrastatDaVerifica(actioncontext);
+        } catch (Throwable e) {
+            return handleException(actioncontext, e);
+        }
+    }
+
+    public Forward doSalva(ActionContext context) throws java.rmi.RemoteException {
+        try {
+            //Controllo importi
+            CRUDFatturaAttivaBP bp = (CRUDFatturaAttivaBP) context.getBusinessProcess();
+            Fattura_attivaBulk fatturaAttivaBulk = (Fattura_attivaBulk) bp.getModel();
+            if (bp.isAttivoChekcImpIntrastat() && fatturaAttivaBulk.validaImportoDettagliIntrastat())
+                return openConfirm(context, "Attenzione! La somma dell'ammontare dei dettagli Intrastat supera l'importo massimo supera l'importo massimo  "+ Utility.NumberToText(fatturaAttivaBulk.getImportoIntrastatTotRighe())+". Vuoi continuare?", OptionBP.CONFIRM_YES_NO, "doConfirmImportoIntrastat");
+            return doConfirmImportoIntrastat(context, OptionBP.YES_BUTTON);
+        } catch (Throwable e) {
+            return super.handleException(context, e);
+        }
+    }
+
 
     protected void postSalvataggio(ActionContext context) throws BusinessProcessException {
 

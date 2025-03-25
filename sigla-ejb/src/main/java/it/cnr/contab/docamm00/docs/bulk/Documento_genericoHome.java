@@ -17,22 +17,24 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
+import it.cnr.contab.config00.bulk.CausaleContabileBulk;
+import it.cnr.contab.config00.bulk.CausaleContabileHome;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazione_wizardBulk;
 import it.cnr.contab.fondecon00.core.bulk.Fondo_spesaBulk;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
-import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.LoggableStatement;
-import it.cnr.jada.persistency.sql.PersistentHome;
-import it.cnr.jada.persistency.sql.SQLBuilder;
+import it.cnr.jada.persistency.sql.*;
+import it.cnr.jada.util.action.FormController;
+import it.cnr.jada.util.ejb.EJBCommonServices;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Documento_genericoHome extends BulkHome implements
 		IDocumentoAmministrativoSpesaHome {
@@ -167,8 +169,20 @@ public class Documento_genericoHome extends BulkHome implements
 		sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, generico.getEsercizio());
 		sql.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, generico.getCd_unita_organizzativa());
 		sql.addClause(FindClause.AND, "cd_tipo_documento_amm", SQLBuilder.EQUALS, generico.getCd_tipo_documento_amm());
-
-		return home.fetchAll(sql);
+		List<Documento_generico_rigaBulk> result = home.fetchAll(sql);
+		for (Documento_generico_rigaBulk riga : result) {
+			SQLBuilder sqlStorno = home.createSQLBuilder();
+			sqlStorno.addClause(FindClause.AND, "documento_generico_riga_storno", SQLBuilder.EQUALS, riga);
+			sqlStorno.addClause(FindClause.AND, "stato_cofi", SQLBuilder.NOT_EQUALS, Documento_generico_rigaBulk.STATO_ANNULLATO);
+			List<Documento_generico_rigaBulk> storni = home.fetchAll(sqlStorno);
+			riga.setRigaStornata(!storni.isEmpty());
+			riga.setImportoStornato(
+					BigDecimal.valueOf(storni
+							.stream()
+							.collect(Collectors.summarizingDouble(value -> value.getIm_riga().doubleValue())).getSum())
+			);
+		}
+		return result;
 	}
 
 	public java.util.List<Documento_generico_rigaBulk> findDocumentoGenericoRigheList(V_doc_passivo_obbligazioneBulk docPassivo ) throws PersistencyException {
@@ -189,5 +203,67 @@ public class Documento_genericoHome extends BulkHome implements
 			return home.fetchAll(sql);
 		}
 		return Collections.EMPTY_LIST;
+	}
+
+	public Hashtable loadTiCausaleContabileKeys(Documento_genericoBulk documentoGenericoBulk) throws PersistencyException {
+		SQLBuilder sql = getHomeCache().getHome(CausaleContabileBulk.class).createSQLBuilder();
+		if (documentoGenericoBulk.getBpStatus() != FormController.SEARCH) {
+			sql.addClause(
+					FindClause.AND,
+					"cdTipoDocumentoAmm",
+					Optional.ofNullable(documentoGenericoBulk.getTipo_documento())
+							.flatMap(tipoDocumentoAmmBulk -> Optional.ofNullable(tipoDocumentoAmmBulk.getCd_tipo_documento_amm()))
+							.map(t -> SQLBuilder.EQUALS).orElse(SQLBuilder.ISNULL),
+					Optional.ofNullable(documentoGenericoBulk.getTipo_documento())
+							.flatMap(tipoDocumentoAmmBulk -> Optional.ofNullable(tipoDocumentoAmmBulk.getCd_tipo_documento_amm()))
+							.orElse(null)
+			);
+		}
+		sql.addClause(FindClause.AND, "flStorno", SQLBuilder.EQUALS, documentoGenericoBulk.getFl_storno());
+		sql.addClause(FindClause.AND, "dtInizioValidita", SQLBuilder.LESS_EQUALS, EJBCommonServices.getServerDate());
+		sql.openParenthesis(FindClause.AND);
+			sql.addClause(FindClause.AND, "dtFineValidita", SQLBuilder.GREATER_EQUALS, EJBCommonServices.getServerDate());
+			sql.addClause(FindClause.OR, "dtFineValidita", SQLBuilder.ISNULL, null);
+		sql.closeParenthesis();
+
+		List<CausaleContabileBulk> result = getHomeCache().getHome(CausaleContabileBulk.class).fetchAll(sql);
+		return new Hashtable(result
+				.stream()
+				.collect(Collectors.toMap(
+						entry -> entry.getCdCausale(),
+						entry -> entry.getDsCausale(),
+						(key, value) -> value, HashMap::new)
+				));
+
+	}
+
+	public SQLBuilder selectCausaleContabileByClause(
+			UserContext userContext,
+			Documento_genericoBulk documentoGenericoBulk,
+			CausaleContabileHome causaleContabileHome,
+			CausaleContabileBulk causaleContabileBulk,
+			CompoundFindClause compoundFindClause) {
+		SQLBuilder sql = causaleContabileHome.createSQLBuilder();
+		Optional.ofNullable(compoundFindClause)
+				.ifPresent(sql::addClause);
+		if (documentoGenericoBulk.getBpStatus() != FormController.SEARCH) {
+			sql.addClause(
+					FindClause.AND,
+					"cdTipoDocumentoAmm",
+					Optional.ofNullable(documentoGenericoBulk.getTipo_documento())
+							.flatMap(tipoDocumentoAmmBulk -> Optional.ofNullable(tipoDocumentoAmmBulk.getCd_tipo_documento_amm()))
+							.map(t -> SQLBuilder.EQUALS).orElse(SQLBuilder.ISNULL),
+					Optional.ofNullable(documentoGenericoBulk.getTipo_documento())
+							.flatMap(tipoDocumentoAmmBulk -> Optional.ofNullable(tipoDocumentoAmmBulk.getCd_tipo_documento_amm()))
+							.orElse(null)
+			);
+		}
+		sql.addClause(FindClause.AND, "flStorno", SQLBuilder.EQUALS, documentoGenericoBulk.getFl_storno());
+		sql.addClause(FindClause.AND, "dtInizioValidita", SQLBuilder.LESS_EQUALS, EJBCommonServices.getServerDate());
+		sql.openParenthesis(FindClause.AND);
+		sql.addClause(FindClause.AND, "dtFineValidita", SQLBuilder.GREATER_EQUALS, EJBCommonServices.getServerDate());
+		sql.addClause(FindClause.OR, "dtFineValidita", SQLBuilder.ISNULL, null);
+		sql.closeParenthesis();
+		return sql;
 	}
 }

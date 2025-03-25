@@ -384,7 +384,7 @@
 		enabledOnSearch="true"
 		keysProperty="flagEnteKeys"
 		label="Generico su Ente"/>
-		<fieldProperty
+	<fieldProperty
 		name="esercizio_lettera"
 		property="lettera_pagamento_estero.esercizio"
 		inputType="ROTEXT"
@@ -733,6 +733,33 @@
 		enabledOnFreeSearch="true"
 		label="Tipo conto"
 		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="causale_contabile"
+		property="causaleContabile"
+		inputType="SEARCHTOOL_WITH_LIKE"
+		formName="searchtool"
+		enabledOnSearch="true"
+		nullable="false"
+		label="Causale Contabile" />
+
+	<fieldProperty
+		name="cd_causale_contabile"
+		property="cd_causale_contabile"
+		inputType="SELECT"
+		keysProperty="tiCausaleContabileKeys"
+		enabledOnSearch="true"
+		inputSize="10"
+		maxLength="10"
+		nullable="false"
+		label="Causale Contabile" />
+	<fieldProperty
+		name="fl_storno"
+		property="fl_storno"
+		inputType="CHECKBOX"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		label="Documento di Storno"/>
 
 	<formFieldProperty
 		name="esercizio_lettera" />
@@ -870,6 +897,12 @@
 		name="findTipoDocumentoGenerico" />
 	<formFieldProperty
 		name="cd_tipo_conto_ep" />
+	<formFieldProperty
+		name="cd_causale_contabile" />
+	<formFieldProperty
+		name="causale_contabile" />
+	<formFieldProperty
+		name="fl_storno" />
 
 	<columnFieldProperty
 		name="cd_tipo_documento_amm" />
@@ -898,8 +931,10 @@
 	<columnFieldProperty 
 		name="causale"/>		
 	<columnFieldProperty 
-		name="cdTipoDocumentoGenerico"/>		
-			
+		name="cdTipoDocumentoGenerico"/>
+	<columnFieldProperty
+		name="cd_causale_contabile" />
+
 	<columnSet name="filtro_ricerca_documenti">	
 		<columnFieldProperty
 			name="pg_documento_generico" />
@@ -956,5 +991,10 @@
 		name="pg_lettera"
 		inputType="TEXT"/>
 	<findFieldProperty
-			name="cd_tipo_conto_ep" />
+		name="cd_tipo_conto_ep" />
+	<findFieldProperty
+		name="cd_causale_contabile" />
+	<findFieldProperty
+		name="fl_storno" />
+
 </bulkInfo>

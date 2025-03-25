@@ -282,17 +282,6 @@ public class Voce_epHome extends BulkHome {
         ti_voce_ep_Keys.put("C", "Conto");
         return ti_voce_ep_Keys;
     }
-    public SQLBuilder selectContiNonAssociati(UserContext usercontext, Voce_epBulk voceEpBulk, CompoundFindClause compoundfindclause) throws PersistencyException {
-        final SQLBuilder sqlBuilder = createSQLBuilder();
-        sqlBuilder.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(usercontext));
-        final PersistentHome home = getHomeCache().getHome(AssociazioneContoGruppoBulk.class);
-        final SQLBuilder sqlBuilderNotIN = home.createSQLBuilder();
-        sqlBuilderNotIN.resetColumns();
-        sqlBuilderNotIN.addColumn("CD_VOCE_EP");
-        sqlBuilderNotIN.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(usercontext));
-        sqlBuilder.addSQLNOTINClause(FindClause.AND, "CD_VOCE_EP", sqlBuilderNotIN);
-        return sqlBuilder;
-    }
 
     public SQLBuilder selectByClause(UserContext usercontext, CompoundFindClause compoundfindclause) throws PersistencyException {
         SQLBuilder sql = super.selectByClause(usercontext, compoundfindclause);

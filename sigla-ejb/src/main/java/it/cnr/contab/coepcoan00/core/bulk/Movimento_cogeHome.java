@@ -141,7 +141,7 @@ public class Movimento_cogeHome extends BulkHome {
 
 	}
 
-	public List<Movimento_cogeBulk> getMovimentiPartita(IDocumentoAmministrativoBulk docamm, Integer cdTerzo, Optional<Scrittura_partita_doppiaBulk> scritturaToExclude) throws ComponentException, PersistencyException {
+	public List<Movimento_cogeBulk> getMovimentiPartita(IDocumentoAmministrativoBulk docamm, Integer cdTerzo, Optional<Scrittura_partita_doppiaBulk> scritturaToExclude) throws PersistencyException {
 		SQLBuilder sql = this.createSQLBuilder();
 		sql.addClause(FindClause.AND,"esercizio_documento",SQLBuilder.EQUALS, docamm.getEsercizio() );
 		sql.addClause(FindClause.AND,"cd_cds_documento",SQLBuilder.EQUALS, docamm.getCd_cds() );

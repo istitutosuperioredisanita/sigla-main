@@ -22,6 +22,7 @@
 	bp.openFormWindow(pageContext); %>
 <table class="card p-2">
   <tr><% bp.getController().writeFormField(out,"esercizio"); %></tr>
+  <tr><% bp.getController().writeFormField(out,"tipoBilancio"); %></tr>
   <tr>
     <td><% bp.getController().writeFormLabel(out,"findCDSForPrint"); %></td>
     <td><% bp.getController().writeFormInput(out,null,"findCDSForPrint",(bulk!=null?!bulk.isCdsForPrintEnabled():false),null,null); %></td>

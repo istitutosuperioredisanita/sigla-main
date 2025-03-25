@@ -37,6 +37,10 @@
 					<% bp.getController().writeFormInput(out, null,"tipo_doc",false,null,"onChange=\"submitForm('doOnTipoDocumentoChange')\"");%>
 				</td>
 			</tr>
+            <tr>
+                <td><% bp.getController().writeFormLabel(out,"causale_contabile"); %></td>
+                <td colspan="4"><% bp.getController().writeFormInput(out,"causale_contabile"); %></td>
+            </tr>
 			<tr>
 			 	<% bp.getController().writeFormField(out,"stato_cofi");%>
 				<td colspan="2">
@@ -51,6 +55,10 @@
 				<td>
 					<% bp.getController().writeFormInput(out,null,"flagEnte",false,null,"onClick=\"submitForm('doOnFlagEnteChange')\"");%>
 				</td>
+                <td colspan="2">
+                    <% bp.getController().writeFormLabel(out,"fl_storno");%>
+                    <% bp.getController().writeFormInput(out,"fl_storno");%>
+                </td>
 			</tr>
 			<tr>
 		     	<td>
@@ -79,6 +87,10 @@
 					<% bp.getController().writeFormInput(out, null,"tipo_doc_for_search",false,null,"");%>
 				</td>
 			</tr>
+            <tr>
+                <td><% bp.getController().writeFormLabel(out,"causale_contabile"); %></td>
+                <td colspan="4"><% bp.getController().writeFormInput(out,"causale_contabile"); %></td>
+            </tr>
 			<tr>
 				<td>
 					<% bp.getController().writeFormLabel(out,"stato_cofiForSearch");%>
@@ -99,6 +111,10 @@
 				<td>
 					<% bp.getController().writeFormInput(out,null,"flagEnte",false,null,"onClick=\"submitForm('doOnFlagEnteChange')\"");%>
 				</td>
+                <td colspan="2">
+                    <% bp.getController().writeFormLabel(out,"fl_storno");%>
+                    <% bp.getController().writeFormInput(out,"fl_storno");%>
+                </td>
 			</tr>
 			<tr>
 		     	<td>

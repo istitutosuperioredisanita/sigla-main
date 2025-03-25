@@ -6130,7 +6130,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_sospensione_fattura_passiva.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunto flag per gestione anno precedente -->
     <include file="bootstrap/add_flag_gest_fatt_anno_prec.xml"/>
-
     <!-- Autore : CIRO SALVIO - Aggiunto accessi per Consultazione Scadenzario Accertamenti Voce -->
     <include file="bootstrap/add_accessi_cons_scad_accert_voce.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunto accessi per Consultazione Scadenzario Obbligazioni Voce -->
@@ -6149,4 +6148,52 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/mod_conf_menu_magazzino.xml"/>
     <!-- Autore : VALENTINA TOMADA - modica PK CHIUSURA_ANNO_MAG_RIM -->
     <include file="bootstrap/mod_pk_table_chiusura_anno.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunti flag fl_intrast a fl_intra12 su voce_iva-->
+    <include file="bootstrap/add_flag_intrastat_intra12_voce_iva.xml"/>
+    <!-- Autore : CIRO SALVIO - Rename column Intrastat-->
+    <include file="bootstrap/rename_flag_intrastat_voce_iva.xml"/>
+    <!-- Autore : CIRO SALVIO - Add parametro per abilitare o meno il controllo degli importo per le infromazioni INTSRATAT-->
+    <include file="bootstrap/add_flag_gest_check_imp_intrastat.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta colonna warning su fatture passiva-->
+    <include file="bootstrap/add_column_warning_fatt_passiva_intra.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta colonna warning su fatture passiva-->
+    <include file="bootstrap/add_column_warning_fatt_attiva_intra.xml"/>
+    <!-- Autore : CIRO SALVIO - Gestione FL_IRREGISTABILE-->
+    <include file="bootstrap/add_conf_fatt_gest_flirregistrabile.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Gestione blocco fatture passive/attive-->
+    <include file="bootstrap/add_accesso_blocco_fatture_passive_attive.xml"/>
+    <!-- Autore : MARCO SPASIANO - Gestione Causali Contabili-->
+    <include file="bootstrap/add_table_causali_contabili.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Creazione tabella ass_la_ribalt_pluriennali -->
+    <include file="bootstrap/add_table_ass_la_ribalt_pluriennali.xml"/>
+    <!-- Autore : RAFFAELE PAGANO - creazione tabella voci analitica-->
+    <include file="bootstrap/add_table_voce_analitica.xml"/>
+    <include file="bootstrap/add_accessi_voce_analitica.xml"/>
+    <!-- Autore : MARCO SPASIANO - Gestione Storno Documenti Generici-->
+    <include file="bootstrap/storna_documenti_generici.xml"/>
+    <!-- Autore : VALENTINA TOMADA - aggiunte colonne gae prelevamento fondi tabella ass_la_ribalt_pluriennali -->
+    <include file="bootstrap/add_column_ass_la_ribalt_plur.xml"/>
+    <!-- Autore : VALENTINA TOMADA - aggiunte FK a tabella ass_la_ribalt_pluriennali -->
+    <include file="bootstrap/add_fk_ass_la_ribalt_plur.xml"/>
+    <!-- Autore : RAFFAELE PAGANO - modifica tabella movimento coan-->
+    <include file="bootstrap/modify_table_movimento_coan.xml"/>
+    <include file="bootstrap/modify_table_saldo_coan.xml"/>
+    <!-- Autore : CIRO SALVIO - add column valora netto anno prec CHIUSURA_ANNO_INVENTARIO-->
+    <include file="bootstrap/add_column_val_netto_anno_prec_chiu_inv.xml"/>
+    <!-- Autore : DAVIDE MIRRA - nuova voce di menù Consultazioni x GESTIONE IVA/ISS -->
+    <include file="bootstrap/insert_gestione_iva_iss_consultazioni.xml"/>
+
+    <!-- Autore : DAVIDE MIRRA - nuova voce di menù Consultazioni x GESTIONE IVA/ISS -->
+    <include file="bootstrap/insert_cons_dettaglio_reg_iva.xml"/>
+
+    <!-- Autore : CIRO SALVIO - Aggiunta Colonna per indicare se un anagrafico può essere firmatario di un contratto-->
+    <include file="bootstrap/add_column_fl_firmatario_contr_utente.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta parametro per abilitari i firmatari tra le persone fisiche-->
+    <include file="bootstrap/add_configurazione_firmatario_contratto.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta rest Service per i firmatari di un contratto-->
+    <include file="bootstrap/add_configurazione_rest_firmatari_contratto.xml"/>
+
+    <!-- Autore : MARCO SPASIANO - nuova voce di menù gestione gruppi stampa -->
+    <include file="bootstrap/insert_gestione_gruppi_stampa.xml"/>
+
 </databaseChangeLog>

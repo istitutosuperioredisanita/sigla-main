@@ -26,6 +26,7 @@ import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.config00.tabnum.ejb.Numerazione_baseComponentSession;
 import it.cnr.contab.docamm00.actions.CRUDFatturaPassivaAction;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
+import it.cnr.contab.docamm00.docs.bulk.Nota_di_creditoBulk;
 import it.cnr.contab.docamm00.ejb.FatturaElettronicaPassivaComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.docamm00.fatturapa.bulk.*;
@@ -127,6 +128,8 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 		super(s);
 	}
 
+	private Boolean isAttivoGestFlIrregistrabile;
+
 	public boolean isPrintButtonEnabled() {
 		return getModel() != null && ((DocumentoEleTestataBulk)getModel()).getIdentificativoSdi() != null;
 	}
@@ -174,11 +177,12 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 
 	public boolean isCollegaFatturaButtonHidden() {
 		DocumentoEleTestataBulk model = (DocumentoEleTestataBulk)getModel();
-		return !(isEditable() && model != null &&
+					return !(isEditable() && model != null &&
 				model.getIdentificativoSdi() != null &&
 				Optional.ofNullable(model.getTipoDocumento())
 						.map(s -> s.equalsIgnoreCase(TipoDocumentoType.TD_04.value())).orElse(Boolean.FALSE) &&
-				(model.isRifiutabile() || model.getStatoDocumentoEle().equals(StatoDocumentoEleEnum.RIFIUTATA_CON_PEC)));
+				(model.isRifiutabile() || model.getStatoDocumentoEle().equals(StatoDocumentoEleEnum.RIFIUTATA_CON_PEC))
+					&& isAttivoGestFlIrregistrabile);
 	}
 
 	public boolean isMostraFatturaCollegataButtonHidden() {
@@ -284,7 +288,7 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 			dataDisattivazioneSplit = Utility.createConfigurazioneCnrComponentSession().getDt02(actioncontext.getUserContext(), new Integer(0), null, Configurazione_cnrBulk.PK_SPLIT_PAYMENT, Configurazione_cnrBulk.SK_PASSIVA);
 			dataAttivazioneSplitProf = Utility.createConfigurazioneCnrComponentSession().getDt01(actioncontext.getUserContext(), new Integer(0), null, Configurazione_cnrBulk.PK_SPLIT_PAYMENT, Configurazione_cnrBulk.SK_PASSIVA_PROF);
 			dataDisattivazioneSplitProf = Utility.createConfigurazioneCnrComponentSession().getDt02(actioncontext.getUserContext(), new Integer(0), null, Configurazione_cnrBulk.PK_SPLIT_PAYMENT, Configurazione_cnrBulk.SK_PASSIVA_PROF);
-			
+			isAttivoGestFlIrregistrabile=Utility.createConfigurazioneCnrComponentSession().isAttivoGestFlIrregistrabile(actioncontext.getUserContext());
 		} catch (ComponentException e) {
 			throw handleException(e);
 		} catch (RemoteException e) {
@@ -294,6 +298,12 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 		}		
 	}
 
+	private void setFlIrregistrabile ( DocumentoEleTestataBulk testata){
+		testata.setFlIrregistrabile( "N");
+		if ( isAttivoGestFlIrregistrabile)
+			testata.setFlIrregistrabile( "S");
+
+	}
 	private void setUoScrivania(Unita_organizzativaBulk uoScrivania) {
 		this.uoScrivania = uoScrivania;
 	}
@@ -553,7 +563,8 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 	    	fatturaPassivaBulk.setFl_intra_ue(Boolean.FALSE);
 	    	fatturaPassivaBulk.setFl_extra_ue(Boolean.FALSE);
 	    	fatturaPassivaBulk.setFl_san_marino_senza_iva(Boolean.FALSE);
-	    	fatturaPassivaBulk.setFl_fattura_compenso(existsTributi(documentoEleTestata));
+			if ( !( fatturaPassivaBulk instanceof Nota_di_creditoBulk))
+	    		fatturaPassivaBulk.setFl_fattura_compenso(existsTributi(documentoEleTestata));
 
 	    	//Il flag viene impostato a true se documento splitPayment con iva != 0
 	    	fatturaPassivaBulk.setFl_split_payment(documentoEleTestata.isDocumentoSplitPayment() &&
@@ -750,7 +761,8 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 	public void collegaNotaFattura(ActionContext context, DocumentoEleTestataBulk fattura, DocumentoEleTestataBulk nota) throws BusinessProcessException {
 		try {
 			nota.setStatoDocumento(StatoDocumentoEleEnum.STORNATO.name());
-			nota.setFlIrregistrabile("S");
+			//nota.setFlIrregistrabile("S");
+			setFlIrregistrabile( nota );
 			nota.setFatturaCollegata(fattura);
 			nota.setToBeUpdated();
 			getComponentSession().modificaConBulk(context.getUserContext(), nota);
@@ -864,7 +876,8 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 								"\n\nNota: questa è un'e-mail generata automaticamente e non avremo la possibilità di " +
 								"leggere eventuali e-mail di risposta. Non rispondere a questo messaggio.")
 			);
-			bulk.setFlIrregistrabile("S");
+			//bulk.setFlIrregistrabile("S");
+			setFlIrregistrabile(bulk);
 			if (isNota) {
 				bulk.setStatoDocumento(StatoDocumentoEleEnum.RIFIUTATA_CON_PEC.name());
 			} else {
@@ -892,12 +905,15 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 		return Optional.ofNullable(allegato)
 				.filter(AllegatoFatturaBulk.class::isInstance)
 				.map(AllegatoFatturaBulk.class::cast)
-				.map(AllegatoFatturaBulk::getAspect)
-				.filter(strings -> strings.contains(StorageDocAmmAspect.SIGLA_FATTURE_ATTACHMENT_COMUNICAZIONE_NON_REGISTRABILITA.value()))
+				.filter(a->a.isComunicazioneNonRegistabilita())
 				.isPresent();
 	}
+
 	@Override
 	protected Boolean isPossibileCancellazione(AllegatoGenericoBulk allegato) {
+		if ( isComunicazioneNonRegistabilita( allegato)&&
+		!isAttivoGestFlIrregistrabile)
+			return Boolean.FALSE;
 		if (isComunicazioneNonRegistabilita(allegato) &&
 				Optional.ofNullable(getModel())
 					.filter(DocumentoEleTestataBulk.class::isInstance)
@@ -906,7 +922,7 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 					.map(s -> s.equalsIgnoreCase("S"))
 					.orElse(Boolean.TRUE)
 		) {
-			return false;
+			return Boolean.FALSE;
 		}
 		return super.isPossibileCancellazione(allegato);
 	}
@@ -1012,10 +1028,11 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 			AllegatoFatturaBulk allegatoFatturaBulk = (AllegatoFatturaBulk)obj;
 			if (allegatoFatturaBulk != null && allegatoFatturaBulk.getAspectName() != null && 
 					allegatoFatturaBulk.getAspectName().equalsIgnoreCase("P:sigla_fatture_attachment:comunicazione_non_registrabilita")) {
-				if (testata.isRegistrata()){
+				if (testata.isRegistrata() && isAttivoGestFlIrregistrabile){
 					throw new ValidationException("La fattura risulta registrata, comunicazione di documento non registrabile non allegabile.");
 				}
-				testata.setFlIrregistrabile("S");				
+				//testata.setFlIrregistrabile("S");
+				setFlIrregistrabile(testata);
 				esisteAllegato=true;
 			}
 		}

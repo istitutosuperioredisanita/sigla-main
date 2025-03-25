@@ -22,9 +22,7 @@ package it.cnr.contab.docamm00.bp;
  */
 
 import it.cnr.contab.chiusura00.ejb.RicercaDocContComponentSession;
-import it.cnr.contab.coepcoan00.bp.CRUDScritturaPDoppiaBP;
-import it.cnr.contab.coepcoan00.bp.EconomicaAvereDetailCRUDController;
-import it.cnr.contab.coepcoan00.bp.EconomicaDareDetailCRUDController;
+import it.cnr.contab.coepcoan00.bp.*;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.docamm00.ejb.DocumentoGenericoComponentSession;
@@ -42,30 +40,52 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.util.Config;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
+import it.cnr.jada.util.jsp.Button;
 import it.cnr.jada.util.jsp.JSPUtils;
 
 import javax.ejb.EJBException;
 import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Gestisce le catene di elementi correlate con il documento in uso.
  */
 public class CRUDDocumentoGenericoPassivoBP
         extends AllegatiCRUDBP<AllegatoGenericoBulk, Documento_genericoBulk>
-        implements IDocumentoAmministrativoBP, IGenericSearchDocAmmBP, IDefferedUpdateSaldiBP, VoidableBP, IDocumentoAmministrativoSpesaBP, IDocAmmEconomicaBP {
+        implements IDocumentoAmministrativoBP, IGenericSearchDocAmmBP, IDefferedUpdateSaldiBP, VoidableBP, IDocumentoAmministrativoSpesaBP, IDocAmmEconomicaBP, IDocAmmAnaliticaBP, IDocumentoGenericoBP {
 
     private final SimpleDetailCRUDController dettaglio = new DocumentoGenericoPassivoRigaCRUDController("Dettaglio", Documento_generico_rigaBulk.class, "documento_generico_dettColl", this);
     private final ObbligazioniCRUDController obbligazioniController =
-            new ObbligazioniCRUDController("Obbligazioni", it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk.class, "documento_generico_obbligazioniHash", this);
+        new ObbligazioniCRUDController(
+                "Obbligazioni",
+                it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk.class,
+                "documento_generico_obbligazioniHash",
+                this){
+            private Boolean isDocumentoStorno() {
+                return Optional.ofNullable(getParentModel())
+                        .filter(Documento_genericoBulk.class::isInstance)
+                        .map(Documento_genericoBulk.class::cast)
+                        .map(Documento_genericoBulk::isDocumentoStorno)
+                        .orElse(Boolean.FALSE);
+            }
+            @Override
+            public boolean isGrowable() {
+                return super.isGrowable() && !isDocumentoStorno();
+            }
+            @Override
+            public boolean isShrinkable() {
+                return super.isShrinkable() && !isDocumentoStorno();
+            }
+        };
     private final SimpleDetailCRUDController dettaglioObbligazioneController;
     private final CollapsableDetailCRUDController movimentiDare = new EconomicaDareDetailCRUDController(this);
     private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
+
+    private final CollapsableDetailCRUDController movimentiAnalitici = new AnaliticaDetailCRUDController(this);
 
     protected it.cnr.contab.docamm00.docs.bulk.Risultato_eliminazioneVBulk deleteManager = null;
     private boolean isDeleting = false;
@@ -76,6 +96,7 @@ public class CRUDDocumentoGenericoPassivoBP
     private boolean carryingThrough = false;
     private boolean ribaltato;
     private boolean attivaEconomicaParallela = false;
+    private boolean attivaAnalitica = false;
     private boolean attivaInventaria = false;
 
     private boolean supervisore = false;
@@ -100,9 +121,24 @@ public class CRUDDocumentoGenericoPassivoBP
                 }
                 return lista;
             }
+            private Boolean isDocumentoStorno() {
+                return Optional.ofNullable(getParentController())
+                        .flatMap(formController -> Optional.ofNullable(getParentController()))
+                        .flatMap(formController -> Optional.ofNullable(getModel()))
+                        .filter(Documento_generico_rigaBulk.class::isInstance)
+                        .map(Documento_generico_rigaBulk.class::cast)
+                        .map(Documento_generico_rigaBulk::isDocumentoStorno)
+                        .orElse(Boolean.FALSE);
+            }
+            @Override
+            public boolean isGrowable() {
+                return super.isGrowable() && !isDocumentoStorno();
+            }
+            @Override
+            public boolean isShrinkable() {
+                return super.isShrinkable() && !isDocumentoStorno();
+            }
         };
-
-
     }
 
     public CRUDDocumentoGenericoPassivoBP(String function) throws BusinessProcessException {
@@ -120,9 +156,24 @@ public class CRUDDocumentoGenericoPassivoBP
                 }
                 return lista;
             }
+            private Boolean isDocumentoStorno() {
+                return Optional.ofNullable(getParentController())
+                        .flatMap(formController -> Optional.ofNullable(getParentController()))
+                        .flatMap(formController -> Optional.ofNullable(getModel()))
+                        .filter(Documento_generico_rigaBulk.class::isInstance)
+                        .map(Documento_generico_rigaBulk.class::cast)
+                        .map(Documento_generico_rigaBulk::isDocumentoStorno)
+                        .orElse(Boolean.FALSE);
+            }
+            @Override
+            public boolean isGrowable() {
+                return super.isGrowable() && !isDocumentoStorno();
+            }
+            @Override
+            public boolean isShrinkable() {
+                return super.isShrinkable() && !isDocumentoStorno();
+            }
         };
-
-
     }
 
     @Override
@@ -202,19 +253,12 @@ public class CRUDDocumentoGenericoPassivoBP
     }
 
     protected it.cnr.jada.util.jsp.Button[] createToolbar() {
-        it.cnr.jada.util.jsp.Button[] toolbar = new it.cnr.jada.util.jsp.Button[11];
-        int i = 0;
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(it.cnr.jada.util.action.CRUDBP.class), "CRUDToolbar.search");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(it.cnr.jada.util.action.CRUDBP.class), "CRUDToolbar.startSearch");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(it.cnr.jada.util.action.CRUDBP.class), "CRUDToolbar.freeSearch");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(it.cnr.jada.util.action.CRUDBP.class), "CRUDToolbar.new");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(it.cnr.jada.util.action.CRUDBP.class), "CRUDToolbar.save");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(it.cnr.jada.util.action.CRUDBP.class), "CRUDToolbar.delete");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(it.cnr.jada.util.action.CRUDBP.class), "CRUDToolbar.bringBack");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(it.cnr.jada.util.action.CRUDBP.class), "CRUDToolbar.undoBringBack");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(it.cnr.jada.util.action.CRUDBP.class), "CRUDToolbar.print");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.riportaIndietro");
-        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.riportaAvanti");
+        final Properties properties = Config.getHandler().getProperties(getClass());
+        Button[] toolbar = Stream.concat(Arrays.stream(super.createToolbar()),
+                Stream.of(
+                        new Button(properties, "CRUDToolbar.riportaIndietro"),
+                        new Button(properties, "CRUDToolbar.riportaAvanti")
+                )).toArray(Button[]::new);
         toolbar = IDocAmmEconomicaBP.addPartitario(toolbar, attivaEconomicaParallela, isEditing(), getModel());
         return toolbar;
     }
@@ -407,6 +451,7 @@ public class CRUDDocumentoGenericoPassivoBP
             int solaris = Documento_genericoBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.YEAR);
             int esercizioScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue();
             attivaEconomicaParallela = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(context.getUserContext());
+            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
             attivaInventaria = Utility.createConfigurazioneCnrComponentSession().isAttivoInventariaDocumenti(context.getUserContext());
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
             setAnnoSolareInScrivania(solaris == esercizioScrivania);
@@ -643,7 +688,6 @@ public class CRUDDocumentoGenericoPassivoBP
      * Attiva oltre al normale reset il metodo di set dei tab di default.
      *
      * @param context <code>ActionContext</code>
-     * @see resetTabs
      */
 
     public void reset(ActionContext context) throws BusinessProcessException {
@@ -657,7 +701,6 @@ public class CRUDDocumentoGenericoPassivoBP
      * Attiva oltre al normale reset il metodo di set dei tab di default.
      *
      * @param context <code>ActionContext</code>
-     * @see resetTabs
      */
 
     public void resetForSearch(ActionContext context) throws BusinessProcessException {
@@ -669,8 +712,6 @@ public class CRUDDocumentoGenericoPassivoBP
 
     /**
      * Imposta come attivi i tab di default.
-     *
-     * @param context <code>ActionContext</code>
      */
 
     public void resetTabs() {
@@ -1005,21 +1046,27 @@ public class CRUDDocumentoGenericoPassivoBP
     private static final String[] TAB_TESTATA = new String[]{ "tabDocumentoPassivo","Documento Generico","/docamm00/tab_documento_passivo.jsp" };
     private static final String[] TAB_DETTAGLIO = new String[]{ "tabDocumentoPassivoDettaglio","Dettaglio","/docamm00/tab_documento_passivo_dettaglio.jsp" };
     private static final String[] TAB_OBBLIGAZIONE = new String[]{ "tabDocumentoGenericoObbligazioni","Impegni","/docamm00/tab_documento_generico_obbligazioni.jsp" };
+    private static final String[] TAB_STORNI = new String[]{ "tabDocumentoGenericoObbligazioni","Storni","/docamm00/tab_documento_generico_obbligazioni.jsp" };
     private static final String[] TAB_LETTERA_PAGAMENTO_ESTERO = new String[]{ "tabLetteraPagamentoEstero","Documento 1210","/docamm00/tab_generico_lettera_pagam_estero.jsp"};
     private static final String[] TAB_ALLEGATI = new String[]{ "tabAllegati","Allegati","/util00/tab_allegati.jsp"};
 
-
     public String[][] getTabs() {
+        Documento_genericoBulk documento = Optional.ofNullable(this.getModel())
+                .filter(Documento_genericoBulk.class::isInstance)
+                .map(Documento_genericoBulk.class::cast)
+                .orElse(null);
+
         TreeMap<Integer, String[]> pages = new TreeMap<Integer, String[]>();
         int i = 0;
         pages.put(i++, TAB_TESTATA);
         pages.put(i++, TAB_DETTAGLIO);
-        pages.put(i++, TAB_OBBLIGAZIONE);
+        pages.put(i++, documento.isDocumentoStorno() ? TAB_STORNI : TAB_OBBLIGAZIONE);
         pages.put(i++, TAB_LETTERA_PAGAMENTO_ESTERO);
         pages.put(i++, TAB_ALLEGATI);
-        if (attivaEconomicaParallela) {
+        if (attivaEconomicaParallela)
             pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
-        }
+        if (attivaAnalitica)
+            pages.put(i++, CRUDScritturaAnaliticaBP.TAB_ANALITICA);
         String[][] tabs = new String[i][3];
         for (int j = 0; j < i; j++)
             tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
@@ -1033,6 +1080,10 @@ public class CRUDDocumentoGenericoPassivoBP
 	public CollapsableDetailCRUDController getMovimentiAvere() {
 		return movimentiAvere;
 	}
+
+    public CollapsableDetailCRUDController getMovimentiAnalitici() {
+        return movimentiAnalitici;
+    }
 
     public boolean isSupervisore() {
         return supervisore;
@@ -1050,11 +1101,22 @@ public class CRUDDocumentoGenericoPassivoBP
         return getModel();
     }
 
+    public boolean isButtonGeneraScritturaAnaliticaVisible() {
+        return Boolean.FALSE;
+    }
+    @Override
+    public OggettoBulk getAnaliticaModel() {
+        return getModel();
+    }
+
     @Override
     public boolean isInputReadonlyFieldName(String fieldName) {
         final List<String> fieldNames = Arrays.asList("dt_da_competenza_coge", "dt_a_competenza_coge");
         if (Optional.ofNullable(fieldName).filter(s -> fieldNames.contains(s)).isPresent()) {
             return esercizioChiuso;
+        }
+        if ("cd_causale_contabile".equalsIgnoreCase(fieldName) || "causale_contabile".equalsIgnoreCase(fieldName) ) {
+            return !supervisore;
         }
         return super.isInputReadonlyFieldName(fieldName);
     }

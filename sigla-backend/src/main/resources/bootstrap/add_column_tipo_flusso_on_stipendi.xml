@@ -36,6 +36,7 @@
     </changeSet>
 
     <changeSet author="raffaele.pagano" id="add_column_tipo_flusso_on_stipendi_03">
-        <addNotNullConstraint columnName="tipo_flusso" tableName="stipendi_cofi"/>
+        <validCheckSum>7:88825d239b54e99c9868d9af42a4672d</validCheckSum>
+        <addNotNullConstraint columnName="tipo_flusso" tableName="stipendi_cofi" columnDataType="CHAR(1)"/>
     </changeSet>
 </databaseChangeLog>

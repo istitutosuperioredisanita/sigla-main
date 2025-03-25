@@ -100,6 +100,8 @@ public interface Configurazione_cnrComponentSession extends it.cnr.jada.ejb.CRUD
 
     Boolean isAttivaEconomicaParallela(UserContext userContext) throws ComponentException, RemoteException;
 
+    Boolean isAttivaAnalitica(UserContext userContext) throws ComponentException, RemoteException;
+
     Boolean isBloccoScrittureProposte(UserContext userContext) throws ComponentException, RemoteException;
 
     Boolean isAssPrgAnagraficoAttiva(UserContext param0) throws ComponentException, RemoteException;
@@ -138,5 +140,18 @@ public interface Configurazione_cnrComponentSession extends it.cnr.jada.ejb.CRUD
 
     Boolean isAttivoGestModPagDipendenti(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
 
+     Boolean isCheckImpIntrastatFattAttiva(UserContext userContext)  throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
+
+    public Boolean isCheckImpIntrastatFattPassiva(UserContext userContext) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
+
+    public Boolean isAttivoGestFlIrregistrabile(UserContext userContext) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
+
+    Boolean isLiqIvaAnticipataFattPassiva(UserContext param0, Timestamp dataFattura) throws ComponentException, RemoteException;
+
+    Boolean isLiqIvaAnticipataFattAttiva(UserContext param0, Timestamp dataFattura) throws ComponentException, RemoteException;
+
+    Timestamp getFineRegFattPass(UserContext userContext, Integer esercizio) throws ComponentException, RemoteException;
+
+    Boolean isAttivoGestFirmatariCont(UserContext userContext) throws ComponentException, RemoteException;
 
 }

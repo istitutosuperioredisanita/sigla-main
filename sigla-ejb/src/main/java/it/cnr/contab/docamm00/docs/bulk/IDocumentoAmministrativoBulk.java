@@ -47,6 +47,7 @@ public interface IDocumentoAmministrativoBulk extends IDocumentoCogeBulk {
     String ATTNC = "ATTNC";
     String NCRED = "NCRED";
      String NVARI = "NVARI";
+    String SPED_BOLDOG = "SPEDBOLDOG";
 
 
     void addToDettagliCancellati(IDocumentoAmministrativoRigaBulk dettaglio);
@@ -199,4 +200,6 @@ public interface IDocumentoAmministrativoBulk extends IDocumentoCogeBulk {
     int removeFromDocumentiContabiliCancellati(IScadenzaDocumentoContabileBulk dettaglio);
 
     void setIsDeleting(boolean deletingStatus);
+
+    boolean isAnnullato();
 }

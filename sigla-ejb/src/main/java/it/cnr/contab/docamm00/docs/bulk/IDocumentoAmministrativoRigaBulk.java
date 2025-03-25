@@ -21,6 +21,9 @@ import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 
+import java.math.BigDecimal;
+import java.util.Optional;
+
 /**
  * Insert the type's description here.
  * Creation date: (12/13/2001 4:02:04 PM)
@@ -105,4 +108,12 @@ public interface IDocumentoAmministrativoRigaBulk {
 	Rif_modalita_pagamentoBulk getModalita_pagamento();
 
 	void setModalita_pagamento(Rif_modalita_pagamentoBulk modalita_pagamento);
+
+	String getDs_riga();
+
+	default BigDecimal getIm_riga() {
+		return Optional.ofNullable(getIm_imponibile()).orElse(BigDecimal.ZERO).add(
+				Optional.ofNullable(getIm_iva()).orElse(BigDecimal.ZERO)
+		);
+	}
 }

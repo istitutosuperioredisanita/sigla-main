@@ -23,6 +23,7 @@ package it.cnr.contab.ordmag.ordini.bulk;
 import java.sql.Connection;
 import java.util.List;
 
+import it.cnr.contab.doccont00.core.bulk.Obbligazione_pluriennale_voceBulk;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
@@ -43,5 +44,22 @@ public class FatturaOrdineHome extends BulkHome {
 		final SQLBuilder sqlBuilder = persistentHome.createSQLBuilder();
 		sqlBuilder.addClause(FindClause.AND, "ordineAcqConsegna", SQLBuilder.EQUALS, ordineAcqConsegnaBulk);
 		return fetchAll(sqlBuilder);
+	}
+
+	public FatturaOrdineBulk findFatturaByRigaConsegna(OrdineAcqConsegnaBulk ordineAcqConsegnaBulk) throws PersistencyException {
+		final PersistentHome persistentHome = getHomeCache().getHome(FatturaOrdineBulk.class, "FATTURA_P");
+		final SQLBuilder sql = persistentHome.createSQLBuilder();
+		sql.addSQLClause("AND", "CD_CDS_ORDINE", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getCdCds());
+		sql.addSQLClause("AND", "CD_UNITA_OPERATIVA", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getCdUnitaOperativa());
+		sql.addSQLClause("AND", "ESERCIZIO_ORDINE", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getEsercizio());
+		sql.addSQLClause("AND", "CD_NUMERATORE", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getCdNumeratore());
+		sql.addSQLClause("AND", "NUMERO", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getNumero());
+		sql.addSQLClause("AND", "RIGA", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getRiga());
+		sql.addSQLClause("AND", "CONSEGNA", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getConsegna());
+
+		if(fetchAll(sql).size() == 0){
+			return null;
+		}
+		return (FatturaOrdineBulk) fetchAll(sql).get(0);
 	}
 }

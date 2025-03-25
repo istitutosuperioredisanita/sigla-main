@@ -103,7 +103,7 @@ public class AccertamentiCRUDController extends it.cnr.jada.util.action.SimpleDe
             enabled = enabled || ((IDocumentoAmministrativoBP) bp).isDeleting() || ((IDocumentoAmministrativoBP) bp).isManualModify();
             modelEditable = (getParentModel() != null &&
                     ((IDocumentoAmministrativoBulk) getParentModel()).isEditable() &&
-                    !((IDocumentoAmministrativoBulk) getParentModel()).isDeleting());
+                    !((IDocumentoAmministrativoBulk) getParentModel()).isDeleting()) && isShrinkable();
 //						&& !((VoidableBP)bp).isModelVoided();
         }
         it.cnr.jada.util.jsp.JSPUtils.toolbarButton(

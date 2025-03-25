@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.doccont00.core.bulk.Ass_la_ribalt_pluriennaliBase"
+	keyClassName="it.cnr.contab.doccont00.core.bulk.Ass_la_ribalt_pluriennaliKey"
+	homeClassName="it.cnr.contab.doccont00.core.bulk.Ass_la_ribalt_pluriennaliHome">
+	<defaultColumnMap
+		tableName="ASS_LA_RIBALT_PLURIENNALI">
+		<columnMapping
+			columnName="CD_CENTRO_RESP_RIBALT"
+			propertyName="cdCentroRespRibalt"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="false" />
+		<columnMapping
+			columnName="CD_LINEA_ATTIVITA_RIBALT"
+			propertyName="cdLineaAttivitaRibalt"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="false" />
+		<columnMapping
+			columnName="DACR"
+			propertyName="dacr"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="UTCR"
+			propertyName="utcr"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="DUVA"
+			propertyName="duva"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="UTUV"
+			propertyName="utuv"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="PG_VER_REC"
+			propertyName="pg_ver_rec"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="false" />
+		<columnMapping
+			columnName="CDR_GAE_PREL_FONDI"
+			propertyName="cdCentroRespGaePrelFondi"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="false" />
+		<columnMapping
+			columnName="GAE_PREL_FONDI"
+			propertyName="cdLineaAttivitaPrelFondi"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="false" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="cdCentroRespRibalt" />
+	<persistentProperty
+		name="cdLineaAttivitaRibalt" />
+	<persistentProperty
+		name="dacr" />
+	<persistentProperty
+		name="utcr" />
+	<persistentProperty
+		name="duva" />
+	<persistentProperty
+		name="utuv" />
+	<persistentProperty
+		name="pg_ver_rec" />
+	<persistentProperty
+		name="cdCentroRespGaePrelFondi" />
+	<persistentProperty
+		name="cdLineaAttivitaPrelFondi" />
+</SQLPersistentInfo>

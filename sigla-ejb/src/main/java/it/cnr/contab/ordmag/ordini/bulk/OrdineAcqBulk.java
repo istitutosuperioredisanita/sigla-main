@@ -22,7 +22,6 @@
 package it.cnr.contab.ordmag.ordini.bulk;
 
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
-import it.cnr.contab.anagraf00.core.bulk.Modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.core.bulk.V_persona_fisicaBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
@@ -54,8 +53,6 @@ import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.jada.util.StrServ;
 import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
-import it.cnr.si.spring.storage.annotation.StoragePolicy;
-import it.cnr.si.spring.storage.annotation.StorageProperty;
 import it.siopeplus.StMotivoEsclusioneCigSiope;
 import org.apache.commons.lang.StringUtils;
 
@@ -63,7 +60,6 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class OrdineAcqBulk extends OrdineAcqBase
         implements IDocumentoAmministrativoBulk,
@@ -1632,6 +1628,17 @@ public class OrdineAcqBulk extends OrdineAcqBase
 
     @Override
     public String getStato_coge() {
+        //TODO Da implementare
+        return null;
+    }
+
+    @Override
+    public void setStato_coan(String stato_coan) {
+        //TODO Da implementare
+    }
+
+    @Override
+    public String getStato_coan() {
         //TODO Da implementare
         return null;
     }

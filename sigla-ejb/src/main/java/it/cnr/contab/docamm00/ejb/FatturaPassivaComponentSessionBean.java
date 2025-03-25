@@ -25,15 +25,23 @@ import it.cnr.contab.docamm00.docs.bulk.TrovatoBulk;
 import it.cnr.contab.docamm00.fatturapa.bulk.DocumentoEleTestataBulk;
 import it.cnr.contab.doccont00.core.bulk.OptionRequestParameter;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
+import it.cnr.contab.inventario00.docs.bulk.Transito_beni_ordiniBulk;
+import it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession;
+import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
+import it.cnr.contab.ordmag.ordini.dto.ImportoOrdine;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.comp.NoRollbackException;
+import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -1494,6 +1502,23 @@ public class FatturaPassivaComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
         } catch (it.cnr.jada.persistency.IntrospectionException e) {
             component_invocation_failure(param0, componentObj);
             throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(param0, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(param0, componentObj, e);
+        }
+    }
+
+
+
+    @Override
+    public BigDecimal getPrezzoUnitarioFattura(UserContext param0,ImportoOrdine param1) throws RemoteException, ComponentException, PersistencyException, IntrospectionException   {
+        pre_component_invocation(param0, componentObj);
+        try {
+            BigDecimal result = ((FatturaPassivaComponent) componentObj).getPrezzoUnitarioFattura( param1);
+            component_invocation_succes(param0, componentObj);
+            return result;
+
         } catch (RuntimeException e) {
             throw uncaughtRuntimeException(param0, componentObj, e);
         } catch (Error e) {

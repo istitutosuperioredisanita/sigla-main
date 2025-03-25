@@ -23,6 +23,7 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabter.bulk.NazioneBulk;
+import it.cnr.contab.coepcoan00.core.bulk.Scrittura_analiticaBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.docamm00.fatturapa.bulk.*;
@@ -177,7 +178,6 @@ public abstract class Fattura_passivaBulk
         CAUSALE.put(CONT, "Importo sospeso in Contenzioso");
         CAUSALE.put(CONT_NORM, "Importo sospeso in contestazione/adempimenti normativi");
         CAUSALE.put(CONT_CONF, "Importo sospeso per data esito regolare verifica di conformità");
-
         CAUSALE.put(ATTNC, "In attesa di nota credito");
     }
     protected Tipo_sezionaleBulk tipo_sezionale;
@@ -258,6 +258,10 @@ public abstract class Fattura_passivaBulk
     private java.sql.Timestamp dt_termine_creazione_docamm = null;
 
     private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
+
+    private Scrittura_analiticaBulk scrittura_analitica;
+
+    private boolean fl_bloccoAttivoDtReg =  Boolean.FALSE;
 
     public Fattura_passivaBulk() {
         super();
@@ -438,6 +442,39 @@ public abstract class Fattura_passivaBulk
         return fattura_passiva_dettColl.size() - 1;
     }
 
+    public BigDecimal getImportoIntrastatTotDaRighe( ){
+        BigDecimal totale= BigDecimal.ZERO;
+        for (Iterator i = fattura_passiva_dettColl.iterator(); i.hasNext(); ) {
+            Fattura_passiva_rigaBulk riga = ((Fattura_passiva_rigaBulk) i.next());
+            if (riga.getBene_servizio()!=null
+             && riga.getBene_servizio().getFl_obb_intrastat_acq()!=null
+                && riga.getBene_servizio().getFl_obb_intrastat_acq().booleanValue()
+                    && (( !Optional.ofNullable(riga.getVoce_iva()).isPresent())|| riga.getVoce_iva().getFl_intrastat().booleanValue())
+            )
+                totale=totale.add(riga.getIm_imponibile());
+        }
+        return totale;
+    }
+
+    public BigDecimal getImportoTotAmmontareIntrastat( ){
+        if ( Optional.ofNullable(getFattura_passiva_intrastatColl()).isPresent()){
+            BigDecimal totAmmontareIntrastat = BigDecimal.ZERO;
+            for (Iterator i = getFattura_passiva_intrastatColl().iterator(); i.hasNext(); ) {
+                Fattura_passiva_intraBulk riga = (Fattura_passiva_intraBulk) i.next();
+                totAmmontareIntrastat = totAmmontareIntrastat.add(riga.getAmmontare_euro());
+            }
+            return totAmmontareIntrastat;
+        }
+        return BigDecimal.ZERO;
+    }
+
+    public Boolean validaImportoDettagliIntrastat(){
+        if ( Optional.ofNullable(getFattura_passiva_intrastatColl()).isPresent()){
+            return ( getImportoTotAmmontareIntrastat().compareTo(getImportoIntrastatTotDaRighe())>0);
+        }
+        return Boolean.FALSE;
+
+    }
     public int addToFattura_passiva_intrastatColl(Fattura_passiva_intraBulk dettaglio){
         dettaglio.initialize();
         dettaglio.setFattura_passiva(this);
@@ -461,8 +498,9 @@ public abstract class Fattura_passivaBulk
         //fatturaPassiva.getFl_intra_ue().booleanValue())	{
         for (Iterator i = fattura_passiva_dettColl.iterator(); i.hasNext(); ) {
             Fattura_passiva_rigaBulk riga = ((Fattura_passiva_rigaBulk) i.next());
-            if (riga.getBene_servizio().getFl_obb_intrastat_acq().booleanValue())
-                dettaglio.setAmmontare_euro(dettaglio.getAmmontare_euro().add(riga.getIm_imponibile()));
+            //if (riga.getBene_servizio().getFl_obb_intrastat_acq().booleanValue()
+            //    && riga.getVoce_iva().getFl_intrastat().booleanValue())
+            //    dettaglio.setAmmontare_euro(dettaglio.getAmmontare_euro().add(riga.getIm_imponibile()));
             if (!this.isDefaultValuta() &&
                     ((this.getFornitore() != null &&
                             this.getFornitore().getAnagrafico() != null &&
@@ -474,6 +512,8 @@ public abstract class Fattura_passivaBulk
                 dettaglio.setAmmontare_divisa(dettaglio.getAmmontare_divisa().add(riga.getIm_totale_divisa()));
             }
         }
+        dettaglio.setWarningInvio(Boolean.FALSE);
+        dettaglio.setAmmontare_euro(getImportoIntrastatTotDaRighe());
         dettaglio.setModalita_trasportoColl(getModalita_trasportoColl());
         dettaglio.setCondizione_consegnaColl(getCondizione_consegnaColl());
         dettaglio.setModalita_incassoColl(getModalita_incassoColl());
@@ -2163,9 +2203,9 @@ public abstract class Fattura_passivaBulk
                 getLettera_pagamento_estero() != null ||
                 isPagata() ||
                 isPagataParzialmente() ||
-                (getObbligazioniHash() == null || getObbligazioniHash().isEmpty());
-        //Come da richiesta 108 gestione errori CNR elimino il controllo sulla valuta (09/09/2002 RP)
-        //|| isDefaultValuta();
+                (getObbligazioniHash() == null || getObbligazioniHash().isEmpty())
+        //Come da richiesta 108 gestione errori CNR elimino il controllo sulla valuta (09/09/2002 RP)-Rimesso controllo 17/03/2025
+        || isDefaultValuta();
     }
 
     /**
@@ -2706,7 +2746,7 @@ public abstract class Fattura_passivaBulk
         return STATO_IVA_B.equalsIgnoreCase(getStatoIVA()) ||
                 STATO_IVA_C.equalsIgnoreCase(getStatoIVA()) ||
                 //A seguito dell'errore segnalato 569 (dovuto alla richiesta 423)
-                (getAutofattura() != null && getAutofattura().isStampataSuRegistroIVA());//||
+                (getAutofattura() != null && getAutofattura().isStampataSuRegistroIVA()) ||( (!this.isFromAmministra()) && isBloccoAttivoDtReg());//||
         //(getProgr_univoco()!=null);
     }
 
@@ -3359,10 +3399,16 @@ public abstract class Fattura_passivaBulk
 
     public Dictionary getCausaleKeys() {
         CAUSALE.remove(NVARI);
+        CAUSALE.remove(SPED_BOLDOG);
         if ( ( this.isNotNew() && NVARI.equalsIgnoreCase(getCausale()))
                 ||this.isFromAmministra()){
             CAUSALE.put(NVARI,"Nota di Variazione");
         }
+        if ( ( this.isNotNew() && SPED_BOLDOG.equalsIgnoreCase(getCausale()))
+        ||(( this.isNonLiquidabile() ||this.isLiquidazioneSospesa()) &&  Boolean.TRUE.equals(getFl_bolla_doganale() ))){
+            CAUSALE.put(SPED_BOLDOG, "Bolla Doganale");
+        }
+
         return CAUSALE;
     }
 
@@ -3610,6 +3656,15 @@ public abstract class Fattura_passivaBulk
         this.scrittura_partita_doppia = scrittura_partita_doppia;
     }
 
+    @Override
+    public Scrittura_analiticaBulk getScrittura_analitica() {
+        return scrittura_analitica;
+    }
+    @Override
+    public void setScrittura_analitica(Scrittura_analiticaBulk scrittura_analitica) {
+        this.scrittura_analitica = scrittura_analitica;
+    }
+
     public TipoDocumentoEnum getTipoDocumentoEnum() {
         if ("C".equals(this.getTi_fattura()))
             return TipoDocumentoEnum.fromValue(TipoDocumentoEnum.TIPO_NOTA_CREDITO_PASSIVA);
@@ -3777,8 +3832,33 @@ public abstract class Fattura_passivaBulk
                 return true;
             if (isNonLiquidabile() && (key.equals(CONT) ||key.equals(CONT_CONF) || key.equals(CONT_NORM)))
                 return true;
+            if ( key.equals(SPED_BOLDOG)) {
+                if (( isNonLiquidabile() ||isLiquidazioneSospesa()) && getFl_bolla_doganale())
+                    return super.isOptionDisabled(fieldProperty, key);
+                else return Boolean.TRUE;
+            }
+
         }
         return super.isOptionDisabled(fieldProperty, key);
+    }
+
+    public boolean isBloccoAttivoDtReg() {
+        return fl_bloccoAttivoDtReg;
+    }
+
+    public boolean isFl_bloccoAttivoDtReg() {
+        return fl_bloccoAttivoDtReg;
+    }
+
+    public void setFl_bloccoAttivoDtReg(boolean fl_bloccoAttivoDtReg) {
+        this.fl_bloccoAttivoDtReg = fl_bloccoAttivoDtReg;
+    }
+
+    @Override
+    public Boolean isDocumentoStorno() {
+        return Optional.ofNullable(this.getTipoDocumentoEnum())
+                .map(TipoDocumentoEnum::isNotaCreditoPassiva)
+                .orElse(Boolean.FALSE);
     }
 
 }

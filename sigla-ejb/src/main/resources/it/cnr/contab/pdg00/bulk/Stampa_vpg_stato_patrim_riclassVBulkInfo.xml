@@ -119,7 +119,14 @@
 			parameterPosition="5"
 			parameterType="STRING"
 			paramNameJR="dettaglioConti"
-			paramTypeJR="java.lang.String" />	
+			paramTypeJR="java.lang.String" />
+		<printFieldProperty
+			name="cdTipoBilancio"
+			parameterPosition="6"
+			parameterType="STRING"
+			paramNameJR="CD_TIPO_BILANCIO"
+			paramTypeJR="java.lang.String" />
+
 	</printForm>		
 		
 </bulkInfo>

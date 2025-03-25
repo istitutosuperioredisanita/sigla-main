@@ -33,6 +33,8 @@ public class Batch_log_tstaBulk extends Batch_log_tstaBase
 
     public static String  LOG_TIPO_ACC_PLURIENNALE = "CONTAB_ACCPLU00";
 
+    public static String  LOG_TIPO_AMMORT_BENE = "INVENT_AMMORBENE";
+
     public Batch_log_tstaBulk()
     {
     }

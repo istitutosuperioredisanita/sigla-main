@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.config00.bulk.AssCausaleVoceEPBulk"
+	homeClassName="it.cnr.contab.config00.bulk.AssCausaleVoceEPHome">
+	<defaultColumnMap
+		tableName="ASS_CAUSALE_VOCE_EP">
+		<columnMapping
+			columnName="CD_CAUSALE"
+			propertyName="causaleContabile.cdCausale" />
+		<columnMapping
+			columnName="ESERCIZIO"
+			propertyName="voceEp.esercizio" />
+		<columnMapping
+			columnName="CD_VOCE_EP"
+			propertyName="voceEp.cd_voce_ep" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="causaleContabile"
+		partOfOid="true" />
+	<persistentProperty
+		name="voceEp"
+		partOfOid="true" />
+</SQLPersistentInfo>

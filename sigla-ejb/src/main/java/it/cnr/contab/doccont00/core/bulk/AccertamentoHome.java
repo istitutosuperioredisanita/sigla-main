@@ -31,6 +31,7 @@ import it.cnr.contab.doccont00.ejb.NumTempDocContComponentSession;
 import it.cnr.contab.pdg00.bulk.Pdg_preventivo_detBulk;
 import it.cnr.contab.pdg01.bulk.Pdg_modulo_entrate_gestBulk;
 import it.cnr.contab.prevent00.bulk.Pdg_vincoloBulk;
+import it.cnr.contab.util.EuroFormat;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.BulkList;
@@ -45,8 +46,10 @@ import it.cnr.jada.util.OrderConstants;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AccertamentoHome extends BulkHome {
     public AccertamentoHome(Class clazz, java.sql.Connection conn) {
@@ -207,7 +210,7 @@ public class AccertamentoHome extends BulkHome {
      * @throws IntrospectionException
      * @throws PersistencyException
      */
-    public java.util.List findAccertamento_scadenzarioList(AccertamentoBulk accertamento) throws IntrospectionException, PersistencyException {
+    public java.util.List findAccertamento_scadenzarioList(AccertamentoBulk accertamento) throws PersistencyException {
         PersistentHome asHome = getHomeCache().getHome(Accertamento_scadenzarioBulk.class);
         SQLBuilder sql = asHome.createSQLBuilder();
         sql.addClause("AND", "cd_cds", sql.EQUALS, accertamento.getCd_cds());
@@ -224,12 +227,12 @@ public class AccertamentoHome extends BulkHome {
      * Dato l'oggetto AccertamentoBulk verifica il tipo
      * e ritorna l'oggetto AccertamentoResiduoBulk o AccertamentoOrdBulk
      *
-     * @param obbligazione
+     * @param accertamento
      * @return
      * @throws PersistencyException
      * @throws IntrospectionException
      */
-    public AccertamentoBulk findAccertamento(AccertamentoBulk accertamento) throws it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException {
+    public AccertamentoBulk findAccertamento(AccertamentoBulk accertamento) throws it.cnr.jada.persistency.PersistencyException {
         if (accertamento.isAccertamentoResiduo())
             return findAccertamentoRes(accertamento);
         else
@@ -242,9 +245,8 @@ public class AccertamentoHome extends BulkHome {
      * @param accertamento
      * @return
      * @throws PersistencyException
-     * @throws IntrospectionException
      */
-    public AccertamentoCdsBulk findAccertamentoCds(AccertamentoBulk accertamento) throws it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException {
+    public AccertamentoCdsBulk findAccertamentoCds(AccertamentoBulk accertamento) throws it.cnr.jada.persistency.PersistencyException {
         return (AccertamentoCdsBulk) findByPrimaryKey(new AccertamentoCdsBulk(accertamento.getCd_cds(), accertamento.getEsercizio(), accertamento.getEsercizio_originale(), accertamento.getPg_accertamento()));
     }
 
@@ -254,9 +256,8 @@ public class AccertamentoHome extends BulkHome {
      * @param accertamento
      * @return AccertamentoResiduoBulk
      * @throws PersistencyException
-     * @throws IntrospectionException
      */
-    public AccertamentoResiduoBulk findAccertamentoRes(AccertamentoBulk accertamento) throws it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException {
+    public AccertamentoResiduoBulk findAccertamentoRes(AccertamentoBulk accertamento) throws it.cnr.jada.persistency.PersistencyException {
         return (AccertamentoResiduoBulk) findByPrimaryKey(new AccertamentoResiduoBulk(accertamento.getCd_cds(), accertamento.getEsercizio(), accertamento.getEsercizio_originale(), accertamento.getPg_accertamento()));
     }
 
@@ -266,9 +267,8 @@ public class AccertamentoHome extends BulkHome {
      * @param accertamento
      * @return
      * @throws PersistencyException
-     * @throws IntrospectionException
      */
-    public AccertamentoOrdBulk findAccertamentoOrd(AccertamentoBulk accertamento) throws it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException {
+    public AccertamentoOrdBulk findAccertamentoOrd(AccertamentoBulk accertamento) throws it.cnr.jada.persistency.PersistencyException {
         return (AccertamentoOrdBulk) findByPrimaryKey(new AccertamentoOrdBulk(accertamento.getCd_cds(), accertamento.getEsercizio(), accertamento.getEsercizio_originale(), accertamento.getPg_accertamento()));
     }
 
@@ -278,9 +278,8 @@ public class AccertamentoHome extends BulkHome {
      * @param accertamento
      * @return
      * @throws PersistencyException
-     * @throws IntrospectionException
      */
-    public AccertamentoPGiroBulk findAccertamentoPGiro(AccertamentoBulk accertamento) throws it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException {
+    public AccertamentoPGiroBulk findAccertamentoPGiro(AccertamentoBulk accertamento) throws it.cnr.jada.persistency.PersistencyException {
         return (AccertamentoPGiroBulk) findByPrimaryKey(new AccertamentoPGiroBulk(accertamento.getCd_cds(), accertamento.getEsercizio(), accertamento.getEsercizio_originale(), accertamento.getPg_accertamento()));
     }
 
@@ -312,11 +311,9 @@ public class AccertamentoHome extends BulkHome {
      *
      * @param accertamento
      * @return
-     * @throws IntrospectionException
      * @throws PersistencyException
-     * @throws ApplicationException
      */
-    public java.util.List findCodiciNatura(AccertamentoBulk accertamento) throws IntrospectionException, PersistencyException, ApplicationException {
+    public java.util.List findCodiciNatura(AccertamentoBulk accertamento) throws PersistencyException {
         List coll = new Vector();
 
         PersistentHome assHome = getHomeCache().getHome(Ass_ev_evBulk.class);
@@ -645,7 +642,7 @@ public java.util.List findLineeAttivita(AccertamentoBulk accertamento) throws In
     /**
      * Imposta il pg_accertamento di un oggetto AccertamentoBulk.
      *
-     * @param accertamento OggettoBulk
+     * @param bulk OggettoBulk
      * @throws PersistencyException
      */
 
@@ -1343,7 +1340,7 @@ public java.util.List findCdr( List capitoliList, AccertamentoBulk accertamento 
      * Ritorna tutti gli accertamenti uguali al bulk indipendentemente dall'esercizio
      * comprensivo di quello indicato nel bulk
      *
-     * @param accertamento
+     * @param bulk
      * @return AccertamentoBulk
      * @throws PersistencyException
      * @throws IntrospectionException
@@ -1367,5 +1364,139 @@ public java.util.List findCdr( List capitoliList, AccertamentoBulk accertamento 
 
         sql.setOrderBy("ANNO", OrderConstants.ORDER_DESC);
         return dettHome.fetchAll(sql);
+    }
+
+    public IScadenzaDocumentoContabileBulk aumentaImportoScadenzaInAutomatico(UserContext userContext, Accertamento_scadenzarioBulk scadenza, BigDecimal newImporto) throws ComponentException {
+        try {
+            Accertamento_scadenzarioHome asHome = (Accertamento_scadenzarioHome)getHomeCache().getHome(Accertamento_scadenzarioBulk.class);
+            Accertamento_scad_voceHome asvHome = (Accertamento_scad_voceHome)getHomeCache().getHome(Accertamento_scad_voceBulk.class);
+
+            AccertamentoBulk accertamento = this.findAccertamento(scadenza.getAccertamento());
+            accertamento.setAccertamento_scadenzarioColl(new BulkList(this.findAccertamento_scadenzarioList(accertamento)));
+
+            //cerco nell'obbligazione riletto la scadenza indicata
+            Accertamento_scadenzarioBulk scadenzaModel = accertamento.getAccertamento_scadenzarioColl().stream().filter(el->el.equalsByPrimaryKey(scadenza)).findFirst()
+                    .orElseThrow(()->new ApplicationException("Scadenza da aggiornare non trovata nell'accertamento indicato!"));
+
+            if (scadenzaModel.getIm_associato_doc_amm().compareTo(BigDecimal.ZERO)>0)
+                throw new ApplicationException("Scadenza da aggiornare collegata a documenti amministrativi. Aggiornamento non possibile!");
+
+            BigDecimal diffImporto = newImporto.subtract(scadenzaModel.getIm_scadenza());
+
+            if (diffImporto.compareTo(BigDecimal.ZERO)<0)
+                throw new ApplicationException("Scadenza da aggiornare di importo ("+ new EuroFormat().format(scadenzaModel.getIm_scadenza())+") superiore al nuovo valore da impostare ("
+                        + new EuroFormat().format(newImporto) + "). Aggiornamento non possibile!");
+
+            // Creo la lista delle scadenze libere da cui prelevare risorse
+            // cerco prima le scadenze con stessa data e descrizione
+            List<Accertamento_scadenzarioBulk> scadenzeDisponibili = accertamento.getAccertamento_scadenzarioColl().stream()
+                    .filter(el->el.getDs_scadenza().equals(scadenzaModel.getDs_scadenza()))
+                    .filter(el->el.getDt_scadenza_incasso().equals(scadenzaModel.getDt_scadenza_incasso()))
+                    .filter(el->el.getIm_associato_doc_amm().compareTo(BigDecimal.ZERO)==0)
+                    .filter(el->el.getIm_associato_doc_contabile().compareTo(BigDecimal.ZERO)==0)
+                    .filter(el->!el.equalsByPrimaryKey(scadenzaModel))
+                    .sorted(Comparator.comparing(Accertamento_scadenzarioBulk::getIm_scadenza))
+                    .sorted(Comparator.comparing(Accertamento_scadenzarioBulk::getPg_accertamento_scadenzario).reversed())
+                    .collect(Collectors.toList());
+
+            // quindi tutte le altre
+            scadenzeDisponibili.addAll(accertamento.getAccertamento_scadenzarioColl().stream()
+                    .filter(el->!el.getDs_scadenza().equals(scadenzaModel.getDs_scadenza()) || !el.getDt_scadenza_incasso().equals(scadenzaModel.getDt_scadenza_incasso()))
+                    .filter(el->el.getIm_associato_doc_amm().compareTo(BigDecimal.ZERO)==0)
+                    .filter(el->el.getIm_associato_doc_contabile().compareTo(BigDecimal.ZERO)==0)
+                    .filter(el->!el.equalsByPrimaryKey(scadenzaModel))
+                    .sorted(Comparator.comparing(Accertamento_scadenzarioBulk::getIm_scadenza))
+                    .sorted(Comparator.comparing(Accertamento_scadenzarioBulk::getPg_accertamento_scadenzario).reversed())
+                    .collect(Collectors.toList()));
+
+            BigDecimal totImportoDisponibile = scadenzeDisponibili.stream().map(Accertamento_scadenzarioBulk::getIm_scadenza).reduce(BigDecimal.ZERO, BigDecimal::add);
+            if (totImportoDisponibile.compareTo(diffImporto)<0)
+                throw new ApplicationException("L'importo disponibile dell'accertamento ("+ new EuroFormat().format(totImportoDisponibile)+") è inferiore alla variazione richiesta ("
+                        + new EuroFormat().format(diffImporto) + "). Aggiornamento non possibile!");
+
+            scadenzaModel.setAccertamento_scad_voceColl(new BulkList(asHome.findAccertamento_scad_voceList(userContext, scadenzaModel)));
+
+            for (Accertamento_scadenzarioBulk scadDisponibile : scadenzeDisponibili) {
+                if (diffImporto.compareTo(BigDecimal.ZERO)<=0)
+                    break;
+
+                scadDisponibile.setAccertamento_scad_voceColl(new BulkList(asHome.findAccertamento_scad_voceList(userContext, scadDisponibile)));
+                BigDecimal newImportoScadDisponibile;
+                //Se l'importo della scadenza disponibile è inferiore allora la azzero e la accorpo alla precedente
+                if (scadDisponibile.getIm_scadenza().compareTo(diffImporto)<0) {
+                    diffImporto=diffImporto.subtract(scadDisponibile.getIm_scadenza());
+                    newImportoScadDisponibile = BigDecimal.ZERO;
+                } else {
+                    newImportoScadDisponibile = scadDisponibile.getIm_scadenza().subtract(diffImporto);
+                    diffImporto=BigDecimal.ZERO;
+                }
+
+                BigDecimal newImportoScadModel = scadenzaModel.getIm_scadenza().add(scadDisponibile.getIm_scadenza().subtract(newImportoScadDisponibile));
+
+                for (Accertamento_scad_voceBulk scadVoceDisponibile : scadDisponibile.getAccertamento_scad_voceColl()) {
+                    BigDecimal newImportoScadVoceDisponibile = scadVoceDisponibile.getIm_voce().multiply(newImportoScadDisponibile).divide(scadDisponibile.getIm_scadenza(),2, RoundingMode.HALF_UP);
+                    BigDecimal importoScadVoceDisponibileTrasferito = scadVoceDisponibile.getIm_voce().subtract(newImportoScadVoceDisponibile);
+
+                    //Cerco la corrispondente nella scadGood
+                    Accertamento_scad_voceBulk scadVoceGood = scadenzaModel.getAccertamento_scad_voceColl()
+                            .stream()
+                            .filter(el -> el.getLinea_attivita().equalsByPrimaryKey(scadVoceDisponibile.getLinea_attivita()))
+                            .findFirst().orElse(null);
+                    if (scadVoceGood != null) {
+                        scadVoceGood.setIm_voce(scadVoceGood.getIm_voce().add(importoScadVoceDisponibileTrasferito));
+                        scadVoceGood.setToBeUpdated();
+                        asvHome.update(scadVoceGood, userContext);
+                    } else {
+                        scadVoceGood = new Accertamento_scad_voceBulk();
+                        scadVoceGood.setAccertamento_scadenzario(scadenzaModel);
+                        scadVoceGood.setIm_voce(importoScadVoceDisponibileTrasferito);
+                        scadVoceGood.setToBeCreated();
+                        asvHome.update(scadVoceGood, userContext);
+                        scadenzaModel.getAccertamento_scad_voceColl().add(scadVoceGood);
+                    }
+                    if (newImportoScadVoceDisponibile.compareTo(BigDecimal.ZERO)==0) {
+                        scadVoceDisponibile.setToBeDeleted();
+                        asvHome.delete(scadVoceDisponibile,userContext);
+                    } else {
+                        scadVoceDisponibile.setIm_voce(newImportoScadVoceDisponibile);
+                        scadVoceDisponibile.setToBeUpdated();
+                        asvHome.update(scadVoceDisponibile, userContext);
+                    }
+                }
+                //Aggiorno la scadenza disponibile da cui ho prelevato l'importo
+                if (newImportoScadDisponibile.compareTo(BigDecimal.ZERO)==0) {
+                    scadDisponibile.setToBeDeleted();
+                    asHome.delete(scadDisponibile,userContext);
+                } else {
+                    BigDecimal totScadVoceDisponibile = scadDisponibile.getAccertamento_scad_voceColl().stream().map(Accertamento_scad_voceBulk::getIm_voce).reduce(BigDecimal.ZERO, BigDecimal::add);
+                    if (!totScadVoceDisponibile.equals(newImportoScadDisponibile)) {
+                        Accertamento_scad_voceBulk scadVoceBulk = scadDisponibile.getAccertamento_scad_voceColl().stream().max(Comparator.comparing(Accertamento_scad_voceBulk::getIm_voce))
+                                .orElseThrow(() -> new ApplicationException("Errore nel recupero della scadenza"));
+                        scadVoceBulk.setIm_voce(scadVoceBulk.getIm_voce().add(newImportoScadDisponibile.subtract(totScadVoceDisponibile)));
+                        scadVoceBulk.setToBeUpdated();
+                        asvHome.update(scadVoceBulk, userContext);
+                    }
+                    scadDisponibile.setIm_scadenza(newImportoScadDisponibile);
+                    scadDisponibile.setToBeUpdated();
+                    asHome.update(scadDisponibile,userContext);
+                }
+
+                //Aggiorno la scadenza model
+                BigDecimal totScadVoceModel = scadenzaModel.getAccertamento_scad_voceColl().stream().map(Accertamento_scad_voceBulk::getIm_voce).reduce(BigDecimal.ZERO, BigDecimal::add);
+                if (!totScadVoceModel.equals(newImportoScadModel)) {
+                    Accertamento_scad_voceBulk scadVoceBulk = scadenzaModel.getAccertamento_scad_voceColl().stream().max(Comparator.comparing(Accertamento_scad_voceBulk::getIm_voce))
+                            .orElseThrow(() -> new ApplicationException("Errore nel recupero della scadenza"));
+                    scadVoceBulk.setIm_voce(scadVoceBulk.getIm_voce().add(newImportoScadModel.subtract(totScadVoceModel)));
+                    scadVoceBulk.setToBeUpdated();
+                    asvHome.update(scadVoceBulk, userContext);
+                }
+                scadenzaModel.setIm_scadenza(newImportoScadModel);
+                scadenzaModel.setToBeUpdated();
+                asHome.update(scadenzaModel,userContext);
+            }
+            return scadenzaModel;
+        } catch (PersistencyException e) {
+            throw new ComponentException( e );
+        }
     }
 }

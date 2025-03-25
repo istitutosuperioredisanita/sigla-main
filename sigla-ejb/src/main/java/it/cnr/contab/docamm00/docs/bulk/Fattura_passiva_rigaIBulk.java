@@ -102,6 +102,7 @@ public class Fattura_passiva_rigaIBulk extends Fattura_passiva_rigaBulk {
 	public IDocumentoAmministrativoRigaBulk getOriginalDetail() {
 		return null;
 	}
+
 	/**
 	 * Insert the method's description here.
 	 * Creation date: (11/6/2001 3:38:46 PM)

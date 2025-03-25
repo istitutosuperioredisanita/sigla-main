@@ -353,7 +353,7 @@ public class LiquidazioneDefinitivaIvaAction extends StampaAction {
 			if (Optional.ofNullable(bp.getEconomicaModel()).filter(OggettoBulk::isToBeCreated).isPresent())
 				throw new ApplicationException("Il documento risulta non salvato! Proposta scrittura prima nota non possibile.");
 
-			documentoCogeBulk.setScrittura_partita_doppia(Utility.createScritturaPartitaDoppiaComponentSession().proposeScritturaPartitaDoppia(
+			documentoCogeBulk.setScrittura_partita_doppia(Utility.createProposeScritturaComponentSession().proposeScritturaPartitaDoppia(
 					actionContext.getUserContext(),
 					documentoCogeBulk)
 			);

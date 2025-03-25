@@ -266,7 +266,7 @@
 	        aListaMovOld(k).CD_CDS=aListaMovNew(u).CD_CDS
         AND aListaMovOld(k).ESERCIZIO=aListaMovNew(u).ESERCIZIO
         AND aListaMovOld(k).CD_UNITA_ORGANIZZATIVA=aListaMovOld(u).CD_UNITA_ORGANIZZATIVA
-        AND aListaMovOld(k).CD_VOCE_EP=aListaMovNew(u).CD_VOCE_EP
+        AND aListaMovOld(k).CD_VOCE_ANA=aListaMovNew(u).CD_VOCE_ANA
         AND aListaMovOld(k).IM_MOVIMENTO=aListaMovNew(u).IM_MOVIMENTO
         AND aListaMovOld(k).SEZIONE=aListaMovNew(u).SEZIONE
         AND aListaMovOld(k).STATO=aListaMovNew(u).STATO
@@ -1028,7 +1028,7 @@ Dbms_Output.PUT_LINE ('INS '||aScrittura.ESERCIZIO||' '||aScrittura.CD_CDS||' '|
      and cd_unita_organizzativa = aMovimento.cd_unita_organizzativa
      and cd_centro_responsabilita = aMovimento.cd_centro_responsabilita
      and cd_linea_attivita = aMovimento.cd_linea_attivita
-     and cd_voce_ep = aMovimento.cd_voce_ep
+     and cd_voce_ana = aMovimento.cd_voce_ana
      And TI_ISTITUZ_COMMERC = aMovimento.TI_ISTITUZ_COMMERC
     For update nowait;
    exception when NO_DATA_FOUND then
@@ -1053,7 +1053,7 @@ Dbms_Output.PUT_LINE ('INS '||aScrittura.ESERCIZIO||' '||aScrittura.CD_CDS||' '|
      and cd_unita_organizzativa = aMovimento.cd_unita_organizzativa
      and cd_centro_responsabilita = aMovimento.cd_centro_responsabilita
      and cd_linea_attivita = aMovimento.cd_linea_attivita
-     and cd_voce_ep = aMovimento.cd_voce_ep
+     and cd_voce_ana = aMovimento.cd_voce_ana
      And TI_ISTITUZ_COMMERC = amovimento.TI_ISTITUZ_COMMERC;
   end loop;
  end;
@@ -1083,7 +1083,7 @@ Dbms_Output.PUT_LINE ('INS '||aScrittura.ESERCIZIO||' '||aScrittura.CD_CDS||' '|
          cd_cds = aMovimento.cd_cds
      and esercizio = aMovimento.esercizio
      and cd_unita_organizzativa = aMovimento.cd_unita_organizzativa
-     and cd_voce_ep = aMovimento.cd_voce_ep
+     and cd_voce_ana = aMovimento.cd_voce_ana
      and cd_centro_responsabilita = aMovimento.cd_centro_responsabilita
      and cd_linea_attivita = aMovimento.cd_linea_attivita
      And TI_ISTITUZ_COMMERC = amovimento.TI_ISTITUZ_COMMERC
@@ -1094,7 +1094,7 @@ Dbms_Output.PUT_LINE ('INS '||aScrittura.ESERCIZIO||' '||aScrittura.CD_CDS||' '|
     aSaldo.CD_CDS:=aMovimento.cd_cds;
     aSaldo.ESERCIZIO:=aMovimento.esercizio;
     aSaldo.CD_UNITA_ORGANIZZATIVA:=aMovimento.cd_unita_organizzativa;
-    aSaldo.CD_VOCE_EP:=aMovimento.cd_voce_ep;
+    aSaldo.CD_VOCE_ANA:=aMovimento.cd_voce_ana;
     aSaldo.cd_centro_responsabilita:=aMovimento.cd_centro_responsabilita;
     aSaldo.cd_linea_attivita:=aMovimento.cd_linea_attivita;
     aSaldo.TI_ISTITUZ_COMMERC := aMovimento.TI_ISTITUZ_COMMERC;
@@ -1125,7 +1125,7 @@ Dbms_Output.PUT_LINE ('INS '||aScrittura.ESERCIZIO||' '||aScrittura.CD_CDS||' '|
                  cd_cds = aMovimento.cd_cds
              and esercizio = aMovimento.esercizio
              and cd_unita_organizzativa = aMovimento.cd_unita_organizzativa
-             and cd_voce_ep = aMovimento.cd_voce_ep
+             and cd_voce_ana = aMovimento.cd_voce_ana
              and cd_centro_responsabilita = aMovimento.cd_centro_responsabilita
              and cd_linea_attivita = aMovimento.cd_linea_attivita
              And TI_ISTITUZ_COMMERC = amovimento.TI_ISTITUZ_COMMERC;
@@ -1140,7 +1140,7 @@ Dbms_Output.PUT_LINE ('INS '||aScrittura.ESERCIZIO||' '||aScrittura.CD_CDS||' '|
                  cd_cds = aMovimento.cd_cds
              and esercizio = aMovimento.esercizio
              and cd_unita_organizzativa = aMovimento.cd_unita_organizzativa
-             and cd_voce_ep = aMovimento.cd_voce_ep
+             and cd_voce_ana = aMovimento.cd_voce_ana
              and cd_centro_responsabilita = aMovimento.cd_centro_responsabilita
              and cd_linea_attivita = aMovimento.cd_linea_attivita
              And TI_ISTITUZ_COMMERC = amovimento.TI_ISTITUZ_COMMERC;
@@ -1380,7 +1380,7 @@ Dbms_Output.PUT_LINE ('INS '||aScrittura.ESERCIZIO||' '||aScrittura.CD_CDS||' '|
     ,ESERCIZIO
     ,CD_UNITA_ORGANIZZATIVA
     ,PG_SCRITTURA
-    ,CD_VOCE_EP
+    ,CD_VOCE_ANA
     ,PG_MOVIMENTO
     ,SEZIONE
     ,TI_ISTITUZ_COMMERC
@@ -1403,7 +1403,7 @@ Dbms_Output.PUT_LINE ('INS '||aScrittura.ESERCIZIO||' '||aScrittura.CD_CDS||' '|
     ,aDest.ESERCIZIO
     ,aDest.CD_UNITA_ORGANIZZATIVA
     ,aDest.PG_SCRITTURA
-    ,aDest.CD_VOCE_EP
+    ,aDest.CD_VOCE_ANA
     ,aDest.PG_MOVIMENTO
     ,aDest.SEZIONE
     ,ADest.TI_ISTITUZ_COMMERC
@@ -1463,7 +1463,7 @@ Dbms_Output.PUT_LINE ('INS '||aScrittura.ESERCIZIO||' '||aScrittura.CD_CDS||' '|
     ,CD_UNITA_ORGANIZZATIVA
     ,CD_CENTRO_RESPONSABILITA
     ,CD_LINEA_ATTIVITA
-    ,CD_VOCE_EP
+    ,CD_VOCE_ANA
     ,TI_ISTITUZ_COMMERC
     ,TOT_DARE
     ,TOT_AVERE
@@ -1478,7 +1478,7 @@ Dbms_Output.PUT_LINE ('INS '||aScrittura.ESERCIZIO||' '||aScrittura.CD_CDS||' '|
     ,aDest.CD_UNITA_ORGANIZZATIVA
     ,aDest.CD_CENTRO_RESPONSABILITA
     ,aDest.CD_LINEA_ATTIVITA
-    ,aDest.CD_VOCE_EP
+    ,aDest.CD_VOCE_ANA
     ,adest.TI_ISTITUZ_COMMERC
     ,aDest.TOT_DARE
     ,aDest.TOT_AVERE

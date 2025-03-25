@@ -368,6 +368,14 @@
 			propertyName="flPivaVerificata"
 			sqlTypeName="CHAR"
 			columnSize="1" />
+		<columnMapping
+				columnName="FL_FIRMATARIO_CONTRATTO"
+				propertyName="flFirmatarioContratto"
+				sqlTypeName="CHAR"
+				nullable="false"
+				columnSize="1"
+				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+
 				
 	</defaultColumnMap>
 	<persistentProperty
@@ -498,4 +506,6 @@
 		name="dt_fine_diaria_miss_est" />
 	<persistentProperty
 		name="flPivaVerificata" />
+	<persistentProperty
+		name="flFirmatarioContratto"/>
 </SQLPersistentInfo>

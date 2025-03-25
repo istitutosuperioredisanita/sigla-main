@@ -90,7 +90,9 @@ public class AccertamentoPluriennaleComponent extends AccertamentoComponent {
 
 
 			AccertamentoBulk newAccertamentoBulk =( AccertamentoBulk) accertamentoBulk.clone();
-			WorkpackageBulk lineaAttivita = (WorkpackageBulk) getHome(uc, WorkpackageBulk.class).findByPrimaryKey(accertamentoPluriennaleBulk.getRigheVoceColl().get(0).getLinea_attivita());
+
+
+
 			newAccertamentoBulk.setCrudStatus(OggettoBulk.TO_BE_CREATED);
 			newAccertamentoBulk.setRiportato("N");
 			newAccertamentoBulk.setPg_accertamento(null);
@@ -126,15 +128,22 @@ public class AccertamentoPluriennaleComponent extends AccertamentoComponent {
 			acc_scadenza.setIm_associato_doc_contabile(BigDecimal.ZERO);
 			acc_scadenza.setIm_associato_doc_contabile(new BigDecimal(0));
 
-			Accertamento_scad_voceBulk acc_scad_voce = new Accertamento_scad_voceBulk();
-			//acc_scad_voce.setUtcr(testata.getUtcr());
-			acc_scad_voce.setToBeCreated();
-			acc_scad_voce.setAccertamento_scadenzario(acc_scadenza);
-			acc_scad_voce.setIm_voce(newAccertamentoBulk.getIm_accertamento());
+			for(Accertamento_pluriennale_voceBulk plurVoce : accertamentoPluriennaleBulk.getRigheVoceColl()){
 
-			acc_scad_voce.setLinea_attivita(lineaAttivita);
+				Accertamento_scad_voceBulk acc_scad_voce = new Accertamento_scad_voceBulk();
 
-			acc_scadenza.getAccertamento_scad_voceColl().add((acc_scad_voce));
+				acc_scad_voce.setToBeCreated();
+				acc_scad_voce.setAccertamento_scadenzario(acc_scadenza);
+				acc_scad_voce.setIm_voce(plurVoce.getImporto());
+
+				WorkpackageBulk lineaAttivita = (WorkpackageBulk) getHome(uc, WorkpackageBulk.class).findByPrimaryKey(plurVoce.getLinea_attivita());
+				acc_scad_voce.setLinea_attivita(lineaAttivita);
+
+				acc_scadenza.getAccertamento_scad_voceColl().add((acc_scad_voce));
+			}
+			// CICLARE PER TUTTI I PLURIENNALI VOCE
+
+
 			//aggiungi pluriennali anni successivi
 			List<Accertamento_pluriennaleBulk> accPluriennali =
 					(	( List<Accertamento_pluriennaleBulk>)Optional.ofNullable(accertamentoHome.findAccertamentiPluriennali(uc,accertamentoBulk)).
@@ -154,6 +163,9 @@ public class AccertamentoPluriennaleComponent extends AccertamentoComponent {
 				for (Accertamento_pluriennale_voceBulk pluriennaleVoceBulk : accPluriennaliVoce){
 					Accertamento_pluriennale_voceBulk newAccertamentoPluriennaleVoce = new Accertamento_pluriennale_voceBulk();
 						newAccertamentoPluriennaleVoce.setAccertamentoPluriennale( newAccPluriennale);
+
+						// PRENDERE LA LINEA DALLA ASSOCIATIAVA
+
 						newAccertamentoPluriennaleVoce.setLinea_attivita( pluriennaleVoceBulk.getLinea_attivita());
 						newAccertamentoPluriennaleVoce.setImporto( pluriennaleVoceBulk.getImporto());
 						newAccertamentoPluriennaleVoce.setToBeCreated();

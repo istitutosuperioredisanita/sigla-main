@@ -27,6 +27,7 @@ import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.docamm00.docs.bulk.*;
+import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceHome;
@@ -36,6 +37,11 @@ import it.cnr.contab.inventario00.docs.bulk.*;
 import it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession;
 import it.cnr.contab.inventario00.tabrif.bulk.*;
 import it.cnr.contab.inventario01.bulk.*;
+import it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession;
+import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
+import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineHome;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
+import it.cnr.contab.ordmag.ordini.dto.ImportoOrdine;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.TipoIVA;
@@ -47,6 +53,7 @@ import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.RemoteIterator;
+import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import javax.ejb.EJBException;
 import java.io.Serializable;
@@ -708,6 +715,10 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 							}
 						}
 						buonoCS = (Buono_carico_scaricoBulk) super.creaConBulk(userContext, definitivo);
+
+						verificaAssociazioneFattura(userContext,definitivo);
+
+
 					} catch (it.cnr.jada.persistency.PersistencyException e) {
 						throw handleException(buonoCS, e);
 					} catch (it.cnr.jada.persistency.IntrospectionException e) {
@@ -733,7 +744,92 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 			throw handleException(bulk, e);
 		}
 	}
-	
+
+	private void verificaAssociazioneFattura(UserContext userContext , Buono_carico_scaricoBulk buonoCS) throws ComponentException, PersistencyException {
+		SimpleBulkList<OggettoBulk> dettagli = buonoCS.getBuono_carico_scarico_dettColl();
+
+		Transito_beni_ordiniHome homeTransito = (Transito_beni_ordiniHome)getHome(userContext, Transito_beni_ordiniBulk.class);
+		FatturaOrdineHome fattHome = (FatturaOrdineHome) getHome(userContext, FatturaOrdineBulk.class);
+		Inventario_beniHome invHome = (Inventario_beniHome) getHome(userContext,Inventario_beniBulk.class);
+		Ass_inv_bene_fatturaHome assHome = (Ass_inv_bene_fatturaHome) getHome(userContext, Ass_inv_bene_fatturaBulk.class);
+
+		FatturaPassivaComponentSession fatturaPassivaComponent = EJBCommonServices.createEJB("CNRDOCAMM00_EJB_FatturaPassivaComponentSession", FatturaPassivaComponentSession.class);
+		Inventario_beniComponentSession inventario_beniComponent = ((it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_Inventario_beniComponentSession",it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession.class));
+
+		for (Iterator i = dettagli.iterator(); i.hasNext(); ) {
+			Buono_carico_scarico_dettBulk dettaglio = (Buono_carico_scarico_dettBulk) i.next();
+
+			Transito_beni_ordiniBulk transito_beni_ordiniBulk = new Transito_beni_ordiniBulk();
+			transito_beni_ordiniBulk.setId(dettaglio.getIdTransito());
+			try {
+				transito_beni_ordiniBulk = (Transito_beni_ordiniBulk)homeTransito.findByPrimaryKey(transito_beni_ordiniBulk);
+
+				if (transito_beni_ordiniBulk != null){
+					getHomeCache(userContext).fetchAll(userContext);
+				}else{
+					throw new ComponentException();
+				}
+			} catch (PersistencyException e) {
+				throw new ComponentException(e);
+			}
+
+			// Se la consegna dell'ordine risulta associata o associata parzialmente a fattura si deve verificare l'associativa FATTURA/INVENTARIO
+
+			if(!transito_beni_ordiniBulk.getMovimentiMag().getLottoMag().getOrdineAcqConsegna().getStatoFatt().equals(OrdineAcqConsegnaBulk.STATO_FATT_NON_ASSOCIATA)){
+
+				FatturaOrdineBulk fatturaOrd = fattHome.findFatturaByRigaConsegna(transito_beni_ordiniBulk.getMovimentiMag().getLottoMag().getOrdineAcqConsegna());
+				// se consegna ordine collegata a fattura
+				if(fatturaOrd != null){
+					try {
+						List<Inventario_beniBulk> listaInventario=invHome.findByTransito(transito_beni_ordiniBulk);
+						if (listaInventario != null){
+							getHomeCache(userContext).fetchAll(userContext);
+							for(Inventario_beniBulk bene:listaInventario){
+									ImportoOrdine importo = new ImportoOrdine();
+									importo.setImponibile(fatturaOrd.getImImponibile());
+									importo.setImportoIvaInd(fatturaOrd.getImIvaNd());
+
+									BigDecimal importoUnitarioFattura = fatturaPassivaComponent.getPrezzoUnitarioFattura(userContext,importo);
+									/*da verificare */
+									//if (bene.getValore_iniziale().compareTo(importoUnitarioFattura) != 0) {
+									//	bene.setValore_iniziale(importoUnitarioFattura);
+									//	bene.setToBeUpdated();
+									//}
+									try {
+										Ass_inv_bene_fatturaBulk ass = new Ass_inv_bene_fatturaBulk();
+										ass.setRiga_fatt_pass((Fattura_passiva_rigaIBulk) fatturaOrd.getFatturaPassivaRiga());
+										ass.setInventario(bene.getInventario());
+										ass.setTest_buono(dettaglio.getBuono_cs());
+										ass.setNr_inventario(bene.getNr_inventario());
+										ass.setPerAumentoValore(Boolean.FALSE);
+										ass.setProgressivo(bene.getProgressivo());
+										BuonoCaricoScaricoComponentSession h = EJBCommonServices.createEJB(
+												"CNRINVENTARIO01_EJB_BuonoCaricoScaricoComponentSession",
+												BuonoCaricoScaricoComponentSession.class);
+										ass.setPg_riga(h.findMaxAssociazione(userContext, ass));
+										ass.setToBeCreated();
+										super.creaConBulk(userContext, ass);
+									} catch (ComponentException | RemoteException e) {
+										handleException(e);
+									}
+									super.modificaConBulk(userContext, bene);
+
+							}
+						}else{
+							throw new ComponentException();
+						}
+					} catch (PersistencyException | RemoteException | IntrospectionException e) {
+						throw new ComponentException(e);
+					}
+
+				}
+			}
+
+		}						/////
+		//if (transito_beni_ordiniBulk != null){
+		//	getHomeCache(aUC).fetchAll(aUC);
+		//}
+	}
 	/** 
 	  *  Validazione dell'operazione di Trasferimento.
 	  *    PreCondition:
@@ -6017,9 +6113,8 @@ private String buildBeniNotChanged_Message(java.util.Vector notChangedBeniKey) {
  * @param buonoC <code>Buono_caricoBulk</code> il Buono di Carico.
  * @param dettagliColl la <code>SimpleBulkList</code> collezione dei dettagli del Buono di Carico.
 **/  
-private void insertBeni (UserContext aUC,Buono_carico_scaricoBulk buonoC, SimpleBulkList dettagliColl) 
-	throws ComponentException
-{
+private void insertBeni (UserContext aUC,Buono_carico_scaricoBulk buonoC, SimpleBulkList dettagliColl)
+		throws ComponentException, PersistencyException, RemoteException {
 
 	Inventario_beniComponentSession inventario_beniComponent = ((it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_Inventario_beniComponentSession",it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession.class));
 	Buono_carico_scarico_dettBulk dett = new Buono_carico_scarico_dettBulk();
@@ -6077,7 +6172,6 @@ private void insertBeni (UserContext aUC,Buono_carico_scaricoBulk buonoC, Simple
 			}
 		}
 
-
 		try{
 			makeBulkPersistent(aUC,bene,false);
 		}catch (Exception pe){
@@ -6092,6 +6186,7 @@ private void insertBeni (UserContext aUC,Buono_carico_scaricoBulk buonoC, Simple
 			} catch (PersistencyException | RemoteException e) {
 				throw new ComponentException(e);
 			}
+
 		}
 	}
 }
@@ -6559,7 +6654,11 @@ private void validaBuonoCarico (UserContext aUC,Buono_carico_scaricoBulk buonoCa
 			// CONTROLLA CHE SIA STATA SPECIFICATA UNA UBICAZIONE PER IL BENE
 			if (bene.getUbicazione()==null || bene.getUbicazione().getCd_ubicazione()==null)
 				throw new it.cnr.jada.comp.ApplicationException("Attenzione: indicare l'Ubicazione del Bene" + (bene.getDs_bene()!=null?"'"+bene.getDs_bene()+"'":""));
-					
+
+			// CONTROLLA CHE SIA STATA SPECIFICATO L'ASSEGNATARIO PER IL BENE
+			if (bene.getAssegnatario()==null || bene.getAssegnatario().getCd_terzo()==null)
+				throw new it.cnr.jada.comp.ApplicationException("Attenzione: indicare l'Assagnatario del Bene"+ (bene.getDs_bene()!=null?"'"+bene.getDs_bene()+"'":""));
+
 			// CONTROLLA CHE SIA STATO INSERITO LA QUANTITA' PER IL BENE
 			if (dett.getQuantita()==null || dett.getQuantita().compareTo(new Long(1))<0)
 				throw new it.cnr.jada.comp.ApplicationException("Attenzione: la Quantita' del Bene " + (bene.getDs_bene()!=null?"'"+bene.getDs_bene()+"'":"") + " non è valida.\n La Quantità deve essere maggiore di 0");
@@ -7639,6 +7738,8 @@ public RemoteIterator cercaBeniAssociabili(UserContext userContext,Ass_inv_bene_
 			throw handleException(ex);
 		}
 	}
+
+
 }
 
 

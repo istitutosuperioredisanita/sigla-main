@@ -23,6 +23,7 @@
                                        http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <changeSet author="valentina.tomada" id="chiusura_anno">
+        <validCheckSum>7:9f903fea2b33393efc2f03a4ccbd9d7a</validCheckSum>
 
         <!-- TABELLA TESTATA CHIUSURA -->
         <createTable tableName="chiusura_anno" remarks="Rappresenta la chiusura dell'anno contabile per magazzino e inventario" >
@@ -152,7 +153,7 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addPrimaryKey tableName="chiusura_anno_mag_rim" constraintName="chiusura_anno_mag_rim_pkey" columnNames="cd_cds_lotto,cd_magazzino_lotto,esercizio_lotto,cd_numeratore_lotto,pg_lotto"></addPrimaryKey>
+        <addPrimaryKey tableName="chiusura_anno_mag_rim" constraintName="chiusura_anno_mag_rim_pkey" columnNames="cd_cds_lotto,cd_magazzino_lotto,esercizio_lotto,cd_numeratore_lotto,pg_lotto,anno"/>
 
 
         <addForeignKeyConstraint baseColumnNames="pg_chiusura,anno,tipo_chiusura" baseTableName="chiusura_anno_mag_rim" constraintName="fk_chiusura_anno_mag_rim01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="pg_chiusura,anno,tipo_chiusura" referencedTableName="chiusura_anno"/>

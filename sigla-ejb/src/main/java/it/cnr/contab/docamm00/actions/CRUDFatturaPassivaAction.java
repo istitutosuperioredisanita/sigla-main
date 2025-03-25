@@ -17,24 +17,6 @@
 
 package it.cnr.contab.docamm00.actions;
 
-import java.rmi.RemoteException;
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.ejb.EJBException;
-
-import it.cnr.contab.anagraf00.core.bulk.TelefonoBulk;
-import it.cnr.contab.docamm00.docs.bulk.*;
-import it.cnr.contab.doccont00.bp.CRUDMandatoBP;
-import it.cnr.contab.doccont00.core.bulk.*;
-import it.cnr.contab.util.enumeration.TipoIVA;
-import it.cnr.jada.ejb.CRUDComponentSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
@@ -46,25 +28,15 @@ import it.cnr.contab.config00.bulk.CigBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.docamm00.bp.*;
 import it.cnr.contab.docamm00.docs.bulk.*;
-import it.cnr.contab.docamm00.bp.CRUDFatturaPassivaBP;
-import it.cnr.contab.docamm00.bp.CRUDFatturaPassivaIBP;
-import it.cnr.contab.docamm00.bp.CRUDNotaDiCreditoBP;
-import it.cnr.contab.docamm00.bp.CRUDNotaDiDebitoBP;
-import it.cnr.contab.docamm00.bp.ContabilizzaOrdineBP;
-import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoBP;
-import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoSpesaBP;
-import it.cnr.contab.docamm00.bp.RisultatoEliminazioneBP;
-import it.cnr.contab.docamm00.bp.TitoloDiCreditoDebitoBP;
 import it.cnr.contab.docamm00.ejb.CategoriaGruppoInventComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.docamm00.ejb.VoceIvaComponentSession;
+import it.cnr.contab.docamm00.intrastat.bulk.Fattura_passiva_intraBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.*;
+import it.cnr.contab.doccont00.bp.CRUDMandatoBP;
 import it.cnr.contab.doccont00.bp.CRUDVirtualObbligazioneBP;
 import it.cnr.contab.doccont00.comp.DateServices;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
-import it.cnr.contab.doccont00.core.bulk.OptionRequestParameter;
-import it.cnr.contab.doccont00.core.bulk.SospesoBulk;
+import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.doccont00.ejb.ObbligazioneAbstractComponentSession;
 import it.cnr.contab.inventario00.bp.AssBeneFatturaBP;
 import it.cnr.contab.inventario00.docs.bulk.Ass_inv_bene_fatturaBulk;
@@ -76,6 +48,7 @@ import it.cnr.contab.inventario01.ejb.NumerazioneTempBuonoComponentSession;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.CNRUserInfo;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util.ApplicationMessageFormatException;
@@ -92,6 +65,7 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
@@ -630,11 +604,16 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
         //if (fp.isRiportata() && !fp.COMPLETAMENTE_RIPORTATO.equalsIgnoreCase(fp.getRiportata()))
         //throw new it.cnr.jada.comp.ApplicationException("Non è possibile generare note di credito per fatture non riportate completamente!");
         try {
-            java.sql.Timestamp date = it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
-            int annoSolare = fp.getDateCalendar(date).get(java.util.Calendar.YEAR);
-            if (annoSolare != esercizioScrivania.intValue())
+            if ((it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(
+                    context.getUserContext()).intValue() != Fattura_passivaBulk
+                    .getDateCalendar(null).get(java.util.Calendar.YEAR) ||
+                    !Utility.createConfigurazioneCnrComponentSession().getFineRegFattPass(context.getUserContext(), CNRUserContext.getEsercizio(context.getUserContext()) - 1)
+                        .before(EJBCommonServices.getServerDate()) )  &&
+                    !Utility.createConfigurazioneCnrComponentSession().getFineRegFattPass(context.getUserContext(), CNRUserContext.getEsercizio(context.getUserContext()))
+                        .after(EJBCommonServices.getServerDate())) {
                 throw new it.cnr.jada.comp.ApplicationException("Non è possibile inserire note di credito in esercizi non corrispondenti all'anno solare!");
-        } catch (javax.ejb.EJBException e) {
+            }
+        } catch (EJBException | RemoteException e) {
             return handleException(context, e);
         }
 
@@ -4421,21 +4400,84 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
         return super.doRiportaSelezione(context);
     }
 
+
+    public Forward doConfirmImportoIntrastat(ActionContext actioncontext, int option) {
+        try {
+            if (option == OptionBP.YES_BUTTON) {
+                return doConfirmSalva(actioncontext, OptionBP.YES_BUTTON);
+            }
+            return doConfirmSalva(actioncontext, OptionBP.NO_BUTTON);
+        } catch (Throwable e) {
+            return handleException(actioncontext, e);
+        }
+    }
+    public Forward doSelezionaRigaIntrastatDaVerifica(ActionContext actioncontext) {
+        try {
+            fillModel(actioncontext);
+            CRUDFatturaPassivaIBP bp = (CRUDFatturaPassivaIBP) actioncontext.getBusinessProcess();
+            super.doTab(actioncontext, "tab", "tabFatturaPassivaIntrastat");
+            bp.doSelezionaRigaIntrastatDaVerifica(actioncontext);
+            return actioncontext.findDefaultForward();
+        } catch (Exception exception) {
+            return handleException(actioncontext, exception);
+        }
+    }
+
+    private void setWarningInstrat(ActionContext context){
+        CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) getBusinessProcess(context);
+        Fattura_passivaBulk fatturaPassivaBulk = (Fattura_passivaBulk) bp.getModel();
+        if ( bp.isAttivoChekcImpIntrastat() ){
+            Boolean warningInvio=fatturaPassivaBulk.validaImportoDettagliIntrastat();
+            if ( Optional.ofNullable(fatturaPassivaBulk.getFattura_passiva_intrastatColl()).isPresent()){
+                BigDecimal totAmmontareIntrastat = BigDecimal.ZERO;
+                for (Iterator i = fatturaPassivaBulk.getFattura_passiva_intrastatColl().iterator(); i.hasNext(); ) {
+                    Fattura_passiva_intraBulk riga = (Fattura_passiva_intraBulk) i.next();
+                    riga.setWarningInvio(warningInvio);
+                    riga.setToBeUpdated();
+                }
+            }
+        }
+    }
+    public Forward doConfirmSalva(ActionContext context, int option) throws java.rmi.RemoteException {
+        try {
+            if (option == OptionBP.YES_BUTTON) {
+                fillModel(context);
+                setWarningInstrat(context);
+                Forward fwd = super.doSalva(context);
+
+                CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) getBusinessProcess(context);
+
+                //Azzero la selezione del controller obbligazioni per forzare il calcolo dei dettagli
+                //associati all'obbligazione selezionata
+
+                bp.getObbligazioniController().setModelIndex(context, -1);
+                return fwd;
+            }
+            return doSelezionaRigaIntrastatDaVerifica(context);
+        } catch (Throwable e) {
+            return handleException(context, e);
+        }
+    }
+
+
+
+
     /**
      * Gestisce una richiesta di salvataggio. Rimplementato
      */
     public Forward doSalva(ActionContext context) throws java.rmi.RemoteException {
+        try {
+            //Controllo importi
+            CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) context.getBusinessProcess();
+            Fattura_passivaBulk fatturaPassivaBulk = (Fattura_passivaBulk) bp.getModel();
+       if (bp.isAttivoChekcImpIntrastat() && fatturaPassivaBulk.validaImportoDettagliIntrastat())
+           return openConfirm(context, "Attenzione! La somma dell'ammontare dei dettagli Intrastat supera l'importo massimo  "+ fatturaPassivaBulk.getImportoIntrastatTotDaRighe().toString()+". Vuoi continuare?", OptionBP.CONFIRM_YES_NO, "doConfirmImportoIntrastat");
+       return doConfirmImportoIntrastat(context, OptionBP.YES_BUTTON);
+        } catch (Throwable e) {
+            return super.handleException(context, e);
+        }
 
-        Forward fwd = super.doSalva(context);
 
-        CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) getBusinessProcess(context);
-
-        //Azzero la selezione del controller obbligazioni per forzare il calcolo dei dettagli
-        //associati all'obbligazione selezionata
-
-        bp.getObbligazioniController().setModelIndex(context, -1);
-
-        return fwd;
     }
 
     public Forward doConfermaRiscontroAValore(ActionContext context) throws BusinessProcessException {
@@ -5990,11 +6032,15 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
             final Optional<MandatoBulk> mandatoBulk = mandato_rigaIBulks
                     .stream()
                     .filter(mandatoRigaIBulk -> {
-                        return  mandatoRigaIBulk.getEsercizio_obbligazione().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getEsercizio()) &&
-                                mandatoRigaIBulk.getEsercizio_ori_obbligazione().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getEsercizio_originale()) &&
-                                mandatoRigaIBulk.getCd_cds().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getCd_cds()) &&
-                                mandatoRigaIBulk.getPg_obbligazione().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getPg_obbligazione()) &&
-                                mandatoRigaIBulk.getPg_obbligazione_scadenzario().equals(fattura_passiva_rigaBulk.get().getObbligazione_scadenziario().getPg_obbligazione_scadenzario());
+                        return fattura_passiva_rigaBulk
+                                .flatMap(fatturaPassivaRigaBulk -> Optional.ofNullable(fatturaPassivaRigaBulk.getObbligazione_scadenziario()))
+                                .filter(obbligazioneScadenzarioBulk -> {
+                                    return  mandatoRigaIBulk.getEsercizio_obbligazione().equals(obbligazioneScadenzarioBulk.getEsercizio()) &&
+                                            mandatoRigaIBulk.getEsercizio_ori_obbligazione().equals(obbligazioneScadenzarioBulk.getEsercizio_originale()) &&
+                                            mandatoRigaIBulk.getCd_cds().equals(obbligazioneScadenzarioBulk.getCd_cds()) &&
+                                            mandatoRigaIBulk.getPg_obbligazione().equals(obbligazioneScadenzarioBulk.getPg_obbligazione()) &&
+                                            mandatoRigaIBulk.getPg_obbligazione_scadenzario().equals(obbligazioneScadenzarioBulk.getPg_obbligazione_scadenzario());
+                                }).isPresent();
                     })
                     .findAny()
                     .map(Mandato_rigaIBulk::getMandato);

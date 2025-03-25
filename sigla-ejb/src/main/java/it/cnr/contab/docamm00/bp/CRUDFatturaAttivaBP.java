@@ -18,12 +18,9 @@
 package it.cnr.contab.docamm00.bp;
 
 import it.cnr.contab.chiusura00.ejb.RicercaDocContComponentSession;
-import it.cnr.contab.coepcoan00.bp.CRUDScritturaPDoppiaBP;
-import it.cnr.contab.coepcoan00.bp.EconomicaAvereDetailCRUDController;
-import it.cnr.contab.coepcoan00.bp.EconomicaDareDetailCRUDController;
+import it.cnr.contab.coepcoan00.bp.*;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.docamm00.docs.bulk.*;
-import it.cnr.contab.docamm00.ejb.DocumentoGenericoComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaAttivaSingolaComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.docamm00.intrastat.bulk.Fattura_attiva_intraBulk;
@@ -84,7 +81,7 @@ public abstract class CRUDFatturaAttivaBP
         implements IDocumentoAmministrativoBP,
         IGenericSearchDocAmmBP,
         IDefferedUpdateSaldiBP,
-        VoidableBP, IDocAmmEconomicaBP {
+        VoidableBP, IDocAmmEconomicaBP, IDocAmmAnaliticaBP {
 
     private final SimpleDetailCRUDController crudRiferimentiBanca = new SimpleDetailCRUDController("RifBanca", Fattura_attiva_rigaBulk.class, "riferimenti_bancari", this);
     private final SimpleDetailCRUDController consuntivoController = new SimpleDetailCRUDController("Consuntivo", Consuntivo_rigaVBulk.class, "fattura_attiva_consuntivoColl", this);
@@ -94,6 +91,8 @@ public abstract class CRUDFatturaAttivaBP
     private final FatturaAttivaRigaIntrastatCRUDController dettaglioIntrastatController = new FatturaAttivaRigaIntrastatCRUDController("Intrastat", Fattura_attiva_intraBulk.class, "fattura_attiva_intrastatColl", this);
     private final CollapsableDetailCRUDController movimentiDare = new EconomicaDareDetailCRUDController(this);
     private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
+
+    private final CollapsableDetailCRUDController movimentiAnalitici = new AnaliticaDetailCRUDController(this);
 
     protected it.cnr.contab.docamm00.docs.bulk.Risultato_eliminazioneVBulk deleteManager = null;
     private boolean isDeleting = false;
@@ -108,12 +107,18 @@ public abstract class CRUDFatturaAttivaBP
     private boolean contoEnte;
     private DocumentiCollegatiDocAmmService docCollService;
     protected boolean attivaEconomicaParallela = false;
+    private boolean attivaAnalitica = false;
     private boolean supervisore = false;
     private boolean esercizioChiuso = false;
 
     protected boolean attivaInventaria = true;
+    protected boolean attivoCheckImpIntrastat = false;
     public CRUDFatturaAttivaBP() {
         this(Fattura_attiva_rigaBulk.class);
+    }
+
+    public Boolean isAttivoChekcImpIntrastat(){
+        return attivoCheckImpIntrastat;
     }
 
     /**
@@ -423,7 +428,9 @@ public abstract class CRUDFatturaAttivaBP
             int solaris = Fattura_attivaBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.YEAR);
             int esercizioScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue();
             attivaEconomicaParallela = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(context.getUserContext());
+            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
             attivaInventaria= Utility.createConfigurazioneCnrComponentSession().isAttivoInventariaDocumenti(context.getUserContext());
+            attivoCheckImpIntrastat=Utility.createConfigurazioneCnrComponentSession().isCheckImpIntrastatFattAttiva(context.getUserContext());
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
             setAnnoSolareInScrivania(solaris == esercizioScrivania);
             setRibaltato(initRibaltato(context));
@@ -454,6 +461,8 @@ public abstract class CRUDFatturaAttivaBP
                 Fattura_attivaBulk fa = (Fattura_attivaBulk) bulk;
                 fa.setDettagliCancellati(new java.util.Vector());
                 fa.setDocumentiContabiliCancellati(new java.util.Vector());
+                Boolean liqIvaAnticipataFattAttiva = Utility.createConfigurazioneCnrComponentSession().isLiqIvaAnticipataFattAttiva(context.getUserContext(), fa.getDt_registrazione());
+                fa.setFl_bloccoAttivoDtReg(liqIvaAnticipataFattAttiva);
             }
             return super.initializeModelForEdit(context, bulk);
         } catch (Throwable e) {
@@ -688,7 +697,6 @@ public abstract class CRUDFatturaAttivaBP
      * Attiva oltre al normale reset il metodo di set dei tab di default.
      *
      * @param context <code>ActionContext</code>
-     * @see resetTabs
      */
 
     public void reset(ActionContext context) throws BusinessProcessException {
@@ -707,7 +715,6 @@ public abstract class CRUDFatturaAttivaBP
      * Attiva oltre al normale reset il metodo di set dei tab di default.
      *
      * @param context <code>ActionContext</code>
-     * @see resetTabs
      */
 
     public void resetForSearch(ActionContext context) throws BusinessProcessException {
@@ -720,7 +727,6 @@ public abstract class CRUDFatturaAttivaBP
     /**
      * Imposta come attivi i tab di default.
      *
-     * @param context <code>ActionContext</code>
      */
 
     public void resetTabs() {
@@ -835,6 +841,19 @@ public abstract class CRUDFatturaAttivaBP
     }
 
     public void save(it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException, ValidationException {
+
+        Optional.ofNullable(getModel())
+                .filter(Fattura_attivaBulk.class::isInstance)
+                .map(Fattura_attivaBulk.class::cast)
+                .ifPresent(fatturaAttivaBulk -> {
+                    try {
+                        fatturaAttivaBulk.setFl_bloccoAttivoDtReg(Utility.createConfigurazioneCnrComponentSession().isLiqIvaAnticipataFattPassiva(context.getUserContext(), fatturaAttivaBulk.getDt_registrazione()));
+                    } catch (ComponentException e) {
+                        throw new RuntimeException(e);
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
 
         super.save(context);
 
@@ -1444,9 +1463,10 @@ public abstract class CRUDFatturaAttivaBP
                 pages.put(i++, TAB_INTRASTAT);
             }
         }
-        if (attivaEconomicaParallela) {
+        if (attivaEconomicaParallela)
             pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
-        }
+        if (attivaAnalitica)
+            pages.put(i++, CRUDScritturaAnaliticaBP.TAB_ANALITICA);
         String[][] tabs = new String[i][3];
         for (int j = 0; j < i; j++)
             tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
@@ -1459,6 +1479,10 @@ public abstract class CRUDFatturaAttivaBP
 
     public CollapsableDetailCRUDController getMovimentiAvere() {
         return movimentiAvere;
+    }
+
+    public CollapsableDetailCRUDController getMovimentiAnalitici() {
+        return movimentiAnalitici;
     }
 
     public boolean isSupervisore() {
@@ -1478,6 +1502,14 @@ public abstract class CRUDFatturaAttivaBP
         return getModel();
     }
 
+    public boolean isButtonGeneraScritturaAnaliticaVisible() {
+        return Boolean.FALSE;
+    }
+    @Override
+    public OggettoBulk getAnaliticaModel() {
+        return getModel();
+    }
+
     public boolean isAttivaEconomicaParallela() {
         return attivaEconomicaParallela;
     }
@@ -1489,5 +1521,23 @@ public abstract class CRUDFatturaAttivaBP
             return esercizioChiuso;
         }
         return super.isInputReadonlyFieldName(fieldName);
+    }
+    public void doSelezionaRigaIntrastatDaVerifica(ActionContext actioncontext) throws it.cnr.jada.action.BusinessProcessException {
+        Fattura_attivaBulk fatturaAttivaBulk = (Fattura_attivaBulk) getModel();
+        Fattura_attiva_intraBulk rigaDaCompletare = null;
+        if (fatturaAttivaBulk != null) {
+            for (Iterator i = fatturaAttivaBulk.getFattura_attiva_intrastatColl().iterator(); i.hasNext(); ) {
+                Fattura_attiva_intraBulk riga = (Fattura_attiva_intraBulk) i.next();
+                if (!Boolean.FALSE) {
+                    rigaDaCompletare = riga;
+                    break;
+                }
+            }
+        }
+        if (rigaDaCompletare != null) {
+            dettaglioIntrastatController.getSelection().setFocus(dettaglioIntrastatController.getDetails().indexOf(rigaDaCompletare));
+            dettaglioIntrastatController.setModelIndex(actioncontext, dettaglioIntrastatController.getDetails().indexOf(rigaDaCompletare));
+            resyncChildren(actioncontext);
+        }
     }
 }

@@ -284,7 +284,7 @@ public class ScritturaPartitaDoppiaChiusuraComponent extends CRUDComponent  {
 						}
 					});
 
-			makePersistentScritture(userContext, esercizio, details, Scrittura_partita_doppiaBulk.Origine.PRECHIUSURA.name(), Scrittura_partita_doppiaBulk.Causale.RIMANENZE_MAGAZZINO.name(), Scrittura_partita_doppiaBulk.Causale.RIMANENZE_MAGAZZINO.label());
+			makePersistentScritture(userContext, esercizio, details, OrigineScritturaEnum.PRECHIUSURA.name(), Scrittura_partita_doppiaBulk.Causale.RIMANENZE_MAGAZZINO.name(), Scrittura_partita_doppiaBulk.Causale.RIMANENZE_MAGAZZINO.label());
 		} catch (PersistencyException e) {
 			throw handleException(e);
 		}
@@ -342,8 +342,8 @@ public class ScritturaPartitaDoppiaChiusuraComponent extends CRUDComponent  {
 					}
 				});
 
-			makePersistentScritture(userContext, esercizio, details, Scrittura_partita_doppiaBulk.Origine.PRECHIUSURA.name(), Scrittura_partita_doppiaBulk.Causale.AMMORTAMENTO.name(), Scrittura_partita_doppiaBulk.Causale.AMMORTAMENTO.label());
-			makePersistentScritture(userContext, esercizio, detailsFondoAmmortamento, Scrittura_partita_doppiaBulk.Origine.PRECHIUSURA.name(), Scrittura_partita_doppiaBulk.Causale.DISMISSIONE_BENE_DUREVOLE.name(), Scrittura_partita_doppiaBulk.Causale.DISMISSIONE_BENE_DUREVOLE.label());
+			makePersistentScritture(userContext, esercizio, details, OrigineScritturaEnum.PRECHIUSURA.name(), Scrittura_partita_doppiaBulk.Causale.AMMORTAMENTO.name(), Scrittura_partita_doppiaBulk.Causale.AMMORTAMENTO.label());
+			makePersistentScritture(userContext, esercizio, detailsFondoAmmortamento, OrigineScritturaEnum.PRECHIUSURA.name(), Scrittura_partita_doppiaBulk.Causale.DISMISSIONE_BENE_DUREVOLE.name(), Scrittura_partita_doppiaBulk.Causale.DISMISSIONE_BENE_DUREVOLE.label());
 		} catch (PersistencyException e) {
 			throw handleException(e);
 		}
@@ -378,7 +378,7 @@ public class ScritturaPartitaDoppiaChiusuraComponent extends CRUDComponent  {
 				});
 			});
 
-			makePersistentScritture(userContext, esercizio, details, Scrittura_partita_doppiaBulk.Origine.PRECHIUSURA.name(), Scrittura_partita_doppiaBulk.Causale.FATTURE_DA_RICEVERE.name(), "Determinazione "+Scrittura_partita_doppiaBulk.Causale.FATTURE_DA_RICEVERE.label()+" da ordini");
+			makePersistentScritture(userContext, esercizio, details, OrigineScritturaEnum.PRECHIUSURA.name(), Scrittura_partita_doppiaBulk.Causale.FATTURE_DA_RICEVERE.name(), "Determinazione "+Scrittura_partita_doppiaBulk.Causale.FATTURE_DA_RICEVERE.label()+" da ordini");
 		} catch (PersistencyException e) {
 			throw handleException(e);
 		}
@@ -393,7 +393,7 @@ public class ScritturaPartitaDoppiaChiusuraComponent extends CRUDComponent  {
 
 			List<DettaglioScrittura> details = makeDetailsChiusuraConti(userContext, allMovimentiCoge, contoEconomico);
 
-			makePersistentScritture(userContext, esercizio, details, Scrittura_partita_doppiaBulk.Origine.CHIUSURA.name(), Scrittura_partita_doppiaBulk.Causale.CHIUSURA_CONTO_ECONOMICO.name(), Scrittura_partita_doppiaBulk.Causale.CHIUSURA_CONTO_ECONOMICO.label());
+			makePersistentScritture(userContext, esercizio, details, OrigineScritturaEnum.CHIUSURA.name(), Scrittura_partita_doppiaBulk.Causale.CHIUSURA_CONTO_ECONOMICO.name(), Scrittura_partita_doppiaBulk.Causale.CHIUSURA_CONTO_ECONOMICO.label());
 		} catch (PersistencyException e) {
 			throw handleException(e);
 		}
@@ -424,7 +424,7 @@ public class ScritturaPartitaDoppiaChiusuraComponent extends CRUDComponent  {
 				details.addAll(makeDetailsChiusuraConti(userContext, allMovimentiCoge, contoUtilePerdita));
 			}
 
-			makePersistentScritture(userContext, esercizio, details, Scrittura_partita_doppiaBulk.Origine.CHIUSURA.name(), Scrittura_partita_doppiaBulk.Causale.DETERMINAZIONE_UTILE_PERDITA.name(), Scrittura_partita_doppiaBulk.Causale.DETERMINAZIONE_UTILE_PERDITA.label());
+			makePersistentScritture(userContext, esercizio, details, OrigineScritturaEnum.CHIUSURA.name(), Scrittura_partita_doppiaBulk.Causale.DETERMINAZIONE_UTILE_PERDITA.name(), Scrittura_partita_doppiaBulk.Causale.DETERMINAZIONE_UTILE_PERDITA.label());
 		} catch (PersistencyException e) {
 			throw handleException(e);
 		}
@@ -439,7 +439,7 @@ public class ScritturaPartitaDoppiaChiusuraComponent extends CRUDComponent  {
 
 			List<DettaglioScrittura> details = makeDetailsChiusuraConti(userContext, allMovimentiCoge, contoStatoPatrimonialeFinale);
 
-			return makePersistentScritture(userContext, esercizio, details, Scrittura_partita_doppiaBulk.Origine.CHIUSURA.name(), Scrittura_partita_doppiaBulk.Causale.CHIUSURA_STATO_PATRIMONIALE.name(), Scrittura_partita_doppiaBulk.Causale.CHIUSURA_STATO_PATRIMONIALE.label());
+			return makePersistentScritture(userContext, esercizio, details, OrigineScritturaEnum.CHIUSURA.name(), Scrittura_partita_doppiaBulk.Causale.CHIUSURA_STATO_PATRIMONIALE.name(), Scrittura_partita_doppiaBulk.Causale.CHIUSURA_STATO_PATRIMONIALE.label());
 		} catch (PersistencyException e) {
 			throw handleException(e);
 		}
@@ -494,8 +494,8 @@ public class ScritturaPartitaDoppiaChiusuraComponent extends CRUDComponent  {
 				});
 			}
 
-			makePersistentScritture(userContext, esercizio+1, details, Scrittura_partita_doppiaBulk.Origine.APERTURA.name(), Scrittura_partita_doppiaBulk.Causale.RIAPERTURA_CONTI.name(), Scrittura_partita_doppiaBulk.Causale.RIAPERTURA_CONTI.label());
-			makePersistentScritture(userContext, esercizio+1, detailsAssegnazioneUtilePerdita, Scrittura_partita_doppiaBulk.Origine.APERTURA.name(), Scrittura_partita_doppiaBulk.Causale.RIAPERTURA_CONTI.name(), "Destinazione Utile/perdita di esercizio");
+			makePersistentScritture(userContext, esercizio+1, details, OrigineScritturaEnum.APERTURA.name(), Scrittura_partita_doppiaBulk.Causale.RIAPERTURA_CONTI.name(), Scrittura_partita_doppiaBulk.Causale.RIAPERTURA_CONTI.label());
+			makePersistentScritture(userContext, esercizio+1, detailsAssegnazioneUtilePerdita, OrigineScritturaEnum.APERTURA.name(), Scrittura_partita_doppiaBulk.Causale.RIAPERTURA_CONTI.name(), "Destinazione Utile/perdita di esercizio");
 		} catch (PersistencyException e) {
 			throw handleException(e);
 		}
@@ -525,7 +525,7 @@ public class ScritturaPartitaDoppiaChiusuraComponent extends CRUDComponent  {
 				});
 			}
 
-			makePersistentScritture(userContext, esercizioChiusura+1, details, Scrittura_partita_doppiaBulk.Origine.APERTURA.name(), Scrittura_partita_doppiaBulk.Causale.RIMANENZE_MAGAZZINO.name(), Scrittura_partita_doppiaBulk.Causale.RIMANENZE_MAGAZZINO.label());
+			makePersistentScritture(userContext, esercizioChiusura+1, details, OrigineScritturaEnum.APERTURA.name(), Scrittura_partita_doppiaBulk.Causale.RIMANENZE_MAGAZZINO.name(), Scrittura_partita_doppiaBulk.Causale.RIMANENZE_MAGAZZINO.label());
 		} catch (PersistencyException e) {
 			throw handleException(e);
 		}
@@ -740,7 +740,7 @@ public class ScritturaPartitaDoppiaChiusuraComponent extends CRUDComponent  {
 		List<Scrittura_partita_doppiaBulk> result = new ArrayList<>();
 
 		GregorianCalendar aDataComp;
-		if (origineScrittura.equals(Scrittura_partita_doppiaBulk.Origine.APERTURA.name()))
+		if (origineScrittura.equals(OrigineScritturaEnum.APERTURA.name()))
 			aDataComp = new GregorianCalendar(esercizio, Calendar.JANUARY, 1);
 		else
 			aDataComp = new GregorianCalendar(esercizio, Calendar.DECEMBER, 31);

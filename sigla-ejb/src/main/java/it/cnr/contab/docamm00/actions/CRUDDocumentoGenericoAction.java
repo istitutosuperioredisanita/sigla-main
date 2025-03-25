@@ -26,7 +26,6 @@ import it.cnr.contab.docamm00.bp.*;
 import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.docamm00.ejb.DocumentoGenericoComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaAttivaSingolaComponentSession;
-import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.inventario00.bp.AssBeneFatturaBP;
@@ -49,9 +48,11 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.action.CRUDBP;
+import it.cnr.jada.util.action.NestedFormController;
 import it.cnr.jada.util.action.SelezionatoreListaBP;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
@@ -63,6 +64,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 public class CRUDDocumentoGenericoAction extends EconomicaAction {
@@ -2019,14 +2021,15 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
      */
 
     public Forward doOnTipoDocumentoChange(ActionContext context) {
-
         try {
             fillModel(context);
-
-
-            it.cnr.jada.util.action.CRUDBP bp = getBusinessProcess(context);
+            it.cnr.jada.util.action.SimpleCRUDBP bp = (SimpleCRUDBP) getBusinessProcess(context);
             DocumentoGenericoComponentSession component = null;
             Documento_genericoBulk documentoGenerico = (Documento_genericoBulk) bp.getModel();
+            documentoGenerico.setTiCausaleContabileKeys(null);
+            documentoGenerico =
+                    (Documento_genericoBulk) ((CRUDComponentSession)bp.createComponentSession()).initializeKeysAndOptionsInto(context.getUserContext(), documentoGenerico);
+            bp.setModel(context, documentoGenerico);
             //if (documentoGenerico.isGenericoAttivo())
             //component= (DocumentoGenericoComponentSession) ((CRUDDocumentoGenericoAttivoBP) bp).createComponentSession();
             //else
@@ -2199,9 +2202,19 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
      * @param context L'ActionContext della richiesta
      * @return Il Forward alla pagina di risposta
      */
-    public Forward doRemoveFromCRUDMain_Accertamenti_DettaglioAccertamenti(ActionContext context) {
+    public Forward doRemoveFromCRUDMain_Accertamenti_DettaglioAccertamenti(ActionContext context) throws ValidationException {
 
         CRUDDocumentoGenericoAttivoBP bp = (CRUDDocumentoGenericoAttivoBP) context.getBusinessProcess();
+        Boolean isDocumentoStorno = Optional.ofNullable(bp.getModel())
+                .filter(Documento_genericoBulk.class::isInstance)
+                .map(Documento_genericoBulk.class::cast)
+                .map(Documento_genericoBulk::isDocumentoStorno)
+                .orElse(Boolean.FALSE);
+        List<Documento_generico_rigaBulk> details = bp.getDettaglioAccertamentoController().getDetails();
+        Boolean isRigaStornata = details.stream().anyMatch(Documento_generico_rigaBulk::isRigaStornata);
+        if (isDocumentoStorno || isRigaStornata) {
+            throw new ValidationException("Non è possibile eliminare la riga in quanto legata ad uno storno!");
+        }
         try {
             it.cnr.jada.util.action.Selection selection = bp.getDettaglioAccertamentoController().getSelection();
             if (selection.isEmpty())
@@ -3998,4 +4011,30 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
         }
     }
 
+    public Forward doApriDocumentoStornato(ActionContext actionContext) throws BusinessProcessException {
+        IDocumentoGenericoBP bp = (IDocumentoGenericoBP) getBusinessProcess(actionContext);
+        Optional<IDocumentoAmministrativoBulk> iDocumentoAmministrativoBulk = Optional.ofNullable(bp.getDettaglio())
+                .map(NestedFormController::getModel)
+                .filter(Documento_generico_rigaBulk.class::isInstance)
+                .map(Documento_generico_rigaBulk.class::cast)
+                .flatMap(Documento_generico_rigaBulk::getRigaStorno)
+                .map(IDocumentoAmministrativoRigaBulk::getFather);
+        String bpName = bp.getName();
+        if (iDocumentoAmministrativoBulk.filter(Fattura_passiva_IBulk.class::isInstance).isPresent()) {
+            bpName = "CRUDFatturaPassivaBP";
+        } else if (iDocumentoAmministrativoBulk.filter(Fattura_attiva_IBulk.class::isInstance).isPresent()) {
+            bpName = "CRUDFatturaAttivaBP";
+        }
+        if (iDocumentoAmministrativoBulk.isPresent()) {
+            try {
+                SimpleCRUDBP nbp = (SimpleCRUDBP) actionContext.createBusinessProcess(bpName, new Object[]{"M"});
+                nbp = (SimpleCRUDBP) actionContext.addBusinessProcess(nbp);
+                nbp.edit(actionContext, (OggettoBulk) iDocumentoAmministrativoBulk.get());
+                return nbp;
+            } catch (Throwable e) {
+                return handleException(actionContext, e);
+            }
+        }
+        return actionContext.findDefaultForward();
+    }
 }

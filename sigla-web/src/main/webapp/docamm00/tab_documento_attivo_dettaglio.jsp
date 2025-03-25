@@ -11,7 +11,7 @@
 
 <% CRUDDocumentoGenericoAttivoBP bp = (CRUDDocumentoGenericoAttivoBP)BusinessProcess.getBusinessProcess(request);%>
 	<%Documento_generico_rigaBulk riga = (Documento_generico_rigaBulk)bp.getDettaglio().getModel();%>
-	<%bp.getDettaglio().writeHTMLTable(pageContext,"righiSet",true,false,true,"100%","100px"); %>
+	<%bp.getDettaglio().writeHTMLTable(pageContext,"righiSet",true,false,true,"100%","auto;max-height:50vh;"); %>
 <div class="Group card">
   <table style="width: 75%;">
 		<tr>

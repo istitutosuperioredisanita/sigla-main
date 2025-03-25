@@ -21,9 +21,7 @@ import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.Modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.docamm00.comp.DocumentoGenericoComponent;
-import it.cnr.contab.docamm00.docs.bulk.DocumentoGenericoWizardBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.Tipo_documento_genericoBulk;
+import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.doccont00.core.AccertamentoWizard;
 import it.cnr.contab.doccont00.core.ObbligazioneWizard;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
@@ -36,6 +34,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
+import java.util.List;
 
 @Stateless(name="CNRDOCAMM00_EJB_DocumentoGenericoComponentSession")
 public class DocumentoGenericoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements DocumentoGenericoComponentSession {
@@ -904,82 +903,22 @@ public class DocumentoGenericoComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 	}
 
 	@Override
-	public Tipo_documento_genericoBulk findTipoDocumentoGenerico(UserContext uc, String codice, String tipo) throws ComponentException,RemoteException {
-		pre_component_invocation(uc,componentObj);
+	public Documento_genericoBulk creaDocumentoGenericoDiStorno(UserContext userContext, char tiEntrataSpesa, boolean isDaFattura, StornaDocumentoGenericoBulk stornaDocumentoGenericoBulk, List<IDocumentoAmministrativoRigaBulk> documentoGenericoRigaBulks) throws ComponentException, RemoteException {
+		pre_component_invocation(userContext,componentObj);
 		try {
-			Tipo_documento_genericoBulk result = ((DocumentoGenericoComponent)componentObj).findTipoDocumentoGenerico(uc,codice,tipo);
-			component_invocation_succes(uc,componentObj);
+			it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk result = ((DocumentoGenericoComponent)componentObj).creaDocumentoGenericoDiStorno(userContext,tiEntrataSpesa,isDaFattura,stornaDocumentoGenericoBulk,documentoGenericoRigaBulks);
+			component_invocation_succes(userContext,componentObj);
 			return result;
 		} catch(it.cnr.jada.comp.NoRollbackException e) {
-			component_invocation_succes(uc,componentObj);
+			component_invocation_succes(userContext,componentObj);
 			throw e;
 		} catch(it.cnr.jada.comp.ComponentException e) {
-			component_invocation_failure(uc,componentObj);
+			component_invocation_failure(userContext,componentObj);
 			throw e;
 		} catch(RuntimeException e) {
-			throw uncaughtRuntimeException(uc,componentObj,e);
+			throw uncaughtRuntimeException(userContext,componentObj,e);
 		} catch(Error e) {
-			throw uncaughtError(uc,componentObj,e);
-		}
-	}
-
-	@Override
-	public Boolean deleteDocumentoGenericoWs(UserContext uc, String cd_cds, String cd_tipo_documento_amm, String cd_unita_organizzativa, Integer esercizio, Long pg_documento_generico) throws ComponentException, RemoteException {
-		pre_component_invocation(uc,componentObj);
-		try {
-			Boolean result = ((DocumentoGenericoComponent)componentObj).deleteDocumentoGenericoWs(uc,cd_cds,cd_tipo_documento_amm,cd_unita_organizzativa,esercizio,pg_documento_generico);
-			component_invocation_succes(uc,componentObj);
-			return result;
-		} catch(it.cnr.jada.comp.NoRollbackException e) {
-			component_invocation_succes(uc,componentObj);
-			throw e;
-		} catch(it.cnr.jada.comp.ComponentException e) {
-			component_invocation_failure(uc,componentObj);
-			throw e;
-		} catch(RuntimeException e) {
-			throw uncaughtRuntimeException(uc,componentObj,e);
-		} catch(Error e) {
-			throw uncaughtError(uc,componentObj,e);
-		}
-	}
-
-	@Override
-	public Documento_genericoBulk creaDocumentoGenericoWs(UserContext uc, Documento_genericoBulk documentoGenericoBulk) throws ComponentException, PersistencyException {
-		pre_component_invocation(uc,componentObj);
-		try {
-			it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk result = ((DocumentoGenericoComponent)componentObj).creaDocumentoGenericoWs(uc,documentoGenericoBulk);
-			component_invocation_succes(uc,componentObj);
-			return result;
-		} catch(it.cnr.jada.comp.NoRollbackException e) {
-			component_invocation_succes(uc,componentObj);
-			throw e;
-		} catch(it.cnr.jada.comp.ComponentException e) {
-			component_invocation_failure(uc,componentObj);
-			throw e;
-		} catch(RuntimeException e) {
-			throw uncaughtRuntimeException(uc,componentObj,e);
-		} catch(Error e) {
-			throw uncaughtError(uc,componentObj,e);
-		}
-	}
-
-	@Override
-	public Documento_genericoBulk modificaDocumentoGenericoWs(UserContext uc, Documento_genericoBulk documentoGenericoBulk) throws ComponentException, RemoteException {
-		pre_component_invocation(uc,componentObj);
-		try {
-			it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk result = ((DocumentoGenericoComponent)componentObj).modificaDocumentoGenericoWs(uc,documentoGenericoBulk);
-			component_invocation_succes(uc,componentObj);
-			return result;
-		} catch(it.cnr.jada.comp.NoRollbackException e) {
-			component_invocation_succes(uc,componentObj);
-			throw e;
-		} catch(it.cnr.jada.comp.ComponentException e) {
-			component_invocation_failure(uc,componentObj);
-			throw e;
-		} catch(RuntimeException e) {
-			throw uncaughtRuntimeException(uc,componentObj,e);
-		} catch(Error e) {
-			throw uncaughtError(uc,componentObj,e);
+			throw uncaughtError(userContext,componentObj,e);
 		}
 	}
 }

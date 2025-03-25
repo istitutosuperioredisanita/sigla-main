@@ -19,6 +19,7 @@ package it.cnr.contab.doccont00.comp;
 
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.doccont00.core.bulk.Accertamento_pluriennaleBulk;
+import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_pluriennaleBulk;
 import it.cnr.contab.doccont00.ejb.AccertamentoPluriennaleComponentSession;
 import it.cnr.contab.doccont00.ejb.ObbligazionePluriennaleComponentSession;
@@ -104,8 +105,35 @@ public class AsyncPluriennaliComponentSessionBean extends it.cnr.jada.ejb.CRUDCo
 								concat(obbligazione.getAnno().toString()).concat("/").
 								concat(obbligazione.getCdCds()).concat("/").
 								concat(obbligazione.getEsercizio().toString()).concat("/").
-								concat(obbligazione.getEsercizioOriginale().toString()));
-						session.createObbligazioneNew(param0, obbligazione,esercizio,gaeIniziale);
+								concat(obbligazione.getEsercizioOriginale().toString()).concat("/").
+								concat(obbligazione.getPgObbligazione().toString()));
+						ObbligazioneBulk obbligazioneNew = session.createObbligazioneNew(param0, obbligazione,esercizio,gaeIniziale);
+
+						Batch_log_rigaBulk log_riga = new Batch_log_rigaBulk();
+						log_riga.setPg_esecuzione(logDB.getPg_esecuzione());
+						log_riga.setPg_riga(BigDecimal.valueOf(listLogRighe.size() + 1));
+						log_riga.setTi_messaggio("I");
+						log_riga.setMessaggio("Obbligazione Elaborata :"
+								+ "-Cds:" + obbligazione.getCdCds()
+								+ "-Esercizio:" + obbligazione.getEsercizio()
+								+ "-Esercizio Orig.:" + obbligazione.getEsercizioOriginale()
+								+ "-Numero Obbl.:" + obbligazione.getPgObbligazione()
+								+" - Creata Obbligazione : "
+								+ "-Cds:" + obbligazioneNew.getCds().getCd_ds_cds()
+								+ "-Esercizio:" + obbligazioneNew.getEsercizio()
+								+ "-Esercizio Orig.:" + obbligazioneNew.getEsercizio_originale()
+								+ "-Numero Obbl.:" + obbligazioneNew.getPg_obbligazione());
+						log_riga.setTrace(log_riga.getMessaggio());
+						log_riga.setToBeCreated();
+						try {
+							listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(param0, log_riga));
+						} catch (ComponentException | RemoteException ex) {
+							SendMail.sendErrorMail(subjectError, "Errore durante l'inserimento dell'errore in Batch_log_rigaBulk " + ex.getMessage());
+							throw new DetailedRuntimeException(ex);
+						}
+
+
+
 						listInsert.add("X");
 					} catch (Throwable e) {
 						listError.add("X");
@@ -218,11 +246,12 @@ public class AsyncPluriennaliComponentSessionBean extends it.cnr.jada.ejb.CRUDCo
 				allAccPluriennali.stream()
 						.forEach(accertamento -> {
 					try {
-						logger.info("Obbligazione in elaborazione: ".
+						logger.info("Accertamenti in elaborazione: ".
 								concat(accertamento.getAnno().toString()).concat("/").
 								concat(accertamento.getCdCds()).concat("/").
 								concat(accertamento.getEsercizio().toString()).concat("/").
-								concat(accertamento.getEsercizioOriginale().toString()));
+								concat(accertamento.getEsercizioOriginale().toString()).concat("/").
+								concat(accertamento.getPgAccertamento().toString()));
 						session.createAccertamentoNew(param0, esercizio,accertamento);
 						listInsert.add("X");
 					} catch (Throwable e) {

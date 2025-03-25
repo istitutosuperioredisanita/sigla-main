@@ -225,6 +225,20 @@
 		label="Obb. Dichiarazione Intento"
 		enabledOnFreeSearch="false"
 		enabledOnSearch="false"/>
+	<fieldProperty
+			name="fl_intrastat"
+			property="fl_intrastat"
+			inputType="CHECKBOX"
+			label="Flag invio instrastat"
+			enabledOnFreeSearch="false"
+			enabledOnSearch="false"/>
+	<fieldProperty
+			name="fl_intra12"
+			property="fl_intra12"
+			inputType="CHECKBOX"
+			label="Flag invio Intra12"
+			enabledOnFreeSearch="false"
+			enabledOnSearch="false"/>
 
 	<form
 		name="searchtool" >
@@ -304,6 +318,11 @@
 		name="ti_bollo" />	
 	<formFieldProperty
 		name="fl_obb_dichiarazione_intento" />
+	<formFieldProperty
+			name="fl_intrastat" />
+	<formFieldProperty
+			name="fl_intra12" />
+
 
 	<columnFieldProperty
 		name="cd_voce_iva" />
@@ -351,6 +370,10 @@
 	<columnFieldProperty
 		name="fl_obb_dichiarazione_intento"
 		label="Obb. Int."/>
+	<columnFieldProperty
+			name="fl_intrastat"/>
+	<columnFieldProperty
+			name="fl_intra12"/>
 	<findFieldProperty
 		name="cd_voce_iva" />	
 	<findFieldProperty

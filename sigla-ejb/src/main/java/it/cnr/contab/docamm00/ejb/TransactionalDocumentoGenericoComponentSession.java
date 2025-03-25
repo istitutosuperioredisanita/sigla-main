@@ -16,14 +16,14 @@
  */
 
 package it.cnr.contab.docamm00.ejb;
+import java.math.BigDecimal;
+import java.rmi.*;
+import java.util.List;
 
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.Modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
-import it.cnr.contab.docamm00.docs.bulk.DocumentoGenericoWizardBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.Tipo_documento_genericoBulk;
+import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.doccont00.core.AccertamentoWizard;
 import it.cnr.contab.doccont00.core.ObbligazioneWizard;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
@@ -31,9 +31,7 @@ import it.cnr.contab.inventario00.docs.bulk.Ass_inv_bene_fatturaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
-
-import java.math.BigDecimal;
-import java.rmi.RemoteException;
+import it.cnr.jada.util.ejb.*;
 
 public class TransactionalDocumentoGenericoComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements DocumentoGenericoComponentSession {
 	public it.cnr.jada.bulk.OggettoBulk aggiornaModalita(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk param1,it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk param2,it.cnr.contab.anagraf00.core.bulk.TerzoBulk param3) throws RemoteException,it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException {
@@ -1131,84 +1129,26 @@ public class TransactionalDocumentoGenericoComponentSession extends it.cnr.jada.
 		}
 	}
 
-	@Override
-	public Tipo_documento_genericoBulk findTipoDocumentoGenerico(UserContext uc, String codice, String tipo) throws ComponentException,java.rmi.RemoteException {
+	public Documento_genericoBulk creaDocumentoGenericoDiStorno(UserContext param0, char param1, boolean param2, StornaDocumentoGenericoBulk param3, List<IDocumentoAmministrativoRigaBulk> param4) throws RemoteException,it.cnr.jada.comp.ComponentException {
 		try {
-			return ( Tipo_documento_genericoBulk) invoke("findTipoDocumentoGenerico", new Object[]{
-					uc,
-					codice,
-					tipo});
-		} catch (java.rmi.RemoteException e) {
+			return (it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk)invoke("creaDocumentoGenericoDiStorno",new Object[] {
+					param0,
+					param1,
+					param2,
+					param3,
+					param4
+			});
+		} catch(java.rmi.RemoteException e) {
 			throw e;
-		} catch (java.lang.reflect.InvocationTargetException e) {
+		} catch(java.lang.reflect.InvocationTargetException e) {
 			try {
 				throw e.getTargetException();
-			} catch (it.cnr.jada.comp.ComponentException ex) {
+			} catch(it.cnr.jada.comp.ComponentException ex) {
 				throw ex;
-			} catch (Throwable ex) {
-				throw new java.rmi.RemoteException("Uncaugth exception", ex);
+			} catch(Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception",ex);
 			}
 		}
 	}
 
-	@Override
-	public Boolean deleteDocumentoGenericoWs(UserContext uc, String cd_cds, String cd_tipo_documento_amm, String cd_unita_organizzativa, Integer esercizio, Long pg_documento_generico) throws ComponentException, RemoteException {
-		try {
-			return  ( Boolean) invoke("deleteDocumentoGenericoWs", new Object[]{
-					uc,
-					cd_cds,
-					cd_tipo_documento_amm,
-					cd_unita_organizzativa,
-					esercizio,
-					pg_documento_generico});
-		} catch (java.rmi.RemoteException e) {
-			throw e;
-		} catch (java.lang.reflect.InvocationTargetException e) {
-			try {
-				throw e.getTargetException();
-			} catch (it.cnr.jada.comp.ComponentException ex) {
-				throw ex;
-			} catch (Throwable ex) {
-				throw new java.rmi.RemoteException("Uncaugth exception", ex);
-			}
-		}
-	}
-
-	@Override
-	public Documento_genericoBulk creaDocumentoGenericoWs(UserContext uc, Documento_genericoBulk documentoGenericoBulk) throws ComponentException, RemoteException {
-		try {
-			return  ( Documento_genericoBulk) invoke("creaDocumentoGenericoWs", new Object[]{
-					uc,
-					documentoGenericoBulk});
-		} catch (java.rmi.RemoteException e) {
-			throw e;
-		} catch (java.lang.reflect.InvocationTargetException e) {
-			try {
-				throw e.getTargetException();
-			} catch (it.cnr.jada.comp.ComponentException ex) {
-				throw ex;
-			} catch (Throwable ex) {
-				throw new java.rmi.RemoteException("Uncaugth exception", ex);
-			}
-		}
-	}
-
-	@Override
-	public Documento_genericoBulk modificaDocumentoGenericoWs(UserContext uc, Documento_genericoBulk documentoGenericoBulk) throws ComponentException, RemoteException {
-		try {
-			return  ( Documento_genericoBulk) invoke("modificaDocumentoGenericoWs", new Object[]{
-					uc,
-					documentoGenericoBulk});
-		} catch (java.rmi.RemoteException e) {
-			throw e;
-		} catch (java.lang.reflect.InvocationTargetException e) {
-			try {
-				throw e.getTargetException();
-			} catch (it.cnr.jada.comp.ComponentException ex) {
-				throw ex;
-			} catch (Throwable ex) {
-				throw new java.rmi.RemoteException("Uncaugth exception", ex);
-			}
-		}
-	}
 }

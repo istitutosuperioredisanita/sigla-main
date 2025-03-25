@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="marco.spasiano" id="add_table_causali_contabili">
+        <createTable tableName="causale_contabile" remarks="Anagrafica delle Causali contabili" >
+            <column name="cd_causale" remarks="Codice" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ds_causale" remarks="Descrizione" type="VARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_tipo_documento_amm" remarks="Identificativo delle tipologie di  documenti amministrativi gestiti." type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fl_storno" remarks="Documento di Storno" type="VARCHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dt_inizio_validita" remarks="Data inizio validità" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dt_fine_validita" remarks="Data fine validità" type="${date.type}">
+            </column>
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record: viene incrementato di 1 ad ogni variazione" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+        <addPrimaryKey tableName="causale_contabile" constraintName="causale_contabile_pkey" columnNames="cd_causale"/>
+        <addForeignKeyConstraint
+                baseColumnNames="cd_tipo_documento_amm"
+                baseTableName="causale_contabile"
+                constraintName="fk_causale_contabile01"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="cd_tipo_documento_amm"
+                referencedTableName="tipo_documento_amm"/>
+    </changeSet>
+
+    <changeSet author="marco.spasiano" id="accessi_causali_contabili">
+        <insert tableName="accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="CFGCAUSALICONTAM"/>
+            <column name="ti_accesso" type="CHAR(1)" value="D"/>
+            <column name="ds_accesso" type="VARCHAR(200)" value="Gestione Causali Contabili"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="CFGCAUSALICONTAV"/>
+            <column name="ti_accesso" type="CHAR(1)" value="D"/>
+            <column name="ds_accesso" type="VARCHAR(200)" value="Visualizzazione Causali Contabili"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="ass_bp_accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="CFGCAUSALICONTAM"/>
+            <column name="business_process" type="VARCHAR(200)" value="CRUDCausaliContabiliBP"/>
+            <column name="ti_funzione" type="CHAR(1)" value="M"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="ass_bp_accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="CFGCAUSALICONTAV"/>
+            <column name="business_process" type="VARCHAR(200)" value="CRUDCausaliContabiliBP"/>
+            <column name="ti_funzione" type="CHAR(1)" value="V"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="albero_main">
+            <column name="cd_nodo" type="VARCHAR(100)" value="0.CFG.CAUCONT"/>
+            <column name="ds_nodo" type="VARCHAR(200)" value="Causali Contabili"/>
+            <column name="pg_ordinamento" type="BIGINT" value="146"/>
+            <column name="fl_terminale" type="CHAR(1)" value="N"/>
+            <column name="livello" type="SMALLINT" value="2"/>
+            <column name="cd_proprio_nodo" type="VARCHAR(100)" value="CAUCONT"/>
+            <column name="cd_nodo_padre" type="VARCHAR(100)" value="0.CFG"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="albero_main">
+            <column name="cd_nodo" type="VARCHAR(100)" value="0.CFG.CAUCONT.M"/>
+            <column name="ds_nodo" type="VARCHAR(200)" value="gestione"/>
+            <column name="cd_accesso" type="VARCHAR(20)" value="CFGCAUSALICONTAM"/>
+            <column name="business_process" type="VARCHAR(200)" value="CRUDCausaliContabiliBP"/>
+            <column name="pg_ordinamento" type="BIGINT" value="10"/>
+            <column name="fl_terminale" type="CHAR(1)" value="Y"/>
+            <column name="livello" type="SMALLINT" value="3"/>
+            <column name="cd_proprio_nodo" type="VARCHAR(100)" value="M"/>
+            <column name="cd_nodo_padre" type="VARCHAR(100)" value="0.CFG.CAUCONT"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="albero_main">
+            <column name="cd_nodo" type="VARCHAR(100)" value="0.CFG.CAUCONT.V"/>
+            <column name="ds_nodo" type="VARCHAR(200)" value="visualizzazione"/>
+            <column name="cd_accesso" type="VARCHAR(20)" value="CFGCAUSALICONTAV"/>
+            <column name="business_process" type="VARCHAR(200)" value="CRUDCausaliContabiliBP"/>
+            <column name="pg_ordinamento" type="BIGINT" value="20"/>
+            <column name="fl_terminale" type="CHAR(1)" value="Y"/>
+            <column name="livello" type="SMALLINT" value="3"/>
+            <column name="cd_proprio_nodo" type="VARCHAR(100)" value="V"/>
+            <column name="cd_nodo_padre" type="VARCHAR(100)" value="0.CFG.CAUCONT"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+    </changeSet>
+    <changeSet author="marco.spasiano" id="add_fk_doc_generico_causali_cont">
+        <addColumn tableName="DOCUMENTO_GENERICO">
+            <column name="cd_causale_contabile" remarks="Codice causale contabile" type="VARCHAR(10)"/>
+        </addColumn>
+        <addForeignKeyConstraint
+                baseColumnNames="cd_causale_contabile"
+                baseTableName="documento_generico"
+                constraintName="fk_documento_generico07"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="cd_causale"
+                referencedTableName="causale_contabile"/>
+    </changeSet>
+
+    <changeSet author="marco.spasiano" id="add_table_ass_causali_voce_ep">
+        <createTable tableName="ass_causale_voce_ep" remarks="Associazione tra le causali contabili e le voci di economica" >
+            <column name="cd_causale" remarks="Codice causale" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="esercizio" remarks="Esercizio" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_voce_ep" remarks="Codice Identificativo completo del conto del piano." type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ti_sezione" remarks="Sezione del conto.&#10;&#10;Dominio:&#10;A = Avere&#10;D = Dare" type="CHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record: viene incrementato di 1 ad ogni variazione" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="ass_causale_voce_ep" constraintName="ass_causale_voce_ep_pkey" columnNames="cd_causale,esercizio,cd_voce_ep"/>
+        <addForeignKeyConstraint
+                baseColumnNames="cd_causale"
+                baseTableName="ass_causale_voce_ep"
+                constraintName="fk_ass_causale_voce_ep_01"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="cd_causale"
+                referencedTableName="causale_contabile"/>
+        <addForeignKeyConstraint
+                baseColumnNames="esercizio,cd_voce_ep"
+                baseTableName="ass_causale_voce_ep"
+                constraintName="fk_ass_causale_voce_ep_02"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="esercizio,cd_voce_ep"
+                referencedTableName="voce_ep"/>
+    </changeSet>
+</databaseChangeLog>

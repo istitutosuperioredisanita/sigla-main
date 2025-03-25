@@ -116,6 +116,7 @@ public class Fattura_attiva_rigaIBulk extends Fattura_attiva_rigaBulk {
 	public IDocumentoAmministrativoRigaBulk getOriginalDetail() {
 		return null;
 	}
+
 	public java.lang.Long getPg_fattura_attiva() {
 		it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_IBulk fattura_attivaI = this.getFattura_attivaI();
 		if (fattura_attivaI == null)

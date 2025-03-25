@@ -103,6 +103,7 @@ public class VIntrastatBase extends VIntrastatKey implements Keyed {
 	private java.lang.String ds_tipo;
 	
 	private java.lang.String uo_origine;
+	private java.lang.String warning;
 	
 	public java.lang.String getDs_tipo() {
 		return ds_tipo;
@@ -458,5 +459,13 @@ public class VIntrastatBase extends VIntrastatKey implements Keyed {
 	}
 	public void setNrProgressivo(java.lang.Integer nrProgressivo) {
 		this.nrProgressivo = nrProgressivo;
+	}
+
+	public String getWarning() {
+		return warning;
+	}
+
+	public void setWarning(String warning) {
+		this.warning = warning;
 	}
 }

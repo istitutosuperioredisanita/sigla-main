@@ -353,6 +353,7 @@ public class AccertamentoComponent extends CRUDComponent implements IDocumentoCo
 
                         if (scadenza.getPg_doc_attivo() != null &&
                                 scadenza.getPg_reversale() == null &&
+                                scadenza.getIm_associato_doc_amm().compareTo(Utility.ZERO) != 0 &&
                                 scadenza.getIm_scadenza().compareTo(Utility.ZERO) == 0) {
 
                             List listaDocAttivi = null;
@@ -395,43 +396,6 @@ public class AccertamentoComponent extends CRUDComponent implements IDocumentoCo
                                 if (!bFound)
                                     throw new ApplicationException("Attenzione! Non è stato trovato il documento attivo a cui è collegato la scadenza da azzerare!");
                             }
-/*
-						if (scadenza.getCd_tipo_documento_amm().equals(Numerazione_doc_ammBulk.TIPO_FATTURA_ATTIVA)) {
-							listaDocAttivi = scadenzaHome.findDocAmm(scadenza, Fattura_attiva_rigaIBulk.class);
-							for(Iterator it=listaDocAttivi.iterator();it.hasNext();)
-							{
-								bFound = true;
-								Fattura_attiva_rigaIBulk docAttivo = (Fattura_attiva_rigaIBulk) it.next();
-								lockBulk(userContext,docAttivo);
-								docAttivo.setStato_cofi(Fattura_attiva_rigaIBulk.STATO_ANNULLATO);
-								updateBulk(userContext,docAttivo);
-							}
-						}
-						if (scadenza.getCd_tipo_documento_amm().equals(Numerazione_doc_ammBulk.TIPO_FATTURA_PASSIVA)) {
-							listaDocAttivi = scadenzaHome.findDocAmm(scadenza, Fattura_passiva_rigaIBulk.class);
-							for(Iterator it=listaDocAttivi.iterator();it.hasNext();)
-							{
-								bFound = true;
-								Fattura_passiva_rigaIBulk docAttivo = (Fattura_passiva_rigaIBulk) it.next();
-								lockBulk(userContext,docAttivo);
-								docAttivo.setStato_cofi(Fattura_passiva_rigaIBulk.STATO_ANNULLATO);
-								updateBulk(userContext,docAttivo);
-							}
-						}
-						if (scadenza.getCd_tipo_documento_amm().equals(Numerazione_doc_ammBulk.TIPO_RIMBORSO)) {
-							listaDocAttivi = scadenzaHome.findDocAmm(scadenza, RimborsoBulk.class);
-							for(Iterator it=listaDocAttivi.iterator();it.hasNext();)
-							{
-								bFound = true;
-								RimborsoBulk docAttivo = (RimborsoBulk) it.next();
-								lockBulk(userContext,docAttivo);
-								docAttivo.setStato_cofi(Fattura_attiva_rigaIBulk.STATO_ANNULLATO);
-								updateBulk(userContext,docAttivo);
-							}
-						}
-						if (!bFound)
-							throw new ApplicationException( "Attenzione! Non è stato trovato il documento attivo a cui è collegato la scadenza da azzerare!");
-*/
                         }
                     }
                 } catch (Exception e) {
@@ -561,7 +525,7 @@ public class AccertamentoComponent extends CRUDComponent implements IDocumentoCo
         if (delta.doubleValue() == 0) return accertamento;
 
         // L'importo della scadenza successiva va in negativo
-        if ((delta.doubleValue() < 0) && (scadenzaSuccessiva.getIm_scadenza().add(delta).doubleValue() <= 0))
+        if ((delta.doubleValue() < 0) && (scadenzaSuccessiva.getIm_scadenza().add(delta).doubleValue() < 0))
             throw handleException(new ApplicationException("L'importo della scadenza successiva e' inferiore all'importo da aggiornare"));
 
         // Aggiorno importo scadenza successiva
@@ -3425,7 +3389,6 @@ private void modificoDettagliScadenza(UserContext aUC,AccertamentoBulk accertame
                 throw new ApplicationException("Workpackages da PdG con ricavi/entrate nulle. Imputazione automatica impossibile!");
         }
 
-
         // non sono ancora state inserite le scadenze
         if (accertamento.getAccertamento_scadenzarioColl().size() == 0)
             return accertamento;
@@ -3580,8 +3543,7 @@ private void modificoDettagliScadenza(UserContext aUC,AccertamentoBulk accertame
                 osv.getLinea_attivita().setCd_natura(ppsd.getCd_natura());
                 osv.setCd_linea_attivita(ppsd.getCd_linea_attivita());
                 osv.setCd_centro_responsabilita(ppsd.getCd_centro_responsabilita());
-
-                osv.setIm_voce(new java.math.BigDecimal(0));
+                osv.setIm_voce(BigDecimal.ZERO);
                 // MITODO - verificare come mai ho dovuto anticipare la valorizzazione rispetto all'obbligazione
                 osv.setAccertamento_scadenzario(scadenzario);
                 osv.setCd_fondo_ricerca(accertamento.getCd_fondo_ricerca());
@@ -4637,6 +4599,8 @@ private void modificoDettagliScadenza(UserContext aUC,AccertamentoBulk accertame
 
                     }
                     linee = calcolaPercentualeLineeAttivita(linee, plur.getImporto());
+                    // esco dal ciclo perchè con i valori del primo pluriennale si è calcolata la percentuale di ogni GAE legata all'accertamento
+                    break;
 
                 }
             }

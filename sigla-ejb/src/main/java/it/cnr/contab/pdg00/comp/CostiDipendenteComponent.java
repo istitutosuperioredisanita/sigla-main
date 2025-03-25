@@ -2343,7 +2343,7 @@ public boolean isCostiDipendenteRipartiti (UserContext userContext, String cd_un
 
 			//Effettuo scritture prima nota
 			try {
-				Scrittura_partita_doppiaBulk scritturaPartitaDoppiaBulk = Utility.createScritturaPartitaDoppiaComponentSession().proposeScritturaPartitaDoppia(userContext, compensoBulk);
+				Scrittura_partita_doppiaBulk scritturaPartitaDoppiaBulk = Utility.createProposeScritturaComponentSession().proposeScritturaPartitaDoppia(userContext, compensoBulk);
 				makeBulkPersistent(userContext, scritturaPartitaDoppiaBulk);
 			} catch (NoRollbackException | ScritturaPartitaDoppiaNotRequiredException ignored ) {
 			} catch (ApplicationException e) {

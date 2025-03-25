@@ -201,7 +201,13 @@
 			propertyName="uo_origine"
 			sqlTypeName="CHAR"
 			columnSize="30"
-			nullable="true" />		
+			nullable="true" />
+		<columnMapping
+				columnName="WARNING"
+				propertyName="warning"
+				sqlTypeName="VARCHAR"
+				columnSize="40"
+				nullable="true"/>
 	</defaultColumnMap>
 	<persistentProperty
 		name="tipo" />
@@ -262,5 +268,7 @@
 	<persistentProperty
 		name="ds_tipo" />	
 	<persistentProperty
-		name="uo_origine" />				
+		name="uo_origine" />
+	<persistentProperty
+			name="warning" />
 </SQLPersistentInfo>

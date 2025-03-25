@@ -17,15 +17,15 @@
 
 package it.cnr.contab.config00.sto.bulk;
 
+import it.cnr.contab.consultazioni.bulk.ConsultazioniRestHome;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ApplicationException;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.LoggableStatement;
-import it.cnr.jada.persistency.sql.PersistentHome;
-import it.cnr.jada.persistency.sql.SQLBuilder;
+import it.cnr.jada.persistency.sql.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,7 +36,7 @@ import java.util.List;
  * Creation date: (12/04/2001 08:32:22)
  */
 
-public class Unita_organizzativaHome extends BulkHome {
+public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRestHome {
 	/**
 	 * Costruttore
 	 * Creation date: (12/04/2001 08:32:22)
@@ -621,5 +621,12 @@ public class Unita_organizzativaHome extends BulkHome {
 	public Unita_organizzativaBulk getUoScrivania(UserContext userContext) throws PersistencyException {
 		Unita_organizzativaBulk uo = new Unita_organizzativaBulk(CNRUserContext.getCd_unita_organizzativa(userContext));
 		return (Unita_organizzativaBulk)findByPrimaryKey(uo);
+	}
+
+	@Override
+	public SQLBuilder restSelect(UserContext userContext, SQLBuilder sql, CompoundFindClause compoundfindclause, OggettoBulk oggettobulk) throws ComponentException, PersistencyException {
+		sql.addClause(FindClause.AND, "esercizio_inizio", SQLBuilder.LESS_EQUALS, CNRUserContext.getEsercizio(userContext));
+		sql.addClause(FindClause.AND, "esercizio_fine", SQLBuilder.GREATER_EQUALS, CNRUserContext.getEsercizio(userContext));
+		return sql;
 	}
 }

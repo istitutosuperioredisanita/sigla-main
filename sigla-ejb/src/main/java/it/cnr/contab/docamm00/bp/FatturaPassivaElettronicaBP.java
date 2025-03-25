@@ -23,4 +23,5 @@ public interface FatturaPassivaElettronicaBP {
 	public SimpleDetailCRUDController getCrudDocEleAllegatiColl();
 	public String getNomeFileAllegato();
 	public String getPath();
+
 }

@@ -39,7 +39,7 @@ public class SelezionatoreStepFineAnnoAction extends BulkAction {
             detail.basicReset(context);
             detail.setModelIndex(context, modelIndex);
         } catch (ComponentException | RemoteException | FillException e) {
-            throw new BusinessProcessException(e);
+            return handleException(context, e);
         }
         return context.findDefaultForward();
     }

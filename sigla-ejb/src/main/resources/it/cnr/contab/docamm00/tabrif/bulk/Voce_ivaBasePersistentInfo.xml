@@ -200,7 +200,21 @@
 			sqlTypeName="CHAR"
 			columnSize="1"
 			nullable="false"
-			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />	
+			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+				columnName="FL_INTRASTAT"
+				propertyName="fl_intrastat"
+				sqlTypeName="CHAR"
+				columnSize="1"
+				nullable="false"
+				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+				columnName="FL_INTRA12"
+				propertyName="fl_intra12"
+				sqlTypeName="CHAR"
+				columnSize="1"
+				nullable="false"
+				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="dt_cancellazione" />
@@ -257,5 +271,9 @@
 	<persistentProperty
 		name="fl_solo_italia" />	
 	<persistentProperty
-		name="fl_obb_dichiarazione_intento" />					
+		name="fl_obb_dichiarazione_intento" />
+	<persistentProperty
+			name="fl_intrastat" />
+	<persistentProperty
+			name="fl_intra12" />
 </SQLPersistentInfo>

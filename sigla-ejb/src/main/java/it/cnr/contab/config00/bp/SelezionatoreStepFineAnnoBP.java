@@ -24,6 +24,7 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 public class SelezionatoreStepFineAnnoBP extends BulkBP {
     private final RemoteDetailCRUDController detail = new RemoteDetailCRUDController(
@@ -31,7 +32,9 @@ public class SelezionatoreStepFineAnnoBP extends BulkBP {
             Configurazione_cnrBulk.class,
             Configurazione_cnrBulk.PK_STEP_FINE_ANNO,
             "CNRCONFIG00_EJB_Configurazione_cnrComponentSession",
-            this) {
+            this,
+            Boolean.FALSE) {
+
         @Override
         protected RemoteIterator createRemoteIterator(ActionContext actioncontext) {
             try {
@@ -92,6 +95,7 @@ public class SelezionatoreStepFineAnnoBP extends BulkBP {
         resyncChildren(actioncontext);
         getDetail().setOrderBy(actioncontext, "cd_chiave_secondaria", OrderConstants.ORDER_ASC);
     }
+
     public void save(ActionContext actioncontext)
             throws ValidationException, BusinessProcessException {
         commitUserTransaction();
@@ -114,8 +118,23 @@ public class SelezionatoreStepFineAnnoBP extends BulkBP {
     @Override
     protected Button[] createToolbar() {
         final Properties properties = it.cnr.jada.util.Config.getHandler().getProperties(CRUDBP.class);
-        return Arrays.asList(
+        return Stream.of(
                         new Button(properties, "CRUDToolbar.save")
-                ).stream().toArray(Button[]::new);
+                ).toArray(Button[]::new);
+    }
+
+    public String getFormName() {
+        return Optional.ofNullable(detail.getModel())
+                .filter(Configurazione_cnrBulk.class::isInstance)
+                .map(Configurazione_cnrBulk.class::cast)
+                .filter(configurazioneCnrBulk ->
+                        Stream.of(
+                                Configurazione_cnrBulk.StepFineAnno.STORNO_FATT_PAS,
+                                Configurazione_cnrBulk.StepFineAnno.STORNO_FATT_ATT
+                        ).map(Configurazione_cnrBulk.StepFineAnno::value)
+                                .anyMatch(s -> s.equalsIgnoreCase(configurazioneCnrBulk.getCd_chiave_secondaria()))
+                )
+                .map(configurazioneCnrBulk -> "STEP_FINE_ANNO_ONLY_DATE")
+                .orElse(Configurazione_cnrBulk.PK_STEP_FINE_ANNO);
     }
 }

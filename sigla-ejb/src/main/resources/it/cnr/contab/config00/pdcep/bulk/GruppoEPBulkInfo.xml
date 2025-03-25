@@ -1,24 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bulkInfo>
 	<fieldProperty
+		name="tipoBilancio"
+		property="tipoBilancio"
+		inputType="SELECT"
+		printProperty="dsTipoBilancio"
+		optionsProperty="tipoBilanci"
+		inputCssClass="w-100"
+		maxLength="40"
+		enabledOnSearch="true"
+		nullable="false"
+		command="doCambiaTipoBilancio"
+		label="Tipo" />
+
+	<fieldProperty
 		name="cdPianoGruppi"
 		property="cdPianoGruppi"
-		inputType="TEXT"
+		inputType="SELECT"
+		keysProperty="ti_pianoGruppiKeys"
 		inputSize="5"
 		maxLength="5"
-		enabledOnEdit="false"
+		enabledOnEdit="true"
 		nullable="false"
-		label="cdPianoGruppi" />
+		label="Codice piano gruppo" />
 	<fieldProperty
 		name="cdGruppoEp"
 		property="cdGruppoEp"
-		inputType="TEXTAREA"
-		cols="60"
-		rows="5"
+		inputType="TEXT"
 		maxLength="40"
-		enabledOnEdit="false"
+		enabledOnEdit="true"
 		nullable="false"
-		label="cdGruppoEp" />
+		label="Codice gruppo" />
 	<fieldProperty
 		name="cdGruppoPadre"
 		property="cdGruppoPadre"
@@ -27,51 +39,46 @@
 		rows="5"
 		maxLength="40"
 		enabledOnEdit="false"
-		label="cdGruppoPadre" />
+		label="Codice gruppo padre" />
 	<fieldProperty
 		name="sequenza"
 		property="sequenza"
-		inputType="TEXTAREA"
-		cols="60"
-		rows="5"
+		inputType="TEXT"
 		maxLength="38"
-		enabledOnEdit="false"
+		enabledOnEdit="true"
 		nullable="false"
-		label="sequenza" />
+		label="Sequenza" />
 	<fieldProperty
 		name="nome"
 		property="nome"
-		inputType="TEXTAREA"
-		cols="60"
-		rows="5"
+		inputType="TEXT"
 		maxLength="100"
-		enabledOnEdit="false"
-		label="nome" />
+		enabledOnEdit="true"
+		label="Nome" />
 	<fieldProperty
 		name="dsGruppoEp"
 		property="dsGruppoEp"
-		inputType="TEXTAREA"
-		cols="60"
-		rows="5"
+		inputType="TEXT"
 		maxLength="200"
-		enabledOnEdit="false"
-		label="dsGruppoEp" />
+		enabledOnEdit="true"
+		label="Descrizione" />
 	<fieldProperty
 		name="segno"
 		property="segno"
-		inputType="TEXT"
+		inputType="SELECT"
+		keysProperty="ti_segnoKeys"
 		inputSize="1"
 		maxLength="1"
-		enabledOnEdit="false"
+		enabledOnEdit="true"
 		nullable="false"
-		label="segno" />
+		label="Segno" />
 	<fieldProperty
 		name="flMastrino"
 		property="flMastrino"
 		inputType="CHECKBOX"
-		enabledOnEdit="false"
+		enabledOnEdit="true"
 		nullable="false"
-		label="flMastrino" />
+		label="Mastrino" />
 	<fieldProperty
 		name="cdPianoPadre"
 		property="cdPianoPadre"
@@ -79,7 +86,7 @@
 		inputSize="5"
 		maxLength="5"
 		enabledOnEdit="false"
-		label="cdPianoPadre" />
+		label="Codice piano gruppo padre" />
 	<fieldProperty
 		name="formula"
 		property="formula"
@@ -87,11 +94,11 @@
 		cols="60"
 		rows="5"
 		maxLength="2000"
-		enabledOnEdit="false"
-		label="formula" />
-	<form
-		name="searchtool">
-	</form>
+		enabledOnEdit="true"
+		label="Formula" />
+
+	<formFieldProperty
+		name="tipoBilancio" />
 	<formFieldProperty
 		name="cdPianoGruppi" />
 	<formFieldProperty
@@ -112,6 +119,7 @@
 		name="cdPianoPadre" />
 	<formFieldProperty
 		name="formula" />
+
 	<findFieldProperty
 		name="cdPianoGruppi" />
 	<findFieldProperty
@@ -132,12 +140,11 @@
 		name="cdPianoPadre" />
 	<findFieldProperty
 		name="formula" />
+
 	<columnFieldProperty
 		name="cdPianoGruppi" />
 	<columnFieldProperty
 		name="cdGruppoEp" />
-	<columnFieldProperty
-		name="cdGruppoPadre" />
 	<columnFieldProperty
 		name="sequenza" />
 	<columnFieldProperty
@@ -148,8 +155,6 @@
 		name="segno" />
 	<columnFieldProperty
 		name="flMastrino" />
-	<columnFieldProperty
-		name="cdPianoPadre" />
 	<columnFieldProperty
 		name="formula" />
 </bulkInfo>
