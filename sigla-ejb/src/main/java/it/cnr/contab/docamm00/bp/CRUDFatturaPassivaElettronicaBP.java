@@ -182,7 +182,7 @@ public class CRUDFatturaPassivaElettronicaBP extends AllegatiCRUDBP<AllegatoFatt
 				Optional.ofNullable(model.getTipoDocumento())
 						.map(s -> s.equalsIgnoreCase(TipoDocumentoType.TD_04.value())).orElse(Boolean.FALSE) &&
 				(model.isRifiutabile() || model.getStatoDocumentoEle().equals(StatoDocumentoEleEnum.RIFIUTATA_CON_PEC))
-					&& isAttivoGestFlIrregistrabile);
+					&& ( this instanceof CRUDFatturaPassivaElettronicaAmministraBP || isAttivoGestFlIrregistrabile));
 	}
 
 	public boolean isMostraFatturaCollegataButtonHidden() {
