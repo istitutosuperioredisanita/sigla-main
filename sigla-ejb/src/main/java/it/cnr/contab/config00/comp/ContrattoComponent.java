@@ -216,7 +216,7 @@ public class ContrattoComponent extends it.cnr.jada.comp.CRUDDetailComponent imp
 		if (clause == null) 
 		  clause = responsabile.buildFindClauses(null);
 		SQLBuilder sql = getHome(userContext, responsabile).createSQLBuilder();
-		if (contratto.getCodfisPivaAggiudicatarioExt() != null){
+		if (contratto.getCodfisPivaRupExt() != null){
 			sql.openParenthesis("AND");
 			sql.addSQLClause("AND","CODICE_FISCALE",sql.EQUALS,contratto.getCodfisPivaRupExt());
 			sql.addSQLClause("OR","PARTITA_IVA",sql.EQUALS,contratto.getCodfisPivaRupExt());
@@ -249,7 +249,7 @@ public class ContrattoComponent extends it.cnr.jada.comp.CRUDDetailComponent imp
 				clause = firmatario.buildFindClauses(null);
 			SQLBuilder sql = getHome(userContext, firmatario).createSQLBuilder();
 			if ( !isAttivoGestFirmatariCont) {
-				if (contratto.getCodfisPivaAggiudicatarioExt() != null) {
+				if (contratto.getCodfisPivaFirmatarioExt() != null) {
 					sql.openParenthesis("AND");
 					sql.addSQLClause("AND", "CODICE_FISCALE", sql.EQUALS, contratto.getCodfisPivaFirmatarioExt());
 					sql.addSQLClause("OR", "PARTITA_IVA", sql.EQUALS, contratto.getCodfisPivaFirmatarioExt());
@@ -2429,7 +2429,7 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 				if ( contratto.getCodfisPivaAggiudicatarioExt()!=null && (!contratto.getCodfisPivaAggiudicatarioExt().isEmpty())) {
 					contratto.setFigura_giuridica_esterna(getTerzoFromCodiceFiscalePiva(userContext, contratto.getCodfisPivaAggiudicatarioExt()));
 					if ( !Optional.ofNullable(contratto.getFigura_giuridica_esterna()).isPresent()){
-						throw new ComponentException("La figura giuridica Esterna con Codice Fiscale/P.Iva "+ contratto.getCodfisPivaRupExt() +" non esiste in SIGLA");
+						throw new ComponentException("La figura giuridica Esterna con Codice Fiscale/P.Iva "+ contratto.getCodfisPivaAggiudicatarioExt() +" non esiste in SIGLA");
 					}
 				}
 				if ( contratto.getAtto()!=null && (!contratto.getAtto().getCd_tipo_atto().isEmpty())) {
@@ -2914,7 +2914,7 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 				throw new ApplicationException("Esistitono Categoria Gruppo duplicati nel Dettalgio Contratto");
 
 		for ( Dettaglio_contrattoBulk dettaglio_contrattoBulk:bulk.getDettaglio_contratto()){
-			if (dettaglio_contrattoBulk.getCdCategoriaGruppo()==null || dettaglio_contrattoBulk.getCdCategoriaGruppo().isEmpty())
+				if (dettaglio_contrattoBulk.getCdCategoriaGruppo()==null || dettaglio_contrattoBulk.getCdCategoriaGruppo().isEmpty())
 				throw new ApplicationException("Selezionare la Categoria/Gruppo tutti i dettagli Contratti");
 			if ( dettaglio_contrattoBulk.getCategoriaGruppoInvent().getDs_categoria_gruppo()==null ||
 					dettaglio_contrattoBulk.getCategoriaGruppoInvent().getDs_categoria_gruppo().isEmpty())

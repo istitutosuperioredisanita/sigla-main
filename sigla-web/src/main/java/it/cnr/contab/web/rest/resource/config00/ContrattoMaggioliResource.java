@@ -7,6 +7,8 @@ import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.local.config00.ContrattoMaggioliLocal;
 import it.cnr.contab.web.rest.model.ContrattoDtoBulk;
+import it.cnr.contab.web.rest.model.EnumNaturaContabileContratto;
+import it.cnr.contab.web.rest.model.EnumTipoDettaglioContratto;
 import it.cnr.contab.web.rest.model.EnumTypeAttachmentContratti;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.bulk.BulkList;
@@ -46,13 +48,14 @@ public class ContrattoMaggioliResource  extends AbstractContrattoResource implem
     }
 
     @Override
-    public void validateContratto(ContrattoDtoBulk contrattoBulk, CNRUserContext userContext) {
+    public void validateContratto(ContrattoDtoBulk contrattoBulk, CNRUserContext userContext) throws RemoteException, ComponentException{
         //Check valore tipoDettaglioContratto
+        super.validateContratto(contrattoBulk,userContext);
         if (Optional.ofNullable(contrattoBulk.getTipoDettaglioContratto()).isPresent()){
-            if ( !contrattoBulk.getTipoDettaglioContratto().equals(ContrattoBulk.DETTAGLIO_CONTRATTO_ARTICOLI) &&
-                    contrattoBulk.getTipoDettaglioContratto().equals(ContrattoBulk.DETTAGLIO_CONTRATTO_CATGRP))
+            if ( !(contrattoBulk.getTipoDettaglioContratto().equals(ContrattoBulk.DETTAGLIO_CONTRATTO_ARTICOLI)) &&
+                    (!contrattoBulk.getTipoDettaglioContratto().equals(ContrattoBulk.DETTAGLIO_CONTRATTO_CATGRP)))
                 throw new RestException(Response.Status.BAD_REQUEST, String.format("Per Il Tipo Dettaglio Contratto sono previsti i seguenti valori:{ vuoto,"
-                        + ContrattoBulk.DETTAGLIO_CONTRATTO_ARTICOLI)+"}");
+                        + EnumTipoDettaglioContratto.DETTAGLIO_CONTRATTO_ARTICOLI+","+EnumTipoDettaglioContratto.DETTAGLIO_CONTRATTO_CATGRP)+"}");
         }
         if (CollectionUtils.isEmpty(contrattoBulk.getAttachments()))
             throw new RestException(Response.Status.BAD_REQUEST,String.format("Deve essere presente tra gli allegati il documento del contratto"));
@@ -60,6 +63,9 @@ public class ContrattoMaggioliResource  extends AbstractContrattoResource implem
         contrattoBulk.getAttachments().stream().filter(a->a.getTypeAttachment().equals(EnumTypeAttachmentContratti.CONTRATTO_FLUSSO)).findFirst().
                 orElseThrow(
                         () -> new DetailedRuntimeException("Il file del contratto è obbligatorio"));
+        if ( !Optional.ofNullable(contrattoBulk.getNaturaContabileContratto()).isPresent())
+            throw new RestException(Response.Status.BAD_REQUEST, String.format("La natura Contabile non può essere vuota. Sono Previsti i seguenti valori:{ "
+                    + EnumNaturaContabileContratto.NATURA_CONTABILE_PASSIVO+","+EnumNaturaContabileContratto.NATURA_CONTABILE_SENZA_FLUSSI_FINANZIARI)+"}");
     }
 
     protected ContrattoBulk innerCreaContrattoBulk( CNRUserContext userContext ,ContrattoBulk contratto) throws ComponentException, RemoteException {

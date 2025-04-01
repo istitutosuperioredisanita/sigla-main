@@ -263,7 +263,7 @@ public abstract class AbstractContrattoResource {
         contrattoBulkSigla.setDt_registrazione(contrattoBulk.getDt_registrazione());
         contrattoBulkSigla.setDt_stipula(contrattoBulk.getDt_stipula());
         contrattoBulkSigla.setEsercizio_protocollo(contrattoBulk.getEsercizio_protocollo());
-
+        //lista aggiudicatari
         if (Optional.ofNullable(contrattoBulk.getFig_giur_est()).isPresent()){
             contrattoBulkSigla.setFigura_giuridica_esterna(new TerzoBulk());
             contrattoBulkSigla.setFig_giur_est(contrattoBulk.getFig_giur_est());
