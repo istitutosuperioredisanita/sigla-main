@@ -59,23 +59,21 @@
 			<td>
 				<% bp.getDettaglio().writeFormInput(out,"cd_barre"); %>
 			</td>
-			<%
-            	if (bp.isAttivaEtichettaInventarioBene()){
+            <%
+                if (bp.isAttivaEtichettaInventarioBene()) {
             %>
-			<% if (bp.isAttivaEtichettaInventarioBene()) { %>
                 <td>
                     <% bp.getDettaglio().writeFormLabel(out, "etichetta"); %>
                 </td>
                 <td>
                     <%
-                    boolean isEtichettaReadOnly = (riga != null && riga.isBeneAccessorio());
-                    bp.getDettaglio().writeFormInput(out, null, "etichetta", isEtichettaReadOnly, null, null);
+                        boolean isEtichettaReadOnly = (riga != null && riga.isBeneAccessorio());
+                        bp.getDettaglio().writeFormInput(out, null, "etichetta", isEtichettaReadOnly, null, null);
                     %>
                 </td>
-            <% } %>
-			<%
+            <%
                 }
-             %>
+            %>
 		</tr>
 		<%
 			}

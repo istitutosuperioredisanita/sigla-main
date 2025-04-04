@@ -214,23 +214,15 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 	 * Se il bene è accessorio, restituisce l'etichetta del bene principale se disponibile.
 	 */
 	public String getEtichetta() {
-		// Se è un bene accessorio
 		if (isBeneAccessorio()) {
-			// Se ha un bene principale associato con etichetta valida
 			if (getBene() != null &&
 					getBene().getBene_principale() != null &&
 					getBene().getBene_principale().getEtichetta() != null) {
-				// Restituisce l'etichetta del bene principale
 				return getBene().getBene_principale().getEtichetta();
 			}
-
-			// Se non c'è un bene principale o la sua etichetta è nulla, restituisce stringa vuota
 			return "";
 		}
-
-		// Altrimenti restituisce l'etichetta normale del bene (o stringa vuota se null)
-		return getBene().getBene_principale() != null &&
-				getBene().getBene_principale().getEtichetta() != null ? getBene().getBene_principale().getEtichetta() : "";
+		return getBene() != null && getBene().getEtichetta() != null ? getBene().getEtichetta() : "";
 	}
 
 	public Boolean getFl_accessorio_contestuale() {
