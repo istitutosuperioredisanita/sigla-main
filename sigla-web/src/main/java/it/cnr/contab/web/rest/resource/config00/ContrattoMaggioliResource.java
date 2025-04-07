@@ -23,6 +23,7 @@ import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import java.rmi.RemoteException;
+import java.util.Collections;
 import java.util.Optional;
 
 @Stateless
@@ -33,6 +34,7 @@ public class ContrattoMaggioliResource  extends AbstractContrattoResource implem
     protected ContrattoBulk creaContrattoSigla(ContrattoDtoBulk contrattoBulk, CNRUserContext userContext) throws PersistencyException, ValidationException, ComponentException, RemoteException {
         // verificare che in associazioneUo ci sia l'unita operativa 000.000 altrimenti inserirla
         ContrattoBulk contrattoToSave= super.creaContrattoSigla(contrattoBulk, userContext);
+        contrattoToSave.setCodfisPivaAggiudicatarioExt(contrattoBulk.getCodFisPivaAggiudicatari().get(0));
         if (! Optional.ofNullable((( BulkList<Ass_contratto_uoBulk>) contrattoToSave.getAssociazioneUO()).
                 stream().
                 filter(el->"000.000".equalsIgnoreCase(el.getCd_unita_organizzativa())).findFirst().orElse(null)).isPresent()){
@@ -66,7 +68,18 @@ public class ContrattoMaggioliResource  extends AbstractContrattoResource implem
         if ( !Optional.ofNullable(contrattoBulk.getNaturaContabileContratto()).isPresent())
             throw new RestException(Response.Status.BAD_REQUEST, String.format("La natura Contabile non può essere vuota. Sono Previsti i seguenti valori:{ "
                     + EnumNaturaContabileContratto.NATURA_CONTABILE_PASSIVO+","+EnumNaturaContabileContratto.NATURA_CONTABILE_SENZA_FLUSSI_FINANZIARI)+"}");
+
+        if ( !Optional.ofNullable(contrattoBulk.getNaturaContabileContratto()).isPresent())
+            throw new RestException(Response.Status.BAD_REQUEST, String.format("La natura Contabile non può essere vuota. Sono Previsti i seguenti valori:{ "
+                    + EnumNaturaContabileContratto.NATURA_CONTABILE_PASSIVO+","+EnumNaturaContabileContratto.NATURA_CONTABILE_SENZA_FLUSSI_FINANZIARI)+"}");
+
+        if ( Optional.ofNullable(contrattoBulk.getCodFisPivaAggiudicatari()).orElse(Collections.emptyList()).size()==0)
+            throw new RestException(Response.Status.BAD_REQUEST, String.format("Manca l'informazione degli aggiudicatari del contratto"));
+        if ( Optional.ofNullable(contrattoBulk.getCodFisPivaAggiudicatari()).orElse(Collections.emptyList()).size()>1)
+            throw new RestException(Response.Status.BAD_REQUEST, String.format("La gestione dei multiaggiudicari ancora non è implementata"));
     }
+
+
 
     protected ContrattoBulk innerCreaContrattoBulk( CNRUserContext userContext ,ContrattoBulk contratto) throws ComponentException, RemoteException {
         return (ContrattoBulk) contrattoComponentSession.creaContrattoDaFlussoAcquisti(userContext, contratto,true);
