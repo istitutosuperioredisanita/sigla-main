@@ -3093,6 +3093,9 @@
     <changeSet author="ciro.salvio" runOnChange="true" id="create-view-V_DETTAGLIO_LOTTI_MAG">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_DETTAGLIO_LOTTI_MAG.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="davide.mirra" runOnChange="true" id="create-view-V_CONS_REG_IVA">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_CONS_REG_IVA.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
     <changeSet author="raffaele.pagano" runOnChange="true" id="create-view-V_CLASSIFICAZIONE_VOCI_H2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_CLASSIFICAZIONE_VOCI.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>

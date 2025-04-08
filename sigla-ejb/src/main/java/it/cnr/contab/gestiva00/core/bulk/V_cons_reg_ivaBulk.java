@@ -20,38 +20,8 @@ import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk;
 import it.cnr.jada.bulk.ValidationException;
 
 public class V_cons_reg_ivaBulk extends V_cons_reg_ivaBase {
-	private Tipo_sezionaleBulk tipo_sezionale;
-	private java.util.Collection tipi_sezionali;
 
 	public V_cons_reg_ivaBulk() {
 		super();
-	}
-
-	public Tipo_sezionaleBulk getTipo_sezionale() {
-		return tipo_sezionale;
-	}
-
-	public void setTipo_sezionale(Tipo_sezionaleBulk tipo_sezionale) {
-		this.tipo_sezionale = tipo_sezionale;
-	}
-
-	public java.util.Collection getTipi_sezionali() {
-		return tipi_sezionali;
-	}
-
-	public void setTipi_sezionali(java.util.Collection tipi_sezionali) {
-		this.tipi_sezionali = tipi_sezionali;
-	}
-
-	public String getCd_ds_tipo_sezionale() {
-		return tipo_sezionale == null ? null : tipo_sezionale.getCd_tipo_sezionale() + " - " + tipo_sezionale.getDs_tipo_sezionale();
-	}
-
-	public String getCd_tipo_sezionale() {
-		return tipo_sezionale == null ? null : tipo_sezionale.getCd_tipo_sezionale();
-	}
-
-	public void setCd_tipo_sezionale(String cd_tipo_sezionale) {
-		this.tipo_sezionale.setCd_tipo_sezionale(cd_tipo_sezionale);
 	}
 }

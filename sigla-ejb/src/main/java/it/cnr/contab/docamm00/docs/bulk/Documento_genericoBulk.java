@@ -17,19 +17,18 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_analiticaBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.contab.config00.bulk.CausaleContabileBulk;
-import it.cnr.contab.docamm00.bp.*;
-import it.cnr.contab.docamm00.tabrif.bulk.*;
-import it.cnr.contab.anagraf00.core.bulk.*;
-import it.cnr.contab.anagraf00.tabrif.bulk.*;
-
-import java.sql.Timestamp;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import it.cnr.contab.doccont00.core.bulk.*;
+import it.cnr.contab.docamm00.bp.CRUDDocumentoGenericoAttivoBP;
+import it.cnr.contab.docamm00.bp.CRUDDocumentoGenericoPassivoBP;
+import it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.Tipo_documento_genericoBulk;
+import it.cnr.contab.doccont00.core.bulk.IDefferUpdateSaldi;
+import it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk;
+import it.cnr.contab.doccont00.core.bulk.MandatoBulk;
 import it.cnr.contab.inventario00.docs.bulk.Ass_inv_bene_fatturaBulk;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk;
 import it.cnr.contab.service.SpringUtil;
@@ -40,8 +39,13 @@ import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.contab.util00.bulk.storage.AllegatoStorePath;
 import it.cnr.jada.bulk.*;
 import it.cnr.jada.util.OrderedHashtable;
-import it.cnr.jada.util.action.*;
+import it.cnr.jada.util.action.CRUDBP;
+import it.cnr.jada.util.action.FormController;
 import it.cnr.si.spring.storage.StorageDriver;
+
+import java.sql.Timestamp;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Documento_genericoBulk extends Documento_genericoBase implements IDocumentoAmministrativoSpesaBulk, IDocumentoAmministrativoEntrataBulk, Voidable, IDefferUpdateSaldi, AllegatoParentBulk, AllegatoStorePath {
 	private BulkList<AllegatoGenericoBulk> archivioAllegati = new BulkList<>();
@@ -1005,8 +1009,8 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 				isPagata() ||
 				isPagataParzialmente() || //richiesta 02449A
 				isByFondoEconomale() ||
-				!controllaCompatibilitaPer1210() ||
-				isDefaultValuta();
+				!controllaCompatibilitaPer1210();
+				//||isDefaultValuta();
 	}
 	/**
 	 * Insert the method's description here.

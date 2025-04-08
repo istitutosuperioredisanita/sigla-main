@@ -47,15 +47,15 @@ public java.util.Collection findTipoMovimenti(it.cnr.contab.inventario01.bulk.Bu
 		// Se è un Buono di Carico proveniente da una fattura x aumento di valore
 		if (buonoCS instanceof Buono_carico_scaricoBulk && ((Buono_carico_scaricoBulk)buonoCS).isByFatturaPerAumentoValore() ||
 			(buonoCS instanceof Buono_carico_scaricoBulk && ((Buono_carico_scaricoBulk)buonoCS).isByDocumentoPerAumentoValore())){
-			sql.addClause("AND","fl_aumento_valore",sql.EQUALS, Boolean.TRUE);
+				sql.addClause("AND","fl_aumento_valore",sql.EQUALS, Boolean.TRUE);
 		}
 		else {
 			sql.addClause("AND","fl_aumento_valore",sql.EQUALS, Boolean.FALSE);
 		}
 	}
-	if (buonoCS.isByOrdini()){
-		sql.addClause("AND","fl_da_ordini",sql.EQUALS, Boolean.TRUE);
-	}
+	//esclude o include il movimento di carico da ordini
+	sql.addClause("AND","fl_da_ordini",sql.EQUALS, buonoCS.isByOrdini());
+
 	if (buonoCS instanceof Buono_carico_scaricoBulk &&
 	   (buonoCS.getTipoMovimento() != null && !buonoCS.getTipoMovimento().getFl_buono_per_trasferimento())
 		||((buonoCS.getCrudStatus()== buonoCS.UNDEFINED)||(buonoCS.getCrudStatus()== buonoCS.TO_BE_CREATED)))
