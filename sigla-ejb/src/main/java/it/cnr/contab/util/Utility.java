@@ -642,5 +642,8 @@ public final class Utility {
 	public static V_InventarioBeneDetComponentSession createV_InventarioBeneDetComponentSession() throws javax.ejb.EJBException{
 		return (V_InventarioBeneDetComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_V_InventarioBeneDetComponentSession", V_InventarioBeneDetComponentSession.class);
 	}
+	public static V_AmmortamentoBeniDetComponentSession createV_AmmortamentoBeniDetComponentSession() throws javax.ejb.EJBException{
+		return (V_AmmortamentoBeniDetComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_V_AmmortamentoBeniDetComponentSession", V_AmmortamentoBeniDetComponentSession.class);
+	}
 
 }
