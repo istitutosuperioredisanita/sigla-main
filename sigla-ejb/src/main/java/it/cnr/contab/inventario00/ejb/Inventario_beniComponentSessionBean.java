@@ -28,6 +28,7 @@ import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
@@ -258,7 +259,7 @@ public Boolean isContab(it.cnr.jada.UserContext param0,it.cnr.contab.inventario0
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void aggiornamentoInventarioBeneConAmmortamento(UserContext param0, Inventario_beniBulk param1) throws ComponentException,RemoteException {
+	public void aggiornamentoInventarioBeneConAmmortamento(UserContext param0, Inventario_beniBulk param1) throws ComponentException, RemoteException, PersistencyException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((Inventario_beniComponent)componentObj).aggiornamentoInventarioBeneConAmmortamento(param0,param1);
@@ -267,6 +268,23 @@ public Boolean isContab(it.cnr.jada.UserContext param0,it.cnr.contab.inventario0
 			throw uncaughtRuntimeException(param0,componentObj,e);
 		} catch(Error e) {
 			throw uncaughtError(param0,componentObj,e);
+		} catch (PersistencyException e) {
+			throw new PersistencyException( e );
+		}
+	}
+
+	@Override
+	public void aggiornamentoInventarioBeneConAmmortamento(UserContext param0, Integer param1,String param2) throws ComponentException, RemoteException, PersistencyException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			((Inventario_beniComponent)componentObj).aggiornamentoInventarioBeneConAmmortamento(param0,param1,param2);
+			component_invocation_succes(param0,componentObj);
+		}catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		} catch (PersistencyException e) {
+			throw new PersistencyException( e );
 		}
 	}
 }

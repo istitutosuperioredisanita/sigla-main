@@ -6,8 +6,8 @@ package it.cnr.contab.inventario00.docs.bulk;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.KeyedPersistent;
 public class Ammortamento_bene_invKey extends OggettoBulk implements KeyedPersistent {
-	private Long pgInventario;
-	private Long nrInventario;
+	private Long pg_inventario;
+	private Long nr_inventario;
 	private Long progressivo;
 	private Integer esercizio;
 	private Integer pgRiga;
@@ -20,8 +20,8 @@ public class Ammortamento_bene_invKey extends OggettoBulk implements KeyedPersis
 	}
 	public Ammortamento_bene_invKey(Long pgInventario, Long nrInventario, Long progressivo, Integer esercizio, Integer pgRiga) {
 		super();
-		this.pgInventario=pgInventario;
-		this.nrInventario=nrInventario;
+		this.pg_inventario=pgInventario;
+		this.nr_inventario=nrInventario;
 		this.progressivo=progressivo;
 		this.esercizio=esercizio;
 		this.pgRiga=pgRiga;
@@ -30,8 +30,8 @@ public class Ammortamento_bene_invKey extends OggettoBulk implements KeyedPersis
 		if (this== o) return true;
 		if (!(o instanceof Ammortamento_bene_invKey)) return false;
 		Ammortamento_bene_invKey k = (Ammortamento_bene_invKey) o;
-		if (!compareKey(getPgInventario(), k.getPgInventario())) return false;
-		if (!compareKey(getNrInventario(), k.getNrInventario())) return false;
+		if (!compareKey(getPg_inventario(), k.getPg_inventario())) return false;
+		if (!compareKey(getNr_inventario(), k.getNr_inventario())) return false;
 		if (!compareKey(getProgressivo(), k.getProgressivo())) return false;
 		if (!compareKey(getEsercizio(), k.getEsercizio())) return false;
 		if (!compareKey(getPgRiga(), k.getPgRiga())) return false;
@@ -39,45 +39,30 @@ public class Ammortamento_bene_invKey extends OggettoBulk implements KeyedPersis
 	}
 	public int primaryKeyHashCode() {
 		int i = 0;
-		i = i + calculateKeyHashCode(getPgInventario());
-		i = i + calculateKeyHashCode(getNrInventario());
+		i = i + calculateKeyHashCode(getPg_inventario());
+		i = i + calculateKeyHashCode(getNr_inventario());
 		i = i + calculateKeyHashCode(getProgressivo());
 		i = i + calculateKeyHashCode(getEsercizio());
 		i = i + calculateKeyHashCode(getPgRiga());
 		return i;
 	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Restituisce il valore di: [Codice del'inventario]
-	 **/
-	public void setPgInventario(Long pgInventario)  {
-		this.pgInventario=pgInventario;
+
+	public Long getPg_inventario() {
+		return pg_inventario;
 	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Setta il valore di: [Codice del'inventario]
-	 **/
-	public Long getPgInventario() {
-		return pgInventario;
+
+	public void setPg_inventario(Long pg_inventario) {
+		this.pg_inventario = pg_inventario;
 	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Restituisce il valore di: [Numero che identifica il bene all'interno di un inventario]
-	 **/
-	public void setNrInventario(Long nrInventario)  {
-		this.nrInventario=nrInventario;
+
+	public Long getNr_inventario() {
+		return nr_inventario;
 	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Setta il valore di: [Numero che identifica il bene all'interno di un inventario]
-	 **/
-	public Long getNrInventario() {
-		return nrInventario;
+
+	public void setNr_inventario(Long nr_inventario) {
+		this.nr_inventario = nr_inventario;
 	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Restituisce il valore di: [Numero che identifica il bene accesorio all'interno di un inventario e una volta che risulti noto il bene primario]
-	 **/
+
 	public void setProgressivo(Long progressivo)  {
 		this.progressivo=progressivo;
 	}

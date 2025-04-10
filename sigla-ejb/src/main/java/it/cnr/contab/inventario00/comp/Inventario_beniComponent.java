@@ -1704,16 +1704,19 @@ private void validaUtilizzatori (UserContext aUC,Inventario_beniBulk bene)
 
 	public Inventario_beniBulk getBeneInventario(UserContext uc,Long pgInventario,Long nrInventario, Long progressivo) throws RemoteException {
 		try {
+			Inventario_beniBulk bene= new Inventario_beniBulk(nrInventario,pgInventario,progressivo);
 			Inventario_beniHome inventarioBeneInvHome = (Inventario_beniHome) getHome(uc, Inventario_beniBulk.class);
-			return inventarioBeneInvHome.getBeneInventario(pgInventario,nrInventario,progressivo);
+			return (Inventario_beniBulk)inventarioBeneInvHome.findByPrimaryKey(bene);
 		}catch (ComponentException | PersistencyException ex){
-			throw new RemoteException("Error getBenePerAmmortamento pg_inventario: "+pgInventario
+			throw new RemoteException("Error getBeneInventario pg_inventario: "+pgInventario
 			+" nr_inventario:"+nrInventario+" progressivo:" +progressivo);
 
 		}
 	}
-	public void aggiornamentoInventarioBeneConAmmortamento(UserContext uc,Inventario_beniBulk bene) throws ComponentException {
-		LoggableStatement ps = null;
+	public void aggiornamentoInventarioBeneConAmmortamento(UserContext uc,Inventario_beniBulk bene) throws ComponentException, PersistencyException {
+		Inventario_beniHome inventarioBeneInvHome = (Inventario_beniHome) getHome(uc, Inventario_beniBulk.class);
+		inventarioBeneInvHome.update(bene,uc);
+		/*LoggableStatement ps = null;
 		try {
 			//lockBulk(uc, bene);
 
@@ -1721,6 +1724,30 @@ private void validaUtilizzatori (UserContext aUC,Inventario_beniBulk bene)
 
 			ps = new LoggableStatement(getConnection(uc),
 					invHome.aggiornamentoSqlInventarioBeneConAmmortamento(uc,bene), true, this.getClass());
+			ps.executeQuery();
+			try {
+				ps.close();
+			} catch (java.sql.SQLException ignored) {
+				throw handleException(ignored);
+			}
+		} catch (SQLException | ComponentException e) {
+			throw handleException(e);
+		} finally {
+			if (ps != null) try {
+				ps.close();
+			} catch (java.sql.SQLException ignored) {
+			}
+		}*/
+	}
+
+	public void aggiornamentoInventarioBeneConAmmortamento(UserContext uc,Integer esercizio,String azione) throws ComponentException, PersistencyException {
+
+		LoggableStatement ps = null;
+		try {
+			Inventario_beniHome invHome = (Inventario_beniHome) getHome(uc, Inventario_beniBulk.class);
+
+			ps = new LoggableStatement(getConnection(uc),
+					invHome.aggiornamentoSqlInventarioBeneConAmmortamento(uc,esercizio,azione), true, this.getClass());
 			ps.executeQuery();
 			try {
 				ps.close();

@@ -150,8 +150,9 @@ public class ChiusuraInventarioAction extends ParametricPrintAction {
 			if(chiusuraInventarioBP.isEsercizioChiusoPerAlmenoUnCds()){
 				throw new it.cnr.jada.bulk.ValidationException("L'esercizio contabile selezionato risulta chiuso definitivamente.Non è più possibile procedere con l'ammortamento");
 			}else{
-				chiusuraInventarioBP.setCalcoloAmmortamentoEffettuato(isCalcoloAmmortamentoEffettutato(actioncontext,model.getAnno()));
+	//			chiusuraInventarioBP.setCalcoloAmmortamentoEffettuato(isCalcoloAmmortamentoEffettutato(actioncontext,model.getAnno()));
 			}
+
 			return actioncontext.findDefaultForward();
 		} catch (Throwable e) {
 			return handleException(actioncontext, e);
@@ -172,11 +173,12 @@ public class ChiusuraInventarioAction extends ParametricPrintAction {
 
 		return esercizioComponent.isEsercizioSpecificoChiusoPerAlmenoUnCds(context.getUserContext(),esercizio);
 	}
-	private boolean isCalcoloAmmortamentoEffettutato(ActionContext context,Integer esercizio) throws RemoteException, InvocationTargetException {
+	private boolean isCalcoloAmmortamentoEffettutato(ActionContext context,Integer esercizio) throws RemoteException, InvocationTargetException, BusinessProcessException {
+		CRUDChiusuraInventarioBP chiusuraInventarioBP = (CRUDChiusuraInventarioBP) getBusinessProcess(context);
+		AmmortamentoBeneComponentSession ammortamentoBeneComponent = (AmmortamentoBeneComponentSession) chiusuraInventarioBP.createComponentSession(
+				"CNRINVENTARIO00_EJB_AmmortamentoBeneComponentSession", AmmortamentoBeneComponentSession.class);
 
-		AmmortamentoBeneComponentSession ammortamentoBeneComponent = Utility.createAmmortamentoBeneComponentSession();
-		List<Ammortamento_bene_invBulk> listaAmmortamenti = ammortamentoBeneComponent.findAllAmmortamenti(context.getUserContext(), esercizio);
-		if(listaAmmortamenti != null && !listaAmmortamenti.isEmpty()){
+		if(ammortamentoBeneComponent.isExistAmmortamentoEsercizio(context.getUserContext(), esercizio)){
 			return true;
 		}
 		return false;

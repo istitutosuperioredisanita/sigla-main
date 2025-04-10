@@ -9,6 +9,7 @@ import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.LoggableStatement;
+import it.cnr.jada.persistency.sql.SQLBuilder;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -50,7 +51,17 @@ public class Ammortamento_bene_invHome extends BulkHome {
 		super(Ammortamento_bene_invBulk.class, conn, persistentCache);
 	}
 
-	public List<Ammortamento_bene_invBulk> findAllAmmortamenti(Integer esercizio) throws PersistencyException {
+	public List<Ammortamento_bene_invBulk> getAllAmmortamentoEsercizio(Integer esercizio) throws PersistencyException {
+		SQLBuilder sql = createSQLBuilder();
+
+		sql.addSQLClause( "AND", "FL_STORNO", SQLBuilder.EQUALS, "N");
+		sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS, esercizio);
+
+		return this.fetchAll(sql);
+	}
+
+	public Boolean isExistAmmortamentoEsercizio(Integer esercizio) throws PersistencyException {
+
 		List<Ammortamento_bene_invBulk> list = null;
 
 		try {
@@ -65,15 +76,11 @@ public class Ammortamento_bene_invHome extends BulkHome {
 				ResultSet rs = ps.executeQuery();
 
 				try {
-					while (rs.next()) {
-
-						if (list == null) {
-							list = new ArrayList<Ammortamento_bene_invBulk>();
-						}
-						list.add(getAmmortamentoBeneInv(rs));
-
+					if (rs.next()) {
+						return true;
 					}
-					return list;
+					return false;
+
 				} catch (Exception e) {
 					throw new PersistencyException(e);
 				} finally {
@@ -253,12 +260,8 @@ public class Ammortamento_bene_invHome extends BulkHome {
 
 
 	}
-	public String deleteSqlAmmortamento(UserContext uc, Ammortamento_bene_invBulk amm){
+	public String deleteSqlAmmortamento(UserContext uc, Integer esercizio){
 		return  "DELETE FROM "+it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+"AMMORTAMENTO_BENE_INV "+
-		"WHERE  pg_inventario = "+amm.getPgInventario()+" AND "+
-		"		nr_inventario = "+amm.getNrInventario()+" AND "+
-		"		progressivo = "+amm.getProgressivo()+" AND " +
-		"		esercizio = "+amm.getEsercizio()+ "AND "+
-		"		fl_storno = 'N'";
+		"WHERE  esercizio = "+esercizio+ " AND fl_storno = 'N'";
 	}
 }

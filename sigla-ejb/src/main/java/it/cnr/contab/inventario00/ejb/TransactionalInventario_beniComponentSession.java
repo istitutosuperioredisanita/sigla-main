@@ -26,6 +26,7 @@ import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.ejb.*;
 
 public class TransactionalInventario_beniComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements Inventario_beniComponentSession {
@@ -451,11 +452,23 @@ public Boolean isContab(it.cnr.jada.UserContext param0,it.cnr.contab.inventario0
 	}
 
 	@Override
-	public void aggiornamentoInventarioBeneConAmmortamento(UserContext param0, Inventario_beniBulk param1) throws ComponentException, RemoteException {
+	public void aggiornamentoInventarioBeneConAmmortamento(UserContext param0, Inventario_beniBulk param1) throws ComponentException, RemoteException, PersistencyException {
 		try {
 			invoke("aggiornamentoInventarioBeneConAmmortamento",new Object[] {
 					param0,
 					param1});
+		}
+		catch(Throwable ex) {
+			throw new java.rmi.RemoteException("Uncaugth exception",ex);
+		}
+	}
+
+	@Override
+	public void aggiornamentoInventarioBeneConAmmortamento(UserContext param0, Integer param1,String param2) throws ComponentException, RemoteException, PersistencyException {
+		try {
+			invoke("aggiornamentoInventarioBeneConAmmortamento",new Object[] {
+					param0,
+					param1,param2});
 		}
 		catch(Throwable ex) {
 			throw new java.rmi.RemoteException("Uncaugth exception",ex);

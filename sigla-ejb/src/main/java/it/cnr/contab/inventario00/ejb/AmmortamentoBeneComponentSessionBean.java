@@ -50,10 +50,24 @@ public class AmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.CRUDCo
 	}
 
 	@Override
-	public List<Ammortamento_bene_invBulk> findAllAmmortamenti(UserContext param0, Integer param1)  throws RemoteException, InvocationTargetException {
+	public Boolean isExistAmmortamentoEsercizio(UserContext param0, Integer param1)  throws RemoteException, InvocationTargetException {
 		pre_component_invocation(param0,componentObj);
 		try {
-			List<Ammortamento_bene_invBulk> result = ((AmmortamentoBeneComponent)componentObj).findAllAmmortamenti(param0,param1);
+			Boolean result = ((AmmortamentoBeneComponent)componentObj).isExistAmmortamentoEsercizio(param0,param1);
+			component_invocation_succes(param0,componentObj);
+			return result;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
+	@Override
+	public List<Ammortamento_bene_invBulk> getAllAmmortamentoEsercizio(UserContext param0, Integer param1) throws RemoteException, InvocationTargetException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			List<Ammortamento_bene_invBulk> result = ((AmmortamentoBeneComponent)componentObj).getAllAmmortamentoEsercizio(param0,param1);
 			component_invocation_succes(param0,componentObj);
 			return result;
 		} catch(RuntimeException e) {
@@ -108,10 +122,10 @@ public class AmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.CRUDCo
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void cancellaiAmmortamentoBene(UserContext param0, Ammortamento_bene_invBulk param1) throws ComponentException, RemoteException {
+	public void cancellaAmmortamentiEsercizio(UserContext param0,Integer  param1) throws ComponentException, RemoteException {
 		pre_component_invocation(param0,componentObj);
 		try {
-			((AmmortamentoBeneComponent)componentObj).cancellaiAmmortamentoBene(param0,param1);
+			((AmmortamentoBeneComponent)componentObj).cancellaAmmortamentiEsercizio(param0,param1);
 			component_invocation_succes(param0,componentObj);
 
 		} catch(RuntimeException e) {
