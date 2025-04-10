@@ -2,7 +2,7 @@
 <bulkInfo>
 	<fieldProperty
 		name="pgInventario"
-		property="pgInventario"
+		property="pg_inventario"
 		inputType="TEXTAREA"
 		cols="60"
 		rows="5"
@@ -13,7 +13,7 @@
 		label="Codice del'inventario" />
 	<fieldProperty
 		name="nrInventario"
-		property="nrInventario"
+		property="nr_inventario"
 		inputType="TEXTAREA"
 		cols="60"
 		rows="5"
@@ -180,9 +180,9 @@
 	<form
 		name="searchtool">
 		<formFieldProperty
-			name="pgInventario" />
+			name="pg_inventario" />
 		<formFieldProperty
-			name="nrInventario" />
+			name="nr_inventario" />
 		<formFieldProperty
 			name="progressivo" />
 		<formFieldProperty
@@ -213,9 +213,9 @@
 	<formFieldProperty
 		name="pgBuonoS" />
 	<findFieldProperty
-		name="pgInventario" />
+		name="pg_inventario" />
 	<findFieldProperty
-		name="nrInventario" />
+		name="nr_inventario" />
 	<findFieldProperty
 		name="progressivo" />
 	<findFieldProperty
@@ -253,9 +253,9 @@
 	<findFieldProperty
 		name="pgBuonoS" />
 	<columnFieldProperty
-		name="pgInventario" />
+		name="pg_inventario" />
 	<columnFieldProperty
-		name="nrInventario" />
+		name="nr_inventario" />
 	<columnFieldProperty
 		name="progressivo" />
 	<columnFieldProperty

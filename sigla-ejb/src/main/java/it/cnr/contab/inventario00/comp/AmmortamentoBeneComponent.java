@@ -56,14 +56,23 @@ public class AmmortamentoBeneComponent
 	}
 
 
-	public List<Ammortamento_bene_invBulk> findAllAmmortamenti(UserContext uc, Integer esercizio) throws RemoteException {
+	public Boolean isExistAmmortamentoEsercizio(UserContext uc, Integer esercizio) throws RemoteException {
 		try {
-			Ammortamento_bene_invHome ammortamentoBeneInvHome = (Ammortamento_bene_invHome) getHome(uc, Ammortamento_bene_invBulk.class);
-			return ammortamentoBeneInvHome.findAllAmmortamenti(esercizio);
+			Ammortamento_bene_invHome ammortamentoBeneInvHome = (Ammortamento_bene_invHome)getHomeCache(uc).getHome( Ammortamento_bene_invBulk.class);
+			return ammortamentoBeneInvHome.isExistAmmortamentoEsercizio(esercizio);
 		} catch (ComponentException | PersistencyException ex) {
-			throw new RemoteException("Error findAllAmmortamenti esercizio : " + esercizio);
+			throw new RemoteException("Error isExistAmmortamentoEsercizio esercizio : " + esercizio);
 		}
 
+	}
+
+	public List<Ammortamento_bene_invBulk> getAllAmmortamentoEsercizio(UserContext uc, Integer esercizio) throws RemoteException {
+		try {
+			Ammortamento_bene_invHome ammortamentoBeneInvHome = (Ammortamento_bene_invHome)getHomeCache(uc).getHome( Ammortamento_bene_invBulk.class);
+			return ammortamentoBeneInvHome.getAllAmmortamentoEsercizio(esercizio);
+		} catch (ComponentException | PersistencyException ex) {
+			throw new RemoteException("Error getAllAmmortamentoEsercizio esercizio : " + esercizio);
+		}
 	}
 
 	public Integer getNumeroAnnoAmmortamento(UserContext uc, Long pgInventario, Long nrInventario, Long progressivo) throws RemoteException {
@@ -107,21 +116,21 @@ public class AmmortamentoBeneComponent
 			}
 		}
 	}
-	public void cancellaiAmmortamentoBene(UserContext uc,Ammortamento_bene_invBulk amm) throws ComponentException {
+	public void cancellaAmmortamentiEsercizio(UserContext uc,Integer esercizio) throws ComponentException {
 		LoggableStatement ps = null;
 		try {
-			lockBulk(uc, amm);
+		//	lockBulk(uc, amm);
 
 			Ammortamento_bene_invHome ammHome = (Ammortamento_bene_invHome) getHome(uc, Ammortamento_bene_invBulk.class);
 
 			ps = new LoggableStatement(getConnection(uc),
-					ammHome.deleteSqlAmmortamento(uc,amm), true, this.getClass());
+					ammHome.deleteSqlAmmortamento(uc,esercizio), true, this.getClass());
 			ps.execute();
 			try {
 				ps.close();
 			} catch (java.sql.SQLException ignored) {
 			}
-		} catch (PersistencyException | OutdatedResourceException | BusyResourceException | SQLException | ComponentException e) {
+		} catch ( SQLException | ComponentException e) {
 			throw handleException(e);
 		} finally {
 			if (ps != null) try {

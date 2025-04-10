@@ -86,9 +86,9 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
         try {
             //logger.info("Eliminazione Ammortamento Esercizio :" + esercizio + "Start:" + formatterTime.format(EJBCommonServices.getServerTimestamp().toInstant()));
             // Elimina eventuali ammortamenti presenti per l'esercizio , ripristina INVENTARIO_BENI e cancella AMMORTAMENTO_BENI
-            Integer beniElaborati = eliminaAmmortamentiPrecedentiDellEsercizio(uc,ammortamentoBeneComponent,inventarioBeniComponent, esercizio, subjectError);
+           eliminaAmmortamentiPrecedentiDellEsercizio(uc,ammortamentoBeneComponent,inventarioBeniComponent, esercizio, subjectError);
             //logger.info("Eliminazione Ammortamento Esercizio :" + esercizio + "Eliminati: "+beniElaborati+" beni - Fine:" + formatterTime.format(EJBCommonServices.getServerTimestamp().toInstant()));
-        } catch (DetailedRuntimeException ex) {
+        } catch (DetailedRuntimeException | RemoteException | InvocationTargetException | PersistencyException ex) {
             //logger.info("Errore durante Eliminazione Ammortamento Esercizio :" + esercizio + "Errore: " + ex.getMessage());
             throw new DetailedRuntimeException("Errore durante Eliminazione Ammortamento Esercizio :" + esercizio + "Errore: " + ex.getMessage());
         }
@@ -119,21 +119,19 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                 for (V_ammortamento_beni_detBulk bene : beniList) {
                     try {
                             // CASO DA GESTIRE
-                            if(!bene.getEtichetta().equals("N-005985")) {
-
-
-                                if (bene.getValoreAmmortizzatoCalcolato().compareTo(bene.getImponibileAmmortamentoCalcolato()) > 0 && !bene.getFlTotalmenteScaricato()) {
+                        if(!bene.getEtichetta().equals("N-005985")) {
+                            if (bene.getValoreAmmortizzatoCalcolato().compareTo(bene.getImponibileAmmortamentoCalcolato()) > 0 && !bene.getFlTotalmenteScaricato()) {
                                     //logger.info("il valore ammortizzato è maggiore dell''imponibile ammortamento esercizio:" + esercizio +
                                     //        " pg_inventario:" + bene.getPgInventario() + " nr_inventario : " + bene.getNrInventario() + " progressivo:" + bene.getProgressivo());
 
                                     // se valore inziale + variazione più - variazione meno = 0 e imponibile ammortamento > 0 e bene non completamente scaricato
-                                } else if (((bene.getValoreIniziale().add(bene.getVariazionePiu())).add(bene.getVariazioneMeno().multiply(MENO_UNO))).compareTo(BigDecimal.ZERO) == 0
+                            } else if (((bene.getValoreIniziale().add(bene.getVariazionePiu())).add(bene.getVariazioneMeno().multiply(MENO_UNO))).compareTo(BigDecimal.ZERO) == 0
                                         &&
                                         bene.getImponibileAmmortamentoCalcolato().compareTo(BigDecimal.ZERO) > 0 && !bene.getFlTotalmenteScaricato()) {
 
                                     //logger.info("L'assestato del bene vale 0 e risulta non totalmente scaricato e con imponibile ammortamento > 0 - esercizio:" + esercizio +
                                     //        " pg_inventario:" + bene.getPgInventario() + " nr_inventario : " + bene.getNrInventario() + " progressivo:" + bene.getProgressivo());
-                                } else {
+                            } else {
                                     // Gestione ammortamento del bene
                                     BigDecimal percAmmortamento = bene.getNumeroAnnoAmmortamento().compareTo(BigDecimal.ZERO) == 0 ? Utility.nvl(bene.getPercPrimoAnno()) : Utility.nvl(bene.getPercSuccessivi());
                                     BigDecimal rataAmmortamento = BigDecimal.ZERO;
@@ -160,8 +158,20 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                                             rataAmmortamento = bene.getImponibileAmmortamentoCalcolato().add(Utility.nvl(bene.getValoreAmmortizzatoCalcolato()).multiply(MENO_UNO));
                                         }
 
+                                       /* try{
+                                            Inventario_beniBulk inv = inventarioBeniComponent.getBeneInventario(uc,bene.getPgInventario(),bene.getNrInventario(),bene.getProgressivo());
+                                            if(inv==null){
+                                                throw new DetailedRuntimeException("Bene non trovato in fase di ammortamento esercizio :" + esercizio + " pg_inventario: " + bene.getPgInventario() +
+                                                    " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo() );
+                                            }
 
-                                        Inventario_beniBulk inv = null;
+                                            inv.setValore_ammortizzato(inv.getValore_ammortizzato().add(rataAmmortamento));
+                                            inv.setToBeUpdated();
+                                            inventarioBeniComponent.aggiornamentoInventarioBeneConAmmortamento(uc,inv);
+                                        }catch (RemoteException | ComponentException | PersistencyException e) {
+                                            throw new DetailedRuntimeException("Errore durante l'aggiornamento del bene in inventario in fase di ammortamento esercizio : " +
+                                            esercizio + " pg_inventario: " + bene.getPgInventario() + " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo() );
+                                        }*/
 
                                         // aggiorna il valore ammortizzato
                             /*
@@ -220,12 +230,15 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                     }
                 }
 
-            } catch (DetailedRuntimeException ex) {
+                inventarioBeniComponent.aggiornamentoInventarioBeneConAmmortamento(uc,esercizio,Ammortamento_bene_invBulk.INCREMENTA_VALORE_AMMORTIZZATO);
+
+            } catch (DetailedRuntimeException | RemoteException | PersistencyException ex) {
                 //logger.info("Errore durante Ammortamento dei Beni esercizio:" + esercizio +
                 //           "Error:" + ex.getMessage());
                 throw new DetailedRuntimeException("Errore durante Ammortamento dei Beni esercizio:" + esercizio +
                         "Error:" + ex.getMessage());
-             }
+
+            }
             //logger.info("Elaborazione Beni da Ammortizzare Esercizio :" + esercizio + "End:" + formatterTime.format(EJBCommonServices.getServerTimestamp().toInstant()));
 
 
@@ -239,52 +252,41 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
     }
 
 
-    private Integer eliminaAmmortamentiPrecedentiDellEsercizio(UserContext uc,  AmmortamentoBeneComponentSession ammortamentoBeneComponent,
-                                                                                Inventario_beniComponentSession inventarioBeniComponent,Integer esercizio, String subjectError) {
-        List<Ammortamento_bene_invBulk> listaAmmortamenti = null;
+    private void eliminaAmmortamentiPrecedentiDellEsercizio(UserContext uc,  AmmortamentoBeneComponentSession ammortamentoBeneComponent,
+                                                                                Inventario_beniComponentSession inventarioBeniComponent,Integer esercizio, String subjectError) throws RemoteException, InvocationTargetException, ComponentException, PersistencyException {
 
-        try {
-
-            listaAmmortamenti = ammortamentoBeneComponent.findAllAmmortamenti(uc, esercizio);
-
-        } catch (RemoteException | InvocationTargetException ex) {
-           // logger.info("Errore durante la lettura degli ammortamenti dell'esercizio " + esercizio + " - Errore: " + ex.getMessage());
-            throw new DetailedRuntimeException("Errore durante la lettura degli ammortamenti dell'esercizio " + esercizio + " - Errore: " + ex.getMessage());
-        }
-        if(listaAmmortamenti!=null)
+        if(ammortamentoBeneComponent.isExistAmmortamentoEsercizio(uc, esercizio) )
         {
-            List<Inventario_beniBulk> invList = new ArrayList<Inventario_beniBulk>();
+            inventarioBeniComponent.aggiornamentoInventarioBeneConAmmortamento(uc,esercizio,Ammortamento_bene_invBulk.DECREMENTA_VALORE_AMMORTIZZATO);
+            /*
+            List<Ammortamento_bene_invBulk> listaAmmortamenti = ammortamentoBeneComponent.getAllAmmortamentoEsercizio(uc, esercizio);
+
             listaAmmortamenti.stream()
                     .forEach(ammortamento_bene_invBulk -> {
-
-                        Inventario_beniBulk inv = aggiornaInventarioBeni(uc,inventarioBeniComponent, ammortamento_bene_invBulk.getPgInventario(),ammortamento_bene_invBulk.getNrInventario(),ammortamento_bene_invBulk.getProgressivo(),
-                                ammortamento_bene_invBulk.getImMovimentoAmmort().multiply(MENO_UNO));
-
-                        if(inv == null){
-                           // logger.info("Errore durante l'eliminazione dell'ammortamento esercizio :" + esercizio + " pg_inventario: " + ammortamento_bene_invBulk.getPgInventario() +
-                           //         " nr_inventario: " + ammortamento_bene_invBulk.getNrInventario() + " progressivo: " + ammortamento_bene_invBulk.getProgressivo() );
-                            throw new DetailedRuntimeException("Errore durante l'eliminazione dell'ammortamento esercizio :" + esercizio + " pg_inventario: " + ammortamento_bene_invBulk.getPgInventario() +
-                                    " nr_inventario: " + ammortamento_bene_invBulk.getNrInventario() + " progressivo: " + ammortamento_bene_invBulk.getProgressivo() );
-                        }
                         try {
+                            Inventario_beniBulk inv = inventarioBeniComponent.getBeneInventario(uc,ammortamento_bene_invBulk.getPgInventario(),ammortamento_bene_invBulk.getNrInventario(),ammortamento_bene_invBulk.getProgressivo());
+                            if(inv==null){
+                                throw new DetailedRuntimeException("Bene non trovato in fase di eliminazione dell'ammortamento esercizio :" + esercizio + " pg_inventario: " + ammortamento_bene_invBulk.getPgInventario() +
+                                        " nr_inventario: " + ammortamento_bene_invBulk.getNrInventario() + " progressivo: " + ammortamento_bene_invBulk.getProgressivo() );
+                            }
+
+                            inv.setValore_ammortizzato(inv.getValore_ammortizzato().add(ammortamento_bene_invBulk.getImMovimentoAmmort().multiply(MENO_UNO)));
+                            inv.setToBeUpdated();
                             inventarioBeniComponent.aggiornamentoInventarioBeneConAmmortamento(uc,inv);
+                        } catch (RemoteException | ComponentException  | PersistencyException e) {
+                            throw new DetailedRuntimeException("Errore durante l'aggiornamento del bene in inventario in fase di eliminazione ammortamento esercizio : " +
+                                    esercizio + " pg_inventario: " + ammortamento_bene_invBulk.getPgInventario() + " nr_inventario: " + ammortamento_bene_invBulk.getNrInventario() + " progressivo: " + ammortamento_bene_invBulk.getProgressivo() );
                         }
-                        catch (RemoteException | ComponentException e) {
-                          //  logger.info("Errore durante il ripristino del valore ammortizzato sul bene " + e.getMessage());
-                            throw new DetailedRuntimeException("Errore durante il ripristinodel valore ammortizzato sul bene " + e.getMessage());
-                        }
-                        try {
-                            ammortamentoBeneComponent.cancellaiAmmortamentoBene(uc, ammortamento_bene_invBulk);
-                        } catch (RemoteException | ComponentException ex) {
-                           // logger.info("Errore durante l'eliminazione dell'ammortamento esercizio :" + esercizio + " pg_inventario: " + ammortamento_bene_invBulk.getPgInventario() +
-                           //         " nr_inventario: " + ammortamento_bene_invBulk.getNrInventario() + " progressivo: " + ammortamento_bene_invBulk.getProgressivo() + "- Errore: " + ex.getMessage());
-                            throw new DetailedRuntimeException("Errore durante l'eliminazione dell'ammortamento esercizio :" + esercizio + " pg_inventario: " + ammortamento_bene_invBulk.getPgInventario() +
-                                    " nr_inventario: " + ammortamento_bene_invBulk.getNrInventario() + " progressivo: " + ammortamento_bene_invBulk.getProgressivo() + "- Errore: " + ex.getMessage());
-                        }
-                    });
-            return listaAmmortamenti.size();
+                    });*/
+                    try {
+                        ammortamentoBeneComponent.cancellaAmmortamentiEsercizio(uc, esercizio);
+                    } catch (RemoteException | ComponentException ex) {
+                       // logger.info("Errore durante l'eliminazione dell'ammortamento esercizio :" + esercizio + " pg_inventario: " + ammortamento_bene_invBulk.getPgInventario() +
+                       //         " nr_inventario: " + ammortamento_bene_invBulk.getNrInventario() + " progressivo: " + ammortamento_bene_invBulk.getProgressivo() + "- Errore: " + ex.getMessage());
+                        throw new DetailedRuntimeException("Errore durante l'eliminazione dell'ammortamento esercizio : " + esercizio + " - Errore: " + ex.getMessage());
+                    }
+
         }
-        return 0;
 
     }
 

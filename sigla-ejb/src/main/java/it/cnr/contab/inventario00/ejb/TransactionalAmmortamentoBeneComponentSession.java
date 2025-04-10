@@ -27,9 +27,9 @@ import java.util.List;
 
 public class TransactionalAmmortamentoBeneComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements AmmortamentoBeneComponentSession {
     @Override
-    public List<Ammortamento_bene_invBulk> findAllAmmortamenti(UserContext param0, Integer param1) throws RemoteException, InvocationTargetException {
+    public Boolean isExistAmmortamentoEsercizio(UserContext param0, Integer param1) throws RemoteException, InvocationTargetException {
         try {
-            return (List<Ammortamento_bene_invBulk>)invoke("findAllAmmortamenti",new Object[] {
+            return (Boolean)invoke("isExistAmmortamentoEsercizio",new Object[] {
                     param0,
                     param1});
         }
@@ -37,6 +37,18 @@ public class TransactionalAmmortamentoBeneComponentSession extends it.cnr.jada.e
             throw new java.rmi.RemoteException("Uncaugth exception",ex);
         }
 
+    }
+
+    @Override
+    public List<Ammortamento_bene_invBulk> getAllAmmortamentoEsercizio(UserContext param0, Integer param1) throws RemoteException, InvocationTargetException {
+        try {
+            return (List<Ammortamento_bene_invBulk>)invoke("getAllAmmortamentoEsercizio",new Object[] {
+                    param0,
+                    param1});
+        }
+        catch(Throwable ex) {
+            throw new java.rmi.RemoteException("Uncaugth exception",ex);
+        }
     }
 
     @Override
@@ -81,9 +93,9 @@ public class TransactionalAmmortamentoBeneComponentSession extends it.cnr.jada.e
     }
 
     @Override
-    public void cancellaiAmmortamentoBene(UserContext param0, Ammortamento_bene_invBulk param1) throws ComponentException, RemoteException {
+    public void cancellaAmmortamentiEsercizio(UserContext param0, Integer param1) throws ComponentException, RemoteException {
         try {
-            invoke("cancellaiAmmortamentoBene",new Object[] {
+            invoke("cancellaAmmortamentiEsercizio",new Object[] {
                     param0,
                     param1});
         }

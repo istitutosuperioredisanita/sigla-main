@@ -5,14 +5,14 @@
 		tableName="AMMORTAMENTO_BENE_INV">
 		<columnMapping
 			columnName="PG_INVENTARIO"
-			propertyName="pgInventario"
+			propertyName="pg_inventario"
 			sqlTypeName="DECIMAL"
 			columnSize="38"
 			nullable="false"
 			primary="true" />
 		<columnMapping
 			columnName="NR_INVENTARIO"
-			propertyName="nrInventario"
+			propertyName="nr_inventario"
 			sqlTypeName="DECIMAL"
 			columnSize="38"
 			nullable="false"
@@ -40,10 +40,10 @@
 			primary="true" />
 	</defaultColumnMap>
 	<persistentProperty
-		name="pgInventario"
+		name="pg_inventario"
 		partOfOid="true" />
 	<persistentProperty
-		name="nrInventario"
+		name="nr_inventario"
 		partOfOid="true" />
 	<persistentProperty
 		name="progressivo"
