@@ -434,7 +434,7 @@ public Forward doFindAccessoriContestuali(ActionContext context) {
 		}
 
 		if (selectedModels.size()==0){
-			riga_da_associare.setFl_accessorio_contestuale(new Boolean(false));			
+			riga_da_associare.setFl_accessorio_contestuale(Boolean.FALSE);
 			throw new it.cnr.jada.comp.ApplicationException("Non ci sono elementi validi da associare come Bene Principale");
 		}
 		it.cnr.jada.util.action.SelezionatoreListaBP slbp = (it.cnr.jada.util.action.SelezionatoreListaBP) select(
@@ -607,17 +607,20 @@ public Forward doDeselezionaAccessoriContestuali(ActionContext context) {
 
 		riga.getBene().setBene_principale(null);
 		riga.getBene().setAssegnatario(null);
-		riga.getBene().setUbicazione(null);		
-		riga.setFl_accessorio_contestuale(new Boolean(false));
+		riga.getBene().setUbicazione(null);
+		riga.setFl_accessorio_contestuale(Boolean.FALSE);
+
+		// Rimuovi l'etichetta quando si deseleziona l'accessorio contestuale
+		riga.getBene().setEtichetta(null);
+
 		buono_cs.removeFromAccessoriContestualiHash(riga);
-		
+
 		return context.findDefaultForward();
-		
 	} catch(Throwable e) {
 		return handleException(context,e);
-	}	
-	
+	}
 }
+
 /**
   *  Durante la creazione di un Buono di Carico da Fattura Passiva, l'utente ha deselezionato 
   *	la proprietà <code>Associa a Bene non registrato</code>: il metodo provvede a resettare 
@@ -713,19 +716,28 @@ public Forward doBringBackAccessoriContestuali(ActionContext context) {
 		if (selectedModels != null && !selectedModels.isEmpty()) {			
 			riga.getBene().setBene_principale(new Inventario_beniBulk());
 			riga.getBene().getBene_principale().setDs_bene(selezionato.getBene().getDs_bene());
+
+			// Copia l'etichetta dal bene principale
+			if (selezionato.getBene().getEtichetta() != null) {
+				riga.getBene().getBene_principale().setEtichetta(selezionato.getBene().getEtichetta());
+				riga.getBene().setEtichetta(selezionato.getBene().getEtichetta());
+			}
+
 			riga.getBene().setUbicazione(selezionato.getBene().getUbicazione());
 			riga.getBene().setAssegnatario(selezionato.getBene().getAssegnatario());
+			riga.setFl_bene_accessorio(Boolean.TRUE);
+			riga.setFl_accessorio_contestuale(Boolean.TRUE);
 			bp.setProgressivo_beni(buonoCS.addToAccessoriContestualiHash(selezionato, riga, bp.getProgressivo_beni()));
+		} else {
+			riga.setFl_accessorio_contestuale(Boolean.FALSE);
 		}
-		else 
-		{
-			riga.setFl_accessorio_contestuale(new Boolean(false));
-		}
+
 		return context.findDefaultForward();
 	} catch(Throwable e) {
 		return handleException(context,e);
 	}
 }
+
 /**
   *  Assegna bene principale ad un bene accessorio.
   *
