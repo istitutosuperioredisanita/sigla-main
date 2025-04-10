@@ -6586,14 +6586,14 @@ private void validaValoreBeneDaFattura(Buono_carico_scaricoBulk buonoC) {
  * @param aUC lo <code>UserContext</code> che ha generato la richiesta.
  * @param buonoCarico il <code>Buono_caricoBulk</code> Buono di Carico.
 **/
-private void validaBuonoCarico (UserContext aUC,Buono_carico_scaricoBulk buonoCarico) 
-	throws ComponentException
+private void validaBuonoCarico(UserContext aUC, Buono_carico_scaricoBulk buonoCarico)
+		throws ComponentException
 {
 	Buono_carico_scarico_dettBulk dett = new Buono_carico_scarico_dettBulk();
-	Inventario_beniBulk bene = new Inventario_beniBulk();	
+	Inventario_beniBulk bene = new Inventario_beniBulk();
 	Iterator i = buonoCarico.getBuono_carico_scarico_dettColl().iterator();
 
-	try{
+	try {
 		// Controlla la testata del Buono di Carico
 		validaBuonoCarico_Testata(aUC, buonoCarico);
 
@@ -6601,7 +6601,10 @@ private void validaBuonoCarico (UserContext aUC,Buono_carico_scaricoBulk buonoCa
 		if (buonoCarico.getBuono_carico_scarico_dettColl().size()==0)
 			throw new it.cnr.jada.comp.ApplicationException("Attenzione: il Buono di Carico deve contenere almeno una riga di dettaglio.");
 
-		ArrayList<String> etichettaList=new ArrayList<>();
+		// HashMap che usa l'etichetta come chiave e tiene traccia dei progressivi associati
+		// (utilizzo il Set per scorrere velocemente la lista e non ammette duplicati)
+		HashMap<String, Set<Integer>> etichettaProgressivoMap = new HashMap<>();
+
 		/****** INIZIO CONTROLLO SU TUTTE LE RIGHE DI DETTAGLIO ******/
 		while (i.hasNext()){
 
@@ -6680,17 +6683,23 @@ private void validaBuonoCarico (UserContext aUC,Buono_carico_scaricoBulk buonoCa
 							if (checkEtichettaBeneAlreadyExist(aUC, dett)) {
 								throw new ApplicationException("Attenzione, l'etichetta: " + dett.getEtichetta() + " è già associata ad un altro bene");
 							}
-							//VERIIFICA ETICHETTA IN LISTA
+							//VERIFICA ETICHETTA E PROGRESSIVO IN LISTA
 							else {
-								if (etichettaList.size() > 0) {
-									if (etichettaList.contains(dett.getEtichetta())) {
-										throw new ApplicationException("Attenzione, l'etichetta: " + dett.getEtichetta() + " è già inserita in lista");
+								String etichetta = dett.getEtichetta();
+								Integer progressivo = dett.getProgressivo();
+
+								if (etichettaProgressivoMap.containsKey(etichetta)) {
+									Set<Integer> progressivi = etichettaProgressivoMap.get(etichetta);
+									if (progressivi.contains(progressivo)) {
+										throw new ApplicationException("Attenzione, l'etichetta: " + etichetta + " con progressivo: " + progressivo + " è già inserita in lista");
 									}
+									progressivi.add(progressivo);
+								} else {
+									Set<Integer> progressivi = new HashSet<>();
+									progressivi.add(progressivo);
+									etichettaProgressivoMap.put(etichetta, progressivi);
 								}
-								etichettaList.add(bene.getEtichetta());
-
 							}
-
 						}
 					}
 				}
@@ -7732,18 +7741,22 @@ public RemoteIterator cercaBeniAssociabili(UserContext userContext,Ass_inv_bene_
 	}
 	public boolean checkEtichettaBeneAlreadyExist(UserContext userContext, Buono_carico_scarico_dettBulk dett) throws ComponentException, RemoteException {
 		try {
-			// Crea l'hashtable per i progressivi se non esiste
+			// Crea l'hashtable per i progressivi se non esiste e nr. inventario
 			java.util.Hashtable progressivi = new java.util.Hashtable();
+			Long nr_inventario = new Long(0);
 
-			// Gestione del progressivo prima di chiamare la home
-			if (dett.isBeneAccessorio()) {
-				// Se è un bene accessorio, ottiene il progressivo
+			// Gestione del progressivo e numero inventario in base alla condizione del bene
+			if (dett.isBeneAccessorio() && (!dett.isAccessorioContestuale())) {
+				// Bene Accessorio di un bene già registrato su DB
+				dett.setNr_inventario(dett.getBene().getBene_principale().getNr_inventario());
 				dett.setProgressivo(
-						getProgressivoDaBenePrincipale(userContext, dett.getBene().getBene_principale(), progressivi).intValue()
+						new Integer(getProgressivoDaBenePrincipale(userContext, dett.getBene().getBene_principale(), progressivi).intValue())
 				);
-			} else {
+			} else if (!dett.isBeneAccessorio()) {
 				// Bene SENZA Accessori
 				dett.setProgressivo(new Integer(0));
+				nr_inventario = new Long(nr_inventario.longValue()+1);
+				dett.setNr_inventario(nr_inventario);
 			}
 
 			Inventario_beniHome invBeniHome = (Inventario_beniHome)getHome(userContext, Inventario_beniBulk.class);
