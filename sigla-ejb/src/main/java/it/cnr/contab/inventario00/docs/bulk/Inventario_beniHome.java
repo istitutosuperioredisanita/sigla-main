@@ -308,7 +308,7 @@ public java.util.Collection findDettagliBuono(Buono_carico_scaricoBulk buono)thr
 
 	public String aggiornamentoSqlInventarioBeneConAmmortamento(UserContext uc, Integer esercizio,String azione){
 	    if(azione.equals(Ammortamento_bene_invBulk.INCREMENTA_VALORE_AMMORTIZZATO)) {
-			return " UPDATE " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() + "INVENTARIO_BENI " +
+			return " UPDATE " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() + "INVENTARIO_BENI i " +
 					" SET VALORE_AMMORTIZZATO = VALORE_AMMORTIZZATO + (" +
 					"			SELECT NVL(IM_MOVIMENTO_AMMORT,0) IM_MOVIMENTO_AMMORT_POS " +
 					" 			FROM  AMMORTAMENTO_BENE_INV a " +
@@ -338,7 +338,7 @@ public java.util.Collection findDettagliBuono(Buono_carico_scaricoBulk buono)thr
 					")" +
 					" AND ETICHETTA != 'N-005985'";
 		}else{
-			return " UPDATE " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() + "INVENTARIO_BENI " +
+			return " UPDATE " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() + "INVENTARIO_BENI i " +
 					" SET VALORE_AMMORTIZZATO = VALORE_AMMORTIZZATO + " +
 					"			(SELECT SUM(decode(sign(NVL(a.IM_MOVIMENTO_AMMORT,0)),-1,abs(NVL(a.IM_MOVIMENTO_AMMORT,0)),1,-abs(NVL(a.IM_MOVIMENTO_AMMORT,0)),0)) IM_MOVIMENTO_AMMORT_NEG  " +
 					" 			FROM  AMMORTAMENTO_BENE_INV a " +
