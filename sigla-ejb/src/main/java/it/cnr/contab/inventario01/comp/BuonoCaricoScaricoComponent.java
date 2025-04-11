@@ -6384,6 +6384,7 @@ private void esplodiDettagliAssociatiContestualmente (
 			newBene.setNr_inventario(new_padre.getNr_inventario());
 			progressivo = new Long(progressivo.intValue()+1);
 			newBene.setProgressivo(new Long(progressivo.longValue()));
+			newBene.setEtichetta(old_padre.getEtichetta());
 			newBene.setTipo_ammortamento(new_padre.getBene().getTipo_ammortamento());
 			newBene.setFl_ammortamento(new_padre.getBene().getFl_ammortamento());
 			newDettaglio.setBene(newBene);			
@@ -6679,25 +6680,10 @@ private void validaBuonoCarico(UserContext aUC, Buono_carico_scaricoBulk buonoCa
 						if (bene.getEtichetta() == null) {
 							throw new ApplicationException("E' necessario indicare l'etichetta del bene");
 						} else {
-							// VERIFICA PRESENZA ETICHETTA SU DB
-							if (checkEtichettaBeneAlreadyExist(aUC, dett)) {
-								throw new ApplicationException("Attenzione, l'etichetta: " + dett.getEtichetta() + " è già associata ad un altro bene");
-							}
-							//VERIFICA ETICHETTA E PROGRESSIVO IN LISTA
-							else {
-								String etichetta = dett.getEtichetta();
-								Integer progressivo = dett.getProgressivo();
-
-								if (etichettaProgressivoMap.containsKey(etichetta)) {
-									Set<Integer> progressivi = etichettaProgressivoMap.get(etichetta);
-									if (progressivi.contains(progressivo)) {
-										throw new ApplicationException("Attenzione, l'etichetta: " + etichetta + " con progressivo: " + progressivo + " è già inserita in lista");
-									}
-									progressivi.add(progressivo);
-								} else {
-									Set<Integer> progressivi = new HashSet<>();
-									progressivi.add(progressivo);
-									etichettaProgressivoMap.put(etichetta, progressivi);
+							if (!bene.isBeneAccessorio()){
+								// VERIFICA PRESENZA ETICHETTA SU DB
+								if (checkEtichettaBeneAlreadyExist(aUC, dett)) {
+									throw new ApplicationException("Attenzione, l'etichetta: " + dett.getEtichetta() + " è già associata ad un altro bene");
 								}
 							}
 						}
@@ -7741,21 +7727,20 @@ public RemoteIterator cercaBeniAssociabili(UserContext userContext,Ass_inv_bene_
 	}
 	public boolean checkEtichettaBeneAlreadyExist(UserContext userContext, Buono_carico_scarico_dettBulk dett) throws ComponentException, RemoteException {
 		try {
-			// Crea l'hashtable per i progressivi se non esiste e nr. inventario
 			java.util.Hashtable progressivi = new java.util.Hashtable();
 			Long nr_inventario = new Long(0);
 
-			// Gestione del progressivo e numero inventario in base alla condizione del bene
-			if (dett.isBeneAccessorio() && (!dett.isAccessorioContestuale())) {
-				// Bene Accessorio di un bene già registrato su DB
-				dett.setNr_inventario(dett.getBene().getBene_principale().getNr_inventario());
-				dett.setProgressivo(
-						new Integer(getProgressivoDaBenePrincipale(userContext, dett.getBene().getBene_principale(), progressivi).intValue())
-				);
-			} else if (!dett.isBeneAccessorio()) {
-				// Bene SENZA Accessori
+			if (dett.isBeneAccessorio()) {
+				if (!dett.isAccessorioContestuale()) {
+					// Bene Accessorio di un bene già registrato su DB
+					dett.setNr_inventario(dett.getBene().getBene_principale().getNr_inventario());
+					dett.setProgressivo(
+							new Integer(getProgressivoDaBenePrincipale(userContext, dett.getBene().getBene_principale(), progressivi).intValue())
+					);
+				}
+			} else {
+				// Bene principale (senza accessori)
 				dett.setProgressivo(new Integer(0));
-				nr_inventario = new Long(nr_inventario.longValue()+1);
 				dett.setNr_inventario(nr_inventario);
 			}
 
