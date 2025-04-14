@@ -6602,9 +6602,7 @@ private void validaBuonoCarico(UserContext aUC, Buono_carico_scaricoBulk buonoCa
 		if (buonoCarico.getBuono_carico_scarico_dettColl().size()==0)
 			throw new it.cnr.jada.comp.ApplicationException("Attenzione: il Buono di Carico deve contenere almeno una riga di dettaglio.");
 
-		// HashMap che usa l'etichetta come chiave e tiene traccia dei progressivi associati
-		// (utilizzo il Set per scorrere velocemente la lista e non ammette duplicati)
-		HashMap<String, Set<Integer>> etichettaProgressivoMap = new HashMap<>();
+		ArrayList<String> etichettaList=new ArrayList<>();
 
 		/****** INIZIO CONTROLLO SU TUTTE LE RIGHE DI DETTAGLIO ******/
 		while (i.hasNext()){
@@ -6685,6 +6683,17 @@ private void validaBuonoCarico(UserContext aUC, Buono_carico_scaricoBulk buonoCa
 								if (checkEtichettaBeneAlreadyExist(aUC, dett)) {
 									throw new ApplicationException("Attenzione, l'etichetta: " + dett.getEtichetta() + " è già associata ad un altro bene");
 								}
+								//VERIIFICA ETICHETTA IN LISTA
+								else {
+									if (etichettaList.size() > 0) {
+										if (etichettaList.contains(dett.getEtichetta())) {
+											throw new ApplicationException("Attenzione, l'etichetta: " + dett.getEtichetta() + " è già inserita in lista");
+										}
+									}
+									etichettaList.add(bene.getEtichetta());
+
+								}
+
 							}
 						}
 					}

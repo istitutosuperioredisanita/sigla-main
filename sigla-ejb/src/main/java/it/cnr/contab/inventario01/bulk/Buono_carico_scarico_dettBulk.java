@@ -110,7 +110,7 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 
 		if (getNr_inventario()==null || getProgressivo()==null)
 			return null;	
-		return getNr_inventario().toString() + "." + getProgressivo().toString();
+		return getNr_inventario().toString() + "." + getProgressivo().toString() + "." + getEtichetta();
 	}
 	/**
 		 * Inizializza il ricevente per la visualizzazione in un <code>FormController</code>
