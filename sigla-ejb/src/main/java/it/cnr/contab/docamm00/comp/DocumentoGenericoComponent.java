@@ -539,28 +539,33 @@ public class DocumentoGenericoComponent
                         PrimaryKeyHashtable obbligs = getDocumentiContabiliNonTemporanei(userContext, documento.getObbligazioniHash().keys());
                         if (!obbligs.containsKey(scadenza.getObbligazione()))
                             aggiornaSaldi(userContext, documento, scadenza.getObbligazione(), status);
+                        for (Iterator r = documento.getDocumento_generico_dettColl().iterator(); r.hasNext(); ) {
+                            Documento_generico_rigaBulk riga = (Documento_generico_rigaBulk) r.next();
+                            if (riga.getObbligazione_scadenziario().equalsByPrimaryKey(scadenza))
+                                if (riga.getIm_imponibile().compareTo(Optional.ofNullable(riga.getIm_riga_iniziale()).orElse(BigDecimal.ZERO)) != 0)
+                                    importoAssociatoAllaScadenza =
+                                            importoAssociatoAllaScadenza.add((riga.getIm_riga_iniziale() == null ? riga.getIm_imponibile() : riga.getIm_imponibile().subtract(riga.getIm_riga_iniziale())).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
+                                else
+                                    importoAssociatoAllaScadenza =
+                                            importoAssociatoAllaScadenza.add((riga.getIm_riga_iniziale() == null ? riga.getIm_imponibile() : riga.getIm_riga_iniziale()).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
+                        }
                         if (!documento.isPassivo_ente())
                             scadenza.setIm_associato_doc_amm(new java.math.BigDecimal(0).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
                         else {
-                            for (Iterator r = documento.getDocumento_generico_dettColl().iterator(); r.hasNext(); ) {
-                                Documento_generico_rigaBulk riga = (Documento_generico_rigaBulk) r.next();
-                                if (riga.getObbligazione_scadenziario().equalsByPrimaryKey(scadenza))
-                                    if (riga.getIm_imponibile().compareTo(riga.getIm_riga_iniziale()) != 0)
-                                        importoAssociatoAllaScadenza =
-                                                importoAssociatoAllaScadenza.add((riga.getIm_riga_iniziale() == null ? riga.getIm_imponibile() : riga.getIm_imponibile().subtract(riga.getIm_riga_iniziale())).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
-                                    else
-                                        importoAssociatoAllaScadenza =
-                                                importoAssociatoAllaScadenza.add((riga.getIm_riga_iniziale() == null ? riga.getIm_imponibile() : riga.getIm_riga_iniziale()).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
-                            }
                             scadenza.setIm_associato_doc_amm((scadenza.getIm_associato_doc_amm().subtract(importoAssociatoAllaScadenza)).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
                         }
-                        if (documento.isDocumentoStorno()) {
-                            ObbligazioneHome obbligHome = (ObbligazioneHome) getHome( userContext, ObbligazioneBulk.class);
-                            scadenza = (Obbligazione_scadenzarioBulk) obbligHome.aumentaImportoScadenzaInAutomatico(userContext, scadenza, scadenza.getIm_scadenza().add(importoAssociatoAllaScadenza));
-                            scadenza.setIm_associato_doc_amm((scadenza.getIm_associato_doc_amm().add(importoAssociatoAllaScadenza)).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
-                            updateImportoAssociatoDocAmm(userContext, scadenza);
-                        } else {
-                            updateImportoAssociatoDocAmm(userContext, scadenza);
+                        try {
+                            if (documento.isDocumentoStorno()) {
+                                ObbligazioneHome obbligHome = (ObbligazioneHome) getHome(userContext, ObbligazioneBulk.class);
+                                scadenza = (Obbligazione_scadenzarioBulk) obbligHome.aumentaImportoScadenzaInAutomatico(userContext, scadenza, scadenza.getIm_scadenza().add(importoAssociatoAllaScadenza));
+                                scadenza.setIm_associato_doc_amm((scadenza.getIm_associato_doc_amm().add(importoAssociatoAllaScadenza)).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
+                                getHomeCache(userContext).fetchAll(userContext);
+                                updateImportoAssociatoDocAmm(userContext, scadenza);
+                            } else {
+                                updateImportoAssociatoDocAmm(userContext, scadenza);
+                            }
+                        } catch (PersistencyException _ex) {
+                          throw handleException(_ex);
                         }
                     }
                     /**
