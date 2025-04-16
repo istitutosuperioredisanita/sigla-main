@@ -6678,7 +6678,7 @@ private void validaBuonoCarico(UserContext aUC, Buono_carico_scaricoBulk buonoCa
 						if (bene.getEtichetta() == null) {
 							throw new ApplicationException("E' necessario indicare l'etichetta del bene");
 						} else {
-							if (!bene.isBeneAccessorio()){
+							if (!dett.isBeneAccessorio()){
 								// VERIFICA PRESENZA ETICHETTA SU DB
 								if (checkEtichettaBeneAlreadyExist(aUC, dett)) {
 									throw new ApplicationException("Attenzione, l'etichetta: " + dett.getEtichetta() + " è già associata ad un altro bene");
@@ -6690,8 +6690,7 @@ private void validaBuonoCarico(UserContext aUC, Buono_carico_scaricoBulk buonoCa
 											throw new ApplicationException("Attenzione, l'etichetta: " + dett.getEtichetta() + " è già inserita in lista");
 										}
 									}
-									etichettaList.add(bene.getEtichetta());
-
+									etichettaList.add(dett.getEtichetta());
 								}
 
 							}
@@ -7736,22 +7735,23 @@ public RemoteIterator cercaBeniAssociabili(UserContext userContext,Ass_inv_bene_
 	}
 	public boolean checkEtichettaBeneAlreadyExist(UserContext userContext, Buono_carico_scarico_dettBulk dett) throws ComponentException, RemoteException {
 		try {
-			java.util.Hashtable progressivi = new java.util.Hashtable();
-			Long nr_inventario = new Long(0);
-
-			if (dett.isBeneAccessorio()) {
-				if (!dett.isAccessorioContestuale()) {
-					// Bene Accessorio di un bene già registrato su DB
-					dett.setNr_inventario(dett.getBene().getBene_principale().getNr_inventario());
-					dett.setProgressivo(
-							new Integer(getProgressivoDaBenePrincipale(userContext, dett.getBene().getBene_principale(), progressivi).intValue())
-					);
-				}
-			} else {
-				// Bene principale (senza accessori)
-				dett.setProgressivo(new Integer(0));
-				dett.setNr_inventario(nr_inventario);
-			}
+//			java.util.Hashtable progressivi = new java.util.Hashtable();
+//			Long nr_inventario = new Long(0);
+//
+//			//eliminare if visto che nel metodo entra solo se è un bene principale
+//			// nr_inventario e progressivo vengono settati nei metodi successivi esplodiDettagli e esplodiDettagliAssociatiContestualmente
+//			if (dett.isBeneAccessorio()) {
+//				if (!dett.isAccessorioContestuale()) {
+//					// Bene Accessorio di un bene già registrato su DB
+//					dett.setNr_inventario(dett.getBene().getBene_principale().getNr_inventario());
+//					dett.setProgressivo(
+//							new Integer(getProgressivoDaBenePrincipale(userContext, dett.getBene().getBene_principale(), progressivi).intValue())
+//					);
+//				}
+//			} else {
+//				// Bene principale (senza accessori)
+//				dett.setProgressivo(new Integer(0));
+//				dett.setNr_inventario(nr_inventario);
 
 			Inventario_beniHome invBeniHome = (Inventario_beniHome)getHome(userContext, Inventario_beniBulk.class);
 			return invBeniHome.IsEtichettaBeneAlreadyExist(dett);
