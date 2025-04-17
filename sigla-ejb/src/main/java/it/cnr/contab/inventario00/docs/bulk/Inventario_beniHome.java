@@ -304,8 +304,6 @@ public java.util.Collection findDettagliBuono(Buono_carico_scaricoBulk buono)thr
 		SQLBuilder sql = createSQLBuilder();
 
 		sql.addSQLClause("AND", "INVENTARIO_BENI.ETICHETTA", sql.EQUALS, dett.getBene().getEtichetta());
-//		tolta clausola per il progressivo
-//		sql.addSQLClause("AND", "INVENTARIO_BENI.PROGRESSIVO", sql.EQUALS, dett.getProgressivo());
 
 		return sql.executeExistsQuery(getConnection());
 	}
