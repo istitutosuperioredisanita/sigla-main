@@ -34,7 +34,6 @@ import it.cnr.contab.docamm00.ejb.AutoFatturaComponentSession;
 import it.cnr.contab.docamm00.ejb.DocumentoGenericoComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaAttivaSingolaComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
-import it.cnr.contab.doccont00.comp.AsyncConsSostitutivaComponentSession;
 import it.cnr.contab.doccont00.comp.AsyncPluriennaliComponentSession;
 import it.cnr.contab.doccont00.ejb.*;
 import it.cnr.contab.gestiva00.ejb.LiquidIvaInterfComponentSession;
@@ -44,7 +43,6 @@ import it.cnr.contab.incarichi00.ejb.IncarichiRepertorioComponentSession;
 import it.cnr.contab.incarichi00.ejb.RepertorioLimitiComponentSession;
 import it.cnr.contab.inventario00.ejb.*;
 import it.cnr.contab.ordmag.ejb.NumeratoriOrdMagComponentSession;
-import it.cnr.contab.ordmag.magazzino.ejb.ChiusuraAnnoComponentSession;
 import it.cnr.contab.ordmag.magazzino.ejb.MovimentiMagComponentSession;
 import it.cnr.contab.ordmag.magazzino.ejb.TransitoBeniOrdiniComponentSession;
 import it.cnr.contab.ordmag.ordini.ejb.OrdineAcqComponentSession;
@@ -650,6 +648,9 @@ public final class Utility {
 	}
 	public static V_AmmortamentoBeniDetComponentSession createV_AmmortamentoBeniDetComponentSession() throws javax.ejb.EJBException{
 		return (V_AmmortamentoBeniDetComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_V_AmmortamentoBeniDetComponentSession", V_AmmortamentoBeniDetComponentSession.class);
+	}
+	public static AsyncAmmortamentoBeneComponentSession createAsyncAmmortamentoBeneComponentSession() throws javax.ejb.EJBException{
+		return (AsyncAmmortamentoBeneComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_AsyncAmmortamentoBeneComponentSession", AsyncAmmortamentoBeneComponentSession.class);
 	}
 	public static ChiusuraAnnoComponentSession createChiusuraAnnoComponentSession() throws javax.ejb.EJBException{
 		return (ChiusuraAnnoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRORDMAG00_EJB_ChiusuraAnnoComponentSession", ChiusuraAnnoComponentSession.class);
