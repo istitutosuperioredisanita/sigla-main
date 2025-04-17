@@ -302,9 +302,7 @@ public java.util.Collection findDettagliBuono(Buono_carico_scaricoBulk buono)thr
 
 	public boolean IsEtichettaBeneAlreadyExist(Buono_carico_scarico_dettBulk dett) throws java.sql.SQLException {
 		SQLBuilder sql = createSQLBuilder();
-
 		sql.addSQLClause("AND", "INVENTARIO_BENI.ETICHETTA", sql.EQUALS, dett.getBene().getEtichetta());
-
 		return sql.executeExistsQuery(getConnection());
 	}
 
