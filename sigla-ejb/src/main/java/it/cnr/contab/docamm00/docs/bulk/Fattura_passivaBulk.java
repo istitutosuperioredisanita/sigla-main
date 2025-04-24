@@ -2203,9 +2203,9 @@ public abstract class Fattura_passivaBulk
                 getLettera_pagamento_estero() != null ||
                 isPagata() ||
                 isPagataParzialmente() ||
-                (getObbligazioniHash() == null || getObbligazioniHash().isEmpty())
+                (getObbligazioniHash() == null || getObbligazioniHash().isEmpty());
         //Come da richiesta 108 gestione errori CNR elimino il controllo sulla valuta (09/09/2002 RP)-Rimesso controllo 17/03/2025
-        || isDefaultValuta();
+        //|| isDefaultValuta();
     }
 
     /**

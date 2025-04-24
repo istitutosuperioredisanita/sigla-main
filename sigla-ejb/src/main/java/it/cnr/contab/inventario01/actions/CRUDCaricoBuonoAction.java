@@ -47,6 +47,7 @@ import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceHome;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.action.*;
 import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.PrimaryKeyHashtable;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
@@ -325,43 +326,79 @@ public Forward doBringBackSearchFind_categoria_bene(ActionContext context, Buono
 		return handleException(context,e);
 	}
 }
-/**
-  *  Richiamato nel caso che l'utente selezioni il Check-Box "Bene Accessorio", (il quale
-  * indica che il bene in quesione è accessorio di un altro bene): in tal caso, va
-  *	a controllare che al bene stesso non fossero già stati associati degli Utilizzatori.
-  *	In tal caso lancia un WARNING, che avvisa l'Utente che è impossibile fare questa
-  *	operazione se prima non vengono cancellati i CdR Utilizzatori associati.
-  *
-  * @param context il <code>ActionContext</code> che contiene le informazioni relative alla richiesta
-  *
-  * @return forward <code>Forward</code>
-**/ 
-public Forward doSelezionaBeneAccessorio(ActionContext context) {
-	
-	try {
-		CRUDCaricoInventarioBP bp = (CRUDCaricoInventarioBP)getBusinessProcess(context);
-		Buono_carico_scarico_dettBulk riga = (Buono_carico_scarico_dettBulk)bp.getDettaglio().getModel();
-		fillModel(context);
-		 if (riga.getBene().getCd_categoria_gruppo()==null){
-			 riga.setFl_bene_accessorio(new Boolean(false));
-			 throw new it.cnr.jada.comp.ApplicationException("Bisogna valorizzare prima la categoria");
-		 }
-		if (riga.isAssociatoConAccessorioContestuale()){
-			riga.setFl_bene_accessorio(new Boolean(false));
-			// Il bene è un Bene Padre di beni contestuali
-			throw new it.cnr.jada.comp.ApplicationException("Attenzione. Questo bene non può essere accessorio poichè ha dei beni associati ad esso");
-		}
-		if (riga.hasUtilizzatori()){
-			riga.setFl_bene_accessorio(new Boolean(false));
-			// Il bene è associato a dei CdR Utilizzatori
-			throw new it.cnr.jada.comp.ApplicationException("Attenzione. Non è possibile continuare nell'operazione poichè questo bene ha degli Utilizzatori");
-		}
+	/**
+	 * Richiamato quando l'utente seleziona il Check-Box "Bene Accessorio".
+	 * Verifica che il bene non abbia già utilizzatori associati o non sia un bene padre.
+	 * Inoltre, disabilita il campo etichetta e imposta il valore dall'etichetta del bene principale se presente.
+	 *
+	 * @param context il <code>ActionContext</code> che contiene le informazioni relative alla richiesta
+	 * @return forward <code>Forward</code>
+	 */
+	public Forward doSelezionaBeneAccessorio(ActionContext context) {
 
-		return context.findDefaultForward();
-	} catch(Throwable e) {
-		return handleException(context,e);
+		try {
+			CRUDCaricoInventarioBP bp = (CRUDCaricoInventarioBP)getBusinessProcess(context);
+			Buono_carico_scarico_dettBulk riga = (Buono_carico_scarico_dettBulk)bp.getDettaglio().getModel();
+			fillModel(context);
+
+			// Verifiche preliminari
+			if (riga.getBene().getCd_categoria_gruppo() == null) {
+				riga.setFl_bene_accessorio(Boolean.FALSE);
+				throw new it.cnr.jada.comp.ApplicationException("Bisogna valorizzare prima la categoria");
+			}
+
+			if (riga.isAssociatoConAccessorioContestuale()) {
+				riga.setFl_bene_accessorio(Boolean.FALSE);
+				throw new it.cnr.jada.comp.ApplicationException("Attenzione. Questo bene non può essere accessorio poichè ha dei beni associati ad esso");
+			}
+
+			if (riga.hasUtilizzatori()) {
+				riga.setFl_bene_accessorio(Boolean.FALSE);
+				throw new it.cnr.jada.comp.ApplicationException("Attenzione. Non è possibile continuare nell'operazione poichè questo bene ha degli Utilizzatori");
+			}
+
+			// Il campo etichetta sarà automaticamente disabilitato grazie al metodo isROetichetta()
+
+			// Se il bene ha un bene principale associato, utilizziamo la sua etichetta
+			if (riga.getBene().getBene_principale() != null &&
+					riga.getBene().getBene_principale().getEtichetta() != null) {
+				// Imposta l'etichetta usando quella del bene principale
+				riga.getBene().setEtichetta(riga.getBene().getBene_principale().getEtichetta());
+			} else {
+				riga.getBene().setEtichetta(null);
+			}
+
+			return context.findDefaultForward();
+		} catch(Throwable e) {
+			return handleException(context, e);
+		}
 	}
-}
+
+
+	protected void blankSearch(ActionContext actioncontext, FormField formfield, OggettoBulk oggettobulk) {
+		try {
+			OggettoBulk oggettobulk1 = formfield.getModel();
+			if (oggettobulk1 != null) {
+				// Verifica se il modello è un Buono_carico_scarico_dettBulk
+				if (oggettobulk1 instanceof Buono_carico_scarico_dettBulk) {
+					Buono_carico_scarico_dettBulk dettaglio = (Buono_carico_scarico_dettBulk) oggettobulk1;
+
+					// Azzera l'etichetta se il bene esiste
+					if (dettaglio.getBene() != null) {
+						dettaglio.getBene().setEtichetta(null);
+					}
+				}
+
+				// Imposta il valore del campo
+				formfield.getField().setValueIn(oggettobulk1, oggettobulk);
+				formfield.getFormController().setDirty(true);
+			}
+		} catch (Exception exception) {
+			throw new ActionPerformingError(exception);
+		}
+	}
+
+
 /**
   *  L'utente ha indicato il bene appena creato come bene accessorio di un bene creato nello 
   *	stesso Buono di Carico.
@@ -397,7 +434,7 @@ public Forward doFindAccessoriContestuali(ActionContext context) {
 		}
 
 		if (selectedModels.size()==0){
-			riga_da_associare.setFl_accessorio_contestuale(new Boolean(false));			
+			riga_da_associare.setFl_accessorio_contestuale(Boolean.FALSE);
 			throw new it.cnr.jada.comp.ApplicationException("Non ci sono elementi validi da associare come Bene Principale");
 		}
 		it.cnr.jada.util.action.SelezionatoreListaBP slbp = (it.cnr.jada.util.action.SelezionatoreListaBP) select(
@@ -570,17 +607,20 @@ public Forward doDeselezionaAccessoriContestuali(ActionContext context) {
 
 		riga.getBene().setBene_principale(null);
 		riga.getBene().setAssegnatario(null);
-		riga.getBene().setUbicazione(null);		
-		riga.setFl_accessorio_contestuale(new Boolean(false));
+		riga.getBene().setUbicazione(null);
+		riga.setFl_accessorio_contestuale(Boolean.FALSE);
+
+		// Rimuovi l'etichetta quando si deseleziona l'accessorio contestuale
+		riga.getBene().setEtichetta(null);
+
 		buono_cs.removeFromAccessoriContestualiHash(riga);
-		
+
 		return context.findDefaultForward();
-		
 	} catch(Throwable e) {
 		return handleException(context,e);
-	}	
-	
+	}
 }
+
 /**
   *  Durante la creazione di un Buono di Carico da Fattura Passiva, l'utente ha deselezionato 
   *	la proprietà <code>Associa a Bene non registrato</code>: il metodo provvede a resettare 
@@ -622,29 +662,33 @@ public Forward doDeselezionaAccessoriContestualiByFattura(ActionContext context)
   * @param context il <code>ActionContext</code> che contiene le informazioni relative alla richiesta  
   *
   * @return forward <code>Forward</code>
-**/ 
+**/
 public Forward doDeselezionaBeneAccessorio(ActionContext context) {
-	
+
 	try {
-		CRUDCaricoInventarioBP bp = (CRUDCaricoInventarioBP)getBusinessProcess(context);	
-		fillModel(context);
+		CRUDCaricoInventarioBP bp = (CRUDCaricoInventarioBP) getBusinessProcess(context);
 		Buono_carico_scarico_dettBulk riga = (Buono_carico_scarico_dettBulk) bp.getDettaglio().getModel();
-		Buono_carico_scaricoBulk buono_cs = (Buono_carico_scaricoBulk)bp.getModel();
-		if (riga.isAccessorioContestuale()){
+		fillModel(context);
+
+		if (riga.isAccessorioContestuale()) {
 			doDeselezionaAccessoriContestuali(context);
+			Buono_carico_scaricoBulk buono_cs = (Buono_carico_scaricoBulk) bp.getModel();
 			buono_cs.removeFromAccessoriContestualiHash(riga);
 		}
+
 		riga.getBene().setBene_principale(null);
 		riga.getBene().setAssegnatario(null);
-		riga.getBene().setUbicazione(null);		
-		riga.setFl_accessorio_contestuale(new Boolean(false));
+		riga.getBene().setUbicazione(null);
+		riga.setFl_accessorio_contestuale(Boolean.FALSE);
+
+		riga.getBene().setEtichetta(null);
+
 		return context.findDefaultForward();
-		
-	} catch(Throwable e) {
-		return handleException(context,e);
-	}	
-	
+	} catch (Throwable e) {
+		return handleException(context, e);
+	}
 }
+
 /**
   *  Assegna bene principale ad un bene accessorio "contestuale".
   *
@@ -672,19 +716,28 @@ public Forward doBringBackAccessoriContestuali(ActionContext context) {
 		if (selectedModels != null && !selectedModels.isEmpty()) {			
 			riga.getBene().setBene_principale(new Inventario_beniBulk());
 			riga.getBene().getBene_principale().setDs_bene(selezionato.getBene().getDs_bene());
+
+			// Copia l'etichetta dal bene principale
+			if (selezionato.getBene().getEtichetta() != null) {
+				riga.getBene().getBene_principale().setEtichetta(selezionato.getBene().getEtichetta());
+				riga.getBene().setEtichetta(selezionato.getBene().getEtichetta());
+			}
+
 			riga.getBene().setUbicazione(selezionato.getBene().getUbicazione());
 			riga.getBene().setAssegnatario(selezionato.getBene().getAssegnatario());
+			riga.setFl_bene_accessorio(Boolean.TRUE);
+			riga.setFl_accessorio_contestuale(Boolean.TRUE);
 			bp.setProgressivo_beni(buonoCS.addToAccessoriContestualiHash(selezionato, riga, bp.getProgressivo_beni()));
+		} else {
+			riga.setFl_accessorio_contestuale(Boolean.FALSE);
 		}
-		else 
-		{
-			riga.setFl_accessorio_contestuale(new Boolean(false));
-		}
+
 		return context.findDefaultForward();
 	} catch(Throwable e) {
 		return handleException(context,e);
 	}
 }
+
 /**
   *  Assegna bene principale ad un bene accessorio.
   *
@@ -697,31 +750,36 @@ public Forward doBringBackAccessoriContestuali(ActionContext context) {
   * @param selezionato il <code>Inventario_beniBulk</code> bene padre
   *
   * @return forward <code>Forward</code>
-**/ 
+**/
 public Forward doBringBackSearchFind_bene_principale(
-	ActionContext context,
-	Buono_carico_scarico_dettBulk dettaglio_accessorio,
-	Inventario_beniBulk selezionato) {
+		ActionContext context,
+		Buono_carico_scarico_dettBulk dettaglio_accessorio,
+		Inventario_beniBulk selezionato) {
 
 	try {
 		HookForward caller = (HookForward)context.getCaller();
 		CRUDCaricoInventarioBP bp = (CRUDCaricoInventarioBP)getBusinessProcess(context);
-		//it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession caricoComponentSession = (it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession)bp.createComponentSession();
-				
-		if (selezionato != null){		
+
+		if (selezionato != null) {
 			dettaglio_accessorio.getBene().setBene_principale(selezionato);
 			dettaglio_accessorio.getBene().setAssegnatario(selezionato.getAssegnatario());
 			dettaglio_accessorio.getBene().setUbicazione(selezionato.getUbicazione());
-			
+
 			dettaglio_accessorio.getBene().setTi_ammortamento(selezionato.getTi_ammortamento());
 			dettaglio_accessorio.getBene().setFl_ammortamento(selezionato.getFl_ammortamento());
-		}		
-		
+
+			// Imposta l'etichetta del bene accessorio con quella del bene principale
+			if (selezionato.getEtichetta() != null) {
+				dettaglio_accessorio.getBene().setEtichetta(selezionato.getEtichetta());
+			}
+		}
+
 		return context.findDefaultForward();
 	} catch(Throwable e) {
 		return handleException(context,e);
 	}
 }
+
 /**
   * Richiamato quando l'utente seleziona il flag "Soggetto ad Ammortamento", nel
   *	tab relativo all'ammortamento, (solo per Carico Diretto).

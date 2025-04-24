@@ -6384,6 +6384,7 @@ private void esplodiDettagliAssociatiContestualmente (
 			newBene.setNr_inventario(new_padre.getNr_inventario());
 			progressivo = new Long(progressivo.intValue()+1);
 			newBene.setProgressivo(new Long(progressivo.longValue()));
+			newBene.setEtichetta(old_padre.getEtichetta());
 			newBene.setTipo_ammortamento(new_padre.getBene().getTipo_ammortamento());
 			newBene.setFl_ammortamento(new_padre.getBene().getFl_ammortamento());
 			newDettaglio.setBene(newBene);			
@@ -6586,14 +6587,14 @@ private void validaValoreBeneDaFattura(Buono_carico_scaricoBulk buonoC) {
  * @param aUC lo <code>UserContext</code> che ha generato la richiesta.
  * @param buonoCarico il <code>Buono_caricoBulk</code> Buono di Carico.
 **/
-private void validaBuonoCarico (UserContext aUC,Buono_carico_scaricoBulk buonoCarico) 
-	throws ComponentException
+private void validaBuonoCarico(UserContext aUC, Buono_carico_scaricoBulk buonoCarico)
+		throws ComponentException
 {
 	Buono_carico_scarico_dettBulk dett = new Buono_carico_scarico_dettBulk();
-	Inventario_beniBulk bene = new Inventario_beniBulk();	
+	Inventario_beniBulk bene = new Inventario_beniBulk();
 	Iterator i = buonoCarico.getBuono_carico_scarico_dettColl().iterator();
 
-	try{
+	try {
 		// Controlla la testata del Buono di Carico
 		validaBuonoCarico_Testata(aUC, buonoCarico);
 
@@ -6602,6 +6603,7 @@ private void validaBuonoCarico (UserContext aUC,Buono_carico_scaricoBulk buonoCa
 			throw new it.cnr.jada.comp.ApplicationException("Attenzione: il Buono di Carico deve contenere almeno una riga di dettaglio.");
 
 		ArrayList<String> etichettaList=new ArrayList<>();
+
 		/****** INIZIO CONTROLLO SU TUTTE LE RIGHE DI DETTAGLIO ******/
 		while (i.hasNext()){
 
@@ -6676,21 +6678,22 @@ private void validaBuonoCarico (UserContext aUC,Buono_carico_scaricoBulk buonoCa
 						if (bene.getEtichetta() == null) {
 							throw new ApplicationException("E' necessario indicare l'etichetta del bene");
 						} else {
-							// VERIFICA PRESENZA ETICHETTA SU DB
-							if (checkEtichettaBeneAlreadyExist(aUC, dett)) {
-								throw new ApplicationException("Attenzione, l'etichetta: " + dett.getEtichetta() + " è già associata ad un altro bene");
-							}
-							//VERIIFICA ETICHETTA IN LISTA
-							else {
-								if (etichettaList.size() > 0) {
-									if (etichettaList.contains(dett.getEtichetta())) {
-										throw new ApplicationException("Attenzione, l'etichetta: " + dett.getEtichetta() + " è già inserita in lista");
-									}
+							if (!dett.isBeneAccessorio()){
+								// VERIFICA PRESENZA ETICHETTA SU DB
+								if (checkEtichettaBeneAlreadyExist(aUC, dett)) {
+									throw new ApplicationException("Attenzione, l'etichetta: " + dett.getEtichetta() + " è già associata ad un altro bene");
 								}
-								etichettaList.add(bene.getEtichetta());
+								//VERIIFICA ETICHETTA IN LISTA
+								else {
+									if (etichettaList.size() > 0) {
+										if (etichettaList.contains(dett.getEtichetta())) {
+											throw new ApplicationException("Attenzione, l'etichetta: " + dett.getEtichetta() + " è già inserita in lista");
+										}
+									}
+									etichettaList.add(dett.getEtichetta());
+								}
 
 							}
-
 						}
 					}
 				}
@@ -7730,11 +7733,11 @@ public RemoteIterator cercaBeniAssociabili(UserContext userContext,Ass_inv_bene_
 			sql.addSQLClause("AND","LIVELLO",sql.GREATER, "0");
 			return sql;		
 	}
-	public boolean checkEtichettaBeneAlreadyExist(UserContext userContext, Buono_carico_scarico_dettBulk dett)  throws ComponentException, RemoteException{
-		try{
+	public boolean checkEtichettaBeneAlreadyExist(UserContext userContext, Buono_carico_scarico_dettBulk dett) throws ComponentException, RemoteException {
+		try {
 			Inventario_beniHome invBeniHome = (Inventario_beniHome)getHome(userContext, Inventario_beniBulk.class);
 			return invBeniHome.IsEtichettaBeneAlreadyExist(dett);
-		}catch (SQLException ex) {
+		} catch (SQLException ex) {
 			throw handleException(ex);
 		}
 	}
