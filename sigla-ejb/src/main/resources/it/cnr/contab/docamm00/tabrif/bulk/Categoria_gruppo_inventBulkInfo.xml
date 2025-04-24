@@ -219,4 +219,11 @@
 		<formFieldProperty
 				name="ds_categoria_gruppo"/>
 	</form>
+	<columnSet name="restService">
+		<columnFieldProperty name="cd_categoria_gruppo" />
+		<columnFieldProperty name="ds_categoria_gruppo" />
+		<columnFieldProperty name="fl_gestione_inventario" />
+		<columnFieldProperty name="fl_ammortamento" />
+
+	</columnSet>
 </bulkInfo>
