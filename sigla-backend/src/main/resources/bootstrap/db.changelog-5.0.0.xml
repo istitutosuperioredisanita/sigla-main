@@ -6198,5 +6198,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
 
     <!-- Autore : DAVIDE MIRRA - nuova unique key per la tab INVENTARIO_BENI x campi ETICHETTA e PROGRESSIVO -->
     <include file="bootstrap/insert_unique_constraint_inv_beni.xml"/>
+    <!-- Autore : CIRO SALVIO - configurazione rest service per categoria gruppo invent -->
+    <include file="bootstrap/insert_rest_catgrp_invent.xml"/>
 
 </databaseChangeLog>
