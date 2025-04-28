@@ -30,10 +30,12 @@ import it.cnr.contab.logs.ejb.BatchControlComponentSession;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 
-import it.cnr.jada.util.SendMail;
+
+import it.cnr.jada.util.ejb.EJBCommonServices;
 import org.slf4j.LoggerFactory;
 
 import javax.ejb.Stateless;
@@ -42,10 +44,7 @@ import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Stateless(name = "CNRINVENTARIO00_EJB_AsyncAmmortamentoBeneComponentSession")
 public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements AsyncAmmortamentoBeneComponentSession {
@@ -97,6 +96,7 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
 
             final Batch_log_tstaBulk logDB = log;
             List<Batch_log_rigaBulk> listLogRighe = new ArrayList<>();
+            Integer countBeniAmm = 0;
 
             try {
                 Batch_log_rigaBulk log_riga = new Batch_log_rigaBulk();
@@ -106,21 +106,23 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                 log_riga.setMessaggio("Cancellazione Ammortamento Beni Inventario esercizio : "+esercizio);
                 log_riga.setTrace(log_riga.getMessaggio());
                 log_riga.setToBeCreated();
+                try {
+                    eliminaAmmortamentiPrecedentiDellEsercizio(uc, ammortamentoBeneComponent, inventarioBeniComponent, esercizio, subjectError);
+                }catch (ComponentException | RemoteException ex) {
+                    logger.info( "Errore durante l'eliminazione dell'ammortamento " + ex.getMessage());
+                    throw new DetailedRuntimeException(ex);
+                }
 
-                eliminaAmmortamentiPrecedentiDellEsercizio(uc, ammortamentoBeneComponent, inventarioBeniComponent, esercizio, subjectError);
 
                 try {
                     listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_riga));
                 } catch (ComponentException | RemoteException ex) {
                     logger.info( "Errore durante l'inserimento dell'errore in Batch_log_rigaBulk " + ex.getMessage());
-                    throw new DetailedRuntimeException(ex);
+                    //throw new DetailedRuntimeException(ex);
                 }
 
-                log_riga.setMessaggio("Estrazione Beni Inventario");
-                log_riga.setTrace(log_riga.getMessaggio());
-                log_riga.setPg_riga(BigDecimal.valueOf(listLogRighe.size() + 1));
-                log_riga.setToBeCreated();
                 List<V_ammortamento_beni_detBulk> beniList = getBeniDaElaborare(uc, v_ammortamentoBeneDetComponent, esercizio);
+
 
                 if (beniList == null || beniList.isEmpty()) {
                     logger.info("Non risultano beni per ammortamento esercizio: " + esercizio);
@@ -136,7 +138,7 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                         listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_rigaErr));
                     } catch (ComponentException | RemoteException ex2) {
                         logger.info("Errore durante l'inserimento della riga di chiusura di Batch_log_riga " + ex2.getMessage());
-                        throw new DetailedRuntimeException();
+                        //throw new DetailedRuntimeException();
                     }
                 }
 
@@ -150,17 +152,11 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                                     &&
                                     bene.getImponibileAmmortamentoCalcolato().compareTo(BigDecimal.ZERO) > 0 && !bene.getFlTotalmenteScaricato()) {
                             } else {
-                                try {
-                                        log_riga.setMessaggio("Ammortamento bene :"
-                                            + "-Numero Inventario:" + bene.getNrInventario()
-                                            + "-Pg Inventario:" + bene.getPgInventario()
-                                            + "-Progressivo:" + bene.getProgressivo());
-                                        log_riga.setPg_riga(BigDecimal.valueOf(listLogRighe.size() + 1));
-                                        log_riga.setTrace(log_riga.getMessaggio());
-                                        log_riga.setToBeCreated();
+
 
                                         BigDecimal percAmmortamento = bene.getNumeroAnnoAmmortamento().compareTo(BigDecimal.ZERO) == 0 ? Utility.nvl(bene.getPercPrimoAnno()) : Utility.nvl(bene.getPercSuccessivi());
                                         BigDecimal rataAmmortamento = BigDecimal.ZERO;
+
 
                                         //Controllare se il bene può essere ammortizzato dell'importo della rata calcolata precedentemente.
                                         //Si posssono verificare i seguenti casi:
@@ -188,53 +184,76 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                                             logger.info("Errore durante la creazione dell'ammortamento esercizio :" + esercizio + " pg_inventario: " + bene.getPgInventario() +
                                                     " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo());
                                         }
-                                        try {
-                                            //ammortamentoBeneComponent.inserisciAmmortamentoBene(uc, amm);
-                                            ammortamentoBeneComponent.creaConBulk(uc, amm);
-                                        } catch (RemoteException e) {
-                                           logger.info("Errore durante l'inserimento dell'amomortamento esercizio :" + esercizio + " pg_inventario: " + bene.getPgInventario() +
-                                                    " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo() + " - Error:" + e.getMessage());
+                                        else {
+                                            try {
+                                                //ammortamentoBeneComponent.inserisciAmmortamentoBene(uc, amm);
+                                                ammortamentoBeneComponent.creaConBulk(uc, amm);
+                                                countBeniAmm++;
+                                            } catch (ComponentException | RemoteException e) {
+                                                logger.info("Errore durante l'inserimento dell'amomortamento esercizio :" + esercizio + " pg_inventario: " + bene.getPgInventario() +
+                                                        " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo() + " - Error:" + e.getMessage());
+                                            }
                                         }
                                     }
-                                    listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_riga));
-                                } catch (ComponentException | RemoteException ex) {
-                                    logger.info( "Errore durante l'inserimento dell'errore in Batch_log_rigaBulk " + ex.getMessage());
-                                    throw new DetailedRuntimeException(ex);
-                                }
+                            //   try {
+                                    log_riga.setMessaggio("Ammortamento bene :"
+                                            + "-Numero Inventario:" + bene.getNrInventario()
+                                            + "-Pg Inventario:" + bene.getPgInventario()
+                                            + "-Progressivo:" + bene.getProgressivo());
+                                    log_riga.setPg_riga(BigDecimal.valueOf(listLogRighe.size() + 1));
+                                    log_riga.setTrace(log_riga.getMessaggio());
+                                    log_riga.setToBeCreated();
+                                    //listLogRighe.add(log_riga);
+                               //listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_riga));
+                          //      } catch (ComponentException | RemoteException ex) {
+                          //          logger.info( "Errore durante l'inserimento dell'errore in Batch_log_rigaBulk " + ex.getMessage());
+                                    //throw new DetailedRuntimeException(ex);
+                          //      }
                             }
                         }
                         else{
                             logger.info( "Attenzione nessun tipo ammortamento per il bene pg_inventario: " + bene.getPgInventario() +
                                          " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo());
+
+                            Batch_log_rigaBulk log_rigaErr = new Batch_log_rigaBulk();
+                            log_rigaErr.setPg_esecuzione(logDB.getPg_esecuzione());
+                            log_rigaErr.setPg_riga(BigDecimal.valueOf(listLogRighe.size() + 1));
+                            log_rigaErr.setTi_messaggio("W");
+                            log_rigaErr.setMessaggio("Attenzione nessun tipo ammortamento per il bene pg_inventario: " + bene.getPgInventario() +
+                                    " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo());
+                            log_rigaErr.setNote("");
+                            log_rigaErr.setToBeCreated();
+                            try {
+                                listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_rigaErr));
+                            } catch (ComponentException | RemoteException ex2) {
+                                logger.info("Errore durante l'inserimento della riga di chiusura di Batch_log_riga " + ex2.getMessage());
+                                //throw new DetailedRuntimeException();
+                            }
                         }
                     } catch (DetailedRuntimeException ex) {
                         throw new DetailedRuntimeException("Errore durante Ammortamento Bene esercizio:" + esercizio +"Error:" + ex.getMessage());
                     }
                 }
-                log.setNote(log.getNote()+" - End: "+ formatterTime.format(EJBCommonServices.getServerTimestamp().toInstant()));
-                log.setToBeUpdated();
-                try {
-                    batchControlComponentSession.modificaConBulkRequiresNew(uc, log);
-                } catch (ComponentException | RemoteException ex) {
-                    SendMail.sendErrorMail(subjectError, "Errore durante l'aggiornamento della riga di testata di Batch_log " + ex.getMessage());
-                    throw new ComponentException(ex);
-                }
+
+
 
                 try {
-                    log_riga.setMessaggio("Aggiornamento Valore Ammortizzato su Inventario per "+beniList.size()+" beni");
+                    log_riga.setMessaggio("Aggiornamento Valore Ammortizzato su Inventario per "+countBeniAmm+" beni");
                     log_riga.setTrace(log_riga.getMessaggio());
                     log_riga.setPg_riga(BigDecimal.valueOf(listLogRighe.size() + 1));
                     log_riga.setToBeCreated();
-                    try {
+
+                 /*   try {
                         inventarioBeniComponent.aggiornamentoInventarioBeneConAmmortamento(uc, esercizio, Ammortamento_bene_invBulk.INCREMENTA_VALORE_AMMORTIZZATO);
-                    } catch (RemoteException e) {
-                        logger.info("Errore durante l'aggiornamento Inventario a seguito dell'ammortamento esercizio: "+esercizio);
                     }
+                    catch (RemoteException e) {
+                        logger.info("Errore durante l'aggiornamento Inventario a seguito dell'ammortamento esercizio: "+esercizio);
+                    }*/
 
                     listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_riga));
                 } catch (ComponentException | RemoteException ex) {
                     logger.info( "Errore durante l'inserimento dell'errore in Batch_log_rigaBulk " + ex.getMessage());
-                    throw new DetailedRuntimeException(ex);
+                    //throw new DetailedRuntimeException(ex);
                 }
 
             } catch (Exception ex) {
@@ -249,14 +268,23 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                     listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_riga));
                 } catch (ComponentException | RemoteException ex2) {
                     logger.info( "Errore durante l'inserimento della riga di chiusura di Batch_log_riga " + ex2.getMessage());
-                    throw new DetailedRuntimeException(ex);
+                    //throw new DetailedRuntimeException(ex);
                 }
 
+            }
+            log.setNote(log.getNote()+" - End: "+ formatterTime.format(EJBCommonServices.getServerTimestamp().toInstant())+" - Ammortizzati "+countBeniAmm+ " beni.");
+            log.setToBeUpdated();
+            try {
+                batchControlComponentSession.modificaConBulkRequiresNew(uc, log);
+            } catch (ComponentException | RemoteException ex) {
+                logger.info( "Errore durante l'aggiornameto della riga di testata di Batch_log " + ex.getMessage());
+                //throw new ComponentException(ex);
             }
         }catch (Exception ex) {
 
             throw new DetailedRuntimeException(ex);
         }
+
     }
 
 
@@ -302,8 +330,8 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
         ammortamento.setTiAmmortamento(bene.getTiAmmortamento());
         ammortamento.setCdCategoriaGruppo(bene.getCdCategoriaGruppo());
         ammortamento.setEsercizioCompetenza(bene.getEsercizioCompetenza());
-        ammortamento.setImponibileAmmortamento(bene.getImponibileAmmortamentoCalcolato());
-        ammortamento.setImMovimentoAmmort(rataAmm);
+        ammortamento.setImponibileAmmortamento(bene.getImponibileAmmortamentoCalcolato().setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
+        ammortamento.setImMovimentoAmmort(rataAmm.setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
         ammortamento.setPercAmmortamento(percAmm);
         ammortamento.setNumeroAnni((bene.getNumeroAnnoAmmortamento().add(BigDecimal.ONE).intValue()));
         ammortamento.setNumeroAnno(numeroAnnoAmm);
