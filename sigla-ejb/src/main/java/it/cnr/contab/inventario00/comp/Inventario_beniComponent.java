@@ -1748,7 +1748,7 @@ private void validaUtilizzatori (UserContext aUC,Inventario_beniBulk bene)
 
 			ps = new LoggableStatement(getConnection(uc),
 					invHome.aggiornamentoSqlInventarioBeneConAmmortamento(uc,esercizio,azione), true, this.getClass());
-			ps.executeQuery();
+			ps.execute();
 			try {
 				ps.close();
 			} catch (java.sql.SQLException ignored) {

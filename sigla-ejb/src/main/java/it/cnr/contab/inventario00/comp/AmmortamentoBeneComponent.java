@@ -31,6 +31,7 @@ import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.*;
 import it.cnr.jada.comp.ApplicationException;
+import it.cnr.jada.comp.CRUDDuplicateKeyException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
@@ -139,4 +140,15 @@ public class AmmortamentoBeneComponent
 			}
 		}
 	}
+	public OggettoBulk creaConBulk(UserContext userContext, OggettoBulk bulk) throws it.cnr.jada.comp.ComponentException {
+		try {
+			super.creaConBulk(userContext, bulk);
+			return bulk;
+		} catch (CRUDDuplicateKeyException e) {
+			throw handleException(new ApplicationException("Inserimento impossibile: Chiave duplicata"));
+		} catch (Throwable e) {
+			throw handleException(bulk, e);
+		}
+	}
+
 }
