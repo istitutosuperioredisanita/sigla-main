@@ -1127,46 +1127,100 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
 	        printbp.addToPrintSpoolerParam(param);
         }    
 	}
-    
+
     public void initializePrintSinteticaBP(AbstractPrintBP bp) {
         OfflineReportPrintBP printbp = (OfflineReportPrintBP) bp;
 
-        Optional<ProgettoBulk> optProgetto = Optional.ofNullable(this.getModel()).filter(ProgettoBulk.class::isInstance).map(ProgettoBulk.class::cast);
+        Optional<ProgettoBulk> optProgetto = Optional.ofNullable(this.getModel())
+                .filter(ProgettoBulk.class::isInstance)
+                .map(ProgettoBulk.class::cast);
+
         if (optProgetto.isPresent()) {
-	        printbp.setReportName("/cnrpreventivo/pdg/piano_economico_progetto.jasper");
-	
-	        Print_spooler_paramBulk param = new Print_spooler_paramBulk();
-	        param.setNomeParam("P_ESERCIZIO");
-	        param.setValoreParam(esercizioScrivania.toString());
-	        param.setParamType("java.lang.Integer");
-	        printbp.addToPrintSpoolerParam(param);
-	
-	        param = new Print_spooler_paramBulk();
-	        param.setNomeParam("P_CENTRO_RESPONSABILITA");
-	        param.setValoreParam(cdrScrivania);
-	        param.setParamType("java.lang.String");
-	        printbp.addToPrintSpoolerParam(param);
+            printbp.setReportName("/cnrpreventivo/pdg/situazione_sintetica_x_progetto.jasper");
 
-	        param = new Print_spooler_paramBulk();
-	        param.setNomeParam("P_PG_PROGETTO");
-	        param.setValoreParam(optProgetto.get().getPg_progetto().toString());
-	        param.setParamType("java.lang.Integer");
-	        printbp.addToPrintSpoolerParam(param);
-	        
-	        param = new Print_spooler_paramBulk();
-	        param.setNomeParam("P_UO_ENTE");
-			param.setValoreParam(uoScrivania.isUoEnte()?"Y":"N");
-			param.setParamType("java.lang.String");
-	        printbp.addToPrintSpoolerParam(param);
+            Print_spooler_paramBulk param = new Print_spooler_paramBulk();
 
-	        param = new Print_spooler_paramBulk();
-	        param.setNomeParam("P_PRINT_DETAIL");
-			param.setValoreParam("N");
-			param.setParamType("java.lang.String");
-	        printbp.addToPrintSpoolerParam(param);
-    	}    
-	}
-    
+            param.setNomeParam("P_ESERCIZIO");
+            param.setValoreParam(esercizioScrivania.toString());
+            param.setParamType("java.lang.Integer");
+            printbp.addToPrintSpoolerParam(param);
+
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_PROGETTO");
+            param.setValoreParam(optProgetto.get().getPg_progetto().toString());
+            param.setParamType("java.lang.Integer");
+            printbp.addToPrintSpoolerParam(param);
+
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_UO");
+            param.setValoreParam(uoScrivania.getCd_unita_organizzativa());
+            param.setParamType("java.lang.String");
+            printbp.addToPrintSpoolerParam(param);
+
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_GAE");
+            param.setValoreParam("*");
+            param.setParamType("java.lang.String");
+            printbp.addToPrintSpoolerParam(param);
+
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_PRINT_ANNO");
+            param.setValoreParam(Boolean.toString(false));
+            param.setParamType("java.lang.Boolean");
+            printbp.addToPrintSpoolerParam(param);
+
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_PRINT_GAE");
+            param.setValoreParam(Boolean.toString(false));
+            param.setParamType("java.lang.Boolean");
+            printbp.addToPrintSpoolerParam(param);
+
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_PRINT_VOCE");
+            param.setValoreParam(Boolean.toString(false));
+            param.setParamType("java.lang.Boolean");
+            printbp.addToPrintSpoolerParam(param);
+
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_PRINT_PIANO_ECO");
+            param.setValoreParam(Boolean.toString(false));
+            param.setParamType("java.lang.Boolean");
+            printbp.addToPrintSpoolerParam(param);
+
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_PRINT_SOLO_GAE_ATTIVE");
+            param.setValoreParam(Boolean.toString(false));
+            param.setParamType("java.lang.Boolean");
+            printbp.addToPrintSpoolerParam(param);
+
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_PRINT_MOVIMENTAZIONE");
+            param.setValoreParam(Boolean.toString(false));
+            param.setParamType("java.lang.Boolean");
+            printbp.addToPrintSpoolerParam(param);
+
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_RESPONSABILE_GAE");
+            param.setValoreParam(String.valueOf(-1));
+            param.setParamType("java.lang.Integer");
+            printbp.addToPrintSpoolerParam(param);
+
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_DS_RESPONSABILE_GAE");
+            param.setValoreParam(null);
+            param.setParamType("java.lang.String");
+            printbp.addToPrintSpoolerParam(param);
+
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_ORDINE");
+            param.setValoreParam("A");
+            param.setParamType("java.lang.String");
+            printbp.addToPrintSpoolerParam(param);
+        }
+    }
+
+
+
     public Unita_organizzativaBulk getUoScrivania() {
     	return uoScrivania;
     }
