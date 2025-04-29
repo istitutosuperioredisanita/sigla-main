@@ -22,6 +22,7 @@ import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -29,15 +30,16 @@ import it.cnr.jada.bulk.ValidationException;
 
 import javax.persistence.Transient;
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Dictionary;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Documento_generico_rigaBulk extends Documento_generico_rigaBase implements IDocumentoAmministrativoRigaBulk, Voidable {
     private Documento_genericoBulk documento_generico;
+	private List<Documento_generico_riga_ecoBulk> righeEconomica = new BulkList<>();
 
     private BulkList riferimenti_bancari= new BulkList();
+	private ContoBulk voce_ep = new ContoBulk();
 
     protected BancaBulk banca;
     protected TerzoBulk terzo;
@@ -438,11 +440,7 @@ public class Documento_generico_rigaBulk extends Documento_generico_rigaBase imp
 	public java.util.Dictionary getTi_associato_manrevKeys() {
 		return STATO_MANDATO;
 	}
-	/**
-	 * Insert the method's description here.
-	 * Creation date: (28/09/2001 16.43.41)
-	 * @param newAnagrafico it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk
-	 */
+
 	public it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk getVoce_iva(){
 		return null;
 	}
@@ -599,6 +597,7 @@ public class Documento_generico_rigaBulk extends Documento_generico_rigaBase imp
 	public void setDocumento_generico(Documento_genericoBulk newDocumento_generico) {
 		documento_generico = newDocumento_generico;
 	}
+
 	public void setIm_diponibile_nc(java.math.BigDecimal im_diponibile_nc){
 	}
 	/**
@@ -1168,5 +1167,30 @@ public class Documento_generico_rigaBulk extends Documento_generico_rigaBase imp
 					.orElse(fattura_attiva_riga_storno
 							.orElse(fattura_passiva_riga_storno
 									.orElse(null))));
+	}
+
+    public List<Documento_generico_riga_ecoBulk> getRigheEconomica() {
+        return righeEconomica;
+    }
+
+    public void setRigheEconomica(List<Documento_generico_riga_ecoBulk> righeEconomica) {
+        this.righeEconomica = righeEconomica;
+    }
+
+    @Override
+    public ContoBulk getVoce_ep() {
+        return voce_ep;
+    }
+
+    public void setVoce_ep(ContoBulk voce_ep) {
+        this.voce_ep = voce_ep;
+    }
+
+	@Override
+	public List<IDocumentoAmministrativoRigaEcoBulk> getChildrenEco() {
+		return this.getRigheEconomica().stream()
+				.filter(Objects::nonNull)
+				.map(IDocumentoAmministrativoRigaEcoBulk.class::cast)
+				.collect(Collectors.toList());
 	}
 }

@@ -17,6 +17,7 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
@@ -110,4 +111,13 @@ public class Nota_di_credito_rigaHome extends Fattura_passiva_rigaHome {
 				.stream()
 				.findAny();
 	}
+
+    public ContoBulk getContoCostoDefault(Nota_di_credito_rigaBulk docRiga) {
+        if (docRiga.getRiga_fattura_origine()!=null && docRiga.getRiga_fattura_origine().getPg_fattura_passiva()!=null) {
+            Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
+            Fattura_passiva_rigaBulk rigaCollegata = (Fattura_passiva_rigaBulk)fatpasHome.loadIfNeededObject(docRiga.getRiga_fattura_origine());
+            return super.getContoCostoDefault(rigaCollegata);
+        }
+        return null;
+    }
 }

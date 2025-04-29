@@ -9382,6 +9382,4 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         return Boolean.FALSE;
     }
 
-
-
 }

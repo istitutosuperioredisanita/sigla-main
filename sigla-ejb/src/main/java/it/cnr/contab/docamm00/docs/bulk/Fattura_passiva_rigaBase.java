@@ -160,6 +160,12 @@ public class Fattura_passiva_rigaBase extends Fattura_passiva_rigaKey implements
     // NUMERO_AVVISO_PAGOPA VARCHAR2(18)
     private java.lang.String numero_avviso_pagopa;
 
+    // ESERCIZIO_VOCE_EP DECIMAL(4,0) NOT NULL
+    private java.lang.Integer esercizio_voce_ep;
+
+    // CD_VOCE_EP VARCHAR(45) NOT NULL
+    private java.lang.String cd_voce_ep;
+
     public Fattura_passiva_rigaBase() {
         super();
     }
@@ -758,5 +764,21 @@ public class Fattura_passiva_rigaBase extends Fattura_passiva_rigaKey implements
 
     public void setNumero_avviso_pagopa(String numero_avviso_pagopa) {
         this.numero_avviso_pagopa = numero_avviso_pagopa;
+    }
+
+    public Integer getEsercizio_voce_ep() {
+        return esercizio_voce_ep;
+    }
+
+    public void setEsercizio_voce_ep(Integer esercizio_voce_ep) {
+        this.esercizio_voce_ep = esercizio_voce_ep;
+    }
+
+    public String getCd_voce_ep() {
+        return cd_voce_ep;
+    }
+
+    public void setCd_voce_ep(String cd_voce_ep) {
+        this.cd_voce_ep = cd_voce_ep;
     }
 }

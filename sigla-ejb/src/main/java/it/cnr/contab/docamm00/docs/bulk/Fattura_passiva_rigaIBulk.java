@@ -32,7 +32,7 @@ import it.cnr.jada.bulk.BulkList;
  */
 public class Fattura_passiva_rigaIBulk extends Fattura_passiva_rigaBulk {
 
-	private Fattura_passiva_IBulk fattura_passivaIBulk;	
+	private Fattura_passiva_IBulk fattura_passivaIBulk;
 
 	private java.math.BigDecimal saldo = new java.math.BigDecimal(0);
 	private java.math.BigDecimal im_totale_storni = new java.math.BigDecimal(0);

@@ -22,6 +22,7 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
 import it.cnr.contab.config00.bulk.CigBulk;
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk;
 import it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk;
@@ -32,14 +33,15 @@ import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
+import org.springframework.util.Assert;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Dictionary;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public abstract class Fattura_passiva_rigaBulk
         extends Fattura_passiva_rigaBase
@@ -99,6 +101,8 @@ public abstract class Fattura_passiva_rigaBulk
 
     private TrovatoBulk trovato = new TrovatoBulk(); // inizializzazione necessaria per i bulk non persistenti
     private Boolean collegatoCapitoloPerTrovato = false;
+    protected ContoBulk voce_ep = new ContoBulk();
+    private List<Fattura_passiva_riga_ecoBulk> righeEconomica = new BulkList<>();
 
     public Fattura_passiva_rigaBulk() {
         super();
@@ -785,4 +789,71 @@ public abstract class Fattura_passiva_rigaBulk
         return getDs_riga_fattura();
     }
 
+    public ContoBulk getVoce_ep() {
+        return voce_ep;
+    }
+
+    public void setVoce_ep(ContoBulk voce_ep) {
+        this.voce_ep = voce_ep;
+    }
+
+    @Override
+    public java.lang.Integer getEsercizio_voce_ep() {
+        return Optional.ofNullable(this.getVoce_ep())
+                .map(ContoBulk::getEsercizio)
+                .orElse(null);
+    }
+
+    @Override
+    public void setEsercizio_voce_ep(java.lang.Integer esercizio_voce_ep) {
+        Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setEsercizio(esercizio_voce_ep));
+    }
+
+    @Override
+    public java.lang.String getCd_voce_ep() {
+        return Optional.ofNullable(this.getVoce_ep())
+                .map(ContoBulk::getCd_voce_ep)
+                .orElse(null);
+    }
+
+    @Override
+    public void setCd_voce_ep(java.lang.String cd_voce_ep) {
+        Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setCd_voce_ep(cd_voce_ep));
+    }
+
+    public List<Fattura_passiva_riga_ecoBulk> getRigheEconomica() {
+        return righeEconomica;
+    }
+
+    public void setRigheEconomica(List<Fattura_passiva_riga_ecoBulk> righeEconomica) {
+        this.righeEconomica = righeEconomica;
+    }
+
+    @Override
+    public List<IDocumentoAmministrativoRigaEcoBulk> getChildrenEco() {
+        return this.getRigheEconomica().stream()
+                .filter(Objects::nonNull)
+                .map(IDocumentoAmministrativoRigaEcoBulk.class::cast)
+                .collect(Collectors.toList());
+    }
+
+    /*
+     * Ritorna l'importo della riga da imputare ad un conto di costo.
+     * Il valore viene utilizzato come quota da ripartire a livello analitico.
+     */
+    @Override
+    public BigDecimal getImportoCostoEco() {
+        BigDecimal importoCostoEco = this.getIm_imponibile();
+        Assert.isTrue(Optional.ofNullable(this.getVoce_iva()).flatMap(el->Optional.ofNullable(el.getPg_ver_rec())).isPresent(), "Calcolo Importo economico non possibile! Non risulta caricato l'oggetto Voce Iva.");
+        if (((Fattura_passivaBulk) this.getFather()).isIstituzionale() || !this.getVoce_iva().isDetraibile())
+            importoCostoEco = importoCostoEco.add(this.getIm_iva());
+        return importoCostoEco;
+    }
+
+    /*
+     * Ritorna l'importo ripartito tra le righe di economica
+     */
+    public BigDecimal getImportoCostoEcoRipartito() {
+        return this.getRigheEconomica().stream().map(IDocumentoAmministrativoRigaEcoBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 }

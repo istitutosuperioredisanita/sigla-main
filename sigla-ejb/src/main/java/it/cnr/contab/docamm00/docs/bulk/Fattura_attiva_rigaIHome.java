@@ -19,12 +19,14 @@ package it.cnr.contab.docamm00.docs.bulk;
 
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
+import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
 import java.math.BigDecimal;
@@ -103,5 +105,9 @@ public class Fattura_attiva_rigaIHome extends Fattura_attiva_rigaHome {
 		sqlBuilder.addSQLNotExistsClause(FindClause.AND, sqlNotExists);
 
 		return sqlBuilder;
+	}
+
+	public ContoBulk getContoRicavoDefault(Fattura_attiva_rigaIBulk docRiga) {
+		return super.getContoRicavoDefault(docRiga);
 	}
 }
