@@ -486,6 +486,16 @@
         </sql>
         <sql>
             UPDATE VOCE_EP
+            SET CD_VOCE_EP_CONTR = 'P22010'
+            WHERE CD_VOCE_EP LIKE 'A22010';
+        </sql>
+        <sql>
+            UPDATE VOCE_EP
+            SET CD_VOCE_EP_CONTR = 'P22011'
+            WHERE CD_VOCE_EP LIKE 'A22011';
+        </sql>
+        <sql>
+            UPDATE VOCE_EP
             SET CD_VOCE_EP_CONTR = 'P22012'
             WHERE CD_VOCE_EP LIKE 'A22012';
         </sql>

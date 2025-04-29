@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="raffaele.pagano" id="add_column_voce_ep_fattura_attiva_riga">
+        <addColumn tableName="FATTURA_ATTIVA_RIGA">
+            <column name="esercizio_voce_ep" remarks="Esercizio Conto Economico" type="SMALLINT"/>
+            <column name="cd_voce_ep" remarks="Codice Identificativo completo del conto del piano." type="VARCHAR(20)"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="esercizio_voce_ep,cd_voce_ep" baseTableName="fattura_attiva_riga" constraintName="fk_fattura_attiva_riga05" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="esercizio,cd_voce_ep" referencedTableName="voce_ep"/>
+        <createIndex indexName="fx_fattura_attiva_riga07" tableName="fattura_attiva_riga">
+            <column name="esercizio_voce_ep"/>
+            <column name="cd_voce_ep"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="add_column_voce_ep_fattura_passiva_riga">
+        <addColumn tableName="FATTURA_PASSIVA_RIGA">
+            <column name="esercizio_voce_ep" remarks="Esercizio Conto Economico" type="SMALLINT"/>
+            <column name="cd_voce_ep" remarks="Codice Identificativo completo del conto del piano." type="VARCHAR(20)"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="esercizio_voce_ep,cd_voce_ep" baseTableName="fattura_passiva_riga" constraintName="fk_fattura_passiva_riga12" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="esercizio,cd_voce_ep" referencedTableName="voce_ep"/>
+        <createIndex indexName="fx_fattura_passiva_riga12" tableName="fattura_passiva_riga">
+            <column name="esercizio_voce_ep"/>
+            <column name="cd_voce_ep"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="add_column_voce_ep_documento_generico_riga">
+        <addColumn tableName="DOCUMENTO_GENERICO_RIGA">
+            <column name="esercizio_voce_ep" remarks="Esercizio Conto Economico" type="SMALLINT"/>
+            <column name="cd_voce_ep" remarks="Codice Identificativo completo del conto del piano." type="VARCHAR(20)"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="esercizio_voce_ep,cd_voce_ep" baseTableName="documento_generico_riga" constraintName="fk_documento_generico_riga12" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="esercizio,cd_voce_ep" referencedTableName="voce_ep"/>
+        <createIndex indexName="fx_documento_generico_riga12" tableName="documento_generico_riga">
+            <column name="esercizio_voce_ep"/>
+            <column name="cd_voce_ep"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="add_table_fattura_attiva_riga_eco">
+        <!-- TABELLA DETTAGLIO FATTURA_ATTIVA_RIGA_ECO-->
+        <createTable tableName="fattura_attiva_riga_eco" remarks="Contiene i dati economici della riga di fattura" >
+            <column name="cd_cds" remarks="Codice identificativo del centro di spesa su cui è registrata la fattura." type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_unita_organizzativa" remarks="Codice identificativo dell'unità organizzativa" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="esercizio" remarks="Esercizio di riferimento della registrazione della fattura" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_fattura_attiva" remarks="Protocollo interno di numerazione delle fatture attive." type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progressivo_riga" remarks="Progressivo numerazione righe all'interno di una fattura attiva" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progressivo_riga_eco" remarks="Progressivo numerazione righe economiche all'interno di una riga fattura attiva" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <!-- TABELLA VOCE_ANALITICA -->
+            <column name="esercizio_voce_ana" remarks="Esercizio Conto analitico" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_voce_ana" remarks="Codice Identificativo completo del conto analitico del piano." type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <!-- TABELLA LINEA_ATTIVITA -->
+            <column name="cd_centro_responsabilita" remarks="Codice identificativo del centro di responsabilità" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_linea_attivita" remarks="Codice della linea di attività" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="importo" remarks="Importo da assegnare al costo e Gae" type="numeric(15, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record: viene incrementato di 1 ad ogni variazione" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="fattura_attiva_riga_eco" constraintName="fattura_attiva_riga_eco_pkey" columnNames="cd_cds,cd_unita_organizzativa,esercizio,pg_fattura_attiva,progressivo_riga,progressivo_riga_eco"></addPrimaryKey>
+
+        <addForeignKeyConstraint baseColumnNames="esercizio_voce_ana,cd_voce_ana" baseTableName="fattura_attiva_riga_eco" constraintName="fk_fattura_attiva_riga_eco01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="esercizio,cd_voce_ana" referencedTableName="voce_analitica"/>
+        <addForeignKeyConstraint baseColumnNames="cd_centro_responsabilita,cd_linea_attivita" baseTableName="fattura_attiva_riga_eco" constraintName="fk_fattura_attiva_riga_eco02" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cd_centro_responsabilita,cd_linea_attivita" referencedTableName="linea_attivita"/>
+
+        <createIndex indexName="fx_fattura_attiva_riga_eco01" tableName="fattura_attiva_riga_eco">
+            <column name="esercizio_voce_ana"/>
+            <column name="cd_voce_ana"/>
+        </createIndex>
+
+        <createIndex indexName="fx_fattura_attiva_riga_eco02" tableName="fattura_attiva_riga_eco">
+            <column name="CD_CENTRO_RESPONSABILITA"/>
+            <column name="CD_LINEA_ATTIVITA"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="add_table_fattura_passiva_riga_eco">
+        <!-- TABELLA DETTAGLIO FATTURA_PASSIVA_RIGA_ECO-->
+        <createTable tableName="fattura_passiva_riga_eco" remarks="Contiene i dati economici della riga di fattura" >
+            <column name="cd_cds" remarks="Codice identificativo del centro di spesa su cui è registrata la fattura." type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_unita_organizzativa" remarks="Codice identificativo dell'unità organizzativa su cui è registrata la fattura." type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="esercizio" remarks="Esercizio di riferimento della registrazione della fattura" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_fattura_passiva" remarks="Protocollo interno di numerazione delle fatture passive" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progressivo_riga" remarks="Progressivo numerazione righe all'interno di una fattura passiva" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progressivo_riga_eco" remarks="Progressivo numerazione righe economiche all'interno di una riga fattura passiva" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <!-- TABELLA VOCE_ANALITICA -->
+            <column name="esercizio_voce_ana" remarks="Esercizio Conto analitico" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_voce_ana" remarks="Codice Identificativo completo del conto analitico del piano." type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <!-- TABELLA LINEA_ATTIVITA -->
+            <column name="cd_centro_responsabilita" remarks="Codice identificativo del centro di responsabilità" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_linea_attivita" remarks="Codice della linea di attività" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="importo" remarks="Importo da assegnare al costo e Gae" type="numeric(15, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record: viene incrementato di 1 ad ogni variazione" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="fattura_passiva_riga_eco" constraintName="fattura_passiva_riga_eco_pkey" columnNames="cd_cds,cd_unita_organizzativa,esercizio,pg_fattura_passiva,progressivo_riga,progressivo_riga_eco"></addPrimaryKey>
+
+        <addForeignKeyConstraint baseColumnNames="esercizio_voce_ana,cd_voce_ana" baseTableName="fattura_passiva_riga_eco" constraintName="fk_fattura_passiva_riga_eco01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="esercizio,cd_voce_ana" referencedTableName="voce_analitica"/>
+        <addForeignKeyConstraint baseColumnNames="cd_centro_responsabilita,cd_linea_attivita" baseTableName="fattura_passiva_riga_eco" constraintName="fk_fattura_passiva_riga_eco02" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cd_centro_responsabilita,cd_linea_attivita" referencedTableName="linea_attivita"/>
+
+        <createIndex indexName="fx_fattura_passiva_riga_eco01" tableName="fattura_passiva_riga_eco">
+            <column name="esercizio_voce_ana"/>
+            <column name="cd_voce_ana"/>
+        </createIndex>
+
+        <createIndex indexName="fx_fattura_passiva_riga_eco02" tableName="fattura_passiva_riga_eco">
+            <column name="CD_CENTRO_RESPONSABILITA"/>
+            <column name="CD_LINEA_ATTIVITA"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="add_table_documento_generico_riga_eco">
+        <!-- TABELLA DETTAGLIO DOCUMENTO_GENERICO_RIGA_ECO-->
+        <createTable tableName="documento_generico_riga_eco" remarks="Contiene i dati economici della riga di documento generico" >
+            <column name="cd_cds" remarks="Codice identificativo del centro di spesa su cui è registrata il documento generico." type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_unita_organizzativa" remarks="Codice identificativo dell'unità organizzativa su cui è registrata la fattura." type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="esercizio" remarks="Esercizio di riferimento della registrazione della fattura" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_tipo_documento_amm" remarks="Tipologia documento amministrativo." type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_documento_generico" remarks="Protocollo interno di numerazione del documento generico" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progressivo_riga" remarks="Progressivo numerazione righe all'interno del documento generico" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progressivo_riga_eco" remarks="Progressivo numerazione righe economiche all'interno di una riga del documento generico" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <!-- TABELLA VOCE_ANALITICA -->
+            <column name="esercizio_voce_ana" remarks="Esercizio Conto analitico" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_voce_ana" remarks="Codice Identificativo completo del conto analitico del piano." type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <!-- TABELLA LINEA_ATTIVITA -->
+            <column name="cd_centro_responsabilita" remarks="Codice identificativo del centro di responsabilità" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_linea_attivita" remarks="Codice della linea di attività" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="importo" remarks="Importo da assegnare al costo e Gae" type="numeric(15, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record: viene incrementato di 1 ad ogni variazione" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="documento_generico_riga_eco" constraintName="documento_generico_riga_eco_pkey" columnNames="cd_cds,cd_unita_organizzativa,esercizio,cd_tipo_documento_amm,pg_documento_generico,progressivo_riga,progressivo_riga_eco"></addPrimaryKey>
+
+        <addForeignKeyConstraint baseColumnNames="esercizio_voce_ana,cd_voce_ana" baseTableName="documento_generico_riga_eco" constraintName="fk_documento_generico_riga_eco01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="esercizio,cd_voce_ana" referencedTableName="voce_analitica"/>
+        <addForeignKeyConstraint baseColumnNames="cd_centro_responsabilita,cd_linea_attivita" baseTableName="documento_generico_riga_eco" constraintName="fk_documento_generico_riga_eco02" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cd_centro_responsabilita,cd_linea_attivita" referencedTableName="linea_attivita"/>
+
+        <createIndex indexName="fx_documento_generico_riga_eco01" tableName="documento_generico_riga_eco">
+            <column name="esercizio_voce_ana"/>
+            <column name="cd_voce_ana"/>
+        </createIndex>
+
+        <createIndex indexName="fx_documento_generico_riga_eco02" tableName="documento_generico_riga_eco">
+            <column name="CD_CENTRO_RESPONSABILITA"/>
+            <column name="CD_LINEA_ATTIVITA"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

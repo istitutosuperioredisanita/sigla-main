@@ -18,7 +18,9 @@
 package it.cnr.contab.docamm00.docs.bulk;
 
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
+import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.*;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.PersistentHome;
@@ -26,7 +28,7 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
 
 import java.sql.Timestamp;
 import java.util.Collections;
-import java.util.List;
+import java.util.Optional;
 
 public class Fattura_passivaHome extends BulkHome {
     protected Fattura_passivaHome(Class clazz, java.sql.Connection connection) {
@@ -147,5 +149,16 @@ public class Fattura_passivaHome extends BulkHome {
             return home.fetchAll(sql);
         }
         return Collections.EMPTY_LIST;
+    }
+
+    public OggettoBulk loadIfNeededObject(OggettoBulk object) {
+        return Optional.of(object).filter(el->el.getCrudStatus()!=OggettoBulk.UNDEFINED).orElseGet(()-> {
+            try {
+                BulkHome bulkHome = (BulkHome)getHomeCache().getHome(object.getClass());
+                return (OggettoBulk)bulkHome.findByPrimaryKey(object);
+            } catch (PersistencyException ex) {
+                throw new DetailedRuntimeException(ex);
+            }
+        });
     }
 }

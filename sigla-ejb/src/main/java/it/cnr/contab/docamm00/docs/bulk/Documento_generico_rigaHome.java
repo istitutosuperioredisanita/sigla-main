@@ -23,12 +23,15 @@ package it.cnr.contab.docamm00.docs.bulk;
  * @author: Ardire Alfonso
  */
 
-import it.cnr.contab.anagraf00.core.bulk.Termini_pagamentoBulk;
-import it.cnr.contab.coepcoan00.core.bulk.PartitarioBulk;
 import it.cnr.contab.config00.bulk.CausaleContabileBulk;
 import it.cnr.contab.config00.latt.bulk.CostantiTi_gestione;
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
+import it.cnr.contab.config00.pdcep.bulk.Ass_ev_voceepBulk;
+import it.cnr.contab.config00.pdcep.bulk.Ass_ev_voceepHome;
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
+import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.*;
 import it.cnr.jada.comp.ComponentException;
@@ -169,6 +172,64 @@ public class Documento_generico_rigaHome extends BulkHome {
             return result.stream().findAny();
         } catch (PersistencyException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public java.util.List<Documento_generico_riga_ecoBulk> findDocumentoGenericoRigheEcoList(Documento_generico_rigaBulk docRiga ) throws PersistencyException {
+        PersistentHome home = getHomeCache().getHome(Documento_generico_riga_ecoBulk.class);
+        it.cnr.jada.persistency.sql.SQLBuilder sql = home.createSQLBuilder();
+        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, docRiga.getEsercizio());
+        sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, docRiga.getCd_cds());
+        sql.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, docRiga.getCd_unita_organizzativa());
+        sql.addClause(FindClause.AND, "cd_tipo_documento_amm", SQLBuilder.EQUALS, docRiga.getCd_tipo_documento_amm());
+        sql.addClause(FindClause.AND, "pg_documento_generico", SQLBuilder.EQUALS, docRiga.getPg_documento_generico());
+        sql.addClause(FindClause.AND, "progressivo_riga", SQLBuilder.EQUALS, docRiga.getProgressivo_riga());
+        return home.fetchAll(sql);
+    }
+
+    public ContoBulk getContoRicavoDefault(Documento_generico_rigaBulk docRiga) {
+        try {
+            Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
+            if (Optional.ofNullable(docRiga).isPresent()) {
+                if (Optional.ofNullable(docRiga.getAccertamento_scadenziario()).isPresent()) {
+                    Accertamento_scadenzarioBulk accertScad = (Accertamento_scadenzarioBulk) fatpasHome.loadIfNeededObject(docRiga.getAccertamento_scadenziario());
+
+                    if (Optional.ofNullable(accertScad).isPresent()) {
+                        AccertamentoBulk accert = (AccertamentoBulk) fatpasHome.loadIfNeededObject(accertScad.getAccertamento());
+                        Ass_ev_voceepHome assEvVoceEpHome = (Ass_ev_voceepHome) getHomeCache().getHome(Ass_ev_voceepBulk.class);
+                        List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(accert.getCd_elemento_voce(), accert.getEsercizio(), accert.getTi_appartenenza(), accert.getTi_gestione()));
+                        return Optional.ofNullable(listAss).orElse(new ArrayList<>())
+                                .stream().map(Ass_ev_voceepBulk::getVoce_ep)
+                                .findAny().orElse(null);
+                    }
+                }
+            }
+            return null;
+        } catch (PersistencyException e) {
+            throw new DetailedRuntimeException(e);
+        }
+    }
+
+    public ContoBulk getContoCostoDefault(Documento_generico_rigaBulk docRiga) {
+        try {
+            Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
+            if (Optional.ofNullable(docRiga).isPresent()) {
+                if (Optional.ofNullable(docRiga.getObbligazione_scadenziario()).isPresent()) {
+                    Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(docRiga.getObbligazione_scadenziario());
+
+                    if (Optional.ofNullable(obbligScad).isPresent()) {
+                        ObbligazioneBulk obblig = (ObbligazioneBulk) fatpasHome.loadIfNeededObject(obbligScad.getObbligazione());
+                        Ass_ev_voceepHome assEvVoceEpHome = (Ass_ev_voceepHome) getHomeCache().getHome(Ass_ev_voceepBulk.class);
+                        List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(obblig.getCd_elemento_voce(), obblig.getEsercizio(), obblig.getTi_appartenenza(), obblig.getTi_gestione()));
+                        return Optional.ofNullable(listAss).orElse(new ArrayList<>())
+                                .stream().map(Ass_ev_voceepBulk::getVoce_ep)
+                                .findAny().orElse(null);
+                    }
+                }
+            }
+            return null;
+        } catch (PersistencyException e) {
+            throw new DetailedRuntimeException(e);
         }
     }
 }

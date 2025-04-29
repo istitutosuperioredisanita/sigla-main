@@ -17,9 +17,9 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
-import it.cnr.contab.config00.bulk.CausaleContabileBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.inventario00.docs.bulk.Ass_inv_bene_fatturaBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
@@ -117,5 +117,9 @@ public class Fattura_passiva_rigaIHome extends Fattura_passiva_rigaHome {
 		sqlBuilder.addSQLNotExistsClause(FindClause.AND, sqlNotExists);
 
 		return sqlBuilder;
+	}
+
+	public ContoBulk getContoCostoDefault(Fattura_passiva_rigaIBulk docRiga) {
+		return super.getContoCostoDefault(docRiga);
 	}
 }

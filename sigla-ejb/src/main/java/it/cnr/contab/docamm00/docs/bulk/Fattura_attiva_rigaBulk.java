@@ -17,8 +17,8 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
-import java.util.Calendar;
-import java.util.Dictionary;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -32,12 +32,15 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.TariffarioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk;
 import it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk;
+import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
+
 @JsonInclude(value=Include.NON_NULL)
 public abstract class Fattura_attiva_rigaBulk extends Fattura_attiva_rigaBase implements IDocumentoAmministrativoRigaBulk, Voidable {
 
@@ -87,6 +90,8 @@ public abstract class Fattura_attiva_rigaBulk extends Fattura_attiva_rigaBase im
 	private boolean inventariato = false;
 	private java.lang.String riportata = NON_RIPORTATO;
 	private TrovatoBulk trovato = new TrovatoBulk(); // inizializzazione necessaria per i bulk non persistenti
+	private ContoBulk voce_ep = new ContoBulk();
+	private List<Fattura_attiva_riga_ecoBulk> righeEconomica = new BulkList<>();
 
 	public Fattura_attiva_rigaBulk() {
 		super();
@@ -522,4 +527,51 @@ public abstract class Fattura_attiva_rigaBulk extends Fattura_attiva_rigaBase im
 		return getDs_riga_fattura();
 	}
 
+	public ContoBulk getVoce_ep() {
+		return voce_ep;
+	}
+
+	public void setVoce_ep(ContoBulk voce_ep) {
+		this.voce_ep = voce_ep;
+	}
+
+	@Override
+	public Integer getEsercizio_voce_ep() {
+		return Optional.ofNullable(this.getVoce_ep())
+				.map(ContoBulk::getEsercizio)
+				.orElse(null);
+	}
+
+	@Override
+	public void setEsercizio_voce_ep(Integer esercizio_voce_ep) {
+		Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setEsercizio(esercizio_voce_ep));
+	}
+
+	@Override
+	public String getCd_voce_ep() {
+		return Optional.ofNullable(this.getVoce_ep())
+				.map(ContoBulk::getCd_voce_ep)
+				.orElse(null);
+	}
+
+	@Override
+	public void setCd_voce_ep(String cd_voce_ep) {
+		Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setCd_voce_ep(cd_voce_ep));
+	}
+
+    public List<Fattura_attiva_riga_ecoBulk> getRigheEconomica() {
+        return righeEconomica;
+    }
+
+    public void setRigheEconomica(List<Fattura_attiva_riga_ecoBulk> righeEconomica) {
+        this.righeEconomica = righeEconomica;
+    }
+
+	@Override
+	public List<IDocumentoAmministrativoRigaEcoBulk> getChildrenEco() {
+		return this.getRigheEconomica().stream()
+				.filter(Objects::nonNull)
+				.map(IDocumentoAmministrativoRigaEcoBulk.class::cast)
+				.collect(Collectors.toList());
+	}
 }

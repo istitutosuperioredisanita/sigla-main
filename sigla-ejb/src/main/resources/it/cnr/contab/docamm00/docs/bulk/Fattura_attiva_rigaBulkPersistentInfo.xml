@@ -46,7 +46,14 @@
 		<columnMapping
 			columnName="PG_TROVATO"
 			propertyName="trovato.pg_trovato" />
-	</defaultColumnMap>		
+
+		<columnMapping
+			columnName="ESERCIZIO_VOCE_EP"
+			propertyName="voce_ep.esercizio" />
+		<columnMapping
+			columnName="CD_VOCE_EP"
+			propertyName="voce_ep.cd_voce_ep" />
+	</defaultColumnMap>
 
 	<fetchPolicy
 		name="solo_voce_iva">
@@ -61,5 +68,7 @@
 	<persistentProperty
 		name="bene_servizio" />	
 	<persistentProperty
-		name="trovato" />	
+		name="trovato" />
+	<persistentProperty
+		name="voce_ep" />
 </SQLPersistentInfo>

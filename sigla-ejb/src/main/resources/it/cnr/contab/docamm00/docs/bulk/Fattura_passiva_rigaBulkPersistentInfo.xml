@@ -83,16 +83,22 @@
 			nullable="true"
 			columnSize="10" />
 		<columnMapping
-				columnName="CODICE_IDENTIFICATIVO_ENTE_PAGOPA"
-				propertyName="codice_identificativo_ente_pagopa"
-				sqlTypeName="VARCHAR"
-				columnSize="11" />
+			columnName="CODICE_IDENTIFICATIVO_ENTE_PAGOPA"
+			propertyName="codice_identificativo_ente_pagopa"
+			sqlTypeName="VARCHAR"
+			columnSize="11" />
 		<columnMapping
-				columnName="NUMERO_AVVISO_PAGOPA"
-				propertyName="numero_avviso_pagopa"
-				sqlTypeName="VARCHAR"
-				columnSize="18" />
-	</defaultColumnMap>		
+			columnName="NUMERO_AVVISO_PAGOPA"
+			propertyName="numero_avviso_pagopa"
+			sqlTypeName="VARCHAR"
+			columnSize="18" />
+		<columnMapping
+			columnName="ESERCIZIO_VOCE_EP"
+			propertyName="voce_ep.esercizio" />
+		<columnMapping
+			columnName="CD_VOCE_EP"
+			propertyName="voce_ep.cd_voce_ep" />
+	</defaultColumnMap>
 
 	<fetchPolicy
 		name="solo_voce_iva">
@@ -121,7 +127,9 @@
 	<persistentProperty
 		name="cig" />
 	<persistentProperty
-	name="codice_identificativo_ente_pagopa" />
+		name="codice_identificativo_ente_pagopa" />
 	<persistentProperty
-			name="numero_avviso_pagopa" />
+		name="numero_avviso_pagopa" />
+	<persistentProperty
+		name="voce_ep" />
 </SQLPersistentInfo>

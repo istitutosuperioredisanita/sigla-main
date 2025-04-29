@@ -302,6 +302,16 @@
 			columnSize="1"
 			nullable="true"
 			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+			columnName="ESERCIZIO_VOCE_EP"
+			propertyName="esercizio_voce_ep"
+			sqlTypeName="DECIMAL"
+			columnSize="4" />
+		<columnMapping
+			columnName="CD_VOCE_EP"
+			propertyName="cd_voce_ep"
+			sqlTypeName="VARCHAR"
+			columnSize="45" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="cd_uo_assncna_eco" />
@@ -403,4 +413,8 @@
 		name="motivo_assenza_cig"/>
 	<persistentProperty
 		name="fl_attesa_nota"/>
+	<persistentProperty
+		name="esercizio_voce_ep" />
+	<persistentProperty
+		name="cd_voce_ep" />
 </SQLPersistentInfo>

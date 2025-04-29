@@ -19,15 +19,22 @@ package it.cnr.contab.docamm00.docs.bulk;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.config00.bulk.CigBulk;
-import it.cnr.contab.doccont00.core.bulk.MandatoBulk;
-import it.cnr.contab.doccont00.core.bulk.Mandato_rigaBulk;
-import it.cnr.contab.doccont00.core.bulk.Mandato_siopeBulk;
+import it.cnr.contab.config00.pdcep.bulk.Ass_ev_voceepBulk;
+import it.cnr.contab.config00.pdcep.bulk.Ass_ev_voceepHome;
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.AssCatgrpInventVoceEpBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.AssCatgrpInventVoceEpHome;
+import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
+import it.cnr.contab.doccont00.core.bulk.*;
+import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.FindClause;
+import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -253,5 +260,56 @@ public class Fattura_passiva_rigaHome extends BulkHome {
     public SQLBuilder selectModalita(Fattura_passiva_rigaBulk rigaFattura, it.cnr.contab.docamm00.tabrif.bulk.DivisaHome divisaHome, it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk clause) {
 
         return divisaHome.createSQLBuilder();
+    }
+
+    public java.util.List<Fattura_passiva_riga_ecoBulk> findFatturaPassivaRigheEcoList(Fattura_passiva_rigaBulk docRiga) throws PersistencyException {
+        PersistentHome home;
+        if (docRiga instanceof Nota_di_credito_rigaBulk)
+            home = getHomeCache().getHome(Nota_di_credito_riga_ecoBulk.class);
+        else if (docRiga instanceof Nota_di_debito_rigaBulk)
+            home = getHomeCache().getHome(Nota_di_debito_riga_ecoBulk.class);
+        else
+            home = getHomeCache().getHome(Fattura_passiva_riga_ecoIBulk.class);
+
+        it.cnr.jada.persistency.sql.SQLBuilder sql = home.createSQLBuilder();
+        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, docRiga.getEsercizio());
+        sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, docRiga.getCd_cds());
+        sql.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, docRiga.getCd_unita_organizzativa());
+        sql.addClause(FindClause.AND, "pg_fattura_passiva", SQLBuilder.EQUALS, docRiga.getPg_fattura_passiva());
+        sql.addClause(FindClause.AND, "progressivo_riga", SQLBuilder.EQUALS, docRiga.getProgressivo_riga());
+        return home.fetchAll(sql);
+    }
+
+    protected ContoBulk getContoCostoDefault(Fattura_passiva_rigaBulk docRiga) {
+        try {
+            Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
+            //verifico se sulla riga del docamm ci sia un bene inventariabile
+            if (Optional.ofNullable(docRiga).isPresent()) {
+                Bene_servizioBulk myBeneServizio = (Bene_servizioBulk)fatpasHome.loadIfNeededObject(docRiga.getBene_servizio());
+
+                if (myBeneServizio.getFl_gestione_inventario() && Optional.ofNullable(myBeneServizio.getCd_categoria_gruppo()).isPresent()) {
+                    AssCatgrpInventVoceEpHome assCatgrpInventVoceEpHome = (AssCatgrpInventVoceEpHome) getHomeCache().getHome(AssCatgrpInventVoceEpBulk.class);
+                    AssCatgrpInventVoceEpBulk result = assCatgrpInventVoceEpHome.findDefaultByCategoria(docRiga.getEsercizio(), myBeneServizio.getCd_categoria_gruppo());
+                    return result.getConto();
+                }
+
+                //se arrivo qui devo guardare alla voce dell'obbligazione
+                if (Optional.ofNullable(docRiga.getObbligazione_scadenziario()).isPresent()) {
+                    Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(docRiga.getObbligazione_scadenziario());
+
+                    if (Optional.ofNullable(obbligScad).isPresent()) {
+                        ObbligazioneBulk obblig = (ObbligazioneBulk) fatpasHome.loadIfNeededObject(obbligScad.getObbligazione());
+                        Ass_ev_voceepHome assEvVoceEpHome = (Ass_ev_voceepHome) getHomeCache().getHome(Ass_ev_voceepBulk.class);
+                        List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(obblig.getElemento_voce());
+                        return Optional.ofNullable(listAss).orElse(new ArrayList<>())
+                                .stream().map(Ass_ev_voceepBulk::getVoce_ep)
+                                .findAny().orElse(null);
+                    }
+                }
+            }
+            return null;
+        } catch (PersistencyException e) {
+            throw new DetailedRuntimeException(e);
+        }
     }
 }

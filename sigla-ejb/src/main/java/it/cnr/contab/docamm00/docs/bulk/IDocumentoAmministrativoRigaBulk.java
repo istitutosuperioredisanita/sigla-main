@@ -20,8 +20,10 @@ package it.cnr.contab.docamm00.docs.bulk;
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -81,11 +83,12 @@ public interface IDocumentoAmministrativoRigaBulk {
 	 * @return it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk
 	 */
 	it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk getVoce_iva();
-	/**
-	 * Insert the method's description here.
-	 * Creation date: (12/14/2001 2:38:27 PM)
-	 * @return it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk
-	 */
+
+	default ContoBulk getVoce_ep() {
+		return null;
+	};
+
+	default void setVoce_ep(ContoBulk voce_ep) {};
 
 	boolean isDirectlyLinkedToDC();
 
@@ -115,5 +118,13 @@ public interface IDocumentoAmministrativoRigaBulk {
 		return Optional.ofNullable(getIm_imponibile()).orElse(BigDecimal.ZERO).add(
 				Optional.ofNullable(getIm_iva()).orElse(BigDecimal.ZERO)
 		);
+	}
+
+	default java.util.List<IDocumentoAmministrativoRigaEcoBulk> getChildrenEco() {
+		return new ArrayList<>();
+	}
+
+	default BigDecimal getImportoCostoEco() {
+		return this.getIm_riga();
 	}
 }

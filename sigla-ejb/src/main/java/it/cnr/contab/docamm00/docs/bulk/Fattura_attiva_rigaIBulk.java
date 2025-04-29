@@ -33,7 +33,7 @@ import it.cnr.jada.bulk.BulkList;
 public class Fattura_attiva_rigaIBulk extends Fattura_attiva_rigaBulk {
 
 	@JsonIgnore
-	private Fattura_attiva_IBulk fattura_attivaIBulk;	
+	private Fattura_attiva_IBulk fattura_attivaIBulk;
 
 	private java.math.BigDecimal saldo = new java.math.BigDecimal(0);
 	private java.math.BigDecimal im_totale_storni = new java.math.BigDecimal(0);
@@ -212,5 +212,4 @@ public class Fattura_attiva_rigaIBulk extends Fattura_attiva_rigaBulk {
 	public BulkList<Reversale_rigaIBulk> getReversaliRighe() {
 		return reversaliRighe;
 	}
-
 }
