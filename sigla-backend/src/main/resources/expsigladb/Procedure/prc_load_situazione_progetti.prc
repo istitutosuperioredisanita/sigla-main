@@ -1,4 +1,4 @@
-CREATE OR REPLACE Procedure PRC_LOAD_SITUAZIONE_PROGETTI
+create or replace Procedure PRC_LOAD_SITUAZIONE_PROGETTI
 (P_ESERCIZIO             IN ESERCIZIO.ESERCIZIO%TYPE,
  P_PROGETTO              IN PROGETTO_SIP.PG_PROGETTO%TYPE,
  P_UO                    IN UNITA_ORGANIZZATIVA.CD_UNITA_ORGANIZZATIVA%TYPE,
@@ -39,7 +39,7 @@ Begin
                                                    AND   C.CD_TIPO_LIVELLO = 'CDR'))
               AND  (P_PROGETTO IS NULL OR A.PG_PROGETTO = P_PROGETTO)
               AND  (P_GAE IS NULL OR P_GAE = '*' OR A.CD_LINEA_ATTIVITA = P_GAE)
-              AND  (P_RESPONSABILE_GAE IS NULL OR A.CD_RESPONSABILE_TERZO = P_RESPONSABILE_GAE)
+              AND  (NVL(P_RESPONSABILE_GAE,-1) =-1 OR A.CD_RESPONSABILE_TERZO = P_RESPONSABILE_GAE)
               AND  A.ESERCIZIO >= 2016) Loop
 
       P_CENTRO_RESPONSABILITA := rec.CD_CENTRO_RESPONSABILITA;
@@ -51,7 +51,7 @@ Begin
           CD_UNITA_PIANO, CD_VOCE_PIANO, DS_VOCE_PIANO,
           CD_LINEA_ATTIVITA, DS_LINEA_ATTIVITA,
           CD_ELEMENTO_VOCE, DS_ELEMENTO_VOCE, TIPO_RECORD,
-          STANZIAMENTO_ACC, VARIAZIONI_ACC, STANZIAMENTO_DEC, VARIAZIONI_DEC,
+          STANZIAMENTO_ACC, VARIAZIONI_ACC, STANZIAMENTO_DEC, VARIAZIONI_DEC, TOT_VINCOLI,
           TOT_IMPACC, TOT_MANREV, TOT_NUMMOV, TOT_NUMMOV_OBBACC, TOT_NUMMOV_VARIAZIONI)
       (SELECT P_ESERCIZIO, p.esercizio_res, p.tipo,
               P_CENTRO_RESPONSABILITA, P_PG_PROGLIV2,
@@ -80,7 +80,7 @@ Begin
                    END ds_elemento_voce,
               P_REC_PRINCIPALE,
               p.stanziamento_acc, p.variazioni_acc,
-              p.stanziamento, p.variazioni,
+              p.stanziamento, p.variazioni, p.vincoli,
               p.impacc, p.pagris, p.nummov, 0, 0
        FROM (SELECT a.tipo, a.esercizio_res, a.cd_unita_piano, a.cd_voce_piano,
                     a.cd_linea_attivita, a.cd_elemento_voce,
@@ -88,6 +88,7 @@ Begin
                     sum(a.variazioni_acc) variazioni_acc,
                     sum(a.stanziamento) stanziamento,
                     sum(a.variazioni) variazioni,
+                    sum(a.vincoli) vincoli,
                     sum(CASE WHEN a.esercizio=P_ESERCIZIO
                              THEN a.impacc
                              ELSE (CASE WHEN a.impacc<a.pagris
@@ -129,6 +130,7 @@ Begin
                                THEN NVL(VAR_PIU,0)-NVL(VAR_MENO,0)
                                ELSE 0
                                END variazioni,
+                          0 vincoli,
                           CASE WHEN esercizio = esercizio_res
                                THEN NVL(ACC_COMP,0)
                                ELSE NVL(ACC_RES_PRO,0)+
@@ -157,7 +159,7 @@ Begin
                                  WHERE cd_centro_responsabilita = P_CENTRO_RESPONSABILITA
                                  AND   pg_progetto=P_PG_PROGLIV2
                                  AND   cd_linea_attivita=NVL(decode(P_GAE,'*',null,P_GAE), cd_linea_attivita)
-                                 AND   (P_RESPONSABILE_GAE IS NULL OR cd_responsabile_terzo=P_RESPONSABILE_GAE))
+                                 AND   (NVL(P_RESPONSABILE_GAE,-1)=-1 OR cd_responsabile_terzo=P_RESPONSABILE_GAE))
                    AND (P_SOLO_GAE_ATTIVE='N' OR
                         EXISTS(SELECT '1' FROM VOCE_F_SALDI_CDR_LINEA SALDI
                                WHERE SALDI.ESERCIZIO = P_ESERCIZIO
@@ -197,6 +199,16 @@ Begin
                                ELSE NVL(VAR_PIU_STANZ_RES_IMP,0)-NVL(VAR_MENO_STANZ_RES_IMP,0)
                                END variazioni,
                           CASE WHEN esercizio = esercizio_res
+                               THEN cnrutl002.IM_VINCOLI(P_ESERCIZIO,
+                                       v_cons_disp_comp_res.ESERCIZIO_RES,
+                                       v_cons_disp_comp_res.CDR,
+                                       v_cons_disp_comp_res.LDA,
+                                       'D',
+                                       'S',
+                                       v_cons_disp_comp_res.cd_elemento_voce)
+                               ELSE 0
+                               END vincoli,
+                          CASE WHEN esercizio = esercizio_res
                                THEN NVL(OBB_COMP,0)
                                ELSE NVL(OBB_RES_IMP,0)+NVL(OBB_RES_PRO,0)+
                                     NVL(VAR_PIU_RES_PRO,0)-NVL(VAR_MENO_RES_PRO,0)
@@ -227,7 +239,7 @@ Begin
                                  WHERE cd_centro_responsabilita = P_CENTRO_RESPONSABILITA
                                  AND   pg_progetto=P_PG_PROGLIV2
                                  AND   cd_linea_attivita=NVL(decode(P_GAE,'*',null,P_GAE), cd_linea_attivita)
-                                 AND   (P_RESPONSABILE_GAE IS NULL OR cd_responsabile_terzo=P_RESPONSABILE_GAE))
+                                 AND   (NVL(P_RESPONSABILE_GAE,-1) =-1 OR cd_responsabile_terzo=P_RESPONSABILE_GAE))
                    AND (P_SOLO_GAE_ATTIVE='N' OR
                         EXISTS(SELECT '1' FROM VOCE_F_SALDI_CDR_LINEA SALDI
                                WHERE SALDI.ESERCIZIO = P_ESERCIZIO
@@ -261,7 +273,7 @@ Begin
                                NVL (a.im_spese_gest_accentrata_int, 0) + NVL (a.im_spese_gest_accentrata_est, 0),
                                0) stanziamento_acc,
                           0 variazioni_acc,
-                          0 stanziamento, 0 variazioni, 0 impegnato, 0 pagato,
+                          0 stanziamento, 0 variazioni, 0 vincoli, 0 impegnato, 0 pagato,
                           CASE WHEN P_ROTTURA_PIANO='S' AND
                                     (NVL(a.im_spese_gest_accentrata_int,0)!=0 OR
                                      NVL(a.im_spese_gest_accentrata_est,0)!=0)
@@ -276,10 +288,10 @@ Begin
                    AND   a.cd_linea_attivita = b.cd_linea_attivita
                    AND   b.pg_progetto=P_PG_PROGLIV2
                    AND   b.cd_linea_attivita = NVL(decode(P_GAE,'*',null,P_GAE), b.cd_linea_attivita)
-                   AND   (P_RESPONSABILE_GAE IS NULL OR b.cd_responsabile_terzo=P_RESPONSABILE_GAE)
+                   AND   (NVL(P_RESPONSABILE_GAE,-1) =-1 OR b.cd_responsabile_terzo=P_RESPONSABILE_GAE)
                    AND   b.pg_progetto = c.pg_progetto (+)
-                   AND   (c.pg_progetto is null or 
-                          (a.esercizio = c.esercizio_piano AND   
+                   AND   (c.pg_progetto is null or
+                          (a.esercizio = c.esercizio_piano AND
                            a.esercizio = c.esercizio_voce AND
                            a.ti_appartenenza = c.ti_appartenenza AND
                            a.ti_gestione = c.ti_gestione AND
@@ -317,7 +329,7 @@ Begin
                           DECODE(b.cd_cdr_assegnatario_clgs, NULL,
                                  NVL (b.im_spese_gest_accentrata_int, 0) + NVL (b.im_spese_gest_accentrata_est, 0),
                                  0) variazioni_acc,
-                          0 stanziamento, 0 variazioni, 0 impegnato, 0 pagato,
+                          0 stanziamento, 0 variazioni, 0 vincoli, 0 impegnato, 0 pagato,
                           CASE WHEN P_ROTTURA_PIANO='S' AND
                                     (NVL(b.im_spese_gest_accentrata_int,0)!=0 OR
                                      NVL(b.im_spese_gest_accentrata_est,0)!=0)
@@ -337,10 +349,10 @@ Begin
                    AND   b.cd_linea_attivita = c.cd_linea_attivita
                    AND   c.pg_progetto=P_PG_PROGLIV2
                    AND   c.cd_linea_attivita = NVL(decode(P_GAE,'*',null,P_GAE), c.cd_linea_attivita)
-                   AND   (P_RESPONSABILE_GAE IS NULL OR c.cd_responsabile_terzo=P_RESPONSABILE_GAE)
+                   AND   (NVL(P_RESPONSABILE_GAE,-1) =-1 OR c.cd_responsabile_terzo=P_RESPONSABILE_GAE)
                    AND   c.pg_progetto = d.pg_progetto (+)
-                   AND   (d.pg_progetto is null or 
-                          (b.esercizio = d.esercizio_piano AND   
+                   AND   (d.pg_progetto is null or
+                          (b.esercizio = d.esercizio_piano AND
                            b.esercizio = d.esercizio_voce AND
                            b.ti_appartenenza = d.ti_appartenenza AND
                            b.ti_gestione = d.ti_gestione AND
@@ -376,7 +388,7 @@ Begin
                                END cd_elemento_voce,
                           0 stanziamento_acc, 0 variazioni_acc,
                           0 stanziamento, -(im_voce-(im_voce*(IM_ASSOCIATO_DOC_CONTABILE/IM_SCADENZA))) variazioni,
-                          0 impegnato, 0 pagato, 1 contamov
+                          0 vincoli, 0 impegnato, 0 pagato, 1 contamov
                    FROM obbligazione_scad_voce a, obbligazione_scadenzario b, obbligazione c, v_linea_attivita_valida d, ass_progetto_piaeco_voce e
                    WHERE a.cd_cds = b.cd_cds
                    and   a.esercizio=b.esercizio
@@ -395,11 +407,11 @@ Begin
                    AND   a.cd_linea_attivita = d.cd_linea_attivita
                    AND   d.pg_progetto=P_PG_PROGLIV2
                    AND   d.cd_linea_attivita = NVL(decode(P_GAE,'*',null,P_GAE), d.cd_linea_attivita)
-                   AND   (P_RESPONSABILE_GAE IS NULL OR d.cd_responsabile_terzo=P_RESPONSABILE_GAE)
+                   AND   (NVL(P_RESPONSABILE_GAE,-1) =-1 OR d.cd_responsabile_terzo=P_RESPONSABILE_GAE)
                    AND   (im_voce-(im_voce*(IM_ASSOCIATO_DOC_CONTABILE/IM_SCADENZA)))!=0
                    AND   d.pg_progetto = e.pg_progetto (+)
-                   AND   (e.pg_progetto is null or 
-                          (a.esercizio = e.esercizio_piano AND   
+                   AND   (e.pg_progetto is null or
+                          (a.esercizio = e.esercizio_piano AND
                            a.esercizio = e.esercizio_voce AND
                            a.ti_appartenenza = e.ti_appartenenza AND
                            a.ti_gestione = e.ti_gestione AND
@@ -434,7 +446,7 @@ Begin
                                END cd_elemento_voce,
                           0 stanziamento_acc, 0 variazioni_acc,
                           0 stanziamento, im_voce-(im_voce*(IM_ASSOCIATO_DOC_CONTABILE/IM_SCADENZA)) variazioni,
-                          0 impegnato, 0 pagato, 1 contamov
+                          0 vincoli, 0 impegnato, 0 pagato, 1 contamov
                    FROM obbligazione_scad_voce a, obbligazione_scadenzario b, obbligazione c, v_linea_attivita_valida d, ass_progetto_piaeco_voce e
                    WHERE a.cd_cds = b.cd_cds
                    and   a.esercizio=b.esercizio
@@ -453,11 +465,11 @@ Begin
                    AND   a.cd_linea_attivita = d.cd_linea_attivita
                    AND   d.pg_progetto=P_PG_PROGLIV2
                    AND   d.cd_linea_attivita = NVL(decode(P_GAE,'*',null,P_GAE), d.cd_linea_attivita)
-                   AND   (P_RESPONSABILE_GAE IS NULL OR d.cd_responsabile_terzo=P_RESPONSABILE_GAE)
+                   AND   (NVL(P_RESPONSABILE_GAE,-1) =-1 OR d.cd_responsabile_terzo=P_RESPONSABILE_GAE)
                    AND   (im_voce-(im_voce*(IM_ASSOCIATO_DOC_CONTABILE/IM_SCADENZA)))!=0
                    AND   d.pg_progetto = e.pg_progetto (+)
-                   AND   (e.pg_progetto is null or 
-                          (a.esercizio = e.esercizio_piano AND   
+                   AND   (e.pg_progetto is null or
+                          (a.esercizio = e.esercizio_piano AND
                            a.esercizio = e.esercizio_voce AND
                            a.ti_appartenenza = e.ti_appartenenza AND
                            a.ti_gestione = e.ti_gestione AND
@@ -493,7 +505,7 @@ Begin
                                END cd_elemento_voce,
                           0 stanziamento_acc, 0 variazioni_acc,
                           0 stanziamento, -(im_voce-(im_voce*(IM_ASSOCIATO_DOC_CONTABILE/IM_SCADENZA))) variazioni,
-                          0 impegnato, 0 pagato, 1 contamov
+                          0 vincoli, 0 impegnato, 0 pagato, 1 contamov
                    FROM accertamento_scad_voce a, accertamento_scadenzario b, accertamento c, v_linea_attivita_valida d, ass_progetto_piaeco_voce e
                    WHERE a.cd_cds = b.cd_cds
                    and   a.esercizio=b.esercizio
@@ -512,11 +524,11 @@ Begin
                    AND   a.cd_linea_attivita = d.cd_linea_attivita
                    AND   d.pg_progetto=P_PG_PROGLIV2
                    AND   d.cd_linea_attivita = NVL(decode(P_GAE,'*',null,P_GAE), d.cd_linea_attivita)
-                   AND   (P_RESPONSABILE_GAE IS NULL OR d.cd_responsabile_terzo=P_RESPONSABILE_GAE)
+                   AND   (NVL(P_RESPONSABILE_GAE,-1) =-1 OR d.cd_responsabile_terzo=P_RESPONSABILE_GAE)
                    AND   (im_voce-(im_voce*(IM_ASSOCIATO_DOC_CONTABILE/IM_SCADENZA)))!=0
                    AND   d.pg_progetto = e.pg_progetto (+)
-                   AND   (e.pg_progetto is null or 
-                          (c.esercizio = e.esercizio_piano AND   
+                   AND   (e.pg_progetto is null or
+                          (c.esercizio = e.esercizio_piano AND
                            c.esercizio = e.esercizio_voce AND
                            c.ti_appartenenza = e.ti_appartenenza AND
                            c.ti_gestione = e.ti_gestione AND
@@ -551,7 +563,7 @@ Begin
                                END cd_elemento_voce,
                           0 stanziamento_acc, 0 variazioni_acc,
                           0 stanziamento, im_voce-(im_voce*(IM_ASSOCIATO_DOC_CONTABILE/IM_SCADENZA)) variazioni,
-                          0 impegnato, 0 pagato, 1 contamov
+                          0 vincoli, 0 impegnato, 0 pagato, 1 contamov
                    FROM accertamento_scad_voce a, accertamento_scadenzario b, accertamento c, v_linea_attivita_valida d, ass_progetto_piaeco_voce e
                    WHERE a.cd_cds = b.cd_cds
                    and   a.esercizio=b.esercizio
@@ -570,11 +582,11 @@ Begin
                    AND   a.cd_linea_attivita = d.cd_linea_attivita
                    AND   d.pg_progetto=P_PG_PROGLIV2
                    AND   d.cd_linea_attivita = NVL(decode(P_GAE,'*',null,P_GAE), d.cd_linea_attivita)
-                   AND   (P_RESPONSABILE_GAE IS NULL OR d.cd_responsabile_terzo=P_RESPONSABILE_GAE)
+                   AND   (NVL(P_RESPONSABILE_GAE,-1) =-1 OR d.cd_responsabile_terzo=P_RESPONSABILE_GAE)
                    AND   (im_voce-(im_voce*(IM_ASSOCIATO_DOC_CONTABILE/IM_SCADENZA)))!=0
                    AND   d.pg_progetto = e.pg_progetto (+)
-                   AND   (e.pg_progetto is null or 
-                          (c.esercizio = e.esercizio_piano AND   
+                   AND   (e.pg_progetto is null or
+                          (c.esercizio = e.esercizio_piano AND
                            c.esercizio = e.esercizio_voce AND
                            c.ti_appartenenza = e.ti_appartenenza AND
                            c.ti_gestione = e.ti_gestione AND
@@ -609,7 +621,7 @@ Begin
                                ELSE 'VOCE_UNICA'
                                END cd_elemento_voce,
                           0 stanziamento_acc, 0 variazioni_acc,
-                          NVL(a.im_residuo, 0), 0 variazioni, 0 impegnato, 0 pagato, 1 contamov
+                          NVL(a.im_residuo, 0), 0 variazioni, 0 vincoli, 0 impegnato, 0 pagato, 1 contamov
                    FROM pdg_residuo_det a, v_linea_attivita_valida b, ass_progetto_piaeco_voce c
                    WHERE a.esercizio = 2005
                    AND   a.stato != 'A'
@@ -619,7 +631,7 @@ Begin
                    AND   a.cd_linea_attivita = b.cd_linea_attivita
                    AND   b.pg_progetto=P_PG_PROGLIV2
                    AND   b.cd_linea_attivita = NVL(decode(P_GAE,'*',null,P_GAE), b.cd_linea_attivita)
-                   AND   (P_RESPONSABILE_GAE IS NULL OR b.cd_responsabile_terzo=P_RESPONSABILE_GAE)
+                   AND   (NVL(P_RESPONSABILE_GAE,-1) =-1 OR b.cd_responsabile_terzo=P_RESPONSABILE_GAE)
                    AND   b.pg_progetto = c.pg_progetto (+)
                    AND   (c.pg_progetto is null or 
                           (a.esercizio = c.esercizio_piano AND   
@@ -637,7 +649,7 @@ Begin
              WHERE (p.stanziamento != 0 OR p.variazioni != 0 OR p.impacc != 0 OR p.pagris != 0 or p.nummov!=0));
 
       IF P_PRINT_MOVIMENTAZIONE = 'S' THEN
-          --INSERISCO DETAIL VARIAZIONI
+
           INSERT INTO TMP_STAMPA_SITUAZIONE_PROGETTI
              (ESERCIZIO, ESERCIZIO_RES, TI_GESTIONE,
               CD_CENTRO_RESPONSABILITA, PG_PROGETTO,
@@ -688,7 +700,7 @@ Begin
                                               WHERE cd_centro_responsabilita = P_CENTRO_RESPONSABILITA
                                               AND   pg_progetto=P_PG_PROGLIV2
                                               AND   cd_linea_attivita=NVL(decode(P_GAE,'*',null,P_GAE), cd_linea_attivita)
-                                              AND   (P_RESPONSABILE_GAE IS NULL OR cd_responsabile_terzo=P_RESPONSABILE_GAE))
+                                              AND   (NVL(P_RESPONSABILE_GAE,-1) =-1 OR cd_responsabile_terzo=P_RESPONSABILE_GAE))
                 AND   (P_SOLO_GAE_ATTIVE='N' OR
                        EXISTS(SELECT '1' FROM VOCE_F_SALDI_CDR_LINEA SALDI
                               WHERE SALDI.ESERCIZIO = P_ESERCIZIO
@@ -724,7 +736,7 @@ Begin
                                               WHERE cd_centro_responsabilita = P_CENTRO_RESPONSABILITA
                                               AND   pg_progetto=P_PG_PROGLIV2
                                               AND   cd_linea_attivita=NVL(decode(P_GAE,'*',null,P_GAE), cd_linea_attivita)
-                                              AND   (P_RESPONSABILE_GAE IS NULL OR cd_responsabile_terzo=P_RESPONSABILE_GAE))
+                                              AND   (NVL(P_RESPONSABILE_GAE,-1) =-1 OR cd_responsabile_terzo=P_RESPONSABILE_GAE))
                 AND   (P_SOLO_GAE_ATTIVE='N' OR
                        EXISTS(SELECT '1' FROM VOCE_F_SALDI_CDR_LINEA SALDI
                               WHERE SALDI.ESERCIZIO = P_ESERCIZIO
@@ -768,7 +780,7 @@ Begin
                                               WHERE cd_centro_responsabilita = P_CENTRO_RESPONSABILITA
                                               AND   pg_progetto=P_PG_PROGLIV2
                                               AND   cd_linea_attivita=NVL(decode(P_GAE,'*',null,P_GAE), cd_linea_attivita)
-                                              AND   (P_RESPONSABILE_GAE IS NULL OR cd_responsabile_terzo=P_RESPONSABILE_GAE))
+                                              AND   (NVL(P_RESPONSABILE_GAE,-1) =-1 OR cd_responsabile_terzo=P_RESPONSABILE_GAE))
                 AND   (im_voce-(im_voce*(IM_ASSOCIATO_DOC_CONTABILE/IM_SCADENZA)))!=0
                 AND   (P_SOLO_GAE_ATTIVE='N' OR
                        EXISTS(SELECT '1' FROM VOCE_F_SALDI_CDR_LINEA SALDI
@@ -812,7 +824,7 @@ Begin
                                               WHERE cd_centro_responsabilita = P_CENTRO_RESPONSABILITA
                                               AND   pg_progetto=P_PG_PROGLIV2
                                               AND   cd_linea_attivita=NVL(decode(P_GAE,'*',null,P_GAE), cd_linea_attivita)
-                                              AND   (P_RESPONSABILE_GAE IS NULL OR cd_responsabile_terzo=P_RESPONSABILE_GAE))
+                                              AND   (NVL(P_RESPONSABILE_GAE,-1) =-1 OR cd_responsabile_terzo=P_RESPONSABILE_GAE))
                 AND   (im_voce-(im_voce*(IM_ASSOCIATO_DOC_CONTABILE/IM_SCADENZA)))!=0
                 AND   (P_SOLO_GAE_ATTIVE='N' OR
                        EXISTS(SELECT '1' FROM VOCE_F_SALDI_CDR_LINEA SALDI
@@ -857,7 +869,7 @@ Begin
                                               WHERE cd_centro_responsabilita = P_CENTRO_RESPONSABILITA
                                               AND   pg_progetto=P_PG_PROGLIV2
                                               AND   cd_linea_attivita=NVL(decode(P_GAE,'*',null,P_GAE), cd_linea_attivita)
-                                              AND   (P_RESPONSABILE_GAE IS NULL OR cd_responsabile_terzo=P_RESPONSABILE_GAE))
+                                              AND   (NVL(P_RESPONSABILE_GAE,-1) =-1 OR cd_responsabile_terzo=P_RESPONSABILE_GAE))
                 AND   (im_voce-(im_voce*(IM_ASSOCIATO_DOC_CONTABILE/IM_SCADENZA)))!=0
                 AND   (P_SOLO_GAE_ATTIVE='N' OR
                        EXISTS(SELECT '1' FROM VOCE_F_SALDI_CDR_LINEA SALDI
@@ -901,7 +913,7 @@ Begin
                                               WHERE cd_centro_responsabilita = P_CENTRO_RESPONSABILITA
                                               AND   pg_progetto=P_PG_PROGLIV2
                                               AND   cd_linea_attivita=NVL(decode(P_GAE,'*',null,P_GAE), cd_linea_attivita)
-                                              AND   (P_RESPONSABILE_GAE IS NULL OR cd_responsabile_terzo=P_RESPONSABILE_GAE))
+                                              AND   (NVL(P_RESPONSABILE_GAE,-1) =-1 OR cd_responsabile_terzo=P_RESPONSABILE_GAE))
                 AND   (im_voce-(im_voce*(IM_ASSOCIATO_DOC_CONTABILE/IM_SCADENZA)))!=0
                 AND   (P_SOLO_GAE_ATTIVE='N' OR
                        EXISTS(SELECT '1' FROM VOCE_F_SALDI_CDR_LINEA SALDI
@@ -914,7 +926,7 @@ Begin
                     X.DT_VARIAZIONE, X.DS_VARIAZIONE);
 
 
-          --INSERISCO DETAIL IMPEGNI
+
           INSERT INTO TMP_STAMPA_SITUAZIONE_PROGETTI
              (ESERCIZIO, ESERCIZIO_RES, TI_GESTIONE,
               CD_CENTRO_RESPONSABILITA, PG_PROGETTO,
@@ -1181,7 +1193,7 @@ Begin
                                               WHERE cd_centro_responsabilita = P_CENTRO_RESPONSABILITA
                                               AND   pg_progetto=P_PG_PROGLIV2
                                               AND   cd_linea_attivita=NVL(decode(P_GAE,'*',null,P_GAE), cd_linea_attivita)
-                                              AND   (P_RESPONSABILE_GAE IS NULL OR cd_responsabile_terzo=P_RESPONSABILE_GAE))
+                                              AND   (NVL(P_RESPONSABILE_GAE,-1) =-1 OR cd_responsabile_terzo=P_RESPONSABILE_GAE))
                 AND   (P_SOLO_GAE_ATTIVE='N' OR
                        EXISTS(SELECT '1' FROM VOCE_F_SALDI_CDR_LINEA SALDI
                               WHERE SALDI.ESERCIZIO = P_ESERCIZIO
