@@ -202,7 +202,7 @@ public class Stampa_situazione_sintetica_x_progettoBulk extends OggettoBulk {
 	}
 
 	public Integer getCdResponsabileGaeForPrint() {
-		return getResponsabileGaeForPrint()!=null?getResponsabileGaeForPrint().getCd_terzo():null;
+		return getResponsabileGaeForPrint()!=null?getResponsabileGaeForPrint().getCd_terzo():-1;
 	}
 
 	public String getDsResponsabileGaeForPrint() {
