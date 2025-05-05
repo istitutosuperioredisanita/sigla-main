@@ -451,27 +451,5 @@ public Boolean isContab(it.cnr.jada.UserContext param0,it.cnr.contab.inventario0
 		}
 	}
 
-	@Override
-	public void aggiornamentoInventarioBeneConAmmortamento(UserContext param0, Inventario_beniBulk param1) throws ComponentException, RemoteException, PersistencyException {
-		try {
-			invoke("aggiornamentoInventarioBeneConAmmortamento",new Object[] {
-					param0,
-					param1});
-		}
-		catch(Throwable ex) {
-			throw new java.rmi.RemoteException("Uncaugth exception",ex);
-		}
-	}
 
-	@Override
-	public void aggiornamentoInventarioBeneConAmmortamento(UserContext param0, Integer param1,String param2) throws ComponentException, RemoteException, PersistencyException {
-		try {
-			invoke("aggiornamentoInventarioBeneConAmmortamento",new Object[] {
-					param0,
-					param1,param2});
-		}
-		catch(Throwable ex) {
-			throw new java.rmi.RemoteException("Uncaugth exception",ex);
-		}
-	}
 }

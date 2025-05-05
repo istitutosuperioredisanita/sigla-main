@@ -109,6 +109,10 @@ public V_AmmortamentoBeniDetComponent() {
 
 			sql.closeParenthesis();
 
+			//sql.addSQLClause( "AND", "nr_inventario", SQLBuilder.EQUALS, 114);
+			//sql.addSQLClause( "AND", "pg_inventario", SQLBuilder.EQUALS, 1);
+			//sql.addSQLClause( "AND", "progressivo", SQLBuilder.EQUALS, 0);
+
 		//	sql.addSQLClause( "AND", "ETICHETTA", SQLBuilder.EQUALS, "V-019698");
 
 			sql.addSQLGroupBy("PG_INVENTARIO,NR_INVENTARIO,PROGRESSIVO,ETICHETTA,FL_TOTALMENTE_SCARICATO,TI_AMMORTAMENTO,CD_CATEGORIA_GRUPPO,PERC_PRIMO_ANNO,PERC_SUCCESSIVI,CD_TIPO_AMMORTAMENTO,ESERCIZIO_COMPETENZA");

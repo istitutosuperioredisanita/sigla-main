@@ -20,6 +20,7 @@ package it.cnr.contab.inventario00.ejb;
 import it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 
 import javax.ejb.Remote;
 import java.lang.reflect.InvocationTargetException;
@@ -35,4 +36,5 @@ public interface AmmortamentoBeneComponentSession extends it.cnr.jada.ejb.CRUDCo
     Integer getProgressivoRigaAmmortamento(UserContext uc, Long pgInventario, Long nrInventario, Long progressivo,Integer esercizio) throws RemoteException;
     void inserisciAmmortamentoBene(UserContext uc,Ammortamento_bene_invBulk amm) throws ComponentException,RemoteException;
     void cancellaAmmortamentiEsercizio(UserContext uc,Integer esercizio) throws ComponentException,RemoteException;
+    void aggiornamentoInventarioBeneConAmmortamento(UserContext uc,Integer esercizio,String azione) throws ComponentException, RemoteException, PersistencyException;
 }
