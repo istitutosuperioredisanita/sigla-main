@@ -1740,27 +1740,5 @@ private void validaUtilizzatori (UserContext aUC,Inventario_beniBulk bene)
 		}*/
 	}
 
-	public void aggiornamentoInventarioBeneConAmmortamento(UserContext uc,Integer esercizio,String azione) throws ComponentException, PersistencyException {
 
-		LoggableStatement ps = null;
-		try {
-			Inventario_beniHome invHome = (Inventario_beniHome) getHome(uc, Inventario_beniBulk.class);
-
-			ps = new LoggableStatement(getConnection(uc),
-					invHome.aggiornamentoSqlInventarioBeneConAmmortamento(uc,esercizio,azione), true, this.getClass());
-			ps.execute();
-			try {
-				ps.close();
-			} catch (java.sql.SQLException ignored) {
-				throw handleException(ignored);
-			}
-		} catch (SQLException | ComponentException e) {
-			throw handleException(e);
-		} finally {
-			if (ps != null) try {
-				ps.close();
-			} catch (java.sql.SQLException ignored) {
-			}
-		}
-	}
 }

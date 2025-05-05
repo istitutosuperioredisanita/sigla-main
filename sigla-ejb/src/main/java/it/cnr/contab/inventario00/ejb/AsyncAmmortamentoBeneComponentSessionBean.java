@@ -17,10 +17,7 @@
 
 package it.cnr.contab.inventario00.ejb;
 
-import it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invBulk;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
-import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beniBulk;
-import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beni_detBulk;
+import it.cnr.contab.inventario00.docs.bulk.*;
 import it.cnr.contab.inventario00.dto.NormalizzatoreAmmortamentoDto;
 import it.cnr.contab.inventario00.dto.TipoAmmCatGruppoDto;
 import it.cnr.contab.inventario00.tabrif.bulk.Tipo_ammortamentoBulk;
@@ -35,6 +32,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 
 
+import it.cnr.jada.persistency.sql.LoggableStatement;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +40,7 @@ import javax.ejb.Stateless;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
+import java.sql.SQLException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -73,7 +72,6 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
     private void ammortamentoBeni(UserContext uc, Integer esercizio) throws ComponentException {
 
         AmmortamentoBeneComponentSession ammortamentoBeneComponent = Utility.createAmmortamentoBeneComponentSession();
-        Inventario_beniComponentSession inventarioBeniComponent = Utility.createInventario_beniComponentSession();
         V_AmmortamentoBeniDetComponentSession v_ammortamentoBeneDetComponent = Utility.createV_AmmortamentoBeniDetComponentSession();
 
         try {
@@ -107,7 +105,7 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                 log_riga.setTrace(log_riga.getMessaggio());
                 log_riga.setToBeCreated();
                 try {
-                    eliminaAmmortamentiPrecedentiDellEsercizio(uc, ammortamentoBeneComponent, inventarioBeniComponent, esercizio, subjectError);
+                    eliminaAmmortamentiPrecedentiDellEsercizio(uc, ammortamentoBeneComponent,  esercizio);
                 }catch (ComponentException | RemoteException ex) {
                     logger.info( "Errore durante l'eliminazione dell'ammortamento " + ex.getMessage());
                     throw new DetailedRuntimeException(ex);
@@ -203,7 +201,7 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                                     log_riga.setPg_riga(BigDecimal.valueOf(listLogRighe.size() + 1));
                                     log_riga.setTrace(log_riga.getMessaggio());
                                     log_riga.setToBeCreated();
-                                    //listLogRighe.add(log_riga);
+                                    listLogRighe.add(log_riga);
                                //listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_riga));
                           //      } catch (ComponentException | RemoteException ex) {
                           //          logger.info( "Errore durante l'inserimento dell'errore in Batch_log_rigaBulk " + ex.getMessage());
@@ -243,12 +241,12 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                     log_riga.setPg_riga(BigDecimal.valueOf(listLogRighe.size() + 1));
                     log_riga.setToBeCreated();
 
-                 /*   try {
-                        inventarioBeniComponent.aggiornamentoInventarioBeneConAmmortamento(uc, esercizio, Ammortamento_bene_invBulk.INCREMENTA_VALORE_AMMORTIZZATO);
+                    try {
+                        ammortamentoBeneComponent.aggiornamentoInventarioBeneConAmmortamento(uc, esercizio, Ammortamento_bene_invBulk.INCREMENTA_VALORE_AMMORTIZZATO);
                     }
                     catch (RemoteException e) {
                         logger.info("Errore durante l'aggiornamento Inventario a seguito dell'ammortamento esercizio: "+esercizio);
-                    }*/
+                    }
 
                     listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_riga));
                 } catch (ComponentException | RemoteException ex) {
@@ -288,14 +286,13 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
     }
 
 
-    private void eliminaAmmortamentiPrecedentiDellEsercizio(UserContext uc,  AmmortamentoBeneComponentSession ammortamentoBeneComponent,
-                                                                                Inventario_beniComponentSession inventarioBeniComponent,Integer esercizio, String subjectError) throws RemoteException, InvocationTargetException, ComponentException, PersistencyException {
+    private void eliminaAmmortamentiPrecedentiDellEsercizio(UserContext uc,  AmmortamentoBeneComponentSession ammortamentoBeneComponent, Integer esercizio) throws RemoteException, InvocationTargetException, ComponentException, PersistencyException {
 
         if(ammortamentoBeneComponent.isExistAmmortamentoEsercizio(uc, esercizio) )
         {
-            inventarioBeniComponent.aggiornamentoInventarioBeneConAmmortamento(uc,esercizio,Ammortamento_bene_invBulk.DECREMENTA_VALORE_AMMORTIZZATO);
+            ammortamentoBeneComponent.aggiornamentoInventarioBeneConAmmortamento(uc,esercizio,Ammortamento_bene_invBulk.DECREMENTA_VALORE_AMMORTIZZATO);
             try {
-                        ammortamentoBeneComponent.cancellaAmmortamentiEsercizio(uc, esercizio);
+                ammortamentoBeneComponent.cancellaAmmortamentiEsercizio(uc, esercizio);
             } catch (RemoteException | ComponentException ex) {
                 logger.info( "Errore durante l'eliminazione dell'ammortamento esercizio : " + esercizio + " - Errore: " + ex.getMessage());
                 throw new DetailedRuntimeException( "Errore durante l'eliminazione dell'ammortamento esercizio : " + esercizio + " - Errore: " + ex.getMessage());

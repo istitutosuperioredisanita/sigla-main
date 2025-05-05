@@ -24,6 +24,7 @@ import it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.PrimaryKeyHashtable;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Remove;
@@ -126,6 +127,20 @@ public class AmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.CRUDCo
 		pre_component_invocation(param0,componentObj);
 		try {
 			((AmmortamentoBeneComponent)componentObj).cancellaAmmortamentiEsercizio(param0,param1);
+			component_invocation_succes(param0,componentObj);
+
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
+	@Override
+	public void aggiornamentoInventarioBeneConAmmortamento(UserContext param0, Integer param1, String param2) throws ComponentException, RemoteException, PersistencyException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			((AmmortamentoBeneComponent)componentObj).aggiornamentoInventarioBeneConAmmortamento(param0,param1,param2);
 			component_invocation_succes(param0,componentObj);
 
 		} catch(RuntimeException e) {
