@@ -19,12 +19,11 @@ package it.cnr.contab.web.rest.config;
 
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.SecurityContext;
 import java.security.Principal;
 import java.util.Calendar;
 import java.util.Optional;
-
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.SecurityContext;
 
 public class SIGLASecurityContext implements SecurityContext {
 

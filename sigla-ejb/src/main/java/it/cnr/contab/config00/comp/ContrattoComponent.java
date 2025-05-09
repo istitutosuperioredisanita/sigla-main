@@ -2500,7 +2500,7 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 				sql.addClause("AND", "codiceFlussoAcquisti", sql.EQUALS, contratto.getCodiceFlussoAcquisti());
 			    List lista = home.fetchAll(sql);
 			    if (lista != null && lista.size() > 0){
-					throw new ComponentException("Il codice flusso acquisti indicato gia esiste");
+					throw new ApplicationException("Il codice flusso acquisti indicato gia esiste");
 			    }
 			} else {
 				throw new ComponentException("E' necessario valorizzare tutti i campi essenziali per l'inserimento");
