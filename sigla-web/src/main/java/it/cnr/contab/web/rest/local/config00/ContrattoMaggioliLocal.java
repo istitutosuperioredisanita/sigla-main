@@ -41,7 +41,10 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(SIGLARoles.CONTRATTO)
 @Api("Contratti")
-public interface ContrattoMaggioliLocal {
+public interface ContrattoMaggioliLocal extends DefaultContrattoLocal{
+
+
+
     /**
      * PUT  /restapi/contratto -> return Contratto
      */
@@ -58,7 +61,25 @@ public interface ContrattoMaggioliLocal {
                     @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDR),
             }
     )
-    public Response insertContratto(@Context HttpServletRequest request, @Valid ContrattoDtoBulk contrattoMaggioliBulk) throws Exception;
+    public Response insertContratto(@Context HttpServletRequest request, @Valid ContrattoDtoBulk contrattoMaggioliBulk ) throws Exception;
+
+    @POST
+    @Valid
+    @Path("/v2.0")
+    @ApiOperation(value = "Inserisce un contratto",
+            notes = "Accesso consentito solo alle utenze abilitate al ruolo CONTRATTO",
+            response = ContrattoDtoBulk.class,
+            authorizations = {
+                    @Authorization(value = "BASIC"),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDS),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
+                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDR),
+            }
+    )
+    public Response insertContrattoV2(@Context HttpServletRequest request, @Valid ContrattoDtoBulk contrattoMaggioliBulk ) throws Exception;
+
+
 
     /**
      * GET  /restapi/contratto -> return Contratto
