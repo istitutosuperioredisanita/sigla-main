@@ -319,7 +319,7 @@ public java.util.Collection findDettagliBuono(Buono_carico_scaricoBulk buono)thr
 					"			AND a.progressivo=i.PROGRESSIVO" +
 					""+
 					""+
-				//	" and nr_inventario =114 and  pg_inventario=1 and  progressivo=0 "+
+				//	" and nr_inventario =1346 and  pg_inventario=1 and  progressivo=0 "+
 					""+
 					""+
 					"           GROUP BY nr_inventario,pg_inventario, progressivo),2) " +
@@ -332,11 +332,10 @@ public java.util.Collection findDettagliBuono(Buono_carico_scaricoBulk buono)thr
 					"				  AND a.FL_STORNO='N'" +
 					"" +
 					"" +
-				//	" and a.nr_inventario =114 and  a.pg_inventario=1 and a.progressivo=0 "+
+			//		" and a.nr_inventario =1346 and  a.pg_inventario=1 and a.progressivo=0 "+
 					"" +
 					"" +
-					")" +
-					" AND ETICHETTA != 'N-005985'";
+					")" ;
 		}else{
 			return " UPDATE " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() + "INVENTARIO_BENI i " +
 					" SET VALORE_AMMORTIZZATO = ROUND(VALORE_AMMORTIZZATO + " +
@@ -349,7 +348,7 @@ public java.util.Collection findDettagliBuono(Buono_carico_scaricoBulk buono)thr
 					"			AND a.progressivo=i.PROGRESSIVO" +
 					""+
 					""+
-				//	" and nr_inventario =114 and  pg_inventario=1 and  progressivo=0 "+
+				//	" and nr_inventario =1346 and  pg_inventario=1 and  progressivo=0 "+
 					""+
 					""+
 					"           GROUP BY nr_inventario,pg_inventario, progressivo),2) " +
@@ -362,10 +361,9 @@ public java.util.Collection findDettagliBuono(Buono_carico_scaricoBulk buono)thr
 					"				 AND a.FL_STORNO='N'" +
 					"" +
 					"" +
-			//		" and a.nr_inventario =114 and  a.pg_inventario=1 and a.progressivo=0 "+
+				//	" and a.nr_inventario =1346 and  a.pg_inventario=1 and a.progressivo=0 "+
 					"" +
-					")"+
-					" AND ETICHETTA != 'N-005985'";
+					")";
 		}
 	}
 }
