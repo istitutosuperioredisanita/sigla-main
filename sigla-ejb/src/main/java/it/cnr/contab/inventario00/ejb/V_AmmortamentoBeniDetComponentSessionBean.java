@@ -24,6 +24,7 @@ import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beniBulk;
 import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beni_detBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Remove;
@@ -54,8 +55,8 @@ public class V_AmmortamentoBeniDetComponentSessionBean extends it.cnr.jada.ejb.C
 			component_invocation_succes(param0,componentObj);
 			return result;
 
-		} catch (RuntimeException e) {
-			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch (RuntimeException | PersistencyException e) {
+			throw uncaughtRuntimeException(param0,componentObj, (RuntimeException) e);
 		}
 	}
 }

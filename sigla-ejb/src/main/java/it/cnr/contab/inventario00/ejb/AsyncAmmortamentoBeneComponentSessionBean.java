@@ -143,19 +143,20 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                 for (V_ammortamento_beni_detBulk bene : beniList) {
                     try {
                         // CASO DA GESTIRE
-                        if (!bene.getEtichetta().equals("N-005985") && bene.getTiAmmortamento() != null) {
+                        if (bene.getTiAmmortamento() != null) {
 
                             if (bene.getValoreAmmortizzatoCalcolato().compareTo(bene.getImponibileAmmortamentoCalcolato()) > 0 && !bene.getFlTotalmenteScaricato()) {
+
                             } else if (((bene.getValoreIniziale().add(bene.getVariazionePiu())).add(bene.getVariazioneMeno().multiply(MENO_UNO))).compareTo(BigDecimal.ZERO) == 0
                                     &&
                                     bene.getImponibileAmmortamentoCalcolato().compareTo(BigDecimal.ZERO) > 0 && !bene.getFlTotalmenteScaricato()) {
                             } else {
 
-
                                         BigDecimal percAmmortamento = bene.getNumeroAnnoAmmortamento().compareTo(BigDecimal.ZERO) == 0 ? Utility.nvl(bene.getPercPrimoAnno()) : Utility.nvl(bene.getPercSuccessivi());
-                                        BigDecimal rataAmmortamento = BigDecimal.ZERO;
 
+                                        if(percAmmortamento.compareTo(BigDecimal.ZERO) > 0){
 
+                                            BigDecimal rataAmmortamento = BigDecimal.ZERO;
                                         //Controllare se il bene può essere ammortizzato dell'importo della rata calcolata precedentemente.
                                         //Si posssono verificare i seguenti casi:
                                         //   a) la rata di ammortamento calcolata con la percentuale stabilita è troppo alta
@@ -171,28 +172,49 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
 
                                         if (bene.getImponibileAmmortamentoCalcolato().compareTo(BigDecimal.ZERO) > 0 && !bene.getFlTotalmenteScaricato() &&
                                         Utility.nvl(bene.getValoreAmmortizzatoCalcolato()).compareTo(bene.getImponibileAmmortamentoCalcolato()) < 0) {
+
                                             rataAmmortamento = ((bene.getImponibileAmmortamentoCalcolato().multiply(percAmmortamento)).divide(CENTO));
 
-                                        if ((rataAmmortamento.add(Utility.nvl(bene.getValoreAmmortizzatoCalcolato()))).compareTo(bene.getImponibileAmmortamentoCalcolato()) > 0) {
-                                            rataAmmortamento = bene.getImponibileAmmortamentoCalcolato().add(Utility.nvl(bene.getValoreAmmortizzatoCalcolato()).multiply(MENO_UNO));
-                                        }
+                                            if ((rataAmmortamento.add(Utility.nvl(bene.getValoreAmmortizzatoCalcolato()))).compareTo(bene.getImponibileAmmortamentoCalcolato()) > 0) {
+                                                rataAmmortamento = bene.getImponibileAmmortamentoCalcolato().add(Utility.nvl(bene.getValoreAmmortizzatoCalcolato()).multiply(MENO_UNO));
+                                            }
 
-                                        Ammortamento_bene_invBulk amm =  creaAmmortamentoBene(uc, ammortamentoBeneComponent, bene, esercizio, rataAmmortamento, percAmmortamento);
-                                        if (amm == null) {
-                                            logger.info("Errore durante la creazione dell'ammortamento esercizio :" + esercizio + " pg_inventario: " + bene.getPgInventario() +
-                                                    " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo());
-                                        }
-                                        else {
-                                            try {
-                                                //ammortamentoBeneComponent.inserisciAmmortamentoBene(uc, amm);
-                                                ammortamentoBeneComponent.creaConBulk(uc, amm);
-                                                countBeniAmm++;
-                                            } catch (ComponentException | RemoteException e) {
-                                                logger.info("Errore durante l'inserimento dell'amomortamento esercizio :" + esercizio + " pg_inventario: " + bene.getPgInventario() +
-                                                        " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo() + " - Error:" + e.getMessage());
+                                            Ammortamento_bene_invBulk amm = creaAmmortamentoBene(uc, ammortamentoBeneComponent, bene, esercizio, rataAmmortamento, percAmmortamento);
+                                            if (amm == null) {
+                                                logger.info("Errore durante la creazione dell'ammortamento esercizio :" + esercizio + " pg_inventario: " + bene.getPgInventario() +
+                                                        " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo());
+                                            } else {
+                                               try {
+
+                                                    ammortamentoBeneComponent.creaConBulk(uc, amm);
+                                                    countBeniAmm++;
+                                                } catch (ComponentException | RemoteException e) {
+                                                    logger.info("Errore durante l'inserimento dell'amomortamento esercizio :" + esercizio + " pg_inventario: " + bene.getPgInventario() +
+                                                            " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo() + " - Error:" + e.getMessage());
+                                                }
+
                                             }
                                         }
                                     }
+                                    else{
+                                            logger.info( "Attenzione percentuale di ammortamento a 0 per il bene pg_inventario: " + bene.getPgInventario() +
+                                                    " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo());
+
+                                            Batch_log_rigaBulk log_rigaErr = new Batch_log_rigaBulk();
+                                            log_rigaErr.setPg_esecuzione(logDB.getPg_esecuzione());
+                                            log_rigaErr.setPg_riga(BigDecimal.valueOf(listLogRighe.size() + 1));
+                                            log_rigaErr.setTi_messaggio("W");
+                                            log_rigaErr.setMessaggio("Attenzione percentuale di ammortamento a 0 per il bene pg_inventario: " + bene.getPgInventario() +
+                                                    " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo());
+                                            log_rigaErr.setNote("");
+                                            log_rigaErr.setToBeCreated();
+                                            try {
+                                                listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_rigaErr));
+                                            } catch (ComponentException | RemoteException ex2) {
+                                                logger.info("Errore durante l'inserimento della riga di chiusura di Batch_log_riga " + ex2.getMessage());
+                                                //throw new DetailedRuntimeException();
+                                            }
+                                        }
                             //   try {
                                     log_riga.setMessaggio("Ammortamento bene :"
                                             + "-Numero Inventario:" + bene.getNrInventario()
