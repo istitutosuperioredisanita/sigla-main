@@ -253,6 +253,12 @@
 				sqlTypeName="VARCHAR"
 				columnSize="3"
 				nullable="true" />
+		<columnMapping
+				columnName="CD_CIG_RIF_EXT"
+				propertyName="cdCigRifExt"
+				sqlTypeName="VARCHAR"
+				columnSize="10"
+				nullable="true" />
 
 	</defaultColumnMap>
 	
@@ -333,4 +339,6 @@
                 name="pg_progetto"/>
 		 <persistentProperty
 			name="tipo_dettaglio_contratto"/>
+		 <persistentProperty
+			name="cdCigRifExt"/>
 </SQLPersistentInfo>

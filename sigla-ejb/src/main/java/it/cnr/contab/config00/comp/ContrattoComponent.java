@@ -2352,6 +2352,16 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 			}
 			return null;
 		}
+		private ContrattoBulk getContrattoRiferimento( UserContext userContext, ContrattoBulk contrattoBulk,ContrattoBulk contrattoPadre) throws ComponentException, PersistencyException {
+			SQLBuilder sql = selectContratto_padreByClause ( userContext, contrattoBulk, contrattoPadre,null);
+
+			ContrattoHome home= (ContrattoHome) getHome(userContext, contrattoPadre);
+			List lista = home.fetchAll(sql);
+			if (lista != null && ( !lista.isEmpty())){
+				return (ContrattoBulk) lista.get(0);
+			}
+			return null;
+		}
 		private void completaDettaglioContrattoArticoli( UserContext userContext, ContrattoBulk contratto) throws ComponentException, PersistencyException {
 			if ( Optional.ofNullable(contratto.getDettaglio_contratto()).isPresent()) {
 				Bene_servizioHome beneServizioHome= (Bene_servizioHome) getHome(userContext, Bene_servizioBulk.class);
@@ -2425,6 +2435,14 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 						throw new ComponentException("Il Firmatario con Codice Fiscale/P.Iva "+ contratto.getCodfisPivaFirmatarioExt() +" non esiste in SIGLA");
 					}
 				}
+				if ( contratto.getCdCigRifExt()!=null && ( !contratto.getCdCigRifExt().isEmpty())){
+					ContrattoBulk contrattoPadre =new ContrattoBulk();
+					contrattoPadre.setCig(new CigBulk(contratto.getCdCigRifExt()));
+					contratto.setContratto_padre(getContrattoRiferimento( userContext,contratto,contrattoPadre));
+					if ( !Optional.ofNullable(contratto.getPg_contratto_padre()).isPresent()){
+						throw new ComponentException("Il progetto di riferimento"+ contratto.getCdCigRifExt() +" non esiste in SIGLA");
+					}
+				}
 
 				if ( contratto.getCodfisPivaAggiudicatarioExt()!=null && (!contratto.getCodfisPivaAggiudicatarioExt().isEmpty())) {
 					contratto.setFigura_giuridica_esterna(getTerzoFromCodiceFiscalePiva(userContext, contratto.getCodfisPivaAggiudicatarioExt()));
@@ -2434,7 +2452,6 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 				}
 				if ( contratto.getAtto()!=null && (!contratto.getAtto().getCd_tipo_atto().isEmpty())) {
 					Tipo_atto_amministrativoBulk tipoAtto= getTipoAttoAmministrativo( userContext,contratto,contratto.getAtto() );
-
 					if ( !Optional.ofNullable(tipoAtto).isPresent()){
 						throw new ComponentException("Il Tipo Atto Amministrativo "+ contratto.getAtto().getCd_tipo_atto() +" non esiste in SIGLA");
 					}

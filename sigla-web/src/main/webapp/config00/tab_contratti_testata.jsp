@@ -136,15 +136,18 @@
               	 <td><% bp.getController().writeFormInput(out,"default","tipo_contratto", bp.isPublishHidden(),null,null);%></td>
               	 <td><% bp.getController().writeFormInput(out,"default","crea_tipo_contratto", bp.isPublishHidden(),null,null);%></td>
 		      </tr>
+               <!--
 		      <% if (((ContrattoBulk)bp.getModel()).isCIGVisible()){%>
 			  <tr>         
-		         <td><% bp.getController().writeFormLabel(out,"cig");%></td>
+		         <td>Cig Visibile<% bp.getController().writeFormLabel(out,"cig");%></td>
 		         <td>
 		         	<div style="float:left"><% bp.getController().writeFormInput(out,"default","cig", bp.isPublishHidden(),null,null);%></div>
 		         	<div style="float:left"><% bp.getController().writeFormInput(out,"default","crea_cig", bp.isPublishHidden(),null,null);%></div>
 		         </td>
 		      </tr>
+
 		      <%}%>
+		      -->
 			  <tr>
 			  	 <td><% bp.getController().writeFormLabel(out,"procedura_amministrativa");%></td>
               	 <td><% bp.getController().writeFormInput(out,"default","procedura_amministrativa", bp.isPublishHidden(),null,null);%></td>
@@ -196,7 +199,7 @@
 	        <td><% bp.getController().writeFormLabel(out,"im_contratto_attivo");%></td>
 	        <td colspan="5"><% bp.getController().writeFormInput(out,"default","im_contratto_attivo", bp.isPublishHidden(),null,null);%></td>                	    
 	      </tr>            
-	      <%} else if( ((ContrattoBulk)bp.getModel()).isPassivo() ) {%>
+	      <%} else if( ((ContrattoBulk)bp.getModel()).isPassivo() || ((ContrattoBulk)bp.getModel()).isCIGVisible()) {%>
           <tr>
              <td><% bp.getController().writeFormLabel(out,"cig");%></td>
              <td colspan="3">
@@ -210,8 +213,9 @@
 	       	<td><% bp.getController().writeFormLabel(out,"im_contratto_passivo_netto");%></td>
 	       	<td><% bp.getController().writeFormInput(out,null,"im_contratto_passivo_netto", false,null,"");%></td>                 	    
 	      </tr>                  
-	      <% } else if( ( (ContrattoBulk) bp.getModel()).isSenzaFlussiFinanziari() && bp.hasGestioneImportiFlussiFinanziari() ){%>
+	      <% } else if( ( (ContrattoBulk) bp.getModel()).isSenzaFlussiFinanziari() && bp.hasGestioneImportiFlussiFinanziari() || ((ContrattoBulk)bp.getModel()).isCIGVisible() ){%>
           <tr>
+
              <td><% bp.getController().writeFormLabel(out,"cig");%></td>
              <td colspan="3">
                 <div style="float:left"><% bp.getController().writeFormInput(out,"default","cig", bp.isPublishHidden(),null,null);%></div>
