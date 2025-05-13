@@ -71,11 +71,12 @@ public class ContrattoMaggioliResource  extends AbstractContrattoResource implem
             if (!Optional.ofNullable(contrattoBulk.getNaturaContabileContratto()).isPresent())
                 throw new RestException(Response.Status.BAD_REQUEST, String.format("La natura Contabile non può essere vuota. Sono Previsti i seguenti valori:{ "
                         + EnumNaturaContabileContratto.NATURA_CONTABILE_PASSIVO + "," + EnumNaturaContabileContratto.NATURA_CONTABILE_SENZA_FLUSSI_FINANZIARI) + "}");
-
+            /*Controllo fatto nel contratto Component
             if ( EnumNaturaContabileContratto.NATURA_CONTABILE_SENZA_FLUSSI_FINANZIARI.equals(contrattoBulk.getNaturaContabileContratto())){
-                if ( !Optional.ofNullable(contrattoBulk.getCdCigPadre()).isPresent())
-                    throw new RestException(Response.Status.BAD_REQUEST, String.format("Per Contratti senza flussi finanziari è necessario indicare il cig del contratto Padre "));
+                if ( Optional.ofNullable(contrattoBulk.getCdCigRifExt()).isPresent())
+                    throw new RestException(Response.Status.BAD_REQUEST, String.format("Per Contratti senza flussi finanziari non è possibile indicare il cig del contratto di Riferimento "));
             }
+            */
 
             if (Optional.ofNullable(contrattoBulk.getCodFisPivaAggiudicatari()).orElse(Collections.emptyList()).size() == 0)
                 throw new RestException(Response.Status.BAD_REQUEST, String.format("Manca l'informazione degli aggiudicatari del contratto"));

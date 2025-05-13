@@ -37,7 +37,6 @@ public class ContrattoDtoBulk extends ContrattoBase  implements Serializable {
 
     private List<String> codFisPivaAggiudicatari;
 
-    private String cdCigPadre;
     private String cdCupExt;
 
     public String getCdCupExt() {
@@ -121,14 +120,6 @@ public class ContrattoDtoBulk extends ContrattoBase  implements Serializable {
 
     public void setNaturaContabileContratto(EnumNaturaContabileContratto naturaContabileContratto) {
         this.naturaContabileContratto = naturaContabileContratto;
-    }
-
-    public String getCdCigPadre() {
-        return cdCigPadre;
-    }
-
-    public void setCdCigPadre(String cdCigPadre) {
-        this.cdCigPadre = cdCigPadre;
     }
 
     public List<String> getCodFisPivaAggiudicatari() {

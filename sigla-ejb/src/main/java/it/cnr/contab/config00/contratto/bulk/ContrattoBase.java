@@ -20,12 +20,10 @@
 * Date 09/04/2005
 */
 package it.cnr.contab.config00.contratto.bulk;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import it.cnr.si.spring.storage.annotation.StorageProperty;
-import it.cnr.jada.persistency.Keyed;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.cnr.jada.persistency.Keyed;
+import it.cnr.si.spring.storage.annotation.StorageProperty;
 
 public class ContrattoBase extends ContrattoKey implements Keyed {
 //    ESERCIZIO_PADRE DECIMAL(4,0)
@@ -167,6 +165,8 @@ public class ContrattoBase extends ContrattoKey implements Keyed {
 	// PG_PROGETTO VARCHAR2(3)
 	@JsonIgnore
 	private String tipo_dettaglio_contratto;
+
+	private String cdCigRifExt;
 
 	public ContrattoBase() {
 		super();
@@ -617,5 +617,13 @@ public class ContrattoBase extends ContrattoKey implements Keyed {
 
 	public void setCd_tipo_norma_perla(String cd_tipo_norma_perla) {
 		this.cd_tipo_norma_perla = cd_tipo_norma_perla;
+	}
+
+	public String getCdCigRifExt() {
+		return cdCigRifExt;
+	}
+
+	public void setCdCigRifExt(String cdCigRifExt) {
+		this.cdCigRifExt = cdCigRifExt;
 	}
 }

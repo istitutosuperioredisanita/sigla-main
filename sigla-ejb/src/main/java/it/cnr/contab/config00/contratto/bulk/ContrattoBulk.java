@@ -20,29 +20,9 @@
 * Date 09/04/2005
 */
 package it.cnr.contab.config00.contratto.bulk;
-import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.persistence.Transient;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import it.cnr.contab.config00.comp.ContrattoComponent;
-import it.cnr.contab.ordmag.anag00.AbilUtenteUopOperMagBulk;
-import it.cnr.jada.UserContext;
-import it.cnr.jada.action.ActionContext;
-import it.cnr.jada.bulk.BulkCollection;
-import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.util.action.CRUDBP;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.core.bulk.V_persona_fisicaBulk;
 import it.cnr.contab.config00.bulk.CigBulk;
@@ -54,13 +34,21 @@ import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.ICancellatoLogicamente;
 import it.cnr.contab.util.Utility;
+import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
+import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.si.spring.storage.annotation.StoragePolicy;
 import it.cnr.si.spring.storage.annotation.StorageProperty;
 import it.cnr.si.spring.storage.annotation.StorageType;
+import org.springframework.util.StringUtils;
+
+import javax.persistence.Transient;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.stream.Collectors;
 @StorageType(name="F:sigla_contratti:appalti")
 @JsonInclude(value=Include.NON_NULL)
 public class ContrattoBulk extends ContrattoBase implements ICancellatoLogicamente{
@@ -205,6 +193,7 @@ public class ContrattoBulk extends ContrattoBase implements ICancellatoLogicamen
 	}
 
 	public boolean isCIGVisible(){
+
 		if (isFromFlussoAcquisti()){
 			return true;
 		}
