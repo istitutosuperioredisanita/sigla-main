@@ -21,8 +21,6 @@ import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.InSequence;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.FileOutputStream;
@@ -54,7 +52,6 @@ public class RestServiceContrattiTest extends ActionDeployments {
         c.setCodfisPivaRupExt("RGLNLR52E69Z600O");
         c.setCodfisPivaAggiudicatarioExt("05923561004");
         //c.setCodfisPivaFirmatarioExt("ZNCMRT79E49H501E");
-
         //c.setTipoDettaglioContratto(EnumTipoDettaglioContratto.DETTAGLIO_CONTRATTO_ARTICOLI);
         c.setTipoDettaglioContratto(EnumTipoDettaglioContratto.DETTAGLIO_CONTRATTO_CATGRP);
         DettaglioContrattoDtoBulk dettaglioContrattoDtoBulk= new DettaglioContrattoDtoBulk();
