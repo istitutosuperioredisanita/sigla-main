@@ -134,13 +134,13 @@ public class ContrattoComponent extends it.cnr.jada.comp.CRUDDetailComponent imp
 	public SQLBuilder selectContratto_padreByClause (UserContext userContext, OggettoBulk bulk, ContrattoBulk contratto_padre,CompoundFindClause clause)	throws ComponentException, PersistencyException
 	{
 		if(((ContrattoBulk)bulk).getPg_contratto() != null && ((ContrattoBulk)bulk).getNatura_contabile() != null &&
-		   (((ContrattoBulk)bulk).getNatura_contabile().equals(ContrattoBulk.NATURA_CONTABILE_SENZA_FLUSSI_FINANZIARI) /*||
-		   ((ContrattoBulk)bulk).getStato().equals(ContrattoBulk.STATO_PROVVISORIO)*/))
+		   (((ContrattoBulk)bulk).getNatura_contabile().equals(ContrattoBulk.NATURA_CONTABILE_SENZA_FLUSSI_FINANZIARI) ||
+		   ((ContrattoBulk)bulk).getStato().equals(ContrattoBulk.STATO_PROVVISORIO)))
 		   throw new ApplicationException("Non è possibile associare un contratto di riferimento!");
+
 		if (clause == null) {
 			clause = contratto_padre.buildFindClauses(null);
 		}
-
 		SQLBuilder sql = getHome(userContext, contratto_padre).createSQLBuilder();
 
 		sql.openNotParenthesis("AND");
@@ -151,11 +151,17 @@ public class ContrattoComponent extends it.cnr.jada.comp.CRUDDetailComponent imp
 		sql.addSQLClause("AND", "NATURA_CONTABILE", sql.EQUALS, ContrattoBulk.NATURA_CONTABILE_SENZA_FLUSSI_FINANZIARI);
 		sql.addSQLClause("AND", "STATO", sql.EQUALS, ContrattoBulk.STATO_DEFINITIVO);
 		// sql.addSQLClause("AND", "NATURA_CONTABILE", sql.EQUALS, ((ContrattoBulk)bulk).getNatura_contabile());
+
+		if (( (ContrattoBulk)bulk).getCdCigRifExt()!=null){
+			sql.openParenthesis("AND");
+			sql.addSQLClause("AND","CD_CIG",sql.EQUALS,((ContrattoBulk)bulk).getCdCigRifExt());
+			sql.closeParenthesis();
+		}
 		if (clause != null) {
 			sql.addClause(clause);
 		}
 		return sql;
-		//}
+
 	}
 
 
@@ -2436,9 +2442,7 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 					}
 				}
 				if ( contratto.getCdCigRifExt()!=null && ( !contratto.getCdCigRifExt().isEmpty())){
-					ContrattoBulk contrattoPadre =new ContrattoBulk();
-					contrattoPadre.setCig(new CigBulk(contratto.getCdCigRifExt()));
-					contratto.setContratto_padre(getContrattoRiferimento( userContext,contratto,contrattoPadre));
+					contratto.setContratto_padre(getContrattoRiferimento( userContext,contratto,new ContrattoBulk()));
 					if ( !Optional.ofNullable(contratto.getPg_contratto_padre()).isPresent()){
 						throw new ComponentException("Il progetto di riferimento"+ contratto.getCdCigRifExt() +" non esiste in SIGLA");
 					}
