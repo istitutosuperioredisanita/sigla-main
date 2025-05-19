@@ -85,30 +85,30 @@ public V_AmmortamentoBeniDetComponent() {
 
 			sql.openParenthesis("AND");
 
-			sql.openParenthesis("OR");
-			sql.addSQLClause( "AND", "TIPORECORD", SQLBuilder.EQUALS, "INCREMENTO");
-			sql.addSQLClause( "AND", "ESERCIZIO_BUONO_CARICO", SQLBuilder.GREATER, esercizio);
-			sql.closeParenthesis();
+				sql.openParenthesis("OR");
+					sql.addSQLClause( "AND", "TIPORECORD", SQLBuilder.EQUALS, "INCREMENTO");
+					sql.addSQLClause( "AND", "ESERCIZIO_BUONO_CARICO", SQLBuilder.GREATER, esercizio);
+			    sql.closeParenthesis();
 
-			sql.openParenthesis("OR");
-			sql.addSQLClause( "AND", "TIPORECORD", SQLBuilder.EQUALS, "DECREMENTO");
-			sql.addSQLClause( "AND", "ESERCIZIO_BUONO_CARICO", SQLBuilder.GREATER, esercizio);
-			sql.closeParenthesis();
+				sql.openParenthesis("OR");
+					sql.addSQLClause( "AND", "TIPORECORD", SQLBuilder.EQUALS, "DECREMENTO");
+					sql.addSQLClause( "AND", "ESERCIZIO_BUONO_CARICO", SQLBuilder.GREATER, esercizio);
+				sql.closeParenthesis();
 
-			sql.openParenthesis("OR");
-			sql.addSQLClause( "AND", "tiporecord", SQLBuilder.EQUALS, "STORNO");
-			sql.addSQLClause( "AND", "esercizio_ammortanento", SQLBuilder.GREATER, esercizio);
-			sql.closeParenthesis();
+				sql.openParenthesis("OR");
+					sql.addSQLClause( "AND", "tiporecord", SQLBuilder.EQUALS, "STORNO");
+					sql.addSQLClause( "AND", "esercizio_ammortanento", SQLBuilder.GREATER, esercizio);
+				sql.closeParenthesis();
 
-			sql.openParenthesis("OR");
-			sql.addSQLClause( "AND", "tiporecord", SQLBuilder.EQUALS, "VALORE");
-			sql.addSQLClause( "AND", "esercizio_carico_bene", SQLBuilder.LESS_EQUALS, esercizio);
-			sql.closeParenthesis();
+					sql.openParenthesis("OR");
+					sql.addSQLClause( "AND", "tiporecord", SQLBuilder.EQUALS, "VALORE");
+					sql.addSQLClause( "AND", "esercizio_carico_bene", SQLBuilder.LESS_EQUALS, esercizio);
+				sql.closeParenthesis();
 
-			sql.openParenthesis("OR");
-			sql.addSQLClause( "AND", "tiporecord", SQLBuilder.EQUALS, "AMMORTAMENTO");
-			sql.addSQLClause( "AND", "esercizio_ammortanento", SQLBuilder.EQUALS, esercizio.intValue()-1);
-			sql.closeParenthesis();
+	//		sql.openParenthesis("OR");
+	//		sql.addSQLClause( "AND", "tiporecord", SQLBuilder.EQUALS, "AMMORTAMENTO");
+	//		sql.addSQLClause( "AND", "esercizio_ammortanento", SQLBuilder.EQUALS, esercizio.intValue()-1);
+	//		sql.closeParenthesis();
 
 
 			sql.closeParenthesis();
