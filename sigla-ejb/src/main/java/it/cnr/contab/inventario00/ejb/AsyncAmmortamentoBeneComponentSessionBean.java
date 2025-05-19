@@ -197,8 +197,8 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                                         }
                                     }
                                     else{
-                                            logger.info( "Attenzione percentuale di ammortamento a 0 per il bene pg_inventario: " + bene.getPgInventario() +
-                                                    " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo());
+                                            //logger.info( "Attenzione percentuale di ammortamento a 0 per il bene pg_inventario: " + bene.getPgInventario() +
+                                             //       " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo());
 
                                             Batch_log_rigaBulk log_rigaErr = new Batch_log_rigaBulk();
                                             log_rigaErr.setPg_esecuzione(logDB.getPg_esecuzione());
@@ -232,8 +232,8 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                             }
                         }
                         else{
-                            logger.info( "Attenzione nessun tipo ammortamento per il bene pg_inventario: " + bene.getPgInventario() +
-                                         " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo());
+                          //  logger.info( "Attenzione nessun tipo ammortamento per il bene pg_inventario: " + bene.getPgInventario() +
+                          //               " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo());
 
                             Batch_log_rigaBulk log_rigaErr = new Batch_log_rigaBulk();
                             log_rigaErr.setPg_esecuzione(logDB.getPg_esecuzione());
