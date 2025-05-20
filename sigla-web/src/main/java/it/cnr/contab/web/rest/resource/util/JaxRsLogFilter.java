@@ -16,26 +16,28 @@ import java.io.IOException;
 
 @Provider
 @PreMatching
-public class LowerCaseFilter implements ContainerRequestFilter {
-    private static final Logger logger = LoggerFactory.getLogger(LowerCaseFilter.class);
+public class JaxRsLogFilter implements ContainerRequestFilter {
+    private static final Logger logger = LoggerFactory.getLogger(JaxRsLogFilter.class);
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        logger.debug("URI: " + requestContext.getUriInfo().getRequestUri().toString());
-            MultivaluedMap<String, String> headers=requestContext.getHeaders();
-            logger.debug("Headers" );
-            headers.forEach((k, v)->{
-                logger.debug("key:"+k );
-                v.forEach(item-> {
-                logger.debug("value"+v);
+        if ( logger.isDebugEnabled()) {
+            logger.debug("URI: " + requestContext.getUriInfo().getRequestUri().toString());
+            MultivaluedMap<String, String> headers = requestContext.getHeaders();
+            logger.debug("Headers");
+            headers.forEach((k, v) -> {
+                logger.debug("key:" + k);
+                v.forEach(item -> {
+                    logger.debug("value" + v);
                 });
             });
-            logger.debug("Fine Headers" );
+            logger.debug("Fine Headers");
             if (HttpMethod.POST.matches(requestContext.getMethod())) {
                 BufferedInputStream stream = new BufferedInputStream(requestContext.getEntityStream());
                 String payload = IOUtils.toString(stream, "UTF-8");
                 logger.debug("Payload: " + payload);
                 requestContext.setEntityStream(IOUtils.toInputStream(payload, "UTF-8"));
             }
+        }
     }
 }
