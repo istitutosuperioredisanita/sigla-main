@@ -110,7 +110,7 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 
 		if (getNr_inventario()==null || getProgressivo()==null)
 			return null;	
-		return getNr_inventario().toString() + "." + getProgressivo().toString();
+		return getNr_inventario().toString() + "." + getProgressivo().toString() + "." + getEtichetta();
 	}
 	/**
 		 * Inizializza il ricevente per la visualizzazione in un <code>FormController</code>
@@ -214,7 +214,7 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 	 * Se il bene è accessorio, restituisce l'etichetta del bene principale se disponibile.
 	 */
 	public String getEtichetta() {
-		if (isBeneAccessorio()) {
+		if (isBeneAccessorio() || isAccessorioContestuale()) {
 			if (getBene() != null &&
 					getBene().getBene_principale() != null &&
 					getBene().getBene_principale().getEtichetta() != null) {
