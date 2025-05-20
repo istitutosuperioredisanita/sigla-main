@@ -18,6 +18,7 @@
 package it.cnr.contab.coepcoan00.ejb;
 
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaComponent;
+import it.cnr.contab.coepcoan00.core.bulk.Scrittura_analiticaBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.jada.UserContext;
 
@@ -74,6 +75,25 @@ public class ScritturaPartitaDoppiaComponentSessionBean extends it.cnr.jada.ejb.
     }
 
     public Long getNextProgressivo(UserContext param0, Scrittura_partita_doppiaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+        pre_component_invocation(param0, componentObj);
+        try {
+            Long result = ((ScritturaPartitaDoppiaComponent) componentObj).getNextProgressivo(param0, param1);
+            component_invocation_succes(param0, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(param0, componentObj);
+            throw e;
+        } catch (it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(param0, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(param0, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(param0, componentObj, e);
+        }
+    }
+
+    public Long getNextProgressivo(UserContext param0, Scrittura_analiticaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             Long result = ((ScritturaPartitaDoppiaComponent) componentObj).getNextProgressivo(param0, param1);

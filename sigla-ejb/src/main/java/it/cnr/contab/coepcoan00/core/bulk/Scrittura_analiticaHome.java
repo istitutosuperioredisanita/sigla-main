@@ -57,40 +57,13 @@ public class Scrittura_analiticaHome extends BulkHome {
 
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,OggettoBulk bulk) throws ComponentException
 	{
-		try
-		{
+		try {
 			Scrittura_analiticaBulk scrittura = (Scrittura_analiticaBulk) bulk;
 
-			LoggableStatement cs = new LoggableStatement(getConnection(),
-				"{ ? = call " +
-				it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() +
-				"CNRCTB200.getNextProgressivo(?, ?, ?, ?, ?)}",false,this.getClass());
-			try
-			{
-				cs.registerOutParameter( 1, java.sql.Types.NUMERIC );
-				cs.setObject( 2, scrittura.getEsercizio() );
-				cs.setString( 3, scrittura.getCd_cds() );
-				cs.setString( 4, scrittura.getCd_unita_organizzativa() );
-				cs.setString( 5, scrittura.TIPO_COAN );
-				cs.setString( 6, scrittura.getUser());
-				cs.executeQuery();
-
-				Long result = new Long( cs.getLong( 1 ));
-				scrittura.setPg_scrittura( result );
-			}
-			catch ( SQLException e )
-			{
-				throw new ComponentException( e );
-			}
-			finally
-			{
-				cs.close();
-			}
-
-		}
-		catch ( java.lang.Exception e )
-		{
-			throw new ComponentException( e );
+			if (scrittura.getPg_scrittura()==null)
+				scrittura.setPg_scrittura(Utility.createScritturaPartitaDoppiaComponentSession().getNextProgressivo(userContext, scrittura));
+		} catch (java.lang.Exception e) {
+			throw new ComponentException(e);
 		}
 	}
 

@@ -343,6 +343,10 @@ public class Movimento_cogeBulk extends Movimento_cogeBase {
         return TipoRiga.COSTO.value().equals(this.getTi_riga());
     }
 
+    public boolean isRigaTipoRicavo() {
+        return TipoRiga.RICAVO.value().equals(this.getTi_riga());
+    }
+
     public boolean isRigaTipoTesoreria() {
         return TipoRiga.TESORERIA.value().equals(this.getTi_riga());
     }

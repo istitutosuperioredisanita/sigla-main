@@ -91,5 +91,5 @@ CompensoBulk ricercaCompensoByKey(it.cnr.jada.UserContext userContext,Long eserc
 java.util.List<CompensoBulk> ricercaCompensiTrovato(it.cnr.jada.UserContext userContext,Long trovato)throws ComponentException,java.rmi.RemoteException,PersistencyException;
 it.cnr.contab.compensi00.docs.bulk.CompensoBulk inizializzaCompensoPerFattura(it.cnr.jada.UserContext param0,it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1,it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_IBulk param2) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 it.cnr.contab.compensi00.docs.bulk.CompensoBulk valorizzaInfoDocEle(it.cnr.jada.UserContext param0,it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
-
+it.cnr.contab.compensi00.docs.bulk.CompensoBulk loadContributiERitenute(it.cnr.jada.UserContext param0,it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 }

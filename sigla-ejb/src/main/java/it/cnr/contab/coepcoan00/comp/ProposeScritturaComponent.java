@@ -62,6 +62,7 @@ import it.cnr.jada.persistency.sql.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.util.Pair;
+import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -3662,7 +3663,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 											if (imponibile.compareTo(BigDecimal.ZERO)!=0) {
 												List<DettaglioAnalitico> dettagliAnalitici = new ArrayList<>();
 												//carico i dettagli analitici recuperandoli dalle tabelle economiche associate alla riga del documento pagato
-												for (IDocumentoAmministrativoRigaEcoBulk rigaEco:riga.getRigheEconomica())
+												for (IDocumentoDetailAnaCogeBulk rigaEco:riga.getRigheEconomica())
 													dettagliAnalitici.add(new DettaglioAnalitico(rigaEco.getCd_centro_responsabilita(), rigaEco.getCd_linea_attivita(), rigaEco.getImporto()));
 												list.add(new DettaglioFinanziario(docamm, cdTerzoDocAmm, riga.getVoce_ep(), dettagliAnalitici, imponibile, imposta));
 											}
@@ -4013,6 +4014,21 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 	private String findCodiceTributoIvaSplit(UserContext userContext) throws ComponentException, RemoteException {
 		return this.findValueByConfigurazioneCNR(userContext, null, Configurazione_cnrBulk.PK_CORI_SPECIALE, Configurazione_cnrBulk.SK_IVA, 3);
+	}
+
+	private WorkpackageBulk findGaeCostoDocumentoNonLiquidabileByConfig(UserContext userContext, Integer esercizio, IDocumentoAmministrativoRigaBulk rigaDocAmm) throws ComponentException, RemoteException {
+		String aCdLineaAttivita = this.findValueByConfigurazioneCNR(userContext, esercizio, Configurazione_cnrBulk.PK_VOCEEP_SPECIALE, Configurazione_cnrBulk.SK_COSTO_DOC_NON_LIQUIDABILE, 2);
+		String aCdCentroCosto = rigaDocAmm.getFather().getCd_uo()+".000";
+
+		return Optional.of(aCdLineaAttivita).map(el->{
+			try {
+				WorkpackageHome wpHome = (WorkpackageHome) getHome(userContext, WorkpackageBulk.class);
+				return (WorkpackageBulk) wpHome.searchGAECompleta(userContext,CNRUserContext.getEsercizio(userContext), aCdCentroCosto, aCdLineaAttivita);
+			} catch(ComponentException ex) {
+				throw new DetailedRuntimeException(ex);
+			}
+		}).orElseThrow(()->new ApplicationException("Attenzione! Non esiste per il cdr " + aCdCentroCosto + " la GAE "+ aCdLineaAttivita +" indicata nella tabella CONFIGURAZIONE_CNR per l'esercizio "+CNRUserContext.getEsercizio(userContext)
+				+" ("+Configurazione_cnrBulk.PK_VOCEEP_SPECIALE+"-"+Configurazione_cnrBulk.SK_COSTO_DOC_NON_LIQUIDABILE+"-VAL02)."));
 	}
 
 	private Voce_epBulk findContoByConfigurazioneCNR(UserContext userContext, int esercizio, String chiavePrimaria, String chiaveSecondaria, int fieldNumber) throws ComponentException, RemoteException {
@@ -4636,6 +4652,35 @@ public class ProposeScritturaComponent extends CRUDComponent {
 							") non risulterebbe essere uguale all'importo della reversale (" +
 							new EuroFormat().format(((ReversaleBulk) doccoge).getIm_reversale()) + ").");
 			}
+		}
+
+		//Metto controllo che se movimentato costo si movimenta anche l'analitica
+		if (makeAnalitica) {
+			Scrittura_analiticaBulk scritturaAnalitica = resultScrittureContabili.getScritturaAnaliticaBulk();
+
+            assert scritturaPartitaDoppia != null;
+            scritturaPartitaDoppia.getAllMovimentiColl().stream()
+					.filter(mc->mc.isRigaTipoCosto() || mc.isRigaTipoRicavo())
+					.forEach(mc->{
+						if (scritturaAnalitica==null)
+							throw new ApplicationRuntimeException("Errore nella generazione scrittura prima nota e analitica del documento "+
+								doccoge.getTipoDocumentoEnum()+"/"+doccoge.getEsercizio()+"/"+doccoge.getCd_cds()+"/"+doccoge.getCd_uo()+
+								"/"+doccoge.getPg_doc()+". Non risulta alcuna ripartizione in analitica per il conto " +
+								mc.getCd_voce_ep() + ".");
+						BigDecimal totAnalitica = scritturaAnalitica.getMovimentiColl().stream()
+								.filter(ana->ana.getMovimentoCoge().equals(mc))
+								.filter(ana->ana.getSezione().equals(mc.getSezione()))
+								.map(Movimento_coanBulk::getIm_movimento)
+								.reduce(BigDecimal.ZERO, BigDecimal::add);
+						if (totAnalitica.compareTo(mc.getIm_movimento())!=0)
+							throw new ApplicationRuntimeException("Errore nella generazione scrittura prima nota e analitica del documento "+
+									doccoge.getTipoDocumentoEnum()+"/"+doccoge.getEsercizio()+"/"+doccoge.getCd_cds()+"/"+doccoge.getCd_uo()+
+									"/"+doccoge.getPg_doc()+". Il totale ripartito in analitica (" +
+									new EuroFormat().format(totAnalitica) +
+									") per il conto " + mc.getCd_voce_ep() + " non risulterebbe essere uguale al totale " +
+									"del costo rilevato in partita doppia (" +
+									new EuroFormat().format(mc.getIm_movimento())+").");
+					});
 		}
 
 		return resultScrittureContabili;
@@ -5395,7 +5440,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 	private void loadRigheEco(UserContext userContext, IDocumentoAmministrativoRigaBulk rigaDocamm) {
 		try {
-			if (rigaDocamm.getChildrenEco().isEmpty()) {
+			if (rigaDocamm.getChildrenAna().isEmpty()) {
 				if (rigaDocamm instanceof Documento_generico_rigaBulk) {
 					Documento_generico_rigaHome rigaHome = (Documento_generico_rigaHome) getHome(userContext, Documento_generico_rigaBulk.class);
 					((Documento_generico_rigaBulk) rigaDocamm).setRigheEconomica(rigaHome.findDocumentoGenericoRigheEcoList((Documento_generico_rigaBulk) rigaDocamm));
@@ -5411,7 +5456,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 				}
 			}
 			//Se continua a non essere valorizzato allora forse devo caricare le tabelle
-			if (rigaDocamm.getChildrenEco().isEmpty())
+			if (rigaDocamm.getChildrenAna().isEmpty())
 				this.loadDocammRigheEco(userContext, rigaDocamm);
 		} catch (PersistencyException | ComponentException | RemoteException e) {
 			throw new RuntimeException(e);
@@ -5891,8 +5936,8 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		//Carico i dettagli economici
 		this.loadRigheEco(userContext, rigaDocAmm);
 
-		for (IDocumentoAmministrativoRigaEcoBulk rigaEco : rigaDocAmm.getChildrenEco())
-			dettagliAnalitici.add(new DettaglioAnalitico(rigaEco.getLinea_attivita().getCd_centro_responsabilita(), rigaEco.getLinea_attivita().getCd_linea_attivita(), rigaEco.getImporto()));
+		for (IDocumentoDetailAnaCogeBulk rigaAna : rigaDocAmm.getChildrenAna())
+			dettagliAnalitici.add(new DettaglioAnalitico(rigaAna.getLinea_attivita().getCd_centro_responsabilita(), rigaAna.getLinea_attivita().getCd_linea_attivita(), rigaAna.getImporto()));
 
 		return new DettaglioFinanziario(rigaDocAmm, rigaPartita, terzo.getCd_terzo(), rigaDocAmm.getVoce_ep(), dettagliAnalitici);
 	}
@@ -5934,9 +5979,9 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		((OggettoBulk)rigaDocAmm).setToBeUpdated();
 		updateBulk(userContext, (OggettoBulk)rigaDocAmm);
 
-		for (IDocumentoAmministrativoRigaEcoBulk rigaEco : rigaDocAmm.getChildrenEco()) {
-			((OggettoBulk) rigaEco).setToBeDeleted();
-			deleteBulk(userContext, (OggettoBulk) rigaEco);
+		for (IDocumentoDetailAnaCogeBulk rigaAna : rigaDocAmm.getChildrenAna()) {
+			((OggettoBulk) rigaAna).setToBeDeleted();
+			deleteBulk(userContext, (OggettoBulk) rigaAna);
 		}
 
 		if (Optional.ofNullable(aContoEconomico).isPresent()) {
@@ -5947,11 +5992,67 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 			if (Optional.ofNullable(voceAnaliticaDef).isPresent()) {
 				try {
-					if (Optional.ofNullable(scadenzaDocumentoContabile).filter(Obbligazione_scadenzarioBulk.class::isInstance).isPresent()) {
+					if (!Optional.ofNullable(scadenzaDocumentoContabile).isPresent()) {
+						WorkpackageBulk gaeDefault = this.findGaeCostoDocumentoNonLiquidabileByConfig(userContext, CNRUserContext.getEsercizio(userContext), rigaDocAmm);
+						if (rigaDocAmm instanceof Fattura_passiva_rigaBulk) {
+							Fattura_passiva_riga_ecoBulk rigaEco = null;
+							if (rigaDocAmm instanceof Fattura_passiva_rigaIBulk)
+								rigaEco = new Fattura_passiva_riga_ecoIBulk();
+							else if (rigaDocAmm instanceof Nota_di_credito_rigaBulk)
+								rigaEco = new Nota_di_credito_riga_ecoBulk();
+							else if (rigaDocAmm instanceof Nota_di_debito_rigaBulk)
+								rigaEco = new Nota_di_debito_riga_ecoBulk();
+
+							rigaEco.setProgressivo_riga_eco((long) (rigaDocAmm.getChildrenAna().size() + 1));
+							rigaEco.setVoce_analitica(voceAnaliticaDef);
+							rigaEco.setLinea_attivita(gaeDefault);
+							rigaEco.setFattura_passiva_riga((Fattura_passiva_rigaBulk) rigaDocAmm);
+							rigaEco.setImporto(rigaDocAmm.getImportoCostoEco());
+							rigaEco.setToBeCreated();
+							insertBulk(userContext, rigaEco);
+							((Fattura_passiva_rigaBulk)rigaDocAmm).getRigheEconomica().add(rigaEco);
+						} else if (rigaDocAmm instanceof Documento_generico_rigaBulk) {
+							Documento_generico_riga_ecoBulk rigaEco = new Documento_generico_riga_ecoBulk();
+							rigaEco.setProgressivo_riga_eco((long) (rigaDocAmm.getChildrenAna().size() + 1));
+							rigaEco.setVoce_analitica(voceAnaliticaDef);
+							rigaEco.setLinea_attivita(gaeDefault);
+							rigaEco.setDocumento_generico_rigaBulk((Documento_generico_rigaBulk) rigaDocAmm);
+							rigaEco.setImporto(rigaDocAmm.getImportoCostoEco());
+							rigaEco.setToBeCreated();
+							insertBulk(userContext, rigaEco);
+							((Documento_generico_rigaBulk)rigaDocAmm).getRigheEconomica().add(rigaEco);
+						} else if (rigaDocAmm instanceof Fattura_attiva_rigaBulk) {
+							Fattura_attiva_riga_ecoBulk rigaEco = null;
+							if (rigaDocAmm instanceof Fattura_attiva_rigaIBulk)
+								rigaEco = new Fattura_attiva_riga_ecoIBulk();
+							else if (rigaDocAmm instanceof Nota_di_credito_attiva_rigaBulk)
+								rigaEco = new Nota_di_credito_attiva_riga_ecoBulk();
+							else if (rigaDocAmm instanceof Nota_di_debito_attiva_rigaBulk)
+								rigaEco = new Nota_di_debito_attiva_riga_ecoBulk();
+
+							rigaEco.setProgressivo_riga_eco((long) (rigaDocAmm.getChildrenAna().size() + 1));
+							rigaEco.setVoce_analitica(voceAnaliticaDef);
+							rigaEco.setLinea_attivita(gaeDefault);
+							rigaEco.setFattura_attiva_riga((Fattura_attiva_rigaBulk) rigaDocAmm);
+							rigaEco.setImporto(rigaDocAmm.getImportoCostoEco());
+							rigaEco.setToBeCreated();
+							insertBulk(userContext, rigaEco);
+							((Fattura_attiva_rigaBulk)rigaDocAmm).getRigheEconomica().add(rigaEco);
+						} else if (rigaDocAmm instanceof Documento_generico_rigaBulk) {
+							Documento_generico_riga_ecoBulk rigaEco = new Documento_generico_riga_ecoBulk();
+							rigaEco.setProgressivo_riga_eco((long) (rigaDocAmm.getChildrenAna().size() + 1));
+							rigaEco.setVoce_analitica(voceAnaliticaDef);
+							rigaEco.setLinea_attivita(gaeDefault);
+							rigaEco.setDocumento_generico_rigaBulk((Documento_generico_rigaBulk) rigaDocAmm);
+							rigaEco.setImporto(rigaDocAmm.getImportoCostoEco());
+							rigaEco.setToBeCreated();
+							insertBulk(userContext, rigaEco);
+							((Documento_generico_rigaBulk)rigaDocAmm).getRigheEconomica().add(rigaEco);
+						}
+					} else if (Optional.ofNullable(scadenzaDocumentoContabile).filter(Obbligazione_scadenzarioBulk.class::isInstance).isPresent()) {
 						//carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
 						Obbligazione_scadenzarioHome obbligazioneScadenzarioHome = (Obbligazione_scadenzarioHome) getHome(userContext, Obbligazione_scadenzarioBulk.class);
 						List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, (Obbligazione_scadenzarioBulk) rigaDocAmm.getScadenzaDocumentoContabile());
-						List<IDocumentoAmministrativoRigaEcoBulk> listEco = new ArrayList<>();
 						for (Obbligazione_scad_voceBulk scadVoce : scadVoceBulks) {
 							if (rigaDocAmm instanceof Fattura_passiva_rigaBulk) {
 								Fattura_passiva_riga_ecoBulk rigaEco = null;
@@ -5962,29 +6063,27 @@ public class ProposeScritturaComponent extends CRUDComponent {
 								else if (rigaDocAmm instanceof Nota_di_debito_rigaBulk)
 									rigaEco = new Nota_di_debito_riga_ecoBulk();
 
-								rigaEco.setProgressivo_riga_eco((long) (listEco.size() + 1));
+								rigaEco.setProgressivo_riga_eco((long) (rigaDocAmm.getChildrenAna().size() + 1));
 								rigaEco.setVoce_analitica(voceAnaliticaDef);
 								rigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
 								rigaEco.setFattura_passiva_riga((Fattura_passiva_rigaBulk) rigaDocAmm);
 								rigaEco.setImporto(scadVoce.getIm_voce());
 								rigaEco.setToBeCreated();
 								insertBulk(userContext, rigaEco);
-								listEco.add(rigaEco);
+								((Fattura_passiva_rigaBulk)rigaDocAmm).getRigheEconomica().add(rigaEco);
 							} else {
 								Documento_generico_riga_ecoBulk rigaEco = new Documento_generico_riga_ecoBulk();
-								rigaEco.setProgressivo_riga_eco((long) (listEco.size() + 1));
+								rigaEco.setProgressivo_riga_eco((long) (rigaDocAmm.getChildrenAna().size() + 1));
 								rigaEco.setVoce_analitica(voceAnaliticaDef);
 								rigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
 								rigaEco.setDocumento_generico_rigaBulk((Documento_generico_rigaBulk) rigaDocAmm);
 								rigaEco.setImporto(scadVoce.getIm_voce());
 								rigaEco.setToBeCreated();
 								insertBulk(userContext, rigaEco);
-								listEco.add(rigaEco);
+								((Documento_generico_rigaBulk)rigaDocAmm).getRigheEconomica().add(rigaEco);
 							}
 						}
-					}
-
-					if (Optional.ofNullable(scadenzaDocumentoContabile).filter(Accertamento_scadenzarioBulk.class::isInstance).isPresent()) {
+					} else if (Optional.ofNullable(scadenzaDocumentoContabile).filter(Accertamento_scadenzarioBulk.class::isInstance).isPresent()) {
 						//carico i dettagli analitici recuperandoli dall'accertamento_scad_voce
 						Accertamento_scadenzarioHome accertamentoScadenzarioHome = (Accertamento_scadenzarioHome) getHome(userContext, Accertamento_scadenzarioBulk.class);
 						List<Accertamento_scad_voceBulk> scadVoceBulks = accertamentoScadenzarioHome.findAccertamento_scad_voceList(userContext, (Accertamento_scadenzarioBulk) rigaDocAmm.getScadenzaDocumentoContabile());
@@ -5998,24 +6097,24 @@ public class ProposeScritturaComponent extends CRUDComponent {
 								else if (rigaDocAmm instanceof Nota_di_debito_attiva_rigaBulk)
 									rigaEco = new Nota_di_debito_attiva_riga_ecoBulk();
 
-								rigaEco.setProgressivo_riga_eco((long) (rigaDocAmm.getChildrenEco().size() + 1));
+								rigaEco.setProgressivo_riga_eco((long) (rigaDocAmm.getChildrenAna().size() + 1));
 								rigaEco.setVoce_analitica(voceAnaliticaDef);
 								rigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
 								rigaEco.setFattura_attiva_riga((Fattura_attiva_rigaBulk) rigaDocAmm);
 								rigaEco.setImporto(scadVoce.getIm_voce());
 								rigaEco.setToBeCreated();
 								insertBulk(userContext, rigaEco);
-								rigaDocAmm.getChildrenEco().add(rigaEco);
+								((Fattura_attiva_rigaBulk)rigaDocAmm).getRigheEconomica().add(rigaEco);
 							} else {
 								Documento_generico_riga_ecoBulk rigaEco = new Documento_generico_riga_ecoBulk();
-								rigaEco.setProgressivo_riga_eco((long) (rigaDocAmm.getChildrenEco().size() + 1));
+								rigaEco.setProgressivo_riga_eco((long) (rigaDocAmm.getChildrenAna().size() + 1));
 								rigaEco.setVoce_analitica(voceAnaliticaDef);
 								rigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
 								rigaEco.setDocumento_generico_rigaBulk((Documento_generico_rigaBulk) rigaDocAmm);
 								rigaEco.setImporto(scadVoce.getIm_voce());
 								rigaEco.setToBeCreated();
 								insertBulk(userContext, rigaEco);
-								rigaDocAmm.getChildrenEco().add(rigaEco);
+								((Documento_generico_rigaBulk)rigaDocAmm).getRigheEconomica().add(rigaEco);
 							}
 						}
 					}

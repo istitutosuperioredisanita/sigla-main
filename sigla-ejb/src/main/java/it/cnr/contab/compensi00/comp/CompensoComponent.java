@@ -3530,15 +3530,14 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 	 * compenso
 	 * 
 	 **/
-	private void loadContributiERitenute(UserContext userContext,
-			CompensoBulk compenso) throws ComponentException {
+	public CompensoBulk loadContributiERitenute(UserContext userContext, CompensoBulk compenso) throws ComponentException {
 
 		try {
 
 			Contributo_ritenutaHome home = (Contributo_ritenutaHome) getHome(
 					userContext, Contributo_ritenutaBulk.class);
 			compenso.setContributi(home.loadContributiRitenute(compenso));
-
+			return compenso;
 		} catch (it.cnr.jada.persistency.PersistencyException ex) {
 			throw handleException(ex);
 		}

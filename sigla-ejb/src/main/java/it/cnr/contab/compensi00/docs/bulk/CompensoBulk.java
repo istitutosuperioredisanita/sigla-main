@@ -23,16 +23,19 @@ import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.*;
 import it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.contab.compensi00.tabrif.bulk.Tipo_prestazione_compensoBulk;
 import it.cnr.contab.compensi00.tabrif.bulk.Tipo_trattamentoBulk;
 import it.cnr.contab.compensi00.tabrif.bulk.Tipologia_rischioBulk;
 import it.cnr.contab.config00.bulk.CigBulk;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.doccont00.core.bulk.IDefferUpdateSaldi;
 import it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk;
+import it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.incarichi00.bulk.Incarichi_repertorio_annoBulk;
 import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
@@ -54,7 +57,7 @@ import java.util.stream.Collectors;
 
 @StorageType(name = "D:emppay:compenso", parentName = "D:emppay:document")
 @JsonInclude(value = Include.NON_NULL)
-public class CompensoBulk extends CompensoBase implements IDefferUpdateSaldi, IDocumentoAmministrativoSpesaBulk, AllegatoStorePath {
+public class CompensoBulk extends CompensoBase implements IDefferUpdateSaldi, IDocumentoAmministrativoSpesaBulk, IDocumentoDetailEcoCogeBulk, AllegatoStorePath {
 
     // Stato COAN
     public final static java.lang.String CONTABILIZZATO_COAN = "C";
@@ -225,6 +228,8 @@ public class CompensoBulk extends CompensoBase implements IDefferUpdateSaldi, ID
     private boolean userAbilitatoSenzaCalcolo = false;
     private CigBulk cig;
     private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
+    private List<Documento_generico_riga_ecoBulk> righeEconomica = new BulkList<>();
+    private ContoBulk voce_ep = new ContoBulk();
 
     public CompensoBulk() {
         super();
@@ -3395,5 +3400,15 @@ public class CompensoBulk extends CompensoBase implements IDefferUpdateSaldi, ID
     @Override
     public Long getReportIdLiquid() {
         return null;
+    }
+
+    @Override
+    public BigDecimal getImportoCostoEco() {
+        return this.getIm_totale_compenso();
+    }
+
+    @Override
+    public IScadenzaDocumentoContabileBulk getScadenzaDocumentoContabile() {
+        return this.getObbligazioneScadenzario();
     }
 }

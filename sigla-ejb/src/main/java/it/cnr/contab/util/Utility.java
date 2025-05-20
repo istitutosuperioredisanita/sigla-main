@@ -578,6 +578,9 @@ public final class Utility {
 	public static ScritturaPartitaDoppiaComponentSession createScritturaPartitaDoppiaComponentSession() throws javax.ejb.EJBException{
 		return (ScritturaPartitaDoppiaComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOEPCOAN00_EJB_ScritturaPartitaDoppiaComponentSession", ScritturaPartitaDoppiaComponentSession.class);
 	}
+	public static ScritturaAnaliticaComponentSession createScritturaAnaliticaComponentSession() throws javax.ejb.EJBException{
+		return (ScritturaAnaliticaComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOEPCOAN00_EJB_ScritturaAnaliticaComponentSession", ScritturaAnaliticaComponentSession.class);
+	}
 	public static ProposeScritturaComponentSession createProposeScritturaComponentSession() throws javax.ejb.EJBException{
 		return (ProposeScritturaComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOEPCOAN00_EJB_ProposeScritturaComponentSession", ProposeScritturaComponentSession.class);
 	}

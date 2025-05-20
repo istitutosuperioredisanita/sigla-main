@@ -22,6 +22,7 @@ import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.bulk.BulkList;
@@ -1187,10 +1188,10 @@ public class Documento_generico_rigaBulk extends Documento_generico_rigaBase imp
     }
 
 	@Override
-	public List<IDocumentoAmministrativoRigaEcoBulk> getChildrenEco() {
+	public List<IDocumentoDetailAnaCogeBulk> getChildrenAna() {
 		return this.getRigheEconomica().stream()
 				.filter(Objects::nonNull)
-				.map(IDocumentoAmministrativoRigaEcoBulk.class::cast)
+				.map(IDocumentoDetailAnaCogeBulk.class::cast)
 				.collect(Collectors.toList());
 	}
 }

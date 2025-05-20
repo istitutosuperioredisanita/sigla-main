@@ -22,7 +22,6 @@ import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -33,7 +32,7 @@ import it.cnr.contab.anagraf00.tabrif.bulk.Rif_inquadramentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Tipo_rapportoBulk;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk;
@@ -52,9 +51,7 @@ import it.cnr.contab.missioni00.service.MissioniCMISService;
 import it.cnr.contab.missioni00.tabrif.bulk.Missione_tipo_spesaBulk;
 import it.cnr.contab.missioni00.tabrif.bulk.Tipo_missioneBulk;
 import it.cnr.contab.service.SpringUtil;
-import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.util.enumeration.TipoIVA;
-import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.annotation.StoragePolicy;
 import it.cnr.si.spring.storage.annotation.StorageProperty;
 import it.cnr.si.spring.storage.annotation.StorageType;
@@ -70,7 +67,6 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.PrimaryKeyHashMap;
 import it.cnr.jada.bulk.PrimaryKeyHashtable;
 import it.cnr.jada.bulk.ValidationException;
-import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.jada.util.StrServ;
@@ -78,7 +74,7 @@ import it.cnr.jada.util.action.CRUDBP;
 
 @StorageType(name="D:emppay:missione", parentName="D:emppay:document")
 @JsonInclude(value=Include.NON_NULL)
-public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, IDocumentoAmministrativoSpesaBulk, AllegatoParentBulk, AllegatoStorePath
+public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, IDocumentoAmministrativoSpesaBulk, IDocumentoDetailEcoCogeBulk, AllegatoParentBulk, AllegatoStorePath
 {
 	// Testata Missione
 	@JsonIgnore
@@ -3817,5 +3813,15 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	@Override
 	public Timestamp getDtGenerazioneScrittura() {
 		return this.getDt_contabilizzazione();
+	}
+
+	@Override
+	public BigDecimal getImportoCostoEco() {
+		return this.getIm_totale_missione();
+	}
+
+	@Override
+	public IScadenzaDocumentoContabileBulk getScadenzaDocumentoContabile() {
+		return this.getObbligazione_scadenzario();
 	}
 }

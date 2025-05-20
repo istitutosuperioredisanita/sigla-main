@@ -20,6 +20,8 @@ package it.cnr.contab.docamm00.docs.bulk;
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 
 import java.math.BigDecimal;
@@ -31,7 +33,7 @@ import java.util.Optional;
  * Creation date: (12/13/2001 4:02:04 PM)
  * @author: Roberto Peli
  */
-public interface IDocumentoAmministrativoRigaBulk {
+public interface IDocumentoAmministrativoRigaBulk extends IDocumentoDetailEcoCogeBulk  {
 	public enum tipo {
 		GEN_CORA_E, GEN_CORV_E
 	}
@@ -84,12 +86,6 @@ public interface IDocumentoAmministrativoRigaBulk {
 	 */
 	it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk getVoce_iva();
 
-	default ContoBulk getVoce_ep() {
-		return null;
-	};
-
-	default void setVoce_ep(ContoBulk voce_ep) {};
-
 	boolean isDirectlyLinkedToDC();
 
 	boolean isRiportata();
@@ -120,10 +116,7 @@ public interface IDocumentoAmministrativoRigaBulk {
 		);
 	}
 
-	default java.util.List<IDocumentoAmministrativoRigaEcoBulk> getChildrenEco() {
-		return new ArrayList<>();
-	}
-
+	@Override
 	default BigDecimal getImportoCostoEco() {
 		return this.getIm_riga();
 	}

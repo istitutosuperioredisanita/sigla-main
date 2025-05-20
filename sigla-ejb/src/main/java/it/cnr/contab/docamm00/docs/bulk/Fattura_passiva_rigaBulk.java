@@ -21,6 +21,7 @@ import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.config00.bulk.CigBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
@@ -830,10 +831,10 @@ public abstract class Fattura_passiva_rigaBulk
     }
 
     @Override
-    public List<IDocumentoAmministrativoRigaEcoBulk> getChildrenEco() {
+    public List<IDocumentoDetailAnaCogeBulk> getChildrenAna() {
         return this.getRigheEconomica().stream()
                 .filter(Objects::nonNull)
-                .map(IDocumentoAmministrativoRigaEcoBulk.class::cast)
+                .map(IDocumentoDetailAnaCogeBulk.class::cast)
                 .collect(Collectors.toList());
     }
 
@@ -854,6 +855,6 @@ public abstract class Fattura_passiva_rigaBulk
      * Ritorna l'importo ripartito tra le righe di economica
      */
     public BigDecimal getImportoCostoEcoRipartito() {
-        return this.getRigheEconomica().stream().map(IDocumentoAmministrativoRigaEcoBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
+        return this.getRigheEconomica().stream().map(IDocumentoDetailAnaCogeBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

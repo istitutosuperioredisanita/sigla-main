@@ -15,27 +15,29 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package it.cnr.contab.docamm00.docs.bulk;
+package it.cnr.contab.missioni00.docs.bulk;
 
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
+import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
 
 import java.util.Optional;
 
-public class Documento_generico_riga_ecoBulk extends Documento_generico_riga_ecoBase implements IDocumentoDetailAnaCogeBulk {
-    private Documento_generico_rigaBulk documento_generico_rigaBulk;
+public class Missione_riga_ecoBulk extends Missione_riga_ecoBase implements IDocumentoDetailAnaCogeBulk {
+    private MissioneBulk missione;
 
     protected Voce_analiticaBulk voce_analitica = new Voce_analiticaBulk();
 
     WorkpackageBulk linea_attivita = new WorkpackageBulk();
 
-    public Documento_generico_riga_ecoBulk() {
+    public Missione_riga_ecoBulk() {
         super();
     }
 
-    public Documento_generico_riga_ecoBulk(String cd_cds, String cd_unita_organizzativa, Integer esercizio, String cd_tipo_documento_amm, Long pg_documento_generico, Long progressivo_riga, Long progressivo_riga_eco) {
-        super(cd_cds, cd_unita_organizzativa, esercizio, cd_tipo_documento_amm, pg_documento_generico, progressivo_riga, progressivo_riga_eco);
+    public Missione_riga_ecoBulk(String cd_cds, String cd_unita_organizzativa, Integer esercizio, Long pg_missione, Long progressivo_riga_eco) {
+        super(cd_cds, cd_unita_organizzativa, esercizio, pg_missione, progressivo_riga_eco);
     }
 
     public Voce_analiticaBulk getVoce_analitica() {
@@ -102,75 +104,63 @@ public class Documento_generico_riga_ecoBulk extends Documento_generico_riga_eco
         Optional.ofNullable(this.getLinea_attivita()).ifPresent(el->el.setCd_centro_responsabilita(cd_centro_responsabilita));
     }
 
-    public IDocumentoAmministrativoRigaBulk getFather() {
-        return getDocumento_generico_rigaBulk();
+    public IDocumentoDetailEcoCogeBulk getFather() {
+        return getMissione();
     }
 
-    public Documento_generico_rigaBulk getDocumento_generico_rigaBulk() {
-        return documento_generico_rigaBulk;
+    public MissioneBulk getMissione() {
+        return missione;
     }
 
-    public void setDocumento_generico_rigaBulk(Documento_generico_rigaBulk documento_generico_rigaBulk) {
-        this.documento_generico_rigaBulk = documento_generico_rigaBulk;
+    public void setMissione(MissioneBulk missione) {
+        this.missione = missione;
     }
 
     @Override
     public Integer getEsercizio() {
-        return Optional.ofNullable(this.getDocumento_generico_rigaBulk())
-                .map(Documento_generico_rigaBulk::getEsercizio)
+        return Optional.ofNullable(this.getMissione())
+                .map(MissioneBulk::getEsercizio)
                 .orElse(null);
     }
 
     @Override
     public void setEsercizio(Integer esercizio) {
-        Optional.ofNullable(this.getDocumento_generico_rigaBulk()).ifPresent(el->el.setEsercizio(esercizio));
+        Optional.ofNullable(this.getMissione()).ifPresent(el->el.setEsercizio(esercizio));
     }
 
     @Override
     public String getCd_cds() {
-        return Optional.ofNullable(this.getDocumento_generico_rigaBulk())
-                .map(Documento_generico_rigaBulk::getCd_cds)
+        return Optional.ofNullable(this.getMissione())
+                .map(MissioneBulk::getCd_cds)
                 .orElse(null);
     }
 
     @Override
     public void setCd_cds(String cd_cds) {
-        Optional.ofNullable(this.getDocumento_generico_rigaBulk()).ifPresent(el->el.setCd_cds(cd_cds));
+        Optional.ofNullable(this.getMissione()).ifPresent(el->el.setCd_cds(cd_cds));
     }
 
     @Override
     public String getCd_unita_organizzativa() {
-        return Optional.ofNullable(this.getDocumento_generico_rigaBulk())
-                .map(Documento_generico_rigaBulk::getCd_unita_organizzativa)
+        return Optional.ofNullable(this.getMissione())
+                .map(MissioneBulk::getCd_unita_organizzativa)
                 .orElse(null);
     }
 
     @Override
     public void setCd_unita_organizzativa(String cd_unita_organizzativa) {
-        Optional.ofNullable(this.getDocumento_generico_rigaBulk()).ifPresent(el->el.setCd_unita_organizzativa(cd_unita_organizzativa));
+        Optional.ofNullable(this.getMissione()).ifPresent(el->el.setCd_unita_organizzativa(cd_unita_organizzativa));
     }
 
     @Override
-    public String getCd_tipo_documento_amm() {
-        return Optional.ofNullable(this.getDocumento_generico_rigaBulk())
-                .map(Documento_generico_rigaBulk::getCd_tipo_documento_amm)
+    public Long getPg_missione() {
+        return Optional.ofNullable(this.getMissione())
+                .map(MissioneBulk::getPg_missione)
                 .orElse(null);
     }
 
     @Override
-    public void setCd_tipo_documento_amm(String cd_tipo_documento_amm) {
-        Optional.ofNullable(this.getDocumento_generico_rigaBulk()).ifPresent(el->el.setCd_tipo_documento_amm(cd_tipo_documento_amm));
-    }
-
-    @Override
-    public Long getPg_documento_generico() {
-        return Optional.ofNullable(this.getDocumento_generico_rigaBulk())
-                .map(Documento_generico_rigaBulk::getPg_documento_generico)
-                .orElse(null);
-    }
-
-    @Override
-    public void setPg_documento_generico(Long pg_documento_generico) {
-        Optional.ofNullable(this.getDocumento_generico_rigaBulk()).ifPresent(el->el.setPg_documento_generico(pg_documento_generico));
+    public void setPg_missione(Long pg_missione) {
+        Optional.ofNullable(this.getMissione()).ifPresent(el->el.setPg_missione(pg_missione));
     }
 }

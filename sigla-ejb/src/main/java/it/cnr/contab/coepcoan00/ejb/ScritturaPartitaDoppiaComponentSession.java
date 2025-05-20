@@ -17,6 +17,7 @@
 
 package it.cnr.contab.coepcoan00.ejb;
 
+import it.cnr.contab.coepcoan00.core.bulk.Scrittura_analiticaBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.jada.UserContext;
 
@@ -26,4 +27,5 @@ import java.rmi.RemoteException;
 @Remote
 public interface ScritturaPartitaDoppiaComponentSession extends it.cnr.jada.ejb.CRUDComponentSession, it.cnr.jada.ejb.PrintComponentSession {
     Long getNextProgressivo(UserContext userContext, Scrittura_partita_doppiaBulk scritturaPartitaDoppia) throws it.cnr.jada.comp.ComponentException,RemoteException;
+    Long getNextProgressivo(UserContext userContext, Scrittura_analiticaBulk scritturaAnalitica) throws it.cnr.jada.comp.ComponentException,RemoteException;
 }

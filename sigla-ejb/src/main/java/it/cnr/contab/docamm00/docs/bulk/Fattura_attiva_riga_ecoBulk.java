@@ -17,12 +17,13 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
 
 import java.util.Optional;
 
-public abstract class Fattura_attiva_riga_ecoBulk extends Fattura_attiva_riga_ecoBase implements IDocumentoAmministrativoRigaEcoBulk {
+public abstract class Fattura_attiva_riga_ecoBulk extends Fattura_attiva_riga_ecoBase implements IDocumentoDetailAnaCogeBulk {
     protected Voce_analiticaBulk voce_analitica = new Voce_analiticaBulk();
 
     WorkpackageBulk linea_attivita = new WorkpackageBulk();
@@ -106,4 +107,52 @@ public abstract class Fattura_attiva_riga_ecoBulk extends Fattura_attiva_riga_ec
     public abstract Fattura_attiva_rigaBulk getFattura_attiva_riga();
 
     public abstract void setFattura_attiva_riga(Fattura_attiva_rigaBulk fattura_attiva_riga);
+
+    @Override
+    public Integer getEsercizio() {
+        return Optional.ofNullable(this.getFattura_attiva_riga())
+                .map(Fattura_attiva_rigaBulk::getEsercizio)
+                .orElse(null);
+    }
+
+    @Override
+    public void setEsercizio(Integer esercizio) {
+        Optional.ofNullable(this.getFattura_attiva_riga()).ifPresent(el->el.setEsercizio(esercizio));
+    }
+
+    @Override
+    public String getCd_cds() {
+        return Optional.ofNullable(this.getFattura_attiva_riga())
+                .map(Fattura_attiva_rigaBulk::getCd_cds)
+                .orElse(null);
+    }
+
+    @Override
+    public void setCd_cds(String cd_cds) {
+        Optional.ofNullable(this.getFattura_attiva_riga()).ifPresent(el->el.setCd_cds(cd_cds));
+    }
+
+    @Override
+    public String getCd_unita_organizzativa() {
+        return Optional.ofNullable(this.getFattura_attiva_riga())
+                .map(Fattura_attiva_rigaBulk::getCd_unita_organizzativa)
+                .orElse(null);
+    }
+
+    @Override
+    public void setCd_unita_organizzativa(String cd_unita_organizzativa) {
+        Optional.ofNullable(this.getFattura_attiva_riga()).ifPresent(el->el.setCd_unita_organizzativa(cd_unita_organizzativa));
+    }
+
+    @Override
+    public Long getPg_fattura_attiva() {
+        return Optional.ofNullable(this.getFattura_attiva_riga())
+                .map(Fattura_attiva_rigaBulk::getPg_fattura_attiva)
+                .orElse(null);
+    }
+
+    @Override
+    public void setPg_fattura_attiva(Long pg_fattura_attiva) {
+        Optional.ofNullable(this.getFattura_attiva_riga()).ifPresent(el->el.setPg_fattura_attiva(pg_fattura_attiva));
+    }
 }

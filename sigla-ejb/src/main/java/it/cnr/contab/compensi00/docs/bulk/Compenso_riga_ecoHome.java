@@ -15,27 +15,25 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package it.cnr.contab.docamm00.docs.bulk;
+package it.cnr.contab.compensi00.docs.bulk;
 
-import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
-import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
+import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.persistency.PersistentCache;
 
-import java.math.BigDecimal;
+public class Compenso_riga_ecoHome extends BulkHome {
+    public Compenso_riga_ecoHome(Class classe, java.sql.Connection conn) {
+        super(classe, conn);
+    }
 
-public interface IDocumentoAmministrativoRigaEcoBulk {
-	IDocumentoAmministrativoRigaBulk getFather();
+    public Compenso_riga_ecoHome(Class classe, java.sql.Connection conn, PersistentCache persistentCache) {
+        super(classe, conn, persistentCache);
+    }
 
-	Voce_analiticaBulk getVoce_analitica();
+    public Compenso_riga_ecoHome(java.sql.Connection conn) {
+        super(Compenso_riga_ecoBulk.class, conn);
+    }
 
-	Integer getEsercizio_voce_ana();
-
-	String getCd_voce_ana();
-
-	WorkpackageBulk getLinea_attivita();
-
-	String getCd_linea_attivita();
-
-	String getCd_centro_responsabilita();
-
-	BigDecimal getImporto();
+    public Compenso_riga_ecoHome(java.sql.Connection conn, PersistentCache persistentCache) {
+        super(Compenso_riga_ecoBulk.class, conn, persistentCache);
+    }
 }
