@@ -11,7 +11,10 @@ import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 
 @Provider
@@ -21,23 +24,30 @@ public class JaxRsLogFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
+
         if ( logger.isDebugEnabled()) {
-            logger.debug("URI: " + requestContext.getUriInfo().getRequestUri().toString());
-            MultivaluedMap<String, String> headers = requestContext.getHeaders();
-            logger.debug("Headers");
-            headers.forEach((k, v) -> {
-                logger.debug("key:" + k);
-                v.forEach(item -> {
-                    logger.debug("value" + v);
+            if ( !requestContext.getUriInfo().getRequestUri().toString().contains("login") ) {
+                logger.debug("URI: " + requestContext.getUriInfo().getRequestUri().toString());
+                MultivaluedMap<String, String> headers = requestContext.getHeaders();
+                logger.debug("Headers");
+                headers.forEach((k, v) -> {
+                    logger.debug("key:" + k);
+                    v.forEach(item -> {
+                        logger.debug("value" + v);
+                    });
                 });
-            });
-            logger.debug("Fine Headers");
-            if (HttpMethod.POST.matches(requestContext.getMethod())) {
-                BufferedInputStream stream = new BufferedInputStream(requestContext.getEntityStream());
-                String payload = IOUtils.toString(stream, "UTF-8");
-                logger.debug("Payload: " + payload);
-                requestContext.setEntityStream(IOUtils.toInputStream(payload, "UTF-8"));
+                logger.debug("Fine Headers");
+                if (HttpMethod.POST.matches(requestContext.getMethod())) {
+                    InputStream is = requestContext.getEntityStream();
+                    System.out.println(is.markSupported());
+                    BufferedInputStream stream = new BufferedInputStream(requestContext.getEntityStream());
+                    byte[] b = IOUtils.toByteArray(stream);
+                    logger.debug("Payload: " + new String(b, StandardCharsets.UTF_8));
+                    requestContext.setEntityStream(new ByteArrayInputStream(b));
+                }
             }
+
+
         }
     }
 }
