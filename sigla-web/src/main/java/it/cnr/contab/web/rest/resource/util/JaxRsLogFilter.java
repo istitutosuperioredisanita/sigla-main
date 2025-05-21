@@ -26,7 +26,7 @@ public class JaxRsLogFilter implements ContainerRequestFilter {
     public void filter(ContainerRequestContext requestContext) throws IOException {
 
         if ( logger.isDebugEnabled()) {
-            if ( !requestContext.getUriInfo().getRequestUri().toString().contains("login") ) {
+            if ( requestContext.getUriInfo().getRequestUri().toString().contains("Maggioli") ) {
                 logger.debug("URI: " + requestContext.getUriInfo().getRequestUri().toString());
                 MultivaluedMap<String, String> headers = requestContext.getHeaders();
                 logger.debug("Headers");
