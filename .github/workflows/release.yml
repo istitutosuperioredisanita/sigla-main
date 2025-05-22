@@ -1,4 +1,4 @@
-name: Publish package to GitHub Packages
+name: Release Packages
 on:
   release:
     types: [created]
@@ -6,16 +6,31 @@ jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: 'master'
       - uses: actions/setup-java@v4
         with:
           java-version: '8'
           distribution: 'temurin'
-      - name: Publish package
-        run: mvn release:prepare release:perform -s .m2/settings.xml -PAZURE --batch-mode --errors --fail-at-end --show-version -DreleaseVersion=${{ github.event.inputs.releaseVersion }} -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }}
+      - name: Update version in pom.xml (Release only) and deploy to Github Package Registry
+        run: |
+          mvn -B versions:set -DnewVersion=${{ github.event.release.tag_name }} -DgenerateBackupPoms=false
+          mvn clean deploy -s .m2/settings.xml -PAZURE --batch-mode --errors --fail-at-end --show-version
+          mvn -B versions:set -DnewVersion=${{ github.event.release.tag_name }}-SNAPSHOT -DgenerateBackupPoms=false
+        env:
+          GITHUB_USERNAME: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit and push changes to pom.
+        run: |
+          git config --global user.email "dirgensa@iss.it"
+          git config --global user.name "dirgensa"
+          git add pom.xml
+          git commit -m "Bumped version to ${{ github.event.release.tag_name }}"
+          git push
         env:
           GITHUB_USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
