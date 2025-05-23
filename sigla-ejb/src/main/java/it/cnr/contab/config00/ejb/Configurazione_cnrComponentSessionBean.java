@@ -1199,5 +1199,23 @@ public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUD
             throw uncaughtError(userContext, componentObj, e);
         }
     }
+    @Override
+    public Boolean isAttivoLiqFattOrdineCheckInv(UserContext param0) throws ComponentException, RemoteException {
+        try {
+            Boolean result = ((Configurazione_cnrComponent)componentObj).isAttivoLiqFattOrdineCheckInv(param0);
+            component_invocation_succes(param0, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(param0, componentObj);
+            throw e;
+        } catch (ComponentException e) {
+            component_invocation_failure(param0, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(param0, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(param0, componentObj, e);
+        }
+    }
 
 }
