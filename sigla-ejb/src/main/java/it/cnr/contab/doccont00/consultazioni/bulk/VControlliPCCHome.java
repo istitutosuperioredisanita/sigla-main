@@ -30,10 +30,12 @@ public class VControlliPCCHome extends BulkHome {
 		Unita_organizzativa_enteBulk ente = (Unita_organizzativa_enteBulk) getHomeCache().getHome(Unita_organizzativa_enteBulk.class).findAll().get(0);
 		if (!((CNRUserContext) usercontext).getCd_unita_organizzativa().equals( ente.getCd_unita_organizzativa())){
 			sqlBuilder.openParenthesis(FindClause.AND);
-				sqlBuilder.addClause(FindClause.AND,"cdUoCUU",SQLBuilder.ISNULL,null);
-				sqlBuilder.addClause(FindClause.AND,"cdUnitaOrganizzativa",SQLBuilder.EQUALS,CNRUserContext.getCd_unita_organizzativa(usercontext));
+				sqlBuilder.openParenthesis(FindClause.AND);
+					sqlBuilder.addClause(FindClause.AND,"cdUoCUU",SQLBuilder.ISNULL,null);
+					sqlBuilder.addClause(FindClause.AND,"cdUnitaOrganizzativa",SQLBuilder.EQUALS,CNRUserContext.getCd_unita_organizzativa(usercontext));
+				sqlBuilder.closeParenthesis();
+				sqlBuilder.addClause(FindClause.OR,"cdUoCUU",SQLBuilder.EQUALS,CNRUserContext.getCd_unita_organizzativa(usercontext));
 			sqlBuilder.closeParenthesis();
-			sqlBuilder.addClause(FindClause.OR,"cdUoCUU",SQLBuilder.EQUALS,CNRUserContext.getCd_unita_organizzativa(usercontext));
 		}
 		return sqlBuilder;
 	}
