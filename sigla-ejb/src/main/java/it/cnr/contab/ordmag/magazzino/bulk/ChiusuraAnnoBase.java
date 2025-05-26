@@ -5,6 +5,7 @@
 package it.cnr.contab.ordmag.magazzino.bulk;
 import it.cnr.jada.persistency.Keyed;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class ChiusuraAnnoBase extends ChiusuraAnnoKey implements Keyed {
@@ -12,6 +13,9 @@ public class ChiusuraAnnoBase extends ChiusuraAnnoKey implements Keyed {
 	private String stato;
 
 	private Date dataCalcolo;
+
+	private BigDecimal pg_job;
+	private String stato_job;
 
  
 	/**
@@ -39,5 +43,21 @@ public class ChiusuraAnnoBase extends ChiusuraAnnoKey implements Keyed {
 
 	public void setDataCalcolo(Date dataCalcolo) {
 		this.dataCalcolo = dataCalcolo;
+	}
+
+	public BigDecimal getPg_job() {
+		return pg_job;
+	}
+
+	public void setPg_job(BigDecimal pg_job) {
+		this.pg_job = pg_job;
+	}
+
+	public String getStato_job() {
+		return stato_job;
+	}
+
+	public void setStato_job(String stato_job) {
+		this.stato_job = stato_job;
 	}
 }

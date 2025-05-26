@@ -43,6 +43,7 @@ import it.cnr.contab.incarichi00.ejb.IncarichiRepertorioComponentSession;
 import it.cnr.contab.incarichi00.ejb.RepertorioLimitiComponentSession;
 import it.cnr.contab.inventario00.ejb.*;
 import it.cnr.contab.ordmag.ejb.NumeratoriOrdMagComponentSession;
+import it.cnr.contab.ordmag.magazzino.ejb.ChiusuraAnnoComponentSession;
 import it.cnr.contab.ordmag.magazzino.ejb.MovimentiMagComponentSession;
 import it.cnr.contab.ordmag.magazzino.ejb.TransitoBeniOrdiniComponentSession;
 import it.cnr.contab.ordmag.ordini.ejb.OrdineAcqComponentSession;
@@ -647,6 +648,9 @@ public final class Utility {
 	}
 	public static AsyncAmmortamentoBeneComponentSession createAsyncAmmortamentoBeneComponentSession() throws javax.ejb.EJBException{
 		return (AsyncAmmortamentoBeneComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_AsyncAmmortamentoBeneComponentSession", AsyncAmmortamentoBeneComponentSession.class);
+	}
+	public static ChiusuraAnnoComponentSession createChiusuraAnnoComponentSession() throws javax.ejb.EJBException{
+		return (ChiusuraAnnoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRORDMAG00_EJB_ChiusuraAnnoComponentSession", ChiusuraAnnoComponentSession.class);
 	}
 
 }

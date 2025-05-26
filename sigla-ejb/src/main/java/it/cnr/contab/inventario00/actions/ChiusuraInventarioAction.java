@@ -83,47 +83,32 @@ public class ChiusuraInventarioAction extends ParametricPrintAction {
 	}
 
 
-	public Forward doCalcolaAmmortamento(ActionContext context) {
-		try {
-			fillModel(context);
-			CRUDChiusuraInventarioBP chiusuraInventarioBP = (CRUDChiusuraInventarioBP) getBusinessProcess(context);
-
-			if(chiusuraInventarioBP.isCalcoloAmmortamentoEffettuato()) {
-				return openConfirm(context, "Attenzione!Ammortamento già effettuato.Procedere con un ammortamento?", OptionBP.CONFIRM_YES_NO, "doConfirmAmmortamento");
-			}else{
-				return doConfirmAmmortamento(context,OptionBP.YES_BUTTON);
-			}
-		} catch(Exception e) {
-			return handleException(context,e);
-		}
-	}
-	public Forward doConfirmAmmortamento(ActionContext context,int i) throws BusinessProcessException, FillException, ComponentException, PersistencyException, RemoteException, ValidationException {
-
-		if(i == OptionBP.YES_BUTTON) {
+	public Forward doCalcolaAmmortamento(ActionContext context) throws BusinessProcessException, FillException, ComponentException, PersistencyException, RemoteException {
 
 			CRUDChiusuraInventarioBP chiusuraInventarioBP = (CRUDChiusuraInventarioBP) getBusinessProcess(context);
 
 			try {
 				Chiusura_anno_inventarioBulk model = (Chiusura_anno_inventarioBulk) chiusuraInventarioBP.getModel();
 				fillModel(context);
-
+				//chiusuraInventarioBP.setMessage("Procedura di Ammortamento esercizio "+model.getAnno()+" avviata.Per stato avanzamento consultare 'Log Applicativi' ");
 				ammortamentoBeni(context,chiusuraInventarioBP,model);
-				chiusuraInventarioBP.setMessage("Ammortamento "+model.getAnno()+" terminata correttamente");
+
 
 			} catch (ValidationException e) {
 				chiusuraInventarioBP.setErrorMessage(e.getMessage());
 			}
-		}
+
 		return context.findDefaultForward();
 	}
+
 	private void ammortamentoBeni(ActionContext context, CRUDChiusuraInventarioBP chiusuraInventarioBP, Chiusura_anno_inventarioBulk model) throws ValidationException, ComponentException, BusinessProcessException, PersistencyException, RemoteException {
 
 		validaModelPerAmmortamento(context,model);
 		AsyncAmmortamentoBeneComponentSession ammortamentoBeneComponent = (AsyncAmmortamentoBeneComponentSession) chiusuraInventarioBP.createComponentSession(
 				"CNRINVENTARIO00_EJB_AsyncAmmortamentoBeneComponentSession", AsyncAmmortamentoBeneComponentSession.class);
 
-		ammortamentoBeneComponent.asyncAmmortamentoBeni(context.getUserContext(), model.getAnno());
-		chiusuraInventarioBP.setCalcoloAmmortamentoEffettuato(true);
+		ammortamentoBeneComponent.asyncAmmortamentoBeni(context.getUserContext(), model.getAnno(),ChiusuraAnnoBulk.STATO_CHIUSURA_PROVVISORIO,true);
+
 	}
 	private void validaModelPerAmmortamento(ActionContext context,Chiusura_anno_inventarioBulk model) throws ValidationException, ComponentException, RemoteException, BusinessProcessException {
 		if(model.getAnno()== null){
@@ -143,14 +128,19 @@ public class ChiusuraInventarioAction extends ParametricPrintAction {
 			Chiusura_anno_inventarioBulk model = (Chiusura_anno_inventarioBulk) chiusuraInventarioBP.getModel();
 			fillModel(actioncontext);
 
-			// verifica se esiste una chiusura anno per l'esercizio così da abilitare la stampa anche se esercizio chiuso
-			chiusuraInventarioBP.setAbilitaStampa(isAnnoChiusuraInventario(actioncontext,model.getAnno() ));
 			chiusuraInventarioBP.setEsercizioChiusoPerAlmenoUnCds(model.getAnno() != null ? isEsercizioChiusoPerAlmenoUnCds(actioncontext,model.getAnno()) : false);
 
 			if(chiusuraInventarioBP.isEsercizioChiusoPerAlmenoUnCds()){
 				throw new it.cnr.jada.bulk.ValidationException("L'esercizio contabile selezionato risulta chiuso definitivamente.Non è più possibile procedere con l'ammortamento");
 			}else{
-	//			chiusuraInventarioBP.setCalcoloAmmortamentoEffettuato(isCalcoloAmmortamentoEffettutato(actioncontext,model.getAnno()));
+
+				verificaChiusuraAnno(actioncontext,model.getAnno());
+
+				if(chiusuraInventarioBP.getChiusuraAnno() != null){
+					chiusuraInventarioBP.setMessage("Ammortamento già presente per l'esercizio selezionato. Se si procede con un nuovo ammortamento" +
+							"il precedente verrà cancellato e ricalcolato il nuovo. Durante il calcolo sarà possibile procedere con il lavoro e " +
+							"consultare lo stato avanzamento della procedura ammortamento accedendo a  'Funzionalità di servizio/ Log Applicativi' ");
+				}
 			}
 
 			return actioncontext.findDefaultForward();
@@ -158,14 +148,7 @@ public class ChiusuraInventarioAction extends ParametricPrintAction {
 			return handleException(actioncontext, e);
 		}
 	}
-	private boolean isAnnoChiusuraInventario(ActionContext context,Integer esercizio) throws BusinessProcessException, ComponentException, PersistencyException, RemoteException {
-		CRUDChiusuraInventarioBP chiusuraInventarioBP = (CRUDChiusuraInventarioBP) getBusinessProcess(context);
-		ChiusuraAnnoComponentSession chiusuraComponent = (ChiusuraAnnoComponentSession)chiusuraInventarioBP.createComponentSession(
-				"CNRORDMAG00_EJB_ChiusuraAnnoComponentSession", ChiusuraAnnoComponentSession.class);
 
-		ChiusuraAnnoBulk chiusura = chiusuraComponent.verificaChiusuraAnno(context.getUserContext(),esercizio,ChiusuraAnnoBulk.TIPO_CHIUSURA_INVENTARIO);
-		return chiusura!=null?true:false;
-	}
 	private boolean isEsercizioChiusoPerAlmenoUnCds(ActionContext context,Integer esercizio) throws ComponentException, RemoteException, BusinessProcessException {
 		CRUDChiusuraInventarioBP chiusuraInventarioBP = (CRUDChiusuraInventarioBP) getBusinessProcess(context);
 		EsercizioComponentSession esercizioComponent = (EsercizioComponentSession) chiusuraInventarioBP.createComponentSession(
@@ -173,15 +156,20 @@ public class ChiusuraInventarioAction extends ParametricPrintAction {
 
 		return esercizioComponent.isEsercizioSpecificoChiusoPerAlmenoUnCds(context.getUserContext(),esercizio);
 	}
-	private boolean isCalcoloAmmortamentoEffettutato(ActionContext context,Integer esercizio) throws RemoteException, InvocationTargetException, BusinessProcessException {
+	private void verificaChiusuraAnno(ActionContext context,Integer esercizio) throws RemoteException, InvocationTargetException, BusinessProcessException, ComponentException, PersistencyException {
+		CRUDChiusuraInventarioBP chiusuraInventarioBP = (CRUDChiusuraInventarioBP) getBusinessProcess(context);
+
+		ChiusuraAnnoComponentSession chiusuraAnnoComponent = (ChiusuraAnnoComponentSession) chiusuraInventarioBP.createComponentSession(
+				"CNRORDMAG00_EJB_ChiusuraAnnoComponentSession", ChiusuraAnnoComponentSession.class);
+
+		chiusuraInventarioBP.setChiusuraAnno(chiusuraAnnoComponent.verificaChiusuraAnno(context.getUserContext(), esercizio,ChiusuraAnnoBulk.TIPO_CHIUSURA_INVENTARIO));
+
+	}
+	private boolean isExistAmmortamentoEsercizio(ActionContext context,Integer esercizio) throws RemoteException, InvocationTargetException, BusinessProcessException {
 		CRUDChiusuraInventarioBP chiusuraInventarioBP = (CRUDChiusuraInventarioBP) getBusinessProcess(context);
 		AmmortamentoBeneComponentSession ammortamentoBeneComponent = (AmmortamentoBeneComponentSession) chiusuraInventarioBP.createComponentSession(
 				"CNRINVENTARIO00_EJB_AmmortamentoBeneComponentSession", AmmortamentoBeneComponentSession.class);
 
-		if(ammortamentoBeneComponent.isExistAmmortamentoEsercizio(context.getUserContext(), esercizio)){
-			return true;
-		}
-		return false;
-
+		return ammortamentoBeneComponent.isExistAmmortamentoEsercizio(context.getUserContext(), esercizio);
 	}
 }

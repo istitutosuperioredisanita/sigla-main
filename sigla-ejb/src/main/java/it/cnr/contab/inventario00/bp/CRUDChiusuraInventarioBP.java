@@ -17,6 +17,9 @@
 
 package it.cnr.contab.inventario00.bp;
 
+import it.cnr.contab.inventario00.docs.bulk.Chiusura_anno_inventarioBulk;
+import it.cnr.contab.logs.bulk.Batch_log_tstaBulk;
+import it.cnr.contab.ordmag.magazzino.bulk.ChiusuraAnnoBulk;
 import it.cnr.contab.reports.bp.ParametricPrintBP;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
@@ -25,8 +28,8 @@ import it.cnr.jada.util.jsp.Button;
 public class CRUDChiusuraInventarioBP extends ParametricPrintBP {
 
     private boolean isEsercizioChiusoPerAlmenoUnCds;
-    private boolean isCalcoloAmmortamentoEffettuato;
-    private boolean abilitaStampa;
+
+    private ChiusuraAnnoBulk chiusuraAnno;
 
 
     public CRUDChiusuraInventarioBP() {
@@ -58,8 +61,9 @@ public class CRUDChiusuraInventarioBP extends ParametricPrintBP {
     }
 
     public boolean isPrintButtonHidden(){
-        // se non è stata lanciata la procedura di ammortamento non viene abilitata la stampa
-        if(this.isCalcoloAmmortamentoEffettuato() || this.abilitaStampa){
+        // se procedura ammortamento terminata (presente la chiusura dell'inventario con stato job ammortamento completato)
+        if(this.getChiusuraAnno() != null && this.getChiusuraAnno().getStato_job() != null && this.getChiusuraAnno().getStato_job().equals(Batch_log_tstaBulk.STATO_JOB_COMPLETE))
+        {
             return false;
         }
         return true;
@@ -97,22 +101,13 @@ public class CRUDChiusuraInventarioBP extends ParametricPrintBP {
         isEsercizioChiusoPerAlmenoUnCds = esercizioChiusoPerAlmenoUnCds;
     }
 
-    public boolean isCalcoloAmmortamentoEffettuato() {
-        return isCalcoloAmmortamentoEffettuato;
+
+    public ChiusuraAnnoBulk getChiusuraAnno() {
+        return chiusuraAnno;
     }
 
-    public void setCalcoloAmmortamentoEffettuato(boolean calcoloAmmortamentoEffettuato) {
-        isCalcoloAmmortamentoEffettuato = calcoloAmmortamentoEffettuato;
+    public void setChiusuraAnno(ChiusuraAnnoBulk chiusuraAnno) {
+        this.chiusuraAnno = chiusuraAnno;
     }
-
-    public boolean isAbilitaStampa() {
-        return abilitaStampa;
-    }
-
-    public void setAbilitaStampa(boolean abilitaStampa) {
-        this.abilitaStampa = abilitaStampa;
-    }
-
-
 }
 

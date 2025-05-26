@@ -25,12 +25,15 @@ import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.contab.ordmag.ordini.dto.ImportoOrdine;
 import it.cnr.contab.ordmag.ordini.dto.ParametriCalcoloImportoOrdine;
 import it.cnr.jada.UserContext;
+import it.cnr.jada.bulk.BusyResourceException;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.RemoteIterator;
 
 import javax.ejb.Remote;
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.text.ParseException;
 import java.util.Date;
@@ -48,4 +51,15 @@ public interface ChiusuraAnnoComponentSession extends it.cnr.jada.ejb.CRUDCompon
    ChiusuraAnnoBulk salvaChiusuraDefinitiva(UserContext userContext,Integer esercizio,String tipoChiusura,Date dataFinePeriodo) throws RemoteException, ComponentException,PersistencyException, ParseException;
 
    void annullaChiusuraDefinitiva(UserContext userContext,Integer esercizio,String tipoChiusura) throws RemoteException, ComponentException,PersistencyException, ParseException;
+
+   ChiusuraAnnoBulk eliminaDatiChiusuraInventarioECreaNuovaChiusuraRequestNew(UserContext userContext,Integer esercizio,String tipoChiusura,String statoChiusuraInventario, BigDecimal pgJob ) throws RemoteException, ComponentException,PersistencyException, ParseException;
+   OggettoBulk creaConBulkRequiresNew(UserContext usercontext, OggettoBulk oggettoBulk) throws RemoteException, ComponentException;
+   OggettoBulk modificaConBulkRequiresNew(UserContext usercontext, OggettoBulk oggettoBulk) throws RemoteException, ComponentException;
+
+   Integer getNuovoProgressivoChiusura(UserContext userContext, ChiusuraAnnoBulk chiusuraAnno) throws ComponentException, BusyResourceException, PersistencyException, RemoteException;
+
+   void inserisciDettagliChiusuraInventario(UserContext userContext, Integer esercizio, Integer pgChiusura) throws RemoteException, ComponentException;
+   void inserisciImportiPerCatGruppoVoceEPInventario(UserContext userContext, Integer esercizio, Integer pgChiusura) throws RemoteException, ComponentException;
+   boolean isJobChiusuraInventarioComplete(UserContext userContext, Integer esercizio) throws RemoteException, ComponentException;
+
 }

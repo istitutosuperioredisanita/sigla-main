@@ -25,5 +25,5 @@ import javax.ejb.Remote;
 
 @Remote
 public interface AsyncAmmortamentoBeneComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
-    void asyncAmmortamentoBeni(UserContext param0, Integer esercizio) throws ComponentException, PersistencyException, java.rmi.RemoteException;
+    void asyncAmmortamentoBeni(UserContext param0, Integer esercizio, String statoChiusuraInventario,boolean inserisciDatiChiusura) throws ComponentException, PersistencyException, java.rmi.RemoteException;
 }

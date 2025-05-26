@@ -24,9 +24,13 @@ import it.cnr.contab.inventario00.tabrif.bulk.Tipo_ammortamentoBulk;
 import it.cnr.contab.logs.bulk.Batch_log_rigaBulk;
 import it.cnr.contab.logs.bulk.Batch_log_tstaBulk;
 import it.cnr.contab.logs.ejb.BatchControlComponentSession;
+import it.cnr.contab.ordmag.magazzino.bulk.ChiusuraAnnoBulk;
+import it.cnr.contab.ordmag.magazzino.bulk.ChiusuraAnnoHome;
+import it.cnr.contab.ordmag.magazzino.ejb.ChiusuraAnnoComponentSession;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
+import it.cnr.jada.bulk.BusyResourceException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
@@ -40,7 +44,9 @@ import javax.ejb.Stateless;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -63,16 +69,19 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
     private final String subjectError = "Errore Ammortamento beni";
 
  //   @Asynchronous
-    public void asyncAmmortamentoBeni(UserContext uc, Integer esercizio) throws ComponentException, PersistencyException, RemoteException {
+    public void asyncAmmortamentoBeni(UserContext uc, Integer esercizio,String statoChiusuraInventario,boolean inserisciDatiChiusura) throws ComponentException, PersistencyException, RemoteException {
         logger.info("Inizio Ammortamento Beni ".concat("esercizio:").concat(esercizio.toString()));
-        ammortamentoBeni(uc, esercizio);
+        ammortamentoBeni(uc, esercizio,statoChiusuraInventario,inserisciDatiChiusura);
         logger.info("Fine Ammortamento Beni ".concat("esercizio:").concat(esercizio.toString()));
     }
 
-    private void ammortamentoBeni(UserContext uc, Integer esercizio) throws ComponentException {
+    private void ammortamentoBeni(UserContext uc, Integer esercizio,String statoChiusuraInventario,boolean inserisciDatiChiusura) throws ComponentException, RemoteException {
 
         AmmortamentoBeneComponentSession ammortamentoBeneComponent = Utility.createAmmortamentoBeneComponentSession();
         V_AmmortamentoBeniDetComponentSession v_ammortamentoBeneDetComponent = Utility.createV_AmmortamentoBeniDetComponentSession();
+        ChiusuraAnnoComponentSession chiusuraAnnoComponent = Utility.createChiusuraAnnoComponentSession();
+        boolean logDettaglio=false;
+        ChiusuraAnnoBulk chiusuraAnno = null;
 
         try {
             DateTimeFormatter formatterTime = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss").withZone(ZoneId.systemDefault());
@@ -91,10 +100,15 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                 logger.info( "Errore durante l'inserimento della riga di testata di Batch_log " + ex.getMessage());
                 throw new ComponentException(ex);
             }
-
             final Batch_log_tstaBulk logDB = log;
             List<Batch_log_rigaBulk> listLogRighe = new ArrayList<>();
             Integer countBeniAmm = 0;
+
+
+            // GESTIONE CHIUSURA INVENTARIO
+            if(inserisciDatiChiusura){
+                chiusuraAnno = eliminaECreaNuovaChiusuraInventario(uc,chiusuraAnnoComponent,esercizio,statoChiusuraInventario, logDB.getPg_job());
+            }
 
             try {
                 Batch_log_rigaBulk log_riga = new Batch_log_rigaBulk();
@@ -105,9 +119,12 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                 log_riga.setTrace(log_riga.getMessaggio());
                 log_riga.setToBeCreated();
                 try {
-                    eliminaAmmortamentiPrecedentiDellEsercizio(uc, ammortamentoBeneComponent,  esercizio);
+                    eliminaAmmortamentiPrecedentiDellEsercizio(uc, ammortamentoBeneComponent,  esercizio,statoChiusuraInventario);
                 }catch (ComponentException | RemoteException ex) {
                     logger.info( "Errore durante l'eliminazione dell'ammortamento " + ex.getMessage());
+                    if(inserisciDatiChiusura){
+                        aggiornaStatoInChiusuraAnno(uc,chiusuraAnnoComponent,chiusuraAnno,Batch_log_tstaBulk.STATO_JOB_ERROR);
+                    }
                     throw new DetailedRuntimeException(ex);
                 }
 
@@ -116,7 +133,10 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                     listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_riga));
                 } catch (ComponentException | RemoteException ex) {
                     logger.info( "Errore durante l'inserimento dell'errore in Batch_log_rigaBulk " + ex.getMessage());
-                    //throw new DetailedRuntimeException(ex);
+                    if(inserisciDatiChiusura){
+                        aggiornaStatoInChiusuraAnno(uc,chiusuraAnnoComponent,chiusuraAnno,Batch_log_tstaBulk.STATO_JOB_ERROR);
+                    }
+                    throw new DetailedRuntimeException(ex);
                 }
 
                 List<V_ammortamento_beni_detBulk> beniList = getBeniDaElaborare(uc, v_ammortamentoBeneDetComponent, esercizio);
@@ -136,7 +156,10 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                         listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_rigaErr));
                     } catch (ComponentException | RemoteException ex2) {
                         logger.info("Errore durante l'inserimento della riga di chiusura di Batch_log_riga " + ex2.getMessage());
-                        //throw new DetailedRuntimeException();
+                        if(inserisciDatiChiusura){
+                            aggiornaStatoInChiusuraAnno(uc,chiusuraAnnoComponent,chiusuraAnno,Batch_log_tstaBulk.STATO_JOB_ERROR);
+                        }
+                        throw new DetailedRuntimeException();
                     }
                 }
 
@@ -152,83 +175,90 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                                     bene.getImponibileAmmortamentoCalcolato().compareTo(BigDecimal.ZERO) > 0 && !bene.getFlTotalmenteScaricato()) {
                             } else {
 
-                                        BigDecimal percAmmortamento = bene.getNumeroAnnoAmmortamento().compareTo(BigDecimal.ZERO) == 0 ? Utility.nvl(bene.getPercPrimoAnno()) : Utility.nvl(bene.getPercSuccessivi());
+                                BigDecimal percAmmortamento = bene.getNumeroAnnoAmmortamento().compareTo(BigDecimal.ZERO) == 0 ? Utility.nvl(bene.getPercPrimoAnno()) : Utility.nvl(bene.getPercSuccessivi());
 
-                                        if(percAmmortamento.compareTo(BigDecimal.ZERO) > 0){
+                                if (percAmmortamento.compareTo(BigDecimal.ZERO) > 0) {
 
-                                            BigDecimal rataAmmortamento = BigDecimal.ZERO;
-                                        //Controllare se il bene può essere ammortizzato dell'importo della rata calcolata precedentemente.
-                                        //Si posssono verificare i seguenti casi:
-                                        //   a) la rata di ammortamento calcolata con la percentuale stabilita è troppo alta
-                                        //           VALORE_AMMORTIZZATO + rata_ammortamento > IMPONIBILE_AMMORTAMENTO
-                                        //       In questo caso il bene viene ammortizzato di un valore pari allo scarto cosi calcolato:
-                                        //           IMPONIBILE_AMMORTAMENTO - VALORE_AMMORTIZZATO
-                                        //   b) la rata di ammortamento calcolata con la percentuale stabilita è consistente in quanto risulta:
-                                        //           VALORE_AMMORTIZZATO + rata_ammortamento <= IMPONIBILE_AMMORTAMENTO (valore da ammortizzare),
-                                        //       in questo caso il bene viene ammortizzato con un importo pari alla rata di ammortamento in esame.
-                                        // Per tutti i casi in cui il bene deve subire una rata di ammortamento si deve aggiornare il :
-                                        //   1) VALORE_AMMORTIZZATO del bene in esame
-                                        //   2) inserire un movimento di ammortamento relativo alla rata.
+                                    BigDecimal rataAmmortamento = BigDecimal.ZERO;
+                                    //Controllare se il bene può essere ammortizzato dell'importo della rata calcolata precedentemente.
+                                    //Si posssono verificare i seguenti casi:
+                                    //   a) la rata di ammortamento calcolata con la percentuale stabilita è troppo alta
+                                    //           VALORE_AMMORTIZZATO + rata_ammortamento > IMPONIBILE_AMMORTAMENTO
+                                    //       In questo caso il bene viene ammortizzato di un valore pari allo scarto cosi calcolato:
+                                    //           IMPONIBILE_AMMORTAMENTO - VALORE_AMMORTIZZATO
+                                    //   b) la rata di ammortamento calcolata con la percentuale stabilita è consistente in quanto risulta:
+                                    //           VALORE_AMMORTIZZATO + rata_ammortamento <= IMPONIBILE_AMMORTAMENTO (valore da ammortizzare),
+                                    //       in questo caso il bene viene ammortizzato con un importo pari alla rata di ammortamento in esame.
+                                    // Per tutti i casi in cui il bene deve subire una rata di ammortamento si deve aggiornare il :
+                                    //   1) VALORE_AMMORTIZZATO del bene in esame
+                                    //   2) inserire un movimento di ammortamento relativo alla rata.
 
-                                        if (bene.getImponibileAmmortamentoCalcolato().compareTo(BigDecimal.ZERO) > 0 && !bene.getFlTotalmenteScaricato() &&
-                                        Utility.nvl(bene.getValoreAmmortizzatoCalcolato()).compareTo(bene.getImponibileAmmortamentoCalcolato()) < 0) {
+                                    if (bene.getImponibileAmmortamentoCalcolato().compareTo(BigDecimal.ZERO) > 0 && !bene.getFlTotalmenteScaricato() &&
+                                            Utility.nvl(bene.getValoreAmmortizzatoCalcolato()).compareTo(bene.getImponibileAmmortamentoCalcolato()) < 0) {
 
-                                            rataAmmortamento = ((bene.getImponibileAmmortamentoCalcolato().multiply(percAmmortamento)).divide(CENTO));
+                                        rataAmmortamento = ((bene.getImponibileAmmortamentoCalcolato().multiply(percAmmortamento)).divide(CENTO));
 
-                                            if ((rataAmmortamento.add(Utility.nvl(bene.getValoreAmmortizzatoCalcolato()))).compareTo(bene.getImponibileAmmortamentoCalcolato()) > 0) {
-                                                rataAmmortamento = bene.getImponibileAmmortamentoCalcolato().add(Utility.nvl(bene.getValoreAmmortizzatoCalcolato()).multiply(MENO_UNO));
+                                        if ((rataAmmortamento.add(Utility.nvl(bene.getValoreAmmortizzatoCalcolato()))).compareTo(bene.getImponibileAmmortamentoCalcolato()) > 0) {
+                                            rataAmmortamento = bene.getImponibileAmmortamentoCalcolato().add(Utility.nvl(bene.getValoreAmmortizzatoCalcolato()).multiply(MENO_UNO));
+                                        }
+
+                                        Ammortamento_bene_invBulk amm = creaAmmortamentoBene(uc, ammortamentoBeneComponent, bene, esercizio, rataAmmortamento, percAmmortamento);
+                                        if (amm == null) {
+                                            logger.info("Errore durante la creazione dell'ammortamento esercizio :" + esercizio + " pg_inventario: " + bene.getPgInventario() +
+                                                    " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo());
+                                        } else {
+                                            try {
+
+                                                ammortamentoBeneComponent.creaConBulk(uc, amm);
+                                                countBeniAmm++;
+                                            } catch (ComponentException | RemoteException e) {
+                                                logger.info("Errore durante l'inserimento dell'amomortamento esercizio :" + esercizio + " pg_inventario: " + bene.getPgInventario() +
+                                                        " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo() + " - Error:" + e.getMessage());
                                             }
 
-                                            Ammortamento_bene_invBulk amm = creaAmmortamentoBene(uc, ammortamentoBeneComponent, bene, esercizio, rataAmmortamento, percAmmortamento);
-                                            if (amm == null) {
-                                                logger.info("Errore durante la creazione dell'ammortamento esercizio :" + esercizio + " pg_inventario: " + bene.getPgInventario() +
-                                                        " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo());
-                                            } else {
-                                               try {
-
-                                                    ammortamentoBeneComponent.creaConBulk(uc, amm);
-                                                    countBeniAmm++;
-                                                } catch (ComponentException | RemoteException e) {
-                                                    logger.info("Errore durante l'inserimento dell'amomortamento esercizio :" + esercizio + " pg_inventario: " + bene.getPgInventario() +
-                                                            " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo() + " - Error:" + e.getMessage());
-                                                }
-
-                                            }
                                         }
                                     }
-                                    else{
-                                            //logger.info( "Attenzione percentuale di ammortamento a 0 per il bene pg_inventario: " + bene.getPgInventario() +
-                                             //       " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo());
+                                } else {
+                                    //logger.info( "Attenzione percentuale di ammortamento a 0 per il bene pg_inventario: " + bene.getPgInventario() +
+                                    //       " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo());
 
-                                            Batch_log_rigaBulk log_rigaErr = new Batch_log_rigaBulk();
-                                            log_rigaErr.setPg_esecuzione(logDB.getPg_esecuzione());
-                                            log_rigaErr.setPg_riga(BigDecimal.valueOf(listLogRighe.size() + 1));
-                                            log_rigaErr.setTi_messaggio("W");
-                                            log_rigaErr.setMessaggio("Attenzione percentuale di ammortamento a 0 per il bene pg_inventario: " + bene.getPgInventario() +
-                                                    " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo());
-                                            log_rigaErr.setNote("");
-                                            log_rigaErr.setToBeCreated();
-                                            try {
-                                                listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_rigaErr));
-                                            } catch (ComponentException | RemoteException ex2) {
-                                                logger.info("Errore durante l'inserimento della riga di chiusura di Batch_log_riga " + ex2.getMessage());
-                                                //throw new DetailedRuntimeException();
-                                            }
+                                    Batch_log_rigaBulk log_rigaErr = new Batch_log_rigaBulk();
+                                    log_rigaErr.setPg_esecuzione(logDB.getPg_esecuzione());
+                                    log_rigaErr.setPg_riga(BigDecimal.valueOf(listLogRighe.size() + 1));
+                                    log_rigaErr.setTi_messaggio("W");
+                                    log_rigaErr.setMessaggio("Attenzione percentuale di ammortamento a 0 per il bene pg_inventario: " + bene.getPgInventario() +
+                                            " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo());
+                                    log_rigaErr.setNote("");
+                                    log_rigaErr.setToBeCreated();
+                                    try {
+                                        listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_rigaErr));
+                                    } catch (ComponentException | RemoteException ex2) {
+                                        logger.info("Errore durante l'inserimento della riga di chiusura di Batch_log_riga " + ex2.getMessage());
+                                        if(inserisciDatiChiusura){
+                                            aggiornaStatoInChiusuraAnno(uc,chiusuraAnnoComponent,chiusuraAnno,Batch_log_tstaBulk.STATO_JOB_ERROR);
                                         }
-                            //   try {
-                                    log_riga.setMessaggio("Ammortamento bene :"
-                                            + "-Numero Inventario:" + bene.getNrInventario()
-                                            + "-Pg Inventario:" + bene.getPgInventario()
-                                            + "-Progressivo:" + bene.getProgressivo());
-                                    log_riga.setPg_riga(BigDecimal.valueOf(listLogRighe.size() + 1));
-                                    log_riga.setTrace(log_riga.getMessaggio());
-                                    log_riga.setToBeCreated();
-                                    listLogRighe.add(log_riga);
-                               //listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_riga));
-                          //      } catch (ComponentException | RemoteException ex) {
-                          //          logger.info( "Errore durante l'inserimento dell'errore in Batch_log_rigaBulk " + ex.getMessage());
-                                    //throw new DetailedRuntimeException(ex);
-                          //      }
+                                        throw new DetailedRuntimeException();
+                                    }
+                                }
+                                if (logDettaglio){
+                                    try {
+                                        log_riga.setMessaggio("Ammortamento bene :"
+                                                + "-Numero Inventario:" + bene.getNrInventario()
+                                                + "-Pg Inventario:" + bene.getPgInventario()
+                                                + "-Progressivo:" + bene.getProgressivo());
+                                        log_riga.setPg_riga(BigDecimal.valueOf(listLogRighe.size() + 1));
+                                        log_riga.setTrace(log_riga.getMessaggio());
+                                        log_riga.setToBeCreated();
+                                        listLogRighe.add(log_riga);
+                                        listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_riga));
+                                    } catch (ComponentException | RemoteException ex) {
+                                        logger.info("Errore durante l'inserimento dell'errore in Batch_log_rigaBulk " + ex.getMessage());
+                                        if(inserisciDatiChiusura){
+                                            aggiornaStatoInChiusuraAnno(uc,chiusuraAnnoComponent,chiusuraAnno,Batch_log_tstaBulk.STATO_JOB_ERROR);
+                                        }
+                                        throw new DetailedRuntimeException(ex);
+                                    }
+                              }
                             }
                         }
                         else{
@@ -247,33 +277,60 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                                 listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_rigaErr));
                             } catch (ComponentException | RemoteException ex2) {
                                 logger.info("Errore durante l'inserimento della riga di chiusura di Batch_log_riga " + ex2.getMessage());
-                                //throw new DetailedRuntimeException();
+                                if(inserisciDatiChiusura){
+                                    aggiornaStatoInChiusuraAnno(uc,chiusuraAnnoComponent,chiusuraAnno,Batch_log_tstaBulk.STATO_JOB_ERROR);
+                                }
+                                throw new DetailedRuntimeException();
                             }
                         }
                     } catch (DetailedRuntimeException ex) {
+                        if(inserisciDatiChiusura){
+                            aggiornaStatoInChiusuraAnno(uc,chiusuraAnnoComponent,chiusuraAnno,Batch_log_tstaBulk.STATO_JOB_ERROR);
+                        }
                         throw new DetailedRuntimeException("Errore durante Ammortamento Bene esercizio:" + esercizio +"Error:" + ex.getMessage());
                     }
                 }
 
-
-
                 try {
-                    log_riga.setMessaggio("Aggiornamento Valore Ammortizzato su Inventario per "+countBeniAmm+" beni");
+                    log_riga.setMessaggio("Ammortamento effettuato su "+countBeniAmm+" beni");
                     log_riga.setTrace(log_riga.getMessaggio());
                     log_riga.setPg_riga(BigDecimal.valueOf(listLogRighe.size() + 1));
                     log_riga.setToBeCreated();
 
-                    try {
-                        ammortamentoBeneComponent.aggiornamentoInventarioBeneConAmmortamento(uc, esercizio, Ammortamento_bene_invBulk.INCREMENTA_VALORE_AMMORTIZZATO);
-                    }
-                    catch (RemoteException e) {
-                        logger.info("Errore durante l'aggiornamento Inventario a seguito dell'ammortamento esercizio: "+esercizio);
-                    }
-
                     listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_riga));
                 } catch (ComponentException | RemoteException ex) {
                     logger.info( "Errore durante l'inserimento dell'errore in Batch_log_rigaBulk " + ex.getMessage());
-                    //throw new DetailedRuntimeException(ex);
+                    if(inserisciDatiChiusura){
+                        aggiornaStatoInChiusuraAnno(uc,chiusuraAnnoComponent,chiusuraAnno,Batch_log_tstaBulk.STATO_JOB_ERROR);
+                    }
+                    throw new DetailedRuntimeException(ex);
+                }
+
+                if(statoChiusuraInventario.equals(ChiusuraAnnoBulk.STATO_CHIUSURA_DEFINITIVO)) {
+                    try {
+                        log_riga.setMessaggio("Aggiornamento Valore Ammortizzato su Inventario per " + countBeniAmm + " beni");
+                        log_riga.setTrace(log_riga.getMessaggio());
+                        log_riga.setPg_riga(BigDecimal.valueOf(listLogRighe.size() + 1));
+                        log_riga.setToBeCreated();
+
+                        try {
+                            ammortamentoBeneComponent.aggiornamentoInventarioBeneConAmmortamento(uc, esercizio, Ammortamento_bene_invBulk.INCREMENTA_VALORE_AMMORTIZZATO);
+                        } catch (RemoteException e) {
+                            logger.info("Errore durante l'aggiornamento Inventario a seguito dell'ammortamento esercizio: " + esercizio);
+                        }
+
+                        listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_riga));
+                    } catch (ComponentException | RemoteException ex) {
+                        logger.info("Errore durante l'inserimento dell'errore in Batch_log_rigaBulk " + ex.getMessage());
+                        if(inserisciDatiChiusura){
+                            aggiornaStatoInChiusuraAnno(uc,chiusuraAnnoComponent,chiusuraAnno,Batch_log_tstaBulk.STATO_JOB_ERROR);
+                        }
+                        throw new DetailedRuntimeException(ex);
+                    }
+                }
+                // GESTIONE CHIUSURA INVENTARIO
+                if(inserisciDatiChiusura){
+                    inserisciDatiChiusuraInventario(uc,chiusuraAnnoComponent,chiusuraAnno);
                 }
 
             } catch (Exception ex) {
@@ -288,7 +345,10 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                     listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_riga));
                 } catch (ComponentException | RemoteException ex2) {
                     logger.info( "Errore durante l'inserimento della riga di chiusura di Batch_log_riga " + ex2.getMessage());
-                    //throw new DetailedRuntimeException(ex);
+                    if(inserisciDatiChiusura){
+                        aggiornaStatoInChiusuraAnno(uc,chiusuraAnnoComponent,chiusuraAnno,Batch_log_tstaBulk.STATO_JOB_ERROR);
+                    }
+                    throw new DetailedRuntimeException(ex);
                 }
 
             }
@@ -298,21 +358,28 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                 batchControlComponentSession.modificaConBulkRequiresNew(uc, log);
             } catch (ComponentException | RemoteException ex) {
                 logger.info( "Errore durante l'aggiornameto della riga di testata di Batch_log " + ex.getMessage());
-                //throw new ComponentException(ex);
+                if(inserisciDatiChiusura){
+                    aggiornaStatoInChiusuraAnno(uc,chiusuraAnnoComponent,chiusuraAnno,Batch_log_tstaBulk.STATO_JOB_ERROR);
+                }
+                throw new ComponentException(ex);
             }
         }catch (Exception ex) {
-
+            if(inserisciDatiChiusura){
+                aggiornaStatoInChiusuraAnno(uc,chiusuraAnnoComponent,chiusuraAnno,Batch_log_tstaBulk.STATO_JOB_ERROR);
+            }
             throw new DetailedRuntimeException(ex);
         }
 
     }
 
 
-    private void eliminaAmmortamentiPrecedentiDellEsercizio(UserContext uc,  AmmortamentoBeneComponentSession ammortamentoBeneComponent, Integer esercizio) throws RemoteException, InvocationTargetException, ComponentException, PersistencyException {
+    private void eliminaAmmortamentiPrecedentiDellEsercizio(UserContext uc,  AmmortamentoBeneComponentSession ammortamentoBeneComponent, Integer esercizio,String statoChiusuraInventario) throws RemoteException, InvocationTargetException, ComponentException, PersistencyException {
 
         if(ammortamentoBeneComponent.isExistAmmortamentoEsercizio(uc, esercizio) )
         {
-            ammortamentoBeneComponent.aggiornamentoInventarioBeneConAmmortamento(uc,esercizio,Ammortamento_bene_invBulk.DECREMENTA_VALORE_AMMORTIZZATO);
+            if(statoChiusuraInventario.equals(ChiusuraAnnoBulk.STATO_CHIUSURA_DEFINITIVO)) {
+                ammortamentoBeneComponent.aggiornamentoInventarioBeneConAmmortamento(uc, esercizio, Ammortamento_bene_invBulk.DECREMENTA_VALORE_AMMORTIZZATO);
+            }
             try {
                 ammortamentoBeneComponent.cancellaAmmortamentiEsercizio(uc, esercizio);
             } catch (RemoteException | ComponentException ex) {
@@ -365,4 +432,35 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
         return  ammortamento;
     }
 
+    ChiusuraAnnoBulk eliminaECreaNuovaChiusuraInventario(UserContext uc,ChiusuraAnnoComponentSession chiusuraAnnoComponent,Integer esercizio,String statoChiusuraInventario, BigDecimal pgJob ) throws ComponentException, PersistencyException, RemoteException, ParseException, BusyResourceException {
+        ChiusuraAnnoBulk chiusuraAnno = null;
+        if(chiusuraAnnoComponent.verificaChiusuraAnno(uc,esercizio,ChiusuraAnnoBulk.TIPO_CHIUSURA_INVENTARIO)!=null) {
+            chiusuraAnno = chiusuraAnnoComponent.eliminaDatiChiusuraInventarioECreaNuovaChiusuraRequestNew(uc, esercizio, ChiusuraAnnoBulk.TIPO_CHIUSURA_INVENTARIO,statoChiusuraInventario,pgJob);
+        }
+        else{
+            chiusuraAnno = new ChiusuraAnnoBulk();
+            chiusuraAnno.setPgChiusura(chiusuraAnnoComponent.getNuovoProgressivoChiusura(uc,chiusuraAnno));
+            chiusuraAnno.setTipoChiusura(ChiusuraAnnoBulk.TIPO_CHIUSURA_INVENTARIO);
+            chiusuraAnno.setAnno(esercizio);
+            chiusuraAnno.setStato(statoChiusuraInventario);
+            chiusuraAnno.setDataCalcolo(new java.util.Date());
+            chiusuraAnno.setPg_job(pgJob);
+            chiusuraAnno.setStato_job(Batch_log_tstaBulk.STATO_JOB_RUNNING);
+            chiusuraAnno.setCrudStatus(OggettoBulk.TO_BE_CREATED);
+
+            chiusuraAnnoComponent.creaConBulkRequiresNew(uc,chiusuraAnno);
+        }
+        return chiusuraAnno;
+    }
+    ChiusuraAnnoBulk aggiornaStatoInChiusuraAnno(UserContext uc,ChiusuraAnnoComponentSession chiusuraAnnoComponent,ChiusuraAnnoBulk chiusuraAnno,String statoChiusura) throws ComponentException, RemoteException {
+        chiusuraAnno.setStato_job(statoChiusura);
+        chiusuraAnno.setCrudStatus(OggettoBulk.TO_BE_UPDATED);
+        chiusuraAnno = (ChiusuraAnnoBulk)chiusuraAnnoComponent.modificaConBulkRequiresNew(uc,chiusuraAnno);
+        return chiusuraAnno;
+    }
+    void inserisciDatiChiusuraInventario(UserContext uc,ChiusuraAnnoComponentSession chiusuraAnnoComponent,ChiusuraAnnoBulk chiusuraAnno) throws ComponentException, RemoteException {
+        chiusuraAnnoComponent.inserisciDettagliChiusuraInventario(uc,chiusuraAnno.getAnno(),chiusuraAnno.getPgChiusura());
+        chiusuraAnnoComponent.inserisciImportiPerCatGruppoVoceEPInventario(uc,chiusuraAnno.getAnno(),chiusuraAnno.getPgChiusura());
+        aggiornaStatoInChiusuraAnno(uc,chiusuraAnnoComponent,chiusuraAnno,Batch_log_tstaBulk.STATO_JOB_COMPLETE);
+    }
 }

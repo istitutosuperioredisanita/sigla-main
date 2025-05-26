@@ -80,7 +80,7 @@ public class V_ammortamento_beni_detHome extends BulkHome {
 	                                                         "NVL(SUM(VALORE_AMMORTIZZATO),0) - NVL(SUM(STORNO),0) VALORE_AMMORTIZZATO_CALCOLATO,"+
 	                                                         "MAX(NUMERO_ANNO_AMMORTAMENTO) NUMERO_ANNO_AMMORTAMENTO"+
 	                                                " FROM "+
-	                                                " V_AMMORTAMENTO_BENI_DET WHERE "+
+	                                                it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+"V_AMMORTAMENTO_BENI_DET WHERE "+
 			                                        " ( FL_AMMORTAMENTO = 'Y' ) AND "+
 	                                                "(  ( ESERCIZIO_COMPETENZA = ? ) OR ( ESERCIZIO_COMPETENZA IS NULL ) ) "+ //2024
 	                                                " AND "+
