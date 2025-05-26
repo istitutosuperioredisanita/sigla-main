@@ -6214,6 +6214,12 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
 
     <!-- Autore : VALENTINA TOMADA - Schedulazione procedura Java Ammortamento Beni Inventario-->
     <include file="bootstrap/add_ammortamento_beni_inv_schedulazione.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Inserite colonne JOB BATCH in CHIUSURA_ANNO-->
+    <include file="bootstrap/add_column_job_batch_to_chiusura_anno.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Modifica Voce Menu per chiusura inventario provvisoria-->
+    <include file="bootstrap/mod_dsnodo_chiusura_inventario_provvisoria.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Nuova Voce Menu per chiusura inventario definitiva-->
+    <include file="bootstrap/add_accesso_stampa_chiusura_invent_definitiva.xml"/>
 
     <!-- Autore : CIRO SALVIO - Aggiunto Batch per conservazione SOstitutiva -->
     <include file="bootstrap/add_batch_cons_sotitutiva.xml"/>

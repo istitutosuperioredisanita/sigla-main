@@ -152,7 +152,7 @@ public class CRUDBatchControlBP extends SimpleCRUDBP
 
                     AsyncAmmortamentoBeneComponentSession obbComponent = Utility.createAsyncAmmortamentoBeneComponentSession();
 
-                    obbComponent.asyncAmmortamentoBeni(actioncontext.getUserContext(), esercizio.intValue());
+                    obbComponent.asyncAmmortamentoBeni(actioncontext.getUserContext(), esercizio.intValue(),"",false);
                 }
 
                 else if ("CONSSOTITUIVAJAVA".equals(batch_controlbulk.getProcedura().getCd_procedura())) {

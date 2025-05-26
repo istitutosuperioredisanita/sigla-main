@@ -21,10 +21,12 @@
     CRUDChiusuraInventarioBP bp = (CRUDChiusuraInventarioBP)BusinessProcess.getBusinessProcess(request);
    bp.openFormWindow(pageContext);
 
+
  %>
 
   <div class="Group">
-	<table>			
+	<table>
+
 		<tr>
            <td>
                 <% bp.getController().writeFormLabel(out,"anno"); %>

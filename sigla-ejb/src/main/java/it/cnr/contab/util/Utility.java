@@ -43,6 +43,7 @@ import it.cnr.contab.incarichi00.ejb.IncarichiRepertorioComponentSession;
 import it.cnr.contab.incarichi00.ejb.RepertorioLimitiComponentSession;
 import it.cnr.contab.inventario00.ejb.*;
 import it.cnr.contab.ordmag.ejb.NumeratoriOrdMagComponentSession;
+import it.cnr.contab.ordmag.magazzino.ejb.ChiusuraAnnoComponentSession;
 import it.cnr.contab.ordmag.magazzino.ejb.MovimentiMagComponentSession;
 import it.cnr.contab.ordmag.magazzino.ejb.TransitoBeniOrdiniComponentSession;
 import it.cnr.contab.ordmag.ordini.ejb.OrdineAcqComponentSession;
@@ -408,10 +409,6 @@ public final class Utility {
 				.forEachOrdered( e -> result.put(e.getKey(), e.getValue()) );
 
 		return result;
-	}
-
-	public static boolean isInteger(BigDecimal num) {
-		return num.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0;
 	}
 
 
