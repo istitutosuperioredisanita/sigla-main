@@ -121,5 +121,8 @@
     <include file="iss/update_conf_fatt_gest_flirregistrabile.xml"/>
     <!-- Autore : CIRO SALVIO - Gestione FL_FIRMATARIO_CONTRATTO-->
     <include file="iss/update_conf_gestione_firmatario_contratto.xml"/>
+    <!--update per abilitare il controllo che tutte le righe dell'ordine di una fattura siano inventariate per poter
+    settare la fattura come liquidabile-->
+    <include file="iss/update_configurazioneCnr_liq_daordine_inv.xml"/>
 
 </databaseChangeLog>

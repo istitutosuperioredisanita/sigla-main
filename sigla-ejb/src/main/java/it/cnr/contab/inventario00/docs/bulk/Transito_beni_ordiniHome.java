@@ -79,12 +79,29 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 		dataInizio.setTime((new GregorianCalendar(year, 11, 31)).getTime());
 		return new Timestamp(dataInizio.getTimeInMillis());
 	}
-	@Override
-	public SQLBuilder selectByClause(UserContext usercontext, CompoundFindClause compoundfindclause) throws PersistencyException {
-		this.setColumnMap("TRANSITO_BENI_ORDINI_DETT");
-			SQLBuilder sql = this.createSQLBuilder();
+	public List<Transito_beni_ordiniBulk> findTransitoBeniByOrdineConsegna(UserContext usercontext,OrdineAcqConsegnaBulk ordineAcqConsegna) throws PersistencyException {
+		if ( !Optional.ofNullable(ordineAcqConsegna).isPresent())
+			return Collections.EMPTY_LIST;
 
-			sql.addClause(compoundfindclause);
+		CompoundFindClause clauses= new CompoundFindClause();
+		clauses.addClause(FindClause.AND, "esercizio_ordine", SQLBuilder.EQUALS,ordineAcqConsegna.getEsercizio());
+		clauses.addClause(FindClause.AND, "cd_cds_ordine", SQLBuilder.EQUALS,ordineAcqConsegna.getCdCds());
+		clauses.addClause(FindClause.AND, "cd_uo_ordine", SQLBuilder.EQUALS,ordineAcqConsegna.getCdUnitaOperativa());
+		clauses.addClause(FindClause.AND, "esercizio_ordine", SQLBuilder.EQUALS,ordineAcqConsegna.getEsercizio());
+		clauses.addClause(FindClause.AND, "numeratoreOrdine", SQLBuilder.EQUALS,ordineAcqConsegna.getCdNumeratore());
+		clauses.addClause(FindClause.AND, "rigaOrdine", SQLBuilder.EQUALS,ordineAcqConsegna.getRiga());
+		clauses.addClause(FindClause.AND, "rigaConsegnaOrdine", SQLBuilder.EQUALS,ordineAcqConsegna.getConsegna());
+
+		SQLBuilder sql  = innerSelectByClause(usercontext,clauses,Boolean.FALSE);
+		return  fetchAll(sql);
+
+
+	}
+	protected SQLBuilder innerSelectByClause(UserContext usercontext, CompoundFindClause compoundfindclause,Boolean clauseStatoIfNotAnn) throws PersistencyException {
+		this.setColumnMap("TRANSITO_BENI_ORDINI_DETT");
+		SQLBuilder sql = this.createSQLBuilder();
+
+		sql.addClause(compoundfindclause);
 		//SQLBuilder sql = super.selectByClause(usercontext, compoundfindclause);
 		boolean ricercaAnnullati=false;
 
@@ -97,8 +114,6 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 		sql.generateJoin(OrdineAcqRigaBulk.class, OrdineAcqBulk.class, "ordineAcq", "ORDINE_ACQ");
 		sql.generateJoin(OrdineAcqBulk.class, NumerazioneOrdBulk.class, "numerazioneOrd", "NUMERAZIONE_ORD");
 
-		addDataRifMovimentoCondition( usercontext,sql,SQLBuilder.GREATER_EQUALS, DateUtils.firstDateOfTheYear(CNRUserContext.getEsercizio(usercontext)));
-		addDataRifMovimentoCondition( usercontext,sql,SQLBuilder.LESS_EQUALS,  lastDateOfTheYear(CNRUserContext.getEsercizio(usercontext)));
 		if (compoundfindclause != null && compoundfindclause.getClauses() != null) {
 			Enumeration e = compoundfindclause.getClauses();
 
@@ -108,11 +123,17 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 					SimpleFindClause clause = (SimpleFindClause) findClause;
 
 					if (clause.getPropertyName() != null && clause.getPropertyName().equals("cd_categoria_gruppo") ||
-						clause.getPropertyName() != null && clause.getPropertyName().equals("numeroOrdine") ||
-						clause.getPropertyName() != null && clause.getPropertyName().equals("numeroBolla") ||
-						clause.getPropertyName() != null && clause.getPropertyName().equals("dataBolla") ||
-						clause.getPropertyName() != null && clause.getPropertyName().equals("dtOrdine") ||
-						clause.getPropertyName() != null && clause.getPropertyName().equals("numeratoreOrdine")) {
+							clause.getPropertyName() != null && clause.getPropertyName().equals("numeroBolla") ||
+							clause.getPropertyName() != null && clause.getPropertyName().equals("dataBolla") ||
+							clause.getPropertyName() != null && clause.getPropertyName().equals("dtOrdine") ||
+							clause.getPropertyName() != null && clause.getPropertyName().equals("cd_cds_ordine") ||
+							clause.getPropertyName() != null && clause.getPropertyName().equals("cd_uo_ordine") ||
+							clause.getPropertyName() != null && clause.getPropertyName().equals("esercizio_ordine") ||
+							clause.getPropertyName() != null && clause.getPropertyName().equals("numeratoreOrdine") ||
+							clause.getPropertyName() != null && clause.getPropertyName().equals("numeroOrdine") ||
+							clause.getPropertyName() != null && clause.getPropertyName().equals("rigaOrdine") ||
+							clause.getPropertyName() != null && clause.getPropertyName().equals("rigaConsegnaOrdine")) {
+
 						if (clause.getPropertyName() != null && clause.getPropertyName().equals("numeroBolla")) {
 							sql.addSQLClause("AND", "MOVIMENTI_MAG.NUMERO_BOLLA", clause.getOperator(), clause.getValue());
 						}
@@ -120,21 +141,23 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 							addDataBollaCondition( usercontext,sql,clause.getOperator(),clause.getValue());
 						}
 						else {
-
-
 							if(clause.getPropertyName() != null && clause.getPropertyName().equals("cd_categoria_gruppo")){
-
 								sql.addSQLClause("AND", "CATEGORIA_GRUPPO.CD_CATEGORIA_GRUPPO", clause.getOperator(), clause.getValue());
 							}else {
-
-
-
 								if (clause.getPropertyName() != null && clause.getPropertyName().equals("dtOrdine")) {
-
 									sql.addSQLClause("AND", "ORDINE_ACQ.DATA_ORDINE", clause.getOperator(), clause.getValue());
-
 								} else if (clause.getPropertyName() != null && clause.getPropertyName().equals("numeroOrdine")) {
 									sql.addSQLClause("AND", "ORDINE_ACQ_CONSEGNA.NUMERO", clause.getOperator(), clause.getValue());
+								} else if (clause.getPropertyName() != null && clause.getPropertyName().equals("cd_cds_ordine")) {
+									sql.addSQLClause("AND", "ORDINE_ACQ_CONSEGNA.CD_CDS", clause.getOperator(), clause.getValue());
+								} else if (clause.getPropertyName() != null && clause.getPropertyName().equals("cd_uo_ordine")) {
+									sql.addSQLClause("AND", "ORDINE_ACQ_CONSEGNA.CD_UNITA_OPERATIVA", clause.getOperator(), clause.getValue());
+								}else if (clause.getPropertyName() != null && clause.getPropertyName().equals("esercizio_ordine")) {
+									sql.addSQLClause("AND", "ORDINE_ACQ_CONSEGNA.ESERCIZIO", clause.getOperator(), clause.getValue());
+								}else if (clause.getPropertyName() != null && clause.getPropertyName().equals("rigaOrdine")) {
+									sql.addSQLClause("AND", "ORDINE_ACQ_CONSEGNA.RIGA", clause.getOperator(), clause.getValue());
+								}else if (clause.getPropertyName() != null && clause.getPropertyName().equals("rigaConsegnaOrdine")) {
+									sql.addSQLClause("AND", "ORDINE_ACQ_CONSEGNA.CONSEGNA", clause.getOperator(), clause.getValue());
 								}
 								//NUMERATORE ORDINE
 								else {
@@ -155,21 +178,31 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 			sql.addClause("AND", "stato", SQLBuilder.EQUALS, Transito_beni_ordiniBulk.STATO_ANNULLATO);
 			sql.addClause("AND", "nota_canc", SQLBuilder.ISNOTNULL,null);
 			sql.closeParenthesis();
-		}else {
+		}else if( clauseStatoIfNotAnn)  {
+
 			sql.openParenthesis("AND");
 
 			sql.addClause("AND", "stato", SQLBuilder.EQUALS, Transito_beni_ordiniBulk.STATO_COMPLETO);
 			sql.addClause("OR", "stato", SQLBuilder.EQUALS, Transito_beni_ordiniBulk.STATO_INSERITO);
 			sql.closeParenthesis();
 		}
+		sql.addOrderBy("id");
+		return sql;
+
+	}
+	@Override
+	public SQLBuilder selectByClause(UserContext usercontext, CompoundFindClause compoundfindclause) throws PersistencyException {
+
+			SQLBuilder sql = innerSelectByClause( usercontext,compoundfindclause,true);
+		addDataRifMovimentoCondition( usercontext,sql,SQLBuilder.GREATER_EQUALS, DateUtils.firstDateOfTheYear(CNRUserContext.getEsercizio(usercontext)));
+		addDataRifMovimentoCondition( usercontext,sql,SQLBuilder.LESS_EQUALS,  lastDateOfTheYear(CNRUserContext.getEsercizio(usercontext)));
 		Id_inventarioHome inventarioHome = (Id_inventarioHome) getHomeCache().getHome(Id_inventarioBulk.class);
 		try {
 			Id_inventarioBulk inventario = inventarioHome.findInventarioFor(usercontext,false);
 			sql.addClause("AND", "pg_inventario", SQLBuilder.EQUALS, inventario.getPg_inventario());
 		} catch (IntrospectionException e) {
 			throw new PersistencyException(e);
-			}
-		sql.addOrderBy("id");
+		}
 		return sql;
 
 	}
