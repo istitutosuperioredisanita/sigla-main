@@ -33,8 +33,11 @@ public class ContrattoDtoBulk extends ContrattoBase  implements Serializable {
     private List<DettaglioContrattoDtoBulk> dettaglioContratto;
     private List<AttachmentContratto> attachments;
     private EnumTipoDettaglioContratto tipoDettaglioContratto;
+    private EnumNaturaContabileContratto naturaContabileContratto;
 
+    private List<String> codFisPivaAggiudicatari;
 
+    private String cdCigPadre;
     private String cdCupExt;
 
     public String getCdCupExt() {
@@ -110,5 +113,29 @@ public class ContrattoDtoBulk extends ContrattoBase  implements Serializable {
 
     public void setTipoDettaglioContratto(EnumTipoDettaglioContratto tipoDettaglioContratto) {
         this.tipoDettaglioContratto = tipoDettaglioContratto;
+    }
+
+    public EnumNaturaContabileContratto getNaturaContabileContratto() {
+        return naturaContabileContratto;
+    }
+
+    public void setNaturaContabileContratto(EnumNaturaContabileContratto naturaContabileContratto) {
+        this.naturaContabileContratto = naturaContabileContratto;
+    }
+
+    public String getCdCigPadre() {
+        return cdCigPadre;
+    }
+
+    public void setCdCigPadre(String cdCigPadre) {
+        this.cdCigPadre = cdCigPadre;
+    }
+
+    public List<String> getCodFisPivaAggiudicatari() {
+        return codFisPivaAggiudicatari;
+    }
+
+    public void setCodFisPivaAggiudicatari(List<String> codFisPivaAggiudicatari) {
+        this.codFisPivaAggiudicatari = codFisPivaAggiudicatari;
     }
 }

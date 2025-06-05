@@ -17,6 +17,14 @@
 
 package it.cnr.contab.web.rest.local.config00;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
+import it.cnr.contab.config00.contratto.bulk.ContrattoDatiSintesiBulk;
+import it.cnr.contab.web.rest.config.SIGLARoles;
+import it.cnr.contab.web.rest.config.SIGLASecurityContext;
+import it.cnr.contab.web.rest.model.ContrattoDtoBulk;
+
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.servlet.http.HttpServletRequest;
@@ -24,17 +32,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
-import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
-import it.cnr.contab.config00.contratto.bulk.ContrattoDatiSintesiBulk;
-import it.cnr.contab.doccont00.core.bulk.MandatoComunicaDatiBulk;
-import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
-import it.cnr.contab.web.rest.config.SIGLARoles;
-import it.cnr.contab.web.rest.config.SIGLASecurityContext;
-import it.cnr.contab.web.rest.model.ContrattoDtoBulk;
 
 @Local
 @Path("/contratto")

@@ -1509,7 +1509,13 @@ public class DistintaCassiereComponent extends
                         sql.addClause(FindClause.AND, "dt_firma", SQLBuilder.ISNOTNULL, null);
                         sql.openParenthesis(FindClause.AND);
                             sql.addClause(FindClause.AND, "stato_trasmissione", SQLBuilder.EQUALS, MandatoBulk.STATO_TRASMISSIONE_PRIMA_FIRMA);
-                            sql.addSQLClause(FindClause.OR, "esito_operazione", SQLBuilder.EQUALS, EsitoOperazione.NON_ACQUISITO.value());
+                            sql.openParenthesis(FindClause.OR);
+                                sql.addSQLClause(FindClause.AND, "esito_operazione", SQLBuilder.EQUALS, EsitoOperazione.NON_ACQUISITO.value());
+                                sql.openParenthesis(FindClause.AND);
+                                    sql.addSQLClause(FindClause.OR, "stato_trasmissione", SQLBuilder.NOT_EQUALS, MandatoBulk.STATO_TRASMISSIONE_TRASMESSO);
+                                    sql.addSQLClause(FindClause.OR, "stato_trasmissione", SQLBuilder.NOT_EQUALS, MandatoBulk.STATO_TRASMISSIONE_INSERITO);
+                                sql.closeParenthesis();
+                            sql.closeParenthesis();
                         sql.closeParenthesis();
                     }
                     sql.openParenthesis(FindClause.AND);
@@ -6691,7 +6697,10 @@ public class DistintaCassiereComponent extends
 
     private BigDecimal calcolaImportoNettoSiope(boolean splitpayment, V_mandato_reversaleBulk vMandatoReversaleBulk, BigDecimal importoLordo) {
         if (splitpayment) {
-            if (importoLordo.equals(BigDecimal.ZERO) || vMandatoReversaleBulk.getIm_ritenute().equals(BigDecimal.ZERO)) {
+            if (vMandatoReversaleBulk.getIm_ritenute().equals(BigDecimal.ZERO)) {
+                return importoLordo;
+            }
+            if (importoLordo.equals(BigDecimal.ZERO)) {
                 return BigDecimal.ZERO;
             }
             final BigDecimal percentuale = importoLordo.multiply(BigDecimal.TEN.multiply(BigDecimal.TEN)).divide(vMandatoReversaleBulk.getIm_documento_cont(), 5, RoundingMode.HALF_UP);

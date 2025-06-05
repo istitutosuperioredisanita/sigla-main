@@ -6923,7 +6923,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         }
 
         //qui
-
+        controllaInventarioDiTutteLeRighe( aUC,fatturaPassiva);
         if (fatturaPassiva instanceof Fattura_passiva_IBulk) {
             Rif_modalita_pagamentoBulk mod = null;
             BancaBulk banca = null;
@@ -9382,6 +9382,47 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         return Boolean.FALSE;
     }
 
+    private List<Transito_beni_ordiniBulk> getTransitoBeniByOrdineConsegna( UserContext userContext, FatturaOrdineBulk rigaOrdine) throws ComponentException, PersistencyException {
+        final Transito_beni_ordiniHome transitoBeniOrdiniHome = (Transito_beni_ordiniHome) getHome(userContext,Transito_beni_ordiniBulk.class);
+        return transitoBeniOrdiniHome.findTransitoBeniByOrdineConsegna(userContext,rigaOrdine.getOrdineAcqConsegna());
+    }
+
+    private Boolean checkRigaOrdineInventariata(UserContext userContext, FatturaOrdineBulk rigaOrdine) throws ComponentException, PersistencyException {
+       return  !(Optional.ofNullable(getTransitoBeniByOrdineConsegna( userContext,rigaOrdine)).
+                map(List<Transito_beni_ordiniBulk>::stream).
+                orElse(Stream.empty()).
+                filter(t->!(t.isStatoAnnullato() || t.isStatoTrasferito())).
+                collect(Collectors.toList()).
+                size()>0);
+
+    }
 
 
+    private void controllaInventarioDiTutteLeRighe(
+            UserContext userContext,
+            Fattura_passivaBulk fattura_passiva)
+            throws ComponentException {
+        Boolean checkRigaInv = Boolean.FALSE;
+        try {
+            Configurazione_cnrComponentSession configurazioneCnrComponentSession = Utility.createConfigurazioneCnrComponentSession();
+            checkRigaInv = configurazioneCnrComponentSession.isAttivoLiqFattOrdineCheckInv(userContext);
+
+            if (fattura_passiva.isLiquidabile() && checkRigaInv) {
+
+                for (java.util.Iterator i = fattura_passiva.getFattura_passiva_ordini().iterator(); i.hasNext(); ) {
+                    FatturaOrdineBulk rigaOrdine = (FatturaOrdineBulk) i.next();
+                    if (rigaOrdine.getFatturaPassivaRiga().getBene_servizio().getFl_gestione_inventario()) {
+                       if ( !checkRigaOrdineInventariata( userContext,rigaOrdine))
+                        /**
+                         * Controllo che la riga di fattura non sia stornata completamente da una Nota
+                         */
+                        throw new ApplicationMessageFormatException("Non tutti i beni relativi alla consegna \"{0}\" \n sono inventariati!", rigaOrdine.getOrdineAcqConsegna().getOrdineAcqRiga().getBeneServizio().getDs_bene_servizio());
+                    }
+                }
+            }
+        } catch (javax.ejb.EJBException|RemoteException|PersistencyException e) {
+            handleException(e);
+
+        }
+    }
 }

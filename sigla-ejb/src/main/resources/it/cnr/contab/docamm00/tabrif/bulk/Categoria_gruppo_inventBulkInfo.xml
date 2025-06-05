@@ -224,6 +224,7 @@
 		<columnFieldProperty name="ds_categoria_gruppo" />
 		<columnFieldProperty name="fl_gestione_inventario" />
 		<columnFieldProperty name="fl_ammortamento" />
+		<columnFieldProperty name="data_cancellazione" />
 
 	</columnSet>
 </bulkInfo>
