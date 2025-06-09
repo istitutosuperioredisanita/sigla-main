@@ -137,7 +137,8 @@ public class CRUDChiusuraInventarioBP extends ParametricPrintBP {
         return false;
     }
     public boolean isAggiornaButtonHidden(){
-        if(this.getChiusuraAnno() == null || !(this.getChiusuraAnno().getStato_job().equals(Batch_log_tstaBulk.STATO_JOB_RUNNING)))
+        if(this.getChiusuraAnno() == null ||
+         ((this.getChiusuraAnno().getStato_job()==null || !this.getChiusuraAnno().getStato_job().equals(Batch_log_tstaBulk.STATO_JOB_RUNNING))))
         {
             return true;
         }
