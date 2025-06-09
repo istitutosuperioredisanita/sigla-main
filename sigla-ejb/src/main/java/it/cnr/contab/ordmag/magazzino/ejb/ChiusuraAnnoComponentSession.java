@@ -61,5 +61,8 @@ public interface ChiusuraAnnoComponentSession extends it.cnr.jada.ejb.CRUDCompon
    void inserisciDettagliChiusuraInventario(UserContext userContext, Integer esercizio, Integer pgChiusura) throws RemoteException, ComponentException;
    void inserisciImportiPerCatGruppoVoceEPInventario(UserContext userContext, Integer esercizio, Integer pgChiusura) throws RemoteException, ComponentException;
    boolean isJobChiusuraInventarioComplete(UserContext userContext, Integer esercizio) throws RemoteException, ComponentException;
+   void eliminaDatiChiusuraInventario(UserContext userContext,Integer esercizio,String tipoChiusura) throws RemoteException, ComponentException;
+   ChiusuraAnnoBulk findByPrimaryKey(UserContext userContext,ChiusuraAnnoBulk chiusuraAnno) throws ComponentException, PersistencyException, RemoteException;
+
 
 }

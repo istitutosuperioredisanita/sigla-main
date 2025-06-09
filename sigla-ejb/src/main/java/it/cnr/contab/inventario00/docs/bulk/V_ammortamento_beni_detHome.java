@@ -92,6 +92,9 @@ public class V_ammortamento_beni_detHome extends BulkHome {
 	                                                " OR "+
 			                                        " ( ( TIPORECORD = 'VALORE' ) AND ( ESERCIZIO_CARICO_BENE <= ? )	) " +  //2024
 			                                        " ) "+
+			""+
+			""+
+		//	" AND ETICHETTA = 'R-012058' "+
 												    " GROUP BY PG_INVENTARIO,NR_INVENTARIO,PROGRESSIVO,ETICHETTA,FL_TOTALMENTE_SCARICATO,TI_AMMORTAMENTO,CD_CATEGORIA_GRUPPO,PERC_PRIMO_ANNO,PERC_SUCCESSIVI,CD_TIPO_AMMORTAMENTO,ESERCIZIO_COMPETENZA)  a "+
 												  " WHERE a.IMPONIBILE_AMMORTAMENTO_CALCOLATO > a.VALORE_AMMORTIZZATO_CALCOLATO";
 }
