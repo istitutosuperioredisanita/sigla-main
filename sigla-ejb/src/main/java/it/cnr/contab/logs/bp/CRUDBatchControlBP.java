@@ -28,6 +28,7 @@ import it.cnr.contab.logs.bulk.Batch_procedura_parametroBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.bulk.BusyResourceException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
@@ -151,12 +152,12 @@ public class CRUDBatchControlBP extends SimpleCRUDBP
 
                     AsyncAmmortamentoBeneComponentSession obbComponent = Utility.createAsyncAmmortamentoBeneComponentSession();
 
-                    obbComponent.asyncAmmortamentoBeni(actioncontext.getUserContext(), esercizio.intValue(),"",false);
+                    obbComponent.asyncAmmortamentoBeni(actioncontext.getUserContext(), esercizio.intValue(),"",false,true,true);
                 }
             }
 
             super.save(actioncontext);
-        } catch (ComponentException | PersistencyException | RemoteException e){
+        } catch (ComponentException | PersistencyException | RemoteException | BusyResourceException e){
             throw handleException(e);
         }
     }

@@ -45,8 +45,11 @@ public class CRUDChiusuraInventarioBP extends ParametricPrintBP {
 
             setBulkClassName(config.getInitParameter("bulkClassName"));
             setComponentSessioneName(config.getInitParameter("componentSessionName"));
-
-            this.getBulkInfo().setShortDescription("Chiusura Inventario - calcolo ammortamento");
+            if(this.getMapping().getConfig().getInitParameter("CHIUSURA_DEFINITIVA") == null) {
+                this.getBulkInfo().setShortDescription("Chiusura Inventario Provvisoria - calcolo ammortamento");
+            }else{
+                this.getBulkInfo().setShortDescription("Chiusura Inventario Definitiva - calcolo ammortamento");
+            }
 
 
         } catch(ClassNotFoundException e) {
@@ -62,7 +65,8 @@ public class CRUDChiusuraInventarioBP extends ParametricPrintBP {
 
     public boolean isPrintButtonHidden(){
         // se procedura ammortamento terminata (presente la chiusura dell'inventario con stato job ammortamento completato)
-        if(this.getChiusuraAnno() != null && this.getChiusuraAnno().getStato_job() != null && this.getChiusuraAnno().getStato_job().equals(Batch_log_tstaBulk.STATO_JOB_COMPLETE))
+        if(this.getChiusuraAnno() != null && this.getChiusuraAnno().getStato_job() != null &&
+                this.getChiusuraAnno().getStato_job().equals(Batch_log_tstaBulk.STATO_JOB_COMPLETE))
         {
             return false;
         }
@@ -75,20 +79,114 @@ public class CRUDChiusuraInventarioBP extends ParametricPrintBP {
 
         Button[] toolbar = null;
 
-        toolbar=new Button[3];
+        if(this.getMapping().getConfig().getInitParameter("CHIUSURA_DEFINITIVA") == null) {
+            toolbar=new Button[4];
+        }else{
+            toolbar=new Button[6];
+        }
 
         int i = 0;
         for (Button button : baseToolbar) {
             toolbar[i++] = button;
         }
         toolbar[i++] = new Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.calcolaAmm");
+        toolbar[i++] = new Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.refresh");
+
+        if(this.getMapping().getConfig().getInitParameter("CHIUSURA_DEFINITIVA") != null) {
+            toolbar[i++] = new Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.chiusuraDef");
+            toolbar[i++] = new Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.undochiusuraDef");
+        }
+
         return toolbar;
+    }
+    public boolean isAnnullaChiusuraDefinitivaButtonHidden(){
+
+        // se esercizio chiuso disabilita pulsante annulla chiusura definitiva
+        if(this.isEsercizioChiusoPerAlmenoUnCds){
+            return true;
+        }
+        // se non effettuata nessuna chiusura disabilita pulsante chiusura definitiva
+        if(this.getChiusuraAnno()== null )
+        {
+            return true;
+        }
+        // se stato diverso da DEFINITIVO o stato job diverso da completo disabilita chiusura definitiva
+        if(!this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_DEFINITIVO) ||
+           !this.getChiusuraAnno().getStato_job().equals(Batch_log_tstaBulk.STATO_JOB_COMPLETE))
+        {
+            return true;
+        }
+        return false;
+    }
+    public boolean isChiusuraDefinitivaButtonHidden(){
+        // se esercizio chiuso disabilita pulsante chiusura definitiva
+        if(this.isEsercizioChiusoPerAlmenoUnCds){
+            return true;
+        }
+        // se non effettuata nessuna chiusura disabilita pulsante chiusura definitiva
+        if(this.getChiusuraAnno()== null )
+        {
+            return true;
+        }
+        // se stato diverso da PREDEFINITIVO o stato job diverso da completo disabilita chiusura definitiva
+        if(!this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PREDEFINITIVO) ||
+           !this.getChiusuraAnno().getStato_job().equals(Batch_log_tstaBulk.STATO_JOB_COMPLETE))
+        {
+            return true;
+        }
+        return false;
+    }
+    public boolean isAggiornaButtonHidden(){
+        if(this.getChiusuraAnno() == null || !(this.getChiusuraAnno().getStato_job().equals(Batch_log_tstaBulk.STATO_JOB_RUNNING)))
+        {
+            return true;
+        }
+        return false;
     }
 
     public boolean isCalcoloButtonHidden()
     {
+        // se esercizio chiuso disabilita pulsante calcolo
         if(this.isEsercizioChiusoPerAlmenoUnCds){
             return true;
+        }
+        if(this.getModel()== null || ((Chiusura_anno_inventarioBulk) this.getModel()).getAnno() == null ){
+            return true;
+        }
+
+        if(this.getChiusuraAnno()!= null )
+        {
+            // se Job in stato RUNNING disabilita pulsante calcolo
+            if(this.getChiusuraAnno().getStato_job().equals(Batch_log_tstaBulk.STATO_JOB_RUNNING)){
+                return true;
+            }
+            // se chiusura inventario Definitiva
+            if(this.getMapping().getConfig().getInitParameter("CHIUSURA_DEFINITIVA") != null){
+                // se lo stato della chiusura è Provvisorio ma il Job non è in stato Completato
+                // oppure se effettuato calcolo predefinitivo viene disabilito il pulsante calcolo
+                if((this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PROVVISORIO) &&
+                    !this.getChiusuraAnno().getStato_job().equals(Batch_log_tstaBulk.STATO_JOB_COMPLETE))
+                                                    ||
+                    !this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PROVVISORIO))
+                {
+                    return true;
+                }
+            }
+            // se chiusura inventario Provvisoroa
+            else{
+                // se effettuata già chiusura predefinitiva o definitiva disabilita pulsante calcolo
+                if(this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PREDEFINITIVO) ||
+                   this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_DEFINITIVO))
+                {
+                    return true;
+                }
+            }
+        }
+        else{
+            // se ancora nessuna chiusura presente e chiusura definitiva disabilita pulsante calcoli
+            if(this.getMapping().getConfig().getInitParameter("CHIUSURA_DEFINITIVA") != null){
+                return true;
+            }
         }
         return false;
     }

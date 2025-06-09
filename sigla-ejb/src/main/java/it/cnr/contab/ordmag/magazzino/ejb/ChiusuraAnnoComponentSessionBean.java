@@ -179,6 +179,20 @@ public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws java
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
+	@Override
+	public ChiusuraAnnoBulk findByPrimaryKey(UserContext userContext, ChiusuraAnnoBulk chiusuraAnno) throws ComponentException, PersistencyException, RemoteException {
+		pre_component_invocation(userContext,componentObj);
+		try {
+			ChiusuraAnnoBulk result = ((ChiusuraAnnoComponent)componentObj).findByPrimaryKey(userContext, chiusuraAnno);
+			component_invocation_succes(userContext,componentObj);
+			return result;
+
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(userContext,componentObj,e);
+		}
+	}
 
 	@Override
 	public Integer getNuovoProgressivoChiusura(UserContext param0, ChiusuraAnnoBulk param1) throws ComponentException, BusyResourceException, PersistencyException, RemoteException {
@@ -241,6 +255,23 @@ public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws java
 			throw new RuntimeException(e);
 		}
 	}
+
+	@Override
+	public void eliminaDatiChiusuraInventario(UserContext param0, Integer param1, String param2) throws RemoteException, ComponentException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			((ChiusuraAnnoComponent)componentObj).eliminaDatiChiusuraInventario(param0, param1,param2);
+			component_invocation_succes(param0, componentObj);
+
+
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
+
 
 
 	@Override

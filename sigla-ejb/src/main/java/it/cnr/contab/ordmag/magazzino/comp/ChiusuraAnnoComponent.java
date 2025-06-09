@@ -538,4 +538,17 @@ public class ChiusuraAnnoComponent extends CRUDComponent implements ICRUDMgr, IP
 		ChiusuraAnnoHome homeChiusuraAnno = (ChiusuraAnnoHome) getHome(userContext, ChiusuraAnnoBulk.class);
 		return homeChiusuraAnno.isJobChiusuraInventarioComplete(esercizio);
 	}
+
+	public void eliminaDatiChiusuraInventario(UserContext userContext,Integer esercizio,String tipoChiusura) throws ComponentException {
+		// cancella i dettagli chiusura_anno_inventario
+		eliminaRigheChiusuraInventario(userContext,esercizio,tipoChiusura);
+		// cancella i calcoli delle catgruppo/voce legati alla chiusura
+		eliminaRigheChiusuraCatGruppoVoceEP(userContext,esercizio,tipoChiusura);
+		// cancella chiusura anno
+		eliminaChiusuraAnno(userContext,esercizio,tipoChiusura);
+	}
+	public ChiusuraAnnoBulk findByPrimaryKey(UserContext userContext,ChiusuraAnnoBulk chiusuraAnno) throws ComponentException, PersistencyException {
+		ChiusuraAnnoHome homeChiusuraAnno = (ChiusuraAnnoHome) getHome(userContext, ChiusuraAnnoBulk.class);
+		return (ChiusuraAnnoBulk)homeChiusuraAnno.findByPrimaryKey(chiusuraAnno);
+	}
 }

@@ -291,6 +291,43 @@ public class TransactionalChiusuraAnnoComponentSession extends it.cnr.jada.ejb.T
         }
     }
 
+    @Override
+    public void eliminaDatiChiusuraInventario(UserContext userContext, Integer esercizio, String tipoChiusura) throws RemoteException, ComponentException {
+        try {
+            invoke("eliminaDatiChiusuraInventario",new Object[] {
+                    userContext, esercizio,tipoChiusura});
+        } catch(RemoteException e) {
+            throw e;
+        } catch(java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch(ComponentException ex) {
+                throw ex;
+            } catch(Throwable ex) {
+                throw new RemoteException("Uncaugth exception",ex);
+            }
+        }
+    }
+
+    @Override
+    public ChiusuraAnnoBulk findByPrimaryKey(UserContext userContext, ChiusuraAnnoBulk chiusuraAnno) throws ComponentException, PersistencyException, RemoteException {
+        try {
+            return (ChiusuraAnnoBulk)invoke("findByPrimaryKey",new Object[] {
+                    userContext,
+                    chiusuraAnno });
+        } catch(java.rmi.RemoteException e) {
+            throw e;
+        } catch(java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch(it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch(Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception",ex);
+            }
+        }
+    }
+
 
     @Override
     public OggettoBulk inizializzaBulkPerStampa(UserContext userContext, OggettoBulk oggettoBulk) throws ComponentException, RemoteException {
