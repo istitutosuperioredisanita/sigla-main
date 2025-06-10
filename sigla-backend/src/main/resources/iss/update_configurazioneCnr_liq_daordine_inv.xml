@@ -24,7 +24,7 @@
 
     <changeSet author="ciro.salvio" id="update_configurazioneCnr_liq_daordine_inv">
         <update tableName="configurazione_cnr">
-            <column name="val01" type="STRING" value="Y"/>
+            <column name="val01" type="STRING" value="N"/>
             <where>CD_UNITA_FUNZIONALE='*' AND CD_CHIAVE_PRIMARIA='INVENTARIO' AND CD_CHIAVE_SECONDARIA='GEST_LIQ_FATT_ORDINE_CHECK_INV'</where>
         </update>
     </changeSet>
