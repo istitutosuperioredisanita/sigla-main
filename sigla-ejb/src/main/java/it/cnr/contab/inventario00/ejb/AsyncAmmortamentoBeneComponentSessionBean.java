@@ -19,6 +19,7 @@ package it.cnr.contab.inventario00.ejb;
 
 import it.cnr.contab.inventario00.docs.bulk.*;
 
+import it.cnr.contab.inventario00.tabrif.bulk.Tipo_ammortamentoBulk;
 import it.cnr.contab.logs.bulk.Batch_log_rigaBulk;
 import it.cnr.contab.logs.bulk.Batch_log_tstaBulk;
 import it.cnr.contab.logs.ejb.BatchControlComponentSession;
@@ -77,6 +78,7 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
         AmmortamentoBeneComponentSession ammortamentoBeneComponent = Utility.createAmmortamentoBeneComponentSession();
         V_AmmortamentoBeniDetComponentSession v_ammortamentoBeneDetComponent = Utility.createV_AmmortamentoBeniDetComponentSession();
         ChiusuraAnnoComponentSession chiusuraAnnoComponent = Utility.createChiusuraAnnoComponentSession();
+        Tipo_ammortamentoComponentSession tipoAmmComponent = Utility.createTipo_ammortamentoComponentSession();
         boolean logDettaglio=false;
         ChiusuraAnnoBulk chiusuraAnno = null;
         Batch_log_tstaBulk log=null;
@@ -108,7 +110,6 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
             if(gestisciDatiChiusura){
                 chiusuraAnno = chiusuraAnnoComponent.verificaChiusuraAnno(uc,esercizio,ChiusuraAnnoBulk.TIPO_CHIUSURA_INVENTARIO);
                 chiusuraAnno = aggiornaStatoInChiusuraAnno(uc,chiusuraAnnoComponent,chiusuraAnno,Batch_log_tstaBulk.STATO_JOB_RUNNING,statoChiusuraInventario,esercizio,logDB.getPg_job());
-                //chiusuraAnno = eliminaECreaNuovaChiusuraInventario(uc,chiusuraAnnoComponent,esercizio,statoChiusuraInventario, logDB.getPg_job());
             }
 
             try {
@@ -121,6 +122,7 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                 log_riga.setToBeCreated();
                 try {
                     eliminaAmmortamentiPrecedentiDellEsercizio(uc, ammortamentoBeneComponent,  esercizio,gestisciRipristinoInventario);
+
                 }catch (ComponentException | RemoteException ex) {
                     logger.info( "Errore durante l'eliminazione dell'ammortamento " + ex.getMessage());
                     if(gestisciDatiChiusura){
@@ -166,8 +168,20 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
 
                 for (V_ammortamento_beni_detBulk bene : beniList) {
                     try {
-                        // CASO DA GESTIRE
-                        if (bene.getTiAmmortamento() != null) {
+                        if (bene.getTiAmmortamento() == null) {
+
+                            Tipo_ammortamentoBulk tipoAmm = recuperaTipoAmmortamento(uc, tipoAmmComponent, bene, esercizio);
+                            if(tipoAmm !=null){
+                                bene.setEsercizioCompetenza(esercizio);
+                                bene.setTiAmmortamento(tipoAmm.getTi_ammortamento());
+                                bene.setCdTipoAmmortamento(tipoAmm.getCd_tipo_ammortamento());
+                                bene.setDsTipoAmmortamento(tipoAmm.getDs_tipo_ammortamento());
+                                bene.setPercPrimoAnno(tipoAmm.getPerc_primo_anno());
+                                bene.setPercSuccessivi(tipoAmm.getPerc_successivi());
+                            }
+
+                        }
+                        if(bene.getTiAmmortamento() != null) {
 
                             if (bene.getValoreAmmortizzatoCalcolato().compareTo(bene.getImponibileAmmortamentoCalcolato()) > 0 && !bene.getFlTotalmenteScaricato()) {
 
@@ -235,13 +249,13 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                                         listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_rigaErr));
                                     } catch (ComponentException | RemoteException ex2) {
                                         logger.info("Errore durante l'inserimento della riga di chiusura di Batch_log_riga " + ex2.getMessage());
-                                        if(gestisciDatiChiusura){
-                                            aggiornaStatoInChiusuraAnno(uc,chiusuraAnnoComponent,chiusuraAnno,Batch_log_tstaBulk.STATO_JOB_ERROR,statoChiusuraInventario,esercizio,logDB.getPg_job());
+                                        if (gestisciDatiChiusura) {
+                                            aggiornaStatoInChiusuraAnno(uc, chiusuraAnnoComponent, chiusuraAnno, Batch_log_tstaBulk.STATO_JOB_ERROR, statoChiusuraInventario, esercizio, logDB.getPg_job());
                                         }
                                         throw new DetailedRuntimeException();
                                     }
                                 }
-                                if (logDettaglio){
+                                if (logDettaglio) {
                                     try {
                                         log_riga.setMessaggio("Ammortamento bene :"
                                                 + "-Numero Inventario:" + bene.getNrInventario()
@@ -254,18 +268,14 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                                         listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(uc, log_riga));
                                     } catch (ComponentException | RemoteException ex) {
                                         logger.info("Errore durante l'inserimento dell'errore in Batch_log_rigaBulk " + ex.getMessage());
-                                        if(gestisciDatiChiusura){
-                                            aggiornaStatoInChiusuraAnno(uc,chiusuraAnnoComponent,chiusuraAnno,Batch_log_tstaBulk.STATO_JOB_ERROR,statoChiusuraInventario,esercizio,logDB.getPg_job());
+                                        if (gestisciDatiChiusura) {
+                                            aggiornaStatoInChiusuraAnno(uc, chiusuraAnnoComponent, chiusuraAnno, Batch_log_tstaBulk.STATO_JOB_ERROR, statoChiusuraInventario, esercizio, logDB.getPg_job());
                                         }
                                         throw new DetailedRuntimeException(ex);
                                     }
-                              }
+                                }
                             }
-                        }
-                        else{
-                          //  logger.info( "Attenzione nessun tipo ammortamento per il bene pg_inventario: " + bene.getPgInventario() +
-                          //               " nr_inventario: " + bene.getNrInventario() + " progressivo: " + bene.getProgressivo());
-
+                        }else{
                             Batch_log_rigaBulk log_rigaErr = new Batch_log_rigaBulk();
                             log_rigaErr.setPg_esecuzione(logDB.getPg_esecuzione());
                             log_rigaErr.setPg_riga(BigDecimal.valueOf(listLogRighe.size() + 1));
@@ -433,27 +443,7 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
         return  ammortamento;
     }
 
-    ChiusuraAnnoBulk eliminaECreaNuovaChiusuraInventario(UserContext uc,ChiusuraAnnoComponentSession chiusuraAnnoComponent,Integer esercizio,String statoChiusuraInventario, BigDecimal pgJob ) throws ComponentException, PersistencyException, RemoteException, ParseException, BusyResourceException {
-        ChiusuraAnnoBulk chiusuraAnno = null;
-        if(chiusuraAnnoComponent.verificaChiusuraAnno(uc,esercizio,ChiusuraAnnoBulk.TIPO_CHIUSURA_INVENTARIO)!=null) {
-            chiusuraAnno = chiusuraAnnoComponent.eliminaDatiChiusuraInventarioECreaNuovaChiusuraRequestNew(uc, esercizio, ChiusuraAnnoBulk.TIPO_CHIUSURA_INVENTARIO,statoChiusuraInventario,pgJob);
-        }
-        else{
-            chiusuraAnno = new ChiusuraAnnoBulk();
-            chiusuraAnno.setPgChiusura(chiusuraAnnoComponent.getNuovoProgressivoChiusura(uc,chiusuraAnno));
-            chiusuraAnno.setTipoChiusura(ChiusuraAnnoBulk.TIPO_CHIUSURA_INVENTARIO);
-            chiusuraAnno.setAnno(esercizio);
-            chiusuraAnno.setStato(statoChiusuraInventario);
-            chiusuraAnno.setDataCalcolo(it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp());
-            chiusuraAnno.setPg_job(pgJob);
-            chiusuraAnno.setStato_job(Batch_log_tstaBulk.STATO_JOB_RUNNING);
-            chiusuraAnno.setCrudStatus(OggettoBulk.TO_BE_CREATED);
-
-            chiusuraAnnoComponent.creaConBulkRequiresNew(uc,chiusuraAnno);
-        }
-        return chiusuraAnno;
-    }
-    ChiusuraAnnoBulk aggiornaStatoInChiusuraAnno(UserContext uc,ChiusuraAnnoComponentSession chiusuraAnnoComponent,ChiusuraAnnoBulk chiusuraAnno,String statoJob,String statoChiusura,Integer esercizio,BigDecimal pgJob) throws ComponentException, RemoteException, BusyResourceException, PersistencyException {
+    private ChiusuraAnnoBulk aggiornaStatoInChiusuraAnno(UserContext uc,ChiusuraAnnoComponentSession chiusuraAnnoComponent,ChiusuraAnnoBulk chiusuraAnno,String statoJob,String statoChiusura,Integer esercizio,BigDecimal pgJob) throws ComponentException, RemoteException, BusyResourceException, PersistencyException {
         if(chiusuraAnno!=null) {
             chiusuraAnno = chiusuraAnnoComponent.findByPrimaryKey(uc,chiusuraAnno);
             chiusuraAnno.setStato_job(statoJob);
@@ -476,9 +466,21 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
         }
         return chiusuraAnno;
     }
-    void inserisciDatiChiusuraInventario(UserContext uc,ChiusuraAnnoComponentSession chiusuraAnnoComponent,ChiusuraAnnoBulk chiusuraAnno,String statoChiusuraInventario,Integer esercizio,BigDecimal pg_job) throws ComponentException, RemoteException, BusyResourceException, PersistencyException {
+    private void inserisciDatiChiusuraInventario(UserContext uc,ChiusuraAnnoComponentSession chiusuraAnnoComponent,ChiusuraAnnoBulk chiusuraAnno,String statoChiusuraInventario,Integer esercizio,BigDecimal pg_job) throws ComponentException, RemoteException, BusyResourceException, PersistencyException {
         chiusuraAnnoComponent.inserisciDettagliChiusuraInventario(uc,chiusuraAnno.getAnno(),chiusuraAnno.getPgChiusura());
         chiusuraAnnoComponent.inserisciImportiPerCatGruppoVoceEPInventario(uc,chiusuraAnno.getAnno(),chiusuraAnno.getPgChiusura());
         aggiornaStatoInChiusuraAnno(uc,chiusuraAnnoComponent,chiusuraAnno,Batch_log_tstaBulk.STATO_JOB_COMPLETE,statoChiusuraInventario,esercizio,pg_job);
+    }
+    private Tipo_ammortamentoBulk recuperaTipoAmmortamento(UserContext uc, Tipo_ammortamentoComponentSession tipoAmmComponent, V_ammortamento_beni_detBulk bene, Integer esercizio) throws ComponentException, RemoteException {
+
+        List<Tipo_ammortamentoBulk> tipoAmmList = tipoAmmComponent.findTipoAmmortamento(uc,bene.getTiAmmortamento(), bene.getCdCategoriaGruppo(), esercizio);
+
+        if(tipoAmmList != null && !tipoAmmList.isEmpty())
+        {
+            return tipoAmmList.get(0);
+
+
+        }
+        return null;
     }
 }

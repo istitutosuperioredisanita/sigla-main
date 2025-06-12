@@ -110,7 +110,8 @@ public class CRUDChiusuraInventarioBP extends ParametricPrintBP {
             return true;
         }
         // se stato diverso da DEFINITIVO o stato job diverso da completo disabilita chiusura definitiva
-        if(!this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_DEFINITIVO) ||
+        if((!this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_DEFINITIVO) &&
+           !this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PREDEFINITIVO)) ||
            !this.getChiusuraAnno().getStato_job().equals(Batch_log_tstaBulk.STATO_JOB_COMPLETE))
         {
             return true;
