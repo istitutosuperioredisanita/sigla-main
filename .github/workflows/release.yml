@@ -29,11 +29,11 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/sigla-wildfly:${{ github.event.release.tag_name }} .
+          docker build -t ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }} .
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ github.repository }}/sigla-wildfly:${{ github.event.release.tag_name }}
+          docker push ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }}
 
       - name: Update version in pom.xml width SNAPSHOT version
         run: |
