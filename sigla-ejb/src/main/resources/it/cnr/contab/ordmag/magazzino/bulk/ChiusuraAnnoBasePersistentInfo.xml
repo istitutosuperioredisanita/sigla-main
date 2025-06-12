@@ -47,6 +47,19 @@
 			sqlTypeName="DECIMAL"
 			columnSize="38"
 			nullable="false" />
+		<columnMapping
+			columnName="PG_JOB"
+			propertyName="pg_job"
+			sqlTypeName="VARCHAR"
+			columnSize="38"
+			nullable="true" />
+		<columnMapping
+			columnName="STATO_JOB"
+			propertyName="stato_job"
+			sqlTypeName="VARCHAR"
+			columnSize="1"
+			nullable="true" />
+
 	</defaultColumnMap>
 	<persistentProperty
 		name="stato" />
@@ -62,4 +75,8 @@
 		name="utuv" />
 	<persistentProperty
 		name="pg_ver_rec" />
+	<persistentProperty
+		name="pg_job" />
+	<persistentProperty
+		name="stato_job" />
 </SQLPersistentInfo>

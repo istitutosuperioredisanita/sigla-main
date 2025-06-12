@@ -14,6 +14,7 @@ public class ChiusuraAnnoBulk extends ChiusuraAnnoBase {
 	public static final String STATO_CHIUSURA_PROVVISORIO = "P";
 	public static final String STATO_CHIUSURA_PREDEFINITIVO = "X";
 	public static final String STATO_CHIUSURA_DEFINITIVO = "D";
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: CHIUSURA_ANNO

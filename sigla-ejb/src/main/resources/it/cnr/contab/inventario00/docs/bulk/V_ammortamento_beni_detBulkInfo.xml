@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="tiporecord"
+		property="tiporecord"
+		inputType="TEXT"
+		inputSize="12"
+		maxLength="12"
+		enabledOnEdit="false"
+		label="tiporecord" />
+	<fieldProperty
+		name="esercizioCaricoBene"
+		property="esercizioCaricoBene"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		label="esercizioCaricoBene" />
+	<fieldProperty
+		name="pgInventario"
+		property="pgInventario"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		label="pgInventario" />
+	<fieldProperty
+		name="nrInventario"
+		property="nrInventario"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		label="nrInventario" />
+	<fieldProperty
+		name="progressivo"
+		property="progressivo"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		label="progressivo" />
+	<fieldProperty
+		name="etichetta"
+		property="etichetta"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="50"
+		enabledOnEdit="false"
+		label="etichetta" />
+	<fieldProperty
+		name="flAmmortamento"
+		property="flAmmortamento"
+		inputType="CHECKBOX"
+		enabledOnEdit="false"
+		label="flAmmortamento" />
+	<fieldProperty
+		name="flTotalmenteScaricato"
+		property="flTotalmenteScaricato"
+		inputType="CHECKBOX"
+		enabledOnEdit="false"
+		label="flTotalmenteScaricato" />
+	<fieldProperty
+		name="tiAmmortamento"
+		property="tiAmmortamento"
+		inputType="TEXT"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="false"
+		label="tiAmmortamento" />
+	<fieldProperty
+		name="cdCategoriaGruppo"
+		property="cdCategoriaGruppo"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		label="cdCategoriaGruppo" />
+	<fieldProperty
+		name="valoreIniziale"
+		property="valoreIniziale"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="valoreIniziale" />
+	<fieldProperty
+		name="valoreAmmortizzato"
+		property="valoreAmmortizzato"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="valoreAmmortizzato" />
+	<fieldProperty
+		name="imponibileAmmortamento"
+		property="imponibileAmmortamento"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="imponibileAmmortamento" />
+	<fieldProperty
+		name="variazionePiu"
+		property="variazionePiu"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="variazionePiu" />
+	<fieldProperty
+		name="variazioneMeno"
+		property="variazioneMeno"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="variazioneMeno" />
+	<fieldProperty
+		name="esercizioBuonoCarico"
+		property="esercizioBuonoCarico"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="esercizioBuonoCarico" />
+	<fieldProperty
+		name="incrementoValore"
+		property="incrementoValore"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="incrementoValore" />
+	<fieldProperty
+		name="decrementoValore"
+		property="decrementoValore"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="decrementoValore" />
+	<fieldProperty
+		name="esercizioAmmortanento"
+		property="esercizioAmmortanento"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="esercizioAmmortanento" />
+	<fieldProperty
+		name="storno"
+		property="storno"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="storno" />
+	<fieldProperty
+		name="esercizioCompetenza"
+		property="esercizioCompetenza"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		label="esercizioCompetenza" />
+	<fieldProperty
+		name="cdTipoAmmortamento"
+		property="cdTipoAmmortamento"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		label="cdTipoAmmortamento" />
+	<fieldProperty
+		name="dsTipoAmmortamento"
+		property="dsTipoAmmortamento"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="100"
+		enabledOnEdit="false"
+		label="dsTipoAmmortamento" />
+	<fieldProperty
+		name="percPrimoAnno"
+		property="percPrimoAnno"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		label="percPrimoAnno" />
+	<fieldProperty
+		name="percSuccessivi"
+		property="percSuccessivi"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		label="percSuccessivi" />
+	<fieldProperty
+		name="numeroAnnoAmmortamento"
+		property="numeroAnnoAmmortamento"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="numeroAnnoAmmortamento" />
+	<fieldProperty
+		name="IMPONIBILE_AMMORTAMENTO_CALCOLATO"
+		property="imponibileAmmortamentoCalcolato"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="imponibileAmmortamentoCalcolato" />
+	<fieldProperty
+		name="VALORE_AMMORTIZZATO_CALCOLATO"
+		property="valoreAmmortizzatoCalcolato"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="valoreAmmortizzatoCalcolato" />
+	<fieldProperty
+			name="IMPONIBILE_AMMORTAMENTO_BENE"
+			property="imponibileAmmortamentoBene"
+			inputType="TEXT"
+			inputSize="0"
+			maxLength="0"
+			enabledOnEdit="false"
+			label="imponibileAmmortamentoBene" />
+	<fieldProperty
+			name="VALORE_AMMORTIZZATO_BENE"
+			property="valoreAmmortizzatoBene"
+			inputType="TEXT"
+			inputSize="0"
+			maxLength="0"
+			enabledOnEdit="false"
+			label="valoreAmmortizzatoBene" />
+	<form
+		name="searchtool">
+	</form>
+	<formFieldProperty
+		name="tiporecord" />
+	<formFieldProperty
+		name="esercizioCaricoBene" />
+	<formFieldProperty
+		name="pgInventario" />
+	<formFieldProperty
+		name="nrInventario" />
+	<formFieldProperty
+		name="progressivo" />
+	<formFieldProperty
+		name="etichetta" />
+	<formFieldProperty
+		name="flAmmortamento" />
+	<formFieldProperty
+		name="flTotalmenteScaricato" />
+	<formFieldProperty
+		name="tiAmmortamento" />
+	<formFieldProperty
+		name="cdCategoriaGruppo" />
+	<formFieldProperty
+		name="valoreIniziale" />
+	<formFieldProperty
+		name="valoreAmmortizzato" />
+	<formFieldProperty
+		name="imponibileAmmortamento" />
+	<formFieldProperty
+		name="variazionePiu" />
+	<formFieldProperty
+		name="variazioneMeno" />
+	<formFieldProperty
+		name="esercizioBuonoCarico" />
+	<formFieldProperty
+		name="incrementoValore" />
+	<formFieldProperty
+		name="decrementoValore" />
+	<formFieldProperty
+		name="esercizioAmmortanento" />
+	<formFieldProperty
+		name="storno" />
+	<formFieldProperty
+		name="esercizioCompetenza" />
+	<formFieldProperty
+		name="cdTipoAmmortamento" />
+	<formFieldProperty
+		name="dsTipoAmmortamento" />
+	<formFieldProperty
+		name="percPrimoAnno" />
+	<formFieldProperty
+		name="percSuccessivi" />
+	<formFieldProperty
+		name="numeroAnnoAmmortamento" />
+	<formFieldProperty
+			name="imponibileAmmortamentoCalcolato" />
+	<formFieldProperty
+			name="valoreAmmortizzatoCalcolato" />
+	<formFieldProperty
+			name="imponibileAmmortamentoBene" />
+	<formFieldProperty
+			name="valoreAmmortizzatoBene" />
+	<findFieldProperty
+		name="tiporecord" />
+	<findFieldProperty
+		name="esercizioCaricoBene" />
+	<findFieldProperty
+		name="pgInventario" />
+	<findFieldProperty
+		name="nrInventario" />
+	<findFieldProperty
+		name="progressivo" />
+	<findFieldProperty
+		name="etichetta" />
+	<findFieldProperty
+		name="flAmmortamento" />
+	<findFieldProperty
+		name="flTotalmenteScaricato" />
+	<findFieldProperty
+		name="tiAmmortamento" />
+	<findFieldProperty
+		name="cdCategoriaGruppo" />
+	<findFieldProperty
+		name="valoreIniziale" />
+	<findFieldProperty
+		name="valoreAmmortizzato" />
+	<findFieldProperty
+		name="imponibileAmmortamento" />
+	<findFieldProperty
+		name="variazionePiu" />
+	<findFieldProperty
+		name="variazioneMeno" />
+	<findFieldProperty
+		name="esercizioBuonoCarico" />
+	<findFieldProperty
+		name="incrementoValore" />
+	<findFieldProperty
+		name="decrementoValore" />
+	<findFieldProperty
+		name="esercizioAmmortanento" />
+	<findFieldProperty
+		name="storno" />
+	<findFieldProperty
+		name="esercizioCompetenza" />
+	<findFieldProperty
+		name="cdTipoAmmortamento" />
+	<findFieldProperty
+		name="dsTipoAmmortamento" />
+	<findFieldProperty
+		name="percPrimoAnno" />
+	<findFieldProperty
+		name="percSuccessivi" />
+	<findFieldProperty
+		name="numeroAnnoAmmortamento" />
+	<columnFieldProperty
+		name="tiporecord" />
+	<columnFieldProperty
+		name="esercizioCaricoBene" />
+	<columnFieldProperty
+		name="pgInventario" />
+	<columnFieldProperty
+		name="nrInventario" />
+	<columnFieldProperty
+		name="progressivo" />
+	<columnFieldProperty
+		name="etichetta" />
+	<columnFieldProperty
+		name="flAmmortamento" />
+	<columnFieldProperty
+		name="flTotalmenteScaricato" />
+	<columnFieldProperty
+		name="tiAmmortamento" />
+	<columnFieldProperty
+		name="cdCategoriaGruppo" />
+	<columnFieldProperty
+		name="valoreIniziale" />
+	<columnFieldProperty
+		name="valoreAmmortizzato" />
+	<columnFieldProperty
+		name="imponibileAmmortamento" />
+	<columnFieldProperty
+		name="variazionePiu" />
+	<columnFieldProperty
+		name="variazioneMeno" />
+	<columnFieldProperty
+		name="esercizioBuonoCarico" />
+	<columnFieldProperty
+		name="incrementoValore" />
+	<columnFieldProperty
+		name="decrementoValore" />
+	<columnFieldProperty
+		name="esercizioAmmortanento" />
+	<columnFieldProperty
+		name="storno" />
+	<columnFieldProperty
+		name="esercizioCompetenza" />
+	<columnFieldProperty
+		name="cdTipoAmmortamento" />
+	<columnFieldProperty
+		name="dsTipoAmmortamento" />
+	<columnFieldProperty
+		name="percPrimoAnno" />
+	<columnFieldProperty
+		name="percSuccessivi" />
+	<columnFieldProperty
+		name="numeroAnnoAmmortamento" />
+	<columnFieldProperty
+		name="imponibileAmmortamentoCalcolato" />
+	<columnFieldProperty
+		name="valoreAmmortizzatoCalcolato" />
+	<columnFieldProperty
+			name="imponibileAmmortamentoBene" />
+	<columnFieldProperty
+			name="valoreAmmortizzatoBene" />
+
+	<columnSet name="PROCEDURA_AMMORTAMENTO">
+		<columnFieldProperty name="pgInventario"/>
+		<columnFieldProperty name="nrInventario"/>
+		<columnFieldProperty name="progressivo"/>
+		<columnFieldProperty name="etichetta"/>
+		<columnFieldProperty name="flTotalmenteScaricato"/>
+		<columnFieldProperty name="tiAmmortamento"/>
+		<columnFieldProperty name="cdCategoriaGruppo"/>
+		<columnFieldProperty name="percPrimoAnno"/>
+		<columnFieldProperty name="percSuccessivi"/>
+		<columnFieldProperty name="cdTipoAmmortamento"/>
+		<columnFieldProperty name="esercizioCompetenza"/>
+		<columnFieldProperty name="valoreIniziale"/>
+		<columnFieldProperty name="valoreAmmortizzatoBene"/>
+		<columnFieldProperty name="imponibileAmmortamentoBene"/>
+		<columnFieldProperty name="variazionePiu"/>
+		<columnFieldProperty name="variazioneMeno"/>
+		<columnFieldProperty name="incrementoValore"/>
+		<columnFieldProperty name="decrementoValore"/>
+		<columnFieldProperty name="storno"/>
+		<columnFieldProperty name="imponibileAmmortamentoCalcolato"/>
+		<columnFieldProperty name="valoreAmmortizzatoCalcolato"/>
+		<columnFieldProperty name="numeroAnnoAmmortamento"/>
+	</columnSet>
+
+
+</bulkInfo>

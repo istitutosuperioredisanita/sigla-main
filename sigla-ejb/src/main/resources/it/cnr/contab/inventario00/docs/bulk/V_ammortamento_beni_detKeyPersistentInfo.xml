@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beni_detKey">
+	<defaultColumnMap
+		tableName="V_AMMORTAMENTO_BENI_DET">
+	</defaultColumnMap>
+</SQLPersistentInfo>

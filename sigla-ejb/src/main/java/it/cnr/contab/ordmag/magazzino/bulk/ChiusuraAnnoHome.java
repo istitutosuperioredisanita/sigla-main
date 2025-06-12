@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.List;
 
+import it.cnr.contab.logs.bulk.Batch_log_tstaBulk;
 import it.cnr.contab.ordmag.anag00.TipoMovimentoMagBulk;
 import it.cnr.contab.preventvar00.bulk.Var_bilancioBulk;
 import it.cnr.jada.UserContext;
@@ -66,5 +67,18 @@ public class ChiusuraAnnoHome extends BulkHome {
 		return l.stream().findFirst().orElse(null);
 	}
 
+	public boolean isJobChiusuraInventarioComplete(Integer esercizio) throws PersistencyException {
+		SQLBuilder sql = createSQLBuilder();
+
+		sql.addSQLClause( "AND", "ANNO", SQLBuilder.EQUALS, esercizio);
+		sql.addSQLClause("AND", "TIPO_CHIUSURA", SQLBuilder.EQUALS,"I");
+		sql.addSQLClause("AND", "STATO_JOB", SQLBuilder.EQUALS, Batch_log_tstaBulk.STATO_JOB_COMPLETE);
+		java.util.List l = fetchAll(sql);
+
+		if(l!= null && l.size()>0){
+			return true;
+		}
+		return false;
+	}
 
 }

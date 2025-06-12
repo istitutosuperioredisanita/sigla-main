@@ -927,7 +927,10 @@ public void setHa_dettagli(Boolean boolean1) {
 	}
 
 	public BigDecimal getValore_residuo_da_ammortizzare() {
+		if ( Optional.ofNullable(this.getFl_totalmente_scaricato()).orElse(Boolean.FALSE))
+			return BigDecimal.ZERO;
 		return Utility.nvl(this.getImponibile_ammortamento(),BigDecimal.ZERO).subtract(Utility.nvl(this.getValore_ammortizzato(),BigDecimal.ZERO));
+
 	}
 
 	public void setValore_residuo_da_ammortizzare(BigDecimal valore_residuo_da_ammortizzare) {

@@ -78,6 +78,12 @@ public class Batch_proceduraBulk extends Batch_proceduraBase
             batch_procedura_parametrobulk3.setTipoParametro(0);
             arraylist.add(batch_procedura_parametrobulk3);
         }
-        return arraylist;
+        else if ("AMMORTAMENTOBENIJAVA".equals(nomeProcedura)) {
+            Batch_procedura_parametroBulk batch_procedura_parametrobulk = new Batch_procedura_parametroBulk(nomeProcedura, "AES", null);
+            batch_procedura_parametrobulk.setTipoParametro(1);
+
+            arraylist.add(batch_procedura_parametrobulk);
+        }
+            return arraylist;
     }
 }

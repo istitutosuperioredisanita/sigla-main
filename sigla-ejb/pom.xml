@@ -22,7 +22,7 @@
     <parent>
         <groupId>it.cnr.si.sigla</groupId>
         <artifactId>sigla-parent</artifactId>
-        <version>6.5.1-SNAPSHOT</version>
+        <version>7.0.4-SNAPSHOT</version>
     </parent>
     <build>
         <pluginManagement>
@@ -329,7 +329,7 @@
         <dependency>
             <groupId>it.cnr.si</groupId>
             <artifactId>firmadigitale</artifactId>
-            <version>1.15</version>
+            <version>1.17</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

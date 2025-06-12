@@ -6,7 +6,7 @@
 		tableName="AMMORTAMENTO_BENE_INV">
 		<columnMapping
 			columnName="PG_INVENTARIO"
-			propertyName="inventarioBeni.pg_inventario" />
+			propertyName="inventarioBeni.inventario.pg_inventario" />
 		<columnMapping
 			columnName="NR_INVENTARIO"
 			propertyName="inventarioBeni.nr_inventario" />
@@ -15,16 +15,16 @@
 			propertyName="inventarioBeni.progressivo" />
 		<columnMapping
 			columnName="CD_TIPO_AMMORTAMENTO"
-			propertyName="assTipoAmmCatGrupInv.cd_tipo_ammortamento" />
+			propertyName="assTipoAmmCatGrupInv.tipoAmmortamento.cd_tipo_ammortamento" />
 		<columnMapping
 			columnName="TI_AMMORTAMENTO"
-			propertyName="assTipoAmmCatGrupInv.ti_ammortamento" />
+			propertyName="assTipoAmmCatGrupInv.tipoAmmortamento.ti_ammortamento" />
 		<columnMapping
 			columnName="CD_CATEGORIA_GRUPPO"
-			propertyName="assTipoAmmCatGrupInv.cd_categoria_gruppo" />
+			propertyName="assTipoAmmCatGrupInv.categoriaGruppoInvent.cd_categoria_gruppo" />
 		<columnMapping
 			columnName="ESERCIZIO_COMPETENZA"
-			propertyName="assTipoAmmCatGrupInv.esercizio_competenza" />
+			propertyName="assTipoAmmCatGrupInv.esercizioCompetenza" />
 		<columnMapping
 			columnName="CD_CDS_UBICAZIONE"
 			propertyName="unitaOrganizzativa.cd_unita_organizzativa" />

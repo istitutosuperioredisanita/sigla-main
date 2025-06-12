@@ -150,5 +150,16 @@
 		<init-param name="componentSessionName" value="CNRORDMAG00_EJB_ChiusuraAnnoComponentSession"/>
 		<init-param name="reportName" value="/cnrdocamm/docamm/iss/movimentazione_inventario_main.jasper" />
 	</businessProcess>
+	<businessProcess name="CRUDChiusuraInventarioDefBP" className="it.cnr.contab.inventario00.bp.CRUDChiusuraInventarioBP">
+		<forward name="default" path="/inventario00/stampa_chiusura_inv.jsp"/>
+		<init-param name="bulkClassName" value="it.cnr.contab.inventario00.docs.bulk.Chiusura_anno_inventarioBulk" />
+		<init-param name="printbp" value="OfflineReportPrintBP"/>
+		<init-param name="defaultAction" value="ChiusuraInventarioAction" />
+		<init-param name="componentSessionName" value="CNRORDMAG00_EJB_ChiusuraAnnoComponentSession"/>
+		<init-param name="reportName" value="/cnrdocamm/docamm/iss/movimentazione_inventario_main.jasper" />
+		<init-param name="CHIUSURA_DEFINITIVA" value="true" />
+	</businessProcess>
+
+
 
 </action-mappings>

@@ -2,7 +2,8 @@
 --  DDL for View V_INVENTARIO_BENE_DET
 --------------------------------------------------------
 
-  CREATE OR REPLACE FORCE EDITIONABLE VIEW "V_INVENTARIO_BENE_DET" ("TIPORECORD", "ESERCIZIO_CARICO_BENE", "PG_INVENTARIO", "NR_INVENTARIO", "PROGRESSIVO", "ETICHETTA", "FL_MIGRATO", "TI_AMMORTAMENTO", "CD_CATEGORIA_GRUPPO", "VALORE_INIZIALE", "VALORE_AMMORTIZZATO", "IMPONIBILE_AMMORTAMENTO", "VARIAZIONE_PIU", "VARIAZIONE_MENO", "ESERCIZIO_BUONO_CARICO", "INCREMENTO_VALORE", "DECREMENTO_VALORE", "PG_BUONO_C_S", "QUOTA_AMMO_BENE_ALIENATO", "ESERCIZIO_AMMORTANENTO", "QUOTA_AMMORTAMENTO", "STORNO", "PIANO_AMM_BENE_MIGRATO") AS
+
+  CREATE OR REPLACE FORCE EDITIONABLE VIEW "V_INVENTARIO_BENE_DET" ("TIPORECORD", "ESERCIZIO_CARICO_BENE", "PG_INVENTARIO", "NR_INVENTARIO", "PROGRESSIVO", "ETICHETTA", "FL_MIGRATO", "FL_TOTALMENTE_SCARICATO", "FL_AMMORTAMENTO", "TI_AMMORTAMENTO", "CD_CATEGORIA_GRUPPO", "VALORE_INIZIALE", "VALORE_AMMORTIZZATO", "IMPONIBILE_AMMORTAMENTO", "VARIAZIONE_PIU", "VARIAZIONE_MENO", "ESERCIZIO_BUONO_CARICO", "INCREMENTO_VALORE", "DECREMENTO_VALORE", "PG_BUONO_C_S", "QUOTA_AMMO_BENE_ALIENATO", "ESERCIZIO_AMMORTANENTO", "NUMERO_ANNO_AMMORTAMENTO", "QUOTA_AMMORTAMENTO", "STORNO", "PIANO_AMM_BENE_MIGRATO") AS
   SELECT
 --
 -- Date: 22/03/2024
@@ -21,6 +22,8 @@
                       a.progressivo,
                       a.etichetta,
                        a.fl_migrato,
+                        a.fl_totalmente_scaricato,
+                      a.fl_ammortamento,
                        a.TI_AMMORTAMENTO,
                       a.cd_categoria_gruppo,
                       a.valore_iniziale,
@@ -34,6 +37,7 @@
                       null PG_BUONO_C_S,
                       0 quota_ammo_bene_alienato,
                       null esercizio_ammortanento,
+                      0 NUMERO_ANNO_AMMORTAMENTO,
                       0 quota_ammortamento,
                       0 storno,
                       a.piano_amm_bene_migrato
@@ -46,6 +50,8 @@
                       a.progressivo,
                       a.etichetta,
                        a.fl_migrato,
+                        a.fl_totalmente_scaricato,
+                      a.fl_ammortamento,
                        a.TI_AMMORTAMENTO,
                       a.cd_categoria_gruppo,
                       0 valore_iniziale ,
@@ -59,6 +65,7 @@
                       d.PG_BUONO_C_S,
                       0 quota_ammo_bene_alienato,
                       null esercizio_ammortanento,
+                       0 NUMERO_ANNO_AMMORTAMENTO,
                        0 quota_ammortamento,
                         0 storno,
                         a.piano_amm_bene_migrato
@@ -82,6 +89,8 @@
                       a.progressivo,
                       a.etichetta,
                        a.fl_migrato,
+                        a.fl_totalmente_scaricato,
+                      a.fl_ammortamento,
                        a.TI_AMMORTAMENTO,
                       a.cd_categoria_gruppo,
                       0 valore_iniziale ,
@@ -95,6 +104,7 @@
                       d.PG_BUONO_C_S  PG_BUONO_C_S,
                       DECODE( t.cd_tipo_carico_scarico,'3',a.valore_ammortizzato, 0)  quota_ammo_bene_alienato,
                       null esercizio_ammortanento,
+                       0 NUMERO_ANNO_AMMORTAMENTO,
                       0 quota_ammortamento,
                        0 storno,
                       a.piano_amm_bene_migrato
@@ -118,6 +128,8 @@
                       a.progressivo,
                       a.etichetta,
                        a.fl_migrato,
+                        a.fl_totalmente_scaricato,
+                      a.fl_ammortamento,
                        a.TI_AMMORTAMENTO,
                       a.cd_categoria_gruppo,
                       0 valore_iniziale ,
@@ -131,6 +143,7 @@
                       null PG_BUONO_C_S,
                       0 quota_ammo_bene_alienato,
                       i.esercizio esercizio_ammortanento,
+                      DECODE(i.fl_storno,'N',i.numero_anno,0) NUMERO_ANNO_AMMORTAMENTO,
                       DECODE(i.fl_storno,'N',i.im_movimento_ammort,0) quota_ammortamento,
                       DECODE(i.fl_storno,'Y',i.im_movimento_ammort,0) storno,
                        a.piano_amm_bene_migrato

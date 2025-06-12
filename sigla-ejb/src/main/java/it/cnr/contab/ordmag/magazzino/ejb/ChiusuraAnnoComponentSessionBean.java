@@ -17,6 +17,7 @@
 
 package it.cnr.contab.ordmag.magazzino.ejb;
 
+import it.cnr.contab.logs.comp.BatchControlComponent;
 import it.cnr.contab.ordmag.magazzino.bulk.*;
 import it.cnr.contab.ordmag.magazzino.comp.ChiusuraAnnoComponent;
 import it.cnr.contab.ordmag.magazzino.comp.MovimentiMagComponent;
@@ -36,6 +37,9 @@ import it.cnr.jada.util.RemoteIterator;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.text.ParseException;
 import java.util.Date;
@@ -125,6 +129,149 @@ public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws java
 			throw uncaughtError(userContext,componentObj,e);
 		}
 	}
+
+	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public ChiusuraAnnoBulk eliminaDatiChiusuraInventarioECreaNuovaChiusuraRequestNew(UserContext userContext, Integer esercizio, String tipoChiusura,String statoChiusuraInventario, BigDecimal pgJob ) throws ComponentException, PersistencyException {
+
+		pre_component_invocation(userContext,componentObj);
+		try {
+			ChiusuraAnnoBulk result = ((ChiusuraAnnoComponent)componentObj).eliminaDatiChiusuraInventarioECreaNuovaChiusuraRequestNew(userContext, esercizio,tipoChiusura,statoChiusuraInventario,pgJob);
+			component_invocation_succes(userContext,componentObj);
+			return result;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(userContext,componentObj,e);
+		} catch (BusyResourceException e) {
+			throw new PersistencyException(e);
+		}
+	}
+
+	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public OggettoBulk creaConBulkRequiresNew(UserContext param0, OggettoBulk param1) throws RemoteException, ComponentException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			OggettoBulk result = ((ChiusuraAnnoComponent)componentObj).creaConBulkRequiresNew(param0, param1);
+			component_invocation_succes(param0, componentObj);
+			return result;
+
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
+	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public OggettoBulk modificaConBulkRequiresNew(UserContext param0, OggettoBulk param1) throws RemoteException, ComponentException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			OggettoBulk result = ((ChiusuraAnnoComponent)componentObj).modificaConBulkRequiresNew(param0, param1);
+			component_invocation_succes(param0, componentObj);
+			return result;
+
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+	@Override
+	public ChiusuraAnnoBulk findByPrimaryKey(UserContext userContext, ChiusuraAnnoBulk chiusuraAnno) throws ComponentException, PersistencyException, RemoteException {
+		pre_component_invocation(userContext,componentObj);
+		try {
+			ChiusuraAnnoBulk result = ((ChiusuraAnnoComponent)componentObj).findByPrimaryKey(userContext, chiusuraAnno);
+			component_invocation_succes(userContext,componentObj);
+			return result;
+
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(userContext,componentObj,e);
+		}
+	}
+
+	@Override
+	public Integer getNuovoProgressivoChiusura(UserContext param0, ChiusuraAnnoBulk param1) throws ComponentException, BusyResourceException, PersistencyException, RemoteException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			Integer result = ((ChiusuraAnnoComponent)componentObj).getNuovoProgressivoChiusura(param0, param1);
+			component_invocation_succes(param0, componentObj);
+			return result;
+
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
+	@Override
+	public void inserisciDettagliChiusuraInventario(UserContext param0, Integer param1, Integer param2) throws RemoteException, ComponentException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			((ChiusuraAnnoComponent)componentObj).inserisciDettagliChiusuraInventario(param0, param1,param2);
+			component_invocation_succes(param0, componentObj);
+
+
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
+	@Override
+	public void inserisciImportiPerCatGruppoVoceEPInventario(UserContext param0, Integer param1, Integer param2) throws RemoteException, ComponentException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			((ChiusuraAnnoComponent)componentObj).inserisciImportiPerCatGruppoVoceEPInventario(param0, param1,param2);
+			component_invocation_succes(param0, componentObj);
+
+
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
+	@Override
+	public boolean isJobChiusuraInventarioComplete(UserContext param0, Integer param1) throws RemoteException, ComponentException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			boolean result = ((ChiusuraAnnoComponent)componentObj).isJobChiusuraInventarioComplete(param0, param1);
+			component_invocation_succes(param0, componentObj);
+			return result;
+
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		} catch (PersistencyException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void eliminaDatiChiusuraInventario(UserContext param0, Integer param1, String param2) throws RemoteException, ComponentException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			((ChiusuraAnnoComponent)componentObj).eliminaDatiChiusuraInventario(param0, param1,param2);
+			component_invocation_succes(param0, componentObj);
+
+
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
+
 
 
 	@Override

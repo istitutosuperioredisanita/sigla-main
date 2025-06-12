@@ -20,6 +20,7 @@ package it.cnr.contab.inventario00.ejb;
 import it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
@@ -27,9 +28,9 @@ import java.util.List;
 
 public class TransactionalAmmortamentoBeneComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements AmmortamentoBeneComponentSession {
     @Override
-    public List<Ammortamento_bene_invBulk> findAllAmmortamenti(UserContext param0, Integer param1) throws RemoteException, InvocationTargetException {
+    public Boolean isExistAmmortamentoEsercizio(UserContext param0, Integer param1) throws RemoteException, InvocationTargetException {
         try {
-            return (List<Ammortamento_bene_invBulk>)invoke("findAllAmmortamenti",new Object[] {
+            return (Boolean)invoke("isExistAmmortamentoEsercizio",new Object[] {
                     param0,
                     param1});
         }
@@ -37,6 +38,18 @@ public class TransactionalAmmortamentoBeneComponentSession extends it.cnr.jada.e
             throw new java.rmi.RemoteException("Uncaugth exception",ex);
         }
 
+    }
+
+    @Override
+    public List<Ammortamento_bene_invBulk> getAllAmmortamentoEsercizio(UserContext param0, Integer param1) throws RemoteException, InvocationTargetException {
+        try {
+            return (List<Ammortamento_bene_invBulk>)invoke("getAllAmmortamentoEsercizio",new Object[] {
+                    param0,
+                    param1});
+        }
+        catch(Throwable ex) {
+            throw new java.rmi.RemoteException("Uncaugth exception",ex);
+        }
     }
 
     @Override
@@ -81,11 +94,24 @@ public class TransactionalAmmortamentoBeneComponentSession extends it.cnr.jada.e
     }
 
     @Override
-    public void cancellaiAmmortamentoBene(UserContext param0, Ammortamento_bene_invBulk param1) throws ComponentException, RemoteException {
+    public void cancellaAmmortamentiEsercizio(UserContext param0, Integer param1) throws ComponentException, RemoteException {
         try {
-            invoke("cancellaiAmmortamentoBene",new Object[] {
+            invoke("cancellaAmmortamentiEsercizio",new Object[] {
                     param0,
                     param1});
+        }
+        catch(Throwable ex) {
+            throw new java.rmi.RemoteException("Uncaugth exception",ex);
+        }
+    }
+
+    @Override
+    public void aggiornamentoInventarioBeneConAmmortamento(UserContext param0, Integer param1, String param2) throws ComponentException, RemoteException, PersistencyException {
+        try {
+            invoke("aggiornamentoInventarioBeneConAmmortamento",new Object[] {
+                    param0,
+                    param1,
+                    param2});
         }
         catch(Throwable ex) {
             throw new java.rmi.RemoteException("Uncaugth exception",ex);
