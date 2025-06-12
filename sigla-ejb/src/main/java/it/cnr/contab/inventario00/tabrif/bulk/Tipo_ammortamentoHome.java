@@ -261,7 +261,7 @@ public void makePersistentAssTiAmm_CatBeni(it.cnr.jada.UserContext aUC, Tipo_amm
 		tipoAmmortamento.setCd_tipo_ammortamento(rs.getString(1));
 		tipoAmmortamento.setTi_ammortamento(rs.getString(2));
 		tipoAmmortamento.setDs_tipo_ammortamento(rs.getString(3));
-		tipoAmmortamento.setPerc_primo_anno_altro(rs.getBigDecimal(4));
+		tipoAmmortamento.setPerc_primo_anno(rs.getBigDecimal(4));
 		tipoAmmortamento.setPerc_successivi(rs.getBigDecimal(5));
 		tipoAmmortamento.setNumero_anni(rs.getInt(6));
 		tipoAmmortamento.setDt_cancellazione(rs.getTimestamp(7));

@@ -319,7 +319,7 @@ public java.util.Collection findDettagliBuono(Buono_carico_scaricoBulk buono)thr
 					"			AND a.progressivo=i.PROGRESSIVO" +
 					""+
 					""+
-				//	" and nr_inventario =1346 and  pg_inventario=1 and  progressivo=0 "+
+
 					""+
 					""+
 					"           GROUP BY nr_inventario,pg_inventario, progressivo),2) " +
@@ -332,7 +332,6 @@ public java.util.Collection findDettagliBuono(Buono_carico_scaricoBulk buono)thr
 					"				  AND a.FL_STORNO='N'" +
 					"" +
 					"" +
-			//		" and a.nr_inventario =1346 and  a.pg_inventario=1 and a.progressivo=0 "+
 					"" +
 					"" +
 					")" ;
