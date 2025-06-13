@@ -177,6 +177,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     private boolean isModificaPCC;
     protected boolean attivoCheckImpIntrastat = false;
 
+    private boolean attivaLiqFattOrdineCheckInv=false;
     private Boolean isAttivoGestFlIrregistrabile;
 
     public Boolean isAttivoChekcImpIntrastat(){
@@ -592,6 +593,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             attivaInventaria= configurazioneCnrComponentSession.isAttivoInventariaDocumenti(context.getUserContext());
             attivoCheckImpIntrastat=Utility.createConfigurazioneCnrComponentSession().isCheckImpIntrastatFattPassiva(context.getUserContext());
             isAttivoGestFlIrregistrabile=Utility.createConfigurazioneCnrComponentSession().isAttivoGestFlIrregistrabile(context.getUserContext());
+            attivaLiqFattOrdineCheckInv=configurazioneCnrComponentSession.isAttivoLiqFattOrdineCheckInv(context.getUserContext());
             isModificaPCC = Optional.ofNullable(
                     configurazioneCnrComponentSession.getConfigurazione(
                     context.getUserContext(),
@@ -729,7 +731,8 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     }
 
     public boolean isAssociaInventarioButtonEnabled() {
-
+        if ( ((Fattura_passivaBulk) getModel()).isDaOrdini() && attivaLiqFattOrdineCheckInv)
+            return false;
         return (isEditing() || isInserting()) && getModel() != null
                 && !getDettaglio().getDetails().isEmpty()
                 && !((Fattura_passivaBulk) getModel()).isGenerataDaCompenso()
@@ -840,7 +843,8 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
 
     }
     public boolean isInventariaPerAumentoButtonEnabled() {
-
+        if ( ((Fattura_passivaBulk) getModel()).isDaOrdini() && attivaLiqFattOrdineCheckInv)
+            return false;
         return (isEditing() || isInserting()) && getModel() != null
                 && !getDettaglio().getDetails().isEmpty()
                 && !((Fattura_passivaBulk) getModel()).isGenerataDaCompenso()

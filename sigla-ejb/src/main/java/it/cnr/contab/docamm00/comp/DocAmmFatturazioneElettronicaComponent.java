@@ -734,7 +734,7 @@ public class DocAmmFatturazioneElettronicaComponent extends CRUDComponent{
 									} else {
 										cuu = fattura.getCodiceUnivocoUfficioIpa();
 									}
-									soggettoOrdine = "#0201:" + cuu + "#";
+									soggettoOrdine = "#" + cuu + "#";
 								} else {
 									if (fattura.getPartita_iva() != null) {
 										soggettoOrdine = "#9906:";

@@ -6200,5 +6200,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_analitica_all_docamm.xml"/>
     <!-- Autore : CIRO SALVIO - configurazione rest service per categoria gruppo invent -->
     <include file="bootstrap/insert_rest_catgrp_invent.xml"/>
+    <!--Autore : CIRO SALVIO inserimento configurazione per abilitare o meno il controllo che tutte le righe dell'ordine di una fattura siano inventariate per poter
+    settare la fattura come liquidabile-->
+    <include file="bootstrap/insert_configurazioneCnr_liq_daordine_inv.xml"/>
 
 </databaseChangeLog>
