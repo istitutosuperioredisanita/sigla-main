@@ -177,6 +177,12 @@
 		<columnMapping
 				columnName="PG_FATTURA_PASSIVA_STORNO"
 				propertyName="fattura_passiva_riga_storno.fattura_passivaI.pg_fattura_passiva"/>
+		<columnMapping
+				columnName="ESERCIZIO_VOCE_EP"
+				propertyName="voce_ep.esercizio" />
+		<columnMapping
+				columnName="CD_VOCE_EP"
+				propertyName="voce_ep.cd_voce_ep" />
 	</defaultColumnMap>
 
 	<columnMap
@@ -236,5 +242,6 @@
 		name="fattura_attiva_riga_storno"/>
 	<persistentProperty
 		name="fattura_passiva_riga_storno"/>
-
+	<persistentProperty
+		name="voce_ep" />
 </SQLPersistentInfo>

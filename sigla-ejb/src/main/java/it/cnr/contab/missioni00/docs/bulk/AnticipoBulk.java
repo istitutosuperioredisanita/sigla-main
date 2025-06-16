@@ -23,28 +23,32 @@ import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
+import it.cnr.contab.compensi00.docs.bulk.Compenso_riga_ecoBulk;
 import it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk;
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoSpesaBP;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoSpesaBulk;
 import it.cnr.contab.docamm00.docs.bulk.TipoDocumentoEnum;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk;
 import it.cnr.contab.doccont00.core.bulk.IDefferUpdateSaldi;
 import it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk;
+import it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.*;
 import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.jada.util.action.CRUDBP;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.Dictionary;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.Vector;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @JsonInclude(value = Include.NON_NULL)
-public class AnticipoBulk extends AnticipoBase implements IDefferUpdateSaldi, IDocumentoAmministrativoSpesaBulk {
+public class AnticipoBulk extends AnticipoBase implements IDefferUpdateSaldi, IDocumentoAmministrativoSpesaBulk, IDocumentoDetailEcoCogeBulk {
     /************* TERZO *********************************/
     public final static String ANAG_ALTRO = "A";
     public final static String ANAG_DIPENDENTE = "D";
@@ -125,6 +129,8 @@ public class AnticipoBulk extends AnticipoBase implements IDefferUpdateSaldi, ID
     private java.lang.String riportata = NON_RIPORTATO;
     private java.lang.String riportataInScrivania = NON_RIPORTATO;
     private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
+    private List<Compenso_riga_ecoBulk> righeEconomica = new BulkList<>();
+    private ContoBulk voce_ep = new ContoBulk();
 
     public AnticipoBulk() {
         super();
@@ -1494,5 +1500,70 @@ public class AnticipoBulk extends AnticipoBase implements IDefferUpdateSaldi, ID
     @Override
     public Timestamp getDtGenerazioneScrittura() {
         return this.getDt_contabilizzazione();
+    }
+
+    @Override
+    public BigDecimal getImportoCostoEco() {
+        return this.getIm_anticipo();
+    }
+
+    @Override
+    public IScadenzaDocumentoContabileBulk getScadenzaDocumentoContabile() {
+        return this.getScadenza_obbligazione();
+    }
+
+    @Override
+    public ContoBulk getVoce_ep() {
+        return voce_ep;
+    }
+
+    @Override
+    public void setVoce_ep(ContoBulk voce_ep) {
+        this.voce_ep = voce_ep;
+    }
+
+    @Override
+    public Integer getEsercizio_voce_ep() {
+        return Optional.ofNullable(this.getVoce_ep())
+                .map(ContoBulk::getEsercizio)
+                .orElse(null);
+    }
+
+    @Override
+    public void setEsercizio_voce_ep(Integer esercizio_voce_ep) {
+        Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setEsercizio(esercizio_voce_ep));
+    }
+
+    @Override
+    public String getCd_voce_ep() {
+        return Optional.ofNullable(this.getVoce_ep())
+                .map(ContoBulk::getCd_voce_ep)
+                .orElse(null);
+    }
+
+    @Override
+    public void setCd_voce_ep(String cd_voce_ep) {
+        Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setCd_voce_ep(cd_voce_ep));
+    }
+
+    public List<Compenso_riga_ecoBulk> getRigheEconomica() {
+        return righeEconomica;
+    }
+
+    public void setRigheEconomica(List<Compenso_riga_ecoBulk> righeEconomica) {
+        this.righeEconomica = righeEconomica;
+    }
+
+    @Override
+    public List<IDocumentoDetailAnaCogeBulk> getChildrenAna() {
+        return this.getRigheEconomica().stream()
+                .filter(Objects::nonNull)
+                .map(IDocumentoDetailAnaCogeBulk.class::cast)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public IDocumentoCogeBulk getFather() {
+        return this;
     }
 }

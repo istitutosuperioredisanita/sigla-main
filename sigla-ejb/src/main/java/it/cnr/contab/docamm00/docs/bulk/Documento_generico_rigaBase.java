@@ -170,7 +170,11 @@ public class Documento_generico_rigaBase extends Documento_generico_rigaKey impl
     private java.lang.String cd_cds_storno_fp;
     // PG_FATTURA_ATTIVA_STORNO DECIMAL(10,0)
     private java.lang.Long pg_fattura_passiva_storno;
+    // ESERCIZIO_VOCE_EP DECIMAL(4,0) NOT NULL
+    private java.lang.Integer esercizio_voce_ep;
 
+    // CD_VOCE_EP VARCHAR(45) NOT NULL
+    private java.lang.String cd_voce_ep;
 
     public Documento_generico_rigaBase() {
         super();
@@ -784,5 +788,21 @@ public class Documento_generico_rigaBase extends Documento_generico_rigaKey impl
 
     public void setPg_fattura_passiva_storno(Long pg_fattura_passiva_storno) {
         this.pg_fattura_passiva_storno = pg_fattura_passiva_storno;
+    }
+
+    public Integer getEsercizio_voce_ep() {
+        return esercizio_voce_ep;
+    }
+
+    public void setEsercizio_voce_ep(Integer esercizio_voce_ep) {
+        this.esercizio_voce_ep = esercizio_voce_ep;
+    }
+
+    public String getCd_voce_ep() {
+        return cd_voce_ep;
+    }
+
+    public void setCd_voce_ep(String cd_voce_ep) {
+        this.cd_voce_ep = cd_voce_ep;
     }
 }

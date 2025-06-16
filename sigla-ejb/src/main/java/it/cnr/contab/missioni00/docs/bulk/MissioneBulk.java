@@ -22,6 +22,7 @@ import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -32,11 +33,15 @@ import it.cnr.contab.anagraf00.tabrif.bulk.Rif_inquadramentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Tipo_rapportoBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
+import it.cnr.contab.compensi00.docs.bulk.Compenso_riga_ecoBulk;
 import it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk;
 import it.cnr.contab.compensi00.tabrif.bulk.Tipo_trattamentoBulk;
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoSpesaBP;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk;
@@ -291,6 +296,11 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	}
 	@JsonIgnore
 	private java.sql.Timestamp dataInizioObbligoRegistroUnico;
+	@JsonIgnore
+	private List<Compenso_riga_ecoBulk> righeEconomica = new BulkList<>();
+	@JsonIgnore
+	private ContoBulk voce_ep = new ContoBulk();
+
 	public MissioneBulk() {
 		super();
 	}
@@ -3823,5 +3833,60 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	@Override
 	public IScadenzaDocumentoContabileBulk getScadenzaDocumentoContabile() {
 		return this.getObbligazione_scadenzario();
+	}
+
+	@Override
+	public ContoBulk getVoce_ep() {
+		return voce_ep;
+	}
+
+	@Override
+	public void setVoce_ep(ContoBulk voce_ep) {
+		this.voce_ep = voce_ep;
+	}
+
+	@Override
+	public Integer getEsercizio_voce_ep() {
+		return Optional.ofNullable(this.getVoce_ep())
+				.map(ContoBulk::getEsercizio)
+				.orElse(null);
+	}
+
+	@Override
+	public void setEsercizio_voce_ep(Integer esercizio_voce_ep) {
+		Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setEsercizio(esercizio_voce_ep));
+	}
+
+	@Override
+	public String getCd_voce_ep() {
+		return Optional.ofNullable(this.getVoce_ep())
+				.map(ContoBulk::getCd_voce_ep)
+				.orElse(null);
+	}
+
+	@Override
+	public void setCd_voce_ep(String cd_voce_ep) {
+		Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setCd_voce_ep(cd_voce_ep));
+	}
+
+	public List<Compenso_riga_ecoBulk> getRigheEconomica() {
+		return righeEconomica;
+	}
+
+	public void setRigheEconomica(List<Compenso_riga_ecoBulk> righeEconomica) {
+		this.righeEconomica = righeEconomica;
+	}
+
+	@Override
+	public List<IDocumentoDetailAnaCogeBulk> getChildrenAna() {
+		return this.getRigheEconomica().stream()
+				.filter(Objects::nonNull)
+				.map(IDocumentoDetailAnaCogeBulk.class::cast)
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public IDocumentoCogeBulk getFather() {
+		return this;
 	}
 }

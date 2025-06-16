@@ -196,6 +196,15 @@
         <dropDefaultValue tableName="numerazione_doc_amm" columnName="dacr"/>
         <dropDefaultValue tableName="numerazione_doc_amm" columnName="duva"/>
     </changeSet>
+    <changeSet author="test" id="create-numerazione-doc-cont">
+        <addDefaultValue tableName="numerazione_doc_cont" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="numerazione_doc_cont" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/numerazione_doc_cont.csv" tableName="numerazione_doc_cont"/>
+
+        <dropDefaultValue tableName="numerazione_doc_cont" columnName="dacr"/>
+        <dropDefaultValue tableName="numerazione_doc_cont" columnName="duva"/>
+    </changeSet>
     <changeSet author="test" id="create-causale-contabile">
         <addDefaultValue tableName="causale_contabile" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="causale_contabile" columnName="duva" defaultValueDate="${now}"/>
@@ -231,6 +240,42 @@
 
         <dropDefaultValue tableName="ass_linea_attivita_esercizio" columnName="dacr"/>
         <dropDefaultValue tableName="ass_linea_attivita_esercizio" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-anagrafico">
+        <addDefaultValue tableName="anagrafico" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="anagrafico" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/anagrafico.csv" tableName="anagrafico"/>
+
+        <dropDefaultValue tableName="anagrafico" columnName="dacr"/>
+        <dropDefaultValue tableName="anagrafico" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-terzo">
+        <addDefaultValue tableName="terzo" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="terzo" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/terzo.csv" tableName="terzo"/>
+
+        <dropDefaultValue tableName="terzo" columnName="dacr"/>
+        <dropDefaultValue tableName="terzo" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-banca">
+        <addDefaultValue tableName="banca" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="banca" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/banca.csv" tableName="banca"/>
+
+        <dropDefaultValue tableName="banca" columnName="dacr"/>
+        <dropDefaultValue tableName="banca" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-modalita-pagamento">
+        <addDefaultValue tableName="modalita_pagamento" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="modalita_pagamento" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/modalita_pagamento.csv" tableName="modalita_pagamento"/>
+
+        <dropDefaultValue tableName="modalita_pagamento" columnName="dacr"/>
+        <dropDefaultValue tableName="modalita_pagamento" columnName="duva"/>
     </changeSet>
     <changeSet author="test" id="create-pdg-modulo">
         <addDefaultValue tableName="pdg_modulo" columnName="dacr" defaultValueDate="${now}"/>
@@ -349,6 +394,33 @@
         <dropDefaultValue tableName="obbligazione_scad_voce" columnName="dacr"/>
         <dropDefaultValue tableName="obbligazione_scad_voce" columnName="duva"/>
     </changeSet>
+    <changeSet author="test" id="create-accertamento">
+        <addDefaultValue tableName="accertamento" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="accertamento" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/accertamento.csv" tableName="accertamento"/>
+
+        <dropDefaultValue tableName="accertamento" columnName="dacr"/>
+        <dropDefaultValue tableName="accertamento" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-accertamento-scadenzario">
+        <addDefaultValue tableName="accertamento_scadenzario" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="accertamento_scadenzario" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/accertamento_scadenzario.csv" tableName="accertamento_scadenzario"/>
+
+        <dropDefaultValue tableName="accertamento_scadenzario" columnName="dacr"/>
+        <dropDefaultValue tableName="accertamento_scadenzario" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-accertamento-scad-voce">
+        <addDefaultValue tableName="accertamento_scad_voce" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="accertamento_scad_voce" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/accertamento_scad_voce.csv" tableName="accertamento_scad_voce"/>
+
+        <dropDefaultValue tableName="accertamento_scad_voce" columnName="dacr"/>
+        <dropDefaultValue tableName="accertamento_scad_voce" columnName="duva"/>
+    </changeSet>
     <changeSet author="test" id="create-documento-generico">
         <addDefaultValue tableName="documento_generico" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="documento_generico" columnName="duva" defaultValueDate="${now}"/>
@@ -412,6 +484,42 @@
         <dropDefaultValue tableName="fattura_passiva_riga" columnName="dacr"/>
         <dropDefaultValue tableName="fattura_passiva_riga" columnName="duva"/>
     </changeSet>
+    <changeSet author="test" id="create-anticipo">
+        <addDefaultValue tableName="anticipo" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="anticipo" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/anticipo.csv" tableName="anticipo"/>
+
+        <dropDefaultValue tableName="anticipo" columnName="dacr"/>
+        <dropDefaultValue tableName="anticipo" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-compenso">
+        <addDefaultValue tableName="compenso" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="compenso" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/compenso.csv" tableName="compenso"/>
+
+        <dropDefaultValue tableName="compenso" columnName="dacr"/>
+        <dropDefaultValue tableName="compenso" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-contributo-ritenuta">
+        <addDefaultValue tableName="contributo_ritenuta" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="contributo_ritenuta" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/contributo_ritenuta.csv" tableName="contributo_ritenuta"/>
+
+        <dropDefaultValue tableName="contributo_ritenuta" columnName="dacr"/>
+        <dropDefaultValue tableName="contributo_ritenuta" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-rapporto">
+        <addDefaultValue tableName="rapporto" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="rapporto" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/rapporto.csv" tableName="rapporto"/>
+
+        <dropDefaultValue tableName="rapporto" columnName="dacr"/>
+        <dropDefaultValue tableName="rapporto" columnName="duva"/>
+    </changeSet>
     <changeSet author="test" id="create-mandato">
         <addDefaultValue tableName="mandato" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="mandato" columnName="duva" defaultValueDate="${now}"/>
@@ -438,6 +546,42 @@
 
         <dropDefaultValue tableName="mandato_terzo" columnName="dacr"/>
         <dropDefaultValue tableName="mandato_terzo" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-reversale">
+        <addDefaultValue tableName="reversale" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="reversale" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/reversale.csv" tableName="reversale"/>
+
+        <dropDefaultValue tableName="reversale" columnName="dacr"/>
+        <dropDefaultValue tableName="reversale" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-reversale-riga">
+        <addDefaultValue tableName="reversale_riga" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="reversale_riga" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/reversale_riga.csv" tableName="reversale_riga"/>
+
+        <dropDefaultValue tableName="reversale_riga" columnName="dacr"/>
+        <dropDefaultValue tableName="reversale_riga" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-reversale-terzo">
+        <addDefaultValue tableName="reversale_terzo" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="reversale_terzo" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/reversale_terzo.csv" tableName="reversale_terzo"/>
+
+        <dropDefaultValue tableName="reversale_terzo" columnName="dacr"/>
+        <dropDefaultValue tableName="reversale_terzo" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-ass-mandato-reversale">
+        <addDefaultValue tableName="ass_mandato_reversale" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="ass_mandato_reversale" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/ass_mandato_reversale.csv" tableName="ass_mandato_reversale"/>
+
+        <dropDefaultValue tableName="ass_mandato_reversale" columnName="dacr"/>
+        <dropDefaultValue tableName="ass_mandato_reversale" columnName="duva"/>
     </changeSet>
     <changeSet author="test" id="sql-attivazione-economica">
         <sql>
@@ -513,6 +657,11 @@
             SET CD_VOCE_EP_CONTR = 'P22012'
             WHERE CD_VOCE_EP LIKE 'A22012';
         </sql>
+        <sql>
+            UPDATE VOCE_EP
+            SET CD_VOCE_EP_CONTR = 'P13024'
+            WHERE CD_VOCE_EP LIKE 'C13024';
+        </sql>
 
         <addDefaultValue tableName="voce_analitica" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="voce_analitica" columnName="duva" defaultValueDate="${now}"/>
@@ -532,68 +681,5 @@
         </sql>
         <dropDefaultValue tableName="configurazione_cnr" columnName="dacr"/>
         <dropDefaultValue tableName="configurazione_cnr" columnName="duva"/>
-    </changeSet>
-    <changeSet author="test" id="create-anagrafico">
-        <addDefaultValue tableName="anagrafico" columnName="dacr" defaultValueDate="${now}"/>
-        <addDefaultValue tableName="anagrafico" columnName="duva" defaultValueDate="${now}"/>
-
-        <loadData file="liquibase/csv/anagrafico.csv" tableName="anagrafico"/>
-
-        <dropDefaultValue tableName="anagrafico" columnName="dacr"/>
-        <dropDefaultValue tableName="anagrafico" columnName="duva"/>
-    </changeSet>
-    <changeSet author="test" id="create-terzo">
-        <addDefaultValue tableName="terzo" columnName="dacr" defaultValueDate="${now}"/>
-        <addDefaultValue tableName="terzo" columnName="duva" defaultValueDate="${now}"/>
-
-        <loadData file="liquibase/csv/terzo.csv" tableName="terzo"/>
-
-        <dropDefaultValue tableName="terzo" columnName="dacr"/>
-        <dropDefaultValue tableName="terzo" columnName="duva"/>
-    </changeSet>
-    <changeSet author="test" id="create-banca">
-        <addDefaultValue tableName="banca" columnName="dacr" defaultValueDate="${now}"/>
-        <addDefaultValue tableName="banca" columnName="duva" defaultValueDate="${now}"/>
-
-        <loadData file="liquibase/csv/banca.csv" tableName="banca"/>
-
-        <dropDefaultValue tableName="banca" columnName="dacr"/>
-        <dropDefaultValue tableName="banca" columnName="duva"/>
-    </changeSet>
-    <changeSet author="test" id="create-modalita-pagamento">
-        <addDefaultValue tableName="modalita_pagamento" columnName="dacr" defaultValueDate="${now}"/>
-        <addDefaultValue tableName="modalita_pagamento" columnName="duva" defaultValueDate="${now}"/>
-
-        <loadData file="liquibase/csv/modalita_pagamento.csv" tableName="modalita_pagamento"/>
-
-        <dropDefaultValue tableName="modalita_pagamento" columnName="dacr"/>
-        <dropDefaultValue tableName="modalita_pagamento" columnName="duva"/>
-    </changeSet>
-    <changeSet author="test" id="create-compenso">
-        <addDefaultValue tableName="compenso" columnName="dacr" defaultValueDate="${now}"/>
-        <addDefaultValue tableName="compenso" columnName="duva" defaultValueDate="${now}"/>
-
-        <loadData file="liquibase/csv/compenso.csv" tableName="compenso"/>
-
-        <dropDefaultValue tableName="compenso" columnName="dacr"/>
-        <dropDefaultValue tableName="compenso" columnName="duva"/>
-    </changeSet>
-    <changeSet author="test" id="create-contributo-ritenuta">
-        <addDefaultValue tableName="contributo_ritenuta" columnName="dacr" defaultValueDate="${now}"/>
-        <addDefaultValue tableName="contributo_ritenuta" columnName="duva" defaultValueDate="${now}"/>
-
-        <loadData file="liquibase/csv/contributo_ritenuta.csv" tableName="contributo_ritenuta"/>
-
-        <dropDefaultValue tableName="contributo_ritenuta" columnName="dacr"/>
-        <dropDefaultValue tableName="contributo_ritenuta" columnName="duva"/>
-    </changeSet>
-    <changeSet author="test" id="create-rapporto">
-        <addDefaultValue tableName="rapporto" columnName="dacr" defaultValueDate="${now}"/>
-        <addDefaultValue tableName="rapporto" columnName="duva" defaultValueDate="${now}"/>
-
-        <loadData file="liquibase/csv/rapporto.csv" tableName="rapporto"/>
-
-        <dropDefaultValue tableName="rapporto" columnName="dacr"/>
-        <dropDefaultValue tableName="rapporto" columnName="duva"/>
     </changeSet>
 </databaseChangeLog>

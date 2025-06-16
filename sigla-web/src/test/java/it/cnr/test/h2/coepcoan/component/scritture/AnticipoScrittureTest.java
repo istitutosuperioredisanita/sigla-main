@@ -20,9 +20,9 @@ package it.cnr.test.h2.coepcoan.component.scritture;
 import it.cnr.contab.coepcoan00.core.bulk.Movimento_cogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
-import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.doccont00.core.bulk.MandatoBulk;
 import it.cnr.contab.doccont00.core.bulk.MandatoIBulk;
+import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.ejb.CRUDComponentSession;
@@ -39,49 +39,48 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class CompensoScrittureTest extends DeploymentsH2 {
+public class AnticipoScrittureTest extends DeploymentsH2 {
     @EJB
     private CRUDComponentSession crudComponentSession;
 
     /**
-     * Compenso occasionale
-     * <p><b>Dati Compenso</b>
+     * Anticipo
+     * <p><b>Dati Anticipo</b>
      * <pre>
-     * Voce Bilancio: 13024 - Prodotti Chimici
-     * Importo: 500,00 - IRPEF: 100
+     * Voce Bilancio: 17001 - Interessi passivi su mutui, prestiti, anticipazioni di cassa ed oneri accessori
+     * Importo: 100,00
      * </pre></p>
-     * <b>Scrittura Economica Compenso</b>
+     * <b>Scrittura Economica Anticipo</b>
      * <pre>
      *     Sezione   Importo      Conto
-     *        D      500,00       C13024 - Prodotti chimici
-     *        A      500,00       P13024 - Debiti verso fornitori - Prodotti chimici
+     *        D      100,00       A71001 - Crediti diversi derivanti da anticipazioni di cassa
+     *        A      100,00       P71001 - Debiti per anticipazioni
      * </pre>
      * <b>Scrittura Economica Mandato</b>
      * <pre>
      *     Sezione   Importo      Conto
-     *        D      500,00       P13024 - Debiti verso fornitori - Prodotti chimici
-     *        A      100,00       A91006 - Crediti diversi derivanti da ritenute erariali su redditi da lavoro autonomo per conto terzi
-     *        A      400,00       A00053 - Istituto tesoriere/cassiere
+     *        D      100,00       P71001 - Debiti per anticipazioni
+     *        A      100,00       A00053 - Istituto tesoriere/cassiere
      * </pre>
      */
     @Test
     @OperateOnDeployment(TEST_H2)
     @InSequence(1)
-    public void testCompenso001() throws Exception {
+    public void testAnticipo001() throws Exception {
         {
-            CompensoBulk compensoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
-                            new CompensoBulk("000", "000.000", 2025, 1L)))
-                    .filter(CompensoBulk.class::isInstance)
-                    .map(CompensoBulk.class::cast)
+            AnticipoBulk anticipoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+                            new AnticipoBulk("000", "000.000", 2025, 1L)))
+                    .filter(AnticipoBulk.class::isInstance)
+                    .map(AnticipoBulk.class::cast)
                     .orElse(null);
             ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
                     new TestUserContext(),
-                    compensoBulk);
-            assertEquals(new BigDecimal("500.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                    anticipoBulk);
+            assertEquals(new BigDecimal("100.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                     .map(Scrittura_partita_doppiaBulk::getIm_scrittura).orElse(null));
-            assertEquals(new BigDecimal("500.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+            assertEquals(new BigDecimal("100.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                     .map(Scrittura_partita_doppiaBulk::getImTotaleDare).orElse(null));
-            assertEquals(new BigDecimal("500.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+            assertEquals(new BigDecimal("100.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                     .map(Scrittura_partita_doppiaBulk::getImTotaleAvere).orElse(null));
 
             BulkList<Movimento_cogeBulk> movimentiDare = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
@@ -91,8 +90,8 @@ public class CompensoScrittureTest extends DeploymentsH2 {
 
             Optional<Movimento_cogeBulk> rigaDare = movimentiDare.stream().findAny();
             assertTrue("Riga dare non presente.", rigaDare.isPresent());
-            assertEquals("C13024", rigaDare.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-            assertEquals(new BigDecimal("500.00"), rigaDare.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+            assertEquals("A71001", rigaDare.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+            assertEquals(new BigDecimal("100.00"), rigaDare.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
             BulkList<Movimento_cogeBulk> movimentiAvere = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                     .map(Scrittura_partita_doppiaBulk::getMovimentiAvereColl)
@@ -101,21 +100,20 @@ public class CompensoScrittureTest extends DeploymentsH2 {
 
             Optional<Movimento_cogeBulk> rigaAvere = movimentiAvere.stream().findAny();
             assertTrue("Riga avere non presente.", rigaAvere.isPresent());
-            assertEquals("P13024", rigaAvere.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-            assertEquals(new BigDecimal("500.00"), rigaAvere.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+            assertEquals("P71001", rigaAvere.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+            assertEquals(new BigDecimal("100.00"), rigaAvere.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
-            //Richiamo il compenso perchè aggiunto valore voce_ep su testata
-            compensoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
-                            new CompensoBulk("000", "000.000", 2025, 1L)))
-                    .filter(CompensoBulk.class::isInstance)
-                    .map(CompensoBulk.class::cast)
+            //Richiamo l'anticipo perchè aggiunto valore voce_ep su testata
+            anticipoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+                            new AnticipoBulk("000", "000.000", 2025, 1L)))
+                    .filter(AnticipoBulk.class::isInstance)
+                    .map(AnticipoBulk.class::cast)
                     .orElse(null);
-            compensoBulk = Utility.createCompensoComponentSession().loadContributiERitenute(new TestUserContext(), compensoBulk);
-            Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), compensoBulk);
+            Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), anticipoBulk);
         }
         {
             MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
-                            new MandatoIBulk("000",2025,11L)))
+                            new MandatoIBulk("000",2025,12L)))
                     .filter(MandatoBulk.class::isInstance)
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
@@ -124,11 +122,11 @@ public class CompensoScrittureTest extends DeploymentsH2 {
                     new TestUserContext(),
                     mandatoBulk);
 
-            assertEquals(new BigDecimal("500.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+            assertEquals(new BigDecimal("100.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                     .map(Scrittura_partita_doppiaBulk::getIm_scrittura).orElse(null));
-            assertEquals(new BigDecimal("500.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+            assertEquals(new BigDecimal("100.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                     .map(Scrittura_partita_doppiaBulk::getImTotaleDare).orElse(null));
-            assertEquals(new BigDecimal("500.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+            assertEquals(new BigDecimal("100.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                     .map(Scrittura_partita_doppiaBulk::getImTotaleAvere).orElse(null));
 
             BulkList<Movimento_cogeBulk> movimentiDare = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
@@ -138,24 +136,18 @@ public class CompensoScrittureTest extends DeploymentsH2 {
 
             Optional<Movimento_cogeBulk> rigaTipoDebito = movimentiDare.stream().filter(Movimento_cogeBulk::isRigaTipoDebito).findAny();
             assertTrue("Riga tipo debito non presente.", rigaTipoDebito.isPresent());
-            assertEquals("P13024", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-            assertEquals(new BigDecimal("500.00"), rigaTipoDebito.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+            assertEquals("P71001", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+            assertEquals(new BigDecimal("100.00"), rigaTipoDebito.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
             BulkList<Movimento_cogeBulk> movimentiAvere = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                     .map(Scrittura_partita_doppiaBulk::getMovimentiAvereColl)
                     .orElse(new BulkList<>());
-            assertEquals(2, movimentiAvere.size());
-
-            Optional<Movimento_cogeBulk> rigaTipoRitenute = movimentiAvere.stream().filter(Movimento_cogeBulk::isRigaTipoDebito).findAny();
-            assertTrue("Riga tipo debito per ritenute non presente.", rigaTipoRitenute.isPresent());
-            assertEquals("RAIRPEF", rigaTipoRitenute.map(Movimento_cogeBulk::getCd_contributo_ritenuta).orElse(null));
-            assertEquals("A91006", rigaTipoRitenute.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-            assertEquals(new BigDecimal("100.00"), rigaTipoRitenute.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+            assertEquals(1, movimentiAvere.size());
 
             Optional<Movimento_cogeBulk> rigaTipoTesoreria = movimentiAvere.stream().filter(Movimento_cogeBulk::isRigaTipoTesoreria).findAny();
             assertTrue("Riga tipo tesoreria non presente.", rigaTipoTesoreria.isPresent());
             assertEquals("A00053", rigaTipoTesoreria.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-            assertEquals(new BigDecimal("400.00"), rigaTipoTesoreria.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+            assertEquals(new BigDecimal("100.00"), rigaTipoTesoreria.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
         }
     }
 }

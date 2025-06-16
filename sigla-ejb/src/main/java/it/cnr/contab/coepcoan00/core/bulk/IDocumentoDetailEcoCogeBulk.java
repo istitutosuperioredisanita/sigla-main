@@ -25,11 +25,13 @@ import java.util.ArrayList;
 public interface IDocumentoDetailEcoCogeBulk  {
     it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk getScadenzaDocumentoContabile();
 
+    IDocumentoCogeBulk getFather();
+
     default ContoBulk getVoce_ep() {
         return null;
-    };
+    }
 
-    default void setVoce_ep(ContoBulk voce_ep) {};
+    default void setVoce_ep(ContoBulk voce_ep) {}
 
     default java.util.List<IDocumentoDetailAnaCogeBulk> getChildrenAna() {
         return new ArrayList<>();

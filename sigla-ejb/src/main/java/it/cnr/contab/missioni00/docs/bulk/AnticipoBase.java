@@ -17,10 +17,7 @@
 
 package it.cnr.contab.missioni00.docs.bulk;
 
-import it.cnr.jada.bulk.*;
 import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
 
 public class AnticipoBase extends AnticipoKey implements Keyed {
 	// CAMBIO DECIMAL(15,4) NOT NULL
@@ -127,6 +124,12 @@ public class AnticipoBase extends AnticipoKey implements Keyed {
 
 	// TI_ASSOCIATO_MANREV CHAR(1) NOT NULL
 	private java.lang.String ti_associato_manrev;
+
+	// ESERCIZIO_VOCE_EP DECIMAL(4,0) NOT NULL
+	private Integer esercizio_voce_ep;
+
+	// CD_VOCE_EP VARCHAR(45) NOT NULL
+	private String cd_voce_ep;
 
 public AnticipoBase() {
 	super();
@@ -554,4 +557,20 @@ public void setTi_anagrafico(java.lang.String ti_anagrafico) {
 public void setTi_associato_manrev(java.lang.String ti_associato_manrev) {
 	this.ti_associato_manrev = ti_associato_manrev;
 }
+
+	public Integer getEsercizio_voce_ep() {
+		return esercizio_voce_ep;
+	}
+
+	public void setEsercizio_voce_ep(Integer esercizio_voce_ep) {
+		this.esercizio_voce_ep = esercizio_voce_ep;
+	}
+
+	public String getCd_voce_ep() {
+		return cd_voce_ep;
+	}
+
+	public void setCd_voce_ep(String cd_voce_ep) {
+		this.cd_voce_ep = cd_voce_ep;
+	}
 }

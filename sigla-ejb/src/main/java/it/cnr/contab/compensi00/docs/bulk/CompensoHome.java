@@ -21,8 +21,12 @@ import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoHome;
 import it.cnr.contab.anagraf00.core.bulk.RapportoBulk;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
+import it.cnr.contab.config00.pdcep.bulk.Ass_ev_voceepBulk;
+import it.cnr.contab.config00.pdcep.bulk.Ass_ev_voceepHome;
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_IBulk;
+import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk;
 import it.cnr.contab.incarichi00.bulk.Incarichi_repertorio_annoBulk;
@@ -34,6 +38,7 @@ import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.spring.service.LDAPService;
 import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.util.SIGLAGroups;
+import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.comp.ApplicationRuntimeException;
@@ -474,5 +479,39 @@ public class CompensoHome extends BulkHome implements
         SQLBuilder sql = fattura_passivaHome.createSQLBuilder();
         sql.addClause(FindClause.AND, "compenso", SQLBuilder.EQUALS, compenso);
         return fattura_passivaHome.fetchAll(sql).stream().findAny();
+    }
+
+    public java.util.List<Compenso_riga_ecoBulk> findCompensoRigheEcoList(CompensoBulk docRiga ) throws PersistencyException {
+        PersistentHome home = getHomeCache().getHome(Compenso_riga_ecoBulk.class);
+
+        it.cnr.jada.persistency.sql.SQLBuilder sql = home.createSQLBuilder();
+        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, docRiga.getEsercizio());
+        sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, docRiga.getCd_cds());
+        sql.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, docRiga.getCd_unita_organizzativa());
+        sql.addClause(FindClause.AND, "pg_compenso", SQLBuilder.EQUALS, docRiga.getPg_compenso());
+        return home.fetchAll(sql);
+    }
+
+    public ContoBulk getContoCostoDefault(CompensoBulk docRiga) {
+        try {
+            Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
+            if (Optional.ofNullable(docRiga).isPresent()) {
+                if (Optional.ofNullable(docRiga.getObbligazioneScadenzario()).isPresent()) {
+                    Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(docRiga.getObbligazioneScadenzario());
+
+                    if (Optional.ofNullable(obbligScad).isPresent()) {
+                        ObbligazioneBulk obblig = (ObbligazioneBulk) fatpasHome.loadIfNeededObject(obbligScad.getObbligazione());
+                        Ass_ev_voceepHome assEvVoceEpHome = (Ass_ev_voceepHome) getHomeCache().getHome(Ass_ev_voceepBulk.class);
+                        List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(obblig.getCd_elemento_voce(), obblig.getEsercizio(), obblig.getTi_appartenenza(), obblig.getTi_gestione()));
+                        return Optional.ofNullable(listAss).orElse(new ArrayList<>())
+                                .stream().map(Ass_ev_voceepBulk::getVoce_ep)
+                                .findAny().orElse(null);
+                    }
+                }
+            }
+            return null;
+        } catch (PersistencyException e) {
+            throw new DetailedRuntimeException(e);
+        }
     }
 }

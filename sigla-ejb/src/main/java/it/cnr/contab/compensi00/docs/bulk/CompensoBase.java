@@ -414,6 +414,12 @@ public class CompensoBase extends CompensoKey implements Keyed {
 	
     private String motivo_assenza_cig;
 
+	// ESERCIZIO_VOCE_EP DECIMAL(4,0) NOT NULL
+	private Integer esercizio_voce_ep;
+
+	// CD_VOCE_EP VARCHAR(45) NOT NULL
+	private String cd_voce_ep;
+
 public CompensoBase() {
 	super();
 }
@@ -1873,4 +1879,19 @@ public void setTi_istituz_commerc(java.lang.String ti_istituz_commerc) {
 		this.detrazioneRidCuneoNetto = detrazioneRidCuneoNetto;
 	}
 
+	public Integer getEsercizio_voce_ep() {
+		return esercizio_voce_ep;
+	}
+
+	public void setEsercizio_voce_ep(Integer esercizio_voce_ep) {
+		this.esercizio_voce_ep = esercizio_voce_ep;
+	}
+
+	public String getCd_voce_ep() {
+		return cd_voce_ep;
+	}
+
+	public void setCd_voce_ep(String cd_voce_ep) {
+		this.cd_voce_ep = cd_voce_ep;
+	}
 }

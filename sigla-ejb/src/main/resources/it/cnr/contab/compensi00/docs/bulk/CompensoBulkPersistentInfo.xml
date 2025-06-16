@@ -140,6 +140,13 @@
 			sqlTypeName="VARCHAR"
 			nullable="true"
 			columnSize="10" />
+
+		<columnMapping
+				columnName="ESERCIZIO_VOCE_EP"
+				propertyName="voce_ep.esercizio" />
+		<columnMapping
+				columnName="CD_VOCE_EP"
+				propertyName="voce_ep.cd_voce_ep" />
 	</defaultColumnMap>		
 
 	<persistentProperty
@@ -219,4 +226,6 @@
 	<persistentProperty name="trovato" />
 	<persistentProperty
 		name="cig" />
+	<persistentProperty
+		name="voce_ep" />
 </SQLPersistentInfo>

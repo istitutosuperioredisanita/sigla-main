@@ -70,6 +70,18 @@
         </createIndex>
     </changeSet>
 
+    <changeSet author="raffaele.pagano" id="add_column_voce_ep_anticipo">
+        <addColumn tableName="ANTICIPO">
+            <column name="esercizio_voce_ep" remarks="Esercizio Conto Economico" type="SMALLINT"/>
+            <column name="cd_voce_ep" remarks="Codice Identificativo completo del conto del piano." type="VARCHAR(20)"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="esercizio_voce_ep,cd_voce_ep" baseTableName="ANTICIPO" constraintName="FK_ANTICIPO11" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="esercizio,cd_voce_ep" referencedTableName="voce_ep"/>
+        <createIndex indexName="FX_ANTICIPO12" tableName="ANTICIPO">
+            <column name="esercizio_voce_ep"/>
+            <column name="cd_voce_ep"/>
+        </createIndex>
+    </changeSet>
+
     <changeSet author="raffaele.pagano" id="add_column_voce_ep_missione">
         <addColumn tableName="MISSIONE">
             <column name="esercizio_voce_ep" remarks="Esercizio Conto Economico" type="SMALLINT"/>
@@ -361,6 +373,74 @@
         </createIndex>
 
         <createIndex indexName="fx_compenso_riga_eco02" tableName="compenso_riga_eco">
+            <column name="CD_CENTRO_RESPONSABILITA"/>
+            <column name="CD_LINEA_ATTIVITA"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="add_table_anticipo_riga_eco">
+        <!-- TABELLA DETTAGLIO ANTICIPO_RIGA_ECO-->
+        <createTable tableName="anticipo_riga_eco" remarks="Contiene i dati economici dell'anticipo" >
+            <column name="cd_cds" remarks="Codice identificativo del centro di spesa su cui è registrato l'anticipo." type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_unita_organizzativa" remarks="Codice identificativo dell'unità organizzativa su cui è registrato l'anticipo." type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="esercizio" remarks="Esercizio di riferimento della registrazione dell'anticipo" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_anticipo" remarks="Protocollo interno di numerazione dell'anticipo" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progressivo_riga_eco" remarks="Progressivo numerazione righe economiche all'interno dell'anticipo" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <!-- TABELLA VOCE_ANALITICA -->
+            <column name="esercizio_voce_ana" remarks="Esercizio Conto analitico" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_voce_ana" remarks="Codice Identificativo completo del conto analitico del piano." type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <!-- TABELLA LINEA_ATTIVITA -->
+            <column name="cd_centro_responsabilita" remarks="Codice identificativo del centro di responsabilità" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_linea_attivita" remarks="Codice della linea di attività" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="importo" remarks="Importo da assegnare al costo e Gae" type="numeric(15, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record: viene incrementato di 1 ad ogni variazione" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="anticipo_riga_eco" constraintName="anticipo_riga_eco_pkey" columnNames="cd_cds,cd_unita_organizzativa,esercizio,pg_anticipo,progressivo_riga_eco"></addPrimaryKey>
+
+        <addForeignKeyConstraint baseColumnNames="esercizio_voce_ana,cd_voce_ana" baseTableName="anticipo_riga_eco" constraintName="fk_anticipo_riga_eco01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="esercizio,cd_voce_ana" referencedTableName="voce_analitica"/>
+        <addForeignKeyConstraint baseColumnNames="cd_centro_responsabilita,cd_linea_attivita" baseTableName="anticipo_riga_eco" constraintName="fk_anticipo_riga_eco02" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cd_centro_responsabilita,cd_linea_attivita" referencedTableName="linea_attivita"/>
+
+        <createIndex indexName="fx_anticipo_riga_eco01" tableName="anticipo_riga_eco">
+            <column name="esercizio_voce_ana"/>
+            <column name="cd_voce_ana"/>
+        </createIndex>
+
+        <createIndex indexName="fx_anticipo_riga_eco02" tableName="anticipo_riga_eco">
             <column name="CD_CENTRO_RESPONSABILITA"/>
             <column name="CD_LINEA_ATTIVITA"/>
         </createIndex>

@@ -228,6 +228,14 @@ public class MissioneBase extends MissioneKey implements Keyed {
 	@JsonIgnore
 	private java.lang.Boolean daRimborsoDaCompletare;
 
+	// ESERCIZIO_VOCE_EP DECIMAL(4,0) NOT NULL
+	@JsonIgnore
+	private Integer esercizio_voce_ep;
+
+	// CD_VOCE_EP VARCHAR(45) NOT NULL
+	@JsonIgnore
+	private String cd_voce_ep;
+
 public MissioneBase() {
 	super();
 }
@@ -894,4 +902,20 @@ public java.lang.Boolean getDaRimborsoDaCompletare() {
 public void setDaRimborsoDaCompletare(java.lang.Boolean daRimborsoDaCompletare) {
 	this.daRimborsoDaCompletare = daRimborsoDaCompletare;
 }
+
+	public Integer getEsercizio_voce_ep() {
+		return esercizio_voce_ep;
+	}
+
+	public void setEsercizio_voce_ep(Integer esercizio_voce_ep) {
+		this.esercizio_voce_ep = esercizio_voce_ep;
+	}
+
+	public String getCd_voce_ep() {
+		return cd_voce_ep;
+	}
+
+	public void setCd_voce_ep(String cd_voce_ep) {
+		this.cd_voce_ep = cd_voce_ep;
+	}
 }

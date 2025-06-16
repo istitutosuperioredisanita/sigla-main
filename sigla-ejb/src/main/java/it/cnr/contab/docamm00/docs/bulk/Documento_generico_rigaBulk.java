@@ -1188,6 +1188,30 @@ public class Documento_generico_rigaBulk extends Documento_generico_rigaBase imp
     }
 
 	@Override
+	public java.lang.Integer getEsercizio_voce_ep() {
+		return Optional.ofNullable(this.getVoce_ep())
+				.map(ContoBulk::getEsercizio)
+				.orElse(null);
+	}
+
+	@Override
+	public void setEsercizio_voce_ep(java.lang.Integer esercizio_voce_ep) {
+		Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setEsercizio(esercizio_voce_ep));
+	}
+
+	@Override
+	public java.lang.String getCd_voce_ep() {
+		return Optional.ofNullable(this.getVoce_ep())
+				.map(ContoBulk::getCd_voce_ep)
+				.orElse(null);
+	}
+
+	@Override
+	public void setCd_voce_ep(java.lang.String cd_voce_ep) {
+		Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setCd_voce_ep(cd_voce_ep));
+	}
+
+	@Override
 	public List<IDocumentoDetailAnaCogeBulk> getChildrenAna() {
 		return this.getRigheEconomica().stream()
 				.filter(Objects::nonNull)

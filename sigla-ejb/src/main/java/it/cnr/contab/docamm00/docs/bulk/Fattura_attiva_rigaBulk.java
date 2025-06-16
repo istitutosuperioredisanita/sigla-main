@@ -33,7 +33,6 @@ import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.TariffarioBulk;
@@ -529,10 +528,12 @@ public abstract class Fattura_attiva_rigaBulk extends Fattura_attiva_rigaBase im
 		return getDs_riga_fattura();
 	}
 
+	@Override
 	public ContoBulk getVoce_ep() {
 		return voce_ep;
 	}
 
+	@Override
 	public void setVoce_ep(ContoBulk voce_ep) {
 		this.voce_ep = voce_ep;
 	}

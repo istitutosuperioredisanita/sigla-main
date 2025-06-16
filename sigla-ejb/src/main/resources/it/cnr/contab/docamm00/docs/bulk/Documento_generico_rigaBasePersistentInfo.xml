@@ -318,6 +318,17 @@
 			propertyName="pg_fattura_passiva_storno"
 			sqlTypeName="DECIMAL"
 			columnSize="10"/>
+		<columnMapping
+			columnName="ESERCIZIO_VOCE_EP"
+			propertyName="esercizio_voce_ep"
+			sqlTypeName="DECIMAL"
+			columnSize="4" />
+		<columnMapping
+			columnName="CD_VOCE_EP"
+			propertyName="cd_voce_ep"
+			sqlTypeName="VARCHAR"
+			columnSize="45" />
+
 	</defaultColumnMap>
 	<persistentProperty
 		name="dt_cancellazione" />
@@ -431,4 +442,8 @@
 		name="cd_cds_storno_fp"/>
 	<persistentProperty
 		name="pg_fattura_passiva_storno"/>
+	<persistentProperty
+		name="esercizio_voce_ep"/>
+	<persistentProperty
+		name="cd_voce_ep"/>
 </SQLPersistentInfo>

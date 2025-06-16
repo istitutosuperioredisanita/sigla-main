@@ -23,6 +23,8 @@ import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.*;
 import it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.contab.compensi00.tabrif.bulk.Tipo_prestazione_compensoBulk;
@@ -228,7 +230,7 @@ public class CompensoBulk extends CompensoBase implements IDefferUpdateSaldi, ID
     private boolean userAbilitatoSenzaCalcolo = false;
     private CigBulk cig;
     private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
-    private List<Documento_generico_riga_ecoBulk> righeEconomica = new BulkList<>();
+    private List<Compenso_riga_ecoBulk> righeEconomica = new BulkList<>();
     private ContoBulk voce_ep = new ContoBulk();
 
     public CompensoBulk() {
@@ -3410,5 +3412,60 @@ public class CompensoBulk extends CompensoBase implements IDefferUpdateSaldi, ID
     @Override
     public IScadenzaDocumentoContabileBulk getScadenzaDocumentoContabile() {
         return this.getObbligazioneScadenzario();
+    }
+
+    @Override
+    public ContoBulk getVoce_ep() {
+        return voce_ep;
+    }
+
+    @Override
+    public void setVoce_ep(ContoBulk voce_ep) {
+        this.voce_ep = voce_ep;
+    }
+
+    @Override
+    public Integer getEsercizio_voce_ep() {
+        return Optional.ofNullable(this.getVoce_ep())
+                .map(ContoBulk::getEsercizio)
+                .orElse(null);
+    }
+
+    @Override
+    public void setEsercizio_voce_ep(Integer esercizio_voce_ep) {
+        Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setEsercizio(esercizio_voce_ep));
+    }
+
+    @Override
+    public String getCd_voce_ep() {
+        return Optional.ofNullable(this.getVoce_ep())
+                .map(ContoBulk::getCd_voce_ep)
+                .orElse(null);
+    }
+
+    @Override
+    public void setCd_voce_ep(String cd_voce_ep) {
+        Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setCd_voce_ep(cd_voce_ep));
+    }
+
+    public List<Compenso_riga_ecoBulk> getRigheEconomica() {
+        return righeEconomica;
+    }
+
+    public void setRigheEconomica(List<Compenso_riga_ecoBulk> righeEconomica) {
+        this.righeEconomica = righeEconomica;
+    }
+
+    @Override
+    public List<IDocumentoDetailAnaCogeBulk> getChildrenAna() {
+        return this.getRigheEconomica().stream()
+                .filter(Objects::nonNull)
+                .map(IDocumentoDetailAnaCogeBulk.class::cast)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public IDocumentoCogeBulk getFather() {
+        return this;
     }
 }
