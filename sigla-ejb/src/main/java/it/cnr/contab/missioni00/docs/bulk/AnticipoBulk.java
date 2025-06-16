@@ -129,7 +129,7 @@ public class AnticipoBulk extends AnticipoBase implements IDefferUpdateSaldi, ID
     private java.lang.String riportata = NON_RIPORTATO;
     private java.lang.String riportataInScrivania = NON_RIPORTATO;
     private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
-    private List<Compenso_riga_ecoBulk> righeEconomica = new BulkList<>();
+    private List<Anticipo_riga_ecoBulk> righeEconomica = new BulkList<>();
     private ContoBulk voce_ep = new ContoBulk();
 
     public AnticipoBulk() {
@@ -1546,11 +1546,11 @@ public class AnticipoBulk extends AnticipoBase implements IDefferUpdateSaldi, ID
         Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setCd_voce_ep(cd_voce_ep));
     }
 
-    public List<Compenso_riga_ecoBulk> getRigheEconomica() {
+    public List<Anticipo_riga_ecoBulk> getRigheEconomica() {
         return righeEconomica;
     }
 
-    public void setRigheEconomica(List<Compenso_riga_ecoBulk> righeEconomica) {
+    public void setRigheEconomica(List<Anticipo_riga_ecoBulk> righeEconomica) {
         this.righeEconomica = righeEconomica;
     }
 

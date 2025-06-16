@@ -566,4 +566,12 @@ public class Configurazione_cnrHome extends BulkHome {
                 Timestamp.valueOf(LocalDateTime.of(esercizio - 1, 3, 1, 0, 0, 0, 0))
         );
     }
+
+    public Optional<Configurazione_cnrBulk> getConfigurazioneContiAnticipo(Integer esercizio) throws PersistencyException{
+        return Optional.ofNullable(
+                this.getConfigurazione(esercizio, ASTERISCO,
+                        Configurazione_cnrBulk.PK_VOCEEP_SPECIALE,
+                        Configurazione_cnrBulk.SK_CREDITO_DEBITO_ANTICIPO)
+        );
+    }
 }

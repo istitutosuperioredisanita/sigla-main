@@ -1738,12 +1738,14 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 	private Scrittura_partita_doppiaBulk proposeScritturaPartitaDoppiaAnticipo(UserContext userContext, AnticipoBulk anticipo) throws ComponentException {
 		try {
+			loadRigheEco(userContext, anticipo);
+
 			TestataPrimaNota testataPrimaNota = new TestataPrimaNota(anticipo.getDt_da_competenza_coge(), anticipo.getDt_a_competenza_coge());
 
 			//Registrazione conto COSTO ANTICIPO
 			BigDecimal imCostoAnticipo = anticipo.getIm_anticipo();
 			if (imCostoAnticipo.compareTo(BigDecimal.ZERO)!=0) {
-				Voce_epBulk aContoCreditoAnticipo = this.findContoCreditoAnticipo(userContext, anticipo.getEsercizio());
+				Voce_epBulk aContoCreditoAnticipo = anticipo.getVoce_ep();
 				Voce_epBulk aContoDebitoAnticipo = this.findContoDebitoAnticipo(userContext, anticipo.getEsercizio());
 				testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.CREDITO.value(), Movimento_cogeBulk.SEZIONE_DARE, aContoCreditoAnticipo, imCostoAnticipo, anticipo.getCd_terzo(), anticipo);
 				testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.DEBITO.value(), Movimento_cogeBulk.SEZIONE_AVERE, aContoDebitoAnticipo, imCostoAnticipo, anticipo.getCd_terzo(), anticipo);
@@ -5458,6 +5460,10 @@ public class ProposeScritturaComponent extends CRUDComponent {
 					CompensoHome compensoHome = (CompensoHome) getHome(userContext, CompensoBulk.class);
 					((CompensoBulk) rigaEco).setRigheEconomica(compensoHome.findCompensoRigheEcoList((CompensoBulk) rigaEco));
 					((CompensoBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setCompenso((CompensoBulk) rigaEco));
+				} else if (rigaEco instanceof AnticipoBulk) {
+					AnticipoHome anticipoHome = (AnticipoHome) getHome(userContext, AnticipoBulk.class);
+					((AnticipoBulk) rigaEco).setRigheEconomica(anticipoHome.findAnticipoRigheEcoList((AnticipoBulk) rigaEco));
+					((AnticipoBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setAnticipo((AnticipoBulk) rigaEco));
 				}
 			}
 			//Se continua a non essere valorizzato allora forse devo caricare le tabelle
@@ -5970,6 +5976,8 @@ public class ProposeScritturaComponent extends CRUDComponent {
 				aContoEconomico = ((Documento_generico_rigaHome) getHome(userContext, Documento_generico_rigaBulk.class)).getContoCostoDefault((Documento_generico_rigaBulk)rigaEco);
 			else if (rigaEco instanceof CompensoBulk)
 				aContoEconomico = ((CompensoHome) getHome(userContext, CompensoBulk.class)).getContoCostoDefault((CompensoBulk) rigaEco);
+			else if (rigaEco instanceof AnticipoBulk)
+				aContoEconomico = ((AnticipoHome) getHome(userContext, AnticipoBulk.class)).getContoCreditoDefault((AnticipoBulk) rigaEco);
 		} else {
 			if (rigaEco instanceof Fattura_attiva_rigaIBulk)
 				aContoEconomico = ((Fattura_attiva_rigaIHome) getHome(userContext, Fattura_attiva_rigaIBulk.class)).getContoRicavoDefault((Fattura_attiva_rigaIBulk) rigaEco);
@@ -6055,6 +6063,16 @@ public class ProposeScritturaComponent extends CRUDComponent {
 							myRigaEco.setToBeCreated();
 							insertBulk(userContext, myRigaEco);
 							((CompensoBulk)rigaEco).getRigheEconomica().add(myRigaEco);
+						} else if (rigaEco instanceof AnticipoBulk) {
+							Anticipo_riga_ecoBulk myRigaEco = new Anticipo_riga_ecoBulk();
+							myRigaEco.setProgressivo_riga_eco((long) (rigaEco.getChildrenAna().size() + 1));
+							myRigaEco.setVoce_analitica(voceAnaliticaDef);
+							myRigaEco.setLinea_attivita(gaeDefault);
+							myRigaEco.setAnticipo((AnticipoBulk) rigaEco);
+							myRigaEco.setImporto(rigaEco.getImportoCostoEco());
+							myRigaEco.setToBeCreated();
+							insertBulk(userContext, myRigaEco);
+							((AnticipoBulk)rigaEco).getRigheEconomica().add(myRigaEco);
 						}
 					} else if (Optional.ofNullable(scadenzaDocumentoContabile).filter(Obbligazione_scadenzarioBulk.class::isInstance).isPresent()) {
 						//carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
@@ -6088,6 +6106,16 @@ public class ProposeScritturaComponent extends CRUDComponent {
 								myRigaEco.setToBeCreated();
 								insertBulk(userContext, myRigaEco);
 								((CompensoBulk)rigaEco).getRigheEconomica().add(myRigaEco);
+							} else if (rigaEco instanceof AnticipoBulk) {
+								Anticipo_riga_ecoBulk myRigaEco = new Anticipo_riga_ecoBulk();
+								myRigaEco.setProgressivo_riga_eco((long) (rigaEco.getChildrenAna().size() + 1));
+								myRigaEco.setVoce_analitica(voceAnaliticaDef);
+								myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
+								myRigaEco.setAnticipo((AnticipoBulk) rigaEco);
+								myRigaEco.setImporto(scadVoce.getIm_voce());
+								myRigaEco.setToBeCreated();
+								insertBulk(userContext, myRigaEco);
+								((AnticipoBulk)rigaEco).getRigheEconomica().add(myRigaEco);
 							} else {
 								Documento_generico_riga_ecoBulk myRigaEco = new Documento_generico_riga_ecoBulk();
 								myRigaEco.setProgressivo_riga_eco((long) (rigaEco.getChildrenAna().size() + 1));

@@ -17,13 +17,28 @@
 
 package it.cnr.contab.missioni00.docs.bulk;
 
+import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
+import it.cnr.contab.compensi00.docs.bulk.Compenso_riga_ecoBulk;
+import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
+import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
+import it.cnr.contab.config00.pdcep.bulk.*;
+import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.docamm00.ejb.*;
 import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
+import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
+import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
+import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.bulk.*;
+import it.cnr.jada.comp.ApplicationException;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.*;
 import it.cnr.jada.persistency.beans.*;
 import it.cnr.jada.persistency.sql.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class AnticipoHome extends BulkHome implements it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoSpesaHome
 {
@@ -126,4 +141,37 @@ public void updateFondoEconomale(it.cnr.contab.fondecon00.core.bulk.Fondo_spesaB
 		throw it.cnr.jada.persistency.sql.SQLExceptionHandler.getInstance().handleSQLException(e,spesa);
 	}
 }
+
+	public java.util.List<Anticipo_riga_ecoBulk> findAnticipoRigheEcoList(AnticipoBulk docRiga ) throws PersistencyException {
+		PersistentHome home = getHomeCache().getHome(Anticipo_riga_ecoBulk.class);
+
+		it.cnr.jada.persistency.sql.SQLBuilder sql = home.createSQLBuilder();
+		sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, docRiga.getEsercizio());
+		sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, docRiga.getCd_cds());
+		sql.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, docRiga.getCd_unita_organizzativa());
+		sql.addClause(FindClause.AND, "pg_compenso", SQLBuilder.EQUALS, docRiga.getPg_anticipo());
+		return home.fetchAll(sql);
+	}
+
+	public ContoBulk getContoCreditoDefault(AnticipoBulk docRiga) {
+		try {
+			Configurazione_cnrHome configHome = (Configurazione_cnrHome)getHomeCache().getHome(Configurazione_cnrBulk.class);
+			if (Optional.ofNullable(docRiga).isPresent()) {
+				Optional<Configurazione_cnrBulk> config = configHome.getConfigurazioneContiAnticipo(docRiga.getEsercizio());
+				String value = config.flatMap(el->Optional.ofNullable(el.getVal01())).orElse(null);
+
+				return Optional.ofNullable(value).map(el->{
+					try {
+						ContoHome contoHome = (ContoHome) getHomeCache().getHome(ContoBulk.class);
+						return (ContoBulk) contoHome.findByPrimaryKey(new ContoBulk(el, docRiga.getEsercizio()));
+					} catch(PersistencyException ex) {
+						throw new DetailedRuntimeException(ex);
+					}
+				}).orElse(null);
+			}
+			return null;
+		} catch (PersistencyException e) {
+			throw new DetailedRuntimeException(e);
+		}
+	}
 }
