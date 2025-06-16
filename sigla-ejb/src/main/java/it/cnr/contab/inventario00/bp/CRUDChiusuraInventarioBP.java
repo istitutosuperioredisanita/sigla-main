@@ -73,21 +73,20 @@ public class CRUDChiusuraInventarioBP extends ParametricPrintBP {
     }
 
     public Button[] createToolbar() {
-        Button[] baseToolbar = super.createToolbar();
+
 
 
         Button[] toolbar = null;
 
         if(this.getMapping().getConfig().getInitParameter("CHIUSURA_DEFINITIVA") == null) {
-            toolbar=new Button[4];
+            toolbar=new Button[3];
         }else{
-            toolbar=new Button[6];
+            toolbar=new Button[5];
         }
 
         int i = 0;
-        for (Button button : baseToolbar) {
-            toolbar[i++] = button;
-        }
+
+        toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "Toolbar.print");
         toolbar[i++] = new Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.calcolaAmm");
         toolbar[i++] = new Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.refresh");
 
