@@ -17,14 +17,18 @@
 
 package it.cnr.contab.inventario00.ejb;
 
+import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beniBulk;
+import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beni_detBulk;
+import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beni_detHome;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.BusyResourceException;
 import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.persistency.PersistencyException;
 
 import javax.ejb.Remote;
+import java.rmi.RemoteException;
+import java.util.List;
 
 @Remote
-public interface AsyncAmmortamentoBeneComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
-    void asyncAmmortamentoBeni(UserContext param0, Integer esercizio, String statoChiusuraInventario,boolean gestisciDatiChiusura, boolean gestisciRipristinoInventario, boolean gestisciAggiornamentoInventario) throws ComponentException, PersistencyException, java.rmi.RemoteException, BusyResourceException;
+public interface V_AmmortamentoBeniDetComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
+
+    List<V_ammortamento_beni_detBulk> getDatiAmmortamentoBeni(UserContext uc, Integer esercizio) throws ComponentException, RemoteException;
 }

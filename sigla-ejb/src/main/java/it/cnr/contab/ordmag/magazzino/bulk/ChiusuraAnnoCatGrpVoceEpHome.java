@@ -150,4 +150,33 @@ public class ChiusuraAnnoCatGrpVoceEpHome extends BulkHome {
 		sql.addOrderBy("cd_categoria_gruppo");
 		return home.fetchAll(sql);
 	}
+	public String insertImportiPerCatGruppoVoceEPInventario(){
+		return "INSERT INTO chiusura_anno_catgrp_voce_ep (\"PG_CHIUSURA\",\"ANNO\",\"TIPO_CHIUSURA\",\"CD_CATEGORIA_GRUPPO\",\"ESERCIZIO\",\"CD_VOCE_EP\",\"IMP_TOTALE\",\"DACR\",\"UTCR\",\"DUVA\",\"UTUV\",\"PG_VER_REC\", \"IMP_PLUSVALENZE\", \"IMP_MINUSVALENZE\",\"IMP_DECREMENTI\") "+
+				"select * from( "+
+					"select ? pg_chiusura ,"+ // 1 PG_CHIUSURA
+						"? anno , "+ // 2 ANNO_AMMORTAMENTO
+						"'I' tipo_chiusura, "+
+						"c.cd_categoria_gruppo, "+
+						"v.esercizio,v.cd_voce_ep, "+
+						"sum( quota_ammortamento) imp_totale, "+
+						"sysdate dacr, "+
+						"'SI' utcr, "+
+						"sysdate duva, "+
+						"'SI' utuv, "+
+						"1, "+
+						"case  when sum( valore_decremento - totale_ammortamento_alienati) <0  "+
+									"then abs(sum( valore_decremento - totale_ammortamento_alienati)) "+
+									"else 0 "+
+						"end plus_valenze, "+
+						"case  when sum( valore_decremento - totale_ammortamento_alienati) >0  "+
+									"then sum( valore_decremento - totale_ammortamento_alienati) "+
+									"else 0 "+
+						"end minus_valenze, "+
+						"sum(totale_ammortamento_alienati)  imp_decremento "+
+					"from chiusura_anno_inventario c "+
+					"inner join ass_catgrp_invent_voce_ep v on c.cd_categoria_gruppo=v.cd_categoria_gruppo and c.anno=v.esercizio and c.pg_chiusura=? "+ //3 PG_CHIUSURA
+					"group by ?,?, 'I', c.cd_categoria_gruppo,v.esercizio,v.cd_voce_ep) "+ // 4 PG_CHIUSURA, 5 ANNO_AMMORTAMENTO
+				"where ( imp_totale>0 or plus_valenze>0 or minus_valenze>0 or imp_decremento>0 ) ";
+
+	}
 }

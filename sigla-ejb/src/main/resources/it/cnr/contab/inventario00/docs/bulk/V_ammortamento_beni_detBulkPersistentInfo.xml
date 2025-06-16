@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beni_detBulk"
+	homeClassName="it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beni_detHome">
+
+	<columnMap
+			name="PROCEDURA_AMMORTAMENTO"
+			tableName="V_AMMORTAMENTO_BENI_DET">
+
+		<columnMapping
+				columnName="PG_INVENTARIO"
+				propertyName="pgInventario"
+				sqlTypeName="DECIMAL"
+				columnSize="38"
+				nullable="true" />
+		<columnMapping
+				columnName="NR_INVENTARIO"
+				propertyName="nrInventario"
+				sqlTypeName="DECIMAL"
+				columnSize="38"
+				nullable="true" />
+		<columnMapping
+				columnName="PROGRESSIVO"
+				propertyName="progressivo"
+				sqlTypeName="DECIMAL"
+				columnSize="38"
+				nullable="true" />
+		<columnMapping
+				columnName="ETICHETTA"
+				propertyName="etichetta"
+				sqlTypeName="VARCHAR"
+				columnSize="50"
+				nullable="true" />
+		<columnMapping
+				columnName="FL_TOTALMENTE_SCARICATO"
+				propertyName="flTotalmenteScaricato"
+				sqlTypeName="CHAR"
+				columnSize="1"
+				nullable="true"
+				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+				columnName="TI_AMMORTAMENTO"
+				propertyName="tiAmmortamento"
+				sqlTypeName="CHAR"
+				columnSize="1"
+				nullable="true" />
+		<columnMapping
+				columnName="CD_CATEGORIA_GRUPPO"
+				propertyName="cdCategoriaGruppo"
+				sqlTypeName="VARCHAR"
+				columnSize="10"
+				nullable="true" />
+		<columnMapping
+				columnName="PERC_PRIMO_ANNO"
+				propertyName="percPrimoAnno"
+				sqlTypeName="DECIMAL"
+				columnSize="5"
+				columnScale="2"
+				nullable="true" />
+		<columnMapping
+				columnName="PERC_SUCCESSIVI"
+				propertyName="percSuccessivi"
+				sqlTypeName="DECIMAL"
+				columnSize="5"
+				columnScale="2"
+				nullable="true" />
+		<columnMapping
+				columnName="CD_TIPO_AMMORTAMENTO"
+				propertyName="cdTipoAmmortamento"
+				sqlTypeName="VARCHAR"
+				columnSize="10"
+				nullable="true" />
+		<columnMapping
+				columnName="ESERCIZIO_COMPETENZA"
+				propertyName="esercizioCompetenza"
+				sqlTypeName="DECIMAL"
+				columnSize="5"
+				nullable="true" />
+		<columnMapping
+				columnName="VALORE_INIZIALE"
+				propertyName="valoreIniziale"
+				sqlTypeName="DECIMAL"
+				columnSize="0"
+				nullable="true" />
+		<columnMapping
+				columnName="VALORE_AMMORTIZZATO_BENE"
+				propertyName="valoreAmmortizzatoBene"
+				sqlTypeName="DECIMAL"
+				columnSize="0"/>
+		<columnMapping
+				columnName="IMPONIBILE_AMMORTAMENTO_BENE"
+				propertyName="imponibileAmmortamentoBene"
+				sqlTypeName="DECIMAL"
+				columnSize="0"/>
+		<columnMapping
+				columnName="VARIAZIONE_PIU"
+				propertyName="variazionePiu"
+				sqlTypeName="DECIMAL"
+				columnSize="0"
+				nullable="true" />
+		<columnMapping
+				columnName="VARIAZIONE_MENO"
+				propertyName="variazioneMeno"
+				sqlTypeName="DECIMAL"
+				columnSize="0"
+				nullable="true" />
+		<columnMapping
+				columnName="INCREMENTO_VALORE"
+				propertyName="incrementoValore"
+				sqlTypeName="DECIMAL"
+				columnSize="0"
+				nullable="true" />
+		<columnMapping
+				columnName="DECREMENTO_VALORE"
+				propertyName="decrementoValore"
+				sqlTypeName="DECIMAL"
+				columnSize="0"
+				nullable="true" />
+		<columnMapping
+				columnName="STORNO"
+				propertyName="storno"
+				sqlTypeName="DECIMAL"
+				columnSize="0"
+				nullable="true" />
+		<columnMapping
+				columnName="IMPONIBILE_AMMORTAMENTO_CALCOLATO"
+				propertyName="imponibileAmmortamentoCalcolato"
+				sqlTypeName="DECIMAL"
+				columnSize="0"/>
+		<columnMapping
+				columnName="VALORE_AMMORTIZZATO_CALCOLATO"
+				propertyName="valoreAmmortizzatoCalcolato"
+				sqlTypeName="DECIMAL"
+				columnSize="0" />
+		<columnMapping
+				columnName="NUMERO_ANNO_AMMORTAMENTO"
+				propertyName="numeroAnnoAmmortamento"
+				sqlTypeName="DECIMAL"
+				columnSize="0"
+				nullable="true" />
+
+	</columnMap>
+
+	<persistentProperty name="pgInventario"/>
+	<persistentProperty name="nrInventario"/>
+	<persistentProperty name="progressivo"/>
+	<persistentProperty name="etichetta"/>
+	<persistentProperty name="flTotalmenteScaricato"/>
+	<persistentProperty name="tiAmmortamento"/>
+	<persistentProperty name="cdCategoriaGruppo"/>
+	<persistentProperty name="percPrimoAnno"/>
+	<persistentProperty name="percSuccessivi"/>
+	<persistentProperty name="cdTipoAmmortamento"/>
+	<persistentProperty name="esercizioCompetenza"/>
+	<persistentProperty name="valoreIniziale"/>
+	<persistentProperty name="valoreAmmortizzatoBene"/>
+	<persistentProperty name="imponibileAmmortamentoBene"/>
+	<persistentProperty name="variazionePiu"/>
+	<persistentProperty name="variazioneMeno"/>
+	<persistentProperty name="incrementoValore"/>
+	<persistentProperty name="decrementoValore"/>
+	<persistentProperty name="storno"/>
+	<persistentProperty name="imponibileAmmortamentoCalcolato"/>
+	<persistentProperty name="valoreAmmortizzatoCalcolato"/>
+	<persistentProperty name="numeroAnnoAmmortamento"/>
+
+
+</SQLPersistentInfo>

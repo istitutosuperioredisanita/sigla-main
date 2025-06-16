@@ -22,11 +22,13 @@ import it.cnr.contab.coepcoan00.ejb.AsyncScritturaPartitaDoppiaFromDocumentoComp
 import it.cnr.contab.coepcoan00.ejb.ScritturaPartitaDoppiaChiusuraComponentSession;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.doccont00.comp.AsyncPluriennaliComponentSession;
+import it.cnr.contab.inventario00.ejb.AsyncAmmortamentoBeneComponentSession;
 import it.cnr.contab.logs.bulk.Batch_controlBulk;
 import it.cnr.contab.logs.bulk.Batch_procedura_parametroBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.bulk.BusyResourceException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
@@ -141,10 +143,21 @@ public class CRUDBatchControlBP extends SimpleCRUDBP
 
                     obbComponent.asyncMakeScrittureChiusura(actioncontext.getUserContext(), esercizio.intValue(), "Y".equals(isAnnullamento), "Y".equals(isDefinitivo));
                 }
+                else if ("AMMORTAMENTOBENIJAVA".equals(batch_controlbulk.getProcedura().getCd_procedura())) {
+                    BigDecimal esercizio = batch_controlbulk.getParametri().stream()
+                            .filter(el -> el.getNome_parametro().equals("AES"))
+                            .findAny()
+                            .map(Batch_procedura_parametroBulk::getValore_number)
+                            .orElseThrow(() -> new ValidationException("Valorizzare il parametro Esercizio!"));
+
+                    AsyncAmmortamentoBeneComponentSession obbComponent = Utility.createAsyncAmmortamentoBeneComponentSession();
+
+                    obbComponent.asyncAmmortamentoBeni(actioncontext.getUserContext(), esercizio.intValue(),"",false,true,true);
+                }
             }
 
             super.save(actioncontext);
-        } catch (ComponentException | PersistencyException | RemoteException e){
+        } catch (ComponentException | PersistencyException | RemoteException | BusyResourceException e){
             throw handleException(e);
         }
     }
