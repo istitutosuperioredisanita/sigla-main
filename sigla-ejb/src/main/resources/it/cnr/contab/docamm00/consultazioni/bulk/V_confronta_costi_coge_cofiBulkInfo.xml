@@ -16,7 +16,7 @@
 		rows="5"
 		maxLength="45"
 		enabledOnEdit="false"
-		label="voceCoge" />
+		label="Conto Econ." />
 	<fieldProperty
 		name="voceCofi"
 		property="voceCofi"
@@ -24,7 +24,7 @@
 		inputSize="20"
 		maxLength="20"
 		enabledOnEdit="false"
-		label="voceCofi" />
+		label="Voce Fin." />
 	<fieldProperty
 		name="importoCoge"
 		property="importoCoge"
@@ -32,7 +32,7 @@
 		inputSize="0"
 		maxLength="0"
 		enabledOnEdit="false"
-		label="importoCoge" />
+		label="Imp. Economica" />
 	<fieldProperty
 		name="importoCofi"
 		property="importoCofi"
@@ -40,7 +40,7 @@
 		inputSize="0"
 		maxLength="0"
 		enabledOnEdit="false"
-		label="importoCofi" />
+		label="Imp. Finanziaria" />
 	<form
 		name="searchtool">
 	</form>
@@ -54,8 +54,7 @@
 		name="importoCoge" />
 	<formFieldProperty
 		name="importoCofi" />
-	<findFieldProperty
-		name="esercizio" />
+
 	<findFieldProperty
 		name="voceCoge" />
 	<findFieldProperty
@@ -74,4 +73,5 @@
 		name="importoCoge" />
 	<columnFieldProperty
 		name="importoCofi" />
+
 </bulkInfo>

@@ -6182,16 +6182,20 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_column_val_netto_anno_prec_chiu_inv.xml"/>
     <!-- Autore : DAVIDE MIRRA - nuova voce di menù Consultazioni x GESTIONE IVA/ISS -->
     <include file="bootstrap/insert_gestione_iva_iss_consultazioni.xml"/>
+
     <!-- Autore : DAVIDE MIRRA - nuova voce di menù Consultazioni x GESTIONE IVA/ISS -->
     <include file="bootstrap/insert_cons_dettaglio_reg_iva.xml"/>
+
     <!-- Autore : CIRO SALVIO - Aggiunta Colonna per indicare se un anagrafico può essere firmatario di un contratto-->
     <include file="bootstrap/add_column_fl_firmatario_contr_utente.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunta parametro per abilitari i firmatari tra le persone fisiche-->
     <include file="bootstrap/add_configurazione_firmatario_contratto.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunta rest Service per i firmatari di un contratto-->
     <include file="bootstrap/add_configurazione_rest_firmatari_contratto.xml"/>
+
     <!-- Autore : MARCO SPASIANO - nuova voce di menù gestione gruppi stampa -->
     <include file="bootstrap/insert_gestione_gruppi_stampa.xml"/>
+
     <!-- Autore : DAVIDE MIRRA - nuova unique key per la tab INVENTARIO_BENI x campi ETICHETTA e PROGRESSIVO -->
     <include file="bootstrap/insert_unique_constraint_inv_beni.xml"/>
     <!-- Autore : Raffalele Pagano agiunta campo  tot_vincoli su TMP_STAMPA_SITUAZIONE_PROGETTI-->
@@ -6201,5 +6205,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <!--Autore : CIRO SALVIO inserimento configurazione per abilitare o meno il controllo che tutte le righe dell'ordine di una fattura siano inventariate per poter
     settare la fattura come liquidabile-->
     <include file="bootstrap/insert_configurazioneCnr_liq_daordine_inv.xml"/>
-
+    <!-- Autore : CIRO SALVIO - Aggiunta funzionalità confornto costi coge cofi-->
+    <include file="bootstrap/add_configurazione_confronta_costi_coge.xml"/>
 </databaseChangeLog>
