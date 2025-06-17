@@ -197,6 +197,9 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 						throw new DetailedRuntimeException("Per la consegna " + consegnaSelected.getConsegnaOrdineString() + " è necessario indicare se bisogna solo sdoppiare la riga o anche evaderla forzatamente");
 					if (consegnaSelected.isQuantitaEvasaMaggioreOrdine())
 						throw new DetailedRuntimeException("La quantità evasa della consegna " + consegnaSelected.getConsegnaOrdineString() + " non può essere maggiore di quella ordinata.");
+					if(consegnaSelected.getQuantitaEvasa()!=null && consegnaSelected.getQuantitaEvasa().compareTo(new BigDecimal(1))<0){
+						throw new DetailedRuntimeException("La quantità evasa della consegna " + consegnaSelected.getConsegnaOrdineString() + " non può essere minore di 1.");
+					}
 
 
 					//Ricarico la consegna dal DB per verificare che non sia stata già evasa
