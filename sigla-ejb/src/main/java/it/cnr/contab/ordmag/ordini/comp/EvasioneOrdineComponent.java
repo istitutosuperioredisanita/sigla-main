@@ -194,9 +194,7 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 					consegneColl.stream().collect(Collectors.groupingBy(o -> o.getOrdineAcqRiga().getOrdineAcq()));
 
 			for (OrdineAcqBulk ordineSelected : mapOrdine.keySet()) {
-
 				for (OrdineAcqConsegnaBulk consegnaSelected : consegneColl) {
-
 					Optional.ofNullable(consegnaSelected.getQuantitaEvasa()).filter(el->el.compareTo(BigDecimal.ZERO)>0)
 							.orElseThrow(()->new DetailedRuntimeException("Indicare la quantità da evadere per la consegna " + consegnaSelected.getConsegnaOrdineString()));
 					if (consegnaSelected.isQuantitaEvasaMinoreOrdine() && consegnaSelected.getOperazioneQuantitaEvasaMinore() == null)
