@@ -1232,6 +1232,7 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
         }
     }
 
+    //test push e merge
     public void initializePrintRendicontoBP(AbstractPrintBP bp) {
         OfflineReportPrintBP printbp = (OfflineReportPrintBP) bp;
 
