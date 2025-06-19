@@ -1978,4 +1978,6 @@
 		<init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
 		<init-param name="defaultAction" value="ConsListaFirmatariContrattiAction" />
 	</businessProcess>
+
+
 </action-mappings>

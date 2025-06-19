@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="esercizio"
+		property="esercizio"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		label="esercizio" />
+	<fieldProperty
+		name="voceCoge"
+		property="voceCoge"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="45"
+		enabledOnEdit="false"
+		label="Conto Econ." />
+	<fieldProperty
+		name="voceCofi"
+		property="voceCofi"
+		inputType="TEXT"
+		inputSize="20"
+		maxLength="20"
+		enabledOnEdit="false"
+		label="Voce Fin." />
+	<fieldProperty
+		name="importoCoge"
+		property="importoCoge"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="Imp. Economica" />
+	<fieldProperty
+		name="importoCofi"
+		property="importoCofi"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="Imp. Finanziaria" />
+	<form
+		name="searchtool">
+	</form>
+	<formFieldProperty
+		name="esercizio" />
+	<formFieldProperty
+		name="voceCoge" />
+	<formFieldProperty
+		name="voceCofi" />
+	<formFieldProperty
+		name="importoCoge" />
+	<formFieldProperty
+		name="importoCofi" />
+
+	<findFieldProperty
+		name="voceCoge" />
+	<findFieldProperty
+		name="voceCofi" />
+	<findFieldProperty
+		name="importoCoge" />
+	<findFieldProperty
+		name="importoCofi" />
+	<columnFieldProperty
+		name="esercizio" />
+	<columnFieldProperty
+		name="voceCoge" />
+	<columnFieldProperty
+		name="voceCofi" />
+	<columnFieldProperty
+		name="importoCoge" />
+	<columnFieldProperty
+		name="importoCofi" />
+
+</bulkInfo>
