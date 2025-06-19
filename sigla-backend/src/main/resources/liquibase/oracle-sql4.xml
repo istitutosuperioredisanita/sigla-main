@@ -1434,4 +1434,10 @@
   <changeSet author="sigla" runOnChange="true" id="sigla-sql-1032">
     <sqlFile dbms="oracle" path="../expsigladb/Trigger/bu_obbligazione.trg" relativeToChangelogFile="true" splitStatements="false" stripComments="true"/>
   </changeSet>
+  <changeSet author="sigla" runOnChange="true" id="create-package-CHECK_CONGRUENZA_DATI">
+    <sqlFile dbms="oracle" path="../expsigladb/Package/CHECK_CONGRUENZA_DATI.sql" relativeToChangelogFile="true" splitStatements="false" stripComments="false"/>
+  </changeSet>
+  <changeSet author="sigla" runOnChange="true" id="create-package-CHECK_CONGRUENZA_DATI_BODY">
+    <sqlFile dbms="oracle" path="../expsigladb/Package/CHECK_CONGRUENZA_DATI_BODY.sql" relativeToChangelogFile="true" splitStatements="false" stripComments="false"/>
+  </changeSet>
 </databaseChangeLog>
