@@ -1978,4 +1978,17 @@
 		<init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
 		<init-param name="defaultAction" value="ConsListaFirmatariContrattiAction" />
 	</businessProcess>
+
+	<action path="/ConfCostiCogeCofiAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction" />
+	<businessProcess name="ConfCostiCogeCofiBP"
+					 className="it.cnr.jada.util.action.ConsultazioniBP">
+		<forward name="default" path="/consultazioni/form_lista.jsp" />
+		<init-param name="bulkClassName"
+					value="it.cnr.contab.docamm00.consultazioni.bulk.V_confronta_costi_coge_cofiBulk"/>
+		<init-param name="componentSessionName"
+					value="JADAEJB_CRUDComponentSession"/>
+		<init-param name="defaultAction" value="ConfCostiCogeCofiAction"/>
+	</businessProcess>
+
+
 </action-mappings>
