@@ -189,6 +189,17 @@
 				propertyName="tiIstituzCommerc"
 				sqlTypeName="VARCHAR"
 				columnSize="30"/>
+		<columnMapping
+				columnName="CD_TERZO"
+				propertyName="cdTerzo"
+				sqlTypeName="DECIMAL"
+				columnSize="10"
+				nullable="true" />
+		<columnMapping
+				columnName="DS_TERZO"
+				propertyName="dsTerzo"
+				sqlTypeName="VARCHAR"
+				columnSize="200"/>
 
 	</defaultColumnMap>
 	<persistentProperty
@@ -253,5 +264,9 @@
 			name="estero"/>
 	<persistentProperty
 			name="tiIstituzCommerc"/>
+	<persistentProperty
+			name="cdTerzo"/>
+	<persistentProperty
+			name="dsTerzo"/>
 
 </SQLPersistentInfo>

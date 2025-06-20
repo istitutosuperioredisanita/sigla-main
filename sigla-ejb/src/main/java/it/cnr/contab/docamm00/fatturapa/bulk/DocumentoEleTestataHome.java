@@ -314,6 +314,13 @@ public class DocumentoEleTestataHome extends BulkHome {
 		}
 		return sql;
 	}
+
+	public List<DocumentoEleTestataBulk> findByIdentificativoSDI(UserContext userContext, Long identificativoSDI) throws PersistencyException {
+		SQLBuilder sqlBuilder = createSQLBuilder();
+		sqlBuilder.addClause(FindClause.OR, "identificativoSdi", SQLBuilder.EQUALS, identificativoSDI);
+		return fetchAll(sqlBuilder);
+	}
+
 	class UploadedFileDataSource implements DataSource {
 		
 		private InputStream inputStream;
