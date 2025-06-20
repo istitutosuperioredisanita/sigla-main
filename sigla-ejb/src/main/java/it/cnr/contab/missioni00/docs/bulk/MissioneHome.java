@@ -20,10 +20,21 @@ package it.cnr.contab.missioni00.docs.bulk;
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoHome;
 import it.cnr.contab.anagraf00.core.bulk.RapportoBulk;
+import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
+import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
+import it.cnr.contab.config00.pdcep.bulk.Ass_ev_voceepBulk;
+import it.cnr.contab.config00.pdcep.bulk.Ass_ev_voceepHome;
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.config00.pdcep.bulk.ContoHome;
+import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoSpesaHome;
-import it.cnr.contab.docamm00.docs.bulk.Numerazione_doc_ammBulk;
+import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.docamm00.ejb.NumerazioneTempDocAmmComponentSession;
+import it.cnr.contab.docamm00.tabrif.bulk.AssCatgrpInventVoceEpBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.AssCatgrpInventVoceEpHome;
+import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
+import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
+import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.fondecon00.core.bulk.Fondo_spesaBulk;
 import it.cnr.contab.reports.bulk.Print_spoolerBulk;
 import it.cnr.contab.reports.bulk.Report;
@@ -32,6 +43,7 @@ import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.spring.service.LDAPService;
 import it.cnr.contab.util.SIGLAGroups;
+import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -39,7 +51,9 @@ import it.cnr.jada.persistency.Broker;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.LoggableStatement;
+import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.si.spring.storage.StorageDriver;
@@ -47,8 +61,7 @@ import it.cnr.si.spring.storage.StoreService;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.UUID;
+import java.util.*;
 
 public class MissioneHome extends BulkHome implements
         IDocumentoAmministrativoSpesaHome {
@@ -475,6 +488,46 @@ public class MissioneHome extends BulkHome implements
                     throw new PersistencyException(e);
                 }
             }
+        }
+    }
+
+    public java.util.List<Missione_riga_ecoBulk> findMissioneRigheEcoList(MissioneBulk docRiga ) throws PersistencyException {
+        PersistentHome home = getHomeCache().getHome(Missione_riga_ecoBulk.class);
+
+        it.cnr.jada.persistency.sql.SQLBuilder sql = home.createSQLBuilder();
+        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, docRiga.getEsercizio());
+        sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, docRiga.getCd_cds());
+        sql.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, docRiga.getCd_unita_organizzativa());
+        sql.addClause(FindClause.AND, "pg_missione", SQLBuilder.EQUALS, docRiga.getPg_missione());
+        return home.fetchAll(sql);
+    }
+
+    public ContoBulk getContoCostoDefault(MissioneBulk docRiga) {
+        try {
+            Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
+            if (Optional.ofNullable(docRiga).isPresent()) {
+                if (Optional.ofNullable(docRiga.getObbligazione_scadenzario()).isPresent()) {
+                    Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(docRiga.getObbligazione_scadenzario());
+
+                    if (Optional.ofNullable(obbligScad).isPresent()) {
+                        ObbligazioneBulk obblig = (ObbligazioneBulk) fatpasHome.loadIfNeededObject(obbligScad.getObbligazione());
+                        Ass_ev_voceepHome assEvVoceEpHome = (Ass_ev_voceepHome) getHomeCache().getHome(Ass_ev_voceepBulk.class);
+                        List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(obblig.getCd_elemento_voce(), obblig.getEsercizio(), obblig.getTi_appartenenza(), obblig.getTi_gestione()));
+                        return Optional.ofNullable(listAss).orElse(new ArrayList<>())
+                                .stream().map(Ass_ev_voceepBulk::getVoce_ep)
+                                .findAny().orElse(null);
+                    }
+                }
+                //Se lo scadenzario non esiste in quanto compenso coperto da anticipo, allora il conto di costo lo recupero
+                //dall'anticipo stesso
+                if (Optional.ofNullable(docRiga.getAnticipo()).isPresent()) {
+                    AnticipoHome anticipoHome = (AnticipoHome)getHomeCache().getHome(AnticipoBulk.class);
+                    return anticipoHome.getContoCostoDefault((AnticipoBulk)anticipoHome.findByPrimaryKey(docRiga.getAnticipo()));
+                }
+            }
+            return null;
+        } catch (PersistencyException e) {
+            throw new DetailedRuntimeException(e);
         }
     }
 }

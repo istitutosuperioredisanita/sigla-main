@@ -23,6 +23,7 @@ import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.contab.doccont00.core.bulk.MandatoBulk;
 import it.cnr.contab.doccont00.core.bulk.MandatoIBulk;
 import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
+import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.ejb.CRUDComponentSession;
@@ -39,43 +40,43 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class AnticipoScrittureTest extends DeploymentsH2 {
+public class MissioneScrittureTest extends DeploymentsH2 {
     @EJB
     private CRUDComponentSession crudComponentSession;
 
     /**
-     * Anticipo
-     * <p><b>Dati Anticipo</b>
+     * Missione
+     * <p><b>Dati Missione</b>
      * <pre>
-     * Voce Bilancio: 17001 - Interessi passivi su mutui, prestiti, anticipazioni di cassa ed oneri accessori
+     * Voce Bilancio: 13024 - Prodotti chimici
      * Importo: 100,00
      * </pre></p>
-     * <b>Scrittura Economica Anticipo</b>
+     * <b>Scrittura Economica Missione</b>
      * <pre>
      *     Sezione   Importo      Conto
-     *        D      100,00       A71001 - Crediti diversi derivanti da anticipazioni di cassa
-     *        A      100,00       P71001 - Debiti per anticipazioni
+     *        D      100,00       C13024 - Prodotti chimici
+     *        A      100,00       P13024 - Debiti verso fornitori - Prodotti chimici
      * </pre>
      * <b>Scrittura Economica Mandato</b>
      * <pre>
      *     Sezione   Importo      Conto
-     *        D      100,00       P71001 - Debiti per anticipazioni
+     *        D      100,00       P13024 - Debiti verso fornitori - Prodotti chimici
      *        A      100,00       A00053 - Istituto tesoriere/cassiere
      * </pre>
      */
     @Test
     @OperateOnDeployment(TEST_H2)
     @InSequence(1)
-    public void testAnticipo001() throws Exception {
+    public void testMissione001() throws Exception {
         {
-            AnticipoBulk anticipoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
-                            new AnticipoBulk("000", "000.000", 2025, 1L)))
-                    .filter(AnticipoBulk.class::isInstance)
-                    .map(AnticipoBulk.class::cast)
+            MissioneBulk missioneBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+                            new MissioneBulk("000", "000.000", 2025, 1L)))
+                    .filter(MissioneBulk.class::isInstance)
+                    .map(MissioneBulk.class::cast)
                     .orElse(null);
             ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
                     new TestUserContext(),
-                    anticipoBulk);
+                    missioneBulk);
             assertEquals(new BigDecimal("100.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                     .map(Scrittura_partita_doppiaBulk::getIm_scrittura).orElse(null));
             assertEquals(new BigDecimal("100.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
@@ -90,7 +91,7 @@ public class AnticipoScrittureTest extends DeploymentsH2 {
 
             Optional<Movimento_cogeBulk> rigaDare = movimentiDare.stream().findAny();
             assertTrue("Riga dare non presente.", rigaDare.isPresent());
-            assertEquals("A71001", rigaDare.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+            assertEquals("C13024", rigaDare.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
             assertEquals(new BigDecimal("100.00"), rigaDare.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
             BulkList<Movimento_cogeBulk> movimentiAvere = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
@@ -100,20 +101,20 @@ public class AnticipoScrittureTest extends DeploymentsH2 {
 
             Optional<Movimento_cogeBulk> rigaAvere = movimentiAvere.stream().findAny();
             assertTrue("Riga avere non presente.", rigaAvere.isPresent());
-            assertEquals("P71001", rigaAvere.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+            assertEquals("P13024", rigaAvere.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
             assertEquals(new BigDecimal("100.00"), rigaAvere.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
             //Richiamo l'anticipo perchè aggiunto valore voce_ep su testata
-            anticipoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
-                            new AnticipoBulk("000", "000.000", 2025, 1L)))
-                    .filter(AnticipoBulk.class::isInstance)
-                    .map(AnticipoBulk.class::cast)
+            missioneBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+                            new MissioneBulk("000", "000.000", 2025, 1L)))
+                    .filter(MissioneBulk.class::isInstance)
+                    .map(MissioneBulk.class::cast)
                     .orElse(null);
-            Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), anticipoBulk);
+            Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), missioneBulk);
         }
         {
             MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
-                            new MandatoIBulk("000",2025,12L)))
+                            new MandatoIBulk("000",2025,13L)))
                     .filter(MandatoBulk.class::isInstance)
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
@@ -136,7 +137,7 @@ public class AnticipoScrittureTest extends DeploymentsH2 {
 
             Optional<Movimento_cogeBulk> rigaTipoDebito = movimentiDare.stream().filter(Movimento_cogeBulk::isRigaTipoDebito).findAny();
             assertTrue("Riga tipo debito non presente.", rigaTipoDebito.isPresent());
-            assertEquals("P71001", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+            assertEquals("P13024", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
             assertEquals(new BigDecimal("100.00"), rigaTipoDebito.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
             BulkList<Movimento_cogeBulk> movimentiAvere = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
@@ -150,4 +151,6 @@ public class AnticipoScrittureTest extends DeploymentsH2 {
             assertEquals(new BigDecimal("100.00"), rigaTipoTesoreria.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
         }
     }
+
+
 }

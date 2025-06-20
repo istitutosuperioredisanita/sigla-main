@@ -85,7 +85,13 @@
 			propertyName="anticipo.cd_unita_organizzativa" />
 		<columnMapping
 			columnName="PG_ANTICIPO"
-			propertyName="anticipo.pg_anticipo" />			
+			propertyName="anticipo.pg_anticipo" />
+		<columnMapping
+			columnName="ESERCIZIO_VOCE_EP"
+			propertyName="voce_ep.esercizio" />
+		<columnMapping
+			columnName="CD_VOCE_EP"
+			propertyName="voce_ep.cd_voce_ep" />
 	</defaultColumnMap>		
 
 	<persistentProperty
@@ -103,6 +109,7 @@
 	<persistentProperty
 		name="obbligazione_scadenzario" />
 	<persistentProperty
-		name="anticipo" />			
-	
+		name="anticipo" />
+	<persistentProperty
+		name="voce_ep" />
 </SQLPersistentInfo>

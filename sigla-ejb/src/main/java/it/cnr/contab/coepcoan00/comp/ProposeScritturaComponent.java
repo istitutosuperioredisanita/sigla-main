@@ -1745,16 +1745,19 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			//Registrazione conto COSTO ANTICIPO
 			BigDecimal imCostoAnticipo = anticipo.getIm_anticipo();
 			if (imCostoAnticipo.compareTo(BigDecimal.ZERO)!=0) {
-				Voce_epBulk aContoCreditoAnticipo = anticipo.getVoce_ep();
-				Voce_epBulk aContoDebitoAnticipo = this.findContoDebitoAnticipo(userContext, anticipo.getEsercizio());
+				final Pair<Voce_epBulk, Voce_epBulk> pairContoCostoAnticipo = this.findPairCosto(userContext, anticipo);
+
+                assert pairContoCostoAnticipo != null;
+                Voce_epBulk aContoCreditoAnticipo = pairContoCostoAnticipo.getFirst();
+				Voce_epBulk aContoDebitoAnticipo = pairContoCostoAnticipo.getSecond();
 				testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.CREDITO.value(), Movimento_cogeBulk.SEZIONE_DARE, aContoCreditoAnticipo, imCostoAnticipo, anticipo.getCd_terzo(), anticipo);
 				testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.DEBITO.value(), Movimento_cogeBulk.SEZIONE_AVERE, aContoDebitoAnticipo, imCostoAnticipo, anticipo.getCd_terzo(), anticipo);
 			}
 			return this.generaScrittura(userContext, anticipo, Collections.singletonList(testataPrimaNota), Boolean.FALSE);
-		} catch (RemoteException e) {
+		} catch (RemoteException | PersistencyException e) {
 			throw handleException(e);
-		}
-	}
+        }
+    }
 
 	private Scrittura_partita_doppiaBulk proposeScritturaPartitaDoppiaAperturaFondo(UserContext userContext, Documento_genericoBulk documento) throws ComponentException {
 		try {
@@ -1820,6 +1823,8 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 	private Scrittura_partita_doppiaBulk proposeScritturaPartitaDoppiaMissione(UserContext userContext, MissioneBulk missione) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
 		try {
+			loadRigheEco(userContext, missione);
+
 			String descMissione = missione.getEsercizio() + "/" + missione.getCd_unita_organizzativa() + "/" + missione.getPg_missione();
 
 			//Le missioni pagate con compenso non creano scritture di prima nota in quanto create direttamente dal compenso stesso
@@ -1842,24 +1847,12 @@ public class ProposeScritturaComponent extends CRUDComponent {
 						}
 					})).filter(anticipo->anticipo.getIm_anticipo().compareTo(BigDecimal.ZERO)!=0);
 
-			final Optional<Pair<Voce_epBulk, Voce_epBulk>> pairContoCostoAnticipo = optAnticipo.map(anticipo->{
-				try {
-					return this.findPairCosto(userContext, optAnticipo.get());
-				} catch (ComponentException | PersistencyException | RemoteException e) {
-					throw new DetailedRuntimeException(e);
-				}
-			});
-
 			TestataPrimaNota testataPrimaNota = new TestataPrimaNota(missione.getDt_inizio_missione(), missione.getDt_fine_missione());
 
 			//Registrazione conto COSTO MISSIONE
 			BigDecimal imCostoMissioneNettoAnticipo = missione.getIm_totale_missione().subtract(optAnticipo.map(AnticipoBulk::getIm_anticipo).orElse(BigDecimal.ZERO));
 
-			final Optional<Pair<Voce_epBulk, Voce_epBulk>> pairContoCostoMissione;
-			if (imCostoMissioneNettoAnticipo.compareTo(BigDecimal.ZERO)>0)
-				pairContoCostoMissione = Optional.ofNullable(this.findPairCosto(userContext, missione));
-			else
-				pairContoCostoMissione = pairContoCostoAnticipo;
+			final Optional<Pair<Voce_epBulk, Voce_epBulk>> pairContoCostoMissione = Optional.ofNullable(this.findPairCosto(userContext, missione));;
 
 			Voce_epBulk contoCostoMissione = pairContoCostoMissione.map(Pair::getFirst).orElse(null);
 			Voce_epBulk contoPatrimonialeMissione = pairContoCostoMissione.map(Pair::getSecond).orElse(null);
@@ -1881,11 +1874,9 @@ public class ProposeScritturaComponent extends CRUDComponent {
 				if (imCostoAnticipo.compareTo(BigDecimal.ZERO) != 0) {
 					if (!pairContoCostoMissione.isPresent())
 						throw new ApplicationException("Missione " + descMissione + " con anticipo di importo non nullo. Scrittura prima nota non possibile per impossibilità ad individuare il conto di costo della missione!");
-					if (!pairContoCostoAnticipo.isPresent())
-						throw new ApplicationException("Missione " + descMissione + " con anticipo di importo non nullo. Scrittura prima nota non possibile per impossibilità ad individuare il conto di costo dell'anticipo!");
 
 					// 1. scaricare i costi dell'anticipo compensandoli con il conto patrimoniale della missione
-					testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.COSTO.value(), Movimento_cogeBulk.SEZIONE_DARE, pairContoCostoAnticipo.get().getFirst(), imCostoAnticipo, Boolean.TRUE);
+					testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.COSTO.value(), Movimento_cogeBulk.SEZIONE_DARE, pairContoCostoMissione.get().getFirst(), imCostoAnticipo, Boolean.TRUE);
 					testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.DEBITO.value(), Movimento_cogeBulk.SEZIONE_AVERE, contoPatrimonialeMissione, imCostoAnticipo, missione.getCd_terzo(), missione);
 
 					//2. chiudere il conto credito per anticipo
@@ -4144,14 +4135,14 @@ public class ProposeScritturaComponent extends CRUDComponent {
 	}
 
 	private Pair<Voce_epBulk, Voce_epBulk> findPairCosto(UserContext userContext, AnticipoBulk anticipo) throws ComponentException, RemoteException, PersistencyException {
-		if (Optional.ofNullable(anticipo.getScadenza_obbligazione()).isPresent())
-			return this.findPairCosto(userContext, Optional.ofNullable(anticipo.getTerzo()).orElse(new TerzoBulk(anticipo.getCd_terzo())), anticipo.getScadenza_obbligazione().getObbligazione());
+		if (Optional.ofNullable(anticipo.getVoce_ep()).isPresent())
+			return this.findPairCosto(userContext, Optional.ofNullable(anticipo.getTerzo()).orElse(new TerzoBulk(anticipo.getCd_terzo())), anticipo.getVoce_ep(), Movimento_cogeBulk.TipoRiga.COSTO.value());
 		return null;
 	}
 
 	private Pair<Voce_epBulk, Voce_epBulk> findPairCosto(UserContext userContext, MissioneBulk missione) throws ComponentException, RemoteException, PersistencyException {
-		if (Optional.ofNullable(missione.getObbligazione_scadenzario()).isPresent())
-			return this.findPairCosto(userContext, Optional.ofNullable(missione.getTerzo()).orElse(new TerzoBulk(missione.getCd_terzo())), missione.getObbligazione_scadenzario().getObbligazione());
+		if (Optional.ofNullable(missione.getVoce_ep()).isPresent())
+			return this.findPairCosto(userContext, Optional.ofNullable(missione.getTerzo()).orElse(new TerzoBulk(missione.getCd_terzo())), missione.getVoce_ep(), Movimento_cogeBulk.TipoRiga.COSTO.value());
 		return null;
 	}
 
@@ -5441,39 +5432,6 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		}
 	}
 
-	private void loadRigheEco(UserContext userContext, IDocumentoDetailEcoCogeBulk rigaEco) {
-		try {
-			if (rigaEco.getChildrenAna().isEmpty()) {
-				if (rigaEco instanceof Documento_generico_rigaBulk) {
-					Documento_generico_rigaHome rigaHome = (Documento_generico_rigaHome) getHome(userContext, Documento_generico_rigaBulk.class);
-					((Documento_generico_rigaBulk) rigaEco).setRigheEconomica(rigaHome.findDocumentoGenericoRigheEcoList((Documento_generico_rigaBulk) rigaEco));
-					((Documento_generico_rigaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setDocumento_generico_rigaBulk((Documento_generico_rigaBulk) rigaEco));
-				} else if (rigaEco instanceof Fattura_passiva_rigaBulk) {
-					Fattura_passiva_rigaHome rigaHome = (Fattura_passiva_rigaHome) getHome(userContext, Fattura_passiva_rigaBulk.class);
-					((Fattura_passiva_rigaBulk) rigaEco).setRigheEconomica(rigaHome.findFatturaPassivaRigheEcoList((Fattura_passiva_rigaBulk) rigaEco));
-					((Fattura_passiva_rigaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setFattura_passiva_riga((Fattura_passiva_rigaBulk) rigaEco));
-				} else if (rigaEco instanceof Fattura_attiva_rigaBulk) {
-					Fattura_attiva_rigaHome rigaHome = (Fattura_attiva_rigaHome) getHome(userContext, Fattura_attiva_rigaBulk.class);
-					((Fattura_attiva_rigaBulk) rigaEco).setRigheEconomica(rigaHome.findFatturaAttivaRigheEcoList((Fattura_attiva_rigaBulk) rigaEco));
-					((Fattura_attiva_rigaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setFattura_attiva_riga((Fattura_attiva_rigaBulk) rigaEco));
-				} else if (rigaEco instanceof CompensoBulk) {
-					CompensoHome compensoHome = (CompensoHome) getHome(userContext, CompensoBulk.class);
-					((CompensoBulk) rigaEco).setRigheEconomica(compensoHome.findCompensoRigheEcoList((CompensoBulk) rigaEco));
-					((CompensoBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setCompenso((CompensoBulk) rigaEco));
-				} else if (rigaEco instanceof AnticipoBulk) {
-					AnticipoHome anticipoHome = (AnticipoHome) getHome(userContext, AnticipoBulk.class);
-					((AnticipoBulk) rigaEco).setRigheEconomica(anticipoHome.findAnticipoRigheEcoList((AnticipoBulk) rigaEco));
-					((AnticipoBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setAnticipo((AnticipoBulk) rigaEco));
-				}
-			}
-			//Se continua a non essere valorizzato allora forse devo caricare le tabelle
-			if (rigaEco.getChildrenAna().isEmpty())
-				this.loadDocammRigheEco(userContext, rigaEco);
-		} catch (PersistencyException | ComponentException | RemoteException e) {
-			throw new RuntimeException(e);
-        }
-    }
-
 	private void completeMandato(UserContext userContext, MandatoBulk mandato) throws ComponentException, PersistencyException {
 		//Se le righe del mandato non sono valorizzate le riempio io
 		if (!Optional.ofNullable(mandato.getMandato_rigaColl()).filter(el->!el.isEmpty()).isPresent()) {
@@ -5953,6 +5911,43 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		return new DettaglioFinanziario(rigaDocAmm, rigaPartita, terzo.getCd_terzo(), rigaDocAmm.getVoce_ep(), dettagliAnalitici);
 	}
 
+	private void loadRigheEco(UserContext userContext, IDocumentoDetailEcoCogeBulk rigaEco) {
+		try {
+			if (rigaEco.getChildrenAna().isEmpty()) {
+				if (rigaEco instanceof Documento_generico_rigaBulk) {
+					Documento_generico_rigaHome rigaHome = (Documento_generico_rigaHome) getHome(userContext, Documento_generico_rigaBulk.class);
+					((Documento_generico_rigaBulk) rigaEco).setRigheEconomica(rigaHome.findDocumentoGenericoRigheEcoList((Documento_generico_rigaBulk) rigaEco));
+					((Documento_generico_rigaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setDocumento_generico_rigaBulk((Documento_generico_rigaBulk) rigaEco));
+				} else if (rigaEco instanceof Fattura_passiva_rigaBulk) {
+					Fattura_passiva_rigaHome rigaHome = (Fattura_passiva_rigaHome) getHome(userContext, Fattura_passiva_rigaBulk.class);
+					((Fattura_passiva_rigaBulk) rigaEco).setRigheEconomica(rigaHome.findFatturaPassivaRigheEcoList((Fattura_passiva_rigaBulk) rigaEco));
+					((Fattura_passiva_rigaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setFattura_passiva_riga((Fattura_passiva_rigaBulk) rigaEco));
+				} else if (rigaEco instanceof Fattura_attiva_rigaBulk) {
+					Fattura_attiva_rigaHome rigaHome = (Fattura_attiva_rigaHome) getHome(userContext, Fattura_attiva_rigaBulk.class);
+					((Fattura_attiva_rigaBulk) rigaEco).setRigheEconomica(rigaHome.findFatturaAttivaRigheEcoList((Fattura_attiva_rigaBulk) rigaEco));
+					((Fattura_attiva_rigaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setFattura_attiva_riga((Fattura_attiva_rigaBulk) rigaEco));
+				} else if (rigaEco instanceof CompensoBulk) {
+					CompensoHome compensoHome = (CompensoHome) getHome(userContext, CompensoBulk.class);
+					((CompensoBulk) rigaEco).setRigheEconomica(compensoHome.findCompensoRigheEcoList((CompensoBulk) rigaEco));
+					((CompensoBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setCompenso((CompensoBulk) rigaEco));
+				} else if (rigaEco instanceof AnticipoBulk) {
+					AnticipoHome anticipoHome = (AnticipoHome) getHome(userContext, AnticipoBulk.class);
+					((AnticipoBulk) rigaEco).setRigheEconomica(anticipoHome.findAnticipoRigheEcoList((AnticipoBulk) rigaEco));
+					((AnticipoBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setAnticipo((AnticipoBulk) rigaEco));
+				} else if (rigaEco instanceof MissioneBulk) {
+					MissioneHome missioneHome = (MissioneHome) getHome(userContext, MissioneBulk.class);
+					((MissioneBulk) rigaEco).setRigheEconomica(missioneHome.findMissioneRigheEcoList((MissioneBulk) rigaEco));
+					((MissioneBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setMissione((MissioneBulk) rigaEco));
+				}
+			}
+			//Se continua a non essere valorizzato allora forse devo caricare le tabelle
+			if (rigaEco.getChildrenAna().isEmpty())
+				this.loadDocammRigheEco(userContext, rigaEco);
+		} catch (PersistencyException | ComponentException | RemoteException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private void loadDocammRigheEco(UserContext userContext, IDocumentoDetailEcoCogeBulk rigaEco) throws ComponentException, PersistencyException, RemoteException {
 		IScadenzaDocumentoContabileBulk scadenzaDocumentoContabile = rigaEco.getScadenzaDocumentoContabile();
 		if (!Optional.ofNullable(scadenzaDocumentoContabile).isPresent() && rigaEco.getFather() instanceof Documento_genericoBulk &&
@@ -5962,8 +5957,12 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		ContoBulk aContoEconomico = null;
 
 		if (!Optional.ofNullable(scadenzaDocumentoContabile).isPresent()) {
-			Voce_epBulk aVoceEp = this.findContoCostoDocumentoNonLiquidabileByConfig(userContext, CNRUserContext.getEsercizio(userContext));
-			aContoEconomico = (ContoBulk)(getHome(userContext, ContoBulk.class)).findByPrimaryKey(new ContoBulk(aVoceEp.getCd_voce_ep(), CNRUserContext.getEsercizio(userContext)));
+			if (rigaEco instanceof MissioneBulk)
+				aContoEconomico = ((MissioneHome) getHome(userContext, MissioneBulk.class)).getContoCostoDefault((MissioneBulk) rigaEco);
+			else {
+				Voce_epBulk aVoceEp = this.findContoCostoDocumentoNonLiquidabileByConfig(userContext, CNRUserContext.getEsercizio(userContext));
+				aContoEconomico = (ContoBulk) (getHome(userContext, ContoBulk.class)).findByPrimaryKey(new ContoBulk(aVoceEp.getCd_voce_ep(), CNRUserContext.getEsercizio(userContext)));
+			}
 		} else if (scadenzaDocumentoContabile instanceof Obbligazione_scadenzarioBulk) {
 			//Carico il conto di costo
 			if (rigaEco instanceof Fattura_passiva_rigaIBulk)
@@ -5978,6 +5977,8 @@ public class ProposeScritturaComponent extends CRUDComponent {
 				aContoEconomico = ((CompensoHome) getHome(userContext, CompensoBulk.class)).getContoCostoDefault((CompensoBulk) rigaEco);
 			else if (rigaEco instanceof AnticipoBulk)
 				aContoEconomico = ((AnticipoHome) getHome(userContext, AnticipoBulk.class)).getContoCreditoDefault((AnticipoBulk) rigaEco);
+			else if (rigaEco instanceof MissioneBulk)
+				aContoEconomico = ((MissioneHome) getHome(userContext, MissioneBulk.class)).getContoCostoDefault((MissioneBulk) rigaEco);
 		} else {
 			if (rigaEco instanceof Fattura_attiva_rigaIBulk)
 				aContoEconomico = ((Fattura_attiva_rigaIHome) getHome(userContext, Fattura_attiva_rigaIBulk.class)).getContoRicavoDefault((Fattura_attiva_rigaIBulk) rigaEco);
@@ -6073,6 +6074,16 @@ public class ProposeScritturaComponent extends CRUDComponent {
 							myRigaEco.setToBeCreated();
 							insertBulk(userContext, myRigaEco);
 							((AnticipoBulk)rigaEco).getRigheEconomica().add(myRigaEco);
+						} else if (rigaEco instanceof MissioneBulk) {
+							Missione_riga_ecoBulk myRigaEco = new Missione_riga_ecoBulk();
+							myRigaEco.setProgressivo_riga_eco((long) (rigaEco.getChildrenAna().size() + 1));
+							myRigaEco.setVoce_analitica(voceAnaliticaDef);
+							myRigaEco.setLinea_attivita(gaeDefault);
+							myRigaEco.setMissione((MissioneBulk) rigaEco);
+							myRigaEco.setImporto(rigaEco.getImportoCostoEco());
+							myRigaEco.setToBeCreated();
+							insertBulk(userContext, myRigaEco);
+							((MissioneBulk)rigaEco).getRigheEconomica().add(myRigaEco);
 						}
 					} else if (Optional.ofNullable(scadenzaDocumentoContabile).filter(Obbligazione_scadenzarioBulk.class::isInstance).isPresent()) {
 						//carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
@@ -6116,6 +6127,16 @@ public class ProposeScritturaComponent extends CRUDComponent {
 								myRigaEco.setToBeCreated();
 								insertBulk(userContext, myRigaEco);
 								((AnticipoBulk)rigaEco).getRigheEconomica().add(myRigaEco);
+							} else if (rigaEco instanceof MissioneBulk) {
+								Missione_riga_ecoBulk myRigaEco = new Missione_riga_ecoBulk();
+								myRigaEco.setProgressivo_riga_eco((long) (rigaEco.getChildrenAna().size() + 1));
+								myRigaEco.setVoce_analitica(voceAnaliticaDef);
+								myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
+								myRigaEco.setMissione((MissioneBulk) rigaEco);
+								myRigaEco.setImporto(scadVoce.getIm_voce());
+								myRigaEco.setToBeCreated();
+								insertBulk(userContext, myRigaEco);
+								((MissioneBulk)rigaEco).getRigheEconomica().add(myRigaEco);
 							} else {
 								Documento_generico_riga_ecoBulk myRigaEco = new Documento_generico_riga_ecoBulk();
 								myRigaEco.setProgressivo_riga_eco((long) (rigaEco.getChildrenAna().size() + 1));

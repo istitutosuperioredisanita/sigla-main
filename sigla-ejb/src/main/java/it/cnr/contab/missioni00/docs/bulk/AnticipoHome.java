@@ -149,7 +149,7 @@ public void updateFondoEconomale(it.cnr.contab.fondecon00.core.bulk.Fondo_spesaB
 		sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, docRiga.getEsercizio());
 		sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, docRiga.getCd_cds());
 		sql.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, docRiga.getCd_unita_organizzativa());
-		sql.addClause(FindClause.AND, "pg_compenso", SQLBuilder.EQUALS, docRiga.getPg_anticipo());
+		sql.addClause(FindClause.AND, "pg_anticipo", SQLBuilder.EQUALS, docRiga.getPg_anticipo());
 		return home.fetchAll(sql);
 	}
 
@@ -168,6 +168,29 @@ public void updateFondoEconomale(it.cnr.contab.fondecon00.core.bulk.Fondo_spesaB
 						throw new DetailedRuntimeException(ex);
 					}
 				}).orElse(null);
+			}
+			return null;
+		} catch (PersistencyException e) {
+			throw new DetailedRuntimeException(e);
+		}
+	}
+
+	public ContoBulk getContoCostoDefault(AnticipoBulk docRiga) {
+		try {
+			Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
+			if (Optional.ofNullable(docRiga).isPresent()) {
+				if (Optional.ofNullable(docRiga.getScadenza_obbligazione()).isPresent()) {
+					Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(docRiga.getScadenza_obbligazione());
+
+					if (Optional.ofNullable(obbligScad).isPresent()) {
+						ObbligazioneBulk obblig = (ObbligazioneBulk) fatpasHome.loadIfNeededObject(obbligScad.getObbligazione());
+						Ass_ev_voceepHome assEvVoceEpHome = (Ass_ev_voceepHome) getHomeCache().getHome(Ass_ev_voceepBulk.class);
+						List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(obblig.getCd_elemento_voce(), obblig.getEsercizio(), obblig.getTi_appartenenza(), obblig.getTi_gestione()));
+						return Optional.ofNullable(listAss).orElse(new ArrayList<>())
+								.stream().map(Ass_ev_voceepBulk::getVoce_ep)
+								.findAny().orElse(null);
+					}
+				}
 			}
 			return null;
 		} catch (PersistencyException e) {

@@ -297,7 +297,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	@JsonIgnore
 	private java.sql.Timestamp dataInizioObbligoRegistroUnico;
 	@JsonIgnore
-	private List<Compenso_riga_ecoBulk> righeEconomica = new BulkList<>();
+	private List<Missione_riga_ecoBulk> righeEconomica = new BulkList<>();
 	@JsonIgnore
 	private ContoBulk voce_ep = new ContoBulk();
 
@@ -3869,11 +3869,11 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setCd_voce_ep(cd_voce_ep));
 	}
 
-	public List<Compenso_riga_ecoBulk> getRigheEconomica() {
+	public List<Missione_riga_ecoBulk> getRigheEconomica() {
 		return righeEconomica;
 	}
 
-	public void setRigheEconomica(List<Compenso_riga_ecoBulk> righeEconomica) {
+	public void setRigheEconomica(List<Missione_riga_ecoBulk> righeEconomica) {
 		this.righeEconomica = righeEconomica;
 	}
 

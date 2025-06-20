@@ -11,3 +11,6 @@ ESERCIZIO,CD_CDS,PG_MANDATO,ESERCIZIO_OBBLIGAZIONE,ESERCIZIO_ORI_OBBLIGAZIONE,PG
 2025,"000",10,2025,2025,1,11,2025,"000","000.000","FATTURA_P",10,"Mandato di pagamento fattura istituzionale","P","15","1","BO",10,"N",0,NULL,"SYSTEM","SYSTEM","1"
 2025,"000",11,2025,2025,3,1,2025,"000","000.000","COMPENSO",1,"Mandato di pagamento compenso","P","100","1","BO",500,"N",100,NULL,"SYSTEM","SYSTEM","1"
 2025,"000",12,2025,2025,3,2,2025,"000","000.000","ANTICIPO",1,"Mandato di pagamento anticipo","P","100","1","BO",100,"N",0,NULL,"SYSTEM","SYSTEM","1"
+2025,"000",13,2025,2025,3,3,2025,"000","000.000","MISSIONE",1,"Mandato di pagamento missione","P","100","1","BO",100,"N",0,NULL,"SYSTEM","SYSTEM","1"
+2025,"000",14,2025,2025,3,4,2025,"000","000.000","MISSIONE",2,"Mandato di pagamento missione con anticipo","P","100","1","BO",200,"N",0,NULL,"SYSTEM","SYSTEM","1"
+2025,"000",15,2025,2025,3,5,2025,"000","000.000","ANTICIPO",2,"Mandato di pagamento anticipo nr.2","P","100","1","BO",300,"N",0,NULL,"SYSTEM","SYSTEM","1"

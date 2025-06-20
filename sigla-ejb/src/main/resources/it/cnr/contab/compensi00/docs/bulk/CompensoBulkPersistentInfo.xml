@@ -142,11 +142,11 @@
 			columnSize="10" />
 
 		<columnMapping
-				columnName="ESERCIZIO_VOCE_EP"
-				propertyName="voce_ep.esercizio" />
+			columnName="ESERCIZIO_VOCE_EP"
+			propertyName="voce_ep.esercizio" />
 		<columnMapping
-				columnName="CD_VOCE_EP"
-				propertyName="voce_ep.cd_voce_ep" />
+			columnName="CD_VOCE_EP"
+			propertyName="voce_ep.cd_voce_ep" />
 	</defaultColumnMap>		
 
 	<persistentProperty

@@ -30,10 +30,10 @@ public class Anticipo_riga_ecoHome extends BulkHome {
     }
 
     public Anticipo_riga_ecoHome(java.sql.Connection conn) {
-        super(Missione_riga_ecoBulk.class, conn);
+        super(Anticipo_riga_ecoBulk.class, conn);
     }
 
     public Anticipo_riga_ecoHome(java.sql.Connection conn, PersistentCache persistentCache) {
-        super(Missione_riga_ecoBulk.class, conn, persistentCache);
+        super(Anticipo_riga_ecoBulk.class, conn, persistentCache);
     }
 }

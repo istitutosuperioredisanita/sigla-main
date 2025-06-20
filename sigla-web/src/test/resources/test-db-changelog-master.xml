@@ -493,6 +493,24 @@
         <dropDefaultValue tableName="anticipo" columnName="dacr"/>
         <dropDefaultValue tableName="anticipo" columnName="duva"/>
     </changeSet>
+    <changeSet author="test" id="create-rimborso">
+        <addDefaultValue tableName="rimborso" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="rimborso" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/rimborso.csv" tableName="rimborso"/>
+
+        <dropDefaultValue tableName="rimborso" columnName="dacr"/>
+        <dropDefaultValue tableName="rimborso" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-missione">
+        <addDefaultValue tableName="missione" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="missione" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/missione.csv" tableName="missione"/>
+
+        <dropDefaultValue tableName="anticipo" columnName="dacr"/>
+        <dropDefaultValue tableName="anticipo" columnName="duva"/>
+    </changeSet>
     <changeSet author="test" id="create-compenso">
         <addDefaultValue tableName="compenso" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="compenso" columnName="duva" defaultValueDate="${now}"/>
@@ -661,6 +679,11 @@
             UPDATE VOCE_EP
             SET CD_VOCE_EP_CONTR = 'P13024'
             WHERE CD_VOCE_EP LIKE 'C13024';
+        </sql>
+        <sql>
+            UPDATE VOCE_EP
+            SET CD_VOCE_EP_CONTR = 'P71001'
+            WHERE CD_VOCE_EP LIKE 'A71001';
         </sql>
 
         <addDefaultValue tableName="voce_analitica" columnName="dacr" defaultValueDate="${now}"/>

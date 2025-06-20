@@ -249,6 +249,16 @@
 			propertyName="esercizio_obbligazione"
 			sqlTypeName="DECIMAL"
 			columnSize="4" />
+		<columnMapping
+			columnName="ESERCIZIO_VOCE_EP"
+			propertyName="esercizio_voce_ep"
+			sqlTypeName="DECIMAL"
+			columnSize="4" />
+		<columnMapping
+			columnName="CD_VOCE_EP"
+			propertyName="cd_voce_ep"
+			sqlTypeName="VARCHAR"
+			columnSize="45" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="fl_associato_missione" />
@@ -330,4 +340,8 @@
 		name="partita_iva" />
 	<persistentProperty
 		name="esercizio_obbligazione" />
+	<persistentProperty
+		name="esercizio_voce_ep"/>
+	<persistentProperty
+		name="cd_voce_ep"/>
 </SQLPersistentInfo>

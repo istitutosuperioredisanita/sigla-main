@@ -71,7 +71,12 @@
 		<columnMapping
 			columnName="CD_CENTRO_RESPONSABILITA"
 			propertyName="lattPerRimborso.centro_responsabilita.cd_centro_responsabilita" />
-			
+		<columnMapping
+			columnName="ESERCIZIO_VOCE_EP"
+			propertyName="voce_ep.esercizio" />
+		<columnMapping
+			columnName="CD_VOCE_EP"
+			propertyName="voce_ep.cd_voce_ep" />
 			
 	</defaultColumnMap>		
 
@@ -87,6 +92,7 @@
 		name="scadenza_obbligazione" />
 	<persistentProperty
 		name="lattPerRimborso" />
-		
-		
+	<persistentProperty
+		name="voce_ep" />
+
 </SQLPersistentInfo>
