@@ -111,7 +111,7 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
                     .filter(el -> el.equals(((ProgettoBulk) this.getParentModel()).getEsercizio())).isPresent())
                 throw new ValidationException("Operazione non possibile! Per caricare un dato relativo all'anno corrente utilizzare la sezione apposita.");
         }
-        
+
         @Override
         public boolean isGrowable() {
             return super.isGrowable() &&
@@ -130,16 +130,16 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
                             .map(ProgettoBulk.class::cast)
                             .map(el -> !el.isROProgettoForStato())
                             .orElse(Boolean.FALSE);
-        }        
+        }
     };
-    
+
     protected SimpleDetailCRUDController crudPianoEconomicoVoceBilancioAnnoCorrente = new ProgettoPianoEconomicoVoceBilancioCRUDController("PianoEconomicoVoceBilancioAnnoCorrente", Ass_progetto_piaeco_voceBulk.class, "vociBilancioAssociate", crudPianoEconomicoAnnoCorrente);
     protected SimpleDetailCRUDController crudPianoEconomicoVoceBilancioAltriAnni = new ProgettoPianoEconomicoVoceBilancioCRUDController("PianoEconomicoVoceBilancioAltriAnni", Ass_progetto_piaeco_voceBulk.class, "vociBilancioAssociate", crudPianoEconomicoAltriAnni);
 
     private boolean flNuovoPdg = false;
     private boolean flInformix = false;
     private boolean flPrgPianoEconomico = false;
-    
+
     private Integer annoFromPianoEconomico;
     private Integer esercizioScrivania;
     private String cdrScrivania;
@@ -164,23 +164,23 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
     private SimpleDetailCRUDController pianoEconomicoSummaryAnno = new SimpleDetailCRUDController("PianoEconomicoSummaryAnno", Progetto_piano_economicoBulk.class, "pianoEconomicoSummaryAnno", this);
     private SimpleDetailCRUDController pianoEconomicoVociBilancioDaAssociare = new SimpleDetailCRUDController("VociMovimentateNonAssociate", V_saldi_voce_progettoBulk.class, "vociMovimentateNonAssociate", this);
     private SimpleDetailCRUDController contrattiAssociati = new SimpleDetailCRUDController("ContrattiAssociati", ContrattoBulk.class, "contratti", this) {
-		public void writeHTMLToolbar(javax.servlet.jsp.PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException {
-			super.openButtonGROUPToolbar(context);
+        public void writeHTMLToolbar(javax.servlet.jsp.PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException {
+            super.openButtonGROUPToolbar(context);
 
-			{
-				Button button = new Button();
-	    		button.setImg("img/open16.gif");
-	    		button.setDisabledImg("img/open16.gif");
-	    		button.setTitle("Apri Contratto");
-	    		button.setIconClass("fa fa-folder-open-o text-primary");
-	    		button.setButtonClass("btn-sm btn-outline-secondary btn-title");
-	            button.setHref("javascript:submitForm('doOpenContratto(" + getInputPrefix() + ")')");
-	            boolean isButtonEnable = Optional.ofNullable(this.getModel()).isPresent();
-	            button.writeToolbarButton(context.getOut(), isButtonEnable, HttpActionContext.isFromBootstrap(context));
-			}
-            
-            super.closeButtonGROUPToolbar(context);			
-		}
+            {
+                Button button = new Button();
+                button.setImg("img/open16.gif");
+                button.setDisabledImg("img/open16.gif");
+                button.setTitle("Apri Contratto");
+                button.setIconClass("fa fa-folder-open-o text-primary");
+                button.setButtonClass("btn-sm btn-outline-secondary btn-title");
+                button.setHref("javascript:submitForm('doOpenContratto(" + getInputPrefix() + ")')");
+                boolean isButtonEnable = Optional.ofNullable(this.getModel()).isPresent();
+                button.writeToolbarButton(context.getOut(), isButtonEnable, HttpActionContext.isFromBootstrap(context));
+            }
+
+            super.closeButtonGROUPToolbar(context);
+        }
     };
 
     private final SimpleDetailCRUDController crudProgetto_anagrafico = new SimpleDetailCRUDController("Progetto_anagrafico", Progetto_anagraficoBulk.class, "anagraficheProgetto", this){
@@ -217,7 +217,7 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
     };
 
 
-        /**
+    /**
      * TestataProgettiRicercaBP constructor comment.
      */
     public TestataProgettiRicercaBP() {
@@ -534,10 +534,10 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
         super.basicEdit(actioncontext, oggettobulk, flag);
         ProgettoBulk progetto = (ProgettoBulk) getModel();
         if (!uoScrivania.isUoEnte() &&
-        	(Optional.ofNullable(progetto.getCd_unita_organizzativa())
-                .map(el -> !el.equals(uoScrivania.getCd_unita_organizzativa()))
-                .orElse(Boolean.TRUE) ||
-             Optional.ofNullable(progetto.getOtherField()).filter(el -> el.isStatoChiuso() || el.isStatoAnnullato()).isPresent()))
+                (Optional.ofNullable(progetto.getCd_unita_organizzativa())
+                        .map(el -> !el.equals(uoScrivania.getCd_unita_organizzativa()))
+                        .orElse(Boolean.TRUE) ||
+                        Optional.ofNullable(progetto.getOtherField()).filter(el -> el.isStatoChiuso() || el.isStatoAnnullato()).isPresent()))
             this.setStatus(VIEW);
     }
 
@@ -552,7 +552,7 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
 
         if (this.isFlNuovoPdg()) {
             if (this.isFlPrgPianoEconomico() &&
-                    ((progetto.isPianoEconomicoRequired() && 
+                    ((progetto.isPianoEconomicoRequired() &&
                             Optional.ofNullable(progetto.getOtherField()).flatMap(el -> Optional.ofNullable(el.getDtInizio())).isPresent() &&
                             Optional.ofNullable(progetto.getOtherField()).flatMap(el -> Optional.ofNullable(el.getDtFine())).isPresent()) ||
                             (progetto.isDettagliPianoEconomicoPresenti() &&
@@ -695,21 +695,21 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
     public boolean isSaveButtonEnabled() {
         return (this instanceof AmministraTestataProgettiRicercaBP) ||
                 (super.isSaveButtonEnabled() &&
-                (!this.isFlInformix() || !Optional.ofNullable(this.getModel()).filter(ProgettoBulk.class::isInstance)
-                        .map(ProgettoBulk.class::cast)
-                        .flatMap(el -> Optional.ofNullable(el.getOtherField()))
-                        .filter(el -> el.isStatoAnnullato() || el.isStatoChiuso())
-                        .isPresent()));
+                        (!this.isFlInformix() || !Optional.ofNullable(this.getModel()).filter(ProgettoBulk.class::isInstance)
+                                .map(ProgettoBulk.class::cast)
+                                .flatMap(el -> Optional.ofNullable(el.getOtherField()))
+                                .filter(el -> el.isStatoAnnullato() || el.isStatoChiuso())
+                                .isPresent()));
     }
 
     @Override
     public boolean isDeleteButtonHidden() {
         return super.isDeleteButtonHidden() || this.isFlInformix() ||
                 Optional.ofNullable(this.getModel())
-                .filter(ProgettoBulk.class::isInstance)
-                .map(ProgettoBulk.class::cast)
-                .filter(ProgettoBulk::isStatoPrgApprovato)
-                .isPresent();
+                        .filter(ProgettoBulk.class::isInstance)
+                        .map(ProgettoBulk.class::cast)
+                        .filter(ProgettoBulk::isStatoPrgApprovato)
+                        .isPresent();
     }
 
     public void caricaVociPianoEconomicoAssociate(ActionContext context, Progetto_piano_economicoBulk progettoPiaeco) throws BusinessProcessException {
@@ -744,7 +744,7 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
     public SimpleDetailCRUDController getContrattiAssociati() {
         return contrattiAssociati;
     }
-    
+
     public boolean isNegoziazioneButtonHidden() {
         return !Optional.ofNullable(this.getModel()).filter(ProgettoBulk.class::isInstance)
                 .map(ProgettoBulk.class::cast).flatMap(el -> Optional.ofNullable(el.getOtherField()))
@@ -798,68 +798,81 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
 
     public boolean isRiapriButtonHidden() {
         return !(Optional.ofNullable(this.getModel())
-		                 .filter(ProgettoBulk.class::isInstance)
-		                 .map(ProgettoBulk.class::cast)
-		                 .flatMap(el -> Optional.ofNullable(el.getOtherField()))
-		                 .map(Progetto_other_fieldBulk::isStatoChiuso)
-		                 .orElse(Boolean.FALSE) &&
-        		(uoScrivania.isUoEnte() ||
-        		 Optional.ofNullable(this.getModel())
-                        .filter(ProgettoBulk.class::isInstance)
-                        .map(ProgettoBulk.class::cast)
-                        .flatMap(el -> Optional.ofNullable(el.getCd_unita_organizzativa()))
-                        .filter(el -> el.equals(uoScrivania.getCd_unita_organizzativa()))
-                        .isPresent()));
+                .filter(ProgettoBulk.class::isInstance)
+                .map(ProgettoBulk.class::cast)
+                .flatMap(el -> Optional.ofNullable(el.getOtherField()))
+                .map(Progetto_other_fieldBulk::isStatoChiuso)
+                .orElse(Boolean.FALSE) &&
+                (uoScrivania.isUoEnte() ||
+                        Optional.ofNullable(this.getModel())
+                                .filter(ProgettoBulk.class::isInstance)
+                                .map(ProgettoBulk.class::cast)
+                                .flatMap(el -> Optional.ofNullable(el.getCd_unita_organizzativa()))
+                                .filter(el -> el.equals(uoScrivania.getCd_unita_organizzativa()))
+                                .isPresent()));
     }
 
     public boolean isRimodulaButtonHidden() {
-    	Optional<ProgettoBulk> optProgetto = Optional.ofNullable(this.getModel())
-											         .filter(ProgettoBulk.class::isInstance)
-											         .map(ProgettoBulk.class::cast);
+        Optional<ProgettoBulk> optProgetto = Optional.ofNullable(this.getModel())
+                .filter(ProgettoBulk.class::isInstance)
+                .map(ProgettoBulk.class::cast);
         return !optProgetto.filter(ProgettoBulk::isPianoEconomicoRequired).isPresent() ||
-        	   !optProgetto.flatMap(el -> Optional.ofNullable(el.getOtherField()))
-                		.map(Progetto_other_fieldBulk::isStatoApprovato)
-                		.orElse(Boolean.FALSE)||
-        	   !(optProgetto.flatMap(el -> Optional.ofNullable(el.getCd_unita_organizzativa()))
+                !optProgetto.flatMap(el -> Optional.ofNullable(el.getOtherField()))
+                        .map(Progetto_other_fieldBulk::isStatoApprovato)
+                        .orElse(Boolean.FALSE)||
+                !(optProgetto.flatMap(el -> Optional.ofNullable(el.getCd_unita_organizzativa()))
                         .filter(el -> el.equals(uoScrivania.getCd_unita_organizzativa()))
                         .isPresent()||
-        		 optProgetto.flatMap(el -> Optional.ofNullable(el.getCd_unita_organizzativa()))
-                        .map(el -> uoScrivania.isUoEnte())
-                        .orElse(Boolean.FALSE));
+                        optProgetto.flatMap(el -> Optional.ofNullable(el.getCd_unita_organizzativa()))
+                                .map(el -> uoScrivania.isUoEnte())
+                                .orElse(Boolean.FALSE));
     }
 
     public boolean isPrintButtonHidden() {
-    	Optional<ProgettoBulk> optProgetto = Optional.ofNullable(this.getModel())
-		         .filter(ProgettoBulk.class::isInstance)
-		         .map(ProgettoBulk.class::cast);
-		return !optProgetto.isPresent() ||
-			   !optProgetto.flatMap(el -> Optional.ofNullable(el.getOtherField()))
-				.map(Progetto_other_fieldBulk::isStatoApprovato)
-				.orElse(Boolean.FALSE);
+        Optional<ProgettoBulk> optProgetto = Optional.ofNullable(this.getModel())
+                .filter(ProgettoBulk.class::isInstance)
+                .map(ProgettoBulk.class::cast);
+        return !optProgetto.isPresent() ||
+                !optProgetto.flatMap(el -> Optional.ofNullable(el.getOtherField()))
+                        .map(Progetto_other_fieldBulk::isStatoApprovato)
+                        .orElse(Boolean.FALSE);
     }
-    
+
+
     @Override
     protected Button[] createToolbar() {
         Button[] toolbar = super.createToolbar();
-        Button[] newToolbar = new Button[toolbar.length + 7];
+        Button[] newToolbar = new Button[toolbar.length + 8];
         int i;
-        for (i = 0; i < toolbar.length; i++)
+        for (i = 0; i < toolbar.length; i++) {
             newToolbar[i] = toolbar[i];
-        newToolbar[i] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "Toolbar.printsintetica");
-        newToolbar[i].setSeparator(true);
-        newToolbar[i + 1] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "Toolbar.negoziazione");
-        newToolbar[i + 1].setSeparator(true);
-        newToolbar[i + 2] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "Toolbar.approva");
-        newToolbar[i + 2].setSeparator(true);
-        newToolbar[i + 3] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "Toolbar.annulla");
-        newToolbar[i + 3].setSeparator(true);
-        newToolbar[i + 4] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "Toolbar.chiusura");
-        newToolbar[i + 4].setSeparator(true);
-        newToolbar[i + 5] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "Toolbar.riapri");
-        newToolbar[i + 5].setSeparator(true);
-        newToolbar[i + 6] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "Toolbar.rimodula");
-        newToolbar[i + 6].setSeparator(true);
+        }
+        Button newButton;
 
+        newButton = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "Toolbar.printsintetica");
+        newButton.setSeparator(true);
+        newToolbar[i++] = newButton;
+        newButton = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "Toolbar.printrendiconto");
+        newButton.setSeparator(true);
+        newToolbar[i++] = newButton;
+        newButton = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "Toolbar.negoziazione");
+        newButton.setSeparator(true);
+        newToolbar[i++] = newButton;
+        newButton = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "Toolbar.approva");
+        newButton.setSeparator(true);
+        newToolbar[i++] = newButton;
+        newButton = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "Toolbar.annulla");
+        newButton.setSeparator(true);
+        newToolbar[i++] = newButton;
+        newButton = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "Toolbar.chiusura");
+        newButton.setSeparator(true);
+        newToolbar[i++] = newButton;
+        newButton = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "Toolbar.riapri");
+        newButton.setSeparator(true);
+        newToolbar[i++] = newButton;
+        newButton = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "Toolbar.rimodula");
+        newButton.setSeparator(true);
+        newToolbar[i++] = newButton;
         return newToolbar;
     }
 
@@ -904,7 +917,7 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
 
         //effettuo l'operazione richiesta
         if (StatoProgetto.STATO_NEGOZIAZIONE.value().equals(newStato) || StatoProgetto.STATO_APPROVATO.value().equals(newStato) ||
-        		StatoProgetto.STATO_ANNULLATO.value().equals(newStato)) {
+                StatoProgetto.STATO_ANNULLATO.value().equals(newStato)) {
             optOtherField.get().setStato(newStato);
             optOtherField.get().setToBeUpdated();
             if (!optProgetto.get().isDatePianoEconomicoRequired()) {
@@ -935,9 +948,9 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
 
         if (optOtherField.isPresent() &&
                 (StatoProgetto.STATO_NEGOZIAZIONE.value().equals(stato) ||
-                 StatoProgetto.STATO_APPROVATO.value().equals(stato) ||
-                 StatoProgetto.STATO_CHIUSURA.value().equals(stato) ||
-                 StatoProgetto.STATO_ANNULLATO.value().equals(stato))) {
+                        StatoProgetto.STATO_APPROVATO.value().equals(stato) ||
+                        StatoProgetto.STATO_CHIUSURA.value().equals(stato) ||
+                        StatoProgetto.STATO_ANNULLATO.value().equals(stato))) {
             if (!optOtherField.flatMap(el -> Optional.ofNullable(el.getTipoFinanziamento()))
                     .flatMap(el -> Optional.ofNullable(el.getCodice())).isPresent())
                 throw new ValidationException("Operazione non possibile! Indicare il tipo di finanziamento!");
@@ -991,24 +1004,24 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
     }
 
     public boolean isROProgettoForStato(ProgettoBulk progettoBulk) {
-		return !(this instanceof AmministraTestataProgettiRicercaBP) &&
-				Optional.ofNullable(progettoBulk)
-				.map(ProgettoBulk::isROProgettoForStato)
-                .orElse(Boolean.TRUE);
-	}
+        return !(this instanceof AmministraTestataProgettiRicercaBP) &&
+                Optional.ofNullable(progettoBulk)
+                        .map(ProgettoBulk::isROProgettoForStato)
+                        .orElse(Boolean.TRUE);
+    }
 
     public boolean isROProgettoForStato() {
-		return isROProgettoForStato(Optional.ofNullable(this.getModel())
-				.filter(ProgettoBulk.class::isInstance).map(ProgettoBulk.class::cast)
-				.orElse(null));
-	}
+        return isROProgettoForStato(Optional.ofNullable(this.getModel())
+                .filter(ProgettoBulk.class::isInstance).map(ProgettoBulk.class::cast)
+                .orElse(null));
+    }
 
-	public boolean isROFlagAutoRimod(CNRUserInfo ui){
+    public boolean isROFlagAutoRimod(CNRUserInfo ui){
         UtenteBulk utente = ui.getUtente();
 
         return !utente.isSupervisore();
     }
-    
+
     @Override
     protected String getStorePath(ProgettoBulk allegatoParentBulk, boolean create) throws BusinessProcessException {
         return allegatoParentBulk.getStorePath();
@@ -1022,21 +1035,21 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
     public boolean isRODatiContabili() {
         return !this.isSearching() && isROProgettoForStato();
     }
-    
+
     @Override
     public OggettoBulk initializeModelForEditAllegati(ActionContext actioncontext, OggettoBulk oggettobulk)
-    		throws BusinessProcessException {
+            throws BusinessProcessException {
         ProgettoBulk progetto = this.innerInitializeModelForEditAllegati(actioncontext,(ProgettoBulk)oggettobulk,((ProgettoBulk)oggettobulk).getCd_unita_organizzativa());
         CRUDComponentSession session = createComponentSession();
         if (!(session instanceof ProgettoRicercaPadreComponentSession)) {
             try {
                 List<ProgettoBulk> progettifigli = ((ProgettoRicercaComponentSession) session).getAllChildren(actioncontext.getUserContext(), progetto);
                 List<String> cdUoList = Optional.ofNullable(progettifigli)
-                                                .map(List::stream)
-                                                .orElse(Stream.empty())
-                                                .map(ProgettoBulk::getCd_unita_organizzativa)
-                                                .distinct()
-                                                .collect(Collectors.toList());
+                        .map(List::stream)
+                        .orElse(Stream.empty())
+                        .map(ProgettoBulk::getCd_unita_organizzativa)
+                        .distinct()
+                        .collect(Collectors.toList());
 
                 for (Iterator i = cdUoList.iterator(); i.hasNext();) {
                     String cdUnitaOrganizzativa = (String)i.next();
@@ -1094,39 +1107,39 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
 
         Optional<ProgettoBulk> optProgetto = Optional.ofNullable(this.getModel()).filter(ProgettoBulk.class::isInstance).map(ProgettoBulk.class::cast);
         if (optProgetto.isPresent()) {
-	        printbp.setReportName("/cnrpreventivo/pdg/piano_economico_progetto.jasper");
-	
-	        Print_spooler_paramBulk param = new Print_spooler_paramBulk();
-	        param.setNomeParam("P_ESERCIZIO");
-	        param.setValoreParam(esercizioScrivania.toString());
-	        param.setParamType("java.lang.Integer");
-	        printbp.addToPrintSpoolerParam(param);
-	
-	        param = new Print_spooler_paramBulk();
-	        param.setNomeParam("P_CENTRO_RESPONSABILITA");
-	        param.setValoreParam(cdrScrivania);
-	        param.setParamType("java.lang.String");
-	        printbp.addToPrintSpoolerParam(param);
+            printbp.setReportName("/cnrpreventivo/pdg/piano_economico_progetto.jasper");
 
-	        param = new Print_spooler_paramBulk();
-	        param.setNomeParam("P_PG_PROGETTO");
-	        param.setValoreParam(optProgetto.get().getPg_progetto().toString());
-	        param.setParamType("java.lang.Integer");
-	        printbp.addToPrintSpoolerParam(param);
+            Print_spooler_paramBulk param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_ESERCIZIO");
+            param.setValoreParam(esercizioScrivania.toString());
+            param.setParamType("java.lang.Integer");
+            printbp.addToPrintSpoolerParam(param);
 
-	        param = new Print_spooler_paramBulk();
-	        param.setNomeParam("P_UO_ENTE");
-			param.setValoreParam(uoScrivania.isUoEnte()?"Y":"N");
-			param.setParamType("java.lang.String");
-	        printbp.addToPrintSpoolerParam(param);
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_CENTRO_RESPONSABILITA");
+            param.setValoreParam(cdrScrivania);
+            param.setParamType("java.lang.String");
+            printbp.addToPrintSpoolerParam(param);
 
-	        param = new Print_spooler_paramBulk();
-	        param.setNomeParam("P_PRINT_DETAIL");
-			param.setValoreParam("Y");
-			param.setParamType("java.lang.String");
-	        printbp.addToPrintSpoolerParam(param);
-        }    
-	}
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_PG_PROGETTO");
+            param.setValoreParam(optProgetto.get().getPg_progetto().toString());
+            param.setParamType("java.lang.Integer");
+            printbp.addToPrintSpoolerParam(param);
+
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_UO_ENTE");
+            param.setValoreParam(uoScrivania.isUoEnte()?"Y":"N");
+            param.setParamType("java.lang.String");
+            printbp.addToPrintSpoolerParam(param);
+
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_PRINT_DETAIL");
+            param.setValoreParam("Y");
+            param.setParamType("java.lang.String");
+            printbp.addToPrintSpoolerParam(param);
+        }
+    }
 
     public void initializePrintSinteticaBP(AbstractPrintBP bp) {
         OfflineReportPrintBP printbp = (OfflineReportPrintBP) bp;
@@ -1219,18 +1232,58 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
         }
     }
 
+    //test push e merge
+    public void initializePrintRendicontoBP(AbstractPrintBP bp) {
+        OfflineReportPrintBP printbp = (OfflineReportPrintBP) bp;
+
+        Optional<ProgettoBulk> optProgetto = Optional.ofNullable(this.getModel()).filter(ProgettoBulk.class::isInstance).map(ProgettoBulk.class::cast);
+        if (optProgetto.isPresent()) {
+            printbp.setReportName("/cnrpreventivo/pdg/rendiconto_progetto.jasper");
+
+            Print_spooler_paramBulk param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_ESERCIZIO");
+            param.setValoreParam(esercizioScrivania.toString());
+            param.setParamType("java.lang.Integer");
+            printbp.addToPrintSpoolerParam(param);
+
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_CENTRO_RESPONSABILITA");
+            param.setValoreParam(cdrScrivania);
+            param.setParamType("java.lang.String");
+            printbp.addToPrintSpoolerParam(param);
+
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_PG_PROGETTO");
+            param.setValoreParam(optProgetto.get().getPg_progetto().toString());
+            param.setParamType("java.lang.Integer");
+            printbp.addToPrintSpoolerParam(param);
+
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_UO_ENTE");
+            param.setValoreParam(uoScrivania.isUoEnte()?"Y":"N");
+            param.setParamType("java.lang.String");
+            printbp.addToPrintSpoolerParam(param);
+
+            param = new Print_spooler_paramBulk();
+            param.setNomeParam("P_PRINT_DETAIL");
+            param.setValoreParam("Y");
+            param.setParamType("java.lang.String");
+            printbp.addToPrintSpoolerParam(param);
+
+        }
+    }
 
 
     public Unita_organizzativaBulk getUoScrivania() {
-    	return uoScrivania;
+        return uoScrivania;
     }
 
     public void removePianoEconomico(ActionContext context) throws BusinessProcessException {
         try {
             if (this instanceof AmministraTestataProgettiRicercaBP) {
                 ((ProgettoRicercaComponentSession) createComponentSession()).removePianoEconomico(
-                    context.getUserContext(),
-                    (ProgettoBulk) getModel());
+                        context.getUserContext(),
+                        (ProgettoBulk) getModel());
                 this.setModel(context, this.initializeModelForEdit(context,this.getModel()));
             }
         } catch (ComponentException | RemoteException e) {
@@ -1253,10 +1306,10 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
         ProgettoBulk progetto = (ProgettoBulk) this.getModel();
         if(progetto != null){
             if(!isAnagraficheProgettoEdit()) {
-                    return "readonly";
-                }
+                return "readonly";
             }
-            return "default";
+        }
+        return "default";
     }
 
     private boolean isAnagraficheProgettoEdit(){
@@ -1286,4 +1339,6 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
         return super.isInputReadonly();
 
     }
+
+
 }
