@@ -56,7 +56,8 @@ import java.util.stream.Stream;
  */
 public class CRUDDocumentoGenericoPassivoBP
         extends AllegatiCRUDBP<AllegatoGenericoBulk, Documento_genericoBulk>
-        implements IDocumentoAmministrativoBP, IGenericSearchDocAmmBP, IDefferedUpdateSaldiBP, VoidableBP, IDocumentoAmministrativoSpesaBP, IDocAmmEconomicaBP, IDocAmmAnaliticaBP, IDocumentoGenericoBP {
+        implements IDocumentoAmministrativoBP, IGenericSearchDocAmmBP, IDefferedUpdateSaldiBP, VoidableBP,
+        IDocumentoAmministrativoSpesaBP, IDocAmmAnaliticaBP, IDocumentoGenericoBP {
 
     private final SimpleDetailCRUDController dettaglio = new DocumentoGenericoPassivoRigaCRUDController("Dettaglio", Documento_generico_rigaBulk.class, "documento_generico_dettColl", this);
     private final ObbligazioniCRUDController obbligazioniController =
@@ -86,6 +87,7 @@ public class CRUDDocumentoGenericoPassivoBP
     private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
 
     private final CollapsableDetailCRUDController movimentiAnalitici = new AnaliticaDetailCRUDController(this);
+    private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(Documento_generico_riga_ecoBulk.class, dettaglio);
 
     protected it.cnr.contab.docamm00.docs.bulk.Risultato_eliminazioneVBulk deleteManager = null;
     private boolean isDeleting = false;
@@ -107,6 +109,7 @@ public class CRUDDocumentoGenericoPassivoBP
 
         setTab("tab", "tabDocumentoPassivo");
         setTab("tabDocumentoPassivo", "tabDocumentoPassivo");
+        setTab("tabDocumentoPassivoDettaglio", "tabDocumentoPassivoDettaglioDetail1");
 
         dettaglioObbligazioneController = new SimpleDetailCRUDController("DettaglioObbligazioni", Documento_generico_rigaBulk.class, "documento_generico_obbligazioniHash", obbligazioniController) {
 
@@ -717,7 +720,7 @@ public class CRUDDocumentoGenericoPassivoBP
     public void resetTabs() {
         setTab("tab", "tabDocumentoPassivo");
 		setTab("tabEconomica", "tabDare");
-
+        setTab("tabDocumentoPassivoDettaglio", "tabDocumentoPassivoDettaglioDetail1");
     }
 
     public void riportaAvanti(ActionContext context)
@@ -1121,4 +1124,21 @@ public class CRUDDocumentoGenericoPassivoBP
         return super.isInputReadonlyFieldName(fieldName);
     }
 
+    @Override
+    public CollapsableDetailCRUDController getChildrenAnaColl() {
+        return childrenAnaColl;
+    }
+
+    @Override
+    public OggettoBulk getDetailEcoCogeModel() {
+        return dettaglio.getModel();
+    }
+
+    public boolean isAttivaEconomicaParallela() {
+        return attivaEconomicaParallela;
+    }
+
+    public boolean isAttivaAnalitica() {
+        return attivaAnalitica;
+    }
 }

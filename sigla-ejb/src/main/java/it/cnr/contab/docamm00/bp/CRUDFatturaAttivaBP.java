@@ -81,7 +81,7 @@ public abstract class CRUDFatturaAttivaBP
         implements IDocumentoAmministrativoBP,
         IGenericSearchDocAmmBP,
         IDefferedUpdateSaldiBP,
-        VoidableBP, IDocAmmEconomicaBP, IDocAmmAnaliticaBP {
+        VoidableBP, IDocAmmAnaliticaBP {
 
     private final SimpleDetailCRUDController crudRiferimentiBanca = new SimpleDetailCRUDController("RifBanca", Fattura_attiva_rigaBulk.class, "riferimenti_bancari", this);
     private final SimpleDetailCRUDController consuntivoController = new SimpleDetailCRUDController("Consuntivo", Consuntivo_rigaVBulk.class, "fattura_attiva_consuntivoColl", this);
@@ -93,6 +93,7 @@ public abstract class CRUDFatturaAttivaBP
     private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
 
     private final CollapsableDetailCRUDController movimentiAnalitici = new AnaliticaDetailCRUDController(this);
+    private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(Fattura_attiva_riga_ecoBulk.class, this.getDettaglio());
 
     protected it.cnr.contab.docamm00.docs.bulk.Risultato_eliminazioneVBulk deleteManager = null;
     private boolean isDeleting = false;
@@ -1510,10 +1511,6 @@ public abstract class CRUDFatturaAttivaBP
         return getModel();
     }
 
-    public boolean isAttivaEconomicaParallela() {
-        return attivaEconomicaParallela;
-    }
-
     @Override
     public boolean isInputReadonlyFieldName(String fieldName) {
         final List<String> fieldNames = Arrays.asList("dt_da_competenza_coge", "dt_a_competenza_coge");
@@ -1539,5 +1536,23 @@ public abstract class CRUDFatturaAttivaBP
             dettaglioIntrastatController.setModelIndex(actioncontext, dettaglioIntrastatController.getDetails().indexOf(rigaDaCompletare));
             resyncChildren(actioncontext);
         }
+    }
+
+    @Override
+    public CollapsableDetailCRUDController getChildrenAnaColl() {
+        return childrenAnaColl;
+    }
+
+    @Override
+    public OggettoBulk getDetailEcoCogeModel() {
+        return getDettaglio().getModel();
+    }
+
+    public boolean isAttivaEconomicaParallela() {
+        return attivaEconomicaParallela;
+    }
+
+    public boolean isAttivaAnalitica() {
+        return attivaAnalitica;
     }
 }

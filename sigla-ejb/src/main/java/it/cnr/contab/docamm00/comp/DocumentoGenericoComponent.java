@@ -3373,6 +3373,10 @@ public class DocumentoGenericoComponent
             Documento_genericoHome home = (Documento_genericoHome)getHome(userContext, Documento_genericoBulk.class);
             generico.setDocumento_generico_dettColl(new it.cnr.jada.bulk.BulkList(home.findDocumentoGenericoRigheList(generico)));
 
+            Documento_generico_rigaHome rigaHome = (Documento_generico_rigaHome)getHome(userContext, Documento_generico_rigaBulk.class);
+            for (Documento_generico_rigaBulk rigaDoc:generico.getDocumento_generico_dettColl())
+                rigaDoc.setRigheEconomica(rigaHome.findDocumentoGenericoRigheEcoList(rigaDoc));
+
             //to be chkd
             generico.setTi_entrate_spese(generico.getTipo_documento().getTi_entrata_spesa().charAt(0));
 

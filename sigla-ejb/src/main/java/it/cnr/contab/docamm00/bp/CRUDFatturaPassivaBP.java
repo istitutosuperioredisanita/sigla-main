@@ -91,7 +91,7 @@ import java.util.stream.Stream;
  */
 public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFatturaBulk, Fattura_passivaBulk> implements
         IDocumentoAmministrativoBP, IGenericSearchDocAmmBP, VoidableBP,
-        IDefferedUpdateSaldiBP, FatturaPassivaElettronicaBP, IDocAmmEconomicaBP, IDocAmmAnaliticaBP {
+        IDefferedUpdateSaldiBP, FatturaPassivaElettronicaBP, IDocAmmAnaliticaBP {
 
     private final static org.slf4j.Logger logger = LoggerFactory.getLogger(CRUDFatturaPassivaBP.class);
 
@@ -153,6 +153,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
 
     private final CollapsableDetailCRUDController movimentiAnalitici = new AnaliticaDetailCRUDController(this);
+    private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(Fattura_passiva_riga_ecoBulk.class, this.getDettaglio());
 
     //variabile inizializzata in fase di caricamento Nota da fattura elettronica
     //utilizzata per ritornare sulla fattura elettronica
@@ -2137,4 +2138,21 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
         return super.isPossibileModifica(allegato);
     }
 
+    @Override
+    public CollapsableDetailCRUDController getChildrenAnaColl() {
+        return childrenAnaColl;
+    }
+
+    @Override
+    public OggettoBulk getDetailEcoCogeModel() {
+        return getDettaglio().getModel();
+    }
+
+    public boolean isAttivaEconomicaParallela() {
+        return attivaEconomicaParallela;
+    }
+
+    public boolean isAttivaAnalitica() {
+        return attivaAnalitica;
+    }
 }

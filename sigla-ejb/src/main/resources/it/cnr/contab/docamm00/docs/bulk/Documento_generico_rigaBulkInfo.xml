@@ -528,6 +528,14 @@
 		nullable="false"
 		label="Numero avviso" />
 
+	<fieldProperty
+		name="find_voce_ep"
+		property="voce_ep"
+		inputType="SEARCHTOOL"
+		label="Conto EP"
+		nullable="false"
+		formName="searchtool"
+		enabledOnSearch="false" />
 
 <!--  FORM FIELD PROPERTY  -->
 	<formFieldProperty name="ti_associato_manrev"/>
@@ -605,6 +613,8 @@
 	<formFieldProperty name="esercizio_ori_obbligazione" />
 	<formFieldProperty name="pg_obbligazione" />
 	<formFieldProperty name="pg_obbligazione_scadenzario" />
+
+	<formFieldProperty name="find_voce_ep" />
 
 <!--  COLUMN FIELD PROPERTY  -->
 

@@ -23,7 +23,7 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.FormController;
 
-public interface IDocAmmAnaliticaBP {
+public interface IDocAmmAnaliticaBP extends IDocAmmEconomicaBP {
 
     String getTab(String tabName);
 
@@ -44,4 +44,8 @@ public interface IDocAmmAnaliticaBP {
     void setMessage(int status, String message);
 
     boolean isButtonGeneraScritturaAnaliticaVisible();
+
+    CollapsableDetailCRUDController getChildrenAnaColl();
+
+    OggettoBulk getDetailEcoCogeModel();
 }

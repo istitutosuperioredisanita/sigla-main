@@ -18,7 +18,10 @@
 package it.cnr.contab.coepcoan00.core.bulk;
 
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.jada.bulk.FieldValidationMap;
 
+import javax.servlet.jsp.JspWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
@@ -38,4 +41,6 @@ public interface IDocumentoDetailEcoCogeBulk  {
     }
 
     BigDecimal getImportoCostoEco();
+
+    void writeFormField(JspWriter jspwriter, String s, int i, FieldValidationMap fieldvalidationmap, boolean isBootstrap) throws IOException;
 }

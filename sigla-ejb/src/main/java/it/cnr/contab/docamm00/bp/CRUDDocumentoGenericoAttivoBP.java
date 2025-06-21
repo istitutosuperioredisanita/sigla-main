@@ -60,7 +60,7 @@ import java.util.stream.Stream;
 
 public class CRUDDocumentoGenericoAttivoBP
         extends AllegatiCRUDBP<AllegatoGenericoBulk, Documento_genericoBulk>
-        implements IDocumentoAmministrativoBP, IGenericSearchDocAmmBP, IDefferedUpdateSaldiBP, VoidableBP, IDocAmmEconomicaBP, IDocAmmAnaliticaBP, IDocumentoGenericoBP {
+        implements IDocumentoAmministrativoBP, IGenericSearchDocAmmBP, IDefferedUpdateSaldiBP, VoidableBP, IDocAmmAnaliticaBP, IDocumentoGenericoBP {
     private final SimpleDetailCRUDController dettaglio = new DocumentoGenericoAttivoRigaCRUDController("Dettaglio", Documento_generico_rigaBulk.class, "documento_generico_dettColl", this);
 
     private final SimpleDetailCRUDController dettaglioAccertamentoController;
@@ -96,6 +96,7 @@ public class CRUDDocumentoGenericoAttivoBP
     private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
 
     private final CollapsableDetailCRUDController movimentiAnalitici = new AnaliticaDetailCRUDController(this);
+    private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(Documento_generico_riga_ecoBulk.class, dettaglio);
 
     protected it.cnr.contab.docamm00.docs.bulk.Risultato_eliminazioneVBulk deleteManager = null;
     private boolean isDeleting = false;
@@ -1270,10 +1271,6 @@ public class CRUDDocumentoGenericoAttivoBP
         return getModel();
     }
 
-    public boolean isAttivaEconomicaParallela() {
-        return attivaEconomicaParallela;
-    }
-
     public boolean isButtonGeneraScritturaAnaliticaVisible() {
         return Boolean.FALSE;
     }
@@ -1294,4 +1291,21 @@ public class CRUDDocumentoGenericoAttivoBP
         return super.isInputReadonlyFieldName(fieldName);
     }
 
+    @Override
+    public CollapsableDetailCRUDController getChildrenAnaColl() {
+        return childrenAnaColl;
+    }
+
+    @Override
+    public OggettoBulk getDetailEcoCogeModel() {
+        return dettaglio.getModel();
+    }
+
+    public boolean isAttivaEconomicaParallela() {
+        return attivaEconomicaParallela;
+    }
+
+    public boolean isAttivaAnalitica() {
+        return attivaAnalitica;
+    }
 }
