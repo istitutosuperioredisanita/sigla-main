@@ -34,23 +34,7 @@
 	import java.util.List;
 
 public class TransactionalOrdineAcqComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements OrdineAcqComponentSession {
-	public void gestioneStampaOrdine(UserContext userContext, OrdineAcqBulk ordine) throws RemoteException,it.cnr.jada.comp.ComponentException{
-		try {
-			invoke("gestioneStampaOrdine",new Object[] {
-				userContext,
-				ordine });
-		} catch(java.rmi.RemoteException e) {
-			throw e;
-		} catch(java.lang.reflect.InvocationTargetException e) {
-			try {
-				throw e.getTargetException();
-			} catch(it.cnr.jada.comp.ComponentException ex) {
-				throw ex;
-			} catch(Throwable ex) {
-				throw new java.rmi.RemoteException("Uncaugth exception",ex);
-			}
-		}
-	}
+	
 
 		public void controllaQuadraturaObbligazioni(UserContext userContext,OrdineAcqBulk ordine) throws RemoteException,ComponentException, PersistencyException{
 			try {
