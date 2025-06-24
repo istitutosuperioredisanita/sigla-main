@@ -277,6 +277,15 @@
 		inputType="ROTEXT"
 		label="Inventore del Trovato"/>
 
+	<fieldProperty
+		name="find_voce_ep"
+		property="voce_ep"
+		inputType="SEARCHTOOL"
+		label="Conto EP"
+		nullable="false"
+		formName="searchtool"
+		enabledOnSearch="false" />
+
 	<formFieldProperty
 		name="dt_da_competenza_coge"
 		label="Competenza dal" />
@@ -337,7 +346,7 @@
 		name="im_totale_divisa" />	
 	<formFieldProperty
 		name="data_esigibilita_iva" />
-			
+
 	<formFieldProperty
 		name="pg_trovato" 
 		command="doVerificaEsistenzaTrovato" />
@@ -345,6 +354,10 @@
 		name="titoloTrovato" />
 	<formFieldProperty
 		name="inventoreTrovato" />
+
+	<formFieldProperty
+		name="find_voce_ep" />
+
 	<columnFieldProperty
 		name="cd_cds" />
 	<columnFieldProperty

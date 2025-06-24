@@ -20,10 +20,11 @@ package it.cnr.contab.compensi00.docs.bulk;
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoHome;
 import it.cnr.contab.anagraf00.core.bulk.RapportoBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
+import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
+import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
-import it.cnr.contab.config00.pdcep.bulk.Ass_ev_voceepBulk;
-import it.cnr.contab.config00.pdcep.bulk.Ass_ev_voceepHome;
-import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.config00.pdcep.bulk.*;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.docamm00.docs.bulk.*;
@@ -42,6 +43,7 @@ import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.comp.ApplicationRuntimeException;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.Broker;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
@@ -49,7 +51,10 @@ import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.*;
 import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.StoreService;
+import org.springframework.data.util.Pair;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -492,26 +497,89 @@ public class CompensoHome extends BulkHome implements
         return home.fetchAll(sql);
     }
 
-    public ContoBulk getContoCostoDefault(CompensoBulk docRiga) {
+    private ContoBulk getContoEconomicoDefault(CompensoBulk compenso) throws ComponentException {
         try {
             Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
-            if (Optional.ofNullable(docRiga).isPresent()) {
-                if (Optional.ofNullable(docRiga.getObbligazioneScadenzario()).isPresent()) {
-                    Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(docRiga.getObbligazioneScadenzario());
+            if (Optional.ofNullable(compenso).isPresent()) {
+                if (Optional.ofNullable(compenso.getObbligazioneScadenzario()).isPresent()) {
+                   Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(compenso.getObbligazioneScadenzario());
 
-                    if (Optional.ofNullable(obbligScad).isPresent()) {
-                        ObbligazioneBulk obblig = (ObbligazioneBulk) fatpasHome.loadIfNeededObject(obbligScad.getObbligazione());
-                        Ass_ev_voceepHome assEvVoceEpHome = (Ass_ev_voceepHome) getHomeCache().getHome(Ass_ev_voceepBulk.class);
-                        List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(obblig.getCd_elemento_voce(), obblig.getEsercizio(), obblig.getTi_appartenenza(), obblig.getTi_gestione()));
-                        return Optional.ofNullable(listAss).orElse(new ArrayList<>())
-                                .stream().map(Ass_ev_voceepBulk::getVoce_ep)
-                                .findAny().orElse(null);
-                    }
+                   if (Optional.ofNullable(obbligScad).isPresent()) {
+                      ObbligazioneBulk obblig = (ObbligazioneBulk) fatpasHome.loadIfNeededObject(obbligScad.getObbligazione());
+                      Ass_ev_voceepHome assEvVoceEpHome = (Ass_ev_voceepHome) getHomeCache().getHome(Ass_ev_voceepBulk.class);
+                      List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(obblig.getCd_elemento_voce(), obblig.getEsercizio(), obblig.getTi_appartenenza(), obblig.getTi_gestione()));
+                      return Optional.ofNullable(listAss).orElse(new ArrayList<>())
+                                    .stream().map(Ass_ev_voceepBulk::getVoce_ep)
+                                    .findAny().orElse(null);
+                   }
+                } else {
+                   Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
+                   return configHome.getContoDocumentoNonLiquidabile(compenso);
                 }
             }
             return null;
         } catch (PersistencyException e) {
             throw new DetailedRuntimeException(e);
         }
+    }
+
+    private List<IDocumentoDetailAnaCogeBulk> getDatiAnaliticiDefault(UserContext userContext, CompensoBulk compenso, ContoBulk aContoEconomico) throws ComponentException {
+        try {
+            List<Compenso_riga_ecoBulk> result = new ArrayList<>();
+
+            if (Optional.ofNullable(aContoEconomico).isPresent()) {
+                List<Voce_analiticaBulk> voceAnaliticaList = ((Voce_analiticaHome) getHomeCache().getHome(Voce_analiticaBulk.class)).findVoceAnaliticaList(aContoEconomico);
+                if (voceAnaliticaList.isEmpty())
+                    return new ArrayList<>();
+                Voce_analiticaBulk voceAnaliticaDef = voceAnaliticaList.stream()
+                        .filter(Voce_analiticaBulk::getFl_default).findAny()
+                        .orElse(voceAnaliticaList.stream().findAny().orElse(null));
+
+                Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
+                if (Optional.ofNullable(compenso.getObbligazioneScadenzario()).isPresent()) {
+                    Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(compenso.getObbligazioneScadenzario());
+
+                    if (Optional.ofNullable(obbligScad).isPresent()) {
+                        //carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
+                        Obbligazione_scadenzarioHome obbligazioneScadenzarioHome = (Obbligazione_scadenzarioHome) getHomeCache().getHome(Obbligazione_scadenzarioBulk.class);
+                        List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, obbligScad);
+                        BigDecimal totScad = scadVoceBulks.stream().map(Obbligazione_scad_voceBulk::getIm_voce).reduce(BigDecimal.ZERO, BigDecimal::add);
+                        for (Obbligazione_scad_voceBulk scadVoce : scadVoceBulks) {
+                            Compenso_riga_ecoBulk myRigaEco = new Compenso_riga_ecoBulk();
+                            myRigaEco.setProgressivo_riga_eco((long) result.size() + 1);
+                            myRigaEco.setVoce_analitica(voceAnaliticaDef);
+                            myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
+                            myRigaEco.setCompenso(compenso);
+                            myRigaEco.setImporto(scadVoce.getIm_voce().multiply(compenso.getImportoCostoEco()).divide(totScad, 2, RoundingMode.HALF_UP));
+                            myRigaEco.setToBeCreated();
+                            result.add(myRigaEco);
+                        }
+                    } else {
+                        Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
+                        WorkpackageBulk gaeDefault = configHome.getGaeDocumentoNonLiquidabile(userContext, compenso);
+
+                        Compenso_riga_ecoBulk myRigaEco = new Compenso_riga_ecoBulk();
+                        myRigaEco.setProgressivo_riga_eco(1L);
+                        myRigaEco.setVoce_analitica(voceAnaliticaDef);
+                        myRigaEco.setLinea_attivita(gaeDefault);
+                        myRigaEco.setCompenso(compenso);
+                        myRigaEco.setImporto(compenso.getImportoCostoEco());
+                        myRigaEco.setToBeCreated();
+                        result.add(myRigaEco);
+                    }
+                }
+            }
+            return result.stream()
+                    .filter(el->el.getImporto().compareTo(BigDecimal.ZERO)!=0)
+                    .collect(Collectors.toList());
+        } catch (PersistencyException e) {
+            throw new ComponentException(e);
+        }
+    }
+
+    public Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> getDatiEconomiciDefault(UserContext userContext, CompensoBulk compenso) throws ComponentException {
+        ContoBulk aContoEconomico = this.getContoEconomicoDefault(compenso);
+        List<IDocumentoDetailAnaCogeBulk> aContiAnalitici = this.getDatiAnaliticiDefault(userContext, compenso, aContoEconomico);
+        return Pair.of(aContoEconomico, aContiAnalitici);
     }
 }

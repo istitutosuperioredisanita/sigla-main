@@ -1076,6 +1076,8 @@ public class ProposeScritturaComponent extends CRUDComponent {
 	}
 
 	private ResultScrittureContabili proposeScritturaPartitaDoppiaDocumento(UserContext userContext, IDocumentoAmministrativoBulk docamm, boolean makeAnalitica) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, RemoteException, IntrospectionException, PersistencyException {
+		this.loadRigheEco(userContext, docamm);
+
 		List<TestataPrimaNota> testataPrimaNotaList = this.proposeTestataPrimaNotaDocumento(userContext, docamm);
 		ResultScrittureContabili resultScrittureContabili = this.generaScritture(userContext, docamm, testataPrimaNotaList, Boolean.TRUE, makeAnalitica);
 		Optional<Scrittura_partita_doppiaBulk> spd = Optional.ofNullable(resultScrittureContabili.getScritturaPartitaDoppiaBulk());
@@ -5424,7 +5426,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 			//Carico i dettagli economici
 			docamm.getChildren().stream().filter(IDocumentoAmministrativoRigaBulk.class::isInstance)
-					.forEach(el -> this.loadRigheEco(userContext, (IDocumentoAmministrativoRigaBulk)el));
+					.forEach(el -> this.loadChildrenAna(userContext, (IDocumentoAmministrativoRigaBulk)el));
 
 			return docamm.getChildren();
 		} catch (ComponentException | PersistencyException | RemoteException | IntrospectionException e) {
@@ -5903,7 +5905,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 		List<DettaglioAnalitico> dettagliAnalitici = new ArrayList<>();
 		//Carico i dettagli economici
-		this.loadRigheEco(userContext, rigaDocAmm);
+		this.loadChildrenAna(userContext, rigaDocAmm);
 
 		for (IDocumentoDetailAnaCogeBulk rigaAna : rigaDocAmm.getChildrenAna())
 			dettagliAnalitici.add(new DettaglioAnalitico(rigaAna.getLinea_attivita().getCd_centro_responsabilita(), rigaAna.getLinea_attivita().getCd_linea_attivita(), rigaAna.getImporto()));
@@ -5911,281 +5913,181 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		return new DettaglioFinanziario(rigaDocAmm, rigaPartita, terzo.getCd_terzo(), rigaDocAmm.getVoce_ep(), dettagliAnalitici);
 	}
 
-	private void loadRigheEco(UserContext userContext, IDocumentoDetailEcoCogeBulk rigaEco) {
+	private void loadChildrenAna(UserContext userContext, IDocumentoDetailEcoCogeBulk rigaEco) {
 		try {
-			if (rigaEco.getChildrenAna().isEmpty()) {
-				if (rigaEco instanceof Documento_generico_rigaBulk) {
-					Documento_generico_rigaHome rigaHome = (Documento_generico_rigaHome) getHome(userContext, Documento_generico_rigaBulk.class);
-					((Documento_generico_rigaBulk) rigaEco).setRigheEconomica(rigaHome.findDocumentoGenericoRigheEcoList((Documento_generico_rigaBulk) rigaEco));
-					((Documento_generico_rigaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setDocumento_generico_rigaBulk((Documento_generico_rigaBulk) rigaEco));
-				} else if (rigaEco instanceof Fattura_passiva_rigaBulk) {
-					Fattura_passiva_rigaHome rigaHome = (Fattura_passiva_rigaHome) getHome(userContext, Fattura_passiva_rigaBulk.class);
-					((Fattura_passiva_rigaBulk) rigaEco).setRigheEconomica(rigaHome.findFatturaPassivaRigheEcoList((Fattura_passiva_rigaBulk) rigaEco));
-					((Fattura_passiva_rigaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setFattura_passiva_riga((Fattura_passiva_rigaBulk) rigaEco));
-				} else if (rigaEco instanceof Fattura_attiva_rigaBulk) {
-					Fattura_attiva_rigaHome rigaHome = (Fattura_attiva_rigaHome) getHome(userContext, Fattura_attiva_rigaBulk.class);
-					((Fattura_attiva_rigaBulk) rigaEco).setRigheEconomica(rigaHome.findFatturaAttivaRigheEcoList((Fattura_attiva_rigaBulk) rigaEco));
-					((Fattura_attiva_rigaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setFattura_attiva_riga((Fattura_attiva_rigaBulk) rigaEco));
-				} else if (rigaEco instanceof CompensoBulk) {
-					CompensoHome compensoHome = (CompensoHome) getHome(userContext, CompensoBulk.class);
-					((CompensoBulk) rigaEco).setRigheEconomica(compensoHome.findCompensoRigheEcoList((CompensoBulk) rigaEco));
-					((CompensoBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setCompenso((CompensoBulk) rigaEco));
-				} else if (rigaEco instanceof AnticipoBulk) {
-					AnticipoHome anticipoHome = (AnticipoHome) getHome(userContext, AnticipoBulk.class);
-					((AnticipoBulk) rigaEco).setRigheEconomica(anticipoHome.findAnticipoRigheEcoList((AnticipoBulk) rigaEco));
-					((AnticipoBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setAnticipo((AnticipoBulk) rigaEco));
-				} else if (rigaEco instanceof MissioneBulk) {
-					MissioneHome missioneHome = (MissioneHome) getHome(userContext, MissioneBulk.class);
-					((MissioneBulk) rigaEco).setRigheEconomica(missioneHome.findMissioneRigheEcoList((MissioneBulk) rigaEco));
-					((MissioneBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setMissione((MissioneBulk) rigaEco));
-				}
+			if (rigaEco instanceof Documento_generico_rigaBulk) {
+				Documento_generico_rigaHome rigaHome = (Documento_generico_rigaHome) getHome(userContext, Documento_generico_rigaBulk.class);
+				((Documento_generico_rigaBulk) rigaEco).setRigheEconomica(rigaHome.findDocumentoGenericoRigheEcoList((Documento_generico_rigaBulk) rigaEco));
+				((Documento_generico_rigaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setDocumento_generico_rigaBulk((Documento_generico_rigaBulk) rigaEco));
+			} else if (rigaEco instanceof Fattura_passiva_rigaBulk) {
+				Fattura_passiva_rigaHome rigaHome = (Fattura_passiva_rigaHome) getHome(userContext, Fattura_passiva_rigaBulk.class);
+				((Fattura_passiva_rigaBulk) rigaEco).setRigheEconomica(rigaHome.findFatturaPassivaRigheEcoList((Fattura_passiva_rigaBulk) rigaEco));
+				((Fattura_passiva_rigaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setFattura_passiva_riga((Fattura_passiva_rigaBulk) rigaEco));
+			} else if (rigaEco instanceof Fattura_attiva_rigaBulk) {
+				Fattura_attiva_rigaHome rigaHome = (Fattura_attiva_rigaHome) getHome(userContext, Fattura_attiva_rigaBulk.class);
+				((Fattura_attiva_rigaBulk) rigaEco).setRigheEconomica(rigaHome.findFatturaAttivaRigheEcoList((Fattura_attiva_rigaBulk) rigaEco));
+				((Fattura_attiva_rigaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setFattura_attiva_riga((Fattura_attiva_rigaBulk) rigaEco));
+			} else if (rigaEco instanceof CompensoBulk) {
+				CompensoHome compensoHome = (CompensoHome) getHome(userContext, CompensoBulk.class);
+				((CompensoBulk) rigaEco).setRigheEconomica(compensoHome.findCompensoRigheEcoList((CompensoBulk) rigaEco));
+				((CompensoBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setCompenso((CompensoBulk) rigaEco));
+			} else if (rigaEco instanceof AnticipoBulk) {
+				AnticipoHome anticipoHome = (AnticipoHome) getHome(userContext, AnticipoBulk.class);
+				((AnticipoBulk) rigaEco).setRigheEconomica(anticipoHome.findAnticipoRigheEcoList((AnticipoBulk) rigaEco));
+				((AnticipoBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setAnticipo((AnticipoBulk) rigaEco));
+			} else if (rigaEco instanceof MissioneBulk) {
+				MissioneHome missioneHome = (MissioneHome) getHome(userContext, MissioneBulk.class);
+				((MissioneBulk) rigaEco).setRigheEconomica(missioneHome.findMissioneRigheEcoList((MissioneBulk) rigaEco));
+				((MissioneBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setMissione((MissioneBulk) rigaEco));
 			}
-			//Se continua a non essere valorizzato allora forse devo caricare le tabelle
-			if (rigaEco.getChildrenAna().isEmpty())
-				this.loadDocammRigheEco(userContext, rigaEco);
-		} catch (PersistencyException | ComponentException | RemoteException e) {
-			throw new RuntimeException(e);
+		} catch (ComponentException | PersistencyException e) {
+			throw new DetailedRuntimeException(e);
 		}
 	}
 
-	private void loadDocammRigheEco(UserContext userContext, IDocumentoDetailEcoCogeBulk rigaEco) throws ComponentException, PersistencyException, RemoteException {
-		IScadenzaDocumentoContabileBulk scadenzaDocumentoContabile = rigaEco.getScadenzaDocumentoContabile();
-		if (!Optional.ofNullable(scadenzaDocumentoContabile).isPresent() && rigaEco.getFather() instanceof Documento_genericoBulk &&
-				rigaEco.getFather().getTipoDocumentoEnum().isGenericoEntrata() && (((Documento_generico_rigaBulk)rigaEco).getAccertamento_scadenziario()!=null))
-			scadenzaDocumentoContabile = ((Documento_generico_rigaBulk)rigaEco).getAccertamento_scadenziario();
+	private void loadRigheEco(UserContext userContext, IDocumentoCogeBulk documentoCoge) {
+		try {
+			boolean isAttivaEconomicaPuraDocamm = ((Configurazione_cnrHome) getHome(userContext, Configurazione_cnrBulk.class)).isAttivaEconomicaPura(documentoCoge.getEsercizio());
 
-		ContoBulk aContoEconomico = null;
+			if (documentoCoge instanceof IDocumentoDetailEcoCogeBulk) {
+				//Carico i dettagli
+				loadChildrenAna(userContext, (IDocumentoDetailEcoCogeBulk) documentoCoge);
 
-		if (!Optional.ofNullable(scadenzaDocumentoContabile).isPresent()) {
-			if (rigaEco instanceof MissioneBulk)
-				aContoEconomico = ((MissioneHome) getHome(userContext, MissioneBulk.class)).getContoCostoDefault((MissioneBulk) rigaEco);
-			else {
-				Voce_epBulk aVoceEp = this.findContoCostoDocumentoNonLiquidabileByConfig(userContext, CNRUserContext.getEsercizio(userContext));
-				aContoEconomico = (ContoBulk) (getHome(userContext, ContoBulk.class)).findByPrimaryKey(new ContoBulk(aVoceEp.getCd_voce_ep(), CNRUserContext.getEsercizio(userContext)));
-			}
-		} else if (scadenzaDocumentoContabile instanceof Obbligazione_scadenzarioBulk) {
-			//Carico il conto di costo
-			if (rigaEco instanceof Fattura_passiva_rigaIBulk)
-				aContoEconomico = ((Fattura_passiva_rigaIHome) getHome(userContext, Fattura_passiva_rigaIBulk.class)).getContoCostoDefault((Fattura_passiva_rigaIBulk) rigaEco);
-			else if (rigaEco instanceof Nota_di_credito_rigaBulk)
-				aContoEconomico = ((Nota_di_credito_rigaHome) getHome(userContext, Nota_di_credito_rigaBulk.class)).getContoCostoDefault((Nota_di_credito_rigaBulk) rigaEco);
-			else if (rigaEco instanceof Nota_di_debito_rigaBulk)
-				aContoEconomico = ((Nota_di_debito_rigaHome) getHome(userContext, Nota_di_debito_rigaBulk.class)).getContoCostoDefault((Nota_di_debito_rigaBulk) rigaEco);
-			else if (rigaEco instanceof Documento_generico_rigaBulk)
-				aContoEconomico = ((Documento_generico_rigaHome) getHome(userContext, Documento_generico_rigaBulk.class)).getContoCostoDefault((Documento_generico_rigaBulk)rigaEco);
-			else if (rigaEco instanceof CompensoBulk)
-				aContoEconomico = ((CompensoHome) getHome(userContext, CompensoBulk.class)).getContoCostoDefault((CompensoBulk) rigaEco);
-			else if (rigaEco instanceof AnticipoBulk)
-				aContoEconomico = ((AnticipoHome) getHome(userContext, AnticipoBulk.class)).getContoCreditoDefault((AnticipoBulk) rigaEco);
-			else if (rigaEco instanceof MissioneBulk)
-				aContoEconomico = ((MissioneHome) getHome(userContext, MissioneBulk.class)).getContoCostoDefault((MissioneBulk) rigaEco);
-		} else {
-			if (rigaEco instanceof Fattura_attiva_rigaIBulk)
-				aContoEconomico = ((Fattura_attiva_rigaIHome) getHome(userContext, Fattura_attiva_rigaIBulk.class)).getContoRicavoDefault((Fattura_attiva_rigaIBulk) rigaEco);
-			else if (rigaEco instanceof Nota_di_credito_attiva_rigaBulk)
-				aContoEconomico = ((Nota_di_credito_attiva_rigaHome) getHome(userContext, Nota_di_credito_attiva_rigaBulk.class)).getContoRicavoDefault((Nota_di_credito_attiva_rigaBulk) rigaEco);
-			else if (rigaEco instanceof Nota_di_debito_attiva_rigaBulk)
-				aContoEconomico = ((Nota_di_debito_attiva_rigaHome) getHome(userContext, Nota_di_debito_attiva_rigaBulk.class)).getContoRicavoDefault((Nota_di_debito_attiva_rigaBulk) rigaEco);
-			else if (rigaEco instanceof Documento_generico_rigaBulk)
-				aContoEconomico = ((Documento_generico_rigaHome) getHome(userContext, Documento_generico_rigaBulk.class)).getContoRicavoDefault((Documento_generico_rigaBulk) rigaEco);
-		}
+				//Se non attiva l'economica pura (quindi c'è la finanziaria o la parallela) ripulisco tutte le tabelle di appoggio per ricaricarle ex-novo con i dati
+				//prelevati dalla finanziaria
+				if (!isAttivaEconomicaPuraDocamm) {
+					//Ripulisco tutti i campi
+					((IDocumentoDetailEcoCogeBulk) documentoCoge).setVoce_ep(null);
+					((OggettoBulk) documentoCoge).setToBeUpdated();
+					updateBulk(userContext, (OggettoBulk) documentoCoge);
 
-		//Ripulisco i dati economici
-		rigaEco.setVoce_ep(aContoEconomico);
-		((OggettoBulk)rigaEco).setToBeUpdated();
-		updateBulk(userContext, (OggettoBulk)rigaEco);
-
-		for (IDocumentoDetailAnaCogeBulk rigaAna : rigaEco.getChildrenAna()) {
-			((OggettoBulk) rigaAna).setToBeDeleted();
-			deleteBulk(userContext, (OggettoBulk) rigaAna);
-		}
-
-		if (Optional.ofNullable(aContoEconomico).isPresent()) {
-			List<Voce_analiticaBulk> voceAnaliticaList = ((Voce_analiticaHome) getHome(userContext, Voce_analiticaBulk.class)).findVoceAnaliticaList(aContoEconomico);
-			Voce_analiticaBulk voceAnaliticaDef = voceAnaliticaList.stream()
-					.filter(Voce_analiticaBulk::getFl_default).findAny()
-					.orElse(voceAnaliticaList.stream().findAny().orElse(null));
-
-			if (Optional.ofNullable(voceAnaliticaDef).isPresent()) {
-				try {
-					if (!Optional.ofNullable(scadenzaDocumentoContabile).isPresent()) {
-						WorkpackageBulk gaeDefault = this.findGaeCostoDocumentoNonLiquidabileByConfig(userContext, CNRUserContext.getEsercizio(userContext), rigaEco);
-						if (rigaEco instanceof Fattura_passiva_rigaBulk) {
-							Fattura_passiva_riga_ecoBulk myRigaEco = null;
-							if (rigaEco instanceof Fattura_passiva_rigaIBulk)
-								myRigaEco = new Fattura_passiva_riga_ecoIBulk();
-							else if (rigaEco instanceof Nota_di_credito_rigaBulk)
-								myRigaEco = new Nota_di_credito_riga_ecoBulk();
-							else if (rigaEco instanceof Nota_di_debito_rigaBulk)
-								myRigaEco = new Nota_di_debito_riga_ecoBulk();
-
-							myRigaEco.setProgressivo_riga_eco((long) (rigaEco.getChildrenAna().size() + 1));
-							myRigaEco.setVoce_analitica(voceAnaliticaDef);
-							myRigaEco.setLinea_attivita(gaeDefault);
-							myRigaEco.setFattura_passiva_riga((Fattura_passiva_rigaBulk) rigaEco);
-							myRigaEco.setImporto(rigaEco.getImportoCostoEco());
-							myRigaEco.setToBeCreated();
-							insertBulk(userContext, myRigaEco);
-							((Fattura_passiva_rigaBulk)rigaEco).getRigheEconomica().add(myRigaEco);
-						} else if (rigaEco instanceof Documento_generico_rigaBulk) {
-							Documento_generico_riga_ecoBulk myRigaEco = new Documento_generico_riga_ecoBulk();
-							myRigaEco.setProgressivo_riga_eco((long) (rigaEco.getChildrenAna().size() + 1));
-							myRigaEco.setVoce_analitica(voceAnaliticaDef);
-							myRigaEco.setLinea_attivita(gaeDefault);
-							myRigaEco.setDocumento_generico_rigaBulk((Documento_generico_rigaBulk) rigaEco);
-							myRigaEco.setImporto(rigaEco.getImportoCostoEco());
-							myRigaEco.setToBeCreated();
-							insertBulk(userContext, myRigaEco);
-							((Documento_generico_rigaBulk)rigaEco).getRigheEconomica().add(myRigaEco);
-						} else if (rigaEco instanceof Fattura_attiva_rigaBulk) {
-							Fattura_attiva_riga_ecoBulk myRigaEco = null;
-							if (rigaEco instanceof Fattura_attiva_rigaIBulk)
-								myRigaEco = new Fattura_attiva_riga_ecoIBulk();
-							else if (rigaEco instanceof Nota_di_credito_attiva_rigaBulk)
-								myRigaEco = new Nota_di_credito_attiva_riga_ecoBulk();
-							else if (rigaEco instanceof Nota_di_debito_attiva_rigaBulk)
-								myRigaEco = new Nota_di_debito_attiva_riga_ecoBulk();
-
-							myRigaEco.setProgressivo_riga_eco((long) (rigaEco.getChildrenAna().size() + 1));
-							myRigaEco.setVoce_analitica(voceAnaliticaDef);
-							myRigaEco.setLinea_attivita(gaeDefault);
-							myRigaEco.setFattura_attiva_riga((Fattura_attiva_rigaBulk) rigaEco);
-							myRigaEco.setImporto(rigaEco.getImportoCostoEco());
-							myRigaEco.setToBeCreated();
-							insertBulk(userContext, myRigaEco);
-							((Fattura_attiva_rigaBulk)rigaEco).getRigheEconomica().add(myRigaEco);
-						} else if (rigaEco instanceof CompensoBulk) {
-							Compenso_riga_ecoBulk myRigaEco = new Compenso_riga_ecoBulk();
-							myRigaEco.setProgressivo_riga_eco((long) (rigaEco.getChildrenAna().size() + 1));
-							myRigaEco.setVoce_analitica(voceAnaliticaDef);
-							myRigaEco.setLinea_attivita(gaeDefault);
-							myRigaEco.setCompenso((CompensoBulk) rigaEco);
-							myRigaEco.setImporto(rigaEco.getImportoCostoEco());
-							myRigaEco.setToBeCreated();
-							insertBulk(userContext, myRigaEco);
-							((CompensoBulk)rigaEco).getRigheEconomica().add(myRigaEco);
-						} else if (rigaEco instanceof AnticipoBulk) {
-							Anticipo_riga_ecoBulk myRigaEco = new Anticipo_riga_ecoBulk();
-							myRigaEco.setProgressivo_riga_eco((long) (rigaEco.getChildrenAna().size() + 1));
-							myRigaEco.setVoce_analitica(voceAnaliticaDef);
-							myRigaEco.setLinea_attivita(gaeDefault);
-							myRigaEco.setAnticipo((AnticipoBulk) rigaEco);
-							myRigaEco.setImporto(rigaEco.getImportoCostoEco());
-							myRigaEco.setToBeCreated();
-							insertBulk(userContext, myRigaEco);
-							((AnticipoBulk)rigaEco).getRigheEconomica().add(myRigaEco);
-						} else if (rigaEco instanceof MissioneBulk) {
-							Missione_riga_ecoBulk myRigaEco = new Missione_riga_ecoBulk();
-							myRigaEco.setProgressivo_riga_eco((long) (rigaEco.getChildrenAna().size() + 1));
-							myRigaEco.setVoce_analitica(voceAnaliticaDef);
-							myRigaEco.setLinea_attivita(gaeDefault);
-							myRigaEco.setMissione((MissioneBulk) rigaEco);
-							myRigaEco.setImporto(rigaEco.getImportoCostoEco());
-							myRigaEco.setToBeCreated();
-							insertBulk(userContext, myRigaEco);
-							((MissioneBulk)rigaEco).getRigheEconomica().add(myRigaEco);
-						}
-					} else if (Optional.ofNullable(scadenzaDocumentoContabile).filter(Obbligazione_scadenzarioBulk.class::isInstance).isPresent()) {
-						//carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
-						Obbligazione_scadenzarioHome obbligazioneScadenzarioHome = (Obbligazione_scadenzarioHome) getHome(userContext, Obbligazione_scadenzarioBulk.class);
-						List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, (Obbligazione_scadenzarioBulk) rigaEco.getScadenzaDocumentoContabile());
-						for (Obbligazione_scad_voceBulk scadVoce : scadVoceBulks) {
-							if (rigaEco instanceof Fattura_passiva_rigaBulk) {
-								Fattura_passiva_riga_ecoBulk myRigaEco = null;
-								if (rigaEco instanceof Fattura_passiva_rigaIBulk)
-									myRigaEco = new Fattura_passiva_riga_ecoIBulk();
-								else if (rigaEco instanceof Nota_di_credito_rigaBulk)
-									myRigaEco = new Nota_di_credito_riga_ecoBulk();
-								else if (rigaEco instanceof Nota_di_debito_rigaBulk)
-									myRigaEco = new Nota_di_debito_riga_ecoBulk();
-
-								myRigaEco.setProgressivo_riga_eco((long) (rigaEco.getChildrenAna().size() + 1));
-								myRigaEco.setVoce_analitica(voceAnaliticaDef);
-								myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
-								myRigaEco.setFattura_passiva_riga((Fattura_passiva_rigaBulk) rigaEco);
-								myRigaEco.setImporto(scadVoce.getIm_voce());
-								myRigaEco.setToBeCreated();
-								insertBulk(userContext, myRigaEco);
-								((Fattura_passiva_rigaBulk)rigaEco).getRigheEconomica().add(myRigaEco);
-							} else if (rigaEco instanceof CompensoBulk) {
-								Compenso_riga_ecoBulk myRigaEco = new Compenso_riga_ecoBulk();
-								myRigaEco.setProgressivo_riga_eco((long) (rigaEco.getChildrenAna().size() + 1));
-								myRigaEco.setVoce_analitica(voceAnaliticaDef);
-								myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
-								myRigaEco.setCompenso((CompensoBulk) rigaEco);
-								myRigaEco.setImporto(scadVoce.getIm_voce());
-								myRigaEco.setToBeCreated();
-								insertBulk(userContext, myRigaEco);
-								((CompensoBulk)rigaEco).getRigheEconomica().add(myRigaEco);
-							} else if (rigaEco instanceof AnticipoBulk) {
-								Anticipo_riga_ecoBulk myRigaEco = new Anticipo_riga_ecoBulk();
-								myRigaEco.setProgressivo_riga_eco((long) (rigaEco.getChildrenAna().size() + 1));
-								myRigaEco.setVoce_analitica(voceAnaliticaDef);
-								myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
-								myRigaEco.setAnticipo((AnticipoBulk) rigaEco);
-								myRigaEco.setImporto(scadVoce.getIm_voce());
-								myRigaEco.setToBeCreated();
-								insertBulk(userContext, myRigaEco);
-								((AnticipoBulk)rigaEco).getRigheEconomica().add(myRigaEco);
-							} else if (rigaEco instanceof MissioneBulk) {
-								Missione_riga_ecoBulk myRigaEco = new Missione_riga_ecoBulk();
-								myRigaEco.setProgressivo_riga_eco((long) (rigaEco.getChildrenAna().size() + 1));
-								myRigaEco.setVoce_analitica(voceAnaliticaDef);
-								myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
-								myRigaEco.setMissione((MissioneBulk) rigaEco);
-								myRigaEco.setImporto(scadVoce.getIm_voce());
-								myRigaEco.setToBeCreated();
-								insertBulk(userContext, myRigaEco);
-								((MissioneBulk)rigaEco).getRigheEconomica().add(myRigaEco);
-							} else {
-								Documento_generico_riga_ecoBulk myRigaEco = new Documento_generico_riga_ecoBulk();
-								myRigaEco.setProgressivo_riga_eco((long) (rigaEco.getChildrenAna().size() + 1));
-								myRigaEco.setVoce_analitica(voceAnaliticaDef);
-								myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
-								myRigaEco.setDocumento_generico_rigaBulk((Documento_generico_rigaBulk) rigaEco);
-								myRigaEco.setImporto(scadVoce.getIm_voce());
-								myRigaEco.setToBeCreated();
-								insertBulk(userContext, myRigaEco);
-								((Documento_generico_rigaBulk)rigaEco).getRigheEconomica().add(myRigaEco);
-							}
-						}
-					} else if (Optional.ofNullable(scadenzaDocumentoContabile).filter(Accertamento_scadenzarioBulk.class::isInstance).isPresent()) {
-						//carico i dettagli analitici recuperandoli dall'accertamento_scad_voce
-						Accertamento_scadenzarioHome accertamentoScadenzarioHome = (Accertamento_scadenzarioHome) getHome(userContext, Accertamento_scadenzarioBulk.class);
-						List<Accertamento_scad_voceBulk> scadVoceBulks = accertamentoScadenzarioHome.findAccertamento_scad_voceList(userContext, (Accertamento_scadenzarioBulk) rigaEco.getScadenzaDocumentoContabile());
-						for (Accertamento_scad_voceBulk scadVoce : scadVoceBulks) {
-							if (rigaEco instanceof Fattura_attiva_rigaBulk) {
-								Fattura_attiva_riga_ecoBulk myRigaEco = null;
-								if (rigaEco instanceof Fattura_attiva_rigaIBulk)
-									myRigaEco = new Fattura_attiva_riga_ecoIBulk();
-								else if (rigaEco instanceof Nota_di_credito_attiva_rigaBulk)
-									myRigaEco = new Nota_di_credito_attiva_riga_ecoBulk();
-								else if (rigaEco instanceof Nota_di_debito_attiva_rigaBulk)
-									myRigaEco = new Nota_di_debito_attiva_riga_ecoBulk();
-
-								myRigaEco.setProgressivo_riga_eco((long) (rigaEco.getChildrenAna().size() + 1));
-								myRigaEco.setVoce_analitica(voceAnaliticaDef);
-								myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
-								myRigaEco.setFattura_attiva_riga((Fattura_attiva_rigaBulk) rigaEco);
-								myRigaEco.setImporto(scadVoce.getIm_voce());
-								myRigaEco.setToBeCreated();
-								insertBulk(userContext, myRigaEco);
-								((Fattura_attiva_rigaBulk)rigaEco).getRigheEconomica().add(myRigaEco);
-							} else {
-								Documento_generico_riga_ecoBulk myRigaEco = new Documento_generico_riga_ecoBulk();
-								myRigaEco.setProgressivo_riga_eco((long) (rigaEco.getChildrenAna().size() + 1));
-								myRigaEco.setVoce_analitica(voceAnaliticaDef);
-								myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
-								myRigaEco.setDocumento_generico_rigaBulk((Documento_generico_rigaBulk) rigaEco);
-								myRigaEco.setImporto(scadVoce.getIm_voce());
-								myRigaEco.setToBeCreated();
-								insertBulk(userContext, myRigaEco);
-								((Documento_generico_rigaBulk)rigaEco).getRigheEconomica().add(myRigaEco);
-							}
-						}
+					for (IDocumentoDetailAnaCogeBulk childrenAna : ((IDocumentoDetailEcoCogeBulk) documentoCoge).getChildrenAna()) {
+						((OggettoBulk) childrenAna).setToBeDeleted();
+						deleteBulk(userContext, (OggettoBulk) childrenAna);
 					}
-				} catch (ComponentException | PersistencyException e) {
-					throw new DetailedRuntimeException(e);
+
+					//e poi ricarico il tutto leggendo dalla finanziaria
+					this.loadDocammRigheEcoFromCofi(userContext, (IDocumentoDetailEcoCogeBulk) documentoCoge);
+				}
+			} else if (documentoCoge instanceof IDocumentoAmministrativoBulk) {
+				List<IDocumentoAmministrativoRigaBulk> righeDocamm = this.getRigheDocamm(userContext, (IDocumentoAmministrativoBulk)documentoCoge);
+				for (IDocumentoAmministrativoRigaBulk rigaDocamm : righeDocamm) {
+					//Carico i dettagli
+					loadChildrenAna(userContext, rigaDocamm);
+
+					//Se non attiva l'economica pura (quindi c'è la finanziaria o la parallela) ripulisco tutte le tabelle di appoggio per ricaricarle ex-novo con i dati
+					//prelevati dalla finanziaria
+					if (!isAttivaEconomicaPuraDocamm) {
+						//Ripulisco tutti i campi
+						rigaDocamm.setVoce_ep(null);
+						((OggettoBulk) rigaDocamm).setToBeUpdated();
+						updateBulk(userContext, (OggettoBulk) rigaDocamm);
+
+						for (IDocumentoDetailAnaCogeBulk childrenAna : rigaDocamm.getChildrenAna()) {
+							((OggettoBulk) childrenAna).setToBeDeleted();
+							deleteBulk(userContext, (OggettoBulk) childrenAna);
+						}
+
+						//e poi ricarico il tutto leggendo dalla finanziaria
+						this.loadDocammRigheEcoFromCofi(userContext, (IDocumentoDetailEcoCogeBulk) rigaDocamm);
+					}
+				}
+			}
+		} catch (PersistencyException | ComponentException | RemoteException e) {
+			throw new RuntimeException(e);
+        }
+    }
+
+	private void loadDocammRigheEcoFromCofi(UserContext userContext, IDocumentoDetailEcoCogeBulk rigaEco) throws ComponentException, PersistencyException, RemoteException {
+		Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> datiEcoDefault = null;
+		if (rigaEco instanceof Documento_generico_rigaBulk)
+			datiEcoDefault = ((Documento_generico_rigaHome) getHome(userContext, Documento_generico_rigaBulk.class)).getDatiEconomiciDefault(userContext, (Documento_generico_rigaBulk) rigaEco);
+		else if (rigaEco instanceof Fattura_passiva_rigaIBulk)
+			datiEcoDefault = ((Fattura_passiva_rigaIHome) getHome(userContext, Fattura_passiva_rigaIBulk.class)).getDatiEconomiciDefault(userContext, (Fattura_passiva_rigaIBulk) rigaEco);
+		else if (rigaEco instanceof Nota_di_credito_rigaBulk)
+			datiEcoDefault = ((Nota_di_credito_rigaHome) getHome(userContext, Nota_di_credito_rigaBulk.class)).getDatiEconomiciDefault(userContext, (Nota_di_credito_rigaBulk) rigaEco);
+		else if (rigaEco instanceof Nota_di_debito_rigaBulk)
+			datiEcoDefault = ((Nota_di_debito_rigaHome) getHome(userContext, Nota_di_debito_rigaBulk.class)).getDatiEconomiciDefault(userContext, (Nota_di_debito_rigaBulk) rigaEco);
+		else if (rigaEco instanceof Fattura_attiva_rigaIBulk)
+			datiEcoDefault = ((Fattura_attiva_rigaIHome) getHome(userContext, Fattura_attiva_rigaIBulk.class)).getDatiEconomiciDefault(userContext, (Fattura_attiva_rigaIBulk) rigaEco);
+		else if (rigaEco instanceof Nota_di_credito_attiva_rigaBulk)
+			datiEcoDefault = ((Nota_di_credito_attiva_rigaHome) getHome(userContext, Nota_di_credito_attiva_rigaBulk.class)).getDatiEconomiciDefault(userContext, (Nota_di_credito_attiva_rigaBulk) rigaEco);
+		else if (rigaEco instanceof Nota_di_debito_attiva_rigaBulk)
+			datiEcoDefault = ((Nota_di_debito_attiva_rigaHome) getHome(userContext, Nota_di_debito_attiva_rigaBulk.class)).getDatiEconomiciDefault(userContext, (Nota_di_debito_attiva_rigaBulk) rigaEco);
+		else if (rigaEco instanceof CompensoBulk)
+			datiEcoDefault = ((CompensoHome) getHome(userContext, CompensoBulk.class)).getDatiEconomiciDefault(userContext, (CompensoBulk) rigaEco);
+		else if (rigaEco instanceof AnticipoBulk)
+			datiEcoDefault = ((AnticipoHome) getHome(userContext, AnticipoBulk.class)).getDatiEconomiciDefault(userContext, (AnticipoBulk) rigaEco);
+		else if (rigaEco instanceof MissioneBulk)
+			datiEcoDefault = ((MissioneHome) getHome(userContext, MissioneBulk.class)).getDatiEconomiciDefault(userContext, (MissioneBulk) rigaEco);
+
+		if (datiEcoDefault!=null) {
+			//Ripulisco i dati economici
+			rigaEco.setVoce_ep(datiEcoDefault.getFirst());
+			((OggettoBulk) rigaEco).setToBeUpdated();
+			updateBulk(userContext, (OggettoBulk) rigaEco);
+
+			for (IDocumentoDetailAnaCogeBulk rigaAna : datiEcoDefault.getSecond()) {
+				if (rigaEco instanceof Documento_generico_rigaBulk) {
+					Documento_generico_rigaBulk myRigaEco = (Documento_generico_rigaBulk) rigaEco;
+					Documento_generico_riga_ecoBulk myRigaAna = (Documento_generico_riga_ecoBulk) rigaAna;
+					myRigaAna.setToBeCreated();
+					insertBulk(userContext, myRigaAna);
+					myRigaEco.getRigheEconomica().add(myRigaAna);
+				} else if (rigaEco instanceof Fattura_passiva_rigaIBulk) {
+					Fattura_passiva_rigaIBulk myRigaEco = (Fattura_passiva_rigaIBulk) rigaEco;
+					Fattura_passiva_riga_ecoIBulk myRigaAna = (Fattura_passiva_riga_ecoIBulk) rigaAna;
+					myRigaAna.setToBeCreated();
+					insertBulk(userContext, myRigaAna);
+					myRigaEco.getRigheEconomica().add(myRigaAna);
+				} else if (rigaEco instanceof Nota_di_credito_rigaBulk) {
+					Nota_di_credito_rigaBulk myRigaEco = (Nota_di_credito_rigaBulk) rigaEco;
+					Nota_di_credito_riga_ecoBulk myRigaAna = (Nota_di_credito_riga_ecoBulk) rigaAna;
+					myRigaAna.setToBeCreated();
+					insertBulk(userContext, myRigaAna);
+					myRigaEco.getRigheEconomica().add(myRigaAna);
+				} else if (rigaEco instanceof Nota_di_debito_rigaBulk) {
+					Nota_di_debito_rigaBulk myRigaEco = (Nota_di_debito_rigaBulk) rigaEco;
+					Nota_di_debito_riga_ecoBulk myRigaAna = (Nota_di_debito_riga_ecoBulk) rigaAna;
+					myRigaAna.setToBeCreated();
+					insertBulk(userContext, myRigaAna);
+					myRigaEco.getRigheEconomica().add(myRigaAna);
+				} else if (rigaEco instanceof Fattura_attiva_rigaIBulk) {
+					Fattura_attiva_rigaIBulk myRigaEco = (Fattura_attiva_rigaIBulk) rigaEco;
+					Fattura_attiva_riga_ecoIBulk myRigaAna = (Fattura_attiva_riga_ecoIBulk) rigaAna;
+					myRigaAna.setToBeCreated();
+					insertBulk(userContext, myRigaAna);
+					myRigaEco.getRigheEconomica().add(myRigaAna);
+				} else if (rigaEco instanceof Nota_di_credito_attiva_rigaBulk) {
+					Nota_di_credito_attiva_rigaBulk myRigaEco = (Nota_di_credito_attiva_rigaBulk) rigaEco;
+					Nota_di_credito_attiva_riga_ecoBulk myRigaAna = (Nota_di_credito_attiva_riga_ecoBulk) rigaAna;
+					myRigaAna.setToBeCreated();
+					insertBulk(userContext, myRigaAna);
+					myRigaEco.getRigheEconomica().add(myRigaAna);
+				} else if (rigaEco instanceof Nota_di_debito_attiva_rigaBulk) {
+					Nota_di_debito_attiva_rigaBulk myRigaEco = (Nota_di_debito_attiva_rigaBulk) rigaEco;
+					Nota_di_debito_attiva_riga_ecoBulk myRigaAna = (Nota_di_debito_attiva_riga_ecoBulk) rigaAna;
+					myRigaAna.setToBeCreated();
+					insertBulk(userContext, myRigaAna);
+					myRigaEco.getRigheEconomica().add(myRigaAna);
+				} else if (rigaEco instanceof AnticipoBulk) {
+					AnticipoBulk myRigaEco = (AnticipoBulk) rigaEco;
+					Anticipo_riga_ecoBulk myRigaAna = (Anticipo_riga_ecoBulk) rigaAna;
+					myRigaAna.setToBeCreated();
+					insertBulk(userContext, myRigaAna);
+					myRigaEco.getRigheEconomica().add(myRigaAna);
+				} else if (rigaEco instanceof MissioneBulk) {
+					MissioneBulk myRigaEco = (MissioneBulk) rigaEco;
+					Missione_riga_ecoBulk myRigaAna = (Missione_riga_ecoBulk) rigaAna;
+					myRigaAna.setToBeCreated();
+					insertBulk(userContext, myRigaAna);
+					myRigaEco.getRigheEconomica().add(myRigaAna);
+				} else if (rigaEco instanceof CompensoBulk) {
+					CompensoBulk myRigaEco = (CompensoBulk) rigaEco;
+					Compenso_riga_ecoBulk myRigaAna = (Compenso_riga_ecoBulk) rigaAna;
+					myRigaAna.setToBeCreated();
+					insertBulk(userContext, myRigaAna);
+					myRigaEco.getRigheEconomica().add(myRigaAna);
 				}
 			}
 		}

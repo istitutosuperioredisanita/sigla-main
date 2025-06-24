@@ -62,7 +62,8 @@ public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
     private boolean ribaltato;
     private final CollapsableDetailCRUDController movimentiDare = new EconomicaDareDetailCRUDController(this);
     private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
-    private boolean attivaEconomicaParallela = false;
+    private boolean attivaEconomica = false;
+    private boolean attivaAnalitica = false;
     private boolean supervisore = false;
 
 	/**
@@ -217,7 +218,7 @@ public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
         newToolbar[i] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.creaRimborso");
         newToolbar[i + 1] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.riportaAvanti");
         newToolbar[i + 2] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.riportaIndietro");
-        newToolbar = IDocAmmEconomicaBP.addPartitario(newToolbar, attivaEconomicaParallela, isEditing(), getModel());
+        newToolbar = IDocAmmEconomicaBP.addPartitario(newToolbar, attivaEconomica, isEditing(), getModel());
         return newToolbar;
     }
 
@@ -398,7 +399,8 @@ public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
     protected void init(Config config, ActionContext context) throws BusinessProcessException {
         try {
             verificoUnitaENTE(context);
-            attivaEconomicaParallela = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(context.getUserContext());
+            attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
+            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
         } catch (Throwable e) {
             throw handleException(e);
@@ -1030,7 +1032,7 @@ public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
         pages.put(i++, TAB_ANAGRAFICO);
         pages.put(i++, TAB_ANTICIPO);
         pages.put(i++, TAB_RIMBORSO);
-        if (attivaEconomicaParallela) {
+        if (attivaEconomica) {
             pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
         }
         String[][] tabs = new String[i][3];
@@ -1061,5 +1063,14 @@ public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
     @Override
     public OggettoBulk getEconomicaModel() {
         return getModel();
+    }
+
+    @Override
+    public boolean isAttivaEconomica() {
+        return attivaEconomica;
+    }
+
+    public boolean isAttivaAnalitica() {
+        return attivaAnalitica;
     }
 }

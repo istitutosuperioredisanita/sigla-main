@@ -199,7 +199,8 @@ public class FatturaPassivaRigaCRUDController extends it.cnr.jada.util.action.Si
                         "btn-sm btn-outline-info btn-title",
                         isFromBootstrap);
             }
-            if (isFromBootstrap && riga.getTi_associato_manrev() != null && riga.ASSOCIATO_A_MANDATO.equalsIgnoreCase(riga.getTi_associato_manrev())) {
+            if (isFromBootstrap && Optional.ofNullable(riga).map(Fattura_passiva_rigaBulk::getTi_associato_manrev)
+                    .map(Fattura_passiva_rigaBulk.ASSOCIATO_A_MANDATO::equalsIgnoreCase).orElse(Boolean.FALSE)) {
                 it.cnr.jada.util.jsp.JSPUtils.toolbarButton(
                         context,
                         "fa fa-fw fa-eye",

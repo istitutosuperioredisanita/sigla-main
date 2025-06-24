@@ -17,9 +17,11 @@
 
 package it.cnr.contab.docamm00.bp;
 
+import it.cnr.contab.coepcoan00.bp.DetailEcoCogeCRUDController;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_IBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaIBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_riga_ecoBulk;
 import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk;
 import it.cnr.jada.action.ActionContext;
@@ -28,6 +30,7 @@ import it.cnr.jada.bulk.FieldProperty;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.Config;
+import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.jada.util.jsp.JSPUtils;
 
@@ -65,6 +68,9 @@ public class CRUDFatturaPassivaIBP extends CRUDFatturaPassivaBP implements IDocu
 				super.writeFormInput(jspwriter,s,s1,flag,s2,s3);
 		}
 	};
+
+	private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(Fattura_passiva_riga_ecoBulk.class, dettaglio);
+
 	/**
 	 * CRUDFatturaPassivaIBP constructor comment.
 	 */
@@ -131,7 +137,7 @@ public class CRUDFatturaPassivaIBP extends CRUDFatturaPassivaBP implements IDocu
 		newToolbar.add(new Button(properties, "CRUDToolbar.riportaIndietro"));
 		newToolbar.add(new Button(properties, "CRUDToolbar.riportaAvanti"));
 		newToolbar.add(new Button(properties, "CRUDToolbar.download"));
-		return IDocAmmEconomicaBP.addPartitario(newToolbar.toArray(new Button[newToolbar.size()]), attivaEconomicaParallela, isEditing(), getModel());
+		return IDocAmmEconomicaBP.addPartitario(newToolbar.toArray(new Button[newToolbar.size()]), attivaEconomica, isEditing(), getModel());
 	}
 	/**
 	 * Insert the method's description here.
@@ -433,5 +439,8 @@ public class CRUDFatturaPassivaIBP extends CRUDFatturaPassivaBP implements IDocu
 			super.completeSearchTool(actioncontext, oggettobulk, fieldproperty);
 	}
 
-
+	@Override
+	public CollapsableDetailCRUDController getChildrenAnaColl() {
+		return childrenAnaColl;
+	}
 }

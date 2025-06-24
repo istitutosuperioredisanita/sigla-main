@@ -49,6 +49,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.Config;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
+import it.cnr.jada.util.action.FormController;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.jada.util.jsp.JSPUtils;
@@ -108,7 +109,7 @@ public class CRUDDocumentoGenericoAttivoBP
     private boolean carryingThrough = false;
     private boolean ribaltato;
     private boolean contoEnte;
-    private boolean attivaEconomicaParallela = false;
+    private boolean attivaEconomica = false;
     private boolean attivaAnalitica = false;
     private boolean supervisore = false;
     private boolean attivaInventaria = false;
@@ -118,6 +119,8 @@ public class CRUDDocumentoGenericoAttivoBP
         super();
         setTab("tab", "tabDocumentoAttivo");
         setTab("tabDocumentoAttivo", "tabDocumentoAttivo");
+        setTab("tabDocumentoAttivoDettaglio", "tabDocumentoAttivoDettaglioDetail1");
+
         dettaglioAccertamentoController = new SimpleDetailCRUDController("DettaglioAccertamenti", Documento_generico_rigaBulk.class, "documento_generico_accertamentiHash", accertamentiController) {
 
             public java.util.List getDetails() {
@@ -279,7 +282,7 @@ public class CRUDDocumentoGenericoAttivoBP
                         new Button(properties, "CRUDToolbar.riportaIndietro"),
                         new Button(properties, "CRUDToolbar.riportaAvanti")
                 )).toArray(Button[]::new);
-        toolbar = IDocAmmEconomicaBP.addPartitario(toolbar, attivaEconomicaParallela, isEditing(), getModel());
+        toolbar = IDocAmmEconomicaBP.addPartitario(toolbar, attivaEconomica, isEditing(), getModel());
         return toolbar;
     }
 
@@ -472,7 +475,7 @@ public class CRUDDocumentoGenericoAttivoBP
             DocumentoGenericoComponentSession session = (DocumentoGenericoComponentSession) createComponentSession();
             int solaris = Documento_genericoBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.YEAR);
             int esercizioScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue();
-            attivaEconomicaParallela = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(context.getUserContext());
+            attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
             attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
             attivaInventaria= Utility.createConfigurazioneCnrComponentSession().isAttivoInventariaDocumenti(context.getUserContext());
             setAnnoSolareInScrivania(solaris == esercizioScrivania);
@@ -729,6 +732,7 @@ public class CRUDDocumentoGenericoAttivoBP
     public void resetTabs() {
         setTab("tab", "tabDocumentoAttivo");
 		setTab("tabEconomica", "tabDare");
+        setTab("tabDocumentoAttivoDettaglio", "tabDocumentoAttivoDettaglioDetail1");
     }
 
     public void riportaAvanti(ActionContext context)
@@ -1233,7 +1237,7 @@ public class CRUDDocumentoGenericoAttivoBP
         pages.put(i++, TAB_DETTAGLIO);
         pages.put(i++, documento.isDocumentoStorno() ? TAB_STORNI : TAB_ACCERTAMENTI);
         pages.put(i++, TAB_ALLEGATI);
-        if (attivaEconomicaParallela)
+        if (attivaEconomica)
             pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
         if (attivaAnalitica)
             pages.put(i++, CRUDScritturaAnaliticaBP.TAB_ANALITICA);
@@ -1297,14 +1301,16 @@ public class CRUDDocumentoGenericoAttivoBP
     }
 
     @Override
-    public OggettoBulk getDetailEcoCogeModel() {
-        return dettaglio.getModel();
+    public FormController getControllerDetailEcoCoge() {
+        return dettaglio;
     }
 
-    public boolean isAttivaEconomicaParallela() {
-        return attivaEconomicaParallela;
+    @Override
+    public boolean isAttivaEconomica() {
+        return attivaEconomica;
     }
 
+    @Override
     public boolean isAttivaAnalitica() {
         return attivaAnalitica;
     }

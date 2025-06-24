@@ -17,28 +17,32 @@
 
 package it.cnr.contab.missioni00.docs.bulk;
 
-import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
-import it.cnr.contab.compensi00.docs.bulk.Compenso_riga_ecoBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
+import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcep.bulk.*;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.docamm00.ejb.*;
 import it.cnr.contab.docamm00.docs.bulk.*;
-import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
+import it.cnr.contab.doccont00.core.bulk.Obbligazione_scad_voceBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
+import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioHome;
 import it.cnr.jada.DetailedRuntimeException;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.*;
-import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
 import it.cnr.jada.persistency.sql.*;
+import org.springframework.data.util.Pair;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class AnticipoHome extends BulkHome implements it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoSpesaHome
 {
@@ -153,34 +157,53 @@ public void updateFondoEconomale(it.cnr.contab.fondecon00.core.bulk.Fondo_spesaB
 		return home.fetchAll(sql);
 	}
 
-	public ContoBulk getContoCreditoDefault(AnticipoBulk docRiga) {
-		try {
-			Configurazione_cnrHome configHome = (Configurazione_cnrHome)getHomeCache().getHome(Configurazione_cnrBulk.class);
-			if (Optional.ofNullable(docRiga).isPresent()) {
-				Optional<Configurazione_cnrBulk> config = configHome.getConfigurazioneContiAnticipo(docRiga.getEsercizio());
-				String value = config.flatMap(el->Optional.ofNullable(el.getVal01())).orElse(null);
+	private ContoBulk getContoEconomicoDefault(AnticipoBulk anticipo) throws ComponentException {
+		if (Optional.ofNullable(anticipo).isPresent()) {
+			Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
+			return configHome.getContoAnticipo(anticipo);
+		}
+		return null;
+    }
 
-				return Optional.ofNullable(value).map(el->{
-					try {
-						ContoHome contoHome = (ContoHome) getHomeCache().getHome(ContoBulk.class);
-						return (ContoBulk) contoHome.findByPrimaryKey(new ContoBulk(el, docRiga.getEsercizio()));
-					} catch(PersistencyException ex) {
-						throw new DetailedRuntimeException(ex);
-					}
-				}).orElse(null);
+	private List<IDocumentoDetailAnaCogeBulk> getDatiAnaliticiDefault(UserContext userContext, AnticipoBulk anticipo, ContoBulk aContoEconomico) throws ComponentException {
+		try {
+			List<Anticipo_riga_ecoBulk> result = new ArrayList<>();
+
+			if (Optional.ofNullable(aContoEconomico).isPresent()) {
+				List<Voce_analiticaBulk> voceAnaliticaList = ((Voce_analiticaHome) getHomeCache().getHome(Voce_analiticaBulk.class)).findVoceAnaliticaList(aContoEconomico);
+				if (voceAnaliticaList.isEmpty())
+					return new ArrayList<>();
+				Voce_analiticaBulk voceAnaliticaDef = voceAnaliticaList.stream()
+						.filter(Voce_analiticaBulk::getFl_default).findAny()
+						.orElse(voceAnaliticaList.stream().findAny().orElse(null));
+
+				Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
+				WorkpackageBulk gaeDefault = configHome.getGaeAnticipo(userContext, anticipo);
+
+				Anticipo_riga_ecoBulk myRigaEco = new Anticipo_riga_ecoBulk();
+				myRigaEco.setProgressivo_riga_eco(1L);
+				myRigaEco.setVoce_analitica(voceAnaliticaDef);
+				myRigaEco.setLinea_attivita(gaeDefault);
+				myRigaEco.setAnticipo(anticipo);
+				myRigaEco.setImporto(anticipo.getImportoCostoEco());
+				myRigaEco.setToBeCreated();
+				result.add(myRigaEco);
 			}
-			return null;
+			return result.stream()
+					.filter(el->el.getImporto().compareTo(BigDecimal.ZERO)!=0)
+					.collect(Collectors.toList());
 		} catch (PersistencyException e) {
-			throw new DetailedRuntimeException(e);
+			throw new ComponentException(e);
 		}
 	}
 
-	public ContoBulk getContoCostoDefault(AnticipoBulk docRiga) {
+	public ContoBulk getContoEconomicoForMissione(AnticipoBulk anticipo) throws ComponentException {
 		try {
 			Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
-			if (Optional.ofNullable(docRiga).isPresent()) {
-				if (Optional.ofNullable(docRiga.getScadenza_obbligazione()).isPresent()) {
-					Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(docRiga.getScadenza_obbligazione());
+			if (Optional.ofNullable(anticipo).isPresent()) {
+				anticipo = (AnticipoBulk)fatpasHome.loadIfNeededObject(anticipo);
+				if (Optional.ofNullable(anticipo.getScadenza_obbligazione()).isPresent()) {
+					Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(anticipo.getScadenza_obbligazione());
 
 					if (Optional.ofNullable(obbligScad).isPresent()) {
 						ObbligazioneBulk obblig = (ObbligazioneBulk) fatpasHome.loadIfNeededObject(obbligScad.getObbligazione());
@@ -190,11 +213,99 @@ public void updateFondoEconomale(it.cnr.contab.fondecon00.core.bulk.Fondo_spesaB
 								.stream().map(Ass_ev_voceepBulk::getVoce_ep)
 								.findAny().orElse(null);
 					}
+				} else {
+					Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
+					return configHome.getContoDocumentoNonLiquidabile(anticipo);
 				}
 			}
 			return null;
 		} catch (PersistencyException e) {
 			throw new DetailedRuntimeException(e);
 		}
+	}
+
+	public List<IDocumentoDetailAnaCogeBulk> getDatiAnaliticiForMissione(UserContext userContext, AnticipoBulk anticipo, ContoBulk aContoEconomico) throws ComponentException {
+		try {
+			List<Anticipo_riga_ecoBulk> result = new ArrayList<>();
+
+			if (Optional.ofNullable(aContoEconomico).isPresent()) {
+				List<Voce_analiticaBulk> voceAnaliticaList = ((Voce_analiticaHome) getHomeCache().getHome(Voce_analiticaBulk.class)).findVoceAnaliticaList(aContoEconomico);
+				if (voceAnaliticaList.isEmpty())
+					return new ArrayList<>();
+				Voce_analiticaBulk voceAnaliticaDef = voceAnaliticaList.stream()
+						.filter(Voce_analiticaBulk::getFl_default).findAny()
+						.orElse(voceAnaliticaList.stream().findAny().orElse(null));
+
+				Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
+				if (Optional.ofNullable(anticipo.getScadenza_obbligazione()).isPresent()) {
+					Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(anticipo.getScadenza_obbligazione());
+
+					if (Optional.ofNullable(obbligScad).isPresent()) {
+						//carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
+						Obbligazione_scadenzarioHome obbligazioneScadenzarioHome = (Obbligazione_scadenzarioHome) getHomeCache().getHome(Obbligazione_scadenzarioBulk.class);
+						List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, obbligScad);
+						BigDecimal totScad = scadVoceBulks.stream().map(Obbligazione_scad_voceBulk::getIm_voce).reduce(BigDecimal.ZERO, BigDecimal::add);
+						for (Obbligazione_scad_voceBulk scadVoce : scadVoceBulks) {
+							Anticipo_riga_ecoBulk myRigaEco = new Anticipo_riga_ecoBulk();
+							myRigaEco.setProgressivo_riga_eco((long) result.size() + 1);
+							myRigaEco.setVoce_analitica(voceAnaliticaDef);
+							myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
+							myRigaEco.setAnticipo(anticipo);
+							myRigaEco.setImporto(scadVoce.getIm_voce().multiply(anticipo.getImportoCostoEco()).divide(totScad, 2, RoundingMode.HALF_UP));
+							myRigaEco.setToBeCreated();
+							result.add(myRigaEco);
+						}
+						BigDecimal totRipartito = result.stream().map(Anticipo_riga_ecoBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
+						BigDecimal diff = totRipartito.subtract(anticipo.getImportoCostoEco());
+
+						if (diff.compareTo(BigDecimal.ZERO) > 0) {
+							for (Anticipo_riga_ecoBulk rigaEco : result) {
+								if (rigaEco.getImporto().compareTo(diff) >= 0) {
+									rigaEco.setImporto(rigaEco.getImporto().subtract(diff));
+									break;
+								} else {
+									diff = diff.subtract(rigaEco.getImporto());
+									rigaEco.setImporto(BigDecimal.ZERO);
+								}
+							}
+						} else if (diff.compareTo(BigDecimal.ZERO) < 0) {
+							for (Anticipo_riga_ecoBulk rigaEco : result) {
+								rigaEco.setImporto(rigaEco.getImporto().add(diff));
+								break;
+							}
+						}
+					}
+				} else {
+					Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
+					WorkpackageBulk gaeDefault = configHome.getGaeDocumentoNonLiquidabile(userContext, anticipo);
+
+					Anticipo_riga_ecoBulk myRigaEco = new Anticipo_riga_ecoBulk();
+					myRigaEco.setProgressivo_riga_eco(1L);
+					myRigaEco.setVoce_analitica(voceAnaliticaDef);
+					myRigaEco.setLinea_attivita(gaeDefault);
+					myRigaEco.setAnticipo(anticipo);
+					myRigaEco.setImporto(anticipo.getImportoCostoEco());
+					myRigaEco.setToBeCreated();
+					result.add(myRigaEco);
+				}
+			}
+			return result.stream()
+					.filter(el->el.getImporto().compareTo(BigDecimal.ZERO)!=0)
+					.collect(Collectors.toList());
+		} catch (PersistencyException e) {
+			throw new ComponentException(e);
+		}
+	}
+
+	public Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> getDatiEconomiciDefault(UserContext userContext, AnticipoBulk anticipo) throws ComponentException {
+		ContoBulk aContoEconomico = this.getContoEconomicoDefault(anticipo);
+		List<IDocumentoDetailAnaCogeBulk> aContiAnalitici = this.getDatiAnaliticiDefault(userContext, anticipo, aContoEconomico);
+		return Pair.of(aContoEconomico, aContiAnalitici);
+	}
+
+	public Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> getDatiEconomiciForMissione(UserContext userContext, AnticipoBulk anticipo) throws ComponentException {
+		ContoBulk aContoEconomico = this.getContoEconomicoForMissione(anticipo);
+		List<IDocumentoDetailAnaCogeBulk> aContiAnalitici = this.getDatiAnaliticiForMissione(userContext, anticipo, aContoEconomico);
+		return Pair.of(aContoEconomico, aContiAnalitici);
 	}
 }

@@ -13,7 +13,7 @@
 	Documento_generico_rigaBulk riga = (Documento_generico_rigaBulk)bp.getDettaglio().getModel();
 	bp.getDettaglio().writeHTMLTable(pageContext,"righiSet",true,false,true,"100%","100px"); %>
 
-  <% if (bp.isAttivaEconomicaParallela() || bp.isAttivaAnalitica()) {
+<% if (bp.isAttivaEconomica() || bp.isAttivaAnalitica()) {
   JSPUtils.tabbed(
 				pageContext,
 				"tabDocumentoPassivoDettaglio",

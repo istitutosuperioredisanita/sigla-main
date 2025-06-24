@@ -40,6 +40,8 @@ public interface IDocAmmEconomicaBP {
 
     int getStatus();
 
+    boolean isDirty();
+
     FieldValidationMap getFieldValidationMap();
 
     BusinessProcess getParentRoot();
@@ -61,4 +63,6 @@ public interface IDocAmmEconomicaBP {
         }
         return buttons;
     }
+
+    boolean isAttivaEconomica();
 }

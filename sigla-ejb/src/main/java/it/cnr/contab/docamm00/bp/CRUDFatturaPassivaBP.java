@@ -58,6 +58,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.DateUtils;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
+import it.cnr.jada.util.action.FormController;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.si.spring.storage.StorageObject;
@@ -153,7 +154,6 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
 
     private final CollapsableDetailCRUDController movimentiAnalitici = new AnaliticaDetailCRUDController(this);
-    private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(Fattura_passiva_riga_ecoBulk.class, this.getDettaglio());
 
     //variabile inizializzata in fase di caricamento Nota da fattura elettronica
     //utilizzata per ritornare sulla fattura elettronica
@@ -170,7 +170,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     private boolean isDetailDoubling = false;
     private boolean attivoOrdini = false;
     private boolean propostaFatturaDaOrdini = false;
-    protected boolean attivaEconomicaParallela = false;
+    protected boolean attivaEconomica = false;
     private boolean attivaAnalitica = false;
     private boolean supervisore = false;
 
@@ -589,7 +589,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             final Configurazione_cnrComponentSession configurazioneCnrComponentSession = Utility.createConfigurazioneCnrComponentSession();
             attivoOrdini = configurazioneCnrComponentSession.isAttivoOrdini(context.getUserContext());
             propostaFatturaDaOrdini = configurazioneCnrComponentSession.propostaFatturaDaOrdini(context.getUserContext());
-            attivaEconomicaParallela = configurazioneCnrComponentSession.isAttivaEconomicaParallela(context.getUserContext());
+            attivaEconomica = configurazioneCnrComponentSession.isAttivaEconomica(context.getUserContext());
             attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
             attivaInventaria= configurazioneCnrComponentSession.isAttivoInventariaDocumenti(context.getUserContext());
             attivoCheckImpIntrastat=Utility.createConfigurazioneCnrComponentSession().isCheckImpIntrastatFattPassiva(context.getUserContext());
@@ -1032,6 +1032,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     public void resetTabs() {
         setTab("tab", "tabFatturaPassiva");
         setTab("tabEconomica", "tabDare");
+        setTab("tabFatturaPassivaDettaglio", "tabFatturaPassivaDettaglioDetail1");
     }
 
     public void riportaAvanti(ActionContext context)
@@ -1767,7 +1768,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             pages.put(i++, TAB_FATTURA_PASSIVA_DOCUMENTI_1210);
             pages.put(i++, TAB_FATTURA_PASSIVA_INTRASTAT);
         }
-        if (attivaEconomicaParallela)
+        if (attivaEconomica)
             pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
         if (attivaAnalitica)
             pages.put(i++, CRUDScritturaAnaliticaBP.TAB_ANALITICA);
@@ -2139,19 +2140,16 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     }
 
     @Override
-    public CollapsableDetailCRUDController getChildrenAnaColl() {
-        return childrenAnaColl;
+    public FormController getControllerDetailEcoCoge() {
+        return getDettaglio();
     }
 
     @Override
-    public OggettoBulk getDetailEcoCogeModel() {
-        return getDettaglio().getModel();
+    public boolean isAttivaEconomica() {
+        return attivaEconomica;
     }
 
-    public boolean isAttivaEconomicaParallela() {
-        return attivaEconomicaParallela;
-    }
-
+    @Override
     public boolean isAttivaAnalitica() {
         return attivaAnalitica;
     }

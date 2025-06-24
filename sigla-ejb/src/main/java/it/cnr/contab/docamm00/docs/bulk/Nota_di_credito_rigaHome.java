@@ -17,12 +17,20 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
+import org.springframework.data.util.Pair;
 
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Insert the type's description here.
@@ -112,12 +120,55 @@ public class Nota_di_credito_rigaHome extends Fattura_passiva_rigaHome {
 				.findAny();
 	}
 
-    public ContoBulk getContoCostoDefault(Nota_di_credito_rigaBulk docRiga) {
+    public Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> getDatiEconomiciDefault(UserContext userContext, Nota_di_credito_rigaBulk docRiga) throws ComponentException {
         if (docRiga.getRiga_fattura_origine()!=null && docRiga.getRiga_fattura_origine().getPg_fattura_passiva()!=null) {
             Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
+            Fattura_passiva_rigaIHome fatpasRigaHome = (Fattura_passiva_rigaIHome)getHomeCache().getHome(Fattura_passiva_rigaIBulk.class);
             Fattura_passiva_rigaBulk rigaCollegata = (Fattura_passiva_rigaBulk)fatpasHome.loadIfNeededObject(docRiga.getRiga_fattura_origine());
-            return super.getContoCostoDefault(rigaCollegata);
+
+            Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> datiEcoFattura = fatpasRigaHome.getDatiEconomiciDefault(userContext, rigaCollegata);
+            BigDecimal totaleImportiAnalitici = datiEcoFattura.getSecond().stream().map(IDocumentoDetailAnaCogeBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            ContoBulk aContoEconomico = datiEcoFattura.getFirst();
+            List<Fattura_passiva_riga_ecoBulk> aContiAnalitici = new ArrayList<>();
+
+            for (IDocumentoDetailAnaCogeBulk rigaEco : datiEcoFattura.getSecond()) {
+                Nota_di_credito_riga_ecoBulk myRigaEco = new Nota_di_credito_riga_ecoBulk();
+                myRigaEco.setProgressivo_riga_eco((long) aContiAnalitici.size() + 1);
+                myRigaEco.setVoce_analitica(rigaEco.getVoce_analitica());
+                myRigaEco.setLinea_attivita(rigaEco.getLinea_attivita());
+                myRigaEco.setFattura_passiva_riga(docRiga);
+                myRigaEco.setImporto(rigaEco.getImporto().multiply(docRiga.getImportoCostoEco()).divide(totaleImportiAnalitici,2, RoundingMode.HALF_UP));
+                myRigaEco.setToBeCreated();
+                aContiAnalitici.add(myRigaEco);
+            }
+
+            BigDecimal totRipartito = aContiAnalitici.stream().map(Fattura_passiva_riga_ecoBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
+            BigDecimal diff = totRipartito.subtract(docRiga.getImportoCostoEco());
+
+            if (diff.compareTo(BigDecimal.ZERO)>0) {
+                for (Fattura_passiva_riga_ecoBulk rigaEco : aContiAnalitici) {
+                    if (rigaEco.getImporto().compareTo(diff) >= 0) {
+                        rigaEco.setImporto(rigaEco.getImporto().subtract(diff));
+                        break;
+                    } else {
+                        diff = diff.subtract(rigaEco.getImporto());
+                        rigaEco.setImporto(BigDecimal.ZERO);
+                    }
+                }
+            } else if (diff.compareTo(BigDecimal.ZERO)<0) {
+                for (Fattura_passiva_riga_ecoBulk rigaEco : aContiAnalitici) {
+                    rigaEco.setImporto(rigaEco.getImporto().add(diff));
+                    break;
+                }
+            }
+            return Pair.of(aContoEconomico,
+                    aContiAnalitici.stream().filter(el->el.getImporto().compareTo(BigDecimal.ZERO)!=0)
+                            .collect(Collectors.toList()));
+        } else {
+            ContoBulk aContoEconomico = this.getContoEconomicoDefault(docRiga);
+            List<IDocumentoDetailAnaCogeBulk> aContiAnalitici = this.getDatiAnaliticiDefault(userContext, docRiga, aContoEconomico, Nota_di_credito_riga_ecoBulk.class);
+            return Pair.of(aContoEconomico, aContiAnalitici);
         }
-        return null;
     }
 }

@@ -80,7 +80,8 @@ public class LiquidazioneDefinitivaIvaBP extends LiquidazioneIvaBP implements ID
 	private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this.getDettaglio_prospetti());
 
 	private boolean isStanziamentoAccentrato = Boolean.FALSE;
-	private boolean attivaEconomicaParallela = false;
+	private boolean attivaEconomica = false;
+	private boolean attivaAnalitica = false;
 
 	private boolean supervisore = false;
 
@@ -163,7 +164,7 @@ public class LiquidazioneDefinitivaIvaBP extends LiquidazioneIvaBP implements ID
 		try {
 			String tipoStanziamentoLiquidazioneIva = Utility.createConfigurazioneCnrComponentSession().getTipoStanziamentoLiquidazioneIva(context.getUserContext());
 			setStanziamentoAccentrato(Optional.ofNullable(tipoStanziamentoLiquidazioneIva).map(el->el.equals("STANZIAMENTI_CENTRALIZZATI")).orElse(Boolean.FALSE));
-			attivaEconomicaParallela = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(context.getUserContext());
+			attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
 			supervisore = Utility.createUtenteComponentSession().isSupervisore(context.getUserContext());
 		} catch (RemoteException | ComponentException e) {
 			throw handleException(e);
@@ -248,7 +249,7 @@ public class LiquidazioneDefinitivaIvaBP extends LiquidazioneIvaBP implements ID
 				.filter(Liquidazione_ivaBulk.class::isInstance)
 				.map(Liquidazione_ivaBulk.class::cast)
 				.flatMap(liquidazioneIvaBulk -> Optional.ofNullable(liquidazioneIvaBulk.getScrittura_partita_doppia()))
-				.isPresent() && attivaEconomicaParallela) {
+				.isPresent() && attivaEconomica) {
 			pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
 		}
 		String[][] tabs = new String[i][3];
@@ -353,5 +354,14 @@ public class LiquidazioneDefinitivaIvaBP extends LiquidazioneIvaBP implements ID
 	@Override
 	public boolean isButtonGeneraScritturaVisible() {
 		return this.isSupervisore();
+	}
+
+	@Override
+	public boolean isAttivaEconomica() {
+		return attivaEconomica;
+	}
+
+	public boolean isAttivaAnalitica() {
+		return attivaAnalitica;
 	}
 }

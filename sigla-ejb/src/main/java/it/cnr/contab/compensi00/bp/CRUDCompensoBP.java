@@ -132,7 +132,7 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
     private boolean nocompenso = true;
 
     private Boolean isGestioneIncarichiEnabled = null;
-    private boolean attivaEconomicaParallela = false;
+    private boolean attivaEconomica = false;
     private boolean supervisore = false;
 
     /**
@@ -153,7 +153,7 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
 
     /**
      * @param context      Il contesto dell'azione
-     * @param accertamento it.cnr.contab.doccont00.core.bulk.AccertamentoBulk
+     * @param compenso     CompensoBulk
      * @param mode         java.lang.String
      * @return it.cnr.jada.util.action.CRUDBP
      */
@@ -215,9 +215,9 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
      * Insert the method's description here.
      * Creation date: (25/02/2002 12.56.44)
      *
-     * @param userContext it.cnr.jada.UserContext
+     * @param context it.cnr.jada.UserContext
      * @param compenso    it.cnr.contab.compensi00.docs.bulk.CompensoBulk
-     * @param aTerzo      it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk
+     * @param vTerzo      it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk
      * @return it.cnr.contab.compensi00.docs.bulk.CompensoBulk
      */
     public void completaTerzo(ActionContext context, CompensoBulk compenso, V_terzo_per_compensoBulk vTerzo) throws BusinessProcessException {
@@ -253,10 +253,8 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
      * Insert the method's description here.
      * Creation date: (25/02/2002 12.56.44)
      *
-     * @param userContext it.cnr.jada.UserContext
-     * @param compenso    it.cnr.contab.compensi00.docs.bulk.CompensoBulk
-     * @param aTerzo      it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk
-     * @return it.cnr.contab.compensi00.docs.bulk.CompensoBulk
+     * @param context it.cnr.jada.UserContext
+     * @return void
      */
     public void contabilizzaCompensoCOFI(ActionContext context) throws BusinessProcessException {
 
@@ -314,7 +312,7 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
         toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.print");
         toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.riportaAvanti");
         toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.riportaIndietro");
-        toolbar = IDocAmmEconomicaBP.addPartitario(toolbar, attivaEconomicaParallela, isEditing(), getModel());
+        toolbar = IDocAmmEconomicaBP.addPartitario(toolbar, attivaEconomica, isEditing(), getModel());
         return toolbar;
     }
 
@@ -687,7 +685,7 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
 
         try {
             setGestioneIncarichiEnabled(Utility.createParametriCnrComponentSession().getParametriCnr(context.getUserContext(), CNRUserContext.getEsercizio(context.getUserContext())).getFl_incarico());
-            attivaEconomicaParallela = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(context.getUserContext());
+            attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
         } catch (it.cnr.jada.comp.ComponentException ex) {
             throw handleException(ex);
@@ -1193,9 +1191,7 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
      * Carica tutti i mandati e le reversali associati al compenso in esame
      *
      * @param context  il Context che ha generato la richiesta
-     * @param compenso it.cnr.contab.compensi00.docs.bulk.CompensoBulk
-     * @param aTerzo   it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk
-     * @return it.cnr.contab.compensi00.docs.bulk.CompensoBulk
+     * @return void
      */
     public void loadDocContAssociati(ActionContext context) throws BusinessProcessException {
 
@@ -1476,10 +1472,8 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
      * Insert the method's description here.
      * Creation date: (25/02/2002 12.56.44)
      *
-     * @param userContext it.cnr.jada.UserContext
-     * @param compenso    it.cnr.contab.compensi00.docs.bulk.CompensoBulk
-     * @param aTerzo      it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk
-     * @return it.cnr.contab.compensi00.docs.bulk.CompensoBulk
+     * @param context it.cnr.jada.UserContext
+     * @return void
      */
     private void validaDatiLiquidazione(ActionContext context) throws BusinessProcessException {
 
@@ -1809,9 +1803,9 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
         pages.put(i++, TAB_CONTRIBUTI_RITENUTE);
         pages.put(i++, TAB_OBBLIGAZIONI);
         pages.put(i++, TAB_DOCUMENTI_ASSOCIATI);
-        if (attivaEconomicaParallela) {
+        if (attivaEconomica)
             pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
-        }
+
         String[][] tabs = new String[i][3];
         for (int j = 0; j < i; j++)
             tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
@@ -1843,4 +1837,8 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
         return getModel();
     }
 
+    @Override
+    public boolean isAttivaEconomica() {
+        return attivaEconomica;
+    }
 }

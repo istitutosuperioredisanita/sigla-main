@@ -387,6 +387,15 @@
 			nullable="false"
 			label="Numero avviso" />
 
+	<fieldProperty
+			name="find_voce_ep"
+			property="voce_ep"
+			inputType="SEARCHTOOL"
+			label="Conto EP"
+			nullable="false"
+			formName="searchtool"
+			enabledOnSearch="false" />
+
 	<formFieldProperty
 		name="voce_iva" />
 	<formFieldProperty
@@ -477,6 +486,9 @@
 
 	<formFieldProperty name="codice_identificativo_ente_pagopa"/>
 	<formFieldProperty name="numero_avviso_pagopa"/>
+
+	<formFieldProperty
+			name="find_voce_ep" />
 
 	<columnFieldProperty
 		name="cd_cds" />

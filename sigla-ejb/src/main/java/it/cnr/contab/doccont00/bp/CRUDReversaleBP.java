@@ -105,7 +105,7 @@ public class CRUDReversaleBP extends it.cnr.jada.util.action.SimpleCRUDBP implem
 	protected boolean attivoSiopeplus;
 	private final CollapsableDetailCRUDController movimentiDare = new EconomicaDareDetailCRUDController(this);
 	private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
-	private boolean attivaEconomicaParallela = false;
+	private boolean attivaEconomica = false;
 	private boolean supervisore = false;
 	public static final String REVERSALE_VARIAZIONE_BP = "CRUDReversaleVariazioneBP";
 	boolean isAbilitatoCrudRevesaleVariazioneBP = Boolean.FALSE;
@@ -325,7 +325,7 @@ public class CRUDReversaleBP extends it.cnr.jada.util.action.SimpleCRUDBP implem
 						new Button(properties, "CRUDToolbar.davariare"),
 						new Button(properties, "CRUDToolbar.save.variazione.sostituzione")
 				).stream()).toArray(Button[]::new);
-		buttons = IDocAmmEconomicaBP.addPartitario(buttons, attivaEconomicaParallela, isEditing(), getModel());
+		buttons = IDocAmmEconomicaBP.addPartitario(buttons, attivaEconomica, isEditing(), getModel());
 		return  buttons;
 	}
 
@@ -904,7 +904,7 @@ public class CRUDReversaleBP extends it.cnr.jada.util.action.SimpleCRUDBP implem
 		try {
 			Configurazione_cnrComponentSession sess = (Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices
 					.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession");
-			attivaEconomicaParallela = sess.isAttivaEconomicaParallela(actioncontext.getUserContext());
+			attivaEconomica = sess.isAttivaEconomica(actioncontext.getUserContext());
 			setSupervisore(Utility.createUtenteComponentSession().isSupervisore(actioncontext.getUserContext()));
 
 			this.attivoSiopeplus = Optional.ofNullable(sess.getVal01(
@@ -959,9 +959,9 @@ public class CRUDReversaleBP extends it.cnr.jada.util.action.SimpleCRUDBP implem
 		pages.put(i++, TAB_DETTAGLIO);
 		pages.put(i++, TAB_SOSPESI);
 		pages.put(i++, TAB_MANDATI);
-		if (attivaEconomicaParallela) {
+		if (attivaEconomica)
 			pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
- 		}
+
 		String[][] tabs = new String[i][3];
 		for (int j = 0; j < i; j++)
 			tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
@@ -1232,5 +1232,10 @@ public class CRUDReversaleBP extends it.cnr.jada.util.action.SimpleCRUDBP implem
 	@Override
 	public OggettoBulk getEconomicaModel() {
 		return getModel();
+	}
+
+	@Override
+	public boolean isAttivaEconomica() {
+		return attivaEconomica;
 	}
 }

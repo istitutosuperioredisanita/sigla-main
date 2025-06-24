@@ -268,7 +268,7 @@ public class CRUDMandatoBP extends CRUDAbstractMandatoBP implements IDocumentoAm
                         new Button(properties, "CRUDToolbar.davariare"),
                         new Button(properties, "CRUDToolbar.save.variazione.sostituzione")
                 ).stream()).toArray(Button[]::new);
-        buttons = IDocAmmEconomicaBP.addPartitario(buttons, attivaEconomicaParallela, isEditing(), getModel());
+        buttons = IDocAmmEconomicaBP.addPartitario(buttons, attivaEconomica, isEditing(), getModel());
         return  buttons;
     }
 

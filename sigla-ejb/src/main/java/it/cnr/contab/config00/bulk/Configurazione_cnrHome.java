@@ -17,15 +17,25 @@
 
 package it.cnr.contab.config00.bulk;
 
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
+import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
+import it.cnr.contab.config00.latt.bulk.WorkpackageHome;
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.config00.pdcep.bulk.ContoHome;
+import it.cnr.contab.config00.pdcep.bulk.Voce_epBulk;
+import it.cnr.contab.config00.pdcep.bulk.Voce_epHome;
+import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import java.math.BigDecimal;
+import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -318,8 +328,12 @@ public class Configurazione_cnrHome extends BulkHome {
      * @throws PersistencyException
      */
     public boolean isAttivaEconomicaParallela(UserContext userContext) throws PersistencyException {
+        return isAttivaEconomicaParallela(CNRUserContext.getEsercizio(userContext));
+    }
+
+    public boolean isAttivaEconomicaParallela(int esercizio) throws PersistencyException {
         return Optional.ofNullable(
-                        this.getConfigurazione(CNRUserContext.getEsercizio(userContext), null,
+                        this.getConfigurazione(esercizio, null,
                                 Configurazione_cnrBulk.PK_ECONOMICO_PATRIMONIALE,
                                 Configurazione_cnrBulk.SK_TIPO_ECONOMICO_PATRIMONIALE)
                 )
@@ -335,8 +349,12 @@ public class Configurazione_cnrHome extends BulkHome {
      * @throws PersistencyException
      */
     public boolean isAttivaEconomicaPura(UserContext userContext) throws PersistencyException {
+        return isAttivaEconomicaPura(CNRUserContext.getEsercizio(userContext));
+    }
+
+    public boolean isAttivaEconomicaPura(int esercizio) throws PersistencyException {
         return Optional.ofNullable(
-                        this.getConfigurazione(CNRUserContext.getEsercizio(userContext), null,
+                        this.getConfigurazione(esercizio, null,
                                 Configurazione_cnrBulk.PK_ECONOMICO_PATRIMONIALE,
                                 Configurazione_cnrBulk.SK_TIPO_ECONOMICO_PATRIMONIALE)
                 )
@@ -573,5 +591,79 @@ public class Configurazione_cnrHome extends BulkHome {
                         Configurazione_cnrBulk.PK_VOCEEP_SPECIALE,
                         Configurazione_cnrBulk.SK_CREDITO_DEBITO_ANTICIPO)
         );
+    }
+
+    public Optional<Configurazione_cnrBulk> getConfigurazioneCostoDocumentoNonLiquidabile(Integer esercizio) throws PersistencyException{
+        return Optional.ofNullable(
+                this.getConfigurazione(esercizio, ASTERISCO,
+                        Configurazione_cnrBulk.PK_VOCEEP_SPECIALE,
+                        Configurazione_cnrBulk.SK_COSTO_DOC_NON_LIQUIDABILE)
+        );
+    }
+
+    public ContoBulk getContoDocumentoNonLiquidabile(IDocumentoDetailEcoCogeBulk rigaDocAmm) throws ComponentException {
+        try {
+            Optional<Configurazione_cnrBulk> config = this.getConfigurazioneCostoDocumentoNonLiquidabile(rigaDocAmm.getEsercizio());
+
+            if (config.isPresent()) {
+                String aCdConto = config.get().getVal01();
+
+                ContoHome contoHome = (ContoHome) getHomeCache().getHome(ContoBulk.class);
+                return (ContoBulk) contoHome.findByPrimaryKey(new ContoBulk(aCdConto, rigaDocAmm.getEsercizio()));
+            }
+            return null;
+        } catch (it.cnr.jada.persistency.PersistencyException e) {
+            throw new ComponentException(e);
+        }
+    }
+
+    public WorkpackageBulk getGaeDocumentoNonLiquidabile(UserContext userContext, IDocumentoDetailEcoCogeBulk rigaDocAmm) throws ComponentException {
+        try {
+            Optional<Configurazione_cnrBulk> config = this.getConfigurazioneCostoDocumentoNonLiquidabile(rigaDocAmm.getEsercizio());
+
+            if (config.isPresent()) {
+                String aCdLineaAttivita = config.get().getVal02();
+                String aCdCentroCosto = Optional.ofNullable(config.get().getVal03()).orElse(rigaDocAmm.getFather().getCd_uo() + ".000");
+
+                WorkpackageHome wpHome = (WorkpackageHome) getHomeCache().getHome(WorkpackageBulk.class);
+                return wpHome.searchGAECompleta(userContext, rigaDocAmm.getEsercizio(), aCdCentroCosto, aCdLineaAttivita);
+            }
+            return null;
+        } catch (it.cnr.jada.persistency.PersistencyException e) {
+            throw new ComponentException(e);
+        }
+    }
+
+    public ContoBulk getContoAnticipo(AnticipoBulk anticipo) throws ComponentException {
+        try {
+            Optional<Configurazione_cnrBulk> config = this.getConfigurazioneContiAnticipo(anticipo.getEsercizio());
+
+            if (config.isPresent()) {
+                String aCdConto = config.get().getVal01();
+
+                ContoHome contoHome = (ContoHome) getHomeCache().getHome(ContoBulk.class);
+                return (ContoBulk) contoHome.findByPrimaryKey(new ContoBulk(aCdConto, anticipo.getEsercizio()));
+            }
+            return null;
+        } catch (it.cnr.jada.persistency.PersistencyException e) {
+            throw new ComponentException(e);
+        }
+    }
+
+    public WorkpackageBulk getGaeAnticipo(UserContext userContext, AnticipoBulk anticipo) throws ComponentException {
+        try {
+            Optional<Configurazione_cnrBulk> config = this.getConfigurazioneContiAnticipo(anticipo.getEsercizio());
+
+            if (config.isPresent()) {
+                String aCdLineaAttivita = config.get().getVal02();
+                String aCdCentroCosto = Optional.ofNullable(config.get().getVal03()).orElse(anticipo.getFather().getCd_uo() + ".000");
+
+                WorkpackageHome wpHome = (WorkpackageHome) getHomeCache().getHome(WorkpackageBulk.class);
+                return wpHome.searchGAECompleta(userContext, anticipo.getEsercizio(), aCdCentroCosto, aCdLineaAttivita);
+            }
+            return null;
+        } catch (it.cnr.jada.persistency.PersistencyException e) {
+            throw new ComponentException(e);
+        }
     }
 }

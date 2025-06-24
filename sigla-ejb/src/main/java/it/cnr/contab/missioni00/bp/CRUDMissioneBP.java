@@ -188,7 +188,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
     };
     private final CollapsableDetailCRUDController movimentiDare = new EconomicaDareDetailCRUDController(this);
     private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
-    private boolean attivaEconomicaParallela = false;
+    private boolean attivaEconomica = false;
     private boolean supervisore = false;
 
     /**
@@ -731,7 +731,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
         newToolbar[i] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.riportaAvanti");
         newToolbar[i + 1] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.riportaIndietro");
         newToolbar[i + 2] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.salvaProvvisorio");
-        newToolbar = IDocAmmEconomicaBP.addPartitario(newToolbar, attivaEconomicaParallela, isEditing(), getModel());
+        newToolbar = IDocAmmEconomicaBP.addPartitario(newToolbar, attivaEconomica, isEditing(), getModel());
         return newToolbar;
     }
 
@@ -1221,7 +1221,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
 
     protected void init(Config config, ActionContext context) throws BusinessProcessException {
         try {
-            attivaEconomicaParallela = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(context.getUserContext());
+            attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
             verificoUnitaENTE(context);
         } catch (Throwable e) {
@@ -2923,12 +2923,11 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
         ) {
             pages.put(i++, TAB_ALLEGATI);
         }
-        if (attivaEconomicaParallela && optionalMissioneBulk
+        if (attivaEconomica && optionalMissioneBulk
                 .map(missioneBulk -> !Optional.ofNullable(missioneBulk.getFl_associato_compenso()).orElse(Boolean.TRUE))
-                .orElse(Boolean.FALSE)
-        ) {
+                .orElse(Boolean.FALSE))
             pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
-        }
+
         String[][] tabs = new String[i][3];
         for (int j = 0; j < i; j++)
             tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
@@ -2959,5 +2958,10 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
     @Override
     public OggettoBulk getEconomicaModel() {
         return getModel();
+    }
+
+    @Override
+    public boolean isAttivaEconomica() {
+        return attivaEconomica;
     }
 }

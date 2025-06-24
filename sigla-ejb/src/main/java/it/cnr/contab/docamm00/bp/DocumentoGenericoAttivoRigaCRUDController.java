@@ -26,6 +26,8 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 
+import java.util.Optional;
+
 /**
  * Riga del documento generico attivo
  */
@@ -144,7 +146,7 @@ public class DocumentoGenericoAttivoRigaCRUDController extends it.cnr.jada.util.
                     true, "Sdoppia",
                     "btn-sm btn-outline-success btn-title",
                     HttpActionContext.isFromBootstrap(context));
-            if (riga.isDocumentoStorno()) {
+            if (Optional.ofNullable(riga).map(Documento_generico_rigaBulk::isDocumentoStorno).orElse(Boolean.FALSE)) {
                 String descrizione = null;
                 if (riga.getDocumento_generico_riga_storno() != null) {
                     descrizione = String.format("Visualizza documento stornato n. %s/%s/%s/%s/%s",

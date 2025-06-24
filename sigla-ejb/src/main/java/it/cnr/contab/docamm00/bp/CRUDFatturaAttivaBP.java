@@ -49,6 +49,7 @@ import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
+import it.cnr.jada.util.action.FormController;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.StorageObject;
@@ -93,7 +94,6 @@ public abstract class CRUDFatturaAttivaBP
     private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
 
     private final CollapsableDetailCRUDController movimentiAnalitici = new AnaliticaDetailCRUDController(this);
-    private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(Fattura_attiva_riga_ecoBulk.class, this.getDettaglio());
 
     protected it.cnr.contab.docamm00.docs.bulk.Risultato_eliminazioneVBulk deleteManager = null;
     private boolean isDeleting = false;
@@ -107,7 +107,7 @@ public abstract class CRUDFatturaAttivaBP
     private boolean isGestoreBancaFatturaAttiva;
     private boolean contoEnte;
     private DocumentiCollegatiDocAmmService docCollService;
-    protected boolean attivaEconomicaParallela = false;
+    protected boolean attivaEconomica = false;
     private boolean attivaAnalitica = false;
     private boolean supervisore = false;
     private boolean esercizioChiuso = false;
@@ -428,7 +428,7 @@ public abstract class CRUDFatturaAttivaBP
         try {
             int solaris = Fattura_attivaBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.YEAR);
             int esercizioScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue();
-            attivaEconomicaParallela = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(context.getUserContext());
+            attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
             attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
             attivaInventaria= Utility.createConfigurazioneCnrComponentSession().isAttivoInventariaDocumenti(context.getUserContext());
             attivoCheckImpIntrastat=Utility.createConfigurazioneCnrComponentSession().isCheckImpIntrastatFattAttiva(context.getUserContext());
@@ -1464,7 +1464,7 @@ public abstract class CRUDFatturaAttivaBP
                 pages.put(i++, TAB_INTRASTAT);
             }
         }
-        if (attivaEconomicaParallela)
+        if (attivaEconomica)
             pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
         if (attivaAnalitica)
             pages.put(i++, CRUDScritturaAnaliticaBP.TAB_ANALITICA);
@@ -1539,19 +1539,16 @@ public abstract class CRUDFatturaAttivaBP
     }
 
     @Override
-    public CollapsableDetailCRUDController getChildrenAnaColl() {
-        return childrenAnaColl;
+    public FormController getControllerDetailEcoCoge() {
+        return getDettaglio();
     }
 
     @Override
-    public OggettoBulk getDetailEcoCogeModel() {
-        return getDettaglio().getModel();
+    public boolean isAttivaEconomica() {
+        return attivaEconomica;
     }
 
-    public boolean isAttivaEconomicaParallela() {
-        return attivaEconomicaParallela;
-    }
-
+    @Override
     public boolean isAttivaAnalitica() {
         return attivaAnalitica;
     }

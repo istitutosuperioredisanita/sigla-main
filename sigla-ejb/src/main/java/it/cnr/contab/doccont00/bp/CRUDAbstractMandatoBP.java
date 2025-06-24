@@ -68,7 +68,7 @@ public abstract class CRUDAbstractMandatoBP extends it.cnr.jada.util.action.Simp
 
 	private final CollapsableDetailCRUDController movimentiDare = new EconomicaDareDetailCRUDController(this);
 	private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
-	protected boolean attivaEconomicaParallela = false;
+	protected boolean attivaEconomica = false;
 
 	public CRUDAbstractMandatoBP() {}
 	public CRUDAbstractMandatoBP( String function ) 
@@ -79,7 +79,7 @@ public abstract class CRUDAbstractMandatoBP extends it.cnr.jada.util.action.Simp
 	@Override
 	protected void init(Config config, ActionContext actioncontext) throws BusinessProcessException {
 		try {
-			attivaEconomicaParallela = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(actioncontext.getUserContext());
+			attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(actioncontext.getUserContext());
 			setSupervisore(Utility.createUtenteComponentSession().isSupervisore(actioncontext.getUserContext()));
 		} catch (ComponentException|RemoteException e) {
 			throw handleException(e);
@@ -526,9 +526,9 @@ public abstract class CRUDAbstractMandatoBP extends it.cnr.jada.util.action.Simp
 			pages.put(i++, TAB_SOSPESI);
 			pages.put(i++, TAB_REVERSALI);
 		}
-		if (attivaEconomicaParallela) {
+		if (attivaEconomica)
 			pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
-		}
+
 		String[][] tabs = new String[i][3];
 		for (int j = 0; j < i; j++)
 			tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
@@ -542,5 +542,10 @@ public abstract class CRUDAbstractMandatoBP extends it.cnr.jada.util.action.Simp
 	@Override
 	public OggettoBulk getEconomicaModel() {
 		return getModel();
+	}
+
+	@Override
+	public boolean isAttivaEconomica() {
+		return attivaEconomica;
 	}
 }

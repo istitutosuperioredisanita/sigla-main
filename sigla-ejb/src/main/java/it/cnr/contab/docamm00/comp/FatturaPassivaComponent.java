@@ -5048,6 +5048,11 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
 
         try {
             fattura_passiva.setFattura_passiva_dettColl(new BulkList(findDettagli(userContext, fattura_passiva)));
+
+            Fattura_passiva_rigaHome rigaHome = (Fattura_passiva_rigaHome)getHome(userContext, Fattura_passiva_rigaBulk.class);
+            for (Fattura_passiva_rigaBulk rigaDoc:fattura_passiva.getFattura_passiva_dettColl())
+                rigaDoc.setRigheEconomica(rigaHome.findFatturaPassivaRigheEcoList(rigaDoc));
+
             fattura_passiva.setFattura_passiva_ordini(new BulkList(findFatturaOrdini(userContext, fattura_passiva)));
             if (fattura_passiva.getFattura_passiva_ordini() != null && !fattura_passiva.getFattura_passiva_ordini().isEmpty()) {
                 for (Iterator i = fattura_passiva.getFattura_passiva_ordini().iterator(); i.hasNext(); ) {

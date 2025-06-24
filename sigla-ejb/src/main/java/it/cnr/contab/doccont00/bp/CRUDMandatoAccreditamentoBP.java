@@ -136,7 +136,7 @@ public class CRUDMandatoAccreditamentoBP extends CRUDAbstractMandatoBP {
         toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.print");
         toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.printpdf");
         toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.contabile");
-        toolbar = IDocAmmEconomicaBP.addPartitario(toolbar, attivaEconomicaParallela, isEditing(), getModel());
+        toolbar = IDocAmmEconomicaBP.addPartitario(toolbar, attivaEconomica, isEditing(), getModel());
         return toolbar;
     }
 

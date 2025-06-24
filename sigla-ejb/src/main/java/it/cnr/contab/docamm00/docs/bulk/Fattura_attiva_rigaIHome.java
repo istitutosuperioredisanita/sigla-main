@@ -17,20 +17,23 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
+import org.springframework.data.util.Pair;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -107,7 +110,9 @@ public class Fattura_attiva_rigaIHome extends Fattura_attiva_rigaHome {
 		return sqlBuilder;
 	}
 
-	public ContoBulk getContoRicavoDefault(Fattura_attiva_rigaIBulk docRiga) {
-		return super.getContoRicavoDefault(docRiga);
+	public Pair<ContoBulk, List<IDocumentoDetailAnaCogeBulk>> getDatiEconomiciDefault(UserContext userContext, Fattura_attiva_rigaBulk docRiga) throws ComponentException {
+		ContoBulk aContoEconomico = this.getContoEconomicoDefault(docRiga);
+		List<IDocumentoDetailAnaCogeBulk> aContiAnalitici = this.getDatiAnaliticiDefault(userContext, docRiga, aContoEconomico, Fattura_attiva_riga_ecoIBulk.class);
+		return Pair.of(aContoEconomico, aContiAnalitici);
 	}
 }

@@ -17,15 +17,14 @@
 
 package it.cnr.contab.docamm00.bp;
 
-import it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_IBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaIBulk;
-import it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attivaBulk;
+import it.cnr.contab.coepcoan00.bp.DetailEcoCogeCRUDController;
+import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.docamm00.ejb.FatturaAttivaSingolaComponentSession;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.jsp.JSPUtils;
 
 import java.rmi.RemoteException;
@@ -57,6 +56,8 @@ public class CRUDFatturaAttivaIBP extends CRUDFatturaAttivaBP {
 				super.writeFormInput(jspwriter,s,s1,flag,s2,s3);
 		}
 	};
+
+	private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(Fattura_attiva_riga_ecoBulk.class, this.getDettaglio());
 
 	/**
 	 * CRUDFatturaPassivaIBP constructor comment.
@@ -139,7 +140,7 @@ public class CRUDFatturaAttivaIBP extends CRUDFatturaAttivaBP {
 		toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()),"CRUDToolbar.downloadXml");
 		toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()),"CRUDToolbar.downloadFatturaFirmata");
 		toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()),"CRUDToolbar.ristampa");
-		toolbar = IDocAmmEconomicaBP.addPartitario(toolbar, attivaEconomicaParallela, isEditing(), getModel());
+		toolbar = IDocAmmEconomicaBP.addPartitario(toolbar, attivaEconomica, isEditing(), getModel());
 		return toolbar;
 	}
 	/**
@@ -308,5 +309,10 @@ public class CRUDFatturaAttivaIBP extends CRUDFatturaAttivaBP {
 		}
 		Nota_di_credito_attivaBulk nota = h.generaNotaCreditoAutomatica(context.getUserContext(), fa, esercizio);
 		return nota;
+	}
+
+	@Override
+	public CollapsableDetailCRUDController getChildrenAnaColl() {
+		return childrenAnaColl;
 	}
 }

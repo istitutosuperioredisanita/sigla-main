@@ -17,6 +17,7 @@
 
 package it.cnr.contab.docamm00.bp;
 import java.io.IOException;
+import java.util.Optional;
 
 import javax.servlet.jsp.JspWriter;
 
@@ -122,7 +123,7 @@ public class DocumentoGenericoPassivoRigaCRUDController extends it.cnr.jada.util
 				"Contabilizza",
 				"btn-sm btn-outline-primary btn-title",
                 isFromBootstrap);
-		if (riga.isDocumentoStorno()) {
+		if (Optional.ofNullable(riga).map(Documento_generico_rigaBulk::isDocumentoStorno).orElse(Boolean.FALSE)) {
 			String descrizione = null;
 			if (riga.getDocumento_generico_riga_storno() != null) {
 				descrizione = String.format("Visualizza documento stornato n. %s/%s/%s/%s/%s",

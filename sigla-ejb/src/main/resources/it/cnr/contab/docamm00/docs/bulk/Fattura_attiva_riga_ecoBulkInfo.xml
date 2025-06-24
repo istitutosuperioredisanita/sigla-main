@@ -19,5 +19,43 @@
 <bulkInfo
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xmlns="https://contab.cnr.it/schema/SIGLA" 
-		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">	<fieldProperty
+		name="cd_voce_ana"
+		property="cd_voce_ana"
+		inputType="TEXT"
+		maxLength="45"
+		enabledOnEdit="true"
+		enabledOnSearch="true"
+		nullable="false"
+		label="Codice Voce Analitica" />
+	<fieldProperty
+			name="cd_centro_responsabilita"
+			property="cd_centro_responsabilita"
+			label="CdR"
+			inputType="TEXT" />
+	<fieldProperty
+			name="cd_linea_attivita"
+			property="cd_linea_attivita"
+			label="Codice GAE"
+			inputType="ROTEXT" />
+	<fieldProperty
+			name="importo"
+			property="importo"
+			formatName="it.cnr.contab.util.EuroFormat"
+			inputType="TEXT"
+			label="Importo"
+			enabledOnEdit="false"
+			enabledOnInsert="false"
+			enabledOnSearch="false"
+			enabledOnFreeSearch="false"/>
+
+	<formFieldProperty name="cd_voce_ana" />
+	<formFieldProperty name="cd_centro_responsabilita" />
+	<formFieldProperty name="cd_linea_attivita" />
+	<formFieldProperty name="importo" />
+
+	<columnFieldProperty name="cd_voce_ana" />
+	<columnFieldProperty name="cd_centro_responsabilita" />
+	<columnFieldProperty name="cd_linea_attivita" />
+	<columnFieldProperty name="importo" />
 </bulkInfo>

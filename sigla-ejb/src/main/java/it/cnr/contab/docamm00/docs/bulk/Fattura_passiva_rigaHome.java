@@ -18,25 +18,32 @@
 package it.cnr.contab.docamm00.docs.bulk;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.config00.bulk.CigBulk;
-import it.cnr.contab.config00.pdcep.bulk.Ass_ev_voceepBulk;
-import it.cnr.contab.config00.pdcep.bulk.Ass_ev_voceepHome;
-import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
+import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
+import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
+import it.cnr.contab.config00.latt.bulk.WorkpackageHome;
+import it.cnr.contab.config00.pdcep.bulk.*;
 import it.cnr.contab.docamm00.tabrif.bulk.AssCatgrpInventVoceEpBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.AssCatgrpInventVoceEpHome;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.doccont00.core.bulk.*;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.DetailedRuntimeException;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.rmi.RemoteException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Fattura_passiva_rigaHome extends BulkHome {
@@ -280,7 +287,7 @@ public class Fattura_passiva_rigaHome extends BulkHome {
         return home.fetchAll(sql);
     }
 
-    protected ContoBulk getContoCostoDefault(Fattura_passiva_rigaBulk docRiga) {
+    protected ContoBulk getContoEconomicoDefault(Fattura_passiva_rigaBulk docRiga) throws ComponentException {
         try {
             Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
             //verifico se sulla riga del docamm ci sia un bene inventariabile
@@ -305,11 +312,82 @@ public class Fattura_passiva_rigaHome extends BulkHome {
                                 .stream().map(Ass_ev_voceepBulk::getVoce_ep)
                                 .findAny().orElse(null);
                     }
+                } else {
+                    Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
+                    return configHome.getContoDocumentoNonLiquidabile(docRiga);
                 }
             }
             return null;
         } catch (PersistencyException e) {
             throw new DetailedRuntimeException(e);
+        }
+    }
+
+    protected List<IDocumentoDetailAnaCogeBulk> getDatiAnaliticiDefault(UserContext userContext, Fattura_passiva_rigaBulk docRiga, ContoBulk aContoEconomico, Class rigaEcoClass) throws ComponentException {
+        try {
+            List<Fattura_passiva_riga_ecoBulk> result = new ArrayList<>();
+
+            if (Optional.ofNullable(aContoEconomico).isPresent()) {
+                List<Voce_analiticaBulk> voceAnaliticaList = ((Voce_analiticaHome) getHomeCache().getHome(Voce_analiticaBulk.class)).findVoceAnaliticaList(aContoEconomico);
+                if (voceAnaliticaList.isEmpty())
+                    return new ArrayList<>();
+                Voce_analiticaBulk voceAnaliticaDef = voceAnaliticaList.stream()
+                        .filter(Voce_analiticaBulk::getFl_default).findAny()
+                        .orElse(voceAnaliticaList.stream().findAny().orElse(null));
+
+                if (!Optional.ofNullable(docRiga.getScadenzaDocumentoContabile()).isPresent()) {
+                    Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
+                    WorkpackageBulk gaeDefault = configHome.getGaeDocumentoNonLiquidabile(userContext, docRiga);
+
+                    Fattura_passiva_riga_ecoBulk myRigaEco = (Fattura_passiva_riga_ecoBulk)rigaEcoClass.newInstance();
+                    myRigaEco.setProgressivo_riga_eco((long) (docRiga.getChildrenAna().size() + 1));
+                    myRigaEco.setVoce_analitica(voceAnaliticaDef);
+                    myRigaEco.setLinea_attivita(gaeDefault);
+                    myRigaEco.setFattura_passiva_riga(docRiga);
+                    myRigaEco.setImporto(docRiga.getImportoCostoEco());
+                    myRigaEco.setToBeCreated();
+                    result.add(myRigaEco);
+                } else if (Optional.ofNullable(docRiga.getScadenzaDocumentoContabile()).filter(Obbligazione_scadenzarioBulk.class::isInstance).isPresent()) {
+                    //carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
+                    Obbligazione_scadenzarioHome obbligazioneScadenzarioHome = (Obbligazione_scadenzarioHome) getHomeCache().getHome(Obbligazione_scadenzarioBulk.class);
+                    List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, (Obbligazione_scadenzarioBulk) docRiga.getScadenzaDocumentoContabile());
+                    BigDecimal totScad = scadVoceBulks.stream().map(Obbligazione_scad_voceBulk::getIm_voce).reduce(BigDecimal.ZERO, BigDecimal::add);
+                    for (Obbligazione_scad_voceBulk scadVoce : scadVoceBulks) {
+                        Fattura_passiva_riga_ecoBulk myRigaEco = (Fattura_passiva_riga_ecoBulk)rigaEcoClass.newInstance();
+                        myRigaEco.setProgressivo_riga_eco((long) (docRiga.getChildrenAna().size() + 1));
+                        myRigaEco.setVoce_analitica(voceAnaliticaDef);
+                        myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
+                        myRigaEco.setFattura_passiva_riga(docRiga);
+                        myRigaEco.setImporto(scadVoce.getIm_voce().multiply(docRiga.getImportoCostoEco()).divide(totScad, 2, RoundingMode.HALF_UP));
+                        myRigaEco.setToBeCreated();
+                        result.add(myRigaEco);
+                    }
+                    BigDecimal totRipartito = result.stream().map(Fattura_passiva_riga_ecoBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
+                    BigDecimal diff = totRipartito.subtract(docRiga.getImportoCostoEco());
+
+                    if (diff.compareTo(BigDecimal.ZERO)>0) {
+                        for (Fattura_passiva_riga_ecoBulk rigaEco : result) {
+                            if (rigaEco.getImporto().compareTo(diff) >= 0) {
+                                rigaEco.setImporto(rigaEco.getImporto().subtract(diff));
+                                break;
+                            } else {
+                                diff = diff.subtract(rigaEco.getImporto());
+                                rigaEco.setImporto(BigDecimal.ZERO);
+                            }
+                        }
+                    } else if (diff.compareTo(BigDecimal.ZERO)<0) {
+                        for (Fattura_passiva_riga_ecoBulk rigaEco : result) {
+                            rigaEco.setImporto(rigaEco.getImporto().add(diff));
+                            break;
+                        }
+                    }
+                }
+            }
+            return result.stream()
+                    .filter(el->el.getImporto().compareTo(BigDecimal.ZERO)!=0)
+                    .collect(Collectors.toList());
+        } catch (PersistencyException | InstantiationException | IllegalAccessException ex) {
+            throw new ComponentException(ex);
         }
     }
 }

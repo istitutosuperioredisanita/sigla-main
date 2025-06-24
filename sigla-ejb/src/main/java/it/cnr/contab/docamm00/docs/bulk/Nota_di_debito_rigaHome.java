@@ -17,8 +17,17 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.sql.SQLBuilder;
+import org.springframework.data.util.Pair;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Insert the type's description here.
@@ -91,7 +100,10 @@ public class Nota_di_debito_rigaHome extends Fattura_passiva_rigaHome {
 		return sql;
 	}
 
-	public ContoBulk getContoCostoDefault(Nota_di_debito_rigaBulk docRiga) {
-		return super.getContoCostoDefault(docRiga);
+	public Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> getDatiEconomiciDefault(UserContext userContext, Nota_di_debito_rigaBulk docRiga) throws ComponentException {
+		ContoBulk aContoEconomico = this.getContoEconomicoDefault(docRiga);
+		List<IDocumentoDetailAnaCogeBulk> aContiAnalitici = this.getDatiAnaliticiDefault(userContext, docRiga, aContoEconomico, Nota_di_debito_riga_ecoBulk.class);
+		return Pair.of(aContoEconomico, aContiAnalitici);
 	}
+
 }

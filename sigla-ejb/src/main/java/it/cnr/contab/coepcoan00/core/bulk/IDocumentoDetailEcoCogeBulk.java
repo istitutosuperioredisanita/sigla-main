@@ -28,6 +28,8 @@ import java.util.ArrayList;
 public interface IDocumentoDetailEcoCogeBulk  {
     it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk getScadenzaDocumentoContabile();
 
+    Integer getEsercizio();
+
     IDocumentoCogeBulk getFather();
 
     default ContoBulk getVoce_ep() {

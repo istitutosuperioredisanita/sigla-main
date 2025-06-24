@@ -47,5 +47,7 @@ public interface IDocAmmAnaliticaBP extends IDocAmmEconomicaBP {
 
     CollapsableDetailCRUDController getChildrenAnaColl();
 
-    OggettoBulk getDetailEcoCogeModel();
+    FormController getControllerDetailEcoCoge();
+
+    boolean isAttivaAnalitica();
 }

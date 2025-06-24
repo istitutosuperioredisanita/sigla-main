@@ -17,16 +17,15 @@
 
 package it.cnr.contab.docamm00.bp;
 
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaIBulk;
-import it.cnr.contab.docamm00.docs.bulk.Nota_di_creditoBulk;
-import it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attivaBulk;
-import it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attiva_rigaBulk;
+import it.cnr.contab.coepcoan00.bp.DetailEcoCogeCRUDController;
+import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.ObjectReplacer;
+import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 
 /**
@@ -56,6 +55,8 @@ public class CRUDNotaDiCreditoAttivaBP
                     ndc.getProtocollo_iva_generale() == null;
         }
     };
+
+    private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(Nota_di_credito_attiva_riga_ecoBulk.class, this.getDettaglio());
 
     private final ObbligazioniCRUDController obbligazioniController = new ObbligazioniCRUDController(
             "Obbligazioni", Obbligazione_scadenzarioBulk.class, "obbligazioniHash", this);
@@ -145,7 +146,7 @@ public class CRUDNotaDiCreditoAttivaBP
         toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.downloadXml");
         toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.downloadFatturaFirmata");
         toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.ristampa");
-        toolbar = IDocAmmEconomicaBP.addPartitario(toolbar, attivaEconomicaParallela, isEditing(), getModel());
+        toolbar = IDocAmmEconomicaBP.addPartitario(toolbar, attivaEconomica, isEditing(), getModel());
         return toolbar;
     }
 
@@ -344,5 +345,10 @@ public class CRUDNotaDiCreditoAttivaBP
 
         super.writeToolbar(writer);
         //writeFPInventarioToolbar(writer);
+    }
+
+    @Override
+    public CollapsableDetailCRUDController getChildrenAnaColl() {
+        return childrenAnaColl;
     }
 }

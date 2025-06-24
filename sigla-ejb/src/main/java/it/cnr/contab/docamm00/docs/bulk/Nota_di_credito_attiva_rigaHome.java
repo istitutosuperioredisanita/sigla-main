@@ -17,8 +17,18 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.sql.SQLBuilder;
+import org.springframework.data.util.Pair;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Insert the type's description here.
@@ -90,12 +100,56 @@ public class Nota_di_credito_attiva_rigaHome extends Fattura_attiva_rigaHome {
 		return sql;
 	}
 
-	public ContoBulk getContoRicavoDefault(Nota_di_credito_attiva_rigaBulk docRiga) {
+	public Pair<ContoBulk, List<IDocumentoDetailAnaCogeBulk>> getDatiEconomiciDefault(UserContext userContext, Nota_di_credito_attiva_rigaBulk docRiga) throws ComponentException {
 		if (docRiga.getRiga_fattura_associata()!=null && docRiga.getRiga_fattura_associata().getPg_fattura_attiva()!=null) {
 			Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
+			Fattura_attivaHome fatattHome = (Fattura_attivaHome)getHomeCache().getHome(Fattura_attivaBulk.class);
+			Fattura_attiva_rigaIHome fatattRigaHome = (Fattura_attiva_rigaIHome)getHomeCache().getHome(Fattura_attiva_rigaIBulk.class);
 			Fattura_attiva_rigaBulk rigaCollegata = (Fattura_attiva_rigaBulk)fatpasHome.loadIfNeededObject(docRiga.getRiga_fattura_associata());
-			return super.getContoRicavoDefault(rigaCollegata);
+
+			Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> datiEcoFattura = fatattRigaHome.getDatiEconomiciDefault(userContext, rigaCollegata);
+			BigDecimal totaleImportiAnalitici = datiEcoFattura.getSecond().stream().map(IDocumentoDetailAnaCogeBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+			ContoBulk aContoEconomico = datiEcoFattura.getFirst();
+			List<Fattura_attiva_riga_ecoBulk> aContiAnalitici = new ArrayList<>();
+
+			for (IDocumentoDetailAnaCogeBulk rigaEco : datiEcoFattura.getSecond()) {
+				Nota_di_credito_attiva_riga_ecoBulk myRigaEco = new Nota_di_credito_attiva_riga_ecoBulk();
+				myRigaEco.setProgressivo_riga_eco((long) aContiAnalitici.size() + 1);
+				myRigaEco.setVoce_analitica(rigaEco.getVoce_analitica());
+				myRigaEco.setLinea_attivita(rigaEco.getLinea_attivita());
+				myRigaEco.setFattura_attiva_riga(docRiga);
+				myRigaEco.setImporto(rigaEco.getImporto().multiply(docRiga.getImportoCostoEco()).divide(totaleImportiAnalitici,2, RoundingMode.HALF_UP));
+				myRigaEco.setToBeCreated();
+				aContiAnalitici.add(myRigaEco);
+			}
+
+			BigDecimal totRipartito = aContiAnalitici.stream().map(Fattura_attiva_riga_ecoBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
+			BigDecimal diff = totRipartito.subtract(docRiga.getImportoCostoEco());
+
+			if (diff.compareTo(BigDecimal.ZERO)>0) {
+				for (Fattura_attiva_riga_ecoBulk rigaEco : aContiAnalitici) {
+					if (rigaEco.getImporto().compareTo(diff) >= 0) {
+						rigaEco.setImporto(rigaEco.getImporto().subtract(diff));
+						break;
+					} else {
+						diff = diff.subtract(rigaEco.getImporto());
+						rigaEco.setImporto(BigDecimal.ZERO);
+					}
+				}
+			} else if (diff.compareTo(BigDecimal.ZERO)<0) {
+				for (Fattura_attiva_riga_ecoBulk rigaEco : aContiAnalitici) {
+					rigaEco.setImporto(rigaEco.getImporto().add(diff));
+					break;
+				}
+			}
+			return Pair.of(aContoEconomico,
+					aContiAnalitici.stream().filter(el->el.getImporto().compareTo(BigDecimal.ZERO)!=0)
+							.collect(Collectors.toList()));
+		} else {
+			ContoBulk aContoEconomico = this.getContoEconomicoDefault(docRiga);
+			List<IDocumentoDetailAnaCogeBulk> aContiAnalitici = this.getDatiAnaliticiDefault(userContext, docRiga, aContoEconomico, Nota_di_credito_attiva_riga_ecoBulk.class);
+			return Pair.of(aContoEconomico, aContiAnalitici);
 		}
-		return null;
 	}
 }

@@ -34,6 +34,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.CRUDAction;
 import it.cnr.jada.util.action.FormBP;
+import it.cnr.jada.util.action.OptionBP;
 
 import java.rmi.RemoteException;
 import java.util.Collections;
@@ -48,39 +49,52 @@ public abstract class EconomicaAction extends CRUDAction {
                 .filter(IDocAmmEconomicaBP.class::isInstance)
                 .map(IDocAmmEconomicaBP.class::cast)
                 .orElseThrow(() -> new BusinessProcessException("Business process non compatibile!"));
-        final IDocumentoCogeBulk documentoCogeBulk = Optional.ofNullable(bp.getEconomicaModel())
-                .filter(IDocumentoCogeBulk.class::isInstance)
-                .map(IDocumentoCogeBulk.class::cast)
-                .orElseThrow(() -> new BusinessProcessException("Modello di business non compatibile!"));
-        try {
-            if (Optional.ofNullable(bp.getEconomicaModel()).filter(OggettoBulk::isToBeCreated).isPresent())
-                throw new ApplicationException("Il documento risulta non salvato! Proposta scrittura prima nota non possibile.");
 
-            if (Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(actionContext.getUserContext())) {
-                ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
-                        actionContext.getUserContext(),
-                        documentoCogeBulk);
+        if (bp.isDirty())
+            return openContinuePrompt(actionContext, "doConfirmGeneraScritturaEconomica");
+        return doConfirmGeneraScritturaEconomica(actionContext, OptionBP.YES_BUTTON);
+    }
 
-                documentoCogeBulk.setScrittura_partita_doppia(result.getScritturaPartitaDoppiaBulk());
-                documentoCogeBulk.setScrittura_analitica(result.getScritturaAnaliticaBulk());
-            } else {
-                documentoCogeBulk.setScrittura_partita_doppia(Utility.createProposeScritturaComponentSession().proposeScritturaPartitaDoppia(
-                        actionContext.getUserContext(),
-                        documentoCogeBulk)
-                );
+    public Forward doConfirmGeneraScritturaEconomica(ActionContext actionContext, int i) throws BusinessProcessException {
+        if (i == OptionBP.YES_BUTTON) {
+            IDocAmmEconomicaBP bp = Optional.ofNullable(actionContext.getBusinessProcess())
+                    .filter(IDocAmmEconomicaBP.class::isInstance)
+                    .map(IDocAmmEconomicaBP.class::cast)
+                    .orElseThrow(() -> new BusinessProcessException("Business process non compatibile!"));
+            final IDocumentoCogeBulk documentoCogeBulk = Optional.ofNullable(bp.getEconomicaModel())
+                    .filter(IDocumentoCogeBulk.class::isInstance)
+                    .map(IDocumentoCogeBulk.class::cast)
+                    .orElseThrow(() -> new BusinessProcessException("Modello di business non compatibile!"));
+            try {
+                if (Optional.ofNullable(bp.getEconomicaModel()).filter(OggettoBulk::isToBeCreated).isPresent())
+                    throw new ApplicationException("Il documento risulta non salvato! Proposta scrittura prima nota non possibile.");
+
+                if (Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(actionContext.getUserContext())) {
+                    ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+                            actionContext.getUserContext(),
+                            documentoCogeBulk);
+
+                    documentoCogeBulk.setScrittura_partita_doppia(result.getScritturaPartitaDoppiaBulk());
+                    documentoCogeBulk.setScrittura_analitica(result.getScritturaAnaliticaBulk());
+                } else {
+                    documentoCogeBulk.setScrittura_partita_doppia(Utility.createProposeScritturaComponentSession().proposeScritturaPartitaDoppia(
+                            actionContext.getUserContext(),
+                            documentoCogeBulk)
+                    );
+                }
+                Optional.of(documentoCogeBulk)
+                        .filter(OggettoBulk.class::isInstance)
+                        .map(OggettoBulk.class::cast)
+                        .ifPresent(OggettoBulk::setToBeUpdated);
+                bp.getMovimentiAvere().reset(actionContext);
+                bp.getMovimentiDare().reset(actionContext);
+                bp.setMessage(FormBP.INFO_MESSAGE, "Scrittura di economica generata correttamente.");
+                bp.setDirty(true);
+            } catch (ScritturaPartitaDoppiaNotRequiredException | ScritturaPartitaDoppiaNotEnabledException e) {
+                bp.setMessage(FormBP.INFO_MESSAGE, e.getMessage());
+            } catch (ComponentException | RemoteException e) {
+                return handleException(actionContext, e);
             }
-            Optional.of(documentoCogeBulk)
-                    .filter(OggettoBulk.class::isInstance)
-                    .map(OggettoBulk.class::cast)
-                    .ifPresent(OggettoBulk::setToBeUpdated);
-            bp.getMovimentiAvere().reset(actionContext);
-            bp.getMovimentiDare().reset(actionContext);
-            bp.setMessage(FormBP.INFO_MESSAGE, "Scrittura di economica generata correttamente.");
-            bp.setDirty(true);
-        } catch (ScritturaPartitaDoppiaNotRequiredException | ScritturaPartitaDoppiaNotEnabledException e) {
-            bp.setMessage(FormBP.INFO_MESSAGE, e.getMessage());
-        } catch (ComponentException | RemoteException e) {
-            return handleException(actionContext, e);
         }
         return actionContext.findDefaultForward();
     }
