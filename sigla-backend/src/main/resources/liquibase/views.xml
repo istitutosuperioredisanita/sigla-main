@@ -3108,4 +3108,7 @@
     <changeSet author="raffaele.pagano" runOnChange="true" id="create-view-V_TERZO_PER_COMPENSO_H2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_TERZO_PER_COMPENSO_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="ciro.salvio" runOnChange="true" id="create-view-V_CONFRONTA_COSTI_COGE_COFI">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_CONFRONTA_COSTI_COGE_COFI.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
 </databaseChangeLog>
