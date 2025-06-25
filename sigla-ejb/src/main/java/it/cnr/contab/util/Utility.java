@@ -34,6 +34,7 @@ import it.cnr.contab.docamm00.ejb.AutoFatturaComponentSession;
 import it.cnr.contab.docamm00.ejb.DocumentoGenericoComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaAttivaSingolaComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
+import it.cnr.contab.doccont00.comp.AsyncConsSostitutivaComponentSession;
 import it.cnr.contab.doccont00.comp.AsyncPluriennaliComponentSession;
 import it.cnr.contab.doccont00.ejb.*;
 import it.cnr.contab.gestiva00.ejb.LiquidIvaInterfComponentSession;
@@ -43,6 +44,7 @@ import it.cnr.contab.incarichi00.ejb.IncarichiRepertorioComponentSession;
 import it.cnr.contab.incarichi00.ejb.RepertorioLimitiComponentSession;
 import it.cnr.contab.inventario00.ejb.*;
 import it.cnr.contab.ordmag.ejb.NumeratoriOrdMagComponentSession;
+import it.cnr.contab.ordmag.magazzino.ejb.ChiusuraAnnoComponentSession;
 import it.cnr.contab.ordmag.magazzino.ejb.MovimentiMagComponentSession;
 import it.cnr.contab.ordmag.magazzino.ejb.TransitoBeniOrdiniComponentSession;
 import it.cnr.contab.ordmag.ordini.ejb.OrdineAcqComponentSession;
@@ -641,6 +643,12 @@ public final class Utility {
 	}
 	public static V_InventarioBeneDetComponentSession createV_InventarioBeneDetComponentSession() throws javax.ejb.EJBException{
 		return (V_InventarioBeneDetComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_V_InventarioBeneDetComponentSession", V_InventarioBeneDetComponentSession.class);
+	}
+	public static ChiusuraAnnoComponentSession createChiusuraAnnoComponentSession() throws javax.ejb.EJBException{
+		return (ChiusuraAnnoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRORDMAG00_EJB_ChiusuraAnnoComponentSession", ChiusuraAnnoComponentSession.class);
+	}
+	public static AsyncConsSostitutivaComponentSession createAsyncConsSostitutivaComponentSession() throws javax.ejb.EJBException{
+		return (AsyncConsSostitutivaComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOEPCOAN00_EJB_ConsSostitutivaComponentSession", AsyncConsSostitutivaComponentSession.class);
 	}
 
 }
