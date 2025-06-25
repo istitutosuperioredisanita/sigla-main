@@ -637,47 +637,68 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 			setIm_netto_pecepiente(getIm_totale_missione());
 		}
 	}
+
 	/**
-	 * Il metodo calcola tutti gli importi necessari per il consuntivo spese della missione
+	 * Calcola i totali delle spese della missione, distinguendo tra anticipate/non anticipate
+	 * e tracciate/non tracciate.
 	 */
-
-	public void calcolaConsuntiviSpese() 
+	public void calcolaConsuntiviSpese()
 	{
-		setIm_spese(new BigDecimal(0));				// Spese non anticipate
+		// Inizializza tutti i totali a zero.
+		setIm_spese(new BigDecimal(0));
 		setIm_spese_anticipate(new BigDecimal(0));
+		setIm_spese_tracc(new BigDecimal(0));
+		setIm_spese_no_tracc(new BigDecimal(0));
 
-		if(getSpeseMissioneColl() == null)
+		// Esci se non ci sono spese di missione.
+		if(getSpeseMissioneColl() == null) {
 			return;
+		}
 
+		// Itera su ogni voce di spesa di dettaglio.
 		for ( Iterator i = getSpeseMissioneColl().iterator(); i.hasNext(); )
 		{
 			Missione_dettaglioBulk spesa = (Missione_dettaglioBulk)i.next();
 
+			// Processa solo spese con importo valido.
 			if(spesa.getIm_totale_spesa() != null)
 			{
+				// Gestione spese anticipate.
 				if(spesa.isSpesaAnticipata())
 				{
-					//	L'importo della spesa anticipata e' uguale al campo im_spesa_euro questo perche'
-					//	nel caso di spesa anticipata di trasporto non deve includere la maggiorazione
-					setIm_spese_anticipate(getIm_spese_anticipate().add(spesa.getIm_spesa_euro()));
-					setIm_spese_anticipate(getIm_spese_anticipate().setScale(2, BigDecimal.ROUND_HALF_UP));
+					// Aggiungi importo in euro alle spese anticipate.
+					setIm_spese_anticipate(getIm_spese_anticipate().add(spesa.getIm_spesa_euro()).setScale(2, BigDecimal.ROUND_HALF_UP));
 
+					// La maggiorazione di trasporto anticipato va nelle spese non anticipate.
 					if(spesa.isTrasporto())
 					{
-						// 	La maggiorazione di una spesa anticipata deve essere
-						//	sommata all'im_spesa (cioe' all'importo non anticipato)
-						setIm_spese(getIm_spese().add(spesa.getIm_maggiorazione_euro()));
-						setIm_spese(getIm_spese().setScale(2, BigDecimal.ROUND_HALF_UP));						
-					}	
-				}	
+						setIm_spese(getIm_spese().add(spesa.getIm_maggiorazione_euro()).setScale(2, BigDecimal.ROUND_HALF_UP));
+					}
+
+					// Categorizza l'importo anticipato come tracciato/non tracciato.
+					if(spesa.isSpesaTracciata()) {
+						setIm_spese_tracc(getIm_spese_tracc().add(spesa.getIm_spesa_euro()).setScale(2, BigDecimal.ROUND_HALF_UP));
+					} else {
+						setIm_spese_no_tracc(getIm_spese_no_tracc().add(spesa.getIm_spesa_euro()).setScale(2, BigDecimal.ROUND_HALF_UP));
+					}
+				}
+				// Gestione spese non anticipate.
 				else
 				{
-					setIm_spese(getIm_spese().add(spesa.getIm_totale_spesa()));
-					setIm_spese(getIm_spese().setScale(2, BigDecimal.ROUND_HALF_UP));
-				}	
-			}	
-		}	
+					// Aggiungi importo totale alle spese non anticipate.
+					setIm_spese(getIm_spese().add(spesa.getIm_totale_spesa()).setScale(2, BigDecimal.ROUND_HALF_UP));
+
+					// Categorizza l'importo non anticipato come tracciato/non tracciato.
+					if(spesa.isSpesaTracciata()) {
+						setIm_spese_tracc(getIm_spese_tracc().add(spesa.getIm_totale_spesa()).setScale(2, BigDecimal.ROUND_HALF_UP));
+					} else {
+						setIm_spese_no_tracc(getIm_spese_no_tracc().add(spesa.getIm_totale_spesa()).setScale(2, BigDecimal.ROUND_HALF_UP));
+					}
+				}
+			}
+		}
 	}
+
 	/**
 	 * Il  metodo calcola tutti gli importi necessari per il consuntivo spese della missione
 	 * di un determinato giorno
