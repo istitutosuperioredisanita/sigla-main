@@ -6222,6 +6222,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_schedulazione_check_congr_dati.xml"/>
     <!-- Autore : DAVIDE MIRRA - Aggiunta colonna FL_SPESA_TRACCIATA su MISSIONE_DETTAGLIO-->
     <include file="bootstrap/add_column_fl_spesa_tracc_missione_dettaglio.xml"/>
-    <!-- Autore : DAVIDE MIRRA - Aggiunte colonne im_spese_tracc e im_spese_no_tracc su MISSIONE_DETTAGLIO-->
-    <include file="bootstrap/add_columns_imp_spesa_tracc_NO_tracc.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Aggiunte colonne im_spese_tracc e im_spese_no_tracc su MISSIONE-->
+    <include file="bootstrap/add_columns_im_spesa_tracc_NO_tracc.xml"/>
 </databaseChangeLog>
