@@ -153,6 +153,17 @@ public class CRUDBatchControlBP extends SimpleCRUDBP
 
                     consSostitutivaComponent.asyncConsSostitutiva(actioncontext.getUserContext(), esercizio.intValue());
                 }
+                else if ("CONSSOTITUIVAJAVA".equals(batch_controlbulk.getProcedura().getCd_procedura())) {
+                    BigDecimal esercizio = batch_controlbulk.getParametri().stream()
+                            .filter(el -> el.getNome_parametro().equals("AES"))
+                            .findAny()
+                            .map(Batch_procedura_parametroBulk::getValore_number)
+                            .orElseThrow(() -> new ValidationException("Valorizzare il parametro Esercizio!"));
+
+                    AsyncConsSostitutivaComponentSession consSostitutivaComponent = Utility.createAsyncConsSostitutivaComponentSession();
+
+                    consSostitutivaComponent.asyncConsSostitutiva(actioncontext.getUserContext(), esercizio.intValue());
+                }
             }
 
             super.save(actioncontext);

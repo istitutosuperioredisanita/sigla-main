@@ -36,6 +36,10 @@ public class Batch_log_tstaBulk extends Batch_log_tstaBase
     public static String  LOG_TIPO_AMMORT_BENE = "INVENT_AMMORBENE";
     public static String  LOG_TIPO_CONS_SOSTITUIVA = "CONS_SOSTIT00";
 
+    public static String STATO_JOB_RUNNING = "R";
+    public static String STATO_JOB_COMPLETE = "C";
+    public static String STATO_JOB_ERROR = "E";
+
     public Batch_log_tstaBulk()
     {
     }
