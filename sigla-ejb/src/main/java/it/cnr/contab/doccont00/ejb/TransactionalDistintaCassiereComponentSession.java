@@ -29,7 +29,6 @@ import it.cnr.contab.doccont00.intcass.giornaliera.MovimentoContoEvidenzaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
-import it.siopeplus.Mandato;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -750,6 +749,24 @@ public class TransactionalDistintaCassiereComponentSession extends it.cnr.jada.e
         try {
             return (it.cnr.si.spring.storage.StorageObject)invoke("generaFlussoSiopeplus", new Object[]{
                     param0, param1});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public List<Distinta_cassiereBulk> findDistinteToConservazione(UserContext userContext, Integer esercizio, Unita_organizzativaBulk unitaOrganizzativaBulk,Distinta_cassiereBulk.Tesoreria tesoreria) throws ComponentException, RemoteException {
+        try {
+            return (List<Distinta_cassiereBulk> )invoke("findDistinteToConservazione", new Object[]{
+                    userContext, esercizio,unitaOrganizzativaBulk,tesoreria});
         } catch (java.rmi.RemoteException e) {
             throw e;
         } catch (java.lang.reflect.InvocationTargetException e) {

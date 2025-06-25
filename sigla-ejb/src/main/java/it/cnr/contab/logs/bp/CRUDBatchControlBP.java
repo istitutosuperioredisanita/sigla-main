@@ -19,8 +19,8 @@ package it.cnr.contab.logs.bp;
 
 import it.cnr.contab.coepcoan00.ejb.AsyncScritturaPartitaDoppiaChiusuraComponentSession;
 import it.cnr.contab.coepcoan00.ejb.AsyncScritturaPartitaDoppiaFromDocumentoComponentSession;
-import it.cnr.contab.coepcoan00.ejb.ScritturaPartitaDoppiaChiusuraComponentSession;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
+import it.cnr.contab.doccont00.comp.AsyncConsSostitutivaComponentSession;
 import it.cnr.contab.doccont00.comp.AsyncPluriennaliComponentSession;
 import it.cnr.contab.inventario00.ejb.AsyncAmmortamentoBeneComponentSession;
 import it.cnr.contab.logs.bulk.Batch_controlBulk;
@@ -153,6 +153,17 @@ public class CRUDBatchControlBP extends SimpleCRUDBP
                     AsyncAmmortamentoBeneComponentSession obbComponent = Utility.createAsyncAmmortamentoBeneComponentSession();
 
                     obbComponent.asyncAmmortamentoBeni(actioncontext.getUserContext(), esercizio.intValue(),"",false,true,true);
+                }
+                else if ("CONSSOTITUIVAJAVA".equals(batch_controlbulk.getProcedura().getCd_procedura())) {
+                    BigDecimal esercizio = batch_controlbulk.getParametri().stream()
+                            .filter(el -> el.getNome_parametro().equals("AES"))
+                            .findAny()
+                            .map(Batch_procedura_parametroBulk::getValore_number)
+                            .orElseThrow(() -> new ValidationException("Valorizzare il parametro Esercizio!"));
+
+                    AsyncConsSostitutivaComponentSession consSostitutivaComponent = Utility.createAsyncConsSostitutivaComponentSession();
+
+                    consSostitutivaComponent.asyncConsSostitutiva(actioncontext.getUserContext(), esercizio.intValue());
                 }
             }
 
