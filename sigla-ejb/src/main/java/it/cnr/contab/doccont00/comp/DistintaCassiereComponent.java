@@ -6740,6 +6740,7 @@ public class DistintaCassiereComponent extends
             SQLBuilder sql = distintaCassiereHome.createSQLBuilder();
             sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
             sql.addClause(FindClause.AND, "fl_flusso", SQLBuilder.EQUALS, Boolean.TRUE);
+            sql.addClause(FindClause.AND, "dt_invio", SQLBuilder.ISNOTNULL,null);
             if ( Optional.ofNullable(tesoreria).map(Distinta_cassiereBulk.Tesoreria::value).isPresent())
                 sql.addClause(FindClause.AND, "cd_tesoreria", SQLBuilder.EQUALS, tesoreria.value());
             if ( Optional.ofNullable(unitaOrganizzativaBulk).map(Unita_organizzativaBulk::getCd_unita_organizzativa).isPresent())
