@@ -110,11 +110,12 @@ public class ConsControlliPCCBP extends SelezionatoreListaBP implements SearchPr
     @Override
     public Button[] createToolbar() {
         final Properties properties = it.cnr.jada.util.Config.getHandler().getProperties(getClass());
-        return Stream.concat(Arrays.asList(super.createToolbar()).stream(),
-                Arrays.asList(
+        return Stream.concat(Arrays.stream(super.createToolbar()),
+                Stream.of(
                         new Button(properties, "CRUDToolbar.estrazionecsv"),
-                        new Button(properties, "CRUDToolbar.allegaticsv")
-                ).stream()).toArray(Button[]::new);
+                        new Button(properties, "CRUDToolbar.allegaticsv"),
+                        new Button(properties, "CRUDToolbar.aprifattura")
+                )).toArray(Button[]::new);
     }
 
     @Override

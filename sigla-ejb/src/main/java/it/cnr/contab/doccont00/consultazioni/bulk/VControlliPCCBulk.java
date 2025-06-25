@@ -109,6 +109,11 @@ public class VControlliPCCBulk extends OggettoBulk implements Persistent {
 	//  TI_ISTITUZ_COMMERC VARCHAR(30)
 	private java.lang.String tiIstituzCommerc;
 
+	//  CD_TERZO NUMBER(38)
+	private java.lang.Integer cdTerzo;
+	//  DS_TERZO VARCHAR(200)
+	private java.lang.String dsTerzo;
+
 	public static final java.util.Dictionary<String, String> tiStatoDocumentoKeys = DocumentoEleTestataBulk.tiStatoDocumentoKeys;
 	public static final java.util.Dictionary<String, String> tiTipoDocumentoKeys = DocumentoEleTestataBulk.tiTipoDocumentoKeys;
 	public static final java.util.Dictionary<String, String> tiCausaleKeys = Fattura_passivaBulk.CAUSALE;
@@ -479,5 +484,19 @@ public class VControlliPCCBulk extends OggettoBulk implements Persistent {
 		this.daPagare = daPagare;
 	}
 
+	public Integer getCdTerzo() {
+		return cdTerzo;
+	}
 
+	public void setCdTerzo(Integer cdTerzo) {
+		this.cdTerzo = cdTerzo;
+	}
+
+	public String getDsTerzo() {
+		return dsTerzo;
+	}
+
+	public void setDsTerzo(String dsTerzo) {
+		this.dsTerzo = dsTerzo;
+	}
 }

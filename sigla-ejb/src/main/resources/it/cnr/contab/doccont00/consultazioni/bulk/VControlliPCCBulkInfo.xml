@@ -244,6 +244,22 @@
 		keysProperty="tiIstituzCommercKeys"
 		enabledOnEdit="false"
 		label="Istituzione/Commerciale" />
+	<fieldProperty
+		name="cdTerzo"
+		property="cdTerzo"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		label="Codice Terzo" />
+	<fieldProperty
+		name="dsTerzo"
+		property="dsTerzo"
+		inputType="TEXT"
+		inputSize="200"
+		maxLength="200"
+		enabledOnEdit="false"
+		label="Descrizione Terzo" />
 
 
 	<formFieldProperty
@@ -316,6 +332,10 @@
 	<findFieldProperty
 		name="codiceDestinatario" />
 	<findFieldProperty
+		name="cdTerzo" />
+	<findFieldProperty
+		name="dsTerzo" />
+	<findFieldProperty
 		name="cdUoCUU" />
 	<findFieldProperty
 		name="dataRicezione" />
@@ -382,6 +402,14 @@
 		name="codiceDestinatario" />
 	<columnFieldProperty
 		name="cdUoCUU" />
+	<columnFieldProperty
+		name="cdTerzo"
+		label="Cod."
+		headerLabel="Terzo"/>
+	<columnFieldProperty
+		name="dsTerzo"
+		label="Des."
+		headerLabel="Terzo"/>
 	<columnFieldProperty
 		name="dataRicezione" />
 	<columnFieldProperty
