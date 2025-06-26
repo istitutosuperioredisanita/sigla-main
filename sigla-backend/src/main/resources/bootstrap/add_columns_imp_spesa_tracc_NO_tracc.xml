@@ -22,16 +22,12 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
                                        http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-    <changeSet author="davide.mirra" dbms="oracle" id="add_columns_im_spesa_tracc_NO_tracc">
+    <changeSet author="davide.mirra" id="add_columns_imp_spesa_tracc_NO_tracc">
         <addColumn tableName="MISSIONE">
-            <column name="IM_SPESE_TRACC" type="NUMERIC(15,2)" remarks="Importo totale delle spese sostenuta con strumenti di pagamento tracciabili (carta di credito, bonifico, ecc.).">
-                <constraints nullable="false"/>
-            </column>
+            <column name="IM_SPESE_TRACC" type="NUMERIC(15,2)" remarks="Importo totale delle spese sostenuta con strumenti di pagamento tracciabili (carta di credito, bonifico, ecc.)."/>
         </addColumn>
         <addColumn tableName="MISSIONE">
-            <column name="IM_SPESE_NO_TRACC" type="NUMERIC(15,2)" remarks="Importo totale delle spese NON tracciate">
-                <constraints nullable="false"/>
-            </column>
+            <column name="IM_SPESE_NO_TRACC" type="NUMERIC(15,2)" remarks="Importo totale delle spese NON tracciate"/>
         </addColumn>
     </changeSet>
 </databaseChangeLog>
