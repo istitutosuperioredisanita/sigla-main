@@ -17,33 +17,37 @@
 
 package it.cnr.contab.doccont00.comp;
 
+import it.cnr.contab.doccont00.core.bulk.ArchiviaConsSostitutivaBulk;
 import it.cnr.contab.doccont00.ejb.DistintaCassiereComponentSession;
 import it.cnr.contab.doccont00.intcass.bulk.Distinta_cassiereBulk;
 import it.cnr.contab.doccont00.service.DocumentiContabiliService;
-import it.cnr.contab.logs.bulk.Batch_log_rigaBulk;
 import it.cnr.contab.service.SpringUtil;
-import it.cnr.contab.util.SIGLAStoragePropertyNames;
 import it.cnr.contab.util.Utility;
+import it.cnr.contab.util00.bulk.storage.AllegatoParentIBulk;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.SendMail;
-import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.StorageObject;
+import it.cnr.si.spring.storage.StoreService;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.LoggerFactory;
 
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
-import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.zip.Deflater;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Stateless(name = "CNRCOEPCOAN00_EJB_ConsSostitutivaComponentSession")
 public class AsyncConsSostitutivaComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements AsyncConsSostitutivaComponentSession {
@@ -53,13 +57,16 @@ public class AsyncConsSostitutivaComponentSessionBean extends it.cnr.jada.ejb.CR
         return new AsyncConsSostitutivaComponentSessionBean();
     }
 	DocumentiContabiliService documentiContabiliService = SpringUtil.getBean("documentiContabiliService", DocumentiContabiliService.class);
+	StoreService storeService = SpringUtil.getBean("storeService",	StoreService .class);
 
 	@Asynchronous
 	@Override
 	public void asyncConsSostitutiva(UserContext param0, Integer esercizio) throws ComponentException, PersistencyException, RemoteException {
-		String subjectError = "Errore caricamento scritture patrimoniali";
+		String subjectError = "Errore Conservazione Sostitutiva";
 		try {
-			distinte(param0,esercizio,Distinta_cassiereBulk.Tesoreria.BANCA_TESORIERE);
+			ArchiviaConsSostitutivaBulk archiviaConsSostitutivaBulk = new ArchiviaConsSostitutivaBulk();
+			archiviaConsSostitutivaBulk.setEsercizio(esercizio);
+			distinte(param0,archiviaConsSostitutivaBulk,Distinta_cassiereBulk.Tesoreria.BANCA_TESORIERE);
 		} catch (DetailedRuntimeException ex) {
 			logger.error("Creazione pacchetto documentazione sostitutiva in errore. Errore: " + ex.getMessage());
 		} catch (Exception ex) {
@@ -208,53 +215,83 @@ public class AsyncConsSostitutivaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
 
 
-	private InputStream getInputStreamXmlSigner(UserContext userContext, Distinta_cassiereBulk distinta) throws ApplicationException {
+	private List<StorageObject> getStorageObjectDistinte(UserContext userContext, Distinta_cassiereBulk distinta) throws ApplicationException {
 		final String storePath = distinta.getStorePath();
 		final String baseIdentificativoFlusso = distinta.getBaseIdentificativoFlusso();
-		Optional<StorageObject> optStorageObject = Optional.ofNullable(documentiContabiliService.getStorageObjectByPath(
-				Arrays.asList(
-						storePath,
-						distinta.getFileNameXML()
-				).stream().collect(
-						Collectors.joining(StorageDriver.SUFFIX)
-				)
-		));
-		if (!optStorageObject.isPresent()) {
-			optStorageObject = documentiContabiliService.getChildren(documentiContabiliService.getStorageObjectByPath(storePath).getKey())
+
+			return documentiContabiliService.getChildren(documentiContabiliService.getStorageObjectByPath(storePath).getKey())
 					.stream()
 					.filter(storageObject1 -> storageObject1.<String>getPropertyValue(StoragePropertyNames.NAME.value())
-							.startsWith(baseIdentificativoFlusso))
-					.max(Comparator.comparing(storageObject1 -> storageObject1.getPropertyValue("cmis:lastModificationDate")));
-		}
-		StorageObject storageObject = optStorageObject.orElseThrow(() -> new ApplicationException("Flusso ordinativi siope+ non trovato!"));
-		if (!documentiContabiliService.hasAspect(storageObject, SIGLAStoragePropertyNames.CNR_SIGNEDDOCUMENT.value())) {
-			throw new ApplicationException("Flusso ordinativi siope+ firmato non trovato!");
-		}
-		return documentiContabiliService.getResource(storageObject);
+							.startsWith(baseIdentificativoFlusso)).collect(Collectors.toList());
+
 
 	}
-	private List<Batch_log_rigaBulk> distinte (UserContext userContext,Integer esercizio, Distinta_cassiereBulk.Tesoreria tipoDistinta) throws ComponentException, RemoteException {
+
+	private void distinte (UserContext userContext,ArchiviaConsSostitutivaBulk archiviaConsSostitutivaBulk, Distinta_cassiereBulk.Tesoreria tipoDistinta) throws ComponentException, RemoteException {
 
 		List<Distinta_cassiereBulk> distinteCassiere;
 		DistintaCassiereComponentSession distintaCassiereComponentSession = Utility.createDistintaCassiereComponentSession();
 		Distinta_cassiereBulk distintaCassiereBulk = new Distinta_cassiereBulk();
-		distintaCassiereBulk.setEsercizio(esercizio);
+		distintaCassiereBulk.setEsercizio(archiviaConsSostitutivaBulk.getEsercizio());
 		distintaCassiereBulk.setCd_tesoreria( tipoDistinta.value());
-		List<Distinta_cassiereBulk> distinte= distintaCassiereComponentSession.findDistinteToConservazione(userContext,esercizio,null,tipoDistinta);
+		List<Distinta_cassiereBulk> distinte= distintaCassiereComponentSession.findDistinteToConservazione(userContext,archiviaConsSostitutivaBulk.getEsercizio(),null,tipoDistinta);
+		String zipFilePath = "E:\\ZipFile\\";
+		ZipOutputStream zos = null;
+		ByteArrayOutputStream baos=null;
+		baos=new ByteArrayOutputStream();
+		zos = new ZipOutputStream(baos);
+		zos.setLevel(Deflater.DEFAULT_COMPRESSION);
+
 		for ( Distinta_cassiereBulk distinta:distinte){
 			logger.info(distinta.toString());
 			try{
-				InputStream inputStream = getInputStreamXmlSigner( userContext,distinta);
-			}catch (ApplicationException e){
+				List<StorageObject> storageObjectsDistinte = getStorageObjectDistinte( userContext,distinta);
+				if ( Optional.ofNullable(storageObjectsDistinte).isPresent()){
+					for ( StorageObject so:storageObjectsDistinte){
+						addToZip(so,zos);
+					}
+				}
+
+			}catch (Exception e){
 				logger.info(e.getMessage());
 			}
 		}
+		try {
+			zos.closeEntry();
+			baos.flush();
+			zos.flush();
+			zos.close();
+			baos.close();
+			saveFileZip( baos,archiviaConsSostitutivaBulk);
 
 
-		return null;
+		}catch (IOException e){
+			logger.info("Errore chiusura file zip "+ e.getMessage());
+		}
+
 	}
 
+	private void addToZip(StorageObject so, ZipOutputStream zos) {
 
-
-
+		try {
+			ZipEntry zipEntryChild = new ZipEntry(so.<String>getPropertyValue(StoragePropertyNames.NAME.value()));
+			zos.putNextEntry(zipEntryChild);
+			IOUtils.copyLarge(documentiContabiliService.getResource(so), zos);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	private void saveFileZip(ByteArrayOutputStream baos, ArchiviaConsSostitutivaBulk archiviaConsSostitutivaBulk){
+		final StorageObject storageObject = storeService.storeSimpleDocument(
+				new ByteArrayInputStream(baos.toByteArray()),
+				"application/zip",
+                    storeService.getStorageObjectByPath(AllegatoParentIBulk.getStorePath("Consercazione Sostituva", archiviaConsSostitutivaBulk.getEsercizio()), true).getPath(),
+				Stream.of(
+								new AbstractMap.SimpleEntry<>(StoragePropertyNames.NAME.value(), "ConsSostitutiva".concat(archiviaConsSostitutivaBulk.getEsercizio().toString()).concat(".zip")),
+								new AbstractMap.SimpleEntry<>(StoragePropertyNames.SECONDARY_OBJECT_TYPE_IDS.value(), Arrays.asList("P:cm:titled")),
+								new AbstractMap.SimpleEntry<>(StoragePropertyNames.TITLE.value(),"ConsSostitutiva Anno".concat(archiviaConsSostitutivaBulk.getEsercizio().toString())),
+								new AbstractMap.SimpleEntry<>(StoragePropertyNames.OBJECT_TYPE_ID.value(), "cmis:document"))
+						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
+            );
+	}
 }
