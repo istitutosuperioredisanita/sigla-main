@@ -233,7 +233,10 @@ FROM (SELECT x.ID_PAESE, x.ID_CODICE, x.IDENTIFICATIVO_SDI, x.PROGRESSIVO,
 			UNION ALL
 			SELECT fp.ID_PAESE, fp.ID_CODICE, fp.IDENTIFICATIVO_SDI, fp.PROGRESSIVO, NULL, NULL,
 				   m.DT_EMISSIONE,
-				   CASE WHEN m.PG_MANDATO IS NOT NULL THEN (CASE WHEN fp.FL_SPLIT_PAYMENT = 'Y' THEN fpr.IM_IMPONIBILE  ELSE fpr.IM_IMPONIBILE + fpr.IM_IVA END)
+				   CASE WHEN m.PG_MANDATO IS NOT NULL THEN (CASE WHEN fp.FL_SPLIT_PAYMENT = 'Y' THEN fpr.IM_IMPONIBILE  ELSE fpr.IM_IMPONIBILE + fpr.IM_IVA END)  -
+                                                            NVL(DECODE(nc.TI_FATTURA, 'C',
+                                                                        ncr.IM_IMPONIBILE + CASE WHEN fp.FL_SPLIT_PAYMENT = 'Y' THEN 0 ELSE ncr.IM_IVA END,
+                                                                        -(ncr.IM_IMPONIBILE + CASE WHEN fp.FL_SPLIT_PAYMENT = 'Y' THEN 0 ELSE ncr.IM_IVA END)),0)
                    	    WHEN m.PG_MANDATO IS NULL AND fpr.STATO_COFI = 'P' THEN
                    	        CASE WHEN fp.FL_SPLIT_PAYMENT = 'Y' THEN fpr.IM_IMPONIBILE  ELSE fpr.IM_IMPONIBILE + fpr.IM_IVA END
                    ELSE 0 END IM_MANDATO,
@@ -258,6 +261,17 @@ FROM (SELECT x.ID_PAESE, x.ID_CODICE, x.IDENTIFICATIVO_SDI, x.PROGRESSIVO,
 			    ON mr.cd_cds = m.cd_cds
 			    AND mr.esercizio = m.esercizio
 			    AND mr.pg_mandato = m.pg_mandato
+            LEFT OUTER JOIN FATTURA_PASSIVA_RIGA ncr
+                ON ncr.CD_CDS_ASSNCNA_FIN = fpr.CD_CDS
+                AND ncr.CD_UO_ASSNCNA_FIN = fpr.CD_UNITA_ORGANIZZATIVA
+                AND ncr.ESERCIZIO_ASSNCNA_FIN = fpr.ESERCIZIO
+                AND ncr.PG_FATTURA_ASSNCNA_FIN = fpr.PG_FATTURA_PASSIVA
+                AND ncr.PG_RIGA_ASSNCNA_FIN = fpr.PROGRESSIVO_RIGA
+            LEFT OUTER JOIN FATTURA_PASSIVA nc
+                ON ncr.CD_CDS = nc.CD_CDS
+                AND ncr.CD_UNITA_ORGANIZZATIVA = nc.CD_UNITA_ORGANIZZATIVA
+                AND ncr.ESERCIZIO = nc.ESERCIZIO
+                AND ncr.PG_FATTURA_PASSIVA = nc.PG_FATTURA_PASSIVA
 			WHERE fp.IDENTIFICATIVO_SDI IS NOT NULL
 			AND fp.FL_FATTURA_COMPENSO = 'N'
 			AND nvl(m.stato, 'N') != 'A'
