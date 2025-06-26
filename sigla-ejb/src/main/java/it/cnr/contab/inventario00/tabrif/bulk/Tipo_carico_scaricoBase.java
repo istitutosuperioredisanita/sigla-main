@@ -47,6 +47,7 @@ public class Tipo_carico_scaricoBase extends Tipo_carico_scaricoKey implements K
 //	 fl_vendita CHAR(1) NOT NULL
 	private java.lang.Boolean fl_vendita;
 	private java.lang.Boolean fl_da_ordini;
+	private Boolean fl_dismissione;
 
 public Tipo_carico_scaricoBase() {
 	super();
@@ -165,4 +166,12 @@ public java.lang.Boolean getFl_vendita() {
 public void setFl_vendita(java.lang.Boolean fl_vendita) {
 	this.fl_vendita = fl_vendita;
 }
+
+	public Boolean getFl_dismissione() {
+		return fl_dismissione;
+	}
+
+	public void setFl_dismissione(Boolean fl_dismissione) {
+		this.fl_dismissione = fl_dismissione;
+	}
 }

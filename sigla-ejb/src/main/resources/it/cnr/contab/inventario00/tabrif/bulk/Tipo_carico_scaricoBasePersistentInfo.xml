@@ -125,6 +125,13 @@
 				columnSize="1"
 				nullable="false"
 				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+				columnName="FL_DISMISSIONE"
+				propertyName="fl_dismissione"
+				sqlTypeName="CHAR"
+				columnSize="1"
+				nullable="false"
+				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="dt_cancellazione" />
@@ -158,4 +165,6 @@
 		name="fl_vendita" />
 	<persistentProperty
 			name="fl_da_ordini" />
+	<persistentProperty
+			name="fl_dismissione" />
 </SQLPersistentInfo>
