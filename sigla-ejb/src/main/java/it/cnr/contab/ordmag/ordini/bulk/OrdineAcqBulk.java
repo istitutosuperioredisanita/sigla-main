@@ -183,6 +183,8 @@ public class OrdineAcqBulk extends OrdineAcqBase
     private CupBulk cup = new CupBulk();
     private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
 
+    private Boolean isOrdineContabilizzato = false;
+
     /**
      * Created by BulkGenerator 2.0 [07/12/2009]
      * Table name: ORDINE_ACQ
@@ -1212,6 +1214,20 @@ public class OrdineAcqBulk extends OrdineAcqBase
                         .filter(ordineAcqConsegnaBulk -> Optional.ofNullable(ordineAcqConsegnaBulk.getObbligazioneScadenzario())
                                 .flatMap(obbligazioneScadenzarioBulk -> Optional.ofNullable(obbligazioneScadenzarioBulk.getEsercizio_originale())).isPresent())
                         .findAny().isPresent();
+    }
+
+
+    public Boolean getOrdineContabilizzato() {
+        return isOrdineContabilizzato;
+    }
+
+    public void setOrdineContabilizzato(Boolean ordineContabilizzato) {
+        isOrdineContabilizzato = ordineContabilizzato;
+    }
+
+    public boolean isROstatoForUpdate(){
+        return isStatoInApprovazione() && !getOrdineContabilizzato();
+
     }
 
     @Override
