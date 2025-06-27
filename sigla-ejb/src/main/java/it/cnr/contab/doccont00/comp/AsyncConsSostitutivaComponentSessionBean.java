@@ -25,6 +25,7 @@ import it.cnr.contab.logs.bulk.Batch_log_rigaBulk;
 import it.cnr.contab.logs.bulk.Batch_log_tstaBulk;
 import it.cnr.contab.logs.ejb.BatchControlComponentSession;
 import it.cnr.contab.service.SpringUtil;
+import it.cnr.contab.util.SIGLAStoragePropertyNames;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bulk.storage.AllegatoParentIBulk;
 import it.cnr.jada.DetailedRuntimeException;
@@ -164,15 +165,18 @@ public class AsyncConsSostitutivaComponentSessionBean extends it.cnr.jada.ejb.CR
 		}
 	}
 
-
 	private List<StorageObject> getStorageObjectDistinte(UserContext userContext, Distinta_cassiereBulk distinta,DocumentiContabiliService documentiContabiliService) throws ComponentException {
 		final String storePath = distinta.getStorePath();
 		final String baseIdentificativoFlusso = distinta.getBaseIdentificativoFlusso();
+		List<StorageObject> toSendCons= new ArrayList<>();
 		try {
 			return documentiContabiliService.getChildren(documentiContabiliService.getStorageObjectByPath(storePath).getKey())
 					.stream()
 					.filter(storageObject1 -> storageObject1.<String>getPropertyValue(StoragePropertyNames.NAME.value())
-							.startsWith(baseIdentificativoFlusso)).collect(Collectors.toList());
+							.startsWith(baseIdentificativoFlusso)).
+					filter(storageObject1 -> documentiContabiliService.hasAspect(storageObject1,SIGLAStoragePropertyNames.CNR_SIGNEDDOCUMENT.value())).
+					collect(Collectors.toList());
+
 		}catch(Exception e){
 			throw new ComponentException(" Eccezione nel recupero del Documento Flusso " );
 		}
@@ -208,6 +212,8 @@ public class AsyncConsSostitutivaComponentSessionBean extends it.cnr.jada.ejb.CR
 			try{
 				List<StorageObject> storageObjectsDistinte = getStorageObjectDistinte( userContext,distinta,documentiContabiliService);
 				if ( Optional.ofNullable(storageObjectsDistinte).isPresent()){
+					if ( storageObjectsDistinte.size()==0)
+						throw new  ComponentException(" Non esite il flusso firmato " );
 					for ( StorageObject so:storageObjectsDistinte){
 						InputStream is = documentiContabiliService.getResource(so);
 						addToZip(so,zos,is);
