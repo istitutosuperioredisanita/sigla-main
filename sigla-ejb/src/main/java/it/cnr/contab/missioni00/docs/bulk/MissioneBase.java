@@ -145,10 +145,10 @@ public class MissioneBase extends MissioneKey implements Keyed {
     // IM_SPESE_ANTICIPATE DECIMAL(15,2) NOT NULL
     private java.math.BigDecimal im_spese_anticipate;
 
-    // IM_SPESE_TRACCIATE DECIMAL(15,2) NOT NULL
+    // IM_SPESE_TRACC DECIMAL(15,2) NOT NULL
     private java.math.BigDecimal im_spese_tracc;
 
-    // IM_SPESE_NO_TRACCIATE DECIMAL(15,2) NOT NULL
+    // IM_SPESE_NO_TRACC DECIMAL(15,2) NOT NULL
     private java.math.BigDecimal im_spese_no_tracc;
 
     // IM_TOTALE_MISSIONE DECIMAL(15,2) NOT NULL

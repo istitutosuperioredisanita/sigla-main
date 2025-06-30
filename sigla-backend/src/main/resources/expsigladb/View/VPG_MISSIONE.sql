@@ -134,6 +134,9 @@ DATA_6,            -- DT_REGISTRAZIONE
 IMPORTO_42,    -- IM_RIMBORSO_SPESE --TOT_QUOTA_RIMBORSO
 IMPORTO_43,    -- IM_TABELL_RIMB
 IMPORTO_44    -- IM_RIMBORSO_DET   --QUOTA_RIMBORSO
+IMPORTO_45, -- IM_SPESE_NO_TRACC
+IMPORTO_46, -- IM_SPESE_TRACC
+ATTRIBUTO_42 -- FL_SPESA_TRACCIATA
 from tmp_report_generico trp;
 
    COMMENT ON TABLE "VPG_MISSIONE"  IS 'Vista per la stampa massiva di nota e prospetto liquidazione missione
