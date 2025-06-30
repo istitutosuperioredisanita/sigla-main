@@ -64,8 +64,6 @@ public class AsyncConsSostitutivaComponentSessionBean extends it.cnr.jada.ejb.CR
     public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
         return new AsyncConsSostitutivaComponentSessionBean();
     }
-
-
 	@Asynchronous
 	@Override
 	public void asyncConsSostitutiva(UserContext userContext, Integer esercizio) throws ComponentException, PersistencyException, RemoteException {
@@ -126,7 +124,6 @@ public class AsyncConsSostitutivaComponentSessionBean extends it.cnr.jada.ejb.CR
 					SendMail.sendErrorMail(subjectError, "Errore durante l'inserimento della riga di chiusura di Batch_log_riga " + ex.getMessage());
 					throw new DetailedRuntimeException(ex);
 				}
-
 
 			} catch (Exception ex) {
 				Batch_log_rigaBulk log_riga = new Batch_log_rigaBulk();
