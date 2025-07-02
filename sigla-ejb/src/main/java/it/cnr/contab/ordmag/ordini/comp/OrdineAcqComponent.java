@@ -607,6 +607,8 @@ public class OrdineAcqComponent
             OrdineAcqHome homeOrdine = (OrdineAcqHome)getHome(usercontext, OrdineAcqBulk.class);
             ordine.setRigheOrdineColl(new BulkList(homeOrdine.findOrdineRigheList(ordine)));
 
+            Boolean isOrdineCompletamenteContabilizzato=true;
+
             for (java.util.Iterator i = ordine.getRigheOrdineColl().iterator(); i.hasNext(); ) {
                 OrdineAcqRigaBulk riga = (OrdineAcqRigaBulk) i.next();
 
@@ -617,6 +619,7 @@ public class OrdineAcqComponent
 
                 Obbligazione_scadenzarioBulk scadenzaComune = null;
                 Boolean esisteScadenzaComune = false;
+
                 for (java.util.Iterator c = riga.getRigheConsegnaColl().iterator(); c.hasNext(); ) {
                     OggettoBulk consbulk = (OggettoBulk) c.next();
                     OrdineAcqConsegnaBulk cons = (OrdineAcqConsegnaBulk) consbulk;
@@ -630,6 +633,7 @@ public class OrdineAcqComponent
                         }
                     } else {
                         esisteScadenzaComune = false;
+                        isOrdineCompletamenteContabilizzato = false;
                     }
                     if (cons.getUnitaOperativaOrd() != null) {
                         UnitaOperativaOrdBulk uop = recuperoUopDest(usercontext, cons);
@@ -641,12 +645,15 @@ public class OrdineAcqComponent
                     riga.setDspObbligazioneScadenzario(scadenzaComune);
                 }
             }
+            ordine.setOrdineContabilizzato(isOrdineCompletamenteContabilizzato);
+
         } catch (PersistencyException e) {
             throw handleException(e);
         }
 
         //    impostaTotaliOrdine(ordine);
         rebuildObbligazioni(usercontext, ordine);
+
         return inizializzaOrdine(usercontext, ordine, false);
     }
 

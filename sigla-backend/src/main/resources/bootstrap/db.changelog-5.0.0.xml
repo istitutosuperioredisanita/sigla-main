@@ -6223,4 +6223,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <!-- Autore : VALENTINA TOMADA - Nuovo flag per dismissione in TIPO_CARICO_SCARICO-->
     <include file="bootstrap/add_column_fl_dismissioni_to_tipo_carico_scarico.xml"/>
 
+
+    <!-- Autore : CIRO SALVIO - Aggiunto Batch per conservazione SOstitutiva -->
+    <include file="bootstrap/add_batch_cons_sotitutiva.xml"/>
 </databaseChangeLog>
