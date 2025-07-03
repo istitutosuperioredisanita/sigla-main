@@ -23,9 +23,12 @@
 				nullable="true" />
 	</defaultColumnMap>
 	<persistentProperty
-			name="esercizio" />
+			name="esercizio"
+			partOfOid="true" />
 	<persistentProperty
-			name="voceCoge" />
+			name="voceCoge"
+			partOfOid="true" />
 	<persistentProperty
-			name="voceCofi" />
+			name="voceCofi"
+			partOfOid="true" />
 </SQLPersistentInfo>
