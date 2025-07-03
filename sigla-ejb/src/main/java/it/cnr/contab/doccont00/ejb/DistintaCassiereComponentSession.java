@@ -30,8 +30,6 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.RemoteIterator;
-import it.cnr.si.spring.storage.StorageObject;
-import it.siopeplus.Mandato;
 
 import javax.ejb.Remote;
 import java.math.BigInteger;
@@ -103,4 +101,6 @@ public interface DistintaCassiereComponentSession extends it.cnr.jada.ejb.CRUDDe
     it.siopeplus.Mandato creaMandatoFlussoSiopeplus(UserContext userContext, V_mandato_reversaleBulk bulk) throws ComponentException, RemoteException;
 
     it.cnr.si.spring.storage.StorageObject generaFlussoSiopeplus(UserContext userContext, Distinta_cassiereBulk distinta) throws ComponentException, RemoteException;
+
+    List<Distinta_cassiereBulk> findDistinteToConservazione(UserContext userContext, Integer esercizio, Unita_organizzativaBulk unitaOrganizzativaBulk,Distinta_cassiereBulk.Tesoreria tesoreria) throws ComponentException, RemoteException;
 }
