@@ -40,8 +40,9 @@ import java.util.Optional;
 
 public class CRUDScritturaPDoppiaBP extends it.cnr.jada.util.action.SimpleCRUDBP {
     public static final String[] TAB_ECONOMICA = new String[]{"tabEconomica", "Economico/Patrimoniale", "/coepcoan00/tab_doc_economica.jsp"};
-    private Unita_organizzativaBulk uoScrivania;
+    public static final String[] TAB_DATI_COGECOAN = new String[]{ "tabDatiCogeCoan","Dati Coge/Coan","/coepcoan00/tab_doc_detail_eco_coge.jsp" };
 
+    private Unita_organizzativaBulk uoScrivania;
 
     public class EconomicaController extends SimpleDetailCRUDController {
         public EconomicaController(String s, Class class1, String s1, FormController formcontroller) {

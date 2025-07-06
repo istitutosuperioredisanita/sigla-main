@@ -24,9 +24,7 @@ package it.cnr.contab.docamm00.docs.bulk;
  */
 
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
-import it.cnr.contab.config00.bulk.CausaleContabileBulk;
-import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
-import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
+import it.cnr.contab.config00.bulk.*;
 import it.cnr.contab.config00.latt.bulk.CostantiTi_gestione;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcep.bulk.*;
@@ -71,11 +69,11 @@ public class Documento_generico_rigaHome extends BulkHome {
             java.sql.ResultSet rs = contact.createStatement().executeQuery("SELECT MAX(PROGRESSIVO_RIGA) FROM " +
                     it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() +
                     "DOCUMENTO_GENERICO_RIGA WHERE " +
-                    "(ESERCIZIO = " + riga.getEsercizio().intValue() + ") AND " +
+                    "(ESERCIZIO = " + riga.getEsercizio() + ") AND " +
                     "(CD_CDS = '" + riga.getCd_cds() + "') AND " +
                     "(CD_UNITA_ORGANIZZATIVA = '" + riga.getCd_unita_organizzativa() + "') AND " +
                     "(CD_TIPO_DOCUMENTO_AMM = '" + riga.getDocumento_generico().getCd_tipo_documento_amm() + "') AND " +
-                    "(PG_DOCUMENTO_GENERICO = " + riga.getPg_documento_generico().longValue() + ")");
+                    "(PG_DOCUMENTO_GENERICO = " + riga.getPg_documento_generico() + ")");
             Long x;
             if (rs.next())
                 x = new Long(rs.getLong(1) + 1);
@@ -192,13 +190,37 @@ public class Documento_generico_rigaHome extends BulkHome {
         return home.fetchAll(sql);
     }
 
-    private ContoBulk getContoEconomicoDefault(Documento_generico_rigaBulk docRiga) throws ComponentException {
+    private ContoBulk getContoEconomicoDefault(UserContext userContext, Documento_generico_rigaBulk docRiga) throws ComponentException {
         try {
             Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
             if (Optional.ofNullable(docRiga).isPresent()) {
                 Documento_genericoBulk docgen = (Documento_genericoBulk) fatpasHome.loadIfNeededObject(docRiga.getDocumento_generico());
                 if (Optional.ofNullable(docgen).map(Documento_genericoBulk::isGenericoAttivo).orElse(Boolean.FALSE)) {
-                    if (Optional.ofNullable(docRiga.getAccertamento_scadenziario()).isPresent()) {
+                    if (Optional.ofNullable(docgen.getCausaleContabile()).flatMap(el->Optional.ofNullable(el.getCdCausale()))
+                            .isPresent()) {
+                        CausaleContabileHome causaleHome = (CausaleContabileHome)getHomeCache().getHome(CausaleContabileBase.class);
+                        List<AssCausaleVoceEPBulk> assCausale = causaleHome.findAssCausaleVoceEPBulk(userContext,docgen.getCausaleContabile().getCdCausale());
+                        Voce_epBulk voceEpBulk = assCausale.stream().filter(AssCausaleVoceEPBulk::isSezioneAvere)
+                                .map(AssCausaleVoceEPBulk::getVoceEp)
+                                .findFirst()
+                                .orElse(null);
+                        if (voceEpBulk!=null && voceEpBulk.getCd_voce_ep()!=null) {
+                            ContoHome contoHome = (ContoHome) getHomeCache().getHome(ContoBulk.class);
+                            return (ContoBulk) contoHome.findByPrimaryKey(new ContoBulk(voceEpBulk.getCd_voce_ep(), voceEpBulk.getEsercizio()));
+                        }
+                        throw new ApplicationPersistencyException("Non è stato possibile individuare il conto della sezione Avere dalla causale contabile associata al documento!");
+                    } else if (docgen.isDocumentoInContoAcconto() || docgen.isDocumentoInContoAnticipo()) {
+                        ContoBulk aContoDefault = null;
+                        if (docgen.isDocumentoInContoAcconto())
+                            aContoDefault = ((Configurazione_cnrHome)getHomeCache().getHome(Configurazione_cnrBulk.class))
+                                    .getContoAccontoDocumentoAttivo(docRiga.getEsercizio());
+                        else if (docgen.isDocumentoInContoAnticipo())
+                            aContoDefault = ((Configurazione_cnrHome)getHomeCache().getHome(Configurazione_cnrBulk.class))
+                                    .getContoAnticipoDocumentoAttivo(docRiga.getEsercizio());
+                        if (aContoDefault != null)
+                            return aContoDefault;
+                        throw new ApplicationPersistencyException("Non è stato possibile individuare il conto acconto/anticipo da associare al documento!");
+                    } else if (Optional.ofNullable(docRiga.getAccertamento_scadenziario()).isPresent()) {
                         Accertamento_scadenzarioBulk accertScad = (Accertamento_scadenzarioBulk) fatpasHome.loadIfNeededObject(docRiga.getAccertamento_scadenziario());
 
                         if (Optional.ofNullable(accertScad).isPresent()) {
@@ -206,12 +228,25 @@ public class Documento_generico_rigaHome extends BulkHome {
                             Ass_ev_voceepHome assEvVoceEpHome = (Ass_ev_voceepHome) getHomeCache().getHome(Ass_ev_voceepBulk.class);
                             List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(accert.getCd_elemento_voce(), accert.getEsercizio(), accert.getTi_appartenenza(), accert.getTi_gestione()));
                             return Optional.ofNullable(listAss).orElse(new ArrayList<>())
-                                    .stream().map(Ass_ev_voceepBulk::getVoce_ep)
-                                    .findAny().orElse(null);
+                                   .stream().map(Ass_ev_voceepBulk::getVoce_ep)
+                                   .findAny().orElse(null);
                         }
                     }
                 } else { //PASSIVO
-                    if (Optional.ofNullable(docRiga.getObbligazione_scadenziario()).isPresent()) {
+                    if (Optional.ofNullable(docgen.getCausaleContabile()).flatMap(el->Optional.ofNullable(el.getCdCausale()))
+                            .isPresent()) {
+                        CausaleContabileHome causaleHome = (CausaleContabileHome)getHomeCache().getHome(CausaleContabileBase.class);
+                        List<AssCausaleVoceEPBulk> assCausale = causaleHome.findAssCausaleVoceEPBulk(userContext,docgen.getCausaleContabile().getCdCausale());
+                        Voce_epBulk voceEpBulk = assCausale.stream().filter(AssCausaleVoceEPBulk::isSezioneDare)
+                                .map(AssCausaleVoceEPBulk::getVoceEp)
+                                .findFirst()
+                                .orElse(null);
+                        if (voceEpBulk!=null && voceEpBulk.getCd_voce_ep()!=null) {
+                            ContoHome contoHome = (ContoHome) getHomeCache().getHome(ContoBulk.class);
+                            return (ContoBulk) contoHome.findByPrimaryKey(new ContoBulk(voceEpBulk.getCd_voce_ep(), voceEpBulk.getEsercizio()));
+                        }
+                        throw new ApplicationPersistencyException("Non è stato possibile individuare il conto della sezione Dare dalla causale contabile associata al documento!");
+                    } else if (Optional.ofNullable(docRiga.getObbligazione_scadenziario()).isPresent()) {
                         Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(docRiga.getObbligazione_scadenziario());
 
                         if (Optional.ofNullable(obbligScad).isPresent()) {
@@ -263,13 +298,16 @@ public class Documento_generico_rigaHome extends BulkHome {
                                 myRigaEco.setVoce_analitica(voceAnaliticaDef);
                                 myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
                                 myRigaEco.setDocumento_generico_rigaBulk(docRiga);
-                                myRigaEco.setImporto(scadVoce.getIm_voce().multiply(docRiga.getImportoCostoEco()).divide(totScad, 2, RoundingMode.HALF_UP));
+                                if (totScad.compareTo(BigDecimal.ZERO)!=0)
+                                    myRigaEco.setImporto(scadVoce.getIm_voce().multiply(docRiga.getImCostoEco()).divide(totScad, 2, RoundingMode.HALF_UP));
+                                else
+                                    myRigaEco.setImporto(docRiga.getImCostoEco().divide(BigDecimal.valueOf(scadVoceBulks.size()), 2, RoundingMode.HALF_UP));
                                 myRigaEco.setToBeCreated();
                                 result.add(myRigaEco);
                             }
 
                             BigDecimal totRipartito = result.stream().map(Documento_generico_riga_ecoBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
-                            BigDecimal diff = totRipartito.subtract(docRiga.getImportoCostoEco());
+                            BigDecimal diff = totRipartito.subtract(docRiga.getImCostoEco());
 
                             if (diff.compareTo(BigDecimal.ZERO)>0) {
                                 for (Documento_generico_riga_ecoBulk rigaEco : result) {
@@ -304,12 +342,15 @@ public class Documento_generico_rigaHome extends BulkHome {
                                 myRigaEco.setVoce_analitica(voceAnaliticaDef);
                                 myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
                                 myRigaEco.setDocumento_generico_rigaBulk(docRiga);
-                                myRigaEco.setImporto(scadVoce.getIm_voce().multiply(docRiga.getImportoCostoEco()).divide(totScad, 2, RoundingMode.HALF_UP));
+                                if (totScad.compareTo(BigDecimal.ZERO)!=0)
+                                    myRigaEco.setImporto(scadVoce.getIm_voce().multiply(docRiga.getImCostoEco()).divide(totScad, 2, RoundingMode.HALF_UP));
+                                else
+                                    myRigaEco.setImporto(docRiga.getImCostoEco().divide(BigDecimal.valueOf(scadVoceBulks.size()), 2, RoundingMode.HALF_UP));
                                 myRigaEco.setToBeCreated();
                                 result.add(myRigaEco);
                             }
                             BigDecimal totRipartito = result.stream().map(Documento_generico_riga_ecoBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
-                            BigDecimal diff = totRipartito.subtract(docRiga.getImportoCostoEco());
+                            BigDecimal diff = totRipartito.subtract(docRiga.getImCostoEco());
 
                             if (diff.compareTo(BigDecimal.ZERO)>0) {
                                 for (Documento_generico_riga_ecoBulk rigaEco : result) {
@@ -336,7 +377,7 @@ public class Documento_generico_rigaHome extends BulkHome {
                             myRigaEco.setVoce_analitica(voceAnaliticaDef);
                             myRigaEco.setLinea_attivita(gaeDefault);
                             myRigaEco.setDocumento_generico_rigaBulk(docRiga);
-                            myRigaEco.setImporto(docRiga.getImportoCostoEco());
+                            myRigaEco.setImporto(docRiga.getImCostoEco());
                             myRigaEco.setToBeCreated();
                             result.add(myRigaEco);
                         }
@@ -351,21 +392,27 @@ public class Documento_generico_rigaHome extends BulkHome {
         }
     }
 
-    public Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> getDatiEconomiciDefault(UserContext userContext, Documento_generico_rigaBulk docRiga) throws ComponentException {
+    public Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> getDatiEconomiciDefault(UserContext userContext, Documento_generico_rigaBulk docRiga) throws ComponentException, PersistencyException {
         Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
         if (docRiga.isDocumentoStorno() && docRiga.getRigaStorno().isPresent()) {
             Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> datiEcoDoc = null;
             if (docRiga.getDocumento_generico_riga_storno()!=null) {
                 Documento_generico_rigaBulk rigaCollegata = (Documento_generico_rigaBulk) fatpasHome.loadIfNeededObject(docRiga.getDocumento_generico_riga_storno());
-                datiEcoDoc = this.getDatiEconomiciDefault(userContext, rigaCollegata);
+                datiEcoDoc = this.getDatiEconomici(rigaCollegata);
+                if (datiEcoDoc.getFirst().getCd_voce_ep()==null)
+                    datiEcoDoc = this.getDatiEconomiciDefault(userContext, rigaCollegata);
             } else if (docRiga.getFattura_attiva_riga_storno()!=null) {
                 Fattura_attiva_rigaIHome fatattrigaHome = (Fattura_attiva_rigaIHome) getHomeCache().getHome(Fattura_attiva_rigaIBulk.class);
                 Fattura_attiva_rigaIBulk rigaCollegata = (Fattura_attiva_rigaIBulk) fatpasHome.loadIfNeededObject(docRiga.getFattura_attiva_riga_storno());
-                datiEcoDoc = fatattrigaHome.getDatiEconomiciDefault(userContext, rigaCollegata);
+                datiEcoDoc = fatattrigaHome.getDatiEconomici(rigaCollegata);
+                if (datiEcoDoc.getFirst().getCd_voce_ep()==null)
+                    datiEcoDoc = fatattrigaHome.getDatiEconomiciDefault(userContext, rigaCollegata);
             } else if (docRiga.getFattura_passiva_riga_storno()!=null) {
-                Fattura_passiva_rigaIHome fatpasrigaIHome = (Fattura_passiva_rigaIHome) getHomeCache().getHome(Fattura_passiva_rigaIBulk.class);
+                Fattura_passiva_rigaIHome fatpasrigaHome = (Fattura_passiva_rigaIHome) getHomeCache().getHome(Fattura_passiva_rigaIBulk.class);
                 Fattura_passiva_rigaIBulk rigaCollegata = (Fattura_passiva_rigaIBulk) fatpasHome.loadIfNeededObject(docRiga.getFattura_passiva_riga_storno());
-                datiEcoDoc = fatpasrigaIHome.getDatiEconomiciDefault(userContext, rigaCollegata);
+                datiEcoDoc = fatpasrigaHome.getDatiEconomici(rigaCollegata);
+                if (datiEcoDoc.getFirst().getCd_voce_ep()==null)
+                    datiEcoDoc = fatpasrigaHome.getDatiEconomiciDefault(userContext, rigaCollegata);
             }
             if (datiEcoDoc!=null) {
                 BigDecimal totaleImportiAnalitici = datiEcoDoc.getSecond().stream().map(IDocumentoDetailAnaCogeBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -379,13 +426,13 @@ public class Documento_generico_rigaHome extends BulkHome {
                     myRigaEco.setVoce_analitica(rigaEco.getVoce_analitica());
                     myRigaEco.setLinea_attivita(rigaEco.getLinea_attivita());
                     myRigaEco.setDocumento_generico_rigaBulk(docRiga);
-                    myRigaEco.setImporto(rigaEco.getImporto().multiply(docRiga.getImportoCostoEco()).divide(totaleImportiAnalitici, 2, RoundingMode.HALF_UP));
+                    myRigaEco.setImporto(rigaEco.getImporto().multiply(docRiga.getImCostoEco()).divide(totaleImportiAnalitici, 2, RoundingMode.HALF_UP));
                     myRigaEco.setToBeCreated();
                     aContiAnalitici.add(myRigaEco);
                 }
 
                 BigDecimal totRipartito = aContiAnalitici.stream().map(IDocumentoDetailAnaCogeBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
-                BigDecimal diff = totRipartito.subtract(docRiga.getImportoCostoEco());
+                BigDecimal diff = totRipartito.subtract(docRiga.getImCostoEco());
 
                 if (diff.compareTo(BigDecimal.ZERO) > 0) {
                     for (Documento_generico_riga_ecoBulk rigaEco : aContiAnalitici) {
@@ -409,9 +456,17 @@ public class Documento_generico_rigaHome extends BulkHome {
             }
             return null;
         } else {
-            ContoBulk aContoEconomico = this.getContoEconomicoDefault(docRiga);
+            ContoBulk aContoEconomico = this.getContoEconomicoDefault(userContext, docRiga);
             List<IDocumentoDetailAnaCogeBulk> aContiAnalitici = this.getDatiAnaliticiDefault(userContext, docRiga, aContoEconomico);
             return Pair.of(aContoEconomico, aContiAnalitici);
         }
+    }
+
+    public Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> getDatiEconomici(Documento_generico_rigaBulk docRiga) throws PersistencyException {
+        ContoBulk aContoEconomico = docRiga.getVoce_ep();
+        List<IDocumentoDetailAnaCogeBulk> aContiAnalitici = this.findDocumentoGenericoRigheEcoList(docRiga).stream()
+                .map(IDocumentoDetailAnaCogeBulk.class::cast)
+                .collect(Collectors.toList());
+        return Pair.of(aContoEconomico, aContiAnalitici);
     }
 }

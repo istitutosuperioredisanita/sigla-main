@@ -19,7 +19,6 @@ package it.cnr.contab.docamm00.docs.bulk;
 
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
-import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
@@ -120,13 +119,15 @@ public class Nota_di_credito_rigaHome extends Fattura_passiva_rigaHome {
 				.findAny();
 	}
 
-    public Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> getDatiEconomiciDefault(UserContext userContext, Nota_di_credito_rigaBulk docRiga) throws ComponentException {
+    public Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> getDatiEconomiciDefault(UserContext userContext, Nota_di_credito_rigaBulk docRiga) throws ComponentException, PersistencyException {
         if (docRiga.getRiga_fattura_origine()!=null && docRiga.getRiga_fattura_origine().getPg_fattura_passiva()!=null) {
             Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
             Fattura_passiva_rigaIHome fatpasRigaHome = (Fattura_passiva_rigaIHome)getHomeCache().getHome(Fattura_passiva_rigaIBulk.class);
             Fattura_passiva_rigaBulk rigaCollegata = (Fattura_passiva_rigaBulk)fatpasHome.loadIfNeededObject(docRiga.getRiga_fattura_origine());
 
-            Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> datiEcoFattura = fatpasRigaHome.getDatiEconomiciDefault(userContext, rigaCollegata);
+            Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> datiEcoFattura = fatpasRigaHome.getDatiEconomici(rigaCollegata);
+            if (datiEcoFattura.getFirst().getCd_voce_ep()==null)
+                datiEcoFattura = fatpasRigaHome.getDatiEconomiciDefault(userContext, rigaCollegata);
             BigDecimal totaleImportiAnalitici = datiEcoFattura.getSecond().stream().map(IDocumentoDetailAnaCogeBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
 
             ContoBulk aContoEconomico = datiEcoFattura.getFirst();
@@ -138,13 +139,13 @@ public class Nota_di_credito_rigaHome extends Fattura_passiva_rigaHome {
                 myRigaEco.setVoce_analitica(rigaEco.getVoce_analitica());
                 myRigaEco.setLinea_attivita(rigaEco.getLinea_attivita());
                 myRigaEco.setFattura_passiva_riga(docRiga);
-                myRigaEco.setImporto(rigaEco.getImporto().multiply(docRiga.getImportoCostoEco()).divide(totaleImportiAnalitici,2, RoundingMode.HALF_UP));
+                myRigaEco.setImporto(rigaEco.getImporto().multiply(docRiga.getImCostoEco()).divide(totaleImportiAnalitici,2, RoundingMode.HALF_UP));
                 myRigaEco.setToBeCreated();
                 aContiAnalitici.add(myRigaEco);
             }
 
             BigDecimal totRipartito = aContiAnalitici.stream().map(Fattura_passiva_riga_ecoBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
-            BigDecimal diff = totRipartito.subtract(docRiga.getImportoCostoEco());
+            BigDecimal diff = totRipartito.subtract(docRiga.getImCostoEco());
 
             if (diff.compareTo(BigDecimal.ZERO)>0) {
                 for (Fattura_passiva_riga_ecoBulk rigaEco : aContiAnalitici) {

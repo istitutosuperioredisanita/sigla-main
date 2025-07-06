@@ -22,8 +22,6 @@ import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.latt.bulk.WorkpackageHome;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoHome;
-import it.cnr.contab.config00.pdcep.bulk.Voce_epBulk;
-import it.cnr.contab.config00.pdcep.bulk.Voce_epHome;
 import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
@@ -35,7 +33,6 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import java.math.BigDecimal;
-import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -601,6 +598,14 @@ public class Configurazione_cnrHome extends BulkHome {
         );
     }
 
+    public Optional<Configurazione_cnrBulk> getConfigurazioneContiAccontoAnticipoDocumentoAttivo(Integer esercizio) throws PersistencyException{
+        return Optional.ofNullable(
+                this.getConfigurazione(esercizio, ASTERISCO,
+                        Configurazione_cnrBulk.PK_VOCEEP_SPECIALE,
+                        Configurazione_cnrBulk.SK_ACCONTO_ANTICIPO_DOCATT)
+        );
+    }
+
     public ContoBulk getContoDocumentoNonLiquidabile(IDocumentoDetailEcoCogeBulk rigaDocAmm) throws ComponentException {
         try {
             Optional<Configurazione_cnrBulk> config = this.getConfigurazioneCostoDocumentoNonLiquidabile(rigaDocAmm.getEsercizio());
@@ -654,12 +659,44 @@ public class Configurazione_cnrHome extends BulkHome {
         try {
             Optional<Configurazione_cnrBulk> config = this.getConfigurazioneContiAnticipo(anticipo.getEsercizio());
 
-            if (config.isPresent()) {
-                String aCdLineaAttivita = config.get().getVal02();
-                String aCdCentroCosto = Optional.ofNullable(config.get().getVal03()).orElse(anticipo.getFather().getCd_uo() + ".000");
+            if (config.flatMap(el->Optional.ofNullable(el.getVal03())).isPresent()) {
+                String aCdLineaAttivita = config.get().getVal03();
+                String aCdCentroCosto = Optional.ofNullable(config.get().getVal04()).orElse(anticipo.getFather().getCd_uo() + ".000");
 
                 WorkpackageHome wpHome = (WorkpackageHome) getHomeCache().getHome(WorkpackageBulk.class);
                 return wpHome.searchGAECompleta(userContext, anticipo.getEsercizio(), aCdCentroCosto, aCdLineaAttivita);
+            }
+            return null;
+        } catch (it.cnr.jada.persistency.PersistencyException e) {
+            throw new ComponentException(e);
+        }
+    }
+
+    public ContoBulk getContoAccontoDocumentoAttivo(Integer esercizio) throws ComponentException {
+        try {
+            Optional<Configurazione_cnrBulk> config = this.getConfigurazioneContiAccontoAnticipoDocumentoAttivo(esercizio);
+
+            if (config.isPresent()) {
+                String aCdConto = config.get().getVal01();
+
+                ContoHome contoHome = (ContoHome) getHomeCache().getHome(ContoBulk.class);
+                return (ContoBulk) contoHome.findByPrimaryKey(new ContoBulk(aCdConto, esercizio));
+            }
+            return null;
+        } catch (it.cnr.jada.persistency.PersistencyException e) {
+            throw new ComponentException(e);
+        }
+    }
+
+    public ContoBulk getContoAnticipoDocumentoAttivo(Integer esercizio) throws ComponentException {
+        try {
+            Optional<Configurazione_cnrBulk> config = this.getConfigurazioneContiAccontoAnticipoDocumentoAttivo(esercizio);
+
+            if (config.isPresent()) {
+                String aCdConto = config.get().getVal02();
+
+                ContoHome contoHome = (ContoHome) getHomeCache().getHome(ContoBulk.class);
+                return (ContoBulk) contoHome.findByPrimaryKey(new ContoBulk(aCdConto, esercizio));
             }
             return null;
         } catch (it.cnr.jada.persistency.PersistencyException e) {

@@ -11,12 +11,24 @@
 		it.cnr.contab.docamm00.bp.*"
 %>
 <%
-    IDocAmmAnaliticaBP bp = (IDocAmmAnaliticaBP)BusinessProcess.getBusinessProcess(request);
+    IDocAmmCogeCoanBP bp = (IDocAmmCogeCoanBP)BusinessProcess.getBusinessProcess(request);
+    IDocumentoDetailEcoCogeBulk model =
+                    Optional.ofNullable(bp.getControllerDetailEcoCoge().getModel())
+                        .filter(IDocumentoDetailEcoCogeBulk.class::isInstance)
+                        .map(IDocumentoDetailEcoCogeBulk.class::cast)
+                        .orElse(null);
 %>
 <div class="Panel card p-2 mb-2 card-shadow">
     <table cellpadding="2">
         <tr>
             <% bp.getControllerDetailEcoCoge().writeFormField(out,"find_voce_ep");%>
+        </tr>
+    </table>
+    <table cellpadding="2">
+        <tr>
+            <% model.writeFormField(out, "imCostoEco", FormController.VIEW, bp.getFieldValidationMap(), bp.getParentRoot().isBootstrap()); %>
+            <% model.writeFormField(out, "imCostoEcoRipartito", FormController.VIEW, bp.getFieldValidationMap(), bp.getParentRoot().isBootstrap()); %>
+            <% model.writeFormField(out, "imCostoEcoDaRipartire", FormController.VIEW, bp.getFieldValidationMap(), bp.getParentRoot().isBootstrap()); %>
         </tr>
     </table>
 </div>

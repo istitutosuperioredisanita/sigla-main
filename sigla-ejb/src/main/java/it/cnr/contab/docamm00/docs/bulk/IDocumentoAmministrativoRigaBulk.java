@@ -20,12 +20,9 @@ package it.cnr.contab.docamm00.docs.bulk;
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
-import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -114,10 +111,5 @@ public interface IDocumentoAmministrativoRigaBulk extends IDocumentoDetailEcoCog
 		return Optional.ofNullable(getIm_imponibile()).orElse(BigDecimal.ZERO).add(
 				Optional.ofNullable(getIm_iva()).orElse(BigDecimal.ZERO)
 		);
-	}
-
-	@Override
-	default BigDecimal getImportoCostoEco() {
-		return this.getIm_riga();
 	}
 }

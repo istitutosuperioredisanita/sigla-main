@@ -628,7 +628,7 @@
         </sql>
         <sql>
             update configurazione_cnr
-            set val02='PTEST001'
+            set val02='PTEST003'
             where cd_chiave_primaria='VOCEEP_SPECIALE'
             and cd_chiave_secondaria='COSTO_DOC_NON_LIQUIDABILE'
             and ESERCIZIO >= 2023;
@@ -638,6 +638,13 @@
             set val03='Y'
             where cd_chiave_primaria='ECONOMICO_PATRIMONIALE'
             and cd_chiave_secondaria='TIPO_ECONOMICO_PATRIMONIALE'
+            and ESERCIZIO >= 2023;
+        </sql>
+        <sql>
+            update configurazione_cnr
+            set val03='PTEST002'
+            where cd_chiave_primaria='VOCEEP_SPECIALE'
+            and cd_chiave_secondaria='CREDITO_DEBITO_ANTICIPO'
             and ESERCIZIO >= 2023;
         </sql>
         <sql>

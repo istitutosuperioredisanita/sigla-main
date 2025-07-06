@@ -80,9 +80,8 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 	private final static Boolean DEFAULT_MODIFICABILE = Boolean.FALSE;
 	private final static Boolean DEFAULT_ACCORPABILE = Boolean.TRUE;
-	private final static String CD_VOCE_DOCUMENTO_NON_LIQUIDABILE = "XXXXXXXXX";
 
-	private final static boolean isAttivaGestioneSopravvenienze = Boolean.FALSE;
+    private final static boolean isAttivaGestioneSopravvenienze = Boolean.FALSE;
 
 	private static class DettaglioScrittura {
 		public DettaglioScrittura(Voce_epBulk conto, IDocumentoAmministrativoBulk partita, BigDecimal importo) {
@@ -109,18 +108,26 @@ public class ProposeScritturaComponent extends CRUDComponent {
 	}
 
 	private static class DettaglioAnalitico {
-		public DettaglioAnalitico(String cdCentroCosto, String cdLineaAttivita, BigDecimal importo) {
-			this.cdCentroCosto = cdCentroCosto;
-			this.cdLineaAttivita = cdLineaAttivita;
-			this.importo = importo;
+		public DettaglioAnalitico(IDocumentoDetailAnaCogeBulk rigaAna) {
+			this(rigaAna.getVoce_analitica(), rigaAna.getLinea_attivita().getCd_centro_responsabilita(), rigaAna.getLinea_attivita().getCd_linea_attivita(), rigaAna.getImporto(), null);
 		}
 
-		public DettaglioAnalitico(DettaglioPrimaNota dettaglioPrimaNota, Voce_analiticaBulk voceAnalitica, String cdCentroCosto, String cdLineaAttivita, BigDecimal importo) {
+		public DettaglioAnalitico(DettaglioAnalitico dettAna) {
+			this(dettAna.getVoceAnalitica(), dettAna.getCdCentroCosto(), dettAna.getCdLineaAttivita(), dettAna.getImporto(), null);
+			this.dettaglioAnalitico = dettAna;
+		}
+
+		public DettaglioAnalitico(IDocumentoDetailAnaCogeBulk rigaAna, DettaglioPrimaNota dettaglioPrimaNota) {
+			this(rigaAna);
 			this.dettaglioPrimaNota = dettaglioPrimaNota;
+		}
+
+		public DettaglioAnalitico(Voce_analiticaBulk voceAnalitica, String cdCentroCosto, String cdLineaAttivita, BigDecimal importo, DettaglioPrimaNota dettaglioPrimaNota) {
 			this.voceAnalitica = voceAnalitica;
 			this.cdCentroCosto = cdCentroCosto;
 			this.cdLineaAttivita = cdLineaAttivita;
 			this.importo = importo;
+			this.dettaglioPrimaNota = dettaglioPrimaNota;
 		}
 
 		DettaglioPrimaNota dettaglioPrimaNota;
@@ -132,6 +139,10 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		String cdLineaAttivita;
 
 		BigDecimal importo;
+
+		DettaglioAnalitico dettaglioAnalitico;
+
+		BigDecimal importoCollegato = BigDecimal.ZERO;
 
 		public DettaglioPrimaNota getDettaglioPrimaNota() {
 			return dettaglioPrimaNota;
@@ -156,10 +167,35 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		public void setImporto(BigDecimal importo) {
 			this.importo = importo;
 		}
+
+		public DettaglioAnalitico getDettaglioAnalitico() {
+			return dettaglioAnalitico;
+		}
+
+		public BigDecimal getImportoCollegato() {
+			return importoCollegato;
+		}
+
+		public void setImportoCollegato(BigDecimal importoCollegato) {
+			this.importoCollegato = importoCollegato;
+		}
 	}
 
 	private static class DettaglioFinanziario {
-		public DettaglioFinanziario(IDocumentoAmministrativoBulk docamm, Integer cdTerzo, Voce_epBulk voceEp, List<DettaglioAnalitico> dettagliAnalitici, BigDecimal imImponibile, BigDecimal imImposta) {
+		public DettaglioFinanziario(IDocumentoAmministrativoBulk docamm, Voce_epBulk voceEp, BigDecimal imImponibile, BigDecimal imImposta, List<DettaglioAnalitico> dettagliAnalitici) {
+			super();
+			this.docamm = docamm;
+			this.voceEp = voceEp;
+			this.dettagliAnalitici = dettagliAnalitici;
+			this.cdTerzo = null;
+			this.imImponibile = Optional.ofNullable(imImponibile).orElse(BigDecimal.ZERO);
+			this.imImposta = Optional.ofNullable(imImposta).orElse(BigDecimal.ZERO);
+			this.rigaDocamm = null;
+			this.rigaPartita = null;
+			this.dtDaCompetenzaCoge = null;
+			this.dtACompetenzaCoge = null;
+		}
+		public DettaglioFinanziario(IDocumentoAmministrativoBulk docamm, Integer cdTerzo, Voce_epBulk voceEp, BigDecimal imImponibile, BigDecimal imImposta, List<DettaglioAnalitico> dettagliAnalitici) {
 			super();
 			this.docamm = docamm;
 			this.voceEp = voceEp;
@@ -658,8 +694,8 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			}
 		}
 
-		public void addDettaglio(UserContext userContext, String tipoDettaglio, String sezione, Voce_epBulk conto, BigDecimal importo, boolean isModificabile) {
-			addDettaglio(userContext, tipoDettaglio, sezione, conto, importo, null, null, null, null, null, isModificabile, DEFAULT_ACCORPABILE);
+		public DettaglioPrimaNota addDettaglio(UserContext userContext, String tipoDettaglio, String sezione, Voce_epBulk conto, BigDecimal importo, boolean isModificabile) {
+			return addDettaglio(userContext, tipoDettaglio, sezione, conto, importo, null, null, null, null, null, isModificabile, DEFAULT_ACCORPABILE);
 		}
 
 		public void addDettaglio(UserContext userContext, String tipoDettaglio, String sezione, Voce_epBulk conto, BigDecimal importo, boolean isModificabile, boolean isAccorpabile) {
@@ -1017,16 +1053,16 @@ public class ProposeScritturaComponent extends CRUDComponent {
 				else if (!doccoge.getTipoDocumentoEnum().isScritturaEconomicaRequired())
 					throw new ScritturaPartitaDoppiaNotRequiredException("Scrittura Economica non prevista per la tipologia di documento selezionato.");
 				else if (doccoge.getTipoDocumentoEnum().isAnticipo())
-					return new ResultScrittureContabili(this.proposeScritturaPartitaDoppiaAnticipo(userContext, (AnticipoBulk) doccoge), null);
+					return this.proposeScritturaPartitaDoppiaAnticipo(userContext, (AnticipoBulk) doccoge, makeAnalitica);
 				else if (doccoge.getTipoDocumentoEnum().isRimborso())
 					return new ResultScrittureContabili(this.proposeScritturaPartitaDoppiaRimborso(userContext, (RimborsoBulk) doccoge), null);
 				else if (doccoge.getTipoDocumentoEnum().isMissione())
-					return new ResultScrittureContabili(this.proposeScritturaPartitaDoppiaMissione(userContext, (MissioneBulk) doccoge), null);
+					return this.proposeScritturaPartitaDoppiaMissione(userContext, (MissioneBulk) doccoge, makeAnalitica);
 				else if (doccoge.getTipoDocumentoEnum().isCompenso()) {
 					if (((CompensoBulk) doccoge).getFl_compenso_stipendi())
 						throw new ScritturaPartitaDoppiaNotRequiredException("Scrittura Economica non prevista per la tipologia di documento selezionato.");
 					else
-						return new ResultScrittureContabili(this.proposeScritturaPartitaDoppiaCompenso(userContext, (CompensoBulk) doccoge), null);
+						return this.proposeScritturaPartitaDoppiaCompenso(userContext, (CompensoBulk) doccoge, makeAnalitica);
 				} else if (doccoge.getTipoDocumentoEnum().isAperturaFondo())
 					return new ResultScrittureContabili(this.proposeScritturaPartitaDoppiaAperturaFondo(userContext, (Documento_genericoBulk) doccoge), null);
 				else if (doccoge.getTipoDocumentoEnum().isGenericoStipendiSpesa() || doccoge.getTipoDocumentoEnum().isDocumentoPassivo() || doccoge.getTipoDocumentoEnum().isDocumentoAttivo())
@@ -1553,7 +1589,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 								.filter(el->Optional.ofNullable(el.getRigheEconomica()).orElse(new ArrayList<>()).isEmpty())
 								.collect(Collectors.groupingBy(Fattura_passiva_rigaBulk::getVoce_ep));
 
-				BigDecimal totDocContabile = mapConto.values().stream().flatMap(Collection::stream).map(Fattura_passiva_rigaBulk::getImportoCostoEcoRipartito)
+				BigDecimal totDocContabile = mapConto.values().stream().flatMap(Collection::stream).map(Fattura_passiva_rigaBulk::getImCostoEcoRipartito)
 						.reduce(BigDecimal.ZERO, BigDecimal::add);
 				BigDecimal totIva = righeDocamm.stream().map(IDocumentoAmministrativoRigaBulk::getIm_iva).reduce(BigDecimal.ZERO, BigDecimal::add);
 
@@ -1590,7 +1626,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
                         if (ivaAdded)
                             totFattura = totFattura.add(mapConto.get(conto).stream().map(Fattura_passiva_rigaBase::getIm_iva).reduce(BigDecimal.ZERO, BigDecimal::add));
 
-                        BigDecimal totCostoEco = mapConto.get(conto).stream().map(Fattura_passiva_rigaBulk::getImportoCostoEcoRipartito)
+                        BigDecimal totCostoEco = mapConto.get(conto).stream().map(Fattura_passiva_rigaBulk::getImCostoEcoRipartito)
                                 .reduce(BigDecimal.ZERO, BigDecimal::add);
                         BigDecimal diffCambio = totCostoEco.add(totStorni).subtract(totFattura);
                         if (diffCambio.compareTo(BigDecimal.ZERO) != 0) {
@@ -1626,9 +1662,11 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		return testataPrimaNotaList;
 	}
 
-	private Scrittura_partita_doppiaBulk proposeScritturaPartitaDoppiaCompenso(UserContext userContext, CompensoBulk compenso) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException {
+	private ResultScrittureContabili proposeScritturaPartitaDoppiaCompenso(UserContext userContext, CompensoBulk compenso, boolean makeAnalitica) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException {
 		try {
 			loadRigheEco(userContext, compenso);
+
+            List<DettaglioAnalitico> dettagliAnaliticos = compenso.getRigheEconomica().stream().map(DettaglioAnalitico::new).collect(Collectors.toList());
 
 			String descCompenso = compenso.getEsercizio() + "/" + compenso.getCd_cds() + "/" + compenso.getPg_compenso();
 
@@ -1668,7 +1706,10 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			if (compenso.getIm_lordo_percipiente().compareTo(BigDecimal.ZERO)!=0) {
 				if (!pairContoCostoCompenso.isPresent())
 					throw new ApplicationException("Compenso " + descCompenso + " con lordo percipiente non nullo. Scrittura prima nota non possibile per impossibilità ad individuare il conto di costo!");
-				testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.COSTO.value(), Movimento_cogeBulk.SEZIONE_DARE, contoCostoCompenso, compenso.getIm_lordo_percipiente(), Boolean.TRUE);
+				DettaglioPrimaNota dettPN = testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.COSTO.value(), Movimento_cogeBulk.SEZIONE_DARE, contoCostoCompenso, compenso.getIm_lordo_percipiente(), Boolean.TRUE);
+				//COMPLETO CON I DATI ANALITICI - TRATTANDOSI DI MISSIONE CON ANTICIPO CERCO PER IMPORTO PER FAR COLLEGARE LA RIGA GIUSTA
+				if (makeAnalitica)
+					this.completeWithDatiAnalitici(userContext,dettPN,compenso,dettagliAnaliticos,Boolean.FALSE);
 				testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.DEBITO.value(), Movimento_cogeBulk.SEZIONE_AVERE, contoPatrimonialeCompenso, compenso.getIm_lordo_percipiente(), compenso.getCd_terzo(), compenso);
 			}
 
@@ -1687,16 +1728,20 @@ public class ProposeScritturaComponent extends CRUDComponent {
 										throw new ApplicationException("Compenso " + descCompenso + " con contributo non nullo. Scrittura prima nota non possibile per impossibilità ad individuare il conto di costo!");
 									if (cori.isTipoContributoRivalsa()) {
 										// Se la tipologia di contributo ritenuta è RIVALSA va tutto sul costo principale del compenso
-										testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.COSTO.value(), Movimento_cogeBulk.SEZIONE_DARE, contoCostoCompenso, imCostoCori, Boolean.TRUE);
+										DettaglioPrimaNota dettPN = testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.COSTO.value(), Movimento_cogeBulk.SEZIONE_DARE, contoCostoCompenso, imCostoCori, Boolean.TRUE);
+										if (makeAnalitica)
+											this.completeWithDatiAnalitici(userContext,dettPN,compenso,dettagliAnaliticos,Boolean.FALSE);
 										testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.DEBITO.value(), Movimento_cogeBulk.SEZIONE_AVERE, contoPatrimonialeCompenso, imCostoCori, compenso.getCd_terzo(), compenso);
 									} else if (cori.isTipoContributoIva()) {
 										//Il primo giro viene fatto solo per il contributo a carico ente.... nel caso di split esiste anche la riga carico
 										//percipiente che, in questa fase, deve solo rilevare il credito verso il fornitore che sarà chiuso all'atto del pagamento
 										if (cori.isContributoEnte()) {
-											if (compenso.isIstituzionale())
+											if (compenso.isIstituzionale()) {
 												// Se la tipologia di contributo ritenuta è IVA ed è istituzionale va tutto sul costo principale del compenso
-												testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.COSTO.value(), Movimento_cogeBulk.SEZIONE_DARE, contoCostoCompenso, imCostoCori, Boolean.TRUE);
-											else if (compenso.isCommerciale()) {
+												DettaglioPrimaNota dettPN = testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.COSTO.value(), Movimento_cogeBulk.SEZIONE_DARE, contoCostoCompenso, imCostoCori, Boolean.TRUE);
+												if (makeAnalitica)
+													this.completeWithDatiAnalitici(userContext, dettPN, compenso, dettagliAnaliticos, Boolean.FALSE);
+											} else if (compenso.isCommerciale()) {
 												// Se la tipologia di contributo ritenuta è IVA Commerciale il conto è del tributo
 												Voce_epBulk voceCosto = this.findContoCosto(userContext, cori.getTipoContributoRitenuta(), cori.getEsercizio(), cori.getSezioneCostoRicavo(), cori.getTi_ente_percipiente());
 												if (compenso.getFl_split_payment().equals(Boolean.TRUE))
@@ -1723,7 +1768,9 @@ public class ProposeScritturaComponent extends CRUDComponent {
 									}
 								} else {
 									pairContoCostoCori = this.findPairCostoCompenso(userContext, cori);
-									testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.COSTO.value(), Movimento_cogeBulk.SEZIONE_DARE, pairContoCostoCori.getFirst(), imCostoCori, Boolean.TRUE);
+									DettaglioPrimaNota dettPN = testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.COSTO.value(), Movimento_cogeBulk.SEZIONE_DARE, pairContoCostoCori.getFirst(), imCostoCori, Boolean.TRUE);
+									if (makeAnalitica)
+										this.completeWithDatiAnalitici(userContext, dettPN, compenso, dettagliAnaliticos, Boolean.FALSE);
 									testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.DEBITO.value(), Movimento_cogeBulk.SEZIONE_AVERE, pairContoCostoCori.getSecond(), imCostoCori, compenso.getCd_terzo(), compenso, cori.getCd_contributo_ritenuta());
 								}
 							}
@@ -1732,15 +1779,15 @@ public class ProposeScritturaComponent extends CRUDComponent {
 						}
 					});
 
-			return this.generaScrittura(userContext, compenso, Collections.singletonList(testataPrimaNota), Boolean.TRUE);
+			return this.generaScritture(userContext, compenso, Collections.singletonList(testataPrimaNota), Boolean.TRUE, makeAnalitica);
 		} catch (PersistencyException|RemoteException e) {
 			throw handleException(e);
 		}
 	}
 
-	private Scrittura_partita_doppiaBulk proposeScritturaPartitaDoppiaAnticipo(UserContext userContext, AnticipoBulk anticipo) throws ComponentException {
+	private ResultScrittureContabili proposeScritturaPartitaDoppiaAnticipo(UserContext userContext, AnticipoBulk anticipo, boolean makeAnalitica) throws ComponentException {
 		try {
-			loadRigheEco(userContext, anticipo);
+			this.loadRigheEco(userContext, anticipo);
 
 			TestataPrimaNota testataPrimaNota = new TestataPrimaNota(anticipo.getDt_da_competenza_coge(), anticipo.getDt_a_competenza_coge());
 
@@ -1752,10 +1799,13 @@ public class ProposeScritturaComponent extends CRUDComponent {
                 assert pairContoCostoAnticipo != null;
                 Voce_epBulk aContoCreditoAnticipo = pairContoCostoAnticipo.getFirst();
 				Voce_epBulk aContoDebitoAnticipo = pairContoCostoAnticipo.getSecond();
+
+				//RIGA DARE
 				testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.CREDITO.value(), Movimento_cogeBulk.SEZIONE_DARE, aContoCreditoAnticipo, imCostoAnticipo, anticipo.getCd_terzo(), anticipo);
+				//RIGA AVERE
 				testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.DEBITO.value(), Movimento_cogeBulk.SEZIONE_AVERE, aContoDebitoAnticipo, imCostoAnticipo, anticipo.getCd_terzo(), anticipo);
 			}
-			return this.generaScrittura(userContext, anticipo, Collections.singletonList(testataPrimaNota), Boolean.FALSE);
+			return this.generaScritture(userContext, anticipo, Collections.singletonList(testataPrimaNota), Boolean.FALSE, makeAnalitica);
 		} catch (RemoteException | PersistencyException e) {
 			throw handleException(e);
         }
@@ -1823,10 +1873,8 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		}
 	}
 
-	private Scrittura_partita_doppiaBulk proposeScritturaPartitaDoppiaMissione(UserContext userContext, MissioneBulk missione) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
+	private ResultScrittureContabili proposeScritturaPartitaDoppiaMissione(UserContext userContext, MissioneBulk missione, boolean makeAnalitica) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
 		try {
-			loadRigheEco(userContext, missione);
-
 			String descMissione = missione.getEsercizio() + "/" + missione.getCd_unita_organizzativa() + "/" + missione.getPg_missione();
 
 			//Le missioni pagate con compenso non creano scritture di prima nota in quanto create direttamente dal compenso stesso
@@ -1838,6 +1886,9 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 			if (!missione.isMissioneDefinitiva())
 				throw new ScritturaPartitaDoppiaNotEnabledException("Missione " + descMissione + " non definitiva. Registrazione economica non prevista.");
+
+			loadRigheEco(userContext, missione);
+			List<DettaglioAnalitico> dettagliAnaliticos = missione.getRigheEconomica().stream().map(DettaglioAnalitico::new).collect(Collectors.toList());
 
 			Optional<AnticipoBulk> optAnticipo = Optional.ofNullable(missione.getAnticipo()).map(anticipo->
 					Optional.of(anticipo).filter(el->el.getCrudStatus()!=OggettoBulk.UNDEFINED).orElseGet(()-> {
@@ -1854,7 +1905,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			//Registrazione conto COSTO MISSIONE
 			BigDecimal imCostoMissioneNettoAnticipo = missione.getIm_totale_missione().subtract(optAnticipo.map(AnticipoBulk::getIm_anticipo).orElse(BigDecimal.ZERO));
 
-			final Optional<Pair<Voce_epBulk, Voce_epBulk>> pairContoCostoMissione = Optional.ofNullable(this.findPairCosto(userContext, missione));;
+			final Optional<Pair<Voce_epBulk, Voce_epBulk>> pairContoCostoMissione = Optional.ofNullable(this.findPairCosto(userContext, missione));
 
 			Voce_epBulk contoCostoMissione = pairContoCostoMissione.map(Pair::getFirst).orElse(null);
 			Voce_epBulk contoPatrimonialeMissione = pairContoCostoMissione.map(Pair::getSecond).orElse(null);
@@ -1862,7 +1913,10 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			if (imCostoMissioneNettoAnticipo.compareTo(BigDecimal.ZERO)>0) {
 				if (!pairContoCostoMissione.isPresent())
 					throw new ApplicationException("Missione " + descMissione + " di importo positivo. Scrittura prima nota non possibile per impossibilità ad individuare il conto di costo!");
-				testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.COSTO.value(), Movimento_cogeBulk.SEZIONE_DARE, contoCostoMissione, imCostoMissioneNettoAnticipo, Boolean.TRUE);
+				DettaglioPrimaNota dettPN = testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.COSTO.value(), Movimento_cogeBulk.SEZIONE_DARE, contoCostoMissione, imCostoMissioneNettoAnticipo, Boolean.TRUE);
+				//COMPLETO CON I DATI ANALITICI - TRATTANDOSI DI MISSIONE CON ANTICIPO CERCO PER IMPORTO PER FAR COLLEGARE LA RIGA GIUSTA
+				if (makeAnalitica)
+					this.completeWithDatiAnalitici(userContext,dettPN,missione,dettagliAnaliticos,optAnticipo.isPresent());
 				testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.DEBITO.value(), Movimento_cogeBulk.SEZIONE_AVERE, contoPatrimonialeMissione, imCostoMissioneNettoAnticipo, missione.getCd_terzo(), missione);
 			}
 
@@ -1878,7 +1932,10 @@ public class ProposeScritturaComponent extends CRUDComponent {
 						throw new ApplicationException("Missione " + descMissione + " con anticipo di importo non nullo. Scrittura prima nota non possibile per impossibilità ad individuare il conto di costo della missione!");
 
 					// 1. scaricare i costi dell'anticipo compensandoli con il conto patrimoniale della missione
-					testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.COSTO.value(), Movimento_cogeBulk.SEZIONE_DARE, pairContoCostoMissione.get().getFirst(), imCostoAnticipo, Boolean.TRUE);
+					DettaglioPrimaNota dettPN = testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.COSTO.value(), Movimento_cogeBulk.SEZIONE_DARE, pairContoCostoMissione.get().getFirst(), imCostoAnticipo, Boolean.TRUE);
+					//COMPLETO CON I DATI ANALITICI - TRATTANDOSI DI MISSIONE CON ANTICIPO CERCO PER IMPORTO PER FAR COLLEGARE LA RIGA GIUSTA
+					if (makeAnalitica)
+						this.completeWithDatiAnalitici(userContext,dettPN,missione,dettagliAnaliticos,true);
 					testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.DEBITO.value(), Movimento_cogeBulk.SEZIONE_AVERE, contoPatrimonialeMissione, imCostoAnticipo, missione.getCd_terzo(), missione);
 
 					//2. chiudere il conto credito per anticipo
@@ -1889,7 +1946,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 					testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.DEBITO.value(), Movimento_cogeBulk.SEZIONE_DARE, contoPatrimonialeMissione, imCostoAnticipo, missione.getCd_terzo(), missione, null, null, null, DEFAULT_MODIFICABILE, Boolean.FALSE);
 				}
 			}
-			return this.generaScrittura(userContext, missione, Collections.singletonList(testataPrimaNota), Boolean.TRUE);
+			return this.generaScritture(userContext, missione, Collections.singletonList(testataPrimaNota), Boolean.TRUE, makeAnalitica);
 		} catch (PersistencyException|RemoteException e) {
 			throw handleException(e);
 		}
@@ -3621,12 +3678,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			mandatoRigaCompleteList.stream()
 					.filter(el->!(el.getDocamm() instanceof Fattura_passivaBulk && ((Fattura_passivaBulk)docamm).isDaOrdini()))
 					.forEach(el -> el.docammRighe.forEach(docammRiga->{
-                        //verifico se sulla riga del docamm ci sia un bene inventariabile
-                        Voce_epBulk aContoBeneServizio = this.getContoByBeneServizio(userContext, docammRiga);
-                        if (Optional.ofNullable(aContoBeneServizio).isPresent())
-                            list.add(new DettaglioFinanziario(docammRiga, cdTerzoDocAmm, aContoBeneServizio));
-                        else
-                            list.add(new DettaglioFinanziario(docammRiga, null, cdTerzoDocAmm, docammRiga.getVoce_ep(), null));
+                        list.add(new DettaglioFinanziario(docammRiga, cdTerzoDocAmm, docammRiga.getVoce_ep()));
                     }));
 
 			//e poi analizzo i dettagli da ordini
@@ -3659,9 +3711,9 @@ public class ProposeScritturaComponent extends CRUDComponent {
 											if (imponibile.compareTo(BigDecimal.ZERO)!=0) {
 												List<DettaglioAnalitico> dettagliAnalitici = new ArrayList<>();
 												//carico i dettagli analitici recuperandoli dalle tabelle economiche associate alla riga del documento pagato
-												for (IDocumentoDetailAnaCogeBulk rigaEco:riga.getRigheEconomica())
-													dettagliAnalitici.add(new DettaglioAnalitico(rigaEco.getCd_centro_responsabilita(), rigaEco.getCd_linea_attivita(), rigaEco.getImporto()));
-												list.add(new DettaglioFinanziario(docamm, cdTerzoDocAmm, riga.getVoce_ep(), dettagliAnalitici, imponibile, imposta));
+												for (IDocumentoDetailAnaCogeBulk rigaAna:riga.getRigheEconomica())
+													dettagliAnalitici.add(new DettaglioAnalitico(rigaAna));
+												list.add(new DettaglioFinanziario(docamm, cdTerzoDocAmm, riga.getVoce_ep(), imponibile, imposta, dettagliAnalitici));
 											}
 										}
 									});
@@ -4012,21 +4064,6 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		return this.findValueByConfigurazioneCNR(userContext, null, Configurazione_cnrBulk.PK_CORI_SPECIALE, Configurazione_cnrBulk.SK_IVA, 3);
 	}
 
-	private WorkpackageBulk findGaeCostoDocumentoNonLiquidabileByConfig(UserContext userContext, Integer esercizio, IDocumentoDetailEcoCogeBulk rigaDocAmm) throws ComponentException, RemoteException {
-		String aCdLineaAttivita = this.findValueByConfigurazioneCNR(userContext, esercizio, Configurazione_cnrBulk.PK_VOCEEP_SPECIALE, Configurazione_cnrBulk.SK_COSTO_DOC_NON_LIQUIDABILE, 2);
-		String aCdCentroCosto = rigaDocAmm.getFather().getCd_uo()+".000";
-
-		return Optional.of(aCdLineaAttivita).map(el->{
-			try {
-				WorkpackageHome wpHome = (WorkpackageHome) getHome(userContext, WorkpackageBulk.class);
-				return (WorkpackageBulk) wpHome.searchGAECompleta(userContext,CNRUserContext.getEsercizio(userContext), aCdCentroCosto, aCdLineaAttivita);
-			} catch(ComponentException ex) {
-				throw new DetailedRuntimeException(ex);
-			}
-		}).orElseThrow(()->new ApplicationException("Attenzione! Non esiste per il cdr " + aCdCentroCosto + " la GAE "+ aCdLineaAttivita +" indicata nella tabella CONFIGURAZIONE_CNR per l'esercizio "+CNRUserContext.getEsercizio(userContext)
-				+" ("+Configurazione_cnrBulk.PK_VOCEEP_SPECIALE+"-"+Configurazione_cnrBulk.SK_COSTO_DOC_NON_LIQUIDABILE+"-VAL02)."));
-	}
-
 	private Voce_epBulk findContoByConfigurazioneCNR(UserContext userContext, int esercizio, String chiavePrimaria, String chiaveSecondaria, int fieldNumber) throws ComponentException, RemoteException {
 		Configurazione_cnrBulk config = Utility.createConfigurazioneCnrComponentSession().getConfigurazione(userContext, esercizio, null, chiavePrimaria, chiaveSecondaria);
 		if (config==null)
@@ -4120,10 +4157,6 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		return this.findContoByConfigurazioneCNR(userContext, esercizio, Configurazione_cnrBulk.PK_VOCEEP_SPECIALE, Configurazione_cnrBulk.SK_CREDITO_DEBITO_ANTICIPO, 1);
 	}
 
-	private Voce_epBulk findContoDebitoAnticipo(UserContext userContext, Integer esercizio) throws ComponentException, RemoteException {
-		return this.findContoByConfigurazioneCNR(userContext, esercizio, Configurazione_cnrBulk.PK_VOCEEP_SPECIALE, Configurazione_cnrBulk.SK_CREDITO_DEBITO_ANTICIPO, 2);
-	}
-
 	private Voce_epBulk findContoCreditoRimborsoAnticipo(UserContext userContext, Integer esercizio) throws ComponentException, RemoteException {
 		return this.findContoByConfigurazioneCNR(userContext, esercizio, Configurazione_cnrBulk.PK_VOCEEP_SPECIALE, Configurazione_cnrBulk.SK_CREDITO_RIMBORSO_ANTICIPO, 1);
 	}
@@ -4154,33 +4187,32 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		return null;
 	}
 
-	private Pair<Voce_epBulk, Voce_epBulk> findPairCosto(UserContext userContext, TerzoBulk terzo, ObbligazioneBulk obbligazione) throws ComponentException, RemoteException, PersistencyException {
-		ObbligazioneBulk obbligazioneDB = (ObbligazioneBulk) this.loadObject(userContext, obbligazione);
-
-		Ass_ev_voceepBulk assEvVoceepBulk = null;
-		Voce_epBulk aContoCosto;
-		if (CD_VOCE_DOCUMENTO_NON_LIQUIDABILE.equalsIgnoreCase(obbligazioneDB.getCd_elemento_voce()))
-			aContoCosto = this.findContoCostoDocumentoNonLiquidabileByConfig(userContext, CNRUserContext.getEsercizio(userContext));
-		else {
-			assEvVoceepBulk = this.findAssEvVoceep(userContext, obbligazioneDB.getElemento_voce());
-			aContoCosto = (Voce_epBulk) loadObject(userContext, assEvVoceepBulk.getVoce_ep());
-		}
-		Voce_epBulk aContoContropartita = this.findContoContropartita(userContext, terzo, assEvVoceepBulk, aContoCosto, Movimento_cogeBulk.TipoRiga.DEBITO.value());
-		return Pair.of(aContoCosto, aContoContropartita);
-	}
-
 	private Pair<Voce_epBulk, Voce_epBulk> findPairCosto(UserContext userContext, DettaglioFinanziario dettaglioFinanziario) throws ComponentException, RemoteException, PersistencyException {
-		//verifico se sulla riga del docamm ci sia un bene invemtariabile
-		Voce_epBulk aContoBeneServizio = this.getContoByBeneServizio(userContext, dettaglioFinanziario.getRigaDocamm());
-		if (Optional.ofNullable(aContoBeneServizio).isPresent())
-			return Pair.of(aContoBeneServizio, this.findContoContropartita(userContext, aContoBeneServizio));
-		return this.findPairCosto(userContext, new TerzoBulk(dettaglioFinanziario.getCdTerzo()), dettaglioFinanziario.getVoceEp(),
+		Voce_epBulk aContoCosto = (Voce_epBulk) loadObject(userContext, dettaglioFinanziario.getVoceEp());
+		//Se esiste causale contabile il conto di contropartita lo recupero direttamente dalla causale
+		String cdCausaleContabile = Optional.ofNullable(dettaglioFinanziario.getDocamm())
+				.filter(Documento_genericoBulk.class::isInstance)
+				.map(Documento_genericoBulk.class::cast)
+				.flatMap(el->Optional.ofNullable(el.getCausaleContabile()))
+				.flatMap(el->Optional.ofNullable(el.getCdCausale()))
+				.orElse(null);
+		if (cdCausaleContabile!=null) {
+			String mySezione = dettaglioFinanziario.getDocamm().getTipoDocumentoEnum().getSezionePatrimoniale();
+			List<AssCausaleVoceEPBulk> assCausaleVoce = new BulkList<>(find(userContext, CausaleContabileBulk.class, "findAssCausaleVoceEPBulk", userContext, cdCausaleContabile));
+			AtomicReference<Voce_epBulk> myContoContropartita = new AtomicReference<>(null);
+			assCausaleVoce.stream().filter(el->el.getTiSezione().equals(dettaglioFinanziario.getDocamm().isDocumentoStorno()?Movimento_cogeBulk.getControSezione(mySezione):mySezione))
+					.findAny()
+					.ifPresent(el-> myContoContropartita.set(el.getVoceEp()));
+			Voce_epBulk aContoContropartita = (Voce_epBulk) loadObject(userContext, myContoContropartita.get());
+			return Pair.of(aContoCosto, aContoContropartita);
+		}
+		return this.findPairCosto(userContext, new TerzoBulk(dettaglioFinanziario.getCdTerzo()), aContoCosto,
 				dettaglioFinanziario.getDocamm().getTipoDocumentoEnum().getTipoPatrimoniale());
 	}
 
 	private Pair<Voce_epBulk, Voce_epBulk> findPairCosto(UserContext userContext, TerzoBulk terzo, Voce_epBulk voceEp, String tipoContoPatrimoniale) throws ComponentException, RemoteException, PersistencyException {
 		Voce_epBulk aContoCosto = (Voce_epBulk) loadObject(userContext, voceEp);
-		Voce_epBulk aContoContropartita = this.findContoContropartita(userContext, terzo, null, aContoCosto, tipoContoPatrimoniale);
+		Voce_epBulk aContoContropartita = this.findContoContropartita(userContext, terzo, aContoCosto, tipoContoPatrimoniale);
 		return Pair.of(aContoCosto, aContoContropartita);
 	}
 
@@ -4234,18 +4266,13 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		return findContoContropartita(userContext, assEvVoceepBulk);
 	}
 
-	private Voce_epBulk findContoContropartita(UserContext userContext, TerzoBulk terzo, Ass_ev_voceepBulk assEvVoceepBulk, Voce_epBulk voceep, String tipoConto) throws ComponentException, RemoteException, PersistencyException {
+	private Voce_epBulk findContoContropartita(UserContext userContext, TerzoBulk terzo, Voce_epBulk voceep, String tipoConto) throws ComponentException, RemoteException, PersistencyException {
 		String valueAssociazioneConti = this.findValueByConfigurazioneCNR(userContext, CNRUserContext.getEsercizio(userContext), Configurazione_cnrBulk.PK_ECONOMICO_PATRIMONIALE, Configurazione_cnrBulk.SK_ASSOCIAZIONE_CONTI, 1);
 
 		if (valueAssociazioneConti.equals("TERZO"))
 			return this.findContoAnag(userContext, terzo, tipoConto);
 		else if (valueAssociazioneConti.equals("CONTO")) {
-			if (Optional.ofNullable(assEvVoceepBulk).flatMap(el->Optional.ofNullable(el.getVoce_ep())).isPresent()) {
-				String valueTipoEP = this.findValueByConfigurazioneCNR(userContext, CNRUserContext.getEsercizio(userContext), Configurazione_cnrBulk.PK_ECONOMICO_PATRIMONIALE, Configurazione_cnrBulk.SK_TIPO_ECONOMICO_PATRIMONIALE, 1);
-				if (valueTipoEP.equals("PARALLELA"))
-					return this.findContoContropartita(userContext, assEvVoceepBulk);
-				return this.findContoContropartita(userContext, assEvVoceepBulk.getVoce_ep());
-			} else if (Optional.ofNullable(voceep).isPresent())
+			if (Optional.ofNullable(voceep).isPresent())
 				return this.findContoContropartita(userContext, voceep);
 			throw new ApplicationRuntimeException("Attenzione! Non è stata indicata alcuna voce di bilancio nè conto per la ricerca della contropartita.");
 		}
@@ -4677,6 +4704,19 @@ public class ProposeScritturaComponent extends CRUDComponent {
 									"del costo rilevato in partita doppia (" +
 									new EuroFormat().format(mc.getIm_movimento())+").");
 					});
+
+			if (scritturaAnalitica!=null) {
+				scritturaPartitaDoppia.getAllMovimentiColl().stream()
+						.filter(mc -> !mc.isRigaTipoCosto() && !mc.isRigaTipoRicavo())
+						.forEach(mc -> {
+							if (scritturaAnalitica.getMovimentiColl().stream()
+								.anyMatch(ana -> ana.getMovimentoCoge().equals(mc)))
+								throw new ApplicationRuntimeException("Errore nella generazione scrittura prima nota e analitica del documento " +
+										doccoge.getTipoDocumentoEnum() + "/" + doccoge.getEsercizio() + "/" + doccoge.getCd_cds() + "/" + doccoge.getCd_uo() +
+										"/" + doccoge.getPg_doc() + ". Risultano registrazioni in analitica per il conto " + mc.getCd_voce_ep() +
+										" non di tipo COSTO/RICAVO.");
+						});
+			}
 		}
 
 		return resultScrittureContabili;
@@ -4791,6 +4831,8 @@ public class ProposeScritturaComponent extends CRUDComponent {
 										Pair<String, BigDecimal> saldoPatrimoniale = this.getSaldo(mapContiPatrimoniali.get(aContoPatrimoniale));
 										Movimento_cogeBulk movcoge = addMovimentoCoge(userContext, scritturaPartitaDoppia, doccoge, aTipoDett, saldoPatrimoniale.getFirst(), aContoPatrimoniale, saldoPatrimoniale.getSecond(), aPartita, aCdTerzo, null);
 										Optional.ofNullable(movcoge).ifPresent(el -> el.setFl_modificabile(aTipoModific));
+										if (makeAnalitica)
+											addMovimentiCoan(userContext, scritturaAnalitica, doccoge, movcoge, mapContiPatrimoniali.get(aContoPatrimoniale));
 									} catch (ComponentException e) {
 										throw new ApplicationRuntimeException(e);
 									}
@@ -4980,14 +5022,24 @@ public class ProposeScritturaComponent extends CRUDComponent {
 											BigDecimal imDare = mapConti.get(aConto).stream()
 													.filter(DettaglioPrimaNota::isSezioneDare)
 													.map(DettaglioPrimaNota::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
-											Optional.ofNullable(addMovimentoCoge(userContext, scritturaPartitaDoppia, doccoge, aTipoDett, Movimento_cogeBulk.SEZIONE_DARE, aConto, imDare, aPartita, aCdTerzo, null))
-													.ifPresent(el -> el.setFl_modificabile(aTipoModific));
+											Optional<Movimento_cogeBulk> movDareCoge = Optional.ofNullable(addMovimentoCoge(userContext, scritturaPartitaDoppia, doccoge, aTipoDett, Movimento_cogeBulk.SEZIONE_DARE, aConto, imDare, aPartita, aCdTerzo, null));
+											if (movDareCoge.isPresent()) {
+												movDareCoge.get().setFl_modificabile(aTipoModific);
+												if (makeAnalitica)
+													addMovimentiCoan(userContext, scritturaAnalitica, doccoge, movDareCoge.get(), mapConti.get(aConto).stream()
+															.filter(DettaglioPrimaNota::isSezioneDare).collect(Collectors.toList()));
+											}
 
 											BigDecimal imAvere = mapConti.get(aConto).stream()
 													.filter(DettaglioPrimaNota::isSezioneAvere)
 													.map(DettaglioPrimaNota::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
-											Optional.ofNullable(addMovimentoCoge(userContext, scritturaPartitaDoppia, doccoge, aTipoDett, Movimento_cogeBulk.SEZIONE_AVERE, aConto, imAvere, aPartita, aCdTerzo, null))
-													.ifPresent(el -> el.setFl_modificabile(aTipoModific));
+											Optional<Movimento_cogeBulk> movAvereCoge = Optional.ofNullable(addMovimentoCoge(userContext, scritturaPartitaDoppia, doccoge, aTipoDett, Movimento_cogeBulk.SEZIONE_AVERE, aConto, imAvere, aPartita, aCdTerzo, null));
+											if (movAvereCoge.isPresent()) {
+												movAvereCoge.get().setFl_modificabile(aTipoModific);
+												if (makeAnalitica)
+													addMovimentiCoan(userContext, scritturaAnalitica, doccoge, movAvereCoge.get(), mapConti.get(aConto).stream()
+															.filter(DettaglioPrimaNota::isSezioneAvere).collect(Collectors.toList()));
+											}
 										} catch (ComponentException e) {
 											throw new ApplicationRuntimeException(e);
 										}
@@ -5086,7 +5138,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 											if (movAvereCoge.isPresent()) {
 												movAvereCoge.get().setFl_modificabile(aTipoModific);
 												if (makeAnalitica)
-													addMovimentiCoan(userContext, scritturaAnalitica, doccoge, movDareCoge.get(), mapContiCostoRicavo.get(aConto).stream()
+													addMovimentiCoan(userContext, scritturaAnalitica, doccoge, movAvereCoge.get(), mapContiCostoRicavo.get(aConto).stream()
 															.filter(DettaglioPrimaNota::isSezioneAvere).collect(Collectors.toList()));
 											}
 										} catch (ComponentException e) {
@@ -5721,7 +5773,10 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 	private void addMovimentiCoan(UserContext userContext, Scrittura_analiticaBulk scritturaAnalitica, IDocumentoCogeBulk doccoge, Movimento_cogeBulk movimentoCoge, List<DettaglioPrimaNota> dettaglioPrimaNotaList) throws ComponentException {
 		List<DettaglioAnalitico> dettagliAnalitici = new ArrayList<>();
-		dettaglioPrimaNotaList.forEach(dettaglioPrimaNota->{
+		dettaglioPrimaNotaList.stream()
+				.filter(el->el.getDettaglioFinanziario()!=null &&
+						el.getDettaglioFinanziario().getDettagliAnalitici()!=null)
+				.forEach(dettaglioPrimaNota->{
 			BigDecimal totDettaglioFinanziario = dettaglioPrimaNota.getDettaglioFinanziario().getDettagliAnalitici()
 					.stream().map(DettaglioAnalitico::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
 
@@ -5732,18 +5787,10 @@ public class ProposeScritturaComponent extends CRUDComponent {
 					.stream()
 					.filter(dettaglioAnalitico -> totDettaglioFinanziario.compareTo(BigDecimal.ZERO) != 0)
 					.forEach(el-> {
-						try {
-							BigDecimal newImporto = dettaglioPrimaNota.getImporto().multiply(el.getImporto()).divide(totDettaglioFinanziario, 2, RoundingMode.HALF_UP);
-							ContoBulk contoBulk = (ContoBulk)(getHome(userContext, ContoBulk.class)).findByPrimaryKey(new ContoBulk(dettaglioPrimaNota.getCdConto(), CNRUserContext.getEsercizio(userContext)));
-							List<Voce_analiticaBulk> voceAnaliticaList = ((Voce_analiticaHome)getHome(userContext, Voce_analiticaBulk.class)).findVoceAnaliticaList(contoBulk);
-							Voce_analiticaBulk voceAnaliticaDef = voceAnaliticaList.stream()
-									.filter(Voce_analiticaBulk::getFl_default).findAny()
-									.orElse(voceAnaliticaList.stream().findAny().orElse(null));
-							if (Optional.ofNullable(voceAnaliticaDef).isPresent())
-								innerDettagliAnalitici.add(new DettaglioAnalitico(dettaglioPrimaNota, voceAnaliticaDef, el.getCdCentroCosto(), el.getCdLineaAttivita(), newImporto));
-						} catch (ComponentException | PersistencyException e) {
-							throw new ApplicationRuntimeException(e);
-						}
+						BigDecimal newImporto = dettaglioPrimaNota.getImporto().multiply(el.getImporto()).divide(totDettaglioFinanziario, 2, RoundingMode.HALF_UP);
+						Voce_analiticaBulk voceAnaliticaDef = el.getVoceAnalitica();
+						if (Optional.ofNullable(voceAnaliticaDef).isPresent())
+							innerDettagliAnalitici.add(new DettaglioAnalitico(voceAnaliticaDef, el.getCdCentroCosto(), el.getCdLineaAttivita(), newImporto, dettaglioPrimaNota));
 			});
 			BigDecimal totInnerDettagliAnalitici = innerDettagliAnalitici.stream().map(DettaglioAnalitico::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
 			if (totInnerDettagliAnalitici.compareTo(dettaglioPrimaNota.getImporto())!=0)
@@ -5793,66 +5840,12 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		return myTipoDettaglio;
 	}
 
-	private Voce_epBulk getContoByBeneServizio(UserContext userContext, IDocumentoAmministrativoRigaBulk rigaDocamm) {
-		try {
-			//verifico se sulla riga del docamm ci sia un bene inventariabile
-			if (Optional.ofNullable(rigaDocamm).filter(Fattura_passiva_rigaBulk.class::isInstance).isPresent()) {
-				Bene_servizioBulk myBeneServizio = (Bene_servizioBulk)this.loadObject(userContext, ((Fattura_passiva_rigaBulk)rigaDocamm).getBene_servizio());
-				if (myBeneServizio.getFl_gestione_inventario() && Optional.ofNullable(myBeneServizio.getCd_categoria_gruppo()).isPresent()) {
-					AssCatgrpInventVoceEpHome assCatgrpInventVoceEpHome = (AssCatgrpInventVoceEpHome) getHome(userContext, AssCatgrpInventVoceEpBulk.class);
-					AssCatgrpInventVoceEpBulk result = assCatgrpInventVoceEpHome.findDefaultByCategoria(((Fattura_passiva_rigaBulk) rigaDocamm).getEsercizio(), myBeneServizio.getCd_categoria_gruppo());
-					return result.getConto();
-				}
-			}
-			return null;
-		} catch (ComponentException | PersistencyException e) {
-			throw new DetailedRuntimeException(e);
-		}
-    }
-
 	private Pair<Voce_epBulk, Voce_epBulk> findPairCostoRigaDocumento(UserContext userContext, DettaglioFinanziario rigaDettFin, Pair<Voce_epBulk, Voce_epBulk> pairContoCostoGen) {
-		IDocumentoAmministrativoBulk docamm = rigaDettFin.getDocamm();
-		final boolean isDocumentoAttivoInContoAcconto =
-				Optional.of(docamm).filter(Fattura_attiva_IBulk.class::isInstance).map(Fattura_attiva_IBulk.class::cast)
-						.map(Fattura_attiva_IBulk::isDocumentoInContoAcconto)
-						.orElse(Optional.of(docamm).filter(Nota_di_debito_attivaBulk.class::isInstance).map(Nota_di_debito_attivaBulk.class::cast)
-								.map(Nota_di_debito_attivaBulk::isDocumentoInContoAcconto)
-								.orElse(Optional.of(docamm).filter(Documento_genericoBulk.class::isInstance).map(Documento_genericoBulk.class::cast)
-										.map(Documento_genericoBulk::isDocumentoInContoAcconto)
-										.orElse(Boolean.FALSE)));
-
-
-		final boolean isDocumentoAttivoInContoAnticipo =
-				Optional.of(docamm).filter(Fattura_attiva_IBulk.class::isInstance).map(Fattura_attiva_IBulk.class::cast)
-						.map(Fattura_attiva_IBulk::isDocumentoInContoAnticipo)
-						.orElse(Optional.of(docamm).filter(Nota_di_debito_attivaBulk.class::isInstance).map(Nota_di_debito_attivaBulk.class::cast)
-								.map(Nota_di_debito_attivaBulk::isDocumentoInContoAnticipo)
-								.orElse(Optional.of(docamm).filter(Documento_genericoBulk.class::isInstance).map(Documento_genericoBulk.class::cast)
-										.map(Documento_genericoBulk::isDocumentoInContoAnticipo)
-										.orElse(Boolean.FALSE)));
-
-		final Voce_epBulk aContoAccontoDocatt, aContoAnticipoDocatt;
 		try {
-			aContoAccontoDocatt = isDocumentoAttivoInContoAcconto?this.findContoAccontoDocumentoAttivo(userContext, docamm.getEsercizio()):null;
-			aContoAnticipoDocatt = isDocumentoAttivoInContoAnticipo?this.findContoAnticipoDocumentoAttivo(userContext, docamm.getEsercizio()):null;
-
-			//Individuazione conto costo....la variabile pairContoCostoGen è valorizzata se l'imponibile è presente tutto su una sola riga di fattura
-			//in quel caso il costo è derivato tutto da quell'unica riga.....
-			Pair<Voce_epBulk, Voce_epBulk> tmpPairContoCosto;
 			if (pairContoCostoGen!=null)
-				tmpPairContoCosto = pairContoCostoGen;
+				return pairContoCostoGen;
 			else
-				tmpPairContoCosto = this.findPairCosto(userContext, rigaDettFin);
-
-			//Metto al posto del costo l'eventuale conto acconto/anticipo
-			Pair<Voce_epBulk, Voce_epBulk> pairContoCosto;
-			if (isDocumentoAttivoInContoAcconto)
-				pairContoCosto = Pair.of(aContoAccontoDocatt, tmpPairContoCosto.getSecond());
-			else if (isDocumentoAttivoInContoAnticipo)
-				pairContoCosto = Pair.of(aContoAnticipoDocatt, tmpPairContoCosto.getSecond());
-			else
-				pairContoCosto = tmpPairContoCosto;
-			return pairContoCosto;
+				return this.findPairCosto(userContext, rigaDettFin);
 		} catch (ComponentException | RemoteException | PersistencyException e) {
 			throw new ApplicationRuntimeException(e);
 		}
@@ -5908,9 +5901,76 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		this.loadChildrenAna(userContext, rigaDocAmm);
 
 		for (IDocumentoDetailAnaCogeBulk rigaAna : rigaDocAmm.getChildrenAna())
-			dettagliAnalitici.add(new DettaglioAnalitico(rigaAna.getLinea_attivita().getCd_centro_responsabilita(), rigaAna.getLinea_attivita().getCd_linea_attivita(), rigaAna.getImporto()));
+			dettagliAnalitici.add(new DettaglioAnalitico(rigaAna));
 
 		return new DettaglioFinanziario(rigaDocAmm, rigaPartita, terzo.getCd_terzo(), rigaDocAmm.getVoce_ep(), dettagliAnalitici);
+	}
+
+	private void completeWithDatiAnalitici(UserContext userContext, DettaglioPrimaNota dettaglioPrimaNota, IDocumentoDetailEcoCogeBulk docamm, List<DettaglioAnalitico> dettagliAnaliticos, boolean firstByImporto) {
+		List<DettaglioAnalitico> newDettagliAnalitici = new ArrayList<>();
+
+		if (firstByImporto)
+			dettagliAnaliticos.stream()
+					.filter(rigaAna->Optional.ofNullable(rigaAna.getImportoCollegato()).orElse(BigDecimal.ZERO).compareTo(BigDecimal.ZERO)==0)
+					.filter(rigaAna->rigaAna.getImporto().compareTo(dettaglioPrimaNota.getImporto())==0)
+					.findAny()
+					.ifPresent(dettAna->{
+						newDettagliAnalitici.add(new DettaglioAnalitico(dettAna));
+						dettAna.setImportoCollegato(dettAna.getImporto());
+					});
+		if (newDettagliAnalitici.isEmpty()) {
+			BigDecimal totAna = dettagliAnaliticos.stream().map(DettaglioAnalitico::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+			dettagliAnaliticos.stream()
+					.filter(rigaAna->Optional.ofNullable(rigaAna.getImportoCollegato()).orElse(BigDecimal.ZERO).compareTo(dettaglioPrimaNota.getImporto())!=0)
+					.findAny()
+					.ifPresent(dettAna->{
+						BigDecimal newImportoAna = dettAna.getImporto().multiply(dettaglioPrimaNota.getImporto()).divide(totAna, 2, RoundingMode.HALF_UP);
+						if (newImportoAna.compareTo(dettAna.getImporto().subtract(dettAna.getImportoCollegato()))>0)
+							newImportoAna = dettAna.getImporto().subtract(dettAna.getImportoCollegato());
+						dettAna.setImportoCollegato(dettAna.getImportoCollegato().add(newImportoAna));
+
+						DettaglioAnalitico dettAnaNew = new DettaglioAnalitico(dettAna);
+						dettAnaNew.setImporto(newImportoAna);
+						newDettagliAnalitici.add(dettAnaNew);
+					});
+			BigDecimal totAnaNew = newDettagliAnalitici.stream().map(DettaglioAnalitico::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
+			if (totAnaNew.compareTo(dettaglioPrimaNota.getImporto())>0) {
+				//Devo togliere
+				BigDecimal impDaSottrarre = totAnaNew.subtract(dettaglioPrimaNota.getImporto());
+				for (DettaglioAnalitico dett : newDettagliAnalitici) {
+					if (dett.getImporto().compareTo(impDaSottrarre)>0) {
+						dett.setImporto(dett.getImporto().subtract(impDaSottrarre));
+						dett.getDettaglioAnalitico().setImportoCollegato(dett.getDettaglioAnalitico().getImportoCollegato().subtract(impDaSottrarre));
+						impDaSottrarre = BigDecimal.ZERO;
+					} else if (dett.getImporto().compareTo(impDaSottrarre)<=0) {
+						impDaSottrarre = impDaSottrarre.subtract(dett.getImporto());
+						dett.getDettaglioAnalitico().setImportoCollegato(dett.getDettaglioAnalitico().getImportoCollegato().subtract(dett.getImporto()));
+						newDettagliAnalitici.remove(dett);
+					}
+					if (impDaSottrarre.compareTo(BigDecimal.ZERO)<=0)
+						break;
+				}
+			} else if (totAnaNew.compareTo(dettaglioPrimaNota.getImporto())<0) {
+				//Devo aggiungere
+				BigDecimal impDaAggiungere = dettaglioPrimaNota.getImporto().subtract(totAnaNew);
+				for (DettaglioAnalitico dett : newDettagliAnalitici) {
+					BigDecimal impUtile = dett.getImporto().subtract(dett.getImportoCollegato());
+					if (impUtile.compareTo(impDaAggiungere) > 0) {
+						dett.setImporto(dett.getImporto().add(impDaAggiungere));
+						dett.getDettaglioAnalitico().setImportoCollegato(dett.getDettaglioAnalitico().getImportoCollegato().add(impDaAggiungere));
+						impDaAggiungere = BigDecimal.ZERO;
+					} else if (impUtile.compareTo(impDaAggiungere) <= 0) {
+						dett.setImporto(dett.getImporto().add(impUtile));
+						dett.getDettaglioAnalitico().setImportoCollegato(dett.getDettaglioAnalitico().getImportoCollegato().add(impUtile));
+						impDaAggiungere = impDaAggiungere.subtract(impUtile);
+					}
+					if (impDaAggiungere.compareTo(BigDecimal.ZERO)<=0)
+						break;
+				}
+			}
+		}
+		dettaglioPrimaNota.setDettaglioFinanziario(new DettaglioFinanziario((IDocumentoAmministrativoBulk)docamm, docamm.getVoce_ep(), docamm.getImCostoEco(), BigDecimal.ZERO, newDettagliAnalitici));
 	}
 
 	private void loadChildrenAna(UserContext userContext, IDocumentoDetailEcoCogeBulk rigaEco) {
@@ -5965,6 +6025,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 						((OggettoBulk) childrenAna).setToBeDeleted();
 						deleteBulk(userContext, (OggettoBulk) childrenAna);
 					}
+					((IDocumentoDetailEcoCogeBulk) documentoCoge).clearChildrenAna();
 
 					//e poi ricarico il tutto leggendo dalla finanziaria
 					this.loadDocammRigheEcoFromCofi(userContext, (IDocumentoDetailEcoCogeBulk) documentoCoge);
@@ -5989,7 +6050,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 						}
 
 						//e poi ricarico il tutto leggendo dalla finanziaria
-						this.loadDocammRigheEcoFromCofi(userContext, (IDocumentoDetailEcoCogeBulk) rigaDocamm);
+						this.loadDocammRigheEcoFromCofi(userContext, rigaDocamm);
 					}
 				}
 			}
@@ -6082,7 +6143,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 					myRigaAna.setToBeCreated();
 					insertBulk(userContext, myRigaAna);
 					myRigaEco.getRigheEconomica().add(myRigaAna);
-				} else if (rigaEco instanceof CompensoBulk) {
+				} else {
 					CompensoBulk myRigaEco = (CompensoBulk) rigaEco;
 					Compenso_riga_ecoBulk myRigaAna = (Compenso_riga_ecoBulk) rigaAna;
 					myRigaAna.setToBeCreated();

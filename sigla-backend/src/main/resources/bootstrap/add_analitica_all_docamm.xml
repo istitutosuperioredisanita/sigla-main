@@ -513,4 +513,34 @@
             <column name="CD_LINEA_ATTIVITA"/>
         </createIndex>
     </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_fattura_attiva_riga_eco">
+        <dropNotNullConstraint tableName="fattura_attiva_riga_eco" columnName="esercizio_voce_ana" columnDataType="SMALLINT"/>
+        <dropNotNullConstraint tableName="fattura_attiva_riga_eco" columnName="cd_voce_ana" columnDataType="VARCHAR(20)"/>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_fattura_passiva_riga_eco">
+        <dropNotNullConstraint tableName="fattura_passiva_riga_eco" columnName="esercizio_voce_ana" columnDataType="SMALLINT"/>
+        <dropNotNullConstraint tableName="fattura_passiva_riga_eco" columnName="cd_voce_ana" columnDataType="VARCHAR(20)"/>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_documento_generico_riga_eco">
+        <dropNotNullConstraint tableName="documento_generico_riga_eco" columnName="esercizio_voce_ana" columnDataType="SMALLINT"/>
+        <dropNotNullConstraint tableName="documento_generico_riga_eco" columnName="cd_voce_ana" columnDataType="VARCHAR(20)"/>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_compenso_riga_eco">
+        <dropNotNullConstraint tableName="compenso_riga_eco" columnName="esercizio_voce_ana" columnDataType="SMALLINT"/>
+        <dropNotNullConstraint tableName="compenso_riga_eco" columnName="cd_voce_ana" columnDataType="VARCHAR(20)"/>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_anticipo_riga_eco">
+        <dropNotNullConstraint tableName="anticipo_riga_eco" columnName="esercizio_voce_ana" columnDataType="SMALLINT"/>
+        <dropNotNullConstraint tableName="anticipo_riga_eco" columnName="cd_voce_ana" columnDataType="VARCHAR(20)"/>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_missione_riga_eco">
+        <dropNotNullConstraint tableName="missione_riga_eco" columnName="esercizio_voce_ana" columnDataType="SMALLINT"/>
+        <dropNotNullConstraint tableName="missione_riga_eco" columnName="cd_voce_ana" columnDataType="VARCHAR(20)"/>
+    </changeSet>
 </databaseChangeLog>

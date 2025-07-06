@@ -23,6 +23,8 @@ package it.cnr.contab.docamm00.docs.bulk;
  */
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
+import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
+import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.pdcep.bulk.*;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.doccont00.core.bulk.*;
@@ -77,7 +79,6 @@ public class Fattura_attiva_rigaHome extends BulkHome {
 	 * Inizializza la chiave primaria di un OggettoBulk per un
 	 * inserimento. Da usare principalmente per riempire i progressivi
 	 * automatici.
-	 * @param bulk l'OggettoBulk da inizializzare
 	 */
 	public SQLBuilder selectAccertamentiPer(
 		it.cnr.jada.UserContext userContext,
@@ -181,6 +182,19 @@ public class Fattura_attiva_rigaHome extends BulkHome {
 		try {
 			Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
 			if (Optional.ofNullable(docRiga).isPresent()) {
+				Fattura_attivaBulk fatturaAttivaBulk = (Fattura_attivaBulk)fatpasHome.loadIfNeededObject((OggettoBulk) docRiga.getFather());
+				if (fatturaAttivaBulk.isDocumentoInContoAcconto() || fatturaAttivaBulk.isDocumentoInContoAnticipo()) {
+					ContoBulk aContoDefault = null;
+					if (fatturaAttivaBulk.isDocumentoInContoAcconto())
+						aContoDefault = ((Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class))
+								.getContoAccontoDocumentoAttivo(docRiga.getEsercizio());
+					else if (fatturaAttivaBulk.isDocumentoInContoAnticipo())
+						aContoDefault = ((Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class))
+								.getContoAnticipoDocumentoAttivo(docRiga.getEsercizio());
+					if (aContoDefault != null)
+						return aContoDefault;
+					throw new ApplicationPersistencyException("Non è stato possibile individuare il conto acconto/anticipo da associare al documento!");
+				}
 				if (Optional.ofNullable(docRiga.getAccertamento_scadenzario()).isPresent()) {
 					Accertamento_scadenzarioBulk accertScad = (Accertamento_scadenzarioBulk) fatpasHome.loadIfNeededObject(docRiga.getAccertamento_scadenzario());
 
@@ -195,10 +209,10 @@ public class Fattura_attiva_rigaHome extends BulkHome {
 				}
 			}
 			return null;
-		} catch (PersistencyException e) {
+		} catch (PersistencyException | ComponentException e) {
 			throw new DetailedRuntimeException(e);
-		}
-	}
+        }
+    }
 
 	protected List<IDocumentoDetailAnaCogeBulk> getDatiAnaliticiDefault(UserContext userContext, Fattura_attiva_rigaBulk docRiga, ContoBulk aContoEconomico, Class rigaEcoClass) throws ComponentException {
 		try {
@@ -223,12 +237,15 @@ public class Fattura_attiva_rigaHome extends BulkHome {
 						myRigaEco.setVoce_analitica(voceAnaliticaDef);
 						myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
 						myRigaEco.setFattura_attiva_riga(docRiga);
-						myRigaEco.setImporto(scadVoce.getIm_voce().multiply(docRiga.getImportoCostoEco()).divide(totScad, 2, RoundingMode.HALF_UP));
+						if (totScad.compareTo(BigDecimal.ZERO)!=0)
+							myRigaEco.setImporto(scadVoce.getIm_voce().multiply(docRiga.getImCostoEco()).divide(totScad, 2, RoundingMode.HALF_UP));
+						else
+							myRigaEco.setImporto(docRiga.getImCostoEco().divide(BigDecimal.valueOf(scadVoceBulks.size()), 2, RoundingMode.HALF_UP));
 						myRigaEco.setToBeCreated();
 						result.add(myRigaEco);
 					}
 					BigDecimal totRipartito = result.stream().map(Fattura_attiva_riga_ecoBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
-					BigDecimal diff = totRipartito.subtract(docRiga.getImportoCostoEco());
+					BigDecimal diff = totRipartito.subtract(docRiga.getImCostoEco());
 
 					if (diff.compareTo(BigDecimal.ZERO)>0) {
 						for (Fattura_attiva_riga_ecoBulk rigaEco : result) {

@@ -165,7 +165,7 @@ public class Fattura_attiva_rigaIBulk extends Fattura_attiva_rigaBulk {
 	/**
 	 * Insert the method's description here.
 	 * Creation date: (10/25/2001 12:03:34 PM)
-	 * @param newFattura_passivaIBulk it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_IBulk
+	 * @param newFattura_attivaIBulk it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_IBulk
 	 */
 	@JsonIgnore
 	public void setFattura_attivaI(Fattura_attiva_IBulk newFattura_attivaIBulk) {

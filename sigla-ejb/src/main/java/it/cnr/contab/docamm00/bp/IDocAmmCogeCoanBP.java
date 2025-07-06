@@ -17,34 +17,10 @@
 
 package it.cnr.contab.docamm00.bp;
 
-import it.cnr.jada.action.BusinessProcess;
-import it.cnr.jada.bulk.FieldValidationMap;
-import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.FormController;
 
-public interface IDocAmmAnaliticaBP extends IDocAmmCogeCoanBP {
-
-    String getTab(String tabName);
-
-    FormController getController();
-
-    CollapsableDetailCRUDController getMovimentiAnalitici();
-
-    int getStatus();
-
-    FieldValidationMap getFieldValidationMap();
-
-    BusinessProcess getParentRoot();
-
-    OggettoBulk getAnaliticaModel();
-
-    void setDirty(boolean dirty);
-
-    void setMessage(int status, String message);
-
-    boolean isButtonGeneraScritturaAnaliticaVisible();
-
+public interface IDocAmmCogeCoanBP extends IDocAmmEconomicaBP {
     CollapsableDetailCRUDController getChildrenAnaColl();
 
     FormController getControllerDetailEcoCoge();

@@ -21,7 +21,6 @@
  */
 package it.cnr.contab.ordmag.ordini.bulk;
 import java.math.BigDecimal;
-import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,8 +28,8 @@ import java.util.stream.Collectors;
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.config00.contratto.bulk.Dettaglio_contrattoBulk;
-import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk;
@@ -690,5 +689,26 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 		public String getLabel() {
 			return label;
 		}
+	}
+
+	/*
+	 * Ritorna l'importo della riga da imputare ad un conto di costo.
+	 * Il valore viene utilizzato come quota da ripartire a livello analitico.
+	 */
+	@Override
+	public BigDecimal getImCostoEco() {
+		return this.getIm_riga();
+	}
+
+	@Override
+	public BigDecimal getImCostoEcoRipartito() {
+		return this.getChildrenAna().stream().map(IDocumentoDetailAnaCogeBulk::getImporto)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	@Override
+	public BigDecimal getImCostoEcoDaRipartire() {
+		return Optional.ofNullable(this.getImCostoEco()).orElse(BigDecimal.ZERO)
+				.subtract(Optional.ofNullable(this.getImCostoEcoRipartito()).orElse(BigDecimal.ZERO));
 	}
 }

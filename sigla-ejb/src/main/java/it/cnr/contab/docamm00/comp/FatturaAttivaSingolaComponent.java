@@ -3861,6 +3861,7 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
 
             //fattura.setModalita_uo(findModalita_uo(userContext,fattura));
 
+            Fattura_attiva_rigaHome rigaHome = (Fattura_attiva_rigaHome)getHome(userContext, Fattura_attiva_rigaBulk.class);
             Fattura_attiva_rigaBulk riga = null;
             for (java.util.Iterator i = fattura.getFattura_attiva_dettColl().iterator(); i.hasNext(); ) {
                 riga = (Fattura_attiva_rigaBulk) i.next();
@@ -3875,6 +3876,8 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
                 trovatoBulk.setTitolo("f");
 
                 riga.setTrovato(trovatoBulk);
+
+                riga.setRigheEconomica(rigaHome.findFatturaAttivaRigheEcoList(riga));
             }
 
             getHomeCache(userContext).fetchAll(userContext);

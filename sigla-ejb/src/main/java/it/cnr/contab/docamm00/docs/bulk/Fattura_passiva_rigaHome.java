@@ -23,13 +23,11 @@ import it.cnr.contab.config00.bulk.CigBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
-import it.cnr.contab.config00.latt.bulk.WorkpackageHome;
 import it.cnr.contab.config00.pdcep.bulk.*;
 import it.cnr.contab.docamm00.tabrif.bulk.AssCatgrpInventVoceEpBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.AssCatgrpInventVoceEpHome;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.doccont00.core.bulk.*;
-import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
@@ -42,7 +40,6 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.rmi.RemoteException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -344,7 +341,7 @@ public class Fattura_passiva_rigaHome extends BulkHome {
                     myRigaEco.setVoce_analitica(voceAnaliticaDef);
                     myRigaEco.setLinea_attivita(gaeDefault);
                     myRigaEco.setFattura_passiva_riga(docRiga);
-                    myRigaEco.setImporto(docRiga.getImportoCostoEco());
+                    myRigaEco.setImporto(docRiga.getImCostoEco());
                     myRigaEco.setToBeCreated();
                     result.add(myRigaEco);
                 } else if (Optional.ofNullable(docRiga.getScadenzaDocumentoContabile()).filter(Obbligazione_scadenzarioBulk.class::isInstance).isPresent()) {
@@ -358,12 +355,15 @@ public class Fattura_passiva_rigaHome extends BulkHome {
                         myRigaEco.setVoce_analitica(voceAnaliticaDef);
                         myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
                         myRigaEco.setFattura_passiva_riga(docRiga);
-                        myRigaEco.setImporto(scadVoce.getIm_voce().multiply(docRiga.getImportoCostoEco()).divide(totScad, 2, RoundingMode.HALF_UP));
+                        if (totScad.compareTo(BigDecimal.ZERO)!=0)
+                            myRigaEco.setImporto(scadVoce.getIm_voce().multiply(docRiga.getImCostoEco()).divide(totScad, 2, RoundingMode.HALF_UP));
+                        else
+                            myRigaEco.setImporto(docRiga.getImCostoEco().divide(BigDecimal.valueOf(scadVoceBulks.size()), 2, RoundingMode.HALF_UP));
                         myRigaEco.setToBeCreated();
                         result.add(myRigaEco);
                     }
                     BigDecimal totRipartito = result.stream().map(Fattura_passiva_riga_ecoBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
-                    BigDecimal diff = totRipartito.subtract(docRiga.getImportoCostoEco());
+                    BigDecimal diff = totRipartito.subtract(docRiga.getImCostoEco());
 
                     if (diff.compareTo(BigDecimal.ZERO)>0) {
                         for (Fattura_passiva_riga_ecoBulk rigaEco : result) {

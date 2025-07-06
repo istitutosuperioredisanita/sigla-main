@@ -39,9 +39,6 @@ import it.cnr.contab.anagraf00.tabter.bulk.NazioneHome;
 import it.cnr.contab.anagraf00.tabter.bulk.RegioneBulk;
 import it.cnr.contab.anagraf00.tabter.bulk.RegioneHome;
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaFromDocumentoComponent;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
-import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaHome;
 import it.cnr.contab.compensi00.docs.bulk.BonusBulk;
 import it.cnr.contab.compensi00.docs.bulk.BonusHome;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
@@ -81,7 +78,6 @@ import it.cnr.contab.compensi00.tabrif.bulk.V_tipo_trattamento_tipo_coriBulk;
 import it.cnr.contab.compensi00.tabrif.bulk.V_tipo_trattamento_tipo_coriHome;
 import it.cnr.contab.config00.bulk.CigBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
-import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.contratto.bulk.Ass_contratto_uoBulk;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
@@ -100,7 +96,6 @@ import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.docamm00.ejb.NumerazioneTempDocAmmComponentSession;
 import it.cnr.contab.docamm00.ejb.ProgressiviAmmComponentSession;
 import it.cnr.contab.docamm00.ejb.RiportoDocAmmComponentSession;
-import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaHome;
 import it.cnr.contab.doccont00.comp.DocumentoContabileComponentSession;
@@ -127,8 +122,6 @@ import it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk;
 import it.cnr.contab.incarichi00.bulk.Incarichi_repertorio_annoBulk;
 import it.cnr.contab.incarichi00.bulk.Incarichi_repertorio_varBulk;
 import it.cnr.contab.incarichi00.ejb.IncarichiRepertorioComponentSession;
-import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
-import it.cnr.contab.missioni00.docs.bulk.MissioneHome;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.RemoveAccent;
 import it.cnr.contab.util.Utility;
@@ -2678,34 +2671,40 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 		it.cnr.jada.bulk.PrimaryKeyHashMap relazioniObbligazione = compenso
 				.getRelationsDocContForSaldi();
 
-		compenso = (CompensoBulk) super.inizializzaBulkPerModifica(userContext,
-				compenso);
-		completaCompenso(userContext, compenso);
-
-		compenso.setStatoCompensoToContabilizzaCofi();
-		compenso.setRelationsDocContForSaldi(relazioniObbligazione);
-		compenso = valorizzaInfoDocEle(userContext,compenso);
-
-		// Faccio una copia del compenso appena caricato
-		if (userContext.isTransactional()) {
-			Long pgTmp = assegnaProgressivoTemporaneo(userContext, compenso);
-			compenso.setPgCompensoPerClone(pgTmp);
-			copiaCompenso(userContext, compenso);
-		}
-
-		// Reimposto i documenti contabili elaborati al compenso ma non
-		// associati ad esso
-		if (compenso.isDaMissione())
-			compenso.setDocumentiContabiliCancellati(docContCancellati);
-
 		try {
-			compenso.setTrovato(ricercaDatiTrovato(userContext, compenso.getPg_trovato()));
-		} catch (RemoteException e) {
-			throw handleException(e);
-		} catch (PersistencyException e) {
+			compenso = (CompensoBulk) super.inizializzaBulkPerModifica(userContext, compenso);
+			completaCompenso(userContext, compenso);
+
+			CompensoHome compensoHome = (CompensoHome) getHome(userContext, CompensoBulk.class);
+			compenso.setRigheEconomica(compensoHome.findCompensoRigheEcoList(compenso));
+
+			compenso.setStatoCompensoToContabilizzaCofi();
+			compenso.setRelationsDocContForSaldi(relazioniObbligazione);
+			compenso = valorizzaInfoDocEle(userContext,compenso);
+
+			// Faccio una copia del compenso appena caricato
+			if (userContext.isTransactional()) {
+				Long pgTmp = assegnaProgressivoTemporaneo(userContext, compenso);
+				compenso.setPgCompensoPerClone(pgTmp);
+				copiaCompenso(userContext, compenso);
+			}
+
+			// Reimposto i documenti contabili elaborati al compenso ma non
+			// associati ad esso
+			if (compenso.isDaMissione())
+				compenso.setDocumentiContabiliCancellati(docContCancellati);
+
+			try {
+				compenso.setTrovato(ricercaDatiTrovato(userContext, compenso.getPg_trovato()));
+			} catch (RemoteException e) {
+				throw handleException(e);
+			} catch (PersistencyException e) {
+				throw handleException(e);
+			}
+			caricaScrittura(userContext, compenso);
+		} catch (Throwable e) {
 			throw handleException(e);
 		}
-		caricaScrittura(userContext, compenso);
 		return compenso;
 	}
 

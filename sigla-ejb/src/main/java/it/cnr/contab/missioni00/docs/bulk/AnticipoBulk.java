@@ -22,11 +22,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
-import it.cnr.contab.compensi00.docs.bulk.Compenso_riga_ecoBulk;
+import it.cnr.contab.coepcoan00.core.bulk.*;
 import it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoSpesaBP;
@@ -129,6 +125,7 @@ public class AnticipoBulk extends AnticipoBase implements IDefferUpdateSaldi, ID
     private java.lang.String riportata = NON_RIPORTATO;
     private java.lang.String riportataInScrivania = NON_RIPORTATO;
     private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
+
     private List<Anticipo_riga_ecoBulk> righeEconomica = new BulkList<>();
     private ContoBulk voce_ep = new ContoBulk();
 
@@ -1503,11 +1500,6 @@ public class AnticipoBulk extends AnticipoBase implements IDefferUpdateSaldi, ID
     }
 
     @Override
-    public BigDecimal getImportoCostoEco() {
-        return this.getIm_anticipo();
-    }
-
-    @Override
     public IScadenzaDocumentoContabileBulk getScadenzaDocumentoContabile() {
         return this.getScadenza_obbligazione();
     }
@@ -1555,6 +1547,29 @@ public class AnticipoBulk extends AnticipoBase implements IDefferUpdateSaldi, ID
     }
 
     @Override
+    public IDocumentoCogeBulk getFather() {
+        return this;
+    }
+
+    @Override
+    public BigDecimal getImCostoEco() {
+        return this.getIm_anticipo();
+    }
+
+    @Override
+    public BigDecimal getImCostoEcoRipartito() {
+        return this.getChildrenAna().stream().map(IDocumentoDetailAnaCogeBulk::getImporto)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    @Override
+    public BigDecimal getImCostoEcoDaRipartire() {
+        return Optional.ofNullable(this.getImCostoEco()).orElse(BigDecimal.ZERO)
+                .subtract(Optional.ofNullable(this.getImCostoEcoRipartito()).orElse(BigDecimal.ZERO));
+    }
+
+
+    @Override
     public List<IDocumentoDetailAnaCogeBulk> getChildrenAna() {
         return this.getRigheEconomica().stream()
                 .filter(Objects::nonNull)
@@ -1563,7 +1578,7 @@ public class AnticipoBulk extends AnticipoBase implements IDefferUpdateSaldi, ID
     }
 
     @Override
-    public IDocumentoCogeBulk getFather() {
-        return this;
+    public void clearChildrenAna() {
+        this.setRigheEconomica(new ArrayList<>());
     }
 }

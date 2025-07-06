@@ -29,6 +29,7 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.RemoteIterator;
@@ -61,7 +62,7 @@ public abstract class EconomicaAction extends CRUDAction {
                     .filter(IDocAmmEconomicaBP.class::isInstance)
                     .map(IDocAmmEconomicaBP.class::cast)
                     .orElseThrow(() -> new BusinessProcessException("Business process non compatibile!"));
-            final IDocumentoCogeBulk documentoCogeBulk = Optional.ofNullable(bp.getEconomicaModel())
+            IDocumentoCogeBulk documentoCogeBulk = Optional.ofNullable(bp.getEconomicaModel())
                     .filter(IDocumentoCogeBulk.class::isInstance)
                     .map(IDocumentoCogeBulk.class::cast)
                     .orElseThrow(() -> new BusinessProcessException("Modello di business non compatibile!"));
@@ -69,30 +70,46 @@ public abstract class EconomicaAction extends CRUDAction {
                 if (Optional.ofNullable(bp.getEconomicaModel()).filter(OggettoBulk::isToBeCreated).isPresent())
                     throw new ApplicationException("Il documento risulta non salvato! Proposta scrittura prima nota non possibile.");
 
+                /*
                 if (Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(actionContext.getUserContext())) {
                     ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
                             actionContext.getUserContext(),
                             documentoCogeBulk);
 
+                    //Richiamo il documento perchè modificato dalla generazione patrimoniale
+                    documentoCogeBulk = (IDocumentoCogeBulk)bp.initializeModelForEdit(actionContext, (OggettoBulk)documentoCogeBulk);
+                    bp.setModel(actionContext, (OggettoBulk)documentoCogeBulk);
+
                     documentoCogeBulk.setScrittura_partita_doppia(result.getScritturaPartitaDoppiaBulk());
                     documentoCogeBulk.setScrittura_analitica(result.getScritturaAnaliticaBulk());
                 } else {
+                    Scrittura_partita_doppiaBulk scrittura = Utility.createProposeScritturaComponentSession().proposeScritturaPartitaDoppia(
+                            actionContext.getUserContext(),
+                            documentoCogeBulk);
+
+                    //Richiamo il documento perchè modificato dalla generazione patrimoniale
+                    documentoCogeBulk = (IDocumentoCogeBulk)bp.initializeModelForEdit(actionContext, (OggettoBulk)documentoCogeBulk);
+                    bp.setModel(actionContext, (OggettoBulk)documentoCogeBulk);
+
                     documentoCogeBulk.setScrittura_partita_doppia(Utility.createProposeScritturaComponentSession().proposeScritturaPartitaDoppia(
                             actionContext.getUserContext(),
                             documentoCogeBulk)
                     );
                 }
                 Optional.of(documentoCogeBulk)
-                        .filter(OggettoBulk.class::isInstance)
                         .map(OggettoBulk.class::cast)
                         .ifPresent(OggettoBulk::setToBeUpdated);
                 bp.getMovimentiAvere().reset(actionContext);
                 bp.getMovimentiDare().reset(actionContext);
+                */
+                bp.save(actionContext);
                 bp.setMessage(FormBP.INFO_MESSAGE, "Scrittura di economica generata correttamente.");
-                bp.setDirty(true);
             } catch (ScritturaPartitaDoppiaNotRequiredException | ScritturaPartitaDoppiaNotEnabledException e) {
                 bp.setMessage(FormBP.INFO_MESSAGE, e.getMessage());
-            } catch (ComponentException | RemoteException e) {
+            } catch (ValidationException validationexception) {
+                this.getBusinessProcess(actionContext).setErrorMessage(validationexception.getMessage());
+                return actionContext.findDefaultForward();
+            } catch (ComponentException e) {
                 return handleException(actionContext, e);
             }
         }

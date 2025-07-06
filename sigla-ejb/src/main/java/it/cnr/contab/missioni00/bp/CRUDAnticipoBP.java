@@ -18,9 +18,8 @@
 package it.cnr.contab.missioni00.bp;
 
 import it.cnr.contab.chiusura00.ejb.RicercaDocContComponentSession;
-import it.cnr.contab.coepcoan00.bp.CRUDScritturaPDoppiaBP;
-import it.cnr.contab.coepcoan00.bp.EconomicaAvereDetailCRUDController;
-import it.cnr.contab.coepcoan00.bp.EconomicaDareDetailCRUDController;
+import it.cnr.contab.coepcoan00.bp.*;
+import it.cnr.contab.docamm00.bp.IDocAmmCogeCoanBP;
 import it.cnr.contab.docamm00.bp.IDocAmmEconomicaBP;
 import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoSpesaBP;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
@@ -31,6 +30,7 @@ import it.cnr.contab.doccont00.bp.IValidaDocContBP;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneResBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
+import it.cnr.contab.missioni00.docs.bulk.Anticipo_riga_ecoBulk;
 import it.cnr.contab.missioni00.docs.bulk.RimborsoBulk;
 import it.cnr.contab.missioni00.ejb.AnticipoComponentSession;
 import it.cnr.contab.util.Utility;
@@ -39,6 +39,7 @@ import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
+import it.cnr.jada.util.action.FormController;
 import it.cnr.jada.util.jsp.Button;
 
 import java.util.Iterator;
@@ -52,7 +53,7 @@ import java.util.Vector;
  * @author: Paola sala
  */
 public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP implements
-		IDefferedUpdateSaldiBP, IDocumentoAmministrativoSpesaBP, IValidaDocContBP, IDocAmmEconomicaBP {
+		IDefferedUpdateSaldiBP, IDocumentoAmministrativoSpesaBP, IValidaDocContBP, IDocAmmCogeCoanBP {
     private it.cnr.contab.doccont00.core.bulk.OptionRequestParameter userConfirm = null;
 
     //	Variabili usate per la gestione del "RIPORTA" documento ad esercizio precedente/successivo
@@ -62,6 +63,9 @@ public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
     private boolean ribaltato;
     private final CollapsableDetailCRUDController movimentiDare = new EconomicaDareDetailCRUDController(this);
     private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
+
+    private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(Anticipo_riga_ecoBulk.class, this);
+
     private boolean attivaEconomica = false;
     private boolean attivaAnalitica = false;
     private boolean supervisore = false;
@@ -80,7 +84,8 @@ public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
      */
     public CRUDAnticipoBP(String function) {
         super(function + "Tr");
-        setTab("tab", "tabAnagrafico");                // Mette il fuoco sul primo TAB
+        setTab("tab", "tabAnagrafico");
+        setTab("tabAnticipo", "tabAnticipoDetail1");
     }
 
 	@Override
@@ -88,7 +93,8 @@ public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
 		super.resetTabs(actioncontext);
 		setTab("tab", "tabAnagrafico");                // Mette il fuoco sul primo TAB
 		setTab("tabEconomica", "tabDare");
-	}
+        setTab("tabAnticipo", "tabAnticipoDetail1");
+    }
 
 	/**
      * Il metodo gestisce l'abilitazione o meno dei bottoni dell'obbligazione.
@@ -1026,20 +1032,34 @@ public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
     private static final String[] TAB_ANTICIPO = new String[]{ "tabAnticipo","Anticipo","/missioni00/tab_anticipo.jsp" };
     private static final String[] TAB_RIMBORSO = new String[]{ "tabRimborsoAnticipo","Rimborso","/missioni00/tab_rimborso_anticipo.jsp" };
 
+    private static final String[] TAB_ANTICIPO_DETAIL1 = new String[]{ "tabAnticipoDetail1","Dettaglio","/missioni00/tab_anticipo_detail.jsp" };
+
     public String[][] getTabs() {
         TreeMap<Integer, String[]> pages = new TreeMap<Integer, String[]>();
         int i = 0;
         pages.put(i++, TAB_ANAGRAFICO);
         pages.put(i++, TAB_ANTICIPO);
         pages.put(i++, TAB_RIMBORSO);
-        if (attivaEconomica) {
-            pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
-        }
         String[][] tabs = new String[i][3];
         for (int j = 0; j < i; j++)
             tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
         return tabs;
     }
+
+    public String[][] getTabsTabAnticipo() {
+        TreeMap<Integer, String[]> pages = new TreeMap<Integer, String[]>();
+        int i = 0;
+        pages.put(i++, TAB_ANTICIPO_DETAIL1);
+        if (attivaAnalitica)
+            pages.put(i++, CRUDScritturaPDoppiaBP.TAB_DATI_COGECOAN);
+        if (attivaEconomica)
+            pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
+        String[][] tabs = new String[i][3];
+        for (int j = 0; j < i; j++)
+            tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
+        return tabs;
+    }
+
 
     public CollapsableDetailCRUDController getMovimentiDare() {
 		return movimentiDare;
@@ -1070,7 +1090,20 @@ public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
         return attivaEconomica;
     }
 
+    @Override
     public boolean isAttivaAnalitica() {
         return attivaAnalitica;
     }
+
+    @Override
+    public CollapsableDetailCRUDController getChildrenAnaColl() {
+        return childrenAnaColl;
+    }
+
+    @Override
+    public FormController getControllerDetailEcoCoge() {
+        return this;
+    }
+
+
 }

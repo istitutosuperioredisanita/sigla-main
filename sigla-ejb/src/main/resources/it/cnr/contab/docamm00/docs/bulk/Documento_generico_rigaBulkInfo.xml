@@ -537,7 +537,32 @@
 		formName="searchtool"
 		enabledOnSearch="false" />
 
-<!--  FORM FIELD PROPERTY  -->
+	<fieldProperty
+			name="imCostoEco"
+			property="imCostoEco"
+			inputType="ROTEXT"
+			style="text-align: right"
+			inputSize="20"
+			formatName="it.cnr.contab.util.EuroFormat"
+			label="Importo" />
+	<fieldProperty
+			name="imCostoEcoRipartito"
+			property="imCostoEcoRipartito"
+			inputType="ROTEXT"
+			style="text-align: right"
+			inputSize="20"
+			formatName="it.cnr.contab.util.EuroFormat"
+			label="Importo Ripartito" />
+	<fieldProperty
+			name="imCostoEcoDaRipartire"
+			property="imCostoEcoDaRipartire"
+			inputType="ROTEXT"
+			style="text-align: right"
+			inputSize="20"
+			formatName="it.cnr.contab.util.EuroFormat"
+			label="Importo da Ripartire" />
+
+	<!--  FORM FIELD PROPERTY  -->
 	<formFieldProperty name="ti_associato_manrev"/>
 <!-- banche -->
 	<formFieldProperty name="contoA" />
@@ -615,6 +640,13 @@
 	<formFieldProperty name="pg_obbligazione_scadenzario" />
 
 	<formFieldProperty name="find_voce_ep" />
+	<formFieldProperty name="imCostoEco" />
+	<formFieldProperty name="imCostoEcoRipartito" />
+	<formFieldProperty name="imCostoEcoDaRipartire" />
+
+	<formFieldProperty name="imCostoEco" />
+	<formFieldProperty name="imCostoEcoRipartito" />
+	<formFieldProperty name="imCostoEcoDaRipartire" />
 
 <!--  COLUMN FIELD PROPERTY  -->
 

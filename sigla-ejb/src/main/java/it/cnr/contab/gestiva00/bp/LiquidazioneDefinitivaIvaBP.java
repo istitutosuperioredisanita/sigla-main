@@ -364,4 +364,8 @@ public class LiquidazioneDefinitivaIvaBP extends LiquidazioneIvaBP implements ID
 	public boolean isAttivaAnalitica() {
 		return attivaAnalitica;
 	}
+
+	@Override
+	public void save(ActionContext actioncontext) throws ValidationException, BusinessProcessException {
+	}
 }

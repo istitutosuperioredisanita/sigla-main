@@ -130,15 +130,15 @@ public void updateFondoEconomale(it.cnr.contab.fondecon00.core.bulk.Fondo_spesaB
 				
 			ps.setString(5, anticipo.getCd_cds());
 			ps.setString(6, anticipo.getCd_unita_organizzativa());
-			ps.setInt(7, anticipo.getEsercizio().intValue());
-			ps.setLong(8, anticipo.getPg_anticipo().longValue());
+			ps.setInt(7, anticipo.getEsercizio());
+			ps.setLong(8, anticipo.getPg_anticipo());
 
 			ps.executeUpdate();
 		} 
 		finally 
 		{
-			try{ps.close();}catch( java.sql.SQLException e ){};
-		}
+			try{ps.close();}catch( java.sql.SQLException ignored){}
+        }
 	} 
 	catch(java.sql.SQLException e) 
 	{
@@ -165,36 +165,62 @@ public void updateFondoEconomale(it.cnr.contab.fondecon00.core.bulk.Fondo_spesaB
 		return null;
     }
 
-	private List<IDocumentoDetailAnaCogeBulk> getDatiAnaliticiDefault(UserContext userContext, AnticipoBulk anticipo, ContoBulk aContoEconomico) throws ComponentException {
-		try {
-			List<Anticipo_riga_ecoBulk> result = new ArrayList<>();
+	private List<Anticipo_riga_ecoBulk> getDatiAnaliticiDefault(UserContext userContext, AnticipoBulk anticipo) throws ComponentException, PersistencyException {
+		List<Anticipo_riga_ecoBulk> result = new ArrayList<>();
 
-			if (Optional.ofNullable(aContoEconomico).isPresent()) {
-				List<Voce_analiticaBulk> voceAnaliticaList = ((Voce_analiticaHome) getHomeCache().getHome(Voce_analiticaBulk.class)).findVoceAnaliticaList(aContoEconomico);
-				if (voceAnaliticaList.isEmpty())
-					return new ArrayList<>();
-				Voce_analiticaBulk voceAnaliticaDef = voceAnaliticaList.stream()
-						.filter(Voce_analiticaBulk::getFl_default).findAny()
-						.orElse(voceAnaliticaList.stream().findAny().orElse(null));
+		Fattura_passivaHome fatpasHome = (Fattura_passivaHome) getHomeCache().getHome(Fattura_passivaBulk.class);
+		if (Optional.ofNullable(anticipo.getScadenza_obbligazione()).isPresent()) {
+			Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(anticipo.getScadenza_obbligazione());
 
-				Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
-				WorkpackageBulk gaeDefault = configHome.getGaeAnticipo(userContext, anticipo);
+			if (Optional.ofNullable(obbligScad).isPresent()) {
+				//carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
+				Obbligazione_scadenzarioHome obbligazioneScadenzarioHome = (Obbligazione_scadenzarioHome) getHomeCache().getHome(Obbligazione_scadenzarioBulk.class);
+				List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, obbligScad);
+				BigDecimal totScad = scadVoceBulks.stream().map(Obbligazione_scad_voceBulk::getIm_voce).reduce(BigDecimal.ZERO, BigDecimal::add);
+				for (Obbligazione_scad_voceBulk scadVoce : scadVoceBulks) {
+					Anticipo_riga_ecoBulk myRigaEco = new Anticipo_riga_ecoBulk();
+					myRigaEco.setProgressivo_riga_eco((long) result.size() + 1);
+					myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
+					myRigaEco.setAnticipo(anticipo);
+					myRigaEco.setImporto(scadVoce.getIm_voce().multiply(anticipo.getImCostoEco()).divide(totScad, 2, RoundingMode.HALF_UP));
+					myRigaEco.setToBeCreated();
+					result.add(myRigaEco);
+				}
+				BigDecimal totRipartito = result.stream().map(Anticipo_riga_ecoBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
+				BigDecimal diff = totRipartito.subtract(anticipo.getImCostoEco());
 
-				Anticipo_riga_ecoBulk myRigaEco = new Anticipo_riga_ecoBulk();
-				myRigaEco.setProgressivo_riga_eco(1L);
-				myRigaEco.setVoce_analitica(voceAnaliticaDef);
-				myRigaEco.setLinea_attivita(gaeDefault);
-				myRigaEco.setAnticipo(anticipo);
-				myRigaEco.setImporto(anticipo.getImportoCostoEco());
-				myRigaEco.setToBeCreated();
-				result.add(myRigaEco);
+				if (diff.compareTo(BigDecimal.ZERO) > 0) {
+					for (Anticipo_riga_ecoBulk rigaEco : result) {
+						if (rigaEco.getImporto().compareTo(diff) >= 0) {
+							rigaEco.setImporto(rigaEco.getImporto().subtract(diff));
+							break;
+						} else {
+							diff = diff.subtract(rigaEco.getImporto());
+							rigaEco.setImporto(BigDecimal.ZERO);
+						}
+					}
+				} else if (diff.compareTo(BigDecimal.ZERO) < 0) {
+					for (Anticipo_riga_ecoBulk rigaEco : result) {
+						rigaEco.setImporto(rigaEco.getImporto().add(diff));
+						break;
+					}
+				}
 			}
-			return result.stream()
-					.filter(el->el.getImporto().compareTo(BigDecimal.ZERO)!=0)
-					.collect(Collectors.toList());
-		} catch (PersistencyException e) {
-			throw new ComponentException(e);
+		} else {
+			Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
+			WorkpackageBulk gaeDefault = configHome.getGaeAnticipo(userContext, anticipo);
+
+			Anticipo_riga_ecoBulk myRigaEco = new Anticipo_riga_ecoBulk();
+			myRigaEco.setProgressivo_riga_eco(1L);
+			myRigaEco.setLinea_attivita(gaeDefault);
+			myRigaEco.setAnticipo(anticipo);
+			myRigaEco.setImporto(anticipo.getImCostoEco());
+			myRigaEco.setToBeCreated();
+			result.add(myRigaEco);
 		}
+		return result.stream()
+				.filter(el->el.getImporto().compareTo(BigDecimal.ZERO)!=0)
+				.collect(Collectors.toList());
 	}
 
 	public ContoBulk getContoEconomicoForMissione(AnticipoBulk anticipo) throws ComponentException {
@@ -236,55 +262,17 @@ public void updateFondoEconomale(it.cnr.contab.fondecon00.core.bulk.Fondo_spesaB
 						.filter(Voce_analiticaBulk::getFl_default).findAny()
 						.orElse(voceAnaliticaList.stream().findAny().orElse(null));
 
-				Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
-				if (Optional.ofNullable(anticipo.getScadenza_obbligazione()).isPresent()) {
-					Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(anticipo.getScadenza_obbligazione());
+				List<Anticipo_riga_ecoBulk> aContiAnalitici = this.findAnticipoRigheEcoList(anticipo);
+				if (aContiAnalitici.isEmpty())
+					aContiAnalitici = this.getDatiAnaliticiDefault(userContext, anticipo);
 
-					if (Optional.ofNullable(obbligScad).isPresent()) {
-						//carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
-						Obbligazione_scadenzarioHome obbligazioneScadenzarioHome = (Obbligazione_scadenzarioHome) getHomeCache().getHome(Obbligazione_scadenzarioBulk.class);
-						List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, obbligScad);
-						BigDecimal totScad = scadVoceBulks.stream().map(Obbligazione_scad_voceBulk::getIm_voce).reduce(BigDecimal.ZERO, BigDecimal::add);
-						for (Obbligazione_scad_voceBulk scadVoce : scadVoceBulks) {
-							Anticipo_riga_ecoBulk myRigaEco = new Anticipo_riga_ecoBulk();
-							myRigaEco.setProgressivo_riga_eco((long) result.size() + 1);
-							myRigaEco.setVoce_analitica(voceAnaliticaDef);
-							myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
-							myRigaEco.setAnticipo(anticipo);
-							myRigaEco.setImporto(scadVoce.getIm_voce().multiply(anticipo.getImportoCostoEco()).divide(totScad, 2, RoundingMode.HALF_UP));
-							myRigaEco.setToBeCreated();
-							result.add(myRigaEco);
-						}
-						BigDecimal totRipartito = result.stream().map(Anticipo_riga_ecoBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
-						BigDecimal diff = totRipartito.subtract(anticipo.getImportoCostoEco());
-
-						if (diff.compareTo(BigDecimal.ZERO) > 0) {
-							for (Anticipo_riga_ecoBulk rigaEco : result) {
-								if (rigaEco.getImporto().compareTo(diff) >= 0) {
-									rigaEco.setImporto(rigaEco.getImporto().subtract(diff));
-									break;
-								} else {
-									diff = diff.subtract(rigaEco.getImporto());
-									rigaEco.setImporto(BigDecimal.ZERO);
-								}
-							}
-						} else if (diff.compareTo(BigDecimal.ZERO) < 0) {
-							for (Anticipo_riga_ecoBulk rigaEco : result) {
-								rigaEco.setImporto(rigaEco.getImporto().add(diff));
-								break;
-							}
-						}
-					}
-				} else {
-					Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
-					WorkpackageBulk gaeDefault = configHome.getGaeDocumentoNonLiquidabile(userContext, anticipo);
-
+				for (Anticipo_riga_ecoBulk rigaEco : aContiAnalitici) {
 					Anticipo_riga_ecoBulk myRigaEco = new Anticipo_riga_ecoBulk();
-					myRigaEco.setProgressivo_riga_eco(1L);
+					myRigaEco.setProgressivo_riga_eco((long) result.size() + 1);
 					myRigaEco.setVoce_analitica(voceAnaliticaDef);
-					myRigaEco.setLinea_attivita(gaeDefault);
+					myRigaEco.setLinea_attivita(rigaEco.getLinea_attivita());
 					myRigaEco.setAnticipo(anticipo);
-					myRigaEco.setImporto(anticipo.getImportoCostoEco());
+					myRigaEco.setImporto(rigaEco.getImporto());
 					myRigaEco.setToBeCreated();
 					result.add(myRigaEco);
 				}
@@ -297,15 +285,15 @@ public void updateFondoEconomale(it.cnr.contab.fondecon00.core.bulk.Fondo_spesaB
 		}
 	}
 
-	public Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> getDatiEconomiciDefault(UserContext userContext, AnticipoBulk anticipo) throws ComponentException {
+	public Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> getDatiEconomiciDefault(UserContext userContext, AnticipoBulk anticipo) throws ComponentException, PersistencyException {
 		ContoBulk aContoEconomico = this.getContoEconomicoDefault(anticipo);
-		List<IDocumentoDetailAnaCogeBulk> aContiAnalitici = this.getDatiAnaliticiDefault(userContext, anticipo, aContoEconomico);
+		List<IDocumentoDetailAnaCogeBulk> aContiAnalitici = this.getDatiAnaliticiDefault(userContext, anticipo).stream().map(IDocumentoDetailAnaCogeBulk.class::cast).collect(Collectors.toList());
 		return Pair.of(aContoEconomico, aContiAnalitici);
 	}
 
 	public Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> getDatiEconomiciForMissione(UserContext userContext, AnticipoBulk anticipo) throws ComponentException {
 		ContoBulk aContoEconomico = this.getContoEconomicoForMissione(anticipo);
-		List<IDocumentoDetailAnaCogeBulk> aContiAnalitici = this.getDatiAnaliticiForMissione(userContext, anticipo, aContoEconomico);
+		List<IDocumentoDetailAnaCogeBulk> aContiAnalitici = this.getDatiAnaliticiForMissione(userContext,anticipo,aContoEconomico);
 		return Pair.of(aContoEconomico, aContiAnalitici);
 	}
 }

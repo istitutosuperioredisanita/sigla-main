@@ -350,7 +350,7 @@ public class Nota_di_credito_attiva_rigaBulk extends Fattura_attiva_rigaBulk {
 	/**
 	 * Insert the method's description here.
 	 * Creation date: (11/16/2001 3:01:15 PM)
-	 * @param newAccertamento it.cnr.contab.doccont00.core.bulk.AccertamentoBulk
+	 * @param newObbligazione_scadenzario it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk
 	 */
 	public void setObbligazione_scadenzario(it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk newObbligazione_scadenzario) {
 		obbligazione_scadenzario = newObbligazione_scadenzario;

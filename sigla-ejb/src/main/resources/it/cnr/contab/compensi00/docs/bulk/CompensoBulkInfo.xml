@@ -1522,6 +1522,40 @@
             CRUDBusinessProcessName="CRUDCodiciCIGBP"
             label="CIG"/>
 
+	<fieldProperty
+			name="find_voce_ep"
+			property="voce_ep"
+			inputType="SEARCHTOOL"
+			label="Conto EP"
+			nullable="false"
+			formName="searchtool"
+			enabledOnSearch="false" />
+
+	<fieldProperty
+			name="imCostoEco"
+			property="imCostoEco"
+			inputType="ROTEXT"
+			style="text-align: right"
+			inputSize="20"
+			formatName="it.cnr.contab.util.EuroFormat"
+			label="Importo" />
+	<fieldProperty
+			name="imCostoEcoRipartito"
+			property="imCostoEcoRipartito"
+			inputType="ROTEXT"
+			style="text-align: right"
+			inputSize="20"
+			formatName="it.cnr.contab.util.EuroFormat"
+			label="Importo Ripartito" />
+	<fieldProperty
+			name="imCostoEcoDaRipartire"
+			property="imCostoEcoDaRipartire"
+			inputType="ROTEXT"
+			style="text-align: right"
+			inputSize="20"
+			formatName="it.cnr.contab.util.EuroFormat"
+			label="Importo da Ripartire" />
+
 	<formFieldProperty name="cd_cds" />
 	<formFieldProperty name="cd_unita_organizzativa" />
 	<formFieldProperty name="esercizio" />
@@ -1712,7 +1746,12 @@
 	<formFieldProperty name="causale"/>			
 	<formFieldProperty name="motivo_assenza_cig"
 		command="doOnMotivoAssenzaCigChange" />
-                       	
+
+	<formFieldProperty name="find_voce_ep" />
+	<formFieldProperty name="imCostoEco" />
+	<formFieldProperty name="imCostoEcoRipartito" />
+	<formFieldProperty name="imCostoEcoDaRipartire" />
+
 	<columnFieldProperty name="cd_cds" />
 	<columnFieldProperty name="cd_unita_organizzativa" />
 	<columnFieldProperty name="esercizio" />

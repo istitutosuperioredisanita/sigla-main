@@ -3,11 +3,9 @@
  * Date 10/01/2025
  */
 package it.cnr.contab.config00.bulk;
+import it.cnr.contab.coepcoan00.core.bulk.Movimento_cogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Sezione;
 import it.cnr.contab.config00.pdcep.bulk.Voce_epBulk;
-import it.cnr.jada.action.ActionContext;
-import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.util.action.CRUDBP;
 
 import java.util.Dictionary;
 import java.util.Optional;
@@ -109,5 +107,13 @@ public class AssCausaleVoceEPBulk extends AssCausaleVoceEPBase {
 		return !Optional.ofNullable(getVoceEp())
 				.map(Voce_epBulk::isContoSezioneBifase)
 				.orElse(Boolean.FALSE);
+	}
+
+	public boolean isSezioneDare() {
+		return Movimento_cogeBulk.SEZIONE_DARE.equals(this.getTiSezione());
+	}
+
+	public boolean isSezioneAvere() {
+		return Movimento_cogeBulk.SEZIONE_AVERE.equals(this.getTiSezione());
 	}
 }

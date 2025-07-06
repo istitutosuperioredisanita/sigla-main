@@ -27,13 +27,13 @@
 			propertyName="esercizio_voce_ana"
 			sqlTypeName="DECIMAL"
 			columnSize="4"
-			nullable="false" />
+			nullable="true" />
 		<columnMapping
 			columnName="CD_VOCE_ANA"
 			propertyName="cd_voce_ana"
 			sqlTypeName="VARCHAR"
 			columnSize="45"
-			nullable="false" />
+			nullable="true" />
 		<columnMapping
 			columnName="CD_CENTRO_RESPONSABILITA"
 			propertyName="cd_centro_responsabilita"

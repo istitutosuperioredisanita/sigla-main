@@ -23,10 +23,7 @@ import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.*;
 import it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
+import it.cnr.contab.coepcoan00.core.bulk.*;
 import it.cnr.contab.compensi00.tabrif.bulk.Tipo_prestazione_compensoBulk;
 import it.cnr.contab.compensi00.tabrif.bulk.Tipo_trattamentoBulk;
 import it.cnr.contab.compensi00.tabrif.bulk.Tipologia_rischioBulk;
@@ -230,6 +227,8 @@ public class CompensoBulk extends CompensoBase implements IDefferUpdateSaldi, ID
     private boolean userAbilitatoSenzaCalcolo = false;
     private CigBulk cig;
     private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
+    private Scrittura_analiticaBulk scrittura_analitica;
+
     private List<Compenso_riga_ecoBulk> righeEconomica = new BulkList<>();
     private ContoBulk voce_ep = new ContoBulk();
 
@@ -3405,13 +3404,36 @@ public class CompensoBulk extends CompensoBase implements IDefferUpdateSaldi, ID
     }
 
     @Override
-    public BigDecimal getImportoCostoEco() {
-        return this.getIm_totale_compenso();
-    }
+    public BigDecimal getImCostoEco() {
+        BigDecimal result = this.getIm_lordo_percipiente();
 
-    @Override
-    public IScadenzaDocumentoContabileBulk getScadenzaDocumentoContabile() {
-        return this.getObbligazioneScadenzario();
+        //Aggiungo rivalsa
+        result = result.add(this.getContributi().stream()
+                        .filter(el->el.getAmmontare().compareTo(BigDecimal.ZERO)!=0)
+                        .filter(el->el.isContributoEnte() || el.isTipoContributoIva())
+                        .filter(Contributo_ritenutaBulk::isTipoContributoRivalsa)
+                        .map(Contributo_ritenutaBulk::getAmmontare)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add));
+
+        //Aggiungo costo iva istituzionale
+        if (this.isIstituzionale()) {
+            result = result.add(this.getContributi().stream()
+                    .filter(el -> el.getAmmontare().compareTo(BigDecimal.ZERO) != 0)
+                    .filter(el -> el.isContributoEnte() || el.isTipoContributoIva())
+                    .filter(el -> !el.isTipoContributoRivalsa())
+                    .filter(Contributo_ritenutaBulk::isTipoContributoIva)
+                    .filter(Contributo_ritenutaBulk::isContributoEnte)
+                    .map(Contributo_ritenutaBulk::getAmmontare)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add));
+        }
+
+        result = result.add(this.getContributi().stream()
+                .filter(el->el.getAmmontare().compareTo(BigDecimal.ZERO)!=0)
+                .filter(el->!el.isContributoEnte() && el.isTipoContributoIva())
+                .map(Contributo_ritenutaBulk::getAmmontare)
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
+
+        return result;
     }
 
     @Override
@@ -3457,6 +3479,38 @@ public class CompensoBulk extends CompensoBase implements IDefferUpdateSaldi, ID
     }
 
     @Override
+    public IDocumentoCogeBulk getFather() {
+        return this;
+    }
+
+    @Override
+    public Scrittura_analiticaBulk getScrittura_analitica() {
+        return scrittura_analitica;
+    }
+
+    @Override
+    public void setScrittura_analitica(Scrittura_analiticaBulk scrittura_analitica) {
+        this.scrittura_analitica = scrittura_analitica;
+    }
+
+    @Override
+    public IScadenzaDocumentoContabileBulk getScadenzaDocumentoContabile() {
+        return this.getObbligazioneScadenzario();
+    }
+
+    @Override
+    public BigDecimal getImCostoEcoRipartito() {
+        return this.getChildrenAna().stream().map(IDocumentoDetailAnaCogeBulk::getImporto)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    @Override
+    public BigDecimal getImCostoEcoDaRipartire() {
+        return Optional.ofNullable(this.getImCostoEco()).orElse(BigDecimal.ZERO)
+                .subtract(Optional.ofNullable(this.getImCostoEcoRipartito()).orElse(BigDecimal.ZERO));
+    }
+
+    @Override
     public List<IDocumentoDetailAnaCogeBulk> getChildrenAna() {
         return this.getRigheEconomica().stream()
                 .filter(Objects::nonNull)
@@ -3465,7 +3519,7 @@ public class CompensoBulk extends CompensoBase implements IDefferUpdateSaldi, ID
     }
 
     @Override
-    public IDocumentoCogeBulk getFather() {
-        return this;
+    public void clearChildrenAna() {
+        this.setRigheEconomica(new ArrayList<>());
     }
 }

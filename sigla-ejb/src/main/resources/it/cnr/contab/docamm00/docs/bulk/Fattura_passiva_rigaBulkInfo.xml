@@ -396,6 +396,31 @@
 			formName="searchtool"
 			enabledOnSearch="false" />
 
+	<fieldProperty
+			name="imCostoEco"
+			property="imCostoEco"
+			inputType="ROTEXT"
+			style="text-align: right"
+			inputSize="20"
+			formatName="it.cnr.contab.util.EuroFormat"
+			label="Importo" />
+	<fieldProperty
+			name="imCostoEcoRipartito"
+			property="imCostoEcoRipartito"
+			inputType="ROTEXT"
+			style="text-align: right"
+			inputSize="20"
+			formatName="it.cnr.contab.util.EuroFormat"
+			label="Importo Ripartito" />
+	<fieldProperty
+			name="imCostoEcoDaRipartire"
+			property="imCostoEcoDaRipartire"
+			inputType="ROTEXT"
+			style="text-align: right"
+			inputSize="20"
+			formatName="it.cnr.contab.util.EuroFormat"
+			label="Importo da Ripartire" />
+
 	<formFieldProperty
 		name="voce_iva" />
 	<formFieldProperty
@@ -487,8 +512,10 @@
 	<formFieldProperty name="codice_identificativo_ente_pagopa"/>
 	<formFieldProperty name="numero_avviso_pagopa"/>
 
-	<formFieldProperty
-			name="find_voce_ep" />
+	<formFieldProperty name="find_voce_ep" />
+	<formFieldProperty name="imCostoEco" />
+	<formFieldProperty name="imCostoEcoRipartito" />
+	<formFieldProperty name="imCostoEcoDaRipartire" />
 
 	<columnFieldProperty
 		name="cd_cds" />

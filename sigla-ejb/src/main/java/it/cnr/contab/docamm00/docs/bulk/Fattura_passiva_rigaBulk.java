@@ -843,7 +843,7 @@ public abstract class Fattura_passiva_rigaBulk
      * Il valore viene utilizzato come quota da ripartire a livello analitico.
      */
     @Override
-    public BigDecimal getImportoCostoEco() {
+    public BigDecimal getImCostoEco() {
         BigDecimal importoCostoEco = this.getIm_imponibile();
         Assert.isTrue(Optional.ofNullable(this.getVoce_iva()).flatMap(el->Optional.ofNullable(el.getPg_ver_rec())).isPresent(), "Calcolo Importo economico non possibile! Non risulta caricato l'oggetto Voce Iva.");
         if (((Fattura_passivaBulk) this.getFather()).isIstituzionale() || !this.getVoce_iva().isDetraibile())
@@ -851,10 +851,20 @@ public abstract class Fattura_passiva_rigaBulk
         return importoCostoEco;
     }
 
-    /*
-     * Ritorna l'importo ripartito tra le righe di economica
-     */
-    public BigDecimal getImportoCostoEcoRipartito() {
-        return this.getRigheEconomica().stream().map(IDocumentoDetailAnaCogeBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
+    @Override
+    public BigDecimal getImCostoEcoRipartito() {
+        return this.getChildrenAna().stream().map(IDocumentoDetailAnaCogeBulk::getImporto)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    @Override
+    public BigDecimal getImCostoEcoDaRipartire() {
+        return Optional.ofNullable(this.getImCostoEco()).orElse(BigDecimal.ZERO)
+                .subtract(Optional.ofNullable(this.getImCostoEcoRipartito()).orElse(BigDecimal.ZERO));
+    }
+
+    @Override
+    public void clearChildrenAna() {
+        this.setRigheEconomica(new ArrayList<>());
     }
 }

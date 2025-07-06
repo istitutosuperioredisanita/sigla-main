@@ -17,6 +17,7 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,6 +42,7 @@ import it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
+import org.springframework.util.Assert;
 
 @JsonInclude(value=Include.NON_NULL)
 public abstract class Fattura_attiva_rigaBulk extends Fattura_attiva_rigaBase implements IDocumentoAmministrativoRigaBulk, Voidable {
@@ -570,11 +572,37 @@ public abstract class Fattura_attiva_rigaBulk extends Fattura_attiva_rigaBase im
         this.righeEconomica = righeEconomica;
     }
 
+	/*
+	 * Ritorna l'importo della riga da imputare ad un conto di costo.
+	 * Il valore viene utilizzato come quota da ripartire a livello analitico.
+	 */
+	@Override
+	public BigDecimal getImCostoEco() {
+		return this.getIm_riga();
+	}
+
+	@Override
+	public BigDecimal getImCostoEcoRipartito() {
+		return this.getChildrenAna().stream().map(IDocumentoDetailAnaCogeBulk::getImporto)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	@Override
+	public BigDecimal getImCostoEcoDaRipartire() {
+		return Optional.ofNullable(this.getImCostoEco()).orElse(BigDecimal.ZERO)
+				.subtract(Optional.ofNullable(this.getImCostoEcoRipartito()).orElse(BigDecimal.ZERO));
+	}
+
 	@Override
 	public List<IDocumentoDetailAnaCogeBulk> getChildrenAna() {
 		return this.getRigheEconomica().stream()
 				.filter(Objects::nonNull)
 				.map(IDocumentoDetailAnaCogeBulk.class::cast)
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public void clearChildrenAna() {
+		this.setRigheEconomica(new ArrayList<>());
 	}
 }

@@ -35,6 +35,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Fattura_attiva_rigaIHome extends Fattura_attiva_rigaHome {
@@ -113,6 +114,14 @@ public class Fattura_attiva_rigaIHome extends Fattura_attiva_rigaHome {
 	public Pair<ContoBulk, List<IDocumentoDetailAnaCogeBulk>> getDatiEconomiciDefault(UserContext userContext, Fattura_attiva_rigaBulk docRiga) throws ComponentException {
 		ContoBulk aContoEconomico = this.getContoEconomicoDefault(docRiga);
 		List<IDocumentoDetailAnaCogeBulk> aContiAnalitici = this.getDatiAnaliticiDefault(userContext, docRiga, aContoEconomico, Fattura_attiva_riga_ecoIBulk.class);
+		return Pair.of(aContoEconomico, aContiAnalitici);
+	}
+
+	public Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> getDatiEconomici(Fattura_attiva_rigaBulk docRiga) throws PersistencyException {
+		ContoBulk aContoEconomico = docRiga.getVoce_ep();
+		List<IDocumentoDetailAnaCogeBulk> aContiAnalitici = this.findFatturaAttivaRigheEcoList(docRiga).stream()
+				.map(IDocumentoDetailAnaCogeBulk.class::cast)
+				.collect(Collectors.toList());
 		return Pair.of(aContoEconomico, aContiAnalitici);
 	}
 }

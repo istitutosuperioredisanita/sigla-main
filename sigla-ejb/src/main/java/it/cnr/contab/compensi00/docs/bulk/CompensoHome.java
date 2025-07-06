@@ -550,7 +550,7 @@ public class CompensoHome extends BulkHome implements
                             myRigaEco.setVoce_analitica(voceAnaliticaDef);
                             myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
                             myRigaEco.setCompenso(compenso);
-                            myRigaEco.setImporto(scadVoce.getIm_voce().multiply(compenso.getImportoCostoEco()).divide(totScad, 2, RoundingMode.HALF_UP));
+                            myRigaEco.setImporto(scadVoce.getIm_voce().multiply(compenso.getImCostoEco()).divide(totScad, 2, RoundingMode.HALF_UP));
                             myRigaEco.setToBeCreated();
                             result.add(myRigaEco);
                         }
@@ -563,7 +563,7 @@ public class CompensoHome extends BulkHome implements
                         myRigaEco.setVoce_analitica(voceAnaliticaDef);
                         myRigaEco.setLinea_attivita(gaeDefault);
                         myRigaEco.setCompenso(compenso);
-                        myRigaEco.setImporto(compenso.getImportoCostoEco());
+                        myRigaEco.setImporto(compenso.getImCostoEco());
                         myRigaEco.setToBeCreated();
                         result.add(myRigaEco);
                     }

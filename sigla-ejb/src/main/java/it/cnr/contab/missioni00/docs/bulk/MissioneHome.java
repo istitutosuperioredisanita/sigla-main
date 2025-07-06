@@ -127,9 +127,8 @@ public class MissioneHome extends BulkHome implements
         } finally {
             try {
                 ps.close();
-            } catch (java.sql.SQLException e) {
+            } catch (java.sql.SQLException ignored) {
             }
-            ;
         }
         /***************** CONFERMO LE TAPPE DELLA MISSIONE ***************************/
         try {
@@ -152,11 +151,11 @@ public class MissioneHome extends BulkHome implements
                     this.getClass());
             pw.close();
 
-            ps.setLong(1, pg.longValue());
-            ps.setInt(2, missioneTemp.getEsercizio().intValue());
+            ps.setLong(1, pg);
+            ps.setInt(2, missioneTemp.getEsercizio());
             ps.setString(3, missioneTemp.getCd_cds());
             ps.setString(4, missioneTemp.getCd_unita_organizzativa());
-            ps.setLong(5, missioneTemp.getPg_missione().longValue());
+            ps.setLong(5, missioneTemp.getPg_missione());
 
             ps.execute();
         } catch (java.sql.SQLException e) {
@@ -164,9 +163,8 @@ public class MissioneHome extends BulkHome implements
         } finally {
             try {
                 ps.close();
-            } catch (java.sql.SQLException e) {
+            } catch (java.sql.SQLException ignored) {
             }
-            ;
         }
         /***************** CONFERMO LE SPESE DELLA MISSIONE ***************************/
         try {
@@ -188,11 +186,11 @@ public class MissioneHome extends BulkHome implements
             ps = new LoggableStatement(getConnection(), sql.toString(), true,
                     this.getClass());
             pw.close();
-            ps.setLong(1, pg.longValue());
-            ps.setInt(2, missioneTemp.getEsercizio().intValue());
+            ps.setLong(1, pg);
+            ps.setInt(2, missioneTemp.getEsercizio());
             ps.setString(3, missioneTemp.getCd_cds());
             ps.setString(4, missioneTemp.getCd_unita_organizzativa());
-            ps.setLong(5, missioneTemp.getPg_missione().longValue());
+            ps.setLong(5, missioneTemp.getPg_missione());
 
             ps.execute();
         } catch (java.sql.SQLException e) {
@@ -200,9 +198,8 @@ public class MissioneHome extends BulkHome implements
         } finally {
             try {
                 ps.close();
-            } catch (java.sql.SQLException e) {
+            } catch (java.sql.SQLException ignored) {
             }
-            ;
         }
 
         // Cancello la missione, spese e tappe con numerazione temporanea
@@ -575,18 +572,23 @@ public class MissioneHome extends BulkHome implements
                         Obbligazione_scadenzarioHome obbligazioneScadenzarioHome = (Obbligazione_scadenzarioHome) getHomeCache().getHome(Obbligazione_scadenzarioBulk.class);
                         List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, obbligScad);
                         BigDecimal totScad = scadVoceBulks.stream().map(Obbligazione_scad_voceBulk::getIm_voce).reduce(BigDecimal.ZERO, BigDecimal::add);
+                        //Carico l'anticipo se presente per il corretto calcolo degli importi
+                        if (Optional.ofNullable(missione.getAnticipo()).isPresent())
+                            missione.setAnticipo((AnticipoBulk)fatpasHome.loadIfNeededObject(missione.getAnticipo()));
                         for (Obbligazione_scad_voceBulk scadVoce : scadVoceBulks) {
                             Missione_riga_ecoBulk myRigaEco = new Missione_riga_ecoBulk();
                             myRigaEco.setProgressivo_riga_eco((long) result.size() + 1);
                             myRigaEco.setVoce_analitica(voceAnaliticaDef);
                             myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
                             myRigaEco.setMissione(missione);
-                            myRigaEco.setImporto(scadVoce.getIm_voce().multiply(missione.getImportoCostoEco()).divide(totScad, 2, RoundingMode.HALF_UP));
+                            myRigaEco.setImporto(scadVoce.getIm_voce()
+                                    .multiply(missione.getImCostoEco())
+                                    .divide(totScad, 2, RoundingMode.HALF_UP));
                             myRigaEco.setToBeCreated();
                             result.add(myRigaEco);
                         }
                         BigDecimal totRipartito = result.stream().map(Missione_riga_ecoBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
-                        BigDecimal diff = totRipartito.subtract(missione.getImportoCostoEco());
+                        BigDecimal diff = totRipartito.subtract(missione.getImCostoEco());
 
                         if (diff.compareTo(BigDecimal.ZERO) > 0) {
                             for (Missione_riga_ecoBulk rigaEco : result) {
@@ -615,7 +617,7 @@ public class MissioneHome extends BulkHome implements
         }
     }
 
-    public Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> getDatiEconomiciDefault(UserContext userContext, MissioneBulk missione) throws ComponentException {
+    public Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> getDatiEconomiciDefault(UserContext userContext, MissioneBulk missione) throws ComponentException, PersistencyException {
         if (Optional.ofNullable(missione.getAnticipo()).isPresent()) {
             AnticipoHome anticipoHome = (AnticipoHome) getHomeCache().getHome(AnticipoBulk.class);
             Pair<ContoBulk, List<IDocumentoDetailAnaCogeBulk>> datiEcoAnticipoForMissione = anticipoHome.getDatiEconomiciForMissione(userContext, missione.getAnticipo());
@@ -630,13 +632,13 @@ public class MissioneHome extends BulkHome implements
                     myRigaEco.setVoce_analitica(rigaEco.getVoce_analitica());
                     myRigaEco.setLinea_attivita(rigaEco.getLinea_attivita());
                     myRigaEco.setMissione(missione);
-                    myRigaEco.setImporto(rigaEco.getImporto().multiply(missione.getImportoCostoEco()).divide(totaleImportiAnalitici, 2, RoundingMode.HALF_UP));
+                    myRigaEco.setImporto(rigaEco.getImporto().multiply(missione.getImCostoEco()).divide(totaleImportiAnalitici, 2, RoundingMode.HALF_UP));
                     myRigaEco.setToBeCreated();
                     aContiAnalitici.add(myRigaEco);
                 }
 
                 BigDecimal totRipartito = aContiAnalitici.stream().map(IDocumentoDetailAnaCogeBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
-                BigDecimal diff = totRipartito.subtract(missione.getImportoCostoEco());
+                BigDecimal diff = totRipartito.subtract(missione.getImCostoEco());
 
                 if (diff.compareTo(BigDecimal.ZERO) > 0) {
                     for (IDocumentoDetailAnaCogeBulk rigaEco : aContiAnalitici) {

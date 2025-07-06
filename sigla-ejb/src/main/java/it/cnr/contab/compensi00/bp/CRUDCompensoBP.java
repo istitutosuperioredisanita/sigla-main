@@ -19,14 +19,13 @@ package it.cnr.contab.compensi00.bp;
 
 import it.cnr.contab.anagraf00.tabrif.bulk.Tipo_rapportoBulk;
 import it.cnr.contab.chiusura00.ejb.RicercaDocContComponentSession;
-import it.cnr.contab.coepcoan00.bp.CRUDScritturaPDoppiaBP;
-import it.cnr.contab.coepcoan00.bp.EconomicaAvereDetailCRUDController;
-import it.cnr.contab.coepcoan00.bp.EconomicaDareDetailCRUDController;
+import it.cnr.contab.coepcoan00.bp.*;
 import it.cnr.contab.compensi00.docs.bulk.*;
 import it.cnr.contab.compensi00.ejb.CompensoComponentSession;
 import it.cnr.contab.compensi00.tabrif.bulk.Tipo_trattamentoBulk;
 import it.cnr.contab.config00.bulk.CigBulk;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
+import it.cnr.contab.docamm00.bp.IDocAmmAnaliticaBP;
 import it.cnr.contab.docamm00.bp.IDocAmmEconomicaBP;
 import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoBP;
 import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoSpesaBP;
@@ -56,6 +55,7 @@ import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.AbstractPrintBP;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
+import it.cnr.jada.util.action.FormController;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 
 import java.math.BigDecimal;
@@ -69,7 +69,7 @@ import java.util.TreeMap;
  *
  * @author: Roberto Fantino
  */
-public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP implements IDefferedUpdateSaldiBP, IDocumentoAmministrativoSpesaBP, IValidaDocContBP, IDocAmmEconomicaBP {
+public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP implements IDefferedUpdateSaldiBP, IDocumentoAmministrativoSpesaBP, IValidaDocContBP, IDocAmmAnaliticaBP {
     private final SimpleDetailCRUDController contributiCRUDController = new SimpleDetailCRUDController("contributiCRUDController", Contributo_ritenutaBulk.class, "contributi", this, false) {
         @Override
         public void writeHTMLToolbar(javax.servlet.jsp.PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
@@ -124,6 +124,9 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
     private final CollapsableDetailCRUDController movimentiDare = new EconomicaDareDetailCRUDController(this);
     private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
 
+    private final CollapsableDetailCRUDController movimentiAnalitici = new AnaliticaDetailCRUDController(this);
+    private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(Compenso_riga_ecoBulk.class, this);
+
     //	Variabili usate per la gestione del "RIPORTA" documento ad esercizio precedente/successivo
     private boolean annoSolareInScrivania = true;
     private boolean riportaAvantiIndietro = false;
@@ -133,6 +136,7 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
 
     private Boolean isGestioneIncarichiEnabled = null;
     private boolean attivaEconomica = false;
+    private boolean attivaAnalitica = false;
     private boolean supervisore = false;
 
     /**
@@ -686,6 +690,7 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
         try {
             setGestioneIncarichiEnabled(Utility.createParametriCnrComponentSession().getParametriCnr(context.getUserContext(), CNRUserContext.getEsercizio(context.getUserContext())).getFl_incarico());
             attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
+            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
         } catch (it.cnr.jada.comp.ComponentException ex) {
             throw handleException(ex);
@@ -1803,8 +1808,12 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
         pages.put(i++, TAB_CONTRIBUTI_RITENUTE);
         pages.put(i++, TAB_OBBLIGAZIONI);
         pages.put(i++, TAB_DOCUMENTI_ASSOCIATI);
+        if (attivaAnalitica)
+            pages.put(i++, CRUDScritturaPDoppiaBP.TAB_DATI_COGECOAN);
         if (attivaEconomica)
             pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
+        if (attivaAnalitica)
+            pages.put(i++, CRUDScritturaAnaliticaBP.TAB_ANALITICA);
 
         String[][] tabs = new String[i][3];
         for (int j = 0; j < i; j++)
@@ -1840,5 +1849,35 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
     @Override
     public boolean isAttivaEconomica() {
         return attivaEconomica;
+    }
+
+    @Override
+    public CollapsableDetailCRUDController getMovimentiAnalitici() {
+        return movimentiAnalitici;
+    }
+
+    @Override
+    public OggettoBulk getAnaliticaModel() {
+        return getModel();
+    }
+
+    @Override
+    public boolean isButtonGeneraScritturaAnaliticaVisible() {
+        return Boolean.FALSE;
+    }
+
+    @Override
+    public CollapsableDetailCRUDController getChildrenAnaColl() {
+        return childrenAnaColl;
+    }
+
+    @Override
+    public FormController getControllerDetailEcoCoge() {
+        return this;
+    }
+
+    @Override
+    public boolean isAttivaAnalitica() {
+        return attivaAnalitica;
     }
 }

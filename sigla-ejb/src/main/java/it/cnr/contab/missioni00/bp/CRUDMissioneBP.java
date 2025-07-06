@@ -19,11 +19,10 @@ package it.cnr.contab.missioni00.bp;
 
 import it.cnr.contab.anagraf00.tabter.bulk.NazioneBulk;
 import it.cnr.contab.chiusura00.ejb.RicercaDocContComponentSession;
-import it.cnr.contab.coepcoan00.bp.CRUDScritturaPDoppiaBP;
-import it.cnr.contab.coepcoan00.bp.EconomicaAvereDetailCRUDController;
-import it.cnr.contab.coepcoan00.bp.EconomicaDareDetailCRUDController;
+import it.cnr.contab.coepcoan00.bp.*;
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
+import it.cnr.contab.docamm00.bp.IDocAmmAnaliticaBP;
 import it.cnr.contab.docamm00.bp.IDocAmmEconomicaBP;
 import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoSpesaBP;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
@@ -43,6 +42,7 @@ import it.cnr.contab.reports.bulk.Print_spooler_paramBulk;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.spring.service.StorePath;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
+import it.cnr.jada.util.action.FormController;
 import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.StorageException;
 import it.cnr.si.spring.storage.StorageObject;
@@ -82,7 +82,7 @@ import java.util.stream.Collectors;
  */
 
 public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, MissioneBulk>
-        implements IDefferedUpdateSaldiBP, IDocumentoAmministrativoSpesaBP, IValidaDocContBP, IDocAmmEconomicaBP {
+        implements IDefferedUpdateSaldiBP, IDocumentoAmministrativoSpesaBP, IValidaDocContBP, IDocAmmAnaliticaBP {
     private final SimpleDetailCRUDController tappaController = new SimpleDetailCRUDController("Tappa", Missione_tappaBulk.class, "tappeMissioneColl", this) {
         @Override
         public void writeHTMLToolbar(javax.servlet.jsp.PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
@@ -188,7 +188,12 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
     };
     private final CollapsableDetailCRUDController movimentiDare = new EconomicaDareDetailCRUDController(this);
     private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
+
+    private final CollapsableDetailCRUDController movimentiAnalitici = new AnaliticaDetailCRUDController(this);
+    private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(Missione_riga_ecoBulk.class, this);
+
     private boolean attivaEconomica = false;
+    private boolean attivaAnalitica = false;
     private boolean supervisore = false;
 
     /**
@@ -1222,6 +1227,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
     protected void init(Config config, ActionContext context) throws BusinessProcessException {
         try {
             attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
+            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
             verificoUnitaENTE(context);
         } catch (Throwable e) {
@@ -2923,11 +2929,16 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
         ) {
             pages.put(i++, TAB_ALLEGATI);
         }
-        if (attivaEconomica && optionalMissioneBulk
+        if (optionalMissioneBulk
                 .map(missioneBulk -> !Optional.ofNullable(missioneBulk.getFl_associato_compenso()).orElse(Boolean.TRUE))
-                .orElse(Boolean.FALSE))
-            pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
-
+                .orElse(Boolean.FALSE)) {
+            if (attivaAnalitica)
+                pages.put(i++, CRUDScritturaPDoppiaBP.TAB_DATI_COGECOAN);
+            if (attivaEconomica)
+                pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
+            if (attivaAnalitica)
+                pages.put(i++, CRUDScritturaAnaliticaBP.TAB_ANALITICA);
+        }
         String[][] tabs = new String[i][3];
         for (int j = 0; j < i; j++)
             tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
@@ -2963,5 +2974,35 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
     @Override
     public boolean isAttivaEconomica() {
         return attivaEconomica;
+    }
+
+    @Override
+    public CollapsableDetailCRUDController getMovimentiAnalitici() {
+        return movimentiAnalitici;
+    }
+
+    @Override
+    public OggettoBulk getAnaliticaModel() {
+        return getModel();
+    }
+
+    @Override
+    public boolean isButtonGeneraScritturaAnaliticaVisible() {
+        return Boolean.FALSE;
+    }
+
+    @Override
+    public CollapsableDetailCRUDController getChildrenAnaColl() {
+        return childrenAnaColl;
+    }
+
+    @Override
+    public FormController getControllerDetailEcoCoge() {
+        return this;
+    }
+
+    @Override
+    public boolean isAttivaAnalitica() {
+        return attivaAnalitica;
     }
 }

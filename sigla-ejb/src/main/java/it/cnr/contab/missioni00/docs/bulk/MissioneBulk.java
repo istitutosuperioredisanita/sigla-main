@@ -33,12 +33,8 @@ import it.cnr.contab.anagraf00.tabrif.bulk.Rif_inquadramentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Tipo_rapportoBulk;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
+import it.cnr.contab.coepcoan00.core.bulk.*;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
-import it.cnr.contab.compensi00.docs.bulk.Compenso_riga_ecoBulk;
 import it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk;
 import it.cnr.contab.compensi00.tabrif.bulk.Tipo_trattamentoBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
@@ -3054,6 +3050,17 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		this.scrittura_partita_doppia = scrittura_partita_doppia;
 	}
 
+	private Scrittura_analiticaBulk scrittura_analitica;
+
+	@Override
+	public Scrittura_analiticaBulk getScrittura_analitica() {
+		return scrittura_analitica;
+	}
+	@Override
+	public void setScrittura_analitica(Scrittura_analiticaBulk scrittura_analitica) {
+		this.scrittura_analitica = scrittura_analitica;
+	}
+
 	@Override
 	public TipoDocumentoEnum getTipoDocumentoEnum() {
 		return TipoDocumentoEnum.fromValue(this.getCd_tipo_doc_amm());
@@ -3826,11 +3833,6 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	}
 
 	@Override
-	public BigDecimal getImportoCostoEco() {
-		return this.getIm_totale_missione();
-	}
-
-	@Override
 	public IScadenzaDocumentoContabileBulk getScadenzaDocumentoContabile() {
 		return this.getObbligazione_scadenzario();
 	}
@@ -3878,6 +3880,31 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	}
 
 	@Override
+	public IDocumentoCogeBulk getFather() {
+		return this;
+	}
+
+	@Override
+	public BigDecimal getImCostoEco() {
+		return this.getIm_totale_missione().subtract(
+				Optional.ofNullable(this.getAnticipo())
+						.map(AnticipoBulk::getImCostoEco)
+						.orElse(BigDecimal.ZERO));
+	}
+
+	@Override
+	public BigDecimal getImCostoEcoRipartito() {
+		return this.getChildrenAna().stream().map(IDocumentoDetailAnaCogeBulk::getImporto)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	@Override
+	public BigDecimal getImCostoEcoDaRipartire() {
+		return Optional.ofNullable(this.getImCostoEco()).orElse(BigDecimal.ZERO)
+				.subtract(Optional.ofNullable(this.getImCostoEcoRipartito()).orElse(BigDecimal.ZERO));
+	}
+
+	@Override
 	public List<IDocumentoDetailAnaCogeBulk> getChildrenAna() {
 		return this.getRigheEconomica().stream()
 				.filter(Objects::nonNull)
@@ -3886,7 +3913,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	}
 
 	@Override
-	public IDocumentoCogeBulk getFather() {
-		return this;
+	public void clearChildrenAna() {
+		this.setRigheEconomica(new ArrayList<>());
 	}
 }

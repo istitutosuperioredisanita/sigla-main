@@ -42,7 +42,13 @@ public interface IDocumentoDetailEcoCogeBulk  {
         return new ArrayList<>();
     }
 
-    BigDecimal getImportoCostoEco();
+    default void clearChildrenAna(){};
+
+    BigDecimal getImCostoEco();
+
+    BigDecimal getImCostoEcoRipartito();
+
+    BigDecimal getImCostoEcoDaRipartire();
 
     void writeFormField(JspWriter jspwriter, String s, int i, FieldValidationMap fieldvalidationmap, boolean isBootstrap) throws IOException;
 }

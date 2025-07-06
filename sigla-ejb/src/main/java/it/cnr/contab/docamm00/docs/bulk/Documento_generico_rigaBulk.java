@@ -1218,4 +1218,26 @@ public class Documento_generico_rigaBulk extends Documento_generico_rigaBase imp
 				.map(IDocumentoDetailAnaCogeBulk.class::cast)
 				.collect(Collectors.toList());
 	}
+
+	@Override
+	public BigDecimal getImCostoEco() {
+		return this.getIm_riga();
+	}
+
+	@Override
+	public BigDecimal getImCostoEcoRipartito() {
+		return this.getChildrenAna().stream().map(IDocumentoDetailAnaCogeBulk::getImporto)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	@Override
+	public BigDecimal getImCostoEcoDaRipartire() {
+		return Optional.ofNullable(this.getImCostoEco()).orElse(BigDecimal.ZERO)
+				.subtract(Optional.ofNullable(this.getImCostoEcoRipartito()).orElse(BigDecimal.ZERO));
+	}
+
+	@Override
+	public void clearChildrenAna() {
+		this.setRigheEconomica(new ArrayList<>());
+	}
 }
