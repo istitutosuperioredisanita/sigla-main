@@ -7621,7 +7621,7 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
                         Accertamento_scadenzarioBulk sca =(Accertamento_scadenzarioBulk)h.sdoppiaScadenzaInAutomatico(userContext,scadenza,scadenza.getIm_scadenza().subtract(totaleDaSottrarre));
                         for (Iterator<Fattura_attiva_rigaBulk> iterator2 = ((java.util.List) accertamentiHash.get(scadenza)).iterator(); iterator2.hasNext(); ) {
                             Fattura_attiva_rigaBulk rigaFattura = iterator2.next();
-                            rigaFattura.setAccertamento_scadenzario(scadenza);
+                            rigaFattura.setAccertamento_scadenzario(caricaScadenzaAccertamentoPer(userContext,scadenza));
                         }
                     } catch (it.cnr.jada.comp.ComponentException e) {
                         if (e.getDetail() instanceof it.cnr.contab.doccont00.comp.CheckDisponibilitaCassaFailed)
