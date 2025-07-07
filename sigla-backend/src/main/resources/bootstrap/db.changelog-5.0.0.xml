@@ -6224,4 +6224,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_column_fl_spesa_tracc_miss_dett.xml"/>
     <!-- Autore : DAVIDE MIRRA - Aggiunte colonne im_spese_tracc e im_spese_no_tracc su MISSIONE-->
     <include file="bootstrap/add_columns_imp_spesa_tracc_NO_tracc.xml"/>
+
+    <!-- Autore : CIRO SALVIO - Aggiunto Batch per conservazione SOstitutiva -->
+    <include file="bootstrap/add_batch_cons_sotitutiva.xml"/>
 </databaseChangeLog>

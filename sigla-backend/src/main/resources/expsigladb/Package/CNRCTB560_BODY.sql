@@ -1023,7 +1023,7 @@ procedure gestioneNoCori(
   if
    not CNRCTB008.ISESERCIZIOAPERTO(inEsercizio, inCdsCompenso)
   then
-   IBMERR001.RAISE_ERR_GENERICO('L''esercizio '||inEsercizio||' non �perto per il CDS '||inCdsCompenso);
+   IBMERR001.RAISE_ERR_GENERICO('L''esercizio '||inEsercizio||' non aperto per il CDS '||inCdsCompenso);
   end if;
 
   aTSNow:=sysdate;
@@ -1213,7 +1213,7 @@ procedure gestioneNoCori(
      IBMERR001.RAISE_ERR_GENERICO('Anticipo collegato a missione collegata a compenso non trovato.');
     end;
     isCompMissConAnt:=true;
-	-- Se c'�nticipo sulla missione, prepara l'importo del mandato con la differenza tra netto percipiente e anticipo se > 0 altrimenti 0
+	-- Se c'anticipo sulla missione, prepara l'importo del mandato con la differenza tra netto percipiente e anticipo se > 0 altrimenti 0
 	-- A questo importo verr�ommato il totale dei CORI presenti sul compenso.
 	-- In questo modo se l'anticipo < del netto percipiente il mandato verr�iquidato per la somma dei cori + la differenza netto percipiente anticipo
     -- Altrimenti il mandato verr�iquidato per il totale dei cori (netto percipiente = 0)
@@ -1314,7 +1314,7 @@ procedure gestioneNoCori(
    aAccScadVoce.PG_ACCERTAMENTO_SCADENZARIO:=aAccScad.PG_ACCERTAMENTO_SCADENZARIO;
 
    if aCompenso.CD_CDR_GENRC is null or aCompenso.CD_LINEA_ATTIVITA_GENRC is null then
-    IBMERR001.RAISE_ERR_GENERICO('Linea di attivit�er creazione dell''accertamento di recupero crediti da terzi non specificata in compenso:'||aCompenso.pg_compenso);
+    IBMERR001.RAISE_ERR_GENERICO('Linea di attività per creazione dell''accertamento di recupero crediti da terzi non specificata in compenso:'||aCompenso.pg_compenso);
    end if;
    aAccScadVoce.CD_CENTRO_RESPONSABILITA:=aCompenso.CD_CDR_GENRC;
    aAccScadVoce.CD_LINEA_ATTIVITA:=aCompenso.CD_LINEA_ATTIVITA_GENRC;
@@ -1563,7 +1563,7 @@ procedure gestioneNoCori(
 	aManP.im_ritenute:=aTotCoriEntePosLiquid;
    -- Altrimenti sollevo un'eccezione
    else
-    IBMERR001.RAISE_ERR_GENERICO('Il compenso non pu�nerare mandato principale perch� CORI ente liquidati con reversali hanno importo maggiore dell''importo del mandato principale del compenso:'||aCompenso.pg_compenso);
+    IBMERR001.RAISE_ERR_GENERICO('Il compenso non può generare mandato principale perchè CORI ente liquidati con reversali hanno importo maggiore dell''importo del mandato principale del compenso:'||aCompenso.pg_compenso);
    end if;
   end if;
 --PIPE.SEND_MESSAGE('aManP.IM_MANDATO = '||aManP.IM_MANDATO||' -  aManP.IM_RITENUTE = '|| aManP.IM_RITENUTE);
