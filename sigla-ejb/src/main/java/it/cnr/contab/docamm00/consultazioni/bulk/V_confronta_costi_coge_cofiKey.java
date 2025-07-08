@@ -3,6 +3,7 @@
  * Date 16/06/2025
  */
 package it.cnr.contab.docamm00.consultazioni.bulk;
+
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.KeyedPersistent;
 public class V_confronta_costi_coge_cofiKey extends OggettoBulk implements KeyedPersistent {
@@ -28,14 +29,22 @@ public class V_confronta_costi_coge_cofiKey extends OggettoBulk implements Keyed
 		this.setVoceCofi(voceCofi);
 
 	}
+
+
 	public boolean equalsByPrimaryKey(Object o) {
 		if (this== o) return true;
 		if (!(o instanceof V_confronta_costi_coge_cofiKey)) return false;
 		V_confronta_costi_coge_cofiKey k = (V_confronta_costi_coge_cofiKey) o;
+		if (!compareKey(getEsercizio(), k.getEsercizio())) return false;
+		if (!compareKey(getVoceCoge(), k.getVoceCoge())) return false;
+		if (!compareKey(getVoceCofi(), k.getVoceCofi())) return false;
 		return true;
 	}
 	public int primaryKeyHashCode() {
 		int i = 0;
+		i = i + calculateKeyHashCode(getEsercizio());
+		i = i + calculateKeyHashCode(getVoceCoge());
+		i = i + calculateKeyHashCode(getVoceCofi());
 		return i;
 	}
 
