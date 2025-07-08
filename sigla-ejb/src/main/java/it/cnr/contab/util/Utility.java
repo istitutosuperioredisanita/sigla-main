@@ -412,6 +412,10 @@ public final class Utility {
 		return result;
 	}
 
+	public static boolean isInteger(BigDecimal num) {
+		return num.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0;
+	}
+
 
 	public static CRUDComponentSession createCRUDComponentSession() throws EJBException, RemoteException {
 		return Optional.ofNullable(EJBCommonServices.createEJB("JADAEJB_CRUDComponentSession"))
