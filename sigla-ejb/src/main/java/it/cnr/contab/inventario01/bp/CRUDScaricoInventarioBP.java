@@ -576,20 +576,22 @@ public boolean isValoreScaricatoRO() {
 	Buono_carico_scaricoBulk buonoS = (Buono_carico_scaricoBulk)this.getModel();
 	// Disabilito il campo se ho scelto Scarico Totale
 	Inventario_beniBulk dettScarico = (Inventario_beniBulk)getDettController().getModel();
-	if(buonoS.getTipoMovimento().getFl_dismissione()){
+	if(dettScarico!=null) {
+		if (buonoS.getTipoMovimento().getFl_dismissione()) {
 
-		dettScarico.setValore_unitario(dettScarico.getValoreBene());
-		dettScarico.setFl_totalmente_scaricato(true);
-		dettScarico.setDt_dismesso(new Timestamp(new java.util.Date().getTime()));
-		dettScarico.setFl_dismesso(true);
-		dettScarico.setCausale_dismissione("SCARICO PER DISMISSIONE");
+			dettScarico.setValore_unitario(dettScarico.getValoreBene());
+			dettScarico.setFl_totalmente_scaricato(true);
+			dettScarico.setDt_dismesso(new Timestamp(new java.util.Date().getTime()));
+			dettScarico.setFl_dismesso(true);
+			dettScarico.setCausale_dismissione("SCARICO PER DISMISSIONE");
 
-		return true;
-	}
-	if ((dettScarico != null)&&(dettScarico.getFl_totalmente_scaricato()!=null)&&(dettScarico.getFl_totalmente_scaricato().booleanValue()))
+			return true;
+		}
+		if(dettScarico.getFl_totalmente_scaricato()!=null && dettScarico.getFl_totalmente_scaricato().booleanValue()){
 			return true; // disabilito
-		else
-			return false;	// abilito
+		}
+	}
+	return false;	// abilito
 }
 
 

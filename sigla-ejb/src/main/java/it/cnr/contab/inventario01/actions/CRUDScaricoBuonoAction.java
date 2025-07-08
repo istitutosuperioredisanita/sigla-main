@@ -231,6 +231,26 @@ public Forward doBringBackAddBeni(ActionContext context) {
 	}
 }
 
+/*
+	public Forward doSelection(ActionContext context,String name) {
+		try
+		{
+		fillModel(context);
+			CRUDScaricoInventarioBP bp = (CRUDScaricoInventarioBP)context.getBusinessProcess();
+			Buono_carico_scaricoBulk buonoS = (Buono_carico_scaricoBulk)bp.getModel();
+			//bp.getDettController().setSelection(context);
+			if(buonoS.getTipoMovimento().getFl_dismissione()){
+			//	return doClickFlagScaricoTotale(context);
+			}
+			return context.findDefaultForward();
+		}
+		catch(Exception e)
+		{
+			return handleException(context,e);
+		}
+	}
+*/
+
 public Forward doSelezionaBeniScaricati(ActionContext context) {
 	try {
 		
