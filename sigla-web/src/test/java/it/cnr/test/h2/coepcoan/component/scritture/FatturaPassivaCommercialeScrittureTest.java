@@ -62,6 +62,10 @@ public class FatturaPassivaCommercialeScrittureTest extends DeploymentsH2 {
      *                                      per scissione contabile IVA COMMERCIALE
      *                                      (Split Payment)
      * </pre>
+     * <b>Scrittura Analitica Fattura</b>
+     * <pre>
+     *     Scrittura da non generare
+     * </pre>
      * <b>Scrittura Economica Mandato</b>
      * <pre>
      *     Sezione   Importo      Conto
@@ -196,6 +200,10 @@ public class FatturaPassivaCommercialeScrittureTest extends DeploymentsH2 {
      *        D       18,67       A22010 - Attrezzature scientifiche
      *        A       18,67       P22010 - Debiti verso fornitori per acquisto di
      *                                     attrezzature scientifiche
+     * </pre>
+     * <b>Scrittura Analitica Fattura</b>
+     * <pre>
+     *     Scrittura da non generare
      * </pre>
      * <b>Scrittura Economica Mandato</b>
      * <pre>

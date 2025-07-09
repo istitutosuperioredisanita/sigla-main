@@ -60,6 +60,10 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
      *                                      per scissione contabile IVA COMMERCIALE
      *                                      (Split Payment)
      * </pre>
+     * <b>Scrittura Analitica Fattura</b>
+     * <pre>
+     *     Scrittura da non generare
+     * </pre>
      * <b>Scrittura Economica Nota Credito</b>
      * <pre>
      *     Sezione   Importo      Conto
@@ -69,6 +73,10 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
      *        D        1,70       P71012I - Debito per versamento delle ritenute
      *                                      per scissione contabile IVA COMMERCIALE
      *                                      (Split Payment)
+     * </pre>
+     * <b>Scrittura Analitica Nota Credito</b>
+     * <pre>
+     *     Scrittura da non generare
      * </pre>
      */
     @Test
@@ -409,6 +417,10 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
      *                                      per scissione contabile IVA COMMERCIALE
      *                                      (Split Payment)
      * </pre>
+     * <b>Scrittura Analitica Fattura</b>
+     * <pre>
+     *     Scrittura da non generare
+     * </pre>
      * <b>Scrittura Economica Nota Credito Riga 1</b>
      * <pre>
      *     Sezione   Importo      Conto
@@ -419,12 +431,20 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
      *                                      per scissione contabile IVA COMMERCIALE
      *                                      (Split Payment)
      * </pre>
+     * <b>Scrittura Analitica Nota Credito Riga 1</b>
+     * <pre>
+     *     Scrittura da non generare
+     * </pre>
      * <b>Scrittura Economica Nota Credito Riga 2</b>
      * <pre>
      *     Sezione   Importo      Conto
      *        A       10,00       A22010  - Attrezzature scientifiche
      *        D       10,00       P22010  - Debiti verso fornitori per acquisto di
      *                                      attrezzature scientifiche
+     * </pre>
+     * <b>Scrittura Analitica Nota Credito Riga 2</b>
+     * <pre>
+     *     Scrittura da non generare
      * </pre>
      */
     @Test

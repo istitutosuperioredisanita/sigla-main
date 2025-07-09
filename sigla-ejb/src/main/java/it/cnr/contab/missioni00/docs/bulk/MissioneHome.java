@@ -115,11 +115,11 @@ public class MissioneHome extends BulkHome implements
                     this.getClass());
             pw.close();
 
-            ps.setLong(1, pg.longValue());
-            ps.setInt(2, missioneTemp.getEsercizio().intValue());
+            ps.setLong(1, pg);
+            ps.setInt(2, missioneTemp.getEsercizio());
             ps.setString(3, missioneTemp.getCd_cds());
             ps.setString(4, missioneTemp.getCd_unita_organizzativa());
-            ps.setLong(5, missioneTemp.getPg_missione().longValue());
+            ps.setLong(5, missioneTemp.getPg_missione());
 
             ps.execute();
         } catch (java.sql.SQLException e) {
@@ -554,7 +554,15 @@ public class MissioneHome extends BulkHome implements
     private List<IDocumentoDetailAnaCogeBulk> getDatiAnaliticiDefault(UserContext userContext, MissioneBulk missione, ContoBulk aContoEconomico) throws ComponentException {
         try {
             List<Missione_riga_ecoBulk> result = new ArrayList<>();
-
+            Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
+            BigDecimal imAnticipo = BigDecimal.ZERO;
+            if (Optional.ofNullable(missione.getAnticipo()).isPresent()) {
+                AnticipoBulk anticipo = (AnticipoBulk)fatpasHome.loadIfNeededObject(missione.getAnticipo());
+                imAnticipo = Optional.ofNullable(anticipo)
+                        .map(AnticipoBulk::getImCostoEco)
+                        .orElse(BigDecimal.ZERO);
+            }
+            BigDecimal myMissioneImCostoEco = missione.getImCostoEco().subtract(imAnticipo);
             if (Optional.ofNullable(aContoEconomico).isPresent()) {
                 List<Voce_analiticaBulk> voceAnaliticaList = ((Voce_analiticaHome) getHomeCache().getHome(Voce_analiticaBulk.class)).findVoceAnaliticaList(aContoEconomico);
                 if (voceAnaliticaList.isEmpty())
@@ -563,7 +571,6 @@ public class MissioneHome extends BulkHome implements
                         .filter(Voce_analiticaBulk::getFl_default).findAny()
                         .orElse(voceAnaliticaList.stream().findAny().orElse(null));
 
-                Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
                 if (Optional.ofNullable(missione.getObbligazione_scadenzario()).isPresent()) {
                     Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(missione.getObbligazione_scadenzario());
 
@@ -582,13 +589,13 @@ public class MissioneHome extends BulkHome implements
                             myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
                             myRigaEco.setMissione(missione);
                             myRigaEco.setImporto(scadVoce.getIm_voce()
-                                    .multiply(missione.getImCostoEco())
+                                    .multiply(myMissioneImCostoEco)
                                     .divide(totScad, 2, RoundingMode.HALF_UP));
                             myRigaEco.setToBeCreated();
                             result.add(myRigaEco);
                         }
                         BigDecimal totRipartito = result.stream().map(Missione_riga_ecoBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);
-                        BigDecimal diff = totRipartito.subtract(missione.getImCostoEco());
+                        BigDecimal diff = totRipartito.subtract(myMissioneImCostoEco);
 
                         if (diff.compareTo(BigDecimal.ZERO) > 0) {
                             for (Missione_riga_ecoBulk rigaEco : result) {

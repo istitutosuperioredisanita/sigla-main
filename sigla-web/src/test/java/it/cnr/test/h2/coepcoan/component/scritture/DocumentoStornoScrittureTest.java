@@ -234,7 +234,7 @@ public class DocumentoStornoScrittureTest extends DeploymentsH2 {
      *        Voce Bilancio: 22010 - Attrezzature scientifiche
      *        Importo:       70,00
      * </pre>
-     * <b>Scrittura Economica</b>
+     * <b>Scrittura Economica Primo Documento Generico (A)</b>
      * <pre>
      *     Sezione   Importo      Conto
      *        D        30,00      A22011 - Attrezzature sanitarie
@@ -243,6 +243,10 @@ public class DocumentoStornoScrittureTest extends DeploymentsH2 {
      *                                     attrezzature sanitarie
      *        A        70,00      P22010 - Debiti verso fornitori per acquisto di
      *                                     attrezzature scientifiche
+     * </pre>
+     * <b>Scrittura Analitica Primo Documento Generico (A)</b>
+     * <pre>
+     *     Scrittura da non generare
      * </pre></p>
      * <p><b>Dati Secondo Documento Generico (B)</b>
      * <pre>
@@ -250,12 +254,16 @@ public class DocumentoStornoScrittureTest extends DeploymentsH2 {
      *        Voce Bilancio: 22011 - Attrezzature sanitarie
      *        Importo:      100,00
      * </pre>
-     * <b>Scrittura Economica</b>
+     * <b>Scrittura Economica Secondo Documento Generico (B)</b>
      * <pre>
      *     Sezione   Importo      Conto
      *        D       100,00      A22011 - Attrezzature sanitarie
      *        A       100,00      P22011 - Debiti verso fornitori per acquisto di
      *                                     attrezzature sanitarie
+     * </pre>
+     * <b>Scrittura Analitica Secondo Documento Generico (B)</b>
+     * <pre>
+     *     Scrittura da non generare
      * </pre></p>
      * <p><b>Dati Primo Documento Generico di Storno (C)</b>
      * <pre>
@@ -266,7 +274,7 @@ public class DocumentoStornoScrittureTest extends DeploymentsH2 {
      *        Voce Bilancio: 22011 - Attrezzature sanitarie
      *        Importo:      100,00
      * </pre>
-     * <b>Scrittura Economica</b>
+     * <b>Scrittura Economica Primo Documento Generico di Storno (C)</b>
      * <pre>
      *     Sezione   Importo      Conto
      *        D        70,00      P22010 - Debiti verso fornitori per acquisto di
@@ -276,21 +284,27 @@ public class DocumentoStornoScrittureTest extends DeploymentsH2 {
      *        A        70,00      A22010 - Attrezzature scientifiche
      *        A       100,00      A22011 - Attrezzature sanitarie
      * </pre>
-     * </p>
+     * <b>Scrittura Analitica Primo Documento Generico di Storno (C)</b>
+     * <pre>
+     *     Scrittura da non generare
+     * </pre></p>
      * <p><b>Dati Secondo Documento Generico di Storno (D)</b>
      * <pre>
      *     <b>Riga 1D - storna riga 1A</b>
      *        Voce Bilancio: 22011 - Attrezzature sanitarie
      *        Importo:       30,00
      * </pre>
-     * <b>Scrittura Economica</b>
+     * <b>Scrittura Economica Secondo Documento Generico di Storno (D)</b>
      * <pre>
      *     Sezione   Importo      Conto
      *        D        30,00      P22011 - Debiti verso fornitori per acquisto di
      *                                     attrezzature sanitarie
      *        A        30,00      A22011 - Attrezzature sanitarie
      * </pre>
-     * </p>
+     * <b>Scrittura Analitica Secondo Documento Generico di Storno (D)</b>
+     * <pre>
+     *     Scrittura da non generare
+     * </pre></p>
      */
     @Test
     @OperateOnDeployment(TEST_H2)

@@ -67,8 +67,11 @@ public abstract class EconomicaAction extends CRUDAction {
                     .map(IDocumentoCogeBulk.class::cast)
                     .orElseThrow(() -> new BusinessProcessException("Modello di business non compatibile!"));
             try {
-                if (Optional.ofNullable(bp.getEconomicaModel()).filter(OggettoBulk::isToBeCreated).isPresent())
+                if (Optional.ofNullable(bp.getEconomicaModel()).filter(OggettoBulk::isToBeCreated).isPresent() || bp.isDirty())
                     throw new ApplicationException("Il documento risulta non salvato! Proposta scrittura prima nota non possibile.");
+
+                if (!documentoCogeBulk.getTipoDocumentoEnum().isScritturaEconomicaRequired())
+                    throw new ApplicationException("Scrittura Economica non prevista per la tipologia di documento selezionato.");
 
                 /*
                 if (Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(actionContext.getUserContext())) {

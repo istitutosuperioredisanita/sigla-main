@@ -23,31 +23,11 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.FormController;
 
-public interface IDocAmmAnaliticaBP extends IDocAmmCogeCoanBP {
-
-    String getTab(String tabName);
-
-    FormController getController();
+public interface IDocAmmAnaliticaBP extends IDocAmmEconomicaBP {
 
     CollapsableDetailCRUDController getMovimentiAnalitici();
 
-    int getStatus();
-
-    FieldValidationMap getFieldValidationMap();
-
-    BusinessProcess getParentRoot();
-
     OggettoBulk getAnaliticaModel();
 
-    void setDirty(boolean dirty);
-
-    void setMessage(int status, String message);
-
     boolean isButtonGeneraScritturaAnaliticaVisible();
-
-    CollapsableDetailCRUDController getChildrenAnaColl();
-
-    FormController getControllerDetailEcoCoge();
-
-    boolean isAttivaAnalitica();
 }

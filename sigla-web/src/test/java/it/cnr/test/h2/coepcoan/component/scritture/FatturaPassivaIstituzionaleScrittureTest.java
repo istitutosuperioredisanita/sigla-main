@@ -51,6 +51,7 @@ public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
      * Imponibile:    18,67
      * Imposta:        1,70
      * </pre></p>
+     * <b>Scrittura Economica Fattura</b>
      * <pre>
      *     Sezione   Importo      Conto
      *        D       18,67       A22010  - Attrezzature scientifiche
@@ -59,6 +60,10 @@ public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
      *        A        1,70       P71012I - Debito per versamento delle ritenute
      *                                      per scissione contabile IVA COMMERCIALE
      *                                      (Split Payment)
+     * </pre>
+     * <b>Scrittura Analitica Fattura</b>
+     * <pre>
+     *     Scrittura da non generare
      * </pre>
      * <b>Scrittura Economica Mandato</b>
      * <pre>
@@ -189,6 +194,10 @@ public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
      *        D       18,67       A22010  - Attrezzature scientifiche
      *        A       18,67       P22010  - Debiti verso fornitori per acquisto di
      *                                      attrezzature scientifiche
+     * </pre>
+     * <b>Scrittura Analitica Fattura</b>
+     * <pre>
+     *     Scrittura da non generare
      * </pre>
      * <b>Scrittura Economica Mandato</b>
      * <pre>

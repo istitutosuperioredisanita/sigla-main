@@ -44,21 +44,24 @@ public class Documento_generico_riga_ecoHome extends BulkHome {
         if (bulk == null) return;
         try {
             Documento_generico_riga_ecoBulk riga = (Documento_generico_riga_ecoBulk) bulk;
-            java.sql.Connection contact = getConnection();
-            java.sql.ResultSet rs = contact.createStatement().executeQuery("SELECT MAX(PROGRESSIVO_RIGA) FROM " +
-                    it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() +
-                    "DOCUMENTO_GENERICO_RIGA_ECO WHERE " +
-                    "(ESERCIZIO = " + riga.getEsercizio() + ") AND " +
-                    "(CD_CDS = '" + riga.getCd_cds() + "') AND " +
-                    "(CD_UNITA_ORGANIZZATIVA = '" + riga.getCd_unita_organizzativa() + "') AND " +
-                    "(CD_TIPO_DOCUMENTO_AMM = '" + riga.getCd_tipo_documento_amm() + "') AND " +
-                    "(PG_DOCUMENTO_GENERICO = " + riga.getPg_documento_generico() + ")");
-            Long x;
-            if (rs.next())
-                x = rs.getLong(1) + 1;
-            else
-                x = 0L;
-            riga.setProgressivo_riga(x);
+            if (riga.getProgressivo_riga_eco()==null) {
+                java.sql.Connection contact = getConnection();
+                java.sql.ResultSet rs = contact.createStatement().executeQuery("SELECT MAX(PROGRESSIVO_RIGA_ECO) FROM " +
+                        it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() +
+                        "DOCUMENTO_GENERICO_RIGA_ECO WHERE " +
+                        "(ESERCIZIO = " + riga.getEsercizio() + ") AND " +
+                        "(CD_CDS = '" + riga.getCd_cds() + "') AND " +
+                        "(CD_UNITA_ORGANIZZATIVA = '" + riga.getCd_unita_organizzativa() + "') AND " +
+                        "(CD_TIPO_DOCUMENTO_AMM = '" + riga.getCd_tipo_documento_amm() + "') AND " +
+                        "(PG_DOCUMENTO_GENERICO = " + riga.getPg_documento_generico() + ") AND " +
+                        "(PROGRESSIVO_RIGA = " + riga.getProgressivo_riga() + ")");
+                Long x;
+                if (rs.next())
+                    x = rs.getLong(1) + 1;
+                else
+                    x = 0L;
+                riga.setProgressivo_riga_eco(x);
+            }
         } catch (java.sql.SQLException sqle) {
             throw new PersistencyException(sqle);
         }

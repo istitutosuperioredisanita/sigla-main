@@ -74,6 +74,10 @@ public class FatturaRicevereScrittureTest extends DeploymentsH2 {
      *                                      per scissione contabile IVA COMMERCIALE
      *                                      (Split Payment)
      * </pre>
+     * <b>Scrittura Analitica Fattura</b>
+     * <pre>
+     *     Scrittura da non generare
+     * </pre>
      * <b>Scrittura Economica Mandato Riga 1</b>
      * <pre>
      *     Sezione   Importo      Conto
@@ -279,6 +283,10 @@ public class FatturaRicevereScrittureTest extends DeploymentsH2 {
      *                                      per scissione contabile IVA COMMERCIALE
      *                                      (Split Payment)
      * </pre>
+     * <b>Scrittura Analitica Fattura</b>
+     * <pre>
+     *     Scrittura da non generare
+     * </pre>
      * <b>Scrittura Economica Nota Credito</b>
      * <pre>
      *     Sezione   Importo      Conto
@@ -290,6 +298,10 @@ public class FatturaRicevereScrittureTest extends DeploymentsH2 {
      *        D        1,70       P71012I - Debito per versamento delle ritenute
      *                                      per scissione contabile IVA COMMERCIALE
      *                                      (Split Payment)
+     * </pre>
+     * <b>Scrittura Analitica Nota Credito</b>
+     * <pre>
+     *     Scrittura da non generare
      * </pre>
      */
     @Test

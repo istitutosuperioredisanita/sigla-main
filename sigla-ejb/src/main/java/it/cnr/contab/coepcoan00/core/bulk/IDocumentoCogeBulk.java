@@ -74,7 +74,7 @@ public interface IDocumentoCogeBulk extends KeyedPersistent{
 
     default Scrittura_analiticaBulk getScrittura_analitica() {
         return null;
-    };
+    }
 
-    default void setScrittura_analitica(Scrittura_analiticaBulk scrittura_analitica) {};
+    default void setScrittura_analitica(Scrittura_analiticaBulk scrittura_analitica) {}
 }

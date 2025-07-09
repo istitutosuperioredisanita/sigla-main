@@ -17,13 +17,45 @@
 
 package it.cnr.contab.docamm00.bp;
 
+import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.action.BusinessProcess;
+import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.bulk.FieldValidationMap;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.FormController;
 
-public interface IDocAmmCogeCoanBP extends IDocAmmEconomicaBP {
+public interface IDocAmmCogeCoanBP {
+    String getTab(String tabName);
+
+    FormController getController();
+
+    int getStatus();
+
+    boolean isDirty();
+
+    FieldValidationMap getFieldValidationMap();
+
+    BusinessProcess getParentRoot();
+
+    void setDirty(boolean dirty);
+
+    void setMessage(int status, String message);
+
+    default OggettoBulk initializeModelForEdit(ActionContext actioncontext, OggettoBulk oggettobulk) throws BusinessProcessException {
+        return oggettobulk;
+    }
+
+    void setModel(ActionContext actioncontext, OggettoBulk oggettobulk) throws BusinessProcessException;
+
+    void save(ActionContext actioncontext) throws ValidationException, BusinessProcessException;
+
     CollapsableDetailCRUDController getChildrenAnaColl();
 
     FormController getControllerDetailEcoCoge();
+
+    boolean isAttivaEconomica();
 
     boolean isAttivaAnalitica();
 }

@@ -3886,10 +3886,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 
 	@Override
 	public BigDecimal getImCostoEco() {
-		return this.getIm_totale_missione().subtract(
-				Optional.ofNullable(this.getAnticipo())
-						.map(AnticipoBulk::getImCostoEco)
-						.orElse(BigDecimal.ZERO));
+		return this.getIm_totale_missione();
 	}
 
 	@Override

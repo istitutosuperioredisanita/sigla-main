@@ -173,4 +173,16 @@ public class Documento_generico_riga_ecoBulk extends Documento_generico_riga_eco
     public void setPg_documento_generico(Long pg_documento_generico) {
         Optional.ofNullable(this.getDocumento_generico_rigaBulk()).ifPresent(el->el.setPg_documento_generico(pg_documento_generico));
     }
+
+    @Override
+    public Long getProgressivo_riga() {
+        return Optional.ofNullable(this.getDocumento_generico_rigaBulk())
+                .map(Documento_generico_rigaBulk::getProgressivo_riga)
+                .orElse(null);
+    }
+
+    @Override
+    public void setProgressivo_riga(Long progressivo_riga) {
+        Optional.ofNullable(this.getDocumento_generico_rigaBulk()).ifPresent(el->el.setProgressivo_riga(progressivo_riga));
+    }
 }

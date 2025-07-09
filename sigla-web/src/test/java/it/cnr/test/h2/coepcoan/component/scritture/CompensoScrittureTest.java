@@ -46,6 +46,7 @@ public class CompensoScrittureTest extends DeploymentsH2 {
      * <p><b>Dati Compenso</b>
      * <pre>
      * Voce Bilancio: 13024 - Prodotti Chimici
+     * CDR/GAE: 000.000.000/PTEST001
      * Importo: 500,00 - IRPEF: 100
      * </pre></p>
      * <b>Scrittura Economica Compenso</b>
@@ -53,6 +54,11 @@ public class CompensoScrittureTest extends DeploymentsH2 {
      *     Sezione   Importo      Conto
      *        D      500,00       C13024 - Prodotti chimici
      *        A      500,00       P13024 - Debiti verso fornitori - Prodotti chimici
+     * </pre>
+     * <b>Scrittura Analitica Compenso</b>
+     * <pre>
+     *     Sezione   Importo      Conto
+     *        D      500,00       000.000.000/PTEST001      C13024 - Prodotti chimici
      * </pre>
      * <b>Scrittura Economica Mandato</b>
      * <pre>
