@@ -91,6 +91,7 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 		clauses.addClause(FindClause.AND, "numeratoreOrdine", SQLBuilder.EQUALS,ordineAcqConsegna.getCdNumeratore());
 		clauses.addClause(FindClause.AND, "rigaOrdine", SQLBuilder.EQUALS,ordineAcqConsegna.getRiga());
 		clauses.addClause(FindClause.AND, "rigaConsegnaOrdine", SQLBuilder.EQUALS,ordineAcqConsegna.getConsegna());
+		clauses.addClause(FindClause.AND, "numeroOrdine", SQLBuilder.EQUALS,ordineAcqConsegna.getNumero());
 
 		SQLBuilder sql  = innerSelectByClause(usercontext,clauses,Boolean.FALSE);
 		return  fetchAll(sql);
