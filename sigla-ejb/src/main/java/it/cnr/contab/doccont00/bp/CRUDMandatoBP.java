@@ -49,6 +49,8 @@ import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.Config;
 import it.cnr.jada.util.RemoteIterator;
+import it.cnr.jada.util.action.CollapsableDetailCRUDController;
+import it.cnr.jada.util.action.FormController;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.jsp.Button;
 

@@ -61,7 +61,7 @@ import java.util.stream.Stream;
 
 public class CRUDDocumentoGenericoAttivoBP
         extends AllegatiCRUDBP<AllegatoGenericoBulk, Documento_genericoBulk>
-        implements IDocumentoAmministrativoBP, IGenericSearchDocAmmBP, IDefferedUpdateSaldiBP, VoidableBP, IDocAmmAnaliticaBP, IDocumentoGenericoBP {
+        implements IDocumentoAmministrativoBP, IGenericSearchDocAmmBP, IDefferedUpdateSaldiBP, VoidableBP, IDocAmmAnaliticaBP, IDocAmmCogeCoanBP, IDocumentoGenericoBP {
     private final SimpleDetailCRUDController dettaglio = new DocumentoGenericoAttivoRigaCRUDController("Dettaglio", Documento_generico_rigaBulk.class, "documento_generico_dettColl", this);
 
     private final SimpleDetailCRUDController dettaglioAccertamentoController;

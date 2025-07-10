@@ -53,7 +53,7 @@ import java.util.Vector;
  * @author: Paola sala
  */
 public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP implements
-		IDefferedUpdateSaldiBP, IDocumentoAmministrativoSpesaBP, IValidaDocContBP, IDocAmmCogeCoanBP {
+		IDefferedUpdateSaldiBP, IDocumentoAmministrativoSpesaBP, IValidaDocContBP, IDocAmmEconomicaBP, IDocAmmCogeCoanBP {
     private it.cnr.contab.doccont00.core.bulk.OptionRequestParameter userConfirm = null;
 
     //	Variabili usate per la gestione del "RIPORTA" documento ad esercizio precedente/successivo
@@ -1080,6 +1080,7 @@ public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
     public boolean isButtonGeneraScritturaVisible() {
         return this.isSupervisore();
     }
+
     @Override
     public OggettoBulk getEconomicaModel() {
         return getModel();

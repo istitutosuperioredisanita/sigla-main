@@ -92,7 +92,7 @@ import java.util.stream.Stream;
  */
 public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFatturaBulk, Fattura_passivaBulk> implements
         IDocumentoAmministrativoBP, IGenericSearchDocAmmBP, VoidableBP,
-        IDefferedUpdateSaldiBP, FatturaPassivaElettronicaBP, IDocAmmAnaliticaBP {
+        IDefferedUpdateSaldiBP, FatturaPassivaElettronicaBP, IDocAmmAnaliticaBP, IDocAmmCogeCoanBP {
 
     private final static org.slf4j.Logger logger = LoggerFactory.getLogger(CRUDFatturaPassivaBP.class);
 

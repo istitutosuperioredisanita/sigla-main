@@ -82,7 +82,7 @@ public abstract class CRUDFatturaAttivaBP
         implements IDocumentoAmministrativoBP,
         IGenericSearchDocAmmBP,
         IDefferedUpdateSaldiBP,
-        VoidableBP, IDocAmmAnaliticaBP {
+        VoidableBP, IDocAmmAnaliticaBP, IDocAmmCogeCoanBP {
 
     private final SimpleDetailCRUDController crudRiferimentiBanca = new SimpleDetailCRUDController("RifBanca", Fattura_attiva_rigaBulk.class, "riferimenti_bancari", this);
     private final SimpleDetailCRUDController consuntivoController = new SimpleDetailCRUDController("Consuntivo", Consuntivo_rigaVBulk.class, "fattura_attiva_consuntivoColl", this);

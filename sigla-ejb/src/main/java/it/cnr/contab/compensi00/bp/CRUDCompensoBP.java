@@ -25,10 +25,7 @@ import it.cnr.contab.compensi00.ejb.CompensoComponentSession;
 import it.cnr.contab.compensi00.tabrif.bulk.Tipo_trattamentoBulk;
 import it.cnr.contab.config00.bulk.CigBulk;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
-import it.cnr.contab.docamm00.bp.IDocAmmAnaliticaBP;
-import it.cnr.contab.docamm00.bp.IDocAmmEconomicaBP;
-import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoBP;
-import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoSpesaBP;
+import it.cnr.contab.docamm00.bp.*;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
 import it.cnr.contab.docamm00.docs.bulk.TrovatoBulk;
 import it.cnr.contab.docamm00.ejb.DocumentoGenericoComponentSession;
@@ -69,7 +66,7 @@ import java.util.TreeMap;
  *
  * @author: Roberto Fantino
  */
-public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP implements IDefferedUpdateSaldiBP, IDocumentoAmministrativoSpesaBP, IValidaDocContBP, IDocAmmAnaliticaBP {
+public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP implements IDefferedUpdateSaldiBP, IDocumentoAmministrativoSpesaBP, IValidaDocContBP, IDocAmmAnaliticaBP, IDocAmmCogeCoanBP {
     private final SimpleDetailCRUDController contributiCRUDController = new SimpleDetailCRUDController("contributiCRUDController", Contributo_ritenutaBulk.class, "contributi", this, false) {
         @Override
         public void writeHTMLToolbar(javax.servlet.jsp.PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {

@@ -30,4 +30,6 @@ public interface IDocAmmAnaliticaBP extends IDocAmmEconomicaBP {
     OggettoBulk getAnaliticaModel();
 
     boolean isButtonGeneraScritturaAnaliticaVisible();
+
+    boolean isAttivaAnalitica();
 }

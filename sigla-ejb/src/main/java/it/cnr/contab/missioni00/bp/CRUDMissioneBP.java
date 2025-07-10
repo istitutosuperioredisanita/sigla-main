@@ -23,6 +23,7 @@ import it.cnr.contab.coepcoan00.bp.*;
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
 import it.cnr.contab.docamm00.bp.IDocAmmAnaliticaBP;
+import it.cnr.contab.docamm00.bp.IDocAmmCogeCoanBP;
 import it.cnr.contab.docamm00.bp.IDocAmmEconomicaBP;
 import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoSpesaBP;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
@@ -82,7 +83,7 @@ import java.util.stream.Collectors;
  */
 
 public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, MissioneBulk>
-        implements IDefferedUpdateSaldiBP, IDocumentoAmministrativoSpesaBP, IValidaDocContBP, IDocAmmAnaliticaBP {
+        implements IDefferedUpdateSaldiBP, IDocumentoAmministrativoSpesaBP, IValidaDocContBP, IDocAmmAnaliticaBP, IDocAmmCogeCoanBP {
     private final SimpleDetailCRUDController tappaController = new SimpleDetailCRUDController("Tappa", Missione_tappaBulk.class, "tappeMissioneColl", this) {
         @Override
         public void writeHTMLToolbar(javax.servlet.jsp.PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {

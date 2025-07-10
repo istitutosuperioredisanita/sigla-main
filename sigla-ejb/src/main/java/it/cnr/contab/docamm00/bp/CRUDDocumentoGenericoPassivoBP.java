@@ -58,7 +58,7 @@ import java.util.stream.Stream;
 public class CRUDDocumentoGenericoPassivoBP
         extends AllegatiCRUDBP<AllegatoGenericoBulk, Documento_genericoBulk>
         implements IDocumentoAmministrativoBP, IGenericSearchDocAmmBP, IDefferedUpdateSaldiBP, VoidableBP,
-        IDocumentoAmministrativoSpesaBP, IDocAmmAnaliticaBP, IDocumentoGenericoBP {
+        IDocumentoAmministrativoSpesaBP, IDocAmmAnaliticaBP, IDocAmmCogeCoanBP, IDocumentoGenericoBP {
 
     private final SimpleDetailCRUDController dettaglio = new DocumentoGenericoPassivoRigaCRUDController("Dettaglio", Documento_generico_rigaBulk.class, "documento_generico_dettColl", this);
     private final ObbligazioniCRUDController obbligazioniController =
