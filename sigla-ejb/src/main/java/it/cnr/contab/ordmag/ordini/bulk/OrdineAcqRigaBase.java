@@ -80,6 +80,12 @@ public class OrdineAcqRigaBase extends OrdineAcqRigaKey implements Keyed {
 //    DT_CANCELLAZIONE TIMESTAMP(7)
 	private java.sql.Timestamp dtCancellazione;
 
+	// ESERCIZIO_VOCE_EP DECIMAL(4,0) NOT NULL
+	private java.lang.Integer esercizio_voce_ep;
+
+	// CD_VOCE_EP VARCHAR(45) NOT NULL
+	private java.lang.String cd_voce_ep;
+
 	public Long getIdDettaglioContratto() {
 		return idDettaglioContratto;
 	}
@@ -347,5 +353,21 @@ public class OrdineAcqRigaBase extends OrdineAcqRigaKey implements Keyed {
 	}
 	public void setImIvaNd(java.math.BigDecimal imIvaNd) {
 		this.imIvaNd = imIvaNd;
+	}
+
+	public Integer getEsercizio_voce_ep() {
+		return esercizio_voce_ep;
+	}
+
+	public void setEsercizio_voce_ep(Integer esercizio_voce_ep) {
+		this.esercizio_voce_ep = esercizio_voce_ep;
+	}
+
+	public String getCd_voce_ep() {
+		return cd_voce_ep;
+	}
+
+	public void setCd_voce_ep(String cd_voce_ep) {
+		this.cd_voce_ep = cd_voce_ep;
 	}
 }

@@ -97,7 +97,7 @@ public abstract class Fattura_passiva_rigaBulk
     private java.util.Collection banche;
     private java.util.Collection modalita;
     private java.util.Collection termini;
-    private BulkList<FatturaOrdineBulk> fatturaOrdineColl = new BulkList();
+
 	private CigBulk cig;
 
     private TrovatoBulk trovato = new TrovatoBulk(); // inizializzazione necessaria per i bulk non persistenti

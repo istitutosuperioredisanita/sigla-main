@@ -1199,6 +1199,13 @@ public class OrdineAcqBulk extends OrdineAcqBase
                 .map(s -> s.equals(TipoIVA.COMMERCIALE.value()))
                 .orElse(Boolean.FALSE);
     }
+
+    public boolean isIstituzionale() {
+        return Optional.ofNullable(getTiAttivita())
+                .map(s -> s.equals(TipoIVA.ISTITUZIONALE.value()))
+                .orElse(Boolean.FALSE);
+    }
+
     public boolean isNotAbledToModifyTipoIstCom() {
         return getRigheOrdineColl()
                         .stream()

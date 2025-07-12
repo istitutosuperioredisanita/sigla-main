@@ -31,6 +31,7 @@ import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.config00.contratto.bulk.Dettaglio_contrattoBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.docamm00.docs.bulk.Documento_generico_riga_ecoBulk;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Voidable;
@@ -53,6 +54,8 @@ import it.cnr.jada.util.StrServ;
 import it.cnr.jada.util.action.CRUDBP;
 public class OrdineAcqRigaBulk extends OrdineAcqRigaBase implements IDocumentoAmministrativoRigaBulk, Voidable, AllegatoParentBulk {
 	protected BulkList<OrdineAcqConsegnaBulk> righeConsegnaColl= new BulkList<OrdineAcqConsegnaBulk>();
+	private List<OrdineAcqRigaEcoBulk> righeEconomica = new BulkList<>();
+
 	private java.lang.String dspTipoConsegna;
 	private java.lang.String dspStato;
 	private StatoContabilizzazione dspStatoContabilizzazione;
@@ -116,6 +119,8 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 	 * Table name: ORDINE_ACQ_RIGA
 	 **/
 	private BulkList<AllegatoGenericoBulk> dettaglioAllegati = new BulkList<AllegatoGenericoBulk>();
+
+	private ContoBulk voce_ep = new ContoBulk();
 
 	public OrdineAcqRigaBulk() {
 		super();
@@ -523,6 +528,7 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 	public IDocumentoAmministrativoBulk getFather() {
 		return getOrdineAcq();
 	}
+
 	@Override
 	public BigDecimal getIm_diponibile_nc() {
 		return null;
@@ -691,13 +697,67 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 		}
 	}
 
+	public List<OrdineAcqRigaEcoBulk> getRigheEconomica() {
+		return righeEconomica;
+	}
+
+	public void setRigheEconomica(List<OrdineAcqRigaEcoBulk> righeEconomica) {
+		this.righeEconomica = righeEconomica;
+	}
+
+	@Override
+	public ContoBulk getVoce_ep() {
+		return this.getDspConto();
+	}
+
+	public void setVoce_ep(ContoBulk voce_ep) {
+		setDspConto(voce_ep);
+	}
+
+	@Override
+	public java.lang.Integer getEsercizio_voce_ep() {
+		return Optional.ofNullable(this.getVoce_ep())
+				.map(ContoBulk::getEsercizio)
+				.orElse(null);
+	}
+
+	@Override
+	public void setEsercizio_voce_ep(java.lang.Integer esercizio_voce_ep) {
+		Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setEsercizio(esercizio_voce_ep));
+	}
+
+	@Override
+	public java.lang.String getCd_voce_ep() {
+		return Optional.ofNullable(this.getVoce_ep())
+				.map(ContoBulk::getCd_voce_ep)
+				.orElse(null);
+	}
+
+	@Override
+	public void setCd_voce_ep(java.lang.String cd_voce_ep) {
+		Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setCd_voce_ep(cd_voce_ep));
+	}
+
+	@Override
+	public List<IDocumentoDetailAnaCogeBulk> getChildrenAna() {
+		return this.getRigheEconomica().stream()
+				.filter(Objects::nonNull)
+				.map(IDocumentoDetailAnaCogeBulk.class::cast)
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public void clearChildrenAna() {
+		this.setRigheEconomica(new ArrayList<>());
+	}
+
 	/*
 	 * Ritorna l'importo della riga da imputare ad un conto di costo.
 	 * Il valore viene utilizzato come quota da ripartire a livello analitico.
 	 */
 	@Override
 	public BigDecimal getImCostoEco() {
-		return this.getIm_riga();
+		return righeConsegnaColl.stream().map(OrdineAcqConsegnaBulk::getImCostoEco).reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 
 	@Override

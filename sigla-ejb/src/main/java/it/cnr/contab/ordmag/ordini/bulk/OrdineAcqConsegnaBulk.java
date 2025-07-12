@@ -21,13 +21,16 @@
  */
 package it.cnr.contab.ordmag.ordini.bulk;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
+import it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.ordmag.anag00.LuogoConsegnaMagBulk;
 import it.cnr.contab.ordmag.anag00.MagazzinoBulk;
@@ -41,7 +44,9 @@ import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.jada.util.action.CRUDBP;
-public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase {
+import org.springframework.util.Assert;
+
+public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase implements IDocumentoDetailEcoCogeBulk {
 	public final static String STATO_INSERITA = "INS";
 	public final static String STATO_EVASA = "EVA";
 	public final static String STATO_EVASA_FORZATAMENTE = "EVF";
@@ -72,7 +77,7 @@ public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase {
 	private java.lang.Boolean obbligazioneInseritaSuConsegna =  Boolean.FALSE;
 	private java.lang.Boolean autorizzaQuantitaEvasaMaggioreOrdinata = Boolean.FALSE;
 	private String operazioneQuantitaEvasaMinore;
-
+	private List<OrdineAcqConsegnaEcoBulk> righeEconomica = new BulkList<>();
 
 	public final static Dictionary OPERAZIONE_EVASIONE_CONSEGNA;
 
@@ -175,14 +180,14 @@ public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase {
 	public void setCdUnitaOperativa(java.lang.String cdUnitaOperativa)  {
 		this.getOrdineAcqRiga().setCdUnitaOperativa(cdUnitaOperativa);
 	}
-	
+
 	public java.lang.Integer getEsercizio() {
 		OrdineAcqRigaBulk ordineAcqRiga = this.getOrdineAcqRiga();
 		if (ordineAcqRiga == null)
 			return null;
 		return getOrdineAcqRiga().getEsercizio();
 	}
-	
+
 	public void setEsercizio(java.lang.Integer esercizio)  {
 		this.getOrdineAcqRiga().setEsercizio(esercizio);
 	}
@@ -573,4 +578,68 @@ public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase {
 		return OrdineAcqConsegnaBulk.STATO_EVASA_FORZATAMENTE.equals(this.getStato());
 	}
 
+	public List<OrdineAcqConsegnaEcoBulk> getRigheEconomica() {
+		return righeEconomica;
+	}
+
+	public void setRigheEconomica(List<OrdineAcqConsegnaEcoBulk> righeEconomica) {
+		this.righeEconomica = righeEconomica;
+	}
+
+	@Override
+	public IScadenzaDocumentoContabileBulk getScadenzaDocumentoContabile() {
+		return this.getObbligazioneScadenzario();
+	}
+
+	@Override
+	public IDocumentoCogeBulk getFather() {
+		return this.getOrdineAcqRiga().getFather();
+	}
+
+	@Override
+	public ContoBulk getVoce_ep() {
+		return this.getContoBulk();
+	}
+
+	@Override
+	public void setVoce_ep(ContoBulk voce_ep) {
+		setContoBulk(voce_ep);
+	}
+
+	@Override
+	public List<IDocumentoDetailAnaCogeBulk> getChildrenAna() {
+		return this.getRigheEconomica().stream()
+				.filter(Objects::nonNull)
+				.map(IDocumentoDetailAnaCogeBulk.class::cast)
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public void clearChildrenAna() {
+		this.setRigheEconomica(new ArrayList<>());
+	}
+
+	@Override
+	public BigDecimal getImCostoEco() {
+		BigDecimal importoCostoEco = BigDecimal.ZERO;
+		if (!isStatoConsegnaEvasaForzatamente()) {
+			importoCostoEco = this.getImImponibile();
+			Assert.isTrue(Optional.ofNullable(this.getOrdineAcqRiga().getVoce_iva()).flatMap(el -> Optional.ofNullable(el.getPg_ver_rec())).isPresent(), "Calcolo Importo economico non possibile! Non risulta caricato l'oggetto Voce Iva.");
+			if (this.getOrdineAcqRiga().getOrdineAcq().isIstituzionale() || !this.getOrdineAcqRiga().getVoce_iva().isDetraibile())
+				importoCostoEco = importoCostoEco.add(this.getImIvaNd());
+		}
+		return importoCostoEco;
+	}
+
+	@Override
+	public BigDecimal getImCostoEcoRipartito() {
+		return this.getChildrenAna().stream().map(IDocumentoDetailAnaCogeBulk::getImporto)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	@Override
+	public BigDecimal getImCostoEcoDaRipartire() {
+		return Optional.ofNullable(this.getImCostoEco()).orElse(BigDecimal.ZERO)
+				.subtract(Optional.ofNullable(this.getImCostoEcoRipartito()).orElse(BigDecimal.ZERO));
+	}
 }

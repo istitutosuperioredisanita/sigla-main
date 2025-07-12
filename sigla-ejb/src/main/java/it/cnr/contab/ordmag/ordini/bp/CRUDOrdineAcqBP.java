@@ -18,16 +18,13 @@
 package it.cnr.contab.ordmag.ordini.bp;
 
 import it.cnr.contab.chiusura00.ejb.RicercaDocContComponentSession;
+import it.cnr.contab.coepcoan00.bp.CRUDScritturaPDoppiaBP;
+import it.cnr.contab.coepcoan00.bp.DetailEcoCogeCRUDController;
 import it.cnr.contab.config00.contratto.bulk.Dettaglio_contrattoBulk;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
-import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoBP;
-import it.cnr.contab.docamm00.bp.IGenericSearchDocAmmBP;
-import it.cnr.contab.docamm00.bp.ObbligazioniCRUDController;
-import it.cnr.contab.docamm00.bp.VoidableBP;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
-import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
-import it.cnr.contab.docamm00.docs.bulk.Voidable;
+import it.cnr.contab.docamm00.bp.*;
+import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.doccont00.bp.IDefferedUpdateSaldiBP;
@@ -60,6 +57,7 @@ import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.Config;
 import it.cnr.jada.util.action.BulkBP;
+import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.FormController;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.jsp.Button;
@@ -84,7 +82,7 @@ import java.util.*;
 /**
  * Gestisce le catene di elementi correlate con il documento in uso.
  */
-public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAcqBulk> implements IDocumentoAmministrativoBP, VoidableBP, IDefferedUpdateSaldiBP, IGenericSearchDocAmmBP {
+public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAcqBulk> implements IDocumentoAmministrativoBP, VoidableBP, IDefferedUpdateSaldiBP, IGenericSearchDocAmmBP, IDocAmmCogeCoanBP {
 
 	private static final DateFormat PDF_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 
@@ -104,6 +102,8 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 	public boolean isDettaglioContrattoCollapse() {
 		return dettaglioContrattoCollapse;
 	}
+	private boolean attivaEconomica = false;
+	private boolean attivaAnalitica = false;
 
 	public void setDettaglioContrattoCollapse(boolean dettaglioContrattoCollapse) {
 		this.dettaglioContrattoCollapse = dettaglioContrattoCollapse;
@@ -240,6 +240,8 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 			return add;
 		}
 	};
+
+	private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(OrdineAcqRigaEcoBulk.class, righe);
 
 	public final it.cnr.jada.util.action.SimpleDetailCRUDController getConsegne() {
 		return consegne;
@@ -854,6 +856,7 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 	protected void resetTabs(ActionContext actioncontext) {
 		super.resetTabs(actioncontext);
 		setTab("tab", "tabOrdineAcq");
+		setTab("tabOrdineAcqDettagli", "tabOrdineDettaglio");
 	}
 
 	@Override
@@ -938,6 +941,9 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 
 			setEsercizioInScrivania(CNRUserContext.getEsercizio(context.getUserContext()).intValue());
 			setAnnoSolareInScrivania(solaris == this.getEsercizioInScrivania());
+			attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
+			attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
+
 			setRibaltato(initRibaltato(context));
 			if (!isAnnoSolareInScrivania()) {
 				String cds = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(context.getUserContext());
@@ -955,6 +961,55 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 				setRiportaAvantiIndietro(false);
 		} catch (javax.ejb.EJBException e) {
 			setAnnoSolareInScrivania(false);
-		}
+		} catch (ComponentException | RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+	private static final String[] TAB_ORDINE_DETTAGLIO = new String[]{ "tabOrdineDettaglio","Dettaglio Riga","/ordmag/ordini/tab_ordine_acq_dettaglio.jsp" };
+	private static final String[] TAB_ORDINE_CONSEGNA = new String[]{ "tabOrdineConsegna","Consegne","/ordmag/ordini/tab_ordine_acq_consegna.jsp" };
+	private static final String[] TAB_ORDINE_ALLEGATI = new String[]{ "tabOrdineDettaglioAllegati","Allegati","/ordmag/ordini/tab_ordine_acq_dettaglio_allegati.jsp" };
+
+	public String[][] getTabsDettagli() {
+		OrdineAcqRigaBulk rigaOrdine = Optional.ofNullable(this.getRighe().getModel())
+				.filter(OrdineAcqRigaBulk.class::isInstance)
+				.map(OrdineAcqRigaBulk.class::cast)
+				.orElse(null);
+
+		TreeMap<Integer, String[]> pages = new TreeMap<Integer, String[]>();
+		int i = 0;
+		pages.put(i++, TAB_ORDINE_DETTAGLIO);
+		pages.put(i++, TAB_ORDINE_CONSEGNA);
+
+		if (attivaEconomica || attivaAnalitica)
+			pages.put(i++, CRUDScritturaPDoppiaBP.TAB_DATI_COGECOAN);
+
+		if (rigaOrdine != null && rigaOrdine.getNumero() != null)
+			pages.put(i++, TAB_ORDINE_ALLEGATI);
+
+		String[][] tabs = new String[i][3];
+		for (int j = 0; j < i; j++)
+			tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
+		return tabs;
+	}
+
+	@Override
+	public CollapsableDetailCRUDController getChildrenAnaColl() {
+		return childrenAnaColl;
+	}
+
+	@Override
+	public FormController getControllerDetailEcoCoge() {
+		return righe;
+	}
+
+	@Override
+	public boolean isAttivaEconomica() {
+		return attivaEconomica;
+	}
+
+	@Override
+	public boolean isAttivaAnalitica() {
+		return attivaAnalitica;
 	}
 }

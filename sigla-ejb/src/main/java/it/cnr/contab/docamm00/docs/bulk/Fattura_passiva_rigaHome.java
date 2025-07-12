@@ -28,9 +28,14 @@ import it.cnr.contab.docamm00.tabrif.bulk.AssCatgrpInventVoceEpBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.AssCatgrpInventVoceEpHome;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.doccont00.core.bulk.*;
+import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
+import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineHome;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaHome;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
@@ -266,7 +271,7 @@ public class Fattura_passiva_rigaHome extends BulkHome {
         return divisaHome.createSQLBuilder();
     }
 
-    public java.util.List<Fattura_passiva_riga_ecoBulk> findFatturaPassivaRigheEcoList(Fattura_passiva_rigaBulk docRiga) throws PersistencyException {
+    public List<Fattura_passiva_riga_ecoBulk> findFatturaPassivaRigheEcoList(Fattura_passiva_rigaBulk docRiga) throws PersistencyException {
         PersistentHome home;
         if (docRiga instanceof Nota_di_credito_rigaBulk)
             home = getHomeCache().getHome(Nota_di_credito_riga_ecoBulk.class);
@@ -284,11 +289,41 @@ public class Fattura_passiva_rigaHome extends BulkHome {
         return home.fetchAll(sql);
     }
 
+    public List<FatturaOrdineBulk> findFatturaOrdineList(Fattura_passiva_rigaBulk docRiga) throws PersistencyException {
+        PersistentHome home = getHomeCache().getHome(FatturaOrdineBulk.class, "FATTURA_P");
+
+        it.cnr.jada.persistency.sql.SQLBuilder sql = home.createSQLBuilder();
+        sql.addSQLClause(FindClause.AND, "FATTURA_ORDINE.CD_CDS", SQLBuilder.EQUALS, docRiga.getCd_cds());
+        sql.addSQLClause(FindClause.AND, "FATTURA_ORDINE.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, docRiga.getCd_unita_organizzativa());
+        sql.addSQLClause(FindClause.AND, "FATTURA_ORDINE.ESERCIZIO", SQLBuilder.EQUALS, docRiga.getEsercizio());
+        sql.addSQLClause(FindClause.AND, "FATTURA_ORDINE.PG_FATTURA_PASSIVA", SQLBuilder.EQUALS, docRiga.getPg_fattura_passiva());
+        sql.addSQLClause(FindClause.AND, "FATTURA_ORDINE.PROGRESSIVO_RIGA", SQLBuilder.EQUALS, docRiga.getProgressivo_riga());
+        return home.fetchAll(sql);
+    }
+
     protected ContoBulk getContoEconomicoDefault(Fattura_passiva_rigaBulk docRiga) throws ComponentException {
         try {
             Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
-            //verifico se sulla riga del docamm ci sia un bene inventariabile
+
             if (Optional.ofNullable(docRiga).isPresent()) {
+                //verifico se sulla riga del docamm ci sia un ordine collegato
+                List<FatturaOrdineBulk> fatturaOrdineBulks = this.findFatturaOrdineList(docRiga);
+                if (!fatturaOrdineBulks.isEmpty()) {
+                    if (fatturaOrdineBulks.size()>1)
+                        throw new ApplicationException("Errore nei dati: esiste più di una consegna associata alla riga della fattura!");
+
+                    FatturaOrdineBulk fatturaOrdine = fatturaOrdineBulks.get(0);
+                    OrdineAcqConsegnaBulk consegna = (OrdineAcqConsegnaBulk)fatpasHome.loadIfNeededObject(fatturaOrdine.getOrdineAcqConsegna());
+                    ContoBulk contoEconomico = consegna.getVoce_ep();
+                    if (contoEconomico == null) {
+                        OrdineAcqConsegnaHome consegnaHome = (OrdineAcqConsegnaHome)getHomeCache().getHome(OrdineAcqConsegnaBulk.class);
+                        contoEconomico = consegnaHome.getContoEconomicoDefault(consegna);
+                    }
+                    if (contoEconomico != null)
+                        return contoEconomico;
+                }
+
+                //verifico se sulla riga del docamm ci sia un bene inventariabile
                 Bene_servizioBulk myBeneServizio = (Bene_servizioBulk)fatpasHome.loadIfNeededObject(docRiga.getBene_servizio());
 
                 if (myBeneServizio.getFl_gestione_inventario() && Optional.ofNullable(myBeneServizio.getCd_categoria_gruppo()).isPresent()) {
@@ -323,6 +358,7 @@ public class Fattura_passiva_rigaHome extends BulkHome {
     protected List<IDocumentoDetailAnaCogeBulk> getDatiAnaliticiDefault(UserContext userContext, Fattura_passiva_rigaBulk docRiga, ContoBulk aContoEconomico, Class rigaEcoClass) throws ComponentException {
         try {
             List<Fattura_passiva_riga_ecoBulk> result = new ArrayList<>();
+            Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
 
             if (Optional.ofNullable(aContoEconomico).isPresent()) {
                 List<Voce_analiticaBulk> voceAnaliticaList = ((Voce_analiticaHome) getHomeCache().getHome(Voce_analiticaBulk.class)).findVoceAnaliticaList(aContoEconomico);
@@ -331,6 +367,35 @@ public class Fattura_passiva_rigaHome extends BulkHome {
                 Voce_analiticaBulk voceAnaliticaDef = voceAnaliticaList.stream()
                         .filter(Voce_analiticaBulk::getFl_default).findAny()
                         .orElse(voceAnaliticaList.stream().findAny().orElse(null));
+
+                //verifico se sulla riga del docamm ci sia un ordine collegato
+                List<FatturaOrdineBulk> fatturaOrdineBulks = this.findFatturaOrdineList(docRiga);
+                if (!fatturaOrdineBulks.isEmpty()) {
+                    if (fatturaOrdineBulks.size()>1)
+                        throw new ApplicationException("Errore nei dati: esiste più di una consegna associata alla riga della fattura!");
+
+                    FatturaOrdineBulk fatturaOrdine = fatturaOrdineBulks.get(0);
+                    OrdineAcqConsegnaBulk consegna = (OrdineAcqConsegnaBulk)fatpasHome.loadIfNeededObject(fatturaOrdine.getOrdineAcqConsegna());
+                    OrdineAcqConsegnaHome consegnaHome = (OrdineAcqConsegnaHome)getHomeCache().getHome(OrdineAcqConsegnaBulk.class);
+                    List<IDocumentoDetailAnaCogeBulk> contiAnaliticiConsegna = consegnaHome.getDatiAnaliticiDefault(userContext,consegna,aContoEconomico);
+                    if (contiAnaliticiConsegna.isEmpty())
+                        contiAnaliticiConsegna = consegnaHome.getDatiEconomiciDefault(userContext,consegna).getSecond();
+                    if (!contiAnaliticiConsegna.isEmpty()) {
+                        for (IDocumentoDetailAnaCogeBulk contoAnaConsegna : contiAnaliticiConsegna) {
+                            Fattura_passiva_riga_ecoBulk myRigaEco = (Fattura_passiva_riga_ecoBulk)rigaEcoClass.newInstance();
+                            myRigaEco.setProgressivo_riga_eco((long) (result.size() + 1));
+                            myRigaEco.setVoce_analitica(contoAnaConsegna.getVoce_analitica());
+                            myRigaEco.setLinea_attivita(contoAnaConsegna.getLinea_attivita());
+                            myRigaEco.setFattura_passiva_riga(docRiga);
+                            myRigaEco.setImporto(contoAnaConsegna.getImporto());
+                            myRigaEco.setToBeCreated();
+                            result.add(myRigaEco);
+                        }
+                        return result.stream()
+                                .filter(el->el.getImporto().compareTo(BigDecimal.ZERO)!=0)
+                                .collect(Collectors.toList());
+                    }
+                }
 
                 if (!Optional.ofNullable(docRiga.getScadenzaDocumentoContabile()).isPresent()) {
                     Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);

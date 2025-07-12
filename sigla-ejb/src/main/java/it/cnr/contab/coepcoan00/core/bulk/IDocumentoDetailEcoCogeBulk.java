@@ -32,17 +32,13 @@ public interface IDocumentoDetailEcoCogeBulk  {
 
     IDocumentoCogeBulk getFather();
 
-    default ContoBulk getVoce_ep() {
-        return null;
-    }
+    ContoBulk getVoce_ep();
 
-    default void setVoce_ep(ContoBulk voce_ep) {}
+    void setVoce_ep(ContoBulk voce_ep);
 
-    default java.util.List<IDocumentoDetailAnaCogeBulk> getChildrenAna() {
-        return new ArrayList<>();
-    }
+    java.util.List<IDocumentoDetailAnaCogeBulk> getChildrenAna();
 
-    default void clearChildrenAna(){};
+    void clearChildrenAna();
 
     BigDecimal getImCostoEco();
 

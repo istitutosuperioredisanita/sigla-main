@@ -1,0 +1,43 @@
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaEcoBulk"
+	homeClassName="it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaEcoHome" >
+
+	<defaultColumnMap
+		tableName="ORDINE_ACQ_RIGA_ECO" >
+		<columnMapping
+			columnName="ESERCIZIO_VOCE_ANA"
+			propertyName="voce_analitica.esercizio" />
+		<columnMapping
+			columnName="CD_VOCE_ANA"
+			propertyName="voce_analitica.cd_voce_ana" />
+
+		<columnMapping
+			columnName="CD_CENTRO_RESPONSABILITA"
+			propertyName="linea_attivita.centro_responsabilita.cd_centro_responsabilita" />
+		<columnMapping
+			columnName="CD_LINEA_ATTIVITA"
+			propertyName="linea_attivita.cd_linea_attivita" />
+	</defaultColumnMap>
+
+	<persistentProperty
+		name="voce_analitica" />
+	<persistentProperty
+		name="linea_attivita" />
+</SQLPersistentInfo>

@@ -611,6 +611,7 @@ public class OrdineAcqComponent
 
                 OrdineAcqRigaHome homeRigaOrdine = (OrdineAcqRigaHome)getHome(usercontext, OrdineAcqRigaBulk.class);
                 riga.setRigheConsegnaColl(new BulkList(homeRigaOrdine.findOrdineRigheConsegnaList(riga)));
+                riga.setRigheEconomica(homeRigaOrdine.findOrdineAcqRigaEcoList(riga));
 
                 getHomeCache(usercontext).fetchAll(usercontext);
 

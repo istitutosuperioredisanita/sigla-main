@@ -41,9 +41,7 @@ import it.cnr.contab.gestiva00.core.bulk.Liquidazione_ivaBulk;
 import it.cnr.contab.gestiva00.core.bulk.Liquidazione_ivaHome;
 import it.cnr.contab.gestiva00.core.bulk.Stampa_registri_ivaVBulk;
 import it.cnr.contab.missioni00.docs.bulk.*;
-import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
-import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk;
-import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
+import it.cnr.contab.ordmag.ordini.bulk.*;
 import it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiBulk;
 import it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiHome;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
@@ -1153,6 +1151,11 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			listaFatturaOrdini.addAll(Utility.createFatturaPassivaComponentSession().findFatturaOrdini(userContext, (Fattura_passivaBulk) docamm));
 			for (FatturaOrdineBulk fattordine : listaFatturaOrdini)
 				fattordine.setOrdineAcqConsegna((OrdineAcqConsegnaBulk) loadObject(userContext, fattordine.getOrdineAcqConsegna()));
+
+			listaFatturaOrdini.stream().map(FatturaOrdineBulk::getOrdineAcqConsegna)
+					.map(OrdineAcqConsegnaBulk::getOrdineAcqRiga)
+					.map(OrdineAcqRigaBulk::getOrdineAcq).distinct()
+					.forEach(el->this.loadRigheEco(userContext,el));
 		}
 
 		//Le fatture generate da compenso non creano scritture di prima nota in quanto create direttamente dal compenso stesso
@@ -5999,6 +6002,14 @@ public class ProposeScritturaComponent extends CRUDComponent {
 				MissioneHome missioneHome = (MissioneHome) getHome(userContext, MissioneBulk.class);
 				((MissioneBulk) rigaEco).setRigheEconomica(missioneHome.findMissioneRigheEcoList((MissioneBulk) rigaEco));
 				((MissioneBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setMissione((MissioneBulk) rigaEco));
+			} else if (rigaEco instanceof OrdineAcqRigaBulk) {
+				OrdineAcqRigaHome ordineAcqRigaHome = (OrdineAcqRigaHome) getHome(userContext, OrdineAcqRigaBulk.class);
+				((OrdineAcqRigaBulk) rigaEco).setRigheEconomica(ordineAcqRigaHome.findOrdineAcqRigaEcoList((OrdineAcqRigaBulk) rigaEco));
+				((OrdineAcqRigaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setOrdineAcqRigaBulk((OrdineAcqRigaBulk) rigaEco));
+			} else if (rigaEco instanceof OrdineAcqConsegnaBulk) {
+				OrdineAcqConsegnaHome ordineAcqConsegnaHome = (OrdineAcqConsegnaHome) getHome(userContext, OrdineAcqConsegnaBulk.class);
+				((OrdineAcqConsegnaBulk) rigaEco).setRigheEconomica(ordineAcqConsegnaHome.findOrdineAcqConsegnaEcoList((OrdineAcqConsegnaBulk) rigaEco));
+				((OrdineAcqConsegnaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setOrdineAcqConsegnaBulk((OrdineAcqConsegnaBulk) rigaEco));
 			}
 		} catch (ComponentException | PersistencyException e) {
 			throw new DetailedRuntimeException(e);
@@ -6029,6 +6040,51 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 					//e poi ricarico il tutto leggendo dalla finanziaria
 					this.loadDocammRigheEcoFromCofi(userContext, (IDocumentoDetailEcoCogeBulk) documentoCoge);
+				}
+			} else if (documentoCoge instanceof OrdineAcqBulk) {
+				OrdineAcqHome home = (OrdineAcqHome) getHome(userContext, OrdineAcqBulk.class);
+				List<OrdineAcqRigaBulk> righeOrdine = home.findOrdineRigheList((OrdineAcqBulk) documentoCoge);
+				righeOrdine.forEach(el->el.setOrdineAcq((OrdineAcqBulk) documentoCoge));
+				((OrdineAcqBulk)documentoCoge).setRigheOrdineColl(new BulkList(righeOrdine));
+
+				for (OrdineAcqRigaBulk rigaOrdine : righeOrdine) {
+					//Carico i dettagli
+					loadChildrenAna(userContext, rigaOrdine);
+
+					//Se non attiva l'economica pura (quindi c'è la finanziaria o la parallela) ripulisco tutte le tabelle di appoggio per ricaricarle ex-novo con i dati
+					//prelevati dalla finanziaria
+					if (!isAttivaEconomicaPuraDocamm) {
+						//Ripulisco tutti i campi della riga ordine
+						rigaOrdine.setVoce_ep(null);
+						rigaOrdine.setToBeUpdated();
+						updateBulk(userContext, rigaOrdine);
+
+						for (IDocumentoDetailAnaCogeBulk childrenAna : rigaOrdine.getChildrenAna()) {
+							((OggettoBulk) childrenAna).setToBeDeleted();
+							deleteBulk(userContext, (OggettoBulk) childrenAna);
+						}
+
+						OrdineAcqRigaHome rigaHome = (OrdineAcqRigaHome)getHome(userContext, OrdineAcqRigaBulk.class);
+						List<OrdineAcqConsegnaBulk> consegneOrdine = rigaHome.findOrdineRigheConsegnaList(rigaOrdine);
+						rigaOrdine.setRigheConsegnaColl(new BulkList<>(consegneOrdine));
+						for (OrdineAcqConsegnaBulk consegnaOrdine : rigaOrdine.getRigheConsegnaColl()) {
+							//Carico i dettagli
+							loadChildrenAna(userContext, consegnaOrdine);
+
+							//Ripulisco tutti i campi della riga consegna
+							consegnaOrdine.setVoce_ep(null);
+							consegnaOrdine.setToBeUpdated();
+							updateBulk(userContext, consegnaOrdine);
+
+							for (IDocumentoDetailAnaCogeBulk childrenAna : consegnaOrdine.getChildrenAna()) {
+								((OggettoBulk) childrenAna).setToBeDeleted();
+								deleteBulk(userContext, (OggettoBulk) childrenAna);
+							}
+
+						}
+						//e poi ricarico il tutto leggendo dalla finanziaria
+						this.loadDocammRigheEcoFromCofi(userContext, rigaOrdine);
+					}
 				}
 			} else if (documentoCoge instanceof IDocumentoAmministrativoBulk) {
 				List<IDocumentoAmministrativoRigaBulk> righeDocamm = this.getRigheDocamm(userContext, (IDocumentoAmministrativoBulk)documentoCoge);
@@ -6081,12 +6137,25 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			datiEcoDefault = ((AnticipoHome) getHome(userContext, AnticipoBulk.class)).getDatiEconomiciDefault(userContext, (AnticipoBulk) rigaEco);
 		else if (rigaEco instanceof MissioneBulk)
 			datiEcoDefault = ((MissioneHome) getHome(userContext, MissioneBulk.class)).getDatiEconomiciDefault(userContext, (MissioneBulk) rigaEco);
+		else if (rigaEco instanceof OrdineAcqRigaBulk)
+			datiEcoDefault = ((OrdineAcqRigaHome) getHome(userContext, OrdineAcqRigaBulk.class)).getDatiEconomiciDefault(userContext, (OrdineAcqRigaBulk) rigaEco, Boolean.TRUE);
+		else if (rigaEco instanceof OrdineAcqConsegnaBulk)
+			datiEcoDefault = ((OrdineAcqConsegnaHome) getHome(userContext, OrdineAcqConsegnaBulk.class)).getDatiEconomiciDefault(userContext, (OrdineAcqConsegnaBulk) rigaEco);
 
 		if (datiEcoDefault!=null) {
 			//Ripulisco i dati economici
 			rigaEco.setVoce_ep(datiEcoDefault.getFirst());
 			((OggettoBulk) rigaEco).setToBeUpdated();
 			updateBulk(userContext, (OggettoBulk) rigaEco);
+
+			if (rigaEco instanceof OrdineAcqRigaBulk) {
+				//Aggiusto il conto anche sulla testata consegna
+				for (OrdineAcqConsegnaBulk consegna : ((OrdineAcqRigaBulk) rigaEco).getRigheConsegnaColl()) {
+					consegna.setVoce_ep(datiEcoDefault.getFirst());
+					consegna.setToBeUpdated();
+					updateBulk(userContext, consegna);
+				}
+			}
 
 			for (IDocumentoDetailAnaCogeBulk rigaAna : datiEcoDefault.getSecond()) {
 				if (rigaEco instanceof Documento_generico_rigaBulk) {
@@ -6143,9 +6212,26 @@ public class ProposeScritturaComponent extends CRUDComponent {
 					myRigaAna.setToBeCreated();
 					insertBulk(userContext, myRigaAna);
 					myRigaEco.getRigheEconomica().add(myRigaAna);
-				} else {
+				} else if (rigaEco instanceof CompensoBulk) {
 					CompensoBulk myRigaEco = (CompensoBulk) rigaEco;
 					Compenso_riga_ecoBulk myRigaAna = (Compenso_riga_ecoBulk) rigaAna;
+					myRigaAna.setToBeCreated();
+					insertBulk(userContext, myRigaAna);
+					myRigaEco.getRigheEconomica().add(myRigaAna);
+				} else if (rigaEco instanceof OrdineAcqRigaBulk && rigaAna instanceof OrdineAcqRigaEcoBulk) {
+					OrdineAcqRigaBulk myRigaEco = (OrdineAcqRigaBulk) rigaEco;
+					OrdineAcqRigaEcoBulk myRigaAna = (OrdineAcqRigaEcoBulk) rigaAna;
+					myRigaAna.setToBeCreated();
+					insertBulk(userContext, myRigaAna);
+					myRigaEco.getRigheEconomica().add(myRigaAna);
+				} else if (rigaEco instanceof OrdineAcqRigaBulk && rigaAna instanceof OrdineAcqConsegnaEcoBulk) {
+					//Aggiorno le righe consegna
+					OrdineAcqConsegnaEcoBulk myRigaAna = (OrdineAcqConsegnaEcoBulk) rigaAna;
+					myRigaAna.setToBeCreated();
+					insertBulk(userContext, myRigaAna);
+				} else {
+					OrdineAcqConsegnaBulk myRigaEco = (OrdineAcqConsegnaBulk) rigaEco;
+					OrdineAcqConsegnaEcoBulk myRigaAna = (OrdineAcqConsegnaEcoBulk) rigaAna;
 					myRigaAna.setToBeCreated();
 					insertBulk(userContext, myRigaAna);
 					myRigaEco.getRigheEconomica().add(myRigaAna);

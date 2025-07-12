@@ -23,6 +23,7 @@
                                        http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <changeSet author="ciro.salvio" id="update_configurazioneCnr_liq_daordine_inv">
+        <validCheckSum>7:1da854b73ac13a4ea67d61b6a84d79cd</validCheckSum>
         <update tableName="configurazione_cnr">
             <column name="val01" type="STRING" value="N"/>
             <where>CD_UNITA_FUNZIONALE='*' AND CD_CHIAVE_PRIMARIA='INVENTARIO' AND CD_CHIAVE_SECONDARIA='GEST_LIQ_FATT_ORDINE_CHECK_INV'</where>

@@ -9,23 +9,11 @@
 %>
 
 <% CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP)BusinessProcess.getBusinessProcess(request);
-    OrdineAcqRigaBulk riga = (OrdineAcqRigaBulk)bp.getRighe().getModel();
 	bp.getRighe().writeHTMLTable(pageContext,"righeSet",true,false,true,"100%","auto;max-height:50vh"); %>
 <div class="mt-2">
 	      <%
-	      	String[][] pages = null;
-	      	if(riga != null && riga.getNumero() != null){
-	      		pages = new String[][] {
-					{ "tabOrdineDettaglio","Dettaglio Riga","/ordmag/ordini/tab_ordine_acq_dettaglio.jsp" },
-					{ "tabOrdineConsegna","Consegna","/ordmag/ordini/tab_ordine_acq_consegna.jsp" },
-					{ "tabOrdineDettaglioAllegati","Allegati","/ordmag/ordini/tab_ordine_acq_dettaglio_allegati.jsp" } };
-	      	} else {
-	      		pages = new String[][] {
-	      			{ "tabOrdineDettaglio","Dettaglio Riga","/ordmag/ordini/tab_ordine_acq_dettaglio.jsp" },
-					{ "tabOrdineConsegna","Consegna","/ordmag/ordini/tab_ordine_acq_consegna.jsp" } };
-	      	}
-	      	JSPUtils.tabbed(pageContext, "tabOrdineAcqDettaglio",
-	      			pages,
-	      			bp.getTab("tabOrdineAcqDettaglio"), "left", "100%", null, true);
+	      	JSPUtils.tabbed(pageContext, "tabOrdineAcqDettagli",
+	      			bp.getTabsDettagli(),
+	      			bp.getTab("tabOrdineAcqDettagli"), "left", "100%", null, true);
 	      %>
 </div>
