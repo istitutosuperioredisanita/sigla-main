@@ -120,4 +120,37 @@
 		name="importoCoge" />
 	<columnFieldProperty
 		name="importoCofi" />
+
+	<columnSet
+			name="visualizzazioneTotali">
+		<columnFieldProperty
+				name="esercizio" />
+		<columnFieldProperty
+				name="voceCoge" />
+		<columnFieldProperty
+				name="dsVoceCoge" />
+		<columnFieldProperty
+				name="voceCofi" />
+		<columnFieldProperty
+				name="importoCoge" />
+		<columnFieldProperty
+				name="importoCofi" />
+	</columnSet>
+	<columnSet
+			name="visualizzazioneCompleta">
+		<columnFieldProperty
+				name="esercizio" />
+		<columnFieldProperty
+				name="voceCoge" />
+		<columnFieldProperty
+				name="dsVoceCoge" />
+		<columnFieldProperty
+				name="voceCofi" />
+		<columnFieldProperty
+				name="dsVoceCofi" />
+		<columnFieldProperty
+				name="importoCoge" />
+		<columnFieldProperty
+				name="importoCofi" />
+	</columnSet>
 </bulkInfo>
