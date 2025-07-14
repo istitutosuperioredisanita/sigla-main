@@ -109,4 +109,12 @@ public class ConfCostiCogeCofiBP extends ConsultazioniBP {
 			throw handleException(e);
 		}
 	}
+	public void setColumnSet(ActionContext actioncontext, String tipoVisualizzazione) {
+		String columnSetName = "visualizzazioneCompleta";
+		if (tipoVisualizzazione.equalsIgnoreCase(V_confronta_costi_coge_cofiBulk.VISUALIZZAZIONE_TOTALI))
+			columnSetName = "visualizzazioneTotali";
+
+		setColumns(getBulkInfo().getColumnFieldPropertyDictionary(columnSetName));
+
+	}
 }

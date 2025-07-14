@@ -44,6 +44,7 @@ public class ConfCostiCogeCofiAction extends ConsultazioniAction {
 			v_confronta_costi_coge_cofiBulk = ((V_confronta_costi_coge_cofiBulk)bulk);
 			v_confronta_costi_coge_cofiBulk.setTipo_visualizzazione(tipoVisualizzazione);
 			bp.setModel(context, bulk);
+			bp.setColumnSet(context, v_confronta_costi_coge_cofiBulk.getTipo_visualizzazione());
 			bp.openIterator(context);
 			return context.findDefaultForward();
 		} catch(Throwable e) {
