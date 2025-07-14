@@ -11,6 +11,10 @@ public class V_confronta_costi_coge_cofiBase extends V_confronta_costi_coge_cofi
  
 //    IMPORTO_COFI DECIMAL(0,-127)
 	private java.math.BigDecimal importoCofi;
+
+
+	private String dsVoceCoge;
+	private String dsVoceCofi;
  
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
@@ -50,5 +54,21 @@ public class V_confronta_costi_coge_cofiBase extends V_confronta_costi_coge_cofi
 	 **/
 	public void setImportoCofi(java.math.BigDecimal importoCofi)  {
 		this.importoCofi=importoCofi;
+	}
+
+	public String getDsVoceCoge() {
+		return dsVoceCoge;
+	}
+
+	public void setDsVoceCoge(String dsVoceCoge) {
+		this.dsVoceCoge = dsVoceCoge;
+	}
+
+	public String getDsVoceCofi() {
+		return dsVoceCofi;
+	}
+
+	public void setDsVoceCofi(String dsVoceCofi) {
+		this.dsVoceCofi = dsVoceCofi;
 	}
 }

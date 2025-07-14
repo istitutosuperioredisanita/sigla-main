@@ -3111,4 +3111,8 @@
     <changeSet author="ciro.salvio" runOnChange="true" id="create-view-V_CONFRONTA_COSTI_COGE_COFI">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_CONFRONTA_COSTI_COGE_COFI.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="valentina.tomada" runOnChange="true" id="create-view-V_COGE_COSTI_BY_COFI">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_COGE_COSTI_BY_COFI.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+
 </databaseChangeLog>
