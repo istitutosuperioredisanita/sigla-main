@@ -179,6 +179,7 @@ public abstract class Fattura_passivaBulk
         CAUSALE.put(CONT_NORM, "Importo sospeso in contestazione/adempimenti normativi");
         CAUSALE.put(CONT_CONF, "Importo sospeso per data esito regolare verifica di conformità");
         CAUSALE.put(ATTNC, "In attesa di nota credito");
+        CAUSALE.put(ATTIN, "In attesa di Inventario");
     }
     protected Tipo_sezionaleBulk tipo_sezionale;
     protected DivisaBulk valuta;
@@ -3828,7 +3829,8 @@ public abstract class Fattura_passivaBulk
     @Override
     public Boolean isOptionDisabled(FieldProperty fieldProperty, Object key) {
         if (fieldProperty.getName().equalsIgnoreCase("causale")) {
-            if (isLiquidazioneSospesa() && key.equals(ATTNC))
+            if (isLiquidazioneSospesa() &&
+                    (key.equals(ATTNC)||key.equals(ATTIN)))
                 return true;
             if (isNonLiquidabile() && (key.equals(CONT) ||key.equals(CONT_CONF) || key.equals(CONT_NORM)))
                 return true;
