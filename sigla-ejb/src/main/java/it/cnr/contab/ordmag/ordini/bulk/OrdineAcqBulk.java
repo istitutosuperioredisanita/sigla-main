@@ -983,7 +983,7 @@ public class OrdineAcqBulk extends OrdineAcqBase
             stato.put(STATO_IN_APPROVAZIONE, "In Approvazione");
             if ( isOrdineMepa())
                 stato.put(STATO_DEFINITIVO, "Definitivo");
-            else
+            else if ( isOrdineContabilizzato)
                 stato.put(STATO_ALLA_FIRMA, "Alla firma");
         } else {
             stato.put(STATO_INSERITO, "Inserito");
