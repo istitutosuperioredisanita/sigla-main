@@ -405,8 +405,8 @@ public class OrdineAcqComponent
             if (consegna.getCdUopDest() != null)
                 throw new ApplicationException("Per una consegna a magazzino non è possibile selezionare l'unità operativa di destinazione per la riga di consegna " + consegna.getConsegna() + " della riga d'ordine " + consegna.getRiga() + ".");
         }
-        if(consegna.getQuantita()!=null && consegna.getQuantita().compareTo(new BigDecimal(1))<0 ){
-            throw new ApplicationException("Per una consegna a magazzino non è possibile impostare una quantità minore di 1. Consegna " + consegna.getConsegna() + " della riga d'ordine " + consegna.getRiga() + ".");
+        if(consegna.getQuantita()!=null && !Utility.isInteger(consegna.getQuantita()) && consegna.getOrdineAcqRiga().getBeneServizio().getFl_gestione_inventario()){
+            throw new ApplicationException("Per una consegna a magazzino non è possibile impostare una quantità con decimali. Consegna " + consegna.getConsegna() + " della riga d'ordine " + consegna.getRiga() + ".");
         }
         if (consegna.getOrdineAcqRiga().getOrdineAcq().getDataOrdine() == null) {
             OrdineAcqHome home = (OrdineAcqHome) getHome(userContext, OrdineAcqBulk.class);
