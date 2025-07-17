@@ -76,6 +76,21 @@ public class SelezionatoreGruppoEpBP extends SelezionatoreListaAlberoBP {
         }
     }
 
+    @Override
+    public RemoteIterator getChildren(ActionContext actioncontext, OggettoBulk oggettobulk) throws BusinessProcessException {
+        try {
+            return EJBCommonServices.openRemoteIterator(
+                    actioncontext,
+                    getRemoteBulkTree().getChildren(
+                            actioncontext,
+                            Optional.ofNullable(oggettobulk).orElse(selezione_tipo_bilancio)
+                    )
+            );
+        } catch (RemoteException exception) {
+            throw handleException(exception);
+        }
+    }
+
     public void refreshRemoteBulkTree(ActionContext actionContext) throws BusinessProcessException {
         try {
             OggettoBulk model = getModel();

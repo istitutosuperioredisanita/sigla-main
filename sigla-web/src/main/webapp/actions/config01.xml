@@ -277,10 +277,10 @@
         <init-param name="defaultAction" value="CRUDAction"/>
     </businessProcess>
 
-    <action path="/ConfCostiCogeCofiAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction" />
+    <action path="/ConfCostiCogeCofiAction" actionClass="it.cnr.contab.docamm00.consultazioni.action.ConfCostiCogeCofiAction" />
     <businessProcess name="ConfCostiCogeCofiBP"
-                     className="it.cnr.jada.util.action.ConsultazioniBP">
-        <forward name="default" path="/consultazioni/form_lista.jsp" />
+                     className="it.cnr.contab.docamm00.consultazioni.bp.ConfCostiCogeCofiBP">
+        <forward name="default" path="/consultazioni/confronta_costi_coge_cofi.jsp" />
         <init-param name="bulkClassName"
                     value="it.cnr.contab.docamm00.consultazioni.bulk.V_confronta_costi_coge_cofiBulk"/>
         <init-param name="componentSessionName"

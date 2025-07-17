@@ -22,28 +22,19 @@ package it.cnr.contab.inventario01.actions;
   *	in Inventario in modo diretto o da Fattura Passiva.
   * 
 **/
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.rmi.RemoteException;
-import java.sql.SQLException;
-import java.util.Iterator;
 
-import javax.ejb.EJBException;
-
-import it.cnr.contab.doccont00.core.bulk.AccertamentoBulk;
-import it.cnr.contab.doccont00.core.bulk.Accertamento_pluriennaleBulk;
-import it.cnr.contab.inventario01.bp.CRUDCaricoInventarioBP;
-import it.cnr.contab.inventario01.bp.CRUDScaricoInventarioBP;
+import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
+import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaIBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario00.docs.bulk.Utilizzatore_CdrVBulk;
-import it.cnr.contab.inventario00.tabrif.bulk.*;
-import it.cnr.contab.inventario01.bulk.*;
-import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
-import it.cnr.contab.config00.esercizio.bulk.EsercizioHome;
-import it.cnr.contab.docamm00.docs.bulk.*;
-import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceHome;
+import it.cnr.contab.inventario00.tabrif.bulk.Tipo_carico_scaricoBulk;
+import it.cnr.contab.inventario00.tabrif.bulk.Ubicazione_beneBulk;
+import it.cnr.contab.inventario01.bp.CRUDCaricoInventarioBP;
+import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk;
+import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.action.*;
 import it.cnr.jada.bulk.BulkList;
@@ -53,6 +44,11 @@ import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.action.*;
+
+import javax.ejb.EJBException;
+import java.math.BigDecimal;
+import java.rmi.RemoteException;
+import java.sql.SQLException;
 
 
 public class CRUDCaricoBuonoAction extends it.cnr.jada.util.action.CRUDAction {
@@ -426,9 +422,10 @@ public Forward doFindAccessoriContestuali(ActionContext context) {
 		for (java.util.Enumeration e = bp.getDettaglio().getElements(); e.hasMoreElements();) {
 			Buono_carico_scarico_dettBulk riga = (Buono_carico_scarico_dettBulk)e.nextElement();
 			//r.p. aggiunto controllo stessa categoria per scegliere il bene accessorio contestuale
-			if(!riga.getFl_accessorio_contestuale()&& 
-					(riga_da_associare.getBene().getCd_categoria_gruppo().substring(0,riga_da_associare.getBene().getCd_categoria_gruppo().lastIndexOf(".")).compareTo(
-			        (riga.getBene().getCd_categoria_gruppo().substring(0,riga.getBene().getCd_categoria_gruppo().lastIndexOf("."))))==0))
+			if(!riga.getFl_accessorio_contestuale()&&
+					(riga_da_associare.getBene().getCd_categoria_gruppo().compareTo(riga.getBene().getCd_categoria_gruppo())==0))
+					//(riga_da_associare.getBene().getCd_categoria_gruppo().substring(0,riga_da_associare.getBene().getCd_categoria_gruppo().lastIndexOf(".")).compareTo(
+			        //(riga.getBene().getCd_categoria_gruppo().substring(0,riga.getBene().getCd_categoria_gruppo().lastIndexOf("."))))==0))
 			          if ((!riga.isBeneAccessorio()) && (riga.getQuantita()!=null) && (riga.getQuantita().compareTo(new Long(1))==0))				
 				        selectedModels.add(riga);
 		}
