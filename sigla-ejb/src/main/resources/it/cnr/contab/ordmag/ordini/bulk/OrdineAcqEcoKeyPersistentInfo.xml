@@ -17,55 +17,68 @@
   -->
 
 <SQLPersistentInfo
-	persistentClassName="it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaBulk"
-	homeClassName="it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaHome">
+	persistentClassName="it.cnr.contab.ordmag.ordini.bulk.OrdineAcqEcoKey">
 	<defaultColumnMap
-		tableName="ORDINE_ACQ_RIGA">
+		tableName="ORDINE_ACQ_ECO">
 		<columnMapping
 			columnName="CD_CDS"
-			propertyName="ordineAcq.unitaOrganizzativa.cd_unita_organizzativa" />
+			propertyName="cdCds"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="false"
+			primary="true" />
 		<columnMapping
 			columnName="CD_UNITA_OPERATIVA"
-			propertyName="ordineAcq.numerazioneOrd.unitaOperativaOrd.cdUnitaOperativa" />
+			propertyName="cdUnitaOperativa"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="false"
+			primary="true" />
 		<columnMapping
 			columnName="ESERCIZIO"
-			propertyName="ordineAcq.numerazioneOrd.esercizio" />
+			propertyName="esercizio"
+			sqlTypeName="DECIMAL"
+			columnSize="4"
+			nullable="false"
+			primary="true" />
 		<columnMapping
 			columnName="CD_NUMERATORE"
-			propertyName="ordineAcq.numerazioneOrd.cdNumeratore" />
+			propertyName="cdNumeratore"
+			sqlTypeName="VARCHAR"
+			columnSize="3"
+			nullable="false"
+			primary="true" />
 		<columnMapping
 			columnName="NUMERO"
-			propertyName="ordineAcq.numero" />
+			propertyName="numero"
+			sqlTypeName="DECIMAL"
+			columnSize="6"
+			nullable="false"
+			primary="true" />
 		<columnMapping
-			columnName="CD_BENE_SERVIZIO"
-			propertyName="beneServizio.cd_bene_servizio" />
-		<columnMapping
-			columnName="CD_VOCE_IVA"
-			propertyName="voceIva.cd_voce_iva" />
-		<columnMapping
-			columnName="CD_UNITA_MISURA"
-			propertyName="unitaMisura.cdUnitaMisura" />
-		<columnMapping
-				columnName="ID_DETTAGLIO_CONTRATTO"
-				propertyName="dettaglioContratto.id" />
-		<columnMapping
-				columnName="ESERCIZIO_VOCE_EP"
-				propertyName="voce_ep.esercizio" />
-		<columnMapping
-				columnName="CD_VOCE_EP"
-				propertyName="voce_ep.cd_voce_ep" />
+			columnName="PROGRESSIVO_RIGA_ECO"
+			propertyName="progressivo_riga_eco"
+			sqlTypeName="DECIMAL"
+			columnSize="10"
+			nullable="false"
+			primary="true" />
 	</defaultColumnMap>
 	<persistentProperty
-		name="ordineAcq"
+		name="cdCds"
 		partOfOid="true" />
 	<persistentProperty
-		name="beneServizio" />
+		name="cdUnitaOperativa"
+		partOfOid="true" />
 	<persistentProperty
-		name="voceIva" />
+		name="esercizio"
+		partOfOid="true" />
 	<persistentProperty
-		name="unitaMisura" />
+		name="cdNumeratore"
+		partOfOid="true" />
 	<persistentProperty
-			name="dettaglioContratto" />
+		name="numero"
+		partOfOid="true" />
 	<persistentProperty
-			name="voce_ep" />
+		name="progressivo_riga_eco"
+		partOfOid="true" />
 </SQLPersistentInfo>

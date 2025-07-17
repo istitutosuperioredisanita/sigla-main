@@ -653,5 +653,4 @@ public final class Utility {
 	public static AsyncConsSostitutivaComponentSession createAsyncConsSostitutivaComponentSession() throws javax.ejb.EJBException{
 		return (AsyncConsSostitutivaComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOEPCOAN00_EJB_ConsSostitutivaComponentSession", AsyncConsSostitutivaComponentSession.class);
 	}
-
 }

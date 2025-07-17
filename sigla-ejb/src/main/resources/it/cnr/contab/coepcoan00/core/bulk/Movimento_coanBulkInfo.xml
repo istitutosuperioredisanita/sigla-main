@@ -121,7 +121,7 @@
 		inputType="TEXT"
 		label="Conto Analitico"
 		readonlyProperty="ROConto"
-		enabledOnSearch="true"						
+		enabledOnSearch="true"
 		formatName="it.cnr.jada.util.UppercaseStringFormat"		
 		caseSensitiveSearch="false"
 		nullable="false"/>

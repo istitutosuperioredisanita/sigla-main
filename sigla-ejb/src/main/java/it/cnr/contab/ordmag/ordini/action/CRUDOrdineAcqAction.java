@@ -42,9 +42,7 @@ import it.cnr.contab.doccont00.core.bulk.OptionRequestParameter;
 import it.cnr.contab.doccont00.ejb.ObbligazioneAbstractComponentSession;
 import it.cnr.contab.ordmag.anag00.*;
 import it.cnr.contab.ordmag.ordini.bp.CRUDOrdineAcqBP;
-import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk;
-import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
-import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaBulk;
+import it.cnr.contab.ordmag.ordini.bulk.*;
 import it.cnr.contab.ordmag.ordini.ejb.OrdineAcqComponentSession;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.action.*;
@@ -247,6 +245,24 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                 if (bene.getCategoria_gruppo() != null) {
                     ContoBulk conto = bp.recuperoContoDefault(context, bene.getCategoria_gruppo());
                     riga.setDspConto(conto);
+                    if (riga.getDspConto()!=null && riga.getOrdineAcq().getCd_voce_ep() !=null &&
+                            riga.getDspConto().getCd_voce_ep().equals(riga.getOrdineAcq().getCd_voce_ep())) {
+                        //carico analitica se presente su testata
+                        if (riga.getRigheEconomica().isEmpty()) {
+                            for (OrdineAcqEcoBulk ordineEco : riga.getOrdineAcq().getRigheEconomica()){
+                                OrdineAcqRigaEcoBulk rigaEco = new OrdineAcqRigaEcoBulk();
+                                rigaEco.setVoce_analitica(ordineEco.getVoce_analitica());
+                                rigaEco.setLinea_attivita(ordineEco.getLinea_attivita());
+                                rigaEco.setImporto(BigDecimal.ZERO);
+                                riga.addToRigheEconomica(rigaEco);
+                            }
+                        }
+                    } else {
+                        //cancello tutta la eco
+                        for (OrdineAcqRigaEcoBulk rigaEco : riga.getRigheEconomica()) {
+                            riga.removeFromRigheEconomica(riga.getRigheEconomica().indexOf(rigaEco));
+                        }
+                    }
                 }
                 bp.completeSearchTools(context, bp);
             } catch (BusinessProcessException | ValidationException e) {
@@ -423,23 +439,9 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         }
     }
 
-    public Forward doBringBackSearchCercaDspConto(ActionContext context, OrdineAcqRigaBulk rigaBulk, ContoBulk contoBulk) throws java.rmi.RemoteException {
-
-        try {
-            CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP) context.getBusinessProcess();
-            rigaBulk.setDspConto(contoBulk);
-            for (java.util.Iterator j = rigaBulk.getRigheConsegnaColl().iterator(); j.hasNext(); ) {
-                OrdineAcqConsegnaBulk consegna = (OrdineAcqConsegnaBulk) j.next();
-                consegna.setContoBulk(rigaBulk.getDspConto());
-                consegna.setToBeUpdated();
-            }
-            return context.findDefaultForward();
-
-        } catch (Exception e) {
-            return handleException(context, e);
-        }
+    public Forward doBlankSearchFind_voce_ep(ActionContext context, OrdineAcqRigaBulk riga) throws java.rmi.RemoteException {
+        return doBlankSearchCercaDspConto(context,riga);
     }
-
 
     public Forward doBringBackSearchFindUnitaOperativaOrdDest(ActionContext context,
                                                               OrdineAcqRigaBulk riga,
@@ -1685,9 +1687,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                     OrdineAcqBulk ordine = (OrdineAcqBulk) bp.getModel();
                     ordine.getOrdineObbligazioniHash().remove(obbligazione);
                     ordine.addToDocumentiContabiliCancellati(obbligazione);
-
-                    ordine.setOrdineContabilizzato(false);
-                    ordine.setStato(ordine.getStato().equals(OrdineAcqBulk.STATO_ALLA_FIRMA) ? OrdineAcqBulk.STATO_IN_APPROVAZIONE : ordine.getStato());
+                    ordine.setStato(ordine.isStatoAllaFirma() ? OrdineAcqBulk.STATO_IN_APPROVAZIONE : ordine.getStato());
 
                 } else {
                     for (java.util.Iterator it = models.iterator(); it.hasNext(); ) {
@@ -1701,9 +1701,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                                     "\" è già stato evaso.");
                         }
                         OrdineAcqBulk ordine = cons.getOrdineAcqRiga().getOrdineAcq();
-                        ordine.setOrdineContabilizzato(false);
-                        ordine.setStato(ordine.getStato().equals(OrdineAcqBulk.STATO_ALLA_FIRMA) ? OrdineAcqBulk.STATO_IN_APPROVAZIONE : ordine.getStato());
-
+                        ordine.setStato(ordine.isStatoAllaFirma() ? OrdineAcqBulk.STATO_IN_APPROVAZIONE : ordine.getStato());
                     }
                     scollegaDettagliDaObbligazione(context, (java.util.List) models.clone());
                 }
@@ -1915,8 +1913,10 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
             CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP) getBusinessProcess(context);
             fillModel(context);
             OrdineAcqBulk ordine = (OrdineAcqBulk) bp.getModel();
+            OrdineAcqRigaBulk riga = (OrdineAcqRigaBulk) bp.getRighe().getModel();
 
             calcolaTotaleOrdine(context, ordine);
+            gestioneAnaliticaRigaOrdine(riga);
 
             return context.findDefaultForward();
 
@@ -1986,6 +1986,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                 consegna.setToBeUpdated();
             }
             calcolaTotaleOrdine(context, ordine);
+            gestioneAnaliticaRigaOrdine(riga);
             return context.findDefaultForward();
 
         } catch (Throwable e) {
@@ -2004,6 +2005,21 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
             consegna.setMagazzino(riga.getDspMagazzino());
             consegna.setLuogoConsegnaMag(riga.getDspLuogoConsegna());
             riga.addToRigheConsegnaColl(consegna);
+        }
+        return riga;
+    }
+
+    private OrdineAcqRigaBulk gestioneAnaliticaRigaOrdine(OrdineAcqRigaBulk riga) {
+        if (!riga.getRigheEconomica().isEmpty()) {
+            for (OrdineAcqRigaEcoBulk rigaEco : riga.getRigheEconomica()) {
+                rigaEco.setImporto(riga.getImCostoEco().divide(BigDecimal.valueOf(riga.getRigheEconomica().size()),2, RoundingMode.HALF_UP));
+                rigaEco.setToBeUpdated();
+            }
+            if (riga.getImCostoEcoDaRipartire().compareTo(BigDecimal.ZERO)!=0)
+                riga.getRigheEconomica().stream()
+                        .filter(el->el.getImporto().add(riga.getImCostoEcoDaRipartire()).compareTo(BigDecimal.ZERO)>=0)
+                        .findFirst()
+                        .ifPresent(el->el.setImporto(el.getImporto().add(riga.getImCostoEcoDaRipartire())));
         }
         return riga;
     }

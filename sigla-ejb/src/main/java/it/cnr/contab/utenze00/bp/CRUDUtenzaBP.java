@@ -27,8 +27,6 @@ import it.cnr.contab.config00.bulk.Parametri_enteBulk;
 import it.cnr.contab.config00.ejb.Parametri_enteComponentSession;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.ordmag.anag00.AbilUtenteUopOperMagBulk;
-import it.cnr.contab.ordmag.ordini.bp.OrdineAcqRigaCRUDController;
-import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaBulk;
 import it.cnr.contab.reports.bulk.Print_spooler_paramBulk;
 import it.cnr.contab.utente00.ejb.UtenteComponentSession;
 import it.cnr.contab.utente00.nav.ejb.GestioneLoginComponentSession;

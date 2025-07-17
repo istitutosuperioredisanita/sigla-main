@@ -18,26 +18,25 @@
 package it.cnr.contab.ordmag.ordini.bulk;
 
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
-import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk;
 
 import java.util.Optional;
 
-public class OrdineAcqRigaEcoBulk extends OrdineAcqRigaEcoBase implements IDocumentoDetailAnaCogeBulk {
-    private OrdineAcqRigaBulk ordineAcqRiga;
+public class OrdineAcqEcoBulk extends OrdineAcqEcoBase implements IDocumentoDetailAnaCogeBulk {
+    private OrdineAcqBulk ordineAcq;
 
     protected Voce_analiticaBulk voce_analitica = new Voce_analiticaBulk();
 
     WorkpackageBulk linea_attivita = new WorkpackageBulk();
 
-    public OrdineAcqRigaEcoBulk() {
+    public OrdineAcqEcoBulk() {
         super();
     }
 
-    public OrdineAcqRigaEcoBulk(java.lang.String cdCds, java.lang.String cdUnitaOperativa, java.lang.Integer esercizio, java.lang.String cdNumeratore, java.lang.Integer numero, java.lang.Integer riga, java.lang.Long progressivo_riga_eco) {
-        super(cdCds, cdUnitaOperativa, esercizio, cdNumeratore, numero, riga, progressivo_riga_eco);
+    public OrdineAcqEcoBulk(String cdCds, String cdUnitaOperativa, Integer esercizio, String cdNumeratore, Integer numero, Long progressivo_riga_eco) {
+        super(cdCds, cdUnitaOperativa, esercizio, cdNumeratore, numero, progressivo_riga_eco);
     }
 
     public Voce_analiticaBulk getVoce_analitica() {
@@ -104,87 +103,75 @@ public class OrdineAcqRigaEcoBulk extends OrdineAcqRigaEcoBase implements IDocum
         Optional.ofNullable(this.getLinea_attivita()).ifPresent(el->el.setCd_centro_responsabilita(cd_centro_responsabilita));
     }
 
-    public IDocumentoAmministrativoRigaBulk getFather() {
-        return getOrdineAcqRiga();
+    public IDocumentoDetailEcoCogeBulk getFather() {
+        return getOrdineAcq();
     }
 
-    public OrdineAcqRigaBulk getOrdineAcqRiga() {
-        return ordineAcqRiga;
+    public OrdineAcqBulk getOrdineAcq() {
+        return ordineAcq;
     }
 
-    public void setOrdineAcqRiga(OrdineAcqRigaBulk ordineAcqRiga) {
-        this.ordineAcqRiga = ordineAcqRiga;
+    public void setOrdineAcq(OrdineAcqBulk ordineAcq) {
+        this.ordineAcq = ordineAcq;
     }
 
     @Override
     public String getCdCds() {
-        return Optional.ofNullable(this.getOrdineAcqRiga())
-                .map(OrdineAcqRigaBulk::getCdCds)
+        return Optional.ofNullable(this.getOrdineAcq())
+                .map(OrdineAcqBulk::getCdCds)
                 .orElse(null);
     }
 
     @Override
     public void setCdCds(String cdCds) {
-        Optional.ofNullable(this.getOrdineAcqRiga()).ifPresent(el->el.setCdCds(cdCds));
+        Optional.ofNullable(this.getOrdineAcq()).ifPresent(el->el.setCdCds(cdCds));
     }
 
     @Override
     public String getCdUnitaOperativa() {
-        return Optional.ofNullable(this.getOrdineAcqRiga())
-                .map(OrdineAcqRigaBulk::getCdUnitaOperativa)
+        return Optional.ofNullable(this.getOrdineAcq())
+                .map(OrdineAcqBulk::getCdUnitaOperativa)
                 .orElse(null);
     }
 
     @Override
     public void setCdUnitaOperativa(String cdUnitaOperativa) {
-        Optional.ofNullable(this.getOrdineAcqRiga()).ifPresent(el->el.setCdUnitaOperativa(cdUnitaOperativa));
+        Optional.ofNullable(this.getOrdineAcq()).ifPresent(el->el.setCdUnitaOperativa(cdUnitaOperativa));
     }
 
     @Override
     public Integer getEsercizio() {
-        return Optional.ofNullable(this.getOrdineAcqRiga())
-                .map(OrdineAcqRigaBulk::getEsercizio)
+        return Optional.ofNullable(this.getOrdineAcq())
+                .map(OrdineAcqBulk::getEsercizio)
                 .orElse(null);
     }
 
     @Override
     public void setEsercizio(Integer esercizio) {
-        Optional.ofNullable(this.getOrdineAcqRiga()).ifPresent(el->el.setEsercizio(esercizio));
+        Optional.ofNullable(this.getOrdineAcq()).ifPresent(el->el.setEsercizio(esercizio));
     }
 
     @Override
     public String getCdNumeratore() {
-        return Optional.ofNullable(this.getOrdineAcqRiga())
-                .map(OrdineAcqRigaBulk::getCdNumeratore)
+        return Optional.ofNullable(this.getOrdineAcq())
+                .map(OrdineAcqBulk::getCdNumeratore)
                 .orElse(null);
     }
 
     @Override
     public void setCdNumeratore(String cdNumeratore) {
-        Optional.ofNullable(this.getOrdineAcqRiga()).ifPresent(el->el.setCdNumeratore(cdNumeratore));
+        Optional.ofNullable(this.getOrdineAcq()).ifPresent(el->el.setCdNumeratore(cdNumeratore));
     }
 
     @Override
     public Integer getNumero() {
-        return Optional.ofNullable(this.getOrdineAcqRiga())
-                .map(OrdineAcqRigaBulk::getNumero)
+        return Optional.ofNullable(this.getOrdineAcq())
+                .map(OrdineAcqBulk::getNumero)
                 .orElse(null);
     }
 
     @Override
     public void setNumero(Integer numero) {
-        Optional.ofNullable(this.getOrdineAcqRiga()).ifPresent(el->el.setNumero(numero));
-    }
-
-    @Override
-    public Integer getRiga() {
-        return Optional.ofNullable(this.getOrdineAcqRiga())
-                .map(OrdineAcqRigaBulk::getRiga)
-                .orElse(null);
-    }
-
-    @Override
-    public void setRiga(Integer riga) {
-        Optional.ofNullable(this.getOrdineAcqRiga()).ifPresent(el->el.setRiga(riga));
+        Optional.ofNullable(this.getOrdineAcq()).ifPresent(el->el.setNumero(numero));
     }
 }

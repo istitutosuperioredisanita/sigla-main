@@ -19,7 +19,9 @@ package it.cnr.contab.coepcoan00.bp;
 
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.util.EuroFormat;
+import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.BulkInfo;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.FormController;
 import it.cnr.jada.util.jsp.TableCustomizer;
@@ -36,7 +38,7 @@ public class DetailEcoCogeCRUDController extends CollapsableDetailCRUDController
         this(
                 "Dati Analitici",
                 class1,
-                "childrenAna",
+                "righeEconomica",
                 formcontroller
         );
     }
@@ -48,12 +50,6 @@ public class DetailEcoCogeCRUDController extends CollapsableDetailCRUDController
     public DetailEcoCogeCRUDController(String s, Class class1, String s1, FormController formcontroller, boolean flag) {
         super(s, class1, s1, formcontroller, flag);
     }
-
-    @Override
-    public boolean isInputReadonly() {
-        return Boolean.TRUE;
-    }
-
 
     @Override
     public String getRowStyle(Object obj) {
@@ -81,11 +77,11 @@ public class DetailEcoCogeCRUDController extends CollapsableDetailCRUDController
 
     public void writeTfoot(JspWriter jspWriter) throws IOException {
         final EuroFormat euroFormat = new EuroFormat();
-        final long numberOfColspan = Collections.list(BulkInfo.getBulkInfo(this.getModelClass())
-                .getColumnFieldProperties("default")).stream().count();
+        final long numberOfColspan = this.getNumberOfColspan();
         final List<IDocumentoDetailAnaCogeBulk> detailAnaCogeBulks = getDetails();
         if (Optional.ofNullable(detailAnaCogeBulks).map(detailAnaCogeBulks1 -> !detailAnaCogeBulks1.isEmpty()).orElse(Boolean.FALSE) ) {
-            final BigDecimal totalMovimento = detailAnaCogeBulks.stream().map(IDocumentoDetailAnaCogeBulk::getImporto)
+            final BigDecimal totalMovimento = detailAnaCogeBulks.stream()
+                    .map(el->Optional.ofNullable(el.getImporto()).orElse(BigDecimal.ZERO))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             jspWriter.println("<tfoot class=\"bg-info\">");
@@ -99,5 +95,10 @@ public class DetailEcoCogeCRUDController extends CollapsableDetailCRUDController
             jspWriter.println("</tr>");
             jspWriter.println("</tfoot>");
         }
+    }
+
+    public long getNumberOfColspan() {
+        return Collections.list(BulkInfo.getBulkInfo(this.getModelClass())
+                .getColumnFieldProperties("default")).stream().count();
     }
 }

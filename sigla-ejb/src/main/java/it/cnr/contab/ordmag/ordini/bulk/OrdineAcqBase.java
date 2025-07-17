@@ -20,6 +20,7 @@
  * Date 28/06/2017
  */
 package it.cnr.contab.ordmag.ordini.bulk;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.cnr.jada.persistency.Keyed;
 public class OrdineAcqBase extends OrdineAcqKey implements Keyed {
 //    DATA_ORDINE TIMESTAMP(7) NOT NULL
@@ -137,7 +138,15 @@ public class OrdineAcqBase extends OrdineAcqKey implements Keyed {
 
 //    DT_CANCELLAZIONE TIMESTAMP(7)
 	private java.sql.Timestamp dtCancellazione;
- 
+
+	// ESERCIZIO_VOCE_EP DECIMAL(4,0) NOT NULL
+	private Integer esercizio_voce_ep;
+
+	// CD_VOCE_EP VARCHAR(45) NOT NULL
+	private String cd_voce_ep;
+
+	private java.lang.String statoOriginale;
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: ORDINE_ACQ
@@ -609,5 +618,29 @@ public class OrdineAcqBase extends OrdineAcqKey implements Keyed {
 
 	public void setMotivoAssenzaCig(String motivoAssenzaCig) {
 		this.motivoAssenzaCig = motivoAssenzaCig;
+	}
+
+	public Integer getEsercizio_voce_ep() {
+		return esercizio_voce_ep;
+	}
+
+	public void setEsercizio_voce_ep(Integer esercizio_voce_ep) {
+		this.esercizio_voce_ep = esercizio_voce_ep;
+	}
+
+	public String getCd_voce_ep() {
+		return cd_voce_ep;
+	}
+
+	public void setCd_voce_ep(String cd_voce_ep) {
+		this.cd_voce_ep = cd_voce_ep;
+	}
+
+	public String getStatoOriginale() {
+		return statoOriginale;
+	}
+
+	public void setStatoOriginale(String statoOriginale) {
+		this.statoOriginale = statoOriginale;
 	}
 }

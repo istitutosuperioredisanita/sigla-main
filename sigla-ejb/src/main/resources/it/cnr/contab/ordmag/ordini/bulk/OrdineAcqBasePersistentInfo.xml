@@ -292,6 +292,16 @@
 			propertyName="motivoAssenzaCig"
 			sqlTypeName="VARCHAR"
 			columnSize="250"/>
+		<columnMapping
+				columnName="ESERCIZIO_VOCE_EP"
+				propertyName="esercizio_voce_ep"
+				sqlTypeName="DECIMAL"
+				columnSize="4" />
+		<columnMapping
+				columnName="CD_VOCE_EP"
+				propertyName="cd_voce_ep"
+				sqlTypeName="VARCHAR"
+				columnSize="45" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="dataOrdine" />
@@ -371,6 +381,10 @@
 		name="dtCancellazione" />
 	<persistentProperty
 			name="fl_mepa" />
+	<persistentProperty
+			name="esercizio_voce_ep"/>
+	<persistentProperty
+			name="cd_voce_ep"/>
 	<persistentProperty
 		name="dacr" />
 	<persistentProperty

@@ -73,7 +73,4 @@
         <div class="col-md-3"><% bp.getRighe().writeFormField(out, "imIvaD"); %></div>
         <div class="col-md-3"><% bp.getRighe().writeFormField(out, "imTotaleRiga"); %></div>
     </div>
-    <div class="form-row">
-        <div class="col-md-12"><% bp.getRighe().writeFormField(out, "cercaDspConto"); %></div>
-    </div>
 </div>

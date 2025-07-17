@@ -6004,12 +6004,12 @@ public class ProposeScritturaComponent extends CRUDComponent {
 				((MissioneBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setMissione((MissioneBulk) rigaEco));
 			} else if (rigaEco instanceof OrdineAcqRigaBulk) {
 				OrdineAcqRigaHome ordineAcqRigaHome = (OrdineAcqRigaHome) getHome(userContext, OrdineAcqRigaBulk.class);
-				((OrdineAcqRigaBulk) rigaEco).setRigheEconomica(ordineAcqRigaHome.findOrdineAcqRigaEcoList((OrdineAcqRigaBulk) rigaEco));
-				((OrdineAcqRigaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setOrdineAcqRigaBulk((OrdineAcqRigaBulk) rigaEco));
+				((OrdineAcqRigaBulk) rigaEco).setRigheEconomica(new BulkList<>(ordineAcqRigaHome.findOrdineAcqRigaEcoList((OrdineAcqRigaBulk) rigaEco)));
+				((OrdineAcqRigaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setOrdineAcqRiga((OrdineAcqRigaBulk) rigaEco));
 			} else if (rigaEco instanceof OrdineAcqConsegnaBulk) {
 				OrdineAcqConsegnaHome ordineAcqConsegnaHome = (OrdineAcqConsegnaHome) getHome(userContext, OrdineAcqConsegnaBulk.class);
-				((OrdineAcqConsegnaBulk) rigaEco).setRigheEconomica(ordineAcqConsegnaHome.findOrdineAcqConsegnaEcoList((OrdineAcqConsegnaBulk) rigaEco));
-				((OrdineAcqConsegnaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setOrdineAcqConsegnaBulk((OrdineAcqConsegnaBulk) rigaEco));
+				((OrdineAcqConsegnaBulk) rigaEco).setRigheEconomica(new BulkList<>(ordineAcqConsegnaHome.findOrdineAcqConsegnaEcoList((OrdineAcqConsegnaBulk) rigaEco)));
+				((OrdineAcqConsegnaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setOrdineAcqConsegna((OrdineAcqConsegnaBulk) rigaEco));
 			}
 		} catch (ComponentException | PersistencyException e) {
 			throw new DetailedRuntimeException(e);

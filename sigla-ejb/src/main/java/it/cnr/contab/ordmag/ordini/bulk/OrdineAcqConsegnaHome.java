@@ -145,7 +145,7 @@ public class OrdineAcqConsegnaHome extends BulkHome {
 						myRigaEco.setProgressivo_riga_eco((long) (consegna.getChildrenAna().size() + 1));
 						myRigaEco.setVoce_analitica(voceAnaliticaDef);
 						myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
-						myRigaEco.setOrdineAcqConsegnaBulk(consegna);
+						myRigaEco.setOrdineAcqConsegna(consegna);
 						if (totScad.compareTo(BigDecimal.ZERO)!=0)
 							myRigaEco.setImporto(scadVoce.getIm_voce().multiply(consegna.getImCostoEco()).divide(totScad, 2, RoundingMode.HALF_UP));
 						else

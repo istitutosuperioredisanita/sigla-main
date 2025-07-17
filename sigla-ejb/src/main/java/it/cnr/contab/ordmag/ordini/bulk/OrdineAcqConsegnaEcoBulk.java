@@ -26,7 +26,7 @@ import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk;
 import java.util.Optional;
 
 public class OrdineAcqConsegnaEcoBulk extends OrdineAcqConsegnaEcoBase implements IDocumentoDetailAnaCogeBulk {
-    private OrdineAcqConsegnaBulk ordineAcqConsegnaBulk;
+    private OrdineAcqConsegnaBulk ordineAcqConsegna;
 
     protected Voce_analiticaBulk voce_analitica = new Voce_analiticaBulk();
 
@@ -105,98 +105,98 @@ public class OrdineAcqConsegnaEcoBulk extends OrdineAcqConsegnaEcoBase implement
     }
 
     public IDocumentoDetailEcoCogeBulk getFather() {
-        return getOrdineAcqConsegnaBulk();
+        return getOrdineAcqConsegna();
     }
 
-    public OrdineAcqConsegnaBulk getOrdineAcqConsegnaBulk() {
-        return ordineAcqConsegnaBulk;
+    public OrdineAcqConsegnaBulk getOrdineAcqConsegna() {
+        return ordineAcqConsegna;
     }
 
-    public void setOrdineAcqConsegnaBulk(OrdineAcqConsegnaBulk ordineAcqConsegnaBulk) {
-        this.ordineAcqConsegnaBulk = ordineAcqConsegnaBulk;
+    public void setOrdineAcqConsegna(OrdineAcqConsegnaBulk ordineAcqConsegna) {
+        this.ordineAcqConsegna = ordineAcqConsegna;
     }
 
     @Override
     public String getCdCds() {
-        return Optional.ofNullable(this.getOrdineAcqConsegnaBulk())
+        return Optional.ofNullable(this.getOrdineAcqConsegna())
                 .map(OrdineAcqConsegnaBulk::getCdCds)
                 .orElse(null);
     }
 
     @Override
     public void setCdCds(String cdCds) {
-        Optional.ofNullable(this.getOrdineAcqConsegnaBulk()).ifPresent(el->el.setCdCds(cdCds));
+        Optional.ofNullable(this.getOrdineAcqConsegna()).ifPresent(el->el.setCdCds(cdCds));
     }
 
     @Override
     public String getCdUnitaOperativa() {
-        return Optional.ofNullable(this.getOrdineAcqConsegnaBulk())
+        return Optional.ofNullable(this.getOrdineAcqConsegna())
                 .map(OrdineAcqConsegnaBulk::getCdUnitaOperativa)
                 .orElse(null);
     }
 
     @Override
     public void setCdUnitaOperativa(String cdUnitaOperativa) {
-        Optional.ofNullable(this.getOrdineAcqConsegnaBulk()).ifPresent(el->el.setCdUnitaOperativa(cdUnitaOperativa));
+        Optional.ofNullable(this.getOrdineAcqConsegna()).ifPresent(el->el.setCdUnitaOperativa(cdUnitaOperativa));
     }
 
     @Override
     public Integer getEsercizio() {
-        return Optional.ofNullable(this.getOrdineAcqConsegnaBulk())
+        return Optional.ofNullable(this.getOrdineAcqConsegna())
                 .map(OrdineAcqConsegnaBulk::getEsercizio)
                 .orElse(null);
     }
 
     @Override
     public void setEsercizio(Integer esercizio) {
-        Optional.ofNullable(this.getOrdineAcqConsegnaBulk()).ifPresent(el->el.setEsercizio(esercizio));
+        Optional.ofNullable(this.getOrdineAcqConsegna()).ifPresent(el->el.setEsercizio(esercizio));
     }
 
     @Override
     public String getCdNumeratore() {
-        return Optional.ofNullable(this.getOrdineAcqConsegnaBulk())
+        return Optional.ofNullable(this.getOrdineAcqConsegna())
                 .map(OrdineAcqConsegnaBulk::getCdNumeratore)
                 .orElse(null);
     }
 
     @Override
     public void setCdNumeratore(String cdNumeratore) {
-        Optional.ofNullable(this.getOrdineAcqConsegnaBulk()).ifPresent(el->el.setCdNumeratore(cdNumeratore));
+        Optional.ofNullable(this.getOrdineAcqConsegna()).ifPresent(el->el.setCdNumeratore(cdNumeratore));
     }
 
     @Override
     public Integer getNumero() {
-        return Optional.ofNullable(this.getOrdineAcqConsegnaBulk())
+        return Optional.ofNullable(this.getOrdineAcqConsegna())
                 .map(OrdineAcqConsegnaBulk::getNumero)
                 .orElse(null);
     }
 
     @Override
     public void setNumero(Integer numero) {
-        Optional.ofNullable(this.getOrdineAcqConsegnaBulk()).ifPresent(el->el.setNumero(numero));
+        Optional.ofNullable(this.getOrdineAcqConsegna()).ifPresent(el->el.setNumero(numero));
     }
 
     @Override
     public Integer getRiga() {
-        return Optional.ofNullable(this.getOrdineAcqConsegnaBulk())
+        return Optional.ofNullable(this.getOrdineAcqConsegna())
                 .map(OrdineAcqConsegnaBulk::getRiga)
                 .orElse(null);
     }
 
     @Override
     public void setRiga(Integer riga) {
-        Optional.ofNullable(this.getOrdineAcqConsegnaBulk()).ifPresent(el->el.setRiga(riga));
+        Optional.ofNullable(this.getOrdineAcqConsegna()).ifPresent(el->el.setRiga(riga));
     }
 
     @Override
     public Integer getConsegna() {
-        return Optional.ofNullable(this.getOrdineAcqConsegnaBulk())
+        return Optional.ofNullable(this.getOrdineAcqConsegna())
                 .map(OrdineAcqConsegnaBulk::getConsegna)
                 .orElse(null);
     }
 
     @Override
     public void setConsegna(Integer consegna) {
-        Optional.ofNullable(this.getOrdineAcqConsegnaBulk()).ifPresent(el->el.setConsegna(consegna));
+        Optional.ofNullable(this.getOrdineAcqConsegna()).ifPresent(el->el.setConsegna(consegna));
     }
 }

@@ -94,6 +94,18 @@
         </createIndex>
     </changeSet>
 
+    <changeSet author="raffaele.pagano" id="add_column_voce_ep_ordine_acq">
+        <addColumn tableName="ORDINE_ACQ">
+            <column name="esercizio_voce_ep" remarks="Esercizio Conto Economico di Proposta" type="SMALLINT"/>
+            <column name="cd_voce_ep" remarks="Codice Identificativo completo del conto del piano di proposta." type="VARCHAR(20)"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="esercizio_voce_ep,cd_voce_ep" baseTableName="ordine_acq" constraintName="fk_ordine_acq18" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="esercizio,cd_voce_ep" referencedTableName="voce_ep"/>
+        <createIndex indexName="fx_ordine_acq18" tableName="ordine_acq">
+            <column name="esercizio_voce_ep"/>
+            <column name="cd_voce_ep"/>
+        </createIndex>
+    </changeSet>
+
     <changeSet author="raffaele.pagano" id="add_column_voce_ep_ordine_acq_riga">
         <addColumn tableName="ORDINE_ACQ_RIGA">
             <column name="esercizio_voce_ep" remarks="Esercizio Conto Economico" type="SMALLINT"/>
@@ -521,6 +533,77 @@
         </createIndex>
 
         <createIndex indexName="fx_missione_riga_eco02" tableName="missione_riga_eco">
+            <column name="CD_CENTRO_RESPONSABILITA"/>
+            <column name="CD_LINEA_ATTIVITA"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="add_table_ordine_acq_eco">
+        <!-- TABELLA DETTAGLIO ORDINE_ACQ_ECO-->
+        <createTable tableName="ordine_acq_eco" remarks="Contiene i dati economici di proposta dell'ordine" >
+            <column name="cd_cds" remarks="Codice del cds" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_unita_operativa" remarks="Codice unita' operativa" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="esercizio" remarks="Esercizio" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_numeratore" remarks="Codice del numeratore dell'ordine" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="numero" remarks="Numero dell'ordine" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progressivo_riga_eco" remarks="Progressivo numerazione righe economiche all'interno di un'ordine" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <!-- TABELLA VOCE_ANALITICA -->
+            <column name="esercizio_voce_ana" remarks="Esercizio Conto analitico" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_voce_ana" remarks="Codice Identificativo completo del conto analitico del piano." type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <!-- TABELLA LINEA_ATTIVITA -->
+            <column name="cd_centro_responsabilita" remarks="Codice identificativo del centro di responsabilità" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_linea_attivita" remarks="Codice della linea di attività" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="importo" remarks="Importo da assegnare al costo e Gae" type="numeric(15, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record: viene incrementato di 1 ad ogni variazione" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="ordine_acq_eco" constraintName="ordine_acq_eco_pkey" columnNames="cd_cds,cd_unita_operativa,esercizio,cd_numeratore,numero,progressivo_riga_eco"/>
+
+        <addForeignKeyConstraint baseColumnNames="esercizio_voce_ana,cd_voce_ana" baseTableName="ordine_acq_eco" constraintName="fk_ordine_acq_eco01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="esercizio,cd_voce_ana" referencedTableName="voce_analitica"/>
+        <addForeignKeyConstraint baseColumnNames="cd_centro_responsabilita,cd_linea_attivita" baseTableName="ordine_acq_eco" constraintName="fk_ordine_acq_eco02" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="cd_centro_responsabilita,cd_linea_attivita" referencedTableName="linea_attivita"/>
+
+        <createIndex indexName="fx_ordine_acq_eco01" tableName="ordine_acq_eco">
+            <column name="esercizio_voce_ana"/>
+            <column name="cd_voce_ana"/>
+        </createIndex>
+
+        <createIndex indexName="fx_ordine_acq_eco02" tableName="ordine_acq_eco">
             <column name="CD_CENTRO_RESPONSABILITA"/>
             <column name="CD_LINEA_ATTIVITA"/>
         </createIndex>

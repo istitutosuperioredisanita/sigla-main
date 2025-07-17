@@ -183,4 +183,16 @@ public class OrdineAcqHome extends BulkHome {
 			rigaOrdine.setRigheConsegnaColl(new BulkList(rigaHome.findOrdineRigheConsegnaList(rigaOrdine)));
 		return ordine;
 	}
+
+	public List<OrdineAcqRigaEcoBulk> findOrdineAcqEcoList(OrdineAcqBulk ordine) throws PersistencyException {
+		PersistentHome home = getHomeCache().getHome(OrdineAcqEcoBulk.class);
+
+		SQLBuilder sql = home.createSQLBuilder();
+		sql.addClause(FindClause.AND, "numero", SQLBuilder.EQUALS, ordine.getNumero());
+		sql.addClause(FindClause.AND, "cdCds", SQLBuilder.EQUALS, ordine.getCdCds());
+		sql.addClause(FindClause.AND, "cdUnitaOperativa", SQLBuilder.EQUALS, ordine.getCdUnitaOperativa());
+		sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, ordine.getEsercizio());
+		sql.addClause(FindClause.AND, "cdNumeratore", SQLBuilder.EQUALS, ordine.getCdNumeratore());
+		return home.fetchAll(sql);
+	}
 }

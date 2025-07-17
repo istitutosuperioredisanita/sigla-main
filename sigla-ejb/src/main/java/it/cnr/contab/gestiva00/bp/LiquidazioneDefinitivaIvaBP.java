@@ -81,7 +81,7 @@ public class LiquidazioneDefinitivaIvaBP extends LiquidazioneIvaBP implements ID
 
 	private boolean isStanziamentoAccentrato = Boolean.FALSE;
 	private boolean attivaEconomica = false;
-	private boolean attivaAnalitica = false;
+	private boolean attivaEconomicaPura = false;
 
 	private boolean supervisore = false;
 
@@ -165,6 +165,7 @@ public class LiquidazioneDefinitivaIvaBP extends LiquidazioneIvaBP implements ID
 			String tipoStanziamentoLiquidazioneIva = Utility.createConfigurazioneCnrComponentSession().getTipoStanziamentoLiquidazioneIva(context.getUserContext());
 			setStanziamentoAccentrato(Optional.ofNullable(tipoStanziamentoLiquidazioneIva).map(el->el.equals("STANZIAMENTI_CENTRALIZZATI")).orElse(Boolean.FALSE));
 			attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
+			attivaEconomicaPura = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(context.getUserContext());
 			supervisore = Utility.createUtenteComponentSession().isSupervisore(context.getUserContext());
 		} catch (RemoteException | ComponentException e) {
 			throw handleException(e);
@@ -361,8 +362,9 @@ public class LiquidazioneDefinitivaIvaBP extends LiquidazioneIvaBP implements ID
 		return attivaEconomica;
 	}
 
-	public boolean isAttivaAnalitica() {
-		return attivaAnalitica;
+	@Override
+	public boolean isAttivaEconomicaPura() {
+		return attivaEconomicaPura;
 	}
 
 	@Override

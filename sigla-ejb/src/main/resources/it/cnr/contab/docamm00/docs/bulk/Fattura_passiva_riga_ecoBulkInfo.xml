@@ -22,7 +22,7 @@
 		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
 	<fieldProperty
 			name="cd_voce_ana"
-			property="cd_voce_ana"
+			property="voce_analitica.cd_voce_ana"
 			inputType="TEXT"
 			maxLength="45"
 			enabledOnEdit="true"
@@ -30,15 +30,64 @@
 			nullable="false"
 			label="Codice Voce Analitica" />
 	<fieldProperty
-			name="cd_centro_responsabilita"
-			property="cd_centro_responsabilita"
-			label="CdR"
-			inputType="TEXT" />
+			name="ds_voce_ana"
+			property="voce_analitica.ds_voce_ana"
+			maxLength="45"
+			inputSize="40"
+			inputType="ROTEXT"
+			label="Descrizione"
+			caseSensitiveSearch="false" />
+	<fieldProperty
+			name="find_voce_ana_searchtool"
+			property="voce_analitica"
+			formName="searchtool"
+			inputType="SEARCHTOOL"
+			enabledOnSearch="true"
+			label="Conto Analitico" />
 	<fieldProperty
 			name="cd_linea_attivita"
-			property="cd_linea_attivita"
-			label="Codice GAE"
-			inputType="ROTEXT" />
+			property="linea_attivita.cd_linea_attivita"
+			maxLength="10"
+			inputSize="10"
+			inputType="TEXT"
+			label="GAE"
+			enabledOnSearch="true"
+			formatName="it.cnr.jada.util.UppercaseStringFormat"
+			caseSensitiveSearch="false"
+			nullable="false"/>
+	<fieldProperty
+			name="ds_linea_attivita"
+			property="linea_attivita.ds_linea_attivita"
+			inputSize="60"
+			inputType="ROTEXT"
+			enabledOnFreeSearch="false" />
+	<fieldProperty
+			name="find_linea_attivita"
+			property="linea_attivita"
+			inputType="SEARCHTOOL"
+			formName="searchtool_denominazione"
+			enabledOnEdit="true"
+			enabledOnSearch="true"
+			nullable="false"
+			label="G.a.e." />
+	<fieldProperty
+			name="centro_responsabilita"
+			property="linea_attivita.centro_responsabilita"
+			inputType="SEARCHTOOL"
+			formName="searchtool"
+			enabledOnInsert="false"
+			enabledOnEdit="false"
+			label="Centro di Responsabilit&#224; del GAE"/>
+	<fieldProperty
+			name="cd_centro_responsabilita"
+			property="linea_attivita.centro_responsabilita.cd_centro_responsabilita"
+			maxLength="15"
+			inputSize="15"
+			inputType="TEXT"
+			label="Centro di Responsabilit&#224; del GAE"
+			formatName="it.cnr.jada.util.UppercaseStringFormat"
+			enabledOnSearch="true"
+			caseSensitiveSearch="false" />
 	<fieldProperty
 			name="importo"
 			property="importo"
@@ -51,8 +100,13 @@
 			enabledOnFreeSearch="false"/>
 
 	<formFieldProperty name="cd_voce_ana" />
-	<formFieldProperty name="cd_centro_responsabilita" />
+	<formFieldProperty name="ds_voce_ana" />
+	<formFieldProperty name="find_voce_ana_searchtool" />
 	<formFieldProperty name="cd_linea_attivita" />
+	<formFieldProperty name="ds_linea_attivita" />
+	<formFieldProperty name="find_linea_attivita" />
+	<formFieldProperty name="centro_responsabilita" />
+	<formFieldProperty name="cd_centro_responsabilita" />
 	<formFieldProperty name="importo" />
 
 	<columnFieldProperty name="cd_voce_ana" />

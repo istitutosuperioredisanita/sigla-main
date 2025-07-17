@@ -109,4 +109,10 @@
 	<columnFieldProperty name="cd_centro_responsabilita" />
 	<columnFieldProperty name="cd_linea_attivita" />
 	<columnFieldProperty name="importo" />
+
+	<columnSet name="propose">
+		<columnFieldProperty name="cd_voce_ana" />
+		<columnFieldProperty name="cd_centro_responsabilita" />
+		<columnFieldProperty name="cd_linea_attivita" />
+	</columnSet>
 </bulkInfo>

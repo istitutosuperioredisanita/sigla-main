@@ -20,6 +20,7 @@ package it.cnr.contab.ordmag.ordini.bp;
 import it.cnr.contab.chiusura00.ejb.RicercaDocContComponentSession;
 import it.cnr.contab.coepcoan00.bp.CRUDScritturaPDoppiaBP;
 import it.cnr.contab.coepcoan00.bp.DetailEcoCogeCRUDController;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.config00.contratto.bulk.Dettaglio_contrattoBulk;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
@@ -39,6 +40,7 @@ import it.cnr.contab.reports.bulk.Report;
 import it.cnr.contab.reports.service.PrintService;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.util.EuroFormat;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
@@ -47,6 +49,7 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.HttpActionContext;
+import it.cnr.jada.bulk.BulkInfo;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
@@ -70,8 +73,10 @@ import org.apache.commons.io.IOUtils;
 
 import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.ServletException;
+import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import java.io.*;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.rmi.RemoteException;
@@ -103,6 +108,7 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 		return dettaglioContrattoCollapse;
 	}
 	private boolean attivaEconomica = false;
+	private boolean attivaEconomicaPura = false;
 	private boolean attivaAnalitica = false;
 
 	public void setDettaglioContrattoCollapse(boolean dettaglioContrattoCollapse) {
@@ -241,7 +247,10 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 		}
 	};
 
+	private final SimpleDetailCRUDController proposeRigheEcoTestata = new SimpleDetailCRUDController("Proposta Dati Analitici", OrdineAcqEcoBulk.class,"righeEconomica",this, false);
+	private final CollapsableDetailCRUDController resultRigheEcoTestata = new DetailEcoCogeCRUDController("Dati Analitici", OrdineAcqEcoBulk.class,"resultRigheEconomica",this);
 	private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(OrdineAcqRigaEcoBulk.class, righe);
+	private final CollapsableDetailCRUDController resultRigheEcoDettaglio = new DetailEcoCogeCRUDController("Dati Coge/Coan", OrdineAcqRigaEcoBulk.class,"resultRigheEconomica",righe);
 
 	public final it.cnr.jada.util.action.SimpleDetailCRUDController getConsegne() {
 		return consegne;
@@ -942,6 +951,7 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 			setEsercizioInScrivania(CNRUserContext.getEsercizio(context.getUserContext()).intValue());
 			setAnnoSolareInScrivania(solaris == this.getEsercizioInScrivania());
 			attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
+			attivaEconomicaPura = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(context.getUserContext());
 			attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
 
 			setRibaltato(initRibaltato(context));
@@ -966,9 +976,48 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
         }
     }
 
-	private static final String[] TAB_ORDINE_DETTAGLIO = new String[]{ "tabOrdineDettaglio","Dettaglio Riga","/ordmag/ordini/tab_ordine_acq_dettaglio.jsp" };
-	private static final String[] TAB_ORDINE_CONSEGNA = new String[]{ "tabOrdineConsegna","Consegne","/ordmag/ordini/tab_ordine_acq_consegna.jsp" };
-	private static final String[] TAB_ORDINE_ALLEGATI = new String[]{ "tabOrdineDettaglioAllegati","Allegati","/ordmag/ordini/tab_ordine_acq_dettaglio_allegati.jsp" };
+	private static final String[] TAB_ORDINE_MAIN = new String[]{ "tabOrdineAcq","Ordine d'Acquisto","/ordmag/ordini/tab_ordine_acq.jsp" };
+	private static final String[] TAB_ORDINE_PROPOSE_DETAIL_COGECOAN = new String[]{ "tabOrdineProposeDetailEcoCoge","Proposta Dati Coan","/ordmag/ordini/tab_ordine_propose_detail_eco_coge.jsp" };
+	private static final String[] TAB_ORDINE_RESULT_DETAIL_COGECOAN = new String[]{ "tabOrdineResultDetailEcoCoge","Dati Coan","/ordmag/ordini/tab_ordine_result_detail_eco_coge.jsp" };
+	private static final String[] TAB_ORDINE_FORNITORE = new String[]{ "tabOrdineFornitore","Fornitore","/ordmag/ordini/tab_ordine_fornitore.jsp" };
+	private static final String[] TAB_ORDINE_DETTAGLI = new String[]{ "tabOrdineAcqDettaglio","Dettaglio","/ordmag/ordini/tab_ordine_acq_dettagli.jsp" };
+	private static final String[] TAB_ORDINE_OBBLIGAZIONI = new String[]{ "tabOrdineAcqObbligazioni","Obbligazioni Collegate","/ordmag/ordini/tab_ordine_acq_obbligazioni.jsp" };
+	private static final String[] TAB_ORDINE_ALLEGATI = new String[]{ "tabAllegati","Allegati","/ordmag/ordini/tab_ordine_acq_allegati.jsp" };
+
+	public String[][] getTabs() {
+		TreeMap<Integer, String[]> pages = new TreeMap<Integer, String[]>();
+		int i = 0;
+		pages.put(i++, TAB_ORDINE_MAIN);
+		pages.put(i++, TAB_ORDINE_FORNITORE);
+		pages.put(i++, TAB_ORDINE_DETTAGLI);
+		if (!attivaEconomicaPura)
+			pages.put(i++, TAB_ORDINE_OBBLIGAZIONI);
+		else if (attivaEconomica && attivaAnalitica) {
+			if (Optional.ofNullable(this.getModel())
+					.filter(OrdineAcqBulk.class::isInstance)
+					.map(OrdineAcqBulk.class::cast)
+					.map(el->el.isStatoOriginaleInserito()||el.isStatoOriginaleInApprovazione())
+					.orElse(Boolean.FALSE))
+				pages.put(i++, TAB_ORDINE_PROPOSE_DETAIL_COGECOAN);
+			else if (Optional.ofNullable(this.getModel())
+					.filter(OrdineAcqBulk.class::isInstance)
+					.map(OrdineAcqBulk.class::cast)
+					.map(el->el.isStatoOriginaleAllaFirma()||el.isStatoOriginaleDefinitivo())
+					.orElse(Boolean.FALSE))
+				pages.put(i++, TAB_ORDINE_RESULT_DETAIL_COGECOAN);
+		}
+		pages.put(i++, TAB_ORDINE_ALLEGATI);
+
+		String[][] tabs = new String[i][3];
+		for (int j = 0; j < i; j++)
+			tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
+		return tabs;
+	}
+
+	private static final String[] TAB_ORDINE_RIGA_DETTAGLIO = new String[]{ "tabOrdineDettaglio","Dettaglio Riga","/ordmag/ordini/tab_ordine_acq_dettaglio.jsp" };
+	private static final String[] TAB_ORDINE_RIGA_CONSEGNA = new String[]{ "tabOrdineConsegna","Consegne","/ordmag/ordini/tab_ordine_acq_consegna.jsp" };
+	private static final String[] TAB_ORDINE_RIGA_RESULT_DETAIL_COGECOAN = new String[]{ "tabOrdineRigaResultDetailEcoCoge","Dati Coge/Coan","/ordmag/ordini/tab_ordine_riga_result_detail_eco_coge.jsp" };
+	private static final String[] TAB_ORDINE_RIGA_ALLEGATI = new String[]{ "tabOrdineDettaglioAllegati","Allegati","/ordmag/ordini/tab_ordine_acq_dettaglio_allegati.jsp" };
 
 	public String[][] getTabsDettagli() {
 		OrdineAcqRigaBulk rigaOrdine = Optional.ofNullable(this.getRighe().getModel())
@@ -978,19 +1027,43 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 
 		TreeMap<Integer, String[]> pages = new TreeMap<Integer, String[]>();
 		int i = 0;
-		pages.put(i++, TAB_ORDINE_DETTAGLIO);
-		pages.put(i++, TAB_ORDINE_CONSEGNA);
+		pages.put(i++, TAB_ORDINE_RIGA_DETTAGLIO);
+		pages.put(i++, TAB_ORDINE_RIGA_CONSEGNA);
 
-		if (attivaEconomica || attivaAnalitica)
-			pages.put(i++, CRUDScritturaPDoppiaBP.TAB_DATI_COGECOAN);
+		if (attivaEconomica || attivaAnalitica) {
+			if (Optional.ofNullable(this.getModel())
+					.filter(OrdineAcqBulk.class::isInstance)
+					.map(OrdineAcqBulk.class::cast)
+					.map(el->el.isStatoOriginaleInserito()||el.isStatoOriginaleInApprovazione())
+					.orElse(Boolean.FALSE))
+				pages.put(i++, CRUDScritturaPDoppiaBP.TAB_DATI_COGECOAN);
+			else if (Optional.ofNullable(this.getModel())
+					.filter(OrdineAcqBulk.class::isInstance)
+					.map(OrdineAcqBulk.class::cast)
+					.map(el->el.isStatoOriginaleAllaFirma()||el.isStatoOriginaleDefinitivo())
+					.orElse(Boolean.FALSE))
+				pages.put(i++, TAB_ORDINE_RIGA_RESULT_DETAIL_COGECOAN);
+		}
 
 		if (rigaOrdine != null && rigaOrdine.getNumero() != null)
-			pages.put(i++, TAB_ORDINE_ALLEGATI);
+			pages.put(i++, TAB_ORDINE_RIGA_ALLEGATI);
 
 		String[][] tabs = new String[i][3];
 		for (int j = 0; j < i; j++)
 			tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
 		return tabs;
+	}
+
+	public SimpleDetailCRUDController getProposeRigheEcoTestata() {
+		return proposeRigheEcoTestata;
+	}
+
+	public CollapsableDetailCRUDController getResultRigheEcoTestata() {
+		return resultRigheEcoTestata;
+	}
+
+	public CollapsableDetailCRUDController getResultRigheEcoDettaglio() {
+		return resultRigheEcoDettaglio;
 	}
 
 	@Override
@@ -1000,7 +1073,7 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 
 	@Override
 	public FormController getControllerDetailEcoCoge() {
-		return righe;
+		return this.getRighe();
 	}
 
 	@Override
@@ -1009,7 +1082,24 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 	}
 
 	@Override
+	public boolean isAttivaEconomicaPura() {
+		return attivaEconomicaPura;
+	}
+
+	@Override
 	public boolean isAttivaAnalitica() {
 		return attivaAnalitica;
+	}
+
+	public boolean isROStatoOrdine() {
+		OrdineAcqBulk ordine = (OrdineAcqBulk) getModel();
+		if (ordine != null && ordine.isStatoInApprovazione() && !isViewing()) {
+			if (isAttivaEconomicaPura())
+				return ordine.getRigheOrdineColl().stream()
+						.anyMatch(cons->cons.getImCostoEcoDaRipartire().compareTo(BigDecimal.ZERO)!=0);
+			return ordine.getRigheOrdineColl().stream().flatMap(el->el.getRigheConsegnaColl().stream())
+					.anyMatch(cons->cons.getObbligazioneScadenzario()==null);
+		}
+		return false;
 	}
 }

@@ -28,7 +28,6 @@ import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
@@ -36,10 +35,10 @@ import it.cnr.contab.ordmag.anag00.LuogoConsegnaMagBulk;
 import it.cnr.contab.ordmag.anag00.MagazzinoBulk;
 import it.cnr.contab.ordmag.anag00.UnitaMisuraBulk;
 import it.cnr.contab.ordmag.anag00.UnitaOperativaOrdBulk;
-import it.cnr.contab.ordmag.richieste.bulk.RichiestaUopRigaBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.bulk.BulkCollection;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.OrderedHashtable;
@@ -77,7 +76,7 @@ public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase implements IDoc
 	private java.lang.Boolean obbligazioneInseritaSuConsegna =  Boolean.FALSE;
 	private java.lang.Boolean autorizzaQuantitaEvasaMaggioreOrdinata = Boolean.FALSE;
 	private String operazioneQuantitaEvasaMinore;
-	private List<OrdineAcqConsegnaEcoBulk> righeEconomica = new BulkList<>();
+	private BulkList<OrdineAcqConsegnaEcoBulk> righeEconomica = new BulkList<>();
 
 	public final static Dictionary OPERAZIONE_EVASIONE_CONSEGNA;
 
@@ -578,11 +577,11 @@ public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase implements IDoc
 		return OrdineAcqConsegnaBulk.STATO_EVASA_FORZATAMENTE.equals(this.getStato());
 	}
 
-	public List<OrdineAcqConsegnaEcoBulk> getRigheEconomica() {
+	public BulkList<OrdineAcqConsegnaEcoBulk> getRigheEconomica() {
 		return righeEconomica;
 	}
 
-	public void setRigheEconomica(List<OrdineAcqConsegnaEcoBulk> righeEconomica) {
+	public void setRigheEconomica(BulkList<OrdineAcqConsegnaEcoBulk> righeEconomica) {
 		this.righeEconomica = righeEconomica;
 	}
 
@@ -616,7 +615,7 @@ public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase implements IDoc
 
 	@Override
 	public void clearChildrenAna() {
-		this.setRigheEconomica(new ArrayList<>());
+		this.setRigheEconomica(new BulkList<>());
 	}
 
 	@Override
@@ -641,5 +640,14 @@ public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase implements IDoc
 	public BigDecimal getImCostoEcoDaRipartire() {
 		return Optional.ofNullable(this.getImCostoEco()).orElse(BigDecimal.ZERO)
 				.subtract(Optional.ofNullable(this.getImCostoEcoRipartito()).orElse(BigDecimal.ZERO));
+	}
+
+	public BulkCollection[] getBulkLists() {
+
+		// Metti solo le liste di oggetti che devono essere resi persistenti
+
+		return new it.cnr.jada.bulk.BulkCollection[]{
+				righeEconomica
+		};
 	}
 }

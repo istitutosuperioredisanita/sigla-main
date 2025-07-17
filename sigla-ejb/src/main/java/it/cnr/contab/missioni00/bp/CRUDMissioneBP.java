@@ -194,6 +194,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
     private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(Missione_riga_ecoBulk.class, this);
 
     private boolean attivaEconomica = false;
+    private boolean attivaEconomicaPura = false;
     private boolean attivaAnalitica = false;
     private boolean supervisore = false;
 
@@ -1228,6 +1229,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
     protected void init(Config config, ActionContext context) throws BusinessProcessException {
         try {
             attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
+            attivaEconomicaPura = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(context.getUserContext());
             attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
             verificoUnitaENTE(context);
@@ -2975,6 +2977,11 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
     @Override
     public boolean isAttivaEconomica() {
         return attivaEconomica;
+    }
+
+    @Override
+    public boolean isAttivaEconomicaPura() {
+        return attivaEconomicaPura;
     }
 
     @Override

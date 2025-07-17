@@ -26,8 +26,11 @@ import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
 import it.cnr.contab.config00.contratto.bulk.ContrattoHome;
 import it.cnr.contab.config00.contratto.bulk.Dettaglio_contrattoBulk;
 import it.cnr.contab.config00.contratto.bulk.Procedure_amministrativeBulk;
+import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoHome;
+import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
+import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaHome;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_obbligazioniVBulk;
@@ -68,6 +71,7 @@ import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
+import javax.ejb.EJBException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -603,15 +607,15 @@ public class OrdineAcqComponent
         try {
             OrdineAcqHome homeOrdine = (OrdineAcqHome)getHome(usercontext, OrdineAcqBulk.class);
             ordine.setRigheOrdineColl(new BulkList(homeOrdine.findOrdineRigheList(ordine)));
-
-            Boolean isOrdineCompletamenteContabilizzato=true;
+            ordine.setRigheEconomica(new BulkList(homeOrdine.findOrdineAcqEcoList(ordine)));
 
             for (java.util.Iterator i = ordine.getRigheOrdineColl().iterator(); i.hasNext(); ) {
                 OrdineAcqRigaBulk riga = (OrdineAcqRigaBulk) i.next();
 
                 OrdineAcqRigaHome homeRigaOrdine = (OrdineAcqRigaHome)getHome(usercontext, OrdineAcqRigaBulk.class);
+                OrdineAcqConsegnaHome homeConsegnaOrdine = (OrdineAcqConsegnaHome)getHome(usercontext, OrdineAcqConsegnaBulk.class);
                 riga.setRigheConsegnaColl(new BulkList(homeRigaOrdine.findOrdineRigheConsegnaList(riga)));
-                riga.setRigheEconomica(homeRigaOrdine.findOrdineAcqRigaEcoList(riga));
+                riga.setRigheEconomica(new BulkList(homeRigaOrdine.findOrdineAcqRigaEcoList(riga)));
 
                 getHomeCache(usercontext).fetchAll(usercontext);
 
@@ -621,6 +625,7 @@ public class OrdineAcqComponent
                 for (java.util.Iterator c = riga.getRigheConsegnaColl().iterator(); c.hasNext(); ) {
                     OggettoBulk consbulk = (OggettoBulk) c.next();
                     OrdineAcqConsegnaBulk cons = (OrdineAcqConsegnaBulk) consbulk;
+                    cons.setRigheEconomica(new BulkList(homeConsegnaOrdine.findOrdineAcqConsegnaEcoList(cons)));
                     if (cons.getObbligazioneScadenzario() != null) {
                         Obbligazione_scadenzarioBulk scad = cons.getObbligazioneScadenzario();
                         if (scadenzaComune == null || scadenzaComune.equalsByPrimaryKey(scad)) {
@@ -631,7 +636,6 @@ public class OrdineAcqComponent
                         }
                     } else {
                         esisteScadenzaComune = false;
-                        isOrdineCompletamenteContabilizzato = false;
                     }
                     if (cons.getUnitaOperativaOrd() != null) {
                         UnitaOperativaOrdBulk uop = recuperoUopDest(usercontext, cons);
@@ -643,8 +647,6 @@ public class OrdineAcqComponent
                     riga.setDspObbligazioneScadenzario(scadenzaComune);
                 }
             }
-            ordine.setOrdineContabilizzato(isOrdineCompletamenteContabilizzato);
-
         } catch (PersistencyException e) {
             throw handleException(e);
         }
@@ -1117,6 +1119,7 @@ public class OrdineAcqComponent
                 }
             }
             assegnaNumeratoreOrd(usercontext, ordine, home);
+            ordine.setStatoOriginale(ordine.getStato());
         } catch (PersistencyException e) {
             throw new ComponentException(e);
         }
@@ -1237,12 +1240,16 @@ public class OrdineAcqComponent
     public it.cnr.jada.bulk.OggettoBulk modificaConBulk(it.cnr.jada.UserContext userContext, it.cnr.jada.bulk.OggettoBulk bulk, it.cnr.contab.doccont00.core.bulk.OptionRequestParameter status)
             throws it.cnr.jada.comp.ComponentException {
         OrdineAcqBulk ordine = (OrdineAcqBulk) bulk;
+        boolean aggiornaAnalitica = ((OrdineAcqBulk) bulk).isStatoAllaFirma() &&
+                !((OrdineAcqBulk) bulk).getStato().equals(((OrdineAcqBulk) bulk).getStatoOriginale());
         validaOrdine(userContext, ordine);
         controlliCambioStato(userContext, ordine);
         calcolaImportoOrdine(userContext, ordine);
         manageDeletedElements(userContext, ordine, status);
         aggiornaObbligazioni(userContext, ordine, status);
         verificaCoperturaContratto(userContext, ordine);
+        if (aggiornaAnalitica)
+            aggiornaAnaliticaConsegne(userContext, (OrdineAcqBulk) bulk);
         return super.modificaConBulk(userContext, bulk);
     }
 
@@ -1283,12 +1290,15 @@ public class OrdineAcqComponent
                         throw new it.cnr.jada.comp.ApplicationException("Non è possibile indicare uno stato diverso da inserito o Definitivo");
                     }
                     if (ordine.isStatoAllaFirma() || (ordine.isOrdineMepa() && ordine.isStatoDefinitivo())) {
-                        for (java.util.Iterator i = ordine.getRigheOrdineColl().iterator(); i.hasNext(); ) {
-                            OrdineAcqRigaBulk riga = (OrdineAcqRigaBulk) i.next();
-                            for (java.util.Iterator k = riga.getRigheConsegnaColl().iterator(); k.hasNext(); ) {
-                                OrdineAcqConsegnaBulk cons = (OrdineAcqConsegnaBulk) k.next();
-                                if (cons.getObbligazioneScadenzario() == null || cons.getObbligazioneScadenzario().getPg_obbligazione() == null) {
-                                    throw new it.cnr.jada.comp.ApplicationException("Sulla consegna " + cons.getConsegnaOrdineString() + " non è indicata l'obbligazione");
+                        for (OrdineAcqRigaBulk riga : ordine.getRigheOrdineColl()) {
+                            if (Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(usercontext)) {
+                                if (riga.getImCostoEcoDaRipartire().compareTo(BigDecimal.ZERO)!=0)
+                                    throw new it.cnr.jada.comp.ApplicationException("Sulla riga " + riga.getRigaOrdineString() + " non risulta ripartita totalmente l'analitica.");
+                            }
+                            if (!Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(usercontext)) {
+                                for (OrdineAcqConsegnaBulk cons : riga.getRigheConsegnaColl()) {
+                                    if (cons.getObbligazioneScadenzario() == null || cons.getObbligazioneScadenzario().getPg_obbligazione() == null)
+                                        throw new it.cnr.jada.comp.ApplicationException("Sulla consegna " + cons.getConsegnaOrdineString() + " non è indicata l'obbligazione");
                                 }
                             }
                         }
@@ -1297,9 +1307,7 @@ public class OrdineAcqComponent
                     throw new it.cnr.jada.comp.ApplicationException("Non è possibile cambiare lo stato di un ordine inviato al fornitore");
                 }
             }
-        } catch (PersistencyException e) {
-            throw new ComponentException(e);
-        } catch (IntrospectionException e) {
+        } catch (PersistencyException | IntrospectionException | RemoteException e) {
             throw new ComponentException(e);
         }
     }
@@ -3038,6 +3046,12 @@ public class OrdineAcqComponent
         return sql;
     }
 
+    public SQLBuilder selectVoce_epByClause(UserContext userContext, OrdineAcqRigaBulk riga,
+                                             ContoBulk contoBulk,
+                                             CompoundFindClause compoundfindclause) throws PersistencyException, ComponentException {
+        return selectDspContoByClause(userContext,riga,contoBulk,compoundfindclause);
+    }
+
     public ContoBulk recuperoContoDefault(UserContext userContext, Categoria_gruppo_inventBulk categoria_gruppo_inventBulk) throws PersistencyException, ComponentException {
         ContoHome contoHome = (ContoHome) getHome(userContext, ContoBulk.class);
         SQLBuilder sql = null;
@@ -3107,5 +3121,112 @@ public class OrdineAcqComponent
 
         BancaHome bancaHome = (BancaHome) getHome(userContext, it.cnr.contab.anagraf00.core.bulk.BancaBulk.class);
         return bancaHome.selectBancaFor(ordine.getModalitaPagamento(), ordine.getFornitore().getCd_terzo());
+    }
+
+    public SQLBuilder selectVoce_epByClause(UserContext userContext, OrdineAcqBulk ordineAcqBulk, ContoBulk contoBulk, CompoundFindClause clause)  throws ComponentException, EJBException, RemoteException {
+        ContoHome contoHome = (ContoHome) getHome(userContext, ContoBulk.class);
+        SQLBuilder sql = contoHome.createSQLBuilder();
+        sql.addSQLClause(FindClause.AND,"ESERCIZIO",SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
+        sql.addClause(clause);
+        return sql;
+    }
+
+    public SQLBuilder selectVoce_analiticaByClause(UserContext userContext, OrdineAcqEcoBulk ordineAcqEcoBulk, Voce_analiticaBulk voceAnaliticaBulk, CompoundFindClause clause)  throws ComponentException, EJBException, RemoteException {
+        Voce_analiticaHome voceAnaliticaHome = (Voce_analiticaHome) getHome(userContext, Voce_analiticaBulk.class);
+        SQLBuilder sql = voceAnaliticaHome.createSQLBuilder();
+        sql.addSQLClause(FindClause.AND,"ESERCIZIO",SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
+        if (ordineAcqEcoBulk.getOrdineAcq()!=null && ordineAcqEcoBulk.getOrdineAcq().getVoce_ep()!= null &&
+                ordineAcqEcoBulk.getOrdineAcq().getEsercizio_voce_ep()!=null &&
+                ordineAcqEcoBulk.getOrdineAcq().getCd_voce_ep()!=null ) {
+            sql.addSQLClause(FindClause.AND, "ESERCIZIO_VOCE_EP", SQLBuilder.EQUALS, ordineAcqEcoBulk.getOrdineAcq().getEsercizio_voce_ep());
+            sql.addSQLClause(FindClause.AND, "CD_VOCE_EP", SQLBuilder.EQUALS, ordineAcqEcoBulk.getOrdineAcq().getCd_voce_ep());
+        } else
+            sql.addSQLClause(FindClause.AND, "1!=1");
+        sql.addClause(clause);
+        return sql;
+    }
+
+    public SQLBuilder selectVoce_analiticaByClause(UserContext userContext, OrdineAcqRigaEcoBulk ordineAcqRigaEcoBulk, Voce_analiticaBulk voceAnaliticaBulk, CompoundFindClause clause)  throws ComponentException, EJBException, RemoteException {
+        Voce_analiticaHome voceAnaliticaHome = (Voce_analiticaHome) getHome(userContext, Voce_analiticaBulk.class);
+        SQLBuilder sql = voceAnaliticaHome.createSQLBuilder();
+        sql.addSQLClause(FindClause.AND,"ESERCIZIO",SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
+        if (ordineAcqRigaEcoBulk.getOrdineAcqRiga()!=null && ordineAcqRigaEcoBulk.getOrdineAcqRiga().getVoce_ep()!= null &&
+                ordineAcqRigaEcoBulk.getOrdineAcqRiga().getEsercizio_voce_ep()!=null &&
+                ordineAcqRigaEcoBulk.getOrdineAcqRiga().getCd_voce_ep()!=null ) {
+            sql.addSQLClause(FindClause.AND, "ESERCIZIO_VOCE_EP", SQLBuilder.EQUALS, ordineAcqRigaEcoBulk.getOrdineAcqRiga().getEsercizio_voce_ep());
+            sql.addSQLClause(FindClause.AND, "CD_VOCE_EP", SQLBuilder.EQUALS, ordineAcqRigaEcoBulk.getOrdineAcqRiga().getCd_voce_ep());
+        } else
+            sql.addSQLClause(FindClause.AND, "1!=1");
+        sql.addClause(clause);
+        return sql;
+    }
+
+    public SQLBuilder selectLinea_attivitaByClause(UserContext userContext, OrdineAcqEcoBulk ordineAcqEcoBulk, WorkpackageBulk latt, CompoundFindClause clauses ) throws ComponentException
+    {
+        SQLBuilder sql = getHome( userContext, latt.getClass(),"V_LINEA_ATTIVITA_VALIDA" ).createSQLBuilder();
+        sql.addTableToHeader( "CDR");
+        sql.addSQLJoin( "CDR.CD_CENTRO_RESPONSABILITA", "V_LINEA_ATTIVITA_VALIDA.CD_CENTRO_RESPONSABILITA" );
+        sql.addSQLClause( FindClause.AND, "V_LINEA_ATTIVITA_VALIDA.ESERCIZIO", SQLBuilder.EQUALS, ((it.cnr.contab.utenze00.bp.CNRUserContext)userContext).getEsercizio());
+        sql.addSQLClause( FindClause.AND, "CDR.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, ((it.cnr.contab.utenze00.bp.CNRUserContext)userContext).getCd_unita_organizzativa());
+        sql.addClause( clauses );
+        return sql;
+    }
+
+    public SQLBuilder selectLinea_attivitaByClause(UserContext userContext, OrdineAcqRigaEcoBulk ordineAcqRigaEcoBulk, WorkpackageBulk latt, CompoundFindClause clauses ) throws ComponentException
+    {
+        SQLBuilder sql = getHome( userContext, latt.getClass(),"V_LINEA_ATTIVITA_VALIDA" ).createSQLBuilder();
+        sql.addTableToHeader( "CDR");
+        sql.addSQLJoin( "CDR.CD_CENTRO_RESPONSABILITA", "V_LINEA_ATTIVITA_VALIDA.CD_CENTRO_RESPONSABILITA" );
+        sql.addSQLClause( FindClause.AND, "V_LINEA_ATTIVITA_VALIDA.ESERCIZIO", SQLBuilder.EQUALS, ((it.cnr.contab.utenze00.bp.CNRUserContext)userContext).getEsercizio());
+        sql.addSQLClause( FindClause.AND, "CDR.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, ((it.cnr.contab.utenze00.bp.CNRUserContext)userContext).getCd_unita_organizzativa());
+        sql.addClause( clauses );
+        return sql;
+    }
+
+    private void aggiornaAnaliticaConsegne(UserContext userContext, OrdineAcqBulk ordine) throws ComponentException {
+        try {
+            for (OrdineAcqRigaBulk rigaOrdine:ordine.getRigheOrdineColl()) {
+                for (OrdineAcqConsegnaBulk consegnaOrdine:rigaOrdine.getRigheConsegnaColl()) {
+                    //prima cancello le eventuali righe eco presenti
+                    for (OrdineAcqConsegnaEcoBulk consEco : consegnaOrdine.getRigheEconomica()) {
+                        consEco.setToBeDeleted();
+                        deleteBulk(userContext, consEco);
+                    }
+                    consegnaOrdine.setRigheEconomica(new BulkList<>());
+                    //quindi inserisco
+                    if (consegnaOrdine.getImCostoEco().compareTo(BigDecimal.ZERO)>0 && rigaOrdine.getImCostoEco().compareTo(BigDecimal.ZERO)>0) {
+                        for (OrdineAcqRigaEcoBulk rigaEco : rigaOrdine.getRigheEconomica()) {
+                            OrdineAcqConsegnaEcoBulk consEco = new OrdineAcqConsegnaEcoBulk();
+                            consEco.setOrdineAcqConsegna(consegnaOrdine);
+                            consEco.setVoce_analitica(rigaEco.getVoce_analitica());
+                            consEco.setLinea_attivita(rigaEco.getLinea_attivita());
+                            consEco.setImporto(rigaEco.getImporto().multiply(consegnaOrdine.getImCostoEco())
+                                    .divide(rigaOrdine.getImCostoEco(), 2, RoundingMode.HALF_UP));
+                            consEco.setToBeCreated();
+                            consegnaOrdine.getRigheEconomica().add(consEco);
+                        }
+                        BigDecimal diff = consegnaOrdine.getImCostoEcoDaRipartire();
+                        if (diff.compareTo(BigDecimal.ZERO) > 0) {
+                            for (OrdineAcqConsegnaEcoBulk rigaEco : consegnaOrdine.getRigheEconomica()) {
+                                if (rigaEco.getImporto().compareTo(diff) >= 0) {
+                                    rigaEco.setImporto(rigaEco.getImporto().subtract(diff));
+                                    break;
+                                } else {
+                                    diff = diff.subtract(rigaEco.getImporto());
+                                    rigaEco.setImporto(BigDecimal.ZERO);
+                                }
+                            }
+                        } else if (diff.compareTo(BigDecimal.ZERO) < 0) {
+                            for (OrdineAcqConsegnaEcoBulk rigaEco : consegnaOrdine.getRigheEconomica()) {
+                                rigaEco.setImporto(rigaEco.getImporto().add(diff));
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (it.cnr.jada.persistency.PersistencyException ex) {
+            throw handleException(ex);
+        }
     }
 }

@@ -133,6 +133,7 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
 
     private Boolean isGestioneIncarichiEnabled = null;
     private boolean attivaEconomica = false;
+    private boolean attivaEconomicaPura = false;
     private boolean attivaAnalitica = false;
     private boolean supervisore = false;
 
@@ -687,6 +688,7 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
         try {
             setGestioneIncarichiEnabled(Utility.createParametriCnrComponentSession().getParametriCnr(context.getUserContext(), CNRUserContext.getEsercizio(context.getUserContext())).getFl_incarico());
             attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
+            attivaEconomicaPura = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(context.getUserContext());
             attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
         } catch (it.cnr.jada.comp.ComponentException ex) {
@@ -1846,6 +1848,11 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
     @Override
     public boolean isAttivaEconomica() {
         return attivaEconomica;
+    }
+
+    @Override
+    public boolean isAttivaEconomicaPura() {
+        return attivaEconomicaPura;
     }
 
     @Override

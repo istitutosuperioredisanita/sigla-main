@@ -67,6 +67,7 @@ public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
     private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(Anticipo_riga_ecoBulk.class, this);
 
     private boolean attivaEconomica = false;
+    private boolean attivaEconomicaPura = false;
     private boolean attivaAnalitica = false;
     private boolean supervisore = false;
 
@@ -406,6 +407,7 @@ public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
         try {
             verificoUnitaENTE(context);
             attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
+            attivaEconomicaPura = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(context.getUserContext());
             attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
         } catch (Throwable e) {
@@ -1089,6 +1091,11 @@ public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
     @Override
     public boolean isAttivaEconomica() {
         return attivaEconomica;
+    }
+
+    @Override
+    public boolean isAttivaEconomicaPura() {
+        return attivaEconomicaPura;
     }
 
     @Override

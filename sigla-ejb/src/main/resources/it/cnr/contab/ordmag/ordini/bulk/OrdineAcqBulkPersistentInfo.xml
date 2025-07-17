@@ -101,6 +101,12 @@
 		<columnMapping
 			columnName="CD_CUP"
 			propertyName="cup.cdCup" />
+		<columnMapping
+				columnName="ESERCIZIO_VOCE_EP"
+				propertyName="voce_ep.esercizio" />
+		<columnMapping
+				columnName="CD_VOCE_EP"
+				propertyName="voce_ep.cd_voce_ep" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="notaPrecodificata"/>
@@ -140,4 +146,6 @@
 		name="cig" />
 	<persistentProperty
 		name="cup" />
+	<persistentProperty
+			name="voce_ep" />
 </SQLPersistentInfo>

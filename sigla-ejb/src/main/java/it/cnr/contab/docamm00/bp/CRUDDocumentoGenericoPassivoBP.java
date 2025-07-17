@@ -99,6 +99,7 @@ public class CRUDDocumentoGenericoPassivoBP
     private boolean carryingThrough = false;
     private boolean ribaltato;
     private boolean attivaEconomica = false;
+    private boolean attivaEconomicaPura = false;
     private boolean attivaAnalitica = false;
     private boolean attivaInventaria = false;
 
@@ -455,6 +456,7 @@ public class CRUDDocumentoGenericoPassivoBP
             int solaris = Documento_genericoBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.YEAR);
             int esercizioScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue();
             attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
+            attivaEconomicaPura = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(context.getUserContext());
             attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
             attivaInventaria = Utility.createConfigurazioneCnrComponentSession().isAttivoInventariaDocumenti(context.getUserContext());
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
@@ -1138,6 +1140,11 @@ public class CRUDDocumentoGenericoPassivoBP
     @Override
     public boolean isAttivaEconomica() {
         return attivaEconomica;
+    }
+
+    @Override
+    public boolean isAttivaEconomicaPura() {
+        return attivaEconomicaPura;
     }
 
     @Override

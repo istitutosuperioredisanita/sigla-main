@@ -152,8 +152,7 @@
 		enabledOnInsert="true"
 		enabledOnEdit="true"
 		label="Stato"
-		caseSensitiveSearch="false"
-		readonlyProperty="ROstatoForUpdate"/>
+		caseSensitiveSearch="false" />
 	<fieldProperty
 		name="findDivisa"
 		property="divisa"
@@ -737,6 +736,14 @@
 		keysProperty="motivoEsclusioneCigSIOPEKeys"
 		enabledOnSearch="true"
 		label="Motivo assenza CIG"/>
+	<fieldProperty
+			name="find_voce_ep"
+			property="voce_ep"
+			inputType="SEARCHTOOL"
+			label="Conto EP"
+			nullable="false"
+			formName="searchtool"
+			enabledOnSearch="false" />
 
 	<form
 		name="searchtool">
@@ -884,6 +891,7 @@
 			name="terminiPagamento" />
 	<formFieldProperty
 			name="modalitaPagamento" />
+	<formFieldProperty name="find_voce_ep" />
 
 	<findFieldProperty
 		name="cdCds" />

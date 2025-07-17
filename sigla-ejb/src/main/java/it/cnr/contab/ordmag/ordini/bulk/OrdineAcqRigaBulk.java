@@ -54,7 +54,7 @@ import it.cnr.jada.util.StrServ;
 import it.cnr.jada.util.action.CRUDBP;
 public class OrdineAcqRigaBulk extends OrdineAcqRigaBase implements IDocumentoAmministrativoRigaBulk, Voidable, AllegatoParentBulk {
 	protected BulkList<OrdineAcqConsegnaBulk> righeConsegnaColl= new BulkList<OrdineAcqConsegnaBulk>();
-	private List<OrdineAcqRigaEcoBulk> righeEconomica = new BulkList<>();
+	private BulkList<OrdineAcqRigaEcoBulk> righeEconomica = new BulkList<>();
 
 	private java.lang.String dspTipoConsegna;
 	private java.lang.String dspStato;
@@ -469,6 +469,7 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 
 		return new it.cnr.jada.bulk.BulkCollection[] { 
 				righeConsegnaColl,
+				righeEconomica,
 				dettaglioAllegati
 		};
 	}
@@ -697,12 +698,24 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 		}
 	}
 
-	public List<OrdineAcqRigaEcoBulk> getRigheEconomica() {
+	public BulkList<OrdineAcqRigaEcoBulk> getRigheEconomica() {
 		return righeEconomica;
 	}
 
-	public void setRigheEconomica(List<OrdineAcqRigaEcoBulk> righeEconomica) {
+	public void setRigheEconomica(BulkList<OrdineAcqRigaEcoBulk> righeEconomica) {
 		this.righeEconomica = righeEconomica;
+	}
+
+	public OrdineAcqRigaEcoBulk removeFromRigheEconomica(int index)	{
+		// Gestisce la selezione del bottone cancella
+		OrdineAcqRigaEcoBulk rigaEco = righeEconomica.remove(index);
+		rigaEco.setToBeDeleted();
+		return rigaEco;
+	}
+	public int addToRigheEconomica( OrdineAcqRigaEcoBulk nuovoRigo )	{
+		nuovoRigo.setOrdineAcqRiga(this);
+		righeEconomica.add(nuovoRigo);
+		return righeEconomica.size()-1;
 	}
 
 	@Override
@@ -748,7 +761,7 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 
 	@Override
 	public void clearChildrenAna() {
-		this.setRigheEconomica(new ArrayList<>());
+		this.setRigheEconomica(new BulkList<>());
 	}
 
 	/*
@@ -757,12 +770,13 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 	 */
 	@Override
 	public BigDecimal getImCostoEco() {
-		return righeConsegnaColl.stream().map(OrdineAcqConsegnaBulk::getImCostoEco).reduce(BigDecimal.ZERO, BigDecimal::add);
+		return this.getImTotaleRiga();
 	}
 
 	@Override
 	public BigDecimal getImCostoEcoRipartito() {
-		return this.getChildrenAna().stream().map(IDocumentoDetailAnaCogeBulk::getImporto)
+		return this.getChildrenAna().stream()
+				.map(el->Optional.ofNullable(el.getImporto()).orElse(BigDecimal.ZERO))
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 
@@ -770,5 +784,29 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 	public BigDecimal getImCostoEcoDaRipartire() {
 		return Optional.ofNullable(this.getImCostoEco()).orElse(BigDecimal.ZERO)
 				.subtract(Optional.ofNullable(this.getImCostoEcoRipartito()).orElse(BigDecimal.ZERO));
+	}
+
+	public List<OrdineAcqRigaEcoBulk> getResultRigheEconomica() {
+		List<OrdineAcqRigaEcoBulk> result = new ArrayList<>();
+		this.getRigheConsegnaColl().stream()
+				.flatMap(el->el.getRigheEconomica().stream())
+				.forEach(el->{
+					OrdineAcqRigaEcoBulk myRigaEco = result.stream()
+							.filter(el2->el2.getCd_linea_attivita().equals(el.getCd_linea_attivita()))
+							.filter(el2->el2.getCd_centro_responsabilita().equals(el.getCd_centro_responsabilita()))
+							.filter(el2->el2.getCd_voce_ana().equals(el.getCd_voce_ana()))
+							.findAny().orElseGet(()->{
+								OrdineAcqRigaEcoBulk rigaEco = new OrdineAcqRigaEcoBulk();
+								rigaEco.setOrdineAcqRiga(this);
+								rigaEco.setLinea_attivita(el.getLinea_attivita());
+								rigaEco.setVoce_analitica(el.getVoce_analitica());
+								rigaEco.setProgressivo_riga_eco((long) result.size()+1);
+								rigaEco.setImporto(BigDecimal.ZERO);
+								result.add(rigaEco);
+								return rigaEco;
+							});
+					myRigaEco.setImporto(myRigaEco.getImporto().add(el.getImporto()));
+				});
+		return result;
 	}
 }

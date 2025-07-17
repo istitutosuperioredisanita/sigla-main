@@ -106,6 +106,7 @@ public class CRUDReversaleBP extends it.cnr.jada.util.action.SimpleCRUDBP implem
 	private final CollapsableDetailCRUDController movimentiDare = new EconomicaDareDetailCRUDController(this);
 	private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
 	private boolean attivaEconomica = false;
+	private boolean attivaEconomicaPura = false;
 	private boolean supervisore = false;
 	public static final String REVERSALE_VARIAZIONE_BP = "CRUDReversaleVariazioneBP";
 	boolean isAbilitatoCrudRevesaleVariazioneBP = Boolean.FALSE;
@@ -905,6 +906,7 @@ public class CRUDReversaleBP extends it.cnr.jada.util.action.SimpleCRUDBP implem
 			Configurazione_cnrComponentSession sess = (Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices
 					.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession");
 			attivaEconomica = sess.isAttivaEconomica(actioncontext.getUserContext());
+			attivaEconomicaPura = sess.isAttivaEconomicaPura(actioncontext.getUserContext());
 			setSupervisore(Utility.createUtenteComponentSession().isSupervisore(actioncontext.getUserContext()));
 
 			this.attivoSiopeplus = Optional.ofNullable(sess.getVal01(
@@ -1237,5 +1239,10 @@ public class CRUDReversaleBP extends it.cnr.jada.util.action.SimpleCRUDBP implem
 	@Override
 	public boolean isAttivaEconomica() {
 		return attivaEconomica;
+	}
+
+	@Override
+	public boolean isAttivaEconomicaPura() {
+		return attivaEconomicaPura;
 	}
 }

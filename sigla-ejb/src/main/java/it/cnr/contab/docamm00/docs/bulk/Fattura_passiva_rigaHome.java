@@ -29,7 +29,6 @@ import it.cnr.contab.docamm00.tabrif.bulk.AssCatgrpInventVoceEpHome;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
-import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineHome;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaHome;
 import it.cnr.jada.DetailedRuntimeException;

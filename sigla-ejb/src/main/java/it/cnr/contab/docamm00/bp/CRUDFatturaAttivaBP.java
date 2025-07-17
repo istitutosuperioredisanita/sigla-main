@@ -108,6 +108,7 @@ public abstract class CRUDFatturaAttivaBP
     private boolean contoEnte;
     private DocumentiCollegatiDocAmmService docCollService;
     protected boolean attivaEconomica = false;
+    protected boolean attivaEconomicaPura = false;
     private boolean attivaAnalitica = false;
     private boolean supervisore = false;
     private boolean esercizioChiuso = false;
@@ -429,6 +430,7 @@ public abstract class CRUDFatturaAttivaBP
             int solaris = Fattura_attivaBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.YEAR);
             int esercizioScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue();
             attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
+            attivaEconomicaPura = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(context.getUserContext());
             attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
             attivaInventaria= Utility.createConfigurazioneCnrComponentSession().isAttivoInventariaDocumenti(context.getUserContext());
             attivoCheckImpIntrastat=Utility.createConfigurazioneCnrComponentSession().isCheckImpIntrastatFattAttiva(context.getUserContext());
@@ -1546,6 +1548,11 @@ public abstract class CRUDFatturaAttivaBP
     @Override
     public boolean isAttivaEconomica() {
         return attivaEconomica;
+    }
+
+    @Override
+    public boolean isAttivaEconomicaPura() {
+        return attivaEconomicaPura;
     }
 
     @Override

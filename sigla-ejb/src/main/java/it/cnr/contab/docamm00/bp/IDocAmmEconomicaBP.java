@@ -64,8 +64,8 @@ public interface IDocAmmEconomicaBP {
 
     boolean isButtonGeneraScritturaVisible();
 
-    static Button[] addPartitario(Button[] buttons, boolean attivaEconomicaParallela, boolean isEditing, OggettoBulk model) {
-        if (attivaEconomicaParallela) {
+    static Button[] addPartitario(Button[] buttons, boolean attivaEconomica, boolean isEditing, OggettoBulk model) {
+        if (attivaEconomica) {
             return Stream.concat(Arrays.stream(buttons),
                     Stream.of(
                             new Button(Config.getHandler().getProperties(IDocAmmEconomicaBP.class), "CRUDToolbar.partitario")
@@ -75,4 +75,6 @@ public interface IDocAmmEconomicaBP {
     }
 
     boolean isAttivaEconomica();
+
+    boolean isAttivaEconomicaPura();
 }

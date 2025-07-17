@@ -171,6 +171,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     private boolean attivoOrdini = false;
     private boolean propostaFatturaDaOrdini = false;
     protected boolean attivaEconomica = false;
+    protected boolean attivaEconomicaPura = false;
     private boolean attivaAnalitica = false;
     private boolean supervisore = false;
 
@@ -590,6 +591,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             attivoOrdini = configurazioneCnrComponentSession.isAttivoOrdini(context.getUserContext());
             propostaFatturaDaOrdini = configurazioneCnrComponentSession.propostaFatturaDaOrdini(context.getUserContext());
             attivaEconomica = configurazioneCnrComponentSession.isAttivaEconomica(context.getUserContext());
+            attivaEconomicaPura = configurazioneCnrComponentSession.isAttivaEconomicaPura(context.getUserContext());
             attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
             attivaInventaria= configurazioneCnrComponentSession.isAttivoInventariaDocumenti(context.getUserContext());
             attivoCheckImpIntrastat=Utility.createConfigurazioneCnrComponentSession().isCheckImpIntrastatFattPassiva(context.getUserContext());
@@ -2147,6 +2149,11 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     @Override
     public boolean isAttivaEconomica() {
         return attivaEconomica;
+    }
+
+    @Override
+    public boolean isAttivaEconomicaPura() {
+        return attivaEconomicaPura;
     }
 
     @Override

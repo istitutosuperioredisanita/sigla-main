@@ -69,6 +69,7 @@ public abstract class CRUDAbstractMandatoBP extends it.cnr.jada.util.action.Simp
 	private final CollapsableDetailCRUDController movimentiDare = new EconomicaDareDetailCRUDController(this);
 	private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
 	protected boolean attivaEconomica = false;
+	protected boolean attivaEconomicaPura = false;
 
 	public CRUDAbstractMandatoBP() {}
 	public CRUDAbstractMandatoBP( String function ) 
@@ -80,6 +81,7 @@ public abstract class CRUDAbstractMandatoBP extends it.cnr.jada.util.action.Simp
 	protected void init(Config config, ActionContext actioncontext) throws BusinessProcessException {
 		try {
 			attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(actioncontext.getUserContext());
+			attivaEconomicaPura = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(actioncontext.getUserContext());
 			setSupervisore(Utility.createUtenteComponentSession().isSupervisore(actioncontext.getUserContext()));
 		} catch (ComponentException|RemoteException e) {
 			throw handleException(e);
@@ -547,5 +549,10 @@ public abstract class CRUDAbstractMandatoBP extends it.cnr.jada.util.action.Simp
 	@Override
 	public boolean isAttivaEconomica() {
 		return attivaEconomica;
+	}
+
+	@Override
+	public boolean isAttivaEconomicaPura() {
+		return attivaEconomicaPura;
 	}
 }

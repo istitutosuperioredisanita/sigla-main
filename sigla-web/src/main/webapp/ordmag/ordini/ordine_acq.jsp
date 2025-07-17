@@ -17,7 +17,7 @@
 <script language="JavaScript" src="scripts/util.js"></script>
 <script language="javascript" src="scripts/css.js"></script>
 <%
-    CRUDBP bp = (CRUDOrdineAcqBP)BusinessProcess.getBusinessProcess(request);
+    CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP)BusinessProcess.getBusinessProcess(request);
     OrdineAcqBulk ordine = (OrdineAcqBulk)bp.getModel();
 %>
 <script language="JavaScript">
@@ -48,7 +48,8 @@ function doStampaOrdine() {
 				   } else if (bp.isSearching()) {
 				     bp.getController().writeFormField(out, "statoForSearch", Boolean.FALSE);
 				   } else {
-				     bp.getController().writeFormField(out, "statoForUpdate", Boolean.FALSE);
+				   	 bp.getController().writeFormLabel(out,"statoForUpdate");
+                   	 bp.getController().writeFormInput(out,null,"statoForUpdate",bp.isROStatoOrdine(),null,null);
 				   }
 				%>
             </div>
@@ -71,12 +72,7 @@ function doStampaOrdine() {
 	JSPUtils.tabbed(
 				pageContext,
 				"tab",
-				new String[][] {
-				{ "tabOrdineAcq","Ordine d'Acquisto","/ordmag/ordini/tab_ordine_acq.jsp" },
-				{ "tabOrdineFornitore","Fornitore","/ordmag/ordini/tab_ordine_fornitore.jsp" },
-				{ "tabOrdineAcqDettaglio","Dettaglio","/ordmag/ordini/tab_ordine_acq_dettagli.jsp" },
-				{ "tabOrdineAcqObbligazioni","Obbligazioni Collegate","/ordmag/ordini/tab_ordine_acq_obbligazioni.jsp" },
-				{ "tabAllegati","Allegati","/ordmag/ordini/tab_ordine_acq_allegati.jsp" }},
+				bp.getTabs(),
 				bp.getTab("tab"),
 				"center",
 				"100%",
