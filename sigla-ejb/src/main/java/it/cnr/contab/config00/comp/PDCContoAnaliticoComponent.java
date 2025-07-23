@@ -23,14 +23,18 @@
  */
 package it.cnr.contab.config00.comp;
 
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.config00.pdcep.bulk.ContoHome;
 import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
 import it.cnr.contab.config00.pdcep.bulk.Voce_epBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.CRUDComponent;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
+import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
 public class PDCContoAnaliticoComponent extends CRUDComponent {
@@ -47,5 +51,14 @@ public class PDCContoAnaliticoComponent extends CRUDComponent {
         sql.closeParenthesis();
 
         return sql;
+    }
+
+    public java.util.List<ContoBulk> findContiAnaliticiAssociatiList(UserContext userContext, Voce_analiticaBulk voceAnalitica) throws ComponentException {
+        try {
+            final ContoHome home = (ContoHome)getHome(userContext,ContoBulk.class);
+            return home.findContiAnaliticiAssociatiList(voceAnalitica);
+        } catch(it.cnr.jada.persistency.PersistencyException ex){
+            throw handleException(ex);
+        }
     }
 }

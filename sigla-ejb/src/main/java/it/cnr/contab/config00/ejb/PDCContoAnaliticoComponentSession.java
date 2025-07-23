@@ -17,8 +17,13 @@
 
 package it.cnr.contab.config00.ejb;
 
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
+import it.cnr.jada.UserContext;
+
 import javax.ejb.Remote;
 
 @Remote
 public interface PDCContoAnaliticoComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
+    java.util.List<ContoBulk> findContiAnaliticiAssociatiList(UserContext userContext, Voce_analiticaBulk voceAnalitica) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 }

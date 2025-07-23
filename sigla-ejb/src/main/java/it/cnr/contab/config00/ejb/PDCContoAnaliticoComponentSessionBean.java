@@ -18,6 +18,10 @@
 package it.cnr.contab.config00.ejb;
 
 import it.cnr.contab.config00.comp.PDCContoAnaliticoComponent;
+import it.cnr.contab.config00.comp.Parametri_uoComponent;
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
+import it.cnr.jada.UserContext;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
@@ -33,5 +37,24 @@ public class PDCContoAnaliticoComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 	}
 	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
 		return new PDCContoAnaliticoComponentSessionBean();
+	}
+
+	public java.util.List<ContoBulk> findContiAnaliticiAssociatiList(UserContext userContext, Voce_analiticaBulk voceAnalitica) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+		pre_component_invocation(userContext,componentObj);
+		try {
+			java.util.List<ContoBulk> result = ((PDCContoAnaliticoComponent)componentObj).findContiAnaliticiAssociatiList(userContext,voceAnalitica);
+			component_invocation_succes(userContext,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(userContext,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(userContext,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(userContext,componentObj,e);
+		}
 	}
 }

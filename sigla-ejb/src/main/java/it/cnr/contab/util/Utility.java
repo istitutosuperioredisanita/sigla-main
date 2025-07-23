@@ -653,4 +653,7 @@ public final class Utility {
 	public static AsyncConsSostitutivaComponentSession createAsyncConsSostitutivaComponentSession() throws javax.ejb.EJBException{
 		return (AsyncConsSostitutivaComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOEPCOAN00_EJB_ConsSostitutivaComponentSession", AsyncConsSostitutivaComponentSession.class);
 	}
+	public static PDCContoAnaliticoComponentSession createPDCContoAnaliticoComponentSession() throws javax.ejb.EJBException{
+		return (PDCContoAnaliticoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_PDCContoAnaliticoComponentSession", PDCContoAnaliticoComponentSession.class);
+	}
 }

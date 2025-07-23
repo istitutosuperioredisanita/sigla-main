@@ -94,9 +94,15 @@ public interface Configurazione_cnrComponentSession extends it.cnr.jada.ejb.CRUD
 
     Boolean getGestioneImpegnoChiusuraForzataResiduo(UserContext userContext) throws ComponentException, java.rmi.RemoteException;
 
+    Boolean isAttivaFinanziaria(UserContext userContext) throws ComponentException, RemoteException;
+
+    Boolean isAttivaFinanziaria(UserContext userContext, int esercizio) throws ComponentException, RemoteException;
+
     Boolean isAttivaEconomica(UserContext userContext) throws ComponentException, RemoteException;
 
     Boolean isAttivaEconomicaPura(UserContext userContext) throws ComponentException, RemoteException;
+
+    Boolean isAttivaEconomicaPura(UserContext userContext, int esercizio) throws ComponentException, RemoteException;
 
     Boolean isAttivaEconomicaParallela(UserContext userContext) throws ComponentException, RemoteException;
 

@@ -27,7 +27,7 @@
         </tr>
     </table>
     <% } %>
-    <% if (bp.isAttivaAnalitica()) { %>
+    <% if (bp.isAttivaAnalitica() && model!=null) { %>
     <table cellpadding="2">
         <tr>
             <% model.writeFormField(out, "imCostoEco", FormController.VIEW, bp.getFieldValidationMap(), bp.getParentRoot().isBootstrap()); %>

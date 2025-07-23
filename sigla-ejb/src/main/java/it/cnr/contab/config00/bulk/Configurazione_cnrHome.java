@@ -314,7 +314,7 @@ public class Configurazione_cnrHome extends BulkHome {
                                 Configurazione_cnrBulk.SK_TIPO_ECONOMICO_PATRIMONIALE)
                 )
                 .map(Configurazione_cnrBulk::getVal01)
-                .map(s -> !Boolean.valueOf(s.equalsIgnoreCase("N")))
+                .map(s -> !s.equalsIgnoreCase("N"))
                 .orElse(Boolean.FALSE);
     }
 
@@ -335,7 +335,7 @@ public class Configurazione_cnrHome extends BulkHome {
                                 Configurazione_cnrBulk.SK_TIPO_ECONOMICO_PATRIMONIALE)
                 )
                 .map(Configurazione_cnrBulk::getVal01)
-                .map(s -> Boolean.valueOf(s.equalsIgnoreCase("PARALLELA")))
+                .map(s -> s.equalsIgnoreCase("PARALLELA"))
                 .orElse(Boolean.FALSE);
     }
 
@@ -356,7 +356,7 @@ public class Configurazione_cnrHome extends BulkHome {
                                 Configurazione_cnrBulk.SK_TIPO_ECONOMICO_PATRIMONIALE)
                 )
                 .map(Configurazione_cnrBulk::getVal01)
-                .map(s -> Boolean.valueOf(s.equalsIgnoreCase("PURA")))
+                .map(s -> s.equalsIgnoreCase("PURA"))
                 .orElse(Boolean.FALSE);
     }
 

@@ -26,14 +26,11 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.core.bulk.V_persona_fisicaBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.contab.config00.bulk.CigBulk;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
 import it.cnr.contab.config00.contratto.bulk.Procedure_amministrativeBulk;
-import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk;
@@ -64,14 +61,14 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class OrdineAcqBulk extends OrdineAcqBase
         implements IDocumentoAmministrativoBulk,
         ICancellatoLogicamente,
         Voidable,
         IDefferUpdateSaldi,
-        AllegatoParentBulk,
-        IDocumentoDetailEcoCogeBulk {
+        AllegatoParentBulk {
     public final static String STATO_ANNULLATO = "ANN";
     public final static String STATO_IN_APPROVAZIONE = "APP";
     public final static String STATO_ALLA_FIRMA = "INV";
@@ -110,6 +107,7 @@ public class OrdineAcqBulk extends OrdineAcqBase
 
     protected BulkList richiesteDaTrasformareInOrdineColl = new BulkList();
     private Boolean aggiornaImpegniInAutomatico = false;
+    private boolean isAttivaEconomicaPura;
     private boolean verificaContratto = true;
     protected TerzoBulk fornitore;
     private java.util.Collection modalita;
@@ -188,7 +186,6 @@ public class OrdineAcqBulk extends OrdineAcqBase
     private CupBulk cup = new CupBulk();
     private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
 
-    private ContoBulk voce_ep = new ContoBulk();
     private BulkList<OrdineAcqEcoBulk> righeEconomica = new BulkList<>();
 
     /**
@@ -989,7 +986,7 @@ public class OrdineAcqBulk extends OrdineAcqBase
             stato.put(STATO_IN_APPROVAZIONE, "In Approvazione");
             if ( isOrdineMepa())
                 stato.put(STATO_DEFINITIVO, "Definitivo");
-            else if ( isOrdineContabilizzato)
+            else if ( isOrdineContabilizzato())
                 stato.put(STATO_ALLA_FIRMA, "Alla firma");
         } else {
             stato.put(STATO_INSERITO, "Inserito");
@@ -1760,52 +1757,6 @@ public class OrdineAcqBulk extends OrdineAcqBase
         return result;
     }
 
-    @Override
-    public IScadenzaDocumentoContabileBulk getScadenzaDocumentoContabile() {
-        return null;
-    }
-
-    @Override
-    public IDocumentoCogeBulk getFather() {
-        return this;
-    }
-
-    @Override
-    public ContoBulk getVoce_ep() {
-        return voce_ep;
-    }
-
-    @Override
-    public void setVoce_ep(ContoBulk voce_ep) {
-        this.voce_ep = voce_ep;
-    }
-
-    @Override
-    public Integer getEsercizio_voce_ep() {
-        return Optional.ofNullable(this.getVoce_ep())
-                .map(ContoBulk::getEsercizio)
-                .orElse(null);
-    }
-
-    @Override
-    public void setEsercizio_voce_ep(Integer esercizio_voce_ep) {
-        Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setEsercizio(esercizio_voce_ep));
-    }
-
-    @Override
-    public String getCd_voce_ep() {
-        return Optional.ofNullable(this.getVoce_ep())
-                .map(ContoBulk::getCd_voce_ep)
-                .orElse(null);
-    }
-
-    @Override
-    public void setCd_voce_ep(String cd_voce_ep) {
-        Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setCd_voce_ep(cd_voce_ep));
-    }
-
-
-    @Override
     public List<IDocumentoDetailAnaCogeBulk> getChildrenAna() {
         return this.getRigheEconomica().stream()
                 .filter(Objects::nonNull)
@@ -1813,24 +1764,16 @@ public class OrdineAcqBulk extends OrdineAcqBase
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public void clearChildrenAna() {
-        this.setRigheEconomica(new BulkList<>());
-    }
-
-    @Override
     public BigDecimal getImCostoEco() {
         return righeOrdineColl.stream().map(OrdineAcqRigaBulk::getImCostoEco).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    @Override
     public BigDecimal getImCostoEcoRipartito() {
         return this.getChildrenAna().stream()
                 .map(el->Optional.ofNullable(el.getImporto()).orElse(BigDecimal.ZERO))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    @Override
     public BigDecimal getImCostoEcoDaRipartire() {
         return Optional.ofNullable(this.getImCostoEco()).orElse(BigDecimal.ZERO)
                 .subtract(Optional.ofNullable(this.getImCostoEcoRipartito()).orElse(BigDecimal.ZERO));
@@ -1854,10 +1797,57 @@ public class OrdineAcqBulk extends OrdineAcqBase
         return STATO_IN_APPROVAZIONE.equals(this.getStatoOriginale());
     }
 
-    @Override
-    public OggettoBulk initializeForEdit(CRUDBP crudbp, ActionContext actioncontext) {
-        OrdineAcqBulk bulk = (OrdineAcqBulk)super.initializeForEdit(crudbp, actioncontext);
-        bulk.setStatoOriginale(bulk.getStato());
-        return bulk;
+    public void setAttivaEconomicaPura(boolean attivaEconomicaPura) {
+        isAttivaEconomicaPura = attivaEconomicaPura;
+    }
+
+    public boolean isOrdineContabilizzato() {
+        if (this.isStatoOriginaleInApprovazione()) {
+            if (this.isAttivaEconomicaPura)
+                return this.getRigheOrdineColl().stream()
+                        .noneMatch(cons->cons.getImCostoEcoDaRipartire().compareTo(BigDecimal.ZERO)!=0);
+            return this.getRigheOrdineColl().stream().flatMap(el->el.getRigheConsegnaColl().stream())
+                    .noneMatch(cons->cons.getObbligazioneScadenzario()==null);
+        }
+        return false;
+    }
+
+    public java.math.BigDecimal getImImponibileConsegne() {
+        return Optional.ofNullable(this.getRigheOrdineColl())
+                .map(Collection::stream)
+                .orElse(Stream.empty())
+                .map(OrdineAcqRigaBulk::getImImponibileConsegne)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public java.math.BigDecimal getImIvaConsegne() {
+        return Optional.ofNullable(this.getRigheOrdineColl())
+                .map(Collection::stream)
+                .orElse(Stream.empty())
+                .map(OrdineAcqRigaBulk::getImIvaConsegne)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public java.math.BigDecimal getImIvaDConsegne() {
+        return Optional.ofNullable(this.getRigheOrdineColl())
+                .map(Collection::stream)
+                .orElse(Stream.empty())
+                .map(OrdineAcqRigaBulk::getImIvaDConsegne)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public java.math.BigDecimal getImTotaleConsegne() {
+        return Optional.ofNullable(this.getRigheOrdineColl())
+                .map(Collection::stream)
+                .orElse(Stream.empty())
+                .map(OrdineAcqRigaBulk::getImTotaleConsegne)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public boolean isImportiConsegneModificati() {
+        return Optional.ofNullable(this.getRigheOrdineColl())
+                .map(Collection::stream)
+                .orElse(Stream.empty())
+                .anyMatch(OrdineAcqRigaBulk::isImportiConsegneModificati);
     }
 }

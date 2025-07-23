@@ -18,19 +18,13 @@
                             .map(OrdineAcqBulk.class::cast)
                             .orElse(null);
 %>
-<div class="Panel card p-2 mb-2 card-shadow">
-    <% if (bp.isAttivaEconomica()) { %>
-    <table cellpadding="2">
-        <tr>
-			<td><% bp.getController().writeFormLabel(out,"find_voce_ep");%> </td>
-			<td><% bp.getController().writeFormInput(out,null,"find_voce_ep",!ordine.getRigheEconomica().isEmpty(),null,null);%></td>
-        </tr>
-    </table>
-    <% } %>
-</div>
 <div class="mt-1">
     <% bp.getProposeRigheEcoTestata().writeHTMLTable(pageContext, "propose", true, false, true,"100%","100px", true); %>
     <table class="Panel mt-1 p-2 card card-shadow" cellpadding="2">
+        <tr>
+            <td><% bp.getProposeRigheEcoTestata().writeFormLabel(out, "find_voce_eco_searchtool"); %></td>
+            <td colspan="7" class="w-100"><% bp.getProposeRigheEcoTestata().writeFormInput(out, "find_voce_eco_searchtool"); %></td>
+        </tr>
         <tr>
             <td><% bp.getProposeRigheEcoTestata().writeFormLabel(out, "find_voce_ana_searchtool"); %></td>
             <td colspan="7" class="w-100"><% bp.getProposeRigheEcoTestata().writeFormInput(out, "find_voce_ana_searchtool"); %></td>

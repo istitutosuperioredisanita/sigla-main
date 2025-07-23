@@ -73,4 +73,15 @@
         <div class="col-md-3"><% bp.getRighe().writeFormField(out, "imIvaD"); %></div>
         <div class="col-md-3"><% bp.getRighe().writeFormField(out, "imTotaleRiga"); %></div>
     </div>
+    <% if (riga!=null && riga.isImportiConsegneModificati()) { %>
+    <div class="h3 text-dark mb-1">Importi Rettificati</div>
+    <div class="Group card border-dark p-2 mb-2">
+        <div class="form-row">
+            <div class="col-md-3"><% bp.getRighe().writeFormField(out, "imImponibileConsegne"); %></div>
+            <div class="col-md-3"><% bp.getRighe().writeFormField(out, "imIvaConsegne"); %></div>
+            <div class="col-md-3"><% bp.getRighe().writeFormField(out, "imIvaDConsegne"); %></div>
+            <div class="col-md-3"><% bp.getRighe().writeFormField(out, "imTotaleConsegne"); %></div>
+        </div>
+    </div>
+    <% } %>
 </div>

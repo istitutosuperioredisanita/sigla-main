@@ -17,14 +17,12 @@
 
 package it.cnr.contab.ordmag.ordini.bulk;
 
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
 
 import java.util.Optional;
 
-public class OrdineAcqEcoBulk extends OrdineAcqEcoBase implements IDocumentoDetailAnaCogeBulk {
+public class OrdineAcqEcoBulk extends OrdineAcqEcoBase  {
     private OrdineAcqBulk ordineAcq;
 
     protected Voce_analiticaBulk voce_analitica = new Voce_analiticaBulk();
@@ -101,10 +99,6 @@ public class OrdineAcqEcoBulk extends OrdineAcqEcoBase implements IDocumentoDeta
     @Override
     public void setCd_centro_responsabilita(String cd_centro_responsabilita) {
         Optional.ofNullable(this.getLinea_attivita()).ifPresent(el->el.setCd_centro_responsabilita(cd_centro_responsabilita));
-    }
-
-    public IDocumentoDetailEcoCogeBulk getFather() {
-        return getOrdineAcq();
     }
 
     public OrdineAcqBulk getOrdineAcq() {

@@ -15,13 +15,13 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package it.cnr.contab.coepcoan00.bp;
+package it.cnr.contab.ordmag.ordini.bp;
 
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqEcoBulk;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaEcoBulk;
 import it.cnr.contab.util.EuroFormat;
-import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.BulkInfo;
-import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.FormController;
 import it.cnr.jada.util.jsp.TableCustomizer;
@@ -33,21 +33,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class DetailEcoCogeCRUDController extends CollapsableDetailCRUDController implements TableCustomizer {
-    public DetailEcoCogeCRUDController(Class class1, FormController formcontroller) {
-        this(
-                "Dati Analitici",
-                class1,
-                "righeEconomica",
-                formcontroller
-        );
-    }
-    public DetailEcoCogeCRUDController(String s, Class class1, String s1, FormController formcontroller) {
+public class ResultRigheEcoTestataCRUDController extends CollapsableDetailCRUDController implements TableCustomizer {
+    public ResultRigheEcoTestataCRUDController(String s, Class class1, String s1, FormController formcontroller) {
         super(s, class1, s1, formcontroller);
         this.setCollapsed(Boolean.FALSE);
     }
 
-    public DetailEcoCogeCRUDController(String s, Class class1, String s1, FormController formcontroller, boolean flag) {
+    public ResultRigheEcoTestataCRUDController(String s, Class class1, String s1, FormController formcontroller, boolean flag) {
         super(s, class1, s1, formcontroller, flag);
     }
 
@@ -79,7 +71,7 @@ public class DetailEcoCogeCRUDController extends CollapsableDetailCRUDController
         final EuroFormat euroFormat = new EuroFormat();
         final long numberOfColspan = Collections.list(BulkInfo.getBulkInfo(this.getModelClass())
                 .getColumnFieldProperties("default")).stream().count();
-        final List<IDocumentoDetailAnaCogeBulk> detailAnaCogeBulks = getDetails();
+        final List<OrdineAcqEcoBulk> detailAnaCogeBulks = getDetails();
         if (Optional.ofNullable(detailAnaCogeBulks).map(detailAnaCogeBulks1 -> !detailAnaCogeBulks1.isEmpty()).orElse(Boolean.FALSE) ) {
             final BigDecimal totalMovimento = detailAnaCogeBulks.stream()
                     .map(el->Optional.ofNullable(el.getImporto()).orElse(BigDecimal.ZERO))

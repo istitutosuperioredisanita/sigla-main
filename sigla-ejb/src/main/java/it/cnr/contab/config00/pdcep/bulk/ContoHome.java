@@ -27,7 +27,9 @@ import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -136,4 +138,14 @@ public class ContoHome extends Voce_epHome {
 		sqlBuilder.addSQLNOTINClause(FindClause.AND, "CD_VOCE_EP", sqlBuilderNotIN);
 		return sqlBuilder;
 	}
+
+    public java.util.List<ContoBulk> findContiAnaliticiAssociatiList(Voce_analiticaBulk voceAnalitica) throws PersistencyException {
+        final PersistentHome home = getHomeCache().getHome(Voce_analiticaBulk.class);
+        SQLBuilder sql = home.createSQLBuilder();
+        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, voceAnalitica.getEsercizio());
+        sql.addClause(FindClause.AND, "cd_voce_ana", SQLBuilder.EQUALS, voceAnalitica.getCd_voce_ana());
+        sql.addOrderBy("cd_voce_ana");
+        List<Voce_analiticaBulk> resultAnalitica = home.fetchAll(sql);
+        return resultAnalitica.stream().map(Voce_analiticaBulk::getVoce_ep).distinct().collect(Collectors.toList());
+    }
 }

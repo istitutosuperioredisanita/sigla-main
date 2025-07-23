@@ -118,15 +118,24 @@
 	<columnFieldProperty
 			name="esercizio" />
 	<columnFieldProperty
-			name="cd_voce_ana" />
+			name="cd_voce_ana"
+			headerLabel="Voce Analitica"
+			label="Codice"/>
 	<columnFieldProperty
-			name="ds_voce_ana" />
+			name="ds_voce_ana"
+			headerLabel="Voce Analitica"
+			label="Descrizione"/>
 	<columnFieldProperty
-			name="cd_voce_ep" />
+			name="cd_voce_ep"
+			headerLabel="Voce Economica"
+			label="Codice"/>
 	<columnFieldProperty
-			name="ds_voce_ep" />
+			name="ds_voce_ep"
+			headerLabel="Voce Economica"
+			label="Descrizione"/>
 	<columnFieldProperty
-			name="fl_default" />
+			name="fl_default"
+			label="Default"/>
 
 	<columnSet
 		name="voceep">

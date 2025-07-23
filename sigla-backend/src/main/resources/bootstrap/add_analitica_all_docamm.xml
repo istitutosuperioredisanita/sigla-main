@@ -789,4 +789,13 @@
         <dropNotNullConstraint tableName="missione_riga_eco" columnName="esercizio_voce_ana" columnDataType="SMALLINT"/>
         <dropNotNullConstraint tableName="missione_riga_eco" columnName="cd_voce_ana" columnDataType="VARCHAR(20)"/>
     </changeSet>
+
+    <changeSet author="raffaele.pagano" id="remove_column_voce_ep_ordine_acq">
+        <dropForeignKeyConstraint baseTableName="ordine_acq" constraintName="fk_ordine_acq18"/>
+        <dropIndex indexName="fx_ordine_acq18" tableName="ordine_acq"/>
+        <dropColumn tableName="ORDINE_ACQ">
+            <column name="esercizio_voce_ep"/>
+            <column name="cd_voce_ep"/>
+        </dropColumn>
+    </changeSet>
 </databaseChangeLog>

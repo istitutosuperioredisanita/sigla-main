@@ -504,6 +504,60 @@
 			formatName="it.cnr.contab.util.EuroFormat"
 			label="Importo da Ripartire" />
 
+	<fieldProperty
+			name="imCostoEcoConsegne"
+			property="imCostoEcoConsegne"
+			inputType="ROTEXT"
+			style="text-align: right"
+			inputSize="20"
+			formatName="it.cnr.contab.util.EuroFormat"
+			label="Importo" />
+	<fieldProperty
+			name="imCostoEcoRipartitoConsegne"
+			property="imCostoEcoRipartitoConsegne"
+			inputType="ROTEXT"
+			style="text-align: right"
+			inputSize="20"
+			formatName="it.cnr.contab.util.EuroFormat"
+			label="Importo Ripartito" />
+	<fieldProperty
+			name="imCostoEcoDaRipartireConsegne"
+			property="imCostoEcoDaRipartireConsegne"
+			inputType="ROTEXT"
+			style="text-align: right"
+			inputSize="20"
+			formatName="it.cnr.contab.util.EuroFormat"
+			label="Importo da Ripartire" />
+
+	<fieldProperty
+			name="imImponibileConsegne"
+			property="imImponibileConsegne"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.GenericImportoFormat"
+			enabledOnEdit="false"
+			label="Imponibile" />
+	<fieldProperty
+			name="imIvaConsegne"
+			property="imIvaConsegne"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.GenericImportoFormat"
+			enabledOnEdit="false"
+			label="Iva" />
+	<fieldProperty
+			name="imIvaDConsegne"
+			property="imIvaDConsegne"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.GenericImportoFormat"
+			enabledOnEdit="false"
+			label="Iva Detraibile" />
+	<fieldProperty
+			name="imTotaleConsegne"
+			property="imTotaleConsegne"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.GenericImportoFormat"
+			enabledOnEdit="false"
+			label="Totale" />
+
 	<columnSet
 		name="righeSet">
 		<columnFieldProperty
@@ -640,6 +694,15 @@
 	<formFieldProperty name="imCostoEco" />
 	<formFieldProperty name="imCostoEcoRipartito" />
 	<formFieldProperty name="imCostoEcoDaRipartire" />
+
+	<formFieldProperty name="imCostoEcoConsegne" />
+	<formFieldProperty name="imCostoEcoRipartitoConsegne" />
+	<formFieldProperty name="imCostoEcoDaRipartireConsegne" />
+
+	<formFieldProperty name="imImponibileConsegne" />
+	<formFieldProperty name="imIvaConsegne" />
+	<formFieldProperty name="imIvaDConsegne" />
+	<formFieldProperty name="imTotaleConsegne" />
 
 	<findFieldProperty
 		name="cdCds" />

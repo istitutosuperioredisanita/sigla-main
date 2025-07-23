@@ -33,6 +33,7 @@ import it.cnr.jada.util.RemoteIterator;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import java.rmi.RemoteException;
+import java.util.List;
 
 @Stateless(name = "CNRORDMAG00_EJB_OrdineAcqComponentSession")
 public class OrdineAcqComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements OrdineAcqComponentSession {

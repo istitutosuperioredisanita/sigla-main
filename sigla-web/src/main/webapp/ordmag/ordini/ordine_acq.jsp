@@ -48,8 +48,7 @@ function doStampaOrdine() {
 				   } else if (bp.isSearching()) {
 				     bp.getController().writeFormField(out, "statoForSearch", Boolean.FALSE);
 				   } else {
-				   	 bp.getController().writeFormLabel(out,"statoForUpdate");
-                   	 bp.getController().writeFormInput(out,null,"statoForUpdate",bp.isROStatoOrdine(),null,null);
+				   	 bp.getController().writeFormField(out, "statoForUpdate", Boolean.FALSE);
 				   }
 				%>
             </div>
@@ -67,6 +66,17 @@ function doStampaOrdine() {
             <div class="col-md-3"><% bp.getController().writeFormField(out, "imIvaD", Boolean.FALSE);%></div>
             <div class="col-md-3"><% bp.getController().writeFormField(out, "imTotaleOrdine", Boolean.FALSE);%></div>
         </div>
+        <% if (ordine!=null && ordine.isImportiConsegneModificati()) { %>
+        <div class="h3 text-dark mb-1">Importi Rettificati</div>
+        <div class="Group card border-dark p-2 mb-2">
+            <div class="form-row">
+                <div class="col-md-3"><% bp.getController().writeFormField(out, "imImponibileConsegne"); %></div>
+                <div class="col-md-3"><% bp.getController().writeFormField(out, "imIvaConsegne"); %></div>
+                <div class="col-md-3"><% bp.getController().writeFormField(out, "imIvaDConsegne"); %></div>
+                <div class="col-md-3"><% bp.getController().writeFormField(out, "imTotaleConsegne"); %></div>
+            </div>
+        </div>
+        <% } %>
 	</div>
 	<%
 	JSPUtils.tabbed(

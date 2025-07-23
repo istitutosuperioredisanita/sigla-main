@@ -8,14 +8,40 @@
 		it.cnr.contab.docamm00.docs.bulk.*,
 		it.cnr.contab.doccont00.core.bulk.*,
 		it.cnr.contab.coepcoan00.core.bulk.*,
-		it.cnr.contab.ordmag.ordini.bp.*"
+		it.cnr.contab.docamm00.bp.*,
+        it.cnr.contab.ordmag.ordini.bp.*"
 %>
 <%
     CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP)BusinessProcess.getBusinessProcess(request);
+    IDocumentoDetailEcoCogeBulk model =
+                    Optional.ofNullable(bp.getRighe().getModel())
+                        .filter(IDocumentoDetailEcoCogeBulk.class::isInstance)
+                        .map(IDocumentoDetailEcoCogeBulk.class::cast)
+                        .orElse(null);
 %>
+<div class="Panel card p-2 mb-2 card-shadow">
+    <% if (bp.isAttivaEconomica()) { %>
+    <table cellpadding="2">
+        <tr>
+			<td><% bp.getRighe().writeFormLabel(out,"find_voce_ep");%> </td>
+			<td><% bp.getRighe().writeFormInput(out,null,"find_voce_ep");%></td>
+        </tr>
+    </table>
+    <% } %>
+    <% if (bp.isAttivaAnalitica() && model!=null) { %>
+    <table cellpadding="2">
+        <tr>
+            <% model.writeFormField(out, "imCostoEcoConsegne", FormController.VIEW, bp.getFieldValidationMap(), bp.getParentRoot().isBootstrap()); %>
+            <% model.writeFormField(out, "imCostoEcoRipartitoConsegne", FormController.VIEW, bp.getFieldValidationMap(), bp.getParentRoot().isBootstrap()); %>
+            <% model.writeFormField(out, "imCostoEcoDaRipartireConsegne", FormController.VIEW, bp.getFieldValidationMap(), bp.getParentRoot().isBootstrap()); %>
+        </tr>
+    </table>
+    <% } %>
+</div>
+<% if (bp.isAttivaAnalitica()) { %>
 <div class="mt-1">
     <% bp.getResultRigheEcoDettaglio().writeHTMLTable(pageContext, "default", false, false, false,"100%","100px", true); %>
-    <% if (!bp.getResultRigheEcoDettaglio().isCollapsed()) { %>
+    <% if (!bp.getResultRigheEcoDettaglio().isCollapsed() && Optional.ofNullable(bp.getResultRigheEcoDettaglio().getModel()).isPresent() && bp.isAttivaEconomicaPura()) { %>
     <table class="Panel mt-1 p-2 card card-shadow" cellpadding="2">
         <tr>
             <td><% bp.getResultRigheEcoDettaglio().writeFormLabel(out, "find_voce_ana_searchtool"); %></td>
@@ -30,5 +56,7 @@
         </tr>
     </table>
     <% } %>
-    <% bp.getResultRigheEcoTestata().closeHTMLTable(pageContext);%>
+    <% bp.getResultRigheEcoDettaglio().closeHTMLTable(pageContext);%>
 </div>
+<% } %>
+

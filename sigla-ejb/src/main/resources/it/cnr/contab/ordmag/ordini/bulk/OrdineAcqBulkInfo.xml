@@ -736,14 +736,35 @@
 		keysProperty="motivoEsclusioneCigSIOPEKeys"
 		enabledOnSearch="true"
 		label="Motivo assenza CIG"/>
+
 	<fieldProperty
-			name="find_voce_ep"
-			property="voce_ep"
-			inputType="SEARCHTOOL"
-			label="Conto EP"
-			nullable="false"
-			formName="searchtool"
-			enabledOnSearch="false" />
+			name="imImponibileConsegne"
+			property="imImponibileConsegne"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.GenericImportoFormat"
+			enabledOnEdit="false"
+			label="Imponibile" />
+	<fieldProperty
+			name="imIvaConsegne"
+			property="imIvaConsegne"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.GenericImportoFormat"
+			enabledOnEdit="false"
+			label="Iva" />
+	<fieldProperty
+			name="imIvaDConsegne"
+			property="imIvaDConsegne"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.GenericImportoFormat"
+			enabledOnEdit="false"
+			label="Iva Detraibile" />
+	<fieldProperty
+			name="imTotaleConsegne"
+			property="imTotaleConsegne"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.GenericImportoFormat"
+			enabledOnEdit="false"
+			label="Totale" />
 
 	<form
 		name="searchtool">
@@ -891,7 +912,11 @@
 			name="terminiPagamento" />
 	<formFieldProperty
 			name="modalitaPagamento" />
-	<formFieldProperty name="find_voce_ep" />
+
+	<formFieldProperty name="imImponibileConsegne" />
+	<formFieldProperty name="imIvaConsegne" />
+	<formFieldProperty name="imIvaDConsegne" />
+	<formFieldProperty name="imTotaleConsegne" />
 
 	<findFieldProperty
 		name="cdCds" />

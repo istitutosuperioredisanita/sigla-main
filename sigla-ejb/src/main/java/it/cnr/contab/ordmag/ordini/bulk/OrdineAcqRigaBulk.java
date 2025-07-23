@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
@@ -809,4 +810,68 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 				});
 		return result;
 	}
+
+	public java.math.BigDecimal getImImponibileConsegne() {
+		return Optional.ofNullable(this.getRigheConsegnaColl())
+				.map(Collection::stream)
+				.orElse(Stream.empty())
+				.map(OrdineAcqConsegnaBulk::getImImponibile)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	public java.math.BigDecimal getImIvaConsegne() {
+		return Optional.ofNullable(this.getRigheConsegnaColl())
+				.map(Collection::stream)
+				.orElse(Stream.empty())
+				.map(OrdineAcqConsegnaBulk::getImIva)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	public java.math.BigDecimal getImIvaDConsegne() {
+		return Optional.ofNullable(this.getRigheConsegnaColl())
+				.map(Collection::stream)
+				.orElse(Stream.empty())
+				.map(OrdineAcqConsegnaBulk::getImIvaD)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	public java.math.BigDecimal getImTotaleConsegne() {
+		return Optional.ofNullable(this.getRigheConsegnaColl())
+				.map(Collection::stream)
+				.orElse(Stream.empty())
+				.map(OrdineAcqConsegnaBulk::getImTotaleConsegna)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	public boolean isImportiConsegneModificati() {
+		return this.getImImponibileConsegne().compareTo(this.getIm_imponibile())!=0 ||
+				this.getImIvaConsegne().compareTo(this.getIm_iva())!=0 ||
+				this.getImIvaDConsegne().compareTo(this.getImIvaD())!=0 ||
+				this.getImTotaleConsegne().compareTo(this.getImTotaleRiga())!=0;
+	}
+
+	public BigDecimal getImCostoEcoConsegne() {
+		return Optional.ofNullable(this.getRigheConsegnaColl())
+				.map(Collection::stream)
+				.orElseGet(Stream::empty)
+				.map(OrdineAcqConsegnaBulk::getImCostoEco)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	public BigDecimal getImCostoEcoRipartitoConsegne() {
+		return Optional.ofNullable(this.getRigheConsegnaColl())
+				.map(Collection::stream)
+				.orElseGet(Stream::empty)
+				.map(OrdineAcqConsegnaBulk::getImCostoEcoRipartito)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	public BigDecimal getImCostoEcoDaRipartireConsegne() {
+		return Optional.ofNullable(this.getRigheConsegnaColl())
+				.map(Collection::stream)
+				.orElseGet(Stream::empty)
+				.map(OrdineAcqConsegnaBulk::getImCostoEcoDaRipartire)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
 }

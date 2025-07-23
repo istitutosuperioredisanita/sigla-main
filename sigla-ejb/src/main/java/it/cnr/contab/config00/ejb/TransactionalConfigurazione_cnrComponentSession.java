@@ -557,6 +557,43 @@ public class TransactionalConfigurazione_cnrComponentSession extends it.cnr.jada
     }
 
     @Override
+    public Boolean isAttivaFinanziaria(UserContext userContext) throws ComponentException, RemoteException {
+        try {
+            return (java.lang.Boolean) invoke("isAttivaFinanziaria", new Object[]{
+                    userContext});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public Boolean isAttivaFinanziaria(UserContext userContext, int esercizio) throws ComponentException, RemoteException {
+        try {
+            return (java.lang.Boolean) invoke("isAttivaFinanziaria", new Object[]{
+                    userContext,
+                    esercizio});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
     public Boolean isAttivaEconomica(UserContext userContext) throws ComponentException, RemoteException {
         try {
             return (java.lang.Boolean) invoke("isAttivaEconomica", new Object[]{
@@ -579,6 +616,25 @@ public class TransactionalConfigurazione_cnrComponentSession extends it.cnr.jada
         try {
             return (java.lang.Boolean) invoke("isAttivaEconomicaPura", new Object[]{
                     userContext});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public Boolean isAttivaEconomicaPura(UserContext userContext, int esercizio) throws ComponentException, RemoteException {
+        try {
+            return (java.lang.Boolean) invoke("isAttivaEconomicaPura", new Object[]{
+                    userContext,
+                    esercizio});
         } catch (java.rmi.RemoteException e) {
             throw e;
         } catch (java.lang.reflect.InvocationTargetException e) {

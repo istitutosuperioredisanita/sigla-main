@@ -38,12 +38,28 @@
 			label="Descrizione"
 			caseSensitiveSearch="false" />
 	<fieldProperty
+			name="cd_voce_ep"
+			property="voce_analitica.cd_voce_ep"
+			inputType="TEXT"
+			maxLength="45"
+			enabledOnEdit="true"
+			enabledOnSearch="true"
+			nullable="false"
+			label="Conto Economico" />
+	<fieldProperty
 			name="find_voce_ana_searchtool"
 			property="voce_analitica"
 			formName="searchtool"
 			inputType="SEARCHTOOL"
 			enabledOnSearch="true"
 			label="Conto Analitico" />
+	<fieldProperty
+			name="find_voce_eco_searchtool"
+			property="voce_analitica.voce_ep"
+			formName="searchtool"
+			inputType="SEARCHTOOL"
+			enabledOnSearch="true"
+			label="Conto Economico" />
 	<fieldProperty
 			name="cd_linea_attivita"
 			property="linea_attivita.cd_linea_attivita"
@@ -95,9 +111,11 @@
 			inputType="TEXT"
 			label="Importo"/>
 
+	<formFieldProperty name="cd_voce_ep" />
 	<formFieldProperty name="cd_voce_ana" />
 	<formFieldProperty name="ds_voce_ana" />
 	<formFieldProperty name="find_voce_ana_searchtool" />
+	<formFieldProperty name="find_voce_eco_searchtool" />
 	<formFieldProperty name="cd_linea_attivita" />
 	<formFieldProperty name="ds_linea_attivita" />
 	<formFieldProperty name="find_linea_attivita" />
@@ -105,12 +123,14 @@
 	<formFieldProperty name="cd_centro_responsabilita" />
 	<formFieldProperty name="importo" />
 
+	<columnFieldProperty name="cd_voce_ep" />
 	<columnFieldProperty name="cd_voce_ana" />
 	<columnFieldProperty name="cd_centro_responsabilita" />
 	<columnFieldProperty name="cd_linea_attivita" />
 	<columnFieldProperty name="importo" />
 
 	<columnSet name="propose">
+		<columnFieldProperty name="cd_voce_ep" />
 		<columnFieldProperty name="cd_voce_ana" />
 		<columnFieldProperty name="cd_centro_responsabilita" />
 		<columnFieldProperty name="cd_linea_attivita" />

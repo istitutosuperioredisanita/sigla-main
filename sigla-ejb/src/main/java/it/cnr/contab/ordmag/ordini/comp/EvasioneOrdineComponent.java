@@ -19,6 +19,7 @@ package it.cnr.contab.ordmag.ordini.comp;
 
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_riga_ecoBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaHome;
 import it.cnr.contab.ordmag.anag00.NumerazioneMagBulk;
@@ -47,10 +48,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent implements ICRUDMgr,Cloneable,Serializable {
@@ -95,9 +93,15 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 
 		sql.addSQLClause(FindClause.AND, "ORDINE_ACQ_CONSEGNA.STATO_FATT", SQLBuilder.EQUALS, OrdineAcqConsegnaBulk.STATO_FATT_NON_ASSOCIATA);
 		sql.addSQLClause(FindClause.AND, "ORDINE_ACQ_CONSEGNA.STATO", SQLBuilder.EQUALS, OrdineAcqConsegnaBulk.STATO_INSERITA);
-		sql.addSQLClause(FindClause.AND, "ORDINE_ACQ_CONSEGNA.PG_OBBLIGAZIONE", SQLBuilder.ISNOTNULL, null);
 
-		sql.generateJoin("ordineAcqRiga", "ORDINE_ACQ_RIGA");
+		try {
+			if (!Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(context))
+				sql.addSQLClause(FindClause.AND, "ORDINE_ACQ_CONSEGNA.PG_OBBLIGAZIONE", SQLBuilder.ISNOTNULL, null);
+		} catch (RemoteException | ComponentException e) {
+			throw new ApplicationException(e);
+        }
+
+        sql.generateJoin("ordineAcqRiga", "ORDINE_ACQ_RIGA");
 
 		sql.generateJoin(OrdineAcqRigaBulk.class, OrdineAcqBulk.class, "ordineAcq", "ORDINE_ACQ");
 		sql.addSQLClause(FindClause.AND, "ORDINE_ACQ.STATO", SQLBuilder.EQUALS, OrdineAcqBulk.STATO_DEFINITIVO);
@@ -201,6 +205,7 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 
 					//Ricarico la consegna dal DB per verificare che non sia stata già evasa
 					OrdineAcqConsegnaBulk consegnaDB = (OrdineAcqConsegnaBulk) findByPrimaryKey(userContext, consegnaSelected);
+					consegnaDB.setOrdineAcqRiga(consegnaSelected.getOrdineAcqRiga());
 					if (consegnaDB.isStatoConsegnaEvasa())
 						throw new DetailedRuntimeException("La consegna " + consegnaDB.getConsegnaOrdineString() + " è stata già evasa");
 
@@ -235,7 +240,61 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 						//Ripulisco la chiave (valorizzata dall'istruzione clone) altrimenti non crea la nuova consegna
 						newConsegna.setConsegna(null);
 						newConsegna.setCrudStatus(OggettoBulk.TO_BE_CREATED);
+
 						makeBulkPersistent(userContext, newConsegna);
+
+						//Divido l'analitica
+						Map<OrdineAcqConsegnaEcoBulk,BigDecimal> mapOrig = new HashMap<>();
+						consegnaDB.setRigheEconomica(new BulkList<>(((OrdineAcqConsegnaHome)getHome(userContext, OrdineAcqConsegnaBulk.class)).findOrdineAcqConsegnaEcoList(consegnaDB)));
+						for (OrdineAcqConsegnaEcoBulk rigaEco:consegnaDB.getRigheEconomica()) {
+							mapOrig.put(rigaEco,rigaEco.getImporto());
+							rigaEco.setImporto(rigaEco.getImporto().multiply(consegnaDB.getQuantita()).divide(consegnaSelected.getQuantita(),2,RoundingMode.HALF_UP));
+							rigaEco.setToBeUpdated();
+						}
+						BigDecimal diff = consegnaDB.getImCostoEcoDaRipartire();
+						if (diff.compareTo(BigDecimal.ZERO)>0) {
+							for (OrdineAcqConsegnaEcoBulk rigaEco : consegnaDB.getRigheEconomica()) {
+								if (rigaEco.getImporto().compareTo(diff) >= 0) {
+									rigaEco.setImporto(rigaEco.getImporto().subtract(diff));
+									rigaEco.setToBeUpdated();
+									break;
+								} else {
+									diff = diff.subtract(rigaEco.getImporto());
+									rigaEco.setImporto(BigDecimal.ZERO);
+									rigaEco.setToBeUpdated();
+								}
+							}
+						} else if (diff.compareTo(BigDecimal.ZERO)<0) {
+							for (OrdineAcqConsegnaEcoBulk rigaEco : consegnaDB.getRigheEconomica()) {
+								rigaEco.setImporto(rigaEco.getImporto().add(diff));
+								rigaEco.setToBeUpdated();
+								break;
+							}
+						}
+
+						if (!consegnaSelected.isOperazioneEvasaForzata()) {
+							newConsegna = (OrdineAcqConsegnaBulk) findByPrimaryKey(userContext, newConsegna);
+							newConsegna.setOrdineAcqRiga(consegnaSelected.getOrdineAcqRiga());
+
+							for (OrdineAcqConsegnaEcoBulk rigaEco : mapOrig.keySet()) {
+								BigDecimal newImporto = mapOrig.get(rigaEco).subtract(rigaEco.getImporto());
+								if (newImporto.compareTo(BigDecimal.ZERO)>0) {
+									OrdineAcqConsegnaEcoBulk newRigaEco = (OrdineAcqConsegnaEcoBulk) rigaEco.clone();
+									newRigaEco.setKey(new OrdineAcqConsegnaEcoKey(newConsegna.getCdCds(), newConsegna.getCdUnitaOperativa(), newConsegna.getEsercizio(), newConsegna.getCdNumeratore(), newConsegna.getNumero(), newConsegna.getRiga(), newConsegna.getConsegna(), null));
+									newRigaEco.setOrdineAcqConsegna(newConsegna);
+									newRigaEco.setImporto(newImporto);
+									newRigaEco.setCrudStatus(OggettoBulk.TO_BE_CREATED);
+									newConsegna.getRigheEconomica().add(newRigaEco);
+								}
+							}
+							if (newConsegna.getImCostoEcoDaRipartire().compareTo(BigDecimal.ZERO)!=0)
+								throw new DetailedRuntimeException("La nuova consegna " + newConsegna.getConsegnaOrdineString() + " risulterebbe non coperta integralmente dall'analitica.");
+
+							newConsegna.setToBeUpdated();
+							makeBulkPersistent(userContext, newConsegna);
+						}
+
+						//Fine alimentazione analitica
 
 						if (consegnaSelected.isOperazioneEvasaForzata())
 							listaConsegneDaForzare.add(newConsegna);

@@ -34,7 +34,6 @@ import it.cnr.contab.docamm00.ejb.CategoriaGruppoInventComponentSession;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceBulk;
-import it.cnr.contab.doccont00.bp.CRUDReversaleBP;
 import it.cnr.contab.doccont00.bp.CRUDVirtualObbligazioneBP;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
@@ -81,8 +80,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
 // */
     public Forward doBringBackSearchFindUnitaMisura(ActionContext context,
                                                     OrdineAcqRigaBulk riga,
-                                                    UnitaMisuraBulk unitaMisura)
-            throws java.rmi.RemoteException {
+                                                    UnitaMisuraBulk unitaMisura) {
 
         riga.setUnitaMisura(unitaMisura);
         ((CRUDBP) context.getBusinessProcess()).setDirty(true);
@@ -102,8 +100,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
 
     public Forward doBringBackSearchFindNumerazioneOrd(ActionContext context,
                                                        OrdineAcqBulk ordine,
-                                                       NumerazioneOrdBulk num)
-            throws java.rmi.RemoteException {
+                                                       NumerazioneOrdBulk num) {
 
         ordine.setNumerazioneOrd(num);
         ((CRUDBP) context.getBusinessProcess()).setDirty(true);
@@ -121,7 +118,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         }
     }
 
-    public Forward doBlankSearchFind_contratto(ActionContext context, OrdineAcqBulk ordine) throws java.rmi.RemoteException {
+    public Forward doBlankSearchFind_contratto(ActionContext context, OrdineAcqBulk ordine) {
         try {
             ordine.setContratto(new ContrattoBulk());
             ordine.setResponsabileProcPers(null);
@@ -177,7 +174,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         return context.findDefaultForward();
     }
 
-    public Forward doBlankSearchFindBeneServizio(ActionContext context, OrdineAcqRigaBulk riga) throws java.rmi.RemoteException {
+    public Forward doBlankSearchFindBeneServizio(ActionContext context, OrdineAcqRigaBulk riga) {
 
         try {
             //imposta i valori di default per il tariffario
@@ -199,8 +196,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
 
     public Forward doBringBackSearchFindBeneServizio(ActionContext context,
                                                      OrdineAcqRigaBulk riga,
-                                                     Bene_servizioBulk bene)
-            throws java.rmi.RemoteException {
+                                                     Bene_servizioBulk bene) {
 
         riga.setBeneServizio(bene);
         ((CRUDBP) context.getBusinessProcess()).setDirty(true);
@@ -245,25 +241,8 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                 if (bene.getCategoria_gruppo() != null) {
                     ContoBulk conto = bp.recuperoContoDefault(context, bene.getCategoria_gruppo());
                     riga.setDspConto(conto);
-                    if (riga.getDspConto()!=null && riga.getOrdineAcq().getCd_voce_ep() !=null &&
-                            riga.getDspConto().getCd_voce_ep().equals(riga.getOrdineAcq().getCd_voce_ep())) {
-                        //carico analitica se presente su testata
-                        if (riga.getRigheEconomica().isEmpty()) {
-                            for (OrdineAcqEcoBulk ordineEco : riga.getOrdineAcq().getRigheEconomica()){
-                                OrdineAcqRigaEcoBulk rigaEco = new OrdineAcqRigaEcoBulk();
-                                rigaEco.setVoce_analitica(ordineEco.getVoce_analitica());
-                                rigaEco.setLinea_attivita(ordineEco.getLinea_attivita());
-                                rigaEco.setImporto(BigDecimal.ZERO);
-                                riga.addToRigheEconomica(rigaEco);
-                            }
-                        }
-                    } else {
-                        //cancello tutta la eco
-                        for (OrdineAcqRigaEcoBulk rigaEco : riga.getRigheEconomica()) {
-                            riga.removeFromRigheEconomica(riga.getRigheEconomica().indexOf(rigaEco));
-                        }
-                    }
                 }
+                bp.aggiornaAnaliticaRigaOrdine(context,riga,Boolean.TRUE);
                 bp.completeSearchTools(context, bp);
             } catch (BusinessProcessException | ValidationException e) {
                 handleException(context, e);
@@ -272,7 +251,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         return context.findDefaultForward();
     }
 
-    public Forward doBlankSearchFindObbligazioneScadenzario(ActionContext context, OrdineAcqConsegnaBulk cons) throws java.rmi.RemoteException {
+    public Forward doBlankSearchFindObbligazioneScadenzario(ActionContext context, OrdineAcqConsegnaBulk cons) {
 
         try {
             //imposta i valori di default per il tariffario
@@ -291,8 +270,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
 
     public Forward doBringBackSearchFindObbligazioneScadenzario(ActionContext context,
                                                                 OrdineAcqConsegnaBulk cons,
-                                                                Obbligazione_scadenzarioBulk obblScad)
-            throws java.rmi.RemoteException {
+                                                                Obbligazione_scadenzarioBulk obblScad) {
 
         CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP) context.getBusinessProcess();
         cons.setObbligazioneScadenzario(obblScad);
@@ -308,21 +286,18 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
 
     public Forward doBringBackSearchFindMagazzino(ActionContext context,
                                                   OrdineAcqRigaBulk riga,
-                                                  MagazzinoBulk magazzino)
-            throws java.rmi.RemoteException {
+                                                  MagazzinoBulk magazzino) {
 
         riga.setDspMagazzino(magazzino);
         gestioneConsegnaNonPresente(riga);
-        for (java.util.Iterator j = riga.getRigheConsegnaColl().iterator(); j.hasNext(); ) {
-            OrdineAcqConsegnaBulk consegna = (OrdineAcqConsegnaBulk) j.next();
+        for (OrdineAcqConsegnaBulk consegna : riga.getRigheConsegnaColl()) {
             consegna.setMagazzino(riga.getDspMagazzino());
             consegna.setToBeUpdated();
         }
         ((CRUDBP) context.getBusinessProcess()).setDirty(true);
         if (magazzino != null) {
             riga.setDspLuogoConsegna(magazzino.getLuogoConsegnaMag());
-            for (java.util.Iterator j = riga.getRigheConsegnaColl().iterator(); j.hasNext(); ) {
-                OrdineAcqConsegnaBulk consegna = (OrdineAcqConsegnaBulk) j.next();
+            for (OrdineAcqConsegnaBulk consegna : riga.getRigheConsegnaColl()) {
                 consegna.setLuogoConsegnaMag(riga.getDspLuogoConsegna());
                 consegna.setToBeUpdated();
             }
@@ -332,8 +307,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
 
     public Forward doBringBackSearchFindMagazzino(ActionContext context,
                                                   OrdineAcqConsegnaBulk cons,
-                                                  MagazzinoBulk magazzino)
-            throws java.rmi.RemoteException {
+                                                  MagazzinoBulk magazzino) {
 
         cons.setMagazzino(magazzino);
         CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP) context.getBusinessProcess();
@@ -351,14 +325,13 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         return context.findDefaultForward();
     }
 
-    public Forward doBlankSearchFindMagazzino(ActionContext context, OrdineAcqRigaBulk riga) throws java.rmi.RemoteException {
+    public Forward doBlankSearchFindMagazzino(ActionContext context, OrdineAcqRigaBulk riga) {
 
         try {
             //imposta i valori di default per il tariffario
             riga.setDspMagazzino(new MagazzinoBulk());
             riga.setDspLuogoConsegna(new LuogoConsegnaMagBulk());
-            for (java.util.Iterator j = riga.getRigheConsegnaColl().iterator(); j.hasNext(); ) {
-                OrdineAcqConsegnaBulk consegna = (OrdineAcqConsegnaBulk) j.next();
+            for (OrdineAcqConsegnaBulk consegna : riga.getRigheConsegnaColl()) {
                 consegna.setMagazzino(riga.getDspMagazzino());
                 consegna.setLuogoConsegnaMag(riga.getDspLuogoConsegna());
                 consegna.setToBeUpdated();
@@ -371,7 +344,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
     }
 
 
-    public Forward doBlankSearchFindMagazzino(ActionContext context, OrdineAcqConsegnaBulk cons) throws java.rmi.RemoteException {
+    public Forward doBlankSearchFindMagazzino(ActionContext context, OrdineAcqConsegnaBulk cons) {
 
         try {
             //imposta i valori di default per il tariffario
@@ -390,7 +363,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         }
     }
 
-    public Forward doBlankSearchCercaConto(ActionContext context, OrdineAcqConsegnaBulk cons) throws java.rmi.RemoteException {
+    public Forward doBlankSearchCercaConto(ActionContext context, OrdineAcqConsegnaBulk cons) {
 
         try {
             CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP) context.getBusinessProcess();
@@ -406,7 +379,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         }
     }
 
-    public Forward doBringBackSearchCercaConto(ActionContext context, OrdineAcqConsegnaBulk cons, ContoBulk contoBulk) throws java.rmi.RemoteException {
+    public Forward doBringBackSearchCercaConto(ActionContext context, OrdineAcqConsegnaBulk cons, ContoBulk contoBulk) {
 
         try {
             CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP) context.getBusinessProcess();
@@ -422,13 +395,10 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         }
     }
 
-    public Forward doBlankSearchCercaDspConto(ActionContext context, OrdineAcqRigaBulk riga) throws java.rmi.RemoteException {
-
+    public Forward doBlankSearchCercaDspConto(ActionContext context, OrdineAcqRigaBulk riga) {
         try {
-            CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP) context.getBusinessProcess();
             riga.setDspConto(new ContoBulk());
-            for (java.util.Iterator j = riga.getRigheConsegnaColl().iterator(); j.hasNext(); ) {
-                OrdineAcqConsegnaBulk consegna = (OrdineAcqConsegnaBulk) j.next();
+            for (OrdineAcqConsegnaBulk consegna : riga.getRigheConsegnaColl()) {
                 consegna.setContoBulk(riga.getDspConto());
                 consegna.setToBeUpdated();
             }
@@ -439,19 +409,17 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         }
     }
 
-    public Forward doBlankSearchFind_voce_ep(ActionContext context, OrdineAcqRigaBulk riga) throws java.rmi.RemoteException {
+    public Forward doBlankSearchFind_voce_ep(ActionContext context, OrdineAcqRigaBulk riga) {
         return doBlankSearchCercaDspConto(context,riga);
     }
 
     public Forward doBringBackSearchFindUnitaOperativaOrdDest(ActionContext context,
                                                               OrdineAcqRigaBulk riga,
-                                                              UnitaOperativaOrdBulk uop)
-            throws java.rmi.RemoteException {
+                                                              UnitaOperativaOrdBulk uop) {
 
         riga.setDspUopDest(uop);
         gestioneConsegnaNonPresente(riga);
-        for (java.util.Iterator j = riga.getRigheConsegnaColl().iterator(); j.hasNext(); ) {
-            OrdineAcqConsegnaBulk consegna = (OrdineAcqConsegnaBulk) j.next();
+        for (OrdineAcqConsegnaBulk consegna : riga.getRigheConsegnaColl()) {
             consegna.setUnitaOperativaOrd(riga.getDspUopDest());
             consegna.setToBeUpdated();
         }
@@ -461,8 +429,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
 
     public Forward doBringBackSearchFindUnitaOperativaOrdDest(ActionContext context,
                                                               OrdineAcqConsegnaBulk cons,
-                                                              UnitaOperativaOrdBulk uop)
-            throws java.rmi.RemoteException {
+                                                              UnitaOperativaOrdBulk uop) {
 
         cons.setUnitaOperativaOrd(uop);
         CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP) context.getBusinessProcess();
@@ -474,13 +441,12 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         return context.findDefaultForward();
     }
 
-    public Forward doBlankSearchFindUnitaOperativaOrdDest(ActionContext context, OrdineAcqRigaBulk riga) throws java.rmi.RemoteException {
+    public Forward doBlankSearchFindUnitaOperativaOrdDest(ActionContext context, OrdineAcqRigaBulk riga) {
 
         try {
             //imposta i valori di default per il tariffario
             riga.setDspUopDest(new UnitaOperativaOrdBulk());
-            for (java.util.Iterator j = riga.getRigheConsegnaColl().iterator(); j.hasNext(); ) {
-                OrdineAcqConsegnaBulk consegna = (OrdineAcqConsegnaBulk) j.next();
+            for (OrdineAcqConsegnaBulk consegna : riga.getRigheConsegnaColl()) {
                 consegna.setUnitaOperativaOrd(riga.getDspUopDest());
                 consegna.setToBeUpdated();
             }
@@ -491,7 +457,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         }
     }
 
-    public Forward doBlankSearchFindUnitaOperativaOrdDest(ActionContext context, OrdineAcqConsegnaBulk cons) throws java.rmi.RemoteException {
+    public Forward doBlankSearchFindUnitaOperativaOrdDest(ActionContext context, OrdineAcqConsegnaBulk cons) {
 
         try {
             //imposta i valori di default per il tariffario
@@ -510,13 +476,11 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
 
     public Forward doBringBackSearchFindLuogoConsegnaMag(ActionContext context,
                                                          OrdineAcqRigaBulk riga,
-                                                         LuogoConsegnaMagBulk luogo)
-            throws java.rmi.RemoteException {
+                                                         LuogoConsegnaMagBulk luogo) {
 
         riga.setDspLuogoConsegna(luogo);
         gestioneConsegnaNonPresente(riga);
-        for (java.util.Iterator j = riga.getRigheConsegnaColl().iterator(); j.hasNext(); ) {
-            OrdineAcqConsegnaBulk consegna = (OrdineAcqConsegnaBulk) j.next();
+        for (OrdineAcqConsegnaBulk consegna : riga.getRigheConsegnaColl()) {
             consegna.setLuogoConsegnaMag(riga.getDspLuogoConsegna());
             consegna.setToBeUpdated();
         }
@@ -526,8 +490,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
 
     public Forward doBringBackSearchFindLuogoConsegnaMag(ActionContext context,
                                                          OrdineAcqConsegnaBulk cons,
-                                                         LuogoConsegnaMagBulk luogo)
-            throws java.rmi.RemoteException {
+                                                         LuogoConsegnaMagBulk luogo) {
 
         cons.setLuogoConsegnaMag(luogo);
         CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP) context.getBusinessProcess();
@@ -539,13 +502,12 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         return context.findDefaultForward();
     }
 
-    public Forward doBlankSearchFindLuogoConsegnaMag(ActionContext context, OrdineAcqRigaBulk riga) throws java.rmi.RemoteException {
+    public Forward doBlankSearchFindLuogoConsegnaMag(ActionContext context, OrdineAcqRigaBulk riga) {
 
         try {
             //imposta i valori di default per il tariffario
             riga.setDspLuogoConsegna(new LuogoConsegnaMagBulk());
-            for (java.util.Iterator j = riga.getRigheConsegnaColl().iterator(); j.hasNext(); ) {
-                OrdineAcqConsegnaBulk consegna = (OrdineAcqConsegnaBulk) j.next();
+            for (OrdineAcqConsegnaBulk consegna : riga.getRigheConsegnaColl()) {
                 consegna.setLuogoConsegnaMag(riga.getDspLuogoConsegna());
                 consegna.setToBeUpdated();
             }
@@ -556,7 +518,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         }
     }
 
-    public Forward doBlankSearchFindLuogoConsegnaMag(ActionContext context, OrdineAcqConsegnaBulk cons) throws java.rmi.RemoteException {
+    public Forward doBlankSearchFindLuogoConsegnaMag(ActionContext context, OrdineAcqConsegnaBulk cons) {
 
         try {
             //imposta i valori di default per il tariffario
@@ -573,7 +535,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         }
     }
 
-    public Forward doBlankSearchFindUnitaOperativaOrd(ActionContext context, OrdineAcqBulk ordine) throws java.rmi.RemoteException {
+    public Forward doBlankSearchFindUnitaOperativaOrd(ActionContext context, OrdineAcqBulk ordine) {
 
         try {
             //imposta i valori di default per il tariffario
@@ -590,8 +552,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
 
     public Forward doBringBackSearchFindUnitaOperativaOrd(ActionContext context,
                                                           OrdineAcqBulk ordine,
-                                                          UnitaOperativaOrdBulk uop)
-            throws java.rmi.RemoteException {
+                                                          UnitaOperativaOrdBulk uop) {
         CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP) context.getBusinessProcess();
         ordine.setUnitaOperativaOrd(uop);
         bp.setDirty(true);
@@ -601,24 +562,13 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                 h.completaOrdine(context.getUserContext(), ordine);
                 try {
                     bp.setModel(context, ordine);
-                } catch (BusinessProcessException e) {
+                } catch (BusinessProcessException ignored) {
                 }
             } catch (BusinessProcessException | RemoteException | PersistenceException | PersistencyException |
                      ComponentException e) {
                 return handleException(context, e);
             }
         }
-//		try{
-//			if (riga.getUnitaMisura()!=null && riga.getUnitaMisura().getCdUnitaMisura()!=null && riga.getBeneServizio() != null && riga.getBeneServizio().getUnitaMisura() != null && riga.getUnitaMisura().getCdUnitaMisura().equals(riga.getBeneServizio().getUnitaMisura().getCdUnitaMisura())) {
-//				riga.setCoefConv(BigDecimal.ONE);
-//			} else {
-//				riga.setCoefConv(null);
-//			}
-//			return context.findDefaultForward();
-//
-//		} catch(Exception e) {
-//			return handleException(context,e);
-//		}
         return context.findDefaultForward();
     }
 
@@ -774,8 +724,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
 
     public Forward doBringBackSearchFindFornitore(ActionContext context,
                                                   OrdineAcqBulk ordine,
-                                                  TerzoBulk fornitoreTrovato)
-            throws java.rmi.RemoteException {
+                                                  TerzoBulk fornitoreTrovato) {
 
         try {
             CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP) context.getBusinessProcess();
@@ -806,8 +755,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
     }
 
     public Forward doBlankSearchFindFornitore(ActionContext context,
-                                              OrdineAcqBulk ordine)
-            throws java.rmi.RemoteException {
+                                              OrdineAcqBulk ordine) {
 
         try {
             final Boolean isStudioAssociato = Optional.ofNullable(ordine)
@@ -1916,7 +1864,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
             OrdineAcqRigaBulk riga = (OrdineAcqRigaBulk) bp.getRighe().getModel();
 
             calcolaTotaleOrdine(context, ordine);
-            gestioneAnaliticaRigaOrdine(riga);
+            bp.aggiornaAnaliticaRigaOrdine(context,riga,Boolean.FALSE);
 
             return context.findDefaultForward();
 
@@ -1986,7 +1934,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                 consegna.setToBeUpdated();
             }
             calcolaTotaleOrdine(context, ordine);
-            gestioneAnaliticaRigaOrdine(riga);
+            bp.aggiornaAnaliticaRigaOrdine(context,riga,Boolean.FALSE);
             return context.findDefaultForward();
 
         } catch (Throwable e) {
@@ -2005,21 +1953,6 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
             consegna.setMagazzino(riga.getDspMagazzino());
             consegna.setLuogoConsegnaMag(riga.getDspLuogoConsegna());
             riga.addToRigheConsegnaColl(consegna);
-        }
-        return riga;
-    }
-
-    private OrdineAcqRigaBulk gestioneAnaliticaRigaOrdine(OrdineAcqRigaBulk riga) {
-        if (!riga.getRigheEconomica().isEmpty()) {
-            for (OrdineAcqRigaEcoBulk rigaEco : riga.getRigheEconomica()) {
-                rigaEco.setImporto(riga.getImCostoEco().divide(BigDecimal.valueOf(riga.getRigheEconomica().size()),2, RoundingMode.HALF_UP));
-                rigaEco.setToBeUpdated();
-            }
-            if (riga.getImCostoEcoDaRipartire().compareTo(BigDecimal.ZERO)!=0)
-                riga.getRigheEconomica().stream()
-                        .filter(el->el.getImporto().add(riga.getImCostoEcoDaRipartire()).compareTo(BigDecimal.ZERO)>=0)
-                        .findFirst()
-                        .ifPresent(el->el.setImporto(el.getImporto().add(riga.getImCostoEcoDaRipartire())));
         }
         return riga;
     }

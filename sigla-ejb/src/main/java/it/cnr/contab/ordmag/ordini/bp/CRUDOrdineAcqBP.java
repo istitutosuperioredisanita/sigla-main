@@ -20,7 +20,6 @@ package it.cnr.contab.ordmag.ordini.bp;
 import it.cnr.contab.chiusura00.ejb.RicercaDocContComponentSession;
 import it.cnr.contab.coepcoan00.bp.CRUDScritturaPDoppiaBP;
 import it.cnr.contab.coepcoan00.bp.DetailEcoCogeCRUDController;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.config00.contratto.bulk.Dettaglio_contrattoBulk;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
@@ -78,6 +77,7 @@ import javax.servlet.jsp.PageContext;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
@@ -247,8 +247,9 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 		}
 	};
 
-	private final SimpleDetailCRUDController proposeRigheEcoTestata = new SimpleDetailCRUDController("Proposta Dati Analitici", OrdineAcqEcoBulk.class,"righeEconomica",this, false);
-	private final CollapsableDetailCRUDController resultRigheEcoTestata = new DetailEcoCogeCRUDController("Dati Analitici", OrdineAcqEcoBulk.class,"resultRigheEconomica",this);
+	private final SimpleDetailCRUDController proposeRigheEcoTestata = new SimpleDetailCRUDController("Proposta Dati Analitici", OrdineAcqEcoBulk.class,"righeEconomica",this, true);
+	private final CollapsableDetailCRUDController resultRigheEcoTestata = new ResultRigheEcoTestataCRUDController("Dati Analitici", OrdineAcqEcoBulk.class,"resultRigheEconomica",this, true);
+
 	private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(OrdineAcqRigaEcoBulk.class, righe);
 	private final CollapsableDetailCRUDController resultRigheEcoDettaglio = new DetailEcoCogeCRUDController("Dati Coge/Coan", OrdineAcqRigaEcoBulk.class,"resultRigheEconomica",righe);
 
@@ -953,6 +954,7 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 			attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
 			attivaEconomicaPura = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(context.getUserContext());
 			attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
+			resultRigheEcoTestata.setCollapsed(Boolean.FALSE);
 
 			setRibaltato(initRibaltato(context));
 			if (!isAnnoSolareInScrivania()) {
@@ -977,8 +979,8 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
     }
 
 	private static final String[] TAB_ORDINE_MAIN = new String[]{ "tabOrdineAcq","Ordine d'Acquisto","/ordmag/ordini/tab_ordine_acq.jsp" };
-	private static final String[] TAB_ORDINE_PROPOSE_DETAIL_COGECOAN = new String[]{ "tabOrdineProposeDetailEcoCoge","Proposta Dati Coan","/ordmag/ordini/tab_ordine_propose_detail_eco_coge.jsp" };
-	private static final String[] TAB_ORDINE_RESULT_DETAIL_COGECOAN = new String[]{ "tabOrdineResultDetailEcoCoge","Dati Coan","/ordmag/ordini/tab_ordine_result_detail_eco_coge.jsp" };
+	private static final String[] TAB_ORDINE_PROPOSE_DETAIL_COGECOAN = new String[]{ "tabOrdineProposeDetailEcoCoge","Proposta Dati Coge/Coan","/ordmag/ordini/tab_ordine_propose_detail_eco_coge.jsp" };
+	private static final String[] TAB_ORDINE_RESULT_DETAIL_COGECOAN = new String[]{ "tabOrdineResultDetailEcoCoge","Dati Coge/Coan","/ordmag/ordini/tab_ordine_result_detail_eco_coge.jsp" };
 	private static final String[] TAB_ORDINE_FORNITORE = new String[]{ "tabOrdineFornitore","Fornitore","/ordmag/ordini/tab_ordine_fornitore.jsp" };
 	private static final String[] TAB_ORDINE_DETTAGLI = new String[]{ "tabOrdineAcqDettaglio","Dettaglio","/ordmag/ordini/tab_ordine_acq_dettagli.jsp" };
 	private static final String[] TAB_ORDINE_OBBLIGAZIONI = new String[]{ "tabOrdineAcqObbligazioni","Obbligazioni Collegate","/ordmag/ordini/tab_ordine_acq_obbligazioni.jsp" };
@@ -1091,15 +1093,56 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 		return attivaAnalitica;
 	}
 
-	public boolean isROStatoOrdine() {
-		OrdineAcqBulk ordine = (OrdineAcqBulk) getModel();
-		if (ordine != null && ordine.isStatoInApprovazione() && !isViewing()) {
-			if (isAttivaEconomicaPura())
-				return ordine.getRigheOrdineColl().stream()
-						.anyMatch(cons->cons.getImCostoEcoDaRipartire().compareTo(BigDecimal.ZERO)!=0);
-			return ordine.getRigheOrdineColl().stream().flatMap(el->el.getRigheConsegnaColl().stream())
-					.anyMatch(cons->cons.getObbligazioneScadenzario()==null);
+	@Override
+	public OggettoBulk initializeModelForInsert(ActionContext actioncontext, OggettoBulk oggettobulk) throws BusinessProcessException {
+		oggettobulk = super.initializeModelForInsert(actioncontext, oggettobulk);
+		((OrdineAcqBulk)oggettobulk).setAttivaEconomicaPura(isAttivaEconomicaPura());
+		return oggettobulk;
+	}
+
+	@Override
+	public OggettoBulk initializeModelForEdit(ActionContext actioncontext, OggettoBulk oggettobulk) throws BusinessProcessException {
+		oggettobulk = super.initializeModelForEdit(actioncontext, oggettobulk);
+		((OrdineAcqBulk)oggettobulk).setAttivaEconomicaPura(isAttivaEconomicaPura());
+		return oggettobulk;
+	}
+
+	public void aggiornaAnaliticaRigaOrdine(ActionContext actionContext, OrdineAcqRigaBulk riga, boolean reloadAll) throws BusinessProcessException {
+		try {
+			if (reloadAll) {
+				//cancello tutta la eco
+				for (OrdineAcqRigaEcoBulk rigaEco : riga.getRigheEconomica())
+					riga.removeFromRigheEconomica(riga.getRigheEconomica().indexOf(rigaEco)-1);
+				if (riga.getDspConto()!=null) {
+					//carico analitica se presente su testata
+					for (OrdineAcqEcoBulk ordineEco : riga.getOrdineAcq().getRigheEconomica()) {
+						//Verifico se voce analitica è associata a voce economica
+						List<ContoBulk> contiAssociati = Utility.createPDCContoAnaliticoComponentSession().findContiAnaliticiAssociatiList(actionContext.getUserContext(), ordineEco.getVoce_analitica());
+						if (contiAssociati.stream()
+								.anyMatch(el -> el.getCd_voce_ep().equals(riga.getDspConto().getCd_voce_ep()))) {
+							OrdineAcqRigaEcoBulk rigaEco = new OrdineAcqRigaEcoBulk();
+							rigaEco.setVoce_analitica(ordineEco.getVoce_analitica());
+							rigaEco.setLinea_attivita(ordineEco.getLinea_attivita());
+							rigaEco.setImporto(BigDecimal.ZERO);
+							riga.addToRigheEconomica(rigaEco);
+						}
+					}
+				}
+			}
+			//Alimento gli importi
+			if (!riga.getRigheEconomica().isEmpty()) {
+				for (OrdineAcqRigaEcoBulk rigaEco : riga.getRigheEconomica()) {
+					rigaEco.setImporto(riga.getImCostoEco().divide(BigDecimal.valueOf(riga.getRigheEconomica().size()),2, RoundingMode.HALF_UP));
+					rigaEco.setToBeUpdated();
+				}
+				if (riga.getImCostoEcoDaRipartire().compareTo(BigDecimal.ZERO)!=0)
+					riga.getRigheEconomica().stream()
+							.filter(el->el.getImporto().add(riga.getImCostoEcoDaRipartire()).compareTo(BigDecimal.ZERO)>=0)
+							.findFirst()
+							.ifPresent(el->el.setImporto(el.getImporto().add(riga.getImCostoEcoDaRipartire())));
+			}
+		} catch (ComponentException | RemoteException e) {
+			throw handleException(e);
 		}
-		return false;
 	}
 }
