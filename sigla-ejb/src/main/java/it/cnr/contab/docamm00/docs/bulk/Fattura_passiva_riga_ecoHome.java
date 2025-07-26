@@ -18,6 +18,8 @@
 package it.cnr.contab.docamm00.docs.bulk;
 
 import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
 
 public class Fattura_passiva_riga_ecoHome extends BulkHome {
@@ -35,5 +37,32 @@ public class Fattura_passiva_riga_ecoHome extends BulkHome {
 
     public Fattura_passiva_riga_ecoHome(java.sql.Connection conn, PersistentCache persistentCache) {
         super(Fattura_passiva_riga_ecoBulk.class, conn, persistentCache);
+    }
+
+    public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext, OggettoBulk bulk) throws PersistencyException, it.cnr.jada.comp.ComponentException {
+
+        if (bulk == null) return;
+        try {
+            Fattura_passiva_riga_ecoBulk riga = (Fattura_passiva_riga_ecoBulk) bulk;
+            if (riga.getProgressivo_riga_eco()==null) {
+                java.sql.Connection contact = getConnection();
+                java.sql.ResultSet rs = contact.createStatement().executeQuery("SELECT MAX(PROGRESSIVO_RIGA_ECO) FROM " +
+                        it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() +
+                        "FATTURA_PASSIVA_RIGA_ECO WHERE " +
+                        "(ESERCIZIO = " + riga.getEsercizio() + ") AND " +
+                        "(CD_CDS = '" + riga.getCd_cds() + "') AND " +
+                        "(CD_UNITA_ORGANIZZATIVA = '" + riga.getCd_unita_organizzativa() + "') AND " +
+                        "(PG_FATTURA_PASSIVA = " + riga.getPg_fattura_passiva() + ") AND " +
+                        "(PROGRESSIVO_RIGA = " + riga.getProgressivo_riga() + ")");
+                Long x;
+                if (rs.next())
+                    x = rs.getLong(1) + 1;
+                else
+                    x = 0L;
+                riga.setProgressivo_riga_eco(x);
+            }
+        } catch (java.sql.SQLException sqle) {
+            throw new PersistencyException(sqle);
+        }
     }
 }

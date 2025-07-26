@@ -255,14 +255,15 @@ public OggettoBulk caricaCosto_dipendente(UserContext userContext,Costi_dipenden
  */
 public void contabilizzaFlussoStipendialeMensile(UserContext userContext,int mese) throws ComponentException {
 	try {
-		if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(userContext))
-			innerContabilizzaFlussoStipendialeMensile(userContext, CNRUserContext.getEsercizio(userContext).intValue(), mese);
+		int esercizioScrivania = CNRUserContext.getEsercizio(userContext);
+		if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(userContext, esercizioScrivania))
+			innerContabilizzaFlussoStipendialeMensile(userContext, esercizioScrivania, mese);
 		else {
 			LoggableStatement stm = new LoggableStatement(getConnection(userContext),
 					"{  call " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()
 							+ "CNRCTB680.contabilFlussoStipCOFI(?, ?, ?)}", false, this.getClass());
 			try {
-				stm.setInt(1, CNRUserContext.getEsercizio(userContext).intValue());
+				stm.setInt(1, esercizioScrivania);
 				stm.setInt(2, mese);
 				stm.setString(3, CNRUserContext.getUser(userContext));
 				stm.execute();
@@ -2348,7 +2349,7 @@ public boolean isCostiDipendenteRipartiti (UserContext userContext, String cd_un
 			} catch (NoRollbackException | ScritturaPartitaDoppiaNotRequiredException ignored ) {
 			} catch (ApplicationException e) {
 				try {
-					if (!Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(userContext))
+					if (!Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(userContext, stipendiCofiBulk.getEsercizio()))
 						throw e;
 				} catch (RemoteException | ComponentException e2) {
 					throw new DetailedRuntimeException(e2);

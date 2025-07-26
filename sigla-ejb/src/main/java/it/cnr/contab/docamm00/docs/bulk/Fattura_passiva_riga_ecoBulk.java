@@ -155,4 +155,16 @@ public abstract class Fattura_passiva_riga_ecoBulk extends Fattura_passiva_riga_
     public void setPg_fattura_passiva(Long pg_fattura_passiva) {
         Optional.ofNullable(this.getFattura_passiva_riga()).ifPresent(el->el.setPg_fattura_passiva(pg_fattura_passiva));
     }
+
+    @Override
+    public Long getProgressivo_riga() {
+        return Optional.ofNullable(this.getFattura_passiva_riga())
+                .map(Fattura_passiva_rigaBulk::getProgressivo_riga)
+                .orElse(null);
+    }
+
+    @Override
+    public void setProgressivo_riga(Long progressivo_riga) {
+        Optional.ofNullable(this.getFattura_passiva_riga()).ifPresent(el->el.setProgressivo_riga(progressivo_riga));
+    }
 }

@@ -22,6 +22,12 @@ import it.cnr.jada.persistency.Keyed;
 import java.math.BigDecimal;
 
 public class OrdineAcqEcoBase extends OrdineAcqEcoKey implements Keyed {
+    // ESERCIZIO_VOCE_EP DECIMAL(4,0) NOT NULL
+    private Integer esercizio_voce_ep;
+
+    // CD_VOCE_EP VARCHAR(45) NOT NULL
+    private String cd_voce_ep;
+
     // ESERCIZIO_VOCE_ANA DECIMAL(4,0) NOT NULL
     private Integer esercizio_voce_ana;
 
@@ -42,6 +48,22 @@ public class OrdineAcqEcoBase extends OrdineAcqEcoKey implements Keyed {
 
     public OrdineAcqEcoBase(String cdCds, String cdUnitaOperativa, Integer esercizio, String cdNumeratore, Integer numero, Long progressivo_riga_eco) {
         super(cdCds, cdUnitaOperativa, esercizio, cdNumeratore, numero, progressivo_riga_eco);
+    }
+
+    public Integer getEsercizio_voce_ep() {
+        return esercizio_voce_ep;
+    }
+
+    public void setEsercizio_voce_ep(Integer esercizio_voce_ep) {
+        this.esercizio_voce_ep = esercizio_voce_ep;
+    }
+
+    public String getCd_voce_ep() {
+        return cd_voce_ep;
+    }
+
+    public void setCd_voce_ep(String cd_voce_ep) {
+        this.cd_voce_ep = cd_voce_ep;
     }
 
     public Integer getEsercizio_voce_ana() {

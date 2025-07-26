@@ -27,7 +27,6 @@
 			maxLength="45"
 			enabledOnEdit="true"
 			enabledOnSearch="true"
-			nullable="false"
 			label="Codice Voce Analitica" />
 	<fieldProperty
 			name="cd_centro_responsabilita"

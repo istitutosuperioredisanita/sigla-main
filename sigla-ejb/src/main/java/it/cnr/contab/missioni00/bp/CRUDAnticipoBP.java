@@ -33,6 +33,7 @@ import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
 import it.cnr.contab.missioni00.docs.bulk.Anticipo_riga_ecoBulk;
 import it.cnr.contab.missioni00.docs.bulk.RimborsoBulk;
 import it.cnr.contab.missioni00.ejb.AnticipoComponentSession;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
@@ -67,7 +68,7 @@ public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
     private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(Anticipo_riga_ecoBulk.class, this);
 
     private boolean attivaEconomica = false;
-    private boolean attivaEconomicaPura = false;
+    private boolean attivaFinanziaria = false;
     private boolean attivaAnalitica = false;
     private boolean supervisore = false;
 
@@ -406,9 +407,10 @@ public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
     protected void init(Config config, ActionContext context) throws BusinessProcessException {
         try {
             verificoUnitaENTE(context);
-            attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
-            attivaEconomicaPura = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(context.getUserContext());
-            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
+            int esercizioScrivania = CNRUserContext.getEsercizio(context.getUserContext());
+            attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext(), esercizioScrivania);
+            attivaFinanziaria = Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(context.getUserContext(), esercizioScrivania);
+            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext(), esercizioScrivania);
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
         } catch (Throwable e) {
             throw handleException(e);
@@ -1052,9 +1054,9 @@ public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
         TreeMap<Integer, String[]> pages = new TreeMap<Integer, String[]>();
         int i = 0;
         pages.put(i++, TAB_ANTICIPO_DETAIL1);
-        if (attivaAnalitica)
+        if (this.isAttivaAnalitica())
             pages.put(i++, CRUDScritturaPDoppiaBP.TAB_DATI_COGECOAN);
-        if (attivaEconomica)
+        if (this.isAttivaEconomica())
             pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
         String[][] tabs = new String[i][3];
         for (int j = 0; j < i; j++)
@@ -1094,8 +1096,8 @@ public class CRUDAnticipoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
     }
 
     @Override
-    public boolean isAttivaEconomicaPura() {
-        return attivaEconomicaPura;
+    public boolean isAttivaFinanziaria() {
+        return attivaFinanziaria;
     }
 
     @Override

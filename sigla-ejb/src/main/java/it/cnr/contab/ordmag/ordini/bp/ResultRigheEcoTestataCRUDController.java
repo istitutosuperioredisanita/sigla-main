@@ -18,6 +18,7 @@
 package it.cnr.contab.ordmag.ordini.bp;
 
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqEcoBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaEcoBulk;
 import it.cnr.contab.util.EuroFormat;
@@ -72,12 +73,30 @@ public class ResultRigheEcoTestataCRUDController extends CollapsableDetailCRUDCo
         final long numberOfColspan = Collections.list(BulkInfo.getBulkInfo(this.getModelClass())
                 .getColumnFieldProperties("default")).stream().count();
         final List<OrdineAcqEcoBulk> detailAnaCogeBulks = getDetails();
-        if (Optional.ofNullable(detailAnaCogeBulks).map(detailAnaCogeBulks1 -> !detailAnaCogeBulks1.isEmpty()).orElse(Boolean.FALSE) ) {
+        final BigDecimal totalEvasoForzatamanente = Optional.ofNullable(getParentModel())
+                .filter(OrdineAcqBulk.class::isInstance)
+                .map(OrdineAcqBulk.class::cast)
+                .map(OrdineAcqBulk::getImEvasoForzatamente)
+                .orElse(BigDecimal.ZERO);
+
+        if (Optional.ofNullable(detailAnaCogeBulks).map(detailAnaCogeBulks1 -> !detailAnaCogeBulks1.isEmpty()).orElse(Boolean.FALSE) ||
+                totalEvasoForzatamanente.compareTo(BigDecimal.ZERO)!=0) {
             final BigDecimal totalMovimento = detailAnaCogeBulks.stream()
                     .map(el->Optional.ofNullable(el.getImporto()).orElse(BigDecimal.ZERO))
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .reduce(BigDecimal.ZERO, BigDecimal::add)
+                    .add(totalEvasoForzatamanente);
 
             jspWriter.println("<tfoot class=\"bg-info\">");
+            if (totalEvasoForzatamanente.compareTo(BigDecimal.ZERO)!=0) {
+                jspWriter.println("<tr>");
+                jspWriter.println("<td class=\"TableHeader text-white font-weight-bold\"  colspan=\"" + numberOfColspan + "\" align=\"right\">");
+                jspWriter.println("<span>Consegne Evase Forzatamente:</span>");
+                jspWriter.println("</td>");
+                jspWriter.println("<td class=\"TableHeader text-white font-weight-bold\" align=\"right\">");
+                jspWriter.print(euroFormat.format(totalEvasoForzatamanente));
+                jspWriter.println("</td>");
+                jspWriter.println("</tr>");
+            }
             jspWriter.println("<tr>");
             jspWriter.println("<td class=\"TableHeader text-white font-weight-bold\"  colspan=\"" + numberOfColspan + "\" align=\"right\">");
             jspWriter.println("<span>Totale:</span>");

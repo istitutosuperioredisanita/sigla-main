@@ -18,8 +18,6 @@
 package it.cnr.contab.ordmag.ordini.comp;
 
 import it.cnr.contab.anagraf00.core.bulk.*;
-import it.cnr.contab.coepcoan00.core.bulk.Movimento_cogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.Movimento_cogeHome;
 import it.cnr.contab.config00.bulk.CigBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_cdsBulk;
@@ -61,9 +59,7 @@ import it.cnr.contab.util.ICancellatoLogicamente;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.BulkList;
-import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.bulk.PrimaryKeyHashtable;
+import it.cnr.jada.bulk.*;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.ICRUDMgr;
@@ -168,14 +164,11 @@ public class OrdineAcqComponent
         ordine.setImIva(BigDecimal.ZERO);
         ordine.setImIvaD(BigDecimal.ZERO);
         ordine.setImTotaleOrdine(BigDecimal.ZERO);
-        for (java.util.Iterator i = ordine.getRigheOrdineColl().iterator(); i.hasNext(); ) {
-            OrdineAcqRigaBulk riga = (OrdineAcqRigaBulk) i.next();
-            if (riga == null) {
-                throw new it.cnr.jada.comp.ApplicationException("Dettaglio vuoto.");
-            }
-            if (riga.getCoefConv() == null || riga.getPrezzoUnitario() == null || riga.getVoceIva() == null || riga.getVoceIva().getCd_voce_iva() == null) {
-                throw new it.cnr.jada.comp.ApplicationException("Campi di dettaglio ordine necessari per il calcolo dell'importo non valorizzati.");
-            }
+        for (OrdineAcqRigaBulk riga : ordine.getRigheOrdineColl()) {
+            if (riga == null)
+                throw new ApplicationException("Dettaglio vuoto.");
+            if (riga.getCoefConv() == null || riga.getPrezzoUnitario() == null || riga.getVoceIva() == null || riga.getVoceIva().getCd_voce_iva() == null)
+                throw new ApplicationException("Campi di dettaglio ordine necessari per il calcolo dell'importo non valorizzati.");
             ParametriCalcoloImportoOrdine parametriRiga = (ParametriCalcoloImportoOrdine) parametriTestata.clone();
             parametriRiga.setCoefacq(riga.getCoefConv());
             parametriRiga.setPrezzo(riga.getPrezzoUnitario());
@@ -194,16 +187,14 @@ public class OrdineAcqComponent
                 if (riga.getDspQuantita() != null) {
                     gestioneSalvataggioRigaConsegnaSingola(riga);
                 } else {
-                    throw new it.cnr.jada.comp.ApplicationException("Campi di dettaglio ordine necessari per il calcolo dell'importo non valorizzati.");
+                    throw new ApplicationException("Campi di dettaglio ordine necessari per il calcolo dell'importo non valorizzati.");
                 }
             }
-            for (java.util.Iterator c = riga.getRigheConsegnaColl().iterator(); c.hasNext(); ) {
-                OggettoBulk consbulk = (OggettoBulk) c.next();
-                OrdineAcqConsegnaBulk cons = (OrdineAcqConsegnaBulk) consbulk;
+            for (OrdineAcqConsegnaBulk cons : riga.getRigheConsegnaColl()) {
                 if (!cons.isConsegna0()) {
                     ParametriCalcoloImportoOrdine parametriCons = (ParametriCalcoloImportoOrdine) parametriRiga.clone();
                     if (cons.getQuantita() == null) {
-                        throw new it.cnr.jada.comp.ApplicationException("Campi di consegna ordine necessari per il calcolo dell'importo non valorizzati.");
+                        throw new ApplicationException("Campi di consegna ordine necessari per il calcolo dell'importo non valorizzati.");
                     }
                     parametriCons.setQtaOrd(cons.getQuantita());
                     parametriCons.setArrAliIva(cons.getArrAliIva());
@@ -285,7 +276,7 @@ public class OrdineAcqComponent
         parametri.setSconto3Ret(fatturaOrdine.getSconto3Rett());
         parametri.setImponibileErratoPerNotaCredito(fatturaOrdine.getImponibileErrato());
         Voce_ivaHome voce_ivaHome = (Voce_ivaHome) getHome(userContext, Voce_ivaBulk.class);
-        Voce_ivaBulk voce_iva = null;
+        Voce_ivaBulk voce_iva;
         try {
             voce_iva = (Voce_ivaBulk) voce_ivaHome.findByPrimaryKey(riga.getVoceIva());
         } catch (PersistencyException e) {
@@ -338,12 +329,9 @@ public class OrdineAcqComponent
 
     public void impostaTotaliOrdine(OrdineAcqBulk ordine) {
         BigDecimal imponibile = BigDecimal.ZERO, iva = BigDecimal.ZERO, ivaD = BigDecimal.ZERO, totale = BigDecimal.ZERO;
-        for (java.util.Iterator i = ordine.getRigheOrdineColl().iterator(); i.hasNext(); ) {
-            OrdineAcqRigaBulk riga = (OrdineAcqRigaBulk) i.next();
+        for (OrdineAcqRigaBulk riga : ordine.getRigheOrdineColl()) {
             if (riga != null) {
-                for (java.util.Iterator c = riga.getRigheConsegnaColl().iterator(); c.hasNext(); ) {
-                    OggettoBulk consbulk = (OggettoBulk) c.next();
-                    OrdineAcqConsegnaBulk cons = (OrdineAcqConsegnaBulk) consbulk;
+                for (OrdineAcqConsegnaBulk cons : riga.getRigheConsegnaColl()) {
                     imponibile = imponibile.add(cons.getImImponibile());
                     iva = iva.add(cons.getImIva());
                     ivaD = ivaD.add(cons.getImIvaD());
@@ -360,13 +348,10 @@ public class OrdineAcqComponent
 
     private void validaOrdine(it.cnr.jada.UserContext userContext, OrdineAcqBulk ordine) throws it.cnr.jada.comp.ComponentException {
         controlloEsistenzaRigheOrdine(ordine);
-        for (java.util.Iterator i = ordine.getRigheOrdineColl().iterator(); i.hasNext(); ) {
-            OrdineAcqRigaBulk riga = (OrdineAcqRigaBulk) i.next();
+        for (OrdineAcqRigaBulk riga : ordine.getRigheOrdineColl()) {
             if (riga != null) {
                 gestioneSalvataggioRigaConsegnaSingola(riga);
-                for (java.util.Iterator c = riga.getRigheConsegnaColl().iterator(); c.hasNext(); ) {
-                    OggettoBulk consbulk = (OggettoBulk) c.next();
-                    OrdineAcqConsegnaBulk cons = (OrdineAcqConsegnaBulk) consbulk;
+                for (OrdineAcqConsegnaBulk cons : riga.getRigheConsegnaColl()) {
                     if ((cons.getObbligazioneScadenzario() == null || cons.getObbligazioneScadenzario().getPg_obbligazione() == null) &&
                             cons.getStato().equals(OrdineAcqConsegnaBulk.STATO_INSERITA)) {
                         cons.setObbligazioneScadenzario(riga.getDspObbligazioneScadenzario());
@@ -381,12 +366,11 @@ public class OrdineAcqComponent
     }
 
     private void controlloEsistenzaRigheOrdine(OrdineAcqBulk ordine) throws ApplicationException {
-        if (ordine.getRigheOrdineColl() == null || ordine.getRigheOrdineColl().size() == 0) {
+        if (ordine.getRigheOrdineColl() == null || ordine.getRigheOrdineColl().isEmpty()) {
             throw new ApplicationException("Non è possibile salvare un ordine senza dettagli.");
         } else {
             boolean esisteRigaValida = false;
-            for (java.util.Iterator i = ordine.getRigheOrdineColl().iterator(); i.hasNext(); ) {
-                OrdineAcqRigaBulk riga = (OrdineAcqRigaBulk) i.next();
+            for (OrdineAcqRigaBulk riga : ordine.getRigheOrdineColl()) {
                 if (!riga.isToBeDeleted()) {
                     esisteRigaValida = true;
                 }
@@ -426,7 +410,7 @@ public class OrdineAcqComponent
             throw new ApplicationException("La data di prevista consegna non può essere precedente alla data dell'ordine per la riga di consegna " + consegna.getConsegna() + " della riga d'ordine " + consegna.getRiga() + ".");
 
         try {
-            if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(userContext) && (consegna.getContoBulk() == null || consegna.getContoBulk().getCd_voce_ep() == null))
+            if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(userContext, consegna.getEsercizio()) && (consegna.getContoBulk() == null || consegna.getContoBulk().getCd_voce_ep() == null))
                 throw new ApplicationException("E' necessario indicare il conto di Economico Patrimoniale sulla riga di consegna " + consegna.getConsegna() + " della riga d'ordine " + consegna.getRiga() + ".");
         } catch (RemoteException e) {
             throw new ComponentException(e);
@@ -452,15 +436,9 @@ public class OrdineAcqComponent
 
     private void controlloCongruenzaObbligazioni(it.cnr.jada.UserContext userContext, OrdineAcqBulk ordine)
             throws ComponentException {
-        CategoriaGruppoInventComponentSession h = EJBCommonServices.createEJB(
-                "CNRDOCAMM00_EJB_CategoriaGruppoInventComponentSession",
-                CategoriaGruppoInventComponentSession.class);
-        for (java.util.Iterator i = ordine.getRigheOrdineColl().iterator(); i.hasNext(); ) {
-            OrdineAcqRigaBulk riga = (OrdineAcqRigaBulk) i.next();
+        for (OrdineAcqRigaBulk riga : ordine.getRigheOrdineColl()) {
             if (riga != null) {
-                for (java.util.Iterator c = riga.getRigheConsegnaColl().iterator(); c.hasNext(); ) {
-                    OggettoBulk consbulk = (OggettoBulk) c.next();
-                    OrdineAcqConsegnaBulk cons = (OrdineAcqConsegnaBulk) consbulk;
+                for (OrdineAcqConsegnaBulk cons : riga.getRigheConsegnaColl()) {
                     if (cons.getPgObbligazioneScad() != null) {
                         try {
                             ObbligazioneBulk obb = retrieveObbligazione(userContext, cons);
@@ -521,31 +499,24 @@ public class OrdineAcqComponent
     }
 
     private void gestioneSalvataggioRigaConsegnaSingola(OrdineAcqRigaBulk riga) throws ApplicationException {
-        if ((riga.isToBeCreated() && riga.getRigheConsegnaColl() == null || riga.getRigheConsegnaColl().isEmpty())
-            //				||
-            //				(riga.getRigheConsegnaColl() != null && riga.getRigheConsegnaColl().size() == 1)
-        ) {
-            if (riga.getDspQuantita() == null) {
-                throw new ApplicationException("E' necessario indicare la quantità.");
+        if (riga.isToBeCreated() && (riga.getRigheConsegnaColl() == null || riga.getRigheConsegnaColl().isEmpty())) {
+            if (riga.getDspQuantita() == null)
+                throw new ApplicationException("E' necessario indicare la quantità sulla riga "+riga.getRigaOrdineString()+".");
+            if (riga.getDspDtPrevConsegna() == null)
+                throw new ApplicationException("E' necessario indicare la data di prevista consegna sulla riga "+riga.getRigaOrdineString()+".");
+            if (riga.getDspTipoConsegna() == null)
+                throw new ApplicationException("E' necessario indicare il tipo di consegna sulla riga "+riga.getRigaOrdineString()+".");
+            if (riga.getPrezzoUnitario() == null)
+                throw new ApplicationException("E' necessario indicare il prezzo unitario sulla riga "+riga.getRigaOrdineString()+".");
+            else {
+                if ((!riga.getDspTipoConsegna().equals(Bene_servizioBulk.TIPO_CONSEGNA_MAGAZZINO)) && (riga.getDspUopDest() == null || riga.getDspUopDest().getCdUnitaOperativa() == null))
+                    throw new ApplicationException("E' necessario indicare l'unità operativa per i tipi consegna in 'Transito' o 'Fuori Magazzino' sulla riga "+riga.getRigaOrdineString()+".");
             }
-            if (riga.getDspDtPrevConsegna() == null) {
-                throw new ApplicationException("E' necessario indicare la data di prevista consegna.");
-            }
-            if (riga.getDspTipoConsegna() == null) {
-                throw new ApplicationException("E' necessario indicare il tipo di consegna.");
-            } else {
-                if ((!riga.getDspTipoConsegna().equals(Bene_servizioBulk.TIPO_CONSEGNA_MAGAZZINO)) && (riga.getDspUopDest() == null || riga.getDspUopDest().getCdUnitaOperativa() == null)) {
-                    throw new ApplicationException("E' necessario indicare l'unità operativa per i tipi consegna in 'Transito' o 'Fuori Magazzino'.");
-                }
-
-            }
-            if (riga.getDspMagazzino() == null || riga.getDspMagazzino().getCdMagazzino() == null) {
-                throw new ApplicationException("E' necessario indicare il magazzino.");
-            }
-            if (riga.getDspLuogoConsegna() == null || riga.getDspLuogoConsegna().getCdLuogoConsegna() == null) {
-                throw new ApplicationException("E' necessario indicare il luogo di consegna.");
-            }
-            OrdineAcqConsegnaBulk consegna = null;
+            if (riga.getDspMagazzino() == null || riga.getDspMagazzino().getCdMagazzino() == null)
+                throw new ApplicationException("E' necessario indicare il magazzino sulla riga "+riga.getRigaOrdineString()+".");
+            if (riga.getDspLuogoConsegna() == null || riga.getDspLuogoConsegna().getCdLuogoConsegna() == null)
+                throw new ApplicationException("E' necessario indicare il luogo di consegna sulla riga "+riga.getRigaOrdineString()+".");
+            OrdineAcqConsegnaBulk consegna;
             if (riga.isToBeCreated()) {
                 consegna = new OrdineAcqConsegnaBulk();
                 consegna.setOrdineAcqRiga(riga);
@@ -579,18 +550,7 @@ public class OrdineAcqComponent
     }
 
     public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext aUC, it.cnr.jada.bulk.OggettoBulk bulk) throws it.cnr.jada.comp.ComponentException {
-
-        //	if (bulk instanceof Stampa_vpg_doc_genericoBulk)
-        //		validateBulkForPrint(aUC, (Stampa_vpg_doc_genericoBulk)bulk);
-        //	if (bulk instanceof Stampa_elenco_fattureVBulk)
-        //		validateBulkForPrint(aUC, (Stampa_elenco_fattureVBulk)bulk);
-        //
-        //	/*if (bulk instanceof Stampa_docamm_per_voce_del_pianoVBulk)
-        //		return  stampaConBulk(aUC, (Stampa_docamm_per_voce_del_pianoVBulk) bulk);*/
-        //	if (bulk instanceof Stampa_fat_pas_per_vpVBulk)
-        //		return  stampaConBulk(aUC, (Stampa_fat_pas_per_vpVBulk) bulk);
         return bulk;
-
     }
 
     @Override
@@ -608,26 +568,22 @@ public class OrdineAcqComponent
 
         try {
             OrdineAcqHome homeOrdine = (OrdineAcqHome)getHome(usercontext, OrdineAcqBulk.class);
-            ordine.setRigheOrdineColl(new BulkList(homeOrdine.findOrdineRigheList(ordine)));
-            ordine.setRigheEconomica(new BulkList(homeOrdine.findOrdineAcqEcoList(ordine)));
+            ordine.setRigheOrdineColl(new BulkList<>(homeOrdine.findOrdineRigheList(ordine)));
+            ordine.setRigheEconomica(new BulkList<>(homeOrdine.findOrdineAcqEcoList(ordine)));
 
-            for (java.util.Iterator i = ordine.getRigheOrdineColl().iterator(); i.hasNext(); ) {
-                OrdineAcqRigaBulk riga = (OrdineAcqRigaBulk) i.next();
-
-                OrdineAcqRigaHome homeRigaOrdine = (OrdineAcqRigaHome)getHome(usercontext, OrdineAcqRigaBulk.class);
-                OrdineAcqConsegnaHome homeConsegnaOrdine = (OrdineAcqConsegnaHome)getHome(usercontext, OrdineAcqConsegnaBulk.class);
-                riga.setRigheConsegnaColl(new BulkList(homeRigaOrdine.findOrdineRigheConsegnaList(riga)));
-                riga.setRigheEconomica(new BulkList(homeRigaOrdine.findOrdineAcqRigaEcoList(riga)));
+            for (OrdineAcqRigaBulk riga : ordine.getRigheOrdineColl()) {
+                OrdineAcqRigaHome homeRigaOrdine = (OrdineAcqRigaHome) getHome(usercontext, OrdineAcqRigaBulk.class);
+                OrdineAcqConsegnaHome homeConsegnaOrdine = (OrdineAcqConsegnaHome) getHome(usercontext, OrdineAcqConsegnaBulk.class);
+                riga.setRigheConsegnaColl(new BulkList<>(homeRigaOrdine.findOrdineRigheConsegnaList(riga)));
+                riga.setRigheEconomica(new BulkList<>(homeRigaOrdine.findOrdineAcqRigaEcoList(riga)));
 
                 getHomeCache(usercontext).fetchAll(usercontext);
 
                 Obbligazione_scadenzarioBulk scadenzaComune = null;
-                Boolean esisteScadenzaComune = false;
+                boolean esisteScadenzaComune = false;
 
-                for (java.util.Iterator c = riga.getRigheConsegnaColl().iterator(); c.hasNext(); ) {
-                    OggettoBulk consbulk = (OggettoBulk) c.next();
-                    OrdineAcqConsegnaBulk cons = (OrdineAcqConsegnaBulk) consbulk;
-                    cons.setRigheEconomica(new BulkList(homeConsegnaOrdine.findOrdineAcqConsegnaEcoList(cons)));
+                for (OrdineAcqConsegnaBulk cons : riga.getRigheConsegnaColl()) {
+                    cons.setRigheEconomica(new BulkList<>(homeConsegnaOrdine.findOrdineAcqConsegnaEcoList(cons)));
                     if (cons.getObbligazioneScadenzario() != null) {
                         Obbligazione_scadenzarioBulk scad = cons.getObbligazioneScadenzario();
                         if (scadenzaComune == null || scadenzaComune.equalsByPrimaryKey(scad)) {
@@ -672,7 +628,7 @@ public class OrdineAcqComponent
                 riga.setDspUopDest(cons.getUnitaOperativaOrd());
                 riga.setDspConto(cons.getContoBulk());
                 riga.setDspStato(cons.getStato());
-                if (!Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(userContext, riga.getEsercizio())) {
+                if (Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(userContext, riga.getEsercizio())) {
                     if (Optional.ofNullable(cons.getObbligazioneScadenzario()).isPresent())
                         riga.setDspStatoContabilizzazione(OrdineAcqRigaBulk.StatoContabilizzazione.CONTABILIZZATA);
                 } else {
@@ -692,7 +648,7 @@ public class OrdineAcqComponent
                     }
                 }
                 riga.setDspStato(stato);
-                if (!Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(userContext, riga.getEsercizio())) {
+                if (Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(userContext, riga.getEsercizio())) {
                     final boolean contabilizzate = riga.getRigheConsegnaColl()
                             .stream()
                             .anyMatch(ordineAcqConsegnaBulk -> Optional.ofNullable(ordineAcqConsegnaBulk.getObbligazioneScadenzario()).isPresent());
@@ -771,20 +727,6 @@ public class OrdineAcqComponent
         return inizializzaOrdine(usercontext, oggetto, false);
     }
 
-    protected Boolean isCdrUo(UserContext userContext) throws ComponentException, PersistencyException {
-        V_struttura_organizzativaHome homeStr = (V_struttura_organizzativaHome) getHome(userContext, V_struttura_organizzativaBulk.class);
-        SQLBuilder sqlStr = homeStr.createSQLBuilder();
-        sqlStr.addSQLClause(FindClause.AND, "V_STRUTTURA_ORGANIZZATIVA.ESERCIZIO", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
-        sqlStr.addSQLClause(FindClause.AND, "V_STRUTTURA_ORGANIZZATIVA.CD_CDS", SQLBuilder.EQUALS, CNRUserContext.getCd_cds(userContext));
-        sqlStr.addSQLClause(FindClause.AND, "V_STRUTTURA_ORGANIZZATIVA.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, CNRUserContext.getCd_unita_organizzativa(userContext));
-        sqlStr.addSQLClause(FindClause.AND, "V_STRUTTURA_ORGANIZZATIVA.CD_CENTRO_RESPONSABILITA", SQLBuilder.EQUALS, CNRUserContext.getCd_cdr(userContext));
-        sqlStr.addSQLClause(FindClause.AND, "V_STRUTTURA_ORGANIZZATIVA.CD_TIPO_LIVELLO", SQLBuilder.EQUALS, V_struttura_organizzativaHome.LIVELLO_CDR);
-        sqlStr.addSQLClause(FindClause.AND, "V_STRUTTURA_ORGANIZZATIVA.FL_CDR_UO", SQLBuilder.EQUALS, "Y");
-
-        List listStr = homeStr.fetchAll(sqlStr);
-        return listStr != null && listStr.size() == 1;
-    }
-
     public SQLBuilder selectBeneServizioByClause(UserContext userContext, OrdineAcqRigaBulk riga,
                                                  Bene_servizioBulk bene,
                                                  CompoundFindClause compoundfindclause) throws PersistencyException, ComponentException {
@@ -818,9 +760,7 @@ public class OrdineAcqComponent
         filtro.setFornitore(consegna.getOrdineAcqRiga().getOrdineAcq().getFornitore());
         filtro.setIm_importo(consegna.getImTotaleConsegna());
 
-        java.util.List listaCapitoli;
-
-        listaCapitoli = recuperoListaCapitoliSelezionabili(userContext, consegna);
+        java.util.List listaCapitoli = recuperoListaCapitoliSelezionabili(userContext, consegna);
         filtro.setListaVociSelezionabili(listaCapitoli);
         filtro.setContratto(consegna.getOrdineAcqRiga().getOrdineAcq().getContratto());
         Unita_organizzativaBulk uo = recuperoUoPerImpegno(userContext, consegna);
@@ -865,9 +805,7 @@ public class OrdineAcqComponent
                                                  MagazzinoBulk mag,
                                                  CompoundFindClause compoundfindclause) throws PersistencyException, ComponentException {
         MagazzinoHome magHome = (MagazzinoHome) getHome(userContext, MagazzinoBulk.class);
-        SQLBuilder sql = magHome.selectMagazziniAbilitatiByClause(userContext, riga.getOrdineAcq().getUnitaOperativaOrd(), TipoOperazioneOrdBulk.OPERAZIONE_ORDINE, compoundfindclause, riga.getDspTipoConsegna());
-
-        return sql;
+        return magHome.selectMagazziniAbilitatiByClause(userContext, riga.getOrdineAcq().getUnitaOperativaOrd(), TipoOperazioneOrdBulk.OPERAZIONE_ORDINE, compoundfindclause, riga.getDspTipoConsegna());
     }
 
     public SQLBuilder selectMagazzinoByClause(UserContext userContext, OrdineAcqConsegnaBulk cons,
@@ -915,8 +853,7 @@ public class OrdineAcqComponent
                                                TipoOrdineBulk tipo,
                                                CompoundFindClause compoundfindclause) throws PersistencyException, ComponentException {
         TipoOrdineHome tipoHome = (TipoOrdineHome) getHome(userContext, TipoOrdineBulk.class);
-        SQLBuilder sql = tipoHome.selectByClause(userContext, compoundfindclause);
-        return sql;
+        return tipoHome.selectByClause(userContext, compoundfindclause);
     }
 
     protected Query select(UserContext userContext, CompoundFindClause clauses, OggettoBulk bulk) throws ComponentException, it.cnr.jada.persistency.PersistencyException {
@@ -927,8 +864,7 @@ public class OrdineAcqComponent
         UtenteBulk utente = (UtenteBulk) (getHome(userContext, UtenteBulk.class).findByPrimaryKey(new UtenteBulk(CNRUserContext.getUser(userContext))));
 
         if (!utente.isSupervisore()) {
-            SQLBuilder sqlExists = null;
-            sqlExists = abilHome.createSQLBuilder();
+            SQLBuilder sqlExists = abilHome.createSQLBuilder();
             sqlExists.addSQLJoin("ORDINE_ACQ.CD_UNITA_OPERATIVA", "ABIL_UTENTE_UOP_OPER.CD_UNITA_OPERATIVA");
             if (!ordineAcqBulk.getIsForFirma()) {
                 sqlExists.openParenthesis("AND");
@@ -986,7 +922,7 @@ public class OrdineAcqComponent
         return ordine;
     }
 
-    private Boolean isPresenteUnaUop(List listUop) throws ComponentException {
+    private Boolean isPresenteUnaUop(List listUop) {
         UnitaOperativaOrdKey key = null;
         for (Object oggettoBulk : listUop) {
             UnitaOperativaOrdBulk uop = (UnitaOperativaOrdBulk) oggettoBulk;
@@ -1093,8 +1029,6 @@ public class OrdineAcqComponent
     public void completaOrdine(UserContext userContext, OrdineAcqBulk ordine) throws PersistencyException, ComponentException {
         OrdineAcqHome home = (OrdineAcqHome) getHomeCache(userContext).getHome(OrdineAcqBulk.class);
         assegnaNumeratoreOrd(userContext, ordine, home);
-        UnitaOperativaOrdHome uopHome = (UnitaOperativaOrdHome) getHome(userContext, UnitaOperativaOrdBulk.class);
-        //	assegnaUnitaOperativaDest(userContext, ordine, home, uopHome);
     }
 
     public it.cnr.jada.bulk.OggettoBulk modificaConBulk(it.cnr.jada.UserContext userContext, it.cnr.jada.bulk.OggettoBulk bulk, it.cnr.contab.doccont00.core.bulk.OptionRequestParameter status)
@@ -1151,11 +1085,11 @@ public class OrdineAcqComponent
                     }
                     if (ordine.isStatoAllaFirma() || (ordine.isOrdineMepa() && ordine.isStatoDefinitivo())) {
                         for (OrdineAcqRigaBulk riga : ordine.getRigheOrdineColl()) {
-                            if (Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(usercontext)) {
+                            if (Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(usercontext, riga.getEsercizio())) {
                                 if (riga.getImCostoEcoDaRipartire().compareTo(BigDecimal.ZERO)!=0)
                                     throw new it.cnr.jada.comp.ApplicationException("Sulla riga " + riga.getRigaOrdineString() + " non risulta ripartita totalmente l'analitica.");
                             }
-                            if (!Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(usercontext)) {
+                            if (Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(usercontext, riga.getEsercizio())) {
                                 for (OrdineAcqConsegnaBulk cons : riga.getRigheConsegnaColl()) {
                                     if (cons.getObbligazioneScadenzario() == null || cons.getObbligazioneScadenzario().getPg_obbligazione() == null)
                                         throw new it.cnr.jada.comp.ApplicationException("Sulla consegna " + cons.getConsegnaOrdineString() + " non è indicata l'obbligazione");
@@ -1179,21 +1113,14 @@ public class OrdineAcqComponent
 
 
     private Boolean isUoImpegnoDaUopDestinazione(UserContext userContext) throws ComponentException {
-
-
-        String uoDestinazione = null;
+        String uoDestinazione;
         try {
             uoDestinazione = EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class).getVal01(userContext, CNRUserContext.getEsercizio(userContext), "*", Configurazione_cnrBulk.PK_ORDINI, Configurazione_cnrBulk.SK_ORDINE_IMPEGNO_UO_DESTINAZIONE);
-            if (uoDestinazione != null && uoDestinazione.equals("Y")) {
+            if (uoDestinazione != null && uoDestinazione.equals("Y"))
                 return true;
-            }
-
-        } catch (javax.ejb.EJBException e) {
-            handleException(e);
-        } catch (java.rmi.RemoteException e) {
+        } catch (javax.ejb.EJBException | RemoteException e) {
             handleException(e);
         }
-
         return false;
     }
 
@@ -1481,7 +1408,7 @@ public class OrdineAcqComponent
 
         sql.addSQLClause("AND", "OBBLIGAZIONE.FL_PGIRO", SQLBuilder.EQUALS, "N");
 
-        if (!filtro.getFl_fornitore().booleanValue()) {
+        if (!filtro.getFl_fornitore()) {
             sql.addTableToHeader("TERZO");
             sql.addTableToHeader("ANAGRAFICO");
             sql.addSQLJoin("OBBLIGAZIONE.CD_TERZO", "TERZO.CD_TERZO");
@@ -1493,13 +1420,13 @@ public class OrdineAcqComponent
             sql.addSQLClause("AND", "OBBLIGAZIONE.CD_TERZO", SQLBuilder.EQUALS, filtro.getFornitore().getCd_terzo());
         }
 
-        if (filtro.getFl_data_scadenziario().booleanValue() && filtro.getData_scadenziario() != null)
+        if (filtro.getFl_data_scadenziario() && filtro.getData_scadenziario() != null)
             sql.addSQLClause("AND", "OBBLIGAZIONE_SCADENZARIO.DT_SCADENZA", SQLBuilder.EQUALS, filtro.getData_scadenziario());
-        if (filtro.getFl_importo().booleanValue() && filtro.getIm_importo() != null)
+        if (filtro.getFl_importo() && filtro.getIm_importo() != null)
             sql.addSQLClause("AND", "OBBLIGAZIONE_SCADENZARIO.IM_SCADENZA", SQLBuilder.GREATER_EQUALS, filtro.getIm_importo());
 
         //filtro su Tipo obbligazione
-        if (filtro.getFl_nr_obbligazione().booleanValue() && filtro.getTipo_obbligazione() != null) {
+        if (filtro.getFl_nr_obbligazione() && filtro.getTipo_obbligazione() != null) {
             if (ObbligazioneBulk.TIPO_COMPETENZA.equals(filtro.getTipo_obbligazione()))
                 sql.addSQLClause("AND", "OBBLIGAZIONE.CD_TIPO_DOCUMENTO_CONT", SQLBuilder.EQUALS, Numerazione_doc_contBulk.TIPO_OBB);
             else if (ObbligazioneBulk.TIPO_RESIDUO_PROPRIO.equals(filtro.getTipo_obbligazione()))
@@ -1509,11 +1436,11 @@ public class OrdineAcqComponent
         }
 
         //filtro su Anno Residuo obbligazione
-        if (filtro.getFl_nr_obbligazione().booleanValue() && filtro.getEsercizio_ori_obbligazione() != null)
+        if (filtro.getFl_nr_obbligazione() && filtro.getEsercizio_ori_obbligazione() != null)
             sql.addSQLClause("AND", "OBBLIGAZIONE.ESERCIZIO_ORIGINALE", SQLBuilder.EQUALS, filtro.getEsercizio_ori_obbligazione());
 
         //filtro su Numero obbligazione
-        if (filtro.getFl_nr_obbligazione().booleanValue() && filtro.getNr_obbligazione() != null)
+        if (filtro.getFl_nr_obbligazione() && filtro.getNr_obbligazione() != null)
             sql.addSQLClause("AND", "OBBLIGAZIONE.PG_OBBLIGAZIONE", SQLBuilder.EQUALS, filtro.getNr_obbligazione());
         return sql;
     }
@@ -1605,7 +1532,6 @@ public class OrdineAcqComponent
 
         java.math.BigDecimal importo = new java.math.BigDecimal(0);
         //RP 20/03/2015
-        boolean escludiIVAInt = false;
         boolean escludiIVAOld = escludiIVA;
         if (selectedModels != null) {
             for (java.util.Iterator i = selectedModels.iterator(); i.hasNext(); ) {
@@ -1674,7 +1600,7 @@ public class OrdineAcqComponent
 
     private Boolean existScandenzaLibera(UserContext userContext, Obbligazione_scadenzarioBulk scadenza) throws ComponentException, PersistencyException {
         List<Obbligazione_scadenzarioBulk> l = recuperoScadenzaLibera(userContext, scadenza);
-        return (l != null && l.size() > 0);
+        return (l != null && !l.isEmpty());
     }
 
     private List<Obbligazione_scadenzarioBulk> recuperoScadenzaLibera(UserContext userContext, Obbligazione_scadenzarioBulk scadenza) throws ComponentException, PersistencyException {
@@ -1888,8 +1814,7 @@ public class OrdineAcqComponent
                     }
                     scadenza.setObbligazione(obbl);
 
-                    java.math.BigDecimal im_ass = null;
-                    im_ass = calcolaTotaleObbligazione(userContext, scadenza, ordine);
+                    java.math.BigDecimal im_ass = calcolaTotaleObbligazione(userContext, scadenza, ordine);
                     scadenza.setFlAssociataOrdine(true);
                     scadenza.setIm_associato_doc_amm(im_ass);
                     if (ordine.getAggiornaImpegniInAutomatico()) {
@@ -1911,7 +1836,7 @@ public class OrdineAcqComponent
                             throw new ComponentException(remoteException);
                         }
 
-                        BulkList<Obbligazione_scadenzarioBulk> listaScadenza = new BulkList<Obbligazione_scadenzarioBulk>();
+                        BulkList<Obbligazione_scadenzarioBulk> listaScadenza = new BulkList<>();
                         int i = 0;
                         for (Obbligazione_scadenzarioBulk scad : scadenza.getObbligazione().getObbligazione_scadenzarioColl()) {
                             if (scad.equalsByPrimaryKey(scadenza)) {
@@ -2020,9 +1945,7 @@ public class OrdineAcqComponent
                     }
                 }
             }
-        } catch (javax.ejb.EJBException e) {
-            throw handleException(ordine, e);
-        } catch (java.rmi.RemoteException e) {
+        } catch (EJBException | RemoteException e) {
             throw handleException(ordine, e);
         }
     }
@@ -2065,11 +1988,7 @@ public class OrdineAcqComponent
 
         try {
             ((IScadenzaDocumentoContabileHome) getHome(userContext, scadenza.getClass())).aggiornaImportoAssociatoADocAmm(userContext, scadenza);
-        } catch (it.cnr.jada.persistency.PersistencyException exc) {
-            throw handleException((OggettoBulk) scadenza, exc);
-        } catch (it.cnr.jada.bulk.BusyResourceException exc) {
-            throw handleException((OggettoBulk) scadenza, exc);
-        } catch (it.cnr.jada.bulk.OutdatedResourceException exc) {
+        } catch (PersistencyException | BusyResourceException | OutdatedResourceException exc) {
             throw handleException((OggettoBulk) scadenza, exc);
         }
 
@@ -2827,7 +2746,7 @@ public class OrdineAcqComponent
                             ordineRigaComp.setToBeUpdated();
                             ordineComp.setToBeUpdated();
 
-                            if (!Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(userContext)) {
+                            if (Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(userContext, ordineConsegnaComp.getEsercizio())) {
                                 if (ordineConsegnaComp.getObbligazioneScadenzario() != null)
                                     ordineConsegnaComp.setStato(OrdineAcqConsegnaBulk.STATO_EVASA_FORZATAMENTE);
 
@@ -3001,25 +2920,34 @@ public class OrdineAcqComponent
         return sql;
     }
 
-    public SQLBuilder selectVoce_analitica_voce_epByClause(UserContext userContext, OrdineAcqEcoBulk ordineAcqEcoBulk, ContoBulk contoBulk, CompoundFindClause clause)  throws ComponentException, EJBException, RemoteException {
+    public SQLBuilder selectVoce_epByClause(UserContext userContext, OrdineAcqEcoBulk ordineAcqEcoBulk, ContoBulk contoBulk, CompoundFindClause clause)  throws ComponentException, EJBException, RemoteException {
         ContoHome contoHome = (ContoHome) getHome(userContext, ContoBulk.class);
         SQLBuilder sql = contoHome.createSQLBuilder();
-        sql.addSQLClause(FindClause.AND,"ESERCIZIO",SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
+        sql.addSQLClause(FindClause.AND,"ESERCIZIO",SQLBuilder.EQUALS, ordineAcqEcoBulk.getEsercizio());
         sql.addClause(clause);
 
-        SQLBuilder sqlVa = this.selectVoce_analiticaByClause(userContext, ordineAcqEcoBulk, ordineAcqEcoBulk.getVoce_analitica(), null);
-        sqlVa.addSQLClause(FindClause.AND, "VOCE_ANALITICA.ESERCIZIO_VOCE_EP=VOCE_EP.ESERCIZIO");
-        sqlVa.addSQLClause(FindClause.AND, "VOCE_ANALITICA.CD_VOCE_EP=VOCE_EP.CD_VOCE_EP");
-        sql.addSQLExistsClause(FindClause.AND, sqlVa);
+        if (ordineAcqEcoBulk.getVoce_analitica()!=null && ordineAcqEcoBulk.getVoce_analitica().getCd_voce_ana()!=null) {
+            SQLBuilder sqlVa = this.selectVoce_analiticaByClause(userContext, ordineAcqEcoBulk, ordineAcqEcoBulk.getVoce_analitica(), null);
+            sqlVa.addSQLClause(FindClause.AND, "VOCE_ANALITICA.ESERCIZIO_VOCE_EP=VOCE_EP.ESERCIZIO");
+            sqlVa.addSQLClause(FindClause.AND, "VOCE_ANALITICA.CD_VOCE_EP=VOCE_EP.CD_VOCE_EP");
+            sql.addSQLExistsClause(FindClause.AND, sqlVa);
+        }
         return sql;
     }
 
     public SQLBuilder selectVoce_analiticaByClause(UserContext userContext, OrdineAcqEcoBulk ordineAcqEcoBulk, Voce_analiticaBulk voceAnaliticaBulk, CompoundFindClause clause)  throws ComponentException, EJBException, RemoteException {
         Voce_analiticaHome voceAnaliticaHome = (Voce_analiticaHome) getHome(userContext, Voce_analiticaBulk.class);
         SQLBuilder sql = voceAnaliticaHome.createSQLBuilder();
-        sql.addSQLClause(FindClause.AND,"ESERCIZIO",SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
+        sql.addSQLClause(FindClause.AND,"ESERCIZIO",SQLBuilder.EQUALS, ordineAcqEcoBulk.getEsercizio());
+
         if (voceAnaliticaBulk!=null && voceAnaliticaBulk.getCd_voce_ana()!=null)
             sql.addSQLClause(FindClause.AND,"CD_VOCE_ANA",SQLBuilder.EQUALS, voceAnaliticaBulk.getCd_voce_ana());
+
+        if (ordineAcqEcoBulk.getVoce_ep()!=null && ordineAcqEcoBulk.getVoce_ep().getCd_voce_ep()!=null) {
+            sql.addSQLClause(FindClause.AND,"ESERCIZIO_VOCE_EP",SQLBuilder.EQUALS, ordineAcqEcoBulk.getVoce_ep().getEsercizio());
+            sql.addSQLClause(FindClause.AND,"CD_VOCE_EP",SQLBuilder.EQUALS, ordineAcqEcoBulk.getVoce_ep().getCd_voce_ep());
+        }
+
         if (clause!=null)
             sql.addClause(clause);
         return sql;
@@ -3072,35 +3000,30 @@ public class OrdineAcqComponent
                         deleteBulk(userContext, consEco);
                     }
                     consegnaOrdine.setRigheEconomica(new BulkList<>());
-                    //quindi inserisco
-                    if (consegnaOrdine.getImCostoEco().compareTo(BigDecimal.ZERO)>0 && rigaOrdine.getImCostoEco().compareTo(BigDecimal.ZERO)>0) {
-                        for (OrdineAcqRigaEcoBulk rigaEco : rigaOrdine.getRigheEconomica()) {
-                            OrdineAcqConsegnaEcoBulk consEco = new OrdineAcqConsegnaEcoBulk();
-                            consEco.setOrdineAcqConsegna(consegnaOrdine);
-                            consEco.setVoce_analitica(rigaEco.getVoce_analitica());
-                            consEco.setLinea_attivita(rigaEco.getLinea_attivita());
-                            consEco.setImporto(rigaEco.getImporto().multiply(consegnaOrdine.getImCostoEco())
-                                    .divide(rigaOrdine.getImCostoEco(), 2, RoundingMode.HALF_UP));
-                            consEco.setToBeCreated();
-                            consegnaOrdine.getRigheEconomica().add(consEco);
-                        }
-                        BigDecimal diff = consegnaOrdine.getImCostoEcoDaRipartire();
-                        if (diff.compareTo(BigDecimal.ZERO) > 0) {
-                            for (OrdineAcqConsegnaEcoBulk rigaEco : consegnaOrdine.getRigheEconomica()) {
-                                if (rigaEco.getImporto().compareTo(diff) >= 0) {
-                                    rigaEco.setImporto(rigaEco.getImporto().subtract(diff));
-                                    break;
-                                } else {
-                                    diff = diff.subtract(rigaEco.getImporto());
-                                    rigaEco.setImporto(BigDecimal.ZERO);
-                                }
-                            }
-                        } else if (diff.compareTo(BigDecimal.ZERO) < 0) {
-                            for (OrdineAcqConsegnaEcoBulk rigaEco : consegnaOrdine.getRigheEconomica()) {
-                                rigaEco.setImporto(rigaEco.getImporto().add(diff));
-                                break;
-                            }
-                        }
+                }
+                //quindi inserisco
+                Map<OggettoBulk,BigDecimal> source = new HashMap<>();
+                for (OrdineAcqRigaEcoBulk rigaEco : rigaOrdine.getRigheEconomica())
+                    source.put(rigaEco,rigaEco.getImporto());
+
+                Map<OggettoBulk,BigDecimal> destination = new HashMap<>();
+                for (OrdineAcqConsegnaBulk rigaCons : rigaOrdine.getRigheConsegnaColl())
+                    destination.put(rigaCons,rigaCons.getImCostoEco());
+
+                Map<OggettoBulk,Map<OggettoBulk,BigDecimal>> result = Utility.spalmaImporti(source,destination);
+
+                for (OggettoBulk obj : result.keySet()) {
+                    OrdineAcqConsegnaBulk rigaCons = (OrdineAcqConsegnaBulk)obj;
+                    Map<OggettoBulk,BigDecimal> result2 = result.get(obj);
+                    for (OggettoBulk obj2 : result2.keySet()) {
+                        OrdineAcqRigaEcoBulk rigaEco = (OrdineAcqRigaEcoBulk)obj2;
+                        OrdineAcqConsegnaEcoBulk consEco = new OrdineAcqConsegnaEcoBulk();
+                        consEco.setOrdineAcqConsegna(rigaCons);
+                        consEco.setVoce_analitica(rigaEco.getVoce_analitica());
+                        consEco.setLinea_attivita(rigaEco.getLinea_attivita());
+                        consEco.setImporto(result2.get(obj2));
+                        consEco.setToBeCreated();
+                        rigaCons.getRigheEconomica().add(consEco);
                     }
                 }
             }

@@ -130,7 +130,7 @@ public class Scrittura_partita_doppiaHome extends BulkHome {
     public Optional<Scrittura_partita_doppiaBulk> getScrittura(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk, boolean fetchAll) throws ComponentException {
         try {
             Optional<Scrittura_partita_doppiaBulk> scritturaOpt = Optional.empty();
-            if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(userContext)) {
+            if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(userContext, documentoCogeBulk.getEsercizio())) {
                 scritturaOpt = this.findByDocumentoAmministrativo(documentoCogeBulk);
                 if (scritturaOpt.isPresent()) {
                     Scrittura_partita_doppiaBulk scrittura = scritturaOpt.get();

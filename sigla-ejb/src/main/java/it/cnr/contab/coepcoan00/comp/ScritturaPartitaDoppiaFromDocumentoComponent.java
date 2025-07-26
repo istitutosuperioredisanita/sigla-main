@@ -53,7 +53,7 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
     private Optional<Scrittura_partita_doppiaBulk> getScrittura(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk) throws ComponentException {
         try {
             Optional<Scrittura_partita_doppiaBulk> scritturaOpt = Optional.empty();
-            if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(userContext)) {
+            if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(userContext, documentoCogeBulk.getEsercizio())) {
                 Scrittura_partita_doppiaHome partitaDoppiaHome = Optional.ofNullable(getHome(userContext, Scrittura_partita_doppiaBulk.class))
                         .filter(Scrittura_partita_doppiaHome.class::isInstance)
                         .map(Scrittura_partita_doppiaHome.class::cast)
@@ -69,7 +69,7 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
     private Optional<Scrittura_analiticaBulk> getScritturaAnalitica(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk) throws ComponentException {
         try {
             Optional<Scrittura_analiticaBulk> scritturaOpt = Optional.empty();
-            if (Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(userContext)) {
+            if (Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(userContext, documentoCogeBulk.getEsercizio())) {
                 Scrittura_analiticaHome analiticaHome = Optional.ofNullable(getHome(userContext, Scrittura_analiticaBulk.class))
                         .filter(Scrittura_analiticaHome.class::isInstance)
                         .map(Scrittura_analiticaHome.class::cast)
@@ -85,7 +85,7 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
     private Optional<Scrittura_partita_doppiaBulk> getScritturaAnnullo(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk) throws ComponentException {
         try {
             Optional<Scrittura_partita_doppiaBulk> scritturaOpt = Optional.empty();
-            if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(userContext)) {
+            if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(userContext, documentoCogeBulk.getEsercizio())) {
                 Scrittura_partita_doppiaHome partitaDoppiaHome = Optional.ofNullable(getHome(userContext, Scrittura_partita_doppiaBulk.class))
                         .filter(Scrittura_partita_doppiaHome.class::isInstance)
                         .map(Scrittura_partita_doppiaHome.class::cast)
@@ -113,7 +113,7 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
                 } catch (NoRollbackException ignored) {
                 } catch (ApplicationException e) {
                     try {
-                        if (!Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(usercontext))
+                        if (!Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(usercontext, el.getEsercizio()))
                             throw e;
                     } catch (RemoteException | ComponentException e2) {
                         throw new DetailedRuntimeException(e2);
@@ -135,7 +135,7 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
                 } catch (NoRollbackException ignored) {
                 } catch (ApplicationException e) {
                     try {
-                        if (!Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaParallela(usercontext))
+                        if (!Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(usercontext, el.getEsercizio()))
                             throw e;
                     } catch (RemoteException | ComponentException e2) {
                         throw new DetailedRuntimeException(e2);
@@ -149,9 +149,9 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
 
     public Scrittura_partita_doppiaBulk createScrittura(UserContext usercontext, IDocumentoCogeBulk documentoCoge) throws ComponentException {
         try {
-            if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(usercontext)) {
-                final Optional<IDocumentoCogeBulk> optionalIDocumentoCogeBulk = Optional.ofNullable(documentoCoge);
-                if (optionalIDocumentoCogeBulk.isPresent()){
+            final Optional<IDocumentoCogeBulk> optionalIDocumentoCogeBulk = Optional.ofNullable(documentoCoge);
+            if (optionalIDocumentoCogeBulk.isPresent()){
+                if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(usercontext, documentoCoge.getEsercizio())) {
                     if (Utility.createConfigurazioneCnrComponentSession().isBloccoScrittureProposte(usercontext)) {
                         return this.loadScritturaPatrimoniale(usercontext, optionalIDocumentoCogeBulk.get());
                     } else {
@@ -198,11 +198,11 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
 
     protected Scrittura_partita_doppiaBulk createScritturaAnnullo(UserContext usercontext, OggettoBulk oggettobulk) throws ComponentException {
         try {
-            if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(usercontext)) {
-                final Optional<IDocumentoCogeBulk> optionalIDocumentoCogeBulk = Optional.ofNullable(oggettobulk)
-                        .filter(IDocumentoCogeBulk.class::isInstance)
-                        .map(IDocumentoCogeBulk.class::cast);
-                if (optionalIDocumentoCogeBulk.isPresent()){
+            final Optional<IDocumentoCogeBulk> optionalIDocumentoCogeBulk = Optional.ofNullable(oggettobulk)
+                    .filter(IDocumentoCogeBulk.class::isInstance)
+                    .map(IDocumentoCogeBulk.class::cast);
+            if (optionalIDocumentoCogeBulk.isPresent()){
+                if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(usercontext, optionalIDocumentoCogeBulk.get().getEsercizio())) {
                     Optional<Scrittura_partita_doppiaBulk> optionalScritturaPartitaDoppiaPropostaBulk1;
                     try {
                         optionalScritturaPartitaDoppiaPropostaBulk1 = Optional.ofNullable(Utility.createProposeScritturaComponentSession()
@@ -453,7 +453,7 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
             Optional<Scrittura_partita_doppiaBulk> optionalScritturaPartitaDoppiaPropostaBulk1;
             Optional<Scrittura_analiticaBulk> optionalScritturaAnaliticaPropostaBulk1;
             try {
-                if (Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(userContext)) {
+                if (Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(userContext, documentoCoge.getEsercizio())) {
                     ResultScrittureContabili pair = this.proposeScrittureContabiliWithSavepoint(userContext, documentoCoge);
                     optionalScritturaPartitaDoppiaPropostaBulk1 = Optional.ofNullable(pair.getScritturaPartitaDoppiaBulk());
                     optionalScritturaAnaliticaPropostaBulk1 = Optional.ofNullable(pair.getScritturaAnaliticaBulk());

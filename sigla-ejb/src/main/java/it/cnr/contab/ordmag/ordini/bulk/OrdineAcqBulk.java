@@ -107,7 +107,7 @@ public class OrdineAcqBulk extends OrdineAcqBase
 
     protected BulkList richiesteDaTrasformareInOrdineColl = new BulkList();
     private Boolean aggiornaImpegniInAutomatico = false;
-    private boolean isAttivaEconomicaPura;
+    private boolean attivaFinanziaria;
     private boolean verificaContratto = true;
     protected TerzoBulk fornitore;
     private java.util.Collection modalita;
@@ -1739,12 +1739,13 @@ public class OrdineAcqBulk extends OrdineAcqBase
                 .flatMap(el->el.getResultRigheEconomica().stream())
                 .forEach(el->{
                     OrdineAcqEcoBulk myRigaEco = result.stream()
-                            .filter(el2->el2.getCd_linea_attivita().equals(el.getCd_linea_attivita()))
-                            .filter(el2->el2.getCd_centro_responsabilita().equals(el.getCd_centro_responsabilita()))
-                            .filter(el2->el2.getCd_voce_ana().equals(el.getCd_voce_ana()))
+                            .filter(el2->Optional.ofNullable(el2.getCd_linea_attivita()).equals(Optional.ofNullable(el.getCd_linea_attivita())))
+                            .filter(el2->Optional.ofNullable(el2.getCd_centro_responsabilita()).equals(Optional.ofNullable(el.getCd_centro_responsabilita())))
+                            .filter(el2->Optional.ofNullable(el2.getCd_voce_ana()).equals(Optional.ofNullable(el.getCd_voce_ana())))
                             .findAny().orElseGet(()->{
                                 OrdineAcqEcoBulk rigaEco = new OrdineAcqEcoBulk();
                                 rigaEco.setOrdineAcq(this);
+                                rigaEco.setVoce_ep(el.getOrdineAcqRiga().getVoce_ep());
                                 rigaEco.setLinea_attivita(el.getLinea_attivita());
                                 rigaEco.setVoce_analitica(el.getVoce_analitica());
                                 rigaEco.setProgressivo_riga_eco((long) result.size()+1);
@@ -1779,6 +1780,20 @@ public class OrdineAcqBulk extends OrdineAcqBase
                 .subtract(Optional.ofNullable(this.getImCostoEcoRipartito()).orElse(BigDecimal.ZERO));
     }
 
+    public BigDecimal getImEvaso() {
+        return Optional.ofNullable(righeOrdineColl).map(Collection::stream)
+                .orElse(Stream.empty())
+                .map(OrdineAcqRigaBulk::getImEvaso)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public BigDecimal getImEvasoForzatamente() {
+        return Optional.ofNullable(righeOrdineColl).map(Collection::stream)
+                .orElse(Stream.empty())
+                .map(OrdineAcqRigaBulk::getImEvasoForzatamente)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
     public Boolean isStatoOriginaleInserito() {
         return STATO_INSERITO.equals(this.getStatoOriginale());
     }
@@ -1797,17 +1812,17 @@ public class OrdineAcqBulk extends OrdineAcqBase
         return STATO_IN_APPROVAZIONE.equals(this.getStatoOriginale());
     }
 
-    public void setAttivaEconomicaPura(boolean attivaEconomicaPura) {
-        isAttivaEconomicaPura = attivaEconomicaPura;
+    public void setAttivaFinanziaria(boolean attivaFinanziaria) {
+        this.attivaFinanziaria = attivaFinanziaria;
     }
 
     public boolean isOrdineContabilizzato() {
         if (this.isStatoOriginaleInApprovazione()) {
-            if (this.isAttivaEconomicaPura)
-                return this.getRigheOrdineColl().stream()
-                        .noneMatch(cons->cons.getImCostoEcoDaRipartire().compareTo(BigDecimal.ZERO)!=0);
-            return this.getRigheOrdineColl().stream().flatMap(el->el.getRigheConsegnaColl().stream())
+            if (this.attivaFinanziaria)
+                return this.getRigheOrdineColl().stream().flatMap(el->el.getRigheConsegnaColl().stream())
                     .noneMatch(cons->cons.getObbligazioneScadenzario()==null);
+            return this.getRigheOrdineColl().stream()
+                    .noneMatch(cons->cons.getImCostoEcoDaRipartire().compareTo(BigDecimal.ZERO)!=0);
         }
         return false;
     }

@@ -1576,10 +1576,10 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 				righeDocamm.stream().filter(Fattura_passiva_rigaBulk.class::isInstance)
 						.map(Fattura_passiva_rigaBulk.class::cast)
-						.filter(el->Optional.ofNullable(el.getRigheEconomica()).orElse(new ArrayList<>()).isEmpty())
+						.filter(el->Optional.ofNullable(el.getRigheEconomica()).orElse(new BulkList<>()).isEmpty())
 						.forEach(fpr->{
 					try {
-						fpr.setRigheEconomica(rigaHome.findFatturaPassivaRigheEcoList(fpr));
+						fpr.setRigheEconomica(new BulkList<>(rigaHome.findFatturaPassivaRigheEcoList(fpr)));
 						fpr.getRigheEconomica().forEach(el2->el2.setFattura_passiva_riga(fpr));
 					} catch (PersistencyException e) {
 						throw new DetailedRuntimeException(e);
@@ -1589,7 +1589,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 				Map<Voce_epBulk, List<Fattura_passiva_rigaBulk>> mapConto =
 						righeDocamm.stream()
 								.filter(Fattura_passiva_rigaBulk.class::isInstance).map(Fattura_passiva_rigaBulk.class::cast)
-								.filter(el->Optional.ofNullable(el.getRigheEconomica()).orElse(new ArrayList<>()).isEmpty())
+								.filter(el->Optional.ofNullable(el.getRigheEconomica()).orElse(new BulkList<>()).isEmpty())
 								.collect(Collectors.groupingBy(Fattura_passiva_rigaBulk::getVoce_ep));
 
 				BigDecimal totDocContabile = mapConto.values().stream().flatMap(Collection::stream).map(Fattura_passiva_rigaBulk::getImCostoEcoRipartito)
@@ -5984,7 +5984,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 				((Documento_generico_rigaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setDocumento_generico_rigaBulk((Documento_generico_rigaBulk) rigaEco));
 			} else if (rigaEco instanceof Fattura_passiva_rigaBulk) {
 				Fattura_passiva_rigaHome rigaHome = (Fattura_passiva_rigaHome) getHome(userContext, Fattura_passiva_rigaBulk.class);
-				((Fattura_passiva_rigaBulk) rigaEco).setRigheEconomica(rigaHome.findFatturaPassivaRigheEcoList((Fattura_passiva_rigaBulk) rigaEco));
+				((Fattura_passiva_rigaBulk) rigaEco).setRigheEconomica(new BulkList<>(rigaHome.findFatturaPassivaRigheEcoList((Fattura_passiva_rigaBulk) rigaEco)));
 				((Fattura_passiva_rigaBulk) rigaEco).getRigheEconomica().forEach(el2 -> el2.setFattura_passiva_riga((Fattura_passiva_rigaBulk) rigaEco));
 			} else if (rigaEco instanceof Fattura_attiva_rigaBulk) {
 				Fattura_attiva_rigaHome rigaHome = (Fattura_attiva_rigaHome) getHome(userContext, Fattura_attiva_rigaBulk.class);

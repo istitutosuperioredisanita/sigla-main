@@ -3,6 +3,7 @@
 		it.cnr.jada.action.*,
 		java.util.*,
 		it.cnr.jada.util.action.*,
+		it.cnr.contab.ordmag.ordini.bulk.*,
 		it.cnr.contab.docamm00.tabrif.bulk.*,
 		it.cnr.contab.docamm00.intrastat.bulk.*,
 		it.cnr.contab.docamm00.docs.bulk.*,
@@ -12,15 +13,25 @@
 %>
 <%
     CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP)BusinessProcess.getBusinessProcess(request);
+    OrdineAcqEcoBulk model = (OrdineAcqEcoBulk)bp.getResultRigheEcoTestata().getModel();
+    boolean isVoceAnaliticaEnabled = model!=null && (model.getVoce_ep()==null ||
+                   model.getVoce_ep().getCrudStatus() != it.cnr.jada.bulk.OggettoBulk.NORMAL ||
+                   model.getVoce_ep().isAnaliticaEnabled());
 %>
 <div class="mt-1">
     <% bp.getResultRigheEcoTestata().writeHTMLTable(pageContext, "default", false, false, false,"100%","100px", true); %>
     <% if (!bp.getResultRigheEcoTestata().isCollapsed()) { %>
     <table class="Panel mt-1 p-2 card card-shadow" cellpadding="2">
         <tr>
+            <td><% bp.getResultRigheEcoTestata().writeFormLabel(out, "find_voce_eco_searchtool"); %></td>
+            <td colspan="7" class="w-100"><% bp.getResultRigheEcoTestata().writeFormInput(out, "find_voce_eco_searchtool"); %></td>
+        </tr>
+        <% if (isVoceAnaliticaEnabled) { %>
+        <tr>
             <td><% bp.getResultRigheEcoTestata().writeFormLabel(out, "find_voce_ana_searchtool"); %></td>
             <td colspan="7" class="w-100"><% bp.getResultRigheEcoTestata().writeFormInput(out, "find_voce_ana_searchtool"); %></td>
         </tr>
+        <% } %>
         <tr>
             <% bp.getResultRigheEcoTestata().writeFormField(out, "find_linea_attivita");%>
             <% bp.getResultRigheEcoTestata().writeFormField(out, "centro_responsabilita");%>

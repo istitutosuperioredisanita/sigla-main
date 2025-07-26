@@ -786,53 +786,9 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
      * @return É attiva la gestione della finanziaria
      * @throws PersistencyException
      */
-    public boolean isAttivaFinanziaria(UserContext userContext) throws ComponentException {
-        return isAttivaFinanziaria(userContext, CNRUserContext.getEsercizio(userContext));
-    }
-
-    /**
-     * @param userContext
-     * @return É attiva la gestione della finanziaria
-     * @throws PersistencyException
-     */
     public boolean isAttivaFinanziaria(UserContext userContext, int esercizio) throws ComponentException {
-        return !this.isAttivaEconomicaPura(userContext, esercizio);
-    }
-
-    /**
-     * @param userContext
-     * @return É attiva la gestione dell'economico patrimoniale (parallela o pura)
-     * @throws PersistencyException
-     */
-    public boolean isAttivaEconomica(UserContext userContext) throws ComponentException {
         try {
-            return Optional.ofNullable(getHome(userContext, Configurazione_cnrBulk.class))
-                    .filter(Configurazione_cnrHome.class::isInstance)
-                    .map(Configurazione_cnrHome.class::cast)
-                    .orElseThrow(() -> new DetailedRuntimeException("Configurazione Home not found"))
-                    .isAttivaEconomica(userContext);
-        } catch (PersistencyException e) {
-            throw handleException(e);
-        }
-    }
-
-    /**
-     * @param userContext
-     * @return É attiva la gestione dell'economico patrimoniale pura
-     * @throws PersistencyException
-     */
-    public boolean isAttivaEconomicaPura(UserContext userContext) throws ComponentException {
-        return isAttivaEconomicaPura(userContext, CNRUserContext.getEsercizio(userContext));
-    }
-
-    /**
-     * @param userContext
-     * @return É attiva la gestione dell'economico patrimoniale pura
-     * @throws PersistencyException
-     */
-    public boolean isAttivaEconomicaPura(UserContext userContext, int esercizio) throws ComponentException {
-        try {
-            return Optional.ofNullable(getHome(userContext, Configurazione_cnrBulk.class))
+            return !Optional.ofNullable(getHome(userContext, Configurazione_cnrBulk.class))
                     .filter(Configurazione_cnrHome.class::isInstance)
                     .map(Configurazione_cnrHome.class::cast)
                     .orElseThrow(() -> new DetailedRuntimeException("Configurazione Home not found"))
@@ -844,16 +800,16 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
 
     /**
      * @param userContext
-     * @return É attiva la gestione dell'economico patrimoniale parallela
+     * @return É attiva la gestione dell'economico patrimoniale (parallela o pura)
      * @throws PersistencyException
      */
-    public boolean isAttivaEconomicaParallela(UserContext userContext) throws ComponentException {
+    public boolean isAttivaEconomica(UserContext userContext, int esercizio) throws ComponentException {
         try {
             return Optional.ofNullable(getHome(userContext, Configurazione_cnrBulk.class))
                     .filter(Configurazione_cnrHome.class::isInstance)
                     .map(Configurazione_cnrHome.class::cast)
                     .orElseThrow(() -> new DetailedRuntimeException("Configurazione Home not found"))
-                    .isAttivaEconomicaParallela(userContext);
+                    .isAttivaEconomica(esercizio);
         } catch (PersistencyException e) {
             throw handleException(e);
         }
@@ -864,13 +820,13 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
      * @return É attiva la gestione dell'analitica
      * @throws PersistencyException
      */
-    public boolean isAttivaAnalitica(UserContext userContext) throws ComponentException {
+    public boolean isAttivaAnalitica(UserContext userContext, int esercizio) throws ComponentException {
         try {
             return Optional.ofNullable(getHome(userContext, Configurazione_cnrBulk.class))
                     .filter(Configurazione_cnrHome.class::isInstance)
                     .map(Configurazione_cnrHome.class::cast)
                     .orElseThrow(() -> new DetailedRuntimeException("Configurazione Home not found"))
-                    .isAttivaAnalitica(userContext);
+                    .isAttivaAnalitica(esercizio);
         } catch (PersistencyException e) {
             throw handleException(e);
         }

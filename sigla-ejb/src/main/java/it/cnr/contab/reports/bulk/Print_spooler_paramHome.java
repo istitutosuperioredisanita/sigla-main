@@ -19,7 +19,6 @@ package it.cnr.contab.reports.bulk;
 
 import it.cnr.jada.bulk.*;
 import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
 import it.cnr.jada.persistency.sql.*;
 
 public class Print_spooler_paramHome extends BulkHome {

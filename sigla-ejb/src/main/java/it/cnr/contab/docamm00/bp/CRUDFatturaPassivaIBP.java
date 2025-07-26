@@ -18,10 +18,7 @@
 package it.cnr.contab.docamm00.bp;
 
 import it.cnr.contab.coepcoan00.bp.DetailEcoCogeCRUDController;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_IBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaIBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_riga_ecoBulk;
+import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk;
 import it.cnr.jada.action.ActionContext;
@@ -69,7 +66,7 @@ public class CRUDFatturaPassivaIBP extends CRUDFatturaPassivaBP implements IDocu
 		}
 	};
 
-	private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(Fattura_passiva_riga_ecoBulk.class, dettaglio);
+	private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(Fattura_passiva_riga_ecoIBulk.class, dettaglio);
 
 	/**
 	 * CRUDFatturaPassivaIBP constructor comment.

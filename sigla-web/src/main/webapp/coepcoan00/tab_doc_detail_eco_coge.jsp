@@ -17,6 +17,9 @@
                         .filter(IDocumentoDetailEcoCogeBulk.class::isInstance)
                         .map(IDocumentoDetailEcoCogeBulk.class::cast)
                         .orElse(null);
+    boolean isVoceAnaliticaEnabled = model!=null && (model.getVoce_ep()==null ||
+                   model.getVoce_ep().getCrudStatus() != it.cnr.jada.bulk.OggettoBulk.NORMAL ||
+                   model.getVoce_ep().isAnaliticaEnabled());
 %>
 <div class="Panel card p-2 mb-2 card-shadow">
     <% if (bp.isAttivaEconomica()) { %>
@@ -39,13 +42,15 @@
 </div>
 <% if (bp.isAttivaAnalitica()) { %>
 <div class="mt-1">
-    <% bp.getChildrenAnaColl().writeHTMLTable(pageContext, "default", bp.isAttivaEconomicaPura(), false, bp.isAttivaEconomicaPura(),"100%","100px", true); %>
-    <% if (!bp.getChildrenAnaColl().isCollapsed() && Optional.ofNullable(bp.getChildrenAnaColl().getModel()).isPresent() && bp.isAttivaEconomicaPura()) { %>
+    <% bp.getChildrenAnaColl().writeHTMLTable(pageContext, isVoceAnaliticaEnabled?"default":"novoceanalitica", !bp.isAttivaFinanziaria(), false, !bp.isAttivaFinanziaria(),"100%","100px", true); %>
+    <% if (!bp.getChildrenAnaColl().isCollapsed() && Optional.ofNullable(bp.getChildrenAnaColl().getModel()).isPresent() && !bp.isAttivaFinanziaria()) { %>
     <table class="Panel mt-1 p-2 card card-shadow" cellpadding="2">
+        <% if (isVoceAnaliticaEnabled) { %>
         <tr>
             <td><% bp.getChildrenAnaColl().writeFormLabel(out, "find_voce_ana_searchtool"); %></td>
             <td colspan="7" class="w-100"><% bp.getChildrenAnaColl().writeFormInput(out, "find_voce_ana_searchtool"); %></td>
         </tr>
+        <% } %>
         <tr>
             <% bp.getChildrenAnaColl().writeFormField(out, "find_linea_attivita");%>
             <% bp.getChildrenAnaColl().writeFormField(out, "centro_responsabilita");%>

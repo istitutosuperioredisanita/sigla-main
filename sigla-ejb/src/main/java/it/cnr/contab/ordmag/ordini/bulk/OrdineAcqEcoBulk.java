@@ -18,12 +18,16 @@
 package it.cnr.contab.ordmag.ordini.bulk;
 
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
+import it.cnr.contab.config00.pdcep.bulk.Voce_epBulk;
 
 import java.util.Optional;
 
 public class OrdineAcqEcoBulk extends OrdineAcqEcoBase  {
     private OrdineAcqBulk ordineAcq;
+
+    protected ContoBulk voce_ep = new ContoBulk();
 
     protected Voce_analiticaBulk voce_analitica = new Voce_analiticaBulk();
 
@@ -35,6 +39,38 @@ public class OrdineAcqEcoBulk extends OrdineAcqEcoBase  {
 
     public OrdineAcqEcoBulk(String cdCds, String cdUnitaOperativa, Integer esercizio, String cdNumeratore, Integer numero, Long progressivo_riga_eco) {
         super(cdCds, cdUnitaOperativa, esercizio, cdNumeratore, numero, progressivo_riga_eco);
+    }
+
+    public ContoBulk getVoce_ep() {
+        return voce_ep;
+    }
+
+    public void setVoce_ep(ContoBulk voce_ep) {
+        this.voce_ep = voce_ep;
+    }
+
+    @Override
+    public Integer getEsercizio_voce_ep() {
+        return Optional.ofNullable(this.getVoce_ep())
+                .map(Voce_epBulk::getEsercizio)
+                .orElse(null);
+    }
+
+    @Override
+    public void setEsercizio_voce_ep(Integer esercizio_voce_ep) {
+        Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setEsercizio(esercizio_voce_ep));
+    }
+
+    @Override
+    public String getCd_voce_ep() {
+        return Optional.ofNullable(this.getVoce_ep())
+                .map(Voce_epBulk::getCd_voce_ep)
+                .orElse(null);
+    }
+
+    @Override
+    public void setCd_voce_ep(String cd_voce_ep) {
+        Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setCd_voce_ep(cd_voce_ep));
     }
 
     public Voce_analiticaBulk getVoce_analitica() {

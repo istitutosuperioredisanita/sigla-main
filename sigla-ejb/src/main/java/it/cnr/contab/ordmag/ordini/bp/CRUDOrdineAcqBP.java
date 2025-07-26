@@ -39,7 +39,6 @@ import it.cnr.contab.reports.bulk.Report;
 import it.cnr.contab.reports.service.PrintService;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.contab.util.EuroFormat;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
@@ -48,7 +47,6 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.HttpActionContext;
-import it.cnr.jada.bulk.BulkInfo;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
@@ -72,7 +70,6 @@ import org.apache.commons.io.IOUtils;
 
 import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.ServletException;
-import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import java.io.*;
 import java.math.BigDecimal;
@@ -108,7 +105,7 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 		return dettaglioContrattoCollapse;
 	}
 	private boolean attivaEconomica = false;
-	private boolean attivaEconomicaPura = false;
+	private boolean attivaFinanziaria = false;
 	private boolean attivaAnalitica = false;
 
 	public void setDettaglioContrattoCollapse(boolean dettaglioContrattoCollapse) {
@@ -251,7 +248,7 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 	private final CollapsableDetailCRUDController resultRigheEcoTestata = new ResultRigheEcoTestataCRUDController("Dati Analitici", OrdineAcqEcoBulk.class,"resultRigheEconomica",this, true);
 
 	private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(OrdineAcqRigaEcoBulk.class, righe);
-	private final CollapsableDetailCRUDController resultRigheEcoDettaglio = new DetailEcoCogeCRUDController("Dati Coge/Coan", OrdineAcqRigaEcoBulk.class,"resultRigheEconomica",righe);
+	private final CollapsableDetailCRUDController resultRigheEcoDettaglio = new ResultRigheEcoDettaglioCRUDController("Dati Coge/Coan", OrdineAcqRigaEcoBulk.class,"resultRigheEconomica",righe);
 
 	public final it.cnr.jada.util.action.SimpleDetailCRUDController getConsegne() {
 		return consegne;
@@ -949,11 +946,12 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 			int solaris = Fattura_passivaBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate())
 					.get(java.util.Calendar.YEAR);
 
-			setEsercizioInScrivania(CNRUserContext.getEsercizio(context.getUserContext()).intValue());
+			int esercizioScrivania = CNRUserContext.getEsercizio(context.getUserContext());
+			setEsercizioInScrivania(esercizioScrivania);
 			setAnnoSolareInScrivania(solaris == this.getEsercizioInScrivania());
-			attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
-			attivaEconomicaPura = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(context.getUserContext());
-			attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
+			attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext(), esercizioScrivania);
+			attivaFinanziaria = Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(context.getUserContext(), esercizioScrivania);
+			attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext(), esercizioScrivania);
 			resultRigheEcoTestata.setCollapsed(Boolean.FALSE);
 
 			setRibaltato(initRibaltato(context));
@@ -992,9 +990,9 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 		pages.put(i++, TAB_ORDINE_MAIN);
 		pages.put(i++, TAB_ORDINE_FORNITORE);
 		pages.put(i++, TAB_ORDINE_DETTAGLI);
-		if (!attivaEconomicaPura)
+		if (this.isAttivaFinanziaria())
 			pages.put(i++, TAB_ORDINE_OBBLIGAZIONI);
-		else if (attivaEconomica && attivaAnalitica) {
+		else if (this.isAttivaEconomica() && this.isAttivaAnalitica()) {
 			if (Optional.ofNullable(this.getModel())
 					.filter(OrdineAcqBulk.class::isInstance)
 					.map(OrdineAcqBulk.class::cast)
@@ -1084,8 +1082,8 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 	}
 
 	@Override
-	public boolean isAttivaEconomicaPura() {
-		return attivaEconomicaPura;
+	public boolean isAttivaFinanziaria() {
+		return attivaFinanziaria;
 	}
 
 	@Override
@@ -1096,14 +1094,14 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 	@Override
 	public OggettoBulk initializeModelForInsert(ActionContext actioncontext, OggettoBulk oggettobulk) throws BusinessProcessException {
 		oggettobulk = super.initializeModelForInsert(actioncontext, oggettobulk);
-		((OrdineAcqBulk)oggettobulk).setAttivaEconomicaPura(isAttivaEconomicaPura());
+		((OrdineAcqBulk)oggettobulk).setAttivaFinanziaria(isAttivaFinanziaria());
 		return oggettobulk;
 	}
 
 	@Override
 	public OggettoBulk initializeModelForEdit(ActionContext actioncontext, OggettoBulk oggettobulk) throws BusinessProcessException {
 		oggettobulk = super.initializeModelForEdit(actioncontext, oggettobulk);
-		((OrdineAcqBulk)oggettobulk).setAttivaEconomicaPura(isAttivaEconomicaPura());
+		((OrdineAcqBulk)oggettobulk).setAttivaFinanziaria(isAttivaFinanziaria());
 		return oggettobulk;
 	}
 
@@ -1111,15 +1109,19 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 		try {
 			if (reloadAll) {
 				//cancello tutta la eco
-				for (OrdineAcqRigaEcoBulk rigaEco : riga.getRigheEconomica())
-					riga.removeFromRigheEconomica(riga.getRigheEconomica().indexOf(rigaEco)-1);
+				for (int k=0;k<riga.getRigheEconomica().size();k++)
+					riga.removeFromRigheEconomica(k);
 				if (riga.getDspConto()!=null) {
 					//carico analitica se presente su testata
 					for (OrdineAcqEcoBulk ordineEco : riga.getOrdineAcq().getRigheEconomica()) {
-						//Verifico se voce analitica è associata a voce economica
-						List<ContoBulk> contiAssociati = Utility.createPDCContoAnaliticoComponentSession().findContiAnaliticiAssociatiList(actionContext.getUserContext(), ordineEco.getVoce_analitica());
-						if (contiAssociati.stream()
-								.anyMatch(el -> el.getCd_voce_ep().equals(riga.getDspConto().getCd_voce_ep()))) {
+						boolean copy = riga.getDspConto().equalsByPrimaryKey(ordineEco.getVoce_ep());
+						if (!copy && ordineEco.getVoce_analitica()!=null) {
+							//Verifico se voce analitica è associata a voce economica
+							List<ContoBulk> contiAssociati = Utility.createPDCContoAnaliticoComponentSession().findContiAnaliticiAssociatiList(actionContext.getUserContext(), ordineEco.getVoce_analitica());
+							copy = contiAssociati.stream()
+									.anyMatch(el -> el.getCd_voce_ep().equals(riga.getDspConto().getCd_voce_ep()));
+						}
+						if (copy) {
 							OrdineAcqRigaEcoBulk rigaEco = new OrdineAcqRigaEcoBulk();
 							rigaEco.setVoce_analitica(ordineEco.getVoce_analitica());
 							rigaEco.setLinea_attivita(ordineEco.getLinea_attivita());

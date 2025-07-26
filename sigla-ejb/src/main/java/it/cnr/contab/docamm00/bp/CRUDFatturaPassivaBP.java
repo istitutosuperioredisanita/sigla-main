@@ -23,12 +23,14 @@ import it.cnr.contab.config00.bulk.Configurazione_cnrBase;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.docamm00.actions.CRUDFatturaPassivaAction;
 import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.docamm00.fatturapa.bulk.*;
 import it.cnr.contab.docamm00.intrastat.bulk.Fattura_passiva_intraBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk;
 import it.cnr.contab.doccont00.bp.IDefferedUpdateSaldiBP;
 import it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk;
@@ -40,6 +42,7 @@ import it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
+import it.cnr.contab.ordmag.ordini.ejb.OrdineAcqComponentSession;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.CNRUserInfo;
@@ -171,7 +174,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     private boolean attivoOrdini = false;
     private boolean propostaFatturaDaOrdini = false;
     protected boolean attivaEconomica = false;
-    protected boolean attivaEconomicaPura = false;
+    protected boolean attivaFinanziaria = false;
     private boolean attivaAnalitica = false;
     private boolean supervisore = false;
 
@@ -588,11 +591,12 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
 
         try {
             final Configurazione_cnrComponentSession configurazioneCnrComponentSession = Utility.createConfigurazioneCnrComponentSession();
+            int esercizioScrivania = CNRUserContext.getEsercizio(context.getUserContext());
             attivoOrdini = configurazioneCnrComponentSession.isAttivoOrdini(context.getUserContext());
             propostaFatturaDaOrdini = configurazioneCnrComponentSession.propostaFatturaDaOrdini(context.getUserContext());
-            attivaEconomica = configurazioneCnrComponentSession.isAttivaEconomica(context.getUserContext());
-            attivaEconomicaPura = configurazioneCnrComponentSession.isAttivaEconomicaPura(context.getUserContext());
-            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
+            attivaEconomica = configurazioneCnrComponentSession.isAttivaEconomica(context.getUserContext(), esercizioScrivania);
+            attivaFinanziaria = configurazioneCnrComponentSession.isAttivaFinanziaria(context.getUserContext(), esercizioScrivania);
+            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext(), esercizioScrivania);
             attivaInventaria= configurazioneCnrComponentSession.isAttivoInventariaDocumenti(context.getUserContext());
             attivoCheckImpIntrastat=Utility.createConfigurazioneCnrComponentSession().isCheckImpIntrastatFattPassiva(context.getUserContext());
             isAttivoGestFlIrregistrabile=Utility.createConfigurazioneCnrComponentSession().isAttivoGestFlIrregistrabile(context.getUserContext());
@@ -614,7 +618,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
                             it.cnr.jada.util.ejb.EJBCommonServices.getServerDate())
                     .get(java.util.Calendar.YEAR);
 
-            setEsercizioInScrivania(CNRUserContext.getEsercizio(context.getUserContext()).intValue());
+            setEsercizioInScrivania(esercizioScrivania);
             setAnnoSolareInScrivania(solaris == this.getEsercizioInScrivania());
             setRibaltato(initRibaltato(context));
             if (!isAnnoSolareInScrivania()) {
@@ -1741,17 +1745,20 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
         } else if (fattura instanceof Nota_di_debitoBulk) {
             pages.put(i++, TAB_FATTURA_PASSIVA_DETTAGLIO);
             pages.put(i++, TAB_FATTURA_PASSIVA_CONSUNTIVO);
-            pages.put(i++, TAB_FATTURA_PASSIVA_OBBLIGAZIONI);
+            if (this.isAttivaFinanziaria())
+                pages.put(i++, TAB_FATTURA_PASSIVA_OBBLIGAZIONI);
         } else if (fattura instanceof Fattura_passiva_IBulk) {
             if (fattura.isDaOrdini()){
                 pages.put(i++, TAB_FATTURA_PASSIVA_ORDINI);
                 pages.put(i++, TAB_FATTURA_PASSIVA_DETTAGLIO);
                 pages.put(i++, TAB_FATTURA_PASSIVA_CONSUNTIVO);
-                pages.put(i++, TAB_FATTURA_PASSIVA_OBBLIGAZIONI);
+                if (this.isAttivaFinanziaria())
+                    pages.put(i++, TAB_FATTURA_PASSIVA_OBBLIGAZIONI);
             } else {
                 pages.put(i++, TAB_FATTURA_PASSIVA_DETTAGLIO);
                 pages.put(i++, TAB_FATTURA_PASSIVA_CONSUNTIVO);
-                pages.put(i++, TAB_FATTURA_PASSIVA_OBBLIGAZIONI);
+                if (this.isAttivaFinanziaria())
+                    pages.put(i++, TAB_FATTURA_PASSIVA_OBBLIGAZIONI);
             }
             pages.put(i++, TAB_FATTURA_PASSIVA_DOCUMENTI_1210);
 
@@ -2152,12 +2159,23 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     }
 
     @Override
-    public boolean isAttivaEconomicaPura() {
-        return attivaEconomicaPura;
+    public boolean isAttivaFinanziaria() {
+        return attivaFinanziaria;
     }
 
     @Override
     public boolean isAttivaAnalitica() {
         return attivaAnalitica;
+    }
+
+    public ContoBulk recuperoContoDefault(
+            ActionContext context,
+            Categoria_gruppo_inventBulk categoria_gruppo_inventBulk)
+            throws it.cnr.jada.action.BusinessProcessException {
+        try {
+            return Utility.createOrdineAcqComponentSession().recuperoContoDefault(context.getUserContext(), categoria_gruppo_inventBulk);
+        } catch (ComponentException | PersistencyException | RemoteException e) {
+            throw handleException(e);
+        }
     }
 }

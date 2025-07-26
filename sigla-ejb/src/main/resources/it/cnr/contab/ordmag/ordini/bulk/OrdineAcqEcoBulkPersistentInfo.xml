@@ -38,6 +38,13 @@
 			propertyName="ordineAcq.numero" />
 
 		<columnMapping
+			columnName="ESERCIZIO_VOCE_EP"
+			propertyName="voce_ep.esercizio" />
+		<columnMapping
+			columnName="CD_VOCE_EP"
+			propertyName="voce_ep.cd_voce_ep" />
+
+		<columnMapping
 			columnName="ESERCIZIO_VOCE_ANA"
 			propertyName="voce_analitica.esercizio" />
 		<columnMapping
@@ -55,6 +62,8 @@
 	<persistentProperty
 		name="ordineAcq"
 		partOfOid="true" />
+	<persistentProperty
+		name="voce_ep" />
 	<persistentProperty
 		name="voce_analitica" />
 	<persistentProperty

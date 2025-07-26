@@ -25,6 +25,7 @@ import it.cnr.contab.compensi00.bp.CRUDCompensoBP;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk;
 import it.cnr.contab.config00.bulk.CigBulk;
+import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.docamm00.bp.*;
 import it.cnr.contab.docamm00.docs.bulk.*;
@@ -1259,7 +1260,6 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
      * figlio del ricevente
      */
     public Forward doAddToCRUDMain_Dettaglio(ActionContext context) {
-
         try {
             CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) getBusinessProcess(context);
             bp.getDettaglio().add(context);
@@ -1278,6 +1278,16 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                             );
                         }
                     });
+            return context.findDefaultForward();
+        } catch (Throwable e) {
+            return handleException(context, e);
+        }
+    }
+
+    public Forward doAddToCRUDMain_Dettaglio_DatiCogeCoan(ActionContext context) {
+        try {
+            CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) getBusinessProcess(context);
+            bp.getChildrenAnaColl().add(context);
             return context.findDefaultForward();
         } catch (Throwable e) {
             return handleException(context, e);
@@ -1820,16 +1830,31 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
         return context.findDefaultForward();
     }
 
+    public Forward doBlankSearchBene_servizio(ActionContext context, Fattura_passiva_rigaBulk fattura_passiva_riga) throws it.cnr.jada.comp.ComponentException {
+        try {
+            if (!fattura_passiva_riga.getRigheEconomica().isEmpty()) {
+                CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) getBusinessProcess(context);
+                bp.setMessage("Operazione non consentita! Esistono dati Coge/Coan collegati alla riga.");
+            } else {
+                fattura_passiva_riga.setVoce_ep(new ContoBulk());
+                fattura_passiva_riga.setBene_servizio(new Bene_servizioBulk());
+            }
+            return context.findDefaultForward();
+        } catch (Exception e) {
+            return handleException(context, e);
+        }
+    }
+
     /**
-     * <!-- @TODO: da completare -->
-     * Gestisce una richiesta di ricerca del searchtool "bene_servizio"
-     *
-     * @param context              L'ActionContext della richiesta
-     * @param fattura_passiva_riga L'OggettoBulk padre del searchtool
-     * @param beneTrovato          L'OggettoBulk selezionato dall'utente
-     * @return Il Forward alla pagina di risposta
-     * @throws ComponentException
-     */
+      * <!-- @TODO: da completare -->
+      * Gestisce una richiesta di ricerca del searchtool "bene_servizio"
+      *
+      * @param context              L'ActionContext della richiesta
+      * @param fattura_passiva_riga L'OggettoBulk padre del searchtool
+      * @param beneTrovato          L'OggettoBulk selezionato dall'utente
+      * @return Il Forward alla pagina di risposta
+      * @throws ComponentException
+      */
     public Forward doBringBackSearchBene_servizio(ActionContext context,
                                                   Fattura_passiva_rigaBulk fattura_passiva_riga,
                                                   Bene_servizioBulk beneTrovato)
@@ -1838,7 +1863,6 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
         try {
             Voce_ivaBulk voceIvaB = null;
             if (beneTrovato != null) {
-
                 fattura_passiva_riga.setBene_servizio(beneTrovato);
                 if (fattura_passiva_riga.getDs_riga_fattura() == null)
                     fattura_passiva_riga.setDs_riga_fattura(beneTrovato.getDs_bene_servizio());
@@ -1850,6 +1874,12 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                     //((it.cnr.jada.util.action.CRUDBP)context.getBusinessProcess()).setErrorMessage("Attenzione: non è stata caricata una voce IVA di default per le fatture istituzionali!");
                 } else
                     voceIvaB = beneTrovato.getVoce_iva();
+
+                if (beneTrovato.getCategoria_gruppo() != null) {
+                    CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) getBusinessProcess(context);
+                    ContoBulk conto = bp.recuperoContoDefault(context, beneTrovato.getCategoria_gruppo());
+                    fattura_passiva_riga.setVoce_ep(conto);
+                }
             }
             return doBringBackSearchVoce_iva(context, fattura_passiva_riga, voceIvaB);
 
@@ -4501,15 +4531,15 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                 try {
                     if (fatturaPassivaBulk.getFattura_passiva_dettColl()
                             .stream()
-                            .filter(fatturaPassivaRigaBulk -> fatturaPassivaRigaBulk.isStatoIniziale())
-                            .findAny().isPresent()) {
+                            .anyMatch(Fattura_passiva_rigaBulk::isStatoIniziale) &&
+                        Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(context.getUserContext(), fatturaPassivaBulk.getEsercizio())) {
                         bp.setTab("tab", CRUDFatturaPassivaBP.TAB_FATTURA_PASSIVA_DETTAGLIO[0]);
                         bp.setMessage(FormBP.WARNING_MESSAGE, "Attenzione ci sono dettagli di fattura da contabilizzare.");
                     } else {
                         bp.setMessage(FormBP.INFO_MESSAGE, "Operazione Effettuata");
                     }
                     bp.setModel(context, fatturaPassivaBulk);
-                } catch (BusinessProcessException e) {
+                } catch (BusinessProcessException | ComponentException | RemoteException e) {
                     throw new RuntimeException(e);
                 }
             });

@@ -108,7 +108,7 @@ public abstract class CRUDFatturaAttivaBP
     private boolean contoEnte;
     private DocumentiCollegatiDocAmmService docCollService;
     protected boolean attivaEconomica = false;
-    protected boolean attivaEconomicaPura = false;
+    protected boolean attivaFinanziaria = false;
     private boolean attivaAnalitica = false;
     private boolean supervisore = false;
     private boolean esercizioChiuso = false;
@@ -428,10 +428,10 @@ public abstract class CRUDFatturaAttivaBP
 
         try {
             int solaris = Fattura_attivaBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.YEAR);
-            int esercizioScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue();
-            attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
-            attivaEconomicaPura = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(context.getUserContext());
-            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
+            int esercizioScrivania = CNRUserContext.getEsercizio(context.getUserContext());
+            attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext(), esercizioScrivania);
+            attivaFinanziaria = Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(context.getUserContext(), esercizioScrivania);
+            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext(), esercizioScrivania);
             attivaInventaria= Utility.createConfigurazioneCnrComponentSession().isAttivoInventariaDocumenti(context.getUserContext());
             attivoCheckImpIntrastat=Utility.createConfigurazioneCnrComponentSession().isCheckImpIntrastatFattAttiva(context.getUserContext());
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
@@ -1466,9 +1466,9 @@ public abstract class CRUDFatturaAttivaBP
                 pages.put(i++, TAB_INTRASTAT);
             }
         }
-        if (attivaEconomica)
+        if (this.isAttivaEconomica())
             pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
-        if (attivaAnalitica)
+        if (this.isAttivaAnalitica())
             pages.put(i++, CRUDScritturaAnaliticaBP.TAB_ANALITICA);
         String[][] tabs = new String[i][3];
         for (int j = 0; j < i; j++)
@@ -1551,8 +1551,8 @@ public abstract class CRUDFatturaAttivaBP
     }
 
     @Override
-    public boolean isAttivaEconomicaPura() {
-        return attivaEconomicaPura;
+    public boolean isAttivaFinanziaria() {
+        return attivaFinanziaria;
     }
 
     @Override

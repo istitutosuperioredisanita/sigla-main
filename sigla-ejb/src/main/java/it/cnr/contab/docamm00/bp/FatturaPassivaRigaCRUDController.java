@@ -156,14 +156,16 @@ public class FatturaPassivaRigaCRUDController extends it.cnr.jada.util.action.Si
                     (getParentModel() instanceof it.cnr.contab.docamm00.docs.bulk.Nota_di_debitoBulk) ?
                             "javascript:submitForm('doAddebitaDettagli')" :
                             "javascript:submitForm('doRicercaObbligazione')";
-        it.cnr.jada.util.jsp.JSPUtils.toolbarButton(
-                context,
-                isFromBootstrap ? "fa fa-fw fa-bolt" : "img/history16.gif",
-                !(isInputReadonly() || getDetails().isEmpty() || ((CRUDFatturaPassivaBP) getParentController()).isSearching()) ? command : null,
-                true,
-                "Contabilizza",
-                "btn-sm btn-outline-primary btn-title",
-                isFromBootstrap);
+        if (((CRUDFatturaPassivaBP) getParentController()).isAttivaFinanziaria()) {
+            it.cnr.jada.util.jsp.JSPUtils.toolbarButton(
+                    context,
+                    isFromBootstrap ? "fa fa-fw fa-bolt" : "img/history16.gif",
+                    !(isInputReadonly() || getDetails().isEmpty() || ((CRUDFatturaPassivaBP) getParentController()).isSearching()) ? command : null,
+                    true,
+                    "Contabilizza",
+                    "btn-sm btn-outline-primary btn-title",
+                    isFromBootstrap);
+        }
         Fattura_passiva_rigaBulk riga = (Fattura_passiva_rigaBulk) getModel();
         if (getParentController() instanceof CRUDFatturaPassivaIBP) {
             CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) getParentController();
@@ -174,13 +176,12 @@ public class FatturaPassivaRigaCRUDController extends it.cnr.jada.util.action.Si
                         (!(isInputReadonly() || getDetails().isEmpty() || bp.isSearching() || bp.isViewing()) ||
                                 bp.isManualModify());
 
-                enabled = enabled && !(riga == null || riga.getTi_associato_manrev() != null && riga.ASSOCIATO_A_MANDATO.equalsIgnoreCase(riga.getTi_associato_manrev())) &&
-                            !riga.getFattura_passiva()
+                enabled = enabled && !(riga == null || riga.getTi_associato_manrev() != null &&
+                        Fattura_passiva_rigaBulk.ASSOCIATO_A_MANDATO.equalsIgnoreCase(riga.getTi_associato_manrev())) &&
+                        riga.getFattura_passiva()
                                     .getFattura_passiva_ordini()
                                     .stream()
-                                    .filter(fatturaOrdineBulk -> fatturaOrdineBulk.getFatturaPassivaRiga().equalsByPrimaryKey(riga))
-                                    .findAny()
-                                    .isPresent();
+                                    .noneMatch(fatturaOrdineBulk -> fatturaOrdineBulk.getFatturaPassivaRiga().equalsByPrimaryKey(riga));
 
                 it.cnr.jada.util.jsp.JSPUtils.toolbarButton(
                         context,

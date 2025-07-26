@@ -32,7 +32,6 @@ import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.config00.contratto.bulk.Dettaglio_contrattoBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_generico_riga_ecoBulk;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Voidable;
@@ -787,15 +786,31 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 				.subtract(Optional.ofNullable(this.getImCostoEcoRipartito()).orElse(BigDecimal.ZERO));
 	}
 
+	public BigDecimal getImEvaso() {
+		return Optional.ofNullable(righeConsegnaColl).map(Collection::stream)
+				.orElse(Stream.empty())
+				.filter(OrdineAcqConsegnaBulk::isStatoConsegnaEvasa)
+				.map(OrdineAcqConsegnaBulk::getImTotaleConsegna)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	public BigDecimal getImEvasoForzatamente() {
+		return Optional.ofNullable(righeConsegnaColl).map(Collection::stream)
+				.orElse(Stream.empty())
+				.filter(OrdineAcqConsegnaBulk::isStatoConsegnaEvasaForzatamente)
+				.map(OrdineAcqConsegnaBulk::getImTotaleConsegna)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
 	public List<OrdineAcqRigaEcoBulk> getResultRigheEconomica() {
 		List<OrdineAcqRigaEcoBulk> result = new ArrayList<>();
 		this.getRigheConsegnaColl().stream()
 				.flatMap(el->el.getRigheEconomica().stream())
 				.forEach(el->{
 					OrdineAcqRigaEcoBulk myRigaEco = result.stream()
-							.filter(el2->el2.getCd_linea_attivita().equals(el.getCd_linea_attivita()))
-							.filter(el2->el2.getCd_centro_responsabilita().equals(el.getCd_centro_responsabilita()))
-							.filter(el2->el2.getCd_voce_ana().equals(el.getCd_voce_ana()))
+							.filter(el2->Optional.ofNullable(el2.getCd_linea_attivita()).equals(Optional.ofNullable(el.getCd_linea_attivita())))
+							.filter(el2->Optional.ofNullable(el2.getCd_centro_responsabilita()).equals(Optional.ofNullable(el.getCd_centro_responsabilita())))
+							.filter(el2->Optional.ofNullable(el2.getCd_voce_ana()).equals(Optional.ofNullable(el.getCd_voce_ana())))
 							.findAny().orElseGet(()->{
 								OrdineAcqRigaEcoBulk rigaEco = new OrdineAcqRigaEcoBulk();
 								rigaEco.setOrdineAcqRiga(this);
@@ -816,6 +831,7 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 				.map(Collection::stream)
 				.orElse(Stream.empty())
 				.map(OrdineAcqConsegnaBulk::getImImponibile)
+				.filter(Objects::nonNull)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 
@@ -824,6 +840,7 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 				.map(Collection::stream)
 				.orElse(Stream.empty())
 				.map(OrdineAcqConsegnaBulk::getImIva)
+				.filter(Objects::nonNull)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 
@@ -832,6 +849,7 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 				.map(Collection::stream)
 				.orElse(Stream.empty())
 				.map(OrdineAcqConsegnaBulk::getImIvaD)
+				.filter(Objects::nonNull)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 
@@ -840,6 +858,7 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 				.map(Collection::stream)
 				.orElse(Stream.empty())
 				.map(OrdineAcqConsegnaBulk::getImTotaleConsegna)
+				.filter(Objects::nonNull)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 
@@ -855,7 +874,8 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 				.map(Collection::stream)
 				.orElseGet(Stream::empty)
 				.map(OrdineAcqConsegnaBulk::getImCostoEco)
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
+				.reduce(BigDecimal.ZERO, BigDecimal::add)
+				.add(this.getImEvasoForzatamente());
 	}
 
 	public BigDecimal getImCostoEcoRipartitoConsegne() {
@@ -863,15 +883,12 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 				.map(Collection::stream)
 				.orElseGet(Stream::empty)
 				.map(OrdineAcqConsegnaBulk::getImCostoEcoRipartito)
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
+				.reduce(BigDecimal.ZERO, BigDecimal::add)
+				.add(this.getImEvasoForzatamente());
 	}
 
 	public BigDecimal getImCostoEcoDaRipartireConsegne() {
-		return Optional.ofNullable(this.getRigheConsegnaColl())
-				.map(Collection::stream)
-				.orElseGet(Stream::empty)
-				.map(OrdineAcqConsegnaBulk::getImCostoEcoDaRipartire)
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		return Optional.ofNullable(this.getImCostoEcoConsegne()).orElse(BigDecimal.ZERO)
+				.subtract(Optional.ofNullable(this.getImCostoEcoRipartitoConsegne()).orElse(BigDecimal.ZERO));
 	}
-
 }

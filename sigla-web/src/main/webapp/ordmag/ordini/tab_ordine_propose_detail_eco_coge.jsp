@@ -13,10 +13,10 @@
 %>
 <%
     CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP)BusinessProcess.getBusinessProcess(request);
-    OrdineAcqBulk ordine = Optional.ofNullable(bp.getModel())
-                            .filter(OrdineAcqBulk.class::isInstance)
-                            .map(OrdineAcqBulk.class::cast)
-                            .orElse(null);
+    OrdineAcqEcoBulk model = (OrdineAcqEcoBulk)bp.getProposeRigheEcoTestata().getModel();
+    boolean isVoceAnaliticaEnabled = model!=null && (model.getVoce_ep()==null ||
+                   model.getVoce_ep().getCrudStatus() != it.cnr.jada.bulk.OggettoBulk.NORMAL ||
+                   model.getVoce_ep().isAnaliticaEnabled());
 %>
 <div class="mt-1">
     <% bp.getProposeRigheEcoTestata().writeHTMLTable(pageContext, "propose", true, false, true,"100%","100px", true); %>
@@ -25,10 +25,12 @@
             <td><% bp.getProposeRigheEcoTestata().writeFormLabel(out, "find_voce_eco_searchtool"); %></td>
             <td colspan="7" class="w-100"><% bp.getProposeRigheEcoTestata().writeFormInput(out, "find_voce_eco_searchtool"); %></td>
         </tr>
+        <% if (isVoceAnaliticaEnabled) { %>
         <tr>
             <td><% bp.getProposeRigheEcoTestata().writeFormLabel(out, "find_voce_ana_searchtool"); %></td>
             <td colspan="7" class="w-100"><% bp.getProposeRigheEcoTestata().writeFormInput(out, "find_voce_ana_searchtool"); %></td>
         </tr>
+        <% } %>
         <tr>
             <% bp.getProposeRigheEcoTestata().writeFormField(out, "find_linea_attivita");%>
             <% bp.getProposeRigheEcoTestata().writeFormField(out, "centro_responsabilita");%>

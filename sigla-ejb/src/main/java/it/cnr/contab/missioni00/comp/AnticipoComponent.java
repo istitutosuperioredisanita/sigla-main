@@ -2034,7 +2034,7 @@ public class AnticipoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
     @Override
     public Scrittura_partita_doppiaBulk createScrittura(UserContext usercontext, IDocumentoCogeBulk documentoCoge) throws ComponentException {
         try {
-            if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(usercontext)) {
+            if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(usercontext, documentoCoge.getEsercizio())) {
                 Scrittura_partita_doppiaBulk scritturaPrinc = super.createScrittura(usercontext, documentoCoge);
                 if (documentoCoge instanceof AnticipoBulk && ((AnticipoBulk) documentoCoge).isAnnullato()) {
                     Scrittura_partita_doppiaBulk scritturaStorno = this.createScritturaAnnullo(usercontext, documentoCoge, scritturaPrinc, ((AnticipoBulk) documentoCoge).getDt_cancellazione());

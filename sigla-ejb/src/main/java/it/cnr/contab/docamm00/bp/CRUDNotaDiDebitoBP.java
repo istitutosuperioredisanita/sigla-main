@@ -232,6 +232,7 @@ public void save(it.cnr.jada.action.ActionContext context)
 		setMessage("Salvataggio eseguito in modo corretto.");
 	}
 }
+
 /**
  * Insert the method's description here.
  * Creation date: (11/5/2001 2:31:22 PM)

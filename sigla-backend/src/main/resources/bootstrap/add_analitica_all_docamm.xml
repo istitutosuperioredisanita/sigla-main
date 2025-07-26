@@ -790,6 +790,32 @@
         <dropNotNullConstraint tableName="missione_riga_eco" columnName="cd_voce_ana" columnDataType="VARCHAR(20)"/>
     </changeSet>
 
+    <changeSet author="raffaele.pagano" id="modify_table_ordine_acq_consegna_eco">
+        <dropNotNullConstraint tableName="ordine_acq_consegna_eco" columnName="esercizio_voce_ana" columnDataType="SMALLINT"/>
+        <dropNotNullConstraint tableName="ordine_acq_consegna_eco" columnName="cd_voce_ana" columnDataType="VARCHAR(20)"/>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_ordine_acq_riga_eco">
+        <dropNotNullConstraint tableName="ordine_acq_riga_eco" columnName="esercizio_voce_ana" columnDataType="SMALLINT"/>
+        <dropNotNullConstraint tableName="ordine_acq_riga_eco" columnName="cd_voce_ana" columnDataType="VARCHAR(20)"/>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_ordine_acq_eco">
+        <dropNotNullConstraint tableName="ordine_acq_eco" columnName="esercizio_voce_ana" columnDataType="SMALLINT"/>
+        <dropNotNullConstraint tableName="ordine_acq_eco" columnName="cd_voce_ana" columnDataType="VARCHAR(20)"/>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_ordine_acq_eco_02">
+        <addColumn tableName="ordine_acq_eco">
+            <column name="esercizio_voce_ep" remarks="Esercizio Conto Economico" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_voce_ep" remarks="Codice Identificativo completo del conto del piano." type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
     <changeSet author="raffaele.pagano" id="remove_column_voce_ep_ordine_acq">
         <dropForeignKeyConstraint baseTableName="ordine_acq" constraintName="fk_ordine_acq18"/>
         <dropIndex indexName="fx_ordine_acq18" tableName="ordine_acq"/>

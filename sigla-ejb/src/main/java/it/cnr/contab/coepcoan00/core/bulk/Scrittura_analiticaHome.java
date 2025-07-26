@@ -74,11 +74,11 @@ public class Scrittura_analiticaHome extends BulkHome {
 	public Optional<Scrittura_analiticaBulk> getScrittura(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk, boolean fetchAll) throws ComponentException {
 		try {
 			Optional<Scrittura_analiticaBulk> scritturaOpt = Optional.empty();
-			if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(userContext)) {
+			if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(userContext, documentoCogeBulk.getEsercizio())) {
 				scritturaOpt = this.findByDocumentoAmministrativo(documentoCogeBulk);
 				if (scritturaOpt.isPresent()) {
 					Scrittura_analiticaBulk scrittura = scritturaOpt.get();
-					scrittura.setMovimentiColl(new BulkList(this.findMovimentiColl( userContext, scrittura )));
+					scrittura.setMovimentiColl(new BulkList<>(this.findMovimentiColl( userContext, scrittura )));
 				}
 			}
 			return scritturaOpt;

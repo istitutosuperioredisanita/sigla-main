@@ -106,7 +106,7 @@ public class CRUDReversaleBP extends it.cnr.jada.util.action.SimpleCRUDBP implem
 	private final CollapsableDetailCRUDController movimentiDare = new EconomicaDareDetailCRUDController(this);
 	private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
 	private boolean attivaEconomica = false;
-	private boolean attivaEconomicaPura = false;
+	private boolean attivaFinanziaria = false;
 	private boolean supervisore = false;
 	public static final String REVERSALE_VARIAZIONE_BP = "CRUDReversaleVariazioneBP";
 	boolean isAbilitatoCrudRevesaleVariazioneBP = Boolean.FALSE;
@@ -903,10 +903,10 @@ public class CRUDReversaleBP extends it.cnr.jada.util.action.SimpleCRUDBP implem
 	@Override
 	protected void init(Config config, ActionContext actioncontext) throws BusinessProcessException {
 		try {
-			Configurazione_cnrComponentSession sess = (Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices
-					.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession");
-			attivaEconomica = sess.isAttivaEconomica(actioncontext.getUserContext());
-			attivaEconomicaPura = sess.isAttivaEconomicaPura(actioncontext.getUserContext());
+			int esercizioScrivania = CNRUserContext.getEsercizio(actioncontext.getUserContext());
+			Configurazione_cnrComponentSession sess = Utility.createConfigurazioneCnrComponentSession();
+			attivaEconomica = sess.isAttivaEconomica(actioncontext.getUserContext(), esercizioScrivania);
+			attivaFinanziaria = sess.isAttivaFinanziaria(actioncontext.getUserContext(), esercizioScrivania);
 			setSupervisore(Utility.createUtenteComponentSession().isSupervisore(actioncontext.getUserContext()));
 
 			this.attivoSiopeplus = Optional.ofNullable(sess.getVal01(
@@ -1242,7 +1242,7 @@ public class CRUDReversaleBP extends it.cnr.jada.util.action.SimpleCRUDBP implem
 	}
 
 	@Override
-	public boolean isAttivaEconomicaPura() {
-		return attivaEconomicaPura;
+	public boolean isAttivaFinanziaria() {
+		return attivaFinanziaria;
 	}
 }

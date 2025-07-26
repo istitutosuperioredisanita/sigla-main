@@ -133,7 +133,7 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
 
     private Boolean isGestioneIncarichiEnabled = null;
     private boolean attivaEconomica = false;
-    private boolean attivaEconomicaPura = false;
+    private boolean attivaFinanziaria = false;
     private boolean attivaAnalitica = false;
     private boolean supervisore = false;
 
@@ -687,9 +687,10 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
 
         try {
             setGestioneIncarichiEnabled(Utility.createParametriCnrComponentSession().getParametriCnr(context.getUserContext(), CNRUserContext.getEsercizio(context.getUserContext())).getFl_incarico());
-            attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
-            attivaEconomicaPura = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(context.getUserContext());
-            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
+            int esercizioScrivania = CNRUserContext.getEsercizio(context.getUserContext());
+            attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext(), esercizioScrivania);
+            attivaFinanziaria = Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(context.getUserContext(), esercizioScrivania);
+            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext(), esercizioScrivania);
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
         } catch (it.cnr.jada.comp.ComponentException ex) {
             throw handleException(ex);
@@ -1805,13 +1806,14 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
         pages.put(i++, TAB_TERZO);
         pages.put(i++, TAB_DATI_LIQUIDAZIONE);
         pages.put(i++, TAB_CONTRIBUTI_RITENUTE);
-        pages.put(i++, TAB_OBBLIGAZIONI);
+        if (this.isAttivaFinanziaria())
+            pages.put(i++, TAB_OBBLIGAZIONI);
         pages.put(i++, TAB_DOCUMENTI_ASSOCIATI);
-        if (attivaAnalitica)
+        if (this.isAttivaAnalitica())
             pages.put(i++, CRUDScritturaPDoppiaBP.TAB_DATI_COGECOAN);
-        if (attivaEconomica)
+        if (this.isAttivaEconomica())
             pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
-        if (attivaAnalitica)
+        if (this.isAttivaAnalitica())
             pages.put(i++, CRUDScritturaAnaliticaBP.TAB_ANALITICA);
 
         String[][] tabs = new String[i][3];
@@ -1851,8 +1853,8 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
     }
 
     @Override
-    public boolean isAttivaEconomicaPura() {
-        return attivaEconomicaPura;
+    public boolean isAttivaFinanziaria() {
+        return attivaFinanziaria;
     }
 
     @Override

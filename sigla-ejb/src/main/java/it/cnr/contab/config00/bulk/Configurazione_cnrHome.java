@@ -296,17 +296,6 @@ public class Configurazione_cnrHome extends BulkHome {
                 .orElse(null);
     }
 
-
-    /**
-     *
-     * @param userContext
-     * @return É attiva la gestione dell'economico patrimononale (parallela o pura)
-     * @throws PersistencyException
-     */
-    public boolean isAttivaEconomica(UserContext userContext) throws PersistencyException {
-        return isAttivaEconomica(CNRUserContext.getEsercizio(userContext));
-    }
-
     public boolean isAttivaEconomica(int esercizio) throws PersistencyException {
         return Optional.ofNullable(
                         this.getConfigurazione(esercizio, null,
@@ -316,37 +305,6 @@ public class Configurazione_cnrHome extends BulkHome {
                 .map(Configurazione_cnrBulk::getVal01)
                 .map(s -> !s.equalsIgnoreCase("N"))
                 .orElse(Boolean.FALSE);
-    }
-
-    /**
-     *
-     * @param userContext
-     * @return É attiva la gestione dell'economico patrimononale parallela
-     * @throws PersistencyException
-     */
-    public boolean isAttivaEconomicaParallela(UserContext userContext) throws PersistencyException {
-        return isAttivaEconomicaParallela(CNRUserContext.getEsercizio(userContext));
-    }
-
-    public boolean isAttivaEconomicaParallela(int esercizio) throws PersistencyException {
-        return Optional.ofNullable(
-                        this.getConfigurazione(esercizio, null,
-                                Configurazione_cnrBulk.PK_ECONOMICO_PATRIMONIALE,
-                                Configurazione_cnrBulk.SK_TIPO_ECONOMICO_PATRIMONIALE)
-                )
-                .map(Configurazione_cnrBulk::getVal01)
-                .map(s -> s.equalsIgnoreCase("PARALLELA"))
-                .orElse(Boolean.FALSE);
-    }
-
-    /**
-     *
-     * @param userContext
-     * @return É attiva la gestione dell'economico patrimononale pura
-     * @throws PersistencyException
-     */
-    public boolean isAttivaEconomicaPura(UserContext userContext) throws PersistencyException {
-        return isAttivaEconomicaPura(CNRUserContext.getEsercizio(userContext));
     }
 
     public boolean isAttivaEconomicaPura(int esercizio) throws PersistencyException {
@@ -360,15 +318,9 @@ public class Configurazione_cnrHome extends BulkHome {
                 .orElse(Boolean.FALSE);
     }
 
-    /**
-     *
-     * @param userContext
-     * @return É attiva la gestione dell'analitica
-     * @throws PersistencyException
-     */
-    public boolean isAttivaAnalitica(UserContext userContext) throws PersistencyException {
+    public boolean isAttivaAnalitica(int esercizio) throws PersistencyException {
         return Optional.ofNullable(
-                        this.getConfigurazione(CNRUserContext.getEsercizio(userContext), null,
+                        this.getConfigurazione(esercizio, null,
                                 Configurazione_cnrBulk.PK_ECONOMICO_PATRIMONIALE,
                                 Configurazione_cnrBulk.SK_TIPO_ECONOMICO_PATRIMONIALE)
                 )

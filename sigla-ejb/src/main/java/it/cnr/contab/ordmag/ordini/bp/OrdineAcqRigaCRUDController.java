@@ -64,7 +64,7 @@ public class OrdineAcqRigaCRUDController extends it.cnr.jada.util.action.SimpleD
 
         super.writeHTMLToolbar(context, reset, find, delete, false);
 
-        if (getParentController()!=null && !this.isAttivaEconomicaPura()) {
+        if (getParentController()!=null && this.isAttivaFinanziaria()) {
             boolean isFromBootstrap = HttpActionContext.isFromBootstrap(context);
             String command = "javascript:submitForm('doRicercaObbligazione')";
             CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP) getParentController();
@@ -87,8 +87,8 @@ public class OrdineAcqRigaCRUDController extends it.cnr.jada.util.action.SimpleD
         return super.isBootstrap();
     }
 
-    private boolean isAttivaEconomicaPura() {
+    private boolean isAttivaFinanziaria() {
         return Optional.ofNullable(this.getParentController()).filter(CRUDOrdineAcqBP.class::isInstance)
-                .map(CRUDOrdineAcqBP.class::cast).map(CRUDOrdineAcqBP::isAttivaEconomicaPura).orElse(Boolean.FALSE);
+                .map(CRUDOrdineAcqBP.class::cast).map(CRUDOrdineAcqBP::isAttivaFinanziaria).orElse(Boolean.FALSE);
     }
 }

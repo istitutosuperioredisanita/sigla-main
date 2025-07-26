@@ -15,17 +15,15 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package it.cnr.contab.coepcoan00.bp;
+package it.cnr.contab.ordmag.ordini.bp;
 
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
-import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqEcoBulk;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaBulk;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaEcoBulk;
 import it.cnr.contab.util.EuroFormat;
-import it.cnr.jada.action.ActionContext;
-import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.BulkInfo;
-import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.FormController;
 import it.cnr.jada.util.jsp.TableCustomizer;
@@ -37,21 +35,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class DetailEcoCogeCRUDController extends CollapsableDetailCRUDController implements TableCustomizer {
-    public DetailEcoCogeCRUDController(Class class1, FormController formcontroller) {
-        this(
-                "DatiCogeCoan",
-                class1,
-                "righeEconomica",
-                formcontroller
-        );
-    }
-    public DetailEcoCogeCRUDController(String s, Class class1, String s1, FormController formcontroller) {
+public class ResultRigheEcoDettaglioCRUDController extends CollapsableDetailCRUDController implements TableCustomizer {
+    public ResultRigheEcoDettaglioCRUDController(String s, Class class1, String s1, FormController formcontroller) {
         super(s, class1, s1, formcontroller);
         this.setCollapsed(Boolean.FALSE);
     }
 
-    public DetailEcoCogeCRUDController(String s, Class class1, String s1, FormController formcontroller, boolean flag) {
+    public ResultRigheEcoDettaglioCRUDController(String s, Class class1, String s1, FormController formcontroller, boolean flag) {
         super(s, class1, s1, formcontroller, flag);
     }
 
@@ -79,17 +69,9 @@ public class DetailEcoCogeCRUDController extends CollapsableDetailCRUDController
         return null;
     };
 
-    @Override
-    protected void validate(ActionContext actioncontext, OggettoBulk oggettobulk) throws ValidationException {
-        super.validate(actioncontext, oggettobulk);
-        IDocumentoDetailAnaCogeBulk model = (IDocumentoDetailAnaCogeBulk)oggettobulk;
-        if (model.getFather().getVoce_ep().isAnaliticaEnabled())
-            if (model.getVoce_analitica()==null || model.getVoce_analitica().getCd_voce_ana()==null)
-                throw new ValidationException("E' obbligatorio indicare la voce analitica!");
-    }
-
     public void writeTfoot(JspWriter jspWriter) throws IOException {
         final EuroFormat euroFormat = new EuroFormat();
+
         String columnSetName = "default";
         if (Optional.ofNullable(this.getParentModel()).filter(IDocumentoDetailEcoCogeBulk.class::isInstance)
                 .map(IDocumentoDetailEcoCogeBulk.class::cast)
@@ -97,15 +79,34 @@ public class DetailEcoCogeCRUDController extends CollapsableDetailCRUDController
                 .map(el->!el.isAnaliticaEnabled())
                 .orElse(Boolean.FALSE))
             columnSetName = "novoceanalitica";
+
         final long numberOfColspan = Collections.list(BulkInfo.getBulkInfo(this.getModelClass())
                 .getColumnFieldProperties(columnSetName)).stream().count();
-        final List<IDocumentoDetailAnaCogeBulk> detailAnaCogeBulks = getDetails();
-        if (Optional.ofNullable(detailAnaCogeBulks).map(detailAnaCogeBulks1 -> !detailAnaCogeBulks1.isEmpty()).orElse(Boolean.FALSE) ) {
+
+        final List<OrdineAcqRigaEcoBulk> detailAnaCogeBulks = getDetails();
+        final BigDecimal totalEvasoForzatamanente = Optional.ofNullable(getParentModel())
+                .filter(OrdineAcqRigaBulk.class::isInstance)
+                .map(OrdineAcqRigaBulk.class::cast)
+                .map(OrdineAcqRigaBulk::getImEvasoForzatamente)
+                .orElse(BigDecimal.ZERO);
+
+        if (Optional.ofNullable(detailAnaCogeBulks).map(detailAnaCogeBulks1 -> !detailAnaCogeBulks1.isEmpty()).orElse(Boolean.FALSE) ||
+                totalEvasoForzatamanente.compareTo(BigDecimal.ZERO)!=0) {
             final BigDecimal totalMovimento = detailAnaCogeBulks.stream()
                     .map(el->Optional.ofNullable(el.getImporto()).orElse(BigDecimal.ZERO))
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .reduce(BigDecimal.ZERO, BigDecimal::add)
+                    .add(totalEvasoForzatamanente);
 
             jspWriter.println("<tfoot class=\"bg-info\">");
+            if (totalEvasoForzatamanente.compareTo(BigDecimal.ZERO)!=0) {
+                jspWriter.println("<td class=\"TableHeader text-white font-weight-bold\"  colspan=\"" + numberOfColspan + "\" align=\"right\">");
+                jspWriter.println("<span>Consegne Evase Forzatamente:</span>");
+                jspWriter.println("</td>");
+                jspWriter.println("<td class=\"TableHeader text-white font-weight-bold\" align=\"right\">");
+                jspWriter.print(euroFormat.format(totalEvasoForzatamanente));
+                jspWriter.println("</td>");
+                jspWriter.println("</tr>");
+            }
             jspWriter.println("<tr>");
             jspWriter.println("<td class=\"TableHeader text-white font-weight-bold\"  colspan=\"" + numberOfColspan + "\" align=\"right\">");
             jspWriter.println("<span>Totale:</span>");

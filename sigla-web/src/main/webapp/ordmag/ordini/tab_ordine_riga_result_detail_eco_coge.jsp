@@ -3,6 +3,7 @@
 		it.cnr.jada.action.*,
 		java.util.*,
 		it.cnr.jada.util.action.*,
+		it.cnr.contab.ordmag.ordini.bulk.*,
 		it.cnr.contab.docamm00.tabrif.bulk.*,
 		it.cnr.contab.docamm00.intrastat.bulk.*,
 		it.cnr.contab.docamm00.docs.bulk.*,
@@ -13,11 +14,10 @@
 %>
 <%
     CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP)BusinessProcess.getBusinessProcess(request);
-    IDocumentoDetailEcoCogeBulk model =
-                    Optional.ofNullable(bp.getRighe().getModel())
-                        .filter(IDocumentoDetailEcoCogeBulk.class::isInstance)
-                        .map(IDocumentoDetailEcoCogeBulk.class::cast)
-                        .orElse(null);
+    OrdineAcqRigaBulk model = (OrdineAcqRigaBulk)bp.getRighe().getModel();
+    boolean isVoceAnaliticaEnabled = model!=null && (model.getVoce_ep()==null ||
+                   model.getVoce_ep().getCrudStatus() != it.cnr.jada.bulk.OggettoBulk.NORMAL ||
+                   model.getVoce_ep().isAnaliticaEnabled());
 %>
 <div class="Panel card p-2 mb-2 card-shadow">
     <% if (bp.isAttivaEconomica()) { %>
@@ -40,13 +40,15 @@
 </div>
 <% if (bp.isAttivaAnalitica()) { %>
 <div class="mt-1">
-    <% bp.getResultRigheEcoDettaglio().writeHTMLTable(pageContext, "default", false, false, false,"100%","100px", true); %>
-    <% if (!bp.getResultRigheEcoDettaglio().isCollapsed() && Optional.ofNullable(bp.getResultRigheEcoDettaglio().getModel()).isPresent() && bp.isAttivaEconomicaPura()) { %>
+    <% bp.getResultRigheEcoDettaglio().writeHTMLTable(pageContext, isVoceAnaliticaEnabled?"default":"novoceanalitica", false, false, false,"100%","100px", true); %>
+    <% if (!bp.getResultRigheEcoDettaglio().isCollapsed() && Optional.ofNullable(bp.getResultRigheEcoDettaglio().getModel()).isPresent() && !bp.isAttivaFinanziaria()) { %>
     <table class="Panel mt-1 p-2 card card-shadow" cellpadding="2">
+        <% if (isVoceAnaliticaEnabled) { %>
         <tr>
             <td><% bp.getResultRigheEcoDettaglio().writeFormLabel(out, "find_voce_ana_searchtool"); %></td>
             <td colspan="7" class="w-100"><% bp.getResultRigheEcoDettaglio().writeFormInput(out, "find_voce_ana_searchtool"); %></td>
         </tr>
+        <% } %>
         <tr>
             <% bp.getResultRigheEcoDettaglio().writeFormField(out, "find_linea_attivita");%>
             <% bp.getResultRigheEcoDettaglio().writeFormField(out, "centro_responsabilita");%>

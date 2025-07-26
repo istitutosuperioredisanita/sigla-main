@@ -37,7 +37,7 @@ public interface IDocAmmCogeCoanBP {
 
     boolean isAttivaEconomica();
 
-    boolean isAttivaEconomicaPura();
+    boolean isAttivaFinanziaria();
 
     boolean isAttivaAnalitica();
 }

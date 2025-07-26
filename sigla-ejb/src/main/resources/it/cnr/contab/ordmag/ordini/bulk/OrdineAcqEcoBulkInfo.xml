@@ -27,7 +27,6 @@
 			maxLength="45"
 			enabledOnEdit="true"
 			enabledOnSearch="true"
-			nullable="false"
 			label="Conto Analitico" />
 	<fieldProperty
 			name="ds_voce_ana"
@@ -39,7 +38,7 @@
 			caseSensitiveSearch="false" />
 	<fieldProperty
 			name="cd_voce_ep"
-			property="voce_analitica.cd_voce_ep"
+			property="cd_voce_ep"
 			inputType="TEXT"
 			maxLength="45"
 			enabledOnEdit="true"
@@ -55,7 +54,7 @@
 			label="Conto Analitico" />
 	<fieldProperty
 			name="find_voce_eco_searchtool"
-			property="voce_analitica.voce_ep"
+			property="voce_ep"
 			formName="searchtool"
 			inputType="SEARCHTOOL"
 			enabledOnSearch="true"

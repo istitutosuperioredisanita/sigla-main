@@ -23,6 +23,7 @@ import it.cnr.contab.coepcoan00.bp.EconomicaDareDetailCRUDController;
 import it.cnr.contab.docamm00.bp.IDocAmmEconomicaBP;
 import it.cnr.contab.doccont00.core.bulk.Mandato_rigaIBulk;
 import it.cnr.contab.gestiva00.core.bulk.*;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
@@ -81,7 +82,7 @@ public class LiquidazioneDefinitivaIvaBP extends LiquidazioneIvaBP implements ID
 
 	private boolean isStanziamentoAccentrato = Boolean.FALSE;
 	private boolean attivaEconomica = false;
-	private boolean attivaEconomicaPura = false;
+	private boolean attivaFinanziaria = false;
 
 	private boolean supervisore = false;
 
@@ -164,8 +165,9 @@ public class LiquidazioneDefinitivaIvaBP extends LiquidazioneIvaBP implements ID
 		try {
 			String tipoStanziamentoLiquidazioneIva = Utility.createConfigurazioneCnrComponentSession().getTipoStanziamentoLiquidazioneIva(context.getUserContext());
 			setStanziamentoAccentrato(Optional.ofNullable(tipoStanziamentoLiquidazioneIva).map(el->el.equals("STANZIAMENTI_CENTRALIZZATI")).orElse(Boolean.FALSE));
-			attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
-			attivaEconomicaPura = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(context.getUserContext());
+			int esercizioScrivania = CNRUserContext.getEsercizio(context.getUserContext());
+			attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext(), esercizioScrivania);
+			attivaFinanziaria = Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(context.getUserContext(), esercizioScrivania);
 			supervisore = Utility.createUtenteComponentSession().isSupervisore(context.getUserContext());
 		} catch (RemoteException | ComponentException e) {
 			throw handleException(e);
@@ -250,7 +252,7 @@ public class LiquidazioneDefinitivaIvaBP extends LiquidazioneIvaBP implements ID
 				.filter(Liquidazione_ivaBulk.class::isInstance)
 				.map(Liquidazione_ivaBulk.class::cast)
 				.flatMap(liquidazioneIvaBulk -> Optional.ofNullable(liquidazioneIvaBulk.getScrittura_partita_doppia()))
-				.isPresent() && attivaEconomica) {
+				.isPresent() && this.isAttivaEconomica()) {
 			pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
 		}
 		String[][] tabs = new String[i][3];
@@ -363,8 +365,8 @@ public class LiquidazioneDefinitivaIvaBP extends LiquidazioneIvaBP implements ID
 	}
 
 	@Override
-	public boolean isAttivaEconomicaPura() {
-		return attivaEconomicaPura;
+	public boolean isAttivaFinanziaria() {
+		return attivaFinanziaria;
 	}
 
 	@Override

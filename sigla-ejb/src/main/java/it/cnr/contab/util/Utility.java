@@ -60,6 +60,7 @@ import it.cnr.contab.utente00.ejb.RuoloComponentSession;
 import it.cnr.contab.utente00.ejb.UtenteComponentSession;
 import it.cnr.contab.varstanz00.ejb.VariazioniStanziamentoResiduoComponentSession;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.ejb.AdminSession;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.util.ejb.EJBCommonServices;
@@ -412,6 +413,71 @@ public final class Utility {
 		return result;
 	}
 
+	public static Map<OggettoBulk,Map<OggettoBulk,BigDecimal>> spalmaImporti(Map<OggettoBulk,BigDecimal> source, Map<OggettoBulk,BigDecimal> destination) throws ApplicationException {
+		Map<OggettoBulk,Map<OggettoBulk,BigDecimal>> result = new HashMap<>();
+		BigDecimal imTotSourceDett = source.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+		for (OggettoBulk destinationDett : destination.keySet()) {
+			Map<OggettoBulk,BigDecimal> result2 = new HashMap<>();
+			BigDecimal imDestinationDett = destination.get(destinationDett);
+
+			for (OggettoBulk sourceDett : source.keySet()) {
+				BigDecimal imSourceDett = source.get(sourceDett);
+				BigDecimal imRipartitoSourceDett = result.values().stream()
+						.map(el->el.get(sourceDett))
+						.reduce(BigDecimal.ZERO, BigDecimal::add);
+				BigDecimal imDaRipartireSourceDett = imSourceDett.subtract(imRipartitoSourceDett);
+				BigDecimal imResult = imSourceDett.multiply(imDestinationDett)
+						.divide(imTotSourceDett, 2, RoundingMode.HALF_UP);
+				if (imResult.compareTo(imDaRipartireSourceDett)<0)
+					result2.put(sourceDett,imResult);
+				else
+					result2.put(sourceDett,imDaRipartireSourceDett);
+			}
+
+			BigDecimal imRipartitoDestinationDett = result2.values()
+					.stream()
+					.reduce(BigDecimal.ZERO, BigDecimal::add);
+			BigDecimal diff = imDestinationDett.subtract(imRipartitoDestinationDett);
+
+			if (diff.compareTo(BigDecimal.ZERO) < 0) {
+				for (OggettoBulk obj : result2.keySet()) {
+					BigDecimal importoRipartito = result2.get(obj);
+					if (importoRipartito.compareTo(diff.abs()) >= 0) {
+						result2.replace(obj,importoRipartito.subtract(diff.abs()));
+						break;
+					} else {
+						diff = diff.subtract(importoRipartito);
+						result2.replace(obj,BigDecimal.ZERO);
+					}
+				}
+			} else if (diff.compareTo(BigDecimal.ZERO) > 0) {
+				for (OggettoBulk obj : result2.keySet()) {
+					BigDecimal importoRipartito = result2.get(obj);
+					result2.replace(obj,importoRipartito.add(diff));
+					break;
+				}
+			}
+			result.put(destinationDett,result2);
+		}
+		//Verifica quadratura
+		for (OggettoBulk sourceDett : source.keySet()) {
+			BigDecimal imSourceDett = source.get(sourceDett);
+			BigDecimal imRipartitoSourceDett = result.values().stream()
+					.map(el -> el.get(sourceDett))
+					.reduce(BigDecimal.ZERO, BigDecimal::add);
+			if (imSourceDett.compareTo(imRipartitoSourceDett) != 0)
+				throw new it.cnr.jada.comp.ApplicationException("Operazione di spalma importi sulle consegne non andata a buon fine. Contattare il servizio assistenza!");
+		}
+		for (OggettoBulk destinationDett : destination.keySet()) {
+			BigDecimal imDestinationDett = destination.get(destinationDett);
+			BigDecimal imRipartitoDestinationDett = result.get(destinationDett)
+					.values().stream()
+					.reduce(BigDecimal.ZERO, BigDecimal::add);
+			if (imDestinationDett.compareTo(imRipartitoDestinationDett) != 0)
+				throw new it.cnr.jada.comp.ApplicationException("Operazione di spalma importi sulle consegne non andata a buon fine. Contattare il servizio assistenza!");
+		}
+		return result;
+	}
 
 	public static CRUDComponentSession createCRUDComponentSession() throws EJBException, RemoteException {
 		return Optional.ofNullable(EJBCommonServices.createEJB("JADAEJB_CRUDComponentSession"))

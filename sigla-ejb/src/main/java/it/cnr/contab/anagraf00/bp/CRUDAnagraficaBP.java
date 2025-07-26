@@ -47,6 +47,7 @@ import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.incarichi00.bulk.Incarichi_archivioBulk;
 import it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession;
 import it.cnr.contab.utente00.ejb.RuoloComponentSession;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.pdg01.bulk.Pdg_modulo_entrate_gestBulk;
@@ -669,9 +670,9 @@ protected void validaRapportoPerCancellazione(ActionContext context,RapportoBulk
 	protected void init(Config config, ActionContext actioncontext) throws BusinessProcessException {
 		try {
 			int solaris = EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.YEAR);
-			int esercizioScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue();
+			int esercizioScrivania = CNRUserContext.getEsercizio(actioncontext.getUserContext());
 			setElenco(solaris == esercizioScrivania+1);
-			setAttivaEconomica(Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(actioncontext.getUserContext()));
+			setAttivaEconomica(Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(actioncontext.getUserContext(), esercizioScrivania));
 			super.init(config, actioncontext);
 		}catch(it.cnr.jada.comp.ComponentException ex){
 			throw handleException(ex);

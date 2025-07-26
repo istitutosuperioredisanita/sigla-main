@@ -24,13 +24,16 @@ import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.config00.bulk.CigBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.config00.pdcfin.cla.bulk.Classificazione_vociBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk;
+import it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk;
 import it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.DetailedRuntimeException;
+import it.cnr.jada.bulk.BulkCollection;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
@@ -43,6 +46,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class Fattura_passiva_rigaBulk
         extends Fattura_passiva_rigaBase
@@ -103,7 +107,7 @@ public abstract class Fattura_passiva_rigaBulk
     private TrovatoBulk trovato = new TrovatoBulk(); // inizializzazione necessaria per i bulk non persistenti
     private Boolean collegatoCapitoloPerTrovato = false;
     protected ContoBulk voce_ep = new ContoBulk();
-    private List<Fattura_passiva_riga_ecoBulk> righeEconomica = new BulkList<>();
+    private BulkList<Fattura_passiva_riga_ecoBulk> righeEconomica = new BulkList<>();
 
     public Fattura_passiva_rigaBulk() {
         super();
@@ -822,12 +826,23 @@ public abstract class Fattura_passiva_rigaBulk
         Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setCd_voce_ep(cd_voce_ep));
     }
 
-    public List<Fattura_passiva_riga_ecoBulk> getRigheEconomica() {
+    public BulkList<Fattura_passiva_riga_ecoBulk> getRigheEconomica() {
         return righeEconomica;
     }
 
-    public void setRigheEconomica(List<Fattura_passiva_riga_ecoBulk> righeEconomica) {
+    public void setRigheEconomica(BulkList<Fattura_passiva_riga_ecoBulk> righeEconomica) {
         this.righeEconomica = righeEconomica;
+    }
+
+    public int addToRigheEconomica(Fattura_passiva_riga_ecoBulk nuovoRigo) {
+        nuovoRigo.setFattura_passiva_riga(this);
+        nuovoRigo.setImporto(BigDecimal.ZERO);
+        this.getRigheEconomica().add(nuovoRigo);
+        return this.getRigheEconomica().size() - 1;
+    }
+
+    public Fattura_passiva_riga_ecoBulk removeFromRigheEconomica(int index) {
+        return this.getRigheEconomica().remove(index);
     }
 
     @Override
@@ -853,7 +868,9 @@ public abstract class Fattura_passiva_rigaBulk
 
     @Override
     public BigDecimal getImCostoEcoRipartito() {
-        return this.getChildrenAna().stream().map(IDocumentoDetailAnaCogeBulk::getImporto)
+        return Optional.ofNullable(this.getChildrenAna()).map(Collection::stream)
+                .orElse(Stream.empty())
+                .map(IDocumentoDetailAnaCogeBulk::getImporto)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
@@ -865,6 +882,15 @@ public abstract class Fattura_passiva_rigaBulk
 
     @Override
     public void clearChildrenAna() {
-        this.setRigheEconomica(new ArrayList<>());
+        this.setRigheEconomica(new BulkList<>());
+    }
+
+    public BulkCollection[] getBulkLists() {
+
+        // Metti solo le liste di oggetti che devono essere resi persistenti
+
+        return new it.cnr.jada.bulk.BulkCollection[]{
+                righeEconomica
+        };
     }
 }

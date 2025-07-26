@@ -99,7 +99,7 @@ public class CRUDDocumentoGenericoPassivoBP
     private boolean carryingThrough = false;
     private boolean ribaltato;
     private boolean attivaEconomica = false;
-    private boolean attivaEconomicaPura = false;
+    private boolean attivaFinanziaria = false;
     private boolean attivaAnalitica = false;
     private boolean attivaInventaria = false;
 
@@ -454,10 +454,10 @@ public class CRUDDocumentoGenericoPassivoBP
         try {
             DocumentoGenericoComponentSession session = (DocumentoGenericoComponentSession) createComponentSession();
             int solaris = Documento_genericoBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.YEAR);
-            int esercizioScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue();
-            attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
-            attivaEconomicaPura = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(context.getUserContext());
-            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
+            int esercizioScrivania = CNRUserContext.getEsercizio(context.getUserContext());
+            attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext(), esercizioScrivania);
+            attivaFinanziaria = Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(context.getUserContext(), esercizioScrivania);
+            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext(), esercizioScrivania);
             attivaInventaria = Utility.createConfigurazioneCnrComponentSession().isAttivoInventariaDocumenti(context.getUserContext());
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
             setAnnoSolareInScrivania(solaris == esercizioScrivania);
@@ -1069,9 +1069,9 @@ public class CRUDDocumentoGenericoPassivoBP
         pages.put(i++, documento.isDocumentoStorno() ? TAB_STORNI : TAB_OBBLIGAZIONE);
         pages.put(i++, TAB_LETTERA_PAGAMENTO_ESTERO);
         pages.put(i++, TAB_ALLEGATI);
-        if (attivaEconomica)
+        if (this.isAttivaEconomica())
             pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
-        if (attivaAnalitica)
+        if (this.isAttivaAnalitica())
             pages.put(i++, CRUDScritturaAnaliticaBP.TAB_ANALITICA);
         String[][] tabs = new String[i][3];
         for (int j = 0; j < i; j++)
@@ -1143,8 +1143,8 @@ public class CRUDDocumentoGenericoPassivoBP
     }
 
     @Override
-    public boolean isAttivaEconomicaPura() {
-        return attivaEconomicaPura;
+    public boolean isAttivaFinanziaria() {
+        return attivaFinanziaria;
     }
 
     @Override

@@ -30,6 +30,7 @@ import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagBulk;
 import it.cnr.contab.ordmag.magazzino.ejb.MovimentiMagComponentSession;
 import it.cnr.contab.ordmag.ordini.bulk.*;
 import it.cnr.contab.ordmag.ordini.ejb.OrdineAcqComponentSession;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
@@ -95,7 +96,7 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 		sql.addSQLClause(FindClause.AND, "ORDINE_ACQ_CONSEGNA.STATO", SQLBuilder.EQUALS, OrdineAcqConsegnaBulk.STATO_INSERITA);
 
 		try {
-			if (!Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(context))
+			if (Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(context, CNRUserContext.getEsercizio(new CNRUserContext())))
 				sql.addSQLClause(FindClause.AND, "ORDINE_ACQ_CONSEGNA.PG_OBBLIGAZIONE", SQLBuilder.ISNOTNULL, null);
 		} catch (RemoteException | ComponentException e) {
 			throw new ApplicationException(e);

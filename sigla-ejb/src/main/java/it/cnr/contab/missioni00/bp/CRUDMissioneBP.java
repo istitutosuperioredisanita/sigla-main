@@ -42,6 +42,7 @@ import it.cnr.contab.missioni00.service.MissioniCMISService;
 import it.cnr.contab.reports.bulk.Print_spooler_paramBulk;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.spring.service.StorePath;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.FormController;
 import it.cnr.si.spring.storage.StorageDriver;
@@ -194,7 +195,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
     private final CollapsableDetailCRUDController childrenAnaColl = new DetailEcoCogeCRUDController(Missione_riga_ecoBulk.class, this);
 
     private boolean attivaEconomica = false;
-    private boolean attivaEconomicaPura = false;
+    private boolean attivaFinanziaria = false;
     private boolean attivaAnalitica = false;
     private boolean supervisore = false;
 
@@ -1228,9 +1229,10 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
 
     protected void init(Config config, ActionContext context) throws BusinessProcessException {
         try {
-            attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext());
-            attivaEconomicaPura = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(context.getUserContext());
-            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext());
+            int esercizioScrivania = CNRUserContext.getEsercizio(context.getUserContext());
+            attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(context.getUserContext(), esercizioScrivania);
+            attivaFinanziaria = Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(context.getUserContext(), esercizioScrivania);
+            attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext(), esercizioScrivania);
             setSupervisore(Utility.createUtenteComponentSession().isSupervisore(context.getUserContext()));
             verificoUnitaENTE(context);
         } catch (Throwable e) {
@@ -2935,11 +2937,11 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
         if (optionalMissioneBulk
                 .map(missioneBulk -> !Optional.ofNullable(missioneBulk.getFl_associato_compenso()).orElse(Boolean.TRUE))
                 .orElse(Boolean.FALSE)) {
-            if (attivaAnalitica)
+            if (this.isAttivaAnalitica())
                 pages.put(i++, CRUDScritturaPDoppiaBP.TAB_DATI_COGECOAN);
-            if (attivaEconomica)
+            if (this.isAttivaEconomica())
                 pages.put(i++, CRUDScritturaPDoppiaBP.TAB_ECONOMICA);
-            if (attivaAnalitica)
+            if (this.isAttivaAnalitica())
                 pages.put(i++, CRUDScritturaAnaliticaBP.TAB_ANALITICA);
         }
         String[][] tabs = new String[i][3];
@@ -2980,8 +2982,8 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
     }
 
     @Override
-    public boolean isAttivaEconomicaPura() {
-        return attivaEconomicaPura;
+    public boolean isAttivaFinanziaria() {
+        return attivaFinanziaria;
     }
 
     @Override

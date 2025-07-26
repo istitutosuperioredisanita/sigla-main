@@ -615,26 +615,6 @@ public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUD
     }
 
     @Override
-    public Boolean isAttivaFinanziaria(UserContext userContext) throws ComponentException, RemoteException {
-        pre_component_invocation(userContext, componentObj);
-        try {
-            Boolean result = ((Configurazione_cnrComponent)componentObj).isAttivaFinanziaria(userContext);
-            component_invocation_succes(userContext, componentObj);
-            return result;
-        } catch (it.cnr.jada.comp.NoRollbackException e) {
-            component_invocation_succes(userContext, componentObj);
-            throw e;
-        } catch (it.cnr.jada.comp.ComponentException e) {
-            component_invocation_failure(userContext, componentObj);
-            throw e;
-        } catch (RuntimeException e) {
-            throw uncaughtRuntimeException(userContext, componentObj, e);
-        } catch (Error e) {
-            throw uncaughtError(userContext, componentObj, e);
-        }
-    }
-
-    @Override
     public Boolean isAttivaFinanziaria(UserContext userContext, int esercizio) throws ComponentException, RemoteException {
         pre_component_invocation(userContext, componentObj);
         try {
@@ -655,10 +635,10 @@ public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUD
     }
 
     @Override
-    public Boolean isAttivaEconomica(UserContext userContext) throws ComponentException, RemoteException {
+    public Boolean isAttivaEconomica(UserContext userContext, int esercizio) throws ComponentException, RemoteException {
         pre_component_invocation(userContext, componentObj);
         try {
-            Boolean result = ((Configurazione_cnrComponent)componentObj).isAttivaEconomica(userContext);
+            Boolean result = ((Configurazione_cnrComponent)componentObj).isAttivaEconomica(userContext, esercizio);
             component_invocation_succes(userContext, componentObj);
             return result;
         } catch (it.cnr.jada.comp.NoRollbackException e) {
@@ -675,70 +655,10 @@ public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUD
     }
 
     @Override
-    public Boolean isAttivaEconomicaPura(UserContext userContext) throws ComponentException, RemoteException {
+    public Boolean isAttivaAnalitica(UserContext userContext, int esercizio) throws ComponentException, RemoteException {
         pre_component_invocation(userContext, componentObj);
         try {
-            Boolean result = ((Configurazione_cnrComponent)componentObj).isAttivaEconomicaPura(userContext);
-            component_invocation_succes(userContext, componentObj);
-            return result;
-        } catch (it.cnr.jada.comp.NoRollbackException e) {
-            component_invocation_succes(userContext, componentObj);
-            throw e;
-        } catch (it.cnr.jada.comp.ComponentException e) {
-            component_invocation_failure(userContext, componentObj);
-            throw e;
-        } catch (RuntimeException e) {
-            throw uncaughtRuntimeException(userContext, componentObj, e);
-        } catch (Error e) {
-            throw uncaughtError(userContext, componentObj, e);
-        }
-    }
-
-    @Override
-    public Boolean isAttivaEconomicaPura(UserContext userContext, int esercizio) throws ComponentException, RemoteException {
-        pre_component_invocation(userContext, componentObj);
-        try {
-            Boolean result = ((Configurazione_cnrComponent)componentObj).isAttivaEconomicaPura(userContext, esercizio);
-            component_invocation_succes(userContext, componentObj);
-            return result;
-        } catch (it.cnr.jada.comp.NoRollbackException e) {
-            component_invocation_succes(userContext, componentObj);
-            throw e;
-        } catch (it.cnr.jada.comp.ComponentException e) {
-            component_invocation_failure(userContext, componentObj);
-            throw e;
-        } catch (RuntimeException e) {
-            throw uncaughtRuntimeException(userContext, componentObj, e);
-        } catch (Error e) {
-            throw uncaughtError(userContext, componentObj, e);
-        }
-    }
-
-    @Override
-    public Boolean isAttivaEconomicaParallela(UserContext userContext) throws ComponentException, RemoteException {
-        pre_component_invocation(userContext, componentObj);
-        try {
-            Boolean result = ((Configurazione_cnrComponent)componentObj).isAttivaEconomicaParallela(userContext);
-            component_invocation_succes(userContext, componentObj);
-            return result;
-        } catch (it.cnr.jada.comp.NoRollbackException e) {
-            component_invocation_succes(userContext, componentObj);
-            throw e;
-        } catch (ComponentException e) {
-            component_invocation_failure(userContext, componentObj);
-            throw e;
-        } catch (RuntimeException e) {
-            throw uncaughtRuntimeException(userContext, componentObj, e);
-        } catch (Error e) {
-            throw uncaughtError(userContext, componentObj, e);
-        }
-    }
-
-    @Override
-    public Boolean isAttivaAnalitica(UserContext userContext) throws ComponentException, RemoteException {
-        pre_component_invocation(userContext, componentObj);
-        try {
-            Boolean result = ((Configurazione_cnrComponent)componentObj).isAttivaAnalitica(userContext);
+            Boolean result = ((Configurazione_cnrComponent)componentObj).isAttivaAnalitica(userContext, esercizio);
             component_invocation_succes(userContext, componentObj);
             return result;
         } catch (it.cnr.jada.comp.NoRollbackException e) {

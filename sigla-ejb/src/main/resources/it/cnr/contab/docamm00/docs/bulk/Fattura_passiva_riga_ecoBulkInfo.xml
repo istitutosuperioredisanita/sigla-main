@@ -66,8 +66,6 @@
 			property="linea_attivita"
 			inputType="SEARCHTOOL"
 			formName="searchtool_denominazione"
-			enabledOnEdit="true"
-			enabledOnSearch="true"
 			nullable="false"
 			label="G.a.e." />
 	<fieldProperty
@@ -93,11 +91,7 @@
 			property="importo"
 			formatName="it.cnr.contab.util.EuroFormat"
 			inputType="TEXT"
-			label="Importo"
-			enabledOnEdit="false"
-			enabledOnInsert="false"
-			enabledOnSearch="false"
-			enabledOnFreeSearch="false"/>
+			label="Importo"/>
 
 	<formFieldProperty name="cd_voce_ana" />
 	<formFieldProperty name="ds_voce_ana" />

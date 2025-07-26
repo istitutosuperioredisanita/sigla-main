@@ -76,5 +76,5 @@ public interface IDocAmmEconomicaBP {
 
     boolean isAttivaEconomica();
 
-    boolean isAttivaEconomicaPura();
+    boolean isAttivaFinanziaria();
 }

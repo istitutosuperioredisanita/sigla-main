@@ -35,6 +35,7 @@ import it.cnr.contab.doccont00.service.DocumentiContabiliService;
 import it.cnr.contab.reports.bp.OfflineReportPrintBP;
 import it.cnr.contab.reports.bulk.Print_spooler_paramBulk;
 import it.cnr.contab.service.SpringUtil;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.StatoVariazioneSostituzione;
 import it.cnr.jada.action.*;
@@ -69,7 +70,7 @@ public abstract class CRUDAbstractMandatoBP extends it.cnr.jada.util.action.Simp
 	private final CollapsableDetailCRUDController movimentiDare = new EconomicaDareDetailCRUDController(this);
 	private final CollapsableDetailCRUDController movimentiAvere = new EconomicaAvereDetailCRUDController(this);
 	protected boolean attivaEconomica = false;
-	protected boolean attivaEconomicaPura = false;
+	protected boolean attivaFinanziaria = false;
 
 	public CRUDAbstractMandatoBP() {}
 	public CRUDAbstractMandatoBP( String function ) 
@@ -80,8 +81,9 @@ public abstract class CRUDAbstractMandatoBP extends it.cnr.jada.util.action.Simp
 	@Override
 	protected void init(Config config, ActionContext actioncontext) throws BusinessProcessException {
 		try {
-			attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(actioncontext.getUserContext());
-			attivaEconomicaPura = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomicaPura(actioncontext.getUserContext());
+			int esercizioScrivania = CNRUserContext.getEsercizio(actioncontext.getUserContext());
+			attivaEconomica = Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(actioncontext.getUserContext(), esercizioScrivania);
+			attivaFinanziaria = Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(actioncontext.getUserContext(), esercizioScrivania);
 			setSupervisore(Utility.createUtenteComponentSession().isSupervisore(actioncontext.getUserContext()));
 		} catch (ComponentException|RemoteException e) {
 			throw handleException(e);
@@ -552,7 +554,7 @@ public abstract class CRUDAbstractMandatoBP extends it.cnr.jada.util.action.Simp
 	}
 
 	@Override
-	public boolean isAttivaEconomicaPura() {
-		return attivaEconomicaPura;
+	public boolean isAttivaFinanziaria() {
+		return attivaFinanziaria;
 	}
 }

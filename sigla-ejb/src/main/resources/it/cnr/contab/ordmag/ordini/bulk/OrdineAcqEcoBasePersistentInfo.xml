@@ -23,6 +23,18 @@
 	<defaultColumnMap
 		tableName="ORDINE_ACQ_ECO" >
 		<columnMapping
+			columnName="ESERCIZIO_VOCE_EP"
+			propertyName="esercizio_voce_ep"
+			sqlTypeName="DECIMAL"
+			columnSize="4"
+			nullable="false" />
+		<columnMapping
+			columnName="CD_VOCE_EP"
+			propertyName="cd_voce_ep"
+			sqlTypeName="VARCHAR"
+			columnSize="45"
+			nullable="false" />
+		<columnMapping
 			columnName="ESERCIZIO_VOCE_ANA"
 			propertyName="esercizio_voce_ana"
 			sqlTypeName="DECIMAL"
@@ -84,6 +96,10 @@
 			columnSize="22"
 			nullable="false" />
 	</defaultColumnMap>
+	<persistentProperty
+		name="esercizio_voce_ep" />
+	<persistentProperty
+		name="cd_voce_ep" />
 	<persistentProperty
 		name="esercizio_voce_ana" />
 	<persistentProperty
