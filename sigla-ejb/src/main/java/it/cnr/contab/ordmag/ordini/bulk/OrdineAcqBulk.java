@@ -85,8 +85,7 @@ public class OrdineAcqBulk extends OrdineAcqBase
         STATO.put(STATO_ANNULLATO, "Annullato");
         STATO.put(STATO_DEFINITIVO, "Definitivo");
     }
-    public final static Map<String,String> motivoEsclusioneCigSIOPEKeys = Arrays.asList(StMotivoEsclusioneCigSiope.values())
-            .stream()
+    public final static Map<String,String> motivoEsclusioneCigSIOPEKeys = Arrays.stream(StMotivoEsclusioneCigSiope.values())
             .collect(Collectors.toMap(
                     StMotivoEsclusioneCigSiope::name,
                     StMotivoEsclusioneCigSiope::value,
@@ -94,7 +93,7 @@ public class OrdineAcqBulk extends OrdineAcqBase
                     Hashtable::new
             ));
 
-    protected BulkList<OrdineAcqRigaBulk> righeOrdineColl = new BulkList<OrdineAcqRigaBulk>();
+    protected BulkList<OrdineAcqRigaBulk> righeOrdineColl = new BulkList<>();
     protected BulkList listaRichiesteTrasformateInOrdine = new BulkList();
     protected BulkList richiesteSelezionate = new BulkList();
     public Boolean getAggiornaImpegniInAutomatico() {
@@ -117,7 +116,7 @@ public class OrdineAcqBulk extends OrdineAcqBase
     private java.util.Vector dettagliCancellati = new Vector();
     private java.util.Vector documentiContabiliCancellati = new Vector();
     private Map ordineAss_totaliMap = null;
-    private BulkList<AllegatoGenericoBulk> archivioAllegati = new BulkList<AllegatoGenericoBulk>();
+    private BulkList<AllegatoGenericoBulk> archivioAllegati = new BulkList<>();
     private MagazzinoBulk unicoMagazzinoAbilitato = null;
     private java.math.BigDecimal importoTotalePerObbligazione = new java.math.BigDecimal(0);
     /**

@@ -55,7 +55,6 @@ import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util.ApplicationMessageFormatException;
 import it.cnr.contab.util.EuroFormat;
-import it.cnr.contab.util.ICancellatoLogicamente;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
@@ -84,21 +83,14 @@ public class OrdineAcqComponent
         extends CalcolaImportiMagComponent
         implements ICRUDMgr, Cloneable, Serializable {
 
-    public final static String TIPO_TOTALE_COMPLETO = "C";
-    public final static String TIPO_TOTALE_PARZIALE = "P";
     private final static int INSERIMENTO = 1;
     private final static int MODIFICA = 2;
-    private final static int CANCELLAZIONE = 3;
 
     public OrdineAcqComponent() {
-
         /*Default constructor*/
-
-
     }
 
     private void assegnaProgressivo(UserContext userContext, OrdineAcqBulk ordine) throws ComponentException {
-
         try {
             // Assegno un nuovo progressivo al documento
             NumeratoriOrdMagComponentSession progressiviSession = EJBCommonServices.createEJB("CNRORDMAG_EJB_NumeratoriOrdMagComponentSession", NumeratoriOrdMagComponentSession.class);
@@ -110,7 +102,6 @@ public class OrdineAcqComponent
     }
 
     public OggettoBulk creaConBulk(UserContext userContext, OggettoBulk bulk) throws ComponentException {
-
         return creaConBulk(userContext, bulk, null);
     }
 
@@ -132,9 +123,8 @@ public class OrdineAcqComponent
     ////^^@@
     public it.cnr.jada.bulk.OggettoBulk creaConBulk(it.cnr.jada.UserContext userContext, it.cnr.jada.bulk.OggettoBulk bulk, it.cnr.contab.doccont00.core.bulk.OptionRequestParameter status)
             throws it.cnr.jada.comp.ComponentException {
-
         OrdineAcqBulk ordine = (OrdineAcqBulk) bulk;
-        //			//assegna un progressivo al documento all'atto della creazione.
+        //assegna un progressivo al documento all'atto della creazione.
         validaOrdine(userContext, ordine);
         calcolaImportoOrdine(userContext, ordine);
 
@@ -152,9 +142,9 @@ public class OrdineAcqComponent
         if (ordine.isOrdineDefinitivo())
             return ordine;
 
-        if (ordine.getCambio() == null || ordine.getDivisa() == null || ordine.getDivisa().getCd_divisa() == null) {
+        if (ordine.getCambio() == null || ordine.getDivisa() == null || ordine.getDivisa().getCd_divisa() == null)
             throw new it.cnr.jada.comp.ApplicationException("Campi di testata ordine necessari per il calcolo dell'importo non valorizzati.");
-        }
+
         ParametriCalcoloImportoOrdine parametriTestata = new ParametriCalcoloImportoOrdine();
         parametriTestata.setCambio(ordine.getCambio());
         parametriTestata.setDivisa(ordine.getDivisa());
@@ -164,6 +154,7 @@ public class OrdineAcqComponent
         ordine.setImIva(BigDecimal.ZERO);
         ordine.setImIvaD(BigDecimal.ZERO);
         ordine.setImTotaleOrdine(BigDecimal.ZERO);
+
         for (OrdineAcqRigaBulk riga : ordine.getRigheOrdineColl()) {
             if (riga == null)
                 throw new ApplicationException("Dettaglio vuoto.");
@@ -183,21 +174,24 @@ public class OrdineAcqComponent
             riga.setImIvaD(BigDecimal.ZERO);
             riga.setImIvaNd(BigDecimal.ZERO);
             riga.setImTotaleRiga(BigDecimal.ZERO);
+
             if (riga.getRigheConsegnaColl() == null || riga.getRigheConsegnaColl().isEmpty()) {
-                if (riga.getDspQuantita() != null) {
+                if (riga.getDspQuantita() != null)
                     gestioneSalvataggioRigaConsegnaSingola(riga);
-                } else {
+                else
                     throw new ApplicationException("Campi di dettaglio ordine necessari per il calcolo dell'importo non valorizzati.");
-                }
             }
+
             for (OrdineAcqConsegnaBulk cons : riga.getRigheConsegnaColl()) {
                 if (!cons.isConsegna0()) {
                     ParametriCalcoloImportoOrdine parametriCons = (ParametriCalcoloImportoOrdine) parametriRiga.clone();
-                    if (cons.getQuantita() == null) {
+
+                    if (cons.getQuantita() == null)
                         throw new ApplicationException("Campi di consegna ordine necessari per il calcolo dell'importo non valorizzati.");
-                    }
+
                     parametriCons.setQtaOrd(cons.getQuantita());
                     parametriCons.setArrAliIva(cons.getArrAliIva());
+
                     if (cons.getFatturaOrdineBulk() != null) {
                         impostoVoceIvaRett(userContext, cons.getFatturaOrdineBulk(), parametriCons);
                         parametriCons.setPrezzoRet(cons.getFatturaOrdineBulk().getPrezzoUnitarioRett());
@@ -371,13 +365,11 @@ public class OrdineAcqComponent
         } else {
             boolean esisteRigaValida = false;
             for (OrdineAcqRigaBulk riga : ordine.getRigheOrdineColl()) {
-                if (!riga.isToBeDeleted()) {
+                if (!riga.isToBeDeleted())
                     esisteRigaValida = true;
-                }
             }
-            if (!esisteRigaValida) {
+            if (!esisteRigaValida)
                 throw new ApplicationException("Non è possibile salvare un ordine senza dettagli.");
-            }
         }
     }
 
@@ -459,42 +451,13 @@ public class OrdineAcqComponent
         }
     }
 
-    private void controlloCongruenzaVoceCategoriaGruppo(it.cnr.jada.UserContext userContext,
-                                                        CategoriaGruppoInventComponentSession h, OrdineAcqRigaBulk riga, ObbligazioneBulk obb)
-            throws ComponentException, PersistencyException {
-        if (obb.getElemento_voce() != null) {
-            Bene_servizioBulk bene = recuperoBeneServizio(userContext, riga.getCdBeneServizio());
-            if (bene != null) {
-                java.util.List titoliCapitoliCatGrp;
-                try {
-                    titoliCapitoliCatGrp = h.findAssVoceFList(userContext, bene.getCategoria_gruppo());
-                    if (titoliCapitoliCatGrp == null)
-                        throw new it.cnr.jada.comp.ApplicationException("Alla categoria " + bene.getCd_categoria_gruppo() + "\" non è stato attribuita l'associazione al capitolo di spesa");
-                    boolean trovataVoce = false;
-                    for (java.util.Iterator k = titoliCapitoliCatGrp.iterator(); k.hasNext(); ) {
-                        Categoria_gruppo_voceBulk assVoce = (Categoria_gruppo_voceBulk) k.next();
-                        if (obb.getElemento_voce().equalsByPrimaryKey(assVoce.getElemento_voce())) {
-                            trovataVoce = true;
-                        }
-                    }
-                    if (!trovataVoce) {
-                        throw new ApplicationException("Per la riga " + riga.getRiga() + " la voce dell'obbligazione collegata " + obb.getElemento_voce().getCd_elemento_voce() + " non è associata alla categoria/gruppo del bene/servizio " + riga.getCdBeneServizio());
-                    }
-                } catch (IntrospectionException | RemoteException e) {
-                    throw new ComponentException(e);
-                }
-            }
-        }
-    }
-
     private void controlloCongruenzaUoImpegno(it.cnr.jada.UserContext userContext,
                                               OrdineAcqConsegnaBulk cons, ObbligazioneBulk obb)
             throws ComponentException, PersistencyException {
         if (obb.getCd_unita_organizzativa() != null) {
             Unita_organizzativaBulk uoOrdine = recuperoUoPerImpegno(userContext, cons);
-            if (uoOrdine != null && !uoOrdine.getCd_unita_organizzativa().equals(obb.getCd_unita_organizzativa())) {
+            if (uoOrdine != null && !uoOrdine.getCd_unita_organizzativa().equals(obb.getCd_unita_organizzativa()))
                 throw new ApplicationException("Per la consegna " + cons.getConsegna() + " della riga " + cons.getRiga() + " la uo dell'obbligazione non è corretta.");
-            }
         }
     }
 
@@ -601,9 +564,8 @@ public class OrdineAcqComponent
                     }
                 }
                 impostaCampiDspRiga(usercontext, riga);
-                if (esisteScadenzaComune) {
+                if (esisteScadenzaComune)
                     riga.setDspObbligazioneScadenzario(scadenzaComune);
-                }
             }
         } catch (PersistencyException e) {
             throw handleException(e);
@@ -732,7 +694,7 @@ public class OrdineAcqComponent
                                                  CompoundFindClause compoundfindclause) throws PersistencyException, ComponentException {
         Bene_servizioHome beneHome = (Bene_servizioHome) getHome(userContext, Bene_servizioBulk.class);
         SQLBuilder sql = beneHome.selectByClause(userContext, compoundfindclause);
-        sql.addSQLClause("AND", "FL_VALIDO", SQLBuilder.EQUALS, Bene_servizioBulk.STATO_VALIDO);
+        sql.addSQLClause(FindClause.AND, "FL_VALIDO", SQLBuilder.EQUALS, Bene_servizioBulk.STATO_VALIDO);
         ContrattoBulk contrattoBulk = riga.getOrdineAcq().getContratto();
         if (riga.getOrdineAcq() != null && contrattoBulk != null && contrattoBulk.getTipo_dettaglio_contratto() != null) {
             sql.addTableToHeader("DETTAGLIO_CONTRATTO");
@@ -742,10 +704,10 @@ public class OrdineAcqComponent
             } else if (contrattoBulk.isDettaglioContrattoPerCategoriaGruppo()) {
                 sql.addSQLJoin("BENE_SERVIZIO.CD_CATEGORIA_GRUPPO", SQLBuilder.EQUALS, "DETTAGLIO_CONTRATTO.CD_CATEGORIA_GRUPPO");
             }
-            sql.addSQLClause("AND", "DETTAGLIO_CONTRATTO.STATO", SQLBuilder.NOT_EQUALS, Dettaglio_contrattoBulk.STATO_ANNULLATO);
-            sql.addSQLClause("AND", "DETTAGLIO_CONTRATTO.PG_CONTRATTO", SQLBuilder.EQUALS, riga.getOrdineAcq().getContratto().getPg_contratto());
-            sql.addSQLClause("AND", "DETTAGLIO_CONTRATTO.ESERCIZIO_CONTRATTO", SQLBuilder.EQUALS, riga.getOrdineAcq().getContratto().getEsercizio());
-            sql.addSQLClause("AND", "DETTAGLIO_CONTRATTO.STATO_CONTRATTO", SQLBuilder.EQUALS, riga.getOrdineAcq().getContratto().getStato());
+            sql.addSQLClause(FindClause.AND, "DETTAGLIO_CONTRATTO.STATO", SQLBuilder.NOT_EQUALS, Dettaglio_contrattoBulk.STATO_ANNULLATO);
+            sql.addSQLClause(FindClause.AND, "DETTAGLIO_CONTRATTO.PG_CONTRATTO", SQLBuilder.EQUALS, riga.getOrdineAcq().getContratto().getPg_contratto());
+            sql.addSQLClause(FindClause.AND, "DETTAGLIO_CONTRATTO.ESERCIZIO_CONTRATTO", SQLBuilder.EQUALS, riga.getOrdineAcq().getContratto().getEsercizio());
+            sql.addSQLClause(FindClause.AND, "DETTAGLIO_CONTRATTO.STATO_CONTRATTO", SQLBuilder.EQUALS, riga.getOrdineAcq().getContratto().getStato());
         }
 
         return sql;
@@ -820,9 +782,8 @@ public class OrdineAcqComponent
                                             CompoundFindClause compoundfindclause) throws PersistencyException, ComponentException {
         Voce_ivaHome voceIvaHome = (Voce_ivaHome) getHome(userContext, Voce_ivaBulk.class);
         SQLBuilder sql = voceIvaHome.selectByClause(userContext, compoundfindclause);
-        if (riga.getBeneServizio() == null) {
+        if (riga.getBeneServizio() == null)
             throw new it.cnr.jada.comp.ApplicationException("Impossibile caricare il Codice Iva! E' necessario prima selezionare il bene/servizio.");
-        }
         return sql;
     }
 
@@ -831,9 +792,8 @@ public class OrdineAcqComponent
                                                      CompoundFindClause compoundfindclause) throws PersistencyException, ComponentException {
         LuogoConsegnaMagHome luogoHome = (LuogoConsegnaMagHome) getHome(userContext, LuogoConsegnaMagBulk.class);
         SQLBuilder sql = luogoHome.selectByClause(userContext, compoundfindclause);
-        if (cons.getMagazzino() == null) {
+        if (cons.getMagazzino() == null)
             throw new it.cnr.jada.comp.ApplicationException("Impossibile caricare il Codice Iva! E' necessario prima selezionare il bene/servizio.");
-        }
         MagazzinoBulk mag = cons.getMagazzino();
         if (mag.getLuogoConsegnaMag() == null || mag.getLuogoConsegnaMag().getCdLuogoConsegna() == null) {
             MagazzinoHome magHome = (MagazzinoHome) getHome(userContext, MagazzinoBulk.class);
@@ -844,7 +804,7 @@ public class OrdineAcqComponent
             }
         }
 
-        sql.addSQLClause("AND", "CD_LUOGO_CONSEGNA", SQLBuilder.EQUALS, mag.getCdLuogoConsegna());
+        sql.addSQLClause(FindClause.AND, "CD_LUOGO_CONSEGNA", SQLBuilder.EQUALS, mag.getCdLuogoConsegna());
 
         return sql;
     }
@@ -867,23 +827,23 @@ public class OrdineAcqComponent
             SQLBuilder sqlExists = abilHome.createSQLBuilder();
             sqlExists.addSQLJoin("ORDINE_ACQ.CD_UNITA_OPERATIVA", "ABIL_UTENTE_UOP_OPER.CD_UNITA_OPERATIVA");
             if (!ordineAcqBulk.getIsForFirma()) {
-                sqlExists.openParenthesis("AND");
-                sqlExists.addSQLClause("OR", "ABIL_UTENTE_UOP_OPER.CD_TIPO_OPERAZIONE", SQLBuilder.EQUALS, TipoOperazioneOrdBulk.OPERAZIONE_ORDINE);
-                sqlExists.addSQLClause("OR", "ABIL_UTENTE_UOP_OPER.CD_TIPO_OPERAZIONE", SQLBuilder.EQUALS, TipoOperazioneOrdBulk.OPERAZIONE_APPROVAZIONE_ORDINE);
+                sqlExists.openParenthesis(FindClause.AND);
+                sqlExists.addSQLClause(FindClause.OR, "ABIL_UTENTE_UOP_OPER.CD_TIPO_OPERAZIONE", SQLBuilder.EQUALS, TipoOperazioneOrdBulk.OPERAZIONE_ORDINE);
+                sqlExists.addSQLClause(FindClause.OR, "ABIL_UTENTE_UOP_OPER.CD_TIPO_OPERAZIONE", SQLBuilder.EQUALS, TipoOperazioneOrdBulk.OPERAZIONE_APPROVAZIONE_ORDINE);
                 sqlExists.closeParenthesis();
             } else {
-                sqlExists.addSQLClause("AND", "ABIL_UTENTE_UOP_OPER.CD_TIPO_OPERAZIONE", SQLBuilder.EQUALS, TipoOperazioneOrdBulk.OPERAZIONE_FIRMA_ORDINE);
-                sql.openParenthesis("AND");
-                sql.addSQLClause("OR", "ORDINE_ACQ.STATO", SQLBuilder.EQUALS, OrdineAcqBulk.STATO_ALLA_FIRMA);
-                sql.addSQLClause("OR", "ORDINE_ACQ.STATO", SQLBuilder.EQUALS, OrdineAcqBulk.STATO_DEFINITIVO);
-                sql.addSQLClause("OR", "ORDINE_ACQ.STATO", SQLBuilder.EQUALS, OrdineAcqBulk.STATO_INVIATO_ORDINE);
+                sqlExists.addSQLClause(FindClause.AND, "ABIL_UTENTE_UOP_OPER.CD_TIPO_OPERAZIONE", SQLBuilder.EQUALS, TipoOperazioneOrdBulk.OPERAZIONE_FIRMA_ORDINE);
+                sql.openParenthesis(FindClause.AND);
+                sql.addSQLClause(FindClause.OR, "ORDINE_ACQ.STATO", SQLBuilder.EQUALS, OrdineAcqBulk.STATO_ALLA_FIRMA);
+                sql.addSQLClause(FindClause.OR, "ORDINE_ACQ.STATO", SQLBuilder.EQUALS, OrdineAcqBulk.STATO_DEFINITIVO);
+                sql.addSQLClause(FindClause.OR, "ORDINE_ACQ.STATO", SQLBuilder.EQUALS, OrdineAcqBulk.STATO_INVIATO_ORDINE);
                 sql.closeParenthesis();
             }
-            sqlExists.addSQLClause("AND", "ABIL_UTENTE_UOP_OPER.CD_UTENTE", SQLBuilder.EQUALS, userContext.getUser());
+            sqlExists.addSQLClause(FindClause.AND, "ABIL_UTENTE_UOP_OPER.CD_UTENTE", SQLBuilder.EQUALS, userContext.getUser());
 
-            sql.addSQLExistsClause("AND", sqlExists);
+            sql.addSQLExistsClause(FindClause.AND, sqlExists);
         }
-        sql.addSQLClause("AND", "ORDINE_ACQ.STATO", SQLBuilder.NOT_EQUALS, OrdineAcqBulk.STATO_ANNULLATO);
+        sql.addSQLClause(FindClause.AND, "ORDINE_ACQ.STATO", SQLBuilder.NOT_EQUALS, OrdineAcqBulk.STATO_ANNULLATO);
         sql.addOrderBy("cd_cds");
         sql.addOrderBy("cd_unita_operativa");
         sql.addOrderBy("esercizio");
@@ -909,9 +869,7 @@ public class OrdineAcqComponent
                 List listUop = uopHome.fetchAll(sql);
                 if (listUop != null && (listUop.size() == 1 || isPresenteUnaUop(listUop))) {
                     ordine.setUnitaOperativaOrd((UnitaOperativaOrdBulk) listUop.get(0));
-
                     ordine.setUnicoMagazzinoAbilitato(unicoMagazzinoAbilitato(usercontext, ordine));
-                    //				assegnaUnitaOperativaDest(usercontext, ordine, home, uopHome);
                 }
             }
             assegnaNumeratoreOrd(usercontext, ordine, home);
@@ -942,17 +900,6 @@ public class OrdineAcqComponent
         ordine.setCambio(BigDecimal.ONE);
     }
 
-    //private void assegnaUnitaOperativaDest(UserContext usercontext, OrdineAcqBulk ordine, OrdineAcqHome home,
-    //		UnitaOperativaOrdHome uopHome) throws PersistencyException {
-    //	if (ordine.getCdUnitaOperativaDest() == null){
-    //		SQLBuilder sqlAss = home.selectUnitaOperativaOrdDestByClause(usercontext, ordine, uopHome, new UnitaOperativaOrdBulk(), new CompoundFindClause());
-    //		List listAssUop=uopHome.fetchAll(sqlAss);
-    //		if (listAssUop != null && listAssUop.size() == 1){
-    //			ordine.setUnitaOperativaOrdDest((UnitaOperativaOrdBulk)listAssUop.get(0));
-    //		}
-    //	}
-    //}
-    //
     private MagazzinoBulk unicoMagazzinoAbilitato(UserContext userContext, OrdineAcqBulk ordine) throws ComponentException {
 
         MagazzinoHome home = (MagazzinoHome) getHome(userContext, MagazzinoBulk.class);
@@ -981,10 +928,6 @@ public class OrdineAcqComponent
     private void assegnaNumeratoreOrd(UserContext usercontext, OrdineAcqBulk ordine, OrdineAcqHome home)
             throws PersistencyException, ComponentException {
         if (ordine.getCdNumeratore() == null && ordine.getCdUopOrdine() != null) {
-            //			AbilUtenteUopOperHome abilHome = (AbilUtenteUopOperHome)getHome(usercontext, AbilUtenteUopOperBulk.class);
-            //			AbilUtenteUopOperBulk abil = new AbilUtenteUopOperBulk(usercontext.getUser(), richiesta.getCdUnitaOperativa(), TipoOperazioneOrdBulk.OPERAZIONE_RICHIESTA);
-            //			abil = (AbilUtenteUopOperBulk)abilHome.findByPrimaryKey(usercontext, abil);
-            //			if (abil != null){
             NumerazioneOrdHome numerazioneHome = (NumerazioneOrdHome) getHome(usercontext, NumerazioneOrdBulk.class);
             SQLBuilder sql = home.selectNumerazioneOrdByClause(usercontext, ordine, numerazioneHome, new NumerazioneOrdBulk(), new CompoundFindClause());
             List listNum = numerazioneHome.fetchAll(sql);
@@ -993,7 +936,6 @@ public class OrdineAcqComponent
                 ordine.setPercProrata(((NumerazioneOrdBulk) listNum.get(0)).getPercProrata());
                 ordine.setTiAttivita(((NumerazioneOrdBulk) listNum.get(0)).getTi_istituz_commerc());
             }
-            //			}
         }
     }
 
@@ -1119,7 +1061,7 @@ public class OrdineAcqComponent
             if (uoDestinazione != null && uoDestinazione.equals("Y"))
                 return true;
         } catch (javax.ejb.EJBException | RemoteException e) {
-            handleException(e);
+            throw  handleException(e);
         }
         return false;
     }
@@ -1132,9 +1074,8 @@ public class OrdineAcqComponent
                     .orElseThrow(() -> new it.cnr.jada.comp.ApplicationException("Impossibile caricare la valuta di default! Prima di poter inserire un ordine, immettere tale valore."));
             return divisaDefault;
         } catch (javax.ejb.EJBException | PersistencyException e) {
-            handleException(e);
+            throw handleException(e);
         }
-        return null;
     }
 
     /**
@@ -1165,12 +1106,13 @@ public class OrdineAcqComponent
         if (clause == null)
             clause = terzo.buildFindClauses(null);
         SQLBuilder sql = getHome(userContext, terzo).createSQLBuilder();
-        sql.addSQLClause("AND", "CD_UNITA_ORGANIZZATIVA", SQLBuilder.ISNOTNULL, null);
+        sql.addSQLClause(FindClause.AND, "CD_UNITA_ORGANIZZATIVA", SQLBuilder.ISNOTNULL, null);
         // Se uo 999.000 in scrivania: visualizza tutti i progetti
         Unita_organizzativa_enteBulk ente = (Unita_organizzativa_enteBulk) getHome(userContext, Unita_organizzativa_enteBulk.class).findAll().get(0);
-        if (!((CNRUserContext) userContext).getCd_unita_organizzativa().equals(ente.getCd_unita_organizzativa())) {
-            sql.addSQLClause("AND", "CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, CNRUserContext.getCd_unita_organizzativa(userContext));
-        }
+
+        if (!((CNRUserContext) userContext).getCd_unita_organizzativa().equals(ente.getCd_unita_organizzativa()))
+            sql.addSQLClause(FindClause.AND, "CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, CNRUserContext.getCd_unita_organizzativa(userContext));
+
         if (clause != null)
             sql.addClause(clause);
         return sql;
@@ -1180,8 +1122,8 @@ public class OrdineAcqComponent
 
         TerzoHome home = (TerzoHome) getHome(userContext, TerzoBulk.class, "V_TERZO_CF_PI");
         SQLBuilder sql = home.createSQLBuilder();
-        sql.addSQLClause("AND", "DT_FINE_RAPPORTO", SQLBuilder.ISNULL, null);
-        sql.addSQLClause("AND", "CD_UNITA_ORGANIZZATIVA", SQLBuilder.ISNULL, null);
+        sql.addSQLClause(FindClause.AND, "DT_FINE_RAPPORTO", SQLBuilder.ISNULL, null);
+        sql.addSQLClause(FindClause.AND, "CD_UNITA_ORGANIZZATIVA", SQLBuilder.ISNULL, null);
         sql.addClause(clauses);
 
         final Optional<TerzoBulk> optionalTerzoContrattoBulk = Optional.ofNullable(bulk)
@@ -1221,124 +1163,16 @@ public class OrdineAcqComponent
         if (clause == null)
             clause = procedura_amministrativa.buildFindClauses(null);
         SQLBuilder sql = getHome(userContext, procedura_amministrativa).createSQLBuilder();
-        sql.openParenthesis("AND");
-        sql.addClause("OR", "ti_proc_amm", SQLBuilder.EQUALS, Procedure_amministrativeBulk.TIPO_FORNITURA_SERVIZI);
-        sql.addClause("OR", "ti_proc_amm", SQLBuilder.EQUALS, Procedure_amministrativeBulk.TIPO_GENERICA);
+        sql.openParenthesis(FindClause.AND);
+        sql.addClause(FindClause.OR, "ti_proc_amm", SQLBuilder.EQUALS, Procedure_amministrativeBulk.TIPO_FORNITURA_SERVIZI);
+        sql.addClause(FindClause.OR, "ti_proc_amm", SQLBuilder.EQUALS, Procedure_amministrativeBulk.TIPO_GENERICA);
         sql.closeParenthesis();
-        sql.addClause("AND", "fl_cancellato", SQLBuilder.EQUALS, Boolean.FALSE);
+        sql.addClause(FindClause.AND, "fl_cancellato", SQLBuilder.EQUALS, Boolean.FALSE);
         if (clause != null)
             sql.addClause(clause);
         return sql;
     }
 
-   /* public ImportoOrdine calcoloImportoOrdine(ParametriCalcoloImportoOrdine parametri) throws ApplicationException {
-        BigDecimal imponibile = calcoloImponibile(parametri);
-        Voce_ivaBulk voceIva = null;
-        if (parametri.getVoceIvaRet() != null && parametri.getVoceIvaRet().getPercentuale() != null) {
-            voceIva = parametri.getVoceIvaRet();
-        } else {
-            voceIva = parametri.getVoceIva();
-        }
-        ImportoOrdine importoOrdine = new ImportoOrdine();
-        importoOrdine = calcoloDettagliImporti(importoOrdine, parametri, imponibile, voceIva, false);
-        if (parametri.getImponibileErratoPerNotaCredito() != null) {
-            importoOrdine = calcoloDettagliImporti(importoOrdine, parametri, parametri.getImponibileErratoPerNotaCredito(), voceIva, true);
-        }
-        return importoOrdine;
-    }
-
-    private ImportoOrdine calcoloDettagliImporti(ImportoOrdine importoOrdine, ParametriCalcoloImportoOrdine parametri, BigDecimal imponibile, Voce_ivaBulk voceIva, Boolean calcoloTotaliPerNotaCredito) {
-        BigDecimal importoIva = Utility.round6Decimali((Utility.divide(imponibile, Utility.CENTO, 6)).multiply(voceIva.getPercentuale()));
-        BigDecimal ivaNonDetraibile = Utility.round6Decimali(importoIva.multiply((Utility.CENTO.subtract(voceIva.getPercentuale_detraibilita()))));
-        BigDecimal ivaPerCalcoloProrata = importoIva.subtract(ivaNonDetraibile);
-        BigDecimal ivaDetraibile = Utility.round6Decimali(ivaPerCalcoloProrata.multiply(Utility.nvl(parametri.getPercProrata())));
-        ivaNonDetraibile = ivaNonDetraibile.add((ivaPerCalcoloProrata.subtract(ivaDetraibile)));
-
-        if (ivaDetraibile.compareTo(BigDecimal.ZERO) == 0 || ivaNonDetraibile.compareTo(BigDecimal.ZERO) > 0) {
-            ivaNonDetraibile = ivaNonDetraibile.add(Utility.nvl(parametri.getArrAliIva()));
-        } else {
-            ivaDetraibile = ivaDetraibile.add(Utility.nvl(parametri.getArrAliIva()));
-        }
-        importoIva = importoIva.add(ivaDetraibile);
-        if (calcoloTotaliPerNotaCredito) {
-            importoOrdine.setImponibilePerNotaCredito(Utility.round2Decimali(imponibile));
-            importoOrdine.setImportoIvaPerNotaCredito(Utility.round2Decimali(importoIva));
-            importoOrdine.setImportoIvaIndPerNotaCredito(Utility.round2Decimali(ivaNonDetraibile));
-            importoOrdine.setImportoIvaDetraibilePerNotaCredito(Utility.round2Decimali(ivaDetraibile));
-        } else {
-            importoOrdine.setImponibile(Utility.round2Decimali(imponibile));
-            importoOrdine.setImportoIva(Utility.round2Decimali(importoIva));
-            importoOrdine.setImportoIvaInd(Utility.round2Decimali(ivaNonDetraibile));
-            importoOrdine.setImportoIvaDetraibile(Utility.round2Decimali(ivaDetraibile));
-            importoOrdine.setArrAliIva(BigDecimal.ZERO);
-        }
-        return importoOrdine;
-    }*/
-/*
-    public ImportoOrdine calcoloImportoOrdinePerMagazzino(ParametriCalcoloImportoOrdine parametri) throws ApplicationException {
-        BigDecimal imponibile = calcoloImponibile(parametri);
-        imponibile = imponibile.divide(parametri.getQtaOrd());
-        BigDecimal arrotondamento = Utility.nvl(parametri.getArrAliIva()).divide(parametri.getQtaOrd());
-        BigDecimal arrAliIva = arrotondamento;
-
-        Voce_ivaBulk voceIva = null;
-        if (parametri.getVoceIvaRet() != null && parametri.getVoceIvaRet().getPercentuale() != null) {
-            voceIva = parametri.getVoceIvaRet();
-        } else {
-            voceIva = parametri.getVoceIva();
-        }
-
-        BigDecimal importoIva = Utility.divide(imponibile.multiply(voceIva.getPercentuale()), Utility.CENTO, 6);
-        BigDecimal ivaNonDetraibile = importoIva.multiply((Utility.CENTO.subtract(voceIva.getPercentuale_detraibilita())));
-
-        BigDecimal ivaPerCalcoloProrata = importoIva.subtract(ivaNonDetraibile);
-
-        BigDecimal ivaDetraibile = ivaPerCalcoloProrata.multiply(Utility.nvl(parametri.getPercProrata()));
-
-        ivaNonDetraibile = ivaNonDetraibile.add((ivaPerCalcoloProrata.subtract(ivaDetraibile)));
-
-        if (ivaDetraibile.compareTo(BigDecimal.ZERO) == 0 || ivaNonDetraibile.compareTo(BigDecimal.ZERO) > 0) {
-            ivaNonDetraibile = ivaNonDetraibile.add(Utility.nvl(parametri.getArrAliIva()));
-        } else {
-            ivaDetraibile = ivaDetraibile.add(Utility.nvl(parametri.getArrAliIva()));
-        }
-        importoIva = importoIva.add(ivaDetraibile);
-        ImportoOrdine importoOrdine = new ImportoOrdine();
-        importoOrdine.setImponibile(Utility.round6Decimali(imponibile));
-        importoOrdine.setImportoIva(Utility.round6Decimali(importoIva));
-        importoOrdine.setImportoIvaInd(Utility.round6Decimali(ivaNonDetraibile));
-        importoOrdine.setImportoIvaDetraibile(Utility.round6Decimali(ivaDetraibile));
-        importoOrdine.setArrAliIva(arrAliIva);
-        return importoOrdine;
-    }
-    */
-
-/*
-    private BigDecimal calcoloImponibile(ParametriCalcoloImportoOrdine parametri) throws ApplicationException {
-        BigDecimal prezzo = Utility.nvl(parametri.getPrezzoRet(), parametri.getPrezzo());
-        BigDecimal cambio = Utility.nvl(parametri.getCambioRet(), parametri.getCambio());
-        if (parametri.getDivisa() == null || parametri.getDivisaRisultato() == null ||
-                parametri.getDivisa().getCd_divisa() == null || parametri.getDivisaRisultato().getCd_divisa() == null) {
-            throw new it.cnr.jada.comp.ApplicationException("E' necessario indicare le divise.");
-        }
-        if (!parametri.getDivisa().getCd_divisa().equals(parametri.getDivisaRisultato().getCd_divisa())) {
-            if (parametri.getDivisaRisultato().getFl_calcola_con_diviso().booleanValue())
-                prezzo = Utility.divide(prezzo, cambio, 6);
-            else
-                prezzo = prezzo.multiply(cambio).setScale(2, RoundingMode.HALF_UP);
-
-        }
-        BigDecimal sconto1 = Utility.nvl(Utility.nvl(parametri.getSconto1Ret(), parametri.getSconto1()));
-        BigDecimal sconto2 = Utility.nvl(Utility.nvl(parametri.getSconto2Ret(), parametri.getSconto2()));
-        BigDecimal sconto3 = Utility.nvl(Utility.nvl(parametri.getSconto3Ret(), parametri.getSconto3()));
-        BigDecimal prezzoScontato = prezzo.
-                multiply(BigDecimal.ONE.subtract(sconto1.divide(Utility.CENTO))).
-                multiply(BigDecimal.ONE.subtract(sconto2.divide(Utility.CENTO))).
-                multiply(BigDecimal.ONE.subtract(sconto3.divide(Utility.CENTO)));
-        BigDecimal imponibile = prezzoScontato.multiply(parametri.getQtaOrd());
-        return imponibile;
-    }
-*/
     public RemoteIterator cercaObbligazioni(UserContext context, Filtro_ricerca_obbligazioniVBulk filtro)
             throws ComponentException {
 
@@ -1357,7 +1191,7 @@ public class OrdineAcqComponent
         it.cnr.jada.persistency.sql.SQLBuilder sql = home.createSQLBuilder();
         sql.setDistinctClause(true);
         sql.addTableToHeader("OBBLIGAZIONE");
-        sql.addSQLClause("AND", "OBBLIGAZIONE.STATO_OBBLIGAZIONE", SQLBuilder.EQUALS, ObbligazioneBulk.STATO_OBB_DEFINITIVO);
+        sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.STATO_OBBLIGAZIONE", SQLBuilder.EQUALS, ObbligazioneBulk.STATO_OBB_DEFINITIVO);
         sql.addSQLJoin("OBBLIGAZIONE_SCADENZARIO.CD_CDS", "OBBLIGAZIONE.CD_CDS");
         sql.addSQLJoin("OBBLIGAZIONE_SCADENZARIO.ESERCIZIO", "OBBLIGAZIONE.ESERCIZIO");
         sql.addSQLJoin("OBBLIGAZIONE_SCADENZARIO.ESERCIZIO_ORIGINALE", "OBBLIGAZIONE.ESERCIZIO_ORIGINALE");
@@ -1369,31 +1203,31 @@ public class OrdineAcqComponent
         sql.addSQLJoin("OBBLIGAZIONE.TI_GESTIONE", "ELEMENTO_VOCE.TI_GESTIONE");
         sql.addSQLJoin("OBBLIGAZIONE.ESERCIZIO", "ELEMENTO_VOCE.ESERCIZIO");
 
-        sql.addSQLClause("AND", "OBBLIGAZIONE.ESERCIZIO", SQLBuilder.EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context));
-        sql.addSQLClause("AND", "OBBLIGAZIONE.RIPORTATO", SQLBuilder.EQUALS, "N");
-        sql.addSQLClause("AND", "OBBLIGAZIONE.DT_CANCELLAZIONE", SQLBuilder.ISNULL, null);
-        sql.addSQLClause("AND", "OBBLIGAZIONE_SCADENZARIO.IM_SCADENZA", SQLBuilder.NOT_EQUALS, new java.math.BigDecimal(0));
-        sql.addSQLClause("AND", "OBBLIGAZIONE_SCADENZARIO.IM_ASSOCIATO_DOC_AMM = ? OR OBBLIGAZIONE_SCADENZARIO.IM_ASSOCIATO_DOC_AMM IS NULL");
+        sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.ESERCIZIO", SQLBuilder.EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context));
+        sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.RIPORTATO", SQLBuilder.EQUALS, "N");
+        sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.DT_CANCELLAZIONE", SQLBuilder.ISNULL, null);
+        sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE_SCADENZARIO.IM_SCADENZA", SQLBuilder.NOT_EQUALS, new java.math.BigDecimal(0));
+        sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE_SCADENZARIO.IM_ASSOCIATO_DOC_AMM = ? OR OBBLIGAZIONE_SCADENZARIO.IM_ASSOCIATO_DOC_AMM IS NULL");
         sql.addParameter(new java.math.BigDecimal(0).setScale(2, RoundingMode.HALF_UP), java.sql.Types.DECIMAL, 2);
-        sql.addSQLClause("AND", "OBBLIGAZIONE_SCADENZARIO.IM_ASSOCIATO_DOC_CONTABILE = ? OR OBBLIGAZIONE_SCADENZARIO.IM_ASSOCIATO_DOC_CONTABILE IS NULL");
+        sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE_SCADENZARIO.IM_ASSOCIATO_DOC_CONTABILE = ? OR OBBLIGAZIONE_SCADENZARIO.IM_ASSOCIATO_DOC_CONTABILE IS NULL");
         sql.addParameter(new java.math.BigDecimal(0).setScale(2, RoundingMode.HALF_UP), java.sql.Types.DECIMAL, 2);
-        sql.addSQLClause("AND", "OBBLIGAZIONE.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, filtro.getCd_unita_organizzativa());
+        sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, filtro.getCd_unita_organizzativa());
 
         if (filtro.getElemento_voce() != null) {
-            sql.addSQLClause("AND", "OBBLIGAZIONE.CD_ELEMENTO_VOCE", SQLBuilder.STARTSWITH, filtro.getElemento_voce().getCd_elemento_voce());
-            sql.addSQLClause("AND", "OBBLIGAZIONE.TI_APPARTENENZA", SQLBuilder.EQUALS, filtro.getElemento_voce().getTi_appartenenza());
-            sql.addSQLClause("AND", "OBBLIGAZIONE.TI_GESTIONE", SQLBuilder.EQUALS, filtro.getElemento_voce().getTi_gestione());
-            sql.addSQLClause("AND", "OBBLIGAZIONE.ESERCIZIO", SQLBuilder.EQUALS, filtro.getElemento_voce().getEsercizio());
+            sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.CD_ELEMENTO_VOCE", SQLBuilder.STARTSWITH, filtro.getElemento_voce().getCd_elemento_voce());
+            sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.TI_APPARTENENZA", SQLBuilder.EQUALS, filtro.getElemento_voce().getTi_appartenenza());
+            sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.TI_GESTIONE", SQLBuilder.EQUALS, filtro.getElemento_voce().getTi_gestione());
+            sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.ESERCIZIO", SQLBuilder.EQUALS, filtro.getElemento_voce().getEsercizio());
         }
 
         if (filtro.getListaVociSelezionabili() != null && !filtro.getListaVociSelezionabili().isEmpty()) {
-            sql.openParenthesis("AND");
+            sql.openParenthesis(FindClause.AND);
             for (Elemento_voceBulk voce : filtro.getListaVociSelezionabili()) {
-                sql.openParenthesis("OR");
-                sql.addSQLClause("AND", "OBBLIGAZIONE.CD_ELEMENTO_VOCE", SQLBuilder.EQUALS, voce.getCd_elemento_voce());
-                sql.addSQLClause("AND", "OBBLIGAZIONE.TI_APPARTENENZA", SQLBuilder.EQUALS, voce.getTi_appartenenza());
-                sql.addSQLClause("AND", "OBBLIGAZIONE.TI_GESTIONE", SQLBuilder.EQUALS, voce.getTi_gestione());
-                sql.addSQLClause("AND", "OBBLIGAZIONE.ESERCIZIO", SQLBuilder.EQUALS, voce.getEsercizio());
+                sql.openParenthesis(FindClause.OR);
+                sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.CD_ELEMENTO_VOCE", SQLBuilder.EQUALS, voce.getCd_elemento_voce());
+                sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.TI_APPARTENENZA", SQLBuilder.EQUALS, voce.getTi_appartenenza());
+                sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.TI_GESTIONE", SQLBuilder.EQUALS, voce.getTi_gestione());
+                sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.ESERCIZIO", SQLBuilder.EQUALS, voce.getEsercizio());
                 sql.closeParenthesis();
 
             }
@@ -1401,47 +1235,47 @@ public class OrdineAcqComponent
         }
 
         if (filtro.getContratto() != null && filtro.getContratto().getPg_contratto() != null) {
-            sql.addSQLClause("AND", "OBBLIGAZIONE.PG_CONTRATTO", SQLBuilder.EQUALS, filtro.getContratto().getPg_contratto());
-            sql.addSQLClause("AND", "OBBLIGAZIONE.ESERCIZIO_CONTRATTO", SQLBuilder.EQUALS, filtro.getContratto().getEsercizio());
-            sql.addSQLClause("AND", "OBBLIGAZIONE.STATO_CONTRATTO", SQLBuilder.EQUALS, filtro.getContratto().getStato());
+            sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.PG_CONTRATTO", SQLBuilder.EQUALS, filtro.getContratto().getPg_contratto());
+            sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.ESERCIZIO_CONTRATTO", SQLBuilder.EQUALS, filtro.getContratto().getEsercizio());
+            sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.STATO_CONTRATTO", SQLBuilder.EQUALS, filtro.getContratto().getStato());
         }
 
-        sql.addSQLClause("AND", "OBBLIGAZIONE.FL_PGIRO", SQLBuilder.EQUALS, "N");
+        sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.FL_PGIRO", SQLBuilder.EQUALS, "N");
 
         if (!filtro.getFl_fornitore()) {
             sql.addTableToHeader("TERZO");
             sql.addTableToHeader("ANAGRAFICO");
             sql.addSQLJoin("OBBLIGAZIONE.CD_TERZO", "TERZO.CD_TERZO");
             sql.addSQLJoin("TERZO.CD_ANAG", "ANAGRAFICO.CD_ANAG");
-            sql.addSQLClause("AND", "(OBBLIGAZIONE.CD_TERZO = ? OR ANAGRAFICO.TI_ENTITA = ?)");
+            sql.addSQLClause(FindClause.AND, "(OBBLIGAZIONE.CD_TERZO = ? OR ANAGRAFICO.TI_ENTITA = ?)");
             sql.addParameter(filtro.getFornitore().getCd_terzo(), java.sql.Types.INTEGER, 0);
             sql.addParameter(AnagraficoBulk.DIVERSI, java.sql.Types.VARCHAR, 0);
         } else {
-            sql.addSQLClause("AND", "OBBLIGAZIONE.CD_TERZO", SQLBuilder.EQUALS, filtro.getFornitore().getCd_terzo());
+            sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.CD_TERZO", SQLBuilder.EQUALS, filtro.getFornitore().getCd_terzo());
         }
 
         if (filtro.getFl_data_scadenziario() && filtro.getData_scadenziario() != null)
-            sql.addSQLClause("AND", "OBBLIGAZIONE_SCADENZARIO.DT_SCADENZA", SQLBuilder.EQUALS, filtro.getData_scadenziario());
+            sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE_SCADENZARIO.DT_SCADENZA", SQLBuilder.EQUALS, filtro.getData_scadenziario());
         if (filtro.getFl_importo() && filtro.getIm_importo() != null)
-            sql.addSQLClause("AND", "OBBLIGAZIONE_SCADENZARIO.IM_SCADENZA", SQLBuilder.GREATER_EQUALS, filtro.getIm_importo());
+            sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE_SCADENZARIO.IM_SCADENZA", SQLBuilder.GREATER_EQUALS, filtro.getIm_importo());
 
         //filtro su Tipo obbligazione
         if (filtro.getFl_nr_obbligazione() && filtro.getTipo_obbligazione() != null) {
             if (ObbligazioneBulk.TIPO_COMPETENZA.equals(filtro.getTipo_obbligazione()))
-                sql.addSQLClause("AND", "OBBLIGAZIONE.CD_TIPO_DOCUMENTO_CONT", SQLBuilder.EQUALS, Numerazione_doc_contBulk.TIPO_OBB);
+                sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.CD_TIPO_DOCUMENTO_CONT", SQLBuilder.EQUALS, Numerazione_doc_contBulk.TIPO_OBB);
             else if (ObbligazioneBulk.TIPO_RESIDUO_PROPRIO.equals(filtro.getTipo_obbligazione()))
-                sql.addSQLClause("AND", "OBBLIGAZIONE.CD_TIPO_DOCUMENTO_CONT", SQLBuilder.EQUALS, Numerazione_doc_contBulk.TIPO_OBB_RES);
+                sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.CD_TIPO_DOCUMENTO_CONT", SQLBuilder.EQUALS, Numerazione_doc_contBulk.TIPO_OBB_RES);
             else if (ObbligazioneBulk.TIPO_RESIDUO_IMPROPRIO.equals(filtro.getTipo_obbligazione()))
-                sql.addSQLClause("AND", "OBBLIGAZIONE.CD_TIPO_DOCUMENTO_CONT", SQLBuilder.EQUALS, Numerazione_doc_contBulk.TIPO_OBB_RES_IMPROPRIA);
+                sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.CD_TIPO_DOCUMENTO_CONT", SQLBuilder.EQUALS, Numerazione_doc_contBulk.TIPO_OBB_RES_IMPROPRIA);
         }
 
         //filtro su Anno Residuo obbligazione
         if (filtro.getFl_nr_obbligazione() && filtro.getEsercizio_ori_obbligazione() != null)
-            sql.addSQLClause("AND", "OBBLIGAZIONE.ESERCIZIO_ORIGINALE", SQLBuilder.EQUALS, filtro.getEsercizio_ori_obbligazione());
+            sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.ESERCIZIO_ORIGINALE", SQLBuilder.EQUALS, filtro.getEsercizio_ori_obbligazione());
 
         //filtro su Numero obbligazione
         if (filtro.getFl_nr_obbligazione() && filtro.getNr_obbligazione() != null)
-            sql.addSQLClause("AND", "OBBLIGAZIONE.PG_OBBLIGAZIONE", SQLBuilder.EQUALS, filtro.getNr_obbligazione());
+            sql.addSQLClause(FindClause.AND, "OBBLIGAZIONE.PG_OBBLIGAZIONE", SQLBuilder.EQUALS, filtro.getNr_obbligazione());
         return sql;
     }
 
@@ -1461,13 +1295,11 @@ public class OrdineAcqComponent
 
                     riga.setDspObbligazioneScadenzario(obbligazioneSelezionata);
                     riga.setToBeUpdated();
-                    for (Object bulk : riga.getRigheConsegnaColl()) {
-                        OrdineAcqConsegnaBulk cons = (OrdineAcqConsegnaBulk) bulk;
-                        if (cons.getObbligazioneScadenzario() == null || cons.getEsercizioOrigObbl() == null || cons.getObbligazioneScadenzario().equalsByPrimaryKey(riga.getDspObbligazioneScadenzario())) {
+                    for (OrdineAcqConsegnaBulk cons : riga.getRigheConsegnaColl()) {
+                        if (cons.getObbligazioneScadenzario() == null || cons.getEsercizioOrigObbl() == null || cons.getObbligazioneScadenzario().equalsByPrimaryKey(riga.getDspObbligazioneScadenzario()))
                             ordine.addToOrdineObbligazioniHash(obbligazioneSelezionata, cons);
-                        } else {
+                        else
                             throw new it.cnr.jada.DetailedRuntimeException("L'impegno sulla riga di consegna è diverso dall'impegno indicato sulla riga d'ordine.");
-                        }
                     }
                 }
                 ordine.addToOrdineAss_totaliMap(obbligazioneSelezionata, calcolaTotalePer(
@@ -1588,8 +1420,8 @@ public class OrdineAcqComponent
         DatiFinanziariScadenzeDTO dati = new DatiFinanziariScadenzeDTO();
         dati.setNuovoImportoScadenzaVecchia(obbligazione_scadenzario.getIm_scadenza().subtract(differenza));
         obbligComp.sdoppiaScadenzaInAutomaticoLight(userContext, obbligazione_scadenzario, dati);
-        /**
-         * Aggiorno l'importo associato a documenti amministrativi sulla vecchia scadenza
+        /*
+          Aggiorno l'importo associato a documenti amministrativi sulla vecchia scadenza
          */
         Obbligazione_scadenzarioBulk oldScadenza = (Obbligazione_scadenzarioBulk) findByPrimaryKey(userContext, obbligazione_scadenzario);
         oldScadenza.setIm_associato_doc_amm(oldScadenza.getIm_scadenza());
@@ -1606,22 +1438,20 @@ public class OrdineAcqComponent
     private List<Obbligazione_scadenzarioBulk> recuperoScadenzaLibera(UserContext userContext, Obbligazione_scadenzarioBulk scadenza) throws ComponentException, PersistencyException {
         Obbligazione_scadenzarioHome obbligazioneScadenzarioHome = (Obbligazione_scadenzarioHome) getHome(userContext, Obbligazione_scadenzarioBulk.class);
         SQLBuilder sql = obbligazioneScadenzarioHome.createSQLBuilder();
-        sql.addClause("AND", "cdCds", SQLBuilder.EQUALS, scadenza.getCd_cds());
-        sql.addClause("AND", "esercizio", SQLBuilder.EQUALS, scadenza.getEsercizio());
-        sql.addClause("AND", "esercizio_originale", SQLBuilder.EQUALS, scadenza.getEsercizio_originale());
-        sql.addClause("AND", "pg_obbligazione", SQLBuilder.EQUALS, scadenza.getPg_obbligazione());
-        sql.addClause("AND", "im_associato_doc_amm", SQLBuilder.EQUALS, BigDecimal.ZERO);
-        sql.addClause("AND", "im_scadenza", SQLBuilder.GREATER, BigDecimal.ZERO);
-        List<Obbligazione_scadenzarioBulk> l = obbligazioneScadenzarioHome.fetchAll(sql);
-        return l;
+        sql.addClause(FindClause.AND, "cdCds", SQLBuilder.EQUALS, scadenza.getCd_cds());
+        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, scadenza.getEsercizio());
+        sql.addClause(FindClause.AND, "esercizio_originale", SQLBuilder.EQUALS, scadenza.getEsercizio_originale());
+        sql.addClause(FindClause.AND, "pg_obbligazione", SQLBuilder.EQUALS, scadenza.getPg_obbligazione());
+        sql.addClause(FindClause.AND, "im_associato_doc_amm", SQLBuilder.EQUALS, BigDecimal.ZERO);
+        sql.addClause(FindClause.AND, "im_scadenza", SQLBuilder.GREATER, BigDecimal.ZERO);
+        return (List<Obbligazione_scadenzarioBulk>) obbligazioneScadenzarioHome.fetchAll(sql);
     }
 
     private void aumentoAutomaticoScadenzaModificaOrdine(UserContext userContext, Obbligazione_scadenzarioBulk obbligazione_scadenzario, BigDecimal importoDaAggiungere) throws ComponentException, PersistencyException, RemoteException {
 
         ObbligazioneBulk obbligazioneBulk = obbligazione_scadenzario.getObbligazione();
         BigDecimal importoVecchioScadenza = obbligazione_scadenzario.getIm_scadenza();
-        BigDecimal importoDisponibile = BigDecimal.ZERO;
-        List<Integer> scadenzeDaEliminare = new ArrayList<Integer>();
+        List<Integer> scadenzeDaEliminare = new ArrayList<>();
         int index = 0;
         for (Obbligazione_scadenzarioBulk scadenza : obbligazioneBulk.getObbligazione_scadenzarioColl()) {
             if (!scadenza.equalsByPrimaryKey(obbligazione_scadenzario) && scadenza.getImportoDisponibile().compareTo(BigDecimal.ZERO) > 0) {
@@ -1676,7 +1506,6 @@ public class OrdineAcqComponent
                 importoScadVoce = osv.getIm_voce();
                 break;
             } else {
-                BigDecimal percentuale = osv.getIm_voce().divide(importoVecchioScadenza, 2, RoundingMode.HALF_UP);
                 BigDecimal nuovoImporto = osv.getIm_voce().multiply(obbligazione_scadenzario.getIm_scadenza()).divide(importoVecchioScadenza, 2, RoundingMode.HALF_UP);
                 osv.setIm_voce(nuovoImporto);
                 osv.setToBeUpdated();
@@ -1713,16 +1542,16 @@ public class OrdineAcqComponent
         SQLBuilder sql = ordineAcqConsegnaHome.createSQLBuilder();
         sql.resetColumns();
         sql.addColumn("SUM(IM_TOTALE_CONSEGNA) IM_TOTALE_CONSEGNA");
-        sql.addClause("AND", "cdCds", SQLBuilder.EQUALS, ordine.getCdCds());
-        sql.addClause("AND", "cdUnitaOperativa", SQLBuilder.EQUALS, ordine.getCdUnitaOperativa());
-        sql.addClause("AND", "esercizio", SQLBuilder.EQUALS, ordine.getEsercizio());
-        sql.addClause("AND", "cdNumeratore", SQLBuilder.EQUALS, ordine.getCdNumeratore());
-        sql.addClause("AND", "numero", SQLBuilder.EQUALS, ordine.getNumero());
+        sql.addClause(FindClause.AND, "cdCds", SQLBuilder.EQUALS, ordine.getCdCds());
+        sql.addClause(FindClause.AND, "cdUnitaOperativa", SQLBuilder.EQUALS, ordine.getCdUnitaOperativa());
+        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, ordine.getEsercizio());
+        sql.addClause(FindClause.AND, "cdNumeratore", SQLBuilder.EQUALS, ordine.getCdNumeratore());
+        sql.addClause(FindClause.AND, "numero", SQLBuilder.EQUALS, ordine.getNumero());
 
-        sql.addClause("AND", "esercizioObbl", SQLBuilder.EQUALS, obbligazione_scadenzario.getEsercizio());
-        sql.addClause("AND", "esercizioOrigObbl", SQLBuilder.EQUALS, obbligazione_scadenzario.getEsercizio_originale());
-        sql.addClause("AND", "pgObbligazione", SQLBuilder.EQUALS, obbligazione_scadenzario.getPg_obbligazione());
-        sql.addClause("AND", "cdCdsObbl", SQLBuilder.EQUALS, obbligazione_scadenzario.getCd_cds());
+        sql.addClause(FindClause.AND, "esercizioObbl", SQLBuilder.EQUALS, obbligazione_scadenzario.getEsercizio());
+        sql.addClause(FindClause.AND, "esercizioOrigObbl", SQLBuilder.EQUALS, obbligazione_scadenzario.getEsercizio_originale());
+        sql.addClause(FindClause.AND, "pgObbligazione", SQLBuilder.EQUALS, obbligazione_scadenzario.getPg_obbligazione());
+        sql.addClause(FindClause.AND, "cdCdsObbl", SQLBuilder.EQUALS, obbligazione_scadenzario.getCd_cds());
         final SQLBroker broker = ordineAcqConsegnaHome.createBroker(sql);
         if (broker.next()) {
             final BigDecimal importoOrdineImpegno = Optional.ofNullable(broker.fetchPropertyValue("imTotaleConsegna", OrdineAcqConsegnaBulk.class))
@@ -1735,12 +1564,10 @@ public class OrdineAcqComponent
     }
 
     private boolean isModificaImpegniConRiduzioneImporto(UserContext userContext, OrdineAcqBulk ordine, Obbligazione_scadenzarioBulk obbligazione_scadenzario) throws ComponentException, PersistencyException {
-        Boolean isResiduoConRiduzione = Boolean.FALSE;
-
-        Boolean isSameImportOrdineImpegno = Boolean.FALSE;
         try {
-// Serve a capire se l'impegno è usato solo per quest'ordine o anche per altri ordini. Se è usato anche per altri non riduco l'impegno a prescindere, ma riduco solo l'importo collegato all'ordine.
-            isSameImportOrdineImpegno = isImpegnoCollegatoInteramenteOrdine(userContext, ordine, obbligazione_scadenzario);
+            Boolean isResiduoConRiduzione = Boolean.FALSE;
+            // Serve a capire se l'impegno è usato solo per quest'ordine o anche per altri ordini. Se è usato anche per altri non riduco l'impegno a prescindere, ma riduco solo l'importo collegato all'ordine.
+            Boolean isSameImportOrdineImpegno = isImpegnoCollegatoInteramenteOrdine(userContext, ordine, obbligazione_scadenzario);
             if (!isSameImportOrdineImpegno)
                 isResiduoConRiduzione = Boolean.FALSE;
             else {
@@ -1765,7 +1592,6 @@ public class OrdineAcqComponent
         } catch (Exception e) {
             throw new ComponentException(e);
         }
-
     }
 
     private void aggiornaObbligazioni(
@@ -1777,17 +1603,15 @@ public class OrdineAcqComponent
         if (ordine != null) {
             ObbligazioniTable obbligazioniHash = ordine.getOrdineObbligazioniHash();
             if (obbligazioniHash != null && !obbligazioniHash.isEmpty()) {
-                Obbligazione_scadenzarioHome home = (Obbligazione_scadenzarioHome) getHome(userContext, Obbligazione_scadenzarioBulk.class);
-
                 //Aggiorna i saldi per le obbligazioni NON temporanee
-                for (java.util.Enumeration e = getDocumentiContabiliNonTemporanei(userContext, ((ObbligazioniTable) obbligazioniHash.clone()).keys()).keys(); e.hasMoreElements(); )
+                for (java.util.Enumeration e = getDocumentiContabiliNonTemporanei(((ObbligazioniTable) obbligazioniHash.clone()).keys()).keys(); e.hasMoreElements(); )
                     aggiornaSaldi(
                             userContext,
                             ordine,
                             (IDocumentoContabileBulk) e.nextElement(),
                             status);
 
-                PrimaryKeyHashtable obblTemporanee = getDocumentiContabiliTemporanei(userContext, ((ObbligazioniTable) obbligazioniHash.clone()).keys());
+                PrimaryKeyHashtable obblTemporanee = getDocumentiContabiliTemporanei(((ObbligazioniTable) obbligazioniHash.clone()).keys());
                 for (java.util.Enumeration e = obblTemporanee.keys(); e.hasMoreElements(); ) {
                     ObbligazioneBulk obblT = (ObbligazioneBulk) e.nextElement();
 
@@ -1820,7 +1644,7 @@ public class OrdineAcqComponent
                     if (ordine.getAggiornaImpegniInAutomatico()) {
                         Obbligazione_scadenzarioHome osHome = (Obbligazione_scadenzarioHome) getHome(userContext, Obbligazione_scadenzarioBulk.class);
                         try {
-                            scadenza.setObbligazione_scad_voceColl(new BulkList(osHome.findObbligazione_scad_voceList(userContext, scadenza)));
+                            scadenza.setObbligazione_scad_voceColl(new BulkList<>(osHome.findObbligazione_scad_voceList(userContext, scadenza)));
                         } catch (PersistencyException persistencyException) {
                             throw new ComponentException(persistencyException);
                         }
@@ -1875,9 +1699,7 @@ public class OrdineAcqComponent
         }
     }
 
-    private it.cnr.jada.bulk.PrimaryKeyHashtable getDocumentiContabiliNonTemporanei(
-            UserContext userContext,
-            java.util.Enumeration scadenze) throws ComponentException {
+    private it.cnr.jada.bulk.PrimaryKeyHashtable getDocumentiContabiliNonTemporanei(java.util.Enumeration scadenze)  {
 
         it.cnr.jada.bulk.PrimaryKeyHashtable documentiContabiliNonTemporanei = new it.cnr.jada.bulk.PrimaryKeyHashtable();
         if (scadenze != null)
@@ -1896,8 +1718,7 @@ public class OrdineAcqComponent
         return documentiContabiliNonTemporanei;
     }
 
-    private it.cnr.jada.bulk.PrimaryKeyHashtable getDocumentiContabiliTemporanei(UserContext userContext, java.util.Enumeration scadenze) throws ComponentException {
-
+    private it.cnr.jada.bulk.PrimaryKeyHashtable getDocumentiContabiliTemporanei(java.util.Enumeration scadenze) {
         it.cnr.jada.bulk.PrimaryKeyHashtable documentiContabiliTemporanei = new it.cnr.jada.bulk.PrimaryKeyHashtable();
         if (scadenze != null)
             while (scadenze.hasMoreElements()) {
@@ -1928,15 +1749,11 @@ public class OrdineAcqComponent
                 if (key != null) {
                     java.util.Map values = (java.util.Map) ordine.getDefferredSaldi().get(key);
                     //QUI chiamare component del documento contabile interessato
-                    String jndiName = null;
-                    Class clazz = null;
                     DocumentoContabileComponentSession session = null;
                     if (docCont instanceof ObbligazioneBulk) {
-                        jndiName = "CNRDOCCONT00_EJB_ObbligazioneAbstractComponentSession";
-                        clazz = ObbligazioneAbstractComponentSession.class;
-                        session =
-                                (ObbligazioneAbstractComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
-                                        jndiName, clazz);
+                        String  jndiName = "CNRDOCCONT00_EJB_ObbligazioneAbstractComponentSession";
+                        session = EJBCommonServices.createEJB(
+                                        jndiName, ObbligazioneAbstractComponentSession.class);
                     }
                     if (session != null) {
                         session.aggiornaSaldiInDifferita(uc, key, values, status);
@@ -1954,17 +1771,14 @@ public class OrdineAcqComponent
 
         try {
             Numerazione_doc_contHome numHome = (Numerazione_doc_contHome) getHomeCache(userContext).getHome(Numerazione_doc_contBulk.class);
-            Long pg = null;
-            pg = numHome.getNextPg(userContext,
+            Long pg = numHome.getNextPg(userContext,
                     obbligazioneTemporanea.getEsercizio(),
                     obbligazioneTemporanea.getCd_cds(),
                     obbligazioneTemporanea.getCd_tipo_documento_cont(),
                     obbligazioneTemporanea.getUser());
             ObbligazioneHome home = (ObbligazioneHome) getHome(userContext, obbligazioneTemporanea);
             home.confirmObbligazioneTemporanea(userContext, obbligazioneTemporanea, pg);
-        } catch (it.cnr.jada.persistency.PersistencyException e) {
-            throw handleException(obbligazioneTemporanea, e);
-        } catch (it.cnr.jada.persistency.IntrospectionException e) {
+        } catch (PersistencyException | IntrospectionException e) {
             throw handleException(obbligazioneTemporanea, e);
         }
     }
@@ -1977,8 +1791,7 @@ public class OrdineAcqComponent
 
         ObbligazioniTable obbligazioniHash = ordine.getOrdineObbligazioniHash();
         Vector dettagli = (Vector) obbligazioniHash.get(scadenza);
-        java.math.BigDecimal impTotaleDettagli = calcolaTotalePer(userContext, dettagli, ordine.isCommerciale());
-        return impTotaleDettagli;
+        return calcolaTotalePer(userContext, dettagli, ordine.isCommerciale());
     }
 
     public IScadenzaDocumentoContabileBulk updateImportoAssociatoDocAmm(
@@ -1996,17 +1809,12 @@ public class OrdineAcqComponent
     }
 
     private void rebuildObbligazioni(UserContext aUC, OrdineAcqBulk ordine) throws ComponentException {
-
         if (ordine == null) return;
 
-        BulkList righe = ordine.getRigheOrdineColl();
+        BulkList<OrdineAcqRigaBulk> righe = ordine.getRigheOrdineColl();
         if (righe != null) {
-
-            for (Iterator i = righe.iterator(); i.hasNext(); ) {
-                OrdineAcqRigaBulk riga = (OrdineAcqRigaBulk) i.next();
-                for (java.util.Iterator c = riga.getRigheConsegnaColl().iterator(); c.hasNext(); ) {
-                    OggettoBulk consbulk = (OggettoBulk) c.next();
-                    OrdineAcqConsegnaBulk cons = (OrdineAcqConsegnaBulk) consbulk;
+            for (OrdineAcqRigaBulk riga : righe) {
+                for (OrdineAcqConsegnaBulk cons : riga.getRigheConsegnaColl()) {
                     if (!cons.isConsegna0()) {
                         Obbligazione_scadenzarioBulk scadenza = cons.getObbligazioneScadenzario();
                         if (cons.getObbligazioneScadenzario() != null) {
@@ -2040,11 +1848,9 @@ public class OrdineAcqComponent
                         "CNRDOCCONT00_EJB_ObbligazioneAbstractComponentSession",
                         ObbligazioneAbstractComponentSession.class);
                 ObbligazioneBulk obbligazione = (ObbligazioneBulk) h.inizializzaBulkPerModifica(context, scadenza.getObbligazione());
-                BulkList scadenze = obbligazione.getObbligazione_scadenzarioColl();
-                scadenza = (Obbligazione_scadenzarioBulk) scadenze.get(scadenze.indexOfByPrimaryKey(scadenza));
-            } catch (java.rmi.RemoteException e) {
-                throw handleException(scadenza, e);
-            } catch (javax.ejb.EJBException e) {
+                BulkList<Obbligazione_scadenzarioBulk> scadenze = obbligazione.getObbligazione_scadenzarioColl();
+                scadenza = scadenze.get(scadenze.indexOfByPrimaryKey(scadenza));
+            } catch (RemoteException | EJBException e) {
                 throw handleException(scadenza, e);
             }
             return scadenza;
@@ -2063,7 +1869,6 @@ public class OrdineAcqComponent
                     !ordine.getDocumentiContabiliCancellati().isEmpty()) {
 
                 PrimaryKeyHashtable scadenzeConfermateTemporanee = getDocumentiContabiliTemporanei(
-                        userContext,
                         ordine.getOrdineObbligazioniHash().keys());
                 Vector scadenzeConfermate = new Vector();
                 java.util.Enumeration e = scadenzeConfermateTemporanee.keys();
@@ -2106,7 +1911,7 @@ public class OrdineAcqComponent
                             ((Vector) obblTemporanee.get(scadenza.getObbligazione())).add(scadenza);
                         }
                     } else if (!ordine.isToBeCreated() && OggettoBulk.NORMAL == scadenza.getCrudStatus()) {
-                        PrimaryKeyHashtable obbligs = getDocumentiContabiliNonTemporanei(userContext, ordine.getObbligazioniHash().keys());
+                        PrimaryKeyHashtable obbligs = getDocumentiContabiliNonTemporanei(ordine.getObbligazioniHash().keys());
                         if (!obbligs.containsKey(scadenza.getObbligazione()))
                             aggiornaSaldi(
                                     userContext,
@@ -2130,7 +1935,7 @@ public class OrdineAcqComponent
 
                 //Aggiorna i saldi per le obbligazioni temporanee
                 //DEVE ESSERE FATTO PRIMA DELL'AGGIORNAMENTO A DEFINITIVA
-                PrimaryKeyHashtable obbligs = getDocumentiContabiliTemporanei(userContext, ordine.getObbligazioniHash().keys());
+                PrimaryKeyHashtable obbligs = getDocumentiContabiliTemporanei(ordine.getObbligazioniHash().keys());
                 if (!obbligs.containsKey(obblT))
                     aggiornaSaldi(
                             userContext,
@@ -2144,16 +1949,13 @@ public class OrdineAcqComponent
         }
     }
 
-    private OrdineAcqBulk manageDeletedElements(
+    private void manageDeletedElements(
             UserContext userContext,
             OrdineAcqBulk ordine,
             OptionRequestParameter status)
             throws ComponentException {
-
-        if (ordine != null) {
+        if (ordine != null)
             manageDocumentiContabiliCancellati(userContext, ordine, status);
-        }
-        return ordine;
     }
 
     public void controllaQuadraturaObbligazioni(UserContext aUC, OrdineAcqBulk ordine)
@@ -2179,10 +1981,8 @@ public class OrdineAcqComponent
                     }
 
                     if (!ordine.getAggiornaImpegniInAutomatico()) {
-                        java.math.BigDecimal totale = new java.math.BigDecimal(0).setScale(2, RoundingMode.HALF_UP);
-                        java.math.BigDecimal delta = null;
-                        totale = calcolaTotaleObbligazione(aUC, scadenza, ordine);
-                        delta = scadenza.getIm_scadenza().subtract(totale);
+                        java.math.BigDecimal totale = calcolaTotaleObbligazione(aUC, scadenza, ordine);
+                        java.math.BigDecimal delta = scadenza.getIm_scadenza().subtract(totale);
                         if (delta.compareTo(new java.math.BigDecimal(0)) > 0) {
                             String sb = "Attenzione: La scadenza " +
                                     scadenza.getDs_scadenza() +
@@ -2207,8 +2007,7 @@ public class OrdineAcqComponent
     protected Bene_servizioBulk recuperoBeneServizio(it.cnr.jada.UserContext userContext, String cdBeneServizio)
             throws ComponentException, PersistencyException {
         Bene_servizioHome home = (Bene_servizioHome) getHome(userContext, Bene_servizioBulk.class);
-        Bene_servizioBulk bene = (Bene_servizioBulk) home.findByPrimaryKey(new Bene_servizioBulk(cdBeneServizio));
-        return bene;
+        return (Bene_servizioBulk) home.findByPrimaryKey(new Bene_servizioBulk(cdBeneServizio));
     }
 
     public SQLBuilder selectContrattoByClause(UserContext userContext, OrdineAcqBulk ordine, ContrattoBulk contratto, CompoundFindClause clauses) throws ComponentException, it.cnr.jada.persistency.PersistencyException {
@@ -2233,7 +2032,7 @@ public class OrdineAcqComponent
         sql.addSQLClause(FindClause.OR, "NATURA_CONTABILE", SQLBuilder.EQUALS, ContrattoBulk.NATURA_CONTABILE_ATTIVO_E_PASSIVO);
         sql.closeParenthesis();
 
-        if (param_cds != null && param_cds.getFl_contratto_cessato().booleanValue()) {
+        if (param_cds != null && param_cds.getFl_contratto_cessato()) {
             sql.openParenthesis(FindClause.AND);
             sql.addSQLClause(FindClause.AND, "STATO", SQLBuilder.EQUALS, ContrattoBulk.STATO_DEFINITIVO);
             sql.addSQLClause(FindClause.OR, "STATO", SQLBuilder.EQUALS, ContrattoBulk.STATO_CESSSATO);
@@ -2260,7 +2059,7 @@ public class OrdineAcqComponent
                     sql.addSQLClause(FindClause.OR, "CONTRATTO.FIG_GIUR_EST", SQLBuilder.EQUALS, associato.getCd_terzo());
                     sql.closeParenthesis();
                 }
-            } catch (IntrospectionException e) {
+            } catch (IntrospectionException ignored) {
             }
             sql.closeParenthesis();
         }
@@ -2289,13 +2088,13 @@ public class OrdineAcqComponent
                         } finally {
                             if (rs != null) try {
                                 rs.close();
-                            } catch (java.sql.SQLException e) {
+                            } catch (java.sql.SQLException ignored) {
                             }
                         }
                     } finally {
                         if (ps != null) try {
                             ps.close();
-                        } catch (java.sql.SQLException e) {
+                        } catch (java.sql.SQLException ignored) {
                         }
                     }
                 } catch (java.sql.SQLException ex) {
@@ -2320,11 +2119,8 @@ public class OrdineAcqComponent
                     if (ordineDB != null)
                         totale = totale.subtract(Utility.nvl(ordineDB.getImTotaleOrdine())).add(Utility.nvl(ordine.getImTotaleOrdine()));
                 }
-                if (totale != null) {
-                    if (totale.compareTo(ordine.getContratto().getIm_contratto_passivo()) > 0) {
-                        throw handleException(new ApplicationException("La somma degli ordini associati " + totale.doubleValue() + " supera l'importo definito nel contratto " + ordine.getContratto().getIm_contratto_passivo()));
-                    }
-                }
+                if (totale.compareTo(ordine.getContratto().getIm_contratto_passivo()) > 0)
+                    throw handleException(new ApplicationException("La somma degli ordini associati " + totale.doubleValue() + " supera l'importo definito nel contratto " + ordine.getContratto().getIm_contratto_passivo()));
 
                 if (ordine.getContratto().isDettaglioContrattoPerArticoli() || ordine.getContratto().isDettaglioContrattoPerCategoriaGruppo()) {
                     List<Dettaglio_contrattoBulk> dettagliContrattoDaAggiornare = new ArrayList<>();
@@ -2333,14 +2129,13 @@ public class OrdineAcqComponent
                         gestioneAggiornamentoDettaglioContratto(dettagliContrattoDaAggiornare, riga.getDettaglioContratto(), riga.getImTotaleRiga().negate(), riga.getQuantitaConsegneColl().negate());
                     }
 
-                    for (Object obj : ordine.getRigheOrdineColl()) {
-                        OrdineAcqRigaBulk riga = (OrdineAcqRigaBulk) obj;
-                        if (riga.getDettaglioContratto() == null) {
+                    for (OrdineAcqRigaBulk riga : ordine.getRigheOrdineColl()) {
+                        if (riga.getDettaglioContratto() == null)
                             throw handleException(new ApplicationException("La riga " + riga.getRiga() + " non è collegata ad un dettaglio del contratto indicato"));
-                        }
-                        if (riga.isToBeCreated()) {
+
+                        if (riga.isToBeCreated())
                             gestioneAggiornamentoDettaglioContratto(dettagliContrattoDaAggiornare, riga.getDettaglioContratto(), riga.getImTotaleRiga(), riga.getQuantitaConsegneColl());
-                        } else if (riga.isToBeUpdated()) {
+                        else if (riga.isToBeUpdated()) {
                             OrdineAcqRigaBulk rigaDB;
                             try {
                                 rigaDB = (OrdineAcqRigaBulk) getTempHome(aUC, OrdineAcqRigaBulk.class).findByPrimaryKey(
@@ -2352,7 +2147,7 @@ public class OrdineAcqComponent
                                                 ordine.getNumero(),
                                                 riga.getRiga()
                                         ));
-                                rigaDB.setRigheConsegnaColl(new BulkList(((OrdineAcqRigaHome)getTempHome(aUC, OrdineAcqRigaBulk.class)).findOrdineRigheConsegnaList(rigaDB)));
+                                rigaDB.setRigheConsegnaColl(new BulkList<>(((OrdineAcqRigaHome)getTempHome(aUC, OrdineAcqRigaBulk.class)).findOrdineRigheConsegnaList(rigaDB)));
                             } catch (PersistencyException e) {
                                 throw new ComponentException(e);
                             }
@@ -2371,26 +2166,22 @@ public class OrdineAcqComponent
                     }
                     for (Dettaglio_contrattoBulk dettaglioContratto : dettagliContrattoDaAggiornare) {
                         if (dettaglioContratto.getCdBeneServizio() != null) {
-                            if (dettaglioContratto.getQuantitaMin() != null && Utility.nvl(dettaglioContratto.getQuantitaOrdinata()).compareTo(dettaglioContratto.getQuantitaMin()) < 0) {
+                            if (dettaglioContratto.getQuantitaMin() != null && Utility.nvl(dettaglioContratto.getQuantitaOrdinata()).compareTo(dettaglioContratto.getQuantitaMin()) < 0)
                                 throw handleException(new ApplicationException("La quantità minima ordinabile sul contratto per l'articolo " + dettaglioContratto.getCdBeneServizio() + " è di " + dettaglioContratto.getQuantitaMin()));
-                            }
-                            if (dettaglioContratto.getQuantitaMax() != null && Utility.nvl(dettaglioContratto.getQuantitaOrdinata()).compareTo(dettaglioContratto.getQuantitaMax()) > 0) {
+                            if (dettaglioContratto.getQuantitaMax() != null && Utility.nvl(dettaglioContratto.getQuantitaOrdinata()).compareTo(dettaglioContratto.getQuantitaMax()) > 0)
                                 throw handleException(new ApplicationException("Sfondamento di " + dettaglioContratto.getQuantitaOrdinata().subtract(dettaglioContratto.getQuantitaMax()) + " della quantità massima ordinabile sul contratto per l'articolo " + dettaglioContratto.getCdBeneServizio()));
-                            }
                         }
                         super.updateBulk(aUC, dettaglioContratto);
                     }
                 }
-            } catch (IntrospectionException e1) {
-                throw new it.cnr.jada.comp.ComponentException(e1);
-            } catch (PersistencyException e1) {
+            } catch (IntrospectionException | PersistencyException e1) {
                 throw new it.cnr.jada.comp.ComponentException(e1);
             }
         }
     }
 
     private void gestioneAggiornamentoDettaglioContratto(List<Dettaglio_contrattoBulk> dettagliContrattoDaAggiornare, Dettaglio_contrattoBulk dettaglio_contratto, BigDecimal importoDaAggiungere, BigDecimal quantitaDaAggiungere) {
-        Boolean contrattoTrovato = false;
+        boolean contrattoTrovato = false;
         for (Dettaglio_contrattoBulk dettaglio_contrattoBulk : dettagliContrattoDaAggiornare) {
             if (dettaglio_contratto.equalsByPrimaryKey(dettaglio_contrattoBulk)) {
                 dettaglio_contrattoBulk.setImportoOrdinato(Utility.nvl(dettaglio_contrattoBulk.getImportoOrdinato()).add(importoDaAggiungere));
@@ -2420,22 +2211,15 @@ public class OrdineAcqComponent
             if (!ordine.isStatoInserito())
                 throw new ApplicationException("Non è possibile cancellare un ordine in stato diverso da inserito");
 
-            for (java.util.Iterator i = ordine.getRigheOrdineColl().iterator(); i.hasNext(); ) {
-                OrdineAcqRigaBulk riga = (OrdineAcqRigaBulk) i.next();
-                if (riga.getDspObbligazioneScadenzario() != null && riga.getDspObbligazioneScadenzario().getPg_obbligazione() != null) {
+            for (OrdineAcqRigaBulk riga : ordine.getRigheOrdineColl()) {
+                if (riga.getDspObbligazioneScadenzario() != null && riga.getDspObbligazioneScadenzario().getPg_obbligazione() != null)
                     throw new ApplicationException("Scollegare prima gli impegni collegati all'ordine prima di procedere alla cancellazione.");
-                }
-                if (riga != null) {
-                    for (java.util.Iterator c = riga.getRigheConsegnaColl().iterator(); c.hasNext(); ) {
-                        OggettoBulk consbulk = (OggettoBulk) c.next();
-                        OrdineAcqConsegnaBulk cons = (OrdineAcqConsegnaBulk) consbulk;
-                        if (cons.getObbligazioneScadenzario() != null && cons.getObbligazioneScadenzario().getPg_obbligazione() != null) {
-                            throw new ApplicationException("Scollegare prima gli impegni collegati all'ordine prima di procedere alla cancellazione.");
-                        }
-                    }
+                for (OrdineAcqConsegnaBulk cons : riga.getRigheConsegnaColl()) {
+                     if (cons.getObbligazioneScadenzario() != null && cons.getObbligazioneScadenzario().getPg_obbligazione() != null)
+                        throw new ApplicationException("Scollegare prima gli impegni collegati all'ordine prima di procedere alla cancellazione.");
                 }
             }
-            ((ICancellatoLogicamente) ordine).cancellaLogicamente();
+            ordine.cancellaLogicamente();
             ordine.setToBeUpdated();
             this.modificaConBulk(userContext, ordine);
         } catch (Exception e) {
@@ -2502,7 +2286,7 @@ public class OrdineAcqComponent
         List<UnitaOperativaOrdBulk> listUop = unitaOperativaHome.fetchAll(sqlUop);
         abilitazioneOrdiniAcqBulk.setUnitaOperativaAbilitata(Optional.ofNullable(listUop)
                 .map(e -> {
-                    if (e.stream().count() > 1) {
+                    if ((long) e.size() > 1) {
                         return null;
                     }
                     return e.stream().findFirst().orElse(null);
@@ -2515,7 +2299,7 @@ public class OrdineAcqComponent
         List<MagazzinoBulk> listMagazzino = magazzinoHome.fetchAll(sqlMagazzino);
         abilitazioneOrdiniAcqBulk.setMagazzinoAbilitato(Optional.ofNullable(listMagazzino)
                 .map(e -> {
-                    if (e.stream().count() > 1) {
+                    if ((long) e.size() > 1) {
                         return null;
                     }
                     return e.stream().findFirst().orElse(null);
@@ -2549,7 +2333,6 @@ public class OrdineAcqComponent
                     sql.addSQLJoin("ORDINE_ACQ.CD_UNITA_OPERATIVA", "ABIL_UTENTE_UOP_OPER.CD_UNITA_OPERATIVA");
                     sql.addSQLClause(FindClause.AND, "ABIL_UTENTE_UOP_OPER.CD_UTENTE", SQLBuilder.EQUALS, userContext.getUser());
                     sql.addSQLClause(FindClause.AND, "ABIL_UTENTE_UOP_OPER.CD_TIPO_OPERAZIONE", SQLBuilder.EQUALS, TipoOperazioneOrdBulk.OPERAZIONE_ORDINE);
-
                 }
             }
         }
@@ -2570,9 +2353,7 @@ public class OrdineAcqComponent
 
 
         Optional.ofNullable(parametri.getUnitaOperativaAbilitata()).map(UnitaOperativaOrdBulk::getCdUnitaOperativa)
-                .ifPresent(e -> {
-                    sql.addSQLClause(FindClause.AND, "ORDINE_ACQ.CD_UNITA_OPERATIVA", SQLBuilder.EQUALS, e);
-                });
+                .ifPresent(e -> sql.addSQLClause(FindClause.AND, "ORDINE_ACQ.CD_UNITA_OPERATIVA", SQLBuilder.EQUALS, e));
 
 
         Optional.ofNullable(parametri.getMagazzinoAbilitato()).map(MagazzinoBulk::getCdMagazzino)
@@ -2582,85 +2363,53 @@ public class OrdineAcqComponent
                 });
 
         Optional.ofNullable(parametri.getNumerazioneOrd()).map(NumerazioneOrdBulk::getCdNumeratore)
-                .ifPresent(e -> {
-                    sql.addClause("AND", "cdNumeratore", SQLBuilder.EQUALS, e);
-                });
+                .ifPresent(e -> sql.addClause(FindClause.AND, "cdNumeratore", SQLBuilder.EQUALS, e));
 
 
         Optional.ofNullable(parametri.getDaDataOrdine())
-                .ifPresent(e -> {
-                    sql.addSQLClause("AND", "ORDINE_ACQ.DATA_ORDINE", SQLBuilder.GREATER_EQUALS, e);
-                });
+                .ifPresent(e -> sql.addSQLClause(FindClause.AND, "ORDINE_ACQ.DATA_ORDINE", SQLBuilder.GREATER_EQUALS, e));
 
         Optional.ofNullable(parametri.getaDataOrdine())
-                .ifPresent(e -> {
-                    sql.addSQLClause("AND", "ORDINE_ACQ.DATA_ORDINE", SQLBuilder.LESS_EQUALS, e);
-                });
+                .ifPresent(e -> sql.addSQLClause(FindClause.AND, "ORDINE_ACQ.DATA_ORDINE", SQLBuilder.LESS_EQUALS, e));
 
         Optional.ofNullable(parametri.getDaNumeroOrdine())
-                .ifPresent(e -> {
-                    sql.addClause("AND", "numero", SQLBuilder.GREATER_EQUALS, e);
-                });
+                .ifPresent(e -> sql.addClause(FindClause.AND, "numero", SQLBuilder.GREATER_EQUALS, e));
 
         Optional.ofNullable(parametri.getaNumeroOrdine())
-                .ifPresent(e -> {
-                    sql.addClause("AND", "numero", SQLBuilder.LESS_EQUALS, e);
-                });
+                .ifPresent(e -> sql.addClause(FindClause.AND, "numero", SQLBuilder.LESS_EQUALS, e));
 
         Optional.ofNullable(parametri.getTerzo()).map(TerzoBulk::getCd_terzo)
-                .ifPresent(e -> {
-                    sql.addSQLClause(FindClause.AND, "ORDINE_ACQ.CD_TERZO", SQLBuilder.EQUALS, e);
-                });
+                .ifPresent(e -> sql.addSQLClause(FindClause.AND, "ORDINE_ACQ.CD_TERZO", SQLBuilder.EQUALS, e));
 
         Optional.ofNullable(parametri.getDaDataOrdineDef())
-                .ifPresent(e -> {
-                    sql.addSQLClause("AND", "ORDINE_ACQ.DATA_ORDINE_DEF", SQLBuilder.GREATER_EQUALS, e);
-                });
+                .ifPresent(e -> sql.addSQLClause(FindClause.AND, "ORDINE_ACQ.DATA_ORDINE_DEF", SQLBuilder.GREATER_EQUALS, e));
 
         Optional.ofNullable(parametri.getaDataOrdineDef())
-                .ifPresent(e -> {
-                    sql.addSQLClause("AND", "ORDINE_ACQ.DATA_ORDINE_DEF", SQLBuilder.LESS_EQUALS, e);
-                });
+                .ifPresent(e -> sql.addSQLClause(FindClause.AND, "ORDINE_ACQ.DATA_ORDINE_DEF", SQLBuilder.LESS_EQUALS, e));
 
         Optional.ofNullable(parametri.getDaBeneServizio()).map(Bene_servizioBulk::getCd_bene_servizio)
-                .ifPresent(e -> {
-                    sql.addSQLClause(FindClause.AND, "ORDINE_ACQ_RIGA.CD_BENE_SERVIZIO", SQLBuilder.GREATER_EQUALS, e);
-                });
+                .ifPresent(e -> sql.addSQLClause(FindClause.AND, "ORDINE_ACQ_RIGA.CD_BENE_SERVIZIO", SQLBuilder.GREATER_EQUALS, e));
 
         Optional.ofNullable(parametri.getaBeneServizio()).map(Bene_servizioBulk::getCd_bene_servizio)
-                .ifPresent(e -> {
-                    sql.addSQLClause(FindClause.AND, "ORDINE_ACQ_RIGA.CD_BENE_SERVIZIO", SQLBuilder.LESS_EQUALS, e);
-                });
+                .ifPresent(e -> sql.addSQLClause(FindClause.AND, "ORDINE_ACQ_RIGA.CD_BENE_SERVIZIO", SQLBuilder.LESS_EQUALS, e));
 
         Optional.ofNullable(parametri.getaDataPrevConsegna())
-                .ifPresent(e -> {
-                    sql.addClause("AND", "dtPrevConsegna", SQLBuilder.GREATER_EQUALS, e);
-                });
+                .ifPresent(e -> sql.addClause(FindClause.AND, "dtPrevConsegna", SQLBuilder.GREATER_EQUALS, e));
 
         Optional.ofNullable(parametri.getaDataPrevConsegna())
-                .ifPresent(e -> {
-                    sql.addClause("AND", "dtPrevConsegna", SQLBuilder.LESS_EQUALS, e);
-                });
+                .ifPresent(e -> sql.addClause(FindClause.AND, "dtPrevConsegna", SQLBuilder.LESS_EQUALS, e));
 
         Optional.ofNullable(parametri.getUnitaOperativaRicevente()).map(UnitaOperativaOrdBulk::getCdUnitaOrganizzativa)
-                .ifPresent(e -> {
-                    sql.addClause(FindClause.AND, "cdUopDest", SQLBuilder.EQUALS, e);
-                });
+                .ifPresent(e -> sql.addClause(FindClause.AND, "cdUopDest", SQLBuilder.EQUALS, e));
 
         Optional.ofNullable(parametri.getTipoConsegna())
-                .ifPresent(e -> {
-                    sql.addClause(FindClause.AND, "tipoConsegna", SQLBuilder.EQUALS, e);
-                });
+                .ifPresent(e -> sql.addClause(FindClause.AND, "tipoConsegna", SQLBuilder.EQUALS, e));
 
         Optional.ofNullable(parametri.getStatoConsegna())
-                .ifPresent(e -> {
-                    sql.addClause(FindClause.AND, "stato", SQLBuilder.EQUALS, e);
-                });
+                .ifPresent(e -> sql.addClause(FindClause.AND, "stato", SQLBuilder.EQUALS, e));
 
         Optional.ofNullable(parametri.getStatoOrdine())
-                .ifPresent(e -> {
-                    sql.addSQLClause(FindClause.AND, "ORDINE_ACQ.STATO", SQLBuilder.EQUALS, e);
-                });
+                .ifPresent(e -> sql.addSQLClause(FindClause.AND, "ORDINE_ACQ.STATO", SQLBuilder.EQUALS, e));
 
 
         Optional.ofNullable(parametri.getImpegno()).map(Obbligazione_scadenzarioBulk::getPg_obbligazione)
@@ -2709,11 +2458,9 @@ public class OrdineAcqComponent
         listaConsegneDaChiudere.add(0, ordineEvasioneForzata);
 
         final Supplier<Stream<OrdineAcqConsegnaBulk>> consegneDaChiudere = () ->
-                Optional.ofNullable(listaConsegneDaChiudere)
-                        .filter(List.class::isInstance)
-                        .map(List.class::cast)
+                Optional.of(listaConsegneDaChiudere)
                         .filter(list -> !list.isEmpty())
-                        .map(list -> list.stream())
+                        .map(Collection::stream)
                         .orElse(Stream.empty());
 
         final Map<OrdineAcqBulk, Map<OrdineAcqRigaBulk, List<OrdineAcqConsegnaBulk>>> mapOrdine =
@@ -2781,12 +2528,10 @@ public class OrdineAcqComponent
         NumerazioneOrdHome numerazioneHome = (NumerazioneOrdHome) getHome(userContext, NumerazioneOrdBulk.class);
         SQLBuilder sql = null;
         try {
-            if (bulk instanceof OrdineAcqBulk) {
+            if (bulk instanceof OrdineAcqBulk)
                 sql = home.selectNumerazioneOrdByClause(userContext, (OrdineAcqBulk) bulk, numerazioneHome, new NumerazioneOrdBulk(), new CompoundFindClause());
-            } else if (bulk instanceof ParametriSelezioneOrdiniAcqBulk) {
+            else if (bulk instanceof ParametriSelezioneOrdiniAcqBulk)
                 sql = home.selectNumerazioneOrdByClause(userContext, (ParametriSelezioneOrdiniAcqBulk) bulk, numerazioneHome, new NumerazioneOrdBulk(), new CompoundFindClause());
-            }
-
         } catch (PersistencyException e) {
             throw new ComponentException(e);
         }
@@ -2796,29 +2541,24 @@ public class OrdineAcqComponent
     }
 
     public SQLBuilder selectContoBulkByClause(UserContext userContext, OrdineAcqConsegnaBulk bulk, ContoBulk contoBulk, CompoundFindClause clauses) throws PersistencyException, ComponentException {
-        ContoHome home = (ContoHome) getHome(userContext, ContoBulk.class);
-        SQLBuilder sql = home.createSQLBuilder();
-        OrdineAcqConsegnaBulk consegna = bulk;
         try {
-            sql = home.selectContiAssociatiACategoria(new CompoundFindClause(), consegna.getEsercizio() == null ? CNRUserContext.getEsercizio(userContext) : consegna.getEsercizio(),
-                    consegna.getOrdineAcqRiga().getBeneServizio().getCategoria_gruppo());
+            ContoHome home = (ContoHome) getHome(userContext, ContoBulk.class);
+            return home.selectContiAssociatiACategoria(new CompoundFindClause(), bulk.getEsercizio() == null ? CNRUserContext.getEsercizio(userContext) : bulk.getEsercizio(),
+                    bulk.getOrdineAcqRiga().getBeneServizio().getCategoria_gruppo());
         } catch (InvocationTargetException | IllegalAccessException e) {
             throw new PersistencyException(e);
         }
-        return sql;
     }
 
     public SQLBuilder selectContoByClause(UserContext userContext, OggettoBulk bulk, ContoBulk contoBulk, CompoundFindClause clauses) throws PersistencyException, ComponentException {
-        ContoHome home = (ContoHome) getHome(userContext, ContoBulk.class);
-        SQLBuilder sql = home.createSQLBuilder();
-        OrdineAcqConsegnaBulk consegna = (OrdineAcqConsegnaBulk) bulk;
         try {
-            sql = home.selectContiAssociatiACategoria(new CompoundFindClause(), consegna.getEsercizio() == null ? CNRUserContext.getEsercizio(userContext) : consegna.getEsercizio(),
+            ContoHome home = (ContoHome) getHome(userContext, ContoBulk.class);
+            OrdineAcqConsegnaBulk consegna = (OrdineAcqConsegnaBulk) bulk;
+            return home.selectContiAssociatiACategoria(new CompoundFindClause(), consegna.getEsercizio() == null ? CNRUserContext.getEsercizio(userContext) : consegna.getEsercizio(),
                     consegna.getOrdineAcqRiga().getBeneServizio().getCategoria_gruppo());
         } catch (InvocationTargetException | IllegalAccessException e) {
             throw new PersistencyException(e);
         }
-        return sql;
     }
 
     public SQLBuilder selectDspContoByClause(UserContext userContext, OrdineAcqRigaBulk riga,
@@ -2843,13 +2583,11 @@ public class OrdineAcqComponent
 
     public ContoBulk recuperoContoDefault(UserContext userContext, Categoria_gruppo_inventBulk categoria_gruppo_inventBulk) throws PersistencyException, ComponentException {
         ContoHome contoHome = (ContoHome) getHome(userContext, ContoBulk.class);
-        SQLBuilder sql = null;
         try {
-            sql = contoHome.selectContoDefaultAssociatoACategoria(new CompoundFindClause(), CNRUserContext.getEsercizio(userContext), categoria_gruppo_inventBulk);
+            SQLBuilder sql = contoHome.selectContoDefaultAssociatoACategoria(new CompoundFindClause(), CNRUserContext.getEsercizio(userContext), categoria_gruppo_inventBulk);
             List conti = contoHome.fetchAll(sql);
-            if (conti != null && !conti.isEmpty()) {
+            if (conti != null && !conti.isEmpty())
                 return (ContoBulk) conti.get(0);
-            }
         } catch (InvocationTargetException | IllegalAccessException e) {
             throw new PersistencyException(e);
         }

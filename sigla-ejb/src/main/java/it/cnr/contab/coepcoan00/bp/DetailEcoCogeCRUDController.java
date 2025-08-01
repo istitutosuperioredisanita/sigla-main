@@ -40,7 +40,7 @@ import java.util.Optional;
 public class DetailEcoCogeCRUDController extends CollapsableDetailCRUDController implements TableCustomizer {
     public DetailEcoCogeCRUDController(Class class1, FormController formcontroller) {
         this(
-                "DatiCogeCoan",
+                "Dati Coge Coan",
                 class1,
                 "righeEconomica",
                 formcontroller

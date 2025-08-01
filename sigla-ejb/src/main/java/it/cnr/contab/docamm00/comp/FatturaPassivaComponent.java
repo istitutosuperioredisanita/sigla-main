@@ -3088,15 +3088,26 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                     //Copio l'analitica dalla riga di consegna
                     riga.setVoce_ep(consegna.getVoce_ep());
                     consegna.setRigheEconomica(new BulkList<>(((OrdineAcqConsegnaHome)getHome(userContext, OrdineAcqConsegnaBulk.class)).findOrdineAcqConsegnaEcoList(consegna)));
+
+                    riga.setRigheEconomica(new BulkList<>());
                     for (OrdineAcqConsegnaEcoBulk consegnaEco : consegna.getRigheEconomica()) {
                         Fattura_passiva_riga_ecoIBulk fatturaEco = new Fattura_passiva_riga_ecoIBulk();
                         fatturaEco.setFattura_passiva_rigaI((Fattura_passiva_rigaIBulk)riga);
                         fatturaEco.setLinea_attivita(consegnaEco.getLinea_attivita());
                         fatturaEco.setVoce_analitica(consegnaEco.getVoce_analitica());
-                        fatturaEco.setImporto(consegnaEco.getImporto());
+
+                        BigDecimal importoDaRipartire = riga.getImCostoEcoDaRipartire();
+                        BigDecimal newImporto = consegnaEco.getImporto().multiply(riga.getImCostoEco())
+                                .divide(consegna.getImCostoEco(), 2, RoundingMode.HALF_UP);
+                        if (newImporto.compareTo(importoDaRipartire)<0)
+                            fatturaEco.setImporto(newImporto);
+                        else
+                            fatturaEco.setImporto(importoDaRipartire);
+
                         fatturaEco.setToBeCreated();
                         riga.getRigheEconomica().add(fatturaEco);
                     }
+
                     valorizzaCIG(riga, fatturaOrdineBulk);
 
                     fatturaOrdineBulk.setFatturaPassivaRiga(riga);
