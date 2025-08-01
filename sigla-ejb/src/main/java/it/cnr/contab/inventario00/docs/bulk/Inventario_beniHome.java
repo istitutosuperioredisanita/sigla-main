@@ -306,16 +306,53 @@ public java.util.Collection findDettagliBuono(Buono_carico_scaricoBulk buono)thr
 		return sql.executeExistsQuery(getConnection());
 	}
 
-	public String aggiornamentoSqlInventarioBeneConAmmortamento(UserContext uc, Inventario_beniBulk bene){
-		return " UPDATE "+it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+"INVENTARIO_BENI "+
-				"SET VALORE_AMMORTIZZATO="+bene.getValore_ammortizzato()+" AND " +
-				" DUVA= SYSDATE, " +
-				" UTUV='SI', " +
-				" PG_VER_REC=(PG_VER_REC+1) " +
-				"WHERE PG_INVENTARIO = "+bene.getPg_inventario()+" AND "+
-				" NR_INVENTARIO = "+bene.getNr_inventario()+" AND "+
-				" PROGRESSIVO = "+bene.getProgressivo();
+	public String aggiornamentoSqlInventarioBeneConAmmortamento(UserContext uc, Integer esercizio,String azione){
+		String user = it.cnr.contab.utenze00.bp.CNRUserContext.getUser(uc);
 
-
+		if(azione.equals(Ammortamento_bene_invBulk.INCREMENTA_VALORE_AMMORTIZZATO)) {
+			return " UPDATE " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() + "INVENTARIO_BENI i " +
+					" SET VALORE_AMMORTIZZATO = ROUND(VALORE_AMMORTIZZATO + (" +
+					"			SELECT SUM(NVL(IM_MOVIMENTO_AMMORT,0)) IM_MOVIMENTO_AMMORT_POS  " +
+					" 			FROM  AMMORTAMENTO_BENE_INV a " +
+					" 			WHERE ESERCIZIO=" + esercizio +
+					"			AND FL_STORNO='N' " +
+					"			AND a.NR_INVENTARIO = i.NR_INVENTARIO " +
+					"			AND a.pg_inventario=i.PG_INVENTARIO " +
+					"			AND a.progressivo=i.PROGRESSIVO" +
+					"           GROUP BY nr_inventario,pg_inventario, progressivo),2) , " +
+					"           DUVA = SYSDATE, " +
+					"           UTUV = '"+user+ "', "+
+					" 			PG_VER_REC = PG_VER_REC+1 " +
+					" WHERE  EXISTS ( " +
+					"                 SELECT 1  FROM AMMORTAMENTO_BENE_INV a " +
+					"                 WHERE a.NR_INVENTARIO = i.NR_INVENTARIO " +
+					"                 AND a.pg_inventario=i.PG_INVENTARIO " +
+					"			      AND a.progressivo=i.PROGRESSIVO " +
+					"				  AND a.ESERCIZIO=" + esercizio +
+					"				  AND a.FL_STORNO='N'" +
+					")" ;
+		}else{
+			return " UPDATE " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() + "INVENTARIO_BENI i " +
+					" SET VALORE_AMMORTIZZATO = ROUND(VALORE_AMMORTIZZATO + " +
+					"			(SELECT SUM(decode(sign(NVL(a.IM_MOVIMENTO_AMMORT,0)),-1,abs(NVL(a.IM_MOVIMENTO_AMMORT,0)),1,-abs(NVL(a.IM_MOVIMENTO_AMMORT,0)),0)) IM_MOVIMENTO_AMMORT_NEG " +
+					" 			FROM  AMMORTAMENTO_BENE_INV a " +
+					" 			WHERE ESERCIZIO=" + esercizio +
+					"			AND FL_STORNO='N' " +
+					"			AND a.NR_INVENTARIO = i.NR_INVENTARIO " +
+					"			AND a.pg_inventario=i.PG_INVENTARIO " +
+					"			AND a.progressivo=i.PROGRESSIVO" +
+					"           GROUP BY nr_inventario,pg_inventario, progressivo),2) , " +
+					"			DUVA = SYSDATE, " +
+					"           UTUV = '"+user+ "', "+
+					" 			PG_VER_REC = PG_VER_REC+1 " +
+					" WHERE  EXISTS ( " +
+					"                 SELECT 1  FROM AMMORTAMENTO_BENE_INV a " +
+					"                 WHERE a.NR_INVENTARIO = i.NR_INVENTARIO " +
+					"                 AND a.pg_inventario=i.PG_INVENTARIO " +
+					"			     AND a.progressivo=i.PROGRESSIVO " +
+					"				 AND a.ESERCIZIO=" + esercizio +
+					"				 AND a.FL_STORNO='N'" +
+					")";
+		}
 	}
 }

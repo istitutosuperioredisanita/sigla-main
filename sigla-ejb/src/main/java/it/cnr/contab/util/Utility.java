@@ -413,6 +413,10 @@ public final class Utility {
 		return result;
 	}
 
+	public static boolean isInteger(BigDecimal num) {
+		return num.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0;
+	}
+
 	public static Map<OggettoBulk,Map<OggettoBulk,BigDecimal>> spalmaImporti(Map<OggettoBulk,BigDecimal> source, Map<OggettoBulk,BigDecimal> destination) throws ApplicationException {
 		Map<OggettoBulk,Map<OggettoBulk,BigDecimal>> result = new HashMap<>();
 		BigDecimal imTotSourceDett = source.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -713,13 +717,19 @@ public final class Utility {
 	public static V_InventarioBeneDetComponentSession createV_InventarioBeneDetComponentSession() throws javax.ejb.EJBException{
 		return (V_InventarioBeneDetComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_V_InventarioBeneDetComponentSession", V_InventarioBeneDetComponentSession.class);
 	}
+	public static V_AmmortamentoBeniDetComponentSession createV_AmmortamentoBeniDetComponentSession() throws javax.ejb.EJBException{
+		return (V_AmmortamentoBeniDetComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_V_AmmortamentoBeniDetComponentSession", V_AmmortamentoBeniDetComponentSession.class);
+	}
+	public static AsyncAmmortamentoBeneComponentSession createAsyncAmmortamentoBeneComponentSession() throws javax.ejb.EJBException{
+		return (AsyncAmmortamentoBeneComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_AsyncAmmortamentoBeneComponentSession", AsyncAmmortamentoBeneComponentSession.class);
+	}
 	public static ChiusuraAnnoComponentSession createChiusuraAnnoComponentSession() throws javax.ejb.EJBException{
 		return (ChiusuraAnnoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRORDMAG00_EJB_ChiusuraAnnoComponentSession", ChiusuraAnnoComponentSession.class);
 	}
 	public static AsyncConsSostitutivaComponentSession createAsyncConsSostitutivaComponentSession() throws javax.ejb.EJBException{
 		return (AsyncConsSostitutivaComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOEPCOAN00_EJB_ConsSostitutivaComponentSession", AsyncConsSostitutivaComponentSession.class);
 	}
-	public static PDCContoAnaliticoComponentSession createPDCContoAnaliticoComponentSession() throws javax.ejb.EJBException{
+    public static PDCContoAnaliticoComponentSession createPDCContoAnaliticoComponentSession() throws javax.ejb.EJBException{
 		return (PDCContoAnaliticoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_PDCContoAnaliticoComponentSession", PDCContoAnaliticoComponentSession.class);
 	}
 }

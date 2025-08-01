@@ -55,6 +55,7 @@ import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util.ApplicationMessageFormatException;
 import it.cnr.contab.util.EuroFormat;
+import it.cnr.contab.util.ICancellatoLogicamente;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
@@ -387,6 +388,9 @@ public class OrdineAcqComponent
             if (consegna.getCdUopDest() != null)
                 throw new ApplicationException("Per una consegna a magazzino non è possibile selezionare l'unità operativa di destinazione per la riga di consegna " + consegna.getConsegna() + " della riga d'ordine " + consegna.getRiga() + ".");
         }
+        if(consegna.getQuantita()!=null && !Utility.isInteger(consegna.getQuantita()) && consegna.getOrdineAcqRiga().getBeneServizio().getFl_gestione_inventario()){
+            throw new ApplicationException("Per una consegna a magazzino non è possibile impostare una quantità con decimali. Consegna " + consegna.getConsegna() + " della riga d'ordine " + consegna.getRiga() + ".");
+        }
         if (consegna.getOrdineAcqRiga().getOrdineAcq().getDataOrdine() == null) {
             OrdineAcqHome home = (OrdineAcqHome) getHome(userContext, OrdineAcqBulk.class);
             try {
@@ -534,10 +538,12 @@ public class OrdineAcqComponent
             ordine.setRigheOrdineColl(new BulkList<>(homeOrdine.findOrdineRigheList(ordine)));
             ordine.setRigheEconomica(new BulkList<>(homeOrdine.findOrdineAcqEcoList(ordine)));
 
+            Boolean isOrdineCompletamenteContabilizzato=true;
+
             for (OrdineAcqRigaBulk riga : ordine.getRigheOrdineColl()) {
-                OrdineAcqRigaHome homeRigaOrdine = (OrdineAcqRigaHome) getHome(usercontext, OrdineAcqRigaBulk.class);
+                OrdineAcqRigaHome homeRigaOrdine = (OrdineAcqRigaHome)getHome(usercontext, OrdineAcqRigaBulk.class);
                 OrdineAcqConsegnaHome homeConsegnaOrdine = (OrdineAcqConsegnaHome) getHome(usercontext, OrdineAcqConsegnaBulk.class);
-                riga.setRigheConsegnaColl(new BulkList<>(homeRigaOrdine.findOrdineRigheConsegnaList(riga)));
+                riga.setRigheConsegnaColl(new BulkList(homeRigaOrdine.findOrdineRigheConsegnaList(riga)));
                 riga.setRigheEconomica(new BulkList<>(homeRigaOrdine.findOrdineAcqRigaEcoList(riga)));
 
                 getHomeCache(usercontext).fetchAll(usercontext);
@@ -557,6 +563,7 @@ public class OrdineAcqComponent
                         }
                     } else {
                         esisteScadenzaComune = false;
+                        isOrdineCompletamenteContabilizzato = false;
                     }
                     if (cons.getUnitaOperativaOrd() != null) {
                         UnitaOperativaOrdBulk uop = recuperoUopDest(usercontext, cons);
@@ -567,6 +574,8 @@ public class OrdineAcqComponent
                 if (esisteScadenzaComune)
                     riga.setDspObbligazioneScadenzario(scadenzaComune);
             }
+            ordine.setOrdineContabilizzato(isOrdineCompletamenteContabilizzato);
+
         } catch (PersistencyException e) {
             throw handleException(e);
         }

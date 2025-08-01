@@ -23,6 +23,7 @@ import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_riga_ecoBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaHome;
 import it.cnr.contab.ordmag.anag00.NumerazioneMagBulk;
+import it.cnr.contab.ordmag.anag00.UnitaMisuraBulk;
 import it.cnr.contab.ordmag.ejb.NumeratoriOrdMagComponentSession;
 import it.cnr.contab.ordmag.magazzino.bulk.BollaScaricoMagBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.BollaScaricoMagHome;
@@ -202,6 +203,9 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 						throw new DetailedRuntimeException("Per la consegna " + consegnaSelected.getConsegnaOrdineString() + " è necessario indicare se bisogna solo sdoppiare la riga o anche evaderla forzatamente");
 					if (consegnaSelected.isQuantitaEvasaMaggioreOrdine())
 						throw new DetailedRuntimeException("La quantità evasa della consegna " + consegnaSelected.getConsegnaOrdineString() + " non può essere maggiore di quella ordinata.");
+					if(consegnaSelected.getQuantitaEvasa()!=null &&  !Utility.isInteger(consegnaSelected.getQuantitaEvasa()) && consegnaSelected.getOrdineAcqRiga().getBeneServizio().getFl_gestione_inventario()){
+						throw new DetailedRuntimeException("La quantità evasa della consegna " + consegnaSelected.getConsegnaOrdineString() + " non può essere con decimali.");
+					}
 
 
 					//Ricarico la consegna dal DB per verificare che non sia stata già evasa

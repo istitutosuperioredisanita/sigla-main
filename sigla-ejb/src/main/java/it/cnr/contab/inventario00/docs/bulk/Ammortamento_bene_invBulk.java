@@ -8,6 +8,10 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.action.CRUDBP;
 public class Ammortamento_bene_invBulk extends Ammortamento_bene_invBase {
+
+	public static String INCREMENTA_VALORE_AMMORTIZZATO = "I";
+	public static String DECREMENTA_VALORE_AMMORTIZZATO = "D";
+
 	/**
 	 * [INVENTARIO_BENI ]
 	 **/

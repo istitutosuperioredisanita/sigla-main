@@ -152,7 +152,9 @@
 		enabledOnInsert="true"
 		enabledOnEdit="true"
 		label="Stato"
-		caseSensitiveSearch="false" />
+		caseSensitiveSearch="false"/>
+		<!-- readonlyProperty="ROstatoForUpdate" -->
+
 	<fieldProperty
 		name="findDivisa"
 		property="divisa"

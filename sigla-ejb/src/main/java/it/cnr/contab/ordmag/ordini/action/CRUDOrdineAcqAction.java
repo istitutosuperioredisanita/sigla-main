@@ -1635,7 +1635,9 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                     OrdineAcqBulk ordine = (OrdineAcqBulk) bp.getModel();
                     ordine.getOrdineObbligazioniHash().remove(obbligazione);
                     ordine.addToDocumentiContabiliCancellati(obbligazione);
-                    ordine.setStato(ordine.isStatoAllaFirma() ? OrdineAcqBulk.STATO_IN_APPROVAZIONE : ordine.getStato());
+
+                    ordine.setOrdineContabilizzato(false);
+                    ordine.setStato(ordine.getStato().equals(OrdineAcqBulk.STATO_ALLA_FIRMA) ? OrdineAcqBulk.STATO_IN_APPROVAZIONE : ordine.getStato());
 
                 } else {
                     for (java.util.Iterator it = models.iterator(); it.hasNext(); ) {
@@ -1649,7 +1651,9 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                                     "\" è già stato evaso.");
                         }
                         OrdineAcqBulk ordine = cons.getOrdineAcqRiga().getOrdineAcq();
-                        ordine.setStato(ordine.isStatoAllaFirma() ? OrdineAcqBulk.STATO_IN_APPROVAZIONE : ordine.getStato());
+                        ordine.setOrdineContabilizzato(false);
+                        ordine.setStato(ordine.getStato().equals(OrdineAcqBulk.STATO_ALLA_FIRMA) ? OrdineAcqBulk.STATO_IN_APPROVAZIONE : ordine.getStato());
+
                     }
                     scollegaDettagliDaObbligazione(context, (java.util.List) models.clone());
                 }

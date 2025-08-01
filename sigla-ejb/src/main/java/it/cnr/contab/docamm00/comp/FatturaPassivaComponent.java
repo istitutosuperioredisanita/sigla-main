@@ -3127,7 +3127,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                     } else {
                         riga.setStato_cofi(Fattura_passiva_IBulk.STATO_CONTABILIZZATO);
                     }
-                    
+
                     if (fatturaOrdineBulk.isRigaAttesaNotaCredito()) {
                         Fattura_passiva_rigaBulk rigaPerRettifica = new Fattura_passiva_rigaIBulk();
                         fattura.addToFattura_passiva_dettColl(rigaPerRettifica);

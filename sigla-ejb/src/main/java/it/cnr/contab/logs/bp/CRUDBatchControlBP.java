@@ -19,14 +19,17 @@ package it.cnr.contab.logs.bp;
 
 import it.cnr.contab.coepcoan00.ejb.AsyncScritturaPartitaDoppiaChiusuraComponentSession;
 import it.cnr.contab.coepcoan00.ejb.AsyncScritturaPartitaDoppiaFromDocumentoComponentSession;
+import it.cnr.contab.coepcoan00.ejb.ScritturaPartitaDoppiaChiusuraComponentSession;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.doccont00.comp.AsyncConsSostitutivaComponentSession;
 import it.cnr.contab.doccont00.comp.AsyncPluriennaliComponentSession;
+import it.cnr.contab.inventario00.ejb.AsyncAmmortamentoBeneComponentSession;
 import it.cnr.contab.logs.bulk.Batch_controlBulk;
 import it.cnr.contab.logs.bulk.Batch_procedura_parametroBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.bulk.BusyResourceException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
@@ -141,17 +144,16 @@ public class CRUDBatchControlBP extends SimpleCRUDBP
 
                     obbComponent.asyncMakeScrittureChiusura(actioncontext.getUserContext(), esercizio.intValue(), "Y".equals(isAnnullamento), "Y".equals(isDefinitivo));
                 }
-
-                else if ("CONSSOTITUIVAJAVA".equals(batch_controlbulk.getProcedura().getCd_procedura())) {
+                else if ("AMMORTAMENTOBENIJAVA".equals(batch_controlbulk.getProcedura().getCd_procedura())) {
                     BigDecimal esercizio = batch_controlbulk.getParametri().stream()
                             .filter(el -> el.getNome_parametro().equals("AES"))
                             .findAny()
                             .map(Batch_procedura_parametroBulk::getValore_number)
                             .orElseThrow(() -> new ValidationException("Valorizzare il parametro Esercizio!"));
 
-                    AsyncConsSostitutivaComponentSession consSostitutivaComponent = Utility.createAsyncConsSostitutivaComponentSession();
+                    AsyncAmmortamentoBeneComponentSession obbComponent = Utility.createAsyncAmmortamentoBeneComponentSession();
 
-                    consSostitutivaComponent.asyncConsSostitutiva(actioncontext.getUserContext(), esercizio.intValue());
+                    obbComponent.asyncAmmortamentoBeni(actioncontext.getUserContext(), esercizio.intValue(),"",false,true,true);
                 }
                 else if ("CONSSOTITUIVAJAVA".equals(batch_controlbulk.getProcedura().getCd_procedura())) {
                     BigDecimal esercizio = batch_controlbulk.getParametri().stream()
@@ -167,7 +169,7 @@ public class CRUDBatchControlBP extends SimpleCRUDBP
             }
 
             super.save(actioncontext);
-        } catch (ComponentException | PersistencyException | RemoteException e){
+        } catch (ComponentException | PersistencyException | RemoteException | BusyResourceException e){
             throw handleException(e);
         }
     }

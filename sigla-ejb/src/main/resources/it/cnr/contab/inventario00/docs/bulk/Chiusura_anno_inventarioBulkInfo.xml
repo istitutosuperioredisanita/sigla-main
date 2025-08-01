@@ -19,6 +19,7 @@
 			inputSize="5"
 			maxLength="5"
 			nullable="false"
+			command="doOnAnnoChange"
 			label="Anno di chiusura" />
 	<fieldProperty
 			name="tipoChiusura"

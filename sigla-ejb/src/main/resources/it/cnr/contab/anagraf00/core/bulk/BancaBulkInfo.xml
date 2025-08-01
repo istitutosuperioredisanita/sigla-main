@@ -57,7 +57,7 @@
             name="codice_iban"
             property="codice_iban"
             label="Codice iban"
-            inputType="rotext"
+            inputType="text"
             inputSize="35"
             readonlyProperty="ROBanca"
     />

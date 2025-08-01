@@ -18,6 +18,7 @@
 package it.cnr.contab.inventario00.ejb;
 
 import it.cnr.jada.UserContext;
+import it.cnr.jada.bulk.BusyResourceException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 
@@ -25,5 +26,5 @@ import javax.ejb.Remote;
 
 @Remote
 public interface AsyncAmmortamentoBeneComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
-    void asyncAmmortamentoBeni(UserContext param0, Integer esercizio) throws ComponentException, PersistencyException, java.rmi.RemoteException;
+    void asyncAmmortamentoBeni(UserContext param0, Integer esercizio, String statoChiusuraInventario,boolean gestisciDatiChiusura, boolean gestisciRipristinoInventario, boolean gestisciAggiornamentoInventario) throws ComponentException, PersistencyException, java.rmi.RemoteException, BusyResourceException;
 }

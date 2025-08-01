@@ -3105,8 +3105,8 @@
     <changeSet author="raffaele.pagano" runOnChange="true" id="create-view-V_DOC_CONT_COMP_H2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_DOC_CONT_COMP_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
-    <changeSet author="raffaele.pagano" runOnChange="true" id="create-view-V_TERZO_PER_COMPENSO_H2">
-        <sqlFile dbms="h2" path="../expsigladb/View/V_TERZO_PER_COMPENSO_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    <changeSet author="valentina.tomada" runOnChange="true" id="create-view-V_AMMORTAMENTO_BENI_DET">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_AMMORTAMENTO_BENI_DET.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
     <changeSet author="valentina.tomada" runOnChange="true" id="create-view-V_COGE_COSTI_BY_COFI">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_COGE_COSTI_BY_COFI.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
@@ -3114,4 +3114,5 @@
     <changeSet author="ciro.salvio" runOnChange="true" id="create-view-V_CONFRONTA_COSTI_COGE_COFI">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_CONFRONTA_COSTI_COGE_COFI.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+
 </databaseChangeLog>
