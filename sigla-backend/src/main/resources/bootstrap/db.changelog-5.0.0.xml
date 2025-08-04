@@ -6214,4 +6214,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
 
     <!-- Autore : CIRO SALVIO - Aggiunto Batch per conservazione SOstitutiva -->
     <include file="bootstrap/add_batch_cons_sotitutiva.xml"/>
+    <!-- Autore : CIRO SALVIO - modificata lunghezza delle colonne cd_livello in TMP_STAMPA_RENDICONTO -->
+    <include file="bootstrap/alter_columns_cdLivello_stampa_rendiconto.xml"/>
 </databaseChangeLog>
