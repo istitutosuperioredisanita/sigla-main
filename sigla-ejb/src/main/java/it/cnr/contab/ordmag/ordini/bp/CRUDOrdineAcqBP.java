@@ -183,20 +183,22 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 			super.writeHTMLToolbar(pagecontext, canAddToCRUD, canFilter, canRemoveFromCRUD, false);
 			final Optional<OrdineAcqConsegnaBulk> ordineAcqConsegnaBulk = Optional.ofNullable(getModel())
 					.filter(OrdineAcqConsegnaBulk.class::isInstance)
-					.map(OrdineAcqConsegnaBulk.class::cast)
-					.filter(bulk -> bulk.getStatoFatt().equalsIgnoreCase(OrdineAcqConsegnaBulk.STATO_FATT_ASSOCIATA_TOTALMENTE));
+					.map(OrdineAcqConsegnaBulk.class::cast);
 			if (ordineAcqConsegnaBulk.isPresent()) {
 				try {
 					if (ordineAcqConsegnaBulk.get().isStatoConsegnaEvasa() || ordineAcqConsegnaBulk.get().isStatoConsegnaEvasaForzatamente()) {
 						final Button button = new Button(Config.getHandler().getProperties(CRUDOrdineAcqBP.class), "Toolbar.visualizzaMovimento");
 						button.writeToolbarButton(pagecontext.getOut(), true, HttpActionContext.isFromBootstrap(pagecontext));
 					}
-					if (ordineAcqConsegnaBulk.get().getFatturaOrdineBulk()==null) {
-						final Button button = new Button(Config.getHandler().getProperties(CRUDOrdineAcqBP.class), "Toolbar.disassociaFattura");
-						button.writeToolbarButton(pagecontext.getOut(), true, HttpActionContext.isFromBootstrap(pagecontext));
-					} else {
-						final Button button = new Button(Config.getHandler().getProperties(CRUDOrdineAcqBP.class), "Toolbar.visualizzaFattura");
-						button.writeToolbarButton(pagecontext.getOut(), true, HttpActionContext.isFromBootstrap(pagecontext));
+					if (ordineAcqConsegnaBulk.filter(bulk -> bulk.getStatoFatt().equalsIgnoreCase(OrdineAcqConsegnaBulk.STATO_FATT_ASSOCIATA_TOTALMENTE))
+							.isPresent()) {
+						if (ordineAcqConsegnaBulk.get().getFatturaOrdineBulk()==null) {
+							final Button button = new Button(Config.getHandler().getProperties(CRUDOrdineAcqBP.class), "Toolbar.disassociaFattura");
+							button.writeToolbarButton(pagecontext.getOut(), true, HttpActionContext.isFromBootstrap(pagecontext));
+						} else {
+							final Button button = new Button(Config.getHandler().getProperties(CRUDOrdineAcqBP.class), "Toolbar.visualizzaFattura");
+							button.writeToolbarButton(pagecontext.getOut(), true, HttpActionContext.isFromBootstrap(pagecontext));
+						}
 					}
 				} catch (RemoteException e) {
 					throw new RuntimeException(e);
