@@ -28,6 +28,7 @@ import it.cnr.contab.ordmag.anag00.NumerazioneOrdBulk;
 import it.cnr.contab.ordmag.anag00.TipoMovimentoMagBulk;
 import it.cnr.contab.ordmag.anag00.UnitaOperativaOrdBulk;
 import it.cnr.contab.ordmag.magazzino.bp.ParametriSelezioneMovimentiMagBP;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.jada.persistency.KeyedPersistent;
 
 public class ParametriSelezioneMovimentiBulk extends AbilitazioneMagazzinoBulk implements KeyedPersistent{
@@ -58,6 +59,7 @@ public class ParametriSelezioneMovimentiBulk extends AbilitazioneMagazzinoBulk i
 	private java.sql.Timestamp aDataOrdineDef; 
 	private Long daProgressivo;
 	private Long aProgressivo;
+	private OrdineAcqConsegnaBulk ordineAcqConsegnaBulk;
 
 	public final static Dictionary tipoMovimentoKeys;
 
@@ -321,4 +323,11 @@ public class ParametriSelezioneMovimentiBulk extends AbilitazioneMagazzinoBulk i
 		this.unitaOperativaOrdine = unitaOperativaOrdine;
 	}
 
+	public OrdineAcqConsegnaBulk getOrdineAcqConsegnaBulk() {
+		return ordineAcqConsegnaBulk;
+	}
+
+	public void setOrdineAcqConsegnaBulk(OrdineAcqConsegnaBulk ordineAcqConsegnaBulk) {
+		this.ordineAcqConsegnaBulk = ordineAcqConsegnaBulk;
+	}
 }

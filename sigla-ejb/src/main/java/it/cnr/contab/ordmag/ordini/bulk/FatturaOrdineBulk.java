@@ -555,6 +555,13 @@ public class FatturaOrdineBulk extends FatturaOrdineBase {
 		return Utility.CSS_CLASS_W_10;
 	}
 
+	public boolean isImponibileRettificato() {
+		return Optional.ofNullable(this.getImImponibileRettificato()).orElse(this.getImImponibile())
+				.compareTo(this.getImImponibile())!=0;
+	}
 
-
+	public boolean isIvaRettificata() {
+		return Optional.ofNullable(this.getImIvaRettificata()).orElse(this.getImIva())
+				.compareTo(this.getImIva())!=0;
+	}
 }

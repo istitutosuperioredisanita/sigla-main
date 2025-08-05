@@ -840,4 +840,47 @@
 		<columnFieldProperty
 			name="pgBollaSca" />
 	</columnSet>
+
+	<columnSet
+			name="movimentiMag01">
+		<columnFieldProperty
+				name="pgMovimento" />
+		<columnFieldProperty
+				name="dtMovimento" />
+		<columnFieldProperty
+				name="dtRiferimento" />
+		<columnFieldProperty
+				name="cdTipoMovimento" />
+		<columnFieldProperty
+				name="dsTipoMovimento"
+				label="Descr. Mov."/>
+		<columnFieldProperty
+				name="cdBeneServizio" />
+		<columnFieldProperty
+				name="dsBeneServizio" />
+		<columnFieldProperty
+				name="cdUnitaMisura" />
+		<columnFieldProperty
+				name="quantita"
+				columnStyle="text-align: right"/>
+		<columnFieldProperty
+				name="prezzoUnitario"
+				columnStyle="text-align: right"/>
+		<columnFieldProperty
+				name="cdUop" />
+		<columnFieldProperty
+				name="dsUop" />
+		<columnFieldProperty
+				name="cdTerzo" />
+		<columnFieldProperty
+				name="ragioneSocialeTerzo" />
+		<columnFieldProperty
+				name="dataBolla" />
+		<columnFieldProperty
+				name="numeroBolla" />
+		<columnFieldProperty
+				name="esercizioLotto" />
+		<columnFieldProperty
+				name="pgLotto" />
+	</columnSet>
 </bulkInfo>

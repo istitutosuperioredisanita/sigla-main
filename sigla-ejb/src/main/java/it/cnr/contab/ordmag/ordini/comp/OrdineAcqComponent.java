@@ -33,6 +33,8 @@ import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
 import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaHome;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.sto.bulk.*;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaHome;
 import it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_obbligazioniVBulk;
 import it.cnr.contab.docamm00.docs.bulk.ObbligazioniTable;
 import it.cnr.contab.docamm00.ejb.CategoriaGruppoInventComponentSession;
@@ -535,14 +537,17 @@ public class OrdineAcqComponent
 
         try {
             OrdineAcqHome homeOrdine = (OrdineAcqHome)getHome(usercontext, OrdineAcqBulk.class);
+            OrdineAcqRigaHome homeRigaOrdine = (OrdineAcqRigaHome)getHome(usercontext, OrdineAcqRigaBulk.class);
+            OrdineAcqConsegnaHome homeConsegnaOrdine = (OrdineAcqConsegnaHome) getHome(usercontext, OrdineAcqConsegnaBulk.class);
+            FatturaOrdineHome homeFatturaOrdine = (FatturaOrdineHome) getHome(usercontext, FatturaOrdineBulk.class);
+            Fattura_passiva_rigaHome homeFatturaRiga = (Fattura_passiva_rigaHome) getHome(usercontext, Fattura_passiva_rigaBulk.class);
+
             ordine.setRigheOrdineColl(new BulkList<>(homeOrdine.findOrdineRigheList(ordine)));
             ordine.setRigheEconomica(new BulkList<>(homeOrdine.findOrdineAcqEcoList(ordine)));
 
             Boolean isOrdineCompletamenteContabilizzato=true;
 
             for (OrdineAcqRigaBulk riga : ordine.getRigheOrdineColl()) {
-                OrdineAcqRigaHome homeRigaOrdine = (OrdineAcqRigaHome)getHome(usercontext, OrdineAcqRigaBulk.class);
-                OrdineAcqConsegnaHome homeConsegnaOrdine = (OrdineAcqConsegnaHome) getHome(usercontext, OrdineAcqConsegnaBulk.class);
                 riga.setRigheConsegnaColl(new BulkList(homeRigaOrdine.findOrdineRigheConsegnaList(riga)));
                 riga.setRigheEconomica(new BulkList<>(homeRigaOrdine.findOrdineAcqRigaEcoList(riga)));
 
@@ -553,6 +558,12 @@ public class OrdineAcqComponent
 
                 for (OrdineAcqConsegnaBulk cons : riga.getRigheConsegnaColl()) {
                     cons.setRigheEconomica(new BulkList<>(homeConsegnaOrdine.findOrdineAcqConsegnaEcoList(cons)));
+                    cons.setFatturaOrdineBulk(homeFatturaOrdine.findFatturaByRigaConsegna(cons));
+
+                    if (cons.getFatturaOrdineBulk()!=null)
+                        cons.getFatturaOrdineBulk().getFatturaPassivaRiga()
+                                .setRigheEconomica(new BulkList<>(homeFatturaRiga.findFatturaPassivaRigheEcoList(cons.getFatturaOrdineBulk().getFatturaPassivaRiga())));
+
                     if (cons.getObbligazioneScadenzario() != null) {
                         Obbligazione_scadenzarioBulk scad = cons.getObbligazioneScadenzario();
                         if (scadenzaComune == null || scadenzaComune.equalsByPrimaryKey(scad)) {
@@ -588,7 +599,12 @@ public class OrdineAcqComponent
 
     protected void impostaCampiDspRiga(UserContext userContext, OrdineAcqRigaBulk riga) throws ComponentException {
         try {
+            boolean isAttivaFinanziaria = Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(userContext, riga.getEsercizio());
             riga.setDspStatoContabilizzazione(OrdineAcqRigaBulk.StatoContabilizzazione.NON_CONTABILIZZATA);
+
+            if (!isAttivaFinanziaria && riga.getImCostoEcoDaRipartireConsegne().compareTo(BigDecimal.ZERO)==0)
+                riga.setDspStatoContabilizzazione(OrdineAcqRigaBulk.StatoContabilizzazione.CONTABILIZZATA);
+
             if (riga.getRigheConsegnaColl().size() == 1) {
                 OrdineAcqConsegnaBulk cons = riga.getRigheConsegnaColl().iterator().next();
                 riga.setDspDtPrevConsegna(cons.getDtPrevConsegna());
@@ -599,13 +615,8 @@ public class OrdineAcqComponent
                 riga.setDspUopDest(cons.getUnitaOperativaOrd());
                 riga.setDspConto(cons.getContoBulk());
                 riga.setDspStato(cons.getStato());
-                if (Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(userContext, riga.getEsercizio())) {
-                    if (Optional.ofNullable(cons.getObbligazioneScadenzario()).isPresent())
-                        riga.setDspStatoContabilizzazione(OrdineAcqRigaBulk.StatoContabilizzazione.CONTABILIZZATA);
-                } else {
-                    if (cons.getImCostoEcoDaRipartire().compareTo(BigDecimal.ZERO)==0)
-                        riga.setDspStatoContabilizzazione(OrdineAcqRigaBulk.StatoContabilizzazione.CONTABILIZZATA);
-                }
+                if (isAttivaFinanziaria && Optional.ofNullable(cons.getObbligazioneScadenzario()).isPresent())
+                    riga.setDspStatoContabilizzazione(OrdineAcqRigaBulk.StatoContabilizzazione.CONTABILIZZATA);
             } else if (riga.getRigheConsegnaColl().size() > 1) {
                 riga.setDspQuantita(riga.getQuantitaConsegneColl());
                 String stato = null;
@@ -619,24 +630,13 @@ public class OrdineAcqComponent
                     }
                 }
                 riga.setDspStato(stato);
-                if (Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(userContext, riga.getEsercizio())) {
+                if (isAttivaFinanziaria) {
                     final boolean contabilizzate = riga.getRigheConsegnaColl()
                             .stream()
                             .anyMatch(ordineAcqConsegnaBulk -> Optional.ofNullable(ordineAcqConsegnaBulk.getObbligazioneScadenzario()).isPresent());
                     final boolean notContabilizzate = riga.getRigheConsegnaColl()
                             .stream()
                             .anyMatch(ordineAcqConsegnaBulk -> !Optional.ofNullable(ordineAcqConsegnaBulk.getObbligazioneScadenzario()).isPresent());
-                    if (notContabilizzate && contabilizzate)
-                        riga.setDspStatoContabilizzazione(OrdineAcqRigaBulk.StatoContabilizzazione.PARZIALMENTE_CONTABILIZZATA);
-                    if (!notContabilizzate && contabilizzate)
-                        riga.setDspStatoContabilizzazione(OrdineAcqRigaBulk.StatoContabilizzazione.CONTABILIZZATA);
-                } else {
-                    final boolean contabilizzate = riga.getRigheConsegnaColl()
-                            .stream()
-                            .anyMatch(ordineAcqConsegnaBulk -> ordineAcqConsegnaBulk.getImCostoEcoDaRipartire().compareTo(BigDecimal.ZERO)==0);
-                    final boolean notContabilizzate = riga.getRigheConsegnaColl()
-                            .stream()
-                            .anyMatch(ordineAcqConsegnaBulk -> ordineAcqConsegnaBulk.getImCostoEcoDaRipartire().compareTo(BigDecimal.ZERO)!=0);
                     if (notContabilizzate && contabilizzate)
                         riga.setDspStatoContabilizzazione(OrdineAcqRigaBulk.StatoContabilizzazione.PARZIALMENTE_CONTABILIZZATA);
                     if (!notContabilizzate && contabilizzate)

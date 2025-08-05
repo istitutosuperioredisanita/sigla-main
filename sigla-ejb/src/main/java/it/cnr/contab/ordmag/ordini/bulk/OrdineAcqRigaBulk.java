@@ -30,8 +30,10 @@ import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
 import it.cnr.contab.config00.contratto.bulk.Dettaglio_contrattoBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaBulk;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Voidable;
@@ -805,7 +807,13 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 	public List<OrdineAcqRigaEcoBulk> getResultRigheEconomica() {
 		List<OrdineAcqRigaEcoBulk> result = new ArrayList<>();
 		this.getRigheConsegnaColl().stream()
-				.flatMap(el->el.getRigheEconomica().stream())
+				.flatMap(el->{
+					if (el.isStatoConsegnaEvasa() && Optional.ofNullable(el.getFatturaOrdineBulk())
+							.flatMap(el2->Optional.ofNullable(el2.getFatturaPassivaRiga()))
+							.isPresent())
+						return el.getFatturaOrdineBulk().getFatturaPassivaRiga().getRigheEconomica().stream();
+					return el.getRigheEconomica().stream();
+				})
 				.forEach(el->{
 					OrdineAcqRigaEcoBulk myRigaEco = result.stream()
 							.filter(el2->Optional.ofNullable(el2.getCd_linea_attivita()).equals(Optional.ofNullable(el.getCd_linea_attivita())))
@@ -879,11 +887,27 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 	}
 
 	public BigDecimal getImCostoEcoRipartitoConsegne() {
-		return Optional.ofNullable(this.getRigheConsegnaColl())
+		BigDecimal fatturato = Optional.ofNullable(this.getRigheConsegnaColl())
 				.map(Collection::stream)
 				.orElseGet(Stream::empty)
+				.filter(el->el.isStatoConsegnaEvasa() && Optional.ofNullable(el.getFatturaOrdineBulk())
+							.flatMap(el2->Optional.ofNullable(el2.getFatturaPassivaRiga()))
+							.isPresent())
+				.flatMap(el-> Stream.of(el.getFatturaOrdineBulk().getFatturaPassivaRiga()))
+				.map(Fattura_passiva_rigaBulk::getImCostoEcoRipartito)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		BigDecimal nonFatturato = Optional.ofNullable(this.getRigheConsegnaColl())
+				.map(Collection::stream)
+				.orElseGet(Stream::empty)
+				.filter(el->!el.isStatoConsegnaEvasa() || !Optional.ofNullable(el.getFatturaOrdineBulk())
+						.flatMap(el2->Optional.ofNullable(el2.getFatturaPassivaRiga()))
+						.isPresent())
 				.map(OrdineAcqConsegnaBulk::getImCostoEcoRipartito)
-				.reduce(BigDecimal.ZERO, BigDecimal::add)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		return fatturato
+				.add(nonFatturato)
 				.add(this.getImEvasoForzatamente());
 	}
 

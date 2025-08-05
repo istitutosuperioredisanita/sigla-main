@@ -30,13 +30,28 @@
             <div class="col-md-12"><% bp.getConsegne().writeFormField(out, "findUnitaOperativaOrdDest"); %></div>
         </div>
     <% } %>
-    <div class="form-row">
-        <div class="col-md-3"><% bp.getConsegne().writeFormField(out, "imImponibile"); %></div>
-        <div class="col-md-3"><% bp.getConsegne().writeFormField(out, "imIva"); %></div>
-        <div class="col-md-3"><% bp.getConsegne().writeFormField(out, "imIvaD"); %></div>
-        <div class="col-md-3"><% bp.getConsegne().writeFormField(out, "imTotaleConsegna"); %></div>
-    </div>
-    <div class="form-row">
-        <div class="col-md-12"><% bp.getConsegne().writeFormField(out, "cercaConto"); %></div>
-    </div>
+    <% if (cons==null || !cons.isImportoConsegnaModificato()) { %>
+        <div class="form-row">
+            <div class="col-md-3"><% bp.getConsegne().writeFormField(out, "imImponibile"); %></div>
+            <div class="col-md-3"><% bp.getConsegne().writeFormField(out, "imIva"); %></div>
+            <div class="col-md-3"><% bp.getConsegne().writeFormField(out, "imIvaD"); %></div>
+            <div class="col-md-3"><% bp.getConsegne().writeFormField(out, "imTotaleConsegna"); %></div>
+        </div>
+    <% } else { %>
+        <div class="form-row">
+            <div class="col-md-3"><% bp.getConsegne().writeFormField(out, "imImponibileConsegnaModificato"); %></div>
+            <div class="col-md-3"><% bp.getConsegne().writeFormField(out, "imIvaConsegnaModificato"); %></div>
+            <div class="col-md-3"><% bp.getConsegne().writeFormField(out, "imIvaDConsegnaModificato"); %></div>
+            <div class="col-md-3"><% bp.getConsegne().writeFormField(out, "imTotaleConsegnaModificato"); %></div>
+        </div>
+        <div class="h3 text-dark mb-1">Importi Rettificati</div>
+        <div class="Group card border-dark p-2 mb-2">
+            <div class="form-row">
+                <div class="col-md-3"><% bp.getConsegne().writeFormField(out, "imImponibile"); %></div>
+                <div class="col-md-3"><% bp.getConsegne().writeFormField(out, "imIva"); %></div>
+                <div class="col-md-3"><% bp.getConsegne().writeFormField(out, "imIvaD"); %></div>
+                <div class="col-md-3"><% bp.getConsegne().writeFormField(out, "imTotaleConsegna"); %></div>
+            </div>
+        </div>
+    <% } %>
 </div>

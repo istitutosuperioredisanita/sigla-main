@@ -585,8 +585,36 @@
 			formName="searchtool"
 			enabledOnSearch="true"
 			completeOnSave="true"
-			label="Conto"
-	/>
+			label="Conto" />
+
+	<fieldProperty
+			name="imImponibileConsegnaModificato"
+			property="imImponibileConsegnaModificato"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.GenericImportoFormat"
+			enabledOnEdit="false"
+			label="Imponibile" />
+	<fieldProperty
+			name="imIvaConsegnaModificato"
+			property="imIvaConsegnaModificato"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.GenericImportoFormat"
+			enabledOnEdit="false"
+			label="Iva" />
+	<fieldProperty
+			name="imIvaDConsegnaModificato"
+			property="imIvaDConsegnaModificato"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.GenericImportoFormat"
+			enabledOnEdit="false"
+			label="Iva Detraibile" />
+	<fieldProperty
+			name="imTotaleConsegnaModificato"
+			property="imTotaleConsegnaModificato"
+			inputType="TEXT"
+			formatName="it.cnr.contab.util.GenericImportoFormat"
+			enabledOnEdit="false"
+			label="Totale" />
 
 	<form
 			name="searchtool">
@@ -729,16 +757,16 @@
 	<formFieldProperty name="dsBeneServizioEsteso"/>
 	<formFieldProperty name="dsBeneServizio" />
 	<formFieldProperty name="voceIvaCompleto" />
-	<formFieldProperty
-			name="findBeneServizio" />
-	<formFieldProperty
-			name="cdUnitaMisuraMinima" />
-	<formFieldProperty
-			name="cdVoceEp" />
-	<formFieldProperty
-			name="dsVoceEp" />
-	<formFieldProperty
-			name="cercaConto" />
+	<formFieldProperty name="findBeneServizio" />
+	<formFieldProperty name="cdUnitaMisuraMinima" />
+	<formFieldProperty name="cdVoceEp" />
+	<formFieldProperty name="dsVoceEp" />
+	<formFieldProperty name="cercaConto" />
+
+	<formFieldProperty name="imImponibileConsegnaModificato" />
+	<formFieldProperty name="imIvaConsegnaModificato" />
+	<formFieldProperty name="imIvaDConsegnaModificato" />
+	<formFieldProperty name="imTotaleConsegnaModificato" />
 
 	<columnSet
 			name="evasioneOrdineForzata">

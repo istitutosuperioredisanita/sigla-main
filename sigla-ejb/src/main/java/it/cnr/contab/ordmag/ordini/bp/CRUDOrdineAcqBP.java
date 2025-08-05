@@ -31,6 +31,8 @@ import it.cnr.contab.doccont00.bp.IDefferedUpdateSaldiBP;
 import it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk;
 import it.cnr.contab.doccont00.core.bulk.IDefferUpdateSaldi;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
+import it.cnr.contab.ordmag.magazzino.bulk.ParametriSelezioneMovimentiBulk;
+import it.cnr.contab.ordmag.magazzino.ejb.MovimentiMagComponentSession;
 import it.cnr.contab.ordmag.ordini.bulk.*;
 import it.cnr.contab.ordmag.ordini.ejb.OrdineAcqComponentSession;
 import it.cnr.contab.ordmag.ordini.service.OrdineAcqCMISService;
@@ -56,6 +58,7 @@ import it.cnr.jada.comp.GenerazioneReportException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.Config;
+import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.BulkBP;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.FormController;
@@ -184,11 +187,18 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 					.filter(bulk -> bulk.getStatoFatt().equalsIgnoreCase(OrdineAcqConsegnaBulk.STATO_FATT_ASSOCIATA_TOTALMENTE));
 			if (ordineAcqConsegnaBulk.isPresent()) {
 				try {
-					if (createComponentSession().find(null, FatturaOrdineBulk.class, "findByRigaConsegna", ordineAcqConsegnaBulk.get()).isEmpty()) {
-						final Button button = new Button(Config.getHandler().getProperties(CRUDOrdineAcqBP.class), "Toolbar.disassociaFattura");
+					if (ordineAcqConsegnaBulk.get().isStatoConsegnaEvasa() || ordineAcqConsegnaBulk.get().isStatoConsegnaEvasaForzatamente()) {
+						final Button button = new Button(Config.getHandler().getProperties(CRUDOrdineAcqBP.class), "Toolbar.visualizzaMovimento");
 						button.writeToolbarButton(pagecontext.getOut(), true, HttpActionContext.isFromBootstrap(pagecontext));
 					}
-				} catch (ComponentException|RemoteException|BusinessProcessException e) {
+					if (ordineAcqConsegnaBulk.get().getFatturaOrdineBulk()==null) {
+						final Button button = new Button(Config.getHandler().getProperties(CRUDOrdineAcqBP.class), "Toolbar.disassociaFattura");
+						button.writeToolbarButton(pagecontext.getOut(), true, HttpActionContext.isFromBootstrap(pagecontext));
+					} else {
+						final Button button = new Button(Config.getHandler().getProperties(CRUDOrdineAcqBP.class), "Toolbar.visualizzaFattura");
+						button.writeToolbarButton(pagecontext.getOut(), true, HttpActionContext.isFromBootstrap(pagecontext));
+					}
+				} catch (RemoteException e) {
 					throw new RuntimeException(e);
 				}
 			}
@@ -1147,4 +1157,21 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 			throw handleException(e);
 		}
 	}
+
+	public RemoteIterator ricercaMovimenti(ActionContext actioncontext) throws BusinessProcessException {
+		try {
+			MovimentiMagComponentSession cs = Utility.createMovimentiMagComponentSession();
+			if (cs == null) return null;
+			OrdineAcqConsegnaBulk cons = (OrdineAcqConsegnaBulk)this.getConsegne().getModel();
+			if (cons!=null) {
+				ParametriSelezioneMovimentiBulk parametriSelezioneMovimentiBulk = new ParametriSelezioneMovimentiBulk();
+				parametriSelezioneMovimentiBulk.setOrdineAcqConsegnaBulk(cons);
+				return cs.ricercaMovimenti(actioncontext.getUserContext(), parametriSelezioneMovimentiBulk);
+			}
+			throw new ApplicationException("E' necessario indicare almeno un criterio di selezione");
+		} catch (ComponentException | RemoteException e) {
+			throw handleException(e);
+		}
+
+    }
 }

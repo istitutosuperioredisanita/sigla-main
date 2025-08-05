@@ -1289,8 +1289,19 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
     	} 
     	if (parametri.getaNumeroOrdine() != null){
     		sql.addSQLClause("AND","LOTTO_MAG.NUMERO_ORDINE",SQLBuilder.LESS_EQUALS,parametri.getaNumeroOrdine());
-    	} 
-    	if (parametri.getDaDataOrdine() != null || parametri.getaDataOrdine() != null || parametri.getDaDataOrdineDef() != null || parametri.getaDataOrdineDef() != null){
+    	}
+
+		if (parametri.getOrdineAcqConsegnaBulk()!= null) {
+			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.CD_CDS_ORDINE",SQLBuilder.EQUALS,parametri.getOrdineAcqConsegnaBulk().getCdCds());
+			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.CD_UNITA_OPERATIVA",SQLBuilder.EQUALS,parametri.getOrdineAcqConsegnaBulk().getCdUnitaOperativa());
+			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.ESERCIZIO_ORDINE",SQLBuilder.EQUALS,parametri.getOrdineAcqConsegnaBulk().getEsercizio());
+			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.CD_NUMERATORE_ORDINE",SQLBuilder.EQUALS,parametri.getOrdineAcqConsegnaBulk().getCdNumeratore());
+			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.NUMERO_ORDINE",SQLBuilder.EQUALS,parametri.getOrdineAcqConsegnaBulk().getNumero());
+			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.RIGA_ORDINE",SQLBuilder.EQUALS,parametri.getOrdineAcqConsegnaBulk().getRiga());
+			sql.addSQLClause(FindClause.AND,"LOTTO_MAG.CONSEGNA",SQLBuilder.EQUALS,parametri.getOrdineAcqConsegnaBulk().getConsegna());
+		}
+
+		if (parametri.getDaDataOrdine() != null || parametri.getaDataOrdine() != null || parametri.getDaDataOrdineDef() != null || parametri.getaDataOrdineDef() != null){
             sql.generateJoin(LottoMagBulk.class, OrdineAcqConsegnaBulk.class, "ordineAcqConsegna", "ORDINE_ACQ_CONSEGNA");
             sql.generateJoin(OrdineAcqConsegnaBulk.class, OrdineAcqRigaBulk.class, "ordineAcqRiga", "ORDINE_ACQ_RIGA");
             sql.generateJoin(OrdineAcqRigaBulk.class, OrdineAcqBulk.class, "ordineAcq", "ORDINE_ACQ");

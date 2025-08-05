@@ -23,6 +23,7 @@ package it.cnr.contab.ordmag.ordini.bulk;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
@@ -649,5 +650,35 @@ public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase implements IDoc
 		return new it.cnr.jada.bulk.BulkCollection[]{
 				righeEconomica
 		};
+	}
+
+	public java.math.BigDecimal getImImponibileConsegnaModificato() {
+		return Optional.ofNullable(this.getFatturaOrdineBulk())
+				.map(FatturaOrdineBulk::getImImponibile)
+				.orElse(BigDecimal.ZERO);
+	}
+
+	public java.math.BigDecimal getImIvaConsegnaModificato() {
+		return Optional.ofNullable(this.getFatturaOrdineBulk())
+				.map(FatturaOrdineBulk::getImIva)
+				.orElse(BigDecimal.ZERO);
+	}
+
+	public java.math.BigDecimal getImIvaDConsegnaModificato() {
+		return this.getImIvaD();
+	}
+
+	public java.math.BigDecimal getImTotaleConsegnaModificato() {
+		return Optional.ofNullable(this.getFatturaOrdineBulk())
+				.map(FatturaOrdineBulk::getImTotaleConsegna)
+				.orElse(BigDecimal.ZERO);
+	}
+
+	public boolean isImportoConsegnaModificato() {
+		if (this.isStatoConsegnaEvasa() && this.getFatturaOrdineBulk()!=null)
+			return this.getFatturaOrdineBulk().isImponibileRettificato() ||
+				   this.getFatturaOrdineBulk().isIvaRettificata() ||
+				   this.getFatturaOrdineBulk().getImTotaleConsegna().compareTo(this.getImTotaleConsegna()) !=0;
+		return Boolean.FALSE;
 	}
 }

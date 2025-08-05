@@ -25,8 +25,10 @@ import it.cnr.contab.config00.contratto.bulk.Dettaglio_contrattoBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
+import it.cnr.contab.docamm00.bp.CRUDFatturaPassivaBP;
 import it.cnr.contab.docamm00.bp.IDocumentoAmministrativoBP;
 import it.cnr.contab.docamm00.bp.TitoloDiCreditoDebitoBP;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_obbligazioniVBulk;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
 import it.cnr.contab.docamm00.docs.bulk.ObbligazioniTable;
@@ -40,7 +42,10 @@ import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.doccont00.core.bulk.OptionRequestParameter;
 import it.cnr.contab.doccont00.ejb.ObbligazioneAbstractComponentSession;
 import it.cnr.contab.ordmag.anag00.*;
+import it.cnr.contab.ordmag.magazzino.bp.ParametriSelezioneMovimentiMagBP;
+import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagBulk;
 import it.cnr.contab.ordmag.ordini.bp.CRUDOrdineAcqBP;
+import it.cnr.contab.ordmag.ordini.bp.SelezionatoreVisualOrdinAcqConsListaBP;
 import it.cnr.contab.ordmag.ordini.bulk.*;
 import it.cnr.contab.ordmag.ordini.ejb.OrdineAcqComponentSession;
 import it.cnr.jada.DetailedRuntimeException;
@@ -50,9 +55,7 @@ import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.util.action.BulkBP;
-import it.cnr.jada.util.action.CRUDBP;
-import it.cnr.jada.util.action.OptionBP;
+import it.cnr.jada.util.action.*;
 
 import javax.persistence.PersistenceException;
 import java.math.BigDecimal;
@@ -2193,5 +2196,49 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         }
     }
 
+    public Forward doVisualizzaFattura(ActionContext actioncontext) throws BusinessProcessException {
+        final CRUDOrdineAcqBP crudOrdineAcqBP = (CRUDOrdineAcqBP) actioncontext.getBusinessProcess();
+        final Optional<Fattura_passivaBulk> fatturaPassivaBulk = Optional.ofNullable((OrdineAcqConsegnaBulk)crudOrdineAcqBP.getConsegne().getModel())
+                .flatMap(el->Optional.ofNullable(el.getFatturaOrdineBulk()))
+                        .flatMap(el->Optional.ofNullable(el.getFatturaPassivaRiga()))
+                        .flatMap(el->Optional.ofNullable(el.getFattura_passiva()));
+        if (fatturaPassivaBulk.isPresent()) {
+            try {
+                CRUDFatturaPassivaBP nbp = (CRUDFatturaPassivaBP) actioncontext.createBusinessProcess("CRUDFatturaPassivaBP", new Object[]{"V"} );
+                nbp = (CRUDFatturaPassivaBP) actioncontext.addBusinessProcess(nbp);
+                nbp.edit(actioncontext, fatturaPassivaBulk.get());
+                return nbp;
+            } catch (Throwable e) {
+                return handleException(actioncontext, e);
+            }
+        }
+        setMessage(actioncontext, FormBP.ERROR_MESSAGE, "Fattura legata a consegna non trovata!");
+        return actioncontext.findDefaultForward();
+    }
+
+    public Forward doVisualizzaMovimento(ActionContext context) throws BusinessProcessException {
+        final CRUDOrdineAcqBP crudOrdineAcqBP = (CRUDOrdineAcqBP) context.getBusinessProcess();
+        try {
+            crudOrdineAcqBP.fillModel(context);
+
+            it.cnr.jada.util.RemoteIterator ri = crudOrdineAcqBP.ricercaMovimenti(context);
+            ri = it.cnr.jada.util.ejb.EJBCommonServices.openRemoteIterator(context,ri);
+            if (ri.countElements() == 0) {
+                it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context,ri);
+                throw new it.cnr.jada.comp.ApplicationException("Attenzione: Nessun dato disponibile.");
+            }
+            SelezionatoreListaBP nbp = (SelezionatoreListaBP)context.createBusinessProcess("Selezionatore");
+            nbp.setMultiSelection(false);
+            nbp.setIterator(context,ri);
+            nbp.setBulkInfo(it.cnr.jada.bulk.BulkInfo.getBulkInfo(MovimentiMagBulk.class));
+            nbp.setColumns(it.cnr.jada.bulk.BulkInfo.getBulkInfo(MovimentiMagBulk.class).getColumnFieldPropertyDictionary("movimentiMag01"));
+            context.findForward("seleziona");
+            context.addHookForward("close",this,"doDefault");
+            return context.addBusinessProcess(nbp);
+
+        } catch (Exception e) {
+            return handleException(context,e);
+        }
+    }
 }
 
