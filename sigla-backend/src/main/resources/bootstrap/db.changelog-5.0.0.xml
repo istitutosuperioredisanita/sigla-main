@@ -6227,4 +6227,10 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
 
     <!-- Autore : CIRO SALVIO - Aggiunto Batch per conservazione SOstitutiva -->
     <include file="bootstrap/add_batch_cons_sotitutiva.xml"/>
+    <!-- Autore : CIRO SALVIO - modificata lunghezza delle colonne cd_livello in TMP_STAMPA_RENDICONTO -->
+    <include file="bootstrap/alter_columns_cdLivello_stampa_rendiconto.xml"/>
+    <!-- Autore : DAVIDE MIRRA - aggiunto nuovo privilegio e nuovo record nella tab associativa con il tipo ruolo -->
+    <include file="bootstrap/add_ass_tipo_ruolo_privilegio_rend.xml"/>
+    <!-- Autore : DAVIDE MIRRA - settato valore del tipo ruolo del record che corrisponde al ruolo RENDICONTI -->
+    <include file="bootstrap/update_ruolo_tipo_rendiconti.xml"/>
 </databaseChangeLog>

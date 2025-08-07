@@ -240,6 +240,12 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
         return attivaAnagraficaProgetto;
     }
 
+    private boolean utenteNonAbilitatoStampaRendProg = false;
+
+    public boolean getUtenteNonAbilitatoStampaRendProg() {
+        return utenteNonAbilitatoStampaRendProg;
+    }
+
     @Override
     protected void init(Config config, ActionContext actioncontext) throws BusinessProcessException {
         try {
@@ -258,6 +264,9 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
                 setAnnoFromPianoEconomico(annoFrom.intValue());
 
             attivaAnagraficaProgetto = Utility.createConfigurazioneCnrComponentSession().isAssPrgAnagraficoAttiva(actioncontext.getUserContext());
+
+            UserContext userContext = actioncontext.getUserContext();
+            utenteNonAbilitatoStampaRendProg = (isUtenteNonAbilitatoStampeRendProgetto(userContext));
 
         } catch (Throwable e) {
             throw new BusinessProcessException(e);
@@ -838,6 +847,17 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
                         .orElse(Boolean.FALSE);
     }
 
+    public boolean isPrintRendProgButtonHidden() {
+        Optional<ProgettoBulk> optProgetto = Optional.ofNullable(this.getModel())
+                .filter(ProgettoBulk.class::isInstance)
+                .map(ProgettoBulk.class::cast);
+        return !optProgetto.isPresent()
+                || !optProgetto.flatMap(el -> Optional.ofNullable(el.getOtherField()))
+                .map(Progetto_other_fieldBulk::isStatoApprovato)
+                .orElse(Boolean.FALSE)
+                || getUtenteNonAbilitatoStampaRendProg();
+    }
+
 
     @Override
     protected Button[] createToolbar() {
@@ -1020,6 +1040,14 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
         UtenteBulk utente = ui.getUtente();
 
         return !utente.isSupervisore();
+    }
+
+    public boolean isUtenteNonAbilitatoStampeRendProgetto(UserContext userContext) throws ApplicationException {
+        try {
+            return !UtenteBulk.isAbilitatoStampeRendProgetto(userContext);
+        } catch (ComponentException | RemoteException e) {
+            throw new ApplicationException(e);
+        }
     }
 
     @Override

@@ -22,6 +22,7 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaHome;
 import it.cnr.contab.ordmag.anag00.NumerazioneMagBulk;
+import it.cnr.contab.ordmag.anag00.UnitaMisuraBulk;
 import it.cnr.contab.ordmag.ejb.NumeratoriOrdMagComponentSession;
 import it.cnr.contab.ordmag.magazzino.bulk.BollaScaricoMagBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.BollaScaricoMagHome;
@@ -197,8 +198,8 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 						throw new DetailedRuntimeException("Per la consegna " + consegnaSelected.getConsegnaOrdineString() + " è necessario indicare se bisogna solo sdoppiare la riga o anche evaderla forzatamente");
 					if (consegnaSelected.isQuantitaEvasaMaggioreOrdine())
 						throw new DetailedRuntimeException("La quantità evasa della consegna " + consegnaSelected.getConsegnaOrdineString() + " non può essere maggiore di quella ordinata.");
-					if(consegnaSelected.getQuantitaEvasa()!=null && consegnaSelected.getQuantitaEvasa().compareTo(new BigDecimal(1))<0){
-						throw new DetailedRuntimeException("La quantità evasa della consegna " + consegnaSelected.getConsegnaOrdineString() + " non può essere minore di 1.");
+					if(consegnaSelected.getQuantitaEvasa()!=null &&  !Utility.isInteger(consegnaSelected.getQuantitaEvasa()) && consegnaSelected.getOrdineAcqRiga().getBeneServizio().getFl_gestione_inventario()){
+						throw new DetailedRuntimeException("La quantità evasa della consegna " + consegnaSelected.getConsegnaOrdineString() + " non può essere con decimali.");
 					}
 
 

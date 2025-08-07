@@ -18,6 +18,15 @@
 		enabledOnEdit="false"
 		label="Conto Econ." />
 	<fieldProperty
+		name="dsVoceCoge"
+		property="dsVoceCoge"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="200"
+		enabledOnEdit="false"
+		label="Conto Econ. Desc" />
+	<fieldProperty
 		name="voceCofi"
 		property="voceCofi"
 		inputType="TEXT"
@@ -25,6 +34,15 @@
 		maxLength="20"
 		enabledOnEdit="false"
 		label="Voce Fin." />
+	<fieldProperty
+		name="dsVoceCofi"
+		property="dsVoceCofi"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="300"
+		enabledOnEdit="false"
+		label="Voce Fin. Desc" />
 	<fieldProperty
 		name="importoCoge"
 		property="importoCoge"
@@ -41,6 +59,18 @@
 		maxLength="0"
 		enabledOnEdit="false"
 		label="Imp. Finanziaria" />
+
+	<fieldProperty
+			name="tipo_visualizzazione"
+			property="tipo_visualizzazione"
+			maxLength="1"
+			inputSize="1"
+			inputType="SELECT"
+			keysProperty="tipo_visualizzazioneKeys"
+			label="Tipo Visualizzazione"
+			enabledOnEdit="true"
+			enabledOnInsert="false"
+			enabledOnSearch="true" />
 	<form
 		name="searchtool">
 	</form>
@@ -49,11 +79,17 @@
 	<formFieldProperty
 		name="voceCoge" />
 	<formFieldProperty
+		name="dsVoceCoge" />
+	<formFieldProperty
 		name="voceCofi" />
+	<formFieldProperty
+		name="dsVoceCofi" />
 	<formFieldProperty
 		name="importoCoge" />
 	<formFieldProperty
 		name="importoCofi" />
+	<formFieldProperty
+		name="tipo_visualizzazione" />
 
 	<findFieldProperty
 		name="voceCoge" />
@@ -63,15 +99,58 @@
 		name="importoCoge" />
 	<findFieldProperty
 		name="importoCofi" />
+	<findFieldProperty
+		name="dsVoceCoge" />
+	<findFieldProperty
+		name="dsVoceCofi" />
+	<findFieldProperty
+		name="tipo_visualizzazione" />
+
 	<columnFieldProperty
 		name="esercizio" />
 	<columnFieldProperty
 		name="voceCoge" />
 	<columnFieldProperty
+		name="dsVoceCoge" />
+	<columnFieldProperty
 		name="voceCofi" />
+	<columnFieldProperty
+		name="dsVoceCofi" />
 	<columnFieldProperty
 		name="importoCoge" />
 	<columnFieldProperty
 		name="importoCofi" />
 
+	<columnSet
+			name="visualizzazioneTotali">
+		<columnFieldProperty
+				name="esercizio" />
+		<columnFieldProperty
+				name="voceCoge" />
+		<columnFieldProperty
+				name="dsVoceCoge" />
+		<columnFieldProperty
+				name="voceCofi" />
+		<columnFieldProperty
+				name="importoCoge" />
+		<columnFieldProperty
+				name="importoCofi" />
+	</columnSet>
+	<columnSet
+			name="visualizzazioneCompleta">
+		<columnFieldProperty
+				name="esercizio" />
+		<columnFieldProperty
+				name="voceCoge" />
+		<columnFieldProperty
+				name="dsVoceCoge" />
+		<columnFieldProperty
+				name="voceCofi" />
+		<columnFieldProperty
+				name="dsVoceCofi" />
+		<columnFieldProperty
+				name="importoCoge" />
+		<columnFieldProperty
+				name="importoCofi" />
+	</columnSet>
 </bulkInfo>
