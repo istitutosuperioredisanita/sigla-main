@@ -507,6 +507,10 @@ public class RuoloComponent extends it.cnr.jada.comp.CRUDComponent implements IC
         return controlloAbilitazione(userContext, PrivilegioBulk.ABILITA_FIRMA_FATTURA_ELETTRONICA);
     }
 
+    public boolean isAbilitatoStampeRendProgetto(UserContext userContext) throws it.cnr.jada.comp.ComponentException {
+        return controlloAbilitazione(userContext, PrivilegioBulk.ABILITA_STAMPE_REND_PROGETTI);
+    }
+
     public boolean isAbilitatoSbloccoImpegni(UserContext userContext) throws it.cnr.jada.comp.ComponentException {
         return controlloAbilitazione(userContext, PrivilegioBulk.ABILITA_SBLOCCO_IMPEGNO);
     }
@@ -522,8 +526,12 @@ public class RuoloComponent extends it.cnr.jada.comp.CRUDComponent implements IC
                 RuoloBulk ruolo = (RuoloBulk) (getHome(userContext, RuoloBulk.class).findByPrimaryKey(new RuoloBulk(utente.getCd_ruolo_supervisore())));
                 if (ruolo != null && ruolo.getTipo() != null) {
                     SQLBuilder sql2 = getHome(userContext, Tipo_ruoloBulk.class).createSQLBuilder();
-                    sql2.addSQLClause("AND", "TIPO_RUOLO.TIPO", SQLBuilder.EQUALS, ruolo.getTipo());
 
+                    if (PrivilegioBulk.ABILITA_STAMPE_REND_PROGETTI.equals(tipoAbilitazione)) {
+                        sql2.addSQLClause("AND", "TIPO_RUOLO.TIPO", SQLBuilder.EQUALS, tipoAbilitazione);
+                    } else if (ruolo.getTipo() != null) {
+                        sql2.addSQLClause("AND", "TIPO_RUOLO.TIPO", SQLBuilder.EQUALS, ruolo.getTipo());
+                    }
                     sql2.addTableToHeader("ASS_TIPO_RUOLO_PRIVILEGIO");
                     sql2.addSQLJoin("TIPO_RUOLO.TIPO", "ASS_TIPO_RUOLO_PRIVILEGIO.TIPO");
 

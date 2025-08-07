@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="davide.mirra" id="add_ass_tipo_ruolo_privilegio_rend">
+        <insert tableName="privilegio">
+            <column name="cd_privilegio" type="STRING" value="RENDPG"/>
+            <column name="ds_privilegio" type="STRING" value="Abilitato alla stampa sintetica e al rendiconto del progetto."/>
+            <column name="ti_privilegio" type="STRING" value="D"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="STRING" value="SYSTEM"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="STRING" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="NUMERIC" value="1"/>
+        </insert>
+        <insert tableName="tipo_ruolo">
+            <column name="tipo" type="STRING" value="RENDPG"/>
+            <column name="ds_tipo" type="STRING" value="Abilitazione al download dei rendiconti progetto"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="STRING" value="SYSTEM"/>
+            <column name="utuv" type="STRING" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="NUMERIC" value="1"/>
+        </insert>
+        <insert tableName="ass_tipo_ruolo_privilegio">
+            <column name="TIPO" type="STRING" value="RENDPG"/>
+            <column name="CD_PRIVILEGIO" type="STRING" value="RENDPG"/>
+            <column name="DACR" type="${date.type}" valueDate="${now}"/>
+            <column name="DUVA" type="${date.type}" valueDate="${now}"/>
+            <column name="UTCR" type="STRING" value="SYSTEM"/>
+            <column name="UTUV" type="STRING" value="SYSTEM"/>
+            <column name="PG_VER_REC" type="NUMERIC" value="1"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
