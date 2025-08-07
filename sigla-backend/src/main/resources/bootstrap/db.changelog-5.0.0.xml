@@ -6220,6 +6220,12 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/mod_dsnodo_chiusura_inventario_provvisoria.xml"/>
     <!-- Autore : VALENTINA TOMADA - Nuova Voce Menu per chiusura inventario definitiva-->
     <include file="bootstrap/add_accesso_stampa_chiusura_invent_definitiva.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta funzionalità confornto costi coge cofi-->
+    <include file="bootstrap/add_configurazione_confronta_costi_coge.xml"/>
+    <!-- Autore : CIRO SALVIO - Remove Schedulazione gestione ammortamento( Calcolo e Annulla Ammortamento) -->
+    <include file="bootstrap/remove_schedulazione_gest_ammortamento.xml"/>
+    <!-- Autore : CIRO SALVIO - Remove Schedulazione gestione ammortamento( Calcolo e Annulla Ammortamento) -->
+    <include file="bootstrap/add_schedulazione_check_congr_dati.xml"/>
 
     <!-- Autore : CIRO SALVIO - Aggiunto Batch per conservazione SOstitutiva -->
     <include file="bootstrap/add_batch_cons_sotitutiva.xml"/>
@@ -6229,4 +6235,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_conf_gestione_importo_ro_inventario_ordini.xml"/>
 
 
+    <!-- Autore : DAVIDE MIRRA - aggiunto nuovo privilegio e nuovo record nella tab associativa con il tipo ruolo -->
+    <include file="bootstrap/add_ass_tipo_ruolo_privilegio_rend.xml"/>
+    <!-- Autore : DAVIDE MIRRA - settato valore del tipo ruolo del record che corrisponde al ruolo RENDICONTI -->
+    <include file="bootstrap/update_ruolo_tipo_rendiconti.xml"/>
 </databaseChangeLog>

@@ -306,6 +306,9 @@ public class UtenteBulk extends UtenteBase {
 	public static boolean isAbilitatoFirmaFatturazioneElettronica(it.cnr.jada.UserContext param0) throws ComponentException, RemoteException{
 		return getRuoloComponentSession().isAbilitatoFirmaFatturazioneElettronica(param0);
 	}
+	public static boolean isAbilitatoStampeRendProgetto(it.cnr.jada.UserContext param0) throws ComponentException, RemoteException{
+		return getRuoloComponentSession().isAbilitatoStampeRendProgetto(param0);
+	}
 	public static boolean isSuperUtenteFunzioniIncarichi(it.cnr.jada.UserContext param0) throws ComponentException, RemoteException{
 		return getRuoloComponentSession().isSuperUtenteFunzioniIncarichi(param0);
 	}
