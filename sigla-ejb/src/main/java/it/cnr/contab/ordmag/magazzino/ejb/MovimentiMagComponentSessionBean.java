@@ -16,30 +16,27 @@
  */
 
 package it.cnr.contab.ordmag.magazzino.ejb;
-import java.rmi.RemoteException;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
 
 import it.cnr.contab.ordmag.magazzino.bulk.*;
 import it.cnr.contab.ordmag.magazzino.comp.MovimentiMagComponent;
-import it.cnr.contab.ordmag.magazzino.dto.ValoriChiusuraMagRim;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
-
 import it.cnr.contab.ordmag.ordini.dto.ImportoOrdine;
 import it.cnr.contab.ordmag.ordini.dto.ParametriCalcoloImportoOrdine;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.RemoteIterator;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.Stateless;
+import java.rmi.RemoteException;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.List;
 @Stateless(name="CNRORDMAG00_EJB_MovimentiMagComponentSession")
 public class MovimentiMagComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements MovimentiMagComponentSession {
 @PostConstruct
@@ -342,6 +339,26 @@ public void annullaMovimento(UserContext userContext, MovimentiMagBulk movimenti
 			((MovimentiMagComponent)componentObj).eliminaMovimentoChiusura(userContext,pgChiusura,anno, tipoChiusura,dataRiferimentoMovimento);
 			component_invocation_succes(userContext,componentObj);
 
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(userContext,componentObj,e);
+		}
+	}
+
+	@Override
+	public List<MovimentiMagBulk> caricoDaOrdineRigheEvase(UserContext userContext,  List<EvasioneOrdineRigaBulk> righeEvase) throws ComponentException, PersistencyException, RemoteException, ApplicationException {
+		pre_component_invocation(userContext,componentObj);
+		try {
+			List<MovimentiMagBulk> result = ((MovimentiMagComponent)componentObj).caricoDaOrdineRigheEvase(userContext,  righeEvase);
+			component_invocation_succes(userContext,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(userContext,componentObj);
+			throw e;
+		} catch(ComponentException e) {
+			component_invocation_failure(userContext,componentObj);
+			throw e;
 		} catch(RuntimeException e) {
 			throw uncaughtRuntimeException(userContext,componentObj,e);
 		} catch(Error e) {

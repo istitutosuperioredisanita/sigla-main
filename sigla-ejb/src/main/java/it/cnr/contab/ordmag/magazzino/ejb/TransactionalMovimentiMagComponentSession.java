@@ -16,16 +16,11 @@
  */
 
 package it.cnr.contab.ordmag.magazzino.ejb;
-import java.rmi.RemoteException;
-import java.sql.Timestamp;
-import java.util.List;
 
 import it.cnr.contab.ordmag.magazzino.bulk.*;
-import it.cnr.contab.ordmag.magazzino.dto.ValoriChiusuraMagRim;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
-
 import it.cnr.contab.ordmag.ordini.dto.ImportoOrdine;
 import it.cnr.contab.ordmag.ordini.dto.ParametriCalcoloImportoOrdine;
 import it.cnr.jada.UserContext;
@@ -34,6 +29,10 @@ import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.RemoteIterator;
+
+import java.rmi.RemoteException;
+import java.sql.Timestamp;
+import java.util.List;
 
 public class TransactionalMovimentiMagComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements MovimentiMagComponentSession {
 public MovimentiMagBulk caricoDaOrdine(UserContext userContext, OrdineAcqConsegnaBulk consegna, EvasioneOrdineRigaBulk evasioneOrdineRiga)throws ComponentException, PersistencyException, RemoteException, ApplicationException{
@@ -312,6 +311,25 @@ public void annullaMovimento(UserContext userContext, MovimentiMagBulk movimenti
 					userContext,pgChiusura,anno,
 					tipoChiusura,
 					dataRiferimentoMovimento});
+		} catch(RemoteException e) {
+			throw e;
+		} catch(java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch(ComponentException ex) {
+				throw ex;
+			} catch(Throwable ex) {
+				throw new RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
+
+	@Override
+	public List<MovimentiMagBulk> caricoDaOrdineRigheEvase(UserContext userContext, List<EvasioneOrdineRigaBulk> righeEvase) throws ComponentException, PersistencyException, RemoteException, ApplicationException {
+		try {
+			return (List<MovimentiMagBulk>)invoke("caricoDaOrdineRigheEvase",new Object[] {
+					userContext,
+					 righeEvase});
 		} catch(RemoteException e) {
 			throw e;
 		} catch(java.lang.reflect.InvocationTargetException e) {
