@@ -17,18 +17,10 @@
 
 package it.cnr.contab.ordmag.magazzino.ejb;
 
-import java.rmi.RemoteException;
-import java.util.List;
-
-import javax.ejb.Remote;
-import javax.xml.registry.infomodel.User;
-
 import it.cnr.contab.ordmag.magazzino.bulk.*;
-import it.cnr.contab.ordmag.magazzino.dto.ValoriChiusuraMagRim;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
-
 import it.cnr.contab.ordmag.ordini.dto.ImportoOrdine;
 import it.cnr.contab.ordmag.ordini.dto.ParametriCalcoloImportoOrdine;
 import it.cnr.jada.UserContext;
@@ -36,6 +28,10 @@ import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.RemoteIterator;
+
+import javax.ejb.Remote;
+import java.rmi.RemoteException;
+import java.util.List;
 @Remote
 public interface MovimentiMagComponentSession extends it.cnr.jada.ejb.CRUDComponentSession, it.cnr.jada.ejb.PrintComponentSession{
 	MovimentiMagBulk caricoDaOrdine(UserContext userContext, OrdineAcqConsegnaBulk consegna, EvasioneOrdineRigaBulk evasioneOrdineRiga) throws ComponentException, PersistencyException, RemoteException, ApplicationException;
@@ -52,5 +48,7 @@ public interface MovimentiMagComponentSession extends it.cnr.jada.ejb.CRUDCompon
     public ImportoOrdine calcoloImporto(UserContext userContext, ParametriCalcoloImportoOrdine parametri) throws RemoteException,ComponentException;
     void creaMovimentoChiusura(UserContext userContext, Integer pgChiusura, Integer anno, String tipoChiusura, java.sql.Timestamp dataRiferimentoMovimento) throws RemoteException, ComponentException;
     void eliminaMovimentoChiusura(UserContext userContext, Integer pgChiusura, Integer anno, String tipoChiusura, java.sql.Timestamp dataRiferimentoMovimento) throws RemoteException, ComponentException;
+
+    List<MovimentiMagBulk> caricoDaOrdineRigheEvase(UserContext userContext,  List<EvasioneOrdineRigaBulk> righeEvase) throws ComponentException, PersistencyException, RemoteException, ApplicationException;
 
 }
