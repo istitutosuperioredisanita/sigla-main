@@ -259,6 +259,7 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 		return super.completeBulkRowByRow(userContext, persistent);
 	}
 	public List findTransitiBeniOrdini(MovimentiMagBulk movimento) throws PersistencyException {
+		this.setColumnMap(( String)null);
 		SQLBuilder sqlBuilder = createSQLBuilder();
 		sqlBuilder.openParenthesis(FindClause.AND);
 		sqlBuilder.addSQLClause(FindClause.OR, "STATO", SQLBuilder.EQUALS, Transito_beni_ordiniBulk.STATO_COMPLETO);
