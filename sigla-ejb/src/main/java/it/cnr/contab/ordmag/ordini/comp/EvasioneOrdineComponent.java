@@ -363,7 +363,7 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 				}
 				try {
 				//effettuo la movimentazione di magazzino per le righe evase per l'ordine
-				listaMovimentiScarico.addAll(movimentiMagComponent.caricoDaOrdineRigheEvase(userContext,righeEvaseOrdine));
+				listaMovimentiScarico.addAll(Optional.ofNullable(movimentiMagComponent.caricoDaOrdineRigheEvase(userContext,righeEvaseOrdine)).orElse(Collections.EMPTY_LIST));
 				} catch (ComponentException | RemoteException | PersistencyException e) {
 					throw new DetailedRuntimeException(e);
 				}
