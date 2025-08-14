@@ -47,10 +47,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent implements ICRUDMgr,Cloneable,Serializable {
@@ -301,7 +298,7 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 				}
 				try {
 				//effettuo la movimentazione di magazzino per le righe evase per l'ordine
-				listaMovimentiScarico.addAll(movimentiMagComponent.caricoDaOrdineRigheEvase(userContext,righeEvaseOrdine));
+				listaMovimentiScarico.addAll(Optional.ofNullable(movimentiMagComponent.caricoDaOrdineRigheEvase(userContext,righeEvaseOrdine)).orElse(Collections.EMPTY_LIST));
 				} catch (ComponentException | RemoteException | PersistencyException e) {
 					throw new DetailedRuntimeException(e);
 				}
