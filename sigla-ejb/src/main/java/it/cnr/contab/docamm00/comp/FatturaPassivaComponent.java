@@ -3529,6 +3529,10 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                             }
                             final List<Inventario_beniBulk> listaInventario = Optional.ofNullable(listaBeni)
                                     .orElse(new ArrayList());
+                            Ass_inv_bene_fatturaHome ass_inv_bene_fatturaHome = Optional.ofNullable(getHome(userContext, Ass_inv_bene_fatturaBulk.class))
+                                    .filter(Ass_inv_bene_fatturaHome.class::isInstance)
+                                    .map(Ass_inv_bene_fatturaHome.class::cast)
+                                    .orElseThrow(() -> new ComponentException("Cannot find Ass_inv_bene_fatturaHome"));
                             listaInventario.stream().forEach(inventario -> {
                                 if (inventario.getValore_iniziale().compareTo(importoUnitario) != 0) {
                                     inventario.setValore_iniziale(importoUnitario);
@@ -3540,25 +3544,30 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                                     }
                                 }
                                 try {
-                                    Ass_inv_bene_fatturaBulk ass = new Ass_inv_bene_fatturaBulk();
-                                    ass.setRiga_fatt_pass((Fattura_passiva_rigaIBulk) fatturaOrdineBulk.getFatturaPassivaRiga());
-                                    ass.setInventario(inventario.getInventario());
+                                    Ass_inv_bene_fatturaBulk assBDb = ass_inv_bene_fatturaHome.findAssFatturaBeneByRigaFattura(
+                                            fatturaOrdineBulk.getFatturaPassivaRiga(),
+                                            inventario);
+                                    if (!Optional.ofNullable(assBDb).isPresent()){
+                                        Ass_inv_bene_fatturaBulk ass = new Ass_inv_bene_fatturaBulk();
+                                        ass.setRiga_fatt_pass((Fattura_passiva_rigaIBulk) fatturaOrdineBulk.getFatturaPassivaRiga());
+                                        ass.setInventario(inventario.getInventario());
 
-                                    Buono_carico_scarico_dettHome buono_carico_scarico_dettHome = Optional.ofNullable(getHome(userContext, Buono_carico_scarico_dettBulk.class))
-                                            .filter(Buono_carico_scarico_dettHome.class::isInstance)
-                                            .map(Buono_carico_scarico_dettHome.class::cast)
-                                            .orElseThrow(() -> new ComponentException("Cannot find Buono_carico_scarico_dettHome"));
-                                    Buono_carico_scarico_dettBulk buono_carico_scarico_dettBulk = buono_carico_scarico_dettHome.findCaricoDaOrdine(inventario);
-                                    ass.setTest_buono(buono_carico_scarico_dettBulk.getBuono_cs());
-                                    ass.setNr_inventario(inventario.getNr_inventario());
-                                    ass.setPerAumentoValore(Boolean.FALSE);
-                                    ass.setProgressivo(inventario.getProgressivo());
-                                    BuonoCaricoScaricoComponentSession h = EJBCommonServices.createEJB(
-                                            "CNRINVENTARIO01_EJB_BuonoCaricoScaricoComponentSession",
-                                            BuonoCaricoScaricoComponentSession.class);
-                                    ass.setPg_riga(h.findMaxAssociazione(userContext, ass));
-                                    ass.setToBeCreated();
-                                    super.creaConBulk(userContext, ass);
+                                        Buono_carico_scarico_dettHome buono_carico_scarico_dettHome = Optional.ofNullable(getHome(userContext, Buono_carico_scarico_dettBulk.class))
+                                                .filter(Buono_carico_scarico_dettHome.class::isInstance)
+                                                .map(Buono_carico_scarico_dettHome.class::cast)
+                                                .orElseThrow(() -> new ComponentException("Cannot find Buono_carico_scarico_dettHome"));
+                                        Buono_carico_scarico_dettBulk buono_carico_scarico_dettBulk = buono_carico_scarico_dettHome.findCaricoDaOrdine(inventario);
+                                        ass.setTest_buono(buono_carico_scarico_dettBulk.getBuono_cs());
+                                        ass.setNr_inventario(inventario.getNr_inventario());
+                                        ass.setPerAumentoValore(Boolean.FALSE);
+                                        ass.setProgressivo(inventario.getProgressivo());
+                                        BuonoCaricoScaricoComponentSession h = EJBCommonServices.createEJB(
+                                                "CNRINVENTARIO01_EJB_BuonoCaricoScaricoComponentSession",
+                                                BuonoCaricoScaricoComponentSession.class);
+                                        ass.setPg_riga(h.findMaxAssociazione(userContext, ass));
+                                        ass.setToBeCreated();
+                                        super.creaConBulk(userContext, ass);
+                                    }
                                 } catch (ComponentException | PersistencyException | RemoteException e) {
                                     handleException(e);
                                 }
