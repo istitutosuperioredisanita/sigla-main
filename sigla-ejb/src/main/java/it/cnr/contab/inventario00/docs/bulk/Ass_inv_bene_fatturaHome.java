@@ -17,30 +17,21 @@
 
 package it.cnr.contab.inventario00.docs.bulk;
 
-import java.util.Iterator;
-import java.util.List;
-
-import it.cnr.contab.config00.sto.bulk.CdrBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_IBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaIBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_IBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaIBulk;
+import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk;
-import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.contab.inventario01.bulk.Inventario_beni_apgBulk;
-import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
-import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.comp.ApplicationException;
-import it.cnr.jada.persistency.*;
+import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.persistency.IntrospectionException;
+import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.LoggableStatement;
 import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
+
+import java.util.Iterator;
+import java.util.List;
 
 public class Ass_inv_bene_fatturaHome extends BulkHome {
 public Ass_inv_bene_fatturaHome(java.sql.Connection conn) {
@@ -311,6 +302,25 @@ public String makePersistentAssociaPerAumento(UserContext userContext, Ass_inv_b
 		sql.addSQLClause("AND", "PG_INVENTARIO", SQLBuilder.EQUALS, inventarioBeni.getPg_inventario());
 		sql.addSQLClause("AND", "NR_INVENTARIO", SQLBuilder.EQUALS, inventarioBeni.getNr_inventario());
 		sql.addSQLClause("AND", "PROGRESSIVO", SQLBuilder.EQUALS, inventarioBeni.getProgressivo());
+
+
+		if(fetchAll(sql).size() == 0){
+			return null;
+		}
+		return (Ass_inv_bene_fatturaBulk) fetchAll(sql).get(0);
+	}
+	public Ass_inv_bene_fatturaBulk findAssFatturaBeneByRigaFattura(Fattura_passiva_rigaBulk fatturaPassivaRiga,Inventario_beniBulk inventarioBeni) throws PersistencyException {
+		SQLBuilder sql = createSQLBuilder();
+		sql.addSQLClause("AND", "PG_INVENTARIO", SQLBuilder.EQUALS, inventarioBeni.getPg_inventario());
+		sql.addSQLClause("AND", "NR_INVENTARIO", SQLBuilder.EQUALS, inventarioBeni.getNr_inventario());
+		sql.addSQLClause("AND", "PROGRESSIVO", SQLBuilder.EQUALS, inventarioBeni.getProgressivo());
+		sql.addSQLClause("AND", "CD_CDS_FATT_PASS", SQLBuilder.EQUALS, fatturaPassivaRiga.getCd_cds());
+		sql.addSQLClause("AND", "CD_UO_FATT_PASS", SQLBuilder.EQUALS, fatturaPassivaRiga.getCd_unita_organizzativa());
+		sql.addSQLClause("AND", "ESERCIZIO_FATT_PASS", SQLBuilder.EQUALS, fatturaPassivaRiga.getEsercizio());
+		sql.addSQLClause("AND", "PG_FATTURA_PASSIVA", SQLBuilder.EQUALS, fatturaPassivaRiga.getPg_fattura_passiva());
+		sql.addSQLClause("AND", "PROGRESSIVO_RIGA_FATT_PASS", SQLBuilder.EQUALS, fatturaPassivaRiga.getProgressivo_riga());
+
+
 
 
 		if(fetchAll(sql).size() == 0){
