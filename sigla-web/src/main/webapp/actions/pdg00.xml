@@ -84,6 +84,8 @@
             path="/SituazioneAmministrativaAction" actionClass="it.cnr.contab.reports.action.ParametricPrintAction">
     </action>
 
+
+
     <businessProcess
             name="CRUDSpeDetPdGBP" className="it.cnr.contab.pdg00.bp.CRUDSpeDetPdGBP">
         <forward name="default" path="/pdg00/preventivo_spe.jsp"/>
@@ -410,6 +412,18 @@
         <init-param name="componentSessionName" value="CNRPREVENT01_EJB_SituazioneAmministrativaComponentSession"/>
         <init-param name="reportName" value="/cnrdoccont/doccont/situazione_amministrativa_main.jasper" />
 
+    </businessProcess>
+
+    <action
+            path="/CaricFlStipAction"
+            actionClass="it.cnr.contab.pdg00.action.CaricFlStipAction">
+    </action>
+    <businessProcess
+            name="CaricFlStipBP" className="it.cnr.contab.pdg00.bp.CaricFlStipBP">
+        <forward name="default" path="/pdg00/caricamento_flusso_stip.jsp"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.pdg00.cdip.bulk.V_caric_fl_stipBulk"/>
+        <init-param name="componentSessionName" value="CNRPDG00_EJB_CaricFlStipComponentSession"/>
+        <init-param name="defaultAction" value="CaricFlStipAction"/>
     </businessProcess>
 
 </action-mappings>
