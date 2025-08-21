@@ -772,8 +772,7 @@
 			name="rigaOrdine" />
 		<columnFieldProperty
 			name="consegna" />
-		<columnFieldProperty
-			name="cdVoceIva" />
+
 		<columnFieldProperty
 			name="dataBolla" />
 		<columnFieldProperty
