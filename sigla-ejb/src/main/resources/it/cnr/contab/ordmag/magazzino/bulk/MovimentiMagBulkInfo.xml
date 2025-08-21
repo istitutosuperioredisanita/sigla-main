@@ -63,7 +63,7 @@
 	<fieldProperty
 		name="findTipoMovimentoMag"
 		property="tipoMovimentoMag"
-		inputType="searchtool"
+		inputType="SEARCHTOOL"
 		formName="searchtool"
 		enabledOnSearch="true"
 		label="Tipo Movimento" />
@@ -183,7 +183,7 @@
 	<fieldProperty
 		name="findUnitaMisura"
 		property="unitaMisura"
-		inputType="searchtool"
+		inputType="SEARCHTOOL"
 		formName="searchtool"
 		enabledOnSearch="true"
 		label="Unita Misura" />
@@ -214,7 +214,7 @@
 	<fieldProperty
 		name="findUnitaOperativaOrd"
 		property="unitaOperativaOrd"
-		inputType="searchtool"
+		inputType="SEARCHTOOL"
 		formName="searchtool"
 		enabledOnSearch="true"
 		label="UOp Ric" />
@@ -252,7 +252,7 @@
 	<fieldProperty
 		name="findLottoMag"
 		property="lottoMag"
-		inputType="searchtool"
+		inputType="SEARCHTOOL"
 		formName="searchtool"
 		enabledOnSearch="true"
 		label="LottoMag" />
@@ -504,18 +504,10 @@
 	<fieldProperty
 		name="findBollaScaricoMag"
 		property="bollaScaricoMag"
-		inputType="searchtool"
+		inputType="SEARCHTOOL"
 		formName="searchtool"
 		enabledOnSearch="true"
 		label="BollaScaricoMag" />
-	<fieldProperty
-		name="cdCdsBollaSca"
-		property="bollaScaricoMag.cdCds"
-		inputType="TEXT"
-		inputSize="30"
-		maxLength="30"
-		enabledOnEdit="false"
-		label="cdCdsBollaSca" />
 	<fieldProperty
 		name="cdMagazzinoBollaSca"
 		property="bollaScaricoMag.cdMagazzino"
@@ -524,22 +516,6 @@
 		maxLength="10"
 		enabledOnEdit="false"
 		label="cdMagazzinoBollaSca" />
-	<fieldProperty
-		name="esercizioBollaSca"
-		property="bollaScaricoMag.esercizio"
-		inputType="TEXT"
-		inputSize="22"
-		maxLength="22"
-		enabledOnEdit="false"
-		label="Es. Bolla Sc." />
-	<fieldProperty
-		name="cdNumeratoreBollaSca"
-		property="bollaScaricoMag.cdNumeratoreMag"
-		inputType="TEXT"
-		inputSize="3"
-		maxLength="3"
-		enabledOnEdit="false"
-		label="Numerat. Bolla Sc." />
 	<fieldProperty
 		name="pgBollaSca"
 		property="bollaScaricoMag.pgBollaSca"
@@ -549,13 +525,6 @@
 		enabledOnEdit="false"
 		label="Numero Bolla Sc." />
 	<fieldProperty
-		name="findBollaScaricoMag"
-		property="bollaScaricoMag"
-		inputType="searchtool"
-		formName="searchtool"
-		enabledOnSearch="true"
-		label="BollaScaricoMag" />
-	<fieldProperty
 		name="cdCdsBollaSca"
 		property="bollaScaricoMag.cdCds"
 		inputType="TEXT"
@@ -563,14 +532,6 @@
 		maxLength="30"
 		enabledOnEdit="false"
 		label="cdCdsBollaSca" />
-	<fieldProperty
-		name="cdMagazzinoBollaSca"
-		property="bollaScaricoMag.cdMagazzino"
-		inputType="TEXT"
-		inputSize="10"
-		maxLength="10"
-		enabledOnEdit="false"
-		label="cdMagazzinoBollaSca" />
 	<fieldProperty
 		name="esercizioBollaSca"
 		property="bollaScaricoMag.esercizio"
@@ -587,14 +548,6 @@
 		maxLength="3"
 		enabledOnEdit="false"
 		label="Numerat. Bolla Scarico" />
-	<fieldProperty
-		name="pgBollaSca"
-		property="bollaScaricoMag.pgBollaSca"
-		inputType="TEXT"
-		inputSize="6"
-		maxLength="6"
-		enabledOnEdit="false"
-		label="Numero Bolla Scarico" />
 	<form
 		name="searchtool">
 		<formFieldProperty
