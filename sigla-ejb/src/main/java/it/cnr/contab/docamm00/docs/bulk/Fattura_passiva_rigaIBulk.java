@@ -59,6 +59,7 @@ public class Fattura_passiva_rigaIBulk extends Fattura_passiva_rigaBulk {
 	 */
 	public Fattura_passiva_rigaIBulk(String cd_cds, String cd_unita_organizzativa, Integer esercizio, Long pg_fattura_passiva, Long progressivo_riga) {
 		super(cd_cds, cd_unita_organizzativa, esercizio, pg_fattura_passiva, progressivo_riga);
+		setFattura_passiva( new Fattura_passiva_IBulk(cd_cds, cd_unita_organizzativa,  esercizio,  pg_fattura_passiva));
 	}
 	/**
 	 * Insert the method's description here.

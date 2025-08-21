@@ -21,10 +21,7 @@ import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.doccont00.comp.DateServices;
-import it.cnr.contab.doccont00.core.DatiFinanziariScadenzeDTO;
 import it.cnr.contab.doccont00.core.bulk.*;
-import it.cnr.contab.fondecon00.core.bulk.Fondo_spesaBulk;
-import it.cnr.contab.fondecon00.core.bulk.Fondo_spesaHome;
 import it.cnr.contab.inventario00.consultazioni.bulk.V_cons_registro_inventarioBulk;
 import it.cnr.contab.inventario00.consultazioni.bulk.V_cons_registro_inventarioHome;
 import it.cnr.contab.inventario00.docs.bulk.*;
@@ -32,10 +29,12 @@ import it.cnr.contab.inventario00.tabrif.bulk.*;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettHome;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.contab.util.EuroFormat;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.*;
+import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.bulk.SimpleBulkList;
+import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.ICRUDMgr;
@@ -48,7 +47,6 @@ import javax.ejb.EJBException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1419,7 +1417,7 @@ private void validaBene (UserContext aUC, Inventario_beniBulk bene)
 			throw new it.cnr.jada.comp.ApplicationException("Attenzione: indicare la Categoria di appartenenza");
 		// CONTROLLA CHE SIA STATA SPECIFICATA UNA targa PER IL BENE
 		if (!bene.isBeneAccessorio() && bene.getCategoria_Bene()!=null &&  bene.getCategoria_Bene().getCd_categoria_gruppo()!=null &&
-				bene.getCategoria_Bene().getFl_gestione_targa() && bene.getTarga()==null)
+				Optional.ofNullable(bene.getCategoria_Bene().getFl_gestione_targa()).orElse(Boolean.FALSE) && bene.getTarga()==null)
 				throw new it.cnr.jada.comp.ApplicationException("Attenzione: è obbligatorio indicare la targa per questa Categoria");
 //		if (!bene.isBeneAccessorio() && bene.getCategoria_Bene()!=null &&  bene.getCategoria_Bene().getCd_categoria_gruppo()!=null &&
 //				bene.getCategoria_Bene().getFl_gestione_seriale() && bene.getSeriale()==null)
