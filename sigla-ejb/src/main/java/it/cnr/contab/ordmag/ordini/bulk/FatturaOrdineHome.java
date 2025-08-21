@@ -20,16 +20,16 @@
  * Date 21/09/2017
  */
 package it.cnr.contab.ordmag.ordini.bulk;
-import java.sql.Connection;
-import java.util.List;
 
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_pluriennale_voceBulk;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
+
+import java.sql.Connection;
+import java.util.List;
 
 public class FatturaOrdineHome extends BulkHome {
 	public FatturaOrdineHome(Connection conn) {

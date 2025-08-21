@@ -91,6 +91,16 @@ public class FatturaOrdineKey extends OggettoBulk implements KeyedPersistent {
 		i = i + calculateKeyHashCode(getConsegna());
 		return i;
 	}
+
+	@Override
+	public int hashCode() {
+		return primaryKeyHashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return this.equalsByPrimaryKey(obj);
+	}
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Restituisce il valore di: [cdCds]

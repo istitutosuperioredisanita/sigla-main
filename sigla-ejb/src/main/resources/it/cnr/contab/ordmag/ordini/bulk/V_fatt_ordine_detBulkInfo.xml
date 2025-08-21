@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="cdCds"
+		property="cdCds"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		nullable="false"
+		label="cdCds" />
+	<fieldProperty
+		name="cdUnitaOrganizzativa"
+		property="cdUnitaOrganizzativa"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		nullable="false"
+		label="cdUnitaOrganizzativa" />
+	<fieldProperty
+		name="esercizio"
+		property="esercizio"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		nullable="false"
+		label="esercizio" />
+	<fieldProperty
+		name="pgFatturaPassiva"
+		property="pgFatturaPassiva"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		nullable="false"
+		label="pgFatturaPassiva" />
+	<fieldProperty
+		name="progressivoRiga"
+		property="progressivoRiga"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		nullable="false"
+		label="progressivoRiga" />
+	<fieldProperty
+		name="cdCdsOrdine"
+		property="cdCdsOrdine"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		nullable="false"
+		label="cdCdsOrdine" />
+	<fieldProperty
+		name="uopOrdine"
+		property="uopOrdine"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		nullable="false"
+		label="uopOrdine" />
+	<fieldProperty
+		name="esercizioOrdine"
+		property="esercizioOrdine"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		nullable="false"
+		label="esercizioOrdine" />
+	<fieldProperty
+		name="cdNumOrdine"
+		property="cdNumOrdine"
+		inputType="TEXT"
+		inputSize="3"
+		maxLength="3"
+		enabledOnEdit="false"
+		nullable="false"
+		label="cdNumOrdine" />
+
+	<fieldProperty
+		name="numOrdine"
+		property="numOrdine"
+		inputType="TEXT"
+		inputSize="6"
+		maxLength="6"
+		enabledOnEdit="false"
+		nullable="false"
+		label="numOrdine" />
+	<fieldProperty
+		name="rigaOrdine"
+		property="rigaOrdine"
+		inputType="TEXT"
+		inputSize="6"
+		maxLength="6"
+		enabledOnEdit="false"
+		nullable="false"
+		label="rigaOrdine" />
+	<fieldProperty
+		name="consOrdine"
+		property="consOrdine"
+		inputType="TEXT"
+		inputSize="6"
+		maxLength="6"
+		enabledOnEdit="false"
+		nullable="false"
+		label="consOrdine" />
+	<fieldProperty
+		name="cdsEvasione"
+		property="cdsEvasione"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		label="cdsEvasione" />
+	<fieldProperty
+		name="magEvazione"
+		property="magEvazione"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		label="magEvazione" />
+	<fieldProperty
+		name="eseEvasione"
+		property="eseEvasione"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		label="eseEvasione" />
+	<fieldProperty
+		name="nummagEvasione"
+		property="nummagEvasione"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		label="nummagEvasione" />
+	<fieldProperty
+		name="numEvasione"
+		property="numEvasione"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		label="numEvasione" />
+	<fieldProperty
+		name="rigaEvasione"
+		property="rigaEvasione"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		label="rigaEvasione" />
+	<fieldProperty
+		name="dataBolla"
+		property="dataBolla"
+		inputType="TEXT"
+		formatName="date_short"
+		enabledOnEdit="false"
+		label="dataBolla" />
+	<fieldProperty
+		name="numeroBolla"
+		property="numeroBolla"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		label="numeroBolla" />
+	<fieldProperty
+		name="idTransito"
+		property="idTransito"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		label="idTransito" />
+	<fieldProperty
+			name="ti_documento"
+			property="ti_documento"
+			maxLength="1"
+			inputSize="1"
+			inputType="ROTEXT"
+			label="Tipo Documento" />
+	<fieldProperty
+			name="eser_buono_car_sca"
+			property="eser_buono_car_sca"
+			inputType="TEXT"
+			inputSize="4"
+			maxLength="4"
+			enabledOnFreeSearch = "false"
+			enabledOnInsert = "false"
+			enabledOnEdit = "false"
+			enabledOnSearch = "false"
+			label="Esercizio Buono Carico Scarico" />
+	<fieldProperty
+			name="pg_buono_c_s"
+			property="pg_buono_c_s"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			enabledOnFreeSearch = "true"
+			enabledOnInsert = "false"
+			enabledOnEdit = "false"
+			enabledOnSearch = "true"
+			label="Numero Buono" />
+	<fieldProperty
+		name="pgInventario"
+		property="pgInventario"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		label="pgInventario" />
+	<fieldProperty
+		name="nrInventario"
+		property="nrInventario"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		label="nrInventario" />
+	<fieldProperty
+		name="progressivo"
+		property="progressivo"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		label="progressivo" />
+	<fieldProperty
+		name="pgRigaAss"
+		property="pgRigaAss"
+		inputType="TEXT"
+		inputSize="0"
+		maxLength="0"
+		enabledOnEdit="false"
+		label="pgRigaAss" />
+	<form
+		name="searchtool">
+	</form>
+	<formFieldProperty
+		name="cdCds" />
+	<formFieldProperty
+		name="cdUnitaOrganizzativa" />
+	<formFieldProperty
+		name="esercizio" />
+	<formFieldProperty
+		name="pgFatturaPassiva" />
+	<formFieldProperty
+		name="progressivoRiga" />
+	<formFieldProperty
+		name="cdCdsOrdine" />
+	<formFieldProperty
+		name="uopOrdine" />
+	<formFieldProperty
+		name="esercizioOrdine" />
+	<formFieldProperty
+		name="cdNumOrdine" />
+	<formFieldProperty
+		name="numOrdine" />
+	<formFieldProperty
+		name="rigaOrdine" />
+	<formFieldProperty
+		name="consOrdine" />
+	<formFieldProperty
+		name="cdsEvasione" />
+	<formFieldProperty
+		name="magEvazione" />
+	<formFieldProperty
+		name="eseEvasione" />
+	<formFieldProperty
+		name="nummagEvasione" />
+	<formFieldProperty
+		name="numEvasione" />
+	<formFieldProperty
+		name="rigaEvasione" />
+	<formFieldProperty
+		name="dataBolla" />
+	<formFieldProperty
+		name="numeroBolla" />
+	<formFieldProperty
+		name="idTransito" />
+	<formFieldProperty
+		name="pgInventario" />
+	<formFieldProperty
+		name="nrInventario" />
+	<formFieldProperty
+		name="progressivo" />
+	<formFieldProperty
+		name="pgRigaAss" />
+	<findFieldProperty
+		name="cdCds" />
+	<findFieldProperty
+		name="cdUnitaOrganizzativa" />
+	<findFieldProperty
+		name="esercizio" />
+	<findFieldProperty
+		name="pgFatturaPassiva" />
+	<findFieldProperty
+		name="progressivoRiga" />
+	<findFieldProperty
+		name="cdCdsOrdine" />
+	<findFieldProperty
+		name="uopOrdine" />
+	<findFieldProperty
+		name="esercizioOrdine" />
+	<findFieldProperty
+		name="cdNumOrdine" />
+	<findFieldProperty
+		name="numOrdine" />
+	<findFieldProperty
+		name="rigaOrdine" />
+	<findFieldProperty
+		name="consOrdine" />
+	<findFieldProperty
+		name="cdsEvasione" />
+	<findFieldProperty
+		name="magEvazione" />
+	<findFieldProperty
+		name="eseEvasione" />
+	<findFieldProperty
+		name="nummagEvasione" />
+	<findFieldProperty
+		name="numEvasione" />
+	<findFieldProperty
+		name="rigaEvasione" />
+	<findFieldProperty
+		name="dataBolla" />
+	<findFieldProperty
+		name="numeroBolla" />
+	<findFieldProperty
+		name="idTransito" />
+	<findFieldProperty
+		name="pgInventario" />
+	<findFieldProperty
+		name="nrInventario" />
+	<findFieldProperty
+		name="progressivo" />
+	<findFieldProperty
+		name="pgRigaAss" />
+	<columnFieldProperty
+		name="cdCds" />
+	<columnFieldProperty
+		name="cdUnitaOrganizzativa" />
+	<columnFieldProperty
+		name="esercizio" />
+	<columnFieldProperty
+		name="pgFatturaPassiva" />
+	<columnFieldProperty
+		name="progressivoRiga" />
+	<columnFieldProperty
+		name="cdCdsOrdine" />
+	<columnFieldProperty
+		name="uopOrdine" />
+	<columnFieldProperty
+		name="esercizioOrdine" />
+	<columnFieldProperty
+		name="cdNumOrdine" />
+	<columnFieldProperty
+		name="numOrdine" />
+	<columnFieldProperty
+		name="rigaOrdine" />
+	<columnFieldProperty
+		name="consOrdine" />
+	<columnFieldProperty
+		name="cdsEvasione" />
+	<columnFieldProperty
+		name="magEvazione" />
+	<columnFieldProperty
+		name="eseEvasione" />
+	<columnFieldProperty
+		name="nummagEvasione" />
+	<columnFieldProperty
+		name="numEvasione" />
+	<columnFieldProperty
+		name="rigaEvasione" />
+	<columnFieldProperty
+		name="dataBolla" />
+	<columnFieldProperty
+		name="numeroBolla" />
+	<columnFieldProperty
+		name="idTransito" />
+	<columnFieldProperty
+		name="pgInventario" />
+	<columnFieldProperty
+		name="nrInventario" />
+	<columnFieldProperty
+		name="progressivo" />
+	<columnFieldProperty
+		name="pgRigaAss" />
+</bulkInfo>
