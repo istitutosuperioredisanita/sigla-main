@@ -1,25 +1,8 @@
-package it.cnr.contab.doccont00.bp;
+package it.cnr.contab.pdg00.bp;
 
-import it.cnr.contab.doccont00.consultazioni.action.ConsControlliPCCAction;
-import it.cnr.contab.service.SpringUtil;
-import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.jada.action.ActionContext;
-import it.cnr.jada.action.BusinessProcess;
-import it.cnr.jada.action.BusinessProcessException;
-import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.util.Config;
-import it.cnr.jada.util.action.ConsultazioniBP;
-import it.cnr.jada.util.action.RicercaLiberaBP;
-import it.cnr.jada.util.jsp.Button;
-import it.cnr.si.spring.storage.StoreService;
 
-import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.Properties;
-import java.util.Vector;
-import java.util.stream.Stream;
-
-public class CaricFlStipBP{
+//ConsControlliPCCBP
+public class CaricFlStipBP {
 
 
 

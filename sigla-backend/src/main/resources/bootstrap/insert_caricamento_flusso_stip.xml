@@ -21,7 +21,7 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
                                        http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
-    <changeSet id="add_gestione_iva_iss_consultazioni" author="davide.mirra">
+    <changeSet id="insert_caricamento_flusso_stip" author="davide.mirra">
 
         <insert tableName="albero_main">
             <column name="cd_nodo" type="VARCHAR(100)" value="0.DOC.STIPEN.CARICAMENTO"/>
@@ -40,7 +40,7 @@
         <insert tableName="accesso">
             <column name="cd_accesso" type="VARCHAR(20)" value="CARICFLSTIP"/>
             <column name="ti_accesso" type="CHAR(1)" value="D"/>
-            <column name="ds_accesso" type="VARCHAR(200)" value="Accesso per Caricamento Flusso Stipendi"/>
+            <column name="ds_accesso" type="VARCHAR(200)" value="Caricamento Flusso Stipendi"/>
             <column name="duva" type="${date.type}" valueDate="${now}"/>
             <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
             <column name="dacr" type="${date.type}" valueDate="${now}"/>
