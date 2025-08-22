@@ -6216,4 +6216,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_batch_cons_sotitutiva.xml"/>
     <!-- Autore : CIRO SALVIO - modificata lunghezza delle colonne cd_livello in TMP_STAMPA_RENDICONTO -->
     <include file="bootstrap/alter_columns_cdLivello_stampa_rendiconto.xml"/>
+        <!-- Autore : VALENTINA TOMADA - nuova variabile in configurazione_cnr per bloccare importo unitario bene se inventariazione da ordini -->
+    <include file="bootstrap/add_conf_gestione_importo_ro_inventario_ordini.xml"/>
 </databaseChangeLog>

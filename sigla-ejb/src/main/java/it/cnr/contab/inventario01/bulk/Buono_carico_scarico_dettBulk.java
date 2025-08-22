@@ -20,8 +20,6 @@
 * Date 19/01/2006
 */
 package it.cnr.contab.inventario01.bulk;
-import java.math.BigDecimal;
-import java.rmi.RemoteException;
 
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceBulk;
@@ -29,14 +27,15 @@ import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario00.docs.bulk.Utilizzatore_CdrVBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Condizione_beneBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Ubicazione_beneBulk;
-import it.cnr.contab.inventario01.bp.CRUDCaricoInventarioBP;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.SimpleBulkList;
-import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
+
+import java.math.BigDecimal;
+import java.rmi.RemoteException;
 
 public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase {
 	public final static  String STATO_COGE_X = "X";
@@ -366,6 +365,16 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 	}
 	public void setCat_voce(Categoria_gruppo_voceBulk cat_voce) {
 		this.cat_voce = cat_voce;
+	}
+
+	public boolean isProvenienzaOrdine(){
+		if(this.getIdTransito() != null)
+			return true;
+		if(this.getBuono_cs() != null && this.getBuono_cs().isByOrdini())
+			return true;
+		if(this.getBene() != null && this.getBene().getId_transito_beni_ordini() != null)
+			return true;
+		return false;
 	}
 
 }

@@ -800,6 +800,23 @@ public class TransactionalConfigurazione_cnrComponentSession extends it.cnr.jada
             }
         }
     }
+    @Override
+    public Boolean isGestioneImportoInventarioReadOnly(UserContext param0) throws ComponentException, RemoteException {
+        try {
+            return (Boolean) invoke("isGestioneImportoInventarioReadOnly", new Object[]{
+                    param0});
+        } catch (RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
 
     @Override
     public Boolean isGestioneBeneDismessoInventarioAttivo(UserContext param0) throws ComponentException, RemoteException {

@@ -236,6 +236,7 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     public final static String PK_INVENTARIO = "INVENTARIO";
     public final static String SK_GESTIONE_ETICHETTA_BENE = "GESTIONE_ETICHETTA_BENE";
     public final static String SK_GESTIONE_BENE_DISMESSO_INVENTARIO = "GESTIONE_BENE_DISMESSO";
+    public final static String SK_GESTIONE_IMPORTO_RO_INVENTARIO = "GESTIONE_IMPORTO_RO_INVENTARIO";
 
     public final static String SK_GESTIONE_INVENTARIA_DA_DOCUMENTI = "GESTIONE_INVENTARIA_DA_DOCUMENTI";
     public final static String SK_GEST_LIQ_FATT_ORDINE_CHECK_INV = "GEST_LIQ_FATT_ORDINE_CHECK_INV";
