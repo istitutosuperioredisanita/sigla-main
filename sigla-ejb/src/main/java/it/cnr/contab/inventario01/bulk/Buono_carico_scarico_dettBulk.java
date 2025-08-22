@@ -368,4 +368,14 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 		this.cat_voce = cat_voce;
 	}
 
+	public boolean isProvenienzaOrdine(){
+		if(this.getIdTransito() != null)
+			return true;
+		if(this.getBuono_cs() != null && this.getBuono_cs().isByOrdini())
+			return true;
+		if(this.getBene() != null && this.getBene().getId_transito_beni_ordini() != null)
+			return true;
+		return false;
+	}
+
 }

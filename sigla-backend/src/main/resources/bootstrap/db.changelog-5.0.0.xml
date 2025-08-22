@@ -6229,4 +6229,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_ass_tipo_ruolo_privilegio_rend.xml"/>
     <!-- Autore : DAVIDE MIRRA - settato valore del tipo ruolo del record che corrisponde al ruolo RENDICONTI -->
     <include file="bootstrap/update_ruolo_tipo_rendiconti.xml"/>
+    <!-- Autore : VALENTINA TOMADA - nuova variabile in configurazione_cnr per bloccare importo unitario bene se inventariazione da ordini -->
+    <include file="bootstrap/add_conf_gestione_importo_ro_inventario_ordini.xml"/>
+
 </databaseChangeLog>
