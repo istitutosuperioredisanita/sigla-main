@@ -206,8 +206,7 @@
 				<% bp.getDettaglio().writeFormLabel(out,"valore_unitario"); %>
 			</td>	
 			<td>
-				 <% bp.getDettaglio().writeFormInput(out,null,"valore_unitario",(riga!=null && riga.isTotalmenteScaricato())|| bp.isBy_fattura()||bp.isBy_documento()||(!bp.isModValore_unitario()||bp.isAssociata(HttpActionContext.getUserContext(session),riga)||
-						 (riga!=null &&	 riga.getBuono_cs().getTipoMovimento().getFl_buono_per_trasferimento().booleanValue())|| bp.isNonUltimo(HttpActionContext.getUserContext(session),riga))&&!bp.isInserting(),null,"");%>
+				 <% bp.getDettaglio().writeFormInput(out,null,"valore_unitario",bp.isValore_unitarioRO(HttpActionContext.getUserContext(session)),null,"");%>
 			</td>	
 		</tr>
 		<tr>
