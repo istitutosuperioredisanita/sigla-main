@@ -196,7 +196,7 @@ public class OrdineAcqCMISService extends StoreService {
 		try {
 			String path = Arrays.asList(
 					getStorePath(ordineAcqRigaBulk.getOrdineAcq()),
-					ordineAcqRigaBulk.getOrdineAcq().constructCMISNomeFile()
+					ordineAcqRigaBulk.constructCMISNomeFile()
 			).stream().collect(
 					Collectors.joining(StorageDriver.SUFFIX)
 			);
