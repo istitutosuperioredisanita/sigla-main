@@ -40,9 +40,6 @@ public class Batch_log_tstaBulk extends Batch_log_tstaBase
     public static String STATO_JOB_COMPLETE = "C";
     public static String STATO_JOB_ERROR = "E";
 
-    public static String STATO_JOB_RUNNING = "R";
-    public static String STATO_JOB_COMPLETE = "C";
-    public static String STATO_JOB_ERROR = "E";
 
     public Batch_log_tstaBulk()
     {
