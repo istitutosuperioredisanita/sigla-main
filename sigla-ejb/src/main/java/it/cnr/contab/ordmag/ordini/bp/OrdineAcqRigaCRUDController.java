@@ -18,7 +18,14 @@
 package it.cnr.contab.ordmag.ordini.bp;
 
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaBulk;
+import it.cnr.contab.ordmag.ordini.service.OrdineAcqCMISService;
+import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.HttpActionContext;
+import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.OggettoBulk;
+
+import java.util.Optional;
 
 /**
  * Riga del documento generico passivo
@@ -27,6 +34,21 @@ import it.cnr.jada.action.HttpActionContext;
 public class OrdineAcqRigaCRUDController extends it.cnr.jada.util.action.SimpleDetailCRUDController {
     public OrdineAcqRigaCRUDController(String name, Class modelClass, String listPropertyName, it.cnr.jada.util.action.FormController parent) {
         super(name, modelClass, listPropertyName, parent);
+
+    }
+
+    protected OggettoBulk getDetail(int i) {
+        OrdineAcqRigaBulk dettaglio=( OrdineAcqRigaBulk) super.getDetail(i);
+        try {
+            if (( !dettaglio.isToBeCreated()) &&  Optional.ofNullable(dettaglio.getArchivioAllegati()).orElse(new BulkList<>()).isEmpty()) {
+                CRUDOrdineAcqBP crudOrdineAcqBP =(CRUDOrdineAcqBP) this.getParentController();
+                dettaglio.setArchivioAllegati(((OrdineAcqCMISService) crudOrdineAcqBP.getStoreService()).recuperoAllegatiDettaglioOrdine(dettaglio));
+            }
+        } catch (BusinessProcessException e) {
+            e.printStackTrace();
+        }
+
+        return dettaglio;
     }
 
     public boolean isGrowable() {
