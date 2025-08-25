@@ -33,7 +33,6 @@ import it.cnr.jada.util.RemoteIterator;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Map;
 
 public class TransactionalMovimentiMagComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements MovimentiMagComponentSession {
 public MovimentiMagBulk caricoDaOrdine(UserContext userContext, OrdineAcqConsegnaBulk consegna, EvasioneOrdineRigaBulk evasioneOrdineRiga)throws ComponentException, PersistencyException, RemoteException, ApplicationException{
@@ -326,9 +325,9 @@ public void annullaMovimento(UserContext userContext, MovimentiMagBulk movimenti
 	}
 
 	@Override
-	public Map<EvasioneOrdineRigaBulk,MovimentiMagBulk> caricoDaOrdineRigheEvase(UserContext userContext, List<EvasioneOrdineRigaBulk> righeEvase) throws ComponentException, PersistencyException, RemoteException, ApplicationException {
+	public List<EvasioneOrdineRigaBulk> caricoDaOrdineRigheEvase(UserContext userContext, List<EvasioneOrdineRigaBulk> righeEvase) throws ComponentException, PersistencyException, RemoteException, ApplicationException {
 		try {
-			return (Map<EvasioneOrdineRigaBulk,MovimentiMagBulk> )invoke("caricoDaOrdineRigheEvase",new Object[] {
+			return (List<EvasioneOrdineRigaBulk> )invoke("caricoDaOrdineRigheEvase",new Object[] {
 					userContext,
 					 righeEvase});
 		} catch(RemoteException e) {

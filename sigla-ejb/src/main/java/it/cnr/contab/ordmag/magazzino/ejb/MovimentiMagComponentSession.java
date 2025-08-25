@@ -32,7 +32,6 @@ import it.cnr.jada.util.RemoteIterator;
 import javax.ejb.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.Map;
 
 @Remote
 public interface MovimentiMagComponentSession extends it.cnr.jada.ejb.CRUDComponentSession, it.cnr.jada.ejb.PrintComponentSession{
@@ -51,6 +50,6 @@ public interface MovimentiMagComponentSession extends it.cnr.jada.ejb.CRUDCompon
     void creaMovimentoChiusura(UserContext userContext, Integer pgChiusura, Integer anno, String tipoChiusura, java.sql.Timestamp dataRiferimentoMovimento) throws RemoteException, ComponentException;
     void eliminaMovimentoChiusura(UserContext userContext, Integer pgChiusura, Integer anno, String tipoChiusura, java.sql.Timestamp dataRiferimentoMovimento) throws RemoteException, ComponentException;
 
-    Map<EvasioneOrdineRigaBulk,MovimentiMagBulk> caricoDaOrdineRigheEvase(UserContext userContext, List<EvasioneOrdineRigaBulk> righeEvase) throws ComponentException, PersistencyException, RemoteException, ApplicationException;
+    List<EvasioneOrdineRigaBulk> caricoDaOrdineRigheEvase(UserContext userContext,  List<EvasioneOrdineRigaBulk> righeEvase) throws ComponentException, PersistencyException, RemoteException, ApplicationException;
 
 }

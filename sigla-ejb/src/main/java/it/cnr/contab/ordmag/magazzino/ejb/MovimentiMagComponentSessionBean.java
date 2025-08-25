@@ -37,7 +37,6 @@ import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Map;
 
 @Stateless(name="CNRORDMAG00_EJB_MovimentiMagComponentSession")
 public class MovimentiMagComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements MovimentiMagComponentSession {
@@ -349,10 +348,10 @@ public void annullaMovimento(UserContext userContext, MovimentiMagBulk movimenti
 	}
 
 	@Override
-	public Map<EvasioneOrdineRigaBulk,MovimentiMagBulk> caricoDaOrdineRigheEvase(UserContext userContext, List<EvasioneOrdineRigaBulk> righeEvase) throws ComponentException, PersistencyException, RemoteException, ApplicationException {
+	public List<EvasioneOrdineRigaBulk> caricoDaOrdineRigheEvase(UserContext userContext, List<EvasioneOrdineRigaBulk> righeEvase) throws ComponentException, PersistencyException, RemoteException, ApplicationException {
 		pre_component_invocation(userContext,componentObj);
 		try {
-			Map<EvasioneOrdineRigaBulk,MovimentiMagBulk>  result = ((MovimentiMagComponent)componentObj).caricoDaOrdineRigheEvase(userContext,  righeEvase);
+			List<EvasioneOrdineRigaBulk>  result = ((MovimentiMagComponent)componentObj).caricoDaOrdineRigheEvase(userContext,  righeEvase);
 			component_invocation_succes(userContext,componentObj);
 			return result;
 		} catch(it.cnr.jada.comp.NoRollbackException e) {
