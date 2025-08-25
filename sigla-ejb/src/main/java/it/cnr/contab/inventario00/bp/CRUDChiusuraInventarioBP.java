@@ -17,6 +17,7 @@
 
 package it.cnr.contab.inventario00.bp;
 
+import it.cnr.contab.inventario00.docs.bulk.Chiusura_anno_inventarioBulk;
 import it.cnr.contab.logs.bulk.Batch_log_tstaBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.ChiusuraAnnoBulk;
 import it.cnr.contab.reports.bp.ParametricPrintBP;

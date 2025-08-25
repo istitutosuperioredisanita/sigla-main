@@ -34,6 +34,7 @@ import it.cnr.contab.docamm00.ejb.AutoFatturaComponentSession;
 import it.cnr.contab.docamm00.ejb.DocumentoGenericoComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaAttivaSingolaComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
+import it.cnr.contab.doccont00.comp.AsyncConsSostitutivaComponentSession;
 import it.cnr.contab.doccont00.comp.AsyncPluriennaliComponentSession;
 import it.cnr.contab.doccont00.ejb.*;
 import it.cnr.contab.gestiva00.ejb.LiquidIvaInterfComponentSession;
@@ -411,6 +412,9 @@ public final class Utility {
 		return result;
 	}
 
+	public static boolean isInteger(BigDecimal num) {
+		return num.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0;
+	}
 
 	public static CRUDComponentSession createCRUDComponentSession() throws EJBException, RemoteException {
 		return Optional.ofNullable(EJBCommonServices.createEJB("JADAEJB_CRUDComponentSession"))
