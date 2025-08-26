@@ -112,7 +112,7 @@ public class CRUDChiusuraInventarioBP extends ParametricPrintBP {
         // se stato diverso da DEFINITIVO o stato job diverso da completo disabilita chiusura definitiva
         if((!this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_DEFINITIVO) &&
            !this.getChiusuraAnno().getStato().equals(ChiusuraAnnoBulk.STATO_CHIUSURA_PREDEFINITIVO)) ||
-           !this.getChiusuraAnno().getStato_job().equals(Batch_log_tstaBulk.STATO_JOB_COMPLETE))
+           (this.getChiusuraAnno().getStato_job() != null && !this.getChiusuraAnno().getStato_job().equals(Batch_log_tstaBulk.STATO_JOB_COMPLETE)))
         {
             return true;
         }
@@ -158,7 +158,7 @@ public class CRUDChiusuraInventarioBP extends ParametricPrintBP {
         if(this.getChiusuraAnno()!= null )
         {
             // se Job in stato RUNNING disabilita pulsante calcolo
-            if(this.getChiusuraAnno().getStato_job().equals(Batch_log_tstaBulk.STATO_JOB_RUNNING)){
+            if(this.getChiusuraAnno().getStato_job() != null && this.getChiusuraAnno().getStato_job().equals(Batch_log_tstaBulk.STATO_JOB_RUNNING)){
                 return true;
             }
             // se chiusura inventario Definitiva
