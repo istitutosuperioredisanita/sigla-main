@@ -3571,13 +3571,15 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                         }
                     } else {
                         Transito_beni_ordiniBulk transito_beni_ordiniBulk = null;
-                        try {
-                            transito_beni_ordiniBulk = (Transito_beni_ordiniBulk) transito_beni_ordiniHome.findByPrimaryKey(v_fatt_ordine_detBulk.getIdTransito());
-                            transito_beni_ordiniBulk.setValore_iniziale(importoUnitario);
-                            transito_beni_ordiniBulk.setToBeUpdated();
-                            transito_beni_ordiniHome.update(transito_beni_ordiniBulk, userContext);
-                        } catch (PersistencyException e) {
-                            handleException(e);
+                        if (Optional.ofNullable(v_fatt_ordine_detBulk.getIdTransito()).isPresent()) {
+                            try {
+                                transito_beni_ordiniBulk = (Transito_beni_ordiniBulk) transito_beni_ordiniHome.findByPrimaryKey(new Transito_beni_ordiniBulk(v_fatt_ordine_detBulk.getIdTransito()));
+                                transito_beni_ordiniBulk.setValore_iniziale(importoUnitario);
+                                transito_beni_ordiniBulk.setToBeUpdated();
+                                transito_beni_ordiniHome.update(transito_beni_ordiniBulk, userContext);
+                            } catch (PersistencyException e) {
+                                handleException(e);
+                            }
                         }
                     }
                 });
