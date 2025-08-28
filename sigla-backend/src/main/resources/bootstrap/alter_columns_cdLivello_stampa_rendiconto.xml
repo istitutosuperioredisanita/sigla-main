@@ -22,12 +22,17 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
                                        http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-    <changeSet author="valentina.tomada" id="remove_and_add_column_on_tmp_stampa_rend">
+    <changeSet author="ciro.salvio" id="alter_columns_cdLivello_stampa_rendiconto">
 
-        <dropColumn columnName="CD_LIVELLO1" tableName="TMP_STAMPA_RENDICONTO"/>
+        <modifyDataType tableName="TMP_STAMPA_RENDICONTO" columnName="CD_LIVELLO1" newDataType="VARCHAR(30)"/>
+        <modifyDataType tableName="TMP_STAMPA_RENDICONTO" columnName="CD_LIVELLO2" newDataType="VARCHAR(30)"/>
+        <modifyDataType tableName="TMP_STAMPA_RENDICONTO" columnName="CD_LIVELLO3" newDataType="VARCHAR(30)"/>
+        <modifyDataType tableName="TMP_STAMPA_RENDICONTO" columnName="CD_LIVELLO4" newDataType="VARCHAR(30)"/>
+        <modifyDataType tableName="TMP_STAMPA_RENDICONTO" columnName="CD_LIVELLO5" newDataType="VARCHAR(30)"/>
+        <modifyDataType tableName="TMP_STAMPA_RENDICONTO" columnName="CD_LIVELLO6" newDataType="VARCHAR(30)"/>
+        <modifyDataType tableName="TMP_STAMPA_RENDICONTO" columnName="CD_LIVELLO7" newDataType="VARCHAR(30)"/>
+        <modifyDataType tableName="TMP_STAMPA_RENDICONTO" columnName="CD_LIVELLO8" newDataType="VARCHAR(30)"/>
+        <modifyDataType tableName="TMP_STAMPA_RENDICONTO" columnName="CD_LIVELLO9" newDataType="VARCHAR(30)"/>
 
-        <addColumn tableName="TMP_STAMPA_RENDICONTO">
-            <column name="CD_LIVELLO1" remarks="" type="VARCHAR(6)"/>
-        </addColumn>
     </changeSet>
 </databaseChangeLog>

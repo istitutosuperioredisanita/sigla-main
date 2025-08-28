@@ -41,6 +41,7 @@ public class PrivilegioBulk extends PrivilegioBase {
 	final public static String ABILITA_AUTORIZZA_DIARIA = "DIARIA";
 	final public static String ABILITA_REVERSALE_INCASSO = "REVINC";
 	final public static String ABILITA_SBLOCCO_IMPEGNO = "SBLIMP";
+	final public static String ABILITA_STAMPE_REND_PROGETTI = "RENDPG";
 
 	public static final String TIPO_RISERVATO_CNR 	= "C";
 	public static final String TIPO_PUBBLICO 		= "D";

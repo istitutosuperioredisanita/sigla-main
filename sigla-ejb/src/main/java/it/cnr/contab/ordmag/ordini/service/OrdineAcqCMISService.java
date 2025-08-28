@@ -194,13 +194,15 @@ public class OrdineAcqCMISService extends StoreService {
 
 	public String getStorePathDettaglio(OrdineAcqRigaBulk ordineAcqRigaBulk) throws BusinessProcessException{
 		try {
+			/*
 			String path = Arrays.asList(
 					getStorePath(ordineAcqRigaBulk.getOrdineAcq()),
-					ordineAcqRigaBulk.getOrdineAcq().constructCMISNomeFile()
+					ordineAcqRigaBulk.constructCMISNomeFile()
 			).stream().collect(
 					Collectors.joining(StorageDriver.SUFFIX)
 			);
-			return createFolderOrdineIfNotPresent(path, ordineAcqRigaBulk);
+*/
+			return createFolderOrdineIfNotPresent(getStorePath(ordineAcqRigaBulk.getOrdineAcq()), ordineAcqRigaBulk);
 		} catch (ComponentException e) {
 			throw new BusinessProcessException(e);
 		}

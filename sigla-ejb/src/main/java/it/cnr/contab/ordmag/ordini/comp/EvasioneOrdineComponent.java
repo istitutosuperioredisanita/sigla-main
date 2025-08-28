@@ -22,7 +22,6 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaHome;
 import it.cnr.contab.ordmag.anag00.NumerazioneMagBulk;
-import it.cnr.contab.ordmag.anag00.UnitaMisuraBulk;
 import it.cnr.contab.ordmag.ejb.NumeratoriOrdMagComponentSession;
 import it.cnr.contab.ordmag.magazzino.bulk.BollaScaricoMagBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.BollaScaricoMagHome;
@@ -48,10 +47,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent implements ICRUDMgr,Cloneable,Serializable {
@@ -66,7 +62,14 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 
 		try {
 			BulkList<OrdineAcqConsegnaBulk> consegne = new BulkList<>(home.fetchAll(sql));
-			getHomeCache(usercontext).fetchAll(usercontext, home);
+				getHomeCache(usercontext).fetchAll(usercontext, home);
+			Optional.ofNullable(consegne).orElse(new BulkList<>()).forEach(
+					ordineAcqConsegnaBulk -> {
+						ordineAcqConsegnaBulk.setQuantitaEvasa(ordineAcqConsegnaBulk.getQuantita());
+						ordineAcqConsegnaBulk.setUnitaMisuraEvasa(ordineAcqConsegnaBulk.getOrdineAcqRiga().getUnitaMisura());
+						ordineAcqConsegnaBulk.setCoefConvEvasa(ordineAcqConsegnaBulk.getOrdineAcqRiga().getCoefConv());
+					});
+
 			filtro.setRigheConsegnaDaEvadereColl(consegne);
 			return filtro;
 		} catch (PersistencyException e) {
@@ -191,7 +194,9 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 					consegneColl.stream().collect(Collectors.groupingBy(o -> o.getOrdineAcqRiga().getOrdineAcq()));
 
 			for (OrdineAcqBulk ordineSelected : mapOrdine.keySet()) {
+
 				for (OrdineAcqConsegnaBulk consegnaSelected : consegneColl) {
+
 					Optional.ofNullable(consegnaSelected.getQuantitaEvasa()).filter(el->el.compareTo(BigDecimal.ZERO)>0)
 							.orElseThrow(()->new DetailedRuntimeException("Indicare la quantità da evadere per la consegna " + consegnaSelected.getConsegnaOrdineString()));
 					if (consegnaSelected.isQuantitaEvasaMinoreOrdine() && consegnaSelected.getOperazioneQuantitaEvasaMinore() == null)
@@ -278,6 +283,8 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 					evasioneOrdineRiga.setToBeCreated();
 
 					evasioneOrdine.addToEvasioneOrdineRigheColl(evasioneOrdineRiga);
+
+					/*
 					//effettuo la movimentazione di magazzino
 					try {
 						Optional.ofNullable(movimentiMagComponent.caricoDaOrdine(userContext, evasioneOrdineRiga.getOrdineAcqConsegna(), evasioneOrdineRiga))
@@ -291,6 +298,21 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 					} catch (ComponentException | RemoteException | PersistencyException e) {
 						throw new DetailedRuntimeException(e);
 					}
+					*/
+				}
+
+				try {
+					/*ottimizzazione esecuzione
+						 caricoDaOrdineRigheEvase-> crea tutti movimenti di carico e ritorna una mappa con chiave la riga di evasione e valore il movimento creato
+						 aggiornaMovRigheEvasione-> aggiorna sulle righe di consegna il movimento di magazzino creato
+						 	e ritorna la lista dei movimenti per i quali creare lo scarico
+					 */
+					listaMovimentiScarico.addAll( aggiornaMovRigheEvasione (
+								movimentiMagComponent.caricoDaOrdineRigheEvase(userContext,Optional.ofNullable(evasioneOrdine.getEvasioneOrdineRigheColl()).orElse(new BulkList<>())),
+								evasioneOrdine ));
+
+				} catch (ComponentException | RemoteException | PersistencyException e) {
+					throw new DetailedRuntimeException(e);
 				}
 			}
 
@@ -320,6 +342,22 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 		}
 	}
 
+	 private List<MovimentiMagBulk> aggiornaMovRigheEvasione(List<EvasioneOrdineRigaBulk> listMovimentiEvaRighe,EvasioneOrdineBulk evasioneOrdine) {
+		List<MovimentiMagBulk> movimentiScarico = new ArrayList<MovimentiMagBulk>();
+			 Optional.ofNullable(listMovimentiEvaRighe).orElse(Collections.EMPTY_LIST).stream().
+					 forEach( rigaEvasione->{
+						 EvasioneOrdineRigaBulk rigaEvasioneInList= Optional.ofNullable(evasioneOrdine.getEvasioneOrdineRigheColl().
+								 indexOf(rigaEvasione)).filter(i->i!=-1).map(i-> evasioneOrdine.getEvasioneOrdineRigheColl().get(i)).orElseGet(() -> {
+							 return null;
+						 });
+						 if ( Optional.ofNullable(rigaEvasioneInList).isPresent()){
+							 rigaEvasioneInList.setMovimentiMag(((EvasioneOrdineRigaBulk) rigaEvasione).getMovimentiMag());
+							 if ( rigaEvasioneInList.getMovimentiMag()!=null)
+								 movimentiScarico.add(rigaEvasioneInList.getMovimentiMag());
+						 }
+					 });
+			 return movimentiScarico;
+	 }
 	private void validaEvasioneOrdine(UserContext userContext,EvasioneOrdineBulk evasioneOrdine) throws ApplicationException {
 		if(evasioneOrdine.getDataConsegna() != null){
 			java.util.Calendar gc = java.util.Calendar.getInstance();

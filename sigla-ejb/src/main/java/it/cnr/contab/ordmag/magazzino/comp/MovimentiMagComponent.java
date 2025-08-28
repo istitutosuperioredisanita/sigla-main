@@ -22,21 +22,22 @@ import it.cnr.contab.docamm00.tabrif.bulk.*;
 import it.cnr.contab.inventario00.docs.bulk.Transito_beni_ordiniBulk;
 import it.cnr.contab.ordmag.anag00.*;
 import it.cnr.contab.ordmag.magazzino.bulk.*;
-import it.cnr.contab.ordmag.magazzino.dto.ValoriChiusuraMagRim;
 import it.cnr.contab.ordmag.ordini.bulk.*;
-
 import it.cnr.contab.ordmag.ordini.dto.ImportoOrdine;
-
 import it.cnr.contab.ordmag.ordini.dto.ParametriCalcoloImportoOrdine;
 import it.cnr.contab.ordmag.ordini.ejb.OrdineAcqComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.action.ActionContext;
-import it.cnr.jada.action.BusinessProcessException;
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.comp.*;
+import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.BusyResourceException;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.bulk.OutdatedResourceException;
+import it.cnr.jada.comp.ApplicationException;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.comp.ICRUDMgr;
+import it.cnr.jada.comp.IPrintMgr;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.*;
@@ -48,7 +49,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.rmi.RemoteException;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -1381,6 +1381,20 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 		//	validateBulkForPrint(userContext, (Stampa_scadenzario_accertamentiBulk)bulk);
 
 		return oggettoBulk;
+	}
+
+
+	public List<EvasioneOrdineRigaBulk> caricoDaOrdineRigheEvase(UserContext userContext,   List<EvasioneOrdineRigaBulk> evasioneOrdineRiga) throws ComponentException, PersistencyException, ApplicationException {
+
+		if (Optional.ofNullable(evasioneOrdineRiga).isPresent() ){
+			for (EvasioneOrdineRigaBulk eva:evasioneOrdineRiga) {
+				Optional.ofNullable(caricoDaOrdine(userContext, eva.getOrdineAcqConsegna(), (EvasioneOrdineRigaBulk) eva))
+						.ifPresent(movimentoCarico -> {
+							eva.setMovimentiMag(movimentoCarico);
+						});
+			}
+		}
+		return evasioneOrdineRiga;
 	}
 
 }
