@@ -42,4 +42,13 @@ public class Stipendi_cofi_obbHome extends BulkHome {
 		sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS,((it.cnr.contab.utenze00.bp.CNRUserContext)context).getEsercizio());
 		return fetchAll(sql);
 	}
+
+
+
+	public Stipendi_cofi_obbBulk findStipendiCofiObb(Stipendi_cofi_obbBulk stipendiCofiObbBulk) throws it.cnr.jada.persistency.PersistencyException {
+		return (Stipendi_cofi_obbBulk) findByPrimaryKey(new Stipendi_cofi_obbBulk(stipendiCofiObbBulk.getEsercizio(), stipendiCofiObbBulk.getCd_cds_obbligazione(),
+				stipendiCofiObbBulk.getEsercizio_obbligazione(), stipendiCofiObbBulk.getEsercizio_ori_obbligazione(), stipendiCofiObbBulk.getPg_obbligazione()));
+	}
+
+
 }

@@ -1888,4 +1888,6 @@ public class ObbligazioneHome extends BulkHome {
             throw new ComponentException( e );
         }
     }
+
+
 }

@@ -84,4 +84,12 @@ public Stipendi_cofiHome(java.sql.Connection conn) {
 					}
 				});
 	}
+
+
+
+	public Stipendi_cofiBulk findStipendiCofi(Stipendi_cofiBulk stipendiCofiBulk) throws it.cnr.jada.persistency.PersistencyException {
+		return (Stipendi_cofiBulk) findByPrimaryKey(new Stipendi_cofiBulk(stipendiCofiBulk.getEsercizio(),stipendiCofiBulk.getMese()));
+	}
+	
+
 }

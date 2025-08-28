@@ -1,51 +1,54 @@
-/*
- * Copyright (C) 2019  Consiglio Nazionale delle Ricerche
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Affero General Public License as
- *     published by the Free Software Foundation, either version 3 of the
- *     License, or (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Affero General Public License for more details.
- *
- *     You should have received a copy of the GNU Affero General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package it.cnr.contab.pdg00.action;
 
-import it.cnr.contab.doccont00.consultazioni.bp.ConsControlliPCCBP;
-import it.cnr.contab.doccont00.consultazioni.bulk.ControlliPCCParams;
-import it.cnr.contab.doccont00.consultazioni.bulk.VControlliPCCBulk;
-import it.cnr.contab.pdg00.bp.ElaboraStralcioMensileStipendiBP;
-import it.cnr.contab.pdg00.cdip.bulk.V_cnr_estrazione_coriBulk;
+import it.cnr.contab.doccont00.bp.CaricaFileCassiereBP;
+import it.cnr.contab.gestiva00.bp.ConsDettRegIvaBP;
+import it.cnr.contab.gestiva00.core.bulk.V_cons_dett_ivaBulk;
+import it.cnr.contab.pdg00.bp.CaricFlStipBP;
+import it.cnr.contab.pdg00.bp.ElaboraFileStipendiBP;
+import it.cnr.contab.pdg00.cdip.bulk.CaricFlStipBulk;
+import it.cnr.contab.pdg00.cdip.bulk.GestioneStipBulk;
+import it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiBulk;
+import it.cnr.contab.pdg00.cdip.bulk.V_stipendi_cofi_dettBulk;
 import it.cnr.jada.action.*;
+import it.cnr.jada.bulk.FillException;
 import it.cnr.jada.comp.ApplicationException;
-import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.SQLBuilder;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.util.action.BulkAction;
+import it.cnr.jada.util.action.BulkBP;
+import it.cnr.jada.util.action.SelezionatoreListaAction;
+import it.cnr.jada.util.upload.UploadedFile;
 
-import java.util.List;
+import java.io.IOException;
+import java.rmi.RemoteException;
 
-public class CaricFlStipAction {
+public class CaricFlStipAction extends it.cnr.jada.util.action.CRUDAction {
+
+    private void validateTipoRapporto(String tipoRapporto) throws it.cnr.jada.comp.ApplicationException {
+        if (tipoRapporto == null || tipoRapporto.isEmpty()) {
+            throw new it.cnr.jada.comp.ApplicationException("Attenzione bisogna indicare un tipo rapporto!");
+        }
+    }
 
 
-    //TODO metodo che permette di impostare la logica al click sul pulsante excel (da adattare)
-//    public Forward doConfirmEstraiCSV(ActionContext context) throws BusinessProcessException {
-//        ConsControlliPCCBP bp = (ConsControlliPCCBP) context.getBusinessProcess();
-//        HookForward caller = (HookForward) context.getCaller();
-//        ControlliPCCParams controlliPCCParams = (ControlliPCCParams) caller.getParameter("model");
-//        List<VControlliPCCBulk> vControlliPCCBulks = bp.getSelectedElements(context);
-//        bp.elaboraCSV(controlliPCCParams, vControlliPCCBulks);
-//        bp.clearSelection(context);
-//        return doVisualizzaAllegatiCSV(context);
-//    }
-//
-//    public Forward doVisualizzaAllegatiCSV(ActionContext context) throws BusinessProcessException {
-//        final BusinessProcess allegatiPCCBP = context.createBusinessProcess("AllegatiPCCBP", new Object[]{"M"});
-//        return context.addBusinessProcess(allegatiPCCBP);
-//    }
+    @Override
+    public Forward doSalva(ActionContext context) throws RemoteException {
+        try {
+            CaricFlStipBP bp = (CaricFlStipBP) context.getBusinessProcess();
+            bp.fillModel(context);
+            CaricFlStipBulk tipoRapportoBulk = (CaricFlStipBulk) bp.getModel();
+
+            // Validazione
+            validateTipoRapporto(tipoRapportoBulk.getTipo_rapporto());
+
+            // Esegui il caricamento dei dati
+            bp.doCaricaGestioneStip(context);
+            bp.save(context);
+            return context.findDefaultForward();
+
+        } catch (Exception e) {
+            return handleException(context, e);
+        }
+    }
+
 
 }

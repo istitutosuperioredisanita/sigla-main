@@ -45,4 +45,14 @@ public class Stipendi_cofi_obb_scadHome extends BulkHome {
 		sql.addSQLClause(FindClause.AND,"MESE",SQLBuilder.EQUALS,mese);
 		return fetchAll(sql);
 	}
+
+
+	public Stipendi_cofi_obb_scadBulk findStipendiCofiObbSacd(Stipendi_cofi_obb_scadBulk stipendiCofiObbScadBulk) throws it.cnr.jada.persistency.PersistencyException {
+		return (Stipendi_cofi_obb_scadBulk) findByPrimaryKey(new Stipendi_cofi_obb_scadBulk(stipendiCofiObbScadBulk.getEsercizio(),stipendiCofiObbScadBulk.getMese(),
+				stipendiCofiObbScadBulk.getCd_cds_obbligazione(),stipendiCofiObbScadBulk.getEsercizio_obbligazione(),stipendiCofiObbScadBulk.getEsercizio_ori_obbligazione(),
+				stipendiCofiObbScadBulk.getPg_obbligazione()));
+	}
+
+
+
 }

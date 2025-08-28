@@ -414,16 +414,15 @@
 
     </businessProcess>
 
-    <action
-            path="/CaricFlStipAction"
-            actionClass="it.cnr.contab.pdg00.action.CaricFlStipAction">
-    </action>
+    <action path="/CaricFlStipAction" actionClass="it.cnr.contab.pdg00.action.CaricFlStipAction"/>
     <businessProcess
-            name="CaricFlStipBP" className="it.cnr.contab.pdg00.bp.CaricFlStipBP">
+            name="CaricFlStipBP"
+            className="it.cnr.contab.pdg00.bp.CaricFlStipBP">
         <forward name="default" path="/pdg00/caricamento_flusso_stip.jsp"/>
-        <init-param name="bulkClassName" value="it.cnr.contab.pdg00.cdip.bulk.V_caric_fl_stipBulk"/>
-        <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>
-        <init-param name="defaultAction" value="CaricFlStipAction"/>
+        <init-param name="defaultAction" value="CaricFlStipAction" />
+        <init-param name="bulkClassName" value="it.cnr.contab.pdg00.cdip.bulk.CaricFlStipBulk" />
+        <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
     </businessProcess>
+
 
 </action-mappings>

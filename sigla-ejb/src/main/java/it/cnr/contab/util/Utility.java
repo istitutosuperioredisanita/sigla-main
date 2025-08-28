@@ -60,10 +60,16 @@ import it.cnr.contab.utente00.ejb.RuoloComponentSession;
 import it.cnr.contab.utente00.ejb.UtenteComponentSession;
 import it.cnr.contab.varstanz00.ejb.VariazioniStanziamentoResiduoComponentSession;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.ejb.AdminSession;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -415,6 +421,115 @@ public final class Utility {
 	public static boolean isInteger(BigDecimal num) {
 		return num.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0;
 	}
+
+
+
+	/*Questo metodo cerca in un foglio Excel una riga di intestazione che
+	corrisponda a un array di nomi specificati. È fondamentale per trovare il punto di inizio dei dati,
+	 indipendentemente dal fatto che ci siano righe vuote o di testo sopra.*/
+	public static int findHeaderRow(XSSFSheet sheet, DataFormatter fmt, String[] headerNames) {
+		for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+			XSSFRow r = sheet.getRow(i);
+			if (r == null) continue;
+			boolean found = true;
+			for (int j = 0; j < headerNames.length; j++) {
+				XSSFCell cell = r.getCell(j);
+				if (cell == null || !headerNames[j].equalsIgnoreCase(fmt.formatCellValue(cell).trim())) {
+					found = false;
+					break;
+				}
+			}
+			if (found) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/*isAnyEmpty: Un semplice metodo di supporto che verifica se una delle stringhe passate in input è null
+	 o vuota dopo aver rimosso gli spazi bianchi.
+	 */
+	public static boolean isAnyEmpty(String... strings) {
+		for (String s : strings) {
+			if (s == null || s.trim().isEmpty()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/*parseInteger, parseLong, parseBigDecimal: Questi metodi convertono i valori delle celle, letti come stringhe,
+	 nei rispettivi tipi numerici. Sono robusti e gestiscono formati comuni come numeri con o senza decimali e diversi separatori
+	  (punto o virgola), lanciando un'eccezione personalizzata ApplicationException in caso di errore.
+	 */
+	public static Integer parseInteger(String value, String fieldName, int row) throws ApplicationException {
+		if (value == null || value.trim().isEmpty()) {
+			return null;
+		}
+		try {
+			return Integer.valueOf(value.trim().replaceAll("\\.0$", ""));
+		} catch (NumberFormatException e) {
+			throw new ApplicationException("Invalid '" + fieldName + "' format at row " + row, e);
+		}
+	}
+
+	public static Long parseLong(String value, String fieldName, int row) throws ApplicationException {
+		if (value == null || value.trim().isEmpty()) {
+			return null;
+		}
+		try {
+			return Long.valueOf(value.trim().replaceAll("\\.0$", ""));
+		} catch (NumberFormatException e) {
+			throw new ApplicationException("Invalid '" + fieldName + "' format at row " + row, e);
+		}
+	}
+
+	public static BigDecimal parseBigDecimal(String value, String fieldName, int row) throws ApplicationException {
+		if (value == null || value.trim().isEmpty()) {
+			return null;
+		}
+		try {
+			String norm = value.trim().replace(".", "").replace(",", ".");
+			return new BigDecimal(norm);
+		} catch (NumberFormatException e) {
+			try {
+				String norm = value.trim().replace(",", ".");
+				return new BigDecimal(norm);
+			} catch (NumberFormatException e2) {
+				throw new ApplicationException("Invalid '" + fieldName + "' format at row " + row, e2);
+			}
+		}
+	}
+
+	/*Cerca di leggere le celle della data prima come formato data nativo di Excel,
+	usando DateUtil.isCellDateFormatted. Se questo non è possibile, prova a interpretare il contenuto della cella come una stringa.
+	Anche questo metodo gestisce in modo efficace gli errori.
+	 */
+	public static Timestamp parseTimestamp(XSSFCell cell, String fieldName, int row) throws ApplicationException {
+		if (cell == null) {
+			return null;
+		}
+
+		if (DateUtil.isCellDateFormatted(cell)) {
+			// Usa il metodo di utilità della libreria per ottenere la data
+			Date d = cell.getDateCellValue();
+			return new Timestamp(d.getTime());
+		} else {
+			// Se non è un formato data numerico, prova a parsarla come stringa
+			String value = new DataFormatter().formatCellValue(cell);
+			if (value.trim().isEmpty()) {
+				return null;
+			}
+			try {
+				// Qui si può aggiungere un parser più robusto se necessario, es. SimpleDateFormat
+				return Timestamp.valueOf(value);
+			} catch (IllegalArgumentException e) {
+				throw new ApplicationException("Invalid '" + fieldName + "' format at row " + row, e);
+			}
+		}
+	}
+
+
 
 
 	public static CRUDComponentSession createCRUDComponentSession() throws EJBException, RemoteException {
