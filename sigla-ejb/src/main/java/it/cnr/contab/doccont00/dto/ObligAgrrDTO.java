@@ -7,14 +7,14 @@ public class ObligAgrrDTO {
     Integer esObb;
     Integer esOri;
     Long pgObb;
-    BigDecimal totalAmount;
+    BigDecimal imTotObbAggr;
 
     public ObligAgrrDTO(String cds, Integer esObb, Integer esOri, Long pgObb, BigDecimal amount) {
         this.cds = cds;
         this.esObb = esObb;
         this.esOri = esOri;
         this.pgObb = pgObb;
-        this.totalAmount = amount;
+        this.imTotObbAggr = amount;
     }
 
     public String getCds() {
@@ -49,17 +49,17 @@ public class ObligAgrrDTO {
         this.pgObb = pgObb;
     }
 
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
+    public BigDecimal getImTotObbAggr() {
+        return imTotObbAggr;
     }
 
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
+    public void setImTotObbAggr(BigDecimal imTotObbAggr) {
+        this.imTotObbAggr = imTotObbAggr;
     }
 
-    public static ObligAgrrDTO merge(ObligAgrrDTO existing, ObligAgrrDTO newItem) {
-        existing.setTotalAmount(
-                existing.getTotalAmount().add(newItem.getTotalAmount())
+    public static ObligAgrrDTO updateImpTot(ObligAgrrDTO existing, ObligAgrrDTO newItem) {
+        existing.setImTotObbAggr(
+                existing.getImTotObbAggr().add(newItem.getImTotObbAggr())
         );
         return existing;
     }
