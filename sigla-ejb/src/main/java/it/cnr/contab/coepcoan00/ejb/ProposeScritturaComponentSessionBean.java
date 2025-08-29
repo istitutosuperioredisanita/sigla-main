@@ -25,6 +25,8 @@ import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_analiticaBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ApplicationException;
+import it.cnr.jada.comp.ApplicationRuntimeException;
 import it.cnr.jada.comp.ComponentException;
 
 import javax.annotation.PostConstruct;
@@ -112,6 +114,9 @@ public class ProposeScritturaComponentSessionBean extends it.cnr.jada.ejb.CRUDCo
         } catch (ComponentException e) {
             component_invocation_failure(param0, componentObj);
             throw e;
+        } catch (ApplicationRuntimeException e) {
+            component_invocation_failure(param0, componentObj);
+            throw new ComponentException(e);
         } catch (RuntimeException e) {
             throw uncaughtRuntimeException(param0, componentObj, e);
         } catch (Error e) {

@@ -6923,7 +6923,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         try {
             boolean isAttivaFinanziaria = Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(aUC, fatturaPassiva.getEsercizio());
             for (Fattura_passiva_rigaBulk riga : fatturaPassiva.getFattura_passiva_dettColl()) {
-                if (!isAttivaFinanziaria) {
+                if (!isAttivaFinanziaria && riga.getObbligazione_scadenziario()==null) {
                     if (riga.getImCostoEcoDaRipartire().compareTo(BigDecimal.ZERO) == 0)
                         riga.setStato_cofi(Fattura_passiva_IBulk.STATO_CONTABILIZZATO);
                     else

@@ -30,10 +30,7 @@ import it.cnr.contab.util.Utility;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.comp.ApplicationException;
-import it.cnr.jada.comp.CRUDComponent;
-import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.comp.NoRollbackException;
+import it.cnr.jada.comp.*;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.PersistentHome;
@@ -128,22 +125,19 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
     @Override
     protected OggettoBulk eseguiModificaConBulk(UserContext usercontext, OggettoBulk oggettobulk) throws ComponentException, PersistencyException {
         OggettoBulk bulk = super.eseguiModificaConBulk(usercontext, oggettobulk);
-        Optional.ofNullable(bulk).filter(IDocumentoCogeBulk.class::isInstance).map(IDocumentoCogeBulk.class::cast)
-            .ifPresent(el->{
+        if (Optional.ofNullable(bulk).filter(IDocumentoCogeBulk.class::isInstance).isPresent()) {
+            try {
+                this.createScrittura(usercontext, (IDocumentoCogeBulk) bulk);
+            } catch (NoRollbackException ignored) {
+            } catch (ApplicationException e) {
                 try {
-                    this.createScrittura(usercontext, el);
-                } catch (NoRollbackException ignored) {
-                } catch (ApplicationException e) {
-                    try {
-                        if (!Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(usercontext, el.getEsercizio()))
-                            throw e;
-                    } catch (RemoteException | ComponentException e2) {
-                        throw new DetailedRuntimeException(e2);
-                    }
-                } catch (ComponentException e) {
-                    throw new DetailedRuntimeException(e);
+                    if (!Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(usercontext, ((IDocumentoCogeBulk) bulk).getEsercizio()))
+                        throw e;
+                } catch (RemoteException e2) {
+                    throw new DetailedRuntimeException(e2);
                 }
-            });
+            }
+        }
         return bulk;
     }
 
@@ -524,6 +518,9 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
         } catch (ScritturaPartitaDoppiaNotRequiredException | ScritturaPartitaDoppiaNotEnabledException | ApplicationException e) {
             rollbackToSavepoint(userContext, "INIT_SCRITTURA_PRIMA_NOTA");
             throw e;
+        } catch (ApplicationRuntimeException e) {
+            rollbackToSavepoint(userContext, "INIT_SCRITTURA_PRIMA_NOTA");
+            throw new ComponentException(e);
         } catch (RemoteException e) {
             throw handleException(e);
         }
@@ -537,6 +534,9 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
         } catch (ScritturaPartitaDoppiaNotRequiredException | ScritturaPartitaDoppiaNotEnabledException | ApplicationException e) {
             rollbackToSavepoint(userContext, "INIT_SCRITTURE_CONTABILI_PRIMA_NOTA");
             throw e;
+        } catch (ApplicationRuntimeException e) {
+            rollbackToSavepoint(userContext, "INIT_SCRITTURE_CONTABILI_PRIMA_NOTA");
+            throw new ComponentException(e);
         } catch (RemoteException e) {
             throw handleException(e);
         }

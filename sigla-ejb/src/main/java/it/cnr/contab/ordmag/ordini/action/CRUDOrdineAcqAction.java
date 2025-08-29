@@ -42,14 +42,14 @@ import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.doccont00.core.bulk.OptionRequestParameter;
 import it.cnr.contab.doccont00.ejb.ObbligazioneAbstractComponentSession;
 import it.cnr.contab.ordmag.anag00.*;
-import it.cnr.contab.ordmag.magazzino.bp.ParametriSelezioneMovimentiMagBP;
 import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagBulk;
+import it.cnr.contab.ordmag.ordini.bp.CRUDEvasioneOrdineBP;
 import it.cnr.contab.ordmag.ordini.bp.CRUDOrdineAcqBP;
-import it.cnr.contab.ordmag.ordini.bp.SelezionatoreVisualOrdinAcqConsListaBP;
 import it.cnr.contab.ordmag.ordini.bulk.*;
 import it.cnr.contab.ordmag.ordini.ejb.OrdineAcqComponentSession;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.action.*;
+import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
@@ -61,10 +61,7 @@ import javax.persistence.PersistenceException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
 
@@ -2239,6 +2236,37 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         } catch (Exception e) {
             return handleException(context,e);
         }
+    }
+
+    public Forward doEvadiConsegna(ActionContext actioncontext) throws BusinessProcessException {
+        final CRUDOrdineAcqBP crudOrdineAcqBP = (CRUDOrdineAcqBP) actioncontext.getBusinessProcess();
+        final Optional<OrdineAcqConsegnaBulk> ordineAcqConsegnaBulk = Optional.ofNullable((OrdineAcqConsegnaBulk)crudOrdineAcqBP.getConsegne().getModel());
+        if (ordineAcqConsegnaBulk.isPresent()) {
+            try {
+                CRUDEvasioneOrdineBP nbp = (CRUDEvasioneOrdineBP) actioncontext.createBusinessProcess("CRUDEvasioneOrdineBP", new Object[]{"M"} );
+                nbp = (CRUDEvasioneOrdineBP) actioncontext.addBusinessProcess(nbp);
+                EvasioneOrdineBulk evasioneOrdineBulk = new EvasioneOrdineBulk();
+                evasioneOrdineBulk = (EvasioneOrdineBulk)nbp.initializeModelForInsert(actioncontext, evasioneOrdineBulk);
+                evasioneOrdineBulk.setFind_esercizio_ordine(ordineAcqConsegnaBulk.get().getEsercizio().toString());
+                evasioneOrdineBulk.setFind_cd_uop_ordine(ordineAcqConsegnaBulk.get().getCdUopDest());
+                evasioneOrdineBulk.setFind_cd_numeratore_ordine(ordineAcqConsegnaBulk.get().getCdNumeratore());
+                evasioneOrdineBulk.setFind_numero_ordine(ordineAcqConsegnaBulk.get().getNumero().toString());
+                evasioneOrdineBulk.setFind_riga_ordine(ordineAcqConsegnaBulk.get().getRiga().toString());
+                evasioneOrdineBulk.setFind_consegna_ordine(ordineAcqConsegnaBulk.get().getConsegna().toString());
+                evasioneOrdineBulk.setMagazzinoAbilitato(ordineAcqConsegnaBulk.get().getMagazzino());
+                nbp.initializeMagazzino(actioncontext, evasioneOrdineBulk, evasioneOrdineBulk.getMagazzinoAbilitato());
+                nbp.getConsegne().getSelection().clear();
+                evasioneOrdineBulk.setRigheConsegnaDaEvadereColl(new BulkList<>(Collections.singletonList(ordineAcqConsegnaBulk.get())));
+                nbp.setModel(actioncontext,evasioneOrdineBulk);
+                nbp.resyncChildren(actioncontext);
+                nbp.setCriteriRicercaCollapse(!nbp.isCriteriRicercaCollapse());
+                return nbp;
+            } catch (Throwable e) {
+                return handleException(actioncontext, e);
+            }
+        }
+        setMessage(actioncontext, FormBP.ERROR_MESSAGE, "Fattura legata a consegna non trovata!");
+        return actioncontext.findDefaultForward();
     }
 }
 

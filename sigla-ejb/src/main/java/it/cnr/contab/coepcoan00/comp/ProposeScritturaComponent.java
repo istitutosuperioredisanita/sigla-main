@@ -1078,8 +1078,6 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			} catch (RemoteException | IntrospectionException | PersistencyException e) {
                 throw new RuntimeException(e);
             }
-        } catch (ApplicationException|ApplicationRuntimeException e) {
-			throw new NoRollbackException(e);
 		} catch (SQLException e) {
 			throw handleException(e);
 		}
@@ -1167,10 +1165,10 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 		//Da questo momento non leggo più dall'obbligazione ma recupero i dati direttamente dalle tabelle economiche caricate nel processo precedente
 		//Creo un oggetto con i dettagli finanziari che mi servono per creare la prima nota
-		List<DettaglioFinanziario> righeDettFin = righeDocamm.stream()
-				.map(rigaDocAmm->this.convertToRigaDettFin(userContext, rigaDocAmm))
-				.filter(Objects::nonNull)
-				.collect(Collectors.toList());
+		List<DettaglioFinanziario> righeDettFin = new ArrayList<>();
+
+		for (IDocumentoAmministrativoRigaBulk rigaDocamm : righeDocamm)
+			righeDettFin.add(this.convertToRigaDettFin(userContext, rigaDocamm));
 
 		/*
 		  Le fatture Commerciali con autofattura sono praticamente tutte le fatture Commerciali con Iva positiva
@@ -5854,7 +5852,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		}
 	}
 
-	private DettaglioFinanziario convertToRigaDettFin(UserContext userContext, IDocumentoAmministrativoRigaBulk rigaDocAmm) {
+	private DettaglioFinanziario convertToRigaDettFin(UserContext userContext, IDocumentoAmministrativoRigaBulk rigaDocAmm) throws ApplicationException {
 		//Attenzione: recupero il terzo dal docamm perchè sulle righe potrebbe non essere valorizzato
 		TerzoBulk terzo;
 		IDocumentoAmministrativoBulk docamm = rigaDocAmm.getFather();
@@ -5905,6 +5903,9 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 		for (IDocumentoDetailAnaCogeBulk rigaAna : rigaDocAmm.getChildrenAna())
 			dettagliAnalitici.add(new DettaglioAnalitico(rigaAna));
+
+		if (rigaDocAmm.getVoce_ep()==null || rigaDocAmm.getVoce_ep().getCd_voce_ep()==null)
+			throw new ApplicationException("Riga documento senza indicazione del conto di economica. Scrittura economica non possibile.");
 
 		return new DettaglioFinanziario(rigaDocAmm, rigaPartita, terzo.getCd_terzo(), rigaDocAmm.getVoce_ep(), dettagliAnalitici);
 	}
