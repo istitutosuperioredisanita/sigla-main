@@ -852,11 +852,16 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 	@Override
 	protected OggettoBulk initializeModelForEditAllegati(ActionContext actioncontext, OggettoBulk oggettobulk, String path) throws BusinessProcessException {
 		OrdineAcqBulk ordine = (OrdineAcqBulk)oggettobulk;
+/*
 		for (OrdineAcqRigaBulk dettaglio : ordine.getRigheOrdineColl()) {
 			dettaglio.setArchivioAllegati(((OrdineAcqCMISService)storeService).recuperoAllegatiDettaglioOrdine(dettaglio));
 		}
-		return super.initializeModelForEditAllegati(actioncontext, oggettobulk, path);
+*/
+
+		return super.initializeModelForEditAllegati(actioncontext, oggettobulk, path,false);
 	}
+
+
 
 	@Override
 	protected void basicEdit(ActionContext actioncontext, OggettoBulk oggettobulk, boolean flag) throws BusinessProcessException {

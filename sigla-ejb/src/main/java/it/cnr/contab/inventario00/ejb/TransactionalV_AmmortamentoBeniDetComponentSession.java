@@ -17,7 +17,6 @@
 
 package it.cnr.contab.inventario00.ejb;
 
-import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beniBulk;
 import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beni_detBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;

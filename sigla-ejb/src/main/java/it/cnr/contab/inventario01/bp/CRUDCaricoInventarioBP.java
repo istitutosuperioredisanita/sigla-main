@@ -39,6 +39,7 @@ import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util.Utility;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
@@ -73,9 +74,14 @@ public class CRUDCaricoInventarioBP extends CRUDCaricoScaricoInventarioBP{
 
 
 	private boolean attivaEtichettaInventarioBene = false;
+	private boolean importoUnitarioRO =false;
 
 	public boolean isAttivaEtichettaInventarioBene() {
 		return attivaEtichettaInventarioBene;
+	}
+
+	public boolean isImportoUnitarioRO() {
+		return importoUnitarioRO;
 	}
 
 	public CRUDCaricoInventarioBP() {
@@ -94,6 +100,7 @@ public class CRUDCaricoInventarioBP extends CRUDCaricoScaricoInventarioBP{
 		utilizzatori.setReadonly(false);
 		try {
 			attivaEtichettaInventarioBene = Utility.createConfigurazioneCnrComponentSession().isGestioneEtichettaInventarioBeneAttivo(context.getUserContext());
+			importoUnitarioRO = Utility.createConfigurazioneCnrComponentSession().isGestioneImportoInventarioReadOnly(context.getUserContext());
 		} catch (ComponentException e) {
 			throw new BusinessProcessException(e);
 		} catch (RemoteException e) {
@@ -394,7 +401,7 @@ public class CRUDCaricoInventarioBP extends CRUDCaricoScaricoInventarioBP{
 			} catch (BusinessProcessException e1) {
 				handleException(e1);
 			}
-		}			
+		}
 		
 		validate_Percentuali_CdR(context, model);
 	
@@ -803,6 +810,25 @@ public class CRUDCaricoInventarioBP extends CRUDCaricoScaricoInventarioBP{
 				}
 			}
 		}
+	}
+
+	public boolean isValore_unitarioRO(UserContext uc) throws ComponentException, RemoteException, BusinessProcessException {
+		if(this.getDettaglio() != null){
+			Buono_carico_scarico_dettBulk riga = (Buono_carico_scarico_dettBulk)this.getDettaglio().getModel();
+
+			return (	(riga != null && riga.isTotalmenteScaricato()) ||
+						this.isBy_fattura() ||
+						this.isBy_documento() ||
+						(riga != null && this.isImportoUnitarioRO() && riga.isProvenienzaOrdine()) ||
+						(	!this.isModValore_unitario() ||
+							this.isAssociata(uc, riga) ||
+							(riga != null && riga.getBuono_cs().getTipoMovimento().getFl_buono_per_trasferimento().booleanValue()) ||
+							this.isNonUltimo(uc, riga))
+						&& !this.isInserting()
+			);
+		}
+
+		return false;
 	}
 }
 

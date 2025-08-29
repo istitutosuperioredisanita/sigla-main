@@ -1029,6 +1029,35 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
         return impegnoPluriennaleAttivo;
     }
 
+    public Boolean isGestioneImportoInventarioReadOnly(UserContext userContext) throws ComponentException {
+        final Configurazione_cnrBulk configurazione =
+                Optional.ofNullable(
+                        getConfigurazione(
+                                userContext,
+                                CNRUserContext.getEsercizio(userContext),
+                                ASTERISCO,
+                                Configurazione_cnrBulk.PK_INVENTARIO,
+                                Configurazione_cnrBulk.SK_GESTIONE_IMPORTO_RO_INVENTARIO)
+                ).orElseGet(() -> {
+                            try {
+                                return getConfigurazione(
+                                        userContext,
+                                        0,
+                                        ASTERISCO,
+                                        Configurazione_cnrBulk.PK_INVENTARIO,
+                                        Configurazione_cnrBulk.SK_GESTIONE_IMPORTO_RO_INVENTARIO);
+                            } catch (ComponentException e) {
+                                throw new DetailedRuntimeException(e);
+                            }
+                        }
+                );
+        return Optional.ofNullable(configurazione)
+                .flatMap(configurazione_cnrBulk -> Optional.ofNullable(configurazione_cnrBulk.getVal01()))
+                .filter(val -> val.equals("Y"))
+                .isPresent();
+    }
+
+
     public Boolean isGestioneEtichettaInventarioBeneAttivo(UserContext userContext) throws ComponentException {
         final Configurazione_cnrBulk configurazione =
                 Optional.ofNullable(

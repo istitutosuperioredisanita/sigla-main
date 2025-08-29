@@ -37,6 +37,14 @@ import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.Stateless;
+import java.rmi.RemoteException;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.List;
+
 @Stateless(name="CNRORDMAG00_EJB_MovimentiMagComponentSession")
 public class MovimentiMagComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements MovimentiMagComponentSession {
 @PostConstruct
@@ -365,6 +373,4 @@ public void annullaMovimento(UserContext userContext, MovimentiMagBulk movimenti
 			throw uncaughtError(userContext,componentObj,e);
 		}
 	}
-
-
 }

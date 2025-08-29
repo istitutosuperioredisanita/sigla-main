@@ -155,6 +155,7 @@ public class CRUDBatchControlBP extends SimpleCRUDBP
 
                     obbComponent.asyncAmmortamentoBeni(actioncontext.getUserContext(), esercizio.intValue(),"",false,true,true);
                 }
+
                 else if ("CONSSOTITUIVAJAVA".equals(batch_controlbulk.getProcedura().getCd_procedura())) {
                     BigDecimal esercizio = batch_controlbulk.getParametri().stream()
                             .filter(el -> el.getNome_parametro().equals("AES"))

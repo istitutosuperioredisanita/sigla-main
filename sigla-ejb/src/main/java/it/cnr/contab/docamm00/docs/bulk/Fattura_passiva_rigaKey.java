@@ -20,8 +20,6 @@ package it.cnr.contab.docamm00.docs.bulk;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.KeyedPersistent;
 
-import java.util.Objects;
-
 public class Fattura_passiva_rigaKey extends OggettoBulk implements KeyedPersistent {
     // CD_CDS VARCHAR(30) NOT NULL (PK)
     private java.lang.String cd_cds;

@@ -346,20 +346,6 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 
 					evasioneOrdine.addToEvasioneOrdineRigheColl(evasioneOrdineRiga);
 					righeEvaseOrdine.add(evasioneOrdineRiga);
-					/*
-					//effettuo la movimentazione di magazzino
-					try {
-						Optional.ofNullable(movimentiMagComponent.caricoDaOrdine(userContext, evasioneOrdineRiga.getOrdineAcqConsegna(), evasioneOrdineRiga))
-								.ifPresent(
-										movimentoCarico -> {
-											if (movimentoCarico.getMovimentoRif() != null) {
-												listaMovimentiScarico.add(movimentoCarico);
-											}
-											evasioneOrdineRiga.setMovimentiMag(movimentoCarico);
-										});
-					} catch (ComponentException | RemoteException | PersistencyException e) {
-						throw new DetailedRuntimeException(e);
-					}*/
 				}
 				try {
 				//effettuo la movimentazione di magazzino per le righe evase per l'ordine
