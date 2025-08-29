@@ -77,6 +77,12 @@
 				columnSize="10"
 				nullable="false"
 				primary="true" />
+		<columnMapping
+				columnName="NOTE_PROGETTO"
+				propertyName="note_progetto"
+				sqlTypeName="VARCHAR"
+				columnSize="400"
+				nullable="true" />
 	</defaultColumnMap>
 	<persistentProperty
 			name="im_voce" />
@@ -94,6 +100,7 @@
 			name="ds_tipo_progetto" />
 	<persistentProperty
 			name="cd_tipo_progetto" />
-
+	<persistentProperty
+			name="note_progetto" />
 
 </SQLPersistentInfo>

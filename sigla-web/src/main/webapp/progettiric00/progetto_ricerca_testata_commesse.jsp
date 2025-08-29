@@ -198,6 +198,10 @@
 		<td><% bp.getController().writeFormLabel(out,"imCofinanziatoOf");%></td>
 		<td><% bp.getController().writeFormInput( out, "default","imCofinanziatoOf",isROImporti,null,null); %></td>	  
 	  </tr>
+	  	  <tr>
+      	  	<td><% bp.getController().writeFormLabel(out,"noteDatiContabili");%></td>
+      	  	<td colspan="3"><% bp.getController().writeFormInput( out, "default","noteDatiContabili", isROField,null,null); %></td>
+      	  </tr>
      </table>
 	 </div>
     <% if (isUoEnte ||

@@ -194,7 +194,7 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 					consegneColl.stream().collect(Collectors.groupingBy(o -> o.getOrdineAcqRiga().getOrdineAcq()));
 
 			for (OrdineAcqBulk ordineSelected : mapOrdine.keySet()) {
-				List<EvasioneOrdineRigaBulk> righeEvaseOrdine= new ArrayList<EvasioneOrdineRigaBulk>();
+
 				for (OrdineAcqConsegnaBulk consegnaSelected : consegneColl) {
 
 					Optional.ofNullable(consegnaSelected.getQuantitaEvasa()).filter(el->el.compareTo(BigDecimal.ZERO)>0)
@@ -283,7 +283,7 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 					evasioneOrdineRiga.setToBeCreated();
 
 					evasioneOrdine.addToEvasioneOrdineRigheColl(evasioneOrdineRiga);
-					righeEvaseOrdine.add(evasioneOrdineRiga);
+
 					/*
 					//effettuo la movimentazione di magazzino
 					try {
@@ -297,11 +297,20 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 										});
 					} catch (ComponentException | RemoteException | PersistencyException e) {
 						throw new DetailedRuntimeException(e);
-					}*/
+					}
+					*/
 				}
+
 				try {
-				//effettuo la movimentazione di magazzino per le righe evase per l'ordine
-				listaMovimentiScarico.addAll(Optional.ofNullable(movimentiMagComponent.caricoDaOrdineRigheEvase(userContext,righeEvaseOrdine)).orElse(Collections.EMPTY_LIST));
+					/*ottimizzazione esecuzione
+						 caricoDaOrdineRigheEvase-> crea tutti movimenti di carico e ritorna una mappa con chiave la riga di evasione e valore il movimento creato
+						 aggiornaMovRigheEvasione-> aggiorna sulle righe di consegna il movimento di magazzino creato
+						 	e ritorna la lista dei movimenti per i quali creare lo scarico
+					 */
+					listaMovimentiScarico.addAll( aggiornaMovRigheEvasione (
+								movimentiMagComponent.caricoDaOrdineRigheEvase(userContext,Optional.ofNullable(evasioneOrdine.getEvasioneOrdineRigheColl()).orElse(new BulkList<>())),
+								evasioneOrdine ));
+
 				} catch (ComponentException | RemoteException | PersistencyException e) {
 					throw new DetailedRuntimeException(e);
 				}
@@ -333,6 +342,22 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 		}
 	}
 
+	 private List<MovimentiMagBulk> aggiornaMovRigheEvasione(List<EvasioneOrdineRigaBulk> listMovimentiEvaRighe,EvasioneOrdineBulk evasioneOrdine) {
+		List<MovimentiMagBulk> movimentiScarico = new ArrayList<MovimentiMagBulk>();
+			 Optional.ofNullable(listMovimentiEvaRighe).orElse(Collections.EMPTY_LIST).stream().
+					 forEach( rigaEvasione->{
+						 EvasioneOrdineRigaBulk rigaEvasioneInList= Optional.ofNullable(evasioneOrdine.getEvasioneOrdineRigheColl().
+								 indexOf(rigaEvasione)).filter(i->i!=-1).map(i-> evasioneOrdine.getEvasioneOrdineRigheColl().get(i)).orElseGet(() -> {
+							 return null;
+						 });
+						 if ( Optional.ofNullable(rigaEvasioneInList).isPresent()){
+							 rigaEvasioneInList.setMovimentiMag(((EvasioneOrdineRigaBulk) rigaEvasione).getMovimentiMag());
+							 if ( rigaEvasioneInList.getMovimentiMag()!=null)
+								 movimentiScarico.add(rigaEvasioneInList.getMovimentiMag());
+						 }
+					 });
+			 return movimentiScarico;
+	 }
 	private void validaEvasioneOrdine(UserContext userContext,EvasioneOrdineBulk evasioneOrdine) throws ApplicationException {
 		if(evasioneOrdine.getDataConsegna() != null){
 			java.util.Calendar gc = java.util.Calendar.getInstance();

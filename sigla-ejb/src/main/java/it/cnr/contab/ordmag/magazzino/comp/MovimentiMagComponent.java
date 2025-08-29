@@ -1384,18 +1384,17 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 	}
 
 
-	public List<MovimentiMagBulk> caricoDaOrdineRigheEvase(UserContext userContext,  List<EvasioneOrdineRigaBulk> evasioneOrdineRiga) throws ComponentException, PersistencyException, ApplicationException {
-		List<MovimentiMagBulk> listaMovimentiScarico =new ArrayList<MovimentiMagBulk>();
+	public List<EvasioneOrdineRigaBulk> caricoDaOrdineRigheEvase(UserContext userContext,   List<EvasioneOrdineRigaBulk> evasioneOrdineRiga) throws ComponentException, PersistencyException, ApplicationException {
+
 		if (Optional.ofNullable(evasioneOrdineRiga).isPresent() ){
 			for (EvasioneOrdineRigaBulk eva:evasioneOrdineRiga) {
-				MovimentiMagBulk movimentoCarico =caricoDaOrdine(userContext, eva.getOrdineAcqConsegna(), (EvasioneOrdineRigaBulk) eva);
-				if (movimentoCarico.getMovimentoRif() != null) {
-					listaMovimentiScarico.add(movimentoCarico);
-				}
-				eva.setMovimentiMag(movimentoCarico);
+				Optional.ofNullable(caricoDaOrdine(userContext, eva.getOrdineAcqConsegna(), (EvasioneOrdineRigaBulk) eva))
+						.ifPresent(movimentoCarico -> {
+							eva.setMovimentiMag(movimentoCarico);
+						});
 			}
 		}
-		return listaMovimentiScarico;
+		return evasioneOrdineRiga;
 	}
 
 }

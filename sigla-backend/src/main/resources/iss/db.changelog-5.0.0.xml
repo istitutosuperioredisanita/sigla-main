@@ -124,5 +124,7 @@
     <!--update per abilitare il controllo che tutte le righe dell'ordine di una fattura siano inventariate per poter
     settare la fattura come liquidabile-->
     <include file="iss/update_configurazioneCnr_liq_daordine_inv.xml"/>
+    <!-- gestione importo inventariazione-->
+    <include file="iss/update_conf_gestione_importo_ro_inventario_ordini.xml"/>
 
 </databaseChangeLog>
