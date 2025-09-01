@@ -3,21 +3,21 @@
  * Date 21/11/2024
  */
 package it.cnr.contab.inventario00.docs.bulk;
+
+import it.cnr.contab.inventario00.dto.NormalizzatoreAmmortamentoDto;
+import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.persistency.sql.LoggableStatement;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.cnr.contab.inventario00.dto.NormalizzatoreAmmortamentoDto;
-import it.cnr.contab.inventario00.dto.TipoAmmCatGruppoDto;
-import it.cnr.jada.bulk.BulkHome;
-import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.persistency.PersistentCache;
-import it.cnr.jada.persistency.sql.LoggableStatement;
-
 public class V_inventario_bene_detHome extends BulkHome {
-	private final String StatmentSelectNormalizzatoreBene =
+	private final String statmentSelectNormalizzatoreBene =
 	" SELECT norm.esercizio_carico_bene,norm.pg_inventario,norm.nr_inventario,norm.progressivo,norm.etichetta,norm.cd_categoria_gruppo,"+
 			" SUM(NVL(norm.valore_bene,0)) as valore_bene, "+
 			" SUM(NVL(norm.incremento_valore,0)) as incrementi_successivi, "+
@@ -83,7 +83,7 @@ public class V_inventario_bene_detHome extends BulkHome {
 		NormalizzatoreAmmortamentoDto normalizzatoreAmmortamentoDto = null;
 
 		try {
-			String statement = StatmentSelectNormalizzatoreBene;
+			String statement = statmentSelectNormalizzatoreBene;
 
 			LoggableStatement ps = null;
 			Connection conn = getConnection();
