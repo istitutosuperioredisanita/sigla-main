@@ -446,8 +446,7 @@ public final class Utility {
 		return -1;
 	}
 
-	/*isAnyEmpty: Un semplice metodo di supporto che verifica se una delle stringhe passate in input è null
-	 o vuota dopo aver rimosso gli spazi bianchi.
+	/*Verifica se una delle stringhe passate in input è null o vuota dopo aver rimosso gli spazi bianchi.
 	 */
 	public static boolean isAnyEmpty(String... strings) {
 		for (String s : strings) {
@@ -458,7 +457,7 @@ public final class Utility {
 		return false;
 	}
 
-	/*parseInteger, parseLong, parseBigDecimal: Questi metodi convertono i valori delle celle, letti come stringhe,
+	/*I metodi di parsing convertono i valori delle celle, letti come stringhe,
 	 nei rispettivi tipi numerici. Sono robusti e gestiscono formati comuni come numeri con o senza decimali e diversi separatori
 	  (punto o virgola), lanciando un'eccezione personalizzata ApplicationException in caso di errore.
 	 */
@@ -503,7 +502,6 @@ public final class Utility {
 
 	/*Cerca di leggere le celle della data prima come formato data nativo di Excel,
 	usando DateUtil.isCellDateFormatted. Se questo non è possibile, prova a interpretare il contenuto della cella come una stringa.
-	Anche questo metodo gestisce in modo efficace gli errori.
 	 */
 	public static Timestamp parseTimestamp(XSSFCell cell, String fieldName, int row) throws ApplicationException {
 		if (cell == null) {

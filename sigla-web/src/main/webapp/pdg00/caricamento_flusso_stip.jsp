@@ -1,48 +1,42 @@
 <%@ page pageEncoding="UTF-8"
-	import="it.cnr.jada.util.jsp.*,
-		it.cnr.jada.action.*,
-		java.util.*,
-		it.cnr.jada.util.action.*,
-		it.cnr.jada.*,
-		it.cnr.contab.pdg00.bp.*"
-%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-
+    import="it.cnr.jada.util.jsp.*,
+            it.cnr.jada.action.*,
+            it.cnr.jada.util.action.*,
+            it.cnr.contab.pdg00.bp.*" %>
+<!DOCTYPE html>
 <html>
 <head>
-<% JSPUtils.printBaseUrl(pageContext); %>
-<title>Risultato ricerca</title>
-<script language="JavaScript" src="scripts/util.js"></script>
-<script language="javascript" src="scripts/css.js"></script>
+  <% JSPUtils.printBaseUrl(pageContext); %>
+  <title>Caricamento Flusso Stipendi</title>
+  <script src="scripts/util.js"></script>
+  <script src="scripts/css.js"></script>
 </head>
-
 <body class="Form">
-
 <%
-    BulkBP bp = (BulkBP)BusinessProcess.getBusinessProcess(request);
-    bp.openFormWindow(pageContext);
+  CaricFlStipBP bp = (CaricFlStipBP) BusinessProcess.getBusinessProcess(request);
+  bp.openFormWindow(pageContext); // AllegatiCRUDBP imposta enctype multipart
 %>
 
-<div class="Group card" style="width:100%">
-    <table width="100%">
-        <tr>
-            <td>
-            <% bp.getController().writeFormLabel(out, "tipo_rapporto"); %>
-            </td>
-                <% bp.getController().writeFormInput(
-                    out,
-                    null,
-                    "tipo_rapporto",
-                    false,
-                    null,
-                    null
-                );%>
-            </td>
-        </tr>
-    </table>
+<!-- Sezione selezione tipo rapporto -->
+<div class="Group card">
+  <table width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+      <td nowrap="nowrap" valign="middle">
+        <% bp.getController().writeFormLabel(out, "tipo_rapporto"); %>&nbsp;
+        <% bp.getController().writeFormInput(out, null, "tipo_rapporto", false, null, null); %>
+      </td>
+    </tr>
+  </table>
+</div>
+
+
+<!-- Form dettaglio: campo file + metadati allegato -->
+<div class="Group card mt-3">
+  <table>
+    <% bp.getCrudArchivioAllegati().writeForm(out, bp.getAllegatiFormName()); %>
+  </table>
 </div>
 
 <% bp.closeFormWindow(pageContext); %>
-
 </body>
 </html>

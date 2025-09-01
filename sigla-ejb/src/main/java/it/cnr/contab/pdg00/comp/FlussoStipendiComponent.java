@@ -21,10 +21,8 @@ import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.BancaHome;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoHome;
-import it.cnr.contab.compensi00.tabrif.bulk.Ass_tipo_cori_evBulk;
-import it.cnr.contab.compensi00.tabrif.bulk.Gruppo_crBulk;
-import it.cnr.contab.compensi00.tabrif.bulk.Gruppo_cr_detBulk;
-import it.cnr.contab.compensi00.tabrif.bulk.Tipo_cr_baseBulk;
+import it.cnr.contab.compensi00.tabrif.bulk.*;
+import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceHome;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneHome;
 import it.cnr.contab.doccont00.dto.EsitoCori;
@@ -63,19 +61,10 @@ public class FlussoStipendiComponent extends CRUDComponent {
             throws ComponentException, RemoteException {
 
         inserisciStipendiCofi(userContext, bulk.getStipendiCofiBulk());
-        //inserisciStipendiCofiObbScad(userContext, bulk.getStipendiCofiBulk(), bulk.getStipendiCofiObbScadBulks());
+        inserisciStipendiCofiObbScad(userContext, bulk.getStipendiCofiBulk(), bulk.getStipendiCofiObbScadBulks());
         EsitoCori esito = inserisciStipendiCofiCoriCompleto(userContext, bulk.getStipendiCofiBulk(), bulk.getStipendiCofiCoriBulks());
 
-        // Se vuoi bloccare in presenza errori config:
-        if (!esito.isOk()) {
-            throw new ComponentException(
-                    "Configurazione e check incomplete: " +
-                            "codiciNonEsistenti=" + esito.codiciNonEsistenti +
-                            ", senzaGruppo=" + esito.codiciSenzaGruppo +
-                            ", senzaCapitolo=" + esito.codiciSenzaCapitolo +
-                            ", senzaTerzo=" + esito.codiciSenzaTerzo
-            );
-        }
+        esito.gestioneNoOk();
     }
 
 
@@ -89,7 +78,7 @@ public class FlussoStipendiComponent extends CRUDComponent {
     public void inserisciStipendiCofi(UserContext userContext, Stipendi_cofiBulk bulk)
             throws ApplicationException, ComponentException, RemoteException {
 
-        final Stipendi_cofiHome home =
+        Stipendi_cofiHome home =
                 (Stipendi_cofiHome) getHome(userContext, Stipendi_cofiBulk.class);
 
         try {
@@ -115,7 +104,7 @@ public class FlussoStipendiComponent extends CRUDComponent {
             if (bulk.getMese() != null) {
                 try {
                     //Stipendi_cofiBulk existing = home.findStipendiCofi(bulk); // by PK (ESERCIZIO,MESE)
-                    Stipendi_cofiBulk existing = (Stipendi_cofiBulk) home.findByPrimaryKey(userContext,bulk);
+                    Stipendi_cofiBulk existing = (Stipendi_cofiBulk) home.findByPrimaryKey(userContext, bulk);
                     if (existing != null) {
                         throw new ApplicationException(
                                 "Operazione non consentita: la modifica di Stipendi_cofi è vietata"
@@ -156,7 +145,7 @@ public class FlussoStipendiComponent extends CRUDComponent {
             UserContext userContext,
             Stipendi_cofiBulk stipendiCofi,
             List<Stipendi_cofi_obb_scadBulk> stipendiCofiObbScadBulks
-    ) throws ApplicationException, ComponentException, RemoteException {
+    ) throws ComponentException, RemoteException {
 
         // Validazione iniziale
         if (stipendiCofi == null || stipendiCofi.getEsercizio() == null || stipendiCofi.getMese() == null) {
@@ -167,12 +156,12 @@ public class FlussoStipendiComponent extends CRUDComponent {
         }
 
         try {
-            final Stipendi_cofi_obb_scadHome scadHome = (Stipendi_cofi_obb_scadHome) getHome(userContext, Stipendi_cofi_obb_scadBulk.class);
-            final Stipendi_cofi_obbHome stipObbHome = (Stipendi_cofi_obbHome) getHome(userContext, Stipendi_cofi_obbBulk.class);
-            final ObbligazioneHome obbHome = (ObbligazioneHome) getHome(userContext, ObbligazioneBulk.class);
+            Stipendi_cofi_obb_scadHome scadHome = (Stipendi_cofi_obb_scadHome) getHome(userContext, Stipendi_cofi_obb_scadBulk.class);
+            Stipendi_cofi_obbHome stipObbHome = (Stipendi_cofi_obbHome) getHome(userContext, Stipendi_cofi_obbBulk.class);
+            ObbligazioneHome obbHome = (ObbligazioneHome) getHome(userContext, ObbligazioneBulk.class);
 
             // Mappa per aggregare gli importi e memorizzare i dati chiave delle obbligazioni
-            final Map<String, ObligAgrrDTO> obbAggregate = new LinkedHashMap<>();
+            Map<String, ObligAgrrDTO> obbAggregate = new LinkedHashMap<>();
 
             for (Stipendi_cofi_obb_scadBulk s : stipendiCofiObbScadBulks) {
                 if (s == null || s.getIm_totale() == null || s.getIm_totale().compareTo(BigDecimal.ZERO) == 0) {
@@ -201,7 +190,7 @@ public class FlussoStipendiComponent extends CRUDComponent {
                 }
 
                 // Aggrega gli importi per la stessa obbligazione usando il DTO
-                final String key = String.join("|", cds, String.valueOf(esObb), String.valueOf(esOri), String.valueOf(pgObb));
+                String key = String.join("|", cds, String.valueOf(esObb), String.valueOf(esOri), String.valueOf(pgObb));
                 //il metodo merge aggiunge un valore a una mappa, con la possibilità di aggiornare un valore esistente se la chiave è già presente
                 obbAggregate.merge(key, new ObligAgrrDTO(cds, esObb, esOri, pgObb, imTotObbAggr), ObligAgrrDTO::updateImpTot);
             }
@@ -234,7 +223,7 @@ public class FlussoStipendiComponent extends CRUDComponent {
                 // Inserimento finale della riga SCAD
                 Stipendi_cofi_obb_scadBulk scadBulk = new Stipendi_cofi_obb_scadBulk();
                 scadBulk.setEsercizio(stipendiCofi.getEsercizio());
-                scadBulk.setMese( stipendiCofi.getMese());
+                scadBulk.setMese(stipendiCofi.getMese());
                 scadBulk.setCd_cds_obbligazione(obbBulk.getCd_cds_obbligazione());
                 scadBulk.setEsercizio_obbligazione(data.getEsObb());
                 scadBulk.setEsercizio_ori_obbligazione(data.getEsOri());
@@ -250,16 +239,15 @@ public class FlussoStipendiComponent extends CRUDComponent {
     }
 
 
-
     /**
-     * Implementa TUTTA la logica delle KTR:
-     * - checkConfigurazioneCodiciRitenute.ktr  (validazioni e lookup di configurazione)
-     * - Stipendi_cofi_cori.ktr                 (group by, calcolo competenza, table output)
+     * Implementa TUTTA la logica delle trasformazioni Pentaho:
+     * - checkConfigurazioneCodiciRitenute  (validazioni e lookup di configurazione)
+     * - Stipendi_cofi_cori               (group by, calcolo competenza, table output)
      *
-     * @param userContext        Contesto utente per le operazioni di persistenza
-     * @param testataStipendi    Testata già persistita (ESERCIZIO/MESE/MESE_REALE/TIPO_FLUSSO…)
+     * @param userContext             Contesto utente per le operazioni di persistenza
+     * @param testataStipendi         Testata già persistente, inserita precedentemente (ESERCIZIO/MESE/MESE_REALE/TIPO_FLUSSO…)
      * @param righeContributiRitenute Lista righe "cori" da processare (ammontare, codice ritenuta, tipo ente/percipiente)
-     * @return                   Report con le anomalie riscontrate durante l'elaborazione
+     * @return Report con le anomalie riscontrate durante l'elaborazione
      */
 
     //il metodo computeIfAbsent garantisce che ci sia sempre un valore per una data chiave. Se la chiave non ha un valore, ne crea uno e lo aggiunge alla mappa prima di restituirlo.
@@ -270,35 +258,34 @@ public class FlussoStipendiComponent extends CRUDComponent {
             List<Stipendi_cofi_coriBulk> righeContributiRitenute
     ) throws ComponentException, RemoteException {
 
-        final EsitoCori esitoElaborazione = new EsitoCori();
+        EsitoCori esitoElaborazione = new EsitoCori();
 
         // === Inizializzazione componenti di accesso ai dati ===
-        final Stipendi_cofi_coriHome contributiRitenuteHome =
+        Stipendi_cofi_coriHome contributiRitenuteHome =
                 (Stipendi_cofi_coriHome) getHome(userContext, Stipendi_cofi_coriBulk.class);
 
-        final it.cnr.contab.compensi00.tabrif.bulk.Tipo_contributo_ritenutaHome tipoContributoRitenutaHome =
-                (it.cnr.contab.compensi00.tabrif.bulk.Tipo_contributo_ritenutaHome)
-                        getHome(userContext, it.cnr.contab.compensi00.tabrif.bulk.Tipo_contributo_ritenutaBulk.class);
+        Tipo_contributo_ritenutaHome tipoContributoRitenutaHome =
+                (Tipo_contributo_ritenutaHome)
+                        getHome(userContext, Tipo_contributo_ritenutaBulk.class);
 
         // === Validazione parametri di input obbligatori ===
         validaParametriInput(testataStipendi, righeContributiRitenute);
 
         // === Calcolo periodo di competenza contabile (KTR: DATE/MONTHEND) ===
-        final Integer meseCompetenza = Optional.ofNullable(testataStipendi.getMese_reale())
+        Integer meseCompetenza = Optional.ofNullable(testataStipendi.getMese_reale())
                 .orElse(testataStipendi.getMese());
         if (meseCompetenza == null) {
             throw new ComponentException("Impossibile determinare il mese di competenza: sia mese_reale che mese sono nulli");
         }
 
-        final Integer annoCompetenza = testataStipendi.getEsercizio();
-        final java.sql.Timestamp dataInizioCompetenza = firstDayOfMonthTs(annoCompetenza, meseCompetenza);
-        final java.sql.Timestamp dataFineCompetenza = lastDayOfMonthTs(annoCompetenza, meseCompetenza);
+        Integer annoCompetenza = testataStipendi.getEsercizio();
+        java.sql.Timestamp dataInizioCompetenza = firstDayOfMonthTs(annoCompetenza, meseCompetenza);
+        java.sql.Timestamp dataFineCompetenza = lastDayOfMonthTs(annoCompetenza, meseCompetenza);
 
-        // === Aggregazione dati per chiave (GROUP BY: CODICE + TIPO_ENTE_PERCIPIENTE) ===
-        // Mappa: "codice|tipo" -> importo totale aggregato
-        final Map<String, BigDecimal> contributiAggregatiPerChiave = new LinkedHashMap<>();
-        final Map<String, String> codicePerChiave = new HashMap<>();  // cache per evitare split
-        final Map<String, String> tipoEntePerChiave = new HashMap<>(); // cache per evitare split
+        // Mappa che gestisce il GROUP BY: CODICE + TIPO_ENTE_PERCIPIENTE --> "codice|tipo" , importo totale aggregato
+        Map<String, BigDecimal> contributiAggregatiPerChiave = new LinkedHashMap<>();
+        Map<String, String> codicePerChiave = new HashMap<>();
+        Map<String, String> tipoEntePerChiave = new HashMap<>();
 
         for (Stipendi_cofi_coriBulk rigaContributo : righeContributiRitenute) {
             if (rigaContributo == null) continue;
@@ -327,7 +314,7 @@ public class FlussoStipendiComponent extends CRUDComponent {
             }
 
             // Crea la chiave di aggregazione e accumula l'importo
-            final String chiaveAggregazione = codiceContributoNormalizzato + "|" + tipoEntePercipienteNormalizzato;
+            String chiaveAggregazione = codiceContributoNormalizzato + "|" + tipoEntePercipienteNormalizzato;
             contributiAggregatiPerChiave.merge(chiaveAggregazione, importoNormalizzato, BigDecimal::add);
             codicePerChiave.putIfAbsent(chiaveAggregazione, codiceContributoNormalizzato);
             tipoEntePerChiave.putIfAbsent(chiaveAggregazione, tipoEntePercipienteNormalizzato);
@@ -338,19 +325,19 @@ public class FlussoStipendiComponent extends CRUDComponent {
         }
 
         try {
-            // === Cache per ottimizzare le query di validazione (evita query ripetute) ===
-            final Map<String, Boolean> cacheCodiciEsistenti = new HashMap<>();
-            final Map<String, String> cacheGruppiContributi = new HashMap<>();
-            final Map<String, String> cacheElementiVoce = new HashMap<>();
+            // Mappe che gestiscono le query di validazione
+            Map<String, Boolean> cacheCodiciEsistenti = new HashMap<>();
+            Map<String, String> cacheGruppiContributi = new HashMap<>();
+            Map<String, String> cacheElementiVoce = new HashMap<>();
 
             // === Elaborazione con validazioni integrate (un solo loop) ===
             for (Map.Entry<String, BigDecimal> entryAggregazione : contributiAggregatiPerChiave.entrySet()) {
-                final String chiaveAggregazione = entryAggregazione.getKey();
-                final String codiceContributo = codicePerChiave.get(chiaveAggregazione);
-                final String tipoEntePercipiente = tipoEntePerChiave.get(chiaveAggregazione);
-                final BigDecimal importoTotaleAggregato = entryAggregazione.getValue();
+                String chiaveAggregazione = entryAggregazione.getKey();
+                String codiceContributo = codicePerChiave.get(chiaveAggregazione);
+                String tipoEntePercipiente = tipoEntePerChiave.get(chiaveAggregazione);
+                BigDecimal importoTotaleAggregato = entryAggregazione.getValue();
 
-                // === VALIDAZIONI DI CONFIGURAZIONE (checkConfigurazioneCodiciRitenute.ktr) ===
+                // VALIDAZIONI DI CONFIGURAZIONE (checkConfigurazioneCodiciRitenute)
 
                 // 1) Verifica esistenza codice in TIPO_CONTRIBUTO_RITENUTA
                 boolean esisteCodiceContributo = cacheCodiciEsistenti.computeIfAbsent(codiceContributo, codice -> {
@@ -423,7 +410,7 @@ public class FlussoStipendiComponent extends CRUDComponent {
                                     ", MP=" + dettaglioGruppoContributo.getCd_modalita_pagamento() + "]");
                 }
 
-                // === TUTTE LE VALIDAZIONI SUPERATE: PROCEDE CON INSERIMENTO/AGGIORNAMENTO ===
+                // === TUTTE LE VALIDAZIONI SUPERATE: PROCEDE CON INSERIMENTO ===
 
                 // Crea la chiave primaria per verificare esistenza record
                 Stipendi_cofi_coriBulk chiavePrimariaRecord = new Stipendi_cofi_coriBulk(
@@ -485,16 +472,6 @@ public class FlussoStipendiComponent extends CRUDComponent {
         }
     }
 
-    /*
-     * METODI DI LOOKUP PER LE VALIDAZIONI DI CONFIGURAZIONE
-     * Implementano la catena di validazioni delle KTR:
-     * - tipo_contributo_ritenuta (esistenza codice)
-     * - tipo_cr_base (→ CD_GRUPPO_CR)
-     * - ASS_TIPO_CORI_EV (→ CD_ELEMENTO_VOCE) per (ESERCIZIO,CODICE,TI)
-     * - gruppo_cr_det (→ CD_TERZO_VERSAMENTO, PG_BANCA, CD_MODALITA_PAGAMENTO)
-     * - terzo (verifica esistenza CD_TERZO)
-     * - banca (verifica esistenza conto per CD_TERZO + PG_BANCA)
-     */
 
     /**
      * Carica il codice gruppo dal TIPO_CR_BASE per un dato contributo/ritenuta
@@ -502,17 +479,17 @@ public class FlussoStipendiComponent extends CRUDComponent {
     private String loadCdGruppoCrFor(UserContext userContext, Integer esercizio, String codiceContributo)
             throws ComponentException {
         try {
-            it.cnr.contab.compensi00.tabrif.bulk.Tipo_cr_baseHome tipoCrBaseHome =
-                    (it.cnr.contab.compensi00.tabrif.bulk.Tipo_cr_baseHome)
-                            getHome(userContext, it.cnr.contab.compensi00.tabrif.bulk.Tipo_cr_baseBulk.class);
+            Tipo_cr_baseHome tipoCrBaseHome =
+                    (Tipo_cr_baseHome)
+                            getHome(userContext, Tipo_cr_baseBulk.class);
 
-            it.cnr.contab.compensi00.tabrif.bulk.Tipo_cr_baseBulk chiaveTipoCrBase =
-                    new it.cnr.contab.compensi00.tabrif.bulk.Tipo_cr_baseBulk();
+            Tipo_cr_baseBulk chiaveTipoCrBase =
+                    new Tipo_cr_baseBulk();
             chiaveTipoCrBase.setEsercizio(esercizio);
             chiaveTipoCrBase.setCd_contributo_ritenuta(codiceContributo);
 
             try {
-                it.cnr.contab.compensi00.tabrif.bulk.Tipo_cr_baseBulk recordTrovato =
+                Tipo_cr_baseBulk recordTrovato =
                         (Tipo_cr_baseBulk) tipoCrBaseHome.findByPrimaryKey(userContext, chiaveTipoCrBase);
                 return (recordTrovato != null) ? recordTrovato.getCd_gruppo_cr() : null;
             } catch (ObjectNotFoundException e) {
@@ -530,19 +507,13 @@ public class FlussoStipendiComponent extends CRUDComponent {
                                          String codiceContributo, String tipoEntePercipiente)
             throws ComponentException {
         try {
-            it.cnr.contab.compensi00.tabrif.bulk.Ass_tipo_cori_evHome assocTipoCoriEvHome =
-                    (it.cnr.contab.compensi00.tabrif.bulk.Ass_tipo_cori_evHome)
-                            getHome(userContext, it.cnr.contab.compensi00.tabrif.bulk.Ass_tipo_cori_evBulk.class);
-
-            it.cnr.contab.compensi00.tabrif.bulk.Ass_tipo_cori_evBulk chiaveAssociazione =
-                    new it.cnr.contab.compensi00.tabrif.bulk.Ass_tipo_cori_evBulk();
-            chiaveAssociazione.setEsercizio(esercizio);
-            chiaveAssociazione.setCd_contributo_ritenuta(codiceContributo);
-            chiaveAssociazione.setTi_ente_percepiente(tipoEntePercipiente); // NB: tabella usa "percepiente"
+            Ass_tipo_cori_evHome assocTipoCoriEvHome =
+                    (Ass_tipo_cori_evHome)
+                            getHome(userContext, Ass_tipo_cori_evBulk.class);
 
             try {
-                it.cnr.contab.compensi00.tabrif.bulk.Ass_tipo_cori_evBulk recordTrovato =
-                        (Ass_tipo_cori_evBulk) assocTipoCoriEvHome.findByPrimaryKey(userContext, chiaveAssociazione);
+                Ass_tipo_cori_evBulk recordTrovato = assocTipoCoriEvHome.getAssCoriEv(esercizio, codiceContributo,
+                        Elemento_voceHome.APPARTENENZA_CNR, Elemento_voceHome.GESTIONE_ENTRATE, tipoEntePercipiente);
                 return (recordTrovato != null) ? recordTrovato.getCd_elemento_voce() : null;
             } catch (ObjectNotFoundException e) {
                 return null; // Record non trovato
@@ -557,9 +528,9 @@ public class FlussoStipendiComponent extends CRUDComponent {
      */
     private Gruppo_cr_detBulk loadGruppoCr_CrDetFor(UserContext userContext, Integer esercizio, String codiceGruppo) {
         try {
-            it.cnr.contab.compensi00.tabrif.bulk.Gruppo_cr_detHome gruppoDettaglioHome =
-                    (it.cnr.contab.compensi00.tabrif.bulk.Gruppo_cr_detHome)
-                            getHome(userContext, it.cnr.contab.compensi00.tabrif.bulk.Gruppo_cr_detBulk.class);
+            Gruppo_cr_detHome gruppoDettaglioHome =
+                    (Gruppo_cr_detHome)
+                            getHome(userContext, Gruppo_cr_detBulk.class);
 
             // Crea la chiave per il gruppo principale
             Gruppo_crBulk chiaveGruppoPrincipale = new Gruppo_crBulk();
@@ -603,26 +574,27 @@ public class FlussoStipendiComponent extends CRUDComponent {
     /**
      * Verifica l'esistenza di una banca per un dato terzo
      */
-    private boolean existsBanca(UserContext userContext, Integer codiceTerzo, Long progressivoBanca) {
+    private boolean existsBanca(UserContext userContext, Integer codiceTerzo, Long progressivoBanca) throws ComponentException {
         if (codiceTerzo == null || progressivoBanca == null) return false;
 
         try {
             BancaHome bancaHome = (BancaHome) getHome(userContext, BancaBulk.class);
 
-            BancaBulk chiaveBanca = new BancaBulk();
-            chiaveBanca.setCd_terzo(codiceTerzo);
-            chiaveBanca.setPg_banca(progressivoBanca);
-
             try {
-                return bancaHome.findByPrimaryKey(chiaveBanca) != null;
+                BancaBulk bancaBulkKey = new BancaBulk();
+                TerzoBulk terzoBulkKey = new TerzoBulk();
+                terzoBulkKey.setCd_terzo(codiceTerzo);
+                bancaBulkKey.setTerzo(terzoBulkKey);
+                bancaBulkKey.setPg_banca(progressivoBanca);
+                bancaBulkKey.setCd_terzo(codiceTerzo);
+                return bancaHome.findByPrimaryKey(bancaBulkKey) != null;
             } catch (ObjectNotFoundException e) {
                 return false; // Banca non trovata
             }
-        } catch (PersistencyException | ComponentException e) {
+        } catch (PersistencyException e) {
             return false; // Errore di accesso ai dati
         }
     }
-
 
     /**
      * Converte CDS a 3 cifre se singola cifra (9→999, altrimenti 00d). Non altera gli altri formati.
@@ -639,3 +611,5 @@ public class FlussoStipendiComponent extends CRUDComponent {
 
 
 }
+
+
