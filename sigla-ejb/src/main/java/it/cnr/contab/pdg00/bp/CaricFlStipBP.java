@@ -1,19 +1,14 @@
 package it.cnr.contab.pdg00.bp;
 
-import it.cnr.contab.pdg00.cdip.bulk.CaricFlStipBulk;
-import it.cnr.contab.pdg00.cdip.bulk.GestioneStipBulk;
-import it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiBulk;
-import it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofi_obb_scadBulk;
-import it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofi_coriBulk;
+import it.cnr.contab.pdg00.cdip.bulk.*;
 import it.cnr.contab.pdg00.ejb.FlussoStipendiComponentSession;
-
+import it.cnr.contab.service.SpringUtil;
+import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
-
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.contab.util00.bulk.storage.AllegatoParentIBulk;
-
 import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
@@ -24,25 +19,24 @@ import it.cnr.jada.util.OrderConstants;
 import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.jada.util.action.FormBP;
 import it.cnr.jada.util.jsp.Button;
-
-import org.apache.poi.xssf.usermodel.*;
+import it.cnr.si.spring.storage.StorageDriver;
 import org.apache.poi.ss.usermodel.DataFormatter;
-
-
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.ejb.EJBException;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlStipBulk> {
     public static final String FLUSSO_STIPENDI = "Flusso Stipendi";
-    private Integer esercizio;
+        private Integer esercizio;
     private UserContext uc;
 
     public CaricFlStipBP() {}
@@ -58,8 +52,8 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
         CaricFlStipBulk bulk = new CaricFlStipBulk();
         bulk.setCrudStatus(OggettoBulk.NORMAL);
         setModel(ctx, initializeModelForEditAllegati(ctx, bulk));
-        getCrudArchivioAllegati().setOrderBy(ctx, "onlyinsert", OrderConstants.ORDER_DESC);
-//        assicuraCampiAbilitati(ctx); // abilitazione upload subito
+      //  getCrudArchivioAllegati().setOrderBy(ctx, "onlyinsert", OrderConstants.ORDER_DESC);
+       assicuraCampiAbilitati(ctx); // abilitazione upload subito
 
     }
 
@@ -81,12 +75,20 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
     }
 
 
-
-    // target: .../ComunicazioniDAL/Flusso Stipendi/<esercizio>
     @Override
-    protected String getStorePath(CaricFlStipBulk parent, boolean create) {
-        return AllegatoParentIBulk.getStorePath(FLUSSO_STIPENDI, esercizio);
+    protected String getStorePath(CaricFlStipBulk allegatoParentBulk, boolean create) throws BusinessProcessException {
+        return Arrays.asList(
+                SpringUtil.getBean(StorePath.class).getPathComunicazioniAl(),
+                "FlussoStipendi",
+                Optional.ofNullable(allegatoParentBulk.getEsercizio())
+                        .map(esercizio -> String.valueOf(esercizio))
+                        .orElse("0")
+        ).stream().collect(
+                Collectors.joining(StorageDriver.SUFFIX)
+        );
     }
+    // target: .../ComunicazioniDAL/Flusso Stipendi/<esercizio>
+
 
     @Override
     protected Class<AllegatoGenericoBulk> getAllegatoClass() {
@@ -96,13 +98,6 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
     @Override
     public String getAllegatiFormName() {
         return "onlyinsert"; // form senza pulsante "Apri File"
-    }
-
-    // --- SOLO UN FILE ALLA VOLTA ---
-    @Override
-    protected boolean isChildGrowable(boolean isGrowable) {
-        CaricFlStipBulk parent = (CaricFlStipBulk) getModel();
-        return isGrowable && parent.getArchivioAllegati().isEmpty();
     }
 
 
@@ -127,7 +122,8 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
 
     private void elaboraDaStorage(AllegatoGenericoBulk allegato) throws ApplicationException {
         try (InputStream in = storeService.getResource(allegato.getStorageKey())) {
-            processFlussoStipendi(in, allegato.getNome());
+            GestioneStipBulk bulk=processFlussoStipendi(in, allegato.getNome());
+            //Store file inpute
             setMessage(FormBP.INFO_MESSAGE, "Flusso stipendi elaborato correttamente.");
         } catch (IOException e) {
             throw new ApplicationException("Errore lettura file archiviato: " + allegato.getNome(), e);
@@ -182,18 +178,18 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
         CaricFlStipBulk model = (CaricFlStipBulk) getModel();
         model.getArchivioAllegati().clear();
         model.setTipo_rapporto(null);
-//        assicuraCampiAbilitati(ctx);  // nuovo TO_BE_CREATED
+      assicuraCampiAbilitati(ctx);  // nuovo TO_BE_CREATED
         setStatus(CRUDBP.INSERT);
     }
 
     // ---------- LOGICA ELABORAZIONE FILE ----------
-    private void processFlussoStipendi(InputStream in, String filename)
+    private GestioneStipBulk processFlussoStipendi(InputStream in, String filename)
             throws ApplicationException {
         String f = filename == null ? "" : filename.toLowerCase();
         try {
             if (f.endsWith(".xlsx")) {
                 try (XSSFWorkbook wb = new XSSFWorkbook(in)) {
-                    elaboraWorkbookXlsx(this.uc, wb);
+                    return elaboraWorkbookXlsx(this.uc, wb);
                 }
             } else {
                 throw new ApplicationException("Formato non supportato: " + filename);
@@ -205,7 +201,10 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
         }
     }
 
-    private void elaboraWorkbookXlsx(UserContext uc, XSSFWorkbook wb)
+
+
+
+    private GestioneStipBulk elaboraWorkbookXlsx(UserContext uc, XSSFWorkbook wb)
             throws ApplicationException, BusinessProcessException {
 
         XSSFSheet sheetLordi = null, sheetRitenute = null;
@@ -224,7 +223,7 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
         elaboraSheetRitenuteInterno(sheetRitenute, bulk);
 
         try {
-            createComponentSession().gestioneFlussoStipendi(uc, bulk);
+            return createComponentSession().gestioneFlussoStipendi(uc, bulk);
         } catch (ComponentException | RemoteException e) {
             throw new RuntimeException(e);
         }
@@ -316,17 +315,17 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
             bulk.getStipendiCofiCoriBulks().add(cori);
         }
     }
-//
-//    private void assicuraCampiAbilitati(ActionContext ctx) {
-//        CaricFlStipBulk m = (CaricFlStipBulk) getModel();
-//        if (m.getArchivioAllegati().isEmpty()) {
-//            AllegatoGenericoBulk a = new AllegatoGenericoBulk();
-//            a.setCrudStatus(OggettoBulk.TO_BE_CREATED); // abilita i campi
-//            m.addToArchivioAllegati(a);
-//        }
-//        getCrudArchivioAllegati().setModelIndex(ctx, 0);
-//        getCrudArchivioAllegati().setSelection(Collections.emptyEnumeration());
-//    }
+
+    private void assicuraCampiAbilitati(ActionContext ctx) {
+        CaricFlStipBulk m = (CaricFlStipBulk) getModel();
+        if (m.getArchivioAllegati().isEmpty()) {
+            AllegatoGenericoBulk a = new AllegatoGenericoBulk();
+            a.setCrudStatus(OggettoBulk.TO_BE_CREATED); // abilita i campi
+            m.addToArchivioAllegati(a);
+        }
+        getCrudArchivioAllegati().setModelIndex(ctx, 0);
+        getCrudArchivioAllegati().setSelection(Collections.emptyEnumeration());
+    }
 
     public FlussoStipendiComponentSession createComponentSession()
             throws EJBException, BusinessProcessException {

@@ -1,13 +1,13 @@
 package it.cnr.contab.pdg00.cdip.bulk;
 
-import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.persistency.Persistent;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 
 import java.util.List;
 
 
 //controlli su pentaho
-public class GestioneStipBulk extends OggettoBulk implements Persistent{
+public class GestioneStipBulk extends AllegatoGenericoBulk {
+
 
     Stipendi_cofiBulk stipendiCofiBulk;
     List<Stipendi_cofi_obb_scadBulk> stipendiCofiObbScadBulks;

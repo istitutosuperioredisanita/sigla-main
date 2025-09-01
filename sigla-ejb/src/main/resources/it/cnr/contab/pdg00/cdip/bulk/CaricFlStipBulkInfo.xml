@@ -32,6 +32,16 @@
 			inputSize="2"
 			enabledOnInsert="true"
 	/>
+	<fieldProperty
+			name="esercizio"
+			property="esercizio"
+			inputType="TEXT"
+			label="Esercizio" />
+	<fieldProperty
+			name="mese"
+			property="mese"
+			inputType="TEXT"
+			label="Mese" />
 
 	<formFieldProperty name="tipo_rapporto"/>
 		

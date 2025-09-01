@@ -1,10 +1,15 @@
 package it.cnr.contab.pdg00.cdip.bulk;
 
 import it.cnr.contab.util00.bulk.storage.AllegatoParentIBulk;
+
 import java.util.Dictionary;
 
 public class CaricFlStipBulk extends AllegatoParentIBulk {
     private String tipo_rapporto;
+
+    private Integer progressivo;
+
+    private Integer esercizio;
 
     public String getTipo_rapporto() { return tipo_rapporto; }
     public void setTipo_rapporto(String tipo_rapporto) { this.tipo_rapporto = tipo_rapporto; }
@@ -19,4 +24,20 @@ public class CaricFlStipBulk extends AllegatoParentIBulk {
         tipo_rapportoKeys.put(COLLABORATORE_COORD_E_CONT, "Collaboratore");
     }
     public Dictionary getTipo_rapportoKeys() { return tipo_rapportoKeys; }
+
+    public Integer getProgressivo() {
+        return progressivo;
+    }
+
+    public void setProgressivo(Integer progressivo) {
+        this.progressivo = progressivo;
+    }
+
+    public Integer getEsercizio() {
+        return esercizio;
+    }
+
+    public void setEsercizio(Integer esercizio) {
+        this.esercizio = esercizio;
+    }
 }

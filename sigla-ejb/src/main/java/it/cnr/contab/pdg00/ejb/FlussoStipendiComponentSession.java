@@ -18,7 +18,6 @@
 package it.cnr.contab.pdg00.ejb;
 
 import it.cnr.contab.pdg00.cdip.bulk.GestioneStipBulk;
-import it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
@@ -28,6 +27,6 @@ import javax.ejb.Remote;
 @Remote
 public interface FlussoStipendiComponentSession extends CRUDComponentSession {
 
-    void gestioneFlussoStipendi(UserContext userContext, GestioneStipBulk bulk) throws ComponentException,java.rmi.RemoteException;
+    GestioneStipBulk gestioneFlussoStipendi(UserContext userContext, GestioneStipBulk bulk) throws ComponentException,java.rmi.RemoteException;
 
 }

@@ -57,7 +57,7 @@ public class FlussoStipendiComponent extends CRUDComponent {
     /**
      * Orchestratore: salva testata e poi righe OBB/SCAD.
      */
-    public void gestioneFlussoStipendi(UserContext userContext, GestioneStipBulk bulk)
+    public GestioneStipBulk gestioneFlussoStipendi(UserContext userContext, GestioneStipBulk bulk)
             throws ComponentException, RemoteException {
 
         inserisciStipendiCofi(userContext, bulk.getStipendiCofiBulk());
@@ -65,6 +65,7 @@ public class FlussoStipendiComponent extends CRUDComponent {
         EsitoCori esito = inserisciStipendiCofiCoriCompleto(userContext, bulk.getStipendiCofiBulk(), bulk.getStipendiCofiCoriBulks());
 
         esito.gestioneNoOk();
+        return bulk;
     }
 
 

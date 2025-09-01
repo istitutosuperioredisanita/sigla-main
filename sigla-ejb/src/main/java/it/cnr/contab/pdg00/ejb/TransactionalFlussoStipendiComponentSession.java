@@ -18,7 +18,6 @@
 package it.cnr.contab.pdg00.ejb;
 
 import it.cnr.contab.pdg00.cdip.bulk.GestioneStipBulk;
-import it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 
@@ -27,9 +26,9 @@ import java.rmi.RemoteException;
 public class TransactionalFlussoStipendiComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements FlussoStipendiComponentSession {
 
     @Override
-    public void gestioneFlussoStipendi(UserContext param0, GestioneStipBulk param1) throws ComponentException, RemoteException {
+    public GestioneStipBulk gestioneFlussoStipendi(UserContext param0, GestioneStipBulk param1) throws ComponentException, RemoteException {
         try {
-            invoke("gestioneFlussoStipendi", new Object[]{
+           return ( GestioneStipBulk) invoke("gestioneFlussoStipendi", new Object[]{
                     param0,
                     param1});
         } catch(java.rmi.RemoteException e) {

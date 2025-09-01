@@ -18,9 +18,7 @@
 package it.cnr.contab.pdg00.ejb;
 
 import it.cnr.contab.pdg00.cdip.bulk.GestioneStipBulk;
-import it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiBulk;
 import it.cnr.contab.pdg00.comp.FlussoStipendiComponent;
-import it.cnr.contab.pdg00.comp.StampaSituazioneSinteticaGAEComponent;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSessionBean;
@@ -45,11 +43,12 @@ public class FlussoStipendiComponentSessionBean extends CRUDComponentSessionBean
 	}
 
 	@Override
-	public void gestioneFlussoStipendi(UserContext param0, GestioneStipBulk param1) throws ComponentException,java.rmi.RemoteException {
+	public GestioneStipBulk gestioneFlussoStipendi(UserContext param0, GestioneStipBulk param1) throws ComponentException,java.rmi.RemoteException {
 		pre_component_invocation(param0,componentObj);
 		try {
-			((FlussoStipendiComponent)componentObj).gestioneFlussoStipendi(param0,param1);
+			GestioneStipBulk bulk= (GestioneStipBulk) ((FlussoStipendiComponent)componentObj).gestioneFlussoStipendi(param0,param1);
 			component_invocation_succes(param0,componentObj);
+			return bulk;
 		} catch(it.cnr.jada.comp.NoRollbackException e) {
 			component_invocation_succes(param0,componentObj);
 			throw e;
