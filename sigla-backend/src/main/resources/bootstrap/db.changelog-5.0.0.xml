@@ -6235,5 +6235,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/update_ruolo_tipo_rendiconti.xml"/>
     <!-- Autore : VALENTINA TOMADA - nuova variabile in configurazione_cnr per bloccare importo unitario bene se inventariazione da ordini -->
     <include file="bootstrap/add_conf_gestione_importo_ro_inventario_ordini.xml"/>
-
+    <!-- Autore : DAVIDE MIRRA - aggiunto campo note per la sezione Dati Contabili del Progetto -->
+    <include file="bootstrap/add_column_note_on_progetto_other_field.xml"/>
 </databaseChangeLog>

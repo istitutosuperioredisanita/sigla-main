@@ -103,6 +103,16 @@
 			label="Descrizione"
 			enabledOnSearch="true"
 			caseSensitiveSearch="false" />
+	<fieldProperty
+			name="note_progetto"
+			property="note_progetto"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="400"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
+			label="Note Progetto" />
 
 	<formFieldProperty
 			name="im_voce" />
@@ -122,10 +132,11 @@
 		name="cd_tipo_progetto" />
 	<formFieldProperty
 			name="ds_tipo_progetto" />
+	<formFieldProperty
+			name="note_progetto" />
 
 	<columnFieldProperty
 			name="im_voce" />
-
 	<columnFieldProperty
 			name="pg_progetto" />
 	<columnFieldProperty
@@ -142,5 +153,7 @@
 			name="cd_tipo_progetto" />
 	<columnFieldProperty
 			name="ds_tipo_progetto" />
+	<columnFieldProperty
+			name="note_progetto" />
 
 </bulkInfo>
