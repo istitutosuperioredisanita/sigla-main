@@ -2,16 +2,14 @@ package it.cnr.contab.pdg00.bp;
 
 import it.cnr.contab.pdg00.cdip.bulk.*;
 import it.cnr.contab.pdg00.ejb.FlussoStipendiComponentSession;
-import it.cnr.contab.service.SpringUtil;
-import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
-import it.cnr.contab.util00.bulk.storage.AllegatoParentIBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
@@ -19,24 +17,30 @@ import it.cnr.jada.util.OrderConstants;
 import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.jada.util.action.FormBP;
 import it.cnr.jada.util.jsp.Button;
-import it.cnr.si.spring.storage.StorageDriver;
+import it.cnr.jada.util.upload.UploadedFile;
+import it.cnr.si.spring.storage.StorageObject;
 import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 
 import javax.ejb.EJBException;
+import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * BP per caricamento + elaborazione flusso stipendi.
+ * Usa ESCLUSIVAMENTE il file XLSX caricato.
+ * Flusso: salvataggio nel documentale (nome UUID.xlsx, TITLE "FLUSSO STIPENDI ISS MM/YYYY") → elaborazione.
+ */
 public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlStipBulk> {
+
     public static final String FLUSSO_STIPENDI = "Flusso Stipendi";
-        private Integer esercizio;
+    private Integer esercizio;
     private UserContext uc;
 
     public CaricFlStipBP() {}
@@ -46,18 +50,17 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
     public void initialize(ActionContext ctx) throws BusinessProcessException {
         super.initialize(ctx);
         this.uc = ctx.getUserContext();
-        esercizio = CNRUserContext.getEsercizio(ctx.getUserContext());
+        this.esercizio = CNRUserContext.getEsercizio(ctx.getUserContext());
         setStatus(CRUDBP.INSERT);
 
-        CaricFlStipBulk bulk = new CaricFlStipBulk();
-        bulk.setCrudStatus(OggettoBulk.NORMAL);
-        setModel(ctx, initializeModelForEditAllegati(ctx, bulk));
-      //  getCrudArchivioAllegati().setOrderBy(ctx, "onlyinsert", OrderConstants.ORDER_DESC);
-       assicuraCampiAbilitati(ctx); // abilitazione upload subito
+        CaricFlStipBulk parent = new CaricFlStipBulk();
+        parent.setCrudStatus(OggettoBulk.NORMAL);
+        setModel(ctx, initializeModelInsAllegatoStip(ctx, parent));
 
+        assicuraCampiAbilitati(ctx);
     }
 
-
+    @Override
     protected void basicEdit(ActionContext actioncontext, OggettoBulk oggettobulk, boolean flag) throws BusinessProcessException {
         super.basicEdit(actioncontext, oggettobulk, flag);
         getCrudArchivioAllegati().setOrderBy(actioncontext, "onlyinsert", OrderConstants.ORDER_DESC);
@@ -65,30 +68,19 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
         getCrudArchivioAllegati().setModelIndex(actioncontext, -1);
     }
 
-    @Override
-    public OggettoBulk initializeModelForEdit(ActionContext actioncontext, OggettoBulk oggettobulk) throws BusinessProcessException {
-        Optional.ofNullable(getModel())
-                .filter(AllegatoParentIBulk.class::isInstance)
-                .map(AllegatoParentIBulk.class::cast)
-                .ifPresent(allegatoParentIBulk -> allegatoParentIBulk.getArchivioAllegati().clear());
-        return initializeModelForEditAllegati(actioncontext, oggettobulk);
+    public OggettoBulk initializeModelInsAllegatoStip(ActionContext actioncontext, OggettoBulk oggettobulk) throws BusinessProcessException {
+        CaricFlStipBulk parent = (CaricFlStipBulk) oggettobulk;
+        String path = getStorePath(parent,true);
+        return super.initializeModelForEditAllegati(actioncontext, parent, path, false);
     }
 
-
+    /** Percorso su CMIS: cartella per FLUSSO_STIPENDI / esercizio / progressivo */
     @Override
-    protected String getStorePath(CaricFlStipBulk allegatoParentBulk, boolean create) throws BusinessProcessException {
-        return Arrays.asList(
-                SpringUtil.getBean(StorePath.class).getPathComunicazioniAl(),
-                "FlussoStipendi",
-                Optional.ofNullable(allegatoParentBulk.getEsercizio())
-                        .map(esercizio -> String.valueOf(esercizio))
-                        .orElse("0")
-        ).stream().collect(
-                Collectors.joining(StorageDriver.SUFFIX)
-        );
+    protected String getStorePath(CaricFlStipBulk allegatoParentBulk, boolean create)
+            throws BusinessProcessException {
+        return CaricFlStipBulk.getStorePathStipendi(FLUSSO_STIPENDI,
+                allegatoParentBulk.getEsercizio(), allegatoParentBulk.getProgressivo());
     }
-    // target: .../ComunicazioniDAL/Flusso Stipendi/<esercizio>
-
 
     @Override
     protected Class<AllegatoGenericoBulk> getAllegatoClass() {
@@ -97,121 +89,111 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
 
     @Override
     public String getAllegatiFormName() {
-        return "onlyinsert"; // form senza pulsante "Apri File"
-    }
-
-
-    // Vietiamo qualsiasi modifica
-    @Override
-    protected Boolean isPossibileModifica(AllegatoGenericoBulk allegato) {
-        return false;
+        return "onlyinsert";
     }
 
     @Override
-    protected void completeUpdateAllegato(UserContext userContext, AllegatoGenericoBulk allegato)
-            throws ApplicationException {
-        throw new ApplicationException("La modifica dell’allegato non è consentita. Inserire un nuovo file.");
-    }
+    protected Boolean isPossibileModifica(AllegatoGenericoBulk allegato) { return false; }
 
     @Override
-    protected void completeCreateAllegato(AllegatoGenericoBulk allegato,
-                                          it.cnr.si.spring.storage.StorageObject so)
-            throws ApplicationException {
-        elaboraDaStorage(allegato); // process dopo store
+    protected void completeUpdateAllegato(UserContext userContext, AllegatoGenericoBulk allegato) throws ApplicationException {
+        throw new ApplicationException("La modifica dell'allegato non è consentita. Inserire un nuovo file.");
     }
 
-    private void elaboraDaStorage(AllegatoGenericoBulk allegato) throws ApplicationException {
-        try (InputStream in = storeService.getResource(allegato.getStorageKey())) {
-            GestioneStipBulk bulk=processFlussoStipendi(in, allegato.getNome());
-            //Store file inpute
-            setMessage(FormBP.INFO_MESSAGE, "Flusso stipendi elaborato correttamente.");
-        } catch (IOException e) {
-            throw new ApplicationException("Errore lettura file archiviato: " + allegato.getNome(), e);
-        }
-    }
-
-    // --- SOLO CREATE: blocca qualsiasi update invocato per errore ---
+    /** Dopo lo store dell'XLSX, elabora dal documentale */
     @Override
-    public void update(ActionContext ctx) throws BusinessProcessException {
-        throw new BusinessProcessException(new ApplicationException(
-                "Operazione non consentita: è prevista solo la creazione di un nuovo allegato."
-        ));
+    protected void completeCreateAllegato(AllegatoGenericoBulk allegato, StorageObject so) throws ApplicationException {
+
     }
 
-    // --- PERCORSO UNICO DI SALVATAGGIO ---
-    @Override
-    public void create(ActionContext ctx) throws BusinessProcessException {
-        CaricFlStipBulk parent = (CaricFlStipBulk) getModel();
-        AllegatoGenericoBulk a = parent.getArchivioAllegati().get(0);
-        initialize(ctx);
+    /** Salva (parent) + archivia allegato con nome/titolo richiesti → triggera elaborazione. */
+    public void saveFileStipendi(ActionContext context) throws BusinessProcessException {
+        try {
+            // Recupera il file caricato e verifica che non sia nullo o vuoto
+            it.cnr.jada.util.upload.UploadedFile uploadedFile =
+                    ((it.cnr.jada.action.HttpActionContext) context).getMultipartParameter("main.ArchivioAllegati.file");
 
-        if (a.getCrudStatus() != OggettoBulk.TO_BE_CREATED) {
-            throw new BusinessProcessException(
-                    new ApplicationException("Operazione non consentita: è possibile solo inserire un nuovo allegato.")
-            );
-        }
-
-        if (a.getFile() != null) {
-            if (a.getNome() == null) {
-                a.setNome(a.parseFilename(a.getFile().getName()));
+            if (uploadedFile == null || uploadedFile.getFile() == null || uploadedFile.getFile().length() == 0L) {
+                throw new ApplicationException("File non caricato correttamente o vuoto. Riprovare.");
             }
-        }
 
-        // 1) Salva fisicamente il file nello store (via AllegatiCRUDBP.archiviaAllegati)
-        super.create(ctx);
+            File file = uploadedFile.getFile();
 
-        try {
-            elaboraDaStorage(a);
+            // Elabora il file usando un blocco try-with-resources per garantire la chiusura dello stream
+            GestioneStipBulk stipBulkParsed;
+            try (InputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
+                stipBulkParsed = processFlussoStipendi(is, file.getName());
+            }
+
+            CaricFlStipBulk allegatoStipBulk = setAllegatoStipBulk(stipBulkParsed, file, uploadedFile);
+
+            // Imposta lo stato 'to be created' sull'oggetto allegato nidificato (ci sarà sempre un solo allegato nell'archivio)
+            allegatoStipBulk.getArchivioAllegati().get(0).setCrudStatus(OggettoBulk.TO_BE_CREATED);
+
+            // Finalizza la creazione e il salvataggio
+            super.create(context);
+
             setMessage(FormBP.INFO_MESSAGE, "Flusso stipendi elaborato correttamente.");
-        } catch (ApplicationException ex) {
-            throw new BusinessProcessException(ex);
+
+            // Resetta il tipo rapporto del model dopo l'elaborazione
+            ((CaricFlStipBulk) getModel()).setTipo_rapporto("");
+
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }
+
+    private CaricFlStipBulk setAllegatoStipBulk(GestioneStipBulk stipBulkParsed, File file, UploadedFile uploadedFile) {
+        CaricFlStipBulk allegatoStipBulk = (CaricFlStipBulk) getModel();
+
+        // Aggiorna il modello con i dati elaborati utilizzando un controllo null-safe
+        if (stipBulkParsed != null && stipBulkParsed.getStipendiCofiBulk() != null) {
+            Stipendi_cofiBulk sc = stipBulkParsed.getStipendiCofiBulk();
+            allegatoStipBulk.setEsercizio(sc.getEsercizio());
+            allegatoStipBulk.setProgressivo(sc.getMese() != null ? sc.getMese() : sc.getMese_reale());
         }
 
-        // 3) Reset per nuovo upload
-        resetForNextUpload(ctx);
+        // Configura il bulk con il suo allegato
+        allegatoStipBulk.setFile(file);
+        allegatoStipBulk.setNome(file.getName());
+        allegatoStipBulk.setContentType(uploadedFile.getContentType());
+
+        allegatoStipBulk.setCrudStatus(OggettoBulk.TO_BE_CREATED);
+
+        // Crea la lista bulk e configura il singolo allegato
+        BulkList<AllegatoGenericoBulk> allegati = new BulkList<>();
+        allegati.add(allegatoStipBulk);
+        allegatoStipBulk.setArchivioAllegati(allegati);
+        return allegatoStipBulk;
     }
 
 
 
-    // RESET dopo salvataggio riuscito
-    private void resetForNextUpload(ActionContext ctx) throws BusinessProcessException {
-        CaricFlStipBulk model = (CaricFlStipBulk) getModel();
-        model.getArchivioAllegati().clear();
-        model.setTipo_rapporto(null);
-      assicuraCampiAbilitati(ctx);  // nuovo TO_BE_CREATED
-        setStatus(CRUDBP.INSERT);
-    }
+    // ---------- ELABORAZIONE XLSX ----------
 
-    // ---------- LOGICA ELABORAZIONE FILE ----------
-    private GestioneStipBulk processFlussoStipendi(InputStream in, String filename)
-            throws ApplicationException {
-        String f = filename == null ? "" : filename.toLowerCase();
+    private GestioneStipBulk processFlussoStipendi(InputStream in, String filename) throws ApplicationException {
         try {
-            if (f.endsWith(".xlsx")) {
-                try (XSSFWorkbook wb = new XSSFWorkbook(in)) {
-                    return elaboraWorkbookXlsx(this.uc, wb);
-                }
-            } else {
-                throw new ApplicationException("Formato non supportato: " + filename);
+            String nome = Optional.ofNullable(filename).orElse("").toLowerCase(Locale.ITALY);
+            if (!nome.endsWith(".xlsx")) {
+                throw new ApplicationException("Formato non supportato: " + filename + ". Caricare un file .xlsx.");
+            }
+
+            try (XSSFWorkbook wb = new XSSFWorkbook(in)) {
+                return elaboraWorkbookXlsx(this.uc, wb);
             }
         } catch (IOException ex) {
             throw new ApplicationException("Impossibile aprire il file " + filename, ex);
         } catch (BusinessProcessException bpe) {
-            throw new ApplicationException("Errore di processo durante l’elaborazione.", bpe);
+            throw new ApplicationException("Errore di processo durante l'elaborazione.", bpe);
         }
     }
 
-
-
-
-    private GestioneStipBulk elaboraWorkbookXlsx(UserContext uc, XSSFWorkbook wb)
-            throws ApplicationException, BusinessProcessException {
-
+    private GestioneStipBulk elaboraWorkbookXlsx(UserContext uc, XSSFWorkbook wb) throws ApplicationException, BusinessProcessException {
         XSSFSheet sheetLordi = null, sheetRitenute = null;
         for (int i = 0; i < wb.getNumberOfSheets(); i++) {
             String name = wb.getSheetName(i);
             if (name == null) continue;
-            String up = name.toUpperCase();
+            String up = name.toUpperCase(Locale.ITALY);
             if (up.contains("LORDI")) sheetLordi = wb.getSheetAt(i);
             else if (up.contains("RITENUTE")) sheetRitenute = wb.getSheetAt(i);
         }
@@ -255,7 +237,7 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
             if (!stipendiCofiSet) {
                 stipendiCofi = new Stipendi_cofiBulk();
                 stipendiCofi.setEsercizio(Utility.parseInteger(esercizio, "esercizio", i));
-                stipendiCofi.setMese(null); // da UI
+                stipendiCofi.setMese(null); // gestito da UI; mese reale proviene dal file
                 stipendiCofi.setMese_reale(Utility.parseInteger(mese, "mese reale (da file)", i));
                 if (!org.springframework.util.StringUtils.isEmpty(tipo)) {
                     stipendiCofi.setTipo_flusso(tipo.trim());
@@ -320,15 +302,14 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
         CaricFlStipBulk m = (CaricFlStipBulk) getModel();
         if (m.getArchivioAllegati().isEmpty()) {
             AllegatoGenericoBulk a = new AllegatoGenericoBulk();
-            a.setCrudStatus(OggettoBulk.TO_BE_CREATED); // abilita i campi
+            a.setCrudStatus(OggettoBulk.TO_BE_CREATED); // abilita i campi di upload
             m.addToArchivioAllegati(a);
         }
         getCrudArchivioAllegati().setModelIndex(ctx, 0);
         getCrudArchivioAllegati().setSelection(Collections.emptyEnumeration());
     }
 
-    public FlussoStipendiComponentSession createComponentSession()
-            throws EJBException, BusinessProcessException {
+    public FlussoStipendiComponentSession createComponentSession() throws EJBException, BusinessProcessException {
         return (FlussoStipendiComponentSession) createComponentSession(
                 "CNRPDG00_EJB_FlussoStipendiComponentSession",
                 FlussoStipendiComponentSession.class
@@ -341,7 +322,6 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
         return Stream.of(new Button(props, "CRUDToolbar.save")).toArray(Button[]::new);
     }
 
-    // UI: tutti i bottoni disabilitati tranne salva
     @Override public boolean isNewButtonHidden()        { return true; }
     @Override public boolean isDeleteButtonHidden()     { return true; }
     @Override public boolean isSearchButtonHidden()     { return true; }
