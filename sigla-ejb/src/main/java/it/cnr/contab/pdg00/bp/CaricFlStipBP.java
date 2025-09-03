@@ -194,7 +194,7 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
             String name = wb.getSheetName(i);
             if (name == null) continue;
             String up = name.toUpperCase(Locale.ITALY);
-            if (up.contains("LORDI")) sheetLordi = wb.getSheetAt(i);
+            if (up.contains("LORD")) sheetLordi = wb.getSheetAt(i);
             else if (up.contains("RITENUTE")) sheetRitenute = wb.getSheetAt(i);
         }
         if (sheetLordi == null)  throw new ApplicationException("Sheet contenente 'LORDI' non trovato.");
