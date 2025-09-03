@@ -227,10 +227,10 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
             String mese      = fmt.formatCellValue(r.getCell(1));
             String tipo      = fmt.formatCellValue(r.getCell(2));
             String cds       = fmt.formatCellValue(r.getCell(3));
-            String annoObbl  = fmt.formatCellValue(r.getCell(4));
+            String annoObblOrigine  = fmt.formatCellValue(r.getCell(4));;
             String numeroObbl= fmt.formatCellValue(r.getCell(5));
             String importo   = fmt.formatCellValue(r.getCell(6));
-            String esercizioObbl = fmt.formatCellValue(r.getCell(12));
+            String esercizioObbl = esercizio;
 
             if (Utility.isAnyEmpty(esercizio, mese)) continue;
 
@@ -246,7 +246,7 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
                 stipendiCofiSet = true;
             }
 
-            if (!Utility.isAnyEmpty(cds, annoObbl, numeroObbl, importo, esercizioObbl)) {
+            if (!Utility.isAnyEmpty(cds, annoObblOrigine, numeroObbl, importo, esercizioObbl)) {
                 if (bulk.getStipendiCofiObbScadBulks() == null) {
                     bulk.setStipendiCofiObbScadBulks(new ArrayList<>());
                 }
@@ -254,7 +254,7 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
                 obbScad.setStipendi_cofi(stipendiCofi);
                 obbScad.setCd_cds_obbligazione(cds.trim());
                 obbScad.setEsercizio_obbligazione(Utility.parseInteger(esercizioObbl, "esercizio_obbligazione", i));
-                obbScad.setEsercizio_ori_obbligazione(Utility.parseInteger(annoObbl, "annoObbl", i));
+                obbScad.setEsercizio_ori_obbligazione(Utility.parseInteger(annoObblOrigine, "annoObblOrigine", i));
                 obbScad.setPg_obbligazione(Utility.parseLong(numeroObbl, "numeroObbl", i));
                 obbScad.setIm_totale(Utility.parseBigDecimal(importo, "importo", i));
                 bulk.getStipendiCofiObbScadBulks().add(obbScad);

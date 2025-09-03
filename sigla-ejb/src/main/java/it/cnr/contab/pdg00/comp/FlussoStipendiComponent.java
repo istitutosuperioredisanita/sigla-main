@@ -213,10 +213,14 @@ public class FlussoStipendiComponent extends CRUDComponent {
                 }
 
                 // Assicura l'esistenza della riga OBB (find or create)
-                Stipendi_cofi_obbBulk obbBulk = new Stipendi_cofi_obbBulk(stipendiCofi.getEsercizio(), data.getCds(), data.getEsObb(), data.getEsOri(), data.getPgObb());
+                Stipendi_cofi_obbBulk obbBulk =null;
                 try {
-                    stipObbHome.findByPrimaryKey(userContext, obbBulk);
+                    obbBulk = ( Stipendi_cofi_obbBulk) stipObbHome.findByPrimaryKey(userContext,  new Stipendi_cofi_obbBulk(stipendiCofi.getEsercizio(), data.getCds(), data.getEsObb(), data.getEsOri(), data.getPgObb()));
                 } catch (ObjectNotFoundException e) {
+
+                }
+                if ( !Optional.ofNullable(obbBulk).isPresent()) {
+                    obbBulk= new Stipendi_cofi_obbBulk(stipendiCofi.getEsercizio(), data.getCds(), data.getEsObb(), data.getEsOri(), data.getPgObb());
                     obbBulk.setToBeCreated();
                     super.creaConBulk(userContext, obbBulk);
                 }
@@ -235,7 +239,7 @@ public class FlussoStipendiComponent extends CRUDComponent {
             }
 
         } catch (PersistencyException e) {
-            throw new ComponentException(e);
+            throw new ApplicationException(e);
         }
     }
 
