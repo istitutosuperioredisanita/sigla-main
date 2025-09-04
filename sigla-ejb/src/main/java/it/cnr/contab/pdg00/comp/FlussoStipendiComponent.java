@@ -26,7 +26,6 @@ import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceHome;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneHome;
 import it.cnr.contab.doccont00.dto.EsitoCori;
-import it.cnr.contab.doccont00.dto.ObligAgrrDTO;
 import it.cnr.contab.pdg00.cdip.bulk.*;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ApplicationException;
@@ -39,6 +38,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofi_coriBulk.firstDayOfMonthTs;
 import static it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofi_coriBulk.lastDayOfMonthTs;
@@ -87,18 +87,13 @@ public class FlussoStipendiComponent extends CRUDComponent {
             if (bulk == null) throw new ComponentException("Stipendi_cofiBulk nullo.");
             if (bulk.getEsercizio() == null) throw new ComponentException("Esercizio non valorizzato (NOT NULL).");
             if (bulk.getMese_reale() == null) throw new ComponentException("Mese_reale non valorizzato (NOT NULL).");
-
-            // Default STATO
-            if (bulk.getStato() == null || bulk.getStato().trim().isEmpty()) {
-                bulk.setStato(Stipendi_cofiBulk.STATO_NON_LIQUIDATO);
-            }
-
-            // Check TIPO_FLUSSO
+            bulk.setStato(Stipendi_cofiBulk.STATO_NON_LIQUIDATO);
+           // Check TIPO_FLUSSO
             String tipoFlusso = bulk.getTipo_flusso();
             if (tipoFlusso == null || (tipoFlusso = tipoFlusso.trim()).isEmpty())
                 throw new ComponentException("Tipo_flusso obbligatorio (ammessi C/D).");
             if (!"C".equalsIgnoreCase(tipoFlusso) && !"D".equalsIgnoreCase(tipoFlusso))
-                throw new ComponentException("Tipo_flusso non valido: usare 'C' o 'D'.");
+                throw new ComponentException("Tipo_flusso non valido: ammessi  C( Collaboratori) o D (Dipendenti).");
             bulk.setTipo_flusso(tipoFlusso.toUpperCase());
 
             // Se esiste già (ESERCIZIO+MESE), vietiamo la modifica
@@ -115,16 +110,7 @@ public class FlussoStipendiComponent extends CRUDComponent {
                     // Non esiste: si potrà procedere ad INSERT
                 }
             }
-
-            // INSERT: assicuro PK (MESE), poi PROG_FLUSSO = MESE
-            if (bulk.getMese() == null) {
-                home.initializePrimaryKeyForInsert(userContext, bulk);
-                if (bulk.getMese() == null) {
-                    throw new ComponentException("Impossibile assegnare la PK (MESE).");
-                }
-            }
-
-            bulk.setProg_flusso(bulk.getMese());
+            bulk.setProg_flusso(bulk.getMese_reale());
             bulk.setToBeCreated();
             super.creaConBulk(userContext, bulk);
 
@@ -155,92 +141,50 @@ public class FlussoStipendiComponent extends CRUDComponent {
         if (stipendiCofiObbScadBulks == null || stipendiCofiObbScadBulks.isEmpty()) {
             return;
         }
+        Stipendi_cofi_obb_scadHome scadHome = (Stipendi_cofi_obb_scadHome) getHome(userContext, Stipendi_cofi_obb_scadBulk.class);
+        Stipendi_cofi_obbHome stipObbHome = (Stipendi_cofi_obbHome) getHome(userContext, Stipendi_cofi_obbBulk.class);
+        ObbligazioneHome obbHome = (ObbligazioneHome) getHome(userContext, ObbligazioneBulk.class);
+        Map<Stipendi_cofi_obbBulk,Double> stipendiCofiObbTotali= stipendiCofiObbScadBulks.stream().collect(Collectors.groupingBy(o->(o.getStipendi_cofi_obb()),Collectors.summingDouble(o->o.getIm_totale().doubleValue())));
+        if (Optional.ofNullable(stipendiCofiObbTotali).isPresent()){
+                    for (Stipendi_cofi_obbBulk stipendi_cofi_obb : stipendiCofiObbTotali.keySet()) {
+                        ObbligazioneBulk obbligazioneBulk=null;
+                        BigDecimal importoTotale = BigDecimal.valueOf(stipendiCofiObbTotali.get(stipendi_cofi_obb).doubleValue());
+                        stipendi_cofi_obb.setCd_cds_obbligazione(normalizeCds(stipendi_cofi_obb.getCd_cds_obbligazione()));
+                        ObbligazioneBulk obligationKey = new ObbligazioneBulk(stipendi_cofi_obb.getCd_cds_obbligazione(), stipendi_cofi_obb.getEsercizio_obbligazione(), stipendi_cofi_obb.getEsercizio_ori_obbligazione(), stipendi_cofi_obb.getPg_obbligazione());
+                        try {
+                            obbligazioneBulk = obbHome.findObbligazioneOrd(obligationKey);
+                        } catch (  PersistencyException e) {
+                        }
+                        if ( !Optional.ofNullable(obbligazioneBulk).isPresent()) {
+                            throw new ApplicationException(
+                                    String.format("Obbligazione con CDS '%s', esercizio '%d' e progressivo '%d' non trovata.", stipendi_cofi_obb.getCd_cds_obbligazione(),
+                                            stipendi_cofi_obb.getEsercizio_ori_obbligazione(),
+                                            stipendi_cofi_obb.getPg_obbligazione())
+                            );
+                        }
+                        Stipendi_cofi_obbBulk obbBulk =null;
+                        try {
+                            obbBulk = ( Stipendi_cofi_obbBulk) stipObbHome.findByPrimaryKey(userContext,  new Stipendi_cofi_obbBulk(stipendiCofi.getEsercizio(),
+                                            stipendi_cofi_obb.getCd_cds_obbligazione(), stipendi_cofi_obb.getEsercizio(), stipendi_cofi_obb.getEsercizio_ori_obbligazione(), stipendi_cofi_obb.getPg_obbligazione()));
+                        } catch (PersistencyException e) {
 
-        try {
-            Stipendi_cofi_obb_scadHome scadHome = (Stipendi_cofi_obb_scadHome) getHome(userContext, Stipendi_cofi_obb_scadBulk.class);
-            Stipendi_cofi_obbHome stipObbHome = (Stipendi_cofi_obbHome) getHome(userContext, Stipendi_cofi_obbBulk.class);
-            ObbligazioneHome obbHome = (ObbligazioneHome) getHome(userContext, ObbligazioneBulk.class);
+                        }
+                        if ( !Optional.ofNullable(obbBulk).isPresent()) {
+                            obbBulk= new Stipendi_cofi_obbBulk(stipendiCofi.getEsercizio(), stipendi_cofi_obb.getCd_cds_obbligazione(), stipendi_cofi_obb.getEsercizio(), stipendi_cofi_obb.getEsercizio_ori_obbligazione(), stipendi_cofi_obb.getPg_obbligazione());
+                            obbBulk.setToBeCreated();
+                            super.creaConBulk(userContext, obbBulk);
+                        }
 
-            // Mappa per aggregare gli importi e memorizzare i dati chiave delle obbligazioni
-            Map<String, ObligAgrrDTO> obbAggregate = new LinkedHashMap<>();
-
-            for (Stipendi_cofi_obb_scadBulk s : stipendiCofiObbScadBulks) {
-                if (s == null || s.getIm_totale() == null || s.getIm_totale().compareTo(BigDecimal.ZERO) == 0) {
-                    continue; // Salta elementi nulli o con importo zero
-                }
-
-                // Normalizzazione dei dati
-                String cds = normalizeCds(s.getCd_cds_obbligazione());
-                Integer esObb = s.getEsercizio_obbligazione();
-                Integer esOri = s.getEsercizio_ori_obbligazione();
-                Long pgObb = s.getPg_obbligazione();
-                BigDecimal imTotObbAggr = s.getIm_totale().setScale(2, RoundingMode.HALF_UP);
-
-                if (cds == null || esObb == null || esOri == null || pgObb == null) {
-                    continue;
-                }
-
-                // Verifica che l'obbligazione esista prima dell'aggregazione
-                ObbligazioneBulk obligationKey = new ObbligazioneBulk(cds, esObb, esOri, pgObb);
-                try {
-                    obbHome.findObbligazioneOrd(obligationKey);
-                } catch (ObjectNotFoundException e) {
-                    throw new ApplicationException(
-                            String.format("Obbligazione con CDS '%s', esercizio '%d' e progressivo '%d' non trovata.", cds, esObb, pgObb)
-                    );
-                }
-
-                // Aggrega gli importi per la stessa obbligazione usando il DTO
-                String key = String.join("|", cds, String.valueOf(esObb), String.valueOf(esOri), String.valueOf(pgObb));
-                //il metodo merge aggiunge un valore a una mappa, con la possibilità di aggiornare un valore esistente se la chiave è già presente
-                obbAggregate.merge(key, new ObligAgrrDTO(cds, esObb, esOri, pgObb, imTotObbAggr), ObligAgrrDTO::updateImpTot);
-            }
-
-            if (obbAggregate.isEmpty()) {
-                return;
-            }
-
-            // Processa i dati aggregati: Pre-check e inserimento/creazione
-            for (ObligAgrrDTO data : obbAggregate.values()) {
-                // Pre-check: verifica se la riga SCAD da inserire esiste già
-                Stipendi_cofi_obb_scadBulk scadCheck = new Stipendi_cofi_obb_scadBulk(stipendiCofi.getEsercizio(), stipendiCofi.getMese(), data.getCds(), data.getEsObb(), data.getEsOri(), data.getPgObb());
-                try {
-                    if (scadHome.findStipendiCofiObbSacd(scadCheck) != null) {
-                        throw new ApplicationException("Modifica/aggiornamento non consentito: riga SCAD esistente.");
+                        Stipendi_cofi_obb_scadBulk scadBulk = new Stipendi_cofi_obb_scadBulk();
+                        scadBulk.setStipendi_cofi_obb(stipendi_cofi_obb);
+                        scadBulk.setStipendi_cofi(stipendiCofi);
+                        scadBulk.setIm_totale(importoTotale);
+                        scadBulk.setToBeCreated();
+                        super.creaConBulk(userContext, scadBulk);
                     }
-                } catch (ObjectNotFoundException e) {
-                    // Comportamento atteso, l'oggetto non esiste.
-                }
-
-                // Assicura l'esistenza della riga OBB (find or create)
-                Stipendi_cofi_obbBulk obbBulk =null;
-                try {
-                    obbBulk = ( Stipendi_cofi_obbBulk) stipObbHome.findByPrimaryKey(userContext,  new Stipendi_cofi_obbBulk(stipendiCofi.getEsercizio(), data.getCds(), data.getEsObb(), data.getEsOri(), data.getPgObb()));
-                } catch (ObjectNotFoundException e) {
-
-                }
-                if ( !Optional.ofNullable(obbBulk).isPresent()) {
-                    obbBulk= new Stipendi_cofi_obbBulk(stipendiCofi.getEsercizio(), data.getCds(), data.getEsObb(), data.getEsOri(), data.getPgObb());
-                    obbBulk.setToBeCreated();
-                    super.creaConBulk(userContext, obbBulk);
-                }
-
-                // Inserimento finale della riga SCAD
-                Stipendi_cofi_obb_scadBulk scadBulk = new Stipendi_cofi_obb_scadBulk();
-                scadBulk.setEsercizio(stipendiCofi.getEsercizio());
-                scadBulk.setMese(stipendiCofi.getMese());
-                scadBulk.setCd_cds_obbligazione(obbBulk.getCd_cds_obbligazione());
-                scadBulk.setEsercizio_obbligazione(data.getEsObb());
-                scadBulk.setEsercizio_ori_obbligazione(data.getEsOri());
-                scadBulk.setPg_obbligazione(obbBulk.getPg_obbligazione());
-                scadBulk.setIm_totale(data.getImTotObbAggr());
-                scadBulk.setToBeCreated();
-                super.creaConBulk(userContext, scadBulk);
-            }
-
-        } catch (PersistencyException e) {
-            throw new ApplicationException(e);
         }
+
+
     }
 
 
