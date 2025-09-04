@@ -349,7 +349,10 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
                 bulk.setStipendiCofiCoriBulks(new ArrayList<>());
             }
 
-            Stipendi_cofi_coriBulk cori = new Stipendi_cofi_coriBulk();
+            Stipendi_cofi_coriBulk cori = new Stipendi_cofi_coriBulk(bulk.getStipendiCofiBulk().getEsercizio(),
+                    bulk.getStipendiCofiBulk().getMese(),
+                    codiceContributo.trim(),
+                    enteDip.trim());
             cori.setStipendi_cofi(bulk.getStipendiCofiBulk());
             cori.setCd_contributo_ritenuta(codiceContributo.trim());
             cori.setTi_ente_percipiente(enteDip.trim());

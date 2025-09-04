@@ -138,49 +138,45 @@ public class FlussoStipendiComponent extends CRUDComponent {
         if (stipendiCofi == null || stipendiCofi.getEsercizio() == null || stipendiCofi.getMese() == null) {
             throw new ComponentException("Dati della testata stipendi non validi (null, 'esercizio' o 'mese' mancanti).");
         }
-        if (stipendiCofiObbScadBulks == null || stipendiCofiObbScadBulks.isEmpty()) {
+        if (!Optional.ofNullable(stipendiCofiObbScadBulks).isPresent()) {
             return;
         }
         Stipendi_cofi_obb_scadHome scadHome = (Stipendi_cofi_obb_scadHome) getHome(userContext, Stipendi_cofi_obb_scadBulk.class);
         Stipendi_cofi_obbHome stipObbHome = (Stipendi_cofi_obbHome) getHome(userContext, Stipendi_cofi_obbBulk.class);
         ObbligazioneHome obbHome = (ObbligazioneHome) getHome(userContext, ObbligazioneBulk.class);
-        Map<Stipendi_cofi_obbBulk,Double> stipendiCofiObbTotali= stipendiCofiObbScadBulks.stream().collect(Collectors.groupingBy(o->(o.getStipendi_cofi_obb()),Collectors.summingDouble(o->o.getIm_totale().doubleValue())));
+        Map<Stipendi_cofi_obb_scadBulk,Double> stipendiCofiObbTotali= stipendiCofiObbScadBulks.stream().collect(Collectors.groupingBy(o->o,Collectors.summingDouble(o->o.getIm_totale().doubleValue())));
+
         if (Optional.ofNullable(stipendiCofiObbTotali).isPresent()){
-                    for (Stipendi_cofi_obbBulk stipendi_cofi_obb : stipendiCofiObbTotali.keySet()) {
+                    for (Stipendi_cofi_obb_scadBulk stipendiCofiObbScadBulk : stipendiCofiObbTotali.keySet()) {
                         ObbligazioneBulk obbligazioneBulk=null;
-                        BigDecimal importoTotale = BigDecimal.valueOf(stipendiCofiObbTotali.get(stipendi_cofi_obb).doubleValue());
-                        stipendi_cofi_obb.setCd_cds_obbligazione(normalizeCds(stipendi_cofi_obb.getCd_cds_obbligazione()));
-                        ObbligazioneBulk obligationKey = new ObbligazioneBulk(stipendi_cofi_obb.getCd_cds_obbligazione(), stipendi_cofi_obb.getEsercizio_obbligazione(), stipendi_cofi_obb.getEsercizio_ori_obbligazione(), stipendi_cofi_obb.getPg_obbligazione());
+                        BigDecimal importoTotale = BigDecimal.valueOf(stipendiCofiObbTotali.get(stipendiCofiObbScadBulk).doubleValue());
+                        stipendiCofiObbScadBulk.getStipendi_cofi_obb().setCd_cds_obbligazione(normalizeCds(stipendiCofiObbScadBulk.getStipendi_cofi_obb().getCd_cds_obbligazione()));
+
                         try {
-                            obbligazioneBulk = obbHome.findObbligazioneOrd(obligationKey);
+                            obbligazioneBulk = obbHome.findObbligazioneOrd(stipendiCofiObbScadBulk.getStipendi_cofi_obb().getObbligazioni());
                         } catch (  PersistencyException e) {
                         }
                         if ( !Optional.ofNullable(obbligazioneBulk).isPresent()) {
                             throw new ApplicationException(
-                                    String.format("Obbligazione con CDS '%s', esercizio '%d' e progressivo '%d' non trovata.", stipendi_cofi_obb.getCd_cds_obbligazione(),
-                                            stipendi_cofi_obb.getEsercizio_ori_obbligazione(),
-                                            stipendi_cofi_obb.getPg_obbligazione())
+                                    String.format("Obbligazione con CDS '%s', esercizio '%d' e progressivo '%d' non trovata.", stipendiCofiObbScadBulk.getStipendi_cofi_obb().getCd_cds_obbligazione(),
+                                            stipendiCofiObbScadBulk.getStipendi_cofi_obb().getEsercizio_ori_obbligazione(),
+                                            stipendiCofiObbScadBulk.getStipendi_cofi_obb().getPg_obbligazione())
                             );
                         }
                         Stipendi_cofi_obbBulk obbBulk =null;
                         try {
-                            obbBulk = ( Stipendi_cofi_obbBulk) stipObbHome.findByPrimaryKey(userContext,  new Stipendi_cofi_obbBulk(stipendiCofi.getEsercizio(),
-                                            stipendi_cofi_obb.getCd_cds_obbligazione(), stipendi_cofi_obb.getEsercizio(), stipendi_cofi_obb.getEsercizio_ori_obbligazione(), stipendi_cofi_obb.getPg_obbligazione()));
+                            obbBulk = ( Stipendi_cofi_obbBulk) stipObbHome.findByPrimaryKey(userContext,  stipendiCofiObbScadBulk.getStipendi_cofi_obb());
                         } catch (PersistencyException e) {
 
                         }
                         if ( !Optional.ofNullable(obbBulk).isPresent()) {
-                            obbBulk= new Stipendi_cofi_obbBulk(stipendiCofi.getEsercizio(), stipendi_cofi_obb.getCd_cds_obbligazione(), stipendi_cofi_obb.getEsercizio(), stipendi_cofi_obb.getEsercizio_ori_obbligazione(), stipendi_cofi_obb.getPg_obbligazione());
-                            obbBulk.setToBeCreated();
-                            super.creaConBulk(userContext, obbBulk);
+                            stipendiCofiObbScadBulk.getStipendi_cofi_obb().setToBeCreated();
+                            super.creaConBulk(userContext, stipendiCofiObbScadBulk.getStipendi_cofi_obb());
                         }
 
-                        Stipendi_cofi_obb_scadBulk scadBulk = new Stipendi_cofi_obb_scadBulk();
-                        scadBulk.setStipendi_cofi_obb(stipendi_cofi_obb);
-                        scadBulk.setStipendi_cofi(stipendiCofi);
-                        scadBulk.setIm_totale(importoTotale);
-                        scadBulk.setToBeCreated();
-                        super.creaConBulk(userContext, scadBulk);
+                        stipendiCofiObbScadBulk.setIm_totale(importoTotale);
+                        stipendiCofiObbScadBulk.setToBeCreated();
+                        super.creaConBulk(userContext, stipendiCofiObbScadBulk);
                     }
         }
 
@@ -235,6 +231,8 @@ public class FlussoStipendiComponent extends CRUDComponent {
         Map<String, BigDecimal> contributiAggregatiPerChiave = new LinkedHashMap<>();
         Map<String, String> codicePerChiave = new HashMap<>();
         Map<String, String> tipoEntePerChiave = new HashMap<>();
+
+        Map<Stipendi_cofi_coriBulk,Double> stipendiCofiObbTotali=  righeContributiRitenute.stream().collect(Collectors.groupingBy(o-> o ,Collectors.summingDouble(o->o.getAmmontare().doubleValue())));
 
         for (Stipendi_cofi_coriBulk rigaContributo : righeContributiRitenute) {
             if (rigaContributo == null) continue;

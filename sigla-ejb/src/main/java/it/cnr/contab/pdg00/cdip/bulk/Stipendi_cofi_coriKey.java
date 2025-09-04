@@ -57,6 +57,15 @@ public boolean equalsByPrimaryKey(Object o) {
 	if(!compareKey(getTi_ente_percipiente(),k.getTi_ente_percipiente())) return false;
 	return true;
 }
+	@Override
+	public int hashCode() {
+		return primaryKeyHashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return this.equalsByPrimaryKey(obj);
+	}
 /* 
  * Getter dell'attributo esercizio
  */
