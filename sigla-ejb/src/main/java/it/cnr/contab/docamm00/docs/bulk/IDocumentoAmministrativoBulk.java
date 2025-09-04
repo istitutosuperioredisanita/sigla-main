@@ -51,6 +51,8 @@ public interface IDocumentoAmministrativoBulk extends IDocumentoCogeBulk {
 
     String ATTIN="ATTIN";
 
+    String OMAGG="OMAGG";
+
 
     void addToDettagliCancellati(IDocumentoAmministrativoRigaBulk dettaglio);
 
