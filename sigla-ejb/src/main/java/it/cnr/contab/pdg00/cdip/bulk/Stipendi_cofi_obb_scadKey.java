@@ -63,6 +63,15 @@ public class Stipendi_cofi_obb_scadKey extends OggettoBulk implements KeyedPersi
 		i = i + calculateKeyHashCode(getPg_obbligazione());
 		return i;
 	}
+	@Override
+	public int hashCode() {
+		return primaryKeyHashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return this.equalsByPrimaryKey(obj);
+	}
 	public void setEsercizio(java.lang.Integer esercizio)  {
 		this.esercizio=esercizio;
 	}
