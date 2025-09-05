@@ -1,8 +1,5 @@
 package it.cnr.contab.gestiva00.core.bulk;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import it.cnr.contab.docamm00.tabrif.bulk.Tipo_sezionaleBulk;
-import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.Persistent;
 
