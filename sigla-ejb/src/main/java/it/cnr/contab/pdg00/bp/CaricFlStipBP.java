@@ -304,11 +304,6 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
                 obbScad.setStipendi_cofi(stipendiCofi);
                 //obbScad.setCd_cds_obbligazione(fmt.formatCellValue(r.getCell(3)).trim());
                 obbScad.setStipendi_cofi(stipendiCofi);
-                obbScad.setKey( new Stipendi_cofi_obb_scadKey(obbScad.getEsercizio(),obbScad.getMese(),
-                        fmt.formatCellValue(r.getCell(3)).trim(),
-                        Utility.parseInteger(esercizio, "esercizio_obbligazione", i),
-                        Utility.parseInteger(annoObblOrigine, "annoObblOrigine", i),
-                        Utility.parseLong(numeroObbl, "numeroObbl", i)));
 
                 obbScad.setStipendi_cofi_obb( new Stipendi_cofi_obbBulk(Utility.parseInteger(esercizio, "esercizio_obbligazione", i),
                         fmt.formatCellValue(r.getCell(3)).trim(),
