@@ -110,12 +110,12 @@ public class CaricFlStipBulk extends AllegatoGenericoBulk implements AllegatoPar
     @Override
     public void validate() throws ValidationException {
         if (!Optional.ofNullable(this.getTipo_rapporto()).isPresent())
-            throw new ValidationException(" Indicare il tipo Rapporto Dipendenti/Collaboratori");
+            throw new ValidationException(" Indicare il tipo Rapporto Dipendente/Collaboratore");
         if ( !(Arrays.asList(Tipo_rapportoBulk.DIPENDENTE,Tipo_rapportoBulk.COLLABORATORE_COORD_E_CONT
         ).stream().collect(
                 Collectors.joining(StorageDriver.SUFFIX)
         ).contains(this.getTipo_rapporto())))
-            throw new ValidationException(" I valori possibile per tipo rapporto sono Dipendenti/Collaboratori");
+            throw new ValidationException(" I valori possibile per tipo rapporto sono Dipendente/Collaboratore");
         super.validate();
     }
 }

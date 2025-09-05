@@ -205,19 +205,15 @@ public class FlussoStipendiComponent extends CRUDComponent {
         EsitoCori esitoElaborazione = new EsitoCori();
 
         // === Inizializzazione componenti di accesso ai dati ===
-        Stipendi_cofi_coriHome contributiRitenuteHome =
-                (Stipendi_cofi_coriHome) getHome(userContext, Stipendi_cofi_coriBulk.class);
+        Stipendi_cofi_coriHome contributiRitenuteHome = (Stipendi_cofi_coriHome) getHome(userContext, Stipendi_cofi_coriBulk.class);
 
-        Tipo_contributo_ritenutaHome tipoContributoRitenutaHome =
-                (Tipo_contributo_ritenutaHome)
-                        getHome(userContext, Tipo_contributo_ritenutaBulk.class);
+        Tipo_contributo_ritenutaHome tipoContributoRitenutaHome = (Tipo_contributo_ritenutaHome) getHome(userContext, Tipo_contributo_ritenutaBulk.class);
 
         // === Validazione parametri di input obbligatori ===
         validaParametriInput(testataStipendi, righeContributiRitenute);
 
         // === Calcolo periodo di competenza contabile (KTR: DATE/MONTHEND) ===
-        Integer meseCompetenza = Optional.ofNullable(testataStipendi.getMese_reale())
-                .orElse(testataStipendi.getMese());
+        Integer meseCompetenza = Optional.ofNullable(testataStipendi.getMese_reale()).orElse(testataStipendi.getMese());
         if (meseCompetenza == null) {
             throw new ComponentException("Impossibile determinare il mese di competenza: sia mese_reale che mese sono nulli");
         }
@@ -226,58 +222,52 @@ public class FlussoStipendiComponent extends CRUDComponent {
         java.sql.Timestamp dataInizioCompetenza = firstDayOfMonthTs(annoCompetenza, meseCompetenza);
         java.sql.Timestamp dataFineCompetenza = lastDayOfMonthTs(annoCompetenza, meseCompetenza);
 
-        // Mappa che gestisce il GROUP BY: CODICE + TIPO_ENTE_PERCIPIENTE --> "codice|tipo" , importo totale aggregato
-        Map<String, BigDecimal> contributiAggregatiPerChiave = new LinkedHashMap<>();
-        Map<String, String> codicePerChiave = new HashMap<>();
-        Map<String, String> tipoEntePerChiave = new HashMap<>();
 
         Map<Stipendi_cofi_coriBulk,Double> stipendiCofiCoriTotali=  righeContributiRitenute.stream().collect(Collectors.groupingBy(o-> o ,Collectors.summingDouble(o->o.getAmmontare().doubleValue())));
         if (Optional.ofNullable(stipendiCofiCoriTotali).isPresent()) {
             // Mappe che gestiscono le query di validazione
-            Map<String, Boolean> cacheCodiciEsistenti = new HashMap<>();
-            Map<String, String> cacheGruppiContributi = new HashMap<>();
-            Map<String, String> cacheElementiVoce = new HashMap<>();
+
             for (Stipendi_cofi_coriBulk stipendiCofiCoriBulk : stipendiCofiCoriTotali.keySet()) {
                 BigDecimal importoTotale = BigDecimal.valueOf(stipendiCofiCoriTotali.get(stipendiCofiCoriBulk).doubleValue());
-                // 1) Verifica esistenza codice in TIPO_CONTRIBUTO_RITENUTA
-                boolean esisteCodiceContributo = cacheCodiciEsistenti.computeIfAbsent(stipendiCofiCoriBulk.getCd_contributo_ritenuta(), codice -> {
-                    try {
-                        return tipoContributoRitenutaHome.findTipoCORIValido(codice) != null;
-                    } catch (PersistencyException e) {
-                        return false;
+
+                try {
+                    Tipo_contributo_ritenutaBulk tipoCORIValido = tipoContributoRitenutaHome.findTipoCORIValido(stipendiCofiCoriBulk.getCd_contributo_ritenuta());
+                    if ( !Optional.ofNullable(tipoCORIValido).isPresent()) {
+                        esitoElaborazione.codiciNonEsistenti.add(stipendiCofiCoriBulk.getCd_contributo_ritenuta());
+                        continue; // Salta alla prossima chiave
                     }
-                });
-                if (!esisteCodiceContributo) {
-                    esitoElaborazione.codiciNonEsistenti.add(stipendiCofiCoriBulk.getCd_contributo_ritenuta());
-                    continue; // Salta alla prossima chiave
+                } catch (PersistencyException e) {
                 }
 
                 // 2) Verifica gruppo in TIPO_CR_BASE → CD_GRUPPO_CR
-                String codiceGruppoContributo = cacheGruppiContributi.computeIfAbsent(stipendiCofiCoriBulk.getCd_contributo_ritenuta(), codice -> {
-                    try {
-                        return loadCdGruppoCrFor(userContext, testataStipendi.getEsercizio(), codice);
-                    } catch (ComponentException e) {
-                        return null; // Gestisce come gruppo non trovato
+                String cdGruppoCodCORI = null;
+                try {
+                    cdGruppoCodCORI = loadCdGruppoCrFor(userContext, testataStipendi.getEsercizio(), stipendiCofiCoriBulk.getCd_contributo_ritenuta());
+                    if ( !Optional.ofNullable(cdGruppoCodCORI).isPresent()) {
+                        esitoElaborazione.codiciSenzaGruppo.add(stipendiCofiCoriBulk.getCd_contributo_ritenuta());
+                        continue; // Salta alla prossima chiave
                     }
-                });
-
-                if (codiceGruppoContributo == null || codiceGruppoContributo.isEmpty()) {
-                    esitoElaborazione.codiciSenzaGruppo.add(stipendiCofiCoriBulk.getCd_contributo_ritenuta());
-                    continue; // Salta alla prossima chiave
+                } catch (PersistencyException e) {
                 }
-                // 3) Verifica elemento voce in ASS_TIPO_CORI_EV per (ESERCIZIO+CODICE+TI)
-                String codiceElementoVoce = cacheElementiVoce.computeIfAbsent(stipendiCofiCoriBulk.getCd_contributo_ritenuta(), chiave -> {
-                    try {
-                        return loadCdElementoVoceFor(userContext, testataStipendi.getEsercizio(),
-                                stipendiCofiCoriBulk.getCd_contributo_ritenuta(), stipendiCofiCoriBulk.getTi_ente_percipiente());
-                    } catch (ComponentException e) {
-                        return null; // Gestisce come elemento voce non trovato
+
+                try {
+                    Gruppo_cr_detBulk gruppoCrDetBulk = loadGruppoCr_CrDetFor(userContext, testataStipendi.getEsercizio(), cdGruppoCodCORI);
+                    if ( !Optional.ofNullable(gruppoCrDetBulk.getCd_terzo_versamento()).isPresent() || !Optional.ofNullable(gruppoCrDetBulk.getPg_banca()).isPresent() ) {
+                        esitoElaborazione.codiciSenzaTerzo.add(
+                                stipendiCofiCoriBulk.getCd_contributo_ritenuta() + " [GRUPPO=" + gruppoCrDetBulk.getCd_gruppo_cr() + "]");
+                        continue; // Salta alla prossima chiave
                     }
-                });
-                if (codiceElementoVoce == null || codiceElementoVoce.isEmpty()) {
-                    esitoElaborazione.codiciSenzaCapitolo.add(stipendiCofiCoriBulk.getCd_contributo_ritenuta() + " [" + stipendiCofiCoriBulk.getTi_ente_percipiente() + "]");
-                    continue; // Salta alla prossima chiave
-                }//
+                } catch (PersistencyException e) {
+                }
+
+                try {
+                    String cdElementoVoce = loadCdElementoVoceFor(userContext, testataStipendi.getEsercizio(), stipendiCofiCoriBulk.getCd_contributo_ritenuta(), stipendiCofiCoriBulk.getTi_ente_percipiente());
+                    if(!Optional.ofNullable(cdElementoVoce).isPresent() ) {
+                        esitoElaborazione.codiciSenzaCapitolo.add(stipendiCofiCoriBulk.getCd_contributo_ritenuta() + " [" + stipendiCofiCoriBulk.getTi_ente_percipiente() + "]");
+                        continue;
+                    }
+                } catch (PersistencyException e) {
+                }
 
                 stipendiCofiCoriBulk.setDt_da_competenza_coge(dataInizioCompetenza);
                 stipendiCofiCoriBulk.setDt_a_competenza_coge(dataFineCompetenza);
@@ -315,7 +305,7 @@ public class FlussoStipendiComponent extends CRUDComponent {
      * Carica il codice gruppo dal TIPO_CR_BASE per un dato contributo/ritenuta
      */
     private String loadCdGruppoCrFor(UserContext userContext, Integer esercizio, String codiceContributo)
-            throws ComponentException {
+            throws PersistencyException {
         try {
             Tipo_cr_baseHome tipoCrBaseHome =
                     (Tipo_cr_baseHome)
@@ -333,7 +323,7 @@ public class FlussoStipendiComponent extends CRUDComponent {
             } catch (ObjectNotFoundException e) {
                 return null; // Record non trovato
             }
-        } catch (PersistencyException e) {
+        } catch (PersistencyException | ComponentException e) {
             return null; // Errore di accesso ai dati
         }
     }
@@ -343,7 +333,7 @@ public class FlussoStipendiComponent extends CRUDComponent {
      */
     private String loadCdElementoVoceFor(UserContext userContext, Integer esercizio,
                                          String codiceContributo, String tipoEntePercipiente)
-            throws ComponentException {
+            throws PersistencyException {
         try {
             Ass_tipo_cori_evHome assocTipoCoriEvHome =
                     (Ass_tipo_cori_evHome)
@@ -356,7 +346,7 @@ public class FlussoStipendiComponent extends CRUDComponent {
             } catch (ObjectNotFoundException e) {
                 return null; // Record non trovato
             }
-        } catch (PersistencyException e) {
+        } catch (PersistencyException | ComponentException e) {
             return null; // Errore di accesso ai dati
         }
     }
@@ -364,7 +354,7 @@ public class FlussoStipendiComponent extends CRUDComponent {
     /**
      * Carica i dettagli del gruppo contributi/ritenute (terzo versamento, banca, modalità pagamento)
      */
-    private Gruppo_cr_detBulk loadGruppoCr_CrDetFor(UserContext userContext, Integer esercizio, String codiceGruppo) {
+    private Gruppo_cr_detBulk loadGruppoCr_CrDetFor(UserContext userContext, Integer esercizio, String codiceGruppo) throws PersistencyException{
         try {
             Gruppo_cr_detHome gruppoDettaglioHome =
                     (Gruppo_cr_detHome)
@@ -384,53 +374,6 @@ public class FlussoStipendiComponent extends CRUDComponent {
             }
         } catch (PersistencyException | ComponentException e) {
             return null; // Errore di accesso ai dati
-        }
-    }
-
-    /**
-     * Verifica l'esistenza di un terzo
-     */
-    private boolean existsTerzo(UserContext userContext, Integer codiceTerzo) {
-        if (codiceTerzo == null) return false;
-
-        try {
-            TerzoHome terzoHome = (TerzoHome) getHome(userContext, TerzoBulk.class);
-
-            TerzoBulk chiaveTerzo = new TerzoBulk();
-            chiaveTerzo.setCd_terzo(codiceTerzo);
-
-            try {
-                return terzoHome.findByPrimaryKey(userContext, chiaveTerzo) != null;
-            } catch (ObjectNotFoundException e) {
-                return false; // Terzo non trovato
-            }
-        } catch (PersistencyException | ComponentException e) {
-            return false; // Errore di accesso ai dati
-        }
-    }
-
-    /**
-     * Verifica l'esistenza di una banca per un dato terzo
-     */
-    private boolean existsBanca(UserContext userContext, Integer codiceTerzo, Long progressivoBanca) throws ComponentException {
-        if (codiceTerzo == null || progressivoBanca == null) return false;
-
-        try {
-            BancaHome bancaHome = (BancaHome) getHome(userContext, BancaBulk.class);
-
-            try {
-                BancaBulk bancaBulkKey = new BancaBulk();
-                TerzoBulk terzoBulkKey = new TerzoBulk();
-                terzoBulkKey.setCd_terzo(codiceTerzo);
-                bancaBulkKey.setTerzo(terzoBulkKey);
-                bancaBulkKey.setPg_banca(progressivoBanca);
-                bancaBulkKey.setCd_terzo(codiceTerzo);
-                return bancaHome.findByPrimaryKey(bancaBulkKey) != null;
-            } catch (ObjectNotFoundException e) {
-                return false; // Banca non trovata
-            }
-        } catch (PersistencyException e) {
-            return false; // Errore di accesso ai dati
         }
     }
 
