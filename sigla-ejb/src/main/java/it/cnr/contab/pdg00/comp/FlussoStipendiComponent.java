@@ -35,7 +35,6 @@ import it.cnr.jada.persistency.ObjectNotFoundException;
 import it.cnr.jada.persistency.PersistencyException;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -232,76 +231,29 @@ public class FlussoStipendiComponent extends CRUDComponent {
         Map<String, String> codicePerChiave = new HashMap<>();
         Map<String, String> tipoEntePerChiave = new HashMap<>();
 
-        Map<Stipendi_cofi_coriBulk,Double> stipendiCofiObbTotali=  righeContributiRitenute.stream().collect(Collectors.groupingBy(o-> o ,Collectors.summingDouble(o->o.getAmmontare().doubleValue())));
-
-        for (Stipendi_cofi_coriBulk rigaContributo : righeContributiRitenute) {
-            if (rigaContributo == null) continue;
-
-            // Normalizza e valida l'importo (scala 2 decimali)
-            BigDecimal importoNormalizzato = Optional.ofNullable(rigaContributo.getAmmontare())
-                    .orElse(BigDecimal.ZERO)
-                    .setScale(2, RoundingMode.HALF_UP);
-            if (importoNormalizzato.compareTo(BigDecimal.ZERO) == 0) continue;
-
-            // Normalizza il codice contributo/ritenuta (trim + uppercase)
-            String codiceContributoNormalizzato = Optional.ofNullable(rigaContributo.getCd_contributo_ritenuta())
-                    .map(String::trim)
-                    .map(String::toUpperCase)
-                    .orElse(null);
-            if (codiceContributoNormalizzato == null || codiceContributoNormalizzato.isEmpty()) continue;
-
-            // Valida il tipo ente/percipiente (solo "E" o "P" ammessi)
-            String tipoEntePercipienteNormalizzato = Optional.ofNullable(rigaContributo.getTi_ente_percipiente())
-                    .map(String::trim)
-                    .map(String::toUpperCase)
-                    .orElse(null);
-            if (!Stipendi_cofi_coriBulk.ENTE.equals(tipoEntePercipienteNormalizzato) &&
-                    !Stipendi_cofi_coriBulk.PERCIPIENTE.equals(tipoEntePercipienteNormalizzato)) {
-                continue; // Scarta righe con tipo non valido
-            }
-
-            // Crea la chiave di aggregazione e accumula l'importo
-            String chiaveAggregazione = codiceContributoNormalizzato + "|" + tipoEntePercipienteNormalizzato;
-            contributiAggregatiPerChiave.merge(chiaveAggregazione, importoNormalizzato, BigDecimal::add);
-            codicePerChiave.putIfAbsent(chiaveAggregazione, codiceContributoNormalizzato);
-            tipoEntePerChiave.putIfAbsent(chiaveAggregazione, tipoEntePercipienteNormalizzato);
-        }
-
-        if (contributiAggregatiPerChiave.isEmpty()) {
-            return esitoElaborazione; // Nessun dato valido da elaborare
-        }
-
-        try {
+        Map<Stipendi_cofi_coriBulk,Double> stipendiCofiCoriTotali=  righeContributiRitenute.stream().collect(Collectors.groupingBy(o-> o ,Collectors.summingDouble(o->o.getAmmontare().doubleValue())));
+        if (Optional.ofNullable(stipendiCofiCoriTotali).isPresent()) {
             // Mappe che gestiscono le query di validazione
             Map<String, Boolean> cacheCodiciEsistenti = new HashMap<>();
             Map<String, String> cacheGruppiContributi = new HashMap<>();
             Map<String, String> cacheElementiVoce = new HashMap<>();
-
-            // === Elaborazione con validazioni integrate (un solo loop) ===
-            for (Map.Entry<String, BigDecimal> entryAggregazione : contributiAggregatiPerChiave.entrySet()) {
-                String chiaveAggregazione = entryAggregazione.getKey();
-                String codiceContributo = codicePerChiave.get(chiaveAggregazione);
-                String tipoEntePercipiente = tipoEntePerChiave.get(chiaveAggregazione);
-                BigDecimal importoTotaleAggregato = entryAggregazione.getValue();
-
-                // VALIDAZIONI DI CONFIGURAZIONE (checkConfigurazioneCodiciRitenute)
-
+            for (Stipendi_cofi_coriBulk stipendiCofiCoriBulk : stipendiCofiCoriTotali.keySet()) {
+                BigDecimal importoTotale = BigDecimal.valueOf(stipendiCofiCoriTotali.get(stipendiCofiCoriBulk).doubleValue());
                 // 1) Verifica esistenza codice in TIPO_CONTRIBUTO_RITENUTA
-                boolean esisteCodiceContributo = cacheCodiciEsistenti.computeIfAbsent(codiceContributo, codice -> {
+                boolean esisteCodiceContributo = cacheCodiciEsistenti.computeIfAbsent(stipendiCofiCoriBulk.getCd_contributo_ritenuta(), codice -> {
                     try {
                         return tipoContributoRitenutaHome.findTipoCORIValido(codice) != null;
                     } catch (PersistencyException e) {
                         return false;
                     }
                 });
-
                 if (!esisteCodiceContributo) {
-                    esitoElaborazione.codiciNonEsistenti.add(codiceContributo);
+                    esitoElaborazione.codiciNonEsistenti.add(stipendiCofiCoriBulk.getCd_contributo_ritenuta());
                     continue; // Salta alla prossima chiave
                 }
 
                 // 2) Verifica gruppo in TIPO_CR_BASE → CD_GRUPPO_CR
-                String codiceGruppoContributo = cacheGruppiContributi.computeIfAbsent(codiceContributo, codice -> {
+                String codiceGruppoContributo = cacheGruppiContributi.computeIfAbsent(stipendiCofiCoriBulk.getCd_contributo_ritenuta(), codice -> {
                     try {
                         return loadCdGruppoCrFor(userContext, testataStipendi.getEsercizio(), codice);
                     } catch (ComponentException e) {
@@ -310,95 +262,34 @@ public class FlussoStipendiComponent extends CRUDComponent {
                 });
 
                 if (codiceGruppoContributo == null || codiceGruppoContributo.isEmpty()) {
-                    esitoElaborazione.codiciSenzaGruppo.add(codiceContributo);
+                    esitoElaborazione.codiciSenzaGruppo.add(stipendiCofiCoriBulk.getCd_contributo_ritenuta());
                     continue; // Salta alla prossima chiave
                 }
-
                 // 3) Verifica elemento voce in ASS_TIPO_CORI_EV per (ESERCIZIO+CODICE+TI)
-                String codiceElementoVoce = cacheElementiVoce.computeIfAbsent(chiaveAggregazione, chiave -> {
+                String codiceElementoVoce = cacheElementiVoce.computeIfAbsent(stipendiCofiCoriBulk.getCd_contributo_ritenuta(), chiave -> {
                     try {
                         return loadCdElementoVoceFor(userContext, testataStipendi.getEsercizio(),
-                                codiceContributo, tipoEntePercipiente);
+                                stipendiCofiCoriBulk.getCd_contributo_ritenuta(), stipendiCofiCoriBulk.getTi_ente_percipiente());
                     } catch (ComponentException e) {
                         return null; // Gestisce come elemento voce non trovato
                     }
                 });
-
                 if (codiceElementoVoce == null || codiceElementoVoce.isEmpty()) {
-                    esitoElaborazione.codiciSenzaCapitolo.add(codiceContributo + " [" + tipoEntePercipiente + "]");
+                    esitoElaborazione.codiciSenzaCapitolo.add(stipendiCofiCoriBulk.getCd_contributo_ritenuta() + " [" + stipendiCofiCoriBulk.getTi_ente_percipiente() + "]");
                     continue; // Salta alla prossima chiave
-                }
+                }//
 
-                // 4) Verifica dettaglio gruppo → CD_TERZO_VERSAMENTO, modalità pagamento
-                Gruppo_cr_detBulk dettaglioGruppoContributo = loadGruppoCr_CrDetFor(
-                        userContext, testataStipendi.getEsercizio(), codiceGruppoContributo);
-
-                if (dettaglioGruppoContributo == null || dettaglioGruppoContributo.getCd_terzo_versamento() == null) {
-                    esitoElaborazione.codiciSenzaTerzo.add(
-                            codiceContributo + " [GRUPPO=" + codiceGruppoContributo + "]");
-                    continue; // Salta alla prossima chiave
-                }
-
-                // 5) Verifica esistenza TERZO + BANCA associata
-                boolean esisteTerzoVersamento = existsTerzo(userContext, dettaglioGruppoContributo.getCd_terzo_versamento());
-                boolean esisteBancaTerzoVersamento = (dettaglioGruppoContributo.getPg_banca() != null) &&
-                        existsBanca(userContext, dettaglioGruppoContributo.getCd_terzo_versamento(),
-                                dettaglioGruppoContributo.getPg_banca());
-
-                if (!esisteTerzoVersamento || !esisteBancaTerzoVersamento) {
-                    esitoElaborazione.codiciSenzaTerzo.add(
-                            codiceContributo + " [TERZO=" + dettaglioGruppoContributo.getCd_terzo_versamento() +
-                                    ", BANCA=" + dettaglioGruppoContributo.getPg_banca() + "]");
-                    continue; // Salta alla prossima chiave
-                } else {
-                    // Registra configurazione valida per reporting
-                    esitoElaborazione.codiciTerziModalitaPagamento.add(
-                            codiceContributo + " [TERZO=" + dettaglioGruppoContributo.getCd_terzo_versamento() +
-                                    ", MP=" + dettaglioGruppoContributo.getCd_modalita_pagamento() + "]");
-                }
-
-                // === TUTTE LE VALIDAZIONI SUPERATE: PROCEDE CON INSERIMENTO ===
-
-                // Crea la chiave primaria per verificare esistenza record
-                Stipendi_cofi_coriBulk chiavePrimariaRecord = new Stipendi_cofi_coriBulk(
-                        testataStipendi.getEsercizio(),
-                        testataStipendi.getMese(),
-                        codiceContributo,
-                        tipoEntePercipiente
-                );
-
-                // Verifica se esiste già un record con questa chiave primaria
-                Stipendi_cofi_coriBulk recordEsistente;
-                try {
-                    recordEsistente = (Stipendi_cofi_coriBulk) contributiRitenuteHome.findByPrimaryKey(
-                            userContext, chiavePrimariaRecord);
-                } catch (ObjectNotFoundException e) {
-                    recordEsistente = null; // Record non esistente, verrà creato
-                }
-
-                if (recordEsistente != null) {
-                    // Al posto dell'aggiornamento, lancia un'eccezione
-                    throw new ApplicationException("Modifica/aggiornamento non consentito di un record già presente");
-                } else {
-                    // INSERIMENTO
-                    Stipendi_cofi_coriBulk nuovoRecordContributo = new Stipendi_cofi_coriBulk();
-                    nuovoRecordContributo.setStipendi_cofi(testataStipendi); // Collega alla testata
-                    nuovoRecordContributo.setCd_contributo_ritenuta(codiceContributo);
-                    nuovoRecordContributo.setTi_ente_percipiente(tipoEntePercipiente);
-                    nuovoRecordContributo.setAmmontare(importoTotaleAggregato);
-                    nuovoRecordContributo.setDt_da_competenza_coge(dataInizioCompetenza);
-                    nuovoRecordContributo.setDt_a_competenza_coge(dataFineCompetenza);
-                    nuovoRecordContributo.setToBeCreated();
-                    super.creaConBulk(userContext, nuovoRecordContributo);
-                }
+                stipendiCofiCoriBulk.setDt_da_competenza_coge(dataInizioCompetenza);
+                stipendiCofiCoriBulk.setDt_a_competenza_coge(dataFineCompetenza);
+                stipendiCofiCoriBulk.setToBeCreated();
+                super.creaConBulk(userContext, stipendiCofiCoriBulk);
 
             }
-
-            return esitoElaborazione;
-
-        } catch (PersistencyException ex) {
-            throw new ComponentException("Errore durante l'elaborazione dei contributi e ritenute", ex);
         }
+
+        return esitoElaborazione;
+
+
     }
 
     /**
