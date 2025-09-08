@@ -2,7 +2,6 @@ package it.cnr.contab.pdg00.bp;
 
 import it.cnr.contab.pdg00.cdip.bulk.*;
 import it.cnr.contab.pdg00.ejb.FlussoStipendiComponentSession;
-import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
@@ -10,15 +9,14 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.FillException;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.util.OrderConstants;
 import it.cnr.jada.util.action.CRUDBP;
-import it.cnr.jada.util.action.FormBP;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.jada.util.upload.UploadedFile;
-import it.cnr.si.spring.storage.StorageObject;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -30,7 +28,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -44,70 +41,130 @@ import java.util.stream.Stream;
 public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlStipBulk> {
 
     public static final String FLUSSO_STIPENDI = "Flusso Stipendi";
-    private Integer esercizio;
-    private UserContext uc;
 
     public CaricFlStipBP() {}
     public CaricFlStipBP(String s) { super(s); }
+
 
     @Override
     public void initialize(ActionContext ctx) throws BusinessProcessException {
 
         super.initialize(ctx);
-        this.uc = ctx.getUserContext();
-        this.esercizio = CNRUserContext.getEsercizio(ctx.getUserContext());
-        setStatus(CRUDBP.INSERT);
+        CaricFlStipBulk caricFlStipBulk = (CaricFlStipBulk) this.getModel();
+        if (caricFlStipBulk.getArchivioAllegati().isEmpty()) {
+            AllegatoGenericoBulk a = new AllegatoGenericoBulk();
+            a.setCrudStatus(OggettoBulk.TO_BE_CREATED); // abilita i campi di upload
+            caricFlStipBulk.addToArchivioAllegati(a);
+        }
+        getCrudArchivioAllegati().setModelIndex(ctx, 0);
+        getCrudArchivioAllegati().setSelection(Collections.emptyEnumeration());
+
+    }
+    @Override
+    public void validate(ActionContext actioncontext)
+            throws ValidationException {
+        super.validate(actioncontext);;
+        CaricFlStipBulk caricFlStipBulk = (CaricFlStipBulk) this.getModel();
+        if ( Optional.ofNullable(caricFlStipBulk.getArchivioAllegati()).isPresent() &&
+                caricFlStipBulk.getArchivioAllegati().size()>0){
+           AllegatoGenericoBulk allegatoGenericoBulk= caricFlStipBulk.getArchivioAllegati().get(0);
+           allegatoGenericoBulk.validate();
+        }
 
 
-        CaricFlStipBulk parent = new CaricFlStipBulk();
-        parent.setCrudStatus(OggettoBulk.NORMAL);
-        setModel(ctx, initializeModelInsAllegatoStip(ctx, parent));
-        assicuraCampiAbilitati(ctx);
+
 
     }
 
 
+    public boolean fillModel(ActionContext actioncontext)
+            throws FillException {
+        Boolean b = super.fillModel(actioncontext);
+
+
+        UploadedFile uploadedFile =
+                ((it.cnr.jada.action.HttpActionContext) actioncontext).getMultipartParameter("main.ArchivioAllegati.file");
+        CaricFlStipBulk caricFlStipBulk = ( CaricFlStipBulk) this.getModel();
+
+        caricFlStipBulk.setArchivioAllegati( new BulkList<>());
+            AllegatoGenericoBulk a = new AllegatoGenericoBulk();
+            a.setCrudStatus(OggettoBulk.TO_BE_CREATED); // abilita i campi di upload
+            caricFlStipBulk.addToArchivioAllegati(a);
+        if (!(uploadedFile == null || uploadedFile.getFile() == null || uploadedFile.getFile().length() == 0L)) {
+            AllegatoGenericoBulk allegatoGenericoBulk =null;
+            if ( (( CaricFlStipBulk) caricFlStipBulk).getArchivioAllegati().isEmpty()){
+                allegatoGenericoBulk = new AllegatoGenericoBulk();
+                (( CaricFlStipBulk) caricFlStipBulk).addToArchivioAllegati(allegatoGenericoBulk);
+            }
+                allegatoGenericoBulk=(( CaricFlStipBulk) caricFlStipBulk).getArchivioAllegati().get(0);
+                allegatoGenericoBulk.setFile(uploadedFile.getFile());
+                allegatoGenericoBulk.setNome(uploadedFile.getName());
+
+            }
+        return b;
+    }
+
+/*
+    public void setModel(ActionContext actioncontext, OggettoBulk bulk) throws BusinessProcessException {
+        if ( Optional.ofNullable(bulk).isPresent()){
+            CaricFlStipBulk parent = new CaricFlStipBulk();
+            UploadedFile uploadedFile =
+                    ((it.cnr.jada.action.HttpActionContext) actioncontext).getMultipartParameter("main.ArchivioAllegati.file");
+            if (!(uploadedFile == null || uploadedFile.getFile() == null || uploadedFile.getFile().length() == 0L)) {
+                AllegatoGenericoBulk allegatoGenericoBulk = new AllegatoGenericoBulk();
+                allegatoGenericoBulk.setFile(uploadedFile.getFile());
+                allegatoGenericoBulk.setNome(uploadedFile.getName());
+
+                (( CaricFlStipBulk) bulk).addToArchivioAllegati(allegatoGenericoBulk);
+            }
+            //parent.setCrudStatus(OggettoBulk.NORMAL);
+            //setModel(actioncontext, initializeModelInsAllegatoStip(actioncontext, parent));
+           // assicuraCampiAbilitati( actioncontext );
+
+        }
+
+        super.setModel(actioncontext, bulk);
+    }
+
+ */
+
     @Override
     public void create(ActionContext context) throws BusinessProcessException {
-        try {
-            try {
-                    CaricFlStipBulk caricFlStipBulk = (CaricFlStipBulk) this.getModel();
 
+
+            try {
+                CaricFlStipBulk caricFlStipBulk = (CaricFlStipBulk) this.getModel();
+
+                /*
                 it.cnr.jada.util.upload.UploadedFile uploadedFile =
                         ((it.cnr.jada.action.HttpActionContext) context).getMultipartParameter("main.ArchivioAllegati.file");
 
                 if (uploadedFile == null || uploadedFile.getFile() == null || uploadedFile.getFile().length() == 0L) {
                     throw new ApplicationException("File non caricato correttamente o vuoto. Riprovare.");
                 }
-
-                File file = uploadedFile.getFile();
-
+*/
+                //File file = uploadedFile.getFile();
+                File file = caricFlStipBulk.getArchivioAllegati().get(0).getFile();
 
                 GestioneStipBulk stipBulkParsed;
                 try (InputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
                     stipBulkParsed = processFlussoStipendi(context.getUserContext(), caricFlStipBulk, is, file.getName());
+                    caricFlStipBulk.setEsercizio(stipBulkParsed.getStipendiCofiBulk().getEsercizio());
+                    caricFlStipBulk.setProgressivo(stipBulkParsed.getStipendiCofiBulk().getMese());
                 }
 
-                CaricFlStipBulk allegatoStipBulk = setAllegatoStipBulk(stipBulkParsed, file, uploadedFile);
-
-                // lo mettiamo in creazione
-                allegatoStipBulk.getArchivioAllegati().get(0).setCrudStatus(OggettoBulk.TO_BE_CREATED);
-                caricFlStipBulk.validate();
-
-                // salva parent + allegato
-                super.create(context);
-
-                setMessage(FormBP.INFO_MESSAGE, "Flusso stipendi elaborato correttamente.");
-
-                // resetta vista upload
-                resetUploadSlot(context);
+                archiviaAllegati(context);
 
             } catch (Exception e) {
                 throw handleException(e);
             }
-        } catch (Throwable e) {
-            throw handleException(e);
-        }
+
+    }
+
+
+    @Override
+    protected Boolean isPossibileModifica(AllegatoGenericoBulk allegato) {
+        return Boolean.FALSE;
     }
 
 
@@ -119,7 +176,7 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
         AllegatoGenericoBulk a = new AllegatoGenericoBulk();
         a.setCrudStatus(OggettoBulk.TO_BE_CREATED);
         nuovo.add(a);
-        m.setArchivioAllegati(nuovo);
+     //   m.setArchivioAllegati(nuovo);
 
         getCrudArchivioAllegati().setModelIndex(ctx, 0);
         getCrudArchivioAllegati().setSelection(Collections.emptyEnumeration());
@@ -127,11 +184,8 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
 
 
     @Override
-    protected void basicEdit(ActionContext actioncontext, OggettoBulk oggettobulk, boolean flag) throws BusinessProcessException {
-        super.basicEdit(actioncontext, oggettobulk, flag);
-       getCrudArchivioAllegati().setOrderBy(actioncontext, "onlyinsert", OrderConstants.ORDER_DESC);
-       getCrudArchivioAllegati().setSelection(Collections.emptyEnumeration());
-        getCrudArchivioAllegati().setModelIndex(actioncontext, -1);
+    protected void basicEdit(ActionContext actioncontext, OggettoBulk oggettobulk, boolean flag) throws BusinessProcessException {return ;
+
     }
 
     public OggettoBulk initializeModelInsAllegatoStip(ActionContext actioncontext, OggettoBulk oggettobulk) throws BusinessProcessException {
@@ -162,11 +216,6 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
         throw new ApplicationException("La modifica dell'allegato non è consentita. Inserire un nuovo file.");
     }
 
-    /** Dopo lo store dell'XLSX, elabora dal documentale */
-    @Override
-    protected void completeCreateAllegato(AllegatoGenericoBulk allegato, StorageObject so) throws ApplicationException {
-
-    }
 
 //    /** Salva (parent) + archivia allegato con nome/titolo richiesti → triggera elaborazione. */
 //    public void saveFileStipendi(ActionContext context) throws BusinessProcessException {
@@ -208,7 +257,7 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
 
     private CaricFlStipBulk setAllegatoStipBulk(GestioneStipBulk stipBulkParsed, File file, UploadedFile uploadedFile) {
         CaricFlStipBulk allegatoStipBulk = (CaricFlStipBulk) getModel();
-
+    /*
         // Aggiorna il modello con i dati elaborati utilizzando un controllo null-safe
         if (stipBulkParsed != null && stipBulkParsed.getStipendiCofiBulk() != null) {
             Stipendi_cofiBulk sc = stipBulkParsed.getStipendiCofiBulk();
@@ -228,13 +277,16 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
         allegati.add(allegatoStipBulk);
         allegatoStipBulk.setArchivioAllegati(allegati);
         return allegatoStipBulk;
+
+     */
+        return allegatoStipBulk;
     }
 
 
 
     // ---------- ELABORAZIONE XLSX ----------
 
-    private GestioneStipBulk processFlussoStipendi(UserContext userContext,CaricFlStipBulk caricFlStipBulk,InputStream in, String filename) throws ApplicationException {
+    private GestioneStipBulk processFlussoStipendi(UserContext userContext,CaricFlStipBulk caricFlStipBulk,InputStream in, String filename) throws ComponentException {
         try {
             String nome = Optional.ofNullable(filename).orElse("").toLowerCase(Locale.ITALY);
             if (!nome.endsWith(".xlsx")) {
@@ -251,7 +303,7 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
         }
     }
 
-    private GestioneStipBulk elaboraWorkbookXlsx(UserContext uc, CaricFlStipBulk caricFlStipBulk,XSSFWorkbook wb) throws ApplicationException, BusinessProcessException {
+    private GestioneStipBulk elaboraWorkbookXlsx(UserContext uc, CaricFlStipBulk caricFlStipBulk,XSSFWorkbook wb) throws ComponentException, BusinessProcessException, RemoteException {
         XSSFSheet sheetLordi = null, sheetRitenute = null;
         for (int i = 0; i < wb.getNumberOfSheets(); i++) {
             String name = wb.getSheetName(i);
@@ -267,11 +319,9 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
         elaboraSheetLordiInterno(sheetLordi, caricFlStipBulk,bulk);
         elaboraSheetRitenuteInterno(sheetRitenute, bulk);
 
-        try {
+
             return createComponentSession().gestioneFlussoStipendi(uc, bulk);
-        } catch (ComponentException | RemoteException e) {
-            throw new RuntimeException(e);
-        }
+
     }
 
     private void elaboraSheetLordiInterno(XSSFSheet sheet, CaricFlStipBulk caricFlStipBulk,GestioneStipBulk bulk) throws ApplicationException {
@@ -366,16 +416,7 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
         }
     }
 
-    private void assicuraCampiAbilitati(ActionContext ctx) {
-        CaricFlStipBulk m = (CaricFlStipBulk) getModel();
-        if (m.getArchivioAllegati().isEmpty()) {
-            AllegatoGenericoBulk a = new AllegatoGenericoBulk();
-            a.setCrudStatus(OggettoBulk.TO_BE_CREATED); // abilita i campi di upload
-            m.addToArchivioAllegati(a);
-        }
-        getCrudArchivioAllegati().setModelIndex(ctx, 0);
-        getCrudArchivioAllegati().setSelection(Collections.emptyEnumeration());
-    }
+
 
     public FlussoStipendiComponentSession createComponentSession() throws EJBException, BusinessProcessException {
         return (FlussoStipendiComponentSession) createComponentSession(
@@ -395,12 +436,7 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
     @Override public boolean isSearchButtonHidden()     { return true; }
     @Override public boolean isFreeSearchButtonHidden() { return true; }
     @Override public boolean isSaveButtonEnabled()      { return true; }
-    @Override
-    public String getAllegatiFormName() {return "onlyinsert";}
-    @Override
-    protected boolean excludeChild(StorageObject storageObject) {return true;}
 
-    @Override
-    protected Boolean isPossibileModifica(AllegatoGenericoBulk allegato) {return false;}
+
 
 }

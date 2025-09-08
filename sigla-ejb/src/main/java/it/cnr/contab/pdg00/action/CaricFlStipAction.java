@@ -1,13 +1,7 @@
 package it.cnr.contab.pdg00.action;
 
-import it.cnr.contab.pdg00.bp.CaricFlStipBP;
-import it.cnr.contab.pdg00.cdip.bulk.CaricFlStipBulk;
-import it.cnr.jada.action.ActionContext;
-import it.cnr.jada.action.Forward;
-import it.cnr.jada.comp.ApplicationException;
-
 public class CaricFlStipAction extends it.cnr.jada.util.action.CRUDAction {
-
+/*
     @Override
     public Forward doSalva(ActionContext context) {
         try {
@@ -31,4 +25,6 @@ public class CaricFlStipAction extends it.cnr.jada.util.action.CRUDAction {
             throw new ApplicationException("Attenzione: indicare il tipo rapporto.");
         }
     }
+
+ */
 }
