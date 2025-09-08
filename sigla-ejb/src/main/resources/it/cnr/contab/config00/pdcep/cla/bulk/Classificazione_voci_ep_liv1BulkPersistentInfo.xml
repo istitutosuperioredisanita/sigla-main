@@ -17,23 +17,6 @@
   -->
 
 <SQLPersistentInfo
-	persistentClassName="it.cnr.contab.config00.bulk.Codici_siopeBulk"
-	homeClassName="it.cnr.contab.config00.bulk.Codici_siopeHome">
-	<defaultColumnMap
-		tableName="CODICI_SIOPE">
-		<columnMapping
-			columnName="ID_CLASSIFICAZIONE_SIOPE"
-			propertyName="v_classificazione_voci_ep_siope.id_classificazione"
-			sqlTypeName="DECIMAL"
-			columnSize="7" />
-		<columnMapping
-			columnName="ID_CLASSIFICAZIONE_SIOPE_REND"
-			propertyName="v_classificazione_voci_ep_siope_rend.id_classificazione"
-			sqlTypeName="DECIMAL"
-			columnSize="7" />
-	</defaultColumnMap>
-	<persistentProperty
-		name="v_classificazione_voci_ep_siope" />
-	<persistentProperty
-		name="v_classificazione_voci_ep_siope_rend" />
+	persistentClassName="it.cnr.contab.config00.pdcep.cla.bulk.Classificazione_voci_ep_liv1Bulk"
+	homeClassName="it.cnr.contab.config00.pdcep.cla.bulk.Classificazione_voci_ep_liv1Home">
 </SQLPersistentInfo>

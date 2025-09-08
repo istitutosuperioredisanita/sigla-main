@@ -26,8 +26,15 @@
 			propertyName="v_classificazione_voci_ep.id_classificazione"
 			sqlTypeName="DECIMAL"
 			columnSize="7" />
+		<columnMapping
+			columnName="ID_CLASSIFICAZIONE_ACC"
+			propertyName="v_classificazione_voci_ep_acc.id_classificazione"
+			sqlTypeName="DECIMAL"
+			columnSize="7" />
 	</defaultColumnMap>
 	
 	<persistentProperty
 		name="v_classificazione_voci_ep" />
+	<persistentProperty
+		name="v_classificazione_voci_ep_acc" />
 </SQLPersistentInfo>

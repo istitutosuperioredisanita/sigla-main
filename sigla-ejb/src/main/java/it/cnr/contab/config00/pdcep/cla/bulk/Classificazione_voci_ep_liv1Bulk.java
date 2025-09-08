@@ -15,15 +15,24 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package it.cnr.contab.config00.ejb;
+/*
+ * Created on Aug 29, 2005
+ *
+ * To change the template for this generated file go to
+ * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ */
+package it.cnr.contab.config00.pdcep.cla.bulk;
 
-import javax.ejb.Remote;
+public class Classificazione_voci_ep_liv1Bulk extends Classificazione_voci_epBulk {
 
-@Remote
-public interface Parametri_livelli_epComponentSession
-extends it.cnr.jada.ejb.CRUDComponentSession 
-{
-	boolean isParametriLivelliEnabled(it.cnr.jada.UserContext param0, it.cnr.contab.config00.pdcep.cla.bulk.Parametri_livelli_epBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
-	it.cnr.contab.config00.pdcep.cla.bulk.Parametri_livelli_epBulk getParametriLivelli(it.cnr.jada.UserContext param0, java.lang.Integer param1, java.lang.String param2) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
-	String getDescrizioneLivello(it.cnr.jada.UserContext param0, Integer param1, String param2) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+	public Classificazione_voci_ep_liv1Bulk() {
+		super();
+	}
+	public Classificazione_voci_ep_liv1Bulk(java.lang.Integer id_classificazione) {
+		super(id_classificazione);
+	}
+	public Classificazione_voci_ep_liv1Bulk(String cd_livello1) {
+		super();
+		setCd_livello1(cd_livello1);
+	}
 }
