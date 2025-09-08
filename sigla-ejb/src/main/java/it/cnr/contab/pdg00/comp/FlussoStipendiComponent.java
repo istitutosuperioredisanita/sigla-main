@@ -17,10 +17,6 @@
 
 package it.cnr.contab.pdg00.comp;
 
-import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
-import it.cnr.contab.anagraf00.core.bulk.BancaHome;
-import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
-import it.cnr.contab.anagraf00.core.bulk.TerzoHome;
 import it.cnr.contab.compensi00.tabrif.bulk.*;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceHome;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
@@ -36,7 +32,9 @@ import it.cnr.jada.persistency.PersistencyException;
 
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofi_coriBulk.firstDayOfMonthTs;
@@ -240,10 +238,10 @@ public class FlussoStipendiComponent extends CRUDComponent {
                 }
 
                 // 2) Verifica gruppo in TIPO_CR_BASE → CD_GRUPPO_CR
-                String cdGruppoCodCORI = null;
+                Tipo_cr_baseBulk tipoCrBaseBulk = null;
                 try {
-                    cdGruppoCodCORI = loadCdGruppoCrFor(userContext, testataStipendi.getEsercizio(), stipendiCofiCoriBulk.getCd_contributo_ritenuta());
-                    if ( !Optional.ofNullable(cdGruppoCodCORI).isPresent()) {
+                    tipoCrBaseBulk = loadCdGruppoCrFor(userContext, testataStipendi.getEsercizio(), stipendiCofiCoriBulk.getCd_contributo_ritenuta());
+                    if ( !Optional.ofNullable(tipoCrBaseBulk).isPresent()) {
                         esitoElaborazione.codiciSenzaGruppo.add(stipendiCofiCoriBulk.getCd_contributo_ritenuta());
                         continue; // Salta alla prossima chiave
                     }
@@ -251,7 +249,7 @@ public class FlussoStipendiComponent extends CRUDComponent {
                 }
 
                 try {
-                    Gruppo_cr_detBulk gruppoCrDetBulk = loadGruppoCr_CrDetFor(userContext, testataStipendi.getEsercizio(), cdGruppoCodCORI);
+                    Gruppo_cr_detBulk gruppoCrDetBulk = loadGruppoCr_CrDetFor(userContext, testataStipendi.getEsercizio(), tipoCrBaseBulk.getCd_gruppo_cr());
                     if ( !Optional.ofNullable(gruppoCrDetBulk.getCd_terzo_versamento()).isPresent() || !Optional.ofNullable(gruppoCrDetBulk.getPg_banca()).isPresent() ) {
                         esitoElaborazione.codiciSenzaTerzo.add(
                                 stipendiCofiCoriBulk.getCd_contributo_ritenuta() + " [GRUPPO=" + gruppoCrDetBulk.getCd_gruppo_cr() + "]");
@@ -304,7 +302,7 @@ public class FlussoStipendiComponent extends CRUDComponent {
     /**
      * Carica il codice gruppo dal TIPO_CR_BASE per un dato contributo/ritenuta
      */
-    private String loadCdGruppoCrFor(UserContext userContext, Integer esercizio, String codiceContributo)
+    private Tipo_cr_baseBulk loadCdGruppoCrFor(UserContext userContext, Integer esercizio, String codiceContributo)
             throws PersistencyException {
         try {
             Tipo_cr_baseHome tipoCrBaseHome =
@@ -316,13 +314,9 @@ public class FlussoStipendiComponent extends CRUDComponent {
             chiaveTipoCrBase.setEsercizio(esercizio);
             chiaveTipoCrBase.setCd_contributo_ritenuta(codiceContributo);
 
-            try {
-                Tipo_cr_baseBulk recordTrovato =
-                        (Tipo_cr_baseBulk) tipoCrBaseHome.findByPrimaryKey(userContext, chiaveTipoCrBase);
-                return (recordTrovato != null) ? recordTrovato.getCd_gruppo_cr() : null;
-            } catch (ObjectNotFoundException e) {
-                return null; // Record non trovato
-            }
+            return  (Tipo_cr_baseBulk) tipoCrBaseHome.findByPrimaryKey(userContext, chiaveTipoCrBase);
+
+
         } catch (PersistencyException | ComponentException e) {
             return null; // Errore di accesso ai dati
         }
@@ -342,7 +336,9 @@ public class FlussoStipendiComponent extends CRUDComponent {
             try {
                 Ass_tipo_cori_evBulk recordTrovato = assocTipoCoriEvHome.getAssCoriEv(esercizio, codiceContributo,
                         Elemento_voceHome.APPARTENENZA_CNR, Elemento_voceHome.GESTIONE_ENTRATE, tipoEntePercipiente);
-                return (recordTrovato != null) ? recordTrovato.getCd_elemento_voce() : null;
+                if( Optional.ofNullable(recordTrovato).isPresent())
+                    return recordTrovato.getCd_elemento_voce();
+                return null;
             } catch (ObjectNotFoundException e) {
                 return null; // Record non trovato
             }
@@ -354,27 +350,14 @@ public class FlussoStipendiComponent extends CRUDComponent {
     /**
      * Carica i dettagli del gruppo contributi/ritenute (terzo versamento, banca, modalità pagamento)
      */
-    private Gruppo_cr_detBulk loadGruppoCr_CrDetFor(UserContext userContext, Integer esercizio, String codiceGruppo) throws PersistencyException{
-        try {
+    private Gruppo_cr_detBulk loadGruppoCr_CrDetFor(UserContext userContext, Integer esercizio, String codiceGruppo) throws PersistencyException,ComponentException{
             Gruppo_cr_detHome gruppoDettaglioHome =
                     (Gruppo_cr_detHome)
                             getHome(userContext, Gruppo_cr_detBulk.class);
-
-            // Crea la chiave per il gruppo principale
-            Gruppo_crBulk chiaveGruppoPrincipale = new Gruppo_crBulk();
-            chiaveGruppoPrincipale.setEsercizio(esercizio);
-            chiaveGruppoPrincipale.setCd_gruppo_cr(codiceGruppo);
-
-            try {
-                List dettagliGruppo = gruppoDettaglioHome.getDetailsFor(chiaveGruppoPrincipale);
-                return (dettagliGruppo != null && !dettagliGruppo.isEmpty()) ?
-                        (Gruppo_cr_detBulk) dettagliGruppo.get(0) : null;
-            } catch (ObjectNotFoundException e) {
-                return null; // Dettaglio non trovato
-            }
-        } catch (PersistencyException | ComponentException e) {
-            return null; // Errore di accesso ai dati
-        }
+            List<Gruppo_cr_detBulk> l =gruppoDettaglioHome.getDetailsFor(new Gruppo_crBulk(esercizio,codiceGruppo ));
+            if ( Optional.ofNullable(l).isPresent())
+                return l.get(0);
+            return null;
     }
 
     /**

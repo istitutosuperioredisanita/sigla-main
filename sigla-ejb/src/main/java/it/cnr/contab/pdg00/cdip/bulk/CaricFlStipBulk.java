@@ -6,14 +6,17 @@ import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.annotation.StorageProperty;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Dictionary;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class CaricFlStipBulk extends AllegatoGenericoBulk implements AllegatoParentBulk {
+public class CaricFlStipBulk extends OggettoBulk implements AllegatoParentBulk {
 
     private static final long serialVersionUID = 1L;
 
@@ -92,9 +95,6 @@ public class CaricFlStipBulk extends AllegatoGenericoBulk implements AllegatoPar
     }
 
     // Metodi di utilità
-    public boolean isAllegatoEsistente() {
-        return !this.isToBeCreated();
-    }
 
     public static String getStorePathStipendi(String suffix, Integer esercizio, Integer progressivo) {
         return Arrays.asList(
