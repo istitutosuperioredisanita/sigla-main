@@ -198,6 +198,7 @@
 		inputType="ROTEXT"
 		enabledOnSearch="true"
 		/>
+
 	<fieldProperty
 		name="id_classificazione"
 		property="v_classificazione_voci_ep.id_classificazione"
@@ -227,6 +228,36 @@
 		freeSearchSet="searchtool"
 		enabledOnSearch="true"
 		label="Classificazione Ufficiale" />
+
+	<fieldProperty
+			name="id_classificazione_acc"
+			property="v_classificazione_voci_ep_acc.id_classificazione"
+			maxLength="7"
+			inputSize="7"
+			inputType="TEXT"
+			enabledOnEdit="false"
+			enabledOnInsert="false"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="false"
+			label="Identificativo Classificazione Accrual" />
+	<fieldProperty
+			name="cd_classificazione_acc"
+			property="v_classificazione_voci_ep_acc.cd_classificazione"
+			maxLength="34"
+			inputSize="40"
+			inputType="TEXT"
+			enabledOnEdit="false"
+			enabledOnInsert="false"
+			label="Codice Classificazione Accrual" />
+	<fieldProperty
+			name="find_classificazione_voci_ep_acc"
+			property="v_classificazione_voci_ep_acc"
+			inputType="SEARCHTOOL"
+			formName="searchtool"
+			columnSet="searchtool"
+			freeSearchSet="searchtool"
+			enabledOnSearch="true"
+			label="Classificazione Accrual" />
 
 	<fieldProperty
 		name="find_voce_ep_contr"
@@ -339,12 +370,15 @@
 	<formFieldProperty
 		name="ti_voce_ep"
 		/>
-	 <formFieldProperty
-		name="id_classificazione" />
-   	<formFieldProperty
-		name="cd_classificazione" />
-   	<formFieldProperty
-		name="find_classificazione_voci_ep" />
+
+    <formFieldProperty name="id_classificazione" />
+   	<formFieldProperty name="cd_classificazione" />
+   	<formFieldProperty name="find_classificazione_voci_ep" />
+
+	<formFieldProperty name="id_classificazione_acc" />
+	<formFieldProperty name="cd_classificazione_acc" />
+	<formFieldProperty name="find_classificazione_voci_ep_acc" />
+
 	<formFieldProperty
 		name="cd_voce_ep_contr"	/>
 	<formFieldProperty
@@ -384,12 +418,12 @@
 		name="ti_sezione"
 		inputType="SELECT"
 		/>
-	<findFieldProperty
-		name="id_classificazione"
-		/>
-	<findFieldProperty
-		name="id_classificazione"
-		/>
+
+	<findFieldProperty name="id_classificazione" />
+	<findFieldProperty name="id_classificazione_acc" />
+	<findFieldProperty name="id_classificazione_siope" />
+	<findFieldProperty name="id_classificazione_siope_rend" />
+
 	<form name="searchtool">
 		<formFieldProperty
 				name="cd_voce_ep"

@@ -32,10 +32,10 @@ public class Classificazione_voci_epComponentSessionBean extends it.cnr.jada.ejb
 	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
 		return new Classificazione_voci_epComponentSessionBean();
 	}
-	public it.cnr.contab.config00.pdcep.cla.bulk.Parametri_livelli_epBulk findParametriLivelli(it.cnr.jada.UserContext param0, java.lang.Integer param1)  throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.config00.pdcep.cla.bulk.Parametri_livelli_epBulk findParametriLivelli(it.cnr.jada.UserContext param0, java.lang.Integer param1, java.lang.String param2)  throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
-			it.cnr.contab.config00.pdcep.cla.bulk.Parametri_livelli_epBulk result = ((Classificazione_voci_epComponent)componentObj).findParametriLivelli(param0, param1);
+			it.cnr.contab.config00.pdcep.cla.bulk.Parametri_livelli_epBulk result = ((Classificazione_voci_epComponent)componentObj).findParametriLivelli(param0, param1, param2);
 			component_invocation_succes(param0,componentObj);
 			return result;
 		} catch(it.cnr.jada.comp.NoRollbackException e) {

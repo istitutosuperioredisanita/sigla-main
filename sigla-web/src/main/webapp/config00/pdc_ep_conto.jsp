@@ -63,6 +63,18 @@
         <td><% bp.getController().writeFormLabel(out,"find_classificazione_voci_ep");%></td>
         <td><% bp.getController().writeFormInput(out,"find_classificazione_voci_ep");%></td>
     </tr>
+    <tr>
+        <td><% bp.getController().writeFormLabel(out,"find_classificazione_voci_ep_acc");%></td>
+        <td><% bp.getController().writeFormInput(out,"find_classificazione_voci_ep_acc");%></td>
+    </tr>
+    <tr>
+        <td><% bp.getController().writeFormLabel(out,"find_classificazione_voci_ep_siope");%></td>
+        <td><% bp.getController().writeFormInput(out,"find_classificazione_voci_ep_siope");%></td>
+    </tr>
+    <tr>
+        <td><% bp.getController().writeFormLabel(out,"find_classificazione_voci_ep_siope_rend");%></td>
+        <td><% bp.getController().writeFormInput(out,"find_classificazione_voci_ep_siope_rend");%></td>
+    </tr>
 	<tr>
         <td><% bp.getController().writeFormLabel( out, "riepiloga_a"); %></td>
         <td><% bp.getController().writeFormInput( out, "riepiloga_a"); %></td>

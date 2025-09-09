@@ -33,10 +33,10 @@ public class Parametri_livelli_epComponentSessionBean extends it.cnr.jada.ejb.CR
 	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
 		return new Parametri_livelli_epComponentSessionBean();
 	}
-	public boolean isParametriLivelliEcoEnabled(it.cnr.jada.UserContext param0, it.cnr.contab.config00.pdcep.cla.bulk.Parametri_livelli_epBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public boolean isParametriLivelliEnabled(it.cnr.jada.UserContext param0, it.cnr.contab.config00.pdcep.cla.bulk.Parametri_livelli_epBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
-			boolean result = ((Parametri_livelli_epComponent)componentObj).isParametriLivelliEcoEnabled(param0,param1);
+			boolean result = ((Parametri_livelli_epComponent)componentObj).isParametriLivelliEnabled(param0,param1);
 			component_invocation_succes(param0,componentObj);
 			return result;
 		} catch(it.cnr.jada.comp.NoRollbackException e) {
@@ -51,28 +51,10 @@ public class Parametri_livelli_epComponentSessionBean extends it.cnr.jada.ejb.CR
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public boolean isParametriLivelliPatEnabled(it.cnr.jada.UserContext param0, it.cnr.contab.config00.pdcep.cla.bulk.Parametri_livelli_epBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.config00.pdcep.cla.bulk.Parametri_livelli_epBulk getParametriLivelli(it.cnr.jada.UserContext param0, java.lang.Integer param1, java.lang.String param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
-			boolean result = ((Parametri_livelli_epComponent)componentObj).isParametriLivelliPatEnabled(param0,param1);
-			component_invocation_succes(param0,componentObj);
-			return result;
-		} catch(it.cnr.jada.comp.NoRollbackException e) {
-			component_invocation_succes(param0,componentObj);
-			throw e;
-		} catch(it.cnr.jada.comp.ComponentException e) {
-			component_invocation_failure(param0,componentObj);
-			throw e;
-		} catch(RuntimeException e) {
-			throw uncaughtRuntimeException(param0,componentObj,e);
-		} catch(Error e) {
-			throw uncaughtError(param0,componentObj,e);
-		}
-	}
-	public it.cnr.contab.config00.pdcep.cla.bulk.Parametri_livelli_epBulk getParametriLivelli(it.cnr.jada.UserContext param0, java.lang.Integer param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
-		pre_component_invocation(param0,componentObj);
-		try {
-			it.cnr.contab.config00.pdcep.cla.bulk.Parametri_livelli_epBulk result = ((Parametri_livelli_epComponent)componentObj).getParametriLivelli(param0,param1);
+			it.cnr.contab.config00.pdcep.cla.bulk.Parametri_livelli_epBulk result = ((Parametri_livelli_epComponent)componentObj).getParametriLivelli(param0,param1,param2);
 			component_invocation_succes(param0,componentObj);
 			return result;
 		} catch(it.cnr.jada.comp.NoRollbackException e) {

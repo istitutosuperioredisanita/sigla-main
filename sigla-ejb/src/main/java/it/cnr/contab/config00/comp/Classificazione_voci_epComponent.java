@@ -26,11 +26,9 @@ package it.cnr.contab.config00.comp;
 
 import java.io.Serializable;
 
-import it.cnr.contab.config00.pdcep.bulk.Voce_epHome;
 import it.cnr.contab.config00.pdcep.cla.bulk.*;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkCollection;
-import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.BusyResourceException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.OutdatedResourceException;
@@ -107,13 +105,13 @@ public class Classificazione_voci_epComponent extends CRUDComponent implements C
 
 	/**
 	 *  Esegue una operazione di creazione di un Classificazione_vociBulk. 
-	 *
+	 * <p>
 	 *  Pre-post-conditions:
-	 *
+	 * <p>
 	 *  Nome: Struttura della classificazione non uguale a quella definita nei parametri
   	 *	Pre:  Viene invocato il metodo verificaLivelli e quest'ultimo genera una eccezione di validazione
 	 *  Post: Viene lasciata uscire l'eccezione senza salvare la classificazione
-	 *  
+	 * <p>
 	 *  Nome: Classificazione inserita di ultimo livello
 	 *	Pre:  Viene invocato il metodo validaMastrino
 	 *  Post: Viene restituita la Classificazione aggiornata 
@@ -135,7 +133,7 @@ public class Classificazione_voci_epComponent extends CRUDComponent implements C
 	public Classificazione_voci_epBulk caricaClassVociAssociate(UserContext usercontext, Classificazione_voci_epBulk bulk, CompoundFindClause compoundfindclause)	throws ComponentException {
 		try {
 			Classificazione_voci_epHome home = (Classificazione_voci_epHome)getHome(usercontext, bulk.getClass());
-			bulk.setClassVociAssociate(new it.cnr.jada.bulk.BulkList(home.findClassVociAssociate(bulk, compoundfindclause)));			
+			bulk.setClassVociAssociate(new it.cnr.jada.bulk.BulkList<>(home.findClassVociAssociate(bulk, compoundfindclause)));
 			getHomeCache(usercontext).fetchAll(usercontext);
 			return bulk;
 		} catch (PersistencyException e) {
@@ -150,13 +148,13 @@ public class Classificazione_voci_epComponent extends CRUDComponent implements C
 	/**
 	 * 	Ritorna il bulk dei parametri livelli <ParametriLivelli_epBulk> dell'Esercizio indicato <esercizio>.
 	 */
-	public Parametri_livelli_epBulk findParametriLivelli(UserContext userContext, Integer esercizio) throws it.cnr.jada.comp.ComponentException {
+	public Parametri_livelli_epBulk findParametriLivelli(UserContext userContext, Integer esercizio, String tipo) throws it.cnr.jada.comp.ComponentException {
 		try
 		{
 			Parametri_livelli_epHome parametri_livelli_epHome = (Parametri_livelli_epHome) getHome(userContext, Parametri_livelli_epBulk.class );
-			Parametri_livelli_epBulk parametri_livelli_epBulk = (Parametri_livelli_epBulk)parametri_livelli_epHome.findByPrimaryKey(new Parametri_livelli_epBulk(esercizio));
+			Parametri_livelli_epBulk parametri_livelli_epBulk = (Parametri_livelli_epBulk)parametri_livelli_epHome.findByPrimaryKey(new Parametri_livelli_epBulk(esercizio,tipo));
 			if (parametri_livelli_epBulk==null)
-				throw new ApplicationException("Parametri Livelli non definiti per l'esercizio " + esercizio + ".");
+				throw new ApplicationException("Parametri Livelli non definiti per l'esercizio " + esercizio + " e tipo classificazione " + tipo + ".");
 			return parametri_livelli_epBulk;
 		}
 		catch (Exception e )
@@ -169,11 +167,8 @@ public class Classificazione_voci_epComponent extends CRUDComponent implements C
 	 * 	Ritorna la Descrizione del Livello a cui appartiene la classificazione <cla> indicata.
 	 */
 	public String getDsLivelloClassificazione(UserContext userContext, Classificazione_voci_epBulk cla) throws it.cnr.jada.comp.ComponentException {
-		Parametri_livelli_epBulk parametri = findParametriLivelli(userContext, cla.getEsercizio());
-		if (cla.getTipo().equals(Voce_epHome.ECONOMICA))
-		 	return parametri.getDs_livello_eco(cla.getLivelloMax().intValue());
-		else
-			return parametri.getDs_livello_pat(cla.getLivelloMax().intValue());
+		Parametri_livelli_epBulk parametri = findParametriLivelli(userContext, cla.getEsercizio(), cla.getTipo());
+	 	return parametri.getDs_livello(cla.getLivelloMax());
 	}
 
 	/**
@@ -188,11 +183,8 @@ public class Classificazione_voci_epComponent extends CRUDComponent implements C
 	 *	 
 	 **/
 	public String getDsLivelloClassificazione(UserContext userContext, Integer esercizio, String tipo, Integer livello) throws it.cnr.jada.comp.ComponentException {
-		Parametri_livelli_epBulk parametri = findParametriLivelli(userContext, esercizio);
-		if (tipo.equals(Voce_epHome.ECONOMICA))
-			return parametri.getDs_livello_eco(livello.intValue());
-		else
-			return parametri.getDs_livello_pat(livello.intValue());
+		Parametri_livelli_epBulk parametri = findParametriLivelli(userContext, esercizio, tipo);
+		return parametri.getDs_livello(livello);
 	}
 
 	/**
@@ -221,27 +213,15 @@ public class Classificazione_voci_epComponent extends CRUDComponent implements C
 	  *		 Esce senza alcuna eccezione
 	 */	
 	private void verificaLivelli(UserContext usercontext, Classificazione_voci_epBulk claNew) throws it.cnr.jada.comp.ComponentException {
-		Parametri_livelli_epBulk parametri = findParametriLivelli(usercontext, claNew.getEsercizio());
-		if (claNew.getTipo().equals(Voce_epHome.ECONOMICA)) {
-			for (int i=1; i<=Classificazione_voci_epHome.LIVELLO_MAX; i++){ 
-				if (claNew.getCd_livello(i) != null) {
-					if (parametri.getLivelli_eco().compareTo(new Integer(i))==-1)
-						throw new ApplicationException("Non è possibile inserire classificazioni di economica con più di " + i + " livelli.");
-					if (parametri.getLung_livello_eco(i).compareTo(new Integer(claNew.getCd_livello(i).length()))!=0)
-						throw new ApplicationException("Il codice " + parametri.getDs_livello_eco(i) + " deve avere una lunghezza di " + parametri.getLung_livello_eco(i).toString() + " caratteri.");
-				}
+		Parametri_livelli_epBulk parametri = findParametriLivelli(usercontext, claNew.getEsercizio(), claNew.getTipo());
+		for (int i=1; i<=Classificazione_voci_epHome.LIVELLO_MAX; i++){
+			if (claNew.getCd_livello(i) != null) {
+				if (parametri.getLivelli().compareTo(new Integer(i))==-1)
+					throw new ApplicationException("Non è possibile inserire classificazioni di economica con più di " + i + " livelli.");
+				if (parametri.getLung_livello(i).compareTo(new Integer(claNew.getCd_livello(i).length()))!=0)
+					throw new ApplicationException("Il codice " + parametri.getDs_livello(i) + " deve avere una lunghezza di " + parametri.getLung_livello(i).toString() + " caratteri.");
 			}
 		}
-		else if (claNew.getTipo().equals(Voce_epHome.PATRIMONIALE)) {
-			for (int i=1; i <= Classificazione_voci_epHome.LIVELLO_MAX; i++){ 
-				if (claNew.getCd_livello(i) != null) {
-					if (parametri.getLivelli_pat().compareTo(new Integer(i))==-1)
-						throw new ApplicationException("Non è possibile inserire classificazioni di patrimoniale con più di " + i + " livelli.");
-					if (parametri.getLung_livello_pat(i).compareTo(new Integer(claNew.getCd_livello(i).length()))!=0)
-						throw new ApplicationException("Il codice " + parametri.getDs_livello_pat(i) + " deve avere una lunghezza di " + parametri.getLung_livello_pat(i).toString() + " caratteri.");
-				}
-			}
-		}		
 
 		/*
 		 * 	Se è cambiato il codice di uno dei livelli della classificazione, procedo ad aggiornare
@@ -262,12 +242,10 @@ public class Classificazione_voci_epComponent extends CRUDComponent implements C
 						updateBulk(usercontext, claAss); 
 					}
 				}
-			} catch (PersistencyException e) {
-				throw handleException(e);
-			} catch (IntrospectionException e) {
+			} catch (PersistencyException | IntrospectionException e) {
 				throw handleException(e);
 			}
-		}
+        }
 	}
 
 	/** 
@@ -284,9 +262,8 @@ public class Classificazione_voci_epComponent extends CRUDComponent implements C
 	  * @return Classificazione_vociBulk <code>Classificazione_vociBulk</code> il bulk aggiornato.
 	**/ 
 	private Classificazione_voci_epBulk validaMastrino(UserContext userContext, Classificazione_voci_epBulk bulk) throws ComponentException {
-		Parametri_livelli_epBulk parametri = findParametriLivelli(userContext, bulk.getEsercizio());
-		if ((bulk instanceof Classificazione_voci_ep_ecoBulk && bulk.getLivelloMax().compareTo(parametri.getLivelli_eco())==0) ||
-			(bulk instanceof Classificazione_voci_ep_patBulk && bulk.getLivelloMax().compareTo(parametri.getLivelli_pat())==0))
+		Parametri_livelli_epBulk parametri = findParametriLivelli(userContext, bulk.getEsercizio(), bulk.getTipo());
+		if (bulk.getLivelloMax().compareTo(parametri.getLivelli())==0)
 			bulk.setFl_mastrino(Boolean.TRUE);
 		else
 			bulk.setFl_mastrino(Boolean.FALSE);
@@ -365,7 +342,7 @@ public class Classificazione_voci_epComponent extends CRUDComponent implements C
 	 * Pre: Nessun errore
 	 * Post: viene ritornato un RemoteIteretor sulla collezione dei figli del bulk specificato
 	 * 
-	 * @param	uc	lo UserContext che ha generato la richiesta
+	 * @param	context	lo UserContext che ha generato la richiesta
 	 * @param	bulk	l'OggettoBulk di cui determinare il parent
 	 * @return	il RemoteIterator sui figli
 	 */

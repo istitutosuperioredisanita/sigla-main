@@ -144,6 +144,15 @@
 			enabledOnEdit="false"
 			label="Id della Classificazione Ufficiale e/p associata alla voce e/p" />
 	<fieldProperty
+			name="id_classificazione_acc"
+			property="id_classificazione_acc"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="38"
+			enabledOnEdit="false"
+			label="Id della Classificazione ACCRUAL e/p associata alla voce e/p" />
+	<fieldProperty
 			name="cd_voce_ep_contr"
 			property="cd_voce_ep_contr"
 			inputType="TEXTAREA"
