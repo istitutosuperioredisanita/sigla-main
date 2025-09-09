@@ -334,7 +334,7 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 						 });
 						 if ( Optional.ofNullable(rigaEvasioneInList).isPresent()){
 							 rigaEvasioneInList.setMovimentiMag(((EvasioneOrdineRigaBulk) rigaEvasione).getMovimentiMag());
-							 if ( rigaEvasioneInList.getMovimentiMag()!=null)
+							 if ( rigaEvasioneInList.getMovimentiMag().getMovimentoRif()!=null)
 								 movimentiScarico.add(rigaEvasioneInList.getMovimentiMag());
 						 }
 					 });
