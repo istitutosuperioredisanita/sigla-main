@@ -6236,4 +6236,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_conf_gestione_importo_ro_inventario_ordini.xml"/>
     <!-- Autore : DAVIDE MIRRA - aggiunto campo note per la sezione Dati Contabili del Progetto -->
     <include file="bootstrap/add_column_note_on_progetto_other_field.xml"/>
+
+    <!-- Autore : RAFFAELE PAGANO - MODIFICHE TABELLE PER GESTIONE MULTI CLASSIFICAZIONI -->
+    <include file="bootstrap/modify_table_for_multi_classificazioni_ep.xml"/>
 </databaseChangeLog>

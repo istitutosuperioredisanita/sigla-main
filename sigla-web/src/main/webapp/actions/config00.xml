@@ -410,15 +410,7 @@
   <businessProcess
       name="ClassificazioneVociEPEcoBP" className="it.cnr.contab.config00.bp.CRUDClassificazioneVociEPBP">
     <forward name="default" path="/config00/classificazione_voci_ep.jsp"/>
-    <init-param name="bulkClassName" value="it.cnr.contab.config00.pdcep.cla.bulk.Classificazione_voci_ep_eco_liv1Bulk"/>
-    <init-param name="componentSessionName" value="CNRCONFIG00_EJB_Classificazione_voci_epComponentSession"/>
-	<init-param name="defaultAction" value="CRUDClassificazioneVociEPAction"/>
-  </businessProcess>
-
-  <businessProcess
-      name="ClassificazioneVociEPPatBP" className="it.cnr.contab.config00.bp.CRUDClassificazioneVociEPBP">
-    <forward name="default" path="/config00/classificazione_voci_ep.jsp"/>
-    <init-param name="bulkClassName" value="it.cnr.contab.config00.pdcep.cla.bulk.Classificazione_voci_ep_pat_liv1Bulk"/>
+    <init-param name="bulkClassName" value="it.cnr.contab.config00.pdcep.cla.bulk.Classificazione_voci_ep_liv1Bulk"/>
     <init-param name="componentSessionName" value="CNRCONFIG00_EJB_Classificazione_voci_epComponentSession"/>
 	<init-param name="defaultAction" value="CRUDClassificazioneVociEPAction"/>
   </businessProcess>

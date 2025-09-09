@@ -27,8 +27,18 @@
 			columnSize="4"
 			nullable="false"
 			primary="true" />
+		<columnMapping
+			columnName="TIPO"
+			propertyName="tipo"
+			sqlTypeName="VARCHAR"
+			columnSize="3"
+			nullable="false"
+			primary="true" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="esercizio"
+		partOfOid="true" />
+	<persistentProperty
+		name="tipo"
 		partOfOid="true" />
 </SQLPersistentInfo>

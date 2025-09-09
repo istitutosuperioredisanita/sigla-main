@@ -26,6 +26,7 @@ package it.cnr.contab.config00.action;
 import java.rmi.RemoteException;
 
 import it.cnr.contab.config00.bp.CRUDClassificazioneVociEPBP;
+import it.cnr.contab.config00.bp.CRUDConfigParametriLivelliEPBP;
 import it.cnr.contab.config00.pdcep.cla.bulk.*;
 import it.cnr.contab.config00.pdcep.cla.bulk.Classificazione_voci_epBulk;
 import it.cnr.jada.action.ActionContext;
@@ -52,15 +53,15 @@ public class CRUDClassificazioneVociEPAction extends CRUDAction {
 	public Forward doTab(ActionContext actioncontext, String tabName,String pageName) {
 		CRUDClassificazioneVociEPBP bp = (CRUDClassificazioneVociEPBP)actioncontext.getBusinessProcess();
 		Classificazione_voci_epBulk classModelNew = null;
-		int intTabOld = (new Integer(bp.getTab(tabName).substring("tabLivello".length()))).intValue();
-		int intTabNew = (new Integer(pageName.substring("tabLivello".length()))).intValue();
+		int intTabOld = Integer.parseInt(bp.getTab(tabName).substring("tabLivello".length()));
+		int intTabNew = Integer.parseInt(pageName.substring("tabLivello".length()));
 
 		/* 
 		 * Non è possibile cambiare Tab se esistono dati non confermati.
 		 */
 		try {
 			fillModel(actioncontext);
-			if (bp.isDirty()){
+			if (bp.isDirty() && intTabOld!=0 && intTabNew!=0){
 				setErrorMessage(actioncontext,"Confermare le modifiche prima di proseguire.");
 				return actioncontext.findDefaultForward();
 			}
@@ -73,31 +74,37 @@ public class CRUDClassificazioneVociEPAction extends CRUDAction {
 		 * almeno un livello successivo da utilizzare per il caricamento delle Bulk successive.
 		 * Regola non valida se si naviga dalla Tab1
 		 */
-		if ((new Integer(intTabNew)).compareTo(new Integer(intTabOld))>0 && 
+		if (intTabOld!=0 && intTabNew!=0 && intTabNew > intTabOld &&
 			((intTabOld==1 && bp.getModel().getCrudStatus()!=OggettoBulk.NORMAL)||
 			 (intTabOld!=1 && bp.getCrudAssLivelli().getSelection().getFocus()<0))) {  
 			bp.setMessage("E' necessario selezionare un livello.");
 			return actioncontext.findDefaultForward();
 		}
-		
+
+		if (intTabOld==0 && intTabNew > intTabOld &&
+				((Classificazione_voci_epBulk)bp.getModel()).getTipo()==null) {
+			bp.setMessage("E' necessario selezionare un tipo di classificazione.");
+			return actioncontext.findDefaultForward();
+		}
+
 		/*
 		 * Se è stato selezionato un livello diverso da quello precedentemente memorizzato (il focus del 
 		 * controller è diverso da quello memorizzato nel Bulk) vengono annullati tutti i riferimenti 
 		 * memorizzati nel BP ai Bulk e focus dei livelli successivi.
 		 * Se si naviga dalla Tab1 il processo di annullamento avviene se cambia il model del BP
 		 */
-		bp.allineaFocusBulkTab(intTabOld);
+		bp.allineaFocusBulkTab(intTabOld==0?1:intTabOld);
 
 		/*
 		 * Se la navigazione tra le Tab è in avanti è possibile navigare solo fino alla Tab immediatamente
 		 * successiva all'ultima Tab caricata.
 		 */
-		if ((new Integer(intTabNew)).compareTo(new Integer(intTabOld))>0 && 
+		if (intTabNew > intTabOld &&
 			bp.getBulkTab(intTabNew-1) == null && intTabNew!=intTabOld+1) {
 			bp.setMessage("E' necessario caricare i livelli nella sequenza corretta.");
 			return actioncontext.findDefaultForward();
 		} 
-		else if ((new Integer(intTabNew)).compareTo(new Integer(intTabOld))>0 && 
+		else if (intTabNew > intTabOld &&
 				 intTabNew!=2 && bp.getBulkTab(intTabNew-1) != null && 
 				 bp.getFocusTab(intTabNew-1) == -1 && intTabNew!=intTabOld+1) {
 			bp.setMessage("E' necessario selezionare un dettaglio del livello precedente.");
@@ -270,6 +277,20 @@ public class CRUDClassificazioneVociEPAction extends CRUDAction {
 				return super.doElimina(context);
 			return context.findDefaultForward();
 		} catch (RemoteException e) {
+			return handleException(context, e);
+		}
+	}
+
+	/**
+	 * Viene richiamato nel momento in cui viene cambiato il livello delle Economica
+	 */
+	public Forward doCambiaTipoClassificazione(ActionContext context) {
+		try {
+			CRUDClassificazioneVociEPBP bp = (CRUDClassificazioneVociEPBP)getBusinessProcess(context);
+			fillModel( context );
+			bp.cambiaTipoClassificazione(context);
+			return context.findDefaultForward();
+		} catch(Throwable e) {
 			return handleException(context, e);
 		}
 	}

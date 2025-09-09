@@ -42,6 +42,8 @@ import it.cnr.jada.util.action.FormController;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 
+import javax.ejb.EJBException;
+
 /**
  * @author rpagano
  *
@@ -64,97 +66,52 @@ public class CRUDClassificazioneVociEPBP extends SimpleCRUDBP {
 	{
 		super(s);
 	}
-	
-	protected void init(Config config, ActionContext actioncontext) throws BusinessProcessException {
-		super.init(config, actioncontext);
 
-		setTab("tab","tabLivello1");
-		try {
-			setParametriLivelli(((Classificazione_voci_epComponentSession)createComponentSession()).findParametriLivelli(actioncontext.getUserContext(), CNRUserContext.getEsercizio(actioncontext.getUserContext())));
-			allineaDescriptionTab(getTabCorrente().intValue());
-			if (this.getName().equals("ClassificazioneVociEPPatBP")) {
-				tabs = new String[getParametriLivelli().getLivelli_pat().intValue()][3];
-				
-				for (int i = 0; i<getParametriLivelli().getLivelli_pat().intValue(); i++){
-					tabs[i] = new String[]{ "tabLivello"+(i+1),getParametriLivelli().getDs_livello_pat(i+1),"/config00/tab_classificazione_voci_ep.jsp" };
-//					setField("cd_livello".concat((new Integer(i+1)).toString()), getParametriLivelli().getDs_livello_p(i+1), getParametriLivelli().getLung_livello_p(i+1).intValue(), i+1);
-				}
-			}
-			else
-			{
-				tabs = new String[getParametriLivelli().getLivelli_eco().intValue()][3];
-				FieldProperty formfieldproperty;				
-				for (int i = 0; i<getParametriLivelli().getLivelli_eco().intValue(); i++){
-					tabs[i] = new String[]{ "tabLivello"+(i+1),getParametriLivelli().getDs_livello_eco(i+1),"/config00/tab_classificazione_voci_ep.jsp" };    	    			
-//					setField("cd_livello".concat((new Integer(i+1)).toString()), getParametriLivelli().getDs_livello_e(i+1), getParametriLivelli().getLung_livello_e(i+1).intValue(), i+1);
-				}
-			}
-		} catch(it.cnr.jada.comp.ComponentException e) {
-			throw handleException(e);
-		} catch(java.rmi.RemoteException e) {
-			throw handleException(e);
-		} catch(javax.ejb.EJBException ejbe){
-			throw handleException(ejbe);
-		} 
+	public String getLabelCd_livello0(){
+		return "Tipo Classificazione";
 	}
 
 	public String getLabelCd_livello1(){
-		if (this.getName().equals("ClassificazioneVociEPPatBP"))
-			return getParametriLivelli().getDs_livello1p();
-		return getParametriLivelli().getDs_livello1e();
+		return getParametriLivelli().getDs_livello1();
 	}
 
 	public String getLabelCd_livello2(){
-		if (this.getName().equals("ClassificazioneVociEPPatBP"))
-			return getParametriLivelli().getDs_livello2p();
-		return getParametriLivelli().getDs_livello2e();
+		return getParametriLivelli().getDs_livello2();
 	}
 
 	public String getLabelCd_livello3(){
-		if (this.getName().equals("ClassificazioneVociEPPatBP"))
-			return getParametriLivelli().getDs_livello3p();
-		return getParametriLivelli().getDs_livello3e();
+		return getParametriLivelli().getDs_livello3();
 	}
 
 	public String getLabelCd_livello4(){
-		if (this.getName().equals("ClassificazioneVociEPPatBP"))
-			return getParametriLivelli().getDs_livello4p();
-		return getParametriLivelli().getDs_livello4e();
+		return getParametriLivelli().getDs_livello4();
 	}
 
 	public String getLabelCd_livello5(){
-		if (this.getName().equals("ClassificazioneVociEPPatBP"))
-			return getParametriLivelli().getDs_livello5p();
-		return getParametriLivelli().getDs_livello5e();
+		return getParametriLivelli().getDs_livello5();
 	}
 
 	public String getLabelCd_livello6(){
-		if (this.getName().equals("ClassificazioneVociEPPatBP"))
-			return getParametriLivelli().getDs_livello6p();
-		return getParametriLivelli().getDs_livello6e();
+		return getParametriLivelli().getDs_livello6();
 	}
 
 	public String getLabelCd_livello7(){
-		if (this.getName().equals("ClassificazioneVociEPPatBP"))
-			return getParametriLivelli().getDs_livello7p();
-		return getParametriLivelli().getDs_livello7e();
+		return getParametriLivelli().getDs_livello7();
 	}
 	public String getLabelCd_livello8(){
-		if (this.getName().equals("ClassificazioneVociEPPatBP"))
-			return getParametriLivelli().getDs_livello8p();
-		return getParametriLivelli().getDs_livello8e();
+		return getParametriLivelli().getDs_livello8();
 	}
 
 	public void setField(String field, String label, int lung, int liv) {
-		FieldProperty fieldproperty = null;
+		FieldProperty fieldproperty;
 		try {
-			fieldproperty = (FieldProperty)getBulkInfo().getFieldProperty(field);
+			fieldproperty = getBulkInfo().getFieldProperty(field);
 			fieldproperty.setLabel(label);
 			fieldproperty.setMaxLength(lung);
 		} catch (NullPointerException e){}
 
 		try {
-			fieldproperty = (FieldProperty)getBulkInfo().getFormFieldProperty(field);
+			fieldproperty = getBulkInfo().getFormFieldProperty(field);
 			fieldproperty.setLabel(label);
 			fieldproperty.setMaxLength(lung);
 		} catch (NullPointerException e){}
@@ -184,33 +141,38 @@ public class CRUDClassificazioneVociEPBP extends SimpleCRUDBP {
 	}
 
 	public boolean isSearchButtonHidden() {
-		return super.isSearchButtonHidden() || getTabCorrente().intValue()!=1;
-		}
+		return super.isSearchButtonHidden() || getTabCorrente()>1;
+	}
 
 	public boolean isFreeSearchButtonHidden() {
-		return super.isFreeSearchButtonHidden() || getTabCorrente().intValue()!=1;
-		}
- 
- 	public boolean isDeleteButtonHidden() {
-		return	super.isDeleteButtonHidden() || getTabCorrente().intValue()!=1;
+		return super.isFreeSearchButtonHidden() || getTabCorrente()>1;
+	}
+
+	@Override
+	public boolean isLastSearchButtonHidden() {
+		return super.isLastSearchButtonHidden() || getTabCorrente()>1;
+	}
+
+	public boolean isDeleteButtonHidden() {
+		return	super.isDeleteButtonHidden() || getTabCorrente()!=1;
 	}
 
 	public boolean isNewButtonHidden() {
-		return super.isNewButtonHidden() || getTabCorrente().intValue()!=1;
+		return super.isNewButtonHidden() || getTabCorrente()>1;
 	}
 
 	public Integer getTabCorrente(){
-		return new Integer(getTab("tab").substring("tabLivello".length()));
+		return Integer.valueOf(getTab("tab").substring("tabLivello".length()));
 	}
 
 	public String getNameDsClassificazioniPre(int liv){
-		if (((Classificazione_voci_epBulk)getModel()).getLivelloMax().intValue()==liv)
+		if (((Classificazione_voci_epBulk) getModel()).getLivelloMax() ==liv)
 			return "ds_classificazione_vis";
-		return "ds_class_padre_pre"+(((Classificazione_voci_epBulk)getModel()).getLivelloMax().intValue() - liv);
+		return "ds_class_padre_pre"+(((Classificazione_voci_epBulk) getModel()).getLivelloMax() - liv);
 	}
 
 	public int getLivelliVisualizzati(){
-		return ((Classificazione_voci_epBulk)getModel()).getLivelloMax().intValue();      	
+		return ((Classificazione_voci_epBulk) getModel()).getLivelloMax();
 	}
 
 	public String[][] getTabs() {
@@ -223,50 +185,35 @@ public class CRUDClassificazioneVociEPBP extends SimpleCRUDBP {
 
 	public CrudAssLivelli getCrudAssLivelli() {
 		Class classController;
-		if (crudAssLivelli[getTabCorrente().intValue()-1] == null) {
-			if (getModel() instanceof Classificazione_voci_ep_eco_liv8Bulk) 
-				classController = Classificazione_voci_ep_eco_liv8Bulk.class;
-			else if (getModel() instanceof Classificazione_voci_ep_eco_liv7Bulk) 
-				classController = Classificazione_voci_ep_eco_liv8Bulk.class;
-			else if (getModel() instanceof Classificazione_voci_ep_eco_liv6Bulk) 
-				classController = Classificazione_voci_ep_eco_liv7Bulk.class;
-			else if (getModel() instanceof Classificazione_voci_ep_eco_liv5Bulk) 
-				classController = Classificazione_voci_ep_eco_liv6Bulk.class;
-			else if (getModel() instanceof Classificazione_voci_ep_eco_liv4Bulk) 
-				classController = Classificazione_voci_ep_eco_liv5Bulk.class;
-			else if (getModel() instanceof Classificazione_voci_ep_eco_liv3Bulk) 
-				classController = Classificazione_voci_ep_eco_liv4Bulk.class;
-			else if (getModel() instanceof Classificazione_voci_ep_eco_liv2Bulk) 
-				classController = Classificazione_voci_ep_eco_liv3Bulk.class;
-			else if (getModel() instanceof Classificazione_voci_ep_eco_liv1Bulk) 
-				classController = Classificazione_voci_ep_eco_liv2Bulk.class;
-			else if (getModel() instanceof Classificazione_voci_ep_pat_liv8Bulk) 
-				classController = Classificazione_voci_ep_pat_liv8Bulk.class;
-			else if (getModel() instanceof Classificazione_voci_ep_pat_liv7Bulk) 
-				classController = Classificazione_voci_ep_pat_liv8Bulk.class;
-			else if (getModel() instanceof Classificazione_voci_ep_pat_liv6Bulk) 
-				classController = Classificazione_voci_ep_pat_liv7Bulk.class;
-			else if (getModel() instanceof Classificazione_voci_ep_pat_liv5Bulk) 
-				classController = Classificazione_voci_ep_pat_liv6Bulk.class;
-			else if (getModel() instanceof Classificazione_voci_ep_pat_liv4Bulk) 
-				classController = Classificazione_voci_ep_pat_liv5Bulk.class;
-			else if (getModel() instanceof Classificazione_voci_ep_pat_liv3Bulk) 
-				classController = Classificazione_voci_ep_pat_liv4Bulk.class;
-			else if (getModel() instanceof Classificazione_voci_ep_pat_liv2Bulk) 
-				classController = Classificazione_voci_ep_pat_liv3Bulk.class;
-			else if (getModel() instanceof Classificazione_voci_ep_pat_liv1Bulk) 
-				classController = Classificazione_voci_ep_pat_liv2Bulk.class;
-			else  
+		int index = (getTabCorrente()==0?1:getTabCorrente())-1;
+		if (crudAssLivelli[index] == null) {
+			if (getModel() instanceof Classificazione_voci_ep_liv8Bulk)
+				classController = Classificazione_voci_ep_liv8Bulk.class;
+			else if (getModel() instanceof Classificazione_voci_ep_liv7Bulk)
+				classController = Classificazione_voci_ep_liv8Bulk.class;
+			else if (getModel() instanceof Classificazione_voci_ep_liv6Bulk)
+				classController = Classificazione_voci_ep_liv7Bulk.class;
+			else if (getModel() instanceof Classificazione_voci_ep_liv5Bulk)
+				classController = Classificazione_voci_ep_liv6Bulk.class;
+			else if (getModel() instanceof Classificazione_voci_ep_liv4Bulk)
+				classController = Classificazione_voci_ep_liv5Bulk.class;
+			else if (getModel() instanceof Classificazione_voci_ep_liv3Bulk)
+				classController = Classificazione_voci_ep_liv4Bulk.class;
+			else if (getModel() instanceof Classificazione_voci_ep_liv2Bulk)
+				classController = Classificazione_voci_ep_liv3Bulk.class;
+			else if (getModel() instanceof Classificazione_voci_ep_liv1Bulk)
+				classController = Classificazione_voci_ep_liv2Bulk.class;
+			else
 				classController = Classificazione_voci_epBulk.class;
-		
-			setCrudAssLivelli(new CrudAssLivelli("ClassVociAssociate"+getTabCorrente().intValue(), classController, "classVociAssociate", this));
+
+			crudAssLivelli[index] = new CrudAssLivelli("ClassVociAssociate"+ getTabCorrente(), classController, "classVociAssociate", this);
 		}
 
-		return crudAssLivelli[getTabCorrente().intValue()-1];
+		return crudAssLivelli[index];
 	}
 
 	public void setCrudAssLivelli(CrudAssLivelli controller) {
-		crudAssLivelli[getTabCorrente().intValue()-1] = controller;
+		crudAssLivelli[getTabCorrente() -1] = controller;
 	}
 
 	public BulkList getBulkTab() {
@@ -279,7 +226,8 @@ public class CRUDClassificazioneVociEPBP extends SimpleCRUDBP {
 
 	public Classificazione_voci_epBulk getBulkTab(int tab) {
 		try{
-			return (Classificazione_voci_epBulk)bulkTab.get(tab-1);
+			int myTab = tab==0?1:tab;
+			return (Classificazione_voci_epBulk)bulkTab.get(myTab-1);
 		} catch (ArrayIndexOutOfBoundsException e){
 			return null;
 		}
@@ -339,14 +287,11 @@ public class CRUDClassificazioneVociEPBP extends SimpleCRUDBP {
 	}
 
 	public void allineaDescriptionTab(int intTabNew){
-		if (getModel() instanceof Classificazione_voci_ep_ecoBulk) {
-			getBulkInfo().setLongDescription(parametriLivelli.getDs_livello_eco(intTabNew)+"- Classificazione Economica");
-			getBulkInfo().setShortDescription(parametriLivelli.getDs_livello_eco(intTabNew));
-		}
-		else if (getModel() instanceof Classificazione_voci_ep_patBulk) {
-			getBulkInfo().setLongDescription(parametriLivelli.getDs_livello_pat(intTabNew)+"- Classificazione Patrimoniale" );
-			getBulkInfo().setShortDescription(parametriLivelli.getDs_livello_pat(intTabNew)+"- Classificazione Patrimoniale" );
-		}
+		Classificazione_voci_epBulk model = (Classificazione_voci_epBulk)getModel();
+		String descriptionTipo = "Tipo Classificazione "+(model.getTipo()!=null?(String)Classificazione_voci_epBulk.tipoKeys.get(model.getTipo()):" NON DEFINITO");
+		String dsLivello = intTabNew==0?"Tipo Classificazione":descriptionTipo+" - "+parametriLivelli.getDs_livello(intTabNew);
+		getBulkInfo().setLongDescription(dsLivello);
+		getBulkInfo().setShortDescription(dsLivello);
 	}
 
 	/**
@@ -398,13 +343,11 @@ public class CRUDClassificazioneVociEPBP extends SimpleCRUDBP {
 	public Parametri_livelli_epBulk getParametriLivelli(ActionContext actioncontext) throws BusinessProcessException {
 		try {
 			if (parametriLivelli == null)
-				setParametriLivelli(((Classificazione_voci_epComponentSession)createComponentSession()).findParametriLivelli(actioncontext.getUserContext(), CNRUserContext.getEsercizio(actioncontext.getUserContext())));
-		} catch(it.cnr.jada.comp.ComponentException e) {
-			throw handleException(e);
-		} catch(java.rmi.RemoteException e) {
+				setParametriLivelli(((Classificazione_voci_epComponentSession)createComponentSession()).findParametriLivelli(actioncontext.getUserContext(), CNRUserContext.getEsercizio(actioncontext.getUserContext()), "ECO"));
+		} catch(ComponentException | RemoteException e) {
 			throw handleException(e);
 		}
-		return getParametriLivelli();
+        return getParametriLivelli();
 	}
 
 	public Parametri_livelli_epBulk getParametriLivelli() {
@@ -492,4 +435,55 @@ public class CRUDClassificazioneVociEPBP extends SimpleCRUDBP {
 		}
 	}
 
+	public void cambiaTipoClassificazione(ActionContext actioncontext) throws BusinessProcessException {
+		try {
+			Classificazione_voci_epBulk model = (Classificazione_voci_epBulk) getModel();
+			if (model.getTipo()==null)
+				resetTabs(actioncontext);
+			else {
+				setParametriLivelli(((Classificazione_voci_epComponentSession)createComponentSession()).findParametriLivelli(actioncontext.getUserContext(), model.getEsercizio(), model.getTipo()));
+				allineaDescriptionTab(getTabCorrente());
+				if (this.isSearching()) {
+					if (getParametriLivelli()==null || getParametriLivelli().getLivelli()>0) {
+						tabs = new String[2][3];
+						tabs[0] = new String[]{"tabLivello0", "Tipo Classificazione", "/config00/tab_classificazione_voci_ep.jsp"};
+						tabs[1] = new String[]{"tabLivello1", getParametriLivelli().getDs_livello(1), "/config00/tab_classificazione_voci_ep.jsp"};
+					} else {
+						tabs = new String[1][3];
+						tabs[0] = new String[]{"tabLivello0", "Tipo Classificazione", "/config00/tab_classificazione_voci_ep.jsp"};
+					}
+					setTab("tab", "tabLivello0");
+				} else {
+					tabs = new String[getParametriLivelli().getLivelli() + 1][3];
+					tabs[0] = new String[]{"tabLivello0", "Tipo Classificazione", "/config00/tab_classificazione_voci_ep.jsp"};
+					for (int i = 1; i <= getParametriLivelli().getLivelli(); i++)
+						tabs[i] = new String[]{"tabLivello" + (i), getParametriLivelli().getDs_livello(i), "/config00/tab_classificazione_voci_ep.jsp"};
+				}
+			}
+		} catch(ComponentException | RemoteException e) {
+			throw handleException(e);
+		}
+	}
+
+	@Override
+	protected void resetTabs(ActionContext actioncontext) {
+		Classificazione_voci_epBulk model = (Classificazione_voci_epBulk) getModel();
+		if (this.isSearching() || getParametriLivelli()==null || model.getTipo()==null) {
+			tabs = new String[1][3];
+			tabs[0] = new String[]{"tabLivello0", "Tipo Classificazione", "/config00/tab_classificazione_voci_ep.jsp"};
+			setTab("tab", "tabLivello0");
+		} else {
+			tabs = new String[getParametriLivelli().getLivelli()+1][3];
+			tabs[0] = new String[]{ "tabLivello0","Tipo Classificazione","/config00/tab_classificazione_voci_ep.jsp" };
+			for (int i = 1; i<=getParametriLivelli().getLivelli(); i++)
+				tabs[i] = new String[]{ "tabLivello"+(i),getParametriLivelli().getDs_livello(i),"/config00/tab_classificazione_voci_ep.jsp" };
+		}
+	}
+
+	@Override
+	public void resetForSearch(ActionContext actioncontext) throws BusinessProcessException {
+		super.resetForSearch(actioncontext);
+		getBulkInfo().setLongDescription("Tipo Classificazione");
+		getBulkInfo().setShortDescription("Tipo Classificazione");
+	}
 }

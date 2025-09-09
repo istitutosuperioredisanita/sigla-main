@@ -23,209 +23,107 @@
 	<defaultColumnMap
 		tableName="PARAMETRI_LIVELLI_EP">
 		<columnMapping
-			columnName="LIVELLI_ECO"
-			propertyName="livelli_eco"
+			columnName="LIVELLI"
+			propertyName="livelli"
 			sqlTypeName="DECIMAL"
 			columnSize="2"
 			nullable="false" />
 		<columnMapping
-			columnName="LUNG_LIVELLO1E"
-			propertyName="lung_livello1e"
+			columnName="LUNG_LIVELLO1"
+			propertyName="lung_livello1"
 			sqlTypeName="DECIMAL"
 			columnSize="1"
 			nullable="true" />
 		<columnMapping
-			columnName="DS_LIVELLO1E"
-			propertyName="ds_livello1e"
+			columnName="DS_LIVELLO1"
+			propertyName="ds_livello1"
 			sqlTypeName="VARCHAR"
 			columnSize="20"
 			nullable="true" />
 		<columnMapping
-			columnName="LUNG_LIVELLO2E"
-			propertyName="lung_livello2e"
+			columnName="LUNG_LIVELLO2"
+			propertyName="lung_livello2"
 			sqlTypeName="DECIMAL"
 			columnSize="1"
 			nullable="true" />
 		<columnMapping
-			columnName="DS_LIVELLO2E"
-			propertyName="ds_livello2e"
+			columnName="DS_LIVELLO2"
+			propertyName="ds_livello2"
 			sqlTypeName="VARCHAR"
 			columnSize="20"
 			nullable="true" />
 		<columnMapping
-			columnName="LUNG_LIVELLO3E"
-			propertyName="lung_livello3e"
+			columnName="LUNG_LIVELLO3"
+			propertyName="lung_livello3"
 			sqlTypeName="DECIMAL"
 			columnSize="1"
 			nullable="true" />
 		<columnMapping
-			columnName="DS_LIVELLO3E"
-			propertyName="ds_livello3e"
+			columnName="DS_LIVELLO3"
+			propertyName="ds_livello3"
 			sqlTypeName="VARCHAR"
 			columnSize="20"
 			nullable="true" />
 		<columnMapping
-			columnName="LUNG_LIVELLO4E"
-			propertyName="lung_livello4e"
+			columnName="LUNG_LIVELLO4"
+			propertyName="lung_livello4"
 			sqlTypeName="DECIMAL"
 			columnSize="1"
 			nullable="true" />
 		<columnMapping
-			columnName="DS_LIVELLO4E"
-			propertyName="ds_livello4e"
+			columnName="DS_LIVELLO4"
+			propertyName="ds_livello4"
 			sqlTypeName="VARCHAR"
 			columnSize="20"
 			nullable="true" />
 		<columnMapping
-			columnName="LUNG_LIVELLO5E"
-			propertyName="lung_livello5e"
+			columnName="LUNG_LIVELLO5"
+			propertyName="lung_livello5"
 			sqlTypeName="DECIMAL"
 			columnSize="1"
 			nullable="true" />
 		<columnMapping
-			columnName="DS_LIVELLO5E"
-			propertyName="ds_livello5e"
+			columnName="DS_LIVELLO5"
+			propertyName="ds_livello5"
 			sqlTypeName="VARCHAR"
 			columnSize="20"
 			nullable="true" />
 		<columnMapping
-			columnName="LUNG_LIVELLO6E"
-			propertyName="lung_livello6e"
+			columnName="LUNG_LIVELLO6"
+			propertyName="lung_livello6"
 			sqlTypeName="DECIMAL"
 			columnSize="1"
 			nullable="true" />
 		<columnMapping
-			columnName="DS_LIVELLO6E"
-			propertyName="ds_livello6e"
+			columnName="DS_LIVELLO6"
+			propertyName="ds_livello6"
 			sqlTypeName="VARCHAR"
 			columnSize="20"
 			nullable="true" />
 		<columnMapping
-			columnName="LUNG_LIVELLO7E"
-			propertyName="lung_livello7e"
+			columnName="LUNG_LIVELLO7"
+			propertyName="lung_livello7"
 			sqlTypeName="DECIMAL"
 			columnSize="1"
 			nullable="true" />
 		<columnMapping
-			columnName="DS_LIVELLO7E"
-			propertyName="ds_livello7e"
+			columnName="DS_LIVELLO7"
+			propertyName="ds_livello7"
 			sqlTypeName="VARCHAR"
 			columnSize="20"
 			nullable="true" />
 		<columnMapping
-			columnName="LUNG_LIVELLO8E"
-			propertyName="lung_livello8e"
+			columnName="LUNG_LIVELLO8"
+			propertyName="lung_livello8"
 			sqlTypeName="DECIMAL"
 			columnSize="1"
 			nullable="true" />
 		<columnMapping
-			columnName="DS_LIVELLO8E"
-			propertyName="ds_livello8e"
+			columnName="DS_LIVELLO8"
+			propertyName="ds_livello8"
 			sqlTypeName="VARCHAR"
 			columnSize="20"
 			nullable="true" />
-		<columnMapping
-			columnName="LIVELLI_PAT"
-			propertyName="livelli_pat"
-			sqlTypeName="DECIMAL"
-			columnSize="2"
-			nullable="false" />
-		<columnMapping
-			columnName="LUNG_LIVELLO1P"
-			propertyName="lung_livello1p"
-			sqlTypeName="DECIMAL"
-			columnSize="1"
-			nullable="true" />
-		<columnMapping
-			columnName="DS_LIVELLO1P"
-			propertyName="ds_livello1p"
-			sqlTypeName="VARCHAR"
-			columnSize="20"
-			nullable="true" />
-		<columnMapping
-			columnName="LUNG_LIVELLO2P"
-			propertyName="lung_livello2p"
-			sqlTypeName="DECIMAL"
-			columnSize="1"
-			nullable="true" />
-		<columnMapping
-			columnName="DS_LIVELLO2P"
-			propertyName="ds_livello2p"
-			sqlTypeName="VARCHAR"
-			columnSize="20"
-			nullable="true" />
-		<columnMapping
-			columnName="LUNG_LIVELLO3P"
-			propertyName="lung_livello3p"
-			sqlTypeName="DECIMAL"
-			columnSize="1"
-			nullable="true" />
-		<columnMapping
-			columnName="DS_LIVELLO3P"
-			propertyName="ds_livello3p"
-			sqlTypeName="VARCHAR"
-			columnSize="20"
-			nullable="true" />
-		<columnMapping
-			columnName="LUNG_LIVELLO4P"
-			propertyName="lung_livello4p"
-			sqlTypeName="DECIMAL"
-			columnSize="1"
-			nullable="true" />
-		<columnMapping
-			columnName="DS_LIVELLO4P"
-			propertyName="ds_livello4p"
-			sqlTypeName="VARCHAR"
-			columnSize="20"
-			nullable="true" />
-		<columnMapping
-			columnName="LUNG_LIVELLO5P"
-			propertyName="lung_livello5p"
-			sqlTypeName="DECIMAL"
-			columnSize="1"
-			nullable="true" />
-		<columnMapping
-			columnName="DS_LIVELLO5P"
-			propertyName="ds_livello5p"
-			sqlTypeName="VARCHAR"
-			columnSize="20"
-			nullable="true" />
-		<columnMapping
-			columnName="LUNG_LIVELLO6P"
-			propertyName="lung_livello6p"
-			sqlTypeName="DECIMAL"
-			columnSize="1"
-			nullable="true" />
-		<columnMapping
-			columnName="DS_LIVELLO6P"
-			propertyName="ds_livello6p"
-			sqlTypeName="VARCHAR"
-			columnSize="20"
-			nullable="true" />
-		<columnMapping
-			columnName="LUNG_LIVELLO7P"
-			propertyName="lung_livello7p"
-			sqlTypeName="DECIMAL"
-			columnSize="1"
-			nullable="true" />
-		<columnMapping
-			columnName="DS_LIVELLO7P"
-			propertyName="ds_livello7p"
-			sqlTypeName="VARCHAR"
-			columnSize="20"
-			nullable="true" />
-		<columnMapping
-			columnName="LUNG_LIVELLO8P"
-			propertyName="lung_livello8p"
-			sqlTypeName="DECIMAL"
-			columnSize="1"
-			nullable="true" />
-		<columnMapping
-			columnName="DS_LIVELLO8P"
-			propertyName="ds_livello8p"
-			sqlTypeName="VARCHAR"
-			columnSize="20"
-			nullable="true" />	
 		<columnMapping
 			columnName="DUVA"
 			propertyName="duva"
@@ -258,73 +156,39 @@
 			nullable="false" />
 	</defaultColumnMap>
 	<persistentProperty
-		name="livelli_eco" />
+		name="livelli" />
 	<persistentProperty
-		name="lung_livello1e" />
+		name="lung_livello1" />
 	<persistentProperty
-		name="ds_livello1e" />
+		name="ds_livello1" />
 	<persistentProperty
-		name="lung_livello2e" />
+		name="lung_livello2" />
 	<persistentProperty
-		name="ds_livello2e" />
+		name="ds_livello2" />
 	<persistentProperty
-		name="lung_livello3e" />
+		name="lung_livello3" />
 	<persistentProperty
-		name="ds_livello3e" />
+		name="ds_livello3" />
 	<persistentProperty
-		name="lung_livello4e" />
+		name="lung_livello4" />
 	<persistentProperty
-		name="ds_livello4e" />
+		name="ds_livello4" />
 	<persistentProperty
-		name="lung_livello5e" />
+		name="lung_livello5" />
 	<persistentProperty
-		name="ds_livello5e" />
+		name="ds_livello5" />
 	<persistentProperty
-		name="lung_livello6e" />
+		name="lung_livello6" />
 	<persistentProperty
-		name="ds_livello6e" />
+		name="ds_livello6" />
 	<persistentProperty
-		name="lung_livello7e" />
+		name="lung_livello7" />
 	<persistentProperty
-		name="ds_livello7e" />
+		name="ds_livello7" />
 		<persistentProperty
-		name="lung_livello8e" />
+		name="lung_livello8" />
 	<persistentProperty
-		name="ds_livello8e" />
-	<persistentProperty
-		name="livelli_pat" />
-	<persistentProperty
-		name="lung_livello1p" />
-	<persistentProperty
-		name="ds_livello1p" />
-	<persistentProperty
-		name="lung_livello2p" />
-	<persistentProperty
-		name="ds_livello2p" />
-	<persistentProperty
-		name="lung_livello3p" />
-	<persistentProperty
-		name="ds_livello3p" />
-	<persistentProperty
-		name="lung_livello4p" />
-	<persistentProperty
-		name="ds_livello4p" />
-	<persistentProperty
-		name="lung_livello5p" />
-	<persistentProperty
-		name="ds_livello5p" />
-	<persistentProperty
-		name="lung_livello6p" />
-	<persistentProperty
-		name="ds_livello6p" />
-	<persistentProperty
-		name="lung_livello7p" />
-	<persistentProperty
-		name="ds_livello7p" />
-	<persistentProperty
-		name="lung_livello8p" />
-	<persistentProperty
-		name="ds_livello8p" />
+		name="ds_livello8" />
 	<persistentProperty
 		name="duva" />
 	<persistentProperty

@@ -28,6 +28,7 @@ import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 public class Classificazione_voci_epHome extends BulkHome {
@@ -100,38 +101,22 @@ public class Classificazione_voci_epHome extends BulkHome {
 	 */
 	public java.util.Collection findClassVociAssociate(OggettoBulk testata, CompoundFindClause compoundfindclause) throws IntrospectionException, PersistencyException {
 		PersistentHome dettHome;
-		if (testata instanceof Classificazione_voci_ep_eco_liv8Bulk)
-			dettHome = getHomeCache().getHome(Classificazione_voci_ep_eco_liv8Bulk.class);
-		else if (testata instanceof Classificazione_voci_ep_eco_liv7Bulk)
-			dettHome = getHomeCache().getHome(Classificazione_voci_ep_eco_liv8Bulk.class);
-		else if (testata instanceof Classificazione_voci_ep_eco_liv6Bulk)
-			dettHome = getHomeCache().getHome(Classificazione_voci_ep_eco_liv7Bulk.class);
-		else if (testata instanceof Classificazione_voci_ep_eco_liv5Bulk)
-			dettHome = getHomeCache().getHome(Classificazione_voci_ep_eco_liv6Bulk.class);
-		else if (testata instanceof Classificazione_voci_ep_eco_liv4Bulk)
-			dettHome = getHomeCache().getHome(Classificazione_voci_ep_eco_liv5Bulk.class);
-		else if (testata instanceof Classificazione_voci_ep_eco_liv3Bulk)
-			dettHome = getHomeCache().getHome(Classificazione_voci_ep_eco_liv4Bulk.class);
-		else if (testata instanceof Classificazione_voci_ep_eco_liv2Bulk)
-			dettHome = getHomeCache().getHome(Classificazione_voci_ep_eco_liv3Bulk.class);
-		else if (testata instanceof Classificazione_voci_ep_eco_liv1Bulk)
-			dettHome = getHomeCache().getHome(Classificazione_voci_ep_eco_liv2Bulk.class);
-		else if (testata instanceof Classificazione_voci_ep_pat_liv8Bulk)
-			dettHome = getHomeCache().getHome(Classificazione_voci_ep_pat_liv8Bulk.class);		
-		else if (testata instanceof Classificazione_voci_ep_pat_liv7Bulk)
-			dettHome = getHomeCache().getHome(Classificazione_voci_ep_pat_liv8Bulk.class);
-		else if (testata instanceof Classificazione_voci_ep_pat_liv6Bulk)
-			dettHome = getHomeCache().getHome(Classificazione_voci_ep_pat_liv7Bulk.class);
-		else if (testata instanceof Classificazione_voci_ep_pat_liv5Bulk)
-			dettHome = getHomeCache().getHome(Classificazione_voci_ep_pat_liv6Bulk.class);
-		else if (testata instanceof Classificazione_voci_ep_pat_liv4Bulk)
-			dettHome = getHomeCache().getHome(Classificazione_voci_ep_pat_liv5Bulk.class);
-		else if (testata instanceof Classificazione_voci_ep_pat_liv3Bulk)
-			dettHome = getHomeCache().getHome(Classificazione_voci_ep_pat_liv4Bulk.class);
-		else if (testata instanceof Classificazione_voci_ep_pat_liv2Bulk)
-			dettHome = getHomeCache().getHome(Classificazione_voci_ep_pat_liv3Bulk.class);
-		else if (testata instanceof Classificazione_voci_ep_pat_liv1Bulk)
-			dettHome = getHomeCache().getHome(Classificazione_voci_ep_pat_liv2Bulk.class);
+		if (testata instanceof Classificazione_voci_ep_liv8Bulk)
+			dettHome = getHomeCache().getHome(Classificazione_voci_ep_liv8Bulk.class);
+		else if (testata instanceof Classificazione_voci_ep_liv7Bulk)
+			dettHome = getHomeCache().getHome(Classificazione_voci_ep_liv8Bulk.class);
+		else if (testata instanceof Classificazione_voci_ep_liv6Bulk)
+			dettHome = getHomeCache().getHome(Classificazione_voci_ep_liv7Bulk.class);
+		else if (testata instanceof Classificazione_voci_ep_liv5Bulk)
+			dettHome = getHomeCache().getHome(Classificazione_voci_ep_liv6Bulk.class);
+		else if (testata instanceof Classificazione_voci_ep_liv4Bulk)
+			dettHome = getHomeCache().getHome(Classificazione_voci_ep_liv5Bulk.class);
+		else if (testata instanceof Classificazione_voci_ep_liv3Bulk)
+			dettHome = getHomeCache().getHome(Classificazione_voci_ep_liv4Bulk.class);
+		else if (testata instanceof Classificazione_voci_ep_liv2Bulk)
+			dettHome = getHomeCache().getHome(Classificazione_voci_ep_liv3Bulk.class);
+		else if (testata instanceof Classificazione_voci_ep_liv1Bulk)
+			dettHome = getHomeCache().getHome(Classificazione_voci_ep_liv2Bulk.class);
 		else
 			dettHome = getHomeCache().getHome(Classificazione_voci_epBulk.class);
 
@@ -149,29 +134,25 @@ public class Classificazione_voci_epHome extends BulkHome {
 	 * @return java.util.Collection Collezione di oggetti <code>OggettoBulk</code>
 	 */
 	public java.util.Collection findAllClassVociAssociate(OggettoBulk testata) throws IntrospectionException, PersistencyException {
-		PersistentHome dettHome = null; 
-		if (testata instanceof Classificazione_voci_ep_ecoBulk)
-			dettHome = getHomeCache().getHome(Classificazione_voci_ep_ecoBulk.class);
-		else
-			dettHome = getHomeCache().getHome(Classificazione_voci_ep_patBulk.class);
+		PersistentHome dettHome = getHomeCache().getHome(Classificazione_voci_epBulk.class);
 
 		SQLBuilder sql = dettHome.createSQLBuilder();
-		sql.addSQLClause("AND","CD_LIVELLO"+((Classificazione_voci_epBulk)testata).getLivelloMax().intValue(),sql.EQUALS,((Classificazione_voci_epBulk)testata).getCd_livello(((Classificazione_voci_epBulk)testata).getLivelloMax().intValue()));
+		sql.addSQLClause(FindClause.AND,"CD_LIVELLO"+((Classificazione_voci_epBulk)testata).getLivelloMax().intValue(),sql.EQUALS,((Classificazione_voci_epBulk)testata).getCd_livello(((Classificazione_voci_epBulk)testata).getLivelloMax().intValue()));
 		if ((((Classificazione_voci_epBulk)testata).getLivelloMax().intValue()+1)!=Classificazione_voci_epHome.LIVELLO_MAX)
-			sql.addSQLClause("AND","CD_LIVELLO"+(((Classificazione_voci_epBulk)testata).getLivelloMax().intValue()+1),sql.ISNOTNULL, null);
+			sql.addSQLClause(FindClause.AND,"CD_LIVELLO"+(((Classificazione_voci_epBulk)testata).getLivelloMax().intValue()+1),sql.ISNOTNULL, null);
 		return dettHome.fetchAll(sql);
 	}	
 	/**
 	 * Recupera i figli dell'oggetto bulk
 	 * Creation date: (28/11/2001 10.57.42)
 	 * @return it.cnr.jada.persistency.sql.SQLBuilder
-	 * @param bulk it.cnr.contab.inventario00.tabrif.bulk.Classificazione_vociBulk
+	 * @param cla it.cnr.contab.inventario00.tabrif.bulk.Classificazione_vociBulk
 	 */
 	public SQLBuilder selectChildrenFor(it.cnr.jada.UserContext aUC, Classificazione_voci_epBulk cla) throws it.cnr.jada.comp.ComponentException{
 
 		SQLBuilder sql= createSQLBuilder();
 
-		sql.addSQLClause("AND","ID_CLASS_PADRE",sql.EQUALS,cla.getId_classificazione());
+		sql.addSQLClause(FindClause.AND,"ID_CLASS_PADRE",sql.EQUALS,cla.getId_classificazione());
 		return sql;
 	}
 	public Classificazione_voci_epBulk getParent(Classificazione_voci_epBulk bulk) throws PersistencyException, IntrospectionException{
