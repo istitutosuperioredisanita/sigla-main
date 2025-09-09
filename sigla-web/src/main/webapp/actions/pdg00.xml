@@ -415,7 +415,7 @@
     </businessProcess>
 
     <action path="/CaricFlStipAction"
-            actionClass="it.cnr.contab.pdg00.action.CaricFlStipAction"/>
+            actionClass="it.cnr.jada.util.action.CRUDAction"/>
 
     <businessProcess
             name="CaricFlStipBP"

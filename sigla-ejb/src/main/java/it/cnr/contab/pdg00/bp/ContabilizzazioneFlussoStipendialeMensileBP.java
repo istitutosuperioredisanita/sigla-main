@@ -21,7 +21,6 @@ import it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiBulk;
 import it.cnr.contab.pdg00.ejb.CostiDipendenteComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
-import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
@@ -30,8 +29,8 @@ import it.cnr.jada.util.jsp.Button;
 
 import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Properties;
-import java.util.stream.Stream;
 
 public class ContabilizzazioneFlussoStipendialeMensileBP extends it.cnr.jada.util.action.SelezionatoreListaBP {
     /**
@@ -69,7 +68,8 @@ public class ContabilizzazioneFlussoStipendialeMensileBP extends it.cnr.jada.uti
 						new Button(properties, "Toolbar.contabilizza"),
 						new Button(properties, "Toolbar.apriCompenso"),
 						new Button(properties, "Toolbar.apriDocumentoGenerico"),
-						new Button(properties, "Toolbar.apriMandato")
+						new Button(properties, "Toolbar.apriMandato"),
+                       new Button(properties, "Toolbar.delete")
 				).stream().toArray(Button[]::new);
     }
 
@@ -110,5 +110,23 @@ public class ContabilizzazioneFlussoStipendialeMensileBP extends it.cnr.jada.uti
         } catch (ComponentException|RemoteException e) {
             throw handleException(e);
         }
+    }
+
+    public boolean isEliminaButtonHidden() {
+       Stipendi_cofiBulk stipendiCofiBulk= (Stipendi_cofiBulk)this.getModel();
+       if (Optional.ofNullable(stipendiCofiBulk).isPresent())
+            return stipendiCofiBulk.isLiquidato();
+       return Boolean.TRUE;
+
+    }
+    public boolean isEliminaButtonEnabled() {
+        Stipendi_cofiBulk stipendiCofiBulk= (Stipendi_cofiBulk)this.getModel();
+        if (Optional.ofNullable(stipendiCofiBulk).isPresent())
+            return !stipendiCofiBulk.isLiquidato();
+        return Boolean.FALSE;
+    }
+
+    public void eliminaRiga(ActionContext context, Stipendi_cofiBulk stipendiCofiBulk){
+        return;
     }
 }
