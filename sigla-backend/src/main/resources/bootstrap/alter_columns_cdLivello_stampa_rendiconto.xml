@@ -22,7 +22,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
                                        http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-    <changeSet author="ciro.salvio" id="alter_columns_cdLivello_stampa_rendiconto">
+    <changeSet dbms="oracle" author="ciro.salvio" id="alter_columns_cdLivello_stampa_rendiconto">
 
         <modifyDataType tableName="TMP_STAMPA_RENDICONTO" columnName="CD_LIVELLO1" newDataType="VARCHAR(30)"/>
         <modifyDataType tableName="TMP_STAMPA_RENDICONTO" columnName="CD_LIVELLO2" newDataType="VARCHAR(30)"/>
