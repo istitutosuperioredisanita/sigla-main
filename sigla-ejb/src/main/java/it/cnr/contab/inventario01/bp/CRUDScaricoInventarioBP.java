@@ -541,7 +541,7 @@ public boolean isDeleteButtonHidden() {
 
 public boolean isFlagScaricoTotaleRO() {
 	Buono_carico_scaricoBulk buonoS = (Buono_carico_scaricoBulk)this.getModel();
-	if(buonoS.getTipoMovimento().getFl_dismissione()){
+	if(buonoS != null && buonoS.getTipoMovimento() != null && buonoS.getTipoMovimento().getFl_dismissione()){
 		return true;
 	}
 	if (isInserting()) 
@@ -581,10 +581,6 @@ public boolean isValoreScaricatoRO() {
 
 			dettScarico.setValore_unitario(dettScarico.getValoreBene());
 			dettScarico.setFl_totalmente_scaricato(true);
-			dettScarico.setDt_dismesso(new Timestamp(new java.util.Date().getTime()));
-			dettScarico.setFl_dismesso(true);
-			dettScarico.setCausale_dismissione("SCARICO PER DISMISSIONE");
-
 			return true;
 		}
 		if(dettScarico.getFl_totalmente_scaricato()!=null && dettScarico.getFl_totalmente_scaricato().booleanValue()){
