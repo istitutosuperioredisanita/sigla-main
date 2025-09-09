@@ -19,6 +19,7 @@ package it.cnr.contab.pdg00.comp;
 
 import it.cnr.contab.compensi00.tabrif.bulk.*;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceHome;
+import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneHome;
 import it.cnr.contab.doccont00.dto.EsitoCori;
@@ -32,6 +33,7 @@ import it.cnr.jada.persistency.PersistencyException;
 
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -374,6 +376,28 @@ public class FlussoStipendiComponent extends CRUDComponent {
     }
 
 
+    public void cancellaFlussoNonLiquidato(UserContext uc,Stipendi_cofiBulk stipendiCofiBulk) throws ComponentException, PersistencyException {
+
+        Stipendi_cofi_coriHome stipendi_cofi_coriHome = (Stipendi_cofi_coriHome)getHome(uc, it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofi_coriBulk.class);
+        Stipendi_cofi_obb_scadHome stipendi_cofi_obb_scadHome = (Stipendi_cofi_obb_scadHome)getHome(uc, it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofi_obb_scadBulk.class);
+        Stipendi_cofiHome stipendi_cofiHome = (Stipendi_cofiHome)getHome(uc, it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiBulk.class);
+
+        Collection<Stipendi_cofi_obb_scadBulk> cofiObbScadList = stipendi_cofi_obb_scadHome.findStipendiCofiObbScad(uc, stipendiCofiBulk.getEsercizio(),stipendiCofiBulk.getMese());
+
+        for(Stipendi_cofi_obb_scadBulk cofiObbScad : cofiObbScadList){
+            cofiObbScad.setToBeDeleted();
+            super.eliminaConBulk(uc,cofiObbScad);
+        }
+
+        Collection<Stipendi_cofi_coriBulk> cofiCoriList = stipendi_cofi_coriHome.findStipendiCofiCori( stipendiCofiBulk.getEsercizio(),stipendiCofiBulk.getMese());
+
+        for(Stipendi_cofi_coriBulk cofiCori : cofiCoriList){
+            cofiCori.setToBeDeleted();
+            super.eliminaConBulk(uc,cofiCori);
+        }
+        stipendiCofiBulk.setToBeDeleted();
+        super.eliminaConBulk(uc,stipendiCofiBulk);
+    }
 }
 
 

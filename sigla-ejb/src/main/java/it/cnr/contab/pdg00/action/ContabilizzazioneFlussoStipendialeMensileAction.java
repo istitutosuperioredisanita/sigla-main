@@ -26,12 +26,16 @@ import it.cnr.contab.doccont00.core.bulk.MandatoIBulk;
 import it.cnr.contab.pdg00.bp.ContabilizzazioneFlussoStipendialeMensileBP;
 import it.cnr.contab.pdg00.cdip.bulk.MeseTipoFlussoBulk;
 import it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiBulk;
+import it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofi_coriBulk;
+import it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofi_coriHome;
 import it.cnr.contab.util00.bp.ModalBP;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.action.HookForward;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
@@ -234,13 +238,20 @@ public class ContabilizzazioneFlussoStipendialeMensileAction extends it.cnr.jada
         return context.findDefaultForward();
     }
 
-    public Forward doEliminaRiga(ActionContext context) throws BusinessProcessException {
+    public Forward doEliminaRiga(ActionContext context) throws BusinessProcessException, RemoteException, ComponentException, PersistencyException {
         ContabilizzazioneFlussoStipendialeMensileBP bp = (ContabilizzazioneFlussoStipendialeMensileBP) context.getBusinessProcess();
-        HookForward caller = (HookForward) context.getCaller();
-        bp.eliminaRiga(context, null);
-        bp.refresh(context);
-        setMessage(context, FormBP.INFO_MESSAGE, "Operazione effettuata.");
+        Stipendi_cofiBulk stipendiCofiBulk= (Stipendi_cofiBulk)bp.getModel();
+        if (Optional.ofNullable(stipendiCofiBulk).isPresent()){
+            if(stipendiCofiBulk.isLiquidato()){
+                throw   new ValidationException("Non è possibile cancellare un flusso liquidato");
+            }
+            bp.createFlussoStipendiComponentSession().cancellaFlussoNonLiquidato(context.getUserContext(), stipendiCofiBulk);
+            bp.refresh(context);
+            setMessage(context, FormBP.INFO_MESSAGE, "Operazione effettuata.");
+        }
         return context.findDefaultForward();
     }
+
+
 
 }

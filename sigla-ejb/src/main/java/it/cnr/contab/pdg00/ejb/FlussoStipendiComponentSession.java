@@ -18,15 +18,19 @@
 package it.cnr.contab.pdg00.ejb;
 
 import it.cnr.contab.pdg00.cdip.bulk.GestioneStipBulk;
+import it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
+import it.cnr.jada.persistency.PersistencyException;
 
 import javax.ejb.Remote;
+import java.rmi.RemoteException;
 
 @Remote
 public interface FlussoStipendiComponentSession extends CRUDComponentSession {
 
     GestioneStipBulk gestioneFlussoStipendi(UserContext userContext, GestioneStipBulk bulk) throws ComponentException,java.rmi.RemoteException;
+    void cancellaFlussoNonLiquidato(UserContext uc, Stipendi_cofiBulk stipendiCofiBulk) throws ComponentException, PersistencyException, RemoteException;
 
 }
