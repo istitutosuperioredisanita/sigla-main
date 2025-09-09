@@ -985,8 +985,8 @@ public class OrdineAcqComponent
     public it.cnr.jada.bulk.OggettoBulk modificaConBulk(it.cnr.jada.UserContext userContext, it.cnr.jada.bulk.OggettoBulk bulk, it.cnr.contab.doccont00.core.bulk.OptionRequestParameter status)
             throws it.cnr.jada.comp.ComponentException {
         OrdineAcqBulk ordine = (OrdineAcqBulk) bulk;
-        boolean aggiornaAnalitica = ((OrdineAcqBulk) bulk).isStatoAllaFirma() &&
-                !((OrdineAcqBulk) bulk).getStato().equals(((OrdineAcqBulk) bulk).getStatoOriginale());
+        boolean aggiornaAnalitica = (ordine.isStatoAllaFirma() || (ordine.isOrdineMepa() && ordine.isStatoDefinitivo())) &&
+                !ordine.getStato().equals(ordine.getStatoOriginale());
         validaOrdine(userContext, ordine);
         controlliCambioStato(userContext, ordine);
         calcolaImportoOrdine(userContext, ordine);

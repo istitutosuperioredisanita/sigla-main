@@ -119,7 +119,9 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 		OrdineAcqBulk ordine = (OrdineAcqBulk)getModel();
 		if(ordine == null || isSearching())
 			return super.isInputReadonly();
-		return 	super.isInputReadonly() || isRibaltato() || (ordine.getStato() != null && !ordine.isStatoInserito() && !ordine.isStatoInApprovazione() && ((ordine.isStatoAllaFirma() && !ordine.isToBeUpdated()) || !ordine.isStatoAllaFirma())) ;
+		return 	super.isInputReadonly() || isRibaltato() ||
+                (!ordine.isStatoInserito() && !ordine.isStatoInApprovazione() &&
+                        ((ordine.isStatoAllaFirma() && !ordine.isToBeUpdated()) || !ordine.isStatoAllaFirma()));
 	}
 
 	private final SimpleDetailCRUDController righe= new OrdineAcqRigaCRUDController("Righe", OrdineAcqRigaBulk.class, "righeOrdineColl", this){
