@@ -2,7 +2,6 @@ package it.cnr.contab.pdg00.bp;
 
 import it.cnr.contab.pdg00.cdip.bulk.*;
 import it.cnr.contab.pdg00.ejb.FlussoStipendiComponentSession;
-import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.UserContext;
@@ -17,6 +16,7 @@ import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.jada.util.upload.UploadedFile;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -27,8 +27,10 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -171,7 +173,7 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
 
     private void elaboraSheetLordiInterno(XSSFSheet sheet, CaricFlStipBulk caricFlStipBulk,GestioneStipBulk bulk) throws ApplicationException {
         DataFormatter fmt = new DataFormatter();
-        int headerRowIndex = Utility.findHeaderRow(sheet, fmt, new String[]{"esercizio", "mese", "tipo"});
+        int headerRowIndex = findHeaderRow(sheet, fmt, new String[]{"esercizio", "mese", "tipo"});
         if (headerRowIndex == -1) throw new ApplicationException("Header 'esercizio, mese, tipo' non trovato.");
 
         boolean stipendiCofiSet = false;
@@ -187,32 +189,32 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
             String annoObblOrigine  = fmt.formatCellValue(r.getCell(4));;
             String numeroObbl= fmt.formatCellValue(r.getCell(5));
             String importo   = fmt.formatCellValue(r.getCell(6));
-            if (Utility.isAnyEmpty(esercizio, mese)) continue;
+            if (isAnyEmpty(esercizio, mese)) continue;
 
             if (!stipendiCofiSet) {
                 stipendiCofi = new Stipendi_cofiBulk();
-                stipendiCofi.setEsercizio(Utility.parseInteger(esercizio, "esercizio", i));
+                stipendiCofi.setEsercizio(parseInteger(esercizio, "esercizio", i));
                 stipendiCofi.setMese(null); // gestito da UI; mese reale proviene dal file
-                stipendiCofi.setMese_reale(Utility.parseInteger(mese, "mese reale (da file)", i));
+                stipendiCofi.setMese_reale(parseInteger(mese, "mese reale (da file)", i));
 
                 stipendiCofi.setTipo_flusso(caricFlStipBulk.getTipo_rapporto());
                 bulk.setStipendiCofiBulk(stipendiCofi);
                 stipendiCofiSet = true;
             }
 
-            if (!Utility.isAnyEmpty(cds, annoObblOrigine, numeroObbl, importo, esercizio)) {
+            if (!isAnyEmpty(cds, annoObblOrigine, numeroObbl, importo, esercizio)) {
                 if (bulk.getStipendiCofiObbScadBulks() == null) {
                     bulk.setStipendiCofiObbScadBulks(new ArrayList<>());
                 }
                 Stipendi_cofi_obb_scadBulk obbScad = new Stipendi_cofi_obb_scadBulk();
                 obbScad.setStipendi_cofi(stipendiCofi);
-                obbScad.setStipendi_cofi_obb( new Stipendi_cofi_obbBulk(Utility.parseInteger(esercizio, "esercizio_obbligazione", i),
+                obbScad.setStipendi_cofi_obb( new Stipendi_cofi_obbBulk(parseInteger(esercizio, "esercizio_obbligazione", i),
                         fmt.formatCellValue(r.getCell(3)).trim(),
-                        Utility.parseInteger(esercizio, "esercizio_obbligazione", i),
-                        Utility.parseInteger(annoObblOrigine, "annoObblOrigine", i),
-                        Utility.parseLong(numeroObbl, "numeroObbl", i)));
-                obbScad.setEsercizio_obbligazione(Utility.parseInteger(esercizio, "esercizio_obbligazione", i));
-                obbScad.setIm_totale(Utility.parseBigDecimal(importo, "importo", i));
+                        parseInteger(esercizio, "esercizio_obbligazione", i),
+                        parseInteger(annoObblOrigine, "annoObblOrigine", i),
+                        parseLong(numeroObbl, "numeroObbl", i)));
+                obbScad.setEsercizio_obbligazione(parseInteger(esercizio, "esercizio_obbligazione", i));
+                obbScad.setIm_totale(parseBigDecimal(importo, "importo", i));
                 bulk.getStipendiCofiObbScadBulks().add(obbScad);
             }
         }
@@ -220,7 +222,7 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
 
     private void elaboraSheetRitenuteInterno(XSSFSheet sheet, GestioneStipBulk bulk) throws ApplicationException {
         DataFormatter fmt = new DataFormatter();
-        int headerRowIndex = Utility.findHeaderRow(sheet, fmt, new String[]{"esercizio", "mese", "codice contributo"});
+        int headerRowIndex = findHeaderRow(sheet, fmt, new String[]{"esercizio", "mese", "codice contributo"});
         if (headerRowIndex == -1) throw new ApplicationException("Header 'esercizio, mese, codice contributo' non trovato.");
 
         for (int i = headerRowIndex + 1; i <= sheet.getLastRowNum(); i++) {
@@ -236,7 +238,7 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
             XSSFCell cellDataInizio = r.getCell(6);
             XSSFCell cellDataFine   = r.getCell(7);
 
-            if (Utility.isAnyEmpty(esercizio, mese, codiceContributo, enteDip, ammontare)) continue;
+            if (isAnyEmpty(esercizio, mese, codiceContributo, enteDip, ammontare)) continue;
 
             if (bulk.getStipendiCofiCoriBulks() == null) {
                 bulk.setStipendiCofiCoriBulks(new ArrayList<>());
@@ -249,9 +251,9 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
             cori.setStipendi_cofi(bulk.getStipendiCofiBulk());
             cori.setCd_contributo_ritenuta(codiceContributo.trim());
             cori.setTi_ente_percipiente(enteDip.trim());
-            cori.setAmmontare(Utility.parseBigDecimal(ammontare, "ammontare", i));
-            cori.setDt_da_competenza_coge(Utility.parseTimestamp(cellDataInizio, "data inizio", i));
-            cori.setDt_a_competenza_coge(Utility.parseTimestamp(cellDataFine, "data fine", i));
+            cori.setAmmontare(parseBigDecimal(ammontare, "ammontare", i));
+            cori.setDt_da_competenza_coge(parseTimestamp(cellDataInizio, "data inizio", i));
+            cori.setDt_a_competenza_coge(parseTimestamp(cellDataFine, "data fine", i));
 
             bulk.getStipendiCofiCoriBulks().add(cori);
         }
@@ -272,6 +274,109 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
         return Stream.of(new Button(props, "CRUDToolbar.save")).toArray(Button[]::new);
     }
 
+
+    /*Questo metodo cerca in un foglio Excel una riga di intestazione che
+	corrisponda a un array di nomi specificati. È fondamentale per trovare il punto di inizio dei dati,
+	 indipendentemente dal fatto che ci siano righe vuote o di testo sopra.*/
+    public static int findHeaderRow(XSSFSheet sheet, DataFormatter fmt, String[] headerNames) {
+        for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+            XSSFRow r = sheet.getRow(i);
+            if (r == null) continue;
+            boolean found = true;
+            for (int j = 0; j < headerNames.length; j++) {
+                XSSFCell cell = r.getCell(j);
+                if (cell == null || !headerNames[j].equalsIgnoreCase(fmt.formatCellValue(cell).trim())) {
+                    found = false;
+                    break;
+                }
+            }
+            if (found) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /*Verifica se una delle stringhe passate in input è null o vuota dopo aver rimosso gli spazi bianchi.
+     */
+    public static boolean isAnyEmpty(String... strings) {
+        for (String s : strings) {
+            if (s == null || s.trim().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*I metodi di parsing convertono i valori delle celle, letti come stringhe,
+     nei rispettivi tipi numerici. Sono robusti e gestiscono formati comuni come numeri con o senza decimali e diversi separatori
+      (punto o virgola), lanciando un'eccezione personalizzata ApplicationException in caso di errore.
+     */
+    public static Integer parseInteger(String value, String fieldName, int row) throws ApplicationException {
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return Integer.valueOf(value.trim().replaceAll("\\.0$", ""));
+        } catch (NumberFormatException e) {
+            throw new ApplicationException("Invalid '" + fieldName + "' format at row " + row, e);
+        }
+    }
+
+    public static Long parseLong(String value, String fieldName, int row) throws ApplicationException {
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return Long.valueOf(value.trim().replaceAll("\\.0$", ""));
+        } catch (NumberFormatException e) {
+            throw new ApplicationException("Invalid '" + fieldName + "' format at row " + row, e);
+        }
+    }
+
+    public static BigDecimal parseBigDecimal(String value, String fieldName, int row) throws ApplicationException {
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            String norm = value.trim().replace(".", "").replace(",", ".");
+            return new BigDecimal(norm);
+        } catch (NumberFormatException e) {
+            try {
+                String norm = value.trim().replace(",", ".");
+                return new BigDecimal(norm);
+            } catch (NumberFormatException e2) {
+                throw new ApplicationException("Invalid '" + fieldName + "' format at row " + row, e2);
+            }
+        }
+    }
+
+    /*Cerca di leggere le celle della data prima come formato data nativo di Excel,
+    usando DateUtil.isCellDateFormatted. Se questo non è possibile, prova a interpretare il contenuto della cella come una stringa.
+     */
+    public static Timestamp parseTimestamp(XSSFCell cell, String fieldName, int row) throws ApplicationException {
+        if (cell == null) {
+            return null;
+        }
+
+        if (DateUtil.isCellDateFormatted(cell)) {
+            // Usa il metodo di utilità della libreria per ottenere la data
+            Date d = cell.getDateCellValue();
+            return new Timestamp(d.getTime());
+        } else {
+            // Se non è un formato data numerico, prova a parsarla come stringa
+            String value = new DataFormatter().formatCellValue(cell);
+            if (value.trim().isEmpty()) {
+                return null;
+            }
+            try {
+                // Qui si può aggiungere un parser più robusto se necessario, es. SimpleDateFormat
+                return Timestamp.valueOf(value);
+            } catch (IllegalArgumentException e) {
+                throw new ApplicationException("Invalid '" + fieldName + "' format at row " + row, e);
+            }
+        }
+    }
 
 
 
