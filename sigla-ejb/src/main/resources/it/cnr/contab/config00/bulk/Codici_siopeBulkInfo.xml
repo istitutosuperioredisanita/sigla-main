@@ -53,8 +53,66 @@
 		rows="5"
 		maxLength="200"
 		label="Descrizione" />
-	
-		
+	<fieldProperty
+		name="id_classificazione_siope"
+		property="v_classificazione_voci_ep_siope.id_classificazione"
+		maxLength="7"
+		inputSize="7"
+		inputType="TEXT"
+		enabledOnEdit="false"
+		enabledOnInsert="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="false"
+		label="Identificativo Classificazione Siope" />
+	<fieldProperty
+		name="cd_classificazione_siope"
+		property="v_classificazione_voci_ep_siope.cd_classificazione"
+		maxLength="34"
+		inputSize="40"
+		inputType="TEXT"
+		enabledOnEdit="false"
+		enabledOnInsert="false"
+		label="Codice Classificazione Siope" />
+	<fieldProperty
+		name="find_classificazione_voci_ep_siope"
+		property="v_classificazione_voci_ep_siope"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		columnSet="searchtool"
+		freeSearchSet="searchtool"
+		enabledOnSearch="true"
+		label="Classificazione Siope" />
+
+	<fieldProperty
+		name="id_classificazione_siope_rend"
+		property="v_classificazione_voci_ep_siope_rend.id_classificazione"
+		maxLength="7"
+		inputSize="7"
+		inputType="TEXT"
+		enabledOnEdit="false"
+		enabledOnInsert="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="false"
+		label="Identificativo Classificazione Siope Rend." />
+	<fieldProperty
+		name="cd_classificazione_siope"
+		property="v_classificazione_voci_ep_siope_rend.cd_classificazione"
+		maxLength="34"
+		inputSize="40"
+		inputType="TEXT"
+		enabledOnEdit="false"
+		enabledOnInsert="false"
+		label="Codice Classificazione Siope Rend." />
+	<fieldProperty
+		name="find_classificazione_voci_ep_siope_rend"
+		property="v_classificazione_voci_ep_siope_rend"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		columnSet="searchtool"
+		freeSearchSet="searchtool"
+		enabledOnSearch="true"
+		label="Classificazione Siope Rend." />
+
 	<form
 		name="searchtool" >
 		<formFieldProperty
@@ -83,7 +141,9 @@
 		name="cd_siope" />
 	<formFieldProperty
 		name="descrizione" />
-	
+
+	<formFieldProperty name="find_classificazione_voci_ep_siope" />
+	<formFieldProperty name="find_classificazione_voci_ep_siope_rend" />
 
 	<findFieldProperty
 		name="esercizio" />
@@ -93,7 +153,11 @@
 		name="cd_siope" />
 	<findFieldProperty
 		name="descrizione" />
-	
+    <findFieldProperty
+            name="cd_classificazione_siope" />
+    <findFieldProperty
+            name="cd_classificazione_siope_rend" />
+
 		
 	<columnFieldProperty
 		name="esercizio" />

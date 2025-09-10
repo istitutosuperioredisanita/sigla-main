@@ -19,7 +19,6 @@ package it.cnr.contab.logs.bp;
 
 import it.cnr.contab.coepcoan00.ejb.AsyncScritturaPartitaDoppiaChiusuraComponentSession;
 import it.cnr.contab.coepcoan00.ejb.AsyncScritturaPartitaDoppiaFromDocumentoComponentSession;
-import it.cnr.contab.coepcoan00.ejb.ScritturaPartitaDoppiaChiusuraComponentSession;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.doccont00.comp.AsyncConsSostitutivaComponentSession;
 import it.cnr.contab.doccont00.comp.AsyncPluriennaliComponentSession;
@@ -155,7 +154,6 @@ public class CRUDBatchControlBP extends SimpleCRUDBP
 
                     obbComponent.asyncAmmortamentoBeni(actioncontext.getUserContext(), esercizio.intValue(),"",false,true,true);
                 }
-
                 else if ("CONSSOTITUIVAJAVA".equals(batch_controlbulk.getProcedura().getCd_procedura())) {
                     BigDecimal esercizio = batch_controlbulk.getParametri().stream()
                             .filter(el -> el.getNome_parametro().equals("AES"))

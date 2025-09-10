@@ -21,17 +21,29 @@
 */
 package it.cnr.contab.config00.pdcep.cla.bulk;
 
+import it.cnr.contab.config00.pdcep.bulk.Voce_epHome;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.contab.util.RemoveAccent;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.action.CRUDBP;
 public class Classificazione_voci_epBulk extends Classificazione_voci_epBase {
+	public final static java.util.Dictionary tipoKeys;
+
+	static {
+		tipoKeys = new it.cnr.jada.util.OrderedHashtable();
+		tipoKeys.put(Voce_epHome.ECONOMICA,"Economica");
+		tipoKeys.put(Voce_epHome.PATRIMONIALE,"Patrimoniale");
+		tipoKeys.put(Voce_epHome.ECONOMICA_ACCRUAL,"Economica Accrual");
+		tipoKeys.put(Voce_epHome.PATRIMONIALE_ACCRUAL,"Patrimoniale Accrual");
+		tipoKeys.put(Voce_epHome.SIOPE,"Siope");
+		tipoKeys.put(Voce_epHome.SIOPE_RENDICONTO,"Siope Rendiconto");
+	};
+
   	private java.lang.String cd_classificazione;
 	private Classificazione_voci_epBulk classificazione_voci_ep;
-	protected BulkList classVociAssociate = new BulkList();
+	protected BulkList<Classificazione_voci_epBulk> classVociAssociate = new BulkList<>();
 	
 	public Classificazione_voci_epBulk() {
 		super();
@@ -82,26 +94,19 @@ public class Classificazione_voci_epBulk extends Classificazione_voci_epBase {
 	protected Classificazione_voci_epBulk(Classificazione_voci_epBulk liv_pre, String cd_livello) {
 		this(liv_pre.getTipo(), liv_pre.getCd_livello1(), liv_pre.getCd_livello2(), liv_pre.getCd_livello3(), liv_pre.getCd_livello4(), liv_pre.getCd_livello5(), liv_pre.getCd_livello6(), liv_pre.getCd_livello7(), liv_pre.getCd_livello8());
 
-		if (liv_pre instanceof Classificazione_voci_ep_eco_liv1Bulk||
-		    liv_pre instanceof Classificazione_voci_ep_pat_liv1Bulk)
+		if (liv_pre instanceof Classificazione_voci_ep_liv1Bulk)
 			setCd_livello2(cd_livello);						
-		if (liv_pre instanceof Classificazione_voci_ep_eco_liv2Bulk||
-		    liv_pre instanceof Classificazione_voci_ep_pat_liv2Bulk)
+		if (liv_pre instanceof Classificazione_voci_ep_liv2Bulk)
 			setCd_livello3(cd_livello);						
-		if (liv_pre instanceof Classificazione_voci_ep_eco_liv3Bulk||
-		    liv_pre instanceof Classificazione_voci_ep_pat_liv3Bulk)
+		if (liv_pre instanceof Classificazione_voci_ep_liv3Bulk)
 			setCd_livello4(cd_livello);						
-		if (liv_pre instanceof Classificazione_voci_ep_eco_liv4Bulk||
-		    liv_pre instanceof Classificazione_voci_ep_pat_liv4Bulk)
+		if (liv_pre instanceof Classificazione_voci_ep_liv4Bulk)
 			setCd_livello5(cd_livello);						
-		if (liv_pre instanceof Classificazione_voci_ep_eco_liv5Bulk||
-		    liv_pre instanceof Classificazione_voci_ep_pat_liv5Bulk)
+		if (liv_pre instanceof Classificazione_voci_ep_liv5Bulk)
 			setCd_livello6(cd_livello);						
-		if (liv_pre instanceof Classificazione_voci_ep_eco_liv6Bulk||
-		    liv_pre instanceof Classificazione_voci_ep_pat_liv6Bulk)
+		if (liv_pre instanceof Classificazione_voci_ep_liv6Bulk)
 			setCd_livello7(cd_livello);						
-		if (liv_pre instanceof Classificazione_voci_ep_eco_liv7Bulk||
-		    liv_pre instanceof Classificazione_voci_ep_pat_liv7Bulk)
+		if (liv_pre instanceof Classificazione_voci_ep_liv7Bulk)
 		  setCd_livello8(cd_livello);						  
 			
 		setClassificazione_voci_ep(liv_pre);
@@ -148,11 +153,11 @@ public class Classificazione_voci_epBulk extends Classificazione_voci_epBase {
 		cd_classificazione = string;
 	}
 
-	public BulkList getClassVociAssociate() {
+	public BulkList<Classificazione_voci_epBulk> getClassVociAssociate() {
 		return classVociAssociate;
 	}
 
-	public void setClassVociAssociate(BulkList list) {
+	public void setClassVociAssociate(BulkList<Classificazione_voci_epBulk> list) {
 		classVociAssociate = list;
 	}
 
@@ -161,22 +166,22 @@ public class Classificazione_voci_epBulk extends Classificazione_voci_epBase {
 	 */
 	public Integer getLivelloMax() {
 		if (getCd_livello8() != null)
-			return new Integer(Classificazione_voci_epHome.LIVELLO_OTTAVO);
+			return Classificazione_voci_epHome.LIVELLO_OTTAVO;
 		else if (getCd_livello7() != null)
-			return new Integer(Classificazione_voci_epHome.LIVELLO_SETTIMO);
+			return Classificazione_voci_epHome.LIVELLO_SETTIMO;
 		else if (getCd_livello6() != null)
-			return new Integer(Classificazione_voci_epHome.LIVELLO_SESTO);
+			return Classificazione_voci_epHome.LIVELLO_SESTO;
 		else if (getCd_livello5() != null)
-			return new Integer(Classificazione_voci_epHome.LIVELLO_QUINTO);
+			return Classificazione_voci_epHome.LIVELLO_QUINTO;
 		else if (getCd_livello4() != null)
-			return new Integer(Classificazione_voci_epHome.LIVELLO_QUARTO);
+			return Classificazione_voci_epHome.LIVELLO_QUARTO;
 		else if (getCd_livello3() != null)
-			return new Integer(Classificazione_voci_epHome.LIVELLO_TERZO);
+			return Classificazione_voci_epHome.LIVELLO_TERZO;
 		else if (getCd_livello2() != null)
-			return new Integer(Classificazione_voci_epHome.LIVELLO_SECONDO);
+			return Classificazione_voci_epHome.LIVELLO_SECONDO;
 		else if (getCd_livello1() != null)
-			return new Integer(Classificazione_voci_epHome.LIVELLO_PRIMO);
-		return new Integer(Classificazione_voci_epHome.LIVELLO_MIN);
+			return Classificazione_voci_epHome.LIVELLO_PRIMO;
+		return Classificazione_voci_epHome.LIVELLO_MIN;
 	}
 
 	/*

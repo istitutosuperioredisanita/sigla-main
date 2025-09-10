@@ -49,11 +49,11 @@ public class CRUDConfigParametriLivelliEPAction extends CRUDAction {
 	/**
 	 * Viene richiamato nel momento in cui viene cambiato il livello delle Economica
 	 */
-	public Forward doCambiaLivelliEconomica(ActionContext context) {
+	public Forward doCambiaLivelli(ActionContext context) {
 		try {	
 			CRUDConfigParametriLivelliEPBP bp = (CRUDConfigParametriLivelliEPBP)getBusinessProcess(context);
 			Parametri_livelli_epBulk parLiv = (Parametri_livelli_epBulk)bp.getModel();
-			Integer livOld = parLiv.getLivelli_eco();
+			Integer livOld = parLiv.getLivelli();
 			try {
 				fillModel( context );
 				if (!bp.isSearching())
@@ -61,31 +61,7 @@ public class CRUDConfigParametriLivelliEPAction extends CRUDAction {
 
 				return context.findDefaultForward();
 			} catch(ValidationException e) {
-				parLiv.setLivelli_eco(livOld);
-				bp.setModel(context,parLiv);
-				throw e;
-			}
-		} catch(Throwable e) {
-			return handleException(context, e);
-		}
-	}
-
-	/**
-	 * Viene richiamato nel momento in cui viene cambiato il livello delle Patrimoniale
-	 */
-	public Forward doCambiaLivelliPatrimoniale(ActionContext context) {
-		try {	
-			CRUDConfigParametriLivelliEPBP bp = (CRUDConfigParametriLivelliEPBP)getBusinessProcess(context);
-			Parametri_livelli_epBulk parLiv = (Parametri_livelli_epBulk)bp.getModel();
-			Integer livOld = parLiv.getLivelli_pat();
-			try {
-				fillModel( context );
-				if (!bp.isSearching())
-					parLiv.validaLivelliValorizzati();
-
-				return context.findDefaultForward();
-			} catch(ValidationException e) {
-				parLiv.setLivelli_pat(livOld);
+				parLiv.setLivelli(livOld);
 				bp.setModel(context,parLiv);
 				throw e;
 			}
