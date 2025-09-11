@@ -1,6 +1,7 @@
 package it.cnr.contab.doccont00.dto;
 
 import it.cnr.jada.comp.ApplicationException;
+import it.cnr.jada.comp.CRUDValidationException;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -42,7 +43,7 @@ public class EsitoCori {
      */
     public void gestioneNoOk() throws ApplicationException {
         if (!isOk()) {
-            throw new ApplicationException(buildErrorMessage());
+            throw new CRUDValidationException(buildErrorMessage());
         }
     }
 }

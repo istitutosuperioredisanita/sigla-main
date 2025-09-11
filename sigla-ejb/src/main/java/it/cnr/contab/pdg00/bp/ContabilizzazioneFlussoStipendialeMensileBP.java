@@ -95,7 +95,7 @@ public class ContabilizzazioneFlussoStipendialeMensileBP extends it.cnr.jada.uti
     public void refresh(ActionContext context) throws BusinessProcessException {
         try {
             setIterator(context, createComponentSession().listaStipendi_cofi(context.getUserContext()));
-            setOrderBy(context, "mese", 1);
+           // setOrderBy(context, "mese", 1);
             reset(context);
         } catch (Throwable e) {
             throw handleException(e);

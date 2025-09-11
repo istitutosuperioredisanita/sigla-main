@@ -19,7 +19,6 @@ package it.cnr.contab.pdg00.comp;
 
 import it.cnr.contab.compensi00.tabrif.bulk.*;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceHome;
-import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneHome;
 import it.cnr.contab.doccont00.dto.EsitoCori;
@@ -27,10 +26,12 @@ import it.cnr.contab.pdg00.cdip.bulk.*;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.CRUDComponent;
+import it.cnr.jada.comp.CRUDValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.ObjectNotFoundException;
 import it.cnr.jada.persistency.PersistencyException;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.Collection;
@@ -48,7 +49,7 @@ import static it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofi_coriBulk.lastDayOfMont
  *
  * @author: CNRADM
  */
-public class FlussoStipendiComponent extends CRUDComponent {
+public class FlussoStipendiComponent extends CRUDComponent implements Cloneable, Serializable {
     public FlussoStipendiComponent() {
         super();
     }
@@ -59,8 +60,9 @@ public class FlussoStipendiComponent extends CRUDComponent {
     public GestioneStipBulk gestioneFlussoStipendi(UserContext userContext, GestioneStipBulk bulk)
             throws ComponentException, RemoteException {
 
-        inserisciStipendiCofi(userContext, bulk.getStipendiCofiBulk());
-        inserisciStipendiCofiObbScad(userContext, bulk.getStipendiCofiBulk(), bulk.getStipendiCofiObbScadBulks());
+            inserisciStipendiCofi(userContext, bulk.getStipendiCofiBulk());
+            inserisciStipendiCofiObbScad(userContext, bulk.getStipendiCofiBulk(), bulk.getStipendiCofiObbScadBulks());
+
         EsitoCori esito = inserisciStipendiCofiCoriCompleto(userContext, bulk.getStipendiCofiBulk(), bulk.getStipendiCofiCoriBulks());
 
         esito.gestioneNoOk();
@@ -76,16 +78,15 @@ public class FlussoStipendiComponent extends CRUDComponent {
      * - Se MESE è null → PK assegnata da Home prima dell'insert
      */
     public void inserisciStipendiCofi(UserContext userContext, Stipendi_cofiBulk bulk)
-            throws ApplicationException, ComponentException, RemoteException {
+            throws ApplicationException, ComponentException, RemoteException{
 
         Stipendi_cofiHome home =
                 (Stipendi_cofiHome) getHome(userContext, Stipendi_cofiBulk.class);
 
-        try {
             // Validazione input minimi
-            if (bulk == null) throw new ComponentException("Stipendi_cofiBulk nullo.");
-            if (bulk.getEsercizio() == null) throw new ComponentException("Esercizio non valorizzato (NOT NULL).");
-            if (bulk.getMese_reale() == null) throw new ComponentException("Mese_reale non valorizzato (NOT NULL).");
+            if (bulk == null) throw new CRUDValidationException("Stipendi_cofiBulk nullo.");
+            if (bulk.getEsercizio() == null) throw new CRUDValidationException("Esercizio non valorizzato (NOT NULL).");
+            if (bulk.getMese_reale() == null) throw new CRUDValidationException("Mese_reale non valorizzato (NOT NULL).");
             bulk.setStato(Stipendi_cofiBulk.STATO_NON_LIQUIDATO);
            // Check TIPO_FLUSSO
             String tipoFlusso = bulk.getTipo_flusso();
@@ -107,15 +108,16 @@ public class FlussoStipendiComponent extends CRUDComponent {
                     }
                 } catch (ObjectNotFoundException ignore) {
                     // Non esiste: si potrà procedere ad INSERT
+                }catch (PersistencyException e){
+                    throw new ComponentException(e);
                 }
+
             }
             bulk.setProg_flusso(bulk.getMese_reale());
             bulk.setToBeCreated();
             super.creaConBulk(userContext, bulk);
 
-        } catch (PersistencyException e) {
-            throw new ComponentException(e);
-        }
+
     }
 
 
@@ -377,26 +379,31 @@ public class FlussoStipendiComponent extends CRUDComponent {
 
 
     public void cancellaFlussoNonLiquidato(UserContext uc,Stipendi_cofiBulk stipendiCofiBulk) throws ComponentException, PersistencyException {
+        Stipendi_cofiHome stipendi_cofiHome = (Stipendi_cofiHome)getHome(uc, it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiBulk.class);
+        Stipendi_cofiBulk stipendiCofiBulkDB  = stipendi_cofiHome.findStipendiCofi(stipendiCofiBulk);
+        if ( stipendiCofiBulkDB.isLiquidato())
+            throw new ApplicationException("Il flusso stipendiale è già stato liquidato");
+
 
         Stipendi_cofi_coriHome stipendi_cofi_coriHome = (Stipendi_cofi_coriHome)getHome(uc, it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofi_coriBulk.class);
         Stipendi_cofi_obb_scadHome stipendi_cofi_obb_scadHome = (Stipendi_cofi_obb_scadHome)getHome(uc, it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofi_obb_scadBulk.class);
-        Stipendi_cofiHome stipendi_cofiHome = (Stipendi_cofiHome)getHome(uc, it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiBulk.class);
 
-        Collection<Stipendi_cofi_obb_scadBulk> cofiObbScadList = stipendi_cofi_obb_scadHome.findStipendiCofiObbScad(uc, stipendiCofiBulk.getEsercizio(),stipendiCofiBulk.getMese());
+
+        Collection<Stipendi_cofi_obb_scadBulk> cofiObbScadList = stipendi_cofi_obb_scadHome.findStipendiCofiObbScad(uc, stipendiCofiBulkDB.getEsercizio(),stipendiCofiBulkDB.getMese());
 
         for(Stipendi_cofi_obb_scadBulk cofiObbScad : cofiObbScadList){
             cofiObbScad.setToBeDeleted();
             super.eliminaConBulk(uc,cofiObbScad);
         }
 
-        Collection<Stipendi_cofi_coriBulk> cofiCoriList = stipendi_cofi_coriHome.findStipendiCofiCori( stipendiCofiBulk.getEsercizio(),stipendiCofiBulk.getMese());
+        Collection<Stipendi_cofi_coriBulk> cofiCoriList = stipendi_cofi_coriHome.findStipendiCofiCori( stipendiCofiBulkDB.getEsercizio(),stipendiCofiBulkDB.getMese());
 
         for(Stipendi_cofi_coriBulk cofiCori : cofiCoriList){
             cofiCori.setToBeDeleted();
             super.eliminaConBulk(uc,cofiCori);
         }
-        stipendiCofiBulk.setToBeDeleted();
-        super.eliminaConBulk(uc,stipendiCofiBulk);
+        stipendiCofiBulkDB.setToBeDeleted();
+        super.eliminaConBulk(uc,stipendiCofiBulkDB);
     }
 }
 
