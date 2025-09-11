@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+    <fieldProperty
+        name="esercizio"
+        property="esercizio"
+        inputType="TEXT"
+        inputSize="4"
+        label="Esercizio" />
+    <fieldProperty
+        name="tipo"
+        property="tipo"
+        inputType="TEXT"
+        inputSize="3"
+        label="Tipo Classificazione" />
+    <fieldProperty
+        name="tiporec"
+        property="tiporec"
+        inputType="TEXT"
+        inputSize="3"
+        label="Tipo Record" />
+    <fieldProperty
+        name="nr_livello"
+        property="nr_livello"
+        inputType="TEXT"
+        inputSize="2"
+        label="Numero Livello" />
+    <fieldProperty
+        name="cd_classificazione"
+        property="cd_classificazione"
+        inputType="TEXT"
+        inputSize="35"
+        label="Codice Classificazione" />
+    <fieldProperty
+        name="ds_classificazione"
+        property="ds_classificazione"
+        inputType="TEXT"
+        inputSize="80"
+        label="Descrizione" />
+
+
+	<formFieldProperty
+		name="esercizio" />
+	<formFieldProperty
+		name="tipo" />
+    <formFieldProperty
+        name="tiporec" />
+	<formFieldProperty
+		name="nr_livello" />
+	<formFieldProperty
+		name="cd_classificazione" />
+	<formFieldProperty
+		name="ds_classificazione" />
+
+	<findFieldProperty
+		name="esercizio" />
+	<findFieldProperty
+		name="tipo" />
+    <findFieldProperty
+        name="tiporec" />
+    <findFieldProperty
+		name="nr_livello" />
+	<findFieldProperty
+		name="cd_classificazione" />
+	<findFieldProperty
+		name="ds_classificazione" />
+
+	<columnFieldProperty
+		name="esercizio" />
+	<columnFieldProperty
+		name="tipo" />
+    <columnFieldProperty
+        name="tiporec" />
+    <columnFieldProperty
+		name="nr_livello" />
+	<columnFieldProperty
+		name="cd_classificazione" />
+	<columnFieldProperty
+		name="ds_classificazione" />
+</bulkInfo>
