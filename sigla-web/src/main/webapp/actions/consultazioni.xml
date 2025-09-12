@@ -266,8 +266,7 @@
 	<action path="/ConsOrganoAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction" needExistingSession="false"/>
 	<action path="/ConsTipoContrattoAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction" needExistingSession="false"/>
 	<action path="/ConsTipoContrattoPassivoAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction" needExistingSession="false"/>
-
-
+    <action path="/ConsPianoContiEconomicoAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction" needExistingSession="false"/>
 
 	<businessProcess name="ConsObbligazioniBP"
 					 className="it.cnr.contab.consultazioni.bp.ConsObbligazioniBP">
@@ -1979,7 +1978,12 @@
 		<init-param name="defaultAction" value="ConsListaFirmatariContrattiAction" />
 	</businessProcess>
 
-
-
-
+    <businessProcess name="ConsPianoContiEconomicoBP"
+                     className="it.cnr.jada.util.action.ConsultazioniBP">
+        <forward name="default" path="/consultazioni/form_lista.jsp" />
+        <init-param name="bulkClassName"
+                    value="it.cnr.contab.config00.pdcep.consultazioni.bulk.VConsPianoContiEconomicoBulk" />
+        <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
+        <init-param name="defaultAction" value="ConsPianoContiEconomicoAction" />
+    </businessProcess>
 </action-mappings>

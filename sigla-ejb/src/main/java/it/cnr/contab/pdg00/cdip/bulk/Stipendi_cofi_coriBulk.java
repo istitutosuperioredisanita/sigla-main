@@ -203,4 +203,19 @@ public class Stipendi_cofi_coriBulk extends Stipendi_cofi_coriBase {
                 .orElse(new Tipo_contributo_ritenutaBulk())
                 .setCd_classificazione_cori(cd_classificazione_cori);
     }
+
+
+    /** Calcola il 1° giorno mese gestisce 12=“tredicesima” e 13=“dicembre”. */
+    public static java.sql.Timestamp firstDayOfMonthTs(int year, int month1to13) {
+        int m = (month1to13 == Stipendi_cofi_coriBulk.DICEMBRE) ? 12 : Math.min(Math.max(month1to13, 1), 12);
+        java.time.LocalDate d = java.time.LocalDate.of(year, m, 1);
+        return java.sql.Timestamp.valueOf(d.atStartOfDay());
+    }
+    /** Calcola l’ultimo giorno mese e imposta 23:59:59. */
+    public static java.sql.Timestamp lastDayOfMonthTs(int year, int month1to13) {
+        int m = (month1to13 == Stipendi_cofi_coriBulk.DICEMBRE) ? 12 : Math.min(Math.max(month1to13, 1), 12);
+        java.time.LocalDate d = java.time.LocalDate.of(year, m, 1)
+                .with(java.time.temporal.TemporalAdjusters.lastDayOfMonth());
+        return java.sql.Timestamp.valueOf(d.atTime(23, 59, 59));
+    }
 }

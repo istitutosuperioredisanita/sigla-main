@@ -24,6 +24,7 @@ import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
+import it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
@@ -345,4 +346,5 @@ public class TerzoHome extends BulkHome {
             return null;
         return (BancaBulk) result.get(0);
     }
+
 }

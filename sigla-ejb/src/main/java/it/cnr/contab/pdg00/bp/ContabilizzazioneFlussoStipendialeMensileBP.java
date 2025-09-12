@@ -19,9 +19,9 @@ package it.cnr.contab.pdg00.bp;
 
 import it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiBulk;
 import it.cnr.contab.pdg00.ejb.CostiDipendenteComponentSession;
+import it.cnr.contab.pdg00.ejb.FlussoStipendiComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
-import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
@@ -30,8 +30,8 @@ import it.cnr.jada.util.jsp.Button;
 
 import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Properties;
-import java.util.stream.Stream;
 
 public class ContabilizzazioneFlussoStipendialeMensileBP extends it.cnr.jada.util.action.SelezionatoreListaBP {
     /**
@@ -62,6 +62,10 @@ public class ContabilizzazioneFlussoStipendialeMensileBP extends it.cnr.jada.uti
         return it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPDG00_EJB_CostiDipendenteComponentSession", CostiDipendenteComponentSession.class);
     }
 
+    public FlussoStipendiComponentSession createFlussoStipendiComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+        return it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPDG00_EJB_FlussoStipendiComponentSession", FlussoStipendiComponentSession.class);
+    }
+
     public it.cnr.jada.util.jsp.Button[] createToolbar() {
 		final Properties properties = it.cnr.jada.util.Config.getHandler().getProperties(getClass());
 		return Arrays.asList(
@@ -69,7 +73,8 @@ public class ContabilizzazioneFlussoStipendialeMensileBP extends it.cnr.jada.uti
 						new Button(properties, "Toolbar.contabilizza"),
 						new Button(properties, "Toolbar.apriCompenso"),
 						new Button(properties, "Toolbar.apriDocumentoGenerico"),
-						new Button(properties, "Toolbar.apriMandato")
+						new Button(properties, "Toolbar.apriMandato"),
+                       new Button(properties, "Toolbar.delete")
 				).stream().toArray(Button[]::new);
     }
 
@@ -109,6 +114,35 @@ public class ContabilizzazioneFlussoStipendialeMensileBP extends it.cnr.jada.uti
             Utility.createCRUDComponentSession().creaConBulk(context.getUserContext(), stipendiCofiBulk);
         } catch (ComponentException|RemoteException e) {
             throw handleException(e);
+        }
+    }
+
+    public boolean isEliminaButtonHidden() {
+       Stipendi_cofiBulk stipendiCofiBulk= (Stipendi_cofiBulk)this.getModel();
+       if (Optional.ofNullable(stipendiCofiBulk).isPresent())
+            return stipendiCofiBulk.isLiquidato();
+       return Boolean.TRUE;
+
+    }
+    public boolean isEliminaButtonEnabled() {
+        Stipendi_cofiBulk stipendiCofiBulk= (Stipendi_cofiBulk)this.getModel();
+        if (Optional.ofNullable(stipendiCofiBulk).isPresent())
+            return !stipendiCofiBulk.isLiquidato();
+        return Boolean.FALSE;
+    }
+
+    public void eliminaRiga(ActionContext context, Stipendi_cofiBulk stipendiCofiBulk){
+
+        if (Optional.ofNullable(stipendiCofiBulk).isPresent()){
+
+
+
+            // Leggere CofiCori x mese anno
+            // Leggere Obb scad x mese anno
+            // leggere obb per mese anno
+
+
+            //Utility.createCRUDComponentSession().creaConBulk(context.getUserContext(), stipendiCofiBulk);
         }
     }
 }
