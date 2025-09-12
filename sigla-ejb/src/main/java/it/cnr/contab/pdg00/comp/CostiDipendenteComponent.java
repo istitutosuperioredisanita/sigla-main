@@ -799,7 +799,7 @@ public java.util.List listaLinea_attivitaPerRipartizioneResidui(UserContext user
 public it.cnr.jada.util.RemoteIterator listaStipendi_cofi(UserContext userContext) throws ComponentException {
 	SQLBuilder sql = getHome(userContext,Stipendi_cofiBulk.class).createSQLBuilder();
 	sql.addClause(FindClause.AND,"esercizio", SQLBuilder.EQUALS,it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
-	sql.addOrderBy("prog_flusso,mese");
+	sql.addOrderBy("prog_flusso desc,mese_reale desc ");
 	return iterator(userContext,sql,Stipendi_cofiBulk.class,null);
 }
 /** 

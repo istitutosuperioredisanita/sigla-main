@@ -34,6 +34,7 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.*;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
@@ -511,23 +512,90 @@ public OggettoBulk modificaConBulk (UserContext userContext,OggettoBulk bulk) th
 			throw handleException( e );
 		}			
 	}
+
 	public SQLBuilder selectV_classificazione_voci_epByClause(UserContext userContext,
 			 ContoBulk conto,
 			 V_classificazione_voci_epBulk classificazioneVoci,
 			 CompoundFindClause clause) throws ComponentException, PersistencyException 
 	{
 		SQLBuilder sql = getHome(userContext, classificazioneVoci).createSQLBuilder();
+
+		sql.openParenthesis(FindClause.AND);
+		sql.addClause(FindClause.OR, "tipo", SQLBuilder.EQUALS, Voce_epHome.ECONOMICA);
+		sql.addClause(FindClause.OR, "tipo", SQLBuilder.EQUALS, Voce_epHome.PATRIMONIALE);
+		sql.closeParenthesis();
+
 		if (conto!=null && conto.getRiepiloga_a()!=null)
 			if(conto.getRiepiloga_a().equals("SPA"))
-				sql.addClause("AND", "tipo", sql.EQUALS,"PAT");
+				sql.addClause(FindClause.AND, "tipo", SQLBuilder.EQUALS,Voce_epHome.PATRIMONIALE);
 			else
-				sql.addClause("AND", "tipo", sql.EQUALS,"ECO");
-		sql.addClause(clause);
-		sql.addSQLClause("AND", "ESERCIZIO", sql.EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
-		
-		sql.addClause("AND", "fl_mastrino", sql.EQUALS, Boolean.TRUE);
-		if (clause != null) 
-		sql.addClause(clause);
+				sql.addClause(FindClause.AND, "tipo", SQLBuilder.EQUALS,Voce_epHome.ECONOMICA);
+
+		sql.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
+		sql.addClause(FindClause.AND, "fl_mastrino", SQLBuilder.EQUALS, Boolean.TRUE);
+
+		if (clause != null)
+			sql.addClause(clause);
+		return sql;
+	}
+
+	public SQLBuilder selectV_classificazione_voci_ep_accByClause(UserContext userContext,
+															  ContoBulk conto,
+															  V_classificazione_voci_epBulk classificazioneVoci,
+															  CompoundFindClause clause) throws ComponentException, PersistencyException
+	{
+		SQLBuilder sql = getHome(userContext, classificazioneVoci).createSQLBuilder();
+
+		sql.openParenthesis(FindClause.AND);
+		sql.addClause(FindClause.OR, "tipo", SQLBuilder.EQUALS, Voce_epHome.ECONOMICA_ACCRUAL);
+		sql.addClause(FindClause.OR, "tipo", SQLBuilder.EQUALS, Voce_epHome.PATRIMONIALE_ACCRUAL);
+		sql.closeParenthesis();
+
+		if (conto!=null && conto.getRiepiloga_a()!=null)
+			if(conto.getRiepiloga_a().equals("SPA"))
+				sql.addClause(FindClause.AND, "tipo", SQLBuilder.EQUALS,Voce_epHome.PATRIMONIALE_ACCRUAL);
+			else
+				sql.addClause(FindClause.AND, "tipo", SQLBuilder.EQUALS,Voce_epHome.ECONOMICA_ACCRUAL);
+
+		sql.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
+		sql.addClause(FindClause.AND, "fl_mastrino", SQLBuilder.EQUALS, Boolean.TRUE);
+
+		if (clause != null)
+			sql.addClause(clause);
+		return sql;
+	}
+
+	public SQLBuilder selectV_classificazione_voci_ep_siopeByClause(UserContext userContext,
+																  ContoBulk conto,
+																  V_classificazione_voci_epBulk classificazioneVoci,
+																  CompoundFindClause clause) throws ComponentException, PersistencyException
+	{
+		SQLBuilder sql = getHome(userContext, classificazioneVoci).createSQLBuilder();
+
+		sql.addClause(FindClause.OR, "tipo", SQLBuilder.EQUALS, Voce_epHome.SIOPE);
+		sql.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
+
+		sql.addClause(FindClause.AND, "fl_mastrino", SQLBuilder.EQUALS, Boolean.TRUE);
+
+		if (clause != null)
+			sql.addClause(clause);
+		return sql;
+	}
+
+	public SQLBuilder selectV_classificazione_voci_ep_siope_rendByClause(UserContext userContext,
+																	ContoBulk conto,
+																	V_classificazione_voci_epBulk classificazioneVoci,
+																	CompoundFindClause clause) throws ComponentException, PersistencyException
+	{
+		SQLBuilder sql = getHome(userContext, classificazioneVoci).createSQLBuilder();
+
+		sql.addClause(FindClause.OR, "tipo", SQLBuilder.EQUALS, Voce_epHome.SIOPE_RENDICONTO);
+		sql.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
+
+		sql.addClause(FindClause.AND, "fl_mastrino", SQLBuilder.EQUALS, Boolean.TRUE);
+
+		if (clause != null)
+			sql.addClause(clause);
 		return sql;
 	}
 }

@@ -6207,12 +6207,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <!--Autore : CIRO SALVIO inserimento configurazione per abilitare o meno il controllo che tutte le righe dell'ordine di una fattura siano inventariate per poter
     settare la fattura come liquidabile-->
     <include file="bootstrap/insert_configurazioneCnr_liq_daordine_inv.xml"/>
-    <!-- Autore : CIRO SALVIO - Aggiunta funzionalità confornto costi coge cofi-->
-    <include file="bootstrap/add_configurazione_confronta_costi_coge.xml"/>
-    <!-- Autore : CIRO SALVIO - Remove Schedulazione gestione ammortamento( Calcolo e Annulla Ammortamento) -->
-    <include file="bootstrap/remove_schedulazione_gest_ammortamento.xml"/>
-    <!-- Autore : CIRO SALVIO - Remove Schedulazione gestione ammortamento( Calcolo e Annulla Ammortamento) -->
-    <include file="bootstrap/add_schedulazione_check_congr_dati.xml"/>
 
     <!-- Autore : VALENTINA TOMADA - Schedulazione procedura Java Ammortamento Beni Inventario-->
     <include file="bootstrap/add_ammortamento_beni_inv_schedulazione.xml"/>
@@ -6233,12 +6227,18 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_batch_cons_sotitutiva.xml"/>
     <!-- Autore : CIRO SALVIO - modificata lunghezza delle colonne cd_livello in TMP_STAMPA_RENDICONTO -->
     <include file="bootstrap/alter_columns_cdLivello_stampa_rendiconto.xml"/>
-        <!-- Autore : VALENTINA TOMADA - nuova variabile in configurazione_cnr per bloccare importo unitario bene se inventariazione da ordini -->
-    <include file="bootstrap/add_conf_gestione_importo_ro_inventario_ordini.xml"/>
-
-
     <!-- Autore : DAVIDE MIRRA - aggiunto nuovo privilegio e nuovo record nella tab associativa con il tipo ruolo -->
     <include file="bootstrap/add_ass_tipo_ruolo_privilegio_rend.xml"/>
     <!-- Autore : DAVIDE MIRRA - settato valore del tipo ruolo del record che corrisponde al ruolo RENDICONTI -->
     <include file="bootstrap/update_ruolo_tipo_rendiconti.xml"/>
+
+    <!-- Autore : DAVIDE MIRRA - nuova voce di menù per il caricamento del flusso stipendiale -->
+    <include file="bootstrap/insert_caricamento_flusso_stip.xml"/>
+    <!-- Autore : VALENTINA TOMADA - nuova variabile in configurazione_cnr per bloccare importo unitario bene se inventariazione da ordini -->
+    <include file="bootstrap/add_conf_gestione_importo_ro_inventario_ordini.xml"/>
+    <!-- Autore : DAVIDE MIRRA - aggiunto campo note per la sezione Dati Contabili del Progetto -->
+    <include file="bootstrap/add_column_note_on_progetto_other_field.xml"/>
+
+    <!-- Autore : RAFFAELE PAGANO - MODIFICHE TABELLE PER GESTIONE MULTI CLASSIFICAZIONI -->
+    <include file="bootstrap/modify_table_for_multi_classificazioni_ep.xml"/>
 </databaseChangeLog>

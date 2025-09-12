@@ -143,6 +143,11 @@
 				nullable="false"
 				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
 		<columnMapping
+				columnName="NOTE_DATI_CONTABILI"
+				propertyName="noteDatiContabili"
+				sqlTypeName="VARCHAR"
+				columnSize="2000" />
+		<columnMapping
 			columnName="PG_VER_REC"
 			propertyName="pg_ver_rec"
 			sqlTypeName="DECIMAL"
@@ -211,6 +216,8 @@
 		name="flControlliDateDisabled" />
 	<persistentProperty
 			name="flAutoRimodulazioneEnable" />
+	<persistentProperty
+			name="noteDatiContabili" />
 	<persistentProperty
 		name="pg_ver_rec" />
 	<persistentProperty

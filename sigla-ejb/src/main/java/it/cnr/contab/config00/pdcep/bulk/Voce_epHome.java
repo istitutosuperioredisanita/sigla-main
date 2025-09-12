@@ -48,6 +48,12 @@ public class Voce_epHome extends BulkHome {
     public static String ECONOMICA = "ECO";
     public static String PATRIMONIALE = "PAT";
 
+    public static String ECONOMICA_ACCRUAL = "EAC";
+    public static String PATRIMONIALE_ACCRUAL = "PAC";
+
+    public static String SIOPE = "SP1";
+    public static String SIOPE_RENDICONTO = "SP2";
+
     private static it.cnr.jada.util.OrderedHashtable gruppiKeys;
 
     protected Voce_epHome(Class clazz, java.sql.Connection connection) {

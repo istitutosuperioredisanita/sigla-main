@@ -17,15 +17,14 @@
 
 package it.cnr.contab.inventario00.ejb;
 
-import it.cnr.contab.inventario00.docs.bulk.*;
-
+import it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invBulk;
+import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beni_detBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Tipo_ammortamentoBulk;
 import it.cnr.contab.logs.bulk.Batch_log_rigaBulk;
 import it.cnr.contab.logs.bulk.Batch_log_tstaBulk;
 import it.cnr.contab.logs.ejb.BatchControlComponentSession;
-
 import it.cnr.contab.ordmag.magazzino.bulk.ChiusuraAnnoBulk;
-import it.cnr.contab.ordmag.magazzino.bulk.ChiusuraAnnoHome;
 import it.cnr.contab.ordmag.magazzino.ejb.ChiusuraAnnoComponentSession;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.DetailedRuntimeException;
@@ -34,7 +33,6 @@ import it.cnr.jada.bulk.BusyResourceException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
-
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import org.slf4j.LoggerFactory;
 
@@ -43,11 +41,10 @@ import javax.ejb.Stateless;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
-
-import java.text.ParseException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Stateless(name = "CNRINVENTARIO00_EJB_AsyncAmmortamentoBeneComponentSession")
 public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements AsyncAmmortamentoBeneComponentSession {
@@ -182,12 +179,13 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
 
                         }
                         if(bene.getTiAmmortamento() != null) {
+                            BigDecimal varPiuNormalizzato = bene.getVariazionePiu().add( bene.getIncrementoValore().multiply( MENO_UNO));
+                            BigDecimal varMenoNormalizzato = bene.getVariazioneMeno().add( bene.getDecrementoValore().multiply( MENO_UNO));
+                            if (bene.getValoreAmmortizzatoCalcolato().compareTo(bene.getImponibileAmmortamentoCalcolato()) > 0 ) {
 
-                            if (bene.getValoreAmmortizzatoCalcolato().compareTo(bene.getImponibileAmmortamentoCalcolato()) > 0 && !bene.getFlTotalmenteScaricato()) {
-
-                            } else if (((bene.getValoreIniziale().add(bene.getVariazionePiu())).add(bene.getVariazioneMeno().multiply(MENO_UNO))).compareTo(BigDecimal.ZERO) == 0
+                            } else if (((bene.getValoreIniziale().add(varPiuNormalizzato)).add(varMenoNormalizzato)).compareTo(BigDecimal.ZERO) == 0
                                     &&
-                                    bene.getImponibileAmmortamentoCalcolato().compareTo(BigDecimal.ZERO) > 0 && !bene.getFlTotalmenteScaricato()) {
+                                    bene.getImponibileAmmortamentoCalcolato().compareTo(BigDecimal.ZERO) > 0 ) {
                             } else {
 
                                 BigDecimal percAmmortamento = bene.getNumeroAnnoAmmortamento().compareTo(BigDecimal.ZERO) == 0 ? Utility.nvl(bene.getPercPrimoAnno()) : Utility.nvl(bene.getPercSuccessivi());
@@ -208,7 +206,7 @@ public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.C
                                     //   1) VALORE_AMMORTIZZATO del bene in esame
                                     //   2) inserire un movimento di ammortamento relativo alla rata.
 
-                                    if (bene.getImponibileAmmortamentoCalcolato().compareTo(BigDecimal.ZERO) > 0 && !bene.getFlTotalmenteScaricato() &&
+                                    if (bene.getImponibileAmmortamentoCalcolato().compareTo(BigDecimal.ZERO) > 0 && //!bene.getFlTotalmenteScaricato() &&
                                             Utility.nvl(bene.getValoreAmmortizzatoCalcolato()).compareTo(bene.getImponibileAmmortamentoCalcolato()) < 0) {
 
                                         rataAmmortamento = ((bene.getImponibileAmmortamentoCalcolato().multiply(percAmmortamento)).divide(CENTO));

@@ -381,6 +381,22 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 		}
 	}
 
+	 private List<MovimentiMagBulk> aggiornaMovRigheEvasione(List<EvasioneOrdineRigaBulk> listMovimentiEvaRighe,EvasioneOrdineBulk evasioneOrdine) {
+		List<MovimentiMagBulk> movimentiScarico = new ArrayList<MovimentiMagBulk>();
+			 Optional.ofNullable(listMovimentiEvaRighe).orElse(Collections.EMPTY_LIST).stream().
+					 forEach( rigaEvasione->{
+						 EvasioneOrdineRigaBulk rigaEvasioneInList= Optional.ofNullable(evasioneOrdine.getEvasioneOrdineRigheColl().
+								 indexOf(rigaEvasione)).filter(i->i!=-1).map(i-> evasioneOrdine.getEvasioneOrdineRigheColl().get(i)).orElseGet(() -> {
+							 return null;
+						 });
+						 if ( Optional.ofNullable(rigaEvasioneInList).isPresent()){
+							 rigaEvasioneInList.setMovimentiMag(((EvasioneOrdineRigaBulk) rigaEvasione).getMovimentiMag());
+							 if ( rigaEvasioneInList.getMovimentiMag().getMovimentoRif()!=null)
+								 movimentiScarico.add(rigaEvasioneInList.getMovimentiMag());
+						 }
+					 });
+			 return movimentiScarico;
+	 }
 	private void validaEvasioneOrdine(UserContext userContext,EvasioneOrdineBulk evasioneOrdine) throws ApplicationException {
 		if(evasioneOrdine.getDataConsegna() != null){
 			java.util.Calendar gc = java.util.Calendar.getInstance();

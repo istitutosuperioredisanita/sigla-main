@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep01">
+        <dropPrimaryKey tableName="PARAMETRI_LIVELLI_EP" constraintName="PARAMETRI_LIVELLI_EP_PKEY"/>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep02">
+        <addColumn tableName="PARAMETRI_LIVELLI_EP">
+            <column name="tipo" remarks="Definisce il tipo di classificazione a cui il livello si riferisce;Dominio:&#10;ECO=Economico&#10;PAT=Patrimoniale;EAC=Economico Accrual&#10;PAC=Patrimoniale Accrual" type="CHAR(3)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep03">
+        <sql>
+            UPDATE PARAMETRI_LIVELLI_EP
+            SET TIPO = 'ECO';
+        </sql>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep04">
+        <addNotNullConstraint columnName="TIPO" tableName="PARAMETRI_LIVELLI_EP" columnDataType="CHAR(3)"/>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep05">
+        <addPrimaryKey columnNames="esercizio,tipo" constraintName="PARAMETRI_LIVELLI_EP_PKEY" tableName="PARAMETRI_LIVELLI_EP"/>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep06">
+        <sql>
+            INSERT INTO PARAMETRI_LIVELLI_EP
+            (ESERCIZIO, TIPO,
+             LIVELLI_ECO, LUNG_LIVELLO1E, DS_LIVELLO1E, LUNG_LIVELLO2E, DS_LIVELLO2E, LUNG_LIVELLO3E, DS_LIVELLO3E,
+             LUNG_LIVELLO4E, DS_LIVELLO4E, LUNG_LIVELLO5E, DS_LIVELLO5E, LUNG_LIVELLO6E, DS_LIVELLO6E, LUNG_LIVELLO7E, DS_LIVELLO7E,
+             LUNG_LIVELLO8E, DS_LIVELLO8E,
+             LIVELLI_PAT, LUNG_LIVELLO1P, DS_LIVELLO1P, LUNG_LIVELLO2P, DS_LIVELLO2P, LUNG_LIVELLO3P, DS_LIVELLO3P,
+             LUNG_LIVELLO4P, DS_LIVELLO4P, LUNG_LIVELLO5P, DS_LIVELLO5P, LUNG_LIVELLO6P, DS_LIVELLO6P, LUNG_LIVELLO7P, DS_LIVELLO7P,
+             LUNG_LIVELLO8P, DS_LIVELLO8P,
+             DUVA, UTUV, DACR, UTCR, PG_VER_REC)
+            SELECT ESERCIZIO, 'PAT',
+            LIVELLI_PAT, LUNG_LIVELLO1P, DS_LIVELLO1P, LUNG_LIVELLO2P, DS_LIVELLO2P, LUNG_LIVELLO3P, DS_LIVELLO3P,
+            LUNG_LIVELLO4P, DS_LIVELLO4P, LUNG_LIVELLO5P, DS_LIVELLO5P, LUNG_LIVELLO6P, DS_LIVELLO6P, LUNG_LIVELLO7P, DS_LIVELLO7P,
+            LUNG_LIVELLO8P, DS_LIVELLO8P,
+            LIVELLI_PAT, LUNG_LIVELLO1P, DS_LIVELLO1P, LUNG_LIVELLO2P, DS_LIVELLO2P, LUNG_LIVELLO3P, DS_LIVELLO3P,
+            LUNG_LIVELLO4P, DS_LIVELLO4P, LUNG_LIVELLO5P, DS_LIVELLO5P, LUNG_LIVELLO6P, DS_LIVELLO6P, LUNG_LIVELLO7P, DS_LIVELLO7P,
+            LUNG_LIVELLO8P, DS_LIVELLO8P,
+            DUVA, UTUV, DACR, UTCR, PG_VER_REC
+            FROM PARAMETRI_LIVELLI_EP;
+        </sql>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep07">
+        <dropColumn tableName="PARAMETRI_LIVELLI_EP" columnName="LIVELLI_PAT"/>
+        <dropColumn tableName="PARAMETRI_LIVELLI_EP" columnName="LUNG_LIVELLO1P"/>
+        <dropColumn tableName="PARAMETRI_LIVELLI_EP" columnName="DS_LIVELLO1P"/>
+        <dropColumn tableName="PARAMETRI_LIVELLI_EP" columnName="LUNG_LIVELLO2P"/>
+        <dropColumn tableName="PARAMETRI_LIVELLI_EP" columnName="DS_LIVELLO2P"/>
+        <dropColumn tableName="PARAMETRI_LIVELLI_EP" columnName="LUNG_LIVELLO3P"/>
+        <dropColumn tableName="PARAMETRI_LIVELLI_EP" columnName="DS_LIVELLO3P"/>
+        <dropColumn tableName="PARAMETRI_LIVELLI_EP" columnName="LUNG_LIVELLO4P"/>
+        <dropColumn tableName="PARAMETRI_LIVELLI_EP" columnName="DS_LIVELLO4P"/>
+        <dropColumn tableName="PARAMETRI_LIVELLI_EP" columnName="LUNG_LIVELLO5P"/>
+        <dropColumn tableName="PARAMETRI_LIVELLI_EP" columnName="DS_LIVELLO5P"/>
+        <dropColumn tableName="PARAMETRI_LIVELLI_EP" columnName="LUNG_LIVELLO6P"/>
+        <dropColumn tableName="PARAMETRI_LIVELLI_EP" columnName="DS_LIVELLO6P"/>
+        <dropColumn tableName="PARAMETRI_LIVELLI_EP" columnName="LUNG_LIVELLO7P"/>
+        <dropColumn tableName="PARAMETRI_LIVELLI_EP" columnName="DS_LIVELLO7P"/>
+        <dropColumn tableName="PARAMETRI_LIVELLI_EP" columnName="LUNG_LIVELLO8P"/>
+        <dropColumn tableName="PARAMETRI_LIVELLI_EP" columnName="DS_LIVELLO8P"/>
+
+        <renameColumn tableName="PARAMETRI_LIVELLI_EP" oldColumnName="LIVELLI_ECO" newColumnName="LIVELLI"/>
+        <renameColumn tableName="PARAMETRI_LIVELLI_EP" oldColumnName="LUNG_LIVELLO1E" newColumnName="LUNG_LIVELLO1"/>
+        <renameColumn tableName="PARAMETRI_LIVELLI_EP" oldColumnName="LUNG_LIVELLO2E" newColumnName="LUNG_LIVELLO2"/>
+        <renameColumn tableName="PARAMETRI_LIVELLI_EP" oldColumnName="LUNG_LIVELLO3E" newColumnName="LUNG_LIVELLO3"/>
+        <renameColumn tableName="PARAMETRI_LIVELLI_EP" oldColumnName="LUNG_LIVELLO4E" newColumnName="LUNG_LIVELLO4"/>
+        <renameColumn tableName="PARAMETRI_LIVELLI_EP" oldColumnName="LUNG_LIVELLO5E" newColumnName="LUNG_LIVELLO5"/>
+        <renameColumn tableName="PARAMETRI_LIVELLI_EP" oldColumnName="LUNG_LIVELLO6E" newColumnName="LUNG_LIVELLO6"/>
+        <renameColumn tableName="PARAMETRI_LIVELLI_EP" oldColumnName="LUNG_LIVELLO7E" newColumnName="LUNG_LIVELLO7"/>
+        <renameColumn tableName="PARAMETRI_LIVELLI_EP" oldColumnName="LUNG_LIVELLO8E" newColumnName="LUNG_LIVELLO8"/>
+
+        <renameColumn tableName="PARAMETRI_LIVELLI_EP" oldColumnName="DS_LIVELLO1E" newColumnName="DS_LIVELLO1"/>
+        <renameColumn tableName="PARAMETRI_LIVELLI_EP" oldColumnName="DS_LIVELLO2E" newColumnName="DS_LIVELLO2"/>
+        <renameColumn tableName="PARAMETRI_LIVELLI_EP" oldColumnName="DS_LIVELLO3E" newColumnName="DS_LIVELLO3"/>
+        <renameColumn tableName="PARAMETRI_LIVELLI_EP" oldColumnName="DS_LIVELLO4E" newColumnName="DS_LIVELLO4"/>
+        <renameColumn tableName="PARAMETRI_LIVELLI_EP" oldColumnName="DS_LIVELLO5E" newColumnName="DS_LIVELLO5"/>
+        <renameColumn tableName="PARAMETRI_LIVELLI_EP" oldColumnName="DS_LIVELLO6E" newColumnName="DS_LIVELLO6"/>
+        <renameColumn tableName="PARAMETRI_LIVELLI_EP" oldColumnName="DS_LIVELLO7E" newColumnName="DS_LIVELLO7"/>
+        <renameColumn tableName="PARAMETRI_LIVELLI_EP" oldColumnName="DS_LIVELLO8E" newColumnName="DS_LIVELLO8"/>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep08">
+        <addDefaultValue tableName="PARAMETRI_LIVELLI_EP" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="PARAMETRI_LIVELLI_EP" columnName="duva" defaultValueDate="${now}"/>
+        <sql>
+            INSERT INTO PARAMETRI_LIVELLI_EP
+            (ESERCIZIO, TIPO, LIVELLI, LUNG_LIVELLO1, DS_LIVELLO1, LUNG_LIVELLO2, DS_LIVELLO2, LUNG_LIVELLO3, DS_LIVELLO3,
+            LUNG_LIVELLO4, DS_LIVELLO4, LUNG_LIVELLO5, DS_LIVELLO5, LUNG_LIVELLO6, DS_LIVELLO6, LUNG_LIVELLO7, DS_LIVELLO7,
+            LUNG_LIVELLO8, DS_LIVELLO8, UTUV, UTCR, PG_VER_REC)
+            SELECT ESERCIZIO, 'EAC', LIVELLI, LUNG_LIVELLO1, DS_LIVELLO1, LUNG_LIVELLO2, DS_LIVELLO2, LUNG_LIVELLO3, DS_LIVELLO3,
+            LUNG_LIVELLO4, DS_LIVELLO4, LUNG_LIVELLO5, DS_LIVELLO5, LUNG_LIVELLO6, DS_LIVELLO6, LUNG_LIVELLO7, DS_LIVELLO7,
+            LUNG_LIVELLO8, DS_LIVELLO8, 'SYSTEM', 'SYSTEM', 0
+            FROM PARAMETRI_LIVELLI_EP
+            WHERE TIPO = 'ECO';
+        </sql>
+        <sql>
+            INSERT INTO PARAMETRI_LIVELLI_EP
+            (ESERCIZIO, TIPO, LIVELLI, LUNG_LIVELLO1, DS_LIVELLO1, LUNG_LIVELLO2, DS_LIVELLO2, LUNG_LIVELLO3, DS_LIVELLO3,
+            LUNG_LIVELLO4, DS_LIVELLO4, LUNG_LIVELLO5, DS_LIVELLO5, LUNG_LIVELLO6, DS_LIVELLO6, LUNG_LIVELLO7, DS_LIVELLO7,
+            LUNG_LIVELLO8, DS_LIVELLO8, UTUV, UTCR, PG_VER_REC)
+            SELECT ESERCIZIO, 'PAC', LIVELLI, LUNG_LIVELLO1, DS_LIVELLO1, LUNG_LIVELLO2, DS_LIVELLO2, LUNG_LIVELLO3, DS_LIVELLO3,
+            LUNG_LIVELLO4, DS_LIVELLO4, LUNG_LIVELLO5, DS_LIVELLO5, LUNG_LIVELLO6, DS_LIVELLO6, LUNG_LIVELLO7, DS_LIVELLO7,
+            LUNG_LIVELLO8, DS_LIVELLO8, 'SYSTEM', 'SYSTEM', 0
+            FROM PARAMETRI_LIVELLI_EP
+            WHERE TIPO = 'PAT';
+        </sql>
+        <dropDefaultValue tableName="PARAMETRI_LIVELLI_EP" columnName="dacr"/>
+        <dropDefaultValue tableName="PARAMETRI_LIVELLI_EP" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep09">
+        <sql>
+            UPDATE CLASSIFICAZIONE_VOCI_EP
+            SET TIPO = 'EAC'
+            WHERE TIPO = 'ECO';
+        </sql>
+        <sql>
+            UPDATE CLASSIFICAZIONE_VOCI_EP
+            SET TIPO = 'PAC'
+            WHERE TIPO = 'PAT';
+        </sql>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep10">
+        <addColumn tableName="VOCE_EP">
+            <column name="id_classificazione_acc" remarks="Identificativo classificazione ACCRUAL" type="INT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep11">
+        <addForeignKeyConstraint baseColumnNames="id_classificazione_acc" baseTableName="voce_ep" constraintName="fk_voce_ep_cla_voci_02" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_classificazione" referencedTableName="classificazione_voci_ep"/>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep12">
+        <createIndex indexName="FK_VOCE_EP_CLA_VOCI_02" tableName="VOCE_EP">
+            <column name="ID_CLASSIFICAZIONE_ACC"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep13">
+        <sql>
+            UPDATE VOCE_EP
+            SET ID_CLASSIFICAZIONE_ACC = ID_CLASSIFICAZIONE;
+        </sql>
+        <sql>
+            UPDATE VOCE_EP
+            SET ID_CLASSIFICAZIONE = NULL;
+        </sql>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep14">
+        <sql>
+            DELETE FROM ALBERO_MAIN
+            WHERE CD_NODO LIKE '0.CFG.PDCECP.CLA.PAT%';
+        </sql>
+        <sql>
+            UPDATE ALBERO_MAIN
+            SET DS_NODO = 'classificazioni'
+            WHERE CD_NODO = '0.CFG.PDCECP.CLA.ECO';
+        </sql>
+        <sql>
+            DELETE FROM ASS_BP_ACCESSO
+            WHERE CD_ACCESSO LIKE 'CFGPDCEPCLASVOCPAT%';
+        </sql>
+        <sql>
+            DELETE FROM UTENTE_UNITA_ACCESSO
+            WHERE CD_ACCESSO LIKE 'CFGPDCEPCLASVOCPAT%';
+        </sql>
+        <sql>
+            DELETE FROM RUOLO_ACCESSO
+            WHERE CD_ACCESSO LIKE 'CFGPDCEPCLASVOCPAT%';
+        </sql>
+        <sql>
+            DELETE FROM ACCESSO
+            WHERE CD_ACCESSO LIKE 'CFGPDCEPCLASVOCPAT%';
+        </sql>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep15">
+        <addColumn tableName="CODICI_SIOPE">
+            <column name="id_classificazione_siope" remarks="Identificativo classificazione Siope" type="INT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep16">
+        <addForeignKeyConstraint baseColumnNames="id_classificazione_siope" baseTableName="CODICI_SIOPE" constraintName="FK_CODICI_SIOPE_CLA01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_classificazione" referencedTableName="classificazione_voci_ep"/>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep17">
+        <createIndex indexName="FK_CODICI_SIOPE_CLA01" tableName="CODICI_SIOPE">
+            <column name="ID_CLASSIFICAZIONE_SIOPE"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep18">
+        <addColumn tableName="CODICI_SIOPE">
+            <column name="id_classificazione_siope_rend" remarks="Identificativo classificazione Siope Rendiconto" type="INT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep19">
+        <addForeignKeyConstraint baseColumnNames="id_classificazione_siope_rend" baseTableName="CODICI_SIOPE" constraintName="FK_CODICI_SIOPE_CLA02" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_classificazione" referencedTableName="classificazione_voci_ep"/>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep20">
+        <createIndex indexName="FK_CODICI_SIOPE_CLA02" tableName="CODICI_SIOPE">
+            <column name="ID_CLASSIFICAZIONE_SIOPE_REND"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep21">
+        <addDefaultValue tableName="PARAMETRI_LIVELLI_EP" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="PARAMETRI_LIVELLI_EP" columnName="duva" defaultValueDate="${now}"/>
+        <sql>
+            INSERT INTO PARAMETRI_LIVELLI_EP
+            (ESERCIZIO, TIPO, LIVELLI, UTUV, UTCR, PG_VER_REC)
+            SELECT ESERCIZIO, 'SP1', 0, 'SYSTEM', 'SYSTEM', 0
+            FROM PARAMETRI_LIVELLI_EP
+            WHERE TIPO = 'ECO';
+        </sql>
+        <sql>
+            INSERT INTO PARAMETRI_LIVELLI_EP
+            (ESERCIZIO, TIPO, LIVELLI, UTUV, UTCR, PG_VER_REC)
+            SELECT ESERCIZIO, 'SP2', 0, 'SYSTEM', 'SYSTEM', 0
+            FROM PARAMETRI_LIVELLI_EP
+            WHERE TIPO = 'ECO';
+        </sql>
+        <dropDefaultValue tableName="PARAMETRI_LIVELLI_EP" columnName="dacr"/>
+        <dropDefaultValue tableName="PARAMETRI_LIVELLI_EP" columnName="duva"/>
+    </changeSet>
+</databaseChangeLog>

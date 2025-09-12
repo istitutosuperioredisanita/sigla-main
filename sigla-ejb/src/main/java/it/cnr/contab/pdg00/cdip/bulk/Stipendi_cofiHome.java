@@ -17,16 +17,18 @@
 
 package it.cnr.contab.pdg00.cdip.bulk;
 
-import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.doccont00.core.bulk.MandatoBulk;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.*;
+import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.bulk.BusyResourceException;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
+import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.persistency.sql.FindClause;
+import it.cnr.jada.persistency.sql.SQLBuilder;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -79,9 +81,20 @@ public Stipendi_cofiHome(java.sql.Connection conn) {
 						stipendiCofiBulk.setMese(
 								((Integer)findAndLockMax(oggettobulk, "mese", new Integer(0))).intValue() + 1
 						);
+						if ( !Optional.ofNullable(stipendiCofiBulk.getProg_flusso()).isPresent()
+						||stipendiCofiBulk.getProg_flusso().compareTo(stipendiCofiBulk.getMese_reale())==0)
+							stipendiCofiBulk.setProg_flusso(stipendiCofiBulk.getMese());
 					} catch (PersistencyException|BusyResourceException e) {
 						throw new DetailedRuntimeException(e);
 					}
 				});
 	}
+
+
+
+	public Stipendi_cofiBulk findStipendiCofi(Stipendi_cofiBulk stipendiCofiBulk) throws it.cnr.jada.persistency.PersistencyException {
+		return (Stipendi_cofiBulk) findByPrimaryKey(new Stipendi_cofiBulk(stipendiCofiBulk.getEsercizio(),stipendiCofiBulk.getMese()));
+	}
+	
+
 }

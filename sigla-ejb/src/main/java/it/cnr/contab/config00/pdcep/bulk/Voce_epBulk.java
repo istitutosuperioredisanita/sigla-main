@@ -61,6 +61,7 @@ public class Voce_epBulk extends Voce_epBase {
 		natura_voce_Keys.put(CONTO_CAPITALE, "CDC - Conto di Capitale");
 	}	
 	private V_classificazione_voci_epBulk v_classificazione_voci_ep;
+	private V_classificazione_voci_epBulk v_classificazione_voci_ep_acc;
 
 	public Voce_epBulk() {
 		super();
@@ -204,6 +205,26 @@ public class Voce_epBulk extends Voce_epBase {
 
 	public void setId_classificazione(java.lang.Integer v_id_classificazione) {
 		getV_classificazione_voci_ep().setId_classificazione(v_id_classificazione);
+	}
+
+	public V_classificazione_voci_epBulk getV_classificazione_voci_ep_acc() {
+		return v_classificazione_voci_ep_acc;
+	}
+
+	public void setV_classificazione_voci_ep_acc(V_classificazione_voci_epBulk v_classificazione_voci_ep_acc) {
+		this.v_classificazione_voci_ep_acc = v_classificazione_voci_ep_acc;
+	}
+
+	@Override
+	public Integer getId_classificazione_acc() {
+		if (getV_classificazione_voci_ep_acc() == null)
+			return null;
+		return getV_classificazione_voci_ep_acc().getId_classificazione();
+	}
+
+	@Override
+	public void setId_classificazione_acc(Integer v_id_classificazione_acc) {
+		getV_classificazione_voci_ep_acc().setId_classificazione(v_id_classificazione_acc);
 	}
 
 	public boolean isContoCostoEconomicoEsercizio() {
