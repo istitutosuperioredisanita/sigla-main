@@ -1006,27 +1006,55 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		super();
 	}
 
-	public Scrittura_partita_doppiaBulk proposeScritturaPartitaDoppia(UserContext userContext, IDocumentoCogeBulk doccoge) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
-		return this.proposeScrittureContabili(userContext, doccoge, Boolean.FALSE).getScritturaPartitaDoppiaBulk();
-	}
+    public IDocumentoCogeBulk loadEconomicaFromFinanziaria(UserContext userContext, IDocumentoCogeBulk doccoge) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
+        controllaFattibilitaOperazione(userContext, doccoge);
+        return this.loadRigheEco(userContext, doccoge);
+    }
 
-	public Scrittura_analiticaBulk proposeScritturaAnalitica(UserContext userContext, IDocumentoCogeBulk doccoge) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
-		return this.proposeScrittureContabili(userContext, doccoge, Boolean.TRUE).getScritturaAnaliticaBulk();
-	}
+    public ResultScrittureContabili proposeScritturaPartitaDoppia(UserContext userContext, IDocumentoCogeBulk doccoge) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
+        return this.proposeScrittureContabili(userContext, doccoge, Boolean.FALSE);
+    }
 
-	public ResultScrittureContabili proposeScrittureContabili(UserContext userContext, IDocumentoCogeBulk doccoge) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
-		return this.proposeScrittureContabili(userContext, doccoge, Boolean.TRUE);
-	}
+    public ResultScrittureContabili proposeScrittureContabili(UserContext userContext, IDocumentoCogeBulk doccoge) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
+        return this.proposeScrittureContabili(userContext, doccoge, Boolean.TRUE);
+    }
 
-	private ResultScrittureContabili proposeScrittureContabili(UserContext userContext, IDocumentoCogeBulk doccoge, boolean makeAnalitica) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
-		try {
-			EsercizioHome home = (EsercizioHome) getHome(userContext, EsercizioBulk.class);
-			if (!home.isEsercizioAperto(doccoge.getEsercizio(), doccoge.getCd_cds()))
-				throw new ScritturaPartitaDoppiaNotEnabledException("Scrittura Economica non generabile/modificabile. L'esercizio contabile " + doccoge.getEsercizio() +
-						" per il cds " + doccoge.getCd_cds() + " risulta essere non aperto.");
-		} catch (PersistencyException e) {
-			throw new RuntimeException(e);
-		}
+    private void controllaFattibilitaOperazione(UserContext userContext, IDocumentoCogeBulk doccoge) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
+        try {
+            EsercizioHome home = (EsercizioHome) getHome(userContext, EsercizioBulk.class);
+            if (!home.isEsercizioAperto(doccoge.getEsercizio(), doccoge.getCd_cds()))
+                throw new ScritturaPartitaDoppiaNotEnabledException("Scrittura Economica non generabile/modificabile. L'esercizio contabile " + doccoge.getEsercizio() +
+                        " per il cds " + doccoge.getCd_cds() + " risulta essere non aperto.");
+
+            if (doccoge.getTipoDocumentoEnum().isGenericoCoriVersamentoSpesa())
+                throw new ScritturaPartitaDoppiaNotRequiredException("Scrittura Economica non prevista per il documento generico di versamento contributi/ritenute. " +
+                        "La scrittura principale viene eseguita sul compenso associato.");
+            else if (doccoge.getTipoDocumentoEnum().isChiusuraFondo())
+                throw new ScritturaPartitaDoppiaNotRequiredException("Scrittura Economica non prevista per il documento generico di chiusura fondo economale. " +
+                        "La scrittura principale viene eseguita sulla reversale associata.");
+            else if (!doccoge.getTipoDocumentoEnum().isScritturaEconomicaRequired())
+                throw new ScritturaPartitaDoppiaNotRequiredException("Scrittura Economica non prevista per la tipologia di documento selezionato.");
+            else if (doccoge.getTipoDocumentoEnum().isCompenso()) {
+                if (((CompensoBulk) doccoge).getFl_compenso_stipendi())
+                    throw new ScritturaPartitaDoppiaNotRequiredException("Scrittura Economica non prevista per la tipologia di documento selezionato.");
+            } else if (doccoge.getTipoDocumentoEnum().isMissione()) {
+                MissioneBulk missione = (MissioneBulk) doccoge;
+                String descMissione = missione.getEsercizio() + "/" + missione.getCd_unita_organizzativa() + "/" + missione.getPg_missione();
+                //Le missioni pagate con compenso non creano scritture di prima nota in quanto create direttamente dal compenso stesso
+                if (missione.getFl_associato_compenso())
+                    throw new ScritturaPartitaDoppiaNotRequiredException("Missione " + descMissione + " associata a compenso. Registrazione economica non prevista.");
+                if (missione.isAnnullato())
+                    throw new ScritturaPartitaDoppiaNotRequiredException("Missione " + descMissione + " annullata. Registrazione economica non prevista.");
+                if (!missione.isMissioneDefinitiva())
+                    throw new ScritturaPartitaDoppiaNotEnabledException("Missione " + descMissione + " non definitiva. Registrazione economica non prevista.");
+            }
+        } catch (PersistencyException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private ResultScrittureContabili proposeScrittureContabili(UserContext userContext, IDocumentoCogeBulk doccoge, boolean makeAnalitica) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
+        controllaFattibilitaOperazione(userContext, doccoge);
 		return this.innerProposeScrittureContabili(userContext, doccoge, Boolean.FALSE, makeAnalitica);
 	}
 
@@ -1042,35 +1070,30 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		try{
 			try {
 				setSavepoint(userContext, "proposeScritturaPartitaDoppia");
-				if (doccoge.getTipoDocumentoEnum().isGenericoCoriVersamentoSpesa())
-					throw new ScritturaPartitaDoppiaNotRequiredException("Scrittura Economica non prevista per il documento generico di versamento contributi/ritenute. " +
-							"La scrittura principale viene eseguita sul compenso associato.");
-				else if (doccoge.getTipoDocumentoEnum().isChiusuraFondo())
-					throw new ScritturaPartitaDoppiaNotRequiredException("Scrittura Economica non prevista per il documento generico di chiusura fondo economale. " +
-							"La scrittura principale viene eseguita sulla reversale associata.");
-				else if (!doccoge.getTipoDocumentoEnum().isScritturaEconomicaRequired())
-					throw new ScritturaPartitaDoppiaNotRequiredException("Scrittura Economica non prevista per la tipologia di documento selezionato.");
-				else if (doccoge.getTipoDocumentoEnum().isAnticipo())
-					return this.proposeScritturaPartitaDoppiaAnticipo(userContext, (AnticipoBulk) doccoge, makeAnalitica);
-				else if (doccoge.getTipoDocumentoEnum().isRimborso())
-					return new ResultScrittureContabili(this.proposeScritturaPartitaDoppiaRimborso(userContext, (RimborsoBulk) doccoge), null);
-				else if (doccoge.getTipoDocumentoEnum().isMissione())
-					return this.proposeScritturaPartitaDoppiaMissione(userContext, (MissioneBulk) doccoge, makeAnalitica);
-				else if (doccoge.getTipoDocumentoEnum().isCompenso()) {
-					if (((CompensoBulk) doccoge).getFl_compenso_stipendi())
-						throw new ScritturaPartitaDoppiaNotRequiredException("Scrittura Economica non prevista per la tipologia di documento selezionato.");
-					else
-						return this.proposeScritturaPartitaDoppiaCompenso(userContext, (CompensoBulk) doccoge, makeAnalitica);
+                if (doccoge.getTipoDocumentoEnum().isAnticipo()) {
+                    this.loadRigheEco(userContext, doccoge);
+                    return this.proposeScritturaPartitaDoppiaAnticipo(userContext, (AnticipoBulk) doccoge, makeAnalitica);
+                } else if (doccoge.getTipoDocumentoEnum().isRimborso())
+					return new ResultScrittureContabili(doccoge, this.proposeScritturaPartitaDoppiaRimborso(userContext, (RimborsoBulk) doccoge), null);
+				else if (doccoge.getTipoDocumentoEnum().isMissione()) {
+                    this.loadRigheEco(userContext, doccoge);
+                    return this.proposeScritturaPartitaDoppiaMissione(userContext, (MissioneBulk) doccoge, makeAnalitica);
+                } else if (doccoge.getTipoDocumentoEnum().isCompenso()) {
+					if (!((CompensoBulk) doccoge).getFl_compenso_stipendi()) {
+                        this.loadRigheEco(userContext, doccoge);
+                        return this.proposeScritturaPartitaDoppiaCompenso(userContext, (CompensoBulk) doccoge, makeAnalitica);
+                    }
 				} else if (doccoge.getTipoDocumentoEnum().isAperturaFondo())
-					return new ResultScrittureContabili(this.proposeScritturaPartitaDoppiaAperturaFondo(userContext, (Documento_genericoBulk) doccoge), null);
-				else if (doccoge.getTipoDocumentoEnum().isGenericoStipendiSpesa() || doccoge.getTipoDocumentoEnum().isDocumentoPassivo() || doccoge.getTipoDocumentoEnum().isDocumentoAttivo())
-					return this.proposeScritturaPartitaDoppiaDocumento(userContext, (IDocumentoAmministrativoBulk) doccoge, makeAnalitica);
-				else if (doccoge.getTipoDocumentoEnum().isLiquidazioneIva())
-					return new ResultScrittureContabili(this.proposeScritturaPartitaDoppiaLiquidazioneUo(userContext, (Liquidazione_ivaBulk) doccoge), null);
+					return new ResultScrittureContabili(doccoge, this.proposeScritturaPartitaDoppiaAperturaFondo(userContext, (Documento_genericoBulk) doccoge), null);
+				else if (doccoge.getTipoDocumentoEnum().isGenericoStipendiSpesa() || doccoge.getTipoDocumentoEnum().isDocumentoPassivo() || doccoge.getTipoDocumentoEnum().isDocumentoAttivo()) {
+                    this.loadRigheEco(userContext, doccoge);
+                    return this.proposeScritturaPartitaDoppiaDocumento(userContext, (IDocumentoAmministrativoBulk) doccoge, makeAnalitica);
+                } else if (doccoge.getTipoDocumentoEnum().isLiquidazioneIva())
+					return new ResultScrittureContabili(doccoge, this.proposeScritturaPartitaDoppiaLiquidazioneUo(userContext, (Liquidazione_ivaBulk) doccoge), null);
 				else if (doccoge.getTipoDocumentoEnum().isMandato())
-					return new ResultScrittureContabili(this.proposeScritturaPartitaDoppiaMandato(userContext, (MandatoBulk) doccoge, isContabilizzaSuInviato), null);
+					return new ResultScrittureContabili(doccoge, this.proposeScritturaPartitaDoppiaMandato(userContext, (MandatoBulk) doccoge, isContabilizzaSuInviato), null);
 				else if (doccoge.getTipoDocumentoEnum().isReversale())
-					return new ResultScrittureContabili(this.proposeScritturaPartitaDoppiaReversale(userContext, (ReversaleBulk) doccoge), null);
+					return new ResultScrittureContabili(doccoge, this.proposeScritturaPartitaDoppiaReversale(userContext, (ReversaleBulk) doccoge), null);
 				throw new ApplicationException("Scrittura Economica non gestita per la tipologia di documento "+doccoge.getCd_tipo_doc()+" selezionato.");
 			} catch (ScritturaPartitaDoppiaNotEnabledException|ScritturaPartitaDoppiaNotRequiredException e) {
 				rollbackToSavepoint(userContext, "proposeScritturaPartitaDoppia");
@@ -1083,7 +1106,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		}
 	}
 
-	public Scrittura_partita_doppiaBulk proposeScritturaPartitaDoppiaAnnullo(UserContext userContext, IDocumentoCogeBulk doccoge) throws ComponentException, ScritturaPartitaDoppiaNotEnabledException {
+	public ResultScrittureContabili proposeScritturaPartitaDoppiaAnnullo(UserContext userContext, IDocumentoCogeBulk doccoge) throws ComponentException, ScritturaPartitaDoppiaNotEnabledException {
 		try{
 			try {
 				setSavepoint(userContext, "proposeScritturaPartitaDoppiaAnnullo");
@@ -1093,7 +1116,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 					Optional<Scrittura_partita_doppiaBulk> scritturaOpt = this.getScritturaPartitaDoppia(userContext, doccoge);
 					if (!scritturaOpt.isPresent())
 						throw new ScritturaPartitaDoppiaNotEnabledException("L'anticipo non risulta ancora collegato ad una scrittura partita doppia. Annullamento scrittura partita doppia non possibile!");
-					return this.proposeStornoScritturaPartitaDoppia(userContext, scritturaOpt.get(), ((AnticipoBulk) doccoge).getDt_cancellazione());
+					return new ResultScrittureContabili(doccoge, this.proposeStornoScritturaPartitaDoppia(userContext, scritturaOpt.get(), ((AnticipoBulk) doccoge).getDt_cancellazione()));
 				}
 				throw new ApplicationException("Annullamento Scrittura Economica non gestita per la tipologia di documento "+doccoge.getCd_tipo_doc()+" selezionato.");
 			} catch (ScritturaPartitaDoppiaNotEnabledException e) {
@@ -1108,8 +1131,6 @@ public class ProposeScritturaComponent extends CRUDComponent {
 	}
 
 	private ResultScrittureContabili proposeScritturaPartitaDoppiaDocumento(UserContext userContext, IDocumentoAmministrativoBulk docamm, boolean makeAnalitica) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, RemoteException, IntrospectionException, PersistencyException {
-		this.loadRigheEco(userContext, docamm);
-
 		List<TestataPrimaNota> testataPrimaNotaList = this.proposeTestataPrimaNotaDocumento(userContext, docamm);
 		ResultScrittureContabili resultScrittureContabili = this.generaScritture(userContext, docamm, testataPrimaNotaList, Boolean.TRUE, makeAnalitica);
 		Optional<Scrittura_partita_doppiaBulk> spd = Optional.ofNullable(resultScrittureContabili.getScritturaPartitaDoppiaBulk());
@@ -1136,7 +1157,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			}
 		}
 		
-		return new ResultScrittureContabili(spd.orElse(null), sa.orElse(null));
+		return new ResultScrittureContabili(docamm, spd.orElse(null), sa.orElse(null));
 	}
 
 	private List<TestataPrimaNota> proposeTestataPrimaNotaDocumento(UserContext userContext, IDocumentoAmministrativoBulk docamm) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, RemoteException, IntrospectionException, PersistencyException {
@@ -1665,8 +1686,6 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 	private ResultScrittureContabili proposeScritturaPartitaDoppiaCompenso(UserContext userContext, CompensoBulk compenso, boolean makeAnalitica) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException {
 		try {
-			loadRigheEco(userContext, compenso);
-
             List<DettaglioAnalitico> dettagliAnaliticos = compenso.getRigheEconomica().stream().map(DettaglioAnalitico::new).collect(Collectors.toList());
 
 			String descCompenso = compenso.getEsercizio() + "/" + compenso.getCd_cds() + "/" + compenso.getPg_compenso();
@@ -1788,8 +1807,6 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 	private ResultScrittureContabili proposeScritturaPartitaDoppiaAnticipo(UserContext userContext, AnticipoBulk anticipo, boolean makeAnalitica) throws ComponentException {
 		try {
-			this.loadRigheEco(userContext, anticipo);
-
 			TestataPrimaNota testataPrimaNota = new TestataPrimaNota(anticipo.getDt_da_competenza_coge(), anticipo.getDt_a_competenza_coge());
 
 			//Registrazione conto COSTO ANTICIPO
@@ -1888,7 +1905,6 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			if (!missione.isMissioneDefinitiva())
 				throw new ScritturaPartitaDoppiaNotEnabledException("Missione " + descMissione + " non definitiva. Registrazione economica non prevista.");
 
-			loadRigheEco(userContext, missione);
 			List<DettaglioAnalitico> dettagliAnaliticos = missione.getRigheEconomica().stream().map(DettaglioAnalitico::new).collect(Collectors.toList());
 
 			Optional<AnticipoBulk> optAnticipo = Optional.ofNullable(missione.getAnticipo()).map(anticipo->
@@ -4725,7 +4741,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 	private ResultScrittureContabili makeScrittureEconomica(UserContext userContext, IDocumentoCogeBulk doccoge, List<TestataPrimaNota> testataPrimaNota, boolean accorpaConti, boolean makeAnalitica) {
 		if (!testataPrimaNota.stream().flatMap(el->el.getDett().stream()).findAny().isPresent())
-			return new ResultScrittureContabili(null,null);
+			return new ResultScrittureContabili(doccoge, null,null);
 
 		Scrittura_partita_doppiaBulk scritturaPartitaDoppia = new Scrittura_partita_doppiaBulk();
 		Scrittura_analiticaBulk scritturaAnalitica;
@@ -5201,7 +5217,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		scritturaPartitaDoppia.setIm_scrittura(scritturaPartitaDoppia.getImTotaleAvere());
 		if (makeAnalitica)
 			scritturaAnalitica.setIm_scrittura(scritturaAnalitica.getImTotaleMov());
-		return new ResultScrittureContabili(scritturaPartitaDoppia, Optional.ofNullable(scritturaAnalitica)
+		return new ResultScrittureContabili(doccoge, scritturaPartitaDoppia, Optional.ofNullable(scritturaAnalitica)
 				.filter(el->Optional.ofNullable(el.getMovimentiColl()).map(el2->!el2.isEmpty()).orElse(Boolean.FALSE))
 				.orElse(null));
 	}
@@ -6017,7 +6033,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		}
 	}
 
-	private void loadRigheEco(UserContext userContext, IDocumentoCogeBulk documentoCoge) {
+	private IDocumentoCogeBulk loadRigheEco(UserContext userContext, IDocumentoCogeBulk documentoCoge) {
 		try {
 			boolean isAttivaEconomicaPuraDocamm = ((Configurazione_cnrHome) getHome(userContext, Configurazione_cnrBulk.class)).isAttivaEconomicaPura(documentoCoge.getEsercizio());
 
@@ -6046,7 +6062,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 				OrdineAcqHome home = (OrdineAcqHome) getHome(userContext, OrdineAcqBulk.class);
 				List<OrdineAcqRigaBulk> righeOrdine = home.findOrdineRigheList((OrdineAcqBulk) documentoCoge);
 				righeOrdine.forEach(el->el.setOrdineAcq((OrdineAcqBulk) documentoCoge));
-				((OrdineAcqBulk)documentoCoge).setRigheOrdineColl(new BulkList(righeOrdine));
+				((OrdineAcqBulk)documentoCoge).setRigheOrdineColl(new BulkList<>(righeOrdine));
 
 				for (OrdineAcqRigaBulk rigaOrdine : righeOrdine) {
 					//Carico i dettagli
@@ -6111,6 +6127,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 					}
 				}
 			}
+            return documentoCoge;
 		} catch (PersistencyException | ComponentException | RemoteException e) {
 			throw new RuntimeException(e);
         }

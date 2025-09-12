@@ -17,7 +17,7 @@
 
 package it.cnr.contab.doccont00.ejb;
 
-import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
+import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
 import it.cnr.contab.config00.sto.bulk.EnteBulk;
 import it.cnr.contab.doccont00.intcass.giornaliera.MovimentoContoEvidenzaBulk;
 import it.cnr.jada.UserContext;
@@ -34,5 +34,5 @@ public interface SospesoRiscontroComponentSession extends it.cnr.jada.ejb.CRUDCo
 void cambiaStato(UserContext param0, java.util.Collection param1, String param2, String param3) throws ComponentException, RemoteException;
 RemoteIterator cercaSospesiPerStato(UserContext usercontext, CompoundFindClause compoundfindclause, OggettoBulk oggettobulk, String statoForSearch) throws ComponentException, RemoteException;
 Integer caricamentoRigaGiornaleCassa(UserContext param0, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws ComponentException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, RemoteException;
-Scrittura_partita_doppiaBulk createScritturaPartitaDoppiaRequiresNew(UserContext param0, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws ComponentException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, RemoteException;
+ResultScrittureContabili createScritturaPartitaDoppiaRequiresNew(UserContext param0, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws ComponentException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, RemoteException;
 }

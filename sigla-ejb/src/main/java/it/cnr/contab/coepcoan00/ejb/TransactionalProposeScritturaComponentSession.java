@@ -19,7 +19,6 @@ package it.cnr.contab.coepcoan00.ejb;
 
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
-import it.cnr.contab.coepcoan00.core.bulk.Scrittura_analiticaBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
@@ -29,26 +28,9 @@ import java.sql.Timestamp;
 
 public class TransactionalProposeScritturaComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements ProposeScritturaComponentSession {
     @Override
-    public Scrittura_partita_doppiaBulk proposeScritturaPartitaDoppia(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, RemoteException {
-		try {
-			return (Scrittura_partita_doppiaBulk) invoke("proposeScritturaPartitaDoppia", new Object[]{
-					param0,
-					param1});
-		} catch (java.lang.reflect.InvocationTargetException e) {
-			try {
-				throw e.getTargetException();
-			} catch (ComponentException ex) {
-				throw ex;
-			} catch (Throwable ex) {
-				throw new RemoteException("Uncaugth exception", ex);
-			}
-		}
-    }
-
-    @Override
-    public Scrittura_partita_doppiaBulk proposeScritturaPartitaDoppiaAnnullo(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, RemoteException {
+    public IDocumentoCogeBulk loadEconomicaFromFinanziaria(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, RemoteException {
         try {
-            return (Scrittura_partita_doppiaBulk) invoke("proposeScritturaPartitaDoppiaAnnullo", new Object[]{
+            return (IDocumentoCogeBulk) invoke("loadEconomicaFromFinanziaria", new Object[]{
                     param0,
                     param1});
         } catch (java.lang.reflect.InvocationTargetException e) {
@@ -63,9 +45,26 @@ public class TransactionalProposeScritturaComponentSession extends it.cnr.jada.e
     }
 
     @Override
-    public Scrittura_analiticaBulk proposeScritturaAnalitica(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, RemoteException {
+    public ResultScrittureContabili proposeScritturaPartitaDoppia(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, RemoteException {
+		try {
+			return (ResultScrittureContabili) invoke("proposeScritturaPartitaDoppia", new Object[]{
+					param0,
+					param1});
+		} catch (java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch (ComponentException ex) {
+				throw ex;
+			} catch (Throwable ex) {
+				throw new RemoteException("Uncaugth exception", ex);
+			}
+		}
+    }
+
+    @Override
+    public ResultScrittureContabili proposeScritturaPartitaDoppiaAnnullo(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, RemoteException {
         try {
-            return (Scrittura_analiticaBulk) invoke("proposeScritturaAnalitica", new Object[]{
+            return (ResultScrittureContabili) invoke("proposeScritturaPartitaDoppiaAnnullo", new Object[]{
                     param0,
                     param1});
         } catch (java.lang.reflect.InvocationTargetException e) {

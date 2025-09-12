@@ -979,10 +979,10 @@ public class OrdineAcqBulk extends OrdineAcqBase
 
         Dictionary stato = new it.cnr.jada.util.OrderedHashtable();
 
-        if (isStatoInserito()) {
+        if (isStatoOriginaleInserito()) {
             stato.put(STATO_INSERITO, "Inserito");
             stato.put(STATO_IN_APPROVAZIONE, "In Approvazione");
-        } else if (isStatoInApprovazione()) {
+        } else if (isStatoOriginaleInApprovazione()) {
             stato.put(STATO_INSERITO, "Inserito");
             stato.put(STATO_IN_APPROVAZIONE, "In Approvazione");
             if ( isOrdineMepa())
@@ -1335,7 +1335,7 @@ public class OrdineAcqBulk extends OrdineAcqBase
     @Override
     public String getCd_tipo_doc_amm() {
         // TODO Auto-generated method stub
-        return null;
+        return TipoDocumentoEnum.ORDINE_ACQUISTO.getValue();
     }
 
     @Override

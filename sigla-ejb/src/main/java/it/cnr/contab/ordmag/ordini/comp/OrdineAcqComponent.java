@@ -18,6 +18,8 @@
 package it.cnr.contab.ordmag.ordini.comp;
 
 import it.cnr.contab.anagraf00.core.bulk.*;
+import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotEnabledException;
+import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotRequiredException;
 import it.cnr.contab.config00.bulk.CigBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_cdsBulk;
@@ -57,7 +59,6 @@ import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util.ApplicationMessageFormatException;
 import it.cnr.contab.util.EuroFormat;
-import it.cnr.contab.util.ICancellatoLogicamente;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
@@ -136,8 +137,8 @@ public class OrdineAcqComponent
         verificaCoperturaContratto(userContext, ordine, INSERIMENTO);
         assegnaProgressivo(userContext, ordine);
         aggiornaObbligazioni(userContext, ordine, status);
-        ordine = (OrdineAcqBulk) super.creaConBulk(userContext, ordine);
-        return ordine;
+
+        return super.creaConBulk(userContext, ordine);
     }
 
     public OrdineAcqBulk calcolaImportoOrdine(it.cnr.jada.UserContext userContext, OrdineAcqBulk ordine) throws it.cnr.jada.comp.ComponentException {
@@ -984,18 +985,34 @@ public class OrdineAcqComponent
 
     public it.cnr.jada.bulk.OggettoBulk modificaConBulk(it.cnr.jada.UserContext userContext, it.cnr.jada.bulk.OggettoBulk bulk, it.cnr.contab.doccont00.core.bulk.OptionRequestParameter status)
             throws it.cnr.jada.comp.ComponentException {
-        OrdineAcqBulk ordine = (OrdineAcqBulk) bulk;
-        boolean aggiornaAnalitica = (ordine.isStatoAllaFirma() || (ordine.isOrdineMepa() && ordine.isStatoDefinitivo())) &&
-                !ordine.getStato().equals(ordine.getStatoOriginale());
-        validaOrdine(userContext, ordine);
-        controlliCambioStato(userContext, ordine);
-        calcolaImportoOrdine(userContext, ordine);
-        manageDeletedElements(userContext, ordine, status);
-        aggiornaObbligazioni(userContext, ordine, status);
-        verificaCoperturaContratto(userContext, ordine);
-        if (aggiornaAnalitica)
-            aggiornaAnaliticaConsegne(userContext, (OrdineAcqBulk) bulk);
-        return super.modificaConBulk(userContext, bulk);
+        try {
+            OrdineAcqBulk ordine = (OrdineAcqBulk) bulk;
+            boolean isAttivaFinanziaria = Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(userContext, ordine.getEsercizio());
+            boolean aggiornaAnalitica = (ordine.isStatoAllaFirma() || (ordine.isOrdineMepa() && ordine.isStatoDefinitivo())) &&
+                    !ordine.getStato().equals(ordine.getStatoOriginale());
+            validaOrdine(userContext, ordine);
+            controlliCambioStato(userContext, ordine);
+            calcolaImportoOrdine(userContext, ordine);
+            manageDeletedElements(userContext, ordine, status);
+            aggiornaObbligazioni(userContext, ordine, status);
+            verificaCoperturaContratto(userContext, ordine);
+
+            if (aggiornaAnalitica && !isAttivaFinanziaria)
+                aggiornaAnaliticaConsegne(userContext, ordine);
+
+            ordine = (OrdineAcqBulk)super.modificaConBulk(userContext, ordine);
+
+            if (aggiornaAnalitica && isAttivaFinanziaria) {
+                try {
+                    ordine = (OrdineAcqBulk)Utility.createProposeScritturaComponentSession().loadEconomicaFromFinanziaria(userContext, (OrdineAcqBulk) ordine);
+                } catch (ScritturaPartitaDoppiaNotEnabledException | ScritturaPartitaDoppiaNotRequiredException ignored) {
+                }
+            }
+
+            return super.modificaConBulk(userContext, ordine);
+        } catch (RemoteException e) {
+            throw new ComponentException(e);
+        }
     }
 
     private void controlliCambioStato(UserContext usercontext, OrdineAcqBulk ordine) throws ComponentException {
@@ -1036,14 +1053,16 @@ public class OrdineAcqComponent
                     }
                     if (ordine.isStatoAllaFirma() || (ordine.isOrdineMepa() && ordine.isStatoDefinitivo())) {
                         for (OrdineAcqRigaBulk riga : ordine.getRigheOrdineColl()) {
-                            if (Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(usercontext, riga.getEsercizio())) {
-                                if (riga.getImCostoEcoDaRipartire().compareTo(BigDecimal.ZERO)!=0)
-                                    throw new it.cnr.jada.comp.ApplicationException("Sulla riga " + riga.getRigaOrdineString() + " non risulta ripartita totalmente l'analitica.");
-                            }
                             if (Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(usercontext, riga.getEsercizio())) {
                                 for (OrdineAcqConsegnaBulk cons : riga.getRigheConsegnaColl()) {
                                     if (cons.getObbligazioneScadenzario() == null || cons.getObbligazioneScadenzario().getPg_obbligazione() == null)
                                         throw new it.cnr.jada.comp.ApplicationException("Sulla consegna " + cons.getConsegnaOrdineString() + " non è indicata l'obbligazione");
+                                }
+                            } else {
+                                //Questo controllo nasce solo se attiva economica pura
+                                if (Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(usercontext, riga.getEsercizio())) {
+                                    if (riga.getImCostoEcoDaRipartire().compareTo(BigDecimal.ZERO)!=0)
+                                        throw new it.cnr.jada.comp.ApplicationException("Sulla riga " + riga.getRigaOrdineString() + " non risulta ripartita totalmente l'analitica.");
                                 }
                             }
                         }

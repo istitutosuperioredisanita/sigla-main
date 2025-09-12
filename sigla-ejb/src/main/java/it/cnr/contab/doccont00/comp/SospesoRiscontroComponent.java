@@ -19,7 +19,7 @@ package it.cnr.contab.doccont00.comp;
 
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
-import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
+import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
@@ -2578,7 +2578,7 @@ public class SospesoRiscontroComponent extends CRUDComponent implements ISospeso
 
 
     }
-    public Scrittura_partita_doppiaBulk createScritturaPartitaDoppia(UserContext userContext, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws ComponentException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, RemoteException{
+    public ResultScrittureContabili createScritturaPartitaDoppia(UserContext userContext, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws ComponentException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, RemoteException{
         if (riga.isMandatoReversale()) {
             if ( riga.isMandato() && ( riga.isTipoOperazioneEseguitoRegolarizzato() || riga.isTipoOperazioneStornato())){
                 MandatoBulk man = new MandatoIBulk();

@@ -19,6 +19,7 @@ package it.cnr.contab.coepcoan00.ejb;
 
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaFromDocumentoComponent;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
@@ -42,10 +43,10 @@ public class ScritturaPartitaDoppiaFromDocumentoComponentSessionBean extends it.
         componentObj = new ScritturaPartitaDoppiaFromDocumentoComponent();
     }
 
-	public Scrittura_partita_doppiaBulk createScrittura(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, RemoteException {
+	public ResultScrittureContabili createScrittura(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, RemoteException {
 		pre_component_invocation(param0, componentObj);
 		try {
-			Scrittura_partita_doppiaBulk result = ((ScritturaPartitaDoppiaFromDocumentoComponent) componentObj).createScrittura(param0, param1);
+            ResultScrittureContabili result = ((ScritturaPartitaDoppiaFromDocumentoComponent) componentObj).createScrittura(param0, param1);
 			component_invocation_succes(param0, componentObj);
 			return result;
 		} catch (it.cnr.jada.comp.NoRollbackException e) {

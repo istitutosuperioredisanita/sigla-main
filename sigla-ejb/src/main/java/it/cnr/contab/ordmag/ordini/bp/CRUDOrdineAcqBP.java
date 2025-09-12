@@ -120,8 +120,8 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 		if(ordine == null || isSearching())
 			return super.isInputReadonly();
 		return 	super.isInputReadonly() || isRibaltato() ||
-                (!ordine.isStatoInserito() && !ordine.isStatoInApprovazione() &&
-                        ((ordine.isStatoAllaFirma() && !ordine.isToBeUpdated()) || !ordine.isStatoAllaFirma()));
+                (!ordine.isStatoOriginaleInserito() && !ordine.isStatoOriginaleInApprovazione() &&
+                        ((ordine.isStatoOriginaleAllaFirma() && !ordine.isToBeUpdated()) || !ordine.isStatoOriginaleAllaFirma()));
 	}
 
 	private final SimpleDetailCRUDController righe= new OrdineAcqRigaCRUDController("Righe", OrdineAcqRigaBulk.class, "righeOrdineColl", this){
@@ -609,7 +609,7 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 				Optional.ofNullable(getModel())
 						.filter(OrdineAcqBulk.class::isInstance)
 						.map(OrdineAcqBulk.class::cast)
-						.map(ordineAcqBulk -> !ordineAcqBulk.isStatoDefinitivo())
+						.map(ordineAcqBulk -> !ordineAcqBulk.isStatoOriginaleDefinitivo())
 						.orElse(Boolean.TRUE);
 	}
 
@@ -1013,9 +1013,16 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 		pages.put(i++, TAB_ORDINE_MAIN);
 		pages.put(i++, TAB_ORDINE_FORNITORE);
 		pages.put(i++, TAB_ORDINE_DETTAGLI);
-		if (this.isAttivaFinanziaria())
-			pages.put(i++, TAB_ORDINE_OBBLIGAZIONI);
-		else if (this.isAttivaEconomica() && this.isAttivaAnalitica()) {
+		if (this.isAttivaFinanziaria()) {
+            pages.put(i++, TAB_ORDINE_OBBLIGAZIONI);
+            if (this.isAttivaEconomica() && this.isAttivaAnalitica())
+                if (Optional.ofNullable(this.getModel())
+                    .filter(OrdineAcqBulk.class::isInstance)
+                    .map(OrdineAcqBulk.class::cast)
+                    .map(el->el.isStatoOriginaleAllaFirma()||el.isStatoOriginaleDefinitivo())
+                    .orElse(Boolean.FALSE))
+                pages.put(i++, TAB_ORDINE_RESULT_DETAIL_COGECOAN);
+        } else if (this.isAttivaEconomica() || this.isAttivaAnalitica()) {
 			if (Optional.ofNullable(this.getModel())
 					.filter(OrdineAcqBulk.class::isInstance)
 					.map(OrdineAcqBulk.class::cast)
@@ -1054,7 +1061,14 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 		pages.put(i++, TAB_ORDINE_RIGA_CONSEGNA);
 
 		if (attivaEconomica || attivaAnalitica) {
-			if (Optional.ofNullable(this.getModel())
+            if (this.isAttivaFinanziaria()) {
+                if (Optional.ofNullable(this.getModel())
+                        .filter(OrdineAcqBulk.class::isInstance)
+                        .map(OrdineAcqBulk.class::cast)
+                        .map(el -> el.isStatoOriginaleAllaFirma() || el.isStatoOriginaleDefinitivo())
+                        .orElse(Boolean.FALSE))
+                    pages.put(i++, TAB_ORDINE_RIGA_RESULT_DETAIL_COGECOAN);
+            } else if (Optional.ofNullable(this.getModel())
 					.filter(OrdineAcqBulk.class::isInstance)
 					.map(OrdineAcqBulk.class::cast)
 					.map(el->el.isStatoOriginaleInserito()||el.isStatoOriginaleInApprovazione())

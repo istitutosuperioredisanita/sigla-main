@@ -470,7 +470,7 @@ public final class Utility {
 					.map(el -> el.get(sourceDett))
 					.reduce(BigDecimal.ZERO, BigDecimal::add);
 			if (imSourceDett.compareTo(imRipartitoSourceDett) != 0)
-				throw new it.cnr.jada.comp.ApplicationException("Operazione di spalma importi sulle consegne non andata a buon fine. Contattare il servizio assistenza!");
+				throw new it.cnr.jada.comp.ApplicationException("Operazione di spalma importi non andata a buon fine. Contattare il servizio assistenza!");
 		}
 		for (OggettoBulk destinationDett : destination.keySet()) {
 			BigDecimal imDestinationDett = destination.get(destinationDett);
@@ -478,7 +478,7 @@ public final class Utility {
 					.values().stream()
 					.reduce(BigDecimal.ZERO, BigDecimal::add);
 			if (imDestinationDett.compareTo(imRipartitoDestinationDett) != 0)
-				throw new it.cnr.jada.comp.ApplicationException("Operazione di spalma importi sulle consegne non andata a buon fine. Contattare il servizio assistenza!");
+				throw new it.cnr.jada.comp.ApplicationException("Operazione di spalma importi non andata a buon fine. Contattare il servizio assistenza!");
 		}
 		return result;
 	}

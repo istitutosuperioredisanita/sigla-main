@@ -22,6 +22,7 @@ import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Tipo_rapportoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Tipo_rapportoHome;
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotRequiredException;
+import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.contab.compensi00.docs.bulk.*;
 import it.cnr.contab.compensi00.ejb.AssTipoCORIEvComponentSession;
@@ -2344,7 +2345,8 @@ public boolean isCostiDipendenteRipartiti (UserContext userContext, String cd_un
 
 			//Effettuo scritture prima nota
 			try {
-				Scrittura_partita_doppiaBulk scritturaPartitaDoppiaBulk = Utility.createProposeScritturaComponentSession().proposeScritturaPartitaDoppia(userContext, compensoBulk);
+                ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScritturaPartitaDoppia(userContext, compensoBulk);
+                Scrittura_partita_doppiaBulk scritturaPartitaDoppiaBulk = result.getScritturaPartitaDoppiaBulk();
 				makeBulkPersistent(userContext, scritturaPartitaDoppiaBulk);
 			} catch (NoRollbackException | ScritturaPartitaDoppiaNotRequiredException ignored ) {
 			} catch (ApplicationException e) {

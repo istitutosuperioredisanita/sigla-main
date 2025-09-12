@@ -16,7 +16,7 @@
  */
 
 package it.cnr.contab.doccont00.ejb;
-import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
+import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
 import it.cnr.contab.config00.sto.bulk.EnteBulk;
 import it.cnr.contab.doccont00.intcass.giornaliera.MovimentoContoEvidenzaBulk;
 import it.cnr.jada.UserContext;
@@ -343,9 +343,9 @@ public it.cnr.jada.util.RemoteIterator cercaSospesiPerStato(it.cnr.jada.UserCont
 	}
 
 	@Override
-	public Scrittura_partita_doppiaBulk createScritturaPartitaDoppiaRequiresNew(UserContext param0, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws ComponentException, EJBException, PersistencyException, RemoteException {
+	public ResultScrittureContabili createScritturaPartitaDoppiaRequiresNew(UserContext param0, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws ComponentException, EJBException, PersistencyException, RemoteException {
 		try {
-			return (Scrittura_partita_doppiaBulk) invoke("createScritturaPartitaDoppia",new Object[] {
+			return (ResultScrittureContabili) invoke("createScritturaPartitaDoppia",new Object[] {
 					param0,
 					tesoreriaUnica, cdsEnte,riga });
 		} catch(RemoteException e) {

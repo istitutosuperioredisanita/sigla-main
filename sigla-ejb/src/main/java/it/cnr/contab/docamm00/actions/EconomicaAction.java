@@ -132,9 +132,10 @@ public abstract class EconomicaAction extends CRUDAction {
             if (Optional.ofNullable(bp.getAnaliticaModel()).filter(OggettoBulk::isToBeCreated).isPresent())
                 throw new ApplicationException("Il documento risulta non salvato! Proposta scrittura analitica non possibile.");
 
-            documentoCogeBulk.setScrittura_analitica(Utility.createProposeScritturaComponentSession().proposeScritturaAnalitica(
+            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
                     actionContext.getUserContext(),
-                    documentoCogeBulk));
+                    documentoCogeBulk);
+            documentoCogeBulk.setScrittura_analitica(result.getScritturaAnaliticaBulk());
 
             Optional.of(documentoCogeBulk)
                     .filter(OggettoBulk.class::isInstance)

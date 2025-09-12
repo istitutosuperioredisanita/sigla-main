@@ -20,6 +20,7 @@ package it.cnr.contab.gestiva00.actions;
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotEnabledException;
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotRequiredException;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
 import it.cnr.contab.docamm00.bp.IDocAmmEconomicaBP;
 import it.cnr.contab.doccont00.bp.CRUDMandatoBP;
 import it.cnr.contab.doccont00.core.bulk.MandatoBulk;
@@ -353,14 +354,14 @@ public class LiquidazioneDefinitivaIvaAction extends StampaAction {
 			if (Optional.ofNullable(bp.getEconomicaModel()).filter(OggettoBulk::isToBeCreated).isPresent())
 				throw new ApplicationException("Il documento risulta non salvato! Proposta scrittura prima nota non possibile.");
 
-			documentoCogeBulk.setScrittura_partita_doppia(Utility.createProposeScritturaComponentSession().proposeScritturaPartitaDoppia(
-					actionContext.getUserContext(),
-					documentoCogeBulk)
-			);
-			Optional.ofNullable(documentoCogeBulk)
+            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScritturaPartitaDoppia(
+                    actionContext.getUserContext(),
+                    documentoCogeBulk);
+			documentoCogeBulk.setScrittura_partita_doppia(result.getScritturaPartitaDoppiaBulk());
+			Optional.of(documentoCogeBulk)
 					.filter(OggettoBulk.class::isInstance)
 					.map(OggettoBulk.class::cast)
-					.ifPresent(oggettoBulk -> oggettoBulk.setToBeUpdated());
+					.ifPresent(OggettoBulk::setToBeUpdated);
 			bp.getMovimentiAvere().reset(actionContext);
 			bp.getMovimentiDare().reset(actionContext);
 			bp.setMessage(FormBP.INFO_MESSAGE, "Scrittura di economica generata correttamente.");

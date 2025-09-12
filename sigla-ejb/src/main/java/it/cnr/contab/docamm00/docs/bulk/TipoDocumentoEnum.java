@@ -63,7 +63,8 @@ public enum TipoDocumentoEnum {
 	GEN_STIPENDI_SPESA("GEN_STIP_S", Documento_generico_passivoBulk.class, "Documento generico di versamento stipendi"),
 	REGOLA_E("REGOLA_E", Documento_generico_attivoBulk.class, "Documento per mandato di regolarizzazione"),
 	GEN_RECUPERO_CREDITI("GEN_RC_DAT", Documento_generico_attivoBulk.class, "Documento generico per recupero crediti"),
-	LIQUIDAZIONE_IVA("LIQUID_IVA", Liquidazione_ivaBulk.class, "Liquidazione Iva");
+	LIQUIDAZIONE_IVA("LIQUID_IVA", Liquidazione_ivaBulk.class, "Liquidazione Iva"),
+    ORDINE_ACQUISTO("ORDINE_ACQ", Liquidazione_ivaBulk.class, "Ordine Acquisto");
 
 	private final String value;
 	private final Class<?> documentoCogeBulk;
@@ -166,6 +167,10 @@ public enum TipoDocumentoEnum {
 	public boolean isGenericoStornoPassivo() {
 		return TipoDocumentoEnum.GEN_STORNO_S.equals(this);
 	}
+
+    public boolean isOrdineAcquisto() {
+        return TipoDocumentoEnum.ORDINE_ACQUISTO.equals(this);
+    }
 
 	/**
 	 * Indica se il tipo di documento rientra tra quelli amministrativi passivi (fattura, nota credito e nota debito)

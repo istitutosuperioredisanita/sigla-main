@@ -20,6 +20,7 @@ package it.cnr.contab.missioni00.comp;
 import it.cnr.contab.anagraf00.core.bulk.*;
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaFromDocumentoComponent;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk;
 import it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoHome;
@@ -2032,11 +2033,12 @@ public class AnticipoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
     }
 
     @Override
-    public Scrittura_partita_doppiaBulk createScrittura(UserContext usercontext, IDocumentoCogeBulk documentoCoge) throws ComponentException {
+    public ResultScrittureContabili createScrittura(UserContext usercontext, IDocumentoCogeBulk documentoCoge) throws ComponentException {
         try {
             if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(usercontext, documentoCoge.getEsercizio())) {
-                Scrittura_partita_doppiaBulk scritturaPrinc = super.createScrittura(usercontext, documentoCoge);
-                if (documentoCoge instanceof AnticipoBulk && ((AnticipoBulk) documentoCoge).isAnnullato()) {
+                ResultScrittureContabili resultScrittureContabili = super.createScrittura(usercontext, documentoCoge);
+                Scrittura_partita_doppiaBulk scritturaPrinc = resultScrittureContabili.getScritturaPartitaDoppiaBulk();
+                if (documentoCoge instanceof AnticipoBulk && ((AnticipoBulk) documentoCoge).isAnnullato() && scritturaPrinc!=null) {
                     Scrittura_partita_doppiaBulk scritturaStorno = this.createScritturaAnnullo(usercontext, documentoCoge, scritturaPrinc, ((AnticipoBulk) documentoCoge).getDt_cancellazione());
 
                     scritturaPrinc.setAttiva(Scrittura_partita_doppiaBulk.ATTIVA_NO);
@@ -2048,7 +2050,7 @@ public class AnticipoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
                     scritturaStorno.setToBeUpdated();
                     makeBulkPersistent(usercontext, scritturaStorno);
                 }
-                return scritturaPrinc;
+                return resultScrittureContabili;
             }
             return null;
         } catch (it.cnr.jada.persistency.PersistencyException | RemoteException e) {

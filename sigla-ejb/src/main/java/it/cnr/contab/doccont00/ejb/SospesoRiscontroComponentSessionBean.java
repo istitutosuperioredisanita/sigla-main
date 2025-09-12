@@ -17,7 +17,7 @@
 
 package it.cnr.contab.doccont00.ejb;
 
-import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
+import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
 import it.cnr.contab.config00.sto.bulk.EnteBulk;
 import it.cnr.contab.doccont00.comp.SospesoRiscontroComponent;
 import it.cnr.contab.doccont00.intcass.giornaliera.MovimentoContoEvidenzaBulk;
@@ -136,12 +136,12 @@ public RemoteIterator cercaSospesiPerStato(UserContext usercontext, CompoundFind
 		}
 	}
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Scrittura_partita_doppiaBulk createScritturaPartitaDoppiaRequiresNew(UserContext param0, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws ComponentException, EJBException, PersistencyException, RemoteException {
+	public ResultScrittureContabili createScritturaPartitaDoppiaRequiresNew(UserContext param0, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws ComponentException, EJBException, PersistencyException, RemoteException {
 		pre_component_invocation(param0, componentObj);
 		try {
-			Scrittura_partita_doppiaBulk scrittura_partita_doppiaBulk = ((SospesoRiscontroComponent) componentObj).createScritturaPartitaDoppia(param0, tesoreriaUnica, cdsEnte, riga);
+            ResultScrittureContabili resultScrittureContabili = ((SospesoRiscontroComponent) componentObj).createScritturaPartitaDoppia(param0, tesoreriaUnica, cdsEnte, riga);
 			component_invocation_succes(param0, componentObj);
-			return scrittura_partita_doppiaBulk;
+			return resultScrittureContabili;
 		} catch (NoRollbackException e) {
 			component_invocation_succes(param0, componentObj);
 			throw e;

@@ -21,7 +21,6 @@ import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotEnabledException;
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotRequiredException;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
-import it.cnr.contab.coepcoan00.core.bulk.Scrittura_analiticaBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
@@ -32,9 +31,9 @@ import java.sql.Timestamp;
 
 @Remote
 public interface ProposeScritturaComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
-    Scrittura_partita_doppiaBulk proposeScritturaPartitaDoppia(UserContext userContext, IDocumentoCogeBulk docamm) throws ComponentException, RemoteException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException;
-    Scrittura_partita_doppiaBulk proposeScritturaPartitaDoppiaAnnullo(UserContext userContext, IDocumentoCogeBulk docamm) throws ComponentException, RemoteException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException;
+    IDocumentoCogeBulk loadEconomicaFromFinanziaria(UserContext userContext, IDocumentoCogeBulk doccoge) throws ComponentException, RemoteException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException;
+    ResultScrittureContabili proposeScritturaPartitaDoppia(UserContext userContext, IDocumentoCogeBulk docamm) throws ComponentException, RemoteException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException;
+    ResultScrittureContabili proposeScritturaPartitaDoppiaAnnullo(UserContext userContext, IDocumentoCogeBulk docamm) throws ComponentException, RemoteException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException;
     Scrittura_partita_doppiaBulk proposeStornoScritturaPartitaDoppia(UserContext userContext, Scrittura_partita_doppiaBulk scritturaPartitaDoppiaDaStornare, Timestamp dataStorno) throws RemoteException;
-    Scrittura_analiticaBulk proposeScritturaAnalitica(UserContext userContext, IDocumentoCogeBulk docamm) throws ComponentException, RemoteException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException;
     ResultScrittureContabili proposeScrittureContabili(UserContext userContext, IDocumentoCogeBulk doccoge) throws ComponentException, RemoteException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException;
 }
