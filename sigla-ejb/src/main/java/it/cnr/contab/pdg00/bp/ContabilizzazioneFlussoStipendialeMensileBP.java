@@ -130,19 +130,4 @@ public class ContabilizzazioneFlussoStipendialeMensileBP extends it.cnr.jada.uti
             return !stipendiCofiBulk.isLiquidato();
         return Boolean.FALSE;
     }
-
-    public void eliminaRiga(ActionContext context, Stipendi_cofiBulk stipendiCofiBulk){
-
-        if (Optional.ofNullable(stipendiCofiBulk).isPresent()){
-
-
-
-            // Leggere CofiCori x mese anno
-            // Leggere Obb scad x mese anno
-            // leggere obb per mese anno
-
-
-            //Utility.createCRUDComponentSession().creaConBulk(context.getUserContext(), stipendiCofiBulk);
-        }
-    }
 }
