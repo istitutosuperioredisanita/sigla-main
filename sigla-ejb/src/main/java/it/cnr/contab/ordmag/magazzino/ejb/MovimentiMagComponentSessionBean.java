@@ -355,10 +355,10 @@ public void annullaMovimento(UserContext userContext, MovimentiMagBulk movimenti
 	}
 
 	@Override
-	public List<MovimentiMagBulk> caricoDaOrdineRigheEvase(UserContext userContext,  List<EvasioneOrdineRigaBulk> righeEvase) throws ComponentException, PersistencyException, RemoteException, ApplicationException {
+	public List<EvasioneOrdineRigaBulk> caricoDaOrdineRigheEvase(UserContext userContext,  List<EvasioneOrdineRigaBulk> righeEvase) throws ComponentException, PersistencyException, RemoteException, ApplicationException {
 		pre_component_invocation(userContext,componentObj);
 		try {
-			List<MovimentiMagBulk> result = ((MovimentiMagComponent)componentObj).caricoDaOrdineRigheEvase(userContext,  righeEvase);
+			List<EvasioneOrdineRigaBulk> result = ((MovimentiMagComponent)componentObj).caricoDaOrdineRigheEvase(userContext,  righeEvase);
 			component_invocation_succes(userContext,componentObj);
 			return result;
 		} catch(it.cnr.jada.comp.NoRollbackException e) {

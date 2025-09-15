@@ -458,7 +458,7 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 			movimentoMag.setTipoMovimentoMag(diffOrdineRettificato.compareTo(BigDecimal.ZERO) > 0 ? magazzinoBulk.getTipoMovimentoMagRvPos() : magazzinoBulk.getTipoMovimentoMagRvNeg());
 			// TODO IMPOSTARE IMPORTO IVA - V.T.
 			movimentoMag.setPrezzoUnitario(diffOrdineRettificato.abs());
-			movimentoMag.setPrezzoUnitario(diffIvaOrdineRettificato.abs());
+			movimentoMag.setImIva(diffIvaOrdineRettificato.abs());
 		} catch (RemoteException | PersistencyException e) {
 			throw new ComponentException(e);
 		}
@@ -1395,18 +1395,17 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 	}
 
 
-	public List<MovimentiMagBulk> caricoDaOrdineRigheEvase(UserContext userContext,  List<EvasioneOrdineRigaBulk> evasioneOrdineRiga) throws ComponentException, PersistencyException, ApplicationException {
-		List<MovimentiMagBulk> listaMovimentiScarico =new ArrayList<MovimentiMagBulk>();
-		if (Optional.ofNullable(evasioneOrdineRiga).isPresent() ){
-			for (EvasioneOrdineRigaBulk eva:evasioneOrdineRiga) {
-				MovimentiMagBulk movimentoCarico =caricoDaOrdine(userContext, eva.getOrdineAcqConsegna(), (EvasioneOrdineRigaBulk) eva);
-				if (movimentoCarico.getMovimentoRif() != null) {
-					listaMovimentiScarico.add(movimentoCarico);
-				}
-				eva.setMovimentiMag(movimentoCarico);
-			}
-		}
-		return listaMovimentiScarico;
-	}
+    public List<EvasioneOrdineRigaBulk> caricoDaOrdineRigheEvase(UserContext userContext, List<EvasioneOrdineRigaBulk> evasioneOrdineRiga) throws ComponentException, PersistencyException, ApplicationException {
+
+        if (Optional.ofNullable(evasioneOrdineRiga).isPresent() ){
+            for (EvasioneOrdineRigaBulk eva:evasioneOrdineRiga) {
+                Optional.ofNullable(caricoDaOrdine(userContext, eva.getOrdineAcqConsegna(), (EvasioneOrdineRigaBulk) eva))
+                        .ifPresent(movimentoCarico -> {
+                            eva.setMovimentiMag(movimentoCarico);
+                        });
+            }
+        }
+        return evasioneOrdineRiga;
+    }
 
 }

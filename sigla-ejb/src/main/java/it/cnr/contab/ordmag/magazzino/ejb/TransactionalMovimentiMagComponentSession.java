@@ -325,9 +325,9 @@ public void annullaMovimento(UserContext userContext, MovimentiMagBulk movimenti
 	}
 
 	@Override
-	public List<MovimentiMagBulk> caricoDaOrdineRigheEvase(UserContext userContext, List<EvasioneOrdineRigaBulk> righeEvase) throws ComponentException, PersistencyException, RemoteException, ApplicationException {
+	public List<EvasioneOrdineRigaBulk> caricoDaOrdineRigheEvase(UserContext userContext, List<EvasioneOrdineRigaBulk> righeEvase) throws ComponentException, PersistencyException, RemoteException, ApplicationException {
 		try {
-			return (List<MovimentiMagBulk>)invoke("caricoDaOrdineRigheEvase",new Object[] {
+			return (List<EvasioneOrdineRigaBulk>)invoke("caricoDaOrdineRigheEvase",new Object[] {
 					userContext,
 					 righeEvase});
 		} catch(RemoteException e) {

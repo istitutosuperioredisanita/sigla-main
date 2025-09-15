@@ -201,7 +201,6 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 					consegneColl.stream().collect(Collectors.groupingBy(o -> o.getOrdineAcqRiga().getOrdineAcq()));
 
 			for (OrdineAcqBulk ordineSelected : mapOrdine.keySet()) {
-				List<EvasioneOrdineRigaBulk> righeEvaseOrdine= new ArrayList<EvasioneOrdineRigaBulk>();
 				for (OrdineAcqConsegnaBulk consegnaSelected : consegneColl) {
 
 					Optional.ofNullable(consegnaSelected.getQuantitaEvasa()).filter(el->el.compareTo(BigDecimal.ZERO)>0)
@@ -345,14 +344,20 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 					evasioneOrdineRiga.setToBeCreated();
 
 					evasioneOrdine.addToEvasioneOrdineRigheColl(evasioneOrdineRiga);
-					righeEvaseOrdine.add(evasioneOrdineRiga);
 				}
-				try {
-				//effettuo la movimentazione di magazzino per le righe evase per l'ordine
-				listaMovimentiScarico.addAll(Optional.ofNullable(movimentiMagComponent.caricoDaOrdineRigheEvase(userContext,righeEvaseOrdine)).orElse(Collections.EMPTY_LIST));
-				} catch (ComponentException | RemoteException | PersistencyException e) {
-					throw new DetailedRuntimeException(e);
-				}
+                try {
+					/*ottimizzazione esecuzione
+						 caricoDaOrdineRigheEvase-> crea tutti movimenti di carico e ritorna una mappa con chiave la riga di evasione e valore il movimento creato
+						 aggiornaMovRigheEvasione-> aggiorna sulle righe di consegna il movimento di magazzino creato
+						 	e ritorna la lista dei movimenti per i quali creare lo scarico
+					 */
+                    listaMovimentiScarico.addAll( aggiornaMovRigheEvasione (
+                            movimentiMagComponent.caricoDaOrdineRigheEvase(userContext,Optional.ofNullable(evasioneOrdine.getEvasioneOrdineRigheColl()).orElse(new BulkList<>())),
+                            evasioneOrdine ));
+
+                } catch (ComponentException | RemoteException | PersistencyException e) {
+                    throw new DetailedRuntimeException(e);
+                }
 			}
 
 			if (!evasioneOrdine.getEvasioneOrdineRigheColl().isEmpty()) {
