@@ -17,18 +17,9 @@
 
 package it.cnr.contab.doccont00.bp;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.rmi.RemoteException;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Stream;
-
 import it.cnr.contab.coepcoan00.bp.CRUDScritturaPDoppiaBP;
 import it.cnr.contab.coepcoan00.bp.EconomicaAvereDetailCRUDController;
 import it.cnr.contab.coepcoan00.bp.EconomicaDareDetailCRUDController;
-import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.config00.bulk.Codici_siopeBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
@@ -40,14 +31,13 @@ import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
 import it.cnr.contab.docamm00.bp.IDocAmmEconomicaBP;
 import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.docamm00.ejb.IDocumentoAmministrativoEntrataComponentSession;
-import it.cnr.contab.docamm00.ejb.IDocumentoAmministrativoSpesaComponentSession;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.doccont00.ejb.AccertamentoComponentSession;
-import it.cnr.contab.doccont00.ejb.MandatoComponentSession;
 import it.cnr.contab.doccont00.ejb.ReversaleComponentSession;
+import it.cnr.contab.doccont00.intcass.bulk.StatoTrasmissione;
+import it.cnr.contab.doccont00.intcass.bulk.V_mandato_reversaleBulk;
 import it.cnr.contab.doccont00.service.ContabiliService;
-import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
-import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
+import it.cnr.contab.doccont00.service.DocumentiContabiliService;
 import it.cnr.contab.missioni00.docs.bulk.RimborsoBulk;
 import it.cnr.contab.reports.bp.OfflineReportPrintBP;
 import it.cnr.contab.reports.bulk.Print_spooler_paramBulk;
@@ -73,7 +63,16 @@ import it.cnr.jada.util.action.AbstractPrintBP;
 import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
+import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.jada.util.jsp.Button;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.rmi.RemoteException;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
 
 /**
  * Business Process che gestisce le attività di CRUD per l'entita' Reversale
@@ -109,6 +108,10 @@ public class CRUDReversaleBP extends it.cnr.jada.util.action.SimpleCRUDBP implem
 	private boolean supervisore = false;
 	public static final String REVERSALE_VARIAZIONE_BP = "CRUDReversaleVariazioneBP";
 	boolean isAbilitatoCrudRevesaleVariazioneBP = Boolean.FALSE;
+
+	private DocumentiContabiliService documentiContabiliService;
+	private String nodeRefDocumento;
+
 
 	public CRUDReversaleBP() {
 		super();
@@ -185,6 +188,53 @@ public class CRUDReversaleBP extends it.cnr.jada.util.action.SimpleCRUDBP implem
 			throw handleException(e);
 		}		
 	}
+
+	protected CRUDComponentSession getComponentSession() {
+		return (CRUDComponentSession) EJBCommonServices.createEJB("JADAEJB_CRUDComponentSession");
+	}
+
+	public String getReversaleFileName(){
+		ReversaleBulk reversale = (ReversaleBulk)getModel();
+		if (reversale != null){
+			return "Reversale n. ".
+					concat(String.valueOf(reversale.getEsercizio())).
+					concat("-").concat(String.valueOf(reversale.getPg_reversale())).
+					concat(" .pdf");
+		}
+		return null;
+	}
+
+	public void scaricaReversale(ActionContext actioncontext) throws Exception {
+		ReversaleBulk reversale = (ReversaleBulk)getModel();
+		InputStream is = documentiContabiliService.getStreamDocumento(
+				(StatoTrasmissione) getComponentSession().findByPrimaryKey(actioncontext.getUserContext(),
+						new V_mandato_reversaleBulk(reversale.getEsercizio(), Numerazione_doc_contBulk.TIPO_REV, reversale.getCd_cds(), reversale.getPg_reversale()))
+		);
+		if (is != null){
+			((HttpActionContext)actioncontext).getResponse().setContentType("application/pdf");
+			OutputStream os = ((HttpActionContext)actioncontext).getResponse().getOutputStream();
+			((HttpActionContext)actioncontext).getResponse().setDateHeader("Expires", 0);
+			byte[] buffer = new byte[((HttpActionContext)actioncontext).getResponse().getBufferSize()];
+			int buflength;
+			while ((buflength = is.read(buffer)) > 0) {
+				os.write(buffer,0,buflength);
+			}
+			is.close();
+			os.flush();
+		}
+	}
+
+	@Override
+	public boolean isPrintButtonHidden() {
+		boolean hidden = super.isPrintButtonHidden() || isInserting() || isSearching();
+		return hidden || this.nodeRefDocumento != null;
+	}
+
+	public boolean isPrintpdfButtonHidden() {
+		boolean hidden = super.isPrintButtonHidden() || isInserting() || isSearching();
+		return hidden || this.nodeRefDocumento == null;
+	}
+
 	/**
 	 *	Metodo per disabilitare tutti i campi, nel caso la reversale sia stata annullata ( come se fosse in stato di visualizzazione )
 	 */
@@ -195,6 +245,16 @@ public class CRUDReversaleBP extends it.cnr.jada.util.action.SimpleCRUDBP implem
 				.filter(ReversaleBulk.class::isInstance)
 				.map(ReversaleBulk.class::cast)
 				.orElseThrow(() -> new BusinessProcessException("Reversale non trovata!"));
+
+		try {
+			this.nodeRefDocumento = null;
+			Optional.ofNullable(documentiContabiliService.getDocumentKey(
+					(StatoTrasmissione) getComponentSession().findByPrimaryKey(context.getUserContext(),
+							new V_mandato_reversaleBulk(reversaleBulk.getEsercizio(), Numerazione_doc_contBulk.TIPO_REV, reversaleBulk.getCd_cds(), reversaleBulk.getPg_reversale()))
+			)).ifPresent(s -> this.nodeRefDocumento = s);
+		} catch(Exception _ex) {
+			throw handleException(_ex);
+		}
 
 		ReversaleComponentSession session = (ReversaleComponentSession) createComponentSession();
 
@@ -320,6 +380,7 @@ public class CRUDReversaleBP extends it.cnr.jada.util.action.SimpleCRUDBP implem
 		final Properties properties = it.cnr.jada.util.Config.getHandler().getProperties(getClass());
 		Button[] buttons = Stream.concat(Arrays.asList(super.createToolbar()).stream(),
 				Arrays.asList(
+						new Button(properties, "CRUDToolbar.printpdf"),
 						new Button(properties, "CRUDToolbar.startSearchSiope"),
 						new Button(properties, "CRUDToolbar.contabile"),
 						new Button(properties, "CRUDToolbar.davariare"),
@@ -529,10 +590,7 @@ public class CRUDReversaleBP extends it.cnr.jada.util.action.SimpleCRUDBP implem
 						//!((ReversaleBulk)getModel()).isIncassato() && 
 						!((ReversaleBulk)getModel()).isAnnullato() ;
 	}
-	public boolean isPrintButtonHidden() 
-	{
-		return super.isPrintButtonHidden() || isInserting() || isSearching();
-	}
+
 	/**
 	 * Abilito il tab di Ricerca dei Documenti solo se la reversale non è stata incassata o annullata.
 	 * @return			TRUE	Il tab di Ricerca dei Documenti è abilitato 			
@@ -637,7 +695,9 @@ public class CRUDReversaleBP extends it.cnr.jada.util.action.SimpleCRUDBP implem
 			setSiope_attiva(Utility.createParametriCnrComponentSession().getParametriCnr(actioncontext.getUserContext(), CNRUserContext.getEsercizio(actioncontext.getUserContext())).getFl_siope().booleanValue());
 			setUoSrivania(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(actioncontext));
 			contabiliService = SpringUtil.getBean("contabiliService",
-					ContabiliService.class);		
+					ContabiliService.class);
+			documentiContabiliService = SpringUtil.getBean("documentiContabiliService",
+					DocumentiContabiliService.class);
 
 			Parametri_cnrBulk parCnr = Utility.createParametriCnrComponentSession().getParametriCnr(actioncontext.getUserContext(),CNRUserContext.getEsercizio(actioncontext.getUserContext()));
 
