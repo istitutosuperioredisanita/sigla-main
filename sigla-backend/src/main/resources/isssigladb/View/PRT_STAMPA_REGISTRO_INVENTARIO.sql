@@ -70,6 +70,7 @@ WHERE inventario_beni.cd_cds = ubicazione_bene.cd_cds
                                         buono_carico_scarico_dett.pg_buono_c_s
    AND tipo_carico_scarico.cd_tipo_carico_scarico =
                                    buono_carico_scarico.cd_tipo_carico_scarico
+   AND inventario_beni.fl_migrato='N'
 union all
 SELECT inventario_beni.cd_unita_organizzativa, inventario_beni.cd_cds,
        inventario_beni.esercizio_carico_bene, inventario_beni.etichetta,
@@ -84,8 +85,9 @@ SELECT inventario_beni.cd_unita_organizzativa, inventario_beni.cd_cds,
        to_date( '01/01/2023','dd/mm/yyyy') data_registrazione,
        '6', -- carico non visibile da documento amministrativo
        'Carico Iniziale',
-       0 variazione_piu,
-       0 variazione_meno,
+        Decode (buono_carico_scarico_dett.ti_documento,'C',
+                Decode(tipo_carico_scarico.FL_AUMENTO_VALORE,'Y',buono_carico_scarico_dett.valore_unitario,0),0) variazione_piu,
+       Decode (buono_carico_scarico_dett.ti_documento,'S',buono_carico_scarico_dett.valore_unitario,0) variazione_meno,
        1 quantita, -- 1 perchè da inventario_beni
        inventario_beni.valore_iniziale valore_unitario,
        imponibile_ammortamento,
@@ -107,7 +109,10 @@ SELECT inventario_beni.cd_unita_organizzativa, inventario_beni.cd_cds,
        ubicazione_bene,
        categoria_gruppo_invent,
        categoria_gruppo_invent categoria_gruppo_invent2,
-       terzo
+       buono_carico_scarico_dett,
+       terzo,
+      buono_carico_scarico,
+       tipo_carico_scarico
 WHERE inventario_beni.cd_cds = ubicazione_bene.cd_cds
    AND inventario_beni.cd_unita_organizzativa =
                                         ubicazione_bene.cd_unita_organizzativa
@@ -123,19 +128,17 @@ WHERE inventario_beni.cd_cds = ubicazione_bene.cd_cds
           t.cd_unita_organizzativa = Inventario_Beni.Cd_Unita_Organizzativa
           and t.dt_fine_rapporto is null)
     and inventario_beni.fl_migrato='Y'
-    and not exists ( select buono_carico_scarico_dett.pg_inventario
-    from buono_carico_scarico_dett,buono_carico_scarico,tipo_carico_scarico
-    where buono_carico_scarico_dett.pg_inventario= inventario_beni.pg_inventario
-    AND buono_carico_scarico_dett.nr_inventario = inventario_beni.nr_inventario
-    AND buono_carico_scarico_dett.progressivo = inventario_beni.progressivo
-   AND buono_carico_scarico.pg_inventario =
+   AND buono_carico_scarico_dett.pg_inventario(+) = inventario_beni.pg_inventario
+   AND buono_carico_scarico_dett.nr_inventario(+) = inventario_beni.nr_inventario
+   AND buono_carico_scarico_dett.progressivo(+) = inventario_beni.progressivo
+
+   AND buono_carico_scarico.pg_inventario(+) =
                                        buono_carico_scarico_dett.pg_inventario
-   AND buono_carico_scarico.ti_documento =
+
+   AND buono_carico_scarico.ti_documento(+) =
                                         buono_carico_scarico_dett.ti_documento
-   AND buono_carico_scarico.esercizio = buono_carico_scarico_dett.esercizio
-   AND buono_carico_scarico.pg_buono_c_s =
+   AND buono_carico_scarico.esercizio(+) = buono_carico_scarico_dett.esercizio
+   AND buono_carico_scarico.pg_buono_c_s(+) =
                                         buono_carico_scarico_dett.pg_buono_c_s
-   AND tipo_carico_scarico.cd_tipo_carico_scarico =
-                                   buono_carico_scarico.cd_tipo_carico_scarico
-    and tipo_carico_scarico.ti_documento='C'
-    and tipo_carico_scarico.fl_aumento_valore!='N' )
+   AND tipo_carico_scarico.cd_tipo_carico_scarico(+) =
+                                   buono_carico_scarico.cd_tipo_carico_scarico;
