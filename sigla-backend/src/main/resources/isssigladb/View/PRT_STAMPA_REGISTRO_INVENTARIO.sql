@@ -98,11 +98,11 @@ SELECT inventario_beni.cd_unita_organizzativa, inventario_beni.cd_cds,
        INVENTARIO_BENI.TI_COMMERCIALE_ISTITUZIONALE,
        inventario_beni.FL_AMMORTAMENTO,
        inventario_beni.progressivo,
-        ( select esercizio_fatt_pass||'/'||cd_uo_fatt_pass||'/'||pg_fattura_passiva||'/'||progressivo_riga_fatt_pass from ass_inv_bene_fattura
+        ( select esercizio_fatt_pass||'/'||cd_uo_fatt_pass||'/'||pg_fattura_passiva from ass_inv_bene_fattura
         where  ass_inv_bene_fattura.pg_inventario=inventario_beni.pg_inventario
   and ass_inv_bene_fattura.nr_inventario=inventario_beni.nr_inventario
   and ass_inv_bene_fattura.progressivo=inventario_beni.progressivo
-    group by esercizio_fatt_pass,cd_uo_fatt_pass,pg_fattura_passiva,progressivo_riga_fatt_pass) rifrimento_fattura
+    group by esercizio_fatt_pass,cd_uo_fatt_pass,pg_fattura_passiva) rifrimento_fattura
   FROM inventario_beni,
        ubicazione_bene,
        categoria_gruppo_invent,
