@@ -2471,17 +2471,13 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 					//controlla i campi obbligatori
 					try {
 						checkToSalvaDefinitivo(userContext, contratto);
-					}catch (Exception e) {
-						return contratto;
-					}
-					try {
 						return salvaDefinitivo(userContext, contratto);
 					}catch (Exception e){
 						logger.error("Error Contratto da Rest Service->",e);
 						if ( isAttachRestContrStoredFromSigla)
 						//rimuovi Contratto con gli allegati
 							deleteDirectoryAllegatiDaFlusso(userContext,contratto,isAttachRestContrStoredFromSigla);
-						throw new ComponentException(e);
+						throw e;
 					}
 				}
 

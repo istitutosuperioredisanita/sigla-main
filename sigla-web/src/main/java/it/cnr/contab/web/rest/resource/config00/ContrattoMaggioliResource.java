@@ -12,6 +12,7 @@ import it.cnr.contab.web.rest.model.EnumTipoDettaglioContratto;
 import it.cnr.contab.web.rest.model.EnumTypeAttachmentContratti;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
@@ -46,6 +47,7 @@ public class ContrattoMaggioliResource  extends AbstractContrattoResource implem
                     ass000000.setContratto(contrattoToSave);
                     ass000000.setEsercizio(contrattoToSave.getEsercizio());
                     ass000000.setStato_contratto(contrattoToSave.getStato());
+                    ass000000.setCrudStatus( OggettoBulk.TO_BE_CREATED);
                 contrattoToSave.addToAssociazioneUO(ass000000);
         }
         return contrattoToSave;
