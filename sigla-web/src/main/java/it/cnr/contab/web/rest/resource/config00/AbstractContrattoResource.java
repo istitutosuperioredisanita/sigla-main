@@ -112,16 +112,6 @@ public abstract class AbstractContrattoResource {
             if ( !Utility.createConfigurazioneCnrComponentSession().isAttivoOrdini(userContext))
                 throw new RestException(Response.Status.BAD_REQUEST,String.format("Il dettaglio del contratto non è previsto su questa installazione SIGLA"));
 
-            /*
-            if ( !contrattoBulk.getTipo_dettaglio_contratto().equals(ContrattoBulk.DETTAGLIO_CONTRATTO_ARTICOLI) &&
-                    contrattoBulk.getTipo_dettaglio_contratto().equals(ContrattoBulk.DETTAGLIO_CONTRATTO_CATGRP))
-            throw new RestException(Response.Status.BAD_REQUEST, String.format("Per Il Tipo Dettaglio Contratto sono previsti i seguenti valori:{ vuoto,"
-                    + ContrattoBulk.DETTAGLIO_CONTRATTO_ARTICOLI)+","+ContrattoBulk.DETTAGLIO_CONTRATTO_CATGRP +"}");
-            if ( contrattoBulk.getTipo_dettaglio_contratto().equals(ContrattoBulk.DETTAGLIO_CONTRATTO_ARTICOLI)){
-                //if (CollectionUtils.isEmpty(contrattoBulk.getDettaglioContratto()))
-
-            }
-             */
             if ( Optional.ofNullable(contrattoBulk.getTipoDettaglioContratto()).isPresent()){
                 checkRowsDettaglioContratto(contrattoBulk);
             }
@@ -173,14 +163,6 @@ public abstract class AbstractContrattoResource {
         contrattoBulkSigla.setAtto(new Tipo_atto_amministrativoBulk());
         contrattoBulkSigla.setCd_tipo_atto("DET");
 
-/*
-        final ContrattoBulk contratto = (ContrattoBulk) contrattoComponentSession.inizializzaBulkPerInserimento(
-                userContext,
-                contrattoBulkSigla);
-
-        contratto.setToBeCreated();
-
- */
         try {
             ContrattoBulk contrattoCreated = creaContrattoBulk(userContext, contrattoBulkSigla);
             contrattoBulk.setPg_contratto(contrattoCreated.getPg_contratto());
