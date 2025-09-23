@@ -126,5 +126,7 @@
     <include file="iss/update_configurazioneCnr_liq_daordine_inv.xml"/>
     <!-- gestione importo inventariazione-->
     <include file="iss/update_conf_gestione_importo_ro_inventario_ordini.xml"/>
+    <!-- Autore : CIRO SALVIO - Menu Replace CNR to ISS-->
+    <include file="iss/update_albero_main_CNRtoISS.xml"/>
 
 </databaseChangeLog>
