@@ -6013,6 +6013,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
     }
 
     public Forward doVisualizzaMandato(ActionContext actioncontext) throws BusinessProcessException{
+
         CRUDFatturaPassivaBP crudFatturaPassivaBP = Optional.ofNullable(getBusinessProcess(actioncontext))
                 .filter(CRUDFatturaPassivaBP.class::isInstance)
                 .map(CRUDFatturaPassivaBP.class::cast)
