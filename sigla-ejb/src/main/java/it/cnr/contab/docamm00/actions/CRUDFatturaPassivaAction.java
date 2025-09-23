@@ -6023,12 +6023,22 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                         .map(Fattura_passiva_rigaBulk.class::cast);
         final CRUDComponentSession componentSession = (CRUDComponentSession) EJBCommonServices.createEJB("JADAEJB_CRUDComponentSession");
         try {
-            final List<Mandato_rigaIBulk> mandato_rigaIBulks = Optional.ofNullable(componentSession.find(
-                            actioncontext.getUserContext(), Mandato_rigaBulk.class,
-                            "findRighe", actioncontext.getUserContext(), (IDocumentoAmministrativoSpesaBulk)fattura_passiva_rigaBulk.get().getFattura_passiva()))
+            final List<Mandato_rigaIBulk> mandato_rigaIBulks = (List<Mandato_rigaIBulk>) Optional.ofNullable(
+                            componentSession.find(
+                                    actioncontext.getUserContext(),
+                                    Mandato_rigaBulk.class,
+                                    "findRighe",
+                                    actioncontext.getUserContext(),
+                                    (IDocumentoAmministrativoSpesaBulk) fattura_passiva_rigaBulk.get().getFattura_passiva()
+                            )
+                    )
                     .filter(List.class::isInstance)
                     .map(List.class::cast)
-                    .orElse(Collections.emptyList());
+                    .orElse(Collections.emptyList())
+                    .stream()
+                    .sorted(Comparator.comparing(Mandato_rigaIBulk::getDacr).reversed())
+                    .collect(Collectors.toList());
+
             final Optional<MandatoBulk> mandatoBulk = mandato_rigaIBulks
                     .stream()
                     .filter(mandatoRigaIBulk -> {
