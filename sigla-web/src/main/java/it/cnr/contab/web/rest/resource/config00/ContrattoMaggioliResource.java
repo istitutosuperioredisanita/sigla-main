@@ -12,6 +12,7 @@ import it.cnr.contab.web.rest.model.EnumTipoDettaglioContratto;
 import it.cnr.contab.web.rest.model.EnumTypeAttachmentContratti;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
@@ -46,6 +47,7 @@ public class ContrattoMaggioliResource  extends AbstractContrattoResource implem
                     ass000000.setContratto(contrattoToSave);
                     ass000000.setEsercizio(contrattoToSave.getEsercizio());
                     ass000000.setStato_contratto(contrattoToSave.getStato());
+                    ass000000.setCrudStatus( OggettoBulk.TO_BE_CREATED);
                 contrattoToSave.addToAssociazioneUO(ass000000);
         }
         return contrattoToSave;
@@ -94,23 +96,6 @@ public class ContrattoMaggioliResource  extends AbstractContrattoResource implem
         return insertContratto(request,contrattoMaggioliBulk,ApiVersion.V2);
     }
 
-    /*
-            @Override
-            public Response insertContratto(HttpServletRequest request, @Valid ContrattoDtoBulk contrattoDtoBulk) throws Exception {
-                _log.info("insertContratto->Maggioli" );
-                CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
-                List<AttachmentContratto> l =contrattoDtoBulk.getAttachments();
-                AttachmentContratto a = Optional.ofNullable(contrattoDtoBulk.getAttachments()).filter(s->s.size()>0).get().stream().findFirst().orElse(null);
-                byte[] decoded= Base64.getDecoder().decode(a.getBytes());
-
-                try (FileOutputStream outputStream = new FileOutputStream("D://temp//decodedFileContratto.pdf")) {
-                    outputStream.write(decoded);
-                }
-                ContrattoBulk contratto = ( ContrattoBulk) super.insertContratto(request,contrattoDtoBulk).getEntity();
-
-                return Response.status(Response.Status.CREATED).entity(contrattoDtoBulk).build();
-            }
-        */
     @Override
     public Response recuperoDatiContratto(HttpServletRequest request, String uo, Integer cdTerzo) throws Exception {
         _log.info("recuperoDatiContratto->Maggioli" );
