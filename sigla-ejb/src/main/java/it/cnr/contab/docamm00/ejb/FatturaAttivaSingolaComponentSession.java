@@ -17,17 +17,11 @@
 
 package it.cnr.contab.docamm00.ejb;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Remote;
-import javax.xml.datatype.XMLGregorianCalendar;
-
+import it.cnr.contab.anagraf00.core.bulk.Dichiarazione_intentoBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_IBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attivaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkList;
@@ -35,6 +29,14 @@ import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
+
+import javax.ejb.Remote;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.math.BigDecimal;
+import java.rmi.RemoteException;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
 
 
 @Remote
@@ -146,4 +148,5 @@ void controlliGestioneBolloVirtuale(UserContext aUC, Fattura_attivaBulk fatturaA
 String recuperoEmailUtente(UserContext aUC, Fattura_attivaBulk fatturaAttiva) throws ApplicationException, ComponentException,java.rmi.RemoteException;
 void gestioneAvvisoInvioMailFattureAttive(UserContext aUC) throws ApplicationException, ComponentException,java.rmi.RemoteException;
 List<String> sendMailForNotificationKo(UserContext userContext, Fattura_attivaBulk fattura) throws ComponentException,java.rmi.RemoteException;
+List<Dichiarazione_intentoBulk> findDichiarazioniIntentoValide(UserContext userContext,Fattura_attiva_rigaBulk fatturaRiga) throws PersistencyException, ComponentException, RemoteException;
 }
