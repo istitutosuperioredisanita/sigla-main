@@ -16,23 +16,25 @@
  */
 
 package it.cnr.contab.docamm00.ejb;
-import java.math.BigDecimal;
-import java.rmi.RemoteException;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
 
-import javax.xml.datatype.XMLGregorianCalendar;
-
+import it.cnr.contab.anagraf00.core.bulk.Dichiarazione_intentoBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_IBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attivaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
+
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.math.BigDecimal;
+import java.rmi.RemoteException;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
 
 public class TransactionalFatturaAttivaSingolaComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements FatturaAttivaSingolaComponentSession {
 public it.cnr.contab.docamm00.docs.bulk.Nota_di_debito_attivaBulk addebitaDettagli(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.docs.bulk.Nota_di_debito_attivaBulk param1,java.util.List param2,java.util.Hashtable param3) throws RemoteException,it.cnr.jada.comp.ComponentException {
@@ -1997,6 +1999,23 @@ public List findListaCondizioneConsegnaWS(UserContext userContext, String query,
 	public List<String> sendMailForNotificationKo(UserContext param0, Fattura_attivaBulk param1) throws ComponentException, RemoteException {
 		try {
 			return (List<String>) invoke("sendMailForNotificationKo",new Object[] {param0, param1});
+		} catch(java.rmi.RemoteException e) {
+			throw e;
+		} catch(java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch(it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch(Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
+
+	@Override
+	public List<Dichiarazione_intentoBulk> findDichiarazioniIntentoValide(UserContext userContext, Fattura_attiva_rigaBulk fatturaRiga) throws PersistencyException, ComponentException,RemoteException {
+		try {
+			return (List<Dichiarazione_intentoBulk>) invoke("findDichiarazioniIntentoValide",new Object[] {userContext, fatturaRiga});
 		} catch(java.rmi.RemoteException e) {
 			throw e;
 		} catch(java.lang.reflect.InvocationTargetException e) {

@@ -17,10 +17,7 @@
 
 package it.cnr.contab.docamm00.comp;
 
-import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
-import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
-import it.cnr.contab.anagraf00.core.bulk.TerzoHome;
-import it.cnr.contab.anagraf00.core.bulk.TerzoKey;
+import it.cnr.contab.anagraf00.core.bulk.*;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk;
 import it.cnr.contab.anagraf00.tabter.bulk.NazioneBulk;
@@ -361,6 +358,36 @@ public class DocAmmFatturazioneElettronicaComponent extends CRUDComponent{
 		}
 	}
 
+	private String getRiferimentoTesto(UserContext userContext,Dichiarazione_intentoBulk dichiarazioneIntentoBulk){
+		StringBuffer sb = new StringBuffer();
+		if ( !Optional.ofNullable(dichiarazioneIntentoBulk).isPresent())
+			return null;
+		if ( Optional.ofNullable(dichiarazioneIntentoBulk.getId_dichiarazione()).isPresent())
+			sb=sb.append(dichiarazioneIntentoBulk.getId_dichiarazione());
+		if ( Optional.ofNullable(dichiarazioneIntentoBulk.getNum_dich()).isPresent()){
+			if ( sb.length()>0)
+				sb= sb.append("-");
+			sb.append(dichiarazioneIntentoBulk.getNum_dich());
+		}
+		return sb.toString();
+	}
+	private AltriDatiGestionaliType getAltriDatiGestionali( UserContext userContext, ObjectFactory factory,Fattura_attiva_rigaBulk riga,TerzoBulk terzoCedentePrestatore) throws RemoteException, ComponentException, PersistencyException, DatatypeConfigurationException {
+		if ( riga.getVoce_iva().getFl_obb_dichiarazione_intento()){
+			// cerca dichiarazione di intento valida
+			List<Dichiarazione_intentoBulk> l = Utility.createFatturaAttivaSingolaComponentSession().findDichiarazioniIntentoValide(userContext,riga);
+			if ( ( !Optional.ofNullable(l).isPresent())||l.isEmpty())
+				new ApplicationException("Impossibile Procedere! Manca una Dichiarazione di Intento Valida per il Cliente con Codice Fiscale"  + terzoCedentePrestatore.getAnagrafico().getCodice_fiscale());
+			if (l.size()>1)
+				new ApplicationException("Impossibile Procedere!Ci sono più Dichiazione di Intento Valide per il Cliente con Codice Fiscale"  + terzoCedentePrestatore.getAnagrafico().getCodice_fiscale());
+			AltriDatiGestionaliType altriDatiGestionaliType = factory.createAltriDatiGestionaliType();
+				altriDatiGestionaliType.setTipoDato("INTENTO");
+				altriDatiGestionaliType.setRiferimentoData( convertDateToXmlGregorian(l.get(0).getDt_comunicazione_dic()));
+				altriDatiGestionaliType.setRiferimentoTesto( getRiferimentoTesto(userContext,l.get(0)));
+			return altriDatiGestionaliType;
+		}
+		return null;
+	}
+
 	public FatturaElettronicaType preparaFattura(UserContext userContext, IDocumentoAmministrativoElettronicoBulk docammElettronico)throws ComponentException {
 		try {
 			ObjectFactory factory = new ObjectFactory();
@@ -684,6 +711,7 @@ public class DocAmmFatturazioneElettronicaComponent extends CRUDComponent{
 						List<Integer> listaTutteLinee = new ArrayList<>();
 						for (Iterator<Fattura_attiva_rigaBulk> i = dettaglio.iterator(); i.hasNext(); ) {
 							Fattura_attiva_rigaBulk riga = (Fattura_attiva_rigaBulk) i.next();
+							riga.setFattura_attiva( fattura);
 							listaTutteLinee.add(riga.getProgressivo_riga().intValue());
 							DettaglioLineeType rigaFattura = factory.createDettaglioLineeType();
 							rigaFattura.setNumeroLinea(riga.getProgressivo_riga().intValue());
@@ -706,6 +734,10 @@ public class DocAmmFatturazioneElettronicaComponent extends CRUDComponent{
 								riga.setVoce_iva((Voce_ivaBulk) findByPrimaryKey(userContext, riga.getVoce_iva()));
 							rigaFattura.setAliquotaIVA(Utility.nvl(riga.getVoce_iva().getPercentuale()).setScale(2));
 							rigaFattura.setNatura(impostaDatiNatura(riga.getVoce_iva().getNaturaOperNonImpSdi()));
+							Optional.ofNullable(getAltriDatiGestionali( userContext,factory,riga,terzoCedentePrestatore)).ifPresent(a->{
+								rigaFattura.getAltriDatiGestionali().add(a);
+							});
+
 							listaDettagli.add(rigaFattura);
 							if (fattura.getTi_fattura().equals(Fattura_attivaBulk.TIPO_NOTA_DI_CREDITO)) {
 								impostaDatiPerNoteCredito(userContext, mappaDocumentiCollegati, riga, dettagliNoteSenzaContratto);
