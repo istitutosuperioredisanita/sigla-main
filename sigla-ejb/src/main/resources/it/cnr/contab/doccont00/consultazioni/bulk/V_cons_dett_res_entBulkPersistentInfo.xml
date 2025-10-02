@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+        persistentClassName="it.cnr.contab.doccont00.consultazioni.bulk.V_cons_dett_res_entBulk"
+        homeClassName="it.cnr.contab.doccont00.consultazioni.bulk.V_cons_dett_res_entHome">
+    <defaultColumnMap
+            tableName="V_CONS_SALDI_RESIDUI_ENT">
+        <columnMapping
+                columnName="ESERCIZIO"
+                propertyName="esercizio"
+                sqlTypeName="DECIMAL"
+                columnSize="4"
+                nullable="true" />
+        <columnMapping
+                columnName="ESERCIZIO_RES"
+                propertyName="esercizio_res"
+                sqlTypeName="DECIMAL"
+                columnSize="4"
+                nullable="true" />
+        <columnMapping
+                columnName="CD_CENTRO_RESPONSABILITA"
+                propertyName="cd_centro_responsabilita"
+                sqlTypeName="VARCHAR"
+                columnSize="30"
+                nullable="true" />
+        <columnMapping
+                columnName="TI_APPARTENENZA"
+                propertyName="ti_appartenenza"
+                sqlTypeName="CHAR"
+                columnSize="1"
+                nullable="true" />
+        <columnMapping
+                columnName="TI_GESTIONE"
+                propertyName="ti_gestione"
+                sqlTypeName="CHAR"
+                columnSize="1"
+                nullable="true" />
+        <columnMapping
+                columnName="CD_ELEMENTO_VOCE"
+                propertyName="cd_elemento_voce"
+                sqlTypeName="VARCHAR"
+                columnSize="45"
+                nullable="true" />
+        <columnMapping
+                columnName="DESCRIZIONE_VOCE"
+                propertyName="descrizione_voce"
+                sqlTypeName="VARCHAR"
+                columnSize="300"
+                nullable="true" />
+        <columnMapping
+                columnName="CDS_ACCERTAMENTO"
+                propertyName="cds_accertamento"
+                sqlTypeName="VARCHAR"
+                columnSize="30"
+                nullable="true" />
+        <columnMapping
+                columnName="PG_ACCERTAMENTO"
+                propertyName="pg_accertamento"
+                sqlTypeName="DECIMAL"
+                columnSize="10"
+                nullable="true" />
+        <columnMapping
+                columnName="DESCRIZIONE_ACCERTAMENTO"
+                propertyName="descrizione_accertamento"
+                sqlTypeName="VARCHAR"
+                columnSize="500"
+                nullable="true" />
+        <columnMapping
+                columnName="CD_TIPO_DOCUMENTO_CONT"
+                propertyName="cd_tipo_documento_cont"
+                sqlTypeName="VARCHAR"
+                columnSize="10"
+                nullable="true" />
+        <columnMapping
+                columnName="IM_ACCERTAMENTO"
+                propertyName="im_accertamento"
+                sqlTypeName="DECIMAL"
+                columnSize="15"
+                columnScale="2"
+                nullable="true" />
+        <columnMapping
+                columnName="DESCRMODIFICA"
+                propertyName="descrModifica"
+                sqlTypeName="VARCHAR"
+                columnSize="4000"
+                nullable="true" />
+        <columnMapping
+                columnName="VARIAZIONI_PIU"
+                propertyName="variazioni_piu"
+                sqlTypeName="DECIMAL"
+                columnSize="15"
+                columnScale="2"
+                nullable="true" />
+        <columnMapping
+                columnName="VARIAZIONI_MENO"
+                propertyName="variazioni_meno"
+                sqlTypeName="DECIMAL"
+                columnSize="15"
+                columnScale="2"
+                nullable="true" />
+        <columnMapping
+                columnName="IMPORTO_RISCOSSO"
+                propertyName="importo_riscosso"
+                sqlTypeName="DECIMAL"
+                columnSize="15"
+                columnScale="2"
+                nullable="true" />
+    </defaultColumnMap>
+
+    <persistentProperty name="esercizio" />
+    <persistentProperty name="esercizio_res" />
+    <persistentProperty name="cd_centro_responsabilita" />
+    <persistentProperty name="ti_appartenenza" />
+    <persistentProperty name="ti_gestione" />
+    <persistentProperty name="cd_elemento_voce" />
+    <persistentProperty name="descrizione_voce" />
+    <persistentProperty name="cds_accertamento" />
+    <persistentProperty name="pg_accertamento" />
+    <persistentProperty name="descrizione_accertamento" />
+    <persistentProperty name="cd_tipo_documento_cont" />
+    <persistentProperty name="im_accertamento" />
+    <persistentProperty name="descrModifica" />
+    <persistentProperty name="variazioni_piu" />
+    <persistentProperty name="variazioni_meno" />
+    <persistentProperty name="importo_riscosso" />
+</SQLPersistentInfo>
