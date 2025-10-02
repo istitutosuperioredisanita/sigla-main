@@ -151,8 +151,12 @@
 
 	<action path="/ConsDettResSpeAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction">
 	</action>
-
 	<action path="/ConsObbDettModAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction">
+	</action>
+
+	<action path="/ConsDettResEntAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction">
+	</action>
+	<action path="/ConsAccDettModAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction">
 	</action>
 
 	<action path="/ConsRiepilogoSiopeAction"
@@ -962,7 +966,7 @@
 		<init-param name="multiSelezione" value="Y" />
 	</businessProcess>
 
-		<businessProcess name="ConsDettResSpeBP"
+	<businessProcess name="ConsDettResSpeBP"
 					 className="it.cnr.jada.util.action.ConsultazioniBP">
 		<forward name="default" path="/consultazioni/form_lista.jsp" />
 		<init-param name="bulkClassName"
@@ -971,7 +975,6 @@
 		<init-param name="defaultAction" value="ConsDettResSpeAction" />
 		<init-param name="multiSelezione" value="Y" />
 	</businessProcess>
-
 	<businessProcess name="ConsObbDettModBP"
 					 className="it.cnr.jada.util.action.ConsultazioniBP">
 		<forward name="default" path="/consultazioni/form_lista.jsp" />
@@ -979,6 +982,25 @@
 					value="it.cnr.contab.doccont00.consultazioni.bulk.V_cons_obb_dett_modBulk" />
 		<init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
 		<init-param name="defaultAction" value="ConsObbDettModAction" />
+		<init-param name="multiSelezione" value="Y" />
+	</businessProcess>
+
+	<businessProcess name="ConsDettResEntBP"
+					 className="it.cnr.jada.util.action.ConsultazioniBP">
+		<forward name="default" path="/consultazioni/form_lista.jsp" />
+		<init-param name="bulkClassName"
+					value="it.cnr.contab.doccont00.consultazioni.bulk.V_cons_dett_res_entBulk" />
+		<init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
+		<init-param name="defaultAction" value="ConsDettResEntAction" />
+		<init-param name="multiSelezione" value="Y" />
+	</businessProcess>
+	<businessProcess name="ConsAccDettModBP"
+					 className="it.cnr.jada.util.action.ConsultazioniBP">
+		<forward name="default" path="/consultazioni/form_lista.jsp" />
+		<init-param name="bulkClassName"
+					value="it.cnr.contab.doccont00.consultazioni.bulk.V_cons_acc_dett_modBulk" />
+		<init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
+		<init-param name="defaultAction" value="ConsAccDettModAction" />
 		<init-param name="multiSelezione" value="Y" />
 	</businessProcess>
 

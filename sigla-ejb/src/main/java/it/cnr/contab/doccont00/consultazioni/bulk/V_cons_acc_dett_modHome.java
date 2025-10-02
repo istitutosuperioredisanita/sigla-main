@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+ * Copyright (C) 2022  Consiglio Nazionale delle Ricerche
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Affero General Public License as
@@ -27,14 +27,14 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
 
 import java.sql.Connection;
 
-public class V_cons_obb_dett_modHome extends BulkHome {
+public class V_cons_acc_dett_modHome extends BulkHome {
 
-    public V_cons_obb_dett_modHome(Connection conn) {
-        super(V_cons_obb_dett_modBulk.class, conn);
+    public V_cons_acc_dett_modHome(Connection conn) {
+        super(V_cons_acc_dett_modBulk.class, conn);
     }
 
-    public V_cons_obb_dett_modHome(Connection conn, PersistentCache persistentCache) {
-        super(V_cons_obb_dett_modBulk.class, conn, persistentCache);
+    public V_cons_acc_dett_modHome(Connection conn, PersistentCache persistentCache) {
+        super(V_cons_acc_dett_modBulk.class, conn, persistentCache);
     }
 
     /**
@@ -44,7 +44,7 @@ public class V_cons_obb_dett_modHome extends BulkHome {
     public SQLBuilder selectByClause(UserContext usercontext, CompoundFindClause compoundfindclause)
             throws PersistencyException {
 
-        SQLBuilder sql = createSQLBuilder();
+        SQLBuilder sql = super.selectByClause(usercontext, compoundfindclause);
 
         // Filtro per esercizio corrente
         sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(usercontext));
@@ -54,5 +54,4 @@ public class V_cons_obb_dett_modHome extends BulkHome {
 
         return sql;
     }
-
 }

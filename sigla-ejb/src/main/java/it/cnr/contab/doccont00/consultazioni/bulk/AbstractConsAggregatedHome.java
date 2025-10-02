@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+ * Copyright (C) 2022  Consiglio Nazionale delle Ricerche
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Affero General Public License as
@@ -27,18 +27,21 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
 
 import java.sql.Connection;
 
-public class V_cons_obb_dett_modHome extends BulkHome {
+/**
+ * Classe base astratta per le consultazioni con aggregazioni.
+ */
+public abstract class AbstractConsAggregatedHome extends BulkHome {
 
-    public V_cons_obb_dett_modHome(Connection conn) {
-        super(V_cons_obb_dett_modBulk.class, conn);
+    public AbstractConsAggregatedHome(Class bulkClass, Connection conn) {
+        super(bulkClass, conn);
     }
 
-    public V_cons_obb_dett_modHome(Connection conn, PersistentCache persistentCache) {
-        super(V_cons_obb_dett_modBulk.class, conn, persistentCache);
+    public AbstractConsAggregatedHome(Class bulkClass, Connection conn, PersistentCache persistentCache) {
+        super(bulkClass, conn, persistentCache);
     }
 
     /**
-     * Override per aggiungere filtri specifici
+     * Override per costruire query con GROUP BY e aggregazioni
      */
     @Override
     public SQLBuilder selectByClause(UserContext usercontext, CompoundFindClause compoundfindclause)
@@ -46,13 +49,34 @@ public class V_cons_obb_dett_modHome extends BulkHome {
 
         SQLBuilder sql = createSQLBuilder();
 
+        // Reset colonne
+        sql.resetColumns();
+
+        // Costruisci SELECT con aggregazioni e GROUP BY (metodo astratto)
+        buildAggregatedSelect(sql);
+
         // Filtro per esercizio corrente
         sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(usercontext));
 
-        // Filtro per avere solo record con modifiche
-        sql.addSQLClause("AND", "PG_VAR_RES_PRO", SQLBuilder.ISNOTNULL, null);
+        // Applica clausole WHERE se presenti
+        if (compoundfindclause != null) {
+            sql.addClause(compoundfindclause);
+        }
 
         return sql;
     }
 
+    /**
+     * Metodo astratto da implementare nelle sottoclassi home (acc/obb) per definire
+     * le colonne specifiche da aggregare
+     */
+    protected abstract void buildAggregatedSelect(SQLBuilder sql);
+
+    /**
+     * aggiunge una colonna e la relativa clausola GROUP BY
+     */
+    protected void addColumnWithGroupBy(SQLBuilder sql, String columnName) {
+        sql.addColumn(columnName);
+        sql.addSQLGroupBy(columnName.toLowerCase());
+    }
 }
