@@ -3744,38 +3744,6 @@ public abstract class Fattura_passivaBulk
         return REGISTRATO_IN_FONDO_ECO.equalsIgnoreCase(getStato_pagamento_fondo_eco());
     }
 
-    /**
-     * Ritorna sempre valore null in quanto campo valido solo per liquidazioni
-     */
-    @Override
-    public Timestamp getDtInizioLiquid() {
-        return null;
-    }
-
-    /**
-     * Ritorna sempre valore null in quanto campo valido solo per liquidazioni
-     */
-    @Override
-    public Timestamp getDtFineLiquid() {
-        return null;
-    }
-
-    /**
-     * Ritorna sempre valore null in quanto campo valido solo per liquidazioni
-     */
-    @Override
-    public String getTipoLiquid() {
-        return null;
-    }
-
-    /**
-     * Ritorna sempre valore null in quanto campo valido solo per liquidazioni
-     */
-    @Override
-    public Long getReportIdLiquid() {
-        return null;
-    }
-
     public boolean isFatturaDiBeni() {
         return Bene_servizioBulk.BENE.equals(this.getTi_bene_servizio());
     }

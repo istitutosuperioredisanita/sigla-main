@@ -96,16 +96,25 @@ public class Scrittura_analiticaHome extends BulkHome {
 		SQLBuilder sql = this.createSQLBuilder();
 		sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, documentoCogeBulk.getEsercizio());
 		sql.addClause(FindClause.AND, "cd_cds_documento", SQLBuilder.EQUALS, documentoCogeBulk.getCd_cds());
-		sql.addClause(FindClause.AND, "cd_uo_documento", SQLBuilder.EQUALS, documentoCogeBulk.getCd_uo());
-		sql.addClause(FindClause.AND, "cd_tipo_documento", SQLBuilder.EQUALS, documentoCogeBulk.getCd_tipo_doc());
 
 		if (documentoCogeBulk.getCd_tipo_doc().equals(TipoDocumentoEnum.LIQUIDAZIONE_IVA.getValue())) {
+            sql.addClause(FindClause.AND, "cd_tipo_documento", SQLBuilder.EQUALS, documentoCogeBulk.getCd_tipo_doc());
+            sql.addClause(FindClause.AND, "cd_uo_documento", SQLBuilder.EQUALS, documentoCogeBulk.getCd_uo());
 			sql.addClause(FindClause.AND, "dt_inizio_liquid", SQLBuilder.EQUALS, documentoCogeBulk.getDtInizioLiquid());
 			sql.addClause(FindClause.AND, "dt_fine_liquid", SQLBuilder.EQUALS, documentoCogeBulk.getDtFineLiquid());
 			sql.addClause(FindClause.AND, "tipo_liquidazione", SQLBuilder.EQUALS, documentoCogeBulk.getTipoLiquid());
 			sql.addClause(FindClause.AND, "report_id_liquid", SQLBuilder.EQUALS, documentoCogeBulk.getReportIdLiquid());
-		} else
-			sql.addClause("AND", "pg_numero_documento", SQLBuilder.EQUALS, documentoCogeBulk.getPg_doc());
+        } else if (documentoCogeBulk.getCd_tipo_doc().equals(TipoDocumentoEnum.CONSEGNA_ORDINE_ACQUISTO.getValue())) {
+            sql.addClause(FindClause.AND, "cdUnitaOperativa", SQLBuilder.EQUALS, documentoCogeBulk.getCdUnitaOperativa());
+            sql.addClause(FindClause.AND, "cdNumeratoreOrdine", SQLBuilder.EQUALS, documentoCogeBulk.getCdNumeratoreOrdine());
+            sql.addClause(FindClause.AND, "pg_numero_documento", SQLBuilder.EQUALS, documentoCogeBulk.getPg_doc());
+            sql.addClause(FindClause.AND, "rigaOrdine", SQLBuilder.EQUALS, documentoCogeBulk.getRigaOrdine());
+            sql.addClause(FindClause.AND, "consegna", SQLBuilder.EQUALS, documentoCogeBulk.getConsegna());
+        } else {
+            sql.addClause(FindClause.AND, "cd_tipo_documento", SQLBuilder.EQUALS, documentoCogeBulk.getCd_tipo_doc());
+            sql.addClause(FindClause.AND, "cd_uo_documento", SQLBuilder.EQUALS, documentoCogeBulk.getCd_uo());
+            sql.addClause(FindClause.AND, "pg_numero_documento", SQLBuilder.EQUALS, documentoCogeBulk.getPg_doc());
+        }
 		return fetchAll(sql);
 	}
 }

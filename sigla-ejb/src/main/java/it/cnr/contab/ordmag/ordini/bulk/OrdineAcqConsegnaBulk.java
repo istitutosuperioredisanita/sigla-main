@@ -21,14 +21,13 @@
  */
 package it.cnr.contab.ordmag.ordini.bulk;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.*;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.docamm00.docs.bulk.TipoDocumentoEnum;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
@@ -46,7 +45,7 @@ import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.jada.util.action.CRUDBP;
 import org.springframework.util.Assert;
 
-public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase implements IDocumentoDetailEcoCogeBulk {
+public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase implements IDocumentoCogeBulk, IDocumentoDetailEcoCogeBulk {
 	public final static String STATO_INSERITA = "INS";
 	public final static String STATO_EVASA = "EVA";
 	public final static String STATO_EVASA_FORZATAMENTE = "EVF";
@@ -78,6 +77,8 @@ public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase implements IDoc
 	private java.lang.Boolean autorizzaQuantitaEvasaMaggioreOrdinata = Boolean.FALSE;
 	private String operazioneQuantitaEvasaMinore;
 	private BulkList<OrdineAcqConsegnaEcoBulk> righeEconomica = new BulkList<>();
+    private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
+    private Scrittura_analiticaBulk scrittura_analitica;
 
 	public final static Dictionary OPERAZIONE_EVASIONE_CONSEGNA;
 
@@ -181,14 +182,14 @@ public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase implements IDoc
 		this.getOrdineAcqRiga().setCdUnitaOperativa(cdUnitaOperativa);
 	}
 
-	public java.lang.Integer getEsercizio() {
+    public java.lang.Integer getEsercizio() {
 		OrdineAcqRigaBulk ordineAcqRiga = this.getOrdineAcqRiga();
 		if (ordineAcqRiga == null)
 			return null;
 		return getOrdineAcqRiga().getEsercizio();
 	}
 
-	public void setEsercizio(java.lang.Integer esercizio)  {
+    public void setEsercizio(java.lang.Integer esercizio)  {
 		this.getOrdineAcqRiga().setEsercizio(esercizio);
 	}
 	
@@ -681,4 +682,84 @@ public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase implements IDoc
 				   this.getFatturaOrdineBulk().getImTotaleConsegna().compareTo(this.getImTotaleConsegna()) !=0;
 		return Boolean.FALSE;
 	}
+
+    @Override
+    public String getCd_tipo_doc() {
+        return this.getTipoDocumentoEnum().getValue();
+    }
+
+    @Override
+    public String getCd_cds() {
+        return this.getCdCds();
+    }
+
+    @Override
+    public String getCd_uo() {
+        return Optional.ofNullable(this.getOrdineAcqRiga())
+                .flatMap(el->Optional.ofNullable(el.getOrdineAcq()))
+                .flatMap(el->Optional.ofNullable(el.getUnitaOperativaOrd()))
+                .flatMap(el->Optional.ofNullable(el.getCdUnitaOrganizzativa()))
+                .orElse(null);
+    }
+
+    @Override
+    public Long getPg_doc() {
+        return this.getNumero().longValue();
+    }
+
+    @Override
+    public TipoDocumentoEnum getTipoDocumentoEnum() {
+        return TipoDocumentoEnum.CONSEGNA_ORDINE_ACQUISTO;
+    }
+
+    @Override
+    public Scrittura_partita_doppiaBulk getScrittura_partita_doppia() {
+        return scrittura_partita_doppia;
+    }
+
+    @Override
+    public void setScrittura_partita_doppia(Scrittura_partita_doppiaBulk scrittura_partita_doppia) {
+        this.scrittura_partita_doppia = scrittura_partita_doppia;
+    }
+
+    @Override
+    public Scrittura_analiticaBulk getScrittura_analitica() {
+        return scrittura_analitica;
+    }
+
+    @Override
+    public void setScrittura_analitica(Scrittura_analiticaBulk scrittura_analitica) {
+        this.scrittura_analitica = scrittura_analitica;
+    }
+
+    @Override
+    public Timestamp getDtGenerazioneScrittura() {
+        return this.getDt_contabilizzazione();
+    }
+
+    @Override
+    public String getCdNumeratoreOrdine() {
+        return this.getCdNumeratore();
+    }
+
+    @Override
+    public Integer getRigaOrdine() {
+        return this.getRiga();
+    }
+
+    @Override
+    public Timestamp getDt_contabilizzazione() {
+        //Metto la data di ultima variazione che dovrebbe corrispondere alla data di evasione
+        return this.getDuva();
+    }
+
+    @Override
+    public Timestamp getDt_da_competenza_coge() {
+        return this.getDt_contabilizzazione();
+    }
+
+    @Override
+    public Timestamp getDt_a_competenza_coge() {
+        return this.getDt_contabilizzazione();
+    }
 }

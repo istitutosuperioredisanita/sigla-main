@@ -192,10 +192,14 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 						final Button button = new Button(Config.getHandler().getProperties(CRUDOrdineAcqBP.class), "Toolbar.visualizzaMovimento");
 						button.writeToolbarButton(pagecontext.getOut(), true, HttpActionContext.isFromBootstrap(pagecontext));
 					}
-					if (ordineAcqConsegnaBulk.get().isStatoConsegnaInserita() && ordineAcqConsegnaBulk.get().getOrdineAcqRiga().getOrdineAcq().isOrdineDefinitivo()) {
-						final Button button = new Button(Config.getHandler().getProperties(CRUDOrdineAcqBP.class), "Toolbar.evadiConsegna");
-						button.writeToolbarButton(pagecontext.getOut(), true, HttpActionContext.isFromBootstrap(pagecontext));
-					}
+                    if (ordineAcqConsegnaBulk.get().isStatoConsegnaEvasa()) {
+                        final Button button = new Button(Config.getHandler().getProperties(CRUDOrdineAcqBP.class), "Toolbar.scritturaEconomica");
+                        button.writeToolbarButton(pagecontext.getOut(), true, HttpActionContext.isFromBootstrap(pagecontext));
+                    }
+                    if (ordineAcqConsegnaBulk.get().isStatoConsegnaEvasa()) {
+                        final Button button = new Button(Config.getHandler().getProperties(CRUDOrdineAcqBP.class), "Toolbar.scritturaAnalitica");
+                        button.writeToolbarButton(pagecontext.getOut(), true, HttpActionContext.isFromBootstrap(pagecontext));
+                    }
 					if (ordineAcqConsegnaBulk.filter(bulk -> bulk.getStatoFatt().equalsIgnoreCase(OrdineAcqConsegnaBulk.STATO_FATT_ASSOCIATA_TOTALMENTE))
 							.isPresent()) {
 						if (ordineAcqConsegnaBulk.get().getFatturaOrdineBulk()==null) {

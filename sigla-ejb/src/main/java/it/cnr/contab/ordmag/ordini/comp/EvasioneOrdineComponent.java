@@ -314,7 +314,7 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 					consegnaDB.setStato(OrdineAcqConsegnaBulk.STATO_EVASA);
 					consegnaDB.setToBeUpdated();
 					makeBulkPersistent(userContext, consegnaDB);
-				}
+                }
 
 				//Ricarico l'ordine
 				OrdineAcqBulk ordineComp = ((OrdineAcqHome)getHome(userContext, OrdineAcqBulk.class)).initializeBulkForEdit(ordineSelected);
@@ -367,6 +367,9 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 				assegnaProgressivo(userContext, evasioneOrdine);
 				creaConBulk(userContext, evasioneOrdine);
 			}
+
+            for (EvasioneOrdineRigaBulk rigaEvasione : evasioneOrdine.getEvasioneOrdineRigheColl())
+                Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().createScrittura(userContext, rigaEvasione.getOrdineAcqConsegna());
 
 			if (!listaMovimentiScarico.isEmpty()) {
 				try {

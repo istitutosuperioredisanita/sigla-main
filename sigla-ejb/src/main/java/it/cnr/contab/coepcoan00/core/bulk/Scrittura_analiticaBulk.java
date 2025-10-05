@@ -19,6 +19,7 @@ package it.cnr.contab.coepcoan00.core.bulk;
 
 import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.anagraf00.core.bulk.*;
+import it.cnr.contab.docamm00.docs.bulk.TipoDocumentoEnum;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.action.MessageToUser;
 import it.cnr.jada.bulk.*;
@@ -342,4 +343,20 @@ public class Scrittura_analiticaBulk extends Scrittura_analiticaBase {
 		return getImTotaleDare().subtract(this.getImTotaleAvere()).abs();
 	}
 
+    public boolean isScritturaFromConsegnaOrdineAcquisto() {
+        return TipoDocumentoEnum.CONSEGNA_ORDINE_ACQUISTO.getValue().equals(this.getCd_tipo_documento());
+    }
+
+    public String getChiaveDocumentoOrigine() {
+        if (this.isScritturaFromConsegnaOrdineAcquisto()) {
+            return "Ordine: " + this.getEsercizio_documento_amm() + "/" +
+                    this.getCd_cds() + "/" +
+                    this.getCdUnitaOperativa() + "/" +
+                    this.getCdNumeratoreOrdine() + "/" +
+                    this.getPg_numero_documento() + " - Riga: " +
+                    this.getRigaOrdine() + " - Consegna: " +
+                    this.getConsegna();
+        }
+        return null;
+    }
 }

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="raffaele.pagano" id="add_column_ordine_acq_consegna_on_scrittura_partita_doppia">
+        <addColumn tableName="SCRITTURA_PARTITA_DOPPIA">
+            <column name="cd_numeratore_ordine" remarks="Codice del numeratore dell'ordine" type="VARCHAR(3)"/>
+            <column name="riga_ordine" remarks="Riga dell'ordine" type="INT"/>
+            <column name="consegna" remarks="Consegna dell'ordine" type="INT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="add_column_stato_coge_on_ordine_acq_consegna">
+        <addColumn tableName="ORDINE_ACQ_CONSEGNA">
+            <column name="stato_coge" remarks="Stato consegna ordine per contabilità economico/ patrimoniale.&#10;&#10;Dominio&#10;N = Non è stata generata alcuna scrittura in COGE&#10;R = Documento registrato in COGE" type="CHAR(1)"/>
+            <column name="stato_coan" remarks="Stato consegna ordine per contabilità analitica.&#10;&#10;Dominio&#10;N = Non è stata generata alcuna scrittura in COAN&#10;R = Documento registrato in COAN" type="CHAR(1)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="add_column_ordine_acq_consegna_on_scrittura_analitica">
+        <addColumn tableName="SCRITTURA_ANALITICA">
+            <column name="cd_numeratore_ordine" remarks="Codice del numeratore dell'ordine" type="VARCHAR(3)"/>
+            <column name="riga_ordine" remarks="Riga dell'ordine" type="INT"/>
+            <column name="consegna" remarks="Consegna dell'ordine" type="INT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="add_column_ordine_on_scritture">
+        <addColumn tableName="SCRITTURA_PARTITA_DOPPIA">
+            <column name="cd_unita_operativa" remarks="Codice unita' operativa" type="VARCHAR(30)"/>
+        </addColumn>
+        <addColumn tableName="SCRITTURA_ANALITICA">
+            <column name="cd_unita_operativa" remarks="Codice unita' operativa" type="VARCHAR(30)"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

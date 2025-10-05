@@ -6241,4 +6241,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
 
     <!-- Autore : RAFFAELE PAGANO - MODIFICHE TABELLE PER GESTIONE MULTI CLASSIFICAZIONI -->
     <include file="bootstrap/modify_table_for_multi_classificazioni_ep.xml"/>
+    <!-- Autore : RAFFAELE PAGANO - MODIFICHE TABELLE PER GESTIONE SCRITTURA SU CONSEGNA ORDINE -->
+    <include file="bootstrap/add_column_ordine_acq_consegna_scrittura_partita_doppia.xml"/>
+
 </databaseChangeLog>

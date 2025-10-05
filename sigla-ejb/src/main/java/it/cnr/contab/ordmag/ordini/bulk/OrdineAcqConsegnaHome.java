@@ -29,23 +29,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
-import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
-import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
-import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcep.bulk.*;
 import it.cnr.contab.docamm00.docs.bulk.*;
-import it.cnr.contab.docamm00.tabrif.bulk.AssCatgrpInventVoceEpBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.AssCatgrpInventVoceEpHome;
-import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scad_voceBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioHome;
 import it.cnr.contab.ordmag.anag00.UnitaOperativaOrdBulk;
 import it.cnr.contab.ordmag.anag00.UnitaOperativaOrdHome;
-import it.cnr.contab.pdg00.bulk.Pdg_residuo_detBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -115,6 +106,7 @@ public class OrdineAcqConsegnaHome extends BulkHome {
 			if (conto == null)
 				return ((OrdineAcqRigaHome)getHomeCache().getHome(OrdineAcqRigaBulk.class))
 						.getContoEconomicoDefault(ordineAcqRigaBulk);
+            return conto;
 		}
 		return null;
 	}

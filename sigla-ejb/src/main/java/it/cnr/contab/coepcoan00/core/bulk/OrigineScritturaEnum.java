@@ -22,6 +22,7 @@ public enum OrigineScritturaEnum {
 	PRIMA_NOTA_MANUALE("Prima Nota Manuale"),
 	DOCAMM( "Documento Amministrativo"),
 	DOCCONT("Documento Contabile"),
+    RISCONTRO_A_VALORE("Riscontro a Valore"),
 	STIPENDI("Stipendi"),
 	LIQUID_IVA("Liquidazione IVA"),
 	PRECHIUSURA("Prechiusura Bilancio"),

@@ -1335,7 +1335,7 @@ public class OrdineAcqBulk extends OrdineAcqBase
     @Override
     public String getCd_tipo_doc_amm() {
         // TODO Auto-generated method stub
-        return TipoDocumentoEnum.ORDINE_ACQUISTO.getValue();
+        return TipoDocumentoEnum.CONSEGNA_ORDINE_ACQUISTO.getValue();
     }
 
     @Override
@@ -1667,38 +1667,6 @@ public class OrdineAcqBulk extends OrdineAcqBase
     @Override
     public String getStato_coan() {
         //TODO Da implementare
-        return null;
-    }
-
-    /**
-     * Ritorna sempre valore null in quanto campo valido solo per liquidazioni
-     */
-    @Override
-    public Timestamp getDtInizioLiquid() {
-        return null;
-    }
-
-    /**
-     * Ritorna sempre valore null in quanto campo valido solo per liquidazioni
-     */
-    @Override
-    public Timestamp getDtFineLiquid() {
-        return null;
-    }
-
-    /**
-     * Ritorna sempre valore null in quanto campo valido solo per liquidazioni
-     */
-    @Override
-    public String getTipoLiquid() {
-        return null;
-    }
-
-    /**
-     * Ritorna sempre valore null in quanto campo valido solo per liquidazioni
-     */
-    @Override
-    public Long getReportIdLiquid() {
         return null;
     }
 

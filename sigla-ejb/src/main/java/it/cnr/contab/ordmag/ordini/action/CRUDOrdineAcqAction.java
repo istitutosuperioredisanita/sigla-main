@@ -19,6 +19,9 @@ package it.cnr.contab.ordmag.ordini.action;
 
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.coepcoan00.action.CRUDScritturaAnaliticaAction;
+import it.cnr.contab.coepcoan00.bp.CRUDScritturaAnaliticaBP;
+import it.cnr.contab.coepcoan00.bp.CRUDScritturaPDoppiaBP;
 import it.cnr.contab.config00.bp.CRUDConfigAnagContrattoBP;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
 import it.cnr.contab.config00.contratto.bulk.Dettaglio_contrattoBulk;
@@ -50,12 +53,18 @@ import it.cnr.contab.ordmag.ordini.ejb.OrdineAcqComponentSession;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.action.*;
 import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.persistency.sql.FindClause;
+import it.cnr.jada.persistency.sql.SQLBuilder;
+import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.*;
+import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import javax.persistence.PersistenceException;
 import java.math.BigDecimal;
@@ -2265,7 +2274,106 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                 return handleException(actioncontext, e);
             }
         }
-        setMessage(actioncontext, FormBP.ERROR_MESSAGE, "Fattura legata a consegna non trovata!");
+        setMessage(actioncontext, FormBP.ERROR_MESSAGE, "Consegna non selezionata!");
+        return actioncontext.findDefaultForward();
+    }
+
+    public Forward doVisualizzaEconomica(ActionContext actioncontext) throws BusinessProcessException {
+        final CRUDOrdineAcqBP crudOrdineAcqBP = (CRUDOrdineAcqBP) actioncontext.getBusinessProcess();
+        OrdineAcqConsegnaBulk ordineAcqConsegnaBulk = (OrdineAcqConsegnaBulk)crudOrdineAcqBP.getConsegne().getModel();
+        if (ordineAcqConsegnaBulk!=null) {
+            try {
+                CRUDScritturaPDoppiaBP nbp = (CRUDScritturaPDoppiaBP) actioncontext.createBusinessProcess("CRUDScritturaPDoppiaBP", new Object[]{"M"});
+                nbp = (CRUDScritturaPDoppiaBP) actioncontext.addBusinessProcess(nbp);
+                nbp.setStatus(FormController.VIEW);
+                nbp.resetForSearch(actioncontext);
+                OggettoBulk oggettobulk = nbp.getModel();
+
+                CompoundFindClause clauses = new CompoundFindClause();
+                clauses.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getEsercizio());
+                clauses.addClause(FindClause.AND, "cd_cds_documento", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getCd_cds());
+                clauses.addClause(FindClause.AND, "cdUnitaOperativa", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getCdUnitaOperativa());
+                clauses.addClause(FindClause.AND, "cdNumeratoreOrdine", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getCdNumeratoreOrdine());
+                clauses.addClause(FindClause.AND, "pg_numero_documento", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getPg_doc());
+                clauses.addClause(FindClause.AND, "rigaOrdine", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getRigaOrdine());
+                clauses.addClause(FindClause.AND, "consegna", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getConsegna());
+
+                final RemoteIterator remoteiterator = nbp.find(actioncontext, clauses, oggettobulk);
+                if (remoteiterator == null || remoteiterator.countElements() == 0) {
+                    EJBCommonServices.closeRemoteIterator(actioncontext, remoteiterator);
+                    nbp.setMessage("Scrittura Economica legata a consegna non trovata!");
+                    return actioncontext.findDefaultForward();
+                }
+                if (remoteiterator.countElements() == 1) {
+                    OggettoBulk oggettobulk1 = (OggettoBulk) remoteiterator.nextElement();
+                    EJBCommonServices.closeRemoteIterator(actioncontext, remoteiterator);
+                    nbp.setStatus(FormController.VIEW);
+                    CRUDScritturaAnaliticaAction analiticaAction = new CRUDScritturaAnaliticaAction();
+                    analiticaAction.doRiportaSelezione(actioncontext, oggettobulk1);
+                    return nbp;
+                } else {
+                    SelezionatoreListaBP selezionatorelistabp = (SelezionatoreListaBP) actioncontext.createBusinessProcess("Selezionatore");
+                    selezionatorelistabp.setIterator(actioncontext, remoteiterator);
+                    selezionatorelistabp.setBulkInfo(nbp.getSearchBulkInfo());
+                    selezionatorelistabp.setColumns(getBusinessProcess(actioncontext).getSearchResultColumns());
+                    actioncontext.addHookForward("seleziona", this, "doRiportaSelezione");
+                    return actioncontext.addBusinessProcess(selezionatorelistabp);
+                }
+            } catch (Throwable e) {
+                return handleException(actioncontext, e);
+            }
+        }
+        setMessage(actioncontext, FormBP.ERROR_MESSAGE, "Scrittura Economica legata a consegna non trovata!");
+        return actioncontext.findDefaultForward();
+    }
+
+    public Forward doVisualizzaAnalitica(ActionContext actioncontext) throws BusinessProcessException {
+        final CRUDOrdineAcqBP crudOrdineAcqBP = (CRUDOrdineAcqBP) actioncontext.getBusinessProcess();
+        OrdineAcqConsegnaBulk ordineAcqConsegnaBulk = (OrdineAcqConsegnaBulk)crudOrdineAcqBP.getConsegne().getModel();
+        if (ordineAcqConsegnaBulk!=null) {
+            try {
+                CRUDScritturaAnaliticaBP nbp = (CRUDScritturaAnaliticaBP) actioncontext.createBusinessProcess("CRUDScritturaAnaliticaBP", new Object[]{"M"});
+                nbp = (CRUDScritturaAnaliticaBP) actioncontext.addBusinessProcess(nbp);
+                nbp.setStatus(FormController.VIEW);
+
+                nbp.resetForSearch(actioncontext);
+                OggettoBulk oggettobulk = nbp.getModel();
+
+                CompoundFindClause clauses = new CompoundFindClause();
+                clauses.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getEsercizio());
+                clauses.addClause(FindClause.AND, "cd_cds_documento", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getCd_cds());
+                clauses.addClause(FindClause.AND, "cdUnitaOperativa", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getCdUnitaOperativa());
+                clauses.addClause(FindClause.AND, "cdNumeratoreOrdine", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getCdNumeratoreOrdine());
+                clauses.addClause(FindClause.AND, "pg_numero_documento", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getPg_doc());
+                clauses.addClause(FindClause.AND, "rigaOrdine", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getRigaOrdine());
+                clauses.addClause(FindClause.AND, "consegna", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getConsegna());
+
+                final RemoteIterator remoteiterator = nbp.find(actioncontext, clauses, oggettobulk);
+                if (remoteiterator == null || remoteiterator.countElements() == 0) {
+                    EJBCommonServices.closeRemoteIterator(actioncontext, remoteiterator);
+                    nbp.setMessage("Scrittura Analitica legata a consegna non trovata!");
+                    return actioncontext.findDefaultForward();
+                }
+                if (remoteiterator.countElements() == 1) {
+                    OggettoBulk oggettobulk1 = (OggettoBulk) remoteiterator.nextElement();
+                    EJBCommonServices.closeRemoteIterator(actioncontext, remoteiterator);
+                    nbp.setStatus(FormController.VIEW);
+                    CRUDScritturaAnaliticaAction analiticaAction = new CRUDScritturaAnaliticaAction();
+                    analiticaAction.doRiportaSelezione(actioncontext, oggettobulk1);
+                    return nbp;
+                } else {
+                    SelezionatoreListaBP selezionatorelistabp = (SelezionatoreListaBP) actioncontext.createBusinessProcess("Selezionatore");
+                    selezionatorelistabp.setIterator(actioncontext, remoteiterator);
+                    selezionatorelistabp.setBulkInfo(nbp.getSearchBulkInfo());
+                    selezionatorelistabp.setColumns(getBusinessProcess(actioncontext).getSearchResultColumns());
+                    actioncontext.addHookForward("seleziona", this, "doRiportaSelezione");
+                    return actioncontext.addBusinessProcess(selezionatorelistabp);
+                }
+            } catch (Throwable e) {
+                return handleException(actioncontext, e);
+            }
+        }
+        setMessage(actioncontext, FormBP.ERROR_MESSAGE, "Scrittura Analitica legata a consegna non trovata!");
         return actioncontext.findDefaultForward();
     }
 }

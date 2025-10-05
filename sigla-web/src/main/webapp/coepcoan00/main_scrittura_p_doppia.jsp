@@ -9,6 +9,7 @@
 		it.cnr.jada.action.*,
 		it.cnr.jada.bulk.*,
 		it.cnr.jada.util.action.*,
+		it.cnr.contab.coepcoan00.core.bulk.*,
 		it.cnr.contab.coepcoan00.bp.*"
 %>
 
@@ -26,6 +27,7 @@
 
 <%  
 		CRUDScritturaPDoppiaBP bp = (CRUDScritturaPDoppiaBP)BusinessProcess.getBusinessProcess(request);
+		Scrittura_partita_doppiaBulk model = (Scrittura_partita_doppiaBulk)bp.getModel();
 		bp.openFormWindow(pageContext);
 %>
 <div class="Group card p-2 mb-2">
@@ -41,21 +43,33 @@
     </div>
 </div>
 <% if (!bp.isInserting() && bp.isFromDocumentoOrigine()) { %>
-<div class="card my-2">
-  <h3 class="card-header text-info"><i class="fa fa-question-circle fa-fw" aria-hidden="true"></i> Documento origine</h3>
-  <div class="card-block p-2">
-    <div class="form-row">
-        <div class="col-md-4"><% bp.getController().writeFormField(out, "cd_tipo_documento", Boolean.FALSE);%></div>
-        <div class="col-md-4"><% bp.getController().writeFormField(out, "pg_numero_documento", Boolean.FALSE);%></div>
-        <div class="col-md-4"><% bp.getController().writeFormField(out, "cd_comp_documento", Boolean.FALSE);%></div>
-    </div>
-    <div class="form-row">
-        <div class="col-md-2"><% bp.getController().writeFormField(out, "esercizio_documento_amm", Boolean.FALSE);%></div>
-        <div class="col-md-4"><% bp.getController().writeFormField(out, "cds_documento", Boolean.FALSE);%></div>
-        <div class="col-md-6"><% bp.getController().writeFormField(out, "uo_documento", Boolean.FALSE);%></div>
-    </div>
-  </div>
-</div>
+    <% if (model.isScritturaFromConsegnaOrdineAcquisto()) { %>
+        <div class="card my-2">
+          <h3 class="card-header text-info"><i class="fa fa-question-circle fa-fw" aria-hidden="true"></i> Documento origine</h3>
+          <div class="card-block p-2">
+            <div class="form-row">
+                <div class="col-md-4"><% bp.getController().writeFormField(out, "cd_tipo_documento", Boolean.FALSE);%></div>
+                <div class="col-md-8"><% bp.getController().writeFormField(out, "chiaveDocumentoOrigine", Boolean.FALSE);%></div>
+            </div>
+          </div>
+        </div>
+    <% } else { %>
+        <div class="card my-2">
+          <h3 class="card-header text-info"><i class="fa fa-question-circle fa-fw" aria-hidden="true"></i> Documento origine</h3>
+          <div class="card-block p-2">
+            <div class="form-row">
+                <div class="col-md-4"><% bp.getController().writeFormField(out, "cd_tipo_documento", Boolean.FALSE);%></div>
+                <div class="col-md-4"><% bp.getController().writeFormField(out, "pg_numero_documento", Boolean.FALSE);%></div>
+                <div class="col-md-4"><% bp.getController().writeFormField(out, "cd_comp_documento", Boolean.FALSE);%></div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-2"><% bp.getController().writeFormField(out, "esercizio_documento_amm", Boolean.FALSE);%></div>
+                <div class="col-md-4"><% bp.getController().writeFormField(out, "cds_documento", Boolean.FALSE);%></div>
+                <div class="col-md-6"><% bp.getController().writeFormField(out, "uo_documento", Boolean.FALSE);%></div>
+            </div>
+          </div>
+        </div>
+    <% } %>
 <% } %>
 <%
     JSPUtils.tabbed(

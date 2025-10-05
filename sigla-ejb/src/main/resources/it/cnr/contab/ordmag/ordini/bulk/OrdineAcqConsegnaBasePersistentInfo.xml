@@ -222,12 +222,24 @@
 			columnSize="22"
 			nullable="false" />
 		<columnMapping
-				columnName="QUANTITA_ORIG"
-				propertyName="quantitaOrig"
-				sqlTypeName="DECIMAL"
-				columnSize="17"
-				columnScale="5" />
-	</defaultColumnMap>
+			columnName="QUANTITA_ORIG"
+			propertyName="quantitaOrig"
+			sqlTypeName="DECIMAL"
+			columnSize="17"
+			columnScale="5" />
+        <columnMapping
+            columnName="STATO_COGE"
+            propertyName="stato_coge"
+            sqlTypeName="CHAR"
+            columnSize="1"
+            nullable="true" />
+        <columnMapping
+            columnName="STATO_COAN"
+            propertyName="stato_coan"
+            sqlTypeName="CHAR"
+            columnSize="1"
+            nullable="true" />
+    </defaultColumnMap>
 	<persistentProperty
 		name="stato" />
 	<persistentProperty
@@ -279,12 +291,16 @@
 	<persistentProperty
 		name="vecchiaConsegna" />
 	<persistentProperty
-			name="cdVoceEp" />
+		name="cdVoceEp" />
 	<persistentProperty
-			name="esercizioEp" />
+		name="esercizioEp" />
 	<persistentProperty
 		name="dtCancellazione" />
-	<persistentProperty
+    <persistentProperty
+        name="stato_coge" />
+    <persistentProperty
+        name="stato_coan" />
+    <persistentProperty
 		name="dacr" />
 	<persistentProperty
 		name="utcr" />

@@ -273,6 +273,14 @@
 		enabledOnEdit="false"
 		caseSensitiveSearch="false"
 		nullable="false"/>
+    <fieldProperty
+        name="chiaveDocumentoOrigine"
+        property="chiaveDocumentoOrigine"
+        maxLength="30"
+        inputSize="10"
+        inputType="TEXT"
+        label="Documento"
+        caseSensitiveSearch="false" />
 
 	<formFieldProperty
 		name="cd_cds" />
@@ -339,6 +347,8 @@
 		extend="ds_scrittura"
 		inputType="TEXTAREA"
 		rows="5"/>
+    <formFieldProperty
+        name="chiaveDocumentoOrigine" />
 
 	<columnFieldProperty
 		name="esercizio" />

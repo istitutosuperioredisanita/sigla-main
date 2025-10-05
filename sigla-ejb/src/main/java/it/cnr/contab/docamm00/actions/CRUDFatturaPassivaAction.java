@@ -971,7 +971,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                     .map(Pair::getSecond)
                     .collect(Collectors.toList());
 
-            final List<OrdineAcqConsegnaBulk> oggettoBulks = Arrays.asList((OrdineAcqConsegnaBulk[]) crudFatturaPassivaBP.get().createComponentSession()
+            final List<OrdineAcqConsegnaBulk> oggettoBulks = Arrays.asList((OrdineAcqConsegnaBulk[]) ((CRUDComponentSession)crudFatturaPassivaBP.get().createComponentSession("JADAEJB_CRUDComponentSession"))
                     .modificaConBulk(context.getUserContext(), ordineAcqConsegnaBulks.toArray(new OrdineAcqConsegnaBulk[ordineAcqConsegnaBulks.size()])));
             for (int i = 0; i < pairs.size(); i++) {
                 final FatturaOrdineBulk fatturaOrdineBulk = pairs.get(i).getFirst();
@@ -4181,16 +4181,15 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                 .filter(selection1 -> !selection1.isEmpty())
                 .orElseThrow(() -> new ApplicationException("Selezionare le consegne che si desidera eliminare!"));
 
-
         final List<FatturaOrdineBulk> details = bp.getFatturaOrdiniController().getDetails();
         final Iterator<Integer> iterator = selection.iterator();
-        List<FatturaOrdineBulk> bulksToRemove = new ArrayList<FatturaOrdineBulk>();
+        List<FatturaOrdineBulk> bulksToRemove = new ArrayList<>();
         iterator.forEachRemaining(index -> {
             try {
                 final FatturaOrdineBulk fatturaOrdineBulk = details.get(index);
                 if (fatturaOrdineBulk.getFatturaPassivaRiga().isPagata())
                     throw new DetailedRuntimeException(new ApplicationException("La riga non può essere eliminata in quanto asscociata ad un pagamento!"));
-                Optional.ofNullable(fattura.getFattura_passiva_dettColl().indexOf(fatturaOrdineBulk.getFatturaPassivaRiga()))
+                Optional.of(fattura.getFattura_passiva_dettColl().indexOf(fatturaOrdineBulk.getFatturaPassivaRiga()))
                         .filter(i -> i != -1)
                         .ifPresent(i -> {
                             final Fattura_passiva_rigaBulk fatturaPassivaRigaBulk = fattura.removeFromFattura_passiva_dettColl(i);
@@ -4201,7 +4200,8 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                         .findByPrimaryKey(context.getUserContext(), fatturaOrdineBulk.getOrdineAcqConsegna());
                 ordineAcqConsegna.setStatoFatt(OrdineAcqConsegnaBulk.STATO_FATT_NON_ASSOCIATA);
                 ordineAcqConsegna.setToBeUpdated();
-                bp.createComponentSession().modificaConBulk(
+                ((CRUDComponentSession)bp.createComponentSession("JADAEJB_CRUDComponentSession"))
+                    .modificaConBulk(
                         context.getUserContext(),
                         ordineAcqConsegna);
                 bulksToRemove.add(fatturaOrdineBulk);
@@ -4209,11 +4209,12 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                 throw new DetailedRuntimeException(e);
             }
         });
-        bulksToRemove.stream()
-                .forEach(fatturaOrdineBulk -> {
-                    fatturaOrdineBulk.setToBeDeleted();
-                    bp.getFatturaOrdiniController().getDetails().remove(fatturaOrdineBulk);
-                });
+
+        bulksToRemove.forEach(fatturaOrdineBulk -> {
+            fatturaOrdineBulk.setToBeDeleted();
+            bp.getFatturaOrdiniController().getDetails().remove(fatturaOrdineBulk);
+        });
+
         bp.getFatturaOrdiniController().getSelection().clear();
         return context.findDefaultForward();
     }

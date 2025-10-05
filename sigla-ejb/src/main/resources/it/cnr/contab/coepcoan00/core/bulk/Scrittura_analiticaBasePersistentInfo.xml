@@ -133,7 +133,31 @@
 			propertyName="cd_tipo_documento"
 			sqlTypeName="VARCHAR"
 			columnSize="10" />
-	</defaultColumnMap>
+        <columnMapping
+            columnName="CD_UNITA_OPERATIVA"
+            propertyName="cdUnitaOperativa"
+            sqlTypeName="VARCHAR"
+            columnSize="30"
+            nullable="true" />
+        <columnMapping
+            columnName="CD_NUMERATORE_ORDINE"
+            propertyName="cdNumeratoreOrdine"
+            sqlTypeName="VARCHAR"
+            columnSize="3"
+            nullable="true" />
+        <columnMapping
+            columnName="RIGA_ORDINE"
+            propertyName="rigaOrdine"
+            sqlTypeName="DECIMAL"
+            columnSize="6"
+            nullable="true" />
+        <columnMapping
+            columnName="CONSEGNA"
+            propertyName="consegna"
+            sqlTypeName="DECIMAL"
+            columnSize="6"
+            nullable="true" />
+    </defaultColumnMap>
 	<persistentProperty
 		name="dt_cancellazione" />
 	<persistentProperty
@@ -176,4 +200,12 @@
 		name="attiva" />
 	<persistentProperty
 		name="cd_tipo_documento" />
+    <persistentProperty
+        name="cdUnitaOperativa" />
+    <persistentProperty
+        name="cdNumeratoreOrdine" />
+    <persistentProperty
+        name="rigaOrdine" />
+    <persistentProperty
+        name="consegna" />
 </SQLPersistentInfo>

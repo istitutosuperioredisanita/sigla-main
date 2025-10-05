@@ -23,7 +23,6 @@ import it.cnr.jada.bulk.FieldValidationMap;
 import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 
 public interface IDocumentoDetailEcoCogeBulk  {
     it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk getScadenzaDocumentoContabile();
@@ -45,6 +44,10 @@ public interface IDocumentoDetailEcoCogeBulk  {
     BigDecimal getImCostoEcoRipartito();
 
     BigDecimal getImCostoEcoDaRipartire();
+
+    java.sql.Timestamp getDt_da_competenza_coge();
+
+    java.sql.Timestamp getDt_a_competenza_coge();
 
     void writeFormField(JspWriter jspwriter, String s, int i, FieldValidationMap fieldvalidationmap, boolean isBootstrap) throws IOException;
 }

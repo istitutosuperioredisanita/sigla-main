@@ -22,6 +22,7 @@ import it.cnr.contab.anagraf00.ejb.AnagraficoComponentSession;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabter.bulk.NazioneBulk;
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaFromDocumentoComponent;
+import it.cnr.contab.coepcoan00.core.bulk.*;
 import it.cnr.contab.config00.bulk.*;
 import it.cnr.contab.config00.contratto.bulk.Ass_contratto_uoBulk;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
@@ -3101,6 +3102,25 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
 
                         fatturaEco.setToBeCreated();
                         riga.getRigheEconomica().add(fatturaEco);
+
+                        //alimento tabella storico consegna
+                        OrdineAcqConsegnaEcoSBulk consegnaEcoSBulk = new OrdineAcqConsegnaEcoSBulk();
+                        consegnaEcoSBulk.setTipoStorico(OrdineAcqConsegnaEcoSBulk.TIPO_STORICO_ORDINE);
+                        consegnaEcoSBulk.setOrdineAcqConsegna(consegnaEco.getOrdineAcqConsegna());
+                        consegnaEcoSBulk.setProgressivo_riga_eco(consegnaEco.getProgressivo_riga_eco());
+                        consegnaEcoSBulk.setLinea_attivita(consegnaEco.getLinea_attivita());
+                        consegnaEcoSBulk.setVoce_analitica(consegnaEco.getVoce_analitica());
+                        consegnaEcoSBulk.setImporto(consegnaEco.getImporto());
+
+                        consegnaEcoSBulk.setToBeCreated();
+                        makeBulkPersistent(userContext,consegnaEcoSBulk);
+
+                        //Aggiorno importo su economica consegna
+                        if (consegnaEco.getImporto().compareTo(fatturaEco.getImporto())!=0) {
+                            consegnaEco.setImporto(fatturaEco.getImporto());
+                            consegnaEco.setToBeUpdated();
+                            makeBulkPersistent(userContext, consegnaEco);
+                        }
                     }
 
                     valorizzaCIG(riga, fatturaOrdineBulk);
@@ -3247,8 +3267,8 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                                                 final OrdineAcqConsegnaBulk ordineAcqConsegna = (OrdineAcqConsegnaBulk) super.inizializzaBulkPerModifica(userContext, ordineAcqConsegnaBulk);
                                                 ordineAcqConsegna.setObbligazioneScadenzario(nuovaScadenza);
                                                 ordineAcqConsegna.setToBeUpdated();
-                                                super.modificaConBulk(userContext, ordineAcqConsegna);
-                                            } catch (ComponentException e) {
+                                                super.makeBulkPersistent(userContext, ordineAcqConsegna, Boolean.TRUE);
+                                            } catch (ComponentException|PersistencyException e) {
                                                 throw new DetailedRuntimeException(e);
                                             }
                                         });
@@ -9532,5 +9552,57 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         if (clause!=null)
             sql.addClause(clause);
         return sql;
+    }
+
+    public void makePersistentOtherScritturePatrimoniali(UserContext userContext, List<Scrittura_partita_doppiaBulk> otherScritturaPartitaDoppiaPropostaBulk1, List<Scrittura_analiticaBulk> otherScritturaAnaliticaPropostaBulk1) throws ComponentException {
+        try {
+            Scrittura_analiticaHome saHome = (Scrittura_analiticaHome)getHome(userContext, Scrittura_analiticaBulk.class);
+            for (Scrittura_analiticaBulk saNew : otherScritturaAnaliticaPropostaBulk1) {
+                if (saNew.isScritturaFromConsegnaOrdineAcquisto()) {
+                    List<Scrittura_analiticaBulk> result = saHome.findByDocumentoCoge(new OrdineAcqConsegnaBulk(saNew.getCd_cds_documento(), saNew.getCdUnitaOperativa(), saNew.getEsercizio_documento_amm(), saNew.getCdNumeratoreOrdine(), saNew.getPg_numero_documento().intValue(), saNew.getRigaOrdine(), saNew.getConsegna()));
+                    Optional<Scrittura_analiticaBulk> spdOld = result.stream().filter(el -> OrigineScritturaEnum.RISCONTRO_A_VALORE.name().equals(el.getOrigine_scrittura()))
+                            .findFirst();
+                    spdOld.ifPresent(oldScrittura -> {
+                        //Elimino vecchia scrittura
+                        try {
+                            saNew.setPg_scrittura(oldScrittura.getPg_scrittura());
+                            this.removeScritturaAnalitica(userContext, oldScrittura);
+                        } catch (ComponentException e) {
+                            throw new DetailedRuntimeException(e);
+                        }
+                    });
+                }
+            }
+
+            Scrittura_partita_doppiaHome spdHome = (Scrittura_partita_doppiaHome)getHome(userContext, Scrittura_partita_doppiaBulk.class);
+            for (Scrittura_partita_doppiaBulk spdNew : otherScritturaPartitaDoppiaPropostaBulk1) {
+                if (spdNew.isScritturaFromConsegnaOrdineAcquisto()) {
+                    List<Scrittura_partita_doppiaBulk> result = spdHome.findByDocumentoCoge(new OrdineAcqConsegnaBulk(spdNew.getCd_cds_documento(), spdNew.getCdUnitaOperativa(), spdNew.getEsercizio_documento_amm(), spdNew.getCdNumeratoreOrdine(), spdNew.getPg_numero_documento().intValue(), spdNew.getRigaOrdine(), spdNew.getConsegna()));
+                    Optional<Scrittura_partita_doppiaBulk> spdOld = result.stream().filter(el -> OrigineScritturaEnum.RISCONTRO_A_VALORE.name().equals(el.getOrigine_scrittura()))
+                            .findFirst();
+                    spdOld.ifPresent(oldScrittura -> {
+                        //Elimino vecchia scrittura
+                        try {
+                            spdNew.setPg_scrittura(oldScrittura.getPg_scrittura());
+                            this.removeScrittura(userContext, oldScrittura);
+                        } catch (ComponentException e) {
+                            throw new DetailedRuntimeException(e);
+                        }
+                    });
+                }
+            }
+
+            //Ricreo
+            for (Scrittura_partita_doppiaBulk spdNew : otherScritturaPartitaDoppiaPropostaBulk1) {
+                if (spdNew.isScritturaFromConsegnaOrdineAcquisto())
+                    makeBulkPersistent(userContext, spdNew);
+            }
+            for (Scrittura_analiticaBulk saNew : otherScritturaAnaliticaPropostaBulk1) {
+                if (saNew.isScritturaFromConsegnaOrdineAcquisto())
+                    makeBulkPersistent(userContext, saNew);
+            }
+        } catch (PersistencyException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

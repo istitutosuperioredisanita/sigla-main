@@ -17,10 +17,7 @@
 
 package it.cnr.contab.coepcoan00.core.bulk;
 
-import it.cnr.jada.bulk.*;
 import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
 
 import java.sql.Timestamp;
 
@@ -95,6 +92,14 @@ public class Scrittura_partita_doppiaBase extends Scrittura_partita_doppiaKey im
 	private java.sql.Timestamp dt_fine_liquid;
 
 	private java.lang.Long report_id_liquid;
+
+    private java.lang.String cdUnitaOperativa;
+
+    private java.lang.String cdNumeratoreOrdine;
+
+    private java.lang.Integer rigaOrdine;
+
+    private java.lang.Integer consegna;
 
 	// DT_INIZIO TIMESTAMP NOT NULL (PK)
 
@@ -391,4 +396,36 @@ public class Scrittura_partita_doppiaBase extends Scrittura_partita_doppiaKey im
 	public void setReport_id_liquid(Long report_id_liquid) {
 		this.report_id_liquid = report_id_liquid;
 	}
+
+    public String getCdUnitaOperativa() {
+        return cdUnitaOperativa;
+    }
+
+    public void setCdUnitaOperativa(String cdUnitaOperativa) {
+        this.cdUnitaOperativa = cdUnitaOperativa;
+    }
+
+    public String getCdNumeratoreOrdine() {
+        return cdNumeratoreOrdine;
+    }
+
+    public void setCdNumeratoreOrdine(String cdNumeratoreOrdine) {
+        this.cdNumeratoreOrdine = cdNumeratoreOrdine;
+    }
+
+    public Integer getRigaOrdine() {
+        return rigaOrdine;
+    }
+
+    public void setRigaOrdine(Integer rigaOrdine) {
+        this.rigaOrdine = rigaOrdine;
+    }
+
+    public Integer getConsegna() {
+        return consegna;
+    }
+
+    public void setConsegna(Integer consegna) {
+        this.consegna = consegna;
+    }
 }

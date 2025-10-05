@@ -29,6 +29,7 @@ import it.cnr.contab.missioni00.docs.bulk.RimborsoBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
+import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.*;
 import it.cnr.jada.persistency.PersistencyException;
@@ -95,9 +96,10 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
         }
     }
 
-    protected void caricaScrittura(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk) throws ComponentException {
+    public IDocumentoCogeBulk caricaScrittura(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk) throws ComponentException {
         this.getScrittura(userContext, documentoCogeBulk).ifPresent(documentoCogeBulk::setScrittura_partita_doppia);
         this.getScritturaAnalitica(userContext, documentoCogeBulk).ifPresent(documentoCogeBulk::setScrittura_analitica);
+        return documentoCogeBulk;
     }
 
     @Override
@@ -105,12 +107,12 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
         OggettoBulk bulk = super.eseguiCreaConBulk(usercontext, oggettobulk);
         if (Optional.ofNullable(bulk).filter(IDocumentoCogeBulk.class::isInstance).isPresent()) {
             try {
-                ResultScrittureContabili resultScrittureContabili = this.createScrittura(usercontext, (IDocumentoCogeBulk)oggettobulk);
-                bulk = (OggettoBulk)resultScrittureContabili.getDocumentoCoge();
+                ResultScrittureContabili resultScrittureContabili = this.createScrittura(usercontext, (IDocumentoCogeBulk) oggettobulk);
+                bulk = (OggettoBulk) resultScrittureContabili.getDocumentoCoge();
             } catch (NoRollbackException ignored) {
             } catch (ApplicationException e) {
                 try {
-                    if (!Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(usercontext, ((IDocumentoCogeBulk)oggettobulk).getEsercizio()))
+                    if (!Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(usercontext, ((IDocumentoCogeBulk) oggettobulk).getEsercizio()))
                         throw e;
                 } catch (RemoteException | ComponentException e2) {
                     throw new DetailedRuntimeException(e2);
@@ -128,7 +130,7 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
         if (Optional.ofNullable(bulk).filter(IDocumentoCogeBulk.class::isInstance).isPresent()) {
             try {
                 ResultScrittureContabili resultScrittureContabili = this.createScrittura(usercontext, (IDocumentoCogeBulk) bulk);
-                bulk = (OggettoBulk)resultScrittureContabili.getDocumentoCoge();
+                bulk = (OggettoBulk) resultScrittureContabili.getDocumentoCoge();
             } catch (NoRollbackException ignored) {
             } catch (ApplicationException e) {
                 try {
@@ -145,7 +147,7 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
     public ResultScrittureContabili createScrittura(UserContext usercontext, IDocumentoCogeBulk documentoCoge) throws ComponentException {
         try {
             final Optional<IDocumentoCogeBulk> optionalIDocumentoCogeBulk = Optional.ofNullable(documentoCoge);
-            if (optionalIDocumentoCogeBulk.isPresent()){
+            if (optionalIDocumentoCogeBulk.isPresent()) {
                 if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(usercontext, documentoCoge.getEsercizio())) {
                     if (Utility.createConfigurazioneCnrComponentSession().isBloccoScrittureProposte(usercontext)) {
                         return this.loadScritturaPatrimoniale(usercontext, optionalIDocumentoCogeBulk.get());
@@ -155,10 +157,10 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
                         if (optionalScrittura_partita_doppiaBulk.isPresent()) {
                             if (optionalScrittura_partita_doppiaBulk.get().isToBeCreated()) {
                                 final Optional<Scrittura_partita_doppiaBulk> optionalScritturaPartitaDoppiaOldBulk = this.getScrittura(usercontext, optionalIDocumentoCogeBulk.get());
-                                optionalScritturaPartitaDoppiaOldBulk.ifPresent(oldScrittura->{
+                                optionalScritturaPartitaDoppiaOldBulk.ifPresent(oldScrittura -> {
                                     //Elimino vecchia scrittura
                                     try {
-                                        optionalScrittura_partita_doppiaBulk.ifPresent(prop->prop.setPg_scrittura(oldScrittura.getPg_scrittura()));
+                                        optionalScrittura_partita_doppiaBulk.ifPresent(prop -> prop.setPg_scrittura(oldScrittura.getPg_scrittura()));
                                         this.removeScrittura(usercontext, oldScrittura);
                                     } catch (ComponentException e) {
                                         throw new DetailedRuntimeException(e);
@@ -176,7 +178,8 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
                                 ResultScrittureContabili pair = this.proposeScritturaPartitaDoppiaWithSavepoint(usercontext, optionalIDocumentoCogeBulk.get());
                                 documentoCoge = pair.getDocumentoCoge();
                                 optionalScritturaPartitaDoppiaBulk = Optional.ofNullable(pair.getScritturaPartitaDoppiaBulk());
-                            } catch (ScritturaPartitaDoppiaNotRequiredException | ScritturaPartitaDoppiaNotEnabledException e) {
+                            } catch (ScritturaPartitaDoppiaNotRequiredException |
+                                     ScritturaPartitaDoppiaNotEnabledException e) {
                                 optionalScritturaPartitaDoppiaBulk = Optional.empty();
                             }
                             if (optionalScritturaPartitaDoppiaBulk.isPresent()) {
@@ -198,7 +201,7 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
             final Optional<IDocumentoCogeBulk> optionalIDocumentoCogeBulk = Optional.ofNullable(oggettobulk)
                     .filter(IDocumentoCogeBulk.class::isInstance)
                     .map(IDocumentoCogeBulk.class::cast);
-            if (optionalIDocumentoCogeBulk.isPresent()){
+            if (optionalIDocumentoCogeBulk.isPresent()) {
                 if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(usercontext, optionalIDocumentoCogeBulk.get().getEsercizio())) {
                     Optional<Scrittura_partita_doppiaBulk> optionalScritturaPartitaDoppiaPropostaBulk1;
                     try {
@@ -212,14 +215,14 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
 
                     final Optional<Scrittura_partita_doppiaBulk> optionalScritturaPartitaDoppiaPropostaBulk = optionalScritturaPartitaDoppiaPropostaBulk1;
                     final Optional<Scrittura_partita_doppiaBulk> optionalScritturaPartitaDoppiaOldBulk = this.getScritturaAnnullo(usercontext, optionalIDocumentoCogeBulk.get());
-                    optionalScritturaPartitaDoppiaOldBulk.ifPresent(oldScrittura->{
-                            //Elimino vecchia scrittura
-                            try {
-                                optionalScritturaPartitaDoppiaPropostaBulk.ifPresent(prop->prop.setPg_scrittura(oldScrittura.getPg_scrittura()));
-                                this.removeScrittura(usercontext, oldScrittura);
-                            } catch (ComponentException e) {
-                                throw new DetailedRuntimeException(e);
-                            }
+                    optionalScritturaPartitaDoppiaOldBulk.ifPresent(oldScrittura -> {
+                        //Elimino vecchia scrittura
+                        try {
+                            optionalScritturaPartitaDoppiaPropostaBulk.ifPresent(prop -> prop.setPg_scrittura(oldScrittura.getPg_scrittura()));
+                            this.removeScrittura(usercontext, oldScrittura);
+                        } catch (ComponentException e) {
+                            throw new DetailedRuntimeException(e);
+                        }
                     });
                     //Ricreo
                     if (optionalScritturaPartitaDoppiaPropostaBulk.isPresent()) {
@@ -239,17 +242,17 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
             final Optional<IDocumentoCogeBulk> optionalIDocumentoCogeBulk = Optional.ofNullable(documentoCoge);
 
             final Optional<Scrittura_partita_doppiaBulk> optionalScritturaPartitaDoppiaPropostaBulk = Optional.ofNullable(Utility.createProposeScritturaComponentSession()
-                        .proposeStornoScritturaPartitaDoppia(usercontext, scritturaPrinc, dataStorno));
+                    .proposeStornoScritturaPartitaDoppia(usercontext, scritturaPrinc, dataStorno));
 
             final Optional<Scrittura_partita_doppiaBulk> optionalScritturaPartitaDoppiaOldBulk = this.getScritturaAnnullo(usercontext, optionalIDocumentoCogeBulk.get());
-            optionalScritturaPartitaDoppiaOldBulk.ifPresent(oldScrittura->{
+            optionalScritturaPartitaDoppiaOldBulk.ifPresent(oldScrittura -> {
                 //Elimino vecchia scrittura
                 try {
-                    optionalScritturaPartitaDoppiaPropostaBulk.ifPresent(prop->prop.setPg_scrittura(oldScrittura.getPg_scrittura()));
-                        this.removeScrittura(usercontext, oldScrittura);
+                    optionalScritturaPartitaDoppiaPropostaBulk.ifPresent(prop -> prop.setPg_scrittura(oldScrittura.getPg_scrittura()));
+                    this.removeScrittura(usercontext, oldScrittura);
                 } catch (ComponentException e) {
-                        throw new DetailedRuntimeException(e);
-                    }
+                    throw new DetailedRuntimeException(e);
+                }
             });
             //Ricreo
             if (optionalScritturaPartitaDoppiaPropostaBulk.isPresent()) {
@@ -264,7 +267,14 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
 
     public void removeScrittura(UserContext userContext, Scrittura_partita_doppiaBulk scrittura) throws ComponentException {
         try {
-            scrittura.getAllMovimentiColl().forEach(movcoge->{
+            if (scrittura.getMovimentiDareColl().isEmpty())
+                scrittura.setMovimentiDareColl(new BulkList<>(((Scrittura_partita_doppiaHome) getHome(userContext, scrittura.getClass()))
+                        .findMovimentiDareColl(userContext, scrittura, false)));
+            if (scrittura.getMovimentiAvereColl().isEmpty())
+                scrittura.setMovimentiAvereColl(new BulkList<>(((Scrittura_partita_doppiaHome) getHome(userContext, scrittura.getClass()))
+                    .findMovimentiAvereColl(userContext, scrittura, false)));
+
+            scrittura.getAllMovimentiColl().forEach(movcoge -> {
                 movcoge.setToBeDeleted();
                 try {
                     super.deleteBulk(userContext, movcoge);
@@ -281,7 +291,9 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
 
     public void removeScritturaAnalitica(UserContext userContext, Scrittura_analiticaBulk scrittura) throws ComponentException {
         try {
-            scrittura.getMovimentiColl().forEach(movcoan->{
+            if (scrittura.getMovimentiColl().isEmpty())
+                scrittura.setMovimentiColl( new BulkList<>( ((Scrittura_analiticaHome) getHome( userContext, scrittura.getClass())).findMovimentiColl( userContext, scrittura )));
+            scrittura.getMovimentiColl().forEach(movcoan -> {
                 movcoan.setToBeDeleted();
                 try {
                     super.deleteBulk(userContext, movcoan);
@@ -451,17 +463,23 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
 
             Optional<Scrittura_partita_doppiaBulk> optionalScritturaPartitaDoppiaPropostaBulk1;
             Optional<Scrittura_analiticaBulk> optionalScritturaAnaliticaPropostaBulk1;
+            List<Scrittura_partita_doppiaBulk> otherScritturaPartitaDoppiaPropostaBulk1;
+            List<Scrittura_analiticaBulk> otherScritturaAnaliticaPropostaBulk1;
             try {
                 if (Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(userContext, documentoCoge.getEsercizio())) {
                     ResultScrittureContabili pair = this.proposeScrittureContabiliWithSavepoint(userContext, documentoCoge);
                     documentoCoge = pair.getDocumentoCoge();
                     optionalScritturaPartitaDoppiaPropostaBulk1 = Optional.ofNullable(pair.getScritturaPartitaDoppiaBulk());
                     optionalScritturaAnaliticaPropostaBulk1 = Optional.ofNullable(pair.getScritturaAnaliticaBulk());
+                    otherScritturaPartitaDoppiaPropostaBulk1 = pair.getOtherScritturaPartitaDoppiaBulk();
+                    otherScritturaAnaliticaPropostaBulk1 = pair.getOtherScritturaAnaliticaBulk();
                 } else {
                     ResultScrittureContabili pair = this.proposeScritturaPartitaDoppiaWithSavepoint(userContext, documentoCoge);
                     documentoCoge = pair.getDocumentoCoge();
                     optionalScritturaPartitaDoppiaPropostaBulk1 = Optional.ofNullable(pair.getScritturaPartitaDoppiaBulk());
                     optionalScritturaAnaliticaPropostaBulk1 = Optional.empty();
+                    otherScritturaPartitaDoppiaPropostaBulk1 = pair.getOtherScritturaPartitaDoppiaBulk();
+                    otherScritturaAnaliticaPropostaBulk1 = pair.getOtherScritturaAnaliticaBulk();
                 }
                 documentoCoge.setStato_coge(Fattura_passivaBulk.NON_REGISTRATO_IN_COGE);
                 documentoCoge.setStato_coan(Fattura_passivaBulk.NON_REGISTRATO_IN_COGE);
@@ -470,6 +488,8 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
             } catch (ScritturaPartitaDoppiaNotRequiredException e) {
                 optionalScritturaPartitaDoppiaPropostaBulk1 = Optional.empty();
                 optionalScritturaAnaliticaPropostaBulk1 = Optional.empty();
+                otherScritturaPartitaDoppiaPropostaBulk1 = new ArrayList<>();
+                otherScritturaAnaliticaPropostaBulk1 = new ArrayList<>();
                 documentoCoge.setStato_coge(Fattura_passivaBulk.NON_PROCESSARE_IN_COGE);
                 documentoCoge.setStato_coan(Fattura_passivaBulk.NON_PROCESSARE_IN_COAN);
             } catch (RemoteException e) {
@@ -478,10 +498,10 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
 
             final Optional<Scrittura_analiticaBulk> optionalScritturaAnaliticaPropostaBulk = optionalScritturaAnaliticaPropostaBulk1;
 
-            optionalScritturaAnaliticaOldBulk.ifPresent(oldScrittura->{
+            optionalScritturaAnaliticaOldBulk.ifPresent(oldScrittura -> {
                 //Elimino vecchia scrittura
                 try {
-                    optionalScritturaAnaliticaPropostaBulk.ifPresent(prop->prop.setPg_scrittura(oldScrittura.getPg_scrittura()));
+                    optionalScritturaAnaliticaPropostaBulk.ifPresent(prop -> prop.setPg_scrittura(oldScrittura.getPg_scrittura()));
                     this.removeScritturaAnalitica(userContext, oldScrittura);
                 } catch (ComponentException e) {
                     throw new DetailedRuntimeException(e);
@@ -490,15 +510,17 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
 
             final Optional<Scrittura_partita_doppiaBulk> optionalScritturaPartitaDoppiaPropostaBulk = optionalScritturaPartitaDoppiaPropostaBulk1;
 
-            optionalScritturaPartitaDoppiaOldBulk.ifPresent(oldScrittura->{
+            optionalScritturaPartitaDoppiaOldBulk.ifPresent(oldScrittura -> {
                 //Elimino vecchia scrittura
                 try {
-                    optionalScritturaPartitaDoppiaPropostaBulk.ifPresent(prop->prop.setPg_scrittura(oldScrittura.getPg_scrittura()));
+                    optionalScritturaPartitaDoppiaPropostaBulk.ifPresent(prop -> prop.setPg_scrittura(oldScrittura.getPg_scrittura()));
                     this.removeScrittura(userContext, oldScrittura);
                 } catch (ComponentException e) {
                     throw new DetailedRuntimeException(e);
                 }
             });
+
+            makePersistentOtherScritturePatrimoniali(userContext, otherScritturaPartitaDoppiaPropostaBulk1, otherScritturaAnaliticaPropostaBulk1);
 
             //Ricreo
             if (optionalScritturaPartitaDoppiaPropostaBulk.isPresent()) {
@@ -510,12 +532,17 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
                 documentoCoge.setStato_coan(Fattura_passivaBulk.REGISTRATO_IN_COGE);
             }
 
-            ((OggettoBulk)documentoCoge).setToBeUpdated();
-            updateBulk(userContext, (OggettoBulk)documentoCoge);
+            ((OggettoBulk) documentoCoge).setToBeUpdated();
+            updateBulk(userContext, (OggettoBulk) documentoCoge);
+
             return new ResultScrittureContabili(documentoCoge, optionalScritturaPartitaDoppiaPropostaBulk.orElse(null), optionalScritturaAnaliticaPropostaBulk.orElse(null));
-        } catch (PersistencyException|SQLException e) {
+        } catch (PersistencyException | SQLException e) {
             throw handleException(e);
         }
+    }
+
+    public void makePersistentOtherScritturePatrimoniali(UserContext userContext, List<Scrittura_partita_doppiaBulk> otherScritturaPartitaDoppiaPropostaBulk1, List<Scrittura_analiticaBulk> otherScritturaAnaliticaPropostaBulk1) throws ComponentException {
+        //INTENTIONALLY BLANK
     }
 
     private ResultScrittureContabili proposeScritturaPartitaDoppiaWithSavepoint(UserContext userContext, IDocumentoCogeBulk documentoCoge) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException, SQLException{

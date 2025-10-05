@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaEcoSBase"
+	keyClassName="it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaEcoSKey"
+	homeClassName="it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaEcoSHome" >
+	<defaultColumnMap
+		tableName="ORDINE_ACQ_CONSEGNA_ECO_S" >
+        <columnMapping
+                columnName="TIPO_STORICO"
+                propertyName="tipoStorico"
+                sqlTypeName="VARCHAR"
+                columnSize="3"
+                nullable="false"/>
+        <columnMapping
+                columnName="CD_CDS"
+                propertyName="cdCds"
+                sqlTypeName="VARCHAR"
+                columnSize="30"
+                nullable="false"/>
+        <columnMapping
+                columnName="CD_UNITA_OPERATIVA"
+                propertyName="cdUnitaOperativa"
+                sqlTypeName="VARCHAR"
+                columnSize="30"
+                nullable="false"/>
+        <columnMapping
+                columnName="ESERCIZIO"
+                propertyName="esercizio"
+                sqlTypeName="DECIMAL"
+                columnSize="4"
+                nullable="false"/>
+        <columnMapping
+                columnName="CD_NUMERATORE"
+                propertyName="cdNumeratore"
+                sqlTypeName="VARCHAR"
+                columnSize="3"
+                nullable="false"/>
+        <columnMapping
+                columnName="NUMERO"
+                propertyName="numero"
+                sqlTypeName="DECIMAL"
+                columnSize="6"
+                nullable="false"/>
+        <columnMapping
+                columnName="RIGA"
+                propertyName="riga"
+                sqlTypeName="DECIMAL"
+                columnSize="6"
+                nullable="false"/>
+        <columnMapping
+                columnName="CONSEGNA"
+                propertyName="consegna"
+                sqlTypeName="DECIMAL"
+                columnSize="6"
+                nullable="false"/>
+        <columnMapping
+                columnName="PROGRESSIVO_RIGA_ECO"
+                propertyName="progressivo_riga_eco"
+                sqlTypeName="DECIMAL"
+                columnSize="10"
+                nullable="false" />
+        <columnMapping
+                columnName="CD_CDS_FATTURA"
+                propertyName="cdCdsFattura"
+                sqlTypeName="VARCHAR"
+                columnSize="30"/>
+        <columnMapping
+                columnName="CD_UNITA_ORGANIZZATIVA_FATTURA"
+                propertyName="cdUnitaOrganizzativaFattura"
+                sqlTypeName="VARCHAR"
+                columnSize="30"/>
+        <columnMapping
+                columnName="ESERCIZIO_FATTURA"
+                propertyName="esercizioFattura"
+                sqlTypeName="DECIMAL"
+                columnSize="4"/>
+        <columnMapping
+                columnName="PG_FATTURA_PASSIVA"
+                propertyName="pgFatturaPassiva"
+                sqlTypeName="DECIMAL"
+                columnSize="10"/>
+        <columnMapping
+                columnName="PROGRESSIVO_RIGA_FATTURA"
+                propertyName="progressivoRigaFattura"
+                sqlTypeName="DECIMAL"
+                columnSize="10"/>
+		<columnMapping
+			columnName="ESERCIZIO_VOCE_ANA"
+			propertyName="esercizio_voce_ana"
+			sqlTypeName="DECIMAL"
+			columnSize="4"
+			nullable="true" />
+		<columnMapping
+			columnName="CD_VOCE_ANA"
+			propertyName="cd_voce_ana"
+			sqlTypeName="VARCHAR"
+			columnSize="45"
+			nullable="true" />
+		<columnMapping
+			columnName="CD_CENTRO_RESPONSABILITA"
+			propertyName="cd_centro_responsabilita"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="false" />
+		<columnMapping
+			columnName="CD_LINEA_ATTIVITA"
+			propertyName="cd_linea_attivita"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="false" />
+		<columnMapping
+			columnName="IMPORTO"
+			propertyName="importo"
+			sqlTypeName="DECIMAL"
+			columnSize="15"
+			columnScale="2"
+			nullable="false" />
+		<columnMapping
+			columnName="UTCR"
+			propertyName="utcr"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="UTUV"
+			propertyName="utuv"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="DACR"
+			propertyName="dacr"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="DUVA"
+			propertyName="duva"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="PG_VER_REC"
+			propertyName="pg_ver_rec"
+			sqlTypeName="DECIMAL"
+			columnSize="22"
+			nullable="false" />
+	</defaultColumnMap>
+
+    <persistentProperty name="tipoStorico" />
+    <persistentProperty name="cdCds" />
+    <persistentProperty name="cdUnitaOperativa" />
+    <persistentProperty name="esercizio" />
+    <persistentProperty name="cdNumeratore" />
+    <persistentProperty name="numero" />
+    <persistentProperty name="riga" />
+    <persistentProperty name="consegna" />
+    <persistentProperty name="progressivo_riga_eco" />
+    <persistentProperty name="cdCdsFattura" />
+    <persistentProperty name="cdUnitaOrganizzativaFattura" />
+    <persistentProperty name="esercizioFattura" />
+    <persistentProperty name="pgFatturaPassiva" />
+    <persistentProperty name="progressivoRigaFattura" />
+
+	<persistentProperty
+		name="esercizio_voce_ana" />
+	<persistentProperty
+		name="cd_voce_ana" />
+	<persistentProperty
+		name="cd_centro_responsabilita" />
+	<persistentProperty
+		name="cd_linea_attivita" />
+	<persistentProperty
+		name="importo" />
+	<persistentProperty
+		name="utcr" />
+	<persistentProperty
+		name="utuv" />
+	<persistentProperty
+		name="dacr" />
+	<persistentProperty
+		name="duva" />
+	<persistentProperty
+		name="pg_ver_rec" />
+</SQLPersistentInfo>

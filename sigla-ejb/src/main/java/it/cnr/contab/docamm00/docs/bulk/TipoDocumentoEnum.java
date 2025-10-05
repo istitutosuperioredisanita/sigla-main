@@ -64,7 +64,7 @@ public enum TipoDocumentoEnum {
 	REGOLA_E("REGOLA_E", Documento_generico_attivoBulk.class, "Documento per mandato di regolarizzazione"),
 	GEN_RECUPERO_CREDITI("GEN_RC_DAT", Documento_generico_attivoBulk.class, "Documento generico per recupero crediti"),
 	LIQUIDAZIONE_IVA("LIQUID_IVA", Liquidazione_ivaBulk.class, "Liquidazione Iva"),
-    ORDINE_ACQUISTO("ORDINE_ACQ", Liquidazione_ivaBulk.class, "Ordine Acquisto");
+    CONSEGNA_ORDINE_ACQUISTO("ORDINE_CNS", Liquidazione_ivaBulk.class, "Consegna Ordine Acquisto");
 
 	private final String value;
 	private final Class<?> documentoCogeBulk;
@@ -92,11 +92,10 @@ public enum TipoDocumentoEnum {
 		return label;
 	}
 
-	public final static Dictionary TIPO_DOCAMM_KEYS = Arrays.asList(TipoDocumentoEnum.values())
-			.stream()
+	public final static Dictionary TIPO_DOCAMM_KEYS = Arrays.stream(TipoDocumentoEnum.values())
 			.collect(
 					Collectors.toMap(
-							s -> s.getValue(), s -> s.getLabel(),
+                            TipoDocumentoEnum::getValue, TipoDocumentoEnum::getLabel,
 							(u, v) -> {
 								throw new IllegalStateException(
 										String.format("Cannot have 2 values (%s, %s) for the same key", u, v)
@@ -114,7 +113,7 @@ public enum TipoDocumentoEnum {
     }
 
 	public IDocumentoAmministrativoBulk getDocumentoAmministrativoBulk() {
-		return Optional.ofNullable(getDocumentoCogeBulk())
+		return Optional.of(getDocumentoCogeBulk())
 				.filter(IDocumentoAmministrativoBulk.class::isInstance)
 				.map(IDocumentoAmministrativoBulk.class::cast)
 				.orElse(null);
@@ -168,8 +167,8 @@ public enum TipoDocumentoEnum {
 		return TipoDocumentoEnum.GEN_STORNO_S.equals(this);
 	}
 
-    public boolean isOrdineAcquisto() {
-        return TipoDocumentoEnum.ORDINE_ACQUISTO.equals(this);
+    public boolean isConsegnaOrdineAcquisto() {
+        return TipoDocumentoEnum.CONSEGNA_ORDINE_ACQUISTO.equals(this);
     }
 
 	/**
@@ -330,6 +329,8 @@ public enum TipoDocumentoEnum {
 			return Movimento_cogeBulk.TipoRiga.RICAVO.value();
 		if (this.isRimborso())
 			return Movimento_cogeBulk.TipoRiga.DEBITO.value();
+        if (this.isConsegnaOrdineAcquisto())
+            return Movimento_cogeBulk.TipoRiga.COSTO.value();
 		return null;
 	}
 
@@ -355,6 +356,8 @@ public enum TipoDocumentoEnum {
 			return Movimento_cogeBulk.TipoRiga.CREDITO.value();
 		if (this.isRimborso())
 			return Movimento_cogeBulk.TipoRiga.CREDITO.value();
+        if (this.isConsegnaOrdineAcquisto())
+            return Movimento_cogeBulk.TipoRiga.DEBITO.value();
 		return null;
 	}
 
@@ -382,6 +385,8 @@ public enum TipoDocumentoEnum {
 			return Movimento_cogeBulk.SEZIONE_AVERE;
 		if (this.isRimborso())
 			return Movimento_cogeBulk.SEZIONE_AVERE;
+        if (this.isConsegnaOrdineAcquisto())
+            return Movimento_cogeBulk.SEZIONE_DARE;
 		return null;
 	}
 
@@ -399,6 +404,8 @@ public enum TipoDocumentoEnum {
 			return Movimento_cogeBulk.SEZIONE_AVERE;
 		if (this.isCompenso())
 			return Movimento_cogeBulk.SEZIONE_DARE;
+        if (this.isConsegnaOrdineAcquisto())
+            return Movimento_cogeBulk.SEZIONE_DARE;
 		return null;
 	}
 
@@ -426,6 +433,8 @@ public enum TipoDocumentoEnum {
 			return Movimento_cogeBulk.SEZIONE_DARE;
 		if (this.isRimborso())
 			return Movimento_cogeBulk.SEZIONE_DARE;
+        if (this.isConsegnaOrdineAcquisto())
+            return Movimento_cogeBulk.SEZIONE_AVERE;
 		return null;
 	}
 
@@ -437,10 +446,12 @@ public enum TipoDocumentoEnum {
 			return 2;
 		if (this.isCompenso())
 			return 3;
+        if (this.isConsegnaOrdineAcquisto())
+            return 4;
 		if (this.isDocumentoPassivo() || this.isDocumentoAttivo())
-			return 4;
-		if (this.isMandato())
 			return 5;
-		return 6;
+		if (this.isMandato())
+			return 6;
+		return 7;
 	}
 }

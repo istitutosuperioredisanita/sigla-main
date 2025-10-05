@@ -40,13 +40,37 @@ public interface IDocumentoCogeBulk extends KeyedPersistent{
 
     Long getPg_doc();
 
-    Timestamp getDtInizioLiquid();
+    default Timestamp getDtInizioLiquid() {
+        return null;
+    }
 
-    Timestamp getDtFineLiquid();
+    default Timestamp getDtFineLiquid(){
+        return null;
+    }
 
-    String getTipoLiquid();
+    default String getTipoLiquid() {
+        return null;
+    }
 
-    Long getReportIdLiquid();
+    default Long getReportIdLiquid() {
+        return null;
+    }
+
+    default String getCdUnitaOperativa() {
+        return null;
+    }
+
+    default String getCdNumeratoreOrdine() {
+        return null;
+    }
+
+    default Integer getRigaOrdine() {
+        return null;
+    }
+
+    default Integer getConsegna() {
+        return null;
+    }
 
     TipoDocumentoEnum getTipoDocumentoEnum();
 

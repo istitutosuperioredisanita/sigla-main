@@ -22,9 +22,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import it.cnr.contab.config00.pdcep.bulk.Voce_epBulk;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
-import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.*;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.*;
@@ -141,7 +139,7 @@ public class Movimento_cogeHome extends BulkHome {
 
 	}
 
-	public List<Movimento_cogeBulk> getMovimentiPartita(IDocumentoAmministrativoBulk docamm, Integer cdTerzo, Optional<Scrittura_partita_doppiaBulk> scritturaToExclude) throws PersistencyException {
+	public List<Movimento_cogeBulk> getMovimentiPartita(IDocumentoCogeBulk docamm, Integer cdTerzo, Optional<Scrittura_partita_doppiaBulk> scritturaToExclude) throws PersistencyException {
 		SQLBuilder sql = this.createSQLBuilder();
 		sql.addClause(FindClause.AND,"esercizio_documento",SQLBuilder.EQUALS, docamm.getEsercizio() );
 		sql.addClause(FindClause.AND,"cd_cds_documento",SQLBuilder.EQUALS, docamm.getCd_cds() );
@@ -157,7 +155,7 @@ public class Movimento_cogeHome extends BulkHome {
 		return allMovimentiCoge;
 	}
 
-	public Map<String, Pair<String, BigDecimal>> getSaldiMovimentiPartita(IDocumentoAmministrativoBulk docamm, Integer cdTerzo, Optional<Scrittura_partita_doppiaBulk> scritturaToExclude) throws ComponentException, PersistencyException {
+	public Map<String, Pair<String, BigDecimal>> getSaldiMovimentiPartita(IDocumentoCogeBulk docamm, Integer cdTerzo, Optional<Scrittura_partita_doppiaBulk> scritturaToExclude) throws ComponentException, PersistencyException {
 		Map<String, Pair<String, BigDecimal>> result = new HashMap<>();
 
 		Collection<Movimento_cogeBulk> allMovimentiCoge = this.getMovimentiPartita(docamm, cdTerzo, scritturaToExclude);

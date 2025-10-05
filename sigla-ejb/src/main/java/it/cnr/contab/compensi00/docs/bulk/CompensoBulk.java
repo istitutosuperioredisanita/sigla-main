@@ -3371,38 +3371,6 @@ public class CompensoBulk extends CompensoBase implements IDefferUpdateSaldi, ID
         return TipoIVA.COMMERCIALE.value().equals(this.getTi_istituz_commerc());
     }
 
-    /**
-     * Ritorna sempre valore null in quanto campo valido solo per liquidazioni
-     */
-    @Override
-    public Timestamp getDtInizioLiquid() {
-        return null;
-    }
-
-    /**
-     * Ritorna sempre valore null in quanto campo valido solo per liquidazioni
-     */
-    @Override
-    public Timestamp getDtFineLiquid() {
-        return null;
-    }
-
-    /**
-     * Ritorna sempre valore null in quanto campo valido solo per liquidazioni
-     */
-    @Override
-    public String getTipoLiquid() {
-        return null;
-    }
-
-    /**
-     * Ritorna sempre valore null in quanto campo valido solo per liquidazioni
-     */
-    @Override
-    public Long getReportIdLiquid() {
-        return null;
-    }
-
     @Override
     public BigDecimal getImCostoEco() {
         BigDecimal result = this.getIm_lordo_percipiente();

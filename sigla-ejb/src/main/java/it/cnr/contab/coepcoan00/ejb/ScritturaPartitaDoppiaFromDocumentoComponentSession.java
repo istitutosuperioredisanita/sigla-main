@@ -34,4 +34,5 @@ public interface ScritturaPartitaDoppiaFromDocumentoComponentSession extends it.
     void createScritturaRequiresNew(UserContext usercontext, IDocumentoCogeBulk documentoCoge, boolean loadAnalitica) throws ComponentException, RemoteException;
     void removeScrittura(UserContext userContext, Scrittura_partita_doppiaBulk scrittura) throws ComponentException, PersistencyException, java.rmi.RemoteException;
     List<IDocumentoCogeBulk> getAllDocumentiCogeDaContabilizzare(UserContext param0, Integer param1, String param2) throws it.cnr.jada.comp.ComponentException, PersistencyException, java.rmi.RemoteException;
+    IDocumentoCogeBulk caricaScrittura(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk) throws it.cnr.jada.comp.ComponentException, PersistencyException, java.rmi.RemoteException;
 }

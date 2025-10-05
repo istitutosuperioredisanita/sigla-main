@@ -20,6 +20,7 @@ package it.cnr.contab.coepcoan00.core.bulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.config00.sto.bulk.CdsBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
+import it.cnr.contab.docamm00.docs.bulk.TipoDocumentoEnum;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.action.MessageToUser;
 import it.cnr.jada.bulk.BulkCollection;
@@ -453,5 +454,22 @@ public class Scrittura_partita_doppiaBulk extends Scrittura_partita_doppiaBase {
 
     public void setDt_a_competenza_coge(Timestamp dt_a_competenza_coge) {
         this.dt_a_competenza_coge = dt_a_competenza_coge;
+    }
+
+    public boolean isScritturaFromConsegnaOrdineAcquisto() {
+        return TipoDocumentoEnum.CONSEGNA_ORDINE_ACQUISTO.getValue().equals(this.getCd_tipo_documento());
+    }
+
+    public String getChiaveDocumentoOrigine() {
+        if (this.isScritturaFromConsegnaOrdineAcquisto()) {
+            return "Ordine: " + this.getEsercizio_documento_amm() + "/" +
+                    this.getCd_cds() + "/" +
+                    this.getCdUnitaOperativa() + "/" +
+                    this.getCdNumeratoreOrdine() + "/" +
+                    this.getPg_numero_documento() + " - Riga: " +
+                    this.getRigaOrdine() + " - Consegna: " +
+                    this.getConsegna();
+        }
+        return null;
     }
 }

@@ -115,4 +115,22 @@ public class ScritturaPartitaDoppiaFromDocumentoComponentSessionBean extends it.
 			throw uncaughtError(param0, componentObj, e);
 		}
 	}
+    public IDocumentoCogeBulk caricaScrittura(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, RemoteException {
+        pre_component_invocation(param0, componentObj);
+        try {
+            IDocumentoCogeBulk result = ((ScritturaPartitaDoppiaFromDocumentoComponent) componentObj).caricaScrittura(param0, param1);
+            component_invocation_succes(param0, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(param0, componentObj);
+            throw e;
+        } catch (ComponentException e) {
+            component_invocation_failure(param0, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(param0, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(param0, componentObj, e);
+        }
+    }
 }

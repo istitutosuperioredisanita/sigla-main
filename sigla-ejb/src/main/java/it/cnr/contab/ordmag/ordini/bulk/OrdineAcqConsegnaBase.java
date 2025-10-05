@@ -23,7 +23,6 @@ package it.cnr.contab.ordmag.ordini.bulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.Keyed;
 import it.cnr.jada.util.DateUtils;
 
@@ -127,7 +126,11 @@ public class OrdineAcqConsegnaBase extends OrdineAcqConsegnaKey implements Keyed
 
 //    DT_CANCELLAZIONE TIMESTAMP(7)
 	private java.sql.Timestamp dtCancellazione;
- 
+
+    private java.lang.String stato_coge;
+
+    private java.lang.String stato_coan;
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: ORDINE_ACQ_CONSEGNA
@@ -460,4 +463,20 @@ public class OrdineAcqConsegnaBase extends OrdineAcqConsegnaKey implements Keyed
 		}
 		return null;
 	}
+
+    public String getStato_coge() {
+        return stato_coge;
+    }
+
+    public void setStato_coge(String stato_coge) {
+        this.stato_coge = stato_coge;
+    }
+
+    public String getStato_coan() {
+        return stato_coan;
+    }
+
+    public void setStato_coan(String stato_coan) {
+        this.stato_coan = stato_coan;
+    }
 }
