@@ -257,4 +257,63 @@
         <dropDefaultValue tableName="PARAMETRI_LIVELLI_EP" columnName="dacr"/>
         <dropDefaultValue tableName="PARAMETRI_LIVELLI_EP" columnName="duva"/>
     </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep22">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_CONS_PIANO_CONTI_ECONOMICO.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_table_for_multi_classificazioni_ep23">
+        <insert tableName="accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="CFGPDCECPCONSPDC"/>
+            <column name="ti_accesso" type="CHAR(1)" value="C"/>
+            <column name="ds_accesso" type="VARCHAR(200)" value="Consultazione Piano dei Conti"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+
+        <insert tableName="ass_bp_accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="CFGPDCECPCONSPDC"/>
+            <column name="business_process" type="VARCHAR(200)" value="ConsPianoContiEconomicoBP"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+
+        <insert tableName="albero_main">
+            <column name="cd_nodo" type="VARCHAR(100)" value="0.CFG.PDCECP.CONS"/>
+            <column name="ds_nodo" type="VARCHAR(200)" value="Consultazioni"/>
+            <column name="pg_ordinamento" type="BIGINT" value="6"/>
+            <column name="fl_terminale" type="CHAR(1)" value="N"/>
+            <column name="livello" type="SMALLINT" value="3"/>
+            <column name="cd_proprio_nodo" type="VARCHAR(100)" value="CONS"/>
+            <column name="cd_nodo_padre" type="VARCHAR(100)" value="0.CFG.PDCECP"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+
+        <insert tableName="albero_main">
+            <column name="cd_nodo" type="VARCHAR(100)" value="0.CFG.PDCECP.CONS.PDC"/>
+            <column name="ds_nodo" type="VARCHAR(200)" value="Piano dei Conti"/>
+            <column name="cd_accesso" type="VARCHAR(20)" value="CFGPDCECPCONSPDC"/>
+            <column name="business_process" type="VARCHAR(200)" value="ConsPianoContiEconomicoBP"/>
+            <column name="pg_ordinamento" type="BIGINT" value="10"/>
+            <column name="fl_terminale" type="CHAR(1)" value="Y"/>
+            <column name="livello" type="SMALLINT" value="4"/>
+            <column name="cd_proprio_nodo" type="VARCHAR(100)" value="PDC"/>
+            <column name="cd_nodo_padre" type="VARCHAR(100)" value="0.CFG.PDCECP.CONS"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+    </changeSet>
 </databaseChangeLog>

@@ -7997,28 +7997,34 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
         return noteSdi == null || noteSdi.length() <= 500 ? noteSdi : noteSdi.substring(0, 499);
     }
 
+    public List<Dichiarazione_intentoBulk> findDichiarazioniIntentoValide(UserContext userContext,
+                                                                    Fattura_attiva_rigaBulk fatturaRiga) throws PersistencyException, ComponentException {
+        Dichiarazione_intentoHome home = (Dichiarazione_intentoHome) getHome(userContext, Dichiarazione_intentoBulk.class);
+        SQLBuilder sqlBuilder = (SQLBuilder) home.createSQLBuilder();
+        //sql.addSQLClause("AND","fl_acquisti", sql.EQUALS,"Y");
+        sqlBuilder.openParenthesis("AND");
+        sqlBuilder.openParenthesis("AND");
+        sqlBuilder.addSQLClause("AND", "dt_inizio_val_dich", SQLBuilder.LESS_EQUALS, fatturaRiga.getFattura_attiva().getDt_registrazione());
+        sqlBuilder.addSQLClause("AND", "dt_fine_val_dich", SQLBuilder.GREATER_EQUALS, fatturaRiga.getFattura_attiva().getDt_registrazione());
+        sqlBuilder.closeParenthesis();
+        sqlBuilder.openParenthesis("OR");
+        sqlBuilder.addSQLClause("AND", "dt_inizio_val_dich", SQLBuilder.ISNULL, null);
+        sqlBuilder.addSQLClause("AND", "dt_fine_val_dich", SQLBuilder.ISNULL, null);
+        sqlBuilder.closeParenthesis();
+        sqlBuilder.closeParenthesis();
+        sqlBuilder.addSQLClause("AND", "ANNO_RIF", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
+        sqlBuilder.addSQLClause("AND", "cd_anag", SQLBuilder.EQUALS, fatturaRiga.getFattura_attiva().getCliente().getCd_anag());
+        sqlBuilder.addSQLClause("AND", "dt_ini_validita", SQLBuilder.LESS_EQUALS, fatturaRiga.getFattura_attiva().getDt_registrazione());
+        sqlBuilder.addSQLClause("AND", "dt_fin_validita", SQLBuilder.GREATER_EQUALS, fatturaRiga.getFattura_attiva().getDt_registrazione());
+        //sqlBuilder.addSQLClause("AND", "1", SQLBuilder.EQUALS, 1);
+
+        return( List<Dichiarazione_intentoBulk>) home.fetchAll(sqlBuilder);
+
+    }
     private void verificaEsistenzaDichiarazioneIntento(UserContext userContext,
                                                        Fattura_attiva_rigaBulk fatturaRiga) throws ComponentException, ApplicationException {
         try {
-            List dichiarazioni = null;
-            Dichiarazione_intentoHome home = (Dichiarazione_intentoHome) getHome(userContext, Dichiarazione_intentoBulk.class);
-            SQLBuilder sql = (SQLBuilder) home.createSQLBuilder();
-            sql.addSQLClause("AND", "ANNO_RIF", sql.EQUALS, CNRUserContext.getEsercizio(userContext));
-            sql.addSQLClause("AND", "cd_anag", sql.EQUALS, fatturaRiga.getFattura_attiva().getCliente().getCd_anag());
-            sql.addSQLClause("AND", "dt_ini_validita", sql.LESS_EQUALS, fatturaRiga.getFattura_attiva().getDt_registrazione());
-            sql.addSQLClause("AND", "dt_fin_validita", sql.GREATER_EQUALS, fatturaRiga.getFattura_attiva().getDt_registrazione());
-            //sql.addSQLClause("AND","fl_acquisti", sql.EQUALS,"Y");
-            sql.openParenthesis("AND");
-            sql.openParenthesis("AND");
-            sql.addSQLClause("AND", "dt_inizio_val_dich", sql.LESS_EQUALS, fatturaRiga.getFattura_attiva().getDt_registrazione());
-            sql.addSQLClause("AND", "dt_fine_val_dich", sql.GREATER_EQUALS, fatturaRiga.getFattura_attiva().getDt_registrazione());
-            sql.closeParenthesis();
-            sql.openParenthesis("OR");
-            sql.addSQLClause("AND", "dt_inizio_val_dich", sql.ISNULL, null);
-            sql.addSQLClause("AND", "dt_fine_val_dich", sql.ISNULL, null);
-            sql.closeParenthesis();
-            sql.closeParenthesis();
-            dichiarazioni = home.fetchAll(sql);
+            List<Dichiarazione_intentoBulk> dichiarazioni = findDichiarazioniIntentoValide(userContext,fatturaRiga);
             if (dichiarazioni.size() == 0)
                 throw new ApplicationException("Dichiarazione intento non trovata o non valida!");
             for (Iterator i = dichiarazioni.iterator(); i.hasNext(); ) {
@@ -8036,18 +8042,18 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
                     sql_fatt.addSQLJoin("FATTURA_ATTIVA.CD_TERZO", "TERZO.CD_TERZO");
                     sql_fatt.addSQLJoin("FATTURA_ATTIVA_RIGA.CD_VOCE_IVA", "VOCE_IVA.CD_VOCE_IVA");
                     sql_fatt.addSQLJoin("ANAGRAFICO.CD_ANAG", "TERZO.CD_ANAG");
-                    sql_fatt.addSQLJoin("FATTURA_ATTIVA.ESERCIZIO", sql.EQUALS, "FATTURA_ATTIVA_RIGA.ESERCIZIO");
-                    sql_fatt.addSQLJoin("FATTURA_ATTIVA.CD_CDS", sql.EQUALS, "FATTURA_ATTIVA_RIGA.CD_CDS");
-                    sql_fatt.addSQLJoin("FATTURA_ATTIVA.CD_UNITA_ORGANIZZATIVA", sql.EQUALS, "FATTURA_ATTIVA_RIGA.CD_UNITA_ORGANIZZATIVA");
-                    sql_fatt.addSQLJoin("FATTURA_ATTIVA.PG_FATTURA_ATTIVA", sql.EQUALS, "FATTURA_ATTIVA_RIGA.PG_FATTURA_ATTIVA");
+                    sql_fatt.addSQLJoin("FATTURA_ATTIVA.ESERCIZIO", SQLBuilder.EQUALS, "FATTURA_ATTIVA_RIGA.ESERCIZIO");
+                    sql_fatt.addSQLJoin("FATTURA_ATTIVA.CD_CDS", SQLBuilder.EQUALS, "FATTURA_ATTIVA_RIGA.CD_CDS");
+                    sql_fatt.addSQLJoin("FATTURA_ATTIVA.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, "FATTURA_ATTIVA_RIGA.CD_UNITA_ORGANIZZATIVA");
+                    sql_fatt.addSQLJoin("FATTURA_ATTIVA.PG_FATTURA_ATTIVA", SQLBuilder.EQUALS, "FATTURA_ATTIVA_RIGA.PG_FATTURA_ATTIVA");
                     if (fatturaRiga.getPg_fattura_attiva() != null) {
-                        sql_fatt.addSQLClause("AND", "FATTURA_ATTIVA.PG_FATTURA_ATTIVA", sql.NOT_EQUALS, fatturaRiga.getPg_fattura_attiva());
+                        sql_fatt.addSQLClause("AND", "FATTURA_ATTIVA.PG_FATTURA_ATTIVA", SQLBuilder.NOT_EQUALS, fatturaRiga.getPg_fattura_attiva());
                     }
 
 
-                    sql_fatt.addSQLClause("AND", "FATTURA_ATTIVA.ESERCIZIO", sql.EQUALS, CNRUserContext.getEsercizio(userContext));
-                    sql_fatt.addSQLClause("AND", "ANAGRAFICO.CD_ANAG", sql.EQUALS, fatturaRiga.getFattura_attiva().getCliente().getCd_anag());
-                    sql_fatt.addSQLClause("AND", "VOCE_IVA.FL_OBB_DICHIARAZIONE_INTENTO", sql.EQUALS, "Y");
+                    sql_fatt.addSQLClause("AND", "FATTURA_ATTIVA.ESERCIZIO", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
+                    sql_fatt.addSQLClause("AND", "ANAGRAFICO.CD_ANAG", SQLBuilder.EQUALS, fatturaRiga.getFattura_attiva().getCliente().getCd_anag());
+                    sql_fatt.addSQLClause("AND", "VOCE_IVA.FL_OBB_DICHIARAZIONE_INTENTO", SQLBuilder.EQUALS, "Y");
 
                     java.sql.ResultSet rs = null;
                     LoggableStatement ps = null;

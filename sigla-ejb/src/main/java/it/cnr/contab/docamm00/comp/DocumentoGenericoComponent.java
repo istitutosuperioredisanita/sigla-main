@@ -5129,9 +5129,15 @@ public class DocumentoGenericoComponent
         if (documentoGenerico.getLettera_pagamento_estero() != null) {
             if (!documentoGenerico.controllaCompatibilitaPer1210() || documentoGenerico.isByFondoEconomale())
                 throw new it.cnr.jada.comp.ApplicationException("E' stata selezionata una lettera di pagamento per un documento in cui o i terzi e le modalità di pagamento sono differenti o il pagamento del fondo economale è stato selezionato");
+
+            if ( !Optional.ofNullable(documentoGenerico.getLettera_pagamento_estero().getIban()).isPresent())
+                throw new it.cnr.jada.comp.ApplicationException("Attenzione il campo IBAN è obbligatorio ");
             if(documentoGenerico.getLettera_pagamento_estero().getIban().length()>35){
                 throw new it.cnr.jada.comp.ApplicationException("Attenzione la lunghezza del campo IBAN supera i 35 caratteri previsti");
             }
+
+            if ( !Optional.ofNullable(documentoGenerico.getLettera_pagamento_estero().getIndirizzo_swift()).isPresent())
+                throw new it.cnr.jada.comp.ApplicationException("Attenzione il campo SWIFT/BIC/Routing Number è obbligatorio ");
             if(documentoGenerico.getLettera_pagamento_estero().getIndirizzo_swift().length()>11){
                 throw new it.cnr.jada.comp.ApplicationException("Attenzione la lunghezza del campo SWIFT/BIC/Routing Number supera gli 11 caratteri previsti");
             }

@@ -34,7 +34,7 @@ function doScaricaAllegato() {
                             <td valign=top>
                                 <span class="FormLabel">
                                 al fine di rispettare le norme in materia di tutela dei dati personali, <br>
-                                prima di allegare il file del contratto da pubblicare sul sito internet istituzionale del CNR <br>
+                                prima di allegare il file del contratto da pubblicare sul sito internet istituzionale di ISS <br>
                                 e' necessario verificare che lo stesso esponga <b><i><u>esclusivamente</u></i></b> i seguenti dati personali: <br>
                                 <b><i>Nome, Cognome, Luogo e Data di nascita, Codice Fiscale</i></b> <br>
                                 Ogni altro dato personale dovrà essere <b><i>"<u>oscurato</u>"</i></b><br><br>
@@ -45,7 +45,7 @@ function doScaricaAllegato() {
                             </td>
                             <td valign=top>
                                 <span class="FormLabel">
-                                ai fini della pubblicazione sul sito internet istituzionale del CNR, <i><u>si raccomanda di usare file in formato PDF</u></i><br>
+                                ai fini della pubblicazione sul sito internet istituzionale di ISS, <i><u>si raccomanda di usare file in formato PDF</u></i><br>
                                 e di <i><u>controllare sempre</u></i>, dopo il salvataggio, la leggibilità dell'allegato utilizzando il bottone "Apri file"<br>
                                 </span>
                             </td></tr>

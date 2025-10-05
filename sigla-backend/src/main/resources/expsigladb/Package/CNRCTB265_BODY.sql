@@ -343,8 +343,7 @@ BEGIN
 
          IF memCodiceGruppoIva != cv_gruppo_iva THEN
             aRecVpStmRiepilogoCentroP.cd_gruppo_iva:=memCodiceGruppoIva;
-            aRecVpStmRiepilogoCentroP.descrizione_riga:=SUBSTR('TOTALE GRUPPO' || memCodiceGruppoIva || ' ' ||
-                                                               memDescrizioneGruppoIva,1,200);
+            aRecVpStmRiepilogoCentroP.descrizione_riga:=SUBSTR('TOTALE GRUPPO '  ||memDescrizioneGruppoIva,1,200);
             aSequenza:=aSequenza + 1;
             aRecVpStmRiepilogoCentroP.sequenza:=aSequenza;
             insVpStmRiepilogoCentro(aRecVpStmRiepilogoCentroP);
@@ -405,8 +404,7 @@ BEGIN
          -- Rigo gruppo IVA
 
          aRecVpStmRiepilogoCentroP.cd_gruppo_iva:=memCodiceGruppoIva;
-         aRecVpStmRiepilogoCentroP.descrizione_riga:=SUBSTR('TOTALE GRUPPO' || memCodiceGruppoIva || ' ' ||
-                                                            memDescrizioneGruppoIva,1,200);
+         aRecVpStmRiepilogoCentroP.descrizione_riga:=SUBSTR('TOTALE GRUPPO ' || memDescrizioneGruppoIva,1,200);
          aSequenza:=aSequenza + 1;
          aRecVpStmRiepilogoCentroP.sequenza:=aSequenza;
          insVpStmRiepilogoCentro(aRecVpStmRiepilogoCentroP);

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+        persistentClassName="it.cnr.contab.doccont00.consultazioni.bulk.V_cons_dett_res_speBulk"
+        homeClassName="it.cnr.contab.doccont00.consultazioni.bulk.V_cons_dett_res_speHome">
+    <defaultColumnMap
+            tableName="V_CONS_SALDI_RESIDUI_SPE_DET">
+        <columnMapping
+                columnName="ESERCIZIO"
+                propertyName="esercizio"
+                sqlTypeName="DECIMAL"
+                columnSize="4"
+                nullable="true" />
+        <columnMapping
+                columnName="ESERCIZIO_RES"
+                propertyName="esercizio_res"
+                sqlTypeName="DECIMAL"
+                columnSize="4"
+                nullable="true" />
+        <columnMapping
+                columnName="CD_CENTRO_RESPONSABILITA"
+                propertyName="cd_centro_responsabilita"
+                sqlTypeName="VARCHAR"
+                columnSize="30"
+                nullable="true" />
+        <columnMapping
+                columnName="TI_APPARTENENZA"
+                propertyName="ti_appartenenza"
+                sqlTypeName="CHAR"
+                columnSize="1"
+                nullable="true" />
+        <columnMapping
+                columnName="TI_GESTIONE"
+                propertyName="ti_gestione"
+                sqlTypeName="CHAR"
+                columnSize="1"
+                nullable="true" />
+        <columnMapping
+                columnName="CD_ELEMENTO_VOCE"
+                propertyName="cd_elemento_voce"
+                sqlTypeName="VARCHAR"
+                columnSize="20"
+                nullable="true" />
+        <columnMapping
+                columnName="DESCRIZIONE_VOCE"
+                propertyName="descrizione_voce"
+                sqlTypeName="VARCHAR"
+                columnSize="300"
+                nullable="true" />
+        <columnMapping
+                columnName="CDS_OBB"
+                propertyName="cds_obb"
+                sqlTypeName="VARCHAR"
+                columnSize="30"
+                nullable="true" />
+        <columnMapping
+                columnName="PG_OBB"
+                propertyName="pg_obb"
+                sqlTypeName="DECIMAL"
+                columnSize="10"
+                nullable="true" />
+        <columnMapping
+                columnName="DS_OBBLIGAZIONE"
+                propertyName="ds_obbligazione"
+                sqlTypeName="VARCHAR"
+                columnSize="300"
+                nullable="true" />
+        <columnMapping
+                columnName="PG_OBB_SCAD"
+                propertyName="pg_obb_scad"
+                sqlTypeName="DECIMAL"
+                columnSize="10"
+                nullable="true" />
+        <columnMapping
+                columnName="DS_SCADENZA"
+                propertyName="ds_scadenza"
+                sqlTypeName="VARCHAR"
+                columnSize="300"
+                nullable="true" />
+        <columnMapping
+                columnName="CD_TIPO_DOCUMENTO_CONT"
+                propertyName="cd_tipo_documento_cont"
+                sqlTypeName="VARCHAR"
+                columnSize="10"
+                nullable="true" />
+        <columnMapping
+                columnName="DESCRMODIFICA"
+                propertyName="descrModifica"
+                sqlTypeName="VARCHAR"
+                columnSize="4000"
+                nullable="true" />
+        <columnMapping
+                columnName="VAR_PIU_OBB_RES_PRO"
+                propertyName="var_piu_obb_res_pro"
+                sqlTypeName="DECIMAL"
+                columnSize="15"
+                columnScale="2"
+                nullable="true" />
+        <columnMapping
+                columnName="VAR_MENO_OBB_RES_PRO"
+                propertyName="var_meno_obb_res_pro"
+                sqlTypeName="DECIMAL"
+                columnSize="15"
+                columnScale="2"
+                nullable="true" />
+        <columnMapping
+                columnName="IM_IMPROPRIO"
+                propertyName="im_improprio"
+                sqlTypeName="DECIMAL"
+                columnSize="15"
+                columnScale="2"
+                nullable="true" />
+        <columnMapping
+                columnName="IM_PROPRIO"
+                propertyName="im_proprio"
+                sqlTypeName="DECIMAL"
+                columnSize="15"
+                columnScale="2"
+                nullable="true" />
+        <columnMapping
+                columnName="PAGATO_RES_PROPRIO"
+                propertyName="pagato_res_proprio"
+                sqlTypeName="DECIMAL"
+                columnSize="15"
+                columnScale="2"
+                nullable="true" />
+        <columnMapping
+                columnName="PAGATO_RES_IMPROPRIO"
+                propertyName="pagato_res_improprio"
+                sqlTypeName="DECIMAL"
+                columnSize="15"
+                columnScale="2"
+                nullable="true" />
+        <columnMapping
+                columnName="IMP_DOC_RES_PROPRIO"
+                propertyName="imp_doc_res_proprio"
+                sqlTypeName="DECIMAL"
+                columnSize="15"
+                columnScale="2"
+                nullable="true" />
+        <columnMapping
+                columnName="IMP_DOC_RES_IMPROPRIO"
+                propertyName="imp_doc_res_improprio"
+                sqlTypeName="DECIMAL"
+                columnSize="15"
+                columnScale="2"
+                nullable="true" />
+    </defaultColumnMap>
+
+    <persistentProperty name="esercizio" />
+    <persistentProperty name="esercizio_res" />
+    <persistentProperty name="cd_centro_responsabilita" />
+    <persistentProperty name="ti_appartenenza" />
+    <persistentProperty name="ti_gestione" />
+    <persistentProperty name="cd_elemento_voce" />
+    <persistentProperty name="descrizione_voce" />
+    <persistentProperty name="cds_obb" />
+    <persistentProperty name="pg_obb" />
+    <persistentProperty name="ds_obbligazione" />
+    <persistentProperty name="pg_obb_scad" />
+    <persistentProperty name="ds_scadenza" />
+    <persistentProperty name="cd_tipo_documento_cont" />
+    <persistentProperty name="descrModifica" />
+    <persistentProperty name="var_piu_obb_res_pro" />
+    <persistentProperty name="var_meno_obb_res_pro" />
+    <persistentProperty name="im_improprio" />
+    <persistentProperty name="im_proprio" />
+    <persistentProperty name="pagato_res_proprio" />
+    <persistentProperty name="pagato_res_improprio" />
+    <persistentProperty name="imp_doc_res_proprio" />
+    <persistentProperty name="imp_doc_res_improprio" />
+</SQLPersistentInfo>

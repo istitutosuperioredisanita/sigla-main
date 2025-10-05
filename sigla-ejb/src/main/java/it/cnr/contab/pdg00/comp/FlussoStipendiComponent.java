@@ -33,6 +33,7 @@ import it.cnr.jada.persistency.PersistencyException;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.List;
@@ -150,7 +151,7 @@ public class FlussoStipendiComponent extends CRUDComponent implements Cloneable,
         if (Optional.ofNullable(stipendiCofiObbTotali).isPresent()){
                     for (Stipendi_cofi_obb_scadBulk stipendiCofiObbScadBulk : stipendiCofiObbTotali.keySet()) {
                         ObbligazioneBulk obbligazioneBulk=null;
-                        BigDecimal importoTotale = BigDecimal.valueOf(stipendiCofiObbTotali.get(stipendiCofiObbScadBulk).doubleValue());
+                        BigDecimal importoTotale = BigDecimal.valueOf(stipendiCofiObbTotali.get(stipendiCofiObbScadBulk)).setScale(2, RoundingMode.HALF_UP);
                         stipendiCofiObbScadBulk.getStipendi_cofi_obb().setCd_cds_obbligazione(normalizeCds(stipendiCofiObbScadBulk.getStipendi_cofi_obb().getCd_cds_obbligazione()));
 
                         try {
@@ -230,7 +231,7 @@ public class FlussoStipendiComponent extends CRUDComponent implements Cloneable,
             // Mappe che gestiscono le query di validazione
 
             for (Stipendi_cofi_coriBulk stipendiCofiCoriBulk : stipendiCofiCoriTotali.keySet()) {
-                BigDecimal importoTotale = BigDecimal.valueOf(stipendiCofiCoriTotali.get(stipendiCofiCoriBulk).doubleValue());
+                BigDecimal ammontareTotale = BigDecimal.valueOf(stipendiCofiCoriTotali.get(stipendiCofiCoriBulk)).setScale(2, RoundingMode.HALF_UP);
 
                 try {
                     Tipo_contributo_ritenutaBulk tipoCORIValido = tipoContributoRitenutaHome.findTipoCORIValido(stipendiCofiCoriBulk.getCd_contributo_ritenuta());
@@ -273,6 +274,7 @@ public class FlussoStipendiComponent extends CRUDComponent implements Cloneable,
 
                 stipendiCofiCoriBulk.setDt_da_competenza_coge(dataInizioCompetenza);
                 stipendiCofiCoriBulk.setDt_a_competenza_coge(dataFineCompetenza);
+                stipendiCofiCoriBulk.setAmmontare(ammontareTotale);
                 stipendiCofiCoriBulk.setToBeCreated();
                 super.creaConBulk(userContext, stipendiCofiCoriBulk);
 
