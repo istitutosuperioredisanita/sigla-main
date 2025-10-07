@@ -49,6 +49,7 @@ import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.OrderConstants;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
+import javax.naming.OperationNotSupportedException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
@@ -1755,7 +1756,11 @@ public class ObbligazioneHome extends BulkHome {
         }
     }
 
-    public IScadenzaDocumentoContabileBulk aumentaImportoScadenzaInAutomatico(UserContext userContext, Obbligazione_scadenzarioBulk scadenza, BigDecimal newImporto) throws ComponentException {
+    public IScadenzaDocumentoContabileBulk aumentaImportoScadenzaInAutomatico(UserContext userContext, Obbligazione_scadenzarioBulk scadenza, BigDecimal newImporto) throws OperationNotSupportedException, ComponentException {
+        return aumentaImportoScadenzaInAutomatico(userContext, scadenza, newImporto, false);
+    }
+
+    public IScadenzaDocumentoContabileBulk aumentaImportoScadenzaInAutomatico(UserContext userContext, Obbligazione_scadenzarioBulk scadenza, BigDecimal newImporto, boolean forzaOperazione) throws OperationNotSupportedException, ComponentException {
         try {
             Obbligazione_scadenzarioHome osHome = (Obbligazione_scadenzarioHome)getHomeCache().getHome(Obbligazione_scadenzarioBulk.class);
             Obbligazione_scad_voceHome osvHome = (Obbligazione_scad_voceHome)getHomeCache().getHome(Obbligazione_scad_voceBulk.class);
@@ -1767,7 +1772,7 @@ public class ObbligazioneHome extends BulkHome {
             Obbligazione_scadenzarioBulk scadenzaModel = obbligazione.getObbligazione_scadenzarioColl().stream().filter(el->el.equalsByPrimaryKey(scadenza)).findFirst()
                     .orElseThrow(()->new ApplicationException("Scadenza da aggiornare non trovata nell'impegno indicato!"));
 
-            if (scadenzaModel.getIm_associato_doc_amm().compareTo(BigDecimal.ZERO)>0)
+            if (scadenzaModel.getIm_associato_doc_amm().compareTo(BigDecimal.ZERO)>0 && !forzaOperazione)
                 throw new ApplicationException("Scadenza da aggiornare collegata a documenti amministrativi. Aggiornamento non possibile!");
 
             BigDecimal diffImporto = newImporto.subtract(scadenzaModel.getIm_scadenza());
@@ -1800,7 +1805,7 @@ public class ObbligazioneHome extends BulkHome {
 
             BigDecimal totImportoDisponibile = scadenzeDisponibili.stream().map(Obbligazione_scadenzarioBulk::getIm_scadenza).reduce(BigDecimal.ZERO, BigDecimal::add);
             if (totImportoDisponibile.compareTo(diffImporto)<0)
-                throw new ApplicationException("L'importo disponibile dell'obbligazione ("+ new EuroFormat().format(totImportoDisponibile)+") è inferiore alla variazione richiesta ("
+                throw new OperationNotSupportedException("L'importo disponibile dell'obbligazione ("+ new EuroFormat().format(totImportoDisponibile)+") è inferiore alla variazione richiesta ("
                         + new EuroFormat().format(diffImporto) + "). Aggiornamento non possibile!");
 
             scadenzaModel.setObbligazione_scad_voceColl(new BulkList(osHome.findObbligazione_scad_voceList(userContext, scadenzaModel, Boolean.FALSE)));

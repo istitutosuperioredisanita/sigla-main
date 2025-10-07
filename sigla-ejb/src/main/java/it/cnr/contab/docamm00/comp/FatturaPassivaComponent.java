@@ -87,6 +87,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.util.Pair;
 
 import javax.ejb.EJBException;
+import javax.naming.OperationNotSupportedException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
@@ -3085,6 +3086,9 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                     riga.setVoce_ep(consegna.getVoce_ep());
                     consegna.setRigheEconomica(new BulkList<>(((OrdineAcqConsegnaHome)getHome(userContext, OrdineAcqConsegnaBulk.class)).findOrdineAcqConsegnaEcoList(consegna)));
 
+                    OrdineAcqConsegnaEcoSHome storicoHome = ((OrdineAcqConsegnaEcoSHome)getHome(userContext, OrdineAcqConsegnaEcoSBulk.class));
+                    List<OrdineAcqConsegnaEcoSBulk> storicoEcoList = storicoHome.getStoricoConsegna(consegna,OrdineAcqConsegnaEcoSBulk.TIPO_STORICO_ORDINE);
+
                     riga.setRigheEconomica(new BulkList<>());
                     for (OrdineAcqConsegnaEcoBulk consegnaEco : consegna.getRigheEconomica()) {
                         Fattura_passiva_riga_ecoIBulk fatturaEco = new Fattura_passiva_riga_ecoIBulk();
@@ -3103,17 +3107,19 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                         fatturaEco.setToBeCreated();
                         riga.getRigheEconomica().add(fatturaEco);
 
-                        //alimento tabella storico consegna
-                        OrdineAcqConsegnaEcoSBulk consegnaEcoSBulk = new OrdineAcqConsegnaEcoSBulk();
-                        consegnaEcoSBulk.setTipoStorico(OrdineAcqConsegnaEcoSBulk.TIPO_STORICO_ORDINE);
-                        consegnaEcoSBulk.setOrdineAcqConsegna(consegnaEco.getOrdineAcqConsegna());
-                        consegnaEcoSBulk.setProgressivo_riga_eco(consegnaEco.getProgressivo_riga_eco());
-                        consegnaEcoSBulk.setLinea_attivita(consegnaEco.getLinea_attivita());
-                        consegnaEcoSBulk.setVoce_analitica(consegnaEco.getVoce_analitica());
-                        consegnaEcoSBulk.setImporto(consegnaEco.getImporto());
+                        //alimento tabella storico consegna se non presente
+                        if (storicoEcoList.isEmpty()) {
+                            OrdineAcqConsegnaEcoSBulk consegnaEcoSBulk = new OrdineAcqConsegnaEcoSBulk();
+                            consegnaEcoSBulk.setTipoStorico(OrdineAcqConsegnaEcoSBulk.TIPO_STORICO_ORDINE);
+                            consegnaEcoSBulk.setOrdineAcqConsegna(consegnaEco.getOrdineAcqConsegna());
+                            consegnaEcoSBulk.setProgressivo_riga_eco(consegnaEco.getProgressivo_riga_eco());
+                            consegnaEcoSBulk.setLinea_attivita(consegnaEco.getLinea_attivita());
+                            consegnaEcoSBulk.setVoce_analitica(consegnaEco.getVoce_analitica());
+                            consegnaEcoSBulk.setImporto(consegnaEco.getImporto());
 
-                        consegnaEcoSBulk.setToBeCreated();
-                        makeBulkPersistent(userContext,consegnaEcoSBulk);
+                            consegnaEcoSBulk.setToBeCreated();
+                            makeBulkPersistent(userContext, consegnaEcoSBulk);
+                        }
 
                         //Aggiorno importo su economica consegna
                         if (consegnaEco.getImporto().compareTo(fatturaEco.getImporto())!=0) {
@@ -5677,7 +5683,24 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             }
         }
 
+        List<FatturaOrdineBulk> listFatturaOrdiniOld;
+        try {
+            listFatturaOrdiniOld = ((FatturaOrdineHome)getTempHome(aUC, FatturaOrdineBulk.class)).findByFattura(fatturaPassiva);
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        }
+
         fatturaPassiva = (Fattura_passivaBulk) super.modificaConBulk(aUC, fatturaPassiva);
+
+        List<FatturaOrdineBulk> listFatturaOrdiniNew;
+        try {
+            listFatturaOrdiniNew = ((FatturaOrdineHome)getHome(aUC, FatturaOrdineBulk.class)).findByFattura(fatturaPassiva);
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        }
+
+        //Serve per eliminare scritture prime note di riscontri poi annullati
+        gestisciEliminaRiscontroValore(aUC, listFatturaOrdiniOld, listFatturaOrdiniNew);
 
         if (fatturaPassiva.getDocumentoEleTestata() != null && fatturaPassiva.getDocumentoEleTestata().getIdentificativoSdi() != null) {
             try {
@@ -9560,7 +9583,9 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             for (Scrittura_analiticaBulk saNew : otherScritturaAnaliticaPropostaBulk1) {
                 if (saNew.isScritturaFromConsegnaOrdineAcquisto()) {
                     List<Scrittura_analiticaBulk> result = saHome.findByDocumentoCoge(new OrdineAcqConsegnaBulk(saNew.getCd_cds_documento(), saNew.getCdUnitaOperativa(), saNew.getEsercizio_documento_amm(), saNew.getCdNumeratoreOrdine(), saNew.getPg_numero_documento().intValue(), saNew.getRigaOrdine(), saNew.getConsegna()));
-                    Optional<Scrittura_analiticaBulk> spdOld = result.stream().filter(el -> OrigineScritturaEnum.RISCONTRO_A_VALORE.name().equals(el.getOrigine_scrittura()))
+                    Optional<Scrittura_analiticaBulk> spdOld = result.stream()
+                            .filter(el -> OrigineScritturaEnum.RISCONTRO_A_VALORE.name().equals(el.getOrigine_scrittura()))
+                            .filter(Scrittura_analiticaBulk::isScritturaAttiva)
                             .findFirst();
                     spdOld.ifPresent(oldScrittura -> {
                         //Elimino vecchia scrittura
@@ -9578,7 +9603,9 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             for (Scrittura_partita_doppiaBulk spdNew : otherScritturaPartitaDoppiaPropostaBulk1) {
                 if (spdNew.isScritturaFromConsegnaOrdineAcquisto()) {
                     List<Scrittura_partita_doppiaBulk> result = spdHome.findByDocumentoCoge(new OrdineAcqConsegnaBulk(spdNew.getCd_cds_documento(), spdNew.getCdUnitaOperativa(), spdNew.getEsercizio_documento_amm(), spdNew.getCdNumeratoreOrdine(), spdNew.getPg_numero_documento().intValue(), spdNew.getRigaOrdine(), spdNew.getConsegna()));
-                    Optional<Scrittura_partita_doppiaBulk> spdOld = result.stream().filter(el -> OrigineScritturaEnum.RISCONTRO_A_VALORE.name().equals(el.getOrigine_scrittura()))
+                    Optional<Scrittura_partita_doppiaBulk> spdOld = result.stream()
+                            .filter(el -> OrigineScritturaEnum.RISCONTRO_A_VALORE.name().equals(el.getOrigine_scrittura()))
+                            .filter(Scrittura_partita_doppiaBulk::isScritturaAttiva)
                             .findFirst();
                     spdOld.ifPresent(oldScrittura -> {
                         //Elimino vecchia scrittura
@@ -9604,5 +9631,124 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         } catch (PersistencyException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void gestisciEliminaRiscontroValore(UserContext userContext, List<FatturaOrdineBulk> listOld, List<FatturaOrdineBulk> listNew) throws ComponentException {
+        try {
+            //Inizio cercando le consegne eliminate
+            List<FatturaOrdineBulk> righeFatturaOrdineToBeDeleted = listOld.stream().filter(elOld->
+                            listNew.stream().noneMatch(elNew->elNew.getOrdineAcqConsegna().equalsByPrimaryKey(elOld.getOrdineAcqConsegna())))
+                    .collect(Collectors.toList());
+
+            //Per le consegne da eliminare annullo le scritture prime note effettuate
+            for (FatturaOrdineBulk fatturaOrdineToBeDeleted : righeFatturaOrdineToBeDeleted) {
+                OrdineAcqConsegnaBulk ordineAcqConsegna = (OrdineAcqConsegnaBulk) findByPrimaryKey(userContext, fatturaOrdineToBeDeleted.getOrdineAcqConsegna());
+                ordineAcqConsegna.setStatoFatt(OrdineAcqConsegnaBulk.STATO_FATT_NON_ASSOCIATA);
+                boolean annullaRiscontroAValore = Boolean.TRUE;
+                boolean isImportoRettificato = fatturaOrdineToBeDeleted.isImponibileRettificato() || fatturaOrdineToBeDeleted.isIvaRettificata();
+
+                //cerco di ripristinare l'obbligazione cercando la disponibilità
+                if (isImportoRettificato) {
+                    ImportoOrdine importoCns = new ImportoOrdine();
+                    importoCns.setImponibile(ordineAcqConsegna.getImImponibile());
+                    importoCns.setImportoIvaInd(ordineAcqConsegna.getImIva());
+
+                    ImportoOrdine importoRet = new ImportoOrdine();
+                    importoRet.setImponibile(fatturaOrdineToBeDeleted.getImImponibile());
+                    importoRet.setImportoIvaInd(fatturaOrdineToBeDeleted.getImIva());
+                    Utility.createMovimentiMagComponentSession().creaMovimentoRettificaValoreOrdine(userContext, ordineAcqConsegna, importoCns, importoRet);
+
+                    BigDecimal oldImporto = fatturaOrdineToBeDeleted.getImImponibile().add(fatturaOrdineToBeDeleted.getImIva());
+                    BigDecimal diff = oldImporto.subtract(ordineAcqConsegna.getImTotaleConsegna());
+
+                    ObbligazioneHome obbligHome = (ObbligazioneHome) getHome(userContext, ObbligazioneBulk.class);
+                    Obbligazione_scadenzarioHome osHome = (Obbligazione_scadenzarioHome) getHome(userContext, Obbligazione_scadenzarioBulk.class);
+                    Obbligazione_scadenzarioBulk scadenza = ordineAcqConsegna.getObbligazioneScadenzario();
+                    if (diff.compareTo(BigDecimal.ZERO)!=0) {
+                        ordineAcqConsegna.setImImponibile(fatturaOrdineToBeDeleted.getImImponibile());
+                        ordineAcqConsegna.setImImponibileDivisa(fatturaOrdineToBeDeleted.getImImponibileDivisa());
+                        ordineAcqConsegna.setImIva(fatturaOrdineToBeDeleted.getImIva());
+                        ordineAcqConsegna.setImIvaDivisa(fatturaOrdineToBeDeleted.getImIvaDivisa());
+                        ordineAcqConsegna.setImIvaD(fatturaOrdineToBeDeleted.getImIvaD());
+                        ordineAcqConsegna.setImIvaNd(fatturaOrdineToBeDeleted.getImIvaNd());
+                        ordineAcqConsegna.setImTotaleConsegna(oldImporto);
+
+                        //Ripristino la parte economica
+                        //Elimino le vecchie righe
+                        OrdineAcqConsegnaHome ordineAcqConsegnaHome = (OrdineAcqConsegnaHome) getHome(userContext, OrdineAcqConsegnaBulk.class);
+                        List<OrdineAcqConsegnaEcoBulk> ecoList = ordineAcqConsegnaHome.findOrdineAcqConsegnaEcoList(ordineAcqConsegna);
+                        for (OrdineAcqConsegnaEcoBulk eco:ecoList) {
+                            eco.setToBeDeleted();
+                            makeBulkPersistent(userContext, eco);
+                        }
+                        //E le ricreo
+                        OrdineAcqConsegnaEcoSHome storicoHome = ((OrdineAcqConsegnaEcoSHome)getHome(userContext, OrdineAcqConsegnaEcoSBulk.class));
+                        List<OrdineAcqConsegnaEcoSBulk> storicoEcoList = storicoHome.getStoricoConsegna(ordineAcqConsegna,OrdineAcqConsegnaEcoSBulk.TIPO_STORICO_ORDINE);
+                        for (OrdineAcqConsegnaEcoSBulk ecoS:storicoEcoList) {
+                            OrdineAcqConsegnaEcoBulk eco = new OrdineAcqConsegnaEcoBulk();
+                            eco.setOrdineAcqConsegna(ecoS.getOrdineAcqConsegna());
+                            eco.setLinea_attivita(ecoS.getLinea_attivita());
+                            eco.setVoce_analitica(ecoS.getVoce_analitica());
+                            eco.setImporto(ecoS.getImporto());
+                            eco.setToBeCreated();
+                            makeBulkPersistent(userContext, eco);
+                        }
+                    }
+                    if (diff.compareTo(BigDecimal.ZERO)>0) {
+                        try {
+                            scadenza = (Obbligazione_scadenzarioBulk) obbligHome.aumentaImportoScadenzaInAutomatico(userContext, scadenza, oldImporto, true);
+                            scadenza.setIm_associato_doc_amm(oldImporto);
+                            osHome.update(scadenza, userContext);
+                        } catch (OperationNotSupportedException ex) {
+                            annullaRiscontroAValore = Boolean.FALSE;
+                        }
+                    } else if (diff.compareTo(BigDecimal.ZERO)<0) {
+                        Utility.createObbligazioneComponentSession().sdoppiaScadenzaInAutomatico(userContext, scadenza, oldImporto);
+                        scadenza.setIm_associato_doc_amm(oldImporto);
+                        osHome.update(scadenza, userContext);
+                    }
+                }
+
+                ordineAcqConsegna.setToBeUpdated();
+                makeBulkPersistent(userContext, ordineAcqConsegna);
+
+                //Cerco la prima nota creata sulla consegna e la metto in stato annullata
+                Scrittura_partita_doppiaHome scrHome = (Scrittura_partita_doppiaHome)getHome(userContext, Scrittura_partita_doppiaBulk.class);
+                List<Scrittura_partita_doppiaBulk> scrList = scrHome.findByDocumentoCoge(ordineAcqConsegna);
+                for (Scrittura_partita_doppiaBulk scrBulk : scrList) {
+                    if (scrBulk.isScritturaAttiva() && OrigineScritturaEnum.RISCONTRO_A_VALORE.name().equals(scrBulk.getOrigine_scrittura())) {
+                        if (annullaRiscontroAValore)
+                            scrBulk.setAttiva("N");
+                        scrBulk.setToBeUpdated();
+                        makeBulkPersistent(userContext, scrBulk);
+                    }
+                }
+
+                //Cerco la prima nota creata sulla consegna e la metto in stato annullata
+                Scrittura_analiticaHome anaHome = (Scrittura_analiticaHome)getHome(userContext, Scrittura_analiticaBulk.class);
+                List<Scrittura_analiticaBulk> anaList = anaHome.findByDocumentoCoge(ordineAcqConsegna);
+                for (Scrittura_analiticaBulk anaBulk : anaList) {
+                    if (anaBulk.isScritturaAttiva() && OrigineScritturaEnum.RISCONTRO_A_VALORE.name().equals(anaBulk.getOrigine_scrittura())) {
+                        anaBulk.setAttiva("N");
+                        anaBulk.setToBeUpdated();
+                        makeBulkPersistent(userContext, anaBulk);
+                    }
+                }
+            }
+        } catch (PersistencyException e) {
+            throw new RuntimeException(e);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected OggettoBulk eseguiModificaConBulk(UserContext usercontext, OggettoBulk oggettobulk) throws ComponentException, PersistencyException {
+        if (oggettobulk instanceof Fattura_passivaBulk) {
+            for (Iterator iterator1 = ((Fattura_passivaBulk) oggettobulk).getFattura_passiva_ordini().deleteIterator(); iterator1.hasNext(); makeBulkPersistent(usercontext, (OggettoBulk) iterator1.next(), false))
+                ;
+            for (Iterator iterator1 = ((Fattura_passivaBulk) oggettobulk).getFattura_passiva_dettColl().deleteIterator(); iterator1.hasNext(); makeBulkPersistent(usercontext, (OggettoBulk) iterator1.next(), false))
+                ;
+        }
+        return super.eseguiModificaConBulk(usercontext, oggettobulk);
     }
 }

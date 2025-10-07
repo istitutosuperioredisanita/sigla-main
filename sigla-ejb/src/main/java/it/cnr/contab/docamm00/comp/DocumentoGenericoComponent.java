@@ -68,6 +68,7 @@ import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import javax.ejb.EJBException;
+import javax.naming.OperationNotSupportedException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -566,6 +567,8 @@ public class DocumentoGenericoComponent
                             }
                         } catch (PersistencyException _ex) {
                           throw handleException(_ex);
+                        } catch (OperationNotSupportedException ex) {
+                            throw new ApplicationException(ex);
                         }
                     }
                     /**

@@ -45,6 +45,7 @@ public interface MovimentiMagComponentSession extends it.cnr.jada.ejb.CRUDCompon
     java.util.Collection<LottoMagBulk> findLottiMagazzino(UserContext userContext, MovimentiMagazzinoRigaBulk movimentiMagazzinoRigaBulk) throws ComponentException, PersistencyException, RemoteException, ApplicationException;
     RemoteIterator ricercaMovimenti(UserContext userContext, ParametriSelezioneMovimentiBulk parametri) throws ComponentException, RemoteException;
     MovimentiMagBulk creaMovimentoRettificaValoreOrdine(UserContext userContext, FatturaOrdineBulk fatturaOrdineBulk) throws ComponentException, RemoteException;
+    MovimentiMagBulk creaMovimentoRettificaValoreOrdine(UserContext userContext, OrdineAcqConsegnaBulk ordineAcqConsegnaBulk, ImportoOrdine importoCns, ImportoOrdine importoRet) throws ComponentException, RemoteException;
     ImportoOrdine calcoloImporto(UserContext userContext, ParametriCalcoloImportoOrdine parametri) throws RemoteException,ComponentException;
     void creaMovimentoChiusura(UserContext userContext, Integer pgChiusura, Integer anno, String tipoChiusura, java.sql.Timestamp dataRiferimentoMovimento) throws RemoteException, ComponentException;
     void eliminaMovimentoChiusura(UserContext userContext, Integer pgChiusura, Integer anno, String tipoChiusura, java.sql.Timestamp dataRiferimentoMovimento) throws RemoteException, ComponentException;

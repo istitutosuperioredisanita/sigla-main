@@ -21,6 +21,11 @@ import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.persistency.sql.FindClause;
+import it.cnr.jada.persistency.sql.PersistentHome;
+import it.cnr.jada.persistency.sql.SQLBuilder;
+
+import java.util.List;
 
 public class OrdineAcqConsegnaEcoSHome extends BulkHome {
     public OrdineAcqConsegnaEcoSHome(Class classe, java.sql.Connection conn) {
@@ -58,5 +63,20 @@ public class OrdineAcqConsegnaEcoSHome extends BulkHome {
         } catch (java.sql.SQLException sqle) {
             throw new PersistencyException(sqle);
         }
+    }
+
+    public List<OrdineAcqConsegnaEcoSBulk> getStoricoConsegna(OrdineAcqConsegnaBulk consegna, String tipoStorico) throws PersistencyException {
+        PersistentHome rigaHome = getHomeCache().getHome(OrdineAcqConsegnaEcoSBulk.class);
+        SQLBuilder sql = rigaHome.createSQLBuilder();
+        sql.addClause(FindClause.AND, "tipoStorico", SQLBuilder.EQUALS, tipoStorico);
+        sql.addClause(FindClause.AND, "cdCds", SQLBuilder.EQUALS, consegna.getCdCds());
+        sql.addClause(FindClause.AND, "cdUnitaOperativa", SQLBuilder.EQUALS, consegna.getCdUnitaOperativa());
+        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, consegna.getEsercizio());
+        sql.addClause(FindClause.AND, "cdNumeratore", SQLBuilder.EQUALS, consegna.getCdNumeratore());
+        sql.addClause(FindClause.AND, "numero", SQLBuilder.EQUALS, consegna.getNumero());
+        sql.addClause(FindClause.AND, "riga", SQLBuilder.EQUALS, consegna.getRiga());
+        sql.addClause(FindClause.AND, "consegna", SQLBuilder.EQUALS, consegna.getConsegna());
+
+        return rigaHome.fetchAll(sql);
     }
 }

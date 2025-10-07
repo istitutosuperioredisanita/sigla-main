@@ -38,13 +38,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import java.rmi.RemoteException;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.List;
-
 @Stateless(name="CNRORDMAG00_EJB_MovimentiMagComponentSession")
 public class MovimentiMagComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements MovimentiMagComponentSession {
 @PostConstruct
@@ -285,6 +278,8 @@ public void annullaMovimento(UserContext userContext, MovimentiMagBulk movimenti
 		}
 
 	}
+
+    @Override
 	public MovimentiMagBulk creaMovimentoRettificaValoreOrdine(UserContext userContext, FatturaOrdineBulk fatturaOrdineBulk) throws ComponentException,javax.ejb.EJBException {
 		pre_component_invocation(userContext,componentObj);
 		try {
@@ -304,7 +299,26 @@ public void annullaMovimento(UserContext userContext, MovimentiMagBulk movimenti
 		}
 	}
 
-	@Override
+    @Override
+    public MovimentiMagBulk creaMovimentoRettificaValoreOrdine(UserContext userContext, OrdineAcqConsegnaBulk ordineAcqConsegnaBulk, ImportoOrdine importoCns, ImportoOrdine importoRet) throws ComponentException,javax.ejb.EJBException {
+        pre_component_invocation(userContext,componentObj);
+        try {
+            MovimentiMagBulk result = ((MovimentiMagComponent)componentObj).creaMovimentoRettificaValoreOrdine(userContext, ordineAcqConsegnaBulk, importoCns, importoRet);
+            component_invocation_succes(userContext,componentObj);
+            return result;
+        } catch(it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext,componentObj);
+            throw e;
+        } catch(ComponentException e) {
+            component_invocation_failure(userContext,componentObj);
+            throw e;
+        } catch(RuntimeException e) {
+            throw uncaughtRuntimeException(userContext,componentObj,e);
+        } catch(Error e) {
+            throw uncaughtError(userContext,componentObj,e);
+        }
+    }
+    @Override
 	public ImportoOrdine calcoloImporto(UserContext userContext, ParametriCalcoloImportoOrdine parametri) throws RemoteException, ComponentException {
 		pre_component_invocation(userContext,componentObj);
 		try {

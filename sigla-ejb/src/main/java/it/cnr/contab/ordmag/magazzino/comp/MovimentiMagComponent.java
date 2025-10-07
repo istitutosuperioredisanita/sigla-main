@@ -384,10 +384,20 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 		return movimentoCaricoMag;
 	}
 
-	public MovimentiMagBulk creaMovimentoRettificaValoreOrdine(UserContext userContext, FatturaOrdineBulk fatturaOrdineBulk) throws ComponentException {
+    public MovimentiMagBulk creaMovimentoRettificaValoreOrdine(UserContext userContext, FatturaOrdineBulk fatturaOrdineBulk) throws ComponentException {
+        try {
+            return  creaMovimentoRettificaValoreOrdine(userContext, fatturaOrdineBulk.getOrdineAcqConsegna(),
+                            recuperoPrezzoUnitario(userContext, fatturaOrdineBulk.getOrdineAcqConsegna()),
+                            recuperoPrezzoUnitarioRettificato(userContext, fatturaOrdineBulk));
+        } catch (RemoteException | PersistencyException e) {
+            throw new ComponentException(e);
+        }
+    }
+
+	public MovimentiMagBulk creaMovimentoRettificaValoreOrdine(UserContext userContext, OrdineAcqConsegnaBulk ordineAcqConsegnaBulk, ImportoOrdine importoCns, ImportoOrdine importoRet) throws ComponentException {
 		LottoMagBulk lotto = null;
 		try {
-			lotto = ((LottoMagHome)getHome(userContext, LottoMagBulk.class)).findCaricoDaOrdine(fatturaOrdineBulk.getOrdineAcqConsegna());
+			lotto = ((LottoMagHome)getHome(userContext, LottoMagBulk.class)).findCaricoDaOrdine(ordineAcqConsegnaBulk);
 		} catch (IntrospectionException | PersistencyException e) {
 			throw handleException(e);
 		}
@@ -417,7 +427,7 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 		movimentoMag.setDtMovimento(new Timestamp(System.currentTimeMillis()));
 		movimentoMag.setDtRiferimento(lotto.getDtCarico());
 		movimentoMag.setMagazzinoUt(magazzinoBulk);
-		movimentoMag.setUnitaOperativaOrd(fatturaOrdineBulk.getOrdineAcqConsegna().getUnitaOperativaOrd());
+		movimentoMag.setUnitaOperativaOrd(ordineAcqConsegnaBulk.getUnitaOperativaOrd());
 
 		try {
 			movimentoMag.setPgMovimento(homeMag.recuperoProgressivoMovimento(userContext));
@@ -436,21 +446,19 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 		OrdineAcqConsegnaHome homeConsegna = (OrdineAcqConsegnaHome)getHome(userContext, OrdineAcqConsegnaBulk.class);
 		OrdineAcqConsegnaBulk consegna = null;
 		try {
-			consegna = (OrdineAcqConsegnaBulk)homeConsegna.findByPrimaryKey(fatturaOrdineBulk.getOrdineAcqConsegna());
+			consegna = (OrdineAcqConsegnaBulk)homeConsegna.findByPrimaryKey(ordineAcqConsegnaBulk);
 		} catch (PersistencyException e) {
 			throw handleException(e);
 		}
 
 		movimentoMag.setOrdineAcqConsegnaUt(consegna);
 
-		try {
-			ImportoOrdine importo = recuperoPrezzoUnitario(userContext, consegna);
-			BigDecimal prezzoUnitarioOrdine = importo.getPrezzoCompIva();
-			BigDecimal prezzoIvaUnitarioOrdine = importo.getTotaleIva();
+        {
+			BigDecimal prezzoUnitarioOrdine = importoCns.getPrezzoCompIva();
+			BigDecimal prezzoIvaUnitarioOrdine = importoCns.getTotaleIva();
 
-			ImportoOrdine importoRet=  recuperoPrezzoUnitarioRettificato(userContext, fatturaOrdineBulk);
-			BigDecimal prezzoUnitarioOrdineRettificato =importoRet.getPrezzoCompIva();
-			BigDecimal prezzoUnitarioIvaOrdineRettificato =importoRet.getTotaleIva();
+			BigDecimal prezzoUnitarioOrdineRettificato = importoRet.getPrezzoCompIva();
+			BigDecimal prezzoUnitarioIvaOrdineRettificato = importoRet.getTotaleIva();
 
 			BigDecimal diffOrdineRettificato = prezzoUnitarioOrdineRettificato.subtract(prezzoUnitarioOrdine);
 			BigDecimal diffIvaOrdineRettificato = prezzoUnitarioIvaOrdineRettificato.subtract(prezzoIvaUnitarioOrdine);
@@ -459,8 +467,6 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 			// TODO IMPOSTARE IMPORTO IVA - V.T.
 			movimentoMag.setPrezzoUnitario(diffOrdineRettificato.abs());
 			movimentoMag.setImIva(diffIvaOrdineRettificato.abs());
-		} catch (RemoteException | PersistencyException e) {
-			throw new ComponentException(e);
 		}
 
 		movimentoMag.setTerzo(lotto.getTerzo());

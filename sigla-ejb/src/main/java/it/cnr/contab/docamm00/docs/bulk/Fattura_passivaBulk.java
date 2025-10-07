@@ -2880,8 +2880,20 @@ public abstract class Fattura_passivaBulk
 
         Fattura_passiva_rigaBulk element = (Fattura_passiva_rigaBulk) fattura_passiva_dettColl.get(indiceDiLinea);
         addToDettagliCancellati(element);
-        if (element != null && element.getObbligazione_scadenziario() != null)
-            removeFromFattura_passiva_obbligazioniHash(element);
+        if (element != null) {
+            if (element.getObbligazione_scadenziario() != null)
+                removeFromFattura_passiva_obbligazioniHash(element);
+
+            List<Fattura_passiva_riga_ecoBulk> bulksToRemove = new ArrayList<>(element.getRigheEconomica());
+            for (Fattura_passiva_riga_ecoBulk rigaEconomica : bulksToRemove) {
+                Optional.of(element.getRigheEconomica().indexOf(rigaEconomica))
+                        .filter(i -> i != -1)
+                        .ifPresent(i -> {
+                            final Fattura_passiva_riga_ecoBulk rigaEconomicaBulk = element.removeFromRigheEconomica(i);
+                            rigaEconomicaBulk.setToBeDeleted();
+                        });
+            }
+        }
 
         return (Fattura_passiva_rigaBulk) fattura_passiva_dettColl.remove(indiceDiLinea);
     }

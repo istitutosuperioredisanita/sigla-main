@@ -4172,7 +4172,6 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
         }
     }
 
-
     public Forward doRemoveFromCRUDMain_Ordini(ActionContext context) throws ApplicationException {
         CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) context.getBusinessProcess();
         Fattura_passivaBulk fattura = (Fattura_passivaBulk) bp.getModel();
@@ -4213,9 +4212,12 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
         bulksToRemove.forEach(fatturaOrdineBulk -> {
             fatturaOrdineBulk.setToBeDeleted();
             bp.getFatturaOrdiniController().getDetails().remove(fatturaOrdineBulk);
+            bp.setDirty(Boolean.TRUE);
         });
 
         bp.getFatturaOrdiniController().getSelection().clear();
+        bp.getFatturaOrdiniController().reset(context);
+        bp.getDettaglio().reset(context);
         return context.findDefaultForward();
     }
     /**

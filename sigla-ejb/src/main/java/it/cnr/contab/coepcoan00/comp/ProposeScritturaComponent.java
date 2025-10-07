@@ -1369,9 +1369,17 @@ public class ProposeScritturaComponent extends CRUDComponent {
                                                                             //Recupero la scrittura prima nota della consegna per recuperare il conto fatture da ricevere usato da chiudere
                                                                             List<Movimento_cogeBulk> allMovimentiPrimaNota = this.findMovimentiPrimaNota(userContext, fatturaOrdineBulk.getOrdineAcqConsegna());
                                                                             if (allMovimentiPrimaNota.isEmpty())
-                                                                                throw new ScritturaPartitaDoppiaNotEnabledException("Scrittura Economica non possibile. Non risulta la scrittura sulla riga di evasione.");
+                                                                                throw new ScritturaPartitaDoppiaNotEnabledException("Scrittura Economica non possibile. Non risulta presente la scrittura sulla evasione della consegna "+
+                                                                                        fatturaOrdineBulk.getOrdineAcqConsegna().getEsercizio()+"/"+fatturaOrdineBulk.getOrdineAcqConsegna().getCdCds()+"/"+
+                                                                                        fatturaOrdineBulk.getOrdineAcqConsegna().getCdUnitaOperativa()+"/"+fatturaOrdineBulk.getOrdineAcqConsegna().getCdNumeratore()+"/"+
+                                                                                        fatturaOrdineBulk.getOrdineAcqConsegna().getNumero()+"/"+fatturaOrdineBulk.getOrdineAcqConsegna().getRiga()+"/"+
+                                                                                        fatturaOrdineBulk.getOrdineAcqConsegna().getConsegna()+".");
                                                                             if (allMovimentiPrimaNota.stream().filter(Movimento_cogeBulk::isSezioneAvere).count() != 1)
-                                                                                throw new ScritturaPartitaDoppiaNotEnabledException("Scrittura Economica non possibile. Non risulta possibile individuare la riga Fattura da ricevere nella scrittura sulla riga di evasione.");
+                                                                                throw new ScritturaPartitaDoppiaNotEnabledException("Scrittura Economica non possibile. Non risulta possibile individuare la riga Fattura da ricevere nella scrittura di evasione della consegna "+
+                                                                                        fatturaOrdineBulk.getOrdineAcqConsegna().getEsercizio()+"/"+fatturaOrdineBulk.getOrdineAcqConsegna().getCdCds()+"/"+
+                                                                                        fatturaOrdineBulk.getOrdineAcqConsegna().getCdUnitaOperativa()+"/"+fatturaOrdineBulk.getOrdineAcqConsegna().getCdNumeratore()+"/"+
+                                                                                        fatturaOrdineBulk.getOrdineAcqConsegna().getNumero()+"/"+fatturaOrdineBulk.getOrdineAcqConsegna().getRiga()+"/"+
+                                                                                        fatturaOrdineBulk.getOrdineAcqConsegna().getConsegna()+".");
 
                                                                             Movimento_cogeBulk movimentoFattRic = allMovimentiPrimaNota.stream().filter(Movimento_cogeBulk::isSezioneAvere).findFirst().orElse(null);
 

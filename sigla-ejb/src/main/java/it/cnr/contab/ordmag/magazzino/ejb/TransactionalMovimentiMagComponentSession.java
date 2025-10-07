@@ -266,6 +266,26 @@ public void annullaMovimento(UserContext userContext, MovimentiMagBulk movimenti
 		}
 	}
 
+    public MovimentiMagBulk creaMovimentoRettificaValoreOrdine(UserContext userContext, OrdineAcqConsegnaBulk ordineAcqConsegnaBulk, ImportoOrdine importoCns, ImportoOrdine importoRet) throws ComponentException, RemoteException{
+        try {
+            return (MovimentiMagBulk) invoke("creaMovimentoRettificaValoreOrdine",new Object[] {
+                    userContext,
+                    ordineAcqConsegnaBulk,
+                    importoCns,
+                    importoRet});
+        } catch(RemoteException e) {
+            throw e;
+        } catch(java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch(ComponentException ex) {
+                throw ex;
+            } catch(Throwable ex) {
+                throw new RemoteException("Uncaugth exception",ex);
+            }
+        }
+    }
+
 	@Override
 	public ImportoOrdine calcoloImporto(UserContext userContext, ParametriCalcoloImportoOrdine parametri) throws RemoteException, ComponentException {
 		try {
