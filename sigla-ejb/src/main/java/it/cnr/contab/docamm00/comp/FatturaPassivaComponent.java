@@ -9530,7 +9530,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         ContoHome contoHome = (ContoHome) getHome(userContext, ContoBulk.class);
         SQLBuilder sql = contoHome.createSQLBuilder();
         sql.addSQLClause(FindClause.AND,"VOCE_EP.ESERCIZIO",SQLBuilder.EQUALS, fatturaPassivaRigaIBulk.getEsercizio());
-        if (Optional.of(fatturaPassivaRigaIBulk.getBene_servizio())
+        if (Optional.ofNullable(fatturaPassivaRigaIBulk.getBene_servizio())
                 .flatMap(el->Optional.ofNullable(el.getCategoria_gruppo()))
                 .flatMap(el->Optional.ofNullable(el.getCd_categoria_gruppo()))
                 .isPresent()) {
