@@ -394,6 +394,7 @@
 			label="Conto EP"
 			nullable="false"
 			formName="searchtool"
+			completeOnSave="false"
 			enabledOnSearch="false" />
 
 	<fieldProperty
