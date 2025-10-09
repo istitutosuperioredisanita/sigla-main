@@ -367,6 +367,37 @@
         <dropDefaultValue tableName="saldi_pag_inc" columnName="dacr"/>
         <dropDefaultValue tableName="saldi_pag_inc" columnName="duva"/>
     </changeSet>
+
+    <changeSet author="test" id="create-procedure-amministrative">
+        <addDefaultValue tableName="procedure_amministrative" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="procedure_amministrative" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/procedure_amministrative.csv" tableName="procedure_amministrative"/>
+
+        <dropDefaultValue tableName="procedure_amministrative" columnName="dacr"/>
+        <dropDefaultValue tableName="procedure_amministrative" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-cig">
+        <addDefaultValue tableName="cig" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="cig" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/cig.csv" tableName="cig"/>
+
+        <dropDefaultValue tableName="cig" columnName="dacr"/>
+        <dropDefaultValue tableName="cig" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-contratto">
+        <addDefaultValue tableName="contratto" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="contratto" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/contratto.csv" tableName="contratto"/>
+
+        <dropDefaultValue tableName="contratto" columnName="dacr"/>
+        <dropDefaultValue tableName="contratto" columnName="duva"/>
+    </changeSet>
+
     <changeSet author="test" id="create-obbligazione">
         <addDefaultValue tableName="obbligazione" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="obbligazione" columnName="duva" defaultValueDate="${now}"/>
@@ -711,5 +742,75 @@
         </sql>
         <dropDefaultValue tableName="configurazione_cnr" columnName="dacr"/>
         <dropDefaultValue tableName="configurazione_cnr" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-unita-operativa-ord">
+        <addDefaultValue tableName="unita_operativa_ord" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="unita_operativa_ord" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/unita_operativa_ord.csv" tableName="unita_operativa_ord"/>
+
+        <dropDefaultValue tableName="unita_operativa_ord" columnName="dacr"/>
+        <dropDefaultValue tableName="unita_operativa_ord" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-numerazione-ord">
+        <addDefaultValue tableName="numerazione_ord" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="numerazione_ord" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/numerazione_ord.csv" tableName="numerazione_ord"/>
+
+        <dropDefaultValue tableName="numerazione_ord" columnName="dacr"/>
+        <dropDefaultValue tableName="numerazione_ord" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-luogo-consegna-mag">
+        <addDefaultValue tableName="luogo_consegna_mag" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="luogo_consegna_mag" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/luogo_consegna_mag.csv" tableName="luogo_consegna_mag"/>
+
+        <dropDefaultValue tableName="luogo_consegna_mag" columnName="dacr"/>
+        <dropDefaultValue tableName="luogo_consegna_mag" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-raggr-magazzino">
+        <addDefaultValue tableName="raggr_magazzino" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="raggr_magazzino" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/raggr_magazzino.csv" tableName="raggr_magazzino"/>
+
+        <dropDefaultValue tableName="raggr_magazzino" columnName="dacr"/>
+        <dropDefaultValue tableName="raggr_magazzino" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-tipo-movimento-mag">
+        <addDefaultValue tableName="tipo_movimento_mag" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="tipo_movimento_mag" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/tipo_movimento_mag.csv" tableName="tipo_movimento_mag"/>
+
+        <dropDefaultValue tableName="tipo_movimento_mag" columnName="dacr"/>
+        <dropDefaultValue tableName="tipo_movimento_mag" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-magazzino">
+        <addDefaultValue tableName="magazzino" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="magazzino" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/magazzino.csv" tableName="magazzino"/>
+
+        <dropDefaultValue tableName="magazzino" columnName="dacr"/>
+        <dropDefaultValue tableName="magazzino" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-abil-utente-uop-oper">
+        <addDefaultValue tableName="abil_utente_uop_oper" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="abil_utente_uop_oper" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/abil_utente_uop_oper.csv" tableName="abil_utente_uop_oper"/>
+
+        <dropDefaultValue tableName="abil_utente_uop_oper" columnName="dacr"/>
+        <dropDefaultValue tableName="abil_utente_uop_oper" columnName="duva"/>
     </changeSet>
 </databaseChangeLog>

@@ -87,4 +87,26 @@
                 path="../h2/function/cnrctb850_ins_controllo_accesso_utente.sql"
                 relativeToChangelogFile="true"/>
     </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="createProcedure-getflfaireversale">
+        <createProcedure
+                dbms="h2"
+                encoding="utf8"
+                path="../h2/function/getflfaireversale.sql"
+                relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="createProcedure-getModPagCessionario">
+        <createProcedure
+                dbms="h2"
+                encoding="utf8"
+                path="../h2/function/getmodpagcessionario.sql"
+                relativeToChangelogFile="true"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="createProcedure-getFlSelezione">
+        <createProcedure
+                dbms="h2"
+                encoding="utf8"
+                path="../h2/function/getflselezione.sql"
+                relativeToChangelogFile="true"/>
+    </changeSet>
+
 </databaseChangeLog>

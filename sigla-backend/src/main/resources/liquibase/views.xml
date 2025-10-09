@@ -3105,6 +3105,18 @@
     <changeSet author="raffaele.pagano" runOnChange="true" id="create-view-V_DOC_CONT_COMP_H2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_DOC_CONT_COMP_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="raffaele.pagano" runOnChange="true" id="create-view-V_ANAGRAFICO_TERZO_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_ANAGRAFICO_TERZO_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_ASS_BP_ACCESSO_UNITA_UTENTE_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_ASS_BP_ACCESSO_UNITA_UTENTE.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_DOC_PASSIVO_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_DOC_PASSIVO_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_DOC_PASSIVO_OBBLIGAZIONE_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_DOC_PASSIVO_OBBLIGAZIONE_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
     <changeSet author="valentina.tomada" runOnChange="true" id="create-view-V_AMMORTAMENTO_BENI_DET">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_AMMORTAMENTO_BENI_DET.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>

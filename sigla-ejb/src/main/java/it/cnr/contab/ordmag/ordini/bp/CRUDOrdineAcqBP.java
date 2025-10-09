@@ -50,6 +50,7 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.HttpActionContext;
 import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.FieldProperty;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
@@ -1072,6 +1073,8 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
                         .map(el -> el.isStatoOriginaleAllaFirma() || el.isStatoOriginaleDefinitivo())
                         .orElse(Boolean.FALSE))
                     pages.put(i++, TAB_ORDINE_RIGA_RESULT_DETAIL_COGECOAN);
+                else
+                    pages.put(i++, CRUDScritturaPDoppiaBP.TAB_DATI_COGECOAN);
             } else if (Optional.ofNullable(this.getModel())
 					.filter(OrdineAcqBulk.class::isInstance)
 					.map(OrdineAcqBulk.class::cast)
@@ -1204,5 +1207,21 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 			throw handleException(e);
 		}
 
+    }
+
+    @Override
+    public void completeSearchTool(ActionContext actioncontext, OggettoBulk oggettobulk, FieldProperty fieldproperty) throws BusinessProcessException, ValidationException {
+        try {
+            super.completeSearchTool(actioncontext, oggettobulk, fieldproperty);
+            if ( oggettobulk instanceof OrdineAcqRigaBulk && fieldproperty.getName().equals("cercaDspConto")) {
+                for (OrdineAcqConsegnaBulk consegna : ((OrdineAcqRigaBulk)oggettobulk).getRigheConsegnaColl()) {
+                    consegna.setContoBulk(((OrdineAcqRigaBulk)oggettobulk).getDspConto());
+                    consegna.setToBeUpdated();
+                }
+            }
+        } catch (ValidationException ex) {
+            if ( !(oggettobulk instanceof OrdineAcqRigaBulk && fieldproperty.getName().equals("cercaDspConto")))
+                throw ex;
+        }
     }
 }

@@ -19,6 +19,7 @@ package it.cnr.test.util;
 
 public enum AlertMessage {
     CREAZIONE_ESEGUITA("Creazione eseguita in modo corretto."),
+    SALVATAGGIO_ESEGUITO("Salvataggio eseguito in modo corretto."),
     MESSAGE_INDICARE_FASE_PROGETTO("Indicare almeno una fase di operatività del progetto.");
 
     private final String value;

@@ -26,6 +26,7 @@ import it.cnr.contab.config00.bp.CRUDConfigAnagContrattoBP;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
 import it.cnr.contab.config00.contratto.bulk.Dettaglio_contrattoBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.config00.pdcep.bulk.Voce_epBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.docamm00.bp.CRUDFatturaPassivaBP;
@@ -420,6 +421,20 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
 
     public Forward doBlankSearchFind_voce_ep(ActionContext context, OrdineAcqRigaBulk riga) {
         return doBlankSearchCercaDspConto(context,riga);
+    }
+
+    public Forward doBringBackSearchFind_voce_ep(ActionContext context, OrdineAcqRigaBulk riga, Voce_epBulk voceEpBulk) {
+        try {
+            riga.setDspConto((ContoBulk)voceEpBulk);
+            for (OrdineAcqConsegnaBulk consegna : riga.getRigheConsegnaColl()) {
+                consegna.setContoBulk(riga.getDspConto());
+                consegna.setToBeUpdated();
+            }
+            return context.findDefaultForward();
+
+        } catch (Exception e) {
+            return handleException(context, e);
+        }
     }
 
     public Forward doBringBackSearchFindUnitaOperativaOrdDest(ActionContext context,

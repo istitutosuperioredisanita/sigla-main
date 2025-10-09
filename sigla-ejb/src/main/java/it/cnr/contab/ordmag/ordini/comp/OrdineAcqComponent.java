@@ -409,8 +409,11 @@ public class OrdineAcqComponent
             throw new ApplicationException("La data di prevista consegna non può essere precedente alla data dell'ordine per la riga di consegna " + consegna.getConsegna() + " della riga d'ordine " + consegna.getRiga() + ".");
 
         try {
-            if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(userContext, consegna.getEsercizio()) && (consegna.getContoBulk() == null || consegna.getContoBulk().getCd_voce_ep() == null))
+            if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(userContext, consegna.getEsercizio()) && (consegna.getContoBulk() == null || consegna.getContoBulk().getCd_voce_ep() == null)) {
+                if (consegna.getOrdineAcqRiga().getDspConto() == null || consegna.getOrdineAcqRiga().getDspConto().getDs_voce_ep() == null)
+                    throw new ApplicationException("E' necessario indicare il conto di Economico Patrimoniale sulla riga d'ordine " + consegna.getRiga() + ".");
                 throw new ApplicationException("E' necessario indicare il conto di Economico Patrimoniale sulla riga di consegna " + consegna.getConsegna() + " della riga d'ordine " + consegna.getRiga() + ".");
+            }
         } catch (RemoteException e) {
             throw new ComponentException(e);
         }

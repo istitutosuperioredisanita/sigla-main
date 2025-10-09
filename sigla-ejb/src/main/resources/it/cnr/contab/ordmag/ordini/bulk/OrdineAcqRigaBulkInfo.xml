@@ -444,7 +444,6 @@
 			inputType="SEARCHTOOL"
 			formName="searchtool"
 			enabledOnSearch="true"
-			completeOnSave="true"
 			label="Conto"
 	/>
 	<fieldProperty
@@ -477,6 +476,7 @@
 			label="Conto EP"
 			nullable="false"
 			formName="searchtool"
+            completeOnSave="false"
 			enabledOnSearch="false" />
 
 	<fieldProperty

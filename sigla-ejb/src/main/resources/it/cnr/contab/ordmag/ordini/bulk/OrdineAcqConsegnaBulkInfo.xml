@@ -584,7 +584,7 @@
 			inputType="SEARCHTOOL"
 			formName="searchtool"
 			enabledOnSearch="true"
-			completeOnSave="true"
+			completeOnSave="false"
 			label="Conto" />
 
 	<fieldProperty
