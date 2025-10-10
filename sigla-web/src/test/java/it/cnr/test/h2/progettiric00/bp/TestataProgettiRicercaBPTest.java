@@ -126,7 +126,6 @@ public class TestataProgettiRicercaBPTest extends ActionDeployments {
 
         alert = browser.switchTo().alert();
         assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
-
         alert.accept();
     }
 }

@@ -813,4 +813,24 @@
         <dropDefaultValue tableName="abil_utente_uop_oper" columnName="dacr"/>
         <dropDefaultValue tableName="abil_utente_uop_oper" columnName="duva"/>
     </changeSet>
+
+    <changeSet author="test" id="create-abil-utente-uop-oper-mag">
+        <addDefaultValue tableName="abil_utente_uop_oper_mag" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="abil_utente_uop_oper_mag" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/abil_utente_uop_oper_mag.csv" tableName="abil_utente_uop_oper_mag"/>
+
+        <dropDefaultValue tableName="abil_utente_uop_oper_mag" columnName="dacr"/>
+        <dropDefaultValue tableName="abil_utente_uop_oper_mag" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-numerazione-mag">
+        <addDefaultValue tableName="numerazione_mag" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="numerazione_mag" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/numerazione_mag.csv" tableName="numerazione_mag"/>
+
+        <dropDefaultValue tableName="numerazione_mag" columnName="dacr"/>
+        <dropDefaultValue tableName="numerazione_mag" columnName="duva"/>
+    </changeSet>
 </databaseChangeLog>

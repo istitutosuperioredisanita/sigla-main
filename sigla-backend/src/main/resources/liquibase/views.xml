@@ -3117,6 +3117,12 @@
     <changeSet author="sigla" runOnChange="true" id="create-view-V_DOC_PASSIVO_OBBLIGAZIONE_H2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_DOC_PASSIVO_OBBLIGAZIONE_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_STUTTURA_ORGANIZZATIVA_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_STRUTTURA_ORGANIZZATIVA.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_PDG_OBBLIGAZIONE_SPE_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_PDG_OBBLIGAZIONE_SPE.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
     <changeSet author="valentina.tomada" runOnChange="true" id="create-view-V_AMMORTAMENTO_BENI_DET">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_AMMORTAMENTO_BENI_DET.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
