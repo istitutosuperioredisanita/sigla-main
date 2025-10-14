@@ -6256,4 +6256,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/modify_length_unita_oper_cnr_anadip.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunti alla tabella Anagrafico l'unità oragnizzativa di appartenza del dipendente-->
     <include file="bootstrap/add_column_unita_organizzativa_anagrafico.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunto fl_cancellato alla tabella tipo_norma_perla-->
+    <include file="bootstrap/add_fl_cancellato_tipo_norma_perla.xml"/>
 </databaseChangeLog>
