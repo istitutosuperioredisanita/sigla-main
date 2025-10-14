@@ -59,6 +59,22 @@ create or replace PACKAGE BODY "CNRMIG080" is
 
 end;
 
+function getUnitaOperativa(aAnaDip cnr_anadip%rowtype) return anagrafico.cd_unita_organizzativa%type is
+unitaOrganizzativaApp unita_organizzativa.cd_unita_organizzativa%type;
+begin
+
+    unitaOrganizzativaApp:=null;
+    if ( aAnaDip.unita_oper is not null) then
+        begin
+            select cd_unita_organizzativa into unitaOrganizzativaApp from unita_organizzativa
+            where sigla_int_ente=aAnaDip.unita_oper
+            and rownum<=1;
+             exception when no_data_found then
+                unitaOrganizzativaApp:=null;
+        end;
+     end if;
+    return unitaOrganizzativaApp;
+end;
 procedure caricaAnagDipendenti(aAnnoRif Number, aMeseRif Number, aUtente varchar2) is
  lData date;
  lAnagraficoOld anagrafico%rowtype;
@@ -83,7 +99,7 @@ procedure caricaAnagDipendenti(aAnnoRif Number, aMeseRif Number, aUtente varchar
 					  and (uo_tit is null or uo_tit!='900300')
 					  ORDER BY MATRICOLA) loop
 	  	  begin
-
+                aAnaDip.UNITA_OPER := getUnitaOperativa( aAnaDip);
 	  	  	  	ibmutl200.logInf(gPgLog ,'Processando matricola' || aAnaDip.matricola , '' , '');
 			    if chkPresenzaAnag(aAnaDip, lAnagraficoOld) then
 			   	   MODIFICAANAGRAFICO(aAnaDip, lAnagraficoOld, lData, aUtente);
@@ -1051,6 +1067,8 @@ procedure MODIFICAANAGRAFICO(aAnaDip cnr_anadip%rowtype,lAnagraficoOld in out an
  	  lAnagraficoOld.DUVA 						 := aData;
  	  lAnagraficoOld.UTUV 						 := aUtente;
  	  lAnagraficoOld.PG_VER_REC 				 := lAnagraficoOld.PG_VER_REC + 1;
+      lAnagraficoOld.CD_UNITA_ORGANIZZATIVA :=aAnaDip.UNITA_OPER;
+
 
 
 	  UPD_ANAGRAFICO(lAnagraficoOld);
@@ -1795,7 +1813,8 @@ function chkPresenzaAnag(aAnaDip cnr_anadip%rowtype, aAnagrafico in out anagrafi
 			UTCR,
 			DUVA,
 			UTUV,
-			PG_VER_REC)
+			PG_VER_REC,
+            CD_UNITA_ORGANIZZATIVA)
 	 values(
  	  aAnagrafico.CD_ANAG,
 	  aAnagrafico.CD_CLASSIFIC_ANAG,
@@ -1843,7 +1862,8 @@ function chkPresenzaAnag(aAnaDip cnr_anadip%rowtype, aAnagrafico in out anagrafi
  	  aAnagrafico.UTCR,
  	  aAnagrafico.DUVA,
  	  aAnagrafico.UTUV,
- 	  aAnagrafico.PG_VER_REC
+ 	  aAnagrafico.PG_VER_REC,
+      aAnagrafico.cd_unita_organizzativa
 	 );
 	 exception
 	 		  when others then
@@ -2161,7 +2181,8 @@ Exception
 --    NOTE 						 = NULL,
  	  DUVA 						 = aAnagrafico.DUVA,
  	  UTUV 						 = aAnagrafico.UTUV,
- 	  PG_VER_REC 				 = aAnagrafico.PG_VER_REC
+ 	  PG_VER_REC 				 = aAnagrafico.PG_VER_REC,
+    cd_unita_organizzativa=aAnagrafico.cd_unita_organizzativa
 	 where cd_anag = aAnagrafico.cd_anag;
  end;
 
