@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.docamm00.tabrif.bulk.Doc_trasporto_rientro_dettBulk"
+	homeClassName="it.cnr.contab.docamm00.tabrif.bulk.Doc_trasporto_rientro_dettHome">
+	<defaultColumnMap
+		tableName="DOC_TRASPORTO_RIENTRO_DETT">
+		<columnMapping
+			columnName="PG_INVENTARIO_RIF"
+			propertyName="docTrasportoRientroDett.pg_inventario" />
+		<columnMapping
+			columnName="TI_DOCUMENTO_RIF"
+			propertyName="docTrasportoRientroDett.ti_documento" />
+		<columnMapping
+			columnName="ESERCIZIO_RIF"
+			propertyName="docTrasportoRientroDett.esercizio" />
+		<columnMapping
+			columnName="PG_DOC_TRASPORTO_RIENTRO_RIF"
+			propertyName="docTrasportoRientroDett.pg_doc_trasporto_rientro" />
+		<columnMapping
+			columnName="NR_INVENTARIO_RIF"
+			propertyName="docTrasportoRientroDett.nr_inventario" />
+		<columnMapping
+			columnName="PROGRESSIVO_RIF"
+			propertyName="docTrasportoRientroDett.progressivo" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="docTrasportoRientroDett" />
+</SQLPersistentInfo>

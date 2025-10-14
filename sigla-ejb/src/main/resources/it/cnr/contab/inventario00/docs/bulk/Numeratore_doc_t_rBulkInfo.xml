@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="pgInventario"
+		property="pgInventario"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="inventario" />
+	<fieldProperty
+		name="tiTrasportoRientro"
+		property="tiTrasportoRientro"
+		inputType="TEXT"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="tiTrasportoRientro" />
+	<fieldProperty
+		name="esercizio"
+		property="esercizio"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="esercizio" />
+	<fieldProperty
+		name="iniziale"
+		property="iniziale"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		nullable="false"
+		label="iniziale" />
+	<fieldProperty
+		name="corrente"
+		property="corrente"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		nullable="false"
+		label="corrente" />
+	<form
+		name="searchtool">
+		<formFieldProperty
+			name="pgInventario" />
+		<formFieldProperty
+			name="tiTrasportoRientro" />
+		<formFieldProperty
+			name="esercizio" />
+	</form>
+	<formFieldProperty
+		name="tiTrasportoRientro" />
+	<formFieldProperty
+		name="esercizio" />
+	<formFieldProperty
+		name="iniziale" />
+	<formFieldProperty
+		name="corrente" />
+	<findFieldProperty
+		name="pgInventario" />
+	<findFieldProperty
+		name="tiTrasportoRientro" />
+	<findFieldProperty
+		name="esercizio" />
+	<findFieldProperty
+		name="iniziale" />
+	<findFieldProperty
+		name="corrente" />
+	<columnFieldProperty
+		name="pgInventario" />
+	<columnFieldProperty
+		name="tiTrasportoRientro" />
+	<columnFieldProperty
+		name="esercizio" />
+	<columnFieldProperty
+		name="iniziale" />
+	<columnFieldProperty
+		name="corrente" />
+</bulkInfo>

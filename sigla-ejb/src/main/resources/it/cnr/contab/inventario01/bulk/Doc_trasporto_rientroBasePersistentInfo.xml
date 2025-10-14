@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.docamm00.tabrif.bulk.Doc_trasporto_rientroBase"
+	keyClassName="it.cnr.contab.docamm00.tabrif.bulk.Doc_trasporto_rientroKey"
+	homeClassName="it.cnr.contab.docamm00.tabrif.bulk.Doc_trasporto_rientroHome">
+	<defaultColumnMap
+		tableName="DOC_TRASPORTO_RIENTRO">
+		<columnMapping
+			columnName="DS_DOC_TRASPORTO_RIENTRO"
+			propertyName="dsDocTrasportoRientro"
+			sqlTypeName="VARCHAR"
+			columnSize="100"
+			nullable="false" />
+		<columnMapping
+			columnName="DATA_REGISTRAZIONE"
+			propertyName="dataRegistrazione"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="CD_TIPO_TRASPORTO_RIENTRO"
+			propertyName="cdTipoTrasportoRientro"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="false" />
+		<columnMapping
+			columnName="STATO"
+			propertyName="stato"
+			sqlTypeName="VARCHAR"
+			columnSize="3"
+			nullable="false" />
+		<columnMapping
+			columnName="DESTINAZIONE"
+			propertyName="destinazione"
+			sqlTypeName="VARCHAR"
+			columnSize="100"
+			nullable="true" />
+		<columnMapping
+			columnName="INDIRIZZO"
+			propertyName="indirizzo"
+			sqlTypeName="VARCHAR"
+			columnSize="200"
+			nullable="true" />
+		<columnMapping
+			columnName="FL_INCARICATO"
+			propertyName="flIncaricato"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false"
+			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+			columnName="FL_VETTORE"
+			propertyName="flVettore"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false"
+			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+			columnName="NOTE_RITIRO"
+			propertyName="noteRitiro"
+			sqlTypeName="VARCHAR"
+			columnSize="4000"
+			nullable="true" />
+		<columnMapping
+			columnName="NOTE"
+			propertyName="note"
+			sqlTypeName="VARCHAR"
+			columnSize="4000"
+			nullable="true" />
+		<columnMapping
+			columnName="DACR"
+			propertyName="dacr"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="UTCR"
+			propertyName="utcr"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="DUVA"
+			propertyName="duva"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="UTUV"
+			propertyName="utuv"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="PG_VER_REC"
+			propertyName="pg_ver_rec"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="false" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="dsDocTrasportoRientro" />
+	<persistentProperty
+		name="dataRegistrazione" />
+	<persistentProperty
+		name="cdTipoTrasportoRientro" />
+	<persistentProperty
+		name="stato" />
+	<persistentProperty
+		name="destinazione" />
+	<persistentProperty
+		name="indirizzo" />
+	<persistentProperty
+		name="flIncaricato" />
+	<persistentProperty
+		name="flVettore" />
+	<persistentProperty
+		name="noteRitiro" />
+	<persistentProperty
+		name="note" />
+	<persistentProperty
+		name="dacr" />
+	<persistentProperty
+		name="utcr" />
+	<persistentProperty
+		name="duva" />
+	<persistentProperty
+		name="utuv" />
+	<persistentProperty
+		name="pg_ver_rec" />
+</SQLPersistentInfo>
