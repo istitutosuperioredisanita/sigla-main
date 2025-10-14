@@ -1708,6 +1708,7 @@ public class IncarichiProceduraComponent extends CRUDComponent {
 			SQLBuilder sql = tnpHome.createSQLBuilder();
 
 			sql.addClause(FindClause.AND, "tipo_associazione", SQLBuilder.EQUALS, Tipo_norma_perlaBulk.ASS_INCARICHI);
+			sql.addClause("AND", "fl_cancellato", SQLBuilder.EQUALS, Boolean.FALSE);
 			sql.addOrderBy("cd_tipo_norma");
 			return tnpHome.fetchAll(sql);
 		}catch (it.cnr.jada.persistency.PersistencyException ex){

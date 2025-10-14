@@ -23,6 +23,8 @@ package it.cnr.contab.incarichi00.tabrif.bulk;
 
 import it.cnr.contab.util.ICancellatoLogicamente;
 
+import java.util.Optional;
+
 public class Tipo_norma_perlaBulk extends Tipo_norma_perlaBase implements ICancellatoLogicamente {
     public final static java.util.Dictionary <String,String> TIPI_ASSOCIAZIONE;
     public final static String ASS_INCARICHI = "INC";
@@ -44,13 +46,14 @@ public class Tipo_norma_perlaBulk extends Tipo_norma_perlaBase implements ICance
 		return TIPI_ASSOCIAZIONE;
 	}
 
-	@Override
 	public boolean isCancellatoLogicamente() {
-		return false;
+		return Optional.ofNullable(getFl_cancellato()).
+				orElse(Boolean.FALSE);
 	}
-
-	@Override
+	/* (non-Javadoc)
+	 * @see it.cnr.contab.util.ICancellatoLogicamente#cancellaLogicamente()
+	 */
 	public void cancellaLogicamente() {
-
+		setFl_cancellato(new Boolean(true));
 	}
 }
