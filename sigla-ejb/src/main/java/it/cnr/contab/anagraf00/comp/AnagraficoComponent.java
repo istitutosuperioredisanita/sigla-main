@@ -613,7 +613,7 @@ public class AnagraficoComponent extends UtilitaAnagraficaComponent implements I
             if ( Optional.ofNullable(anagrafico.getCd_unita_organizzativa()).isPresent()) {
                 anagrafico.setUnitaOrganizzativa(
                         (Unita_organizzativaBulk) getHome(userContext, Unita_organizzativaBulk.class).
-                        findByPrimaryKey(new Unita_organizzativaBulk(CNRUserContext.getCd_unita_organizzativa(userContext))));
+                        findByPrimaryKey(new Unita_organizzativaBulk(anagrafico.getCd_unita_organizzativa())));
             }
             //java.util.Collection details = anagraficoHome.findContatti(anagrafico);
             //for (java.util.Iterator i = details.iterator();i.hasNext();) {
