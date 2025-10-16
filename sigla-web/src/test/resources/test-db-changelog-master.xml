@@ -241,6 +241,17 @@
         <dropDefaultValue tableName="ass_linea_attivita_esercizio" columnName="dacr"/>
         <dropDefaultValue tableName="ass_linea_attivita_esercizio" columnName="duva"/>
     </changeSet>
+
+    <changeSet author="test" id="create-classificazione-anag">
+        <addDefaultValue tableName="classificazione_anag" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="classificazione_anag" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/classificazione_anag.csv" tableName="classificazione_anag"/>
+
+        <dropDefaultValue tableName="classificazione_anag" columnName="dacr"/>
+        <dropDefaultValue tableName="classificazione_anag" columnName="duva"/>
+    </changeSet>
+
     <changeSet author="test" id="create-anagrafico">
         <addDefaultValue tableName="anagrafico" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="anagrafico" columnName="duva" defaultValueDate="${now}"/>
@@ -679,6 +690,13 @@
             and ESERCIZIO >= 2023;
         </sql>
         <sql>
+            update configurazione_cnr
+            set val01='Y'
+            where cd_chiave_primaria='ORDINI'
+            and cd_chiave_secondaria='GESTIONE'
+            and ESERCIZIO >= 2023;
+        </sql>
+        <sql>
             UPDATE VOCE_EP
             SET NATURA_VOCE = 'EEC'
             WHERE CD_VOCE_EP LIKE 'C%';
@@ -723,7 +741,35 @@
             SET CD_VOCE_EP_CONTR = 'P71001'
             WHERE CD_VOCE_EP LIKE 'A71001';
         </sql>
-
+        <sql>
+            UPDATE VOCE_EP
+            SET CD_VOCE_EP_CONTR = 'P13003'
+            WHERE CD_VOCE_EP LIKE 'C13003';
+        </sql>
+        <sql>
+            UPDATE VOCE_EP
+            SET CD_VOCE_EP_CONTR = 'P13001'
+            WHERE CD_VOCE_EP LIKE 'C13001';
+        </sql>
+        <sql>
+            UPDATE VOCE_IVA
+            SET NATURA_OPER_NON_IMP_SDI = NULL
+            WHERE NATURA_OPER_NON_IMP_SDI = '';
+        </sql>
+        <sql>
+            UPDATE NUMERAZIONE_DOC_AMM
+            SET CORRENTE = 17
+            WHERE ESERCIZIO=2025
+            AND CD_UNITA_ORGANIZZATIVA = '000.000'
+            AND CD_TIPO_DOCUMENTO_AMM = 'FATTURA_P';
+        </sql>
+        <sql>
+            UPDATE NUMERAZIONE_DOC_AMM
+            SET CORRENTE = 8
+            WHERE ESERCIZIO=2025
+            AND CD_UNITA_ORGANIZZATIVA = '000.000'
+            AND CD_TIPO_DOCUMENTO_AMM = 'GENERICO_S';
+        </sql>
         <addDefaultValue tableName="voce_analitica" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="voce_analitica" columnName="duva" defaultValueDate="${now}"/>
         <sql>
@@ -832,5 +878,125 @@
 
         <dropDefaultValue tableName="numerazione_mag" columnName="dacr"/>
         <dropDefaultValue tableName="numerazione_mag" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-ordine-acq">
+        <addDefaultValue tableName="ordine_acq" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="ordine_acq" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/ordine_acq.csv" tableName="ordine_acq"/>
+
+        <dropDefaultValue tableName="ordine_acq" columnName="dacr"/>
+        <dropDefaultValue tableName="ordine_acq" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-ordine-acq-riga">
+        <addDefaultValue tableName="ordine_acq_riga" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="ordine_acq_riga" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/ordine_acq_riga.csv" tableName="ordine_acq_riga"/>
+
+        <dropDefaultValue tableName="ordine_acq_riga" columnName="dacr"/>
+        <dropDefaultValue tableName="ordine_acq_riga" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-ordine-acq-riga-eco">
+        <addDefaultValue tableName="ordine_acq_riga_eco" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="ordine_acq_riga_eco" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/ordine_acq_riga_eco.csv" tableName="ordine_acq_riga_eco"/>
+
+        <dropDefaultValue tableName="ordine_acq_riga_eco" columnName="dacr"/>
+        <dropDefaultValue tableName="ordine_acq_riga_eco" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-ordine-acq-consegna">
+        <addDefaultValue tableName="ordine_acq_consegna" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="ordine_acq_consegna" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/ordine_acq_consegna.csv" tableName="ordine_acq_consegna"/>
+
+        <dropDefaultValue tableName="ordine_acq_consegna" columnName="dacr"/>
+        <dropDefaultValue tableName="ordine_acq_consegna" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-ordine-acq-consegna-eco">
+        <addDefaultValue tableName="ordine_acq_consegna_eco" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="ordine_acq_consegna_eco" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/ordine_acq_consegna_eco.csv" tableName="ordine_acq_consegna_eco"/>
+
+        <dropDefaultValue tableName="ordine_acq_consegna_eco" columnName="dacr"/>
+        <dropDefaultValue tableName="ordine_acq_consegna_eco" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-documento-ele-trasmissione">
+        <addDefaultValue tableName="documento_ele_trasmissione" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="documento_ele_trasmissione" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/documento_ele_trasmissione.csv" tableName="documento_ele_trasmissione"/>
+
+        <dropDefaultValue tableName="documento_ele_trasmissione" columnName="dacr"/>
+        <dropDefaultValue tableName="documento_ele_trasmissione" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-documento-ele-testata">
+        <addDefaultValue tableName="documento_ele_testata" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="documento_ele_testata" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/documento_ele_testata.csv" tableName="documento_ele_testata"/>
+
+        <dropDefaultValue tableName="documento_ele_testata" columnName="dacr"/>
+        <dropDefaultValue tableName="documento_ele_testata" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-documento-ele-linea">
+        <addDefaultValue tableName="documento_ele_linea" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="documento_ele_linea" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/documento_ele_linea.csv" tableName="documento_ele_linea"/>
+
+        <dropDefaultValue tableName="documento_ele_linea" columnName="dacr"/>
+        <dropDefaultValue tableName="documento_ele_linea" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-documento-ele-iva">
+        <addDefaultValue tableName="documento_ele_iva" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="documento_ele_iva" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/documento_ele_iva.csv" tableName="documento_ele_iva"/>
+
+        <dropDefaultValue tableName="documento_ele_iva" columnName="dacr"/>
+        <dropDefaultValue tableName="documento_ele_iva" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-cambio">
+        <addDefaultValue tableName="cambio" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="cambio" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/cambio.csv" tableName="cambio"/>
+
+        <dropDefaultValue tableName="cambio" columnName="dacr"/>
+        <dropDefaultValue tableName="cambio" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-id-inventario">
+        <addDefaultValue tableName="id_inventario" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="id_inventario" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/id_inventario.csv" tableName="id_inventario"/>
+
+        <dropDefaultValue tableName="id_inventario" columnName="dacr"/>
+        <dropDefaultValue tableName="id_inventario" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-ass-inventario-uo">
+        <addDefaultValue tableName="ass_inventario_uo" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="ass_inventario_uo" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/ass_inventario_uo.csv" tableName="ass_inventario_uo"/>
+
+        <dropDefaultValue tableName="ass_inventario_uo" columnName="dacr"/>
+        <dropDefaultValue tableName="ass_inventario_uo" columnName="duva"/>
     </changeSet>
 </databaseChangeLog>

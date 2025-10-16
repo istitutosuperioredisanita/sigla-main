@@ -19,9 +19,9 @@ package it.cnr.contab.config00.esercizio.bulk;
 
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
-import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
@@ -29,15 +29,13 @@ import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.LoggableStatement;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.persistency.sql.SQLExceptionHandler;
-import it.cnr.jada.util.PropertyNames;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Calendar;
 
 /**
  * Home che gestisce l'esercizio contabile.
@@ -49,15 +47,15 @@ public class EsercizioHome extends BulkHome {
         // (29/10/2002 17:29:52) CNRADM
         // Imposto la data infinito usando Calendar perchè così sono sicuro
         // che sia relativa al timezone corrente
-        java.util.Calendar cal = java.util.Calendar.getInstance();
-        cal.set(cal.YEAR, 2200);
-        cal.set(cal.MONTH, cal.DECEMBER);
-        cal.set(cal.DAY_OF_MONTH, 31);
-        cal.set(cal.HOUR, 1);
-        cal.set(cal.MINUTE, 0);
-        cal.set(cal.SECOND, 0);
-        cal.set(cal.MILLISECOND, 0);
-        cal.set(cal.AM_PM, cal.AM);
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, 2200);
+        cal.set(Calendar.MONTH, Calendar.DECEMBER);
+        cal.set(Calendar.DAY_OF_MONTH, 31);
+        cal.set(Calendar.HOUR, 1);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        cal.set(Calendar.AM_PM, Calendar.AM);
         DATA_INFINITO = new Timestamp(cal.getTime().getTime());
     }
 
@@ -116,8 +114,7 @@ public class EsercizioHome extends BulkHome {
      * precedente.
      */
     public EsercizioBulk findEsercizioPrecedente(EsercizioBulk esercizioCorrente) throws IntrospectionException, PersistencyException {
-        EsercizioBulk esercizioPrecente = (EsercizioBulk) findByPrimaryKey(new EsercizioBulk(esercizioCorrente.getCd_cds(), new Integer(esercizioCorrente.getEsercizio().intValue() - 1)));
-        return esercizioPrecente;
+        return (EsercizioBulk) findByPrimaryKey(new EsercizioBulk(esercizioCorrente.getCd_cds(), esercizioCorrente.getEsercizio() - 1));
 
     }
 
@@ -130,7 +127,7 @@ public class EsercizioHome extends BulkHome {
      * successivo.
      */
     public EsercizioBulk findEsercizioSuccessivo(EsercizioBulk esercizioCorrente) throws IntrospectionException, PersistencyException {
-        return (EsercizioBulk) findByPrimaryKey(new EsercizioBulk(esercizioCorrente.getCd_cds(), new Integer(esercizioCorrente.getEsercizio().intValue() + 1)));
+        return (EsercizioBulk) findByPrimaryKey(new EsercizioBulk(esercizioCorrente.getCd_cds(), esercizioCorrente.getEsercizio() + 1));
 
     }
 
@@ -144,9 +141,9 @@ public class EsercizioHome extends BulkHome {
      */
     public List findEserciziSuccessivi(EsercizioBulk esercizioCorrente) throws IntrospectionException, PersistencyException {
         SQLBuilder sql = createSQLBuilder();
-        sql.addClause("AND", "esercizio", sql.GREATER, new Integer(esercizioCorrente.getEsercizio().intValue()));
-        sql.addClause("AND", "cd_cds", sql.EQUALS, esercizioCorrente.getCd_cds());
-        sql.addClause("AND", "st_apertura_chiusura", sql.EQUALS, EsercizioBulk.STATO_APERTO);
+        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.GREATER, esercizioCorrente.getEsercizio());
+        sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, esercizioCorrente.getCd_cds());
+        sql.addClause(FindClause.AND, "st_apertura_chiusura", SQLBuilder.EQUALS, EsercizioBulk.STATO_APERTO);
         return fetchAll(sql);
     }
 
@@ -164,9 +161,8 @@ public class EsercizioHome extends BulkHome {
      * @return boolean : TRUE se stato = C
      * FALSE altrimenti
      */
-    public boolean isEsercizioChiuso(it.cnr.jada.UserContext userContext) throws PersistencyException {
+    public boolean isEsercizioChiuso(it.cnr.jada.UserContext userContext) throws ComponentException, PersistencyException {
         return isEsercizioChiuso(
-                userContext,
                 it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext),
                 it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext));
     }
@@ -181,12 +177,11 @@ public class EsercizioHome extends BulkHome {
      * -		'N' altrimenti
      * Se l'esercizio e' chiuso e' impossibile proseguire
      *
-     * @param userContext <code>UserContext</code>
      * @return boolean : TRUE se stato = C
      * FALSE altrimenti
      */
-    public boolean isEsercizioChiuso(it.cnr.jada.UserContext userContext, Integer esercizio, it.cnr.contab.config00.sto.bulk.CdrBulk cdr) throws PersistencyException {
-        return isEsercizioChiuso(userContext, esercizio, cdr.getUnita_padre().getCd_unita_padre());
+    public boolean isEsercizioChiuso(Integer esercizio, it.cnr.contab.config00.sto.bulk.CdrBulk cdr) throws ComponentException, PersistencyException {
+        return isEsercizioChiuso(esercizio, cdr.getUnita_padre().getCd_unita_padre());
     }
 
     /**
@@ -199,33 +194,12 @@ public class EsercizioHome extends BulkHome {
      * -		'N' altrimenti
      * Se l'esercizio e' chiuso e' impossibile proseguire
      *
-     * @param userContext <code>UserContext</code>
      * @return boolean : TRUE se stato = C
      * FALSE altrimenti
      */
-    public boolean isEsercizioChiuso(it.cnr.jada.UserContext userContext, Integer esercizio, String cd_cds) throws PersistencyException {
-        try {
-
-            if (findByPrimaryKey(new EsercizioBulk(cd_cds, esercizio)) == null)
-                return false;
-
-            LoggableStatement cs = new LoggableStatement(getConnection(),
-                    PropertyNames.getProperty("package.cnrctb008.isEsercizioChiusoYesNo"), false, this.getClass());
-
-            try {
-                cs.registerOutParameter(1, java.sql.Types.CHAR);
-                cs.setObject(2, esercizio);
-                cs.setObject(3, cd_cds);
-
-                cs.execute();
-
-                return "Y".equals(cs.getString(1));
-            } finally {
-                cs.close();
-            }
-        } catch (java.sql.SQLException e) {
-            throw SQLExceptionHandler.getInstance().handleSQLException(e);
-        }
+    public boolean isEsercizioChiuso(Integer aEs, String aCdCds) throws ComponentException, PersistencyException {
+        String statoEsercizio = getStatoEsercizio(aEs,aCdCds);
+        return Optional.ofNullable(statoEsercizio).map(EsercizioBulk.STATO_CHIUSO_DEF::equals).orElse(Boolean.FALSE);
     }
 
     /**
@@ -307,32 +281,6 @@ public class EsercizioHome extends BulkHome {
         }
     }
 
-    public boolean isEsercizioAperto(it.cnr.jada.UserContext userContext, Integer esercizio, String cd_cds) throws PersistencyException {
-        try {
-
-            if (findByPrimaryKey(new EsercizioBulk(cd_cds, esercizio)) == null)
-                return false;
-
-            LoggableStatement cs = new LoggableStatement(getConnection(),
-                    "{ ? = call " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()
-                            + "CNRCTB008.isEsercizioApertoYesNo(?,?)}", false, this.getClass());
-
-            try {
-                cs.registerOutParameter(1, java.sql.Types.CHAR);
-                cs.setObject(2, esercizio);
-                cs.setObject(3, cd_cds);
-
-                cs.execute();
-
-                return "Y".equals(cs.getString(1));
-            } finally {
-                cs.close();
-            }
-        } catch (java.sql.SQLException e) {
-            throw SQLExceptionHandler.getInstance().handleSQLException(e);
-        }
-    }
-
     public List<EsercizioBulk> findEsercizi(UserContext userContext, String cds) throws PersistencyException {
         final SQLBuilder sqlBuilder = createSQLBuilder();
         Integer esercizioPartenza = Optional.ofNullable(
@@ -359,12 +307,19 @@ public class EsercizioHome extends BulkHome {
         return !result.isEmpty();
     }
 
-    public boolean isEsercizioAperto(Integer esercizio, String cdCds) throws PersistencyException {
-        SQLBuilder sql = createSQLBuilder();
-        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
-        sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, cdCds);
-        sql.addClause(FindClause.AND, "st_apertura_chiusura", sql.NOT_EQUALS, EsercizioBulk.STATO_CHIUSO_DEF);
-        List<EsercizioBulk> result = fetchAll(sql);
-        return !result.isEmpty();
+    public boolean isEsercizioAperto(Integer aEs, String aCdCds) throws PersistencyException, ComponentException {
+        String statoEsercizio = getStatoEsercizio(aEs,aCdCds);
+        return Optional.ofNullable(statoEsercizio).map(EsercizioBulk.STATO_APERTO::equals).orElse(Boolean.FALSE);
+    }
+
+    public String getStatoEsercizio(Integer aEs, String aCdCds) throws PersistencyException, ComponentException {
+        Integer aEsPartenza = ((Configurazione_cnrHome)getHomeCache().getHome(Configurazione_cnrBulk.class)).getEsercizioPartenza();
+        if (aEs < aEsPartenza)
+            return EsercizioBulk.STATO_CHIUSO_DEF;
+
+        EsercizioBulk esercizio = (EsercizioBulk)findByPrimaryKey(new EsercizioBulk(aCdCds, aEs));
+        if (esercizio==null)
+            throw new ComponentException("Esercizio contabile " + aEs + " non definito per il CdS " + aCdCds);
+        return esercizio.getSt_apertura_chiusura();
     }
 }

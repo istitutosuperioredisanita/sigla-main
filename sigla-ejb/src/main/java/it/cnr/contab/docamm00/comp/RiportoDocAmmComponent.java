@@ -18,14 +18,24 @@
 package it.cnr.contab.docamm00.comp;
 
 import java.sql.CallableStatement;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
-import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
+import it.cnr.contab.config00.sto.bulk.CdsBulk;
+import it.cnr.contab.config00.sto.bulk.CdsHome;
+import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
+import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.doccont00.core.bulk.OptionRequestParameter;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.GenericComponent;
+import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.LoggableStatement;
+import it.cnr.jada.persistency.sql.SQLBuilder;
 
 /**
  * Insert the type's description here.
@@ -110,14 +120,21 @@ private void callRiportaIndietro(
 /**
  * Insert the method's description here.
  * Creation date: (04/06/2003 14.16.46)
- * @return java.lang.String
+ * @return java.lang.Strin
  */
 private java.lang.String callVerificaStatoRiporto(
 	UserContext userContext, 
 	IDocumentoAmministrativoBulk documentoAmministrativo) 
 	throws ComponentException {
 
-	LoggableStatement cs = null;
+    try {
+        if (documentoAmministrativo instanceof Fattura_passivaBulk)
+            return ((Fattura_passivaHome) getHome(userContext, Fattura_passivaBulk.class)).callVerificaStatoRiporto(userContext, (Fattura_passivaBulk) documentoAmministrativo);
+    } catch (PersistencyException ex) {
+        throw new ComponentException(ex);
+    }
+
+    LoggableStatement cs = null;
 	String status = null;
 	try {
 		try	{
@@ -155,6 +172,13 @@ private java.lang.String callVerificaStatoRiportoInScrivania(
 	UserContext userContext, 
 	IDocumentoAmministrativoBulk documentoAmministrativo) 
 	throws ComponentException {
+
+    try {
+        if (documentoAmministrativo instanceof Fattura_passivaBulk)
+            return ((Fattura_passivaHome) getHome(userContext, Fattura_passivaBulk.class)).callVerificaStatoRiportoInScrivania(userContext, (Fattura_passivaBulk) documentoAmministrativo);
+    } catch (PersistencyException ex) {
+        throw new ComponentException(ex);
+    }
 
 	LoggableStatement cs = null;
 	String status = null;

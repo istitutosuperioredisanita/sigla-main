@@ -413,7 +413,7 @@ protected boolean isEsercizioChiuso(UserContext userContext,Pdg_preventivoBulk p
 		EsercizioHome home = (EsercizioHome)getHome(userContext,EsercizioBulk.class);
 		CdrBulk cdr = (CdrBulk)getHome(userContext,pdg.getCentro_responsabilita()).findByPrimaryKey(pdg.getCentro_responsabilita());
 		Unita_organizzativaBulk uo = (Unita_organizzativaBulk)getHome(userContext,cdr.getUnita_padre()).findByPrimaryKey(cdr.getUnita_padre());
-		return home.isEsercizioChiuso(userContext,it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext),uo.getCd_unita_padre());
+		return home.isEsercizioChiuso(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext),uo.getCd_unita_padre());
 	} catch(PersistencyException e) {
 		throw handleException(e);
 	}
@@ -422,8 +422,8 @@ protected boolean isPdgApertoPerVariazioni(UserContext userContext,Pdg_preventiv
 	String stato = pdg.getStato();
 
 	return 
-		stato.equals(pdg.ST_G_APERTURA_PER_VARIAZIONI) ||
-		stato.equals(pdg.ST_H_PRECHIUSURA_PER_VARIAZIONI);
+		stato.equals(Pdg_preventivoBulk.ST_G_APERTURA_PER_VARIAZIONI) ||
+		stato.equals(Pdg_preventivoBulk.ST_H_PRECHIUSURA_PER_VARIAZIONI);
 }
 /**
  *  PDG in stato A,B, utente non abilitato

@@ -683,7 +683,7 @@ public class EsercizioComponent extends it.cnr.jada.comp.CRUDComponent implement
     public boolean isEsercizioAperto(UserContext userContext) throws ComponentException {
         try {
             EsercizioHome home = (EsercizioHome) getHome(userContext, EsercizioBulk.class);
-            return home.isEsercizioAperto(userContext, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext), it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext));
+            return home.isEsercizioAperto(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext), it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext));
         } catch (PersistencyException ex) {
             throw handleException(ex);
         }

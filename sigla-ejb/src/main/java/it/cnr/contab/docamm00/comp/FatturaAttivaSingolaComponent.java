@@ -6050,10 +6050,7 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
 
         try {
             it.cnr.contab.config00.esercizio.bulk.EsercizioHome eHome = (it.cnr.contab.config00.esercizio.bulk.EsercizioHome) getHome(userContext, EsercizioBulk.class);
-            return !eHome.isEsercizioChiuso(
-                    userContext,
-                    anEsercizio.getEsercizio(),
-                    anEsercizio.getCd_cds());
+            return !eHome.isEsercizioChiuso(anEsercizio.getEsercizio(), anEsercizio.getCd_cds());
         } catch (it.cnr.jada.persistency.PersistencyException e) {
             throw handleException(e);
         }

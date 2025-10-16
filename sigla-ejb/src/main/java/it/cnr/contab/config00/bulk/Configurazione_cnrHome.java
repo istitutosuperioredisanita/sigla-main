@@ -24,6 +24,7 @@ import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoHome;
 import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.comp.ComponentException;
@@ -33,6 +34,7 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -558,6 +560,14 @@ public class Configurazione_cnrHome extends BulkHome {
         );
     }
 
+    public Optional<Configurazione_cnrBulk> getConfigurazioneEsercizioPartenza() throws PersistencyException{
+        return Optional.ofNullable(
+                this.getConfigurazione(ANNI_ALL, ASTERISCO,
+                        Configurazione_cnrBulk.PK_ESERCIZIO_SPECIALE,
+                        Configurazione_cnrBulk.SK_ESERCIZIO_PARTENZA)
+        );
+    }
+
     public ContoBulk getContoDocumentoNonLiquidabile(IDocumentoDetailEcoCogeBulk rigaDocAmm) throws ComponentException {
         try {
             Optional<Configurazione_cnrBulk> config = this.getConfigurazioneCostoDocumentoNonLiquidabile(rigaDocAmm.getEsercizio());
@@ -654,5 +664,15 @@ public class Configurazione_cnrHome extends BulkHome {
         } catch (it.cnr.jada.persistency.PersistencyException e) {
             throw new ComponentException(e);
         }
+    }
+
+    public Integer getEsercizioPartenza() throws ComponentException {
+        try {
+            Optional<Configurazione_cnrBulk> config = this.getConfigurazioneEsercizioPartenza();
+            if (config.isPresent() && config.get().getIm01()!=null)
+                return config.get().getIm01().intValueExact();
+        } catch (Exception ignored) {
+        }
+        throw new ComponentException("Esercizio di partenza non specificato in configurazione CNR.");
     }
 }

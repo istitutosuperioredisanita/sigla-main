@@ -109,17 +109,17 @@ public Ass_inventario_uoBulk findAssInvUoFor(it.cnr.jada.UserContext userContext
 	Ass_inventario_uoBulk assInvUo = null;
 
 	sql = createSQLBuilder();
-	sql.addSQLClause("AND","CD_CDS",sql.EQUALS,cdCds);
-	sql.addSQLClause("AND","CD_UNITA_ORGANIZZATIVA",sql.EQUALS,cdUO);
-	if (resp==true)
-		sql.addSQLClause("AND","FL_RESPONSABILE",sql.EQUALS,Boolean.TRUE,java.sql.Types.VARCHAR,0,new CHARToBooleanConverter(),true,false);
+	sql.addSQLClause(FindClause.AND,"CD_CDS",SQLBuilder.EQUALS,cdCds);
+	sql.addSQLClause(FindClause.AND,"CD_UNITA_ORGANIZZATIVA",SQLBuilder.EQUALS,cdUO);
+	if (resp)
+		sql.addSQLClause(FindClause.AND,"FL_RESPONSABILE",SQLBuilder.EQUALS,Boolean.TRUE,java.sql.Types.VARCHAR,0,new CHARToBooleanConverter(),true,false);
 
 	broker = createBroker(sql);
 	if (broker.next()){
 		assInvUo = (Ass_inventario_uoBulk)fetch(broker);
 		getHomeCache().fetchAll(userContext);
 		// Se la Uo è responsabile dell'inventario, riempio l'attributo corrispondente
-		if (resp==true)
+		if (resp)
 			assInvUo.getInventario().setAssInvUoResp(assInvUo);
 	}
 	broker.close();

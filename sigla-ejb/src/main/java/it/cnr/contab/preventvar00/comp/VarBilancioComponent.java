@@ -413,7 +413,7 @@ protected boolean isEsercizioChiuso(UserContext userContext) throws ComponentExc
 protected boolean isEsercizioChiuso(UserContext userContext,Integer esercizio) throws ComponentException {
 	try {
 		EsercizioHome home = (EsercizioHome)getHome(userContext,EsercizioBulk.class);
-		return home.isEsercizioChiuso(userContext,esercizio,CNRUserContext.getCd_cds(userContext));
+		return home.isEsercizioChiuso(esercizio,CNRUserContext.getCd_cds(userContext));
 	} catch(it.cnr.jada.persistency.PersistencyException e) {
 		throw handleException(e);
 	}

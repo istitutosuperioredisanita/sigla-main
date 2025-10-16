@@ -30,6 +30,7 @@ import it.cnr.contab.config00.contratto.bulk.ContrattoHome;
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
 import it.cnr.contab.config00.ejb.Parametri_cnrComponentSession;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
+import it.cnr.contab.config00.esercizio.bulk.EsercizioHome;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoHome;
 import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
@@ -56,6 +57,8 @@ import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.doccont00.ejb.AccertamentoAbstractComponentSession;
 import it.cnr.contab.doccont00.ejb.ObbligazioneAbstractComponentSession;
 import it.cnr.contab.doccont00.ejb.ObbligazioneComponentSession;
+import it.cnr.contab.gestiva00.core.bulk.Report_statoBulk;
+import it.cnr.contab.gestiva00.core.bulk.Report_statoHome;
 import it.cnr.contab.inventario00.docs.bulk.*;
 import it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession;
 import it.cnr.contab.inventario01.bulk.*;
@@ -96,6 +99,7 @@ import java.math.RoundingMode;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Supplier;
@@ -1575,17 +1579,22 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
             // è uguale a quella precedente allora il controllo viene bypassato
             if (fatturaDB != null && fatturaPassiva.getDt_registrazione().compareTo(fatturaDB.getDt_registrazione()) == 0)
                 return;
-            cs = new LoggableStatement(getConnection(userContext),
-                    "{ call " +
-                            it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() +
-                            "CNRCTB100.chkDtRegistrazPerIva(?, ?, ?, ?, ?) }", false, this.getClass());
-            cs.setString(1, fatturaPassiva.getCd_cds_origine());
-            cs.setString(2, fatturaPassiva.getCd_uo_origine());
-            cs.setInt(3, fatturaPassiva.getEsercizio().intValue());
-            cs.setString(4, fatturaPassiva.getCd_tipo_sezionale());
-            cs.setTimestamp(5, fatturaPassiva.getDt_registrazione());
 
-            cs.executeQuery();
+            Report_statoHome reportStatoHome = (Report_statoHome)getHome(userContext, Report_statoBulk.class);
+            Report_statoBulk lastRegistroStampato = reportStatoHome.getLastRegitroIvaStampato(fatturaPassiva.getCd_cds_origine(),
+                    fatturaPassiva.getCd_uo_origine(),
+                    fatturaPassiva.getEsercizio(),
+                    fatturaPassiva.getCd_tipo_sezionale());
+
+            if (lastRegistroStampato!=null && lastRegistroStampato.getDt_fine()!=null) {
+                Date dtFineRegistroStampato = lastRegistroStampato.getDt_fine();
+
+                if (!DateUtils.truncate(fatturaPassiva.getDt_registrazione()).after(DateUtils.truncate(dtFineRegistroStampato))) {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    throw new ComponentException("Data registrazione inferiore/uguale a ultimo periodo definitivo di stampa registri IVA " + dateFormat.format(dtFineRegistroStampato));
+                }
+            }
+
             // //Verifica la validità della data di registrazione tra i 2 range e lo stato del flag
             callVerifyDataRegistrazioneIsAttivoBlocco(userContext, fatturaPassiva);
         } catch (Throwable e) {
@@ -3034,9 +3043,9 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                     OrdineAcqConsegnaBulk consegna = fatturaOrdineBulk.getOrdineAcqConsegna();
                     if (fatturaOrdineBulk.isRigaAttesaNotaCredito()) {
                         if (fatturaOrdineBulk.getImponibilePerNotaCredito().compareTo(fatturaOrdineBulk.getImImponibile()) < 0)
-                            throw new ApplicationMessageFormatException("Attenzione: Per la riga di consegna {0} è stato indicato un imponibile errato per nota di credito più basso dell'imponibile reale!", consegna.getConsegnaOrdineString());
+                            throw new ApplicationMessageFormatException("Attenzione: Per la riga di consegna {0} è stato indicato un imponibile errato per nota di credito più basso dell''imponibile reale!", consegna.getConsegnaOrdineString());
                         if (fatturaOrdineBulk.getOperazioneImpegnoNotaCredito() == null)
-                            throw new ApplicationMessageFormatException("Attenzione: Per la riga di consegna {0} non è stato indicato l'impegno da usare per nota di credito", consegna.getConsegnaOrdineString());
+                            throw new ApplicationMessageFormatException("Attenzione: Per la riga di consegna {0} non è stato indicato l''impegno da usare per nota di credito", consegna.getConsegnaOrdineString());
                     }
                     consegna.setFatturaOrdineBulk(fatturaOrdineBulk);
                     Fattura_passiva_rigaBulk riga = Optional.ofNullable(fatturaOrdineBulk.getFatturaPassivaRiga())
@@ -4175,22 +4184,8 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
      */
 //^^@@
     public java.util.List findDettagli(UserContext aUC, Fattura_passivaBulk fatturaPassiva) throws ComponentException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException {
-
         if (fatturaPassiva == null) return null;
-
-        it.cnr.jada.bulk.BulkHome home = null;
-        if (fatturaPassiva instanceof Nota_di_creditoBulk)
-            home = getHome(aUC, Nota_di_credito_rigaBulk.class);
-        else if (fatturaPassiva instanceof Nota_di_debitoBulk)
-            home = getHome(aUC, Nota_di_debito_rigaBulk.class);
-        else home = getHome(aUC, Fattura_passiva_rigaIBulk.class);
-
-        it.cnr.jada.persistency.sql.SQLBuilder sql = home.createSQLBuilder();
-        sql.addClause("AND", "pg_fattura_passiva", SQLBuilder.EQUALS, fatturaPassiva.getPg_fattura_passiva());
-        sql.addClause("AND", "cd_cds", SQLBuilder.EQUALS, fatturaPassiva.getCd_cds());
-        sql.addClause("AND", "esercizio", SQLBuilder.EQUALS, fatturaPassiva.getEsercizio());
-        sql.addClause("AND", "cd_unita_organizzativa", SQLBuilder.EQUALS, fatturaPassiva.getCd_unita_organizzativa());
-        final List list = home.fetchAll(sql);
+        final List list = ((Fattura_passivaHome)getHome(aUC,Fattura_passivaBulk.class)).findFatturaPassivaRigheList(fatturaPassiva);
         getHomeCache(aUC).fetchAll(aUC);
         return list;
     }
@@ -7699,10 +7694,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
 
         try {
             it.cnr.contab.config00.esercizio.bulk.EsercizioHome eHome = (it.cnr.contab.config00.esercizio.bulk.EsercizioHome) getHome(userContext, EsercizioBulk.class);
-            return !eHome.isEsercizioChiuso(
-                    userContext,
-                    anEsercizio.getEsercizio(),
-                    anEsercizio.getCd_cds());
+            return !eHome.isEsercizioChiuso(anEsercizio.getEsercizio(), anEsercizio.getCd_cds());
         } catch (it.cnr.jada.persistency.PersistencyException e) {
             throw handleException(e);
         }
@@ -7723,22 +7715,10 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
     // aggiunto per testare l'esercizio della data competenza da/a
     public boolean isEsercizioChiusoPerDataCompetenza(UserContext userContext, Integer esercizio, String cd_cds) throws ComponentException, PersistencyException {
         try {
-
-            LoggableStatement cs = new LoggableStatement(getConnection(userContext), "{ ? = call " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() + "CNRCTB008.isEsercizioChiusoYesNo(?,?)}", false, this.getClass());
-
-            try {
-                cs.registerOutParameter(1, java.sql.Types.CHAR);
-                cs.setObject(2, esercizio);
-                cs.setObject(3, cd_cds);
-
-                cs.execute();
-
-                return "Y".equals(cs.getString(1));
-            } finally {
-                cs.close();
-            }
-        } catch (java.sql.SQLException e) {
-            throw handleSQLException(e);
+            EsercizioHome home = (EsercizioHome)getHome(userContext,EsercizioBulk.class);
+            return home.isEsercizioChiuso(esercizio,cd_cds);
+        } catch(it.cnr.jada.persistency.PersistencyException e) {
+            throw handleException(e);
         }
     }
 

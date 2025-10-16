@@ -431,7 +431,7 @@ public class PdgAggregatoModuloComponent extends CRUDComponent implements IPrint
 			EsercizioHome home = (EsercizioHome)getHome(userContext,EsercizioBulk.class);
 			CdrBulk cdr = (CdrBulk)getHome(userContext,pdg_modulo.getCdr()).findByPrimaryKey(pdg_modulo.getCdr());
 			Unita_organizzativaBulk uo = (Unita_organizzativaBulk)getHome(userContext,cdr.getUnita_padre()).findByPrimaryKey(cdr.getUnita_padre());
-			return home.isEsercizioChiuso(userContext,it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext),uo.getCd_unita_padre());
+			return home.isEsercizioChiuso(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext),uo.getCd_unita_padre());
 		} catch(PersistencyException e) {
 			throw handleException(e);
 		}

@@ -4316,7 +4316,7 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
         try {
             it.cnr.contab.config00.esercizio.bulk.EsercizioHome eHome = (it.cnr.contab.config00.esercizio.bulk.EsercizioHome) getHome(userContext, it.cnr.contab.config00.esercizio.bulk.EsercizioBulk.class);
 
-            return !eHome.isEsercizioChiuso(userContext, anEsercizio.getEsercizio(), anEsercizio.getCd_cds());
+            return !eHome.isEsercizioChiuso(anEsercizio.getEsercizio(), anEsercizio.getCd_cds());
         } catch (it.cnr.jada.persistency.PersistencyException e) {
             throw handleException(e);
         }

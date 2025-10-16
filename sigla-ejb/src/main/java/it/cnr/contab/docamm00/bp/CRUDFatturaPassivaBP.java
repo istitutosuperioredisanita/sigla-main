@@ -1942,6 +1942,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     public FatturaOrdineBulk calcolaRettificaOrdine(ActionContext context, FatturaOrdineBulk fatturaOrdineBulk) throws BusinessProcessException {
         try {
             FatturaOrdineBulk fatturaOrdine =  Utility.createOrdineAcqComponentSession().calcolaImportoOrdine(context.getUserContext(), fatturaOrdineBulk);
+            fatturaOrdineBulk.setImponibilePerNotaCredito(fatturaOrdine.getImponibilePerNotaCredito());
             fatturaOrdineBulk.setImImponibileRettificato(fatturaOrdine.getImImponibile());
             fatturaOrdineBulk.setImIvaRettificata(fatturaOrdine.getImIva());
             return fatturaOrdineBulk;

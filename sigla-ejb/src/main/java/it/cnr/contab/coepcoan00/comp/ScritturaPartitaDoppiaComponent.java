@@ -493,36 +493,10 @@ public class ScritturaPartitaDoppiaComponent extends CRUDComponent implements IS
 	 * @return boolean : TRUE se stato = C
 	 *					  FALSE altrimenti
 	 */
-	private boolean isEsercizioChiuso(UserContext userContext) throws ComponentException
-	{
-		LoggableStatement cs;
-		String status;
-
-		try
-		{
-			cs = new LoggableStatement(getConnection(userContext), "{ ? = call " + EJBCommonServices.getDefaultSchema()
-					+	"CNRCTB200.isChiusuraCoepDef(?,?)}",false,this.getClass());
-
-			cs.registerOutParameter( 1, Types.VARCHAR);
-			cs.setObject( 2, CNRUserContext.getEsercizio(userContext)	);
-			cs.setObject( 3, CNRUserContext.getCd_cds(userContext)		);
-
-			cs.executeQuery();
-
-			status = cs.getString(1);
-
-			if(status.compareTo("Y")==0)
-				return true;
-
-		} catch (SQLException ex) {
-			throw handleException(ex);
-		}
-
-		return false;
-	}
-/* per le date salvate nel database come timestamp bisogna ridefinire la query nel modo seguente:
-		TRUNC( dt_nel_db) operator 'GG/MM/YYYY'
-*/
+	private boolean isEsercizioChiuso(UserContext userContext) throws ComponentException {
+        return ((Chiusura_coepHome)getHome(userContext, Chiusura_coepBase.class))
+                .isChiusuraCoepDef(CNRUserContext.getEsercizio(userContext),CNRUserContext.getCd_cds(userContext));
+    }
 
 	protected void ridefinisciClausoleConTimestamp(UserContext userContext,CompoundFindClause clauses)
 	{

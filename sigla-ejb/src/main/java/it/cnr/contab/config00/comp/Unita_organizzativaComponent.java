@@ -998,7 +998,7 @@ public class Unita_organizzativaComponent extends it.cnr.jada.comp.CRUDComponent
     protected boolean isEsercizioChiuso(UserContext userContext, CdsBulk cds) throws ComponentException {
         try {
             EsercizioHome home = (EsercizioHome) getHome(userContext, EsercizioBulk.class);
-            return home.isEsercizioChiuso(userContext, cds.getEsercizio_fine(), cds.getCd_unita_organizzativa());
+            return home.isEsercizioChiuso(cds.getEsercizio_fine(), cds.getCd_unita_organizzativa());
         } catch (it.cnr.jada.persistency.PersistencyException e) {
             throw handleException(e);
         }
@@ -1007,7 +1007,7 @@ public class Unita_organizzativaComponent extends it.cnr.jada.comp.CRUDComponent
     protected boolean isEsercizioChiuso(UserContext userContext, Unita_organizzativaBulk uo) throws ComponentException {
         try {
             EsercizioHome home = (EsercizioHome) getHome(userContext, EsercizioBulk.class);
-            return home.isEsercizioChiuso(userContext, uo.getEsercizio_fine(), uo.getCd_unita_padre());
+            return home.isEsercizioChiuso(uo.getEsercizio_fine(), uo.getCd_unita_padre());
         } catch (it.cnr.jada.persistency.PersistencyException e) {
             throw handleException(e);
         }

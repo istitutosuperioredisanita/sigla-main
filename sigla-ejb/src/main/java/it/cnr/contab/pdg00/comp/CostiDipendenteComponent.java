@@ -535,7 +535,7 @@ public boolean isEsercizioChiuso(UserContext userContext) throws ComponentExcept
 protected boolean isEsercizioChiuso(UserContext userContext,Unita_organizzativaBulk uo) throws ComponentException {
 	try {
 		EsercizioHome home = (EsercizioHome)getHome(userContext,EsercizioBulk.class);
-		return home.isEsercizioChiuso(userContext,CNRUserContext.getEsercizio(userContext),uo.getCd_unita_padre());
+		return home.isEsercizioChiuso(CNRUserContext.getEsercizio(userContext),uo.getCd_unita_padre());
 	} catch(it.cnr.jada.persistency.PersistencyException e) {
 		throw handleException(e);
 	}

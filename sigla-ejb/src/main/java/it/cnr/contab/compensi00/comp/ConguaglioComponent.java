@@ -1539,7 +1539,7 @@ public boolean verificaStatoEsercizio(UserContext userContext,it.cnr.contab.conf
 	{
 		it.cnr.contab.config00.esercizio.bulk.EsercizioHome eHome = (it.cnr.contab.config00.esercizio.bulk.EsercizioHome)getHome(userContext, it.cnr.contab.config00.esercizio.bulk.EsercizioBulk.class);
 		
-		return !eHome.isEsercizioChiuso(userContext, anEsercizio.getEsercizio(), anEsercizio.getCd_cds());
+		return !eHome.isEsercizioChiuso(anEsercizio.getEsercizio(), anEsercizio.getCd_cds());
 	} 
 	catch (it.cnr.jada.persistency.PersistencyException e) 
 	{

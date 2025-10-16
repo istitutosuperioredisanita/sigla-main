@@ -443,33 +443,11 @@ private Scrittura_analiticaBulk inizializzaDataContabilizzazione (UserContext us
   * @return boolean : TRUE se stato = C
   *					  FALSE altrimenti
   */
-private boolean isEsercizioChiuso(UserContext userContext) throws ComponentException
-{
-	LoggableStatement cs = null;	
-	String status = null;
-
-	try
-	{
-		cs = new LoggableStatement(getConnection(userContext),"{ ? = call " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() 
-				+	"CNRCTB200.isChiusuraCoepDef(?,?)}",false,this.getClass());		
-
-		cs.registerOutParameter( 1, java.sql.Types.VARCHAR);
-		cs.setObject( 2, CNRUserContext.getEsercizio(userContext)	);		
-		cs.setObject( 3, CNRUserContext.getCd_cds(userContext)		);		
-		
-		cs.executeQuery();
-
-		status = new String(cs.getString(1));
-
-	    if(status.compareTo("Y")==0)
-	    	return true;
-	    	
-	} catch (java.sql.SQLException ex) {
-		throw handleException(ex);
-	}
-	
-    return false;		    	
+private boolean isEsercizioChiuso(UserContext userContext) throws ComponentException {
+    return ((Chiusura_coepHome) getHome(userContext, Chiusura_coepBase.class))
+            .isChiusuraCoepDef(CNRUserContext.getEsercizio(userContext), CNRUserContext.getCd_cds(userContext));
 }
+
 /** 
   *  Modifica Scrittura Analitica - Esercizio COEP/COAN chiuso
   *    PreCondition:
@@ -483,7 +461,7 @@ private boolean isEsercizioChiuso(UserContext userContext) throws ComponentExcep
   *    PostCondition:
   *      Viene consentito il salvataggio.
   *
-  * @param userContext lo <code>UserContext</code> che ha generato la richiesta
+  * @param aUC lo <code>UserContext</code> che ha generato la richiesta
   * @param bulk <code>OggettoBulk</code> il Bulk da creare
   *
   * @return l'oggetto <code>OggettoBulk</code> creato
@@ -542,7 +520,7 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
  *
  * @param userContext <code>UserContext</code> 
  * @param movimento <code>Movimento_coanBulk</code> per cui ricercare il conto
- * @param conto <code>ContoBulk</code> conto econom.patrimoniale da ricercare
+ * @param voceAnalitica <code>Voce_analiticaBulk</code> voce analitica da ricercare
  * @param clauses <code>CompoundFindClause</code> clausole specificate dall'utente
  * @return SQLBuilder
  *
@@ -565,7 +543,7 @@ public SQLBuilder selectVoceAnaliticaByClause (UserContext userContext, Moviment
  *
  * @param userContext <code>UserContext</code> 
  * @param movimento <code>Movimento_coanBulk</code> per cui ricercare il conto
- * @param conto <code>Linea_attivitaBulk</code> linea att. da ricercare
+ * @param latt <code>WorkpackageBulk</code> linea att. da ricercare
  * @param clauses <code>CompoundFindClause</code> clausole specificate dall'utente
  * @return SQLBuilder
  *

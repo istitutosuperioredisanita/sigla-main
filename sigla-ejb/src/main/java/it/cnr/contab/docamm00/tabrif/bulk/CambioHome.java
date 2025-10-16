@@ -159,8 +159,8 @@ public CambioBulk getCambio(DivisaBulk valuta, java.sql.Timestamp dataCambio) th
 public CambioBulk getCambio(String divisa, java.sql.Timestamp dataCambio)
 		throws PersistencyException, ApplicationException {
 	SQLBuilder sql = createSQLBuilder();
-	sql.addSQLClause("AND", "CD_DIVISA", sql.EQUALS, divisa);
-	sql.addSQLClause("AND", "? BETWEEN DT_INIZIO_VALIDITA AND DT_FINE_VALIDITA");
+	sql.addSQLClause(FindClause.AND, "CD_DIVISA", SQLBuilder.EQUALS, divisa);
+	sql.addSQLClause(FindClause.AND, "? BETWEEN DT_INIZIO_VALIDITA AND DT_FINE_VALIDITA");
 	sql.addParameter(dataCambio, java.sql.Types.TIMESTAMP, 0);
 
 	java.util.List cambiValidi = fetchAll(sql);

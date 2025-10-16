@@ -611,7 +611,7 @@ protected boolean isEsercizioChiuso(UserContext userContext,WorkpackageBulk latt
 	try {
 		if (latt != null && latt.getCentro_responsabilita() != null) {
 			EsercizioHome home = (EsercizioHome)getHome(userContext,EsercizioBulk.class);
-			return home.isEsercizioChiuso(userContext,latt.getEsercizio_fine(),latt.getCentro_responsabilita());
+			return home.isEsercizioChiuso(latt.getEsercizio_fine(),latt.getCentro_responsabilita());
 		}
 		return false;
 	} catch(it.cnr.jada.persistency.PersistencyException e) {
@@ -633,7 +633,7 @@ protected boolean isEsercizioChiuso(UserContext userContext,Integer esercizio,Wo
 	try {
 		if (latt != null && latt.getCentro_responsabilita() != null) {
 			EsercizioHome home = (EsercizioHome)getHome(userContext,EsercizioBulk.class);
-			return home.isEsercizioChiuso(userContext,esercizio,latt.getCentro_responsabilita());
+			return home.isEsercizioChiuso(esercizio,latt.getCentro_responsabilita());
 		}
 		return false;
 	} catch(it.cnr.jada.persistency.PersistencyException e) {

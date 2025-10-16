@@ -1296,7 +1296,7 @@ public class SospesoRiscontroComponent extends CRUDComponent implements ISospeso
         try {
             Integer esercizio = CNRUserContext.getEsercizio(userContext);
             EsercizioHome home = (EsercizioHome) getHome(userContext, EsercizioBulk.class);
-            return home.isEsercizioChiuso(userContext, esercizio, cd_cds);
+            return home.isEsercizioChiuso(esercizio, cd_cds);
         } catch (PersistencyException e) {
             throw handleException(e);
         }

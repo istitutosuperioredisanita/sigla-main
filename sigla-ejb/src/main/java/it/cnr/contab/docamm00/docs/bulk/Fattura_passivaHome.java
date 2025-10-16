@@ -17,18 +17,22 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
+import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
 import it.cnr.jada.DetailedRuntimeException;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.*;
 import it.cnr.jada.persistency.sql.FindClause;
+import it.cnr.jada.persistency.sql.LoggableStatement;
 import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
 import java.sql.Timestamp;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Fattura_passivaHome extends BulkHome {
     protected Fattura_passivaHome(Class clazz, java.sql.Connection connection) {
@@ -151,6 +155,23 @@ public class Fattura_passivaHome extends BulkHome {
         return Collections.EMPTY_LIST;
     }
 
+    public List<Fattura_passiva_rigaBulk> findFatturaPassivaRigheList(Fattura_passivaBulk fatturaPassiva) throws PersistencyException {
+        PersistentHome home;
+        if (fatturaPassiva instanceof Nota_di_creditoBulk)
+            home = getHomeCache().getHome(Nota_di_credito_rigaBulk.class);
+        else if (fatturaPassiva instanceof Nota_di_debitoBulk)
+            home = getHomeCache().getHome(Nota_di_debito_rigaBulk.class);
+        else
+            home = getHomeCache().getHome(Fattura_passiva_rigaIBulk.class);
+
+        it.cnr.jada.persistency.sql.SQLBuilder sql = home.createSQLBuilder();
+        sql.addClause(FindClause.AND, "pg_fattura_passiva", SQLBuilder.EQUALS, fatturaPassiva.getPg_fattura_passiva());
+        sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, fatturaPassiva.getCd_cds());
+        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, fatturaPassiva.getEsercizio());
+        sql.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, fatturaPassiva.getCd_unita_organizzativa());
+        return home.fetchAll(sql);
+    }
+
     public OggettoBulk loadIfNeededObject(OggettoBulk object) {
         return Optional.of(object).filter(el->el.getCrudStatus()!=OggettoBulk.UNDEFINED).orElseGet(()-> {
             try {
@@ -160,5 +181,90 @@ public class Fattura_passivaHome extends BulkHome {
                 throw new DetailedRuntimeException(ex);
             }
         });
+    }
+
+    public String callVerificaStatoRiporto(UserContext userContext, Fattura_passivaBulk fatturaPassiva) throws PersistencyException {
+            Unita_organizzativa_enteBulk ente = (Unita_organizzativa_enteBulk) getHomeCache().getHome(Unita_organizzativa_enteBulk.class).findAll().get(0);
+            String aCdCdsEnte = ente.getUnita_padre().getCd_unita_organizzativa();
+
+            List<Fattura_passiva_rigaBulk> righeFattura = this.findFatturaPassivaRigheList(fatturaPassiva);
+
+            List<Integer> eserciziDoccont = null;
+            if (fatturaPassiva instanceof Nota_di_creditoBulk && fatturaPassiva.getCd_cds().equals(aCdCdsEnte))
+                eserciziDoccont = righeFattura.stream()
+                    .map(Fattura_passiva_rigaBulk::getEsercizio_accertamento)
+                    .distinct()
+                    .collect(Collectors.toList());
+            else
+                eserciziDoccont = righeFattura.stream()
+                        .filter(el->Optional.ofNullable(el.getObbligazione_scadenziario()).isPresent())
+                        .map(el->el.getObbligazione_scadenziario().getEsercizio())
+                        .filter(Objects::nonNull)
+                        .distinct()
+                        .collect(Collectors.toList());
+
+            int aEsScr = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext);
+            int aEsDocCont = eserciziDoccont.stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new);
+            int aEs = fatturaPassiva.getEsercizio();
+
+            // 1. Es = EsScr = aEsDocCont
+            if (aEs == aEsScr && aEsScr == aEsDocCont)
+                return IDocumentoAmministrativoBulk.NON_RIPORTATO;
+            // 2. Es = aEsDocCont < aEsScr
+            //caso non significativo, il documento non è comunque modificabile
+            else if (aEs == aEsDocCont && aEsDocCont < aEsScr)
+                return IDocumentoAmministrativoBulk.NON_RIPORTATO;
+            // 3. Es < EsScr = aEsDocCont
+            else if (aEs < aEsScr && aEsScr == aEsDocCont)
+                return IDocumentoAmministrativoBulk.NON_RIPORTATO;
+            // 4. Es = EsScr < aEsDocCont
+            else if (aEs == aEsScr && aEsScr < aEsDocCont)
+                return eserciziDoccont.size()>1?IDocumentoAmministrativoBulk.PARZIALMENTE_RIPORTATO
+                        :IDocumentoAmministrativoBulk.COMPLETAMENTE_RIPORTATO;
+            // 5. Es < aEsDocCont < EsScr
+            // caso non significativo, il documento  non è comunque modificabile
+            else if (aEs < aEsDocCont && aEsDocCont < aEsScr)
+                return IDocumentoAmministrativoBulk.NON_RIPORTATO;
+            // 6. Es < EsScr < aEsDocCont
+            else if (aEs < aEsScr && aEsScr < aEsDocCont)
+                return eserciziDoccont.size()>1?IDocumentoAmministrativoBulk.PARZIALMENTE_RIPORTATO
+                        :IDocumentoAmministrativoBulk.COMPLETAMENTE_RIPORTATO;
+        return eserciziDoccont.size()>1?IDocumentoAmministrativoBulk.PARZIALMENTE_RIPORTATO
+                :IDocumentoAmministrativoBulk.COMPLETAMENTE_RIPORTATO;
+    }
+
+    public String callVerificaStatoRiportoInScrivania(UserContext userContext, Fattura_passivaBulk fatturaPassiva) throws PersistencyException {
+        Unita_organizzativa_enteBulk ente = (Unita_organizzativa_enteBulk) getHomeCache().getHome(Unita_organizzativa_enteBulk.class).findAll().get(0);
+        String aCdCdsEnte = ente.getUnita_padre().getCd_unita_organizzativa();
+
+        List<Fattura_passiva_rigaBulk> righeFattura = this.findFatturaPassivaRigheList(fatturaPassiva);
+
+        List<Integer> eserciziDoccont = null;
+        if (fatturaPassiva instanceof Nota_di_creditoBulk && fatturaPassiva.getCd_cds().equals(aCdCdsEnte))
+            eserciziDoccont = righeFattura.stream()
+                    .map(Fattura_passiva_rigaBulk::getEsercizio_accertamento)
+                    .distinct()
+                    .collect(Collectors.toList());
+        else
+            eserciziDoccont = righeFattura.stream()
+                    .filter(el->Optional.ofNullable(el.getObbligazione_scadenziario()).isPresent())
+                    .map(el->el.getObbligazione_scadenziario().getEsercizio())
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .collect(Collectors.toList());
+
+        int aEsScr = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext);
+        int aEsDocCont = eserciziDoccont.stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new);
+        int aEs = fatturaPassiva.getEsercizio();
+
+        if (aEsDocCont == aEsScr) {
+            if (aEs == aEsDocCont)
+                // documento mai riportato
+                return IDocumentoAmministrativoBulk.NON_RIPORTATO;
+            else
+                return eserciziDoccont.size() > 1 ? IDocumentoAmministrativoBulk.PARZIALMENTE_RIPORTATO
+                        : IDocumentoAmministrativoBulk.COMPLETAMENTE_RIPORTATO;
+        } else
+            return IDocumentoAmministrativoBulk.NON_RIPORTATO;
     }
 }
