@@ -20,26 +20,19 @@
 * Date 19/01/2006
 */
 package it.cnr.contab.inventario01.bulk;
+
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaIBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaBulk;
-import it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_rigaBulk;
+import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario00.docs.bulk.Transito_beni_ordiniBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Condizione_beneBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Tipo_carico_scaricoBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Ubicazione_beneBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.bulk.BulkCollection;
 import it.cnr.jada.bulk.BulkList;
-import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.PrimaryKeyHashtable;
-
-import java.math.BigDecimal;
 
 public class Buono_carico_scaricoBulk extends Buono_carico_scaricoBase {
 	
@@ -170,6 +163,14 @@ public class Buono_carico_scaricoBulk extends Buono_carico_scaricoBase {
 		
 		return byFatturaPerAumentoValore.booleanValue();
 	}
+	public boolean isTrasferimento() {
+
+		if (getTipoMovimento() == null || getTipoMovimento().getFl_buono_per_trasferimento() == null)
+			return false;
+
+		return getTipoMovimento().getFl_buono_per_trasferimento().booleanValue();
+	}
+
 	public boolean isPerAumentoValore() {
 	
 		if (getTipoMovimento() == null || getTipoMovimento().getFl_aumento_valore() == null)

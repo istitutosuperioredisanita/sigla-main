@@ -698,6 +698,10 @@ public abstract class Fattura_passiva_rigaBulk
         this.getCessionario().setCd_terzo(cd_terzo_cessionario);
     }
 
+    public boolean isROInfoPagoPa() {
+        return isROModalita_pagamento_dett();
+
+    }
     public boolean isROModalita_pagamento_dett() {
         return (STATO_PAGATO.equals(this.getStato_cofi())
                 || !Optional.ofNullable(getFattura_passiva())

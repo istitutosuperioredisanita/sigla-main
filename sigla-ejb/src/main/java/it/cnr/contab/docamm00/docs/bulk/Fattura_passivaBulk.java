@@ -435,6 +435,13 @@ public abstract class Fattura_passivaBulk
         nuovoRigo.setTermini_pagamento(this.getTermini_pagamento());
         nuovoRigo.setModalita(this.getModalita());
         nuovoRigo.setModalita_pagamento(this.getModalita_pagamento());
+        if ( Optional.ofNullable(nuovoRigo.getModalita_pagamento()).orElse(new Rif_modalita_pagamentoBulk()).isPAGOPA()){
+            nuovoRigo.setCodice_identificativo_ente_pagopa(
+                    Optional.ofNullable(nuovoRigo.getFornitore())
+                            .map(t->t.getCodice_fiscale_anagrafico()!=null?t.getCodice_fiscale_anagrafico():t.getPartita_iva_anagrafico())
+                            .orElse(null)
+            );
+        }
         nuovoRigo.setBanche(this.getBanche());
         nuovoRigo.setBanca(this.getBanca());
         nuovoRigo.setCessionario(this.getCessionario());

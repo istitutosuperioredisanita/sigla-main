@@ -6930,6 +6930,9 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
 
     public void validaFattura(UserContext aUC, Fattura_passivaBulk fatturaPassiva) throws ComponentException {
         ObbligazioniTable obbligazioniHash = fatturaPassiva.getFattura_passiva_obbligazioniHash();
+        if ( fatturaPassiva.isDaOrdini() &&
+            Optional.ofNullable(fatturaPassiva.getFattura_passiva_ordini()).get().isEmpty())
+              throw new it.cnr.jada.comp.ApplicationException("Attenzione: per salvare una fattura con flag da Ordine, selezionato in Testata, è necessario inserire almeno una riga nel tab Ordini.");
 
         if (obbligazioniHash != null && !obbligazioniHash.isEmpty()) {
             Enumeration en = obbligazioniHash.keys();

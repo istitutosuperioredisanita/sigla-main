@@ -94,6 +94,13 @@
 			sqlTypeName="DECIMAL"
 			columnSize="22"
 			nullable="false" />
+		<columnMapping
+				columnName="FL_CANCELLATO"
+				propertyName="fl_cancellato"
+				sqlTypeName="CHAR"
+				columnSize="1"
+				nullable="false"
+				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="ds_tipo_norma" />
@@ -119,4 +126,6 @@
 		name="duva" />
 	<persistentProperty
 		name="pg_ver_rec" />
+	<persistentProperty
+	name="fl_cancellato" />
 </SQLPersistentInfo>

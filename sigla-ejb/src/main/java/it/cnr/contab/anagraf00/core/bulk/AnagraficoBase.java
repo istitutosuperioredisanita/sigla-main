@@ -198,6 +198,8 @@ public class AnagraficoBase extends AnagraficoKey implements Keyed {
 	private java.lang.String flPivaVerificata;
 	// FL_FIRMATARIO_CONTRATTO CHAR(1) NOT NULL
 	private java.lang.Boolean flFirmatarioContratto = Boolean.FALSE;
+
+	private String cd_unita_organizzativa;
 	
 public AnagraficoBase() {
 	super();
@@ -826,5 +828,13 @@ public void setFlPivaVerificata(java.lang.String flPivaVerificata) {
 
 	public void setFlFirmatarioContratto(Boolean flFirmatarioContratto) {
 		this.flFirmatarioContratto = flFirmatarioContratto;
+	}
+
+	public String getCd_unita_organizzativa() {
+		return cd_unita_organizzativa;
+	}
+
+	public void setCd_unita_organizzativa(String cd_unita_organizzativa) {
+		this.cd_unita_organizzativa = cd_unita_organizzativa;
 	}
 }

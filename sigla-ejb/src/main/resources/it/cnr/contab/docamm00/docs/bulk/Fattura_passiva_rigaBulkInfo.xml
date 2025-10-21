@@ -373,18 +373,22 @@
 	<fieldProperty
 			name="codice_identificativo_ente_pagopa"
 			property="codice_identificativo_ente_pagopa"
+			enabledOnView="true"
 			inputSize="11"
 			maxLength="11"
 			inputType="TEXT"
 			nullable="false"
+			readonlyProperty="ROInfoPagoPa"
 			label="Codice Identificativo Ente" />
 	<fieldProperty
 			name="numero_avviso_pagopa"
 			property="numero_avviso_pagopa"
+			enabledOnView="true"
 			inputSize="18"
 			maxLength="18"
 			inputType="TEXT"
 			nullable="false"
+			readonlyProperty="ROInfoPagoPa"
 			label="Numero avviso" />
 
 	<fieldProperty

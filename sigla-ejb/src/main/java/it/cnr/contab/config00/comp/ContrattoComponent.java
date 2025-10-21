@@ -272,6 +272,7 @@ public class ContrattoComponent extends it.cnr.jada.comp.CRUDDetailComponent imp
 		  clause = tipo_norma_perla.buildFindClauses(null);
 		SQLBuilder sql = getHome(userContext, tipo_norma_perla).createSQLBuilder();
 		sql.addSQLClause("AND", "TIPO_ASSOCIAZIONE", SQLBuilder.EQUALS, Tipo_norma_perlaBulk.ASS_CONTRATTI);
+		sql.addClause("AND", "fl_cancellato", SQLBuilder.EQUALS, Boolean.FALSE);
 		if (clause != null) 
 		  sql.addClause(clause);
 		return sql;
