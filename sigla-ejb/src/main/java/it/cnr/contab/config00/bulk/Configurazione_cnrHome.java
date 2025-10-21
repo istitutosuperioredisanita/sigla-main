@@ -27,6 +27,7 @@ import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
@@ -590,6 +591,10 @@ public class Configurazione_cnrHome extends BulkHome {
 
             if (config.isPresent()) {
                 String aCdLineaAttivita = config.get().getVal02();
+                if (aCdLineaAttivita==null)
+                    throw new ApplicationException("Attenzione! Non esiste il codice Linea Attività indicato nella tabella CONFIGURAZIONE_CNR per l'esercizio "+rigaDocAmm.getEsercizio()
+                            +" ("+Configurazione_cnrBulk.PK_VOCEEP_SPECIALE+"-"+Configurazione_cnrBulk.SK_COSTO_DOC_NON_LIQUIDABILE+"-VAL02).");
+
                 String aCdCentroCosto = Optional.ofNullable(config.get().getVal03()).orElse(rigaDocAmm.getFather().getCd_uo() + ".000");
 
                 WorkpackageHome wpHome = (WorkpackageHome) getHomeCache().getHome(WorkpackageBulk.class);

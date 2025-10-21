@@ -67,6 +67,8 @@ public class Parametri_cdsBase extends Parametri_cdsKey implements Keyed {
 
 	private java.lang.Boolean fl_blocco_impegni_natfin;
 
+    private java.lang.Boolean fl_blocco_ass_imp_iva;
+
 	// ABIL_PROGETTO_STRORG VARCHAR2(3)
 	private java.lang.String abil_progetto_strorg;
     private Boolean fl_obblig_liq_fatt;
@@ -339,5 +341,13 @@ public class Parametri_cdsBase extends Parametri_cdsKey implements Keyed {
 
     public void setFl_obblig_liq_fatt(Boolean fl_obblig_liq_fatt) {
         this.fl_obblig_liq_fatt = fl_obblig_liq_fatt;
+    }
+
+    public Boolean getFl_blocco_ass_imp_iva() {
+        return fl_blocco_ass_imp_iva;
+    }
+
+    public void setFl_blocco_ass_imp_iva(Boolean fl_blocco_ass_imp_iva) {
+        this.fl_blocco_ass_imp_iva = fl_blocco_ass_imp_iva;
     }
 }

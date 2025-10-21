@@ -203,6 +203,9 @@ public class Fattura_passivaHome extends BulkHome {
                         .distinct()
                         .collect(Collectors.toList());
 
+            if (eserciziDoccont.isEmpty())
+                return IDocumentoAmministrativoBulk.NON_RIPORTATO;
+
             int aEsScr = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext);
             int aEsDocCont = eserciziDoccont.stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new);
             int aEs = fatturaPassiva.getEsercizio();
@@ -252,6 +255,9 @@ public class Fattura_passivaHome extends BulkHome {
                     .filter(Objects::nonNull)
                     .distinct()
                     .collect(Collectors.toList());
+
+        if (eserciziDoccont.isEmpty())
+            return IDocumentoAmministrativoBulk.NON_RIPORTATO;
 
         int aEsScr = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext);
         int aEsDocCont = eserciziDoccont.stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new);

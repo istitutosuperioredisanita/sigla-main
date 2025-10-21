@@ -770,6 +770,10 @@
             AND CD_UNITA_ORGANIZZATIVA = '000.000'
             AND CD_TIPO_DOCUMENTO_AMM = 'GENERICO_S';
         </sql>
+        <sql>
+            UPDATE PARAMETRI_CDS
+            SET FL_BLOCCO_ASS_IMP_IVA = 'N';
+        </sql>
         <addDefaultValue tableName="voce_analitica" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="voce_analitica" columnName="duva" defaultValueDate="${now}"/>
         <sql>

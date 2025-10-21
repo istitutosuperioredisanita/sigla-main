@@ -142,7 +142,7 @@ public class ActionDeployments extends DeploymentsH2 {
         switchToFrame(FRAME_DESKTOP);
     }
 
-    protected void  switchToFrame(String frameId) {
+    protected void switchToFrame(String frameId) {
         browser.switchTo().frame(frameId);
     }
 

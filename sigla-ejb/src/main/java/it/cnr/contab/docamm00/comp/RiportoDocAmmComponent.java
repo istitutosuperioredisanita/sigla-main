@@ -215,7 +215,7 @@ public java.lang.String getStatoRiporto(
 	throws ComponentException {
 
 	if (documentoAmministrativo == null)
-		return documentoAmministrativo.NON_RIPORTATO;
+		return IDocumentoAmministrativoBulk.NON_RIPORTATO;
 
 	String status = callVerificaStatoRiporto(userContext, documentoAmministrativo);
 	
@@ -231,7 +231,7 @@ public java.lang.String getStatoRiporto(
 public java.lang.String getStatoRiportoInScrivania(it.cnr.jada.UserContext userContext, it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk documentoAmministrativo) throws it.cnr.jada.comp.ComponentException {
 
 	if (documentoAmministrativo == null)
-		return documentoAmministrativo.NON_RIPORTATO;
+		return IDocumentoAmministrativoBulk.NON_RIPORTATO;
 
 	String status = callVerificaStatoRiportoInScrivania(userContext, documentoAmministrativo);
 	

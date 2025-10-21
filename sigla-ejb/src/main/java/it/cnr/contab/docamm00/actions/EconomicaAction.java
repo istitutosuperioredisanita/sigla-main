@@ -24,6 +24,8 @@ import it.cnr.contab.coepcoan00.core.bulk.*;
 import it.cnr.contab.docamm00.bp.IDocAmmAnaliticaBP;
 import it.cnr.contab.docamm00.bp.IDocAmmEconomicaBP;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.utenze00.bulk.CNRUserInfo;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
@@ -73,39 +75,34 @@ public abstract class EconomicaAction extends CRUDAction {
                 if (!documentoCogeBulk.getTipoDocumentoEnum().isScritturaEconomicaRequired())
                     throw new ApplicationException("Scrittura Economica non prevista per la tipologia di documento selezionato.");
 
-                /*
-                if (Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(actionContext.getUserContext())) {
+                if (Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(actionContext.getUserContext(), CNRUserContext.getEsercizio(actionContext.getUserContext()))) {
                     ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
                             actionContext.getUserContext(),
                             documentoCogeBulk);
 
                     //Richiamo il documento perchè modificato dalla generazione patrimoniale
-                    documentoCogeBulk = (IDocumentoCogeBulk)bp.initializeModelForEdit(actionContext, (OggettoBulk)documentoCogeBulk);
+                    documentoCogeBulk = result.getDocumentoCoge();
                     bp.setModel(actionContext, (OggettoBulk)documentoCogeBulk);
 
                     documentoCogeBulk.setScrittura_partita_doppia(result.getScritturaPartitaDoppiaBulk());
                     documentoCogeBulk.setScrittura_analitica(result.getScritturaAnaliticaBulk());
                 } else {
-                    Scrittura_partita_doppiaBulk scrittura = Utility.createProposeScritturaComponentSession().proposeScritturaPartitaDoppia(
+                    ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScritturaPartitaDoppia(
                             actionContext.getUserContext(),
                             documentoCogeBulk);
 
                     //Richiamo il documento perchè modificato dalla generazione patrimoniale
-                    documentoCogeBulk = (IDocumentoCogeBulk)bp.initializeModelForEdit(actionContext, (OggettoBulk)documentoCogeBulk);
+                    documentoCogeBulk = result.getDocumentoCoge();
                     bp.setModel(actionContext, (OggettoBulk)documentoCogeBulk);
 
-                    documentoCogeBulk.setScrittura_partita_doppia(Utility.createProposeScritturaComponentSession().proposeScritturaPartitaDoppia(
-                            actionContext.getUserContext(),
-                            documentoCogeBulk)
-                    );
+                    documentoCogeBulk.setScrittura_partita_doppia(result.getScritturaPartitaDoppiaBulk());
                 }
                 Optional.of(documentoCogeBulk)
                         .map(OggettoBulk.class::cast)
                         .ifPresent(OggettoBulk::setToBeUpdated);
                 bp.getMovimentiAvere().reset(actionContext);
                 bp.getMovimentiDare().reset(actionContext);
-                */
-                bp.save(actionContext);
+//                bp.save(actionContext);
                 bp.setMessage(FormBP.INFO_MESSAGE, "Scrittura di economica generata correttamente.");
             } catch (ScritturaPartitaDoppiaNotRequiredException | ScritturaPartitaDoppiaNotEnabledException e) {
                 bp.setMessage(FormBP.INFO_MESSAGE, e.getMessage());
@@ -114,6 +111,8 @@ public abstract class EconomicaAction extends CRUDAction {
                 return actionContext.findDefaultForward();
             } catch (ComponentException e) {
                 return handleException(actionContext, e);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
             }
         }
         return actionContext.findDefaultForward();

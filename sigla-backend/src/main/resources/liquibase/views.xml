@@ -3138,6 +3138,21 @@
     <changeSet author="sigla" runOnChange="true" id="create-view-V_ASS_INV_BENE_FATTURA_H2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_ASS_INV_BENE_FATTURA.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-PROGETTO_GEST_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/PROGETTO_GEST.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_ASSESTATO_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_ASSESTATO_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_ELEMENTO_VOCE_ASSESTATO_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_ELEMENTO_VOCE_ASSESTATO.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_DOC_ATTIVO_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_DOC_ATTIVO.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_CONTRATTI_TOTALI_DET_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_CONTRATTI_TOTALI_DET_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
     <changeSet author="valentina.tomada" runOnChange="true" id="create-view-V_AMMORTAMENTO_BENI_DET">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_AMMORTAMENTO_BENI_DET.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>

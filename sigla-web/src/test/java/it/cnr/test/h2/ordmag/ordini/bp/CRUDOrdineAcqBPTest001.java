@@ -15,7 +15,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package it.cnr.test.h2.coepcoan.component.scritture;
+package it.cnr.test.h2.ordmag.ordini.bp;
 
 import it.cnr.test.h2.utenze.action.ActionDeployments;
 import it.cnr.test.util.AlertMessage;
@@ -25,7 +25,6 @@ import org.jboss.arquillian.drone.webdriver.htmlunit.DroneHtmlUnitDriver;
 import org.jboss.arquillian.graphene.GrapheneElement;
 import org.jboss.arquillian.junit.InSequence;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -35,7 +34,7 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
-public class CRUDOrdineAcqBPTest extends ActionDeployments {
+public class CRUDOrdineAcqBPTest001 extends ActionDeployments {
     public static final String USERNAME = "ENTETEST";
     public static final String PASSWORD = "PASSTEST";
 
@@ -63,7 +62,7 @@ public class CRUDOrdineAcqBPTest extends ActionDeployments {
     @Test
     @RunAsClient
     @OperateOnDeployment(TEST_H2)
-    @InSequence(1)
+    @InSequence(100)
     public void testLogin() throws Exception {
         doLogin(USERNAME, PASSWORD);
         doLoginUO(UO, CDR);
@@ -75,7 +74,7 @@ public class CRUDOrdineAcqBPTest extends ActionDeployments {
     @Test
     @RunAsClient
     @OperateOnDeployment(TEST_H2)
-    @InSequence(2)
+    @InSequence(200)
     public void testCreaProgetto() {
         switchToFrameDesktop();
         switchToFrameMenu();
@@ -375,7 +374,7 @@ public class CRUDOrdineAcqBPTest extends ActionDeployments {
     @RunAsClient
     @OperateOnDeployment(TEST_H2)
     @InSequence(4)
-    public void testRiscontroValore() {
+    public void testRiscontroValore001() {
         browser.switchTo().parentFrame();
         switchToFrameMenu();
         doApriMenu(AMM);
@@ -409,7 +408,9 @@ public class CRUDOrdineAcqBPTest extends ActionDeployments {
 
         doClickButton("doTab('tab','tabFatturaPassivaOrdini')");
 
-        doClickButton("submitForm('doSelezionaOrdini');");
+        System.out.println("1 - " +browser.getPageSource().contains("Fattura Passiva - Inserimento"));
+
+        doClickButton("submitForm('doSelezionaOrdini')");
 
         //Seleziono la prima riga ordini
         Optional<GrapheneElement> element = browser.findElements(By.tagName("tr"))
@@ -479,6 +480,9 @@ public class CRUDOrdineAcqBPTest extends ActionDeployments {
         assertEquals("21,78", getTableColumnElement("main.Movimenti Avere",1,5).getText());
 
         assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Avere' and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.Movimenti Avere",2));
+
+        doClickButton("doTab('tab','tabAnalitica')");
+        assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Analitici' and numberRow: 0", RuntimeException.class, ()->getTableRowElement("main.Movimenti Analitici",0));
     }
 
     @Test
@@ -646,7 +650,7 @@ public class CRUDOrdineAcqBPTest extends ActionDeployments {
         //Rimuovo la consegna DSA/1/1/1 collegata alla fattura
         doClickButton("submitForm('doRemoveFromCRUD(main.Ordini)')");
 
-        doClickButton("submitForm('doSelezionaOrdini');");
+        doClickButton("submitForm('doSelezionaOrdini')");
 
         //Cerco la consegna DSA/2/1/1 proposta da collegare
         Optional<GrapheneElement> element = browser.findElements(By.tagName("tr"))
@@ -1004,5 +1008,136 @@ public class CRUDOrdineAcqBPTest extends ActionDeployments {
         assertEquals("1,22", getTableColumnElement("mainTable",1,9).getText());
 
         assertThrows("Cannot find Element <tr> with tableName 'mainTable' and numberRow: 2", RuntimeException.class, ()->getTableRowElement("mainTable",2));
+    }
+
+    @Test
+    @RunAsClient
+    @OperateOnDeployment(TEST_H2)
+    @InSequence(8)
+    public void testRiscontroValore002() {
+        browser.switchTo().parentFrame();
+        switchToFrameMenu();
+        doSelezionaMenu(AMM_FATTUR_FATPAS_ELE);
+
+        browser.switchTo().parentFrame();
+        switchToFrameWorkspace();
+
+        getGrapheneElement("main.identificativoSdi").writeIntoElement("90000000001");
+
+        Select select = new Select(getGrapheneElement("main.statoDocumento"));
+        select.selectByValue("");
+
+        doClickButton("doCerca()");
+        Alert alert = browser.switchTo().alert();
+        assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
+        alert.accept();
+
+        doClickButton("submitForm('doCompilaFattura')");
+
+        assertTrue(browser.getPageSource().contains("La compilazione della Fattura e il suo successivo salvataggio, comporta l'accettazione del documento elettronico."));
+
+        getGrapheneElement("comando.doYes").click();
+
+        System.out.println("1 - " +browser.getPageSource().contains("Fattura Passiva - Inserimento"));
+
+        select = new Select(getGrapheneElement("main.stato_liquidazione"));
+        select.selectByValue("NOLIQ");
+
+        select = new Select(getGrapheneElement("main.causale"));
+        select.selectByValue("ATTNC");
+
+        getGrapheneElement("main.flDaOrdini").click();
+
+        getGrapheneElement("main.ds_fattura_passiva").writeIntoElement("RISCONTRO VALORE TEST");
+
+        doClickButton("doTab('tab','tabFatturaPassivaOrdini')");
+
+        doClickButton("submitForm('doSelezionaOrdini')");
+
+        //Seleziono la prima riga ordini
+        Optional<GrapheneElement> element = browser.findElements(By.tagName("tr"))
+                .stream()
+                .filter(GrapheneElement.class::isInstance)
+                .map(GrapheneElement.class::cast)
+                .filter(rowElement -> {
+                    try {
+                        return "DSA".equals(getTableColumnElement(rowElement, 4).getText()) &&
+                                "1".equals(getTableColumnElement(rowElement, 5).getText()) &&
+                                "1".equals(getTableColumnElement(rowElement, 6).getText()) &&
+                                "1".equals(getTableColumnElement(rowElement, 7).getText());
+                    } catch (java.lang.RuntimeException ex) {
+                        return false;
+                    }
+                })
+                .findAny();
+
+        Assert.assertTrue(element.isPresent());
+
+        element.get().findElement(By.name("mainTable.selection")).click();
+
+        doClickButton("submitForm('doMultipleSelection')");
+
+        doSelectTableRow("main.Ordini",0);
+
+        getGrapheneElement("main.Ordini.imponibileErrato").writeIntoElement("103");
+        doClickButton("confirmModalInputChange(this,'main.Ordini.imponibileErrato','doRettificaConsegna')");
+
+        doClickButton("submitForm('doConfermaRiscontroAValore')");
+
+        alert = browser.switchTo().alert();
+        assertEquals("Attenzione: Per la riga di consegna 2025/DSA/1/1/1 non è stato indicato l'impegno da usare per nota di credito", alert.getText());
+        alert.accept();
+
+        select = new Select(getGrapheneElement("main.Ordini.operazioneImpegnoNotaCredito"));
+        select.selectByValue("D");
+
+        doClickButton("submitForm('doConfermaRiscontroAValore')");
+
+        alert = browser.switchTo().alert();
+        assertEquals("Attenzione ci sono dettagli di fattura da contabilizzare.", alert.getText());
+        alert.accept();
+
+        doSelectTableRow("main.Dettaglio",1);
+
+        getGrapheneElement("main.Dettaglio.im_iva").clear();
+        getGrapheneElement("main.Dettaglio.im_iva").writeIntoElement("0");
+        doClickButton("confirmModalInputChange(this,'main.Dettaglio.im_iva','doForzaIVA')");
+
+        doClickButton("doSalva()");
+
+        alert = browser.switchTo().alert();
+        assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
+        alert.accept();
+
+        doClickButton("doTab('tab','tabEconomica')");
+        assertEquals("P00047", getTableColumnElement("main.Movimenti Dare",0,1).getText());
+        assertEquals("122,00", getTableColumnElement("main.Movimenti Dare",0,5).getText());
+
+        assertEquals("C00066", getTableColumnElement("main.Movimenti Dare",1,1).getText());
+        assertEquals("3,00", getTableColumnElement("main.Movimenti Dare",1,5).getText());
+
+        assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Dare' and numberRow: 2", RuntimeException.class, ()->getTableRowElement("main.Movimenti Dare",2));
+
+        assertEquals("P43001", getTableColumnElement("main.Movimenti Avere",0,1).getText());
+        assertEquals("3,00", getTableColumnElement("main.Movimenti Avere",0,5).getText());
+
+        assertEquals("P13003", getTableColumnElement("main.Movimenti Avere",1,1).getText());
+        assertEquals("100,00", getTableColumnElement("main.Movimenti Avere",1,5).getText());
+
+        assertEquals("P71012I", getTableColumnElement("main.Movimenti Avere",2,1).getText());
+        assertEquals("22,00", getTableColumnElement("main.Movimenti Avere",2,5).getText());
+
+        assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Avere' and numberRow: 3", RuntimeException.class, ()->getTableRowElement("main.Movimenti Avere",3));
+
+        doClickButton("doTab('tab','tabAnalitica')");
+        assertEquals("C00066", getTableColumnElement("main.Movimenti Analitici",0,1).getText());
+        assertEquals("Dare", getTableColumnElement("main.Movimenti Analitici",0,2).getText());
+        assertEquals("C00066", getTableColumnElement("main.Movimenti Analitici",0,3).getText());
+        assertEquals("000.000.000", getTableColumnElement("main.Movimenti Analitici",0,5).getText());
+        assertEquals("PTEST003", getTableColumnElement("main.Movimenti Analitici",0,6).getText());
+        assertEquals("D", getTableColumnElement("main.Movimenti Analitici",0,7).getText());
+        assertEquals("3,00", getTableColumnElement("main.Movimenti Analitici",0,8).getText());
+
+        assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Analitici' and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.Movimenti Analitici",1));
     }
 }

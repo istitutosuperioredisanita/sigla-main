@@ -5190,30 +5190,39 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 	public void controllaAssunzioneImpegni(UserContext userContext) throws it.cnr.jada.comp.ComponentException{
 		try
 		{
-			LoggableStatement cs = new LoggableStatement(getConnection( userContext ), 
-				"call " +
-				it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() +			
-				"CNRCTB270.controllaAssunzioneImpegni(?, ?)",false,this.getClass());
-			try
-			{
-				cs.setString( 1, CNRUserContext.getCd_cds(userContext));			
-				cs.setObject( 2, CNRUserContext.getEsercizio(userContext));
-				cs.executeQuery();				
-			}
-			catch ( SQLException e )
-			{
-				throw handleException( e );
-			}	
-			finally
-			{
-				cs.close();
-			}
-		}
-		catch ( SQLException e )
-		{
-			throw handleException( e );
-		}	
-	}
+            String aCdCds = CNRUserContext.getCd_cds(userContext);
+            Integer aEs = CNRUserContext.getEsercizio(userContext);
+
+            Parametri_cdsHome parametriCdsHome = (Parametri_cdsHome)getHome(userContext, Parametri_cdsBulk.class);
+            Parametri_cdsBulk parametriCdsBulk = (Parametri_cdsBulk)parametriCdsHome.findByPrimaryKey(new Parametri_cdsBulk(aCdCds, aEs));
+
+            if (parametriCdsBulk==null)
+                throw new ApplicationException("Parametri CDS ("+aCdCds+") mancanti per l''anno "+aEs+")");
+
+            if (parametriCdsBulk.getFl_blocco_ass_imp_iva()) {
+                try {
+                    LoggableStatement cs = new LoggableStatement(getConnection(userContext),
+                            "call " +
+                                    it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() +
+                                    "CNRCTB270.controllaAssunzioneImpegni(?, ?)", false, this.getClass());
+                    try {
+                        cs.setString(1, CNRUserContext.getCd_cds(userContext));
+                        cs.setObject(2, CNRUserContext.getEsercizio(userContext));
+                        cs.executeQuery();
+                    } catch (SQLException e) {
+                        throw handleException(e);
+                    } finally {
+                        cs.close();
+                    }
+                } catch (SQLException e) {
+                    throw handleException(e);
+                }
+            }
+       } catch (PersistencyException e) {
+           throw new RuntimeException(e);
+       }
+    }
+
 	public void controllaAssunzioneImpResImpro(UserContext userContext) throws it.cnr.jada.comp.ComponentException{
 		try
 		{

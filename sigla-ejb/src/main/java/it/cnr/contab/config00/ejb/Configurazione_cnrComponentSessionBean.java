@@ -1158,8 +1158,6 @@ public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUD
         }
     }
 
-
-
     public Timestamp getFineRegFattPass(UserContext userContext, Integer esercizio) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
         pre_component_invocation(userContext, componentObj);
         try {

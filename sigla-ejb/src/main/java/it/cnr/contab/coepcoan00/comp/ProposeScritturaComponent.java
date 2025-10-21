@@ -6130,101 +6130,103 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		}
 	}
 
-	private IDocumentoCogeBulk loadRigheEco(UserContext userContext, IDocumentoCogeBulk documentoCoge) {
+	private IDocumentoCogeBulk loadRigheEco(UserContext userContext, IDocumentoCogeBulk documentoCoge) throws ApplicationException {
 		try {
-			boolean isAttivaEconomicaPuraDocamm = ((Configurazione_cnrHome) getHome(userContext, Configurazione_cnrBulk.class)).isAttivaEconomicaPura(documentoCoge.getEsercizio());
+            boolean isAttivaEconomicaPuraDocamm = ((Configurazione_cnrHome) getHome(userContext, Configurazione_cnrBulk.class)).isAttivaEconomicaPura(documentoCoge.getEsercizio());
 
-			if (documentoCoge instanceof IDocumentoDetailEcoCogeBulk) {
-				//Carico i dettagli
-				loadChildrenAna(userContext, (IDocumentoDetailEcoCogeBulk) documentoCoge);
+            if (documentoCoge instanceof IDocumentoDetailEcoCogeBulk) {
+                //Carico i dettagli
+                loadChildrenAna(userContext, (IDocumentoDetailEcoCogeBulk) documentoCoge);
 
-				//Se non attiva l'economica pura (quindi c'è la finanziaria o la parallela) ripulisco tutte le tabelle di appoggio per ricaricarle ex-novo con i dati
-				//prelevati dalla finanziaria
-				if (!isAttivaEconomicaPuraDocamm) {
-					//Ripulisco tutti i campi
-					((IDocumentoDetailEcoCogeBulk) documentoCoge).setVoce_ep(null);
-					((OggettoBulk) documentoCoge).setToBeUpdated();
-					updateBulk(userContext, (OggettoBulk) documentoCoge);
+                //Se non attiva l'economica pura (quindi c'è la finanziaria o la parallela) ripulisco tutte le tabelle di appoggio per ricaricarle ex-novo con i dati
+                //prelevati dalla finanziaria
+                if (!isAttivaEconomicaPuraDocamm) {
+                    //Ripulisco tutti i campi
+                    ((IDocumentoDetailEcoCogeBulk) documentoCoge).setVoce_ep(null);
+                    ((OggettoBulk) documentoCoge).setToBeUpdated();
+                    updateBulk(userContext, (OggettoBulk) documentoCoge);
 
-					for (IDocumentoDetailAnaCogeBulk childrenAna : ((IDocumentoDetailEcoCogeBulk) documentoCoge).getChildrenAna()) {
-						((OggettoBulk) childrenAna).setToBeDeleted();
-						deleteBulk(userContext, (OggettoBulk) childrenAna);
-					}
-					((IDocumentoDetailEcoCogeBulk) documentoCoge).clearChildrenAna();
+                    for (IDocumentoDetailAnaCogeBulk childrenAna : ((IDocumentoDetailEcoCogeBulk) documentoCoge).getChildrenAna()) {
+                        ((OggettoBulk) childrenAna).setToBeDeleted();
+                        deleteBulk(userContext, (OggettoBulk) childrenAna);
+                    }
+                    ((IDocumentoDetailEcoCogeBulk) documentoCoge).clearChildrenAna();
 
-					//e poi ricarico il tutto leggendo dalla finanziaria
-					this.loadDocammRigheEcoFromCofi(userContext, (IDocumentoDetailEcoCogeBulk) documentoCoge);
-				}
-			} else if (documentoCoge instanceof OrdineAcqBulk) {
-				OrdineAcqHome home = (OrdineAcqHome) getHome(userContext, OrdineAcqBulk.class);
-				List<OrdineAcqRigaBulk> righeOrdine = home.findOrdineRigheList((OrdineAcqBulk) documentoCoge);
-				righeOrdine.forEach(el->el.setOrdineAcq((OrdineAcqBulk) documentoCoge));
-				((OrdineAcqBulk)documentoCoge).setRigheOrdineColl(new BulkList<>(righeOrdine));
+                    //e poi ricarico il tutto leggendo dalla finanziaria
+                    this.loadDocammRigheEcoFromCofi(userContext, (IDocumentoDetailEcoCogeBulk) documentoCoge);
+                }
+            } else if (documentoCoge instanceof OrdineAcqBulk) {
+                OrdineAcqHome home = (OrdineAcqHome) getHome(userContext, OrdineAcqBulk.class);
+                List<OrdineAcqRigaBulk> righeOrdine = home.findOrdineRigheList((OrdineAcqBulk) documentoCoge);
+                righeOrdine.forEach(el -> el.setOrdineAcq((OrdineAcqBulk) documentoCoge));
+                ((OrdineAcqBulk) documentoCoge).setRigheOrdineColl(new BulkList<>(righeOrdine));
 
-				for (OrdineAcqRigaBulk rigaOrdine : righeOrdine) {
-					//Carico i dettagli
-					loadChildrenAna(userContext, rigaOrdine);
+                for (OrdineAcqRigaBulk rigaOrdine : righeOrdine) {
+                    //Carico i dettagli
+                    loadChildrenAna(userContext, rigaOrdine);
 
-					//Se non attiva l'economica pura (quindi c'è la finanziaria o la parallela) ripulisco tutte le tabelle di appoggio per ricaricarle ex-novo con i dati
-					//prelevati dalla finanziaria
-					if (!isAttivaEconomicaPuraDocamm) {
-						//Ripulisco tutti i campi della riga ordine
-						rigaOrdine.setVoce_ep(null);
-						rigaOrdine.setToBeUpdated();
-						updateBulk(userContext, rigaOrdine);
+                    //Se non attiva l'economica pura (quindi c'è la finanziaria o la parallela) ripulisco tutte le tabelle di appoggio per ricaricarle ex-novo con i dati
+                    //prelevati dalla finanziaria
+                    if (!isAttivaEconomicaPuraDocamm) {
+                        //Ripulisco tutti i campi della riga ordine
+                        rigaOrdine.setVoce_ep(null);
+                        rigaOrdine.setToBeUpdated();
+                        updateBulk(userContext, rigaOrdine);
 
-						for (IDocumentoDetailAnaCogeBulk childrenAna : rigaOrdine.getChildrenAna()) {
-							((OggettoBulk) childrenAna).setToBeDeleted();
-							deleteBulk(userContext, (OggettoBulk) childrenAna);
-						}
+                        for (IDocumentoDetailAnaCogeBulk childrenAna : rigaOrdine.getChildrenAna()) {
+                            ((OggettoBulk) childrenAna).setToBeDeleted();
+                            deleteBulk(userContext, (OggettoBulk) childrenAna);
+                        }
 
-						OrdineAcqRigaHome rigaHome = (OrdineAcqRigaHome)getHome(userContext, OrdineAcqRigaBulk.class);
-						List<OrdineAcqConsegnaBulk> consegneOrdine = rigaHome.findOrdineRigheConsegnaList(rigaOrdine);
-						rigaOrdine.setRigheConsegnaColl(new BulkList<>(consegneOrdine));
-						for (OrdineAcqConsegnaBulk consegnaOrdine : rigaOrdine.getRigheConsegnaColl()) {
-							//Carico i dettagli
-							loadChildrenAna(userContext, consegnaOrdine);
+                        OrdineAcqRigaHome rigaHome = (OrdineAcqRigaHome) getHome(userContext, OrdineAcqRigaBulk.class);
+                        List<OrdineAcqConsegnaBulk> consegneOrdine = rigaHome.findOrdineRigheConsegnaList(rigaOrdine);
+                        rigaOrdine.setRigheConsegnaColl(new BulkList<>(consegneOrdine));
+                        for (OrdineAcqConsegnaBulk consegnaOrdine : rigaOrdine.getRigheConsegnaColl()) {
+                            //Carico i dettagli
+                            loadChildrenAna(userContext, consegnaOrdine);
 
-							//Ripulisco tutti i campi della riga consegna
-							consegnaOrdine.setVoce_ep(null);
-							consegnaOrdine.setToBeUpdated();
-							updateBulk(userContext, consegnaOrdine);
+                            //Ripulisco tutti i campi della riga consegna
+                            consegnaOrdine.setVoce_ep(null);
+                            consegnaOrdine.setToBeUpdated();
+                            updateBulk(userContext, consegnaOrdine);
 
-							for (IDocumentoDetailAnaCogeBulk childrenAna : consegnaOrdine.getChildrenAna()) {
-								((OggettoBulk) childrenAna).setToBeDeleted();
-								deleteBulk(userContext, (OggettoBulk) childrenAna);
-							}
+                            for (IDocumentoDetailAnaCogeBulk childrenAna : consegnaOrdine.getChildrenAna()) {
+                                ((OggettoBulk) childrenAna).setToBeDeleted();
+                                deleteBulk(userContext, (OggettoBulk) childrenAna);
+                            }
 
-						}
-						//e poi ricarico il tutto leggendo dalla finanziaria
-						this.loadDocammRigheEcoFromCofi(userContext, rigaOrdine);
-					}
-				}
-			} else if (documentoCoge instanceof IDocumentoAmministrativoBulk) {
-				List<IDocumentoAmministrativoRigaBulk> righeDocamm = this.getRigheDocamm(userContext, (IDocumentoAmministrativoBulk)documentoCoge);
-				for (IDocumentoAmministrativoRigaBulk rigaDocamm : righeDocamm) {
-					//Carico i dettagli
-					loadChildrenAna(userContext, rigaDocamm);
+                        }
+                        //e poi ricarico il tutto leggendo dalla finanziaria
+                        this.loadDocammRigheEcoFromCofi(userContext, rigaOrdine);
+                    }
+                }
+            } else if (documentoCoge instanceof IDocumentoAmministrativoBulk) {
+                List<IDocumentoAmministrativoRigaBulk> righeDocamm = this.getRigheDocamm(userContext, (IDocumentoAmministrativoBulk) documentoCoge);
+                for (IDocumentoAmministrativoRigaBulk rigaDocamm : righeDocamm) {
+                    //Carico i dettagli
+                    loadChildrenAna(userContext, rigaDocamm);
 
-					//Se non attiva l'economica pura (quindi c'è la finanziaria o la parallela) ripulisco tutte le tabelle di appoggio per ricaricarle ex-novo con i dati
-					//prelevati dalla finanziaria
-					if (!isAttivaEconomicaPuraDocamm) {
-						//Ripulisco tutti i campi
-						rigaDocamm.setVoce_ep(null);
-						((OggettoBulk) rigaDocamm).setToBeUpdated();
-						updateBulk(userContext, (OggettoBulk) rigaDocamm);
+                    //Se non attiva l'economica pura (quindi c'è la finanziaria o la parallela) ripulisco tutte le tabelle di appoggio per ricaricarle ex-novo con i dati
+                    //prelevati dalla finanziaria
+                    if (!isAttivaEconomicaPuraDocamm) {
+                        //Ripulisco tutti i campi
+                        rigaDocamm.setVoce_ep(null);
+                        ((OggettoBulk) rigaDocamm).setToBeUpdated();
+                        updateBulk(userContext, (OggettoBulk) rigaDocamm);
 
-						for (IDocumentoDetailAnaCogeBulk childrenAna : rigaDocamm.getChildrenAna()) {
-							((OggettoBulk) childrenAna).setToBeDeleted();
-							deleteBulk(userContext, (OggettoBulk) childrenAna);
-						}
+                        for (IDocumentoDetailAnaCogeBulk childrenAna : rigaDocamm.getChildrenAna()) {
+                            ((OggettoBulk) childrenAna).setToBeDeleted();
+                            deleteBulk(userContext, (OggettoBulk) childrenAna);
+                        }
 
-						//e poi ricarico il tutto leggendo dalla finanziaria
-						this.loadDocammRigheEcoFromCofi(userContext, rigaDocamm);
-					}
-				}
-			}
+                        //e poi ricarico il tutto leggendo dalla finanziaria
+                        this.loadDocammRigheEcoFromCofi(userContext, rigaDocamm);
+                    }
+                }
+            }
             return documentoCoge;
+        } catch (ApplicationException e) {
+            throw e;
 		} catch (PersistencyException | ComponentException | RemoteException e) {
 			throw new RuntimeException(e);
         }

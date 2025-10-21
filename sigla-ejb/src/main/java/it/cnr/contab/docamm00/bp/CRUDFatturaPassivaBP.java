@@ -999,12 +999,16 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
 
     public void reset(ActionContext context) throws BusinessProcessException {
         try {
-            if ((it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(
-                    context.getUserContext()).intValue() != Fattura_passivaBulk
-                    .getDateCalendar(null).get(java.util.Calendar.YEAR) || !Utility.createConfigurazioneCnrComponentSession().getFineRegFattPass(context.getUserContext(), CNRUserContext.getEsercizio(context.getUserContext()) - 1)
-                    .before(EJBCommonServices.getServerDate()) )  &&
-                    !Utility.createConfigurazioneCnrComponentSession().getFineRegFattPass(context.getUserContext(), CNRUserContext.getEsercizio(context.getUserContext()))
-                            .after(EJBCommonServices.getServerDate())) {
+            Configurazione_cnrComponentSession confComponent = Utility.createConfigurazioneCnrComponentSession();
+            Integer esercizioCorrente = CNRUserContext.getEsercizio(context.getUserContext());
+            Integer esercizioPrecedente = esercizioCorrente-1;
+//            if ((esercizioCorrente.intValue() != Fattura_passivaBulk.getDateCalendar(null).get(Calendar.YEAR) ||
+//                 !confComponent.getFineRegFattPass(context.getUserContext(), esercizioPrecedente).before(EJBCommonServices.getServerDate()) )
+//                &&
+//                 !confComponent.getFineRegFattPass(context.getUserContext(), esercizioCorrente).after(EJBCommonServices.getServerDate())) {
+            if (confComponent.getFineRegFattPass(context.getUserContext(), esercizioCorrente).before(EJBCommonServices.getServerDate()) &&
+                (esercizioCorrente.intValue() != Fattura_passivaBulk.getDateCalendar(null).get(Calendar.YEAR) ||
+                 confComponent.getFineRegFattPass(context.getUserContext(), esercizioPrecedente).after(EJBCommonServices.getServerDate()))) {
                 resetForSearch(context);
             } else {
                 setCarryingThrough(false);
