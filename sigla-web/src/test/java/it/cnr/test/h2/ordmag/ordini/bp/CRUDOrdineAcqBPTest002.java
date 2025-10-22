@@ -68,8 +68,8 @@ public class CRUDOrdineAcqBPTest002 extends ActionDeployments {
     @Test
     @RunAsClient
     @OperateOnDeployment(TEST_H2)
-    @InSequence(2)
-    public void testCreaProgetto() {
+    @InSequence(200)
+    public void testCreaOrdine() {
         switchToFrameDesktop();
         switchToFrameMenu();
         doApriMenu(ORD);

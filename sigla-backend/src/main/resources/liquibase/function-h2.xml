@@ -52,6 +52,13 @@
                 path="../h2/function/cnrctb850_unregister.sql"
                 relativeToChangelogFile="true"/>
     </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="createProcedure-cnrctb850_unregisterall">
+        <createProcedure
+                dbms="h2"
+                encoding="utf8"
+                path="../h2/function/cnrctb850_unregisterall.sql"
+                relativeToChangelogFile="true"/>
+    </changeSet>
     <changeSet author="sigla" runOnChange="true" id="createProcedure-cnrctb850_register">
         <createProcedure
                 dbms="h2"

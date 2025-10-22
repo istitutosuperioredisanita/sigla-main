@@ -3063,9 +3063,6 @@
     <changeSet author="marco.spasiano" runOnChange="true" id="create-view-V_LINEA_ATTIVITA_VALIDA-h2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_LINEA_ATTIVITA_VALIDA_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
-    <changeSet author="marco.spasiano" runOnChange="true" id="create-view-VOCE_F_SALDI_CDR_LINEA-h2">
-        <sqlFile dbms="h2" path="../expsigladb/View/VOCE_F_SALDI_CDR_LINEA.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
-    </changeSet>
     <changeSet author="marco.spasiano" runOnChange="true" id="create-view-V_SALDI_GAE_VOCE_PROGETTO-h2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_SALDI_GAE_VOCE_PROGETTO.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
@@ -3165,5 +3162,7 @@
     <changeSet author="ciro.salvio" runOnChange="true" id="create-view-V_FATT_ORDINE_DET">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_FATT_ORDINE_DET.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
-
+    <changeSet author="sigla" runOnChange="true" id="create-view-VOCE_F_SALDI_CDR_LINEA_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/VOCE_F_SALDI_CDR_LINEA_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
 </databaseChangeLog>
