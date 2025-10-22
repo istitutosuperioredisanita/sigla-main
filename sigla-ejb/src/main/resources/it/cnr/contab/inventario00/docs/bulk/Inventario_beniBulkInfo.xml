@@ -48,11 +48,16 @@
 	<fieldProperty
 		name="dt_acquisizione"
 		property="dt_acquisizione"
-		inputType="ROTEXT"
+		inputType="TEXT"
 		maxLength="10"
 		inputSize="10"
 		label="Data Acquiszione"
-		formatName="date_short"/>	
+		enabledOnInsert = "false"
+		enabledOnEdit = "false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		formatName="date_short"
+	/>
 	<fieldProperty
 		name="ds_bene"
 		property="ds_bene"
@@ -200,7 +205,7 @@
 		property="assegnatario"
 		inputType="SEARCHTOOL" 	
 		formName="searchtool" 	
-		label="Assegnatario"		
+		label="Assegnatario"
 		enabledOnSearch="true"		
 		enabledOnEdit="true"  />
 	<fieldProperty
@@ -209,7 +214,7 @@
 		maxLength="10"
 		inputSize="10"
 		inputType="TEXT"
-		label="Assegnatario"	
+		label="Cod.Assegnatario"
 		readonlyProperty="ROassegnatarioBene"
 		caseSensitiveSearch="false"
 		enabledOnInsert = "true"
@@ -828,6 +833,8 @@
 			name="dt_dismesso" />
 	<findFieldProperty
 			name="causale_dismissione" />
+	<findFieldProperty
+			name="dt_acquisizione" />
 
 	<freeSearchSet name="freeSearchWithoutProgressivoSet">
 		<findFieldProperty
@@ -850,6 +857,8 @@
 			name="collocazione" />
 		<findFieldProperty
 			name="condizioni" />
+		<findFieldProperty
+				name="dt_acquisizione" />
 	</freeSearchSet>
     <form name="searchtool">		
 	    <formFieldProperty
