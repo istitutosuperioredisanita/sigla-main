@@ -294,7 +294,7 @@ try{
 					 Buono_carico_scarico_dettBulk dettaglio = (Buono_carico_scarico_dettBulk)dett.next();
 					 Inventario_beniBulk inv =(Inventario_beniBulk)getHome(aUC,Inventario_beniBulk.class).findByPrimaryKey(new Inventario_beniBulk(dettaglio.getNr_inventario(),dettaglio.getPg_inventario(),new Long(dettaglio.getProgressivo().longValue())));
 					 dettaglio.setBene(inv);
-					 dettaglio.setFl_bene_accessorio(inv.getProgressivo()>0);
+					 dettaglio.setFl_bene_accessorio(inv.isBeneAccessorio());
 					 dettaglio.CalcolaTotaleBene();
 				 }	    
 				 getHomeCache(aUC).fetchAll(aUC,dettHome);
