@@ -21,7 +21,6 @@ import org.eu.ingwar.tools.arquillian.extension.suite.annotations.ArquillianSuit
 import org.jboss.arquillian.container.test.api.ContainerController;
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ArchivePath;
@@ -93,6 +92,7 @@ public abstract class Deployments {
                 .addPackages(true, "feign")
                 .addPackages(true, "net.dongliu.gson")
                 .addPackages(true, "org.infinispan")
+                .addClasses(SharedResource.class)
                 .addAsResource("org/springframework/web/context/ContextLoader.properties")
                 .addAsResource("org/springframework/ws/client/core/WebServiceTemplate.properties")
                 .addAsResource("META-INF/spring/filesystem.properties")

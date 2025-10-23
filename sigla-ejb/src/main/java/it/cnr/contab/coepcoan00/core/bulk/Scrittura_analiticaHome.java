@@ -39,10 +39,10 @@ public class Scrittura_analiticaHome extends BulkHome {
 	public Collection findMovimentiColl( UserContext userContext,Scrittura_analiticaBulk scrittura ) throws PersistencyException
 	{
 		SQLBuilder sql = getHomeCache().getHome( Movimento_coanBulk.class ).createSQLBuilder();
-		sql.addClause( "AND", "esercizio", sql.EQUALS, scrittura.getEsercizio());
-		sql.addClause( "AND", "cd_cds", sql.EQUALS, scrittura.getCd_cds());
-		sql.addClause( "AND", "cd_unita_organizzativa", sql.EQUALS, scrittura.getCd_unita_organizzativa());
-		sql.addClause( "AND", "pg_scrittura", sql.EQUALS, scrittura.getPg_scrittura());
+		sql.addClause( FindClause.AND, "esercizio", SQLBuilder.EQUALS, scrittura.getEsercizio());
+		sql.addClause( FindClause.AND, "cd_cds", SQLBuilder.EQUALS, scrittura.getCd_cds());
+		sql.addClause( FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, scrittura.getCd_unita_organizzativa());
+		sql.addClause( FindClause.AND, "pg_scrittura", SQLBuilder.EQUALS, scrittura.getPg_scrittura());
 		List result = getHomeCache().getHome( Movimento_coanBulk.class ).fetchAll( sql );
 		getHomeCache().fetchAll(userContext);
 		return result;
@@ -89,7 +89,9 @@ public class Scrittura_analiticaHome extends BulkHome {
 
 	public Optional<Scrittura_analiticaBulk> findByDocumentoAmministrativo(IDocumentoCogeBulk documentoCogeBulk) throws PersistencyException {
 		return findByDocumentoCoge(documentoCogeBulk)
-				.stream().min(Comparator.comparing(Scrittura_analiticaKey::getPg_scrittura));
+				.stream()
+                .filter(Scrittura_analiticaBulk::isScritturaAttiva)
+                .min(Comparator.comparing(Scrittura_analiticaKey::getPg_scrittura));
 	}
 
 	public List<Scrittura_analiticaBulk> findByDocumentoCoge(IDocumentoCogeBulk documentoCogeBulk) throws PersistencyException {

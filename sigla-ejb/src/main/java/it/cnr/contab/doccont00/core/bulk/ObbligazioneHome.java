@@ -322,6 +322,14 @@ public class ObbligazioneHome extends BulkHome {
         }
 
         if (deleteTemp) {
+            //Cancello tutta la catena
+            Obbligazione_scadenzarioHome scadHome = (Obbligazione_scadenzarioHome)getHomeCache().getHome(Obbligazione_scadenzarioBulk.class);
+            for (Obbligazione_scadenzarioBulk scad : obbligazioneTemporanea.getObbligazione_scadenzarioColl()) {
+                Obbligazione_scad_voceHome scadVoceHome = (Obbligazione_scad_voceHome)getHomeCache().getHome(Obbligazione_scad_voceBulk.class);
+                for (Obbligazione_scad_voceBulk scadVoce : scad.getObbligazione_scad_voceColl())
+                    scadVoceHome.delete(scadVoce, userContext);
+                scadHome.delete(scad, userContext);
+            }
             delete(obbligazioneTemporanea, userContext);
             obbligazioneTemporanea.setPg_obbligazione(pg);
         }

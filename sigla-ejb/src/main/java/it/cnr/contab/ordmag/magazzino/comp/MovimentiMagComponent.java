@@ -17,7 +17,9 @@
 
 package it.cnr.contab.ordmag.magazzino.comp;
 
+import it.cnr.contab.coepcoan00.core.bulk.*;
 import it.cnr.contab.config00.sto.bulk.EnteBulk;
+import it.cnr.contab.docamm00.docs.bulk.TipoDocumentoEnum;
 import it.cnr.contab.docamm00.tabrif.bulk.*;
 import it.cnr.contab.inventario00.docs.bulk.Transito_beni_ordiniBulk;
 import it.cnr.contab.ordmag.anag00.*;
@@ -760,8 +762,33 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 							evasioneOrdineRigaBulk.setToBeUpdated();
 							return evasioneOrdineRigaBulk;
 						}).collect(Collectors.toList());
-		if (!evasioneOrdineRigaBulks.isEmpty())
-			super.modificaConBulk(userContext, evasioneOrdineRigaBulks.toArray(new EvasioneOrdineRigaBulk[evasioneOrdineRigaBulks.size()]));
+		if (!evasioneOrdineRigaBulks.isEmpty()) {
+            super.modificaConBulk(userContext, evasioneOrdineRigaBulks.toArray(new EvasioneOrdineRigaBulk[evasioneOrdineRigaBulks.size()]));
+
+            for (EvasioneOrdineRigaBulk evasioneOrdineRigaBulk : evasioneOrdineRigaBulks) {
+                //Cerco la prima nota creata sulla consegna e la metto in stato annullata
+                Scrittura_partita_doppiaHome scrHome = (Scrittura_partita_doppiaHome) getHome(userContext, Scrittura_partita_doppiaBulk.class);
+                List<Scrittura_partita_doppiaBulk> scrList = scrHome.findByDocumentoCoge(evasioneOrdineRigaBulk.getOrdineAcqConsegna());
+                for (Scrittura_partita_doppiaBulk scrBulk : scrList) {
+                    if (scrBulk.isScritturaAttiva() && TipoDocumentoEnum.CONSEGNA_ORDINE_ACQUISTO.getValue().equals(scrBulk.getCd_tipo_documento())) {
+                        scrBulk.setAttiva("N");
+                        scrBulk.setToBeUpdated();
+                        makeBulkPersistent(userContext, scrBulk);
+                    }
+                }
+
+                //Cerco la prima nota creata sulla consegna e la metto in stato annullata
+                Scrittura_analiticaHome anaHome = (Scrittura_analiticaHome) getHome(userContext, Scrittura_analiticaBulk.class);
+                List<Scrittura_analiticaBulk> anaList = anaHome.findByDocumentoCoge(evasioneOrdineRigaBulk.getOrdineAcqConsegna());
+                for (Scrittura_analiticaBulk anaBulk : anaList) {
+                    if (anaBulk.isScritturaAttiva() && TipoDocumentoEnum.CONSEGNA_ORDINE_ACQUISTO.getValue().equals(anaBulk.getCd_tipo_documento())) {
+                        anaBulk.setAttiva("N");
+                        anaBulk.setToBeUpdated();
+                        makeBulkPersistent(userContext, anaBulk);
+                    }
+                }
+            }
+        }
 
 		return movimentoDiStorno;
 	}

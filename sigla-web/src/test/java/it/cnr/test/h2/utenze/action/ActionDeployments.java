@@ -209,4 +209,11 @@ public class ActionDeployments extends DeploymentsH2 {
                         " and numberRow: " + numberRow))
                 .click();
     }
+
+    protected void doSelectTableRow(GrapheneElement rowElement, String elementName) {
+        String name = elementName+".selection";
+        Optional.ofNullable(rowElement.findElement(By.name(name)))
+                .orElseThrow(() -> new RuntimeException("Cannot find Element selection in Element <tr> with name " + elementName))
+                .click();
+    }
 }

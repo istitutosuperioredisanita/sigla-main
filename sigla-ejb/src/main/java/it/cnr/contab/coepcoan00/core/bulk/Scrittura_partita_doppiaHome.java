@@ -89,7 +89,9 @@ public class Scrittura_partita_doppiaHome extends BulkHome {
      */
     public Optional<Scrittura_partita_doppiaBulk> findByDocumentoAmministrativo(IDocumentoCogeBulk documentoCogeBulk) throws PersistencyException {
         return findByDocumentoCoge(documentoCogeBulk)
-                .stream().min(Comparator.comparing(Scrittura_partita_doppiaKey::getPg_scrittura));
+                .stream()
+                .filter(Scrittura_partita_doppiaBulk::isScritturaAttiva)
+                .min(Comparator.comparing(Scrittura_partita_doppiaKey::getPg_scrittura));
     }
 
 	public List<Scrittura_partita_doppiaBulk> findByDocumentoCoge(IDocumentoCogeBulk documentoCogeBulk) throws PersistencyException {

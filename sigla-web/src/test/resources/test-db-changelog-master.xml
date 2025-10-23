@@ -378,7 +378,15 @@
         <dropDefaultValue tableName="saldi_pag_inc" columnName="dacr"/>
         <dropDefaultValue tableName="saldi_pag_inc" columnName="duva"/>
     </changeSet>
+    <changeSet author="test" id="create-voce-f-saldi-cdr-linea">
+        <addDefaultValue tableName="voce_f_saldi_cdr_linea" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="voce_f_saldi_cdr_linea" columnName="duva" defaultValueDate="${now}"/>
 
+        <loadData file="liquibase/csv/voce_f_saldi_cdr_linea.csv" tableName="voce_f_saldi_cdr_linea"/>
+
+        <dropDefaultValue tableName="voce_f_saldi_cdr_linea" columnName="dacr"/>
+        <dropDefaultValue tableName="voce_f_saldi_cdr_linea" columnName="duva"/>
+    </changeSet>
     <changeSet author="test" id="create-procedure-amministrative">
         <addDefaultValue tableName="procedure_amministrative" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="procedure_amministrative" columnName="duva" defaultValueDate="${now}"/>
@@ -792,6 +800,11 @@
         </sql>
         <dropDefaultValue tableName="configurazione_cnr" columnName="dacr"/>
         <dropDefaultValue tableName="configurazione_cnr" columnName="duva"/>
+        <sql>
+            UPDATE NUMERAZIONE_DOC_CONT
+            SET CORRENTE = 7
+            WHERE CD_TIPO_DOCUMENTO_CONT='OBB'
+        </sql>
     </changeSet>
 
     <changeSet author="test" id="create-unita-operativa-ord">

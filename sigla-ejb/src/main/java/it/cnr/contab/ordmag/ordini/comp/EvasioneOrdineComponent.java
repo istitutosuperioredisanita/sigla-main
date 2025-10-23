@@ -138,7 +138,7 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 		Optional.ofNullable(filtro.getFind_cd_uop_ordine())
 				.ifPresent(findCdUopOrdine -> sql.addSQLClause(FindClause.AND, "ORDINE_ACQ.CD_UOP_ORDINE", SQLBuilder.EQUALS, findCdUopOrdine));
 
-		sql.addSQLClause(FindClause.AND, "ORDINE_ACQ.DATA_ORDINE", SQLBuilder.LESS_EQUALS, filtro.getDataConsegna());
+        sql.addSQLClause(FindClause.AND, "TRUNC(ORDINE_ACQ.DATA_ORDINE)", SQLBuilder.LESS_EQUALS, filtro.getDataConsegna());
 
 		if (filtro.getFind_cd_precedente() != null || filtro.getFind_cd_terzo() != null || filtro.getFind_ragione_sociale() != null) {
 			sql.generateJoin(OrdineAcqBulk.class, TerzoBulk.class, "fornitore", "TERZO");

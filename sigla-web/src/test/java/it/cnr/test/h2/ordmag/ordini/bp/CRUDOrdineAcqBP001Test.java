@@ -34,7 +34,7 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
-public class CRUDOrdineAcqBPTest001 extends ActionDeployments {
+public class CRUDOrdineAcqBP001Test extends ActionDeployments {
     public static final String USERNAME = "ENTETEST";
     public static final String PASSWORD = "PASSTEST";
 
@@ -62,7 +62,7 @@ public class CRUDOrdineAcqBPTest001 extends ActionDeployments {
     @Test
     @RunAsClient
     @OperateOnDeployment(TEST_H2)
-    @InSequence(100)
+    @InSequence(1)
     public void testLogin() throws Exception {
         doLogin(USERNAME, PASSWORD);
         doLoginUO(UO, CDR);
@@ -74,7 +74,7 @@ public class CRUDOrdineAcqBPTest001 extends ActionDeployments {
     @Test
     @RunAsClient
     @OperateOnDeployment(TEST_H2)
-    @InSequence(200)
+    @InSequence(2)
     public void testCreaProgetto() {
         switchToFrameDesktop();
         switchToFrameMenu();
@@ -138,7 +138,7 @@ public class CRUDOrdineAcqBPTest001 extends ActionDeployments {
         doClickButton("doSalva()");
 
         alert = browser.switchTo().alert();
-        assertEquals("Sulla consegna 2025/DSA/"+pgProgetto+"/1/1 non è indicata l'obbligazione", alert.getText());
+        assertEquals("Sulla consegna 2025/"+CD_NUMERATORE+"/"+pgProgetto+"/1/1 non è indicata l'obbligazione", alert.getText());
         alert.accept();
 
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
@@ -171,9 +171,11 @@ public class CRUDOrdineAcqBPTest001 extends ActionDeployments {
         browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
+        doClickButton("doBlankSearch(main.findUnitaOperativaOrd)");
         getGrapheneElement("main.findUnitaOperativaOrd.cdUnitaOperativa").writeIntoElement(CD_UNITA_OPERATIVA);
         doClickButton("doSearch(main.findUnitaOperativaOrd)");
 
+        doClickButton("doBlankSearch(main.findMagazzino)");
         getGrapheneElement("main.findMagazzino.cdMagazzino").writeIntoElement(CD_MAGAZZINO);
         doClickButton("doSearch(main.findMagazzino)");
 
@@ -208,7 +210,7 @@ public class CRUDOrdineAcqBPTest001 extends ActionDeployments {
 
         doClickButton("doSalva()");
         Alert alert = browser.switchTo().alert();
-        assertEquals("Per la consegna 2025/DSA/2/1/1 è necessario indicare se bisogna solo sdoppiare la riga o anche evaderla forzatamente", alert.getText());
+        assertEquals("Per la consegna 2025/"+CD_NUMERATORE+"/2/1/1 è necessario indicare se bisogna solo sdoppiare la riga o anche evaderla forzatamente", alert.getText());
         alert.accept();
 
         getTableRowElement("main.ConsegneDaEvadere",1).click();
@@ -217,7 +219,7 @@ public class CRUDOrdineAcqBPTest001 extends ActionDeployments {
 
         doClickButton("doSalva()");
         alert = browser.switchTo().alert();
-        assertEquals("Per la consegna 2025/DSA/1/1/1 è necessario indicare se bisogna solo sdoppiare la riga o anche evaderla forzatamente", alert.getText());
+        assertEquals("Per la consegna 2025/"+CD_NUMERATORE+"/1/1/1 è necessario indicare se bisogna solo sdoppiare la riga o anche evaderla forzatamente", alert.getText());
         alert.accept();
 
         getTableRowElement("main.ConsegneDaEvadere",0).click();
@@ -419,7 +421,7 @@ public class CRUDOrdineAcqBPTest001 extends ActionDeployments {
                 .map(GrapheneElement.class::cast)
                 .filter(rowElement -> {
                     try {
-                        return "DSA".equals(getTableColumnElement(rowElement, 4).getText()) &&
+                        return CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 5).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 6).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 7).getText());
@@ -440,7 +442,7 @@ public class CRUDOrdineAcqBPTest001 extends ActionDeployments {
                 .map(GrapheneElement.class::cast)
                 .anyMatch(rowElement -> {
                     try {
-                        return "DSA".equals(getTableColumnElement(rowElement, 4).getText()) &&
+                        return CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
                                 "2".equals(getTableColumnElement(rowElement, 5).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 6).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 7).getText());
@@ -659,7 +661,7 @@ public class CRUDOrdineAcqBPTest001 extends ActionDeployments {
                 .map(GrapheneElement.class::cast)
                 .filter(rowElement -> {
                     try {
-                        return "DSA".equals(getTableColumnElement(rowElement, 4).getText()) &&
+                        return CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
                                 "2".equals(getTableColumnElement(rowElement, 5).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 6).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 7).getText());
@@ -681,7 +683,7 @@ public class CRUDOrdineAcqBPTest001 extends ActionDeployments {
                 .map(GrapheneElement.class::cast)
                 .anyMatch(rowElement -> {
                     try {
-                        return "DSA".equals(getTableColumnElement(rowElement, 4).getText()) &&
+                        return CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 5).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 6).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 7).getText());
@@ -1061,7 +1063,7 @@ public class CRUDOrdineAcqBPTest001 extends ActionDeployments {
                 .map(GrapheneElement.class::cast)
                 .filter(rowElement -> {
                     try {
-                        return "DSA".equals(getTableColumnElement(rowElement, 4).getText()) &&
+                        return CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 5).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 6).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 7).getText());
@@ -1085,7 +1087,7 @@ public class CRUDOrdineAcqBPTest001 extends ActionDeployments {
         doClickButton("submitForm('doConfermaRiscontroAValore')");
 
         alert = browser.switchTo().alert();
-        assertEquals("Attenzione: Per la riga di consegna 2025/DSA/1/1/1 non è stato indicato l'impegno da usare per nota di credito", alert.getText());
+        assertEquals("Attenzione: Per la riga di consegna 2025/"+CD_NUMERATORE+"/1/1/1 non è stato indicato l'impegno da usare per nota di credito", alert.getText());
         alert.accept();
 
         select = new Select(getGrapheneElement("main.Ordini.operazioneImpegnoNotaCredito"));
