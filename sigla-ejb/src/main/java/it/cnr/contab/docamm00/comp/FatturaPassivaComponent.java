@@ -7398,10 +7398,11 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
                     //!original.getCd_tipo_sezionale().equalsIgnoreCase(fatturaPassiva.getCd_tipo_sezionale()))
                     throw new it.cnr.jada.comp.ApplicationException("Attenzione: non si possono modificare campi relativi alla " + fatturaPassiva.getDescrizioneEntita() + " del fornitore quando la fattura o la relativa autofattura (se esiste).");
 
-                if (!original.getCd_divisa().equals(fatturaPassiva.getCd_divisa()) ||
-                        original.getCambio().compareTo(fatturaPassiva.getCambio()) != 0)
-                    throw new it.cnr.jada.comp.ApplicationException("Attenzione: non si possono modificare i campi della valuta o del cambio della " + fatturaPassiva.getDescrizioneEntita());
-
+                if (fatturaPassiva.isStampataSuRegistroIVA() || fatturaPassiva.getPg_lettera()!=null) {
+                    if (!original.getCd_divisa().equals(fatturaPassiva.getCd_divisa()) ||
+                            original.getCambio().compareTo(fatturaPassiva.getCambio()) != 0)
+                        throw new it.cnr.jada.comp.ApplicationException("Attenzione: non si possono modificare i campi della valuta o del cambio della " + fatturaPassiva.getDescrizioneEntita());
+                }
                 if (!original.getCd_terzo().equals(fatturaPassiva.getCd_terzo()))
                     throw new it.cnr.jada.comp.ApplicationException("Attenzione: non si possono modificare campi relativi al fornitore della " + fatturaPassiva.getDescrizioneEntita());
             }
