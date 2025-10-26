@@ -97,7 +97,20 @@
 			nullable="false"
 			keysProperty="statoOrdineKeys"
 			label="Stato" />
-	<fieldProperty
+    <fieldProperty
+            name="stato_consegna"
+            property="stato"
+            inputType="TEXT"
+            inputSize="20"
+            maxLength="20"
+            enabledOnInsert="false"
+            enabledOnEdit="false"
+            enabledOnSearch="false"
+            enabledOnFreeSearch="false"
+            nullable="false"
+            keysProperty="statoKeys"
+            label="Stato" />
+    <fieldProperty
 			name="riga"
 			property="ordineAcqRiga.riga"
 			inputType="TEXT"
@@ -698,6 +711,8 @@
 			name="consegna" />
 	<formFieldProperty
 			name="stato" />
+    <formFieldProperty
+            name="stato_consegna" />
 	<formFieldProperty
 			name="statoFatt" />
 	<formFieldProperty

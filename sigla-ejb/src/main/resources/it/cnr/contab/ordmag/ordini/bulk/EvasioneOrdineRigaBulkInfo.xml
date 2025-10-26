@@ -254,6 +254,34 @@
     <columnFieldProperty
             name="stato"/>
 
+    <columnSet name="seleziona_visualizza">
+        <columnFieldProperty name="dataBolla" property="evasioneOrdine.dataBolla" formatName="date_short"
+                             label="Data Bolla"/>
+        <columnFieldProperty name="numeroBolla" property="evasioneOrdine.numeroBolla" label="Numero Bolla"/>
+        <columnFieldProperty name="stato" property="stato" keysProperty="statoKeys" label="Stato Evasione"/>
+        <columnFieldProperty name="dataOrdine" property="ordineAcqConsegna.ordineAcqRiga.ordineAcq.dataOrdine" formatName="date_short" label="Dt. Ord."/>
+        <columnFieldProperty name="cdNumeratore" property="ordineAcqConsegna.cdNumeratore" label="Tipo"/>
+        <columnFieldProperty name="numero" property="ordineAcqConsegna.numero" label="Num"/>
+        <columnFieldProperty name="riga" property="ordineAcqConsegna.riga" label="Riga"/>
+        <columnFieldProperty name="consegna" property="ordineAcqConsegna.consegna" label="Cons"/>
+        <columnFieldProperty name="cdBeneServizio" property="ordineAcqConsegna.ordineAcqRiga.cdBeneServizio"
+                             label="Codice Bene"/>
+        <columnFieldProperty name="dsBeneServizio" property="ordineAcqConsegna.ordineAcqRiga.dsBeneServizio"
+                             label="Descrizione Bene"/>
+        <columnFieldProperty name="notaRiga" property="ordineAcqConsegna.ordineAcqRiga.notaRiga"
+                             label="Note"/>
+        <columnFieldProperty name="cdVoceIva" property="ordineAcqConsegna.ordineAcqRiga.cdVoceIva" label="Codice IVA"/>
+        <columnFieldProperty name="quantitaEvasa"/>
+        <columnFieldProperty name="prezzoUnitario" property="ordineAcqConsegna.ordineAcqRiga.prezzoUnitario"
+                             formatName="it.cnr.contab.util.Importo6CifreFormat"
+                             label="Prezzo Unitario"/>
+        <columnFieldProperty name="imImponibileDivisa" property="ordineAcqConsegna.imImponibileDivisa"
+                             label="Imponibile" formatName="it.cnr.contab.util.EuroFormat"/>
+        <columnFieldProperty name="imIvaDivisa" property="ordineAcqConsegna.imIvaDivisa"
+                             label="Iva" formatName="it.cnr.contab.util.EuroFormat"/>
+        <columnFieldProperty name="imTotaleRiga" property="ordineAcqConsegna.imTotaleConsegna"
+                             label="Totale consegna" formatName="it.cnr.contab.util.EuroFormat"/>
+    </columnSet>
     <columnSet name="fattura_passiva">
         <columnFieldProperty name="dataBolla" property="evasioneOrdine.dataBolla" formatName="date_short"
                              label="Data Bolla"/>

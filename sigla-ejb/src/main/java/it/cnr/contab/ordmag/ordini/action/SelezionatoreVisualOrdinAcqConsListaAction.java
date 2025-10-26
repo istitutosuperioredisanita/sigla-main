@@ -53,7 +53,7 @@ public class SelezionatoreVisualOrdinAcqConsListaAction extends SelezionatoreLis
             it.cnr.jada.util.RemoteIterator ri = selezionatoreVisualOrdinAcqConsListaBP.ricercaEvasioni(actioncontext);
             SelezionatoreListaBP nbp = (SelezionatoreListaBP)actioncontext.createBusinessProcess("SelezionatoreVisualEvasioneListaBP");
             nbp.setBulkInfo(it.cnr.jada.bulk.BulkInfo.getBulkInfo(EvasioneOrdineRigaBulk.class));
-            nbp.setColumns(nbp.getBulkInfo().getColumnFieldPropertyDictionary("fattura_passiva"));
+            nbp.setColumns(nbp.getBulkInfo().getColumnFieldPropertyDictionary("seleziona_visualizza"));
             nbp.setIterator(actioncontext,ri);
             HookForward hook = (HookForward)actioncontext.findForward("seleziona");
             return actioncontext.addBusinessProcess(nbp);

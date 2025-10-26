@@ -30,13 +30,7 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoHome;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
-import it.cnr.contab.ordmag.anag00.AbilUtenteUopOperBulk;
-import it.cnr.contab.ordmag.anag00.AbilUtenteUopOperHome;
-import it.cnr.contab.ordmag.anag00.NumerazioneOrdBulk;
-import it.cnr.contab.ordmag.anag00.NumerazioneOrdHome;
-import it.cnr.contab.ordmag.anag00.TipoOperazioneOrdBulk;
-import it.cnr.contab.ordmag.anag00.UnitaOperativaOrdBulk;
-import it.cnr.contab.ordmag.anag00.UnitaOperativaOrdHome;
+import it.cnr.contab.ordmag.anag00.*;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
@@ -103,26 +97,39 @@ public class OrdineAcqHome extends BulkHome {
 	public SQLBuilder selectNumerazioneOrdByClause(UserContext userContext, OrdineAcqBulk ordine, 
 			NumerazioneOrdHome numerazioneHome, NumerazioneOrdBulk numerazioneBulk, 
 			CompoundFindClause compoundfindclause) throws PersistencyException,ApplicationException{
-		if (ordine == null || ordine.getCdUopOrdine() == null){
+		if (ordine == null || ordine.getCdUopOrdine() == null)
 			throw new ApplicationException("Selezionare prima l'unità operativa");
-		}
 		SQLBuilder sql = numerazioneHome.selectByClause(userContext, compoundfindclause);
-		sql.addSQLClause("AND", "NUMERAZIONE_ORD.CD_UNITA_OPERATIVA", SQLBuilder.EQUALS, ordine.getCdUopOrdine());
-		sql.addSQLClause("AND", "NUMERAZIONE_ORD.ESERCIZIO", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
-		sql.addSQLClause("AND", "NUMERAZIONE_ORD.CD_TIPO_OPERAZIONE", SQLBuilder.EQUALS, TipoOperazioneOrdBulk.OPERAZIONE_ORDINE);
+		sql.addSQLClause(FindClause.AND, "NUMERAZIONE_ORD.CD_UNITA_OPERATIVA", SQLBuilder.EQUALS, ordine.getCdUopOrdine());
+		sql.addSQLClause(FindClause.AND, "NUMERAZIONE_ORD.ESERCIZIO", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
+		sql.addSQLClause(FindClause.AND, "NUMERAZIONE_ORD.CD_TIPO_OPERAZIONE", SQLBuilder.EQUALS, TipoOperazioneOrdBulk.OPERAZIONE_ORDINE);
 		return sql;
 	}
 	public SQLBuilder selectNumerazioneOrdByClause(UserContext userContext, ParametriSelezioneOrdiniAcqBulk parametriSelezioneOrdiniAcqBulk,
 												   NumerazioneOrdHome numerazioneHome, NumerazioneOrdBulk numerazioneBulk,
 												   CompoundFindClause compoundfindclause) throws PersistencyException,ApplicationException{
+        if (parametriSelezioneOrdiniAcqBulk == null ||
+                ((parametriSelezioneOrdiniAcqBulk.getUnitaOperativaOrdine() == null || parametriSelezioneOrdiniAcqBulk.getUnitaOperativaOrdine().getCdUnitaOperativa()==null) &&
+                 (parametriSelezioneOrdiniAcqBulk.getUnitaOperativaAbilitata()==null || parametriSelezioneOrdiniAcqBulk.getUnitaOperativaAbilitata().getCdUnitaOperativa()==null)))
+            throw new ApplicationException("Selezionare prima l'unità operativa");
+
 		SQLBuilder sql = numerazioneHome.selectByClause(userContext, compoundfindclause);
-		sql.addSQLClause("AND", "NUMERAZIONE_ORD.CD_UNITA_OPERATIVA", SQLBuilder.EQUALS,
-				Optional.ofNullable(parametriSelezioneOrdiniAcqBulk.getUnitaOperativaOrdine())
-						.map(unitaOperativaOrdBulk -> unitaOperativaOrdBulk.getCdUnitaOperativa())
-						.orElse(null)
-		);
-		sql.addSQLClause("AND", "NUMERAZIONE_ORD.ESERCIZIO", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
-		sql.addSQLClause("AND", "NUMERAZIONE_ORD.CD_TIPO_OPERAZIONE", SQLBuilder.EQUALS, TipoOperazioneOrdBulk.OPERAZIONE_ORDINE);
+
+        if (parametriSelezioneOrdiniAcqBulk.getUnitaOperativaOrdine() != null && parametriSelezioneOrdiniAcqBulk.getUnitaOperativaOrdine().getCdUnitaOperativa()!=null)
+            sql.addSQLClause(FindClause.AND, "NUMERAZIONE_ORD.CD_UNITA_OPERATIVA", SQLBuilder.EQUALS,
+                    Optional.ofNullable(parametriSelezioneOrdiniAcqBulk.getUnitaOperativaOrdine())
+                            .map(UnitaOperativaOrdKey::getCdUnitaOperativa)
+                            .orElse(null)
+            );
+        else
+            sql.addSQLClause(FindClause.AND, "NUMERAZIONE_ORD.CD_UNITA_OPERATIVA", SQLBuilder.EQUALS,
+                    Optional.ofNullable(parametriSelezioneOrdiniAcqBulk.getUnitaOperativaAbilitata())
+                            .map(UnitaOperativaOrdKey::getCdUnitaOperativa)
+                            .orElse(null)
+            );
+
+		sql.addSQLClause(FindClause.AND, "NUMERAZIONE_ORD.ESERCIZIO", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
+		sql.addSQLClause(FindClause.AND, "NUMERAZIONE_ORD.CD_TIPO_OPERAZIONE", SQLBuilder.EQUALS, TipoOperazioneOrdBulk.OPERAZIONE_ORDINE);
 		return sql;
 	}
 

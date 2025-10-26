@@ -47,6 +47,9 @@ public class CRUDOrdineAcqBP002Test extends ActionDeployments {
     public static final String ORD_ORDACQ_M = "0.ORD.ORDACQ.M";
     public static final String ORD_EVAORD = "0.ORD.EVAORD";
 
+    public static final String ORD_CON = "0.ORD.CON";
+    public static final String ORD_CON_VISORDCONSEGNA = "0.ORD.CON.VISORDCONSEGNA";
+
     public static final String AMM = "0.AMM";
     public static final String AMM_FATTUR = "0.AMM.FATTUR";
     public static final String AMM_FATTUR_FATPAS = "0.AMM.FATTUR.FATPAS";
@@ -198,8 +201,8 @@ public class CRUDOrdineAcqBP002Test extends ActionDeployments {
         assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
         alert.accept();
 
-        String pgProgettoCreated = getGrapheneElement("main.numero").getAttribute("value");
-        sharedResource.setVal01(pgProgettoCreated);
+        String pgOrdineCreated = getGrapheneElement("main.numero").getAttribute("value");
+        sharedResource.setVal01(pgOrdineCreated);
 
         //modifico lo stato portandolo ‘In Approvazione’
         select = new Select(getGrapheneElement("main.statoForUpdate"));
@@ -221,7 +224,7 @@ public class CRUDOrdineAcqBP002Test extends ActionDeployments {
 
         //Restituisce messaggio di assenza obbligazione
         alert = browser.switchTo().alert();
-        assertEquals("Sulla consegna 2025/"+CD_NUMERATORE+"/"+pgProgettoCreated+"/1/1 non è indicata l'obbligazione", alert.getText());
+        assertEquals("Sulla consegna 2025/"+CD_NUMERATORE+"/"+pgOrdineCreated+"/1/1 non è indicata l'obbligazione", alert.getText());
         alert.accept();
 
         //Ritorno sulla tab delle righe ordine
@@ -299,21 +302,21 @@ public class CRUDOrdineAcqBP002Test extends ActionDeployments {
         //Eseguo la ricerca
         doClickButton("doCercaConsegneDaEvadere");
 
-        String pgProgettoCreated = sharedResource.getVal01();
+        String pgOrdineCreated = sharedResource.getVal01();
 
         //Trovo le mie due righe di consegna dell’ordine creato con test precedente
         GrapheneElement rowElement1=null;
-        if (getTableColumnElement("main.ConsegneDaEvadere",0, 1).getText().equals("2025/"+CD_NUMERATORE+"/"+pgProgettoCreated+"/1/1"))
+        if (getTableColumnElement("main.ConsegneDaEvadere",0, 1).getText().equals("2025/"+CD_NUMERATORE+"/"+pgOrdineCreated+"/1/1"))
             rowElement1 = getTableRowElement("main.ConsegneDaEvadere",0);
-        else if (getTableColumnElement("main.ConsegneDaEvadere",1, 1).getText().equals("2025/"+CD_NUMERATORE+"/"+pgProgettoCreated+"/1/1"))
+        else if (getTableColumnElement("main.ConsegneDaEvadere",1, 1).getText().equals("2025/"+CD_NUMERATORE+"/"+pgOrdineCreated+"/1/1"))
             rowElement1 = getTableRowElement("main.ConsegneDaEvadere",1);
         else
             Assert.fail("Riga consegna 1 non individuata");
 
         GrapheneElement rowElement2=null;
-        if (getTableColumnElement("main.ConsegneDaEvadere",0, 1).getText().equals("2025/"+CD_NUMERATORE+"/"+pgProgettoCreated+"/1/2"))
+        if (getTableColumnElement("main.ConsegneDaEvadere",0, 1).getText().equals("2025/"+CD_NUMERATORE+"/"+pgOrdineCreated+"/1/2"))
             rowElement2 = getTableRowElement("main.ConsegneDaEvadere",0);
-        else if (getTableColumnElement("main.ConsegneDaEvadere",1, 1).getText().equals("2025/"+CD_NUMERATORE+"/"+pgProgettoCreated+"/1/2"))
+        else if (getTableColumnElement("main.ConsegneDaEvadere",1, 1).getText().equals("2025/"+CD_NUMERATORE+"/"+pgOrdineCreated+"/1/2"))
             rowElement2 = getTableRowElement("main.ConsegneDaEvadere",1);
         else
             Assert.fail("Riga consegna 2 non individuata");
@@ -350,7 +353,7 @@ public class CRUDOrdineAcqBP002Test extends ActionDeployments {
         getGrapheneElement("main.findNumerazioneOrd.cdNumeratore").writeIntoElement(CD_NUMERATORE);
         doClickButton("doSearch(main.findNumerazioneOrd)");
 
-        getGrapheneElement("main.numero").writeIntoElement(pgProgettoCreated);
+        getGrapheneElement("main.numero").writeIntoElement(pgOrdineCreated);
 
         doClickButton("doCerca()");
         alert = browser.switchTo().alert();
@@ -463,9 +466,9 @@ public class CRUDOrdineAcqBP002Test extends ActionDeployments {
         getGrapheneElement("main.findMagazzino.cdMagazzino").writeIntoElement(CD_MAGAZZINO);
         doClickButton("doSearch(main.findMagazzino)");
 
-        String pgProgettoCreated = sharedResource.getVal01();
-        getGrapheneElement("main.daNumeroOrdine").writeIntoElement(pgProgettoCreated);
-        getGrapheneElement("main.aNumeroOrdine").writeIntoElement(pgProgettoCreated);
+        String pgOrdineCreated = sharedResource.getVal01();
+        getGrapheneElement("main.daNumeroOrdine").writeIntoElement(pgOrdineCreated);
+        getGrapheneElement("main.aNumeroOrdine").writeIntoElement(pgOrdineCreated);
 
         doClickButton("doCerca");
 
@@ -477,7 +480,7 @@ public class CRUDOrdineAcqBP002Test extends ActionDeployments {
                 .filter(rowElement -> {
                     try {
                         return  CD_NUMERATORE.equals(getTableColumnElement(rowElement, 18).getText()) &&
-                                pgProgettoCreated.equals(getTableColumnElement(rowElement, 19).getText()) &&
+                                pgOrdineCreated.equals(getTableColumnElement(rowElement, 19).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 20).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 21).getText());
                     } catch (java.lang.RuntimeException ex) {
@@ -517,7 +520,7 @@ public class CRUDOrdineAcqBP002Test extends ActionDeployments {
         getGrapheneElement("main.findNumerazioneOrd.cdNumeratore").writeIntoElement(CD_NUMERATORE);
         doClickButton("doSearch(main.findNumerazioneOrd)");
 
-        getGrapheneElement("main.numero").writeIntoElement(pgProgettoCreated);
+        getGrapheneElement("main.numero").writeIntoElement(pgOrdineCreated);
 
         doClickButton("doCerca()");
         Alert alert = browser.switchTo().alert();
@@ -597,21 +600,21 @@ public class CRUDOrdineAcqBP002Test extends ActionDeployments {
         //Eseguo la ricerca
         doClickButton("doCercaConsegneDaEvadere");
 
-        String pgProgettoCreated = sharedResource.getVal01();
+        String pgOrdineCreated = sharedResource.getVal01();
 
         //Trovo le mie due righe di consegna dell’ordine creato con test precedente
         GrapheneElement rowElement1=null;
-        if (getTableColumnElement("main.ConsegneDaEvadere",0, 1).getText().equals("2025/"+CD_NUMERATORE+"/"+pgProgettoCreated+"/1/1"))
+        if (getTableColumnElement("main.ConsegneDaEvadere",0, 1).getText().equals("2025/"+CD_NUMERATORE+"/"+pgOrdineCreated+"/1/1"))
             rowElement1 = getTableRowElement("main.ConsegneDaEvadere",0);
-        else if (getTableColumnElement("main.ConsegneDaEvadere",1, 1).getText().equals("2025/"+CD_NUMERATORE+"/"+pgProgettoCreated+"/1/1"))
+        else if (getTableColumnElement("main.ConsegneDaEvadere",1, 1).getText().equals("2025/"+CD_NUMERATORE+"/"+pgOrdineCreated+"/1/1"))
             rowElement1 = getTableRowElement("main.ConsegneDaEvadere",1);
         else
             Assert.fail("Riga consegna 1 non individuata");
 
         GrapheneElement rowElement2=null;
-        if (getTableColumnElement("main.ConsegneDaEvadere",0, 1).getText().equals("2025/"+CD_NUMERATORE+"/"+pgProgettoCreated+"/1/2"))
+        if (getTableColumnElement("main.ConsegneDaEvadere",0, 1).getText().equals("2025/"+CD_NUMERATORE+"/"+pgOrdineCreated+"/1/2"))
             rowElement2 = getTableRowElement("main.ConsegneDaEvadere",0);
-        else if (getTableColumnElement("main.ConsegneDaEvadere",1, 1).getText().equals("2025/"+CD_NUMERATORE+"/"+pgProgettoCreated+"/1/2"))
+        else if (getTableColumnElement("main.ConsegneDaEvadere",1, 1).getText().equals("2025/"+CD_NUMERATORE+"/"+pgOrdineCreated+"/1/2"))
             rowElement2 = getTableRowElement("main.ConsegneDaEvadere",1);
         else
             Assert.fail("Riga consegna 2 non individuata");
@@ -648,7 +651,7 @@ public class CRUDOrdineAcqBP002Test extends ActionDeployments {
         getGrapheneElement("main.findNumerazioneOrd.cdNumeratore").writeIntoElement(CD_NUMERATORE);
         doClickButton("doSearch(main.findNumerazioneOrd)");
 
-        getGrapheneElement("main.numero").writeIntoElement(pgProgettoCreated);
+        getGrapheneElement("main.numero").writeIntoElement(pgOrdineCreated);
 
         doClickButton("doCerca()");
         alert = browser.switchTo().alert();
@@ -758,5 +761,93 @@ public class CRUDOrdineAcqBP002Test extends ActionDeployments {
         assertThrows("Cannot find Element <tr> with tableName main.Movimenti and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.Movimenti",1));
 
         doClickButton("doChiudiForm()");
+    }
+
+    @Test
+    @RunAsClient
+    @OperateOnDeployment(TEST_H2)
+    @InSequence(6)
+    public void testControlloDatiEvasioneConsegna001() {
+        //Rifaccio l’evasione come al testEvasioneConsegna001
+        browser.switchTo().parentFrame();
+        switchToFrameMenu();
+        doApriMenu(ORD_CON);
+        doSelezionaMenu(ORD_CON_VISORDCONSEGNA);
+
+        browser.switchTo().parentFrame();
+        switchToFrameWorkspace();
+
+        //Scelgo Unità operativa: DRUE
+        doClickButton("doBlankSearch(main.findUnitaOperativaOrd)");
+        getGrapheneElement("main.findUnitaOperativaOrd.cdUnitaOperativa").writeIntoElement(CD_UNITA_OPERATIVA);
+        doClickButton("doSearch(main.findUnitaOperativaOrd)");
+
+        //Sul campo numeratore indico: DSA
+        doClickButton("doBlankSearch(main.findNumerazioneOrd)");
+        getGrapheneElement("main.findNumerazioneOrd.cdNumeratore").writeIntoElement(CD_NUMERATORE);
+        doClickButton("doSearch(main.findNumerazioneOrd)");
+
+        String pgOrdineCreated = sharedResource.getVal01();
+
+        //Indico da numero ordine a numero ordine: il numero ordine creato
+        getGrapheneElement("main.daNumeroOrdine").writeIntoElement(pgOrdineCreated);
+        getGrapheneElement("main.aNumeroOrdine").writeIntoElement(pgOrdineCreated);
+
+        //Eseguo la ricerca e vedo le mie due consegne
+        doClickButton("doCerca");
+
+        //Trovo le mie due righe di consegna dell’ordine creato con test precedente
+        GrapheneElement rowElement1=null;
+        if (getTableColumnElement("mainTable",0, 4).getText().equals("1"))
+            rowElement1 = getTableRowElement("mainTable",0);
+        else if (getTableColumnElement("mainTable",1, 4).getText().equals("1"))
+            rowElement1 = getTableRowElement("mainTable",1);
+        else
+            Assert.fail("Riga consegna 1 non individuata");
+
+        GrapheneElement rowElement2=null;
+        if (getTableColumnElement("mainTable",0, 4).getText().equals("2"))
+            rowElement2 = getTableRowElement("mainTable",0);
+        else if (getTableColumnElement("mainTable",1, 4).getText().equals("2"))
+            rowElement2 = getTableRowElement("mainTable",1);
+        else
+            Assert.fail("Riga consegna 2 non individuata");
+
+        //Verifico che la riga consegna n. 1 sia in stato ‘EVASA’ e la consegna n. 2 ancora in stato INSERITA. Entrambe ‘Non Associate’.
+        assertEquals("Evasa", getTableColumnElement(rowElement1,14).getText());
+        assertEquals("Inserita", getTableColumnElement(rowElement2,14).getText());
+        assertEquals("Non Associata", getTableColumnElement(rowElement1,15).getText());
+        assertEquals("Non Associata", getTableColumnElement(rowElement2,15).getText());
+
+        //Seleziono la consegna 1 EVASA
+        rowElement1.click();
+
+        //Visualizzo le righe di evasione
+        doClickButton("submitForm('doVisualizzaEvasione')");
+
+        //Cerco quella creata con bolla 7
+        if (getTableColumnElement("mainTable",0, 1).getText().equals("7"))
+            rowElement1 = getTableRowElement("mainTable",0);
+        else if (getTableColumnElement("mainTable",1, 1).getText().equals("7"))
+            rowElement1 = getTableRowElement("mainTable",1);
+        else
+            Assert.fail("Riga evasione con numero bolla 7 non individuata");
+
+        //Cerco quella creata con bolla 8
+        if (getTableColumnElement("mainTable",0, 1).getText().equals("8"))
+            rowElement2 = getTableRowElement("mainTable",0);
+        else if (getTableColumnElement("mainTable",1, 1).getText().equals("8"))
+            rowElement2 = getTableRowElement("mainTable",1);
+        else
+            Assert.fail("Riga evasione con numero bolla 8 non individuata");
+
+        //Verifico che la riga di evasione con riga 7 sia annullata e quella con riga 8 Inserita
+        assertEquals("Annullata", getTableColumnElement(rowElement1,2).getText());
+        assertEquals("Inserita", getTableColumnElement(rowElement2,2).getText());
+
+        doClickButton("doChiudiForm()");
+        doClickButton("doChiudiForm()");
+        doClickButton("doChiudiForm()");
+
     }
 }

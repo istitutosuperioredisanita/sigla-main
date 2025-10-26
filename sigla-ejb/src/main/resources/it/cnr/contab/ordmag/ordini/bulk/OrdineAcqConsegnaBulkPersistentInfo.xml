@@ -115,27 +115,23 @@
 			name="CONSULTAZIONE_DATI_ORDINI_COMPLETI"
 			tableName="ORDINE_ACQ_CONSEGNA"
 			extends="default">
-		<removeColumnMapping
-			columnName="STATO"
-			propertyName="stato"
-		/>
 		<columnMapping
 				columnName="ORDINE_ACQ.DATA_ORDINE"
 				propertyName="ordineAcqRiga.ordineAcq.dataOrdine"
 				sqlTypeName="timestamp"
 				columnSize="7"/>
 		<columnMapping
-				columnName="ORDINE_ACQ_RIGA.CD_NUMERATORE"
+				columnName="ORDINE_ACQ_RIGA.CD_NUMERATORE CD_NUMERATORE_RIGA"
 				propertyName="ordineAcqRiga.cdNumeratore"
 				sqlTypeName="VARCHAR"
 				columnSize="3"/>
 		<columnMapping
-				columnName="ORDINE_ACQ_RIGA.NUMERO"
+				columnName="ORDINE_ACQ_RIGA.NUMERO NUMERO_RIGA"
 				propertyName="ordineAcqRiga.numero"
 				sqlTypeName="DECIMAL"
 				columnSize="6"/>
 		<columnMapping
-				columnName="ORDINE_ACQ.STATO"
+				columnName="ORDINE_ACQ.STATO STATO_ORDINE"
 				propertyName="ordineAcqRiga.ordineAcq.stato"
 				sqlTypeName="VARCHAR"
 				columnSize="3"/>
@@ -144,11 +140,6 @@
 				propertyName="ordineAcqRiga.ordineAcq.fornitore.denominazione_sede"
 				sqlTypeName="VARCHAR"
 				columnSize="250"/>
-		<columnMapping
-				columnName="BENE_SERVIZIO.CD_BENE_SERVIZIO"
-				propertyName="ordineAcqRiga.beneServizio.cd_bene_servizio"
-				sqlTypeName="VARCHAR"
-				columnSize="15"/>
 		<columnMapping
 				columnName="BENE_SERVIZIO.DS_BENE_SERVIZIO"
 				propertyName="ordineAcqRiga.beneServizio.ds_bene_servizio"
@@ -172,16 +163,6 @@
 				columnSize="20"
 				columnScale="6"/>
 		<columnMapping
-				columnName="ORDINE_ACQ_RIGA.CD_BENE_SERVIZIO"
-				propertyName="ordineAcqRiga.cdBeneServizio"
-				sqlTypeName="VARCHAR"
-				columnSize="15"/>
-		<columnMapping
-				columnName="ORDINE_ACQ_RIGA.DS_BENE_SERVIZIO"
-				propertyName="ordineAcqRiga.dsBeneServizio"
-				sqlTypeName="VARCHAR"
-				columnSize="300"/>
-		<columnMapping
 				columnName="ORDINE_ACQ.CD_TERZO"
 				propertyName="ordineAcqRiga.ordineAcq.cdTerzo"
 				sqlTypeName="DECIMAL"
@@ -196,11 +177,6 @@
 				propertyName="ordineAcq.notaRiga"
 				sqlTypeName="VARCHAR"
 				columnSize="30"/>
-		<columnMapping
-				columnName="ORDINE_ACQ_CONSEGNA.STATO"
-				propertyName="stato"
-				sqlTypeName="VARCHAR"
-				columnSize="3"/>
 	</columnMap>
 	<persistentProperty
 		name="ordineAcqRiga"

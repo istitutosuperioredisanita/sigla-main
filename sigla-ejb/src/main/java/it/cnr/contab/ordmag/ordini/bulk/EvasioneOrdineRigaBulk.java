@@ -25,6 +25,7 @@ import it.cnr.contab.ordmag.anag00.UnitaMisuraBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagBulk;
 
 import java.math.BigDecimal;
+import java.util.Dictionary;
 import java.util.Optional;
 
 public class EvasioneOrdineRigaBulk extends EvasioneOrdineRigaBase {
@@ -310,4 +311,8 @@ public class EvasioneOrdineRigaBulk extends EvasioneOrdineRigaBase {
 	public void setQuantitaEvasaBolla(BigDecimal quantitaEvasaBolla) {
 		this.quantitaEvasaBolla = quantitaEvasaBolla;
 	}
+
+    public Dictionary getStatoKeys() {
+        return OrdineAcqConsegnaBulk.STATO;
+    }
 }

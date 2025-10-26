@@ -24,6 +24,7 @@ import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.contab.ordmag.ordini.bulk.ParametriSelezioneOrdiniAcqBulk;
 import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.action.HookForward;
 import it.cnr.jada.util.action.BulkAction;
@@ -115,7 +116,7 @@ public class ParametriSelezioneOrdiniAcqAction extends BulkAction {
 //			}
 //			return context.findDefaultForward();
 //	}
-//
+
 //	public Forward doBringBackSearchFindDaUnitaOperativaOrd(ActionContext context,
 //			ParametriSelezioneMovimentiBulk parametri,
 //			UnitaOperativaOrdBulk uop)
@@ -128,7 +129,16 @@ public class ParametriSelezioneOrdiniAcqAction extends BulkAction {
 //			return context.findDefaultForward();
 //	}
 
-	public Forward doCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, javax.ejb.RemoveException {
+    public Forward doBlankSearchFindUnitaOperativaOrd(ActionContext context,
+			ParametriSelezioneOrdiniAcqBulk parametri)
+            throws java.rmi.RemoteException {
+        parametri.setUnitaOperativaOrdine(null);
+        parametri.setUnitaOperativaAbilitata(null);
+        parametri.setNumerazioneOrd(null);
+        return context.findDefaultForward();
+    }
+
+    public Forward doCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, javax.ejb.RemoveException {
 
         ParametriSelezioneOrdiniAcqBP bp = (ParametriSelezioneOrdiniAcqBP) context.getBusinessProcess();
     	try {
@@ -164,8 +174,12 @@ public class ParametriSelezioneOrdiniAcqAction extends BulkAction {
     	} catch (Exception e) {
     			return handleException(context,e); 
     	}
-    	
     }
 
-
+    @Override
+    public Forward doCloseForm(ActionContext actioncontext) throws BusinessProcessException {
+        ParametriSelezioneOrdiniAcqBP bp = (ParametriSelezioneOrdiniAcqBP)actioncontext.getBusinessProcess();
+        bp.setDirty(false);
+        return super.doCloseForm(actioncontext);
+    }
 }
