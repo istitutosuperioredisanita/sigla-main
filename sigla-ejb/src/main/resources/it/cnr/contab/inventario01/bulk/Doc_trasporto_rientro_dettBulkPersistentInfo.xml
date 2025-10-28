@@ -6,6 +6,12 @@
 
 		<!-- Chiavi per il documento di trasporto -->
 		<columnMapping
+				columnName="PG_INVENTARIO"
+				propertyName="bene.inventario.pg_inventario"
+				sqlTypeName="DECIMAL"
+				columnSize="10" />
+
+		<columnMapping
 				columnName="TI_DOCUMENTO"
 				propertyName="doc_trasporto_rientro.tiDocumento"
 				sqlTypeName="CHAR"
@@ -24,7 +30,7 @@
 		<!-- Chiavi per il bene (incluso PG_INVENTARIO) -->
 		<columnMapping
 				columnName="PG_INVENTARIO"
-				propertyName="bene.inventario.pg_inventario"
+				propertyName="doc_trasporto_rientro.inventario.pg_inventario"
 				sqlTypeName="DECIMAL"
 				columnSize="10" />
 		<columnMapping
