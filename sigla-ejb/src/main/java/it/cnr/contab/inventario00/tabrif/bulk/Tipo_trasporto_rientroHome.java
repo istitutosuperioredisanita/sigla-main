@@ -17,30 +17,33 @@
 
 package it.cnr.contab.inventario00.tabrif.bulk;
 
-import it.cnr.contab.docamm00.tabrif.bulk.Doc_trasporto_rientroBulk;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
-import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
 public class Tipo_trasporto_rientroHome extends BulkHome {
 public Tipo_trasporto_rientroHome(java.sql.Connection conn) {
-	super(Tipo_carico_scaricoBulk.class,conn);
+	super(Tipo_trasporto_rientroBulk.class,conn);
 }
 public Tipo_trasporto_rientroHome(java.sql.Connection conn, PersistentCache persistentCache) {
-	super(Tipo_carico_scaricoBulk.class,conn,persistentCache);
+	super(Tipo_trasporto_rientroBulk.class,conn,persistentCache);
 }
 
-	public java.util.Collection findTipoMovimenti(
-			it.cnr.contab.docamm00.tabrif.bulk.Doc_trasporto_rientroBulk docTrasportoRientro)
-			throws IntrospectionException, PersistencyException {
+	/**
+	 * Cerca i tipi di movimento per il tipo documento (T/R)
+	 */
+	public java.util.Collection findTipiPerDocumento(UserContext userContext, String tiDocumento)
+			throws PersistencyException {
 
-		SQLBuilder sql = createSQLBuilder();
-		// Filtra per tipo documento (T=Trasporto, R=Rientro)
-		sql.addClause("AND", "ti_documento", sql.EQUALS, docTrasportoRientro.getTiDocumento());
-		// Esclude i movimenti cancellati (dove dt_cancellazione è NULL)
-		sql.addClause("AND", "dt_cancellazione", sql.ISNULL, null);
+		CompoundFindClause clause = new CompoundFindClause();
+		clause.addClause("AND", "tiDocumento", SQLBuilder.EQUALS, tiDocumento);
+		clause.addClause("AND", "dtCancellazione", SQLBuilder.ISNULL, null);
+		SQLBuilder sql = selectByClause(userContext, clause);
+
+		sql.addOrderBy("CD_TIPO_TRASPORTO_RIENTRO");
 
 		return fetchAll(sql);
 	}

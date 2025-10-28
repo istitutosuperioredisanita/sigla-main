@@ -42,6 +42,7 @@ public class CRUDTipoTrasportoRientroAction extends it.cnr.jada.util.action.CRUD
      * @return forward <code>Forward</code>
      **/
     public Forward doOnTiDocumentoChange(ActionContext context) {
+
         try {
             CRUDTipoTrasportoRientroBP bp = (CRUDTipoTrasportoRientroBP)getBusinessProcess(context);
             Tipo_trasporto_rientroBulk movimento = (Tipo_trasporto_rientroBulk)bp.getModel();

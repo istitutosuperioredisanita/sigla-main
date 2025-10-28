@@ -2,7 +2,7 @@
  * Created by BulkGenerator 2.0 [07/12/2009]
  * Date 10/10/2025
  */
-package it.cnr.contab.docamm00.tabrif.bulk;
+package it.cnr.contab.inventario01.bulk;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.KeyedPersistent;
 public class Doc_trasporto_rientro_dettKey extends OggettoBulk implements KeyedPersistent {

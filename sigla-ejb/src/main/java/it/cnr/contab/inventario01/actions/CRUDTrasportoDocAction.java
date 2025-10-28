@@ -1,527 +1,317 @@
-/*
- * Copyright (C) 2019  Consiglio Nazionale delle Ricerche
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Affero General Public License as
- *     published by the Free Software Foundation, either version 3 of the
- *     License, or (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Affero General Public License for more details.
- *
- *     You should have received a copy of the GNU Affero General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package it.cnr.contab.inventario01.actions;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-
-import it.cnr.contab.docamm00.tabrif.bulk.Doc_trasporto_rientroBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Tipo_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.bp.CRUDTrasportoBeniInvBP;
+import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
-import it.cnr.jada.action.*;
-import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.action.Forward;
+import it.cnr.jada.action.HookForward;
 import it.cnr.jada.bulk.SimpleBulkList;
-import it.cnr.jada.comp.ApplicationException;
-import it.cnr.jada.util.action.*;
+import it.cnr.jada.bulk.ValidationException;
+import it.cnr.jada.util.action.RicercaLiberaBP;
+import it.cnr.jada.util.action.SelezionatoreListaBP;
+import it.cnr.jada.util.ejb.EJBCommonServices;
+
+import java.rmi.RemoteException;
 
 /**
- * Action per la gestione dei documenti di trasporto beni inventariali
+ * Action - SOLO COORDINAMENTO FLUSSO
  */
 public class CRUDTrasportoDocAction extends it.cnr.jada.util.action.CRUDAction {
 
-    /**
-     * Costruttore
-     */
+    // =======================================================
+    // GESTIONE CAMBI TESTATA
+    // =======================================================
+
     public CRUDTrasportoDocAction() {
         super();
     }
 
-    /**
-     * Gestisce la selezione del tipo di trasporto/rientro
-     * Controlla che il cambio di tipologia sia possibile verificando:
-     * - Se il documento è in editing o ha già dettagli
-     * - Se il documento è già associato o contabilizzato
-     * - Se il tipo documento (T/R) è cambiato
-     *
-     * @param context il contesto dell'azione
-     * @return Forward
-     */
-    public Forward doSelezionaTipoTrasportoRientro(ActionContext context) {
+    public Forward doSelezionaTipoMovimento(ActionContext context) {
         try {
-            CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP)getBusinessProcess(context);
-            Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk)bp.getModel();
-            Tipo_trasporto_rientroBulk tipoMovimentoOld = documento.getTipoMovimento();
+            CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP) getBusinessProcess(context);
+            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
+            Tipo_trasporto_rientroBulk tipoOld = doc.getTipoMovimento();
 
             fillModel(context);
 
-            if (tipoMovimentoOld != null && documento.getTipoMovimento() != null) {
-                if (bp.isEditing() || bp.getDettaglio().countDetails() != 0) {
-                    // Verifica se il tipo documento (T/R) è cambiato
-                    if (!documento.getTipoMovimento().getTiDocumento().equals(tipoMovimentoOld.getTiDocumento())) {
-                        documento.setTipoMovimento(tipoMovimentoOld);
-                        throw new ApplicationException("Cambio tipologia documento non possibile.");
-                    }
-                }
+            if (hasBeniInDettaglio(doc)) {
+                doc.setTipoMovimento(tipoOld);
+                bp.setMessage("Impossibile cambiare Tipo Movimento: eliminare prima i beni.");
             }
+
+            bp.setModel(context, doc);
             return context.findDefaultForward();
-        } catch(Throwable e) {
-            return handleException(context, e);
-        }
-    }
-
-    /**
-     * Gestisce l'aggiunta di beni al documento di trasporto
-     * Verifica che:
-     * - Sia stato specificato un tipo di trasporto
-     * - Sia stata specificata la data di registrazione
-     * - Sia stata specificata la destinazione
-     * Propone all'utente una ricerca guidata sui beni disponibili
-     *
-     * @param context il contesto dell'azione
-     * @return Forward
-     */
-    public Forward doAddToCRUDMain_Dettaglio(ActionContext context) {
-        try {
-            fillModel(context);
-            CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP)getBusinessProcess(context);
-            Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk)bp.getModel();
-
-            // Validazioni
-            if (documento.getTipoMovimento() == null) {
-                return handleException(context,
-                        new it.cnr.jada.bulk.ValidationException(
-                                "Attenzione: specificare un tipo di trasporto nella testata"));
-            }
-
-            if (documento.getDataRegistrazione() == null) {
-                return handleException(context,
-                        new it.cnr.jada.bulk.ValidationException(
-                                "Attenzione: specificare la data di registrazione"));
-            }
-
-            // Per i trasporti, la destinazione è obbligatoria
-            if (documento.getTipoMovimento().isTrasporto() &&
-                    (documento.getDestinazione() == null || documento.getDestinazione().trim().isEmpty())) {
-                return handleException(context,
-                        new it.cnr.jada.bulk.ValidationException(
-                                "Attenzione: specificare la destinazione per il trasporto"));
-            }
-
-            bp.getDettaglio().validate(context);
-
-            // Recupera i beni già selezionati
-            SimpleBulkList selezionati = documento.getDoc_trasporto_rientro_dettColl() != null ?
-                    documento.getDoc_trasporto_rientro_dettColl() : new SimpleBulkList();
-
-//            // Cerca i beni disponibili per il trasporto
-            //TODO da verificare e in caso implementare
-//            it.cnr.jada.util.RemoteIterator ri = ((DocTrasportoRientroComponentSession)bp.createComponentSession())
-//                    .cercaBeniTrasportabili(context.getUserContext(), documento, selezionati, null);
-//
-//            ri = it.cnr.jada.util.ejb.EJBCommonServices.openRemoteIterator(context, ri);
-//            int count = ri.countElements();
-//
-//            if (count == 0) {
-//                bp.setMessage("Nessun Bene recuperato");
-//                it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context, ri);
-//            } else {
-//                RicercaLiberaBP rlbp = (RicercaLiberaBP)context.createBusinessProcess("RicercaLibera");
-//                rlbp.setCanPerformSearchWithoutClauses(false);
-//                rlbp.setPrototype(new Inventario_beniBulk());
-//                context.addHookForward("searchResult", this, "doBringBackAddBeni");
-//                context.addHookForward("filter", this, "doBringBackAddBeni");
-//                return context.addBusinessProcess(rlbp);
-//            }
-            return context.findDefaultForward();
-
-        } catch(Throwable e) {
-            return handleException(context, e);
-        }
-    }
-
-    /**
-     * Gestisce il ritorno dalla ricerca dei beni
-     * Applica i filtri di ricerca e propone la selezione dei beni
-     *
-     * @param context il contesto dell'azione
-     * @return Forward
-     */
-    public Forward doBringBackAddBeni(ActionContext context) {
-        try {
-            HookForward fwd = (HookForward)context.getCaller();
-            CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP)getBusinessProcess(context);
-            Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk)bp.getModel();
-
-            it.cnr.jada.persistency.sql.CompoundFindClause clauses =
-                    (it.cnr.jada.persistency.sql.CompoundFindClause)fwd.getParameter("filter");
-
-            context.addHookForward("filter", this, "doSelezionaBeni");
-
-            SimpleBulkList selezionati = documento.getDoc_trasporto_rientro_dettColl() != null ?
-                    documento.getDoc_trasporto_rientro_dettColl() : new SimpleBulkList();
-
-            it.cnr.jada.util.RemoteIterator iterator = bp.getListaBeniTrasportabili(
-                    context.getUserContext(), selezionati, clauses);
-
-            if (iterator != null) {
-                iterator = it.cnr.jada.util.ejb.EJBCommonServices.openRemoteIterator(context, iterator);
-                int count = iterator.countElements();
-
-                if (count == 0) {
-                    bp.setMessage("Nessun Bene associabile");
-                    it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context, iterator);
-                } else {
-                    SelezionatoreListaBP slbp = select(context, iterator,
-                            it.cnr.jada.bulk.BulkInfo.getBulkInfo(Inventario_beniBulk.class),
-                            null, "doSelezionaBeni", null, bp);
-                    slbp.setMultiSelection(true);
-                    return slbp;
-                }
-            } else {
-                bp.setMessage("Funzionalità non ancora implementata");
-            }
-            return context.findDefaultForward();
-        } catch(Throwable e) {
-            return handleException(context, e);
-        }
-    }
-
-    /**
-     * Gestisce la conferma della selezione dei beni
-     * Aggiunge i beni selezionati al documento di trasporto
-     *
-     * @param context il contesto dell'azione
-     * @return Forward
-     */
-    public Forward doSelezionaBeni(ActionContext context) {
-        try {
-            CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP)context.getBusinessProcess();
-
-            // Recupera i beni selezionati dal selezionatore
-            HookForward hookForward = (HookForward)context.getCaller();
-            java.util.List beniSelezionati = (java.util.List)hookForward.getParameter("beniSelezionati");
-
-            if (beniSelezionati != null && !beniSelezionati.isEmpty()) {
-                // Aggiungi i beni al documento tramite il BP
-                bp.aggiungiDettagliTrasporto(context.getUserContext(), beniSelezionati);
-            }
-
-            bp.getDettaglio().reset(context);
-            return context.findDefaultForward();
-        } catch(Exception e) {
-            return handleException(context, e);
-        }
-    }
-
-    /**
-     * Gestisce la selezione di un dettaglio nel controller
-     * Imposta la selezione e gestisce il comportamento automatico
-     *
-     * @param context il contesto dell'azione
-     * @return Forward
-     */
-    public Forward doSelectDettaglio(ActionContext context) {
-        CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP)context.getBusinessProcess();
-        try {
-            bp.getDettaglio().setSelection(context);
-
-            if (Optional.ofNullable(bp.getModel()).isPresent()) {
-                Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk)bp.getModel();
-                Doc_trasporto_rientro_dettBulk dettaglio =
-                        (Doc_trasporto_rientro_dettBulk)bp.getDettaglio().getModel();
-
-                if (dettaglio != null && dettaglio.getBene() != null) {
-                    // Gestione automatica per beni con accessori
-                    if (dettaglio.isAssociatoConAccessorioContestuale()) {
-                        return impostaAccessoriContestuali(context, bp, dettaglio);
-                    }
-                }
-            }
         } catch (Throwable e) {
             return handleException(context, e);
         }
-        return context.findDefaultForward();
     }
 
-    /**
-     * Imposta gli accessori contestuali per un bene principale
-     * Gestisce la sincronizzazione delle proprietà tra bene principale e accessori
-     *
-     * @param context il contesto dell'azione
-     * @param bp il business process
-     * @param dettaglio il dettaglio del documento
-     * @return Forward
-     */
-    public Forward impostaAccessoriContestuali(ActionContext context, CRUDTrasportoBeniInvBP bp,
-                                               Doc_trasporto_rientro_dettBulk dettaglio)
-            throws it.cnr.jada.comp.ApplicationException {
+    public Forward doOnTipoRitiroChange(ActionContext context) {
         try {
-            Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk)bp.getModel();
+            CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP) getBusinessProcess(context);
 
-            if (documento.getAccessoriContestualiHash() != null) {
-                BulkList accessori = (BulkList)documento.getAccessoriContestualiHash()
-                        .get(dettaglio.getChiaveHash());
+            bp.getDettBeniController().removeAll(context);
+            bp.getEditDettController().removeAll(context);
+            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
 
-                if (accessori != null && !accessori.isEmpty()) {
-                    // Sincronizza le proprietà del bene principale con gli accessori
-                    for (Iterator i = accessori.iterator(); i.hasNext();) {
-                        Doc_trasporto_rientro_dettBulk accessorio =
-                                (Doc_trasporto_rientro_dettBulk)i.next();
-                        accessorio.getBene().setUbicazione(dettaglio.getBene().getUbicazione());
-                        accessorio.getBene().setCategoria_Bene(dettaglio.getBene().getCategoria_Bene());
-                    }
-                }
-            }
-
-            bp.getDettaglio().reset(context);
-            return context.findDefaultForward();
-        } catch(Throwable e) {
-            return handleException(context, e);
-        }
-    }
-
-    /**
-     * Gestisce il click sul flag di trasporto totale/scarico totale
-     *
-     * @param context il contesto dell'azione
-     * @return Forward
-     */
-    public Forward doClickFlagTrasportoTotale(ActionContext context)
-            throws it.cnr.jada.comp.ApplicationException {
-
-        CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP)getBusinessProcess(context);
-        Doc_trasporto_rientro_dettBulk dettaglio =
-                (Doc_trasporto_rientro_dettBulk)bp.getDettaglio().getModel();
-
-        try {
+            String oldValue = doc.getTipoRitiro();
             fillModel(context);
+            String newValue = doc.getTipoRitiro();
 
-            Inventario_beniBulk bene = dettaglio.getBene();
-
-            if (bene.getFl_totalmente_scaricato() != null &&
-                    bene.getFl_totalmente_scaricato().booleanValue()) {
-
-                // Verifica se ci sono accessori da gestire
-                if (dettaglio.isAssociatoConAccessorioContestuale()) {
-                    OptionBP optionBP = openConfirm(context,
-                            "Attenzione: il bene selezionato ha degli accessori. Verranno trasportati totalmente. Vuoi continuare?",
-                            OptionBP.CONFIRM_YES_NO, "doConfirmTrasportoTotaleBene");
-                    optionBP.addAttribute("DettaglioTrasporto", dettaglio);
-                    return optionBP;
-                }
+            if (valoreUguale(oldValue, newValue)) {
+                return context.findDefaultForward();
             }
 
-            bp.getDettaglio().reset(context);
+            eliminaBeniSePresenti(context, bp, doc, "Tipo ritiro modificato. Beni precedenti rimossi.");
+
+            if (Doc_trasporto_rientroBulk.TIPO_RITIRO_VETTORE.equals(newValue)) {
+                doc.setAnagDipRitiro(null);
+            }
+
+            bp.setModel(context, doc);
             return context.findDefaultForward();
-        } catch(Throwable e) {
+        } catch (Throwable e) {
             return handleException(context, e);
         }
     }
 
-    /**
-     * Conferma il trasporto totale del bene
-     *
-     * @param context il contesto dell'azione
-     * @param optionBP l'option BP con i parametri
-     * @return Forward
-     */
-    public Forward doConfirmTrasportoTotaleBene(ActionContext context, OptionBP optionBP)
-            throws it.cnr.jada.comp.ApplicationException, BusinessProcessException {
+    public Forward doOnDipendenteChange(ActionContext context) {
+        try {
+            CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP) getBusinessProcess(context);
+            bp.getDettBeniController().removeAll(context);
+            bp.getEditDettController().removeAll(context);
 
-        CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP)getBusinessProcess(context);
-        Doc_trasporto_rientro_dettBulk dettaglio =
-                (Doc_trasporto_rientro_dettBulk)optionBP.getAttribute("DettaglioTrasporto");
+            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
 
-        if (optionBP.getOption() == OptionBP.YES_BUTTON) {
-            // Procedi con il trasporto totale
-            bp.getDettaglio().reset(context);
-        } else {
-            // Annulla l'operazione
-            dettaglio.getBene().setFl_totalmente_scaricato(Boolean.FALSE);
+            Integer oldValue = getCdAnag(doc.getAnagDipRitiro());
+            fillModel(context);
+            Integer newValue = getCdAnag(doc.getAnagDipRitiro());
+
+            if (valoreUguale(oldValue, newValue)) {
+                return context.findDefaultForward();
+            }
+
+            eliminaBeniSePresenti(context, bp, doc, "Dipendente modificato. Beni precedenti rimossi.");
+
+            bp.setModel(context, doc);
+            return context.findDefaultForward();
+        } catch (Throwable e) {
+            return handleException(context, e);
         }
-        return context.findDefaultForward();
     }
 
-    /**
-     * Gestisce la modifica della data di registrazione
-     * Rimuove tutti i dettagli esistenti quando cambia la data
-     *
-     * @param context il contesto dell'azione
-     * @return Forward
-     */
     public Forward doOnData_registrazioneChange(ActionContext context) {
         try {
-            CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP)context.getBusinessProcess();
-            bp.getDettaglio().removeAll(context);
+            CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP) getBusinessProcess(context);
+            bp.getDettBeniController().removeAll(context);
+            bp.getEditDettController().removeAll(context);
+
             fillModel(context);
+            bp.setModel(context, (Doc_trasporto_rientroBulk) bp.getModel());
 
-            Doc_trasporto_rientroBulk model = (Doc_trasporto_rientroBulk)bp.getModel();
-            bp.setModel(context, model);
-            return context.findDefaultForward();
-        } catch (Throwable t) {
-            return handleException(context, t);
-        }
-    }
-
-    /**
-     * Annulla il documento e riporta le associazioni
-     *
-     * @param context il contesto dell'azione
-     * @return Forward
-     */
-    public Forward doAnnullaRiporta(ActionContext context) throws BusinessProcessException {
-        try {
-            fillModel(context);
-            CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP)context.getBusinessProcess();
-            List dettagli = bp.getDettaglio().getDetails();
-            //TODO da verificare e in caso implementare
-//            ((DocTrasportoRientroComponentSession)bp.createComponentSession())
-//                    .annullaRiportaTrasporto(context.getUserContext(), bp.getModel(), dettagli);
-
-            context.closeBusinessProcess();
-            HookForward bringBackForward = (HookForward)context.findForward("bringback");
-            if (bringBackForward != null)
-                return bringBackForward;
-            return context.findDefaultForward();
-        } catch(Throwable e) {
-            return handleException(context, e);
-        }
-    }
-
-    /**
-     * Assegna la quantità al dettaglio selezionato
-     * Verifica che la quantità sia valida
-     *
-     * @param context il contesto dell'azione
-     * @return Forward
-     */
-    public Forward doAssegnaQuantita(ActionContext context)
-            throws it.cnr.jada.comp.ApplicationException {
-
-        CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP)getBusinessProcess(context);
-        Doc_trasporto_rientro_dettBulk dettaglio =
-                (Doc_trasporto_rientro_dettBulk)bp.getDettaglio().getModel();
-
-        try {
-            fillModel(context);
-
-            // Validazione quantità
-            if (dettaglio.getQuantita() == null || dettaglio.getQuantita() <= 0) {
-                throw new ApplicationException(
-                        "Attenzione: specificare una quantità valida (maggiore di 0)");
-            }
-
-            // Per beni con accessori contestuali, la quantità deve essere 1
-            if (dettaglio.isAssociatoConAccessorioContestuale() &&
-                    dettaglio.getQuantita().compareTo(new Long("1")) != 0) {
-                dettaglio.setQuantita(new Long("1"));
-                throw new ApplicationException(
-                        "Attenzione: la quantità di questa riga deve essere 1, poiché alcuni beni sono suoi accessori");
-            }
-
-            bp.getDettaglio().reset(context);
-
-        } catch (Throwable e) {
-            return handleException(context, e);
-        }
-
-        return context.findDefaultForward();
-    }
-
-    /**
-     * Trasporta tutti i beni disponibili in un'unica operazione
-     *
-     * @param context il contesto dell'azione
-     * @return Forward
-     */
-    public Forward doTrasportaTutti(ActionContext context) {
-        try {
-            fillModel(context);
-            CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP)getBusinessProcess(context);
-            Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk)bp.getModel();
-
-            // Verifica che ci siano dettagli da trasportare
-            if (documento.getDoc_trasporto_rientro_dettColl() == null ||
-                    documento.getDoc_trasporto_rientro_dettColl().isEmpty()) {
-                throw new ApplicationException("Attenzione: non ci sono beni da trasportare");
-            }
-
-            // Imposta tutti i dettagli come trasportati
-            for (Iterator i = documento.getDoc_trasporto_rientro_dettColl().iterator(); i.hasNext();) {
-                Doc_trasporto_rientro_dettBulk dett = (Doc_trasporto_rientro_dettBulk)i.next();
-                if (dett.isValidoPerTrasporto()) {
-                    dett.setStatoTrasporto(Doc_trasporto_rientro_dettBulk.STATO_DEFINITIVO);
-                }
-            }
-
-            bp.getDettaglio().reset(context);
-            return context.findDefaultForward();
-        } catch(Throwable e) {
-            return handleException(context, e);
-        }
-    }
-
-    /**
-     * Gestisce il cambio dello stato trasporto per un dettaglio
-     *
-     * @param context il contesto dell'azione
-     * @return Forward
-     */
-    public Forward doOnStatoTrasportoChange(ActionContext context) {
-        try {
-            fillModel(context);
-            CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP)context.getBusinessProcess();
-            Doc_trasporto_rientro_dettBulk dettaglio =
-                    (Doc_trasporto_rientro_dettBulk)bp.getDettaglio().getModel();
-
-            // Verifica che il cambio di stato sia consentito
-            if (!bp.isDettaglioModificabile()) {
-                throw new ApplicationException(
-                        "Attenzione: impossibile modificare lo stato per questo dettaglio");
-            }
-
-            bp.getDettaglio().reset(context);
             return context.findDefaultForward();
         } catch (Throwable e) {
             return handleException(context, e);
         }
     }
 
-    /**
-     * Gestisce la selezione di un bene principale per un accessorio
-     *
-     * @param context il contesto dell'azione
-     * @return Forward
-     */
-    public Forward doSelezionaBenePrincipale(ActionContext context) {
+    // =======================================================
+    // AGGIUNTA BENI
+    // =======================================================
+
+    public Forward doAddToCRUDMain_DettBeniController(ActionContext context) {
         try {
             fillModel(context);
-            CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP)getBusinessProcess(context);
-            Doc_trasporto_rientro_dettBulk dettaglio =
-                    (Doc_trasporto_rientro_dettBulk)bp.getDettaglio().getModel();
 
-            // Se è un bene accessorio, verifica che il bene principale sia valido
-            if (dettaglio.isBeneAccessorio()) {
-                Inventario_beniBulk benePrincipale = dettaglio.getBene().getBene_principale();
-                if (benePrincipale != null && benePrincipale.getFl_totalmente_scaricato() != null &&
-                        benePrincipale.getFl_totalmente_scaricato().booleanValue()) {
-                    throw new ApplicationException(
-                            "Attenzione: il bene principale selezionato è stato totalmente scaricato");
-                }
+            CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP) getBusinessProcess(context);
+            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
+
+            validaTestataDocumento(doc);
+            bp.getDettBeniController().validate(context);
+            SimpleBulkList selezionati = ((it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession) bp.createComponentSession()).
+                    selezionati(context.getUserContext(), (Doc_trasporto_rientroBulk) bp.getModel());
+            it.cnr.jada.util.RemoteIterator ri = getComp(bp).cercaBeniTrasportabili(
+                    context.getUserContext(), doc, selezionati, null);
+            ri = EJBCommonServices.openRemoteIterator(context, ri);
+
+            if (ri.countElements() == 0) {
+                bp.setMessage("Nessun Bene recuperato");
+                EJBCommonServices.closeRemoteIterator(context, ri);
+            } else {
+                RicercaLiberaBP rlbp = (RicercaLiberaBP) context.createBusinessProcess("RicercaLibera");
+                rlbp.setCanPerformSearchWithoutClauses(false);
+                rlbp.setPrototype(new Inventario_beniBulk());
+                context.addHookForward("searchResult", this, "doBringBackAddBeniTrasporto");
+                context.addHookForward("filter", this, "doBringBackAddBeniTrasporto");
+                return context.addBusinessProcess(rlbp);
+            }
+
+            return context.findDefaultForward();
+
+        } catch (Throwable e) {
+            return handleException(context, e);
+        }
+    }
+
+    public Forward doBringBackAddBeniTrasporto(ActionContext context) {
+        try {
+            HookForward fwd = (HookForward) context.getCaller();
+            CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP) getBusinessProcess(context);
+            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
+
+            it.cnr.jada.persistency.sql.CompoundFindClause clauses =
+                    (it.cnr.jada.persistency.sql.CompoundFindClause) fwd.getParameter("filter");
+            it.cnr.jada.bulk.SimpleBulkList selezionati = null;
+
+            bp.setClauses(clauses);
+            context.addHookForward("filter", this, "doSelezionaBeniTrasporto");
+
+            selezionati = getComp(bp).selezionati(context.getUserContext(),
+                    (Doc_trasporto_rientroBulk) bp.getModel());
+
+            it.cnr.jada.util.RemoteIterator ri = getComp(bp).cercaBeniTrasportabili(
+                    context.getUserContext(), doc, selezionati, clauses);
+            ri = EJBCommonServices.openRemoteIterator(context, ri);
+
+            if (ri.countElements() == 0) {
+                bp.setMessage("Nessun Bene associabile");
+                EJBCommonServices.closeRemoteIterator(context, ri);
+            } else {
+//                // INIZIALIZZA LA SELEZIONE PRIMA DI CREARE IL SELEZIONATORE
+//                bp.initializeSelection(context);
+
+                SelezionatoreListaBP slbp = select(context, ri,
+                        it.cnr.jada.bulk.BulkInfo.getBulkInfo(Inventario_beniBulk.class),
+                        null, "doSelezionaBeniTrasporto", null, bp);
+                slbp.setMultiSelection(true);
+                return slbp;
             }
 
             return context.findDefaultForward();
         } catch (Throwable e) {
             return handleException(context, e);
+        }
+    }
+
+    public Forward doSelezionaBeniTrasporto(ActionContext context) {
+        try {
+            CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP) getBusinessProcess(context);
+            bp.getDettBeniController().reset(context);
+
+            // Pulisce il savepoint dopo la selezione
+            bp.clearSelection(context);
+
+            return context.findDefaultForward();
+        } catch (Exception e) {
+            return handleException(context, e);
+        }
+    }
+
+    public Forward doSelectDettBeniController(ActionContext context) {
+        try {
+            CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP) getBusinessProcess(context);
+            bp.getDettBeniController().setSelection(context);
+            return context.findDefaultForward();
+        } catch (Throwable e) {
+            return handleException(context, e);
+        }
+    }
+
+    // =======================================================
+    // WORKFLOW
+    // =======================================================
+
+
+    public Forward doPredisponiAllaFirma(ActionContext context) {
+        try {
+            CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP) getBusinessProcess(context);
+            bp.predisponiAllaFirma(context);
+            return context.findDefaultForward();
+        } catch (Exception e) {
+            return handleException(context, e);
+        }
+    }
+
+    // =======================================================
+    // ELIMINAZIONE
+    // =======================================================
+
+    @Override
+    public Forward doElimina(ActionContext context) throws RemoteException {
+        try {
+            fillModel(context);
+
+            CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP) getBusinessProcess(context);
+            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
+
+            if (!bp.isEditing()) {
+                bp.setMessage("Non è possibile annullare in questo momento.");
+                return context.findDefaultForward();
+            }
+
+            doc.setStato(Doc_trasporto_rientroBulk.STATO_ANNULLATO);
+            getComp(bp).modificaConBulk(context.getUserContext(), doc);
+
+            bp.setMessage("Documento annullato correttamente.");
+            bp.reset(context);
+            return context.findDefaultForward();
+
+        } catch (Throwable e) {
+            return handleException(context, e);
+        }
+    }
+
+    // =======================================================
+    // HELPER
+    // =======================================================
+
+    private DocTrasportoRientroComponentSession getComp(CRUDTrasportoBeniInvBP bp) throws Exception {
+        return (DocTrasportoRientroComponentSession) bp.createComponentSession(
+                "CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession",
+                DocTrasportoRientroComponentSession.class);
+    }
+
+    private <T> boolean valoreUguale(T oldValue, T newValue) {
+        if (oldValue == null && newValue == null) return true;
+        if (oldValue == null || newValue == null) return false;
+        return oldValue.equals(newValue);
+    }
+
+    private Integer getCdAnag(it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo) {
+        if (terzo == null) return null;
+        it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk anag = terzo.getAnagrafico();
+        return (anag != null) ? anag.getCd_anag() : null;
+    }
+
+    private boolean hasBeniInDettaglio(Doc_trasporto_rientroBulk doc) {
+        return doc.getDoc_trasporto_rientro_dettColl() != null &&
+                !doc.getDoc_trasporto_rientro_dettColl().isEmpty();
+    }
+
+    private void eliminaBeniSePresenti(ActionContext context, CRUDTrasportoBeniInvBP bp,
+                                       Doc_trasporto_rientroBulk doc, String messaggio) throws Exception {
+        if (hasBeniInDettaglio(doc)) {
+            getComp(bp).eliminaTuttiBeniDettaglio(context.getUserContext(), doc);
+            doc.getDoc_trasporto_rientro_dettColl().clear();
+            bp.setDirty(true);
+            bp.setMessage(messaggio);
+        }
+    }
+
+    private void validaTestataDocumento(Doc_trasporto_rientroBulk doc) throws ValidationException {
+        if (doc.getTipoMovimento() == null) {
+            throw new ValidationException("Attenzione: specificare un tipo di movimento nella testata");
+        }
+
+        if (doc.getDataRegistrazione() == null) {
+            throw new ValidationException("Attenzione: specificare la data trasporto");
+        }
+
+        if (doc.getDsDocTrasportoRientro() == null || doc.getDsDocTrasportoRientro().trim().isEmpty()) {
+            throw new ValidationException("Attenzione: indicare una Descrizione per il Documento di Trasporto");
         }
     }
 }

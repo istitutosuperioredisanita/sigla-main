@@ -17,11 +17,12 @@
 
 package it.cnr.contab.inventario01.bp;
 
-import it.cnr.contab.docamm00.tabrif.bulk.Doc_trasporto_rientroBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.Doc_trasporto_rientro_dettBulk;
+import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
+import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
 import it.cnr.contab.util.Utility;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.BulkList;
@@ -34,11 +35,12 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.AbstractDetailCRUDController;
 import it.cnr.jada.util.action.SearchProvider;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
-import it.cnr.jada.util.action.SelectionListener;
 
 import java.rmi.RemoteException;
 import java.util.BitSet;
 import java.util.Iterator;
+
+import static it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk.*;
 
 /**
  * Business Process per la gestione del Rientro dei beni inventariali.
@@ -46,7 +48,7 @@ import java.util.Iterator;
  *
  * @author rpucciarelli
  */
-public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP implements SelectionListener {
+public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP {
 
     private Long progressivo_beni = new Long("0");
 
@@ -105,6 +107,21 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP implements 
             throw new BusinessProcessException(e);
         }
     }
+
+
+
+
+//    //TODO da gestire x rientro
+//    @Override
+//    protected String getStorePath(Doc_trasporto_rientroBulk documento, boolean create) throws BusinessProcessException {
+//        return "";
+//    }
+//    @Override
+//    protected Class<AllegatoGenericoBulk> getAllegatoClass() {
+//        return null;
+//    }
+
+
 
     // ========================================
     // GESTIONE TAB
@@ -322,7 +339,7 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP implements 
             for (Iterator i = documento.getDoc_trasporto_rientro_dettColl().iterator(); i.hasNext();) {
                 Doc_trasporto_rientro_dettBulk existingDett = (Doc_trasporto_rientro_dettBulk) i.next();
                 if (existingDett != dett &&
-                        existingDett.getNr_inventario().equals(dett.getNr_inventario()) &&
+                        existingDett.getNrInventario().equals(dett.getNrInventario()) &&
                         existingDett.getProgressivo().equals(dett.getProgressivo())) {
                     throw new ValidationException("Attenzione: il bene è già presente nel documento di rientro");
                 }
@@ -344,7 +361,7 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP implements 
         }
 
         // Verifica coerenza dei riferimenti
-        if (!dett.getNrInventarioRif().equals(dett.getNr_inventario()) ||
+        if (!dett.getNrInventarioRif().equals(dett.getNrInventario()) ||
                 !dett.getProgressivoRif().equals(dett.getProgressivo())) {
             throw new ValidationException(
                     "Attenzione: i riferimenti al bene non sono coerenti con il trasporto originale");
@@ -371,16 +388,16 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP implements 
 
             // Verifica che il dettaglio sia stato effettivamente trasportato
             if (!Doc_trasporto_rientroBulk.TRASPORTO.equals(dettTrasporto.getDoc_trasporto_rientro().getTiDocumento()) &&
-                    !Doc_trasporto_rientro_dettBulk.STATO_DEFINITIVO.equals(dettTrasporto.getDoc_trasporto_rientro().getTiDocumento())) {
+                    !STATO_FIRMATO.equals(dettTrasporto.getDoc_trasporto_rientro().getStato())) {
                 throw new ApplicationException(
-                        "Il Bene " + dettTrasporto.getNr_inventario() +
+                        "Il Bene " + dettTrasporto.getNrInventario() +
                                 " non è stato ancora trasportato e non può essere inserito nel rientro");
             }
 
             // Verifica che non sia già rientrato
             if (Doc_trasporto_rientroBulk.RIENTRO.equals(dettTrasporto.getDoc_trasporto_rientro().getTiDocumento())) {
                 throw new ApplicationException(
-                        "Il Bene " + dettTrasporto.getNr_inventario() +
+                        "Il Bene " + dettTrasporto.getNrInventario() +
                                 " è già rientrato");
             }
 
@@ -400,14 +417,13 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP implements 
             dettRientro.setDoc_trasporto_rientro(documento);
             dettRientro.setBene(bene);
             dettRientro.setQuantita(dettTrasporto.getQuantita());
-            dettRientro.setStatoTrasporto(null); // Stato gestito dal documento
 
             // Imposta i riferimenti al trasporto originale
-            dettRientro.setPgInventarioRif(dettTrasporto.getPg_inventario());
-            dettRientro.setTiDocumentoRif(dettTrasporto.getTi_documento());
+            dettRientro.setPgInventarioRif(dettTrasporto.getPgInventario());
+            dettRientro.setTiDocumentoRif(dettTrasporto.getTiDocumento());
             dettRientro.setEsercizioRif(dettTrasporto.getEsercizio());
-            dettRientro.setPgDocTrasportoRientroRif(dettTrasporto.getPg_doc_trasporto_rientro());
-            dettRientro.setNrInventarioRif(dettTrasporto.getNr_inventario());
+            dettRientro.setPgDocTrasportoRientroRif(dettTrasporto.getPgDocTrasportoRientro());
+            dettRientro.setNrInventarioRif(dettTrasporto.getNrInventario());
             dettRientro.setProgressivoRif(dettTrasporto.getProgressivo());
 
             // Imposta il riferimento circolare
@@ -433,7 +449,7 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP implements 
         for (Iterator i = docTrasporto.getDoc_trasporto_rientro_dettColl().iterator(); i.hasNext();) {
             Doc_trasporto_rientro_dettBulk dett = (Doc_trasporto_rientro_dettBulk) i.next();
             if (Doc_trasporto_rientroBulk.TRASPORTO.equals(dett.getDoc_trasporto_rientro().getTiDocumento()) ||
-                    Doc_trasporto_rientro_dettBulk.STATO_DEFINITIVO.equals(dett.getStatoTrasporto())) {
+                    STATO_FIRMATO.equals(dett.getDoc_trasporto_rientro().getStato())) {
                 dettagliDisponibili.add(dett);
             }
         }
@@ -450,78 +466,78 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP implements 
     // SEARCH PROVIDER
     // ========================================
 
-    /**
-     * Provider per la ricerca dei beni trasportati disponibili per il rientro
-     */
-    public SearchProvider getBeneSearchProvider(ActionContext context) {
-        return new SearchProvider() {
-            public it.cnr.jada.util.RemoteIterator search(
-                    it.cnr.jada.action.ActionContext context,
-                    it.cnr.jada.persistency.sql.CompoundFindClause clauses,
-                    it.cnr.jada.bulk.OggettoBulk prototype) throws it.cnr.jada.action.BusinessProcessException {
+//    /**
+//     * Provider per la ricerca dei beni trasportati disponibili per il rientro
+//     */
+//    public SearchProvider getBeneSearchProvider(ActionContext context) {
+//        return new SearchProvider() {
+//            public it.cnr.jada.util.RemoteIterator search(
+//                    it.cnr.jada.action.ActionContext context,
+//                    it.cnr.jada.persistency.sql.CompoundFindClause clauses,
+//                    it.cnr.jada.bulk.OggettoBulk prototype) throws it.cnr.jada.action.BusinessProcessException {
+//
+//                Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) getModel();
+//                try {
+//                    return getListaBeniRientrabili(
+//                            context.getUserContext(),
+//                            documento.getDoc_trasporto_rientro_dettColl(),
+//                            clauses);
+//                } catch (Throwable t) {
+//                    return null;
+//                }
+//            }
+//        };
+//    }
 
-                Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) getModel();
-                try {
-                    return getListaBeniRientrabili(
-                            context.getUserContext(),
-                            documento.getDoc_trasporto_rientro_dettColl(),
-                            clauses);
-                } catch (Throwable t) {
-                    return null;
-                }
-            }
-        };
-    }
+//    /**
+//     * Provider per la ricerca dei documenti di trasporto disponibili
+//     */
+//    public SearchProvider getTrasportoSearchProvider(ActionContext context) {
+//        return new SearchProvider() {
+//            public it.cnr.jada.util.RemoteIterator search(
+//                    it.cnr.jada.action.ActionContext context,
+//                    it.cnr.jada.persistency.sql.CompoundFindClause clauses,
+//                    it.cnr.jada.bulk.OggettoBulk prototype) throws it.cnr.jada.action.BusinessProcessException {
+//
+//                try {
+//                    return getListaTrasporti(context.getUserContext(), clauses);
+//                } catch (Throwable t) {
+//                    return null;
+//                }
+//            }
+//        };
+//    }
 
-    /**
-     * Provider per la ricerca dei documenti di trasporto disponibili
-     */
-    public SearchProvider getTrasportoSearchProvider(ActionContext context) {
-        return new SearchProvider() {
-            public it.cnr.jada.util.RemoteIterator search(
-                    it.cnr.jada.action.ActionContext context,
-                    it.cnr.jada.persistency.sql.CompoundFindClause clauses,
-                    it.cnr.jada.bulk.OggettoBulk prototype) throws it.cnr.jada.action.BusinessProcessException {
+//    /**
+//     * Cerca i beni trasportati disponibili per il rientro
+//     */
+//    public it.cnr.jada.util.RemoteIterator getListaBeniRientrabili(
+//            it.cnr.jada.UserContext userContext,
+//            SimpleBulkList beni_da_escludere,
+//            it.cnr.jada.persistency.sql.CompoundFindClause clauses)
+//            throws BusinessProcessException, java.rmi.RemoteException, it.cnr.jada.comp.ComponentException {
+//        //TODO da verificare e in caso implementare
+////        return ((DocTrasportoRientroComponentSession) createComponentSession())
+////                .getListaBeniRientrabili(
+////                        userContext,
+////                        (Doc_trasporto_rientroBulk) this.getModel(),
+////                        beni_da_escludere,
+////                        clauses);
+//        return null;
+//    }
 
-                try {
-                    return getListaTrasporti(context.getUserContext(), clauses);
-                } catch (Throwable t) {
-                    return null;
-                }
-            }
-        };
-    }
-
-    /**
-     * Cerca i beni trasportati disponibili per il rientro
-     */
-    public it.cnr.jada.util.RemoteIterator getListaBeniRientrabili(
-            it.cnr.jada.UserContext userContext,
-            SimpleBulkList beni_da_escludere,
-            it.cnr.jada.persistency.sql.CompoundFindClause clauses)
-            throws BusinessProcessException, java.rmi.RemoteException, it.cnr.jada.comp.ComponentException {
-        //TODO da verificare e in caso implementare
-//        return ((DocTrasportoRientroComponentSession) createComponentSession())
-//                .getListaBeniRientrabili(
-//                        userContext,
-//                        (Doc_trasporto_rientroBulk) this.getModel(),
-//                        beni_da_escludere,
-//                        clauses);
-        return null;
-    }
-
-    /**
-     * Cerca i documenti di trasporto con beni disponibili per il rientro
-     */
-    public it.cnr.jada.util.RemoteIterator getListaTrasporti(
-            it.cnr.jada.UserContext userContext,
-            it.cnr.jada.persistency.sql.CompoundFindClause clauses)
-            throws BusinessProcessException, java.rmi.RemoteException, it.cnr.jada.comp.ComponentException {
-        //TODO da verificare e in caso implementare
+//    /**
+//     * Cerca i documenti di trasporto con beni disponibili per il rientro
+//     */
+//    public it.cnr.jada.util.RemoteIterator getListaTrasporti(
+//            it.cnr.jada.UserContext userContext,
+//            it.cnr.jada.persistency.sql.CompoundFindClause clauses)
+//            throws BusinessProcessException, java.rmi.RemoteException, it.cnr.jada.comp.ComponentException {
+//        //TODO da verificare e in caso implementare
 //        return ((DocTrasportoRientroComponentSession) createComponentSession())
 //                .getListaTrasportiConBeniDisponibili(userContext, clauses);
-        return null;
-    }
+//        return null;
+//    }
 
     // ========================================
     // ABILITAZIONE PULSANTI
@@ -569,46 +585,6 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP implements 
     }
 
     // ========================================
-    // IMPLEMENTAZIONE SelectionListener
-    // ========================================
-
-    @Override
-    public void clearSelection(ActionContext actionContext) throws BusinessProcessException {
-        selection.clear();
-    }
-
-    @Override
-    public void deselectAll(ActionContext actionContext) {
-        selection.clear();
-    }
-
-    @Override
-    public BitSet getSelection(ActionContext actionContext, OggettoBulk[] oggettoBulks, BitSet bitSet)
-            throws BusinessProcessException {
-        return selection;
-    }
-
-    @Override
-    public void initializeSelection(ActionContext actionContext) throws BusinessProcessException {
-        selection.clear();
-    }
-
-    @Override
-    public void selectAll(ActionContext actionContext) throws BusinessProcessException {
-        Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) getModel();
-        if (documento != null && documento.getDoc_trasporto_rientro_dettColl() != null) {
-            selection.set(0, documento.getDoc_trasporto_rientro_dettColl().size());
-        }
-    }
-
-    @Override
-    public BitSet setSelection(ActionContext actionContext, OggettoBulk[] oggettoBulks,
-                               BitSet bitSet, BitSet bitSet1) throws BusinessProcessException {
-        selection = bitSet1;
-        return selection;
-    }
-
-    // ========================================
     // GETTER E SETTER
     // ========================================
 
@@ -647,9 +623,9 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP implements 
         Doc_trasporto_rientro_dettBulk dett = (Doc_trasporto_rientro_dettBulk) getDettaglio().getModel();
         if (dett != null) {
             // Può essere modificato solo se lo stato è null, INSERITO o ANNULLATO
-            return dett.getStatoTrasporto() == null ||
-                    Doc_trasporto_rientro_dettBulk.STATO_INSERITO.equals(dett.getStatoTrasporto()) ||
-                    Doc_trasporto_rientro_dettBulk.STATO_ANNULLATO.equals(dett.getStatoTrasporto());
+            return dett.getDoc_trasporto_rientro().getStato() == null ||
+                    STATO_INSERITO.equals(dett.getDoc_trasporto_rientro().getStato()) ||
+                    STATO_ANNULLATO.equals(dett.getDoc_trasporto_rientro().getStato());
         }
         return true;
     }

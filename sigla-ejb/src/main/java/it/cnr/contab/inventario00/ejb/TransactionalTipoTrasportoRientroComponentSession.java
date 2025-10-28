@@ -20,7 +20,7 @@ package it.cnr.contab.inventario00.ejb;
 
 import java.rmi.RemoteException;
 
-public class TransactionalTipoTrasportoRientroComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements TipoCaricoScaricoComponentSession {
+public class TransactionalTipoTrasportoRientroComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements TipoTrasportoRientroComponentSession {
 public it.cnr.jada.util.RemoteIterator cerca(it.cnr.jada.UserContext param0,it.cnr.jada.persistency.sql.CompoundFindClause param1,it.cnr.jada.bulk.OggettoBulk param2) throws RemoteException,it.cnr.jada.comp.ComponentException {
 	try {
 		return (it.cnr.jada.util.RemoteIterator)invoke("cerca",new Object[] {

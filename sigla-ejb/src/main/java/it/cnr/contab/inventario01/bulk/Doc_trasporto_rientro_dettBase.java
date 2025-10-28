@@ -2,7 +2,7 @@
  * Created by BulkGenerator 2.0 [07/12/2009]
  * Date 10/10/2025
  */
-package it.cnr.contab.docamm00.tabrif.bulk;
+package it.cnr.contab.inventario01.bulk;
 import it.cnr.jada.persistency.Keyed;
 public class Doc_trasporto_rientro_dettBase extends Doc_trasporto_rientro_dettKey implements Keyed {
 //    INTERVALLO VARCHAR(20) NOT NULL
@@ -10,9 +10,6 @@ public class Doc_trasporto_rientro_dettBase extends Doc_trasporto_rientro_dettKe
  
 //    QUANTITA DECIMAL(38,0) NOT NULL
 	private Long quantita;
- 
-//    STATO_TRASPORTO CHAR(1) NOT NULL
-	private String statoTrasporto;
  
 //    DATA_EFFETTIVA_MOVIMENTAZIONE TIMESTAMP(7)
 	private java.sql.Timestamp dataEffettivaMovimentazione;
@@ -72,20 +69,6 @@ public class Doc_trasporto_rientro_dettBase extends Doc_trasporto_rientro_dettKe
 	 **/
 	public void setQuantita(Long quantita)  {
 		this.quantita=quantita;
-	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Restituisce il valore di: [Stato del trasporto del singolo bene. Dominio: P = Predisposto per trasporto, T = Trasportato, R = Rientrato, A = Annullato]
-	 **/
-	public String getStatoTrasporto() {
-		return statoTrasporto;
-	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Setta il valore di: [Stato del trasporto del singolo bene. Dominio: P = Predisposto per trasporto, T = Trasportato, R = Rientrato, A = Annullato]
-	 **/
-	public void setStatoTrasporto(String statoTrasporto)  {
-		this.statoTrasporto=statoTrasporto;
 	}
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]

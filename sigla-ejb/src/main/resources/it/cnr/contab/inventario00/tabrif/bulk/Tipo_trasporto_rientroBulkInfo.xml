@@ -45,7 +45,7 @@
 		inputType="CHECKBOX"
 		enabledOnEdit="false"
 		nullable="false"
-		label="Flag che indica se per questa tipologia di documento e' possibile inserire delle note" />
+		label="Note Aggiuntive" />
 	<form
 		name="searchtool">
 		<formFieldProperty

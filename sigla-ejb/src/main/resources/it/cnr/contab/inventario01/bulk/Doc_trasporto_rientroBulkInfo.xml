@@ -1,445 +1,276 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU Affero General Public License as
-  ~     published by the Free Software Foundation, either version 3 of the
-  ~     License, or (at your option) any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU Affero General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU Affero General Public License
-  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
-  -->
-
 <bulkInfo
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xmlns="https://contab.cnr.it/schema/SIGLA"
-		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="https://contab.cnr.it/schema/SIGLA"
+        xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
 
-	<!-- ============================================ -->
-	<!-- CAMPI BASE DOCUMENTO                         -->
-	<!-- ============================================ -->
+    <!-- ============================================ -->
+    <!-- CAMPI CHIAVE (da Key) -->
+    <!-- ============================================ -->
 
-	<fieldProperty
-			name="pg_inventario"
-			property="inventario.pg_inventario"
-			inputType="ROTEXT"
-			maxLength="10"
-			inputSize="10"
-			label="Inventario" />
+    <fieldProperty
+            name="pgInventario"
+            property="pgInventario"
+            inputType="ROTEXT"
+            maxLength="10"
+            inputSize="10"
+            label="Inventario" />
 
-	<fieldProperty
-			name="ti_documento"
-			property="ti_documento"
-			maxLength="1"
-			inputSize="1"
-			inputType="ROTEXT"
-			label="Tipo Documento" />
+    <fieldProperty
+            name="tiDocumento"
+            property="tiDocumento"
+            maxLength="1"
+            inputSize="1"
+            inputType="ROTEXT"
+            label="Tipo Documento" />
 
-	<fieldProperty
-			name="esercizio"
-			property="esercizio"
-			inputType="TEXT"
-			inputSize="4"
-			maxLength="4"
-			enabledOnFreeSearch="false"
-			enabledOnInsert="false"
-			enabledOnEdit="false"
-			enabledOnSearch="false"
-			nullable="false"
-			label="Esercizio" />
+    <fieldProperty
+            name="esercizio"
+            property="esercizio"
+            inputType="TEXT"
+            inputSize="4"
+            maxLength="4"
+            enabledOnInsert="false"
+            enabledOnEdit="false"
+            label="Esercizio" />
 
-	<fieldProperty
-			name="pg_doc_trasporto_rientro"
-			property="pg_doc_trasporto_rientro"
-			inputType="TEXT"
-			inputSize="10"
-			maxLength="38"
-			enabledOnFreeSearch="true"
-			enabledOnInsert="false"
-			enabledOnEdit="false"
-			enabledOnSearch="true"
-			nullable="false"
-			label="Numero Documento" />
+    <fieldProperty
+            name="pgDocTrasportoRientro"
+            property="pgDocTrasportoRientro"
+            inputType="TEXT"
+            inputSize="10"
+            maxLength="10"
+            enabledOnInsert="false"
+            enabledOnEdit="false"
+            label="Numero Documento" />
 
-	<fieldProperty
-			name="ds_doc_trasporto_rientro"
-			property="ds_doc_trasporto_rientro"
-			inputType="TEXT"
-			maxLength="100"
-			inputSize="100"
-			nullable="false"
-			caseSensitiveSearch="false"
-			label="Descrizione"/>
+    <!-- ============================================ -->
+    <!-- CAMPI BASE (da Base) -->
+    <!-- ============================================ -->
 
-	<fieldProperty
-			name="data_registrazione"
-			property="data_registrazione"
-			inputType="TEXT"
-			maxLength="10"
-			inputSize="10"
-			nullable="false"
-			formatName="date_short"
-			label="Data Registrazione"
-			command="doOnData_registrazioneChange"/>
+    <fieldProperty
+            name="dsDocTrasportoRientro"
+            property="dsDocTrasportoRientro"
+            inputType="TEXT"
+            maxLength="100"
+            inputSize="100"
+            label="Descrizione"
+            nullable="false" />
 
-	<fieldProperty
-			name="cd_tipo_trasporto_rientro"
-			property="tipoMovimento.cd_tipo_trasporto_rientro"
-			inputType="TEXT"
-			inputSize="10"
-			maxLength="10"
-			nullable="false"
-			label="Codice Tipo Movimento" />
+    <fieldProperty
+            name="dataRegistrazione"
+            property="dataRegistrazione"
+            inputType="TEXT"
+            maxLength="10"
+            inputSize="10"
+            nullable="false"
+            formatName="date_short"
+            label="Data"
+            command ="doOnData_registrazioneChange"/>
 
-	<fieldProperty
-			name="tipoMovimento"
-			property="tipoMovimento"
-			printProperty="ds_tipo_trasporto_rientro"
-			optionsProperty="tipoMovimenti"
-			maxLength="100"
-			inputSize="100"
-			inputType="SELECT"
-			nullable="false"
-			enabledOnSearch="true"
-			label="Tipo Movimento"/>
+    <fieldProperty
+            name="stato"
+            property="stato"
+            inputType="ROTEXT"
+            maxLength="3"
+            inputSize="3"
+            label="Stato" />
 
-	<fieldProperty
-			name="stato"
-			property="stato"
-			inputType="SELECT"
-			maxLength="3"
-			inputSize="3"
-			nullable="false"
-			enabledOnSearch="true"
-			enabledOnEdit="true"
-			label="Stato"/>
+    <fieldProperty
+            name="destinazione"
+            property="destinazione"
+            maxLength="100"
+            inputSize="100"
+            inputType="TEXT"
+            label="Destinazione" />
 
-	<fieldProperty
-			name="destinazione"
-			property="destinazione"
-			inputType="TEXT"
-			maxLength="100"
-			inputSize="100"
-			caseSensitiveSearch="false"
-			label="Destinazione"/>
+    <fieldProperty
+            name="indirizzo"
+            property="indirizzo"
+            inputType="TEXTAREA"
+            cols="75"
+            rows="3"
+            maxLength="200"
+            label="Indirizzo" />
 
-	<fieldProperty
-			name="indirizzo"
-			property="indirizzo"
-			inputType="TEXTAREA"
-			cols="60"
-			rows="3"
-			maxLength="200"
-			label="Indirizzo"/>
+    <fieldProperty
+            name="note"
+            property="note"
+            inputType="TEXTAREA"
+            cols="75"
+            rows="4"
+            maxLength="4000"
+            label="Note Motivo Trasporto" />
 
-	<!-- ============================================ -->
-	<!--SEZIONE RITIRO DELEGATO               -->
-	<!-- ============================================ -->
+    <!-- ============================================ -->
+    <!-- CAMPI BULK -->
+    <!-- ============================================ -->
 
-	<fieldProperty
-			name="fl_incaricato"
-			property="fl_incaricato"
-			inputType="CHECKBOX"
-			nullable="false"
-			label="Ritiro Incaricato"
-			command="doOnFlIncaricatoChange"/>
+    <!-- TIPO MOVIMENTO -->
+    <fieldProperty
+            name="tipoMovimento"
+            property="tipoMovimento"
+            printProperty="dsTipoTrasportoRientro"
+            optionsProperty="tipoMovimenti"
+            maxLength="100"
+            inputSize="100"
+            inputType="SELECT"
+            nullable="false"
+            enabledOnSearch="true"
+            label="Tipo Movimento"/>
 
-	<fieldProperty
-			name="fl_vettore"
-			property="fl_vettore"
-			inputType="CHECKBOX"
-			nullable="false"
-			label="Ritiro Vettore"
-			command="doOnFlVettoreChange"/>
+    <!-- TIPO RITIRO (RADIO) -->
+    <fieldProperty
+            name="tipoRitiro"
+            property="tipoRitiro"
+            inputType="RADIOGROUP"
+            keysProperty="tipoRitiroKeys"
+            layout="HORIZONTAL"
+            nullable="false"
+            label="Tipo Ritiro" />
 
-	<!--CAMPO DIPENDENTE (CONDIZIONALE)-->
-	<!-- Visibile SOLO se fl_incaricato = Y o fl_vettore = Y -->
-	<fieldProperty
-			name="find_dipendente"
-			property="dipendente"
-			inputType="SEARCHTOOL"
-			formName="searchtool"
-			label="Dipendente (Incaricato/Vettore)"
-			enabledOnInsert="true"
-			enabledOnEdit="true"
-			enabledOnSearch="false"
-			command="doOnDipendenteChange"/>
+    <!-- DIPENDENTE INCARICATO -->
+    <fieldProperty
+            name="anagDipRitiro"
+            property="anagDipRitiro"
+            inputType="SEARCHTOOL"
+            formName="searchtool"
+            enabledOnSearch="true"
+            enabledOnEdit="true"
+            completeOnSave = "true"
+            label="Incaricato Al Ritiro" />
 
-	<fieldProperty
-			name="cd_dipendente"
-			property="dipendente.cd_anagr"
-			inputType="TEXT"
-			maxLength="20"
-			inputSize="20"
-			label="Codice Dipendente"
-			caseSensitiveSearch="false" />
+    <!-- UO CONSEGNATARIA -->
+    <fieldProperty
+            name="cdUoConsegnataria"
+            property="uo_consegnataria.cd_unita_organizzativa"
+            inputType="ROTEXT"
+            label="UO Consegnataria"
+            maxLength="30"
+            inputSize="30" />
 
-	<fieldProperty
-			name="denominazione_dipendente"
-			property="dipendente.denominazione_sede"
-			inputType="TEXT"
-			maxLength="100"
-			inputSize="50"
-			label="Nome Dipendente"
-			caseSensitiveSearch="false" />
+    <fieldProperty
+            name="dsUoConsegnataria"
+            property="uo_consegnataria.ds_unita_organizzativa"
+            inputType="ROTEXT"
+            maxLength="100"
+            inputSize="50" />
 
-	<fieldProperty
-			name="uo_dipendente"
-			property="dipendente.cd_unita_organizzativa"
-			inputType="ROTEXT"
-			maxLength="30"
-			inputSize="30"
-			label="UO Dipendente" />
+    <!-- CONSEGNATARIO -->
+    <fieldProperty
+            name="cdConsegnatario"
+            property="consegnatario.cd_terzo"
+            inputType="ROTEXT"
+            label="Consegnatario"
+            maxLength="8"
+            inputSize="8" />
 
-	<!--NOTE RITIRO (CONDIZIONALI)-->
-	<!-- Abilitate SOLO se fl_incaricato = Y o fl_vettore = Y -->
-	<fieldProperty
-			name="note_ritiro"
-			property="note_ritiro"
-			inputType="TEXTAREA"
-			cols="60"
-			rows="5"
-			maxLength="4000"
-			label="Note Ritiro"/>
+    <fieldProperty
+            name="cognomeConsegnatario"
+            property="consegnatario.denominazione_sede"
+            inputType="ROTEXT"
+            maxLength="100"
+            inputSize="50" />
 
-	<fieldProperty
-			name="note"
-			property="note"
-			inputType="TEXTAREA"
-			cols="60"
-			rows="5"
-			maxLength="4000"
-			label="Note Motivo Trasporto"/>
+    <!-- DELEGATO -->
+    <fieldProperty
+            name="cdDelegato"
+            property="delegato.cd_terzo"
+            inputType="ROTEXT"
+            label="Delegato"
+            maxLength="8"
+            inputSize="8" />
 
-	<!-- ============================================ -->
-	<!-- RICERCA BENI                                 -->
-	<!-- ============================================ -->
+    <fieldProperty
+            name="cognomeDelegato"
+            property="delegato.denominazione_sede"
+            inputType="ROTEXT"
+            maxLength="100"
+            inputSize="50" />
 
-	<fieldProperty
-			name="nr_inventario"
-			property="nr_inventario"
-			maxLength="10"
-			inputSize="10"
-			inputType="TEXT"
-			label="Codice Bene"/>
+    <!-- ============================================ -->
+    <!-- FORM FIELD PROPERTIES - CRITICAL! -->
+    <!-- ============================================ -->
 
-	<fieldProperty
-			name="cd_barre"
-			property="cd_barre"
-			maxLength="6"
-			inputSize="6"
-			inputType="TEXT"
-			label="Cod. barre"/>
+    <formFieldProperty name="pgInventario" />
+    <formFieldProperty name="tiDocumento" />
+    <formFieldProperty name="esercizio" />
+    <formFieldProperty name="pgDocTrasportoRientro" />
+    <formFieldProperty name="dsDocTrasportoRientro" />
+    <formFieldProperty name="dataRegistrazione" />
+    <formFieldProperty name="tipoMovimento" />
+    <formFieldProperty name="destinazione" />
+    <formFieldProperty name="indirizzo" />
+    <formFieldProperty name="tipoRitiro"/>
+    <formFieldProperty name="anagDipRitiro" />
+    <formFieldProperty name="note" />
+    <formFieldProperty name="stato" />
+    <formFieldProperty name="cdUoConsegnataria" />
+    <formFieldProperty name="dsUoConsegnataria" />
+    <formFieldProperty name="cdConsegnatario" />
+    <formFieldProperty name="cognomeConsegnatario" />
+    <formFieldProperty name="cdDelegato" />
+    <formFieldProperty name="cognomeDelegato" />
 
-	<!-- ============================================ -->
-	<!-- DATI CONSEGNATARIO                          -->
-	<!-- ============================================ -->
+    <!-- COLONNE TABELLA DI DEFAULT -->
+    <columnFieldProperty name="esercizio" />
+    <columnFieldProperty name="pgDocTrasportoRientro" />
+    <columnFieldProperty name="dataRegistrazione" />
+    <columnFieldProperty name="tipoMovimento" />
+    <columnFieldProperty name="dsDocTrasportoRientro" />
+    <columnFieldProperty name="destinazione" />
+    <columnFieldProperty name="stato" />
 
-	<fieldProperty
-			name="cd_consegnatario"
-			property="consegnatario.cd_terzo"
-			inputType="ROTEXT"
-			label="Consegnatario"
-			maxLength="6"
-			inputSize="6"
-			enabledOnSearch="true"
-			enabledOnEdit="true"
-			caseSensitiveSearch="false" />
+    <!-- CAMPI DI RICERCA DI DEFAULT -->
+    <findFieldProperty name="esercizio" />
+    <findFieldProperty name="pgDocTrasportoRientro" />
+    <findFieldProperty name="dataRegistrazione" />
+    <findFieldProperty name="tipoMovimento" />
+    <findFieldProperty name="dsDocTrasportoRientro" />
+    <findFieldProperty name="destinazione" />
 
-	<fieldProperty
-			name="cognome_consegnatario"
-			property="consegnatario.denominazione_sede"
-			inputType="ROTEXT"
-			maxLength="30"
-			inputSize="30"
-			enabledOnSearch="true"
-			enabledOnEdit="true"
-			caseSensitiveSearch="false" />
+    <!-- ============================================ -->
+    <!-- COLUMN SETS -->
+    <!-- ============================================ -->
 
-	<!-- ============================================ -->
-	<!-- DATI DELEGATO                               -->
-	<!-- ============================================ -->
+    <columnSet name="T">
+        <columnFieldProperty name="esercizio" />
+        <columnFieldProperty name="pgDocTrasportoRientro" />
+        <columnFieldProperty name="dataRegistrazione" label="Data Trasporto"/>
+        <columnFieldProperty name="tipoMovimento" />
+        <columnFieldProperty name="dsDocTrasportoRientro" />
+        <columnFieldProperty name="destinazione" />
+        <columnFieldProperty name="stato" />
+    </columnSet>
 
-	<fieldProperty
-			name="cd_delegato"
-			property="delegato.cd_terzo"
-			inputType="ROTEXT"
-			label="Delegato"
-			maxLength="6"
-			inputSize="6"
-			enabledOnSearch="true"
-			enabledOnEdit="true"
-			caseSensitiveSearch="false" />
+    <columnSet name="R">
+        <columnFieldProperty name="esercizio" />
+        <columnFieldProperty name="pgDocTrasportoRientro" />
+        <columnFieldProperty name="dataRegistrazione" label="Data Rientro"/>
+        <columnFieldProperty name="tipoMovimento" />
+        <columnFieldProperty name="dsDocTrasportoRientro" />
+        <columnFieldProperty name="destinazione" />
+        <columnFieldProperty name="stato" />
+    </columnSet>
 
-	<fieldProperty
-			name="cognome_delegato"
-			property="delegato.denominazione_sede"
-			inputType="ROTEXT"
-			maxLength="30"
-			inputSize="30"
-			enabledOnSearch="true"
-			enabledOnEdit="true"
-			caseSensitiveSearch="false" />
+    <!-- ============================================ -->
+    <!-- FREE SEARCH SETS -->
+    <!-- ============================================ -->
 
-	<!-- ============================================ -->
-	<!-- DATI UO CONSEGNATARIA                       -->
-	<!-- ============================================ -->
+    <freeSearchSet name="T">
+        <findFieldProperty name="tipoMovimento" />
+        <findFieldProperty name="dataRegistrazione"/>
+        <findFieldProperty name="dsDocTrasportoRientro" />
+        <findFieldProperty name="pgDocTrasportoRientro" />
+        <findFieldProperty name="destinazione" />
+    </freeSearchSet>
 
-	<fieldProperty
-			name="cd_uo_consegnataria"
-			property="uo_consegnataria.cd_unita_organizzativa"
-			inputType="ROTEXT"
-			label="UO Consegnataria"
-			maxLength="6"
-			inputSize="6"
-			enabledOnSearch="true"
-			enabledOnEdit="true"
-			caseSensitiveSearch="false" />
-
-	<fieldProperty
-			name="ds_uo_consegnataria"
-			property="uo_consegnataria.ds_unita_organizzativa"
-			inputType="ROTEXT"
-			maxLength="30"
-			inputSize="30"
-			enabledOnSearch="true"
-			enabledOnEdit="true"
-			caseSensitiveSearch="false" />
-
-	<!-- ============================================ -->
-	<!-- FORM FIELDS PROPERTY                         -->
-	<!-- ============================================ -->
-
-	<formFieldProperty name="tipoMovimento" />
-	<formFieldProperty name="cd_uo_consegnataria" />
-	<formFieldProperty name="ds_uo_consegnataria" />
-	<formFieldProperty name="cd_consegnatario" />
-	<formFieldProperty name="cognome_consegnatario" />
-	<formFieldProperty name="cd_delegato" />
-	<formFieldProperty name="cognome_delegato" />
-	<formFieldProperty name="uo_consegnataria"/>
-	<formFieldProperty name="delegato"/>
-	<formFieldProperty name="consegnatario" />
-	<formFieldProperty name="pg_inventario" />
-	<formFieldProperty name="ti_documento" />
-	<formFieldProperty name="esercizio" />
-	<formFieldProperty name="pg_doc_trasporto_rientro" />
-	<formFieldProperty name="ds_doc_trasporto_rientro" />
-	<formFieldProperty name="data_registrazione" />
-	<formFieldProperty name="cd_tipo_trasporto_rientro" />
-	<formFieldProperty name="stato" />
-	<formFieldProperty name="destinazione" />
-	<formFieldProperty name="indirizzo" />
-
-	<!--Campi ritiro delegato -->
-	<formFieldProperty name="fl_incaricato" />
-	<formFieldProperty name="fl_vettore" />
-	<formFieldProperty name="find_dipendente" />
-	<formFieldProperty name="cd_dipendente" />
-	<formFieldProperty name="denominazione_dipendente" />
-	<formFieldProperty name="uo_dipendente" />
-	<formFieldProperty name="note_ritiro" />
-	<formFieldProperty name="note" />
-
-	<!-- ============================================ -->
-	<!-- FIND FIELDS PROPERTY                         -->
-	<!-- ============================================ -->
-
-	<findFieldProperty name="pg_inventario" />
-	<findFieldProperty name="ti_documento" />
-	<findFieldProperty name="esercizio" />
-	<findFieldProperty name="pg_doc_trasporto_rientro" />
-	<findFieldProperty name="ds_doc_trasporto_rientro" />
-	<findFieldProperty name="data_registrazione" />
-	<findFieldProperty name="cd_tipo_trasporto_rientro" />
-	<findFieldProperty name="tipoMovimento" />
-	<findFieldProperty name="stato" />
-	<findFieldProperty name="destinazione" />
-	<findFieldProperty name="indirizzo" />
-	<findFieldProperty name="fl_incaricato" />
-	<findFieldProperty name="fl_vettore" />
-	<findFieldProperty name="note_ritiro" />
-	<findFieldProperty name="note" />
-	<findFieldProperty name="nr_inventario" />
-	<findFieldProperty name="cd_barre" />
-
-	<!-- ============================================ -->
-	<!-- COLUMN FIELDS PROPERTY                       -->
-	<!-- ============================================ -->
-
-	<columnFieldProperty name="pg_inventario" />
-	<columnFieldProperty name="ti_documento" />
-	<columnFieldProperty name="esercizio" />
-	<columnFieldProperty name="pg_doc_trasporto_rientro" />
-	<columnFieldProperty name="ds_doc_trasporto_rientro" />
-	<columnFieldProperty name="data_registrazione" />
-	<columnFieldProperty name="cd_tipo_trasporto_rientro" />
-	<columnFieldProperty name="tipoMovimento" />
-	<columnFieldProperty name="stato" />
-	<columnFieldProperty name="destinazione" />
-	<columnFieldProperty name="indirizzo" />
-
-	<!-- ============================================ -->
-	<!-- COLUMN SETS                                  -->
-	<!-- ============================================ -->
-
-	<columnSet name="TRASPORTO">
-		<columnFieldProperty name="pg_inventario" />
-		<columnFieldProperty name="esercizio" />
-		<columnFieldProperty name="tipoMovimento" />
-		<columnFieldProperty name="data_registrazione" label="Data Trasporto"/>
-		<columnFieldProperty name="ds_doc_trasporto_rientro" />
-		<columnFieldProperty name="pg_doc_trasporto_rientro" />
-		<columnFieldProperty name="stato" />
-		<columnFieldProperty name="destinazione" />
-	</columnSet>
-
-	<columnSet name="RIENTRO">
-		<columnFieldProperty name="pg_inventario" />
-		<columnFieldProperty name="esercizio" />
-		<columnFieldProperty name="tipoMovimento" />
-		<columnFieldProperty name="data_registrazione" label="Data Rientro"/>
-		<columnFieldProperty name="ds_doc_trasporto_rientro" />
-		<columnFieldProperty name="pg_doc_trasporto_rientro" />
-		<columnFieldProperty name="stato" />
-		<columnFieldProperty name="destinazione" />
-	</columnSet>
-
-	<!-- ============================================ -->
-	<!-- FREE SEARCH SETS                             -->
-	<!-- ============================================ -->
-
-	<freeSearchSet name="TRASPORTO">
-		<findFieldProperty name="tipoMovimento" />
-		<findFieldProperty name="data_registrazione"/>
-		<findFieldProperty name="ds_doc_trasporto_rientro" />
-		<findFieldProperty name="pg_doc_trasporto_rientro" />
-		<findFieldProperty name="stato" />
-		<findFieldProperty name="destinazione" />
-		<findFieldProperty name="indirizzo" />
-		<findFieldProperty name="nr_inventario" />
-		<findFieldProperty name="cd_barre" />
-		<findFieldProperty name="fl_incaricato" />
-		<findFieldProperty name="fl_vettore" />
-	</freeSearchSet>
-
-	<freeSearchSet name="RIENTRO">
-		<findFieldProperty name="tipoMovimento" />
-		<findFieldProperty name="data_registrazione"/>
-		<findFieldProperty name="pg_doc_trasporto_rientro" />
-		<findFieldProperty name="ds_doc_trasporto_rientro" />
-		<findFieldProperty name="stato" />
-		<findFieldProperty name="destinazione" />
-		<findFieldProperty name="nr_inventario" />
-		<findFieldProperty name="cd_barre" />
-		<findFieldProperty name="fl_incaricato" />
-		<findFieldProperty name="fl_vettore" />
-	</freeSearchSet>
+    <freeSearchSet name="R">
+        <findFieldProperty name="tipoMovimento" />
+        <findFieldProperty name="dataRegistrazione"/>
+        <findFieldProperty name="dsDocTrasportoRientro" />
+        <findFieldProperty name="pgDocTrasportoRientro" />
+        <findFieldProperty name="destinazione" />
+    </freeSearchSet>
 
 </bulkInfo>

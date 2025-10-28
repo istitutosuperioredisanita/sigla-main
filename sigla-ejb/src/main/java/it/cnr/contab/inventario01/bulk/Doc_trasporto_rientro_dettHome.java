@@ -2,17 +2,23 @@
  * Created by BulkGenerator 2.0 [07/12/2009]
  * Date 10/10/2025
  */
-package it.cnr.contab.docamm00.tabrif.bulk;
+package it.cnr.contab.inventario01.bulk;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.pdg00.bulk.Pdg_residuo_detBulk;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.persistency.IntrospectionException;
+import it.cnr.jada.persistency.KeyedPersistent;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
+import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
 /**
@@ -39,15 +45,22 @@ public class Doc_trasporto_rientro_dettHome extends BulkHome {
 	 * Recupera tutti i dettagli di un documento
 	 */
 	public java.util.List getDetailsFor(Doc_trasporto_rientroBulk doc)
-			throws PersistencyException {
+			throws it.cnr.jada.persistency.PersistencyException {
+		PersistentHome dettHome = getHomeCache().getHome(Doc_trasporto_rientro_dettBulk.class);
+		SQLBuilder sql = dettHome.createSQLBuilder();
+		// Usa i nomi delle COLONNE DATABASE, non delle proprietà Java
+		sql.addSQLClause(FindClause.AND, "ESERCIZIO",
+				SQLBuilder.EQUALS, doc.getEsercizio());
+		sql.addSQLClause(FindClause.AND, "PG_INVENTARIO",
+				SQLBuilder.EQUALS, doc.getInventario().getPg_inventario());
+		sql.addSQLClause(FindClause.AND, "TI_DOCUMENTO",
+				SQLBuilder.EQUALS, doc.getTiDocumento());
+		sql.addSQLClause(FindClause.AND, "PG_DOC_TRASPORTO_RIENTRO",
+				SQLBuilder.EQUALS, doc.getPgDocTrasportoRientro());
 
-		SQLBuilder sql = createSQLBuilder();
-		sql.addClause("AND", "esercizio", sql.EQUALS, doc.getEsercizio());
-		sql.addClause("AND", "pg_inventario", sql.EQUALS, doc.getPg_inventario());
-		sql.addClause("AND", "TI_DOCUMENTO", sql.EQUALS, doc.getTiDocumento());
-		sql.addClause("AND", "PG_DOC_TRASPORTO_RIENTRO", sql.EQUALS, doc.getPgDocTrasportoRientro());
+		sql.addOrderBy("NR_INVENTARIO, PROGRESSIVO");
 
-		return fetchAll(sql);
+		return dettHome.fetchAll(sql);
 	}
 
 	/**
@@ -221,6 +234,49 @@ public class Doc_trasporto_rientro_dettHome extends BulkHome {
 
 		Inventario_beniBulk record = (Inventario_beniBulk) results.iterator().next();
 		return record.getCd_unita_organizzativa();
+	}
+
+	public void escludiBeniInDocumentiTrasporto(
+			SQLBuilder sql,
+			Long pg_inventario,
+			boolean escludiSoloDocumentiNonAnnullati) throws IntrospectionException {
+
+		// Creo un SQLBuilder per la subquery NOT EXISTS
+		SQLBuilder subquery = createSQLBuilder();
+
+		// Aggiungo la tabella DOC_TRASPORTO_RIENTRO_DETT come tabella principale
+		subquery.addTableToHeader("DOC_TRASPORTO_RIENTRO_DETT", "DTR_DETT");
+
+		// Se necessario, aggiungo anche la tabella HEAD e i JOIN
+		if (escludiSoloDocumentiNonAnnullati) {
+			// IMPORTANTE: Devo aggiungere anche DOC_TRASPORTO_RIENTRO al FROM
+			subquery.addTableToHeader("DOC_TRASPORTO_RIENTRO", "DTR_HEAD");
+
+			// Aggiungo i join tra DETT e HEAD usando i 4 campi della PK
+			subquery.addSQLJoin("DTR_DETT.PG_INVENTARIO", "DTR_HEAD.PG_INVENTARIO");
+			subquery.addSQLJoin("DTR_DETT.TI_DOCUMENTO", "DTR_HEAD.TI_DOCUMENTO");
+			subquery.addSQLJoin("DTR_DETT.ESERCIZIO", "DTR_HEAD.ESERCIZIO");
+			subquery.addSQLJoin("DTR_DETT.PG_DOC_TRASPORTO_RIENTRO", "DTR_HEAD.PG_DOC_TRASPORTO_RIENTRO");
+		}
+
+		// Aggiungo la condizione WHERE sul PG_INVENTARIO
+		subquery.addSQLClause("AND", "DTR_DETT.PG_INVENTARIO", SQLBuilder.EQUALS, pg_inventario);
+
+		// Aggiungo le condizioni di correlazione con la query principale (INVENTARIO_BENI)
+		String mainTableAlias = sql.getColumnMap() != null ?
+				sql.getColumnMap().getTableName() : "INVENTARIO_BENI";
+
+		// Correlazione sui campi NR_INVENTARIO e PROGRESSIVO
+		subquery.addSQLClause("AND", "DTR_DETT.NR_INVENTARIO = " + mainTableAlias + ".NR_INVENTARIO");
+		subquery.addSQLClause("AND", "DTR_DETT.PROGRESSIVO = " + mainTableAlias + ".PROGRESSIVO");
+
+		// Se necessario, aggiungo la condizione sullo STATO (esclude gli annullati)
+		if (escludiSoloDocumentiNonAnnullati) {
+			subquery.addSQLClause("AND", "DTR_HEAD.STATO", SQLBuilder.NOT_EQUALS, "ANN");
+		}
+
+		// Aggiungo la clausola NOT EXISTS alla query principale
+		sql.addSQLNotExistsClause("AND", subquery);
 	}
 
 }

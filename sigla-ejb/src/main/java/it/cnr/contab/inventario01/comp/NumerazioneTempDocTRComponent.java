@@ -17,7 +17,7 @@
 
 package it.cnr.contab.inventario01.comp;
 
-import it.cnr.contab.docamm00.tabrif.bulk.Doc_trasporto_rientroBulk;
+import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario00.docs.bulk.Numeratore_buono_c_sBulk;
 import it.cnr.contab.inventario00.docs.bulk.Numeratore_doc_t_rHome;
 import it.cnr.jada.UserContext;

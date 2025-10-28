@@ -18,13 +18,12 @@
 package it.cnr.contab.inventario01.actions;
 
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.Doc_trasporto_rientroBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.Doc_trasporto_rientro_dettBulk;
+import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
+import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Tipo_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.bp.CRUDRientroBeniInvBP;
 import it.cnr.jada.action.*;
-import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.PrimaryKeyHashtable;
 import it.cnr.jada.comp.ApplicationException;
@@ -133,42 +132,42 @@ public class CRUDRientroDocAction extends it.cnr.jada.util.action.CRUDAction {
         }
     }
 
-    /**
-     * Gestisce l'aggiunta di beni al documento di rientro
-     * Permette di selezionare i beni da far rientrare
-     */
-    public Forward doAddToCRUDMain_Dettaglio(ActionContext context) {
-        try {
-            CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP) getBusinessProcess(context);
-            Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) bp.getModel();
-
-            // Controlla che sia stato specificato un Tipo Movimento
-            if (documento.getTipoMovimento() == null) {
-                return handleException(context,
-                        new it.cnr.jada.bulk.ValidationException(
-                                "Attenzione: specificare un tipo di movimento nella testata"));
-            }
-
-            // Controlla che la data di registrazione sia stata specificata
-            if (documento.getDataRegistrazione() == null) {
-                return handleException(context,
-                        new it.cnr.jada.bulk.ValidationException(
-                                "Attenzione: specificare la data di rientro nella testata"));
-            }
-
-            // Apre una ricerca guidata sui beni trasportati disponibili per il rientro
-            RicercaLiberaBP rlbp = (RicercaLiberaBP) context.createBusinessProcess("RicercaLibera");
-            rlbp.setCanPerformSearchWithoutClauses(false);
-            rlbp.setSearchProvider(bp.getBeneSearchProvider(context));
-            rlbp.setPrototype(new Inventario_beniBulk());
-            rlbp.setMultiSelection(true);
-            context.addHookForward("seleziona", this, "doBringBackAddToBeniDaRientrare");
-            return context.addBusinessProcess(rlbp);
-
-        } catch (Throwable e) {
-            return handleException(context, e);
-        }
-    }
+//    /**
+//     * Gestisce l'aggiunta di beni al documento di rientro
+//     * Permette di selezionare i beni da far rientrare
+//     */
+//    public Forward doAddToCRUDMain_Dettaglio(ActionContext context) {
+//        try {
+//            CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP) getBusinessProcess(context);
+//            Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) bp.getModel();
+//
+//            // Controlla che sia stato specificato un Tipo Movimento
+//            if (documento.getTipoMovimento() == null) {
+//                return handleException(context,
+//                        new it.cnr.jada.bulk.ValidationException(
+//                                "Attenzione: specificare un tipo di movimento nella testata"));
+//            }
+//
+//            // Controlla che la data di registrazione sia stata specificata
+//            if (documento.getDataRegistrazione() == null) {
+//                return handleException(context,
+//                        new it.cnr.jada.bulk.ValidationException(
+//                                "Attenzione: specificare la data di rientro nella testata"));
+//            }
+//
+//            // Apre una ricerca guidata sui beni trasportati disponibili per il rientro
+//            RicercaLiberaBP rlbp = (RicercaLiberaBP) context.createBusinessProcess("RicercaLibera");
+//            rlbp.setCanPerformSearchWithoutClauses(false);
+//            rlbp.setSearchProvider(bp.getBeneSearchProvider(context));
+//            rlbp.setPrototype(new Inventario_beniBulk());
+//            rlbp.setMultiSelection(true);
+//            context.addHookForward("seleziona", this, "doBringBackAddToBeniDaRientrare");
+//            return context.addBusinessProcess(rlbp);
+//
+//        } catch (Throwable e) {
+//            return handleException(context, e);
+//        }
+//    }
 
     /**
      * Gestisce il ritorno dalla selezione dei beni da far rientrare
@@ -188,35 +187,35 @@ public class CRUDRientroDocAction extends it.cnr.jada.util.action.CRUDAction {
         }
     }
 
-    /**
-     * Importa tutti i beni da un documento di trasporto selezionato
-     */
-    public Forward doImportaDaTrasporto(ActionContext context) {
-        try {
-            fillModel(context);
-            CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP) getBusinessProcess(context);
-            Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) bp.getModel();
-
-            // Verifica che sia stato specificato un tipo movimento
-            if (documento.getTipoMovimento() == null) {
-                return handleException(context,
-                        new it.cnr.jada.bulk.ValidationException(
-                                "Attenzione: specificare un tipo di movimento nella testata"));
-            }
-
-            // Apre una ricerca sui documenti di trasporto disponibili
-            RicercaLiberaBP rlbp = (RicercaLiberaBP) context.createBusinessProcess("RicercaLibera");
-            rlbp.setCanPerformSearchWithoutClauses(false);
-            rlbp.setSearchProvider(bp.getTrasportoSearchProvider(context));
-            rlbp.setPrototype(new Doc_trasporto_rientroBulk());
-            rlbp.setMultiSelection(false);
-            context.addHookForward("seleziona", this, "doBringBackTrasportoSelezionato");
-            return context.addBusinessProcess(rlbp);
-
-        } catch (Throwable e) {
-            return handleException(context, e);
-        }
-    }
+//    /**
+//     * Importa tutti i beni da un documento di trasporto selezionato
+//     */
+//    public Forward doImportaDaTrasporto(ActionContext context) {
+//        try {
+//            fillModel(context);
+//            CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP) getBusinessProcess(context);
+//            Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) bp.getModel();
+//
+//            // Verifica che sia stato specificato un tipo movimento
+//            if (documento.getTipoMovimento() == null) {
+//                return handleException(context,
+//                        new it.cnr.jada.bulk.ValidationException(
+//                                "Attenzione: specificare un tipo di movimento nella testata"));
+//            }
+//
+//            // Apre una ricerca sui documenti di trasporto disponibili
+//            RicercaLiberaBP rlbp = (RicercaLiberaBP) context.createBusinessProcess("RicercaLibera");
+//            rlbp.setCanPerformSearchWithoutClauses(false);
+//            rlbp.setSearchProvider(bp.getTrasportoSearchProvider(context));
+//            rlbp.setPrototype(new Doc_trasporto_rientroBulk());
+//            rlbp.setMultiSelection(false);
+//            context.addHookForward("seleziona", this, "doBringBackTrasportoSelezionato");
+//            return context.addBusinessProcess(rlbp);
+//
+//        } catch (Throwable e) {
+//            return handleException(context, e);
+//        }
+//    }
 
     /**
      * Gestisce il ritorno dalla selezione del trasporto
@@ -325,32 +324,32 @@ public class CRUDRientroDocAction extends it.cnr.jada.util.action.CRUDAction {
         }
     }
 
-    /**
-     * Gestisce la deselezione del flag "Bene Accessorio"
-     */
-    public Forward doDeselezionaBeneAccessorio(ActionContext context) {
-        try {
-            CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP) getBusinessProcess(context);
-            Doc_trasporto_rientro_dettBulk riga = (Doc_trasporto_rientro_dettBulk) bp.getDettaglio().getModel();
-            fillModel(context);
-
-            if (riga.isAccessorioContestuale()) {
-                doDeselezionaAccessoriContestuali(context);
-                Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) bp.getModel();
-                documento.removeFromAccessoriContestualiHash(riga);
-            }
-
-            riga.getBene().setBene_principale(null);
-            riga.getBene().setAssegnatario(null);
-            riga.getBene().setUbicazione(null);
-            riga.setFl_accessorio_contestuale(Boolean.FALSE);
-            riga.getBene().setEtichetta(null);
-
-            return context.findDefaultForward();
-        } catch (Throwable e) {
-            return handleException(context, e);
-        }
-    }
+//    /**
+//     * Gestisce la deselezione del flag "Bene Accessorio"
+//     */
+//    public Forward doDeselezionaBeneAccessorio(ActionContext context) {
+//        try {
+//            CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP) getBusinessProcess(context);
+//            Doc_trasporto_rientro_dettBulk riga = (Doc_trasporto_rientro_dettBulk) bp.getDettaglio().getModel();
+//            fillModel(context);
+//
+//            if (riga.isAccessorioContestuale()) {
+//                doDeselezionaAccessoriContestuali(context);
+//                Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) bp.getModel();
+//                documento.removeFromAccessoriContestualiHash(riga);
+//            }
+//
+//            riga.getBene().setBene_principale(null);
+//            riga.getBene().setAssegnatario(null);
+//            riga.getBene().setUbicazione(null);
+//            riga.setFl_accessorio_contestuale(Boolean.FALSE);
+//            riga.getBene().setEtichetta(null);
+//
+//            return context.findDefaultForward();
+//        } catch (Throwable e) {
+//            return handleException(context, e);
+//        }
+//    }
 
     /**
      * Trova gli accessori contestuali disponibili
@@ -401,68 +400,68 @@ public class CRUDRientroDocAction extends it.cnr.jada.util.action.CRUDAction {
         }
     }
 
-    /**
-     * Gestisce il ritorno dalla selezione dell'accessorio contestuale
-     */
-    public Forward doBringBackAccessoriContestuali(ActionContext context) {
-        try {
-            HookForward caller = (HookForward) context.getCaller();
-            CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP) getBusinessProcess(context);
-            Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) bp.getModel();
-            Doc_trasporto_rientro_dettBulk selezionato =
-                    (Doc_trasporto_rientro_dettBulk) caller.getParameter("focusedElement");
-            Doc_trasporto_rientro_dettBulk riga = (Doc_trasporto_rientro_dettBulk) bp.getDettaglio().getModel();
-            java.util.List selectedModels = (java.util.List) caller.getParameter("selectedElements");
+//    /**
+//     * Gestisce il ritorno dalla selezione dell'accessorio contestuale
+//     */
+//    public Forward doBringBackAccessoriContestuali(ActionContext context) {
+//        try {
+//            HookForward caller = (HookForward) context.getCaller();
+//            CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP) getBusinessProcess(context);
+//            Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) bp.getModel();
+//            Doc_trasporto_rientro_dettBulk selezionato =
+//                    (Doc_trasporto_rientro_dettBulk) caller.getParameter("focusedElement");
+//            Doc_trasporto_rientro_dettBulk riga = (Doc_trasporto_rientro_dettBulk) bp.getDettaglio().getModel();
+//            java.util.List selectedModels = (java.util.List) caller.getParameter("selectedElements");
+//
+//            if (selectedModels != null && !selectedModels.isEmpty()) {
+//                riga.getBene().setBene_principale(new Inventario_beniBulk());
+//                riga.getBene().getBene_principale().setDs_bene(selezionato.getBene().getDs_bene());
+//
+//                // Copia l'etichetta dal bene principale
+//                if (selezionato.getBene().getEtichetta() != null) {
+//                    riga.getBene().getBene_principale().setEtichetta(selezionato.getBene().getEtichetta());
+//                    riga.getBene().setEtichetta(selezionato.getBene().getEtichetta());
+//                }
+//
+//                riga.getBene().setUbicazione(selezionato.getBene().getUbicazione());
+//                riga.getBene().setAssegnatario(selezionato.getBene().getAssegnatario());
+//                riga.setFl_bene_accessorio(Boolean.TRUE);
+//                riga.setFl_accessorio_contestuale(Boolean.TRUE);
+//                bp.setProgressivo_beni(documento.addToAccessoriContestualiHash(selezionato, riga,
+//                        bp.getProgressivo_beni()));
+//            } else {
+//                riga.setFl_accessorio_contestuale(Boolean.FALSE);
+//            }
+//
+//            return context.findDefaultForward();
+//        } catch (Throwable e) {
+//            return handleException(context, e);
+//        }
+//    }
 
-            if (selectedModels != null && !selectedModels.isEmpty()) {
-                riga.getBene().setBene_principale(new Inventario_beniBulk());
-                riga.getBene().getBene_principale().setDs_bene(selezionato.getBene().getDs_bene());
-
-                // Copia l'etichetta dal bene principale
-                if (selezionato.getBene().getEtichetta() != null) {
-                    riga.getBene().getBene_principale().setEtichetta(selezionato.getBene().getEtichetta());
-                    riga.getBene().setEtichetta(selezionato.getBene().getEtichetta());
-                }
-
-                riga.getBene().setUbicazione(selezionato.getBene().getUbicazione());
-                riga.getBene().setAssegnatario(selezionato.getBene().getAssegnatario());
-                riga.setFl_bene_accessorio(Boolean.TRUE);
-                riga.setFl_accessorio_contestuale(Boolean.TRUE);
-                bp.setProgressivo_beni(documento.addToAccessoriContestualiHash(selezionato, riga,
-                        bp.getProgressivo_beni()));
-            } else {
-                riga.setFl_accessorio_contestuale(Boolean.FALSE);
-            }
-
-            return context.findDefaultForward();
-        } catch (Throwable e) {
-            return handleException(context, e);
-        }
-    }
-
-    /**
-     * Deseleziona gli accessori contestuali
-     */
-    public Forward doDeselezionaAccessoriContestuali(ActionContext context) {
-        try {
-            CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP) getBusinessProcess(context);
-            fillModel(context);
-            Doc_trasporto_rientro_dettBulk riga = (Doc_trasporto_rientro_dettBulk) bp.getDettaglio().getModel();
-            Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) bp.getModel();
-
-            riga.getBene().setBene_principale(null);
-            riga.getBene().setAssegnatario(null);
-            riga.getBene().setUbicazione(null);
-            riga.setFl_accessorio_contestuale(Boolean.FALSE);
-            riga.getBene().setEtichetta(null);
-
-            documento.removeFromAccessoriContestualiHash(riga);
-
-            return context.findDefaultForward();
-        } catch (Throwable e) {
-            return handleException(context, e);
-        }
-    }
+//    /**
+//     * Deseleziona gli accessori contestuali
+//     */
+//    public Forward doDeselezionaAccessoriContestuali(ActionContext context) {
+//        try {
+//            CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP) getBusinessProcess(context);
+//            fillModel(context);
+//            Doc_trasporto_rientro_dettBulk riga = (Doc_trasporto_rientro_dettBulk) bp.getDettaglio().getModel();
+//            Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) bp.getModel();
+//
+//            riga.getBene().setBene_principale(null);
+//            riga.getBene().setAssegnatario(null);
+//            riga.getBene().setUbicazione(null);
+//            riga.setFl_accessorio_contestuale(Boolean.FALSE);
+//            riga.getBene().setEtichetta(null);
+//
+//            documento.removeFromAccessoriContestualiHash(riga);
+//
+//            return context.findDefaultForward();
+//        } catch (Throwable e) {
+//            return handleException(context, e);
+//        }
+//    }
 
     /**
      * Apre la ricerca libera per il bene principale
@@ -506,35 +505,35 @@ public class CRUDRientroDocAction extends it.cnr.jada.util.action.CRUDAction {
         }
     }
 
-    /**
-     * Gestisce l'eliminazione di un bene dal documento di rientro
-     */
-    public Forward doRemoveFromCRUDMain_Dettaglio(ActionContext context)
-            throws java.rmi.RemoteException, BusinessProcessException {
-
-        CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP) getBusinessProcess(context);
-        Doc_trasporto_rientro_dettBulk riga = (Doc_trasporto_rientro_dettBulk) bp.getDettaglio().getModel();
-
-        if (riga != null) {
-            // Il bene è un bene padre di beni segnalati come accessori
-            if (riga.isAssociatoConAccessorioContestuale()) {
-                return handleException(context,
-                        new it.cnr.jada.comp.ApplicationException(
-                                "Il bene selezionato non può essere cancellato, poichè associato ad altri beni"));
-            }
-
-            try {
-                bp.getDettaglio().remove(context);
-            } catch (it.cnr.jada.bulk.ValidationException vge) {
-            }
-
-            if (riga.isAccessorioContestuale()) {
-                Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) riga.getDoc_trasporto_rientro();
-                documento.removeFromAccessoriContestualiHash(riga);
-            }
-        }
-        return context.findDefaultForward();
-    }
+//    /**
+//     * Gestisce l'eliminazione di un bene dal documento di rientro
+//     */
+//    public Forward doRemoveFromCRUDMain_Dettaglio(ActionContext context)
+//            throws java.rmi.RemoteException, BusinessProcessException {
+//
+//        CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP) getBusinessProcess(context);
+//        Doc_trasporto_rientro_dettBulk riga = (Doc_trasporto_rientro_dettBulk) bp.getDettaglio().getModel();
+//
+//        if (riga != null) {
+//            // Il bene è un bene padre di beni segnalati come accessori
+//            if (riga.isAssociatoConAccessorioContestuale()) {
+//                return handleException(context,
+//                        new it.cnr.jada.comp.ApplicationException(
+//                                "Il bene selezionato non può essere cancellato, poichè associato ad altri beni"));
+//            }
+//
+//            try {
+//                bp.getDettaglio().remove(context);
+//            } catch (it.cnr.jada.bulk.ValidationException vge) {
+//            }
+//
+//            if (riga.isAccessorioContestuale()) {
+//                Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) riga.getDoc_trasporto_rientro();
+//                documento.removeFromAccessoriContestualiHash(riga);
+//            }
+//        }
+//        return context.findDefaultForward();
+//    }
 
     /**
      * Gestisce la modifica della data di registrazione

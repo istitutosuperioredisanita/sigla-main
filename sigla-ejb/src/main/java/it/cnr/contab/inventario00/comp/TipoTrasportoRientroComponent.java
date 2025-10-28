@@ -17,7 +17,6 @@
 
 package it.cnr.contab.inventario00.comp;
 
-import it.cnr.contab.docamm00.tabrif.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Tipo_trasporto_rientroBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -41,9 +40,9 @@ public class TipoTrasportoRientroComponent
 	public void eliminaConBulk (UserContext userContext,OggettoBulk bulk) throws ComponentException{
 
 		try{
-			Tipo_trasporto_rientroBulk tipoCS= (Tipo_trasporto_rientroBulk)bulk;
-			tipoCS.setDtCancellazione(getHome(userContext,Tipo_trasporto_rientroBulk.class).getServerTimestamp());
-			updateBulk( userContext, tipoCS);
+			Tipo_trasporto_rientroBulk tipoTR= (Tipo_trasporto_rientroBulk)bulk;
+			tipoTR.setDtCancellazione(getHome(userContext,Tipo_trasporto_rientroBulk.class).getServerTimestamp());
+			updateBulk( userContext, tipoTR);
 		}catch (it.cnr.jada.persistency.PersistencyException e){
 			throw handleException(bulk,e);
 		}

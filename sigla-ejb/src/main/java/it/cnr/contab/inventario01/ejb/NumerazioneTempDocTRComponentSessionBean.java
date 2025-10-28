@@ -17,7 +17,7 @@
 
 package it.cnr.contab.inventario01.ejb;
 
-import it.cnr.contab.docamm00.tabrif.bulk.Doc_trasporto_rientroBulk;
+import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.comp.NumerazioneTempDocTRComponent;
 
 import javax.annotation.PostConstruct;

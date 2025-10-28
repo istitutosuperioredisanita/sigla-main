@@ -1,67 +1,47 @@
-/*
- * Copyright (C) 2019  Consiglio Nazionale delle Ricerche
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Affero General Public License as
- *     published by the Free Software Foundation, either version 3 of the
- *     License, or (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Affero General Public License for more details.
- *
- *     You should have received a copy of the GNU Affero General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package it.cnr.contab.inventario01.bp;
 
-import it.cnr.contab.docamm00.tabrif.bulk.Doc_trasporto_rientroBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.Doc_trasporto_rientro_dettBulk;
+import it.cnr.contab.inventario00.bp.RigheInvDaFatturaCRUDController;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
-import it.cnr.contab.inventario00.tabrif.bulk.Tipo_trasporto_rientroBulk;
+import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
+import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
-import it.cnr.contab.util.Utility;
+import it.cnr.contab.reports.bp.OfflineReportPrintBP;
+import it.cnr.contab.reports.bulk.Print_spooler_paramBulk;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
+import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
-import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.bulk.PrimaryKeyHashtable;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.bulk.ValidationException;
-import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.util.action.AbstractDetailCRUDController;
-import it.cnr.jada.util.action.SearchProvider;
-import it.cnr.jada.util.action.SimpleDetailCRUDController;
+import it.cnr.jada.util.RemoteIterator;
+import it.cnr.jada.util.action.AbstractPrintBP;
+import it.cnr.jada.util.action.RemoteDetailCRUDController;
 import it.cnr.jada.util.action.SelectionListener;
 
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.BitSet;
-import java.util.Iterator;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.stream.Stream;
+
+import static it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk.STATO_INSERITO;
 
 /**
- * Business Process per la gestione del Trasporto dei beni inventariali.
- *
- *LOGICA FILTRO UO CON DIPENDENTE
- *
- * CASO 1: FL_INCARICATO = N e FL_VETTORE = N
- *   → Campo dipendente NASCOSTO/DISABILITATO
- *   → Campo noteRitiro DISABILITATO
- *   → Usa UO dell'utente loggato
- *
- * CASO 2: FL_INCARICATO = Y o FL_VETTORE = Y
- *   → Campo dipendente VISIBILE e OBBLIGATORIO
- *   → Campo noteRitiro ABILITATO
- *   → Usa UO del dipendente selezionato
+ * Business Process - SOLO UI, DELEGA AL COMPONENT
  */
 public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implements SelectionListener {
 
-    private boolean attivaEtichettaInventarioBene = false;
-    private boolean isNumGruppiErrato = false;
-    private boolean isQuantitaEnabled = true;
-    private BitSet selection = new BitSet();
+    private it.cnr.jada.persistency.sql.CompoundFindClause clauses;
+
+    public static final String DOC_T_R = "Documenti Di";
+
+
+    // ========================================
+    // COSTRUTTORI
+    // ========================================
 
     public CRUDTrasportoBeniInvBP() {
         super();
@@ -73,66 +53,197 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
     }
 
     @Override
-    protected void init(it.cnr.jada.action.Config config, it.cnr.jada.action.ActionContext context)
-            throws it.cnr.jada.action.BusinessProcessException {
-
+    protected void init(it.cnr.jada.action.Config config, ActionContext context)
+            throws BusinessProcessException {
         super.init(config, context);
         resetTabs();
+    }
 
+//    /** Percorso su CMIS: cartella per DOC_T_R / esercizio / inventario / tiDocumento / pgDocTrasportoRientro**/
+//    @Override
+//    protected String getStorePath(Doc_trasporto_rientroBulk allegatoDDT, boolean create)
+//            throws BusinessProcessException {
+//        return Doc_trasporto_rientroBulk.getStorePathDDT(DOC_T_R,
+//                allegatoDDT.getEsercizio(), allegatoDDT.getPgInventario(),
+//                allegatoDDT.getTiDocumento(),allegatoDDT.getPgDocTrasportoRientro());
+//    }
+//
+//    @Override
+//    protected Class<AllegatoGenericoBulk> getAllegatoClass() {
+//        return AllegatoGenericoBulk.class;
+//    }
+
+    // ========================================
+    // CONTROLLERS
+    // ========================================
+
+    /**
+     * Controller per i dettagli dei beni da trasportare (Inventario_beniBulk).
+     * Usato nella tab principale per selezionare i beni.
+     */
+    protected final RigheInvDaFatturaCRUDController dettBeniController = new RigheInvDaFatturaCRUDController(
+            "DettBeniController",
+            Inventario_beniBulk.class,
+            "DettagliTrasporto",
+            "CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession",
+            this) {
+
+        @Override
+        protected RemoteIterator createRemoteIterator(ActionContext context) {
+            try {
+                return (isInserting() || isEditing()) && !isDocumentoAnnullato()
+                        ? selectDettagliTrasportobyClause(context)
+                        : new it.cnr.jada.util.EmptyRemoteIterator();
+            } catch (BusinessProcessException e) {
+                return null;
+            }
+        }
+
+        @Override
+        public void removeAll(ActionContext context) throws ValidationException, BusinessProcessException {
+            if (isDocumentoAnnullato()) {
+                throw new ValidationException("Impossibile modificare un documento annullato");
+            }
+            eliminaDettagliTrasportoConBulk(context);
+            reset(context);
+        }
+
+        @Override
+        protected void removeDetails(ActionContext context, OggettoBulk[] details) throws BusinessProcessException {
+            if (isDocumentoAnnullato()) {
+                throw new BusinessProcessException("Impossibile modificare un documento annullato");
+            }
+            eliminaDettagliTrasportoConBulk(context, details);
+        }
+    };
+
+    /**
+     * Controller per l'editing dei dettagli già associati (Doc_trasporto_rientro_dettBulk).
+     * Usato per modificare quantità e altre proprietà dei beni già aggiunti.
+     */
+    private final RemoteDetailCRUDController editDettController = new RemoteDetailCRUDController(
+            "editDettController",
+            Doc_trasporto_rientro_dettBulk.class,
+            "EditDettagliTrasporto",
+            "CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession",
+            this) {
+
+        @Override
+        protected RemoteIterator createRemoteIterator(ActionContext context) {
+            try {
+                return isInserting() || isDocumentoAnnullato()
+                        ? new it.cnr.jada.util.EmptyRemoteIterator()
+                        : selectEditDettagliTrasportobyClause(context);
+            } catch (BusinessProcessException e) {
+                return null;
+            }
+        }
+    };
+
+    // ========================================
+    // GESTIONE DETTAGLI
+    // ========================================
+
+    private void eliminaDettagliTrasportoConBulk(ActionContext context) throws BusinessProcessException {
         try {
-            attivaEtichettaInventarioBene = Utility.createConfigurazioneCnrComponentSession()
-                    .isGestioneEtichettaInventarioBeneAttivo(context.getUserContext());
-        } catch (ComponentException | RemoteException e) {
-            throw new BusinessProcessException(e);
+            getComp().eliminaBeniAssociatiConBulk(context.getUserContext(), getDoc());
+        } catch (Throwable e) {
+            throw handleException(e);
         }
     }
 
-    public void resetTabs() {
-        setTab("tab", "tabTrasportoTestata");
+    private void eliminaDettagliTrasportoConBulk(ActionContext context, OggettoBulk[] details)
+            throws BusinessProcessException {
+        try {
+            getComp().eliminaBeniAssociatiConBulk(
+                    context.getUserContext(),
+                    (Doc_trasporto_rientroBulk) getModel(),
+                    details);
+        } catch (ComponentException | RemoteException e) {
+            throw handleException(e);
+        }
+    }
+
+    private RemoteIterator selectDettagliTrasportobyClause(ActionContext context)
+            throws BusinessProcessException {
+        try {
+            return getComp().selectBeniAssociatiByClause(
+                    context.getUserContext(),
+                    getDoc(),
+                    Inventario_beniBulk.class);
+        } catch (ComponentException | RemoteException e) {
+            throw handleException(e);
+        }
+    }
+
+    private RemoteIterator selectEditDettagliTrasportobyClause(ActionContext context)
+            throws BusinessProcessException {
+        try {
+            it.cnr.jada.persistency.sql.CompoundFindClause clauses =
+                    ((RemoteDetailCRUDController) getEditDettController()).getFilter();
+
+            return getComp().selectEditDettagliTrasporto(
+                    context.getUserContext(),
+                    getDoc(),
+                    Doc_trasporto_rientro_dettBulk.class,
+                    clauses);
+        } catch (ComponentException | RemoteException e) {
+            throw handleException(e);
+        }
+    }
+
+    public RemoteIterator getListaBeniDaTrasportare(
+            it.cnr.jada.UserContext userContext,
+            SimpleBulkList beni_da_escludere,
+            it.cnr.jada.persistency.sql.CompoundFindClause clauses)
+            throws BusinessProcessException, RemoteException, ComponentException {
+        return getComp().getListaBeniDaTrasportare(
+                userContext,
+                getDoc(),
+                beni_da_escludere,
+                clauses);
     }
 
     // ========================================
-    // INIZIALIZZAZIONE MODEL
+    // INIZIALIZZAZIONE MODELLI
     // ========================================
 
     @Override
     public OggettoBulk initializeModelForEdit(ActionContext context, OggettoBulk bulk)
             throws BusinessProcessException {
+        bulk = super.initializeModelForEdit(context, bulk);
+        bulk = initializeDocTrasporto(bulk);
 
-        Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) bulk;
-        documento.setTiDocumento(Tipo_trasporto_rientroBulk.TIPO_TRASPORTO);
-        resetTabs();
-        bulk = super.initializeModelForEdit(context, documento);
+        // Controlla se il documento è annullato e mostra il messaggio
+        Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bulk;
+        if (doc.isAnnullato()) {
+            setStatus(VIEW);
+            setMessage("ATTENZIONE: Il DDT è stato ANNULLATO");
+        }
+
         return bulk;
     }
 
     @Override
     public OggettoBulk initializeModelForInsert(ActionContext context, OggettoBulk bulk)
             throws BusinessProcessException {
-
-        Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) bulk;
-        documento.setTiDocumento(Tipo_trasporto_rientroBulk.TIPO_TRASPORTO);
-        bulk = super.initializeModelForInsert(context, documento);
-        return bulk;
+        return initializeDocTrasporto(super.initializeModelForInsert(context, bulk));
     }
 
     @Override
-    public OggettoBulk initializeModelForFreeSearch(ActionContext actioncontext, OggettoBulk oggettobulk)
+    public OggettoBulk initializeModelForFreeSearch(ActionContext context, OggettoBulk bulk)
             throws BusinessProcessException {
-
-        Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) oggettobulk;
-        documento.setTiDocumento(Tipo_trasporto_rientroBulk.TIPO_TRASPORTO);
-        oggettobulk = super.initializeModelForFreeSearch(actioncontext, documento);
-        return oggettobulk;
+        return initializeDocTrasporto(super.initializeModelForFreeSearch(context, bulk));
     }
 
     @Override
     public OggettoBulk initializeModelForSearch(ActionContext context, OggettoBulk bulk)
             throws BusinessProcessException {
+        return initializeDocTrasporto(super.initializeModelForSearch(context, bulk));
+    }
 
-        Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) bulk;
-        documento.setTiDocumento(Tipo_trasporto_rientroBulk.TIPO_TRASPORTO);
-        bulk = super.initializeModelForSearch(context, documento);
+    private OggettoBulk initializeDocTrasporto(OggettoBulk bulk) {
+        ((Doc_trasporto_rientroBulk) bulk).setTiDocumento(TRASPORTO);
         return bulk;
     }
 
@@ -142,471 +253,277 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
         resetTabs();
     }
 
-    // ========================================
-    // CONTROLLER DEI DETTAGLI
-    // ========================================
-
-    protected final AbstractDetailCRUDController dettaglio = createDettaglio();
-
-    protected AbstractDetailCRUDController createDettaglio() {
-        return new SimpleDetailCRUDController(
-                "Dettaglio",
-                Doc_trasporto_rientro_dettBulk.class,
-                "doc_trasporto_rientro_dettColl",
-                this) {
-
-            @Override
-            public void validate(ActionContext context, OggettoBulk model) throws ValidationException {
-                validate_Dettagli(context, model);
-            }
-
-            @Override
-            public boolean isGrowable() {
-                return isInserting();
-            }
-        };
-    }
-
-    public AbstractDetailCRUDController getDettaglio() {
-        return dettaglio;
+    public void resetTabs() {
+        setTab("tab", "tabTrasportoTestata");
     }
 
     // ========================================
-    // VALIDAZIONI
-    // ========================================
-
-    private void validate_Dettagli(ActionContext context, OggettoBulk model) throws ValidationException {
-
-        if (isInserting()) {
-            try {
-                completeSearchTools(context, this);
-
-                Doc_trasporto_rientro_dettBulk dettaglio = (Doc_trasporto_rientro_dettBulk) model;
-                Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) dettaglio.getDoc_trasporto_rientro();
-
-                validate_property_details(dettaglio);
-
-                PrimaryKeyHashtable accessori_contestuali = null;
-                BulkList newBeni_associati = new BulkList();
-
-                if (dettaglio.isAssociatoConAccessorioContestuale()) {
-                    if (dettaglio.getQuantita() != null && dettaglio.getQuantita().compareTo(new Long("1")) != 0) {
-                        dettaglio.setQuantita(new Long("1"));
-                        throw new ValidationException(
-                                "Attenzione: la quantità di questa riga deve essere 1, poiché alcuni beni sono suoi accessori");
-                    }
-
-                    accessori_contestuali = documento.getAccessoriContestualiHash();
-                    BulkList beni_associati = (BulkList) accessori_contestuali.get(dettaglio.getChiaveHash());
-
-                    for (Iterator i = beni_associati.iterator(); i.hasNext();) {
-                        Doc_trasporto_rientro_dettBulk dettaglio_associato =
-                                (Doc_trasporto_rientro_dettBulk) i.next();
-                        dettaglio_associato.getBene().getBene_principale()
-                                .setDs_bene(dettaglio.getBene().getDs_bene());
-                        dettaglio_associato.getBene().setUbicazione(dettaglio.getBene().getUbicazione());
-                        dettaglio_associato.getBene().setCategoria_Bene(dettaglio.getBene().getCategoria_Bene());
-                        newBeni_associati.add(dettaglio_associato);
-                    }
-                    accessori_contestuali.put(dettaglio.getChiaveHash(), newBeni_associati);
-                }
-
-                if (dettaglio.isAccessorioContestuale()) {
-                    accessori_contestuali = documento.getAccessoriContestualiHash();
-                    for (java.util.Enumeration e = accessori_contestuali.keys(); e.hasMoreElements();) {
-                        String chiave_bene_padre = (String) e.nextElement();
-                        newBeni_associati = (BulkList) accessori_contestuali.get(chiave_bene_padre);
-                        if (newBeni_associati.containsByPrimaryKey(dettaglio)) {
-                            newBeni_associati.remove(dettaglio);
-                            newBeni_associati.add(dettaglio);
-                            break;
-                        }
-                    }
-                }
-
-            } catch (BusinessProcessException e1) {
-                handleException(e1);
-            }
-        }
-    }
-
-    private void validate_property_details(Doc_trasporto_rientro_dettBulk dett) throws ValidationException {
-
-        Inventario_beniBulk bene = dett.getBene();
-
-        if (bene.getCategoria_Bene() == null) {
-            throw new ValidationException("Attenzione: indicare la Categoria di appartenenza del Bene");
-        }
-
-        if (bene.getDs_bene() == null) {
-            throw new ValidationException("Attenzione: indicare la Descrizione del Bene");
-        }
-
-        if (bene.getCondizioneBene() == null) {
-            throw new ValidationException("Attenzione: indicare una Condizione per il Bene");
-        }
-
-        if (dett.isBeneAccessorio() && bene.getBene_principale() == null) {
-            throw new ValidationException("Attenzione: indicare un Bene Principale per il Bene Accessorio");
-        }
-
-        if (bene.getUbicazione() == null) {
-            throw new ValidationException("Attenzione: indicare l'Ubicazione del Bene");
-        }
-
-        if (dett.getQuantita() == null) {
-            throw new ValidationException("Attenzione: indicare la Quantità");
-        }
-
-        if (!dett.isValidoPerTrasporto()) {
-            throw new ValidationException(
-                    "Attenzione: il bene selezionato non è valido per il trasporto");
-        }
-
-        Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) dett.getDoc_trasporto_rientro();
-        if (documento.getDoc_trasporto_rientro_dettColl() != null) {
-            for (Iterator i = documento.getDoc_trasporto_rientro_dettColl().iterator(); i.hasNext();) {
-                Doc_trasporto_rientro_dettBulk existingDett = (Doc_trasporto_rientro_dettBulk) i.next();
-                if (existingDett != dett &&
-                        existingDett.getNr_inventario().equals(dett.getNr_inventario()) &&
-                        existingDett.getProgressivo().equals(dett.getProgressivo())) {
-                    throw new ValidationException("Attenzione: il bene è già presente nel documento di trasporto");
-                }
-            }
-        }
-    }
-
-    // ========================================
-    // GESTIONE BENI
-    // ========================================
-
-    public void aggiungiDettagliTrasporto(it.cnr.jada.UserContext userContext, java.util.List beni)
-            throws it.cnr.jada.comp.ComponentException {
-
-        Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) getModel();
-        Doc_trasporto_rientro_dettBulk dettTrasporto = null;
-        Inventario_beniBulk bene = null;
-
-        for (Iterator i = beni.iterator(); i.hasNext();) {
-            dettTrasporto = new Doc_trasporto_rientro_dettBulk();
-            bene = (Inventario_beniBulk) i.next();
-
-            if (bene.getCategoria_Bene() != null &&
-                    documento.getDataRegistrazione() != null &&
-                    bene.getCategoria_Bene().getData_cancellazione() != null &&
-                    bene.getCategoria_Bene().getData_cancellazione()
-                            .before(documento.getDataRegistrazione())) {
-                throw new ApplicationException(
-                        "Il Bene " + bene.getNr_inventario() + " ha una categoria non più valida");
-            }
-
-            if (bene.getFl_totalmente_scaricato() != null &&
-                    bene.getFl_totalmente_scaricato().booleanValue()) {
-                throw new ApplicationException(
-                        "Il Bene " + bene.getNr_inventario() + " è stato totalmente scaricato e non può essere trasportato");
-            }
-
-            if (bene.getId_transito_beni_ordini() != null) {
-                throw new ApplicationException(
-                        "Il Bene " + bene.getNr_inventario() + " è in transito e non può essere trasportato");
-            }
-
-            dettTrasporto.setDoc_trasporto_rientro(documento);
-            dettTrasporto.setBene(bene);
-            dettTrasporto.setQuantita(new Long(1));
-            dettTrasporto.setStatoTrasporto(Doc_trasporto_rientro_dettBulk.STATO_PREDISPOSTO_FIRMA);
-            documento.getDoc_trasporto_rientro_dettColl().add(dettTrasporto);
-        }
-    }
-
-    // ========================================
-    // SEARCH PROVIDER CON FILTRO UO
+    // VISIBILITÀ UI
     // ========================================
 
     /**
-     *Provider per la ricerca dei beni CON FILTRO UO
+     * Verifica se il documento corrente è annullato.
      */
-    public SearchProvider getBeneSearchProvider(ActionContext context) {
-        return new SearchProvider() {
-            public it.cnr.jada.util.RemoteIterator search(
-                    it.cnr.jada.action.ActionContext context,
-                    it.cnr.jada.persistency.sql.CompoundFindClause clauses,
-                    it.cnr.jada.bulk.OggettoBulk prototype) throws it.cnr.jada.action.BusinessProcessException {
-
-                Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) getModel();
-                try {
-                    //USA IL METODO CON FILTRO UO
-                    return getListaBeniTrasportabiliConFiltroUO(
-                            context.getUserContext(),
-                            documento,
-                            documento.getDoc_trasporto_rientro_dettColl(),
-                            clauses);
-                } catch (Throwable t) {
-                    throw new BusinessProcessException(t);
-                }
-            }
-        };
+    private boolean isDocumentoAnnullato() {
+        return getDoc() != null && getDoc().isAnnullato();
     }
 
     /**
-     *Cerca beni FILTRATI per UO (utente o dipendente)
+     * Verifica se il documento è in modalità visualizzazione.
+     * Un documento annullato deve essere sempre in sola lettura.
      */
-    public it.cnr.jada.util.RemoteIterator getListaBeniTrasportabiliConFiltroUO(
-            it.cnr.jada.UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            SimpleBulkList beni_da_escludere,
-            it.cnr.jada.persistency.sql.CompoundFindClause clauses)
-            throws BusinessProcessException, java.rmi.RemoteException, it.cnr.jada.comp.ComponentException {
-
-        try {
-            //CHIAMA IL COMPONENT CHE GESTISCE IL FILTRO UO
-            //TODO da verificare e in caso implementare
-//            return ((DocTrasportoRientroComponentSession) createComponentSession())
-//                    .cercaBeniTrasportabiliConFiltroUO(
-//                            userContext,
-//                            doc,
-//                            beni_da_escludere,
-//                            clauses);
-        } catch (Exception e) {
-            throw new BusinessProcessException(e);
-        }
-        return null;
-    }
-
-    // ========================================
-    //ABILITAZIONE CAMPI CONDIZIONALI
-    // ========================================
-
-    /**
-     *Verifica se il campo dipendente è abilitato
-     */
-    public boolean isDipendenteEnabled() {
-        Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
-        if (doc != null) {
-            return doc.isDipendenteEnabled();
-        }
-        return false;
+    public boolean isVisualizzazione() {
+        return isDocumentoAnnullato();
     }
 
     /**
-     *Verifica se il campo noteRitiro è abilitato
+     * Il bottone "Aggiungi Bene" è abilitato solo in inserimento e se il documento è in stato INSERITO.
      */
-    public boolean isNoteRitiroEnabled() {
-        Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
-        if (doc != null) {
-            return doc.isNoteRitiroEnabled();
-        }
-        return false;
+    public boolean isBottoneAggiungiBeneEnabled() {
+        return isInserting() && getDoc() != null && getDoc().isInserito() && !isDocumentoAnnullato();
     }
 
-    /**
-     *Verifica se il dipendente è obbligatorio
-     */
-    public boolean isDipendenteRequired() {
-        Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
-        if (doc != null) {
-            return doc.isDipendenteRequired();
-        }
-        return false;
-    }
-
-    /**
-     *Handler per cambio flag FL_INCARICATO
-     */
-    public void doOnFlIncaricatoChange(ActionContext context) throws BusinessProcessException {
-        try {
-            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
-
-            // Se viene attivato FL_INCARICATO, disattiva FL_VETTORE
-            if (doc.getFlIncaricato() != null && doc.getFlIncaricato().booleanValue()) {
-                doc.setFlVettore(Boolean.FALSE);
-            }
-
-            // Se viene disattivato, pulisce dipendente e note
-            if (doc.getFlIncaricato() == null || !doc.getFlIncaricato().booleanValue()) {
-                if (!doc.isRitiroDelegato()) {
-                    doc.setAnagDipRitiro(null);
-                    doc.setNoteRitiro(null);
-                }
-            }
-
-        } catch (Exception e) {
-            throw new BusinessProcessException(e);
-        }
-    }
-
-    /**
-     *Handler per cambio flag FL_VETTORE
-     */
-    public void doOnFlVettoreChange(ActionContext context) throws BusinessProcessException {
-        try {
-            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
-
-            // Se viene attivato FL_VETTORE, disattiva FL_INCARICATO
-            if (doc.getFlVettore() != null && doc.getFlVettore().booleanValue()) {
-                doc.setFlIncaricato(Boolean.FALSE);
-            }
-
-            // Se viene disattivato, pulisce dipendente e note
-            if (doc.getFlVettore() == null || !doc.getFlVettore().booleanValue()) {
-                if (!doc.isRitiroDelegato()) {
-                    doc.setAnagDipRitiro(null);
-                    doc.setNoteRitiro(null);
-                }
-            }
-
-        } catch (Exception e) {
-            throw new BusinessProcessException(e);
-        }
-    }
-
-    /**
-     *Handler per cambio dipendente
-     */
-    public void doOnDipendenteChange(ActionContext context) throws BusinessProcessException {
-        try {
-            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
-
-            // Se cambia il dipendente, pulisce i dettagli esistenti
-            // perché potrebbero appartenere a un'altra UO
-            if (doc.getAnagDipRitiro() != null &&
-                    doc.getDoc_trasporto_rientro_dettColl() != null &&
-                    !doc.getDoc_trasporto_rientro_dettColl().isEmpty()) {
-
-                // Avvisa l'utente
-                throw new ApplicationException(
-                        "ATTENZIONE: Cambiando il dipendente, i beni già selezionati verranno rimossi " +
-                                "perché potrebbero appartenere a un'unità organizzativa diversa.\n" +
-                                "Confermare per procedere.");
-            }
-
-        } catch (ApplicationException e) {
-            throw new BusinessProcessException(e);
-        } catch (Exception e) {
-            throw new BusinessProcessException(e);
-        }
-    }
-
-    // ========================================
-    // ABILITAZIONE PULSANTI
-    // ========================================
-
-    @Override
-    public boolean isPrintButtonHidden() {
-        Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) getModel();
-        return documento.isTemporaneo() || super.isPrintButtonHidden();
-    }
-
-    @Override
-    public boolean isBringbackButtonEnabled() {
-        return isInserting() || isEditing();
-    }
-
-    @Override
-    public boolean isBringbackButtonHidden() {
-        return false;
-    }
-
-    public boolean isCRUDAddButtonEnabled() {
-        return isInserting();
-    }
-
-    public boolean isCRUDDeleteButtonEnabled() {
-        return isInserting();
-    }
-
-    @Override
     public boolean isDeleteButtonEnabled() {
-        return isEditing();
+        return !isVisualizzazione();
     }
 
     @Override
-    public boolean isDeleteButtonHidden() {
-        return false;
-    }
-
-    // ========================================
-    // IMPLEMENTAZIONE SelectionListener
-    // ========================================
-
-    @Override
-    public void clearSelection(ActionContext actionContext) throws BusinessProcessException {
-        selection.clear();
-    }
-
-    @Override
-    public void deselectAll(ActionContext actionContext) {
-        selection.clear();
-    }
-
-    @Override
-    public BitSet getSelection(ActionContext actionContext, OggettoBulk[] oggettoBulks, BitSet bitSet)
-            throws BusinessProcessException {
-        return selection;
-    }
-
-    @Override
-    public void initializeSelection(ActionContext actionContext) throws BusinessProcessException {
-        selection.clear();
-    }
-
-    @Override
-    public void selectAll(ActionContext actionContext) throws BusinessProcessException {
-        Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) getModel();
-        if (documento != null && documento.getDoc_trasporto_rientro_dettColl() != null) {
-            selection.set(0, documento.getDoc_trasporto_rientro_dettColl().size());
+    public boolean isEditable() {
+        // Documenti annullati non sono mai modificabili
+        if (isDocumentoAnnullato()) {
+            return false;
         }
+        return !isVisualizzazione() && super.isEditable();
     }
 
-    @Override
-    public BitSet setSelection(ActionContext actionContext, OggettoBulk[] oggettoBulks,
-                               BitSet bitSet, BitSet bitSet1) throws BusinessProcessException {
-        selection = bitSet1;
-        return selection;
-    }
-
-    // ========================================
-    // GETTER E SETTER
-    // ========================================
-
-    public boolean isAttivaEtichettaInventarioBene() {
-        return attivaEtichettaInventarioBene;
-    }
-
-    public void setIsNumGruppiErrato(boolean newIsNumGruppiErrato) {
-        isNumGruppiErrato = newIsNumGruppiErrato;
-    }
-
-    public boolean isNumGruppiErrato() {
-        return isNumGruppiErrato;
-    }
-
-    public void setIsQuantitaEnabled(boolean enabled) {
-        isQuantitaEnabled = enabled;
-    }
-
-    public boolean isQuantitaEnabled() {
-        return isQuantitaEnabled;
-    }
-
-    public String getLabelData_documento() {
+    public String getLabelData_registrazione() {
         return "Data Trasporto";
     }
 
-    public boolean isDettaglioModificabile() {
-        Doc_trasporto_rientro_dettBulk dett = (Doc_trasporto_rientro_dettBulk) getDettaglio().getModel();
-        if (dett != null && dett.getStatoTrasporto() != null) {
-            return Doc_trasporto_rientro_dettBulk.STATO_PREDISPOSTO_FIRMA.equals(dett.getStatoTrasporto()) ||
-                    Doc_trasporto_rientro_dettBulk.STATO_ANNULLATO.equals(dett.getStatoTrasporto());
+    // ========================================
+    // WORKFLOW E STATO
+    // ========================================
+
+    /**
+     * AZIONE: Predispone il documento alla firma.
+     * TRANSIZIONE DI STATO: INSERITO (INS) → PREDISPOSTO ALLA FIRMA (PAF)
+     */
+    public void predisponiAllaFirma(ActionContext context) throws BusinessProcessException {
+        validaStatoPerFirma();
+        try {
+            getComp().predisponiAllaFirma(context.getUserContext(), getDoc());
+            commitUserTransaction();
+            setMessage("Documento predisposto alla firma con successo");
+        } catch (ComponentException | RemoteException e) {
+            rollbackUserTransaction();
+            throw handleException(e);
         }
-        return true;
     }
 
-    public boolean isConfermabile() {
-        Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) getModel();
-        if (documento != null && documento.getDoc_trasporto_rientro_dettColl() != null) {
-            return documento.getDoc_trasporto_rientro_dettColl().size() > 0;
+    /**
+     * Valida che il documento sia in stato INSERITO prima di predisporlo alla firma.
+     */
+    private void validaStatoPerFirma() throws BusinessProcessException {
+        if (isDocumentoAnnullato()) {
+            throw new BusinessProcessException("Impossibile predisporre alla firma un documento annullato");
         }
-        return false;
+        if (!getDoc().isInserito()) {
+            throw new BusinessProcessException(
+                    "Il documento deve essere in stato 'Inserito' per essere predisposto alla firma");
+        }
+    }
+
+    // ========================================
+    // SELECTION LISTENER
+    // ========================================
+
+    @Override
+    public void clearSelection(ActionContext context) throws BusinessProcessException {
+        try {
+            getComp().annullaModificaTrasportoBeni(context.getUserContext());
+        } catch (ComponentException | RemoteException e) {
+            throw handleException(e);
+        }
+    }
+
+    @Override
+    public void deselectAll(ActionContext context) {
+        // Implementazione vuota - la deselezione viene gestita via clearSelection
+    }
+
+    @Override
+    public BitSet getSelection(ActionContext context, OggettoBulk[] bulks, BitSet currentSelection)
+            throws BusinessProcessException {
+        return currentSelection;
+    }
+
+    @Override
+    public void initializeSelection(ActionContext context) throws BusinessProcessException {
+        if (isDocumentoAnnullato()) {
+            return; // Non inizializzare la selezione per documenti annullati
+        }
+        try {
+            getComp().inizializzaBeniDaTrasportare(context.getUserContext());
+        } catch (ComponentException | RemoteException e) {
+            throw handleException(e);
+        }
+    }
+
+    @Override
+    public void selectAll(ActionContext context) throws BusinessProcessException {
+        if (isDocumentoAnnullato()) {
+            throw new BusinessProcessException("Impossibile modificare un documento annullato");
+        }
+        try {
+            getComp().trasportaTuttiBeni(
+                    context.getUserContext(),
+                    getDoc(),
+                    getClauses());
+            setClauses(null);
+        } catch (ComponentException | RemoteException e) {
+            throw handleException(e);
+        }
+    }
+
+    @Override
+    public BitSet setSelection(ActionContext context, OggettoBulk[] bulks,
+                               BitSet oldSelection, BitSet newSelection)
+            throws BusinessProcessException {
+        if (isDocumentoAnnullato()) {
+            throw new BusinessProcessException("Impossibile modificare un documento annullato");
+        }
+        try {
+            getComp().modificaBeniTrasportati(
+                    context.getUserContext(),
+                    getDoc(),
+                    bulks,
+                    oldSelection,
+                    newSelection);
+            return newSelection;
+        } catch (ComponentException | RemoteException e) {
+            throw handleException(e);
+        }
+    }
+
+    // ========================================
+    // TOOLBAR
+    // ========================================
+
+    @Override
+    protected it.cnr.jada.util.jsp.Button[] createToolbar() {
+        final Properties props = it.cnr.jada.util.Config.getHandler().getProperties(getClass());
+        return Stream.concat(
+                Arrays.stream(super.createToolbar()),
+                Stream.of(
+                        new it.cnr.jada.util.jsp.Button(props, "CRUDToolbar.predisponiAllaFirma")
+                )
+        ).toArray(it.cnr.jada.util.jsp.Button[]::new);
+    }
+
+    public boolean isPredisponiAllaFirmaButtonHidden() {
+        // Nascondi il bottone per documenti annullati
+        if (isDocumentoAnnullato()) {
+            return true;
+        }
+
+        // Mostra il bottone quando il documento è in stato INSERITO
+        return !(getModel() != null &&
+                getModel().getCrudStatus() == OggettoBulk.NORMAL &&
+                STATO_INSERITO.equals(getDoc().getStato()));
+    }
+
+    // ========================================
+    // HELPER E GETTER
+    // ========================================
+
+    public Doc_trasporto_rientroBulk getDoc() {
+        return (Doc_trasporto_rientroBulk) getModel();
+    }
+
+    private DocTrasportoRientroComponentSession getComp() throws BusinessProcessException {
+        try {
+            return (DocTrasportoRientroComponentSession) createComponentSession(
+                    "CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession",
+                    DocTrasportoRientroComponentSession.class);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }
+
+    public RemoteDetailCRUDController getDettBeniController() {
+        return dettBeniController;
+    }
+
+    public RemoteDetailCRUDController getEditDettController() {
+        return editDettController;
+    }
+
+    public it.cnr.jada.persistency.sql.CompoundFindClause getClauses() {
+        return clauses;
+    }
+
+    public void setClauses(it.cnr.jada.persistency.sql.CompoundFindClause newClauses) {
+        clauses = newClauses;
+    }
+
+
+    @Override
+    public boolean isPrintButtonHidden() {
+        return !Optional.ofNullable(getModel())
+                .filter(Doc_trasporto_rientroBulk.class::isInstance)
+                .map(Doc_trasporto_rientroBulk.class::cast)
+                .flatMap(Doc_trasporto_rientroBulk -> Optional.ofNullable(Doc_trasporto_rientroBulk.getPgDocTrasportoRientro()))
+                .isPresent();
+    }
+
+    @Override
+    protected void initializePrintBP(ActionContext actioncontext, AbstractPrintBP abstractprintbp) {
+        OfflineReportPrintBP printbp = (OfflineReportPrintBP) abstractprintbp;
+        printbp.setReportName("/cnrdocamm/docamm/doc_trasporto_rientro.jasper");
+        final Doc_trasporto_rientroBulk docT = Optional.ofNullable(getModel())
+                .filter(Doc_trasporto_rientroBulk.class::isInstance)
+                .map(Doc_trasporto_rientroBulk.class::cast)
+                .orElseThrow(() -> new DetailedRuntimeException("Modello vuoto!"));
+
+        Print_spooler_paramBulk param;
+
+        param = new Print_spooler_paramBulk();
+        param.setNomeParam("esercizio");
+        param.setValoreParam(
+                Optional.ofNullable(docT.getEsercizio())
+                        .map(String::valueOf)
+                        .orElse(null)
+        );
+        param.setParamType(Integer.class.getCanonicalName());
+        printbp.addToPrintSpoolerParam(param);
+
+        param = new Print_spooler_paramBulk();
+        param.setNomeParam("pgInventario");
+        param.setValoreParam(
+                Optional.ofNullable(docT.getPgInventario())
+                        .map(String::valueOf)
+                        .orElse(null)
+        );
+        param.setParamType(Integer.class.getCanonicalName());
+        printbp.addToPrintSpoolerParam(param);
+
+        param = new Print_spooler_paramBulk();
+        param.setNomeParam("tiDocumento");
+        param.setValoreParam(
+                docT.getTiDocumento()
+        );
+        param.setParamType(String.class.getCanonicalName());
+        printbp.addToPrintSpoolerParam(param);
+
+        param = new Print_spooler_paramBulk();
+        param.setNomeParam("pgDocTrasportoRientro");
+        param.setValoreParam(
+                Optional.ofNullable(docT.getPgDocTrasportoRientro())
+                        .map(String::valueOf)
+                        .orElse(null)
+        );
+        param.setParamType(Integer.class.getCanonicalName());
+        printbp.addToPrintSpoolerParam(param);
+
     }
 }

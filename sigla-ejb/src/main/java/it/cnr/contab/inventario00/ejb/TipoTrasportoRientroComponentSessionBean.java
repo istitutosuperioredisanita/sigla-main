@@ -21,10 +21,10 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 
 @Stateless(name="CNRINVENTARIO00_EJB_TipoTrasportoRientroComponentSession")
-public class TipoTrasportoRientroComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements TipoCaricoScaricoComponentSession {
+public class TipoTrasportoRientroComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements TipoTrasportoRientroComponentSession {
 @PostConstruct
 	public void ejbCreate() {
-	componentObj = new it.cnr.contab.inventario00.comp.TipoCaricoScaricoComponent();
+	componentObj = new it.cnr.contab.inventario00.comp.TipoTrasportoRientroComponent();
 }
 public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
 	return new TipoTrasportoRientroComponentSessionBean();
