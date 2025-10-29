@@ -33,7 +33,9 @@ import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.BulkBP;
 import it.cnr.jada.util.action.FormBP;
 import it.cnr.jada.util.action.FormField;
+import it.cnr.jada.util.action.OptionBP;
 
+import javax.ejb.RemoveException;
 import javax.swing.text.html.Option;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -205,5 +207,10 @@ public class CRUDScritturaPDoppiaAction extends it.cnr.jada.util.action.CRUDActi
         if (formfield.getField().getProperty().equalsIgnoreCase("terzo")){
             getModelDetail(actioncontext).get().setPartitario(new PartitarioBulk());
         }
+    }
+
+    @Override
+    public Forward doCerca(ActionContext actioncontext) throws RemoteException, InstantiationException, RemoveException {
+        return super.doCerca(actioncontext);
     }
 }

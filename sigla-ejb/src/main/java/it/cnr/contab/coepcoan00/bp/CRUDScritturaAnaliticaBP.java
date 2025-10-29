@@ -36,6 +36,8 @@ public class CRUDScritturaAnaliticaBP extends it.cnr.jada.util.action.SimpleCRUD
 	public static final String[] TAB_ANALITICA = new String[]{"tabAnalitica", "Analitica", "/coepcoan00/tab_doc_analitica.jsp"};
 	private Unita_organizzativaBulk uoScrivania;
 	private Boolean isBloccoScrittureProposte;
+    public boolean searchButtonHidden=Boolean.FALSE;
+    public boolean freeSearchButtonHidden=Boolean.FALSE;
 
 	private final SimpleDetailCRUDController movimenti = new SimpleDetailCRUDController("Movimenti",it.cnr.contab.coepcoan00.core.bulk.Movimento_coanBulk.class,"movimentiColl",this);
 	/**
@@ -107,4 +109,22 @@ public class CRUDScritturaAnaliticaBP extends it.cnr.jada.util.action.SimpleCRUD
 				.map(scrittura_analiticaBulk -> Optional.ofNullable(scrittura_analiticaBulk.getPg_scrittura_annullata()).isPresent())
 				.orElse(Boolean.FALSE);
 	}
+
+    public void setSearchButtonHidden(boolean searchButtonHidden) {
+        this.searchButtonHidden = searchButtonHidden;
+    }
+
+    public void setFreeSearchButtonHidden(boolean freeSearchButtonHidden) {
+        this.freeSearchButtonHidden = freeSearchButtonHidden;
+    }
+
+    @Override
+    public boolean isSearchButtonHidden() {
+        return searchButtonHidden || super.isSearchButtonHidden();
+    }
+
+    @Override
+    public boolean isFreeSearchButtonHidden() {
+        return freeSearchButtonHidden || super.isFreeSearchButtonHidden();
+    }
 }

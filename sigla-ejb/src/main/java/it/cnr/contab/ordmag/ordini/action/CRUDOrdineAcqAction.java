@@ -2301,6 +2301,8 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                 CRUDScritturaPDoppiaBP nbp = (CRUDScritturaPDoppiaBP) actioncontext.createBusinessProcess("CRUDScritturaPDoppiaBP", new Object[]{"V"});
                 nbp = (CRUDScritturaPDoppiaBP) actioncontext.addBusinessProcess(nbp);
                 nbp.setStatus(FormController.VIEW);
+                nbp.setSearchButtonHidden(Boolean.TRUE);
+                nbp.setFreeSearchButtonHidden(Boolean.TRUE);
                 nbp.resetForSearch(actioncontext);
                 nbp.setSearchResultColumnSet("includeFieldAttiva");
                 OggettoBulk oggettobulk = nbp.getModel();
@@ -2333,6 +2335,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                     selezionatorelistabp.setBulkInfo(nbp.getSearchBulkInfo());
                     selezionatorelistabp.setColumns(getBusinessProcess(actioncontext).getSearchResultColumns());
                     actioncontext.addHookForward("seleziona", this, "doRiportaSelezione");
+                    actioncontext.addHookForward("annulla_seleziona", this, "doAnnullaRiportaSelezione");
                     return actioncontext.addBusinessProcess(selezionatorelistabp);
                 }
             } catch (Throwable e) {
@@ -2351,6 +2354,8 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                 CRUDScritturaAnaliticaBP nbp = (CRUDScritturaAnaliticaBP) actioncontext.createBusinessProcess("CRUDScritturaAnaliticaBP", new Object[]{"V"});
                 nbp = (CRUDScritturaAnaliticaBP) actioncontext.addBusinessProcess(nbp);
                 nbp.setStatus(FormController.VIEW);
+                nbp.setSearchButtonHidden(Boolean.TRUE);
+                nbp.setFreeSearchButtonHidden(Boolean.TRUE);
 
                 nbp.resetForSearch(actioncontext);
                 nbp.setSearchResultColumnSet("includeFieldAttiva");
@@ -2384,6 +2389,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                     selezionatorelistabp.setBulkInfo(nbp.getSearchBulkInfo());
                     selezionatorelistabp.setColumns(getBusinessProcess(actioncontext).getSearchResultColumns());
                     actioncontext.addHookForward("seleziona", this, "doRiportaSelezione");
+                    actioncontext.addHookForward("annulla_seleziona", this, "doAnnullaRiportaSelezione");
                     return actioncontext.addBusinessProcess(selezionatorelistabp);
                 }
             } catch (Throwable e) {
@@ -2392,6 +2398,14 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         }
         setMessage(actioncontext, FormBP.ERROR_MESSAGE, "Scrittura Analitica legata a consegna non trovata!");
         return actioncontext.findDefaultForward();
+    }
+
+    public Forward doAnnullaRiportaSelezione(ActionContext context)  throws RemoteException {
+        try {
+            return super.doCloseForm(context);
+        } catch (BusinessProcessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 

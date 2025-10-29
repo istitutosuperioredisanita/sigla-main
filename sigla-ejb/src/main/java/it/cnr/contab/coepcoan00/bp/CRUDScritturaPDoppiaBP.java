@@ -96,6 +96,8 @@ public class CRUDScritturaPDoppiaBP extends it.cnr.jada.util.action.SimpleCRUDBP
             this
     );
     private Boolean isBloccoScrittureProposte;
+    public boolean searchButtonHidden=Boolean.FALSE;
+    public boolean freeSearchButtonHidden=Boolean.FALSE;
 
     public CRUDScritturaPDoppiaBP() {
         super();
@@ -183,4 +185,21 @@ public class CRUDScritturaPDoppiaBP extends it.cnr.jada.util.action.SimpleCRUDBP
                 .orElse(Boolean.FALSE);
     }
 
+    public void setSearchButtonHidden(boolean searchButtonHidden) {
+        this.searchButtonHidden = searchButtonHidden;
+    }
+
+    public void setFreeSearchButtonHidden(boolean freeSearchButtonHidden) {
+        this.freeSearchButtonHidden = freeSearchButtonHidden;
+    }
+
+    @Override
+    public boolean isSearchButtonHidden() {
+        return searchButtonHidden || super.isSearchButtonHidden();
+    }
+
+    @Override
+    public boolean isFreeSearchButtonHidden() {
+        return freeSearchButtonHidden || super.isFreeSearchButtonHidden();
+    }
 }
