@@ -43,7 +43,7 @@ public class Tipo_norma_perlaBase extends Tipo_norma_perlaKey implements Keyed {
 //    TIPO_ASSOCIAZIONE VARCHAR(3) NOT NULL
 	private java.lang.String tipo_associazione;
 
-	private java.lang.Boolean fl_cancellato;
+	private java.lang.Boolean fl_cancellato=Boolean.FALSE;
 
 	public Tipo_norma_perlaBase() {
 		super();
