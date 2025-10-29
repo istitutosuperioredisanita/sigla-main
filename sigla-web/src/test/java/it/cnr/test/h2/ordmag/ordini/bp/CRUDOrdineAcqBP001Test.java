@@ -576,7 +576,6 @@ public class CRUDOrdineAcqBP001Test extends ActionDeployments {
         assertThrows("Cannot find Element <tr> with tableName 'mainTable' and numberRow: 2", RuntimeException.class, ()->getTableRowElement("mainTable",2));
 
         doClickButton("doChiudiForm()");
-        doClickButton("doChiudiForm()");
 
         doClickButton("submitForm('doVisualizzaAnalitica');");
         getTableRowElement("mainTable",0).click();
@@ -826,7 +825,6 @@ public class CRUDOrdineAcqBP001Test extends ActionDeployments {
         assertThrows("Cannot find Element <tr> with tableName 'mainTable' and numberRow: 2", RuntimeException.class, ()->getTableRowElement("mainTable",2));
 
         doClickButton("doChiudiForm()");
-        doClickButton("doChiudiForm()");
 
         //Visualizzo le scritture di analitica associate
         doClickButton("submitForm('doVisualizzaAnalitica');");
@@ -962,7 +960,6 @@ public class CRUDOrdineAcqBP001Test extends ActionDeployments {
         doClickButton("submitForm('doVisualizzaEconomica');");
         assertThrows("Cannot find Element <tr> with tableName 'mainTable' and numberRow: 2", RuntimeException.class, ()->getTableRowElement("mainTable",2));
 
-        doClickButton("doChiudiForm()");
         doClickButton("doChiudiForm()");
 
         //Visualizzo le scritture di analitica associate
