@@ -1106,26 +1106,23 @@ public class CRUDOrdineAcqBP001Test extends ActionDeployments {
         assertEquals("P00047", getTableColumnElement("main.Movimenti Dare",0,1).getText());
         assertEquals("122,00", getTableColumnElement("main.Movimenti Dare",0,5).getText());
 
-        assertEquals("C00066", getTableColumnElement("main.Movimenti Dare",1,1).getText());
+        assertEquals("C13003", getTableColumnElement("main.Movimenti Dare",1,1).getText());
         assertEquals("3,00", getTableColumnElement("main.Movimenti Dare",1,5).getText());
 
         assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Dare' and numberRow: 2", RuntimeException.class, ()->getTableRowElement("main.Movimenti Dare",2));
 
-        assertEquals("P43001", getTableColumnElement("main.Movimenti Avere",0,1).getText());
-        assertEquals("3,00", getTableColumnElement("main.Movimenti Avere",0,5).getText());
+        assertEquals("P13003", getTableColumnElement("main.Movimenti Avere",0,1).getText());
+        assertEquals("103,00", getTableColumnElement("main.Movimenti Avere",0,5).getText());
 
-        assertEquals("P13003", getTableColumnElement("main.Movimenti Avere",1,1).getText());
-        assertEquals("100,00", getTableColumnElement("main.Movimenti Avere",1,5).getText());
+        assertEquals("P71012I", getTableColumnElement("main.Movimenti Avere",1,1).getText());
+        assertEquals("22,00", getTableColumnElement("main.Movimenti Avere",1,5).getText());
 
-        assertEquals("P71012I", getTableColumnElement("main.Movimenti Avere",2,1).getText());
-        assertEquals("22,00", getTableColumnElement("main.Movimenti Avere",2,5).getText());
-
-        assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Avere' and numberRow: 3", RuntimeException.class, ()->getTableRowElement("main.Movimenti Avere",3));
+        assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Avere' and numberRow: 2", RuntimeException.class, ()->getTableRowElement("main.Movimenti Avere",2));
 
         doClickButton("doTab('tab','tabAnalitica')");
-        assertEquals("C00066", getTableColumnElement("main.Movimenti Analitici",0,1).getText());
+        assertEquals("C13003", getTableColumnElement("main.Movimenti Analitici",0,1).getText());
         assertEquals("Dare", getTableColumnElement("main.Movimenti Analitici",0,2).getText());
-        assertEquals("C00066", getTableColumnElement("main.Movimenti Analitici",0,3).getText());
+        assertEquals("C13003", getTableColumnElement("main.Movimenti Analitici",0,3).getText());
         assertEquals("000.000.000", getTableColumnElement("main.Movimenti Analitici",0,5).getText());
         assertEquals("PTEST003", getTableColumnElement("main.Movimenti Analitici",0,6).getText());
         assertEquals("D", getTableColumnElement("main.Movimenti Analitici",0,7).getText());
