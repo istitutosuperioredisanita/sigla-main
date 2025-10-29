@@ -32,6 +32,7 @@ import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
 import java.sql.Connection;
+import java.util.Optional;
 
 public class VDocammElettroniciAttiviHome extends BulkHome {
 	public VDocammElettroniciAttiviHome(Connection conn) {
@@ -41,6 +42,14 @@ public class VDocammElettroniciAttiviHome extends BulkHome {
 		super(VDocammElettroniciAttiviBulk.class, conn, persistentCache);
 	}
 
+	private BulkHome getHomeDocPassivo( VDocammElettroniciAttiviBulk vDocammElettroniciAttiviBulk){
+		if (!Optional.ofNullable(vDocammElettroniciAttiviBulk).isPresent())
+			return null;
+		//da verificare xml generato per nota di credito per autofattura
+		//if ( Fattura_passivaBulk.TIPO_NOTA_DI_CREDITO.equalsIgnoreCase(vDocammElettroniciAttiviBulk.getTi_fattura()))
+		//	return (Nota_di_creditoHome)getHomeCache().getHome(Nota_di_creditoBulk.class);
+		return (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
+	}
 	public AutofatturaBulk findAutofattura(VDocammElettroniciAttiviBulk vDocammElettroniciAttiviBulk) throws PersistencyException {
 		if (vDocammElettroniciAttiviBulk.isAutofattura()) {
 			AutofatturaHome autofatturaHome = (AutofatturaHome)getHomeCache().getHome(AutofatturaBulk.class);
@@ -57,7 +66,8 @@ public class VDocammElettroniciAttiviHome extends BulkHome {
 			AutofatturaBulk autof = (AutofatturaBulk) resultAuto.get(0);
 
 			//Carico la fattura passiva collegata
-			Fattura_passivaHome fatturaPassivaHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passiva_IBulk.class);
+			BulkHome fatturaPassivaHome = getHomeDocPassivo(vDocammElettroniciAttiviBulk);
+			//Fattura_passivaHome fatturaPassivaHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
 			SQLBuilder sqlFatpas = fatturaPassivaHome.createSQLBuilder();
 			sqlFatpas.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, autof.getCd_cds_ft_passiva());
 			sqlFatpas.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, autof.getCd_uo_ft_passiva());
@@ -65,6 +75,7 @@ public class VDocammElettroniciAttiviHome extends BulkHome {
 			sqlFatpas.addClause(FindClause.AND, "pg_fattura_passiva", SQLBuilder.EQUALS, autof.getPg_fattura_passiva());
 
 			java.util.List resultFatpas = fatturaPassivaHome.fetchAll(sqlFatpas);
+
 			if (resultFatpas == null || resultFatpas.isEmpty()) return null;
 			if (resultFatpas.size() != 1)
 				throw new PersistencyException("Trovate più autofatture!");
