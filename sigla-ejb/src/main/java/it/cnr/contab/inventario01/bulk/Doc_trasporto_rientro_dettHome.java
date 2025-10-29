@@ -52,7 +52,7 @@ public class Doc_trasporto_rientro_dettHome extends BulkHome {
 		sql.addSQLClause(FindClause.AND, "ESERCIZIO",
 				SQLBuilder.EQUALS, doc.getEsercizio());
 		sql.addSQLClause(FindClause.AND, "PG_INVENTARIO",
-				SQLBuilder.EQUALS, doc.getInventario().getPg_inventario());
+				SQLBuilder.EQUALS, doc.getPg_inventario());
 		sql.addSQLClause(FindClause.AND, "TI_DOCUMENTO",
 				SQLBuilder.EQUALS, doc.getTiDocumento());
 		sql.addSQLClause(FindClause.AND, "PG_DOC_TRASPORTO_RIENTRO",

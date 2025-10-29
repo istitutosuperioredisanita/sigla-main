@@ -19,9 +19,12 @@ package it.cnr.contab.inventario01.bulk;
 
 import java.rmi.RemoteException;
 
+import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.inventario00.tabrif.bulk.Condizione_beneBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk;
+import it.cnr.contab.inventario00.tabrif.bulk.Ubicazione_beneBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -121,6 +124,58 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
 	}
 
 	// ========================================
+	// GETTER E SETTER - Campi Delegati
+	// ========================================
+
+	public void setPg_inventario(Long pg_inventario) {
+		this.getDoc_trasporto_rientro().setPg_inventario(pg_inventario);
+	}
+
+	public Long getPg_inventario() {
+		return this.getDoc_trasporto_rientro().getPg_inventario();
+	}
+
+	public Long getNr_inventario() {
+		return this.getBene().getNr_inventario();
+	}
+
+	public void setNr_inventario(Long nr_inventario) {
+		this.getBene().setNr_inventario(nr_inventario);
+	}
+
+	public Integer getProgressivo() {
+		return new Integer(this.getBene().getProgressivo().intValue());
+	}
+
+	public void setProgressivo(Integer progressivo) {
+		this.getBene().setProgressivo(new Long(progressivo.longValue()));
+	}
+
+	public void setTi_documento(String ti_documento) {
+		this.getDoc_trasporto_rientro().setTiDocumento(ti_documento);
+	}
+
+	public String getTi_documento() {
+		return this.getDoc_trasporto_rientro().getTiDocumento();
+	}
+
+	public void setEsercizio(Integer esercizio) {
+		this.getDoc_trasporto_rientro().setEsercizio(esercizio);
+	}
+
+	public Integer getEsercizio() {
+		return this.getDoc_trasporto_rientro().getEsercizio();
+	}
+
+	public void setPg_doc_trasporto_rientro(Long pg_doc_trasporto_rientro) {
+		this.getDoc_trasporto_rientro().setPgDocTrasportoRientro(pg_doc_trasporto_rientro);
+	}
+
+	public Long getPg_doc_trasporto_rientro() {
+		return this.getDoc_trasporto_rientro().getPgDocTrasportoRientro();
+	}
+
+	// ========================================
 	// METODI UTILITY - Codifiche
 	// ========================================
 
@@ -129,11 +184,11 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
 	 * Il progressivo viene formattato con 3 cifre (es: 001, 002, etc.)
 	 */
 	public String getCod_bene() {
-		if (getNrInventario() == null || getProgressivo() == null) {
+		if (getNr_inventario() == null || getProgressivo() == null) {
 			return "";
 		}
 		java.text.DecimalFormat formato = new java.text.DecimalFormat("000");
-		return getNrInventario().toString() + "-" + formato.format(getProgressivo());
+		return getNr_inventario().toString() + "-" + formato.format(getProgressivo());
 	}
 
 	/**
@@ -141,10 +196,10 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
 	 * Formato: "NR_INVENTARIO.PROGRESSIVO.ETICHETTA"
 	 */
 	public String getChiaveHash() {
-		if (getNrInventario() == null || getProgressivo() == null) {
+		if (getNr_inventario() == null || getProgressivo() == null) {
 			return null;
 		}
-		return getNrInventario().toString() + "." + getProgressivo().toString() + "." + getEtichetta();
+		return getNr_inventario().toString() + "." + getProgressivo().toString() + "." + getEtichetta();
 	}
 
 	// ========================================
@@ -215,6 +270,10 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
 		return doc.getAccessoriContestualiHash().containsKey(getChiaveHash());
 	}
 
+	public boolean isROsearchTool() {
+		return isBeneAccessorio();
+	}
+
 	public boolean isROcategoriaBene() {
 		return isAccessorioContestuale();
 	}
@@ -237,13 +296,14 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
 	 */
 	public String getEtichetta() {
 		if (isBeneAccessorio() || isAccessorioContestuale()) {
-			if (bene != null && bene.getBene_principale() != null &&
-					bene.getBene_principale().getEtichetta() != null) {
-				return bene.getBene_principale().getEtichetta();
+			if (getBene() != null &&
+					getBene().getBene_principale() != null &&
+					getBene().getBene_principale().getEtichetta() != null) {
+				return getBene().getBene_principale().getEtichetta();
 			}
 			return "";
 		}
-		return bene != null && bene.getEtichetta() != null ? bene.getEtichetta() : "";
+		return getBene() != null && getBene().getEtichetta() != null ? getBene().getEtichetta() : "";
 	}
 
 	public Boolean getFl_accessorio_contestuale() {
@@ -267,6 +327,34 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
 	}
 
 	// ========================================
+	// METODI DELEGATI AL BENE
+	// ========================================
+
+	public it.cnr.contab.anagraf00.core.bulk.TerzoBulk getAssegnatario() {
+		return bene.getAssegnatario();
+	}
+
+	public String getCollocazione() {
+		return bene.getCollocazione();
+	}
+
+	public Categoria_gruppo_inventBulk getCategoria_Bene() {
+		return bene.getCategoria_Bene();
+	}
+
+	public String getDs_bene() {
+		return bene.getDs_bene();
+	}
+
+	public Ubicazione_beneBulk getUbicazione() {
+		return bene.getUbicazione();
+	}
+
+	public Condizione_beneBulk getCondizioneBene() {
+		return bene.getCondizioneBene();
+	}
+
+	// ========================================
 	// ALTRI GETTER/SETTER
 	// ========================================
 
@@ -285,7 +373,4 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
 	public void setCat_voce(Categoria_gruppo_voceBulk cat_voce) {
 		this.cat_voce = cat_voce;
 	}
-
-
-
 }

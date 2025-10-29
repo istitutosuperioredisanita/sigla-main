@@ -318,9 +318,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
         try {
             Doc_trasporto_rientroBulk docT = (Doc_trasporto_rientroBulk) bulk;
-            docT.setTiDocumento(docT.getTipoMovimento().getTiDocumento());
-            docT.setPgInventario(docT.getInventario().getPg_inventario());
-            docT.setTipoMovimento(docT.getTipoMovimento());
+//            docT.setTiDocumento(docT.getTipoMovimento().getTiDocumento());
+//            docT.setPgInventario(docT.getInventario().getPg_inventario());
+//            docT.setTipoMovimento(docT.getTipoMovimento());
             // ===== 1. GENERA IL PROGRESSIVO =====
             Numeratore_doc_t_rHome numHome = (Numeratore_doc_t_rHome)
                     getHome(userContext, Numeratore_doc_t_rBulk.class);
@@ -329,7 +329,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 docT.setPgDocTrasportoRientro(numHome.getNextPg(
                         userContext,
                         docT.getEsercizio(),
-                        docT.getPgInventario(),
+                        docT.getPg_inventario(),
                         docT.getTiDocumento(),
                         userContext.getUser()));
 
@@ -385,19 +385,20 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 // ===== 6. CREA IL DETTAGLIO =====
                 Doc_trasporto_rientro_dettBulk dettaglio = new Doc_trasporto_rientro_dettBulk();
 
+                dettaglio.setDoc_trasporto_rientro(docT);
+                dettaglio.setBene(bene);
+
                 // IMPORTANTE: Imposta ESPLICITAMENTE tutte le 6 chiavi primarie
                 // usando i metodi SNAKE_CASE
-                dettaglio.setPgInventario(docT.getPgInventario());
-                dettaglio.setTiDocumento(docT.getTiDocumento());
+                dettaglio.setPg_inventario(docT.getPg_inventario());
+                dettaglio.setTi_documento(docT.getTiDocumento());
                 dettaglio.setEsercizio(docT.getEsercizio());
-                dettaglio.setPgDocTrasportoRientro(docT.getPgDocTrasportoRientro());
-                dettaglio.setNrInventario(bene.getNr_inventario());
+                dettaglio.setPg_doc_trasporto_rientro(docT.getPgDocTrasportoRientro());
+                dettaglio.setNr_inventario(bene.getNr_inventario());
                 dettaglio.setProgressivo(bene.getProgressivo().intValue());
 
-                dettaglio.setDoc_trasporto_rientro(docT);
 
-                // E il bene (per gli altri campi non-chiave)
-                dettaglio.setBene(bene);
+
 
                 // Imposta campi obbligatori
                 dettaglio.setQuantita(1L);
@@ -540,7 +541,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
         try {
             validaDataDDT(aUC, docT);
-            validaBeniDettDDT(aUC, docT);
+            //validaBeniDettDDT(aUC, docT);
 
             if (docT.getDataRegistrazione().before(getMaxDataFor(aUC, docT))) {
                 throw new it.cnr.jada.comp.ApplicationException("Attenzione: data di Trasporto non valida.\n La Data di Trasporto non può essere precedente ad una modifica di uno dei beni trasportati");
@@ -584,29 +585,32 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
-    private void validaBeniDettDDT(UserContext userContext, Doc_trasporto_rientroBulk docT) throws ComponentException {
 
-        boolean hasNoDetails = true;
-        try {
-            Inventario_beni_apgHome apgHome = (Inventario_beni_apgHome) getHome(userContext, Inventario_beni_apgBulk.class);
-
-            SQLBuilder sql = apgHome.createSQLBuilder();
-            sql.addSQLClause("AND", "LOCAL_TRANSACTION_ID", sql.EQUALS, docT.getLocal_transactionID());
-            List beniApg = apgHome.fetchAll(sql);
-            for (Iterator i = beniApg.iterator(); i.hasNext(); ) {
-                Inventario_beni_apgBulk beneApg = (Inventario_beni_apgBulk) i.next();
-                if (beneApg != null) {
-                    hasNoDetails = false;
-                    //aggiungiDettDDT(userContext, docT, beneDettAss);
-                }
-            }
-            if (hasNoDetails) {
-                throw new it.cnr.jada.comp.ApplicationException("Attenzione: è necessario specificare almeno un bene da trasportare!");
-            }
-        } catch (PersistencyException e) {
-            throw handleException(e);
-        }
-    }
+    //VIENE GIA' FATTO NEL CREACONBULK
+//
+//    private void validaBeniDettDDT(UserContext userContext, Doc_trasporto_rientroBulk docT) throws ComponentException {
+//
+//        boolean hasNoDetails = true;
+//        try {
+//            Inventario_beni_apgHome apgHome = (Inventario_beni_apgHome) getHome(userContext, Inventario_beni_apgBulk.class);
+//
+//            SQLBuilder sql = apgHome.createSQLBuilder();
+//            sql.addSQLClause("AND", "LOCAL_TRANSACTION_ID", sql.EQUALS, docT.getLocal_transactionID());
+//            List beniApg = apgHome.fetchAll(sql);
+//            for (Iterator i = beniApg.iterator(); i.hasNext(); ) {
+//                Inventario_beni_apgBulk beneApg = (Inventario_beni_apgBulk) i.next();
+//                if (beneApg != null) {
+//                    hasNoDetails = false;
+//                    //aggiungiDettDDT(userContext, docT, beneDettAss);
+//                }
+//            }
+//            if (hasNoDetails) {
+//                throw new it.cnr.jada.comp.ApplicationException("Attenzione: è necessario specificare almeno un bene da trasportare!");
+//            }
+//        } catch (PersistencyException e) {
+//            throw handleException(e);
+//        }
+//    }
 
 
 //    public OggettoBulk modificaConBulk(UserContext aUC, OggettoBulk bulk)
