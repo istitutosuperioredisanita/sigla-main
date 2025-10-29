@@ -163,6 +163,10 @@
 			actionClass="it.cnr.contab.doccont00.action.ConsRiepilogoSiopeAction">
 	</action>
 
+	<action path="/ConsFlussiCassaAction"
+			actionClass="it.cnr.contab.doccont00.action.ConsFlussiCassaAction">
+	</action>
+
 	<action path="/ConsRiepilogoSiopeDettagliAction"
 			actionClass="it.cnr.contab.doccont00.action.ConsRiepilogoSiopeDettagliAction">
 	</action>
@@ -1178,7 +1182,15 @@
 					value="CNRDOCCONT00_EJB_ConsRiepilogoSiopeComponentSession" />
 		<init-param name="defaultAction" value="ConsRiepilogoSiopeAction" />
 	</businessProcess>
-
+	<businessProcess name="ConsFlussiCassaBP"
+					 className="it.cnr.contab.doccont00.bp.ConsFlussiCassaBP">
+		<forward name="default" path="/doccont00/cons_flussi_cassa.jsp" />
+		<init-param name="bulkClassName"
+					value="it.cnr.contab.doccont00.consultazioni.bulk.V_cons_siope_mandatiBulk" />
+		<init-param name="componentSessionName"
+					value="CNRDOCCONT00_EJB_ConsRiepilogoSiopeComponentSession" />
+		<init-param name="defaultAction" value="ConsFlussiCassaAction" />
+	</businessProcess>
 	<businessProcess name="ConsRiepilogoSiopeReversaliBP"
 					 className="it.cnr.contab.doccont00.bp.ConsRiepilogoSiopeReversaliBP">
 		<forward name="default" path="/doccont00/riepilogo_siope_reversali.jsp" />
