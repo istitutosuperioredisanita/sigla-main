@@ -20,10 +20,7 @@
  * Date 29/05/2009
  */
 package it.cnr.contab.utenze00.bulk;
-import it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk;
-import it.cnr.jada.action.ActionContext;
-import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.util.action.CRUDBP;
+
 public class Utente_gestoreBulk extends Utente_gestoreBase {
 	
 	private UtenteBulk utente;
@@ -75,12 +72,6 @@ public class Utente_gestoreBulk extends Utente_gestoreBase {
 		try{return getDataOdierna(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate());}
 		catch (javax.ejb.EJBException e){throw new it.cnr.jada.action.BusinessProcessException(e);}
 	}
-	/**
-	 * Insert the method's description here.
-	 * Creation date: (24/05/2002 13.01.57)
-	 * @param docCont it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk
-	 * @param map java.util.Map
-	 */
 	public static java.sql.Timestamp getDataOdierna(java.sql.Timestamp dataOdierna) {
 
 		java.util.Calendar gc = java.util.Calendar.getInstance();
@@ -95,7 +86,7 @@ public class Utente_gestoreBulk extends Utente_gestoreBase {
 	public java.util.Calendar getDateCalendar(java.sql.Timestamp date) {
 
 		if (date == null)
-			date = new java.sql.Timestamp(System.currentTimeMillis());
+			date = it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp();
 			
 		java.util.Calendar calendar = java.util.Calendar.getInstance();
 		calendar.setTime(date);

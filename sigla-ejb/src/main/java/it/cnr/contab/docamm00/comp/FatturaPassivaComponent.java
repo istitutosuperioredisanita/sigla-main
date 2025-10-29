@@ -3044,7 +3044,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                     if (fatturaOrdineBulk.isRigaAttesaNotaCredito()) {
                         if (fatturaOrdineBulk.getImponibilePerNotaCredito().compareTo(fatturaOrdineBulk.getImImponibile()) < 0)
                             throw new ApplicationMessageFormatException("Attenzione: Per la riga di consegna {0} è stato indicato un imponibile errato per nota di credito più basso dell''imponibile reale!", consegna.getConsegnaOrdineString());
-                        if (fatturaOrdineBulk.getOperazioneImpegnoNotaCredito() == null)
+                        if (!fattura.isNonLiquidabile() && fatturaOrdineBulk.getOperazioneImpegnoNotaCredito() == null)
                             throw new ApplicationMessageFormatException("Attenzione: Per la riga di consegna {0} non è stato indicato l''impegno da usare per nota di credito", consegna.getConsegnaOrdineString());
                     }
                     consegna.setFatturaOrdineBulk(fatturaOrdineBulk);

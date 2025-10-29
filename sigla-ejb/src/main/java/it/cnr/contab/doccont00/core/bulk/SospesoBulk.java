@@ -515,7 +515,6 @@ public class SospesoBulk extends SospesoBase {
             throw new ValidationException("Il campo DATA di REGISTRAZIONE è obbligatorio.");
 
         java.sql.Timestamp dataRegistrazione = getDt_registrazione();
-//	java.sql.Timestamp dataSistema = new java.sql.Timestamp(System.currentTimeMillis());
         java.sql.Timestamp dataSistema;
         try {
             dataSistema = it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();

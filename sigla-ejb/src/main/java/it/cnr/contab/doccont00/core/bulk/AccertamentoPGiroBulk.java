@@ -315,7 +315,6 @@ public void validate() throws ValidationException {
 		throw new ValidationException( "Il campo DATA è obbligatorio." );
 
 	java.sql.Timestamp dataRegistrazione = getDt_registrazione();
-//	java.sql.Timestamp dataSistema = new java.sql.Timestamp(System.currentTimeMillis());
 	java.sql.Timestamp dataSistema;
 	try
 	{

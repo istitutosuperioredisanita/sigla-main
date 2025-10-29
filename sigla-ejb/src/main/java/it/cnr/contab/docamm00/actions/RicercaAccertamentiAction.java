@@ -269,15 +269,6 @@ public Forward doOpenAccertamentiWindow(ActionContext context) {
 		accertamento.setIm_accertamento(filtro.getIm_importo());
 		accertamento.setRiportato("N");
 		accertamento.setEsercizio_competenza(it.cnr.contab.utenze00.bulk.CNRUserInfo.getEsercizio(context));
-		
-		//Accertamento_scadenzarioBulk scadenza = new Accertamento_scadenzarioBulk(accertamento);
-		//scadenza.setDs_scadenza("Scadenza per fattura passiva");
-		//scadenza.setDt_scadenza_incasso(new java.sql.Timestamp(System.currentTimeMillis()));
-		//scadenza.setDt_scadenza_emissione_fattura(null);
-		//scadenza.setIm_scadenza(filtro.getIm_importo());
-		//scadenza.setToBeCreated();
-		//accertamento.addToAccertamento_scadenzarioColl(scadenza);
-	
 		return context.addBusinessProcess(accertamentoBP);
 	} catch(Exception e) {
 		return handleException(context,e);

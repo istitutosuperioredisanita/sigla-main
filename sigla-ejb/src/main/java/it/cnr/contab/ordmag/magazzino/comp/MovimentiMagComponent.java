@@ -199,7 +199,7 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 		MovimentiMagBulk movimentoMag = new MovimentiMagBulk();
 		movimentoMag.setBeneServizioUt(beneServizio);
 		movimentoMag.setQuantita(quantitaBeneServizio);
-		movimentoMag.setDtMovimento(new Timestamp(System.currentTimeMillis()));
+		movimentoMag.setDtMovimento(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate());
 		movimentoMag.setDtRiferimento(dataRiferimento);
 		movimentoMag.setMagazzinoUt(magazzino);
 		movimentoMag.setUnitaOperativaOrd(unitaOperativa);
@@ -426,7 +426,7 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 
 		movimentoMag.setBeneServizioUt(lotto.getBeneServizio());
 		movimentoMag.setQuantita(BigDecimal.ONE);
-		movimentoMag.setDtMovimento(new Timestamp(System.currentTimeMillis()));
+		movimentoMag.setDtMovimento(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate());
 		movimentoMag.setDtRiferimento(lotto.getDtCarico());
 		movimentoMag.setMagazzinoUt(magazzinoBulk);
 		movimentoMag.setUnitaOperativaOrd(ordineAcqConsegnaBulk.getUnitaOperativaOrd());
@@ -911,7 +911,7 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 
 			MovimentiMagBulk movimentoDiStorno = (MovimentiMagBulk)movimentoDaAnnullare.clone();
 
-			movimentoDiStorno.setDtMovimento(new Timestamp(System.currentTimeMillis()));
+			movimentoDiStorno.setDtMovimento(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate());
 			movimentoDiStorno.setPgMovimento(null);
 			movimentoDiStorno.setMovimentoRif(new MovimentiMagBulk());
 			movimentoDiStorno.setTipoMovimentoMag(tipoMovimento.getTipoMovimentoMagStorno());

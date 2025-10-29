@@ -880,8 +880,6 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
             lettera.setSospeso(sospeso);
             java.math.BigDecimal zero = new java.math.BigDecimal(0).setScale(2, java.math.BigDecimal.ROUND_HALF_UP);
             lettera.setIm_pagamento(zero);
-            //lettera.setIm_commissioni(zero);
-            //lettera.setDt_registrazione(new java.sql.Timestamp(System.currentTimeMillis()));
             ((CRUDBP) context.getBusinessProcess()).setDirty(true);
             return context.findDefaultForward();
 

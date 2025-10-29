@@ -23,6 +23,7 @@ import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.Persistent;
 import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.util.ejb.EJBCommonServices;
 
 public class AssGruppoIvaAnagHome extends BulkHome {
 	public AssGruppoIvaAnagHome(java.sql.Connection conn) {
@@ -34,7 +35,7 @@ public class AssGruppoIvaAnagHome extends BulkHome {
 	@Override
 	public void delete(Persistent persistent, UserContext userContext) throws PersistencyException {
 		((AssGruppoIvaAnagBulk)persistent).setStato("ANN");
-		((AssGruppoIvaAnagBulk)persistent).setDt_cancellazione(new java.sql.Timestamp(System.currentTimeMillis()));
+		((AssGruppoIvaAnagBulk)persistent).setDt_cancellazione(EJBCommonServices.getServerDate());
 		super.update(persistent, userContext);
 	}
 }

@@ -872,49 +872,8 @@ public void	selectAllPerAnnullamento(UserContext userContext, V_obb_acc_xxxBulk 
 	{
 		throw handleException(e);
 	}	
-/*
-	try 
-	{
-		
-		Query sql = selectPerAnnullamento( userContext, doc );
-		V_mandato_reversaleHome home = (V_mandato_reversaleHome) getHome( userContext, V_mandato_reversaleBulk.class );
-		SQLBroker broker = home.createBroker( sql );
-		
-		Long last_pg_dettaglio = ((Distinta_cassiere_detHome)getHome( userContext, Distinta_cassiere_detBulk.class)).getUltimoPg_Dettaglio( userContext, distinta );
-		V_mandato_reversaleBulk docContabile;
-		while ( broker.next() )
-		{
-			docContabile = (V_mandato_reversaleBulk) broker.fetch(V_mandato_reversaleBulk.class );
-			last_pg_dettaglio = inserisciDettaglioDistinta( userContext, distinta, docContabile, last_pg_dettaglio );
- 			last_pg_dettaglio =	aggiungiMandatiEReversaliCollegati( userContext, distinta, docContabile, last_pg_dettaglio )	;					
-		}
-		broker.close();
-	*/	
-			
-/*
-		String schema = it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema();
-		String user = it.cnr.contab.utenze00.bp.CNRUserContext.getUser(userContext);
-		java.sql.Timestamp dacr = new java.sql.Timestamp(System.currentTimeMillis());
-
-		java.sql.PreparedStatement ps = getConnection(userContext).prepareStatement(
-			"INSERT INTO "+schema+"ASS_TIPO_LA_CDR ( CD_CENTRO_RESPONSABILITA, CD_TIPO_LINEA_ATTIVITA, UTCR, DUVA, UTUV, DACR, PG_VER_REC ) SELECT CD_CENTRO_RESPONSABILITA, ?, ?, ?, ?, ?, 1 FROM "+schema+"V_CDR_VALIDO WHERE ESERCIZIO = ? AND NOT EXISTS ( SELECT 1 FROM "+schema+"ASS_TIPO_LA_CDR WHERE V_CDR_VALIDO.CD_CENTRO_RESPONSABILITA = ASS_TIPO_LA_CDR.CD_CENTRO_RESPONSABILITA AND ASS_TIPO_LA_CDR.CD_TIPO_LINEA_ATTIVITA = ? ) ");
-
-		ps.setString(1,dsitinta.getCd_tipo_linea_attivita());   // CD_TIPO_LINEA_ATTIVITA
-		ps.setString(2,user);  // UTCR
-		ps.setTimestamp(3,dacr);   // DUVA
-		ps.setString(4,user);   // UTUV
-		ps.setTimestamp(5,dacr);    // DACR
-		ps.setInt(6,it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext).intValue());   // ESERCIZIO
-		ps.setString(7,tipo_la.getCd_tipo_linea_attivita());   // CD_TIPO_LINEA_ATTIVITA
-		LoggableStatement.execute(ps);
-		try{ps.close();}catch( java.sql.SQLException e ){};
-			}	
-	 catch(Exception e) 
-	{
-		throw handleException(e);
-	}	
-*/		
 }
+
 /*
  *	Name: inserimento di tutti i doc.contabile della VSX_CHIUSURA per riporta avanti
  *	Pre: l'utente ha effettuato una ricerca che ha dato come risultato una lista di documenti contabili potenzialmente 

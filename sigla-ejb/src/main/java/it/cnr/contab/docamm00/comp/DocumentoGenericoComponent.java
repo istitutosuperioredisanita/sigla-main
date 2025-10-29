@@ -1247,67 +1247,9 @@ public class DocumentoGenericoComponent
         genericoBulk.setInizio_validita_valuta(cambioValido.getDt_inizio_validita());
         genericoBulk.setFine_validita_valuta(cambioValido.getDt_fine_validita());
         genericoBulk.setCambio(cambioValido.getCambio());
-        //try{
-        //genericoBulk.setValute(findValute(uc,genericoBulk));
-        //} catch (Exception e){
-        //throw handleException(genericoBulk, new it.cnr.jada.comp.ApplicationException("Non esiste una valuta per il periodo specificato!"));
-        //}
 
         return genericoBulk;
-
-        //it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk valuta= genericoBulk.getValuta();
-        //if (valuta == null) {
-        //return resetChangeData(uc, genericoBulk);
-        //}
-
-        //String query= "SELECT * FROM " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() + "CAMBIO WHERE CD_DIVISA = ? " + "AND ? BETWEEN DT_INIZIO_VALIDITA AND DT_FINE_VALIDITA";
-
-        //try {
-        //java.sql.PreparedStatement pstmt= getHomeCache(uc).getConnection().prepareStatement(query);
-        //pstmt.setString(1, valuta.getCd_divisa());
-        //pstmt.setTimestamp(2, (genericoBulk.getData_registrazione() == null) ? new java.sql.Timestamp(System.currentTimeMillis()) : genericoBulk.getData_registrazione());
-
-        //java.sql.ResultSet rs= pstmt.executeQuery();
-
-        //if (rs.next()) {
-        //genericoBulk.setInizio_validita_valuta((java.sql.Timestamp) rs.getObject("DT_INIZIO_VALIDITA"));
-        //genericoBulk.setFine_validita_valuta((java.sql.Timestamp) rs.getObject("DT_FINE_VALIDITA"));
-        //java.math.BigDecimal change= rs.getBigDecimal("CAMBIO");
-        //genericoBulk.setCambio(change);
-        //if (valuta.getCd_divisa().equals(getEuro(uc).getCd_divisa())) {
-        //genericoBulk.setDefaultValuta(true);
-        ////if (dataCambio == null)
-        ////dataCambio= new java.sql.Timestamp(System.currentTimeMillis());
-        //}
-        //else genericoBulk.setDefaultValuta(false);
-        //java.util.Collection dettagli= (java.util.Collection) genericoBulk.getDocumento_generico_dettColl();
-        //for (java.util.Iterator i= dettagli.iterator(); i.hasNext();) {
-        //Documento_generico_rigaBulk dettaglio= (Documento_generico_rigaBulk) i.next();
-        //dettaglio.setIm_riga((dettaglio.getIm_riga_divisa() != null ? dettaglio.getIm_riga_divisa() : new java.math.BigDecimal(0)).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
-        //java.math.BigDecimal imp_divisa= new java.math.BigDecimal(0);
-        //if (dettaglio.getIm_riga().compareTo(new java.math.BigDecimal(0)) != 0)
-        //imp_divisa=
-        //(genericoBulk.getChangeOperation() == genericoBulk_passivaBulk.MOLTIPLICA) ? dettaglio.getIm_riga().multiply(change) : dettaglio.getIm_riga().divide(change, java.math.BigDecimal.ROUND_HALF_UP);
-        //dettaglio.setIm_riga(imp_divisa.setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
-        //}
-        //} else {
-        //throw new it.cnr.jada.comp.ApplicationException("Non esiste una valuta per il periodo specificato!");
-        //}
-
-        //} catch (ComponentException ce) {
-        ////setChangeDataToEur(uc, genericoBulk);
-        //throw new it.cnr.jada.comp.ApplicationException("Non esiste una valuta per il periodo specificato!");
-        //} catch (java.sql.SQLException sqle) {
-        ////return null;
-        //throw new it.cnr.jada.comp.ApplicationException("Non esiste una valuta per il periodo specificato!");
-        //} catch (Exception e) {
-        ////return null;
-        //throw new it.cnr.jada.comp.ApplicationException("Non esiste una valuta per il periodo specificato!");
-        //}
-
-        //return genericoBulk;
     }
-//^^@@
 
     /**
      * Tutti i controlli  superati.
@@ -1366,7 +1308,6 @@ public class DocumentoGenericoComponent
      * PostCondition:
      * La scadenza non viene aggiunta alla lista delle scadenze congruenti.
      */
-//^^@@
     public RemoteIterator cercaObbligazioni(UserContext context, Filtro_ricerca_obbligazioniVBulk filtro)
             throws ComponentException {
 

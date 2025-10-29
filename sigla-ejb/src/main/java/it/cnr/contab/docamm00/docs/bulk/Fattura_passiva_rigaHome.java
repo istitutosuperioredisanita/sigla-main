@@ -325,10 +325,11 @@ public class Fattura_passiva_rigaHome extends BulkHome {
                 //verifico se sulla riga del docamm ci sia un bene inventariabile
                 Bene_servizioBulk myBeneServizio = (Bene_servizioBulk)fatpasHome.loadIfNeededObject(docRiga.getBene_servizio());
 
-                if (myBeneServizio.getFl_gestione_inventario() && Optional.ofNullable(myBeneServizio.getCd_categoria_gruppo()).isPresent()) {
+                if (Optional.ofNullable(myBeneServizio.getCd_categoria_gruppo()).isPresent()) {
                     AssCatgrpInventVoceEpHome assCatgrpInventVoceEpHome = (AssCatgrpInventVoceEpHome) getHomeCache().getHome(AssCatgrpInventVoceEpBulk.class);
                     AssCatgrpInventVoceEpBulk result = assCatgrpInventVoceEpHome.findDefaultByCategoria(docRiga.getEsercizio(), myBeneServizio.getCd_categoria_gruppo());
-                    return result.getConto();
+                    if (result!=null && result.getConto()!=null && result.getConto().getCd_voce_ep()!=null)
+                        return result.getConto();
                 }
 
                 //se arrivo qui devo guardare alla voce dell'obbligazione
@@ -360,13 +361,6 @@ public class Fattura_passiva_rigaHome extends BulkHome {
             Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
 
             if (Optional.ofNullable(aContoEconomico).isPresent()) {
-                List<Voce_analiticaBulk> voceAnaliticaList = ((Voce_analiticaHome) getHomeCache().getHome(Voce_analiticaBulk.class)).findVoceAnaliticaList(aContoEconomico);
-                if (voceAnaliticaList.isEmpty())
-                    return new ArrayList<>();
-                Voce_analiticaBulk voceAnaliticaDef = voceAnaliticaList.stream()
-                        .filter(Voce_analiticaBulk::getFl_default).findAny()
-                        .orElse(voceAnaliticaList.stream().findAny().orElse(null));
-
                 //verifico se sulla riga del docamm ci sia un ordine collegato
                 List<FatturaOrdineBulk> fatturaOrdineBulks = this.findFatturaOrdineList(docRiga);
                 if (!fatturaOrdineBulks.isEmpty()) {
@@ -396,14 +390,24 @@ public class Fattura_passiva_rigaHome extends BulkHome {
                     }
                 }
 
-                if (!Optional.ofNullable(docRiga.getScadenzaDocumentoContabile()).isPresent()) {
+                //Cerco voci analitiche associate a conto economico indicato
+                List<Voce_analiticaBulk> voceAnaliticaList = ((Voce_analiticaHome) getHomeCache().getHome(Voce_analiticaBulk.class)).findVoceAnaliticaList(aContoEconomico);
+                if (voceAnaliticaList.isEmpty())
+                    return new ArrayList<>();
+                Voce_analiticaBulk voceAnaliticaDef = voceAnaliticaList.stream()
+                        .filter(Voce_analiticaBulk::getFl_default).findAny()
+                        .orElse(voceAnaliticaList.stream().findAny().orElse(null));
+
+                //Se fattura non liquidabile o documento senza obbligazione metto analitica di DocumentoNonLiquidabile
+                if ((docRiga.getFather() instanceof Fattura_passiva_IBulk && ((Fattura_passiva_IBulk)docRiga.getFather()).isNonLiquidabile()) ||
+                    !Optional.ofNullable(docRiga.getScadenzaDocumentoContabile()).isPresent()) {
                     Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
-                    WorkpackageBulk gaeDefault = configHome.getGaeDocumentoNonLiquidabile(userContext, docRiga);
+                    WorkpackageBulk gaeDocumentoNonLiquidabile = configHome.getGaeDocumentoNonLiquidabile(userContext, docRiga);
 
                     Fattura_passiva_riga_ecoBulk myRigaEco = (Fattura_passiva_riga_ecoBulk)rigaEcoClass.newInstance();
                     myRigaEco.setProgressivo_riga_eco((long) (docRiga.getChildrenAna().size() + 1));
                     myRigaEco.setVoce_analitica(voceAnaliticaDef);
-                    myRigaEco.setLinea_attivita(gaeDefault);
+                    myRigaEco.setLinea_attivita(gaeDocumentoNonLiquidabile);
                     myRigaEco.setFattura_passiva_riga(docRiga);
                     myRigaEco.setImporto(docRiga.getImCostoEco());
                     myRigaEco.setToBeCreated();

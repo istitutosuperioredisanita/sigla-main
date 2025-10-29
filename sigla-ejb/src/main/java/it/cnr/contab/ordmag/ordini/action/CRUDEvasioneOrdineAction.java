@@ -43,6 +43,7 @@ import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.SelezionatoreListaBP;
+import it.cnr.jada.util.ejb.EJBCommonServices;
 
 public class CRUDEvasioneOrdineAction extends it.cnr.jada.util.action.CRUDAction {
 
@@ -280,11 +281,9 @@ public class CRUDEvasioneOrdineAction extends it.cnr.jada.util.action.CRUDAction
 				int annoCompetenza = gc.get(java.util.Calendar.YEAR);
 				int esScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue();
 
-				if (annoCompetenza != esScrivania) {
+				if (annoCompetenza != esScrivania)
 					throw new ApplicationException("La \"Data Consegna\" deve ricadere nell'esercizio selezionato!");
-				}
 				validaDateEvasione(evasioneOrdine);
-
 			}
 			return context.findDefaultForward();
 		}
@@ -300,6 +299,8 @@ public class CRUDEvasioneOrdineAction extends it.cnr.jada.util.action.CRUDAction
 		}
 	}
 	private void validaDateEvasione(EvasioneOrdineBulk evasioneOrdine) throws ApplicationException {
+        if(evasioneOrdine.getDataConsegna() != null && evasioneOrdine.getDataConsegna().after(EJBCommonServices.getServerDate()))
+            throw new ApplicationException("La \"Data Consegna\" non può essere maggiore della data odierna.");
 		if(evasioneOrdine.getDataBolla() != null && evasioneOrdine.getDataConsegna() != null){
 			if(evasioneOrdine.getDataBolla().compareTo(evasioneOrdine.getDataConsegna()) > 0){
 				throw new ApplicationException("La \"Data Bolla\" non può essere maggiore della \"Data Consegna\" ");

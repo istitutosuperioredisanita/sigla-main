@@ -1137,7 +1137,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	public java.util.Calendar getDateCalendar(java.sql.Timestamp date) 
 	{
 		if (date == null)
-			date = new java.sql.Timestamp(System.currentTimeMillis());
+			date = it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp();
 
 		java.util.Calendar calendar = java.util.Calendar.getInstance();
 		calendar.setTime(date);

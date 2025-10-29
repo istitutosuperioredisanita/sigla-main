@@ -727,7 +727,7 @@ public class CRUDCompensoAction extends EconomicaAction {
             Obbligazione_scadenzarioBulk scadenza = new Obbligazione_scadenzarioBulk(obbligazione);
             obbligazione.addToObbligazione_scadenzarioColl(scadenza);
             scadenza.setDs_scadenza("Scadenza per compenso");
-            scadenza.setDt_scadenza(new java.sql.Timestamp(System.currentTimeMillis()));
+            scadenza.setDt_scadenza(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate());
             scadenza.setIm_scadenza(compenso.getImportoObbligazione());
             scadenza.setUser(obbligazione.getUser());
             scadenza.setToBeCreated();

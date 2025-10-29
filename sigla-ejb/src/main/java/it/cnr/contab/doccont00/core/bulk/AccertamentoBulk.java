@@ -725,7 +725,6 @@ public void validate() throws ValidationException {
 		throw new ValidationException( "Il campo DATA è obbligatorio." );
 
 	java.sql.Timestamp dataRegistrazione = getDt_registrazione();
-//	java.sql.Timestamp dataSistema = new java.sql.Timestamp(System.currentTimeMillis());
 	java.sql.Timestamp dataSistema;
 	try
 	{
@@ -771,7 +770,6 @@ public void validate() throws ValidationException {
  */
 public void validateTerzo( it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo ) throws ValidationException 
 {
-//	java.sql.Timestamp dataSistema = new java.sql.Timestamp(System.currentTimeMillis());
 	java.sql.Timestamp dataSistema;
 	try
 	{

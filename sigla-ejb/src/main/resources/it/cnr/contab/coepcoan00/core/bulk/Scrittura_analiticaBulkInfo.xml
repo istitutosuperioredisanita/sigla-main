@@ -367,7 +367,28 @@
 	<columnFieldProperty
 		name="cd_terzo" />
 
-	<findFieldProperty
+    <columnSet name="includeFieldAttiva">
+        <columnFieldProperty
+                name="esercizio" />
+        <columnFieldProperty
+                name="cd_cds" />
+        <columnFieldProperty
+                name="pg_scrittura" />
+        <columnFieldProperty
+                name="dt_contabilizzazione" />
+        <columnFieldProperty
+                name="ds_scrittura" />
+        <columnFieldProperty
+                name="stato" />
+        <columnFieldProperty
+                name="attiva" />
+        <columnFieldProperty
+                name="im_scrittura" />
+        <columnFieldProperty
+                name="cd_terzo" />
+    </columnSet>
+
+    <findFieldProperty
 		name="pg_scrittura" />
 	<findFieldProperty
 		name="cd_cds" />

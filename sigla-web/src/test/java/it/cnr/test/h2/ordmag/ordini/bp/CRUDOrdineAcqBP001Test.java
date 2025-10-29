@@ -1087,15 +1087,6 @@ public class CRUDOrdineAcqBP001Test extends ActionDeployments {
         doClickButton("submitForm('doConfermaRiscontroAValore')");
 
         alert = browser.switchTo().alert();
-        assertEquals("Attenzione: Per la riga di consegna 2025/"+CD_NUMERATORE+"/1/1/1 non è stato indicato l'impegno da usare per nota di credito", alert.getText());
-        alert.accept();
-
-        select = new Select(getGrapheneElement("main.Ordini.operazioneImpegnoNotaCredito"));
-        select.selectByValue("D");
-
-        doClickButton("submitForm('doConfermaRiscontroAValore')");
-
-        alert = browser.switchTo().alert();
         assertEquals("Attenzione ci sono dettagli di fattura da contabilizzare.", alert.getText());
         alert.accept();
 

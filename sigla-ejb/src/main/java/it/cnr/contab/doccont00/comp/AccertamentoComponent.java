@@ -597,8 +597,6 @@ public class AccertamentoComponent extends CRUDComponent implements IDocumentoCo
             if (accertamento.getAccertamentiPluriennali() != null && !accertamento.getAccertamentiPluriennali().isEmpty()) {
                 throw new ApplicationException("Impossibile annullare un accertamento con accertamenti pluriennali collegati");
             }
-            /* simona
-        accertamento.setDt_cancellazione(new java.sql.Timestamp(System.currentTimeMillis())); */
             accertamento.setDt_cancellazione(DateServices.getDt_valida(aUC));
 
             // azzero tutti gli importi

@@ -2298,10 +2298,11 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         OrdineAcqConsegnaBulk ordineAcqConsegnaBulk = (OrdineAcqConsegnaBulk)crudOrdineAcqBP.getConsegne().getModel();
         if (ordineAcqConsegnaBulk!=null) {
             try {
-                CRUDScritturaPDoppiaBP nbp = (CRUDScritturaPDoppiaBP) actioncontext.createBusinessProcess("CRUDScritturaPDoppiaBP", new Object[]{"M"});
+                CRUDScritturaPDoppiaBP nbp = (CRUDScritturaPDoppiaBP) actioncontext.createBusinessProcess("CRUDScritturaPDoppiaBP", new Object[]{"V"});
                 nbp = (CRUDScritturaPDoppiaBP) actioncontext.addBusinessProcess(nbp);
                 nbp.setStatus(FormController.VIEW);
                 nbp.resetForSearch(actioncontext);
+                nbp.setSearchResultColumnSet("includeFieldAttiva");
                 OggettoBulk oggettobulk = nbp.getModel();
 
                 CompoundFindClause clauses = new CompoundFindClause();
@@ -2347,11 +2348,12 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         OrdineAcqConsegnaBulk ordineAcqConsegnaBulk = (OrdineAcqConsegnaBulk)crudOrdineAcqBP.getConsegne().getModel();
         if (ordineAcqConsegnaBulk!=null) {
             try {
-                CRUDScritturaAnaliticaBP nbp = (CRUDScritturaAnaliticaBP) actioncontext.createBusinessProcess("CRUDScritturaAnaliticaBP", new Object[]{"M"});
+                CRUDScritturaAnaliticaBP nbp = (CRUDScritturaAnaliticaBP) actioncontext.createBusinessProcess("CRUDScritturaAnaliticaBP", new Object[]{"V"});
                 nbp = (CRUDScritturaAnaliticaBP) actioncontext.addBusinessProcess(nbp);
                 nbp.setStatus(FormController.VIEW);
 
                 nbp.resetForSearch(actioncontext);
+                nbp.setSearchResultColumnSet("includeFieldAttiva");
                 OggettoBulk oggettobulk = nbp.getModel();
 
                 CompoundFindClause clauses = new CompoundFindClause();

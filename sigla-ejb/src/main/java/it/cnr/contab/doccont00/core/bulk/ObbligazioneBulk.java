@@ -1405,11 +1405,7 @@ public void validate() throws ValidationException {
 	if ( getDt_registrazione() == null )
 		throw new ValidationException( "Il campo DATA è obbligatorio." );
 
-	//java.util.GregorianCalendar gc = (java.util.GregorianCalendar)java.util.GregorianCalendar.getInstance();
-	//gc.setTime(getDt_registrazione());
-	//if (gc.getTime().compareTo(this.getDt_registrazione()) < 0 )
 	java.sql.Timestamp dataRegistrazione = getDt_registrazione();
-//	java.sql.Timestamp dataSistema = new java.sql.Timestamp(System.currentTimeMillis());
 	java.sql.Timestamp dataSistema;
 	try
 	{
@@ -1531,7 +1527,6 @@ public void validateNuovaLineaAttivita( it.cnr.contab.doccont00.core.bulk.Linea_
  */
 public void validateTerzo( it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo ) throws ValidationException 
 {
-//	java.sql.Timestamp dataSistema = new java.sql.Timestamp(System.currentTimeMillis());
 	java.sql.Timestamp dataSistema;
 	try
 	{

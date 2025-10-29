@@ -760,6 +760,11 @@
             WHERE CD_VOCE_EP LIKE 'C13001';
         </sql>
         <sql>
+            UPDATE VOCE_EP
+            SET CD_VOCE_EP_CONTR = 'P13012'
+            WHERE CD_VOCE_EP LIKE 'C13012';
+        </sql>
+        <sql>
             UPDATE VOCE_IVA
             SET NATURA_OPER_NON_IMP_SDI = NULL
             WHERE NATURA_OPER_NON_IMP_SDI = '';
