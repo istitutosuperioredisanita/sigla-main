@@ -810,6 +810,11 @@
             SET CORRENTE = 7
             WHERE CD_TIPO_DOCUMENTO_CONT='OBB'
         </sql>
+        <sql>
+            UPDATE UTENTE
+            SET DT_ULTIMA_VAR_PASSWORD = '2025-10-15'
+            WHERE CD_UTENTE='ENTETEST'
+        </sql>
     </changeSet>
 
     <changeSet author="test" id="create-unita-operativa-ord">

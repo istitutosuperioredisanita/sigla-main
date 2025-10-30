@@ -89,24 +89,39 @@ public class Nota_di_credito_rigaHome extends Fattura_passiva_rigaHome {
             sql.addSQLJoin("FATTURA_PASSIVA_RIGA.CD_UNITA_ORGANIZZATIVA", "FATTURA_PASSIVA.CD_UNITA_ORGANIZZATIVA");
             sql.addSQLJoin("FATTURA_PASSIVA_RIGA.PG_FATTURA_PASSIVA", "FATTURA_PASSIVA.PG_FATTURA_PASSIVA");
 
-            sql.addSQLClause("AND", "FATTURA_PASSIVA.TI_FATTURA", SQLBuilder.EQUALS, Fattura_passivaBulk.TIPO_NOTA_DI_CREDITO);
+            sql.addSQLClause(FindClause.AND, "FATTURA_PASSIVA.TI_FATTURA", SQLBuilder.EQUALS, Fattura_passivaBulk.TIPO_NOTA_DI_CREDITO);
 
-            sql.addSQLClause("AND", "FATTURA_PASSIVA_RIGA.CD_CDS_ASSNCNA_FIN", SQLBuilder.EQUALS, rigaFattura.getCd_cds());
-            sql.addSQLClause("AND", "FATTURA_PASSIVA_RIGA.CD_UO_ASSNCNA_FIN", SQLBuilder.EQUALS, rigaFattura.getCd_unita_organizzativa());
-            //Gennaro Borriello - (03/11/2004 19.04.48)
-            // Fix sul controllo dello "Stato Riportato"
-            //if (!rigaFattura.getFattura_passiva().isRiportata() && !rigaFattura.getFattura_passiva().isRiportataInScrivania())
-            sql.addSQLClause("AND", "FATTURA_PASSIVA_RIGA.ESERCIZIO_ASSNCNA_FIN", SQLBuilder.EQUALS, rigaFattura.getEsercizio());
-            /*
-             * Modifica effettuata da marco il 03/11/2004 per gestire il caso in cui la
-             * fattura non è ancora salvata
-             */
+            sql.openParenthesis(FindClause.AND);
+
+            sql.openParenthesis(FindClause.OR);
+            sql.addSQLClause(FindClause.AND, "FATTURA_PASSIVA_RIGA.PG_OBBLIGAZIONE", SQLBuilder.ISNOTNULL, null);
+            sql.addSQLClause(FindClause.AND, "FATTURA_PASSIVA_RIGA.CD_CDS_ASSNCNA_FIN", SQLBuilder.EQUALS, rigaFattura.getCd_cds());
+            sql.addSQLClause(FindClause.AND, "FATTURA_PASSIVA_RIGA.CD_UO_ASSNCNA_FIN", SQLBuilder.EQUALS, rigaFattura.getCd_unita_organizzativa());
+
+            sql.addSQLClause(FindClause.AND, "FATTURA_PASSIVA_RIGA.ESERCIZIO_ASSNCNA_FIN", SQLBuilder.EQUALS, rigaFattura.getEsercizio());
             if (rigaFattura.getPg_fattura_passiva() != null)
-                sql.addSQLClause("AND", "FATTURA_PASSIVA_RIGA.PG_FATTURA_ASSNCNA_FIN", SQLBuilder.EQUALS, rigaFattura.getPg_fattura_passiva());
+                sql.addSQLClause(FindClause.AND, "FATTURA_PASSIVA_RIGA.PG_FATTURA_ASSNCNA_FIN", SQLBuilder.EQUALS, rigaFattura.getPg_fattura_passiva());
             else
-                sql.addSQLClause("AND", "FATTURA_PASSIVA_RIGA.PG_FATTURA_ASSNCNA_FIN", SQLBuilder.ISNULL, null);
-            sql.addSQLClause("AND", "FATTURA_PASSIVA_RIGA.PG_RIGA_ASSNCNA_FIN", SQLBuilder.EQUALS, rigaFattura.getProgressivo_riga());
-            sql.addSQLClause("AND", "FATTURA_PASSIVA_RIGA.STATO_COFI", SQLBuilder.NOT_EQUALS, Fattura_passiva_rigaBulk.STATO_ANNULLATO);
+                sql.addSQLClause(FindClause.AND, "FATTURA_PASSIVA_RIGA.PG_FATTURA_ASSNCNA_FIN", SQLBuilder.ISNULL, null);
+            sql.addSQLClause(FindClause.AND, "FATTURA_PASSIVA_RIGA.PG_RIGA_ASSNCNA_FIN", SQLBuilder.EQUALS, rigaFattura.getProgressivo_riga());
+            sql.closeParenthesis();
+
+            sql.openParenthesis(FindClause.OR);
+            sql.addSQLClause(FindClause.AND, "FATTURA_PASSIVA_RIGA.PG_OBBLIGAZIONE", SQLBuilder.ISNULL, null);
+            sql.addSQLClause(FindClause.AND, "FATTURA_PASSIVA_RIGA.CD_CDS_ASSNCNA_ECO", SQLBuilder.EQUALS, rigaFattura.getCd_cds());
+            sql.addSQLClause(FindClause.AND, "FATTURA_PASSIVA_RIGA.CD_UO_ASSNCNA_ECO", SQLBuilder.EQUALS, rigaFattura.getCd_unita_organizzativa());
+
+            sql.addSQLClause(FindClause.AND, "FATTURA_PASSIVA_RIGA.ESERCIZIO_ASSNCNA_ECO", SQLBuilder.EQUALS, rigaFattura.getEsercizio());
+            if (rigaFattura.getPg_fattura_passiva() != null)
+                sql.addSQLClause(FindClause.AND, "FATTURA_PASSIVA_RIGA.PG_FATTURA_ASSNCNA_ECO", SQLBuilder.EQUALS, rigaFattura.getPg_fattura_passiva());
+            else
+                sql.addSQLClause(FindClause.AND, "FATTURA_PASSIVA_RIGA.PG_FATTURA_ASSNCNA_ECO", SQLBuilder.ISNULL, null);
+            sql.addSQLClause(FindClause.AND, "FATTURA_PASSIVA_RIGA.PG_RIGA_ASSNCNA_ECO", SQLBuilder.EQUALS, rigaFattura.getProgressivo_riga());
+            sql.closeParenthesis();
+
+            sql.closeParenthesis();
+
+            sql.addSQLClause(FindClause.AND, "FATTURA_PASSIVA_RIGA.STATO_COFI", SQLBuilder.NOT_EQUALS, Fattura_passiva_rigaBulk.STATO_ANNULLATO);
         }
         return sql;
     }

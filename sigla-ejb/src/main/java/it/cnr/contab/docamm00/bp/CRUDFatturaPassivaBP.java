@@ -1002,10 +1002,6 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             Configurazione_cnrComponentSession confComponent = Utility.createConfigurazioneCnrComponentSession();
             Integer esercizioCorrente = CNRUserContext.getEsercizio(context.getUserContext());
             Integer esercizioPrecedente = esercizioCorrente-1;
-//            if ((esercizioCorrente.intValue() != Fattura_passivaBulk.getDateCalendar(null).get(Calendar.YEAR) ||
-//                 !confComponent.getFineRegFattPass(context.getUserContext(), esercizioPrecedente).before(EJBCommonServices.getServerDate()) )
-//                &&
-//                 !confComponent.getFineRegFattPass(context.getUserContext(), esercizioCorrente).after(EJBCommonServices.getServerDate())) {
             if (confComponent.getFineRegFattPass(context.getUserContext(), esercizioCorrente).before(EJBCommonServices.getServerDate()) &&
                 (esercizioCorrente.intValue() != Fattura_passivaBulk.getDateCalendar(null).get(Calendar.YEAR) ||
                  confComponent.getFineRegFattPass(context.getUserContext(), esercizioPrecedente).after(EJBCommonServices.getServerDate()))) {

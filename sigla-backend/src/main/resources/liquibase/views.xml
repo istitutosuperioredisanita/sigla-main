@@ -3153,6 +3153,9 @@
     <changeSet author="sigla" runOnChange="true" id="create-view-V_CONTRATTI_TOTALI_DET_H2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_CONTRATTI_TOTALI_DET_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_PARTITARIO_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_PARTITARIO_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
     <changeSet author="valentina.tomada" runOnChange="true" id="create-view-V_AMMORTAMENTO_BENI_DET">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_AMMORTAMENTO_BENI_DET.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>

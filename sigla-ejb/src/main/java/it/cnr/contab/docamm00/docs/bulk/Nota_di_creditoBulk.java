@@ -421,6 +421,11 @@ public boolean isROTerminiPagamentoUO() {
 	
 	return getAccertamentiHash() == null || getAccertamentiHash().isEmpty();
 }
+
+    public boolean isROFlDaOrdini() {
+        return Boolean.TRUE;
+    }
+
 public void removeFromAccertamenti_scadenzarioHash(
 	Nota_di_credito_rigaBulk rigaNdC) {
 

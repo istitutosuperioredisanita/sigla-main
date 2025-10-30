@@ -5871,26 +5871,26 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
                         scadenza = caricaScadenzaObbligazionePer(aUC, scadenza);
                     }
                     fatturaPassiva.addToFattura_passiva_obbligazioniHash(scadenza, riga);
-                    if (riga instanceof Fattura_passiva_rigaIBulk) {
-                        Fattura_passiva_rigaIBulk rigaFP = (Fattura_passiva_rigaIBulk) riga;
-                        java.math.BigDecimal impStorni = new java.math.BigDecimal(0).setScale(2, RoundingMode.HALF_UP);
-                        java.math.BigDecimal impAddebiti = new java.math.BigDecimal(0).setScale(2, RoundingMode.HALF_UP);
-                        if (storniHashMap != null) {
-                            impStorni = calcolaTotalePer((Vector) storniHashMap.get(riga), false);
-                        }
-                        impStorni = impStorni.add(
-                                documentoGenericoRigaHome.findRigaStorno(aUC, rigaFP)
-                                        .map(Documento_generico_rigaBase::getIm_riga)
-                                        .orElse(BigDecimal.ZERO)
-                        );
-                        rigaFP.setIm_totale_storni(impStorni);
-                        if (addebitiHashMap != null) {
-                            impAddebiti = calcolaTotalePer((Vector) addebitiHashMap.get(riga), false);
-                            rigaFP.setIm_totale_addebiti(impAddebiti);
-                        }
-                        java.math.BigDecimal totaleRiga = riga.getIm_imponibile().add(riga.getIm_iva());
-                        rigaFP.setSaldo(totaleRiga.subtract(impStorni).add(impAddebiti));
+                }
+                if (riga instanceof Fattura_passiva_rigaIBulk) {
+                    Fattura_passiva_rigaIBulk rigaFP = (Fattura_passiva_rigaIBulk) riga;
+                    java.math.BigDecimal impStorni = new java.math.BigDecimal(0).setScale(2, RoundingMode.HALF_UP);
+                    java.math.BigDecimal impAddebiti = new java.math.BigDecimal(0).setScale(2, RoundingMode.HALF_UP);
+                    if (storniHashMap != null) {
+                        impStorni = calcolaTotalePer((Vector) storniHashMap.get(riga), false);
                     }
+                    impStorni = impStorni.add(
+                            documentoGenericoRigaHome.findRigaStorno(aUC, rigaFP)
+                                    .map(Documento_generico_rigaBase::getIm_riga)
+                                    .orElse(BigDecimal.ZERO)
+                    );
+                    rigaFP.setIm_totale_storni(impStorni);
+                    if (addebitiHashMap != null) {
+                        impAddebiti = calcolaTotalePer((Vector) addebitiHashMap.get(riga), false);
+                        rigaFP.setIm_totale_addebiti(impAddebiti);
+                    }
+                    java.math.BigDecimal totaleRiga = riga.getIm_imponibile().add(riga.getIm_iva());
+                    rigaFP.setSaldo(totaleRiga.subtract(impStorni).add(impAddebiti));
                 }
             }
             if (!(fatturaPassiva instanceof Fattura_passiva_IBulk) && fatturaPassiva.getFattura_passiva_obbligazioniHash() != null) {

@@ -25,6 +25,7 @@ import it.cnr.contab.compensi00.bp.CRUDCompensoBP;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk;
 import it.cnr.contab.config00.bulk.CigBulk;
+import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.docamm00.bp.*;
@@ -605,13 +606,12 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
         //if (fp.isRiportata() && !fp.COMPLETAMENTE_RIPORTATO.equalsIgnoreCase(fp.getRiportata()))
         //throw new it.cnr.jada.comp.ApplicationException("Non è possibile generare note di credito per fatture non riportate completamente!");
         try {
-            if ((it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(
-                    context.getUserContext()).intValue() != Fattura_passivaBulk
-                    .getDateCalendar(null).get(java.util.Calendar.YEAR) ||
-                    !Utility.createConfigurazioneCnrComponentSession().getFineRegFattPass(context.getUserContext(), CNRUserContext.getEsercizio(context.getUserContext()) - 1)
-                        .before(EJBCommonServices.getServerDate()) )  &&
-                    !Utility.createConfigurazioneCnrComponentSession().getFineRegFattPass(context.getUserContext(), CNRUserContext.getEsercizio(context.getUserContext()))
-                        .after(EJBCommonServices.getServerDate())) {
+            Configurazione_cnrComponentSession confComponent = Utility.createConfigurazioneCnrComponentSession();
+            Integer esercizioCorrente = CNRUserContext.getEsercizio(context.getUserContext());
+            Integer esercizioPrecedente = esercizioCorrente-1;
+            if (confComponent.getFineRegFattPass(context.getUserContext(), esercizioCorrente).before(EJBCommonServices.getServerDate()) &&
+                    (esercizioCorrente.intValue() != Fattura_passivaBulk.getDateCalendar(null).get(Calendar.YEAR) ||
+                            confComponent.getFineRegFattPass(context.getUserContext(), esercizioPrecedente).after(EJBCommonServices.getServerDate()))) {
                 throw new it.cnr.jada.comp.ApplicationException("Non è possibile inserire note di credito in esercizi non corrispondenti all'anno solare!");
             }
         } catch (EJBException | RemoteException e) {
@@ -4373,6 +4373,8 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
             } catch (ApplicationException e) {
                 throw new it.cnr.jada.comp.ApplicationException(e.getMessage());
             }
+            if (calcolaTotaleSelezionati(models, fatturaPassiva.quadraturaInDeroga()).compareTo(BigDecimal.ZERO)==0)
+                throw new it.cnr.jada.comp.ApplicationException("Per eseguire questa operazione è necessario che la somma dei saldi delle righe da associare sia positiva!");
             return basicDoRicercaObbligazione(context, fatturaPassiva, models, false);
         } catch (Throwable e) {
             return handleException(context, e);

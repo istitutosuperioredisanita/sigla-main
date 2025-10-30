@@ -35,6 +35,17 @@ import java.util.Optional;
 
 import static org.junit.Assert.*;
 
+/**
+ * Test di:
+ * 1) creazione ordine con 2 righe consegna
+ * 2) evasione riga consegna nr.1
+ * 3) annullamento evasione riga consegna nr.1
+ * 4) nuova evasione riga consegna nr.1
+ * 5) evasione riga consegna nr.2
+ * 6) registrazione fattura con riscontro valore su riga consegna nr.2 con Fattura di importo superiore all’ordine e dettaglio fatt. in attesa nota credito
+ * 7) modifica fattura con annullamento riscontro valore
+ * 8) regsitrazione nota credito di annullamento totale fattura creata
+ */
 public class CRUDOrdineAcqBP002Test extends ActionDeployments {
     private static SharedResource sharedResource;
 
@@ -643,6 +654,8 @@ public class CRUDOrdineAcqBP002Test extends ActionDeployments {
         Alert alert = browser.switchTo().alert();
         assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
         alert.accept();
+
+        doClickButton("doChiudiForm()");
     }
 
     @Test
@@ -929,9 +942,7 @@ public class CRUDOrdineAcqBP002Test extends ActionDeployments {
         assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
         alert.accept();
 
-        //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
-        browser.switchTo().parentFrame();
-        switchToFrameMenu();
+        doClickButton("doChiudiForm()");
     }
 
     @Test
@@ -939,6 +950,9 @@ public class CRUDOrdineAcqBP002Test extends ActionDeployments {
     @OperateOnDeployment(TEST_H2)
     @InSequence(11)
     public void testVerificaScritturaOrdine004() {        //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
+        //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
+        browser.switchTo().parentFrame();
+        switchToFrameMenu();
         doSelezionaMenu(ORD_ORDACQ_M);
 
         browser.switchTo().parentFrame();
@@ -1214,6 +1228,8 @@ public class CRUDOrdineAcqBP002Test extends ActionDeployments {
         assertEquals("5,00", getTableColumnElement("main.Movimenti Analitici",0,8).getText());
 
         assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Analitici' and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.Movimenti Analitici",1));
+
+        doClickButton("doChiudiForm()");
     }
 
     @Test
@@ -1300,6 +1316,8 @@ public class CRUDOrdineAcqBP002Test extends ActionDeployments {
 
         String pgFatturaCreated = sharedResource.getVal02();
         assertEquals(pgFatturaCreated, getGrapheneElement("main.pg_fattura_passiva").getAttribute("value"));
+
+        doClickButton("doChiudiForm()");
     }
 
     @Test
@@ -1414,5 +1432,112 @@ public class CRUDOrdineAcqBP002Test extends ActionDeployments {
         assertEquals("249,00", getTableColumnElement("main.Movimenti Analitici",0,8).getText());
 
         assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Analitici' and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.Movimenti Analitici",1));
+
+        doClickButton("doChiudiForm()");
+    }
+
+    @Test
+    @RunAsClient
+    @OperateOnDeployment(TEST_H2)
+    @InSequence(15)
+    public void testAssociaNotaCredito001() {
+        browser.switchTo().parentFrame();
+        switchToFrameMenu();
+        doSelezionaMenu(AMM_FATTUR_FATPAS_ELE);
+
+        browser.switchTo().parentFrame();
+        switchToFrameWorkspace();
+
+        //Ricerco la fattura SDI: 90000000003 - Nota Credito
+        getGrapheneElement("main.identificativoSdi").writeIntoElement("90000000003");
+
+        Select select = new Select(getGrapheneElement("main.statoDocumento"));
+        select.selectByValue("");
+
+        doClickButton("doCerca()");
+        Alert alert = browser.switchTo().alert();
+        assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
+        alert.accept();
+
+        //Clicco sul pulsante ‘Compila fattura’;
+        doClickButton("submitForm('doCompilaFattura')");
+
+        //Passo alla maschera di Registrazione Fattura
+        getGrapheneElement("comando.doYes").click();
+
+        getGrapheneElement("main.ds_fattura_passiva").writeIntoElement("NOTA CREDITO DI ANNULLAMENTO FATTURA");
+
+        //Passo alla tab ‘Dettaglio’
+        doClickButton("doTab('tab','tabFatturaPassivaDettaglio')");
+
+        //Aggiungo un dettaglio
+        doClickButton("submitForm('doAddToCRUD(main.Dettaglio)')");
+
+        //Mi apre lista fatture associabili a nota credito. Cerco quella creata
+        String pgFatturaCreated = sharedResource.getVal02();
+
+        //Trovo la riga della fattura creata con test precedente
+        GrapheneElement rowElement1=null;
+        for (int riga = 0; riga < 10; riga++) {
+            try {
+                if (getTableColumnElement("mainTable", riga, 3).getText().equals(pgFatturaCreated))
+                    rowElement1 = getTableRowElement("mainTable", riga);
+            } catch (RuntimeException ignored) {
+            }
+        }
+
+        assertNotNull("Fattura " + pgFatturaCreated + " da associare a Nota Credito non trovata non individuata", rowElement1);
+
+        //Seleziono la nota
+        rowElement1.click();
+
+        //Seleziono l'unica riga proposta della fattura creata
+        browser.findElement(By.name("mainTable.selection")).click();
+
+        doClickButton("submitForm('doMultipleSelection')");
+
+        doClickButton("doSalva()");
+
+        alert = browser.switchTo().alert();
+        assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
+        alert.accept();
+
+        //Vado sulla tab principale
+        doClickButton("doTab('tab','tabFatturaPassiva')");
+
+        //Registro il numero della nota creata
+        String pgNotaCreated = getGrapheneElement("main.pg_fattura_passiva").getAttribute("value");
+        sharedResource.setVal03(pgNotaCreated);
+
+        //Vado sulla tab economica per controllare scrittura
+        doClickButton("doTab('tab','tabEconomica')");
+        //Il conto di costo C13012 (associato alla categoria del bene scelto) in Avere per 249,00;
+        assertEquals("C13012", getTableColumnElement("main.Movimenti Avere",0,1).getText());
+        assertEquals("249,00", getTableColumnElement("main.Movimenti Avere",0,5).getText());
+        assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Avere' and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.Movimenti Avere",1));
+
+        //Il controconto di debito P13012 in Dare per 205,00;
+        assertEquals("P13012", getTableColumnElement("main.Movimenti Dare",0,1).getText());
+        assertEquals("205,00", getTableColumnElement("main.Movimenti Dare",0,5).getText());
+
+        //Il conto IVA Split P71012I in Avere per 44,00
+        assertEquals("P71012I", getTableColumnElement("main.Movimenti Dare",1,1).getText());
+        assertEquals("44,00", getTableColumnElement("main.Movimenti Dare",1,5).getText());
+
+        assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Dare' and numberRow: 2", RuntimeException.class, ()->getTableRowElement("main.Movimenti Dare",2));
+
+        //Vado sulla tab analitica per controllare scrittura
+        doClickButton("doTab('tab','tabAnalitica')");
+        assertEquals("C13012", getTableColumnElement("main.Movimenti Analitici",0,1).getText());
+        assertEquals("Avere", getTableColumnElement("main.Movimenti Analitici",0,2).getText());
+        assertEquals("C13012", getTableColumnElement("main.Movimenti Analitici",0,3).getText());
+        assertEquals("000.000.000", getTableColumnElement("main.Movimenti Analitici",0,5).getText());
+        assertEquals("PTEST003", getTableColumnElement("main.Movimenti Analitici",0,6).getText());
+        assertEquals("D", getTableColumnElement("main.Movimenti Analitici",0,7).getText());
+        assertEquals("249,00", getTableColumnElement("main.Movimenti Analitici",0,8).getText());
+
+        assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Analitici' and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.Movimenti Analitici",1));
+
+        doClickButton("doChiudiForm()");
     }
 }
