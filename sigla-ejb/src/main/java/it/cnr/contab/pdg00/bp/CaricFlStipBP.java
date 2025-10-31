@@ -118,7 +118,7 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
                 }
                 archiviaAllegati(context);
             } catch (Exception e) {
-                handleException(e);
+               throw handleException(e);
             }
     }
 
