@@ -574,14 +574,15 @@ public class CRUDRientroDocAction extends it.cnr.jada.util.action.CRUDAction {
                         "Attenzione: non è possibile indicare una Quantità maggiore di 999 per un Bene Accessorio.");
             }
 
-            // Verifica che la quantità di rientro non sia superiore alla quantità trasportata
-            if (riga.getDocTrasportoRientroDettRif() != null &&
-                    riga.getQuantita() != null &&
-                    riga.getQuantita().compareTo(riga.getDocTrasportoRientroDettRif().getQuantita()) > 0) {
-                throw new it.cnr.jada.comp.ApplicationException(
-                        "Attenzione: la quantità di rientro non può essere superiore alla quantità trasportata (" +
-                                riga.getDocTrasportoRientroDettRif().getQuantita() + ")");
-            }
+            //TODO controlla e riscrivi logica senza campi _rif
+//            // Verifica che la quantità di rientro non sia superiore alla quantità trasportata
+//            if (riga.getDocTrasportoRientroDettRif() != null &&
+//                    riga.getQuantita() != null &&
+//                    riga.getQuantita().compareTo(riga.getDocTrasportoRientroDettRif().getQuantita()) > 0) {
+//                throw new it.cnr.jada.comp.ApplicationException(
+//                        "Attenzione: la quantità di rientro non può essere superiore alla quantità trasportata (" +
+//                                riga.getDocTrasportoRientroDettRif().getQuantita() + ")");
+//            }
 
         } catch (Throwable e) {
             riga.setQuantita(qta);
@@ -599,11 +600,11 @@ public class CRUDRientroDocAction extends it.cnr.jada.util.action.CRUDAction {
             CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP) getBusinessProcess(context);
             Doc_trasporto_rientro_dettBulk riga = (Doc_trasporto_rientro_dettBulk) bp.getDettaglio().getModel();
 
-            if (!riga.isValidoPerRientro()) {
-                throw new it.cnr.jada.comp.ApplicationException(
-                        "Attenzione: il dettaglio non ha un riferimento valido al documento di trasporto. " +
-                                "Verificare che il bene sia stato effettivamente trasportato.");
-            }
+//            if (!riga.isValidoPerRientro()) {
+//                throw new it.cnr.jada.comp.ApplicationException(
+//                        "Attenzione: il dettaglio non ha un riferimento valido al documento di trasporto. " +
+//                                "Verificare che il bene sia stato effettivamente trasportato.");
+//            }
 
             bp.setMessage("Riferimento al trasporto valido");
             return context.findDefaultForward();

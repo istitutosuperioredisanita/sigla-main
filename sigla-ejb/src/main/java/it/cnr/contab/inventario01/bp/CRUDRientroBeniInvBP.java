@@ -326,12 +326,12 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP {
             throw new ValidationException("Attenzione: indicare la Quantità");
         }
 
-        // VERIFICA CHE IL BENE SIA VALIDO PER IL RIENTRO
-        if (!dett.isValidoPerRientro()) {
-            throw new ValidationException(
-                    "Attenzione: il bene selezionato non è valido per il rientro. " +
-                            "Verificare che il bene sia stato trasportato e che esista un riferimento al trasporto originale");
-        }
+//        // VERIFICA CHE IL BENE SIA VALIDO PER IL RIENTRO
+//        if (!dett.isValidoPerRientro()) {
+//            throw new ValidationException(
+//                    "Attenzione: il bene selezionato non è valido per il rientro. " +
+//                            "Verificare che il bene sia stato trasportato e che esista un riferimento al trasporto originale");
+//        }
 
         // VERIFICA CHE IL BENE NON SIA GIÀ PRESENTE NEL DOCUMENTO DI RIENTRO
         Doc_trasporto_rientroBulk documento = (Doc_trasporto_rientroBulk) dett.getDoc_trasporto_rientro();
@@ -352,20 +352,21 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP {
      */
     private void validate_riferimento_trasporto(Doc_trasporto_rientro_dettBulk dett) throws ValidationException {
 
-        // Verifica che esista il riferimento al trasporto originale
-        if (dett.getPgInventarioRif() == null ||
-                dett.getPgDocTrasportoRientroRif() == null ||
-                dett.getNrInventarioRif() == null) {
-            throw new ValidationException(
-                    "Attenzione: il dettaglio di rientro deve avere un riferimento al documento di trasporto originale");
-        }
+        //TODO controlla e riscrivi logica senza campi _rif
+//        // Verifica che esista il riferimento al trasporto originale
+//        if (dett.getPgInventarioRif() == null ||
+//                dett.getPgDocTrasportoRientroRif() == null ||
+//                dett.getNrInventarioRif() == null) {
+//            throw new ValidationException(
+//                    "Attenzione: il dettaglio di rientro deve avere un riferimento al documento di trasporto originale");
+//        }
 
-        // Verifica coerenza dei riferimenti
-        if (!dett.getNrInventarioRif().equals(dett.getNrInventario()) ||
-                !dett.getProgressivoRif().equals(dett.getProgressivo())) {
-            throw new ValidationException(
-                    "Attenzione: i riferimenti al bene non sono coerenti con il trasporto originale");
-        }
+//        // Verifica coerenza dei riferimenti
+//        if (!dett.getNrInventarioRif().equals(dett.getNrInventario()) ||
+//                !dett.getProgressivoRif().equals(dett.getProgressivo())) {
+//            throw new ValidationException(
+//                    "Attenzione: i riferimenti al bene non sono coerenti con il trasporto originale");
+//        }
     }
 
     // ========================================
@@ -418,16 +419,17 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP {
             dettRientro.setBene(bene);
             dettRientro.setQuantita(dettTrasporto.getQuantita());
 
-            // Imposta i riferimenti al trasporto originale
-            dettRientro.setPgInventarioRif(dettTrasporto.getPgInventario());
-            dettRientro.setTiDocumentoRif(dettTrasporto.getTiDocumento());
-            dettRientro.setEsercizioRif(dettTrasporto.getEsercizio());
-            dettRientro.setPgDocTrasportoRientroRif(dettTrasporto.getPgDocTrasportoRientro());
-            dettRientro.setNrInventarioRif(dettTrasporto.getNrInventario());
-            dettRientro.setProgressivoRif(dettTrasporto.getProgressivo());
-
-            // Imposta il riferimento circolare
-            dettRientro.setDocTrasportoRientroDettRif(dettTrasporto);
+            //TODO controlla e riscrivi logica senza campi _rif
+//            // Imposta i riferimenti al trasporto originale
+//            dettRientro.setPgInventarioRif(dettTrasporto.getPgInventario());
+//            dettRientro.setTiDocumentoRif(dettTrasporto.getTiDocumento());
+//            dettRientro.setEsercizioRif(dettTrasporto.getEsercizio());
+//            dettRientro.setPgDocTrasportoRientroRif(dettTrasporto.getPgDocTrasportoRientro());
+//            dettRientro.setNrInventarioRif(dettTrasporto.getNrInventario());
+//            dettRientro.setProgressivoRif(dettTrasporto.getProgressivo());
+//
+//            // Imposta il riferimento circolare
+//            dettRientro.setDocTrasportoRientroDettRif(dettTrasporto);
 
             documento.getDoc_trasporto_rientro_dettColl().add(dettRientro);
         }
@@ -649,9 +651,9 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP {
         if (documento != null && documento.getDoc_trasporto_rientro_dettColl() != null) {
             for (Iterator i = documento.getDoc_trasporto_rientro_dettColl().iterator(); i.hasNext();) {
                 Doc_trasporto_rientro_dettBulk dett = (Doc_trasporto_rientro_dettBulk) i.next();
-                if (!dett.isValidoPerRientro()) {
-                    return false;
-                }
+//                if (!dett.isValidoPerRientro()) {
+//                    return false;
+//                }
             }
             return true;
         }

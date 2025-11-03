@@ -524,6 +524,8 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase /*imple
 		}
 	}
 
+
+
 	@Override
 	public void validate() throws ValidationException {
 		// Validazioni campi obbligatori

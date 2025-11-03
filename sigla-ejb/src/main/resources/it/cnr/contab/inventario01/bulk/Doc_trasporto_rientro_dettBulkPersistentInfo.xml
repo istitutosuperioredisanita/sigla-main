@@ -2,51 +2,31 @@
 <SQLPersistentInfo
 		persistentClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk"
 		homeClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettHome">
+
 	<defaultColumnMap tableName="DOC_TRASPORTO_RIENTRO_DETT">
 
-		<!-- Chiavi per il documento di trasporto -->
-		<columnMapping
-				columnName="PG_INVENTARIO"
-				propertyName="bene.inventario.pg_inventario"
-				sqlTypeName="DECIMAL"
-				columnSize="10" />
+		<columnMapping columnName="PG_INVENTARIO" propertyName="doc_trasporto_rientro.inventario.pg_inventario" sqlTypeName="DECIMAL" columnSize="10"/>
+		<columnMapping columnName="TI_DOCUMENTO" propertyName="doc_trasporto_rientro.tiDocumento" sqlTypeName="CHAR" columnSize="1"/>
+		<columnMapping columnName="ESERCIZIO" propertyName="doc_trasporto_rientro.esercizio" sqlTypeName="DECIMAL" columnSize="4"/>
+		<columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO" propertyName="doc_trasporto_rientro.pgDocTrasportoRientro" sqlTypeName="DECIMAL" columnSize="10"/>
 
-		<columnMapping
-				columnName="TI_DOCUMENTO"
-				propertyName="doc_trasporto_rientro.tiDocumento"
-				sqlTypeName="CHAR"
-				columnSize="1" />
-		<columnMapping
-				columnName="ESERCIZIO"
-				propertyName="doc_trasporto_rientro.esercizio"
-				sqlTypeName="DECIMAL"
-				columnSize="4" />
-		<columnMapping
-				columnName="PG_DOC_TRASPORTO_RIENTRO"
-				propertyName="doc_trasporto_rientro.pgDocTrasportoRientro"
-				sqlTypeName="DECIMAL"
-				columnSize="10" />
+		<!-- Nuovi campi di riferimento -->
+		<columnMapping columnName="TI_DOCUMENTO_RIF" propertyName="tiDocumentoRif" sqlTypeName="CHAR" columnSize="1"/>
+		<columnMapping columnName="ESERCIZIO_RIF" propertyName="esercizioRif" sqlTypeName="DECIMAL" columnSize="5"/>
+		<columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO_RIF" propertyName="pgDocTrasportoRientroRif" sqlTypeName="DECIMAL" columnSize="10"/>
 
-		<!-- Chiavi per il bene (incluso PG_INVENTARIO) -->
-		<columnMapping
-				columnName="PG_INVENTARIO"
-				propertyName="doc_trasporto_rientro.inventario.pg_inventario"
-				sqlTypeName="DECIMAL"
-				columnSize="10" />
-		<columnMapping
-				columnName="NR_INVENTARIO"
-				propertyName="bene.nr_inventario"
-				sqlTypeName="DECIMAL"
-				columnSize="10" />
-		<columnMapping
-				columnName="PROGRESSIVO"
-				propertyName="bene.progressivo"
-				sqlTypeName="DECIMAL"
-				columnSize="10" />
+		<columnMapping columnName="NR_INVENTARIO" propertyName="bene.nr_inventario" sqlTypeName="DECIMAL" columnSize="10"/>
+		<columnMapping columnName="PROGRESSIVO" propertyName="bene.progressivo" sqlTypeName="DECIMAL" columnSize="10"/>
+		<columnMapping columnName="PG_INVENTARIO" propertyName="bene.inventario.pg_inventario" sqlTypeName="DECIMAL" columnSize="10"/>
 
 	</defaultColumnMap>
 
-	<persistentProperty name="doc_trasporto_rientro" partOfOid="true" />
-	<persistentProperty name="bene" partOfOid="true" />
+	<persistentProperty name="doc_trasporto_rientro" partOfOid="true"/>
+	<persistentProperty name="bene" partOfOid="true"/>
+
+	<!-- Nuove proprietà -->
+	<persistentProperty name="tiDocumentoRif"/>
+	<persistentProperty name="esercizioRif"/>
+	<persistentProperty name="pgDocTrasportoRientroRif"/>
 
 </SQLPersistentInfo>

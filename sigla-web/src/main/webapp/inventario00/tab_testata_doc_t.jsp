@@ -84,9 +84,7 @@
     <tr>
         <td><% bp.getController().writeFormLabel(out,"tipoRitiro"); %></td>
         <td colspan="3">
-            <% bp.getController().writeFormInput(out, null, "tipoRitiro",
-                bp.isTipoRitiroReadOnly(), null,
-                "onClick=\"submitForm('doOnTipoRitiroChange')\""); %>
+            <% bp.getController().writeFormInput(out, "tipoRitiro"); %>
         </td>
     </tr>
 
@@ -110,9 +108,9 @@
 
     <% if (bp.isAssegnatarioVisible()) { %>
         <tr>
-            <td><% bp.getController().writeFormLabel(out,"anagDipRitiro"); %></td>
+            <td><% bp.getController().writeFormLabel(out,"find_assegnatario"); %></td>
             <td colspan="3">
-                <% bp.getController().writeFormInput(out, null, "anagDipRitiro",
+                <% bp.getController().writeFormInput(out, null, "find_assegnatario",
                     bp.isAssegnatarioReadOnly(), null,
                     "onChange=\"submitForm('doOnDipendenteChange')\""); %>
             </td>

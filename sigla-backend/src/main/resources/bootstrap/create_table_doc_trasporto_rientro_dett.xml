@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="davide.mirra" id="create_table_doc_trasporto_rientro_dett">
+        <createTable remarks="Dettaglio relativi ai documenti di trasporto e rientro inventario" tableName="doc_trasporto_rientro_dett">
+
+            <column name="pg_inventario" remarks="Codice dell'inventario" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ti_documento" remarks="Flag per stabilire se il documento risulta essere un trasporto o un rientro (T=Trasporto, R=Rientro)" type="CHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="esercizio" remarks="Esercizio di riferimento" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_doc_trasporto_rientro" remarks="Numero che identifica il documento di trasporto/rientro una volta noto inventario e esercizio" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="ti_documento_rif" remarks="Tipo documento di riferimento" type="CHAR(1)"/>
+            <column name="esercizio_rif" remarks="Esercizio di riferimento del documento collegato" type="INT"/>
+            <column name="pg_doc_trasporto_rientro_rif" remarks="Numero documento di trasporto/rientro di riferimento" type="BIGINT"/>
+
+            <column name="nr_inventario" remarks="Numero che identifica il bene all'interno di un inventario" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progressivo" remarks="Numero che identifica il bene accessorio all'interno di un inventario e una volta noto il bene primario" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="intervallo" remarks="Stringa che identifica il gruppo di appartenenza del bene in esame, rispetto agli altri beni dello stesso documento di trasporto" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantita" remarks="Quantità di beni trasportati/rientrati" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data_effettiva_movimentazione" remarks="Data effettiva di movimentazione del bene (trasporto o rientro)" type="${date.type}"/>
+
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record: viene incrementato di 1 ad ogni variazione" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="doc_trasporto_rientro_dett" constraintName="doc_trasporto_rientro_dett_pkey"
+                       columnNames="pg_inventario,ti_documento,esercizio,pg_doc_trasporto_rientro,nr_inventario,progressivo"/>
+
+        <addForeignKeyConstraint baseTableName="doc_trasporto_rientro_dett"
+                                 baseColumnNames="pg_inventario,ti_documento,esercizio,pg_doc_trasporto_rientro"
+                                 constraintName="fk_doc_trasporto_rientro_dett01"
+                                 referencedTableName="doc_trasporto_rientro"
+                                 referencedColumnNames="pg_inventario,ti_documento,esercizio,pg_doc_trasporto_rientro"
+                                 onDelete="CASCADE"
+                                 onUpdate="NO ACTION"
+                                 deferrable="false" initiallyDeferred="false"/>
+
+        <addForeignKeyConstraint baseTableName="doc_trasporto_rientro_dett"
+                                 baseColumnNames="ti_documento_rif,esercizio_rif,pg_doc_trasporto_rientro_rif,pg_inventario,nr_inventario,progressivo"
+                                 constraintName="fk_doc_trasporto_rientro_dett02"
+                                 referencedTableName="doc_trasporto_rientro_dett"
+                                 referencedColumnNames="ti_documento,esercizio,pg_doc_trasporto_rientro,pg_inventario,nr_inventario,progressivo"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION"
+                                 deferrable="false" initiallyDeferred="false"/>
+
+        <createIndex indexName="fx_doc_trasporto_rientro_dett01" tableName="doc_trasporto_rientro_dett">
+            <column name="pg_inventario"/>
+            <column name="nr_inventario"/>
+            <column name="progressivo"/>
+        </createIndex>
+
+        <createIndex indexName="fx_doc_trasporto_rientro_dett02" tableName="doc_trasporto_rientro_dett">
+            <column name="pg_inventario"/>
+            <column name="ti_documento"/>
+            <column name="esercizio"/>
+            <column name="pg_doc_trasporto_rientro"/>
+        </createIndex>
+
+        <createIndex indexName="fx_doc_trasporto_rientro_dett03" tableName="doc_trasporto_rientro_dett">
+            <column name="ti_documento_rif"/>
+            <column name="esercizio_rif"/>
+            <column name="pg_doc_trasporto_rientro_rif"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

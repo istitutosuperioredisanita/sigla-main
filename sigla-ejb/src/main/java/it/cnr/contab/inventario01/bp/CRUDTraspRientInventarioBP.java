@@ -153,7 +153,7 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP /*extends 
     // VISIBILITÀ UI
     // ========================================
 
-    protected Doc_trasporto_rientroBulk getDoc() {
+    public Doc_trasporto_rientroBulk getDoc() {
         return (Doc_trasporto_rientroBulk) getModel();
     }
 

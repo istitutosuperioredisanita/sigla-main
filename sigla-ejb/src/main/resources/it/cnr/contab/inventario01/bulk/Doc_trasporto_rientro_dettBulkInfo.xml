@@ -60,6 +60,31 @@
 			maxLength="3"
 			label="Progressivo" />
 
+	<fieldProperty
+			name="ti_documento_rif"
+			property="tiDocumentoRif"
+			inputType="TEXT"
+			inputSize="1"
+			maxLength="1"
+			label="Tipo Documento Rif" />
+
+	<fieldProperty
+			name="esercizio_rif"
+			property="esercizioRif"
+			inputType="TEXT"
+			inputSize="4"
+			maxLength="4"
+			label="Esercizio Rif" />
+
+	<fieldProperty
+			name="pg_doc_trasporto_rientro_rif"
+			property="pgDocTrasportoRientroRif"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			label="Numero Documento Rif" />
+
+
 	<!-- ============================================ -->
 	<!-- CAMPI BASE DEL DETTAGLIO -->
 	<!-- ============================================ -->
@@ -419,7 +444,7 @@
 
 	<fieldProperty
 			name="ds_documento"
-			property="doc_trasporto_rientro.ds_doc_trasporto_rientro"
+			property="doc_trasporto_rientro.dsDocTrasportoRientro"
 			inputType="TEXT"
 			inputSize="100"
 			maxLength="100"
@@ -512,13 +537,6 @@
 	<formFieldProperty name="intervallo" />
 	<formFieldProperty name="quantita" />
 	<formFieldProperty name="data_effettiva_movimentazione" />
-	<formFieldProperty name="pg_inventario_rif" />
-	<formFieldProperty name="ti_documento_rif" />
-	<formFieldProperty name="esercizio_rif" />
-	<formFieldProperty name="pg_doc_trasporto_rientro_rif" />
-	<formFieldProperty name="nr_inventario_rif" />
-	<formFieldProperty name="progressivo_rif" />
-	<formFieldProperty name="find_doc_trasporto_rif" />
 	<formFieldProperty name="gruppi" />
 	<formFieldProperty name="fl_dismesso" />
 	<formFieldProperty name="dt_dismesso" />

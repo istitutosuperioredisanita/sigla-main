@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <bulkInfo
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns="https://contab.cnr.it/schema/SIGLA"
         xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
 
     <!-- ============================================ -->
-    <!-- CAMPI CHIAVE (da Key) -->
+    <!-- CAMPI CHIAVE -->
     <!-- ============================================ -->
 
     <fieldProperty
@@ -19,9 +20,9 @@
     <fieldProperty
             name="tiDocumento"
             property="tiDocumento"
+            inputType="ROTEXT"
             maxLength="1"
             inputSize="1"
-            inputType="ROTEXT"
             label="Tipo Documento" />
 
     <fieldProperty
@@ -45,7 +46,7 @@
             label="Numero Documento" />
 
     <!-- ============================================ -->
-    <!-- CAMPI BASE (da Base) -->
+    <!-- CAMPI BASE -->
     <!-- ============================================ -->
 
     <fieldProperty
@@ -65,8 +66,8 @@
             inputSize="10"
             nullable="false"
             formatName="date_short"
-            label="Data"
-            command ="doOnData_registrazioneChange"/>
+            label="Data Documento"
+            command="doOnData_registrazioneChange"/>
 
     <fieldProperty
             name="stato"
@@ -79,9 +80,9 @@
     <fieldProperty
             name="destinazione"
             property="destinazione"
+            inputType="TEXT"
             maxLength="100"
             inputSize="100"
-            inputType="TEXT"
             label="Destinazione" />
 
     <fieldProperty
@@ -100,13 +101,13 @@
             cols="75"
             rows="4"
             maxLength="4000"
-            label="Note Motivo Trasporto" />
+            label="Note / Motivo Trasporto" />
 
     <!-- ============================================ -->
     <!-- CAMPI BULK -->
     <!-- ============================================ -->
 
-    <!-- TIPO MOVIMENTO -->
+    <!-- Tipo Movimento -->
     <fieldProperty
             name="tipoMovimento"
             property="tipoMovimento"
@@ -119,7 +120,7 @@
             enabledOnSearch="true"
             label="Tipo Movimento"/>
 
-    <!-- TIPO RITIRO (RADIO) -->
+    <!-- Tipo Ritiro -->
     <fieldProperty
             name="tipoRitiro"
             property="tipoRitiro"
@@ -127,20 +128,47 @@
             keysProperty="tipoRitiroKeys"
             layout="HORIZONTAL"
             nullable="false"
+            command="doOnTipoRitiroChange"
             label="Tipo Ritiro" />
 
-    <!-- DIPENDENTE INCARICATO -->
+    <!-- Dipendente Incaricato -->
     <fieldProperty
-            name="anagDipRitiro"
+            name="find_assegnatario"
             property="anagDipRitiro"
             inputType="SEARCHTOOL"
             formName="searchtool"
             enabledOnSearch="true"
             enabledOnEdit="true"
-            completeOnSave = "true"
-            label="Incaricato Al Ritiro" />
+            completeOnSave="true"
+            label="Incaricato al Ritiro" />
 
-    <!-- UO CONSEGNATARIA -->
+    <fieldProperty
+            name="cd_assegnatario"
+            property="anagDipRitiro.cd_terzo"
+            inputType="TEXT"
+            maxLength="10"
+            inputSize="6"
+            label="Incaricato al Ritiro"
+            caseSensitiveSearch="false" />
+
+    <!-- Consegnatario -->
+    <fieldProperty
+            name="cdConsegnatario"
+            property="consegnatario.cd_terzo"
+            inputType="ROTEXT"
+            label="Codice Consegnatario"
+            maxLength="8"
+            inputSize="8" />
+
+    <fieldProperty
+            name="cognomeConsegnatario"
+            property="consegnatario.denominazione_sede"
+            inputType="ROTEXT"
+            maxLength="100"
+            inputSize="50"
+            label="Nome Consegnatario" />
+
+    <!-- UO Consegnataria -->
     <fieldProperty
             name="cdUoConsegnataria"
             property="uo_consegnataria.cd_unita_organizzativa"
@@ -154,30 +182,15 @@
             property="uo_consegnataria.ds_unita_organizzativa"
             inputType="ROTEXT"
             maxLength="100"
-            inputSize="50" />
+            inputSize="50"
+            label="Descrizione UO Consegnataria" />
 
-    <!-- CONSEGNATARIO -->
-    <fieldProperty
-            name="cdConsegnatario"
-            property="consegnatario.cd_terzo"
-            inputType="ROTEXT"
-            label="Consegnatario"
-            maxLength="8"
-            inputSize="8" />
-
-    <fieldProperty
-            name="cognomeConsegnatario"
-            property="consegnatario.denominazione_sede"
-            inputType="ROTEXT"
-            maxLength="100"
-            inputSize="50" />
-
-    <!-- DELEGATO -->
+    <!-- Delegato -->
     <fieldProperty
             name="cdDelegato"
             property="delegato.cd_terzo"
             inputType="ROTEXT"
-            label="Delegato"
+            label="Codice Delegato"
             maxLength="8"
             inputSize="8" />
 
@@ -186,10 +199,11 @@
             property="delegato.denominazione_sede"
             inputType="ROTEXT"
             maxLength="100"
-            inputSize="50" />
+            inputSize="50"
+            label="Nome Delegato" />
 
     <!-- ============================================ -->
-    <!-- FORM FIELD PROPERTIES - CRITICAL! -->
+    <!-- FORM FIELD PROPERTIES -->
     <!-- ============================================ -->
 
     <formFieldProperty name="pgInventario" />
@@ -202,7 +216,8 @@
     <formFieldProperty name="destinazione" />
     <formFieldProperty name="indirizzo" />
     <formFieldProperty name="tipoRitiro"/>
-    <formFieldProperty name="anagDipRitiro" />
+    <formFieldProperty name="find_assegnatario" />
+    <formFieldProperty name="cd_assegnatario" />
     <formFieldProperty name="note" />
     <formFieldProperty name="stato" />
     <formFieldProperty name="cdUoConsegnataria" />
@@ -212,7 +227,10 @@
     <formFieldProperty name="cdDelegato" />
     <formFieldProperty name="cognomeDelegato" />
 
-    <!-- COLONNE TABELLA DI DEFAULT -->
+    <!-- ============================================ -->
+    <!-- COLONNE DEFAULT -->
+    <!-- ============================================ -->
+
     <columnFieldProperty name="esercizio" />
     <columnFieldProperty name="pgDocTrasportoRientro" />
     <columnFieldProperty name="dataRegistrazione" />
@@ -221,7 +239,10 @@
     <columnFieldProperty name="destinazione" />
     <columnFieldProperty name="stato" />
 
-    <!-- CAMPI DI RICERCA DI DEFAULT -->
+    <!-- ============================================ -->
+    <!-- CAMPI DI RICERCA -->
+    <!-- ============================================ -->
+
     <findFieldProperty name="esercizio" />
     <findFieldProperty name="pgDocTrasportoRientro" />
     <findFieldProperty name="dataRegistrazione" />

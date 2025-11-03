@@ -1,18 +1,18 @@
 /*
  * Copyright (C) 2019  Consiglio Nazionale delle Ricerche
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package it.cnr.contab.inventario01.ejb;
@@ -31,6 +31,7 @@ import it.cnr.jada.util.RemoteIterator;
 import javax.ejb.EJBException;
 import javax.ejb.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * Interfaccia remota (EJB Session) per il Component dei Documenti di Trasporto/Rientro.
@@ -51,15 +52,6 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
             Doc_trasporto_rientroBulk doc)
             throws ComponentException, RemoteException;
 
-//    /**
-//     * Elimina SOLO i beni selezionati dal dettaglio
-//     */
-//    void eliminaBeniSelezionati(
-//            UserContext userContext,
-//            Doc_trasporto_rientroBulk doc,
-//            Doc_trasporto_rientro_dettBulk[] dettagliDaEliminare)
-//            throws ComponentException, RemoteException;
-
     // ========================================
     // RICERCA BENI DISPONIBILI
     // ========================================
@@ -76,24 +68,8 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
             throws ComponentException, RemoteException;
 
     // ========================================
-    // VALIDAZIONE BENI
-    // ========================================
-
-
-//    /**
-//     * Valida un bene (dettaglio) per il Rientro.
-//     * Verifica la correttezza dei riferimenti al documento di trasporto originale.
-//     */
-//    void validaBenePerRientro(
-//            UserContext userContext,
-//            Doc_trasporto_rientroBulk docRientro,
-//            Doc_trasporto_rientro_dettBulk dettRientro)
-//            throws ComponentException, RemoteException;
-
-    // ========================================
     // GESTIONE WORKFLOW - TRANSIZIONI STATO
     // ========================================
-
 
     /**
      * Sposta il documento di stato da **INSERITO** a **PREDISPOSTO_FIRMA**.
@@ -104,44 +80,14 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
             throws ComponentException, RemoteException;
 
     // ========================================
-    // GESTIONE BENI - AGGIUNTA/RIMOZIONE/MODIFICA
+    // GESTIONE BENI - METODI STANDARD
     // ========================================
-
-//    /**
-//     * Aggiunge un bene al documento di trasporto/rientro.
-//     */
-//    Doc_trasporto_rientroBulk aggiungiBeneDDT(
-//            UserContext userContext,
-//            Doc_trasporto_rientroBulk doc,
-//            Inventario_beniBulk bene)
-//            throws ComponentException, RemoteException;
-
-//    /**
-//     * Rimuove un bene (dettaglio) dal documento.
-//     */
-//    Doc_trasporto_rientroBulk rimuoviBeneDDT(
-//            UserContext userContext,
-//            Doc_trasporto_rientroBulk doc,
-//            Doc_trasporto_rientro_dettBulk dettaglio)
-//            throws ComponentException, RemoteException;
-//
-//    /**
-//     * Aggiorna la quantità di un bene (dettaglio) nel documento.
-//     */
-//    Doc_trasporto_rientroBulk aggiornaQuantitaBene(
-//            UserContext userContext,
-//            Doc_trasporto_rientroBulk doc,
-//            Doc_trasporto_rientro_dettBulk dettaglio)
-//            throws ComponentException, RemoteException;
 
     it.cnr.jada.util.RemoteIterator selectEditDettagliTrasporto(it.cnr.jada.UserContext param0,it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk param1,java.lang.Class param2,it.cnr.jada.persistency.sql.CompoundFindClause param3) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 
-
     RemoteIterator getListaBeniDaTrasportare(UserContext userContext, Doc_trasporto_rientroBulk bulk, SimpleBulkList beni_da_escludere, CompoundFindClause clauses)throws ComponentException,java.rmi.RemoteException;
 
-
     SimpleBulkList selezionati(it.cnr.jada.UserContext userContext, Doc_trasporto_rientroBulk docT) throws it.cnr.jada.comp.ComponentException,RemoteException;
-
 
     it.cnr.jada.util.RemoteIterator selectBeniAssociatiByClause(it.cnr.jada.UserContext param0, Doc_trasporto_rientroBulk param2, java.lang.Class param3) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 
@@ -151,10 +97,62 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
 
     void trasportaTuttiBeni(it.cnr.jada.UserContext param0,it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk param1,it.cnr.jada.persistency.sql.CompoundFindClause param3) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 
-    void modificaBeniTrasportati(UserContext userContext,Doc_trasporto_rientroBulk docT, OggettoBulk[] beni,java.util.BitSet old_ass,java.util.BitSet ass) throws ComponentException, RemoteException ;
+    // ========================================
+    // GESTIONE BENI ACCESSORI [NUOVI METODI]
+    // ========================================
 
-    void eliminaBeniAssociatiConBulk(it.cnr.jada.UserContext param0,OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+    /**
+     * Trova i beni accessori associati a un bene principale
+     */
+    List cercaBeniAccessoriAssociati(
+            UserContext userContext,
+            Inventario_beniBulk benePrincipale)
+            throws ComponentException, RemoteException;
 
-    void eliminaBeniAssociatiConBulk(it.cnr.jada.UserContext param0,OggettoBulk param1,it.cnr.jada.bulk.OggettoBulk[] param2) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+    /**
+     * Elimina uno o più beni dalla tabella di appoggio INVENTARIO_BENI_APG.
+     */
+    void eliminaBeniAssociati(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            OggettoBulk[] beni)
+            throws ComponentException, RemoteException;
 
+    /**
+     * Elimina TUTTI i beni dalla tabella di appoggio INVENTARIO_BENI_APG.
+     */
+    void eliminaTuttiBeniAssociati(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException;
+
+    /**
+     * Cerca gli accessori associati a un bene principale nel dettaglio del documento.
+     */
+    List cercaBeniAccessoriAssociatiInDettaglio(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            Inventario_beniBulk benePrincipale)
+            throws ComponentException, RemoteException;
+
+    /**
+     * Modifica i beni trasportati con opzione di includere gli accessori
+     */
+    void modificaBeniTrasportatiConAccessori(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk docT,
+            OggettoBulk[] beni,
+            java.util.BitSet old_ass,
+            java.util.BitSet ass)
+            throws ComponentException, RemoteException;
+
+    /**
+     * Elimina il bene principale E tutti gli accessori associati dalla tabella di appoggio.
+     */
+    void eliminaBeniPrincipaleConAccessori(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            Inventario_beniBulk benePrincipale,
+            List beniAccessori)
+            throws ComponentException, RemoteException;
 }
