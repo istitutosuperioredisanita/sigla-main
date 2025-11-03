@@ -20,16 +20,16 @@ package it.cnr.contab.inventario01.bulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
-import it.cnr.contab.inventario00.tabrif.bulk.*;
+import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk;
+import it.cnr.contab.inventario00.tabrif.bulk.Tipo_trasporto_rientroBulk;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.spring.service.StorePath;
-import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
-import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.jada.bulk.*;
 import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.annotation.StorageProperty;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -168,11 +168,11 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase /*imple
 	// GETTER E SETTER - Campi Delegati
 	// ========================================
 
-	public void setPg_inventario(Long pg_inventario) {
+	public void setPgInventario(Long pg_inventario) {
 		this.getInventario().setPg_inventario(pg_inventario);
 	}
 
-	public Long getPg_inventario() {
+	public Long getPgInventario() {
 		Id_inventarioBulk inventario = this.getInventario();
 		if (inventario == null)
 			return null;
@@ -304,7 +304,7 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase /*imple
 		getDoc_trasporto_rientro_dettColl().add(nuovo);
 		nuovo.setBene(new Inventario_beniBulk());
 		nuovo.getBene().setInventario(this.getInventario());
-		nuovo.getBene().setPg_inventario(this.getPg_inventario());
+		nuovo.getBene().setPg_inventario(this.getPgInventario());
 		nuovo.getBene().setFl_totalmente_scaricato(Boolean.FALSE);
 		return getDoc_trasporto_rientro_dettColl().size() - 1;
 	}
@@ -330,14 +330,14 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase /*imple
 			beni_associati = new BulkList();
 			bene_padre.setNr_inventario(progressivo);
 			bene_padre.setProgressivo(new Integer("0"));
-			bene_padre.setPg_inventario(getPg_inventario());
+			bene_padre.setPg_inventario(getPgInventario());
 
 			progressivo = new Long(progressivo.longValue() + 1);
 		}
 
 		bene_figlio.setNr_inventario(bene_padre.getNr_inventario());
 		bene_figlio.setProgressivo(new Integer(Integer.toString(beni_associati.size() + 1)));
-		bene_figlio.setPg_inventario(getPg_inventario());
+		bene_figlio.setPg_inventario(getPgInventario());
 		beni_associati.add(bene_figlio);
 		accessoriContestualiHash.put(bene_padre.getChiaveHash(), beni_associati);
 

@@ -4,22 +4,18 @@
  */
 package it.cnr.contab.inventario01.bulk;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
-import it.cnr.contab.pdg00.bulk.Pdg_residuo_detBulk;
-import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.IntrospectionException;
-import it.cnr.jada.persistency.KeyedPersistent;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
-import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Home per Doc_trasporto_rientro_dettBulk.
@@ -52,7 +48,7 @@ public class Doc_trasporto_rientro_dettHome extends BulkHome {
 		sql.addSQLClause(FindClause.AND, "ESERCIZIO",
 				SQLBuilder.EQUALS, doc.getEsercizio());
 		sql.addSQLClause(FindClause.AND, "PG_INVENTARIO",
-				SQLBuilder.EQUALS, doc.getPg_inventario());
+				SQLBuilder.EQUALS, doc.getPgInventario());
 		sql.addSQLClause(FindClause.AND, "TI_DOCUMENTO",
 				SQLBuilder.EQUALS, doc.getTiDocumento());
 		sql.addSQLClause(FindClause.AND, "PG_DOC_TRASPORTO_RIENTRO",

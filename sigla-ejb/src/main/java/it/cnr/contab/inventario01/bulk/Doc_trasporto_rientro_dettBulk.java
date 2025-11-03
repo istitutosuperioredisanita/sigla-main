@@ -115,11 +115,11 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
     // ========================================
 
     public void setPg_inventario(Long pg_inventario) {
-        this.getDoc_trasporto_rientro().setPg_inventario(pg_inventario);
+        this.getDoc_trasporto_rientro().setPgInventario(pg_inventario);
     }
 
     public Long getPg_inventario() {
-        return this.getDoc_trasporto_rientro().getPg_inventario();
+        return this.getDoc_trasporto_rientro().getPgInventario();
     }
 
     public Long getNr_inventario() {

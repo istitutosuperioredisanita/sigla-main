@@ -11,7 +11,7 @@
 
     <fieldProperty
             name="pgInventario"
-            property="pgInventario"
+            property="inventario.pg_inventario"
             inputType="ROTEXT"
             maxLength="10"
             inputSize="10"
