@@ -10,6 +10,7 @@ import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.FillException;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.CRUDBP;
@@ -89,6 +90,20 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
     }
 
     @Override
+    public void validate(ActionContext actioncontext)
+            throws ValidationException {
+        super.validate(actioncontext);;
+        CaricFlStipBulk caricFlStipBulk = (CaricFlStipBulk) this.getModel();
+        if ( Optional.ofNullable(caricFlStipBulk.getArchivioAllegati()).isPresent() &&
+                caricFlStipBulk.getArchivioAllegati().size()>0){
+            AllegatoGenericoBulk allegatoGenericoBulk= caricFlStipBulk.getArchivioAllegati().get(0);
+            allegatoGenericoBulk.validate();
+        }
+    }
+
+
+
+    @Override
     public void create(ActionContext context) throws BusinessProcessException {
             try {
                 CaricFlStipBulk caricFlStipBulk = (CaricFlStipBulk) this.getModel();
@@ -103,7 +118,7 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
                 }
                 archiviaAllegati(context);
             } catch (Exception e) {
-                throw handleException(e);
+               throw handleException(e);
             }
     }
 
@@ -112,7 +127,19 @@ public class CaricFlStipBP extends AllegatiCRUDBP<AllegatoGenericoBulk, CaricFlS
         return Boolean.FALSE;
     }
     @Override
-    protected void basicEdit(ActionContext actioncontext, OggettoBulk oggettobulk, boolean flag) throws BusinessProcessException {return ;
+    protected void basicEdit(ActionContext actioncontext, OggettoBulk oggettobulk, boolean flag) throws BusinessProcessException {
+        // Svuota la lista e lascia SOLO un allegato "vuoto" TO_BE_CREATED per l'upload successivo
+        CaricFlStipBulk m = (CaricFlStipBulk) getModel();
+        m.setTipo_rapporto("");
+        BulkList<AllegatoGenericoBulk> nuovo = new BulkList<>();
+        AllegatoGenericoBulk a = new AllegatoGenericoBulk();
+        a.setCrudStatus(OggettoBulk.TO_BE_CREATED);
+        nuovo.add(a);
+        m.setArchivioAllegati(nuovo);
+
+        getCrudArchivioAllegati().setModelIndex(actioncontext, 0);
+        getCrudArchivioAllegati().setSelection(Collections.emptyEnumeration());
+
 
     }
 
