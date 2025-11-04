@@ -70,6 +70,13 @@
 			sqlTypeName="DECIMAL"
 			columnSize="22"
 			nullable="false" />
+        <columnMapping
+            columnName="TI_TIPO_DEBITO"
+            propertyName="ti_tipo_debito"
+            sqlTypeName="CHAR"
+            columnSize="1"
+            nullable="true" />
+
 	</defaultColumnMap>
 	<persistentProperty
 		name="descrizione" />
@@ -87,4 +94,6 @@
 		name="duva" />
 	<persistentProperty
 		name="pg_ver_rec" />
+    <persistentProperty
+        name="ti_tipo_debito" />
 </SQLPersistentInfo>
