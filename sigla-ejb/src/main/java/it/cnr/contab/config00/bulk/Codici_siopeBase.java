@@ -28,6 +28,8 @@ public class Codici_siopeBase extends Codici_siopeKey implements Keyed {
 	private java.lang.Integer id_classificazione_siope;
 
 	private java.lang.Integer id_classificazione_siope_rend;
+    //    TI_TIPO_DEBITO CHAR(1) NULL
+    private java.lang.String ti_tipo_debito;
 
 	public Codici_siopeBase() {
 		super();
@@ -57,4 +59,12 @@ public class Codici_siopeBase extends Codici_siopeKey implements Keyed {
 	public void setId_classificazione_siope_rend(Integer id_classificazione_siope_rend) {
 		this.id_classificazione_siope_rend = id_classificazione_siope_rend;
 	}
+
+    public String getTi_tipo_debito() {
+        return ti_tipo_debito;
+    }
+
+    public void setTi_tipo_debito(String ti_tipo_debito) {
+        this.ti_tipo_debito = ti_tipo_debito;
+    }
 }

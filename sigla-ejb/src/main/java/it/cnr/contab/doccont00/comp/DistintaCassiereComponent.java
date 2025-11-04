@@ -29,10 +29,7 @@ import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.compensi00.docs.bulk.CompensoHome;
 import it.cnr.contab.compensi00.tabrif.bulk.Tipo_trattamentoBulk;
 import it.cnr.contab.compensi00.tabrif.bulk.Tipo_trattamentoHome;
-import it.cnr.contab.config00.bulk.CigBulk;
-import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
-import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
-import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
+import it.cnr.contab.config00.bulk.*;
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
 import it.cnr.contab.config00.ejb.EsercizioComponentSession;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
@@ -102,6 +99,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DistintaCassiereComponent extends
         it.cnr.jada.comp.CRUDDetailComponent implements IDistintaCassiereMgr,
@@ -6433,14 +6431,25 @@ public class DistintaCassiereComponent extends
                 final boolean isCommerciale = collect
                         .keySet()
                         .stream()
-                        .filter(fattura_passivaBulk -> !(fattura_passivaBulk.isEstera() ||
+                        .anyMatch(fattura_passivaBulk -> !(fattura_passivaBulk.isEstera() ||
                                 fattura_passivaBulk.isSanMarinoConIVA() ||
-                                fattura_passivaBulk.isSanMarinoSenzaIVA()))
-                        .findAny().isPresent();
+                                fattura_passivaBulk.isSanMarinoSenzaIVA()));
                 if (!isCommerciale) {
                     ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(StTipoDebitoNonCommerciale.NON_COMMERCIALE);
                 } else {
-                    ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(StTipoDebitoCommerciale.COMMERCIALE);
+                    /**
+                     * Controllo che associato ai codici siope ci sia un tipo debito NON_COMMERCIALE o COMMERCIALE
+                     */
+                    boolean isSIOPENonCommerciale = siopeBulks
+                            .stream()
+                            .map(Mandato_siopeBulk::getCodice_siope)
+                            .map(Codici_siopeBase::getTi_tipo_debito)
+                            .anyMatch(s -> s != null && TipoDebitoSIOPE.getValueFrom(s).equals(TipoDebitoSIOPE.NON_COMMERCIALE));
+                    if (isSIOPENonCommerciale) {
+                        ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(StTipoDebitoNonCommerciale.NON_COMMERCIALE);
+                    } else {
+                        ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(StTipoDebitoCommerciale.COMMERCIALE);
+                    }
                     Fattura_passiva_rigaHome fattura_passivaRigaHome = Optional.ofNullable(getHome(userContext, Fattura_passiva_rigaIBulk.class))
                             .filter(Fattura_passiva_rigaHome.class::isInstance)
                             .map(Fattura_passiva_rigaHome.class::cast)
