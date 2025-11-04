@@ -1,6 +1,8 @@
 package it.cnr.contab.inventario01.actions;
 
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.inventario01.bp.CRUDScaricoInventarioBP;
+import it.cnr.contab.inventario01.bp.CRUDTraspRientInventarioBP;
 import it.cnr.contab.inventario01.bp.CRUDTrasportoBeniInvBP;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
@@ -8,14 +10,12 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.action.HookForward;
+import it.cnr.jada.bulk.FillException;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
-import it.cnr.jada.util.action.OptionBP;
-import it.cnr.jada.util.action.RemoteDetailCRUDController;
-import it.cnr.jada.util.action.RicercaLiberaBP;
-import it.cnr.jada.util.action.SelezionatoreListaBP;
+import it.cnr.jada.util.action.*;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import java.rmi.RemoteException;
 import java.util.Objects;
@@ -36,7 +36,7 @@ public class CRUDTrasportoDocAction extends it.cnr.jada.util.action.CRUDAction {
     }
 
     // =======================================================
-    // GESTIONE CAMBI TESTATA 📝
+    // GESTIONE CAMBI TESTATA
     // =======================================================
 
     public Forward doSelezionaTipoMovimento(ActionContext context) {
@@ -125,7 +125,7 @@ public class CRUDTrasportoDocAction extends it.cnr.jada.util.action.CRUDAction {
     }
 
     // =======================================================
-    // AGGIUNTA BENI - SELEZIONATORE ➕
+    // AGGIUNTA BENI - SELEZIONATORE
     // =======================================================
 
     public Forward doAddToCRUDMain_DettBeniController(ActionContext context) {
@@ -206,18 +206,15 @@ public class CRUDTrasportoDocAction extends it.cnr.jada.util.action.CRUDAction {
     /**
      * Metodo richiamato quando l'utente preme "Elimina Selezionati"
      */
-    public Forward doRemoveFromCRUDMain_DettBeniController(ActionContext context) {
+    public Forward doRemoveFromCRUDMain_DettBeniController_V3(ActionContext context) {
         try {
             CRUDTrasportoBeniInvBP bp = getBP(context);
             bp.getDettBeniController().remove(context);
 
-            if (bp.hasBeniPrincipaliConAccessoriPerEliminazione()) {
-                return apriFlussoRicorsivo(context, bp, true);
-            } else {
-                bp.getDettBeniController().setSelection(context);
-            }
-
-            return context.findDefaultForward();
+            // Apri flusso ricorsivo solo se ci sono beni con accessori
+            return bp.hasBeniPrincipaliConAccessoriPerEliminazione()
+                    ? apriFlussoRicorsivo(context, bp, true)
+                    : context.findDefaultForward();
 
         } catch (Throwable e) {
             return handleException(context, e);
@@ -341,7 +338,7 @@ public class CRUDTrasportoDocAction extends it.cnr.jada.util.action.CRUDAction {
     }
 
     // =======================================================
-    // WORKFLOW E ANNULLAMENTO ⚙️
+    // WORKFLOW E ANNULLAMENTO
     // =======================================================
 
     public Forward doPredisponiAllaFirma(ActionContext context) {
@@ -353,6 +350,7 @@ public class CRUDTrasportoDocAction extends it.cnr.jada.util.action.CRUDAction {
         }
     }
 
+    //TODO capire se fare eliminazione logica e/o fisica
     @Override
     public Forward doElimina(ActionContext context) throws RemoteException {
         try {
@@ -361,21 +359,53 @@ public class CRUDTrasportoDocAction extends it.cnr.jada.util.action.CRUDAction {
             CRUDTrasportoBeniInvBP bp = getBP(context);
             Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
 
+            // Validazioni
             if (!bp.isEditing()) {
                 bp.setMessage("Non è possibile annullare in questo momento.");
                 return context.findDefaultForward();
             }
-            doc.setStato(Doc_trasporto_rientroBulk.STATO_ANNULLATO);
-            getComponentSession(bp).modificaConBulk(context.getUserContext(), doc);
 
-            bp.setMessage("Documento annullato correttamente.");
-            bp.reset(context);
+            if (doc.isAnnullato()) {
+                bp.setMessage("Il documento è già stato annullato.");
+                return context.findDefaultForward();
+            }
+
+            if (doc.isPredispostoAllaFirma()) {
+                bp.setMessage("Impossibile annullare un documento già predisposto alla firma.");
+                return context.findDefaultForward();
+            }
+
+            getBP(context).annullaDoc(context);
             return context.findDefaultForward();
 
         } catch (Throwable e) {
             return handleException(context, e);
         }
     }
+
+    @Override
+    public Forward doSalva(ActionContext context) throws RemoteException {
+        try {
+            fillModel(context);
+            CRUDTrasportoBeniInvBP bp = getBP(context);
+
+            if (bp.isDocumentoPredispostoAllaFirma()) {
+                bp.setMessage("Impossibile salvare il documento: è già stato Predisposto Alla Firma");
+                return context.findDefaultForward();
+            }
+
+            if (bp.isDocumentoAnnullato()) {
+                bp.setMessage("Impossibile salvare un documento annullato");
+                return context.findDefaultForward();
+            }
+
+            return super.doSalva(context);
+
+        } catch (Throwable e) {
+            return handleException(context, e);
+        }
+    }
+
 
     // =======================================================
     // METODI HELPER 💡

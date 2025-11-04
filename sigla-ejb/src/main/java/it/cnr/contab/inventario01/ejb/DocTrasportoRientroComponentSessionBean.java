@@ -18,8 +18,8 @@
 package it.cnr.contab.inventario01.ejb;
 
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
-import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.inventario01.comp.BuonoCaricoScaricoComponent;
 import it.cnr.contab.inventario01.comp.DocTrasportoRientroComponent;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -564,4 +564,226 @@ public class DocTrasportoRientroComponentSessionBean
         }
     }
 
+
+    /**
+     * Annulla logicamente il documento cambiando solo lo stato.
+     * NON tocca i dettagli associati.
+     */
+    @Override
+    public Doc_trasporto_rientroBulk annullaDocumento(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException {
+
+        pre_component_invocation(userContext, componentObj);
+        Doc_trasporto_rientroBulk docTR;
+        try {
+            docTR = ((DocTrasportoRientroComponent) componentObj)
+                    .annullaDocumento(userContext, doc);
+            component_invocation_succes(userContext, componentObj);
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+        } catch (it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+        return docTR;
+    }
+
+
+
+
+
+    /**
+     * Seleziona i dettagli del documento di rientro per modifica
+     */
+    @Override
+    public RemoteIterator selectEditDettagliRientro(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            Class bulkClass,
+            CompoundFindClause filters)
+            throws ComponentException, RemoteException {
+
+        pre_component_invocation(userContext, componentObj);
+        try {
+            RemoteIterator result = ((DocTrasportoRientroComponent) componentObj)
+                    .selectEditDettagliRientro(userContext, doc, bulkClass, filters);
+            component_invocation_succes(userContext, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+        } catch (it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
+
+
+    /**
+     * Ottiene la lista dei beni disponibili per il rientro (wrapper)
+     */
+    @Override
+    public RemoteIterator getListaBeniDaFarRientrare(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            SimpleBulkList beniEsclusi,
+            CompoundFindClause clauses)
+            throws ComponentException, RemoteException {
+
+        pre_component_invocation(userContext, componentObj);
+        try {
+            RemoteIterator result = ((DocTrasportoRientroComponent) componentObj)
+                    .getListaBeniDaFarRientrare(userContext, doc, beniEsclusi, clauses);
+            component_invocation_succes(userContext, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+        } catch (it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
+
+    /**
+     * Annulla le modifiche sui beni in rientro
+     */
+    @Override
+    public void annullaModificaRientroBeni(UserContext userContext)
+            throws ComponentException, RemoteException {
+
+        pre_component_invocation(userContext, componentObj);
+        try {
+            ((DocTrasportoRientroComponent) componentObj)
+                    .annullaModificaRientroBeni(userContext);
+            component_invocation_succes(userContext, componentObj);
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+        } catch (it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
+
+    /**
+     * Inizializza la selezione dei beni da far rientrare
+     */
+    @Override
+    public void inizializzaBeniDaFarRientrare(UserContext userContext)
+            throws ComponentException, RemoteException {
+
+        pre_component_invocation(userContext, componentObj);
+        try {
+            ((DocTrasportoRientroComponent) componentObj)
+                    .inizializzaBeniDaFarRientrare(userContext);
+            component_invocation_succes(userContext, componentObj);
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+        } catch (it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
+
+    /**
+     * Fa rientrare tutti i beni filtrati
+     */
+    @Override
+    public void rientraTuttiBeni(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            CompoundFindClause clauses)
+            throws ComponentException, RemoteException {
+
+        pre_component_invocation(userContext, componentObj);
+        try {
+            ((DocTrasportoRientroComponent) componentObj)
+                    .rientraTuttiBeni(userContext, doc, clauses);
+            component_invocation_succes(userContext, componentObj);
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+        } catch (it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
+
+    /**
+     * Modifica i beni rientrati gestendo gli accessori
+     */
+    @Override
+    public void modificaBeniRientratiConAccessori(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            OggettoBulk[] bulks,
+            java.util.BitSet oldSelection,
+            java.util.BitSet newSelection)
+            throws ComponentException, RemoteException {
+
+        pre_component_invocation(userContext, componentObj);
+        try {
+            ((DocTrasportoRientroComponent) componentObj)
+                    .modificaBeniRientratiConAccessori(userContext, doc, bulks, oldSelection, newSelection);
+            component_invocation_succes(userContext, componentObj);
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+        } catch (it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
+
+    public boolean isEsercizioCOEPChiuso(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, EJBException{
+        pre_component_invocation(param0,componentObj);
+        try {
+            boolean result = ((BuonoCaricoScaricoComponent)componentObj).isEsercizioCOEPChiuso(param0);
+            component_invocation_succes(param0,componentObj);
+            return result;
+        } catch(it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(param0,componentObj);
+            throw e;
+        } catch(it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(param0,componentObj);
+            throw e;
+        } catch(RuntimeException e) {
+            throw uncaughtRuntimeException(param0,componentObj,e);
+        } catch(Error e) {
+            throw uncaughtError(param0,componentObj,e);
+        }
+    }
 }

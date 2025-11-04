@@ -81,12 +81,19 @@
 
     <!-- ==================== TIPO RITIRO ==================== -->
 
-    <tr>
-        <td><% bp.getController().writeFormLabel(out,"tipoRitiro"); %></td>
-        <td colspan="3">
-            <% bp.getController().writeFormInput(out, "tipoRitiro"); %>
-        </td>
-    </tr>
+        <tr>
+            <td><% bp.getController().writeFormLabel(out,"tipoRitiro"); %></td>
+            <td colspan="3">
+                <% bp.getController().writeFormInput(
+                    out,
+                    null,
+                    "tipoRitiro",
+                    bp.isTipoRitiroReadOnly(),
+                    null,
+                    null
+                ); %>
+            </td>
+        </tr>
 
     <!-- ==================== CAMPI CONDIZIONALI ==================== -->
 

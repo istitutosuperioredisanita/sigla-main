@@ -73,9 +73,7 @@
     <!--TODO creare tabelle e bulk(buonotrasportorientro, buonotrasportorientrodett, Numeratore_buono_t_r??)-->
     <!--TODO verifica utilizzo e gestione jsp-->
     <businessProcess name="CRUDRientroBeniInvBP" className="it.cnr.contab.inventario01.bp.CRUDRientroBeniInvBP">
-        <forward name="default" path="/inventario00/rientro_beni_inv.jsp"/>
-        <forward name="daFattura" path="/inventario00/beni_inv_aggrega.jsp"/>
-        <forward name="daDocumento" path="/inventario00/beni_inv_aggrega_doc.jsp"/>
+        <forward name="default" path="/inventario00/rientro_inventario.jsp"/>
         <init-param name="printbp" value="OfflineReportPrintBP"/>
         <init-param name="bulkClassName" value="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk" />
         <init-param name="componentSessionName" value="CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession"/>

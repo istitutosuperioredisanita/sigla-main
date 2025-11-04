@@ -6267,4 +6267,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/create_table_doc_trasporto_rientro.xml"/>
     <!-- Autore : DAVIDE MIRRA - Creazione della tabella DOC_TRASPORTO_RIENTRO_DETT-->
     <include file="bootstrap/create_table_doc_trasporto_rientro_dett.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Creazione della stampa e print priority del report doc_trasporto_rientro-->
+    <include file="bootstrap/add_print_priority_doc_trasporto_rientro.xml"/>
 </databaseChangeLog>

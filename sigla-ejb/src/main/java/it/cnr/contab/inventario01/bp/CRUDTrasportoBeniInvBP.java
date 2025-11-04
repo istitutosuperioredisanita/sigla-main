@@ -2,8 +2,6 @@ package it.cnr.contab.inventario01.bp;
 
 import it.cnr.contab.inventario00.bp.RigheInvDaFatturaCRUDController;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
-import it.cnr.contab.inventario00.docs.bulk.Trasferimento_inventarioBulk;
-import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
@@ -13,7 +11,6 @@ import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.bulk.PrimaryKeyHashtable;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
@@ -29,9 +26,14 @@ import java.util.stream.Stream;
 import static it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk.STATO_INSERITO;
 
 /**
- * Business Process per la gestione dei Documenti di Trasporto/Rientro.
- * Gestisce le operazioni CRUD e il flusso di lavoro (workflow) con logica ricorsiva unificata
- * per eliminazione e aggiunta di beni principali con accessori.
+ * Business Process per la gestione dei Documenti di Trasporto.
+ * <p>
+ * OTTIMIZZAZIONI APPLICATE:
+ * -  Eliminata duplicazione completa gestione stato (già nel padre)
+ * -  Eliminati metodi di annullamento mai usati
+ * -  Eliminato metodo getNomeBenePrincipalePendente() non utilizzato
+ * -  Semplificato getComp() rimuovendo try-catch ridondante
+ * -  Migliorata gestione errori nei controller
  */
 public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implements SelectionListener {
 
@@ -70,6 +72,7 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
     private int indexBeneCurrentePerAggiunta = 0;
     private boolean ultimaOperazioneEliminazione = false;
 
+    // Getter/Setter per indici
     public int getIndexBeneCurrentePerEliminazione() {
         return indexBeneCurrentePerEliminazione;
     }
@@ -123,13 +126,14 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
 
         @Override
         protected RemoteIterator createRemoteIterator(ActionContext context) {
-            try {
-                return (isInserting() || isEditing()) && !isDocumentoAnnullato()
-                        ? selectDettagliTrasportobyClause(context)
-                        : new it.cnr.jada.util.EmptyRemoteIterator();
-            } catch (BusinessProcessException e) {
-                return null;
+            if (isInserting() || isEditing() && !isDocumentoAnnullato()) {
+                try {
+                    return selectDettagliTrasportobyClause(context);
+                } catch (BusinessProcessException e) {
+                    throw new RuntimeException("Errore caricamento dettagli beni", e);
+                }
             }
+            return new it.cnr.jada.util.EmptyRemoteIterator();
         }
 
         @Override
@@ -193,12 +197,13 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
 
         @Override
         protected RemoteIterator createRemoteIterator(ActionContext context) {
+            if (isInserting() || isDocumentoAnnullato()) {
+                return new it.cnr.jada.util.EmptyRemoteIterator();
+            }
             try {
-                return isInserting() || isDocumentoAnnullato()
-                        ? new it.cnr.jada.util.EmptyRemoteIterator()
-                        : selectEditDettagliTrasportobyClause(context);
+                return selectEditDettagliTrasportobyClause(context);
             } catch (BusinessProcessException e) {
-                return null;
+                throw new RuntimeException("Errore caricamento dettagli modifica", e);
             }
         }
     };
@@ -256,34 +261,13 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
 
     // ========================= INIZIALIZZAZIONE MODELLI =========================
 
-//    @Override
-//    public OggettoBulk initializeModelForEdit(ActionContext context, OggettoBulk bulk)
-//            throws BusinessProcessException {
-//        bulk = super.initializeModelForEdit(context, bulk);
-//        bulk = initializeDocTrasporto(bulk);
-//
-//        Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bulk;
-//        if (doc.isAnnullato()) {
-//            setStatus(VIEW);
-//            setMessage("ATTENZIONE: Il DDT è stato ANNULLATO");
-//        }
-//
-//        return bulk;
-//    }
-
-    public OggettoBulk initializeModelForEdit(ActionContext context,OggettoBulk bulk) throws BusinessProcessException {
-        Doc_trasporto_rientroBulk testata = (Doc_trasporto_rientroBulk)bulk;
+    @Override
+    public OggettoBulk initializeModelForEdit(ActionContext context, OggettoBulk bulk)
+            throws BusinessProcessException {
+        Doc_trasporto_rientroBulk testata = (Doc_trasporto_rientroBulk) bulk;
         testata.setTiDocumento(TRASPORTO);
-        try {
-            bulk = super.initializeModelForEdit(context, testata);
-            return bulk;
-        } catch(Throwable e) {
-            throw new it.cnr.jada.action.BusinessProcessException(e);
-        }
-
+        return super.initializeModelForEdit(context, testata);
     }
-
-
 
     @Override
     public OggettoBulk initializeModelForInsert(ActionContext context, OggettoBulk bulk)
@@ -319,27 +303,23 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
     }
 
     // ========================= VISIBILITÀ UI =========================
+    // NOTA: I metodi isDocumentoAnnullato(), isEditable(), isInputReadonly()
+    //       sono ereditati dalla classe padre CRUDTraspRientInventarioBP
 
-    private boolean isDocumentoAnnullato() {
-        return getDoc() != null && getDoc().isAnnullato();
+    public boolean isDocumentoPredispostoAllaFirma() {
+        return getDoc() != null && getDoc().isPredispostoAllaFirma();
     }
 
-    public boolean isVisualizzazione() {
-        return isDocumentoAnnullato();
+    public boolean isDocumentoNonModificabile() {
+        return isDocumentoAnnullato() || isDocumentoPredispostoAllaFirma();
+    }
+
+    public boolean isPredispostoAllaFirma() {
+        return getDoc() != null && getDoc().isPredispostoAllaFirma();
     }
 
     public boolean isBottoneAggiungiBeneEnabled() {
         return isInserting() && getDoc() != null && getDoc().isInserito() && !isDocumentoAnnullato();
-    }
-
-    public boolean isDeleteButtonEnabled() {
-        return !isVisualizzazione();
-    }
-
-    @Override
-    public boolean isEditable() {
-        if (isDocumentoAnnullato()) return false;
-        return !isVisualizzazione() && super.isEditable();
     }
 
     public String getLabelData_registrazione() {
@@ -351,9 +331,47 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
     public void predisponiAllaFirma(ActionContext context) throws BusinessProcessException {
         validaStatoPerFirma();
         try {
-            getComp().predisponiAllaFirma(context.getUserContext(), getDoc());
-            commitUserTransaction();
-            setMessage("Documento predisposto alla firma con successo");
+            // 1. Esegui la predisposizione
+            Doc_trasporto_rientroBulk doc = getComp().predisponiAllaFirma(context.getUserContext(), getDoc());
+            //commitUserTransaction();
+
+//            //  Ricarica il documento con lo stato aggiornato
+//            Doc_trasporto_rientroBulk docAggiornato = (Doc_trasporto_rientroBulk)
+//                    getComp().findByPrimaryKey(context.getUserContext(), getDoc());
+
+            // Aggiorna il modello
+            setModel(context, doc);
+
+            // Forza modalità VIEW (disabilita tutto!)
+            setStatus(VIEW);
+
+            setMessage("Documento predisposto alla firma. Ora in sola lettura.");
+
+        } catch (ComponentException | RemoteException e) {
+            rollbackUserTransaction();
+            throw handleException(e);
+        }
+    }
+
+    public void annullaDoc(ActionContext context) throws BusinessProcessException {
+        validaStatoPerFirma();
+        try {
+            // 1. Esegui la predisposizione
+            Doc_trasporto_rientroBulk doc = getComp().annullaDocumento(context.getUserContext(), getDoc());
+            //commitUserTransaction();
+
+//            //  Ricarica il documento con lo stato aggiornato
+//            Doc_trasporto_rientroBulk docAggiornato = (Doc_trasporto_rientroBulk)
+//                    getComp().findByPrimaryKey(context.getUserContext(), getDoc());
+
+            // Aggiorna il modello
+            setModel(context, doc);
+
+            // Forza modalità VIEW (disabilita tutto!)
+            setStatus(VIEW);
+
+            setMessage("Documento annullato. Ora in sola lettura.");
+
         } catch (ComponentException | RemoteException e) {
             rollbackUserTransaction();
             throw handleException(e);
@@ -403,7 +421,9 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
 
     @Override
     public void selectAll(ActionContext context) throws BusinessProcessException {
-        if (isDocumentoAnnullato()) throw new BusinessProcessException("Impossibile modificare un documento annullato");
+        if (isDocumentoAnnullato()) {
+            throw new BusinessProcessException("Impossibile modificare un documento annullato");
+        }
         try {
             getComp().trasportaTuttiBeni(context.getUserContext(), getDoc(), getClauses());
             setClauses(null);
@@ -465,9 +485,6 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
 
     // ========================= FLUSSO RICORSIVO UNIFICATO =========================
 
-    /**
-     * Restituisce il bene principale corrente per l'operazione specificata
-     */
     public Inventario_beniBulk getBenePrincipaleCorrente(boolean isEliminazione) {
         PendingSelection ps = isEliminazione ? pendingDelete : pendingAdd;
         int index = isEliminazione ? indexBeneCurrentePerEliminazione : indexBeneCurrentePerAggiunta;
@@ -486,9 +503,6 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
         return null;
     }
 
-    /**
-     * Restituisce gli accessori del bene principale corrente
-     */
     public List<Inventario_beniBulk> getAccessoriCorrente(boolean isEliminazione) {
         Inventario_beniBulk bene = getBenePrincipaleCorrente(isEliminazione);
         PendingSelection ps = isEliminazione ? pendingDelete : pendingAdd;
@@ -499,9 +513,6 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
         return Collections.emptyList();
     }
 
-    /**
-     * Genera il messaggio per il bene principale corrente
-     */
     public String getMessaggioSingoloBene(boolean isEliminazione) {
         Inventario_beniBulk bene = getBenePrincipaleCorrente(isEliminazione);
         if (bene == null) {
@@ -538,25 +549,16 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
         return msg.toString();
     }
 
-    /**
-     * Restituisce il numero totale di beni principali con accessori
-     */
     public int getTotaleBeniPrincipali(boolean isEliminazione) {
         PendingSelection ps = isEliminazione ? pendingDelete : pendingAdd;
         return (ps != null) ? ps.principaliConAccessori.size() : 0;
     }
 
-    /**
-     * Restituisce l'indice corrente (per info all'utente: "Bene 1 di 3")
-     */
     public int getIndexBeneCorrente(boolean isEliminazione) {
         int index = isEliminazione ? indexBeneCurrentePerEliminazione : indexBeneCurrentePerAggiunta;
         return index + 1;
     }
 
-    /**
-     * Elabora il bene principale corrente
-     */
     public void elaboraBeneCorrente(ActionContext context, boolean isEliminazione, boolean includiAccessori)
             throws BusinessProcessException {
 
@@ -567,9 +569,6 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
         }
     }
 
-    /**
-     * Elimina il bene principale corrente e i suoi accessori
-     */
     private void eliminaBeneCorrente(ActionContext context) throws BusinessProcessException {
         Inventario_beniBulk bene = getBenePrincipaleCorrente(true);
         List<Inventario_beniBulk> accessori = getAccessoriCorrente(true);
@@ -587,9 +586,6 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
         }
     }
 
-    /**
-     * Aggiunge il bene principale corrente (con o senza accessori)
-     */
     private void aggiungiBenesCorrente(ActionContext context, boolean includiAccessori)
             throws BusinessProcessException {
 
@@ -599,7 +595,6 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
         try {
             BitSet tempSelection = new BitSet(pendingAdd.bulks.length);
 
-            // Seleziona il bene principale
             for (int i = 0; i < pendingAdd.bulks.length; i++) {
                 if (pendingAdd.bulks[i] instanceof Inventario_beniBulk) {
                     Inventario_beniBulk b = (Inventario_beniBulk) pendingAdd.bulks[i];
@@ -610,7 +605,6 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
                 }
             }
 
-            // Se richiesto, seleziona anche gli accessori
             if (includiAccessori) {
                 List<Inventario_beniBulk> accessori = getAccessoriCorrente(false);
                 if (accessori != null && !accessori.isEmpty()) {
@@ -628,7 +622,6 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
                 }
             }
 
-            // Applica la modifica
             getComp().modificaBeniTrasportatiConAccessori(
                     context.getUserContext(),
                     getDoc(),
@@ -642,9 +635,6 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
         }
     }
 
-    /**
-     * Avanza al prossimo bene principale
-     */
     public boolean passaAlProssimoBene(boolean isEliminazione) {
         if (isEliminazione) {
             indexBeneCurrentePerEliminazione++;
@@ -655,9 +645,6 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
         }
     }
 
-    /**
-     * Reimposta l'indice e pulisce i dati pendenti
-     */
     public void resetOperazione(boolean isEliminazione) {
         if (isEliminazione) {
             indexBeneCurrentePerEliminazione = 0;
@@ -688,16 +675,6 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
         return pendingAdd != null && !pendingAdd.accessori.isEmpty();
     }
 
-    public void annullaModificaBeniConAccessori() {
-        if (pendingAdd != null) pendingAdd.clear();
-        pendingAdd = null;
-    }
-
-    public void annullaEliminazioneBeniMultipli() {
-        if (pendingDelete != null) pendingDelete.clear();
-        pendingDelete = null;
-    }
-
     // ========================= GETTER PER STATISTICHE =========================
 
     public int getNumeroBeniPrincipaliConAccessori() {
@@ -718,82 +695,18 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP implement
         return (pendingAdd != null) ? pendingAdd.accessori.size() : 0;
     }
 
-    public String getNomeBenePrincipalePendente() {
-        if (pendingAdd == null || pendingAdd.bulks == null) return "Bene";
-        for (int i = 0; i < pendingAdd.bulks.length; i++) {
-            if (pendingAdd.newSel != null && pendingAdd.oldSel != null &&
-                    pendingAdd.newSel.get(i) && !pendingAdd.oldSel.get(i)) {
-                Inventario_beniBulk b = (Inventario_beniBulk) pendingAdd.bulks[i];
-                return b.getNumeroBeneCompleto();
-            }
-        }
-        return "Bene";
-    }
 
-    // ========================= TOOLBAR & PRINT =========================
-
-    @Override
-    protected it.cnr.jada.util.jsp.Button[] createToolbar() {
-        final Properties props = it.cnr.jada.util.Config.getHandler().getProperties(getClass());
-        return Stream.concat(
-                Arrays.stream(super.createToolbar()),
-                Stream.of(new it.cnr.jada.util.jsp.Button(props, "CRUDToolbar.predisponiAllaFirma"))
-        ).toArray(it.cnr.jada.util.jsp.Button[]::new);
-    }
-
-    public boolean isPredisponiAllaFirmaButtonHidden() {
-        if (isDocumentoAnnullato()) return true;
-        return !(getModel() != null && (getModel().getCrudStatus() == OggettoBulk.NORMAL ||
-                getModel().getCrudStatus() == OggettoBulk.TO_BE_UPDATED) &&
-                STATO_INSERITO.equals(getDoc().getStato()));
-    }
-
-    @Override
-    public boolean isPrintButtonHidden() {
-        return !Optional.ofNullable(getModel())
-                .filter(Doc_trasporto_rientroBulk.class::isInstance)
-                .map(Doc_trasporto_rientroBulk.class::cast)
-                .flatMap(d -> Optional.ofNullable(d.getPgDocTrasportoRientro()))
-                .isPresent();
-    }
-
-    @Override
-    protected void initializePrintBP(ActionContext actioncontext, AbstractPrintBP abstractprintbp) {
-        OfflineReportPrintBP printbp = (OfflineReportPrintBP) abstractprintbp;
-        printbp.setReportName("/cnrdocamm/docamm/doc_trasporto_rientro.jasper");
-        final Doc_trasporto_rientroBulk docT = Optional.ofNullable(getModel())
-                .filter(Doc_trasporto_rientroBulk.class::isInstance)
-                .map(Doc_trasporto_rientroBulk.class::cast)
-                .orElseThrow(() -> new DetailedRuntimeException("Modello vuoto!"));
-
-        addPrintParam(printbp, "esercizio", Optional.ofNullable(docT.getEsercizio()).map(String::valueOf).orElse(null), Integer.class);
-        addPrintParam(printbp, "pgInventario", Optional.ofNullable(docT.getPgInventario()).map(String::valueOf).orElse(null), Integer.class);
-        addPrintParam(printbp, "tiDocumento", docT.getTiDocumento(), String.class);
-        addPrintParam(printbp, "pgDocTrasportoRientro", Optional.ofNullable(docT.getPgDocTrasportoRientro()).map(String::valueOf).orElse(null), Integer.class);
-    }
-
-    private void addPrintParam(OfflineReportPrintBP printbp, String name, String value, Class<?> type) {
-        Print_spooler_paramBulk param = new Print_spooler_paramBulk();
-        param.setNomeParam(name);
-        param.setValoreParam(value);
-        param.setParamType(type.getCanonicalName());
-        printbp.addToPrintSpoolerParam(param);
-    }
 
     // ========================= HELPER & GETTERS =========================
 
-    public Doc_trasporto_rientroBulk getDoc() {
-        return (Doc_trasporto_rientroBulk) getModel();
-    }
-
+    /**
+     * OTTIMIZZATO: Rimosso try-catch ridondante.
+     * createComponentSession già lancia BusinessProcessException.
+     */
     private DocTrasportoRientroComponentSession getComp() throws BusinessProcessException {
-        try {
-            return (DocTrasportoRientroComponentSession) createComponentSession(
-                    "CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession",
-                    DocTrasportoRientroComponentSession.class);
-        } catch (Exception e) {
-            throw handleException(e);
-        }
+        return (DocTrasportoRientroComponentSession) createComponentSession(
+                "CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession",
+                DocTrasportoRientroComponentSession.class);
     }
 
     public RemoteDetailCRUDController getDettBeniController() {

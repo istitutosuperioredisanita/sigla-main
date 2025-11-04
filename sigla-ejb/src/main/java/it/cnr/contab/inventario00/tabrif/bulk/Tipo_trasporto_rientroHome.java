@@ -19,6 +19,7 @@ package it.cnr.contab.inventario00.tabrif.bulk;
 
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
@@ -44,6 +45,15 @@ public Tipo_trasporto_rientroHome(java.sql.Connection conn, PersistentCache pers
 		SQLBuilder sql = selectByClause(userContext, clause);
 
 		sql.addOrderBy("CD_TIPO_TRASPORTO_RIENTRO");
+
+		return fetchAll(sql);
+	}
+
+	public java.util.Collection findTipoMovimenti(String tipo) throws IntrospectionException, PersistencyException{
+
+		SQLBuilder sql = createSQLBuilder();
+		sql.addClause("AND","ti_documento",sql.EQUALS, tipo);
+		sql.addClause("AND","dt_cancellazione", sql.ISNULL,null);
 
 		return fetchAll(sql);
 	}

@@ -18,7 +18,6 @@
 package it.cnr.contab.inventario01.ejb;
 
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
-import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -31,6 +30,7 @@ import it.cnr.jada.util.RemoteIterator;
 import javax.ejb.EJBException;
 import javax.ejb.Remote;
 import java.rmi.RemoteException;
+import java.util.BitSet;
 import java.util.List;
 
 /**
@@ -155,4 +155,95 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
             Inventario_beniBulk benePrincipale,
             List beniAccessori)
             throws ComponentException, RemoteException;
+
+    /**
+     * Annulla logicamente il documento cambiando solo lo stato.
+     * NON tocca i dettagli associati.
+     */
+    Doc_trasporto_rientroBulk annullaDocumento(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException;
+
+
+
+
+
+    /**
+     * Seleziona i dettagli del documento di rientro per modifica
+     * @param userContext Contesto utente
+     * @param doc Documento
+     * @param bulkClass Classe bulk
+     * @param filters Filtri da applicare
+     * @return Iterator sui dettagli
+     */
+    RemoteIterator selectEditDettagliRientro(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            Class bulkClass,
+            CompoundFindClause filters
+    ) throws ComponentException, RemoteException;
+
+    /**
+     * Ottiene la lista dei beni disponibili per il rientro
+     * @param userContext Contesto utente
+     * @param doc Documento rientro
+     * @param beniEsclusi Beni da escludere
+     * @param clauses Filtri
+     * @return Iterator sui beni
+     */
+    RemoteIterator getListaBeniDaFarRientrare(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            SimpleBulkList beniEsclusi,
+            CompoundFindClause clauses
+    ) throws ComponentException, RemoteException;
+
+    /**
+     * Annulla le modifiche sui beni in rientro
+     * @param userContext Contesto utente
+     */
+    void annullaModificaRientroBeni(
+            UserContext userContext
+    ) throws ComponentException, RemoteException;
+
+    /**
+     * Inizializza la selezione dei beni da far rientrare
+     * @param userContext Contesto utente
+     */
+    void inizializzaBeniDaFarRientrare(
+            UserContext userContext
+    ) throws ComponentException, RemoteException;
+
+    /**
+     * Fa rientrare tutti i beni filtrati
+     * @param userContext Contesto utente
+     * @param doc Documento rientro
+     * @param clauses Filtri
+     */
+    void rientraTuttiBeni(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            CompoundFindClause clauses
+    ) throws ComponentException, RemoteException;
+
+    /**
+     * Modifica i beni rientrati gestendo gli accessori
+     * @param userContext Contesto utente
+     * @param doc Documento rientro
+     * @param bulks Array di beni
+     * @param oldSelection Selezione precedente
+     * @param newSelection Nuova selezione
+     */
+    void modificaBeniRientratiConAccessori(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            OggettoBulk[] bulks,
+            BitSet oldSelection,
+            BitSet newSelection
+    ) throws ComponentException, RemoteException;
+
+
+    boolean isEsercizioCOEPChiuso(it.cnr.jada.UserContext userContext) throws ComponentException,java.rmi.RemoteException;
+
 }

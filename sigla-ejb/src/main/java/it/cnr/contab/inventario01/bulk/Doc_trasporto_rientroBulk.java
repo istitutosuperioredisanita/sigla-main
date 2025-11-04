@@ -471,6 +471,22 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase /*imple
 		return false;
 	}
 
+
+	public String getDocTrasportoRiferimento() {
+		if (!RIENTRO.equals(this.getTiDocumento())) return null;
+		if (this.doc_trasporto_rientro_dettColl == null ||
+				this.doc_trasporto_rientro_dettColl.isEmpty()) return null;
+
+		Doc_trasporto_rientro_dettBulk primoDettaglio =
+				(Doc_trasporto_rientro_dettBulk) this.doc_trasporto_rientro_dettColl.get(0);
+
+		if (primoDettaglio.getPgDocTrasportoRientroRif() == null) return null;
+
+		return primoDettaglio.getEsercizioRif() + "/" +
+				primoDettaglio.getTiDocumentoRif() + "/" +
+				primoDettaglio.getPgDocTrasportoRientroRif();
+	}
+
 	// ========================================
 	// ANNOTAZIONI AZURE STORAGE
 	// ========================================

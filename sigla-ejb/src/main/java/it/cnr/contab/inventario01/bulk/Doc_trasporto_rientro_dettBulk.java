@@ -154,6 +154,7 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
         return this.getDoc_trasporto_rientro().getEsercizio();
     }
 
+
     public void setPg_doc_trasporto_rientro(Long pg_doc_trasporto_rientro) {
         this.getDoc_trasporto_rientro().setPgDocTrasportoRientro(pg_doc_trasporto_rientro);
     }
