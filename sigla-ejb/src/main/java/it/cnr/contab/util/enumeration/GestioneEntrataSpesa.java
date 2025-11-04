@@ -22,14 +22,22 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.stream.Collectors;
 
-public enum TipoDebitoSIOPE {
-    COMMERCIALE("COMMERCIALE", "C"),
-    NON_COMMERCIALE("NON COMMERCIALE", "N"),
-    IVA("IVA", "I");
+public enum GestioneEntrataSpesa {
+    ENTRATA("Entrate","Entrata", "E"),
+    SPESA("Spese","Spesa", "S");
 
-    public static final Dictionary<String, String> AllTipoDebitoSIOPE_CN_Keys = Arrays.stream(TipoDebitoSIOPE.values())
+    public static final Dictionary<String, String> ti_gestionePluraleKeys = Arrays.stream(GestioneEntrataSpesa.values())
             .collect(Collectors.toMap(
-                    TipoDebitoSIOPE::value, TipoDebitoSIOPE::label,
+                    GestioneEntrataSpesa::value, GestioneEntrataSpesa::labelPlurale,
+                    (u, v) -> {
+                        throw new IllegalStateException(
+                                String.format("Cannot have 2 values (%s, %s) for the same key", u, v)
+                        );
+                    }, Hashtable::new
+            ));
+    public static final Dictionary<String, String> ti_gestioneSingolareKeys = Arrays.stream(GestioneEntrataSpesa.values())
+            .collect(Collectors.toMap(
+                    GestioneEntrataSpesa::value, GestioneEntrataSpesa::labelSingolare,
                     (u, v) -> {
                         throw new IllegalStateException(
                                 String.format("Cannot have 2 values (%s, %s) for the same key", u, v)
@@ -37,38 +45,31 @@ public enum TipoDebitoSIOPE {
                     }, Hashtable::new
             ));
 
-    public static final Dictionary<String, String> TipoDebitoSIOPE_CN_Keys = Arrays.stream(TipoDebitoSIOPE.values())
-            .filter(tipoDebitoSIOPE -> !tipoDebitoSIOPE.equals(TipoDebitoSIOPE.IVA))
-            .collect(Collectors.toMap(
-                    TipoDebitoSIOPE::value, TipoDebitoSIOPE::label,
-                    (u, v) -> {
-                        throw new IllegalStateException(
-                                String.format("Cannot have 2 values (%s, %s) for the same key", u, v)
-                        );
-                    }, Hashtable::new
-            ));
+    private final String labelPlurale, labelSingolare, value;
 
-    private final String label, value;
-
-
-    TipoDebitoSIOPE(String label, String value) {
+    GestioneEntrataSpesa(String labelPlurale, String labelSingolare, String value) {
         this.value = value;
-        this.label = label;
+        this.labelPlurale = labelPlurale;
+        this.labelSingolare = labelSingolare;
     }
 
-    public static TipoDebitoSIOPE getValueFrom(String value) {
-        for (TipoDebitoSIOPE esito : TipoDebitoSIOPE.values()) {
+    public static GestioneEntrataSpesa getValueFrom(String value) {
+        for (GestioneEntrataSpesa esito : GestioneEntrataSpesa.values()) {
             if (esito.value.equals(value))
                 return esito;
         }
-        throw new IllegalArgumentException("TipoDebitoSIOPE no found for value: " + value);
+        throw new IllegalArgumentException("GestioneEntrataSpesa no found for value: " + value);
     }
 
     public String value() {
         return value;
     }
 
-    public String label() {
-        return label;
+    public String labelPlurale() {
+        return labelPlurale;
+    }
+
+    public String labelSingolare() {
+        return labelPlurale;
     }
 }
