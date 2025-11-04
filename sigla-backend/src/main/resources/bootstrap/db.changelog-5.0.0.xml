@@ -6269,4 +6269,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/create_table_doc_trasporto_rientro_dett.xml"/>
     <!-- Autore : DAVIDE MIRRA - Creazione della stampa e print priority del report doc_trasporto_rientro-->
     <include file="bootstrap/add_print_priority_doc_trasporto_rientro.xml"/>
+    <!-- Autore : MARCO SPASIANO - Aggiunto commerciale/non commerciale alla tabella codici_siope-->
+    <include file="bootstrap/add_ti_tipo_debito_codici_siope.xml"/>
 </databaseChangeLog>
