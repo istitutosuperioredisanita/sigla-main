@@ -771,7 +771,7 @@ public class DocTrasportoRientroComponentSessionBean
     public boolean isEsercizioCOEPChiuso(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, EJBException{
         pre_component_invocation(param0,componentObj);
         try {
-            boolean result = ((BuonoCaricoScaricoComponent)componentObj).isEsercizioCOEPChiuso(param0);
+            boolean result = ((DocTrasportoRientroComponent)componentObj).isEsercizioCOEPChiuso(param0);
             component_invocation_succes(param0,componentObj);
             return result;
         } catch(it.cnr.jada.comp.NoRollbackException e) {
