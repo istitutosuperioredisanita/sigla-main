@@ -45,8 +45,8 @@
 			 </tr>
 				
 			 <tr>
-				<td> <% bp.getController().writeFormLabel(out,"tipoPagamento");%></td>
-				<td colspan="3"> <% bp.getController().writeFormInput(out,null,"tipoPagamento",false,null,"");%></td>
+				<td> <% bp.getController().writeFormLabel(out,"tipoFlusso");%></td>
+				<td colspan="3"> <% bp.getController().writeFormInput(out,null,"tipoFlusso",false,null,"");%></td>
 			 </tr>
 
 	</table>

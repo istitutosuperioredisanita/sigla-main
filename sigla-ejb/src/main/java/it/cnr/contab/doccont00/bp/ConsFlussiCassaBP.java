@@ -21,7 +21,7 @@ package it.cnr.contab.doccont00.bp;
 import it.cnr.contab.config00.pdcfin.cla.bulk.Parametri_livelliBulk;
 import it.cnr.contab.config00.sto.bulk.CdsBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.doccont00.consultazioni.bulk.V_cons_siope_mandatiBulk;
+import it.cnr.contab.doccont00.dto.FlussiDiCassaDtoBulk;
 import it.cnr.contab.doccont00.ejb.ConsRiepilogoSiopeComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.action.ActionContext;
@@ -63,8 +63,8 @@ public class ConsFlussiCassaBP extends BulkBP {
 		}
 
 		protected void init(Config config, ActionContext context) throws BusinessProcessException {
-			
-				V_cons_siope_mandatiBulk bulk = new V_cons_siope_mandatiBulk();
+
+				FlussiDiCassaDtoBulk bulk = new FlussiDiCassaDtoBulk();
 				CompoundFindClause clauses = new CompoundFindClause();
 				Integer esercizio = CNRUserContext.getEsercizio(context.getUserContext());
 			    String cds = CNRUserContext.getCd_cds(context.getUserContext());
@@ -104,7 +104,7 @@ public class ConsFlussiCassaBP extends BulkBP {
 		public void setTitle() {
 			
 			   String title=null;
-			   		   title = "Consultazione Riepilogo Codici Siope su Mandati";
+			   		   title = "Consultazione Flussi di cassa";
 			
 				getBulkInfo().setShortDescription(title);
 			}	
@@ -123,14 +123,6 @@ public class ConsFlussiCassaBP extends BulkBP {
 			}
 		}
 
-		
-	/*	public void valorizzaDate(ActionContext context, V_cons_siope_mandatiBulk bulk) throws ValidationException{
-			if ((bulk.getDt_emissione_da()== null||bulk.getDt_emissione_a()==null)&&
-				(bulk.getDt_pagamento_da()== null||bulk.getDt_pagamento_a()== null)&&
-				(bulk.getDt_trasmissione_da()== null||bulk.getDt_trasmissione_a()== null))
-				throw new ValidationException("Valorizzare o le Date di Emissione o le Date di Riscontro o le Date di Trasmissione");
-		}*/
-
 		public CdsBulk getCds_scrivania() {
 			return cds_scrivania;
 		}
@@ -139,6 +131,4 @@ public class ConsFlussiCassaBP extends BulkBP {
 			this.cds_scrivania = cds_scrivania;
 		}
 
-		
-		
 	}

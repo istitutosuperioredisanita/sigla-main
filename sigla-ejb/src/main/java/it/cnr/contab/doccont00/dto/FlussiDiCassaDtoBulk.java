@@ -1,6 +1,9 @@
 package it.cnr.contab.doccont00.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import it.cnr.contab.config00.sto.bulk.CdsBulk;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.persistency.Persistent;
 import it.cnr.jada.util.OrderedHashtable;
 
 import java.io.Serializable;
@@ -8,7 +11,8 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Dictionary;
 
-public class FlussiDiCassaDto  implements Serializable  {
+
+public class FlussiDiCassaDtoBulk extends OggettoBulk {
 
     private final static Dictionary tipo_EstrazioneKeys;
     public final static String MANDATI = "MAN";
@@ -20,16 +24,16 @@ public class FlussiDiCassaDto  implements Serializable  {
 
     private Timestamp dtEmissioneDa;
     private Timestamp dtEmissioneA;
-    private String tipoPagamento;
+    private String tipoFlusso;
 
     static {
         tipo_EstrazioneKeys = new OrderedHashtable();
         tipo_EstrazioneKeys.put(MANDATI, "Mandati");
         tipo_EstrazioneKeys.put(REVERSALI, "Reversali");
     }
+    private boolean roFindCds;
 
-
-    private Integer idClassificazione;
+    private String classificazione;
     private String dsClassificazione;
 
     private BigDecimal impPrimoTrimestre;
@@ -38,12 +42,17 @@ public class FlussiDiCassaDto  implements Serializable  {
     private BigDecimal impQuartoTrimestre;
 
 
+    public FlussiDiCassaDtoBulk() {
+        cds=new CdsBulk();
+    }
+
+
     public String getCdCds() {
-        return cdCds;
+        return this.cds.getCd_unita_organizzativa();
     }
 
     public void setCdCds(String cdCds) {
-        this.cdCds = cdCds;
+        this.cds.setCd_unita_organizzativa(cdCds);
     }
 
     public CdsBulk getCds() {
@@ -78,20 +87,20 @@ public class FlussiDiCassaDto  implements Serializable  {
         this.dtEmissioneA = dtEmissioneA;
     }
 
-    public String getTipoPagamento() {
-        return tipoPagamento;
+    public String getTipoFlusso() {
+        return tipoFlusso;
     }
 
-    public void setTipoPagamento(String tipoPagamento) {
-        this.tipoPagamento = tipoPagamento;
+    public void setTipoFlusso(String tipoFlusso) {
+        this.tipoFlusso = tipoFlusso;
     }
 
-    public Integer getIdClassificazione() {
-        return idClassificazione;
+    public String getClassificazione() {
+        return classificazione;
     }
 
-    public void setIdClassificazione(Integer idClassificazione) {
-        this.idClassificazione = idClassificazione;
+    public void setClassificazione(String classificazione) {
+        this.classificazione = classificazione;
     }
 
     public String getDsClassificazione() {
@@ -132,5 +141,13 @@ public class FlussiDiCassaDto  implements Serializable  {
 
     public void setImpQuartoTrimestre(BigDecimal impQuartoTrimestre) {
         this.impQuartoTrimestre = impQuartoTrimestre;
+    }
+
+    public boolean isROFindCds() {
+        return roFindCds;
+    }
+
+    public void setROFindCds(boolean roFindCds) {
+        this.roFindCds = roFindCds;
     }
 }
