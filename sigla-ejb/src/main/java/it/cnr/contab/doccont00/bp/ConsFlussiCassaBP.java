@@ -21,7 +21,7 @@ package it.cnr.contab.doccont00.bp;
 import it.cnr.contab.config00.pdcfin.cla.bulk.Parametri_livelliBulk;
 import it.cnr.contab.config00.sto.bulk.CdsBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.doccont00.dto.FlussiDiCassaDtoBulk;
+import it.cnr.contab.doccont00.consultazioni.bulk.FlussiDiCassaDtoBulk;
 import it.cnr.contab.doccont00.ejb.ConsRiepilogoSiopeComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.action.ActionContext;

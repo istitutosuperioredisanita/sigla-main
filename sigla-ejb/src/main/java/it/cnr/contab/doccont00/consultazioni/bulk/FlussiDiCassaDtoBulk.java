@@ -1,12 +1,9 @@
-package it.cnr.contab.doccont00.dto;
+package it.cnr.contab.doccont00.consultazioni.bulk;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import it.cnr.contab.config00.sto.bulk.CdsBulk;
 import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.persistency.Persistent;
 import it.cnr.jada.util.OrderedHashtable;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Dictionary;
