@@ -89,6 +89,15 @@
             enabledOnEdit="false"
             enabledOnSearch="false"
             enabledOnFreeSearch="false"/>
+    <fieldProperty
+            name="contoC"
+            property="banca"
+            inputType="FORM"
+            formName="C"
+            enabledOnInsert="false"
+            enabledOnEdit="false"
+            enabledOnSearch="false"
+            enabledOnFreeSearch="false"/>
 
     <formFieldProperty
             name="modalita_pagamento"/>
@@ -104,5 +113,7 @@
             name="contoQ"/>
     <formFieldProperty
             name="contoN"/>
+    <formFieldProperty
+            name="contoC"/>
 
 </bulkInfo>
