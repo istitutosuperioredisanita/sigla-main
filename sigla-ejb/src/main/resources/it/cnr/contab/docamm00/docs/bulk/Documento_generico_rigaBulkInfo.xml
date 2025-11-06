@@ -79,6 +79,15 @@
 		enabledOnEdit="false"
 		enabledOnSearch="false"
 		enabledOnFreeSearch="false" />
+	<fieldProperty
+			name="contoC"
+			property="banca"
+			inputType="FORM"
+			formName="C"
+			enabledOnInsert="false"
+			enabledOnEdit="false"
+			enabledOnSearch="false"
+			enabledOnFreeSearch="false" />
 
 	<fieldProperty 
 		name="listabanche"
@@ -537,6 +546,7 @@
 	<formFieldProperty name="contoP" />
 	<formFieldProperty name="contoQ" />
 	<formFieldProperty name="contoN" />
+	<formFieldProperty name="contoC" />
 	<formFieldProperty name="contoAUO" />
 	<formFieldProperty name="contoBUO" />
 	<formFieldProperty name="contoPUO" />
