@@ -103,6 +103,7 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
 
     public final static String PK_PDG_VARIAZIONE = "PDG_VARIAZIONE";
     public final static String SK_TIPO_VAR_APPROVA_CDS = "TIPO_VAR_APPROVA_CDS";
+    public final static String SK_VARIAZIONE_FL_PGIRO = "VARIAZIONE_FL_PGIRO";
 
     public final static String PK_VAR_STANZ_RES = "VAR_STANZ_RES";
     public final static String SK_TIPO_VAR_APPROVA_CNR = "TIPO_VAR_APPROVA_CNR";

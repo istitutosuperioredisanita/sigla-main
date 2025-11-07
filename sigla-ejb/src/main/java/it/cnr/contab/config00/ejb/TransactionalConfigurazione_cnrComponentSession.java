@@ -1719,4 +1719,57 @@ public class TransactionalConfigurazione_cnrComponentSession extends it.cnr.jada
         }
     }
 
+    @Override
+    public Boolean is1210BonificoEsteroEuroSepa(UserContext userContext) throws ComponentException, RemoteException {
+        try {
+            return (java.lang.Boolean) invoke("is1210BonificoEsteroEuroSepa", new Object[]{
+                    userContext});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public Boolean is1210BonificoEsteroEuroExtraSepa(UserContext userContext) throws ComponentException, RemoteException {
+        try {
+            return (java.lang.Boolean) invoke("is1210BonificoEsteroEuroExtraSepa", new Object[]{
+                    userContext});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public Boolean isEnabledPartGiroInVarizione(UserContext userContext) throws ComponentException, RemoteException {
+        try {
+            return (java.lang.Boolean) invoke("isEnabledPartGiroInVarizione", new Object[]{
+                    userContext});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
 }
