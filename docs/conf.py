@@ -24,7 +24,7 @@ source_parsers = {
 
 project = 'Sistema Informativo Gestione Linee di Attività'
 release = '6.5.0'
-author = u'Consiglio Nazionale delle Ricerche'
+author = u'Istituto Superiore di Sanità'
 
 show_authors = True
 # Grouping the document tree into LaTeX files. List of tuples
@@ -42,7 +42,7 @@ html_theme_path = [docs_cnr_theme.get_html_theme_path()]
 # These folders are copied to the documentation's HTML output
 html_static_path = ['_static']
 
-copyright = "2020 Consiglio Nazionale delle Ricerche"
+copyright = "2020 Istituto Superiore di Sanità"
 html_title = "Sistema Informativo Gestione Linee di Attività"
 html_show_sourcelink = False
 html_favicon = "favicon.ico"
