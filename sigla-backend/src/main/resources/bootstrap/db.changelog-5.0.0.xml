@@ -6262,6 +6262,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_ti_tipo_debito_codici_siope.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunto configurazione gestione lettera pagamento estero( 1210)-->
     <include file="bootstrap/add_conf_gestione_bonifici_esteri_euro.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta configurazione prefix contro Bonifici Esteri Euro( 1210)-->
+    <include file="bootstrap/add_conf_bonifici_esteri_prefix_conto.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunto configurazione per permettere o meno variazione sulle partite di giro-->
     <include file="bootstrap/add_conf_partite_giro_variazione.xml"/>
 </databaseChangeLog>

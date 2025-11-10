@@ -22,20 +22,11 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
                                        http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-    <changeSet author="ciro.salvio" id="add_conf_gestione_bonifici_esteri_euro">
-        <insert tableName="configurazione_cnr">
-            <column name="esercizio" type="NUMERIC" valueNumeric="${esercizio_corrente}"/>
-            <column name="cd_unita_funzionale" type="STRING" value="*"/>
-            <column name="cd_chiave_primaria" type="STRING" value="FLUSSO_ORDINATIVI"/>
-            <column name="cd_chiave_secondaria" type="STRING" value="PREFIX_CONTO_EXTRA_SEPA"/>
-            <column name="val01" type="STRING" value=""/>
-            <column name="dacr" type="${date.type}" valueDate="${now}"/>
-            <column name="utcr" type="STRING" value="SYSTEM"/>
-            <column name="duva" type="${date.type}" valueDate="${now}"/>
-            <column name="utuv" type="STRING" value="SYSTEM"/>
-            <column name="pg_ver_rec" type="NUMERIC" value="0"/>
-        </insert>
-
+    <changeSet author="ciro.salvio" id="update_conf_bonifici_esteriprefix_conto">
+        <update tableName="configurazione_cnr">
+            <column name="val01" type="STRING" value="OO99"/>
+            <where>CD_UNITA_FUNZIONALE='*' AND CD_CHIAVE_PRIMARIA='FLUSSO_ORDINATIVI' AND CD_CHIAVE_SECONDARIA='PREFIX_CONTO_BON_ESTERO_EURO'</where>
+        </update>
     </changeSet>
 
 </databaseChangeLog>

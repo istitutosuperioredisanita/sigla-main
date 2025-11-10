@@ -1519,7 +1519,7 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
             throw handleException(e);
         }
     }
-    public Boolean is1210BonificoEsteroEuroSepa(UserContext userContext) throws ComponentException {
+    public Boolean is1210BonificoEsteroEuro(UserContext userContext) throws ComponentException {
         try {
             Configurazione_cnrKey configurazioneCnrKey = new Configurazione_cnrKey(
                     Configurazione_cnrBulk.PK_FLUSSO_ORDINATIVI,
@@ -1530,26 +1530,6 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
                     .orElseGet(() -> {
                         try {
                             return val01YesNo(userContext, configurazioneCnrKey.esercizio(0))
-                                    .orElse(Boolean.FALSE);
-                        } catch (PersistencyException|ComponentException e) {
-                            throw new PersistencyError(e);
-                        }
-                    });
-        } catch (PersistencyException e) {
-            throw handleException(e);
-        }
-    }
-    public Boolean is1210BonificoEsteroEuroExtraSepa(UserContext userContext) throws ComponentException {
-        try {
-            Configurazione_cnrKey configurazioneCnrKey = new Configurazione_cnrKey(
-                    Configurazione_cnrBulk.PK_FLUSSO_ORDINATIVI,
-                    Configurazione_cnrBulk.SK_BONIFICO_ESTERO_EURO_1210,
-                    ASTERISCO,
-                    CNRUserContext.getEsercizio(userContext));
-            return val02YesNo(userContext, configurazioneCnrKey)
-                    .orElseGet(() -> {
-                        try {
-                            return val02YesNo(userContext, configurazioneCnrKey.esercizio(0))
                                     .orElse(Boolean.FALSE);
                         } catch (PersistencyException|ComponentException e) {
                             throw new PersistencyError(e);
