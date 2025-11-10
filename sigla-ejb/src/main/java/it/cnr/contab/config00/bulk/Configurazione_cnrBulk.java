@@ -182,7 +182,7 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     public final static String SK_INVIA_TAG_BILANCIO = "INVIA_TAG_BILANCIO";
     public final static String SK_BONIFICO_ESTERO_EURO_1210="BONIFICO_ESTERO_EURO_1210";
 
-    public final static String SK_PREFIX_CONTO_EXTRA_SEPA="PREFIX_CONTO_EXTRA_SEPA";
+    public final static String SK_PREFIX_CONTO_BON_ESTERO_EURO="PREFIX_CONTO_BON_ESTERO_EURO";
     public final static String SK_TIPO_RAPPORTO_TESORERIA = "TIPO_RAPPORTO_TESORERIA";
 
     public final static String SK_ANNULLA_MANDATI = "ANNULLA_MANDATI";
