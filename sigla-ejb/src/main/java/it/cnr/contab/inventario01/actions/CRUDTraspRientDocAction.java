@@ -68,9 +68,24 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         try {
             CRUDTraspRientInventarioBP bp = getBP(context);
             Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
+
+            // Salva il tipo movimento corrente
             it.cnr.contab.inventario00.tabrif.bulk.Tipo_trasporto_rientroBulk tipoOld = doc.getTipoMovimento();
+            // Aggiorna il model con i dati dal form
             fillModel(context);
+
+            // Ricarica la lista dei tipi movimento in base a tiDocumento (T/R)
+            try {
+                DocTrasportoRientroComponentSession session = getComponentSession(bp);
+                // Chiama il metodo che filtra per tipo documento
+                session.initializeKeysAndOptionsInto(context.getUserContext(), doc);
+            } catch (Exception e) {
+                throw new BusinessProcessException("Errore ricaricamento tipi movimento", e);
+            }
+
+            // Verifica se ci sono già beni associati
             if (hasBeniInDettaglio(doc)) {
+                // Ripristina il tipo movimento precedente
                 doc.setTipoMovimento(tipoOld);
                 bp.setMessage("Impossibile cambiare Tipo Movimento: eliminare prima i beni.");
             }

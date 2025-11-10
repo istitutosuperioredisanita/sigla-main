@@ -63,6 +63,13 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         try {
             Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bulk;
 
+            if (doc.getTiDocumento() == null || doc.getTiDocumento().isEmpty()) {
+                throw new ComponentException(
+                        "Errore: Tipo documento (T/R) non impostato dal BP. "
+                );
+            }
+
+
             inizializzaTipoMovimento(aUC, doc);
             doc.setDoc_trasporto_rientro_dettColl(new SimpleBulkList());
 

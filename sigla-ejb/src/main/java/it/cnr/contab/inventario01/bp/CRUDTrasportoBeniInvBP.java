@@ -144,4 +144,15 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP {
         ((Doc_trasporto_rientroBulk) bulk).setTiDocumento(TRASPORTO);
         return bulk;
     }
+
+    /**
+     * Imposta tiDocumento SUBITO alla creazione del bulk
+     */
+    @Override
+    public OggettoBulk createNewBulk(it.cnr.jada.action.ActionContext context)
+            throws BusinessProcessException {
+        Doc_trasporto_rientroBulk doc = new Doc_trasporto_rientroBulk();
+        doc.setTiDocumento(TRASPORTO);
+        return doc;
+    }
 }
