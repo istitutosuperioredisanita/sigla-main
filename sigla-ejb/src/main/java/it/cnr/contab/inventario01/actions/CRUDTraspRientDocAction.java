@@ -1,13 +1,16 @@
 package it.cnr.contab.inventario01.actions;
 
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.inventario01.bp.CRUDScaricoInventarioBP;
 import it.cnr.contab.inventario01.bp.CRUDTraspRientInventarioBP;
+import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.action.HookForward;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
@@ -16,7 +19,9 @@ import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.*;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -76,26 +81,41 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
+
     public Forward doOnTipoRitiroChange(ActionContext context) {
         try {
             CRUDTraspRientInventarioBP bp = getBP(context);
             Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
             String oldValue = doc.getTipoRitiro();
+
             fillModel(context);
             String newValue = doc.getTipoRitiro();
-            if (valoreUguale(oldValue, newValue)) {
+
+            // Se oldValue è null o i valori sono diversi, procedi con le modifiche
+            if (oldValue != null && valoreUguale(oldValue, newValue)) {
                 return context.findDefaultForward();
             }
-            eliminaBeniSePresenti(context, bp, doc, "Tipo ritiro modificato. Beni precedenti rimossi.");
+
+            // Se oldValue non è null ed è diverso da newValue, elimina i beni
+            if (oldValue != null) {
+                eliminaBeniSePresenti(context, bp, doc, "Tipo ritiro modificato. Beni precedenti rimossi.");
+            }
+
+            // Gestisci il caso specifico del tipo ritiro vettore
             if (Doc_trasporto_rientroBulk.TIPO_RITIRO_VETTORE.equals(newValue)) {
                 doc.setAnagDipRitiro(null);
             }
+
+            // Aggiorna il model nel BP
             bp.setModel(context, doc);
+
             return context.findDefaultForward();
+
         } catch (Throwable e) {
             return handleException(context, e);
         }
     }
+
 
     public Forward doOnDipendenteChange(ActionContext context) {
         try {
@@ -121,7 +141,8 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             bp.getDettBeniController().removeAll(context);
             bp.getEditDettController().removeAll(context);
             fillModel(context);
-            bp.setModel(context, (Doc_trasporto_rientroBulk) bp.getModel());
+            Doc_trasporto_rientroBulk model=(Doc_trasporto_rientroBulk)bp.getModel();
+            bp.setModel(context,model);
             return context.findDefaultForward();
         } catch (Throwable e) {
             return handleException(context, e);
@@ -199,66 +220,190 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     /**
      * METODO CRITICO: Gestisce la selezione dei beni dopo che l'utente li ha selezionati.
      * DEVE:
-     * 1. Aggiungere PRIMA i beni semplici (principali senza accessori + accessori singoli)
-     * 2. POI avviare il flusso ricorsivo per i principali con accessori
+     * 1. Raccogliere TUTTI i beni selezionati (semplici e con accessori)
+     * 2. Avviare il flusso ricorsivo generalizzato per elaborarli uno per uno
+     *    - Beni semplici: elaborare direttamente SENZA accessori
+     *    - Beni con accessori: chiedere conferma per includere accessori
      */
     protected Forward doSelezionaBeniGeneric(ActionContext context) {
         try {
             CRUDTraspRientInventarioBP bp = getBP(context);
 
-            // CONTROLLO CRITICO: Verifica che pendingAdd sia stato inizializzato
             if (bp.getPendingAdd() == null) {
-                // Non ci sono beni in pending, semplicemente resetta e ritorna
-                bp.getDettBeniController().reset(context);
                 return context.findDefaultForward();
             }
 
-            // STEP 1: Aggiungi i beni semplici (principali senza accessori + accessori singoli)
-            if (!bp.getPendingAdd().getPrincipaliSenza().isEmpty() || !bp.getPendingAdd().getAccessori().isEmpty()) {
-                BitSet tempSel = (BitSet) bp.getPendingAdd().getOldSel().clone();
+            // Aggiungi SUBITO i beni semplici (principali senza accessori + accessori standalone)
+            // Questi NON richiedono conferma, quindi li elaboriamo prima del flusso ricorsivo
+            aggiungiImmediatamenteBeniSemplici(context, bp);
 
-                // Seleziona tutti i beni semplici
-                for (int i = 0; i < bp.getPendingAdd().getBulks().length; i++) {
-                    Inventario_beniBulk b = (Inventario_beniBulk) bp.getPendingAdd().getBulks()[i];
-                    if (bp.getPendingAdd().getPrincipaliSenza().contains(b) ||
-                            bp.getPendingAdd().getAccessori().contains(b)) {
-                        tempSel.set(i);
-                    }
-                }
+            // Crea una lista SOLO dei beni principali CON accessori (che richiedono conferma)
+            List<Inventario_beniBulk> beniConAccessoriDaConfermare = new ArrayList<>(
+                    bp.getPendingAdd().getPrincipaliConAccessori().keySet()
+            );
 
-                // CRITICO: Aggiorna selectionAccumulata per accumulo progressivo
-                bp.getPendingAdd().setSelectionAccumulata(tempSel);
+            // Se non ci sono beni con accessori, finisci subito
+            if (beniConAccessoriDaConfermare.isEmpty()) {
+                bp.getDettBeniController().reset(context);
+                bp.setMessage("Aggiunta beni completata con successo");
+                bp.resetOperazione(false);
+                return context.findDefaultForward();
             }
 
-            bp.getDettBeniController().reset(context);
+            //  3: Avvia il flusso ricorsivo SOLO per i beni con accessori
+            return apriFlussoRicorsivoGenerico(context, bp, false, beniConAccessoriDaConfermare, 0);
 
-            // STEP 2: Se ci sono principali con accessori, avvia il flusso ricorsivo
-            if (bp.hasBeniPrincipaliConAccessoriPendenti()) {
-                return apriFlussoRicorsivo(context, bp, false);
-            }
-            // STEP 3: Se NON ci sono principali con accessori, aggiungi i beni semplici ora
-            if (!bp.hasBeniPrincipaliConAccessoriPendenti()) {
-                if (!bp.getPendingAdd().getPrincipaliSenza().isEmpty() || !bp.getPendingAdd().getAccessori().isEmpty()) {
-                    bp.modificaBeniConAccessoriComponente(context, bp.getPendingAdd().getBulks(),
-                            bp.getPendingAdd().getOldSel(), bp.getPendingAdd().getSelectionAccumulata());
-                    bp.getDettBeniController().reset(context);
-                }
-            }
-
-            return context.findDefaultForward();
         } catch (Throwable e) {
             return handleException(context, e);
         }
     }
 
+    /**
+     * Aggiunge immediatamente i beni semplici senza chiedere conferma
+     */
+    private void aggiungiImmediatamenteBeniSemplici(ActionContext context, CRUDTraspRientInventarioBP bp)
+            throws BusinessProcessException {
+        try {
+            List<Inventario_beniBulk> beniSemplici = new ArrayList<>();
+            beniSemplici.addAll(bp.getPendingAdd().getPrincipaliSenza());
+            beniSemplici.addAll(bp.getPendingAdd().getAccessori());
+
+            if (beniSemplici.isEmpty()) {
+                return;
+            }
+
+            // Crea un BitSet per selezionare tutti i beni semplici
+            BitSet oldSelection = new BitSet(bp.getPendingAdd().getBulks().length);
+            BitSet newSelection = new BitSet(bp.getPendingAdd().getBulks().length);
+
+            for (Inventario_beniBulk beneSemplice : beniSemplici) {
+                for (int i = 0; i < bp.getPendingAdd().getBulks().length; i++) {
+                    if (bp.getPendingAdd().getBulks()[i] instanceof Inventario_beniBulk) {
+                        Inventario_beniBulk b = (Inventario_beniBulk) bp.getPendingAdd().getBulks()[i];
+                        if (b.equalsByPrimaryKey(beneSemplice)) {
+                            newSelection.set(i);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Aggiungi tutti i beni semplici in una sola chiamata
+            bp.modificaBeniConAccessoriComponente(context, bp.getPendingAdd().getBulks(), oldSelection, newSelection);
+
+        } catch (ComponentException | RemoteException e) {
+            throw bp.handleException(e);
+        }
+    }
+
+
+
+
+    private Forward apriFlussoRicorsivoGenerico(ActionContext context, CRUDTraspRientInventarioBP bp,
+                                                boolean isEliminazione,
+                                                List<Inventario_beniBulk> beniDaElaborare,
+                                                int index)
+            throws ComponentException, RemoteException, BusinessProcessException {
+
+        if (beniDaElaborare == null || index >= beniDaElaborare.size()) {
+            // : Finito il ciclo, finalizza con messaggio appropriato
+            finalizeFlusso(context, bp, isEliminazione, true);
+            return context.findDefaultForward();
+        }
+
+        Inventario_beniBulk beneCorrente = beniDaElaborare.get(index);
+
+        // Qui arriviamo SOLO per beni con accessori (per aggiunta)
+        // o per beni principali con accessori (per eliminazione)
+
+        bp.setUltimaOperazioneEliminazione(isEliminazione);
+
+        String messaggio = String.format("[Bene %d di %d]\n\n%s",
+                index + 1,
+                beniDaElaborare.size(),
+                bp.getMessaggioSingoloBene(isEliminazione, beneCorrente));
+
+        try {
+            int confirmType = isEliminazione ? OptionBP.CONFIRM_YES_NO_CANCEL : OptionBP.CONFIRM_YES_NO;
+            openConfirm(context, messaggio, confirmType, "doRispostaRicorsivaGenerica");
+
+            HookForward hookForward = (HookForward) context.findForward("option");
+            if (hookForward != null) {
+                hookForward.addParameter("beniDaElaborare", beniDaElaborare);
+                hookForward.addParameter("index", index);
+                hookForward.addParameter("beneCorrente", beneCorrente);
+            }
+        } catch (BusinessProcessException e) {
+            throw new RuntimeException(e);
+        }
+
+        return context.findDefaultForward();
+    }
+
+
+
+    /**
+     *   Gestisce correttamente SI/NO/ANNULLA per ogni bene
+     */
+    public Forward doRispostaRicorsivaGenerica(ActionContext context, int opt) {
+        try {
+            CRUDTraspRientInventarioBP bp = getBP(context);
+            boolean isEliminazione = bp.isUltimaOperazioneEliminazione();
+
+            HookForward caller = (HookForward) context.getCaller();
+            List<Inventario_beniBulk> beniDaElaborare = (List<Inventario_beniBulk>) caller.getParameter("beniDaElaborare");
+            Integer index = (Integer) caller.getParameter("index");
+            Inventario_beniBulk beneCorrente = (Inventario_beniBulk) caller.getParameter("beneCorrente");
+
+            boolean haCliccatoSI = (opt == OptionBP.YES_BUTTON);
+            boolean haCliccatoNO = (opt == OptionBP.NO_BUTTON);
+            boolean haCliccatoANNULLA = (opt == OptionBP.CANCEL_BUTTON);
+
+            //  4: Gestione ANNULLA
+            if (haCliccatoANNULLA) {
+                bp.getDettBeniController().reset(context);
+
+                if (isEliminazione) {
+                    bp.setMessage("Eliminazione annullata."); // : Messaggio corretto
+                } else {
+                    bp.setMessage("Operazione annullata.");
+                }
+
+                bp.resetOperazione(isEliminazione);
+                return context.findDefaultForward();
+            }
+
+            // : Gestione SI/NO
+            if (haCliccatoSI) {
+                // SI: Elabora con accessori
+                bp.elaboraBeneConAccessori(context, isEliminazione, beneCorrente, true);
+            } else if (haCliccatoNO) {
+                // NO: Elabora SOLO il principale SENZA accessori
+                bp.elaboraBeneConAccessori(context, isEliminazione, beneCorrente, false);
+            }
+
+            // Passa al prossimo bene
+            return apriFlussoRicorsivoGenerico(context, bp, isEliminazione, beniDaElaborare, index + 1);
+
+        } catch (Throwable e) {
+            return handleException(context, e);
+        }
+    }
+
+
+
+
+
     private Forward apriFlussoRicorsivo(ActionContext context, CRUDTraspRientInventarioBP bp, boolean isEliminazione) {
         bp.setIndexBeneCurrentePerEliminazione(0);
         bp.setIndexBeneCurrentePerAggiunta(0);
         bp.setUltimaOperazioneEliminazione(isEliminazione);
+        Inventario_beniBulk beneProssimoCorrente = bp.getBenePrincipaleCorrente(isEliminazione);
+
         String messaggio = String.format("[Bene %d di %d]\n\n%s",
                 bp.getIndexBeneCorrente(isEliminazione),
                 bp.getTotaleBeniPrincipali(isEliminazione),
-                bp.getMessaggioSingoloBene(isEliminazione));
+                bp.getMessaggioSingoloBene(isEliminazione,beneProssimoCorrente));
         try {
             // Per eliminazione: usa 3 pulsanti (SI/NO/ANNULLA)
             // Per aggiunta: usa 2 pulsanti (SI/NO)
@@ -310,12 +455,15 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                 }
             }
 
+            // Recupera prima il bene corrente, poi passa entrambi i parametri
+            Inventario_beniBulk beneProssimoCorrente = bp.getBenePrincipaleCorrente(isEliminazione);
+
             // Passa al prossimo bene
             if (bp.passaAlProssimoBene(isEliminazione)) {
                 String messaggio = String.format("[Bene %d di %d]\n\n%s",
                         bp.getIndexBeneCorrente(isEliminazione),
                         bp.getTotaleBeniPrincipali(isEliminazione),
-                        bp.getMessaggioSingoloBene(isEliminazione));
+                        bp.getMessaggioSingoloBene(isEliminazione,beneProssimoCorrente));
 
                 // Per eliminazione: usa 3 pulsanti, per aggiunta: usa 2 pulsanti
                 int confirmType = isEliminazione ? OptionBP.CONFIRM_YES_NO_CANCEL : OptionBP.CONFIRM_YES_NO;
@@ -335,25 +483,18 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     /**
      * Finalizza il flusso ricorsivo con messaggi appropriati
      */
-    private void finalizeFlusso(ActionContext context, CRUDTraspRientInventarioBP bp, boolean isEliminazione, boolean ultimaRispostaSI) throws ComponentException, RemoteException {
 
-        // CRITICO: Chiama il component UNA SOLA VOLTA con tutta la selezione accumulata
-        if (!isEliminazione && bp.getPendingAdd() != null && bp.getPendingAdd().getSelectionAccumulata() != null) {
-            bp.modificaBeniConAccessoriComponente(context, bp.getPendingAdd().getBulks(),
-                    bp.getPendingAdd().getOldSel(), bp.getPendingAdd().getSelectionAccumulata());
-        }
+    private void finalizeFlusso(ActionContext context, CRUDTraspRientInventarioBP bp,
+                                boolean isEliminazione, boolean ultimaRispostaSI)
+            throws ComponentException, RemoteException {
 
-        bp.getDettBeniController().reset(context);
         bp.getDettBeniController().reset(context);
 
         if (isEliminazione) {
-            // Per eliminazione: se almeno un bene è stato elaborato, mostra "completata", altrimenti "annullata"
-            if (bp.getIndexBeneCurrentePerEliminazione() > 0 && !ultimaRispostaSI) {
-                bp.setMessage("Eliminazione annullata.");
-            } else {
-                bp.setMessage("Eliminazione completata.");
-            }
+            // Per eliminazione: messaggio sempre "completata" (perché ANNULLA esce prima)
+            bp.setMessage("Eliminazione completata.");
         } else {
+            // Per aggiunta: sempre successo
             bp.setMessage("Aggiunta beni completata con successo");
         }
 
@@ -398,24 +539,6 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-    @Override
-    public Forward doSalva(ActionContext context) throws RemoteException {
-        try {
-            fillModel(context);
-            CRUDTraspRientInventarioBP bp = getBP(context);
-            if (bp.isDocumentoPredispostoAllaFirma()) {
-                bp.setMessage("Impossibile salvare il documento: è già stato Predisposto Alla Firma");
-                return context.findDefaultForward();
-            }
-            if (bp.isDocumentoAnnullato()) {
-                bp.setMessage("Impossibile salvare un documento annullato");
-                return context.findDefaultForward();
-            }
-            return super.doSalva(context);
-        } catch (Throwable e) {
-            return handleException(context, e);
-        }
-    }
 
     // =======================================================
     // METODI HELPER (comuni)
@@ -440,12 +563,10 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     }
 
     protected void eliminaBeniSePresenti(ActionContext context, CRUDTraspRientInventarioBP bp, Doc_trasporto_rientroBulk doc, String messaggio) throws Exception {
-        bp.getDettBeniController().removeAll(context);
-        bp.getEditDettController().removeAll(context);
-        if (hasBeniInDettaglio(doc)) {
-            getComponentSession(bp).eliminaTuttiBeniDettaglio(context.getUserContext(), doc);
+        SimpleBulkList selezionati = getComponentSession(bp).selezionati(context.getUserContext(), doc);
+        if (!selezionati.isEmpty()) {
+            bp.getDettBeniController().removeAll(context);
             doc.getDoc_trasporto_rientro_dettColl().clear();
-            bp.setDirty(true);
             bp.setMessage(messaggio);
         }
     }

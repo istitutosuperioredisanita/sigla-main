@@ -166,7 +166,7 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
     protected abstract void inizializzaSelezioneComponente(ActionContext context) throws ComponentException, RemoteException;
     protected abstract void annullaModificaComponente(ActionContext context) throws ComponentException, RemoteException;
     protected abstract void selezionaTuttiBeniComponente(ActionContext context) throws ComponentException, RemoteException;
-    public abstract void modificaBeniConAccessoriComponente(ActionContext context, OggettoBulk[] bulks, BitSet oldSelection, BitSet newSelection) throws ComponentException, RemoteException;
+    public abstract void modificaBeniConAccessoriComponente(ActionContext context, OggettoBulk[] bulks, BitSet oldSelection, BitSet newSelection) throws ComponentException, RemoteException, BusinessProcessException;
 
     private PendingSelection getPendingDelete() {
         return pendingDelete;
@@ -694,7 +694,6 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
                     }
                 }
             }
-
             if (ps.principaliConAccessori.isEmpty()) {
                 if (!ps.isEmpty()) {
                     modificaBeniConAccessoriComponente(context, bulks, oldSelection, newSelection);
@@ -741,21 +740,24 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
         return Collections.emptyList();
     }
 
-    public String getMessaggioSingoloBene(boolean isEliminazione) {
-        Inventario_beniBulk bene = getBenePrincipaleCorrente(isEliminazione);
-        if (bene == null) {
+    /**
+     * : Versione che accetta il bene corrente come parametro
+     */
+    public String getMessaggioSingoloBene(boolean isEliminazione, Inventario_beniBulk beneCorrente) {
+        if (beneCorrente == null) {
             return "";
         }
 
-        List<Inventario_beniBulk> accessori = getAccessoriCorrente(isEliminazione);
+        PendingSelection ps = isEliminazione ? pendingDelete : pendingAdd;
+        List<Inventario_beniBulk> accessori = (ps != null) ? ps.principaliConAccessori.get(beneCorrente) : null;
         int numAccessori = (accessori != null) ? accessori.size() : 0;
 
         StringBuilder msg = new StringBuilder();
 
         if (isEliminazione) {
-            msg.append("Il bene principale con codice: ").append(bene.getNr_inventario());
-            if (bene.getEtichetta() != null && !bene.getEtichetta().isEmpty()) {
-                msg.append(" e etichetta ").append(bene.getEtichetta());
+            msg.append("Il bene principale con codice: ").append(beneCorrente.getNr_inventario());
+            if (beneCorrente.getEtichetta() != null && !beneCorrente.getEtichetta().isEmpty()) {
+                msg.append(" e etichetta ").append(beneCorrente.getEtichetta());
             }
             msg.append(" ha ").append(numAccessori);
             String pluraleAccessorio = (numAccessori == 1) ? " bene accessorio" : " beni accessori";
@@ -765,9 +767,9 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
             msg.append("• NO: Elimina SOLO il bene principale (mantieni accessori)\n");
             msg.append("• ANNULLA: Interrompi l'operazione");
         } else {
-            msg.append("La selezione include il bene principale con codice: ").append(bene.getNr_inventario());
-            if (bene.getEtichetta() != null && !bene.getEtichetta().isEmpty()) {
-                msg.append(" e etichetta ").append(bene.getEtichetta());
+            msg.append("La selezione include il bene principale con codice: ").append(beneCorrente.getNr_inventario());
+            if (beneCorrente.getEtichetta() != null && !beneCorrente.getEtichetta().isEmpty()) {
+                msg.append(" e etichetta ").append(beneCorrente.getEtichetta());
             }
             msg.append(" che ha ").append(numAccessori);
             String pluraleAccessorio = (numAccessori == 1) ? " bene accessorio" : " beni accessori";
@@ -780,6 +782,8 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
 
         return msg.toString();
     }
+
+
 
     public int getTotaleBeniPrincipali(boolean isEliminazione) {
         PendingSelection ps = isEliminazione ? pendingDelete : pendingAdd;
@@ -847,42 +851,109 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
         Inventario_beniBulk bene = getBenePrincipaleCorrente(false);
         if (bene == null) return;
 
-        // CRITICO: Usa selectionAccumulata invece di oldSel
-        BitSet tempSelection = (BitSet) pendingAdd.selectionAccumulata.clone();
+        try {
+            // Usa selectionAccumulata invece di oldSel
+            BitSet tempSelection = (BitSet) pendingAdd.selectionAccumulata.clone();
 
-        // Aggiungi il bene principale
-        for (int i = 0; i < pendingAdd.bulks.length; i++) {
-            if (pendingAdd.bulks[i] instanceof Inventario_beniBulk) {
-                Inventario_beniBulk b = (Inventario_beniBulk) pendingAdd.bulks[i];
-                if (b.equalsByPrimaryKey(bene)) {
-                    tempSelection.set(i);
-                    break;
+            // Aggiungi il bene principale al BitSet
+            boolean benePrincipaleAggiunto = false;
+            for (int i = 0; i < pendingAdd.bulks.length; i++) {
+                if (pendingAdd.bulks[i] instanceof Inventario_beniBulk) {
+                    Inventario_beniBulk b = (Inventario_beniBulk) pendingAdd.bulks[i];
+                    if (b.equalsByPrimaryKey(bene)) {
+                        tempSelection.set(i);
+                        benePrincipaleAggiunto = true;
+
+                        break;
+                    }
                 }
             }
-        }
 
-        // Se includiAccessori = true, aggiungi anche gli accessori
-        if (includiAccessori) {
-            List<Inventario_beniBulk> accessori = getAccessoriCorrente(false);
-            if (accessori != null && !accessori.isEmpty()) {
-                for (Inventario_beniBulk acc : accessori) {
-                    for (int i = 0; i < pendingAdd.bulks.length; i++) {
-                        if (pendingAdd.bulks[i] instanceof Inventario_beniBulk) {
-                            Inventario_beniBulk b = (Inventario_beniBulk) pendingAdd.bulks[i];
-                            if (b.equalsByPrimaryKey(acc)) {
-                                tempSelection.set(i);
-                                break;
+            // Gestisci gli accessori se richiesto
+            if (includiAccessori) {
+                List<Inventario_beniBulk> accessori = getAccessoriCorrente(false);
+
+                if (accessori != null && !accessori.isEmpty()) {
+
+                    // Aggiungi al BitSet gli accessori presenti in bulks[]
+                    int accessoriInBulks = 0;
+                    for (Inventario_beniBulk acc : accessori) {
+                        for (int i = 0; i < pendingAdd.bulks.length; i++) {
+                            if (pendingAdd.bulks[i] instanceof Inventario_beniBulk) {
+                                Inventario_beniBulk b = (Inventario_beniBulk) pendingAdd.bulks[i];
+                                if (b.equalsByPrimaryKey(acc)) {
+                                    tempSelection.set(i);
+                                    accessoriInBulks++;
+                                    break;
+                                }
                             }
                         }
                     }
                 }
             }
+
+            //  Chiama il component per i beni in bulks[]
+            // Questo aggiunge il principale + accessori trovati in bulks[]
+            modificaBeniConAccessoriComponente(context, pendingAdd.bulks,
+                    pendingAdd.selectionAccumulata, tempSelection);
+
+
+            // Aggiungi gli accessori NON presenti in bulks[]
+            if (includiAccessori) {
+                List<Inventario_beniBulk> accessori = getAccessoriCorrente(false);
+                aggiungiAccessoriMancanti(context, accessori);
+            }
+
+            //  Aggiorna selectionAccumulata per il prossimo giro
+            pendingAdd.selectionAccumulata = (BitSet) tempSelection.clone();
+
+        } catch (ComponentException | RemoteException e) {
+            throw handleException(e);
         }
-
-        // CRITICO: Aggiorna selectionAccumulata per il prossimo giro
-        pendingAdd.selectionAccumulata = (BitSet) tempSelection.clone();
-
     }
+
+
+    /**
+     * Aggiunge direttamente gli accessori che NON sono presenti nell'array bulks[]
+     * (accessori in pagine successive del selezionatore)
+     */
+    private void aggiungiAccessoriMancanti(ActionContext context, List<Inventario_beniBulk> accessori)
+            throws BusinessProcessException {
+
+        if (accessori == null || accessori.isEmpty()) return;
+
+        try {
+            for (Inventario_beniBulk acc : accessori) {
+                // Verifica se l'accessorio è presente in bulks[]
+                boolean trovatoInBulks = false;
+                for (int i = 0; i < pendingAdd.bulks.length; i++) {
+                    if (pendingAdd.bulks[i] instanceof Inventario_beniBulk) {
+                        Inventario_beniBulk b = (Inventario_beniBulk) pendingAdd.bulks[i];
+                        if (b.equalsByPrimaryKey(acc)) {
+                            trovatoInBulks = true;
+                            break;
+                        }
+                    }
+                }
+
+                // Se NON è in bulks[], aggiungilo direttamente con una chiamata separata
+                if (!trovatoInBulks) {
+
+                    // Crea un array con solo questo accessorio
+                    OggettoBulk[] accessorioArray = new OggettoBulk[]{acc};
+                    BitSet vuoto = new BitSet(1);
+                    BitSet selezionato = new BitSet(1);
+                    selezionato.set(0);
+
+                    // Chiamata diretta al component per questo accessorio
+                    modificaBeniConAccessoriComponente(context, accessorioArray, vuoto, selezionato);
+                }
+            }
+        } catch (ComponentException | RemoteException e) {
+            throw handleException(e);
+        }
+    }
+
 
     public boolean passaAlProssimoBene(boolean isEliminazione) {
         if (isEliminazione) {
@@ -1001,4 +1072,105 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
                 "CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession",
                 DocTrasportoRientroComponentSession.class);
     }
+
+
+
+    /**
+     * Elabora un singolo bene principale con o senza accessori
+     */
+    public void elaboraBeneConAccessori(ActionContext context, boolean isEliminazione,
+                                        Inventario_beniBulk beneCorrente, boolean includiAccessori)
+            throws BusinessProcessException {
+
+        if (isEliminazione) {
+            elaboraBenePerEliminazione(context, beneCorrente, includiAccessori);
+        } else {
+            elaboraBenePerAggiunta(context, beneCorrente, includiAccessori);
+        }
+    }
+
+    /**
+     * Elabora un bene per ELIMINAZIONE
+     */
+    private void elaboraBenePerEliminazione(ActionContext context, Inventario_beniBulk beneCorrente,
+                                            boolean includiAccessori) throws BusinessProcessException {
+        try {
+            if (includiAccessori) {
+                // Elimina principale + accessori
+                List<Inventario_beniBulk> accessori = pendingDelete.principaliConAccessori.get(beneCorrente);
+                getComp().eliminaBeniPrincipaleConAccessori(context.getUserContext(), getDoc(), beneCorrente, accessori);
+            } else {
+                // Elimina SOLO il principale
+                OggettoBulk[] soloIlPrincipale = new OggettoBulk[]{beneCorrente};
+                getComp().eliminaBeniAssociati(context.getUserContext(), getDoc(), soloIlPrincipale);
+            }
+        } catch (ComponentException | RemoteException e) {
+            throw handleException(e);
+        }
+    }
+
+    /**
+     * Elabora un bene per AGGIUNTA
+     */
+    private void elaboraBenePerAggiunta(ActionContext context, Inventario_beniBulk beneCorrente,
+                                        boolean includiAccessori) throws BusinessProcessException {
+        try {
+            // Trova l'indice del bene principale in bulks[]
+            int indiceBenePrincipale = -1;
+            for (int i = 0; i < pendingAdd.bulks.length; i++) {
+                if (pendingAdd.bulks[i] instanceof Inventario_beniBulk) {
+                    Inventario_beniBulk b = (Inventario_beniBulk) pendingAdd.bulks[i];
+                    if (b.equalsByPrimaryKey(beneCorrente)) {
+                        indiceBenePrincipale = i;
+                        break;
+                    }
+                }
+            }
+
+            if (indiceBenePrincipale == -1) {
+                throw new BusinessProcessException("Bene principale non trovato in bulks[]");
+            }
+
+            // Crea BitSet per la selezione
+            BitSet oldSelection = new BitSet(pendingAdd.bulks.length);
+            BitSet newSelection = new BitSet(pendingAdd.bulks.length);
+
+            // Seleziona il bene principale
+            newSelection.set(indiceBenePrincipale);
+
+            if (includiAccessori) {
+                //  Aggiungi TUTTI gli accessori (anche quelli non in bulks[])
+                List<Inventario_beniBulk> accessori = pendingAdd.principaliConAccessori.get(beneCorrente);
+
+                if (accessori != null && !accessori.isEmpty()) {
+                    // Aggiungi accessori presenti in bulks[]
+                    for (Inventario_beniBulk acc : accessori) {
+                        for (int i = 0; i < pendingAdd.bulks.length; i++) {
+                            if (pendingAdd.bulks[i] instanceof Inventario_beniBulk) {
+                                Inventario_beniBulk b = (Inventario_beniBulk) pendingAdd.bulks[i];
+                                if (b.equalsByPrimaryKey(acc)) {
+                                    newSelection.set(i);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Aggiungi il principale (e accessori in bulks[] se includiAccessori=true)
+            modificaBeniConAccessoriComponente(context, pendingAdd.bulks, oldSelection, newSelection);
+
+            //   Aggiungi accessori NON presenti in bulks[] (pagine successive)
+            if (includiAccessori) {
+                List<Inventario_beniBulk> accessori = pendingAdd.principaliConAccessori.get(beneCorrente);
+                aggiungiAccessoriMancanti(context, accessori);
+            }
+
+        } catch (ComponentException | RemoteException e) {
+            throw handleException(e);
+        }
+    }
+
+
 }

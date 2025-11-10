@@ -220,55 +220,6 @@ public class TransactionalDocTrasportoRientroComponentSession
     // GESTIONE ELIMINAZIONE BENI
     // ========================================
 
-    @Override
-    public void eliminaTuttiBeniDettaglio(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc)
-            throws ComponentException, RemoteException {
-
-        try {
-            invoke("eliminaTuttiBeniDettaglio", new Object[]{
-                    userContext,
-                    doc
-            });
-        } catch (java.rmi.RemoteException e) {
-            throw e;
-        } catch (java.lang.reflect.InvocationTargetException e) {
-            try {
-                throw e.getTargetException();
-            } catch (ComponentException ex) {
-                throw ex;
-            } catch (Throwable ex) {
-                throw new RemoteException("Uncaught exception", ex);
-            }
-        }
-    }
-
-//    @Override
-//    public void eliminaBeniSelezionati(
-//            UserContext userContext,
-//            Doc_trasporto_rientroBulk doc,
-//            Doc_trasporto_rientro_dettBulk[] dettagliDaEliminare)
-//            throws ComponentException, RemoteException {
-//
-//        try {
-//            invoke("eliminaBeniSelezionati", new Object[]{
-//                    userContext,
-//                    doc,
-//                    dettagliDaEliminare
-//            });
-//        } catch (java.rmi.RemoteException e) {
-//            throw e;
-//        } catch (java.lang.reflect.InvocationTargetException e) {
-//            try {
-//                throw e.getTargetException();
-//            } catch (ComponentException ex) {
-//                throw ex;
-//            } catch (Throwable ex) {
-//                throw new RemoteException("Uncaught exception", ex);
-//            }
-//        }
-//    }
 
     // ========================================
     // RICERCA BENI DISPONIBILI
@@ -302,40 +253,8 @@ public class TransactionalDocTrasportoRientroComponentSession
     }
 
     // ========================================
-    // VALIDAZIONE BENI
-    // ========================================
-
-
-//    @Override
-//    public void validaBenePerRientro(
-//            UserContext userContext,
-//            Doc_trasporto_rientroBulk docRientro,
-//            Doc_trasporto_rientro_dettBulk dettRientro)
-//            throws ComponentException, RemoteException {
-//
-//        try {
-//            invoke("validaBenePerRientro", new Object[]{
-//                    userContext,
-//                    docRientro,
-//                    dettRientro
-//            });
-//        } catch (java.rmi.RemoteException e) {
-//            throw e;
-//        } catch (java.lang.reflect.InvocationTargetException e) {
-//            try {
-//                throw e.getTargetException();
-//            } catch (ComponentException ex) {
-//                throw ex;
-//            } catch (Throwable ex) {
-//                throw new RemoteException("Uncaught exception", ex);
-//            }
-//        }
-//    }
-
-    // ========================================
     // GESTIONE WORKFLOW - TRANSIZIONI STATO
     // ========================================
-
 
     @Override
     public Doc_trasporto_rientroBulk predisponiAllaFirma(
@@ -364,84 +283,6 @@ public class TransactionalDocTrasportoRientroComponentSession
     // ========================================
     // GESTIONE BENI - AGGIUNTA/RIMOZIONE/MODIFICA
     // ========================================
-//
-//    @Override
-//    public Doc_trasporto_rientroBulk aggiungiBeneDDT(
-//            UserContext userContext,
-//            Doc_trasporto_rientroBulk doc,
-//            Inventario_beniBulk bene)
-//            throws ComponentException, RemoteException {
-//
-//        try {
-//            return (Doc_trasporto_rientroBulk) invoke("aggiungiBeneDDT", new Object[]{
-//                    userContext,
-//                    doc,
-//                    bene
-//            });
-//        } catch (java.rmi.RemoteException e) {
-//            throw e;
-//        } catch (java.lang.reflect.InvocationTargetException e) {
-//            try {
-//                throw e.getTargetException();
-//            } catch (ComponentException ex) {
-//                throw ex;
-//            } catch (Throwable ex) {
-//                throw new RemoteException("Uncaught exception", ex);
-//            }
-//        }
-//    }
-//
-//    @Override
-//    public Doc_trasporto_rientroBulk rimuoviBeneDDT(
-//            UserContext userContext,
-//            Doc_trasporto_rientroBulk doc,
-//            Doc_trasporto_rientro_dettBulk dettaglio)
-//            throws ComponentException, RemoteException {
-//
-//        try {
-//            return (Doc_trasporto_rientroBulk) invoke("rimuoviBeneDDT", new Object[]{
-//                    userContext,
-//                    doc,
-//                    dettaglio
-//            });
-//        } catch (java.rmi.RemoteException e) {
-//            throw e;
-//        } catch (java.lang.reflect.InvocationTargetException e) {
-//            try {
-//                throw e.getTargetException();
-//            } catch (ComponentException ex) {
-//                throw ex;
-//            } catch (Throwable ex) {
-//                throw new RemoteException("Uncaught exception", ex);
-//            }
-//        }
-//    }
-
-//    @Override
-//    public Doc_trasporto_rientroBulk aggiornaQuantitaBene(
-//            UserContext userContext,
-//            Doc_trasporto_rientroBulk doc,
-//            Doc_trasporto_rientro_dettBulk dettaglio)
-//            throws ComponentException, RemoteException {
-//
-//        try {
-//            return (Doc_trasporto_rientroBulk) invoke("aggiornaQuantitaBene", new Object[]{
-//                    userContext,
-//                    doc,
-//                    dettaglio
-//            });
-//        } catch (java.rmi.RemoteException e) {
-//            throw e;
-//        } catch (java.lang.reflect.InvocationTargetException e) {
-//            try {
-//                throw e.getTargetException();
-//            } catch (ComponentException ex) {
-//                throw ex;
-//            } catch (Throwable ex) {
-//                throw new RemoteException("Uncaught exception", ex);
-//            }
-//        }
-//    }
 
     public it.cnr.jada.util.RemoteIterator selectEditDettagliTrasporto(it.cnr.jada.UserContext param0, it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk param1, java.lang.Class param2, it.cnr.jada.persistency.sql.CompoundFindClause param3) throws RemoteException, it.cnr.jada.comp.ComponentException {
         try {

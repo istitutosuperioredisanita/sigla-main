@@ -44,13 +44,6 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
     // GESTIONE ELIMINAZIONE BENI
     // ========================================
 
-    /**
-     * Elimina tutti i dettagli (beni) associati al documento.
-     */
-    void eliminaTuttiBeniDettaglio(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc)
-            throws ComponentException, RemoteException;
 
     // ========================================
     // RICERCA BENI DISPONIBILI
