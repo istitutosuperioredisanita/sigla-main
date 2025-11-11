@@ -5565,15 +5565,6 @@ public class DistintaCassiereComponent extends
                     if (obb_iban && !infoben.getTipoPagamento().equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.REGOLARIZZAZIONE.value()) ) {
                         //gestione invio SEPA da concordare con la banca al momento non gestito
                             sepa.setIban(getIban(userContext,bulk,docContabile));
-                            /*
-                            sepa.setIban(Optional.ofNullable(docContabile.getCodiceIban())
-                                    .orElseThrow(() -> new ApplicationMessageFormatException("Impossibile generare il flusso, manca il codice iban " +
-                                            "sul Mandato {0}/{1}/{2}",
-                                            String.valueOf(bulk.getEsercizio()),
-                                            String.valueOf(bulk.getCd_cds()),
-                                            String.valueOf(bulk.getPg_documento_cont())
-                                    )));
-                            */
                             if  (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.BONIFICOESTEROEURO)) {
                                 //gestione invio SEPA da concordare con la banca al momento non gestito
                                 sepa.setBic(Optional.ofNullable(docContabile.getBic())
