@@ -597,7 +597,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             attivoCheckImpIntrastat=Utility.createConfigurazioneCnrComponentSession().isCheckImpIntrastatFattPassiva(context.getUserContext());
             isAttivoGestFlIrregistrabile=Utility.createConfigurazioneCnrComponentSession().isAttivoGestFlIrregistrabile(context.getUserContext());
             attivaLiqFattOrdineCheckInv=configurazioneCnrComponentSession.isAttivoLiqFattOrdineCheckInv(context.getUserContext());
-            isEnabledToInsertLettera = !(configurazioneCnrComponentSession.is1210BonificoEsteroEuro(context.getUserContext()));
+            isEnabledToInsertLettera = configurazioneCnrComponentSession.is1210BonificoEsteroEuro(context.getUserContext());
             isModificaPCC = Optional.ofNullable(
                     configurazioneCnrComponentSession.getConfigurazione(
                     context.getUserContext(),
