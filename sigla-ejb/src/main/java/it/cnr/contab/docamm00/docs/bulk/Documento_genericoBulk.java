@@ -89,11 +89,11 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	public final static char ENTRATE= 'E';
 	public final static char SPESE= 'S';
 	public final static Dictionary flagEnteKeys;
-	public final static Dictionary entrate_speseKeys;	
+	public final static Dictionary entrate_speseKeys;
 	protected TerzoBulk terzo_uo_cds;
 	protected TerzoBulk terzo_spesa;
 	private PrimaryKeyHashMap deferredSaldi= new PrimaryKeyHashMap();
-	
+
 	public final static String NON_REGISTRATO_IN_COGE= "N";
 	public final static String REGISTRATO_IN_COGE= "C";
 	public final static String DA_RIREGISTRARE_IN_COGE= "R";
@@ -126,13 +126,13 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 
 	/*
 	 * Le variabili isDetailDoubled e isDocumentoModificabile servono per gestire il caso in cui l'utente
-	 * non potendo modificare il documento procede solo a sdoppiare la riga di dettaglio. In tal caso la 
+	 * non potendo modificare il documento procede solo a sdoppiare la riga di dettaglio. In tal caso la
 	 * procedura provvede a non rieffettuare la ricontabilizzazione in COAN e COGE.
-	 *    
+	 *
 	 */
 	private boolean isDetailDoubled = false; //serve per sapere se è stata sdoppiata una riga di dettaglio 
 	private boolean isDocumentoModificabile = true; //serve per sapere se il documento è modificabile o meno
-
+	private boolean isEnabledToInsertLettera= Boolean.TRUE;
 	private Lettera_pagam_esteroBulk lettera_pagamento_estero = null;
 	public final static Dictionary STATO_LIQUIDAZIONE;
 	public final static Dictionary CAUSALE;
@@ -195,11 +195,11 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 		CAUSALE.put(ATTLIQ,"In attesa di liquidazione");
 		CAUSALE.put(CONT,"Contenzioso");
 	}
-	public final static java.util.Dictionary ti_bonifico_mezzoKeys = Lettera_pagam_esteroBulk.ti_bonifico_mezzoKeys, 
+	public final static java.util.Dictionary ti_bonifico_mezzoKeys = Lettera_pagam_esteroBulk.ti_bonifico_mezzoKeys,
 			ti_ammontare_debitoKeys = Lettera_pagam_esteroBulk.ti_ammontare_debitoKeys,
 			ti_commissione_speseKeys = Lettera_pagam_esteroBulk.ti_commissione_speseKeys,
 			ti_divisaKeys = Lettera_pagam_esteroBulk.ti_divisaKeys;
-	
+
 	private java.sql.Timestamp dt_termine_creazione_docamm = null;
 	private CarichiInventarioTable carichiInventarioHash = null;
 	private AssociazioniInventarioTable associazioniInventarioHash = null;
@@ -266,19 +266,19 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 		}
 		documento_generico_accertamentiHash.put(accertamento, righeAssociate);
 
-		if (getDocumentiContabiliCancellati() != null && 
+		if (getDocumentiContabiliCancellati() != null &&
 				it.cnr.jada.bulk.BulkCollections.containsByPrimaryKey(getDocumentiContabiliCancellati(), accertamento))
 			removeFromDocumentiContabiliCancellati(accertamento);
 	}
 
-	public int addToDocumento_generico_dettColl( Documento_generico_rigaBulk nuovoRigo ) 
+	public int addToDocumento_generico_dettColl( Documento_generico_rigaBulk nuovoRigo )
 	{
 
 
 		nuovoRigo.setTi_associato_manrev(nuovoRigo.NON_ASSOCIATO_A_MANDATO);
 		nuovoRigo.setTerzo(new TerzoBulk());
 		if (getTi_entrate_spese()==ENTRATE){
-			nuovoRigo.setTerzo_uo_cds(getTerzo_uo_cds());		
+			nuovoRigo.setTerzo_uo_cds(getTerzo_uo_cds());
 		}
 		nuovoRigo.setDocumento_generico(this);
 
@@ -288,7 +288,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 			nuovoRigo.setDt_a_competenza_coge((getDt_a_competenza_coge() == null)?ts : getDt_a_competenza_coge());
 		} catch (javax.ejb.EJBException e) {
 			throw new it.cnr.jada.DetailedRuntimeException(e);
-		}	
+		}
 		nuovoRigo.setStato_cofi(STATO_INIZIALE);
 		long max = 0;
 		for (Iterator i = documento_generico_dettColl.iterator(); i.hasNext();) {
@@ -320,7 +320,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 		}
 		documento_generico_obbligazioniHash.put(obbligazione, righeAssociate);
 
-		if (getDocumentiContabiliCancellati() != null && 
+		if (getDocumentiContabiliCancellati() != null &&
 				it.cnr.jada.bulk.BulkCollections.containsByPrimaryKey(getDocumentiContabiliCancellati(), obbligazione))
 			removeFromDocumentiContabiliCancellati(obbligazione);
 	}
@@ -345,7 +345,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 			if (count == 0) {
 				terzo = riga.getTerzo();
 				modalita = riga.getModalita_pagamento();
-			} else if (modalita == null || terzo == null || 
+			} else if (modalita == null || terzo == null ||
 					riga.getTerzo() == null || riga.getModalita_pagamento() == null ||
 					!terzo.equalsByPrimaryKey(riga.getTerzo()) ||
 					!modalita.getTi_pagamento().equals(riga.getModalita_pagamento().getTi_pagamento()))
@@ -361,7 +361,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 
 		// Metti solo le liste di oggetti che devono essere resi persistenti
 
-		return new it.cnr.jada.bulk.BulkCollection[] { 
+		return new it.cnr.jada.bulk.BulkCollection[] {
 				documento_generico_dettColl,archivioAllegati
 		};
 	}
@@ -590,7 +590,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	 * @return java.sql.Timestamp
 	 */
 	public java.sql.Timestamp getFine_validita_valuta() {
-		return fine_validita_valuta; 
+		return fine_validita_valuta;
 	}
 	/**
 	 * Insert the method's description here.
@@ -708,7 +708,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	public java.lang.String getRiportataInScrivania() {
 		return riportataInScrivania;
 	}
-	/* 
+	/*
 	 * Getter dell'attributo riportata
 	 */
 	public Dictionary getRiportataKeys() {
@@ -782,13 +782,13 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	public it.cnr.contab.anagraf00.core.bulk.TerzoBulk getTerzo_uo_cds() {
 		return terzo_uo_cds;
 	}
-	/* 
+	/*
 	 * Getter dell'attributo ti_associato_manrev
 	 */
 	public Dictionary getTi_associato_manrevKeys() {
 		return STATO_MANDATO;
 	}
-	/* 
+	/*
 	 * Getter dell'attributo ti_associato_manrev
 	 */
 	public Dictionary getTi_associato_manrevKeysForSearch() {
@@ -875,7 +875,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 		return valute;
 	}
 	/**
-	 * Indica se la competenza COGE è stata indicata nell'anno precedente. Regola valida SOLO nel caso di 
+	 * Indica se la competenza COGE è stata indicata nell'anno precedente. Regola valida SOLO nel caso di
 	 * ESERCIZIO == ESERCIZIO_INIZIO
 	 */
 	public boolean hasCompetenzaCOGEInAnnoPrecedente() {
@@ -1009,8 +1009,8 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 				isPagata() ||
 				isPagataParzialmente() || //richiesta 02449A
 				isByFondoEconomale() ||
-				!controllaCompatibilitaPer1210();
-				//||isDefaultValuta();
+				!controllaCompatibilitaPer1210()
+				|| ( !isEnabledToInsertLettera && isDefaultValuta());
 	}
 	/**
 	 * Insert the method's description here.
@@ -1065,7 +1065,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 			return !(isPagata() ||
 					isAnnullato() ||
 					isDocumentoStorno() ||
-					(!((getEsercizio().intValue() == getEsercizioInScrivania().intValue())&& !isRiportata()) && 
+					(!((getEsercizio().intValue() == getEsercizioInScrivania().intValue())&& !isRiportata()) &&
 							!isDeleting()));
 		}catch(NullPointerException e){
 			return false;
@@ -1094,7 +1094,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	 */
 	public boolean isPagata() {
 
-		return STATO_PAGATO.equalsIgnoreCase(getStato_cofi()) || 
+		return STATO_PAGATO.equalsIgnoreCase(getStato_cofi()) ||
 				REGISTRATO_IN_FONDO_ECO.equalsIgnoreCase(getStato_pagamento_fondo_eco());
 	}
 	/**
@@ -1128,7 +1128,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	 * @return boolean
 	 */
 	public boolean isROCambio() {
-		return isDefaultValuta() 
+		return isDefaultValuta()
 				|| isGenericoAttivo() ;
 	}
 	/**
@@ -1148,14 +1148,14 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	public boolean isROFlagEnte() {
 
 		return	//Questo controllo evita problemi del tipo "cambiamenti di chiave" quando il doc è già salvato
-				isToBeUpdated() || 
-				getCrudStatus() == OggettoBulk.NORMAL ||
-				//*****************************************************************************************
-				((this.isPassivo_ente() && 
-						(this.getUo_CNR()!=null && this.getUo_CNR().equals(getCd_uo_origine()))) ||
-						this.isGenericoAttivo() && this.getAccertamentiHash() != null && !this.getAccertamentiHash().isEmpty()) ||
+				isToBeUpdated() ||
+						getCrudStatus() == OggettoBulk.NORMAL ||
+						//*****************************************************************************************
+						((this.isPassivo_ente() &&
+								(this.getUo_CNR()!=null && this.getUo_CNR().equals(getCd_uo_origine()))) ||
+								this.isGenericoAttivo() && this.getAccertamentiHash() != null && !this.getAccertamentiHash().isEmpty()) ||
 						(!this.isGenericoAttivo() && this.getObbligazioniHash() != null && !this.getObbligazioniHash().isEmpty()||
-							(!this.isGenericoAttivo() && this.getLettera_pagamento_estero()!=null));
+								(!this.isGenericoAttivo() && this.getLettera_pagamento_estero()!=null));
 	}
 	/**
 	 * Insert the method's description here.
@@ -1164,7 +1164,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	 */
 	public boolean isROProgressivo() {
 
-		return true;	
+		return true;
 	}
 	/**
 	 * Insert the method's description here.
@@ -1182,7 +1182,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	 */
 	public boolean isROSospesoSearchTool() {
 
-		return false;	
+		return false;
 	}
 	/**
 	 * Insert the method's description here.
@@ -1191,16 +1191,16 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	 */
 	public boolean isROStato_pagamento_fondo_eco() {
 
-		return	isPagata() || 
-				isPagataParzialmente() || 
-				getLettera_pagamento_estero() != null || 
-				(tipo_documento!=null && 
-				tipo_documento.getFl_solo_partita_giro()!=null &&
-				tipo_documento.getFl_solo_partita_giro().booleanValue()) ||
+		return	isPagata() ||
+				isPagataParzialmente() ||
+				getLettera_pagamento_estero() != null ||
+				(tipo_documento!=null &&
+						tipo_documento.getFl_solo_partita_giro()!=null &&
+						tipo_documento.getFl_solo_partita_giro().booleanValue()) ||
 				(getCd_unita_organizzativa()!=null && !getCd_uo_origine().equals(getCd_unita_organizzativa()));
 
 	}
-	
+
 	public boolean isROStatoTrasmissioneLettera() {
 		if (lettera_pagamento_estero == null)
 			return true;
@@ -1226,13 +1226,13 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 				ASSOCIATO_A_MANDATO.equals(getTi_associato_manrev())) ||
 				(STATO_CONTABILIZZATO.equals(getStato_cofi()) &&
 						PARZIALMENTE_ASSOCIATO_A_MANDATO.equals(getTi_associato_manrev())) ||
-						!NON_REGISTRATO_IN_COGE.equalsIgnoreCase(getStato_coge()) ||
-						!NON_CONTABILIZZATO_IN_COAN.equalsIgnoreCase(getStato_coan()) ||
-						// Gennaro Borriello - (02/11/2004 16.48.21)
-						// Fix sul controllo dello "Stato Riportato": controlla che il documento sia stato riportato 
-						//	DA UN ES. PRECEDENTE a quello di scrivania.			
-						(isRiportataInScrivania() && !isRiportata()) ) &&
-						!"GEN_RC_DAT".equalsIgnoreCase(getCd_tipo_documento_amm());
+				!NON_REGISTRATO_IN_COGE.equalsIgnoreCase(getStato_coge()) ||
+				!NON_CONTABILIZZATO_IN_COAN.equalsIgnoreCase(getStato_coan()) ||
+				// Gennaro Borriello - (02/11/2004 16.48.21)
+				// Fix sul controllo dello "Stato Riportato": controlla che il documento sia stato riportato
+				//	DA UN ES. PRECEDENTE a quello di scrivania.
+				(isRiportataInScrivania() && !isRiportata()) ) &&
+				!"GEN_RC_DAT".equalsIgnoreCase(getCd_tipo_documento_amm());
 	}
 	/**
 	 * Insert the method's description here.
@@ -1274,9 +1274,9 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 				addToDocumentiContabiliCancellati(riga.getAccertamento_scadenziario());
 			}
 		} else
-			addToDocumentiContabiliCancellati(riga.getAccertamento_scadenziario());	
+			addToDocumentiContabiliCancellati(riga.getAccertamento_scadenziario());
 	}
-	public Documento_generico_rigaBulk removeFromDocumento_generico_dettColl( int indiceDiLinea ) 
+	public Documento_generico_rigaBulk removeFromDocumento_generico_dettColl( int indiceDiLinea )
 	{
 		Documento_generico_rigaBulk element = (Documento_generico_rigaBulk)documento_generico_dettColl.get(indiceDiLinea);
 		addToDettagliCancellati(element);
@@ -1342,7 +1342,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 			Documento_generico_rigaBulk riga) {
 
 		Vector righeAssociate = (Vector)documento_generico_obbligazioniHash.get(riga.getObbligazione_scadenziario());
-		it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk scadenza=riga.getObbligazione_scadenziario();	
+		it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk scadenza=riga.getObbligazione_scadenziario();
 		//if (righeAssociate != null) {
 		//scadenza.setIm_associato_doc_amm(new java.math.BigDecimal(0));
 		//scadenza.setToBeUpdated();
@@ -1366,7 +1366,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 
 	public void resetDefferredSaldi() {
 
-		deferredSaldi = null;	
+		deferredSaldi = null;
 	}
 	public void setAndVerifyStatus() {
 
@@ -1375,8 +1375,8 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 				setStato_cofi(STATO_PARZIALE);
 			else
 				setStato_cofi(hasDettagliNonContabilizzati() ?
-						STATO_INIZIALE : 
-							STATO_CONTABILIZZATO);
+						STATO_INIZIALE :
+						STATO_CONTABILIZZATO);
 		}
 	}
 	/**
@@ -1685,7 +1685,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	public void validaDateCompetenza()
 			throws ValidationException {
 
-		if (getDt_da_competenza_coge() == null) 
+		if (getDt_da_competenza_coge() == null)
 			throw new ValidationException("Inserire la data di \"competenza da\" per la testata documento.");
 		if (getDt_a_competenza_coge() == null)
 			throw new ValidationException("Inserire la data di \"competenza a\" per la testata documento.");
@@ -1704,7 +1704,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	private void validaDateCompetenzaEnte(
 			Calendar competenzaDa,
 			Calendar competenzaA)
-					throws ValidationException {
+			throws ValidationException {
 
 		int annoCompetenzaDa = competenzaDa.get(Calendar.YEAR);
 		int annoCompetenzaA = competenzaA.get(Calendar.YEAR);
@@ -1719,7 +1719,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 					(annoCompetenzaDa < annoPrecedente))
 				throw e;
 			else if (annoCompetenzaDa == annoPrecedente) {
-				if (annoCompetenzaA > annoPrecedente)	
+				if (annoCompetenzaA > annoPrecedente)
 					throw new ValidationException("La data di \"competenza a\" deve appartenere all'esercizio dell'anno " + annoPrecedente + ".");
 				if (isGenericoAttivo() && getData_registrazione().after(getDt_termine_creazione_docamm())) {
 					java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
@@ -1727,12 +1727,12 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 				}
 			} else
 				throw e;
-		}	
+		}
 	}
 	private void validaDateCompetenzaNonEnte(
 			Calendar competenzaDa,
 			Calendar competenzaA)
-					throws ValidationException {
+			throws ValidationException {
 
 		int annoCompetenzaDa = competenzaDa.get(Calendar.YEAR);
 		int annoCompetenzaA = competenzaA.get(Calendar.YEAR);
@@ -1754,7 +1754,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 					(annoCompetenzaDa < annoPrecedente))
 				throw e;
 			else if (annoCompetenzaDa == annoPrecedente) {
-				if (annoCompetenzaA > annoPrecedente)	
+				if (annoCompetenzaA > annoPrecedente)
 					throw new ValidationException("La data di \"competenza a\" deve appartenere all'esercizio dell'anno " + annoPrecedente + ".");
 				if (isGenericoAttivo() && getData_registrazione().after(getDt_termine_creazione_docamm())) {
 					java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
@@ -1830,7 +1830,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 			} else
 				throw new ValidationException("La data di registrazione deve appartenere all'esercizio " + getEsercizio().intValue() + "!");
 
-			if (!((dataRegistrazione.after(limInf) || (dataRegistrazione.equals(limInf))) && 
+			if (!((dataRegistrazione.after(limInf) || (dataRegistrazione.equals(limInf))) &&
 					(dataRegistrazione.before(limSup) || (dataRegistrazione.equals(limSup)))))
 				throw new ValidationException("La data di registrazione deve essere compresa tra il " + sdf.format(limInf.getTime()) + " e il " + sdf.format(limSup.getTime()) + "!");
 		} catch (java.text.ParseException e) {
@@ -1933,7 +1933,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 		if (ha_beniColl!=null )
 			return ha_beniColl;
 		else
-			return Boolean.FALSE;	
+			return Boolean.FALSE;
 	}
 
 	/**
@@ -1973,14 +1973,14 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	}
 	public void setTipoDocumentoGenerico(Tipo_documento_genericoBulk tipoDocumentoGenerico) {
 		this.tipoDocumentoGenerico = tipoDocumentoGenerico;
-	}	
+	}
 	@Override
 	public Integer getIdTipoDocumentoGenerico() {
 		return Optional.ofNullable(getTipoDocumentoGenerico())
-					.map(Tipo_documento_genericoBulk::getId)
-					.orElse(null);
+				.map(Tipo_documento_genericoBulk::getId)
+				.orElse(null);
 	}
-	
+
 	@Override
 	public void setIdTipoDocumentoGenerico(Integer idTipoDocumentoGenerico) {
 		Optional.ofNullable(getTipoDocumentoGenerico()).ifPresent(el->el.setId(idTipoDocumentoGenerico));
@@ -2141,4 +2141,11 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 				.orElse(Boolean.FALSE);
 	}
 
+	public boolean isEnabledToInsertLettera() {
+		return isEnabledToInsertLettera;
+	}
+
+	public void setEnabledToInsertLettera(boolean enabledToInsertLettera) {
+		isEnabledToInsertLettera = enabledToInsertLettera;
+	}
 }
