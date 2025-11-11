@@ -462,7 +462,7 @@ public class CRUDDocumentoGenericoPassivoBP
             setAnnoSolareInScrivania(solaris == esercizioScrivania);
             setRibaltato(initRibaltato(context));
             esercizioChiuso = session.isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioScrivania, CNRUserContext.getCd_cds(context.getUserContext()));
-            isEnabledToInsertLettera = !(Utility.createConfigurazioneCnrComponentSession().is1210BonificoEsteroEuro(context.getUserContext()));
+            isEnabledToInsertLettera = Utility.createConfigurazioneCnrComponentSession().is1210BonificoEsteroEuro(context.getUserContext());
 
             if (!isAnnoSolareInScrivania()) {
                 String cds = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(context.getUserContext());
