@@ -18,13 +18,12 @@
 package it.cnr.contab.doccont00.action;
 
 
-import it.cnr.contab.doccont00.bp.*;
+import it.cnr.contab.doccont00.bp.ConsFlussiCassaBP;
 import it.cnr.contab.doccont00.consultazioni.bulk.FlussiDiCassaDtoBulk;
-import it.cnr.contab.doccont00.consultazioni.bulk.V_cons_siope_mandatiBulk;
-import it.cnr.contab.doccont00.consultazioni.bulk.V_cons_siope_reversaliBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.util.action.BulkAction;
+import it.cnr.jada.util.action.SelezionatoreListaBP;
 
 import javax.ejb.RemoveException;
 import java.rmi.RemoteException;
@@ -48,8 +47,11 @@ public class ConsFlussiCassaAction extends BulkAction{
 					it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context,ri);
 					throw new it.cnr.jada.comp.ApplicationException("Attenzione: Nessun dato disponibile");
 				}
+				SelezionatoreListaBP selezionatorelistabp = (SelezionatoreListaBP) context.createBusinessProcess("Selezionatore");
+				selezionatorelistabp.setIterator(context, ri);
+				selezionatorelistabp.setBulkInfo(it.cnr.jada.bulk.BulkInfo.getBulkInfo(FlussiDiCassaDtoBulk.class));
+				return context.addBusinessProcess(selezionatorelistabp);
 
-				return context.addBusinessProcess(bp);
 						
 			} catch (Exception e) {
 					return handleException(context,e); 

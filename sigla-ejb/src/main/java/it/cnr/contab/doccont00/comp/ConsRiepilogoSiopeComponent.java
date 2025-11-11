@@ -302,9 +302,10 @@ public class ConsRiepilogoSiopeComponent extends CRUDComponent {
         }
     }
     public RemoteIterator findFlussiCassa(UserContext uc, FlussiDiCassaDtoBulk flussi) throws  ComponentException, RemoteException{
-        FlussiDiCassaDtoHome reversaliHome = (FlussiDiCassaDtoHome) getHome(uc, FlussiDiCassaDtoBulk.class);
+        FlussiDiCassaDtoHome flussiDiCassaDtoHome = (FlussiDiCassaDtoHome) getHome(uc, FlussiDiCassaDtoBulk.class);
 
 
-        return null;
+        return iterator(uc, flussiDiCassaDtoHome.findFlussiDiCassa(uc, flussi),FlussiDiCassaDtoBulk.class,null);
+
     }
 }

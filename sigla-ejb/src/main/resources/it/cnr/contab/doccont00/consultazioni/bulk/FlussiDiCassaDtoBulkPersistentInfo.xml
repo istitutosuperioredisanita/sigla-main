@@ -21,208 +21,7 @@
 	homeClassName="it.cnr.contab.doccont00.consultazioni.bulk.FlussiDiCassaDtoHome" >
 	<defaultColumnMap
 			tableName="V_CONS_SIOPE_MANDATI">
-		<columnMapping
-				columnName="CD_CDS"
-				propertyName="cd_cds"
-				sqlTypeName="VARCHAR"
-				columnSize="30"
-				nullable="false" />
-		<columnMapping
-				columnName="ESERCIZIO"
-				propertyName="esercizio"
-				sqlTypeName="DECIMAL"
-				columnSize="4"
-				nullable="false" />
-		<columnMapping
-				columnName="PG_MANDATO"
-				propertyName="pg_mandato"
-				sqlTypeName="DECIMAL"
-				columnSize="10"
-				nullable="false" />
-		<columnMapping
-				columnName="ESERCIZIO_OBBLIGAZIONE"
-				propertyName="esercizio_obbligazione"
-				sqlTypeName="DECIMAL"
-				columnSize="4"
-				nullable="false" />
-		<columnMapping
-				columnName="ESERCIZIO_ORI_OBBLIGAZIONE"
-				propertyName="esercizio_ori_obbligazione"
-				sqlTypeName="DECIMAL"
-				columnSize="4"
-				nullable="false" />
-		<columnMapping
-				columnName="PG_OBBLIGAZIONE"
-				propertyName="pg_obbligazione"
-				sqlTypeName="DECIMAL"
-				columnSize="10"
-				nullable="false" />
-		<columnMapping
-				columnName="PG_OBBLIGAZIONE_SCADENZARIO"
-				propertyName="pg_obbligazione_scadenzario"
-				sqlTypeName="DECIMAL"
-				columnSize="10"
-				nullable="false" />
-		<columnMapping
-				columnName="CD_CDS_DOC_AMM"
-				propertyName="cd_cds_doc_amm"
-				sqlTypeName="VARCHAR"
-				columnSize="30"
-				nullable="false" />
-		<columnMapping
-				columnName="CD_UO_DOC_AMM"
-				propertyName="cd_uo_doc_amm"
-				sqlTypeName="VARCHAR"
-				columnSize="30"
-				nullable="false" />
-		<columnMapping
-				columnName="ESERCIZIO_DOC_AMM"
-				propertyName="esercizio_doc_amm"
-				sqlTypeName="DECIMAL"
-				columnSize="4"
-				nullable="false" />
-		<columnMapping
-				columnName="CD_TIPO_DOCUMENTO_AMM"
-				propertyName="cd_tipo_documento_amm"
-				sqlTypeName="VARCHAR"
-				columnSize="10"
-				nullable="false" />
-		<columnMapping
-				columnName="DS_TIPO_DOC_AMM"
-				propertyName="ds_tipo_doc_amm"
-				sqlTypeName="VARCHAR"
-				columnSize="100"
-				nullable="false" />
-		<columnMapping
-				columnName="PG_DOC_AMM"
-				propertyName="pg_doc_amm"
-				sqlTypeName="DECIMAL"
-				columnSize="10"
-				nullable="false" />
-		<columnMapping
-				columnName="ESERCIZIO_SIOPE"
-				propertyName="esercizio_siope"
-				sqlTypeName="DECIMAL"
-				columnSize="4"
-				nullable="false" />
-		<columnMapping
-				columnName="TI_GESTIONE"
-				propertyName="ti_gestione"
-				sqlTypeName="CHAR"
-				columnSize="1"
-				nullable="false" />
-		<columnMapping
-				columnName="CD_SIOPE"
-				propertyName="cd_siope"
-				sqlTypeName="VARCHAR"
-				columnSize="45"
-				nullable="false" />
-		<columnMapping
-				columnName="DS_SIOPE"
-				propertyName="ds_siope"
-				sqlTypeName="VARCHAR"
-				columnSize="200"
-				nullable="false" />
-		<columnMapping
-				columnName="IMPORTO"
-				propertyName="importo"
-				sqlTypeName="DECIMAL"
-				columnSize="22"
-				columnScale="2"
-				nullable="false" />
-		<columnMapping
-				columnName="TOT_IM_SIOPE"
-				propertyName="tot_im_siope"
-				sqlTypeName="DECIMAL"
-				columnSize="22"
-				columnScale="2"
-				nullable="false" />
-		<columnMapping
-				columnName="DT_EMISSIONE"
-				propertyName="dt_emissione"
-				sqlTypeName="TIMESTAMP"
-				columnSize="7"
-				nullable="false" />
-		<columnMapping
-				columnName="DT_EMISSIONE_DA"
-				propertyName="dt_emissione_da"
-				sqlTypeName="TIMESTAMP"
-				columnSize="7"
-				nullable="false" />
-		<columnMapping
-				columnName="DT_EMISSIONE_A"
-				propertyName="dt_emissione_a"
-				sqlTypeName="TIMESTAMP"
-				columnSize="7"
-				nullable="false" />
-		<columnMapping
-				columnName="DT_PAGAMENTO"
-				propertyName="dt_pagamento"
-				sqlTypeName="TIMESTAMP"
-				columnSize="7"
-				nullable="true" />
-		<columnMapping
-				columnName="DT_PAGAMENTO_DA"
-				propertyName="dt_pagamento_da"
-				sqlTypeName="TIMESTAMP"
-				columnSize="7"
-				nullable="true" />
-		<columnMapping
-				columnName="DT_PAGAMENTO_A"
-				propertyName="dt_pagamento_a"
-				sqlTypeName="TIMESTAMP"
-				columnSize="7"
-				nullable="true" />
-		<columnMapping
-				columnName="DT_TRASMISSIONE"
-				propertyName="dt_trasmissione"
-				sqlTypeName="TIMESTAMP"
-				columnSize="7"
-				nullable="true" />
-		<columnMapping
-				columnName="DT_TRASMISSIONE_DA"
-				propertyName="dt_trasmissione_da"
-				sqlTypeName="TIMESTAMP"
-				columnSize="7"
-				nullable="true" />
-		<columnMapping
-				columnName="DT_TRASMISSIONE_DA"
-				propertyName="dt_trasmissione_da"
-				sqlTypeName="TIMESTAMP"
-				columnSize="7"
-				nullable="true" />
-	</defaultColumnMap>
-	<columnMap
-			name="FLUSSO_CASSA"
-			tableName="V_CONS_SIOPE_MANDATI"
-			extends="default" >
-		<columnMapping
-				columnName="CD_CDS"
-				propertyName="cdCds"
-				sqlTypeName="VARCHAR"
-				columnSize="30"
-				nullable="false" />
-		<columnMapping
-				columnName="CD_CDS"
-				propertyName="cds.cd_unita_organizzativa"/>
-		<columnMapping
-				columnName="ESERCIZIO"
-				propertyName="esercizio"
-				sqlTypeName="DECIMAL"
-				columnSize="4"
-				nullable="false" />
-		<columnMapping
-				columnName="DT_EMISSIONE_DA"
-				propertyName="dtEmissioneDa"
-				sqlTypeName="TIMESTAMP"
-				columnSize="7"
-				nullable="false" />
-		<columnMapping
-				columnName="DT_EMISSIONE_A"
-				propertyName="dtEmissioneA"
-				sqlTypeName="TIMESTAMP"
-				columnSize="7"
-				nullable="false" />
+
 		<columnMapping
 				columnName="CLASSIFICAZIONE"
 				propertyName="classificazione"
@@ -263,15 +62,18 @@
 				columnSize="22"
 				columnScale="2"
 				nullable="false" />
+	</defaultColumnMap>
+	<columnMap
+			name="FLUSSO_REVERSALI"
+			tableName="V_CONS_SIOPE_REVERSALI"
+			extends="default">
 	</columnMap>
-	<persistentProperty
-			name="cdCds"/>
-	<persistentProperty
-			name="esercizio"/>
-	<persistentProperty
-			name="dtEmissioneDa" />
-	<persistentProperty
-			name="dtEmissioneA" />
+	<columnMap
+			name="FLUSSO_MANDATI"
+			tableName="V_CONS_SIOPE_MANDATI"
+			extends="default">
+	</columnMap>
+
 	<persistentProperty
 			name="classificazione" />
 	<persistentProperty
