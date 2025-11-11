@@ -24,15 +24,20 @@ import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.doccont00.dto.FlussiDiCassaDtoBulk;
 import it.cnr.contab.doccont00.ejb.ConsRiepilogoSiopeComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
+import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.BulkBP;
+
+import javax.servlet.ServletException;
+import java.text.ParseException;
 
 
 public class ConsFlussiCassaBP extends BulkBP {
@@ -69,8 +74,8 @@ public class ConsFlussiCassaBP extends BulkBP {
 				Integer esercizio = CNRUserContext.getEsercizio(context.getUserContext());
 			    String cds = CNRUserContext.getCd_cds(context.getUserContext());
 			    bulk.setROFindCds(false);
-			    
-				if(!isUoEnte(context))	 {					
+
+			if(!isUoEnte(context))	 {
 					clauses.addClause("AND", "esercizio", SQLBuilder.EQUALS, esercizio);
 					clauses.addClause("AND", "cds",SQLBuilder.EQUALS, cds);
 					bulk.setCds(new CdsBulk(cds));
@@ -87,8 +92,15 @@ public class ConsFlussiCassaBP extends BulkBP {
 					clauses.addClause("AND", "esercizio", SQLBuilder.EQUALS, esercizio);
 			    				
 				setModel(context,bulk);
-				bulk.setEsercizio(esercizio);		
-				
+				bulk.setEsercizio(esercizio);
+				java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+				try {
+					bulk.setDtEmissioneA(new java.sql.Timestamp(sdf.parse("31/12/"+esercizio).getTime()));
+					bulk.setDtEmissioneDa(new java.sql.Timestamp(sdf.parse("01/01/"+esercizio).getTime()));
+				} catch (ParseException e) {
+
+				}
+
 			super.init(config, context);
 		}
 		
@@ -129,6 +141,24 @@ public class ConsFlussiCassaBP extends BulkBP {
 
 		public void setCds_scrivania(CdsBulk cds_scrivania) {
 			this.cds_scrivania = cds_scrivania;
+		}
+
+		public void validaRichiestaFlussi(FlussiDiCassaDtoBulk flussoCassa) throws ApplicationException {
+
+			if(flussoCassa.getEsercizio() == null){
+				throw new ApplicationException("Attenzione!Impostare esercizio");
+			}
+			if(flussoCassa.getCds()== null){
+				throw new ApplicationException("Attenzione!Impostare CDS");
+			}
+			if(flussoCassa.getDtEmissioneDa() != null && flussoCassa.getDtEmissioneA()!=null){
+				if(flussoCassa.getDtEmissioneDa().compareTo(flussoCassa.getDtEmissioneA())>0){
+					throw new ApplicationException("Attenzione! Data Emissione Da non può essere più grande di Data Emissione A");
+				}
+			}
+			if(flussoCassa.getTipoFlusso() == null){
+				throw new ApplicationException("Attenzione!Impostare una tipologia di Flusso");
+			}
 		}
 
 	}

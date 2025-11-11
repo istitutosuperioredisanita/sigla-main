@@ -21,10 +21,7 @@ package it.cnr.contab.doccont00.comp;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.config00.sto.bulk.CdrBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
-import it.cnr.contab.doccont00.consultazioni.bulk.V_cons_siope_mandatiBulk;
-import it.cnr.contab.doccont00.consultazioni.bulk.V_cons_siope_mandatiHome;
-import it.cnr.contab.doccont00.consultazioni.bulk.V_cons_siope_reversaliBulk;
-import it.cnr.contab.doccont00.consultazioni.bulk.V_cons_siope_reversaliHome;
+import it.cnr.contab.doccont00.consultazioni.bulk.*;
 import it.cnr.contab.doccont00.core.bulk.Mandato_rigaIBulk;
 import it.cnr.contab.doccont00.core.bulk.Reversale_rigaIBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
@@ -303,5 +300,11 @@ public class ConsRiepilogoSiopeComponent extends CRUDComponent {
         } catch (it.cnr.jada.persistency.PersistencyException e) {
             throw new ComponentException(e);
         }
+    }
+    public RemoteIterator findFlussiCassa(UserContext uc, FlussiDiCassaDtoBulk flussi) throws  ComponentException, RemoteException{
+        FlussiDiCassaDtoHome reversaliHome = (FlussiDiCassaDtoHome) getHome(uc, FlussiDiCassaDtoBulk.class);
+
+
+        return null;
     }
 }

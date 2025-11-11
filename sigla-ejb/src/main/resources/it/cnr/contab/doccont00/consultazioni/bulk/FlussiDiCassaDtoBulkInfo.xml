@@ -163,22 +163,24 @@
 		name="dt_emissione_a" />
 	<findFieldProperty
 		name="tipoFlusso" />
-
-	<columnFieldProperty
-		name="cd_cds" />
-	<columnFieldProperty
-		name="esercizio" />
-	<columnFieldProperty
-		name="classificazione" />
-	<columnFieldProperty
-		name="dsClassificazione" />
-	<columnFieldProperty
-		name="impPrimoTrimestre" />
-	<columnFieldProperty
-		name="impSecondoTrimestre" />
-	<columnFieldProperty
-		name="impTerzoTrimestre" />
-	<columnFieldProperty
-		name="impQuartoTrimestre" />
+	<columnSet
+			name="FLUSSO_CASSA">
+		<columnFieldProperty
+			name="cd_cds" />
+		<columnFieldProperty
+			name="esercizio" />
+		<columnFieldProperty
+			name="classificazione" />
+		<columnFieldProperty
+			name="dsClassificazione" />
+		<columnFieldProperty
+			name="impPrimoTrimestre" />
+		<columnFieldProperty
+			name="impSecondoTrimestre" />
+		<columnFieldProperty
+			name="impTerzoTrimestre" />
+		<columnFieldProperty
+			name="impQuartoTrimestre" />
+	</columnSet>
 
 </bulkInfo>

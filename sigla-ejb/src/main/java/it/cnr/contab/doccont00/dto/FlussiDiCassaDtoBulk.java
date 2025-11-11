@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 import java.util.Dictionary;
 
 
-public class FlussiDiCassaDtoBulk extends OggettoBulk {
+public class FlussiDiCassaDtoBulk extends OggettoBulk implements Persistent {
 
     private final static Dictionary tipo_EstrazioneKeys;
     public final static String MANDATI = "MAN";
@@ -150,4 +150,9 @@ public class FlussiDiCassaDtoBulk extends OggettoBulk {
     public void setROFindCds(boolean roFindCds) {
         this.roFindCds = roFindCds;
     }
+
+    public java.util.Dictionary getTipo_EstrazioneKeys() {
+        return tipo_EstrazioneKeys;
+    }
+
 }
