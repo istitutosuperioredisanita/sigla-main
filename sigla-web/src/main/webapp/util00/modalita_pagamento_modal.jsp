@@ -49,7 +49,10 @@
                     bp.getController().writeFormInput(out,"contoN");
                 } else if (Rif_modalita_pagamentoBulk.BANCA_ITALIA.equalsIgnoreCase(cambiaModalitaPagamento.getBanca().getTi_pagamento()) && cambiaModalitaPagamento.getBanca().isTABB()) {
                     bp.getController().writeFormInput(out,"contoB");
+                } else if (Rif_modalita_pagamentoBulk.CONTO.equalsIgnoreCase(cambiaModalitaPagamento.getBanca().getTi_pagamento()) ) {
+                     bp.getController().writeFormInput(out,"contoC");
                 }
+
                 %>
           </div>
           <div class="card-footer border bg-white">

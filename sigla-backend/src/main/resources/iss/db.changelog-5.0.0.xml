@@ -128,5 +128,11 @@
     <include file="iss/update_conf_gestione_importo_ro_inventario_ordini.xml"/>
     <!-- Autore : CIRO SALVIO - Menu Replace CNR to ISS-->
     <include file="iss/update_albero_main_CNRtoISS.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiornamento Lettera 1210 bonifici esteri euro-->
+    <include file="iss/update_conf_bonifici_esteri_euro_iss.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta configurazione prefix contro Bonifici Esteri Euro( 1210)-->
+    <include file="iss/update_conf_bonifici_esteriprefix_conto.xml"/>
+    <!-- Autore : CIRO SALVIO - Abilitazione partite di giro per le variazioni di bilancio-->
+    <include file="iss/update_conf_partite_giro_variazione_iss.xml"/>
 
 </databaseChangeLog>

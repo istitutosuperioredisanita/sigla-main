@@ -29,10 +29,7 @@ import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.compensi00.docs.bulk.CompensoHome;
 import it.cnr.contab.compensi00.tabrif.bulk.Tipo_trattamentoBulk;
 import it.cnr.contab.compensi00.tabrif.bulk.Tipo_trattamentoHome;
-import it.cnr.contab.config00.bulk.CigBulk;
-import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
-import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
-import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
+import it.cnr.contab.config00.bulk.*;
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
 import it.cnr.contab.config00.ejb.EsercizioComponentSession;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
@@ -4921,6 +4918,11 @@ public class DistintaCassiereComponent extends
                 Configurazione_cnrBulk.SK_INVIA_TAG_BILANCIO);
     }
 
+    private Boolean is1210BonificoEsteroEuro(UserContext userContext) throws RemoteException, ComponentException {
+        return ((Configurazione_cnrComponentSession) EJBCommonServices
+                .createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession")).is1210BonificoEsteroEuro(userContext);
+    }
+
     private void completeReversale(UserContext userContext, ReversaleBulk reversale) throws ComponentException, PersistencyException {
         //Se le righe del mandato non sono valorizzate le riempio io
         if (!Optional.ofNullable(reversale.getReversale_rigaColl()).filter(el -> !el.isEmpty()).isPresent()) {
@@ -5253,6 +5255,40 @@ public class DistintaCassiereComponent extends
                 .createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession")).getTipoRapportoTesoreria(userContext);
     }
 
+    private String gebTagContoBOE(UserContext userContext,V_mandato_reversaleBulk bulk,VDocumentiFlussoBulk  docContabile) throws RemoteException, ComponentException {
+        if ( Optional.ofNullable(docContabile.getNumeroConto()).isPresent())
+            return Optional.ofNullable(Utility.createConfigurazioneCnrComponentSession().getVal01(
+                    userContext,
+                    CNRUserContext.getEsercizio(userContext),
+                    null,Configurazione_cnrBulk.PK_FLUSSO_ORDINATIVI,
+                    Configurazione_cnrBulk.SK_PREFIX_CONTO_BON_ESTERO_EURO)).orElse("").concat(docContabile.getNumeroConto());
+
+        return null;
+    }
+    private String getIban(UserContext userContext,V_mandato_reversaleBulk bulk,VDocumentiFlussoBulk  docContabile) throws ComponentException, RemoteException {
+        if ( Optional.ofNullable(docContabile.getCodiceIban()).isPresent())
+            return docContabile.getCodiceIban();
+        if ( !Utility.createConfigurazioneCnrComponentSession().is1210BonificoEsteroEuro(userContext)){
+            if ( Optional.ofNullable(docContabile.getNumeroConto()).isPresent())
+                return Optional.ofNullable(gebTagContoBOE( userContext,bulk,docContabile)).orElseThrow(() ->new ApplicationMessageFormatException("Impossibile generare il flusso, manca il codice iban/conto " +
+                        "sul Mandato {0}/{1}/{2}",
+                        String.valueOf(bulk.getEsercizio()),
+                        String.valueOf(bulk.getCd_cds()),
+                        String.valueOf(bulk.getPg_documento_cont())));
+        }
+        throw new ApplicationMessageFormatException("Impossibile generare il flusso, manca il codice iban " +
+                        "sul Mandato {0}/{1}/{2}",
+                        String.valueOf(bulk.getEsercizio()),
+                        String.valueOf(bulk.getCd_cds()),
+                        String.valueOf(bulk.getPg_documento_cont()));
+    }
+    private String getSoggettoDestinatarioDelleSpese(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus tipoPagamentoSiopePlus){
+        if ( Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.BONIFICOESTEROEURO.equals(tipoPagamentoSiopePlus))
+            return "A CARICO ENTE";
+        return "ESENTE";
+
+    }
+
     public Mandato creaMandatoFlussoSiopeplus(UserContext userContext, V_mandato_reversaleBulk bulk) throws ComponentException, RemoteException {
         try {
 
@@ -5411,9 +5447,6 @@ public class DistintaCassiereComponent extends
                                 ||rif_modalita_pagamentoBulk.getCd_modalita_pag().equals(STIPENDI)
                                 ||docContabile.getTiDocumento().compareTo(MandatoBulk.TIPO_REGOLAM_SOSPESO) == 0).isPresent();
 
-                //da mettere in configurazione
-                Boolean modalitaBOERifDocEsterno=true;
-
                 if (multibeneficiario) {
                     bollo = objectFactory.createMandatoInformazioniBeneficiarioBollo();
                     benef = objectFactory.createBeneficiario();
@@ -5494,7 +5527,7 @@ public class DistintaCassiereComponent extends
                     }
                     infoben.setDestinazione(LIBERA);
 
-                    caricaInformazioniAggiuntive(infoben, bulk, docContabile,aggiuntive, tipoPagamentoSiopePlus,modalitaBOERifDocEsterno);
+                    caricaInformazioniAggiuntive(userContext,infoben, bulk, docContabile,aggiuntive, tipoPagamentoSiopePlus);
                     caricaTipoPostalizzazione(infoben, docContabile, tipoPagamentoSiopePlus);
                     if (obb_dati_beneficiario) {
                         benef.setIndirizzoBeneficiario(RemoveAccent
@@ -5529,33 +5562,21 @@ public class DistintaCassiereComponent extends
                         );
                         infoben.setPiazzatura(piazzatura);
                     }
-                    if (obb_iban && !infoben.getTipoPagamento().equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.REGOLARIZZAZIONE.value())) {
+                    if (obb_iban && !infoben.getTipoPagamento().equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.REGOLARIZZAZIONE.value()) ) {
                         //gestione invio SEPA da concordare con la banca al momento non gestito
-                        boolean generaSepa=true;
-                        if ( (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.BONIFICOESTEROEURO) && modalitaBOERifDocEsterno) )
-                            generaSepa=false;
-                        if ( generaSepa) {
-                            sepa.setIban(Optional.ofNullable(docContabile.getCodiceIban())
-                                    .orElseThrow(() -> new ApplicationMessageFormatException("Impossibile generare il flusso, manca il codice iban " +
-                                            "sul Mandato {0}/{1}/{2}",
-                                            String.valueOf(bulk.getEsercizio()),
-                                            String.valueOf(bulk.getCd_cds()),
-                                            String.valueOf(bulk.getPg_documento_cont())
-                                    )));
-
-                            if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.BONIFICOESTEROEURO)) {
-                                    //gestione invio SEPA da concordare con la banca al momento non gestito
-                                    sepa.setBic(Optional.ofNullable(docContabile.getBic())
-                                            .filter(s -> Optional.ofNullable(docContabile.getCodiceIban()).isPresent())
-                                            .filter(s -> patternBic.matcher(s).find())
-                                            .orElseThrow(() -> new ApplicationMessageFormatException("Impossibile generare il flusso, codice BIC: {0} non valido " +
-                                                    "sul Mandato {1}/{2}/{3}",
-                                                    docContabile.getBic(),
-                                                    String.valueOf(bulk.getEsercizio()),
-                                                    String.valueOf(bulk.getCd_cds()),
-                                                    String.valueOf(bulk.getPg_documento_cont())
-                                            )));
-
+                            sepa.setIban(getIban(userContext,bulk,docContabile));
+                            if  (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.BONIFICOESTEROEURO)) {
+                                //gestione invio SEPA da concordare con la banca al momento non gestito
+                                sepa.setBic(Optional.ofNullable(docContabile.getBic())
+                                        .filter(s -> Optional.ofNullable(docContabile.getCodiceIban()).isPresent())
+                                        .filter(s -> patternBic.matcher(s).find())
+                                        .orElseThrow(() -> new ApplicationMessageFormatException("Impossibile generare il flusso, codice BIC: {0} non valido " +
+                                                "sul Mandato {1}/{2}/{3}",
+                                                docContabile.getBic(),
+                                                String.valueOf(bulk.getEsercizio()),
+                                                String.valueOf(bulk.getCd_cds()),
+                                                String.valueOf(bulk.getPg_documento_cont())
+                                        )));
                             }
                             if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.SEPACREDITTRANSFER)
                                     && !infoben.getTipoPagamento().equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.COMPENSAZIONE.value()))
@@ -5565,7 +5586,7 @@ public class DistintaCassiereComponent extends
                                         + docContabile.getCdUoOrigine()
                                         + "-" + docContabile.getPgDocumento().toString());
                             infoben.setSepaCreditTransfer(sepa);
-                        }
+
                     }
                     List listClass = findDocumentiFlussoClass(userContext, bulk);
                     VDocumentiFlussoBulk oldDoc = null;
@@ -5839,7 +5860,7 @@ public class DistintaCassiereComponent extends
                         informazioniAggiuntive.setAvvisoPagoPA(getAvvisoPagoPA(userContext, objectFactory, bulk));
                         infoben.setInformazioniAggiuntive(informazioniAggiuntive);
                     }
-                    caricaInformazioniAggiuntive(infoben, bulk, docContabile, aggiuntive, tipoPagamentoSiopePlus,modalitaBOERifDocEsterno);
+                    caricaInformazioniAggiuntive(userContext,infoben, bulk, docContabile, aggiuntive, tipoPagamentoSiopePlus);
                     caricaTipoPostalizzazione(infoben, docContabile, tipoPagamentoSiopePlus);
                     infoben.setDestinazione(LIBERA);
                     List listClass = findDocumentiFlussoClass(userContext, bulk);
@@ -6014,7 +6035,7 @@ public class DistintaCassiereComponent extends
                     infoben.setBollo(bollo);
 
                     final Mandato.InformazioniBeneficiario.Spese mandatoInformazioniBeneficiarioSpese = objectFactory.createMandatoInformazioniBeneficiarioSpese();
-                    mandatoInformazioniBeneficiarioSpese.setSoggettoDestinatarioDelleSpese("ESENTE");
+                    mandatoInformazioniBeneficiarioSpese.setSoggettoDestinatarioDelleSpese(getSoggettoDestinatarioDelleSpese(tipoPagamentoSiopePlus));
                     mandatoInformazioniBeneficiarioSpese.setCausaleEsenzioneSpese("ESENTE");
                     infoben.setSpese(mandatoInformazioniBeneficiarioSpese);
 
@@ -6057,24 +6078,11 @@ public class DistintaCassiereComponent extends
                     }
                     if (obb_iban && !infoben.getTipoPagamento().equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.REGOLARIZZAZIONE.value())) {
                         //gestione invio SEPA da concordare con la banca al momento non gestito
-                        boolean generaSepa=true;
-                        if ( (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.BONIFICOESTEROEURO) && modalitaBOERifDocEsterno))
-                            generaSepa=false;
-                        if ( generaSepa) {
-                            sepa.setIban(
-                                    Optional.ofNullable(docContabile.getCodiceIban())
-                                            .orElseThrow(() -> new ApplicationMessageFormatException("Impossibile generare il flusso, manca il codice iban " +
-                                                    "sul Mandato {0}/{1}/{2}",
-                                                    String.valueOf(bulk.getEsercizio()),
-                                                    String.valueOf(bulk.getCd_cds()),
-                                                    String.valueOf(bulk.getPg_documento_cont())
-                                            ))
-                            );
-
-                            if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.BONIFICOESTEROEURO)) {
+                        sepa.setIban(getIban(userContext,bulk,docContabile));
+                        if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.BONIFICOESTEROEURO)) {
                                     //gestione invio SEPA da concordare con la banca al momento non gestito
                                     sepa.setBic(Optional.ofNullable(docContabile.getBic())
-                                            .filter(s -> Optional.ofNullable(docContabile.getCodiceIban()).isPresent())
+                                            //.filter(s -> Optional.ofNullable(docContabile.getCodiceIban()).isPresent())
                                             .filter(s -> patternBic.matcher(s).find())
                                             .orElseThrow(() -> new ApplicationMessageFormatException("Impossibile generare il flusso, codice BIC: {0} non valido " +
                                                     "sul Mandato {1}/{2}/{3}",
@@ -6092,7 +6100,6 @@ public class DistintaCassiereComponent extends
                                         + docContabile.getCdUoOrigine()
                                         + "-" + docContabile.getPgDocumento().toString());
                             infoben.setSepaCreditTransfer(sepa);
-                        }
                     }
                     infoben.setCausale(Optional.ofNullable(Optional.ofNullable(docContabile.getDsDocumento())
                             .filter(s -> s.length() > MAX_LENGTH_CAUSALE)
@@ -6227,7 +6234,7 @@ public class DistintaCassiereComponent extends
         }
     }
 
-    private String getRiferimentoDocumentoEsternoBOE(V_mandato_reversaleBulk bulk,VDocumentiFlussoBulk  docContabile) throws  ApplicationMessageFormatException{
+    private String getRiferimentoDocumentoEsternoBOE(UserContext userContext,V_mandato_reversaleBulk bulk,VDocumentiFlussoBulk  docContabile) throws ComponentException, RemoteException {
 
         String iban =Optional.ofNullable(docContabile.getCodiceIban())
                 .orElse(null);
@@ -6242,31 +6249,28 @@ public class DistintaCassiereComponent extends
                             String.valueOf(bulk.getCd_cds()),
                             String.valueOf(bulk.getPg_documento_cont())
                     ));
-
-            return "SWIFT CODE:".concat(bic).concat(" ").concat(" IBAN CODE:").concat(iban);
         }
-        String intestazioneModPag =Optional.ofNullable(docContabile.getIntestazioneModPag())
-                .orElseThrow(() -> new ApplicationMessageFormatException("Impossibile generare il flusso, manca sia il codice iban che l'intestazione" +
-                        "sul Mandato {0}/{1}/{2}",
-                        String.valueOf(bulk.getEsercizio()),
-                        String.valueOf(bulk.getCd_cds()),
-                        String.valueOf(bulk.getPg_documento_cont())
-                ));
-        return intestazioneModPag;
+        //da definire con la banca
+        if ( is1210BonificoEsteroEuro(userContext))
+            return docContabile.getIntestazioneModPag();
+        if ( iban!=null) {
+            return docContabile.getIntestazioneModPag().concat(" SWIFT CODE:").concat(docContabile.getBic()).concat(" ").concat(" IBAN CODE:").concat(iban);
+        }
+        return docContabile.getIntestazioneModPag().concat(" SWIFT CODE:").concat(docContabile.getBic()).concat(" ").concat(" ACCOUNT NNUMBER:").concat(gebTagContoBOE(userContext,bulk,docContabile));
     }
-    private void caricaInformazioniAggiuntive(Mandato.InformazioniBeneficiario infoben,
+    private void caricaInformazioniAggiuntive(UserContext userContext,
+                                                Mandato.InformazioniBeneficiario infoben,
                                               V_mandato_reversaleBulk bulk,
                                               VDocumentiFlussoBulk  docContabile,
                                               Mandato.InformazioniBeneficiario.InformazioniAggiuntive aggiuntive,
-                                              Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus tipoPagamentoSiopePlus,
-                                              Boolean modalitaBOERifDocEsterno) throws  ApplicationMessageFormatException {
+                                              Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus tipoPagamentoSiopePlus) throws ComponentException, RemoteException {
         if (Arrays.asList(
                 Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.DISPOSIZIONEDOCUMENTOESTERNO,
                 Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.ACCREDITOCONTOCORRENTEPOSTALE,
                 Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.BONIFICOESTEROEURO
         ).contains(tipoPagamentoSiopePlus)) {
-            if ( Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.BONIFICOESTEROEURO.equals(tipoPagamentoSiopePlus) && modalitaBOERifDocEsterno) {
-                aggiuntive.setRiferimentoDocumentoEsterno(getRiferimentoDocumentoEsternoBOE(bulk,docContabile));
+            if ( Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.BONIFICOESTEROEURO.equals(tipoPagamentoSiopePlus) ) {
+                aggiuntive.setRiferimentoDocumentoEsterno(getRiferimentoDocumentoEsternoBOE(userContext,bulk,docContabile));
                 infoben.setInformazioniAggiuntive(aggiuntive);
             }else {
                 aggiuntive.setRiferimentoDocumentoEsterno(bulk.getCMISName());
@@ -6433,14 +6437,25 @@ public class DistintaCassiereComponent extends
                 final boolean isCommerciale = collect
                         .keySet()
                         .stream()
-                        .filter(fattura_passivaBulk -> !(fattura_passivaBulk.isEstera() ||
+                        .anyMatch(fattura_passivaBulk -> !(fattura_passivaBulk.isEstera() ||
                                 fattura_passivaBulk.isSanMarinoConIVA() ||
-                                fattura_passivaBulk.isSanMarinoSenzaIVA()))
-                        .findAny().isPresent();
+                                fattura_passivaBulk.isSanMarinoSenzaIVA()));
                 if (!isCommerciale) {
                     ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(StTipoDebitoNonCommerciale.NON_COMMERCIALE);
                 } else {
-                    ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(StTipoDebitoCommerciale.COMMERCIALE);
+                    /**
+                     * Controllo che associato ai codici siope ci sia un tipo debito NON_COMMERCIALE o COMMERCIALE
+                     */
+                    boolean isSIOPENonCommerciale = siopeBulks
+                            .stream()
+                            .map(Mandato_siopeBulk::getCodice_siope)
+                            .map(Codici_siopeBase::getTi_tipo_debito)
+                            .anyMatch(s -> s != null && TipoDebitoSIOPE.getValueFrom(s).equals(TipoDebitoSIOPE.NON_COMMERCIALE));
+                    if (isSIOPENonCommerciale) {
+                        ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(StTipoDebitoNonCommerciale.NON_COMMERCIALE);
+                    } else {
+                        ctClassificazioneDatiSiopeUscite.getTipoDebitoSiopeNcAndCodiceCigSiopeOrMotivoEsclusioneCigSiope().add(StTipoDebitoCommerciale.COMMERCIALE);
+                    }
                     Fattura_passiva_rigaHome fattura_passivaRigaHome = Optional.ofNullable(getHome(userContext, Fattura_passiva_rigaIBulk.class))
                             .filter(Fattura_passiva_rigaHome.class::isInstance)
                             .map(Fattura_passiva_rigaHome.class::cast)

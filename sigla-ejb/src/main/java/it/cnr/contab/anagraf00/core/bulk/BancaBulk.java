@@ -420,11 +420,22 @@ public class BancaBulk extends BancaBase {
             // SE è ALTRO CON IBAN OBBLIGATORIO
             if (getIntestazione() == null)
                 throw new ValidationException("Modalità di pagamento: Intestazione è obbligatoria.");
-            if (this.getNazione_iban() != null)
+            if (!Optional.ofNullable(this.getNazione_iban()).isPresent())
+                throw new ValidationException("Modalità di pagamento: IBAN obbligatorio.");
+            //if (this.getNazione_iban() != null)
                 validaIban();
-            else
-                setCodice_iban(null);
-        }
+            //else
+            //    setCodice_iban(null);
+        } else if (Rif_modalita_pagamentoBulk.CONTO.equals(getTi_pagamento())) {
+            // SE è ALTRO CON CONTO OBBLIGATORIO
+            if (getIntestazione() == null)
+                throw new ValidationException("Modalità di pagamento: Intestazione è obbligatoria.");
+            if (!Optional.ofNullable(this.getNumero_conto()).isPresent())
+                throw new ValidationException("Modalità di pagamento: Numero Conto è obbligatorio.");
+            if (!Optional.ofNullable(this.getCodice_swift()).isPresent())
+                throw new ValidationException("Modalità di pagamento: Il codice swift è obbligatorio.");
+
+    }
         if ((this.getFl_cancellato() == null || !this.getFl_cancellato().booleanValue()) &&
                 ((Rif_modalita_pagamentoBulk.IBAN.equals(getTi_pagamento()) || Rif_modalita_pagamentoBulk.BANCARIO.equals(getTi_pagamento())))) {
             if (this.getNazione_iban() != null && this.getNazione_iban().getFl_iban()) {

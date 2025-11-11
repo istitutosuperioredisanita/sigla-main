@@ -45,12 +45,7 @@ public class CRUDCodiciSiopeBP extends SimpleCRUDBP {
 	public CRUDCodiciSiopeBP(String function)  throws BusinessProcessException{
 		super(function);
 	}
-		
-	public OggettoBulk createNewBulk(ActionContext context) throws BusinessProcessException {
-		Codici_siopeBulk siope = (Codici_siopeBulk)super.createNewBulk(context);
-		return siope;
-	}
-	
+
 	public void validainserimento(ActionContext context, Codici_siopeBulk bulk) throws ValidationException{
 		if ( bulk.getEsercizio()==null) 
 			throw new ValidationException("E' necessario inserire l' Esercizio");
