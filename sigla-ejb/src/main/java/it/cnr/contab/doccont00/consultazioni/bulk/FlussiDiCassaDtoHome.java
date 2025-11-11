@@ -17,13 +17,9 @@
 
 package it.cnr.contab.doccont00.consultazioni.bulk;
 
-import it.cnr.contab.config00.sto.bulk.Ass_uo_areaBulk;
-import it.cnr.contab.rest.bulk.RestServicesHome;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
-import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
-import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
@@ -42,60 +38,50 @@ public class FlussiDiCassaDtoHome extends BulkHome {
 	public SQLBuilder findFlussiDiCassa(UserContext uc, FlussiDiCassaDtoBulk flussi){
 		SQLBuilder sqlInterna = null;
 
-		if(flussi.getTipoFlusso().equals(FlussiDiCassaDtoBulk.MANDATI)){
-			sqlInterna = getHomeCache().getHome(V_cons_siope_mandatiBulk.class,"FLUSSI").createSQLBuilder();
-		}else{
-			sqlInterna = getHomeCache().getHome(V_cons_siope_reversaliBulk.class,"FLUSSI").createSQLBuilder();
-		}
 
-		//SQLBuilder sql = this.createSQLBuilder();
+		if(flussi.getTipoFlusso().equals(FlussiDiCassaDtoBulk.REVERSALI))
+			this.setColumnMap("FLUSSO_REVERSALI");
+		else
+			this.setColumnMap("FLUSSO_MANDATI");
+
+		sqlInterna=this.createSQLBuilder();
 		sqlInterna.resetColumns();
-		setColumnMap("FLUSSO_CASSA");
 
 		sqlInterna.setHeader("SELECT " +
-"CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CLASSIFICAZIONE.CD_LIVELLO1,'.'),CLASSIFICAZIONE.CD_LIVELLO2),'.'),CLASSIFICAZIONE.CD_LIVELLO3),'.'),CLASSIFICAZIONE.CD_LIVELLO4),'.'),CLASSIFICAZIONE.CD_LIVELLO5),'.'),CLASSIFICAZIONE.CD_LIVELLO5) CLASSIFICAZIONE , " +
-				      "CLASSIFICAZIONE.DS_CLASSIFICAZIONE , " +
-					  " CASE "+
-						" WHEN TO_CHAR( FLUSSI.DT_EMISSIONE,'mm') <=3 THEN FLUSSI.IMPORTO "+
+"CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CLASSIFICAZIONE_VOCI_EP.CD_LIVELLO1,'.'),CLASSIFICAZIONE_VOCI_EP.CD_LIVELLO2),'.'),CLASSIFICAZIONE_VOCI_EP.CD_LIVELLO3),'.'),CLASSIFICAZIONE_VOCI_EP.CD_LIVELLO4),'.'),CLASSIFICAZIONE_VOCI_EP.CD_LIVELLO5),'.'),CLASSIFICAZIONE_VOCI_EP.CD_LIVELLO5) CLASSIFICAZIONE , " +
+				      "CLASSIFICAZIONE_VOCI_EP.DS_CLASSIFICAZIONE , " +
+					  " sum(CASE "+
+						" WHEN TO_CHAR("+ sqlInterna.getColumnMap().getTableName().concat(".DT_EMISSIONE").concat(",'mm') <=3 THEN IMPORTO ")+
 					    " ELSE 0 "+
-		              " END PRIMO_TRIMESTRE ,"+
-				      " CASE "+
-				      " WHEN TO_CHAR( FLUSSI.DT_EMISSIONE,'mm') <=6 THEN FLUSSI.IMPORTO "+
+		              " END ) IMP_PRIMO_TRIMESTRE ,"+
+				      " sum(CASE "+
+				      " WHEN TO_CHAR("+ sqlInterna.getColumnMap().getTableName().concat(".DT_EMISSIONE").concat(",'mm') <=6 THEN IMPORTO ")+
 				      " ELSE 0 "+
-				      " END SECONDO_TRIMESTRE ,"+
-					  " CASE "+
-					  " WHEN TO_CHAR( FLUSSI.DT_EMISSIONE,'mm') <=9 THEN FLUSSI.IMPORTO "+
+				      " END) IMP_SECONDO_TRIMESTRE ,"+
+					  " sum(CASE "+
+					  " WHEN TO_CHAR("+ sqlInterna.getColumnMap().getTableName().concat(".DT_EMISSIONE").concat(",'mm') <=9 THEN IMPORTO ")+
 					  " ELSE 0 "+
-					  " END TERZO_TRIMESTRE ,"+
-					  " CASE "+
-				      " WHEN TO_CHAR( FLUSSI.DT_EMISSIONE,'mm') <=12 THEN FLUSSI.IMPORTO "+
+					  " END) IMP_TERZO_TRIMESTRE ,"+
+					  " sum(CASE "+
+				      " WHEN TO_CHAR("+ sqlInterna.getColumnMap().getTableName().concat(".DT_EMISSIONE").concat(",'mm') <=12 THEN IMPORTO ")+
 				      " ELSE 0 "+
-				      " END TERZO_TRIMESTRE ,"
-				      //"SUM( IMP_PRIMO_TRIMESTRE ) PRIMO_TRIMESTRE , " +
-				      //"SUM( IMP_SECONDO_TRIMESTRE ) SECONDO_TRIMESTRE , " +
-				      //"SUM( IMP_TERZO_TRIMESTRE ) TERZO_TRIMESTRE , " +
-				      //"SUM( IMP_QUARTO_TRIMESTRE) QUARTO_TRIMESTRE "
+				      " END ) IMP_QUARTO_TRIMESTRE "
 				);
 
 		sqlInterna.addTableToHeader("CODICI_SIOPE");
-		sqlInterna.addJoin("CODICI_SIOPE.ESERCIZIO", "FLUSSI.ESERCIZIO_SIOPE");
-		sqlInterna.addJoin("CODICI_SIOPE.CD_SIOPE", "FLUSSI.CD_SIOPE");
+		sqlInterna.addSQLJoin("CODICI_SIOPE.ESERCIZIO", sqlInterna.getColumnMap().getTableName().concat(".ESERCIZIO_SIOPE"));
+		sqlInterna.addSQLJoin("CODICI_SIOPE.CD_SIOPE", sqlInterna.getColumnMap().getTableName().concat(".CD_SIOPE"));
 
-		sqlInterna.addTableToHeader("CODICI_SIOPE");
-		sqlInterna.addJoin("CODICI_SIOPE.ESERCIZIO", "FLUSSI.ESERCIZIO_SIOPE");
-		sqlInterna.addJoin("CODICI_SIOPE.CD_SIOPE", "FLUSSI.CD_SIOPE");
+		sqlInterna.addTableToHeader("CLASSIFICAZIONE_VOCI_EP");
+		sqlInterna.addSQLJoin("CLASSIFICAZIONE_VOCI_EP.ID_CLASSIFICAZIONE", "CODICI_SIOPE.ID_CLASSIFICAZIONE_SIOPE");
+		sqlInterna.addSQLClause(FindClause.AND, "CLASSIFICAZIONE_VOCI_EP.TIPO", SQLBuilder.EQUALS, "SP1");
 
-		sqlInterna.addTableToHeader("CLASSIFICAZIONE_VOCE_EP");
-		sqlInterna.addJoin("CLASSIFICAZIONE_VOCE_EP.ID_CLASSIFICAZIONE", "FLUSSI.ID_CLASSIFICAZIONE_SIOPE");
-		sqlInterna.addClause(FindClause.AND, "CLASSIFICAZIONE_VOCE_EP.TIPO", SQLBuilder.EQUALS, "SP1");
-
-		sqlInterna.addClause(FindClause.AND, "FLUSSI.ESERCIZIO", SQLBuilder.EQUALS, flussi.getEsercizio());
-		sqlInterna.addClause(FindClause.AND, "FLUSSI.DT_EMISSIONE", SQLBuilder.GREATER_EQUALS, flussi.getDtEmissioneDa());
-		sqlInterna.addClause(FindClause.AND, "FLUSSI.DT_EMISSIONE", SQLBuilder.LESS_EQUALS, flussi.getDtEmissioneA());
-
-
-		sqlInterna.addSQLGroupBy("CLASSIFICAZIONE,DS_CLASSIFICAZIONE");
-
+		sqlInterna.addSQLClause(FindClause.AND, sqlInterna.getColumnMap().getTableName().concat(".ESERCIZIO"), SQLBuilder.EQUALS, flussi.getEsercizio());
+		sqlInterna.addSQLClause(FindClause.AND,  sqlInterna.getColumnMap().getTableName().concat(".DT_EMISSIONE"), SQLBuilder.GREATER_EQUALS, flussi.getDtEmissioneDa());
+		sqlInterna.addSQLClause(FindClause.AND,  sqlInterna.getColumnMap().getTableName().concat(".DT_EMISSIONE"), SQLBuilder.LESS_EQUALS, flussi.getDtEmissioneA());
+		sqlInterna.addSQLGroupBy("CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CLASSIFICAZIONE_VOCI_EP.CD_LIVELLO1,'.')," +
+				"CLASSIFICAZIONE_VOCI_EP.CD_LIVELLO2),'.'),CLASSIFICAZIONE_VOCI_EP.CD_LIVELLO3),'.')," +
+				"CLASSIFICAZIONE_VOCI_EP.CD_LIVELLO4),'.'),CLASSIFICAZIONE_VOCI_EP.CD_LIVELLO5),'.'),CLASSIFICAZIONE_VOCI_EP.CD_LIVELLO5), CLASSIFICAZIONE_VOCI_EP.DS_CLASSIFICAZIONE ");
 		return sqlInterna;
 	}
 

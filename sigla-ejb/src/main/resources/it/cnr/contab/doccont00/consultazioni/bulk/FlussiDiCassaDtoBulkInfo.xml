@@ -123,6 +123,7 @@
 		formatName="it.cnr.contab.util.EuroFormat"
 		label="Quarto Trimestre" />
 
+
 	<formFieldProperty
 		name="cd_cds" />
 	<formFieldProperty
@@ -163,12 +164,7 @@
 		name="dt_emissione_a" />
 	<findFieldProperty
 		name="tipoFlusso" />
-	<columnSet
-			name="FLUSSO_CASSA">
-		<columnFieldProperty
-			name="cd_cds" />
-		<columnFieldProperty
-			name="esercizio" />
+
 		<columnFieldProperty
 			name="classificazione" />
 		<columnFieldProperty
@@ -181,6 +177,6 @@
 			name="impTerzoTrimestre" />
 		<columnFieldProperty
 			name="impQuartoTrimestre" />
-	</columnSet>
+
 
 </bulkInfo>
