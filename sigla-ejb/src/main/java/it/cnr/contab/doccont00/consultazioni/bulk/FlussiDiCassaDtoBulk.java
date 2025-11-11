@@ -2,14 +2,16 @@ package it.cnr.contab.doccont00.consultazioni.bulk;
 
 import it.cnr.contab.config00.sto.bulk.CdsBulk;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.persistency.Persistent;
 import it.cnr.jada.util.OrderedHashtable;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Dictionary;
 
 
-public class FlussiDiCassaDtoBulk extends OggettoBulk {
+public class FlussiDiCassaDtoBulk extends OggettoBulk implements Persistent {
 
     private final static Dictionary tipo_EstrazioneKeys;
     public final static String MANDATI = "MAN";
@@ -147,4 +149,9 @@ public class FlussiDiCassaDtoBulk extends OggettoBulk {
     public void setROFindCds(boolean roFindCds) {
         this.roFindCds = roFindCds;
     }
+
+    public java.util.Dictionary getTipo_EstrazioneKeys() {
+        return tipo_EstrazioneKeys;
+    }
+
 }
