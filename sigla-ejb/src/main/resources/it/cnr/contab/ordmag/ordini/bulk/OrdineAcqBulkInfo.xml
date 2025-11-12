@@ -195,6 +195,7 @@
 		label="Tipo"
 		nullable="false"
 		enabledOnSearch="true"
+		command="doChangeAttivita"
 		keysProperty="tiAttivitaKeys" />
 	<fieldProperty
 		name="tiAttivitaSearch"

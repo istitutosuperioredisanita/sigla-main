@@ -34,7 +34,6 @@ import it.cnr.contab.docamm00.ejb.CategoriaGruppoInventComponentSession;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceBulk;
-import it.cnr.contab.doccont00.bp.CRUDReversaleBP;
 import it.cnr.contab.doccont00.bp.CRUDVirtualObbligazioneBP;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
@@ -95,6 +94,21 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
             } else {
                 riga.setCoefConv(null);
             }
+            return context.findDefaultForward();
+
+        } catch (Exception e) {
+            return handleException(context, e);
+        }
+    }
+    public Forward doChangeAttivita(ActionContext context) {
+        //rimuovi numeratore
+        try {
+            fillModel(context);
+            //imposta i valori di default per il tariffario
+            CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP) context.getBusinessProcess();
+            OrdineAcqBulk ordine = (OrdineAcqBulk) bp.getModel();
+            ordine.setNumerazioneOrd(null);
+            ordine.setPercProrata( null);
             return context.findDefaultForward();
 
         } catch (Exception e) {
