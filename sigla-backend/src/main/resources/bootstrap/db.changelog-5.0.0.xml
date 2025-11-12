@@ -6271,6 +6271,15 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_print_priority_doc_trasporto_rientro.xml"/>
     <!-- Autore : MARCO SPASIANO - Aggiunto commerciale/non commerciale alla tabella codici_siope-->
     <include file="bootstrap/add_ti_tipo_debito_codici_siope.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunto configurazione gestione lettera pagamento estero( 1210)-->
+    <include file="bootstrap/add_conf_gestione_bonifici_esteri_euro.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta configurazione prefix contro Bonifici Esteri Euro( 1210)-->
+    <include file="bootstrap/add_conf_bonifici_esteri_prefix_conto.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunto configurazione per permettere o meno variazione sulle partite di giro-->
+    <include file="bootstrap/add_conf_partite_giro_variazione.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Nuova voce di menu per consultazione flussi di cassa-->
+    <include file="bootstrap/add_accesso_flussi_di_cassa.xml"/>
+
     <!-- Autore : DAVIDE MIRRA - Aggiunta colonna nominativo vettore Trasporto/Rientro e campi per la firma con HappySign-->
     <include file="bootstrap/add_columns_nominativo_fields_happysign_docTR.xml"/>
     <!-- Autore : DAVIDE MIRRA - Creazione tabella gestione dei documenti di Trasporto/Rientro respinti con HappySign -->

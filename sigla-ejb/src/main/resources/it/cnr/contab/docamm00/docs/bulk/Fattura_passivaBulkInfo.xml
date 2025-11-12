@@ -586,6 +586,15 @@
             enabledOnEdit="false"
             enabledOnSearch="false"
             enabledOnFreeSearch="false"/>
+    <fieldProperty
+            name="contoC"
+            property="banca"
+            inputType="FORM"
+            formName="C"
+            enabledOnInsert="false"
+            enabledOnEdit="false"
+            enabledOnSearch="false"
+            enabledOnFreeSearch="false"/>
 
     <fieldProperty
             name="dt_fattura_fornitore"
@@ -1459,6 +1468,8 @@
             name="contoQ"/>
     <formFieldProperty
             name="contoN"/>
+    <formFieldProperty
+            name="contoC"/>
     <formFieldProperty
             name="via_fiscale"/>
     <formFieldProperty

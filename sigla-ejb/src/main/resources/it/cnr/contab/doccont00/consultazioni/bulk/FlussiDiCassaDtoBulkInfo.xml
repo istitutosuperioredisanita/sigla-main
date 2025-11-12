@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+	<fieldProperty
+		name="cd_cds"
+		property="cdCds"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		label="CDS" />
+	<fieldProperty
+		name="find_cds"
+		property="cds"
+		inputType="SEARCHTOOL"
+		label="CDS"
+		readonlyProperty="ROFindCds"
+		enabledOnSearch="true"
+		completeOnSave="true" />
+	<fieldProperty
+		name="cds_cd"
+		property="cds.cd_unita_organizzativa"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		readonlyProperty="ROFindCds"
+		label="CDS" />
+	<fieldProperty
+		name="cds_ds"
+		property="cds.ds_unita_organizzativa"
+		inputType="ROTEXT"
+		inputSize="60"
+		maxLength="60"
+		label="CDS" />
+	<fieldProperty
+		name="esercizio"
+		property="esercizio"
+		inputType="TEXT"
+		inputSize="4"
+		maxLength="4"
+		label="Esercizio" />
+	<fieldProperty
+		name="dt_emissione_da"
+		property="dtEmissioneDa"
+		inputType="TEXT"
+		formatName="date_short"
+		label="Da Data Emissione" />
+	<fieldProperty
+		name="dt_emissione_a"
+		property="dtEmissioneA"
+		inputType="TEXT"
+		formatName="date_short"
+		label="A Data Emissione" />
+	<fieldProperty
+		name="tipoFlusso"
+		property="tipoFlusso"
+		inputType="RADIOGROUP"
+		layout="HORIZONTAL"
+		keysProperty="tipo_EstrazioneKeys"
+		label="Tipo Flusso"/>
+	<fieldProperty
+		name="classificazione"
+		property="classificazione"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		label="Classificazione" />
+	<fieldProperty
+		name="dsClassificazione"
+		property="dsClassificazione"
+		inputType="TEXT"
+		inputSize="250"
+		maxLength="250"
+		label="Descrizione" />
+	<fieldProperty
+		name="impPrimoTrimestre"
+		property="impPrimoTrimestre"
+		inputType="TEXT"
+		inputSize="22"
+		maxLength="22"
+		formatName="it.cnr.contab.util.EuroFormat"
+		label="Primo Trimestre" />
+	<fieldProperty
+		name="impSecondoTrimestre"
+		property="impSecondoTrimestre"
+		inputType="TEXT"
+		inputSize="22"
+		maxLength="22"
+		formatName="it.cnr.contab.util.EuroFormat"
+		label="Secondo Trimestre" />
+	<fieldProperty
+		name="impTerzoTrimestre"
+		property="impTerzoTrimestre"
+		inputType="TEXT"
+		inputSize="22"
+		maxLength="22"
+		formatName="it.cnr.contab.util.EuroFormat"
+		label="Terzo Trimestre" />
+	<fieldProperty
+		name="impQuartoTrimestre"
+		property="impQuartoTrimestre"
+		inputType="TEXT"
+		inputSize="22"
+		maxLength="22"
+		formatName="it.cnr.contab.util.EuroFormat"
+		label="Quarto Trimestre" />
+
+
+	<formFieldProperty
+		name="cd_cds" />
+	<formFieldProperty
+		name="find_cds" />
+	<formFieldProperty
+		name="cds_cd" />
+	<formFieldProperty
+		name="cds_ds" />
+	<formFieldProperty
+		name="esercizio" />
+	<formFieldProperty
+		name="dt_emissione_da" />
+	<formFieldProperty
+		name="dt_emissione_a" />
+	<formFieldProperty
+		name="tipoFlusso" />
+	<formFieldProperty
+		name="classificazione" />
+	<formFieldProperty
+		name="dsClassificazione" />
+	<formFieldProperty
+		name="impPrimoTrimestre" />
+	<formFieldProperty
+		name="impSecondoTrimestre" />
+	<formFieldProperty
+		name="impTerzoTrimestre" />
+	<formFieldProperty
+		name="impQuartoTrimestre" />
+
+		
+	<findFieldProperty
+		name="cd_cds" />
+	<findFieldProperty
+		name="esercizio" />
+	<findFieldProperty
+		name="dt_emissione_da" />
+	<findFieldProperty
+		name="dt_emissione_a" />
+	<findFieldProperty
+		name="tipoFlusso" />
+
+		<columnFieldProperty
+			name="classificazione" />
+		<columnFieldProperty
+			name="dsClassificazione" />
+		<columnFieldProperty
+			name="impPrimoTrimestre" />
+		<columnFieldProperty
+			name="impSecondoTrimestre" />
+		<columnFieldProperty
+			name="impTerzoTrimestre" />
+		<columnFieldProperty
+			name="impQuartoTrimestre" />
+
+
+</bulkInfo>

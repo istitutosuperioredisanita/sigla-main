@@ -17,18 +17,6 @@
 
 package it.cnr.contab.pdg01.comp;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import javax.ejb.EJBException;
-
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
@@ -38,12 +26,7 @@ import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.latt.bulk.WorkpackageHome;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceHome;
-import it.cnr.contab.config00.sto.bulk.CdsBulk;
-import it.cnr.contab.config00.sto.bulk.CdsHome;
-import it.cnr.contab.config00.sto.bulk.Tipo_unita_organizzativaHome;
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativaHome;
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
+import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.messaggio00.bulk.MessaggioBulk;
 import it.cnr.contab.messaggio00.bulk.MessaggioHome;
 import it.cnr.contab.pdg00.bulk.ArchiviaStampaPdgVariazioneBulk;
@@ -80,17 +63,24 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.ObjectNotFoundException;
 import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.LoggableStatement;
-import it.cnr.jada.persistency.sql.PersistentHome;
-import it.cnr.jada.persistency.sql.SQLBuilder;
+import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.ejb.EJBCommonServices;
-import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StorageDriver;
+import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.EJBException;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.rmi.RemoteException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CRUDPdgVariazioneRigaGestComponent extends it.cnr.jada.comp.CRUDComponent {
+	private static final Logger log = LoggerFactory.getLogger(CRUDPdgVariazioneRigaGestComponent.class);
+
 	/**
 	  * CRUDPdgVariazioneRigaGestComponent constructor comment.
 	  */
@@ -609,11 +599,12 @@ public class CRUDPdgVariazioneRigaGestComponent extends it.cnr.jada.comp.CRUDCom
 			sql.addTableToHeader("V_CLASSIFICAZIONE_VOCI_ALL");
 			sql.addSQLJoin(columnMapName+".ID_CLASSIFICAZIONE", "V_CLASSIFICAZIONE_VOCI_ALL.ID_CLASSIFICAZIONE");
 			sql.addSQLJoin("V_CLASSIFICAZIONE_VOCI_ALL.NR_LIVELLO", "PARAMETRI_LIVELLI.LIVELLI_SPESA");
-	
-			sql.openParenthesis(FindClause.AND);
-			sql.addSQLClause(FindClause.OR, columnMapName+".FL_PARTITA_GIRO", SQLBuilder.ISNULL, null);
-			sql.addSQLClause(FindClause.OR, columnMapName+".FL_PARTITA_GIRO", SQLBuilder.EQUALS, "N");
-			sql.closeParenthesis();
+			if ( !isEnabledPartiteGiro(userContext)) {
+				sql.openParenthesis(FindClause.AND);
+				sql.addSQLClause(FindClause.OR, columnMapName + ".FL_PARTITA_GIRO", SQLBuilder.ISNULL, null);
+				sql.addSQLClause(FindClause.OR, columnMapName + ".FL_PARTITA_GIRO", SQLBuilder.EQUALS, "N");
+				sql.closeParenthesis();
+			}
 			sql.addSQLClause( FindClause.AND, columnMapName+".FL_SOLO_RESIDUO", SQLBuilder.EQUALS, "N");
 			if (dett.getLinea_attivita() != null)
 				sql.addSQLClause(FindClause.AND,columnMapName+".CD_FUNZIONE",SQLBuilder.EQUALS,dett.getLinea_attivita().getCd_funzione());
@@ -763,7 +754,17 @@ public class CRUDPdgVariazioneRigaGestComponent extends it.cnr.jada.comp.CRUDCom
 			throw new ComponentException(e);
 		}
 	}
-	
+
+	public boolean isEnabledPartiteGiro(UserContext userContext){
+
+		try {
+			return Utility.createConfigurazioneCnrComponentSession().isEnabledPartGiroInVarizione(userContext);
+		} catch (Exception e) {
+			log.error("",e);
+		}
+		return Boolean.FALSE;
+	}
+
 	public SQLBuilder selectElemento_voceByClause (UserContext userContext, 
 												   Pdg_variazione_riga_entrata_gestBulk dett,
 												   Elemento_voceBulk elementoVoce, 
@@ -779,14 +780,15 @@ public class CRUDPdgVariazioneRigaGestComponent extends it.cnr.jada.comp.CRUDCom
 		sql.addTableToHeader("PARAMETRI_LIVELLI");
 		sql.addSQLJoin("V_ELEMENTO_VOCE_PDG_ETR.ESERCIZIO", "PARAMETRI_LIVELLI.ESERCIZIO");
 
-		sql.addTableToHeader("V_CLASSIFICAZIONE_VOCI_ALL");
-		sql.addSQLJoin("V_ELEMENTO_VOCE_PDG_ETR.ID_CLASSIFICAZIONE", "V_CLASSIFICAZIONE_VOCI_ALL.ID_CLASSIFICAZIONE");
-		sql.addSQLJoin("V_CLASSIFICAZIONE_VOCI_ALL.NR_LIVELLO", "PARAMETRI_LIVELLI.LIVELLI_ENTRATA");
-
-		sql.openParenthesis("AND");
-		sql.addSQLClause("OR", "V_ELEMENTO_VOCE_PDG_ETR.FL_PARTITA_GIRO", sql.ISNULL, null);	
-		sql.addSQLClause("OR", "V_ELEMENTO_VOCE_PDG_ETR.FL_PARTITA_GIRO", sql.EQUALS, "N");	
-		sql.closeParenthesis();
+			 sql.addTableToHeader("V_CLASSIFICAZIONE_VOCI_ALL");
+			 sql.addSQLJoin("V_ELEMENTO_VOCE_PDG_ETR.ID_CLASSIFICAZIONE", "V_CLASSIFICAZIONE_VOCI_ALL.ID_CLASSIFICAZIONE");
+			 sql.addSQLJoin("V_CLASSIFICAZIONE_VOCI_ALL.NR_LIVELLO", "PARAMETRI_LIVELLI.LIVELLI_ENTRATA");
+		if ( !isEnabledPartiteGiro(userContext)) {
+				sql.openParenthesis("AND");
+				sql.addSQLClause("OR", "V_ELEMENTO_VOCE_PDG_ETR.FL_PARTITA_GIRO", sql.ISNULL, null);
+				sql.addSQLClause("OR", "V_ELEMENTO_VOCE_PDG_ETR.FL_PARTITA_GIRO", sql.EQUALS, "N");
+				sql.closeParenthesis();
+		}
 		sql.addSQLClause( "AND", "V_ELEMENTO_VOCE_PDG_ETR.FL_SOLO_RESIDUO", sql.EQUALS, "N");
 		if (dett.getLinea_attivita() != null && dett.getCd_linea_attivita() != null)
 			sql.addSQLClause("AND","V_ELEMENTO_VOCE_PDG_ETR.CD_NATURA",sql.EQUALS,dett.getLinea_attivita().getCd_natura());

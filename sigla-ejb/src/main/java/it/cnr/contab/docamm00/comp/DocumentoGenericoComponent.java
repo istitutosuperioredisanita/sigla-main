@@ -1240,6 +1240,10 @@ public class DocumentoGenericoComponent
             genericoBulk = setChangeDataToEur(uc, genericoBulk);
             throw handleException(genericoBulk, new it.cnr.jada.comp.ApplicationException("Non esiste una valuta per il periodo specificato!"));
         }
+        if ( !genericoBulk.isEnabledToInsertLettera() && genericoBulk.isDefaultValuta() &&
+                Optional.ofNullable(genericoBulk.getLettera_pagamento_estero()).isPresent())
+            throw handleException(genericoBulk, new it.cnr.jada.comp.ApplicationException("Per Documenti Generici Esteri in Euro non è necessario il Documento 1210, bisogna Eliminarlo."));
+
 
         genericoBulk.setInizio_validita_valuta(cambioValido.getDt_inizio_validita());
         genericoBulk.setFine_validita_valuta(cambioValido.getDt_fine_validita());
@@ -5091,7 +5095,12 @@ public class DocumentoGenericoComponent
                 }
             }
         }
-
+        if (documentoGenerico.getTi_entrate_spese() == Documento_genericoBulk.SPESE) {
+            if ( !documentoGenerico.isEnabledToInsertLettera() &&
+                    documentoGenerico.isDefaultValuta() &&
+                    Optional.ofNullable(documentoGenerico.getLettera_pagamento_estero()).isPresent())
+                throw new ApplicationException("Per Documenti Generici Esteri in Euro non è necessario il Documento 1210, bisogna Eliminarlo.");
+        }
         //controllo obbligazione/accertamento
         if (!documentoGenerico.isPassivo_ente()) {
             if (documentoGenerico.getTi_entrate_spese() == Documento_genericoBulk.SPESE) {

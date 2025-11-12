@@ -65,6 +65,16 @@
 		enabledOnInsert="false"				
 		enabledOnSearch="true"
 		label="Numero Livello" />
+	<fieldProperty
+			name="cd_classificane_5_liv"
+			property="cd_classificane_5_liv"
+			inputType="TEXT"
+			inputSize="35"
+			maxLength="35"
+			enabledOnEdit="false"
+			enabledOnInsert="false"
+			enabledOnSearch="true"
+			label="Codice Classificazione al V Liv" />
 
 	<formFieldProperty
 		name="cd_livello_last" />
@@ -74,6 +84,8 @@
 		name="ds_classificazione" />
 	<formFieldProperty
 		name="nr_livello" />
+	<formFieldProperty
+			name="cd_classificane_5_liv" />
 
 	<findFieldProperty
 		name="cd_livello_last" />
@@ -83,6 +95,8 @@
 		name="ds_classificazione" />
 	<findFieldProperty
 		name="nr_livello" />
+	<findFieldProperty
+			name="cd_classificane_5_liv" />
 
 	<columnFieldProperty
 		name="cd_classificazione" />
@@ -90,6 +104,8 @@
 		name="ds_classificazione" />
 	<columnFieldProperty
 		name="nr_livello" />
+	<columnFieldProperty
+			name="cd_classificane_5_liv" />
 
 	<form
 		name="searchtool" >

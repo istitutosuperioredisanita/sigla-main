@@ -446,6 +446,22 @@
                 name="fl_cancellato"
         />
     </columnSet>
+    <columnSet
+            name="C">
+        <columnFieldProperty
+                name="ti_pagamento"
+        />
+        <columnFieldProperty
+                name="numero_conto"
+        />
+        <columnFieldProperty
+                name="intestazione"
+        />
+        <columnFieldProperty
+                name="fl_cancellato"
+        />
+    </columnSet>
+
 
     <columnSet
             name="restService">
@@ -672,6 +688,19 @@
         <formFieldProperty
                 name="codice_swift"
         />
+    </form>
+    <form
+            name="C">
+        <formFieldProperty
+                name="intestazione"
+        />
+        <formFieldProperty
+                name="numero_conto"
+        />
+        <formFieldProperty
+                name="codice_swift"
+        />
+
     </form>
 
     <form

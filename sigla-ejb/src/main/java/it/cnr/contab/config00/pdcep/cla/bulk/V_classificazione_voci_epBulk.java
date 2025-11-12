@@ -21,12 +21,12 @@
 */
 package it.cnr.contab.config00.pdcep.cla.bulk;
 
-import it.cnr.jada.bulk.BulkList;
-
 public class V_classificazione_voci_epBulk extends Classificazione_voci_epBulk {
   	private java.lang.String cd_livello_last;
   	private java.lang.String cd_classificazione;
 	private java.lang.Integer nr_livello;
+
+	private String cd_classificane_5_liv;
 	
 	public V_classificazione_voci_epBulk() {
 		super();
@@ -58,5 +58,13 @@ public class V_classificazione_voci_epBulk extends Classificazione_voci_epBulk {
 
 	public void setNr_livello(java.lang.Integer integer) {
 		nr_livello = integer;
+	}
+
+	public String getCd_classificane_5_liv() {
+		return cd_classificane_5_liv;
+	}
+
+	public void setCd_classificane_5_liv(String cd_classificane_5_liv) {
+		this.cd_classificane_5_liv = cd_classificane_5_liv;
 	}
 }

@@ -1236,5 +1236,43 @@ public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUD
             throw uncaughtError(param0, componentObj, e);
         }
     }
+    @Override
+    public Boolean is1210BonificoEsteroEuro(UserContext userContext) throws ComponentException, RemoteException {
+        try {
+            Boolean result = ((Configurazione_cnrComponent)componentObj).is1210BonificoEsteroEuro(userContext);
+            component_invocation_succes(userContext, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+        } catch (ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
+
+
+    @Override
+    public Boolean isEnabledPartGiroInVarizione(UserContext userContext) throws ComponentException, RemoteException {
+        try {
+            Boolean result = ((Configurazione_cnrComponent)componentObj).isEnabledPartGiroInVarizione(userContext);
+            component_invocation_succes(userContext, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+        } catch (ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
 
 }

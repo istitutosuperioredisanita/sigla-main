@@ -158,4 +158,9 @@ public interface Configurazione_cnrComponentSession extends it.cnr.jada.ejb.CRUD
 
     Boolean isGestioneImportoInventarioReadOnly(UserContext param0) throws ComponentException, RemoteException;
 
+     Boolean is1210BonificoEsteroEuro(UserContext userContext) throws ComponentException, RemoteException;
+
+    Boolean isEnabledPartGiroInVarizione(UserContext userContext) throws ComponentException, RemoteException;
+
+
 }

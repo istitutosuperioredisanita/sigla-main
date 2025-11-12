@@ -1137,6 +1137,9 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
             fattura = setChangeDataToEur(uc, fattura);
             throw handleException(fattura, new it.cnr.jada.comp.ApplicationException("Non esiste una valuta per il periodo specificato!"));
         }
+        if ( !fattura.isEnabledToInsertLettera() && fattura.isDefaultValuta() &&
+                Optional.ofNullable(fattura.getLettera_pagamento_estero()).isPresent())
+            throw handleException(fattura, new it.cnr.jada.comp.ApplicationException("Per Fatture Estere in Euro non è necessario il Documento 1210, bisogna Eliminarlo."));
 
         fattura.setInizio_validita_valuta(cambioValido.getDt_inizio_validita());
         fattura.setFine_validita_valuta(cambioValido.getDt_fine_validita());
@@ -7242,10 +7245,22 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
                 throw new ApplicationMessageFormatException("Sulla riga {0}, con modalità di pagamento PAGOPA, bisogna valorizzare il Numero dell''avviso!", riga.getDs_riga_fattura());
             }
         }
-
-
     }
 
+    private void validaLettera1210(UserContext aUC, Fattura_passivaBulk fatturaPassiva) throws ComponentException,ValidationException{
+        // per gestire lo storico quando era necessario la lettera 1210 per bonifici esteri in euro
+        if ( !fatturaPassiva.isPagata()) {
+            boolean is1210LetteraBonEsteroEuto = Boolean.TRUE;
+            try {
+                is1210LetteraBonEsteroEuto = Utility.createConfigurazioneCnrComponentSession().is1210BonificoEsteroEuro(aUC);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+            if (fatturaPassiva.isDefaultValuta() && (!is1210LetteraBonEsteroEuto) && Optional.ofNullable(fatturaPassiva.getLettera_pagamento_estero()).isPresent())
+                throw new it.cnr.jada.bulk.ValidationException("Per Fatture Estere in Euro non è necessario il Documento 1210, bisogna Eliminarlo.");
+        }
+
+    }
     private void validateFornitore(UserContext aUC, Fattura_passivaBulk fatturaPassiva) throws it.cnr.jada.bulk.ValidationException {
 
         if (fatturaPassiva.getDt_fattura_fornitore() == null)
@@ -7358,6 +7373,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             //controllaCompetenzaCOGEDettagli(aUC, fatturaPassiva);
 
             validateFornitore(aUC, fatturaPassiva);
+            validaLettera1210(aUC, fatturaPassiva);
         } catch (it.cnr.jada.bulk.ValidationException e) {
             throw new it.cnr.jada.comp.ApplicationException(e.getMessage());
         }
