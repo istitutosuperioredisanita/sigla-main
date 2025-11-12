@@ -630,7 +630,7 @@ public class OrdineAcqComponent
                         }
                     } else {
                         esisteScadenzaComune = false;
-                        if ( BigDecimal.ZERO.compareTo(cons.getOrdineAcqRiga().getIm_riga())<0)
+                        if ( BigDecimal.ZERO.compareTo(cons.getImImponibile())<0)
                             isOrdineCompletamenteContabilizzato = false;
                     }
                     if (cons.getUnitaOperativaOrd() != null) {
@@ -1287,7 +1287,7 @@ public class OrdineAcqComponent
                             OrdineAcqRigaBulk riga = (OrdineAcqRigaBulk) i.next();
                             for (java.util.Iterator k = riga.getRigheConsegnaColl().iterator(); k.hasNext(); ) {
                                 OrdineAcqConsegnaBulk cons = (OrdineAcqConsegnaBulk) k.next();
-                                if (cons.getObbligazioneScadenzario() == null || cons.getObbligazioneScadenzario().getPg_obbligazione() == null) {
+                                if (BigDecimal.ZERO.compareTo(cons.getImImponibile())<0 && (cons.getObbligazioneScadenzario() == null || cons.getObbligazioneScadenzario().getPg_obbligazione() == null)) {
                                     throw new it.cnr.jada.comp.ApplicationException("Sulla consegna " + cons.getConsegnaOrdineString() + " non è indicata l'obbligazione");
                                 }
                             }
