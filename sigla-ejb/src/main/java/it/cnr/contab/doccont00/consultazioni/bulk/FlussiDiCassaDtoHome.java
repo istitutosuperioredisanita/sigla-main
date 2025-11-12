@@ -83,6 +83,7 @@ public class FlussiDiCassaDtoHome extends BulkHome {
 		sqlInterna.addSQLClause(FindClause.AND,  sqlInterna.getColumnMap().getTableName().concat(".DT_EMISSIONE"), SQLBuilder.GREATER_EQUALS, flussi.getDtEmissioneDa());
 		sqlInterna.addSQLClause(FindClause.AND,  sqlInterna.getColumnMap().getTableName().concat(".DT_EMISSIONE"), SQLBuilder.LESS_EQUALS, flussi.getDtEmissioneA());
 		sqlInterna.addSQLGroupBy("V_CLASSIFICAZIONE_VOCI_EP.CD_CLASSIFICAZIONE_5_LIV, V_CLASSIFICAZIONE_VOCI_EP.DS_CLASSIFICAZIONE ");
+		sqlInterna.addOrderBy("V_CLASSIFICAZIONE_VOCI_EP.CD_CLASSIFICAZIONE_5_LIV DESC");
 		return sqlInterna;
 	}
 
