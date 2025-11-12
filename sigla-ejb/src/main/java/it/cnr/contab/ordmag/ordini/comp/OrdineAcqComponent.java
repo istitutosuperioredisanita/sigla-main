@@ -22,10 +22,7 @@ import it.cnr.contab.config00.bulk.CigBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_cdsBulk;
 import it.cnr.contab.config00.bulk.Parametri_cdsHome;
-import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
-import it.cnr.contab.config00.contratto.bulk.ContrattoHome;
-import it.cnr.contab.config00.contratto.bulk.Dettaglio_contrattoBulk;
-import it.cnr.contab.config00.contratto.bulk.Procedure_amministrativeBulk;
+import it.cnr.contab.config00.contratto.bulk.*;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoHome;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
@@ -633,7 +630,8 @@ public class OrdineAcqComponent
                         }
                     } else {
                         esisteScadenzaComune = false;
-                        isOrdineCompletamenteContabilizzato = false;
+                        if ( BigDecimal.ZERO.compareTo(cons.getOrdineAcqRiga().getIm_riga())<0)
+                            isOrdineCompletamenteContabilizzato = false;
                     }
                     if (cons.getUnitaOperativaOrd() != null) {
                         UnitaOperativaOrdBulk uop = recuperoUopDest(usercontext, cons);
@@ -2456,7 +2454,16 @@ public class OrdineAcqComponent
         } else
             sql.addSQLClause(FindClause.AND, "STATO", SQLBuilder.EQUALS, ContrattoBulk.STATO_DEFINITIVO);
 
-        sql.addSQLClause(FindClause.AND, "CONTRATTO.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, CNRUserContext.getCd_unita_organizzativa(userContext));
+        //sql.addSQLClause(FindClause.AND, "CONTRATTO.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, CNRUserContext.getCd_unita_organizzativa(userContext));
+        sql.openParenthesis("AND");
+        sql.addSQLClause("AND","CONTRATTO.CD_UNITA_ORGANIZZATIVA",sql.EQUALS,CNRUserContext.getCd_unita_organizzativa(userContext));
+        SQLBuilder sqlAssUo = getHome(userContext, Ass_contratto_uoBulk.class).createSQLBuilder();
+            sqlAssUo.addSQLJoin("CONTRATTO.ESERCIZIO","ASS_CONTRATTO_UO.ESERCIZIO");
+            sqlAssUo.addSQLJoin("CONTRATTO.PG_CONTRATTO","ASS_CONTRATTO_UO.PG_CONTRATTO");
+            sqlAssUo.addSQLClause("AND","ASS_CONTRATTO_UO.CD_UNITA_ORGANIZZATIVA",sql.EQUALS,CNRUserContext.getCd_unita_organizzativa(userContext));
+        sql.addSQLExistsClause("OR",sqlAssUo);
+        sql.closeParenthesis();
+
 
         sql.addTableToHeader("TERZO");
         sql.addSQLJoin("CONTRATTO.FIG_GIUR_EST", SQLBuilder.EQUALS, "TERZO.CD_TERZO");
