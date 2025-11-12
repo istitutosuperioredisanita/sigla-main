@@ -20,24 +20,10 @@
  * Date 28/06/2017
  */
 package it.cnr.contab.ordmag.ordini.bulk;
-import java.sql.Connection;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoHome;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
-import it.cnr.contab.ordmag.anag00.AbilUtenteUopOperBulk;
-import it.cnr.contab.ordmag.anag00.AbilUtenteUopOperHome;
-import it.cnr.contab.ordmag.anag00.NumerazioneOrdBulk;
-import it.cnr.contab.ordmag.anag00.NumerazioneOrdHome;
-import it.cnr.contab.ordmag.anag00.TipoOperazioneOrdBulk;
-import it.cnr.contab.ordmag.anag00.UnitaOperativaOrdBulk;
-import it.cnr.contab.ordmag.anag00.UnitaOperativaOrdHome;
-import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk;
+import it.cnr.contab.ordmag.anag00.*;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.jada.DetailedRuntimeException;
@@ -45,13 +31,17 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.comp.ApplicationException;
-import it.cnr.jada.comp.CRUDException;
-import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.*;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
+
+import java.sql.Connection;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 public class OrdineAcqHome extends BulkHome {
 	public OrdineAcqHome(Connection conn) {
 		super(OrdineAcqBulk.class, conn);
@@ -107,9 +97,10 @@ public class OrdineAcqHome extends BulkHome {
 			throw new ApplicationException("Selezionare prima l'unità operativa");
 		}
 		SQLBuilder sql = numerazioneHome.selectByClause(userContext, compoundfindclause);
-		sql.addSQLClause("AND", "NUMERAZIONE_ORD.CD_UNITA_OPERATIVA", SQLBuilder.EQUALS, ordine.getCdUopOrdine());
-		sql.addSQLClause("AND", "NUMERAZIONE_ORD.ESERCIZIO", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
-		sql.addSQLClause("AND", "NUMERAZIONE_ORD.CD_TIPO_OPERAZIONE", SQLBuilder.EQUALS, TipoOperazioneOrdBulk.OPERAZIONE_ORDINE);
+		sql.addSQLClause(FindClause.AND, "NUMERAZIONE_ORD.CD_UNITA_OPERATIVA", SQLBuilder.EQUALS, ordine.getCdUopOrdine());
+		sql.addSQLClause(FindClause.AND, "NUMERAZIONE_ORD.ESERCIZIO", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
+		sql.addSQLClause(FindClause.AND, "NUMERAZIONE_ORD.CD_TIPO_OPERAZIONE", SQLBuilder.EQUALS, TipoOperazioneOrdBulk.OPERAZIONE_ORDINE);
+		sql.addSQLClause(FindClause.AND,"NUMERAZIONE_ORD.TI_ISTITUZ_COMMERC",SQLBuilder.EQUALS,ordine.getTiAttivita());
 		return sql;
 	}
 	public SQLBuilder selectNumerazioneOrdByClause(UserContext userContext, ParametriSelezioneOrdiniAcqBulk parametriSelezioneOrdiniAcqBulk,
