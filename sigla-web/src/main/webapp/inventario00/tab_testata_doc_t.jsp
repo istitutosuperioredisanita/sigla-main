@@ -4,6 +4,16 @@
         it.cnr.contab.inventario01.bp.*,
         it.cnr.contab.inventario01.bulk.*"
 %>
+
+<!-- Script JavaScript aggiunto per la stampa -->
+<script language="JavaScript">
+function doStampaDocTrasporto() {
+    doPrint('<%=JSPUtils.getAppRoot(request)%>genericdownload/stampaDocTrasportoRientro.html?methodName=stampaDocTrasportoRientro&it.cnr.jada.action.BusinessProcess=<%=bp.getPath()%>',
+            'Documento di Trasporto Rientro',
+            'toolbar=no, location=no, directories=no, status=no, menubar=no,resizable,scrollbars,width=800,height=600').focus() ;
+}
+</script>
+
 <%
     CRUDTraspRientInventarioBP bp = (CRUDTraspRientInventarioBP)BusinessProcess.getBusinessProcess(request);
     Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk)bp.getModel();
@@ -81,19 +91,19 @@
 
     <!-- ==================== TIPO RITIRO ==================== -->
 
-        <tr>
-            <td><% bp.getController().writeFormLabel(out,"tipoRitiro"); %></td>
-            <td colspan="3">
-                <% bp.getController().writeFormInput(
-                    out,
-                    null,
-                    "tipoRitiro",
-                    bp.isTipoRitiroReadOnly(),
-                    null,
-                    null
-                ); %>
-            </td>
-        </tr>
+    <tr>
+        <td><% bp.getController().writeFormLabel(out,"tipoRitiro"); %></td>
+        <td colspan="3">
+            <% bp.getController().writeFormInput(
+                out,
+                null,
+                "tipoRitiro",
+                bp.isTipoRitiroReadOnly(),
+                null,
+                null
+            ); %>
+        </td>
+    </tr>
 
     <!-- ==================== CAMPI CONDIZIONALI ==================== -->
 
@@ -111,6 +121,7 @@
 
     <% } %>
 
+
     <!-- ==================== ASSEGNATARIO (INCARICATO) ==================== -->
 
     <% if (bp.isAssegnatarioVisible()) { %>
@@ -124,12 +135,24 @@
         </tr>
     <% } %>
 
+    <!-- ==================== NOMINATIVO VETTORE ==================== -->
+
+    <% if (bp.isNominativoVettoreVisible()) { %>
+        <tr>
+            <td><% bp.getController().writeFormLabel(out,"nominativoVettore"); %></td>
+            <td colspan="3">
+                <% bp.getController().writeFormInput(out, null, "nominativoVettore",
+                    bp.isNominativoVettoreReadOnly(), null, null); %>
+            </td>
+        </tr>
+    <% } %>
+
     <!-- ==================== NOTE ==================== -->
-        <% if (bp.isNoteAbilitate()) { %>
-            <tr>
-                <td valign="top"><% bp.getController().writeFormLabel(out,"note"); %></td>
-                <td colspan="3"><% bp.getController().writeFormInput(out,"note"); %></td>
-            </tr>
-        <% } %>
+    <% if (bp.isNoteAbilitate()) { %>
+        <tr>
+            <td valign="top"><% bp.getController().writeFormLabel(out,"note"); %></td>
+            <td colspan="3"><% bp.getController().writeFormInput(out,"note"); %></td>
+        </tr>
+    <% } %>
 
 </table>

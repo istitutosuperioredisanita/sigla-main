@@ -2,31 +2,56 @@ package it.cnr.contab.inventario01.bp;
 
 import it.cnr.contab.inventario00.bp.RigheInvDaFatturaCRUDController;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.inventario01.bulk.AllegatoDocTraspRientBulk;
+import it.cnr.contab.inventario01.bulk.AllegatoDocTraspRientDettaglioBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
+import it.cnr.contab.inventario01.service.DocTraspRientCMISService;
 import it.cnr.contab.reports.bp.OfflineReportPrintBP;
+import it.cnr.contab.reports.bulk.Print_spoolerBulk;
 import it.cnr.contab.reports.bulk.Print_spooler_paramBulk;
+import it.cnr.contab.reports.bulk.Report;
+import it.cnr.contab.reports.service.PrintService;
+import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
+import it.cnr.contab.util00.bp.AllegatiCRUDBP;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.DetailedRuntimeException;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.action.HttpActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
+import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.comp.GenerazioneReportException;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.AbstractPrintBP;
 import it.cnr.jada.util.action.RemoteDetailCRUDController;
-import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.action.SelectionListener;
+import it.cnr.si.spring.storage.StorageException;
+import it.cnr.si.spring.storage.StorageObject;
+import org.apache.commons.io.IOUtils;
 
+import javax.activation.MimetypesFileTypeMap;
+import java.io.*;
+import java.nio.file.Files;
 import java.rmi.RemoteException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Stream;
 
 import static it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk.STATO_INSERITO;
 
-public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements SelectionListener {
+public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<AllegatoDocTraspRientBulk, Doc_trasporto_rientroBulk>
+implements SelectionListener {
+
+    private static final DateFormat PDF_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+    private static final String NOME_REPORT_JASPER = "doc_trasporto_rientro.jasper";
+    protected DocTraspRientCMISService storeService;
 
     public static final String TRASPORTO = "T";
     public static final String RIENTRO = "R";
@@ -44,7 +69,7 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
         OggettoBulk[] bulks = null;
         BitSet oldSel = null;
         BitSet newSel = null;
-        BitSet selectionAccumulata = null; // NUOVO: per accumulare le selezioni progressive
+        BitSet selectionAccumulata = null; // per accumulare le selezioni progressive
 
         void clear() {
             principaliConAccessori.clear();
@@ -71,7 +96,8 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
             this.bulks = bulks;
             this.oldSel = oldSel;
             this.newSel = newSel;
-            this.selectionAccumulata = (BitSet) oldSel.clone(); // Inizializza accumulo
+            // null-safe
+            this.selectionAccumulata = oldSel != null ? (BitSet) oldSel.clone() : new BitSet();
         }
 
         boolean isEmpty() {
@@ -201,6 +227,8 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
             throw handleException(e);
         }
         super.init(config, context);
+        storeService = SpringUtil.getBean("docTrasportoRientroCMISService", DocTraspRientCMISService.class);
+
         initVariabili(context, getTipo());
         resetTabs();
     }
@@ -281,7 +309,7 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
     }
 
     public boolean isDocumentoPredispostoAllaFirma() {
-        return getDoc() != null && getDoc().isPredispostoAllaFirma();
+        return getDoc() != null && getDoc().isInviatoInFirma();
     }
 
     public boolean isDocumentoNonModificabile() {
@@ -325,9 +353,9 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
     }
 
     public boolean isNoteAbilitate() {
-        return hasValidModel() &&
-                getDoc().getTipoMovimento() != null &&
-                getDoc().getTipoMovimento().isAbilitaNote();
+        return hasValidModel()
+                && getDoc().getTipoMovimento() != null
+                && getDoc().getTipoMovimento().isAbilitaNote();
     }
 
     public boolean isBottoneAggiungiBeneEnabled() {
@@ -341,10 +369,10 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
     private boolean isCampiCriticiReadOnly() {
         if (isDocumentoNonModificabile()) return true;
 
-        return isEditing() &&
-                hasValidModel() &&
-                getDoc().getDoc_trasporto_rientro_dettColl() != null &&
-                !getDoc().getDoc_trasporto_rientro_dettColl().isEmpty();
+        return isEditing()
+                && hasValidModel()
+                && getDoc().getDoc_trasporto_rientro_dettColl() != null
+                && !getDoc().getDoc_trasporto_rientro_dettColl().isEmpty();
     }
 
     public boolean isTipoMovimentoReadOnly() {
@@ -389,9 +417,7 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
 
     @Override
     public boolean isPrintButtonHidden() {
-        return !Optional.ofNullable(getDoc())
-                .flatMap(d -> Optional.ofNullable(d.getPgDocTrasportoRientro()))
-                .isPresent();
+        return true;
     }
 
     @Override
@@ -399,20 +425,35 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
         OfflineReportPrintBP printbp = (OfflineReportPrintBP) abstractprintbp;
         printbp.setReportName("/cnrdocamm/docamm/doc_trasporto_rientro.jasper");
 
-        final Doc_trasporto_rientroBulk docT = Optional.ofNullable(getDoc())
+        final Doc_trasporto_rientroBulk docT = Optional.ofNullable(getModel())
+                .filter(Doc_trasporto_rientroBulk.class::isInstance)
+                .map(Doc_trasporto_rientroBulk.class::cast)
                 .orElseThrow(() -> new DetailedRuntimeException("Modello vuoto!"));
 
-        addPrintParam(printbp, "esercizio", docT.getEsercizio());
-        addPrintParam(printbp, "pg_inventario", docT.getPgInventario());
-        addPrintParam(printbp, "ti_documento", docT.getTiDocumento());
-        addPrintParam(printbp, "pg_doc_trasporto_rientro", docT.getPgDocTrasportoRientro());
-    }
+        Print_spooler_paramBulk param;
 
-    private void addPrintParam(OfflineReportPrintBP printbp, String name, Object value) {
-        Print_spooler_paramBulk param = new Print_spooler_paramBulk();
-        param.setNomeParam(name);
-        param.setValoreParam(value != null ? String.valueOf(value) : null);
-        param.setParamType(value != null ? value.getClass().getCanonicalName() : String.class.getCanonicalName());
+        param = new Print_spooler_paramBulk();
+        param.setNomeParam("esercizio");
+        param.setValoreParam(Optional.ofNullable(docT.getEsercizio()).map(Object::toString).orElse(null));
+        param.setParamType(Integer.class.getCanonicalName());
+        printbp.addToPrintSpoolerParam(param);
+
+        param = new Print_spooler_paramBulk();
+        param.setNomeParam("pg_inventario");
+        param.setValoreParam(Optional.ofNullable(docT.getPgInventario()).map(Object::toString).orElse(null));
+        param.setParamType(Integer.class.getCanonicalName());
+        printbp.addToPrintSpoolerParam(param);
+
+        param = new Print_spooler_paramBulk();
+        param.setNomeParam("ti_documento");
+        param.setValoreParam(docT.getTiDocumento());
+        param.setParamType(String.class.getCanonicalName());
+        printbp.addToPrintSpoolerParam(param);
+
+        param = new Print_spooler_paramBulk();
+        param.setNomeParam("pg_doc_trasporto_rientro");
+        param.setValoreParam(Optional.ofNullable(docT.getPgDocTrasportoRientro()).map(Object::toString).orElse(null));
+        param.setParamType(Integer.class.getCanonicalName());
         printbp.addToPrintSpoolerParam(param);
     }
 
@@ -423,15 +464,18 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
         final Properties props = it.cnr.jada.util.Config.getHandler().getProperties(getClass());
         return Stream.concat(
                 Arrays.stream(super.createToolbar()),
-                Stream.of(new it.cnr.jada.util.jsp.Button(props, "CRUDToolbar.predisponiAllaFirma"))
+                Stream.of(
+                        new it.cnr.jada.util.jsp.Button(props, "CRUDToolbar.predisponiAllaFirma"),
+                        new it.cnr.jada.util.jsp.Button(props, "CRUDToolbar.stampa")
+                )
         ).toArray(it.cnr.jada.util.jsp.Button[]::new);
     }
 
     public boolean isPredisponiAllaFirmaButtonHidden() {
         if (isDocumentoAnnullato()) return true;
-        return !(getModel() != null && (getModel().getCrudStatus() == OggettoBulk.NORMAL ||
-                getModel().getCrudStatus() == OggettoBulk.TO_BE_UPDATED) &&
-                STATO_INSERITO.equals(getDoc().getStato()));
+        return !(getModel() != null
+                && (getModel().getCrudStatus() == OggettoBulk.NORMAL || getModel().getCrudStatus() == OggettoBulk.TO_BE_UPDATED)
+                && STATO_INSERITO.equals(getDoc().getStato()));
     }
 
     // ==================== CONTROLLERS ====================
@@ -449,7 +493,7 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
 
         @Override
         protected RemoteIterator createRemoteIterator(ActionContext context) {
-            if (isInserting() || isEditing() && !isDocumentoAnnullato()) {
+            if (isInserting() || (isEditing() && !isDocumentoAnnullato())) {
                 try {
                     return selectDettaglibyClause(context);
                 } catch (BusinessProcessException e) {
@@ -469,8 +513,7 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
         }
 
         @Override
-        public void removeDetails(ActionContext context, OggettoBulk[] details)
-                throws BusinessProcessException {
+        public void removeDetails(ActionContext context, OggettoBulk[] details) throws BusinessProcessException {
             if (isDocumentoAnnullato()) {
                 throw new BusinessProcessException("Impossibile modificare un documento annullato");
             }
@@ -488,7 +531,8 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
                         List<Inventario_beniBulk> found = getComp().cercaBeniAccessoriAssociatiInDettaglio(
                                 context.getUserContext(),
                                 getDoc(),
-                                bene);
+                                bene
+                        );
 
                         if (found != null && !found.isEmpty()) {
                             ps.principaliConAccessori.put(bene, found);
@@ -572,7 +616,8 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
             return getComp().selectBeniAssociatiByClause(
                     context.getUserContext(),
                     getDoc(),
-                    Inventario_beniBulk.class);
+                    Inventario_beniBulk.class
+            );
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
         }
@@ -672,14 +717,13 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
         try {
             PendingSelection ps = new PendingSelection();
             ps.bulks = bulks;
-            ps.oldSel = (BitSet) oldSelection.clone();
-            ps.newSel = (BitSet) newSelection.clone();
-            ps.selectionAccumulata = (BitSet) oldSelection.clone(); // CRITICO: inizializza accumulo
+            ps.oldSel = oldSelection != null ? (BitSet) oldSelection.clone() : new BitSet();
+            ps.newSel = newSelection != null ? (BitSet) newSelection.clone() : new BitSet();
+            ps.selectionAccumulata = oldSelection != null ? (BitSet) oldSelection.clone() : new BitSet();
 
             for (int i = 0; i < bulks.length; i++) {
                 if (oldSelection.get(i) == newSelection.get(i)) continue;
-                OggettoBulk o = bulks[i];
-                Inventario_beniBulk bene = (Inventario_beniBulk) o;
+                Inventario_beniBulk bene = (Inventario_beniBulk) bulks[i];
 
                 if (ps.newSel.get(i)) {
                     if (bene.isBeneAccessorio()) {
@@ -694,6 +738,7 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
                     }
                 }
             }
+
             if (ps.principaliConAccessori.isEmpty()) {
                 if (!ps.isEmpty()) {
                     modificaBeniConAccessoriComponente(context, bulks, oldSelection, newSelection);
@@ -740,9 +785,6 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
         return Collections.emptyList();
     }
 
-    /**
-     * : Versione che accetta il bene corrente come parametro
-     */
     public String getMessaggioSingoloBene(boolean isEliminazione, Inventario_beniBulk beneCorrente) {
         if (beneCorrente == null) {
             return "";
@@ -760,8 +802,7 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
                 msg.append(" e etichetta ").append(beneCorrente.getEtichetta());
             }
             msg.append(" ha ").append(numAccessori);
-            String pluraleAccessorio = (numAccessori == 1) ? " bene accessorio" : " beni accessori";
-            msg.append(pluraleAccessorio).append(".\n\n");
+            msg.append(numAccessori == 1 ? " bene accessorio" : " beni accessori").append(".\n\n");
             msg.append("Come vuoi procedere?\n\n");
             msg.append("• SI: Elimina il bene principale CON tutti gli accessori\n");
             msg.append("• NO: Elimina SOLO il bene principale (mantieni accessori)\n");
@@ -772,9 +813,7 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
                 msg.append(" e etichetta ").append(beneCorrente.getEtichetta());
             }
             msg.append(" che ha ").append(numAccessori);
-            String pluraleAccessorio = (numAccessori == 1) ? " bene accessorio" : " beni accessori";
-            String verbo = (numAccessori == 1) ? "associato" : "associati";
-            msg.append(pluraleAccessorio).append(" ").append(verbo).append(".\n\n");
+            msg.append(numAccessori == 1 ? " bene accessorio associato" : " beni accessori associati").append(".\n\n");
             String articoloFinale = (numAccessori == 1) ? "questo accessorio" : "questi accessori";
             String azione = getTipo().equals(TRASPORTO) ? "nell'aggiunta" : "nel rientro";
             msg.append("Vuoi includere anche ").append(articoloFinale).append(" ").append(azione).append("?");
@@ -783,7 +822,7 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
         return msg.toString();
     }
 
-
+    // ========================= AVANZAMENTO/ELABORAZIONE =========================
 
     public int getTotaleBeniPrincipali(boolean isEliminazione) {
         PendingSelection ps = isEliminazione ? pendingDelete : pendingAdd;
@@ -800,10 +839,8 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
 
         if (isEliminazione) {
             if (includiAccessori) {
-                // Elimina bene principale CON accessori
                 eliminaBeneCorrente(context);
             } else {
-                // Elimina SOLO bene principale SENZA accessori
                 eliminaBenePrincipaleSenzaAccessori(context);
             }
         } else {
@@ -821,22 +858,19 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
                         context.getUserContext(),
                         getDoc(),
                         bene,
-                        accessori);
+                        accessori
+                );
             } catch (ComponentException | RemoteException e) {
                 throw handleException(e);
             }
         }
     }
 
-    /**
-     * Elimina SOLO il bene principale, mantenendo gli accessori
-     */
     private void eliminaBenePrincipaleSenzaAccessori(ActionContext context) throws BusinessProcessException {
         Inventario_beniBulk bene = getBenePrincipaleCorrente(true);
 
         if (bene != null) {
             try {
-                // Elimina solo il bene principale, NON gli accessori
                 OggettoBulk[] soloIlPrincipale = new OggettoBulk[]{bene};
                 getComp().eliminaBeniAssociati(context.getUserContext(), getDoc(), soloIlPrincipale);
             } catch (ComponentException | RemoteException e) {
@@ -852,38 +886,30 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
         if (bene == null) return;
 
         try {
-            // Usa selectionAccumulata invece di oldSel
-            BitSet tempSelection = (BitSet) pendingAdd.selectionAccumulata.clone();
+            BitSet tempSelection = (pendingAdd != null && pendingAdd.selectionAccumulata != null)
+                    ? (BitSet) pendingAdd.selectionAccumulata.clone()
+                    : new BitSet();
 
-            // Aggiungi il bene principale al BitSet
-            boolean benePrincipaleAggiunto = false;
+            // Seleziona il bene principale
             for (int i = 0; i < pendingAdd.bulks.length; i++) {
                 if (pendingAdd.bulks[i] instanceof Inventario_beniBulk) {
                     Inventario_beniBulk b = (Inventario_beniBulk) pendingAdd.bulks[i];
                     if (b.equalsByPrimaryKey(bene)) {
                         tempSelection.set(i);
-                        benePrincipaleAggiunto = true;
-
                         break;
                     }
                 }
             }
 
-            // Gestisci gli accessori se richiesto
             if (includiAccessori) {
                 List<Inventario_beniBulk> accessori = getAccessoriCorrente(false);
-
                 if (accessori != null && !accessori.isEmpty()) {
-
-                    // Aggiungi al BitSet gli accessori presenti in bulks[]
-                    int accessoriInBulks = 0;
                     for (Inventario_beniBulk acc : accessori) {
                         for (int i = 0; i < pendingAdd.bulks.length; i++) {
                             if (pendingAdd.bulks[i] instanceof Inventario_beniBulk) {
                                 Inventario_beniBulk b = (Inventario_beniBulk) pendingAdd.bulks[i];
                                 if (b.equalsByPrimaryKey(acc)) {
                                     tempSelection.set(i);
-                                    accessoriInBulks++;
                                     break;
                                 }
                             }
@@ -892,19 +918,17 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
                 }
             }
 
-            //  Chiama il component per i beni in bulks[]
-            // Questo aggiunge il principale + accessori trovati in bulks[]
+            // Applica modifica per elementi in bulks[]
             modificaBeniConAccessoriComponente(context, pendingAdd.bulks,
-                    pendingAdd.selectionAccumulata, tempSelection);
+                    pendingAdd.selectionAccumulata != null ? pendingAdd.selectionAccumulata : new BitSet(),
+                    tempSelection);
 
-
-            // Aggiungi gli accessori NON presenti in bulks[]
+            // Aggiungi accessori non presenti in bulks[]
             if (includiAccessori) {
                 List<Inventario_beniBulk> accessori = getAccessoriCorrente(false);
                 aggiungiAccessoriMancanti(context, accessori);
             }
 
-            //  Aggiorna selectionAccumulata per il prossimo giro
             pendingAdd.selectionAccumulata = (BitSet) tempSelection.clone();
 
         } catch (ComponentException | RemoteException e) {
@@ -912,11 +936,6 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
         }
     }
 
-
-    /**
-     * Aggiunge direttamente gli accessori che NON sono presenti nell'array bulks[]
-     * (accessori in pagine successive del selezionatore)
-     */
     private void aggiungiAccessoriMancanti(ActionContext context, List<Inventario_beniBulk> accessori)
             throws BusinessProcessException {
 
@@ -924,7 +943,6 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
 
         try {
             for (Inventario_beniBulk acc : accessori) {
-                // Verifica se l'accessorio è presente in bulks[]
                 boolean trovatoInBulks = false;
                 for (int i = 0; i < pendingAdd.bulks.length; i++) {
                     if (pendingAdd.bulks[i] instanceof Inventario_beniBulk) {
@@ -936,16 +954,11 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
                     }
                 }
 
-                // Se NON è in bulks[], aggiungilo direttamente con una chiamata separata
                 if (!trovatoInBulks) {
-
-                    // Crea un array con solo questo accessorio
                     OggettoBulk[] accessorioArray = new OggettoBulk[]{acc};
                     BitSet vuoto = new BitSet(1);
                     BitSet selezionato = new BitSet(1);
                     selezionato.set(0);
-
-                    // Chiamata diretta al component per questo accessorio
                     modificaBeniConAccessoriComponente(context, accessorioArray, vuoto, selezionato);
                 }
             }
@@ -953,7 +966,6 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
             throw handleException(e);
         }
     }
-
 
     public boolean passaAlProssimoBene(boolean isEliminazione) {
         if (isEliminazione) {
@@ -981,7 +993,7 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
         }
     }
 
-    // ========================= METODI DI VERIFICA =========================
+    // ========================= STATISTICHE E STATO =========================
 
     public boolean hasBeniPrincipaliConAccessoriPerEliminazione() {
         return pendingDelete != null && !pendingDelete.principaliConAccessori.isEmpty();
@@ -995,15 +1007,13 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
         return pendingAdd != null && !pendingAdd.accessori.isEmpty();
     }
 
-    // ========================= STATISTICHE =========================
-
     public int getNumeroBeniPrincipaliConAccessori() {
         return (pendingAdd != null) ? pendingAdd.principaliConAccessori.size() : 0;
     }
 
     public int getNumeroBeniAccessoriTotaliPendenti() {
         if (pendingAdd == null) return 0;
-        return (int) pendingAdd.principaliConAccessori.values().stream().mapToInt(List::size).sum();
+        return pendingAdd.principaliConAccessori.values().stream().mapToInt(List::size).sum();
     }
 
     public int getNumeroBeniSemplici() {
@@ -1023,19 +1033,20 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
         this.pendingAdd = pendingAdd;
     }
 
-    // ========================= GETTERS/SETTERS =========================
-
     public int getIndexBeneCurrentePerEliminazione() {
         return indexBeneCurrentePerEliminazione;
-    }
-
-    public void setIndexBeneCurrentePerEliminazione(int value) {
-        this.indexBeneCurrentePerEliminazione = value;
     }
 
     public int getIndexBeneCurrentePerAggiunta() {
         return indexBeneCurrentePerAggiunta;
     }
+
+    // ========================= GETTERS/SETTERS =========================
+
+    public void setIndexBeneCurrentePerEliminazione(int value) {
+        this.indexBeneCurrentePerEliminazione = value;
+    }
+
 
     public void setIndexBeneCurrentePerAggiunta(int value) {
         this.indexBeneCurrentePerAggiunta = value;
@@ -1047,6 +1058,172 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
 
     public void setUltimaOperazioneEliminazione(boolean value) {
         this.ultimaOperazioneEliminazione = value;
+    }
+
+    // ========================= CAMPI SPECIFICI UI =========================
+
+    public boolean isNominativoVettoreVisible() {
+        return getModel() != null && getDoc() != null && getDoc().isNominativoVettoreVisible();
+    }
+
+    public boolean isNominativoVettoreReadOnly() {
+        return isCampiCriticiReadOnly();
+    }
+
+    // ========================= STAMPA DOCUMENTO =========================
+
+    public boolean isStampaDocButtonHidden() {
+        Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
+        return (doc == null || doc.getPgDocTrasportoRientro() == null);
+    }
+
+    public void stampaDoc(ActionContext actioncontext) throws Exception {
+        Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
+        HttpActionContext httpCtx = (HttpActionContext) actioncontext;
+        httpCtx.getResponse().setContentType("application/pdf");
+        httpCtx.getResponse().setDateHeader("Expires", 0);
+
+        OutputStream os = httpCtx.getResponse().getOutputStream();
+
+        // Se disponibile nel documentale, usa quello; altrimenti genera e invia
+        try (InputStream is = storeService.getStreamDoc(doc, actioncontext.getUserContext())) {
+            if (is != null) {
+                IOUtils.copy(is, os);
+            } else {
+                File f = stampaDocTrasportoRientro(actioncontext.getUserContext(), doc);
+                try (InputStream fis = Files.newInputStream(f.toPath())) {
+                    IOUtils.copy(fis, os);
+                }
+            }
+            os.flush();
+        }
+    }
+
+    public File stampaDocTrasportoRientro(UserContext userContext, Doc_trasporto_rientroBulk docTrasportoRientro)
+            throws ComponentException {
+        try {
+            final String reportPath = "/cnrdocamm/docamm/doc_trasporto_rientro.jasper";
+            final String nomeFileOut = getOutputFileNameDoc(NOME_REPORT_JASPER, docTrasportoRientro);
+
+            final String baseTmp = System.getProperty("tmp.dir.SIGLAWeb", System.getProperty("java.io.tmpdir"));
+            final File tmpDir = new File(baseTmp, "tmp");
+            if (!tmpDir.exists() && !tmpDir.mkdirs()) {
+                throw new GenerazioneReportException("Impossibile creare la directory temporanea: " + tmpDir.getAbsolutePath());
+            }
+
+            final File output = new File(tmpDir, nomeFileOut);
+
+            Print_spoolerBulk print = new Print_spoolerBulk();
+            print.setFlEmail(false);
+            print.setReport(reportPath);
+            print.setNomeFile(nomeFileOut);
+            print.setUtcr(userContext.getUser());
+            print.setPgStampa(Math.abs(UUID.randomUUID().getLeastSignificantBits()));
+
+            // Parametri allineati a initializePrintBP
+            print.addParam("esercizio", docTrasportoRientro.getEsercizio(), Integer.class);
+            print.addParam("pg_inventario", docTrasportoRientro.getPgInventario(), Long.class);
+            print.addParam("ti_documento", docTrasportoRientro.getTiDocumento(), String.class);
+            print.addParam("pg_doc_trasporto_rientro", docTrasportoRientro.getPgDocTrasportoRientro(), Long.class);
+
+            Report report = SpringUtil.getBean("printService", PrintService.class)
+                    .executeReport(userContext, print);
+
+            try (FileOutputStream fos = new FileOutputStream(output)) {
+                fos.write(report.getBytes());
+                fos.flush();
+            }
+
+            return output;
+        } catch (IOException e) {
+            throw new GenerazioneReportException("Generazione Stampa non riuscita", e);
+        }
+    }
+
+    // ========================= ALLEGATI DOCUMENTALE =========================
+
+    /**
+     * Gestisce l'allegato della stampa del documento nel documentale.
+     * - Se il documento NON è predisposto alla firma/firmato, elimina eventuali stampe esistenti
+     * - Se il documento è predisposto alla firma e non esiste una stampa, la crea e la allega
+     *
+     * @param userContext il contesto utente
+     * @throws Exception in caso di errore
+     */
+    private void allegatoStampaDoc(UserContext userContext) throws Exception {
+        Doc_trasporto_rientroBulk docTrasportoRientro = (Doc_trasporto_rientroBulk) getModel();
+        StorageObject s = ((DocTraspRientCMISService) storeService)
+                .getStorageObjectStampaDoc(docTrasportoRientro, userContext);
+
+        // Se non in stato predisposto/firmato e una stampa esiste, eliminala
+        if (!Doc_trasporto_rientroBulk.STATO_INVIATO.equals(docTrasportoRientro.getStato())
+                && !Doc_trasporto_rientroBulk.STATO_FIRMATO.equals(docTrasportoRientro.getStato())
+                && s != null) {
+            storeService.delete(s);
+        }
+
+        // Se predisposto alla firma e la stampa non è presente, allega
+        if (Doc_trasporto_rientroBulk.STATO_INVIATO.equals(docTrasportoRientro.getStato()) && s == null) {
+            File f = stampaDocTrasportoRientro(userContext, docTrasportoRientro);
+
+            AllegatoDocTraspRientBulk allegatoStampa = new AllegatoDocTraspRientBulk();
+            allegatoStampa.setFile(f);
+            allegatoStampa.setContentType(new MimetypesFileTypeMap().getContentType(f.getName()));
+            allegatoStampa.setNome(f.getName());
+            allegatoStampa.setDescrizione(f.getName());
+            allegatoStampa.setTitolo(f.getName());
+            allegatoStampa.setCrudStatus(OggettoBulk.TO_BE_CREATED);
+            allegatoStampa.setAspectName(DocTraspRientCMISService.ASPECT_STAMPA_DOC);
+            allegatoStampa.setDocTrasportoRientro(docTrasportoRientro);
+            docTrasportoRientro.addToArchivioAllegati(allegatoStampa);
+        }
+    }
+
+    // ========================= UPDATE OVERRIDE =========================
+
+    @Override
+    public void update(ActionContext context) throws BusinessProcessException {
+        try {
+            getModel().setToBeUpdated();
+            setModel(context, getComp().modificaConBulk(context.getUserContext(), getModel()));
+
+            // Genera/aggiorna allegato stampa in base allo stato
+            allegatoStampaDoc(context.getUserContext());
+
+            // Archiviazione allegati - questi metodi sono ora forniti da AllegatiCRUDBP
+            archiviaAllegati(context);
+            archiviaAllegatiDettaglio(context);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }
+
+    // ========================= UTILS STAMPA =========================
+
+    private String getOutputFileNameDoc(String reportName, Doc_trasporto_rientroBulk doc) {
+        String fileName = preparaFileNamePerStampa(reportName);
+        fileName = PDF_DATE_FORMAT.format(new java.util.Date()) + '_'
+                + doc.getEsercizio() + '_'
+                + doc.getPgInventario() + '_'
+                + doc.getTiDocumento() + '_'
+                + doc.getPgDocTrasportoRientro() + '_' + fileName;
+        return fileName;
+    }
+
+    private String preparaFileNamePerStampa(String reportName) {
+        String fileName = reportName;
+        fileName = fileName.replace('/', '_').replace('\\', '_');
+        if (fileName.startsWith("_"))
+            fileName = fileName.substring(1);
+        if (fileName.endsWith(".jasper"))
+            fileName = fileName.substring(0, fileName.length() - 7);
+        return fileName + ".pdf";
+    }
+
+    protected DocTrasportoRientroComponentSession getComp() throws BusinessProcessException {
+        return (DocTrasportoRientroComponentSession) createComponentSession(
+                "CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession",
+                DocTrasportoRientroComponentSession.class);
     }
 
     public it.cnr.jada.persistency.sql.CompoundFindClause getClauses() {
@@ -1065,15 +1242,103 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
         return editDettController;
     }
 
-    // ========================= COMPONENT SESSION =========================
+    // ========================= GETTERS/SETTERS =========================
 
-    protected DocTrasportoRientroComponentSession getComp() throws BusinessProcessException {
-        return (DocTrasportoRientroComponentSession) createComponentSession(
-                "CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession",
-                DocTrasportoRientroComponentSession.class);
+
+
+    /**
+     * Archivia gli allegati dei dettagli del documento di trasporto/rientro
+     * Gestisce creazione, modifica ed eliminazione degli allegati
+     *
+     * @throws ApplicationException se si verifica un errore di business
+     * @throws BusinessProcessException se si verifica un errore di processo
+     */
+    /**
+     * Archivia gli allegati dei dettagli del documento di trasporto/rientro
+     * Gestisce creazione, modifica ed eliminazione degli allegati
+     *
+     * @param context il contesto dell'azione
+     * @throws ApplicationException se si verifica un errore di business
+     * @throws BusinessProcessException se si verifica un errore di processo
+     */
+    private void archiviaAllegatiDettaglio(ActionContext context)
+            throws ApplicationException, BusinessProcessException {
+        Doc_trasporto_rientroBulk doc = getDoc();
+
+        // Itera sui dettagli del documento
+        for (Doc_trasporto_rientro_dettBulk dettaglio :
+                (java.util.Collection<Doc_trasporto_rientro_dettBulk>) doc.getDoc_trasporto_rientro_dettColl()) {
+
+            // Gestione allegati da creare o modificare
+            for (AllegatoGenericoBulk allegato : dettaglio.getArchivioAllegati()) {
+                if (allegato.isToBeCreated()) {
+                    // Creazione nuovo allegato
+                    try {
+                        storeService.storeSimpleDocument(
+                                allegato,
+                                new FileInputStream(allegato.getFile()),
+                                allegato.getContentType(),
+                                allegato.getNome(),
+                                ((DocTraspRientCMISService) storeService)
+                                        .getStorePathDettaglio(dettaglio, context.getUserContext())
+                        );
+                        allegato.setCrudStatus(OggettoBulk.NORMAL);
+                    } catch (FileNotFoundException e) {
+                        throw handleException(e);
+                    } catch (StorageException e) {
+                        if (e.getType().equals(StorageException.Type.CONSTRAINT_VIOLATED)) {
+                            throw new ApplicationException(
+                                    "File [" + allegato.getNome() + "] già presente. Inserimento non possibile!"
+                            );
+                        }
+                        throw handleException(e);
+                    }
+                } else if (allegato.isToBeUpdated()) {
+                    // Modifica allegato esistente
+                    if (isPossibileModifica(allegato)) {
+                        try {
+                            if (allegato.getFile() != null) {
+                                storeService.updateStream(
+                                        allegato.getStorageKey(),
+                                        new FileInputStream(allegato.getFile()),
+                                        allegato.getContentType()
+                                );
+                            }
+                            storeService.updateProperties(
+                                    allegato,
+                                    storeService.getStorageObjectBykey(allegato.getStorageKey())
+                            );
+                            allegato.setCrudStatus(OggettoBulk.NORMAL);
+                        } catch (FileNotFoundException e) {
+                            throw handleException(e);
+                        }
+                    }
+                }
+            }
+
+            // Gestione eliminazione allegati marcati per la cancellazione
+            for (Iterator<AllegatoDocTraspRientDettaglioBulk> iterator =
+                 dettaglio.getArchivioAllegati().deleteIterator(); iterator.hasNext();) {
+                AllegatoDocTraspRientDettaglioBulk allegato = iterator.next();
+                if (allegato.isToBeDeleted()) {
+                    storeService.delete(allegato.getStorageKey());
+                    allegato.setCrudStatus(OggettoBulk.NORMAL);
+                }
+            }
+        }
+
+        // Gestione eliminazione allegati di dettagli cancellati
+        for (Iterator<Doc_trasporto_rientro_dettBulk> iterator =
+             doc.getDoc_trasporto_rientro_dettColl().deleteIterator(); iterator.hasNext();) {
+            Doc_trasporto_rientro_dettBulk dettaglio = iterator.next();
+            for (AllegatoGenericoBulk allegato : dettaglio.getArchivioAllegati()) {
+                if (allegato.isToBeDeleted()) {
+                    storeService.delete(allegato.getStorageKey());
+                    allegato.setCrudStatus(OggettoBulk.NORMAL);
+                }
+            }
+        }
     }
-
-
 
     /**
      * Elabora un singolo bene principale con o senza accessori
@@ -1171,6 +1436,5 @@ public abstract class CRUDTraspRientInventarioBP extends SimpleCRUDBP implements
             throw handleException(e);
         }
     }
-
 
 }

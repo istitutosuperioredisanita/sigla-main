@@ -116,9 +116,11 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                 eliminaBeniSePresenti(context, bp, doc, "Tipo ritiro modificato. Beni precedenti rimossi.");
             }
 
-            // Gestisci il caso specifico del tipo ritiro vettore
             if (Doc_trasporto_rientroBulk.TIPO_RITIRO_VETTORE.equals(newValue)) {
-                doc.setAnagDipRitiro(null);
+                doc.setAnagDipRitiro(null); // Pulisci dipendente incaricato
+                doc.setCdTerzoAssegnatario(null);
+            } else if (Doc_trasporto_rientroBulk.TIPO_RITIRO_INCARICATO.equals(newValue)) {
+                doc.setNominativoVettore(null); // Pulisci nominativo vettore
             }
 
             // Aggiorna il model nel BP
@@ -543,7 +545,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                 bp.setMessage("Il documento è già stato annullato.");
                 return context.findDefaultForward();
             }
-            if (doc.isPredispostoAllaFirma()) {
+            if (doc.isInviatoInFirma()) {
                 bp.setMessage("Impossibile annullare un documento già predisposto alla firma.");
                 return context.findDefaultForward();
             }

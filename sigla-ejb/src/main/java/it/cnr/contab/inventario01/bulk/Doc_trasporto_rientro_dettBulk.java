@@ -24,10 +24,16 @@ import it.cnr.contab.inventario00.tabrif.bulk.Condizione_beneBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Ubicazione_beneBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.TipoIVA;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
+import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
+import it.cnr.jada.bulk.BulkCollection;
+import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.util.StrServ;
 
 import java.rmi.RemoteException;
+import java.util.Optional;
 
 /**
  * Dettaglio documento Trasporto/Rientro.
@@ -41,7 +47,7 @@ import java.rmi.RemoteException;
  * - FK verso DOC_TRASPORTO_RIENTRO (testata) → OBBLIGATORIA, ON DELETE CASCADE
  * - FK verso DOC_TRASPORTO_RIENTRO_DETT (riferimento) → per i rientri
  */
-public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBase {
+public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBase implements AllegatoParentBulk {
 
     // ========================================
     // ATTRIBUTI
@@ -66,6 +72,9 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
     private Boolean fl_accessorio_contestuale = Boolean.FALSE;
     protected Boolean fl_bene_accessorio;
     private Categoria_gruppo_voceBulk cat_voce;
+
+    private BulkList<AllegatoGenericoBulk> dettaglioAllegati = new BulkList<AllegatoGenericoBulk>();
+
 
     // ========================================
     // COSTRUTTORI
@@ -357,4 +366,77 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
     public void setCat_voce(Categoria_gruppo_voceBulk cat_voce) {
         this.cat_voce = cat_voce;
     }
+
+    public String constructCMISNomeFile() {
+        StringBuffer nomeFile = new StringBuffer();
+        nomeFile = nomeFile.append(StrServ.lpad(this.getPg_doc_trasporto_rientro().toString(), 9, "0"));
+        return nomeFile.toString();
+    }
+
+// ========================================
+// GESTIONE ALLEGATI (AllegatoParentBulk)
+// ========================================
+
+    /**
+     * Aggiunge un allegato alla lista degli allegati del dettaglio.
+     * Se l'allegato è di tipo AllegatoDocTrasportoRientroDettaglioBulk,
+     * imposta automaticamente il riferimento al dettaglio.
+     *
+     * @param allegato l'allegato da aggiungere
+     * @return l'indice nella lista dove è stato aggiunto l'allegato
+     */
+    @Override
+    public int addToArchivioAllegati(AllegatoGenericoBulk allegato) {
+        Optional.ofNullable(allegato)
+                .filter(AllegatoDocTraspRientDettaglioBulk.class::isInstance)
+                .map(AllegatoDocTraspRientDettaglioBulk.class::cast)
+                .ifPresent(el -> el.setDocTrasportoRientroDettaglio(this));
+        dettaglioAllegati.add(allegato);
+        return dettaglioAllegati.size() - 1;
+    }
+
+    /**
+     * Rimuove un allegato dalla lista degli allegati del dettaglio.
+     * L'allegato viene marcato per la cancellazione (setToBeDeleted).
+     *
+     * @param index l'indice dell'allegato da rimuovere
+     * @return l'allegato rimosso
+     */
+    @Override
+    public AllegatoGenericoBulk removeFromArchivioAllegati(int index) {
+        AllegatoGenericoBulk allegato = dettaglioAllegati.remove(index);
+        allegato.setToBeDeleted();
+        return allegato;
+    }
+
+    /**
+     * Restituisce la lista degli allegati del dettaglio
+     *
+     * @return la lista degli allegati
+     */
+    @Override
+    public BulkList<AllegatoGenericoBulk> getArchivioAllegati() {
+        return dettaglioAllegati;
+    }
+
+    /**
+     * Imposta la lista degli allegati del dettaglio
+     *
+     * @param archivioAllegati la nuova lista degli allegati
+     */
+    @Override
+    public void setArchivioAllegati(BulkList<AllegatoGenericoBulk> archivioAllegati) {
+        this.dettaglioAllegati = archivioAllegati;
+    }
+
+    /**
+     * Restituisce le collezioni di oggetti che devono essere resi persistenti.
+     */
+    public BulkCollection[] getBulkLists() {
+        return new BulkCollection[] {
+                dettaglioAllegati
+        };
+    }
+
+
 }

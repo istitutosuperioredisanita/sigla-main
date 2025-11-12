@@ -547,7 +547,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             Doc_trasporto_rientroBulk docTR = caricaRelazioniCompleteDocumento(userContext, doc);
 
             // ==================== CAMBIA STATO ====================
-            docTR.setStato(Doc_trasporto_rientroBulk.STATO_PREDISPOSTO_FIRMA);
+            docTR.setStato(Doc_trasporto_rientroBulk.STATO_INVIATO);
             docTR.setToBeUpdated();
 
             // ==================== SALVA UNA SOLA VOLTA ====================
@@ -1350,7 +1350,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 throw new ApplicationException("Il documento è già annullato");
             }
 
-            if (Doc_trasporto_rientroBulk.STATO_PREDISPOSTO_FIRMA.equals(doc.getStato())) {
+            if (Doc_trasporto_rientroBulk.STATO_INVIATO.equals(doc.getStato())) {
                 throw new ApplicationException(
                         "Impossibile annullare un documento predisposto alla firma"
                 );
@@ -1382,7 +1382,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     private Doc_trasporto_rientroBulk caricaRelazioniCompleteDocumento(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc)
-            throws ComponentException {  // ← Cambia da void a Doc_trasporto_rientroBulk
+            throws ComponentException {
 
         try {
             // ========== CARICA DETTAGLI E BENI ==========
@@ -1393,7 +1393,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             // Per ogni dettaglio, carica il bene
             SimpleBulkList dettagli = doc.getDoc_trasporto_rientro_dettColl();
-            if (dettagli != null && !dettagli.isEmpty()) {  // ← Aggiungi !isEmpty()
+            if (dettagli != null && !dettagli.isEmpty()) {
                 Inventario_beniHome beniHome =
                         (Inventario_beniHome) getHome(userContext, Inventario_beniBulk.class);
 
@@ -1422,7 +1422,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 }
             }
 
-            return doc;  // ← AGGIUNGI QUESTO!
+            return doc;
 
         } catch (PersistencyException e) {
             throw new ComponentException(
@@ -1430,6 +1430,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             );
         }
     }
+
 
 
 // ========================================

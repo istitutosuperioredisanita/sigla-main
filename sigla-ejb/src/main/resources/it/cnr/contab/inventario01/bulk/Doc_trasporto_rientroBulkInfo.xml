@@ -151,6 +151,16 @@
             label="Incaricato al Ritiro"
             caseSensitiveSearch="false" />
 
+    <!-- ⚠️ NUOVO CAMPO: Nominativo Vettore -->
+    <fieldProperty
+            name="nominativoVettore"
+            property="nominativoVettore"
+            inputType="TEXT"
+            maxLength="100"
+            inputSize="50"
+            label="Nominativo Vettore"
+            nullable="true" />
+
     <!-- Consegnatario -->
     <fieldProperty
             name="cdConsegnatario"
@@ -218,6 +228,8 @@
     <formFieldProperty name="tipoRitiro"/>
     <formFieldProperty name="find_assegnatario" />
     <formFieldProperty name="cd_assegnatario" />
+    <!-- ⚠️ NUOVO: Aggiungi al form -->
+    <formFieldProperty name="nominativoVettore" />
     <formFieldProperty name="note" />
     <formFieldProperty name="stato" />
     <formFieldProperty name="cdUoConsegnataria" />
@@ -249,6 +261,7 @@
     <findFieldProperty name="tipoMovimento" />
     <findFieldProperty name="dsDocTrasportoRientro" />
     <findFieldProperty name="destinazione" />
+    <findFieldProperty name="nominativoVettore" />
 
     <!-- ============================================ -->
     <!-- COLUMN SETS -->
@@ -268,30 +281,4 @@
         <columnFieldProperty name="esercizio" />
         <columnFieldProperty name="pgDocTrasportoRientro" />
         <columnFieldProperty name="dataRegistrazione" label="Data Rientro"/>
-        <columnFieldProperty name="tipoMovimento" />
-        <columnFieldProperty name="dsDocTrasportoRientro" />
-        <columnFieldProperty name="destinazione" />
-        <columnFieldProperty name="stato" />
-    </columnSet>
-
-    <!-- ============================================ -->
-    <!-- FREE SEARCH SETS -->
-    <!-- ============================================ -->
-
-    <freeSearchSet name="T">
-        <findFieldProperty name="tipoMovimento" />
-        <findFieldProperty name="dataRegistrazione"/>
-        <findFieldProperty name="dsDocTrasportoRientro" />
-        <findFieldProperty name="pgDocTrasportoRientro" />
-        <findFieldProperty name="destinazione" />
-    </freeSearchSet>
-
-    <freeSearchSet name="R">
-        <findFieldProperty name="tipoMovimento" />
-        <findFieldProperty name="dataRegistrazione"/>
-        <findFieldProperty name="dsDocTrasportoRientro" />
-        <findFieldProperty name="pgDocTrasportoRientro" />
-        <findFieldProperty name="destinazione" />
-    </freeSearchSet>
-
-</bulkInfo>
+        <columnFiel

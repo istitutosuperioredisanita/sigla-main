@@ -71,6 +71,13 @@
 				nullable="true" />
 
 		<columnMapping
+				columnName="NOMINATIVO_VETTORE"
+				propertyName="nominativoVettore"
+				sqlTypeName="VARCHAR"
+				columnSize="100"
+				nullable="true" />
+
+		<columnMapping
 				columnName="NOTE_RITIRO"
 				propertyName="noteRitiro"
 				sqlTypeName="VARCHAR"
@@ -130,6 +137,7 @@
 	<persistentProperty name="flIncaricato" />
 	<persistentProperty name="flVettore" />
 	<persistentProperty name="cdTerzoAssegnatario" />
+	<persistentProperty name="nominativoVettore" />
 	<persistentProperty name="noteRitiro" />
 	<persistentProperty name="note" />
 	<persistentProperty name="dacr" />

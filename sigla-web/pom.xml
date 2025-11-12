@@ -303,6 +303,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>it.iss.si</groupId>
+            <artifactId>happysign-client</artifactId>
+            <version>${happysign.version}</version>
+        </dependency>
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
@@ -706,6 +711,19 @@
                     <groupId>it.cnr.si.storage</groupId>
                     <artifactId>storage-cloud-s3</artifactId>
                     <version>${storage.cloud.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>iss</id>
+            <properties>
+                <profile.iss>,iss</profile.iss>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>it.iss.si</groupId>
+                    <artifactId>happysign-client</artifactId>
+                    <version>${happysign.version}</version>
                 </dependency>
             </dependencies>
         </profile>
