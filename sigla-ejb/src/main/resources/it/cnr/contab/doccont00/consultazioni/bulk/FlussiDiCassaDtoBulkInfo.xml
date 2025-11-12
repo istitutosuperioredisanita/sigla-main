@@ -165,18 +165,18 @@
 	<findFieldProperty
 		name="tipoFlusso" />
 
-		<columnFieldProperty
-			name="classificazione" />
-		<columnFieldProperty
-			name="dsClassificazione" />
-		<columnFieldProperty
-			name="impPrimoTrimestre" />
-		<columnFieldProperty
-			name="impSecondoTrimestre" />
-		<columnFieldProperty
-			name="impTerzoTrimestre" />
-		<columnFieldProperty
-			name="impQuartoTrimestre" />
+	<columnFieldProperty
+		name="classificazione" />
+	<columnFieldProperty
+		name="dsClassificazione" />
+	<columnFieldProperty
+		name="impPrimoTrimestre" />
+	<columnFieldProperty
+		name="impSecondoTrimestre" />
+	<columnFieldProperty
+		name="impTerzoTrimestre" />
+	<columnFieldProperty
+		name="impQuartoTrimestre" />
 
 
 </bulkInfo>

@@ -37,21 +37,19 @@ public class FlussiDiCassaDtoHome extends BulkHome {
 
 	public SQLBuilder findFlussiDiCassa(UserContext uc, FlussiDiCassaDtoBulk flussi){
 		SQLBuilder sqlInterna = null;
-		String prefixClass=null;
 
-		if(flussi.getTipoFlusso().equals(FlussiDiCassaDtoBulk.REVERSALI)) {
-			prefixClass="'E.'";
+
+		if(flussi.getTipoFlusso().equals(FlussiDiCassaDtoBulk.REVERSALI))
 			this.setColumnMap("FLUSSO_REVERSALI");
-		}else {
+		else
 			this.setColumnMap("FLUSSO_MANDATI");
-			prefixClass="'S.'";
-		}
+
 
 		sqlInterna=this.createSQLBuilder();
 		sqlInterna.resetColumns();
 
 		sqlInterna.setHeader("SELECT " +
-"V_CLASSIFICAZIONE_VOCI_EP.CD_CLASSIFICAZIONE_5_LIV CLASSIFICAZIONE , " +
+					"V_CLASSIFICAZIONE_VOCI_EP.CD_CLASSIFICAZIONE_5_LIV CLASSIFICAZIONE , " +
 				      "V_CLASSIFICAZIONE_VOCI_EP.DS_CLASSIFICAZIONE , " +
 					  " sum(CASE "+
 						" WHEN TO_CHAR("+ sqlInterna.getColumnMap().getTableName().concat(".DT_EMISSIONE").concat(",'mm') <=3 THEN IMPORTO ")+
