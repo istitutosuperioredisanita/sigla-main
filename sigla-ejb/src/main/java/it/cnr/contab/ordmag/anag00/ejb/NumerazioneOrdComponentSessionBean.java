@@ -17,7 +17,7 @@
 
 package it.cnr.contab.ordmag.anag00.ejb;
 
-import it.cnr.contab.ordmag.anag00.bp.NumerazioneOrdComponent;
+import it.cnr.contab.ordmag.anag00.comp.NumerazioneOrdComponent;
 import it.cnr.jada.ejb.CRUDComponentSessionBean;
 
 import javax.annotation.PostConstruct;
