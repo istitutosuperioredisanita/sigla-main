@@ -93,13 +93,7 @@ public class ConsFlussiCassaBP extends BulkBP {
 			    				
 				setModel(context,bulk);
 				bulk.setEsercizio(esercizio);
-				java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
-				try {
-					bulk.setDtEmissioneA(new java.sql.Timestamp(sdf.parse("31/12/"+esercizio).getTime()));
-					bulk.setDtEmissioneDa(new java.sql.Timestamp(sdf.parse("01/01/"+esercizio).getTime()));
-				} catch (ParseException e) {
 
-				}
 
 			super.init(config, context);
 		}
@@ -151,13 +145,44 @@ public class ConsFlussiCassaBP extends BulkBP {
 			if(flussoCassa.getCds()== null){
 				throw new ApplicationException("Attenzione!Impostare CDS");
 			}
-			if(flussoCassa.getDtEmissioneDa() != null && flussoCassa.getDtEmissioneA()!=null){
-				if(flussoCassa.getDtEmissioneDa().compareTo(flussoCassa.getDtEmissioneA())>0){
-					throw new ApplicationException("Attenzione! Data Emissione Da non può essere più grande di Data Emissione A");
-				}
+
+			if(flussoCassa.getTrimestre() == null){
+				throw new ApplicationException("Attenzione!Impostare un Trimestre");
+			}
+			else{
+				impostaDataEmissioneDaTrimestre(flussoCassa);
 			}
 			if(flussoCassa.getTipoFlusso() == null){
 				throw new ApplicationException("Attenzione!Impostare una tipologia di Flusso");
+			}
+
+		}
+		private void impostaDataEmissioneDaTrimestre(FlussiDiCassaDtoBulk flussoCassa) throws ApplicationException {
+			java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+
+			try {
+				flussoCassa.setDtEmissioneDa(new java.sql.Timestamp(sdf.parse("01/01/"+flussoCassa.getEsercizio()).getTime()));
+
+				if(flussoCassa.getTrimestre().equals(FlussiDiCassaDtoBulk.PRIMO)){
+					// Fino al 31 Marzo
+					flussoCassa.setDtEmissioneA(new java.sql.Timestamp(sdf.parse("31/03/"+flussoCassa.getEsercizio()).getTime()));
+
+				}else if(flussoCassa.getTrimestre().equals(FlussiDiCassaDtoBulk.SECONDO)){
+					// Fino al 30 Giugno
+					flussoCassa.setDtEmissioneA(new java.sql.Timestamp(sdf.parse("30/06/"+flussoCassa.getEsercizio()).getTime()));
+				}
+				else if(flussoCassa.getTrimestre().equals(FlussiDiCassaDtoBulk.TERZO)){
+					// Fino al 30 Settembre
+					flussoCassa.setDtEmissioneA(new java.sql.Timestamp(sdf.parse("30/09/"+flussoCassa.getEsercizio()).getTime()));
+				}
+				else{
+					// Fino al 31 Dicembre
+					flussoCassa.setDtEmissioneA(new java.sql.Timestamp(sdf.parse("31/12/"+flussoCassa.getEsercizio()).getTime()));
+				}
+
+
+			} catch (ParseException e) {
+				throw new ApplicationException("Attenzione! Riscontrato errore su impostazione della data emissione");
 			}
 		}
 
