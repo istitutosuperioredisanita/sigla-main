@@ -9,13 +9,13 @@
 
 L’art. 1 comma 57 della Legge 266/2005, dispone che per un periodo di tre anni (*ndr* *2006 – 2007 -2008*), le pubbliche amministrazioni non possono *“ … stipulare contratti di consulenza che nel loro complesso siano di importo superiore rispetto all’ammontare totale dei contratti in essere al 30 settembre 2005, come automaticamente ridotto.*\ ”. La riduzione cui fa riferimento la norma è del 10%.
 
-Tale importo è stato determinato in base all’ammontare dei contratti in essere al 30 settembre 2005 risultanti dalle comunicazioni effettuate da tutti i centri di responsabilità del CNR in attuazione di quanto disposto dalla circolare CNR n. 12/2006. Il limite è, pertanto, pari ad euro 1.470.790,22.
+Tale importo è stato determinato in base all’ammontare dei contratti in essere al 30 settembre 2005 risultanti dalle comunicazioni effettuate da tutti i centri di responsabilità (verificare circolare interna all'Ente). Il limite è, pertanto, definito internamente all'Ente.
 
 Tale limite colpisce, pertanto, tutti **gli incarichi di consulenza, conferiti in forma occasionale non abituale o professionale, a prescindere dalla fonte di finanziamento, anche se finalizzati all’attuazione di progetti di ricerca ed innovazione tecnologica.**
 
 Il limite non opera per gli incarichi conferiti in forma occasionale non abituale o professionale per attività di studio, di ricerca e per altre tipologie di attività oggetto di incarico (quali ad esempio quelle riguardanti il supporto ai servizi amministrativi e tecnici dell’ente - cfr. tabella in allegato 13).
 
-**Tale limite sarà, pertanto, operante per gli esercizi finanziari 2006, 2007 e 2008.**
+**Tale limite sarà, pertanto, operante per gli esercizi finanziari di un triennio.**
 
 Al fine di verificare finanziariamente la possibilità di stipulare incarichi di consulenza conferiti in forma occasionale non abituale o professionale, una volta rispettati i presupposti di legittimità ed espletate le formalità preliminari necessarie al conferimento (compresa la verifica di professionalità interne all’ente), ogni Centro di responsabilità interessato dovrà inserire l’incarico che intende affidare nella procedura SIGLA. La procedura provvederà a verificare, laddove necessario, il rispetto dei limiti di spesa, consentendo di proseguire nella registrazione, ovvero il superamento degli stessi, inibendo la relativa registrazione.
 
@@ -38,7 +38,7 @@ tecnologica, i cui oneri non risultino a carico dei bilanci di funzionamento deg
 
 **Pertanto, non rientrano nel procedimento di verifica dei limiti di spesa, i contratti di collaborazione coordinata e continuativa inerenti lo svolgimento di qualsiasi tipologia di attività, purché finalizzate all’attuazione di progetti di ricerca e di innovazione tecnologica i cui oneri siano finanziati da Fondi esterni**.
 
-Pertanto, a partire dall’anno 2008, il CNR può avvalersi di contratti di collaborazione coordinata e continuativa a carico del Fondo di finanziamento ordinario nel limite del 35 per cento delle somme impegnate nel 2003 per contratti di collaborazione coordinata e continuativa finanziate dal medesimo fondo, pari ad € 1.269.464,11.
+Pertanto, a partire dall’anno 2008, l'Ente può avvalersi di contratti di collaborazione coordinata e continuativa a carico del Fondo di finanziamento ordinario nel limite del 35 per cento delle somme impegnate nel 2003 per contratti di collaborazione coordinata e continuativa finanziate dal medesimo fondo, pari ad un importo predefinito.
 
 Tale limite di spesa, quindi, per gli incarichi conferiti nella forma di collaborazione coordinata e continuativa:
 
