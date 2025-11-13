@@ -122,7 +122,13 @@
 		maxLength="22"
 		formatName="it.cnr.contab.util.EuroFormat"
 		label="Quarto Trimestre" />
-
+	<fieldProperty
+		name="trimestre"
+		property="trimestre"
+		inputType="RADIOGROUP"
+		layout="HORIZONTAL"
+		keysProperty="trimestreKeys"
+		label="Trimestre"/>
 
 	<formFieldProperty
 		name="cd_cds" />
@@ -152,6 +158,8 @@
 		name="impTerzoTrimestre" />
 	<formFieldProperty
 		name="impQuartoTrimestre" />
+	<formFieldProperty
+		name="trimestre" />
 
 		
 	<findFieldProperty
@@ -164,6 +172,9 @@
 		name="dt_emissione_a" />
 	<findFieldProperty
 		name="tipoFlusso" />
+	<findFieldProperty
+		name="trimestre" />
+
 
 	<columnFieldProperty
 		name="classificazione" />

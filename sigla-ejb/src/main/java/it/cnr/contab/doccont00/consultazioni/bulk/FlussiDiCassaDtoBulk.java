@@ -16,6 +16,12 @@ public class FlussiDiCassaDtoBulk extends OggettoBulk implements Persistent {
     public final static String MANDATI = "MAN";
     public final static String REVERSALI = "REV";
 
+    private final static Dictionary trimestreKeys;
+    public final static String PRIMO = "1";
+    public final static String SECONDO = "2";
+    public final static String TERZO = "3";
+    public final static String QUARTO = "4";
+
     private String cdCds;
     protected CdsBulk cds = new CdsBulk();
     private Integer esercizio;
@@ -23,11 +29,20 @@ public class FlussiDiCassaDtoBulk extends OggettoBulk implements Persistent {
     private Timestamp dtEmissioneDa;
     private Timestamp dtEmissioneA;
     private String tipoFlusso;
+    private String trimestre;
 
     static {
         tipo_EstrazioneKeys = new OrderedHashtable();
         tipo_EstrazioneKeys.put(MANDATI, "Mandati");
         tipo_EstrazioneKeys.put(REVERSALI, "Reversali");
+    }
+
+    static {
+        trimestreKeys = new OrderedHashtable();
+        trimestreKeys.put(PRIMO, "Primo");
+        trimestreKeys.put(SECONDO, "Secondo");
+        trimestreKeys.put(TERZO, "Terzo");
+        trimestreKeys.put(QUARTO, "Quarto");
     }
     private boolean roFindCds;
 
@@ -141,6 +156,14 @@ public class FlussiDiCassaDtoBulk extends OggettoBulk implements Persistent {
         this.impQuartoTrimestre = impQuartoTrimestre;
     }
 
+    public String getTrimestre() {
+        return trimestre;
+    }
+
+    public void setTrimestre(String trimestre) {
+        this.trimestre = trimestre;
+    }
+
     public boolean isROFindCds() {
         return roFindCds;
     }
@@ -152,5 +175,9 @@ public class FlussiDiCassaDtoBulk extends OggettoBulk implements Persistent {
     public java.util.Dictionary getTipo_EstrazioneKeys() {
         return tipo_EstrazioneKeys;
     }
+    public java.util.Dictionary getTrimestreKeys() {
+        return trimestreKeys;
+    }
+
 
 }
