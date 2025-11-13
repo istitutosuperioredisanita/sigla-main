@@ -2,6 +2,9 @@ name: Publish package
 on:
   push:
     branches: [master, sviluppo]
+  paths:
+    - '!docs/**'   # Tutti i file tranne docs e sottocartelle      
+
 jobs:
   publish:
     runs-on: ubuntu-latest

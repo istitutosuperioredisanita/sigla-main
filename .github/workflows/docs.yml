@@ -3,6 +3,10 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'docs/**'     # Tutti i file dentro docs e sottocartelle
+  workflow_dispatch:  # parte anche su richiesta manuale
+
 env:
   DEFAULT_BRANCH: "master"
   #SPHINXOPTS: "-W --keep-going -T"
