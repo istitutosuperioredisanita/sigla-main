@@ -75,14 +75,13 @@ public class ConsFlussiCassaBP extends BulkBP {
 			    String cds = CNRUserContext.getCd_cds(context.getUserContext());
 			    bulk.setROFindCds(false);
 
-			if(!isUoEnte(context))	 {
+				if(!isUoEnte(context))	 {
 					clauses.addClause("AND", "esercizio", SQLBuilder.EQUALS, esercizio);
 					clauses.addClause("AND", "cds",SQLBuilder.EQUALS, cds);
 					bulk.setCds(new CdsBulk(cds));
 					try {
 						completeSearchTool(context,bulk,bulk.getBulkInfo().getFieldProperty("find_cds"));
 					} catch (ValidationException e) {
-					
 						e.printStackTrace();
 					}
 					bulk.setROFindCds(true);
@@ -93,7 +92,6 @@ public class ConsFlussiCassaBP extends BulkBP {
 			    				
 				setModel(context,bulk);
 				bulk.setEsercizio(esercizio);
-
 
 			super.init(config, context);
 		}
@@ -142,10 +140,6 @@ public class ConsFlussiCassaBP extends BulkBP {
 			if(flussoCassa.getEsercizio() == null){
 				throw new ApplicationException("Attenzione!Impostare esercizio");
 			}
-			if(flussoCassa.getCds()== null){
-				throw new ApplicationException("Attenzione!Impostare CDS");
-			}
-
 			if(flussoCassa.getTrimestre() == null){
 				throw new ApplicationException("Attenzione!Impostare un Trimestre");
 			}
@@ -154,6 +148,9 @@ public class ConsFlussiCassaBP extends BulkBP {
 			}
 			if(flussoCassa.getTipoFlusso() == null){
 				throw new ApplicationException("Attenzione!Impostare una tipologia di Flusso");
+			}
+			if(flussoCassa.getLivello()== null){
+				throw new ApplicationException("Attenzione!Impostare un Livello di estrazione");
 			}
 
 		}
