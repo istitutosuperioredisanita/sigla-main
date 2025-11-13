@@ -23,6 +23,9 @@ public class FlussiDiCassaDtoBulk extends OggettoBulk implements Persistent {
     public final static String TERZO = "3";
     public final static String QUARTO = "4";
 
+    private final static Dictionary livelloKeys;
+    public final static String QUINTO = "5";
+
     private String cdCds;
     protected CdsBulk cds = new CdsBulk();
     private Integer esercizio;
@@ -31,6 +34,7 @@ public class FlussiDiCassaDtoBulk extends OggettoBulk implements Persistent {
     private Timestamp dtEmissioneA;
     private String tipoFlusso;
     private String trimestre;
+    private String livello;
 
     static {
         tipo_EstrazioneKeys = new OrderedHashtable();
@@ -45,6 +49,14 @@ public class FlussiDiCassaDtoBulk extends OggettoBulk implements Persistent {
         trimestreKeys.put(TERZO, "Terzo");
         trimestreKeys.put(QUARTO, "Quarto");
     }
+
+    static {
+        livelloKeys = new OrderedHashtable();
+        livelloKeys.put(SECONDO, "Secondo Livello");
+        livelloKeys.put(TERZO, "Terzo Livello");
+        livelloKeys.put(QUARTO, "Quarto Livello");
+        livelloKeys.put(QUINTO, "Quinto Livello");
+    }
     private boolean roFindCds;
 
     private String classificazione;
@@ -55,10 +67,6 @@ public class FlussiDiCassaDtoBulk extends OggettoBulk implements Persistent {
     private BigDecimal impTerzoTrimestre;
     private BigDecimal impQuartoTrimestre;
 
-
-    public FlussiDiCassaDtoBulk() {
-        cds=new CdsBulk();
-    }
 
 
     public String getCdCds() {
@@ -165,6 +173,14 @@ public class FlussiDiCassaDtoBulk extends OggettoBulk implements Persistent {
         this.trimestre = trimestre;
     }
 
+    public String getLivello() {
+        return livello;
+    }
+
+    public void setLivello(String livello) {
+        this.livello = livello;
+    }
+
     public boolean isROFindCds() {
         return roFindCds;
     }
@@ -179,6 +195,10 @@ public class FlussiDiCassaDtoBulk extends OggettoBulk implements Persistent {
     public java.util.Dictionary getTrimestreKeys() {
         return trimestreKeys;
     }
+    public java.util.Dictionary getLivelloKeys() {
+        return livelloKeys;
+    }
+
 
 
 }

@@ -34,7 +34,7 @@
 		label="CDS"
 		readonlyProperty="ROFindCds"
 		enabledOnSearch="true"
-		completeOnSave="true" />
+		completeOnSave="true"/>
 	<fieldProperty
 		name="cds_cd"
 		property="cds.cd_unita_organizzativa"
@@ -129,6 +129,13 @@
 		layout="HORIZONTAL"
 		keysProperty="trimestreKeys"
 		label="Trimestre"/>
+	<fieldProperty
+		name="livello"
+		property="livello"
+		inputType="RADIOGROUP"
+		layout="HORIZONTAL"
+		keysProperty="livelloKeys"
+		label="Estrazione"/>
 
 	<formFieldProperty
 		name="cd_cds" />
@@ -160,6 +167,9 @@
 		name="impQuartoTrimestre" />
 	<formFieldProperty
 		name="trimestre" />
+	<formFieldProperty
+		name="livello" />
+
 
 		
 	<findFieldProperty
@@ -174,6 +184,9 @@
 		name="tipoFlusso" />
 	<findFieldProperty
 		name="trimestre" />
+	<findFieldProperty
+		name="livello" />
+
 
 
 	<columnFieldProperty
