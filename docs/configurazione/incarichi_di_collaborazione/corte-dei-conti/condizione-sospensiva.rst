@@ -20,7 +20,7 @@ verifica preliminare di professionalità interne e la procedura comparativa. Ovv
 
 *- L. 724/1994 - art. 25.*
 
-Gli incarichi di collaborazione possono essere affidati anche al personale CNR cessato dal servizio [1]_, nel rispetto della normativa vigente e con l’osservanza, pertanto, dell’intero procedimento amministrativo di conferimento descritto nel presente Manuale.
+Gli incarichi di collaborazione possono essere affidati anche al personale cessato dal servizio [1]_, nel rispetto della normativa vigente e con l’osservanza, pertanto, dell’intero procedimento amministrativo di conferimento descritto nel presente Manuale.
 
 Ai sensi dell’art. 25 della Legge 724/1994, esistono però delle limitazioni al conferimento di incarichi a tali soggetti.
 
@@ -30,15 +30,15 @@ L'art. 25, infatti, recita testualmente:
 
 Alla luce di quanto sopra esposto possono configurarsi le seguenti situazioni
 
-a) personale CNR cessato per conseguimento della pensione di vecchiaia (65 anni per gli uomini e 60 per le donne): è possibile conferire un incarico;
+a) personale CNR cessato per conseguimento della pensione di vecchiaia (67 anni per gli uomini e 62 per le donne): è possibile conferire un incarico;
 
-b) personale CNR cessato per dimissioni volontarie in possesso dei requisiti previsti per l’ottenimento della pensione di anzianità: non è possibile conferire l’incarico;
+b) personale cessato per dimissioni volontarie in possesso dei requisiti previsti per l’ottenimento della pensione di anzianità: non è possibile conferire l’incarico;
 
-c) personale CNR trasferito ad altra amministrazione pubblica che cessa da tale ultima amministrazione pubblica, occorre aver riguardo agli ultimi cinque anni che precedono la cessazione dal servizio:
+c) personale trasferito ad altra amministrazione pubblica che cessa da tale ultima amministrazione pubblica, occorre aver riguardo agli ultimi cinque anni che precedono la cessazione dal servizio:
 
-c. 1 se anche uno solo di questi cinque anni che precedono la cessazione dal servizio è stato trascorso presso il CNR: non è possibile conferire un incarico;
+c. 1 se anche uno solo di questi cinque anni che precedono la cessazione dal servizio è stato trascorso presso l'Ente: non è possibile conferire un incarico;
 
-c. 2 se i cinque anni che precedono la cessazione dal servizio sono stati trascorsi presso amministrazioni diverse dal CNR: è possibile conferire un incarico.
+c. 2 se i cinque anni che precedono la cessazione dal servizio sono stati trascorsi presso amministrazioni diverse dall'Ente: è possibile conferire un incarico.
 
 **12. I limiti di spesa**
 
