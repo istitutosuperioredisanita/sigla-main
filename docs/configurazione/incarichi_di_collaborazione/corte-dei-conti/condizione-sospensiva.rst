@@ -30,7 +30,7 @@ L'art. 25, infatti, recita testualmente:
 
 Alla luce di quanto sopra esposto possono configurarsi le seguenti situazioni
 
-a) personale CNR cessato per conseguimento della pensione di vecchiaia (67 anni per gli uomini e 62 per le donne): è possibile conferire un incarico;
+a) personale cessato per conseguimento della pensione di vecchiaia (67 anni per gli uomini e 62 per le donne): è possibile conferire un incarico;
 
 b) personale cessato per dimissioni volontarie in possesso dei requisiti previsti per l’ottenimento della pensione di anzianità: non è possibile conferire l’incarico;
 
@@ -46,7 +46,7 @@ Per quanto attiene ai diversi limiti di spesa imposti dalle leggi finanziarie, �
 
 La distinzione presente nelle leggi finanziarie per tipologia di rapporto e per oggetto dell’attività (studio, ricerca e consulenza) è operante quindi solo ed esclusivamente ai fini di individuare i diversi limiti di spesa pertinenti.
 
-I limiti di spesa operano, ovviamente, con riferimento all’intero CNR e non al singolo centro di responsabilità.
+I limiti di spesa operano, ovviamente, con riferimento all’intero dell'Ente e non al singolo centro di responsabilità.
 
 Ai fini del calcolo dei limiti di spesa non si considerano i rimborsi delle spese di trasferta in quanto non costituenti compenso/retribuzione. Tali tipologie di spese dovranno essere gestite nella procedura SIGLA con gli appositi trattamenti creati.
 
