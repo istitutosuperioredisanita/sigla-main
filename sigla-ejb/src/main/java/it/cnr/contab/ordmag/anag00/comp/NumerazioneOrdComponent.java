@@ -15,7 +15,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package it.cnr.contab.ordmag.anag00.bp;
+package it.cnr.contab.ordmag.anag00.comp;
 
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.ordmag.anag00.NumerazioneOrdBulk;
