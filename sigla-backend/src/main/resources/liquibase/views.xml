@@ -3117,5 +3117,7 @@
     <changeSet author="ciro.salvio" runOnChange="true" id="create-view-V_FATT_ORDINE_DET">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_FATT_ORDINE_DET.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
-
+    <changeSet author="ciro.salvio" runOnChange="true" id="create-view-V_CONS_SALDI_RESIDUI_SPE_DET">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_CONS_SALDI_RESIDUI_SPE_DET.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
 </databaseChangeLog>
