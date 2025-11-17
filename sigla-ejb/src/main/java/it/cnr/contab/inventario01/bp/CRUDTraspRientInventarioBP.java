@@ -7,16 +7,12 @@ import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
 import it.cnr.contab.inventario01.service.DocTraspRientCMISService;
-import it.cnr.contab.ordmag.ordini.bulk.AllegatoOrdineBulk;
-import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk;
-import it.cnr.contab.ordmag.ordini.service.OrdineAcqCMISService;
 import it.cnr.contab.reports.bp.OfflineReportPrintBP;
 import it.cnr.contab.reports.bulk.Print_spoolerBulk;
 import it.cnr.contab.reports.bulk.Print_spooler_paramBulk;
 import it.cnr.contab.reports.bulk.Report;
 import it.cnr.contab.reports.service.PrintService;
 import it.cnr.contab.service.SpringUtil;
-import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
@@ -34,6 +30,7 @@ import it.cnr.jada.util.action.AbstractPrintBP;
 import it.cnr.jada.util.action.RemoteDetailCRUDController;
 import it.cnr.jada.util.action.SelectionListener;
 import it.cnr.si.spring.storage.StorageObject;
+import it.cnr.si.spring.storage.StoreService;
 import org.apache.commons.io.IOUtils;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -59,16 +56,6 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
     private boolean isVisualizzazione = false;
 
     private boolean isGestioneInvioInFirmaAttiva = false;
-
-    private String cd_uo_context;
-
-    public String getCd_uo_context() {
-        return cd_uo_context;
-    }
-
-    public void setCd_uo_context(String cd_uo_context) {
-        this.cd_uo_context = cd_uo_context;
-    }
 
     // ==================== PENDING SELECTION ====================
 
@@ -228,7 +215,6 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
 
         Integer esercizio = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext());
 
-        setCd_uo_context(CNRUserContext.getCd_unita_organizzativa(context.getUserContext()));
 
         if (this instanceof CRUDTrasportoBeniInvBP)
             setTipo(TRASPORTO);
@@ -268,12 +254,16 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
         }
 
         super.init(config, context);
-        storeService = SpringUtil.getBean("docTraspRientCMISService", DocTraspRientCMISService.class);
+
 
         initVariabili(context, getTipo());
         resetTabs();
     }
 
+    @Override
+    public StoreService getBeanStoreService(ActionContext actioncontext) throws BusinessProcessException{
+        return SpringUtil.getBean("docTraspRientCMISService", DocTraspRientCMISService.class);
+    }
     public boolean isGestioneInvioInFirmaAttiva() {
         return isGestioneInvioInFirmaAttiva;
     }
@@ -1248,7 +1238,7 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
         Doc_trasporto_rientroBulk docTrasportoRientro = (Doc_trasporto_rientroBulk) getModel();
         StorageObject s = ((DocTraspRientCMISService) storeService)
                 .getStorageObjectStampaDoc(docTrasportoRientro,userContext);
-
+/*
         // Se non in stato predisposto/firmato e una stampa esiste, eliminala
         if (!Doc_trasporto_rientroBulk.STATO_INVIATO.equals(docTrasportoRientro.getStato())
                 && !Doc_trasporto_rientroBulk.STATO_DEFINITIVO.equals(docTrasportoRientro.getStato())
@@ -1256,14 +1246,18 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
             storeService.delete(s);
         }
 
+ */
+
         // Se predisposto alla firma e la stampa non è presente, allega
-        if (Doc_trasporto_rientroBulk.STATO_INVIATO.equals(docTrasportoRientro.getStato()) && s == null) {
+       // if (Doc_trasporto_rientroBulk.STATO_INVIATO.equals(docTrasportoRientro.getStato()) && s == null) {
+        if ( !Optional.ofNullable(s).isPresent()){
             File f = stampaDocTrasportoRientro(userContext, docTrasportoRientro);
 
             AllegatoGenericoBulk allegatoStampa = new AllegatoGenericoBulk();
             allegatoStampa.setFile(f);
             allegatoStampa.setContentType(new MimetypesFileTypeMap().getContentType(f.getName()));
             allegatoStampa.setNome(f.getName());
+            allegatoStampa.setCrudStatus( OggettoBulk.TO_BE_CREATED);
             allegatoStampa.setDescrizione(f.getName());
             allegatoStampa.setTitolo(f.getName());
             docTrasportoRientro.addToArchivioAllegati(allegatoStampa);
@@ -1274,8 +1268,23 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
 
     @Override
     protected String getStorePath(Doc_trasporto_rientroBulk allegatoParentBulk, boolean create) throws BusinessProcessException{
-        return ( (DocTraspRientCMISService)storeService).getStorePath(allegatoParentBulk,getCd_uo_context());
+
+        return ( (DocTraspRientCMISService)storeService).getStorePath(allegatoParentBulk);
+        /*
+        return Arrays.asList(
+                SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
+                "Documento Trasporto Rientro",
+                Optional.ofNullable(allegatoParentBulk.getEsercizio())
+                        .map(esercizio -> String.valueOf(esercizio))
+                        .orElse("0"),
+                "Doc. Trasporto " + allegatoParentBulk.getEsercizio().toString() + Utility.lpad(allegatoParentBulk.getPgDocTrasportoRientro().toString(), 10, '0')
+        ).stream().collect(
+                Collectors.joining(StorageDriver.SUFFIX)
+        );
+
+         */
     }
+
 
     @Override
     protected Class<AllegatoGenericoBulk> getAllegatoClass() {
