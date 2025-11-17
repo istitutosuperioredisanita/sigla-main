@@ -6,6 +6,7 @@ import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Tipo_trasporto_rientroBulk;
+import it.cnr.contab.ordmag.anag00.NumerazioneOrdBulk;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
@@ -23,18 +24,9 @@ import java.util.stream.Collectors;
 
 /**
  * Testata documento Trasporto/Rientro.
- * <p>
- * PATTERN: Delega per pg_inventario
- * - pg_inventario è delegato a inventario (Id_inventarioBulk)
- * - ti_documento, esercizio, pg_doc_trasporto_rientro sono nella Key
- * <p>
- * GESTIONE STATO:
- * - Lo STATO del documento è gestito tramite il campo 'stato' ereditato dal Base
- * - Utilizza un Dictionary per le label degli stati
- * <p>
- * GESTIONE FIRMA DIGITALE:
- * - I firmatari sono gestiti direttamente come campi del documento
- * - Firmatari obbligatori: Consegnatario (sempre), Responsabile (sempre), Incaricato (se ritiro incaricato)
+ *
+ * ⚠️ IMPORTANTE: Tutti gli allegati (inclusa la stampa firmata) sono gestiti QUI nella testata.
+ * Non esiste più una gestione separata per i dettagli.
  */
 public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase implements AllegatoParentBulk {
 
@@ -51,19 +43,16 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase impleme
 
     public static final String STATO_INSERITO = "INS";
     public static final String STATO_INVIATO = "INV";
-    public static final String STATO_FIRMATO = "FIR";
+    public static final String STATO_DEFINITIVO = "DEF";
     public static final String STATO_ANNULLATO = "ANN";
 
-    /**
-     * Dictionary degli stati del documento con le relative label
-     */
     public final static Dictionary STATO;
 
     static {
         STATO = new it.cnr.jada.util.OrderedHashtable();
         STATO.put(STATO_INSERITO, "Inserito");
         STATO.put(STATO_INVIATO, "Inviato In Firma");
-        STATO.put(STATO_FIRMATO, "Firmato");
+        STATO.put(STATO_DEFINITIVO, "Definitivo");
         STATO.put(STATO_ANNULLATO, "Annullato");
     }
 
@@ -83,7 +72,7 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase impleme
     }
 
     // ========================================
-    // ATTRIBUTI ESISTENTI
+    // ATTRIBUTI
     // ========================================
 
     private String local_transactionID;
@@ -101,146 +90,13 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase impleme
     private SimpleBulkList doc_trasporto_rientro_dettColl;
     private TerzoBulk anagDipRitiro;
     private Inventario_beniBulk bene;
+
+    // ⚠️ UNICA LISTA ALLEGATI - Include TUTTO (DDT, verbali, stampa firmata, ecc.)
     private BulkList<AllegatoGenericoBulk> archivioAllegati = new BulkList<AllegatoGenericoBulk>();
 
-    // ========================================
-    // ATTRIBUTI PER LA FIRMA DIGITALE (SOLO OGGETTI COMPLETI)
-    // ========================================
-
-    /**
-     * Responsabile struttura (firmatario obbligatorio) - OGGETTO COMPLETO
-     * Il codice (cdTerzoResponsabile) è nel Base
-     */
+    // Firmatari
     private TerzoBulk terzoResponsabile;
     private V_persona_fisicaBulk personaFisicaResponsabile;
-
-    // ========================================
-    // GETTER E SETTER - FIRMA DIGITALE
-    // ========================================
-
-    /**
-     * Alias per idFlussoHappysign (per compatibilità con codice esistente)
-     */
-    public String getIdFlusso() {
-        return getIdFlussoHappysign();
-    }
-
-    public void setIdFlusso(String idFlusso) {
-        setIdFlussoHappysign(idFlusso);
-    }
-
-    /**
-     * Alias per noteRifiuto (per compatibilità con codice esistente)
-     */
-    public String getMotivoRifiuto() {
-        return getNoteRifiuto();
-    }
-
-    public void setMotivoRifiuto(String motivoRifiuto) {
-        setNoteRifiuto(motivoRifiuto);
-    }
-
-    // Responsabile struttura - OGGETTI COMPLETI
-    public TerzoBulk getTerzoResponsabile() {
-        return terzoResponsabile;
-    }
-
-    public void setTerzoResponsabile(TerzoBulk terzoResponsabile) {
-        this.terzoResponsabile = terzoResponsabile;
-        if (terzoResponsabile != null) {
-            setCdTerzoResponsabile(terzoResponsabile.getCd_terzo());
-        }
-    }
-
-    public V_persona_fisicaBulk getPersonaFisicaResponsabile() {
-        return personaFisicaResponsabile;
-    }
-
-    public void setPersonaFisicaResponsabile(V_persona_fisicaBulk personaFisicaResponsabile) {
-        this.personaFisicaResponsabile = personaFisicaResponsabile;
-        if (personaFisicaResponsabile != null && personaFisicaResponsabile.getCd_terzo() != null) {
-            setCdTerzoResponsabile(personaFisicaResponsabile.getCd_terzo());
-        }
-    }
-
-    // ========================================
-    // METODI UTILITY - FIRMA (SOLO ESSENZIALI)
-    // ========================================
-
-    /**
-     * Verifica se il documento può essere firmato
-     */
-    public boolean isFirmabile() {
-        return isInviatoInFirma() && !isFirmatoCompletamente();
-    }
-
-    /**
-     * Verifica se il documento è già stato firmato completamente
-     */
-    public boolean isFirmatoCompletamente() {
-        return "FIR".equals(getStatoFlusso()) || isFirmato();
-    }
-
-    /**
-     * Verifica se il documento ha un flusso di firma attivo
-     */
-    public boolean hasFlussoFirmaAttivo() {
-        return getIdFlussoHappysign() != null && !isFirmatoCompletamente();
-    }
-
-    /**
-     * Restituisce il numero di firmatari richiesti per questo documento
-     */
-    public int getNumeroFirmatariRichiesti() {
-        // Consegnatario + Responsabile = 2
-        // + Incaricato se ritiro incaricato = 3
-        return isRitiroIncaricato() ? 3 : 2;
-    }
-
-    // ========================================
-    // GETTER E SETTER - ALLEGATI
-    // ========================================
-
-    /**
-     * Restituisce la lista degli allegati del documento
-     */
-    public BulkList<AllegatoGenericoBulk> getArchivioAllegati() {
-        return archivioAllegati;
-    }
-
-    /**
-     * Imposta la lista degli allegati del documento
-     */
-    public void setArchivioAllegati(BulkList<AllegatoGenericoBulk> archivioAllegati) {
-        this.archivioAllegati = archivioAllegati;
-    }
-
-    /**
-     * Rimuove un allegato dalla lista degli allegati
-     *
-     * @param index l'indice dell'allegato da rimuovere
-     * @return l'allegato rimosso
-     */
-    public AllegatoGenericoBulk removeFromArchivioAllegati(int index) {
-        return getArchivioAllegati().remove(index);
-    }
-
-    /**
-     * Aggiunge un allegato alla lista degli allegati
-     * Se l'allegato è di tipo AllegatoDocTrasportoRientroBulk, imposta automaticamente
-     * il riferimento al documento di trasporto/rientro
-     *
-     * @param allegato l'allegato da aggiungere
-     * @return l'indice nella lista dove è stato aggiunto l'allegato
-     */
-    public int addToArchivioAllegati(AllegatoGenericoBulk allegato) {
-        Optional.ofNullable(allegato)
-                .filter(AllegatoDocTraspRientBulk.class::isInstance)
-                .map(AllegatoDocTraspRientBulk.class::cast)
-                .ifPresent(el -> el.setDocTrasportoRientro(this));
-        archivioAllegati.add(allegato);
-        return archivioAllegati.size() - 1;
-    }
 
     // ========================================
     // COSTRUTTORI
@@ -257,7 +113,35 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase impleme
     }
 
     // ========================================
-    // GETTER E SETTER - Oggetti Relazionati
+    // GETTER E SETTER - ALLEGATI (UNICA GESTIONE)
+    // ========================================
+
+    // Implementazione AllegatoParentBulk
+    @Override
+    public BulkList<AllegatoGenericoBulk> getArchivioAllegati() {
+        return archivioAllegati;
+    }
+
+    @Override
+    public void setArchivioAllegati(BulkList<AllegatoGenericoBulk> archivioAllegati) {
+        this.archivioAllegati = archivioAllegati;
+    }
+
+    @Override
+    public int addToArchivioAllegati(AllegatoGenericoBulk allegato) {
+        if (allegato != null) {
+            archivioAllegati.add(allegato);
+        }
+        return archivioAllegati.size() - 1;
+    }
+
+    public AllegatoGenericoBulk removeFromArchivioAllegati(int index) {
+        return getArchivioAllegati().remove(index);
+    }
+
+
+    // ========================================
+    // GETTER E SETTER - Altri attributi
     // ========================================
 
     public TerzoBulk getConsegnatario() {
@@ -308,10 +192,6 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase impleme
         uo_consegnataria = bulk;
     }
 
-    // ========================================
-    // GETTER E SETTER - Campi Delegati
-    // ========================================
-
     public void setPgInventario(Long pg_inventario) {
         this.getInventario().setPg_inventario(pg_inventario);
     }
@@ -333,10 +213,6 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase impleme
             return null;
         return tipoMovimento.getCdTipoTrasportoRientro();
     }
-
-    // ========================================
-    // GETTER E SETTER - Altri Attributi
-    // ========================================
 
     public String getCds_scrivania() {
         return cds_scrivania;
@@ -430,6 +306,44 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase impleme
         this.bene = bene;
     }
 
+    public TerzoBulk getTerzoResponsabile() {
+        return terzoResponsabile;
+    }
+
+    public void setTerzoResponsabile(TerzoBulk terzoResponsabile) {
+        this.terzoResponsabile = terzoResponsabile;
+        if (terzoResponsabile != null) {
+            setCdTerzoResponsabile(terzoResponsabile.getCd_terzo());
+        }
+    }
+
+    public V_persona_fisicaBulk getPersonaFisicaResponsabile() {
+        return personaFisicaResponsabile;
+    }
+
+    public void setPersonaFisicaResponsabile(V_persona_fisicaBulk personaFisicaResponsabile) {
+        this.personaFisicaResponsabile = personaFisicaResponsabile;
+        if (personaFisicaResponsabile != null && personaFisicaResponsabile.getCd_terzo() != null) {
+            setCdTerzoResponsabile(personaFisicaResponsabile.getCd_terzo());
+        }
+    }
+
+    public String getIdFlusso() {
+        return getIdFlussoHappysign();
+    }
+
+    public void setIdFlusso(String idFlusso) {
+        setIdFlussoHappysign(idFlusso);
+    }
+
+    public String getMotivoRifiuto() {
+        return getNoteRifiuto();
+    }
+
+    public void setMotivoRifiuto(String motivoRifiuto) {
+        setNoteRifiuto(motivoRifiuto);
+    }
+
     // ========================================
     // GESTIONE COLLEZIONI
     // ========================================
@@ -512,18 +426,10 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase impleme
     // GESTIONE STATO DOCUMENTO
     // ========================================
 
-    /**
-     * Restituisce il Dictionary completo degli stati
-     * Utilizzato per visualizzare tutte le opzioni disponibili
-     */
     public Dictionary getStatoKeys() {
         return STATO;
     }
 
-    /**
-     * Restituisce il Dictionary degli stati per la ricerca
-     * Include tutti gli stati possibili
-     */
     public Dictionary getStatoKeysForSearch() {
         it.cnr.jada.util.OrderedHashtable d = (it.cnr.jada.util.OrderedHashtable) getStatoKeys();
         if (d == null) return null;
@@ -531,104 +437,66 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase impleme
         return clone;
     }
 
-    /**
-     * Restituisce il Dictionary degli stati per l'aggiornamento
-     * Filtra gli stati in base allo stato corrente del documento
-     */
     public Dictionary getStatoKeysForUpdate() {
         Dictionary stato = new it.cnr.jada.util.OrderedHashtable();
 
         if (isInserito()) {
-            // Da INSERITO può passare a:
             stato.put(STATO_INSERITO, "Inserito");
             stato.put(STATO_INVIATO, "Inviato In Firma");
         } else if (isInviatoInFirma()) {
-            // Da INVIATO IN FIRMA può passare a:
             stato.put(STATO_INVIATO, "Inviato In Firma");
-            stato.put(STATO_FIRMATO, "Firmato");
+            stato.put(STATO_DEFINITIVO, "Definitivo");
             stato.put(STATO_ANNULLATO, "Annullato");
-        } else if (isFirmato()) {
-            // Da FIRMATO può solo essere annullato
-            stato.put(STATO_FIRMATO, "Firmato");
+        } else if (isDefinitivo()) {
+            stato.put(STATO_DEFINITIVO, "Definitivo");
             stato.put(STATO_ANNULLATO, "Annullato");
         } else if (isAnnullato()) {
-            // ANNULLATO è uno stato finale
             stato.put(STATO_ANNULLATO, "Annullato");
         } else {
-            // Default: mostra tutti gli stati
             stato.put(STATO_INSERITO, "Inserito");
             stato.put(STATO_INVIATO, "Inviato In Firma");
-            stato.put(STATO_FIRMATO, "Firmato");
+            stato.put(STATO_DEFINITIVO, "Definitivo");
             stato.put(STATO_ANNULLATO, "Annullato");
         }
 
         return stato;
     }
 
-    /**
-     * Verifica se il documento è in un determinato stato
-     */
     private boolean hasStato(String stato) {
         return stato != null && stato.equals(getStato());
     }
 
-    /**
-     * Verifica se il documento è in stato INSERITO
-     */
     public boolean isInserito() {
         return hasStato(STATO_INSERITO);
     }
 
-    /**
-     * Verifica se il documento è in stato INVIATO IN FIRMA
-     */
     public boolean isInviatoInFirma() {
         return hasStato(STATO_INVIATO);
     }
 
-    /**
-     * Verifica se il documento è in stato FIRMATO
-     */
-    public boolean isFirmato() {
-        return hasStato(STATO_FIRMATO);
+    public boolean isDefinitivo() {
+        return hasStato(STATO_DEFINITIVO);
     }
 
-    /**
-     * Verifica se il documento è in stato ANNULLATO
-     */
     public boolean isAnnullato() {
         return hasStato(STATO_ANNULLATO);
     }
 
-    /**
-     * Verifica se il documento è modificabile
-     * Solo i documenti in stato INSERITO sono modificabili
-     */
     public boolean isModificabile() {
-        // Un documento firmato o INVIATO IN FIRMA non è modificabile
-        if (isFirmatoCompletamente() || isInviatoInFirma()) {
+        if (isDefinitivoCompletamente() || isInviatoInFirma()) {
             return false;
         }
         return isInserito();
     }
 
-    /**
-     * Verifica se è possibile modificare i dettagli del documento
-     */
     public boolean isPossibileModificareDettagli() {
         return isInserito();
     }
 
-    /**
-     * Verifica se il documento può essere confermato/INVIATO IN FIRMA
-     */
     public boolean isConfermabile() {
         return isInserito() && hasDettagli();
     }
 
-    /**
-     * Verifica se il documento può essere annullato
-     */
     public boolean isAnnullabile() {
         return !isAnnullato();
     }
@@ -654,11 +522,10 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase impleme
     public void setTipoRitiro(String tipoRitiro) {
         setFlIncaricato(TIPO_RITIRO_INCARICATO.equals(tipoRitiro));
         setFlVettore(TIPO_RITIRO_VETTORE.equals(tipoRitiro));
-        // Pulisci i campi quando cambi tipo ritiro
         if (TIPO_RITIRO_INCARICATO.equals(tipoRitiro)) {
-            setNominativoVettore(null); // Pulisci nominativo vettore
+            setNominativoVettore(null);
         } else if (TIPO_RITIRO_VETTORE.equals(tipoRitiro)) {
-            setAnagDipRitiro(null); // Pulisci dipendente incaricato
+            setAnagDipRitiro(null);
             setCdTerzoAssegnatario(null);
         }
     }
@@ -723,39 +590,75 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase impleme
     }
 
     // ========================================
-    // ANNOTAZIONI AZURE STORAGE
+    // METODI FIRMA DIGITALE
     // ========================================
 
-    @StorageProperty(name = "Doc_Trasporto_Rientro:esercizio")
-    public Integer getEsercizioPathAzure() {
-        return getEsercizio();
+    public boolean isFirmabile() {
+        return isInviatoInFirma() && !isDefinitivoCompletamente();
     }
 
-    @StorageProperty(name = "Doc_Trasporto_Rientro:inventario")
-    public Long getPgInventarioPathAzure() {
-        return getPgInventario();
+    public boolean isDefinitivoCompletamente() {
+        return "FIR".equals(getStatoFlusso()) || isDefinitivo();
     }
 
-    @StorageProperty(name = "Doc_Trasporto_Rientro:tiDocumento")
-    public String getTipoDocPathAzure() {
-        if (TRASPORTO.equals(getTiDocumento()))
-            return "Trasporto";
-        else
-            return "Rientro";
+    public boolean hasFlussoFirmaAttivo() {
+        return getIdFlussoHappysign() != null && !isDefinitivoCompletamente();
     }
 
-    @StorageProperty(name = "Doc_Trasporto_Rientro:pgDocTrasportoRientro")
-    public Long getPgDocTRPathAzure() {
-        return getPgDocTrasportoRientro();
+    public int getNumeroFirmatariRichiesti() {
+        return isRitiroIncaricato() ? 3 : 2;
     }
 
-    /**
-     * Percorso su CMIS: cartella per DOC_T_R / esercizio / inventario / tiDocumento / pgDocTrasportoRientro
-     **/
+    public void inizializzaPerInvioFirma() {
+        setStatoFlusso("INV");
+        setDataInvioFirma(new java.sql.Timestamp(System.currentTimeMillis()));
+    }
+
+    public void aggiornaDopoFirmaCompletata() {
+        setStato(STATO_DEFINITIVO);
+        setStatoFlusso("FIR");
+        setDataFirma(new java.sql.Timestamp(System.currentTimeMillis()));
+        setNoteRifiuto(null);
+    }
+
+    public void aggiornaDopoRifiutoFirma(String motivoRifiuto) {
+        setStato(STATO_INSERITO);
+        setStatoFlusso("RIF");
+        setNoteRifiuto(motivoRifiuto);
+        setIdFlussoHappysign(null);
+        setDataInvioFirma(null);
+        setDataFirma(null);
+    }
+
+    public void resetFlussoFirma() {
+        setIdFlussoHappysign(null);
+        setStatoFlusso(null);
+        setDataInvioFirma(null);
+        setDataFirma(null);
+        setNoteRifiuto(null);
+    }
+
+    public boolean isInviabileAllaFirma() {
+        return isInviatoInFirma() &&
+                getIdFlussoHappysign() == null &&
+                getConsegnatario() != null &&
+                getCdTerzoResponsabile() != null &&
+                hasDettagli();
+    }
+
+    public boolean isRifiutatoInFirma() {
+        return "RIF".equals(getStatoFlusso());
+    }
+
+    public boolean isInviatoAlFlusso() {
+        return "INV".equals(getStatoFlusso()) && getIdFlussoHappysign() != null;
+    }
+
+
     public static String getStorePathDDT(String suffix, Integer esercizio, Long inventario,
                                          String tiDocumento, Long pgDocTrasportoRientro) {
         return Arrays.asList(
-                SpringUtil.getBean(StorePath.class).getPathComunicazioniAl(),
+                SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
                 suffix,
                 String.valueOf(esercizio),
                 String.valueOf(inventario),
@@ -779,25 +682,20 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase impleme
 
     @Override
     public void validate() throws ValidationException {
-        // Validazioni campi obbligatori
         validaCampoObbligatorio(getDsDocTrasportoRientro(), "la Descrizione del documento");
         validaCampoObbligatorio(getDataRegistrazione(),
                 "la Data " + (TRASPORTO.equals(getTiDocumento()) ? "Trasporto" : "Rientro"));
         validaCampoObbligatorio(getTipoMovimento(), "il Tipo Movimento");
         validaCampoObbligatorio(getTipoRitiro(), "il Tipo Ritiro (Incaricato o Vettore)");
 
-        // Validazione valori ammessi per Tipo Ritiro
         if (!Arrays.asList(TIPO_RITIRO_INCARICATO, TIPO_RITIRO_VETTORE).contains(getTipoRitiro())) {
             throw new ValidationException("I valori possibili per Tipo Ritiro sono: Incaricato o Vettore.");
         }
-
-        // Validazione Dipendente Incaricato se tipo ritiro è INCARICATO
         if (isRitiroIncaricato() && (getAnagDipRitiro() == null || getAnagDipRitiro().getCd_anag() == null)) {
             throw new ValidationException(
                     "Per il ritiro tramite INCARICATO è necessario selezionare il Dipendente Incaricato.");
         }
 
-        // Validazione Nominativo Vettore se tipo ritiro è VETTORE
         if (isRitiroVettore() &&
                 (getNominativoVettore() == null || getNominativoVettore().trim().isEmpty())) {
             throw new ValidationException(
@@ -807,18 +705,10 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase impleme
         super.validate();
     }
 
-    /**
-     * Determina se il campo Nominativo Vettore deve essere visibile
-     * Visibile SOLO quando il tipo ritiro è VETTORE
-     */
     public boolean isNominativoVettoreVisible() {
         return isRitiroVettore();
     }
 
-    /**
-     * Determina se il campo Nominativo Vettore è obbligatorio
-     * Obbligatorio quando il tipo ritiro è VETTORE
-     */
     public boolean isNominativoVettoreRequired() {
         return isRitiroVettore();
     }
@@ -835,75 +725,4 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase impleme
                 + StrServ.lpad(getPgInventario().toString(), 5)
                 + StrServ.lpad(getPgDocTrasportoRientro().toString(), 5);
     }
-
-    // ========================================
-// METODI PER LA GESTIONE DEL FLUSSO DI FIRMA
-// ========================================
-
-    /**
-     * Inizializza il documento per l'invio al flusso di firma
-     */
-    public void inizializzaPerInvioFirma() {
-        setStatoFlusso("INV");
-        setDataInvioFirma(new java.sql.Timestamp(System.currentTimeMillis()));
-    }
-
-    /**
-     * Aggiorna il documento dopo la firma completata
-     */
-    public void aggiornaDopoFirmaCompletata() {
-        setStato(STATO_FIRMATO);
-        setStatoFlusso("FIR");
-        setDataFirma(new java.sql.Timestamp(System.currentTimeMillis()));
-        setNoteRifiuto(null);
-    }
-
-    /**
-     * Aggiorna il documento dopo il rifiuto della firma
-     */
-    public void aggiornaDopoRifiutoFirma(String motivoRifiuto) {
-        setStato(STATO_INSERITO);
-        setStatoFlusso("RIF");
-        setNoteRifiuto(motivoRifiuto);
-        setIdFlussoHappysign(null);
-        setDataInvioFirma(null);
-        setDataFirma(null);
-    }
-
-    /**
-     * Resetta i dati del flusso di firma
-     */
-    public void resetFlussoFirma() {
-        setIdFlussoHappysign(null);
-        setStatoFlusso(null);
-        setDataInvioFirma(null);
-        setDataFirma(null);
-        setNoteRifiuto(null);
-    }
-
-    /**
-     * Verifica se il documento può essere inviato alla firma
-     */
-    public boolean isInviabileAllaFirma() {
-        return isInviatoInFirma() &&
-                getIdFlussoHappysign() == null &&
-                getConsegnatario() != null &&
-                getCdTerzoResponsabile() != null &&
-                hasDettagli();
-    }
-
-    /**
-     * Verifica se il documento è stato rifiutato in firma
-     */
-    public boolean isRifiutatoInFirma() {
-        return "RIF".equals(getStatoFlusso());
-    }
-
-    /**
-     * Verifica se il documento è stato inviato al flusso di firma
-     */
-    public boolean isInviatoAlFlusso() {
-        return "INV".equals(getStatoFlusso()) && getIdFlussoHappysign() != null;
-    }
-
 }

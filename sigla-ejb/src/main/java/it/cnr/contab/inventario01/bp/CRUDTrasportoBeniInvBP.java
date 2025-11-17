@@ -1,7 +1,7 @@
 package it.cnr.contab.inventario01.bp;
 
-import it.cnr.contab.inventario01.bulk.AllegatoDocTraspRientBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -30,25 +30,6 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP {
         super(function);
     }
 
-    @Override
-    protected String getStorePath(Doc_trasporto_rientroBulk allegatoParentBulk, boolean create)
-            throws BusinessProcessException {
-        if (allegatoParentBulk == null) {
-            return "";
-        }
-        return Doc_trasporto_rientroBulk.getStorePathDDT(
-                "Trasporto",  // o "Rientro" per la classe di rientro
-                allegatoParentBulk.getEsercizio(),
-                allegatoParentBulk.getPgInventario(),
-                allegatoParentBulk.getTiDocumento(),
-                allegatoParentBulk.getPgDocTrasportoRientro()
-        );
-    }
-
-    @Override
-    protected Class<AllegatoDocTraspRientBulk> getAllegatoClass() {
-        return AllegatoDocTraspRientBulk.class;
-    }
 
     // ==================== IMPLEMENTAZIONE METODI ASTRATTI ====================
 
@@ -176,4 +157,15 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP {
         doc.setTiDocumento(TRASPORTO);
         return doc;
     }
+
+    @Override
+    protected String getStorePath(Doc_trasporto_rientroBulk allegatoParentBulk, boolean create) throws BusinessProcessException {
+        return "";
+    }
+
+    @Override
+    protected Class<AllegatoGenericoBulk> getAllegatoClass() {
+        return null;
+    }
+
 }

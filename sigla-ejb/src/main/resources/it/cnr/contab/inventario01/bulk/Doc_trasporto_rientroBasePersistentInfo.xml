@@ -91,6 +91,54 @@
 				columnSize="4000"
 				nullable="true" />
 
+		<!-- ========================================
+		     NUOVI CAMPI PER FIRMA DIGITALE HAPPYSIGN
+		     ======================================== -->
+
+		<columnMapping
+				columnName="ID_FLUSSO_HAPPYSIGN"
+				propertyName="idFlussoHappysign"
+				sqlTypeName="VARCHAR"
+				columnSize="100"
+				nullable="true" />
+
+		<columnMapping
+				columnName="STATO_FLUSSO"
+				propertyName="statoFlusso"
+				sqlTypeName="VARCHAR"
+				columnSize="3"
+				nullable="true" />
+
+		<columnMapping
+				columnName="DATA_INVIO_FIRMA"
+				propertyName="dataInvioFirma"
+				sqlTypeName="TIMESTAMP"
+				columnSize="7"
+				nullable="true" />
+
+		<columnMapping
+				columnName="DATA_FIRMA"
+				propertyName="dataFirma"
+				sqlTypeName="TIMESTAMP"
+				columnSize="7"
+				nullable="true" />
+
+		<columnMapping
+				columnName="NOTE_RIFIUTO"
+				propertyName="noteRifiuto"
+				sqlTypeName="VARCHAR"
+				columnSize="4000"
+				nullable="true" />
+
+		<columnMapping
+				columnName="CD_TERZO_RESPONSABILE"
+				propertyName="cdTerzoResponsabile"
+				sqlTypeName="DECIMAL"
+				columnSize="8"
+				nullable="true" />
+
+		<!-- ======================================== -->
+
 		<columnMapping
 				columnName="DACR"
 				propertyName="dacr"
@@ -140,6 +188,15 @@
 	<persistentProperty name="nominativoVettore" />
 	<persistentProperty name="noteRitiro" />
 	<persistentProperty name="note" />
+
+	<!-- Nuove proprietà per firma digitale HappySign -->
+	<persistentProperty name="idFlussoHappysign" />
+	<persistentProperty name="statoFlusso" />
+	<persistentProperty name="dataInvioFirma" />
+	<persistentProperty name="dataFirma" />
+	<persistentProperty name="noteRifiuto" />
+	<persistentProperty name="cdTerzoResponsabile" />
+
 	<persistentProperty name="dacr" />
 	<persistentProperty name="utcr" />
 	<persistentProperty name="duva" />

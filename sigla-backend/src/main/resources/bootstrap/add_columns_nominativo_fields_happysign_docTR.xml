@@ -1,19 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU Affero General Public License as
-  ~     published by the Free Software Foundation, either version 3 of the
-  ~     License, or (at your option) any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU Affero General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU Affero General Public License
-  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
@@ -23,15 +10,37 @@
                                        http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <changeSet author="davide.mirra" id="add_columns_nominativo_fields_happysign_docTR">
-        <addColumn tableName="DOC_TRASPORTO_RIENTRO">
-            <column name="NOMINATIVO_VETTORE" remarks="Nominativo del vettore che effettua il Trasporto/Rientro" type="VARCHAR2(100)"/>
-            <column name="ID_FLUSSO_HAPPYSIGN" remarks="ID del flusso di firma su HappySign" type="VARCHAR2(100)"/>
-            <column name="STATO_FLUSSO" remarks="Stato del flusso di firma. Dominio: INV=Inviato, FIR=Firmato, RIF=Rifiutato" type="VARCHAR2(3)"/>
-            <column name="DATA_INVIO_FIRMA" remarks="Data invio al flusso di firma" type="TIMESTAMP(7)"/>
-            <column name="DATA_FIRMA" remarks="Data completamento firma" type="TIMESTAMP(7)"/>
-            <column name="NOTE_RIFIUTO" remarks="Note in caso di rifiuto firma" type="VARCHAR2(2000)"/>
-            <column name="CD_TERZO_RESPONSABILE" remarks="Codice terzo del responsabile struttura (firmatario)" type="NUMBER(8,0)"/>
+        <addColumn tableName="doc_trasporto_rientro">
+            <column name="nominativo_vettore" remarks="Nominativo del vettore che effettua il Trasporto/Rientro" type="VARCHAR(100)"/>
+            <column name="id_flusso_happysign" remarks="ID del flusso di firma su HappySign" type="VARCHAR(100)"/>
+            <column name="stato_flusso" remarks="Stato del flusso di firma. Dominio: INV=Inviato, FIR=Firmato, RIF=Rifiutato" type="VARCHAR(3)"/>
+            <column name="data_invio_firma" remarks="Data invio al flusso di firma" type="${date.type}"/>
+            <column name="data_firma" remarks="Data completamento firma" type="${date.type}"/>
+            <column name="note_rifiuto" remarks="Note in caso di rifiuto firma" type="VARCHAR(2000)"/>
+            <column name="cd_terzo_responsabile" remarks="Codice terzo del responsabile struttura (firmatario)" type="BIGINT"/>
         </addColumn>
+
+        <!-- Aggiungi foreign key per cd_terzo_responsabile -->
+        <addForeignKeyConstraint
+                baseTableName="doc_trasporto_rientro"
+                baseColumnNames="cd_terzo_responsabile"
+                constraintName="fk_doc_t_r_resp_terzo"
+                referencedTableName="terzo"
+                referencedColumnNames="cd_terzo"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"/>
+
+        <!-- Aggiungi indice per stato_flusso per le query dello scheduler -->
+        <createIndex indexName="idx_doc_t_r_stato_flusso" tableName="doc_trasporto_rientro">
+            <column name="stato_flusso"/>
+        </createIndex>
+
+        <!-- Aggiungi indice per id_flusso_happysign -->
+        <createIndex indexName="idx_doc_t_r_id_flusso" tableName="doc_trasporto_rientro">
+            <column name="id_flusso_happysign"/>
+        </createIndex>
     </changeSet>
 
 </databaseChangeLog>

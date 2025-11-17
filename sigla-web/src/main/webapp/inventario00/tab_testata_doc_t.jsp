@@ -4,20 +4,18 @@
         it.cnr.contab.inventario01.bp.*,
         it.cnr.contab.inventario01.bulk.*"
 %>
-
-<!-- Script JavaScript aggiunto per la stampa -->
-<script language="JavaScript">
-function doStampaDocTrasporto() {
-    doPrint('<%=JSPUtils.getAppRoot(request)%>genericdownload/stampaDocTrasportoRientro.html?methodName=stampaDocTrasportoRientro&it.cnr.jada.action.BusinessProcess=<%=bp.getPath()%>',
-            'Documento di Trasporto Rientro',
-            'toolbar=no, location=no, directories=no, status=no, menubar=no,resizable,scrollbars,width=800,height=600').focus() ;
-}
-</script>
-
 <%
     CRUDTraspRientInventarioBP bp = (CRUDTraspRientInventarioBP)BusinessProcess.getBusinessProcess(request);
     Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk)bp.getModel();
 %>
+<!-- Script JavaScript aggiunto per la stampa -->
+<script language="JavaScript">
+function doStampaDocTraspRient() {
+    doPrint('<%=JSPUtils.getAppRoot(request)%>genericdownload/stampaDocTrasportoRientro.html?methodName=stampaDocTrasportoRientro&it.cnr.jada.action.BusinessProcess=<%=bp.getPath()%>',
+            'Documento di Trasporto/Rientro',
+            'toolbar=no, location=no, directories=no, status=no, menubar=no,resizable,scrollbars,width=800,height=600').focus() ;
+}
+</script>
 
 <table>
 
@@ -33,7 +31,8 @@ function doStampaDocTrasporto() {
     <!-- ==================== DATI INVENTARIO ==================== -->
 
     <tr>
-        <td><% bp.getController().writeFormLabel(out,"cdUoConsegnataria"); %></td>
+        <td><% bp.getController().writeFormLabel(out,"cdUoConsegnataria"); %></
+        td>
         <td colspan="3">
             <% bp.getController().writeFormInput(out,"cdUoConsegnataria"); %>
             <% bp.getController().writeFormInput(out,"dsUoConsegnataria"); %>

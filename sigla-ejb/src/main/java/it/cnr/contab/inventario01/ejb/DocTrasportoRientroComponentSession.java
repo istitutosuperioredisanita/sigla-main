@@ -38,7 +38,7 @@ import java.util.List;
  * Espone i servizi per la gestione del ciclo di vita e dei dettagli del documento.
  */
 @Remote
-public interface DocTrasportoRientroComponentSession extends CRUDDetailComponentSession {
+public interface DocTrasportoRientroComponentSession extends CRUDDetailComponentSession,it.cnr.jada.ejb.PrintComponentSession {
 
     // ========================================
     // GESTIONE ELIMINAZIONE BENI
@@ -67,7 +67,7 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
     /**
      * Sposta il documento di stato da **INSERITO** a **PREDISPOSTO_FIRMA**.
      */
-    Doc_trasporto_rientroBulk predisponiAllaFirma(
+    Doc_trasporto_rientroBulk changeStatoInInviato(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc)
             throws ComponentException, RemoteException;
@@ -239,4 +239,19 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
 
     boolean isEsercizioCOEPChiuso(it.cnr.jada.UserContext userContext) throws ComponentException,java.rmi.RemoteException;
 
+
+    /**
+     * Recupera i documenti predisposti alla firma.
+     *
+     * Criteri di selezione:
+     * - Stato = INVIATO (INV)
+     * - statoFlusso = INV
+     * - idFlussoHappysign valorizzato (NOT NULL)
+     *
+     * @param userContext contesto utente
+     * @return lista dei documenti predisposti alla firma
+     * @throws ComponentException in caso di errore
+     */
+    List getDocumentiPredispostiAllaFirma(UserContext userContext)
+            throws ComponentException, RemoteException;
 }

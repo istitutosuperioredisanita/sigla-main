@@ -1,27 +1,10 @@
-/*
- * Copyright (C) 2019  Consiglio Nazionale delle Ricerche
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Affero General Public License as
- *     published by the Free Software Foundation, either version 3 of the
- *     License, or (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Affero General Public License for more details.
- *
- *     You should have received a copy of the GNU Affero General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package it.cnr.contab.inventario00.bp;
 
 import it.cnr.contab.inventario00.tabrif.bulk.*;
 
 /**
- * Un BusinessProcess controller che permette di effettuare le operazioni di CRUD su istanze 
- * di Tipo_trasporto_rientroBulk, per la gestione dei Tipi di Movimenti di Trasporto e Rientro 
+ * Un BusinessProcess controller che permette di effettuare le operazioni di CRUD su istanze
+ * di Tipo_trasporto_rientroBulk, per la gestione dei Tipi di Movimenti di Trasporto e Rientro
  * dell'Inventario
  **/
 public class CRUDTipoTrasportoRientroBP extends it.cnr.jada.util.action.SimpleCRUDBP {
@@ -41,10 +24,17 @@ public class CRUDTipoTrasportoRientroBP extends it.cnr.jada.util.action.SimpleCR
      * @return <code>boolean</code>
      **/
     public boolean isDeleteButtonEnabled() {
-        if (!isEditable())
+        Tipo_trasporto_rientroBulk m = (Tipo_trasporto_rientroBulk)getModel();
+        if (m == null) {
             return false;
+        }
 
-        return ((Tipo_trasporto_rientroBulk)getModel()).isCancellabile();
+        // Non permettere eliminazione se già cancellato logicamente
+        if (m.getDtCancellazione() != null) {
+            return false;
+        }
+
+        return super.isDeleteButtonEnabled() && m.isCancellabile();
     }
 
     /**
@@ -54,7 +44,7 @@ public class CRUDTipoTrasportoRientroBP extends it.cnr.jada.util.action.SimpleCR
      **/
     public boolean isMovimentoTrasporto() {
         Tipo_trasporto_rientroBulk movimento = (Tipo_trasporto_rientroBulk)getModel();
-        if (movimento.getTiDocumento() == null) {
+        if (movimento == null || movimento.getTiDocumento() == null) {
             return false;
         }
         return movimento.getTiDocumento().equals(movimento.TIPO_TRASPORTO);
@@ -67,9 +57,59 @@ public class CRUDTipoTrasportoRientroBP extends it.cnr.jada.util.action.SimpleCR
      **/
     public boolean isMovimentoRientro() {
         Tipo_trasporto_rientroBulk movimento = (Tipo_trasporto_rientroBulk)getModel();
-        if (movimento.getTiDocumento() == null) {
+        if (movimento == null || movimento.getTiDocumento() == null) {
             return false;
         }
         return movimento.getTiDocumento().equals(movimento.TIPO_RIENTRO);
+    }
+
+    /**
+     * Controlla se il record può essere modificato.
+     * Un record cancellato logicamente (con dtCancellazione valorizzato) può essere modificato
+     * solo per aggiornare alcuni campi specifici.
+     */
+    @Override
+    public boolean isEditable() {
+        Tipo_trasporto_rientroBulk m = (Tipo_trasporto_rientroBulk)getModel();
+        if (m == null) {
+            return false;
+        }
+        // Permetti sempre la modifica, la gestione dei campi specifici
+        // è delegata ai metodi isInputReadonly
+        return super.isEditable();
+    }
+
+    /**
+     * Controlla se i campi principali devono essere in sola lettura.
+     * Restituisce true se il record è stato cancellato logicamente.
+     */
+    public boolean isInputReadonly() {
+        Tipo_trasporto_rientroBulk m = (Tipo_trasporto_rientroBulk)getModel();
+        if (m == null) {
+            return false;
+        }
+        return m.getDtCancellazione() != null;
+    }
+
+    /**
+     * Controlla se il campo Tipo Documento deve essere in sola lettura.
+     */
+    public boolean isTiDocumentoReadonly() {
+        return isInputReadonly();
+    }
+
+    /**
+     * Controlla se il campo Note Aggiuntive deve essere in sola lettura.
+     */
+    public boolean isFlAbilitaNoteReadonly() {
+        return isInputReadonly();
+    }
+
+    /**
+     * Controlla se il campo Data Cancellazione deve essere in sola lettura.
+     * La data di cancellazione è sempre disabilitata (readonly).
+     */
+    public boolean isDtCancellazioneReadonly() {
+        return true;
     }
 }

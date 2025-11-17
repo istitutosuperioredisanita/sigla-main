@@ -45,7 +45,6 @@
 			path="/ListaBeniInTransitoDaInventariareAction"
 			actionClass="it.cnr.contab.inventario00.actions.ListaBeniInTransitoDaInventariareAction" />
 	<action
-	<action
 	path="/CRUDTrasferimentoInventarioAction"
 	actionClass="it.cnr.contab.inventario00.actions.CRUDTrasferimentoInventarioAction" />
   <action

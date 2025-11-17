@@ -1,19 +1,22 @@
 package it.cnr.contab.inventario01.bp;
 
+import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
 import it.cnr.contab.inventario00.bp.RigheInvDaFatturaCRUDController;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
-import it.cnr.contab.inventario01.bulk.AllegatoDocTraspRientBulk;
-import it.cnr.contab.inventario01.bulk.AllegatoDocTraspRientDettaglioBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
 import it.cnr.contab.inventario01.service.DocTraspRientCMISService;
+import it.cnr.contab.ordmag.ordini.bulk.AllegatoOrdineBulk;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk;
+import it.cnr.contab.ordmag.ordini.service.OrdineAcqCMISService;
 import it.cnr.contab.reports.bp.OfflineReportPrintBP;
 import it.cnr.contab.reports.bulk.Print_spoolerBulk;
 import it.cnr.contab.reports.bulk.Print_spooler_paramBulk;
 import it.cnr.contab.reports.bulk.Report;
 import it.cnr.contab.reports.service.PrintService;
 import it.cnr.contab.service.SpringUtil;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
@@ -24,14 +27,12 @@ import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.HttpActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
-import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.GenerazioneReportException;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.AbstractPrintBP;
 import it.cnr.jada.util.action.RemoteDetailCRUDController;
 import it.cnr.jada.util.action.SelectionListener;
-import it.cnr.si.spring.storage.StorageException;
 import it.cnr.si.spring.storage.StorageObject;
 import org.apache.commons.io.IOUtils;
 
@@ -43,15 +44,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Stream;
-
-import static it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk.STATO_INSERITO;
-
-public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<AllegatoDocTraspRientBulk, Doc_trasporto_rientroBulk>
-implements SelectionListener {
+//riscrivi logica per la gestione degli allegati e dei file nel documentale azure in CRUDTraspRientInventarioBP come è stato fatto nel bp CaricFlStipBP
+public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Doc_trasporto_rientroBulk>
+        implements SelectionListener {
 
     private static final DateFormat PDF_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
-    private static final String NOME_REPORT_JASPER = "doc_trasporto_rientro.jasper";
-    protected DocTraspRientCMISService storeService;
+    private static final String REPORT_DOC_TRASPORTO_RIENTRO = "doc_trasporto_rientro.jasper";
 
     public static final String TRASPORTO = "T";
     public static final String RIENTRO = "R";
@@ -59,6 +57,18 @@ implements SelectionListener {
     private String tipo;
     private boolean isAmministratore = false;
     private boolean isVisualizzazione = false;
+
+    private boolean isGestioneInvioInFirmaAttiva = false;
+
+    private String cd_uo_context;
+
+    public String getCd_uo_context() {
+        return cd_uo_context;
+    }
+
+    public void setCd_uo_context(String cd_uo_context) {
+        this.cd_uo_context = cd_uo_context;
+    }
 
     // ==================== PENDING SELECTION ====================
 
@@ -186,12 +196,19 @@ implements SelectionListener {
     // ========================================
 
     protected abstract String getDettagliControllerName();
+
     protected abstract String getEditDettagliControllerName();
+
     protected abstract String getMainTabName();
+
     public abstract String getLabelData_registrazione();
+
     protected abstract void inizializzaSelezioneComponente(ActionContext context) throws ComponentException, RemoteException;
+
     protected abstract void annullaModificaComponente(ActionContext context) throws ComponentException, RemoteException;
+
     protected abstract void selezionaTuttiBeniComponente(ActionContext context) throws ComponentException, RemoteException;
+
     public abstract void modificaBeniConAccessoriComponente(ActionContext context, OggettoBulk[] bulks, BitSet oldSelection, BitSet newSelection) throws ComponentException, RemoteException, BusinessProcessException;
 
     private PendingSelection getPendingDelete() {
@@ -208,29 +225,61 @@ implements SelectionListener {
 
     protected void init(it.cnr.jada.action.Config config, it.cnr.jada.action.ActionContext context)
             throws it.cnr.jada.action.BusinessProcessException {
+
         Integer esercizio = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext());
+
+        setCd_uo_context(CNRUserContext.getCd_unita_organizzativa(context.getUserContext()));
+
         if (this instanceof CRUDTrasportoBeniInvBP)
             setTipo(TRASPORTO);
         else
             setTipo(RIENTRO);
+
         setSearchResultColumnSet(getTipo());
         setFreeSearchSet(getTipo());
+
         try {
-            DocTrasportoRientroComponentSession session = (DocTrasportoRientroComponentSession)
-                    createComponentSession("CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession",
-                            DocTrasportoRientroComponentSession.class);
-            setVisualizzazione(session.isEsercizioCOEPChiuso(context.getUserContext()));
+            // Session documenti trasporto/rientro
+            DocTrasportoRientroComponentSession docSession = (DocTrasportoRientroComponentSession)
+                    createComponentSession(
+                            "CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession",
+                            DocTrasportoRientroComponentSession.class
+                    );
+
+            setVisualizzazione(docSession.isEsercizioCOEPChiuso(context.getUserContext()));
             setAmministratore(UtenteBulk.isAmministratoreInventario(context.getUserContext()));
+
+            // verifica abilitazione firma
+            Configurazione_cnrComponentSession confSession = (Configurazione_cnrComponentSession)
+                    createComponentSession(
+                            "CNRCONFIG00_EJB_Configurazione_cnrComponentSession",
+                            Configurazione_cnrComponentSession.class
+                    );
+
+            boolean abilitazioneInvioFirma = confSession.isGestioneInvioInFirmaDocTRAttivo(
+                    context.getUserContext()
+            );
+            setGestioneInvioInFirmaAttiva(abilitazioneInvioFirma);
+
         } catch (ComponentException e) {
             throw handleException(e);
         } catch (RemoteException e) {
             throw handleException(e);
         }
+
         super.init(config, context);
-        storeService = SpringUtil.getBean("docTrasportoRientroCMISService", DocTraspRientCMISService.class);
+        storeService = SpringUtil.getBean("docTraspRientCMISService", DocTraspRientCMISService.class);
 
         initVariabili(context, getTipo());
         resetTabs();
+    }
+
+    public boolean isGestioneInvioInFirmaAttiva() {
+        return isGestioneInvioInFirmaAttiva;
+    }
+
+    public void setGestioneInvioInFirmaAttiva(boolean gestioneInvioInFirmaAttiva) {
+        this.isGestioneInvioInFirmaAttiva = gestioneInvioInFirmaAttiva;
     }
 
     public void initVariabili(it.cnr.jada.action.ActionContext context, String Tipo) {
@@ -308,12 +357,12 @@ implements SelectionListener {
         return getDoc() != null && getDoc().isAnnullato();
     }
 
-    public boolean isDocumentoPredispostoAllaFirma() {
+    public boolean isDocumentoInviatoInFirma() {
         return getDoc() != null && getDoc().isInviatoInFirma();
     }
 
     public boolean isDocumentoNonModificabile() {
-        return isDocumentoAnnullato() || isDocumentoPredispostoAllaFirma();
+        return isDocumentoAnnullato() || isDocumentoInviatoInFirma();
     }
 
     @Override
@@ -416,11 +465,6 @@ implements SelectionListener {
     // ========================================
 
     @Override
-    public boolean isPrintButtonHidden() {
-        return true;
-    }
-
-    @Override
     protected void initializePrintBP(ActionContext actioncontext, AbstractPrintBP abstractprintbp) {
         OfflineReportPrintBP printbp = (OfflineReportPrintBP) abstractprintbp;
         printbp.setReportName("/cnrdocamm/docamm/doc_trasporto_rientro.jasper");
@@ -441,7 +485,7 @@ implements SelectionListener {
         param = new Print_spooler_paramBulk();
         param.setNomeParam("pg_inventario");
         param.setValoreParam(Optional.ofNullable(docT.getPgInventario()).map(Object::toString).orElse(null));
-        param.setParamType(Integer.class.getCanonicalName());
+        param.setParamType(Long.class.getCanonicalName());
         printbp.addToPrintSpoolerParam(param);
 
         param = new Print_spooler_paramBulk();
@@ -453,7 +497,7 @@ implements SelectionListener {
         param = new Print_spooler_paramBulk();
         param.setNomeParam("pg_doc_trasporto_rientro");
         param.setValoreParam(Optional.ofNullable(docT.getPgDocTrasportoRientro()).map(Object::toString).orElse(null));
-        param.setParamType(Integer.class.getCanonicalName());
+        param.setParamType(Long.class.getCanonicalName());
         printbp.addToPrintSpoolerParam(param);
     }
 
@@ -462,21 +506,43 @@ implements SelectionListener {
     @Override
     protected it.cnr.jada.util.jsp.Button[] createToolbar() {
         final Properties props = it.cnr.jada.util.Config.getHandler().getProperties(getClass());
+
         return Stream.concat(
                 Arrays.stream(super.createToolbar()),
                 Stream.of(
-                        new it.cnr.jada.util.jsp.Button(props, "CRUDToolbar.predisponiAllaFirma"),
-                        new it.cnr.jada.util.jsp.Button(props, "CRUDToolbar.stampa")
+//                        new it.cnr.jada.util.jsp.Button(props, "CRUDToolbar.inviaInFirma"),
+                        new it.cnr.jada.util.jsp.Button(props, "CRUDToolbar.stampaDoc")
                 )
         ).toArray(it.cnr.jada.util.jsp.Button[]::new);
     }
 
-    public boolean isPredisponiAllaFirmaButtonHidden() {
-        if (isDocumentoAnnullato()) return true;
-        return !(getModel() != null
-                && (getModel().getCrudStatus() == OggettoBulk.NORMAL || getModel().getCrudStatus() == OggettoBulk.TO_BE_UPDATED)
-                && STATO_INSERITO.equals(getDoc().getStato()));
+    @Override
+    public boolean isPrintButtonHidden() {
+        return true;
     }
+
+//    /**
+//     * Determina se il pulsante "Invia alla Firma" deve essere nascosto.
+//     *
+//     * @return true = nascondi pulsante, false = mostra pulsante
+//     */
+//    public boolean inviaInFirmaButtonHidden() {
+//        if (!isGestioneInvioInFirmaAttiva()) return true;
+//        if (getModel() == null) return true;
+//        if (isDocumentoAnnullato()) return true;
+//        if (getModel().getCrudStatus() != OggettoBulk.NORMAL
+//                && getModel().getCrudStatus() != OggettoBulk.TO_BE_UPDATED) {
+//            return true;
+//        }
+//
+//        // Controllo null-safe per getDoc()
+//        Doc_trasporto_rientroBulk doc = getDoc();
+//        if (doc == null || doc.getStato() == null) return true;
+//
+//        return !STATO_INSERITO.equals(doc.getStato());
+//    }
+
+
 
     // ==================== CONTROLLERS ====================
 
@@ -522,11 +588,18 @@ implements SelectionListener {
                 PendingSelection ps = new PendingSelection();
                 ps.bulks = details;
 
+                System.out.println("========== INIZIO ELABORAZIONE ELIMINAZIONE ==========");
+                System.out.println("Totale beni selezionati: " + details.length);
+
                 for (OggettoBulk o : details) {
                     Inventario_beniBulk bene = (Inventario_beniBulk) o;
 
+                    System.out.println("\n--- Elaboro bene: " + bene.getNr_inventario() + " ---");
+                    System.out.println("È accessorio? " + bene.isBeneAccessorio());
+
                     if (bene.isBeneAccessorio()) {
                         ps.accessori.add(bene);
+                        System.out.println("Aggiunto a lista accessori standalone");
                     } else {
                         List<Inventario_beniBulk> found = getComp().cercaBeniAccessoriAssociatiInDettaglio(
                                 context.getUserContext(),
@@ -534,13 +607,29 @@ implements SelectionListener {
                                 bene
                         );
 
+                        System.out.println("Accessori trovati per questo principale: " + (found != null ? found.size() : 0));
+                        if (found != null) {
+                            for (Inventario_beniBulk acc : found) {
+                                System.out.println("  - Accessorio: " + acc.getNr_inventario());
+                            }
+                        }
+
                         if (found != null && !found.isEmpty()) {
                             ps.principaliConAccessori.put(bene, found);
+                            System.out.println("Aggiunto a principaliConAccessori");
                         } else {
                             ps.principaliSenza.add(bene);
+                            System.out.println("Aggiunto a principaliSenza");
                         }
                     }
                 }
+
+                System.out.println("\n========== RIEPILOGO FINALE ==========");
+                System.out.println("Principali con accessori: " + ps.principaliConAccessori.size());
+                for (Map.Entry<Inventario_beniBulk, List<Inventario_beniBulk>> entry : ps.principaliConAccessori.entrySet()) {
+                    System.out.println("  Principale " + entry.getKey().getNr_inventario() + " -> " + entry.getValue().size() + " accessori");
+                }
+                System.out.println("========== FINE ELABORAZIONE ==========\n");
 
                 if (ps.principaliConAccessori.isEmpty()) {
                     eliminaDettagliConBulk(context, details);
@@ -625,10 +714,10 @@ implements SelectionListener {
 
     // ========================= WORKFLOW =========================
 
-    public void predisponiAllaFirma(ActionContext context) throws BusinessProcessException {
+    public void inviaAllaFirma(ActionContext context) throws BusinessProcessException {
         validaStatoPerFirma();
         try {
-            Doc_trasporto_rientroBulk doc = getComp().predisponiAllaFirma(context.getUserContext(), getDoc());
+            Doc_trasporto_rientroBulk doc = getComp().changeStatoInInviato(context.getUserContext(), getDoc());
             setModel(context, doc);
             setStatus(VIEW);
             setMessage("Documento predisposto alla firma. Ora in sola lettura.");
@@ -785,7 +874,10 @@ implements SelectionListener {
         return Collections.emptyList();
     }
 
-    public String getMessaggioSingoloBene(boolean isEliminazione, Inventario_beniBulk beneCorrente) {
+    public String getMessaggioSingoloBene(boolean isEliminazione) {
+        // Recupera il bene corrente usando il metodo esistente
+        Inventario_beniBulk beneCorrente = getBenePrincipaleCorrente(isEliminazione);
+
         if (beneCorrente == null) {
             return "";
         }
@@ -854,12 +946,8 @@ implements SelectionListener {
 
         if (bene != null && accessori != null) {
             try {
-                getComp().eliminaBeniPrincipaleConAccessori(
-                        context.getUserContext(),
-                        getDoc(),
-                        bene,
-                        accessori
-                );
+                getComp().eliminaBeniPrincipaleConAccessori(context.getUserContext(), getDoc(), bene, accessori);
+
             } catch (ComponentException | RemoteException e) {
                 throw handleException(e);
             }
@@ -1072,71 +1160,77 @@ implements SelectionListener {
 
     // ========================= STAMPA DOCUMENTO =========================
 
-    public boolean isStampaDocButtonHidden() {
+
+
+    public void stampaDocTrasportoRientro(ActionContext actioncontext) throws Exception {
         Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
-        return (doc == null || doc.getPgDocTrasportoRientro() == null);
-    }
-
-    public void stampaDoc(ActionContext actioncontext) throws Exception {
-        Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
-        HttpActionContext httpCtx = (HttpActionContext) actioncontext;
-        httpCtx.getResponse().setContentType("application/pdf");
-        httpCtx.getResponse().setDateHeader("Expires", 0);
-
-        OutputStream os = httpCtx.getResponse().getOutputStream();
-
-        // Se disponibile nel documentale, usa quello; altrimenti genera e invia
-        try (InputStream is = storeService.getStreamDoc(doc, actioncontext.getUserContext())) {
-            if (is != null) {
-                IOUtils.copy(is, os);
-            } else {
-                File f = stampaDocTrasportoRientro(actioncontext.getUserContext(), doc);
-                try (InputStream fis = Files.newInputStream(f.toPath())) {
-                    IOUtils.copy(fis, os);
-                }
-            }
-            os.flush();
+        ((HttpActionContext)actioncontext).getResponse().setContentType("application/pdf");
+        OutputStream os = ((HttpActionContext)actioncontext).getResponse().getOutputStream();
+        ((HttpActionContext)actioncontext).getResponse().setDateHeader("Expires", 0);
+        InputStream is = ((DocTraspRientCMISService)storeService).getStreamDoc( doc, actioncontext.getUserContext());
+        if ( is==null) {
+            UserContext userContext = actioncontext.getUserContext();
+            File f = stampaDocTrasportoRientro(userContext, doc);
+            IOUtils.copy(Files.newInputStream(f.toPath()), os);
+        }else{
+            IOUtils.copy(is, os);
         }
+
+        os.flush();
     }
 
-    public File stampaDocTrasportoRientro(UserContext userContext, Doc_trasporto_rientroBulk docTrasportoRientro)
-            throws ComponentException {
+    public File stampaDocTrasportoRientro(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc) throws ComponentException {
         try {
-            final String reportPath = "/cnrdocamm/docamm/doc_trasporto_rientro.jasper";
-            final String nomeFileOut = getOutputFileNameDoc(NOME_REPORT_JASPER, docTrasportoRientro);
-
-            final String baseTmp = System.getProperty("tmp.dir.SIGLAWeb", System.getProperty("java.io.tmpdir"));
-            final File tmpDir = new File(baseTmp, "tmp");
-            if (!tmpDir.exists() && !tmpDir.mkdirs()) {
-                throw new GenerazioneReportException("Impossibile creare la directory temporanea: " + tmpDir.getAbsolutePath());
-            }
-
-            final File output = new File(tmpDir, nomeFileOut);
-
+            String nomeFileOrdineOut = getOutputFileNameOrdine(REPORT_DOC_TRASPORTO_RIENTRO, doc);
+            File output = new File(System.getProperty("tmp.dir.SIGLAWeb") + "/tmp/", File.separator + nomeFileOrdineOut);
             Print_spoolerBulk print = new Print_spoolerBulk();
             print.setFlEmail(false);
-            print.setReport(reportPath);
-            print.setNomeFile(nomeFileOut);
+            print.setReport("/cnrdocamm/docamm/" + REPORT_DOC_TRASPORTO_RIENTRO);
+            print.setNomeFile(nomeFileOrdineOut);
             print.setUtcr(userContext.getUser());
-            print.setPgStampa(Math.abs(UUID.randomUUID().getLeastSignificantBits()));
+            print.setPgStampa(UUID.randomUUID().getLeastSignificantBits());
+            print.addParam("esercizio", doc.getEsercizio(), Integer.class);
+            print.addParam("pg_inventario", doc.getPgInventario(), Long.class);
+            print.addParam("ti_documento", doc.getTiDocumento(), String.class);
+            print.addParam("pg_doc_trasporto_rientro", doc.getPgDocTrasportoRientro(), Long.class);
+            print.addParam("DIR_IMAGE", "", String.class);
+            Report report = SpringUtil.getBean("printService", PrintService.class).executeReport(userContext, print);
 
-            // Parametri allineati a initializePrintBP
-            print.addParam("esercizio", docTrasportoRientro.getEsercizio(), Integer.class);
-            print.addParam("pg_inventario", docTrasportoRientro.getPgInventario(), Long.class);
-            print.addParam("ti_documento", docTrasportoRientro.getTiDocumento(), String.class);
-            print.addParam("pg_doc_trasporto_rientro", docTrasportoRientro.getPgDocTrasportoRientro(), Long.class);
-
-            Report report = SpringUtil.getBean("printService", PrintService.class)
-                    .executeReport(userContext, print);
-
-            try (FileOutputStream fos = new FileOutputStream(output)) {
-                fos.write(report.getBytes());
-                fos.flush();
-            }
-
+            FileOutputStream f = new FileOutputStream(output);
+            f.write(report.getBytes());
             return output;
         } catch (IOException e) {
             throw new GenerazioneReportException("Generazione Stampa non riuscita", e);
+        }
+    }
+
+
+    private String getOutputFileNameOrdine(String reportName, Doc_trasporto_rientroBulk doc) {
+        String fileName = preparaFileNamePerStampa(reportName);
+        fileName = PDF_DATE_FORMAT.format(new java.util.Date()) + '_' + doc.recuperoIdDocAsString() + '_' + fileName;
+        return fileName;
+    }
+
+    public void create(it.cnr.jada.action.ActionContext context) throws	it.cnr.jada.action.BusinessProcessException {
+        try {
+            getModel().setToBeCreated();
+            setModel(context, createComponentSession().creaConBulk(context.getUserContext(),getModel()));
+        } catch(Exception e) {
+            throw handleException(e);
+        }
+    }
+
+
+    public void update(it.cnr.jada.action.ActionContext context) throws	it.cnr.jada.action.BusinessProcessException {
+        try {
+            getModel().setToBeUpdated();
+            setModel(context,createComponentSession().modificaConBulk(context.getUserContext(),getModel()));
+            allegatoStampaDoc(context.getUserContext());
+            archiviaAllegati(context);
+        } catch(Exception e) {
+            throw handleException(e);
         }
     }
 
@@ -1153,11 +1247,11 @@ implements SelectionListener {
     private void allegatoStampaDoc(UserContext userContext) throws Exception {
         Doc_trasporto_rientroBulk docTrasportoRientro = (Doc_trasporto_rientroBulk) getModel();
         StorageObject s = ((DocTraspRientCMISService) storeService)
-                .getStorageObjectStampaDoc(docTrasportoRientro, userContext);
+                .getStorageObjectStampaDoc(docTrasportoRientro,userContext);
 
         // Se non in stato predisposto/firmato e una stampa esiste, eliminala
         if (!Doc_trasporto_rientroBulk.STATO_INVIATO.equals(docTrasportoRientro.getStato())
-                && !Doc_trasporto_rientroBulk.STATO_FIRMATO.equals(docTrasportoRientro.getStato())
+                && !Doc_trasporto_rientroBulk.STATO_DEFINITIVO.equals(docTrasportoRientro.getStato())
                 && s != null) {
             storeService.delete(s);
         }
@@ -1166,49 +1260,34 @@ implements SelectionListener {
         if (Doc_trasporto_rientroBulk.STATO_INVIATO.equals(docTrasportoRientro.getStato()) && s == null) {
             File f = stampaDocTrasportoRientro(userContext, docTrasportoRientro);
 
-            AllegatoDocTraspRientBulk allegatoStampa = new AllegatoDocTraspRientBulk();
+            AllegatoGenericoBulk allegatoStampa = new AllegatoGenericoBulk();
             allegatoStampa.setFile(f);
             allegatoStampa.setContentType(new MimetypesFileTypeMap().getContentType(f.getName()));
             allegatoStampa.setNome(f.getName());
             allegatoStampa.setDescrizione(f.getName());
             allegatoStampa.setTitolo(f.getName());
-            allegatoStampa.setCrudStatus(OggettoBulk.TO_BE_CREATED);
-            allegatoStampa.setAspectName(DocTraspRientCMISService.ASPECT_STAMPA_DOC);
-            allegatoStampa.setDocTrasportoRientro(docTrasportoRientro);
             docTrasportoRientro.addToArchivioAllegati(allegatoStampa);
         }
     }
 
-    // ========================= UPDATE OVERRIDE =========================
+
 
     @Override
-    public void update(ActionContext context) throws BusinessProcessException {
-        try {
-            getModel().setToBeUpdated();
-            setModel(context, getComp().modificaConBulk(context.getUserContext(), getModel()));
-
-            // Genera/aggiorna allegato stampa in base allo stato
-            allegatoStampaDoc(context.getUserContext());
-
-            // Archiviazione allegati - questi metodi sono ora forniti da AllegatiCRUDBP
-            archiviaAllegati(context);
-            archiviaAllegatiDettaglio(context);
-        } catch (Exception e) {
-            throw handleException(e);
-        }
+    protected String getStorePath(Doc_trasporto_rientroBulk allegatoParentBulk, boolean create) throws BusinessProcessException{
+        return ( (DocTraspRientCMISService)storeService).getStorePath(allegatoParentBulk,getCd_uo_context());
     }
+
+    @Override
+    protected Class<AllegatoGenericoBulk> getAllegatoClass() {
+        return AllegatoGenericoBulk.class;
+    }
+
+    // ========================= UPDATE OVERRIDE =========================
+
+
 
     // ========================= UTILS STAMPA =========================
 
-    private String getOutputFileNameDoc(String reportName, Doc_trasporto_rientroBulk doc) {
-        String fileName = preparaFileNamePerStampa(reportName);
-        fileName = PDF_DATE_FORMAT.format(new java.util.Date()) + '_'
-                + doc.getEsercizio() + '_'
-                + doc.getPgInventario() + '_'
-                + doc.getTiDocumento() + '_'
-                + doc.getPgDocTrasportoRientro() + '_' + fileName;
-        return fileName;
-    }
 
     private String preparaFileNamePerStampa(String reportName) {
         String fileName = reportName;
@@ -1244,108 +1323,18 @@ implements SelectionListener {
 
     // ========================= GETTERS/SETTERS =========================
 
-
-
-    /**
-     * Archivia gli allegati dei dettagli del documento di trasporto/rientro
-     * Gestisce creazione, modifica ed eliminazione degli allegati
-     *
-     * @throws ApplicationException se si verifica un errore di business
-     * @throws BusinessProcessException se si verifica un errore di processo
-     */
-    /**
-     * Archivia gli allegati dei dettagli del documento di trasporto/rientro
-     * Gestisce creazione, modifica ed eliminazione degli allegati
-     *
-     * @param context il contesto dell'azione
-     * @throws ApplicationException se si verifica un errore di business
-     * @throws BusinessProcessException se si verifica un errore di processo
-     */
-    private void archiviaAllegatiDettaglio(ActionContext context)
-            throws ApplicationException, BusinessProcessException {
-        Doc_trasporto_rientroBulk doc = getDoc();
-
-        // Itera sui dettagli del documento
-        for (Doc_trasporto_rientro_dettBulk dettaglio :
-                (java.util.Collection<Doc_trasporto_rientro_dettBulk>) doc.getDoc_trasporto_rientro_dettColl()) {
-
-            // Gestione allegati da creare o modificare
-            for (AllegatoGenericoBulk allegato : dettaglio.getArchivioAllegati()) {
-                if (allegato.isToBeCreated()) {
-                    // Creazione nuovo allegato
-                    try {
-                        storeService.storeSimpleDocument(
-                                allegato,
-                                new FileInputStream(allegato.getFile()),
-                                allegato.getContentType(),
-                                allegato.getNome(),
-                                ((DocTraspRientCMISService) storeService)
-                                        .getStorePathDettaglio(dettaglio, context.getUserContext())
-                        );
-                        allegato.setCrudStatus(OggettoBulk.NORMAL);
-                    } catch (FileNotFoundException e) {
-                        throw handleException(e);
-                    } catch (StorageException e) {
-                        if (e.getType().equals(StorageException.Type.CONSTRAINT_VIOLATED)) {
-                            throw new ApplicationException(
-                                    "File [" + allegato.getNome() + "] già presente. Inserimento non possibile!"
-                            );
-                        }
-                        throw handleException(e);
-                    }
-                } else if (allegato.isToBeUpdated()) {
-                    // Modifica allegato esistente
-                    if (isPossibileModifica(allegato)) {
-                        try {
-                            if (allegato.getFile() != null) {
-                                storeService.updateStream(
-                                        allegato.getStorageKey(),
-                                        new FileInputStream(allegato.getFile()),
-                                        allegato.getContentType()
-                                );
-                            }
-                            storeService.updateProperties(
-                                    allegato,
-                                    storeService.getStorageObjectBykey(allegato.getStorageKey())
-                            );
-                            allegato.setCrudStatus(OggettoBulk.NORMAL);
-                        } catch (FileNotFoundException e) {
-                            throw handleException(e);
-                        }
-                    }
-                }
-            }
-
-            // Gestione eliminazione allegati marcati per la cancellazione
-            for (Iterator<AllegatoDocTraspRientDettaglioBulk> iterator =
-                 dettaglio.getArchivioAllegati().deleteIterator(); iterator.hasNext();) {
-                AllegatoDocTraspRientDettaglioBulk allegato = iterator.next();
-                if (allegato.isToBeDeleted()) {
-                    storeService.delete(allegato.getStorageKey());
-                    allegato.setCrudStatus(OggettoBulk.NORMAL);
-                }
-            }
-        }
-
-        // Gestione eliminazione allegati di dettagli cancellati
-        for (Iterator<Doc_trasporto_rientro_dettBulk> iterator =
-             doc.getDoc_trasporto_rientro_dettColl().deleteIterator(); iterator.hasNext();) {
-            Doc_trasporto_rientro_dettBulk dettaglio = iterator.next();
-            for (AllegatoGenericoBulk allegato : dettaglio.getArchivioAllegati()) {
-                if (allegato.isToBeDeleted()) {
-                    storeService.delete(allegato.getStorageKey());
-                    allegato.setCrudStatus(OggettoBulk.NORMAL);
-                }
-            }
-        }
-    }
-
     /**
      * Elabora un singolo bene principale con o senza accessori
      */
-    public void elaboraBeneConAccessori(ActionContext context, boolean isEliminazione,
-                                        Inventario_beniBulk beneCorrente, boolean includiAccessori)
+    public void elaboraBeneConAccessori(ActionContext context, boolean isEliminazione, boolean includiAccessori)
             throws BusinessProcessException {
+
+        // Recupera il bene corrente internamente
+        Inventario_beniBulk beneCorrente = getBenePrincipaleCorrente(isEliminazione);
+
+        if (beneCorrente == null) {
+            throw new BusinessProcessException("Nessun bene corrente da elaborare");
+        }
 
         if (isEliminazione) {
             elaboraBenePerEliminazione(context, beneCorrente, includiAccessori);
@@ -1435,6 +1424,22 @@ implements SelectionListener {
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
         }
+    }
+
+    /**
+     *	Abilito il bottone di stampa del Documento solo se questo e' in fase di
+     *	modifica/inserimento.
+     *
+     */
+
+    public boolean isStampaDocButtonEnabled() {
+        return isEditable() || isInserting();
+    }
+
+
+    public boolean isStampaDocButtonHidden() {
+        Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk)getModel();
+        return (doc == null || doc.getPgDocTrasportoRientro() == null);
     }
 
 }

@@ -1,6 +1,11 @@
 package it.cnr.contab.inventario01.comp;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
+import it.cnr.contab.config00.sto.bulk.Unita_organizzativaHome;
+import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
+import it.cnr.contab.doccont00.intcass.bulk.Stampa_vpg_situazione_cassaVBulk;
+import it.cnr.contab.doccont00.ordine.bulk.Stampa_ordineBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniHome;
 import it.cnr.contab.inventario00.docs.bulk.Numeratore_doc_t_rBulk;
@@ -209,7 +214,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             // Filtra per documenti FIRMATI (stato = FIR)
             sql.addSQLClause("AND", "dt.STATO", SQLBuilder.EQUALS,
-                    Doc_trasporto_rientroBulk.STATO_FIRMATO);
+                    Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
 
             // ==================== ESCLUDI BENI GIÀ RIENTRATI ====================
             // Subquery NOT EXISTS per escludere beni già usati in altri rientri
@@ -351,7 +356,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                     if (dettaglioTrasportoOriginale == null) {
                         throw new ApplicationException(
                                 "Bene " + bene.getNumeroBeneCompleto() +
-                                        " non presente in nessun documento di trasporto firmato!");
+                                        " non presente in nessun documento di trasporto firmato (stato DEFINITIVO)!");
                     }
 
                     dettaglio.setEsercizioRif(dettaglioTrasportoOriginale.getEsercizio());
@@ -536,9 +541,19 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     // ========================================
 // TRANSIZIONI STATO
 // ========================================
-    public Doc_trasporto_rientroBulk predisponiAllaFirma(UserContext userContext, Doc_trasporto_rientroBulk doc)
+    /**
+     * Predispone il documento alla firma
+     * Cambia lo stato da INSERITO a INVIATO
+     *
+     * @param userContext contesto utente
+     * @param doc documento da predisporre
+     * @return documento aggiornato
+     * @throws ComponentException in caso di errore
+     */
+    public Doc_trasporto_rientroBulk changeStatoInInviato(UserContext userContext, Doc_trasporto_rientroBulk doc)
             throws ComponentException {
         try {
+            // Validazione stato
             if (!Doc_trasporto_rientroBulk.STATO_INSERITO.equals(doc.getStato())) {
                 throw new ApplicationException("Stato deve essere INSERITO per predisporre alla firma.");
             }
@@ -546,8 +561,20 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             // ==================== CARICA TUTTE LE RELAZIONI PRIMA ====================
             Doc_trasporto_rientroBulk docTR = caricaRelazioniCompleteDocumento(userContext, doc);
 
-            // ==================== CAMBIA STATO ====================
+            // ==================== CAMBIA STATO A INVIATO ====================
             docTR.setStato(Doc_trasporto_rientroBulk.STATO_INVIATO);
+            docTR.setStatoFlusso("INV");
+
+            // ID flusso e data invio sono già impostati dall'Action
+            // Se non sono impostati, genera errore
+            if (docTR.getIdFlussoHappysign() == null || docTR.getIdFlussoHappysign().isEmpty()) {
+                throw new ApplicationException("ID flusso HappySign non impostato");
+            }
+
+            if (docTR.getDataInvioFirma() == null) {
+                docTR.setDataInvioFirma(new Timestamp(System.currentTimeMillis()));
+            }
+
             docTR.setToBeUpdated();
 
             // ==================== SALVA UNA SOLA VOLTA ====================
@@ -559,7 +586,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             throw new ComponentException("Errore predisposizione firma: " + e.getMessage(), e);
         }
     }
-
 
     /**
      * Cerca i beni trasportabili per un documento di trasporto/rientro
@@ -1476,7 +1502,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             // ==================== FILTRO 2: SOLO DOCUMENTI FIRMATI ====================
             sql.addSQLClause("AND", "dt.STATO", SQLBuilder.EQUALS,
-                    Doc_trasporto_rientroBulk.STATO_FIRMATO);
+                    Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
 
             // ==================== FILTRO 3: STESSO INVENTARIO ====================
             sql.addSQLClause("AND", "INVENTARIO_BENI.PG_INVENTARIO", SQLBuilder.EQUALS,
@@ -1730,4 +1756,138 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         // Controlla anche la causa
         return isSessionExpired(e.getCause());
     }
+
+
+    /**
+     * Recupera i documenti predisposti alla firma con filtri aggiuntivi.
+     *
+     * @param userContext contesto utente
+     * @return lista dei documenti predisposti alla firma
+     * @throws ComponentException in caso di errore
+     */
+    public List getDocumentiPredispostiAllaFirma(UserContext userContext)
+            throws ComponentException {
+
+        try {
+            Doc_trasporto_rientroHome home = (Doc_trasporto_rientroHome)
+                    getHome(userContext, Doc_trasporto_rientroBulk.class);
+
+            SQLBuilder sql = home.createSQLBuilder();
+
+            // ==================== FILTRI PRINCIPALI ====================
+
+            // 1. Stato = INVIATO
+            sql.addSQLClause("AND", "STATO", SQLBuilder.EQUALS,
+                    Doc_trasporto_rientroBulk.STATO_INVIATO);
+
+            // 2. StatoFlusso = INV (inviato al flusso)
+            sql.addSQLClause("AND", "STATO_FLUSSO", SQLBuilder.EQUALS, "INV");
+
+            // 3. ID flusso HappySign valorizzato
+            sql.addSQLClause("AND", "ID_FLUSSO_HAPPYSIGN", SQLBuilder.ISNOTNULL, null);
+
+            // ==================== FILTRI AGGIUNTIVI ====================
+
+            // 4. Solo documenti dell'esercizio corrente o precedente
+            Integer esercizioCorrente = CNRUserContext.getEsercizio(userContext);
+            sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.LESS_EQUALS, esercizioCorrente);
+
+//            // 5. OPZIONALE: Solo documenti inviati negli ultimi N giorni
+//            // (evita di controllare documenti troppo vecchi)
+//            java.sql.Timestamp limitDate = new java.sql.Timestamp(
+//                    System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000) // 30 giorni fa
+//            );
+//            sql.addSQLClause("AND", "DATA_INVIO_FIRMA", SQLBuilder.GREATER_EQUALS, limitDate);
+
+            // ==================== ORDINAMENTO ====================
+            // Ordina per data invio (più vecchi prima = priorità maggiore)
+            sql.addOrderBy("DATA_INVIO_FIRMA ASC");
+
+            // ==================== ESECUZIONE ====================
+            List documenti = home.fetchAll(sql);
+
+            System.out.println(String.format("Recuperati %d documenti predisposti alla firma",
+                    documenti != null ? documenti.size() : 0));
+
+            return documenti != null ? documenti : java.util.Collections.emptyList();
+
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        }
+    }
+
+
+    /**
+     * stampaConBulk method comment.
+     */
+    public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext aUC, it.cnr.jada.bulk.OggettoBulk bulk) throws it.cnr.jada.comp.ComponentException {
+            validateBulkForPrint(aUC, (Stampa_doc_trasporto_rientroBulk)bulk);
+        return bulk;
+    }
+
+
+    /**
+     * inizializzaBulkPerStampa method comment.
+     */
+    public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext userContext, it.cnr.jada.bulk.OggettoBulk bulk) throws it.cnr.jada.comp.ComponentException {
+
+        if (bulk instanceof Stampa_doc_trasporto_rientroBulk)
+            inizializzaBulkPerStampa(userContext, (Stampa_doc_trasporto_rientroBulk)bulk);
+        return bulk;
+    }
+
+    /**
+     * inizializzaBulkPerStampa method comment.
+     */
+    public void inizializzaBulkPerStampa(UserContext userContext, Stampa_doc_trasporto_rientroBulk stampa) throws it.cnr.jada.comp.ComponentException {
+
+        Stampa_doc_trasporto_rientroBulk stampaDoc = (Stampa_doc_trasporto_rientroBulk) stampa;
+        //TODO da sostituire (con quale oggetto?)
+//        stampaDoc.setObbligazione(new ObbligazioneBulk());
+        stampaDoc.setEsercizio(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
+        stampaDoc.setCds_scrivania(it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext));
+        stampaDoc.setPgInizio(new Integer(0));
+        stampaDoc.setPgFine(new Integer(999999999));
+
+        try{
+            String cd_uo_scrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_unita_organizzativa(userContext);
+
+            Unita_organizzativaHome uoHome = (Unita_organizzativaHome)getHome(userContext, Unita_organizzativaBulk.class);
+            Unita_organizzativaBulk uo = (Unita_organizzativaBulk)uoHome.findByPrimaryKey(new Unita_organizzativaBulk(cd_uo_scrivania));
+
+            if (!uo.isUoCds()){
+                stampaDoc.setUoForPrint(uo);
+                stampaDoc.setIsUOForPrintEnabled(false);
+            } else {
+                stampaDoc.setUoForPrint(new Unita_organizzativaBulk());
+                stampaDoc.setIsUOForPrintEnabled(true);
+            }
+
+        } catch (it.cnr.jada.persistency.PersistencyException pe){
+            throw new ComponentException(pe);
+        }
+    }
+
+    /**
+     * Validazione dell'oggetto in fase di stampa
+     *
+     */
+    private void validateBulkForPrint(it.cnr.jada.UserContext userContext, Stampa_doc_trasporto_rientroBulk stampa) throws ComponentException{
+
+        try{
+            /**** Controlli sui PG_INIZIO/PG_FINE *****/
+            if (stampa.getPgInizio()==null)
+                throw new ValidationException("Il campo NUMERO INIZIO è obbligatorio");
+            if (stampa.getPgFine()==null)
+                throw new ValidationException("Il campo NUMERO FINE è obbligatorio");
+            if (stampa.getPgInizio().compareTo(stampa.getPgFine())>0)
+                throw new ValidationException("Il NUMERO INIZIO non può essere superiore al NUMERO FINE");
+            if (stampa.getUoForPrint().getCd_unita_organizzativa()==null)
+                throw new ValidationException("Il campo Unità Organizzativa è obbligatorio");
+
+        }catch(ValidationException ex){
+            throw new ApplicationException(ex);
+        }
+    }
+
 }

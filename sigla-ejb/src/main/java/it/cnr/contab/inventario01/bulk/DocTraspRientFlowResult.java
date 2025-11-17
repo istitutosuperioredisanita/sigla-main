@@ -44,7 +44,7 @@ public class DocTraspRientFlowResult implements Serializable {
 
     static {
         Map<String, String> aMap = new HashMap<String, String>();
-        aMap.put(ESITO_FLUSSO_FIRMATO, Doc_trasporto_rientroBulk.STATO_FIRMATO);
+        aMap.put(ESITO_FLUSSO_FIRMATO, Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
         aMap.put(ESITO_FLUSSO_RIFIUTATO, Doc_trasporto_rientroBulk.STATO_INSERITO);
         STATO_FLUSSO_DOCUMENTI = Collections.unmodifiableMap(aMap);
     }
@@ -52,8 +52,8 @@ public class DocTraspRientFlowResult implements Serializable {
     static {
         Map<String, String> aMap = new HashMap<String, String>();
         //TODO da decommentare
-//        aMap.put(TIPO_FLUSSO_TRASPORTO, Doc_trasporto_rientro_respintoBulk.OPERAZIONE_DOC_TRASPORTO);
-//        aMap.put(TIPO_FLUSSO_RIENTRO, Doc_trasporto_rientro_respintoBulk.OPERAZIONE_DOC_RIENTRO);
+        aMap.put(TIPO_FLUSSO_TRASPORTO, Doc_trasporto_rientro_respintoBulk.OPERAZIONE_RIENTRO);
+        aMap.put(TIPO_FLUSSO_RIENTRO, Doc_trasporto_rientro_respintoBulk.OPERAZIONE_RIENTRO);
         TIPO_FLUSSO_DOCUMENTO = Collections.unmodifiableMap(aMap);
     }
 

@@ -1,84 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bulkInfo>
 	<fieldProperty
-		name="cdTipoTrasportoRientro"
-		property="cdTipoTrasportoRientro"
-		inputType="TEXT"
-		inputSize="10"
-		maxLength="10"
-		enabledOnEdit="false"
-		enabledOnSearch="false"
-		nullable="false"
-		label="Codice" />
+			name="cdTipoTrasportoRientro"
+			property="cdTipoTrasportoRientro"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			enabledOnEdit="true"
+			enabledOnSearch="false"
+			nullable="false"
+			label="Codice" />
 	<fieldProperty
-		name="dsTipoTrasportoRientro"
-		property="dsTipoTrasportoRientro"
-		inputType="TEXTAREA"
-		cols="60"
-		rows="5"
-		maxLength="100"
-		enabledOnEdit="false"
-		nullable="false"
-		label="Descrizione" />
-<!--TODO da testare-->
+			name="dsTipoTrasportoRientro"
+			property="dsTipoTrasportoRientro"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="100"
+			enabledOnEdit="true"
+			nullable="false"
+			label="Descrizione" />
 	<fieldProperty
-		name="tiDocumento"
-		property="tiDocumento"
-		inputType="RADIOGROUP"
-		keysProperty="tipoDocumentoKeys"
-		layout="HORIZONTAL"
-		nullable="false"
-		enabledOnSearch="true"
-		enabledOnInsert="true"
-		enabledOnEdit="true"
-		label="Tipo Documento" />
+			name="tiDocumento"
+			property="tiDocumento"
+			inputType="RADIOGROUP"
+			keysProperty="tipoDocumentoKeys"
+			layout="HORIZONTAL"
+			nullable="false"
+			enabledOnSearch="true"
+			enabledOnInsert="true"
+			enabledOnEdit="true"
+			label="Tipo Documento" />
 	<fieldProperty
-		name="dtCancellazione"
-		property="dtCancellazione"
-		inputType="TEXT"
-		formatName="date_short"
-		enabledOnEdit="false"
-		label="Data Cancellazione" />
+			name="dtCancellazione"
+			property="dtCancellazione"
+			inputType="TEXT"
+			formatName="date_short"
+			enabledOnEdit="true"
+			label="Data Cancellazione" />
 	<fieldProperty
-		name="flAbilitaNote"
-		property="flAbilitaNote"
-		inputType="CHECKBOX"
-		enabledOnEdit="false"
-		nullable="false"
-		label="Note Aggiuntive" />
+			name="flAbilitaNote"
+			property="flAbilitaNote"
+			inputType="CHECKBOX"
+			enabledOnEdit="true"
+			nullable="false"
+			label="Note Aggiuntive" />
 	<form
-		name="searchtool">
+			name="searchtool">
 		<formFieldProperty
-			name="cdTipoTrasportoRientro" />
+				name="cdTipoTrasportoRientro" />
 	</form>
 	<formFieldProperty
-		name="cdTipoTrasportoRientro" />
+			name="cdTipoTrasportoRientro" />
 	<formFieldProperty
-		name="dsTipoTrasportoRientro" />
+			name="dsTipoTrasportoRientro" />
 	<formFieldProperty
-		name="tiDocumento" />
+			name="tiDocumento" />
 	<formFieldProperty
-		name="dtCancellazione" />
+			name="dtCancellazione" />
 	<formFieldProperty
-		name="flAbilitaNote" />
+			name="flAbilitaNote" />
 	<findFieldProperty
-		name="cdTipoTrasportoRientro" />
+			name="cdTipoTrasportoRientro" />
 	<findFieldProperty
-		name="dsTipoTrasportoRientro" />
+			name="dsTipoTrasportoRientro" />
 	<findFieldProperty
-		name="tiDocumento" />
+			name="tiDocumento" />
 	<findFieldProperty
-		name="dtCancellazione" />
+			name="dtCancellazione" />
 	<findFieldProperty
-		name="flAbilitaNote" />
+			name="flAbilitaNote" />
 	<columnFieldProperty
-		name="cdTipoTrasportoRientro" />
+			name="cdTipoTrasportoRientro" />
 	<columnFieldProperty
-		name="dsTipoTrasportoRientro" />
+			name="dsTipoTrasportoRientro" />
 	<columnFieldProperty
-		name="tiDocumento" />
+			name="tiDocumento" />
 	<columnFieldProperty
-		name="dtCancellazione" />
+			name="dtCancellazione" />
 	<columnFieldProperty
-		name="flAbilitaNote" />
+			name="flAbilitaNote" />
 </bulkInfo>

@@ -716,9 +716,6 @@
         </profile>
         <profile>
             <id>iss</id>
-            <properties>
-                <profile.iss>,iss</profile.iss>
-            </properties>
             <dependencies>
                 <dependency>
                     <groupId>it.iss.si</groupId>

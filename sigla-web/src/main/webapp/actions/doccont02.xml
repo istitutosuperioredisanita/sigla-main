@@ -20,7 +20,7 @@
   		path="/CRUDOrdineAction" actionClass="it.cnr.contab.doccont00.action.CRUDOrdineAction">
   	</action>
   
-	<businessProcess name="CRUDOrdineBP" className="it.cnr.contab.doccont00.bp.CRUDOrdineBP">
+		<businessProcess name="CRUDOrdineBP" className="it.cnr.contab.doccont00.bp.CRUDOrdineBP">
 		<forward name="default" path="/doccont00/ordine.jsp"/>
 		<init-param name="bulkClassName" value="it.cnr.contab.doccont00.ordine.bulk.OrdineBulk" />
 		<init-param name="componentSessionName" value="CNRDOCCONT00_EJB_OrdineComponentSession"/>		

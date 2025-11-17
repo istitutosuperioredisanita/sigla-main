@@ -17,6 +17,8 @@
 
 package it.cnr.contab.inventario01.service;
 
+import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.core.bulk.V_persona_fisicaBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.jada.comp.ComponentException;
@@ -24,6 +26,7 @@ import it.iss.si.dto.happysign.base.Signer;
 import it.iss.si.dto.happysign.request.UploadToComplexRequest;
 import it.iss.si.dto.happysign.response.UploadToComplexResponse;
 import it.iss.si.service.HappySign;
+import it.iss.si.service.HappySignService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,7 @@ import org.springframework.stereotype.Service;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Service per l'invio dei documenti a HappySign per la firma digitale
@@ -47,95 +51,134 @@ public class DocTraspRientHappySignService {
 
     private static final Logger log = LoggerFactory.getLogger(DocTraspRientHappySignService.class);
 
-    @Value("${flows.templateFirme.docTrasportoRientro:Missioni_doppia_firma}")
+    @Value("${flows.templateFirme.1firma:#{null}}")
     private String happysignTemplate;
 
-    @Autowired
-    private HappySign happySignClient;
+    @Autowired(required = false)
+    private HappySignService happySignService;
 
-    /**
-     * Invia un documento a HappySign per la firma digitale
-     *
-     * @param documento il documento da firmare
-     * @param pdfBytes il contenuto del PDF da firmare
-     * @return l'UUID del documento su HappySign
-     * @throws ComponentException se si verifica un errore
-     */
     public String inviaDocumentoAdHappySign(
             Doc_trasporto_rientroBulk documento,
             byte[] pdfBytes) throws ComponentException {
 
-        log.info("Invio documento a HappySign - Esercizio: {}, Inventario: {}, Tipo: {}, Progressivo: {}",
+        log.info("Invio documento a HappySign - Doc: {}/{}/{}/{}",
                 documento.getEsercizio(),
                 documento.getPgInventario(),
                 documento.getTiDocumento(),
                 documento.getPgDocTrasportoRientro());
 
         try {
-            // Validazione firmatari
             validaFirmatari(documento);
 
-            int numeroFirmatari = documento.getNumeroFirmatariRichiesti();
-            log.info("Firmatari configurati: {}", numeroFirmatari);
-
-            // Prepara la richiesta per HappySign
-            UploadToComplexRequest request = new UploadToComplexRequest();
-            request.setNametemplate(happysignTemplate);
-
-            // Aggiungi il PDF
+            // Prepara PDF
             it.iss.si.dto.happysign.base.File pdfFile = new it.iss.si.dto.happysign.base.File();
             pdfFile.setFilename(costruisciNomeDocumento(documento));
             pdfFile.setPdf(pdfBytes);
-            request.addPdf(pdfFile);
 
-            // Aggiungi i firmatari
+            // Crea lista firmatari
             List<Signer> signers = creaListaFirmatari(documento);
-            for (Signer signer : signers) {
-                request.addSigner(signer);
+
+            // ✅ Estrai email con stream
+            List<String> emailFirmatari = signers.stream()
+                    .map(Signer::getEmail)
+                    .collect(Collectors.toList());
+
+            log.info("Invio a HappySign - Template: {}, Firmatari: {}",
+                    happysignTemplate, emailFirmatari);
+
+            // ✅ Invia con lista email
+            String uuid = happySignService.startFlowToSignSingleDocument(
+                    happysignTemplate,
+                    emailFirmatari,      // List<String>
+                    new ArrayList<>(),   // Approvatori (vuoto)
+                    pdfFile
+            );
+
+            if (uuid == null || uuid.trim().isEmpty()) {
+                throw new ComponentException("UUID non ricevuto da HappySign");
             }
 
-            // Invia a HappySign
-            UploadToComplexResponse response = happySignClient.uploadToComplexTemplate(request);
-
-            if (response != null && response.getListiddocument() != null &&
-                    !response.getListiddocument().isEmpty()) {
-
-                String uuid = response.getListiddocument().get(0).getUuid();
-                log.info("Documento inviato con successo a HappySign - UUID: {}", uuid);
-                return uuid;
-
-            } else {
-                throw new ComponentException("Risposta non valida da HappySign");
-            }
+            log.info("Documento inviato con successo - UUID: {}", uuid);
+            return uuid;
 
         } catch (ComponentException e) {
-            log.error("Errore durante l'invio del documento a HappySign", e);
+            log.error("Errore invio documento a HappySign", e);
             throw e;
         } catch (Exception e) {
-            log.error("Errore imprevisto durante l'invio del documento a HappySign", e);
-            throw new ComponentException("Errore durante l'invio a HappySign: " + e.getMessage(), e);
+            log.error("Errore imprevisto invio documento a HappySign", e);
+            throw new ComponentException("Errore invio a HappySign: " + e.getMessage(), e);
         }
     }
-
     /**
      * Valida che ci siano tutti i firmatari necessari
      */
     private void validaFirmatari(Doc_trasporto_rientroBulk documento) throws ComponentException {
-        // Verifica consegnatario
-        if (documento.getConsegnatario() == null || documento.getConsegnatario().getCd_terzo() == null) {
-            throw new ComponentException("Consegnatario non configurato");
+
+        // ==================== VERIFICA CONSEGNATARIO ====================
+        if (documento.getConsegnatario() == null) {
+            throw new ComponentException("Consegnatario non presente nel documento");
         }
 
-        // Verifica responsabile
+        if (documento.getConsegnatario().getCd_terzo() == null) {
+            throw new ComponentException("Codice terzo consegnatario non valorizzato");
+        }
+
+        AnagraficoBulk anagConsegnatario = documento.getConsegnatario().getAnagrafico();
+        if (anagConsegnatario == null) {
+            throw new ComponentException("Anagrafica consegnatario non disponibile");
+        }
+
+        validaDatiAnagrafica(anagConsegnatario, "Consegnatario");
+
+        // ==================== VERIFICA RESPONSABILE ====================
         if (documento.getCdTerzoResponsabile() == null) {
             throw new ComponentException("Responsabile struttura non configurato");
         }
 
-        // Se ritiro incaricato, verifica incaricato
+        if (documento.getPersonaFisicaResponsabile() == null) {
+            throw new ComponentException("Dati persona fisica responsabile non disponibili");
+        }
+
+        AnagraficoBulk anagResponsabile = documento.getPersonaFisicaResponsabile().getAnagrafico();
+        if (anagResponsabile == null) {
+            throw new ComponentException("Anagrafica responsabile non disponibile");
+        }
+
+        validaDatiAnagrafica(anagResponsabile, "Responsabile");
+
+        // ==================== VERIFICA INCARICATO (se necessario) ====================
         if (documento.isRitiroIncaricato()) {
-            if (documento.getAnagDipRitiro() == null || documento.getAnagDipRitiro().getCd_terzo() == null) {
-                throw new ComponentException("Dipendente incaricato non configurato");
+            if (documento.getAnagDipRitiro() == null) {
+                throw new ComponentException("Dipendente incaricato non presente nel documento");
             }
+
+            if (documento.getAnagDipRitiro().getCd_terzo() == null) {
+                throw new ComponentException("Codice terzo dipendente incaricato non valorizzato");
+            }
+
+            AnagraficoBulk anagIncaricato = documento.getAnagDipRitiro().getAnagrafico();
+            if (anagIncaricato == null) {
+                throw new ComponentException("Anagrafica dipendente incaricato non disponibile");
+            }
+
+            validaDatiAnagrafica(anagIncaricato, "Dipendente incaricato");
+        }
+    }
+
+    /**
+     * Valida i dati anagrafici necessari per la firma
+     */
+    private void validaDatiAnagrafica(AnagraficoBulk anagrafica, String ruolo) throws ComponentException {
+        if (anagrafica.getNome() == null || anagrafica.getNome().trim().isEmpty()) {
+            throw new ComponentException("Nome non disponibile per " + ruolo);
+        }
+
+        if (anagrafica.getCognome() == null || anagrafica.getCognome().trim().isEmpty()) {
+            throw new ComponentException("Cognome non disponibile per " + ruolo);
+        }
+
+        if (anagrafica.getCodice_fiscale() == null || anagrafica.getCodice_fiscale().trim().isEmpty()) {
+            throw new ComponentException("Codice fiscale non disponibile per " + ruolo);
         }
     }
 
@@ -146,66 +189,70 @@ public class DocTraspRientHappySignService {
         List<Signer> signers = new ArrayList<>();
         int ordine = 1;
 
-        // 1. CONSEGNATARIO
+        // ==================== 1. CONSEGNATARIO ====================
+        AnagraficoBulk anagConsegnatario = documento.getConsegnatario().getAnagrafico();
+
         String emailConsegnatario = costruisciEmail(
-                documento.getConsegnatario().getAnagrafico().getNome(),
-                documento.getConsegnatario().getAnagrafico().getCognome()
+                anagConsegnatario.getNome(),
+                anagConsegnatario.getCognome()
         );
 
         Signer signerConsegnatario = creaSigner(
-                documento.getConsegnatario().getAnagrafico().getNome(),
-                documento.getConsegnatario().getAnagrafico().getCognome(),
+                anagConsegnatario.getNome(),
+                anagConsegnatario.getCognome(),
                 emailConsegnatario,
-                documento.getConsegnatario().getAnagrafico().getCodice_fiscale(),
+                anagConsegnatario.getCodice_fiscale(),
                 ordine++
         );
         signers.add(signerConsegnatario);
+
         log.debug("Firmatario #{}: Consegnatario - {} {} ({})",
                 ordine - 1,
                 signerConsegnatario.getSurname(),
                 signerConsegnatario.getName(),
                 emailConsegnatario);
 
-        // 2. RESPONSABILE STRUTTURA
-        V_persona_fisicaBulk personaResponsabile = documento.getPersonaFisicaResponsabile();
-        if (personaResponsabile == null || personaResponsabile.getAnagrafico() == null) {
-            throw new ComponentException("Dati persona fisica responsabile non disponibili");
-        }
+        // ==================== 2. RESPONSABILE STRUTTURA ====================
+        AnagraficoBulk anagResponsabile = documento.getPersonaFisicaResponsabile().getAnagrafico();
 
         String emailResponsabile = costruisciEmail(
-                personaResponsabile.getAnagrafico().getNome(),
-                personaResponsabile.getAnagrafico().getCognome()
+                anagResponsabile.getNome(),
+                anagResponsabile.getCognome()
         );
 
         Signer signerResponsabile = creaSigner(
-                personaResponsabile.getAnagrafico().getNome(),
-                personaResponsabile.getAnagrafico().getCognome(),
+                anagResponsabile.getNome(),
+                anagResponsabile.getCognome(),
                 emailResponsabile,
-                personaResponsabile.getAnagrafico().getCodice_fiscale(),
+                anagResponsabile.getCodice_fiscale(),
                 ordine++
         );
         signers.add(signerResponsabile);
+
         log.debug("Firmatario #{}: Responsabile - {} {} ({})",
                 ordine - 1,
                 signerResponsabile.getSurname(),
                 signerResponsabile.getName(),
                 emailResponsabile);
 
-        // 3. DIPENDENTE INCARICATO (solo se ritiro INCARICATO)
+        // ==================== 3. DIPENDENTE INCARICATO (opzionale) ====================
         if (documento.isRitiroIncaricato()) {
+            AnagraficoBulk anagIncaricato = documento.getAnagDipRitiro().getAnagrafico();
+
             String emailIncaricato = costruisciEmail(
-                    documento.getAnagDipRitiro().getAnagrafico().getNome(),
-                    documento.getAnagDipRitiro().getAnagrafico().getCognome()
+                    anagIncaricato.getNome(),
+                    anagIncaricato.getCognome()
             );
 
             Signer signerIncaricato = creaSigner(
-                    documento.getAnagDipRitiro().getAnagrafico().getNome(),
-                    documento.getAnagDipRitiro().getAnagrafico().getCognome(),
+                    anagIncaricato.getNome(),
+                    anagIncaricato.getCognome(),
                     emailIncaricato,
-                    documento.getAnagDipRitiro().getAnagrafico().getCodice_fiscale(),
+                    anagIncaricato.getCodice_fiscale(),
                     ordine++
             );
             signers.add(signerIncaricato);
+
             log.debug("Firmatario #{}: Dipendente incaricato - {} {} ({})",
                     ordine - 1,
                     signerIncaricato.getSurname(),
@@ -254,13 +301,17 @@ public class DocTraspRientHappySignService {
 
         // Converte in minuscolo
         String risultato = stringa.toLowerCase().trim();
+
         // Rimuove spazi e trattini
         risultato = risultato.replace(" ", "").replace("-", "");
+
         // Normalizza caratteri Unicode (rimuove accenti)
         risultato = Normalizer.normalize(risultato, Normalizer.Form.NFD);
         risultato = risultato.replaceAll("\\p{M}", ""); // Rimuove i segni diacritici
+
         // Rimuove tutti i caratteri non alfanumerici
         risultato = risultato.replaceAll("[^a-z0-9]", "");
+
         return risultato;
     }
 
@@ -284,12 +335,14 @@ public class DocTraspRientHappySignService {
     private String costruisciNomeDocumento(Doc_trasporto_rientroBulk documento) {
         StringBuilder nome = new StringBuilder();
 
+        // Tipo documento
         if (Doc_trasporto_rientroBulk.TRASPORTO.equals(documento.getTiDocumento())) {
             nome.append("Trasporto");
         } else {
             nome.append("Rientro");
         }
 
+        // Dati identificativi
         nome.append("_");
         nome.append(documento.getEsercizio());
         nome.append("_");
@@ -301,3 +354,4 @@ public class DocTraspRientHappySignService {
         return nome.toString();
     }
 }
+

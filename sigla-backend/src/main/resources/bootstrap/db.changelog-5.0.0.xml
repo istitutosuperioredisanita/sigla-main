@@ -6253,22 +6253,12 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <!-- Autore : CIRO SALVIO - Aggiunti accessi per le consultazioni dei dettagli sugli Accertamenti-->
     <include file="bootstrap/mod_accessi_cons_dett_mod_res_acc_imp.xml"/>
 
-    <!-- Autore : DAVIDE MIRRA - Aggiunto nodo padre Documento Movimenti Beni e i nodi x Trasporto e Rientro (con accessi x Gestione/Visualizzazione)-->
-    <include file="bootstrap/add_accessi_doc_trasp_rient_beni.xml"/>
-    <!-- Autore : DAVIDE MIRRA - Aggiunto nodo padre Tipo Trasporto/Rientro Inventario (con accessi x Gestione/Visualizzazione)-->
-    <include file="bootstrap/add_accesso_tipo_tras_rient.xml"/>
     <!-- Autore : CIRO SALVIO - Modificata lunghezza Unità Operativa tabella CNR_ANADIP-->
     <include file="bootstrap/modify_length_unita_oper_cnr_anadip.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunti alla tabella Anagrafico l'unità oragnizzativa di appartenza del dipendente-->
     <include file="bootstrap/add_column_unita_organizzativa_anagrafico.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunto fl_cancellato alla tabella tipo_norma_perla-->
     <include file="bootstrap/add_fl_cancellato_tipo_norma_perla.xml"/>
-    <!-- Autore : DAVIDE MIRRA - Creazione della tabella DOC_TRASPORTO_RIENTRO-->
-    <include file="bootstrap/create_table_doc_trasporto_rientro.xml"/>
-    <!-- Autore : DAVIDE MIRRA - Creazione della tabella DOC_TRASPORTO_RIENTRO_DETT-->
-    <include file="bootstrap/create_table_doc_trasporto_rientro_dett.xml"/>
-    <!-- Autore : DAVIDE MIRRA - Creazione della stampa e print priority del report doc_trasporto_rientro-->
-    <include file="bootstrap/add_print_priority_doc_trasporto_rientro.xml"/>
     <!-- Autore : MARCO SPASIANO - Aggiunto commerciale/non commerciale alla tabella codici_siope-->
     <include file="bootstrap/add_ti_tipo_debito_codici_siope.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunto configurazione gestione lettera pagamento estero( 1210)-->
@@ -6280,8 +6270,25 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <!-- Autore : VALENTINA TOMADA - Nuova voce di menu per consultazione flussi di cassa-->
     <include file="bootstrap/add_accesso_flussi_di_cassa.xml"/>
 
-    <!-- Autore : DAVIDE MIRRA - Aggiunta colonna nominativo vettore Trasporto/Rientro e campi per la firma con HappySign-->
+    <!-- Autore : DAVIDE MIRRA - Creata tabella di supporto Tipo Trasporto Rientro -->
+    <include file="bootstrap/create_table_tipo_trasporto_rientro.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Creata tabella di supporto Numeratore Documento Trasporto Rientro -->
+    <include file="bootstrap/create_table_numeratore_doc_t_r.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Creata tabella principale Documento Trasporto Rientro -->
+    <include file="bootstrap/create_table_doc_trasporto_rientro.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Creata tabella principale Dettaglio Documento Trasporto Rientro -->
+    <include file="bootstrap/create_table_doc_trasporto_rientro_dett.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Aggiunte colonne aggiuntive per i campi nominativo su Happysign Documento TR -->
     <include file="bootstrap/add_columns_nominativo_fields_happysign_docTR.xml"/>
-    <!-- Autore : DAVIDE MIRRA - Creazione tabella gestione dei documenti di Trasporto/Rientro respinti con HappySign -->
+    <!-- Autore : DAVIDE MIRRA - Creata tabella per la gestione dei documenti TR respinti in Happysign -->
     <include file="bootstrap/create_table_docTR_respinto_happysign.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Aggiunta configurazione stampe prioritarie per Documento Trasporto Rientro -->
+    <include file="bootstrap/add_print_priority_doc_trasporto_rientro.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Aggiunti accessi per Documento Trasporto Rientro Beni -->
+    <include file="bootstrap/add_accessi_doc_trasp_rient_beni.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Aggiunto accesso per Tipo Trasporto Rientro -->
+    <include file="bootstrap/add_accesso_tipo_tras_rient.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Aggiunta configurazione gestione invio in firma Documento Trasporto Rientro -->
+    <include file="bootstrap/add_conf_gestione_invio_docTR.xml"/>
+
 </databaseChangeLog>

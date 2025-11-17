@@ -1,11 +1,17 @@
 package it.cnr.contab.inventario01.actions;
 
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
-import it.cnr.contab.inventario01.bp.CRUDScaricoInventarioBP;
 import it.cnr.contab.inventario01.bp.CRUDTraspRientInventarioBP;
-import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
+import it.cnr.contab.inventario01.bulk.Stampa_doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
+import it.cnr.contab.inventario01.service.DocTraspRientCMISService;
+import it.cnr.contab.inventario01.service.DocTraspRientFirmatariService;
+import it.cnr.contab.inventario01.service.DocTraspRientHappySignService;
+import it.cnr.contab.reports.bp.ParametricPrintBP;
+import it.cnr.contab.service.SpringUtil;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
@@ -18,11 +24,16 @@ import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.*;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+import it.cnr.si.spring.storage.StorageObject;
+import org.apache.commons.io.IOUtils;
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.List;
-import java.util.Objects;
+import java.sql.Timestamp;
+import java.util.*;
+
+import static it.cnr.jada.util.action.FormController.VIEW;
 
 /**
  * Action BASE per la gestione del flusso di Trasporto/Rientro Beni.
@@ -31,7 +42,7 @@ import java.util.Objects;
  * - Cambio testata (tipo movimento, tipo ritiro, dipendente, data)
  * - Aggiunta/Selezione beni con gestione accessori (flusso ricorsivo unificato)
  * - Eliminazione beni con gestione accessori (flusso ricorsivo unificato)
- * - Workflow (predisponi alla firma, annullamento)
+ * - Workflow (invia alla firma, annullamento)
  * - Helper methods
  * <p>
  * Le classi figlie devono solo implementare:
@@ -314,8 +325,6 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     }
 
 
-
-
     private Forward apriFlussoRicorsivoGenerico(ActionContext context, CRUDTraspRientInventarioBP bp,
                                                 boolean isEliminazione,
                                                 List<Inventario_beniBulk> beniDaElaborare,
@@ -323,22 +332,26 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             throws ComponentException, RemoteException, BusinessProcessException {
 
         if (beniDaElaborare == null || index >= beniDaElaborare.size()) {
-            // : Finito il ciclo, finalizza con messaggio appropriato
             finalizeFlusso(context, bp, isEliminazione, true);
             return context.findDefaultForward();
         }
 
         Inventario_beniBulk beneCorrente = beniDaElaborare.get(index);
 
-        // Qui arriviamo SOLO per beni con accessori (per aggiunta)
-        // o per beni principali con accessori (per eliminazione)
-
         bp.setUltimaOperazioneEliminazione(isEliminazione);
+
+        // ========== AGGIORNA L'INDICE INTERNO DEL BP ==========
+        if (isEliminazione) {
+            bp.setIndexBeneCurrentePerEliminazione(index);
+        } else {
+            bp.setIndexBeneCurrentePerAggiunta(index);
+        }
+        // ======================================================
 
         String messaggio = String.format("[Bene %d di %d]\n\n%s",
                 index + 1,
                 beniDaElaborare.size(),
-                bp.getMessaggioSingoloBene(isEliminazione, beneCorrente));
+                bp.getMessaggioSingoloBene(isEliminazione));
 
         try {
             int confirmType = isEliminazione ? OptionBP.CONFIRM_YES_NO_CANCEL : OptionBP.CONFIRM_YES_NO;
@@ -392,11 +405,11 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
 
             // : Gestione SI/NO
             if (haCliccatoSI) {
-                // SI: Elabora con accessori
-                bp.elaboraBeneConAccessori(context, isEliminazione, beneCorrente, true);
+                bp.elaboraBeneCorrente(context, isEliminazione, true);  // Elimina con accessori
             } else if (haCliccatoNO) {
-                // NO: Elabora SOLO il principale SENZA accessori
-                bp.elaboraBeneConAccessori(context, isEliminazione, beneCorrente, false);
+                if (isEliminazione) {
+                    bp.elaboraBeneCorrente(context, isEliminazione, false);  // Elimina SOLO principale
+                }
             }
 
             // Passa al prossimo bene
@@ -420,7 +433,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         String messaggio = String.format("[Bene %d di %d]\n\n%s",
                 bp.getIndexBeneCorrente(isEliminazione),
                 bp.getTotaleBeniPrincipali(isEliminazione),
-                bp.getMessaggioSingoloBene(isEliminazione,beneProssimoCorrente));
+                bp.getMessaggioSingoloBene(isEliminazione));
         try {
             // Per eliminazione: usa 3 pulsanti (SI/NO/ANNULLA)
             // Per aggiunta: usa 2 pulsanti (SI/NO)
@@ -480,7 +493,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                 String messaggio = String.format("[Bene %d di %d]\n\n%s",
                         bp.getIndexBeneCorrente(isEliminazione),
                         bp.getTotaleBeniPrincipali(isEliminazione),
-                        bp.getMessaggioSingoloBene(isEliminazione,beneProssimoCorrente));
+                        bp.getMessaggioSingoloBene(isEliminazione));
 
                 // Per eliminazione: usa 3 pulsanti, per aggiunta: usa 2 pulsanti
                 int confirmType = isEliminazione ? OptionBP.CONFIRM_YES_NO_CANCEL : OptionBP.CONFIRM_YES_NO;
@@ -522,14 +535,170 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     // WORKFLOW E ANNULLAMENTO (comune)
     // =======================================================
 
-    public Forward doPredisponiAllaFirma(ActionContext context) {
+    /**
+     * Gestisce il click su "Invia alla Firma"
+     * Esegue l'intero flusso:
+     * 1. Validazioni
+     * 2. Popolazione firmatari
+     * 3. Generazione PDF (con dati testata + dettagli)
+     * 4. Salvataggio PDF NON firmato su CMIS (temporaneo)
+     * 5. Invio a HappySign
+     * 6. Aggiornamento stato documento
+     * 7. Quando HappySign richiama il callback, il PDF firmato sostituirà quello temporaneo
+     */
+    public Forward doInviaInFirma(ActionContext context) {
         try {
-            getBP(context).predisponiAllaFirma(context);
+            CRUDTraspRientInventarioBP bp = getBP(context);
+            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
+
+            // ==================== 1. VALIDAZIONI ====================
+            validaDocumentoPerFirma(doc);
+
+            // ==================== 2. POPOLAZIONE FIRMATARI ====================
+            DocTraspRientFirmatariService firmatariService =
+                    SpringUtil.getBean("docTraspRientFirmatariService", DocTraspRientFirmatariService.class);
+
+            firmatariService.popolaFirmatari(doc, (CNRUserContext) context.getUserContext());
+
+            // ==================== 3. GENERAZIONE PDF ====================
+            // Questo PDF contiene TUTTI i dati (testata + dettagli)
+            File pdfFile = bp.stampaDocTrasportoRientro(context.getUserContext(), doc);
+
+            // Leggi il PDF come byte array
+            byte[] pdfBytes;
+            try (FileInputStream fis = new FileInputStream(pdfFile)) {
+                pdfBytes = IOUtils.toByteArray(fis);
+            }
+
+            // ==================== 4. SALVATAGGIO PDF TEMPORANEO SU CMIS ====================
+            //  Questo è il PDF NON ancora firmato
+            salvaStampaSuCMIS(context, doc, pdfFile, false); // ← false = non firmato
+
+            // ==================== 5. INVIO A HAPPYSIGN ====================
+            DocTraspRientHappySignService happySignService =
+                    SpringUtil.getBean("docTraspRientHappySignService", DocTraspRientHappySignService.class);
+
+            String uuidHappysign = happySignService.inviaDocumentoAdHappySign(doc, pdfBytes);
+
+            // ==================== 6. AGGIORNAMENTO STATO DOCUMENTO ====================
+            doc.setIdFlussoHappysign(uuidHappysign);
+            doc.setDataInvioFirma(new Timestamp(System.currentTimeMillis()));
+
+            // Usa il metodo del Component per cambiare stato
+            doc = getComponentSession(bp).changeStatoInInviato(context.getUserContext(), doc);
+
+            // Aggiorna il model nel BP
+            bp.setModel(context, doc);
+            bp.setStatus(VIEW);
+
+            bp.setMessage("Documento inviato alla firma con successo. UUID HappySign: " + uuidHappysign);
+
             return context.findDefaultForward();
+
         } catch (Throwable e) {
             return handleException(context, e);
         }
     }
+
+    /**
+     * Salva la stampa del documento su CMIS
+     *
+     * @param context il contesto dell'azione
+     * @param doc il documento di trasporto/rientro
+     * @param pdfFile il file PDF da salvare
+     * @param isFirmato true se il PDF è già firmato, false se è temporaneo
+     */
+    private void salvaStampaSuCMIS(ActionContext context, Doc_trasporto_rientroBulk doc,
+                                   File pdfFile, boolean isFirmato)
+            throws Exception {
+
+        DocTraspRientCMISService storeService =
+                SpringUtil.getBean("docTraspRientCMISService", DocTraspRientCMISService.class);
+
+        // Verifica se esiste già una stampa
+        StorageObject stampaEsistente = storeService.getStorageObjectStampaDoc(doc, context.getUserContext());
+
+        if (stampaEsistente != null) {
+            // ========== AGGIORNA FILE ESISTENTE ==========
+            try (FileInputStream fis = new FileInputStream(pdfFile)) {
+                storeService.updateStream(
+                        stampaEsistente.getKey(),
+                        fis,
+                        "application/pdf"
+                );
+            }
+
+            // Aggiorna le proprietà
+            Map<String, Object> properties = new HashMap<>();
+            properties.put("doc_trasporto_rientro:stato",
+                    isFirmato ? DocTraspRientCMISService.STATO_STAMPA_DOC_VALIDO
+                            : DocTraspRientCMISService.STATO_STAMPA_DOC_ANNULLATO);
+            properties.put("doc_trasporto_rientro:firmato", isFirmato);
+            if (isFirmato) {
+                properties.put("doc_trasporto_rientro:data_firma", new Date());
+            }
+
+            storeService.updateProperties(properties, stampaEsistente);
+
+        } else {
+            // ========== CREA NUOVO FILE ==========
+            AllegatoGenericoBulk allegatoStampa = new AllegatoGenericoBulk();
+            allegatoStampa.setFile(pdfFile);
+            allegatoStampa.setContentType("application/pdf");
+            allegatoStampa.setNome(pdfFile.getName());
+            allegatoStampa.setDescrizione("Stampa documento " + doc.getTiDocumento() + " " + doc.getPgDocTrasportoRientro());
+            allegatoStampa.setTitolo(pdfFile.getName());
+            allegatoStampa.setCrudStatus(OggettoBulk.TO_BE_CREATED);
+            String uo = CNRUserContext.getCd_unita_organizzativa(context.getUserContext());
+
+            try (FileInputStream fis = new FileInputStream(pdfFile)) {
+                storeService.storeSimpleDocument(
+                        allegatoStampa,
+                        fis,
+                        "application/pdf",
+                        pdfFile.getName(),
+                        storeService.getStorePath(doc, uo)
+                );
+            }
+        }
+    }
+
+    /**
+     * Validazioni pre-invio firma
+     */
+    private void validaDocumentoPerFirma(Doc_trasporto_rientroBulk doc) throws ValidationException {
+        if (doc == null) {
+            throw new ValidationException("Documento non presente");
+        }
+
+        if (doc.isAnnullato()) {
+            throw new ValidationException("Impossibile inviare alla firma un documento annullato");
+        }
+
+        if (!doc.isInserito()) {
+            throw new ValidationException("Il documento deve essere in stato 'Inserito' per essere inviato in firma");
+        }
+
+        if (doc.getDoc_trasporto_rientro_dettColl() == null ||
+                doc.getDoc_trasporto_rientro_dettColl().isEmpty()) {
+            throw new ValidationException("Il documento deve contenere almeno un bene");
+        }
+
+        if (doc.getTipoMovimento() == null) {
+            throw new ValidationException("Tipo movimento non specificato");
+        }
+
+        if (doc.getDataRegistrazione() == null) {
+            throw new ValidationException("Data registrazione non specificata");
+        }
+
+        if (doc.getDsDocTrasportoRientro() == null || doc.getDsDocTrasportoRientro().trim().isEmpty()) {
+            throw new ValidationException("Descrizione documento non specificata");
+        }
+    }
+
+
+
 
     @Override
     public Forward doElimina(ActionContext context) throws RemoteException {
@@ -546,7 +715,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                 return context.findDefaultForward();
             }
             if (doc.isInviatoInFirma()) {
-                bp.setMessage("Impossibile annullare un documento già predisposto alla firma.");
+                bp.setMessage("Impossibile annullare un documento già inviato in firma.");
                 return context.findDefaultForward();
             }
             bp.annullaDoc(context);
@@ -597,6 +766,36 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
         if (doc.getDsDocTrasportoRientro() == null || doc.getDsDocTrasportoRientro().trim().isEmpty()) {
             throw new ValidationException("Attenzione: indicare una Descrizione per il Documento.");
+        }
+    }
+
+
+    /**
+     * Gestisce la Stampa di un Documento di Trasporto/Rientro.
+     *
+     * @param context <code>ActionContext</code> in uso.
+     * @return <code>Forward</code>
+     */
+    public Forward doStampaDocTraspRient(ActionContext context) {
+
+        try {
+            fillModel(context);
+            CRUDTraspRientInventarioBP bp = (CRUDTraspRientInventarioBP)getBusinessProcess(context);
+            Doc_trasporto_rientroBulk docTrasporto = (Doc_trasporto_rientroBulk)bp.getModel();
+
+            ParametricPrintBP ppbp = (ParametricPrintBP)context.createBusinessProcess("StampaDocTraspRientBP");
+            Stampa_doc_trasporto_rientroBulk stampa = (Stampa_doc_trasporto_rientroBulk)ppbp.createNewBulk(context);
+
+            if (docTrasporto != null && docTrasporto.getPgDocTrasportoRientro() != null){
+                stampa.setPgInizio(new Integer(docTrasporto.getPgDocTrasportoRientro().intValue()));
+                stampa.setPgFine(new Integer(docTrasporto.getPgDocTrasportoRientro().intValue()));
+            }
+            ppbp.setModel(context, stampa);
+
+            return context.addBusinessProcess(ppbp);
+
+        } catch (Throwable t) {
+            return handleException(context, t);
         }
     }
 }

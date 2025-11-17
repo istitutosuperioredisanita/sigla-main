@@ -1,36 +1,18 @@
-/*
- * Copyright (C) 2020  Consiglio Nazionale delle Ricerche
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Affero General Public License as
- *     published by the Free Software Foundation, either version 3 of the
- *     License, or (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Affero General Public License for more details.
- *
- *     You should have received a copy of the GNU Affero General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package it.cnr.contab.inventario01.config;
 
 import it.cnr.contab.inventario01.service.DocTraspRientCronService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Configurazione scheduler per la verifica della firma digitale
- * dei documenti di trasporto/rientro tramite HappySign
- *
- * Usa la stessa configurazione cron.happysign già presente
+ * Scheduler per la verifica dello stato di firma digitale (HappySign)
+ * dei documenti di trasporto e rientro.
+ * Configurazione tramite application.yml: ${cron.happysign.active} e ${cron.happysign.cronExpression}.
  */
 @Configuration
 @EnableScheduling
@@ -38,43 +20,38 @@ public class DocTraspRientSchedulerConfig {
 
     private static final Logger log = LoggerFactory.getLogger(DocTraspRientSchedulerConfig.class);
 
-    @Value("${cron.happysign.active:false}")
+    @Value("${cron.happysign.active}")
     private boolean cronHappySignActive;
 
+    // Richiesto = false per non bloccare l'avvio se il service non è presente in tutti i profili.
     @Autowired(required = false)
     private DocTraspRientCronService docTRCronService;
 
     /**
-     * Job schedulato per verificare lo stato dei documenti su HappySign
-     * Usa la configurazione: cron.happysign.cronExpression (ogni minuto)
+     * Job schedulato per interrogare HappySign e aggiornare lo stato dei documenti INVIATO.
      */
     @Scheduled(cron = "${cron.happysign.cronExpression}")
     public void cronVerificaFirmeDocumentiTrasportoRientro() {
-
         if (!cronHappySignActive) {
-            log.trace("Scheduler HappySign NON attivo");
+            log.trace("Scheduler HappySign NON attivo. Saltato.");
             return;
         }
 
         if (docTRCronService == null) {
-            log.warn("DocTrasportoRientroCronService non disponibile");
+            log.warn("DocTraspRientCronService non disponibile. Saltato.");
             return;
         }
 
         try {
-            log.info("========================================");
-            log.info("INIZIO Verifica firme documenti trasporto/rientro su HappySign");
-            log.info("========================================");
+            log.info("--- INIZIO Verifica firme HappySign documenti trasporto/rientro ---");
 
-            // Esegue la verifica
+            // Delega l'esecuzione al service
             docTRCronService.verificaFirmeDocumentiTrasportoRientro();
 
-            log.info("========================================");
-            log.info("FINE Verifica firme documenti trasporto/rientro su HappySign");
-            log.info("========================================");
+            log.info("--- FINE Verifica firme HappySign documenti trasporto/rientro ---");
 
         } catch (Exception e) {
-            log.error("ERRORE durante la verifica firme documenti trasporto/rientro", e);
+            log.error("❌ ERRORE durante la verifica firme documenti trasporto/rientro", e);
         }
     }
 }

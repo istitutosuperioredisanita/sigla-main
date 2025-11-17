@@ -45,6 +45,14 @@ public class Doc_trasporto_rientroHome extends BulkHome {
 		super(Doc_trasporto_rientroBulk.class, conn, persistentCache);
 	}
 
+	public Doc_trasporto_rientroHome(Class class1, Connection connection) {
+		super(class1, connection);
+	}
+
+	public Doc_trasporto_rientroHome(Class class1, Connection connection, PersistentCache persistentcache) {
+		super(class1, connection, persistentcache);
+	}
+
 	/**
 	 * Trova i tipi di movimento disponibili per un documento di trasporto/rientro
 	 */

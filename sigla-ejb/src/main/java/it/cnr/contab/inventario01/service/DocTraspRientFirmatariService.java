@@ -20,15 +20,16 @@ package it.cnr.contab.inventario01.service;
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.core.bulk.V_persona_fisicaBulk;
+import it.cnr.contab.anagraf00.ejb.TerzoComponentSession;
+import it.cnr.contab.config00.ejb.Unita_organizzativaComponentSession;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
-import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
-import it.cnr.jada.UserContext;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.util.ejb.EJBCommonServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.rmi.RemoteException;
@@ -46,8 +47,9 @@ public class DocTraspRientFirmatariService {
 
     private static final Logger log = LoggerFactory.getLogger(DocTraspRientFirmatariService.class);
 
-    @Autowired
-    private DocTrasportoRientroComponentSession docTrasportoRientroComponent;
+    // Nomi JNDI dei component session
+    private static final String TERZO_COMPONENT_SESSION = "CNRANAGRAF00_EJB_TerzoComponentSession";
+    private static final String UO_COMPONENT_SESSION = "CNRCONFIG00_EJB_Unita_organizzativaComponentSession";
 
     /**
      * Popola i campi dei firmatari nel documento.
@@ -56,7 +58,7 @@ public class DocTraspRientFirmatariService {
      * @param userContext il contesto utente
      * @throws ComponentException se si verifica un errore
      */
-    public void popolaFirmatari(Doc_trasporto_rientroBulk documento, UserContext userContext)
+    public void popolaFirmatari(Doc_trasporto_rientroBulk documento, CNRUserContext userContext)
             throws ComponentException {
 
         log.info("Inizio popolazione firmatari per documento - Esercizio: {}, Inventario: {}, Tipo: {}, Progressivo: {}",
@@ -118,7 +120,7 @@ public class DocTraspRientFirmatariService {
      */
     private String determinaUnitaOrganizzativa(
             Doc_trasporto_rientroBulk documento,
-            UserContext userContext) throws ApplicationException {
+            CNRUserContext userContext) throws ApplicationException {
 
         if (documento.isRitiroIncaricato()) {
             // Usa la UO dell'incaricato
@@ -137,7 +139,7 @@ public class DocTraspRientFirmatariService {
 
         } else {
             // Usa la UO dell'utente dal contesto
-            String cdUo = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_unita_organizzativa(userContext);
+            String cdUo = CNRUserContext.getCd_unita_organizzativa(userContext);
             if (cdUo == null) {
                 throw new ApplicationException(
                         "Unità organizzativa dell'utente non trovata nel contesto");
@@ -150,53 +152,92 @@ public class DocTraspRientFirmatariService {
     /**
      * Recupera il terzo dato un codice terzo
      */
-    private TerzoBulk recuperaTerzo(Integer cdTerzo, UserContext userContext)
+    private TerzoBulk recuperaTerzo(Integer cdTerzo, CNRUserContext userContext)
             throws ComponentException {
-        //TODO da decommentare
+        try {
+            // Crea il component session
+            TerzoComponentSession component = (TerzoComponentSession)
+                    EJBCommonServices.createEJB(TERZO_COMPONENT_SESSION, TerzoComponentSession.class);
 
-//        try {
-//            return docTrasportoRientroComponent.recuperaTerzo(userContext, cdTerzo);
-//        } catch (ComponentException | RemoteException e) {
-//            throw new ComponentException("Errore nel recupero terzo: " + e.getMessage(), e);
-//        }
-        return null;
+            // Cerca il terzo
+            TerzoBulk terzo = new TerzoBulk(cdTerzo);
+            terzo = (TerzoBulk) component.inizializzaBulkPerModifica(userContext, terzo);
+
+            if (terzo == null) {
+                throw new ComponentException("Terzo non trovato: " + cdTerzo);
+            }
+
+            return terzo;
+
+        } catch (ComponentException | RemoteException e) {
+            log.error("Errore nel recupero terzo: {}", cdTerzo, e);
+            throw new ComponentException("Errore nel recupero terzo: " + e.getMessage(), e);
+        }
     }
 
     /**
      * Recupera la persona fisica dato un codice terzo
      */
-    private V_persona_fisicaBulk recuperaPersonaFisica(Integer cdTerzo, UserContext userContext)
+    private V_persona_fisicaBulk recuperaPersonaFisica(Integer cdTerzo, CNRUserContext userContext)
             throws ComponentException {
-        //TODO da decommentare
+        try {
+            // Crea il component session
+            TerzoComponentSession component = (TerzoComponentSession)
+                    EJBCommonServices.createEJB(TERZO_COMPONENT_SESSION, TerzoComponentSession.class);
 
-//        try {
-//            return docTrasportoRientroComponent.recuperaPersonaFisica(userContext, cdTerzo);
-//        } catch (ComponentException | RemoteException e) {
-//            throw new ComponentException("Errore nel recupero persona fisica: " + e.getMessage(), e);
-//        }
-        return null;
+            // Cerca la persona fisica
+            V_persona_fisicaBulk personaFisica = new V_persona_fisicaBulk();
+            personaFisica.setCd_terzo(cdTerzo);
+
+            personaFisica = (V_persona_fisicaBulk) component.inizializzaBulkPerModifica(
+                    userContext,
+                    personaFisica
+            );
+
+            if (personaFisica == null) {
+                throw new ComponentException("Persona fisica non trovata per terzo: " + cdTerzo);
+            }
+
+            return personaFisica;
+
+        } catch (ComponentException | RemoteException e) {
+            log.error("Errore nel recupero persona fisica per terzo: {}", cdTerzo, e);
+            throw new ComponentException("Errore nel recupero persona fisica: " + e.getMessage(), e);
+        }
     }
 
     /**
      * Recupera il responsabile di un'unità organizzativa
      */
-    private Integer recuperaResponsabileUO(String cdUnitaOrganizzativa, UserContext userContext)
+    private Integer recuperaResponsabileUO(String cdUnitaOrganizzativa, CNRUserContext userContext)
             throws ComponentException {
-        //TODO da decommentare
+        try {
+            // Crea il component session
+            Unita_organizzativaComponentSession component = (Unita_organizzativaComponentSession)
+                    EJBCommonServices.createEJB(UO_COMPONENT_SESSION, Unita_organizzativaComponentSession.class);
 
-//        try {
-//            Unita_organizzativaBulk uo = docTrasportoRientroComponent.recuperaUnitaOrganizzativa(
-//                    userContext, cdUnitaOrganizzativa);
-//
-//            if (uo == null) {
-//                return null;
-//            }
-//
-//            return uo.getCd_responsabile();
-//
-//        } catch (ComponentException | RemoteException e) {
-//            throw new ComponentException("Errore nel recupero responsabile UO: " + e.getMessage(), e);
-//        }
-        return 0;
+            // Cerca la UO
+            Unita_organizzativaBulk uo = new Unita_organizzativaBulk();
+            uo.setCd_unita_organizzativa(cdUnitaOrganizzativa);
+
+            uo = (Unita_organizzativaBulk) component.inizializzaBulkPerModifica(userContext, uo);
+
+            if (uo == null) {
+                log.warn("Unità organizzativa non trovata: {}", cdUnitaOrganizzativa);
+                return null;
+            }
+
+            Integer cdResponsabile = uo.getCd_responsabile();
+
+            if (cdResponsabile == null) {
+                log.warn("Responsabile non definito per UO: {}", cdUnitaOrganizzativa);
+            }
+
+            return cdResponsabile;
+
+        } catch (ComponentException | RemoteException e) {
+            log.error("Errore nel recupero responsabile UO: {}", cdUnitaOrganizzativa, e);
+            throw new ComponentException("Errore nel recupero responsabile UO: " + e.getMessage(), e);
+        }
     }
 }

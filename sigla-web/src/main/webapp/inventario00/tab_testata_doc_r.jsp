@@ -4,16 +4,18 @@
         it.cnr.contab.inventario01.bp.*,
         it.cnr.contab.inventario01.bulk.*" %>
 
+<%
+    CRUDTraspRientInventarioBP bp = (CRUDTraspRientInventarioBP)BusinessProcess.getBusinessProcess(request);
+    Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk)bp.getModel();
+%>
+<!-- Script JavaScript aggiunto per la stampa -->
 <script language="JavaScript">
-function doStampaDocTrasporto() {
+function doStampaDocTraspRient() {
     doPrint('<%=JSPUtils.getAppRoot(request)%>genericdownload/stampaDocTrasportoRientro.html?methodName=stampaDocTrasportoRientro&it.cnr.jada.action.BusinessProcess=<%=bp.getPath()%>',
             'Documento di Trasporto Rientro',
             'toolbar=no, location=no, directories=no, status=no, menubar=no,resizable,scrollbars,width=800,height=600').focus() ;
 }
 </script>
-
-<% CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP)BusinessProcess.getBusinessProcess(request);
-   Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk)bp.getModel(); %>
 
 <div class="Group card" style="width:100%">
 <table class="Panel">

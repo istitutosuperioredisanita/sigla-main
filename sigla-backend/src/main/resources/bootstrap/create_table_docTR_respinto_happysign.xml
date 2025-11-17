@@ -1,19 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright (C) 2023  Consiglio Nazionale delle Ricerche
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU Affero General Public License as
-  ~     published by the Free Software Foundation, either version 3 of the
-  ~     License, or (at your option) any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU Affero General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU Affero General Public License
-  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
@@ -22,22 +9,35 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
                                        http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
+    <!-- Unico changeset: crea sequence, tabella, FK e indici -->
     <changeSet author="davide.mirra" id="create_table_docTR_respinto_happysign">
-        <createTable remarks="Storico dei rifiuti dei documenti di trasporto e rientro" tableName="doc_trasporto_rientro_respinto">
 
-            <column name="id" remarks="Identificativo univoco del record" type="BIGINT" autoIncrement="true">
+        <!-- Sequence -->
+        <createSequence
+                sequenceName="seq_doc_trasporto_rientro_resp"
+                startValue="1"
+                incrementBy="1"/>
+
+        <!-- Tabella -->
+        <createTable remarks="Storico dei rifiuti dei documenti di trasporto e rientro"
+                     tableName="doc_trasporto_rientro_respinto">
+
+            <column name="id" remarks="Identificativo univoco del record" type="BIGINT">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
 
             <column name="pg_inventario" remarks="Codice dell'inventario" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
+
             <column name="ti_documento" remarks="Flag per stabilire se il documento risulta essere un trasporto o un rientro (T=Trasporto, R=Rientro)" type="CHAR(1)">
                 <constraints nullable="false"/>
             </column>
+
             <column name="esercizio" remarks="Esercizio di riferimento" type="INT">
                 <constraints nullable="false"/>
             </column>
+
             <column name="pg_doc_trasporto_rientro" remarks="Numero che identifica il documento di trasporto/rientro" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
@@ -45,44 +45,56 @@
             <column name="data_inserimento" remarks="Data e ora di inserimento del record di rifiuto" type="${date.type}">
                 <constraints nullable="false"/>
             </column>
+
             <column name="uid_insert" remarks="Utente che ha rifiutato il documento" type="VARCHAR(256)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="tipo_operazione_documento" remarks="Tipo di operazione: DOC_TRASPORTO_RIENTRO" type="VARCHAR(30)">
+            <column name="tipo_operazione_doc" remarks="Tipo di operazione: TR=Trasporto, RI=Rientro" type="VARCHAR(2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="tipo_fase_respingi" remarks="Fase in cui è avvenuto il rifiuto: FIRMA" type="VARCHAR(30)">
+
+            <column name="tipo_fase_respingi" remarks="Fase in cui è avvenuto il rifiuto: RFI=Rifiuto Firma" type="VARCHAR(3)">
                 <constraints nullable="false"/>
             </column>
+
             <column name="motivo_respingi" remarks="Motivazione del rifiuto" type="VARCHAR(2000)"/>
 
             <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
                 <constraints nullable="false"/>
             </column>
+
             <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
+
             <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
                 <constraints nullable="false"/>
             </column>
+
             <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
+
             <column name="pg_ver_rec" remarks="Progressivo di versione del record" type="BIGINT" defaultValue="0">
                 <constraints nullable="false"/>
             </column>
 
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="doc_trasporto_rientro_respinto"
-                                 baseColumnNames="pg_inventario,ti_documento,esercizio,pg_doc_trasporto_rientro"
-                                 constraintName="fk_doc_t_r_resp_01"
-                                 referencedTableName="doc_trasporto_rientro"
-                                 referencedColumnNames="pg_inventario,ti_documento,esercizio,pg_doc_trasporto_rientro"
-                                 deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION"/>
+        <!-- Foreign key verso la tabella doc_trasporto_rientro -->
+        <addForeignKeyConstraint
+                baseTableName="doc_trasporto_rientro_respinto"
+                baseColumnNames="pg_inventario,ti_documento,esercizio,pg_doc_trasporto_rientro"
+                constraintName="fk_doc_t_r_resp_01"
+                referencedTableName="doc_trasporto_rientro"
+                referencedColumnNames="pg_inventario,ti_documento,esercizio,pg_doc_trasporto_rientro"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"/>
 
+        <!-- Indici -->
         <createIndex indexName="idx_doc_t_r_resp_01" tableName="doc_trasporto_rientro_respinto">
             <column name="pg_inventario"/>
             <column name="ti_documento"/>
@@ -98,12 +110,10 @@
             <column name="uid_insert"/>
         </createIndex>
 
-    </changeSet>
+        <createIndex indexName="idx_doc_t_r_resp_04" tableName="doc_trasporto_rientro_respinto">
+            <column name="tipo_operazione_doc"/>
+        </createIndex>
 
-    <changeSet author="davide.mirra" id="create_sequence_doc_t_r_respinto">
-        <createSequence sequenceName="seq_doc_trasporto_rientro_resp"
-                        startValue="1"
-                        incrementBy="1"/>
     </changeSet>
 
 </databaseChangeLog>

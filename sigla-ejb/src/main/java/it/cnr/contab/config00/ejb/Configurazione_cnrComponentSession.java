@@ -125,6 +125,8 @@ public interface Configurazione_cnrComponentSession extends it.cnr.jada.ejb.CRUD
 
     Boolean isGestioneEtichettaInventarioBeneAttivo(UserContext param0) throws ComponentException, RemoteException;
 
+    Boolean isGestioneInvioInFirmaDocTRAttivo(UserContext param0) throws ComponentException, RemoteException;
+
     String getTipoStanziamentoLiquidazioneIva(UserContext param0) throws ComponentException, RemoteException;
     Boolean isGestioneBeneDismessoInventarioAttivo(UserContext param0) throws ComponentException, RemoteException;
 

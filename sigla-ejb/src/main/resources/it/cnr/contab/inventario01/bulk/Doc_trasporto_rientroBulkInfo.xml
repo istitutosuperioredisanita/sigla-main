@@ -281,4 +281,30 @@
         <columnFieldProperty name="esercizio" />
         <columnFieldProperty name="pgDocTrasportoRientro" />
         <columnFieldProperty name="dataRegistrazione" label="Data Rientro"/>
-        <columnFiel
+        <columnFieldProperty name="tipoMovimento" />
+        <columnFieldProperty name="dsDocTrasportoRientro" />
+        <columnFieldProperty name="destinazione" />
+        <columnFieldProperty name="stato" />
+    </columnSet>
+
+    <!-- ============================================ -->
+    <!-- FREE SEARCH SETS -->
+    <!-- ============================================ -->
+
+    <freeSearchSet name="T">
+        <findFieldProperty name="tipoMovimento" />
+        <findFieldProperty name="dataRegistrazione"/>
+        <findFieldProperty name="dsDocTrasportoRientro" />
+        <findFieldProperty name="pgDocTrasportoRientro" />
+        <findFieldProperty name="destinazione" />
+    </freeSearchSet>
+
+    <freeSearchSet name="R">
+        <findFieldProperty name="tipoMovimento" />
+        <findFieldProperty name="dataRegistrazione"/>
+        <findFieldProperty name="dsDocTrasportoRientro" />
+        <findFieldProperty name="pgDocTrasportoRientro" />
+        <findFieldProperty name="destinazione" />
+    </freeSearchSet>
+
+</bulkInfo>

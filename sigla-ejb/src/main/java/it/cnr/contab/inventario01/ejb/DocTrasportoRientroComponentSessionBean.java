@@ -17,9 +17,9 @@
 
 package it.cnr.contab.inventario01.ejb;
 
+import it.cnr.contab.doccont00.comp.OrdineComponent;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
-import it.cnr.contab.inventario01.comp.BuonoCaricoScaricoComponent;
 import it.cnr.contab.inventario01.comp.DocTrasportoRientroComponent;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -91,7 +91,7 @@ public class DocTrasportoRientroComponentSessionBean
     // ========================================
 
     @Override
-    public Doc_trasporto_rientroBulk predisponiAllaFirma(
+    public Doc_trasporto_rientroBulk changeStatoInInviato(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc)
             throws ComponentException, RemoteException {
@@ -99,7 +99,7 @@ public class DocTrasportoRientroComponentSessionBean
         pre_component_invocation(userContext, componentObj);
         try {
             Doc_trasporto_rientroBulk result = ((DocTrasportoRientroComponent) componentObj)
-                    .predisponiAllaFirma(userContext, doc);
+                    .changeStatoInInviato(userContext, doc);
             component_invocation_succes(userContext, componentObj);
             return result;
         } catch (it.cnr.jada.comp.NoRollbackException e) {
@@ -616,6 +616,66 @@ public class DocTrasportoRientroComponentSessionBean
         pre_component_invocation(param0,componentObj);
         try {
             boolean result = ((DocTrasportoRientroComponent)componentObj).isEsercizioCOEPChiuso(param0);
+            component_invocation_succes(param0,componentObj);
+            return result;
+        } catch(it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(param0,componentObj);
+            throw e;
+        } catch(it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(param0,componentObj);
+            throw e;
+        } catch(RuntimeException e) {
+            throw uncaughtRuntimeException(param0,componentObj,e);
+        } catch(Error e) {
+            throw uncaughtError(param0,componentObj,e);
+        }
+    }
+
+    @Override
+    public List getDocumentiPredispostiAllaFirma(UserContext userContext)
+            throws ComponentException, RemoteException {
+
+        pre_component_invocation(userContext, componentObj);
+        try {
+            List result = ((DocTrasportoRientroComponent) componentObj)
+                    .getDocumentiPredispostiAllaFirma(userContext);
+            component_invocation_succes(userContext, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+        } catch (it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
+
+    public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+        pre_component_invocation(param0,componentObj);
+        try {
+            it.cnr.jada.bulk.OggettoBulk result = ((DocTrasportoRientroComponent)componentObj).inizializzaBulkPerStampa(param0,param1);
+            component_invocation_succes(param0,componentObj);
+            return result;
+        } catch(it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(param0,componentObj);
+            throw e;
+        } catch(it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(param0,componentObj);
+            throw e;
+        } catch(RuntimeException e) {
+            throw uncaughtRuntimeException(param0,componentObj,e);
+        } catch(Error e) {
+            throw uncaughtError(param0,componentObj,e);
+        }
+    }
+    public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+        pre_component_invocation(param0,componentObj);
+        try {
+            it.cnr.jada.bulk.OggettoBulk result = ((DocTrasportoRientroComponent)componentObj).stampaConBulk(param0,param1);
             component_invocation_succes(param0,componentObj);
             return result;
         } catch(it.cnr.jada.comp.NoRollbackException e) {

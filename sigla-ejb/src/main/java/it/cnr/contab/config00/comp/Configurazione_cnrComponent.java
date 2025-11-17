@@ -1112,6 +1112,45 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
         return gestioneEtichettaInventarioAttiva;
     }
 
+    public Boolean isGestioneInvioInFirmaDocTRAttivo(UserContext userContext) throws ComponentException {
+        final Configurazione_cnrBulk configurazione =
+                Optional.ofNullable(
+                        getConfigurazione(
+                                userContext,
+                                CNRUserContext.getEsercizio(userContext),
+                                ASTERISCO,
+                                Configurazione_cnrBulk.PK_INVENTARIO,
+                                Configurazione_cnrBulk.SK_INVIO_DOC_TR)
+                ).orElseGet(() -> {
+                            try {
+                                return getConfigurazione(
+                                        userContext,
+                                        0,
+                                        ASTERISCO,
+                                        Configurazione_cnrBulk.PK_INVENTARIO,
+                                        Configurazione_cnrBulk.SK_INVIO_DOC_TR);
+                            } catch (ComponentException e) {
+                                throw new DetailedRuntimeException(e);
+                            }
+                        }
+                );
+        final boolean gestioneInvioInFirmaDocTRAttivo = Optional.ofNullable(configurazione)
+                .flatMap(configurazione_cnrBulk -> Optional.ofNullable(configurazione_cnrBulk.getVal01()))
+                .filter(val -> val.equals("Y"))
+                .isPresent();
+        final Optional<String> ruolo = Optional.ofNullable(configurazione.getVal02());
+        if (gestioneInvioInFirmaDocTRAttivo && ruolo.isPresent()){
+            try {
+                return ((RuoloComponentSession) EJBCommonServices.createEJB("CNRUTENZE00_EJB_RuoloComponentSession"))
+                        .controlloAbilitazione(userContext, ruolo.get());
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return gestioneInvioInFirmaDocTRAttivo;
+    }
+
+
     public String getTipoStanziamentoLiquidazioneIva(UserContext userContext) throws ComponentException {
         try {
             return Optional.ofNullable(getHome(userContext, Configurazione_cnrBulk.class))

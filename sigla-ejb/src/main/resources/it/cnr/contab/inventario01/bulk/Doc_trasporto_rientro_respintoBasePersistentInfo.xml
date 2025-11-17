@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_respintoBase"
+	keyClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_respintoKey"
+	homeClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_respintoHome">
+	<defaultColumnMap
+		tableName="DOC_TRASPORTO_RIENTRO_RESPINTO">
+		<columnMapping
+			columnName="PG_INVENTARIO"
+			propertyName="pgInventario"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="false" />
+		<columnMapping
+			columnName="TI_DOCUMENTO"
+			propertyName="tiDocumento"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false" />
+		<columnMapping
+			columnName="ESERCIZIO"
+			propertyName="esercizio"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="false" />
+		<columnMapping
+			columnName="PG_DOC_TRASPORTO_RIENTRO"
+			propertyName="pgDocTrasportoRientro"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="false" />
+		<columnMapping
+			columnName="DATA_INSERIMENTO"
+			propertyName="dataInserimento"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="UID_INSERT"
+			propertyName="uidInsert"
+			sqlTypeName="VARCHAR"
+			columnSize="256"
+			nullable="false" />
+		<columnMapping
+			columnName="TIPO_OPERAZIONE_DOC"
+			propertyName="tipoOperazioneDoc"
+			sqlTypeName="VARCHAR"
+			columnSize="2"
+			nullable="false" />
+		<columnMapping
+			columnName="TIPO_FASE_RESPINGI"
+			propertyName="tipoFaseRespingi"
+			sqlTypeName="VARCHAR"
+			columnSize="3"
+			nullable="false" />
+		<columnMapping
+			columnName="MOTIVO_RESPINGI"
+			propertyName="motivoRespingi"
+			sqlTypeName="VARCHAR"
+			columnSize="2000"
+			nullable="true" />
+		<columnMapping
+			columnName="DACR"
+			propertyName="dacr"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="UTCR"
+			propertyName="utcr"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="DUVA"
+			propertyName="duva"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="UTUV"
+			propertyName="utuv"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="PG_VER_REC"
+			propertyName="pg_ver_rec"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="false" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="pgInventario" />
+	<persistentProperty
+		name="tiDocumento" />
+	<persistentProperty
+		name="esercizio" />
+	<persistentProperty
+		name="pgDocTrasportoRientro" />
+	<persistentProperty
+		name="dataInserimento" />
+	<persistentProperty
+		name="uidInsert" />
+	<persistentProperty
+		name="tipoOperazioneDoc" />
+	<persistentProperty
+		name="tipoFaseRespingi" />
+	<persistentProperty
+		name="motivoRespingi" />
+	<persistentProperty
+		name="dacr" />
+	<persistentProperty
+		name="utcr" />
+	<persistentProperty
+		name="duva" />
+	<persistentProperty
+		name="utuv" />
+	<persistentProperty
+		name="pg_ver_rec" />
+</SQLPersistentInfo>
