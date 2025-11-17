@@ -657,7 +657,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                         fis,
                         "application/pdf",
                         pdfFile.getName(),
-                        storeService.getStorePath(doc, uo)
+                        storeService.getStorePath(doc)
                 );
             }
         }

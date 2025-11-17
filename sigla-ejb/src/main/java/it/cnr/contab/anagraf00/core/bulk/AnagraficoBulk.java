@@ -21,7 +21,6 @@ import it.cnr.contab.anagraf00.tabrif.bulk.Tipologie_istatBulk;
 import it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk;
 import it.cnr.contab.anagraf00.tabter.bulk.NazioneBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.inventario00.tabrif.bulk.Tipo_trasporto_rientroBulk;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;

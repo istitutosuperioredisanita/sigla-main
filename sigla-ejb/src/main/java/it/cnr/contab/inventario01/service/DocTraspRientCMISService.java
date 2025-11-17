@@ -1,18 +1,13 @@
 package it.cnr.contab.inventario01.service;
 
-import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
-import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
-import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk;
-import it.cnr.contab.ordmag.ordini.service.OrdineAcqCMISService;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.comp.ApplicationException;
-import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.util.DateUtils;
 import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
@@ -24,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -118,7 +112,7 @@ public class DocTraspRientCMISService extends StoreService {
      * Recupera l'oggetto CMIS (cartella) che rappresenta il Doc
      */
     public StorageObject recuperoFolderDocSigla(Doc_trasporto_rientroBulk doc, String uo_context) throws BusinessProcessException{
-        String path = getStorePath(doc,uo_context);
+        String path = getStorePath(doc);
         logger.info("-> Recupero StorageObject per il path: {}", path);
         StorageObject folder = getStorageObjectByPath(path);
         if (folder != null) {
@@ -192,51 +186,49 @@ public class DocTraspRientCMISService extends StoreService {
 
 
     /**
-     * Ottiene il path nuovo per il documento (per date >= 2024)
+     * Metodo principale per determinare il path CMIS del doc, gestendo la transizione (Old/New Path).
      */
-    private String getStorePathNewPath(Doc_trasporto_rientroBulk doc, String uo_context)
+
+    public String getStorePath(Doc_trasporto_rientroBulk doc)
             throws BusinessProcessException {
 
-        logger.info("-> getStorePathNewPath - Applicazione logica path successiva al 2024");
 
-        try {
-            // Determina UO e tipo ritiro (codice esistente)
-            String tipoRitiro = "";
-
-            if (doc.isRitiroIncaricato()) {
-                tipoRitiro = "INCARICATO";
-
-            } else if (doc.isRitiroVettore()) {
-                tipoRitiro = "VETTORE";
-            }
-
-            logger.info("   Tipo ritiro: {}. UO base: {}", tipoRitiro, uo_context);
-
-
-            // Path BASE (SENZA la folder finale del documento)
-            String basePath = Arrays.asList(
+            // Path base: ComunicazioniDal/CdUnitaOrganizzativa/Ordini/CdUnitaOperativa/CdNumeratore/Esercizio
+            String path =Arrays.asList(
                     SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
-                    uo_context,
-                    DOC_TRASPORTO_RIENTRO,
-                    String.valueOf(doc.getEsercizio()),
-                    "Inventario",
-                    doc.getTiDocumento(),
-                    String.valueOf(doc.getPgDocTrasportoRientro())
-            ).stream().collect(Collectors.joining(StorageDriver.SUFFIX));
+                    "Documento Trasporto Rientro",
+                    Optional.ofNullable(doc.getEsercizio())
+                            .map(esercizio -> String.valueOf(esercizio))
+                            .orElse("0"),
+                    "Doc. Trasporto " + doc.getEsercizio().toString() + Utility.lpad(doc.getPgDocTrasportoRientro().toString(), 10, '0')
+            ).stream().collect(
+                    Collectors.joining(StorageDriver.SUFFIX)
+            );
 
+            logger.info("   Path base 'New Path' generato: {}", path);
+            return path;
 
-            logger.info("   Path BASE generato: {}", basePath);
+    }
+    public String createFolderOrdineIfNotPresent(String path, Doc_trasporto_rientroBulk ordine) throws ApplicationException{
+        logger.info("-> createFolderOrdineIfNotPresent (OrdineAcqBulk) - Path padre: {}", path);
+        Map<String, Object> metadataProperties = new HashMap<String, Object>();
+        String folderName = sanitizeFolderName(ordine.constructCMISNomeFile());
+        logger.debug("   Nome della cartella da creare: {}", folderName);
 
-            // Crea TUTTA la gerarchia + folder documento
-            String fullPath = createFolderDocIfNotPresent(basePath, doc);
-            logger.info("   *** Path COMPLETO (con folder documento): {} ***", fullPath);
+        metadataProperties.put(StoragePropertyNames.OBJECT_TYPE_ID.value(), "F:doc_trasporto:main");
+        metadataProperties.put(StoragePropertyNames.NAME.value(), folderName);
+       // metadataProperties.put(OrdineAcqCMISService.CMIS_ORDINI_ACQ_NUMERATORE, ordine.getCdNumeratore());
+       // metadataProperties.put(OrdineAcqCMISService.CMIS_ORDINI_ACQ_ANNO, ordine.getEsercizio());
+       // metadataProperties.put(OrdineAcqCMISService.CMIS_ORDINI_ACQ_NUMERO, ordine.getNumero());
+       // metadataProperties.put(OrdineAcqCMISService.CMIS_ORDINI_ACQ_UOP, ordine.getCdUnitaOperativa());
+       // metadataProperties.put("sigla_commons_aspect:utente_applicativo", ordine.getUtuv());
 
-            return fullPath;
+        List<String> aspectsToAdd = Arrays.asList("P:cm:titled", "P:sigla_commons_aspect:utente_applicativo_sigla");
+        metadataProperties.put(StoragePropertyNames.SECONDARY_OBJECT_TYPE_IDS.value(), aspectsToAdd);
 
-        } catch (ComponentException e) {
-            logger.error("   ERRORE durante creazione del 'New Path'", e);
-            throw new BusinessProcessException(e);
-        }
+        String folderKey = createFolderIfNotPresent(path, folderName, metadataProperties);
+        logger.info("   Cartella principale creata/esistente. Chiave (Key) CMIS: {}", folderKey);
+        return folderKey;
     }
 
     /**
@@ -314,29 +306,7 @@ public class DocTraspRientCMISService extends StoreService {
     }
 
 
-    /**
-     * Metodo principale per determinare il path CMIS del doc, gestendo la transizione (Old/New Path).
-     */
-    public String getStorePath(Doc_trasporto_rientroBulk allegatoParentBulk, String uo_context) throws BusinessProcessException{
-        String path = null;
-        Timestamp dateLimite = DateUtils.firstDateOfTheYear(2024);
-        logger.info("-> getStorePath - Determina path per Doc. Data Doc: {}. Limite Old Path: {}", allegatoParentBulk.getDacr(), dateLimite.getTime());
 
-        // La data di riferimento del doc è precedente o uguale al 01/01/2024
-        if (allegatoParentBulk.getDacr().compareTo(dateLimite)<=0) {
-            logger.info("   La data Doc ricade nella finestra 'Old Path'. Tentativo di recupero...");
-            path = getStorePathOldPath(allegatoParentBulk,uo_context);
-            if (path != null) {
-                logger.info("   Old Path valido e utilizzato. Key Folder: {}", path);
-                return path;
-            }
-            logger.warn("   Old Path non valido/esistente. Esegue fallback su 'New Path'.");
-        }
-
-        path = getStorePathNewPath(allegatoParentBulk,uo_context);
-        logger.info("   New Path utilizzato. Key Folder: {}", path);
-        return path;
-    }
 
     /**
      * Recupera il file di stampa del documento
@@ -443,7 +413,7 @@ public class DocTraspRientCMISService extends StoreService {
                 logger.warn("   File stampa NON esistente. Inizio procedura di creazione nuovo file.");
                 String uo = CNRUserContext.getCd_unita_organizzativa(userContext);
 
-                String path = getStorePath(documento, uo);
+                String path = getStorePath(documento);
                 logger.info("   Path della cartella di destinazione: {}", path);
 
                 StorageObject parentObject = getStorageObjectByPath(path, true, true);
