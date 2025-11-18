@@ -35,6 +35,7 @@ public  class CRUDAutofatturaBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Aut
 
     private static final long serialVersionUID = 1L;
     private final static org.slf4j.Logger logger = LoggerFactory.getLogger(CRUDAutofatturaBP.class);
+    private boolean prevenienteDaFattura = false;
 
     /**
      * CRUDAutofatturaBP constructor comment.
@@ -49,6 +50,7 @@ public  class CRUDAutofatturaBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Aut
             throws it.cnr.jada.action.BusinessProcessException {
         super.init(config, context);
         resetTabs();
+        this.setPrevenienteDaFattura(false);
     }
     protected it.cnr.jada.util.jsp.Button[] createToolbar() {
         Button[] buttons = super.createToolbar();
@@ -116,9 +118,15 @@ public  class CRUDAutofatturaBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Aut
         AutofatturaBulk model = (AutofatturaBulk)getModel();
         return (model != null &&
                 Optional.ofNullable(model.getFattura_passiva()).isPresent() &&
-                Optional.ofNullable(model.getFattura_passiva().getPg_fattura_passiva()).isPresent());
+                Optional.ofNullable(model.getFattura_passiva().getPg_fattura_passiva()).isPresent()
+                && !this.isPrevenienteDaFattura());
     }
 
+    public boolean isPrevenienteDaFattura() {
+        return prevenienteDaFattura;
+    }
 
-
+    public void setPrevenienteDaFattura(boolean prevenienteDaFattura) {
+        this.prevenienteDaFattura = prevenienteDaFattura;
+    }
 }

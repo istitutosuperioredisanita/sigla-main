@@ -9452,4 +9452,14 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
 
         }
     }
+    public AutofatturaBulk cercaAutoFattura(UserContext uc, Fattura_passivaBulk fp) throws ComponentException {
+        AutofatturaHome autofatturaHome = (AutofatturaHome) getHomeCache(uc).getHome(AutofatturaBulk.class);
+        try {
+             return autofatturaHome.findFor(fp);
+
+        } catch (PersistencyException e) {
+            throw new ApplicationMessageFormatException("Errore nell'estrazione dell'autofattura");
+        }
+
+    }
 }

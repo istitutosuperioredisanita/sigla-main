@@ -20,6 +20,7 @@ package it.cnr.contab.docamm00.ejb;
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.Modalita_pagamentoBulk;
 import it.cnr.contab.docamm00.comp.FatturaPassivaComponent;
+import it.cnr.contab.docamm00.docs.bulk.AutofatturaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
 import it.cnr.contab.docamm00.docs.bulk.TrovatoBulk;
 import it.cnr.contab.docamm00.fatturapa.bulk.DocumentoEleTestataBulk;
@@ -1516,6 +1517,21 @@ public class FatturaPassivaComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
         pre_component_invocation(param0, componentObj);
         try {
             BigDecimal result = ((FatturaPassivaComponent) componentObj).getPrezzoUnitarioFattura( param1);
+            component_invocation_succes(param0, componentObj);
+            return result;
+
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(param0, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(param0, componentObj, e);
+        }
+    }
+
+    @Override
+    public AutofatturaBulk cercaAutoFattura(UserContext param0, Fattura_passivaBulk param1) throws RemoteException, ComponentException, PersistencyException, IntrospectionException{
+        pre_component_invocation(param0, componentObj);
+        try {
+            AutofatturaBulk result = ((FatturaPassivaComponent) componentObj).cercaAutoFattura( param0,param1);
             component_invocation_succes(param0, componentObj);
             return result;
 
