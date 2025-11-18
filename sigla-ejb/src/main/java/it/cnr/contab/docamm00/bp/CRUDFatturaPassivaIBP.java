@@ -397,12 +397,12 @@ public class CRUDFatturaPassivaIBP extends CRUDFatturaPassivaBP implements IDocu
 	public boolean isApriAutoFatturaButtonHidden() {
 
 		Fattura_passiva_IBulk fp = (Fattura_passiva_IBulk)getModel();
-		return fp==null || !fp.getFl_autofattura() || !isEditing();
+		return fp==null || !fp.getFl_autofattura() || (!isEditing() && !isViewing());
 	}
 	public boolean isApriAutoFatturaButtonEnabled() {
 
 		Fattura_passiva_IBulk fp = (Fattura_passiva_IBulk)getModel();
-		return  fp!=null && fp.getFl_autofattura() && isEditing() && !this.isProvenienteDaAutoFattura();
+		return  fp!=null && fp.getFl_autofattura() && (isEditing() || isViewing()) && !this.isProvenienteDaAutoFattura();
 	}
 	public void validaFatturaPerCompenso(ActionContext context) throws BusinessProcessException {
 
