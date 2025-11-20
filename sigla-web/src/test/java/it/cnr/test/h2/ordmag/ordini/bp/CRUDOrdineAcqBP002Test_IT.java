@@ -44,9 +44,9 @@ import static org.junit.Assert.*;
  * 5) evasione riga consegna nr.2
  * 6) registrazione fattura con riscontro valore su riga consegna nr.2 con Fattura di importo superiore all’ordine e dettaglio fatt. in attesa nota credito
  * 7) modifica fattura con annullamento riscontro valore
- * 8) regsitrazione nota credito di annullamento totale fattura creata
+ * 8) registrazione nota credito di annullamento totale fattura creata
  */
-public class CRUDOrdineAcqBP002Test extends ActionDeployments {
+public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
     private static SharedResource sharedResource;
 
     public static final String USERNAME = "ENTETEST";
@@ -662,7 +662,8 @@ public class CRUDOrdineAcqBP002Test extends ActionDeployments {
     @RunAsClient
     @OperateOnDeployment(TEST_H2)
     @InSequence(8)
-    public void testVerificaScritturaOrdine003() {        //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
+    public void testVerificaScritturaOrdine003() {
+        //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
         browser.switchTo().parentFrame();
         switchToFrameMenu();
 
@@ -949,7 +950,7 @@ public class CRUDOrdineAcqBP002Test extends ActionDeployments {
     @RunAsClient
     @OperateOnDeployment(TEST_H2)
     @InSequence(11)
-    public void testVerificaScritturaOrdine004() {        //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
+    public void testVerificaScritturaOrdine004() {
         //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
         browser.switchTo().parentFrame();
         switchToFrameMenu();

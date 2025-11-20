@@ -23,6 +23,8 @@
  */
 package it.cnr.contab.inventario01.comp;
 
+import it.cnr.contab.coepcoan00.core.bulk.Chiusura_coepBase;
+import it.cnr.contab.coepcoan00.core.bulk.Chiusura_coepHome;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.sto.bulk.*;
@@ -52,6 +54,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.*;
+import it.cnr.jada.util.PropertyNames;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
@@ -60,13 +63,14 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.rmi.RemoteException;
+import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 /**
  * @author rpucciarelli
- *
+ * <p>
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
@@ -194,44 +198,26 @@ try{
 	}
 }
 /** Viene richiamata la funziona che controlla se l'esercizio coep è chiuso */
-	public boolean isEsercizioCOEPChiuso(UserContext userContext) throws ComponentException
-{
-	LoggableStatement cs = null;	
-	String status = null;
-	try
-	{
-		cs = new LoggableStatement(getConnection(userContext),
-				"{ ? = call " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() +
-				"CNRCTB200.isChiusuraCoepDef(?,?)}",false,this.getClass());		
-		cs.registerOutParameter( 1, java.sql.Types.VARCHAR);
-		cs.setObject( 2, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));		
-		cs.setObject( 3, it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext));		
-		cs.executeQuery();
-		status = new String(cs.getString(1));
-		if(status.compareTo("Y")==0)
-			return true;
-		//controlla anche se è chiuso l'inventario
-		Id_inventarioHome inventarioHome = (Id_inventarioHome) getHome(userContext, Id_inventarioBulk.class);
-		Id_inventarioBulk inventario = inventarioHome.findInventarioFor(userContext,false);
-		if (!inventarioHome.isAperto(inventario,it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext)))
-           return true;
-	
-	} catch (java.sql.SQLException ex) {
-		throw handleException(ex);	
-	} catch (PersistencyException e) {
-		throw handleException(e);
-	} catch (IntrospectionException e) {
-		throw handleException(e);
-	} finally {
-		try {
-			if (cs != null)
-				cs.close();
-		} catch (java.sql.SQLException e) {
-			throw handleException(e);
-		}
-	}
-	return false;		    	
-}
+	public boolean isEsercizioCOEPChiuso(UserContext userContext) throws ComponentException {
+        boolean isChiusuraCoepDef = ((Chiusura_coepHome) getHome(userContext, Chiusura_coepBase.class))
+                .isChiusuraCoepDef(CNRUserContext.getEsercizio(userContext), CNRUserContext.getCd_cds(userContext));
+
+        if (isChiusuraCoepDef)
+            return Boolean.TRUE;
+
+        try
+        {
+            //controlla anche se è chiuso l'inventario
+            Id_inventarioHome inventarioHome = (Id_inventarioHome) getHome(userContext, Id_inventarioBulk.class);
+            Id_inventarioBulk inventario = inventarioHome.findInventarioFor(userContext,false);
+            if (!inventarioHome.isAperto(inventario,it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext)))
+               return true;
+        } catch ( PersistencyException | IntrospectionException ex) {
+            throw handleException(ex);
+        }
+        return false;
+    }
+
 /** Restituisce il progressivo inventario associato alla UO */
 	public Id_inventarioBulk caricaInventario(UserContext aUC)
 		throws ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException 
@@ -464,7 +450,7 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 	  *		che sia valida, ossia che la data di cancellazione sia NULL; che sia un Gruppo e non una categoria (LIVELLO>0).
 	  *
 	  * @param userContext lo <code>UserContext</code> che ha generato la richiesta
-	  * @param dettaglio il <code>Buono_carico_dettBulk</code> dettaglio.
+	  * @param dett il <code>Buono_carico_dettBulk</code> dettaglio.
 	  * @param cat_gruppo la <code>Categoria_gruppo_inventBulk</code> Categoria_gruppo_inventBulk modello.
 	  * @param clauses <code>CompoundFindClause</code> le clausole della selezione.
 	  *
@@ -1075,9 +1061,9 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 	  *		associati alla riga di Fattura selezionata.
 	  *
 	  * @param userContext lo <code>UserContext</code> che ha generato la richiesta.
-	  * @param buonoS <code>Buono_scaricoBulk</code> il Buono di Scarico.
+	  * @param buono <code>Buono_scaricoBulk</code> il Buono di Scarico.
 	  * @param beni i <code>OggettoBulk[]</code> beni selezionati dal'utente, che andrano cancellati dalle associazioni.
-	  * @param riga_fattura la <code>Fattura_attiva_rigaIBulk</code> riga di fattura di cui vanno cancellate le associazioni.
+	  * @param oggetto la <code>Fattura_attiva_rigaIBulk</code> riga di fattura di cui vanno cancellate le associazioni.
 **/
 public void eliminaBeniAssociatiConBulk(UserContext userContext, OggettoBulk buono, OggettoBulk[] beni,OggettoBulk oggetto) throws ComponentException {
 	try {
@@ -1158,7 +1144,7 @@ public void eliminaBeniAssociatiConBulk(UserContext userContext, OggettoBulk buo
  *
  * @param userContext lo <code>UserContext</code> che ha generato la richiesta
  * @param buonoS il <code>Buono_scaricoBulk</code> buono di scarico.
- * @param riga_fattura la <code>Fattura_attiva_rigaIBulk</code> riga di fattura di cui vanno cancellate le associazioni.
+ * @param oggetto la <code>Fattura_attiva_rigaIBulk</code> riga di fattura di cui vanno cancellate le associazioni.
 **/  
 public void eliminaBuoniAssociatiConBulk(UserContext userContext, Ass_inv_bene_fatturaBulk buonoS, OggettoBulk oggetto) throws ComponentException {
 	try{
@@ -1286,7 +1272,7 @@ public void eliminaBuoniAssociatiConBulk(UserContext userContext, Ass_inv_bene_f
  *
  * @param userContext lo <code>UserContext</code> che ha generato la richiesta
  * @param buonoS il <code>Buono_scaricoBulk</code> buono di scarico.
- * @param riga_fattura la <code>Fattura_attiva_rigaIBulk</code> riga di fattura di cui vanno cancellate le associazioni.
+ * @param fattura la <code>Fattura_attiva_rigaIBulk</code> riga di fattura di cui vanno cancellate le associazioni.
 **/  
 public void eliminaBeniAssociatiConBulk(UserContext userContext, OggettoBulk buonoS, OggettoBulk fattura) throws ComponentException {
 	Inventario_beni_apgHome benihome=(Inventario_beni_apgHome)getHome(userContext,Inventario_beni_apgBulk.class);//,"V_INVENTARIO_BENI_APG");
@@ -1438,7 +1424,7 @@ public SQLBuilder selectBene_bene_principaleByClause(UserContext userContext, Bu
 	  *
 	  * @param userContext lo <code>UserContext</code> che ha generato la richiesta
 	  * @param bene il <code>Inventario_beniBulk</code> bene che si sta trasferendo.
-	  * @param modelllo il <code>Inventario_beniBulk</code> Inventario_beniBulk modello.
+	  * @param modello il <code>Inventario_beniBulk</code> Inventario_beniBulk modello.
 	  * @param clauses <code>CompoundFindClause</code> le clausole della selezione.
 	  *
 	  * @return sql <code>SQLBuilder</code> Risultato della selezione.
@@ -1557,9 +1543,7 @@ public SQLBuilder selectNuovo_bene_padreByClause(UserContext userContext, Invent
 	  * @param no_accessori <code>boolean</code> il flag che determina se escludere i beni accessori.
 	  * @param beni_da_escludere la <code>SimpleBulkList</code> lista di beni da escludere, (perchè già utilizzati nella sessione di lavoro).
 	  * @param clauses <code>CompoundFindClause</code> le clausole della selezione.
-	  * 
-	  * @param iterator la <code>RemoteIterator</code> l'iteratore sui beni trovati.
-	**/  
+	**/
 	public RemoteIterator getListaBeni(
 		UserContext userContext, 
 		OggettoBulk bulk, 
@@ -1666,7 +1650,7 @@ public SQLBuilder selectNuovo_bene_padreByClause(UserContext userContext, Invent
 	  *     Viene costruito e restituito l'Iteratore sui beni disponibili.
 	  *
 	  * @param userContext lo <code>UserContext</code> che ha generato la richiesta
-	  * @param associaBulk <code>Ass_inv_bene_fatturaBulk</code> il Bulk principale per l'associazione
+	  * @param associa_Bulk <code>Ass_inv_bene_fatturaBulk</code> il Bulk principale per l'associazione
 	  * @param riga_fattura <code>Fattura_passiva_rigaIBulk</code> la riga di Fattura selezionate dall'utente
 	  *
 	  * @return l'Iteratore <code>RemoteIterator</code> sulle righe caricate
@@ -1767,7 +1751,7 @@ public SQLBuilder selectNuovo_bene_padreByClause(UserContext userContext, Invent
 	  *     Viene costruito e restituito l'Iteratore sui beni disponibili.
 	  *
 	  * @param userContext lo <code>UserContext</code> che ha generato la richiesta
-	  * @param associaBulk <code>Ass_inv_bene_fatturaBulk</code> il Bulk principale per l'associazione
+	  * @param associa_Bulk <code>Ass_inv_bene_fatturaBulk</code> il Bulk principale per l'associazione
 	  * @param riga_fattura <code>Fattura_passiva_rigaIBulk</code> la riga di Fattura selezionate dall'utente
 	  *
 	  * @return l'Iteratore <code>RemoteIterator</code> sulle righe caricate
@@ -2299,7 +2283,7 @@ public RemoteIterator getListaBeniDaScaricare(
   *		  in base al cds di scrivania
   *
   * @param userContext	lo userContext che ha generato la richiesta
-  * @param stampa		l'OggettoBulk che rappresenta il contesto della ricerca.
+  * @param bulk		l'OggettoBulk che rappresenta il contesto della ricerca.
   * @param uo			l'OggettoBulk da usare come prototipo della ricerca; sul prototipo vengono
   *						costruite delle clausole aggiuntive che vengono aggiunte in AND alle clausole specificate.
   * @param				clauses L'albero logico delle clausole da applicare alla ricerca
@@ -2334,7 +2318,7 @@ public SQLBuilder selectUo_destinazioneByClause(UserContext userContext, Trasfer
   *
   * @param userContext lo <code>UserContext</code> che ha generato la richiesta
   * @param buonoS il <code>Buono_scaricoBulk</code> Buono di Scarico.
-  * @param riga_fattura la <code>Fattura_attiva_rigaIBulk</code> riga di fattura.
+  * @param oggetto la <code>Fattura_attiva_rigaIBulk</code> riga di fattura.
   * @param bulkClass la <code>Class</code> modello per il dettaglio.
   * @param clauses <code>CompoundFindClause</code> le clausole della selezione.
   *
@@ -2404,7 +2388,7 @@ public RemoteIterator selectBeniAssociatiByClause(
  * @param associaBulk <code>Ass_inv_bene_fatturaBulk</code> l'oggetto che contiene le informazioni 
  *		relative all'Inventario di riferimento ed alle righe di Fattura Passive.
  * 
- * @param riga_fattura la <code>Fattura_passiva_rigaIBulk</code> riga di fattura passiva.
+ * @param oggetto la <code>Fattura_passiva_rigaIBulk</code> riga di fattura passiva.
  * @param bulkClass la <code>Class</code> modello per il dettaglio.
  * @param clauses <code>CompoundFindClause</code> le clausole della selezione.
  *
@@ -2700,8 +2684,8 @@ public void selectBeniAssociatiForModifica(
  *			(tramite la vista V_INVENTARIO_BENI_APG).
  *
  * @param userContext lo <code>UserContext</code> che ha generato la richiesta
- * @param buonoS il <code>Buono_caricoBulk</code> Buono di Carico.
- * @param riga_fattura la <code>Fattura_passiva_rigaIBulk</code> riga di fattura.
+ * @param associa il <code>Buono_caricoBulk</code> Buono di Carico.
+ * @param oggetto la <code>Fattura_passiva_rigaIBulk</code> riga di fattura.
  * @param bulkClass la <code>Class</code> modello per il dettaglio.
  * @param clauses <code>CompoundFindClause</code> le clausole della selezione.
  *
@@ -3015,7 +2999,7 @@ throws PersistencyException, ComponentException {
  *
  * @param userContext lo <code>UserContext</code> che ha generato la richiesta
  * @param buonoS il <code>Buono_carico_scaricoBulk</code> Buono di Scarico.
- * @param bene_padre il <code>Inventario_beniBulk</code> bene di cui si devono scaricare gli accessori.
+ * @param bene il <code>Inventario_beniBulk</code> bene di cui si devono scaricare gli accessori.
  * @param selectedRighe_fattura la <code>List</code> lista eventuale di righe di Fattura Attiva 
  *		alle quali saranno associati i beni scaricati.
 **/
@@ -3163,7 +3147,7 @@ private void aggiornaValoreAlienazioneFor(UserContext userContext, Inventario_be
  * @param userContext lo <code>UserContext</code> che ha generato la richiesta
  * @param buonoS il <code>Buono_carico_scaricoBulk</code> Buono di Scarico.
  * @param bene il <code>Inventario_beniBulk</code> bene da scaricare selezionato.
- * @param riga_fattura la <code>Fattura_attiva_rigaIBulk</code> riga di Fattura alla quale sarà eventualmente associato il bene.
+ * @param oggetto la <code>Fattura_attiva_rigaIBulk</code> riga di Fattura alla quale sarà eventualmente associato il bene.
 **/ 
 public void modificaBeneScaricato(UserContext userContext,Buono_carico_scaricoBulk buonoS, Inventario_beniBulk bene, OggettoBulk oggetto) throws ComponentException {
 
@@ -3338,7 +3322,7 @@ public void annullaScaricaBeniAccessoriFor(UserContext userContext,Buono_carico_
  *      Viene restituita la lista dei beni che rislutano accessori del bene specificato.
  *
  * @param userContext lo <code>UserContext</code> che ha generato la richiesta
- * @param bene_principale <code>Inventario_beniBulk</code> il bene di riferimento
+ * @param principale <code>Inventario_beniBulk</code> il bene di riferimento
  *
  * @return beni_accessori <code>List</code> gli eventuali beni accessori trovati
 **/
@@ -3371,16 +3355,16 @@ public String getLocalTransactionID(UserContext aUC, boolean force)
 	it.cnr.jada.persistency.PersistencyException,
 	it.cnr.jada.persistency.IntrospectionException 
 {
-	String localTransactionID = null;
-	LoggableStatement cs = null;
+	String localTransactionID;
+    LoggableStatement cs = null;
 	try
 	{
-		cs = new LoggableStatement(getConnection( aUC ), 
-				"{ ? = call " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+
-				"IBMUTL001.getLocalTransactionID(" + 
-			(force?"TRUE":"FALSE") + ")}",false,this.getClass());
-		cs.registerOutParameter( 1, java.sql.Types.VARCHAR );
-		cs.executeQuery();
+        cs = new LoggableStatement(getConnection( aUC ),PropertyNames.getProperty("package.ibmutl001.getLocalTransactionID"),false,this.getClass());
+        cs.setBoolean(1, force?Boolean.TRUE:Boolean.FALSE);
+
+        cs.registerOutParameter( 1, java.sql.Types.VARCHAR );
+        cs.executeQuery();
+
 		localTransactionID = cs.getString(1);
 	} catch (Throwable e) 
 	{
@@ -3388,7 +3372,7 @@ public String getLocalTransactionID(UserContext aUC, boolean force)
 	} finally {
 		try {
 			if (cs != null)
-				cs.close();
+                cs.close();
 		} catch (java.sql.SQLException e) {
 			throw handleException(e);
 		}
@@ -3458,7 +3442,7 @@ public SimpleBulkList selezionati(it.cnr.jada.UserContext userContext, Buono_car
  *		In caso di chiusura della sessione da parte dell'utente, tutte le operazione fatte 
  *		sul DB saranno annullate a partire da questo punto.
  *
- * @param aUC lo <code>UserContext</code> che ha generato la richiesta  
+ * @param userContext lo <code>UserContext</code> che ha generato la richiesta
 **/
 public void inizializzaBeniAssociatiPerModifica(it.cnr.jada.UserContext userContext) throws it.cnr.jada.comp.ComponentException {
 	try {
@@ -3469,7 +3453,7 @@ public void inizializzaBeniAssociatiPerModifica(it.cnr.jada.UserContext userCont
 }
 /** 
  *  
- * @param aUC lo <code>UserContext</code> che ha generato la richiesta
+ * @param userContext lo <code>UserContext</code> che ha generato la richiesta
  * @parama associa_buono lo <code>OggettoBulk</code> che ha generato la richiesta
  * @param riga_fattura_ncnd il <code>OggettoBulk</code> la riga della fattura a cui è associato il bene
  * @param bene il <code>Inventario_beniBulk</code> il bene modificato.
@@ -3563,7 +3547,7 @@ public OggettoBulk modificaBeneAssociatoConBulk (
  *		relative all'Inventario di riferimento ed alle righe di Fattura Passive.
  * 
  * @param righe_fattura la <code>List</code> lista di righe di fattura a cui associare i beni.
- * @param beni <code>OggettoBulk[]</code> i beni selezionati dall'utente.
+ * @param buoni <code>OggettoBulk[]</code> i beni selezionati dall'utente.
  * @param old_ass la <code>BitSet</code> selezione precedente.
  * @param ass la <code>BitSet</code> selezione attuale.
 **/ 
@@ -4572,7 +4556,7 @@ public void associaTuttiBeni(UserContext userContext,Ass_inv_bene_fatturaBulk as
 	  *  
 	  * @param userContext lo <code>UserContext</code> che ha generato la richiesta.
 	  * @param buonoS <code>Buono_scaricoBulk</code> il Buono di Scarico.
-	  * @param bene_padre il <code>Inventario_beniBulk</code> bene da scaricare totalmente.
+	  * @param bene il <code>Inventario_beniBulk</code> bene da scaricare totalmente.
 	  *
 	  *	@return boolean
 	**/
@@ -5874,7 +5858,7 @@ private void modificaBeneTrasferito(UserContext userContext,Buono_carico_scarico
  *      Consente di proseguire con le operazioni di salvataggio.
  * 
  * @param userContext lo <code>UserContext</code> che ha generato la richiesta.
- * @param buonoScarico il <code>Buono_scaricoBulk</code> Buono di Scarico.
+ * @param buonoT il <code>Buono_scaricoBulk</code> Buono di Scarico.
 **/
 private void validaDettagliTrasferiti (UserContext userContext, Trasferimento_inventarioBulk buonoT) throws ComponentException {
 	try {
@@ -5948,7 +5932,7 @@ private void validaDettagliTrasferiti (UserContext userContext, Trasferimento_in
  *      Viene richiamata la procedura di Trafserimento, (CNRCTB400.trasferisciBeni).
  *
  * @param userContext lo <code>UserContext</code> che ha generato la richiesta.
- * @param file il <code>V_ext_cassiere00Bulk</code> file da processare.
+ * @param buonoT il <code>V_ext_cassiere00Bulk</code> file da processare.
 **/ 
 private void callTrasferisciBeni(
 	UserContext userContext, 
@@ -6942,7 +6926,7 @@ public OggettoBulk modificaConBulk (UserContext aUC,OggettoBulk bulk)
  *    PostCondition:
  *      Viene richiamata la procedura che scriverè sulle tabelle dell'Inventario i dati inseriti dall'utente.
  *
- * @param userContext lo <code>UserContext</code> che ha generato la richiesta
+ * @param aUC lo <code>UserContext</code> che ha generato la richiesta
  * @param buonoS il <code>Buono_scaricoBulk</code> Buono di Scarico.
 **/
 public String makePersistentScarico(UserContext aUC, Buono_carico_scaricoBulk buonoS) 
@@ -7011,7 +6995,7 @@ public String makePersistentScarico(UserContext aUC, Buono_carico_scaricoBulk bu
  *      Consente di creare il Buono di Scarico con tutti i dettagli ed i beni correlati.
  * 
  * @param userContext lo <code>UserContext</code> che ha generato la richiesta.
- * @param buonoScarico il <code>Buono_scaricoBulk</code> Buono di Scarico.
+ * @param buonoS il <code>Buono_scaricoBulk</code> Buono di Scarico.
 **/
 private void validaDettagliAssociati (UserContext userContext, Buono_carico_scaricoBulk buonoS) throws ComponentException {
 
@@ -7054,7 +7038,7 @@ private void validaDettagliAssociati (UserContext userContext, Buono_carico_scar
  *	 ossia, la data corrispondente alla modifica piè recente.
  *
  * @param userContext lo <code>UserContext</code> che ha generato la richiesta.
- * @param Buono_carico_scaricoBulk il <code>Buono_carico_scaricoBulk</code> Buono di Scarico.
+ * @param buonoS il <code>Buono_carico_scaricoBulk</code> Buono di Scarico.
  *
  * @return max_data <code>Timestamp</code> il valore cercato.
 
@@ -7091,7 +7075,7 @@ private java.sql.Timestamp getMaxDataFor(UserContext userContext, Buono_carico_s
  *      Consente di creare il Buono di Scarico con tutti i dettagli ed i beni correlati.
  * 
  * @param userContext lo <code>UserContext</code> che ha generato la richiesta.
- * @param buonoScarico il <code>Buono_scaricoBulk</code> Buono di Scarico.
+ * @param buonoS il <code>Buono_scaricoBulk</code> Buono di Scarico.
 **/
 private void validaQuadratura (it.cnr.jada.UserContext userContext, Buono_carico_scaricoBulk buonoS) 
 	throws ComponentException
@@ -7228,7 +7212,7 @@ try{
  *		 Vengono impostate le informazioni relative a Consegnatario, Delegato e UO Resp.
  *		 dell'Inventario a cui è associata la UO di scrivania.
  *  
- * @param aUC lo <code>UserContext</code> che ha generato la richiesta
+ * @param userContext lo <code>UserContext</code> che ha generato la richiesta
  * @param bulk <code>OggettoBulk</code> il buono che deve essere istanziato
 **/
 private void inizializzaBuonoTrasferimentoPerInserimento (UserContext userContext, OggettoBulk bulk) throws ComponentException {
@@ -7311,7 +7295,7 @@ private void checkBeniAssociatiPerElimina(UserContext userContext, Buono_carico_
  *      Cancella gli utilizzatori dei beni associati al Buono di Carico specificato.
  *
  * @param userContext lo <code>UserContext</code> che ha generato la richiesta.  
- * @param bulk <code>OggettoBulk</code> il Buono da eliminare.
+ * @param bene <code>OggettoBulk</code> il Buono da eliminare.
 **/ 
 private void eliminaUtilizzatoriBuono (UserContext userContext,Inventario_beniBulk bene) throws ComponentException {
 	try{

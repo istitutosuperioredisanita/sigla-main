@@ -115,5 +115,11 @@
                 path="../h2/function/getflselezione.sql"
                 relativeToChangelogFile="true"/>
     </changeSet>
-
+    <changeSet author="sigla" runOnChange="true" id="createProcedure-ibmutl001_getLocalTransactionID">
+        <createProcedure
+                dbms="h2"
+                encoding="utf8"
+                path="../h2/function/ibmutl001_getLocalTransactionID.sql"
+                relativeToChangelogFile="true"/>
+    </changeSet>
 </databaseChangeLog>

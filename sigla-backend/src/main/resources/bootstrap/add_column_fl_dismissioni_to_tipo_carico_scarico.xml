@@ -22,7 +22,8 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
                                        http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-    <changeSet author="valentina.tomada" dbms="oracle" id="add_column_fl_dismissioni_to_tipo_carico_scarico">
+    <changeSet author="valentina.tomada" id="add_column_fl_dismissioni_to_tipo_carico_scarico">
+        <validCheckSum>7:d072097e0c373bdfba727b3b49ef26a3</validCheckSum>
         <addColumn tableName="TIPO_CARICO_SCARICO">
             <column name="FL_DISMISSIONE" type="CHAR(1)" defaultValue="N" remarks="Indica se la tipologia di movimento scarica completamente il bene"/>
         </addColumn>

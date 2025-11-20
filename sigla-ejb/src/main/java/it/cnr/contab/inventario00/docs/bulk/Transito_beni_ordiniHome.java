@@ -95,9 +95,8 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 
 		SQLBuilder sql  = innerSelectByClause(usercontext,clauses,Boolean.FALSE);
 		return  fetchAll(sql);
-
-
 	}
+
 	protected SQLBuilder innerSelectByClause(UserContext usercontext, CompoundFindClause compoundfindclause,Boolean clauseStatoIfNotAnn) throws PersistencyException {
 		this.setColumnMap("TRANSITO_BENI_ORDINI_DETT");
 		SQLBuilder sql = this.createSQLBuilder();
@@ -258,8 +257,8 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 	public Persistent completeBulkRowByRow(UserContext userContext, Persistent persistent) throws PersistencyException {
 		return super.completeBulkRowByRow(userContext, persistent);
 	}
-	public List findTransitiBeniOrdini(MovimentiMagBulk movimento) throws PersistencyException {
-		this.setColumnMap(( String)null);
+
+	public List<Transito_beni_ordiniBulk> findTransitoBeniByMovimentoMag(MovimentiMagBulk movimento) throws PersistencyException {
 		SQLBuilder sqlBuilder = createSQLBuilder();
 		sqlBuilder.openParenthesis(FindClause.AND);
 		sqlBuilder.addSQLClause(FindClause.OR, "STATO", SQLBuilder.EQUALS, Transito_beni_ordiniBulk.STATO_COMPLETO);
@@ -267,7 +266,7 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 		sqlBuilder.addSQLClause(FindClause.OR, "STATO", SQLBuilder.EQUALS, Transito_beni_ordiniBulk.STATO_TRASFERITO);
 		sqlBuilder.closeParenthesis();
 		sqlBuilder.addSQLClause(FindClause.AND, "ID_MOVIMENTI_MAG", SQLBuilder.EQUALS, movimento.getPgMovimento());
-		return fetchAll(sqlBuilder);
+		return this.fetchAll(sqlBuilder);
 	}
 
 }

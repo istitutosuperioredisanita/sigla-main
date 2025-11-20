@@ -34,7 +34,7 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
-public class CRUDOrdineAcqBP001Test extends ActionDeployments {
+public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
     public static final String USERNAME = "ENTETEST";
     public static final String PASSWORD = "PASSTEST";
 

@@ -2299,7 +2299,6 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         if (ordineAcqConsegnaBulk!=null) {
             try {
                 CRUDScritturaPDoppiaBP nbp = (CRUDScritturaPDoppiaBP) actioncontext.createBusinessProcess("CRUDScritturaPDoppiaBP", new Object[]{"V"});
-                nbp = (CRUDScritturaPDoppiaBP) actioncontext.addBusinessProcess(nbp);
                 nbp.setStatus(FormController.VIEW);
                 nbp.setSearchButtonHidden(Boolean.TRUE);
                 nbp.setFreeSearchButtonHidden(Boolean.TRUE);
@@ -2319,9 +2318,10 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                 final RemoteIterator remoteiterator = nbp.find(actioncontext, clauses, oggettobulk);
                 if (remoteiterator == null || remoteiterator.countElements() == 0) {
                     EJBCommonServices.closeRemoteIterator(actioncontext, remoteiterator);
-                    nbp.setMessage("Scrittura Economica legata a consegna non trovata!");
+                    setMessage(actioncontext, FormBP.WARNING_MESSAGE, "Scrittura Economica non presente!");
                     return actioncontext.findDefaultForward();
                 }
+                nbp = (CRUDScritturaPDoppiaBP) actioncontext.addBusinessProcess(nbp);
                 if (remoteiterator.countElements() == 1) {
                     OggettoBulk oggettobulk1 = (OggettoBulk) remoteiterator.nextElement();
                     EJBCommonServices.closeRemoteIterator(actioncontext, remoteiterator);
@@ -2342,7 +2342,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                 return handleException(actioncontext, e);
             }
         }
-        setMessage(actioncontext, FormBP.ERROR_MESSAGE, "Scrittura Economica legata a consegna non trovata!");
+        setMessage(actioncontext, FormBP.WARNING_MESSAGE, "Scrittura Economica non presente!");
         return actioncontext.findDefaultForward();
     }
 
@@ -2352,7 +2352,6 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         if (ordineAcqConsegnaBulk!=null) {
             try {
                 CRUDScritturaAnaliticaBP nbp = (CRUDScritturaAnaliticaBP) actioncontext.createBusinessProcess("CRUDScritturaAnaliticaBP", new Object[]{"V"});
-                nbp = (CRUDScritturaAnaliticaBP) actioncontext.addBusinessProcess(nbp);
                 nbp.setStatus(FormController.VIEW);
                 nbp.setSearchButtonHidden(Boolean.TRUE);
                 nbp.setFreeSearchButtonHidden(Boolean.TRUE);
@@ -2373,9 +2372,10 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                 final RemoteIterator remoteiterator = nbp.find(actioncontext, clauses, oggettobulk);
                 if (remoteiterator == null || remoteiterator.countElements() == 0) {
                     EJBCommonServices.closeRemoteIterator(actioncontext, remoteiterator);
-                    nbp.setMessage("Scrittura Analitica legata a consegna non trovata!");
+                    setMessage(actioncontext, FormBP.WARNING_MESSAGE, "Scrittura Analitica non presente!");
                     return actioncontext.findDefaultForward();
                 }
+                nbp = (CRUDScritturaAnaliticaBP) actioncontext.addBusinessProcess(nbp);
                 if (remoteiterator.countElements() == 1) {
                     OggettoBulk oggettobulk1 = (OggettoBulk) remoteiterator.nextElement();
                     EJBCommonServices.closeRemoteIterator(actioncontext, remoteiterator);
@@ -2396,7 +2396,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                 return handleException(actioncontext, e);
             }
         }
-        setMessage(actioncontext, FormBP.ERROR_MESSAGE, "Scrittura Analitica legata a consegna non trovata!");
+        setMessage(actioncontext, FormBP.WARNING_MESSAGE, "Scrittura Analitica non presente!");
         return actioncontext.findDefaultForward();
     }
 

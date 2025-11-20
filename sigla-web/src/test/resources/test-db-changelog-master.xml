@@ -417,6 +417,16 @@
         <dropDefaultValue tableName="contratto" columnName="duva"/>
     </changeSet>
 
+    <changeSet author="test" id="create-dettaglio-contratto">
+        <addDefaultValue tableName="dettaglio_contratto" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="dettaglio_contratto" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/dettaglio_contratto.csv" tableName="dettaglio_contratto"/>
+
+        <dropDefaultValue tableName="dettaglio_contratto" columnName="dacr"/>
+        <dropDefaultValue tableName="dettaglio_contratto" columnName="duva"/>
+    </changeSet>
+
     <changeSet author="test" id="create-obbligazione">
         <addDefaultValue tableName="obbligazione" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="obbligazione" columnName="duva" defaultValueDate="${now}"/>
@@ -815,6 +825,10 @@
             SET DT_ULTIMA_VAR_PASSWORD = '2025-10-15'
             WHERE CD_UTENTE='ENTETEST'
         </sql>
+        <sql>
+            UPDATE ORGANO
+            SET DT_FINE_VALIDITA = '2200-12-31'
+        </sql>
     </changeSet>
 
     <changeSet author="test" id="create-unita-operativa-ord">
@@ -1025,5 +1039,15 @@
 
         <dropDefaultValue tableName="ass_inventario_uo" columnName="dacr"/>
         <dropDefaultValue tableName="ass_inventario_uo" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-ubicazione-bene">
+        <addDefaultValue tableName="ubicazione_bene" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="ubicazione_bene" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/ubicazione_bene.csv" tableName="ubicazione_bene"/>
+
+        <dropDefaultValue tableName="ubicazione_bene" columnName="dacr"/>
+        <dropDefaultValue tableName="ubicazione_bene" columnName="duva"/>
     </changeSet>
 </databaseChangeLog>

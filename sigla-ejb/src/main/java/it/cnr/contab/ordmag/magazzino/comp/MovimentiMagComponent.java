@@ -22,6 +22,7 @@ import it.cnr.contab.config00.sto.bulk.EnteBulk;
 import it.cnr.contab.docamm00.docs.bulk.TipoDocumentoEnum;
 import it.cnr.contab.docamm00.tabrif.bulk.*;
 import it.cnr.contab.inventario00.docs.bulk.Transito_beni_ordiniBulk;
+import it.cnr.contab.inventario00.docs.bulk.Transito_beni_ordiniHome;
 import it.cnr.contab.ordmag.anag00.*;
 import it.cnr.contab.ordmag.magazzino.bulk.*;
 import it.cnr.contab.ordmag.ordini.bulk.*;
@@ -747,6 +748,9 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 		if (movimentoDaAnnullare.getBollaScaricoMag() != null && movimentoDaAnnullare.getBollaScaricoMag().getPgBollaSca() != null ){
 			annullaRigaBollaDiScarico(userContext, movimentoDaAnnullare);
 		}
+
+        annullaTransitoBeni(userContext, movimentoDaAnnullare);
+
 		/**
 		 * Cerco la riga di evasione legata al movimento per effettuare l'annullamento
 		 */
@@ -757,11 +761,10 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 		final List<EvasioneOrdineRigaBulk> evasioneOrdineRigaBulks =
 				evasioneOrdineRigaHome.findByMovimentiMag(movimentoDaAnnullare)
 						.stream()
-						.map(evasioneOrdineRigaBulk -> {
+						.peek(evasioneOrdineRigaBulk -> {
 							evasioneOrdineRigaBulk.setStato(OrdineAcqConsegnaBulk.STATO_ANNULLATA);
 							evasioneOrdineRigaBulk.setToBeUpdated();
-							return evasioneOrdineRigaBulk;
-						}).collect(Collectors.toList());
+                        }).collect(Collectors.toList());
 		if (!evasioneOrdineRigaBulks.isEmpty()) {
             super.modificaConBulk(userContext, evasioneOrdineRigaBulks.toArray(new EvasioneOrdineRigaBulk[evasioneOrdineRigaBulks.size()]));
 
@@ -850,6 +853,23 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 		
 	}
 
+    private void annullaTransitoBeni(UserContext userContext, MovimentiMagBulk movimentoDaAnnullare) throws ComponentException, PersistencyException {
+
+        //Cerco il transito per procedere al suo annullamento
+        final Transito_beni_ordiniHome transitoBeniOrdiniHome = Optional.ofNullable(getHome(userContext, Transito_beni_ordiniBulk.class))
+                .filter(Transito_beni_ordiniHome.class::isInstance)
+                .map(Transito_beni_ordiniHome.class::cast)
+                .orElseThrow(() -> new ComponentException("Transito_beni_ordiniHome not found!"));
+        final List<Transito_beni_ordiniBulk> transitoBeniOrdiniBulks =
+                transitoBeniOrdiniHome.findTransitoBeniByMovimentoMag(movimentoDaAnnullare)
+                        .stream()
+                        .peek(transitoBeniOrdiniBulk -> {
+                            transitoBeniOrdiniBulk.setStato(OrdineAcqConsegnaBulk.STATO_ANNULLATA);
+                            transitoBeniOrdiniBulk.setToBeUpdated();
+                        }).collect(Collectors.toList());
+        if (!transitoBeniOrdiniBulks.isEmpty())
+            super.modificaConBulk(userContext, transitoBeniOrdiniBulks.toArray(new Transito_beni_ordiniBulk[transitoBeniOrdiniBulks.size()]));
+    }
 
 	private void verificaBeneDaAnnullare(UserContext userContext, MovimentiMagBulk movimentoDaAnnullare) throws ComponentException, PersistencyException, ApplicationException{
 
@@ -902,7 +922,7 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 	    	} catch (IntrospectionException e) {
 				throw new ComponentException(e);
 			}
-		}
+        }
 	}
 
 	private MovimentiMagBulk preparaMovimentoDiAnnullamento(UserContext userContext, MovimentiMagBulk movimentoDaAnnullare) throws ComponentException {
