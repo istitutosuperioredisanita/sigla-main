@@ -1,47 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
 <SQLPersistentInfo
-	persistentClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroKey">
+		persistentClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroKey">
 	<defaultColumnMap
-		tableName="DOC_TRASPORTO_RIENTRO">
+			tableName="DOC_TRASPORTO_RIENTRO">
 		<columnMapping
-			columnName="PG_INVENTARIO"
-			propertyName="pgInventario"
-			sqlTypeName="DECIMAL"
-			columnSize="38"
-			nullable="false"
-			primary="true" />
+				columnName="PG_INVENTARIO"
+				propertyName="pgInventario"
+				sqlTypeName="DECIMAL"
+				columnSize="38"
+				nullable="false"
+				primary="true" />
 		<columnMapping
-			columnName="TI_DOCUMENTO"
-			propertyName="tiDocumento"
-			sqlTypeName="CHAR"
-			columnSize="1"
-			nullable="false"
-			primary="true" />
+				columnName="TI_DOCUMENTO"
+				propertyName="tiDocumento"
+				sqlTypeName="CHAR"
+				columnSize="1"
+				nullable="false"
+				primary="true" />
 		<columnMapping
-			columnName="ESERCIZIO"
-			propertyName="esercizio"
-			sqlTypeName="DECIMAL"
-			columnSize="5"
-			nullable="false"
-			primary="true" />
+				columnName="ESERCIZIO"
+				propertyName="esercizio"
+				sqlTypeName="DECIMAL"
+				columnSize="5"
+				nullable="false"
+				primary="true" />
 		<columnMapping
-			columnName="PG_DOC_TRASPORTO_RIENTRO"
-			propertyName="pgDocTrasportoRientro"
-			sqlTypeName="DECIMAL"
-			columnSize="38"
-			nullable="false"
-			primary="true" />
+				columnName="PG_DOC_TRASPORTO_RIENTRO"
+				propertyName="pgDocTrasportoRientro"
+				sqlTypeName="DECIMAL"
+				columnSize="38"
+				nullable="false"
+				primary="true" />
 	</defaultColumnMap>
 	<persistentProperty
-		name="pgInventario"
-		partOfOid="true" />
+			name="pgInventario"
+			partOfOid="true" />
 	<persistentProperty
-		name="tiDocumento"
-		partOfOid="true" />
+			name="tiDocumento"
+			partOfOid="true" />
 	<persistentProperty
-		name="esercizio"
-		partOfOid="true" />
+			name="esercizio"
+			partOfOid="true" />
 	<persistentProperty
-		name="pgDocTrasportoRientro"
-		partOfOid="true" />
+			name="pgDocTrasportoRientro"
+			partOfOid="true" />
 </SQLPersistentInfo>

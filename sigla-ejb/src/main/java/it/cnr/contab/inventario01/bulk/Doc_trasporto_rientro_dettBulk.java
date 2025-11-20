@@ -24,10 +24,6 @@ import it.cnr.contab.inventario00.tabrif.bulk.Condizione_beneBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Ubicazione_beneBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.TipoIVA;
-import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
-import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
-import it.cnr.jada.bulk.BulkCollection;
-import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.StrServ;
@@ -36,41 +32,31 @@ import java.rmi.RemoteException;
 import java.util.Optional;
 
 /**
- * Dettaglio documento Trasporto/Rientro.
- * <p>
- * PATTERN: Delega completa alle entità correlate
- * - I campi PK (pg_inventario, ti_documento, esercizio, pg_doc_trasporto_rientro)
- * sono delegati a doc_trasporto_rientro
- * - I campi PK (nr_inventario, progressivo) sono delegati a bene
- * <p>
- * RELAZIONI DATABASE:
- * - FK verso DOC_TRASPORTO_RIENTRO (testata) → OBBLIGATORIA, ON DELETE CASCADE
- * - FK verso DOC_TRASPORTO_RIENTRO_DETT (riferimento) → per i rientri
+ * Dettaglio (riga) di un documento di Trasporto/Rientro.
+ * Le chiavi primarie composite (PK) sono delegate alle entità correlate (Testata e Bene).
  */
 public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBase {
 
     // ========================================
-    // ATTRIBUTI
+    // ATTRIBUTI E RELAZIONI
     // ========================================
 
     /**
-     * Bene associato al dettaglio.
-     * Contiene nr_inventario e progressivo (parte della PK).
+     * Bene inventariale associato a questa riga di dettaglio.
+     * Delega le PK: nr_inventario, progressivo.
      */
     private Inventario_beniBulk bene;
 
     /**
-     * TESTATA del documento (FOREIGN KEY OBBLIGATORIA).
-     * Contiene pg_inventario, ti_documento, esercizio, pg_doc_trasporto_rientro (parte della PK).
-     * Relazione master-detail con ON DELETE CASCADE.
+     * Testata del documento (FK obbligatoria).
+     * Delega le PK: pg_inventario, ti_documento, esercizio, pg_doc_trasporto_rientro.
      */
     private Doc_trasporto_rientroBulk doc_trasporto_rientro;
 
-
     // Altri attributi
     private int gruppi;
-    private Boolean fl_accessorio_contestuale = Boolean.FALSE;
-    protected Boolean fl_bene_accessorio;
+    private Boolean fl_accessorio_contestuale = Boolean.FALSE; // Flag se è un accessorio aggiunto in contesto
+    protected Boolean fl_bene_accessorio;                     // Flag se è un bene accessorio pre-esistente
     private Categoria_gruppo_voceBulk cat_voce;
 
 
@@ -80,7 +66,7 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
 
     public Doc_trasporto_rientro_dettBulk() {
         super();
-        // NON inizializzare nulla qui - lascia che JADA usi la classe base
+        // NON inizializzare campi delegati qui (logica JADA)
     }
 
     public Doc_trasporto_rientro_dettBulk(Long pg_inventario, String ti_documento,
@@ -89,7 +75,7 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
         super(pg_inventario, ti_documento, esercizio, pg_doc_trasporto_rientro,
                 nr_inventario, progressivo);
 
-        // Inizializza SOLO quando costruisci manualmente
+        // Inizializza gli oggetti bulk relazionati (PK delegate)
         setDoc_trasporto_rientro(new Doc_trasporto_rientroBulk(
                 pg_inventario, ti_documento, esercizio, pg_doc_trasporto_rientro));
         setBene(new Inventario_beniBulk(nr_inventario, pg_inventario,
@@ -116,58 +102,84 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
         doc_trasporto_rientro = bulk;
     }
 
+    public Categoria_gruppo_voceBulk getCat_voce() {
+        return cat_voce;
+    }
+
+    public void setCat_voce(Categoria_gruppo_voceBulk cat_voce) {
+        this.cat_voce = cat_voce;
+    }
+
 
     // ========================================
-    // GETTER E SETTER - Campi Delegati
+    // GETTER E SETTER - Campi PK Delegati
     // ========================================
 
+    // Delega: PG_INVENTARIO
     public void setPg_inventario(Long pg_inventario) {
-        this.getDoc_trasporto_rientro().setPgInventario(pg_inventario);
+        if (this.getDoc_trasporto_rientro() != null) {
+            this.getDoc_trasporto_rientro().setPgInventario(pg_inventario);
+        }
     }
 
     public Long getPg_inventario() {
-        return this.getDoc_trasporto_rientro().getPgInventario();
+        return this.getDoc_trasporto_rientro() == null ? null : this.getDoc_trasporto_rientro().getPgInventario();
     }
 
+    // Delega: NR_INVENTARIO
     public Long getNr_inventario() {
-        return this.getBene().getNr_inventario();
+        return this.getBene() == null ? null : this.getBene().getNr_inventario();
     }
 
     public void setNr_inventario(Long nr_inventario) {
-        this.getBene().setNr_inventario(nr_inventario);
+        if (this.getBene() != null) {
+            this.getBene().setNr_inventario(nr_inventario);
+        }
     }
 
+    // Delega: PROGRESSIVO (mappato come Long in Inventario_beniBulk)
     public Integer getProgressivo() {
+        if (this.getBene() == null || this.getBene().getProgressivo() == null) return null;
         return new Integer(this.getBene().getProgressivo().intValue());
     }
 
     public void setProgressivo(Integer progressivo) {
-        this.getBene().setProgressivo(new Long(progressivo.longValue()));
+        if (this.getBene() != null) {
+            this.getBene().setProgressivo(new Long(progressivo.longValue()));
+        }
     }
 
+    // Delega: TI_DOCUMENTO
     public void setTi_documento(String ti_documento) {
-        this.getDoc_trasporto_rientro().setTiDocumento(ti_documento);
+        if (this.getDoc_trasporto_rientro() != null) {
+            this.getDoc_trasporto_rientro().setTiDocumento(ti_documento);
+        }
     }
 
     public String getTi_documento() {
-        return this.getDoc_trasporto_rientro().getTiDocumento();
+        return this.getDoc_trasporto_rientro() == null ? null : this.getDoc_trasporto_rientro().getTiDocumento();
     }
 
+    // Delega: ESERCIZIO
     public void setEsercizio(Integer esercizio) {
-        this.getDoc_trasporto_rientro().setEsercizio(esercizio);
+        if (this.getDoc_trasporto_rientro() != null) {
+            this.getDoc_trasporto_rientro().setEsercizio(esercizio);
+        }
     }
 
     public Integer getEsercizio() {
-        return this.getDoc_trasporto_rientro().getEsercizio();
+        return this.getDoc_trasporto_rientro() == null ? null : this.getDoc_trasporto_rientro().getEsercizio();
     }
 
-
+    // Delega: PG_DOC_TRASPORTO_RIENTRO
     public void setPg_doc_trasporto_rientro(Long pg_doc_trasporto_rientro) {
-        this.getDoc_trasporto_rientro().setPgDocTrasportoRientro(pg_doc_trasporto_rientro);
+        if (this.getDoc_trasporto_rientro() != null) {
+            this.getDoc_trasporto_rientro().setPgDocTrasportoRientro(pg_doc_trasporto_rientro);
+        }
     }
 
     public Long getPg_doc_trasporto_rientro() {
-        return this.getDoc_trasporto_rientro().getPgDocTrasportoRientro();
+        return this.getDoc_trasporto_rientro() == null ? null : this.getDoc_trasporto_rientro().getPgDocTrasportoRientro();
     }
 
     // ========================================
@@ -175,8 +187,7 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
     // ========================================
 
     /**
-     * Restituisce il codice del bene formato come "NR_INVENTARIO-PROGRESSIVO".
-     * Il progressivo viene formattato con 3 cifre (es: 001, 002, etc.)
+     * Restituisce il codice del bene nel formato "NR_INVENTARIO-PROGRESSIVO" (progressivo a 3 cifre).
      */
     public String getCod_bene() {
         if (getNr_inventario() == null || getProgressivo() == null) {
@@ -187,31 +198,32 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
     }
 
     /**
-     * Restituisce una chiave hash univoca per il dettaglio.
-     * Formato: "NR_INVENTARIO.PROGRESSIVO.ETICHETTA"
+     * Restituisce una chiave hash univoca per il dettaglio, usata per gli accessori contestuali.
+     * Formato: "NR_INVENTARIO.PROGRESSIVO.ETICHETTA".
      */
     public String getChiaveHash() {
         if (getNr_inventario() == null || getProgressivo() == null) {
             return null;
         }
+        // Utilizza l'etichetta del dettaglio (che può essere quella del bene principale)
         return getNr_inventario().toString() + "." + getProgressivo().toString() + "." + getEtichetta();
     }
 
     // ========================================
-    // METODI UTILITY - Validazioni
+    // METODI UTILITY - Validazioni e Stati
     // ========================================
 
     //TODO creare un metodo isValidoPerRientro()
 
     /**
-     * Verifica se il bene è totalmente scaricato.
+     * Verifica se il bene associato è totalmente scaricato.
      */
     public boolean isTotalmenteScaricato() {
         return bene != null && Boolean.TRUE.equals(bene.getFl_totalmente_scaricato());
     }
 
     /**
-     * Verifica se il bene è in transito.
+     * Verifica se il bene è attualmente in transito (gestione specifica).
      */
     public boolean isBeneInTransito() {
         return bene != null && bene.getId_transito_beni_ordini() != null;
@@ -223,6 +235,7 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
 
     @Override
     public OggettoBulk initialize(it.cnr.jada.util.action.CRUDBP bp, it.cnr.jada.action.ActionContext context) {
+        // Inizializzazione standard
         bene = new Inventario_beniBulk();
         bene.setTi_commerciale_istituzionale(TipoIVA.ISTITUZIONALE.value());
         return this;
@@ -230,29 +243,34 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
 
     @Override
     public OggettoBulk initializeForInsert(it.cnr.jada.util.action.CRUDBP bp, it.cnr.jada.action.ActionContext context) {
+        // Inizializzazione per l'inserimento
         bene = new Inventario_beniBulk();
         bene.setTi_commerciale_istituzionale(TipoIVA.ISTITUZIONALE.value());
 
         try {
+            // Se la gestione etichetta è attiva, imposta la quantità a 1
             if (Utility.createConfigurazioneCnrComponentSession()
                     .isGestioneEtichettaInventarioBeneAttivo(context.getUserContext())) {
                 setQuantita(1L);
             }
         } catch (RemoteException | ComponentException e) {
-            // Log error se necessario
+            // Errore di inizializzazione, log se necessario
         }
 
         return this;
     }
 
     // ========================================
-    // ACCESSORI E ETICHETTE
+    // GESTIONE ACCESSORI E ETICHETTE
     // ========================================
 
     public boolean isAccessorioContestuale() {
         return Boolean.TRUE.equals(fl_accessorio_contestuale);
     }
 
+    /**
+     * Verifica se la riga corrente è associata ad accessori contestuali nella Testata.
+     */
     public boolean isAssociatoConAccessorioContestuale() {
         Doc_trasporto_rientroBulk doc = getDoc_trasporto_rientro();
         if (getChiaveHash() == null || doc == null || doc.getAccessoriContestualiHash() == null) {
@@ -260,6 +278,8 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
         }
         return doc.getAccessoriContestualiHash().containsKey(getChiaveHash());
     }
+
+    // Metodi per controllare la readonly (RO) dei campi in base al tipo di bene/dettaglio
 
     public boolean isROsearchTool() {
         return isBeneAccessorio();
@@ -318,31 +338,31 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
     }
 
     // ========================================
-    // METODI DELEGATI AL BENE
+    // METODI DELEGATI AL BENE (Accesso diretto ai campi dell'Inventario_beniBulk)
     // ========================================
 
     public it.cnr.contab.anagraf00.core.bulk.TerzoBulk getAssegnatario() {
-        return bene.getAssegnatario();
+        return bene == null ? null : bene.getAssegnatario();
     }
 
     public String getCollocazione() {
-        return bene.getCollocazione();
+        return bene == null ? null : bene.getCollocazione();
     }
 
     public Categoria_gruppo_inventBulk getCategoria_Bene() {
-        return bene.getCategoria_Bene();
+        return bene == null ? null : bene.getCategoria_Bene();
     }
 
     public String getDs_bene() {
-        return bene.getDs_bene();
+        return bene == null ? null : bene.getDs_bene();
     }
 
     public Ubicazione_beneBulk getUbicazione() {
-        return bene.getUbicazione();
+        return bene == null ? null : bene.getUbicazione();
     }
 
     public Condizione_beneBulk getCondizioneBene() {
-        return bene.getCondizioneBene();
+        return bene == null ? null : bene.getCondizioneBene();
     }
 
     // ========================================
@@ -357,14 +377,7 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
         this.gruppi = gruppi;
     }
 
-    public Categoria_gruppo_voceBulk getCat_voce() {
-        return cat_voce;
-    }
-
-    public void setCat_voce(Categoria_gruppo_voceBulk cat_voce) {
-        this.cat_voce = cat_voce;
-    }
-
+    // Costruisce il nome file CMIS
     public String constructCMISNomeFile() {
         StringBuffer nomeFile = new StringBuffer();
         nomeFile = nomeFile.append(StrServ.lpad(this.getPg_doc_trasporto_rientro().toString(), 9, "0"));

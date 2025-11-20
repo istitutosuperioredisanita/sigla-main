@@ -101,7 +101,7 @@
             cols="75"
             rows="4"
             maxLength="4000"
-            label="Note / Motivo Trasporto" />
+            label="Note Tipo Movimento" />
 
     <!-- ============================================ -->
     <!-- CAMPI BULK -->
@@ -131,27 +131,29 @@
             command="doOnTipoRitiroChange"
             label="Tipo Ritiro" />
 
-    <!-- Dipendente Incaricato -->
+    <!-- ============================================ -->
+    <!-- FK: TERZO_ASSEGNATARIO (Incaricato Ritiro) -->
+    <!-- ============================================ -->
+
     <fieldProperty
-            name="find_assegnatario"
-            property="anagDipRitiro"
+            name="find_terzoIncRitiro"
+            property="terzoIncRitiro"
             inputType="SEARCHTOOL"
             formName="searchtool"
             enabledOnSearch="true"
             enabledOnEdit="true"
             completeOnSave="true"
-            label="Incaricato al Ritiro" />
+            label="Dipendente Incaricato" />
 
     <fieldProperty
-            name="cd_assegnatario"
-            property="anagDipRitiro.cd_terzo"
+            name="cd_terzo_assegnatario"
+            property="terzoIncRitiro.cd_terzo"
             inputType="TEXT"
             maxLength="10"
-            inputSize="6"
-            label="Incaricato al Ritiro"
+            inputSize="10"
+            label="Cod. Incaricato"
             caseSensitiveSearch="false" />
 
-    <!-- ⚠️ NUOVO CAMPO: Nominativo Vettore -->
     <fieldProperty
             name="nominativoVettore"
             property="nominativoVettore"
@@ -226,9 +228,8 @@
     <formFieldProperty name="destinazione" />
     <formFieldProperty name="indirizzo" />
     <formFieldProperty name="tipoRitiro"/>
-    <formFieldProperty name="find_assegnatario" />
-    <formFieldProperty name="cd_assegnatario" />
-    <!-- ⚠️ NUOVO: Aggiungi al form -->
+    <formFieldProperty name="find_terzoIncRitiro" />
+    <formFieldProperty name="cd_terzo_assegnatario" />
     <formFieldProperty name="nominativoVettore" />
     <formFieldProperty name="note" />
     <formFieldProperty name="stato" />

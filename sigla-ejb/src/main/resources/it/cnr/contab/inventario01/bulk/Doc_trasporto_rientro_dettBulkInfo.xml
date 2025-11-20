@@ -649,7 +649,7 @@
 	<!-- COLUMN SET PER TRASPORTO BENI -->
 	<!-- ============================================ -->
 
-	<columnSet name="righeTrasporto">
+	<columnSet name="righeRientro">
 		<columnFieldProperty
 				name="nr_inventario"
 				style="width:80px"/>

@@ -51,7 +51,10 @@ public class DocTraspRientCMISService extends StoreService {
     @Autowired
     private StorageDriver storageDriver;
 
-    public static final String DOC_TRASPORTO_RIENTRO = "Documenti Trasporto/Rientro";
+    public static final String DOC_TRASPORTO_RIENTRO = "Documenti Trasporto - Rientro";
+    public static final String DOC_TRASPORTO_FILEFOLDER = "Doc. Trasporto";
+    public static final String DOC_RIENTRO_FILEFOLDER = "Doc. Rientro";
+
 
 
     /**
@@ -59,253 +62,82 @@ public class DocTraspRientCMISService extends StoreService {
      */
     public List<StorageObject> getFilesDoc(Doc_trasporto_rientroBulk doc, UserContext userContext)
             throws BusinessProcessException {
-        logger.info("-> getFilesDoc - Inizio recupero files per documento: Esercizio={}, Inventario={}, Tipo={}, PgDoc={}",
-                doc.getEsercizio(), doc.getPgInventario(), doc.getTiDocumento(), doc.getPgDocTrasportoRientro());
-
         String uo = CNRUserContext.getCd_unita_organizzativa(userContext);
-
         StorageObject folderDoc = recuperoFolderDocSigla(doc, uo);
 
         if (Optional.ofNullable(folderDoc).isPresent()) {
-            String folderKey = folderDoc.getKey();
-            logger.info("   Folder trovata con key: {}", folderKey);
-            List<StorageObject> children = getChildren(folderKey);
-            logger.info("   Numero files trovati nella folder: {}", children.size());
-            return children;
+            return getChildren(folderDoc.getKey());
         }
-        logger.warn("   Nessuna folder trovata per il documento. Ritorno lista vuota.");
         return Collections.EMPTY_LIST;
     }
 
     /**
-     * Recupera documenti filtrati per tipo allegato
-     */
-    private List<StorageObject> getDocuments(String storageObjectKey, String tipoAllegato) {
-        logger.debug("-> getDocuments - Ricerca documenti figli per Key: {} con tipo: {}", storageObjectKey, tipoAllegato);
-        List<StorageObject> filtered = getChildren(storageObjectKey).stream()
-                .filter(storageObject -> tipoAllegato == null ||
-                        storageObject.<String>getPropertyValue(StoragePropertyNames.OBJECT_TYPE_ID.value())
-                                .equals(tipoAllegato))
-                .collect(Collectors.toList());
-        logger.debug("   Trovati {} documenti filtrati.", filtered.size());
-        return filtered;
-    }
-
-    /**
-//     * Recupera il folder principale del documento
-//     */
-//    public StorageObject recuperoFolderDocSigla(Doc_trasporto_rientroBulk doc, UserContext userContext)
-//            throws BusinessProcessException {
-//        String path = getStorePath(doc, userContext);
-//        logger.info("-> recuperoFolderDocSigla - Recupero StorageObject (folder) dal path: {}", path);
-//        StorageObject folder = getStorageObjectByPath(path);
-//        if (folder != null) {
-//            logger.info("   Folder recuperata con successo - Key: {}", folder.getKey());
-//        } else {
-//            logger.warn("   Folder NON trovata al path: {}", path);
-//        }
-//        return folder;
-//    }
-
-
-    /**
      * Recupera l'oggetto CMIS (cartella) che rappresenta il Doc
      */
-    public StorageObject recuperoFolderDocSigla(Doc_trasporto_rientroBulk doc, String uo_context) throws BusinessProcessException{
+    public StorageObject recuperoFolderDocSigla(Doc_trasporto_rientroBulk doc, String uo_context) throws BusinessProcessException {
         String path = getStorePath(doc);
-        logger.info("-> Recupero StorageObject per il path: {}", path);
-        StorageObject folder = getStorageObjectByPath(path);
-        if (folder != null) {
-            logger.info("   Folder recuperato con Key: {}", folder.getKey());
-        } else {
-            logger.warn("   Folder non trovato per il path: {}", path);
+        StorageObject folder = getStorageObjectByPath(path, true);
+        if (folder == null) {
+            logger.warn("Cartella CMIS NON trovata per documento: {} al path: {}", doc.recuperoIdDocAsString(), path);
         }
         return folder;
     }
 
     /**
-     * Estrae il path base (senza il nome della folder finale) dal path completo
+     * Metodo principale per determinare il path CMIS del doc.
+     * Struttura:
+     * Comunicazioni da ISS / Documenti di Trasporto e Rientro / 2025 / Doc. Trasporto / 20250000000007
+     * Comunicazioni da ISS / Documenti di Trasporto e Rientro / 2025 / Doc. Rientro / 20250000000002
      */
-    private String getBasePathFromFullPath(String fullPath) {
-        if (fullPath == null || !fullPath.contains(StorageDriver.SUFFIX)) {
-            return fullPath;
-        }
-
-        int lastSeparatorIndex = fullPath.lastIndexOf(StorageDriver.SUFFIX);
-        if (lastSeparatorIndex > 0) {
-            return fullPath.substring(0, lastSeparatorIndex);
-        }
-
-        return fullPath;
-    }
-
-    /**
-     * Crea la cartella principale del documento di trasporto/rientro se non esiste.
-     * Restituisce la chiave (Key) CMIS della cartella.
-     */
-    public String createFolderDocIfNotPresent(String path, Doc_trasporto_rientroBulk doc)
-            throws ApplicationException {
-
-        logger.info("-> createFolderDocIfNotPresent (Doc_trasporto_rientroBulk) - Path padre: {}", path);
-
-        Map<String, Object> metadataProperties = new HashMap<>();
-        String folderName = sanitizeFolderName(doc.constructCMISNomeFile());
-        logger.debug("   Nome della cartella da creare: {}", folderName);
-
-        // TIPO FOLDER CMIS PER DOCUMENTI TRASPORTO/RIENTRO
-        metadataProperties.put(StoragePropertyNames.OBJECT_TYPE_ID.value(),
-                "F:doc_trasporto_rientro:main");
-        metadataProperties.put(StoragePropertyNames.NAME.value(), folderName);
-
-        // METADATI SPECIFICI DEL DOCUMENTO TRASPORTO/RIENTRO
-        metadataProperties.put(CMIS_DOC_ESERCIZIO, doc.getEsercizio());
-        metadataProperties.put(CMIS_DOC_PG_INVENTARIO, doc.getPgInventario());
-        metadataProperties.put(CMIS_DOC_TI_DOCUMENTO, doc.getTiDocumento());
-        metadataProperties.put(CMIS_DOC_PG_DOCUMENTO, doc.getPgDocTrasportoRientro());
-
-        // Metadati opzionali
-        if (doc.getDsDocTrasportoRientro() != null) {
-            metadataProperties.put(CMIS_DOC_OGGETTO, doc.getDsDocTrasportoRientro());
-        }
-
-        // Utente applicativo
-        metadataProperties.put("sigla_commons_aspect:utente_applicativo", doc.getUtuv());
-
-        // ASPECTS CMIS
-        List<String> aspectsToAdd = Arrays.asList(
-                "P:cm:titled",
-                "P:sigla_commons_aspect:utente_applicativo_sigla"
-        );
-        metadataProperties.put(StoragePropertyNames.SECONDARY_OBJECT_TYPE_IDS.value(), aspectsToAdd);
-
-        String folderKey = createFolderIfNotPresent(path, folderName, metadataProperties);
-        logger.info("   Cartella principale Doc T/R creata/esistente. Chiave (Key) CMIS: {}", folderKey);
-
-        return folderKey;
-    }
-
-
-    /**
-     * Metodo principale per determinare il path CMIS del doc, gestendo la transizione (Old/New Path).
-     */
-
     public String getStorePath(Doc_trasporto_rientroBulk doc)
             throws BusinessProcessException {
 
+        String tipoFolderName = "";      // "Doc. Trasporto" o "Doc. Rientro"
+        String numeroDocumento = "";     // "20250000000007"
 
-            // Path base: ComunicazioniDal/CdUnitaOrganizzativa/Ordini/CdUnitaOperativa/CdNumeratore/Esercizio
-            String path =Arrays.asList(
-                    SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
-                    "Documento Trasporto Rientro",
-                    Optional.ofNullable(doc.getEsercizio())
-                            .map(esercizio -> String.valueOf(esercizio))
-                            .orElse("0"),
-                    "Doc. Trasporto " + doc.getEsercizio().toString() + Utility.lpad(doc.getPgDocTrasportoRientro().toString(), 10, '0')
-            ).stream().collect(
-                    Collectors.joining(StorageDriver.SUFFIX)
-            );
+        // Determina il nome della cartella tipo
+        if (Doc_trasporto_rientroBulk.TRASPORTO.equals(doc.getTiDocumento())) {
+            tipoFolderName = DOC_TRASPORTO_FILEFOLDER; // "Doc. Trasporto"
+        } else if (Doc_trasporto_rientroBulk.RIENTRO.equals(doc.getTiDocumento())) {
+            tipoFolderName = DOC_RIENTRO_FILEFOLDER;   // "Doc. Rientro"
+        }
 
-            logger.info("   Path base 'New Path' generato: {}", path);
-            return path;
+        // Crea il numero documento formattato: esercizio + progressivo
+        numeroDocumento = doc.getEsercizio().toString() +
+                Utility.lpad(doc.getPgDocTrasportoRientro().toString(), 10, '0');
 
+        // Costruisce path completo:
+        // Comunicazioni da ISS/Documenti di Trasporto e Rientro/2025/Doc. Trasporto/20250000000007
+        String path = Arrays.asList(
+                SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
+                DOC_TRASPORTO_RIENTRO,  // "Documenti di Trasporto e Rientro"
+                Optional.ofNullable(doc.getEsercizio())
+                        .map(esercizio -> String.valueOf(esercizio))
+                        .orElse("0"),
+                tipoFolderName,         // "Doc. Trasporto" o "Doc. Rientro"
+                numeroDocumento         // "20250000000007"
+        ).stream().collect(
+                Collectors.joining(StorageDriver.SUFFIX)
+        );
+
+        return path;
     }
-    public String createFolderOrdineIfNotPresent(String path, Doc_trasporto_rientroBulk ordine) throws ApplicationException{
-        logger.info("-> createFolderOrdineIfNotPresent (OrdineAcqBulk) - Path padre: {}", path);
+
+
+    public String createFolderDocIfNotPresent(String path, Doc_trasporto_rientroBulk doc) throws ApplicationException {
         Map<String, Object> metadataProperties = new HashMap<String, Object>();
-        String folderName = sanitizeFolderName(ordine.constructCMISNomeFile());
-        logger.debug("   Nome della cartella da creare: {}", folderName);
+        String folderName = sanitizeFolderName(doc.constructCMISNomeFile());
 
         metadataProperties.put(StoragePropertyNames.OBJECT_TYPE_ID.value(), "F:doc_trasporto:main");
         metadataProperties.put(StoragePropertyNames.NAME.value(), folderName);
-       // metadataProperties.put(OrdineAcqCMISService.CMIS_ORDINI_ACQ_NUMERATORE, ordine.getCdNumeratore());
-       // metadataProperties.put(OrdineAcqCMISService.CMIS_ORDINI_ACQ_ANNO, ordine.getEsercizio());
-       // metadataProperties.put(OrdineAcqCMISService.CMIS_ORDINI_ACQ_NUMERO, ordine.getNumero());
-       // metadataProperties.put(OrdineAcqCMISService.CMIS_ORDINI_ACQ_UOP, ordine.getCdUnitaOperativa());
-       // metadataProperties.put("sigla_commons_aspect:utente_applicativo", ordine.getUtuv());
 
         List<String> aspectsToAdd = Arrays.asList("P:cm:titled", "P:sigla_commons_aspect:utente_applicativo_sigla");
         metadataProperties.put(StoragePropertyNames.SECONDARY_OBJECT_TYPE_IDS.value(), aspectsToAdd);
 
         String folderKey = createFolderIfNotPresent(path, folderName, metadataProperties);
-        logger.info("   Cartella principale creata/esistente. Chiave (Key) CMIS: {}", folderKey);
+        logger.info("Folder CMIS creata/esistente per documento {}. Key: {}", doc.recuperoIdDocAsString(), folderKey);
         return folderKey;
     }
-
-    /**
-     * Ottiene il path vecchio per retrocompatibilità (date < 2024)
-     * RESTITUISCE IL PATH COMPLETO DELLA CARTELLA DOCUMENTO (se esiste e valida)
-     * Altrimenti NULL per triggherare il fallback su New Path
-     */
-    private String getStorePathOldPath(Doc_trasporto_rientroBulk doc, String uo_context)
-            throws BusinessProcessException {
-
-        logger.info("-> getStorePathOldPath - Applicazione logica path precedente o uguale al 2023 (aggiornata)");
-
-        String tipoRitiro;
-
-        // Determinazione UO
-        if (doc.isRitiroIncaricato()) {
-            tipoRitiro = "INCARICATO";
-        } else if (doc.isRitiroVettore()) {
-            tipoRitiro = "VETTORE";
-        } else {
-            throw new BusinessProcessException("Tipo ritiro non valido. Deve essere INCARICATO o VETTORE.");
-        }
-
-        logger.info("   Tipo ritiro: {}. UO base: {}", tipoRitiro, uo_context);
-
-        // Path base Old Path (senza Documenti_Trasporto_Rientro)
-        String basePath = Arrays.asList(
-                SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
-                uo_context,
-                "Inventario",
-                doc.getTiDocumento(),
-                Optional.ofNullable(doc.getEsercizio()).map(String::valueOf).orElse("0")
-        ).stream().collect(Collectors.joining(StorageDriver.SUFFIX));
-
-        logger.info("   Path BASE 'Old Path' generato: {}", basePath);
-
-        // Costruzione nome folder documento
-        String folderName = sanitizeFolderName(doc.constructCMISNomeFile());
-        String fullPathOldFolder = basePath
-                .concat(basePath.endsWith(StorageDriver.SUFFIX) ? "" : StorageDriver.SUFFIX)
-                .concat(folderName);
-
-        logger.debug("   Path COMPLETO Old Folder: {}", fullPathOldFolder);
-
-        // Verifica esistenza cartella vecchia
-        StorageObject folder = this.getStorageObjectByPath(fullPathOldFolder, true, false);
-
-        if (folder == null)
-            return null;
-
-        // Recupero figli per validare
-        List<StorageObject> children = Optional.ofNullable(folder)
-                .map(m -> this.getChildren(m.getKey()))
-                .orElse(null);
-
-        if (children == null || children.isEmpty())
-            return null; // cartella vuota → non valida
-
-        // Verifica coerenza file stampa
-        StorageObject fileStampaDoc = children.stream()
-                .filter(storageObject -> hasAspect(storageObject, ASPECT_STAMPA_DOC))
-                .findFirst()
-                .orElse(null);
-
-        if (fileStampaDoc != null) {
-            String docId = doc.recuperoIdDocAsString();
-            boolean isCoerente = fileStampaDoc.getKey().contains(docId);
-
-            if (!isCoerente)
-                return null; // incoerenza → Old Path non valido
-        }
-
-        // Old Path valido
-        return fullPathOldFolder;
-    }
-
-
 
 
     /**
@@ -313,114 +145,62 @@ public class DocTraspRientCMISService extends StoreService {
      */
     public StorageObject getStorageObjectStampaDoc(Doc_trasporto_rientroBulk doc, UserContext userContext)
             throws Exception {
-        logger.info("-> getStorageObjectStampaDoc - Ricerca file stampa documento con aspetto: {}", ASPECT_STAMPA_DOC);
-        StorageObject stampa = getFilesDoc(doc, userContext).stream()
+        return getFilesDoc(doc, userContext).stream()
                 .filter(storageObject -> hasAspect(storageObject, ASPECT_STAMPA_DOC))
                 .findFirst()
                 .orElse(null);
-        if (stampa != null) {
-            logger.info("   File stampa trovato - Key: {}, Nome: {}",
-                    stampa.getKey(), stampa.getPropertyValue(StoragePropertyNames.NAME.value()));
-        } else {
-            logger.info("   Nessun file stampa trovato.");
-        }
-        return stampa;
     }
 
-    /**
-     * Verifica se esiste già una stampa valida del documento
-     */
-    public boolean alreadyExistValidStampaDoc(Doc_trasporto_rientroBulk doc, UserContext userContext)
-            throws Exception {
-        logger.info("-> alreadyExistValidStampaDoc - Verifica esistenza stampa valida (Stato: {}).", STATO_STAMPA_DOC_VALIDO);
-        boolean isValid = Optional.ofNullable(getStorageObjectStampaDoc(doc, userContext))
-                .flatMap(storageObject -> Optional.ofNullable(
-                        storageObject.<String>getPropertyValue("doc_trasporto_rientro:stato")))
-                .filter(stato -> stato.equalsIgnoreCase(STATO_STAMPA_DOC_VALIDO))
-                .isPresent();
-        logger.info("   Esito verifica stampa valida: {}", isValid);
-        return isValid;
-    }
 
     /**
      * Ottiene lo stream del file di stampa
      */
     public InputStream getStreamDoc(Doc_trasporto_rientroBulk doc, UserContext userContext)
             throws Exception {
-        logger.info("-> getStreamDoc - Recupero stream file stampa documento");
         return Optional.ofNullable(getStorageObjectStampaDoc(doc, userContext))
-                .map(storageObject -> {
-                    logger.info("   Stream recuperato per file: {}", storageObject.getKey());
-                    return getResource(storageObject.getKey());
-                })
-                .orElseGet(() -> {
-                    logger.warn("   Nessuno stream disponibile - file stampa non trovato.");
-                    return null;
-                });
+                .map(storageObject -> getResource(storageObject.getKey()))
+                .orElse(null);
     }
 
     /**
      * Salva il documento firmato da HappySign su CMIS/Azure
-     * Sostituisce il contenuto del file di stampa esistente con quello firmato
-     *
-     * @param pdfFirmato contenuto del PDF firmato
-     * @param documento il documento di trasporto/rientro
-     * @param userContext il contesto utente (CNRUserContext)
-     * @return lo StorageObject del documento salvato
      */
     public StorageObject salvaStampaDocumentoFirmatoSuCMIS(
             byte[] pdfFirmato,
             Doc_trasporto_rientroBulk documento,
             UserContext userContext) throws Exception {
 
-        logger.info("-> salvaStampaDocumentoFirmatoSuCMIS - *** INIZIO SALVATAGGIO DOCUMENTO FIRMATO ***");
-        logger.debug("   Documento - Esercizio: {}, Inventario: {}, Tipo: {}, PgDoc: {}",
-                documento.getEsercizio(), documento.getPgInventario(),
-                documento.getTiDocumento(), documento.getPgDocTrasportoRientro());
-        logger.info("   Dimensione PDF firmato: {} bytes", pdfFirmato.length);
-
         try {
-            // Recupera lo StorageObject del file di stampa esistente
             StorageObject stampaEsistente = getStorageObjectStampaDoc(documento, userContext);
 
             if (stampaEsistente != null) {
-                logger.info("   File stampa esistente trovato - Key: {}. Aggiornamento del contenuto.", stampaEsistente.getKey());
-
-                // Sostituisce il PDF non firmato con quello firmato
+                // Aggiornamento
                 StorageObject updatedDoc = updateStream(
                         stampaEsistente.getKey(),
                         new ByteArrayInputStream(pdfFirmato),
                         "application/pdf");
-                logger.info("   Stream del file aggiornato con successo. Key: {}", updatedDoc.getKey());
 
-                // Aggiorna le proprietà
                 Map<String, Object> properties = new HashMap<>();
                 properties.put("doc_trasporto_rientro:stato", STATO_STAMPA_DOC_VALIDO);
                 properties.put("doc_trasporto_rientro:firmato", Boolean.TRUE);
                 properties.put("doc_trasporto_rientro:data_firma", new Date());
-                logger.debug("   Proprietà da aggiornare: Stato={}, Firmato=true, DataFirma={}", STATO_STAMPA_DOC_VALIDO, properties.get("doc_trasporto_rientro:data_firma"));
 
                 updateProperties(properties, stampaEsistente);
-                logger.info("   Proprietà del file aggiornate in CMIS.");
 
                 StorageObject documentoAggiornato = getStorageObjectBykey(stampaEsistente.getKey());
-                logger.info("   *** DOCUMENTO FIRMATO AGGIORNATO CON SUCCESSO - Key: {} ***",
-                        documentoAggiornato.getKey());
-
+                logger.info("DOCUMENTO FIRMATO AGGIORNATO (UPDATE) con successo. Key: {}", documentoAggiornato.getKey());
                 return documentoAggiornato;
 
             } else {
-                logger.warn("   File stampa NON esistente. Inizio procedura di creazione nuovo file.");
-                String uo = CNRUserContext.getCd_unita_organizzativa(userContext);
-
+                // Creazione
                 String path = getStorePath(documento);
-                logger.info("   Path della cartella di destinazione: {}", path);
-
                 StorageObject parentObject = getStorageObjectByPath(path, true, true);
-                logger.info("   Parent object recuperato - Key: {}", parentObject.getKey());
+
+                if (parentObject == null) {
+                    throw new ApplicationException("Cartella padre CMIS non trovata: " + path);
+                }
 
                 String nomeFile = costruisciNomeFileFirmato(documento);
-                logger.info("   Nome file firmato da creare: {}", nomeFile);
 
                 Map<String, Object> metadataProperties = new HashMap<>();
                 metadataProperties.put(StoragePropertyNames.OBJECT_TYPE_ID.value(),
@@ -430,12 +210,10 @@ public class DocTraspRientCMISService extends StoreService {
                 metadataProperties.put("doc_trasporto_rientro:firmato", Boolean.TRUE);
                 metadataProperties.put("doc_trasporto_rientro:data_firma", new Date());
 
-                // Aggiungi gli aspect
                 List<String> aspects = new ArrayList<>();
                 aspects.add(ASPECT_STAMPA_DOC);
                 aspects.add(ASPECT_STATO_STAMPA_DOC);
                 metadataProperties.put(StoragePropertyNames.SECONDARY_OBJECT_TYPE_IDS.value(), aspects);
-                logger.debug("   Aspects aggiunti: {}", aspects);
 
                 StorageObject nuovoFile = storageDriver.createDocument(
                         new ByteArrayInputStream(pdfFirmato),
@@ -445,16 +223,12 @@ public class DocTraspRientCMISService extends StoreService {
                         path,
                         false
                 );
-
-                logger.info("   *** NUOVO DOCUMENTO FIRMATO CREATO CON SUCCESSO - Key: {} ***", nuovoFile.getKey());
-
+                logger.info("DOCUMENTO FIRMATO CREATO (NEW) con successo. Key: {}", nuovoFile.getKey());
                 return nuovoFile;
             }
 
         } catch (Exception e) {
-            logger.error("-> salvaStampaDocumentoFirmatoSuCMIS - *** ERRORE FATALE DURANTE SALVATAGGIO DOCUMENTO FIRMATO ***", e);
-            logger.error("   Dettagli: Tipo errore: {}, Messaggio: {}",
-                    e.getClass().getName(), e.getMessage());
+            logger.error("ERRORE FATALE durante il salvataggio del documento firmato per: {}", documento.recuperoIdDocAsString(), e);
             throw e;
         }
     }
@@ -464,14 +238,12 @@ public class DocTraspRientCMISService extends StoreService {
      */
     private String costruisciNomeFileFirmato(Doc_trasporto_rientroBulk documento) {
         StringBuilder nome = new StringBuilder();
-        String tipoDoc;
+        String tipoDoc = "";
 
         if (Doc_trasporto_rientroBulk.TRASPORTO.equals(documento.getTiDocumento())) {
             tipoDoc = "Trasporto";
         } else if (Doc_trasporto_rientroBulk.RIENTRO.equals(documento.getTiDocumento())) {
             tipoDoc = "Rientro";
-        } else {
-            tipoDoc = "DocGenerico";
         }
 
         nome.append(tipoDoc);
@@ -483,7 +255,62 @@ public class DocTraspRientCMISService extends StoreService {
         nome.append(documento.getPgDocTrasportoRientro());
         nome.append("_firmato.pdf");
 
-        logger.debug("-> costruisciNomeFileFirmato - Nome file generato: {}", nome.toString());
         return nome.toString();
+    }
+
+    /**
+     * Salva il file di stampa su CMIS con aspect corretti.
+     */
+    public void salvaFileStampaSuCMIS(
+            byte[] pdfContent,
+            String nomeFile,
+            Doc_trasporto_rientroBulk documento,
+            UserContext userContext) throws Exception {
+
+        try {
+            StorageObject esistente = getStorageObjectStampaDoc(documento, userContext);
+            if (esistente != null) {
+                logger.warn("File stampa già esistente (Key: {}). Salvataggio saltato.", esistente.getKey());
+                return;
+            }
+
+            String path = getStorePath(documento);
+            StorageObject parentFolder = getStorageObjectByPath(path, true, true);
+
+            if (parentFolder == null) {
+                logger.error("Cartella padre CMIS non trovata al path: {}", path);
+                throw new ApplicationException("Cartella non trovata: " + path);
+            }
+
+            Map<String, Object> metadataProperties = new HashMap<>();
+            metadataProperties.put(StoragePropertyNames.OBJECT_TYPE_ID.value(),
+                    "D:doc_trasporto_rientro_attachment:document");
+            metadataProperties.put(StoragePropertyNames.NAME.value(), nomeFile);
+            metadataProperties.put("doc_trasporto_rientro:stato", STATO_STAMPA_DOC_VALIDO);
+            metadataProperties.put("doc_trasporto_rientro:firmato", Boolean.FALSE);
+            metadataProperties.put("doc_trasporto_rientro:data_creazione", new Date());
+
+            List<String> aspects = new ArrayList<>();
+            aspects.add(ASPECT_STAMPA_DOC);
+            aspects.add(ASPECT_STATO_STAMPA_DOC);
+            aspects.add("P:cm:titled");
+            aspects.add("P:sigla_commons_aspect:utente_applicativo_sigla");
+            metadataProperties.put(StoragePropertyNames.SECONDARY_OBJECT_TYPE_IDS.value(), aspects);
+
+            StorageObject nuovoFile = storageDriver.createDocument(
+                    new ByteArrayInputStream(pdfContent),
+                    "application/pdf",
+                    metadataProperties,
+                    parentFolder,
+                    path,
+                    false
+            );
+
+            logger.info("FILE STAMPA CREATO con successo. Key: {}", nuovoFile.getKey());
+
+        } catch (Exception e) {
+            logger.error("ERRORE durante il salvataggio del file di stampa per: {}", documento.recuperoIdDocAsString(), e);
+            throw e;
+        }
     }
 }

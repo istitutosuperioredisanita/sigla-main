@@ -3,9 +3,6 @@ package it.cnr.contab.inventario01.comp;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaHome;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
-import it.cnr.contab.doccont00.intcass.bulk.Stampa_vpg_situazione_cassaVBulk;
-import it.cnr.contab.doccont00.ordine.bulk.Stampa_ordineBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniHome;
 import it.cnr.contab.inventario00.docs.bulk.Numeratore_doc_t_rBulk;
@@ -20,6 +17,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.LoggableStatement;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
@@ -27,10 +25,10 @@ import it.cnr.jada.util.RemoteIterator;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Iterator;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.*;
+
 
 /**
  * Component per la gestione dei documenti di Trasporto e Rientro.
@@ -99,7 +97,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             doc.setStato(Doc_trasporto_rientroBulk.STATO_INSERITO);
 
             if (doc.getBene() == null) doc.setBene(new Inventario_beniBulk());
-            if (doc.getAnagDipRitiro() == null) doc.setAnagDipRitiro(new TerzoBulk());
+            if (doc.getTerzoIncRitiro() == null) doc.setTerzoIncRitiro(new TerzoBulk());
 
             return doc;
 
@@ -132,7 +130,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 TerzoBulk terzo = (TerzoBulk) getHome(aUC, TerzoBulk.class)
                         .findByPrimaryKey(new TerzoBulk(docTR.getCdTerzoAssegnatario()));
                 if (terzo != null) {
-                    docTR.setAnagDipRitiro(terzo);
+                    docTR.setTerzoIncRitiro(terzo);
                 }
             }
             // ==========================================
@@ -157,17 +155,194 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     }
 
 
+//    @Override
+//    public OggettoBulk inizializzaBulkPerRicerca(UserContext userContext, OggettoBulk bulk)
+//            throws ComponentException {
+//        try {
+//            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bulk;
+//            inizializzaTipoMovimento(userContext, doc);
+//            doc.setInventario(caricaInventario(userContext));
+//            return doc;
+//        } catch (PersistencyException | IntrospectionException e) {
+//            throw new ComponentException(e);
+//        }
+//    }
+
+
+    /**
+     * Inizializza il documento di trasporto/rientro per la ricerca.
+     * Carica inventario, consegnatario, delegato e UO consegnataria.
+     */
     @Override
-    public OggettoBulk inizializzaBulkPerRicerca(UserContext userContext, OggettoBulk bulk)
+    public OggettoBulk inizializzaBulkPerRicerca(
+            UserContext userContext,
+            OggettoBulk bulk)
             throws ComponentException {
-        try {
-            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bulk;
-            inizializzaTipoMovimento(userContext, doc);
-            doc.setInventario(caricaInventario(userContext));
-            return doc;
-        } catch (PersistencyException | IntrospectionException e) {
-            throw new ComponentException(e);
+
+        if (bulk == null) {
+            throw new ApplicationException(
+                    "Attenzione: non esiste alcun documento corrispondente ai criteri di ricerca!"
+            );
         }
+
+        // Chiamata al metodo padre
+        bulk = super.inizializzaBulkPerRicerca(userContext, bulk);
+
+        Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bulk;
+
+        // ========== INIZIALIZZA DATI DA SCRIVANIA ==========
+        String cds = CNRUserContext.getCd_cds(userContext);
+        String uo = CNRUserContext.getCd_unita_organizzativa(userContext);
+        Integer esercizio = CNRUserContext.getEsercizio(userContext);
+
+        doc.setCds_scrivania(cds);
+        doc.setUo_scrivania(uo);
+        doc.setEsercizio(esercizio);
+
+        try {
+            // ========== CARICA INVENTARIO ==========
+            if (doc.getPgInventario() != null) {
+                Id_inventarioBulk inventario = (Id_inventarioBulk) getHome(userContext, Id_inventarioBulk.class)
+                        .findByPrimaryKey(new Id_inventarioBulk(doc.getPgInventario()));
+                doc.setInventario(inventario);
+
+                // ========== CARICA CONSEGNATARIO, DELEGATO, UO ==========
+                if (inventario != null) {
+                    Id_inventarioHome inventarioHome =
+                            (Id_inventarioHome) getHome(userContext, Id_inventarioBulk.class);
+
+                    doc.setConsegnatario(
+                            inventarioHome.findConsegnatarioFor(inventario)
+                    );
+                    doc.setDelegato(
+                            inventarioHome.findDelegatoFor(inventario)
+                    );
+                    doc.setUo_consegnataria(
+                            inventarioHome.findUoRespFor(userContext, inventario)
+                    );
+                }
+            }
+
+            // ========== CARICA TIPO MOVIMENTO ==========
+            if (doc.getCd_tipo_trasporto_rientro() != null) {
+                Tipo_trasporto_rientroBulk tipoMovimento =
+                        (Tipo_trasporto_rientroBulk) getHome(userContext, Tipo_trasporto_rientroBulk.class)
+                                .findByPrimaryKey(new Tipo_trasporto_rientroBulk(
+                                        doc.getCd_tipo_trasporto_rientro()
+                                ));
+                doc.setTipoMovimento(tipoMovimento);
+            }
+
+            // ========== CARICA TERZO ASSEGNATARIO ==========
+            if (doc.getCdTerzoAssegnatario() != null) {
+                TerzoBulk terzoAssegnatario =
+                        (TerzoBulk) getHome(userContext, TerzoBulk.class)
+                                .findByPrimaryKey(new TerzoBulk(doc.getCdTerzoAssegnatario()));
+                doc.setTerzoIncRitiro(terzoAssegnatario);
+            }
+
+            // ========== CARICA TERZO RESPONSABILE ==========
+            if (doc.getCdTerzoResponsabile() != null) {
+                TerzoBulk terzoResponsabile =
+                        (TerzoBulk) getHome(userContext, TerzoBulk.class)
+                                .findByPrimaryKey(new TerzoBulk(doc.getCdTerzoResponsabile()));
+                doc.setTerzoRespDip(terzoResponsabile);
+            }
+
+        } catch (PersistencyException | IntrospectionException e) {
+            System.out.println("Errore caricamento relazioni per ricerca: " + e.getMessage());
+        }
+
+        return doc;
+    }
+
+
+    /**
+     * Inizializza il documento di trasporto/rientro per la ricerca libera.
+     * Carica inventario, consegnatario, delegato e UO consegnataria.
+     */
+    @Override
+    public OggettoBulk inizializzaBulkPerRicercaLibera(
+            UserContext userContext,
+            OggettoBulk bulk)
+            throws ComponentException {
+
+        if (bulk == null) {
+            throw new ComponentException(
+                    "Attenzione: non esiste alcun documento corrispondente ai criteri di ricerca!"
+            );
+        }
+
+        // Chiamata al metodo padre
+        bulk = super.inizializzaBulkPerRicercaLibera(userContext, bulk);
+
+        Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bulk;
+
+        // ========== INIZIALIZZA DATI DA SCRIVANIA ==========
+        String cds = CNRUserContext.getCd_cds(userContext);
+        String uo = CNRUserContext.getCd_unita_organizzativa(userContext);
+        Integer esercizio = CNRUserContext.getEsercizio(userContext);
+
+        doc.setCds_scrivania(cds);
+        doc.setUo_scrivania(uo);
+        doc.setEsercizio(esercizio);
+
+        try {
+            // ========== CARICA INVENTARIO ==========
+            if (doc.getPgInventario() != null) {
+                Id_inventarioBulk inventario = (Id_inventarioBulk) getHome(userContext, Id_inventarioBulk.class)
+                        .findByPrimaryKey(new Id_inventarioBulk(doc.getPgInventario()));
+                doc.setInventario(inventario);
+
+                // ========== CARICA CONSEGNATARIO, DELEGATO, UO ==========
+                if (inventario != null) {
+                    Id_inventarioHome inventarioHome =
+                            (Id_inventarioHome) getHome(userContext, Id_inventarioBulk.class);
+
+                    doc.setConsegnatario(
+                            inventarioHome.findConsegnatarioFor(inventario)
+                    );
+                    doc.setDelegato(
+                            inventarioHome.findDelegatoFor(inventario)
+                    );
+                    doc.setUo_consegnataria(
+                            inventarioHome.findUoRespFor(userContext, inventario)
+                    );
+                }
+            }
+
+            // ========== CARICA TIPO MOVIMENTO ==========
+            if (doc.getCd_tipo_trasporto_rientro() != null) {
+                Tipo_trasporto_rientroBulk tipoMovimento =
+                        (Tipo_trasporto_rientroBulk) getHome(userContext, Tipo_trasporto_rientroBulk.class)
+                                .findByPrimaryKey(new Tipo_trasporto_rientroBulk(
+                                        doc.getCd_tipo_trasporto_rientro()
+                                ));
+                doc.setTipoMovimento(tipoMovimento);
+            }
+
+            // ========== CARICA TERZO ASSEGNATARIO ==========
+            if (doc.getCdTerzoAssegnatario() != null) {
+                TerzoBulk terzoAssegnatario =
+                        (TerzoBulk) getHome(userContext, TerzoBulk.class)
+                                .findByPrimaryKey(new TerzoBulk(doc.getCdTerzoAssegnatario()));
+                doc.setTerzoIncRitiro(terzoAssegnatario);
+            }
+
+            // ========== CARICA TERZO RESPONSABILE ==========
+            if (doc.getCdTerzoResponsabile() != null) {
+                TerzoBulk terzoResponsabile =
+                        (TerzoBulk) getHome(userContext, TerzoBulk.class)
+                                .findByPrimaryKey(new TerzoBulk(doc.getCdTerzoResponsabile()));
+                doc.setTerzoRespDip(terzoResponsabile);
+            }
+
+        } catch (PersistencyException | IntrospectionException e) {
+            // Log dell'errore ma non blocca l'operazione
+            System.out.println("Errore caricamento relazioni per ricerca libera: " + e.getMessage());
+        }
+
+        return doc;
     }
 
 
@@ -274,28 +449,28 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         try {
             Doc_trasporto_rientroBulk docT = (Doc_trasporto_rientroBulk) bulk;
 
-                Numeratore_doc_t_rHome numHome = (Numeratore_doc_t_rHome)
-                        getHome(userContext, Numeratore_doc_t_rBulk.class);
+            Numeratore_doc_t_rHome numHome = (Numeratore_doc_t_rHome)
+                    getHome(userContext, Numeratore_doc_t_rBulk.class);
 
-                docT.setPgDocTrasportoRientro(numHome.getNextPg(
-                        userContext,
-                        docT.getEsercizio(),
-                        docT.getPgInventario(),
-                        docT.getTiDocumento(),
-                        userContext.getUser()));
+            docT.setPgDocTrasportoRientro(numHome.getNextPg(
+                    userContext,
+                    docT.getEsercizio(),
+                    docT.getPgInventario(),
+                    docT.getTiDocumento(),
+                    userContext.getUser()));
 
-                // Verifica se esiste già nel database
-                Doc_trasporto_rientroBulk existing = (Doc_trasporto_rientroBulk)
-                        findByPrimaryKey(userContext, docT);
+            // Verifica se esiste già nel database
+            Doc_trasporto_rientroBulk existing = (Doc_trasporto_rientroBulk)
+                    findByPrimaryKey(userContext, docT);
 
-                if (existing != null) {
-                    throw new ApplicationException(
-                            "Il documento è già stato salvato (PG=" + docT.getPgDocTrasportoRientro() + ")"
-                    );
-                }
+            if (existing != null) {
+                throw new ApplicationException(
+                        "Il documento è già stato salvato (PG=" + docT.getPgDocTrasportoRientro() + ")"
+                );
+            }
 
             // ===== 2. VALIDAZIONE =====
-            validaDDT(userContext, docT);
+            validaDoc(userContext, docT);
 
             // ===== 3. LEGGI BENI DA INVENTARIO_BENI_APG =====
             Inventario_beni_apgHome apgHome = (Inventario_beni_apgHome)
@@ -400,7 +575,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     }
 
 
-
     /**
      * Helper per calcolare l'intervallo progressivo
      */
@@ -487,41 +661,62 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     }
 
 
-
-    private void validaDDT(UserContext aUC, Doc_trasporto_rientroBulk docT)
+    private void validaDoc(UserContext aUC, Doc_trasporto_rientroBulk docT)
             throws ComponentException {
 
         try {
 
-            validaDataDDT(aUC, docT);
+            validaDataDoc(aUC, docT);
             //validaBeniDettDDT(aUC, docT);
 
+            // Determina il tipo di documento per il messaggio di errore
+            String tipoDoc = "Documento di";
+            if (Doc_trasporto_rientroBulk.RIENTRO.equals(docT.getTiDocumento())) {
+                tipoDoc = "Rientro";
+            } else if (Doc_trasporto_rientroBulk.TRASPORTO.equals(docT.getTiDocumento())) {
+                tipoDoc = "Trasporto";
+            }
+
             if (docT.getDataRegistrazione().before(getMaxDataFor(aUC, docT))) {
-                throw new it.cnr.jada.comp.ApplicationException("Attenzione: data di Trasporto non valida.\n La Data di Trasporto non può essere precedente ad una modifica di uno dei beni trasportati");
+                throw new it.cnr.jada.comp.ApplicationException(
+                        "Attenzione: data di " + tipoDoc + " non valida.\n" +
+                                "La Data di " + tipoDoc + " non può essere precedente ad una modifica di uno dei beni movimentati."
+                );
             }
 
             if (docT.getTipoMovimento() == null)
-                throw new it.cnr.jada.comp.ApplicationException("Attenzione: specificare un Tipo di Movimento per il DDT");
+                throw new it.cnr.jada.comp.ApplicationException("Attenzione: specificare un Tipo di Movimento per il Documento");
 
             if (docT.getDsDocTrasportoRientro() == null)
-                throw new it.cnr.jada.comp.ApplicationException("Attenzione: indicare una Descrizione per il DDT");
+                throw new it.cnr.jada.comp.ApplicationException("Attenzione: indicare una Descrizione per il Documento");
         } catch (Throwable t) {
             throw handleException(t);
         }
     }
 
-    private void validaDataDDT(UserContext aUC, Doc_trasporto_rientroBulk docT)
+    private void validaDataDoc(UserContext aUC, Doc_trasporto_rientroBulk docT)
             throws ComponentException {
 
         try {
-            java.sql.Timestamp dataOdierna = getHome(aUC, Doc_trasporto_rientroBulk.class).getServerDate();
-            if (docT.getDataRegistrazione() == null)
+            Timestamp dataOdiernaTimestamp = getHome(aUC, Doc_trasporto_rientroBulk.class).getServerDate();
+            Timestamp dataDiTrasporto = docT.getDataRegistrazione();
+            if (dataDiTrasporto == null)
                 throw new it.cnr.jada.comp.ApplicationException("Attenzione: indicare una Data di Trasporto");
 
-            // CONTROLLA LA DATA DI Trasporto - DATA DI Trasporto>SYSDATE
-            if (docT.getDataRegistrazione().after(dataOdierna))
-                throw new it.cnr.jada.comp.ApplicationException("Attenzione: data di Trasporto non valida. La Data di  Trasporto non può essere superiore alla data odierna");
+            // Converti la data di Trasporto in LocalDate
+            LocalDate dataTrasportoSoloGiorno = dataDiTrasporto.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
 
+            // Converti la data odierna in LocalDate
+            LocalDate dataOdiernaSoloGiorno = dataOdiernaTimestamp.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+
+            // Confronta solo il giorno/mese/anno
+            if (dataTrasportoSoloGiorno.isAfter(dataOdiernaSoloGiorno)) {
+                throw new it.cnr.jada.comp.ApplicationException("Attenzione: data di Trasporto non valida. La Data di Trasporto non può essere superiore alla data odierna");
+            }
             // CONTROLLA LA DATA DI Trasporto - DATA DI Trasporto ALL'INTERNO DELL'ESERCIZIO DI SCRIVANIA
             java.sql.Timestamp firstDayOfYear = it.cnr.contab.doccont00.comp.DateServices.getFirstDayOfYear(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(aUC).intValue());
             java.sql.Timestamp lastDayOfYear = it.cnr.contab.doccont00.comp.DateServices.getLastDayOfYear(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(aUC).intValue());
@@ -541,12 +736,13 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     // ========================================
 // TRANSIZIONI STATO
 // ========================================
+
     /**
      * Predispone il documento alla firma
      * Cambia lo stato da INSERITO a INVIATO
      *
      * @param userContext contesto utente
-     * @param doc documento da predisporre
+     * @param doc         documento da predisporre
      * @return documento aggiornato
      * @throws ComponentException in caso di errore
      */
@@ -878,7 +1074,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
      * Viene restituito un Iteratore sui beni presenti sulla tabella INVENTARIO_BENI_APG
      *
      * @param userContext lo <code>UserContext</code> che ha generato la richiesta
-     * @param docT        il DDT
+     * @param docT        il Documento
      * @param bulkClass   la <code>Class</code> modello per il dettaglio.
      * @return iterator <code>RemoteIterator</code> l'Iteratore sulla selezione.
      **/
@@ -1006,7 +1202,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
 
     /**
-     * Restituisce, tra tutti i beni trasportati nel DDT la MAX(dt_validita_variazione),
+     * Restituisce, tra tutti i beni trasportati nel Documento la MAX(dt_validita_variazione),
      * ossia, la data corrispondente alla modifica più recente.
      **/
     private java.sql.Timestamp getMaxDataFor(UserContext userContext, Doc_trasporto_rientroBulk docT) throws ComponentException {
@@ -1014,7 +1210,8 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         try {
             Inventario_beni_apgHome home = (Inventario_beni_apgHome) getHome(userContext, Inventario_beni_apgBulk.class);
             max_data = home.getMaxDataFor(docT.getLocal_transactionID());
-            if(max_data == null) throw new ApplicationException("Attenzione: è necessario specificare almeno un bene!");
+            if (max_data == null)
+                throw new ApplicationException("Attenzione: è necessario specificare almeno un bene!");
         } catch (PersistencyException pe) {
             throw handleException(pe);
         }
@@ -1382,15 +1579,17 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 );
             }
 
-            // ==================== CARICA TUTTE LE RELAZIONI PRIMA ====================
-            Doc_trasporto_rientroBulk docTR = caricaRelazioniCompleteDocumento(userContext, doc);
-
             // ==================== CAMBIA STATO ====================
-            docTR.setStato(Doc_trasporto_rientroBulk.STATO_ANNULLATO);
-            docTR.setToBeUpdated();
+            doc.setStato(Doc_trasporto_rientroBulk.STATO_ANNULLATO);
+            doc.setToBeUpdated();
 
             // ==================== SALVA UNA SOLA VOLTA ====================
-            return (Doc_trasporto_rientroBulk) super.modificaConBulk(userContext, docTR);
+            doc = (Doc_trasporto_rientroBulk) modificaConBulk(userContext, doc);
+
+            // ==================== RICARICA CON TUTTI I DETTAGLI ====================
+            doc = (Doc_trasporto_rientroBulk) inizializzaBulkPerModifica(userContext, doc);
+
+            return doc;
 
         } catch (ApplicationException e) {
             throw e;
@@ -1444,7 +1643,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 TerzoBulk terzo = (TerzoBulk) getHome(userContext, TerzoBulk.class)
                         .findByPrimaryKey(new TerzoBulk(doc.getCdTerzoAssegnatario()));
                 if (terzo != null) {
-                    doc.setAnagDipRitiro(terzo);
+                    doc.setTerzoIncRitiro(terzo);
                 }
             }
 
@@ -1456,7 +1655,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             );
         }
     }
-
 
 
 // ========================================
@@ -1821,7 +2019,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
      * stampaConBulk method comment.
      */
     public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext aUC, it.cnr.jada.bulk.OggettoBulk bulk) throws it.cnr.jada.comp.ComponentException {
-            validateBulkForPrint(aUC, (Stampa_doc_trasporto_rientroBulk)bulk);
+        validateBulkForPrint(aUC, (Stampa_doc_trasporto_rientroBulk) bulk);
         return bulk;
     }
 
@@ -1832,7 +2030,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext userContext, it.cnr.jada.bulk.OggettoBulk bulk) throws it.cnr.jada.comp.ComponentException {
 
         if (bulk instanceof Stampa_doc_trasporto_rientroBulk)
-            inizializzaBulkPerStampa(userContext, (Stampa_doc_trasporto_rientroBulk)bulk);
+            inizializzaBulkPerStampa(userContext, (Stampa_doc_trasporto_rientroBulk) bulk);
         return bulk;
     }
 
@@ -1849,13 +2047,13 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         stampaDoc.setPgInizio(new Integer(0));
         stampaDoc.setPgFine(new Integer(999999999));
 
-        try{
+        try {
             String cd_uo_scrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_unita_organizzativa(userContext);
 
-            Unita_organizzativaHome uoHome = (Unita_organizzativaHome)getHome(userContext, Unita_organizzativaBulk.class);
-            Unita_organizzativaBulk uo = (Unita_organizzativaBulk)uoHome.findByPrimaryKey(new Unita_organizzativaBulk(cd_uo_scrivania));
+            Unita_organizzativaHome uoHome = (Unita_organizzativaHome) getHome(userContext, Unita_organizzativaBulk.class);
+            Unita_organizzativaBulk uo = (Unita_organizzativaBulk) uoHome.findByPrimaryKey(new Unita_organizzativaBulk(cd_uo_scrivania));
 
-            if (!uo.isUoCds()){
+            if (!uo.isUoCds()) {
                 stampaDoc.setUoForPrint(uo);
                 stampaDoc.setIsUOForPrintEnabled(false);
             } else {
@@ -1863,29 +2061,28 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 stampaDoc.setIsUOForPrintEnabled(true);
             }
 
-        } catch (it.cnr.jada.persistency.PersistencyException pe){
+        } catch (it.cnr.jada.persistency.PersistencyException pe) {
             throw new ComponentException(pe);
         }
     }
 
     /**
      * Validazione dell'oggetto in fase di stampa
-     *
      */
-    private void validateBulkForPrint(it.cnr.jada.UserContext userContext, Stampa_doc_trasporto_rientroBulk stampa) throws ComponentException{
+    private void validateBulkForPrint(it.cnr.jada.UserContext userContext, Stampa_doc_trasporto_rientroBulk stampa) throws ComponentException {
 
-        try{
+        try {
             /**** Controlli sui PG_INIZIO/PG_FINE *****/
-            if (stampa.getPgInizio()==null)
+            if (stampa.getPgInizio() == null)
                 throw new ValidationException("Il campo NUMERO INIZIO è obbligatorio");
-            if (stampa.getPgFine()==null)
+            if (stampa.getPgFine() == null)
                 throw new ValidationException("Il campo NUMERO FINE è obbligatorio");
-            if (stampa.getPgInizio().compareTo(stampa.getPgFine())>0)
+            if (stampa.getPgInizio().compareTo(stampa.getPgFine()) > 0)
                 throw new ValidationException("Il NUMERO INIZIO non può essere superiore al NUMERO FINE");
-            if (stampa.getUoForPrint().getCd_unita_organizzativa()==null)
+            if (stampa.getUoForPrint().getCd_unita_organizzativa() == null)
                 throw new ValidationException("Il campo Unità Organizzativa è obbligatorio");
 
-        }catch(ValidationException ex){
+        } catch (ValidationException ex) {
             throw new ApplicationException(ex);
         }
     }

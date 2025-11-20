@@ -53,16 +53,4 @@ public class Doc_trasporto_rientro_dettBase extends Doc_trasporto_rientro_dettKe
 
 	public java.sql.Timestamp getDataEffettivaMovimentazione() { return dataEffettivaMovimentazione; }
 	public void setDataEffettivaMovimentazione(java.sql.Timestamp dataEffettivaMovimentazione) { this.dataEffettivaMovimentazione = dataEffettivaMovimentazione; }
-
-	public java.sql.Timestamp getDacr() { return dacr; }
-	public void setDacr(java.sql.Timestamp dacr) { this.dacr = dacr; }
-
-	public String getUtcr() { return utcr; }
-	public void setUtcr(String utcr) { this.utcr = utcr; }
-
-	public java.sql.Timestamp getDuva() { return duva; }
-	public void setDuva(java.sql.Timestamp duva) { this.duva = duva; }
-
-	public String getUtuv() { return utuv; }
-	public void setUtuv(String utuv) { this.utuv = utuv; }
 }

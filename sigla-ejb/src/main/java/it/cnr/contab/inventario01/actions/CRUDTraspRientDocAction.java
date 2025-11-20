@@ -128,7 +128,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             }
 
             if (Doc_trasporto_rientroBulk.TIPO_RITIRO_VETTORE.equals(newValue)) {
-                doc.setAnagDipRitiro(null); // Pulisci dipendente incaricato
+                doc.setTerzoIncRitiro(null); // Pulisci dipendente incaricato
                 doc.setCdTerzoAssegnatario(null);
             } else if (Doc_trasporto_rientroBulk.TIPO_RITIRO_INCARICATO.equals(newValue)) {
                 doc.setNominativoVettore(null); // Pulisci nominativo vettore
@@ -149,9 +149,9 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         try {
             CRUDTraspRientInventarioBP bp = getBP(context);
             Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
-            Integer oldValue = getCdAnag(doc.getAnagDipRitiro());
+            Integer oldValue = getCdAnag(doc.getTerzoIncRitiro());
             fillModel(context);
-            Integer newValue = getCdAnag(doc.getAnagDipRitiro());
+            Integer newValue = getCdAnag(doc.getTerzoIncRitiro());
             if (valoreUguale(oldValue, newValue)) {
                 return context.findDefaultForward();
             }

@@ -88,20 +88,20 @@ public class DocTraspRientFirmatariService {
             V_persona_fisicaBulk personaFisicaResponsabile = recuperaPersonaFisica(cdTerzoResponsabile, userContext);
 
             documento.setCdTerzoResponsabile(cdTerzoResponsabile);
-            documento.setTerzoResponsabile(terzoResponsabile);
+            documento.setTerzoRespDip(terzoResponsabile);
             documento.setPersonaFisicaResponsabile(personaFisicaResponsabile);
 
             log.info("Responsabile struttura impostato: cd_terzo = {}", cdTerzoResponsabile);
 
             // 3. DIPENDENTE INCARICATO - solo verifica se ritiro INCARICATO
             if (documento.isRitiroIncaricato()) {
-                if (documento.getAnagDipRitiro() == null ||
-                        documento.getAnagDipRitiro().getCd_terzo() == null) {
+                if (documento.getTerzoIncRitiro() == null ||
+                        documento.getTerzoIncRitiro().getCd_terzo() == null) {
                     throw new ApplicationException(
                             "Dipendente incaricato non presente nel documento");
                 }
                 log.info("Dipendente incaricato presente: cd_terzo = {}",
-                        documento.getAnagDipRitiro().getCd_terzo());
+                        documento.getTerzoIncRitiro().getCd_terzo());
             }
 
             log.info("Popolazione firmatari completata con successo");
@@ -124,7 +124,7 @@ public class DocTraspRientFirmatariService {
 
         if (documento.isRitiroIncaricato()) {
             // Usa la UO dell'incaricato
-            TerzoBulk anagDipRitiro = documento.getAnagDipRitiro();
+            TerzoBulk anagDipRitiro = documento.getTerzoIncRitiro();
             if (anagDipRitiro == null) {
                 throw new ApplicationException("Dipendente incaricato non valorizzato");
             }

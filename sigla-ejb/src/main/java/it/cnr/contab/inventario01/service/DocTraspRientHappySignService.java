@@ -18,14 +18,9 @@
 package it.cnr.contab.inventario01.service;
 
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
-import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
-import it.cnr.contab.anagraf00.core.bulk.V_persona_fisicaBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.iss.si.dto.happysign.base.Signer;
-import it.iss.si.dto.happysign.request.UploadToComplexRequest;
-import it.iss.si.dto.happysign.response.UploadToComplexResponse;
-import it.iss.si.service.HappySign;
 import it.iss.si.service.HappySignService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -148,15 +143,15 @@ public class DocTraspRientHappySignService {
 
         // ==================== VERIFICA INCARICATO (se necessario) ====================
         if (documento.isRitiroIncaricato()) {
-            if (documento.getAnagDipRitiro() == null) {
+            if (documento.getTerzoIncRitiro() == null) {
                 throw new ComponentException("Dipendente incaricato non presente nel documento");
             }
 
-            if (documento.getAnagDipRitiro().getCd_terzo() == null) {
+            if (documento.getTerzoIncRitiro().getCd_terzo() == null) {
                 throw new ComponentException("Codice terzo dipendente incaricato non valorizzato");
             }
 
-            AnagraficoBulk anagIncaricato = documento.getAnagDipRitiro().getAnagrafico();
+            AnagraficoBulk anagIncaricato = documento.getTerzoIncRitiro().getAnagrafico();
             if (anagIncaricato == null) {
                 throw new ComponentException("Anagrafica dipendente incaricato non disponibile");
             }
@@ -237,7 +232,7 @@ public class DocTraspRientHappySignService {
 
         // ==================== 3. DIPENDENTE INCARICATO (opzionale) ====================
         if (documento.isRitiroIncaricato()) {
-            AnagraficoBulk anagIncaricato = documento.getAnagDipRitiro().getAnagrafico();
+            AnagraficoBulk anagIncaricato = documento.getTerzoIncRitiro().getAnagrafico();
 
             String emailIncaricato = costruisciEmail(
                     anagIncaricato.getNome(),

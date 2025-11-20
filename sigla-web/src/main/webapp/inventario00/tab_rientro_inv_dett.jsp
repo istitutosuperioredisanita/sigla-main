@@ -1,28 +1,25 @@
 <%@ page pageEncoding="UTF-8"
-    import="it.cnr.jada.util.jsp.*,
-        it.cnr.jada.action.*,
-        it.cnr.contab.inventario01.bp.*" %>
+        import="it.cnr.jada.util.jsp.*,
+            it.cnr.jada.action.*,
+            java.util.*,
+            it.cnr.jada.util.action.*,
+            it.cnr.contab.inventario01.bulk.*,
+            it.cnr.contab.inventario01.bp.*,
+            it.cnr.jada.comp.ApplicationException"
+    %>
 
-<% CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP)BusinessProcess.getBusinessProcess(request); %>
+<%
+    CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP)BusinessProcess.getBusinessProcess(request);
+    Doc_trasporto_rientroBulk docRientro = (Doc_trasporto_rientroBulk)bp.getModel();
+%>
 
-<div class="Group card" style="width:100%; margin-top:10px">
-
-    <div style="margin-bottom:10px; padding:10px; background-color:#f0f8ff; border-left:4px solid #2196F3;">
-        <strong>Istruzioni:</strong>
-        <ul style="margin:5px 0 0 20px; padding:0;">
-            <li>Compilare la testata del documento (Tipo Movimento, Data Rientro, ecc.)</li>
-            <li>Premere il pulsante <strong>"Aggiungi Beni"</strong> per selezionare i beni da far rientrare</li>
-            <li>I beni devono essere presenti in un documento di trasporto <strong>FIRMATO</strong></li>
-            <li>Per i beni con accessori, verrà chiesto se includerli nel rientro</li>
-        </ul>
-    </div>
-
-    <table class="Panel" style="width:100%">
+<div class="Group">
+    <table>
       <tr>
         <td colspan="4">
           <% bp.getDettBeniController().writeHTMLTable(
                 pageContext,
-                "righeTrasporto",
+                "righeRientro",
                 bp.isInserting(),
                 false,
                 bp.isInserting(),
@@ -33,12 +30,44 @@
       </tr>
     </table>
 
+    <!-- ==================== FORM DETTAGLI BENE ==================== -->
+
+    <table>
+      <tr>
+        <td><% bp.getDettBeniController().writeFormLabel(out,"codiceCompleto"); %></td>
+        <td colspan="2"><% bp.getDettBeniController().writeFormInput(out,"codiceCompleto"); %></td>
+      </tr>
+      <tr>
+        <td><% bp.getDettBeniController().writeFormLabel(out,"ds_bene"); %></td>
+        <td colspan="2"><% bp.getDettBeniController().writeFormInput(out,null,"ds_bene",true,null,null); %></td>
+      </tr>
+      <tr>
+        <td><% bp.getDettBeniController().writeFormLabel(out,"ti_istituzionale_commerciale"); %></td>
+        <td colspan="2"><% bp.getDettBeniController().writeFormInput(out,null,"ti_istituzionale_commerciale",true,null,null); %></td>
+      </tr>
+      <tr>
+        <td><% bp.getDettBeniController().writeFormLabel(out,"find_categoria_bene"); %></td>
+        <td colspan="2"><% bp.getDettBeniController().writeFormInput(out,null,"find_categoria_bene",true,null,null); %></td>
+      </tr>
+    </table>
+
+    <table>
+      <tr>
+        <td><% bp.getDettBeniController().writeFormLabel(out,"find_ubicazione"); %></td>
+        <td colspan="3"><% bp.getDettBeniController().writeFormInput(out,null,"find_ubicazione",true,null,null); %></td>
+      </tr>
+      <tr>
+        <td><% bp.getDettBeniController().writeFormLabel(out,"condizioni"); %></td>
+        <td colspan="3"><% bp.getDettBeniController().writeFormInput(out,null,"condizioni",true,null,null); %></td>
+      </tr>
+    </table>
+
     <% if (bp.isBottoneAggiungiBeneEnabled()) { %>
-    <div style="margin-top:10px; padding:8px; background-color:#fff3cd; border-left:4px solid #ffc107;">
-        <span style="font-size:0.9em; color:#856404;">
-            <strong>Nota:</strong> Saranno visualizzati solo i beni presenti in documenti di trasporto firmati
-        </span>
-    </div>
+        <div style="margin-top:10px; padding:8px; background-color:#fff3cd; border-left:4px solid #ffc107;">
+            <span style="font-size:0.9em; color:#856404;">
+                <strong>Nota:</strong> Saranno visualizzati solo i beni presenti in documenti di trasporto firmati
+            </span>
+        </div>
     <% } %>
 
 </div>

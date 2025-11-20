@@ -1,10 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
 <SQLPersistentInfo
 		persistentClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBase"
 		keyClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroKey"
 		homeClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroHome">
-	<defaultColumnMap tableName="DOC_TRASPORTO_RIENTRO">
+	<defaultColumnMap
+			tableName="DOC_TRASPORTO_RIENTRO">
 
+		<!-- Campi Base (non PK, non FK) -->
 		<columnMapping
 				columnName="DS_DOC_TRASPORTO_RIENTRO"
 				propertyName="dsDocTrasportoRientro"
@@ -17,13 +36,6 @@
 				propertyName="dataRegistrazione"
 				sqlTypeName="TIMESTAMP"
 				columnSize="7"
-				nullable="false" />
-
-		<columnMapping
-				columnName="CD_TIPO_TRASPORTO_RIENTRO"
-				propertyName="cdTipoTrasportoRientro"
-				sqlTypeName="VARCHAR"
-				columnSize="10"
 				nullable="false" />
 
 		<columnMapping
@@ -64,13 +76,6 @@
 				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
 
 		<columnMapping
-				columnName="CD_TERZO_ASSEGNATARIO"
-				propertyName="cdTerzoAssegnatario"
-				sqlTypeName="DECIMAL"
-				columnSize="8"
-				nullable="true" />
-
-		<columnMapping
 				columnName="NOMINATIVO_VETTORE"
 				propertyName="nominativoVettore"
 				sqlTypeName="VARCHAR"
@@ -91,10 +96,7 @@
 				columnSize="4000"
 				nullable="true" />
 
-		<!-- ========================================
-		     NUOVI CAMPI PER FIRMA DIGITALE HAPPYSIGN
-		     ======================================== -->
-
+		<!-- Campi Firma Digitale HappySign -->
 		<columnMapping
 				columnName="ID_FLUSSO_HAPPYSIGN"
 				propertyName="idFlussoHappysign"
@@ -130,15 +132,7 @@
 				columnSize="4000"
 				nullable="true" />
 
-		<columnMapping
-				columnName="CD_TERZO_RESPONSABILE"
-				propertyName="cdTerzoResponsabile"
-				sqlTypeName="DECIMAL"
-				columnSize="8"
-				nullable="true" />
-
-		<!-- ======================================== -->
-
+		<!-- Campi Audit -->
 		<columnMapping
 				columnName="DACR"
 				propertyName="dacr"
@@ -173,30 +167,24 @@
 				sqlTypeName="DECIMAL"
 				columnSize="38"
 				nullable="false" />
-
 	</defaultColumnMap>
 
+	<!-- Proprietà persistenti (solo campi Base, no FK, no PK) -->
 	<persistentProperty name="dsDocTrasportoRientro" />
 	<persistentProperty name="dataRegistrazione" />
-	<persistentProperty name="cdTipoTrasportoRientro" />
 	<persistentProperty name="stato" />
 	<persistentProperty name="destinazione" />
 	<persistentProperty name="indirizzo" />
 	<persistentProperty name="flIncaricato" />
 	<persistentProperty name="flVettore" />
-	<persistentProperty name="cdTerzoAssegnatario" />
 	<persistentProperty name="nominativoVettore" />
 	<persistentProperty name="noteRitiro" />
 	<persistentProperty name="note" />
-
-	<!-- Nuove proprietà per firma digitale HappySign -->
 	<persistentProperty name="idFlussoHappysign" />
 	<persistentProperty name="statoFlusso" />
 	<persistentProperty name="dataInvioFirma" />
 	<persistentProperty name="dataFirma" />
 	<persistentProperty name="noteRifiuto" />
-	<persistentProperty name="cdTerzoResponsabile" />
-
 	<persistentProperty name="dacr" />
 	<persistentProperty name="utcr" />
 	<persistentProperty name="duva" />

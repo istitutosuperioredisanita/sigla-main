@@ -118,18 +118,18 @@ public class DocTraspRientCronService {
      */
     private EnumEsitoFlowDocumentStatus processaDocumentoHappySign(Doc_trasporto_rientroBulk documento) throws Exception {
 
-        if (documento.getIdFlusso() == null || documento.getIdFlusso().isEmpty()) {
+        if (documento.getIdFlussoHappysign() == null || documento.getIdFlussoHappysign().isEmpty()) {
             log.warn("Documento {} senza idFlusso - skip", documento.getPgDocTrasportoRientro());
             return null;
         }
 
         GetStatusRequest getStatusRequest = new GetStatusRequest();
-        getStatusRequest.setUuid(documento.getIdFlusso());
+        getStatusRequest.setUuid(documento.getIdFlussoHappysign());
 
         EnumEsitoFlowDocumentStatus statusResponse = happySignService.getDocumentStatus(getStatusRequest.getUuid());
 
         if (statusResponse == null || statusResponse.docstatus() == null) {
-            log.error("Risposta nulla da HappySign per doc {}", documento.getIdFlusso());
+            log.error("Risposta nulla da HappySign per doc {}", documento.getIdFlussoHappysign());
             return null;
         }
 
@@ -137,10 +137,10 @@ public class DocTraspRientCronService {
         EnumEsitoFlowDocumentStatus esito = EnumEsitoFlowDocumentStatus.esitoForDocStatus(docStatus);
 
         log.debug("Documento {} - stato HappySign: {} ({})",
-                documento.getIdFlusso(), esito, docStatus);
+                documento.getIdFlussoHappysign(), esito, docStatus);
 
         if (esito == null) {
-            log.warn("Stato sconosciuto {} per doc {}", docStatus, documento.getIdFlusso());
+            log.warn("Stato sconosciuto {} per doc {}", docStatus, documento.getIdFlussoHappysign());
             return null;
         }
 
@@ -164,7 +164,7 @@ public class DocTraspRientCronService {
                 break;
 
             default:
-                log.warn("Stato non gestito per doc {}", documento.getIdFlusso());
+                log.warn("Stato non gestito per doc {}", documento.getIdFlussoHappysign());
         }
 
         return esito;
@@ -183,7 +183,7 @@ public class DocTraspRientCronService {
 
         try {
             GetDocumentRequest getDocumentRequest = new GetDocumentRequest();
-            getDocumentRequest.setUuid(documento.getIdFlusso());
+            getDocumentRequest.setUuid(documento.getIdFlussoHappysign());
 
             GetDocumentResponse getDocumentResponse = happySignService.getDocument(getDocumentRequest.getUuid());
 
@@ -223,7 +223,7 @@ public class DocTraspRientCronService {
 
         try {
             GetDocumentDetailsRequest getDetailsRequest = new GetDocumentDetailsRequest();
-            getDetailsRequest.setUuid(documento.getIdFlusso());
+            getDetailsRequest.setUuid(documento.getIdFlussoHappysign());
 
             GetDocumentDetailResponse documentDetails = happySignService.getDocumentDetails(getDetailsRequest.getUuid());
 
