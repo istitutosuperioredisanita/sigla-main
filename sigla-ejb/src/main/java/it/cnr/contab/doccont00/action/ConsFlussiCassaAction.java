@@ -27,10 +27,12 @@ import it.cnr.jada.util.action.SelezionatoreListaBP;
 
 import javax.ejb.RemoveException;
 import java.rmi.RemoteException;
+import java.util.Optional;
 
 public class ConsFlussiCassaAction extends BulkAction{
 
 	public Forward doCercaFlussiCassa(ActionContext context) throws RemoteException, InstantiationException, RemoveException{
+		it.cnr.jada.util.RemoteIterator ri =null;
 			try {
 
 				ConsFlussiCassaBP bp = (ConsFlussiCassaBP) context.getBusinessProcess();
@@ -40,13 +42,13 @@ public class ConsFlussiCassaAction extends BulkAction{
 
 				bp.validaRichiestaFlussi(flussoCassa);
 
-				it.cnr.jada.util.RemoteIterator ri = bp.createComponentSession().findFlussiCassa(context.getUserContext(),flussoCassa);
-			
+				 ri = bp.createComponentSession().findFlussiCassa(context.getUserContext(),flussoCassa);
+
 				ri = it.cnr.jada.util.ejb.EJBCommonServices.openRemoteIterator(context,ri);
 				if (ri.countElements() == 0) {
-					it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context,ri);
 					throw new it.cnr.jada.comp.ApplicationException("Attenzione: Nessun dato disponibile");
 				}
+				it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context,ri);
 				SelezionatoreListaBP selezionatorelistabp = (SelezionatoreListaBP) context.createBusinessProcess("Selezionatore");
 				selezionatorelistabp.setIterator(context, ri);
 				selezionatorelistabp.setBulkInfo(it.cnr.jada.bulk.BulkInfo.getBulkInfo(FlussiDiCassaDtoBulk.class));
@@ -55,6 +57,9 @@ public class ConsFlussiCassaAction extends BulkAction{
 						
 			} catch (Exception e) {
 					return handleException(context,e); 
+			}finally {
+				if (Optional.ofNullable(ri).isPresent())
+					it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context,ri);
 			}
 	}
 
