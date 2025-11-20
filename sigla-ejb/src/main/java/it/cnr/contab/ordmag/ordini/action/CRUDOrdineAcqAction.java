@@ -107,6 +107,21 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
             return handleException(context, e);
         }
     }
+    public Forward doChangeAttivita(ActionContext context) {
+        //rimuovi numeratore
+        try {
+            fillModel(context);
+            //imposta i valori di default per il tariffario
+            CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP) context.getBusinessProcess();
+            OrdineAcqBulk ordine = (OrdineAcqBulk) bp.getModel();
+            ordine.setNumerazioneOrd(null);
+            ordine.setPercProrata( null);
+            return context.findDefaultForward();
+
+        } catch (Exception e) {
+            return handleException(context, e);
+        }
+    }
 
     public Forward doBringBackSearchFindNumerazioneOrd(ActionContext context,
                                                        OrdineAcqBulk ordine,

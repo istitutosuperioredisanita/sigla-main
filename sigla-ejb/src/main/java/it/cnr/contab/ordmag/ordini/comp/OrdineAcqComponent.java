@@ -29,6 +29,7 @@ import it.cnr.contab.config00.contratto.bulk.ContrattoHome;
 import it.cnr.contab.config00.contratto.bulk.Dettaglio_contrattoBulk;
 import it.cnr.contab.config00.contratto.bulk.Procedure_amministrativeBulk;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
+import it.cnr.contab.config00.contratto.bulk.*;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoHome;
 import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
@@ -578,7 +579,8 @@ public class OrdineAcqComponent
                         }
                     } else {
                         esisteScadenzaComune = false;
-                        isOrdineCompletamenteContabilizzato = false;
+                        if ( BigDecimal.ZERO.compareTo(cons.getImImponibile())<0)
+                            isOrdineCompletamenteContabilizzato = false;
                     }
                     if (cons.getUnitaOperativaOrd() != null) {
                         UnitaOperativaOrdBulk uop = recuperoUopDest(usercontext, cons);
@@ -1058,7 +1060,7 @@ public class OrdineAcqComponent
                         for (OrdineAcqRigaBulk riga : ordine.getRigheOrdineColl()) {
                             if (Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(usercontext, riga.getEsercizio())) {
                                 for (OrdineAcqConsegnaBulk cons : riga.getRigheConsegnaColl()) {
-                                    if (cons.getObbligazioneScadenzario() == null || cons.getObbligazioneScadenzario().getPg_obbligazione() == null)
+                                    if (BigDecimal.ZERO.compareTo(cons.getImImponibile())<0 && (cons.getObbligazioneScadenzario() == null || cons.getObbligazioneScadenzario().getPg_obbligazione() == null))
                                         throw new it.cnr.jada.comp.ApplicationException("Sulla consegna " + cons.getConsegnaOrdineString() + " non è indicata l'obbligazione");
                                 }
                             } else {
@@ -2071,7 +2073,14 @@ public class OrdineAcqComponent
         } else
             sql.addSQLClause(FindClause.AND, "STATO", SQLBuilder.EQUALS, ContrattoBulk.STATO_DEFINITIVO);
 
-        sql.addSQLClause(FindClause.AND, "CONTRATTO.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, CNRUserContext.getCd_unita_organizzativa(userContext));
+        sql.openParenthesis(FindClause.AND);
+        sql.addSQLClause(FindClause.AND,"CONTRATTO.CD_UNITA_ORGANIZZATIVA",SQLBuilder.EQUALS,CNRUserContext.getCd_unita_organizzativa(userContext));
+        SQLBuilder sqlAssUo = getHome(userContext, Ass_contratto_uoBulk.class).createSQLBuilder();
+            sqlAssUo.addSQLJoin("CONTRATTO.ESERCIZIO","ASS_CONTRATTO_UO.ESERCIZIO");
+            sqlAssUo.addSQLJoin("CONTRATTO.PG_CONTRATTO","ASS_CONTRATTO_UO.PG_CONTRATTO");
+            sqlAssUo.addSQLClause(FindClause.AND,"ASS_CONTRATTO_UO.CD_UNITA_ORGANIZZATIVA",SQLBuilder.EQUALS,CNRUserContext.getCd_unita_organizzativa(userContext));
+        sql.addSQLExistsClause(FindClause.OR,sqlAssUo);
+        sql.closeParenthesis();
 
         sql.addTableToHeader("TERZO");
         sql.addSQLJoin("CONTRATTO.FIG_GIUR_EST", SQLBuilder.EQUALS, "TERZO.CD_TERZO");

@@ -14,13 +14,13 @@ mediante un provvedimento amministrativo del Direttore/Dirigente che ha sottoscr
 Nel caso in cui vengano conferiti incarichi a soggetti residenti in Italia per i quali sia previsto il solo rimborso delle spese di trasferta (missioni o rimborso analitico delle spese), indipendentemente dalla tipologia del rapporto che verrà instaurato con il soggetto, sarà necessario rispettare tutti i presupposti di legittimità, compresi la
 verifica preliminare di professionalità interne e la procedura comparativa. Ovviamente, non essendo previsto nel contratto un compenso prestabilito, tali incarichi non sono sottoposti alla verifica del rispetto dei limiti di spesa illustrati successivamente.
 
-**11.Il conferimento degli incarichi al personale CNR cessato dal servizio**
+**11.Il conferimento degli incarichi al personale cessato dal servizio**
 
 *Riferimenti normativi:*
 
 *- L. 724/1994 - art. 25.*
 
-Gli incarichi di collaborazione possono essere affidati anche al personale CNR cessato dal servizio [1]_, nel rispetto della normativa vigente e con l’osservanza, pertanto, dell’intero procedimento amministrativo di conferimento descritto nel presente Manuale.
+Gli incarichi di collaborazione possono essere affidati anche al personale cessato dal servizio [1]_, nel rispetto della normativa vigente e con l’osservanza, pertanto, dell’intero procedimento amministrativo di conferimento descritto nel presente Manuale.
 
 Ai sensi dell’art. 25 della Legge 724/1994, esistono però delle limitazioni al conferimento di incarichi a tali soggetti.
 
@@ -30,15 +30,15 @@ L'art. 25, infatti, recita testualmente:
 
 Alla luce di quanto sopra esposto possono configurarsi le seguenti situazioni
 
-a) personale CNR cessato per conseguimento della pensione di vecchiaia (65 anni per gli uomini e 60 per le donne): è possibile conferire un incarico;
+a) personale cessato per conseguimento della pensione di vecchiaia (67 anni per gli uomini e 62 per le donne): è possibile conferire un incarico;
 
-b) personale CNR cessato per dimissioni volontarie in possesso dei requisiti previsti per l’ottenimento della pensione di anzianità: non è possibile conferire l’incarico;
+b) personale cessato per dimissioni volontarie in possesso dei requisiti previsti per l’ottenimento della pensione di anzianità: non è possibile conferire l’incarico;
 
-c) personale CNR trasferito ad altra amministrazione pubblica che cessa da tale ultima amministrazione pubblica, occorre aver riguardo agli ultimi cinque anni che precedono la cessazione dal servizio:
+c) personale trasferito ad altra amministrazione pubblica che cessa da tale ultima amministrazione pubblica, occorre aver riguardo agli ultimi cinque anni che precedono la cessazione dal servizio:
 
-c. 1 se anche uno solo di questi cinque anni che precedono la cessazione dal servizio è stato trascorso presso il CNR: non è possibile conferire un incarico;
+c. 1 se anche uno solo di questi cinque anni che precedono la cessazione dal servizio è stato trascorso presso l'Ente: non è possibile conferire un incarico;
 
-c. 2 se i cinque anni che precedono la cessazione dal servizio sono stati trascorsi presso amministrazioni diverse dal CNR: è possibile conferire un incarico.
+c. 2 se i cinque anni che precedono la cessazione dal servizio sono stati trascorsi presso amministrazioni diverse dall'Ente: è possibile conferire un incarico.
 
 **12. I limiti di spesa**
 
@@ -46,7 +46,7 @@ Per quanto attiene ai diversi limiti di spesa imposti dalle leggi finanziarie, �
 
 La distinzione presente nelle leggi finanziarie per tipologia di rapporto e per oggetto dell’attività (studio, ricerca e consulenza) è operante quindi solo ed esclusivamente ai fini di individuare i diversi limiti di spesa pertinenti.
 
-I limiti di spesa operano, ovviamente, con riferimento all’intero CNR e non al singolo centro di responsabilità.
+I limiti di spesa operano, ovviamente, con riferimento all’intero dell'Ente e non al singolo centro di responsabilità.
 
 Ai fini del calcolo dei limiti di spesa non si considerano i rimborsi delle spese di trasferta in quanto non costituenti compenso/retribuzione. Tali tipologie di spese dovranno essere gestite nella procedura SIGLA con gli appositi trattamenti creati.
 

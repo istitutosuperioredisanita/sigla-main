@@ -45,6 +45,7 @@ public class Rif_modalita_pagamentoBulk extends Rif_modalita_pagamentoBase {
     public final static String BANCA_ITALIA = "I";
     public final static String IBAN = "N";
     public final static String ASSEGNO = "S";
+    public final static String CONTO = "C";
 
     public final static String TABA = "TABA";
 
@@ -56,6 +57,7 @@ public class Rif_modalita_pagamentoBulk extends Rif_modalita_pagamentoBase {
         TI_PAGAMENTO_KEYS.put(BANCA_ITALIA, "Banca d'Italia");
         TI_PAGAMENTO_KEYS.put(ALTRO, "Altro");
         TI_PAGAMENTO_KEYS.put(IBAN, "Altro con Iban Obbligatorio");
+        TI_PAGAMENTO_KEYS.put(CONTO, "Altro con Conto Obbligatorio");
 
         DS_LISTA_PAGAMENTI_KEYS = new it.cnr.jada.util.OrderedHashtable();
         DS_LISTA_PAGAMENTI_KEYS.put(BANCARIO, "Conti correnti bancari");
@@ -64,6 +66,7 @@ public class Rif_modalita_pagamentoBulk extends Rif_modalita_pagamentoBase {
         DS_LISTA_PAGAMENTI_KEYS.put(BANCA_ITALIA, "Banca d'Italia");
         DS_LISTA_PAGAMENTI_KEYS.put(ALTRO, "Altre modalità di pagamento");
         DS_LISTA_PAGAMENTI_KEYS.put(IBAN, "Altre modalità di pagamento con Iban obbligatorio");
+        DS_LISTA_PAGAMENTI_KEYS.put(CONTO, "Altre modalità di pagamento con Conto obbligatorio");
 
         TIPO_PAGAMENTO_SDI_KEYS = new it.cnr.jada.util.OrderedHashtable();
         TIPO_PAGAMENTO_SDI_KEYS.put(ModalitaPagamentoType.MP_01.value(), "Contanti");

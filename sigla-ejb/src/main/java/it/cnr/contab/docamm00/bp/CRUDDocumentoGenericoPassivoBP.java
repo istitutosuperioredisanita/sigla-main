@@ -106,6 +106,8 @@ public class CRUDDocumentoGenericoPassivoBP
     private boolean supervisore = false;
     private boolean esercizioChiuso = false;
 
+    private Boolean isEnabledToInsertLettera = Boolean.FALSE;
+
     public CRUDDocumentoGenericoPassivoBP() {
         super();
 
@@ -195,6 +197,7 @@ public class CRUDDocumentoGenericoPassivoBP
         try {
             Documento_genericoBulk doc = (Documento_genericoBulk) bulk;
             setAnnoDiCompetenza(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue() == doc.getEsercizio().intValue());
+            doc.setEnabledToInsertLettera(isEnabledToInsertLettera);
             super.basicEdit(context, doc, doInitializeForEdit);
         } catch (Throwable e) {
             throw new it.cnr.jada.action.BusinessProcessException(e);
@@ -234,7 +237,9 @@ public class CRUDDocumentoGenericoPassivoBP
     public OggettoBulk createEmptyModel(it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException {
 
         setAnnoDiCompetenza(true);
-        return super.createEmptyModel(context);
+        OggettoBulk emptyModel = super.createEmptyModel(context);
+        ((Documento_genericoBulk)emptyModel).setEnabledToInsertLettera(isEnabledToInsertLettera);
+        return emptyModel;
     }
 
     public it.cnr.jada.bulk.OggettoBulk createNewBulk(
@@ -463,6 +468,8 @@ public class CRUDDocumentoGenericoPassivoBP
             setAnnoSolareInScrivania(solaris == esercizioScrivania);
             setRibaltato(initRibaltato(context));
             esercizioChiuso = session.isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioScrivania, CNRUserContext.getCd_cds(context.getUserContext()));
+            isEnabledToInsertLettera = Utility.createConfigurazioneCnrComponentSession().is1210BonificoEsteroEuro(context.getUserContext());
+
             if (!isAnnoSolareInScrivania()) {
                 String cds = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(context.getUserContext());
                 try {

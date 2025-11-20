@@ -155,19 +155,20 @@ public Forward doAddToCRUDMain_dettaglioCRUDController(ActionContext context) {
 		((it.cnr.contab.inventario00.docs.bulk.Aggiornamento_inventarioBulk)bp.getModel()).setDettagli(new SimpleBulkList());
 		bp.getDettagliCRUDController().validate(context);
 		
-		it.cnr.jada.util.RemoteIterator ri = ((it.cnr.contab.inventario00.ejb.Aggiornamento_inventarioComponentSession)bp.createComponentSession()).cercaBeniAggiornabili(context.getUserContext(),(it.cnr.contab.inventario00.docs.bulk.Aggiornamento_inventarioBulk)bp.getModel(),null);
-		ri = it.cnr.jada.util.ejb.EJBCommonServices.openRemoteIterator(context,ri);
+		it.cnr.jada.util.RemoteIterator remoteIterator = ((it.cnr.contab.inventario00.ejb.Aggiornamento_inventarioComponentSession)bp.createComponentSession()).cercaBeniAggiornabili(context.getUserContext(),(it.cnr.contab.inventario00.docs.bulk.Aggiornamento_inventarioBulk)bp.getModel(),null);
+        remoteIterator = it.cnr.jada.util.ejb.EJBCommonServices.openRemoteIterator(context,remoteIterator);
 		
-		int count = ri.countElements();
+		int count = remoteIterator.countElements();
 
 		
 		if (count == 0) {
 			bp.setMessage("Nessun Bene aggiornabile");
-			it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context, ri);		
+			it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context, remoteIterator);
 			context.closeBusinessProcess();
 		} else {
-			
-			RicercaLiberaBP rlbp = (RicercaLiberaBP)context.createBusinessProcess("RicercaLibera");
+            it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context, remoteIterator);
+
+            RicercaLiberaBP rlbp = (RicercaLiberaBP)context.createBusinessProcess("RicercaLibera");
 			//rlbp.setCanPerformSearchWithoutClauses(true);
 			
 			it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession inventario_component = (it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession)bp.createComponentSession("CNRINVENTARIO00_EJB_Inventario_beniComponentSession",it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession.class);

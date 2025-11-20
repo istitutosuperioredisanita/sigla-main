@@ -21,13 +21,20 @@
  */
 package it.cnr.contab.config00.bulk;
 import it.cnr.contab.config00.pdcep.cla.bulk.V_classificazione_voci_epBulk;
+import it.cnr.contab.util.enumeration.GestioneEntrataSpesa;
+import it.cnr.contab.util.enumeration.TipoDebitoSIOPE;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.action.CRUDBP;
+
+import java.util.Dictionary;
+
 public class Codici_siopeBulk extends Codici_siopeBase {
 
 	private V_classificazione_voci_epBulk v_classificazione_voci_ep_siope;
 	private V_classificazione_voci_epBulk v_classificazione_voci_ep_siope_rend;
+    public static final Dictionary<String, String> tiTipoDebitoSIOPEKeys = TipoDebitoSIOPE.TipoDebitoSIOPE_CN_Keys;
+    public static final Dictionary<String, String> tiGestioneKeys = GestioneEntrataSpesa.ti_gestioneSingolareKeys;
 
 	public Codici_siopeBulk() {
 		super();

@@ -131,6 +131,8 @@
 		 	     	bp.getDettaglio().writeFormInput(out,"contoN");
 				} else if (Rif_modalita_pagamentoBulk.BANCA_ITALIA.equalsIgnoreCase(riga.getBanca().getTi_pagamento()) && riga.getBanca().isTABB()) {
                        bp.getDettaglio().writeFormInput(out,"contoB");
+                } else if (Rif_modalita_pagamentoBulk.CONTO.equalsIgnoreCase(riga.getBanca().getTi_pagamento())) {
+                       bp.getDettaglio().writeFormInput(out,"contoC");
                 } else if (riga.getModalita_pagamento().isPAGOPA()) {
                     %>
                         <tr><% bp.getDettaglio().writeFormField(out,"codice_identificativo_ente_pagopa"); %></tr>

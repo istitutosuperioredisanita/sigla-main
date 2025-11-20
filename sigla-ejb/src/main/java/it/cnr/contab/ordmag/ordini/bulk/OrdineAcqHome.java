@@ -28,10 +28,7 @@ import java.util.Optional;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoHome;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.ordmag.anag00.*;
-import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.jada.DetailedRuntimeException;
@@ -39,8 +36,6 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.comp.ApplicationException;
-import it.cnr.jada.comp.CRUDException;
-import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.*;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
@@ -103,6 +98,7 @@ public class OrdineAcqHome extends BulkHome {
 		sql.addSQLClause(FindClause.AND, "NUMERAZIONE_ORD.CD_UNITA_OPERATIVA", SQLBuilder.EQUALS, ordine.getCdUopOrdine());
 		sql.addSQLClause(FindClause.AND, "NUMERAZIONE_ORD.ESERCIZIO", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
 		sql.addSQLClause(FindClause.AND, "NUMERAZIONE_ORD.CD_TIPO_OPERAZIONE", SQLBuilder.EQUALS, TipoOperazioneOrdBulk.OPERAZIONE_ORDINE);
+		sql.addSQLClause(FindClause.AND, "NUMERAZIONE_ORD.TI_ISTITUZ_COMMERC",SQLBuilder.EQUALS,ordine.getTiAttivita());
 		return sql;
 	}
 	public SQLBuilder selectNumerazioneOrdByClause(UserContext userContext, ParametriSelezioneOrdiniAcqBulk parametriSelezioneOrdiniAcqBulk,
