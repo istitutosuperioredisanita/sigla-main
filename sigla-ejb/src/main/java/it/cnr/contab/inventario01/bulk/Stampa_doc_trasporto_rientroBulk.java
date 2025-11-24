@@ -17,7 +17,7 @@
 
 package it.cnr.contab.inventario01.bulk;
 
-public class Stampa_doc_trasporto_rientroBulk extends Doc_trasporto_rientroBulk {
+public abstract class Stampa_doc_trasporto_rientroBulk extends Doc_trasporto_rientroBulk {
 
     private java.lang.Integer pgInizio;
     private java.lang.Integer pgFine;

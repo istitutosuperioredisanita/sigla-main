@@ -10,6 +10,7 @@ import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
+import it.cnr.contab.util00.bulk.storage.AllegatoStorePath;
 import it.cnr.jada.bulk.*;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.StrServ;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
  * Testata del documento di Trasporto o Rientro beni inventariali.
  * La classe gestisce le informazioni principali del movimento e la collezione degli allegati e dei dettagli.
  */
-public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase implements AllegatoParentBulk {
+public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase implements AllegatoParentBulk, AllegatoStorePath {
 
     // ========================================
     // COSTANTI TIPO DOCUMENTO

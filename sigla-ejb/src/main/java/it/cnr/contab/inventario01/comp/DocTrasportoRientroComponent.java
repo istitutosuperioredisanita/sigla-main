@@ -22,13 +22,11 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -500,7 +498,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             Inventario_beniHome invBeniHome = (Inventario_beniHome)
                     getHome(userContext, Inventario_beniBulk.class);
 
-            /*
+
             SimpleBulkList dettagliList = new SimpleBulkList();
 
             for (Iterator it = beniApg.iterator(); it.hasNext(); ) {
@@ -519,8 +517,11 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                             "Bene non trovato: " + beneApg.getNr_inventario() +
                                     "-" + beneApg.getProgressivo());
                 }
-
-                Doc_trasporto_rientro_dettBulk dettaglio = new Doc_trasporto_rientro_dettBulk();
+                Doc_trasporto_rientro_dettBulk dettaglio;
+                if ( docT instanceof DocumentoTrasportoBulk)
+                    dettaglio= new DocumentoTrasportoDettBulk();
+                else
+                    dettaglio= new DocumentoRientroDettBulk();
                 dettaglio.setDoc_trasporto_rientro(docT);
                 dettaglio.setBene(bene);
 
@@ -533,7 +534,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 dettaglio.setProgressivo(bene.getProgressivo().intValue());
 
                 // Gestione TRASPORTO/RIENTRO
-                if (Doc_trasporto_rientroBulk.RIENTRO.equals(docT.getTiDocumento())) {
+                if (docT instanceof DocumentoRientroBulk) {
                     Doc_trasporto_rientro_dettBulk dettaglioTrasportoOriginale =
                             trovaDettaglioTrasportoOriginale(userContext, bene, docT.getPgInventario());
 
@@ -566,7 +567,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             // ===== 5. ASSOCIA I DETTAGLI AL DOCUMENTO =====
             docT.setDoc_trasporto_rientro_dettColl(dettagliList);
-*/
             // Marca la testata come da creare
             docT.setToBeCreated();
 
@@ -626,17 +626,17 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             //docT.setDoc_trasporto_rientro_dettColl(new BulkList((( Doc_trasporto_rientro_dettHome)getHomeDocumentoTrasportoRientroDett(aUC,bulk)).getDetailsFor(docT)));
             //SimpleBulkList dettagli = docT.getDoc_trasporto_rientro_dettColl();
-
+        if (Optional.ofNullable(docT.getDoc_trasporto_rientro_dettColl()).isPresent()) {
             for (Iterator i = docT.getDoc_trasporto_rientro_dettColl().iterator(); i.hasNext(); ) {
                 Doc_trasporto_rientro_dettBulk dettaglio = (Doc_trasporto_rientro_dettBulk) i.next();
 
                 // Carica il bene
-               // Inventario_beniBulk inv = (Inventario_beniBulk) getHome(aUC, Inventario_beniBulk.class)
-               //         .findByPrimaryKey(new Inventario_beniBulk(
-               //                 dettaglio.getNr_inventario(),
-               //                 dettaglio.getPg_inventario(),
-               //                 Long.valueOf(dettaglio.getProgressivo())));
-               // dettaglio.setBene(inv);
+                // Inventario_beniBulk inv = (Inventario_beniBulk) getHome(aUC, Inventario_beniBulk.class)
+                //         .findByPrimaryKey(new Inventario_beniBulk(
+                //                 dettaglio.getNr_inventario(),
+                //                 dettaglio.getPg_inventario(),
+                //                 Long.valueOf(dettaglio.getProgressivo())));
+                // dettaglio.setBene(inv);
 
                 // ==================== DIFFERENZIAZIONE TRASPORTO/RIENTRO ====================
                 if (Doc_trasporto_rientroBulk.RIENTRO.equals(docT.getTiDocumento())) {
@@ -655,6 +655,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
                 updateBulk(aUC, dettaglio);
             }
+        }
 
         } catch (PersistencyException e) {
             throw new ComponentException(e);

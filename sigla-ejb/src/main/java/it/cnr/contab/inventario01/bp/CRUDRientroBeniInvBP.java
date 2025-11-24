@@ -1,7 +1,8 @@
 package it.cnr.contab.inventario01.bp;
 
+import it.cnr.contab.inventario01.bulk.AllegatoDocumentoTrasportoBulk;
+import it.cnr.contab.inventario01.bulk.DocumentoRientroBulk;
 import it.cnr.contab.inventario01.bulk.DocumentoRientroDettBulk;
-import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -25,7 +26,7 @@ import java.util.BitSet;
  * - Ogni bene può rientrare una sola volta
  * - Collegamento obbligatorio con documento di trasporto di riferimento
  */
-public class CRUDRientroBeniInvBP<AllegatoGenericoBulk, DocumentoRientroBulk> extends CRUDTraspRientInventarioBP {
+public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoDocumentoTrasportoBulk, DocumentoRientroBulk> {
 
     public CRUDRientroBeniInvBP() {
         super();
@@ -36,9 +37,10 @@ public class CRUDRientroBeniInvBP<AllegatoGenericoBulk, DocumentoRientroBulk> ex
     }
 
     @Override
-    protected String getStorePath(AllegatoParentBulk allegatoParentBulk, boolean create) throws BusinessProcessException {
+    protected String getStorePath(DocumentoRientroBulk allegatoParentBulk, boolean create) throws BusinessProcessException {
         return null;
     }
+
 
     @Override
     protected Class getAllegatoClass() {

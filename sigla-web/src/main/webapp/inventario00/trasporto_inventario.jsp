@@ -24,6 +24,7 @@
                         new String[][] {
                             { "tabTrasportoTestata","Testata","/inventario00/tab_testata_doc_t.jsp" },
                             { "tabTrasportoDettaglio","Dettaglio","/inventario00/tab_trasporto_inv_dett.jsp"},
+                             {"tabAllegati", "Allegati", "/util00/tab_allegati.jsp"},
                         },
                         bp.getTab("tab"),
                         "center",
@@ -35,7 +36,8 @@
                         "tab",
                         new String[][] {
                             { "tabTrasportoTestata","Testata","/inventario00/tab_testata_doc_t.jsp" },
-                            { "tabTrasportoDettaglio","Dettaglio","/inventario00/tab_trasporto_inv_edit_dett.jsp"},
+                            { "tabTrasportoDettaglio","Dettaglio    ","/inventario00/tab_trasporto_inv_edit_dett.jsp"},
+                            {"tabAllegati", "Allegati", "/util00/tab_allegati.jsp"},
                         },
                         bp.getTab("tab"),
                         "center",

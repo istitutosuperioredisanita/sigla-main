@@ -1,7 +1,8 @@
 package it.cnr.contab.inventario01.bp;
 
+import it.cnr.contab.inventario01.bulk.AllegatoDocumentoTrasportoBulk;
+import it.cnr.contab.inventario01.bulk.DocumentoTrasportoBulk;
 import it.cnr.contab.inventario01.bulk.DocumentoTrasportoDettBulk;
-import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -20,7 +21,7 @@ import java.util.BitSet;
  * - Nomi controller specifici
  * - Chiamate component session specifiche per trasporto
  */
-public class CRUDTrasportoBeniInvBP<AllegatoGenericoBulk, DocumentoTrasportoBulk> extends CRUDTraspRientInventarioBP{
+public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoDocumentoTrasportoBulk, DocumentoTrasportoBulk>{
 
     public CRUDTrasportoBeniInvBP() {
         super();
@@ -31,13 +32,14 @@ public class CRUDTrasportoBeniInvBP<AllegatoGenericoBulk, DocumentoTrasportoBulk
     }
 
     @Override
-    protected String getStorePath(AllegatoParentBulk allegatoParentBulk, boolean create) throws BusinessProcessException {
-        return null;
+    protected String getStorePath(DocumentoTrasportoBulk documentoTrasportoBulk, boolean create) throws BusinessProcessException {
+        return documentoTrasportoBulk.getStorePath().get(0);
     }
+
 
     @Override
     protected Class getAllegatoClass() {
-        return it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk.class;
+        return it.cnr.contab.inventario01.bulk.AllegatoDocumentoTrasportoBulk.class;
     }
 
 
