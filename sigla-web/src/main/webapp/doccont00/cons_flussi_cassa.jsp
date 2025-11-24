@@ -37,17 +37,21 @@
 						         bp.getController().writeFormInput( out, "find_cds");%></td>
 			 </tr>
 
- 			 <tr>
-				<td> <% bp.getController().writeFormLabel(out,"dt_emissione_da");%></td>
-				<td> <% bp.getController().writeFormInput(out,null,"dt_emissione_da",false,null,"");%></td>
-			  	<td> <% bp.getController().writeFormLabel(out,"dt_emissione_a");%></td>
-				<td> <% bp.getController().writeFormInput(out,null,"dt_emissione_a",false,null,"");%></td>
-			 </tr>
+ 			<tr>
+                <td> <% bp.getController().writeFormLabel(out,"trimestre");%></td>
+                <td colspan="3"> <% bp.getController().writeFormInput(out,null,"trimestre",false,null,"");%></td>
+             </tr>
+
 				
 			 <tr>
 				<td> <% bp.getController().writeFormLabel(out,"tipoFlusso");%></td>
 				<td colspan="3"> <% bp.getController().writeFormInput(out,null,"tipoFlusso",false,null,"");%></td>
 			 </tr>
+			 <tr><td colspan="3"></td></tr>
+			  <tr>
+                <td> <% bp.getController().writeFormLabel(out,"livello");%></td>
+                <td colspan="3"> <% bp.getController().writeFormInput(out,null,"livello",false,null,"");%></td>
+             </tr>
 
 	</table>
 		

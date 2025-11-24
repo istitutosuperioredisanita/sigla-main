@@ -116,6 +116,7 @@ public class CRUDAutofatturaAction extends EconomicaAction {
             nbp = (CRUDFatturaPassivaBP) context.addBusinessProcess(nbp);
             nbp.edit(context, ((AutoFatturaComponentSession) autofatturaBP.createComponentSession()).
                     cercaFatturaPassiva(context.getUserContext(), autofatturaBulk));
+            nbp.setProvenienteDaAutoFattura(true);
             return nbp;
         } catch (Throwable e) {
             return handleException(context, e);

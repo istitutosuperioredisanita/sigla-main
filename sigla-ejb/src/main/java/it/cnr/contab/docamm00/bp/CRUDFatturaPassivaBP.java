@@ -181,6 +181,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     private Boolean isAttivoGestFlIrregistrabile;
 
     private Boolean isEnabledToInsertLettera = Boolean.FALSE;
+    private boolean provenienteDaAutoFattura=false;
 
     public Boolean isAttivoChekcImpIntrastat(){
         return attivoCheckImpIntrastat;
@@ -618,6 +619,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             setEsercizioInScrivania(CNRUserContext.getEsercizio(context.getUserContext()).intValue());
             setAnnoSolareInScrivania(solaris == this.getEsercizioInScrivania());
             setRibaltato(initRibaltato(context));
+            setProvenienteDaAutoFattura(false);
             if (!isAnnoSolareInScrivania()) {
                 String cds = it.cnr.contab.utenze00.bp.CNRUserContext
                         .getCd_cds(context.getUserContext());
@@ -2142,4 +2144,11 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
         return super.isPossibileModifica(allegato);
     }
 
+    public boolean isProvenienteDaAutoFattura() {
+        return provenienteDaAutoFattura;
+    }
+
+    public void setProvenienteDaAutoFattura(boolean provenienteDaAutoFattura) {
+        this.provenienteDaAutoFattura = provenienteDaAutoFattura;
+    }
 }

@@ -34,7 +34,7 @@
 		label="CDS"
 		readonlyProperty="ROFindCds"
 		enabledOnSearch="true"
-		completeOnSave="true" />
+		completeOnSave="true"/>
 	<fieldProperty
 		name="cds_cd"
 		property="cds.cd_unita_organizzativa"
@@ -122,7 +122,20 @@
 		maxLength="22"
 		formatName="it.cnr.contab.util.EuroFormat"
 		label="Quarto Trimestre" />
-
+	<fieldProperty
+		name="trimestre"
+		property="trimestre"
+		inputType="RADIOGROUP"
+		layout="HORIZONTAL"
+		keysProperty="trimestreKeys"
+		label="Trimestre"/>
+	<fieldProperty
+		name="livello"
+		property="livello"
+		inputType="RADIOGROUP"
+		layout="HORIZONTAL"
+		keysProperty="livelloKeys"
+		label="Estrazione"/>
 
 	<formFieldProperty
 		name="cd_cds" />
@@ -152,6 +165,11 @@
 		name="impTerzoTrimestre" />
 	<formFieldProperty
 		name="impQuartoTrimestre" />
+	<formFieldProperty
+		name="trimestre" />
+	<formFieldProperty
+		name="livello" />
+
 
 		
 	<findFieldProperty
@@ -164,19 +182,25 @@
 		name="dt_emissione_a" />
 	<findFieldProperty
 		name="tipoFlusso" />
+	<findFieldProperty
+		name="trimestre" />
+	<findFieldProperty
+		name="livello" />
 
-		<columnFieldProperty
-			name="classificazione" />
-		<columnFieldProperty
-			name="dsClassificazione" />
-		<columnFieldProperty
-			name="impPrimoTrimestre" />
-		<columnFieldProperty
-			name="impSecondoTrimestre" />
-		<columnFieldProperty
-			name="impTerzoTrimestre" />
-		<columnFieldProperty
-			name="impQuartoTrimestre" />
+
+
+	<columnFieldProperty
+		name="classificazione" />
+	<columnFieldProperty
+		name="dsClassificazione" />
+	<columnFieldProperty
+		name="impPrimoTrimestre" />
+	<columnFieldProperty
+		name="impSecondoTrimestre" />
+	<columnFieldProperty
+		name="impTerzoTrimestre" />
+	<columnFieldProperty
+		name="impQuartoTrimestre" />
 
 
 </bulkInfo>
