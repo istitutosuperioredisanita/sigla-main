@@ -18,6 +18,7 @@ public class Doc_trasporto_rientro_dettBase extends Doc_trasporto_rientro_dettKe
 	private Long quantita;
 	private java.sql.Timestamp dataEffettivaMovimentazione;
 
+
 	/**
 	 * Table name: DOC_TRASPORTO_RIENTRO_DETT
 	 **/

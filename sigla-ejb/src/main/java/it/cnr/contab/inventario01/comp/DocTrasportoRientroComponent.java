@@ -17,17 +17,18 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.LoggableStatement;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -106,14 +107,20 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
+    private BulkHome getHomeDocumentoTrasportoRientroDett(UserContext aUC, OggettoBulk bulk)throws ComponentException {
+        if ( bulk instanceof DocumentoTrasportoBulk)
+            return  getHome(aUC, DocumentoTrasportoDettBulk.class);
+        else
+            return  getHome(aUC, DocumentoRientroDettBulk.class);
+    }
 
     public OggettoBulk inizializzaBulkPerModifica(UserContext aUC, OggettoBulk bulk) throws ComponentException {
         if (bulk == null)
             throw new ComponentException("Attenzione: non esiste alcun documento corrispondente ai criteri di ricerca!");
 
+        //Doc_trasporto_rientroBulk docTR = (Doc_trasporto_rientroBulk) bulk;
+        bulk =  super.inizializzaBulkPerModifica(aUC, bulk);
         Doc_trasporto_rientroBulk docTR = (Doc_trasporto_rientroBulk) bulk;
-        docTR = (Doc_trasporto_rientroBulk) super.inizializzaBulkPerModifica(aUC, bulk);
-
         inizializzaTipoMovimento(aUC, docTR);
         // Carica l'Inventario associato alla UO
         try {
@@ -135,11 +142,12 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             }
             // ==========================================
 
-            Doc_trasporto_rientro_dettHome dettHome = (Doc_trasporto_rientro_dettHome) getHome(aUC, Doc_trasporto_rientro_dettBulk.class);
+            BulkHome dettHome = getHomeDocumentoTrasportoRientroDett(aUC, docTR);
 
-            docTR.setDoc_trasporto_rientro_dettColl(new BulkList(dettHome.getDetailsFor(docTR)));
+            docTR.setDoc_trasporto_rientro_dettColl(new BulkList(( (Doc_trasporto_rientro_dettHome)dettHome).getDetailsFor(docTR)));
             for (Iterator dett = docTR.getDoc_trasporto_rientro_dettColl().iterator(); dett.hasNext(); ) {
                 Doc_trasporto_rientro_dettBulk dettaglio = (Doc_trasporto_rientro_dettBulk) dett.next();
+                dettaglio.setDoc_trasporto_rientro(docTR);
                 Inventario_beniBulk inv = (Inventario_beniBulk) getHome(aUC, Inventario_beniBulk.class).findByPrimaryKey
                         (new Inventario_beniBulk(dettaglio.getNr_inventario(), dettaglio.getPg_inventario(), new Long(dettaglio.getProgressivo().longValue())));
                 dettaglio.setBene(inv);
@@ -492,6 +500,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             Inventario_beniHome invBeniHome = (Inventario_beniHome)
                     getHome(userContext, Inventario_beniBulk.class);
 
+            /*
             SimpleBulkList dettagliList = new SimpleBulkList();
 
             for (Iterator it = beniApg.iterator(); it.hasNext(); ) {
@@ -557,7 +566,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             // ===== 5. ASSOCIA I DETTAGLI AL DOCUMENTO =====
             docT.setDoc_trasporto_rientro_dettColl(dettagliList);
-
+*/
             // Marca la testata come da creare
             docT.setToBeCreated();
 
@@ -613,28 +622,27 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         Doc_trasporto_rientroBulk docT = (Doc_trasporto_rientroBulk) bulk;
 
         try {
-            Doc_trasporto_rientro_dettHome dettHome = (Doc_trasporto_rientro_dettHome)
-                    getHome(aUC, Doc_trasporto_rientro_dettBulk.class);
 
-            docT.setDoc_trasporto_rientro_dettColl(new BulkList(dettHome.getDetailsFor(docT)));
-            SimpleBulkList dettagli = docT.getDoc_trasporto_rientro_dettColl();
 
-            for (Iterator i = dettagli.iterator(); i.hasNext(); ) {
+            //docT.setDoc_trasporto_rientro_dettColl(new BulkList((( Doc_trasporto_rientro_dettHome)getHomeDocumentoTrasportoRientroDett(aUC,bulk)).getDetailsFor(docT)));
+            //SimpleBulkList dettagli = docT.getDoc_trasporto_rientro_dettColl();
+
+            for (Iterator i = docT.getDoc_trasporto_rientro_dettColl().iterator(); i.hasNext(); ) {
                 Doc_trasporto_rientro_dettBulk dettaglio = (Doc_trasporto_rientro_dettBulk) i.next();
 
                 // Carica il bene
-                Inventario_beniBulk inv = (Inventario_beniBulk) getHome(aUC, Inventario_beniBulk.class)
-                        .findByPrimaryKey(new Inventario_beniBulk(
-                                dettaglio.getNr_inventario(),
-                                dettaglio.getPg_inventario(),
-                                Long.valueOf(dettaglio.getProgressivo())));
-                dettaglio.setBene(inv);
+               // Inventario_beniBulk inv = (Inventario_beniBulk) getHome(aUC, Inventario_beniBulk.class)
+               //         .findByPrimaryKey(new Inventario_beniBulk(
+               //                 dettaglio.getNr_inventario(),
+               //                 dettaglio.getPg_inventario(),
+               //                 Long.valueOf(dettaglio.getProgressivo())));
+               // dettaglio.setBene(inv);
 
                 // ==================== DIFFERENZIAZIONE TRASPORTO/RIENTRO ====================
                 if (Doc_trasporto_rientroBulk.RIENTRO.equals(docT.getTiDocumento())) {
                     if (dettaglio.getPgDocTrasportoRientroRif() == null) {
                         Doc_trasporto_rientro_dettBulk dettaglioTrasportoOriginale =
-                                trovaDettaglioTrasportoOriginale(aUC, inv, docT.getPgInventario());
+                                trovaDettaglioTrasportoOriginale(aUC, dettaglio.getBene(), docT.getPgInventario());
 
                         if (dettaglioTrasportoOriginale != null) {
                             dettaglio.setEsercizioRif(dettaglioTrasportoOriginale.getEsercizio());
@@ -643,10 +651,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                                     dettaglioTrasportoOriginale.getPg_doc_trasporto_rientro());
                         }
                     }
-                } else {
-                    dettaglio.setEsercizioRif(null);
-                    dettaglio.setTiDocumentoRif(null);
-                    dettaglio.setPgDocTrasportoRientroRif(null);
                 }
 
                 updateBulk(aUC, dettaglio);
@@ -670,6 +674,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             //validaBeniDettDDT(aUC, docT);
 
             // Determina il tipo di documento per il messaggio di errore
+
             String tipoDoc = "Documento di";
             if (Doc_trasporto_rientroBulk.RIENTRO.equals(docT.getTiDocumento())) {
                 tipoDoc = "Rientro";
@@ -679,8 +684,8 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             if (docT.getDataRegistrazione().before(getMaxDataFor(aUC, docT))) {
                 throw new it.cnr.jada.comp.ApplicationException(
-                        "Attenzione: data di " + tipoDoc + " non valida.\n" +
-                                "La Data di " + tipoDoc + " non può essere precedente ad una modifica di uno dei beni movimentati."
+                        "Attenzione: data del " + tipoDoc + " non valida.\n" +
+                                "La Data del " + tipoDoc + " non può essere precedente ad una modifica di uno dei beni movimentati."
                 );
             }
 
@@ -998,7 +1003,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         if (docTR == null || docTR.getPgDocTrasportoRientro() == null)
             return new it.cnr.jada.util.EmptyRemoteIterator();
 
-        SQLBuilder sql = getHome(userContext, Doc_trasporto_rientro_dettBulk.class).createSQLBuilder();
+        SQLBuilder sql = getHome(userContext, DocumentoTrasportoDettBulk.class).createSQLBuilder();
 
         sql.addSQLClause("AND", "PG_INVENTARIO", sql.EQUALS, docTR.getPgInventario());
         sql.addSQLClause("AND", "TI_DOCUMENTO", sql.EQUALS, docTR.getTiDocumento());

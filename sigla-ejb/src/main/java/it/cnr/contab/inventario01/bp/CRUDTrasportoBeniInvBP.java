@@ -1,10 +1,10 @@
 package it.cnr.contab.inventario01.bp;
 
-import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
+import it.cnr.contab.inventario01.bulk.DocumentoTrasportoDettBulk;
+import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.bulk.PrimaryKeyHashtable;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.RemoteIterator;
@@ -20,7 +20,7 @@ import java.util.BitSet;
  * - Nomi controller specifici
  * - Chiamate component session specifiche per trasporto
  */
-public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP {
+public class CRUDTrasportoBeniInvBP<AllegatoGenericoBulk, DocumentoTrasportoBulk> extends CRUDTraspRientInventarioBP{
 
     public CRUDTrasportoBeniInvBP() {
         super();
@@ -28,6 +28,16 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP {
 
     public CRUDTrasportoBeniInvBP(String function) {
         super(function);
+    }
+
+    @Override
+    protected String getStorePath(AllegatoParentBulk allegatoParentBulk, boolean create) throws BusinessProcessException {
+        return null;
+    }
+
+    @Override
+    protected Class getAllegatoClass() {
+        return it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk.class;
     }
 
 
@@ -101,6 +111,11 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP {
         }
     }
 
+    @Override
+    Class getDocumentoClassDett() {
+        return DocumentoTrasportoDettBulk.class;
+    }
+
     // ==================== METODO SPECIFICO TRASPORTO ====================
 
     /**
@@ -114,52 +129,7 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP {
         return getComp().getListaBeniDaTrasportare(userContext, getDoc(), beni_da_escludere, clauses);
     }
 
-    // ==================== INIZIALIZZAZIONE MODELLI ====================
 
-    protected void init(it.cnr.jada.action.Config config,it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException {
-
-        super.init(config,context);
-        resetTabs();
-    }
-
-    public OggettoBulk initializeModelForEdit(ActionContext context,OggettoBulk bulk) throws BusinessProcessException {
-
-        Doc_trasporto_rientroBulk testata = (Doc_trasporto_rientroBulk)bulk;
-        testata.setTiDocumento(TRASPORTO);
-        try {
-            bulk = super.initializeModelForEdit(context, testata);
-            return bulk;
-        } catch(Throwable e) {
-            throw new it.cnr.jada.action.BusinessProcessException(e);
-        }
-
-    }
-    public OggettoBulk initializeModelForInsert(ActionContext context,OggettoBulk bulk) throws BusinessProcessException {
-        Doc_trasporto_rientroBulk testata = (Doc_trasporto_rientroBulk)bulk;
-        testata.setTiDocumento(TRASPORTO);
-        bulk = super.initializeModelForInsert(context, testata);
-        return bulk;
-    }
-    public OggettoBulk initializeModelForFreeSearch(
-            ActionContext actioncontext,
-            OggettoBulk oggettobulk)
-            throws BusinessProcessException {
-        Doc_trasporto_rientroBulk testata = (Doc_trasporto_rientroBulk)oggettobulk;
-        testata.setTiDocumento(TRASPORTO);
-        oggettobulk = super.initializeModelForFreeSearch(actioncontext, testata);
-        return oggettobulk;
-    }
-
-    public OggettoBulk initializeModelForSearch(ActionContext context,OggettoBulk bulk) throws BusinessProcessException {
-        Doc_trasporto_rientroBulk testata = (Doc_trasporto_rientroBulk)bulk;
-        testata.setTiDocumento(TRASPORTO);
-        bulk = super.initializeModelForSearch(context, testata);
-        return bulk;
-    }
-    public void resetForSearch(ActionContext context) throws BusinessProcessException {
-        super.resetForSearch(context);
-        resetTabs();
-    }
 
 
 }

@@ -29,13 +29,12 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.StrServ;
 
 import java.rmi.RemoteException;
-import java.util.Optional;
 
 /**
  * Dettaglio (riga) di un documento di Trasporto/Rientro.
  * Le chiavi primarie composite (PK) sono delegate alle entità correlate (Testata e Bene).
  */
-public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBase {
+public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBase {
 
     // ========================================
     // ATTRIBUTI E RELAZIONI
@@ -51,7 +50,6 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
      * Testata del documento (FK obbligatoria).
      * Delega le PK: pg_inventario, ti_documento, esercizio, pg_doc_trasporto_rientro.
      */
-    private Doc_trasporto_rientroBulk doc_trasporto_rientro;
 
     // Altri attributi
     private int gruppi;
@@ -76,8 +74,7 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
                 nr_inventario, progressivo);
 
         // Inizializza gli oggetti bulk relazionati (PK delegate)
-        setDoc_trasporto_rientro(new Doc_trasporto_rientroBulk(
-                pg_inventario, ti_documento, esercizio, pg_doc_trasporto_rientro));
+
         setBene(new Inventario_beniBulk(nr_inventario, pg_inventario,
                 Long.valueOf(progressivo)));
     }
@@ -94,13 +91,9 @@ public class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBa
         bene = bulk;
     }
 
-    public Doc_trasporto_rientroBulk getDoc_trasporto_rientro() {
-        return doc_trasporto_rientro;
-    }
+    public abstract Doc_trasporto_rientroBulk getDoc_trasporto_rientro() ;
 
-    public void setDoc_trasporto_rientro(Doc_trasporto_rientroBulk bulk) {
-        doc_trasporto_rientro = bulk;
-    }
+    public abstract void setDoc_trasporto_rientro(Doc_trasporto_rientroBulk bulk) ;
 
     public Categoria_gruppo_voceBulk getCat_voce() {
         return cat_voce;

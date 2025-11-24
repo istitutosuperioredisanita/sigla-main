@@ -4,10 +4,7 @@
  */
 package it.cnr.contab.inventario01.bulk;
 
-import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.Keyed;
-
-import java.sql.Timestamp;
 
 public class Doc_trasporto_rientro_respintoBulk extends Doc_trasporto_rientro_respintoBase implements Keyed {
 
@@ -24,7 +21,7 @@ public class Doc_trasporto_rientro_respintoBulk extends Doc_trasporto_rientro_re
 
 	public Doc_trasporto_rientro_respintoBulk() {
 		super();
-		setDocTrasportoRientro(new Doc_trasporto_rientroBulk());
+		//setDocTrasportoRientro(new DocumentoRientroBulk());
 	}
 
 
@@ -34,11 +31,14 @@ public class Doc_trasporto_rientro_respintoBulk extends Doc_trasporto_rientro_re
 			Integer esercizio,
 			Long pgDocTrasportoRientro) {
 		super();
-		setDocTrasportoRientro(new Doc_trasporto_rientroBulk(
+		/*
+		setDocTrasportoRientro(new DocumentoRientroBulk(
 				pgInventario,
 				tiDocumento,
 				esercizio,
 				pgDocTrasportoRientro));
+
+		 */
 	}
 
 	// Getter e Setter

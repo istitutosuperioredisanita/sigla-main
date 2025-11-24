@@ -4,7 +4,7 @@ import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
 import it.cnr.contab.inventario00.bp.RigheInvDaFatturaCRUDController;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
-import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
+import it.cnr.contab.inventario01.bulk.DocumentoTrasportoDettBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
 import it.cnr.contab.inventario01.service.DocTraspRientCMISService;
 import it.cnr.contab.reports.bp.OfflineReportPrintBP;
@@ -16,6 +16,7 @@ import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
+import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
@@ -29,22 +30,18 @@ import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.AbstractPrintBP;
 import it.cnr.jada.util.action.RemoteDetailCRUDController;
 import it.cnr.jada.util.action.SelectionListener;
-import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
 import org.apache.commons.io.IOUtils;
 
-import javax.activation.MimetypesFileTypeMap;
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Stream;
-
-public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<AllegatoGenericoBulk, Doc_trasporto_rientroBulk>
+//riscrivi logica per la gestione degli allegati e dei file nel documentale azure in CRUDTraspRientInventarioBP come è stato fatto nel bp CaricFlStipBP
+public abstract class CRUDTraspRientInventarioBP<T extends AllegatoGenericoBulk, K extends AllegatoParentBulk> extends AllegatiCRUDBP<T, K>
         implements SelectionListener {
 
     private static final DateFormat PDF_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
@@ -216,8 +213,6 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
             throws it.cnr.jada.action.BusinessProcessException {
 
         Integer esercizio = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext());
-
-
         if (this instanceof CRUDTrasportoBeniInvBP)
             setTipo(TRASPORTO);
         else
@@ -263,10 +258,9 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
     }
 
     @Override
-    public StoreService getBeanStoreService(ActionContext actioncontext) throws BusinessProcessException {
+    public StoreService getBeanStoreService(ActionContext actioncontext) throws BusinessProcessException{
         return SpringUtil.getBean("docTraspRientCMISService", DocTraspRientCMISService.class);
     }
-
     public boolean isGestioneInvioInFirmaAttiva() {
         return isGestioneInvioInFirmaAttiva;
     }
@@ -442,7 +436,7 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
     }
 
     public boolean isDeleteButtonEnabled() {
-        return isModificationButtonEnabled() || !isDocumentoAnnullato();
+        return isModificationButtonEnabled();
     }
 
     public boolean isSaveButtonEnabled() {
@@ -536,6 +530,7 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
 //    }
 
 
+
     // ==================== CONTROLLERS ====================
 
     protected final RigheInvDaFatturaCRUDController dettBeniController = new RigheInvDaFatturaCRUDController(
@@ -580,12 +575,18 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
                 PendingSelection ps = new PendingSelection();
                 ps.bulks = details;
 
+                System.out.println("========== INIZIO ELABORAZIONE ELIMINAZIONE ==========");
+                System.out.println("Totale beni selezionati: " + details.length);
+
                 for (OggettoBulk o : details) {
                     Inventario_beniBulk bene = (Inventario_beniBulk) o;
 
+                    System.out.println("\n--- Elaboro bene: " + bene.getNr_inventario() + " ---");
+                    System.out.println("È accessorio? " + bene.isBeneAccessorio());
 
                     if (bene.isBeneAccessorio()) {
                         ps.accessori.add(bene);
+                        System.out.println("Aggiunto a lista accessori standalone");
                     } else {
                         List<Inventario_beniBulk> found = getComp().cercaBeniAccessoriAssociatiInDettaglio(
                                 context.getUserContext(),
@@ -593,13 +594,29 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
                                 bene
                         );
 
+                        System.out.println("Accessori trovati per questo principale: " + (found != null ? found.size() : 0));
+                        if (found != null) {
+                            for (Inventario_beniBulk acc : found) {
+                                System.out.println("  - Accessorio: " + acc.getNr_inventario());
+                            }
+                        }
+
                         if (found != null && !found.isEmpty()) {
                             ps.principaliConAccessori.put(bene, found);
+                            System.out.println("Aggiunto a principaliConAccessori");
                         } else {
                             ps.principaliSenza.add(bene);
+                            System.out.println("Aggiunto a principaliSenza");
                         }
                     }
                 }
+
+                System.out.println("\n========== RIEPILOGO FINALE ==========");
+                System.out.println("Principali con accessori: " + ps.principaliConAccessori.size());
+                for (Map.Entry<Inventario_beniBulk, List<Inventario_beniBulk>> entry : ps.principaliConAccessori.entrySet()) {
+                    System.out.println("  Principale " + entry.getKey().getNr_inventario() + " -> " + entry.getValue().size() + " accessori");
+                }
+                System.out.println("========== FINE ELABORAZIONE ==========\n");
 
                 if (ps.principaliConAccessori.isEmpty()) {
                     eliminaDettagliConBulk(context, details);
@@ -614,9 +631,11 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
         }
     };
 
+    abstract Class getDocumentoClassDett();
+
     private final RemoteDetailCRUDController editDettController = new RemoteDetailCRUDController(
             "editDettController",
-            Doc_trasporto_rientro_dettBulk.class,
+            getDocumentoClassDett(),
             "",
             "CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession",
             this) {
@@ -663,7 +682,7 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
             it.cnr.jada.persistency.sql.CompoundFindClause filters =
                     ((RemoteDetailCRUDController) getEditDettController()).getFilter();
             return getComp().selectEditDettagliTrasporto(context.getUserContext(), getDoc(),
-                    Doc_trasporto_rientro_dettBulk.class, filters);
+                    DocumentoTrasportoDettBulk.class, filters);
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
         }
@@ -690,7 +709,7 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
             Doc_trasporto_rientroBulk doc = getComp().changeStatoInInviato(context.getUserContext(), getDoc());
             setModel(context, doc);
             setStatus(VIEW);
-            setMessage("Documento inviato in firma. Ora in sola lettura.");
+            setMessage("Documento predisposto alla firma. Ora in sola lettura.");
         } catch (ComponentException | RemoteException e) {
             rollbackUserTransaction();
             throw handleException(e);
@@ -698,25 +717,24 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
     }
 
     public void annullaDoc(ActionContext context) throws BusinessProcessException {
+        validaStatoPerFirma();
         try {
-
-            // Usa il metodo del component che annulla E persiste
             Doc_trasporto_rientroBulk doc = getComp().annullaDocumento(context.getUserContext(), getDoc());
-
             setModel(context, doc);
             setStatus(VIEW);
             setMessage("Documento annullato. Ora in sola lettura.");
-
-        } catch (Exception e) {
-            throw new BusinessProcessException(e);
+        } catch (ComponentException | RemoteException e) {
+            rollbackUserTransaction();
+            throw handleException(e);
         }
     }
+
     private void validaStatoPerFirma() throws BusinessProcessException {
         if (isDocumentoAnnullato()) {
             throw new BusinessProcessException("Impossibile predisporre alla firma un documento annullato");
         }
         if (!getDoc().isInserito()) {
-            throw new BusinessProcessException("Il documento deve essere in stato 'Inserito' per essere inviato in firma");
+            throw new BusinessProcessException("Il documento deve essere in stato 'Inserito' per essere predisposto alla firma");
         }
     }
 
@@ -1131,54 +1149,24 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
 
     // ========================= STAMPA DOCUMENTO =========================
 
-    /*
-     * Gestisce la richiesta di stampa di un documento di trasporto/rientro.
-     * Tenta prima di recuperare il file PDF da CMIS (archivio documentale).
-     * Se il file non è presente, lo genera localmente, lo salva in CMIS
-     * e infine lo invia come risposta HTTP al browser. Se il file è presente in CMIS,
-     * lo invia direttamente al browser.
-     */
+
+
     public void stampaDocTrasportoRientro(ActionContext actioncontext) throws Exception {
-
         Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
-        HttpActionContext httpContext = (HttpActionContext) actioncontext;
-        UserContext userContext = actioncontext.getUserContext();
-
-        httpContext.getResponse().setContentType("application/pdf");
-        httpContext.getResponse().setDateHeader("Expires", 0);
-
-        OutputStream os = httpContext.getResponse().getOutputStream();
-
-        try (InputStream is = ((DocTraspRientCMISService) storeService).getStreamDoc(doc, userContext)) {
-
-            if (is != null) {
-                IOUtils.copy(is, os);
-            } else {
-                File f = stampaDocTrasportoRientro(userContext, doc);
-                Path filePath = f.toPath();
-
-                try {
-                    byte[] pdfContent = Files.readAllBytes(filePath);
-
-                    ((DocTraspRientCMISService) storeService).salvaFileStampaSuCMIS(
-                            pdfContent,
-                            f.getName(),
-                            doc,
-                            userContext
-                    );
-
-                    try (InputStream finalInputStream = Files.newInputStream(filePath, StandardOpenOption.READ)) {
-                        IOUtils.copy(finalInputStream, os);
-                    }
-
-                } catch (Exception e) {
-                    throw new Exception("Errore durante la generazione o il salvataggio del file su CMIS.", e);
-                }
-            }
+        ((HttpActionContext)actioncontext).getResponse().setContentType("application/pdf");
+        OutputStream os = ((HttpActionContext)actioncontext).getResponse().getOutputStream();
+        ((HttpActionContext)actioncontext).getResponse().setDateHeader("Expires", 0);
+        InputStream is = ((DocTraspRientCMISService)storeService).getStreamDoc( doc, actioncontext.getUserContext());
+        if ( is==null) {
+            UserContext userContext = actioncontext.getUserContext();
+            File f = stampaDocTrasportoRientro(userContext, doc);
+            IOUtils.copy(Files.newInputStream(f.toPath()), os);
+        }else{
+            IOUtils.copy(is, os);
         }
+
         os.flush();
     }
-
 
     public File stampaDocTrasportoRientro(
             UserContext userContext,
@@ -1209,41 +1197,28 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
 
 
     private String getOutputFileNameOrdine(String reportName, Doc_trasporto_rientroBulk doc) {
-
-        String parteFinalePdfName= "";
-
-        if (Doc_trasporto_rientroBulk.TRASPORTO.equals(doc.getTiDocumento())) {
-            parteFinalePdfName = "doc_trasporto.pdf";
-        } else {
-            parteFinalePdfName = "doc_rientro.pdf";
-        }
-
-        String fileName = PDF_DATE_FORMAT.format(new java.util.Date()) + '_'
-                + doc.recuperoIdDocAsString() + '_'
-                + parteFinalePdfName;
-
+        String fileName = preparaFileNamePerStampa(reportName);
+        fileName = PDF_DATE_FORMAT.format(new java.util.Date()) + '_' + doc.recuperoIdDocAsString() + '_' + fileName;
         return fileName;
     }
 
-
-
-    public void create(it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException {
+    public void create(it.cnr.jada.action.ActionContext context) throws	it.cnr.jada.action.BusinessProcessException {
         try {
             getModel().setToBeCreated();
-            setModel(context, createComponentSession().creaConBulk(context.getUserContext(), getModel()));
-        } catch (Exception e) {
+            setModel(context, createComponentSession().creaConBulk(context.getUserContext(),getModel()));
+        } catch(Exception e) {
             throw handleException(e);
         }
     }
 
 
-    public void update(it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException {
+    public void update(it.cnr.jada.action.ActionContext context) throws	it.cnr.jada.action.BusinessProcessException {
         try {
             getModel().setToBeUpdated();
-            setModel(context, createComponentSession().modificaConBulk(context.getUserContext(), getModel()));
-            allegatoStampaDoc(context.getUserContext());
+            setModel(context,createComponentSession().modificaConBulk(context.getUserContext(),getModel()));
+            //allegatoStampaDoc(context.getUserContext());
             archiviaAllegati(context);
-        } catch (Exception e) {
+        } catch(Exception e) {
             throw handleException(e);
         }
     }
@@ -1252,48 +1227,33 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
 
     /**
      * Gestisce l'allegato della stampa del documento nel documentale.
-     * - Se il documento NON è inviato in firma/firmato, elimina eventuali stampe esistenti
-     * - Se il documento è inviato in firma e non esiste una stampa, la crea e la allega
+     * - Se il documento NON è predisposto alla firma/firmato, elimina eventuali stampe esistenti
+     * - Se il documento è predisposto alla firma e non esiste una stampa, la crea e la allega
      *
      * @param userContext il contesto utente
      * @throws Exception in caso di errore
      */
-    private void allegatoStampaDoc(UserContext userContext) throws Exception {
-        Doc_trasporto_rientroBulk docTrasportoRientro = (Doc_trasporto_rientroBulk) getModel();
-        StorageObject s = ((DocTraspRientCMISService) storeService)
-                .getStorageObjectStampaDoc(docTrasportoRientro, userContext);
-
-        if (!Optional.ofNullable(s).isPresent()) {
-            File f = stampaDocTrasportoRientro(userContext, docTrasportoRientro);
-
-            AllegatoGenericoBulk allegatoStampa = new AllegatoGenericoBulk();
-            allegatoStampa.setFile(f);
-            allegatoStampa.setContentType(new MimetypesFileTypeMap().getContentType(f.getName()));
-            allegatoStampa.setNome(f.getName());
-            allegatoStampa.setCrudStatus(OggettoBulk.TO_BE_CREATED);
-            allegatoStampa.setDescrizione(f.getName());
-            allegatoStampa.setTitolo(f.getName());
-            docTrasportoRientro.addToArchivioAllegati(allegatoStampa);
-        }
-    }
 
 
-    @Override
-    protected String getStorePath(Doc_trasporto_rientroBulk allegatoParentBulk, boolean create) throws BusinessProcessException {
-        return ((DocTraspRientCMISService) storeService).getStorePath(allegatoParentBulk);
-    }
 
 
-    @Override
-    protected Class<AllegatoGenericoBulk> getAllegatoClass() {
-        return AllegatoGenericoBulk.class;
-    }
 
     // ========================= UPDATE OVERRIDE =========================
 
 
+
     // ========================= UTILS STAMPA =========================
 
+
+    private String preparaFileNamePerStampa(String reportName) {
+        String fileName = reportName;
+        fileName = fileName.replace('/', '_').replace('\\', '_');
+        if (fileName.startsWith("_"))
+            fileName = fileName.substring(1);
+        if (fileName.endsWith(".jasper"))
+            fileName = fileName.substring(0, fileName.length() - 7);
+        return fileName + ".pdf";
+    }
 
     protected DocTrasportoRientroComponentSession getComp() throws BusinessProcessException {
         return (DocTrasportoRientroComponentSession) createComponentSession(
@@ -1423,17 +1383,18 @@ public abstract class CRUDTraspRientInventarioBP extends AllegatiCRUDBP<Allegato
     }
 
     /**
-     * Abilito il bottone di stampa del Documento solo se questo e' in fase di
-     * modifica/inserimento e anche se è ANNULLATO.
+     *	Abilito il bottone di stampa del Documento solo se questo e' in fase di
+     *	modifica/inserimento.
+     *
      */
 
     public boolean isStampaDocButtonEnabled() {
-        return isEditable() || isInserting() || isDocumentoAnnullato();
+        return isEditable() || isInserting();
     }
 
 
     public boolean isStampaDocButtonHidden() {
-        Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
+        Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk)getModel();
         return (doc == null || doc.getPgDocTrasportoRientro() == null);
     }
 

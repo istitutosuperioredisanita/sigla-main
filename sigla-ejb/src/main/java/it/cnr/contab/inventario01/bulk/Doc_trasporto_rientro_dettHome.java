@@ -10,7 +10,6 @@ import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
 import java.sql.Connection;
@@ -29,6 +28,13 @@ public class Doc_trasporto_rientro_dettHome extends BulkHome {
 
 	private static final String TABLE_INVENTARIO_BENI = "INVENTARIO_BENI";
 
+	public Doc_trasporto_rientro_dettHome(Class classe, java.sql.Connection conn) {
+		super(classe, conn);
+	}
+
+	public Doc_trasporto_rientro_dettHome(Class classe, java.sql.Connection conn, PersistentCache persistentCache) {
+		super(classe, conn, persistentCache);
+	}
 	public Doc_trasporto_rientro_dettHome(Connection conn) {
 		super(Doc_trasporto_rientro_dettBulk.class, conn);
 	}
@@ -42,8 +48,8 @@ public class Doc_trasporto_rientro_dettHome extends BulkHome {
 	 */
 	public java.util.List getDetailsFor(Doc_trasporto_rientroBulk doc)
 			throws it.cnr.jada.persistency.PersistencyException {
-		PersistentHome dettHome = getHomeCache().getHome(Doc_trasporto_rientro_dettBulk.class);
-		SQLBuilder sql = dettHome.createSQLBuilder();
+
+		SQLBuilder sql = createSQLBuilder();
 		// Usa i nomi delle COLONNE DATABASE, non delle proprietà Java
 		sql.addSQLClause(FindClause.AND, "ESERCIZIO",
 				SQLBuilder.EQUALS, doc.getEsercizio());
@@ -56,7 +62,7 @@ public class Doc_trasporto_rientro_dettHome extends BulkHome {
 
 		sql.addOrderBy("NR_INVENTARIO, PROGRESSIVO");
 
-		return dettHome.fetchAll(sql);
+		return fetchAll(sql);
 	}
 
 	/**

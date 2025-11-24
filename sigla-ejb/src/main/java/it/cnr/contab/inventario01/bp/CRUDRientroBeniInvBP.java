@@ -1,6 +1,7 @@
 package it.cnr.contab.inventario01.bp;
 
-import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
+import it.cnr.contab.inventario01.bulk.DocumentoRientroDettBulk;
+import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -24,7 +25,7 @@ import java.util.BitSet;
  * - Ogni bene può rientrare una sola volta
  * - Collegamento obbligatorio con documento di trasporto di riferimento
  */
-public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP {
+public class CRUDRientroBeniInvBP<AllegatoGenericoBulk, DocumentoRientroBulk> extends CRUDTraspRientInventarioBP {
 
     public CRUDRientroBeniInvBP() {
         super();
@@ -32,6 +33,16 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP {
 
     public CRUDRientroBeniInvBP(String function) {
         super(function);
+    }
+
+    @Override
+    protected String getStorePath(AllegatoParentBulk allegatoParentBulk, boolean create) throws BusinessProcessException {
+        return null;
+    }
+
+    @Override
+    protected Class getAllegatoClass() {
+        return it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk.class;
     }
 
 
@@ -105,6 +116,11 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP {
         }
     }
 
+    @Override
+    Class getDocumentoClassDett() {
+        return DocumentoRientroDettBulk.class;
+    }
+
 
     // ==================== METODO SPECIFICO RIENTRO ====================
 
@@ -117,49 +133,6 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP {
             it.cnr.jada.persistency.sql.CompoundFindClause clauses)
             throws BusinessProcessException, RemoteException, ComponentException {
         return getComp().getListaBeniDaFarRientrare(userContext, getDoc(), beni_da_escludere, clauses);
-    }
-
-    // ==================== INIZIALIZZAZIONE MODELLI ====================
-
-    protected void init(it.cnr.jada.action.Config config,it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException {
-
-        super.init(config,context);
-        resetTabs();
-    }
-
-    public OggettoBulk initializeModelForEdit(ActionContext context,OggettoBulk bulk) throws BusinessProcessException {
-
-        Doc_trasporto_rientroBulk testata = (Doc_trasporto_rientroBulk)bulk;
-        testata.setTiDocumento(RIENTRO);
-        try {
-            bulk = super.initializeModelForEdit(context, testata);
-            return bulk;
-        } catch(Throwable e) {
-            throw new it.cnr.jada.action.BusinessProcessException(e);
-        }
-
-    }
-    public OggettoBulk initializeModelForInsert(ActionContext context,OggettoBulk bulk) throws BusinessProcessException {
-        Doc_trasporto_rientroBulk testata = (Doc_trasporto_rientroBulk)bulk;
-        testata.setTiDocumento(RIENTRO);
-        bulk = super.initializeModelForInsert(context, testata);
-        return bulk;
-    }
-    public OggettoBulk initializeModelForFreeSearch(
-            ActionContext actioncontext,
-            OggettoBulk oggettobulk)
-            throws BusinessProcessException {
-        Doc_trasporto_rientroBulk testata = (Doc_trasporto_rientroBulk)oggettobulk;
-        testata.setTiDocumento(RIENTRO);
-        oggettobulk = super.initializeModelForFreeSearch(actioncontext, testata);
-        return oggettobulk;
-    }
-
-    public OggettoBulk initializeModelForSearch(ActionContext context,OggettoBulk bulk) throws BusinessProcessException {
-        Doc_trasporto_rientroBulk testata = (Doc_trasporto_rientroBulk)bulk;
-        testata.setTiDocumento(RIENTRO);
-        bulk = super.initializeModelForSearch(context, testata);
-        return bulk;
     }
 
 }

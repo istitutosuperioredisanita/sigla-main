@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SQLPersistentInfo
-		persistentClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk"
-		homeClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettHome">
+		persistentClassName="it.cnr.contab.inventario01.bulk.DocumentoRientroDettBulk"
+		homeClassName="it.cnr.contab.inventario01.bulk.DocumentoRientroDettHome">
 
 	<defaultColumnMap tableName="DOC_TRASPORTO_RIENTRO_DETT">
-<!--
-		<columnMapping columnName="PG_INVENTARIO" propertyName="doc_trasporto_rientro.inventario.pg_inventario" sqlTypeName="DECIMAL" columnSize="10"/>
-		<columnMapping columnName="TI_DOCUMENTO" propertyName="doc_trasporto_rientro.tiDocumento" sqlTypeName="CHAR" columnSize="1"/>
-		<columnMapping columnName="ESERCIZIO" propertyName="doc_trasporto_rientro.esercizio" sqlTypeName="DECIMAL" columnSize="4"/>
-		<columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO" propertyName="doc_trasporto_rientro.pgDocTrasportoRientro" sqlTypeName="DECIMAL" columnSize="10"/>
--->
+
+		<columnMapping columnName="PG_INVENTARIO" propertyName="documentoRientro.inventario.pg_inventario" sqlTypeName="DECIMAL" columnSize="10"/>
+		<columnMapping columnName="TI_DOCUMENTO" propertyName="documentoRientro.tiDocumento" sqlTypeName="CHAR" columnSize="1"/>
+		<columnMapping columnName="ESERCIZIO" propertyName="documentoRientro.esercizio" sqlTypeName="DECIMAL" columnSize="4"/>
+		<columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO" propertyName="documentoRientro.pgDocTrasportoRientro" sqlTypeName="DECIMAL" columnSize="10"/>
+
 		<!-- Nuovi campi di riferimento -->
 		<columnMapping columnName="TI_DOCUMENTO_RIF" propertyName="tiDocumentoRif" sqlTypeName="CHAR" columnSize="1"/>
 		<columnMapping columnName="ESERCIZIO_RIF" propertyName="esercizioRif" sqlTypeName="DECIMAL" columnSize="5"/>
@@ -21,6 +21,7 @@
 
 	</defaultColumnMap>
 
+	<persistentProperty name="documentoRientro" partOfOid="true"/>
 	<persistentProperty name="bene" partOfOid="true"/>
 
 	<!-- Nuove proprietà -->

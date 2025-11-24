@@ -11,9 +11,7 @@ import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.jada.bulk.*;
-import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.util.StrServ;
 import it.cnr.si.spring.storage.StorageDriver;
 
@@ -26,7 +24,7 @@ import java.util.stream.Collectors;
  * Testata del documento di Trasporto o Rientro beni inventariali.
  * La classe gestisce le informazioni principali del movimento e la collezione degli allegati e dei dettagli.
  */
-public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase implements AllegatoParentBulk {
+public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase implements AllegatoParentBulk {
 
     // ========================================
     // COSTANTI TIPO DOCUMENTO
@@ -94,6 +92,7 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase impleme
     // Gestione Allegati
     private BulkList<AllegatoGenericoBulk> archivioAllegati = new BulkList<AllegatoGenericoBulk>();
 
+
     // Firmatari
     private V_persona_fisicaBulk personaFisicaResponsabile;
 
@@ -119,6 +118,13 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase impleme
     }
 
     // ========================================
+    // GETTER E SETTER - ALLEGATI (UNICA GESTIONE)
+    // ========================================
+
+
+
+    // ========================================
+    // GETTER E SETTER - Altri attributi
     // GETTER/SETTER - FK MAPPATE (con auto-inizializzazione)
     // ========================================
 
@@ -132,9 +138,6 @@ public class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase impleme
     }
 
     public void setPgInventario(Long pg_inventario) {
-        if (this.getInventario() == null) {
-            this.setInventario(new Id_inventarioBulk());
-        }
         this.getInventario().setPg_inventario(pg_inventario);
     }
 

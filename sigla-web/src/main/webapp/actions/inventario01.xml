@@ -75,14 +75,14 @@
     <businessProcess name="CRUDRientroBeniInvBP" className="it.cnr.contab.inventario01.bp.CRUDRientroBeniInvBP">
         <forward name="default" path="/inventario00/rientro_inventario.jsp"/>
         <init-param name="printbp" value="OfflineReportPrintBP"/>
-        <init-param name="bulkClassName" value="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk" />
+        <init-param name="bulkClassName" value="it.cnr.contab.inventario01.bulk.DocumentoRientroBulk" />
         <init-param name="componentSessionName" value="CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession"/>
         <init-param name="defaultAction" value="CRUDRientroDocAction"/>
     </businessProcess>
     <businessProcess name="CRUDTrasportoBeniInvBP" className="it.cnr.contab.inventario01.bp.CRUDTrasportoBeniInvBP">
         <forward name="default" path="/inventario00/trasporto_inventario.jsp"/>
         <init-param name="printbp" value="OfflineReportPrintBP"/>
-        <init-param name="bulkClassName" value="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk" />
+        <init-param name="bulkClassName" value="it.cnr.contab.inventario01.bulk.DocumentoTrasportoBulk" />
         <init-param name="componentSessionName" value="CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession"/>
         <init-param name="defaultAction" value="CRUDTrasportoDocAction"/>
     </businessProcess>

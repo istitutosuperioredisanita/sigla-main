@@ -171,7 +171,7 @@ public class DocTraspRientFlowService {
 
     /**
      * Recupera un documento dalla chiave primaria
-     */
+
     public Doc_trasporto_rientroBulk recuperaDocumento(
             Long pgInventario,
             String tiDocumento,
@@ -213,6 +213,7 @@ public class DocTraspRientFlowService {
             throw new ComponentException("Errore nel recupero documento: " + e.getMessage(), e);
         }
     }
+     */
 
     /**
      * Salva un documento (inserimento o modifica)

@@ -7,7 +7,7 @@
 	<!-- ============================================ -->
 	<!-- CHIAVI PRIMARIE - TESTATA (Foreign Key) -->
 	<!-- ============================================ -->
-
+<!--
 	<fieldProperty
 			name="pg_inventario"
 			property="doc_trasporto_rientro.inventario.pg_inventario"
@@ -39,6 +39,7 @@
 			inputSize="10"
 			maxLength="10"
 			label="Numero Documento" />
+			-->
 
 	<!-- ============================================ -->
 	<!-- CHIAVI PRIMARIE - BENE -->
