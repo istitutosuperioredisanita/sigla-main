@@ -60,7 +60,7 @@ public class DocumentoTrasportoBulk extends Doc_trasporto_rientroBulk  {
                 Optional.ofNullable(this.getEsercizio())
                         .map(esercizio -> String.valueOf(esercizio))
                         .orElse("0"),
-                "Fattura " + this.getEsercizio().toString() + Utility.lpad(this.getPgDocTrasportoRientro().toString(), 10, '0')
+                "Documento Trasporto " + this.getEsercizio().toString() + Utility.lpad(this.getPgDocTrasportoRientro().toString(), 10, '0')
         ).stream().collect(
                 Collectors.joining(StorageDriver.SUFFIX)
         ));

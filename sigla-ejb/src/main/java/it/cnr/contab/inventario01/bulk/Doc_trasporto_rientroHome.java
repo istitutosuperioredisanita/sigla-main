@@ -1,8 +1,5 @@
 package it.cnr.contab.inventario01.bulk;
 
-import java.sql.Connection;
-import java.util.Collection;
-
 import it.cnr.contab.inventario00.docs.bulk.Numeratore_doc_t_rBulk;
 import it.cnr.contab.inventario00.docs.bulk.Numeratore_doc_t_rHome;
 import it.cnr.contab.inventario00.tabrif.bulk.Tipo_trasporto_rientroBulk;
@@ -16,7 +13,12 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+
+import java.sql.Connection;
+import java.util.Collection;
 
 public class Doc_trasporto_rientroHome extends BulkHome {
 
@@ -79,6 +81,14 @@ public class Doc_trasporto_rientroHome extends BulkHome {
 							NumerazioneTempDocTRComponentSession.class);
 			return session.getNextTempPG(userContext, docTR);
 		}
+	}
+	@Override
+	public SQLBuilder selectByClause(CompoundFindClause compoundfindclause)
+			throws PersistencyException {
+		SQLBuilder sqlbuilder = super.selectByClause(compoundfindclause);
+		sqlbuilder.addOrderBy("ESERCIZIO desc,PG_DOC_TRASPORTO_RIENTRO desc");
+
+		return sqlbuilder;
 	}
 
 

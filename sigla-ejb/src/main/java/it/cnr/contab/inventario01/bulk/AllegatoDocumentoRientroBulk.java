@@ -19,27 +19,27 @@ package it.cnr.contab.inventario01.bulk;
 
 import it.cnr.jada.util.OrderedHashtable;
 
-public class AllegatoDocumentoTrasportoBulk extends AllegatoDocTraspRientroBulk {
+public class AllegatoDocumentoRientroBulk extends AllegatoDocTraspRientroBulk {
 	private static final long serialVersionUID = 1L;
 
 	public static OrderedHashtable aspectNamesKeys = new OrderedHashtable();
 
-	public static final String P_SIGLA_DOCTRASPORTO_ATTACHMENT_ALTRO = "P:sigla_doctrasporto_attachment:altro";
-	public static final String P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO = "P:sigla_doctrasporto_attachment:doctrasporto_firmato";
+	public static final String P_SIGLA_DOCTRASPORTO_ATTACHMENT_ALTRO = "P:sigla_doctrientro_attachment:altro";
+	public static final String P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO = "P:sigla_docrientro_attachment:docrientro_firmato";
 
 	static {
 		aspectNamesKeys.put(P_SIGLA_DOCTRASPORTO_ATTACHMENT_ALTRO,"Altro");
-		aspectNamesKeys.put(P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO,"Doc. Trasporto Firmato");
+		aspectNamesKeys.put(P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO,"Doc. Rientro Firmato");
 
 
 	}
 	private String aspectName;
 
-	public AllegatoDocumentoTrasportoBulk() {
+	public AllegatoDocumentoRientroBulk() {
 		super();
 	}
 
-	public AllegatoDocumentoTrasportoBulk(String storageKey) {
+	public AllegatoDocumentoRientroBulk(String storageKey) {
 		super(storageKey);
 	}
 
@@ -54,5 +54,5 @@ public class AllegatoDocumentoTrasportoBulk extends AllegatoDocTraspRientroBulk 
 		return aspectNamesKeys;
 	}
 
-
+	
 }

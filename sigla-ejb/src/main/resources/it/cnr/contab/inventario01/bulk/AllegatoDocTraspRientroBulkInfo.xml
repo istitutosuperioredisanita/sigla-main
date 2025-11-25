@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="https://contab.cnr.it/schema/SIGLA"
+        xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+    <fieldProperty
+            name="aspectName"
+            property="aspectName"
+            inputType="SELECT"
+            keysProperty="aspectNamesKeys"
+            command="doDefault"
+            inputSize="40"
+            nullable="false"
+            label="Tipologia"/>
+    <fieldProperty
+            name="utente"
+            inputType="TEXT"
+            property="utenteSIGLA"
+            label="Utente"/>
+    <fieldProperty
+            name="data"
+            inputType="TEXT"
+            property="lastModificationDate"
+            formatName="timestamp"
+            label="Data"/>
+    <formFieldProperty
+            name="aspectName" />
+    <columnFieldProperty
+            name="aspectName" />
+    <columnSet
+            name="default" >
+        <columnFieldProperty
+                name="aspectName" />
+        <columnFieldProperty
+                name="nome" />
+        <columnFieldProperty
+                name="descrizione" />
+        <columnFieldProperty
+                name="utente"/>
+        <columnFieldProperty
+                name="data"/>
+    </columnSet>
+    <form
+            name="default" >
+        <formFieldProperty
+                name="aspectName" />
+        <formFieldProperty
+                name="nome" />
+        <formFieldProperty
+                name="descrizione" />
+        <formFieldProperty
+                name="file" />
+        <formFieldProperty
+                name="attivaFile" />
+    </form>
+
+</bulkInfo>

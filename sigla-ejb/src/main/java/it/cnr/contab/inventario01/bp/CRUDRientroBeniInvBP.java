@@ -1,6 +1,6 @@
 package it.cnr.contab.inventario01.bp;
 
-import it.cnr.contab.inventario01.bulk.AllegatoDocumentoTrasportoBulk;
+import it.cnr.contab.inventario01.bulk.AllegatoDocumentoRientroBulk;
 import it.cnr.contab.inventario01.bulk.DocumentoRientroBulk;
 import it.cnr.contab.inventario01.bulk.DocumentoRientroDettBulk;
 import it.cnr.jada.action.ActionContext;
@@ -26,7 +26,7 @@ import java.util.BitSet;
  * - Ogni bene può rientrare una sola volta
  * - Collegamento obbligatorio con documento di trasporto di riferimento
  */
-public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoDocumentoTrasportoBulk, DocumentoRientroBulk> {
+public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoDocumentoRientroBulk, DocumentoRientroBulk> {
 
     public CRUDRientroBeniInvBP() {
         super();
@@ -136,5 +136,7 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoDoc
             throws BusinessProcessException, RemoteException, ComponentException {
         return getComp().getListaBeniDaFarRientrare(userContext, getDoc(), beni_da_escludere, clauses);
     }
+
+
 
 }

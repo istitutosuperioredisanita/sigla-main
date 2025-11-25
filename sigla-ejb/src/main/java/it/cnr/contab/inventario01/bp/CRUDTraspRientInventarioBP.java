@@ -3,6 +3,7 @@ package it.cnr.contab.inventario01.bp;
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
 import it.cnr.contab.inventario00.bp.RigheInvDaFatturaCRUDController;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.inventario01.bulk.AllegatoDocTraspRientroBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.bulk.DocumentoTrasportoDettBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
@@ -15,7 +16,6 @@ import it.cnr.contab.reports.service.PrintService;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
-import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
@@ -23,12 +23,14 @@ import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.HttpActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
+import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.GenerazioneReportException;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.AbstractPrintBP;
 import it.cnr.jada.util.action.RemoteDetailCRUDController;
 import it.cnr.jada.util.action.SelectionListener;
+import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
 import org.apache.commons.io.IOUtils;
 
@@ -40,7 +42,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Stream;
 //riscrivi logica per la gestione degli allegati e dei file nel documentale azure in CRUDTraspRientInventarioBP come è stato fatto nel bp CaricFlStipBP
-public abstract class CRUDTraspRientInventarioBP<T extends AllegatoGenericoBulk, K extends Doc_trasporto_rientroBulk> extends AllegatiCRUDBP<T, K>
+public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRientroBulk, K extends Doc_trasporto_rientroBulk> extends AllegatiCRUDBP<T, K>
         implements SelectionListener {
 
     private static final DateFormat PDF_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
@@ -1397,4 +1399,13 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoGenericoBulk,
         return (doc == null || doc.getPgDocTrasportoRientro() == null);
     }
 
+
+    @Override
+    protected void completeAllegato(T allegato, StorageObject storageObject) throws ApplicationException {
+        Optional.ofNullable(storageObject.<String>getPropertyValue("sigla_commons_aspect:utente_applicativo"))
+                .ifPresent(s -> allegato.setUtenteSIGLA(s));
+        super.completeAllegato(allegato, storageObject);
+
+
+    }
 }
