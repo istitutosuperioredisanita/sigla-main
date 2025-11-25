@@ -2,15 +2,12 @@ package it.cnr.contab.inventario01.service;
 
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.si.spring.storage.StorageObject;
 import it.iss.si.dto.happysign.base.EnumEsitoFlowDocumentStatus;
 import it.iss.si.dto.happysign.request.GetDocumentDetailsRequest;
 import it.iss.si.dto.happysign.request.GetDocumentRequest;
 import it.iss.si.dto.happysign.request.GetStatusRequest;
 import it.iss.si.dto.happysign.response.GetDocumentDetailResponse;
 import it.iss.si.dto.happysign.response.GetDocumentResponse;
-import it.iss.si.dto.happysign.response.GetStatusResponse;
-import it.iss.si.service.HappySign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,8 +33,8 @@ public class DocTraspRientCronService {
     @Autowired(required = false)
     private it.iss.si.service.HappySignService happySignService;
 
-    @Autowired
-    private DocTraspRientCMISService docTrasportoRientroCMISService;
+   // @Autowired
+    //private DocTraspRientCMISService docTrasportoRientroCMISService;
 
     @Autowired
     private DocTraspRientFlowService docTraspRientFlowService;
@@ -52,8 +50,8 @@ public class DocTraspRientCronService {
         try {
             log.info("Inizio verifica documenti trasporto/rientro su HappySign");
 
-            List<Doc_trasporto_rientroBulk> listaDocumenti =
-                    docTraspRientFlowService.getDocumentiPredispostiAllaFirma();
+            List<Doc_trasporto_rientroBulk> listaDocumenti =new ArrayList<>();
+                    //docTraspRientFlowService.getDocumentiPredispostiAllaFirma();
 
             if (listaDocumenti == null || listaDocumenti.isEmpty()) {
                 log.info("Nessun documento da verificare");
@@ -192,7 +190,7 @@ public class DocTraspRientCronService {
             }
 
             CNRUserContext systemUserContext = getUserContext();
-
+            /*
             StorageObject so = docTrasportoRientroCMISService.salvaStampaDocumentoFirmatoSuCMIS(
                     getDocumentResponse.getDocument(),
                     documento,
@@ -203,6 +201,8 @@ public class DocTraspRientCronService {
             docTraspRientFlowService.aggiornaDocumentoFirmato(documento);
 
             log.info("Documento {} aggiornato a stato FIRMATO", documento.getPgDocTrasportoRientro());
+
+             */
 
         } catch (Exception e) {
             log.error("Errore salvataggio documento firmato", e);

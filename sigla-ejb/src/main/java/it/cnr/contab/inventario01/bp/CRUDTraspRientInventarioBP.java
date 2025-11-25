@@ -7,7 +7,6 @@ import it.cnr.contab.inventario01.bulk.AllegatoDocTraspRientroBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.bulk.DocumentoTrasportoDettBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
-import it.cnr.contab.inventario01.service.DocTraspRientCMISService;
 import it.cnr.contab.reports.bp.OfflineReportPrintBP;
 import it.cnr.contab.reports.bulk.Print_spoolerBulk;
 import it.cnr.contab.reports.bulk.Print_spooler_paramBulk;
@@ -20,7 +19,6 @@ import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
-import it.cnr.jada.action.HttpActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
@@ -31,11 +29,10 @@ import it.cnr.jada.util.action.AbstractPrintBP;
 import it.cnr.jada.util.action.RemoteDetailCRUDController;
 import it.cnr.jada.util.action.SelectionListener;
 import it.cnr.si.spring.storage.StorageObject;
-import it.cnr.si.spring.storage.StoreService;
-import org.apache.commons.io.IOUtils;
 
-import java.io.*;
-import java.nio.file.Files;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -258,10 +255,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         resetTabs();
     }
 
-    @Override
-    public StoreService getBeanStoreService(ActionContext actioncontext) throws BusinessProcessException{
-        return SpringUtil.getBean("docTraspRientCMISService", DocTraspRientCMISService.class);
-    }
     public boolean isGestioneInvioInFirmaAttiva() {
         return isGestioneInvioInFirmaAttiva;
     }
@@ -1153,6 +1146,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
 
     public void stampaDocTrasportoRientro(ActionContext actioncontext) throws Exception {
+        /*
         Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
         ((HttpActionContext)actioncontext).getResponse().setContentType("application/pdf");
         OutputStream os = ((HttpActionContext)actioncontext).getResponse().getOutputStream();
@@ -1167,6 +1161,8 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         }
 
         os.flush();
+
+         */
     }
 
     public File stampaDocTrasportoRientro(

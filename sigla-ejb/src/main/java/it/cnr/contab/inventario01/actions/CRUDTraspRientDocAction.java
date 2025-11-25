@@ -5,33 +5,34 @@ import it.cnr.contab.inventario01.bp.CRUDTraspRientInventarioBP;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.bulk.Stampa_doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
-import it.cnr.contab.inventario01.service.DocTraspRientCMISService;
 import it.cnr.contab.inventario01.service.DocTraspRientFirmatariService;
 import it.cnr.contab.inventario01.service.DocTraspRientHappySignService;
 import it.cnr.contab.reports.bp.ParametricPrintBP;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.action.HookForward;
-import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
-import it.cnr.jada.util.action.*;
+import it.cnr.jada.util.action.OptionBP;
+import it.cnr.jada.util.action.RicercaLiberaBP;
+import it.cnr.jada.util.action.SelezionatoreListaBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
-import it.cnr.si.spring.storage.StorageObject;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.List;
+import java.util.Objects;
 
 import static it.cnr.jada.util.action.FormController.VIEW;
 
@@ -611,7 +612,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     private void salvaStampaSuCMIS(ActionContext context, Doc_trasporto_rientroBulk doc,
                                    File pdfFile, boolean isFirmato)
             throws Exception {
-
+/*
         DocTraspRientCMISService storeService =
                 SpringUtil.getBean("docTraspRientCMISService", DocTraspRientCMISService.class);
 
@@ -660,7 +661,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                         storeService.getStorePath(doc)
                 );
             }
-        }
+        }*/
     }
 
     /**
