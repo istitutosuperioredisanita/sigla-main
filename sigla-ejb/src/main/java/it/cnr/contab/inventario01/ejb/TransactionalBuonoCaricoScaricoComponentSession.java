@@ -1451,4 +1451,23 @@ public Ass_inv_bene_fatturaBulk sdoppiaAssociazioneFor(UserContext param0,Fattur
 		}
 	}
 
+	@Override
+	public boolean isPresentiAccessoriPerBeni(UserContext userContext, Buono_carico_scaricoBulk buonoCs) throws RemoteException, ComponentException,PersistencyException {
+		try {
+
+			return ((Boolean)invoke("isPresentiAccessoriPerBeni",new Object[] {
+					userContext,buonoCs})).booleanValue();
+		} catch(java.rmi.RemoteException e) {
+			throw e;
+		} catch(java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch(it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch(Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
+
 }

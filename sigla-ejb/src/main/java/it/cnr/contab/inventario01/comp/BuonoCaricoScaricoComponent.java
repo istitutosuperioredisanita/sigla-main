@@ -7615,7 +7615,7 @@ public RemoteIterator cercaBeniAssociabili(UserContext userContext,Ass_inv_bene_
 	 public void scaricaTuttiBeniDef(UserContext userContext,Buono_carico_scaricoBulk buonoS ) throws ComponentException {
 		try {
 				Boolean accesorio_presente;
-			    Inventario_beni_apgHome homebeni =(Inventario_beni_apgHome)getHome(userContext,Inventario_beni_apgBulk.class); 
+			    Inventario_beni_apgHome homebeni =(Inventario_beni_apgHome)getHome(userContext,Inventario_beni_apgBulk.class);
 				SQLBuilder sql = homebeni.createSQLBuilder();
 				sql.addTableToHeader("INVENTARIO_BENI");
 				sql.addSQLClause("AND","INVENTARIO_BENI.PG_INVENTARIO",SQLBuilder.EQUALS, buonoS.getInventario().getPg_inventario());
@@ -7741,6 +7741,22 @@ public RemoteIterator cercaBeniAssociabili(UserContext userContext,Ass_inv_bene_
 		} catch (SQLException ex) {
 			throw handleException(ex);
 		}
+	}
+	public boolean isPresentiAccessoriPerBeni(UserContext userContext,Buono_carico_scaricoBulk buonoCs) throws ComponentException, PersistencyException {
+
+		Inventario_beniHome homebeni =(Inventario_beniHome)getHome(userContext,Inventario_beniBulk.class);
+		SQLBuilder sql = homebeni.createSQLBuilder();
+		sql.addTableToHeader("INVENTARIO_BENI_APG");
+		sql.addSQLJoin("INVENTARIO_BENI.PG_INVENTARIO","INVENTARIO_BENI_APG.PG_INVENTARIO");
+		sql.addSQLJoin("INVENTARIO_BENI.NR_INVENTARIO","INVENTARIO_BENI_APG.NR_INVENTARIO");
+
+		sql.addSQLClause("AND","INVENTARIO_BENI.FL_TOTALMENTE_SCARICATO",SQLBuilder.EQUALS,Inventario_beniBulk.ISNOTTOTALMENTESCARICATO);
+		sql.addSQLClause("AND","INVENTARIO_BENI.PROGRESSIVO",SQLBuilder.GREATER,0);
+		sql.addSQLClause("AND","INVENTARIO_BENI_APG.LOCAL_TRANSACTION_ID",SQLBuilder.EQUALS,buonoCs.getLocal_transactionID());
+
+		List beni = homebeni.fetchAll(sql);
+
+		return (beni!=null && !beni.isEmpty());
 	}
 
 

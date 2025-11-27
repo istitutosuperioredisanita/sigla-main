@@ -39,6 +39,7 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 
 /**
  * Bean implementation class for Enterprise Bean: CNRINVENTARIO01_EJB_BuonoCaricoScaricoComponentSession
@@ -1037,6 +1038,29 @@ public class BuonoCaricoScaricoComponentSessionBean extends it.cnr.jada.ejb.CRUD
 			throw uncaughtRuntimeException(param0,componentObj,e);
 		} catch(Error e) {
 			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
+	@Override
+	public boolean isPresentiAccessoriPerBeni(UserContext param0, Buono_carico_scaricoBulk param1) throws RemoteException, ComponentException, PersistencyException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			boolean result = ((BuonoCaricoScaricoComponent)componentObj).isPresentiAccessoriPerBeni(param0,param1);
+			component_invocation_succes(param0,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(param0,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(param0,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		} catch (PersistencyException e) {
+			component_invocation_failure(param0,componentObj);
+			throw e;
 		}
 	}
 
