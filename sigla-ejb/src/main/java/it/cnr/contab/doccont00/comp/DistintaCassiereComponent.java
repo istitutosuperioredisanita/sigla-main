@@ -5568,7 +5568,7 @@ public class DistintaCassiereComponent extends
                             if  (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.BONIFICOESTEROEURO)) {
                                 //gestione invio SEPA da concordare con la banca al momento non gestito
                                 sepa.setBic(Optional.ofNullable(docContabile.getBic())
-                                        .filter(s -> Optional.ofNullable(docContabile.getCodiceIban()).isPresent())
+                                        //.filter(s -> Optional.ofNullable(docContabile.getCodiceIban()).isPresent())
                                         .filter(s -> patternBic.matcher(s).find())
                                         .orElseThrow(() -> new ApplicationMessageFormatException("Impossibile generare il flusso, codice BIC: {0} non valido " +
                                                 "sul Mandato {1}/{2}/{3}",
