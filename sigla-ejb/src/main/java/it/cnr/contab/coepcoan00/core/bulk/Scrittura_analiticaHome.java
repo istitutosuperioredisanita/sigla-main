@@ -96,7 +96,7 @@ public class Scrittura_analiticaHome extends BulkHome {
 
 	public List<Scrittura_analiticaBulk> findByDocumentoCoge(IDocumentoCogeBulk documentoCogeBulk) throws PersistencyException {
 		SQLBuilder sql = this.createSQLBuilder();
-		sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, documentoCogeBulk.getEsercizio());
+		sql.addClause(FindClause.AND, "esercizio_documento_amm", SQLBuilder.EQUALS, documentoCogeBulk.getEsercizio());
 		sql.addClause(FindClause.AND, "cd_cds_documento", SQLBuilder.EQUALS, documentoCogeBulk.getCd_cds());
 
 		if (documentoCogeBulk.getCd_tipo_doc().equals(TipoDocumentoEnum.LIQUIDAZIONE_IVA.getValue())) {

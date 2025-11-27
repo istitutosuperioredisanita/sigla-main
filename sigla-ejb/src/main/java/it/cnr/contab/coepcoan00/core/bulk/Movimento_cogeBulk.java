@@ -30,6 +30,7 @@ import it.cnr.jada.util.OrderedHashtable;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Movimento_cogeBulk extends Movimento_cogeBase {
 
@@ -280,16 +281,14 @@ public class Movimento_cogeBulk extends Movimento_cogeBase {
      */
     public String getPartita() {
         return Optional.ofNullable(getCd_tipo_documento())
-                .map(s -> {
-                    return Arrays.asList(
-                            TipoDocumentoEnum.fromValue(s).getLabel(),
-                            Optional.ofNullable(getEsercizio_documento()).map(String::valueOf).orElse(null),
-                            Optional.ofNullable(getCd_cds_documento()).orElse(null),
-                            Optional.ofNullable(getPg_numero_documento()).map(String::valueOf).orElse(null)
-                    ).stream().filter(Objects::nonNull).collect(
-                            Collectors.joining("/")
-                    );
-                }).orElse(null);
+                .map(s -> Stream.of(
+                        TipoDocumentoEnum.fromValue(s).getLabel(),
+                        Optional.ofNullable(getEsercizio_documento()).map(String::valueOf).orElse(null),
+                        getCd_cds_documento(),
+                        Optional.ofNullable(getPg_numero_documento()).map(String::valueOf).orElse(null)
+                ).filter(Objects::nonNull).collect(
+                        Collectors.joining("/")
+                )).orElse(null);
     }
 
     /**

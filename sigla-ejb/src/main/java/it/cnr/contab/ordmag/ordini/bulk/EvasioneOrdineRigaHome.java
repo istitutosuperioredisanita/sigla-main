@@ -21,16 +21,12 @@
  */
 package it.cnr.contab.ordmag.ordini.bulk;
 import java.sql.Connection;
-import java.util.Collection;
 import java.util.List;
 
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_IBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagBulk;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
-import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
@@ -42,7 +38,7 @@ public class EvasioneOrdineRigaHome extends BulkHome {
 		super(EvasioneOrdineRigaBulk.class, conn, persistentCache);
 	}
 
-	public List<EvasioneOrdineRigaBulk> findByConsegna(OrdineAcqConsegnaBulk consegna) throws PersistencyException {
+	private List<EvasioneOrdineRigaBulk> findEvasioniByConsegna(OrdineAcqConsegnaBulk consegna) throws PersistencyException {
 		SQLBuilder sqlBuilder = createSQLBuilder();
 		sqlBuilder.addSQLClause(FindClause.AND, "EVASIONE_ORDINE_RIGA.CD_CDS_ORDINE", SQLBuilder.EQUALS, consegna.getCdCds());
 		sqlBuilder.addSQLClause(FindClause.AND, "EVASIONE_ORDINE_RIGA.CD_UNITA_OPERATIVA", SQLBuilder.EQUALS, consegna.getCdUnitaOperativa());
@@ -55,6 +51,10 @@ public class EvasioneOrdineRigaHome extends BulkHome {
 		return fetchAll(sqlBuilder);
 	}
 
+    public EvasioneOrdineRigaBulk findByConsegna(OrdineAcqConsegnaBulk consegna) throws PersistencyException {
+        List<EvasioneOrdineRigaBulk> evasioneOrdineRigaBulkList = this.findEvasioniByConsegna(consegna);
+        return evasioneOrdineRigaBulkList.stream().findFirst().orElse(null);
+    }
 
 	public List<EvasioneOrdineRigaBulk> findByMovimentiMag(MovimentiMagBulk movimentiMagBulk) throws PersistencyException {
 		SQLBuilder sqlBuilder = createSQLBuilder();

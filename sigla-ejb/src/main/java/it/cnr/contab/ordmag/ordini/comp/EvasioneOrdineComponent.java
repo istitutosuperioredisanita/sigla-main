@@ -364,7 +364,7 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 			}
 
             for (EvasioneOrdineRigaBulk rigaEvasione : evasioneOrdine.getEvasioneOrdineRigheColl())
-                Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().createScrittura(userContext, rigaEvasione.getOrdineAcqConsegna());
+                Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().createScrittura(userContext, rigaEvasione);
 
 			if (!listaMovimentiScarico.isEmpty()) {
 				try {

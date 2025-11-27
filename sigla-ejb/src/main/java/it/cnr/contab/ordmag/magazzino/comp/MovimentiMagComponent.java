@@ -854,19 +854,20 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 	}
 
     private void annullaTransitoBeni(UserContext userContext, MovimentiMagBulk movimentoDaAnnullare) throws ComponentException, PersistencyException {
-
         //Cerco il transito per procedere al suo annullamento
         final Transito_beni_ordiniHome transitoBeniOrdiniHome = Optional.ofNullable(getHome(userContext, Transito_beni_ordiniBulk.class))
                 .filter(Transito_beni_ordiniHome.class::isInstance)
                 .map(Transito_beni_ordiniHome.class::cast)
                 .orElseThrow(() -> new ComponentException("Transito_beni_ordiniHome not found!"));
-        final List<Transito_beni_ordiniBulk> transitoBeniOrdiniBulks =
-                transitoBeniOrdiniHome.findTransitoBeniByMovimentoMag(movimentoDaAnnullare)
-                        .stream()
-                        .peek(transitoBeniOrdiniBulk -> {
-                            transitoBeniOrdiniBulk.setStato(OrdineAcqConsegnaBulk.STATO_ANNULLATA);
-                            transitoBeniOrdiniBulk.setToBeUpdated();
-                        }).collect(Collectors.toList());
+        List<Transito_beni_ordiniBulk> transitoBeniOrdiniBulks =
+                transitoBeniOrdiniHome.findTransitoBeniByMovimentoMag(movimentoDaAnnullare);
+        if (transitoBeniOrdiniBulks.stream().anyMatch(Transito_beni_ordiniBulk::isStatoTrasferito))
+            throw new ApplicationException("Operazione non possibile! Il bene associato al movimento "+movimentoDaAnnullare.getPgMovimento()+" risulta essere inventariato.");
+        transitoBeniOrdiniBulks = transitoBeniOrdiniBulks.stream()
+            .peek(transitoBeniOrdiniBulk -> {
+                transitoBeniOrdiniBulk.setStato(OrdineAcqConsegnaBulk.STATO_ANNULLATA);
+                transitoBeniOrdiniBulk.setToBeUpdated();
+            }).collect(Collectors.toList());
         if (!transitoBeniOrdiniBulks.isEmpty())
             super.modificaConBulk(userContext, transitoBeniOrdiniBulks.toArray(new Transito_beni_ordiniBulk[transitoBeniOrdiniBulks.size()]));
     }

@@ -79,6 +79,7 @@ public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase implements IDoc
 	private BulkList<OrdineAcqConsegnaEcoBulk> righeEconomica = new BulkList<>();
     private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
     private Scrittura_analiticaBulk scrittura_analitica;
+    private EvasioneOrdineRigaBulk evasioneOrdineRigaBulk;
 
 	public final static Dictionary OPERAZIONE_EVASIONE_CONSEGNA;
 
@@ -761,5 +762,13 @@ public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase implements IDoc
     @Override
     public Timestamp getDt_a_competenza_coge() {
         return this.getDt_contabilizzazione();
+    }
+
+    public EvasioneOrdineRigaBulk getEvasioneOrdineRigaBulk() {
+        return evasioneOrdineRigaBulk;
+    }
+
+    public void setEvasioneOrdineRigaBulk(EvasioneOrdineRigaBulk evasioneOrdineRigaBulk) {
+        this.evasioneOrdineRigaBulk = evasioneOrdineRigaBulk;
     }
 }

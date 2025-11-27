@@ -37,14 +37,16 @@ import static org.junit.Assert.*;
 
 /**
  * Test di:
- * 1) creazione ordine con 2 righe consegna
- * 2) evasione riga consegna nr.1
- * 3) annullamento evasione riga consegna nr.1
- * 4) nuova evasione riga consegna nr.1
- * 5) evasione riga consegna nr.2
- * 6) registrazione fattura con riscontro valore su riga consegna nr.2 con Fattura di importo superiore all’ordine e dettaglio fatt. in attesa nota credito
- * 7) modifica fattura con annullamento riscontro valore
- * 8) registrazione nota credito di annullamento totale fattura creata
+ * 1) creazione ordine con 1 riga consegna con bene inventariale
+ * 2) evasione riga consegna
+ * 3) verifica scrittura economica/analitica su consegna
+ * 4) verifica inserimento bene in transito
+ * 5) annullamento evasione riga consegna
+ * 6) verifica annullamento bene in transito
+ * 7) nuova evasione riga consegna
+ * 8) verifica inserimento bene in transito e completamento per successiva inventariazione
+ * 9) inventariazione bene in transito
+ * 10) annullamento evasione riga consegna non consentita per bene inventariato
  */
 public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
     private static SharedResource sharedResource;
@@ -70,6 +72,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
     public static final String AMM_INVENT = "0.AMM.INVENT";
     public static final String AMM_INVENT_ORDINI = "0.AMM.INVENT.ORDINI";
     public static final String AMM_INVENT_ORDINI_TRANSITO = "0.AMM.INVENT.ORDINI.BENI_TRANSITO";
+    public static final String AMM_INVENT_ORDINI_INVENTARIAZIONE = "0.AMM.INVENT.ORDINI.INVENTARIAZIONE";
 
     public static final String MAG = "0.MAG";
     public static final String MAG_ANNULLAMENTO = "0.MAG.ANNULLAMENTO";
@@ -103,13 +106,14 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         doLoginUO(UO, CDR);
     }
 
+
     /**
-     * Test Creazione Progetto
+     * 1) creazione ordine con 1 riga consegna con bene inventariale
      */
     @Test
     @RunAsClient
     @OperateOnDeployment(TEST_H2)
-    @InSequence(302)
+    @InSequence(2)
     public void testCreaOrdine() {
         switchToFrameDesktop();
         switchToFrameMenu();
@@ -253,10 +257,13 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         alert.accept();
     }
 
+    /**
+     * 2) evasione riga consegna
+     */
     @Test
     @RunAsClient
     @OperateOnDeployment(TEST_H2)
-    @InSequence(303)
+    @InSequence(3)
     public void testEvasioneConsegna001() {
         browser.switchTo().parentFrame();
         switchToFrameMenu();
@@ -312,10 +319,13 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         alert.accept();
     }
 
+    /**
+     * 3) verifica scrittura economica/analitica su consegna
+     */
     @Test
     @RunAsClient
     @OperateOnDeployment(TEST_H2)
-    @InSequence(304)
+    @InSequence(4)
     public void testVerificaScritturaOrdine001() {
         //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
         browser.switchTo().parentFrame();
@@ -345,13 +355,27 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
         alert.accept();
 
-        //Vado sul dettaglio
+        //Vado sul dettaglio analitico a livello di Ordine
+        doClickButton("doTab('tab','tabOrdineResultDetailEcoCoge')");
+        doSelectTableRow("main.Dati Analitici",0);
+
+        assertEquals("A22012", getTableColumnElement("main.Dati Analitici",0,1).getText());
+        assertEquals(" ", getTableColumnElement("main.Dati Analitici",0,2).getText());
+        assertEquals(" ", getTableColumnElement("main.Dati Analitici",0,3).getText());
+        assertEquals(" ", getTableColumnElement("main.Dati Analitici",0,4).getText());
+        assertEquals("183,00", getTableColumnElement("main.Dati Analitici",0,5).getText());
+        assertThrows("Cannot find Element <tr> with tableName main.Dati Analitici and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.Dati Analitici",1));
+
+        //Vado sul dettaglio a livello riga Ordine
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
         doSelectTableRow("main.Righe",0);
 
         doClickButton("doTab('tabOrdineAcqDettagli','tabOrdineRigaResultDetailEcoCoge')");
 
         assertEquals("A22012", getGrapheneElement("main.Righe.find_voce_ep.cd_voce_ep").getAttribute("value"));
+        assertEquals("183,00", getGrapheneElement("imCostoEcoConsegne").getAttribute("value"));
+        assertEquals("0,00", getGrapheneElement("imCostoEcoRipartitoConsegne").getAttribute("value"));
+        assertEquals("0,00", getGrapheneElement("imCostoEcoDaRipartireConsegne").getAttribute("value"));
 
         assertThrows("Cannot find Element <tr> with tableName main.Righe.Dati Coge/Coan and numberRow: 0", RuntimeException.class, () -> getTableRowElement("main.Righe.Dati Coge/Coan", 0));
 
@@ -404,10 +428,13 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         doClickButton("doChiudiForm()");
     }
 
+    /**
+     * 4) verifica inserimento bene in transito
+     */
     @Test
     @RunAsClient
     @OperateOnDeployment(TEST_H2)
-    @InSequence(305)
+    @InSequence(5)
     public void testVerificaBeneInTransito001() {
         //Verifico che il bene sia in transito
         browser.switchTo().parentFrame();
@@ -460,13 +487,13 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
     }
 
     /**
-     * Test Evasione Consegne di Progetto creato con test precedente
+     * 5) annullamento evasione riga consegna
      */
     @Test
     @RunAsClient
     @OperateOnDeployment(TEST_H2)
-    @InSequence(306)
-    public void testAnnullaEvasioneConsegna() {
+    @InSequence(6)
+    public void testAnnullaEvasioneConsegna001() {
         browser.switchTo().parentFrame();
         switchToFrameMenu();
         doApriMenu(MAG);
@@ -499,7 +526,8 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
                 .map(GrapheneElement.class::cast)
                 .filter(rowElement -> {
                     try {
-                        return CD_NUMERATORE.equals(getTableColumnElement(rowElement, 18).getText()) &&
+                        return getTableColumnElement(rowElement, 17).getText().contains("2025") &&
+                                CD_NUMERATORE.equals(getTableColumnElement(rowElement, 18).getText()) &&
                                 pgOrdineCreated.equals(getTableColumnElement(rowElement, 19).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 20).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 21).getText());
@@ -520,4 +548,498 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         doClickButton("doChiudiForm()");
         doClickButton("doChiudiForm()");
     }
+
+    /**
+     * 6) verifica annullamento bene in transito
+     */
+    @Test
+    @RunAsClient
+    @OperateOnDeployment(TEST_H2)
+    @InSequence(7)
+    public void testVerificaBeneInTransito002() {
+        //Verifico che il bene sia in transito
+        browser.switchTo().parentFrame();
+        switchToFrameMenu();
+        doSelezionaMenu(AMM_INVENT_ORDINI_TRANSITO);
+
+        browser.switchTo().parentFrame();
+        switchToFrameWorkspace();
+
+        //Ricerco l’unico bene in transito
+        doClickButton("doCerca()");
+        Alert alert = browser.switchTo().alert();
+        assertEquals(AlertMessage.MESSAGE_RICERCA_NO_RECORD.value(), alert.getText());
+        alert.accept();
+
+        doClickButton("doChiudiForm()");
+    }
+
+    /**
+     * 7) nuova evasione riga consegna
+     */
+    @Test
+    @RunAsClient
+    @OperateOnDeployment(TEST_H2)
+    @InSequence(8)
+    public void testEvasioneConsegna002() {
+        browser.switchTo().parentFrame();
+        switchToFrameMenu();
+        doSelezionaMenu(ORD_EVAORD);
+
+        browser.switchTo().parentFrame();
+        switchToFrameWorkspace();
+
+        //Scelgo Unità operativa: DRUE
+        getGrapheneElement("main.findUnitaOperativaOrd.cdUnitaOperativa").writeIntoElement(CD_UNITA_OPERATIVA);
+        doClickButton("doSearch(main.findUnitaOperativaOrd)");
+
+        //Scelgo Magazzino: PT
+        doClickButton("doBlankSearch(main.findMagazzino)");
+        getGrapheneElement("main.findMagazzino.cdMagazzino").writeIntoElement(CD_MAGAZZINO);
+        doClickButton("doSearch(main.findMagazzino)");
+
+        //Data Bolla: Oggi
+        getGrapheneElement("main.dataBolla").writeIntoElement(DATA_ODIERNA);
+        doClickButton("doOnDtBollaChange");
+
+        //Numero Bolla: 7
+        getGrapheneElement("main.numeroBolla").writeIntoElement("10");
+
+        //Data Consegna: Oggi
+        getGrapheneElement("main.dataConsegna").writeIntoElement(DATA_ODIERNA);
+        doClickButton("doOnDtConsegnaChange");
+
+        //Eseguo la ricerca
+        doClickButton("doCercaConsegneDaEvadere");
+
+        String pgOrdineCreated = sharedResource.getVal01();
+
+        //Trovo le mie due righe di consegna dell’ordine creato con test precedente
+        GrapheneElement rowElement1 = null;
+        if (getTableColumnElement("main.ConsegneDaEvadere", 0, 1).getText().equals("2025/" + CD_NUMERATORE + "/" + pgOrdineCreated + "/1/1"))
+            rowElement1 = getTableRowElement("main.ConsegneDaEvadere", 0);
+        else if (getTableColumnElement("main.ConsegneDaEvadere", 1, 1).getText().equals("2025/" + CD_NUMERATORE + "/" + pgOrdineCreated + "/1/1"))
+            rowElement1 = getTableRowElement("main.ConsegneDaEvadere", 1);
+        else
+            Assert.fail("Riga consegna 1 non individuata");
+
+        assertThrows("Cannot find Element <tr> with tableName main.ConsegneDaEvadere and numberRow: 1", RuntimeException.class, () -> getTableRowElement("main.ConsegneDaEvadere", 1));
+
+        //Scelgo la prima consegna
+        rowElement1.click();
+        doSelectTableRow(rowElement1, "main.ConsegneDaEvadere");
+
+        //Salvo
+        doClickButton("doSalva()");
+        Alert alert = browser.switchTo().alert();
+        assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
+        alert.accept();
+    }
+
+    /**
+     * 8) verifica inserimento bene in transito e completamento per successiva inventariazione
+     */
+    @Test
+    @RunAsClient
+    @OperateOnDeployment(TEST_H2)
+    @InSequence(9)
+    public void testCompletaBeneInTransito001() {
+        //Verifico che il bene sia in transito
+        browser.switchTo().parentFrame();
+        switchToFrameMenu();
+        doSelezionaMenu(AMM_INVENT_ORDINI_TRANSITO);
+
+        browser.switchTo().parentFrame();
+        switchToFrameWorkspace();
+
+        //Ricerco l’unico bene in transito
+        doClickButton("doCerca()");
+        Alert alert = browser.switchTo().alert();
+        assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
+        alert.accept();
+
+        assertEquals("Inserito", getGrapheneElement("main.stato").getAttribute("value"));
+
+        String pgOrdineCreated = sharedResource.getVal01();
+        assertEquals("2025/" + CD_NUMERATORE + "/" + pgOrdineCreated + "/1/1", getGrapheneElement("main.ordine").getAttribute("value"));
+
+        //Modifico il campo condizioni bene mettendolo a Ottimo (0)
+        Select select = new Select(getGrapheneElement("main.condizioni"));
+        select.selectByValue("0");
+
+        //Valorizzo il campo ubicazione con il valore 1
+        doClickButton("doBlankSearch(main.find_ubicazione)");
+        getGrapheneElement("main.find_ubicazione.cd_ubicazione").writeIntoElement("1");
+        doClickButton("doSearch(main.find_ubicazione)");
+
+        //Valorizzo il campo Assegnatario con il valore 1
+        doClickButton("doBlankSearch(main.find_assegnatario)");
+        getGrapheneElement("main.find_assegnatario.cd_terzo").writeIntoElement("1");
+        doClickButton("doSearch(main.find_assegnatario)");
+
+        //Salvo
+        doClickButton("doSalva()");
+        alert = browser.switchTo().alert();
+        assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), alert.getText());
+        alert.accept();
+
+        //Il transito del bene deve acquisita stato "Completo"
+        assertEquals("Completo", getGrapheneElement("main.stato").getAttribute("value"));
+
+        doClickButton("doChiudiForm()");
+    }
+
+    /**
+     * 9) verifica inserimento bene in transito e completamento per successiva inventariazione
+     */
+    @Test
+    @RunAsClient
+    @OperateOnDeployment(TEST_H2)
+    @InSequence(10)
+    public void testInventariazioneBeneInTransito001() {
+        //Verifico che il bene sia in transito
+        browser.switchTo().parentFrame();
+        switchToFrameMenu();
+        doSelezionaMenu(AMM_INVENT_ORDINI_INVENTARIAZIONE);
+
+        browser.switchTo().parentFrame();
+        switchToFrameWorkspace();
+
+        String pgOrdineCreated = sharedResource.getVal01();
+
+        //Seleziono il bene messo in transito dalla consegna n. 1
+        Optional<GrapheneElement> element = browser.findElements(By.tagName("tr"))
+                .stream()
+                .filter(GrapheneElement.class::isInstance)
+                .map(GrapheneElement.class::cast)
+                .filter(rowElement -> {
+                    try {
+                        return getTableColumnElement(rowElement, 12).getText().contains("2025") &&
+                                CD_NUMERATORE.equals(getTableColumnElement(rowElement, 13).getText()) &&
+                                pgOrdineCreated.equals(getTableColumnElement(rowElement, 14).getText()) &&
+                                "1".equals(getTableColumnElement(rowElement, 15).getText()) &&
+                                "1".equals(getTableColumnElement(rowElement, 16).getText());
+                    } catch (java.lang.RuntimeException ex) {
+                        return false;
+                    }
+                })
+                .findAny();
+
+        Assert.assertTrue(element.isPresent());
+
+        element.get().findElement(By.name("mainTable.selection")).click();
+
+        doClickButton("doInventaria");
+
+        //Data Carico: Oggi
+        getGrapheneElement("main.data_registrazione").writeIntoElement(DATA_ODIERNA);
+        doClickButton("doOnData_registrazioneChange");
+
+        getGrapheneElement("main.ds_buono_carico_scarico").writeIntoElement("Inventariazione di test");
+
+        //Salvo
+        doClickButton("doSalva()");
+
+        Alert alert = browser.switchTo().alert();
+        assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
+        alert.accept();
+
+        doClickButton("doChiudiForm()");
+        doClickButton("doChiudiForm()");
+    }
+
+    /**
+     * 10) annullamento evasione riga consegna non consentita per bene inventariato
+     */
+    @Test
+    @RunAsClient
+    @OperateOnDeployment(TEST_H2)
+    @InSequence(11)
+    public void testAnnullaEvasioneConsegna002() {
+        browser.switchTo().parentFrame();
+        switchToFrameMenu();
+        doSelezionaMenu(MAG_ANNULLAMENTO_M);
+
+        browser.switchTo().parentFrame();
+        switchToFrameWorkspace();
+
+        //Scelgo Unità operativa: DRUE
+        doClickButton("doBlankSearch(main.findUnitaOperativaOrd)");
+        getGrapheneElement("main.findUnitaOperativaOrd.cdUnitaOperativa").writeIntoElement(CD_UNITA_OPERATIVA);
+        doClickButton("doSearch(main.findUnitaOperativaOrd)");
+
+        //Scelgo Magazzino: PT
+        doClickButton("doBlankSearch(main.findMagazzino)");
+        getGrapheneElement("main.findMagazzino.cdMagazzino").writeIntoElement(CD_MAGAZZINO);
+        doClickButton("doSearch(main.findMagazzino)");
+
+        String pgOrdineCreated = sharedResource.getVal01();
+        getGrapheneElement("main.daNumeroOrdine").writeIntoElement(pgOrdineCreated);
+        getGrapheneElement("main.aNumeroOrdine").writeIntoElement(pgOrdineCreated);
+
+        doClickButton("doCerca");
+
+        //Seleziono la prima riga ordini
+        Optional<GrapheneElement> element = browser.findElements(By.tagName("tr"))
+                .stream()
+                .filter(GrapheneElement.class::isInstance)
+                .map(GrapheneElement.class::cast)
+                .filter(rowElement -> {
+                    try {
+                        return getTableColumnElement(rowElement, 17).getText().contains("2025") &&
+                                CD_NUMERATORE.equals(getTableColumnElement(rowElement, 18).getText()) &&
+                                pgOrdineCreated.equals(getTableColumnElement(rowElement, 19).getText()) &&
+                                "1".equals(getTableColumnElement(rowElement, 20).getText()) &&
+                                "1".equals(getTableColumnElement(rowElement, 21).getText());
+                    } catch (java.lang.RuntimeException ex) {
+                        return false;
+                    }
+                })
+                .findAny();
+
+        Assert.assertTrue(element.isPresent());
+
+        element.get().findElement(By.name("mainTable.selection")).click();
+
+        //Digito il pulsante ‘Annulla Movimenti Selezionati’.
+        doClickButton("submitForm('doAnnullaMovimenti');");
+
+        Alert alert = browser.switchTo().alert();
+        assertEquals("Operazione non possibile! Il bene associato al movimento " + getTableColumnElement(element.get(), 1).getText() + " risulta essere inventariato.", alert.getText());
+        alert.accept();
+
+        //Chiudo la form (2 volte perchè sono 2 BP aperti)
+        doClickButton("doChiudiForm()");
+        doClickButton("doChiudiForm()");
+    }
+
+    @Test
+    @RunAsClient
+    @OperateOnDeployment(TEST_H2)
+    @InSequence(12)
+    public void testRiscontroValore001() {
+        browser.switchTo().parentFrame();
+        switchToFrameMenu();
+        doApriMenu(AMM_FATTUR);
+        doApriMenu(AMM_FATTUR_FATPAS);
+        doSelezionaMenu(AMM_FATTUR_FATPAS_ELE);
+
+        browser.switchTo().parentFrame();
+        switchToFrameWorkspace();
+
+        //Ricerco la fattura SDI: 90000000002
+        getGrapheneElement("main.identificativoSdi").writeIntoElement("90000000004");
+
+        Select select = new Select(getGrapheneElement("main.statoDocumento"));
+        select.selectByValue("");
+
+        doClickButton("doCerca()");
+        Alert alert = browser.switchTo().alert();
+        assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
+        alert.accept();
+
+        //Clicco sul pulsante ‘Compila fattura’;
+        doClickButton("submitForm('doCompilaFattura')");
+
+        //Passo alla maschera di Registrazione Fattura
+        getGrapheneElement("comando.doYes").click();
+
+        //Sulla testata fattura indico lo stato ‘Liquidabile
+        select = new Select(getGrapheneElement("main.stato_liquidazione"));
+        select.selectByValue("LIQ");
+
+        //Indico ‘fattura da Ordini =Si
+        getGrapheneElement("main.flDaOrdini").click();
+
+        getGrapheneElement("main.ds_fattura_passiva").writeIntoElement("RISCONTRO VALORE TEST BENE INVENTARIALE");
+
+        //Passo alla tab ‘ordini’
+        doClickButton("doTab('tab','tabFatturaPassivaOrdini')");
+
+        //Effettuo la ricerca
+        doClickButton("submitForm('doSelezionaOrdini')");
+
+        String pgOrdineCreated = sharedResource.getVal01();
+
+        //Seleziono l'ordine creato
+        Optional<GrapheneElement> element = browser.findElements(By.tagName("tr"))
+                .stream()
+                .filter(GrapheneElement.class::isInstance)
+                .map(GrapheneElement.class::cast)
+                .filter(rowElement -> {
+                    try {
+                        return getTableColumnElement(rowElement, 3).getText().contains("2025") &&
+                                CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
+                                pgOrdineCreated.equals(getTableColumnElement(rowElement, 5).getText()) &&
+                                "1".equals(getTableColumnElement(rowElement, 6).getText()) &&
+                                "1".equals(getTableColumnElement(rowElement, 7).getText());
+                    } catch (java.lang.RuntimeException ex) {
+                        return false;
+                    }
+                })
+                .findAny();
+
+        Assert.assertTrue(element.isPresent());
+
+        element.get().findElement(By.name("mainTable.selection")).click();
+
+        doClickButton("submitForm('doMultipleSelection')");
+
+        //Ritorno sulla tab ordini, vedo la squadratura di 1,22 euro della fattura (in più) rispetto all’ordine;
+        doSelectTableRow("main.Ordini",0);
+
+        //Inserisco nella sezione ‘Rettifiche’ nel campo ‘Prezzzo Unitario’ l’importo: 149,00;
+        getGrapheneElement("main.Ordini.prezzoUnitarioRett").writeIntoElement("149,00");
+        doClickButton("confirmModalInputChange(this,'main.Ordini.prezzoUnitarioRett','doRettificaConsegna')");
+
+        //Digito ‘Fine riscontro a valore’ e mi sposto sulla tab ‘dettaglio’ dove mi è stato creato il dettaglio pari alla riga ordine (200 imponibile + 44 IVA).
+        doClickButton("submitForm('doConfermaRiscontroAValore')");
+
+        alert = browser.switchTo().alert();
+        assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
+        alert.accept();
+
+        doClickButton("doSalva()");
+
+        alert = browser.switchTo().alert();
+        assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
+        alert.accept();
+
+        //Vado sulla tab principale
+        doClickButton("doTab('tab','tabFatturaPassiva')");
+
+        //Registro il numero fattura creata
+        String pgFatturaCreated = getGrapheneElement("main.pg_fattura_passiva").getAttribute("value");
+        sharedResource.setVal02(pgFatturaCreated);
+
+        //Vado sulla tab economica per controllare scrittura
+        doClickButton("doTab('tab','tabEconomica')");
+        assertEquals("P00047", getTableColumnElement("main.Movimenti Dare",0,1).getText());
+        assertEquals("181,78", getTableColumnElement("main.Movimenti Dare",0,5).getText());
+
+        assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Dare' and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.Movimenti Dare",1));
+
+        assertEquals("P22012", getTableColumnElement("main.Movimenti Avere",0,1).getText());
+        assertEquals("149,00", getTableColumnElement("main.Movimenti Avere",0,5).getText());
+
+        assertEquals("P71012I", getTableColumnElement("main.Movimenti Avere",1,1).getText());
+        assertEquals("32,78", getTableColumnElement("main.Movimenti Avere",1,5).getText());
+
+        assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Avere' and numberRow: 2", RuntimeException.class, ()->getTableRowElement("main.Movimenti Avere",2));
+
+        //Vado sulla tab analitica per controllare scrittura che non deve esistere dato che la movimentazione avviene sulla consegna
+        doClickButton("doTab('tab','tabAnalitica')");
+        assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Analitici' and numberRow: 0", RuntimeException.class, ()->getTableRowElement("main.Movimenti Analitici",0));
+
+        doClickButton("doChiudiForm()");
+    }
+
+    @Test
+    @RunAsClient
+    @OperateOnDeployment(TEST_H2)
+    @InSequence(13)
+    public void testVerificaScritturaOrdine002() {
+        //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
+        browser.switchTo().parentFrame();
+        switchToFrameMenu();
+
+        doSelezionaMenu(ORD_ORDACQ_M);
+
+        browser.switchTo().parentFrame();
+        switchToFrameWorkspace();
+
+        //Ricerco l’ordine
+        doClickButton("doNuovaRicerca()");
+
+        doClickButton("doBlankSearch(main.findUnitaOperativaOrd)");
+        getGrapheneElement("main.findUnitaOperativaOrd.cdUnitaOperativa").writeIntoElement(CD_UNITA_OPERATIVA);
+        doClickButton("doSearch(main.findUnitaOperativaOrd)");
+
+        doClickButton("doBlankSearch(main.findNumerazioneOrd)");
+        getGrapheneElement("main.findNumerazioneOrd.cdNumeratore").writeIntoElement(CD_NUMERATORE);
+        doClickButton("doSearch(main.findNumerazioneOrd)");
+
+        String pgOrdineCreated = sharedResource.getVal01();
+        getGrapheneElement("main.numero").writeIntoElement(pgOrdineCreated);
+
+        doClickButton("doCerca()");
+        Alert alert = browser.switchTo().alert();
+        assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
+        alert.accept();
+
+        //Vado sul dettaglio
+        doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
+        doSelectTableRow("main.Righe",0);
+
+        doClickButton("doTab('tabOrdineAcqDettagli','tabOrdineRigaResultDetailEcoCoge')");
+
+        assertEquals("A22012", getGrapheneElement("main.Righe.find_voce_ep.cd_voce_ep").getAttribute("value"));
+        assertEquals("181,78", getGrapheneElement("imCostoEcoConsegne").getAttribute("value"));
+        assertEquals("0,00", getGrapheneElement("imCostoEcoRipartitoConsegne").getAttribute("value"));
+        assertEquals("0,00", getGrapheneElement("imCostoEcoDaRipartireConsegne").getAttribute("value"));
+
+        assertThrows("Cannot find Element <tr> with tableName main.Righe.Dati Coge/Coan and numberRow: 0", RuntimeException.class, ()->getTableRowElement("main.Righe.Dati Coge/Coan",0));
+
+        //Vado sulla tab ‘consegne’
+        doClickButton("doTab('tabOrdineAcqDettagli','tabOrdineConsegna')");
+
+        //Vado sulla tab ‘consegne’ e individuo la riga consegna n. 1
+        GrapheneElement rowElement1 = null;
+        if (getTableColumnElement("main.Righe.Consegne",0, 1).getText().equals("1"))
+            rowElement1 = getTableRowElement("main.Righe.Consegne",0);
+        else if (getTableColumnElement("main.Righe.Consegne",1, 1).getText().equals("1"))
+            rowElement1 = getTableRowElement("main.Righe.Consegne",1);
+        else
+            Assert.fail("Riga consegna 1 non individuata");
+
+        //Verifico che le righe di consegna n. 1 sia in stato ‘EVASA’ e ‘Associata Totalmente’ a Fattura.
+        assertEquals("Evasa", getTableColumnElement(rowElement1,5).getText());
+        assertEquals("Associata Totalmente", getTableColumnElement(rowElement1,6).getText());
+
+        rowElement1.click();
+
+        //Visualizzo le scritture di economica associate
+        doClickButton("submitForm('doVisualizzaEconomica');");
+
+        //Seleziono l'ultima scrittura che dovrebbe essere la rettifica valore
+        getTableRowElement("mainTable",2).click();
+
+        assertEquals("Si", getGrapheneElement("main.attiva").getText());
+        assertEquals("1,22", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
+        assertEquals("1,22", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
+
+        doClickButton("doTab('tab','tabDare')");
+        assertEquals("P00047", getTableColumnElement("main.MovimentiDare",0,1).getText());
+        assertEquals("1,22", getTableColumnElement("main.MovimentiDare",0,5).getText());
+        assertThrows("Cannot find Element <tr> with tableName main.MovimentiDare and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.MovimentiDare",1));
+
+        doClickButton("doTab('tab','tabAvere')");
+        assertEquals("A22012", getTableColumnElement("main.MovimentiAvere",0,1).getText());
+        assertEquals("1,22", getTableColumnElement("main.MovimentiAvere",0,5).getText());
+        assertThrows("Cannot find Element <tr> with tableName main.MovimentiAvere and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.MovimentiAvere",1));
+
+        doClickButton("doChiudiForm()");
+
+        //Passo alla ‘visualizzazione fattura collegata’
+        doClickButton("submitForm('doVisualizzaFattura');");
+
+        String pgFatturaCreated = sharedResource.getVal02();
+        assertEquals(pgFatturaCreated, getGrapheneElement("main.pg_fattura_passiva").getAttribute("value"));
+
+        doClickButton("doChiudiForm()");
+
+        //Passo alla ‘visualizzazione dei movimenti’
+        doClickButton("submitForm('doVisualizzaMovimento');");
+
+        assertEquals("C01", getTableColumnElement("mainTable",0,3).getText());
+        assertEquals("183", getTableColumnElement("mainTable",0,9).getText());
+
+        assertEquals("C20", getTableColumnElement("mainTable",1,3).getText());
+        assertEquals("1,22", getTableColumnElement("mainTable",1,9).getText());
+
+        assertThrows("Cannot find Element <tr> with tableName 'mainTable' and numberRow: 2", RuntimeException.class, ()->getTableRowElement("mainTable",2));
+
+        doClickButton("doChiudiForm()");
+    }
+
 }

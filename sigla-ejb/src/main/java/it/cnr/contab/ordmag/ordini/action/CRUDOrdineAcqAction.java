@@ -2322,7 +2322,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                 OggettoBulk oggettobulk = nbp.getModel();
 
                 CompoundFindClause clauses = new CompoundFindClause();
-                clauses.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getEsercizio());
+                clauses.addClause(FindClause.AND, "esercizio_documento_amm", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getEsercizio());
                 clauses.addClause(FindClause.AND, "cd_cds_documento", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getCd_cds());
                 clauses.addClause(FindClause.AND, "cdUnitaOperativa", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getCdUnitaOperativa());
                 clauses.addClause(FindClause.AND, "cdNumeratoreOrdine", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getCdNumeratoreOrdine());
@@ -2376,7 +2376,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                 OggettoBulk oggettobulk = nbp.getModel();
 
                 CompoundFindClause clauses = new CompoundFindClause();
-                clauses.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getEsercizio());
+                clauses.addClause(FindClause.AND, "esercizio_documento_amm", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getEsercizio());
                 clauses.addClause(FindClause.AND, "cd_cds_documento", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getCd_cds());
                 clauses.addClause(FindClause.AND, "cdUnitaOperativa", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getCdUnitaOperativa());
                 clauses.addClause(FindClause.AND, "cdNumeratoreOrdine", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getCdNumeratoreOrdine());

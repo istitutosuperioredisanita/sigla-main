@@ -499,7 +499,8 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
                 .map(GrapheneElement.class::cast)
                 .filter(rowElement -> {
                     try {
-                        return CD_NUMERATORE.equals(getTableColumnElement(rowElement, 18).getText()) &&
+                        return getTableColumnElement(rowElement, 17).getText().contains("2025") &&
+                                CD_NUMERATORE.equals(getTableColumnElement(rowElement, 18).getText()) &&
                                 pgOrdineCreated.equals(getTableColumnElement(rowElement, 19).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 20).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 21).getText());
@@ -1119,7 +1120,8 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
                 .map(GrapheneElement.class::cast)
                 .filter(rowElement -> {
                     try {
-                        return CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
+                        return getTableColumnElement(rowElement, 3).getText().contains("2025") &&
+                                CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
                                 pgOrdineCreated.equals(getTableColumnElement(rowElement, 5).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 6).getText()) &&
                                 "2".equals(getTableColumnElement(rowElement, 7).getText());
@@ -1140,7 +1142,8 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
                 .map(GrapheneElement.class::cast)
                 .anyMatch(rowElement -> {
                     try {
-                        return CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
+                        return getTableColumnElement(rowElement, 3).getText().contains("2025") &&
+                                CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
                                 pgOrdineCreated.equals(getTableColumnElement(rowElement, 5).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 6).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 7).getText());
@@ -1218,7 +1221,7 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
 
         assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Avere' and numberRow: 2", RuntimeException.class, ()->getTableRowElement("main.Movimenti Avere",2));
 
-        //Vado sulla tab analitica per controllare scrittura
+        //Vado sulla tab analitica per controllare scrittura analitica per maggior costo rilevato rispetto ordine
         doClickButton("doTab('tab','tabAnalitica')");
         assertEquals("C13003", getTableColumnElement("main.Movimenti Analitici",0,1).getText());
         assertEquals("Dare", getTableColumnElement("main.Movimenti Analitici",0,2).getText());

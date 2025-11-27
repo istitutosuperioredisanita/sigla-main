@@ -194,15 +194,35 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
 
         doClickButton("doCercaConsegneDaEvadere");
 
-        getTableRowElement("main.ConsegneDaEvadere",0).click();
-        doSelectTableRow("main.ConsegneDaEvadere",0);
+        //Trovo la riga della consegna 1 e 2 dell'ordine 2025/"+CD_NUMERATORE+"/2/1/1
+        String keyRowElement1 = "2025/"+CD_NUMERATORE+"/1/1/1";
+        String keyRowElement2 = "2025/"+CD_NUMERATORE+"/2/1/1";
+
+        GrapheneElement rowElement1=null, rowElement2=null;
+        for (int riga = 0; riga < 10; riga++) {
+            try {
+                if (getTableColumnElement("main.ConsegneDaEvadere", riga, 1).getText().equals(keyRowElement1))
+                    rowElement1 = getTableRowElement("main.ConsegneDaEvadere", riga);
+                else if (getTableColumnElement("main.ConsegneDaEvadere", riga, 1).getText().equals(keyRowElement2))
+                    rowElement2 = getTableRowElement("main.ConsegneDaEvadere", riga);
+            } catch (RuntimeException ignored) {
+            }
+        }
+
+        assertNotNull("Riga Consegna " + keyRowElement1 + " non individuata", rowElement1);
+        assertNotNull("Riga Consegna " + keyRowElement2 + " non individuata", rowElement2);
+
+        //Seleziono la prima consegna
+        rowElement1.click();
+        doSelectTableRow(rowElement1, "main.ConsegneDaEvadere");
 
         getGrapheneElement("main.ConsegneDaEvadere.quantitaEvasa").clear();
         getGrapheneElement("main.ConsegneDaEvadere.quantitaEvasa").writeIntoElement("1");
         doClickButton("confirmModalInputChange(this,'main.ConsegneDaEvadere.quantitaEvasa','doDefault')");
 
-        getTableRowElement("main.ConsegneDaEvadere",1).click();
-        doSelectTableRow("main.ConsegneDaEvadere",1);
+        //Seleziono la seconda consegna
+        rowElement2.click();
+        doSelectTableRow(rowElement2, "main.ConsegneDaEvadere");
 
         getGrapheneElement("main.ConsegneDaEvadere.quantitaEvasa").clear();
         getGrapheneElement("main.ConsegneDaEvadere.quantitaEvasa").writeIntoElement("1");
@@ -210,19 +230,19 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
 
         doClickButton("doSalva()");
         Alert alert = browser.switchTo().alert();
-        assertEquals("Per la consegna 2025/"+CD_NUMERATORE+"/2/1/1 è necessario indicare se bisogna solo sdoppiare la riga o anche evaderla forzatamente", alert.getText());
+        assertEquals("Per la consegna " + keyRowElement2 + " è necessario indicare se bisogna solo sdoppiare la riga o anche evaderla forzatamente", alert.getText());
         alert.accept();
 
-        getTableRowElement("main.ConsegneDaEvadere",1).click();
+        rowElement2.click();
         Select select = new Select(getGrapheneElement("main.ConsegneDaEvadere.operazioneQuantitaEvasaMinore"));
         select.selectByValue("C");
 
         doClickButton("doSalva()");
         alert = browser.switchTo().alert();
-        assertEquals("Per la consegna 2025/"+CD_NUMERATORE+"/1/1/1 è necessario indicare se bisogna solo sdoppiare la riga o anche evaderla forzatamente", alert.getText());
+        assertEquals("Per la consegna " + keyRowElement1 + " è necessario indicare se bisogna solo sdoppiare la riga o anche evaderla forzatamente", alert.getText());
         alert.accept();
 
-        getTableRowElement("main.ConsegneDaEvadere",0).click();
+        rowElement1.click();
         select = new Select(getGrapheneElement("main.ConsegneDaEvadere.operazioneQuantitaEvasaMinore"));
         select.selectByValue("C");
 
@@ -421,7 +441,8 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
                 .map(GrapheneElement.class::cast)
                 .filter(rowElement -> {
                     try {
-                        return CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
+                        return getTableColumnElement(rowElement, 3).getText().contains("2025") &&
+                                CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 5).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 6).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 7).getText());
@@ -442,7 +463,8 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
                 .map(GrapheneElement.class::cast)
                 .anyMatch(rowElement -> {
                     try {
-                        return CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
+                        return getTableColumnElement(rowElement, 3).getText().contains("2025") &&
+                                CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
                                 "2".equals(getTableColumnElement(rowElement, 5).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 6).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 7).getText());
@@ -660,7 +682,8 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
                 .map(GrapheneElement.class::cast)
                 .filter(rowElement -> {
                     try {
-                        return CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
+                        return getTableColumnElement(rowElement, 3).getText().contains("2025") &&
+                                CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
                                 "2".equals(getTableColumnElement(rowElement, 5).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 6).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 7).getText());
@@ -682,7 +705,8 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
                 .map(GrapheneElement.class::cast)
                 .anyMatch(rowElement -> {
                     try {
-                        return CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
+                        return getTableColumnElement(rowElement, 3).getText().contains("2025") &&
+                                CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 5).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 6).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 7).getText());
@@ -1060,7 +1084,8 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
                 .map(GrapheneElement.class::cast)
                 .filter(rowElement -> {
                     try {
-                        return CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
+                        return getTableColumnElement(rowElement, 3).getText().contains("2025") &&
+                                CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 5).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 6).getText()) &&
                                 "1".equals(getTableColumnElement(rowElement, 7).getText());

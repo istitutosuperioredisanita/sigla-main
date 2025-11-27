@@ -3156,6 +3156,18 @@
     <changeSet author="sigla" runOnChange="true" id="create-view-V_PARTITARIO_H2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_PARTITARIO_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_BUONO_CARICO_SCARICO_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_BUONO_CARICO_SCARICO.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_INVENTARIO_BENI_APG_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_INVENTARIO_BENI_APG.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_AMMORTAMENTO_BENI_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_AMMORTAMENTO_BENI_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_CONS_REGISTRO_INVENTARIO_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_CONS_REGISTRO_INVENTARIO_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
     <changeSet author="valentina.tomada" runOnChange="true" id="create-view-V_AMMORTAMENTO_BENI_DET">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_AMMORTAMENTO_BENI_DET.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>

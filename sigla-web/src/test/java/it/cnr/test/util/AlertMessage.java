@@ -22,6 +22,7 @@ public enum AlertMessage {
     SALVATAGGIO_ESEGUITO("Salvataggio eseguito in modo corretto."),
     OPERAZIONE_EFFETTUATA("Operazione Effettuata"),
     MESSAGE_RICERCA_MONO_RECORD("La ricerca ha fornito un solo risultato."),
+    MESSAGE_RICERCA_NO_RECORD("La ricerca non ha fornito alcun risultato."),
     MESSAGE_INDICARE_FASE_PROGETTO("Indicare almeno una fase di operatività del progetto.");
 
     private final String value;

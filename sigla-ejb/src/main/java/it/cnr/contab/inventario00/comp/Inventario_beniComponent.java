@@ -17,6 +17,8 @@
 
 package it.cnr.contab.inventario00.comp;
 
+import it.cnr.contab.coepcoan00.core.bulk.Chiusura_coepBase;
+import it.cnr.contab.coepcoan00.core.bulk.Chiusura_coepHome;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
@@ -759,52 +761,14 @@ public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserCon
 	  *					  FALSE altrimenti
 	  */
 	protected boolean isEsercizioCOEPChiuso(UserContext userContext) throws ComponentException {
+        boolean isChiusuraCoepDef = ((Chiusura_coepHome) getHome(userContext, Chiusura_coepBase.class))
+                .isChiusuraCoepDef(CNRUserContext.getEsercizio(userContext), CNRUserContext.getCd_cds(userContext));
 
-		LoggableStatement cs = null;
-		String status = null;
+        if (isChiusuraCoepDef)
+            return Boolean.TRUE;
 
-
-		try
-		{
-			// Controlla lo Stato 'C'
-			cs = new LoggableStatement(getConnection(userContext),"{ ? = call " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()
-					+	"CNRCTB200.isChiusuraCoepDef(?,?)}",false,this.getClass());
-
-			cs.registerOutParameter( 1, java.sql.Types.VARCHAR);
-			cs.setObject( 2, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext)	);
-			cs.setObject( 3, it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext)		);
-
-			cs.executeQuery();
-
-			status = new String(cs.getString(1));
-
-			if(status.compareTo("Y")==0){
-				return true;
-			}
-
-			// Resetta i parametri
-			cs.clearParameters();
-
-			// Controlla lo Stato 'P'
-			cs = new LoggableStatement(getConnection(userContext), "{ ? = call " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()
-					+	"CNRCTB200.isChiusuraCoepProva(?,?)}",false,this.getClass());
-
-			cs.registerOutParameter( 1, java.sql.Types.VARCHAR);
-			cs.setObject( 2, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext)	);
-			cs.setObject( 3, it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext)		);
-
-			cs.executeQuery();
-
-			status = new String(cs.getString(1));
-
-			if(status.compareTo("Y")==0){
-				return true;
-			}
-		} catch (java.sql.SQLException ex) {
-			throw handleException(ex);
-		}
-
-		return false;
+        return ((Chiusura_coepHome) getHome(userContext, Chiusura_coepBase.class))
+                .isChiusuraCoepProva(CNRUserContext.getEsercizio(userContext), CNRUserContext.getCd_cds(userContext));
 	}
 
 	protected boolean isInventarioChiuso(UserContext userContext) throws ComponentException {

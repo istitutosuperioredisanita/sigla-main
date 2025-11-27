@@ -7,6 +7,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         CRUDOrdineAcqBP001Test_IT.class,
         CRUDOrdineAcqBP002Test_IT.class,
-        CRUDOrdineAcqBP003Test_IT.class
+        CRUDOrdineAcqBP003Test_IT.class,
+        CRUDOrdineAcqBP004Test_IT.class
 })
 public class CRUDOrdineAcqBP001SuiteTest { }

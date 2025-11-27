@@ -954,6 +954,9 @@ public void callDoRiprocObb(
 {
 	try
 	{
+        if (((Configurazione_cnrHome)getHome(userContext, Configurazione_cnrBulk.class)).isAttivaEconomica(doc.getEsercizio()))
+            return;
+
 		LoggableStatement cs = new LoggableStatement(getConnection( userContext ), 
 			"call " +
 			it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() +			
@@ -983,7 +986,9 @@ public void callDoRiprocObb(
 	catch ( SQLException e )
 	{
 		throw handleException( e );
-	}	
+	} catch (PersistencyException e) {
+        throw new RuntimeException(e);
+    }
 }
 /** 
   *  riporta all'esercizio successivo di doc.contabile

@@ -30,7 +30,6 @@ import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
 import it.cnr.contab.config00.contratto.bulk.Dettaglio_contrattoBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaBulk;
@@ -831,7 +830,7 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 							});
 					myRigaEco.setImporto(myRigaEco.getImporto().add(el.getImporto()));
 				});
-		return result;
+        return result;
 	}
 
 	public java.math.BigDecimal getImImponibileConsegne() {
@@ -912,7 +911,8 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 	}
 
 	public BigDecimal getImCostoEcoDaRipartireConsegne() {
-		return Optional.ofNullable(this.getImCostoEcoConsegne()).orElse(BigDecimal.ZERO)
-				.subtract(Optional.ofNullable(this.getImCostoEcoRipartitoConsegne()).orElse(BigDecimal.ZERO));
+		return Optional.ofNullable(this.getVoce_ep()).map(ContoBulk::isAnaliticaEnabled).orElse(Boolean.FALSE)?
+                Optional.ofNullable(this.getImCostoEcoConsegne()).orElse(BigDecimal.ZERO)
+				.subtract(Optional.ofNullable(this.getImCostoEcoRipartitoConsegne()).orElse(BigDecimal.ZERO)):BigDecimal.ZERO;
 	}
 }

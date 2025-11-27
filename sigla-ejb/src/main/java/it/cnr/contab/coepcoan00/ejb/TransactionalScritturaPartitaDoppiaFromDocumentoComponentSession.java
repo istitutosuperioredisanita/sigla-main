@@ -20,6 +20,7 @@ package it.cnr.contab.coepcoan00.ejb;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
+import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 
@@ -303,6 +304,25 @@ public class TransactionalScritturaPartitaDoppiaFromDocumentoComponentSession ex
 
     @Override
     public ResultScrittureContabili createScrittura(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, RemoteException {
+        try {
+            return (ResultScrittureContabili)invoke("createScrittura", new Object[]{
+                    param0,
+                    param1});
+        } catch (RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public ResultScrittureContabili createScrittura(UserContext param0, EvasioneOrdineRigaBulk param1) throws ComponentException, RemoteException {
         try {
             return (ResultScrittureContabili)invoke("createScrittura", new Object[]{
                     param0,

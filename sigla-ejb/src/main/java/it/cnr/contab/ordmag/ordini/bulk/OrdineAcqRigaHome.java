@@ -144,7 +144,7 @@ public class OrdineAcqRigaHome extends BulkHome {
 				if (Optional.ofNullable(myBeneServizio.getCd_categoria_gruppo()).isPresent()) {
 					AssCatgrpInventVoceEpHome assCatgrpInventVoceEpHome = (AssCatgrpInventVoceEpHome) getHomeCache().getHome(AssCatgrpInventVoceEpBulk.class);
 					AssCatgrpInventVoceEpBulk result = assCatgrpInventVoceEpHome.findDefaultByCategoria(ordineRiga.getEsercizio(), myBeneServizio.getCd_categoria_gruppo());
-					if (result.getConto()!=null)
+					if (Optional.ofNullable(result).flatMap(el->Optional.ofNullable(el.getConto())).isPresent())
 						return result.getConto();
 				}
 

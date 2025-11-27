@@ -1019,7 +1019,8 @@ public class ProposeScritturaComponent extends CRUDComponent {
     private void controllaFattibilitaOperazione(UserContext userContext, IDocumentoCogeBulk doccoge) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException {
         try {
             EsercizioHome home = (EsercizioHome) getHome(userContext, EsercizioBulk.class);
-            if (!home.isEsercizioAperto(doccoge.getEsercizio(), doccoge.getCd_cds()))
+            Integer esercizioScritture = this.getEsercizioScritture(userContext, doccoge);
+            if (!home.isEsercizioAperto(esercizioScritture, doccoge.getCd_cds()))
                 throw new ScritturaPartitaDoppiaNotEnabledException("Scrittura Economica non generabile/modificabile. L'esercizio contabile " + doccoge.getEsercizio() +
                         " per il cds " + doccoge.getCd_cds() + " risulta essere non aperto.");
 
@@ -1365,6 +1366,9 @@ public class ProposeScritturaComponent extends CRUDComponent {
                                                                                 aContoContropartita = pairContoCosto.getSecond();
                                                                             else
                                                                                 aContoContropartita = this.findContoContropartita(userContext, fatturaOrdineBulk.getOrdineAcqConsegna().getContoBulk());
+
+                                                                            //Controllo che l'ordine collegato sia pienamente caricato
+                                                                            fatturaOrdineBulk.setOrdineAcqConsegna(this.loadIfNeededConsegna(userContext,fatturaOrdineBulk.getOrdineAcqConsegna()));
 
                                                                             //Recupero la scrittura prima nota della consegna per recuperare il conto fatture da ricevere usato da chiudere
                                                                             List<Movimento_cogeBulk> allMovimentiPrimaNota = this.findMovimentiPrimaNota(userContext, fatturaOrdineBulk.getOrdineAcqConsegna());
@@ -4844,7 +4848,13 @@ public class ProposeScritturaComponent extends CRUDComponent {
 							.concat(String.valueOf(doccoge.getPg_doc()))
 			);
 		}
-		scritturaPartitaDoppia.setEsercizio(doccoge.getEsercizio());
+        Integer esercizioScritture;
+        try {
+            esercizioScritture = this.getEsercizioScritture(userContext, doccoge);
+        } catch (ComponentException | PersistencyException e) {
+            throw new RuntimeException(e);
+        }
+        scritturaPartitaDoppia.setEsercizio(esercizioScritture);
 		scritturaPartitaDoppia.setEsercizio_documento_amm(doccoge.getEsercizio());
 		scritturaPartitaDoppia.setCd_cds_documento(doccoge.getCd_cds());
 		scritturaPartitaDoppia.setCd_uo_documento(doccoge.getCd_uo());
@@ -4884,7 +4894,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			scritturaAnalitica.setStato(scritturaPartitaDoppia.getStato());
 			scritturaAnalitica.setDs_scrittura(scritturaPartitaDoppia.getDs_scrittura());
 			scritturaAnalitica.setEsercizio(scritturaPartitaDoppia.getEsercizio());
-			scritturaAnalitica.setEsercizio_documento_amm(scritturaPartitaDoppia.getEsercizio());
+			scritturaAnalitica.setEsercizio_documento_amm(scritturaPartitaDoppia.getEsercizio_documento_amm());
 			scritturaAnalitica.setCd_cds_documento(scritturaPartitaDoppia.getCd_cds());
 			scritturaAnalitica.setCd_uo_documento(scritturaPartitaDoppia.getCd_uo_documento());
 			scritturaAnalitica.setCd_tipo_documento(scritturaPartitaDoppia.getCd_tipo_documento());
@@ -5379,9 +5389,11 @@ public class ProposeScritturaComponent extends CRUDComponent {
                 OrdineAcqConsegnaBulk ordineAcqConsegnaBulk = (OrdineAcqConsegnaBulk) doccoge;
                 movimentoCoge.setCd_cds(ordineAcqConsegnaBulk.getCd_cds());
                 movimentoCoge.setEsercizio(ordineAcqConsegnaBulk.getEsercizio());
-                UnitaOperativaOrdBulk unitaOperativaOrdBulk = (UnitaOperativaOrdBulk)getHome(userContext, UnitaOperativaOrdBulk.class).findByPrimaryKey(ordineAcqConsegnaBulk.getOrdineAcqRiga().getOrdineAcq().getUnitaOperativaOrd());
+                Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHome(userContext, Fattura_passivaBulk.class);
+                OrdineAcqBulk ordineAcqBulk = (OrdineAcqBulk)fatpasHome.loadIfNeededObject(ordineAcqConsegnaBulk.getOrdineAcqRiga().getOrdineAcq());
+                UnitaOperativaOrdBulk unitaOperativaOrdBulk = (UnitaOperativaOrdBulk)fatpasHome.loadIfNeededObject(ordineAcqBulk.getUnitaOperativaOrd());
                 movimentoCoge.setCd_unita_organizzativa(unitaOperativaOrdBulk.getCdUnitaOrganizzativa());
-                movimentoCoge.setTi_istituz_commerc(ordineAcqConsegnaBulk.getOrdineAcqRiga().getOrdineAcq().getTiAttivita());
+                movimentoCoge.setTi_istituz_commerc(ordineAcqBulk.getTiAttivita());
 			} else if (doccoge instanceof MandatoBulk) {
 				MandatoBulk mandatoBulk = (MandatoBulk) doccoge;
 
@@ -6132,7 +6144,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 	private IDocumentoCogeBulk loadRigheEco(UserContext userContext, IDocumentoCogeBulk documentoCoge) throws ApplicationException {
 		try {
-            boolean isAttivaEconomicaPuraDocamm = ((Configurazione_cnrHome) getHome(userContext, Configurazione_cnrBulk.class)).isAttivaEconomicaPura(documentoCoge.getEsercizio());
+            boolean isAttivaEconomicaPuraDocamm = ((Configurazione_cnrHome) getHome(userContext, Configurazione_cnrBulk.class)).isAttivaEconomicaPura(this.getEsercizioScritture(userContext,documentoCoge));
 
             if (documentoCoge instanceof IDocumentoDetailEcoCogeBulk) {
                 //Carico i dettagli
@@ -6362,10 +6374,13 @@ public class ProposeScritturaComponent extends CRUDComponent {
             if (!consegna.isStatoConsegnaEvasa())
                 throw new ScritturaPartitaDoppiaNotRequiredException("Scrittura Economica non necessaria in quanto la consegna non risulta evasa.");
 
-            //cerco evasione ordine
-            List<EvasioneOrdineRigaBulk> evasioneRigaList = ((EvasioneOrdineRigaHome)getHome(userContext, EvasioneOrdineRigaBulk.class)).findByConsegna(consegna);
+            //Questo metodo carica l'oggetto evasioneRiga sulla consegna
+            Integer esercizioScritture = this.getEsercizioScritture(userContext, consegna);
 
-            if (evasioneRigaList.isEmpty())
+            //Recupero l'evasione associata alla consegna caricata dall'istruzione precedente
+            EvasioneOrdineRigaBulk evasioneRiga = consegna.getEvasioneOrdineRigaBulk();
+
+            if (evasioneRiga==null)
                 throw new ScritturaPartitaDoppiaNotRequiredException("Scrittura Economica non necessaria in quanto la consegna risulta evasa ma non è presente alcuna scrittura di evasione associata. Contattare il Customer Support.");
 
             Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache(userContext).getHome(Fattura_passivaBulk.class);
@@ -6373,17 +6388,12 @@ public class ProposeScritturaComponent extends CRUDComponent {
             consegna.getOrdineAcqRiga().setOrdineAcq((OrdineAcqBulk)fatpasHome.loadIfNeededObject(consegna.getOrdineAcqRiga().getOrdineAcq()));
             consegna.getOrdineAcqRiga().getOrdineAcq().setUnitaOperativaOrd((UnitaOperativaOrdBulk) fatpasHome.loadIfNeededObject(consegna.getOrdineAcqRiga().getOrdineAcq().getUnitaOperativaOrd()));
 
-            //Recupero la prima evasione
-            EvasioneOrdineRigaBulk evasioneRiga = evasioneRigaList.get(0);
             TestataPrimaNota testataPrimaNota = new TestataPrimaNota(evasioneRiga.getDacr(), evasioneRiga.getDacr());
-
-            //Carico i dettagli economici
-            this.loadChildrenAna(userContext, consegna);
 
             if (consegna.getVoce_ep()==null || consegna.getVoce_ep().getCd_voce_ep()==null)
                 throw new ApplicationException("Riga documento senza indicazione del conto di economica. Scrittura economica non possibile.");
 
-            Voce_epBulk aContoFatturaDaRicevere = findContoFattureDaRicevere(userContext, evasioneRiga.getEsercizio());
+            Voce_epBulk aContoFatturaDaRicevere = findContoFattureDaRicevere(userContext, esercizioScritture);
 
             DettaglioPrimaNota dettPN = testataPrimaNota.addDettaglio(userContext, null, Movimento_cogeBulk.SEZIONE_DARE, consegna.getContoBulk(), consegna.getImCostoEco(), Boolean.TRUE);
             //COMPLETO CON I DATI ANALITICI - TRATTANDOSI DI MISSIONE CON ANTICIPO CERCO PER IMPORTO PER FAR COLLEGARE LA RIGA GIUSTA
@@ -6397,5 +6407,29 @@ public class ProposeScritturaComponent extends CRUDComponent {
         } catch (PersistencyException|RemoteException e) {
             throw new DetailedRuntimeException(e);
         }
+    }
+
+    private OrdineAcqConsegnaBulk loadIfNeededConsegna(UserContext userContext, OrdineAcqConsegnaBulk consegna) throws ComponentException {
+        Fattura_passivaHome home = (Fattura_passivaHome) getHome(userContext,Fattura_passivaBulk.class);
+        consegna = (OrdineAcqConsegnaBulk) home.loadIfNeededObject(consegna);
+        consegna.setOrdineAcqRiga((OrdineAcqRigaBulk) home.loadIfNeededObject(consegna.getOrdineAcqRiga()));
+        consegna.getOrdineAcqRiga().setOrdineAcq((OrdineAcqBulk) home.loadIfNeededObject(consegna.getOrdineAcqRiga().getOrdineAcq()));
+        consegna.getOrdineAcqRiga().getOrdineAcq().setUnitaOperativaOrd((UnitaOperativaOrdBulk) home.loadIfNeededObject(consegna.getOrdineAcqRiga().getOrdineAcq().getUnitaOperativaOrd()));
+        return consegna;
+    }
+
+    private Integer getEsercizioScritture(UserContext userContext, IDocumentoCogeBulk doccoge) throws ComponentException, PersistencyException {
+        if (doccoge.getTipoDocumentoEnum().isConsegnaOrdineAcquisto() && doccoge instanceof OrdineAcqConsegnaBulk) {
+            OrdineAcqConsegnaBulk consegna = (OrdineAcqConsegnaBulk) doccoge;
+            if (consegna.getEvasioneOrdineRigaBulk() != null)
+                return consegna.getEvasioneOrdineRigaBulk().getEsercizio();
+            else {
+                //cerco evasione ordine perchè la scrittura deve essere fatta nell'esercizio dell'evasione
+                EvasioneOrdineRigaBulk evasioneRiga = ((EvasioneOrdineRigaHome) getHome(userContext, EvasioneOrdineRigaBulk.class)).findByConsegna((OrdineAcqConsegnaBulk) doccoge);
+                consegna.setEvasioneOrdineRigaBulk(evasioneRiga);
+                return consegna.getEvasioneOrdineRigaBulk().getEsercizio();
+            }
+        }
+        return doccoge.getEsercizio();
     }
 }

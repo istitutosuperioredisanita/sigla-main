@@ -44,22 +44,20 @@ public Long getNextPg(
 	// non esiste il record - creo un nuovo record
 	if (numeratore == null){
 		numeratore = new Numeratore_buono_c_sBulk(esercizio, progressivoInventario, tipoDocumento);
-		numeratore.setCorrente(new Long("1"));
-		numeratore.setIniziale(new Long("0"));
+		numeratore.setCorrente(0L);
+		numeratore.setIniziale(0L);
 		numeratore.setUser(user);
 		insert(numeratore, userContext);		
 	}
 	else{
-		numeratore.setCorrente(new Long(numeratore.getCorrente().longValue()+1));		
+		numeratore.setCorrente(numeratore.getCorrente() + 1);
 		lock(numeratore);
 		update(numeratore, userContext);
 	}
 	return numeratore.getCorrente();
-	}catch (BusyResourceException e) {
+	}catch (BusyResourceException | OutdatedResourceException e) {
 		throw new it.cnr.jada.comp.ApplicationException("Operazione effettuata al momento da un'altro utente, riprovare successivamente.");	
-	}catch (OutdatedResourceException e) {
-	    throw new it.cnr.jada.comp.ApplicationException("Operazione effettuata al momento da un'altro utente, riprovare successivamente.");
-	}	
+	}
 }
 public Long getNextTempPg(
 	UserContext userContext,
@@ -88,8 +86,8 @@ public Long getNextTempPg(
 		progressivo.setEsercizio(esercizio);
 		progressivo.setPg_inventario(progressivoInventario);
 		progressivo.setTi_carico_scarico(tipoDocTemp);
-		progressivo.setIniziale(new Long(-1));
-		pgCorrente = new Long(progressivo.getIniziale().longValue());
+		progressivo.setIniziale((long) -1);
+		pgCorrente = progressivo.getIniziale();
 		progressivo.setCorrente(pgCorrente);
 		progressivo.setUser(user);
 		insert(progressivo, userContext);
@@ -98,24 +96,22 @@ public Long getNextTempPg(
 				progressivo_def.setEsercizio(esercizio);
 				progressivo_def.setPg_inventario(progressivoInventario);
 				progressivo_def.setTi_carico_scarico(tipoDocumento);
-				progressivo_def.setIniziale(new Long(1));
-				progressivo_def.setCorrente(progressivo_def.getIniziale().longValue());
+				progressivo_def.setIniziale(0L);
+				progressivo_def.setCorrente(progressivo_def.getIniziale());
 				progressivo_def.setUser(user);
 				insert(progressivo_def, userContext);
 			}
 		return pgCorrente;
 	}
 	
-	pgCorrente = new Long(progressivo.getCorrente().longValue()-1);
+	pgCorrente = progressivo.getCorrente() - 1;
 	progressivo.setCorrente(pgCorrente);
 	progressivo.setUser(user);
 	lock(progressivo);
 	update(progressivo, userContext);
 	return pgCorrente;
-	}catch (BusyResourceException e) {
+	}catch (BusyResourceException | OutdatedResourceException e) {
 		throw new it.cnr.jada.comp.ApplicationException("Operazione effettuata al momento da un'altro utente, riprovare successivamente.");	
-	}catch (OutdatedResourceException e) {
-	    throw new it.cnr.jada.comp.ApplicationException("Operazione effettuata al momento da un'altro utente, riprovare successivamente.");
-	}	
+	}
 }
 }

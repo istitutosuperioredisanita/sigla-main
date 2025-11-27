@@ -1738,7 +1738,25 @@ public class OrdineAcqBulk extends OrdineAcqBase
                             });
                     myRigaEco.setImporto(myRigaEco.getImporto().add(el.getImporto()));
                 });
-        return result;
+
+        //Inserisco riga per quota non distribuita
+        this.getRigheOrdineColl().stream()
+                .filter(el->BigDecimal.ZERO.compareTo(el.getImCostoEcoDaRipartire())!=0)
+                .forEach(el->{
+                    OrdineAcqEcoBulk rigaEco = new OrdineAcqEcoBulk();
+                    rigaEco.setOrdineAcq(this);
+                    rigaEco.setVoce_ep(el.getVoce_ep());
+                    rigaEco.setProgressivo_riga_eco((long) result.size()+1);
+                    try {
+                        rigaEco.setImporto(el.getImCostoEcoConsegne().subtract(el.getImCostoEcoRipartitoConsegne()));
+                    } catch (Exception e){
+                        rigaEco.setImporto(BigDecimal.ZERO);
+                    }
+                    result.add(rigaEco);
+                });
+
+        return result.stream().filter(el->el.getImporto().compareTo(BigDecimal.ZERO)!=0)
+                .collect(Collectors.toList());
     }
 
     public List<IDocumentoDetailAnaCogeBulk> getChildrenAna() {

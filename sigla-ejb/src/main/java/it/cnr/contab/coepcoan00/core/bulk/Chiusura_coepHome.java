@@ -20,7 +20,6 @@
 * Date 17/05/2005
 */
 package it.cnr.contab.coepcoan00.core.bulk;
-import it.cnr.contab.config00.bulk.Semaforo_baseBulk;
 import it.cnr.contab.config00.bulk.Semaforo_staticoBulk;
 import it.cnr.contab.config00.bulk.Semaforo_staticoHome;
 import it.cnr.jada.bulk.BulkHome;
@@ -35,6 +34,7 @@ import java.util.Optional;
 public class Chiusura_coepHome extends BulkHome {
     private static final String SEMAFORO_CHIUSURA = "CHIUSURA_COGE00";
     private static final String STATO_CHIUSURA_DEF = "C";
+    private static final String STATO_PROVA_CHIUSURA = "P";
 
     public Chiusura_coepHome(java.sql.Connection conn) {
 		super(Chiusura_coepBulk.class, conn);
@@ -68,6 +68,16 @@ public class Chiusura_coepHome extends BulkHome {
             Chiusura_coepBulk chiusuraCoepBulk = getChiusuraCoep(esercizio, cdCds);
             return Optional.ofNullable(chiusuraCoepBulk).flatMap(el->Optional.ofNullable(el.getStato()))
                     .map(STATO_CHIUSURA_DEF::equals).orElse(Boolean.FALSE);
+        } catch (PersistencyException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean isChiusuraCoepProva(Integer esercizio, String cdCds) {
+        try {
+            Chiusura_coepBulk chiusuraCoepBulk = getChiusuraCoep(esercizio, cdCds);
+            return Optional.ofNullable(chiusuraCoepBulk).flatMap(el->Optional.ofNullable(el.getStato()))
+                    .map(STATO_PROVA_CHIUSURA::equals).orElse(Boolean.FALSE);
         } catch (PersistencyException e) {
             throw new RuntimeException(e);
         }

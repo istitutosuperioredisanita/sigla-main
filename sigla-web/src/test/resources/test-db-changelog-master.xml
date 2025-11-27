@@ -829,6 +829,14 @@
             UPDATE ORGANO
             SET DT_FINE_VALIDITA = '2200-12-31'
         </sql>
+        <sql>
+            DELETE MODALITA_PAGAMENTO
+            WHERE CD_TERZO = 19
+        </sql>
+        <sql>
+            DELETE TERZO
+            WHERE CD_TERZO = 19
+        </sql>
     </changeSet>
 
     <changeSet author="test" id="create-unita-operativa-ord">
@@ -1049,5 +1057,70 @@
 
         <dropDefaultValue tableName="ubicazione_bene" columnName="dacr"/>
         <dropDefaultValue tableName="ubicazione_bene" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-inventario-ap-ch">
+        <addDefaultValue tableName="inventario_ap_ch" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="inventario_ap_ch" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/inventario_ap_ch.csv" tableName="inventario_ap_ch"/>
+
+        <dropDefaultValue tableName="inventario_ap_ch" columnName="dacr"/>
+        <dropDefaultValue tableName="inventario_ap_ch" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-tipo-carico-scarico">
+        <addDefaultValue tableName="tipo_carico_scarico" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="tipo_carico_scarico" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/tipo_carico_scarico.csv" tableName="tipo_carico_scarico"/>
+
+        <dropDefaultValue tableName="tipo_carico_scarico" columnName="dacr"/>
+        <dropDefaultValue tableName="tipo_carico_scarico" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-evasione-ordine">
+        <addDefaultValue tableName="evasione_ordine" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="evasione_ordine" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/evasione_ordine.csv" tableName="evasione_ordine"/>
+
+        <dropDefaultValue tableName="evasione_ordine" columnName="dacr"/>
+        <dropDefaultValue tableName="evasione_ordine" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-evasione-ordine-riga">
+        <addDefaultValue tableName="evasione_ordine_riga" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="evasione_ordine_riga" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/evasione_ordine_riga.csv" tableName="evasione_ordine_riga"/>
+
+        <dropDefaultValue tableName="evasione_ordine_riga" columnName="dacr"/>
+        <dropDefaultValue tableName="evasione_ordine_riga" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-lotto-mag">
+        <addDefaultValue tableName="lotto_mag" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="lotto_mag" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/lotto_mag.csv" tableName="lotto_mag"/>
+
+        <dropDefaultValue tableName="lotto_mag" columnName="dacr"/>
+        <dropDefaultValue tableName="lotto_mag" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-movimenti-mag">
+        <addDefaultValue tableName="movimenti_mag" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="movimenti_mag" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="liquibase/csv/movimenti_mag.csv" tableName="movimenti_mag"/>
+
+        <dropDefaultValue tableName="movimenti_mag" columnName="dacr"/>
+        <dropDefaultValue tableName="movimenti_mag" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="recreate-sequence">
+        <dropSequence sequenceName="cnrseq00_movimenti_mag"/>
+        <createSequence sequenceName="cnrseq00_movimenti_mag" startValue="2"/>
     </changeSet>
 </databaseChangeLog>
