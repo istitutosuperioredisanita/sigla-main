@@ -12,6 +12,7 @@ import it.cnr.jada.util.RemoteIterator;
 
 import java.rmi.RemoteException;
 import java.util.BitSet;
+import java.util.TreeMap;
 
 /**
  * Business Process per la gestione dei Documenti di TRASPORTO.
@@ -42,7 +43,21 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoD
         return it.cnr.contab.inventario01.bulk.AllegatoDocumentoTrasportoBulk.class;
     }
 
+    public String[][] getTabs() {
+        TreeMap<Integer, String[]> hash = new TreeMap<>();
+        int i=0;
+        hash.put(i++, new String[]{ "tabTrasportoTestata","Testata","/inventario00/tab_testata_doc_r.jsp" });
+        if ( isInserting())
+            hash.put(i++, new String[]{ "tabTrasportoDettaglio","Dettaglio","/inventario00/tab_trasporto_inv_dett.jsp"});
+        else
+            hash.put(i++, new String[]{ "tabTrasportoDettaglio","Dettaglio","/inventario00/tab_trasporto_inv_edit_dett.jsp"});
+        hash.put(i++, new String[]{"tabAllegati", "Allegati", "/util00/tab_allegati.jsp"});
 
+        String[][] tabs = new String[i][3];
+        for (int j = 0; j < i; j++)
+            tabs[j]=new String[]{hash.get(j)[0],hash.get(j)[1],hash.get(j)[2]};
+        return tabs;
+    }
     // ==================== IMPLEMENTAZIONE METODI ASTRATTI ====================
 
     @Override

@@ -49,17 +49,24 @@
         <td><% bp.getDettBeniController().writeFormLabel(out,"find_categoria_bene"); %></td>
         <td colspan="2"><% bp.getDettBeniController().writeFormInput(out,null,"find_categoria_bene",true,null,null); %></td>
       </tr>
+
     </table>
 
     <table>
       <tr>
-        <td><% bp.getDettBeniController().writeFormLabel(out,"find_ubicazione"); %></td>
+      <tr>
+       <td><% bp.getDettBeniController().writeFormLabel(out,"find_assegnatario"); %></td>
+         <td colspan="3"><% bp.getDettBeniController().writeFormInput(out,null,"find_assegnatario",true,null,null); %></td>
+      </tr>
+      <td><% bp.getDettBeniController().writeFormLabel(out,"find_ubicazione"); %></td>
         <td colspan="3"><% bp.getDettBeniController().writeFormInput(out,null,"find_ubicazione",true,null,null); %></td>
       </tr>
       <tr>
-        <td><% bp.getDettBeniController().writeFormLabel(out,"condizioni"); %></td>
-        <td colspan="3"><% bp.getDettBeniController().writeFormInput(out,null,"condizioni",true,null,null); %></td>
+        <td><% bp.getDettBeniController().writeFormLabel(out,"ds_condizione_bene"); %></td>
+        <td colspan="3"><% bp.getDettBeniController().writeFormInput(out,null,"ds_condizione_bene",true,null,null); %></td>
       </tr>
+
+
     </table>
 
 </div>

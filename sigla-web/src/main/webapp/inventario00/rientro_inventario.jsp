@@ -17,31 +17,16 @@
 <% CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP)BusinessProcess.getBusinessProcess(request);
     bp.openFormWindow(pageContext);
 
-    if (bp.isInserting()){
-        JSPUtils.tabbed(
-                        pageContext,
-                        "tab",
-                        new String[][] {
-                            { "tabRientroTestata","Testata","/inventario00/tab_testata_doc_r.jsp" },
-                            { "tabRientroDettaglio","Dettaglio","/inventario00/tab_rientro_inv_dett.jsp"},
-                        },
-                        bp.getTab("tab"),
-                        "center",
-                        "100%",
-                        null );
-    } else {
-        JSPUtils.tabbed(
-                        pageContext,
-                        "tab",
-                        new String[][] {
-                            { "tabRientroTestata","Testata","/inventario00/tab_testata_doc_r.jsp" },
-                            { "tabRientroDettaglio","Dettaglio","/inventario00/tab_rientro_inv_edit_dett.jsp"},
-                        },
-                        bp.getTab("tab"),
-                        "center",
-                        "100%",
-                        null );
-    }
+    JSPUtils.tabbed(
+    					pageContext,
+    					"tab",
+    					bp.getTabs(),
+    					bp.getTab("tab"),
+    					"center",
+    					"100%",
+    					"100%" );
+
+
 
     bp.closeFormWindow(pageContext); %>
 

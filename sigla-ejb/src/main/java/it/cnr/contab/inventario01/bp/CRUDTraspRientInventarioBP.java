@@ -1,7 +1,6 @@
 package it.cnr.contab.inventario01.bp;
 
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
-import it.cnr.contab.inventario00.bp.RigheInvDaFatturaCRUDController;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario01.bulk.AllegatoDocTraspRientroBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
@@ -484,6 +483,8 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
     // ========================= TOOLBAR =========================
 
+
+
     @Override
     protected it.cnr.jada.util.jsp.Button[] createToolbar() {
         final Properties props = it.cnr.jada.util.Config.getHandler().getProperties(getClass());
@@ -527,7 +528,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
     // ==================== CONTROLLERS ====================
 
-    protected final RigheInvDaFatturaCRUDController dettBeniController = new RigheInvDaFatturaCRUDController(
+    protected final RemoteDetailCRUDController dettBeniController = new RemoteDetailCRUDController(
             "DettBeniController",
             Inventario_beniBulk.class,
             "",

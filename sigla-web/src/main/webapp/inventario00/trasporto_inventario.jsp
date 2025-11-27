@@ -16,34 +16,15 @@
 
 <% CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP)BusinessProcess.getBusinessProcess(request);
     bp.openFormWindow(pageContext);
+    	JSPUtils.tabbed(
+    					pageContext,
+    					"tab",
+    					bp.getTabs(),
+    					bp.getTab("tab"),
+    					"center",
+    					"100%",
+    					"100%" );
 
-    if (bp.isInserting()){
-        JSPUtils.tabbed(
-                        pageContext,
-                        "tab",
-                        new String[][] {
-                            { "tabTrasportoTestata","Testata","/inventario00/tab_testata_doc_t.jsp" },
-                            { "tabTrasportoDettaglio","Dettaglio","/inventario00/tab_trasporto_inv_dett.jsp"},
-                             {"tabAllegati", "Allegati", "/util00/tab_allegati.jsp"},
-                        },
-                        bp.getTab("tab"),
-                        "center",
-                        "100%",
-                        null );
-    } else {
-        JSPUtils.tabbed(
-                        pageContext,
-                        "tab",
-                        new String[][] {
-                            { "tabTrasportoTestata","Testata","/inventario00/tab_testata_doc_t.jsp" },
-                            { "tabTrasportoDettaglio","Dettaglio    ","/inventario00/tab_trasporto_inv_edit_dett.jsp"},
-                            {"tabAllegati", "Allegati", "/util00/tab_allegati.jsp"},
-                        },
-                        bp.getTab("tab"),
-                        "center",
-                        "100%",
-                        null );
-    }
 
     bp.closeFormWindow(pageContext); %>
 
