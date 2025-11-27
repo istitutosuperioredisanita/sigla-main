@@ -15,11 +15,7 @@
 		<columnMapping columnName="TI_DOCUMENTO_RIF" propertyName="tiDocumentoRif" sqlTypeName="CHAR" columnSize="1"/>
 		<columnMapping columnName="ESERCIZIO_RIF" propertyName="esercizioRif" sqlTypeName="DECIMAL" columnSize="5"/>
 		<columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO_RIF" propertyName="pgDocTrasportoRientroRif" sqlTypeName="DECIMAL" columnSize="10"/>
-<!--
-		<columnMapping columnName="NR_INVENTARIO" propertyName="bene.nr_inventario" sqlTypeName="DECIMAL" columnSize="10"/>
-		<columnMapping columnName="PROGRESSIVO" propertyName="bene.progressivo" sqlTypeName="DECIMAL" columnSize="10"/>
-		<columnMapping columnName="PG_INVENTARIO" propertyName="bene.inventario.pg_inventario" sqlTypeName="DECIMAL" columnSize="10"/>
--->
+
 	</defaultColumnMap>
 
 	<persistentProperty name="documentoTrasporto" partOfOid="true"/>

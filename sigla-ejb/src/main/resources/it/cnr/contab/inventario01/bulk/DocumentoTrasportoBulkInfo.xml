@@ -5,25 +5,6 @@
 		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
 
 	<!-- ============================================ -->
-	<!-- CHIAVI PRIMARIE - TESTATA (Foreign Key) -->
-	<!-- ============================================ -->
-	<columnSet name="righeTrasporto">
-		<columnFieldProperty
-				name="nr_inventario"
-				style="width:80px"/>
-		<columnFieldProperty
-				name="etichetta"
-				style="width:80px"/>
-		<columnFieldProperty
-				name="progressivo"/>
-		<columnFieldProperty
-				name="ds_bene"
-				style="width:300px"/>
-		<columnFieldProperty
-				name="valore_bene"
-				style="width:80px"/>
-	</columnSet>
-	<!-- ============================================ -->
 	<!-- COLUMN SET PER TRASPORTO BENI -->
 	<!-- ============================================ -->
 

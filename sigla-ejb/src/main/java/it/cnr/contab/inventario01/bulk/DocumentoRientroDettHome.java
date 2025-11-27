@@ -20,11 +20,11 @@ public class DocumentoRientroDettHome extends Doc_trasporto_rientro_dettHome {
 
 
 	public DocumentoRientroDettHome(Connection conn) {
-		super(DocumentoTrasportoDettBulk.class, conn);
+		super(DocumentoRientroDettBulk.class, conn);
 	}
 
 	public DocumentoRientroDettHome(Connection conn, PersistentCache persistentCache) {
-		super(DocumentoTrasportoDettBulk.class, conn, persistentCache);
+		super(DocumentoRientroDettBulk.class, conn, persistentCache);
 	}
 
 

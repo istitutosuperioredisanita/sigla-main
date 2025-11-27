@@ -35,11 +35,6 @@
     <persistentProperty name="esercizio"/>
     <persistentProperty name="pgDocTrasportoRientro"/>
 
-    <!-- Nuove proprietà -->
-    <persistentProperty name="tiDocumentoRif"/>
-    <persistentProperty name="esercizioRif"/>
-    <persistentProperty name="esercizioRif"/>
-    <persistentProperty name="pgDocTrasportoRientroRif"/>
 
     <persistentProperty name="nrInventario"/>
     <persistentProperty name="progressivo"/>

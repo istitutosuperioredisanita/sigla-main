@@ -5,10 +5,6 @@
 		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
 
 	<!-- ============================================ -->
-	<!-- CHIAVI PRIMARIE - TESTATA (Foreign Key) -->
-	<!-- ============================================ -->
-
-	<!-- ============================================ -->
 	<!-- COLUMN SET PER TRASPORTO BENI -->
 	<!-- ============================================ -->
 

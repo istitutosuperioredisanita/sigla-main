@@ -53,16 +53,16 @@
 
     <table>
       <tr>
-       <td><% bp.getEditDettController().writeFormLabel(out,"find_ubicazione"); %></td>
-       <td colspan="3"><% bp.getEditDettController().writeFormInput(out,null,"find_ubicazione",true,null,null); %></td>
-      </tr>
-      <tr>
        <td><% bp.getEditDettController().writeFormLabel(out,"find_assegnatario"); %></td>
-       <td colspan="3"><% bp.getEditDettController().writeFormInput(out,null,"find_assegnatario",true,null,null); %></td>
+         <td colspan="3"><% bp.getEditDettController().writeFormInput(out,null,"find_assegnatario",true,null,null); %></td>
       </tr>
       <tr>
-       <td><% bp.getEditDettController().writeFormLabel(out,"condizione"); %></td>
-       <td colspan="3"><% bp.getEditDettController().writeFormInput(out,null,"condizione",true,null,null); %></td>
+      <td><% bp.getEditDettController().writeFormLabel(out,"find_ubicazione"); %></td>
+        <td colspan="3"><% bp.getEditDettController().writeFormInput(out,null,"find_ubicazione",true,null,null); %></td>
+      </tr>
+      <tr>
+        <td><% bp.getEditDettController().writeFormLabel(out,"ds_condizione_bene"); %></td>
+        <td colspan="3"><% bp.getEditDettController().writeFormInput(out,null,"ds_condizione_bene",true,null,null); %></td>
       </tr>
     </table>
 

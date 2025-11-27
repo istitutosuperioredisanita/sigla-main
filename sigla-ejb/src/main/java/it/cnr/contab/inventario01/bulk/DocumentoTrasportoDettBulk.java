@@ -35,12 +35,28 @@ public  class DocumentoTrasportoDettBulk extends Doc_trasporto_rientro_dettBulk 
      */
     private DocumentoTrasportoBulk documentoTrasporto;
 
+    /**
+     * Riferimento al documento di TRASPORTO (dettaglio)
+     */
+
+    private DocumentoRientroBulk docRientroRif;
+
+
+
     public DocumentoTrasportoBulk getDocumentoTrasporto() {
         return documentoTrasporto;
     }
 
     public void setDocumentoTrasporto(DocumentoTrasportoBulk documentoTrasporto) {
         this.documentoTrasporto = documentoTrasporto;
+    }
+
+    public DocumentoRientroBulk getDocRientroRif() {
+        return docRientroRif;
+    }
+
+    public void setDocRientroRif(DocumentoRientroBulk docRientroRif) {
+        this.docRientroRif = docRientroRif;
     }
 
     /**
@@ -75,6 +91,16 @@ public  class DocumentoTrasportoDettBulk extends Doc_trasporto_rientro_dettBulk 
     @Override
     public void setDoc_trasporto_rientro(Doc_trasporto_rientroBulk bulk) {
         setDocumentoTrasporto((DocumentoTrasportoBulk) bulk);
+    }
+
+    @Override
+    public Doc_trasporto_rientroBulk getDoc_trasporto_rientroRif() {
+        return getDocRientroRif();
+    }
+
+    @Override
+    public void setDoc_trasporto_rientroRif(Doc_trasporto_rientroBulk bulk) {
+        setDocRientroRif((DocumentoRientroBulk) bulk);
     }
 
 }

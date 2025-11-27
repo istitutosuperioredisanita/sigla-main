@@ -27,10 +27,11 @@ public class DocumentoRientroDettBulk extends Doc_trasporto_rientro_dettBulk {
     // ATTRIBUTI E RELAZIONI
     // ========================================
 
-    /**
-     * Riferimento al documento di RIENTRO (testata).
-     */
+
     private DocumentoRientroBulk documentoRientro;
+
+
+    private DocumentoTrasportoBulk docTrasportoRif;
 
     // ========================================
     // COSTRUTTORI
@@ -62,6 +63,14 @@ public class DocumentoRientroDettBulk extends Doc_trasporto_rientro_dettBulk {
         this.documentoRientro = documentoRientro;
     }
 
+    public DocumentoTrasportoBulk getDocTrasportoRif() {
+        return docTrasportoRif;
+    }
+
+    public void setDocTrasportoRif(DocumentoTrasportoBulk docTrasportoRif) {
+        this.docTrasportoRif = docTrasportoRif;
+    }
+
     // ========================================
     // OVERRIDE - Metodi astratti della classe padre
     // ========================================
@@ -71,8 +80,21 @@ public class DocumentoRientroDettBulk extends Doc_trasporto_rientro_dettBulk {
         return getDocumentoRientro();
     }
 
+
     @Override
     public void setDoc_trasporto_rientro(Doc_trasporto_rientroBulk bulk) {
         setDocumentoRientro((DocumentoRientroBulk) bulk);
     }
+
+    @Override
+    public Doc_trasporto_rientroBulk getDoc_trasporto_rientroRif() {
+        return getDocTrasportoRif();
+    }
+
+    @Override
+    public void setDoc_trasporto_rientroRif(Doc_trasporto_rientroBulk bulk) {
+        setDocTrasportoRif((DocumentoTrasportoBulk) bulk);
+    }
+
+
 }
