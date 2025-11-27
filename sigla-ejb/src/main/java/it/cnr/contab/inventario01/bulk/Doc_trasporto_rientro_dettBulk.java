@@ -95,9 +95,9 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
 
     public abstract void setDoc_trasporto_rientro(Doc_trasporto_rientroBulk bulk) ;
 
-    public abstract Doc_trasporto_rientroBulk getDoc_trasporto_rientroRif() ;
+    public abstract Doc_trasporto_rientro_dettBulk getDoc_trasporto_rientroDettRif() ;
 
-    public abstract void setDoc_trasporto_rientroRif(Doc_trasporto_rientroBulk bulk) ;
+    public abstract void setDoc_trasporto_rientroDettRif(Doc_trasporto_rientro_dettBulk bulk) ;
 
     public Categoria_gruppo_voceBulk getCat_voce() {
         return cat_voce;

@@ -26,12 +26,16 @@ public class DocumentoRientroDettBulk extends Doc_trasporto_rientro_dettBulk {
     // ========================================
     // ATTRIBUTI E RELAZIONI
     // ========================================
-
-
     private DocumentoRientroBulk documentoRientro;
+    private DocumentoTrasportoDettBulk docTrasportoDettRif;
 
+    public DocumentoTrasportoDettBulk getDocTrasportoDettRif() {
+        return docTrasportoDettRif;
+    }
 
-    private DocumentoTrasportoBulk docTrasportoRif;
+    public void setDocTrasportoDettRif(DocumentoTrasportoDettBulk docTrasportoDettRif) {
+        this.docTrasportoDettRif = docTrasportoDettRif;
+    }
 
     // ========================================
     // COSTRUTTORI
@@ -63,13 +67,7 @@ public class DocumentoRientroDettBulk extends Doc_trasporto_rientro_dettBulk {
         this.documentoRientro = documentoRientro;
     }
 
-    public DocumentoTrasportoBulk getDocTrasportoRif() {
-        return docTrasportoRif;
-    }
 
-    public void setDocTrasportoRif(DocumentoTrasportoBulk docTrasportoRif) {
-        this.docTrasportoRif = docTrasportoRif;
-    }
 
     // ========================================
     // OVERRIDE - Metodi astratti della classe padre
@@ -87,13 +85,13 @@ public class DocumentoRientroDettBulk extends Doc_trasporto_rientro_dettBulk {
     }
 
     @Override
-    public Doc_trasporto_rientroBulk getDoc_trasporto_rientroRif() {
-        return getDocTrasportoRif();
+    public Doc_trasporto_rientro_dettBulk getDoc_trasporto_rientroDettRif() {
+        return getDoc_trasporto_rientroDettRif();
     }
 
     @Override
-    public void setDoc_trasporto_rientroRif(Doc_trasporto_rientroBulk bulk) {
-        setDocTrasportoRif((DocumentoTrasportoBulk) bulk);
+    public void setDoc_trasporto_rientroDettRif(Doc_trasporto_rientro_dettBulk bulk) {
+        setDocTrasportoDettRif((DocumentoTrasportoDettBulk) bulk);
     }
 
 

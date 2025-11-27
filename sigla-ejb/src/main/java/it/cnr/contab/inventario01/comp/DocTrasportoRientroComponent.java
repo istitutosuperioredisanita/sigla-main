@@ -18,17 +18,18 @@ import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.LoggableStatement;
-import it.cnr.jada.persistency.sql.SQLBroker;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.Iterator;
+import java.util.List;
 
 import static it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk.RIENTRO;
 import static it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk.TRASPORTO;
@@ -471,11 +472,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                                     "Bene " + bene.getNumeroBeneCompleto() +
                                             " non presente in nessun documento di trasporto firmato (stato DEFINITIVO)!");
                         }
-
-                        dettaglio.setEsercizioRif(dettaglioTrasportoOriginale.getEsercizio());
-                        dettaglio.setTiDocumentoRif(dettaglioTrasportoOriginale.getTi_documento());
-                        dettaglio.setPgDocTrasportoRientroRif(
-                                dettaglioTrasportoOriginale.getPg_doc_trasporto_rientro());
+                        dettaglio.setDoc_trasporto_rientroDettRif(dettaglioTrasportoOriginale);
 
                     } catch (Exception e) {
                         e.printStackTrace(System.err);
@@ -558,9 +555,16 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             throws ComponentException {
 
         try {
-            Doc_trasporto_rientro_dettHome dettHome =
-                    (Doc_trasporto_rientro_dettHome) getHome(
-                            userContext, Doc_trasporto_rientro_dettBulk.class);
+            Doc_trasporto_rientro_dettHome dettHome=null;
+            if ( Doc_trasporto_rientroBulk.RIENTRO.equalsIgnoreCase(tipoDocumentoDaCercare)) {
+                dettHome =
+                        (Doc_trasporto_rientro_dettHome) getHome(
+                                userContext, DocumentoRientroDettBulk.class);
+            }else {
+                dettHome =
+                        (Doc_trasporto_rientro_dettHome) getHome(
+                                userContext, DocumentoTrasportoDettBulk.class);
+            }
 
             SQLBuilder sql = dettHome.createSQLBuilder();
 
