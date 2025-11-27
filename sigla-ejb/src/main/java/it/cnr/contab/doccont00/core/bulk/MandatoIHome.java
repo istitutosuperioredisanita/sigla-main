@@ -248,6 +248,7 @@ public class MandatoIHome extends MandatoHome {
         sql.addClause(FindClause.AND, "cd_tipo_documento_amm", SQLBuilder.NOT_EQUALS, Numerazione_doc_ammBulk.TIPO_ORDINE);
         sql.addClause(FindClause.AND, "cd_tipo_documento_amm", SQLBuilder.NOT_EQUALS, TipoDocumentoEnum.GEN_STIPENDI_SPESA.getValue());
         sql.addSQLClause(FindClause.AND, "fl_selezione", SQLBuilder.EQUALS, "N");
+        sql.addOrderBy("TI_FATTURA desc");
         return home.fetchAll(sql);
 
     }

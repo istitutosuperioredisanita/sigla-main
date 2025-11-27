@@ -42,7 +42,6 @@ import it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
-import it.cnr.contab.ordmag.ordini.ejb.OrdineAcqComponentSession;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.CNRUserInfo;
@@ -186,6 +185,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     private Boolean isAttivoGestFlIrregistrabile;
 
     private Boolean isEnabledToInsertLettera = Boolean.FALSE;
+    private boolean provenienteDaAutoFattura=false;
 
     public Boolean isAttivoChekcImpIntrastat(){
         return attivoCheckImpIntrastat;
@@ -625,6 +625,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             setEsercizioInScrivania(esercizioScrivania);
             setAnnoSolareInScrivania(solaris == this.getEsercizioInScrivania());
             setRibaltato(initRibaltato(context));
+            setProvenienteDaAutoFattura(false);
             if (!isAnnoSolareInScrivania()) {
                 String cds = it.cnr.contab.utenze00.bp.CNRUserContext
                         .getCd_cds(context.getUserContext());
@@ -2183,5 +2184,12 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
         } catch (ComponentException | PersistencyException | RemoteException e) {
             throw handleException(e);
         }
+    }
+    public boolean isProvenienteDaAutoFattura() {
+        return provenienteDaAutoFattura;
+    }
+
+    public void setProvenienteDaAutoFattura(boolean provenienteDaAutoFattura) {
+        this.provenienteDaAutoFattura = provenienteDaAutoFattura;
     }
 }

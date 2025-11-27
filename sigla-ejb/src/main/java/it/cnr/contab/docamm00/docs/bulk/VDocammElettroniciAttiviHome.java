@@ -48,7 +48,7 @@ public class VDocammElettroniciAttiviHome extends BulkHome {
 		//da verificare xml generato per nota di credito per autofattura
 		//if ( Fattura_passivaBulk.TIPO_NOTA_DI_CREDITO.equalsIgnoreCase(vDocammElettroniciAttiviBulk.getTi_fattura()))
 		//	return (Nota_di_creditoHome)getHomeCache().getHome(Nota_di_creditoBulk.class);
-		return (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
+		return (Fattura_passivaHome)getHomeCache().getHome(Fattura_passiva_IBulk.class);
 	}
 	public AutofatturaBulk findAutofattura(VDocammElettroniciAttiviBulk vDocammElettroniciAttiviBulk) throws PersistencyException {
 		if (vDocammElettroniciAttiviBulk.isAutofattura()) {

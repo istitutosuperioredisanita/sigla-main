@@ -9526,6 +9526,17 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         }
     }
 
+    public AutofatturaBulk cercaAutoFattura(UserContext uc, Fattura_passivaBulk fp) throws ComponentException {
+        AutofatturaHome autofatturaHome = (AutofatturaHome) getHomeCache(uc).getHome(AutofatturaBulk.class);
+        try {
+             return autofatturaHome.findFor(fp);
+
+        } catch (PersistencyException e) {
+            throw new ApplicationMessageFormatException("Errore nell'estrazione dell'autofattura");
+        }
+
+    }
+
     public SQLBuilder selectVoce_epByClause(UserContext userContext, Fattura_passiva_rigaIBulk fatturaPassivaRigaIBulk, ContoBulk contoBulk, CompoundFindClause clause)  throws ComponentException, EJBException, RemoteException {
         ContoHome contoHome = (ContoHome) getHome(userContext, ContoBulk.class);
         SQLBuilder sql = contoHome.createSQLBuilder();

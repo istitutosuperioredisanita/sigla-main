@@ -30,6 +30,7 @@ import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.docamm00.bp.*;
 import it.cnr.contab.docamm00.docs.bulk.*;
+import it.cnr.contab.docamm00.ejb.AutoFatturaComponentSession;
 import it.cnr.contab.docamm00.ejb.CategoriaGruppoInventComponentSession;
 import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.docamm00.ejb.VoceIvaComponentSession;
@@ -6101,4 +6102,22 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
             return handleException(actioncontext, e);
         }
     }
+
+    public Forward doVisualizzaAutoFattura(ActionContext context) throws BusinessProcessException {
+        CRUDFatturaPassivaBP fatturaBP = (CRUDFatturaPassivaBP)context.getBusinessProcess();
+
+        Fattura_passivaBulk fp = (Fattura_passivaBulk) fatturaBP.getModel();
+
+        try {
+            CRUDAutofatturaBP autofatturaBP = (CRUDAutofatturaBP) context.createBusinessProcess("CRUDAutofatturaBP",new Object[]{"V"+"Tn"});
+            autofatturaBP = (CRUDAutofatturaBP) context.addBusinessProcess(autofatturaBP);
+            autofatturaBP.edit(context, ((FatturaPassivaComponentSession) fatturaBP.createComponentSession()).
+                    cercaAutoFattura(context.getUserContext(), fp));
+            autofatturaBP.setPrevenienteDaFattura(true);
+            return autofatturaBP;
+        } catch (Throwable e) {
+            return handleException(context, e);
+        }
+    }
+
 }
