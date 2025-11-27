@@ -17,6 +17,8 @@
 
 package it.cnr.contab.inventario01.bulk;
 
+import it.cnr.contab.inventario00.tabrif.bulk.Condizione_beneBulk;
+
 /**
  * Dettaglio (riga) di un documento di Trasporto/Rientro.
  * Le chiavi primarie composite (PK) sono delegate alle entità correlate (Testata e Bene).
@@ -74,6 +76,5 @@ public  class DocumentoTrasportoDettBulk extends Doc_trasporto_rientro_dettBulk 
     public void setDoc_trasporto_rientro(Doc_trasporto_rientroBulk bulk) {
         setDocumentoTrasporto((DocumentoTrasportoBulk) bulk);
     }
-
 
 }

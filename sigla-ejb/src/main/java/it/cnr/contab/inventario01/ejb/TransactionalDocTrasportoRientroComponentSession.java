@@ -855,4 +855,23 @@ public class TransactionalDocTrasportoRientroComponentSession
             }
         }
     }
+
+    @Override
+    public Doc_trasporto_rientroBulk salvaDefinitivo(UserContext userContext, Doc_trasporto_rientroBulk docTR) throws ComponentException, RemoteException {
+        try {
+            return (Doc_trasporto_rientroBulk) invoke("salvaDefinitivo", new Object[]{
+                    userContext,
+                    docTR});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
 }

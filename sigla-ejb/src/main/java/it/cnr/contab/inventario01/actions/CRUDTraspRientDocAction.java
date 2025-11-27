@@ -232,19 +232,128 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-    // =======================================================
-    // ELIMINAZIONE E AGGIUNTA - FLUSSO RICORSIVO UNIFICATO
-    // =======================================================
 
-    public Forward doRemoveFromCRUDMain_DettBeniController(ActionContext context) {
+
+    /**
+     * ✅ VERSIONE CORRETTA: Gestisce correttamente SI/NO/ANNULLA per ogni bene
+     *
+     * COMPORTAMENTO CORRETTO:
+     * - SI (AGGIUNTA/ELIMINAZIONE): Elabora bene principale + accessori
+     * - NO (AGGIUNTA/ELIMINAZIONE): Elabora SOLO bene principale (SENZA accessori)
+     * - ANNULLA: Interrompe l'intera operazione
+     */
+    public Forward doRispostaRicorsivaGenerica(ActionContext context, int opt) {
         try {
             CRUDTraspRientInventarioBP bp = getBP(context);
-            bp.getDettBeniController().remove(context);
-            return bp.hasBeniPrincipaliConAccessoriPerEliminazione() ? apriFlussoRicorsivo(context, bp, true) : context.findDefaultForward();
+            boolean isEliminazione = bp.isUltimaOperazioneEliminazione();
+
+            HookForward caller = (HookForward) context.getCaller();
+            List<Inventario_beniBulk> beniDaElaborare = (List<Inventario_beniBulk>) caller.getParameter("beniDaElaborare");
+            Integer index = (Integer) caller.getParameter("index");
+            Inventario_beniBulk beneCorrente = (Inventario_beniBulk) caller.getParameter("beneCorrente");
+
+            boolean haCliccatoSI = (opt == OptionBP.YES_BUTTON);
+            boolean haCliccatoNO = (opt == OptionBP.NO_BUTTON);
+            boolean haCliccatoANNULLA = (opt == OptionBP.CANCEL_BUTTON);
+
+            // ANNULLA
+            if (haCliccatoANNULLA) {
+                bp.getDettBeniController().reset(context);
+
+                if (isEliminazione) {
+                    bp.setMessage("Eliminazione annullata.");
+                } else {
+                    bp.setMessage("Operazione annullata.");
+                }
+
+                bp.resetOperazione(isEliminazione);
+                return context.findDefaultForward();
+            }
+
+            // SI
+            if (haCliccatoSI) {
+                bp.elaboraBeneCorrente(context, isEliminazione, true);
+            }
+
+            // NO
+            else if (haCliccatoNO) {
+                if (isEliminazione) {
+                    bp.elaboraBeneCorrente(context, true, false);
+                } else {
+                    bp.elaboraBeneCorrente(context, false, false);
+                }
+            }
+
+            // Aggiorna vista
+            if (!isEliminazione) {
+                bp.getDettBeniController().reset(context);
+            } else {
+                bp.getEditDettController().reset(context);
+            }
+
+            // Step successivo
+            int nextIndex = index + 1;
+
+            if (nextIndex < beniDaElaborare.size()) {
+                return apriFlussoRicorsivoGenerico(context, bp, isEliminazione, beniDaElaborare, nextIndex);
+            } else {
+                finalizeFlusso(context, bp, isEliminazione, haCliccatoSI);
+                return context.findDefaultForward();
+            }
+
         } catch (Throwable e) {
             return handleException(context, e);
         }
     }
+
+
+    public Forward doRemoveFromCRUDMain_DettBeniController(ActionContext context) {
+        try {
+            CRUDTraspRientInventarioBP bp = getBP(context);
+
+            bp.getDettBeniController().remove(context);
+
+            if (bp.getPendingDelete() == null) {
+                return context.findDefaultForward();
+            }
+
+            // Elimina beni semplici
+            if (!bp.getPendingDelete().getPrincipaliSenza().isEmpty()) {
+
+                for (Inventario_beniBulk beneSemplice : bp.getPendingDelete().getPrincipaliSenza()) {
+                    try {
+                        bp.getComp().eliminaBeniAssociati(
+                                context.getUserContext(),
+                                bp.getDoc(),
+                                new it.cnr.jada.bulk.OggettoBulk[]{beneSemplice}
+                        );
+                    } catch (Exception e) {
+                        throw bp.handleException(e);
+                    }
+                }
+
+                bp.getDettBeniController().reset(context);
+            }
+
+            // Beni con accessori → avvia flusso ricorsivo
+            if (!bp.getPendingDelete().getPrincipaliConAccessori().isEmpty()) {
+
+                List<Inventario_beniBulk> beniConAccessori = new ArrayList<>(
+                        bp.getPendingDelete().getPrincipaliConAccessori().keySet()
+                );
+
+                return apriFlussoRicorsivoGenerico(context, bp, true, beniConAccessori, 0);
+            }
+
+            // Fine
+            bp.resetOperazione(true);
+            return context.findDefaultForward();
+
+        } catch (Throwable e) {
+            return handleException(context, e);
+        }
+    }
+
 
     /**
      * METODO CRITICO: Gestisce la selezione dei beni dopo che l'utente li ha selezionati.
@@ -370,57 +479,6 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
 
         return context.findDefaultForward();
     }
-
-
-
-    /**
-     *   Gestisce correttamente SI/NO/ANNULLA per ogni bene
-     */
-    public Forward doRispostaRicorsivaGenerica(ActionContext context, int opt) {
-        try {
-            CRUDTraspRientInventarioBP bp = getBP(context);
-            boolean isEliminazione = bp.isUltimaOperazioneEliminazione();
-
-            HookForward caller = (HookForward) context.getCaller();
-            List<Inventario_beniBulk> beniDaElaborare = (List<Inventario_beniBulk>) caller.getParameter("beniDaElaborare");
-            Integer index = (Integer) caller.getParameter("index");
-            Inventario_beniBulk beneCorrente = (Inventario_beniBulk) caller.getParameter("beneCorrente");
-
-            boolean haCliccatoSI = (opt == OptionBP.YES_BUTTON);
-            boolean haCliccatoNO = (opt == OptionBP.NO_BUTTON);
-            boolean haCliccatoANNULLA = (opt == OptionBP.CANCEL_BUTTON);
-
-            //  4: Gestione ANNULLA
-            if (haCliccatoANNULLA) {
-                bp.getDettBeniController().reset(context);
-
-                if (isEliminazione) {
-                    bp.setMessage("Eliminazione annullata."); // : Messaggio corretto
-                } else {
-                    bp.setMessage("Operazione annullata.");
-                }
-
-                bp.resetOperazione(isEliminazione);
-                return context.findDefaultForward();
-            }
-
-            // : Gestione SI/NO
-            if (haCliccatoSI) {
-                bp.elaboraBeneCorrente(context, isEliminazione, true);  // Elimina con accessori
-            } else if (haCliccatoNO) {
-                if (isEliminazione) {
-                    bp.elaboraBeneCorrente(context, isEliminazione, false);  // Elimina SOLO principale
-                }
-            }
-
-            // Passa al prossimo bene
-            return apriFlussoRicorsivoGenerico(context, bp, isEliminazione, beniDaElaborare, index + 1);
-
-        } catch (Throwable e) {
-            return handleException(context, e);
-        }
-    }
-
 
 
 
@@ -798,5 +856,26 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         } catch (Throwable t) {
             return handleException(context, t);
         }
+    }
+
+    /**
+     * Gestione della richiesta di salvataggio di una variazione come definitiva
+     *
+     * @param context	L'ActionContext della richiesta
+     * @return Il Forward alla pagina di risposta
+     */
+    public Forward doSalvaDefinitivo(ActionContext context) {
+
+        try {
+            fillModel(context);
+            CRUDTraspRientInventarioBP bp = getBP(context);
+            bp.salvaDefinitivo(context);
+            bp.setMessage("Documento salvato definitivamente con successo.");
+            return context.findDefaultForward();
+
+        }catch(Throwable ex){
+            return handleException(context, ex);
+        }
+
     }
 }

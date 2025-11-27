@@ -1,177 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU Affero General Public License as
-  ~     published by the Free Software Foundation, either version 3 of the
-  ~     License, or (at your option) any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU Affero General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU Affero General Public License
-  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
-  -->
-
 <SQLPersistentInfo
 		persistentClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBase"
 		keyClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroKey"
 		homeClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroHome">
-	<defaultColumnMap
-			tableName="DOC_TRASPORTO_RIENTRO">
+	<defaultColumnMap tableName="DOC_TRASPORTO_RIENTRO">
 
-		<!-- Campi Base (non PK, non FK) -->
-		<columnMapping
-				columnName="DS_DOC_TRASPORTO_RIENTRO"
-				propertyName="dsDocTrasportoRientro"
-				sqlTypeName="VARCHAR"
-				columnSize="100"
-				nullable="false" />
+		<!-- Campi Base esistenti -->
+		<columnMapping columnName="DS_DOC_TRASPORTO_RIENTRO" propertyName="dsDocTrasportoRientro" sqlTypeName="VARCHAR" columnSize="100" nullable="false" />
+		<columnMapping columnName="DATA_REGISTRAZIONE" propertyName="dataRegistrazione" sqlTypeName="TIMESTAMP" columnSize="7" nullable="false" />
+		<columnMapping columnName="CD_TIPO_TRASPORTO_RIENTRO" propertyName="cdTipoTrasportoRientro" sqlTypeName="VARCHAR" columnSize="10" nullable="false" />
+		<columnMapping columnName="STATO" propertyName="stato" sqlTypeName="VARCHAR" columnSize="3" nullable="false" />
+		<columnMapping columnName="DESTINAZIONE" propertyName="destinazione" sqlTypeName="VARCHAR" columnSize="100" nullable="true" />
+		<columnMapping columnName="INDIRIZZO" propertyName="indirizzo" sqlTypeName="VARCHAR" columnSize="200" nullable="true" />
+		<columnMapping columnName="FL_INCARICATO" propertyName="flIncaricato" sqlTypeName="CHAR" columnSize="1" nullable="false" converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping columnName="FL_VETTORE" propertyName="flVettore" sqlTypeName="CHAR" columnSize="1" nullable="false" converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping columnName="NOMINATIVO_VETTORE" propertyName="nominativoVettore" sqlTypeName="VARCHAR" columnSize="100" nullable="true" />
+		<columnMapping columnName="NOTE_RITIRO" propertyName="noteRitiro" sqlTypeName="VARCHAR" columnSize="4000" nullable="true" />
+		<columnMapping columnName="NOTE" propertyName="note" sqlTypeName="VARCHAR" columnSize="4000" nullable="true" />
+		<columnMapping columnName="CD_TERZO_ASSEGNATARIO" propertyName="cdTerzoAssegnatario" sqlTypeName="DECIMAL" columnSize="38" nullable="true" />
 
-		<columnMapping
-				columnName="DATA_REGISTRAZIONE"
-				propertyName="dataRegistrazione"
-				sqlTypeName="TIMESTAMP"
-				columnSize="7"
-				nullable="false" />
-
-		<columnMapping
-				columnName="STATO"
-				propertyName="stato"
-				sqlTypeName="VARCHAR"
-				columnSize="3"
-				nullable="false" />
-
-		<columnMapping
-				columnName="DESTINAZIONE"
-				propertyName="destinazione"
-				sqlTypeName="VARCHAR"
-				columnSize="100"
-				nullable="true" />
-
-		<columnMapping
-				columnName="INDIRIZZO"
-				propertyName="indirizzo"
-				sqlTypeName="VARCHAR"
-				columnSize="200"
-				nullable="true" />
-
-		<columnMapping
-				columnName="FL_INCARICATO"
-				propertyName="flIncaricato"
-				sqlTypeName="CHAR"
-				columnSize="1"
-				nullable="false"
-				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
-
-		<columnMapping
-				columnName="FL_VETTORE"
-				propertyName="flVettore"
-				sqlTypeName="CHAR"
-				columnSize="1"
-				nullable="false"
-				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
-
-		<columnMapping
-				columnName="NOMINATIVO_VETTORE"
-				propertyName="nominativoVettore"
-				sqlTypeName="VARCHAR"
-				columnSize="100"
-				nullable="true" />
-
-		<columnMapping
-				columnName="NOTE_RITIRO"
-				propertyName="noteRitiro"
-				sqlTypeName="VARCHAR"
-				columnSize="4000"
-				nullable="true" />
-
-		<columnMapping
-				columnName="NOTE"
-				propertyName="note"
-				sqlTypeName="VARCHAR"
-				columnSize="4000"
-				nullable="true" />
+		<columnMapping columnName="TI_DOCUMENTO_RIF" propertyName="tiDocumentoRif" sqlTypeName="CHAR" columnSize="1" nullable="true" />
+		<columnMapping columnName="ESERCIZIO_RIF" propertyName="esercizioRif" sqlTypeName="DECIMAL" columnSize="5" nullable="true" />
+		<columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO_RIF" propertyName="pgDocTrasportoRientroRif" sqlTypeName="DECIMAL" columnSize="38" nullable="true" />
 
 		<!-- Campi Firma Digitale HappySign -->
-		<columnMapping
-				columnName="ID_FLUSSO_HAPPYSIGN"
-				propertyName="idFlussoHappysign"
-				sqlTypeName="VARCHAR"
-				columnSize="100"
-				nullable="true" />
-
-		<columnMapping
-				columnName="STATO_FLUSSO"
-				propertyName="statoFlusso"
-				sqlTypeName="VARCHAR"
-				columnSize="3"
-				nullable="true" />
-
-		<columnMapping
-				columnName="DATA_INVIO_FIRMA"
-				propertyName="dataInvioFirma"
-				sqlTypeName="TIMESTAMP"
-				columnSize="7"
-				nullable="true" />
-
-		<columnMapping
-				columnName="DATA_FIRMA"
-				propertyName="dataFirma"
-				sqlTypeName="TIMESTAMP"
-				columnSize="7"
-				nullable="true" />
-
-		<columnMapping
-				columnName="NOTE_RIFIUTO"
-				propertyName="noteRifiuto"
-				sqlTypeName="VARCHAR"
-				columnSize="4000"
-				nullable="true" />
+		<columnMapping columnName="ID_FLUSSO_HAPPYSIGN" propertyName="idFlussoHappysign" sqlTypeName="VARCHAR" columnSize="100" nullable="true" />
+		<columnMapping columnName="STATO_FLUSSO" propertyName="statoFlusso" sqlTypeName="VARCHAR" columnSize="3" nullable="true" />
+		<columnMapping columnName="DATA_INVIO_FIRMA" propertyName="dataInvioFirma" sqlTypeName="TIMESTAMP" columnSize="7" nullable="true" />
+		<columnMapping columnName="DATA_FIRMA" propertyName="dataFirma" sqlTypeName="TIMESTAMP" columnSize="7" nullable="true" />
+		<columnMapping columnName="NOTE_RIFIUTO" propertyName="noteRifiuto" sqlTypeName="VARCHAR" columnSize="4000" nullable="true" />
+		<columnMapping columnName="CD_TERZO_RESPONSABILE" propertyName="cdTerzoResponsabile" sqlTypeName="DECIMAL" columnSize="38" nullable="true" />
 
 		<!-- Campi Audit -->
-		<columnMapping
-				columnName="DACR"
-				propertyName="dacr"
-				sqlTypeName="TIMESTAMP"
-				columnSize="7"
-				nullable="false" />
-
-		<columnMapping
-				columnName="UTCR"
-				propertyName="utcr"
-				sqlTypeName="VARCHAR"
-				columnSize="20"
-				nullable="false" />
-
-		<columnMapping
-				columnName="DUVA"
-				propertyName="duva"
-				sqlTypeName="TIMESTAMP"
-				columnSize="7"
-				nullable="false" />
-
-		<columnMapping
-				columnName="UTUV"
-				propertyName="utuv"
-				sqlTypeName="VARCHAR"
-				columnSize="20"
-				nullable="false" />
-
-		<columnMapping
-				columnName="PG_VER_REC"
-				propertyName="pg_ver_rec"
-				sqlTypeName="DECIMAL"
-				columnSize="38"
-				nullable="false" />
+		<columnMapping columnName="DACR" propertyName="dacr" sqlTypeName="TIMESTAMP" columnSize="7" nullable="false" />
+		<columnMapping columnName="UTCR" propertyName="utcr" sqlTypeName="VARCHAR" columnSize="20" nullable="false" />
+		<columnMapping columnName="DUVA" propertyName="duva" sqlTypeName="TIMESTAMP" columnSize="7" nullable="false" />
+		<columnMapping columnName="UTUV" propertyName="utuv" sqlTypeName="VARCHAR" columnSize="20" nullable="false" />
+		<columnMapping columnName="PG_VER_REC" propertyName="pg_ver_rec" sqlTypeName="DECIMAL" columnSize="38" nullable="false" />
 	</defaultColumnMap>
 
-	<!-- Proprietà persistenti (solo campi Base, no FK, no PK) -->
+	<!-- Proprietà persistenti -->
 	<persistentProperty name="dsDocTrasportoRientro" />
 	<persistentProperty name="dataRegistrazione" />
+	<persistentProperty name="cdTipoTrasportoRientro" />
 	<persistentProperty name="stato" />
 	<persistentProperty name="destinazione" />
 	<persistentProperty name="indirizzo" />
@@ -180,11 +51,18 @@
 	<persistentProperty name="nominativoVettore" />
 	<persistentProperty name="noteRitiro" />
 	<persistentProperty name="note" />
+	<persistentProperty name="cdTerzoAssegnatario" />
+
+	<persistentProperty name="tiDocumentoRif" />
+	<persistentProperty name="esercizioRif" />
+	<persistentProperty name="pgDocTrasportoRientroRif" />
+
 	<persistentProperty name="idFlussoHappysign" />
 	<persistentProperty name="statoFlusso" />
 	<persistentProperty name="dataInvioFirma" />
 	<persistentProperty name="dataFirma" />
 	<persistentProperty name="noteRifiuto" />
+	<persistentProperty name="cdTerzoResponsabile" />
 	<persistentProperty name="dacr" />
 	<persistentProperty name="utcr" />
 	<persistentProperty name="duva" />

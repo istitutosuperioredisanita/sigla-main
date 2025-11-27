@@ -898,13 +898,14 @@
 				name="etichetta"
 				style="width:80px"/>
 		<columnFieldProperty
-				name="progressivo"/>
+				name="progressivo"
+				style="width:40px"/>
 		<columnFieldProperty
 				name="ds_bene"
 				style="width:300px"/>
 		<columnFieldProperty
 				name="valore_bene"
-				style="width:80px"/>
+				style="width:100px"/>
 	</columnSet>
 
 

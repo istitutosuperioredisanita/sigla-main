@@ -12,8 +12,8 @@
 
 <script language="JavaScript">
 function doStampaDocTraspRient() {
-    doPrint('<%=JSPUtils.getAppRoot(request)%>genericdownload/stampaDocTrasportoRientro.html?methodName=stampaDocTrasportoRientro&it.cnr.jada.action.BusinessProcess=<%=bp.getPath()%>',
-            'Documento di Trasporto Rientro',
+    doPrint('<%=JSPUtils.getAppRoot(request)%>genericdownload/stampaDocTrasportoRientro.pdf?methodName=stampaDocTrasportoRientro&it.cnr.jada.action.BusinessProcess=<%=bp.getPath()%>',
+            'Documento di Trasporto',
             'toolbar=no, location=no, directories=no, status=no, menubar=no,resizable,scrollbars,width=800,height=600').focus();
 }
 </script>
@@ -97,7 +97,7 @@ function doStampaDocTraspRient() {
         <td colspan="4" style="border-top: 2px solid #003d7a; padding-top: 15px;"></td>
     </tr>
 
-    <!-- ==================== TIPO RITIRO ==================== -->
+    <!-- ==================== TIPO RITIRO (DISABILITATO SE SMARTWORKING) ==================== -->
     <tr>
       <td><% bp.getController().writeFormLabel(out,"tipoRitiro"); %></td>
       <td colspan="3">

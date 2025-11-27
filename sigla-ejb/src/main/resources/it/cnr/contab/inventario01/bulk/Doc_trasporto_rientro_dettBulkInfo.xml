@@ -209,7 +209,7 @@
 	<fieldProperty
 			name="condizione"
 			property="bene.condizioneBene"
-			printProperty="condizioneBene.ds_condizione_bene"
+			printProperty="ds_condizione_bene"
 			optionsProperty="doc_trasporto_rientro.condizioni"
 			maxLength="30"
 			inputSize="30"
@@ -227,13 +227,6 @@
 			inputSize="30"
 			label="Condizione Bene" />
 
-	<fieldProperty
-			name="cd_condizione_bene"
-			property="bene.condizioneBene.cd_condizione_bene"
-			inputType="TEXT"
-			maxLength="10"
-			inputSize="10"
-			label="Cod. Condizione" />
 
 	<!-- ============================================ -->
 	<!-- CATEGORIA BENE -->

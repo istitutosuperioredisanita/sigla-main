@@ -22,6 +22,7 @@ import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.SimpleBulkList;
+import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDDetailComponentSession;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
@@ -251,5 +252,9 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
      * @throws ComponentException in caso di errore
      */
     List getDocumentiPredispostiAllaFirma(UserContext userContext)
+            throws ComponentException, RemoteException;
+
+
+    Doc_trasporto_rientroBulk salvaDefinitivo(UserContext userContext, Doc_trasporto_rientroBulk docTR)
             throws ComponentException, RemoteException;
 }

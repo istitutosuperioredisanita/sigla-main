@@ -26,7 +26,7 @@
              false,
              bp.isInserting(),
              null,
-             "100%",
+             "200px",
              true); %>
        </td>
       </tr>
@@ -34,13 +34,12 @@
 
     <table>
       <tr>
-       <%-- Nel rientro, di solito si mostra il bene già collegato, non si cerca un nuovo numero --%>
        <td><% bp.getEditDettController().writeFormLabel(out,"numeroBeneCompleto"); %></td>
        <td colspan="3"><% bp.getEditDettController().writeFormInput(out,"numeroBeneCompleto"); %></td>
       </tr>
       <tr>
-       <td><% bp.getDettBeniController().writeFormLabel(out,"ds_bene"); %></td>
-       <td colspan="3"><% bp.getDettBeniController().writeFormInput(out,null,"ds_bene",true,null,null); %></td>
+       <td><% bp.getEditDettController().writeFormLabel(out,"ds_bene"); %></td>
+       <td colspan="3"><% bp.getEditDettController().writeFormInput(out,null,"ds_bene",true,null,null); %></td>
     </tr>
       <tr>
        <td>

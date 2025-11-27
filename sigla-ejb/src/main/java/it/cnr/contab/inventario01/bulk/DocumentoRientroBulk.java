@@ -1,52 +1,54 @@
 package it.cnr.contab.inventario01.bulk;
 
-import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
-import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
-import it.cnr.contab.util00.bulk.storage.AllegatoStorePath;
-import it.cnr.jada.bulk.BulkList;
+import it.cnr.contab.service.SpringUtil;
+import it.cnr.contab.spring.service.StorePath;
+import it.cnr.contab.util.Utility;
+import it.cnr.si.spring.storage.StorageDriver;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-public  class DocumentoRientroBulk extends Doc_trasporto_rientroBulk  implements AllegatoParentBulk, AllegatoStorePath {
-    // ⚠️ UNICA LISTA ALLEGATI - Include TUTTO (DDT, verbali, stampa firmata, ecc.)
-    private BulkList<AllegatoGenericoBulk> archivioAllegati = new BulkList<AllegatoGenericoBulk>();
+/**
+ * Bulk per documenti di RIENTRO beni inventariali
+ */
+public class DocumentoRientroBulk extends Doc_trasporto_rientroBulk {
+
+    private static final String DOC_RIENTRO_FILEFOLDER = "Doc. Rientro";
+
+    // ========================================
+    // COSTRUTTORI
+    // ========================================
+
     public DocumentoRientroBulk() {
         super();
         setTiDocumento(RIENTRO);
     }
 
-
     public DocumentoRientroBulk(Long pg_inventario, String ti_documento,
-                                     Integer esercizio, Long pg_doc_trasporto_rientro) {
+                                Integer esercizio, Long pg_doc_trasporto_rientro) {
         super(pg_inventario, ti_documento, esercizio, pg_doc_trasporto_rientro);
         setTiDocumento(RIENTRO);
     }
 
-    // Implementazione AllegatoParentBulk
-    @Override
-    public BulkList<AllegatoGenericoBulk> getArchivioAllegati() {
-        return archivioAllegati;
-    }
-
-    @Override
-    public void setArchivioAllegati(BulkList<AllegatoGenericoBulk> archivioAllegati) {
-        this.archivioAllegati = archivioAllegati;
-    }
-
-    @Override
-    public int addToArchivioAllegati(AllegatoGenericoBulk allegato) {
-        if (allegato != null) {
-            archivioAllegati.add(allegato);
-        }
-        return archivioAllegati.size() - 1;
-    }
-
-    public AllegatoGenericoBulk removeFromArchivioAllegati(int index) {
-        return getArchivioAllegati().remove(index);
-    }
+    // ========================================
+    // IMPLEMENTAZIONE STORAGE PATH
+    // ========================================
 
     @Override
     public List<String> getStorePath() {
-        return null;
+
+        return Collections.singletonList(Arrays.asList(
+                SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
+                DOC_RIENTRO_FILEFOLDER,
+                Optional.ofNullable(this.getEsercizio())
+                        .map(esercizio -> String.valueOf(esercizio))
+                        .orElse("0"),
+                "Documento Rientro " + this.getEsercizio().toString() + Utility.lpad(this.getPgDocTrasportoRientro().toString(), 10, '0')
+        ).stream().collect(
+                Collectors.joining(StorageDriver.SUFFIX)
+        ));
     }
 }

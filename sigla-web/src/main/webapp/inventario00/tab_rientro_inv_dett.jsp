@@ -10,7 +10,7 @@
 
 <%
     CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP)BusinessProcess.getBusinessProcess(request);
-    Doc_trasporto_rientroBulk docRientro = (Doc_trasporto_rientroBulk)bp.getModel();
+    DocumentoRientroBulk docRientro = (DocumentoRientroBulk)bp.getModel();
 %>
 
 <div class="Group">
@@ -62,7 +62,7 @@
       </tr>
     </table>
 
-    <% if (bp.isBottoneAggiungiBeneEnabled()) { %>
+    <% if (bp.isInserting()) { %>
         <div style="margin-top:10px; padding:8px; background-color:#fff3cd; border-left:4px solid #ffc107;">
             <span style="font-size:0.9em; color:#856404;">
                 <strong>Nota:</strong> Saranno visualizzati solo i beni presenti in documenti di trasporto firmati

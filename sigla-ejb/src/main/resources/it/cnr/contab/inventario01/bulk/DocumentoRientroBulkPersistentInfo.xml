@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SQLPersistentInfo
-		persistentClassName="it.cnr.contab.inventario01.bulk.DocumentoRientroBulkBulk"
-		homeClassName="it.cnr.contab.inventario01.bulk.DocumentoTrasportoHome">
+		persistentClassName="it.cnr.contab.inventario01.bulk.DocumentoRientroBulk"
+		homeClassName="it.cnr.contab.inventario01.bulk.DocumentoRientroHome">
+
 	<defaultColumnMap tableName="DOC_TRASPORTO_RIENTRO">
 
-		<!-- MAPPING PG_INVENTARIO -->
 		<columnMapping
 				columnName="PG_INVENTARIO"
 				propertyName="inventario.pg_inventario"
 				sqlTypeName="DECIMAL"
 				columnSize="38" />
 
-		<!-- MAPPING CD_TIPO_TRASPORTO_RIENTRO -->
 		<columnMapping
 				columnName="CD_TIPO_TRASPORTO_RIENTRO"
 				propertyName="tipoMovimento.cdTipoTrasportoRientro"

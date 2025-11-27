@@ -67,7 +67,7 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         tipoRitiroKeys.put(TIPO_RITIRO_INCARICATO, "Ritiro Incaricato");
         tipoRitiroKeys.put(TIPO_RITIRO_VETTORE, "Ritiro Vettore");
     }
-
+//quando il tipo di movimento è "Smartworking" devi nascondere i radio button tipo movimento
     // ========================================
     // ATTRIBUTI (FK mappate e locali)
     // ========================================
@@ -549,7 +549,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     public boolean isNominativoVettoreVisible() {
         return isRitiroVettore();
     }
-
     public boolean isNominativoVettoreRequired() {
         return isRitiroVettore();
     }
@@ -691,28 +690,78 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         }
     }
 
+
+    // ========================================
+// METODI PER GESTIONE SMARTWORKING
+// ========================================
+
+    /**
+     * Verifica se il tipo movimento selezionato è "Smartworking"
+     * @return true se il tipo movimento è Smartworking
+     */
+    public boolean isSmartworking() {
+        if (tipoMovimento == null) {
+            return false;
+        }
+
+        String dsTipo = tipoMovimento.getDsTipoTrasportoRientro();
+
+        return dsTipo != null &&
+                dsTipo.trim().equalsIgnoreCase("Smartworking");
+    }
+
+    /**
+     * Determina se i radio button del Tipo Ritiro devono essere readonly/disabilitati
+     * @return true se i radio button devono essere disabilitati
+     */
+    public boolean isTipoRitiroReadonly() {
+        return isSmartworking();
+    }
+
+    /**
+     * Determina se il campo Tipo Ritiro è obbligatorio
+     * @return true se è obbligatorio
+     */
+    public boolean isTipoRitiroRequired() {
+        return !isSmartworking();
+    }
+
+    /**
+     * Determina se i campi Assegnatario/Vettore devono essere disabilitati
+     * @return true se devono essere disabilitati
+     */
+    public boolean isCampiRitiroReadonly() {
+        return isSmartworking();
+    }
+
+    /**
+     * Override del metodo validate per gestire Smartworking
+     */
     @Override
     public void validate() throws ValidationException {
         validaCampoObbligatorio(getDsDocTrasportoRientro(), "la Descrizione del documento");
         validaCampoObbligatorio(getDataRegistrazione(),
                 "la Data " + (TRASPORTO.equals(getTiDocumento()) ? "Trasporto" : "Rientro"));
         validaCampoObbligatorio(getTipoMovimento(), "il Tipo Movimento");
-        validaCampoObbligatorio(getTipoRitiro(), "il Tipo Ritiro (Incaricato o Vettore)");
 
-        if (!Arrays.asList(TIPO_RITIRO_INCARICATO, TIPO_RITIRO_VETTORE).contains(getTipoRitiro())) {
-            throw new ValidationException("I valori possibili per Tipo Ritiro sono: Incaricato o Vettore.");
-        }
+        if (!isSmartworking()) {
+            validaCampoObbligatorio(getTipoRitiro(), "il Tipo Ritiro (Incaricato o Vettore)");
 
-        if (isRitiroIncaricato() &&
-                (getTerzoIncRitiro() == null || getTerzoIncRitiro().getCd_anag() == null)) {
-            throw new ValidationException(
-                    "Per il ritiro tramite INCARICATO è necessario selezionare il Dipendente Incaricato.");
-        }
+            if (!Arrays.asList(TIPO_RITIRO_INCARICATO, TIPO_RITIRO_VETTORE).contains(getTipoRitiro())) {
+                throw new ValidationException("I valori possibili per Tipo Ritiro sono: Incaricato o Vettore.");
+            }
 
-        if (isRitiroVettore() &&
-                (getNominativoVettore() == null || getNominativoVettore().trim().isEmpty())) {
-            throw new ValidationException(
-                    "Per il ritiro tramite VETTORE è necessario specificare il Nominativo del Vettore.");
+            if (isRitiroIncaricato() &&
+                    (getTerzoIncRitiro() == null || getTerzoIncRitiro().getCd_anag() == null)) {
+                throw new ValidationException(
+                        "Per il ritiro tramite INCARICATO è necessario selezionare il Dipendente Incaricato.");
+            }
+
+            if (isRitiroVettore() &&
+                    (getNominativoVettore() == null || getNominativoVettore().trim().isEmpty())) {
+                throw new ValidationException(
+                        "Per il ritiro tramite VETTORE è necessario specificare il Nominativo del Vettore.");
+            }
         }
 
         super.validate();

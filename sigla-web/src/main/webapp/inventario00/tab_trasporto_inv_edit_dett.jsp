@@ -37,17 +37,13 @@
        <td><% bp.getEditDettController().writeFormLabel(out,"numeroBeneCompleto"); %></td>
        <td colspan="2"><% bp.getEditDettController().writeFormInput(out,"numeroBeneCompleto"); %></td>
       </tr>
-    <tr>
-       <td><% bp.getDettBeniController().writeFormLabel(out,"ds_bene"); %></td>
-       <td colspan="2"><% bp.getDettBeniController().writeFormInput(out,null,"ds_bene",true,null,null); %></td>
-    </tr>
       <tr>
-       <td>
-          <% bp.getEditDettController().writeFormLabel(out,"ti_istituzionale_commerciale"); %>
-       </td>
-       <td>
-          <% bp.getEditDettController().writeFormInput(out,null,"ti_istituzionale_commerciale",true,null,null); %>
-       </td>
+       <td><% bp.getEditDettController().writeFormLabel(out,"ds_bene"); %></td>
+       <td colspan="2"><% bp.getEditDettController().writeFormInput(out,null,"ds_bene",true,null,null); %></td>
+      </tr>
+      <tr>
+       <td><% bp.getEditDettController().writeFormLabel(out,"ti_istituzionale_commerciale"); %></td>
+       <td><% bp.getEditDettController().writeFormInput(out,null,"ti_istituzionale_commerciale",true,null,null); %></td>
       </tr>
       <tr>
        <td><% bp.getEditDettController().writeFormLabel(out,"find_categoria_bene"); %></td>

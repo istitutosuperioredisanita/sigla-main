@@ -13,8 +13,8 @@ public class Doc_trasporto_rientroBase extends Doc_trasporto_rientroKey implemen
 	private String stato;
 	private String destinazione;
 	private String indirizzo;
-	private Boolean flIncaricato;
-	private Boolean flVettore;
+	private Boolean flIncaricato=Boolean.FALSE;
+	private Boolean flVettore=Boolean.FALSE;
 	private Integer cdTerzoAssegnatario;
 	private String noteRitiro;
 	private String note;
@@ -54,6 +54,21 @@ public class Doc_trasporto_rientroBase extends Doc_trasporto_rientroKey implemen
 	 * Codice terzo responsabile struttura (firmatario obbligatorio)
 	 */
 	private Integer cdTerzoResponsabile;
+
+	/**
+	 * Tipo documento di riferimento (per collegamento tra trasporti e rientri)
+	 */
+	private String tiDocumentoRif;
+
+	/**
+	 * Esercizio del documento di riferimento
+	 */
+	private Integer esercizioRif;
+
+	/**
+	 * Progressivo del documento di riferimento
+	 */
+	private Long pgDocTrasportoRientroRif;
 
 	// ========================================
 	// COSTRUTTORI
@@ -217,5 +232,29 @@ public class Doc_trasporto_rientroBase extends Doc_trasporto_rientroKey implemen
 
 	public void setCdTerzoResponsabile(Integer cdTerzoResponsabile) {
 		this.cdTerzoResponsabile = cdTerzoResponsabile;
+	}
+
+	public String getTiDocumentoRif() {
+		return tiDocumentoRif;
+	}
+
+	public void setTiDocumentoRif(String tiDocumentoRif) {
+		this.tiDocumentoRif = tiDocumentoRif;
+	}
+
+	public Integer getEsercizioRif() {
+		return esercizioRif;
+	}
+
+	public void setEsercizioRif(Integer esercizioRif) {
+		this.esercizioRif = esercizioRif;
+	}
+
+	public Long getPgDocTrasportoRientroRif() {
+		return pgDocTrasportoRientroRif;
+	}
+
+	public void setPgDocTrasportoRientroRif(Long pgDocTrasportoRientroRif) {
+		this.pgDocTrasportoRientroRif = pgDocTrasportoRientroRif;
 	}
 }
