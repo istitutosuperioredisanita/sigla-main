@@ -17,7 +17,7 @@
 
 package it.cnr.contab.prevent01.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface PdGPreliminareComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

@@ -19,8 +19,8 @@ package it.cnr.contab.doccont00.consultazioni.ejb;
 
 import java.rmi.RemoteException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.doccont00.consultazioni.comp.ConsGAEComResSintComponent;
 import it.cnr.jada.UserContext;
@@ -35,10 +35,8 @@ public class ConsGAEComResSintComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.doccont00.consultazioni.comp.ConsGAEComResSintComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new ConsGAEComResSintComponentSessionBean();
-	}
-	public it.cnr.jada.util.RemoteIterator findConsultazione(it.cnr.jada.UserContext param0,it.cnr.jada.persistency.sql.CompoundFindClause param2,it.cnr.jada.persistency.sql.CompoundFindClause param3) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public it.cnr.jada.util.RemoteIterator findConsultazione(it.cnr.jada.UserContext param0,it.cnr.jada.persistency.sql.CompoundFindClause param2,it.cnr.jada.persistency.sql.CompoundFindClause param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.util.RemoteIterator result = ((ConsGAEComResSintComponent)componentObj).findConsultazione(param0,param2,param3);

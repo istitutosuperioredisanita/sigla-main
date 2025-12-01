@@ -29,11 +29,11 @@ import it.cnr.jada.persistency.Persistent;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 
 @Stateless(name="CNRPROGETTIRIC00_EJB_GECO_ProgettoGecoComponentSession")
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -42,11 +42,9 @@ public class ProgettoGecoComponentSessionBean extends it.cnr.jada.ejb.CRUDCompon
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.progettiric00.comp.geco.ProgettoGecoComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-		return new ProgettoGecoComponentSessionBean();
-	}
 	
-	public List<Geco_progettoIBulk>  cercaProgettiGeco(it.cnr.jada.UserContext param0, OggettoBulk oggettoBulk, Class<? extends OggettoBulk> bulkClass) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public List<Geco_progettoIBulk>  cercaProgettiGeco(it.cnr.jada.UserContext param0, OggettoBulk oggettoBulk, Class<? extends OggettoBulk> bulkClass) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		componentObj.initialize();
 		try {
 			List<Geco_progettoIBulk> result = ((it.cnr.contab.progettiric00.comp.geco.ProgettoGecoComponent)componentObj).cercaProgettiGeco(param0, oggettoBulk, bulkClass);
@@ -65,7 +63,7 @@ public class ProgettoGecoComponentSessionBean extends it.cnr.jada.ejb.CRUDCompon
 		}
 	}
 	
-	public List<Geco_commessaIBulk>  cercaCommesseGeco(it.cnr.jada.UserContext param0, OggettoBulk oggettoBulk, Class<? extends OggettoBulk> bulkClass) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public List<Geco_commessaIBulk>  cercaCommesseGeco(it.cnr.jada.UserContext param0, OggettoBulk oggettoBulk, Class<? extends OggettoBulk> bulkClass) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		try {
 			componentObj.initialize();
 			List<Geco_commessaIBulk> result = ((it.cnr.contab.progettiric00.comp.geco.ProgettoGecoComponent)componentObj).cercaCommesseGeco(param0, oggettoBulk, bulkClass);
@@ -84,7 +82,7 @@ public class ProgettoGecoComponentSessionBean extends it.cnr.jada.ejb.CRUDCompon
 		}
 	}
 
-	public List<Geco_moduloIBulk>  cercaModuliGeco(it.cnr.jada.UserContext param0, OggettoBulk oggettoBulk, Class<? extends OggettoBulk> bulkClass) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public List<Geco_moduloIBulk>  cercaModuliGeco(it.cnr.jada.UserContext param0, OggettoBulk oggettoBulk, Class<? extends OggettoBulk> bulkClass) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		try {
 			componentObj.initialize();
 			List<Geco_moduloIBulk> result = ((it.cnr.contab.progettiric00.comp.geco.ProgettoGecoComponent)componentObj).cercaModuliGeco(param0, oggettoBulk, bulkClass);
@@ -102,7 +100,7 @@ public class ProgettoGecoComponentSessionBean extends it.cnr.jada.ejb.CRUDCompon
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public List<Geco_dipartimentiIBulk>  cercaDipartimentiGeco(it.cnr.jada.UserContext param0, OggettoBulk oggettoBulk, Class<? extends OggettoBulk> bulkClass) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public List<Geco_dipartimentiIBulk>  cercaDipartimentiGeco(it.cnr.jada.UserContext param0, OggettoBulk oggettoBulk, Class<? extends OggettoBulk> bulkClass) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		try {
 			componentObj.initialize();
 			List<Geco_dipartimentiIBulk> result = ((it.cnr.contab.progettiric00.comp.geco.ProgettoGecoComponent)componentObj).cercaDipartimentiGeco(param0, oggettoBulk, bulkClass);

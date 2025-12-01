@@ -23,13 +23,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import javax.servlet.http.HttpSession;
-
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.sto.bulk.DipartimentoBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.pdg00.bulk.ArchiviaStampaPdgVariazioneBulk;
 import it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk;
 import it.cnr.contab.pdg00.bulk.Pdg_variazione_archivioBulk;
 import it.cnr.contab.pdg00.bulk.V_pdg_variazione_riepilogoBulk;
@@ -55,6 +52,9 @@ import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.jsp.PageContext;
 
 /**
  * Business Process per la gestione della testata delle variazioni al PDG
@@ -100,10 +100,10 @@ public class PdGVariazioneBP extends it.cnr.jada.util.action.SimpleCRUDBP {
          */
         @Override
         public void writeHTMLToolbar(
-                javax.servlet.jsp.PageContext context,
+                PageContext context,
                 boolean reset,
                 boolean find,
-                boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+                boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
             super.writeHTMLToolbar(context, reset, find, delete, false);
 
@@ -142,21 +142,21 @@ public class PdGVariazioneBP extends it.cnr.jada.util.action.SimpleCRUDBP {
     /**
      * Crea la ProcedureComponentSession da usare per effettuare operazioni
      */
-    public it.cnr.contab.util00.ejb.ProcedureComponentSession createProcedureComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+    public it.cnr.contab.util00.ejb.ProcedureComponentSession createProcedureComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
         return (it.cnr.contab.util00.ejb.ProcedureComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRUTIL00_EJB_ProcedureComponentSession", it.cnr.contab.util00.ejb.ProcedureComponentSession.class);
     }
 
     /**
      * Crea la PdGComponentSession da usare per effettuare operazioni
      */
-    public it.cnr.contab.pdg00.ejb.PdGPreventivoComponentSession createPdGPreventivoComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+    public it.cnr.contab.pdg00.ejb.PdGPreventivoComponentSession createPdGPreventivoComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
         return (it.cnr.contab.pdg00.ejb.PdGPreventivoComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPDG00_EJB_PdGPreventivoComponentSession", it.cnr.contab.pdg00.ejb.PdGPreventivoComponentSession.class);
     }
 
     /**
      * Crea la CdrComponentSession da usare per effettuare operazioni
      */
-    public it.cnr.contab.config00.ejb.CDRComponentSession createCdrComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+    public it.cnr.contab.config00.ejb.CDRComponentSession createCdrComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
         return (it.cnr.contab.config00.ejb.CDRComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_CDRComponentSession", it.cnr.contab.config00.ejb.CDRComponentSession.class);
     }
 
@@ -172,7 +172,7 @@ public class PdGVariazioneBP extends it.cnr.jada.util.action.SimpleCRUDBP {
             validaAccessoBP(context);
 
             it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession configSession = Utility.createConfigurazioneCnrComponentSession();
-            BigDecimal annoFrom = configSession.getIm01(context.getUserContext(), new Integer(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO);
+            BigDecimal annoFrom = configSession.getIm01(context.getUserContext(), Integer.valueOf(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO);
             if (Optional.ofNullable(annoFrom).isPresent())
                 setAnnoFromPianoEconomico(annoFrom.intValue());
 

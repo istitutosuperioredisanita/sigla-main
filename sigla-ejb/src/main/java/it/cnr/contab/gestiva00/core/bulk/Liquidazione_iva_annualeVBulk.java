@@ -94,7 +94,7 @@ public OggettoBulk initializeForSearch(
 	Liquidazione_iva_annualeVBulk bulk = (Liquidazione_iva_annualeVBulk)super.initializeForSearch(bp, context);
 	
 	bulk.setEsercizio(it.cnr.contab.utenze00.bulk.CNRUserInfo.getEsercizio(context));
-	bulk.setPageNumber(new Integer(1));
+	bulk.setPageNumber(Integer.valueOf(1));
 	bulk.setRistampabile(false);
 	
 	return bulk;

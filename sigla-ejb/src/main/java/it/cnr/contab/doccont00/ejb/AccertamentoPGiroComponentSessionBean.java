@@ -16,9 +16,9 @@
  */
 
 package it.cnr.contab.doccont00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.doccont00.comp.AccertamentoPGiroComponent;
 @Stateless(name="CNRDOCCONT00_EJB_AccertamentoPGiroComponentSession")
@@ -28,14 +28,12 @@ public class AccertamentoPGiroComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 		componentObj = new it.cnr.contab.doccont00.comp.AccertamentoPGiroComponent();
 	}
 	@Remove
-	public void ejbRemove() throws javax.ejb.EJBException {
+	public void ejbRemove() throws jakarta.ejb.EJBException {
 		componentObj.release();
 	}
 
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new AccertamentoPGiroComponentSessionBean();
-	}
-	public void aggiornaCogeCoanInDifferita(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1,java.util.Map param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public void aggiornaCogeCoanInDifferita(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1,java.util.Map param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((AccertamentoPGiroComponent)componentObj).aggiornaCogeCoanInDifferita(param0,param1,param2);
@@ -52,7 +50,7 @@ public class AccertamentoPGiroComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void aggiornaSaldiInDifferita(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1,java.util.Map param2,it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param3) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void aggiornaSaldiInDifferita(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1,java.util.Map param2,it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((AccertamentoPGiroComponent)componentObj).aggiornaSaldiInDifferita(param0,param1,param2,param3);
@@ -69,7 +67,7 @@ public class AccertamentoPGiroComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.doccont00.core.bulk.AccertamentoPGiroBulk annullaAccertamento(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.AccertamentoPGiroBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.doccont00.core.bulk.AccertamentoPGiroBulk annullaAccertamento(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.AccertamentoPGiroBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.doccont00.core.bulk.AccertamentoPGiroBulk result = ((AccertamentoPGiroComponent)componentObj).annullaAccertamento(param0,param1);
@@ -87,7 +85,7 @@ public class AccertamentoPGiroComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void callRiportaAvanti(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void callRiportaAvanti(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((AccertamentoPGiroComponent)componentObj).callRiportaAvanti(param0,param1);
@@ -104,7 +102,7 @@ public class AccertamentoPGiroComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void callRiportaIndietro(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void callRiportaIndietro(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((AccertamentoPGiroComponent)componentObj).callRiportaIndietro(param0,param1);
@@ -121,7 +119,7 @@ public class AccertamentoPGiroComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.doccont00.core.bulk.AccertamentoPGiroBulk creaAccertamento(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.ImpegnoPGiroBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.doccont00.core.bulk.AccertamentoPGiroBulk creaAccertamento(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.ImpegnoPGiroBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.doccont00.core.bulk.AccertamentoPGiroBulk result = ((AccertamentoPGiroComponent)componentObj).creaAccertamento(param0,param1);
@@ -139,7 +137,7 @@ public class AccertamentoPGiroComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.doccont00.core.bulk.AccertamentoPGiroBulk creaAccertamentoDiIncassoIVA(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1,boolean split) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.doccont00.core.bulk.AccertamentoPGiroBulk creaAccertamentoDiIncassoIVA(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1,boolean split) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.doccont00.core.bulk.AccertamentoPGiroBulk result = ((AccertamentoPGiroComponent)componentObj).creaAccertamentoDiIncassoIVA(param0,param1,split);
@@ -157,7 +155,7 @@ public class AccertamentoPGiroComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void eliminaAccertamento(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.AccertamentoPGiroBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void eliminaAccertamento(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.AccertamentoPGiroBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((AccertamentoPGiroComponent)componentObj).eliminaAccertamento(param0,param1);
@@ -174,7 +172,7 @@ public class AccertamentoPGiroComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void lockScadenza(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void lockScadenza(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((AccertamentoPGiroComponent)componentObj).lockScadenza(param0,param1);
@@ -191,7 +189,7 @@ public class AccertamentoPGiroComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.doccont00.core.bulk.AccertamentoPGiroBulk modificaAccertamento(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.ImpegnoPGiroBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.doccont00.core.bulk.AccertamentoPGiroBulk modificaAccertamento(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.ImpegnoPGiroBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.doccont00.core.bulk.AccertamentoPGiroBulk result = ((AccertamentoPGiroComponent)componentObj).modificaAccertamento(param0,param1);
@@ -209,7 +207,7 @@ public class AccertamentoPGiroComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk modificaScadenzaInAutomatico(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk param1,java.math.BigDecimal param2,boolean param3) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk modificaScadenzaInAutomatico(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk param1,java.math.BigDecimal param2,boolean param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk result = ((AccertamentoPGiroComponent)componentObj).modificaScadenzaInAutomatico(param0,param1,param2,param3);

@@ -75,7 +75,7 @@ public class Nota_di_debito_rigaBulk extends Fattura_passiva_rigaBulk {
 		setDt_da_competenza_coge(dettaglio.getDt_da_competenza_coge());
 		setDt_a_competenza_coge(dettaglio.getDt_a_competenza_coge());
 		setTi_istituz_commerc(dettaglio.getTi_istituz_commerc());
-		setProgressivo_riga(new Long(getNotaDiDebito().getFattura_passiva_dettColl().size() + 1));
+		setProgressivo_riga(Long.valueOf(getNotaDiDebito().getFattura_passiva_dettColl().size() + 1));
 
 		setBene_servizio(dettaglio.getBene_servizio());
 		setVoce_iva(dettaglio.getVoce_iva());

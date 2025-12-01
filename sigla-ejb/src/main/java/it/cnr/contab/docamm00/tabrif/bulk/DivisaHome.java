@@ -39,7 +39,7 @@ public DivisaHome(java.sql.Connection conn,PersistentCache persistentCache) {
 // 	Ritorno la divisa di default
 //
 
-public DivisaBulk getDivisaDefault(it.cnr.jada.UserContext userContext) throws it.cnr.jada.comp.ComponentException, PersistencyException, javax.ejb.EJBException
+public DivisaBulk getDivisaDefault(it.cnr.jada.UserContext userContext) throws it.cnr.jada.comp.ComponentException, PersistencyException, jakarta.ejb.EJBException
 {
 	String cd_divisa_default = null;
 
@@ -47,7 +47,7 @@ public DivisaBulk getDivisaDefault(it.cnr.jada.UserContext userContext) throws i
 		return null;		
 	
 	try {
-		cd_divisa_default = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(userContext, new Integer(0), "*", "CD_DIVISA", "EURO");
+		cd_divisa_default = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(userContext, Integer.valueOf(0), "*", "CD_DIVISA", "EURO");
 	} catch (RemoteException e) {
 		throw new ComponentException(e);
 	}

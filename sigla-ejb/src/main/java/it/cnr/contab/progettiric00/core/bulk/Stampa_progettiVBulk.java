@@ -106,7 +106,7 @@ public class Stampa_progettiVBulk extends ProgettoBulk {
      * @return java.lang.String
      */
     public Integer getTc() {
-	    return new Integer(0);
+	    return Integer.valueOf(0);
     }
 
 }

@@ -24,6 +24,7 @@ import it.cnr.jada.bulk.BulkInfo;
 import it.cnr.jada.bulk.FillException;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.jsp.Button;
+import jakarta.servlet.jsp.JspWriter;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -157,13 +158,13 @@ public class OfflineReportPrintBP extends ReportPrintBP {
 	public void setServerPriority(int newServerPriority) {
 		serverPriority = newServerPriority;
 	}
-	public void writeFormField(javax.servlet.jsp.JspWriter out,String name) throws java.io.IOException {
+	public void writeFormField(JspWriter out, String name) throws java.io.IOException {
 		getBulkInfo().writeFormField(out,getModel(),null,name,"main",1,1,it.cnr.jada.util.action.FormController.EDIT,false,getFieldValidationMap(), getParentRoot().isBootstrap());
 	}
-	public void writeFormInput(javax.servlet.jsp.JspWriter out,String name) throws java.io.IOException {
+	public void writeFormInput(JspWriter out,String name) throws java.io.IOException {
 		getBulkInfo().writeFormInput(out,getModel(),null,name,false,null,null,"main",it.cnr.jada.util.action.FormController.EDIT,getFieldValidationMap(), getParentRoot().isBootstrap());
 	}
-	public void writeFormLabel(javax.servlet.jsp.JspWriter out,String name) throws java.io.IOException {
+	public void writeFormLabel(JspWriter out,String name) throws java.io.IOException {
 		getBulkInfo().writeFormLabel(out,getModel(),null,name,null, this.getParentRoot().isBootstrap());
 	}
 	public void initCdServizioPEC(String cdServizioPEC) {

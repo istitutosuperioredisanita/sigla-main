@@ -162,7 +162,7 @@ public it.cnr.jada.util.RemoteIterator cerca(UserContext userContext,it.cnr.jada
 					
 
 				voce_epBulk.setCd_voce_ep(voce_epBulk.getCd_voce_ep_padre().concat(".").concat(voce_epBulk.getCd_proprio_voce_ep()));
-				voce_epBulk.setLivello(new Integer(2));
+				voce_epBulk.setLivello(Integer.valueOf(2));
 				voce_epBulk.setFl_mastrino(new Boolean (false));
 				insertBulk(userContext, voce_epBulk);
 				return voce_epBulk;
@@ -306,7 +306,7 @@ public OggettoBulk creaConBulk (UserContext userContext,OggettoBulk bulk) throws
 						throw new GruppoNaturaNonCongrui();
 					}	
 					
-					contoBulk.setLivello(new Integer(3));
+					contoBulk.setLivello(Integer.valueOf(3));
 					contoBulk.setFl_mastrino(new Boolean ( true ));
 					((CapocontoHome)getHomeCache(userContext).getHome( CapocontoBulk.class )).lock( contoBulk.getVoce_ep_padre() );
 				}
@@ -314,7 +314,7 @@ public OggettoBulk creaConBulk (UserContext userContext,OggettoBulk bulk) throws
 					if (contoBulk.getRiepiloga_a() == null)
 						throw new ApplicationException("Il campo Riepiloga a è obbligatorio.");
 					contoBulk.setCd_voce_ep(contoBulk.getCd_proprio_voce_ep());
-					contoBulk.setLivello(new Integer(1));
+					contoBulk.setLivello(Integer.valueOf(1));
 					contoBulk.setFl_mastrino(new Boolean ( true ));
 				}			
 				insertBulk( userContext, contoBulk);

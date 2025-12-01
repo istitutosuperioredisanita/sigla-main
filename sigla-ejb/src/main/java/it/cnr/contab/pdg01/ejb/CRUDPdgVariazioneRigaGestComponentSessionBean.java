@@ -16,9 +16,9 @@
  */
 
 package it.cnr.contab.pdg01.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.pdg01.comp.CRUDPdgVariazioneRigaGestComponent;
 import it.cnr.jada.UserContext;
@@ -36,10 +36,8 @@ public class CRUDPdgVariazioneRigaGestComponentSessionBean extends it.cnr.jada.e
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.pdg01.comp.CRUDPdgVariazioneRigaGestComponent();
 }
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-		return new CRUDPdgVariazioneRigaGestComponentSessionBean();
-	}
-	public it.cnr.contab.progettiric00.core.bulk.ProgettoBulk getProgettoLineaAttivita(it.cnr.jada.UserContext param0,it.cnr.contab.pdg01.bulk.Pdg_variazione_riga_gestBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public it.cnr.contab.progettiric00.core.bulk.ProgettoBulk getProgettoLineaAttivita(it.cnr.jada.UserContext param0,it.cnr.contab.pdg01.bulk.Pdg_variazione_riga_gestBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.progettiric00.core.bulk.ProgettoBulk result = ((CRUDPdgVariazioneRigaGestComponent)componentObj).getProgettoLineaAttivita(param0,param1);

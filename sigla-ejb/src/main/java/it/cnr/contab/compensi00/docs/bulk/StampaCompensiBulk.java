@@ -97,7 +97,7 @@ public java.lang.Integer getEsercizio() {
 }
 
 public Integer getTc() {
-	return new Integer(0);
+	return Integer.valueOf(0);
 }
 
 public it.cnr.contab.anagraf00.core.bulk.TerzoBulk getTerzoForPrint() {

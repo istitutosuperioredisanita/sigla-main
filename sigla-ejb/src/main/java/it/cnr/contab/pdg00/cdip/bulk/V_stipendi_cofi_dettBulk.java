@@ -48,20 +48,20 @@ public class V_stipendi_cofi_dettBulk extends V_stipendi_cofi_dettBase {
 	public static final int RECUPERO_ADD = 15;
 
 	static {
-		meseKeys.put(new Integer(GENNAIO),"Gennaio");
-		meseKeys.put(new Integer(FEBBRAIO),"Febbraio");
-		meseKeys.put(new Integer(MARZO),"Marzo");
-		meseKeys.put(new Integer(APRILE),"Aprile");
-		meseKeys.put(new Integer(MAGGIO),"Maggio");
-		meseKeys.put(new Integer(GIUGNO),"Giugno");
-		meseKeys.put(new Integer(LUGLIO),"Luglio");
-		meseKeys.put(new Integer(AGOSTO),"Agosto");
-		meseKeys.put(new Integer(SETTEMBRE),"Settembre");
-		meseKeys.put(new Integer(OTTOBRE),"Ottobre");
-		meseKeys.put(new Integer(NOVEMBRE),"Novembre");
-		meseKeys.put(new Integer(TREDICESIMA),"Tredicesima");
-		meseKeys.put(new Integer(DICEMBRE),"Dicembre");
-		meseKeys.put(new Integer(RECUPERO_ADD),"Recupero Addizionali");
+		meseKeys.put(Integer.valueOf(GENNAIO),"Gennaio");
+		meseKeys.put(Integer.valueOf(FEBBRAIO),"Febbraio");
+		meseKeys.put(Integer.valueOf(MARZO),"Marzo");
+		meseKeys.put(Integer.valueOf(APRILE),"Aprile");
+		meseKeys.put(Integer.valueOf(MAGGIO),"Maggio");
+		meseKeys.put(Integer.valueOf(GIUGNO),"Giugno");
+		meseKeys.put(Integer.valueOf(LUGLIO),"Luglio");
+		meseKeys.put(Integer.valueOf(AGOSTO),"Agosto");
+		meseKeys.put(Integer.valueOf(SETTEMBRE),"Settembre");
+		meseKeys.put(Integer.valueOf(OTTOBRE),"Ottobre");
+		meseKeys.put(Integer.valueOf(NOVEMBRE),"Novembre");
+		meseKeys.put(Integer.valueOf(TREDICESIMA),"Tredicesima");
+		meseKeys.put(Integer.valueOf(DICEMBRE),"Dicembre");
+		meseKeys.put(Integer.valueOf(RECUPERO_ADD),"Recupero Addizionali");
 	}
 	
 	private static java.util.Dictionary entrata_spesakeys = new it.cnr.jada.util.OrderedHashtable();

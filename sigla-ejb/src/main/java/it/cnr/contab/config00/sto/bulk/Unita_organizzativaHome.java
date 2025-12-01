@@ -338,7 +338,7 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
 	public CdrBulk findCdrResponsbileUo(Unita_organizzativaBulk uo) throws PersistencyException {
 
 		SQLBuilder sql = getHomeCache().getHome(CdrBulk.class).createSQLBuilder();
-		sql.addSQLClause("AND", "TO_NUMBER(CD_PROPRIO_CDR)", SQLBuilder.EQUALS, new Integer(0));
+		sql.addSQLClause("AND", "TO_NUMBER(CD_PROPRIO_CDR)", SQLBuilder.EQUALS, Integer.valueOf(0));
 		sql.addClause("AND", "cd_unita_organizzativa", SQLBuilder.EQUALS, uo.getCd_unita_organizzativa());
 		Broker broker = createBroker(sql);
 		if (!broker.next()) return null;

@@ -12,7 +12,7 @@ boolean multi_incarico = false;
 if (procedura!=null && procedura.getFaseProcesso()!=null && 
 	procedura.getNr_contratti()!=null && procedura.getIncarichi_repertorioValidiColl()!=null &&
 	procedura.getFaseProcesso().compareTo(Incarichi_proceduraBulk.FASE_INSERIMENTO_CONTRATTO)!=-1 &&
-	procedura.getNr_contratti().compareTo(new Integer(1))==1)
+	procedura.getNr_contratti().compareTo(Integer.valueOf(1))==1)
 	multi_incarico=true;
 %>
 <fieldset>

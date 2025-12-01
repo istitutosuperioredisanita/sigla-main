@@ -19,7 +19,7 @@ package it.cnr.contab.utenze00.action;
 
 import java.io.Serializable;
 
-import javax.servlet.http.*;
+import jakarta.servlet.http.*;
 
 import it.cnr.jada.UserContext;
 import it.cnr.jada.action.HttpActionContext;
@@ -43,7 +43,7 @@ public void valueUnbound(HttpSessionBindingEvent event) {
 	try {
 		//GestioneUtenteAction.getComponentSession().unregisterUser(HttpActionContext.getUserContext(event.getSession()));
 		GestioneUtenteAction.getComponentSession().unregisterUser(httpContext);
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 	} catch(java.rmi.RemoteException e) {
 	} catch(it.cnr.jada.comp.ComponentException e) {
 	}

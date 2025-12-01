@@ -28,6 +28,8 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.action.SimpleCRUDBP;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 import java.util.List;
 
@@ -139,10 +141,10 @@ public class FatturaAttivaRigaCRUDController extends it.cnr.jada.util.action.Sim
 
     @Override
     public void writeHTMLToolbar(
-            javax.servlet.jsp.PageContext context,
+            PageContext context,
             boolean reset,
             boolean find,
-            boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+            boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
         super.writeHTMLToolbar(context, reset, find, delete, false);
 

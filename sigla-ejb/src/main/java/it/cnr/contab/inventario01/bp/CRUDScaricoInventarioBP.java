@@ -881,7 +881,7 @@ public void modificaBeneAssociatoConBulk(ActionContext context, OggettoBulk bulk
 		throw handleException(e);
 	} catch(java.rmi.RemoteException e) {
 		throw handleException(e);
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw handleException(e);
 	} 	
 	

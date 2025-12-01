@@ -35,10 +35,10 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.RemoteIterator;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.text.ParseException;
@@ -51,9 +51,7 @@ public class ChiusuraAnnoComponentSessionBean extends it.cnr.jada.ejb.CRUDCompon
 	public void ejbCreate() {
 	componentObj = new ChiusuraAnnoComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new ChiusuraAnnoComponentSessionBean();
-}
+
 
 
 	@Override

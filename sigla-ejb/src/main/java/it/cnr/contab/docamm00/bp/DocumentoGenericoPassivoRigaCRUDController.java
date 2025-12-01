@@ -18,7 +18,8 @@
 package it.cnr.contab.docamm00.bp;
 import java.io.IOException;
 
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspWriter;
 
 import it.cnr.contab.docamm00.ejb.*;
 import it.cnr.contab.docamm00.docs.bulk.*;
@@ -26,6 +27,7 @@ import it.cnr.contab.doccont00.core.bulk.MandatoBulk;
 import it.cnr.jada.action.*;
 import it.cnr.jada.bulk.*;
 import it.cnr.jada.util.action.SimpleCRUDBP;
+import jakarta.servlet.jsp.PageContext;
 
 /**
  * Riga del documento generico passivo
@@ -102,10 +104,10 @@ public class DocumentoGenericoPassivoRigaCRUDController extends it.cnr.jada.util
 	}
 	@Override
 	public void writeHTMLToolbar(
-			javax.servlet.jsp.PageContext context,
+			PageContext context,
 			boolean reset,
 			boolean find,
-			boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+			boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
 		super.writeHTMLToolbar(context, reset, find, delete, false);
 

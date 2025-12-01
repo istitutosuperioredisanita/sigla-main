@@ -280,7 +280,7 @@ public abstract class Fattura_passivaBulk
         if (date == null)
             try {
                 date = it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp();
-            } catch (javax.ejb.EJBException e) {
+            } catch (jakarta.ejb.EJBException e) {
                 throw new it.cnr.jada.DetailedRuntimeException(e);
             }
 
@@ -411,7 +411,7 @@ public abstract class Fattura_passivaBulk
             java.sql.Timestamp ts = it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp();
             nuovoRigo.setDt_da_competenza_coge((getDt_da_competenza_coge() == null) ? ts : getDt_da_competenza_coge());
             nuovoRigo.setDt_a_competenza_coge((getDt_a_competenza_coge() == null) ? ts : getDt_a_competenza_coge());
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw new it.cnr.jada.DetailedRuntimeException(e);
         }
         nuovoRigo.setTi_istituz_commerc(
@@ -423,7 +423,7 @@ public abstract class Fattura_passivaBulk
             long prog = ((Fattura_passiva_rigaBulk) i.next()).getProgressivo_riga().longValue();
             if (prog > max) max = prog;
         }
-        nuovoRigo.setProgressivo_riga(new Long(max + 1));
+        nuovoRigo.setProgressivo_riga(Long.valueOf(max + 1));
 
         nuovoRigo.setFl_iva_forzata(Boolean.FALSE);
         nuovoRigo.setQuantita(new java.math.BigDecimal(1));
@@ -495,7 +495,7 @@ public abstract class Fattura_passivaBulk
             long prog = ((Fattura_passiva_rigaBulk) i.next()).getProgressivo_riga().longValue();
             if (prog > max) max = prog;
         }
-        dettaglio.setPg_riga_intra(new Long(max + 1));
+        dettaglio.setPg_riga_intra(Long.valueOf(max + 1));
         if (getFornitore() != null && getFornitore().getAnagrafico() != null &&
                 getFornitore().getAnagrafico().getComune_fiscale() != null) {
             NazioneBulk nazione = getFornitore().getAnagrafico().getComune_fiscale().getNazione();
@@ -3162,7 +3162,7 @@ public abstract class Fattura_passivaBulk
         try {
             // Quando sar? a regime la parte della stampa registri IVA limInf dovr? essere
             // impostato a data successiva alla data ultima stampa IVA (se esiste, altrimenti come adesso)
-            int compare = getEsercizio().compareTo(new Integer(dataRegistrazione.get(Calendar.YEAR)));
+            int compare = getEsercizio().compareTo(Integer.valueOf(dataRegistrazione.get(Calendar.YEAR)));
             if (compare == 0) {
                 limSup = today;
                 limInf = getDateCalendar(new java.sql.Timestamp(sdf.parse("01/01/" + getEsercizio().intValue()).getTime()));

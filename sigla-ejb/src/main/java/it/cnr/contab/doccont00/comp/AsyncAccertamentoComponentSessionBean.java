@@ -29,10 +29,10 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.SendMail;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+import jakarta.ejb.Asynchronous;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.Asynchronous;
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.time.ZoneId;
@@ -44,9 +44,7 @@ import java.util.List;
 public class AsyncAccertamentoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements AsyncAccertamentoComponentSession {
 	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(AsyncAccertamentoComponentSessionBean.class);
 
-    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-        return new AsyncAccertamentoComponentSessionBean();
-    }
+    
 
 	@Asynchronous
 	public void asyncCreateAcceratmentiPluriennali(UserContext param0, Integer esercizio, WorkpackageKey key) throws ComponentException {

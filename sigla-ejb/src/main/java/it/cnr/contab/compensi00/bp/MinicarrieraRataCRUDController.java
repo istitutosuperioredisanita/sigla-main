@@ -23,6 +23,8 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.HttpActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 /**
  * Insert the type's description here.
@@ -135,10 +137,10 @@ public class MinicarrieraRataCRUDController extends it.cnr.jada.util.action.Simp
     }
     @Override
     public void writeHTMLToolbar(
-            javax.servlet.jsp.PageContext context,
+            PageContext context,
             boolean reset,
             boolean find,
-            boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+            boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
         MinicarrieraBulk carriera = (MinicarrieraBulk) getParentModel();
         CRUDMinicarrieraBP parentController = (CRUDMinicarrieraBP) getParentController();

@@ -40,7 +40,7 @@ import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.jada.util.jsp.Button;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.Enumeration;
@@ -71,7 +71,7 @@ public class SelezionatoreAssestatoDocContBP extends SelezionatoreAssestatoBP{
 	/**
 	 * Crea la CRUDComponentSession da usare per effettuare le operazioni di CRUD
 	 */
-	public CRUDComponentSession createComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public CRUDComponentSession createComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		if (CostantiTi_gestione.TI_GESTIONE_ENTRATE.equals(this.getTipoGestione()))
 			return EJBCommonServices.createEJB("CNRDOCCONT00_EJB_AccertamentoComponentSession", AccertamentoComponentSession.class);
 		else

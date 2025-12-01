@@ -57,7 +57,10 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.AbstractPrintBP;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
+import jakarta.servlet.jsp.PageContext;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.Optional;
@@ -72,7 +75,7 @@ import java.util.TreeMap;
 public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP implements IDefferedUpdateSaldiBP, IDocumentoAmministrativoSpesaBP, IValidaDocContBP, IDocAmmEconomicaBP {
     private final SimpleDetailCRUDController contributiCRUDController = new SimpleDetailCRUDController("contributiCRUDController", Contributo_ritenutaBulk.class, "contributi", this, false) {
         @Override
-        public void writeHTMLToolbar(javax.servlet.jsp.PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+        public void writeHTMLToolbar(PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
             super.writeHTMLToolbar(context, reset, find, delete, false);
 
             // Aggiungo alla table dei contributi per visualizzare ulteriori dettagli per ogni riga
@@ -97,7 +100,7 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
     };
     private final SimpleDetailCRUDController docContAssociatiCRUDController = new SimpleDetailCRUDController("docContAssociatiCRUDController", V_doc_cont_compBulk.class, "docContAssociati", this, false) {
         @Override
-        public void writeHTMLToolbar(javax.servlet.jsp.PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+        public void writeHTMLToolbar(PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
             super.writeHTMLToolbar(context, reset, find, delete, false);
 
@@ -153,7 +156,7 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
 
     /**
      * @param context      Il contesto dell'azione
-     * @param accertamento it.cnr.contab.doccont00.core.bulk.AccertamentoBulk
+     * @param compenso     CompensoBulk
      * @param mode         java.lang.String
      * @return it.cnr.jada.util.action.CRUDBP
      */
@@ -215,9 +218,9 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
      * Insert the method's description here.
      * Creation date: (25/02/2002 12.56.44)
      *
-     * @param userContext it.cnr.jada.UserContext
+     * @param context     it.cnr.jada.UserContext
      * @param compenso    it.cnr.contab.compensi00.docs.bulk.CompensoBulk
-     * @param aTerzo      it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk
+     * @param vTerzo      it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk
      * @return it.cnr.contab.compensi00.docs.bulk.CompensoBulk
      */
     public void completaTerzo(ActionContext context, CompensoBulk compenso, V_terzo_per_compensoBulk vTerzo) throws BusinessProcessException {
@@ -738,8 +741,8 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
                 String cds = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(context.getUserContext());
                 try {
                     DocumentoGenericoComponentSession session = (DocumentoGenericoComponentSession) createComponentSession("CNRDOCAMM00_EJB_DocumentoGenericoComponentSession", DocumentoGenericoComponentSession.class);
-                    boolean esercizioScrivaniaAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, new Integer(compenso.getEsercizioScrivania())));
-                    boolean esercizioSuccessivoAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, new Integer(compenso.getEsercizioScrivania() + 1)));
+                    boolean esercizioScrivaniaAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, Integer.valueOf(compenso.getEsercizioScrivania())));
+                    boolean esercizioSuccessivoAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, Integer.valueOf(compenso.getEsercizioScrivania() + 1)));
                     setRiportaAvantiIndietro(esercizioScrivaniaAperto && esercizioSuccessivoAperto && isRibaltato() && isSupervisore());
                 } catch (Throwable t) {
                     // handleException(t);
@@ -747,7 +750,7 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
                 }
             } else
                 setRiportaAvantiIndietro(false);
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             setAnnoSolareInScrivania(false);
             throw new BusinessProcessException(e);
         }
@@ -1193,8 +1196,6 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
      * Carica tutti i mandati e le reversali associati al compenso in esame
      *
      * @param context  il Context che ha generato la richiesta
-     * @param compenso it.cnr.contab.compensi00.docs.bulk.CompensoBulk
-     * @param aTerzo   it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk
      * @return it.cnr.contab.compensi00.docs.bulk.CompensoBulk
      */
     public void loadDocContAssociati(ActionContext context) throws BusinessProcessException {
@@ -1476,9 +1477,7 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
      * Insert the method's description here.
      * Creation date: (25/02/2002 12.56.44)
      *
-     * @param userContext it.cnr.jada.UserContext
-     * @param compenso    it.cnr.contab.compensi00.docs.bulk.CompensoBulk
-     * @param aTerzo      it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk
+     * @param context it.cnr.jada.UserContext
      * @return it.cnr.contab.compensi00.docs.bulk.CompensoBulk
      */
     private void validaDatiLiquidazione(ActionContext context) throws BusinessProcessException {

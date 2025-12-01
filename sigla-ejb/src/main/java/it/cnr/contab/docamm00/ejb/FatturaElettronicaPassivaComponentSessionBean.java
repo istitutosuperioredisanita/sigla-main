@@ -30,11 +30,11 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.NoRollbackException;
 import it.cnr.jada.persistency.PersistencyException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
@@ -45,9 +45,7 @@ public class FatturaElettronicaPassivaComponentSessionBean extends it.cnr.jada.e
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.docamm00.comp.FatturaElettronicaPassivaComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new FatturaElettronicaPassivaComponentSessionBean();
-	}
+	
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public OggettoBulk creaDocumento(UserContext usercontext,

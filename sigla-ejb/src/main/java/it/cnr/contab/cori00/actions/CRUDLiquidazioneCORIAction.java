@@ -19,7 +19,7 @@ package it.cnr.contab.cori00.actions;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.cori00.docs.bulk.*;

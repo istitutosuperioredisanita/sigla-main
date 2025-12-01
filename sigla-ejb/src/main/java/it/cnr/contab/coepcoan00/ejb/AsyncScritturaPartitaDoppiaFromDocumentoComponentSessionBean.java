@@ -29,10 +29,10 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.SendMail;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+import jakarta.ejb.Asynchronous;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.Asynchronous;
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.time.ZoneId;
@@ -46,9 +46,7 @@ import java.util.Optional;
 public class AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements AsyncScritturaPartitaDoppiaFromDocumentoComponentSession {
 	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean.class);
 
-    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-        return new AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean();
-    }
+    
 
 	@Asynchronous
 	public void asyncLoadScritturePatrimoniali(UserContext param0, Integer pEsercizio, String pCdCds) throws ComponentException {

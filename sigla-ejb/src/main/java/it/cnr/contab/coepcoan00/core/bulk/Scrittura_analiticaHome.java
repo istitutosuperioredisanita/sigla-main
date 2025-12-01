@@ -75,7 +75,7 @@ public class Scrittura_analiticaHome extends BulkHome {
 				cs.setString( 6, scrittura.getUser());
 				cs.executeQuery();
 
-				Long result = new Long( cs.getLong( 1 ));
+				Long result = Long.valueOf( cs.getLong( 1 ));
 				scrittura.setPg_scrittura( result );
 			}
 			catch ( SQLException e )

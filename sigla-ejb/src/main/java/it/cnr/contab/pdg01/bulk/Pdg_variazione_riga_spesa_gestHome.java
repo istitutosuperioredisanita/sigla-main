@@ -36,8 +36,8 @@ public class Pdg_variazione_riga_spesa_gestHome extends BulkHome {
 	public void initializePrimaryKeyForInsert(UserContext usercontext,OggettoBulk oggettobulk)throws PersistencyException, ComponentException {
 		try {
 			((Pdg_variazione_riga_gestBulk)oggettobulk).setPg_riga(
-				new Integer(
-					((Integer)findAndLockMax( oggettobulk, "pg_riga", new Integer(0) )).intValue()+1
+				Integer.valueOf(
+					((Integer)findAndLockMax( oggettobulk, "pg_riga", Integer.valueOf(0) )).intValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

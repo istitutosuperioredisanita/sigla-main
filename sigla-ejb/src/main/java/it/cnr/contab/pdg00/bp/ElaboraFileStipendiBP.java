@@ -79,7 +79,7 @@ public void doCercaBatch(ActionContext context,V_stipendi_cofi_dettBulk dett) th
 	try{
 		ElaboraFileStipendiComponentSession sess = (ElaboraFileStipendiComponentSession)createComponentSession();
 		setModel(context,sess.cercaBatch(context.getUserContext(), dett));
-	}catch(javax.ejb.EJBException e){
+	}catch(jakarta.ejb.EJBException e){
 		throw handleException(e);
 	} catch(java.rmi.RemoteException re){
 		throw handleException(re);
@@ -111,7 +111,7 @@ public void doElaboraFile(ActionContext context,V_stipendi_cofi_dettBulk dett) t
 	try{
 		ElaboraFileStipendiComponentSession sess = (ElaboraFileStipendiComponentSession)createComponentSession();
 		setModel(context,sess.elaboraFile(context.getUserContext(), dett));
-	}catch(javax.ejb.EJBException e){
+	}catch(jakarta.ejb.EJBException e){
 		throw handleException(e);
 	} catch(java.rmi.RemoteException re){
 		throw handleException(re);
@@ -123,7 +123,7 @@ public void doReset(ActionContext context,V_stipendi_cofi_dettBulk dett) throws 
 	try{
 		ElaboraFileStipendiComponentSession sess = (ElaboraFileStipendiComponentSession)createComponentSession();
 		setModel(context,sess.annullaElaborazione(context.getUserContext(), dett));
-	}catch(javax.ejb.EJBException e){
+	}catch(jakarta.ejb.EJBException e){
 		throw handleException(e);
 	} catch(java.rmi.RemoteException re){
 		throw handleException(re);

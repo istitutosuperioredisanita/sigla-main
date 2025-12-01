@@ -27,7 +27,7 @@ import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 
-import javax.persistence.Transient;
+import jakarta.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Dictionary;

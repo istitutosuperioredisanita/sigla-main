@@ -88,7 +88,7 @@ public Forward doBringBackOpenAccertamentiWindow(ActionContext context) {
  * Al business process viene anche chiesto l'elenco delle colonne da
  * visualizzare.
  */
-public Forward doCerca(ActionContext context) throws java.rmi.RemoteException,InstantiationException,javax.ejb.RemoveException {
+public Forward doCerca(ActionContext context) throws java.rmi.RemoteException,InstantiationException,jakarta.ejb.RemoveException {
 
 	try {
 		fillModel(context);
@@ -255,7 +255,7 @@ public Forward doOpenAccertamentiWindow(ActionContext context) {
 		java.sql.Timestamp dataReg = null;
 		try {
 			dataReg = it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
-		} catch (javax.ejb.EJBException e) {
+		} catch (jakarta.ejb.EJBException e) {
 			return handleException(context, e);
 		}
 		java.util.Calendar calendar = java.util.GregorianCalendar.getInstance();

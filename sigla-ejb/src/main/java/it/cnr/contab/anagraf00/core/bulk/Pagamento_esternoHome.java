@@ -65,9 +65,9 @@ public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,Og
 			try
 			{
 				if(rs.next())
-					x = new Integer(rs.getInt(1) + 1);
+					x = Integer.valueOf(rs.getInt(1) + 1);
 				else
-					x = new Integer(0);
+					x = Integer.valueOf(0);
 			}
 			catch( SQLException e )
 			{

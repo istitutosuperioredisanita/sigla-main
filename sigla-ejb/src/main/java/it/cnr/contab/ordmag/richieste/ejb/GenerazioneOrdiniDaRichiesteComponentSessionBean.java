@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.ordmag.richieste.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk;
 import it.cnr.contab.ordmag.richieste.comp.GenerazioneOrdiniDaRichiesteComponent;
@@ -29,10 +29,8 @@ public class GenerazioneOrdiniDaRichiesteComponentSessionBean extends it.cnr.jad
 	public void ejbCreate() {
 	componentObj = new GenerazioneOrdiniDaRichiesteComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new GenerazioneOrdiniDaRichiesteComponentSessionBean();
-}
-public OrdineAcqBulk generaOrdine (UserContext aUC,OrdineAcqBulk ordine) throws ComponentException, javax.ejb.EJBException {
+
+public OrdineAcqBulk generaOrdine (UserContext aUC,OrdineAcqBulk ordine) throws ComponentException, jakarta.ejb.EJBException {
 	pre_component_invocation(aUC,componentObj);
 	try {
 		OrdineAcqBulk result = ((GenerazioneOrdiniDaRichiesteComponent)componentObj).generaOrdine(aUC, ordine);
@@ -50,7 +48,7 @@ public OrdineAcqBulk generaOrdine (UserContext aUC,OrdineAcqBulk ordine) throws 
 		throw uncaughtError(aUC,componentObj,e);
 	}
 }
-public OrdineAcqBulk cercaRichieste(it.cnr.jada.UserContext aUC,OrdineAcqBulk ordine) throws ComponentException, javax.ejb.EJBException {
+public OrdineAcqBulk cercaRichieste(it.cnr.jada.UserContext aUC,OrdineAcqBulk ordine) throws ComponentException, jakarta.ejb.EJBException {
 	pre_component_invocation(aUC,componentObj);
 	try {
 		OrdineAcqBulk result = ((GenerazioneOrdiniDaRichiesteComponent)componentObj).cercaRichieste(aUC, ordine);

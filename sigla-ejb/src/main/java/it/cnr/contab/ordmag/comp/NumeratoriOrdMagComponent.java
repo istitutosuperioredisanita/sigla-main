@@ -73,12 +73,12 @@ public Integer getNextPG (UserContext userContext,NumerazioneOrdBulk progressivo
 			progressivo.setEsercizio(es);
 			progressivo.setCdTipoOperazione(progressivo.getCdTipoOperazione());
 			progressivo.setUser(userContext.getUser());
-			pgCorrente = new Integer(1);
+			pgCorrente = Integer.valueOf(1);
 			progressivo.setCorrente(pgCorrente);
 			home.insert(progressivo, userContext);
 			return pgCorrente;
 		}
-		pgCorrente = new Integer(progressivo.getCorrente()+1);
+		pgCorrente = Integer.valueOf(progressivo.getCorrente()+1);
 		progressivo.setCorrente(pgCorrente);
 		progressivo.setUser(userContext.getUser());
 		home.lock(progressivo);
@@ -109,12 +109,12 @@ public Long getNextPG (UserContext userContext,NumerazioneMagBulk progressivo)
 				progressivo.setCdCds(cds);
 				progressivo.setCdMagazzino(mag);
 				progressivo.setUser(userContext.getUser());
-				pgCorrente = new Long(1);
+				pgCorrente = Long.valueOf(1);
 				progressivo.setCorrente(pgCorrente);
 				home.insert(progressivo, userContext);
 				return pgCorrente;
 			}
-			pgCorrente = new Long(progressivo.getCorrente().longValue()+1);
+			pgCorrente = Long.valueOf(progressivo.getCorrente().longValue()+1);
 			progressivo.setCorrente(pgCorrente);
 			progressivo.setUser(userContext.getUser());
 			home.lock(progressivo);

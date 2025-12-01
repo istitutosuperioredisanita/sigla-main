@@ -41,7 +41,7 @@ import it.cnr.jada.util.action.SelezionatoreListaAlberoBP;
 import it.cnr.jada.util.action.SelezionatoreListaBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
-import javax.servlet.http.HttpSessionBindingEvent;
+import jakarta.servlet.http.HttpSessionBindingEvent;
 
 /**
  * Action di gestione della selezione di unità organizzative di scrivania
@@ -130,7 +130,7 @@ public Forward doSelezionaCds(ActionContext context) {
         return handleException(context, t);
     }
 }
-public static GestioneLoginComponentSession getGestioneLoginComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+public static GestioneLoginComponentSession getGestioneLoginComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 	return (GestioneLoginComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRUTENZE00_NAV_EJB_GestioneLoginComponentSession",GestioneLoginComponentSession.class);
 }
 protected Forward selectFromSearchResult(ActionContext actioncontext, FormField formfield, BulkInfo bulkinfo, RemoteIterator remoteiterator, String s)

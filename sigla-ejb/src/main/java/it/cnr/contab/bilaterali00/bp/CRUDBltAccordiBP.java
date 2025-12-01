@@ -28,6 +28,8 @@ import it.cnr.jada.action.Config;
 import it.cnr.jada.action.HttpActionContext;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 import java.util.TreeMap;
 
@@ -104,7 +106,7 @@ public class CRUDBltAccordiBP extends it.cnr.jada.util.action.SimpleCRUDBP {
 			return super.isReadonly();
 		};
 		@Override
-		public void writeHTMLToolbar(javax.servlet.jsp.PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+		public void writeHTMLToolbar(PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 			super.writeHTMLToolbar(context, reset, find, delete, false);
 
 			Blt_autorizzatiBulk autorizzato = (Blt_autorizzatiBulk)getParentModel();
@@ -139,7 +141,7 @@ public class CRUDBltAccordiBP extends it.cnr.jada.util.action.SimpleCRUDBP {
 			return super.isReadonly();
 		};
 		@Override
-		public void writeHTMLToolbar(javax.servlet.jsp.PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+		public void writeHTMLToolbar(PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 			super.writeHTMLToolbar(context, reset, find, delete, false);
 
 			Blt_autorizzatiBulk autorizzato = (Blt_autorizzatiBulk)getParentModel();

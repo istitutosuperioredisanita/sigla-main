@@ -9,7 +9,7 @@
 	CRUDIncarichiRichiestaBP bp = (CRUDIncarichiRichiestaBP)BusinessProcess.getBusinessProcess(request);
  	Incarichi_richiestaBulk  model = (Incarichi_richiestaBulk)bp.getModel();
 %>
-<% if (model.getNrContrattiAttivati().compareTo(new Integer(0))==0) {%>
+<% if (model.getNrContrattiAttivati().compareTo(Integer.valueOf(0))==0) {%>
 <fieldset class="fieldset">
 	<% if (model.getStatoText()!=null) {%>
     <legend class="GroupLabel ml-2">
@@ -85,7 +85,7 @@
       	  <div class="GroupLabel h5 text-primary ml-2">Esito ricerca</div>
 	      <div class="Group card p-2 mb-2">
 	      <table width="100%" class="w-100">
-			<% if (!bp.isSearching() && model.getNr_risorse_da_trovare().compareTo(new Integer(1))==0) {%>
+			<% if (!bp.isSearching() && model.getNr_risorse_da_trovare().compareTo(Integer.valueOf(1))==0) {%>
 			<tr>
 	     		<% bp.getController().writeFormField(out,"nr_risorse_da_trovare");%>
 			  	<td><% bp.getController().writeFormLabel(out,"personale_interno");%></td>
@@ -200,6 +200,6 @@
         </td>
       </tr>
 	</table>   
-<% if (model.getNrContrattiAttivati().compareTo(new Integer(0))==0) {%>
+<% if (model.getNrContrattiAttivati().compareTo(Integer.valueOf(0))==0) {%>
 </fieldset> 	
 <% } %>

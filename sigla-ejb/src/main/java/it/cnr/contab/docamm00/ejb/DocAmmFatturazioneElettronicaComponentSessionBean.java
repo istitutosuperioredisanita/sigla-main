@@ -25,9 +25,9 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1.FatturaElettronicaType;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
 import javax.xml.bind.JAXBElement;
 import java.rmi.RemoteException;
 import java.util.Date;
@@ -41,9 +41,7 @@ public class DocAmmFatturazioneElettronicaComponentSessionBean extends it.cnr.ja
 	public void ejbCreate() {
 		componentObj = new DocAmmFatturazioneElettronicaComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-		return new DocAmmFatturazioneElettronicaComponentSessionBean();
-	}
+	
 	
 	public Configurazione_cnrBulk getAuthenticatorPecSdi(UserContext userContext) throws it.cnr.jada.comp.ComponentException {
 		pre_component_invocation(userContext,componentObj);

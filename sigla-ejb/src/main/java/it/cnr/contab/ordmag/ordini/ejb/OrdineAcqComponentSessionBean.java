@@ -30,22 +30,20 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.RemoteIterator;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
 
 @Stateless(name = "CNRORDMAG00_EJB_OrdineAcqComponentSession")
 public class OrdineAcqComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements OrdineAcqComponentSession {
-    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-        return new OrdineAcqComponentSessionBean();
-    }
+
 
     @PostConstruct
     public void ejbCreate() {
         componentObj = new OrdineAcqComponent();
     }
 
-    public Boolean isUtenteAbilitatoOrdine(UserContext usercontext, OrdineAcqBulk ordine) throws ComponentException, PersistencyException, javax.ejb.EJBException {
+    public Boolean isUtenteAbilitatoOrdine(UserContext usercontext, OrdineAcqBulk ordine) throws ComponentException, PersistencyException, jakarta.ejb.EJBException {
         pre_component_invocation(usercontext, componentObj);
         try {
             Boolean result = ((OrdineAcqComponent) componentObj).isUtenteAbilitatoOrdine(usercontext, ordine);
@@ -67,7 +65,7 @@ public class OrdineAcqComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public Boolean isUtenteAbilitatoValidazioneOrdine(UserContext usercontext, OrdineAcqBulk ordine) throws ComponentException, PersistencyException, javax.ejb.EJBException {
+    public Boolean isUtenteAbilitatoValidazioneOrdine(UserContext usercontext, OrdineAcqBulk ordine) throws ComponentException, PersistencyException, jakarta.ejb.EJBException {
         pre_component_invocation(usercontext, componentObj);
         try {
             Boolean result = ((OrdineAcqComponent) componentObj).isUtenteAbilitatoValidazioneOrdine(usercontext, ordine);
@@ -89,7 +87,7 @@ public class OrdineAcqComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public void controllaQuadraturaObbligazioni(UserContext userContext, OrdineAcqBulk ordine) throws PersistencyException, ComponentException, javax.ejb.EJBException, RemoteException {
+    public void controllaQuadraturaObbligazioni(UserContext userContext, OrdineAcqBulk ordine) throws PersistencyException, ComponentException, jakarta.ejb.EJBException, RemoteException {
         pre_component_invocation(userContext, componentObj);
         try {
             ((OrdineAcqComponent) componentObj).controllaQuadraturaObbligazioni(userContext, ordine);
@@ -104,7 +102,7 @@ public class OrdineAcqComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public void completaOrdine(UserContext userContext, OrdineAcqBulk ordine) throws PersistencyException, ComponentException, javax.ejb.EJBException, RemoteException {
+    public void completaOrdine(UserContext userContext, OrdineAcqBulk ordine) throws PersistencyException, ComponentException, jakarta.ejb.EJBException, RemoteException {
         pre_component_invocation(userContext, componentObj);
         try {
             ((OrdineAcqComponent) componentObj).completaOrdine(userContext, ordine);
@@ -119,7 +117,7 @@ public class OrdineAcqComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public it.cnr.jada.util.RemoteIterator cercaObbligazioni(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_obbligazioniVBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.util.RemoteIterator cercaObbligazioni(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_obbligazioniVBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.util.RemoteIterator result = ((OrdineAcqComponent) componentObj).cercaObbligazioni(param0, param1);
@@ -138,7 +136,7 @@ public class OrdineAcqComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public OrdineAcqBulk contabilizzaDettagliSelezionati(it.cnr.jada.UserContext param0, OrdineAcqBulk param1, java.util.Collection param2, it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk param3) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public OrdineAcqBulk contabilizzaDettagliSelezionati(it.cnr.jada.UserContext param0, OrdineAcqBulk param1, java.util.Collection param2, it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk param3) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             OrdineAcqBulk result = ((OrdineAcqComponent) componentObj).contabilizzaDettagliSelezionati(param0, param1, param2, param3);
@@ -195,7 +193,7 @@ public class OrdineAcqComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public OrdineAcqBulk contabilizzaConsegneSelezionate(it.cnr.jada.UserContext param0, OrdineAcqBulk param1, java.util.Collection param2, it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk param3) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public OrdineAcqBulk contabilizzaConsegneSelezionate(it.cnr.jada.UserContext param0, OrdineAcqBulk param1, java.util.Collection param2, it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk param3) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             OrdineAcqBulk result = ((OrdineAcqComponent) componentObj).contabilizzaConsegneSelezionate(param0, param1, param2, param3);
@@ -385,7 +383,7 @@ public class OrdineAcqComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public java.util.List findListabanche(it.cnr.jada.UserContext param0, OrdineAcqBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.util.List findListabanche(it.cnr.jada.UserContext param0, OrdineAcqBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.util.List result = ((OrdineAcqComponent) componentObj).findListabanche(param0, param1);

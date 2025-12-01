@@ -17,8 +17,8 @@
 
 package it.cnr.contab.util00.comp;
 public interface IPingMgr {
-Integer TIPO_PING_SERVER_ATTIVO = new Integer("0");
-Integer TIPO_PING_LOGIN_ATTIVO = new Integer("1");
+Integer TIPO_PING_SERVER_ATTIVO = Integer.valueOf("0");
+Integer TIPO_PING_LOGIN_ATTIVO = Integer.valueOf("1");
 /**
  * Test attivazione server
  *  PreCondition: 

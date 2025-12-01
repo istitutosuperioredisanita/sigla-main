@@ -29,7 +29,7 @@ import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 @Remote
 public interface CompensoComponentSession extends it.cnr.jada.ejb.CRUDComponentSession, it.cnr.jada.ejb.PrintComponentSession, IDocumentoAmministrativoSpesaComponentSession {
 void aggiornaMontanti(it.cnr.jada.UserContext param0,it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;

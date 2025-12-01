@@ -132,7 +132,7 @@ public class SezionaleBulk extends SezionaleBase {
 
 		Long correnteSezionale = null;
 		if (getCorrente() == null)
-			setCorrente(new Long(getPrimo().longValue()-1));
+			setCorrente(Long.valueOf(getPrimo().longValue()-1));
 		try {
 			correnteSezionale = getCorrente();
 		if (correnteSezionale.longValue() < 0)

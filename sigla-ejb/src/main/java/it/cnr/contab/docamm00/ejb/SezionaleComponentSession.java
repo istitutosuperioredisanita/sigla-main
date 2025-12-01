@@ -17,7 +17,7 @@
 
 package it.cnr.contab.docamm00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface SezionaleComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

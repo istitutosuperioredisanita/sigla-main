@@ -19,7 +19,7 @@ package it.cnr.contab.utente00.ejb;
 
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface RuoloComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

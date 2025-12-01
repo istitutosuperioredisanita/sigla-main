@@ -30,8 +30,8 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.RemoteIterator;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -41,9 +41,7 @@ public class TransitoBeniOrdiniComponentSessionBean extends it.cnr.jada.ejb.CRUD
 	public void ejbCreate() {
 	componentObj = new TransitoBeniOrdiniComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new TransitoBeniOrdiniComponentSessionBean();
-}
+
 
 public Transito_beni_ordiniBulk gestioneTransitoInventario(UserContext userContext, MovimentiMagBulk movimentoCarico)  throws ComponentException, PersistencyException, RemoteException, ApplicationException{
 	pre_component_invocation(userContext,componentObj);

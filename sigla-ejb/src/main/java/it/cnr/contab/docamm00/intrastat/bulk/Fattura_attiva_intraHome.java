@@ -43,8 +43,8 @@ public class Fattura_attiva_intraHome extends BulkHome {
 		if (bulk == null) return;
 		try {
 			Fattura_attiva_intraBulk riga = (Fattura_attiva_intraBulk)bulk;
-			riga.setPg_riga_intra(new Long(
-					((Long)findAndLockMax( bulk, "pg_riga_intra", new Long(0))).longValue()+1));
+			riga.setPg_riga_intra(Long.valueOf(
+					((Long)findAndLockMax( bulk, "pg_riga_intra", Long.valueOf(0))).longValue()+1));
 			
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {
 			throw new PersistencyException(e);

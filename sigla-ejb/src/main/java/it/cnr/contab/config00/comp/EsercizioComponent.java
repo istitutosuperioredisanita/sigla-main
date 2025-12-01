@@ -82,7 +82,7 @@ public class EsercizioComponent extends it.cnr.jada.comp.CRUDComponent implement
 
             EsercizioHome home = (EsercizioHome) getHome(userContext, EsercizioBulk.class);
             BigDecimal imDispCassa = findIm_disp_cassa(userContext, esercizio);
-            EsercizioBulk esSuccessivo = (EsercizioBulk) home.findAndLock(new EsercizioBulk(esercizio.getCd_cds(), new Integer(esercizio.getEsercizio().intValue() + 1)));
+            EsercizioBulk esSuccessivo = (EsercizioBulk) home.findAndLock(new EsercizioBulk(esercizio.getCd_cds(), Integer.valueOf(esercizio.getEsercizio().intValue() + 1)));
             if (esSuccessivo == null)
                 throw new ApplicationException("Esercizio contabile " + esSuccessivo.getEsercizio() + " per Cds " + esSuccessivo.getCd_cds() + " non trovato");
 
@@ -222,7 +222,7 @@ public class EsercizioComponent extends it.cnr.jada.comp.CRUDComponent implement
 //			if ( esercizioPrecedente != null && !esercizioPrecedente.isChiuso() )
 //				throw new it.cnr.jada.comp.ApplicationException( "L'esercizio precedente non è stato chiuso." );
                 if (!esercizioHome.verificaEsercizi2AnniPrecedenti(esercizio))
-                    throw new it.cnr.jada.comp.ApplicationException("Esistono esercizi non chiusi per l'anno " + new Integer(esercizio.getEsercizio().intValue() - 2));
+                    throw new it.cnr.jada.comp.ApplicationException("Esistono esercizi non chiusi per l'anno " + Integer.valueOf(esercizio.getEsercizio().intValue() - 2));
             }
 
 

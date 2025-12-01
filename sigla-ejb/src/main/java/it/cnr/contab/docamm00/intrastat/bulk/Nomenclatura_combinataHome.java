@@ -35,8 +35,8 @@ public Nomenclatura_combinataHome(java.sql.Connection conn,PersistentCache persi
 public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext, OggettoBulk bulk) throws PersistencyException {
 	try {
 		((Nomenclatura_combinataBulk)bulk).setId_nomenclatura_combinata(
-				new Long(
-				((Long)findAndLockMax( bulk, "id_nomenclatura_combinata", new Long(0) )).longValue()+1
+				Long.valueOf(
+				((Long)findAndLockMax( bulk, "id_nomenclatura_combinata", Long.valueOf(0) )).longValue()+1
 			)
 		);
 	} catch(it.cnr.jada.bulk.BusyResourceException e) {

@@ -95,7 +95,7 @@ public java.lang.Integer getEsercizio() {
  * @return java.lang.Integer
  */
 public Integer getTc() {
-	return new Integer(0);
+	return Integer.valueOf(0);
 }
 /**
  * Insert the method's description here.

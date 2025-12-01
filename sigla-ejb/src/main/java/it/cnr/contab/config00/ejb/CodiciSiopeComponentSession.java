@@ -17,7 +17,7 @@
 
 package it.cnr.contab.config00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 /**
  * Remote interface for Enterprise Bean: CNRCONFIG00_EJB_CODICI_SIOPE_ComponentSession

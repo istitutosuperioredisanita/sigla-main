@@ -3711,7 +3711,7 @@ REVERSALE
     }
 
     public byte[] lanciaStampa(UserContext userContext, String cds, Integer esercizio, Long pgReversale)
-            throws PersistencyException, ComponentException, RemoteException, javax.ejb.EJBException, ParseException {
+            throws PersistencyException, ComponentException, RemoteException, jakarta.ejb.EJBException, ParseException {
 
         ReversaleIHome home = (ReversaleIHome) getHome(userContext, ReversaleIBulk.class);
         SQLBuilder sql = home.createSQLBuilder();

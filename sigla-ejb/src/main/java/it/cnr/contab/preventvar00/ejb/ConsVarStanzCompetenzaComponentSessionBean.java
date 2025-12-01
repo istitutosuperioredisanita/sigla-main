@@ -28,18 +28,16 @@ import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.RemoteIterator;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.*;
 @Stateless(name="CNRPREVENTVAR00_EJB_ConsVarStanzCompetenzaComponentSession")
 public class ConsVarStanzCompetenzaComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements ConsVarStanzCompetenzaComponentSession {
 @PostConstruct
 	public void ejbCreate() {
 	componentObj = new ConsVarStanzCompetenzaComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-	return new ConsVarStanzCompetenzaComponentSessionBean();
-}
-public it.cnr.contab.config00.pdcfin.cla.bulk.Parametri_livelliBulk findParametriLivelli(it.cnr.jada.UserContext param0, java.lang.Integer param1)  throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public it.cnr.contab.config00.pdcfin.cla.bulk.Parametri_livelliBulk findParametriLivelli(it.cnr.jada.UserContext param0, java.lang.Integer param1)  throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.config00.pdcfin.cla.bulk.Parametri_livelliBulk result = ((ConsVarStanzCompetenzaComponent)componentObj).findParametriLivelli(param0, param1);
@@ -58,7 +56,7 @@ public it.cnr.contab.config00.pdcfin.cla.bulk.Parametri_livelliBulk findParametr
 	}
 }
 
-public java.lang.String getDsLivelloClassificazione(it.cnr.jada.UserContext param0,it.cnr.contab.config00.pdcfin.cla.bulk.Classificazione_vociBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public java.lang.String getDsLivelloClassificazione(it.cnr.jada.UserContext param0,it.cnr.contab.config00.pdcfin.cla.bulk.Classificazione_vociBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.lang.String result = ((ConsVarStanzCompetenzaComponent)componentObj).getDsLivelloClassificazione(param0, param1);
@@ -76,7 +74,7 @@ public java.lang.String getDsLivelloClassificazione(it.cnr.jada.UserContext para
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public java.lang.String getDsLivelloClassificazione(it.cnr.jada.UserContext param0,java.lang.Integer param1,java.lang.String param2, java.lang.Integer param3) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public java.lang.String getDsLivelloClassificazione(it.cnr.jada.UserContext param0,java.lang.Integer param1,java.lang.String param2, java.lang.Integer param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.lang.String result = ((ConsVarStanzCompetenzaComponent)componentObj).getDsLivelloClassificazione(param0, param1, param2, param3);

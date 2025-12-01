@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.config00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.config00.comp.LimiteSpesaComponent;
 import it.cnr.jada.UserContext;
@@ -29,11 +29,9 @@ public class LimiteSpesaComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.config00.comp.LimiteSpesaComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new LimiteSpesaComponentSessionBean();
-}
+
 public void validaCds(UserContext param0, OggettoBulk param1)
-		throws ComponentException,javax.ejb.EJBException {
+		throws ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((LimiteSpesaComponent)componentObj).validaCds(param0,param1);

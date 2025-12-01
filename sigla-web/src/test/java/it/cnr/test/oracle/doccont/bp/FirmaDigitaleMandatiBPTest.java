@@ -32,7 +32,7 @@ import it.cnr.test.util.TestUserContext;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.junit.Test;
 
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 import java.text.SimpleDateFormat;
 import java.util.Optional;
 
@@ -50,7 +50,7 @@ public class FirmaDigitaleMandatiBPTest extends DeploymentsOracle {
         V_mandato_reversaleBulk v_mandato_reversaleBulk =
                 Optional.ofNullable(
                         crudComponentSession.findByPrimaryKey(testUserContext,
-                                new V_mandato_reversaleBulk(2019, "MAN", "000", new Long(1)))
+                                new V_mandato_reversaleBulk(2019, "MAN", "000", Long.valueOf(1)))
                 )
                         .filter(V_mandato_reversaleBulk.class::isInstance)
                         .map(V_mandato_reversaleBulk.class::cast)

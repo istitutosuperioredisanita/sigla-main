@@ -66,11 +66,11 @@ public Forward doRiportaSelezione(ActionContext context)
                                 //it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class))
                             //.getVal01(
                         //context.getUserContext(),
-                        //new Integer(0),
+                        //Integer.valueOf(0),
                         //"*",
                         //"CD_DIVISA",
                         //"EURO");
-            //} catch (javax.ejb.EJBException e) {
+            //} catch (jakarta.ejb.EJBException e) {
                 //return handleException(context,e);
             //} catch (java.rmi.RemoteException e) {
                 //return handleException(context,e);

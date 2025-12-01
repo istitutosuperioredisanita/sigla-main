@@ -34,7 +34,7 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 public class ProcedureComponent extends it.cnr.jada.comp.GenericComponent {
 /**

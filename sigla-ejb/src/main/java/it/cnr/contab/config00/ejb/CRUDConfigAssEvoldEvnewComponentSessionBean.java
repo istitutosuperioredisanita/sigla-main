@@ -17,8 +17,8 @@
 
 package it.cnr.contab.config00.ejb;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.config00.comp.CRUDConfigAssEvoldEvnewComponent;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
@@ -30,9 +30,7 @@ public class CRUDConfigAssEvoldEvnewComponentSessionBean extends it.cnr.jada.ejb
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.config00.comp.CRUDConfigAssEvoldEvnewComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new CRUDConfigAssEvoldEvnewComponentSessionBean();
-	}
+
 	public Elemento_voceBulk getCurrentElementoVoce(UserContext param0, Elemento_voceBulk param1, int param2) throws it.cnr.jada.comp.ComponentException {
 		pre_component_invocation(param0,componentObj);
 		try {

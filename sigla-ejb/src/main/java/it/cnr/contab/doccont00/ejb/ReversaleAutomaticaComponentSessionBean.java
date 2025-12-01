@@ -20,8 +20,8 @@ package it.cnr.contab.doccont00.ejb;
 import it.cnr.contab.doccont00.comp.MandatoAutomaticoComponent;
 import it.cnr.contab.doccont00.comp.ReversaleAutomaticaComponent;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 @Stateless(name="CNRDOCCONT00_EJB_ReversaleAutomaticaComponentSession")
 public class ReversaleAutomaticaComponentSessionBean extends ReversaleComponentSessionBean implements ReversaleAutomaticaComponentSession {
@@ -29,10 +29,8 @@ public class ReversaleAutomaticaComponentSessionBean extends ReversaleComponentS
 	public void ejbCreate() {
 	componentObj = new ReversaleAutomaticaComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new ReversaleAutomaticaComponentSessionBean();
-}
-public it.cnr.jada.bulk.OggettoBulk creaReversaleAutomatica(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+
+public it.cnr.jada.bulk.OggettoBulk creaReversaleAutomatica(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 	pre_component_invocation(param0, componentObj);
 	try
 	{

@@ -21,7 +21,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.anagraf00.tabter.bulk.NazioneBulk;
 import it.cnr.contab.docamm00.ejb.IDocumentoAmministrativoSpesaComponentSession;
@@ -52,7 +52,7 @@ java.util.Collection findTipi_rapporto(it.cnr.jada.UserContext param0,it.cnr.jad
 java.util.Collection findTipi_trattamento(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 it.cnr.contab.missioni00.docs.bulk.MissioneBulk generaDiaria(it.cnr.jada.UserContext param0,it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 it.cnr.contab.missioni00.docs.bulk.MissioneBulk generaRimborso(it.cnr.jada.UserContext param0,it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
-it.cnr.contab.missioni00.docs.bulk.MissioneBulk inizializzaDivisaCambioPerRimborsoKm(it.cnr.jada.UserContext param0,it.cnr.contab.missioni00.docs.bulk.Missione_dettaglioBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,javax.ejb.EJBException,java.rmi.RemoteException,it.cnr.jada.bulk.ValidationException;
+it.cnr.contab.missioni00.docs.bulk.MissioneBulk inizializzaDivisaCambioPerRimborsoKm(it.cnr.jada.UserContext param0,it.cnr.contab.missioni00.docs.bulk.Missione_dettaglioBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,java.rmi.RemoteException,it.cnr.jada.bulk.ValidationException;
 boolean isMissioneAnnullata(it.cnr.jada.UserContext param0,it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 it.cnr.contab.missioni00.docs.bulk.MissioneBulk loadCompenso(it.cnr.jada.UserContext param0,it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 it.cnr.jada.bulk.OggettoBulk modificaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1,it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param2) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
@@ -63,7 +63,7 @@ void setSavePoint(it.cnr.jada.UserContext param0,java.lang.String param1) throws
 void updateAnticipo(it.cnr.jada.UserContext param0,it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,java.rmi.RemoteException;
 it.cnr.contab.missioni00.docs.bulk.MissioneBulk updateCompenso(it.cnr.jada.UserContext param0,it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,java.rmi.RemoteException;
 void validaEsercizioDataRegistrazione(it.cnr.jada.UserContext param0,it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
-it.cnr.contab.missioni00.docs.bulk.MissioneBulk validaMassimaliSpesa(it.cnr.jada.UserContext param0,it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1,it.cnr.contab.missioni00.docs.bulk.Missione_dettaglioBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException,it.cnr.jada.persistency.PersistencyException,java.rmi.RemoteException,it.cnr.jada.bulk.ValidationException;
+it.cnr.contab.missioni00.docs.bulk.MissioneBulk validaMassimaliSpesa(it.cnr.jada.UserContext param0,it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1,it.cnr.contab.missioni00.docs.bulk.Missione_dettaglioBulk param2) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,java.rmi.RemoteException,it.cnr.jada.bulk.ValidationException;
 void validaObbligazione(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk param1,it.cnr.jada.bulk.OggettoBulk param2) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 void validaTerzo(it.cnr.jada.UserContext param0,it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 int validaTerzo(it.cnr.jada.UserContext param0,it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1,boolean param2) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;

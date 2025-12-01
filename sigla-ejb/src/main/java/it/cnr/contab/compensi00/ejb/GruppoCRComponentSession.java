@@ -21,7 +21,7 @@ package it.cnr.contab.compensi00.ejb;
 import java.util.Collection;
 import java.util.List;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.compensi00.tabrif.bulk.Gruppo_crBulk;

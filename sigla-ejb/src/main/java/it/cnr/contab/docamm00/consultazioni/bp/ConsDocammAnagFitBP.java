@@ -46,7 +46,7 @@ public class ConsDocammAnagFitBP extends BulkBP {
     }
 
     public AnagraficoComponentSession createComponentSession()
-            throws javax.ejb.EJBException,
+            throws jakarta.ejb.EJBException,
             java.rmi.RemoteException,
             BusinessProcessException {
         return (AnagraficoComponentSession) createComponentSession("CNRANAGRAF00_EJB_AnagraficoComponentSession", AnagraficoComponentSession.class);

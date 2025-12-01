@@ -18,11 +18,12 @@
 package it.cnr.contab.util.servlet;
 
 import it.cnr.contab.util.Utility;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.jar.Attributes;
@@ -36,7 +37,7 @@ public class UtilServlet extends HttpServlet {
     private transient final static Logger logger = LoggerFactory.getLogger(UtilServlet.class);
 
     public void init()
-            throws ServletException {
+            throws jakarta.servlet.ServletException {
         Utility.loadPersistentInfos();
         String version = "01.001.000";
         InputStream is = getServletContext().getResourceAsStream(Utility.MANIFEST_PATH);

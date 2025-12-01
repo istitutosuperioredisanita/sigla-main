@@ -112,13 +112,13 @@ public class XMLBulkInfo extends XMLBase {
                 addAttribute(Tags.INPUT_TYPE, Tags.TYPE_TEXTAREA);
                 addAttribute(
                         Tags.COLS,
-                        new Integer(areaCols).toString());
+                        Integer.valueOf(areaCols).toString());
                 addAttribute(
                         Tags.ROWS,
-                        new Integer(areaRows).toString());
+                        Integer.valueOf(areaRows).toString());
                 addAttribute(
                         Tags.MAX_LENGTH,
-                        new Integer(size).toString());
+                        Integer.valueOf(size).toString());
             } else if (type.equalsIgnoreCase(Tags.TIMESTAMP)) {
                 addAttribute(Tags.INPUT_TYPE, Tags.TYPE_TEXT);
                 addAttribute(Tags.FORMAT_NAME, Tags.DATE_SHORT);
@@ -127,10 +127,10 @@ public class XMLBulkInfo extends XMLBase {
                 addAttribute(Tags.FORMAT_NAME, Tags.EURO_FORMAT);
             } else {
                 addAttribute(Tags.INPUT_TYPE, Tags.TYPE_TEXT);
-                addAttribute(Tags.INPUT_SIZE, new Integer(size).toString());
+                addAttribute(Tags.INPUT_SIZE, Integer.valueOf(size).toString());
                 addAttribute(
                         Tags.MAX_LENGTH,
-                        new Integer(size).toString());
+                        Integer.valueOf(size).toString());
 
             }
             addAttribute(Tags.ENABLED_ON_EDIT, "false");

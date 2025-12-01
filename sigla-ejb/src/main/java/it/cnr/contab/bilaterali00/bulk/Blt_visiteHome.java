@@ -102,8 +102,8 @@ public class Blt_visiteHome extends BulkHome {
 			Blt_visiteBulk visita = (Blt_visiteBulk)bulk;
 			visita.setPgAutorizzazione(autorizzatoDettGood.getPgAutorizzazione());
 			((Blt_visiteBulk)bulk).setPgVisita(
-					new Long(
-					((Long)findAndLockMax( bulk, "pgVisita", new Long(0) )).longValue()+1
+					Long.valueOf(
+					((Long)findAndLockMax( bulk, "pgVisita", Long.valueOf(0) )).longValue()+1
 				)
 			);
 		}catch(it.cnr.jada.bulk.BusyResourceException e) {

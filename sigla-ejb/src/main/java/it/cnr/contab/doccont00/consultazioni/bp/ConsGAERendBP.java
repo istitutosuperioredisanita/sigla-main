@@ -46,7 +46,7 @@ public class ConsGAERendBP extends ConsultazioniBP {
 	
 	private String pathConsultazione;
 
-	public ConsGAEComResSintComponentSession createConsGAEComResSintComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {		
+	public ConsGAEComResSintComponentSession createConsGAEComResSintComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		   return (ConsGAEComResSintComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_ConsGAEComResSintComponentSession",ConsGAEComResSintComponentSession.class);
 	}
 	protected void init(it.cnr.jada.action.Config config,it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException {

@@ -53,7 +53,7 @@ public class PdGVarSelezionatoreListaBP  extends ConsultazioniBP {
 		return "Variazioni al Piano di Gestione - Approvazione Formale";
 	}
 
-	public it.cnr.contab.util00.ejb.ProcedureComponentSession createProcedureComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public it.cnr.contab.util00.ejb.ProcedureComponentSession createProcedureComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		return (it.cnr.contab.util00.ejb.ProcedureComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRUTIL00_EJB_ProcedureComponentSession", it.cnr.contab.util00.ejb.ProcedureComponentSession.class);
 	}
 

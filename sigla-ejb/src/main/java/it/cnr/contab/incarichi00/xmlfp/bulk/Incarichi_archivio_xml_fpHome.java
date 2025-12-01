@@ -37,8 +37,8 @@ public class Incarichi_archivio_xml_fpHome extends BulkHome {
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext, OggettoBulk bulk) throws PersistencyException {
 		try {
 			((Incarichi_archivio_xml_fpBulk)bulk).setId_archivio(
-					new Integer(
-					((Integer)findAndLockMax( bulk, "id_archivio", new Integer(0) )).intValue()+1
+					Integer.valueOf(
+					((Integer)findAndLockMax( bulk, "id_archivio", Integer.valueOf(0) )).intValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

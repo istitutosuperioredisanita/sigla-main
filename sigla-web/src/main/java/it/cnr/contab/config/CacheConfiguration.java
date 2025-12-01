@@ -17,6 +17,7 @@
 
 package it.cnr.contab.config;
 
+import jakarta.annotation.Resource;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.infinispan.spring.embedded.provider.SpringEmbeddedCacheManager;
 import org.slf4j.Logger;
@@ -25,8 +26,6 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Resource;
 
 @EnableCaching
 @Configuration

@@ -116,7 +116,7 @@ public class EsercizioHome extends BulkHome {
      * precedente.
      */
     public EsercizioBulk findEsercizioPrecedente(EsercizioBulk esercizioCorrente) throws IntrospectionException, PersistencyException {
-        EsercizioBulk esercizioPrecente = (EsercizioBulk) findByPrimaryKey(new EsercizioBulk(esercizioCorrente.getCd_cds(), new Integer(esercizioCorrente.getEsercizio().intValue() - 1)));
+        EsercizioBulk esercizioPrecente = (EsercizioBulk) findByPrimaryKey(new EsercizioBulk(esercizioCorrente.getCd_cds(), Integer.valueOf(esercizioCorrente.getEsercizio().intValue() - 1)));
         return esercizioPrecente;
 
     }
@@ -130,7 +130,7 @@ public class EsercizioHome extends BulkHome {
      * successivo.
      */
     public EsercizioBulk findEsercizioSuccessivo(EsercizioBulk esercizioCorrente) throws IntrospectionException, PersistencyException {
-        return (EsercizioBulk) findByPrimaryKey(new EsercizioBulk(esercizioCorrente.getCd_cds(), new Integer(esercizioCorrente.getEsercizio().intValue() + 1)));
+        return (EsercizioBulk) findByPrimaryKey(new EsercizioBulk(esercizioCorrente.getCd_cds(), Integer.valueOf(esercizioCorrente.getEsercizio().intValue() + 1)));
 
     }
 
@@ -144,7 +144,7 @@ public class EsercizioHome extends BulkHome {
      */
     public List findEserciziSuccessivi(EsercizioBulk esercizioCorrente) throws IntrospectionException, PersistencyException {
         SQLBuilder sql = createSQLBuilder();
-        sql.addClause("AND", "esercizio", sql.GREATER, new Integer(esercizioCorrente.getEsercizio().intValue()));
+        sql.addClause("AND", "esercizio", sql.GREATER, Integer.valueOf(esercizioCorrente.getEsercizio().intValue()));
         sql.addClause("AND", "cd_cds", sql.EQUALS, esercizioCorrente.getCd_cds());
         sql.addClause("AND", "st_apertura_chiusura", sql.EQUALS, EsercizioBulk.STATO_APERTO);
         return fetchAll(sql);
@@ -297,7 +297,7 @@ public class EsercizioHome extends BulkHome {
      */
     public boolean verificaEsercizi2AnniPrecedenti(EsercizioBulk esercizioCorrente) throws IntrospectionException, PersistencyException {
         SQLBuilder sql = createSQLBuilder();
-        sql.addClause("AND", "esercizio", sql.EQUALS, new Integer(esercizioCorrente.getEsercizio().intValue() - 2));
+        sql.addClause("AND", "esercizio", sql.EQUALS, Integer.valueOf(esercizioCorrente.getEsercizio().intValue() - 2));
         sql.addClause("AND", "st_apertura_chiusura", sql.NOT_EQUALS, EsercizioBulk.STATO_CHIUSO_DEF);
         try {
             int result = sql.executeCountQuery(getConnection());

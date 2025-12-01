@@ -33,9 +33,10 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.*;
 
-import javax.ejb.EJBException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.ejb.EJBException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 
 import org.slf4j.Logger;
@@ -214,7 +215,7 @@ public class BasicAuthentication {
 	public static List<Utente_unita_ruoloBulk> getRuoli(UserContext userContext, UtenteBulk utente) throws IOException, ComponentException{
 		return loginComponentSession().getRuoli(userContext, utente);
 	}
-	public static GestioneLoginComponentSession loginComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public static GestioneLoginComponentSession loginComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 		return (GestioneLoginComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRUTENZE00_NAV_EJB_GestioneLoginComponentSession");
 	}
 }

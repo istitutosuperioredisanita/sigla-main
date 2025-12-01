@@ -36,8 +36,8 @@ public class Incarichi_procedura_noteHome extends BulkHome {
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext, OggettoBulk bulk) throws PersistencyException {
 		try {
 			((Incarichi_procedura_noteBulk)bulk).setPg_nota(
-					new Long(
-					((Long)findAndLockMax( bulk, "pg_nota", new Long(0) )).longValue()+1
+					Long.valueOf(
+					((Long)findAndLockMax( bulk, "pg_nota", Long.valueOf(0) )).longValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

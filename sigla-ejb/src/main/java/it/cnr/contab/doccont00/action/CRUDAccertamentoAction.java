@@ -920,19 +920,19 @@ public Forward doSelectLineeDiAttivita(ActionContext context)
                  * dell'accertamento residuo (subito dopo l'anno) un numeretto identificativo del CDS.
                  * Tale gestione dovrà essere assolutamente eliminata a regime.
                  */
-                Integer lungNumacc = new Integer(AccertamentoResiduoBulk.LUNGHEZZA_NUMERO_ACCERTAMENTO);
-                Integer firstNumber = new Integer(0);
+                Integer lungNumacc = Integer.valueOf(AccertamentoResiduoBulk.LUNGHEZZA_NUMERO_ACCERTAMENTO);
+                Integer firstNumber = Integer.valueOf(0);
 
                 if (accertamento.getCd_cds_origine() != null) {
                     if (accertamento.getCd_cds_origine().equals("110") || accertamento.getCd_cds_origine().equals("111") ||
                             accertamento.getCd_cds_origine().equals("112")) {
-                        lungNumacc = new Integer(AccertamentoResiduoBulk.LUNGHEZZA_NUMERO_ACCERTAMENTO - 1);
+                        lungNumacc = Integer.valueOf(AccertamentoResiduoBulk.LUNGHEZZA_NUMERO_ACCERTAMENTO - 1);
                         if (accertamento.getCd_cds_origine().equals("110"))
-                            firstNumber = new Integer(9);
+                            firstNumber = Integer.valueOf(9);
                         if (accertamento.getCd_cds_origine().equals("111"))
-                            firstNumber = new Integer(8);
+                            firstNumber = Integer.valueOf(8);
                         if (accertamento.getCd_cds_origine().equals("112"))
-                            firstNumber = new Integer(7);
+                            firstNumber = Integer.valueOf(7);
                     }
                 }
 
@@ -948,10 +948,10 @@ public Forward doSelectLineeDiAttivita(ActionContext context)
                     if (accertamento.getPg_accertamento().toString().length() > lungNumacc.intValue()) {
                         bp.setMessage("Attenzione! Il numero dell'accertamento residuo deve essere al massimo di " + lungNumacc.intValue() + " caratteri.");
                         accertamento.setPg_accertamento(null);
-                    } else if (lungNumacc.equals(new Integer(AccertamentoResiduoBulk.LUNGHEZZA_NUMERO_ACCERTAMENTO)))
-                        accertamento.setPg_accertamento(new Long(accertamento.getEsercizio_originale() + StrServ.lpad(accertamento.getPg_accertamento().toString(), lungNumacc.intValue(), "0")));
+                    } else if (lungNumacc.equals(Integer.valueOf(AccertamentoResiduoBulk.LUNGHEZZA_NUMERO_ACCERTAMENTO)))
+                        accertamento.setPg_accertamento(Long.valueOf(accertamento.getEsercizio_originale() + StrServ.lpad(accertamento.getPg_accertamento().toString(), lungNumacc.intValue(), "0")));
                     else
-                        accertamento.setPg_accertamento(new Long(accertamento.getEsercizio_originale() + firstNumber.toString() + StrServ.lpad(accertamento.getPg_accertamento().toString(), lungNumacc.intValue(), "0")));
+                        accertamento.setPg_accertamento(Long.valueOf(accertamento.getEsercizio_originale() + firstNumber.toString() + StrServ.lpad(accertamento.getPg_accertamento().toString(), lungNumacc.intValue(), "0")));
                 }
             }
             return context.findDefaultForward();

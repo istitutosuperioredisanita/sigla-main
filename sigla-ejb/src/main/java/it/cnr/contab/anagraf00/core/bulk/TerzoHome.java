@@ -37,7 +37,7 @@ import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.*;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Comparator;
@@ -217,8 +217,8 @@ public class TerzoHome extends BulkHome {
                             it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_TABNUM_EJB_Numerazione_baseComponentSession",
                                     it.cnr.contab.config00.tabnum.ejb.Numerazione_baseComponentSession.class);
             ((TerzoBulk) trz).setCd_terzo(
-                    new Integer(
-                            (numerazione.creaNuovoProgressivo(userContext, new Integer(0), "TERZO", "CD_TERZO", ((TerzoBulk) trz).getAnagrafico().getUser())).toString()
+                    Integer.valueOf(
+                            (numerazione.creaNuovoProgressivo(userContext, Integer.valueOf(0), "TERZO", "CD_TERZO", ((TerzoBulk) trz).getAnagrafico().getUser())).toString()
                     )
             );
         } catch (it.cnr.jada.bulk.BusyResourceException e) {
@@ -331,7 +331,7 @@ public class TerzoHome extends BulkHome {
                     "CONTO_CORRENTE_SPECIALE",
                     "ENTE",
                     "*",
-                    new Integer(0));
+                    Integer.valueOf(0));
             it.cnr.contab.config00.bulk.Configurazione_cnrHome home = (it.cnr.contab.config00.bulk.Configurazione_cnrHome) getHomeCache().getHome(config);
             List configurazioni = home.find(config);
             if ((configurazioni != null) && (configurazioni.size() == 1)) {

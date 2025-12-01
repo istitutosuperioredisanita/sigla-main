@@ -25,6 +25,7 @@ import it.cnr.contab.config00.util.Constants;
 import it.cnr.jada.action.BusinessProcess;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.comp.ComponentException;
+import jakarta.servlet.ServletException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMImplementation;
@@ -32,8 +33,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import javax.servlet.ServletException;
-import javax.servlet.jsp.PageContext;
+
+import jakarta.servlet.jsp.PageContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -78,7 +79,7 @@ public class RicercaVoceBP extends BusinessProcess implements ResponseXMLBP {
 
     private Element generaNumeroVoci(Document xmldoc) {
         Element e = xmldoc.createElement("numris");
-        Node n = xmldoc.createTextNode(new Integer(getVoci().size()).toString());
+        Node n = xmldoc.createTextNode(Integer.valueOf(getVoci().size()).toString());
         e.appendChild(n);
         return e;
     }
@@ -110,7 +111,7 @@ public class RicercaVoceBP extends BusinessProcess implements ResponseXMLBP {
     public void generaXML(PageContext pagecontext) throws IOException, ServletException {
         try {
             if (getNumMax() == null)
-                setNumMax(new Integer(20));
+                setNumMax(Integer.valueOf(20));
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             DOMImplementation impl = builder.getDOMImplementation();
@@ -126,7 +127,7 @@ public class RicercaVoceBP extends BusinessProcess implements ResponseXMLBP {
                 root.appendChild(generaNumeroVoci(xmldoc));
                 int num = 0;
                 if (getVoci() != null && !getVoci().isEmpty()) {
-                    for (Iterator i = getVoci().iterator(); i.hasNext() && num < new Integer(numMax).intValue(); ) {
+                    for (Iterator i = getVoci().iterator(); i.hasNext() && num < Integer.valueOf(numMax).intValue(); ) {
                         if (getTipo().compareTo(Elemento_voceHome.GESTIONE_ENTRATE) == 0) {
                             V_voce_f_partita_giroBulk voce = (V_voce_f_partita_giroBulk) i.next();
                             root.appendChild(generaDettaglioVoci(xmldoc, voce.getTi_gestione(), voce.getCd_voce(), voce.getDs_titolo_capitolo()));

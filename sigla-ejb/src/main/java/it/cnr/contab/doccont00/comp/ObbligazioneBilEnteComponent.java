@@ -238,7 +238,7 @@ private void aggiornaCapitoloSaldoObbligazione (UserContext aUC,ImpegnoBulk obbl
 		else if ( azione == CANCELLAZIONE )
 			aggiornaSaldiInModifica( aUC, 
 											 obbligazione, 
-											 new Long(obbligazione.getPg_ver_rec().longValue() + 1),
+											 Long.valueOf(obbligazione.getPg_ver_rec().longValue() + 1),
 											 false);		
 			
 			
@@ -889,7 +889,7 @@ public ImpegnoBulk creaObbligazione(
             "AND",
             "cd_terzo",
             sql.EQUALS,
-            new Integer(config.getIm01().intValue()));
+            Integer.valueOf(config.getIm01().intValue()));
         List result =
             getHomeCache(uc)
                 .getHome(it.cnr.contab.anagraf00.core.bulk.TerzoBulk.class)
@@ -1209,7 +1209,7 @@ public OggettoBulk inizializzaBulkPerInserimento (UserContext aUC,OggettoBulk bu
 		if ( config.getIm01() == null )
 			throw new ApplicationException("Configurazione CNR: non sono stati impostati i valori per TERZO_SPECIALE - CODICE_DIVERSI_IMPEGNI");			
 		TerzoHome terzohome = (TerzoHome) getHome(aUC, TerzoBulk.class);
-		TerzoBulk cred = (TerzoBulk) terzohome.findByPrimaryKey(new TerzoBulk(new Integer(config.getIm01().intValue())));
+		TerzoBulk cred = (TerzoBulk) terzohome.findByPrimaryKey(new TerzoBulk(Integer.valueOf(config.getIm01().intValue())));
 		imp.setCreditore(cred);
 
 		imp.setDt_registrazione( DateServices.getDt_valida( aUC) );
@@ -1633,7 +1633,7 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
   * @param impegno <code>ImpegnoBulk</code> l'obbligazione su partita di giro da validare
   *
  */
-protected void verificaObbligazione(UserContext userContext, ImpegnoBulk impegno ) throws it.cnr.jada.persistency.PersistencyException, ComponentException, ApplicationException, javax.ejb.EJBException
+protected void verificaObbligazione(UserContext userContext, ImpegnoBulk impegno ) throws it.cnr.jada.persistency.PersistencyException, ComponentException, ApplicationException, jakarta.ejb.EJBException
 {
 	if ( impegno.isToBeCreated() )
 	{
@@ -1689,7 +1689,7 @@ void verificaStatoEsercizio( UserContext userContext, Integer es, String cd_cds 
 void verificaStatoEsercizioEsPrecedente( UserContext userContext, Integer es, String cd_cds ) throws ComponentException, it.cnr.jada.persistency.PersistencyException
 {
 	EsercizioBulk esPrec = (EsercizioBulk) getHome(userContext, EsercizioBulk.class).findByPrimaryKey( 
-																									new EsercizioBulk( cd_cds, new Integer( es.intValue() - 1 )));
+																									new EsercizioBulk( cd_cds, Integer.valueOf( es.intValue() - 1 )));
 	if (esPrec != null && !esPrec.STATO_CHIUSO_DEF.equals(esPrec.getSt_apertura_chiusura()))
 			throw handleException( new ApplicationException( "Operazione impossibile: esercizio precedente non chiuso!") );
 			

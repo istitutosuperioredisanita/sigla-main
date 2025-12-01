@@ -31,7 +31,7 @@ import it.cnr.jada.util.action.OptionBP;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 
 /**
  * Gestione delle azioni relative alla ricerca delle obbligazioni (scadenze)
@@ -98,7 +98,7 @@ public Forward doBringBackOpenObbligazioniWindow(ActionContext context) {
  * @throws InstantiationException	
  * @throws RemoveException	
  */
-public Forward doCerca(ActionContext context) throws java.rmi.RemoteException,InstantiationException,javax.ejb.RemoveException {
+public Forward doCerca(ActionContext context) throws java.rmi.RemoteException,InstantiationException,jakarta.ejb.RemoveException {
 
 		try {
 			fillModel(context);
@@ -250,7 +250,7 @@ public Forward doOpenObbligazioniWindow(ActionContext context) {
 		obbligazione.setDs_obbligazione("Impegno per fondo economale");
 		try {
 			obbligazione.setDt_registrazione(it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp());
-		} catch (javax.ejb.EJBException e) {
+		} catch (jakarta.ejb.EJBException e) {
 			return handleException(context, e);
 		}
 		obbligazione.setFl_calcolo_automatico(Boolean.TRUE);
@@ -261,7 +261,7 @@ public Forward doOpenObbligazioniWindow(ActionContext context) {
 		scadenza.setDs_scadenza("Scadenza per fondo economale");
 		try {
 			scadenza.setDt_scadenza(it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp());
-		} catch (javax.ejb.EJBException e) {
+		} catch (jakarta.ejb.EJBException e) {
 			throw new it.cnr.jada.DetailedRuntimeException(e);
 		}
 		scadenza.setIm_scadenza(

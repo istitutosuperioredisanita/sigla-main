@@ -69,7 +69,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -280,7 +280,7 @@ public class AnagraficoComponent extends UtilitaAnagraficaComponent implements I
                             getDt01(userContext, CNRUserContext.getEsercizio(userContext), null, "FATTURAZIONE_ELETTRONICA", "INIZIO_TRA_PRIVATI"));
                 } catch (RemoteException e) {
                     throw handleException(e);
-                } catch (javax.ejb.EJBException ex) {
+                } catch (jakarta.ejb.EJBException ex) {
                     throw handleException(ex);
                 }
             }
@@ -488,8 +488,8 @@ public class AnagraficoComponent extends UtilitaAnagraficaComponent implements I
             it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession configurazione = (it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class);
             AnagraficoBulk ente = (AnagraficoBulk) getHome(userContext, AnagraficoBulk.class).findByPrimaryKey(
                     new AnagraficoBulk(
-                            new Integer(
-                                    configurazione.getIm01(userContext, new Integer(0), null, "COSTANTI", "CODICE_ANAG_ENTE").toString()
+                            Integer.valueOf(
+                                    configurazione.getIm01(userContext, Integer.valueOf(0), null, "COSTANTI", "CODICE_ANAG_ENTE").toString()
                             )
                     )
             );
@@ -1676,7 +1676,7 @@ public class AnagraficoComponent extends UtilitaAnagraficaComponent implements I
                     try {
                         // Per testare se il codice fiscale è una partita iva
                         // controllo se sono tutti numeri...
-                        new Long(anagrafico.getCodice_fiscale());
+                        Long.valueOf(anagrafico.getCodice_fiscale());
                         PartitaIVAControllo.parsePartitaIVA(anagrafico.getCodice_fiscale());
                     } catch (NumberFormatException nfe) {
                         // se non sono tutti numeri è un codice fiscale!
@@ -2247,7 +2247,7 @@ public class AnagraficoComponent extends UtilitaAnagraficaComponent implements I
                         carico_familiare.getCodice_fiscale_altro_gen() == null)
                     throw new ApplicationException("Carichi Familiari: per il Figlio è necessario specificare il Codice fiscale dell'altro genitore oppure è necessario inserire il Coniuge");
             }
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw new it.cnr.jada.DetailedRuntimeException(e);
         } catch (it.cnr.jada.comp.ComponentException ex) {
             throw new it.cnr.jada.DetailedRuntimeException(ex);
@@ -2608,7 +2608,7 @@ public class AnagraficoComponent extends UtilitaAnagraficaComponent implements I
                     }
 
                 } else {
-                    PersonaWebDto personaWebDto = aceService.personaById(new Integer(personaId.get()));
+                    PersonaWebDto personaWebDto = aceService.personaById(Integer.valueOf(personaId.get()));
                     try {
                         Map<String, Object> params = new HashMap<>();
                         params.put("persona", personaId.get());
@@ -2729,7 +2729,7 @@ public class AnagraficoComponent extends UtilitaAnagraficaComponent implements I
     public java.sql.Timestamp getCurrentDate() {
         try {
             return it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw new it.cnr.jada.DetailedRuntimeException(e);
         }
     }

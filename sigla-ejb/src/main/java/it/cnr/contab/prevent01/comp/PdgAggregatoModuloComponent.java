@@ -193,7 +193,7 @@ public class PdgAggregatoModuloComponent extends CRUDComponent implements IPrint
 		if (cdrUtente.getCd_cdr_afferenza()!= null)
 			uoCdrLiv1 = (Unita_organizzativaBulk) getHome(userContext,cdrLiv1.getUnita_padre()).findByPrimaryKey(cdrLiv1.getUnita_padre());		
 
-		if (cdrUtente.getLivello().compareTo(new Integer(1))==0
+		if (cdrUtente.getLivello().compareTo(Integer.valueOf(1))==0
 			|| uoCdrLiv1 == null
 			|| uoCdrLiv1.getCd_tipo_unita().equals(Tipo_unita_organizzativaHome.TIPO_UO_SAC) 
 			|| uoCdrLiv1.getCd_tipo_unita().equals(Tipo_unita_organizzativaHome.TIPO_UO_AREA)) {

@@ -73,7 +73,7 @@ public class Filtro_ricerca_doc_ammVBulk extends it.cnr.jada.bulk.OggettoBulk {
 
         try {
             return getDataOdierna(it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp());
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw new it.cnr.jada.DetailedRuntimeException(e);
         }
     }

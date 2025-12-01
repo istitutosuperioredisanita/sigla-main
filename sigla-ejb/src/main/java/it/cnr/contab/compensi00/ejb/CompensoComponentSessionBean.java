@@ -32,8 +32,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 @Stateless(name = "CNRCOMPENSI00_EJB_CompensoComponentSession")
 public class CompensoComponentSessionBean extends
@@ -44,14 +44,11 @@ public class CompensoComponentSessionBean extends
 		componentObj = new it.cnr.contab.compensi00.comp.CompensoComponent();
 	}
 
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance()
-			throws javax.ejb.EJBException {
-		return new CompensoComponentSessionBean();
-	}
+	
 
 	public void aggiornaMontanti(it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			((CompensoComponent) componentObj).aggiornaMontanti(param0, param1);
@@ -73,7 +70,7 @@ public class CompensoComponentSessionBean extends
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1,
 			it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param2)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk result = ((CompensoComponent) componentObj)
@@ -96,7 +93,7 @@ public class CompensoComponentSessionBean extends
 	public java.lang.Long assegnaProgressivo(
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			java.lang.Long result = ((CompensoComponent) componentObj)
@@ -119,7 +116,7 @@ public class CompensoComponentSessionBean extends
 	public java.lang.Long assegnaProgressivoTemporaneo(
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			java.lang.Long result = ((CompensoComponent) componentObj)
@@ -142,7 +139,7 @@ public class CompensoComponentSessionBean extends
 	public it.cnr.jada.util.RemoteIterator cercaObbligazioni(
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_obbligazioniVBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.jada.util.RemoteIterator result = ((CompensoComponent) componentObj)
@@ -166,7 +163,7 @@ public class CompensoComponentSessionBean extends
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1,
 			it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk param2)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk result = ((CompensoComponent) componentObj)
@@ -190,7 +187,7 @@ public class CompensoComponentSessionBean extends
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1,
 			it.cnr.contab.compensi00.docs.bulk.Contributo_ritenutaBulk param2)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk result = ((CompensoComponent) componentObj)
@@ -213,7 +210,7 @@ public class CompensoComponentSessionBean extends
 	public it.cnr.contab.compensi00.docs.bulk.ConguaglioBulk conguaglioAssociatoACompenso(
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.ConguaglioBulk result = ((CompensoComponent) componentObj)
@@ -237,7 +234,7 @@ public class CompensoComponentSessionBean extends
 			it.cnr.jada.UserContext param0,
 			it.cnr.jada.bulk.OggettoBulk param1,
 			it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param2)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((CompensoComponent) componentObj)
@@ -260,7 +257,7 @@ public class CompensoComponentSessionBean extends
 	public it.cnr.contab.compensi00.docs.bulk.CompensoBulk doContabilizzaCompensoCofi(
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk result = ((CompensoComponent) componentObj)
@@ -283,7 +280,7 @@ public class CompensoComponentSessionBean extends
 	public it.cnr.contab.compensi00.docs.bulk.EstrazioneCUDVBulk doElaboraCUD(
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.EstrazioneCUDVBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.EstrazioneCUDVBulk result = ((CompensoComponent) componentObj)
@@ -306,7 +303,7 @@ public class CompensoComponentSessionBean extends
 	public it.cnr.contab.compensi00.docs.bulk.EstrazioneINPSMensileBulk doElaboraINPSMensile(
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.EstrazioneINPSMensileBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.EstrazioneINPSMensileBulk result = ((CompensoComponent) componentObj)
@@ -331,7 +328,7 @@ public class CompensoComponentSessionBean extends
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1,
 			it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk param2,
 			it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk param3)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk result = ((CompensoComponent) componentObj)
@@ -354,7 +351,7 @@ public class CompensoComponentSessionBean extends
 	public void eliminaCompensoTemporaneo(it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1,
 			java.lang.Long param2) throws it.cnr.jada.comp.ComponentException,
-			javax.ejb.EJBException {
+			jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			((CompensoComponent) componentObj).eliminaCompensoTemporaneo(
@@ -376,7 +373,7 @@ public class CompensoComponentSessionBean extends
 	public it.cnr.contab.compensi00.docs.bulk.CompensoBulk eliminaObbligazione(
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk result = ((CompensoComponent) componentObj)
@@ -399,7 +396,7 @@ public class CompensoComponentSessionBean extends
 	public it.cnr.contab.compensi00.docs.bulk.CompensoBulk eseguiCalcolo(
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk result = ((CompensoComponent) componentObj)
@@ -421,7 +418,7 @@ public class CompensoComponentSessionBean extends
 
 	public java.util.List findListaBanche(it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			java.util.List result = ((CompensoComponent) componentObj)
@@ -443,7 +440,7 @@ public class CompensoComponentSessionBean extends
 
 	public java.util.Collection findModalita(it.cnr.jada.UserContext param0,
 			it.cnr.jada.bulk.OggettoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			java.util.Collection result = ((CompensoComponent) componentObj)
@@ -465,7 +462,7 @@ public class CompensoComponentSessionBean extends
 
 	public java.util.Collection findTermini(it.cnr.jada.UserContext param0,
 			it.cnr.jada.bulk.OggettoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			java.util.Collection result = ((CompensoComponent) componentObj)
@@ -488,7 +485,7 @@ public class CompensoComponentSessionBean extends
 	public java.util.Collection findTipiRapporto(
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			java.util.Collection result = ((CompensoComponent) componentObj)
@@ -511,7 +508,7 @@ public class CompensoComponentSessionBean extends
 	public java.util.Collection findTipiTrattamento(
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			java.util.Collection result = ((CompensoComponent) componentObj)
@@ -534,7 +531,7 @@ public class CompensoComponentSessionBean extends
 	public java.util.Collection findTipiPrestazioneCompenso(
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			java.util.Collection result = ((CompensoComponent) componentObj)
@@ -554,7 +551,7 @@ public class CompensoComponentSessionBean extends
 		}
 	}
 	public java.sql.Timestamp getDataOdierna(it.cnr.jada.UserContext param0)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			java.sql.Timestamp result = ((CompensoComponent) componentObj)
@@ -576,7 +573,7 @@ public class CompensoComponentSessionBean extends
 
 	public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(
 			it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((CompensoComponent) componentObj)
@@ -601,7 +598,7 @@ public class CompensoComponentSessionBean extends
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1,
 			it.cnr.contab.compensi00.docs.bulk.MinicarrieraBulk param2,
 			java.util.List param3) throws it.cnr.jada.comp.ComponentException,
-			javax.ejb.EJBException {
+			jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk result = ((CompensoComponent) componentObj)
@@ -626,7 +623,7 @@ public class CompensoComponentSessionBean extends
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1,
 			it.cnr.contab.missioni00.docs.bulk.MissioneBulk param2)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk result = ((CompensoComponent) componentObj)
@@ -649,7 +646,7 @@ public class CompensoComponentSessionBean extends
 	public it.cnr.contab.compensi00.docs.bulk.CompensoBulk inserisciCompenso(
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk result = ((CompensoComponent) componentObj)
@@ -671,7 +668,7 @@ public class CompensoComponentSessionBean extends
 
 	public boolean isCompensoAnnullato(it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			boolean result = ((CompensoComponent) componentObj)
@@ -693,7 +690,7 @@ public class CompensoComponentSessionBean extends
 
 	public java.util.List loadDocContAssociati(it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			java.util.List result = ((CompensoComponent) componentObj)
@@ -717,7 +714,7 @@ public class CompensoComponentSessionBean extends
 			it.cnr.jada.UserContext param0,
 			it.cnr.jada.bulk.OggettoBulk param1,
 			it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param2)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((CompensoComponent) componentObj)
@@ -740,7 +737,7 @@ public class CompensoComponentSessionBean extends
 	public it.cnr.contab.compensi00.docs.bulk.CompensoBulk onTipoTrattamentoChange(
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk result = ((CompensoComponent) componentObj)
@@ -763,7 +760,7 @@ public class CompensoComponentSessionBean extends
 	public it.cnr.contab.compensi00.docs.bulk.CompensoBulk reloadCompenso(
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk result = ((CompensoComponent) componentObj)
@@ -786,7 +783,7 @@ public class CompensoComponentSessionBean extends
 	public it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk resyncScadenza(
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk result = ((CompensoComponent) componentObj)
@@ -810,7 +807,7 @@ public class CompensoComponentSessionBean extends
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk param1,
 			it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param2)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk result = ((CompensoComponent) componentObj)
@@ -832,7 +829,7 @@ public class CompensoComponentSessionBean extends
 
 	public void rollbackToSavePoint(it.cnr.jada.UserContext param0,
 			java.lang.String param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			((CompensoComponent) componentObj).rollbackToSavePoint(param0,
@@ -853,7 +850,7 @@ public class CompensoComponentSessionBean extends
 
 	public void setSavePoint(it.cnr.jada.UserContext param0,
 			java.lang.String param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			((CompensoComponent) componentObj).setSavePoint(param0, param1);
@@ -873,7 +870,7 @@ public class CompensoComponentSessionBean extends
 
 	public it.cnr.jada.bulk.OggettoBulk stampaConBulk(
 			it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((CompensoComponent) componentObj)
@@ -896,7 +893,7 @@ public class CompensoComponentSessionBean extends
 	public it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk updateImportoAssociatoDocAmm(
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk result = ((CompensoComponent) componentObj)
@@ -920,7 +917,7 @@ public class CompensoComponentSessionBean extends
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk param1,
 			it.cnr.jada.bulk.OggettoBulk param2)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			((CompensoComponent) componentObj).validaObbligazione(param0,
@@ -941,7 +938,7 @@ public class CompensoComponentSessionBean extends
 
 	public void validaTerzo(it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			((CompensoComponent) componentObj).validaTerzo(param0, param1);
@@ -962,7 +959,7 @@ public class CompensoComponentSessionBean extends
 	public int validaTerzo(it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1,
 			boolean param2) throws it.cnr.jada.comp.ComponentException,
-			javax.ejb.EJBException {
+			jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			int result = ((CompensoComponent) componentObj).validaTerzo(param0,
@@ -985,7 +982,7 @@ public class CompensoComponentSessionBean extends
 	public it.cnr.contab.compensi00.docs.bulk.Estrazione770Bulk doElabora770(
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.Estrazione770Bulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.Estrazione770Bulk result = ((CompensoComponent) componentObj)
@@ -1007,7 +1004,7 @@ public class CompensoComponentSessionBean extends
 
 	public boolean isTerzoCervellone(it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			boolean result = ((CompensoComponent) componentObj)
@@ -1033,7 +1030,7 @@ public class CompensoComponentSessionBean extends
 			java.lang.String param2)
 			throws it.cnr.jada.comp.ComponentException,
 			it.cnr.jada.persistency.PersistencyException,
-			javax.ejb.EJBException {
+			jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			boolean result = ((CompensoComponent) componentObj)
@@ -1099,7 +1096,7 @@ public class CompensoComponentSessionBean extends
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
 			throws it.cnr.jada.DetailedRuntimeException,
-			it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk result = ((CompensoComponent) componentObj)
@@ -1121,7 +1118,7 @@ public class CompensoComponentSessionBean extends
 
 	public boolean isAccontoAddComOkPerContabil(it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			boolean result = ((CompensoComponent) componentObj)
@@ -1142,7 +1139,7 @@ public class CompensoComponentSessionBean extends
 	}
 
 	public boolean isGestiteDeduzioniIrpef(it.cnr.jada.UserContext param0)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			boolean result = ((CompensoComponent) componentObj)
@@ -1166,7 +1163,7 @@ public class CompensoComponentSessionBean extends
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1,
 			it.cnr.contab.incarichi00.bulk.Incarichi_repertorio_annoBulk param2)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk result = ((CompensoComponent) componentObj)
@@ -1188,7 +1185,7 @@ public class CompensoComponentSessionBean extends
 
 	public BigDecimal prendiUtilizzato(it.cnr.jada.UserContext param0,
 			it.cnr.contab.incarichi00.bulk.Incarichi_repertorio_annoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			BigDecimal result = ((CompensoComponent) componentObj)
@@ -1210,7 +1207,7 @@ public class CompensoComponentSessionBean extends
 
 	public Acconto_classific_coriBulk doCalcolaAccontoAddCom(
 			it.cnr.jada.UserContext param0, Acconto_classific_coriBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException,
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException,
 			RemoteException {
 		pre_component_invocation(param0, componentObj);
 		try {
@@ -1280,7 +1277,7 @@ public class CompensoComponentSessionBean extends
 	public boolean isSospensioneIrpefOkPerContabil(
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
-			throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			boolean result = ((CompensoComponent) componentObj)
@@ -1301,7 +1298,7 @@ public class CompensoComponentSessionBean extends
 	}
 	
 	public void archiviaStampa(UserContext userContext, Date fromDate, Date untilDate, CompensoBulk compensoBulk, Integer... years)throws ComponentException,
-	javax.ejb.EJBException {
+	jakarta.ejb.EJBException {
 		pre_component_invocation(userContext, componentObj);
 		try {
 			((CompensoComponent) componentObj).archiviaStampa(userContext, fromDate, untilDate, compensoBulk, years);
@@ -1381,7 +1378,7 @@ public class CompensoComponentSessionBean extends
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1,
 			it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_IBulk param2) 
 			throws it.cnr.jada.comp.ComponentException,
-			javax.ejb.EJBException {
+			jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk result = ((CompensoComponent) componentObj)
@@ -1404,7 +1401,7 @@ public class CompensoComponentSessionBean extends
 			it.cnr.jada.UserContext param0,
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk param1)
 			throws it.cnr.jada.DetailedRuntimeException,
-			it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+			it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.contab.compensi00.docs.bulk.CompensoBulk result = ((CompensoComponent) componentObj)

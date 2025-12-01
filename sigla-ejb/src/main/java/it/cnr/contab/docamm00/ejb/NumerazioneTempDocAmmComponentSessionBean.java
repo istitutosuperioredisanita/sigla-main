@@ -16,10 +16,10 @@
  */
 
 package it.cnr.contab.docamm00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 
 import it.cnr.contab.docamm00.comp.NumerazioneTempDocAmmComponent;
 @Stateless(name="CNRDOCAMM00_EJB_NumerazioneTempDocAmmComponentSession")
@@ -29,10 +29,8 @@ public class NumerazioneTempDocAmmComponentSessionBean extends it.cnr.jada.ejb.C
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.docamm00.comp.NumerazioneTempDocAmmComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new NumerazioneTempDocAmmComponentSessionBean();
-}
-public java.lang.Long getNextTempPG(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.docs.bulk.Numerazione_doc_ammBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public java.lang.Long getNextTempPG(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.docs.bulk.Numerazione_doc_ammBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.lang.Long result = ((NumerazioneTempDocAmmComponent)componentObj).getNextTempPG(param0,param1);

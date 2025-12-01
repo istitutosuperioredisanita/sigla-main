@@ -125,9 +125,9 @@
    <div class="card p-2">
      <div class="GroupLabel font-weight-bold text-primary"><% bp.getController().writeFormLabel(out,"label_contrattazione");%></div>
 		<% 	if (bp.isFlNuovoPdg()){
-   				bp.getCrudDettagliContrSpese().writeHTMLTable(pageContext,(bp.getLivelloContrattazione().compareTo(new Integer(0))==0)?"csNewPdgPSenzaVoce":"csNewPdgP",false,false,false,"100%","130px");
+   				bp.getCrudDettagliContrSpese().writeHTMLTable(pageContext,(bp.getLivelloContrattazione().compareTo(Integer.valueOf(0))==0)?"csNewPdgPSenzaVoce":"csNewPdgP",false,false,false,"100%","130px");
    			} else {
-   				bp.getCrudDettagliContrSpese().writeHTMLTable(pageContext,(bp.getLivelloContrattazione().compareTo(new Integer(0))==0)?"csPdgPSenzaVoce":"csPdgP",false,false,false,"100%","130px");
+   				bp.getCrudDettagliContrSpese().writeHTMLTable(pageContext,(bp.getLivelloContrattazione().compareTo(Integer.valueOf(0))==0)?"csPdgPSenzaVoce":"csPdgP",false,false,false,"100%","130px");
    			}
    		%>
 	</div>

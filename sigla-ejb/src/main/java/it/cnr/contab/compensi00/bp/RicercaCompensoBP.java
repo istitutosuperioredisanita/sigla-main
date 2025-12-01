@@ -25,8 +25,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
-import javax.servlet.ServletException;
-import javax.servlet.jsp.PageContext;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
@@ -81,14 +82,14 @@ public class RicercaCompensoBP extends BusinessProcess implements ResponseXMLBP{
 	}
 	private Element generaNumeroCompensi(Document xmldoc){
 		Element e = xmldoc.createElement("numris");
-		Node n = xmldoc.createTextNode(new Integer(getCompensi().size()).toString());
+		Node n = xmldoc.createTextNode(Integer.valueOf(getCompensi().size()).toString());
     	e.appendChild(n);
     	return e;	
 	}
-	public void generaXML(PageContext pagecontext) throws IOException, ServletException{
+	public void generaXML(PageContext pagecontext) throws IOException, ServletException {
 		try {
 			if (getNumMax()==null)
-				setNumMax(new Integer(20));
+				setNumMax(Integer.valueOf(20));
 	    	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 	    	DocumentBuilder builder = factory.newDocumentBuilder();
 	    	DOMImplementation impl = builder.getDOMImplementation();
@@ -184,7 +185,7 @@ public class RicercaCompensoBP extends BusinessProcess implements ResponseXMLBP{
 
 		int mesi= (DateUtils.monthsBetweenDates(comp.getDt_da_competenza_coge(),comp.getDt_a_competenza_coge()));
 		element = xmldoc.createElement("mesi");
-		node = xmldoc.createTextNode(new Long(mesi).toString());
+		node = xmldoc.createTextNode(Long.valueOf(mesi).toString());
 		element.appendChild(node);
 		elementCompenso.appendChild(element);
 

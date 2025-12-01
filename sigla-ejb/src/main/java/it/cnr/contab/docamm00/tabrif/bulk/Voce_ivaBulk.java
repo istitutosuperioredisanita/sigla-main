@@ -274,7 +274,7 @@ public class Voce_ivaBulk extends Voce_ivaBase {
             if (getDt_inizio_validita() != null
                     && getDt_inizio_validita().after(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()))
                 throw new ValidationException("La data di inizio validità deve essere non successiva a quella attuale");
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw new it.cnr.jada.DetailedRuntimeException(e);
         }
 

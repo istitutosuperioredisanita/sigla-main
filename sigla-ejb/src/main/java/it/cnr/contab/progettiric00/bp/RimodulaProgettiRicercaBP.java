@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import javax.servlet.http.HttpSession;
-
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_enteBulk;
 import it.cnr.contab.config00.ejb.EsercizioComponentSession;
@@ -59,6 +57,9 @@ import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.si.spring.storage.StorageObject;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.jsp.PageContext;
 
 public class RimodulaProgettiRicercaBP extends AllegatiProgettoRimodulazioneCRUDBP<AllegatoProgettoRimodulazioneBulk, Progetto_rimodulazioneBulk> {
 	private boolean flPrgPianoEconomico = false;
@@ -88,7 +89,7 @@ public class RimodulaProgettiRicercaBP extends AllegatiProgettoRimodulazioneCRUD
 	};
 
 	private SimpleDetailCRUDController pianoEconomicoSummaryVoce = new RimodulaProgettoPianoEconomicoCRUDController( "PianoEconomicoSummaryVoce", Progetto_piano_economicoBulk.class, "pianoEconomicoSummaryVoce", this){
-		public void writeHTMLToolbar(javax.servlet.jsp.PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException ,javax.servlet.ServletException {};
+		public void writeHTMLToolbar(PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException , ServletException {};
 
 		@Override
 		public String getRowStyle(Object obj) {
@@ -102,7 +103,7 @@ public class RimodulaProgettiRicercaBP extends AllegatiProgettoRimodulazioneCRUD
 		};
 	};
 	private SimpleDetailCRUDController pianoEconomicoSummaryAnno = new RimodulaProgettoPianoEconomicoCRUDController( "PianoEconomicoSummaryAnno", Progetto_piano_economicoBulk.class, "pianoEconomicoSummaryAnno", this){
-		public void writeHTMLToolbar(javax.servlet.jsp.PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException ,javax.servlet.ServletException {};
+		public void writeHTMLToolbar(PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException ,ServletException {};
 	};
 	private SimpleDetailCRUDController pianoEconomicoVociBilancioDaAssociare = new SimpleDetailCRUDController( "VociMovimentateNonAssociate", V_saldi_voce_progettoBulk.class, "vociMovimentateNonAssociate", this); 
 
@@ -222,7 +223,7 @@ public class RimodulaProgettiRicercaBP extends AllegatiProgettoRimodulazioneCRUD
 	};
 
 	private final SimpleDetailCRUDController crudVariazioniAssociate = new SimpleDetailCRUDController("Variazioni associate", Progetto_rimodulazione_variazioneBulk.class,"variazioniAssociate",this){
-		public void writeHTMLToolbar(javax.servlet.jsp.PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException ,javax.servlet.ServletException {
+		public void writeHTMLToolbar(PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException ,ServletException {
 			super.openButtonGROUPToolbar(context);
 
 			{
@@ -270,7 +271,7 @@ public class RimodulaProgettiRicercaBP extends AllegatiProgettoRimodulazioneCRUD
 			isUoCdsCollegata = uoScrivania.getFl_uo_cds();
 
 			it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession configSession = (it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class);
-	   		BigDecimal annoFrom = configSession.getIm01(actioncontext.getUserContext(), new Integer(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO);
+	   		BigDecimal annoFrom = configSession.getIm01(actioncontext.getUserContext(), Integer.valueOf(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO);
 
 	   		if (Optional.ofNullable(annoFrom).isPresent())
 	   			setAnnoFromPianoEconomico(annoFrom.intValue());

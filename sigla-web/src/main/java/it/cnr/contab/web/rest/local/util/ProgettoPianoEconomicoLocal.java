@@ -20,12 +20,12 @@ package it.cnr.contab.web.rest.local.util;
 import it.cnr.contab.web.rest.config.AccessoAllowed;
 import it.cnr.contab.util.enumeration.AccessoEnum;
 
-import javax.ejb.Local;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ejb.Local;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 @Local
 @Path("/progetto")
@@ -36,5 +36,9 @@ public interface ProgettoPianoEconomicoLocal {
     @GET
     @Path("/check-piano-economico")
     @AccessoAllowed(value= AccessoEnum.XXXHTTPSESSIONXXXXXX)
-    Response checkPdgPianoEconomico(@Context HttpServletRequest request, @QueryParam("tipoVariazione") String tipoVariazione, @QueryParam("esercizio") Integer esercizio, @QueryParam("pgVariazioneMin") Long pgVariazioneMin,@QueryParam("pgVariazioneMax") Long pgVariazioneMax) throws Exception;
+    Response checkPdgPianoEconomico(@Context HttpServletRequest request,
+                                    @QueryParam("tipoVariazione") String tipoVariazione,
+                                    @QueryParam("esercizio") Integer esercizio,
+                                    @QueryParam("pgVariazioneMin") Long pgVariazioneMin,
+                                    @QueryParam("pgVariazioneMax") Long pgVariazioneMax) throws Exception;
 }

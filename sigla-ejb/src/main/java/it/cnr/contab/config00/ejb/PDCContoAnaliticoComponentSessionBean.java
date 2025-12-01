@@ -19,8 +19,8 @@ package it.cnr.contab.config00.ejb;
 
 import it.cnr.contab.config00.comp.PDCContoAnaliticoComponent;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 /**
  * Bean implementation class for Enterprise Bean: CNRCONFIG00_EJB_PDCContoAnaliticoComponentSession
@@ -31,7 +31,5 @@ public class PDCContoAnaliticoComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 	public void ejbCreate() {
 		componentObj = new PDCContoAnaliticoComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new PDCContoAnaliticoComponentSessionBean();
-	}
+
 }

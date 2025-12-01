@@ -151,7 +151,7 @@ public int addToMinicarriera_rate(Minicarriera_rataBulk rata) {
 		long prog = ((Minicarriera_rataBulk)i.next()).getPg_rata().longValue();
 		if (prog > max) max = prog;
 	}
-	rata.setPg_rata(new Long(max+1));
+	rata.setPg_rata(Long.valueOf(max+1));
 
 	rata.initialize();
 	rata.setUser(getUser());
@@ -235,7 +235,7 @@ public static int getAnno(java.sql.Timestamp data) {
 		gc.set(java.util.Calendar.MILLISECOND, 0);
 		gc.set(java.util.Calendar.AM_PM, java.util.Calendar.AM);
 		return gc.get(Calendar.YEAR);
-	} catch (javax.ejb.EJBException e) {
+	} catch (jakarta.ejb.EJBException e) {
 		throw new it.cnr.jada.DetailedRuntimeException(e);
 	}	
 }
@@ -305,7 +305,7 @@ public static java.sql.Timestamp getDataOdierna() {
 
 	try {
 		return getDataOdierna(it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp());
-	} catch (javax.ejb.EJBException e) {
+	} catch (jakarta.ejb.EJBException e) {
 		throw new it.cnr.jada.DetailedRuntimeException(e);
 	}
 }
@@ -1026,7 +1026,7 @@ private void reset(it.cnr.jada.action.ActionContext context) {
 	
 	setIm_totale_minicarriera(new java.math.BigDecimal(0).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
 	
-	setNumero_rate(new Integer(1));
+	setNumero_rate(Integer.valueOf(1));
 
 	try {
 		java.sql.Timestamp date = getDataOdierna();
@@ -1044,7 +1044,7 @@ private void reset(it.cnr.jada.action.ActionContext context) {
 		setDt_fine_minicarriera(getDataOdierna());
 	}
 	
-	setNumero_rate(new Integer(it.cnr.jada.util.DateUtils.monthsBetweenDates(new Date(getDt_inizio_minicarriera().getTime()),new Date(getDt_fine_minicarriera().getTime()))));	
+	setNumero_rate(Integer.valueOf(it.cnr.jada.util.DateUtils.monthsBetweenDates(new Date(getDt_inizio_minicarriera().getTime()),new Date(getDt_fine_minicarriera().getTime()))));
 	setPercipiente(new V_terzo_per_compensoBulk());
 	setTi_anagrafico(Tipo_rapportoBulk.ALTRO);
 	setFl_tassazione_separata(Boolean.FALSE);
@@ -1053,7 +1053,7 @@ private void reset(it.cnr.jada.action.ActionContext context) {
 	resetTassazioneSeparataData();
 	
 	setTi_anticipo_posticipo(TIPO_NESSUNO);
-	setMesi_anticipo_posticipo(new Integer(0));
+	setMesi_anticipo_posticipo(Integer.valueOf(0));
 }
 /**
  * Imposta la mappa dei saldi in differita al valore di default

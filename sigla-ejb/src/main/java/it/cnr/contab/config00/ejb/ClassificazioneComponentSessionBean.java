@@ -17,8 +17,8 @@
 
 package it.cnr.contab.config00.ejb;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 /**
  * Bean implementation class for Enterprise Bean: CNRCONFIG00_EJB_ClassificazioneComponentSession
@@ -29,7 +29,5 @@ public class ClassificazioneComponentSessionBean extends it.cnr.jada.ejb.CRUDCom
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.config00.comp.ClassificazioneComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new ClassificazioneComponentSessionBean();
-	}
+	
 }

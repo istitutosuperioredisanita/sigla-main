@@ -17,7 +17,7 @@
 
 package it.cnr.contab.segnalazioni00.ejb;
 import java.rmi.*;
-import javax.ejb.*;
+import jakarta.ejb.*;
 
 import it.cnr.jada.ejb.*;
 import it.cnr.jada.util.ejb.*;

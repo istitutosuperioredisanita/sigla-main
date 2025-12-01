@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.gestiva00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.gestiva00.comp.LiquidIvaInterfComponent;
 
@@ -30,10 +30,8 @@ public class LiquidIvaInterfComponentSessionBean extends it.cnr.jada.ejb.CRUDCom
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.gestiva00.comp.LiquidIvaInterfComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new LiquidIvaInterfComponentSessionBean();
-	}
-	public boolean contaRiga(it.cnr.jada.UserContext param0,it.cnr.contab.gestiva00.core.bulk.Liquid_iva_interfBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public boolean contaRiga(it.cnr.jada.UserContext param0,it.cnr.contab.gestiva00.core.bulk.Liquid_iva_interfBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((LiquidIvaInterfComponent)componentObj).contaRiga(param0,param1);
@@ -51,7 +49,7 @@ public class LiquidIvaInterfComponentSessionBean extends it.cnr.jada.ejb.CRUDCom
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}	
-	public void inserisciRighe(it.cnr.jada.UserContext param0,it.cnr.contab.gestiva00.core.bulk.Liquid_iva_interfBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void inserisciRighe(it.cnr.jada.UserContext param0,it.cnr.contab.gestiva00.core.bulk.Liquid_iva_interfBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((LiquidIvaInterfComponent)componentObj).inserisciRighe(param0,param1);
@@ -68,7 +66,7 @@ public class LiquidIvaInterfComponentSessionBean extends it.cnr.jada.ejb.CRUDCom
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.gestiva00.core.bulk.Liquidazione_definitiva_ivaVBulk inizializzaMese(it.cnr.jada.UserContext param0,it.cnr.contab.gestiva00.core.bulk.Liquidazione_definitiva_ivaVBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.gestiva00.core.bulk.Liquidazione_definitiva_ivaVBulk inizializzaMese(it.cnr.jada.UserContext param0,it.cnr.contab.gestiva00.core.bulk.Liquidazione_definitiva_ivaVBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.gestiva00.core.bulk.Liquidazione_definitiva_ivaVBulk result = ((LiquidIvaInterfComponent)componentObj).inizializzaMese(param0,param1);
@@ -86,7 +84,7 @@ public class LiquidIvaInterfComponentSessionBean extends it.cnr.jada.ejb.CRUDCom
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void saveRipartizioneFinanziaria(it.cnr.jada.UserContext param0,it.cnr.contab.gestiva00.core.bulk.Liquidazione_definitiva_ivaVBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void saveRipartizioneFinanziaria(it.cnr.jada.UserContext param0,it.cnr.contab.gestiva00.core.bulk.Liquidazione_definitiva_ivaVBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((LiquidIvaInterfComponent)componentObj).saveRipartizioneFinanziaria(param0,param1);
@@ -103,7 +101,7 @@ public class LiquidIvaInterfComponentSessionBean extends it.cnr.jada.ejb.CRUDCom
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.gestiva00.core.bulk.Liquidazione_massa_ivaVBulk inizializzaMese(it.cnr.jada.UserContext param0,it.cnr.contab.gestiva00.core.bulk.Liquidazione_massa_ivaVBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.gestiva00.core.bulk.Liquidazione_massa_ivaVBulk inizializzaMese(it.cnr.jada.UserContext param0,it.cnr.contab.gestiva00.core.bulk.Liquidazione_massa_ivaVBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.gestiva00.core.bulk.Liquidazione_massa_ivaVBulk result = ((LiquidIvaInterfComponent)componentObj).inizializzaMese(param0,param1);

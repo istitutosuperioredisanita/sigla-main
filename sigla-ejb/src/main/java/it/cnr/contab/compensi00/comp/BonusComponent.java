@@ -233,7 +233,7 @@ public OggettoBulk inizializzaBulkPerModifica(UserContext usercontext,
 public Boolean verificaLimiteFamiliareCarico(UserContext context,
 		Bonus_nucleo_famBulk bonus_nucleo_fam) throws ComponentException, RemoteException {
 	Configurazione_cnrComponentSession sess = (Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession");
-	java.math.BigDecimal limite=sess.getIm01(context, new Integer(0), null,"COSTANTI", "IMPORTO_LIMITE_FAMILIARE_CARICO");
+	java.math.BigDecimal limite=sess.getIm01(context, Integer.valueOf(0), null,"COSTANTI", "IMPORTO_LIMITE_FAMILIARE_CARICO");
 	if (bonus_nucleo_fam.getIm_reddito_componente()!=null && bonus_nucleo_fam.getIm_reddito_componente().compareTo(limite)>0)
 		return false;
 	else
@@ -241,7 +241,7 @@ public Boolean verificaLimiteFamiliareCarico(UserContext context,
 }
 private java.math.BigDecimal recuperaLimiteFamiliareCarico(UserContext context) throws ComponentException, RemoteException {
 	Configurazione_cnrComponentSession sess = (Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession");
-	return sess.getIm01(context, new Integer(0), null,"COSTANTI", "IMPORTO_LIMITE_FAMILIARE_CARICO");
+	return sess.getIm01(context, Integer.valueOf(0), null,"COSTANTI", "IMPORTO_LIMITE_FAMILIARE_CARICO");
 	
 }
 
@@ -367,7 +367,7 @@ public java.util.List estraiDettagli(UserContext context,BonusBulk bonus)throws 
 }
 public String recuperaCodiceFiscaleInvio(UserContext context) throws ComponentException, RemoteException {
 	Configurazione_cnrComponentSession sess = (Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession");
-	return sess.getVal01(context, new Integer(0), null,"COSTANTI", "CODICE_FISCALE_INVIO");
+	return sess.getVal01(context, Integer.valueOf(0), null,"COSTANTI", "CODICE_FISCALE_INVIO");
 	
 }
 

@@ -30,8 +30,9 @@ import it.cnr.jada.util.Config;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.jsp.Button;
 
-import javax.servlet.ServletException;
-import javax.servlet.jsp.JspWriter;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspWriter;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.*;

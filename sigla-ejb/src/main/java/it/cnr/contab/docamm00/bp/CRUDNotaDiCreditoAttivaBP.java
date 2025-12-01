@@ -28,6 +28,8 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.ObjectReplacer;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspWriter;
 
 /**
  * Insert the type's description here.
@@ -331,7 +333,7 @@ public class CRUDNotaDiCreditoAttivaBP
         }
     }
 
-    public void writeFPInventarioToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException, javax.servlet.ServletException {
+    public void writeFPInventarioToolbar(JspWriter writer) throws java.io.IOException, ServletException {
 
         if (!isSearching() && !isDeleting()) {
             openToolbar(writer);
@@ -340,7 +342,7 @@ public class CRUDNotaDiCreditoAttivaBP
         }
     }
 
-    public void writeToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException, javax.servlet.ServletException {
+    public void writeToolbar(JspWriter writer) throws java.io.IOException, ServletException {
 
         super.writeToolbar(writer);
         //writeFPInventarioToolbar(writer);

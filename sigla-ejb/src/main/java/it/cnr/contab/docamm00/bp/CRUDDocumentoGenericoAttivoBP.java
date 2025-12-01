@@ -52,8 +52,10 @@ import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.jada.util.jsp.JSPUtils;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspWriter;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.stream.Stream;
@@ -481,8 +483,8 @@ public class CRUDDocumentoGenericoAttivoBP
             if (!isAnnoSolareInScrivania()) {
                 String cds = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(context.getUserContext());
                 try {
-                    boolean esercizioScrivaniaAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, new Integer(esercizioScrivania)));
-                    boolean esercizioSuccessivoAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, new Integer(esercizioScrivania + 1)));
+                    boolean esercizioScrivaniaAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, Integer.valueOf(esercizioScrivania)));
+                    boolean esercizioSuccessivoAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, Integer.valueOf(esercizioScrivania + 1)));
                     setRiportaAvantiIndietro(esercizioScrivaniaAperto && esercizioSuccessivoAperto && isRibaltato() && isSupervisore());
                 } catch (Throwable t) {
                     handleException(t);
@@ -905,7 +907,7 @@ public class CRUDDocumentoGenericoAttivoBP
         return;
     }
 
-    protected void writeToolbar(javax.servlet.jsp.JspWriter writer, it.cnr.jada.util.jsp.Button[] buttons) throws java.io.IOException, javax.servlet.ServletException {
+    protected void writeToolbar(JspWriter writer, it.cnr.jada.util.jsp.Button[] buttons) throws java.io.IOException, ServletException {
 
         it.cnr.jada.util.jsp.Button riportaAvantiButton = buttons[buttons.length - 1];
         riportaAvantiButton.setSeparator(isRiportaIndietroButtonHidden() && !isRiportaAvantiButtonHidden());
@@ -1117,7 +1119,7 @@ public class CRUDDocumentoGenericoAttivoBP
         this.isDetailDoubling = isDetailDoubling;
     }
 
-    public void writeInventarioToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException, javax.servlet.ServletException {
+    public void writeInventarioToolbar(JspWriter writer) throws java.io.IOException, ServletException {
 
         if (!isSearching() && !isDeleting()) {
             if (this.getParentRoot().isBootstrap()) {

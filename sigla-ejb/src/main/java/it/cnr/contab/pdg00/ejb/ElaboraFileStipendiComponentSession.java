@@ -17,7 +17,7 @@
 
 package it.cnr.contab.pdg00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.pdg00.cdip.bulk.V_cnr_estrazione_coriBulk;
 import it.cnr.contab.pdg00.cdip.bulk.V_stipendi_cofi_dettBulk;

@@ -17,7 +17,7 @@
 
 package it.cnr.contab.compensi00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface ScaglioneComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

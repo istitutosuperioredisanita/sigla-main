@@ -80,7 +80,7 @@ public class FlussiDiCassaDtoHome extends BulkHome {
 		sqlInterna.addTableToHeader("V_CLASSIFICAZIONE_VOCI_EP","DETAIL");
 		sqlInterna.addSQLJoin("V_CLASSIFICAZIONE_VOCI_EP.ESERCIZIO", "DETAIL.ESERCIZIO");
 		sqlInterna.addSQLJoin("V_CLASSIFICAZIONE_VOCI_EP.TIPO", "DETAIL.TIPO");
-		for(int i=1; i<=new Integer(flussi.getLivello());i++){
+		for(int i=1; i<=Integer.valueOf(flussi.getLivello());i++){
 			sqlInterna.addSQLJoin(FindClause.AND, "V_CLASSIFICAZIONE_VOCI_EP.CD_LIVELLO"+i, SQLBuilder.EQUALS,"DETAIL.CD_LIVELLO"+i);
 		}
 

@@ -56,7 +56,7 @@ import java.util.Vector;
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class CRUDCaricoInventarioBP extends CRUDCaricoScaricoInventarioBP{
-	private Long progressivo_beni = new Long("0");
+	private Long progressivo_beni = Long.valueOf("0");
 	/* Flag che viene impostato a true nel caso che l'utente immetta un valore non valido 
 	 * nel campo Num. Gruppi. Se settato a true, nella Jsp, il campo verrÓ visualizzato in 
 	 * arancio, seguendo lo standard.
@@ -362,8 +362,8 @@ public class CRUDCaricoInventarioBP extends CRUDCaricoScaricoInventarioBP{
 			* attualmente presente nella HashTable.
 			*/
 			if (dettaglio.isAssociatoConAccessorioContestuale()){
-				if ( dettaglio.getQuantita()!=null && dettaglio.getQuantita().compareTo(new Long("1"))!=0){
-					dettaglio.setQuantita(new Long("1"));
+				if ( dettaglio.getQuantita()!=null && dettaglio.getQuantita().compareTo(Long.valueOf("1"))!=0){
+					dettaglio.setQuantita(Long.valueOf("1"));
 					throw new ValidationException("Attenzione: la quantità di questa riga deve essere 1, poichè alcuni beni sono suoi accessori");
 				}
 				accessori_contestuali = buono_carico.getAccessoriContestualiHash();
@@ -589,7 +589,7 @@ public class CRUDCaricoInventarioBP extends CRUDCaricoScaricoInventarioBP{
 			}
 			dettCarico.setBuono_cs(buonoC);
 			dettCarico.setBene(bene);
-			dettCarico.setQuantita(new Long(1));
+			dettCarico.setQuantita(Long.valueOf(1));
 			dettCarico.setValore_unitario(new java.math.BigDecimal(0));
 			buonoC.getBuono_carico_scarico_dettColl().add(dettCarico);		
 		}
@@ -628,8 +628,8 @@ public class CRUDCaricoInventarioBP extends CRUDCaricoScaricoInventarioBP{
 					}
 					if (dettaglio.isAssociatoConAccessorioContestuale()){
 						BulkList newBeni_associati = new BulkList();
-						if ( dettaglio.getQuantita()!=null && dettaglio.getQuantita().compareTo(new Long("1"))!=0){
-						dettaglio.setQuantita(new Long("1"));
+						if ( dettaglio.getQuantita()!=null && dettaglio.getQuantita().compareTo(Long.valueOf("1"))!=0){
+						dettaglio.setQuantita(Long.valueOf("1"));
 						throw new ValidationException("Attenzione. La Quantità di questa riga deve essere 1, poichè alcuni beni sono suoi accessori");
 					}
 					PrimaryKeyHashtable accessori_contestuali = buonoCS.getAccessoriContestualiHash();
@@ -725,7 +725,7 @@ public class CRUDCaricoInventarioBP extends CRUDCaricoScaricoInventarioBP{
 	public Long incrementaProgressivo_beni() {
 
 		Long prog = progressivo_beni;
-		progressivo_beni = new Long(progressivo_beni.longValue() + 1);
+		progressivo_beni = Long.valueOf(progressivo_beni.longValue() + 1);
 		
 		return prog;
 	}
@@ -790,8 +790,8 @@ public class CRUDCaricoInventarioBP extends CRUDCaricoScaricoInventarioBP{
 					}
 					if (dettaglio.isAssociatoConAccessorioContestuale()){
 						BulkList newBeni_associati = new BulkList();
-						if ( dettaglio.getQuantita()!=null && dettaglio.getQuantita().compareTo(new Long("1"))!=0){
-						dettaglio.setQuantita(new Long("1"));
+						if ( dettaglio.getQuantita()!=null && dettaglio.getQuantita().compareTo(Long.valueOf("1"))!=0){
+						dettaglio.setQuantita(Long.valueOf("1"));
 						throw new ValidationException("Attenzione. La Quantità di questa riga deve essere 1, poichè alcuni beni sono suoi accessori");
 					}
 					PrimaryKeyHashtable accessori_contestuali = buonoCS.getAccessoriContestualiHash();

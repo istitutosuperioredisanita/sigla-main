@@ -45,7 +45,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.action.*;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
@@ -166,7 +166,7 @@ public Forward doCalcolaValoreTotaleBene(ActionContext context) {
 	try{
 		fillModel(context);
 		// Se la riga è per un bene accessorio, controlla che la Quantità indicata NON sia superiore a 999
-		if (riga.isBeneAccessorio() && riga.getQuantita() != null && riga.getQuantita().compareTo(new Long(999))>0){
+		if (riga.isBeneAccessorio() && riga.getQuantita() != null && riga.getQuantita().compareTo(Long.valueOf(999))>0){
 			throw new it.cnr.jada.comp.ApplicationException("Attenzione: non è possibile indicare una Quantità maggiore di 999 per un Bene Accessorio.");
 		}
 	
@@ -297,7 +297,7 @@ public Forward doBringBackSearchFind_categoria_bene(ActionContext context, Buono
 		if (cat_gruppo != null){
 			CRUDCaricoInventarioBP bp = (CRUDCaricoInventarioBP)getBusinessProcess(context);
 			Buono_carico_scaricoBulk buonoCS = (Buono_carico_scaricoBulk)bp.getModel();						
-			String cd_pubblicazioni = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(context.getUserContext(), new Integer(0), "*", "CD_CATEGORIA_GRUPPO_SPECIALE", "PUBBLICAZIONI");
+			String cd_pubblicazioni = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(context.getUserContext(), Integer.valueOf(0), "*", "CD_CATEGORIA_GRUPPO_SPECIALE", "PUBBLICAZIONI");
 			if(cd_pubblicazioni != null)
 				dettaglio.getBene().setPubblicazione(cat_gruppo.getCd_categoria_padre().equalsIgnoreCase(cd_pubblicazioni));
 			dettaglio.getBene().setCategoria_Bene(cat_gruppo);
@@ -426,7 +426,7 @@ public Forward doFindAccessoriContestuali(ActionContext context) {
 					(riga_da_associare.getBene().getCd_categoria_gruppo().compareTo(riga.getBene().getCd_categoria_gruppo())==0))
 					//(riga_da_associare.getBene().getCd_categoria_gruppo().substring(0,riga_da_associare.getBene().getCd_categoria_gruppo().lastIndexOf(".")).compareTo(
 			        //(riga.getBene().getCd_categoria_gruppo().substring(0,riga.getBene().getCd_categoria_gruppo().lastIndexOf("."))))==0))
-			          if ((!riga.isBeneAccessorio()) && (riga.getQuantita()!=null) && (riga.getQuantita().compareTo(new Long(1))==0))				
+			          if ((!riga.isBeneAccessorio()) && (riga.getQuantita()!=null) && (riga.getQuantita().compareTo(Long.valueOf(1))==0))				
 				        selectedModels.add(riga);
 		}
 
@@ -491,7 +491,7 @@ public Forward doFindAccessoriContestualiByFattura(ActionContext context) {
 							(riga_da_associare.getBene().getCd_categoria_gruppo().substring(0,riga_da_associare.getBene().getCd_categoria_gruppo().lastIndexOf(".")).compareTo(
 					        (riga.getBene().getCd_categoria_gruppo().substring(0,riga.getBene().getCd_categoria_gruppo().lastIndexOf("."))))==0))
 					
-					 if ((!riga.isBeneAccessorio()) && (riga.getQuantita()!=null) && (riga.getQuantita().compareTo(new Long(1))==0))				
+					 if ((!riga.isBeneAccessorio()) && (riga.getQuantita()!=null) && (riga.getQuantita().compareTo(Long.valueOf(1))==0))				
 						selectedModels.add(riga);
 				}
 			}
@@ -1054,7 +1054,7 @@ public Forward doCreaGruppi(ActionContext context) {
 		validaCreaGruppi(buono_cs, riga_fattura);
 
 		// Cerca il Codice relativo alla Categoria PUBBLICAZIONI
-		cd_pubblicazioni = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(context.getUserContext(), new Integer(0), "*", "CD_CATEGORIA_GRUPPO_SPECIALE", "PUBBLICAZIONI");
+		cd_pubblicazioni = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(context.getUserContext(), Integer.valueOf(0), "*", "CD_CATEGORIA_GRUPPO_SPECIALE", "PUBBLICAZIONI");
 		if(cd_pubblicazioni != null)
 			isPubblicazione = riga_fattura.getBene_servizio().getCategoria_gruppo().getCd_categoria_padre().equalsIgnoreCase(cd_pubblicazioni);
 	}
@@ -1204,7 +1204,7 @@ private void validaCreaDettagli(ActionContext context, PrimaryKeyHashtable righe
 		for (java.util.Iterator i = righeInventario.iterator(); i.hasNext();){
 			Buono_carico_scarico_dettBulk riga_inventario = (Buono_carico_scarico_dettBulk)i.next();
 			// Non è stata indicata la quantità nella riga di dettaglio del Buono di Carico
-			if (riga_inventario.getQuantita()==null || (riga_inventario.getQuantita().compareTo(new Long(0)))==0){
+			if (riga_inventario.getQuantita()==null || (riga_inventario.getQuantita().compareTo(Long.valueOf(0)))==0){
 				throw new it.cnr.jada.bulk.ValidationException ("Attenzione: "+
 					"uno o più dettagli specificati per la riga di Fattura '" + 
 					riga_fattura.getDs_riga_fattura() + 
@@ -1380,7 +1380,7 @@ public Forward doOnData_registrazioneChange(ActionContext context)  {
 			nuovoBene.setToBeCreated();
 			
 			if (gruppi==1){
-				nuovoRigoInventario.setQuantita(new Long(1));
+				nuovoRigoInventario.setQuantita(Long.valueOf(1));
 				bp.setIsQuantitaEnabled(false);
 			}
 			else{
@@ -1494,7 +1494,7 @@ public Forward doOnData_registrazioneChange(ActionContext context)  {
 						  (riga_da_associare.getCat_voce()!=null &&
 						   riga.getCat_voce()!=null &&
 						   riga_da_associare.getCat_voce().getCd_categoria_gruppo().compareTo(riga.getCat_voce().getCd_categoria_gruppo())==0))
-						 if ((!riga.isBeneAccessorio()) && (riga.getQuantita()!=null) && (riga.getQuantita().compareTo(new Long(1))==0))				
+						 if ((!riga.isBeneAccessorio()) && (riga.getQuantita()!=null) && (riga.getQuantita().compareTo(Long.valueOf(1))==0))				
 							selectedModels.add(riga);
 					}
 				}
@@ -1600,7 +1600,7 @@ public Forward doOnData_registrazioneChange(ActionContext context)  {
 			for (java.util.Iterator i = righeInventario.iterator(); i.hasNext();){
 				Buono_carico_scarico_dettBulk riga_inventario = (Buono_carico_scarico_dettBulk)i.next();
 				// Non Þ stata indicata la quantitÓ nella riga di dettaglio del Buono di Carico
-				if (riga_inventario.getQuantita()==null || (riga_inventario.getQuantita().compareTo(new Long(0)))==0){
+				if (riga_inventario.getQuantita()==null || (riga_inventario.getQuantita().compareTo(Long.valueOf(0)))==0){
 					throw new it.cnr.jada.bulk.ValidationException ("Attenzione: "+
 						"uno o più dettagli specificati per la riga di Documento '" + 
 						riga.getDs_riga() + 

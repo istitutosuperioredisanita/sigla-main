@@ -33,7 +33,9 @@ import it.cnr.contab.inventario00.ejb.*;
 import it.cnr.jada.action.*;
 import it.cnr.jada.bulk.*;
 import it.cnr.jada.util.action.*;
- 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspWriter;
+
 public class CRUDTipoAmmortamentoBP extends it.cnr.jada.util.action.SimpleCRUDBP implements SelectionListener{
 
 	private final SimpleDetailCRUDController catBeni  = new SimpleDetailCRUDController("catBeni",Categoria_gruppo_inventBulk.class,"catBeni",this,true);
@@ -365,7 +367,7 @@ public java.util.BitSet setSelection(it.cnr.jada.action.ActionContext context,
  *
  * @param writer <code>JspWriter</code>
 **/
-public void writeRiassociaToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException,javax.servlet.ServletException {
+public void writeRiassociaToolbar(JspWriter writer) throws java.io.IOException, ServletException {
 
 	if (!isSearching()) {
 		openToolbar(writer);
@@ -379,7 +381,7 @@ public void writeRiassociaToolbar(javax.servlet.jsp.JspWriter writer) throws jav
  *
  * @param writer <code>JspWriter</code>
 **/
-public void writeToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException,javax.servlet.ServletException {
+public void writeToolbar(JspWriter writer) throws java.io.IOException,ServletException {
 
 	super.writeToolbar(writer);
 	writeRiassociaToolbar(writer);

@@ -50,8 +50,8 @@ public class Pdg_residuo_detHome extends BulkHome {
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,OggettoBulk bulk) throws PersistencyException, ComponentException {
 		Integer max = (Integer)findMax(bulk, "pg_dettaglio", null);
 		if (max!=null)
-			((Pdg_residuo_detBulk)bulk).setPg_dettaglio(new Integer(max.intValue()+1));
+			((Pdg_residuo_detBulk)bulk).setPg_dettaglio(Integer.valueOf(max.intValue()+1));
 		else
-			((Pdg_residuo_detBulk)bulk).setPg_dettaglio(new Integer(1));
+			((Pdg_residuo_detBulk)bulk).setPg_dettaglio(Integer.valueOf(1));
 	}
 }

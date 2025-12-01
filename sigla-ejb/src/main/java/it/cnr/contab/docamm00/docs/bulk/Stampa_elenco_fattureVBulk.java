@@ -90,9 +90,9 @@ public java.lang.String getCd_cds() {
 public Integer getCdTerzoForPrint() {
 
 	if (getTerzo()==null)
-		return new Integer(0);
+		return Integer.valueOf(0);
 	if (getTerzo().getCd_terzo()==null)
-		return new Integer(0);
+		return Integer.valueOf(0);
 
 	return getTerzo().getCd_terzo();
 }
@@ -301,7 +301,7 @@ public java.lang.Integer getEsercizio_fattura() {
 public java.lang.Integer getEsercizio_fatturaForPrint() {
 	
 	if (esercizio_fattura == null)
-		return new Integer(0);
+		return Integer.valueOf(0);
 		
 	return esercizio_fattura;
 }
@@ -340,7 +340,7 @@ public java.lang.Integer getPgFine() {
 public java.lang.Integer getPgFineForPrint() {
 
 	if (pgFine == null)
-		return new Integer(999999999);
+		return Integer.valueOf(999999999);
 		
 	return pgFine;
 }
@@ -361,7 +361,7 @@ public java.lang.Integer getPgInizio() {
 public java.lang.Integer getPgInizioForPrint() {
 
 	if (pgInizio == null)
-		return new Integer(0);
+		return Integer.valueOf(0);
 		
 	return pgInizio;
 }

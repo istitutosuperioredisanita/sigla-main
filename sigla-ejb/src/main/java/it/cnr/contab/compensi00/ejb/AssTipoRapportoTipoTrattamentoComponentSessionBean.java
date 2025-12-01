@@ -16,9 +16,9 @@
  */
 
 package it.cnr.contab.compensi00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
 
 import it.cnr.jada.ejb.CRUDComponentSessionBean;
 @Stateless(name="CNRCOMPENSI00_EJB_AssTipoRapportoTipoTrattamentoComponentSession")
@@ -28,11 +28,8 @@ public class AssTipoRapportoTipoTrattamentoComponentSessionBean extends it.cnr.j
 		componentObj = new it.cnr.contab.compensi00.comp.AssTipoRapportoTipoTrattamentoComponent();
 	}
 	@Remove
-	public void ejbRemove() throws javax.ejb.EJBException {
+	public void ejbRemove() throws jakarta.ejb.EJBException {
 		componentObj.release();
 	}
 
-	public static CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new AssTipoRapportoTipoTrattamentoComponentSessionBean();
-	}
 }

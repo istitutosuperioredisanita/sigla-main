@@ -16,10 +16,10 @@
  */
 
 package it.cnr.contab.doccont00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 
 import it.cnr.contab.doccont00.comp.NumTempDocContComponent;
 @Stateless(name="CNRDOCCONT00_EJB_NumTempDocContComponentSession")
@@ -29,10 +29,8 @@ public class NumTempDocContComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.doccont00.comp.NumTempDocContComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new NumTempDocContComponentSessionBean();
-}
-public java.lang.Long getNextTempPg(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.AccertamentoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public java.lang.Long getNextTempPg(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.AccertamentoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.lang.Long result = ((NumTempDocContComponent)componentObj).getNextTempPg(param0,param1);
@@ -50,7 +48,7 @@ public java.lang.Long getNextTempPg(it.cnr.jada.UserContext param0,it.cnr.contab
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public java.lang.Long getNextTempPg(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public java.lang.Long getNextTempPg(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.lang.Long result = ((NumTempDocContComponent)componentObj).getNextTempPg(param0,param1);
@@ -68,7 +66,7 @@ public java.lang.Long getNextTempPg(it.cnr.jada.UserContext param0,it.cnr.contab
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public java.lang.Long getNextTempPg(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.Obbligazione_modificaBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public java.lang.Long getNextTempPg(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.Obbligazione_modificaBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.lang.Long result = ((NumTempDocContComponent)componentObj).getNextTempPg(param0,param1);
@@ -86,7 +84,7 @@ public java.lang.Long getNextTempPg(it.cnr.jada.UserContext param0,it.cnr.contab
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public java.lang.Long getNextTempPg(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.Accertamento_modificaBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public java.lang.Long getNextTempPg(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.Accertamento_modificaBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.lang.Long result = ((NumTempDocContComponent)componentObj).getNextTempPg(param0,param1);

@@ -13,9 +13,9 @@
 	SimpleDetailCRUDController controller = ( (PdGVariazioneBP)bp ).getCrudArchivioCons();
 	Pdg_variazioneBulk pdg = (Pdg_variazioneBulk)bp.getModel();
 
-    Integer esercizioPDG    = new Integer(-1);
-    Long    nrVariazionePDG = new Long(-1);
-	Long    progPDG         = new Long(-1);
+    Integer esercizioPDG    = Integer.valueOf(-1);
+    Long    nrVariazionePDG = Long.valueOf(-1);
+	Long    progPDG         = Long.valueOf(-1);
     // Recupero il nome del file selezionato
     String  nomeArchivio    = null;
 

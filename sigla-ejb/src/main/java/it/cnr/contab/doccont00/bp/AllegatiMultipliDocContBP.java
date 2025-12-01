@@ -34,8 +34,9 @@ import it.cnr.si.spring.storage.StorageException;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
 
-import javax.servlet.ServletException;
-import javax.servlet.jsp.PageContext;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -152,7 +153,7 @@ public class AllegatiMultipliDocContBP extends SimpleCRUDBP {
     }
 
     @Override
-    public void openForm(javax.servlet.jsp.PageContext context, String action, String target) throws java.io.IOException, javax.servlet.ServletException {
+    public void openForm(PageContext context, String action, String target) throws java.io.IOException, ServletException {
         openForm(context, action, target, "multipart/form-data");
     }
 }

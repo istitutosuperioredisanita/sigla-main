@@ -122,7 +122,7 @@ public class ListaBeniBP
 	/**
 	 * Crea la CRUDComponentSession da usare per effettuare le operazioni di CRUD
 	 */
-	public CRUDComponentSession createComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public CRUDComponentSession createComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		return (CRUDComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB(componentSessioneName,CRUDComponentSession.class);
 	}
 	/**
@@ -215,7 +215,7 @@ public class ListaBeniBP
 		try {
 			AssBeneFatturaBP assBeneFattureBP = (AssBeneFatturaBP)actioncontext.getBusinessProcess();
 			assBeneFattureBP.initializeSelection(actioncontext);
-		}catch(javax.ejb.EJBException ejbe) {
+		}catch(jakarta.ejb.EJBException ejbe) {
 			throw handleException(ejbe);
 		}
 	}
@@ -226,7 +226,7 @@ public class ListaBeniBP
 		try {
 			AssBeneFatturaBP assBeneFattureBP = (AssBeneFatturaBP)actioncontext.getBusinessProcess().getParent();
 			return assBeneFattureBP.setSelection(actioncontext,aoggettobulk,bitset,bitset1);
-		}catch(javax.ejb.EJBException ejbe) {
+		}catch(jakarta.ejb.EJBException ejbe) {
 			throw handleException(ejbe);
 		}
 	}
@@ -238,7 +238,7 @@ public class ListaBeniBP
 		try {
 			AssBeneFatturaBP assBeneFattureBP = (AssBeneFatturaBP)context.getBusinessProcess().getParent();
 			assBeneFattureBP.selectAll(context,getFindclause());
-		}catch(javax.ejb.EJBException e) {
+		}catch(jakarta.ejb.EJBException e) {
 			throw handleException(e);
 		}
 	}					

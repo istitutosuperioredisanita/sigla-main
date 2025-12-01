@@ -32,7 +32,7 @@ import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 public class UnitaMisuraCoeffMagHome extends BulkHome {
 	public UnitaMisuraCoeffMagHome(Connection conn) {

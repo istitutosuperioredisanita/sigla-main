@@ -56,7 +56,7 @@ import it.cnr.jada.util.action.OptionBP;
 import it.cnr.jada.util.action.SelezionatoreListaBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.rmi.RemoteException;
 import java.sql.Date;
 import java.util.*;
@@ -441,7 +441,7 @@ public class CRUDFatturaAttivaAction extends EconomicaAction {
             int annoSolare = fa.getDateCalendar(date).get(java.util.Calendar.YEAR);
             if (annoSolare != esercizioScrivania.intValue())
                 throw new it.cnr.jada.comp.ApplicationException("Non è possibile inserire note di credito in esercizi non corrispondenti all'anno solare!");
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             return handleException(context, e);
         }
 
@@ -486,7 +486,7 @@ public class CRUDFatturaAttivaAction extends EconomicaAction {
             int annoSolare = fa.getDateCalendar(date).get(java.util.Calendar.YEAR);
             if (annoSolare != esercizioScrivania.intValue())
                 throw new it.cnr.jada.comp.ApplicationException("Non è possibile inserire note di debito in esercizi non corrispondenti all'anno solare!");
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             return handleException(context, e);
         }
 
@@ -2774,14 +2774,14 @@ public class CRUDFatturaAttivaAction extends EconomicaAction {
 
             if (competenzaA != competenzaABck) {
                 tsOdiernoGregorian.setTime(new Date(competenzaA.getTime()));
-                Integer esercizioCompetenzaA = new Integer(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
+                Integer esercizioCompetenzaA = Integer.valueOf(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
                 if (((FatturaAttivaSingolaComponentSession) bp.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaA, cds))
                     throw new it.cnr.jada.comp.ApplicationException("Le date \"Competenza da\" e \"Competenza a\" non possono appartenere ad un esercizio chiuso");
 
             }
             if (competenzaDa != competenzaDaBck) {
                 tsOdiernoGregorian.setTime(new Date(competenzaDa.getTime()));
-                Integer esercizioCompetenzaDa = new Integer(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
+                Integer esercizioCompetenzaDa = Integer.valueOf(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
                 if (((FatturaAttivaSingolaComponentSession) bp.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaDa, cds))
                     throw new it.cnr.jada.comp.ApplicationException("Le date \"Competenza da\" e \"Competenza a\" non possono appartenere ad un esercizio chiuso");
             }
@@ -3352,7 +3352,7 @@ public class CRUDFatturaAttivaAction extends EconomicaAction {
                 int annoSolare = fa.getDateCalendar(date).get(java.util.Calendar.YEAR);
                 if (annoSolare != esercizioScrivania.intValue())
                     throw new it.cnr.jada.comp.ApplicationException("Non è possibile inserire note di credito in esercizi non corrispondenti all'anno solare!");
-            } catch (javax.ejb.EJBException e) {
+            } catch (jakarta.ejb.EJBException e) {
                 return handleException(context, e);
             }
 

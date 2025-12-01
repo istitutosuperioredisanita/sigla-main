@@ -17,7 +17,7 @@
 
 package it.cnr.contab.fondecon00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface FondoSpesaComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

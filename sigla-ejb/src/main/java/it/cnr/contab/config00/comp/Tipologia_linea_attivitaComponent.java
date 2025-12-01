@@ -162,7 +162,7 @@ protected void creaLineaAttivitaComune(UserContext userContext,Ass_tipo_la_cdrBu
 	   		linea_attivita.setCentro_responsabilita(ass_tipo_la_cdr.getCentro_responsabilita());
 	   		linea_attivita.setCd_linea_attivita("C"+tipo_la.getCd_tipo_linea_attivita());
 	   		linea_attivita.setEsercizio_inizio(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
-	   		linea_attivita.setEsercizio_fine(new Integer(2100));
+	   		linea_attivita.setEsercizio_fine(Integer.valueOf(2100));
 	   		linea_attivita.setDenominazione(tipo_la.getDs_tipo_linea_attivita());
 	   		linea_attivita.setFunzione(tipo_la.getFunzione());
 	   		linea_attivita.setNatura(tipo_la.getNatura());
@@ -308,7 +308,7 @@ public void modificaCdrAssociati(UserContext userContext,Tipo_linea_attivitaBulk
 			   		linea_attivita.setCentro_responsabilita(cdr);
 			   		linea_attivita.setCd_linea_attivita("C"+tipo_la.getCd_tipo_linea_attivita());
 			   		linea_attivita.setEsercizio_inizio(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
-			   		linea_attivita.setEsercizio_fine(new Integer(2100));
+			   		linea_attivita.setEsercizio_fine(Integer.valueOf(2100));
 			   		linea_attivita.setDenominazione(tipo_la.getDs_tipo_linea_attivita());
 			   		linea_attivita.setFunzione(tipo_la.getFunzione());
 			   		linea_attivita.setNatura(tipo_la.getNatura());

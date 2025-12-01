@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.geco.bulk.Geco_dipartimentiBulk;
 import it.cnr.contab.config00.geco.bulk.Geco_dipartimentiHome;

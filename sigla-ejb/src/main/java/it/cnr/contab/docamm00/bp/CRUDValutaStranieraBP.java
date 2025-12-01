@@ -55,7 +55,7 @@ public void edit(
                                 it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class))
                             .getVal01(
                         context.getUserContext(),
-                        new Integer(0),
+                        Integer.valueOf(0),
                         "*",
                         "CD_DIVISA",
                         "EURO");

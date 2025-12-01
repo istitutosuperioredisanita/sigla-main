@@ -43,7 +43,7 @@ public class Id_inventarioHome extends BulkHome {
     }
 
     public void assegnaProgressivo(Id_inventarioBulk id_inventario) throws PersistencyException, OutdatedResourceException, BusyResourceException {
-        Long x = new Long(0);
+        Long x = Long.valueOf(0);
         try {
             x = (Long) (findAndLockMax(id_inventario, "pg_inventario", x)) + 1;
         } catch (it.cnr.jada.bulk.BusyResourceException e) {

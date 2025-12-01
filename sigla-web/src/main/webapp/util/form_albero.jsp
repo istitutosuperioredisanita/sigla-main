@@ -40,7 +40,7 @@ function selezionaRiga(riga) {
 	<div style="position:relative; width=100%; height=100%; overflow:auto; background-color: white">
 	<table bgcolor=white cellspacing="0" cellpadding="0" border=0 align=center >
 <%	request.setAttribute("treerows",bp.getRighe());
-		request.setAttribute("levels",new Integer(bp.getNumeroLivelli()));
+		request.setAttribute("levels",Integer.valueOf(bp.getNumeroLivelli()));
 		request.setAttribute("joinL","img/treejoinL16.gif");
 		request.setAttribute("joinT","img/treejoinT16.gif");
 		request.setAttribute("joinI","img/treejoinI16.gif");

@@ -64,9 +64,9 @@ public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,Og
 				if (rs.next()) {
 	             aMaxVal = rs.getBigDecimal(1);
 	             if (aMaxVal != null)
-	             	risultato.setPg_risultato(new Long(aMaxVal.longValue()+1));
+	             	risultato.setPg_risultato(Long.valueOf(aMaxVal.longValue()+1));
 	             else
-	             	risultato.setPg_risultato(new Long(1));
+	             	risultato.setPg_risultato(Long.valueOf(1));
 	             try{rs.close();}catch( java.sql.SQLException e ){};
 				}
 			} finally {

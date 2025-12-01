@@ -25,31 +25,23 @@ import it.cnr.jada.comp.CRUDException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.util.ejb.HttpEJBCleaner;
-import it.cnr.jada.util.jsp.JSPUtils;
-
-import java.io.IOException;
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.rmi.RemoteException;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Optional;
 
-import javax.ejb.EJBException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSessionEvent;
+import jakarta.servlet.http.HttpSessionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExpireSessionServlet extends HttpServlet implements Serializable,HttpSessionListener {
+public class ExpireSessionServlet extends HttpServlet implements Serializable, HttpSessionListener {
 	@SuppressWarnings("unchecked")
-	public  final static Hashtable<String,HttpSession> sessionObjects = new Hashtable();
+	public  final static Hashtable<String, HttpSession> sessionObjects = new Hashtable();
 	private transient final static Logger log = LoggerFactory.getLogger(ExpireSessionServlet.class);
 	
 	public ExpireSessionServlet() {
@@ -139,11 +131,11 @@ public class ExpireSessionServlet extends HttpServlet implements Serializable,Ht
 			httpejbcleaner.remove();
 		sessionObjects.remove(se.getSession().getId());
 	}
-	public CRUDComponentSession createCRUDComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public CRUDComponentSession createCRUDComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		return (CRUDComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("JADAEJB_CRUDComponentSession");
 	}
 
-	public GestioneLoginComponentSession createGestioneLoginComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public GestioneLoginComponentSession createGestioneLoginComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		return (GestioneLoginComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRUTENZE00_NAV_EJB_GestioneLoginComponentSession");
 	}
 }

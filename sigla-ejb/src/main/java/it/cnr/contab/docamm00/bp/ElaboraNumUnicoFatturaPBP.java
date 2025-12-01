@@ -56,7 +56,7 @@ public class ElaboraNumUnicoFatturaPBP extends it.cnr.jada.util.action.BulkBP {
 		return toolbar;
 	}
 
-	public it.cnr.jada.ejb.CRUDComponentSession createComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException, BusinessProcessException {
+	public it.cnr.jada.ejb.CRUDComponentSession createComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException, BusinessProcessException {
 	
 		return (it.cnr.jada.ejb.CRUDComponentSession)createComponentSession("CNRDOCAMM00_EJB_FatturaPassivaComponentSession", FatturaPassivaComponentSession.class);
 	}

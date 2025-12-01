@@ -342,7 +342,7 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 					try {
 						rs = ps.executeQuery();
 						while (rs.next()) {
-							idCla = new Integer(rs.getInt(1));
+							idCla = Integer.valueOf(rs.getInt(1));
 							if (rs.getString(2)!= null)
 								cdrAcc = rs.getString(2);
 							if (rs.getBigDecimal(3)!= null)
@@ -584,7 +584,7 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 			sql.addTableToHeader("UNITA_ORGANIZZATIVA");
 			sql.addSQLJoin("CDR.CD_UNITA_ORGANIZZATIVA", "UNITA_ORGANIZZATIVA.CD_UNITA_ORGANIZZATIVA");
 			sql.addSQLClause("AND", "CDR.cd_unita_organizzativa", sql.EQUALS, CNRUserContext.getCd_unita_organizzativa(userContext));
-			sql.addSQLClause("AND", "CDR.livello", sql.EQUALS, new Integer(1));
+			sql.addSQLClause("AND", "CDR.livello", sql.EQUALS, Integer.valueOf(1));
 			sql.addSQLClause("AND", "UNITA_ORGANIZZATIVA.CD_TIPO_UNITA", sql.EQUALS, Tipo_unita_organizzativaHome.TIPO_UO_ENTE);
 
 			List result = getHome( userContext, CdrBulk.class ).fetchAll( sql );
@@ -702,9 +702,9 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 						rs = ps.executeQuery();
 						while (rs.next()) {
 							if (rs.getString(1)!= null)
-								pgMod = new Integer(rs.getInt(1));
+								pgMod = Integer.valueOf(rs.getInt(1));
 							if (rs.getString(2)!= null)
-								idCla = new Integer(rs.getInt(2));
+								idCla = Integer.valueOf(rs.getInt(2));
 							if (rs.getString(3)!= null)
 								cds = rs.getString(3);
 							if (rs.getBigDecimal(4)!= null)
@@ -745,7 +745,7 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 		SQLBuilder sql = home.createSQLBuilder();
 		sql.resetColumns();
 		sql.addColumn("PDG_MODULO_SPESE.PG_PROGETTO");
-		if (livContrSpe.compareTo(new Integer(0))!=0) 
+		if (livContrSpe.compareTo(Integer.valueOf(0))!=0) 
 			sql.addColumn("V_CLASSIFICAZIONE_VOCI_ALL.ID_LIV"+livContrSpe);
 		else
 			sql.addColumn("NULL");
@@ -756,7 +756,7 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 		sql.addSQLJoin("PDG_MODULO_SPESE.ID_CLASSIFICAZIONE","V_CLASSIFICAZIONE_VOCI_ALL.ID_CLASSIFICAZIONE");
 		sql.addSQLClause("AND","PDG_MODULO_SPESE.ESERCIZIO",SQLBuilder.EQUALS,pdg.getEsercizio());
 		sql.addSQLClause("AND","PDG_MODULO_SPESE.CD_CENTRO_RESPONSABILITA",SQLBuilder.EQUALS,pdg.getCd_centro_responsabilita());
-		if (livContrSpe.compareTo(new Integer(0))!=0) 
+		if (livContrSpe.compareTo(Integer.valueOf(0))!=0) 
 			sql.addSQLGroupBy("PDG_MODULO_SPESE.PG_PROGETTO, V_CLASSIFICAZIONE_VOCI_ALL.ID_LIV"+livContrSpe+", PDG_MODULO_SPESE.CD_CDS_AREA");
 		else	
 			sql.addSQLGroupBy("PDG_MODULO_SPESE.PG_PROGETTO, PDG_MODULO_SPESE.CD_CDS_AREA");
@@ -869,11 +869,11 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 						while (rs.next()) {
 							totImpInt = Utility.ZERO;
 							if (rs.getString(1)!= null)
-								esDip = new Integer(rs.getInt(1));
+								esDip = Integer.valueOf(rs.getInt(1));
 							if (rs.getString(2)!= null)
 								cdDip = rs.getString(2);
 							if (rs.getString(3)!= null)
-								pgDip = new Integer(rs.getInt(3));
+								pgDip = Integer.valueOf(rs.getInt(3));
 								
 							Pdg_approvato_dip_areaHome appDipAreaHome = (Pdg_approvato_dip_areaHome)getHome(userContext,Pdg_approvato_dip_areaBulk.class);
 							Pdg_approvato_dip_areaBulk appDipArea = (Pdg_approvato_dip_areaBulk)appDipAreaHome.findByPrimaryKey(new Pdg_approvato_dip_areaBulk(esDip, cdDip, pgDip));
@@ -918,7 +918,7 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 			sql.addClause("AND","cd_centro_responsabilita",SQLBuilder.EQUALS,pdg.getCd_centro_responsabilita());
 			sql.addClause("AND","pg_progetto",SQLBuilder.EQUALS,pgMod);
 
-			if (livContrSpe.compareTo(new Integer(0))!=0) 
+			if (livContrSpe.compareTo(Integer.valueOf(0))!=0) 
 				sql.addClause("AND","id_classificazione",SQLBuilder.EQUALS,idCla);
 			else
 				sql.addClause("AND","id_classificazione",SQLBuilder.ISNULL,null);
@@ -945,7 +945,7 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 			else
 			{
 				Pdg_contrattazione_speseBulk contrSpese = new Pdg_contrattazione_speseBulk(pdg.getEsercizio(), pdg.getCd_centro_responsabilita(), pgMod, null);
-				if (livContrSpe.compareTo(new Integer(0))!=0) {
+				if (livContrSpe.compareTo(Integer.valueOf(0))!=0) {
 					V_classificazione_vociBulk clav = new V_classificazione_vociBulk(idCla);
 					contrSpese.setClassificazione(clav);
 				}
@@ -985,7 +985,7 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 			while(itm.hasNext()) {
 
 				Pdg_moduloBulk pdg_modulo = (Pdg_moduloBulk)itm.next();
-				if (livContrSpe.compareTo(new Integer(0))!=0) {
+				if (livContrSpe.compareTo(Integer.valueOf(0))!=0) {
 					home = (V_classificazione_vociHome)getHome(userContext,V_classificazione_vociBulk.class);
 					sql = home.createSQLBuilder();
 					sql.addSQLClause("AND","NR_LIVELLO",sql.EQUALS,livContrSpe);
@@ -1329,7 +1329,7 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 					rs = ps.executeQuery();
 					while (rs.next()) {
 						if (rs.getString(1)!= null) {
-							pgProgetto = new Integer(rs.getInt(1));
+							pgProgetto = Integer.valueOf(rs.getInt(1));
 							Pdg_moduloHome moduloHome = (Pdg_moduloHome)getHome(userContext,Pdg_moduloBulk.class);
 							Pdg_moduloBulk modulo = new Pdg_moduloBulk(pdg.getEsercizio(),pdg.getCd_centro_responsabilita(),pgProgetto);
 							Pdg_moduloBulk moduloDB = (Pdg_moduloBulk)moduloHome.findByPrimaryKey(modulo);
@@ -1374,7 +1374,7 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 					rs = ps.executeQuery();
 					while (rs.next()) {
 						if (rs.getString(1)!= null) {
-							pgProgetto = new Integer(rs.getInt(1));
+							pgProgetto = Integer.valueOf(rs.getInt(1));
 							Pdg_moduloHome moduloHome = (Pdg_moduloHome)getHome(userContext,Pdg_moduloBulk.class);
 							Pdg_moduloBulk modulo = new Pdg_moduloBulk(pdg.getEsercizio(),pdg.getCd_centro_responsabilita(),pgProgetto);
 							Pdg_moduloBulk moduloDB = (Pdg_moduloBulk)moduloHome.findByPrimaryKey(modulo);						

@@ -136,7 +136,7 @@ public class Stampa_vpg_doc_genericoBulk extends Documento_genericoBulk {
      * @return java.lang.String
      */
     public Integer getTc() {
-        return new Integer(0);
+        return Integer.valueOf(0);
     }
 
     /**

@@ -76,7 +76,7 @@ public class OfflineReportComponent extends GenericComponent implements
             }
 
             Print_priorityBulk print_priority=findPrintPriority(userContext,print_spooler.getReport());
-            print_spooler.setPriorita(new Integer(0));
+            print_spooler.setPriorita(Integer.valueOf(0));
 
             if ( print_priority==null)
                 throw new ApplicationException(

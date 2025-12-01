@@ -17,7 +17,8 @@
 
 package it.cnr.contab.web.rest.exception;
 
-import javax.servlet.ServletException;
+
+import jakarta.servlet.ServletException;
 
 public class UnauthorizedException extends RuntimeException{
 

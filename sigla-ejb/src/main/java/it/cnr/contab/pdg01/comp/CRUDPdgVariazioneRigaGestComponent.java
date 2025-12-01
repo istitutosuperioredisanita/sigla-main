@@ -71,7 +71,7 @@ import it.cnr.si.spring.storage.StoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -340,7 +340,7 @@ public class CRUDPdgVariazioneRigaGestComponent extends it.cnr.jada.comp.CRUDCom
         );
 	}
 	
-	public CRUDComponentSession createComponentSessionVariazioneGestionale() throws javax.ejb.EJBException {
+	public CRUDComponentSession createComponentSessionVariazioneGestionale() throws jakarta.ejb.EJBException {
 		return (CRUDPdgVariazioneGestionaleComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPDG01_EJB_CRUDPdgVariazioneGestionaleComponentSession",CRUDPdgVariazioneGestionaleComponentSession.class);
 }
 
@@ -629,7 +629,7 @@ public class CRUDPdgVariazioneRigaGestComponent extends it.cnr.jada.comp.CRUDCom
 			 * controllo aggiunto solo per variazioni su anni successivi a quello di attivazione piano economico e per 
 			 * progetti con Piano Economico con data fine/proroga successiva all'anno di attivazione
 			 */
-			BigDecimal annoFrom = Utility.createConfigurazioneCnrComponentSession().getIm01(userContext, new Integer(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO);
+			BigDecimal annoFrom = Utility.createConfigurazioneCnrComponentSession().getIm01(userContext, Integer.valueOf(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO);
 			if (Optional.ofNullable(annoFrom).map(BigDecimal::intValue).map(el->el.compareTo(CNRUserContext.getEsercizio( userContext ))<=0).orElse(Boolean.FALSE)) {
 				optProgetto.orElseThrow(() -> new ApplicationException("Errore: Progetto non valorizzato sulla riga della variazione!"));
 
@@ -867,9 +867,9 @@ public class CRUDPdgVariazioneRigaGestComponent extends it.cnr.jada.comp.CRUDCom
 	private MessaggioBulk generaMessaggioCopertura(UserContext userContext, UtenteBulk utente, Ass_pdg_variazione_cdrBulk ass_var, String tipo) throws ComponentException, PersistencyException{
 		MessaggioHome messHome = (MessaggioHome)getHome(userContext,MessaggioBulk.class);
 		MessaggioBulk messaggio = new MessaggioBulk();
-		messaggio.setPg_messaggio(new Long(messHome.fetchNextSequenceValue(userContext,"CNRSEQ00_PG_MESSAGGIO").longValue()));
+		messaggio.setPg_messaggio(Long.valueOf(messHome.fetchNextSequenceValue(userContext,"CNRSEQ00_PG_MESSAGGIO").longValue()));
 		messaggio.setCd_utente(utente.getCd_utente());
-		messaggio.setPriorita(new Integer(1));
+		messaggio.setPriorita(Integer.valueOf(1));
 		java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		messaggio.setDs_messaggio(sdf.format(EJBCommonServices.getServerTimestamp()) + " - È stata raggiunta la quota di " + (tipo.equals(Elemento_voceHome.GESTIONE_SPESE)?"Spesa":"Entrata") + " assegnata alla Variazione di competenza");
 		messaggio.setCorpo("Numero variazione:"+ass_var.getPg_variazione_pdg());

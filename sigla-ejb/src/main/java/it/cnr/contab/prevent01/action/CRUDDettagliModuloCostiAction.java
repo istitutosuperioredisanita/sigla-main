@@ -454,7 +454,7 @@ public class CRUDDettagliModuloCostiAction extends CRUDAction {
 					if (pdg_modulo_spese.getIm_spese_a2()==null)
 						pdg_modulo_spese.setIm_spese_a2(Utility.ZERO);
 			}
-			bp.setModel(context,((PdgModuloCostiComponentSession)bp.createComponentSession()).calcolaPrevisioneAssestataRowByRow(context.getUserContext(),(Pdg_modulo_costiBulk)bp.getModel() ,pdg_modulo_spese,new Integer(CNRUserContext.getEsercizio(context.getUserContext()).intValue() - 1)));
+			bp.setModel(context,((PdgModuloCostiComponentSession)bp.createComponentSession()).calcolaPrevisioneAssestataRowByRow(context.getUserContext(),(Pdg_modulo_costiBulk)bp.getModel() ,pdg_modulo_spese,Integer.valueOf(CNRUserContext.getEsercizio(context.getUserContext()).intValue() - 1)));
 		}
 	}
 

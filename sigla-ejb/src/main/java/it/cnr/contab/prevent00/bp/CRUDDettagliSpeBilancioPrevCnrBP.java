@@ -43,7 +43,7 @@ public CRUDDettagliSpeBilancioPrevCnrBP(String function)
  * @throws RemoteException	Se si verifica qualche eccezione di sistema per cui non è possibile effettuare l'operazione
  */
  
-public it.cnr.contab.prevent00.ejb.BilancioPreventivoComponentSession createBilancioPreventivoComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException 
+public it.cnr.contab.prevent00.ejb.BilancioPreventivoComponentSession createBilancioPreventivoComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException
 {
 	return (BilancioPreventivoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPREVENT00_EJB_BilancioPreventivoComponentSession", BilancioPreventivoComponentSession.class);
 }

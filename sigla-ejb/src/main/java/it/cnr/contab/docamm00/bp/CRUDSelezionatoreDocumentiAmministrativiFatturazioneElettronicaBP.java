@@ -613,7 +613,7 @@ public class CRUDSelezionatoreDocumentiAmministrativiFatturazioneElettronicaBP e
         Timestamp dataStampa = it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
         Integer offSet = 0;
         componentFatturaAttiva.preparaProtocollazioneEProtocolla(userContext, pgProtocollazione, offSet, pgStampa, dataStampa, fattura);
-        return componentFatturaAttiva.ricercaFatturaByKey(userContext, new Long(fattura.getEsercizio()), fattura.getCd_cds(), fattura.getCd_unita_organizzativa(), fattura.getPg_fattura_attiva());
+        return componentFatturaAttiva.ricercaFatturaByKey(userContext, Long.valueOf(fattura.getEsercizio()), fattura.getCd_cds(), fattura.getCd_unita_organizzativa(), fattura.getPg_fattura_attiva());
 
     }
 

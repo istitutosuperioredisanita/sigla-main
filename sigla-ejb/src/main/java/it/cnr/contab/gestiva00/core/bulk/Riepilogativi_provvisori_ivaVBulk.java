@@ -43,7 +43,7 @@ public Riepilogativi_provvisori_ivaVBulk() {
  * @return java.lang.Integer
  */
 public java.lang.Integer getPageNumber() {
-	return new Integer(1);
+	return Integer.valueOf(1);
 }
 
 /**

@@ -57,7 +57,7 @@ import it.cnr.jada.util.action.SelezionatoreListaBP;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.Date;
@@ -164,7 +164,7 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
      * Al business process viene anche chiesto l'elenco delle colonne da
      * visualizzare.
      */
-    protected Forward basicDoCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, javax.ejb.RemoveException {
+    protected Forward basicDoCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, jakarta.ejb.RemoveException {
 //per spesa
         try {
             fillModel(context);
@@ -1403,7 +1403,7 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
      * Al business process viene anche chiesto l'elenco delle colonne da
      * visualizzare.
      */
-    public Forward doCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, javax.ejb.RemoveException {
+    public Forward doCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, jakarta.ejb.RemoveException {
 
         //per spesa
         if (context.getBusinessProcess() instanceof CRUDDocumentoGenericoPassivoBP) {
@@ -2535,13 +2535,13 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
                 CRUDDocumentoGenericoAttivoBP bpA = (CRUDDocumentoGenericoAttivoBP) bp;
                 if (competenzaA != null && competenzaABck != null && competenzaA != competenzaABck) {
                     tsOdiernoGregorian.setTime(new Date(competenzaA.getTime()));
-                    Integer esercizioCompetenzaA = new Integer(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
+                    Integer esercizioCompetenzaA = Integer.valueOf(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
                     if (((DocumentoGenericoComponentSession) bpA.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaA, cds))
                         throw new it.cnr.jada.comp.ApplicationException("Le date \"Competenza da\" e \"Competenza a\" non possono appartenere ad un esercizio chiuso");
                 }
                 if (competenzaDa != null && competenzaDaBck != null && competenzaDa != competenzaDaBck) {
                     tsOdiernoGregorian.setTime(new Date(competenzaDa.getTime()));
-                    Integer esercizioCompetenzaDa = new Integer(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
+                    Integer esercizioCompetenzaDa = Integer.valueOf(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
                     if (((DocumentoGenericoComponentSession) bpA.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaDa, cds))
                         throw new it.cnr.jada.comp.ApplicationException("Le date \"Competenza da\" e \"Competenza a\" non possono appartenere ad un esercizio chiuso");
                 }
@@ -2550,13 +2550,13 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
                 CRUDDocumentoGenericoPassivoBP bpP = (CRUDDocumentoGenericoPassivoBP) bp;
                 if (competenzaA != null && competenzaABck != null && competenzaA != competenzaABck) {
                     tsOdiernoGregorian.setTime(new Date(competenzaA.getTime()));
-                    Integer esercizioCompetenzaA = new Integer(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
+                    Integer esercizioCompetenzaA = Integer.valueOf(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
                     if (((DocumentoGenericoComponentSession) bpP.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaA, cds))
                         throw new it.cnr.jada.comp.ApplicationException("Le date \"Competenza da\" e \"Competenza a\" non possono appartenere ad un esercizio chiuso");
                 }
                 if (competenzaDa != null && competenzaDaBck != null && competenzaDa != competenzaDaBck) {
                     tsOdiernoGregorian.setTime(new Date(competenzaDa.getTime()));
-                    Integer esercizioCompetenzaDa = new Integer(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
+                    Integer esercizioCompetenzaDa = Integer.valueOf(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
                     if (((DocumentoGenericoComponentSession) bpP.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaDa, cds))
                         throw new it.cnr.jada.comp.ApplicationException("Le date \"Competenza da\" e \"Competenza a\" non possono appartenere ad un esercizio chiuso");
                 }
@@ -2740,7 +2740,7 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
                 if (competenzaA != null)
                     if (competenzaA != competenzaABck) {
                         tsOdiernoGregorian.setTime(new Date(competenzaA.getTime()));
-                        Integer esercizioCompetenzaA = new Integer(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
+                        Integer esercizioCompetenzaA = Integer.valueOf(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
                         if (((DocumentoGenericoComponentSession) bpA.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaA, cds))
                             throw new it.cnr.jada.comp.ApplicationException("Le date \"Competenza da\" e \"Competenza a\" non possono appartenere ad un esercizio chiuso");
 
@@ -2748,7 +2748,7 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
                 if (competenzaDa != null)
                     if (competenzaDa != competenzaDaBck) {
                         tsOdiernoGregorian.setTime(new Date(competenzaDa.getTime()));
-                        Integer esercizioCompetenzaDa = new Integer(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
+                        Integer esercizioCompetenzaDa = Integer.valueOf(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
                         if (((DocumentoGenericoComponentSession) bpA.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaDa, cds))
                             throw new it.cnr.jada.comp.ApplicationException("Le date \"Competenza da\" e \"Competenza a\" non possono appartenere ad un esercizio chiuso");
                     }
@@ -2759,14 +2759,14 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
                 if (competenzaA != null)
                     if (competenzaA != competenzaABck) {
                         tsOdiernoGregorian.setTime(new Date(competenzaA.getTime()));
-                        Integer esercizioCompetenzaA = new Integer(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
+                        Integer esercizioCompetenzaA = Integer.valueOf(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
                         if (((DocumentoGenericoComponentSession) bpP.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaA, cds))
                             throw new it.cnr.jada.comp.ApplicationException("Le date \"Competenza da\" e \"Competenza a\" non possono appartenere ad un esercizio chiuso");
                     }
                 if (competenzaDa != null)
                     if (competenzaDa != competenzaDaBck) {
                         tsOdiernoGregorian.setTime(new Date(competenzaDa.getTime()));
-                        Integer esercizioCompetenzaDa = new Integer(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
+                        Integer esercizioCompetenzaDa = Integer.valueOf(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
                         if (((DocumentoGenericoComponentSession) bpP.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaDa, cds))
                             throw new it.cnr.jada.comp.ApplicationException("Le date \"Competenza da\" e \"Competenza a\" non possono appartenere ad un esercizio chiuso");
                     }
@@ -3932,7 +3932,7 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
                 java.util.GregorianCalendar tsOdiernoGregorian = new GregorianCalendar();
                 tsOdiernoGregorian.setTime(new java.util.Date(competenzaA.getTime()));
 
-                Integer esercizioCompetenzaA = new Integer(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
+                Integer esercizioCompetenzaA = Integer.valueOf(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
                 String cds = documentoGenericoBulk.getCd_cds();
 
                 if (competenzaA != null && competenzaDa != null)
@@ -3981,7 +3981,7 @@ public class CRUDDocumentoGenericoAction extends EconomicaAction {
                 java.util.GregorianCalendar tsOdiernoGregorian = new GregorianCalendar();
                 tsOdiernoGregorian.setTime(new java.util.Date(competenzaDa.getTime()));
 
-                Integer esercizioCompetenzaDa = new Integer(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
+                Integer esercizioCompetenzaDa = Integer.valueOf(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
                 String cds = documentoGenericoBulk.getCd_cds();
 
                 if (competenzaA != null && competenzaDa != null)

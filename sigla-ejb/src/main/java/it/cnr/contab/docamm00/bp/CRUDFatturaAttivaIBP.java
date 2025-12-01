@@ -27,6 +27,8 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.jsp.JSPUtils;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspWriter;
 
 import java.rmi.RemoteException;
 import java.util.Arrays;
@@ -45,7 +47,7 @@ public class CRUDFatturaAttivaIBP extends CRUDFatturaAttivaBP {
 		 * che è stata sdoppiata quando il documento non risulta essere modificabile
 		 *  
 		 */
-		public void writeFormInput(javax.servlet.jsp.JspWriter jspwriter,String s,String s1,boolean flag,String s2,String s3) throws java.io.IOException {
+		public void writeFormInput(JspWriter jspwriter,String s,String s1,boolean flag,String s2,String s3) throws java.io.IOException {
 			if (isInputReadonly()&&
 					s1.equals("ds_riga_fattura") && 
 					getModel()!=null && 
@@ -248,7 +250,7 @@ public class CRUDFatturaAttivaIBP extends CRUDFatturaAttivaBP {
 			return Boolean.TRUE;
 		return isSearching() || isDeleting();
 	}
-	public void writeFPInventarioToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException,javax.servlet.ServletException {
+	public void writeFPInventarioToolbar(JspWriter writer) throws java.io.IOException, ServletException {
 		if (!isSearching() && !isDeleting()) {
 			if (this.getParentRoot().isBootstrap()) {
 				writer.println("<!-- TOOLBAR INVENTARIO -->");
@@ -265,7 +267,7 @@ public class CRUDFatturaAttivaIBP extends CRUDFatturaAttivaBP {
 		}
 
 	}
-	public void writeFPToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException,javax.servlet.ServletException {
+	public void writeFPToolbar(JspWriter writer) throws java.io.IOException,ServletException {
 		if (!isSearching() && !isDeleting()) {
 			if (this.getParentRoot().isBootstrap()) {
 				writer.println("<!-- TOOLBAR FP -->");
@@ -280,7 +282,7 @@ public class CRUDFatturaAttivaIBP extends CRUDFatturaAttivaBP {
 			}
 		}
 	}
-	public void writeToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException,javax.servlet.ServletException {
+	public void writeToolbar(JspWriter writer) throws java.io.IOException,ServletException {
 
 		super.writeToolbar(writer);
 		writeFPToolbar(writer);

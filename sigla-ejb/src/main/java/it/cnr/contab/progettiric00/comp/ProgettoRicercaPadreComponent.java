@@ -139,7 +139,7 @@ public class ProgettoRicercaPadreComponent extends it.cnr.jada.comp.CRUDComponen
             }
 
             if ((ProgettoBulk) bulk.getProgettopadre() == null)
-                ((ProgettoBulk) bulk).setLivello(new Integer(1));
+                ((ProgettoBulk) bulk).setLivello(Integer.valueOf(1));
 
             //se nei dettagli non è presente la UO cordinatrice viene creata
             if (cercaUocordinatrice(bulk)) {
@@ -261,15 +261,15 @@ public class ProgettoRicercaPadreComponent extends it.cnr.jada.comp.CRUDComponen
         java.math.BigDecimal sq_progetto;
         sq_progetto = getSequence(uc);
         ((ProgettoBulk) bulk).setPg_progetto(sq_progetto);
-        ((Progetto_uoBulk) ((ProgettoBulk) bulk).getDettagli().get(0)).setPg_progetto(new Integer(sq_progetto.intValue()));
+        ((Progetto_uoBulk) ((ProgettoBulk) bulk).getDettagli().get(0)).setPg_progetto(Integer.valueOf(sq_progetto.intValue()));
         for (int i = 0; ((ProgettoBulk) bulk).getDettagliFinanziatori().size() > i; i++) {
-            ((Progetto_finanziatoreBulk) ((ProgettoBulk) bulk).getDettagliFinanziatori().get(i)).setPg_progetto(new Integer(sq_progetto.intValue()));
+            ((Progetto_finanziatoreBulk) ((ProgettoBulk) bulk).getDettagliFinanziatori().get(i)).setPg_progetto(Integer.valueOf(sq_progetto.intValue()));
         }
         for (int i = 0; ((ProgettoBulk) bulk).getDettagliPartner_esterni().size() > i; i++) {
-            ((Progetto_partner_esternoBulk) ((ProgettoBulk) bulk).getDettagliPartner_esterni().get(i)).setPg_progetto(new Integer(sq_progetto.intValue()));
+            ((Progetto_partner_esternoBulk) ((ProgettoBulk) bulk).getDettagliPartner_esterni().get(i)).setPg_progetto(Integer.valueOf(sq_progetto.intValue()));
         }
         for (int i = 0; ((ProgettoBulk) bulk).getDettagli().size() > i; i++) {
-            ((Progetto_uoBulk) ((ProgettoBulk) bulk).getDettagli().get(i)).setPg_progetto(new Integer(sq_progetto.intValue()));
+            ((Progetto_uoBulk) ((ProgettoBulk) bulk).getDettagli().get(i)).setPg_progetto(Integer.valueOf(sq_progetto.intValue()));
         }
 
         ((ProgettoBulk) bulk).setFl_piano_triennale(false);
@@ -422,7 +422,7 @@ public class ProgettoRicercaPadreComponent extends it.cnr.jada.comp.CRUDComponen
         SQLBuilder sql = getHome(userContext, progettopadre, "V_PROGETTO_PADRE").createSQLBuilder();
         sql.addSQLClause("AND", "PG_PROGETTO", sql.NOT_EQUALS, ((ProgettoBulk) bulk).getPg_progetto());
         if (((ProgettoBulk) bulk).getLivello() != null)
-            sql.addSQLClause("AND", "LIVELLO", sql.EQUALS, new Integer(((ProgettoBulk) bulk).getLivello().intValue() - 1));
+            sql.addSQLClause("AND", "LIVELLO", sql.EQUALS, Integer.valueOf(((ProgettoBulk) bulk).getLivello().intValue() - 1));
         if (clause != null)
             sql.addClause(clause);
         return sql;
@@ -668,11 +668,11 @@ public class ProgettoRicercaPadreComponent extends it.cnr.jada.comp.CRUDComponen
 
             //Giro prima sui moduli
             for (Progetto_sipBulk moduli : listModuli) {
-                if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_moduloBulk(new Long(moduli.getPg_progetto().intValue()), new Long(moduli.getEsercizio().intValue()), moduli.getTipo_fase())) == null) {
-                    if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_modulo_sacBulk(new Long(moduli.getPg_progetto().intValue()), new Long(moduli.getEsercizio().intValue()), moduli.getTipo_fase())) == null) {
-                        if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_modulo_rstlBulk(new Long(moduli.getPg_progetto().intValue()), new Long(moduli.getEsercizio().intValue()), moduli.getTipo_fase())) == null) {
-                            if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_modulo_pbBulk(new Long(moduli.getPg_progetto().intValue()), new Long(moduli.getEsercizio().intValue()), moduli.getTipo_fase())) == null) {
-                                if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_attivitaBulk(new Long(moduli.getPg_progetto().intValue()), new Long(moduli.getEsercizio().intValue()), moduli.getTipo_fase())) == null) {
+                if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_moduloBulk(Long.valueOf(moduli.getPg_progetto().intValue()), Long.valueOf(moduli.getEsercizio().intValue()), moduli.getTipo_fase())) == null) {
+                    if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_modulo_sacBulk(Long.valueOf(moduli.getPg_progetto().intValue()), Long.valueOf(moduli.getEsercizio().intValue()), moduli.getTipo_fase())) == null) {
+                        if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_modulo_rstlBulk(Long.valueOf(moduli.getPg_progetto().intValue()), Long.valueOf(moduli.getEsercizio().intValue()), moduli.getTipo_fase())) == null) {
+                            if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_modulo_pbBulk(Long.valueOf(moduli.getPg_progetto().intValue()), Long.valueOf(moduli.getEsercizio().intValue()), moduli.getTipo_fase())) == null) {
+                                if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_attivitaBulk(Long.valueOf(moduli.getPg_progetto().intValue()), Long.valueOf(moduli.getEsercizio().intValue()), moduli.getTipo_fase())) == null) {
                                     SQLBuilder sql = moduli_utilizzatiHome.createSQLBuilderAll();
                                     sql.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.EQUALS, moduli.getEsercizio());
                                     sql.addSQLClause(FindClause.AND, "PG_PROGETTO", SQLBuilder.EQUALS, moduli.getPg_progetto());
@@ -700,11 +700,11 @@ public class ProgettoRicercaPadreComponent extends it.cnr.jada.comp.CRUDComponen
 
             //Poi sulle commesse
             for (Progetto_sipBulk commesse : listCommesse) {
-                if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_commessaBulk(new Long(commesse.getPg_progetto().intValue()), new Long(commesse.getEsercizio().intValue()), commesse.getTipo_fase())) == null) {
-                    if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_commessa_sacBulk(new Long(commesse.getPg_progetto().intValue()), new Long(commesse.getEsercizio().intValue()), commesse.getTipo_fase())) == null) {
-                        if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_commessa_rstlBulk(new Long(commesse.getPg_progetto().intValue()), new Long(commesse.getEsercizio().intValue()), commesse.getTipo_fase())) == null) {
-                            if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_commessa_pbBulk(new Long(commesse.getPg_progetto().intValue()), new Long(commesse.getEsercizio().intValue()), commesse.getTipo_fase())) == null) {
-                                if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_progetto_operativoBulk(new Long(commesse.getPg_progetto().intValue()), new Long(commesse.getEsercizio().intValue()), commesse.getTipo_fase())) == null) {
+                if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_commessaBulk(Long.valueOf(commesse.getPg_progetto().intValue()), Long.valueOf(commesse.getEsercizio().intValue()), commesse.getTipo_fase())) == null) {
+                    if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_commessa_sacBulk(Long.valueOf(commesse.getPg_progetto().intValue()), Long.valueOf(commesse.getEsercizio().intValue()), commesse.getTipo_fase())) == null) {
+                        if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_commessa_rstlBulk(Long.valueOf(commesse.getPg_progetto().intValue()), Long.valueOf(commesse.getEsercizio().intValue()), commesse.getTipo_fase())) == null) {
+                            if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_commessa_pbBulk(Long.valueOf(commesse.getPg_progetto().intValue()), Long.valueOf(commesse.getEsercizio().intValue()), commesse.getTipo_fase())) == null) {
+                                if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_progetto_operativoBulk(Long.valueOf(commesse.getPg_progetto().intValue()), Long.valueOf(commesse.getEsercizio().intValue()), commesse.getTipo_fase())) == null) {
                                     SQLBuilder sql = moduli_utilizzatiHome.createSQLBuilderAll();
                                     sql.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.EQUALS, commesse.getEsercizio());
                                     sql.addSQLClause(FindClause.AND, "PG_PROGETTO", SQLBuilder.EQUALS, commesse.getPg_progetto());
@@ -746,11 +746,11 @@ public class ProgettoRicercaPadreComponent extends it.cnr.jada.comp.CRUDComponen
 
             //Ed infine sui progetti
             for (Progetto_sipBulk progetto : listProgetti) {
-                if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_progettoBulk(new Long(progetto.getPg_progetto().intValue()), new Long(progetto.getEsercizio().intValue()), progetto.getTipo_fase())) == null) {
-                    if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_progetto_sacBulk(new Long(progetto.getPg_progetto().intValue()), new Long(progetto.getEsercizio().intValue()), progetto.getTipo_fase())) == null) {
-                        if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_progetto_rstlBulk(new Long(progetto.getPg_progetto().intValue()), new Long(progetto.getEsercizio().intValue()), progetto.getTipo_fase())) == null) {
-                            if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_progetto_pbBulk(new Long(progetto.getPg_progetto().intValue()), new Long(progetto.getEsercizio().intValue()), progetto.getTipo_fase())) == null) {
-                                if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_area_progBulk(new Long(progetto.getPg_progetto().intValue()), new Long(progetto.getEsercizio().intValue()), progetto.getTipo_fase())) == null) {
+                if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_progettoBulk(Long.valueOf(progetto.getPg_progetto().intValue()), Long.valueOf(progetto.getEsercizio().intValue()), progetto.getTipo_fase())) == null) {
+                    if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_progetto_sacBulk(Long.valueOf(progetto.getPg_progetto().intValue()), Long.valueOf(progetto.getEsercizio().intValue()), progetto.getTipo_fase())) == null) {
+                        if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_progetto_rstlBulk(Long.valueOf(progetto.getPg_progetto().intValue()), Long.valueOf(progetto.getEsercizio().intValue()), progetto.getTipo_fase())) == null) {
+                            if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_progetto_pbBulk(Long.valueOf(progetto.getPg_progetto().intValue()), Long.valueOf(progetto.getEsercizio().intValue()), progetto.getTipo_fase())) == null) {
+                                if (Utility.createProgettoGecoComponentSession().findByPrimaryKey(userContext, new Geco_area_progBulk(Long.valueOf(progetto.getPg_progetto().intValue()), Long.valueOf(progetto.getEsercizio().intValue()), progetto.getTipo_fase())) == null) {
                                     boolean progettoIsToBeDeleted = true;
                                     for (Progetto_sipBulk commesseBulk : listCommesseNotDeleted) {
                                         if (progetto.getEsercizio().equals(commesseBulk.getEsercizio_progetto_padre()) &&

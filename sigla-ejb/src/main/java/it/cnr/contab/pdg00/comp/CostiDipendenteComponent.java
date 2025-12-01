@@ -70,7 +70,7 @@ import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.LoggableStatement;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
@@ -187,7 +187,7 @@ public OggettoBulk caricaCosto_dipendente(UserContext userContext,Costi_dipenden
 			sql = home.createSQLBuilder();
 			sql.addClause(FindClause.AND,"esercizio",SQLBuilder.EQUALS,esercizio);
 			sql.addClause(FindClause.AND,"id_matricola",SQLBuilder.EQUALS,cdp.getId_matricola());
-			sql.addClause(FindClause.AND,"mese",SQLBuilder.EQUALS,new Integer(mese));
+			sql.addClause(FindClause.AND,"mese",SQLBuilder.EQUALS,Integer.valueOf(mese));
 			if (!cdp.isProvenienzaInterna())
 				sql.addClause(FindClause.AND,"cd_unita_organizzativa",SQLBuilder.EQUALS,cd_unita_organizzativa);				
 			
@@ -369,13 +369,13 @@ public V_cdp_matricolaBulk generaDaUltimaRipartizione(UserContext userContext,V_
 				sql.addSQLClause(FindClause.AND,"CDR.CD_UNITA_ORGANIZZATIVA",SQLBuilder.EQUALS,cd_unita_organizzativa);
 				sql.addClause(FindClause.AND,"esercizio",SQLBuilder.EQUALS,esercizio);
 				sql.addClause(FindClause.AND,"id_matricola",SQLBuilder.EQUALS,id_matricola);
-				sql.addClause(FindClause.AND,"mese",SQLBuilder.EQUALS,new Integer(ultimo_mese));
+				sql.addClause(FindClause.AND,"mese",SQLBuilder.EQUALS,Integer.valueOf(ultimo_mese));
 				cdp.setCostiScaricati(new BulkList(getHome(userContext,Ass_cdp_laBulk.class).fetchAll(sql)));
 
 				sql = getHome(userContext,Ass_cdp_uoBulk.class).createSQLBuilder();
 				sql.addClause(FindClause.AND,"esercizio",SQLBuilder.EQUALS,esercizio);
 				sql.addClause(FindClause.AND,"id_matricola",SQLBuilder.EQUALS,id_matricola);
-				sql.addClause(FindClause.AND,"mese",SQLBuilder.EQUALS,new Integer(ultimo_mese));
+				sql.addClause(FindClause.AND,"mese",SQLBuilder.EQUALS,Integer.valueOf(ultimo_mese));
 				sql.addClause(FindClause.AND,"stato",SQLBuilder.NOT_EQUALS,Ass_cdp_uoBulk.STATO_NON_ACCETTATO);
 				cdp.setCostiScaricatiAltraUO(new BulkList(getHome(userContext,Ass_cdp_uoBulk.class).fetchAll(sql)));
 
@@ -679,7 +679,7 @@ try {
 	sql.addSQLClause(FindClause.AND,"V_LINEA_ATTIVITA_VALIDA.ESERCIZIO",SQLBuilder.EQUALS,CNRUserContext.getEsercizio(userContext));
 	sql.addClause(FindClause.AND,"cd_centro_responsabilita",SQLBuilder.EQUALS,cdr.getCd_centro_responsabilita());
 
-//	sql.addSQLClause("AND","V_LINEA_ATTIVITA_VALIDA.CD_NATURA",sql.NOT_EQUALS,new Integer(5));
+//	sql.addSQLClause("AND","V_LINEA_ATTIVITA_VALIDA.CD_NATURA",sql.NOT_EQUALS,Integer.valueOf(5));
 
 	sql.addTableToHeader("NATURA");
 	sql.addSQLJoin("V_LINEA_ATTIVITA_VALIDA.CD_NATURA","NATURA.CD_NATURA");
@@ -906,7 +906,7 @@ public void lockMatricola(UserContext userContext,String id_matricola,int mese) 
 		SQLBuilder sql = getHome(userContext,Costo_del_dipendenteBulk.class).createSQLBuilder();
 		sql.addSQLClause(FindClause.AND,"ESERCIZIO",SQLBuilder.EQUALS,it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
 		sql.addSQLClause(FindClause.AND,"ID_MATRICOLA",SQLBuilder.EQUALS,id_matricola);
-		sql.addSQLClause(FindClause.AND,"MESE",SQLBuilder.EQUALS,new Integer(mese));
+		sql.addSQLClause(FindClause.AND,"MESE",SQLBuilder.EQUALS,Integer.valueOf(mese));
 		sql.setForUpdate(true);
 		LoggableStatement stm = sql.prepareStatement(getConnection(userContext));
 		try {
@@ -953,7 +953,7 @@ public void ripartizioneResidui(it.cnr.jada.UserContext userContext, java.lang.S
 			cd_unita_organizzativa,
 			CNRUserContext.getEsercizio(userContext),
 			id_matricola,
-			new Integer(mese)));
+			Integer.valueOf(mese)));
 
 		if (ass_cdp_uo != null && ass_cdp_uo.isStato_iniziale())
 			throw new ApplicationException("Per poter effettuare lo scarico di una matricola proveniente da un altra unità organizzativa è necessario prima accettare la contrattazione.");
@@ -1000,7 +1000,7 @@ public void ripartizioneResidui(it.cnr.jada.UserContext userContext, java.lang.S
 				linea.getCd_linea_attivita(),
 				CNRUserContext.getEsercizio(userContext),
 				id_matricola,
-				new Integer(mese));
+				Integer.valueOf(mese));
 			ass_cdp_la = (Ass_cdp_laBulk)getHome(userContext,ass_cdp_la_pk).findByPrimaryKey(ass_cdp_la_pk);
 			
 			if (ass_cdp_la != null) {
@@ -1397,7 +1397,7 @@ private CdrBulk getCdrPdgP (UserContext userContext, CdrBulk cdrUtente)  throws 
 		// riempiamo i dati di cdrUtente.getUnita_padre() dato che ci servono
 		cdrUtente.setUnita_padre((Unita_organizzativaBulk)getHome(userContext,cdrUtente.getUnita_padre()).findByPrimaryKey(cdrUtente.getUnita_padre()));
 		
-		if (cdrUtente.getLivello().equals(new Integer(1)) || cdrUtente.getUnita_padre().isUoArea() ||
+		if (cdrUtente.getLivello().equals(Integer.valueOf(1)) || cdrUtente.getUnita_padre().isUoArea() ||
 			isCdrSAC(userContext, cdrUtente)) {
 			sql.addSQLClause("AND", "cd_centro_responsabilita", SQLBuilder.EQUALS, cdrUtente.getCd_centro_responsabilita());
 		}

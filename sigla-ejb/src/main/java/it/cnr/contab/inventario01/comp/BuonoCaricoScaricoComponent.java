@@ -55,7 +55,7 @@ import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -292,7 +292,7 @@ try{
 				 buonoC.setBuono_carico_scarico_dettColl(new BulkList(dettHome.getDetailsFor(buonoC)));
 				 for (Iterator dett = buonoC.getBuono_carico_scarico_dettColl().iterator();dett.hasNext();){
 					 Buono_carico_scarico_dettBulk dettaglio = (Buono_carico_scarico_dettBulk)dett.next();
-					 Inventario_beniBulk inv =(Inventario_beniBulk)getHome(aUC,Inventario_beniBulk.class).findByPrimaryKey(new Inventario_beniBulk(dettaglio.getNr_inventario(),dettaglio.getPg_inventario(),new Long(dettaglio.getProgressivo().longValue())));
+					 Inventario_beniBulk inv =(Inventario_beniBulk)getHome(aUC,Inventario_beniBulk.class).findByPrimaryKey(new Inventario_beniBulk(dettaglio.getNr_inventario(),dettaglio.getPg_inventario(),Long.valueOf(dettaglio.getProgressivo().longValue())));
 					 dettaglio.setBene(inv);
 					 dettaglio.setFl_bene_accessorio(inv.isBeneAccessorio());
 					 dettaglio.CalcolaTotaleBene();
@@ -613,7 +613,7 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 			
 			if ((buonoC.getTi_documento().compareTo(Buono_carico_scaricoBulk.SCARICO)==0) && buonoC.getTipoMovimento().isQuoteElaborabile()){
 				if(dettaglio.getCrudStatus()!=OggettoBulk.TO_BE_CREATED ){
-					 bene_a =(Inventario_beniBulk)getHome(userContext,Inventario_beniBulk.class).findByPrimaryKey(new Inventario_beniBulk(dettaglio.getNr_inventario(),dettaglio.getPg_inventario(),new Long(dettaglio.getProgressivo().longValue())));
+					 bene_a =(Inventario_beniBulk)getHome(userContext,Inventario_beniBulk.class).findByPrimaryKey(new Inventario_beniBulk(dettaglio.getNr_inventario(),dettaglio.getPg_inventario(),Long.valueOf(dettaglio.getProgressivo().longValue())));
 				if( dettaglio.getStato_coge_quote().compareTo(Buono_carico_scarico_dettBulk.STATO_COGE_C)!=0)	 
 					if (bene_a.getValore_ammortizzato().compareTo(new BigDecimal(0))!=0)
 						dettaglio.setStato_coge_quote(Buono_carico_scarico_dettBulk.STATO_COGE_N);
@@ -1040,7 +1040,7 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 					sql_dett.addSQLClause("AND","NR_INVENTARIO",SQLBuilder.EQUALS,buono_dett.getNr_inventario());
 					sql_dett.addSQLClause("AND","PROGRESSIVO",SQLBuilder.EQUALS,buono_dett.getProgressivo());
 					if (sql_dett.executeCountQuery(getConnection(userContext))==1){
-						Inventario_beniBulk inv =(Inventario_beniBulk)getHome(userContext,Inventario_beniBulk.class).findByPrimaryKey(new Inventario_beniBulk(buono_dett.getNr_inventario(),buono_dett.getPg_inventario(),new Long(buono_dett.getProgressivo().longValue())));
+						Inventario_beniBulk inv =(Inventario_beniBulk)getHome(userContext,Inventario_beniBulk.class).findByPrimaryKey(new Inventario_beniBulk(buono_dett.getNr_inventario(),buono_dett.getPg_inventario(),Long.valueOf(buono_dett.getProgressivo().longValue())));
 						if (!inv.isMigrato()){
 //							 Elimina gli Utilizzatori eventualmente specificati per i beni del Buono di Carico
 							eliminaUtilizzatoriBuono(userContext,inv);
@@ -2614,7 +2614,7 @@ public void selectBeniAssociatiForModifica(
 				im_riga_fattura = doc_riga.getIm_riga();
 			}
 			new_bene.setLocal_transaction_id(associaBulk.getLocal_transactionID());
-			Buono_carico_scarico_dettBulk dett =(Buono_carico_scarico_dettBulk)getHome(userContext,Buono_carico_scarico_dettBulk.class).findByPrimaryKey(new Buono_carico_scarico_dettBulk(ass.getPg_inventario(),ass.getTi_documento(),ass.getEsercizio(),ass.getPg_buono_c_s(),ass.getNr_inventario(),new Integer(ass.getProgressivo().intValue())));
+			Buono_carico_scarico_dettBulk dett =(Buono_carico_scarico_dettBulk)getHome(userContext,Buono_carico_scarico_dettBulk.class).findByPrimaryKey(new Buono_carico_scarico_dettBulk(ass.getPg_inventario(),ass.getTi_documento(),ass.getEsercizio(),ass.getPg_buono_c_s(),ass.getNr_inventario(),Integer.valueOf(ass.getProgressivo().intValue())));
 			dett.setBene((Inventario_beniBulk)getHome(userContext,Inventario_beniBulk.class).findByPrimaryKey(dett.getBene()));
 			if((fattura_attiva!=null)||(doc_riga!=null && doc_riga.getDocumento_generico().getTi_entrate_spese()==Documento_genericoBulk.ENTRATE)){
 				new_bene.setValore_alienazione(dett.getBene().getValore_alienazione());
@@ -2870,7 +2870,7 @@ throws ComponentException{
 			List buoni = home.fetchAll(sql);
 			for(Iterator i=buoni.iterator();i.hasNext();){
 				Buono_carico_scarico_dettBulk buono_dett  =(Buono_carico_scarico_dettBulk)i.next();
-				Inventario_beniBulk bene = new Inventario_beniBulk(buono_dett.getNr_inventario(),buono_dett.getPg_inventario(),new Long(buono_dett.getProgressivo().longValue()));
+				Inventario_beniBulk bene = new Inventario_beniBulk(buono_dett.getNr_inventario(),buono_dett.getPg_inventario(),Long.valueOf(buono_dett.getProgressivo().longValue()));
 				bene = (Inventario_beniBulk)getHome(aUC, bene).findByPrimaryKey(bene);
 				if (bene.getFl_totalmente_scaricato().booleanValue()&& buono_dett.getTi_documento().compareTo(Buono_carico_scaricoBulk.CARICO)==0)
 					throw new it.cnr.jada.comp.ApplicationException("Attenzione: Operazione non possibile!\nIl Bene " + 
@@ -3601,7 +3601,7 @@ public void modificaBeniAssociati(UserContext userContext,Ass_inv_bene_fatturaBu
 							Inventario_beni_apgBulk new_bene_apg = new Inventario_beni_apgBulk();
 							new_bene_apg.setPg_inventario(buono.getPg_inventario());
 							new_bene_apg.setNr_inventario(buono.getNr_inventario());
-							new_bene_apg.setProgressivo(new Long(buono.getProgressivo()));
+							new_bene_apg.setProgressivo(Long.valueOf(buono.getProgressivo()));
 							new_bene_apg.setDt_validita_variazione(buono.getBene().getDt_validita_variazione());
 							new_bene_apg.setLocal_transaction_id(associaBulk.getLocal_transactionID());
 							new_bene_apg.setTi_documento(buono.getTi_documento());
@@ -3721,7 +3721,7 @@ public void modificaBeniAssociati(UserContext userContext,Ass_inv_bene_fatturaBu
 						}
 							new_bene_apg.setImp_fattura(im_riga_fattura);
 							if (new_bene_apg.getValore_alienazione().compareTo(new BigDecimal(0))>0){
-								Inventario_beniBulk inv =(Inventario_beniBulk)getHome( userContext,Inventario_beniBulk.class).findByPrimaryKey(new Inventario_beniBulk(new_bene_apg.getNr_inventario(),new_bene_apg.getPg_inventario(),new Long(new_bene_apg.getProgressivo().longValue())));
+								Inventario_beniBulk inv =(Inventario_beniBulk)getHome( userContext,Inventario_beniBulk.class).findByPrimaryKey(new Inventario_beniBulk(new_bene_apg.getNr_inventario(),new_bene_apg.getPg_inventario(),Long.valueOf(new_bene_apg.getProgressivo().longValue())));
 								lockBulk(userContext,inv);
 								new_bene_apg.setToBeCreated();
 								super.creaConBulk(userContext,new_bene_apg);
@@ -3811,7 +3811,7 @@ public void modificaBeniAssociati(UserContext userContext,Ass_inv_bene_fatturaBu
 							new_bene_apg.setValore_alienazione(bene.getValoreBene());
 							new_bene_apg.setTi_documento(associaBulk.getTi_documento());
 							new_bene_apg.setPg_buono_c_s(associaBulk.getPg_buono_c_s());
-							Inventario_beniBulk inv =(Inventario_beniBulk)getHome( userContext,Inventario_beniBulk.class).findByPrimaryKey(new Inventario_beniBulk(new_bene_apg.getNr_inventario(),new_bene_apg.getPg_inventario(),new Long(new_bene_apg.getProgressivo().longValue())));
+							Inventario_beniBulk inv =(Inventario_beniBulk)getHome( userContext,Inventario_beniBulk.class).findByPrimaryKey(new Inventario_beniBulk(new_bene_apg.getNr_inventario(),new_bene_apg.getPg_inventario(),Long.valueOf(new_bene_apg.getProgressivo().longValue())));
 							lockBulk(userContext,inv);
 							
 							new_bene_apg.setToBeCreated();							
@@ -5255,7 +5255,7 @@ private void scaricaTuttiBeniPerTrasferimento(UserContext userContext,Buono_cari
 			new_bene_apg.setVariazione_meno(bene.getValoreBene());
 			new_bene_apg.setFl_totalmente_scaricato(new Boolean(true));
 			new_bene_apg.setFl_trasf_come_principale(new Boolean(false));
-			if (new_bene_apg.getProgressivo().compareTo(new Long("0"))==0)
+			if (new_bene_apg.getProgressivo().compareTo(Long.valueOf("0"))==0)
 				new_bene_apg.setFl_visibile(new Boolean(true));
 			else
 				new_bene_apg.setFl_visibile(new Boolean(false));
@@ -6210,7 +6210,7 @@ private Buono_carico_scaricoBulk esplodiDettagli (UserContext aUC, Buono_carico_
 	throws ComponentException
 {
 	
-	Long nr_inventario = new Long(0);
+	Long nr_inventario = Long.valueOf(0);
 	Buono_carico_scarico_dettBulk tmpDettaglio;
 	Buono_carico_scarico_dettBulk newDettaglio;
 	Inventario_beniBulk tmpBene;
@@ -6223,8 +6223,8 @@ private Buono_carico_scaricoBulk esplodiDettagli (UserContext aUC, Buono_carico_
 	// Recupera NR_INVENTARIO per l'Inventario corrente
 	try{		
 		nr_inventario = inventario_bene_home.getMaxNr_Inventario(buono_cs.getPg_inventario());
-		if (nr_inventario.compareTo(new Long(0))==0|| nr_inventario.compareTo(buono_cs.getInventario().getNr_inventario_iniziale().longValue()-1)<0)
-			nr_inventario = new Long(buono_cs.getInventario().getNr_inventario_iniziale().longValue()-1);
+		if (nr_inventario.compareTo(Long.valueOf(0))==0|| nr_inventario.compareTo(buono_cs.getInventario().getNr_inventario_iniziale().longValue()-1)<0)
+			nr_inventario = Long.valueOf(buono_cs.getInventario().getNr_inventario_iniziale().longValue()-1);
 	}catch (PersistencyException pe){
 			throw handleException(pe);
 	}
@@ -6248,7 +6248,7 @@ private Buono_carico_scaricoBulk esplodiDettagli (UserContext aUC, Buono_carico_
 				
 				newDettaglio.setBene(newBene);
 				newDettaglio.setIntervallo(intervallo);		
-				newDettaglio.setQuantita(new Long("1"));
+				newDettaglio.setQuantita(Long.valueOf("1"));
 				newDettaglio.setTotale(newDettaglio.getValore_unitario());
 				
 				/* Assegna NR_INVENTARIO e PROGRESSIVO al Dettaglio, in base alla 
@@ -6258,12 +6258,12 @@ private Buono_carico_scaricoBulk esplodiDettagli (UserContext aUC, Buono_carico_
 				if (newDettaglio.isBeneAccessorio() && (!newDettaglio.isAccessorioContestuale())){
 					// Bene Accessorio di un bene già registrato su DB
 					newDettaglio.setNr_inventario(newDettaglio.getBene().getBene_principale().getNr_inventario());
-					newDettaglio.setProgressivo(new Integer(getProgressivoDaBenePrincipale(aUC,newDettaglio.getBene().getBene_principale(), progressivi).intValue()));				
+					newDettaglio.setProgressivo(Integer.valueOf(getProgressivoDaBenePrincipale(aUC,newDettaglio.getBene().getBene_principale(), progressivi).intValue()));
 				}
 				else if (!newDettaglio.isBeneAccessorio()){
 					// Bene SENZA Accessori
-					newDettaglio.setProgressivo(new Integer(0));					
-					nr_inventario = new Long(nr_inventario.longValue()+1);
+					newDettaglio.setProgressivo(Integer.valueOf(0));
+					nr_inventario = Long.valueOf(nr_inventario.longValue()+1);
 					newDettaglio.setNr_inventario(nr_inventario);
 				}				
 				newDettaglio.getBene().setUtilizzatori(estraiUtilizzatoriFor(newDettaglio));
@@ -6314,7 +6314,7 @@ private java.lang.Long getProgressivoDaBenePrincipale (UserContext aUC,Inventari
 	throws ComponentException
 {
 
-	java.lang.Long progressivo = new Long("0");
+	java.lang.Long progressivo = Long.valueOf("0");
 
 	Inventario_beniHome beneHome =(Inventario_beniHome) getHome(aUC,Inventario_beniBulk.class);
 
@@ -6322,7 +6322,7 @@ private java.lang.Long getProgressivoDaBenePrincipale (UserContext aUC,Inventari
 		progressivo =(Long) progressivi.remove(benePrincipale.getNr_inventario());
 		long prog = progressivo.longValue();
 		prog++;
-		progressivo = new Long(prog);
+		progressivo = Long.valueOf(prog);
 		progressivi.put(benePrincipale.getNr_inventario(),progressivo);
 		
 	}
@@ -6334,7 +6334,7 @@ private java.lang.Long getProgressivoDaBenePrincipale (UserContext aUC,Inventari
 		
 		long prog = progressivo.longValue();
 		prog++;
-		progressivo = new Long(prog);
+		progressivo = Long.valueOf(prog);
 		progressivi.put(benePrincipale.getNr_inventario(),progressivo);		
 	}
 
@@ -6359,7 +6359,7 @@ private void esplodiDettagliAssociatiContestualmente (
 	Inventario_beniBulk newBene;
 	PrimaryKeyHashtable pkht = buono_carico.getAccessoriContestualiHash();
 	BulkList dettagliPerRigaDiFattura;
-	Long progressivo = new Long(0);
+	Long progressivo = Long.valueOf(0);
 
 	BulkList accessori = (BulkList)pkht.get(old_padre.getChiaveHash());
 	for (Iterator i = accessori.iterator(); i.hasNext();){		
@@ -6379,12 +6379,12 @@ private void esplodiDettagliAssociatiContestualmente (
 			newBene.setToBeCreated();
 			
 			newDettaglio.setIntervallo(intervallo);		
-			newDettaglio.setQuantita(new Long("1"));
+			newDettaglio.setQuantita(Long.valueOf("1"));
 			newDettaglio.setTotale(newDettaglio.getValore_unitario());
 			
 			newBene.setNr_inventario(new_padre.getNr_inventario());
-			progressivo = new Long(progressivo.intValue()+1);
-			newBene.setProgressivo(new Long(progressivo.longValue()));
+			progressivo = Long.valueOf(progressivo.intValue()+1);
+			newBene.setProgressivo(Long.valueOf(progressivo.longValue()));
 			newBene.setEtichetta(old_padre.getEtichetta());
 			newBene.setTipo_ammortamento(new_padre.getBene().getTipo_ammortamento());
 			newBene.setFl_ammortamento(new_padre.getBene().getFl_ammortamento());
@@ -6663,7 +6663,7 @@ private void validaBuonoCarico(UserContext aUC, Buono_carico_scaricoBulk buonoCa
 				throw new it.cnr.jada.comp.ApplicationException("Attenzione: indicare l'Assagnatario del Bene"+ (bene.getDs_bene()!=null?"'"+bene.getDs_bene()+"'":""));
 
 			// CONTROLLA CHE SIA STATO INSERITO LA QUANTITA' PER IL BENE
-			if (dett.getQuantita()==null || dett.getQuantita().compareTo(new Long(1))<0)
+			if (dett.getQuantita()==null || dett.getQuantita().compareTo(Long.valueOf(1))<0)
 				throw new it.cnr.jada.comp.ApplicationException("Attenzione: la Quantita' del Bene " + (bene.getDs_bene()!=null?"'"+bene.getDs_bene()+"'":"") + " non è valida.\n La Quantità deve essere maggiore di 0");
 
 			// CONTROLLA CHE SIA STATO INSERITO IL PREZZO UNITARIO PER IL BENE
@@ -6920,7 +6920,7 @@ public OggettoBulk modificaConBulk (UserContext aUC,OggettoBulk bulk)
 			SimpleBulkList dettagli = buono_cs.getBuono_carico_scarico_dettColl(); 
 			for (Iterator i=dettagli.iterator();i.hasNext();){
 				Buono_carico_scarico_dettBulk dettaglio =(Buono_carico_scarico_dettBulk)i.next();
-				Inventario_beniBulk inv =(Inventario_beniBulk)getHome(aUC,Inventario_beniBulk.class).findByPrimaryKey(new Inventario_beniBulk(dettaglio.getNr_inventario(),dettaglio.getPg_inventario(),new Long(dettaglio.getProgressivo().longValue())));
+				Inventario_beniBulk inv =(Inventario_beniBulk)getHome(aUC,Inventario_beniBulk.class).findByPrimaryKey(new Inventario_beniBulk(dettaglio.getNr_inventario(),dettaglio.getPg_inventario(),Long.valueOf(dettaglio.getProgressivo().longValue())));
 				dettaglio.setBene(inv);
 				dettaglio.CalcolaTotaleBene();
 				assegnaStatoCOGE(aUC,buono_cs);

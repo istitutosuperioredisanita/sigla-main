@@ -18,7 +18,7 @@
 package it.cnr.contab.docamm00.ejb;
 import java.util.Date;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk;

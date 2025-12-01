@@ -136,7 +136,7 @@ public class DocumentiContabiliService extends StoreService implements Initializ
     @Override
     public void afterPropertiesSet() throws Exception {
         this.userContext = new WSUserContext(SIOPEPLUS, null,
-                new Integer(Calendar.getInstance().get(Calendar.YEAR)),
+                Integer.valueOf(Calendar.getInstance().get(Calendar.YEAR)),
                 null, null, null);
         this.crudComponentSession = Optional.ofNullable(EJBCommonServices.createEJB("JADAEJB_CRUDComponentSession"))
                 .filter(CRUDComponentSession.class::isInstance)
@@ -528,7 +528,7 @@ public class DocumentiContabiliService extends StoreService implements Initializ
                 .orElseGet(() -> {
                     FlussoGiornaleDiCassaBulk flusso = new FlussoGiornaleDiCassaBulk(flussoGiornaleDiCassa.getEsercizio(), identificativoFlusso);
                     flusso.setUser(userContext.getUser());
-                    flusso.setCodiceAbiBt(new Long(flussoGiornaleDiCassa.getTestataMessaggio().getCodiceABIBT()));
+                    flusso.setCodiceAbiBt(Long.valueOf(flussoGiornaleDiCassa.getTestataMessaggio().getCodiceABIBT()));
                     flusso.setDataOraCreazioneFlusso(new Timestamp(flussoGiornaleDiCassa.getTestataMessaggio().getDataOraCreazioneFlusso().toGregorianCalendar().getTime().getTime()));
                     flusso.setDataInizioPeriodoRif(
                             Optional.ofNullable(flussoGiornaleDiCassa.getDataRiferimentoGdC())
@@ -588,7 +588,7 @@ public class DocumentiContabiliService extends StoreService implements Initializ
                                 identificativoFlusso,
                                 informazioniContoEvidenza.getContoEvidenza(),
                                 "I",
-                                new Long(index.incrementAndGet()));
+                                Long.valueOf(index.incrementAndGet()));
                         movBulk.setTipoMovimento(movimentoContoEvidenza.getTipoMovimento());
                         movBulk.setTipoDocumento(movimentoContoEvidenza.getTipoDocumento());
                         movBulk.setTipoOperazione(movimentoContoEvidenza.getTipoOperazione());

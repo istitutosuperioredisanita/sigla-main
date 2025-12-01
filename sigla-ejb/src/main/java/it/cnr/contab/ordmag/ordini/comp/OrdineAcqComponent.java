@@ -1320,7 +1320,7 @@ public class OrdineAcqComponent
                 return true;
             }
 
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             handleException(e);
         } catch (java.rmi.RemoteException e) {
             handleException(e);
@@ -1336,7 +1336,7 @@ public class OrdineAcqComponent
                     .map(DivisaBulk::getCd_divisa)
                     .orElseThrow(() -> new it.cnr.jada.comp.ApplicationException("Impossibile caricare la valuta di default! Prima di poter inserire un ordine, immettere tale valore."));
             return divisaDefault;
-        } catch (javax.ejb.EJBException | PersistencyException e) {
+        } catch (jakarta.ejb.EJBException | PersistencyException e) {
             handleException(e);
         }
         return null;
@@ -2152,7 +2152,7 @@ public class OrdineAcqComponent
                     }
                 }
             }
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw handleException(ordine, e);
         } catch (java.rmi.RemoteException e) {
             throw handleException(ordine, e);
@@ -2257,7 +2257,7 @@ public class OrdineAcqComponent
                 scadenza = (Obbligazione_scadenzarioBulk) scadenze.get(scadenze.indexOfByPrimaryKey(scadenza));
             } catch (java.rmi.RemoteException e) {
                 throw handleException(scadenza, e);
-            } catch (javax.ejb.EJBException e) {
+            } catch (jakarta.ejb.EJBException e) {
                 throw handleException(scadenza, e);
             }
             return scadenza;

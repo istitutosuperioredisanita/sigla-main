@@ -24,7 +24,7 @@
    int j = bp.numeriPagina(pageContext);
    int nrPage = 0;
    if (request.getParameter("nrPage") != null)
-     nrPage = new Integer(request.getParameter("nrPage")).intValue();
+     nrPage = Integer.valueOf(request.getParameter("nrPage")).intValue();
    if (Pages != null)
    {
      response.resetBuffer();

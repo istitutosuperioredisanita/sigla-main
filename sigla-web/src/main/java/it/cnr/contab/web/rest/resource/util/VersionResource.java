@@ -19,17 +19,15 @@ package it.cnr.contab.web.rest.resource.util;
 
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.web.rest.local.util.VersionLocal;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -45,7 +43,7 @@ public class VersionResource implements ServletContextListener, VersionLocal {
     private static Map<Object, Object> ATTRIBUTES;
     private final Logger logger = LoggerFactory.getLogger(VersionResource.class);
 
-    public Response get(HttpServletRequest request) throws Exception {
+    public jakarta.ws.rs.core.Response get(HttpServletRequest request) throws Exception {
         if (Optional.ofNullable(ATTRIBUTES).isPresent())
             return Response.ok(ATTRIBUTES).build();
         return Response.noContent().build();
@@ -68,7 +66,7 @@ public class VersionResource implements ServletContextListener, VersionLocal {
                                             || attribute.equals(new Attributes.Name(SPECIFICATION_VERSION)))
                                     .orElse(Boolean.FALSE);
                         })
-                        .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()));
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             }
         } catch (IOException e) {
             logger.warn("IOException", e);

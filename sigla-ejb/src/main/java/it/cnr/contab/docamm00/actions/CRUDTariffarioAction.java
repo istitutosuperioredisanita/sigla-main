@@ -56,7 +56,7 @@ public Forward doEliminaTariffario(ActionContext context) throws java.rmi.Remote
 	            doElimina(context);
 	        else
 	        	doSalva(context);
-		} catch (javax.ejb.EJBException e) {
+		} catch (jakarta.ejb.EJBException e) {
 			throw new it.cnr.jada.DetailedRuntimeException(e);
 		}
 

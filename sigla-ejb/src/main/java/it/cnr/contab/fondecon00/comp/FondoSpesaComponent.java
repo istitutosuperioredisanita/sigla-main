@@ -656,7 +656,7 @@ private void validaSpesa(it.cnr.jada.UserContext userContext, Fondo_spesaBulk sp
 		if(spesa.getCodice_fiscale() != null) {
 			if(spesa.getCodice_fiscale() != null && spesa.getCodice_fiscale().length() != 0) {
 				try {
-					new Long(spesa.getCodice_fiscale());
+					Long.valueOf(spesa.getCodice_fiscale());
 					try {
 						it.cnr.contab.anagraf00.util.PartitaIVAControllo.parsePartitaIVA(spesa.getCodice_fiscale());
 					} catch(it.cnr.contab.anagraf00.util.ExPartitaIVA ecf) {
@@ -711,9 +711,9 @@ public boolean verificaStatoEsercizio(
 public void verificaTracciabilitaPagamenti(UserContext context,
 		Fondo_spesaBulk spesa) throws ComponentException, RemoteException {
 	Configurazione_cnrComponentSession sess = (Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession");
-	java.math.BigDecimal limite=sess.getIm01(context, new Integer(0), null,"LIMITE_UTILIZZO_CONTANTI", "LIMITE1");
-	java.sql.Timestamp data_da=sess.getDt01(context, new Integer(0), null,"LIMITE_UTILIZZO_CONTANTI", "LIMITE1");
-	java.sql.Timestamp data_a=sess.getDt02(context, new Integer(0), null,"LIMITE_UTILIZZO_CONTANTI", "LIMITE1");
+	java.math.BigDecimal limite=sess.getIm01(context, Integer.valueOf(0), null,"LIMITE_UTILIZZO_CONTANTI", "LIMITE1");
+	java.sql.Timestamp data_da=sess.getDt01(context, Integer.valueOf(0), null,"LIMITE_UTILIZZO_CONTANTI", "LIMITE1");
+	java.sql.Timestamp data_a=sess.getDt02(context, Integer.valueOf(0), null,"LIMITE_UTILIZZO_CONTANTI", "LIMITE1");
 	if ( sess == null  )
 		throw new ApplicationException("Configurazione CNR: manca la definizione del LIMITE_UTILIZZO_CONTANTI");	
 	

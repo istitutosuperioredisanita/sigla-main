@@ -29,7 +29,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.activation.DataHandler;
-import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.mail.Message;
@@ -60,6 +59,7 @@ import it.gov.fatturapa.FileSdIType;
 import it.gov.fatturapa.RispostaRiceviFattureType;
 import it.gov.fatturapa.sdi.messaggi.v1.NotificaDecorrenzaTerminiType;
 import it.gov.fatturapa.sdi.messaggi.v1.ScartoEsitoCommittenteType;
+import jakarta.ejb.Stateless;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -853,7 +853,7 @@ public class RicezioneFatture implements it.cnr.contab.docamm00.ejb.RicezioneFat
                 }
                 int progressivoAcquisto = 0;
                 for (DocumentoEleAcquistoBulk docAcquisto : acquisti) {
-                    docAcquisto.setProgressivoAcquisto(new Long(progressivoAcquisto++));
+                    docAcquisto.setProgressivoAcquisto((long) progressivoAcquisto++);
                     docAcquisto.setToBeCreated();
                     docTestata.addToDocEleAcquistoColl(docAcquisto);
                 }
@@ -1028,7 +1028,7 @@ public class RicezioneFatture implements it.cnr.contab.docamm00.ejb.RicezioneFat
             JAXBElement<NotificaDecorrenzaTerminiType> file = (JAXBElement<NotificaDecorrenzaTerminiType>) getJAXBElement(data);
             NotificaDecorrenzaTerminiType notifica = file.getValue();
             LOGGER.info("Fatture Elettroniche: Passive: Decorrenza Termini. MessageId:" + notifica.getMessageId());
-            Long identificativoSdi = new Long(notifica.getIdentificativoSdI());
+            Long identificativoSdi = Long.valueOf(notifica.getIdentificativoSdI());
             List<DocumentoEleTestataBulk> docs = component.recuperoDocumento(userContext, identificativoSdi);
             if (docs != null && !docs.isEmpty()) {
                 Boolean docsDaAggiornare = false;
@@ -1086,7 +1086,7 @@ public class RicezioneFatture implements it.cnr.contab.docamm00.ejb.RicezioneFat
             JAXBContext jc = JAXBContext.newInstance("it.gov.fatturapa.sdi.messaggi.v1");
             JAXBElement<ScartoEsitoCommittenteType> fileScartoEsito = (JAXBElement<ScartoEsitoCommittenteType>) jc.createUnmarshaller().unmarshal(new ByteArrayInputStream(bStream.toByteArray()));
             ScartoEsitoCommittenteType scartoEsito = fileScartoEsito.getValue();
-            Long identificativoSdi = new Long (scartoEsito.getIdentificativoSdI());
+            Long identificativoSdi = Long.valueOf (scartoEsito.getIdentificativoSdI());
             LOGGER.info("Fatture Elettroniche: Passive: Pec: Scarto Esito Id SDI: " + identificativoSdi);
             if (scartoEsito.getNote() != null && scartoEsito.getNote().startsWith("EN02: Notifica di esito già pervenuta al Sistema di Interscambio")) {
                 LOGGER.info("Id SDI: " + identificativoSdi + ".  " + scartoEsito.getNote());
@@ -1138,7 +1138,7 @@ public class RicezioneFatture implements it.cnr.contab.docamm00.ejb.RicezioneFat
         ByteArrayOutputStream bStream = new ByteArrayOutputStream();
         try {
             LOGGER.info("Fatture Elettroniche: Passive: Notifica non ricevibile: ID Sdi: " + idSdi);
-            Long identificativoSdi = new Long(idSdi);
+            Long identificativoSdi = Long.valueOf(idSdi);
             List<DocumentoEleTestataBulk> docs = component.recuperoDocumento(userContext, identificativoSdi);
             if (docs != null && !docs.isEmpty()) {
                 Boolean docsDaAggiornare = false;
@@ -1176,7 +1176,7 @@ public class RicezioneFatture implements it.cnr.contab.docamm00.ejb.RicezioneFat
     }
 
     private UserContext createUserContext() {
-        UserContext userContext = new WSUserContext("SDI", null, new Integer(java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)), null, null, null);
+        UserContext userContext = new WSUserContext("SDI", null, Integer.valueOf(java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)), null, null, null);
         return userContext;
     }
 
@@ -1191,7 +1191,7 @@ public class RicezioneFatture implements it.cnr.contab.docamm00.ejb.RicezioneFat
         UserContext userContext = createUserContext();
         try {
             LOGGER.info("Fatture Elettroniche: Passive: Pec: Consegna Esito Id SDI: " + idSdI);
-            Long identificativoSdi = new Long(idSdI);
+            Long identificativoSdi = Long.valueOf(idSdI);
             List<DocumentoEleTestataBulk> docs = component.recuperoDocumento(userContext, identificativoSdi);
             if (docs != null && !docs.isEmpty()) {
                 Boolean docsDaAggiornare = false;

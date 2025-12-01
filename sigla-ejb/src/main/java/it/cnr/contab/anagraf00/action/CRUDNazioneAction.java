@@ -45,7 +45,7 @@ public Forward doOnTipoNazioneChange(ActionContext context) {
 		CRUDNazioneBP bp = (CRUDNazioneBP)getBusinessProcess(context);
 		NazioneBulk nazione = (NazioneBulk)bp.getModel();
 		if (nazione.isTipoIndifferente())
-			nazione.setPg_nazione(new Long(0));
+			nazione.setPg_nazione(Long.valueOf(0));
 		else
 			nazione.setPg_nazione(null);
 		

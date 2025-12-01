@@ -66,7 +66,7 @@ public Long getNextPg(UserContext userContext, Integer esercizio, String cd_cds,
 	//non esiste il record - segnalo errore
 	if (progressivo == null)
 		throw new it.cnr.jada.comp.ApplicationException("Non e' possibile assegnare progressivi");
-	Long pgCorrente = new Long(progressivo.getCorrente().longValue()+1);
+	Long pgCorrente = Long.valueOf(progressivo.getCorrente().longValue()+1);
 	//esauriti i progressivi - segnalo errore
 	if ( !(pgCorrente.compareTo( progressivo.getUltimo()) <= 0 ))
 		throw new it.cnr.jada.comp.ApplicationException("Non esistono più progressivi disponibili");
@@ -119,14 +119,14 @@ public Long getNextTempPg(
 		progressivo.setCd_cds(cd_cds);
 		progressivo.setCd_tipo_documento_cont(tipoDocTemp);
 		progressivo.setEsercizio(esercizio);
-		progressivo.setPrimo(new Long(-numeratore.getPrimo().longValue()));
-		progressivo.setUltimo(new Long(-numeratore.getUltimo().longValue()));
-		pgCorrente = new Long(progressivo.getPrimo().longValue());
+		progressivo.setPrimo(Long.valueOf(-numeratore.getPrimo().longValue()));
+		progressivo.setUltimo(Long.valueOf(-numeratore.getUltimo().longValue()));
+		pgCorrente = Long.valueOf(progressivo.getPrimo().longValue());
 		progressivo.setCorrente(pgCorrente);
 		insert(progressivo, userContext);
 		return pgCorrente;
 	}
-	pgCorrente = new Long(progressivo.getCorrente().longValue()-1);
+	pgCorrente = Long.valueOf(progressivo.getCorrente().longValue()-1);
 	if (pgCorrente.longValue() < progressivo.getUltimo().longValue())
 		pgCorrente = progressivo.getPrimo();
 	progressivo.setCorrente(pgCorrente);

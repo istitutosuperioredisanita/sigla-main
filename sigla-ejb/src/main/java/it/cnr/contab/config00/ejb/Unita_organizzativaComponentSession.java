@@ -20,7 +20,7 @@ import it.cnr.contab.config00.sto.bulk.CdsBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 @Remote
 public interface Unita_organizzativaComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
 it.cnr.jada.bulk.OggettoBulk findUOByCodice(it.cnr.jada.UserContext param0,String param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;

@@ -44,13 +44,13 @@ public Long getNextPg(
 	// non esiste il record - creo un nuovo record
 	if (numeratore == null){
 		numeratore = new Numeratore_buono_c_sBulk(esercizio, progressivoInventario, tipoDocumento);
-		numeratore.setCorrente(new Long("1"));
-		numeratore.setIniziale(new Long("0"));
+		numeratore.setCorrente(Long.valueOf("1"));
+		numeratore.setIniziale(Long.valueOf("0"));
 		numeratore.setUser(user);
 		insert(numeratore, userContext);		
 	}
 	else{
-		numeratore.setCorrente(new Long(numeratore.getCorrente().longValue()+1));		
+		numeratore.setCorrente(Long.valueOf(numeratore.getCorrente().longValue()+1));
 		lock(numeratore);
 		update(numeratore, userContext);
 	}
@@ -88,8 +88,8 @@ public Long getNextTempPg(
 		progressivo.setEsercizio(esercizio);
 		progressivo.setPg_inventario(progressivoInventario);
 		progressivo.setTi_carico_scarico(tipoDocTemp);
-		progressivo.setIniziale(new Long(-1));
-		pgCorrente = new Long(progressivo.getIniziale().longValue());
+		progressivo.setIniziale(Long.valueOf(-1));
+		pgCorrente = Long.valueOf(progressivo.getIniziale().longValue());
 		progressivo.setCorrente(pgCorrente);
 		progressivo.setUser(user);
 		insert(progressivo, userContext);
@@ -98,7 +98,7 @@ public Long getNextTempPg(
 				progressivo_def.setEsercizio(esercizio);
 				progressivo_def.setPg_inventario(progressivoInventario);
 				progressivo_def.setTi_carico_scarico(tipoDocumento);
-				progressivo_def.setIniziale(new Long(1));
+				progressivo_def.setIniziale(Long.valueOf(1));
 				progressivo_def.setCorrente(progressivo_def.getIniziale().longValue());
 				progressivo_def.setUser(user);
 				insert(progressivo_def, userContext);
@@ -106,7 +106,7 @@ public Long getNextTempPg(
 		return pgCorrente;
 	}
 	
-	pgCorrente = new Long(progressivo.getCorrente().longValue()-1);
+	pgCorrente = Long.valueOf(progressivo.getCorrente().longValue()-1);
 	progressivo.setCorrente(pgCorrente);
 	progressivo.setUser(user);
 	lock(progressivo);

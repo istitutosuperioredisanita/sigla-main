@@ -31,13 +31,13 @@
 </div>
 <%
 	if (!bp.isFlNuovoPdg()) 
-	  controller_det.writeHTMLTable(pageContext,(bp.getLivelloContrattazione().compareTo(new Integer(0))==0)?"csContrattazioneSenzaVoce":null,true,false,true,"100%","180px");
+	  controller_det.writeHTMLTable(pageContext,(bp.getLivelloContrattazione().compareTo(Integer.valueOf(0))==0)?"csContrattazioneSenzaVoce":null,true,false,true,"100%","180px");
 	else
-	  controller_det.writeHTMLTable(pageContext,(bp.getLivelloContrattazione().compareTo(new Integer(0))==0)?"csContrattazioneSenzaVoceNuovoPdg":null,true,false,true,"100%","180px");
+	  controller_det.writeHTMLTable(pageContext,(bp.getLivelloContrattazione().compareTo(Integer.valueOf(0))==0)?"csContrattazioneSenzaVoceNuovoPdg":null,true,false,true,"100%","180px");
 %>
 <div class="Group">
 	<table class="Panel" cellspacing="2">
-		<% if (bp.getLivelloContrattazione().compareTo(new Integer(0))!=0) {%>
+		<% if (bp.getLivelloContrattazione().compareTo(Integer.valueOf(0))!=0) {%>
 		<tr>
 	  		<td><% controller_det.writeFormLabel(out,"classificazione");%></td>
 			<td><% controller_det.writeFormInput(out,"classificazione");%></td>

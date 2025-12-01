@@ -38,8 +38,8 @@ public class F24ep_tempHome extends BulkHome {
 		F24ep_tempBulk F24ep_temp= (F24ep_tempBulk)oggettobulk;
 		try {
 		((F24ep_tempBulk)oggettobulk).setProg(
-		new Long(
-		((Long)findAndLockMax( F24ep_temp, "prog", new Long(0) )).longValue()+1));
+		Long.valueOf(
+		((Long)findAndLockMax( F24ep_temp, "prog", Long.valueOf(0) )).longValue()+1));
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {
 		 throw new it.cnr.jada.comp.ApplicationException("Operazione effettuata al momento da un'altro utente, riprovare successivamente.");
 		} 

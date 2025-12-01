@@ -17,7 +17,7 @@
 
 package it.cnr.contab.doccont00.consultazioni.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface ConsGAEResComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

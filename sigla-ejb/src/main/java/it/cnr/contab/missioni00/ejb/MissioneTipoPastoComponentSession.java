@@ -17,7 +17,7 @@
 
 package it.cnr.contab.missioni00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface MissioneTipoPastoComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

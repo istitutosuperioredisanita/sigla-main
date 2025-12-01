@@ -60,17 +60,15 @@ import it.cnr.jada.comp.FatturaNonTrovataException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.DateUtils;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import jakarta.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -116,7 +114,7 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                     .orElseThrow(() -> new FatturaNonTrovataException(FATTURA_ATTIVA_NON_PRESENTE));
             return Response.ok(fatturaAttiva).build();
         } catch (FatturaNonTrovataException _ex) {
-            return Response.status(Status.NOT_FOUND).entity(Collections.singletonMap("ERROR", FATTURA_ATTIVA_NON_PRESENTE)).build();
+            return Response.status(Response.Status.NOT_FOUND).entity(Collections.singletonMap("ERROR", FATTURA_ATTIVA_NON_PRESENTE)).build();
         }
     }
 
@@ -129,26 +127,26 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
         fatture.stream().forEach(fattura -> {
             Fattura_attivaBulk testata;
 
-            Optional.ofNullable(fattura.getEsercizio()).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, Esercizio obbligatorio!"));
-            Optional.ofNullable(fattura.getCd_cds_origine()).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, Cds origine obbligatorio!"));
-            Optional.ofNullable(fattura.getCd_uo_origine()).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, UO origine obbligatoria!"));
+            Optional.ofNullable(fattura.getEsercizio()).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Esercizio obbligatorio!"));
+            Optional.ofNullable(fattura.getCd_cds_origine()).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Cds origine obbligatorio!"));
+            Optional.ofNullable(fattura.getCd_uo_origine()).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, UO origine obbligatoria!"));
 
             Optional.ofNullable(fattura.getEsercizio()).filter(x -> userContext.getEsercizio().equals(x)).
-                    orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Esercizio del contesto diverso da quello della Fattura!"));
+                    orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Esercizio del contesto diverso da quello della Fattura!"));
             Optional.ofNullable(fattura.getCd_cds_origine()).filter(x -> userContext.getCd_cds().equals(x)).
-                    orElseThrow(() -> new RestException(Status.BAD_REQUEST, "CdS del contesto diverso da quello della Fattura!"));
+                    orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "CdS del contesto diverso da quello della Fattura!"));
             Optional.ofNullable(fattura.getCd_uo_origine()).filter(x -> userContext.getCd_unita_organizzativa().equals(x)).
-                    orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Unità Organizzativa del contesto diversa da quella della Fattura!"));
+                    orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Unità Organizzativa del contesto diversa da quella della Fattura!"));
             Optional.ofNullable(fattura.getTi_causale_emissione()).filter(x -> Stream.of("C", "L", "T").anyMatch(y -> y.equals(x)))
-                    .orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Causale emissione non valida!"));
+                    .orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Causale emissione non valida!"));
             Optional.ofNullable(fattura.getTi_bene_servizio()).filter(x -> Stream.of("B", "S", "*").anyMatch(y -> y.equals(x)))
-                    .orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Tipologia bene/servizio non valida!"));
+                    .orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Tipologia bene/servizio non valida!"));
 
             Optional.ofNullable(fattura.getTi_fattura()).filter(x -> Stream.of(
                             Fattura_attivaBulk.TIPO_NOTA_DI_CREDITO,
                             Fattura_attivaBulk.TIPO_FATTURA_ATTIVA
                     ).anyMatch(y -> y.equals(x)))
-                    .orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_99));
+                    .orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_99));
 
             if (fattura.getTi_fattura().equals(Fattura_attivaBulk.TIPO_NOTA_DI_CREDITO)) {
                 testata = new Nota_di_credito_attivaBulk();
@@ -172,14 +170,14 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                             Optional.ofNullable(fattura.getFl_san_marino()).orElse(Boolean.FALSE))
                             .filter(x -> x.equals(Boolean.TRUE)).count())
                             .filter(x -> x <= 1)
-                    .orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_129));
+                    .orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_129));
 
             Optional.of((
                         Optional.ofNullable(fattura.getFl_intra_ue()).orElse(Boolean.FALSE) ||
                         Optional.ofNullable(fattura.getFl_extra_ue()).orElse(Boolean.FALSE)
                     ) && fattura.getTi_bene_servizio().equals("*"))
                     .filter(x -> x.equals(Boolean.FALSE))
-                    .orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_142));
+                    .orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_142));
 
             try {
                 userContext.setTransactional(true);
@@ -188,17 +186,17 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                 fatturaAttivaSingolaComponentSession.setSavePoint(userContext, FATTURA_AUTOMATICA);
                 // potrebbe non essere univoca per tipologia
                 Optional.of(fatturaAttivaSingolaComponentSession.verificaDuplicati(userContext, testata)).filter(x -> x.equals(Boolean.FALSE))
-                        .orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_102));
+                        .orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_102));
 
                 testata.setTipo_sezionale(new Tipo_sezionaleBulk(fattura.getCd_tipo_sezionale()));
                 Optional.of(testata.getSezionali().stream().filter(x -> x.getCd_tipo_sezionale().equals(
                                 fattura.getCd_tipo_sezionale())).count()).filter(x -> x == 1).
-                        orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_127));
+                        orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_127));
 
                 testata.setDt_registrazione(
                         Optional.ofNullable(fattura.getDt_registrazione())
                                 .map(date -> new Timestamp(date.getTime()))
-                                .orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_152))
+                                .orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_152))
                 );
                 testata.setTi_causale_emissione(fattura.getTi_causale_emissione());
                 testata.setFl_liquidazione_differita(fattura.getFl_liquidazione_differita());
@@ -206,34 +204,34 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                 testata.setRiferimento_ordine(fattura.getRif_ordine());
                 testata.setCliente(new TerzoBulk(fattura.getCd_terzo()));
                 testata.setCliente((TerzoBulk) fatturaAttivaSingolaComponentSession.completaOggetto(userContext, testata.getCliente()));
-                Optional.ofNullable(testata.getCliente()).orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_105));
+                Optional.ofNullable(testata.getCliente()).orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_105));
                 Optional.of(testata.getCliente().getAnagrafico().getTi_italiano_estero().equals(testata.getSupplierNationType())).
                         filter(x -> x.equals(Boolean.TRUE))
-                        .orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_140));
+                        .orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_140));
                 testata.setCd_terzo(fattura.getCd_terzo());
                 testata = fatturaAttivaSingolaComponentSession.completaTerzo(userContext, testata, testata.getCliente());
                 Optional.of(Stream.of(
                         testata.getCliente().isAnagraficoScaduto(),
                         testata.getCliente().getTi_terzo().equals(TerzoBulk.CREDITORE),
                         testata.getCliente().getAnagrafico().getTi_entita().equals(AnagraficoBulk.DIVERSI)
-                ).filter(x -> x.equals(Boolean.TRUE)).count()).filter(x -> x == 0).orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_125));
+                ).filter(x -> x.equals(Boolean.TRUE)).count()).filter(x -> x == 0).orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_125));
 
                 Optional.ofNullable(fattura.getFl_liquidazione_differita())
-                                .orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_124));
+                                .orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_124));
                 testata.setFl_liquidazione_differita(fattura.getFl_liquidazione_differita());
                 Optional.of(testata).filter(x -> !(x.getFl_liquidazione_differita().equals(Boolean.TRUE) &&
                                 !x.getFl_liquidazione_differita().equals(x.getCliente().getAnagrafico().getFl_fatturazione_differita())))
-                        .orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_124));
+                        .orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_124));
 
                 Optional.of(testata).filter(x -> x.getCd_terzo_uo_cds().equals(fattura.getCd_terzo_uo_cds()))
-                        .orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_133));
+                        .orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_133));
 
                 testata.setCd_modalita_pag_uo_cds(fattura.getCd_modalita_pag_uo_cds());
                 testata.setModalita_pagamento_uo(((Rif_modalita_pagamentoBulk) fatturaAttivaSingolaComponentSession.completaOggetto(userContext, new Rif_modalita_pagamentoBulk(fattura.getCd_modalita_pag_uo_cds()))));
-                Optional.ofNullable(testata.getModalita_pagamento_uo()).orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_132));
+                Optional.ofNullable(testata.getModalita_pagamento_uo()).orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_132));
                 testata.setPg_banca_uo_cds(
                         Optional.ofNullable(fattura.getPg_banca_uo_cds())
-                                .orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_134))
+                                .orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_134))
                 );
                 testata.setBanca_uo(((BancaBulk) fatturaAttivaSingolaComponentSession.completaOggetto(userContext, new BancaBulk(testata.getCd_terzo_uo_cds(), testata.getPg_banca_uo_cds()))));
                 Configurazione_cnrBulk config = configurazione_cnrComponentSession.getConfigurazione(userContext, 0, "*", CONTO_CORRENTE_SPECIALE, ENTE);
@@ -242,28 +240,28 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                             testata.getBanca_uo().getAbi().equalsIgnoreCase(config.getVal01()),
                             testata.getBanca_uo().getCab().equalsIgnoreCase(config.getVal02()),
                             testata.getBanca_uo().getNumero_conto().contains(config.getVal03())
-                    ).filter(x -> x.equals(Boolean.FALSE)).count()).filter(x -> x == 0).orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_134));
+                    ).filter(x -> x.equals(Boolean.FALSE)).count()).filter(x -> x == 0).orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_134));
                 }
                 List<BancaBulk> listaBanche = fatturaAttivaSingolaComponentSession.
                         findListaBancheWS(userContext, String.valueOf(testata.getCd_terzo_uo_cds()), testata.getModalita_pagamento_uo().getCd_modalita_pag(), "", "", "");
                 listaBanche.stream().filter(banca -> banca.getPg_banca().equals(fattura.getPg_banca_uo_cds())).findFirst().
-                        orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_134));
+                        orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_134));
 
                 if ((testata.getTi_fattura().equals(Fattura_attivaBulk.TIPO_NOTA_DI_CREDITO))) {
-                    Optional.ofNullable(fattura.getCd_modalita_pag()).orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_111));
+                    Optional.ofNullable(fattura.getCd_modalita_pag()).orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_111));
                     ((Nota_di_credito_attivaBulk) testata).setModalita_pagamento(Optional.ofNullable((Rif_modalita_pagamentoBulk) fatturaAttivaSingolaComponentSession.
                                     completaOggetto(userContext, new Rif_modalita_pagamentoBulk(fattura.getCd_modalita_pag()))).
-                            orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_111)));
+                            orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_111)));
 
-                    Optional.ofNullable(fattura.getPg_banca()).orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_110));
+                    Optional.ofNullable(fattura.getPg_banca()).orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_110));
                     ((Nota_di_credito_attivaBulk) testata).setBanca(Optional.ofNullable((BancaBulk) fatturaAttivaSingolaComponentSession.
                                     completaOggetto(userContext, new BancaBulk(testata.getCd_terzo(), fattura.getPg_banca()))).
-                            orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_118)));
+                            orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_118)));
 
                     listaBanche = fatturaAttivaSingolaComponentSession.
                             findListaBancheWS(userContext, String.valueOf(testata.getCd_terzo()), ((Nota_di_credito_attivaBulk) testata).getModalita_pagamento().getCd_modalita_pag(), "", "", "");
                     listaBanche.stream().filter(banca -> banca.getPg_banca().equals(fattura.getPg_banca())).findFirst().
-                            orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_118));
+                            orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_118));
                 }
 
                 testata.setCd_divisa(Optional.ofNullable(fattura.getCd_divisa()).orElse("EURO"));
@@ -271,7 +269,7 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                 testata.setNote(fattura.getNote());
                 testata.validate();
                 java.util.ArrayList<FatturaAttivaRiga> listOfRighe = Optional.ofNullable(fattura.getRighefat())
-                        .orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_98));
+                        .orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_98));
 
                 for (FatturaAttivaRiga fatr : listOfRighe) {
                     Fattura_attiva_rigaBulk riga = new Fattura_attiva_rigaIBulk();
@@ -281,25 +279,25 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                     testata.addToFattura_attiva_dettColl(riga);
                     riga.setToBeCreated();
                     Optional.ofNullable(fatr.getCd_bene_servizio())
-                            .orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_139));
+                            .orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_139));
                     riga.setBene_servizio(Optional.ofNullable((Bene_servizioBulk) fatturaAttivaSingolaComponentSession.completaOggetto(userContext, new Bene_servizioBulk(fatr.getCd_bene_servizio()))).
-                            orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_139)));
+                            orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_139)));
 
                     Optional.of(Stream.of(
                                     fattura.getTi_bene_servizio().equals("*"),
                                     riga.getBene_servizio().getTi_bene_servizio().equals(fattura.getTi_bene_servizio())
                             ).filter(x -> x.equals(Boolean.FALSE)).count()).filter(x -> x < 2).
-                            orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_141));
+                            orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_141));
 
                     if (testata.getTi_causale_emissione().equals(Fattura_attivaBulk.TARIFFARIO)) {
                         Optional.ofNullable(fatr.getCd_tariffario()).
-                                orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_103));
+                                orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_103));
                         riga.setCd_tariffario(fatr.getCd_tariffario());
                         riga.setTariffario(Optional.ofNullable(fatturaAttivaSingolaComponentSession.findTariffario(userContext, riga)).
-                                orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_128)));
+                                orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_128)));
                         riga.setVoce_iva(riga.getTariffario().getVoce_iva());
                         riga.setVoce_iva(Optional.ofNullable((Voce_ivaBulk) fatturaAttivaSingolaComponentSession.completaOggetto(userContext, riga.getVoce_iva())).
-                                orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_106)));
+                                orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_106)));
                         riga.setPrezzo_unitario(riga.getTariffario().getIm_tariffario());
                         riga.setQuantita(new BigDecimal(riga.getTariffario().getUnita_misura()));
                         riga.setIm_imponibile(riga.getPrezzo_unitario().multiply(riga.getQuantita()));
@@ -316,7 +314,7 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                         riga.setPrezzo_unitario(Optional.ofNullable(fatr.getPrezzo_unitario()).orElse(BigDecimal.ZERO));
                         riga.setQuantita(Optional.ofNullable(fatr.getQuantita()).orElse(BigDecimal.ZERO));
                         riga.setVoce_iva(Optional.ofNullable((Voce_ivaBulk) fatturaAttivaSingolaComponentSession.completaOggetto(userContext, new Voce_ivaBulk(fatr.getCd_voce_iva()))).
-                                orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_106)));
+                                orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_106)));
                         riga.setIm_imponibile(riga.getPrezzo_unitario().multiply(riga.getQuantita()));
                         if (Optional.ofNullable(fatr.getFl_iva_forzata()).orElse(Boolean.FALSE)) {
                             riga.setIm_iva(fatr.getIm_iva());
@@ -333,7 +331,7 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                                             fatr.getPg_riga_assncna_fin() != null,
                                             fatr.getEsercizio_assncna_fin() != null
                                     ).filter(x -> x.equals(Boolean.FALSE)).count()).filter(x -> x == 0).
-                                    orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_109));
+                                    orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_109));
                             ((Nota_di_credito_attiva_rigaBulk) riga).setRiga_fattura_associata(Optional.ofNullable((Fattura_attiva_rigaIBulk) fatturaAttivaSingolaComponentSession.completaOggetto(userContext,
                                             new Fattura_attiva_rigaIBulk(
                                                     testata.getCd_cds(),
@@ -341,12 +339,12 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                                                     fatr.getEsercizio_assncna_fin(),
                                                     fatr.getPg_fattura_assncna_fin(),
                                                     fatr.getPg_riga_assncna_fin()))).
-                                    orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_109)));
+                                    orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_109)));
                             Fattura_attiva_rigaIBulk rigaFP = ((Nota_di_credito_attiva_rigaBulk) riga).getRiga_fattura_associata();
                             BigDecimal nuovoImportoDisponibile = rigaFP.getIm_diponibile_nc().subtract(riga.getIm_totale_divisa());
 
                             if (nuovoImportoDisponibile.compareTo(BigDecimal.ZERO) < 0) {
-                                throw FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_117);
+                                throw FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_117);
                             } else {
                                 rigaFP.setIm_diponibile_nc(nuovoImportoDisponibile.setScale(2, BigDecimal.ROUND_HALF_UP));
                                 ((Nota_di_credito_attiva_rigaBulk) riga).setRiga_fattura_associata(rigaFP);
@@ -361,24 +359,24 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                                             rigaFP.getFattura_attivaI().getCliente()));
                             //Controllo codice iva coerente fattura - NC
                             if (rigaFP != null && rigaFP.getCd_voce_iva() != null && rigaFP.getCd_voce_iva().compareTo(riga.getCd_voce_iva()) != 0)
-                                throw FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_120);
+                                throw FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_120);
                             //controllo causale emissione coerente fattura - Nc
                             if (rigaFP != null && rigaFP.getFattura_attivaI().getTi_causale_emissione() != null &&
                                     rigaFP.getFattura_attivaI().getTi_causale_emissione().compareTo(riga.getFattura_attiva().getTi_causale_emissione()) != 0)
-                                throw FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_121);
+                                throw FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_121);
                             //controllo sezionale coerente fattura - Nc
                             if (rigaFP != null && rigaFP.getFattura_attivaI().getTipo_sezionale() != null &&
                                     rigaFP.getFattura_attivaI().getTipo_sezionale().getCd_tipo_sezionale().compareTo(riga.getFattura_attiva().getTipo_sezionale().getCd_tipo_sezionale()) != 0)
-                                throw FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_122);
+                                throw FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_122);
                             //controllo tariffario coerente fattura - Nc
                             if (rigaFP != null && rigaFP.getCd_tariffario() != null && rigaFP.getCd_tariffario().compareTo(riga.getCd_tariffario()) != 0)
-                                throw FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_123);//controllo flag coerente fattura - Nc
+                                throw FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_123);//controllo flag coerente fattura - Nc
                             if (rigaFP != null &&
                                     (rigaFP.getFattura_attivaI().getFl_extra_ue().compareTo(riga.getFattura_attiva().getFl_extra_ue()) != 0 ||
                                             rigaFP.getFattura_attivaI().getFl_intra_ue().compareTo(riga.getFattura_attiva().getFl_intra_ue()) != 0 ||
                                             rigaFP.getFattura_attivaI().getFl_san_marino().compareTo(riga.getFattura_attiva().getFl_san_marino()) != 0 ||
                                             rigaFP.getFattura_attivaI().getFl_liquidazione_differita().compareTo(riga.getFattura_attiva().getFl_liquidazione_differita()) != 0))
-                                throw FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_126);
+                                throw FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_126);
                             testata.setCd_cds(testata.getCd_cds_origine());
                             testata.setCd_unita_organizzativa(testata.getCd_uo_origine());
                         }
@@ -395,10 +393,10 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                             acc.setCd_cds_origine(testata.getCd_cds_origine());
                             acc.setCd_uo_origine(testata.getCd_uo_origine());
                             acc.setCd_tipo_documento_cont(Numerazione_doc_contBulk.TIPO_ACR);
-                            acc.setFl_pgiro(new Boolean(false));
+                            acc.setFl_pgiro(Boolean.FALSE);
                             acc.setRiportato("N");
-                            acc.setFromDocAmm(new Boolean(true));
-                            acc.setFl_calcolo_automatico(new Boolean(false));
+                            acc.setFromDocAmm(Boolean.TRUE);
+                            acc.setFl_calcolo_automatico(Boolean.FALSE);
                             acc.setUtcr(testata.getUtcr());
                             acc.setUser(testata.getUtcr());
 
@@ -409,7 +407,7 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
 
                             voce.setCd_elemento_voce(fatr.getCd_voce());
                             voce = Optional.ofNullable(((Elemento_voceBulk) fatturaAttivaSingolaComponentSession.completaOggetto(userContext, voce)))
-                                    .orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_107));
+                                    .orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_107));
                             acc.setCapitolo(new V_voce_f_partita_giroBulk(voce.getCd_voce(), voce.getEsercizio(), voce.getTi_appartenenza(), voce.getTi_gestione()));
                             acc.setTi_appartenenza(voce.getTi_appartenenza());
                             acc.setTi_gestione(voce.getTi_gestione());
@@ -419,7 +417,7 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                             Elemento_voceBulk v = new Elemento_voceBulk(voce.getCd_elemento_voce(), voce.getEsercizio(), voce.getTi_appartenenza(), voce.getTi_gestione());
                             v = ((Elemento_voceBulk) fatturaAttivaSingolaComponentSession.completaOggetto(userContext, v));
                             if (v.getFl_solo_residuo())
-                                throw FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_107);
+                                throw FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_107);
                             //acc.setDt_registrazione(testata.getDt_registrazione());
                             ///?????
                             acc.setDt_registrazione((DateUtils.truncate(new Timestamp(
@@ -429,7 +427,7 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                             ))));
                             acc.setDs_accertamento(
                                     Optional.ofNullable(fatr.getDs_accertamento())
-                                            .orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_153))
+                                            .orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_153))
                             );
                             //??? importo riga?????
                             if (fatturaAttivaSingolaComponentSession.isAttivoSplitPayment(userContext, testata.getDt_registrazione()) && testata.getFl_liquidazione_differita())
@@ -455,7 +453,7 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                                     fatr.getPg_contratto() != null) {
                                 acc.setContratto(new ContrattoBulk(fatr.getEsercizio_contratto(), fatr.getStato_contratto(), fatr.getPg_contratto()));
                                 acc.setContratto((ContrattoBulk) fatturaAttivaSingolaComponentSession.completaOggetto(userContext, acc.getContratto()));
-                                Optional.ofNullable(acc.getContratto()).orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_104));
+                                Optional.ofNullable(acc.getContratto()).orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_104));
                                 acc.setCheckDisponibilitaContrattoEseguito(true);
                             } else {
                                 if ((fatr.getEsercizio_contratto() != null ||
@@ -464,10 +462,10 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                                         (fatr.getEsercizio_contratto() == null &&
                                                 fatr.getStato_contratto() == null &&
                                                 fatr.getPg_contratto() == null))
-                                    throw FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_108);
+                                    throw FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_108);
                             }
                             List<FatturaAttivaScad> listOfScad = Optional.ofNullable(fatr.getRighescadvoc())
-                                    .orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_98));
+                                    .orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_98));
                             for (FatturaAttivaScad fatrs : listOfScad) {
                                 Accertamento_scad_voceBulk acc_scad_voce = new Accertamento_scad_voceBulk();
                                 acc_scad_voce.setUtcr(testata.getUtcr());
@@ -475,7 +473,7 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                                 acc_scad_voce.setAccertamento_scadenzario(acc_scadenza);
                                 if (fatturaAttivaSingolaComponentSession.isAttivoSplitPayment(userContext, testata.getDt_registrazione()) && testata.getFl_liquidazione_differita()) {
                                     if (listOfScad.size() != 1) {
-                                        throw FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_98);
+                                        throw FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_98);
                                     }
                                     acc_scad_voce.setIm_voce(acc.getIm_accertamento());
                                 } else {
@@ -483,15 +481,15 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                                 }
                                 CdrBulk cdr_db = new CdrBulk();
                                 cdr_db = (((CdrBulk) fatturaAttivaSingolaComponentSession.completaOggetto(userContext, new CdrBulk(fatrs.getCdr()))));
-                                Optional.ofNullable(cdr_db).orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_136));
+                                Optional.ofNullable(cdr_db).orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_136));
                                 acc_scad_voce.setLinea_attivita(((WorkpackageBulk) fatturaAttivaSingolaComponentSession.completaOggetto(userContext,
                                         new WorkpackageBulk(fatrs.getCdr(), fatrs.getGae()))));
                                 if (acc_scad_voce.getLinea_attivita() != null) {
                                     if (acc_scad_voce.getLinea_attivita().getTi_gestione().compareTo(acc.getTi_gestione()) != 0)
-                                        throw FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_138);
+                                        throw FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_138);
                                     acc_scadenza.getAccertamento_scad_voceColl().add((acc_scad_voce));
                                 } else {
-                                    throw FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_137);
+                                    throw FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_137);
                                 }
                             }
                             // fine for listOfScad
@@ -525,43 +523,43 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                                             fa_intra.setModalita_erogazione(((Modalita_erogazioneBulk) fatturaAttivaSingolaComponentSession.completaOggetto(
                                                     userContext, new Modalita_erogazioneBulk(testata.getEsercizio(), intra.getCod_erogazione()))));
                                             Optional.ofNullable(fa_intra.getModalita_erogazione()).
-                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_143));
+                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_143));
 
                                             fa_intra.setModalita_incasso(Optional.ofNullable(((Modalita_incassoBulk) fatturaAttivaSingolaComponentSession.
                                                             completaOggetto(userContext, new Modalita_incassoBulk(testata.getEsercizio(), intra.getCod_incasso())))).
-                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_144)));
+                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_144)));
 
                                             fa_intra.setCodici_cpa(Optional.ofNullable(((Codici_cpaBulk) fatturaAttivaSingolaComponentSession.
                                                             completaOggetto(userContext, new Codici_cpaBulk(intra.getId_cpa())))).
-                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_145)));
+                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_145)));
 
                                             if (!fa_intra.getCodici_cpa().getEsercizio().equals(testata.getEsercizio())) {
-                                                throw FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_145);
+                                                throw FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_145);
                                             }
                                         } else {
                                             // per il momento non richiesto da Pisa da testare totalmente anche i WS di servizio
                                             fa_intra.setNomenclatura_combinata(Optional.ofNullable(((Nomenclatura_combinataBulk) fatturaAttivaSingolaComponentSession.
                                                             completaOggetto(userContext, new Nomenclatura_combinataBulk(intra.getId_nomenclatura_combinata())))).
-                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_147)));
+                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_147)));
                                             if (!fa_intra.getNomenclatura_combinata().getEsercizio().equals(testata.getEsercizio())) {
-                                                throw FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_147);
+                                                throw FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_147);
                                             }
 
                                             fa_intra.setNatura_transazione(Optional.ofNullable(((Natura_transazioneBulk) fatturaAttivaSingolaComponentSession.
                                                             completaOggetto(userContext, new Natura_transazioneBulk(intra.getId_natura_transazione())))).
-                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_148)));
+                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_148)));
 
                                             fa_intra.setCondizione_consegna(Optional.ofNullable(((Condizione_consegnaBulk) fatturaAttivaSingolaComponentSession.
                                                             completaOggetto(userContext, new Condizione_consegnaBulk(intra.getCd_consegna(), testata.getEsercizio())))).
-                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_149)));
+                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_149)));
 
                                             fa_intra.setModalita_trasporto(Optional.ofNullable(((Modalita_trasportoBulk) fatturaAttivaSingolaComponentSession.
                                                             completaOggetto(userContext, new Modalita_trasportoBulk(intra.getCd_trasporto(), testata.getEsercizio())))).
-                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_150)));
+                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_150)));
 
                                             fa_intra.setProvincia_origine(Optional.ofNullable(((ProvinciaBulk) fatturaAttivaSingolaComponentSession.
                                                             completaOggetto(userContext, new ProvinciaBulk(intra.getCd_provincia())))).
-                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_151)));
+                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_151)));
 
                                             if (intra.getMassa() != null)
                                                 fa_intra.setMassa_netta(intra.getMassa());
@@ -572,7 +570,7 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                                         }
                                         fa_intra.setNazione_destinazione(Optional.ofNullable(((NazioneBulk) fatturaAttivaSingolaComponentSession.
                                                         completaOggetto(userContext, new NazioneBulk(intra.getPg_nazione())))).
-                                                orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_146)));
+                                                orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_146)));
 
                                         fa_intra.setAmmontare_euro(intra.getAmmontare_euro());
                                         fa_intra.setFl_inviato(false);
@@ -592,12 +590,12 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                             obb.setCd_cds_origine(testata.getCd_cds_origine());
                             obb.setCd_uo_origine(testata.getCd_uo_origine());
                             obb.setCd_tipo_documento_cont(Numerazione_doc_contBulk.TIPO_OBB);
-                            obb.setFl_pgiro(new Boolean(false));
+                            obb.setFl_pgiro(Boolean.FALSE);
                             obb.setRiportato("N");
-                            obb.setFromDocAmm(new Boolean(true));
-                            obb.setFl_calcolo_automatico(new Boolean(false));
-                            obb.setFl_spese_costi_altrui(new Boolean(false));
-                            obb.setFl_gara_in_corso(new Boolean(false));
+                            obb.setFromDocAmm(Boolean.TRUE);
+                            obb.setFl_calcolo_automatico(Boolean.FALSE);
+                            obb.setFl_spese_costi_altrui(Boolean.FALSE);
+                            obb.setFl_gara_in_corso(Boolean.FALSE);
                             obb.setUtcr(testata.getUtcr());
                             obb.setUser(testata.getUtcr());
                             it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk voce = new it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk();
@@ -607,7 +605,7 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                             voce.setCd_elemento_voce(fatr.getCd_voce());
                             //voce.setCd_unita_organizzativa(testata.getCd_uo_origine());
                             voce = ((it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk) fatturaAttivaSingolaComponentSession.completaOggetto(userContext, voce));
-                            Optional.ofNullable(voce).orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_107));
+                            Optional.ofNullable(voce).orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_107));
                             obb.setElemento_voce(((Elemento_voceBulk) fatturaAttivaSingolaComponentSession.completaOggetto(userContext, new Elemento_voceBulk(voce.getCd_elemento_voce(), voce.getEsercizio(), voce.getTi_appartenenza(), voce.getTi_gestione()))));
                             obb = obbligazioneComponentSession.listaCapitoliPerCdsVoce(userContext, obb);
                             obb.setCapitoliDiSpesaCdsSelezionatiColl(obb.getCapitoliDiSpesaCdsColl());
@@ -639,12 +637,12 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                             if (fatr.getEsercizio_contratto() != null && fatr.getStato_contratto() != null && fatr.getPg_contratto() != null) {
                                 obb.setContratto(new ContrattoBulk(fatr.getEsercizio_contratto(), fatr.getStato_contratto(), fatr.getPg_contratto()));
                                 obb.setContratto(Optional.ofNullable((ContrattoBulk) fatturaAttivaSingolaComponentSession.completaOggetto(userContext, obb.getContratto())).
-                                        orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_104)));
+                                        orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_104)));
                                 obb.setCheckDisponibilitaContrattoEseguito(true);
                             } else {
                                 if ((fatr.getEsercizio_contratto() != null || fatr.getStato_contratto() != null || fatr.getPg_contratto() != null) &&
                                         (fatr.getEsercizio_contratto() == null && fatr.getStato_contratto() == null && fatr.getPg_contratto() == null))
-                                    throw FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_108);
+                                    throw FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_108);
                             }
                             List<FatturaAttivaScad> listOfScad = fatr.getRighescadvoc();
                             for (FatturaAttivaScad fatrs : listOfScad) {
@@ -657,12 +655,12 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                                 obb_scad_voce.setTi_gestione(voce.getTi_gestione());
                                 obb_scad_voce.setTi_appartenenza(voce.getTi_appartenenza());
                                 Optional.ofNullable(fatturaAttivaSingolaComponentSession.completaOggetto(userContext, new CdrBulk(fatrs.getCdr()))).
-                                        orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_136));
+                                        orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_136));
                                 obb_scad_voce.setLinea_attivita(Optional.ofNullable(((WorkpackageBulk) fatturaAttivaSingolaComponentSession.completaOggetto(userContext,
                                                 new WorkpackageBulk(fatrs.getCdr(), fatrs.getGae())))).
-                                        orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_137)));
+                                        orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_137)));
                                 if (obb_scad_voce.getLinea_attivita().getTi_gestione().compareTo(obb.getTi_gestione()) != 0)
-                                    throw FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_138);
+                                    throw FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_138);
                                 Linea_attivitaBulk nuovaLatt = new Linea_attivitaBulk();
                                 nuovaLatt.setLinea_att(obb_scad_voce.getLinea_attivita());
                                 if (obb_scad_voce.getObbligazione_scadenzario().getIm_scadenza().compareTo(new BigDecimal(0)) != 0)
@@ -690,38 +688,38 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                                         if (testata.getTi_bene_servizio().compareTo(Bene_servizioBulk.SERVIZIO) == 0) {
                                             fa_intra.setModalita_erogazione(Optional.ofNullable(((Modalita_erogazioneBulk) fatturaAttivaSingolaComponentSession.
                                                             completaOggetto(userContext, new Modalita_erogazioneBulk(testata.getEsercizio(), intra.getCod_erogazione())))).
-                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_143)));
+                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_143)));
 
                                             fa_intra.setModalita_incasso(Optional.ofNullable(((Modalita_incassoBulk) fatturaAttivaSingolaComponentSession.
                                                             completaOggetto(userContext, new Modalita_incassoBulk(testata.getEsercizio(), intra.getCod_incasso())))).
-                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_144)));
+                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_144)));
 
                                             fa_intra.setCodici_cpa(Optional.ofNullable(((Codici_cpaBulk) fatturaAttivaSingolaComponentSession.
                                                             completaOggetto(userContext, new Codici_cpaBulk(intra.getId_cpa())))).
-                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_145)));
+                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_145)));
                                             if (fa_intra.getCodici_cpa().getEsercizio() != testata.getEsercizio())
-                                                throw FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_145);
+                                                throw FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_145);
                                         } else {
                                             // per il momento non richiesto da Pisa da testare totalmente anche i WS di servizio
                                             fa_intra.setNomenclatura_combinata(Optional.ofNullable(((Nomenclatura_combinataBulk) fatturaAttivaSingolaComponentSession.
                                                             completaOggetto(userContext, new Nomenclatura_combinataBulk(intra.getId_nomenclatura_combinata())))).
-                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_147)));
+                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_147)));
 
                                             fa_intra.setNatura_transazione(Optional.ofNullable(((Natura_transazioneBulk) fatturaAttivaSingolaComponentSession.
                                                             completaOggetto(userContext, new Natura_transazioneBulk(intra.getId_natura_transazione())))).
-                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_148)));
+                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_148)));
 
                                             fa_intra.setCondizione_consegna(Optional.ofNullable(((Condizione_consegnaBulk) fatturaAttivaSingolaComponentSession.
                                                             completaOggetto(userContext, new Condizione_consegnaBulk(intra.getCd_consegna(), testata.getEsercizio())))).
-                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_149)));
+                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_149)));
 
                                             fa_intra.setModalita_trasporto(Optional.ofNullable(((Modalita_trasportoBulk) fatturaAttivaSingolaComponentSession.
                                                             completaOggetto(userContext, new Modalita_trasportoBulk(intra.getCd_trasporto(), testata.getEsercizio())))).
-                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_150)));
+                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_150)));
 
                                             fa_intra.setProvincia_origine(Optional.ofNullable(((ProvinciaBulk) fatturaAttivaSingolaComponentSession.
                                                             completaOggetto(userContext, new ProvinciaBulk(intra.getCd_provincia())))).
-                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_151)));
+                                                    orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_151)));
                                             if (intra.getMassa() != null)
                                                 fa_intra.setMassa_netta(intra.getMassa());
                                             if (intra.getValore_statistico() != null)
@@ -732,7 +730,7 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                                         }
                                         fa_intra.setNazione_destinazione(Optional.ofNullable(((NazioneBulk) fatturaAttivaSingolaComponentSession.
                                                         completaOggetto(userContext, new NazioneBulk(intra.getPg_nazione())))).
-                                                orElseThrow(() -> FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_146)));
+                                                orElseThrow(() -> FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_146)));
                                         fa_intra.setAmmontare_euro(intra.getAmmontare_euro());
                                         fa_intra.setFl_inviato(false);
                                         testata.getFattura_attiva_intrastatColl().add(fa_intra);
@@ -770,7 +768,7 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                             fatr_agg.setPg_accertamento(riga_fat.getAccertamento_scadenzario().getPg_accertamento());
                         } else {
                             Nota_di_credito_attiva_rigaBulk riga_fat = (Nota_di_credito_attiva_rigaBulk) testata.getFattura_attiva_dettColl().get(testata.getFattura_attiva_dettColl().indexOfByPrimaryKey(
-                                    new Nota_di_credito_attiva_rigaBulk(testata.getCd_cds(), testata.getCd_unita_organizzativa(), testata.getEsercizio(), testata.getPg_fattura_attiva(), new Long(fatr_agg.getProgressivo_riga()))));
+                                    new Nota_di_credito_attiva_rigaBulk(testata.getCd_cds(), testata.getCd_unita_organizzativa(), testata.getEsercizio(), testata.getPg_fattura_attiva(), Long.valueOf(fatr_agg.getProgressivo_riga()))));
                             fatr_agg.setPg_obbligazione(riga_fat.getObbligazione_scadenzario().getPg_obbligazione());
                         }
                     }
@@ -781,12 +779,12 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
             } catch (RemoteException | ComponentException | PersistencyException | ValidationException | IntrospectionException ex) {
                 LOGGER.error("ERROR while importing ", ex);
                 if (ex instanceof ApplicationException) {
-                    throw new FatturaAttivaException(Status.BAD_REQUEST, ex.getMessage(), FatturaAttivaCodiciEnum.ERRORE_FA_999);
+                    throw new FatturaAttivaException(Response.Status.BAD_REQUEST, ex.getMessage(), FatturaAttivaCodiciEnum.ERRORE_FA_999);
                 }
-                throw FatturaAttivaException.newInstance(Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_999);
+                throw FatturaAttivaException.newInstance(Response.Status.BAD_REQUEST, FatturaAttivaCodiciEnum.ERRORE_FA_999);
             }
         });
-        return Response.status(Status.CREATED).entity(fattureCreate.stream().map(fattura_attivaBulk -> {
+        return Response.status(Response.Status.CREATED).entity(fattureCreate.stream().map(fattura_attivaBulk -> {
             return convert(userContext, fattura_attivaBulk);
         }).collect(Collectors.toList())).build();
     }
@@ -804,9 +802,9 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
                             pgFattura);
             return Response.ok().entity(pgStampa).build();
         } catch (FatturaNonTrovataException _ex) {
-            return Response.status(Status.NOT_FOUND).entity(Collections.singletonMap("ERROR", FATTURA_ATTIVA_NON_PRESENTE)).build();
+            return Response.status(Response.Status.NOT_FOUND).entity(Collections.singletonMap("ERROR", FATTURA_ATTIVA_NON_PRESENTE)).build();
         } catch (FatturaNonProtocollataException _ex) {
-            return Response.status(Status.NOT_FOUND).entity(Collections.singletonMap("ERROR", FATTURA_ATTIVA_NON_PROTOCOLLATA)).build();
+            return Response.status(Response.Status.NOT_FOUND).entity(Collections.singletonMap("ERROR", FATTURA_ATTIVA_NON_PROTOCOLLATA)).build();
         }
     }
 
@@ -818,7 +816,7 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
             byte[] stampa = fatturaAttivaSingolaComponentSession.lanciaStampa(userContext, pgStampa);
             return Response.ok().entity(stampa).build();
         } catch (FatturaNonTrovataException _ex) {
-            return Response.status(Status.NOT_FOUND).entity(Collections.singletonMap("ERROR", FATTURA_ATTIVA_NON_PRESENTE)).build();
+            return Response.status(Response.Status.NOT_FOUND).entity(Collections.singletonMap("ERROR", FATTURA_ATTIVA_NON_PRESENTE)).build();
         }
     }
 

@@ -1457,11 +1457,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import javax.ejb.EJBException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.ejb.EJBException;
+
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerationException;
@@ -1594,8 +1594,8 @@ public class RESTServlet extends HttpServlet{
 </pre></div>
 </div>
 <p>Tecnicamente quindi una servlet non è altro che una classe che estende
-la classe <em>javax.servlet.http.HttpServlet</em> ed implementa l'interfaccia
-<em>javax.servlet.Servlet</em>.</p>
+la classe <em>jakarta.servlet.http.HttpServlet</em> ed implementa l'interfaccia
+<em>jakarta.servlet.Servlet</em>.</p>
 <p>Questo fa sì che possiamo, e dobbiamo, ridefinire due funzioni:</p>
 <ul class="simple">
 <li><em>doGet</em> viene invocata quando viene richiesta la servlet con metodo HTTPGET;</li>

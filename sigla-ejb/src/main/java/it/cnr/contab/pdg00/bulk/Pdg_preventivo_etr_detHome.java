@@ -52,8 +52,8 @@ public Pdg_preventivo_etr_detHome(java.sql.Connection conn,PersistentCache persi
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,OggettoBulk det_etr) throws PersistencyException {
 		try {
 			((Pdg_preventivo_etr_detBulk)det_etr).setPg_entrata(
-				new Long(
-					((Long)findAndLockMax( det_etr, "pg_entrata", new Long(0) )).longValue()+1
+				Long.valueOf(
+					((Long)findAndLockMax( det_etr, "pg_entrata", Long.valueOf(0) )).longValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

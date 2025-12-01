@@ -32,7 +32,7 @@ import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.InSequence;
 import org.junit.Test;
 
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 import java.math.BigDecimal;
 import java.util.Optional;
 

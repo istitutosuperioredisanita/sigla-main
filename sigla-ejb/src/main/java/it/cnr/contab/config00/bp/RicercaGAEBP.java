@@ -24,6 +24,7 @@ import it.cnr.jada.action.BusinessProcess;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
+import jakarta.servlet.ServletException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMImplementation;
@@ -31,9 +32,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import javax.ejb.EJBException;
-import javax.servlet.ServletException;
-import javax.servlet.jsp.PageContext;
+import jakarta.ejb.EJBException;
+
+import jakarta.servlet.jsp.PageContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -79,7 +80,7 @@ public class RicercaGAEBP extends BusinessProcess implements ResponseXMLBP {
 
     private Element generaNumeroGAE(Document xmldoc) {
         Element e = xmldoc.createElement("numris");
-        Node n = xmldoc.createTextNode(new Integer(getGAE().size()).toString());
+        Node n = xmldoc.createTextNode(Integer.valueOf(getGAE().size()).toString());
         e.appendChild(n);
         return e;
     }
@@ -131,7 +132,7 @@ public class RicercaGAEBP extends BusinessProcess implements ResponseXMLBP {
     public void generaXML(PageContext pagecontext) throws IOException, ServletException {
         try {
             if (getNumMax() == null)
-                setNumMax(new Integer(20));
+                setNumMax(Integer.valueOf(20));
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             DOMImplementation impl = builder.getDOMImplementation();
@@ -147,7 +148,7 @@ public class RicercaGAEBP extends BusinessProcess implements ResponseXMLBP {
                 root.appendChild(generaNumeroGAE(xmldoc));
                 int num = 0;
                 if (getGAE() != null && !getGAE().isEmpty()) {
-                    for (Iterator i = getGAE().iterator(); i.hasNext() && num < new Integer(numMax).intValue(); ) {
+                    for (Iterator i = getGAE().iterator(); i.hasNext() && num < Integer.valueOf(numMax).intValue(); ) {
                         WorkpackageBulk linea = (WorkpackageBulk) i.next();
                         root.appendChild(generaDettaglioGAE(xmldoc, linea.getCd_centro_responsabilita(), linea.getCd_linea_attivita(), linea.getDs_linea_attivita(),
                                 linea.getProgetto().getCd_progetto(), linea.getProgetto().getDs_progetto(), linea.getProgettopadre().getCd_progetto(),

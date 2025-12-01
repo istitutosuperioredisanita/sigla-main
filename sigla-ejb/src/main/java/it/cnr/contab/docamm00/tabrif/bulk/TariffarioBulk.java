@@ -145,7 +145,7 @@ public void validate() throws ValidationException {
 	public static java.sql.Timestamp getDataOdierna() throws it.cnr.jada.action.BusinessProcessException {
 		try {
 			return getDataOdierna(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate());
-		} catch (javax.ejb.EJBException e) {
+		} catch (jakarta.ejb.EJBException e) {
 			throw new it.cnr.jada.action.BusinessProcessException(e);
 		}
 	}

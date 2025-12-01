@@ -156,7 +156,7 @@ private void aggiornaCapitoloSaldoObbligazione (UserContext aUC,ImpegnoPGiroBulk
 		else if ( azione == CANCELLAZIONE )
 			aggiornaSaldiInModifica( aUC, 
 											 obbligazione, 
-											 new Long(obbligazione.getPg_ver_rec().longValue() + 1),
+											 Long.valueOf(obbligazione.getPg_ver_rec().longValue() + 1),
 											 false);		
 			
 			
@@ -965,7 +965,7 @@ public ImpegnoPGiroBulk creaObbligazione(
             "AND",
             "cd_terzo",
             sql.EQUALS,
-            new Integer(config.getIm01().intValue()));
+            Integer.valueOf(config.getIm01().intValue()));
         List result =
             getHomeCache(uc)
                 .getHome(it.cnr.contab.anagraf00.core.bulk.TerzoBulk.class)
@@ -2192,7 +2192,7 @@ protected SQLBuilder selectPGiroDaRiportare(UserContext userContext,IDocumentoCo
   * @param impegno <code>ImpegnoPGiroBulk</code> l'obbligazione su partita di giro da validare
   *
  */
-protected void verificaObbligazione(UserContext userContext, ImpegnoPGiroBulk impegno ) throws it.cnr.jada.persistency.PersistencyException, ComponentException, ApplicationException, javax.ejb.EJBException
+protected void verificaObbligazione(UserContext userContext, ImpegnoPGiroBulk impegno ) throws it.cnr.jada.persistency.PersistencyException, ComponentException, ApplicationException, jakarta.ejb.EJBException
 {
 	if ( impegno.isToBeCreated() )
 	{
@@ -2248,7 +2248,7 @@ void verificaStatoEsercizio( UserContext userContext, Integer es, String cd_cds 
 void verificaStatoEsercizioEsPrecedente( UserContext userContext, Integer es, String cd_cds ) throws ComponentException, it.cnr.jada.persistency.PersistencyException
 {
 	EsercizioBulk esPrec = (EsercizioBulk) getHome(userContext, EsercizioBulk.class).findByPrimaryKey( 
-																									new EsercizioBulk( cd_cds, new Integer( es.intValue() - 1 )));
+																									new EsercizioBulk( cd_cds, Integer.valueOf( es.intValue() - 1 )));
 	if (esPrec != null && !esPrec.STATO_CHIUSO_DEF.equals(esPrec.getSt_apertura_chiusura()))
 			throw handleException( new ApplicationException( "Operazione impossibile: esercizio precedente non chiuso!") );
 			

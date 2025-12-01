@@ -36,7 +36,7 @@ public class Stampa_anag_progettiVBulk extends ProgettoBulk {
     private Unita_organizzativaBulk unita_organizzativaForPrint;
     private boolean isUOForPrintEnabled;
     private java.lang.Integer esercizioForPrint;
-    public static final Integer LIVELLO_PROGETTO_ALL 	= new Integer(99);
+    public static final Integer LIVELLO_PROGETTO_ALL 	= Integer.valueOf(99);
         
         public final static Dictionary livello_progettoKeys;
         static {
@@ -108,7 +108,7 @@ public class Stampa_anag_progettiVBulk extends ProgettoBulk {
      * @return java.lang.String
      */
     public Integer getTc() {
-	    return new Integer(0);
+	    return Integer.valueOf(0);
     }
     
     public boolean isROunita_organizzativaForPrint(){

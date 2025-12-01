@@ -17,7 +17,7 @@
 
 package it.cnr.contab.inventario01.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk;
 @Remote
 public interface NumerazioneTempBuonoComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

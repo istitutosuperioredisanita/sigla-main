@@ -40,8 +40,8 @@ public class Pdg_Modulo_EntrateHome extends BulkHome {
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,OggettoBulk dett) throws PersistencyException {
 		try {
 				((Pdg_Modulo_EntrateBulk)dett).setPg_dettaglio(
-					new Long(
-						((Long)findAndLockMax( dett, "pg_dettaglio", new Long(0) )).longValue()+1
+					Long.valueOf(
+						((Long)findAndLockMax( dett, "pg_dettaglio", Long.valueOf(0) )).longValue()+1
 					)
 				);
 			} catch(it.cnr.jada.bulk.BusyResourceException e) {

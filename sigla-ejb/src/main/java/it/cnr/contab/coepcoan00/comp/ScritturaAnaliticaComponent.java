@@ -411,7 +411,7 @@ public OggettoBulk inizializzaBulkPerRicercaLibera (UserContext userContext,Ogge
  *
  */
 
-private Scrittura_analiticaBulk inizializzaDataContabilizzazione (UserContext userContext,Scrittura_analiticaBulk scrittura ) throws PersistencyException, ComponentException, javax.ejb.EJBException
+private Scrittura_analiticaBulk inizializzaDataContabilizzazione (UserContext userContext,Scrittura_analiticaBulk scrittura ) throws PersistencyException, ComponentException, jakarta.ejb.EJBException
 {
 	EsercizioBulk esercizio = (EsercizioBulk) getHome( userContext, EsercizioBulk.class ).findByPrimaryKey( new EsercizioBulk( ((CNRUserContext)userContext).getCd_cds(), ((CNRUserContext)userContext).getEsercizio()));
 	if ( esercizio == null )

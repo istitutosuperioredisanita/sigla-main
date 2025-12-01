@@ -384,7 +384,7 @@ public Forward doCreaCompenso(ActionContext context) {
 		else
 			carriera.setVisualizzaIncarico(false);
 		
-		if(carriera.getPg_minicarriera()!=null && !(carriera.getPg_minicarriera().compareTo(new Long(0)) <0))
+		if(carriera.getPg_minicarriera()!=null && !(carriera.getPg_minicarriera().compareTo(Long.valueOf(0)) <0))
 		{
 			if(carriera.isVisualizzaPrestazione() && (carriera.getTipoPrestazioneCompenso() == null || carriera.getTipoPrestazioneCompenso().getCrudStatus()== OggettoBulk.UNDEFINED))
 			{
@@ -470,7 +470,7 @@ public Forward doOnAnticipoPosticipoChange(ActionContext context) {
 		MinicarrieraBulk carriera = (MinicarrieraBulk)bp.getModel();
 
 		if (carriera.TIPO_NESSUNO.equalsIgnoreCase(carriera.getTi_anticipo_posticipo())) {
-			carriera.setMesi_anticipo_posticipo(new Integer(0));
+			carriera.setMesi_anticipo_posticipo(Integer.valueOf(0));
 		}
 		
 		return context.findDefaultForward();
@@ -616,7 +616,7 @@ public Forward doOnDtFineValiditaChange(ActionContext context) {
 			throw new it.cnr.jada.comp.ApplicationException("Operazione non consentita. Non è possibile cambiare l'anno poichè il Terzo scelto potrebbe essere soggetto ad Agevolazioni per 'Rientro dei Cervelli'.");
 		}
 		if (!((MinicarrieraBulk)bp.getModel()).getFl_tassazione_separata().booleanValue())
-		((MinicarrieraBulk)bp.getModel()).setNumero_rate(new Integer(it.cnr.jada.util.DateUtils.monthsBetweenDates(new Date(((MinicarrieraBulk)bp.getModel()).getDt_inizio_minicarriera().getTime()),new Date(((MinicarrieraBulk)bp.getModel()).getDt_fine_minicarriera().getTime()))));
+		((MinicarrieraBulk)bp.getModel()).setNumero_rate(Integer.valueOf(it.cnr.jada.util.DateUtils.monthsBetweenDates(new Date(((MinicarrieraBulk)bp.getModel()).getDt_inizio_minicarriera().getTime()),new Date(((MinicarrieraBulk)bp.getModel()).getDt_fine_minicarriera().getTime()))));
 		
 		if (!bp.isSearching()) {
 			MinicarrieraBulk carriera = (MinicarrieraBulk)bp.getModel();
@@ -681,11 +681,11 @@ public Forward doOnDtInizioValiditaChange(ActionContext context) {
 				
 			OptionBP option = openConfirm(context, msg , OptionBP.CONFIRM_YES_NO,"doConfermaModificaDataInizioValidita");
 			option.addAttribute("oldDataIni", oldDataInizio);
-			option.addAttribute("errorCodeTerzo", new Integer(errorCodeTerzo));
+			option.addAttribute("errorCodeTerzo", Integer.valueOf(errorCodeTerzo));
 			return option;
 		}
 		if (!((MinicarrieraBulk)bp.getModel()).getFl_tassazione_separata().booleanValue())
-		((MinicarrieraBulk)bp.getModel()).setNumero_rate(new Integer(it.cnr.jada.util.DateUtils.monthsBetweenDates(new Date(((MinicarrieraBulk)bp.getModel()).getDt_inizio_minicarriera().getTime()),new Date(((MinicarrieraBulk)bp.getModel()).getDt_fine_minicarriera().getTime()))));		
+		((MinicarrieraBulk)bp.getModel()).setNumero_rate(Integer.valueOf(it.cnr.jada.util.DateUtils.monthsBetweenDates(new Date(((MinicarrieraBulk)bp.getModel()).getDt_inizio_minicarriera().getTime()),new Date(((MinicarrieraBulk)bp.getModel()).getDt_fine_minicarriera().getTime()))));
 		try {
 			bp.findTipiRapporto(context);
 		} catch (BusinessProcessException e) {
@@ -743,7 +743,7 @@ public Forward doOnDtRegistrazioneChange(ActionContext context) {
 					
 				OptionBP option = openConfirm(context, msg , OptionBP.CONFIRM_YES_NO,"doConfermaModificaDataRegistrazione");
 				option.addAttribute("dataReg", oldDataReg);
-				option.addAttribute("errorCodeTerzo", new Integer(errorCodeTerzo));
+				option.addAttribute("errorCodeTerzo", Integer.valueOf(errorCodeTerzo));
 				return option;
 			}
 		}
@@ -918,9 +918,9 @@ public Forward doOnFlTassazioneSeparataChange(ActionContext context) {
 		if  (!bp.isSearching()){
 			MinicarrieraBulk carriera = (MinicarrieraBulk)bp.getModel();
 			if (!carriera.getFl_tassazione_separata().booleanValue())
-				carriera.setNumero_rate(new Integer(it.cnr.jada.util.DateUtils.monthsBetweenDates(new Date(((MinicarrieraBulk)bp.getModel()).getDt_inizio_minicarriera().getTime()),new Date(((MinicarrieraBulk)bp.getModel()).getDt_fine_minicarriera().getTime()))));
+				carriera.setNumero_rate(Integer.valueOf(it.cnr.jada.util.DateUtils.monthsBetweenDates(new Date(((MinicarrieraBulk)bp.getModel()).getDt_inizio_minicarriera().getTime()),new Date(((MinicarrieraBulk)bp.getModel()).getDt_fine_minicarriera().getTime()))));
 			else
-				carriera.setNumero_rate(new Integer(1));
+				carriera.setNumero_rate(Integer.valueOf(1));
 		}
 	return doOnTipoRapportoChange(context);
 	}catch (Throwable ex) {

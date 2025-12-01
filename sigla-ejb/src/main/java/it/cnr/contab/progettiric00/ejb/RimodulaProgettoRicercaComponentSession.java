@@ -19,7 +19,7 @@ package it.cnr.contab.progettiric00.ejb;
 
 import java.util.List;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.progettiric00.core.bulk.Progetto_rimodulazioneBulk;
 import it.cnr.jada.UserContext;

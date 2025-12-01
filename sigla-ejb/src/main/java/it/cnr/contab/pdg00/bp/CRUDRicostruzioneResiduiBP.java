@@ -25,7 +25,7 @@ package it.cnr.contab.pdg00.bp;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 
 import it.cnr.contab.chiusura00.ejb.RicercaDocContComponentSession;
 import it.cnr.contab.config00.sto.bulk.CdrBulk;
@@ -102,7 +102,7 @@ public class CRUDRicostruzioneResiduiBP extends it.cnr.jada.util.action.SimpleCR
 			throw handleException( new ApplicationException("Non è possibile utilizzare questa funzione perchè è stato effettuato il ribaltamento complessivo dei documenti contabili per il CDS "+CNRUserContext.getCd_cds(context.getUserContext())));
 		}
 		// dal 2006 non si deve usare più questa funzione (è brutto questo controllo così, ma non importa
-		if (((CNRUserContext)context.getUserContext()).getEsercizio().compareTo(new Integer(2006))>=0) {
+		if (((CNRUserContext)context.getUserContext()).getEsercizio().compareTo(Integer.valueOf(2006))>=0) {
 			throw handleException( new ApplicationException("Funzione non utilizzabile per questo esercizio contabile."));
 		}
 		getCrudDettagli().setMultiSelection(false);

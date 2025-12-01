@@ -34,6 +34,8 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.action.SelectionIterator;
 import it.cnr.jada.util.jsp.Button;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 public class RimodulaProgettoPianoEconomicoVoceBilancioCRUDController extends SimpleProgettoPianoEconomicoVoceBilancioCRUDController {
 	public RimodulaProgettoPianoEconomicoVoceBilancioCRUDController(String name, Class modelClass, String listPropertyName, it.cnr.jada.util.action.FormController parent) {
@@ -89,10 +91,10 @@ public class RimodulaProgettoPianoEconomicoVoceBilancioCRUDController extends Si
 	
     @Override
     public void writeHTMLToolbar(
-            javax.servlet.jsp.PageContext context,
+            PageContext context,
             boolean reset,
             boolean find,
-            boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+            boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
     	Progetto_piano_economicoBulk ppe = (Progetto_piano_economicoBulk)getParentController().getModel();
     	boolean isPpeEliminato = Optional.ofNullable(ppe).map(Progetto_piano_economicoBulk::isDetailRimodulatoEliminato).orElse(Boolean.FALSE);
     	if (isPpeEliminato)

@@ -18,8 +18,8 @@
 package it.cnr.contab.doccont00.ejb;
 import java.rmi.RemoteException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 import it.cnr.contab.doccont00.comp.CupComponent;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
@@ -31,9 +31,7 @@ public class CupComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessio
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.doccont00.comp.CupComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new CupComponentSessionBean();
-}
+
 public String recuperoCds(UserContext param0) throws ComponentException,
 		PersistencyException, IntrospectionException, RemoteException {
 	pre_component_invocation(param0,componentObj);

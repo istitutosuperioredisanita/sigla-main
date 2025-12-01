@@ -17,8 +17,8 @@
 
 package it.cnr.contab.incarichi00.ejb;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.incarichi00.comp.RepertorioLimitiComponent;
 
@@ -31,10 +31,8 @@ public class RepertorioLimitiComponentSessionBean extends it.cnr.jada.ejb.CRUDCo
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.incarichi00.comp.RepertorioLimitiComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new RepertorioLimitiComponentSessionBean();
-	}
-	public it.cnr.contab.incarichi00.bulk.Repertorio_limitiBulk getRepertorioLimiti(it.cnr.jada.UserContext param0,int param1,java.lang.String param2,java.lang.String param3,java.lang.String param4) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public it.cnr.contab.incarichi00.bulk.Repertorio_limitiBulk getRepertorioLimiti(it.cnr.jada.UserContext param0,int param1,java.lang.String param2,java.lang.String param3,java.lang.String param4) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.incarichi00.bulk.Repertorio_limitiBulk result = ((RepertorioLimitiComponent)componentObj).getRepertorioLimiti(param0,param1,param2,param3,param4);
@@ -52,7 +50,7 @@ public class RepertorioLimitiComponentSessionBean extends it.cnr.jada.ejb.CRUDCo
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.incarichi00.bulk.Repertorio_limitiBulk aggiornaRepertorioLimiti(it.cnr.jada.UserContext param0,int param1,java.lang.String param2,java.lang.String param3,java.lang.String param4,java.math.BigDecimal param5) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.incarichi00.bulk.Repertorio_limitiBulk aggiornaRepertorioLimiti(it.cnr.jada.UserContext param0,int param1,java.lang.String param2,java.lang.String param3,java.lang.String param4,java.math.BigDecimal param5) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.incarichi00.bulk.Repertorio_limitiBulk result = ((RepertorioLimitiComponent)componentObj).aggiornaRepertorioLimiti(param0,param1,param2,param3,param4,param5);

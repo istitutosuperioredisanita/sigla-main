@@ -88,7 +88,7 @@ public java.lang.Integer getPriorita() {
 public java.util.Dictionary getPrioritaKeys() {
 	it.cnr.jada.util.OrderedHashtable prioritaKeys = new it.cnr.jada.util.OrderedHashtable();
 	for ( int i = 1; i <= nrImpegni; i ++ )
-		prioritaKeys.put( new Integer( i ),new Integer( i ) );
+		prioritaKeys.put( Integer.valueOf( i ),Integer.valueOf( i ) );
 	return prioritaKeys;
 }
 /**

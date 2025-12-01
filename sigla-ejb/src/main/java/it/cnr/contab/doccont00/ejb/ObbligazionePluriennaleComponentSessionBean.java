@@ -24,10 +24,10 @@ import it.cnr.contab.doccont00.core.bulk.Obbligazione_pluriennaleBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -37,9 +37,7 @@ public class ObbligazionePluriennaleComponentSessionBean extends ObbligazioneCom
 	public void ejbCreate() {
 	componentObj = new ObbligazionePluriennaleComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new ObbligazionePluriennaleComponentSessionBean();
-}
+
 
 	@Override
 	public List<Obbligazione_pluriennaleBulk> findObbligazioniPluriennali(UserContext uc, int esercizio) throws ComponentException, RemoteException {

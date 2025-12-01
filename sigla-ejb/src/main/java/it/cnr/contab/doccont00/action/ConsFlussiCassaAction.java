@@ -25,7 +25,7 @@ import it.cnr.jada.action.Forward;
 import it.cnr.jada.util.action.BulkAction;
 import it.cnr.jada.util.action.SelezionatoreListaBP;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 import java.rmi.RemoteException;
 import java.util.Optional;
 

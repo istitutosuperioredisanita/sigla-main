@@ -60,7 +60,7 @@ public DocumentiAmministrativiProtocollabiliAction() {
  * Al business process viene anche chiesto l'elenco delle colonne da
  * visualizzare.
  */
-public Forward doCerca(ActionContext context) throws java.rmi.RemoteException,InstantiationException,javax.ejb.RemoveException {
+public Forward doCerca(ActionContext context) throws java.rmi.RemoteException,InstantiationException,jakarta.ejb.RemoveException {
 
 	DocumentiAmministrativiProtocollabiliBP bp = (DocumentiAmministrativiProtocollabiliBP)context.getBusinessProcess();
 	try {
@@ -295,7 +295,7 @@ private it.cnr.jada.util.action.SelectionListener getSelectionListener(
 		public java.util.BitSet setSelection(it.cnr.jada.action.ActionContext context, it.cnr.jada.bulk.OggettoBulk[] bulks, java.util.BitSet oldSelection, java.util.BitSet newSelection) throws it.cnr.jada.action.BusinessProcessException {
 			try {
 				if (counter == null) {
-					counter = new Integer(0);
+					counter = Integer.valueOf(0);
 					filtro.setPgProtocollazioneIVA(session.callGetPgPerProtocolloIVA(context.getUserContext()));
 					filtro.setPgStampa(session.callGetPgPerStampa(context.getUserContext()));
 				}

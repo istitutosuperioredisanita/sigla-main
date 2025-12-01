@@ -28,7 +28,10 @@ import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.action.Selection;
 import it.cnr.jada.util.jsp.TableCustomizer;
 
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.PageContext;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -247,10 +250,10 @@ public class OrdiniCRUDController extends it.cnr.jada.util.action.CollapsableDet
 
     @Override
     public void writeHTMLToolbar(
-            javax.servlet.jsp.PageContext context,
+            PageContext context,
             boolean reset,
             boolean find,
-            boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+            boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
         super.writeHTMLToolbar(context, reset, find, delete, false);
         boolean isFromBootstrap = HttpActionContext.isFromBootstrap(context);

@@ -17,8 +17,8 @@
 
 package it.cnr.contab.doccont00.ejb;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.doccont00.comp.ObbligazioneResComponent;
 @Stateless(name="CNRDOCCONT00_EJB_ObbligazioneResComponentSession")
@@ -27,10 +27,8 @@ public class ObbligazioneResComponentSessionBean extends ObbligazioneComponentSe
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.doccont00.comp.ObbligazioneResComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new ObbligazioneResComponentSessionBean();
-}
-public String controllaDettagliScadenzaObbligazione(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk param1,it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public String controllaDettagliScadenzaObbligazione(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk param1,it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		String result = ((ObbligazioneResComponent)componentObj).controllaDettagliScadenzaObbligazione(param0,param1,param2);

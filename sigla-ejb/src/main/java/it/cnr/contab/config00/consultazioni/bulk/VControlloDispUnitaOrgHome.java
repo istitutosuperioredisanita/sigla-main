@@ -31,7 +31,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.*;
 import it.cnr.jada.persistency.sql.*;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 public class VControlloDispUnitaOrgHome extends BulkHome {
 	public VControlloDispUnitaOrgHome(Connection conn) {

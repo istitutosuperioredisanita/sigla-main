@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.config00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.config00.comp.Parametri_uoComponent;
 /**
@@ -29,10 +29,8 @@ public class Parametri_uoComponentSessionBean extends it.cnr.jada.ejb.CRUDCompon
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.config00.comp.Parametri_uoComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new Parametri_uoComponentSessionBean();
-	}
-	public boolean isFlGestioneModuliEnabled(it.cnr.jada.UserContext param0, it.cnr.contab.config00.bulk.Parametri_uoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public boolean isFlGestioneModuliEnabled(it.cnr.jada.UserContext param0, it.cnr.contab.config00.bulk.Parametri_uoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((Parametri_uoComponent)componentObj).isFlGestioneModuliEnabled(param0,param1);
@@ -50,7 +48,7 @@ public class Parametri_uoComponentSessionBean extends it.cnr.jada.ejb.CRUDCompon
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.config00.bulk.Parametri_uoBulk getParametriUo(it.cnr.jada.UserContext param0, java.lang.Integer param1, it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.config00.bulk.Parametri_uoBulk getParametriUo(it.cnr.jada.UserContext param0, java.lang.Integer param1, it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.config00.bulk.Parametri_uoBulk result = ((Parametri_uoComponent)componentObj).getParametriUo(param0,param1,param2);

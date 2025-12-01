@@ -33,7 +33,7 @@ import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.persistency.PersistencyException;
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 public class TipoMovimentoMagHome extends BulkHome {
 	public TipoMovimentoMagHome(Connection conn) {

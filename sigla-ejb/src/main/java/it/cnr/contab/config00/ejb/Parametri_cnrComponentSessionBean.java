@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.config00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.config00.comp.Parametri_cnrComponent;
 /**
@@ -29,10 +29,8 @@ public class Parametri_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUDCompo
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.config00.comp.Parametri_cnrComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new Parametri_cnrComponentSessionBean();
-	}
-	public boolean isLivelloPdgDecisionaleSpeEnabled(it.cnr.jada.UserContext param0, it.cnr.contab.config00.bulk.Parametri_cnrBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public boolean isLivelloPdgDecisionaleSpeEnabled(it.cnr.jada.UserContext param0, it.cnr.contab.config00.bulk.Parametri_cnrBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((Parametri_cnrComponent)componentObj).isLivelloPdgDecisionaleSpeEnabled(param0,param1);
@@ -50,7 +48,7 @@ public class Parametri_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUDCompo
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public boolean isLivelloPdgDecisionaleEtrEnabled(it.cnr.jada.UserContext param0, it.cnr.contab.config00.bulk.Parametri_cnrBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public boolean isLivelloPdgDecisionaleEtrEnabled(it.cnr.jada.UserContext param0, it.cnr.contab.config00.bulk.Parametri_cnrBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((Parametri_cnrComponent)componentObj).isLivelloPdgDecisionaleEtrEnabled(param0,param1);
@@ -68,7 +66,7 @@ public class Parametri_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUDCompo
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.config00.bulk.Parametri_cnrBulk getParametriCnr(it.cnr.jada.UserContext param0, java.lang.Integer param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.config00.bulk.Parametri_cnrBulk getParametriCnr(it.cnr.jada.UserContext param0, java.lang.Integer param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.config00.bulk.Parametri_cnrBulk result = ((Parametri_cnrComponent)componentObj).getParametriCnr(param0,param1);
@@ -86,7 +84,7 @@ public class Parametri_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUDCompo
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}	
-	public boolean isLivelloPdgContrattazioneSpeEnabled(it.cnr.jada.UserContext param0, it.cnr.contab.config00.bulk.Parametri_cnrBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException{
+	public boolean isLivelloPdgContrattazioneSpeEnabled(it.cnr.jada.UserContext param0, it.cnr.contab.config00.bulk.Parametri_cnrBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException{
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((Parametri_cnrComponent)componentObj).isLivelloPdgContrattazioneSpeEnabled(param0,param1);
@@ -104,7 +102,7 @@ public class Parametri_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUDCompo
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public boolean isCofogObbligatorio(it.cnr.jada.UserContext param0 ) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException{
+	public boolean isCofogObbligatorio(it.cnr.jada.UserContext param0 ) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException{
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((Parametri_cnrComponent)componentObj).isCofogObbligatorio(param0);

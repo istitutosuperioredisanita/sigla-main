@@ -803,7 +803,7 @@ public class BltVisiteComponent extends CRUDComponent {
 				}
 			}
 		} 
-		catch (javax.ejb.EJBException e) 
+		catch (jakarta.ejb.EJBException e)
 		{
 			throw handleException(visita, e);
 		} 

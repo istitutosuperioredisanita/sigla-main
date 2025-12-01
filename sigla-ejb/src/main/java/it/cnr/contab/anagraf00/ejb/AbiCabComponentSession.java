@@ -17,7 +17,7 @@
 
 package it.cnr.contab.anagraf00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface AbiCabComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

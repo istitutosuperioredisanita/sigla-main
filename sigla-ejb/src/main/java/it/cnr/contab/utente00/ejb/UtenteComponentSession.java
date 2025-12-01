@@ -22,7 +22,7 @@ import it.cnr.contab.utenze00.bulk.UtenteFirmaDettaglioBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface UtenteComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

@@ -17,7 +17,7 @@
 
 package it.cnr.contab.config00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface Tipologia_linea_attivitaComponentSession extends it.cnr.jada.ejb.CRUDDetailComponentSession {

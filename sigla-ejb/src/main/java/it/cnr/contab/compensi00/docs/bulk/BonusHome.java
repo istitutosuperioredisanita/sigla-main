@@ -40,8 +40,8 @@ public class BonusHome extends BulkHome {
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,OggettoBulk bulk) throws PersistencyException {
 		try {
 				((BonusBulk)bulk).setPg_bonus(
-					new Long(
-						((Long)findAndLockMax( bulk, "pg_bonus", new Long(0) )).longValue()+1
+					Long.valueOf(
+						((Long)findAndLockMax( bulk, "pg_bonus", Long.valueOf(0) )).longValue()+1
 					)
 				);
 			} catch(it.cnr.jada.bulk.BusyResourceException e) {

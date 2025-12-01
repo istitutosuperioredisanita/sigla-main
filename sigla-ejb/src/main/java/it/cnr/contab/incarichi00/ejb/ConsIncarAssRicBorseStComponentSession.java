@@ -26,7 +26,7 @@ import it.cnr.jada.util.RemoteIterator;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 @Remote
 public interface ConsIncarAssRicBorseStComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
 	RemoteIterator findIncarichi(UserContext param0, VIncarichiAssRicBorseStBulk param1) throws PersistencyException, IntrospectionException, ComponentException, RemoteException;

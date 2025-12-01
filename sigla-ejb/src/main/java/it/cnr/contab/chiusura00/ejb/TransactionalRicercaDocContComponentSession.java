@@ -18,7 +18,7 @@
 package it.cnr.contab.chiusura00.ejb;
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;

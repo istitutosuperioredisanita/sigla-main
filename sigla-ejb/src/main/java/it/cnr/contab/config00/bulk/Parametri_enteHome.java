@@ -62,7 +62,7 @@ public class Parametri_enteHome extends BulkHome
 
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,OggettoBulk parEnte) throws PersistencyException {
 		try {
-			((Parametri_enteBulk)parEnte).setId(new Integer( ((Integer)findAndLockMax( parEnte, "id", new Integer(0) )).intValue()+1 ));
+			((Parametri_enteBulk)parEnte).setId(Integer.valueOf( ((Integer)findAndLockMax( parEnte, "id", Integer.valueOf(0) )).intValue()+1 ));
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {
 			throw new PersistencyException(e);
 		}

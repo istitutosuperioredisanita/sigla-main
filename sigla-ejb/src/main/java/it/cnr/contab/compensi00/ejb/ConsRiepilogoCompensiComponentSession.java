@@ -19,7 +19,7 @@ package it.cnr.contab.compensi00.ejb;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.docamm00.consultazioni.bulk.VConsRiepCompensiBulk;
 import it.cnr.jada.UserContext;

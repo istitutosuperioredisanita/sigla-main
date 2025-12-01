@@ -20,7 +20,7 @@ package it.cnr.contab.ordmag.ordini.ejb;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.ordmag.magazzino.bulk.BollaScaricoMagBulk;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineBulk;

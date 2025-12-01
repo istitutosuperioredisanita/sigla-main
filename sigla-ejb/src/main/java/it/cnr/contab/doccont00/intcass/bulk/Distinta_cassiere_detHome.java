@@ -133,9 +133,9 @@ public Long getUltimoPg_Dettaglio(it.cnr.jada.UserContext userContext,Distinta_c
 			try
 			{	
 				if ( rs.next() )
-					return  new Long( rs.getLong(1) + 1) ;
+					return  Long.valueOf( rs.getLong(1) + 1) ;
 				else
-					return  new Long( 1 ) ;
+					return  Long.valueOf( 1 ) ;
 			}
 			finally
 			{

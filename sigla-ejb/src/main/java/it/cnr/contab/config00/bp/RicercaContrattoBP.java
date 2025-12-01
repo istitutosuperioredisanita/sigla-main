@@ -24,9 +24,10 @@ import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.ejb.EJBException;
-import javax.servlet.ServletException;
-import javax.servlet.jsp.PageContext;
+import jakarta.ejb.EJBException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
@@ -100,7 +101,7 @@ public class RicercaContrattoBP extends BusinessProcess implements ResponseXMLBP
 			size=getContratti().size();
 		else
 			size=0;
-		Node n = xmldoc.createTextNode(new Integer(size).toString());
+		Node n = xmldoc.createTextNode(Integer.valueOf(size).toString());
     	e.appendChild(n);
 		return e;	
 	}
@@ -282,7 +283,7 @@ public class RicercaContrattoBP extends BusinessProcess implements ResponseXMLBP
 	}
 	return null;
 }
-public void generaXML(PageContext pagecontext) throws IOException, ServletException{
+public void generaXML(PageContext pagecontext) throws IOException, ServletException {
 	try {
 			Parametri_enteBulk parametriEnte=null;
 	    	java.sql.Connection conn=null;
@@ -456,7 +457,7 @@ try{
 			}
 	}
 	if(esercizio_da!= null){
-		Integer esercizio=new Integer(esercizio_da);
+		Integer esercizio=Integer.valueOf(esercizio_da);
 		if (esercizio <1900){
 			codiceErrore = Constants.ERRORE_CON_202;
 			descErroreDett =" - Esercizio Da";
@@ -465,7 +466,7 @@ try{
 	}else 
 		setEsercizio_da(1900);
 	if(esercizio_a!= null){
-		Integer esercizio=new Integer(esercizio_a);
+		Integer esercizio=Integer.valueOf(esercizio_a);
 		if (esercizio >2999){
 			codiceErrore = Constants.ERRORE_CON_202;
 			descErroreDett =" - Esercizio A";
@@ -474,7 +475,7 @@ try{
 	}else
 		setEsercizio_a(2999);
 	if(id!= null){
-		Long i=new Long(id);
+		Long i=Long.valueOf(id);
 		if (i <1){
 			codiceErrore = Constants.ERRORE_CON_202;
 			descErroreDett =" - Id";
@@ -482,7 +483,7 @@ try{
 		}
 	}
 	if(num!= null){
-		Integer i=new Integer(num);
+		Integer i=Integer.valueOf(num);
 		if (i <1){
 			codiceErrore = Constants.ERRORE_CON_202;
 			descErroreDett =" - Numero risultati";
@@ -491,7 +492,7 @@ try{
 	}else
 		setNum(20);
 	if(daNum!= null){
-		Integer i=new Integer(daNum);
+		Integer i=Integer.valueOf(daNum);
 		if (i <1){
 			codiceErrore = Constants.ERRORE_CON_202;
 			descErroreDett =" - dal Numero";
@@ -500,14 +501,14 @@ try{
 	}else 
 	    setDaNum(1);
 }else{
-	Integer es=new Integer(esercizio);
+	Integer es=Integer.valueOf(esercizio);
 	if (es >2999||es<1900){
 		codiceErrore = Constants.ERRORE_CON_202;
 		descErroreDett =" - Esercizio";
 		return;
 	}
 	if(id!= null){
-		Long i=new Long(id);
+		Long i=Long.valueOf(id);
 		if (i <1){
 			codiceErrore = Constants.ERRORE_CON_202;
 			descErroreDett =" - Id";
@@ -539,8 +540,8 @@ try{
 		 			descErroreDett =" - Uo";
 		 			return;
 		    	 }
-		    	 Integer test=new Integer(uo_sel.substring(0,3));
-		    	 	     test=new Integer(uo_sel.substring(4,7));
+		    	 Integer test=Integer.valueOf(uo_sel.substring(0,3));
+		    	 	     test=Integer.valueOf(uo_sel.substring(4,7));
 				} catch (NumberFormatException e) {
 					codiceErrore = Constants.ERRORE_CON_202;
 		 			descErroreDett =" - Uo";

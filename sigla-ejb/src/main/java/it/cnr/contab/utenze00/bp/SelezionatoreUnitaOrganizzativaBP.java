@@ -18,7 +18,7 @@
 package it.cnr.contab.utenze00.bp;
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.config00.sto.bulk.CdrBulk;
@@ -113,16 +113,16 @@ public class SelezionatoreUnitaOrganizzativaBP extends it.cnr.jada.util.action.S
 		bp.setRadiceAlbero_main(context, getComponentSession().generaAlberoPerUtente(context.getUserContext(),bp.getUserInfo().getUtente(),uo.getCd_unita_organizzativa(),null,(short)0));
 	}
 	
-	private CRUDComponentSession createCRUDComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException{
+	private CRUDComponentSession createCRUDComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException{
 		return (CRUDComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("JADAEJB_CRUDComponentSession");
 	}
 	
-	public GestioneLoginComponentSession getComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public GestioneLoginComponentSession getComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 		return (GestioneLoginComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRUTENZE00_NAV_EJB_GestioneLoginComponentSession",GestioneLoginComponentSession.class);
 	}
 	
 	public UtenteComponentSession createUtenteComponentSession()
-	throws javax.ejb.EJBException,
+	throws jakarta.ejb.EJBException,
 			java.rmi.RemoteException,
 			BusinessProcessException {
 		return (UtenteComponentSession)createComponentSession("CNRUTENZE00_EJB_UtenteComponentSession",UtenteComponentSession.class);

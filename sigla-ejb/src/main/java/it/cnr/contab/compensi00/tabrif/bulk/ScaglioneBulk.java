@@ -213,7 +213,7 @@ public void resetImporti(){
 	setIm_inferiore(new java.math.BigDecimal(0));
 	setIm_superiore(null);
 //	setAliquota(new java.math.BigDecimal(0));
-	setBase_calcolo(new Integer(100));
+	setBase_calcolo(Integer.valueOf(100));
 }
 public void setCd_contributo_ritenuta(java.lang.String cd_contributo_ritenuta) {
 	this.getContributo_ritenuta().setCd_contributo_ritenuta(cd_contributo_ritenuta);
@@ -339,8 +339,8 @@ public void validate() throws ValidationException
 
 	// controllo sulla BASE di CALCOLO
 	if((getBase_calcolo() == null) ||
-	   (getBase_calcolo().compareTo( new Integer(1)) < 0) ||
-	   (getBase_calcolo().compareTo( new Integer(100)) > 0))
+	   (getBase_calcolo().compareTo( Integer.valueOf(1)) < 0) ||
+	   (getBase_calcolo().compareTo( Integer.valueOf(100)) > 0))
 		throw new ValidationException( "La percentuale BASE di CALCOLO deve essere compresa tra 1 e 100" );			
 }		
 }

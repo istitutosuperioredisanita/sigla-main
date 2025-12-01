@@ -104,7 +104,7 @@ public OggettoBulk creaConBulk (UserContext aUC,OggettoBulk bulk) throws Compone
 	}
 
 	ubi.setCd_ubicazione(str);
-	ubi.setLivello(new Integer(livello));
+	ubi.setLivello(Integer.valueOf(livello));
 
 	return super.creaConBulk(aUC, ubi);
 

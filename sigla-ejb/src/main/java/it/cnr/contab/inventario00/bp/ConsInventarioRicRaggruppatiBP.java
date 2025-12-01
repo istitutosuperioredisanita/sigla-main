@@ -28,7 +28,7 @@ import it.cnr.jada.util.action.ConsultazioniBP;
 
 public class ConsInventarioRicRaggruppatiBP extends ConsultazioniBP
 {
-	public ConsRegistroInventarioComponentSession createConsRegistroInventarioComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public ConsRegistroInventarioComponentSession createConsRegistroInventarioComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		return (ConsRegistroInventarioComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_ConsRegistroInventarioComponentSession", ConsRegistroInventarioComponentSession.class);
 	}
 	

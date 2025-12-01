@@ -18,8 +18,8 @@
 package it.cnr.contab.cori00.ejb;
 import java.rmi.RemoteException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.cori00.comp.Liquid_coriComponent;
@@ -39,10 +39,8 @@ public class Liquid_coriComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.cori00.comp.Liquid_coriComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new Liquid_coriComponentSessionBean();
-}
-public it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk calcolaLiquidazione(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk calcolaLiquidazione(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk result = ((Liquid_coriComponent)componentObj).calcolaLiquidazione(param0,param1);
@@ -60,7 +58,7 @@ public it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk calcolaLiquidazione(it.cnr
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.util.RemoteIterator cerca(it.cnr.jada.UserContext param0,it.cnr.jada.persistency.sql.CompoundFindClause param1,java.lang.Class param2,it.cnr.jada.bulk.OggettoBulk param3,java.lang.String param4) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.util.RemoteIterator cerca(it.cnr.jada.UserContext param0,it.cnr.jada.persistency.sql.CompoundFindClause param1,java.lang.Class param2,it.cnr.jada.bulk.OggettoBulk param3,java.lang.String param4) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.util.RemoteIterator result = ((Liquid_coriComponent)componentObj).cerca(param0,param1,param2,param3,param4);
@@ -78,7 +76,7 @@ public it.cnr.jada.util.RemoteIterator cerca(it.cnr.jada.UserContext param0,it.c
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk creaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1,it.cnr.jada.bulk.OggettoBulk param2,java.lang.String param3) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk creaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1,it.cnr.jada.bulk.OggettoBulk param2,java.lang.String param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((Liquid_coriComponent)componentObj).creaConBulk(param0,param1,param2,param3);
@@ -96,7 +94,7 @@ public it.cnr.jada.bulk.OggettoBulk creaConBulk(it.cnr.jada.UserContext param0,i
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public void eliminaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1,java.lang.String param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public void eliminaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1,java.lang.String param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		((Liquid_coriComponent)componentObj).eliminaConBulk(param0,param1,param2);
@@ -113,7 +111,7 @@ public void eliminaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.Ogget
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public void eliminaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk[] param1,it.cnr.jada.bulk.OggettoBulk param2,java.lang.String param3) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public void eliminaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk[] param1,it.cnr.jada.bulk.OggettoBulk param2,java.lang.String param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		((Liquid_coriComponent)componentObj).eliminaConBulk(param0,param1,param2,param3);
@@ -130,7 +128,7 @@ public void eliminaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.Ogget
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk eseguiLiquidazione(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk param1,java.util.List param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk eseguiLiquidazione(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk param1,java.util.List param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk result = ((Liquid_coriComponent)componentObj).eseguiLiquidazione(param0,param1,param2);
@@ -148,7 +146,7 @@ public it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk eseguiLiquidazione(it.cnr.
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerInserimento(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1,it.cnr.jada.bulk.OggettoBulk param2,java.lang.String param3) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerInserimento(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1,it.cnr.jada.bulk.OggettoBulk param2,java.lang.String param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((Liquid_coriComponent)componentObj).inizializzaBulkPerInserimento(param0,param1,param2,param3);
@@ -166,7 +164,7 @@ public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerInserimento(it.cnr.jada.Us
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerModifica(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1,it.cnr.jada.bulk.OggettoBulk param2,java.lang.String param3) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerModifica(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1,it.cnr.jada.bulk.OggettoBulk param2,java.lang.String param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((Liquid_coriComponent)componentObj).inizializzaBulkPerModifica(param0,param1,param2,param3);
@@ -184,7 +182,7 @@ public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerModifica(it.cnr.jada.UserC
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk modificaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1,it.cnr.jada.bulk.OggettoBulk param2,java.lang.String param3) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk modificaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1,it.cnr.jada.bulk.OggettoBulk param2,java.lang.String param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((Liquid_coriComponent)componentObj).modificaConBulk(param0,param1,param2,param3);
@@ -202,7 +200,7 @@ public it.cnr.jada.bulk.OggettoBulk modificaConBulk(it.cnr.jada.UserContext para
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk eseguiLiquidazioneMassaCori(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquidazione_massa_coriBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk eseguiLiquidazioneMassaCori(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquidazione_massa_coriBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((Liquid_coriComponent)componentObj).eseguiLiquidazioneMassaCori(param0,param1);
@@ -220,7 +218,7 @@ public it.cnr.jada.bulk.OggettoBulk eseguiLiquidazioneMassaCori(it.cnr.jada.User
 			throw uncaughtError(param0,componentObj,e);
 		}
 }
-public it.cnr.jada.bulk.OggettoBulk cercaBatch(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquidazione_massa_coriBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk cercaBatch(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquidazione_massa_coriBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((Liquid_coriComponent)componentObj).cercaBatch(param0,param1);
@@ -238,7 +236,7 @@ public it.cnr.jada.bulk.OggettoBulk cercaBatch(it.cnr.jada.UserContext param0,it
 			throw uncaughtError(param0,componentObj,e);
 		}
 }
-public void callRibalta(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquid_gruppo_centroBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public void callRibalta(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquid_gruppo_centroBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		((Liquid_coriComponent)componentObj).callRibalta(param0,param1);
@@ -255,7 +253,7 @@ public void callRibalta(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.contab.cori00.docs.bulk.Liquid_gruppo_centroBulk cambiaStato(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquid_gruppo_centroBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.cori00.docs.bulk.Liquid_gruppo_centroBulk cambiaStato(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquid_gruppo_centroBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	
 	try {
@@ -274,7 +272,7 @@ public it.cnr.contab.cori00.docs.bulk.Liquid_gruppo_centroBulk cambiaStato(it.cn
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public boolean esisteRiga(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquid_gruppo_centroBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public boolean esisteRiga(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquid_gruppo_centroBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	
 	try {
@@ -293,7 +291,7 @@ public boolean esisteRiga(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.do
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public java.util.List EstraiLista(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public java.util.List EstraiLista(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.util.List result = ((Liquid_coriComponent)componentObj).EstraiLista(param0,param1);
@@ -311,7 +309,7 @@ public java.util.List EstraiLista(it.cnr.jada.UserContext param0,it.cnr.contab.c
 		throw uncaughtError(param0,componentObj,e);
 }
 }
-public it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk getAnagraficoEnte(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk getAnagraficoEnte(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk result = ((Liquid_coriComponent)componentObj).getAnagraficoEnte(param0);
@@ -329,7 +327,7 @@ public it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk getAnagraficoEnte(it.cnr
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public String getContoSpecialeEnteF24(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public String getContoSpecialeEnteF24(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		String result = ((Liquid_coriComponent)componentObj).getContoSpecialeEnteF24(param0);
@@ -347,7 +345,7 @@ public String getContoSpecialeEnteF24(it.cnr.jada.UserContext param0) throws it.
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public void Popola_f24(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public void Popola_f24(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		((Liquid_coriComponent)componentObj).Popola_f24(param0,param1);
@@ -364,7 +362,7 @@ public void Popola_f24(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public void Popola_f24Tot(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public void Popola_f24Tot(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		((Liquid_coriComponent)componentObj).Popola_f24Tot(param0,param1);
@@ -381,7 +379,7 @@ public void Popola_f24Tot(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.do
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public java.util.List EstraiListaTot(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public java.util.List EstraiListaTot(it.cnr.jada.UserContext param0,it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.util.List result = ((Liquid_coriComponent)componentObj).EstraiListaTot(param0,param1);
@@ -399,7 +397,7 @@ public java.util.List EstraiListaTot(it.cnr.jada.UserContext param0,it.cnr.conta
 		throw uncaughtError(param0,componentObj,e);
 }
 }
-public String getSedeInpsF24(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public String getSedeInpsF24(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		String result = ((Liquid_coriComponent)componentObj).getSedeInpsF24(param0);
@@ -417,7 +415,7 @@ public String getSedeInpsF24(it.cnr.jada.UserContext param0) throws it.cnr.jada.
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public Configurazione_cnrBulk getSedeInailF24(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public Configurazione_cnrBulk getSedeInailF24(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		Configurazione_cnrBulk result = ((Liquid_coriComponent)componentObj).getSedeInailF24(param0);
@@ -435,7 +433,7 @@ public Configurazione_cnrBulk getSedeInailF24(it.cnr.jada.UserContext param0) th
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public String getSedeInpdapF24(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public String getSedeInpdapF24(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		String result = ((Liquid_coriComponent)componentObj).getSedeInpdapF24(param0);
@@ -453,7 +451,7 @@ public String getSedeInpdapF24(it.cnr.jada.UserContext param0) throws it.cnr.jad
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public String getSedeInpgiF24(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public String getSedeInpgiF24(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		String result = ((Liquid_coriComponent)componentObj).getSedeInpgiF24(param0);
@@ -490,7 +488,7 @@ public void eliminaPendenti_f24Tot(UserContext param0) throws ComponentException
 	}
 	
 }
-	public RemoteIterator ricercaCori(UserContext userContext, ParSelConsLiqCoriBulk parametri) throws ComponentException,javax.ejb.EJBException {
+	public RemoteIterator ricercaCori(UserContext userContext, ParSelConsLiqCoriBulk parametri) throws ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(userContext,componentObj);
 		try {
 			RemoteIterator result = ((Liquid_coriComponent)componentObj).ricercaCori(userContext, parametri);

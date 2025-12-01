@@ -381,8 +381,8 @@ public boolean findRapportoDipendenteFor(AnagraficoBulk anagrafico) throws Intro
 					it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_TABNUM_EJB_Numerazione_baseComponentSession",
 																	it.cnr.contab.config00.tabnum.ejb.Numerazione_baseComponentSession.class);
 			((AnagraficoBulk)ngrfc).setCd_anag(
-				new Integer(
-					( numerazione.creaNuovoProgressivo(userContext,new Integer(0), "ANAGRAFICO", "CD_ANAG", ((AnagraficoBulk)ngrfc).getUser()) ).toString()
+				Integer.valueOf(
+					( numerazione.creaNuovoProgressivo(userContext,Integer.valueOf(0), "ANAGRAFICO", "CD_ANAG", ((AnagraficoBulk)ngrfc).getUser()) ).toString()
 				)
 			);
 		}catch(it.cnr.jada.bulk.BusyResourceException e) {

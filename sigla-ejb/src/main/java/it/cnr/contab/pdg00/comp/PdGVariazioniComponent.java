@@ -69,7 +69,7 @@ import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -319,9 +319,9 @@ public class PdGVariazioniComponent extends it.cnr.jada.comp.CRUDComponent
 	protected MessaggioBulk generaMessaggio(UserContext userContext, UtenteBulk utente, Pdg_variazioneBulk pdg, String tipo) throws ComponentException, PersistencyException {
 		MessaggioHome messHome = (MessaggioHome) getHome(userContext, MessaggioBulk.class);
 		MessaggioBulk messaggio = new MessaggioBulk();
-		messaggio.setPg_messaggio(new Long(messHome.fetchNextSequenceValue(userContext, "CNRSEQ00_PG_MESSAGGIO").longValue()));
+		messaggio.setPg_messaggio(Long.valueOf(messHome.fetchNextSequenceValue(userContext, "CNRSEQ00_PG_MESSAGGIO").longValue()));
 		messaggio.setCd_utente(utente.getCd_utente());
-		messaggio.setPriorita(new Integer(1));
+		messaggio.setPriorita(Integer.valueOf(1));
 		java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		if (tipo == null) {
 			messaggio.setDs_messaggio(sdf.format(EJBCommonServices.getServerTimestamp()) +
@@ -2658,7 +2658,7 @@ public class PdGVariazioniComponent extends it.cnr.jada.comp.CRUDComponent
 	
 //	per la stampa delle variazioni residuo conto terzi
 	public byte[] lanciaStampa(UserContext userContext, Integer esercizio,Integer pgVariazione, String tipo_variazione) 
-			throws PersistencyException, ComponentException, RemoteException, javax.ejb.EJBException {
+			throws PersistencyException, ComponentException, RemoteException, jakarta.ejb.EJBException {
 
 		String cdrPersonale = Optional.ofNullable(((Configurazione_cnrHome)getHome(userContext,Configurazione_cnrBulk.class)).getCdrPersonale(esercizio))
 				.orElseThrow(() -> new ComponentException("Non è possibile individuare il codice CDR del Personale per l'esercizio "+esercizio+"."));
@@ -2769,7 +2769,7 @@ public class PdGVariazioniComponent extends it.cnr.jada.comp.CRUDComponent
 			Integer numeroVariazione) throws  ComponentException {
 		try{
 			Pdg_variazioneBulk varPdg = (Pdg_variazioneBulk) getHome(userContext, Pdg_variazioneBulk.class).
-					findByPrimaryKey(new Pdg_variazioneBulk(esercizio,new Long(numeroVariazione)));
+					findByPrimaryKey(new Pdg_variazioneBulk(esercizio,Long.valueOf(numeroVariazione)));
 			varPdg.setToBeUpdated();
 			varPdg.setDt_firma(EJBCommonServices.getServerDate());
 			varPdg = (Pdg_variazioneBulk)super.modificaConBulk(userContext, varPdg);

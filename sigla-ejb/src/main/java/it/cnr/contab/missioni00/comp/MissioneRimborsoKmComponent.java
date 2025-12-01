@@ -112,7 +112,7 @@ public void eliminaConBulk (UserContext userContext, OggettoBulk bulk) throws Co
 			rimborsoKm.setDt_fine_validita(dataOdierna);
 	    	updateBulk(userContext, rimborsoKm);
 		}
-	}catch(javax.ejb.EJBException ex){
+	}catch(jakarta.ejb.EJBException ex){
 		throw handleException(bulk, ex);
 	}catch(it.cnr.jada.persistency.PersistencyException ex){
 		throw handleException(bulk, ex);

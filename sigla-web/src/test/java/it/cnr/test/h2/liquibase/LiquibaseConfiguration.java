@@ -19,6 +19,8 @@ package it.cnr.test.h2.liquibase;
 
 
 import it.cnr.contab.spring.configuration.GzipClassLoaderResourceAccessor;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
@@ -27,11 +29,9 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.TransactionManagement;
+import jakarta.ejb.TransactionManagementType;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Optional;

@@ -19,9 +19,9 @@ package it.cnr.contab.prevent01.ejb;
 
 import it.cnr.contab.prevent01.comp.SituazioneAmministrativaComponent;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
 
 @Stateless(name="CNRPREVENT01_EJB_SituazioneAmministrativaComponentSession")
 public class SituazioneAmministrativaComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements SituazioneAmministrativaComponentSession{
@@ -29,12 +29,10 @@ public class SituazioneAmministrativaComponentSessionBean extends it.cnr.jada.ej
 	public void ejbCreate() {
 	componentObj = new SituazioneAmministrativaComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-	return new SituazioneAmministrativaComponentSessionBean();
-}
+
 
 	@Override
-	public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((SituazioneAmministrativaComponent)componentObj).inizializzaBulkPerStampa(param0,param1);
@@ -54,7 +52,7 @@ public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBE
 	}
 
 	@Override
-	public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((SituazioneAmministrativaComponent)componentObj).stampaConBulk(param0,param1);

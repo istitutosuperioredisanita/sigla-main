@@ -30,9 +30,9 @@ import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v2.DatiFatturaType;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
 import javax.xml.bind.JAXBElement;
 
 
@@ -43,13 +43,11 @@ public class ElaboraFileIntraComponentSessionBean extends it.cnr.jada.ejb.CRUDCo
 		componentObj = new it.cnr.contab.docamm00.comp.ElaboraFileIntraComponent();
 	}
 	@Remove
-	public void ejbRemove() throws javax.ejb.EJBException {
+	public void ejbRemove() throws jakarta.ejb.EJBException {
 		componentObj.release();
 	}
 	
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new ElaboraFileIntraComponentSessionBean();
-	}
+	
 	public List EstraiLista(UserContext param0, OggettoBulk param1)
 			throws ComponentException, PersistencyException,
 			IntrospectionException, RemoteException {

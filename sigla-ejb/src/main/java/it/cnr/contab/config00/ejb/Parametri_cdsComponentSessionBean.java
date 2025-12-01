@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.config00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.config00.comp.Parametri_cdsComponent;
 
@@ -30,10 +30,8 @@ public class Parametri_cdsComponentSessionBean extends it.cnr.jada.ejb.CRUDCompo
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.config00.comp.Parametri_cdsComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new Parametri_cdsComponentSessionBean();
-	}
-	public it.cnr.contab.config00.bulk.Parametri_cdsBulk getParametriCds(it.cnr.jada.UserContext param0, java.lang.String param1, java.lang.Integer param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public it.cnr.contab.config00.bulk.Parametri_cdsBulk getParametriCds(it.cnr.jada.UserContext param0, java.lang.String param1, java.lang.Integer param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.config00.bulk.Parametri_cdsBulk result = ((Parametri_cdsComponent)componentObj).getParametriCds(param0,param1,param2);

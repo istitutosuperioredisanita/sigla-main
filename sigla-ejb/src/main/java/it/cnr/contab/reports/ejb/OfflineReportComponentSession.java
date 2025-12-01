@@ -17,7 +17,7 @@
 
 package it.cnr.contab.reports.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.reports.bulk.Print_priorityBulk;
 import it.cnr.contab.reports.bulk.Print_spoolerBulk;

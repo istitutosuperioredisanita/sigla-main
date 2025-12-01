@@ -77,7 +77,7 @@ public void doElaboraStralcioMensile(ActionContext context,V_cnr_estrazione_cori
 	try{
 		ElaboraFileStipendiComponentSession sess = (ElaboraFileStipendiComponentSession)createComponentSession();
 		setModel(context,sess.elaboraStralcioMensile(context.getUserContext(), dett));
-	}catch(javax.ejb.EJBException e){
+	}catch(jakarta.ejb.EJBException e){
 		throw handleException(e);
 	} catch(java.rmi.RemoteException re){
 		throw handleException(re);
@@ -100,7 +100,7 @@ public boolean esisteStralcioNegativo(ActionContext context,V_cnr_estrazione_cor
 	try{
 		ElaboraFileStipendiComponentSession sess = (ElaboraFileStipendiComponentSession)createComponentSession();
 		return sess.esisteStralcioNegativo(context.getUserContext(), dett);
-	}catch(javax.ejb.EJBException e){
+	}catch(jakarta.ejb.EJBException e){
 		throw handleException(e);
 	} catch(java.rmi.RemoteException re){
 		throw handleException(re);
@@ -113,7 +113,7 @@ public void doReset(ActionContext context,V_stipendi_cofi_dettBulk dett) throws 
 	try{
 		ElaboraFileStipendiComponentSession sess = (ElaboraFileStipendiComponentSession)createComponentSession();
 		setModel(context,sess.annullaElaborazione(context.getUserContext(), dett));
-	}catch(javax.ejb.EJBException e){
+	}catch(jakarta.ejb.EJBException e){
 		throw handleException(e);
 	} catch(java.rmi.RemoteException re){
 		throw handleException(re);

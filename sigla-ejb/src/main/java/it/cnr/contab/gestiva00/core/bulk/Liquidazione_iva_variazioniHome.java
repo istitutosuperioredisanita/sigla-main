@@ -35,8 +35,8 @@ public class Liquidazione_iva_variazioniHome extends BulkHome {
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,OggettoBulk bulk) throws PersistencyException {
 		try {
 			((Liquidazione_iva_variazioniBulk)bulk).setPg_dettaglio(
-				new Long(
-					((Long)findAndLockMax( bulk, "pg_dettaglio", new Long(0) )).longValue()+1
+				Long.valueOf(
+					((Long)findAndLockMax( bulk, "pg_dettaglio", Long.valueOf(0) )).longValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

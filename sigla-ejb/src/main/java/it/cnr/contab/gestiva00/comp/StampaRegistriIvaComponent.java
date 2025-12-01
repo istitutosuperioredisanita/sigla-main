@@ -41,7 +41,7 @@ import it.cnr.jada.comp.RicercaComponent;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.*;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.rmi.RemoteException;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -64,7 +64,7 @@ public class StampaRegistriIvaComponent extends RicercaComponent implements ISta
         Liquidazione_ivaBulk liquidazione = stampaBulk.getLiquidazione_iva();
 
 
-        liquidazione.setReport_id(new Long(pg_Stampa.longValue()));
+        liquidazione.setReport_id(Long.valueOf(pg_Stampa.longValue()));
         liquidazione.setDt_inizio(stampaBulk.getData_da());
         liquidazione.setDt_fine(stampaBulk.getData_a());
         liquidazione.setTipo_liquidazione(stampaBulk.getTipoSezionaleFlag());
@@ -267,7 +267,7 @@ public class StampaRegistriIvaComponent extends RicercaComponent implements ISta
                     sql.addClause("AND", "dt_inizio", SQLBuilder.EQUALS, liquidazione.getDt_inizio());
                     sql.addClause("AND", "dt_fine", SQLBuilder.EQUALS, liquidazione.getDt_fine());
                     if (stampaBulk instanceof Liquidazione_definitiva_ivaVBulk)
-                        sql.addClause("AND", "report_id", SQLBuilder.EQUALS, new Long(0L));
+                        sql.addClause("AND", "report_id", SQLBuilder.EQUALS, Long.valueOf(0L));
                     else
                         sql.addClause("AND", "report_id", SQLBuilder.EQUALS, liquidazione.getReport_id());
                     sql.addClause("AND", "tipo_liquidazione", SQLBuilder.EQUALS, stampaBulk.getTipoSezionaleFlag());

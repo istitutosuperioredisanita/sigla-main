@@ -29,11 +29,12 @@ import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
-import javax.ejb.EJBException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.PageContext;
+import jakarta.ejb.EJBException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.jsp.PageContext;
 
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
@@ -103,7 +104,7 @@ public void doElaboraFile(ActionContext context,VFatcomBlacklistBulk dett) throw
 			 File f = new File(System.getProperty("tmp.dir.SIGLAWeb")+"/tmp/",
 				   ente.getCodice_fiscale()+"_"+//codice fiscale
 				   Formatta((CNRUserContext.getEsercizio(context.getUserContext())).toString().substring(2),"D",2,"0")+		   
-				   "M"+Formatta(new Integer(dett.getMese()).toString(),"D",2,"0")+
+				   "M"+Formatta(Integer.valueOf(dett.getMese()).toString(),"D",2,"0")+
 				   ".ivl");
 	      OutputStream os = (OutputStream)new FileOutputStream(f);
 	      OutputStreamWriter osw = new OutputStreamWriter(os);
@@ -111,7 +112,7 @@ public void doElaboraFile(ActionContext context,VFatcomBlacklistBulk dett) throw
 	      AnagraficoBulk resp=null; 
     if (!lista.isEmpty()){
   		try {
-  			resp = (AnagraficoBulk)sess.findByPrimaryKey(context.getUserContext(), new AnagraficoBulk(new Integer(config.getVal03())));
+  			resp = (AnagraficoBulk)sess.findByPrimaryKey(context.getUserContext(), new AnagraficoBulk(Integer.valueOf(config.getVal03())));
   		} catch (RemoteException e) {
   			throw new ComponentException(e);
   		} catch (EJBException e) {
@@ -182,9 +183,9 @@ public void doElaboraFile(ActionContext context,VFatcomBlacklistBulk dett) throw
 		   bw.append(resp.getTi_sesso());//sesso rappresentante     ???????????????
 		   GregorianCalendar dataNascita = new GregorianCalendar();
 		   dataNascita.setTime(new Date(resp.getDt_nascita().getTime()));
-		   bw.append(Formatta(new Integer(dataNascita.get(GregorianCalendar.DAY_OF_MONTH)).toString(),"D",2,"0"));
-		   bw.append(Formatta(new Integer(dataNascita.get(GregorianCalendar.MONTH)+1).toString(),"D",2,"0"));
-		   bw.append(Formatta(new Integer(dataNascita.get(GregorianCalendar.YEAR)).toString(),"D",4,"0"));
+		   bw.append(Formatta(Integer.valueOf(dataNascita.get(GregorianCalendar.DAY_OF_MONTH)).toString(),"D",2,"0"));
+		   bw.append(Formatta(Integer.valueOf(dataNascita.get(GregorianCalendar.MONTH)+1).toString(),"D",2,"0"));
+		   bw.append(Formatta(Integer.valueOf(dataNascita.get(GregorianCalendar.YEAR)).toString(),"D",4,"0"));
 		   ComuneBulk comune = (ComuneBulk)sess.findByPrimaryKey(context.getUserContext(), new ComuneBulk(resp.getComune_nascita().getPg_comune()));
 		   if(comune==null)
 			   throw new ApplicationException("Dati anagrafici del rappresentante non completi!");     
@@ -205,7 +206,7 @@ public void doElaboraFile(ActionContext context,VFatcomBlacklistBulk dett) throw
 			   bw.append(Formatta(null,"S",12," "));//tel rappresentante    
 		   }
 		   
-		   bw.append(Formatta(new Integer(lista.size()).toString(),"D",8,"0"));// Firma checkbox
+		   bw.append(Formatta(Integer.valueOf(lista.size()).toString(),"D",8,"0"));// Firma checkbox
 		   bw.append(Formatta("1","D",1,"0"));// Firma checkbox
 		   
 		   
@@ -246,9 +247,9 @@ public void doElaboraFile(ActionContext context,VFatcomBlacklistBulk dett) throw
 						   if(det.getItaliano_estero().compareTo(NazioneBulk.ITALIA)==0){ //Dalla nazione di nascita
 							   bw.append("A1001003");
 							   dataNascita.setTime(new Date(det.getDt_nascita().getTime()));
-							   bw.append(Formatta(new Integer(dataNascita.get(GregorianCalendar.DAY_OF_MONTH)).toString(),"D",2,"0"));
-							   bw.append(Formatta(new Integer(dataNascita.get(GregorianCalendar.MONTH)+1).toString(),"D",2,"0"));
-							   bw.append(Formatta(new Integer(dataNascita.get(GregorianCalendar.YEAR)).toString(),"D",4,"0"));
+							   bw.append(Formatta(Integer.valueOf(dataNascita.get(GregorianCalendar.DAY_OF_MONTH)).toString(),"D",2,"0"));
+							   bw.append(Formatta(Integer.valueOf(dataNascita.get(GregorianCalendar.MONTH)+1).toString(),"D",2,"0"));
+							   bw.append(Formatta(Integer.valueOf(dataNascita.get(GregorianCalendar.YEAR)).toString(),"D",4,"0"));
 							   num_col++;
 							   
 							   num_col=Formatta(det.getComune_nascita(),"S",16," ",bw,"A1001004",num_col);
@@ -438,7 +439,7 @@ public void doElaboraFile(ActionContext context,VFatcomBlacklistBulk dett) throw
 		   bw.append("Z"); // tipo record
 		   bw.append(Formatta(null,"S",14," "));// Filler
 		   bw.append(Formatta("1","D",9,"0"));// N° record tipo B
-		   bw.append(Formatta(new Integer(lista.size()).toString(),"D",9,"0"));// N° record tipo C
+		   bw.append(Formatta(Integer.valueOf(lista.size()).toString(),"D",9,"0"));// N° record tipo C
 		   
 	 	   bw.append(Formatta(null,"S",1864," "));// Filler 
 	 	   bw.append("A"); //

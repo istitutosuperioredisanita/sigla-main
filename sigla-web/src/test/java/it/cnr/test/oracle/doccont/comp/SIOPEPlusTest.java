@@ -32,13 +32,13 @@ import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.test.oracle.DeploymentsOracle;
 import it.siopeplus.*;
+import jakarta.ws.rs.core.Response;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJB;
-import javax.ws.rs.core.Response;
+import jakarta.ejb.EJB;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;

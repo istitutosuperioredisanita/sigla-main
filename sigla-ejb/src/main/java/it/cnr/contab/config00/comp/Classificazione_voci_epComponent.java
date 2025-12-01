@@ -216,9 +216,9 @@ public class Classificazione_voci_epComponent extends CRUDComponent implements C
 		Parametri_livelli_epBulk parametri = findParametriLivelli(usercontext, claNew.getEsercizio(), claNew.getTipo());
 		for (int i=1; i<=Classificazione_voci_epHome.LIVELLO_MAX; i++){
 			if (claNew.getCd_livello(i) != null) {
-				if (parametri.getLivelli().compareTo(new Integer(i))==-1)
+				if (parametri.getLivelli().compareTo(Integer.valueOf(i))==-1)
 					throw new ApplicationException("Non è possibile inserire classificazioni di economica con più di " + i + " livelli.");
-				if (parametri.getLung_livello(i).compareTo(new Integer(claNew.getCd_livello(i).length()))!=0)
+				if (parametri.getLung_livello(i).compareTo(Integer.valueOf(claNew.getCd_livello(i).length()))!=0)
 					throw new ApplicationException("Il codice " + parametri.getDs_livello(i) + " deve avere una lunghezza di " + parametri.getLung_livello(i).toString() + " caratteri.");
 			}
 		}

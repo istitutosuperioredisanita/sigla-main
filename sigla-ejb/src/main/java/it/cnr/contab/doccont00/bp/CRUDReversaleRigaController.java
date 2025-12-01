@@ -25,6 +25,8 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.HttpActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 import java.util.Optional;
 
@@ -88,7 +90,7 @@ public class CRUDReversaleRigaController extends it.cnr.jada.util.action.SimpleD
             Reversale_rigaIBulk rigaDaCancellare = (Reversale_rigaIBulk) detail;
             Reversale_rigaIBulk row = null;
             int len = getDetails().size();
-            Long pg_fattura_attiva = new Long(0);
+            Long pg_fattura_attiva = Long.valueOf(0);
             //ricerco il progressivo della fattura attiva da cui la nota di debito/credito dipende
             int index;
             for (index = len - 1; index >= 0; index--) {
@@ -116,14 +118,13 @@ public class CRUDReversaleRigaController extends it.cnr.jada.util.action.SimpleD
      * per la ricerca rapida della riga da quadrare con il SIOPE
      *
      * @param context  Il contesto dell'azione
-     * @param scadenza La scadenza dell'oggetto bulk in uso
      */
     @Override
     public void writeHTMLToolbar(
-            javax.servlet.jsp.PageContext context,
+            PageContext context,
             boolean reset,
             boolean find,
-            boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+            boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
         super.writeHTMLToolbar(context, reset, find, delete, false);
 

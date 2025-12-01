@@ -21,7 +21,7 @@ package it.cnr.contab.prevent01.consultazioni.comp;
 import java.rmi.RemoteException;
 import java.util.Enumeration;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceHome;
 import it.cnr.contab.config00.sto.bulk.CdrBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;

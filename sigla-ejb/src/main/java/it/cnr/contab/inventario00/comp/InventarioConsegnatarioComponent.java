@@ -235,7 +235,7 @@ public OggettoBulk inizializzaBulkPerInserimento (UserContext aUC,OggettoBulk bu
 		throw handleException(bulk,e);
 	} catch(it.cnr.jada.persistency.IntrospectionException e) {
 		throw handleException(bulk,e);
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw handleException(bulk,e);
 	}
 }

@@ -36,13 +36,13 @@ public DateServices() {
  * @return La data corrente (solo data) fornita dal db
  * @throws PersistencyException Se si verifica qualche eccezione SQL
  */
-public static Timestamp getDataOdierna() throws javax.ejb.EJBException {
+public static Timestamp getDataOdierna() throws jakarta.ejb.EJBException {
 
 	
 	return it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
 	
 }
-public static java.sql.Timestamp getDt_valida( UserContext userContext) throws javax.ejb.EJBException
+public static java.sql.Timestamp getDt_valida( UserContext userContext) throws jakarta.ejb.EJBException
 {
 	Timestamp today = it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
 	java.util.Calendar calendar = java.util.GregorianCalendar.getInstance();
@@ -80,7 +80,7 @@ public static java.sql.Timestamp getLastDayOfYear(int year){
 	calendar.set(java.util.Calendar.AM_PM, java.util.Calendar.AM);
 	return new java.sql.Timestamp(calendar.getTime().getTime());
 }
-public static  java.sql.Timestamp getLastTsOfYear(int year) throws javax.ejb.EJBException
+public static  java.sql.Timestamp getLastTsOfYear(int year) throws jakarta.ejb.EJBException
 {
 	java.util.Calendar cNow = java.util.GregorianCalendar.getInstance();	
 	Timestamp now = it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp();
@@ -97,7 +97,7 @@ public static  java.sql.Timestamp getLastTsOfYear(int year) throws javax.ejb.EJB
 	calendar.set(java.util.Calendar.AM_PM, cNow.get(cNow.AM_PM));
 	return new java.sql.Timestamp(calendar.getTime().getTime());   
 }
-public static  java.sql.Timestamp getMidDayTs(Timestamp aTS) throws javax.ejb.EJBException
+public static  java.sql.Timestamp getMidDayTs(Timestamp aTS) throws jakarta.ejb.EJBException
 {
 	java.util.Calendar calendar = java.util.GregorianCalendar.getInstance();	
 	calendar.setTime(aTS);
@@ -109,7 +109,7 @@ public static  java.sql.Timestamp getMidDayTs(Timestamp aTS) throws javax.ejb.EJ
 	return new java.sql.Timestamp(calendar.getTime().getTime());   
 }
 /* Ritorna un timestamp incrementato d 1 minuto rispetto a quello passato */  
-public static  java.sql.Timestamp getNextMinTs( UserContext userContext, Timestamp aTS) throws javax.ejb.EJBException
+public static  java.sql.Timestamp getNextMinTs( UserContext userContext, Timestamp aTS) throws jakarta.ejb.EJBException
 {
 	java.util.Calendar calendar = java.util.GregorianCalendar.getInstance();
 	calendar.setTime( aTS );
@@ -119,7 +119,7 @@ public static  java.sql.Timestamp getNextMinTs( UserContext userContext, Timesta
 /* se la data odierna è maggiore dell'esercizio di scrivania ritorna il timestamp così fatto:
      31/12/esercizio di scrivania + ora,minuto, secondo del timestamp corrente
    altrimenti ritorna il timestamp corrente */  
-public static  java.sql.Timestamp getTs_valido( UserContext userContext) throws javax.ejb.EJBException
+public static  java.sql.Timestamp getTs_valido( UserContext userContext) throws jakarta.ejb.EJBException
 {
 	Timestamp today = it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
 	java.util.Calendar calendar = java.util.GregorianCalendar.getInstance();
@@ -132,7 +132,7 @@ public static  java.sql.Timestamp getTs_valido( UserContext userContext) throws 
 		return it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp();	
 }
 /* se la data odierna è maggiore dell'esercizio di scrivania ritorna true altrimenti false */  
-public static boolean isAnnoMaggEsScriv( UserContext userContext) throws javax.ejb.EJBException
+public static boolean isAnnoMaggEsScriv( UserContext userContext) throws jakarta.ejb.EJBException
 {
 	Timestamp today = it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
 

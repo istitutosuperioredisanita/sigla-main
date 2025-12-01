@@ -51,7 +51,7 @@ public class ConsAssCompPerDataDettagliBP extends ConsultazioniBP
 	public static final String LIV_BASESTANZ= "STANZ";
 	
 	
-	public ConsAssCompPerDataComponentSession createConsAssCompPerDataComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public ConsAssCompPerDataComponentSession createConsAssCompPerDataComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		return (ConsAssCompPerDataComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPREVENTVAR00_EJB_ConsAssCompPerDataComponentSession", ConsAssCompPerDataComponentSession.class);
 	}
 	

@@ -25,7 +25,7 @@ import it.cnr.jada.persistency.sql.*;
 
 public class CambioHome extends BulkHome {
 
-	//final static protected java.sql.Timestamp fineinfinito=new java.sql.Timestamp(new Long("7289568000000").longValue());
+	//final static protected java.sql.Timestamp fineinfinito=new java.sql.Timestamp(Long.valueOf("7289568000000").longValue());
 	final static protected String fineinfinitosql=" TO_DATE('31122200','ddmmyyyy') ";
 public CambioHome(java.sql.Connection conn) {
 	super(CambioBulk.class,conn);

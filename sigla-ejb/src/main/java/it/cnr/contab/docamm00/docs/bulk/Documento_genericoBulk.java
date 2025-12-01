@@ -286,7 +286,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 			java.sql.Timestamp ts = it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp();
 			nuovoRigo.setDt_da_competenza_coge((getDt_da_competenza_coge() == null)?ts : getDt_da_competenza_coge());
 			nuovoRigo.setDt_a_competenza_coge((getDt_a_competenza_coge() == null)?ts : getDt_a_competenza_coge());
-		} catch (javax.ejb.EJBException e) {
+		} catch (jakarta.ejb.EJBException e) {
 			throw new it.cnr.jada.DetailedRuntimeException(e);
 		}
 		nuovoRigo.setStato_cofi(STATO_INIZIALE);
@@ -295,7 +295,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 			long prog = ((Documento_generico_rigaBulk)i.next()).getProgressivo_riga().longValue();
 			if (prog > max) max = prog;
 		}
-		nuovoRigo.setProgressivo_riga(new Long(max+1));
+		nuovoRigo.setProgressivo_riga(Long.valueOf(max+1));
 		documento_generico_dettColl.add(nuovoRigo);
 		return documento_generico_dettColl.size()-1;
 	}
@@ -426,7 +426,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 		if (date == null)
 			try {
 				date = it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp();
-			} catch (javax.ejb.EJBException e) {
+			} catch (jakarta.ejb.EJBException e) {
 				throw new it.cnr.jada.DetailedRuntimeException(e);
 			}
 
@@ -1820,7 +1820,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 		java.util.Calendar dataRegistrazione = getDateCalendar(getData_registrazione());
 
 		try {
-			int compare = getEsercizio().compareTo(new Integer(dataRegistrazione.get(Calendar.YEAR)));
+			int compare = getEsercizio().compareTo(Integer.valueOf(dataRegistrazione.get(Calendar.YEAR)));
 			if (compare == 0) {
 				limSup = today;
 				limInf = getDateCalendar(new java.sql.Timestamp(sdf.parse("01/01/"+getEsercizio().intValue()).getTime()));

@@ -21,9 +21,9 @@ import it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk;
 import it.cnr.contab.incarichi00.bulk.V_incarichi_elenco_fpBulk;
 import it.cnr.contab.incarichi00.comp.IncarichiEstrazioneFpComponent;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
 import java.math.BigDecimal;
 
 /**
@@ -35,9 +35,7 @@ public class IncarichiEstrazioneFpComponentSessionBean extends it.cnr.jada.ejb.C
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.incarichi00.comp.IncarichiEstrazioneFpComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-		return new IncarichiEstrazioneFpComponentSessionBean();
-	}
+	
 	public it.cnr.contab.incarichi00.bulk.V_incarichi_elenco_fpBulk completaIncaricoElencoFP(it.cnr.jada.UserContext param0, it.cnr.contab.incarichi00.bulk.V_incarichi_elenco_fpBulk param1) throws it.cnr.jada.comp.ComponentException{
 		pre_component_invocation(param0,componentObj);
 		try {
@@ -56,7 +54,7 @@ public class IncarichiEstrazioneFpComponentSessionBean extends it.cnr.jada.ejb.C
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void aggiornaIncarichiComunicatiFP(it.cnr.jada.UserContext param0, java.util.List<it.cnr.contab.incarichi00.xmlfp.bulk.Incarichi_comunicati_fpBulk> param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void aggiornaIncarichiComunicatiFP(it.cnr.jada.UserContext param0, java.util.List<it.cnr.contab.incarichi00.xmlfp.bulk.Incarichi_comunicati_fpBulk> param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((IncarichiEstrazioneFpComponent)componentObj).aggiornaIncarichiComunicatiFP(param0,param1);
@@ -73,7 +71,7 @@ public class IncarichiEstrazioneFpComponentSessionBean extends it.cnr.jada.ejb.C
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}	
-	public void aggiornaIncarichiComunicatiFP(it.cnr.jada.UserContext param0, it.cnr.contab.incarichi00.xmlfp.bulk.Incarichi_comunicati_fpBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void aggiornaIncarichiComunicatiFP(it.cnr.jada.UserContext param0, it.cnr.contab.incarichi00.xmlfp.bulk.Incarichi_comunicati_fpBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((IncarichiEstrazioneFpComponent)componentObj).aggiornaIncarichiComunicatiFP(param0,param1);

@@ -66,7 +66,7 @@ import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.DateUtils;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -193,7 +193,7 @@ private void aggiornaCapitoloSaldoObbligazione (UserContext userContext,Obbligaz
 		else if ( azione == CANCELLAZIONE )
 			aggiornaSaldiInModifica( userContext, 
 											 obbligazione, 
-											 new Long(obbligazione.getPg_ver_rec().longValue() + 1),
+											 Long.valueOf(obbligazione.getPg_ver_rec().longValue() + 1),
 											 Boolean.TRUE);		
 			
 		
@@ -2851,8 +2851,8 @@ private void inizializzaBulkPerStampa(UserContext userContext, Stampa_registro_a
 	
 	stampa.setDataInizio(DateServices.getFirstDayOfYear(CNRUserContext.getEsercizio(userContext).intValue()));
 	stampa.setDataFine(getDataOdierna(userContext));
-	stampa.setPgInizio(new Integer(0));
-	stampa.setPgFine(new Integer(999999999));
+	stampa.setPgInizio(Integer.valueOf(0));
+	stampa.setPgFine(Integer.valueOf(999999999));
 
 	stampa.setCdsOrigineForPrint(new CdsBulk());
 	try {
@@ -2909,8 +2909,8 @@ private void inizializzaBulkPerStampa(UserContext userContext, Stampa_registro_o
 	
 	stampa.setDataInizio(DateServices.getFirstDayOfYear(CNRUserContext.getEsercizio(userContext).intValue()));
 	stampa.setDataFine(getDataOdierna(userContext));
-	stampa.setPgInizio(new Long(0));
-	stampa.setPgFine(new Long("9999999999"));
+	stampa.setPgInizio(Long.valueOf(0));
+	stampa.setPgFine(Long.valueOf("9999999999"));
 
 	stampa.setStato_obbligazione(stampa.STATO_OBB_TUTTI);
 	stampa.setCd_tipo_documento_cont(stampa.TIPO_TUTTI);
@@ -3686,7 +3686,7 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 	SQLBuilder sql = (SQLBuilder) super.select( userContext, clauses, bulk );
 	sql.addClause( "AND", "cd_uo_origine", sql.EQUALS, ((CNRUserContext)userContext).getCd_unita_organizzativa()); 
 	sql.addClause( "AND", "esercizio", sql.EQUALS, ((CNRUserContext)userContext).getEsercizio());
-	sql.addClause( "AND", "pg_obbligazione", sql.GREATER_EQUALS, new Long(0)); 	
+	sql.addClause( "AND", "pg_obbligazione", sql.GREATER_EQUALS, Long.valueOf(0)); 	
 	if ( bulk instanceof V_obbligazione_im_mandatoBulk  )
 	{
 		verificaStatoEsercizio( userContext, ((CNRUserContext)userContext).getEsercizio(), ((CNRUserContext)userContext).getCd_cds() );
@@ -4069,7 +4069,7 @@ public SQLBuilder selectUoForPrintByClause(UserContext userContext, Stampa_regis
 		//sql.addClause(clauses);
 		//return sql;
 
-	//}catch(javax.ejb.EJBException ex){
+	//}catch(jakarta.ejb.EJBException ex){
 		//throw handleException(ex);
 	//}catch(java.rmi.RemoteException ex){
 		//throw handleException(ex);
@@ -4380,7 +4380,7 @@ private void validateBulkForPrint(it.cnr.jada.UserContext userContext, Stampa_re
 			//CDRComponentSession sess = (CDRComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_CDRComponentSession", CDRComponentSession.class);
 			//if (sess.isEnte(userContext) && stampa.getCdCdsOrigineForPrint()==null)
 				//throw new ValidationException("Il campo CDS di ORIGINE è obbligatorio");
-		//}catch(javax.ejb.EJBException ex){
+		//}catch(jakarta.ejb.EJBException ex){
 			//throw handleException(ex);
 		//}catch(java.rmi.RemoteException ex){
 			//throw handleException(ex);
@@ -5589,7 +5589,7 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 														 osv.getEsercizio(),
 														 osv.getEsercizio_originale(),
 														 osv.getPg_obbligazione(),
-														 new Long(1),
+														 Long.valueOf(1),
 														 osv.getTi_appartenenza(),
 														 osv.getTi_gestione());
 	

@@ -26,9 +26,9 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -39,13 +39,11 @@ public class V_AmmortamentoBeniDetComponentSessionBean extends it.cnr.jada.ejb.C
 		componentObj = new V_AmmortamentoBeniDetComponent();
 	}
 	@Remove
-	public void ejbRemove() throws javax.ejb.EJBException {
+	public void ejbRemove() throws jakarta.ejb.EJBException {
 		componentObj.release();
 	}
 
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new V_AmmortamentoBeniDetComponentSessionBean();
-	}
+	
 
 	@Override
 	public List<V_ammortamento_beni_detBulk> getDatiAmmortamentoBeni(UserContext param0, Integer param1) throws ComponentException, RemoteException  {

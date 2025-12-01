@@ -241,17 +241,17 @@ public class Buono_carico_scaricoBulk extends Buono_carico_scaricoBase {
 			*/
 			beni_associati = new BulkList();
 			bene_padre.setNr_inventario(progressivo);
-			bene_padre.setProgressivo(new Integer("0"));
+			bene_padre.setProgressivo(Integer.valueOf("0"));
 			bene_padre.setPg_inventario(getPg_inventario());
 			
-			progressivo = new Long(progressivo.longValue()+1);
+			progressivo = Long.valueOf(progressivo.longValue()+1);
 		}
 
 		/* Viene assegnato al bene figlio il codice (Nr_inventario) fittizio del padre
 		*	ed un progreessivo (Progressivo) che lo identifichi in modo.
 		*/
 		bene_figlio.setNr_inventario(bene_padre.getNr_inventario());
-		bene_figlio.setProgressivo(new Integer(Integer.toString(beni_associati.size()+1)));
+		bene_figlio.setProgressivo(Integer.valueOf(Integer.toString(beni_associati.size()+1)));
 		bene_figlio.setPg_inventario(getPg_inventario());
 		beni_associati.add(bene_figlio);	
 		accessoriContestualiHash.put(bene_padre.getChiaveHash(), beni_associati);
@@ -359,7 +359,7 @@ public class Buono_carico_scaricoBulk extends Buono_carico_scaricoBase {
 				bene.setToBeCreated();
 				rigoInventario.setBuono_cs(this);
 				bene.setDs_bene(transito.getDs_bene());
-				rigoInventario.setQuantita(new Long("1"));
+				rigoInventario.setQuantita(Long.valueOf("1"));
 				rigoInventario.setBene(bene);
 				bene.setCollocazione(transito.getCollocazione());
 				bene.setValore_iniziale(transito.getValore_iniziale());
@@ -414,7 +414,7 @@ public class Buono_carico_scaricoBulk extends Buono_carico_scaricoBase {
 						bene.setCrudStatus(TO_BE_CREATED);
 						rigoInventario.setBuono_cs(this);
 						bene.setDs_bene(rigoFattura.getDs_riga_fattura());
-						rigoInventario.setQuantita(new Long(rigoFattura.getQuantita().longValue()));			
+						rigoInventario.setQuantita(Long.valueOf(rigoFattura.getQuantita().longValue()));
 						rigoInventario.setBene(bene);
 						// Assegna il Prezzo unitario: il prezzo Þ diverso a seconda che il dettaglio della Fattura sia ISTITUZIONALE o COMMERCIALE
 						if (rigoFattura.getTi_istituz_commerc().equals(TipoIVA.ISTITUZIONALE.value())){
@@ -450,7 +450,7 @@ public class Buono_carico_scaricoBulk extends Buono_carico_scaricoBase {
 						bene.setCrudStatus(TO_BE_CREATED);
 						rigoInventario.setBuono_cs(this);
 						bene.setDs_bene(riga.getDs_riga());
-						rigoInventario.setQuantita(new Long(1));			
+						rigoInventario.setQuantita(Long.valueOf(1));
 						rigoInventario.setBene(bene);
 						rigoInventario.setValore_unitario(riga.getIm_riga());			
 						rigoInventario.getBene().setValore_iniziale(riga.getIm_riga());			
@@ -476,7 +476,7 @@ public class Buono_carico_scaricoBulk extends Buono_carico_scaricoBase {
 							bene.setCrudStatus(TO_BE_CREATED);
 							rigoInventario.setBuono_cs(this);
 							bene.setDs_bene(riga.getDs_riga());
-							rigoInventario.setQuantita(new Long(1));			
+							rigoInventario.setQuantita(Long.valueOf(1));
 							rigoInventario.setBene(bene);
 							rigoInventario.setValore_unitario(riga.getIm_riga());			
 							rigoInventario.getBene().setValore_iniziale(riga.getIm_riga());			
@@ -500,9 +500,9 @@ public class Buono_carico_scaricoBulk extends Buono_carico_scaricoBase {
 							bene.setCrudStatus(TO_BE_CREATED);
 							rigoInventario.setBuono_cs(this);
 							if (rigoFattura_at!=null)
-								rigoInventario.setQuantita(new Long(rigoFattura_at.getQuantita().longValue()));
+								rigoInventario.setQuantita(Long.valueOf(rigoFattura_at.getQuantita().longValue()));
 							else
-								rigoInventario.setQuantita(new Long(rigonc.getQuantita().longValue()));
+								rigoInventario.setQuantita(Long.valueOf(rigonc.getQuantita().longValue()));
 							rigoInventario.setBene(bene);
 							if (rigoFattura_at!=null)
 								rigoInventario.setValore_unitario(rigoFattura_at.getIm_imponibile());
@@ -688,7 +688,7 @@ public class Buono_carico_scaricoBulk extends Buono_carico_scaricoBase {
 		this.perVendita = perVendita;
 	}
 	public boolean isTemporaneo() {
-		return 	getPg_buono_c_s() == null || getPg_buono_c_s().compareTo(new Long("0")) <= 0;
+		return 	getPg_buono_c_s() == null || getPg_buono_c_s().compareTo(Long.valueOf("0")) <= 0;
 	}
 
 }

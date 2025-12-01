@@ -428,7 +428,7 @@ public abstract it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerModifica(it.cnr.j
  * @return  la MissioneBulk con la spesa inizializzata
  */
 
-public abstract it.cnr.contab.missioni00.docs.bulk.MissioneBulk inizializzaDivisaCambioPerRimborsoKm(it.cnr.jada.UserContext param0,it.cnr.contab.missioni00.docs.bulk.Missione_dettaglioBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,javax.ejb.EJBException,java.rmi.RemoteException,it.cnr.jada.bulk.ValidationException;
+public abstract it.cnr.contab.missioni00.docs.bulk.MissioneBulk inizializzaDivisaCambioPerRimborsoKm(it.cnr.jada.UserContext param0,it.cnr.contab.missioni00.docs.bulk.Missione_dettaglioBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,jakarta.ejb.EJBException,java.rmi.RemoteException,it.cnr.jada.bulk.ValidationException;
 /**
   * Viene richiesto lo stato cofi della missione
   *
@@ -685,7 +685,7 @@ public abstract void validaEsercizioDataRegistrazione(UserContext aUC, MissioneB
  *
  * @return MissioneBulk validata
  */	
-public abstract it.cnr.contab.missioni00.docs.bulk.MissioneBulk validaMassimaliSpesa(it.cnr.jada.UserContext param0,it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1,it.cnr.contab.missioni00.docs.bulk.Missione_dettaglioBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException,it.cnr.jada.persistency.PersistencyException,java.rmi.RemoteException,it.cnr.jada.bulk.ValidationException;
+public abstract it.cnr.contab.missioni00.docs.bulk.MissioneBulk validaMassimaliSpesa(it.cnr.jada.UserContext param0,it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1,it.cnr.contab.missioni00.docs.bulk.Missione_dettaglioBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException,it.cnr.jada.persistency.PersistencyException,java.rmi.RemoteException,it.cnr.jada.bulk.ValidationException;
 /**
   * Viene richiesta la validazione dell'obbligazione associata alla missione
   *

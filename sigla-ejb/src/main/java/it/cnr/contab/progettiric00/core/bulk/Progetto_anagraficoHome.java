@@ -23,8 +23,8 @@ public class Progetto_anagraficoHome extends BulkHome {
 		try {
 
 			((Progetto_anagraficoBulk)bulk).setIdPrgAnagrafico(
-					new Long(
-							((Long)findAndLockMax( bulk, "idPrgAnagrafico", new Long(0) )).longValue()+1
+					Long.valueOf(
+							((Long)findAndLockMax( bulk, "idPrgAnagrafico", Long.valueOf(0) )).longValue()+1
 					)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

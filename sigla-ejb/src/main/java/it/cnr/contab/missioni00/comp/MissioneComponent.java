@@ -160,7 +160,7 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
                     }
                 }
             }
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw handleException(missione, e);
         } catch (java.rmi.RemoteException e) {
             throw handleException(missione, e);
@@ -377,7 +377,7 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
                     }
                 }
             }
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw handleException(missione, e);
         } catch (java.rmi.RemoteException e) {
             throw handleException(missione, e);
@@ -1635,8 +1635,8 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
                     AnagraficoBulk a = (AnagraficoBulk) aHome.findByPrimaryKey(aKey);
 
                     if (a.getFl_cervellone() &&
-                            !(new Integer(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_inizio_res_fis().intValue()) < 0) &&
-                            !(new Integer(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_fine_agevolazioni().intValue()) > 0)) {
+                            !(Integer.valueOf(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_inizio_res_fis().intValue()) < 0) &&
+                            !(Integer.valueOf(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_fine_agevolazioni().intValue()) > 0)) {
                         filtro.setFlAgevolazioniCervelli(new Boolean(a.getFl_cervellone()));
                     } else
                         filtro.setFlAgevolazioniCervelli(new Boolean(false));
@@ -1812,7 +1812,7 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
      * @param    uc    lo UserContext che ha generato la richiesta
      */
 
-    public DivisaBulk getDivisaDefault(UserContext aUC) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException {
+    public DivisaBulk getDivisaDefault(UserContext aUC) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException, it.cnr.jada.persistency.PersistencyException {
         DivisaHome divisaHome = (DivisaHome) getHome(aUC, DivisaBulk.class);
         DivisaBulk divisaDefault = divisaHome.getDivisaDefault(aUC);
 
@@ -1871,7 +1871,7 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
         return documentiContabiliNonTemporanei;
     }
 
-    private BigDecimal getMassimaleEuro(UserContext aUC, Missione_dettaglioBulk spesa, DivisaBulk divisaDefault, String cdDivisaMassimale, BigDecimal importoMassimale, boolean flgSpesa) throws ComponentException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.bulk.ValidationException {
+    private BigDecimal getMassimaleEuro(UserContext aUC, Missione_dettaglioBulk spesa, DivisaBulk divisaDefault, String cdDivisaMassimale, BigDecimal importoMassimale, boolean flgSpesa) throws ComponentException, jakarta.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.bulk.ValidationException {
         CambioBulk cambioMassimale = new CambioBulk();
         DivisaBulk divisaMassimale = null;
         BigDecimal importoMassimaleEuro = new BigDecimal(0);
@@ -2223,8 +2223,8 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
             stampa.setCd_cds(CNRUserContext.getCd_cds(userContext));
             stampa.setEsercizio(CNRUserContext.getEsercizio(userContext));
 
-            stampa.setPgInizio(new Long(0));
-            stampa.setPgFine(new Long(999999999));
+            stampa.setPgInizio(Long.valueOf(0));
+            stampa.setPgFine(Long.valueOf(999999999));
 
             stampa.setTerzoForPrint(new TerzoBulk());
 
@@ -2249,7 +2249,7 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
      * @param    aSpesa    la Missione_dettaglioBulk per tipo rimborso km
      */
 
-    public MissioneBulk inizializzaDivisaCambioPerRimborsoKm(UserContext userContext, Missione_dettaglioBulk aSpesa) throws ComponentException, it.cnr.jada.persistency.PersistencyException, javax.ejb.EJBException, it.cnr.jada.bulk.ValidationException {
+    public MissioneBulk inizializzaDivisaCambioPerRimborsoKm(UserContext userContext, Missione_dettaglioBulk aSpesa) throws ComponentException, it.cnr.jada.persistency.PersistencyException, jakarta.ejb.EJBException, it.cnr.jada.bulk.ValidationException {
         aSpesa.setDivisa_spesa(getDivisaDefault(userContext));
         if ((aSpesa.getDivisa_spesa() == null) || (aSpesa.getDivisa_spesa().getCd_divisa() == null))
             throw new it.cnr.jada.bulk.ValidationException("Divisa non disponibile !");
@@ -2458,8 +2458,8 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
                     AnagraficoBulk a = (AnagraficoBulk) aHome.findByPrimaryKey(aKey);
 
                     if (a.getFl_cervellone() &&
-                            !(new Integer(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_inizio_res_fis().intValue()) < 0) &&
-                            !(new Integer(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_fine_agevolazioni().intValue()) > 0)) {
+                            !(Integer.valueOf(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_inizio_res_fis().intValue()) < 0) &&
+                            !(Integer.valueOf(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_fine_agevolazioni().intValue()) > 0)) {
                         filtro.setFlAgevolazioniCervelli(new Boolean(a.getFl_cervellone()));
                     } else
                         filtro.setFlAgevolazioniCervelli(new Boolean(false));
@@ -2510,7 +2510,7 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
                 throw new it.cnr.jada.comp.ApplicationException("Impossibile trovare il compenso associato alla missione !");
         } catch (it.cnr.jada.persistency.PersistencyException e) {
             throw handleException(missione, e);
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw handleException(missione, e);
         } catch (java.rmi.RemoteException e) {
             throw handleException(missione, e);
@@ -3258,7 +3258,7 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 
         sql.openParenthesis("AND");
         sql.addClause("AND", "pg_nazione", sql.EQUALS, nazione.getPg_nazione());
-        sql.addClause("OR", "pg_nazione", sql.EQUALS, new Long(0));
+        sql.addClause("OR", "pg_nazione", sql.EQUALS, Long.valueOf(0));
         sql.closeParenthesis();
 
         sql.addClause("AND", "ti_auto", sql.EQUALS, tipoAuto);
@@ -3345,12 +3345,12 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 
         sql.openParenthesis("AND");
         sql.addClause("AND", "pg_nazione", sql.EQUALS, nazione.getPg_nazione());
-        sql.addClause("OR", "pg_nazione", sql.EQUALS, new Long(0));
+        sql.addClause("OR", "pg_nazione", sql.EQUALS, Long.valueOf(0));
         sql.closeParenthesis();
 
         sql.openParenthesis("AND");
         sql.addClause("AND", "pg_rif_inquadramento", sql.EQUALS, inquadramento);
-        sql.addClause("OR", "pg_rif_inquadramento", sql.EQUALS, new Long(0));
+        sql.addClause("OR", "pg_rif_inquadramento", sql.EQUALS, Long.valueOf(0));
         sql.closeParenthesis();
 
         sql.addClause("AND", "cd_ti_pasto", sql.EQUALS, tipoPasto);
@@ -3449,12 +3449,12 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 
         sql.openParenthesis("AND");
         sql.addClause("AND", "pg_nazione", sql.EQUALS, nazione.getPg_nazione());
-        sql.addClause("OR", "pg_nazione", sql.EQUALS, new Long(0));
+        sql.addClause("OR", "pg_nazione", sql.EQUALS, Long.valueOf(0));
         sql.closeParenthesis();
 
         sql.openParenthesis("AND");
         sql.addClause("AND", "pg_rif_inquadramento", sql.EQUALS, inquadramento);
-        sql.addClause("OR", "pg_rif_inquadramento", sql.EQUALS, new Long(0));
+        sql.addClause("OR", "pg_rif_inquadramento", sql.EQUALS, Long.valueOf(0));
         sql.closeParenthesis();
 
         if (ammissibileConRimborso)
@@ -3758,7 +3758,7 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 
             //	Verifico che l'esercizio della data di registrazione valorizzata dall'utente
             //	sia aperto
-            if (!verificaStatoEsercizio(aUC, new it.cnr.contab.config00.esercizio.bulk.EsercizioBulk(missione.getCd_cds(), new Integer(registrazioneGreg.get(Calendar.YEAR)))))
+            if (!verificaStatoEsercizio(aUC, new it.cnr.contab.config00.esercizio.bulk.EsercizioBulk(missione.getCd_cds(), Integer.valueOf(registrazioneGreg.get(Calendar.YEAR)))))
                 throw new it.cnr.jada.comp.ApplicationException("La data di registrazione non e' in un esercizio aperto !");
         } catch (ApplicationException e) {
             throw handleException(missione, e);
@@ -3786,7 +3786,7 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
      * @param    divisaDefault    la DivisaBulk di default
      */
 
-    private Missione_dettaglioBulk validaMassimaleTipoPasto(UserContext aUC, Missione_dettaglioBulk spesa, DivisaBulk divisaDefault) throws it.cnr.jada.persistency.PersistencyException, ComponentException, it.cnr.jada.bulk.ValidationException, javax.ejb.EJBException {
+    private Missione_dettaglioBulk validaMassimaleTipoPasto(UserContext aUC, Missione_dettaglioBulk spesa, DivisaBulk divisaDefault) throws it.cnr.jada.persistency.PersistencyException, ComponentException, it.cnr.jada.bulk.ValidationException, jakarta.ejb.EJBException {
         BigDecimal massimalePastoEuro = new BigDecimal(0);
 
         // MASSIMALE MISSIONE_TIPO_PASTO
@@ -3833,7 +3833,7 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
      * @param    divisaDefault    la DivisaBulk di default
      */
 
-    private Missione_dettaglioBulk validaMassimaleTipoSpesa(UserContext aUC, Missione_dettaglioBulk spesa, DivisaBulk divisaDefault) throws it.cnr.jada.persistency.PersistencyException, ComponentException, it.cnr.jada.bulk.ValidationException, javax.ejb.EJBException {
+    private Missione_dettaglioBulk validaMassimaleTipoSpesa(UserContext aUC, Missione_dettaglioBulk spesa, DivisaBulk divisaDefault) throws it.cnr.jada.persistency.PersistencyException, ComponentException, it.cnr.jada.bulk.ValidationException, jakarta.ejb.EJBException {
         BigDecimal massimaleSpesaEuro = new BigDecimal(0);
 
         // MASSIMALE MISSIONE_TIPO_SPESA
@@ -3888,7 +3888,7 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
      * @param    spesa        la Missione_dettaglioBulk per cui effettuare i cacloli e la validazione degli importi
      */
 
-    public MissioneBulk validaMassimaliSpesa(UserContext aUC, MissioneBulk missione, Missione_dettaglioBulk spesa) throws ComponentException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.bulk.ValidationException {
+    public MissioneBulk validaMassimaliSpesa(UserContext aUC, MissioneBulk missione, Missione_dettaglioBulk spesa) throws ComponentException, jakarta.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.bulk.ValidationException {
         DivisaBulk divisaDefault = getDivisaDefault(aUC);
 
         if (divisaDefault == null)
@@ -4034,7 +4034,7 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 
         try {
             if (missione.isRiportataInScrivania()) {
-                Integer es_prec = new Integer(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext).intValue() - 1);
+                Integer es_prec = Integer.valueOf(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext).intValue() - 1);
 
                 cs = new LoggableStatement(getConnection(userContext), "{ ? = call " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()
                         + "CNRCTB200.isChiusuraCoepDef(?,?)}", false, this.getClass());
@@ -4335,7 +4335,7 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
         java.sql.Timestamp data_fine_diaria_miss_estero;
         try {
             Configurazione_cnrComponentSession sess = (Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession");
-            data_fine_diaria_miss_estero = sess.getDt01(context, new Integer(0), "*", "DIARIA_MISS_ESTERO", "DATA_FINE");
+            data_fine_diaria_miss_estero = sess.getDt01(context, Integer.valueOf(0), "*", "DIARIA_MISS_ESTERO", "DATA_FINE");
         } catch (RemoteException e) {
             throw handleException(e);
         }

@@ -72,7 +72,7 @@ public class CRUDFirmaOrdineAcqBP extends CRUDOrdineAcqBP {
                     java.sql.Timestamp dataReg = null;
                     try {
                         dataReg = it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
-                    } catch (javax.ejb.EJBException e) {
+                    } catch (jakarta.ejb.EJBException e) {
                         throw new it.cnr.jada.DetailedRuntimeException(e);
                     }
 

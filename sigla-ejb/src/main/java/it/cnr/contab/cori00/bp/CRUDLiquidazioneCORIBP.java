@@ -31,10 +31,12 @@ import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.*;
- 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.PageContext;
+
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.PageContext;
  
 import it.cnr.contab.anagraf00.core.bulk.*;
 import it.cnr.contab.anagraf00.tabrif.bulk.*;
@@ -252,7 +254,7 @@ public void setIsLiquidato(boolean newIsLiquidato) {
  *
  * @param writer <code>JspWriter</code>
 **/
-public void writeToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException,javax.servlet.ServletException {
+public void writeToolbar(JspWriter writer) throws java.io.IOException, ServletException {
 
 	super.writeToolbar(writer);
 	writeViewDettaglioGruppiToolbar(writer);
@@ -262,7 +264,7 @@ public void writeToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOEx
  *
  * @param writer <code>JspWriter</code>
 **/
-public void writeViewDettaglioGruppiToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException,javax.servlet.ServletException {
+public void writeViewDettaglioGruppiToolbar(JspWriter writer) throws java.io.IOException,ServletException {
 	if (this.getParentRoot().isBootstrap()) {
 		writer.println("<!-- TOOLBAR FP -->");
 		writer.println("<div id=\"fpToolbar\" class=\"btn-toolbar\" role=\"toolbar\" aria-label=\"Toolbar with button groups\">");
@@ -352,8 +354,8 @@ public void Estrazione(ActionContext context) throws ComponentException, RemoteE
           lista=((Liquid_coriComponentSession)createComponentSession()).EstraiLista(context.getUserContext(),liquidazione);
       }
       File f = null;
-     String data_formattata=Formatta(new Integer(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.DAY_OF_MONTH)).toString(),"D",2,"0").concat(
-    		 Formatta(new Integer(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.MONTH)+1).toString(),"D",2,"0")+
+     String data_formattata=Formatta(Integer.valueOf(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.DAY_OF_MONTH)).toString(),"D",2,"0").concat(
+    		 Formatta(Integer.valueOf(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.MONTH)+1).toString(),"D",2,"0")+
     				 EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.YEAR));
       if(liquidazione!=null)
     	  	  f = new File(System.getProperty("tmp.dir.SIGLAWeb")+"/tmp/",
@@ -638,8 +640,8 @@ public void EstrazioneTot(ActionContext context) throws ComponentException, Remo
           lista=((Liquid_coriComponentSession)createComponentSession()).EstraiListaTot(context.getUserContext(),liquidazione);
       }
       File f = null;
-     String data_formattata=Formatta(new Integer(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.DAY_OF_MONTH)).toString(),"D",2,"0").concat(
-    		 Formatta(new Integer(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.MONTH)+1).toString(),"D",2,"0")+
+     String data_formattata=Formatta(Integer.valueOf(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.DAY_OF_MONTH)).toString(),"D",2,"0").concat(
+    		 Formatta(Integer.valueOf(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.MONTH)+1).toString(),"D",2,"0")+
     				 EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.YEAR));
       if(liquidazione!=null)
     	  	  f = new File(System.getProperty("tmp.dir.SIGLAWeb")+"/tmp/",

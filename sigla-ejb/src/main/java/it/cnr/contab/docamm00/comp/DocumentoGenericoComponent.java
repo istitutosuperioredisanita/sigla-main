@@ -67,7 +67,7 @@ import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -290,7 +290,7 @@ public class DocumentoGenericoComponent
                     }
                 }
             }
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw handleException(doc, e);
         } catch (java.rmi.RemoteException e) {
             throw handleException(doc, e);
@@ -646,7 +646,7 @@ public class DocumentoGenericoComponent
                     }
                 }
             }
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw handleException(generico, e);
         } catch (java.rmi.RemoteException e) {
             throw handleException(generico, e);
@@ -1168,7 +1168,7 @@ public class DocumentoGenericoComponent
         if (filtro.getFl_nr_accertamento().booleanValue() && filtro.getNr_accertamento() != null)
             sql.addSQLClause("AND", "ACCERTAMENTO.PG_ACCERTAMENTO", SQLBuilder.EQUALS, filtro.getNr_accertamento());
         //else
-        //sql.addSQLClause("AND","ACCERTAMENTO.PG_ACCERTAMENTO",sql.GREATER_EQUALS, new Long(0));
+        //sql.addSQLClause("AND","ACCERTAMENTO.PG_ACCERTAMENTO",sql.GREATER_EQUALS, Long.valueOf(0));
 
         sql.addTableToHeader("TERZO");
         sql.addTableToHeader("ANAGRAFICO");
@@ -1484,7 +1484,7 @@ public class DocumentoGenericoComponent
         if (filtro.getFl_nr_obbligazione().booleanValue() && filtro.getNr_obbligazione() != null)
             sql.addSQLClause("AND", "OBBLIGAZIONE.PG_OBBLIGAZIONE", SQLBuilder.EQUALS, filtro.getNr_obbligazione());
         //else
-        //sql.addSQLClause("AND","OBBLIGAZIONE.PG_OBBLIGAZIONE",sql.GREATER_EQUALS, new Long(0));
+        //sql.addSQLClause("AND","OBBLIGAZIONE.PG_OBBLIGAZIONE",sql.GREATER_EQUALS, Long.valueOf(0));
 
 
 //	sql.addTableToHeader("ELEMENTO_VOCE");
@@ -2492,7 +2492,7 @@ public class DocumentoGenericoComponent
             // Gennaro Borriello - (02/11/2004 16.48.21)
             // Fix sul controllo dello "Stato Riportato": controlla che il documento sia stato riportato DA UN ES. PRECEDENTE a quello di scrivania.
             if (documento.isRiportataInScrivania()) {
-                Integer es_prec = new Integer(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(aUC).intValue() - 1);
+                Integer es_prec = Integer.valueOf(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(aUC).intValue() - 1);
                 if (!isEsercizioCoepChiusoFor(aUC, documento, es_prec)) {
                     throw new it.cnr.jada.comp.ApplicationException("Attenzione: non è possibile eliminare il documento, poichè l'esercizio economico precedente a quello in scrivania non è chiuso.");
                 }
@@ -3066,8 +3066,8 @@ public class DocumentoGenericoComponent
 
         String cd_euro = null;
         try {
-            cd_euro = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(userContext, new Integer(0), "*", "CD_DIVISA", "EURO");
-        } catch (javax.ejb.EJBException e) {
+            cd_euro = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(userContext, Integer.valueOf(0), "*", "CD_DIVISA", "EURO");
+        } catch (jakarta.ejb.EJBException e) {
             handleException(e);
         } catch (java.rmi.RemoteException e) {
             handleException(e);
@@ -3162,11 +3162,11 @@ public class DocumentoGenericoComponent
                                     "CNRCONFIG00_EJB_Configurazione_cnrComponentSession",
                                     it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getIm01(
                             userContext,
-                            new Integer(0),
+                            Integer.valueOf(0),
                             "*",
                             "TERZO_SPECIALE",
                             "CODICE_DIVERSI_DEFAULT");
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             handleException(e);
         } catch (java.rmi.RemoteException e) {
             handleException(e);
@@ -3179,7 +3179,7 @@ public class DocumentoGenericoComponent
                 it.cnr.jada.bulk.BulkHome home = getHome(userContext, TerzoBulk.class);
                 it.cnr.jada.persistency.sql.SQLBuilder sql = home.createSQLBuilder();
 
-                sql.addClause("AND", "cd_terzo", SQLBuilder.EQUALS, new Long(cd_terzo_default.longValue()).toString());
+                sql.addClause("AND", "cd_terzo", SQLBuilder.EQUALS, Long.valueOf(cd_terzo_default.longValue()).toString());
 
                 it.cnr.jada.persistency.Broker broker = home.createBroker(sql);
                 if (!broker.next())
@@ -3267,7 +3267,7 @@ public class DocumentoGenericoComponent
             documento.setData_registrazione(date);
             try {
                 documento.setDataInizioObbligoRegistroUnico(Utility.createConfigurazioneCnrComponentSession().
-                        getDt01(userContext, new Integer(0), null, "REGISTRO_UNICO_FATPAS", "DATA_INIZIO"));
+                        getDt01(userContext, Integer.valueOf(0), null, "REGISTRO_UNICO_FATPAS", "DATA_INIZIO"));
 
             } catch (Exception e) {
                 throw handleException(documento, e);
@@ -3387,7 +3387,7 @@ public class DocumentoGenericoComponent
             setDt_termine_creazione_docamm(userContext, generico);
             try {
                 generico.setDataInizioObbligoRegistroUnico(Utility.createConfigurazioneCnrComponentSession().
-                        getDt01(userContext, new Integer(0), null, "REGISTRO_UNICO_FATPAS", "DATA_INIZIO"));
+                        getDt01(userContext, Integer.valueOf(0), null, "REGISTRO_UNICO_FATPAS", "DATA_INIZIO"));
 
             } catch (Exception e) {
                 throw handleException(generico, e);
@@ -3636,8 +3636,8 @@ public class DocumentoGenericoComponent
 
         stampa.setDataInizio(getFirstDayOfYear(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext).intValue()));
         stampa.setDataFine(getDataOdierna(userContext));
-        stampa.setPgInizio(new Integer(1));
-        stampa.setPgFine(new Integer(999999999));
+        stampa.setPgInizio(Integer.valueOf(1));
+        stampa.setPgFine(Integer.valueOf(999999999));
 
         stampa.setTerzoForPrint(new TerzoBulk());
 
@@ -4206,7 +4206,7 @@ public class DocumentoGenericoComponent
                 }
             } catch (java.rmi.RemoteException e) {
                 throw handleException(accertamento, e);
-            } catch (javax.ejb.EJBException e) {
+            } catch (jakarta.ejb.EJBException e) {
                 throw handleException(accertamento, e);
             }
         }
@@ -4231,7 +4231,7 @@ public class DocumentoGenericoComponent
                 }
             } catch (java.rmi.RemoteException e) {
                 throw handleException(obbligazione, e);
-            } catch (javax.ejb.EJBException e) {
+            } catch (jakarta.ejb.EJBException e) {
                 throw handleException(obbligazione, e);
             }
         }
@@ -4726,7 +4726,7 @@ public class DocumentoGenericoComponent
                     "CONTO_CORRENTE_SPECIALE",
                     "ENTE",
                     "*",
-                    new Integer(0));
+                    Integer.valueOf(0));
             it.cnr.contab.config00.bulk.Configurazione_cnrHome home = (it.cnr.contab.config00.bulk.Configurazione_cnrHome) getHome(userContext, config);
             java.util.List configurazioni = home.find(config);
             if (configurazioni != null) {
@@ -5711,7 +5711,7 @@ public class DocumentoGenericoComponent
                                                                     it.cnr.contab.inventario00.docs.bulk.Inventario_utilizzatori_laBulk new_utilizzatore_la
                                                                             = new it.cnr.contab.inventario00.docs.bulk.Inventario_utilizzatori_laBulk(linea_att.getCd_linea_attivita(), linea_att.getCd_centro_responsabilita(),
                                                                             buono.getNr_inventario(),
-                                                                            buono.getPg_inventario(), new Long(buono.getProgressivo().longValue()));
+                                                                            buono.getPg_inventario(), Long.valueOf(buono.getProgressivo().longValue()));
                                                                     BigDecimal perc_cdr = (cdraggr.getImporto().multiply(new BigDecimal(100)).divide(dett.getObbligazione_scadenzario().getIm_scadenza(), 2, 6));
                                                                     tot_perc_cdr = tot_perc_cdr.add(perc_cdr);
                                                                     tot_perc_la = tot_perc_la.add(((dett.getPrc()).multiply(new BigDecimal(100))).divide(perc_cdr, 2, 6));
@@ -5725,7 +5725,7 @@ public class DocumentoGenericoComponent
                                                                         Inventario_utilizzatori_laHome Inventario_utilizzatore_laHome = (Inventario_utilizzatori_laHome) getHome(userContext, Inventario_utilizzatori_laBulk.class);
                                                                         Inventario_utilizzatori_laBulk utilizzatore = (Inventario_utilizzatori_laBulk) Inventario_utilizzatore_laHome.findByPrimaryKey(new Inventario_utilizzatori_laBulk(linea_att.getCd_linea_attivita(), linea_att.getCd_centro_responsabilita(),
                                                                                 buono.getNr_inventario(),
-                                                                                buono.getPg_inventario(), new Long(buono.getProgressivo().longValue())));
+                                                                                buono.getPg_inventario(), Long.valueOf(buono.getProgressivo().longValue())));
                                                                         if (!new_utilizzatore_la.equalsByPrimaryKey(utilizzatore))
                                                                             super.insertBulk(userContext, new_utilizzatore_la, true);
                                                                     }
@@ -6259,7 +6259,7 @@ public class DocumentoGenericoComponent
             documento.setDt_da_competenza_coge(wizard.getDt_da_competenza_coge());
             documento.setDs_documento_generico(wizard.getDs_documento_generico());
 
-            DivisaBulk divisa = new DivisaBulk( Utility.createConfigurazioneCnrComponentSession().getVal01(userContext, new Integer(0), "*", Configurazione_cnrBulk.PK_CD_DIVISA,Configurazione_cnrBulk.SK_EURO ));
+            DivisaBulk divisa = new DivisaBulk( Utility.createConfigurazioneCnrComponentSession().getVal01(userContext, Integer.valueOf(0), "*", Configurazione_cnrBulk.PK_CD_DIVISA,Configurazione_cnrBulk.SK_EURO ));
             documento.setValuta( divisa );
             documento.setCambio( new BigDecimal(1));
 

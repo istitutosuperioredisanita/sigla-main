@@ -89,7 +89,7 @@ public it.cnr.jada.bulk.OggettoBulk initializeForSearch(
 	bulk.setCd_cds(unita_organizzativa.getUnita_padre().getCd_unita_organizzativa());
 	bulk.setTipo_report(DEFINITIVO);
 	bulk.setTipo_stampa(TIPO_STAMPA_RIEPILOGATIVI_IVA_DIFFERITA);
-	bulk.setPageNumber(new Integer(1));
+	bulk.setPageNumber(Integer.valueOf(1));
 	
 	return bulk;
 }

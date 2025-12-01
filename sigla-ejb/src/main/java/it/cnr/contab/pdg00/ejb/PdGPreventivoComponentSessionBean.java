@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.pdg00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.pdg00.comp.PdGPreventivoComponent;
 @Stateless(name="CNRPDG00_EJB_PdGPreventivoComponentSession")
@@ -26,10 +26,8 @@ public class PdGPreventivoComponentSessionBean extends it.cnr.jada.ejb.CRUDCompo
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.pdg00.comp.PdGPreventivoComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new PdGPreventivoComponentSessionBean();
-}
-public it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk annullaCDPSuPdg(it.cnr.jada.UserContext param0,it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk annullaCDPSuPdg(it.cnr.jada.UserContext param0,it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk result = ((PdGPreventivoComponent)componentObj).annullaCDPSuPdg(param0,param1);
@@ -47,7 +45,7 @@ public it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk annullaCDPSuPdg(it.cnr.jada.U
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk caricaPdg(it.cnr.jada.UserContext param0,it.cnr.contab.config00.sto.bulk.CdrBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk caricaPdg(it.cnr.jada.UserContext param0,it.cnr.contab.config00.sto.bulk.CdrBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk result = ((PdGPreventivoComponent)componentObj).caricaPdg(param0,param1);
@@ -65,7 +63,7 @@ public it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk caricaPdg(it.cnr.jada.UserCon
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk delDetByLA(it.cnr.jada.UserContext param0,it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk param1) throws it.cnr.jada.comp.ApplicationException,it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk delDetByLA(it.cnr.jada.UserContext param0,it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk param1) throws it.cnr.jada.comp.ApplicationException,it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk result = ((PdGPreventivoComponent)componentObj).delDetByLA(param0,param1);
@@ -86,7 +84,7 @@ public it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk delDetByLA(it.cnr.jada.UserCo
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((PdGPreventivoComponent)componentObj).inizializzaBulkPerStampa(param0,param1);
@@ -104,7 +102,7 @@ public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserCon
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public boolean isDettagliPdGModificabili(it.cnr.jada.UserContext param0,it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public boolean isDettagliPdGModificabili(it.cnr.jada.UserContext param0,it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		boolean result = ((PdGPreventivoComponent)componentObj).isDettagliPdGModificabili(param0,param1);
@@ -122,7 +120,7 @@ public boolean isDettagliPdGModificabili(it.cnr.jada.UserContext param0,it.cnr.c
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk modificaStatoPdG(it.cnr.jada.UserContext param0,it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk param1) throws it.cnr.contab.pdg00.comp.DiscrepanzeAggregatoException,it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk modificaStatoPdG(it.cnr.jada.UserContext param0,it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk param1) throws it.cnr.contab.pdg00.comp.DiscrepanzeAggregatoException,it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((PdGPreventivoComponent)componentObj).modificaStatoPdG(param0,param1);
@@ -143,7 +141,7 @@ public it.cnr.jada.bulk.OggettoBulk modificaStatoPdG(it.cnr.jada.UserContext par
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk ribaltaCostiPdGArea(it.cnr.jada.UserContext param0,it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk ribaltaCostiPdGArea(it.cnr.jada.UserContext param0,it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk result = ((PdGPreventivoComponent)componentObj).ribaltaCostiPdGArea(param0,param1);
@@ -161,7 +159,7 @@ public it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk ribaltaCostiPdGArea(it.cnr.ja
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk scaricaCDPSuPdg(it.cnr.jada.UserContext param0,it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk scaricaCDPSuPdg(it.cnr.jada.UserContext param0,it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk result = ((PdGPreventivoComponent)componentObj).scaricaCDPSuPdg(param0,param1);
@@ -179,7 +177,7 @@ public it.cnr.contab.pdg00.bulk.Pdg_preventivoBulk scaricaCDPSuPdg(it.cnr.jada.U
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((PdGPreventivoComponent)componentObj).stampaConBulk(param0,param1);
@@ -197,7 +195,7 @@ public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public boolean isUoPrincipale(it.cnr.contab.utenze00.bp.CNRUserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public boolean isUoPrincipale(it.cnr.contab.utenze00.bp.CNRUserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		boolean result = ((PdGPreventivoComponent)componentObj).isUoPrincipale(param0);
@@ -215,7 +213,7 @@ public boolean isUoPrincipale(it.cnr.contab.utenze00.bp.CNRUserContext param0) t
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public boolean controllaDiscrepanzeAggregatoForCons(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1, String param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public boolean controllaDiscrepanzeAggregatoForCons(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1, String param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		boolean result = ((PdGPreventivoComponent)componentObj).controllaDiscrepanzeAggregatoForCons(param0,param1,param2);

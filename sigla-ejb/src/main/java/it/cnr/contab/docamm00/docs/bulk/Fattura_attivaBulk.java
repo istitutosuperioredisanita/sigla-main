@@ -325,7 +325,7 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
         if (date == null)
             try {
                 date = it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp();
-            } catch (javax.ejb.EJBException e) {
+            } catch (jakarta.ejb.EJBException e) {
                 throw new it.cnr.jada.DetailedRuntimeException(e);
             }
 
@@ -504,13 +504,13 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
             long prog = ((Fattura_attiva_rigaBulk) i.next()).getProgressivo_riga().longValue();
             if (prog > max) max = prog;
         }
-        nuovoRigo.setProgressivo_riga(new Long(max + 1));
+        nuovoRigo.setProgressivo_riga(Long.valueOf(max + 1));
 
         try {
             java.sql.Timestamp ts = it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp();
             nuovoRigo.setDt_da_competenza_coge((getDt_da_competenza_coge() == null) ? ts : getDt_da_competenza_coge());
             nuovoRigo.setDt_a_competenza_coge((getDt_a_competenza_coge() == null) ? ts : getDt_a_competenza_coge());
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw new it.cnr.jada.DetailedRuntimeException(e);
         }
         nuovoRigo.setFl_iva_forzata(Boolean.FALSE);
@@ -2021,7 +2021,7 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
         java.util.Calendar dataRegistrazione = getDateCalendar(getDt_registrazione());
 
         try {
-            int compare = getEsercizio().compareTo(new Integer(dataRegistrazione.get(Calendar.YEAR)));
+            int compare = getEsercizio().compareTo(Integer.valueOf(dataRegistrazione.get(Calendar.YEAR)));
             if (compare == 0) {
                 limSup = today;
                 limInf = getDateCalendar(new java.sql.Timestamp(sdf.parse("01/01/" + getEsercizio().intValue()).getTime()));
@@ -2205,7 +2205,7 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
             long prog = ((Fattura_attiva_rigaBulk) i.next()).getProgressivo_riga().longValue();
             if (prog > max) max = prog;
         }
-        dettaglio.setPg_riga_intra(new Long(max + 1));
+        dettaglio.setPg_riga_intra(Long.valueOf(max + 1));
         if (getCliente() != null && getCliente().getAnagrafico() != null &&
                 getCliente().getAnagrafico().getComune_fiscale() != null) {
             NazioneBulk nazione = getCliente().getAnagrafico().getComune_fiscale().getNazione();

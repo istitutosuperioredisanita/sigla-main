@@ -22,35 +22,35 @@ package it.cnr.contab.config00.util;
  */
 public class Constants 
 {
-	public static final Integer LIVELLO_CDS = new Integer( 1 );
-	public static final Integer LIVELLO_UO =  new Integer( 2 );
+	public static final Integer LIVELLO_CDS = Integer.valueOf( 1 );
+	public static final Integer LIVELLO_UO =  Integer.valueOf( 2 );
 
 	
 	public static final String  TIPO_CDS = new String( "C" );
 	public static final String  TIPO_UO  = new String( "U" );
 	public static final String  TIPO_CDR = new String( "R" );	
 
-	public static final Integer ERRORE_SIP_100 = new Integer(100);
-	public static final Integer ERRORE_SIP_101 = new Integer(101);
-	public static final Integer ERRORE_SIP_102 = new Integer(102);
-	public static final Integer ERRORE_SIP_103 = new Integer(103);
-	public static final Integer ERRORE_SIP_104 = new Integer(104);
-	public static final Integer ERRORE_SIP_105 = new Integer(105);
-	public static final Integer ERRORE_SIP_106 = new Integer(106);
-	public static final Integer ERRORE_SIP_107 = new Integer(107);
-	public static final Integer ERRORE_SIP_108 = new Integer(108);
-	public static final Integer ERRORE_SIP_109 = new Integer(109);
-	public static final Integer ERRORE_SIP_110 = new Integer(110);
-	public static final Integer ERRORE_SIP_111 = new Integer(111);
-	public static final Integer ERRORE_SIP_112 = new Integer(112);
-	public static final Integer ERRORE_SIP_113 = new Integer(113);
-	public static final Integer ERRORE_SIP_114 = new Integer(114);
-	public static final Integer ERRORE_SIP_115 = new Integer(115);
-	public static final Integer ERRORE_SIP_116 = new Integer(116);
-	public static final Integer ERRORE_SIP_117 = new Integer(117);
-	public static final Integer ERRORE_SIP_118 = new Integer(118);
-	public static final Integer ERRORE_SIP_119 = new Integer(119);
-	public static final Integer ERRORE_SIP_120 = new Integer(120);
+	public static final Integer ERRORE_SIP_100 = Integer.valueOf(100);
+	public static final Integer ERRORE_SIP_101 = Integer.valueOf(101);
+	public static final Integer ERRORE_SIP_102 = Integer.valueOf(102);
+	public static final Integer ERRORE_SIP_103 = Integer.valueOf(103);
+	public static final Integer ERRORE_SIP_104 = Integer.valueOf(104);
+	public static final Integer ERRORE_SIP_105 = Integer.valueOf(105);
+	public static final Integer ERRORE_SIP_106 = Integer.valueOf(106);
+	public static final Integer ERRORE_SIP_107 = Integer.valueOf(107);
+	public static final Integer ERRORE_SIP_108 = Integer.valueOf(108);
+	public static final Integer ERRORE_SIP_109 = Integer.valueOf(109);
+	public static final Integer ERRORE_SIP_110 = Integer.valueOf(110);
+	public static final Integer ERRORE_SIP_111 = Integer.valueOf(111);
+	public static final Integer ERRORE_SIP_112 = Integer.valueOf(112);
+	public static final Integer ERRORE_SIP_113 = Integer.valueOf(113);
+	public static final Integer ERRORE_SIP_114 = Integer.valueOf(114);
+	public static final Integer ERRORE_SIP_115 = Integer.valueOf(115);
+	public static final Integer ERRORE_SIP_116 = Integer.valueOf(116);
+	public static final Integer ERRORE_SIP_117 = Integer.valueOf(117);
+	public static final Integer ERRORE_SIP_118 = Integer.valueOf(118);
+	public static final Integer ERRORE_SIP_119 = Integer.valueOf(119);
+	public static final Integer ERRORE_SIP_120 = Integer.valueOf(120);
 	public final static java.util.Dictionary<Integer,String> erroriSIP;
 	static {
 		erroriSIP = new it.cnr.jada.util.OrderedHashtable();
@@ -80,13 +80,13 @@ public class Constants
 	public static final String  RICHIESTE_IN_CORSO = "C";
 	public static final String  RICHIESTE_SCADUTE = "S";
 
-	public static final Integer ERRORE_INC_100 = new Integer(100);
-	public static final Integer ERRORE_INC_101 = new Integer(101);
-	public static final Integer ERRORE_INC_102 = new Integer(102);
-	public static final Integer ERRORE_INC_103 = new Integer(103);
-	public static final Integer ERRORE_INC_104 = new Integer(104);
-	public static final Integer ERRORE_INC_105 = new Integer(105);
-	public static final Integer ERRORE_INC_106 = new Integer(106);
+	public static final Integer ERRORE_INC_100 = Integer.valueOf(100);
+	public static final Integer ERRORE_INC_101 = Integer.valueOf(101);
+	public static final Integer ERRORE_INC_102 = Integer.valueOf(102);
+	public static final Integer ERRORE_INC_103 = Integer.valueOf(103);
+	public static final Integer ERRORE_INC_104 = Integer.valueOf(104);
+	public static final Integer ERRORE_INC_105 = Integer.valueOf(105);
+	public static final Integer ERRORE_INC_106 = Integer.valueOf(106);
 	
 	public final static java.util.Dictionary<Integer,String> erroriINC;
 	static {
@@ -99,12 +99,12 @@ public class Constants
 		erroriINC.put(ERRORE_INC_105, "Errore di autenticazione");
 		erroriINC.put(ERRORE_INC_106, "Errore interno del sistema, il sistema potrebbe avere un problema tecnico in corso");
 	}	
-	public static final Integer ERRORE_CON_200 = new Integer(200);
-	public static final Integer ERRORE_CON_201 = new Integer(201);
-	public static final Integer ERRORE_CON_202 = new Integer(202);
-	public static final Integer ERRORE_CON_203 = new Integer(203);
-	public static final Integer ERRORE_CON_204 = new Integer(204);
-	public static final Integer ERRORE_CON_205 = new Integer(205);
+	public static final Integer ERRORE_CON_200 = Integer.valueOf(200);
+	public static final Integer ERRORE_CON_201 = Integer.valueOf(201);
+	public static final Integer ERRORE_CON_202 = Integer.valueOf(202);
+	public static final Integer ERRORE_CON_203 = Integer.valueOf(203);
+	public static final Integer ERRORE_CON_204 = Integer.valueOf(204);
+	public static final Integer ERRORE_CON_205 = Integer.valueOf(205);
 	
 	
 	public final static java.util.Dictionary<Integer,String> erroriCON;

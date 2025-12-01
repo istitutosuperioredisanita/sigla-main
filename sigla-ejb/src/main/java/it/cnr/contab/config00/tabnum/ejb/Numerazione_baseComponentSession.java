@@ -17,7 +17,7 @@
 
 package it.cnr.contab.config00.tabnum.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface Numerazione_baseComponentSession extends it.cnr.jada.ejb.GenericComponentSession {

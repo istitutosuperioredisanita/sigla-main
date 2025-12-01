@@ -42,7 +42,7 @@ public class TransactionalRichiestaUopComponentSession extends it.cnr.jada.ejb.T
 			}
 		}
 	}
-	public Boolean isUtenteAbilitatoRichiesta(UserContext usercontext, RichiestaUopBulk richiesta) throws ComponentException, PersistencyException,javax.ejb.EJBException, RemoteException{
+	public Boolean isUtenteAbilitatoRichiesta(UserContext usercontext, RichiestaUopBulk richiesta) throws ComponentException, PersistencyException,jakarta.ejb.EJBException, RemoteException{
 		try {
 			return (Boolean)invoke("isUtenteAbilitatoRichiesta",new Object[] {
 					usercontext,
@@ -59,7 +59,7 @@ public class TransactionalRichiestaUopComponentSession extends it.cnr.jada.ejb.T
 			}
 		}
 	}
-	public Boolean isUtenteAbilitatoValidazioneRichiesta(UserContext usercontext, RichiestaUopBulk richiesta) throws ComponentException, PersistencyException,javax.ejb.EJBException, RemoteException{
+	public Boolean isUtenteAbilitatoValidazioneRichiesta(UserContext usercontext, RichiestaUopBulk richiesta) throws ComponentException, PersistencyException,jakarta.ejb.EJBException, RemoteException{
 		try {
 			return (Boolean)invoke("isUtenteAbilitatoValidazioneRichiesta",new Object[] {
 					usercontext,

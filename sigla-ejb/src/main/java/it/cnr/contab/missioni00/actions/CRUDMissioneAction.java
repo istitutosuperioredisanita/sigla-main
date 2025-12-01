@@ -118,7 +118,7 @@ public class CRUDMissioneAction extends EconomicaAction {
      * Tale metodo chiama il metodo "find" della missione
      */
 
-    protected Forward basicDoCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, javax.ejb.RemoveException {
+    protected Forward basicDoCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, jakarta.ejb.RemoveException {
         try {
             fillModel(context);
             it.cnr.jada.util.action.CRUDBP bp = getBusinessProcess(context);
@@ -747,7 +747,7 @@ public class CRUDMissioneAction extends EconomicaAction {
      * Attiva la ricerca libera di una missione
      */
 
-    public Forward doCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, javax.ejb.RemoveException {
+    public Forward doCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, jakarta.ejb.RemoveException {
         CRUDMissioneBP bp = (CRUDMissioneBP) context.getBusinessProcess();
 
         //	Se chi invoca la ricerca delle missioni e' il Fondo Economale
@@ -1724,7 +1724,7 @@ public class CRUDMissioneAction extends EconomicaAction {
 
                 OptionBP option = openConfirm(context, msg, OptionBP.CONFIRM_YES_NO, "doConfermaDataRegistrazioneChange");
                 option.addAttribute("dataReg", oldData);
-                option.addAttribute("errorCodeTerzo", new Integer(errorCodeTerzo));
+                option.addAttribute("errorCodeTerzo", Integer.valueOf(errorCodeTerzo));
                 return option;
             }
 
@@ -2283,7 +2283,7 @@ public class CRUDMissioneAction extends EconomicaAction {
         } catch (Throwable e) {
             try {
                 missione = (MissioneBulk) bp.getModel();
-                if (oldMissioneIniziale.getPg_missione() != null && oldMissioneIniziale.getPg_missione().compareTo(new Long(0)) > 0) {
+                if (oldMissioneIniziale.getPg_missione() != null && oldMissioneIniziale.getPg_missione().compareTo(Long.valueOf(0)) > 0) {
                     missione.setMissioneIniziale((MissioneBulk) oldMissioneIniziale.clone());
                     missione.setTi_provvisorio_definitivo(missione.getMissioneIniziale().getTi_provvisorio_definitivo());
                 } else {
@@ -2795,7 +2795,7 @@ public class CRUDMissioneAction extends EconomicaAction {
             throw new BusinessProcessException(ex);
         }
 
-        if (bp.isInserting() || (missione.getPg_missione().compareTo(new Long(0)) == -1))
+        if (bp.isInserting() || (missione.getPg_missione().compareTo(Long.valueOf(0)) == -1))
             bp.create(context);        // creo la missione
         else if (bp.isEditing())
             bp.update(context);        // modifico la missione

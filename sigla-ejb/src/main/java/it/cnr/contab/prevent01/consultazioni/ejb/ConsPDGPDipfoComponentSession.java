@@ -17,7 +17,7 @@
 
 package it.cnr.contab.prevent01.consultazioni.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface ConsPDGPDipfoComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

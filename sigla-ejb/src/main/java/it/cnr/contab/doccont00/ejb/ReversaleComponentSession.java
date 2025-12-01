@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
 import java.sql.Date;
 import java.text.ParseException;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface ReversaleComponentSession extends it.cnr.jada.ejb.CRUDComponentSession, it.cnr.jada.ejb.PrintComponentSession {

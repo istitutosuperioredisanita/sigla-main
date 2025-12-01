@@ -44,7 +44,7 @@ import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.LoggableStatement;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Date;
@@ -641,7 +641,7 @@ public Configurazione_cnrBulk getLimitiRitardoDetraibile(UserContext userContext
        	else
        		throw new ApplicationException("Configurazione registrazione tardiva mancante.");
       
-    } catch (javax.ejb.EJBException ex) {
+    } catch (jakarta.ejb.EJBException ex) {
         throw handleException(ex);
     } catch (RemoteException ex) {
         throw handleException(ex);

@@ -87,15 +87,16 @@ import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.bulk.StorageFile;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
+import jakarta.servlet.ServletException;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.PageContext;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.jsp.PageContext;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConstants;
@@ -1070,7 +1071,7 @@ public class CRUDDistintaCassiereBP extends AllegatiCRUDBP<AllegatoGenericoBulk,
                             if (doc.getCdSospeso() != null) {
                                 for (Iterator it = infoben.getSospeso().iterator(); it.hasNext(); ) {
                                     it.cnr.contab.doccont00.intcass.xmlbnl.Mandato.InformazioniBeneficiario.Sospeso presente = (it.cnr.contab.doccont00.intcass.xmlbnl.Mandato.InformazioniBeneficiario.Sospeso) it.next();
-                                    Long l = new Long(doc.getCdSospeso().substring(0, doc.getCdSospeso().indexOf(".")).replace(" ", "")).longValue();
+                                    Long l = Long.valueOf(doc.getCdSospeso().substring(0, doc.getCdSospeso().indexOf(".")).replace(" ", "")).longValue();
                                     if (l.compareTo(presente.getNumeroProvvisorio()) == 0) {
                                         presente.setImportoProvvisorio(presente.getImportoProvvisorio().add(doc.getImAssociato()));
                                         sospesoTrovato = true;
@@ -1080,7 +1081,7 @@ public class CRUDDistintaCassiereBP extends AllegatiCRUDBP<AllegatoGenericoBulk,
                                 if (!sospesoTrovato) {
                                     sosp = new it.cnr.contab.doccont00.intcass.xmlbnl.Mandato.InformazioniBeneficiario.Sospeso();
                                     try {
-                                        sosp.setNumeroProvvisorio(new Long(
+                                        sosp.setNumeroProvvisorio(Long.valueOf(
                                                 doc.getCdSospeso()
                                                         .substring(
                                                                 0,
@@ -1599,7 +1600,7 @@ public class CRUDDistintaCassiereBP extends AllegatiCRUDBP<AllegatoGenericoBulk,
                             if (doc.getCdSospeso() != null) {
                                 for (Iterator it = infoben.getSospeso().iterator(); it.hasNext(); ) {
                                     it.cnr.contab.doccont00.intcass.xmlbnl.Mandato.InformazioniBeneficiario.Sospeso presente = (it.cnr.contab.doccont00.intcass.xmlbnl.Mandato.InformazioniBeneficiario.Sospeso) it.next();
-                                    Long l = new Long(doc.getCdSospeso().substring(0, doc.getCdSospeso().indexOf(".")).replace(" ", "")).longValue();
+                                    Long l = Long.valueOf(doc.getCdSospeso().substring(0, doc.getCdSospeso().indexOf(".")).replace(" ", "")).longValue();
                                     if (l.compareTo(presente.getNumeroProvvisorio()) == 0) {
                                         presente.setImportoProvvisorio(presente.getImportoProvvisorio().add(doc.getImAssociato()));
                                         sospesoTrovato = true;
@@ -1609,7 +1610,7 @@ public class CRUDDistintaCassiereBP extends AllegatiCRUDBP<AllegatoGenericoBulk,
                                 if (!sospesoTrovato) {
                                     sosp = new it.cnr.contab.doccont00.intcass.xmlbnl.Mandato.InformazioniBeneficiario.Sospeso();
                                     try {
-                                        sosp.setNumeroProvvisorio(new Long(
+                                        sosp.setNumeroProvvisorio(Long.valueOf(
                                                 doc.getCdSospeso()
                                                         .substring(
                                                                 0,
@@ -1787,7 +1788,7 @@ public class CRUDDistintaCassiereBP extends AllegatiCRUDBP<AllegatoGenericoBulk,
                         if (doc.getCdSospeso() != null) {
                             for (Iterator it = infover.getSospeso().iterator(); it.hasNext(); ) {
                                 it.cnr.contab.doccont00.intcass.xmlbnl.Reversale.InformazioniVersante.Sospeso presente = (it.cnr.contab.doccont00.intcass.xmlbnl.Reversale.InformazioniVersante.Sospeso) it.next();
-                                Long l = new Long(doc.getCdSospeso().substring(0, doc.getCdSospeso().indexOf(".")).replace(" ", "")).longValue();
+                                Long l = Long.valueOf(doc.getCdSospeso().substring(0, doc.getCdSospeso().indexOf(".")).replace(" ", "")).longValue();
                                 if (l.compareTo(presente.getNumeroProvvisorio()) == 0) {
                                     presente.setImportoProvvisorio(presente.getImportoProvvisorio().add(doc.getImAssociato()));
                                     sospesoTrovato = true;
@@ -1797,7 +1798,7 @@ public class CRUDDistintaCassiereBP extends AllegatiCRUDBP<AllegatoGenericoBulk,
                             if (!sospesoTrovato) {
                                 sosp = new it.cnr.contab.doccont00.intcass.xmlbnl.Reversale.InformazioniVersante.Sospeso();
                                 try {
-                                    sosp.setNumeroProvvisorio(new Long(
+                                    sosp.setNumeroProvvisorio(Long.valueOf(
                                             doc.getCdSospeso()
                                                     .substring(
                                                             0,
@@ -1943,7 +1944,7 @@ public class CRUDDistintaCassiereBP extends AllegatiCRUDBP<AllegatoGenericoBulk,
             throw handleException(e);
         } catch (ComponentException e) {
             throw handleException(e);
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw handleException(e);
         } catch (IOException e) {
             throw handleException(e);

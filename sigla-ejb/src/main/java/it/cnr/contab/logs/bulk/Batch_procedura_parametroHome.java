@@ -45,7 +45,7 @@ public class Batch_procedura_parametroHome extends BulkHome
     {
         try
         {
-            ((Batch_procedura_parametroBulk)oggettobulk).setPg_valore_parametro(new Integer(((Integer)findAndLockMax(oggettobulk, "pg_valore_parametro", new Integer(0))).intValue() + 1));
+            ((Batch_procedura_parametroBulk)oggettobulk).setPg_valore_parametro(Integer.valueOf(((Integer)findAndLockMax(oggettobulk, "pg_valore_parametro", Integer.valueOf(0))).intValue() + 1));
         }
         catch(BusyResourceException busyresourceexception)
         {

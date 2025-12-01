@@ -246,7 +246,7 @@ public class CompensoBulk extends CompensoBase implements IDefferUpdateSaldi, ID
     public static java.sql.Timestamp getDataOdierna() throws it.cnr.jada.action.BusinessProcessException {
         try {
             return getDataOdierna(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate());
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw new it.cnr.jada.action.BusinessProcessException(e);
         }
     }
@@ -1713,7 +1713,7 @@ public class CompensoBulk extends CompensoBase implements IDefferUpdateSaldi, ID
     }
 
     public OggettoBulk initialize() {
-        setNumero_giorni(new Integer(0));
+        setNumero_giorni(Integer.valueOf(0));
 
         setTi_anagrafico(Tipo_rapportoBulk.DIPENDENTE);
         resetFlags();
@@ -2621,7 +2621,7 @@ public class CompensoBulk extends CompensoBase implements IDefferUpdateSaldi, ID
     }
 
     public void validaDate() throws it.cnr.jada.comp.ApplicationException, it.cnr.jada.action.BusinessProcessException,
-            java.text.ParseException, javax.ejb.EJBException {
+            java.text.ParseException, jakarta.ejb.EJBException {
         if (getDt_registrazione() == null)
             throw new it.cnr.jada.comp.ApplicationException("Inserire la data registrazione");
 
@@ -2759,7 +2759,7 @@ public class CompensoBulk extends CompensoBase implements IDefferUpdateSaldi, ID
     }
 
     public void validaTestata() throws it.cnr.jada.comp.ApplicationException,
-            it.cnr.jada.action.BusinessProcessException, javax.ejb.EJBException, java.text.ParseException {
+            it.cnr.jada.action.BusinessProcessException, jakarta.ejb.EJBException, java.text.ParseException {
         // Validazione Date
         validaDate();
         if (getMissione() != null && getMissione().getDataInizioObbligoRegistroUnico() != null) {

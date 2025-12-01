@@ -135,7 +135,7 @@ public class StampaPdgVariazioneAction extends ParametricPrintAction {
 	}
 
 	
-	public PdGVariazioniComponentSession createPdgComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public PdGVariazioniComponentSession createPdgComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		return (PdGVariazioniComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPDG00_EJB_PdGVariazioniComponentSession", PdGVariazioniComponentSession.class);
 	}
 	

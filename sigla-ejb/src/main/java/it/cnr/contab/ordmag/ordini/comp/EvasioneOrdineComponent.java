@@ -169,7 +169,7 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 					.map(DivisaBulk::getCd_divisa)
 					.orElseThrow(() -> new it.cnr.jada.comp.ApplicationException("Impossibile caricare la valuta di default! Prima di poter inserire un ordine, immettere tale valore."));
 			return divisaDefault;
-		} catch (javax.ejb.EJBException | PersistencyException e) {
+		} catch (jakarta.ejb.EJBException | PersistencyException e) {
 			handleException(e);
 		}
 		return null;

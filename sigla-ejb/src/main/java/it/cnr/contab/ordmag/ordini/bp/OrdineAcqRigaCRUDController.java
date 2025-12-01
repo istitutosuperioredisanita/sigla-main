@@ -24,6 +24,8 @@ import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.HttpActionContext;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 import java.util.Optional;
 
@@ -75,62 +77,12 @@ public class OrdineAcqRigaCRUDController extends it.cnr.jada.util.action.SimpleD
         //fatturaP.getProtocollo_iva_generale() == null;
     }
 
-    /**
-     * Insert the method's description here.
-     * Creation date: (12/11/2001 4:23:46 PM)
-     *
-     * @param newInventoriedChildDeleted boolean
-     */
-//public void validate(ActionContext context,OggettoBulk model) throws ValidationException {
-//	try {
-//		((FatturaPassivaComponentSession)(((SimpleCRUDBP)getParentController()).createComponentSession())).validaRiga(context.getUserContext(), (Fattura_passiva_rigaBulk)model);
-//	} catch (it.cnr.jada.comp.ApplicationException e) {
-//		throw new ValidationException(e.getMessage());
-//	} catch (Throwable e) {
-//		throw new it.cnr.jada.DetailedRuntimeException(e);
-//	}
-//}
-//public void validateForDelete(ActionContext context, OggettoBulk detail) throws ValidationException {
-//	try {
-//		Fattura_passiva_rigaBulk fpr = (Fattura_passiva_rigaBulk)detail;
-//		if (fpr.getTi_associato_manrev() != null && fpr.ASSOCIATO_A_MANDATO.equalsIgnoreCase(fpr.getTi_associato_manrev()))
-//			throw new ValidationException("Impossibile eliminare il dettaglio \"" + 
-//											((fpr.getDs_riga_fattura() != null) ?
-//												fpr.getDs_riga_fattura() :
-//												String.valueOf(fpr.getProgressivo_riga().longValue())) + 
-//											"\" perchè associato a mandato.");
-//		FatturaPassivaComponentSession comp = ((FatturaPassivaComponentSession)(((SimpleCRUDBP)getParentController()).createComponentSession()));
-//		comp.eliminaRiga(context.getUserContext(), fpr);
-//
-//		if (!fpr.isPagata() && !fpr.isToBeCreated()) {
-//			try {
-//				List result = comp.findManRevRigaCollegati(context.getUserContext(), fpr);
-//				if (result!=null && !result.isEmpty())
-//					throw new ValidationException("Impossibile eliminare il dettaglio \"" + 
-//							((fpr.getDs_riga_fattura() != null) ?
-//								fpr.getDs_riga_fattura() :
-//								String.valueOf(fpr.getProgressivo_riga().longValue())) + 
-//							"\" perchè associato a mandato annullato.");
-//			} catch (PersistencyException e) {
-//				throw new ComponentException(e);
-//			} catch (IntrospectionException e) {
-//				throw new ComponentException(e);
-//			}
-//		}
-//	} catch (it.cnr.jada.comp.ApplicationException e) {
-//		throw new ValidationException(e.getMessage());
-//	} catch (ValidationException e) {
-//		throw e;
-//	} catch (Throwable e) {
-//		throw new it.cnr.jada.DetailedRuntimeException(e);
-//	}
-//}
     @Override
     public void writeHTMLToolbar(
-            javax.servlet.jsp.PageContext context,
+            PageContext context,
             boolean reset,
             boolean find,
-            boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+            boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
         super.writeHTMLToolbar(context, reset, find, delete, false);
         boolean isFromBootstrap = HttpActionContext.isFromBootstrap(context);

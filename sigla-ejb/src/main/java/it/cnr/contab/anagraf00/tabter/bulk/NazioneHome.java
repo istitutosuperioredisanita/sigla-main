@@ -56,8 +56,8 @@ public NazioneBulk findNazione(String tipoNazione) throws PersistencyException{
 public void initializePrimaryKeyForInsert(UserContext userContext, OggettoBulk nazione) throws it.cnr.jada.persistency.PersistencyException {
 
 	try {
-		Long maxValue = (Long)findAndLockMax(nazione,"pg_nazione",new Long(0));
-		Long x = new Long(maxValue.longValue()+1);
+		Long maxValue = (Long)findAndLockMax(nazione,"pg_nazione",Long.valueOf(0));
+		Long x = Long.valueOf(maxValue.longValue()+1);
 
 		((NazioneBulk)nazione).setPg_nazione(x);
 

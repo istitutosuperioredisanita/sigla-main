@@ -25,7 +25,7 @@ import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.TransactionalSessionImpl;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 

@@ -62,7 +62,7 @@ import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -125,7 +125,7 @@ public class AccertamentoComponent extends CRUDComponent implements IDocumentoCo
             else if (azione == MODIFICA)
                 aggiornaSaldiInModifica(userContext,
                         accertamento,
-//											 new Long( accertamento.getPg_ver_rec().longValue() - 1),
+//											 Long.valueOf( accertamento.getPg_ver_rec().longValue() - 1),
                         accertamento.getPg_ver_rec());
 
 /*
@@ -1744,8 +1744,8 @@ public AccertamentoBulk generaDettagliScadenzaAccertamento (UserContext aUC,Acce
 
         stampa.setDataInizio(DateServices.getFirstDayOfYear(CNRUserContext.getEsercizio(userContext).intValue()));
         stampa.setDataFine(getDataOdierna(userContext));
-        stampa.setPgInizio(new Long(0));
-        stampa.setPgFine(new Long("9999999999"));
+        stampa.setPgInizio(Long.valueOf(0));
+        stampa.setPgFine(Long.valueOf("9999999999"));
 
         stampa.setCd_tipo_documento_cont(stampa.TIPO_TUTTI);
         stampa.setRiporto("N");
@@ -1798,8 +1798,8 @@ public AccertamentoBulk generaDettagliScadenzaAccertamento (UserContext aUC,Acce
 
         stampa.setDataInizio(DateServices.getFirstDayOfYear(CNRUserContext.getEsercizio(userContext).intValue()));
         stampa.setDataFine(getDataOdierna(userContext));
-        stampa.setPgInizio(new Integer(0));
-        stampa.setPgFine(new Integer(999999999));
+        stampa.setPgInizio(Integer.valueOf(0));
+        stampa.setPgFine(Integer.valueOf(999999999));
 
         try {
             String cd_uo_scrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_unita_organizzativa(userContext);
@@ -2757,7 +2757,7 @@ private void modificoDettagliScadenza(UserContext aUC,AccertamentoBulk accertame
             //throw new ValidationException("Il campo CDS di ORIGINE è obbligatorio");
             //if (stampa.getCdUoForPrint()==null)
             //throw new ValidationException("Il campo UNITA ORGANIZZATIVA è obbligatorio");
-            //}catch(javax.ejb.EJBException ex){
+            //}catch(jakarta.ejb.EJBException ex){
             //throw handleException(ex);
             //}catch(java.rmi.RemoteException ex){
             //throw handleException(ex);
@@ -3215,7 +3215,7 @@ private void modificoDettagliScadenza(UserContext aUC,AccertamentoBulk accertame
 
     void verificaStatoEsercizioEsPrecedente(UserContext userContext, Integer es, String cd_cds) throws ComponentException, it.cnr.jada.persistency.PersistencyException {
         EsercizioBulk esPrec = (EsercizioBulk) getHome(userContext, EsercizioBulk.class).findByPrimaryKey(
-                new EsercizioBulk(cd_cds, new Integer(es.intValue() - 1)));
+                new EsercizioBulk(cd_cds, Integer.valueOf(es.intValue() - 1)));
         if (esPrec != null && !esPrec.STATO_CHIUSO_DEF.equals(esPrec.getSt_apertura_chiusura()))
             throw handleException(new ApplicationException("Operazione impossibile: esercizio precedente non chiuso!"));
 
@@ -3963,7 +3963,7 @@ private void modificoDettagliScadenza(UserContext aUC,AccertamentoBulk accertame
                             asv.getEsercizio(),
                             asv.getEsercizio_originale(),
                             asv.getPg_accertamento(),
-                            new Long(1));
+                            Long.valueOf(1));
 
                     totaleScad = (BigDecimal) prcImputazioneFinanziariaTable.get(key);
                     if (totaleScad == null || totaleScad.compareTo(new BigDecimal(0)) == 0)

@@ -80,15 +80,15 @@ public class ProgettoRicercaModuloComponent extends it.cnr.jada.comp.CRUDCompone
         java.math.BigDecimal sq_progetto;
         sq_progetto = getSequence(uc);
         ((ProgettoBulk) bulk).setPg_progetto(sq_progetto);
-        ((Progetto_uoBulk) ((ProgettoBulk) bulk).getDettagli().get(0)).setPg_progetto(new Integer(sq_progetto.intValue()));
+        ((Progetto_uoBulk) ((ProgettoBulk) bulk).getDettagli().get(0)).setPg_progetto(Integer.valueOf(sq_progetto.intValue()));
         for (int i = 0; ((ProgettoBulk) bulk).getDettagliFinanziatori().size() > i; i++) {
-            ((Progetto_finanziatoreBulk) ((ProgettoBulk) bulk).getDettagliFinanziatori().get(i)).setPg_progetto(new Integer(sq_progetto.intValue()));
+            ((Progetto_finanziatoreBulk) ((ProgettoBulk) bulk).getDettagliFinanziatori().get(i)).setPg_progetto(Integer.valueOf(sq_progetto.intValue()));
         }
         for (int i = 0; ((ProgettoBulk) bulk).getDettagliPartner_esterni().size() > i; i++) {
-            ((Progetto_partner_esternoBulk) ((ProgettoBulk) bulk).getDettagliPartner_esterni().get(i)).setPg_progetto(new Integer(sq_progetto.intValue()));
+            ((Progetto_partner_esternoBulk) ((ProgettoBulk) bulk).getDettagliPartner_esterni().get(i)).setPg_progetto(Integer.valueOf(sq_progetto.intValue()));
         }
         for (int i = 0; ((ProgettoBulk) bulk).getDettagli().size() > i; i++) {
-            ((Progetto_uoBulk) ((ProgettoBulk) bulk).getDettagli().get(i)).setPg_progetto(new Integer(sq_progetto.intValue()));
+            ((Progetto_uoBulk) ((ProgettoBulk) bulk).getDettagli().get(i)).setPg_progetto(Integer.valueOf(sq_progetto.intValue()));
         }
         return super.creaConBulk(uc, bulk);
     }
@@ -203,7 +203,7 @@ public class ProgettoRicercaModuloComponent extends it.cnr.jada.comp.CRUDCompone
             throw new it.cnr.jada.comp.ApplicationException("L'unità organizzativa è obbligatoria.");
 
         if ((ProgettoBulk) bulk.getProgettopadre() == null)
-            ((ProgettoBulk) bulk).setLivello(new Integer(1));
+            ((ProgettoBulk) bulk).setLivello(Integer.valueOf(1));
 
         if (bulk.getImporto_progetto() == null)
             bulk.setImporto_progetto(new BigDecimal(0));
@@ -350,7 +350,7 @@ public class ProgettoRicercaModuloComponent extends it.cnr.jada.comp.CRUDCompone
         SQLBuilder sql = getHome(userContext, progettopadre, "V_PROGETTO_PADRE").createSQLBuilder();
         sql.addSQLClause("AND", "PG_PROGETTO", sql.NOT_EQUALS, ((ProgettoBulk) bulk).getPg_progetto());
         if (((ProgettoBulk) bulk).getLivello() != null)
-            sql.addSQLClause("AND", "LIVELLO", sql.EQUALS, new Integer(((ProgettoBulk) bulk).getLivello().intValue() - 1));
+            sql.addSQLClause("AND", "LIVELLO", sql.EQUALS, Integer.valueOf(((ProgettoBulk) bulk).getLivello().intValue() - 1));
         if (clause != null)
             sql.addClause(clause);
         return sql;

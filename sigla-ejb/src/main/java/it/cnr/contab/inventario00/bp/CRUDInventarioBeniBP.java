@@ -131,7 +131,7 @@ public OggettoBulk initializeModelForEdit(ActionContext context,OggettoBulk bulk
 		//Inventario_beniBulk bene = (Inventario_beniBulk)
 		
 		it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk categoria_gruppo = bene.getCategoria_Bene();
-		cd_pubblicazioni = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(context.getUserContext(), new Integer(0), "*", "CD_CATEGORIA_GRUPPO_SPECIALE", "PUBBLICAZIONI");
+		cd_pubblicazioni = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(context.getUserContext(), Integer.valueOf(0), "*", "CD_CATEGORIA_GRUPPO_SPECIALE", "PUBBLICAZIONI");
 		if(cd_pubblicazioni != null && categoria_gruppo.getCd_categoria_padre()!=null){
 			//setIsPubblicazione(categoria_gruppo.getCd_categoria_padre().equalsIgnoreCase(cd_pubblicazioni));
 			bene.setPubblicazione(categoria_gruppo.getCd_categoria_padre().equalsIgnoreCase(cd_pubblicazioni));

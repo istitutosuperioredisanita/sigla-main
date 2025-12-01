@@ -19,7 +19,7 @@ package it.cnr.contab.doccont00.ejb;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.doccont00.consultazioni.bulk.FlussiDiCassaDtoBulk;
 import it.cnr.jada.UserContext;

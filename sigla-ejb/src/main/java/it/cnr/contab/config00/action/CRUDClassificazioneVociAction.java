@@ -51,8 +51,8 @@ public class CRUDClassificazioneVociAction extends CRUDAction {
 	public Forward doTab(ActionContext actioncontext, String tabName,String pageName) {
 		CRUDClassificazioneVociBP bp = (CRUDClassificazioneVociBP)actioncontext.getBusinessProcess();
 		Classificazione_vociBulk classModelNew = null;
-		int intTabOld = (new Integer(bp.getTab(tabName).substring("tabLivello".length()))).intValue();
-		int intTabNew = (new Integer(pageName.substring("tabLivello".length()))).intValue();
+		int intTabOld = (Integer.valueOf(bp.getTab(tabName).substring("tabLivello".length()))).intValue();
+		int intTabNew = (Integer.valueOf(pageName.substring("tabLivello".length()))).intValue();
 
 		/* 
 		 * Non è possibile cambiare Tab se esistono dati non confermati.
@@ -72,7 +72,7 @@ public class CRUDClassificazioneVociAction extends CRUDAction {
 		 * almeno un livello successivo da utilizzare per il caricamento delle Bulk successive.
 		 * Regola non valida se si naviga dalla Tab1
 		 */
-		if ((new Integer(intTabNew)).compareTo(new Integer(intTabOld))>0 && 
+		if ((Integer.valueOf(intTabNew)).compareTo(Integer.valueOf(intTabOld))>0 &&
 			((intTabOld==1 && bp.getModel().getCrudStatus()!=OggettoBulk.NORMAL)||
 			 (intTabOld!=1 && bp.getCrudAssLivelli().getSelection().getFocus()<0))) {  
 			bp.setMessage("E' necessario selezionare un livello.");
@@ -91,12 +91,12 @@ public class CRUDClassificazioneVociAction extends CRUDAction {
 		 * Se la navigazione tra le Tab è in avanti è possibile navigare solo fino alla Tab immediatamente
 		 * successiva all'ultima Tab caricata.
 		 */
-		if ((new Integer(intTabNew)).compareTo(new Integer(intTabOld))>0 && 
+		if ((Integer.valueOf(intTabNew)).compareTo(Integer.valueOf(intTabOld))>0 &&
 			bp.getBulkTab(intTabNew-1) == null && intTabNew!=intTabOld+1) {
 			bp.setMessage("E' necessario caricare i livelli nella sequenza corretta.");
 			return actioncontext.findDefaultForward();
 		} 
-		else if ((new Integer(intTabNew)).compareTo(new Integer(intTabOld))>0 && 
+		else if ((Integer.valueOf(intTabNew)).compareTo(Integer.valueOf(intTabOld))>0 &&
 				 intTabNew!=2 && bp.getBulkTab(intTabNew-1) != null && 
 				 bp.getFocusTab(intTabNew-1) == -1 && intTabNew!=intTabOld+1) {
 			bp.setMessage("E' necessario selezionare un dettaglio del livello precedente.");

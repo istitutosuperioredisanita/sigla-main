@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
 import java.util.Enumeration;
 import java.util.Iterator;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.ejb.Classificazione_vociComponentSession;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
@@ -66,12 +66,12 @@ public class ConsPDGPIstBP extends ConsultazioniBP {
 	private String ds_livello2;
 	private String ds_livello3;
 	private String anno_corrente,anno_successivo,anno_successivo_successivo;
-	public ConsPDGPAreaComponentSession createPdgpAreaComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public ConsPDGPAreaComponentSession createPdgpAreaComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		
 		   return (ConsPDGPAreaComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPREVENT01_EJB_ConsPDGPAreaComponentSession",ConsPDGPAreaComponentSession.class);
 	}
 
-	   public Classificazione_vociComponentSession createClassificazioneVociComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	   public Classificazione_vociComponentSession createClassificazioneVociComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		   return (Classificazione_vociComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Classificazione_vociComponentSession",Classificazione_vociComponentSession.class);
 	   }
 
@@ -124,8 +124,8 @@ public class ConsPDGPIstBP extends ConsultazioniBP {
 			   setDs_livello3(getDs_livello3(context.getUserContext()));
 			
 			 anno_corrente = CNRUserContext.getEsercizio(context.getUserContext()).toString();
-			 anno_successivo = new Integer(CNRUserContext.getEsercizio(context.getUserContext()).intValue() + 1).toString();
-			 anno_successivo_successivo = new Integer(CNRUserContext.getEsercizio(context.getUserContext()).intValue() + 2).toString();
+			 anno_successivo = Integer.valueOf(CNRUserContext.getEsercizio(context.getUserContext()).intValue() + 1).toString();
+			 anno_successivo_successivo = Integer.valueOf(CNRUserContext.getEsercizio(context.getUserContext()).intValue() + 2).toString();
 			
 			 
 			
@@ -265,12 +265,12 @@ public class ConsPDGPIstBP extends ConsultazioniBP {
 					   setDs_livello1(createClassificazioneVociComponentSession().getDsLivelloClassificazione(userContext, 
 																											  CNRUserContext.getEsercizio(userContext),
 																											  Elemento_voceHome.GESTIONE_SPESE,
-																											  new Integer(Classificazione_vociHome.LIVELLO_PRIMO)));
+																											  Integer.valueOf(Classificazione_vociHome.LIVELLO_PRIMO)));
 				   else
 					   setDs_livello1(createClassificazioneVociComponentSession().getDsLivelloClassificazione(userContext, 
 																											  CNRUserContext.getEsercizio(userContext),
 																											  Elemento_voceHome.GESTIONE_ENTRATE,
-																											  new Integer(Classificazione_vociHome.LIVELLO_PRIMO)));
+																											  Integer.valueOf(Classificazione_vociHome.LIVELLO_PRIMO)));
 			   }
 			   return getDs_livello1();
 		   }catch(Throwable e) {
@@ -290,12 +290,12 @@ public class ConsPDGPIstBP extends ConsultazioniBP {
 					   setDs_livello2(createClassificazioneVociComponentSession().getDsLivelloClassificazione(userContext, 
 																											  CNRUserContext.getEsercizio(userContext),
 																											  Elemento_voceHome.GESTIONE_SPESE,
-																											  new Integer(Classificazione_vociHome.LIVELLO_SECONDO)));
+																											  Integer.valueOf(Classificazione_vociHome.LIVELLO_SECONDO)));
 				   else
 					   setDs_livello2(createClassificazioneVociComponentSession().getDsLivelloClassificazione(userContext, 
 																											  CNRUserContext.getEsercizio(userContext),
 																											  Elemento_voceHome.GESTIONE_ENTRATE,
-																											  new Integer(Classificazione_vociHome.LIVELLO_SECONDO)));
+																											  Integer.valueOf(Classificazione_vociHome.LIVELLO_SECONDO)));
 			   }
 			   return getDs_livello2();
 		   }catch(Throwable e) {
@@ -309,12 +309,12 @@ public class ConsPDGPIstBP extends ConsultazioniBP {
 						   setDs_livello3(createClassificazioneVociComponentSession().getDsLivelloClassificazione(userContext, 
 																												  CNRUserContext.getEsercizio(userContext),
 																												  Elemento_voceHome.GESTIONE_SPESE,
-																												  new Integer(Classificazione_vociHome.LIVELLO_TERZO)));
+																												  Integer.valueOf(Classificazione_vociHome.LIVELLO_TERZO)));
 					   else
 						   setDs_livello3(createClassificazioneVociComponentSession().getDsLivelloClassificazione(userContext, 
 																												  CNRUserContext.getEsercizio(userContext),
 																												  Elemento_voceHome.GESTIONE_ENTRATE,
-																												  new Integer(Classificazione_vociHome.LIVELLO_TERZO)));
+																												  Integer.valueOf(Classificazione_vociHome.LIVELLO_TERZO)));
 				   }
 				   return getDs_livello3();
 			   }catch(Throwable e) {

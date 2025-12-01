@@ -26,13 +26,13 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 import java.rmi.RemoteException;
 
 @Remote
 public interface SospesoRiscontroComponentSession extends it.cnr.jada.ejb.CRUDComponentSession, it.cnr.jada.ejb.PrintComponentSession {
 void cambiaStato(UserContext param0, java.util.Collection param1, String param2, String param3) throws ComponentException, RemoteException;
 RemoteIterator cercaSospesiPerStato(UserContext usercontext, CompoundFindClause compoundfindclause, OggettoBulk oggettobulk, String statoForSearch) throws ComponentException, RemoteException;
-Integer caricamentoRigaGiornaleCassa(UserContext param0, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws ComponentException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, RemoteException;
-Scrittura_partita_doppiaBulk createScritturaPartitaDoppiaRequiresNew(UserContext param0, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws ComponentException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, RemoteException;
+Integer caricamentoRigaGiornaleCassa(UserContext param0, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws ComponentException, jakarta.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, RemoteException;
+Scrittura_partita_doppiaBulk createScritturaPartitaDoppiaRequiresNew(UserContext param0, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws ComponentException, jakarta.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, RemoteException;
 }

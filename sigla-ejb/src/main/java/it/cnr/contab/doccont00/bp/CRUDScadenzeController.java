@@ -23,6 +23,8 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.HttpActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 public class CRUDScadenzeController extends it.cnr.jada.util.action.SimpleDetailCRUDController {
     public CRUDScadenzeController(String name, Class modelClass, String listPropertyName, it.cnr.jada.util.action.FormController parent) {
@@ -74,14 +76,13 @@ public class CRUDScadenzeController extends it.cnr.jada.util.action.SimpleDetail
      * le righe di scadenza dell'obbligazione.
      *
      * @param context  Il contesto dell'azione
-     * @param scadenza La scadenza dell'oggetto bulk in uso
      */
     @Override
     public void writeHTMLToolbar(
-            javax.servlet.jsp.PageContext context,
+            PageContext context,
             boolean reset,
             boolean find,
-            boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+            boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
         super.writeHTMLToolbar(context, reset, find, delete, false);
 

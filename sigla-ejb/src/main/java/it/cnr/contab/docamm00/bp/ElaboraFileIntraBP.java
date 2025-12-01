@@ -34,12 +34,13 @@ import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.jada.util.jsp.JSPUtils;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
-import javax.ejb.EJBException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.PageContext;
+import jakarta.ejb.EJBException;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -124,8 +125,8 @@ public void doElaboraFile(ActionContext context,VIntrastatBulk dett,Boolean invi
 	    if (invio){
 	       f = new File(System.getProperty("tmp.dir.SIGLAWeb")+"/tmp/",
 				   Formatta(config.getVal02(),"S",4," ")+//codice utente abilitato
-				   Formatta(new Integer(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.MONTH)+1).toString(),"D",2,"0")+
-				   Formatta(new Integer(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.DAY_OF_MONTH)).toString(),"D",2,"0")+
+				   Formatta(Integer.valueOf(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.MONTH)+1).toString(),"D",2,"0")+
+				   Formatta(Integer.valueOf(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.DAY_OF_MONTH)).toString(),"D",2,"0")+
 				   ".I01");
 	    }
 	    else{
@@ -155,8 +156,8 @@ public void doElaboraFile(ActionContext context,VIntrastatBulk dett,Boolean invi
 	    	bw.append(Formatta(null,"S",12," "));//riservata SDA
 	    	//Nome del flusso
 	    	bw.append(Formatta(config.getVal02(),"S",4," ")); //codice utente abilitato
-	    	bw.append(Formatta(new Integer(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.MONTH)+1).toString(),"D",2,"0"));
-	    	bw.append(Formatta(new Integer(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.DAY_OF_MONTH)).toString(),"D",2,"0"));
+	    	bw.append(Formatta(Integer.valueOf(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.MONTH)+1).toString(),"D",2,"0"));
+	    	bw.append(Formatta(Integer.valueOf(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.DAY_OF_MONTH)).toString(),"D",2,"0"));
 	    	bw.append(".");// nome file
 	    	bw.append("I");// tipo file Dichiarazioni Intrastat
 	    	bw.append("01");//progressivo dell'interchange
@@ -171,8 +172,8 @@ public void doElaboraFile(ActionContext context,VIntrastatBulk dett,Boolean invi
 				 throw new ApplicationException("Progressivo sede utente abilitato non configurato");
 			bw.append(Formatta(config.getVal03(),"D",3,"0")); //progressivo sede
 			bw.append(Formatta(null,"S",1," "));//riservata SDA
-			Integer cont=((listaSezioneUnoAcquisti.size()+listaSezioneDueAcquisti.size()+listaSezioneTreAcquisti.size()+listaSezioneQuattroAcquisti.size())==new Integer(0)?0:1 )+
-				    ((listaSezioneUnoVendite.size()+listaSezioneDueVendite.size()+listaSezioneTreVendite.size()+listaSezioneQuattroVendite.size())==new Integer(0)?0:1 )+
+			Integer cont=((listaSezioneUnoAcquisti.size()+listaSezioneDueAcquisti.size()+listaSezioneTreAcquisti.size()+listaSezioneQuattroAcquisti.size())==Integer.valueOf(0)?0:1 )+
+				    ((listaSezioneUnoVendite.size()+listaSezioneDueVendite.size()+listaSezioneTreVendite.size()+listaSezioneQuattroVendite.size())==Integer.valueOf(0)?0:1 )+
 				    +listaSezioneUnoAcquisti.size()+listaSezioneDueAcquisti.size()+listaSezioneTreAcquisti.size()+listaSezioneQuattroAcquisti.size()
 					+listaSezioneUnoVendite.size()+listaSezioneDueVendite.size()+listaSezioneTreVendite.size()+listaSezioneQuattroVendite.size()+1;
 			bw.append(Formatta(cont.toString(),"D",5,"0")); //conteggio totale + frontespizi + testata
@@ -229,7 +230,7 @@ public void doElaboraFile(ActionContext context,VIntrastatBulk dett,Boolean invi
 	    		bw.append(Formatta(somma_det.toString(),"D",13,"0"));  // somma_det sez2 acq
 	    	else
 	    	{
-	    		switch (new Integer(somma_det.toString().substring(somma_det.toString().length()-1,somma_det.toString().length())).intValue()) {
+	    		switch (Integer.valueOf(somma_det.toString().substring(somma_det.toString().length()-1,somma_det.toString().length())).intValue()) {
 				case 0:
 					bw.append(Formatta(somma_det.abs().toString().substring(0,somma_det.abs().toString().length()-1).concat("p"),"D",13,"0").toLowerCase());
 					break;
@@ -496,7 +497,7 @@ public void doElaboraFile(ActionContext context,VIntrastatBulk dett,Boolean invi
 	    		bw.append(Formatta(somma_det.toString(),"D",13,"0"));  // somma_det sez2 ven
 	    	else
 	    	{
-	    		switch (new Integer(somma_det.toString().substring(somma_det.toString().length()-1,somma_det.toString().length())).intValue()) {
+	    		switch (Integer.valueOf(somma_det.toString().substring(somma_det.toString().length()-1,somma_det.toString().length())).intValue()) {
 				case 0:
 					bw.append(Formatta(somma_det.abs().toString().substring(0,somma_det.abs().toString().length()-1).concat("p"),"D",13,"0").toLowerCase());
 					break;
@@ -775,7 +776,7 @@ public void doElaboraFile(ActionContext context, VIntra12Bulk dett)throws Busine
 		  File f = new File(System.getProperty("tmp.dir.SIGLAWeb")+"/tmp/",
 				  "INTRASTAT"
 				  +EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.DAY_OF_MONTH)+
-				  +new Integer(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.MONTH)+1)+
+				  +Integer.valueOf(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.MONTH)+1)+
 				  +EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.YEAR)+"intra12.cee");
 		  OutputStream os = (OutputStream)new FileOutputStream(f);
 	      OutputStreamWriter osw = new OutputStreamWriter(os);
@@ -789,7 +790,7 @@ public void doElaboraFile(ActionContext context, VIntra12Bulk dett)throws Busine
 	   it.cnr.contab.config00.bulk.Configurazione_cnrBulk config = null;
 		try {
 			config = Utility.createConfigurazioneCnrComponentSession().getConfigurazione( context.getUserContext(), it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()), null, it.cnr.contab.config00.bulk.Configurazione_cnrBulk.PK_COSTANTI, it.cnr.contab.config00.bulk.Configurazione_cnrBulk.SK_MODELLO_INTRA_12);
-			resp = (AnagraficoBulk)sess.findByPrimaryKey(context.getUserContext(), new AnagraficoBulk(new Integer(config.getVal03())));
+			resp = (AnagraficoBulk)sess.findByPrimaryKey(context.getUserContext(), new AnagraficoBulk(Integer.valueOf(config.getVal03())));
 		} catch (RemoteException e) {
 			throw new ComponentException(e);
 		} catch (EJBException e) {
@@ -911,9 +912,9 @@ public void doElaboraFile(ActionContext context, VIntra12Bulk dett)throws Busine
 	   bw.append(resp.getTi_sesso());//sesso rappresentante     ???????????????
 	   GregorianCalendar dataNascita = new GregorianCalendar();
 	   dataNascita.setTime(new Date(resp.getDt_nascita().getTime()));
-	   bw.append(Formatta(new Integer(dataNascita.get(GregorianCalendar.DAY_OF_MONTH)).toString(),"D",2,"0"));
-	   bw.append(Formatta(new Integer(dataNascita.get(GregorianCalendar.MONTH)+1).toString(),"D",2,"0"));
-	   bw.append(Formatta(new Integer(dataNascita.get(GregorianCalendar.YEAR)).toString(),"D",4,"0"));
+	   bw.append(Formatta(Integer.valueOf(dataNascita.get(GregorianCalendar.DAY_OF_MONTH)).toString(),"D",2,"0"));
+	   bw.append(Formatta(Integer.valueOf(dataNascita.get(GregorianCalendar.MONTH)+1).toString(),"D",2,"0"));
+	   bw.append(Formatta(Integer.valueOf(dataNascita.get(GregorianCalendar.YEAR)).toString(),"D",4,"0"));
 	   ComuneBulk comune = (ComuneBulk)sess.findByPrimaryKey(context.getUserContext(), new ComuneBulk(resp.getComune_nascita().getPg_comune()));
 	   if(comune==null)
 		   throw new ApplicationException("Dati anagrafici del rappresentante non completi!");     
@@ -1058,9 +1059,9 @@ public void doElaboraFile(ActionContext context, VIntra12Bulk dett)throws Busine
 		   bw.append(Formatta(null,"D",8," "));//completamento 16 caratteri non necessari per data
 		   GregorianCalendar datagc = new GregorianCalendar();
 		   datagc.setTime(new Date(data.getTime()));
-		   bw.append(Formatta(new Integer(datagc.get(GregorianCalendar.DAY_OF_MONTH)).toString(),"D",2,"0"));
-		   bw.append(Formatta(new Integer(datagc.get(GregorianCalendar.MONTH)+1).toString(),"D",2,"0"));
-		   bw.append(Formatta(new Integer(datagc.get(GregorianCalendar.YEAR)).toString(),"D",4,"0"));
+		   bw.append(Formatta(Integer.valueOf(datagc.get(GregorianCalendar.DAY_OF_MONTH)).toString(),"D",2,"0"));
+		   bw.append(Formatta(Integer.valueOf(datagc.get(GregorianCalendar.MONTH)+1).toString(),"D",2,"0"));
+		   bw.append(Formatta(Integer.valueOf(datagc.get(GregorianCalendar.YEAR)).toString(),"D",4,"0"));
 		   
 		  
 	   }

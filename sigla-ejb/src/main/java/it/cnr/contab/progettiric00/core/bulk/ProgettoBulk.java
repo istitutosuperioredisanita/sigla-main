@@ -64,10 +64,10 @@ public class ProgettoBulk extends ProgettoBase implements AllegatoParentBulk {
 	public static final String DURATA_PROGETTO_PLURIENNALE ="P";
 	public static final String DURATA_PROGETTO_ANNUALE 	="A";
 
-	public static final Integer LIVELLO_PROGETTO_PRIMO 	= new Integer(1);
-	public static final Integer LIVELLO_PROGETTO_SECONDO  = new Integer(2);
-	public static final Integer LIVELLO_PROGETTO_TERZO 	= new Integer(3);
-	public static final Integer LIVELLO_PROGETTO_ALL 	= new Integer(4);
+	public static final Integer LIVELLO_PROGETTO_PRIMO 	= Integer.valueOf(1);
+	public static final Integer LIVELLO_PROGETTO_SECONDO  = Integer.valueOf(2);
+	public static final Integer LIVELLO_PROGETTO_TERZO 	= Integer.valueOf(3);
+	public static final Integer LIVELLO_PROGETTO_ALL 	= Integer.valueOf(4);
 	
 	public static final String LABEL_AREA_PROGETTUALE = "Area Progettuale";
 	public static final String LABEL_PROGETTO = "Progetto";
@@ -128,7 +128,7 @@ public class ProgettoBulk extends ProgettoBase implements AllegatoParentBulk {
 		livello_progettoKeys.put(LIVELLO_PROGETTO_TERZO,"Modulo di Attività");
 		livello_progettoKeys.put(LIVELLO_PROGETTO_ALL,"Sottogruppo");
 		for(int i=4;i<100;i++)
-		  livello_progettoKeys.put(new Integer(i),"Sottogruppo");
+		  livello_progettoKeys.put(Integer.valueOf(i),"Sottogruppo");
 	};
 	public final static Dictionary livello_progetto2016Keys;
 	static {
@@ -137,7 +137,7 @@ public class ProgettoBulk extends ProgettoBase implements AllegatoParentBulk {
 		livello_progetto2016Keys.put(LIVELLO_PROGETTO_SECONDO,"Progetto");
 		livello_progetto2016Keys.put(LIVELLO_PROGETTO_ALL,"Sottogruppo");
 		for(int i=3;i<100;i++)
-			livello_progetto2016Keys.put(new Integer(i),"Sottogruppo");
+			livello_progetto2016Keys.put(Integer.valueOf(i),"Sottogruppo");
 	};
 	
     public final static Map<String,String> statoOfKeys = Arrays.asList(StatoProgetto.values())

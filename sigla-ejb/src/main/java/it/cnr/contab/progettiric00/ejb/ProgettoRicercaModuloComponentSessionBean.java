@@ -25,18 +25,16 @@ import it.cnr.jada.comp.NoRollbackException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.*;
 @Stateless(name="CNRPROGETTIRIC00_EJB_ProgettoRicercaModuloComponentSession")
 public class ProgettoRicercaModuloComponentSessionBean extends it.cnr.contab.progettiric00.ejb.ProgettoRicercaComponentSessionBean implements ProgettoRicercaModuloComponentSession{
 @PostConstruct
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.progettiric00.comp.ProgettoRicercaModuloComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-	return new ProgettoRicercaModuloComponentSessionBean();
-}
-public it.cnr.jada.util.RemoteIterator getChildren(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException{
+
+public it.cnr.jada.util.RemoteIterator getChildren(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException{
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.util.RemoteIterator result = ((ProgettoRicercaModuloComponent)componentObj).getChildren(param0,param1);
@@ -54,7 +52,7 @@ public it.cnr.jada.util.RemoteIterator getChildren(it.cnr.jada.UserContext param
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.util.RemoteIterator getChildrenWorkpackage(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException{
+public it.cnr.jada.util.RemoteIterator getChildrenWorkpackage(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException{
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.util.RemoteIterator result = ((ProgettoRicercaModuloComponent)componentObj).getChildrenWorkpackage(param0,param1);
@@ -72,7 +70,7 @@ public it.cnr.jada.util.RemoteIterator getChildrenWorkpackage(it.cnr.jada.UserCo
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk getParent(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk getParent(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((ProgettoRicercaModuloComponent)componentObj).getParent(param0,param1);
@@ -90,7 +88,7 @@ public it.cnr.jada.bulk.OggettoBulk getParent(it.cnr.jada.UserContext param0,it.
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public boolean isLeaf(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public boolean isLeaf(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		boolean result = ((ProgettoRicercaModuloComponent)componentObj).isLeaf(param0,param1);
@@ -108,7 +106,7 @@ public boolean isLeaf(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBul
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((ProgettoRicercaModuloComponent)componentObj).stampaConBulk(param0,param1);
@@ -126,7 +124,7 @@ public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((ProgettoRicercaModuloComponent)componentObj).inizializzaBulkPerStampa(param0,param1);
@@ -145,7 +143,7 @@ public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserCon
 	}
 }
 
-public it.cnr.contab.progettiric00.core.bulk.ProgettoBulk cercaWorkpackages(it.cnr.jada.UserContext param0,it.cnr.contab.progettiric00.core.bulk.ProgettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.progettiric00.core.bulk.ProgettoBulk cercaWorkpackages(it.cnr.jada.UserContext param0,it.cnr.contab.progettiric00.core.bulk.ProgettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.progettiric00.core.bulk.ProgettoBulk result = ((ProgettoRicercaModuloComponent)componentObj).cercaWorkpackages(param0,param1);

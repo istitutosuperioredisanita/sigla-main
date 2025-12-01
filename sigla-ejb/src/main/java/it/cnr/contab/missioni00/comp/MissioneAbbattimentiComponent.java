@@ -114,7 +114,7 @@ public void eliminaConBulk (UserContext aUC, OggettoBulk bulk) throws ComponentE
 	    	updateBulk(aUC, abbattimento);
 		}
 
-	}catch(javax.ejb.EJBException ex){
+	}catch(jakarta.ejb.EJBException ex){
 		throw handleException(ex);
 	}catch(it.cnr.jada.persistency.PersistencyException ex){
 		throw handleException(ex);

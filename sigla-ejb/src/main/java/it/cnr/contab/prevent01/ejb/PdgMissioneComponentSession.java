@@ -19,7 +19,7 @@ package it.cnr.contab.prevent01.ejb;
 
 import java.util.List;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface PdgMissioneComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

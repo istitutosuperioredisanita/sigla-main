@@ -21,7 +21,7 @@ import it.cnr.contab.reports.bp.ParametricPrintBP;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.doccont00.core.bulk.Stampa_elenco_progetti_laBulk;

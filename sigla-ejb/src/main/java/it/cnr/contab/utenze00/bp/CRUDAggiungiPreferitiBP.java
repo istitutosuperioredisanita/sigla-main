@@ -30,7 +30,7 @@ import it.cnr.jada.util.action.SimpleCRUDBP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.JspWriter;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Optional;
@@ -56,7 +56,7 @@ public class CRUDAggiungiPreferitiBP extends SimpleCRUDBP {
         this.descrizione = descrizione;
     }
 
-    public static AssBpAccessoComponentSession assBpAccessoComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+    public static AssBpAccessoComponentSession assBpAccessoComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
         return (AssBpAccessoComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRUTENZE00_EJB_AssBpAccessoComponentSession");
     }
 

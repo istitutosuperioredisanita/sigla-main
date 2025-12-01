@@ -49,6 +49,8 @@ import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.jada.util.upload.UploadedFile;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +64,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.servlet.ServletException;
+
 
 public class ArchiviaStampaPdgVariazioneBP extends SimpleCRUDBP{
 	private transient static final Logger logger = LoggerFactory.getLogger(ArchiviaStampaPdgVariazioneBP.class);
@@ -134,7 +136,7 @@ public class ArchiviaStampaPdgVariazioneBP extends SimpleCRUDBP{
 	 * Sovrascrive quello presente nelle superclassi
 	 * 
 	*/
-	public void openForm(javax.servlet.jsp.PageContext context,String action,String target) throws java.io.IOException,javax.servlet.ServletException {
+	public void openForm(PageContext context, String action, String target) throws java.io.IOException, ServletException {
 		openForm(context,action,target,"multipart/form-data");
 	}
 

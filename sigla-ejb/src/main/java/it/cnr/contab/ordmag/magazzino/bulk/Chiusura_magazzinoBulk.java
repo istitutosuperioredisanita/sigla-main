@@ -171,7 +171,7 @@ public class Chiusura_magazzinoBulk extends Stampa_inventarioBulk {
         if (this.getCatgrp().getCd_categoria_gruppo() == null)
             return Valori_magazzinoBulk.TUTTI;
 
-        return this.getCatgrp().getLivello().equals(new Integer(0))  ? this.getCatgrp().getCd_proprio():this.getCatgrp().getCd_categoria_padre();
+        return this.getCatgrp().getLivello().equals(Integer.valueOf(0))  ? this.getCatgrp().getCd_proprio():this.getCatgrp().getCd_categoria_padre();
     }
 
     public String getCdRaggrMagazzinoForPrint() {
@@ -260,7 +260,7 @@ public class Chiusura_magazzinoBulk extends Stampa_inventarioBulk {
     }
     public void caricaAnniList(UserContext usercontext) {
         for (int i = CNRUserContext.getEsercizio(usercontext).intValue(); i>=2023; i--)
-            getAnniList().put(new Integer(i), new Integer(i));
+            getAnniList().put(Integer.valueOf(i), Integer.valueOf(i));
     }
     public OggettoBulk initialize(CRUDBP crudbp, ActionContext actioncontext) {
         super.initialize(crudbp, actioncontext);

@@ -26,7 +26,7 @@ public void annullaScritturaAnalitica(it.cnr.jada.UserContext param0,int param1)
 	try {
 		invoke("annullaScritturaAnalitica",new Object[] {
 			param0,
-			new Integer(param1) });
+			Integer.valueOf(param1) });
 	} catch(java.rmi.RemoteException e) {
 		throw e;
 	} catch(java.lang.reflect.InvocationTargetException e) {
@@ -96,7 +96,7 @@ public void contabilizzaFlussoStipendialeMensile(it.cnr.jada.UserContext param0,
 	try {
 		invoke("contabilizzaFlussoStipendialeMensile",new Object[] {
 			param0,
-			new Integer(param1) });
+			Integer.valueOf(param1) });
 	} catch(java.rmi.RemoteException e) {
 		throw e;
 	} catch(java.lang.reflect.InvocationTargetException e) {
@@ -132,7 +132,7 @@ public void generaScritturaAnalitica(it.cnr.jada.UserContext param0,int param1) 
 	try {
 		invoke("generaScritturaAnalitica",new Object[] {
 			param0,
-			new Integer(param1) });
+			Integer.valueOf(param1) });
 	} catch(java.rmi.RemoteException e) {
 		throw e;
 	} catch(java.lang.reflect.InvocationTargetException e) {
@@ -183,7 +183,7 @@ public it.cnr.jada.util.RemoteIterator listaCdr(it.cnr.jada.UserContext param0,S
 		return (it.cnr.jada.util.RemoteIterator)invoke("listaCdr",new Object[] {
 			param0,
 			param1,
-			new Integer(param2) });
+			Integer.valueOf(param2) });
 	} catch(java.rmi.RemoteException e) {
 		throw e;
 	} catch(java.lang.reflect.InvocationTargetException e) {
@@ -201,7 +201,7 @@ public it.cnr.jada.util.RemoteIterator listaLinea_attivitaPerCdr(it.cnr.jada.Use
 		return (it.cnr.jada.util.RemoteIterator)invoke("listaLinea_attivitaPerCdr",new Object[] {
 			param0,
 			param1,
-			new Integer(param2),
+			Integer.valueOf(param2),
 			param3});
 	} catch(java.rmi.RemoteException e) {
 		throw e;
@@ -221,7 +221,7 @@ public java.util.List listaLinea_attivitaPerRipartizioneResidui(it.cnr.jada.User
 			param0,
 			param1,
 			param2,
-			new Integer(param3),
+			Integer.valueOf(param3),
 			param4});
 	} catch(java.rmi.RemoteException e) {
 		throw e;
@@ -256,7 +256,7 @@ public it.cnr.jada.util.RemoteIterator listaUnita_organizzativa(it.cnr.jada.User
 		return (it.cnr.jada.util.RemoteIterator)invoke("listaUnita_organizzativa",new Object[] {
 			param0,
 			param1,
-			new Integer(param2) });
+			Integer.valueOf(param2) });
 	} catch(java.rmi.RemoteException e) {
 		throw e;
 	} catch(java.lang.reflect.InvocationTargetException e) {
@@ -275,7 +275,7 @@ public void ripartizioneResidui(it.cnr.jada.UserContext param0,java.lang.String 
 			param0,
 			param1,
             param2,
-			new Integer(param3),
+			Integer.valueOf(param3),
 			param4 });
 	} catch(java.rmi.RemoteException e) {
 		throw e;

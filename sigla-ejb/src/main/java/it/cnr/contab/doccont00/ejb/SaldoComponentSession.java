@@ -20,7 +20,7 @@ package it.cnr.contab.doccont00.ejb;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;

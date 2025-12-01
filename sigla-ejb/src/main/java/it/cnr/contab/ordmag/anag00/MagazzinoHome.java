@@ -46,7 +46,7 @@ import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 public class MagazzinoHome extends BulkHome {
 	private static final long serialVersionUID = 1L;

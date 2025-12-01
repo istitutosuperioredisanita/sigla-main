@@ -20,7 +20,7 @@ package it.cnr.contab.utenze00.bp;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.utente00.nav.ejb.*;
@@ -32,6 +32,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.Selection;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.jada.util.jsp.JSPUtils;
+import jakarta.servlet.jsp.JspWriter;
 
 /**
  * BusinessProecess che mantiene le informazioni sull'utente connesso
@@ -158,9 +159,9 @@ public class GestioneUtenteBP extends it.cnr.jada.util.action.FormBP {
 	 *
 	 * @return Il valore della proprietà 'componentSession'
 	 * @throws EJBException	Se si verifica qualche eccezione applicativa per cui non è possibile effettuare l'operazione
-	 * @throws RemoteException	Se si verifica qualche eccezione di sistema per cui non è possibile effettuare l'operazione
+	 * @throws java.rmi.RemoteException	Se si verifica qualche eccezione di sistema per cui non è possibile effettuare l'operazione
 	 */
-	public static GestioneLoginComponentSession getComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public static GestioneLoginComponentSession getComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 		return (GestioneLoginComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRUTENZE00_NAV_EJB_GestioneLoginComponentSession",GestioneLoginComponentSession.class);
 	}
 	/**
@@ -231,7 +232,7 @@ public class GestioneUtenteBP extends it.cnr.jada.util.action.FormBP {
 	public void setUserInfo(it.cnr.contab.utenze00.bulk.CNRUserInfo newUserInfo) {
 		userInfo = newUserInfo;
 	}
-	public void writeCollapseButton(javax.servlet.jsp.JspWriter out)throws java.io.IOException {
+	public void writeCollapseButton(JspWriter out)throws java.io.IOException {
 		if (radiceAlbero_main == null)
 		    return;
 		out.print("&nbsp;&nbsp;&nbsp;&nbsp;<button class=\"Button\" onclick=\"cancelBubble(event); if (disableDblClick()) collapseAllNode(); return false\" onMouseOver=\"mouseOver(this)\" onMouseOut=\"mouseOut(this)\" onMouseDown=\"mouseDown(this)\" onMouseUp=\"mouseUp(this)\" title=\"Chiudi tutti i rami\">");
@@ -239,7 +240,7 @@ public class GestioneUtenteBP extends it.cnr.jada.util.action.FormBP {
 		out.print("</button>");
 	}
 
-	public void writePreferiti(javax.servlet.jsp.JspWriter out, UserContext userContext)throws java.io.IOException, BusinessProcessException {
+	public void writePreferiti(JspWriter out, UserContext userContext)throws java.io.IOException, BusinessProcessException {
 		try {
 			List<PreferitiBulk> preferiti = getComponentSession().preferitiList(userContext);
 			out.println("<table width=\"100%\" cellspacing=\"2\">");
@@ -274,24 +275,24 @@ public class GestioneUtenteBP extends it.cnr.jada.util.action.FormBP {
 	 * Disegna il menù applicativo usando il Writer specificato
 	 * 
 	 * @param out writer
-	 * @throws IOException	
+	 * @throws java.io.IOException
 	 */
-	public void writeMenu(javax.servlet.jsp.JspWriter out)
+	public void writeMenu(JspWriter out)
 	    throws java.io.IOException {
 	    if (radiceAlbero_main == null)
 	        return;
 	    java.util.BitSet livelliCompleti = new java.util.BitSet();
 	    writeMenuItem(out, radiceAlbero_main, -1, livelliCompleti, false, true);
 	}
-	private void writeMenu(javax.servlet.jsp.JspWriter out,it.cnr.contab.utenze00.bulk.Albero_mainBulk nodo,int livello,java.util.BitSet livelliCompleti) throws java.io.IOException {
+	private void writeMenu(JspWriter out,it.cnr.contab.utenze00.bulk.Albero_mainBulk nodo,int livello,java.util.BitSet livelliCompleti) throws java.io.IOException {
 		for (java.util.Iterator i = nodo.getNodi_figli().iterator();i.hasNext();){
 			writeMenuItem(out,(Albero_mainBulk)i.next(),livello,livelliCompleti,i.hasNext());
 		}
 	}
-	private void writeMenuItem(javax.servlet.jsp.JspWriter out,it.cnr.contab.utenze00.bulk.Albero_mainBulk nodoFiglio,int livello,java.util.BitSet livelliCompleti,boolean hasNext) throws java.io.IOException {
+	private void writeMenuItem(JspWriter out,it.cnr.contab.utenze00.bulk.Albero_mainBulk nodoFiglio,int livello,java.util.BitSet livelliCompleti,boolean hasNext) throws java.io.IOException {
 		writeMenuItem(out,nodoFiglio,livello,livelliCompleti,hasNext, false);
 	}
-	private void writeMenuItem(javax.servlet.jsp.JspWriter out,it.cnr.contab.utenze00.bulk.Albero_mainBulk nodoFiglio,int livello,java.util.BitSet livelliCompleti,boolean hasNext,boolean writeCollapseButton) throws java.io.IOException {
+	private void writeMenuItem(JspWriter out,it.cnr.contab.utenze00.bulk.Albero_mainBulk nodoFiglio,int livello,java.util.BitSet livelliCompleti,boolean hasNext,boolean writeCollapseButton) throws java.io.IOException {
 			out.println("<div>");
 			Albero_mainBulk nodoEspanso = (Albero_mainBulk)nodiEspansi.get(nodoFiglio.getCd_nodo());
 			if (nodoEspanso != null)

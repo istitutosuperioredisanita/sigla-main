@@ -87,8 +87,8 @@ private String getEuro(UserContext userContext) throws ComponentException {
 
 	String cd_euro = null;
 	try {
-		cd_euro = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(userContext, new Integer(0), "*", "CD_DIVISA", "EURO");
-	} catch (javax.ejb.EJBException e) {
+		cd_euro = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(userContext, Integer.valueOf(0), "*", "CD_DIVISA", "EURO");
+	} catch (jakarta.ejb.EJBException e) {
 		handleException(e);
 	} catch (java.rmi.RemoteException e) {
 		handleException(e);

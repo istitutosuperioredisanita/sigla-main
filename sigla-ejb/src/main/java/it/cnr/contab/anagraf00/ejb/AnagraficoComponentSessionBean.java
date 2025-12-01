@@ -16,9 +16,9 @@
  */
 
 package it.cnr.contab.anagraf00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
 
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -42,14 +42,12 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 		componentObj = new it.cnr.contab.anagraf00.comp.AnagraficoComponent();
 	}
 	@Remove
-	public void ejbRemove() throws javax.ejb.EJBException {
+	public void ejbRemove() throws jakarta.ejb.EJBException {
 		componentObj.release();
 	}
 
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new AnagraficoComponentSessionBean();
-	}
-	public java.lang.String calcolaCodiceFiscale(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public java.lang.String calcolaCodiceFiscale(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.lang.String result = ((AnagraficoComponent)componentObj).calcolaCodiceFiscale(param0,param1);
@@ -67,7 +65,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk getAnagraficoEnte(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk getAnagraficoEnte(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk result = ((AnagraficoComponent)componentObj).getAnagraficoEnte(param0);
@@ -85,7 +83,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.anagraf00.core.bulk.TerzoBulk getDefaultTerzo(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.anagraf00.core.bulk.TerzoBulk getDefaultTerzo(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.anagraf00.core.bulk.TerzoBulk result = ((AnagraficoComponent)componentObj).getDefaultTerzo(param0,param1);
@@ -103,7 +101,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((AnagraficoComponent)componentObj).inizializzaBulkPerStampa(param0,param1);
@@ -121,7 +119,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk setComune_fiscale(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1,it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk setComune_fiscale(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1,it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk result = ((AnagraficoComponent)componentObj).setComune_fiscale(param0,param1,param2);
@@ -139,7 +137,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((AnagraficoComponent)componentObj).stampaConBulk(param0,param1);
@@ -157,7 +155,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.util.List bulkForSIP(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public java.util.List bulkForSIP(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.util.List result = ((AnagraficoComponent)componentObj).bulkForSIP(param0,param1);
@@ -175,7 +173,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void eliminaBulkForSIP(it.cnr.jada.UserContext param0,String param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void eliminaBulkForSIP(it.cnr.jada.UserContext param0,String param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((AnagraficoComponent)componentObj).eliminaBulkForSIP(param0,param1);
@@ -193,7 +191,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 		}
 	}
 	
-	public boolean isItalianoEsteroModificabile(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public boolean isItalianoEsteroModificabile(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((AnagraficoComponent)componentObj).isItalianoEsteroModificabile(param0,param1);
@@ -211,7 +209,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void checkConiugeAlreadyExistFor(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1, it.cnr.contab.anagraf00.core.bulk.Carico_familiare_anagBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void checkConiugeAlreadyExistFor(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1, it.cnr.contab.anagraf00.core.bulk.Carico_familiare_anagBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((AnagraficoComponent)componentObj).checkConiugeAlreadyExistFor(param0,param1,param2);
@@ -228,7 +226,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public boolean isGestiteDeduzioniIrpef(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public boolean isGestiteDeduzioniIrpef(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((AnagraficoComponent)componentObj).isGestiteDeduzioniIrpef(param0);
@@ -246,7 +244,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public boolean isGestiteDeduzioniFamily(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public boolean isGestiteDeduzioniFamily(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((AnagraficoComponent)componentObj).isGestiteDeduzioniFamily(param0);
@@ -264,7 +262,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public boolean isGestiteDetrazioniAltre(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public boolean isGestiteDetrazioniAltre(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((AnagraficoComponent)componentObj).isGestiteDetrazioniAltre(param0);
@@ -282,7 +280,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public boolean isGestiteDetrazioniFamily(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public boolean isGestiteDetrazioniFamily(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((AnagraficoComponent)componentObj).isGestiteDetrazioniFamily(param0);
@@ -300,7 +298,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public boolean esisteConiugeValido(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1, it.cnr.contab.anagraf00.core.bulk.Carico_familiare_anagBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public boolean esisteConiugeValido(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1, it.cnr.contab.anagraf00.core.bulk.Carico_familiare_anagBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((AnagraficoComponent)componentObj).esisteConiugeValido(param0,param1,param2);
@@ -318,7 +316,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public boolean esisteFiglioValido(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public boolean esisteFiglioValido(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((AnagraficoComponent)componentObj).esisteFiglioValido(param0,param1);
@@ -336,7 +334,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.util.List EstraiLista(it.cnr.jada.UserContext param0,Long param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public java.util.List EstraiLista(it.cnr.jada.UserContext param0,Long param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.util.List result = ((AnagraficoComponent)componentObj).EstraiLista(param0,param1);
@@ -355,7 +353,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 		}
 	}
 	
-	public boolean esisteAltroFamValido(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public boolean esisteAltroFamValido(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((AnagraficoComponent)componentObj).esisteAltroFamValido(param0,param1);
@@ -374,7 +372,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 		}
 	}
 	
-	public Long Max_prog_estrazione(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public Long Max_prog_estrazione(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			Long result = ((AnagraficoComponent)componentObj).Max_prog_estrazione(param0);
@@ -392,7 +390,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void Popola_ecf(it.cnr.jada.UserContext param0,Long param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void Popola_ecf(it.cnr.jada.UserContext param0,Long param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((AnagraficoComponent)componentObj).Popola_ecf(param0,param1);
@@ -409,7 +407,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public Timestamp findMaxDataCompValida(it.cnr.jada.UserContext param0,AnagraficoBulk param1) throws IntrospectionException,PersistencyException,it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public Timestamp findMaxDataCompValida(it.cnr.jada.UserContext param0,AnagraficoBulk param1) throws IntrospectionException,PersistencyException,it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			Timestamp result = ((AnagraficoComponent)componentObj).findMaxDataCompValida(param0,param1);
@@ -484,7 +482,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void controllaUnicitaCaricoInAnnoImposta(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1, it.cnr.contab.anagraf00.core.bulk.Carico_familiare_anagBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {	pre_component_invocation(param0,componentObj);
+	public void controllaUnicitaCaricoInAnnoImposta(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1, it.cnr.contab.anagraf00.core.bulk.Carico_familiare_anagBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {	pre_component_invocation(param0,componentObj);
 		try {
 			((AnagraficoComponent)componentObj).controllaUnicitaCaricoInAnnoImposta(param0,param1,param2);
 			component_invocation_succes(param0,componentObj);
@@ -500,7 +498,7 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void aggiornaDatiAce(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {	pre_component_invocation(param0,componentObj);
+	public void aggiornaDatiAce(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {	pre_component_invocation(param0,componentObj);
 		try {
 			((AnagraficoComponent)componentObj).aggiornaDatiAce(param0,param1);
 			component_invocation_succes(param0,componentObj);

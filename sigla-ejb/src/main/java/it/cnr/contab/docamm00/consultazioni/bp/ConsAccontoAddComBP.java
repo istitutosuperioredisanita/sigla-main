@@ -26,8 +26,8 @@ package it.cnr.contab.docamm00.consultazioni.bp;
 import java.io.IOException;
 import java.util.BitSet;
 
-import javax.servlet.ServletException;
-import javax.servlet.jsp.JspWriter;
+
+import jakarta.servlet.jsp.JspWriter;
 
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;

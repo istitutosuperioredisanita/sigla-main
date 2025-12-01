@@ -1053,7 +1053,7 @@ public class CRUDBltVisiteBP extends it.cnr.jada.util.action.SimpleCRUDBP implem
 			java.sql.Timestamp dataReg = null;
 			try {
 				dataReg = it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
-			} catch (javax.ejb.EJBException e) {
+			} catch (jakarta.ejb.EJBException e) {
 				throw handleException(e);
 			}
 			java.util.Calendar calendar = java.util.GregorianCalendar.getInstance();

@@ -18,8 +18,8 @@
 package it.cnr.contab.ordmag.richieste.ejb;
 import java.rmi.RemoteException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.ordmag.richieste.bulk.RichiestaUopBulk;
 import it.cnr.contab.ordmag.richieste.comp.RichiestaUopComponent;
@@ -32,10 +32,8 @@ public class RichiestaUopComponentSessionBean extends it.cnr.jada.ejb.CRUDCompon
 	public void ejbCreate() {
 	componentObj = new RichiestaUopComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new RichiestaUopComponentSessionBean();
-}
-public Boolean isUtenteAbilitatoRichiesta(UserContext usercontext, RichiestaUopBulk richiesta) throws ComponentException, PersistencyException,javax.ejb.EJBException {
+
+public Boolean isUtenteAbilitatoRichiesta(UserContext usercontext, RichiestaUopBulk richiesta) throws ComponentException, PersistencyException,jakarta.ejb.EJBException {
 	pre_component_invocation(usercontext,componentObj);
 	try {
 		Boolean result = ((RichiestaUopComponent)componentObj).isUtenteAbilitatoRichiesta(usercontext, richiesta);
@@ -56,7 +54,7 @@ public Boolean isUtenteAbilitatoRichiesta(UserContext usercontext, RichiestaUopB
 		throw uncaughtError(usercontext,componentObj,e);
 	}
 }
-public Boolean isUtenteAbilitatoValidazioneRichiesta(UserContext usercontext, RichiestaUopBulk richiesta) throws ComponentException, PersistencyException,javax.ejb.EJBException {
+public Boolean isUtenteAbilitatoValidazioneRichiesta(UserContext usercontext, RichiestaUopBulk richiesta) throws ComponentException, PersistencyException,jakarta.ejb.EJBException {
 	pre_component_invocation(usercontext,componentObj);
 	try {
 		Boolean result = ((RichiestaUopComponent)componentObj).isUtenteAbilitatoValidazioneRichiesta(usercontext, richiesta);
@@ -77,7 +75,7 @@ public Boolean isUtenteAbilitatoValidazioneRichiesta(UserContext usercontext, Ri
 		throw uncaughtError(usercontext,componentObj,e);
 	}
 }
-public RichiestaUopBulk completaRichiesta(UserContext userContext, RichiestaUopBulk richiesta) throws PersistencyException,ComponentException, javax.ejb.EJBException, RemoteException {
+public RichiestaUopBulk completaRichiesta(UserContext userContext, RichiestaUopBulk richiesta) throws PersistencyException,ComponentException, jakarta.ejb.EJBException, RemoteException {
 	pre_component_invocation(userContext,componentObj);
 	try {
 		RichiestaUopBulk result = ((RichiestaUopComponent)componentObj).completaRichiesta(userContext, richiesta);

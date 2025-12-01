@@ -30,7 +30,7 @@ import it.cnr.jada.util.action.SelezionatoreListaBP;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 
 /**
  * Action di gestione delle variazioni di bilancio preventivo

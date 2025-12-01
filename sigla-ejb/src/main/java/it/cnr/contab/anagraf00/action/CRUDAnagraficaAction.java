@@ -730,10 +730,10 @@ public Forward doCambiaDateRes(ActionContext context) {
 			
  			if( anagrafico.getDt_inizio_res_italia() != null) {
  				Configurazione_cnrComponentSession sess = (Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession");
- 				if ( sess.getIm01(context.getUserContext(), new Integer(0), null, "COSTANTI", "NUMERO_LIMITE_GG_RESIDENZA_FISCALE") == null ||
- 					 sess.getIm01(context.getUserContext(), new Integer(0), null, "COSTANTI", "NUM_MAX_ANNI_AGEVOLAZIONI_RIENTRO_CERVELLI") == null ||
- 					 sess.getDt01(context.getUserContext(), new Integer(0), null, "COSTANTI", "PRIMO_ANNO_AGEVOLAZIONI_RIENTRO_CERVELLI") == null ||
- 					 sess.getDt01(context.getUserContext(), new Integer(0), null, "COSTANTI", "ULTIMO_ANNO_AGEVOLAZIONI_RIENTRO_CERVELLI") == null)
+ 				if ( sess.getIm01(context.getUserContext(), Integer.valueOf(0), null, "COSTANTI", "NUMERO_LIMITE_GG_RESIDENZA_FISCALE") == null ||
+ 					 sess.getIm01(context.getUserContext(), Integer.valueOf(0), null, "COSTANTI", "NUM_MAX_ANNI_AGEVOLAZIONI_RIENTRO_CERVELLI") == null ||
+ 					 sess.getDt01(context.getUserContext(), Integer.valueOf(0), null, "COSTANTI", "PRIMO_ANNO_AGEVOLAZIONI_RIENTRO_CERVELLI") == null ||
+ 					 sess.getDt01(context.getUserContext(), Integer.valueOf(0), null, "COSTANTI", "ULTIMO_ANNO_AGEVOLAZIONI_RIENTRO_CERVELLI") == null)
  				{
  					anagrafico.setDt_inizio_res_italia(null);
  					anagrafico.setDt_fine_res_italia(null);
@@ -742,10 +742,10 @@ public Forward doCambiaDateRes(ActionContext context) {
  					throw new ApplicationException("Configurazione CNR: non sono stati impostati i valori per la gestione dei 'Cervelli'");
  				}
  					
- 				numMinGiorni = sess.getIm01(context.getUserContext(), new Integer(0), null, "COSTANTI", "NUMERO_LIMITE_GG_RESIDENZA_FISCALE").intValue();
- 				numMaxAnni = sess.getIm01(context.getUserContext(), new Integer(0), null, "COSTANTI", "NUM_MAX_ANNI_AGEVOLAZIONI_RIENTRO_CERVELLI").intValue();
- 				data_inizio_agevolazioni.setTime(sess.getDt01(context.getUserContext(), new Integer(0), null, "COSTANTI", "PRIMO_ANNO_AGEVOLAZIONI_RIENTRO_CERVELLI"));
- 				data_fine_agevolazioni.setTime(sess.getDt01(context.getUserContext(), new Integer(0), null, "COSTANTI", "ULTIMO_ANNO_AGEVOLAZIONI_RIENTRO_CERVELLI"));
+ 				numMinGiorni = sess.getIm01(context.getUserContext(), Integer.valueOf(0), null, "COSTANTI", "NUMERO_LIMITE_GG_RESIDENZA_FISCALE").intValue();
+ 				numMaxAnni = sess.getIm01(context.getUserContext(), Integer.valueOf(0), null, "COSTANTI", "NUM_MAX_ANNI_AGEVOLAZIONI_RIENTRO_CERVELLI").intValue();
+ 				data_inizio_agevolazioni.setTime(sess.getDt01(context.getUserContext(), Integer.valueOf(0), null, "COSTANTI", "PRIMO_ANNO_AGEVOLAZIONI_RIENTRO_CERVELLI"));
+ 				data_fine_agevolazioni.setTime(sess.getDt01(context.getUserContext(), Integer.valueOf(0), null, "COSTANTI", "ULTIMO_ANNO_AGEVOLAZIONI_RIENTRO_CERVELLI"));
  				
 				data_da.setTime(anagrafico.getDt_inizio_res_italia());
 				if (anagrafico.getDt_fine_res_italia() != null)
@@ -759,7 +759,7 @@ public Forward doCambiaDateRes(ActionContext context) {
 				else
 				{
 					//calcolo il numero di giorni residui nell'anno
-					if( anagrafico.getDt_fine_res_italia() != null && (new Long(data_a.get(java.util.GregorianCalendar.YEAR)).equals(new Long(data_da.get(java.util.GregorianCalendar.YEAR))) ))
+					if( anagrafico.getDt_fine_res_italia() != null && (Long.valueOf(data_a.get(java.util.GregorianCalendar.YEAR)).equals(Long.valueOf(data_da.get(java.util.GregorianCalendar.YEAR))) ))
 					{
 						numGiorniRes = DateUtils.daysBetweenDates(anagrafico.getDt_inizio_res_italia(),anagrafico.getDt_fine_res_italia()) + 1;
 					}

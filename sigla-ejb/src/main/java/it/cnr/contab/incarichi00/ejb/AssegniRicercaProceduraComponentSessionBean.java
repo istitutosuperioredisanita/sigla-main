@@ -17,8 +17,8 @@
 
 package it.cnr.contab.incarichi00.ejb;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 /**
  * Bean implementation class for Enterprise Bean: CNRINCARICHI00_EJB_AssegniRicercaProceduraComponentSession
@@ -29,7 +29,5 @@ public class AssegniRicercaProceduraComponentSessionBean extends IncarichiProced
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.incarichi00.comp.AssegniRicercaProceduraComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new AssegniRicercaProceduraComponentSessionBean();
-	}
+	
 }

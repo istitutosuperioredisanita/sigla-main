@@ -202,17 +202,17 @@ public class Elemento_voceHome extends BulkHome implements ConsultazioniRestHome
 		{
 
 			java.util.Hashtable lungCnrEntrate  = new java.util.Hashtable();
-			lungCnrEntrate.put( TIPO_CATEGORIA, new Integer( 2 ));
-			lungCnrEntrate.put( TIPO_CAPITOLO, new Integer( 12 ));
+			lungCnrEntrate.put( TIPO_CATEGORIA, Integer.valueOf( 2 ));
+			lungCnrEntrate.put( TIPO_CAPITOLO, Integer.valueOf( 12 ));
 
 			java.util.Hashtable lungCnrSpese    = new java.util.Hashtable();
-			lungCnrSpese.put( TIPO_CAPITOLO, new Integer( 3 ));
+			lungCnrSpese.put( TIPO_CAPITOLO, Integer.valueOf( 3 ));
 
 			java.util.Hashtable lungCdsEntrate  = new java.util.Hashtable();
-			lungCdsEntrate.put( TIPO_CAPITOLO, new Integer( 3 ));
+			lungCdsEntrate.put( TIPO_CAPITOLO, Integer.valueOf( 3 ));
 
 			java.util.Hashtable lungCdsSpese    = new java.util.Hashtable();
-			lungCdsSpese.put( TIPO_CAPITOLO, new Integer( 15 ));
+			lungCdsSpese.put( TIPO_CAPITOLO, Integer.valueOf( 15 ));
 
 
 			lunghezzeChiavi = new java.util.Hashtable();

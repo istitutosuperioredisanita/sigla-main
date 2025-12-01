@@ -23,6 +23,8 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
 import it.cnr.jada.util.jsp.Button;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,7 +70,7 @@ public class CaricaFileCassiereBP extends it.cnr.jada.util.action.SelezionatoreL
      *
      * @return DistintaCassiereComponentSession
      **/
-    public it.cnr.contab.doccont00.ejb.DistintaCassiereComponentSession createComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException, BusinessProcessException {
+    public it.cnr.contab.doccont00.ejb.DistintaCassiereComponentSession createComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException, BusinessProcessException {
 
         return (it.cnr.contab.doccont00.ejb.DistintaCassiereComponentSession) createComponentSession("CNRDOCCONT00_EJB_DistintaCassiereComponentSession", it.cnr.contab.doccont00.ejb.DistintaCassiereComponentSession.class);
     }
@@ -161,7 +163,7 @@ public class CaricaFileCassiereBP extends it.cnr.jada.util.action.SelezionatoreL
      * @param action  nome della action da eseguire
      * @param target  target HTML su cui eseguire la action
      */
-    public void openForm(javax.servlet.jsp.PageContext context, String action, String target) throws java.io.IOException, javax.servlet.ServletException {
+    public void openForm(PageContext context, String action, String target) throws java.io.IOException, ServletException {
 
         if (CARICA.equals(getAzione())) {
             openForm(context, action, target, "multipart/form-data");

@@ -16,9 +16,9 @@
  */
 
 package it.cnr.contab.consultazioni.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
 
 /**
  * Bean implementation class for Enterprise Bean: CNRDOCAMM00_EJB_MonitoCococoComponentSession
@@ -28,8 +28,5 @@ public class ConsultazioniRestComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 	@PostConstruct
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.consultazioni.comp.ConsultazioniRestComponent();
-	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-		return new ConsultazioniRestComponentSessionBean();
 	}
 }

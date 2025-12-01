@@ -19,9 +19,9 @@ package it.cnr.contab.doccont00.ejb;
 
 import java.rmi.RemoteException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.doccont00.comp.ConsRiepilogoSiopeComponent;
 import it.cnr.contab.doccont00.consultazioni.bulk.FlussiDiCassaDtoBulk;
@@ -44,9 +44,7 @@ public class ConsRiepilogoSiopeComponentSessionBean extends it.cnr.jada.ejb.CRUD
 		componentObj = new ConsRiepilogoSiopeComponent();
 	}
 	
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new ConsAssCompPerDataComponentSessionBean();
-	}
+	
 	
 	
 	public it.cnr.jada.util.RemoteIterator findSiopeDettaglioMandati(it.cnr.jada.UserContext param0, java.lang.String param1, java.lang.String param2, it.cnr.jada.persistency.sql.CompoundFindClause param3,it.cnr.jada.persistency.sql.CompoundFindClause param4, OggettoBulk param5) 

@@ -25,10 +25,10 @@ import it.cnr.jada.comp.ComponentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -36,10 +36,6 @@ import java.util.UUID;
 @Stateless(name = "CNRCONFIG00_EJB_Configurazione_cnrComponentSession")
 public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUDDetailComponentSessionBean implements Configurazione_cnrComponentSession {
     private transient final static Logger logger = LoggerFactory.getLogger(Configurazione_cnrComponentSessionBean.class);
-
-    public static Configurazione_cnrComponentSessionBean newInstance() throws EJBException {
-        return new Configurazione_cnrComponentSessionBean();
-    }
 
     public void ejbActivate() throws EJBException {
     }
@@ -813,7 +809,7 @@ public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUD
         }
     }
 
-    public Integer getCdTerzoDiversiStipendi(UserContext userContext) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public Integer getCdTerzoDiversiStipendi(UserContext userContext) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(userContext, componentObj);
         try {
             Integer result = ((Configurazione_cnrComponent)componentObj).getCdTerzoDiversiStipendi(userContext);
@@ -832,7 +828,7 @@ public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUD
         }
     }
 
-    public Integer getCdTerzoDiversiCollaboratori(UserContext userContext) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public Integer getCdTerzoDiversiCollaboratori(UserContext userContext) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(userContext, componentObj);
         try {
             Integer result = ((Configurazione_cnrComponent)componentObj).getCdTerzoDiversiCollaboratori(userContext);
@@ -851,7 +847,7 @@ public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUD
         }
     }
 
-    public String getContoCorrenteEnte(UserContext userContext, Integer esercizio) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public String getContoCorrenteEnte(UserContext userContext, Integer esercizio) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(userContext, componentObj);
         try {
             String result = ((Configurazione_cnrComponent)componentObj).getContoCorrenteEnte(userContext, esercizio);
@@ -869,7 +865,7 @@ public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUD
             throw uncaughtError(userContext, componentObj, e);
         }
     }
-    public Timestamp getDataFineValiditaCaricoFamiliare(UserContext userContext, String tiPersona) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public Timestamp getDataFineValiditaCaricoFamiliare(UserContext userContext, String tiPersona) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(userContext, componentObj);
         try {
             Timestamp result = ((Configurazione_cnrComponent)componentObj).getDataFineValiditaCaricoFamiliare(userContext, tiPersona);
@@ -1180,7 +1176,7 @@ public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUD
 
 
 
-    public Timestamp getFineRegFattPass(UserContext userContext, Integer esercizio) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public Timestamp getFineRegFattPass(UserContext userContext, Integer esercizio) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(userContext, componentObj);
         try {
             Timestamp result = ((Configurazione_cnrComponent)componentObj).getFineRegFattPass(userContext, esercizio);

@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.doccont00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.doccont00.comp.ImpegnoComponent;
 @Stateless(name="CNRDOCCONT00_EJB_ImpegnoComponentSession")
@@ -26,10 +26,8 @@ public class ImpegnoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSe
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.doccont00.comp.ImpegnoComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new ImpegnoComponentSessionBean();
-}
-public void aggiornaCogeCoanInDifferita(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1,java.util.Map param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public void aggiornaCogeCoanInDifferita(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1,java.util.Map param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		((ImpegnoComponent)componentObj).aggiornaCogeCoanInDifferita(param0,param1,param2);
@@ -46,7 +44,7 @@ public void aggiornaCogeCoanInDifferita(it.cnr.jada.UserContext param0,it.cnr.co
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public void aggiornaSaldiInDifferita(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1,java.util.Map param2,it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param3) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public void aggiornaSaldiInDifferita(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1,java.util.Map param2,it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		((ImpegnoComponent)componentObj).aggiornaSaldiInDifferita(param0,param1,param2,param3);
@@ -63,7 +61,7 @@ public void aggiornaSaldiInDifferita(it.cnr.jada.UserContext param0,it.cnr.conta
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public void callRiportaAvanti(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public void callRiportaAvanti(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		((ImpegnoComponent)componentObj).callRiportaAvanti(param0,param1);
@@ -80,7 +78,7 @@ public void callRiportaAvanti(it.cnr.jada.UserContext param0,it.cnr.contab.docco
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public void callRiportaIndietro(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public void callRiportaIndietro(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		((ImpegnoComponent)componentObj).callRiportaIndietro(param0,param1);
@@ -97,7 +95,7 @@ public void callRiportaIndietro(it.cnr.jada.UserContext param0,it.cnr.contab.doc
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public void lockScadenza(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public void lockScadenza(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		((ImpegnoComponent)componentObj).lockScadenza(param0,param1);
@@ -114,7 +112,7 @@ public void lockScadenza(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk modificaScadenzaInAutomatico(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk param1,java.math.BigDecimal param2,boolean param3) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk modificaScadenzaInAutomatico(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk param1,java.math.BigDecimal param2,boolean param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk result = ((ImpegnoComponent)componentObj).modificaScadenzaInAutomatico(param0,param1,param2,param3);

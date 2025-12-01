@@ -70,9 +70,9 @@ public class Documento_generico_rigaHome extends BulkHome {
                     "(PG_DOCUMENTO_GENERICO = " + riga.getPg_documento_generico().longValue() + ")");
             Long x;
             if (rs.next())
-                x = new Long(rs.getLong(1) + 1);
+                x = Long.valueOf(rs.getLong(1) + 1);
             else
-                x = new Long(0);
+                x = Long.valueOf(0);
             riga.setProgressivo_riga(x);
         } catch (java.sql.SQLException sqle) {
             throw new PersistencyException(sqle);

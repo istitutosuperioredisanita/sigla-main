@@ -50,7 +50,7 @@ public class ConsDettRegIvaBP extends BulkBP {
     }
 
     public ConsRegIvaComponentSession createComponentSession()
-            throws javax.ejb.EJBException,
+            throws jakarta.ejb.EJBException,
             java.rmi.RemoteException,
             BusinessProcessException {
         return (ConsRegIvaComponentSession) createComponentSession("CNRGESTIVA00_EJB_ConsRegIvaComponentSession", ConsRegIvaComponentSession.class);

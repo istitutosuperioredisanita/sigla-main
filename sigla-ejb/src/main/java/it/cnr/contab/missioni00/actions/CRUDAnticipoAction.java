@@ -95,7 +95,7 @@ public class CRUDAnticipoAction extends EconomicaAction {
      * Tale metodo chiama il metodo "find" dell'anticipo
      */
 
-    protected Forward basicDoCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, javax.ejb.RemoveException {
+    protected Forward basicDoCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, jakarta.ejb.RemoveException {
         try {
             fillModel(context);
             it.cnr.jada.util.action.CRUDBP bp = getBusinessProcess(context);
@@ -270,7 +270,7 @@ public class CRUDAnticipoAction extends EconomicaAction {
     /**
      * Attiva la ricerca libera di un anticipo
      */
-    public Forward doCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, javax.ejb.RemoveException {
+    public Forward doCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, jakarta.ejb.RemoveException {
         CRUDAnticipoBP bp = (CRUDAnticipoBP) context.getBusinessProcess();
 
         //	Se chi invoca la ricerca degli anticipi e' il Fondo Economale

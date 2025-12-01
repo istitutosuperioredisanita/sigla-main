@@ -61,7 +61,7 @@ public class XMLKeyPersistentInfo extends XMLBase {
                 addAttribute(Tags.SQL_TYPE_NAME, c.getSqlTypeName());
                 addAttribute(
                         Tags.COLUMN_SIZE,
-                        new Integer(c.getColumnSize()).toString());
+                        Integer.valueOf(c.getColumnSize()).toString());
                 addAttribute(
                         Tags.NULLABLE,
                         new Boolean(c.isNullable()).toString());

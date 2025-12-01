@@ -20,7 +20,7 @@ package it.cnr.contab.docamm00.actions;
 import java.rmi.RemoteException;
 import java.sql.*;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 
 import it.cnr.contab.docamm00.docs.bulk.ElaboraNumUnicoFatturaPBulk;
 import it.cnr.contab.reports.bulk.Print_spooler_paramBulk;

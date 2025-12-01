@@ -127,8 +127,8 @@ public Forward doStampaOrdine(ActionContext context) {
 		ParametricPrintBP ppbp = (ParametricPrintBP)context.createBusinessProcess("StampaOrdineBP");
 		Stampa_ordineBulk stampa = (Stampa_ordineBulk)ppbp.createNewBulk(context);
 		if (ordine != null && ordine.getPg_ordine() != null){
-			stampa.setPgInizio(new Integer(ordine.getPg_ordine().intValue()));
-			stampa.setPgFine(new Integer(ordine.getPg_ordine().intValue()));
+			stampa.setPgInizio(Integer.valueOf(ordine.getPg_ordine().intValue()));
+			stampa.setPgFine(Integer.valueOf(ordine.getPg_ordine().intValue()));
 		}
 		ppbp.setModel(context, stampa);
 		

@@ -59,7 +59,7 @@ public class ConsFirmatariContrattiRestBP extends ConsultazioniBP implements Sea
     }
 
 
-    public ContrattoComponentSession createComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException, BusinessProcessException {
+    public ContrattoComponentSession createComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException, BusinessProcessException {
 
         return (ContrattoComponentSession) createComponentSession("CNRCONFIG00_EJB_ContrattoComponentSession", ContrattoComponentSession.class);
     }

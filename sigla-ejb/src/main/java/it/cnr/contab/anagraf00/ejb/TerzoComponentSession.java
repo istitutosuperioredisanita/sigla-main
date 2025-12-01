@@ -27,7 +27,7 @@ import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface TerzoComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

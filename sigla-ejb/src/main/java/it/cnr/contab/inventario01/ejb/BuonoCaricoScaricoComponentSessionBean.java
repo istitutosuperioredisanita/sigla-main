@@ -19,9 +19,9 @@ package it.cnr.contab.inventario01.ejb;
 
 import java.rmi.RemoteException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaIBulk;
@@ -51,9 +51,7 @@ public class BuonoCaricoScaricoComponentSessionBean extends it.cnr.jada.ejb.CRUD
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.inventario01.comp.BuonoCaricoScaricoComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new BuonoCaricoScaricoComponentSessionBean();
-	}
+
 	
 	public void eliminaBeniAssociatiConBulk(it.cnr.jada.UserContext param0,OggettoBulk param1,it.cnr.jada.bulk.OggettoBulk[] param2,OggettoBulk param3) throws it.cnr.jada.comp.ComponentException,EJBException {
 		pre_component_invocation(param0,componentObj);
@@ -706,7 +704,7 @@ public class BuonoCaricoScaricoComponentSessionBean extends it.cnr.jada.ejb.CRUD
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.lang.String getLocalTransactionID(it.cnr.jada.UserContext param0,boolean param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,javax.ejb.EJBException {
+	public java.lang.String getLocalTransactionID(it.cnr.jada.UserContext param0,boolean param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.lang.String result = ((BuonoCaricoScaricoComponent)componentObj).getLocalTransactionID(param0,param1);

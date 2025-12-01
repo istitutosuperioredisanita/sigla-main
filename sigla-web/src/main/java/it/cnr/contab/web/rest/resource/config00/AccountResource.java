@@ -31,18 +31,16 @@ import it.cnr.contab.web.rest.model.PasswordDTO;
 import it.cnr.contab.web.rest.resource.util.AbstractResource;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.util.ejb.EJBCommonServices;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.representations.IDToken;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Base64Utils;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -65,9 +63,13 @@ public class AccountResource implements AccountLocal {
         final Optional<SIGLALDAPPrincipal> siglaldapPrincipal = Optional.ofNullable(securityContext.getUserPrincipal())
                 .filter(SIGLALDAPPrincipal.class::isInstance)
                 .map(SIGLALDAPPrincipal.class::cast);
+        /*
+        TODO WILDFLY
         final Optional<KeycloakPrincipal> keycloakPrincipal = Optional.ofNullable(securityContext.getUserPrincipal())
                 .filter(KeycloakPrincipal.class::isInstance)
                 .map(KeycloakPrincipal.class::cast);
+
+         */
 
         AccountDTO accountDTO = null;
         if (siglaldapPrincipal.isPresent()) {
@@ -95,6 +97,8 @@ public class AccountResource implements AccountLocal {
                 request.logout();
                 throw new UnprocessableEntityException("");
             }
+        /*
+        TODO WILDFLY
         } else if (keycloakPrincipal.isPresent()) {
             final IDToken idToken = Optional.ofNullable(keycloakPrincipal.get().getKeycloakSecurityContext().getIdToken())
                     .orElse(keycloakPrincipal.get().getKeycloakSecurityContext().getToken());
@@ -123,6 +127,8 @@ public class AccountResource implements AccountLocal {
             accountDTO.setUtenteMultiplo(findUtenteByUID.size() > 1);
             accountDTO.setLdap(Boolean.TRUE);
             accountDTO.setAbilitatoLdap(gestioneLoginComponentSession.isUtenteAbilitatoLdap(userContext, uid, Boolean.TRUE));
+
+         */
         } else {
             final UtenteBulk utenteBulk = (UtenteBulk) crudComponentSession.findByPrimaryKey(
                     userContext,

@@ -84,7 +84,7 @@ public class Incarichi_repertorio_annoBulk extends Incarichi_repertorio_annoBase
 	}
 	public void caricaAnniList(ActionContext actioncontext) { 
 		for (int i=CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue()+5;i>=2005;i--)
-			getAnniList().put(new Integer(i), new Integer(i));
+			getAnniList().put(Integer.valueOf(i), Integer.valueOf(i));
 	}
 	public OggettoBulk initialize(CRUDBP crudbp, ActionContext actioncontext) {
 		super.initialize(crudbp, actioncontext);

@@ -30,8 +30,8 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.RemoteIterator;
 
-import javax.ejb.EJBException;
-import javax.ejb.Remote;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Remote;
 import java.rmi.RemoteException;
 
 @Remote

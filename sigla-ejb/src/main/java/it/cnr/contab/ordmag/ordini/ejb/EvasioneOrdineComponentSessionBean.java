@@ -26,22 +26,20 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 import java.util.List;
 
 @Stateless(name = "CNRORDMAG00_EJB_EvasioneOrdineComponentSession")
 public class EvasioneOrdineComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements EvasioneOrdineComponentSession {
-    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-        return new EvasioneOrdineComponentSessionBean();
-    }
+
 
     @PostConstruct
     public void ejbCreate() {
         componentObj = new EvasioneOrdineComponent();
     }
 
-    public EvasioneOrdineBulk cercaOrdini(it.cnr.jada.UserContext param0, EvasioneOrdineBulk evasioneOrdine) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public EvasioneOrdineBulk cercaOrdini(it.cnr.jada.UserContext param0, EvasioneOrdineBulk evasioneOrdine) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             EvasioneOrdineBulk result = ((EvasioneOrdineComponent) componentObj).cercaOrdini(param0, evasioneOrdine);
@@ -60,7 +58,7 @@ public class EvasioneOrdineComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
         }
     }
 
-    public List<BollaScaricoMagBulk> evadiOrdine(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws ComponentException, PersistencyException, javax.ejb.EJBException {
+    public List<BollaScaricoMagBulk> evadiOrdine(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws ComponentException, PersistencyException, jakarta.ejb.EJBException {
         pre_component_invocation(userContext, componentObj);
         try {
             List<BollaScaricoMagBulk> result = ((EvasioneOrdineComponent) componentObj).evadiOrdine(userContext, evasioneOrdine);
@@ -79,7 +77,7 @@ public class EvasioneOrdineComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
         }
     }
 
-	public it.cnr.jada.util.RemoteIterator ricercaEvasioni(it.cnr.jada.UserContext param0, OrdineAcqConsegnaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+	public it.cnr.jada.util.RemoteIterator ricercaEvasioni(it.cnr.jada.UserContext param0, OrdineAcqConsegnaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			it.cnr.jada.util.RemoteIterator result = ((EvasioneOrdineComponent) componentObj).ricercaEvasioni(param0, param1);

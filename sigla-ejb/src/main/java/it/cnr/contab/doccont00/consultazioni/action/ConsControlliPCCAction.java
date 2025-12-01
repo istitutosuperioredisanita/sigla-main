@@ -18,7 +18,7 @@ import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
 
-import javax.servlet.ServletException;
+
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;

@@ -115,7 +115,7 @@ public void completeFrom(java.util.List righe_fattura) {
 				if (riga_fattura.getFattura_passiva().getPg_fattura_passiva()!=null)
 					riga_fattura.setPg_fattura_passiva(riga_fattura.getFattura_passiva().getPg_fattura_passiva());
 				else
-					riga_fattura.setPg_fattura_passiva(new Long(1));	
+					riga_fattura.setPg_fattura_passiva(Long.valueOf(1));	
 					aggiungi_pgFattura.add(riga_fattura);
 			}			
 			setDettagliFatturaColl(aggiungi_pgFattura);
@@ -128,7 +128,7 @@ public void completeFrom(java.util.List righe_fattura) {
 				if (riga_fattura.getFattura_passiva().getPg_fattura_passiva()!=null)
 					riga_fattura.setPg_fattura_passiva(riga_fattura.getFattura_passiva().getPg_fattura_passiva());
 				else
-					riga_fattura.setPg_fattura_passiva(new Long(1));	
+					riga_fattura.setPg_fattura_passiva(Long.valueOf(1));	
 					aggiungi_pgFattura.add(riga_fattura);
 			}			
 			setDettagliFatturaColl(aggiungi_pgFattura);
@@ -140,7 +140,7 @@ public void completeFrom(java.util.List righe_fattura) {
 				if (riga_fattura.getFattura_passiva().getPg_fattura_passiva()!=null)
 					riga_fattura.setPg_fattura_passiva(riga_fattura.getFattura_passiva().getPg_fattura_passiva());
 				else
-					riga_fattura.setPg_fattura_passiva(new Long(-1));	
+					riga_fattura.setPg_fattura_passiva(Long.valueOf(-1));	
 				aggiungi_pgFattura.add(riga_fattura);
 			}			
 			setDettagliFatturaColl(aggiungi_pgFattura);
@@ -152,7 +152,7 @@ public void completeFrom(java.util.List righe_fattura) {
 				if (riga_fattura.getFattura_attiva().getPg_fattura_attiva()!=null)
 					riga_fattura.setPg_fattura_attiva(riga_fattura.getFattura_attiva().getPg_fattura_attiva());
 				else
-					riga_fattura.setPg_fattura_attiva(new Long(-1));	
+					riga_fattura.setPg_fattura_attiva(Long.valueOf(-1));	
 				aggiungi_pgFattura.add(riga_fattura);
 			}			
 			setDettagliFatturaColl(aggiungi_pgFattura);
@@ -164,7 +164,7 @@ public void completeFrom(java.util.List righe_fattura) {
 			if (riga.getDocumento_generico().getPg_documento_generico()!=null)
 				riga.setPg_documento_generico(riga.getDocumento_generico().getPg_documento_generico());
 			else
-				riga.setPg_documento_generico(new Long(-1));	
+				riga.setPg_documento_generico(Long.valueOf(-1));	
 			aggiungi_pgFattura.add(riga);
 		}			
 		setDettagliDocumentoColl(aggiungi_pgFattura);

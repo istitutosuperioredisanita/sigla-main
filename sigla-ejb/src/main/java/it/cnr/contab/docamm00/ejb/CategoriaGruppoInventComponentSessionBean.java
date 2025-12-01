@@ -19,9 +19,9 @@ package it.cnr.contab.docamm00.ejb;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.docamm00.comp.CategoriaGruppoInventComponent;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
@@ -34,14 +34,12 @@ public class CategoriaGruppoInventComponentSessionBean extends it.cnr.jada.ejb.C
 		componentObj = new it.cnr.contab.docamm00.comp.CategoriaGruppoInventComponent();
 	}
 	@Remove
-	public void ejbRemove() throws javax.ejb.EJBException {
+	public void ejbRemove() throws jakarta.ejb.EJBException {
 		componentObj.release();
 	}
 	
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new CategoriaGruppoInventComponentSessionBean();
-	}
-	public it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk completaElementoVoceOf(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+	public it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk completaElementoVoceOf(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk result = ((CategoriaGruppoInventComponent)componentObj).completaElementoVoceOf(param0,param1);
@@ -59,7 +57,7 @@ public class CategoriaGruppoInventComponentSessionBean extends it.cnr.jada.ejb.C
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk findElementoVoce(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk findElementoVoce(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk result = ((CategoriaGruppoInventComponent)componentObj).findElementoVoce(param0,param1);
@@ -77,7 +75,7 @@ public class CategoriaGruppoInventComponentSessionBean extends it.cnr.jada.ejb.C
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.config00.pdcfin.bulk.Voce_fBulk findVoce_f(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,javax.ejb.EJBException {
+	public it.cnr.contab.config00.pdcfin.bulk.Voce_fBulk findVoce_f(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.config00.pdcfin.bulk.Voce_fBulk result = ((CategoriaGruppoInventComponent)componentObj).findVoce_f(param0,param1);
@@ -101,7 +99,7 @@ public class CategoriaGruppoInventComponentSessionBean extends it.cnr.jada.ejb.C
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.jada.util.RemoteIterator getChildren(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.jada.util.RemoteIterator getChildren(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.util.RemoteIterator result = ((CategoriaGruppoInventComponent)componentObj).getChildren(param0,param1);
@@ -119,7 +117,7 @@ public class CategoriaGruppoInventComponentSessionBean extends it.cnr.jada.ejb.C
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.jada.bulk.OggettoBulk getParent(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.jada.bulk.OggettoBulk getParent(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((CategoriaGruppoInventComponent)componentObj).getParent(param0,param1);
@@ -137,7 +135,7 @@ public class CategoriaGruppoInventComponentSessionBean extends it.cnr.jada.ejb.C
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public boolean isLeaf(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public boolean isLeaf(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((CategoriaGruppoInventComponent)componentObj).isLeaf(param0,param1);
@@ -156,7 +154,7 @@ public class CategoriaGruppoInventComponentSessionBean extends it.cnr.jada.ejb.C
 		}
 	}
 	public List findAssVoceFList(UserContext param0,
-			Categoria_gruppo_inventBulk param1) throws ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,javax.ejb.EJBException ,RemoteException{
+			Categoria_gruppo_inventBulk param1) throws ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,jakarta.ejb.EJBException ,RemoteException{
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.util.List result = ((CategoriaGruppoInventComponent)componentObj).findAssVoceFList(param0,param1);

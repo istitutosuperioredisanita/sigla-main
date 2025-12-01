@@ -58,15 +58,18 @@ import it.cnr.si.spring.storage.StorageException;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.jsp.PageContext;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.cms.CMSException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJBException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.ejb.EJBException;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.io.*;
 import java.math.BigInteger;
 import java.rmi.RemoteException;
@@ -156,7 +159,7 @@ public class FirmaDigitalePdgVariazioniBP extends
             super.setFocusedElement(actioncontext, obj);
     }
 
-    public void openForm(javax.servlet.jsp.PageContext context, String action, String target) throws java.io.IOException, javax.servlet.ServletException {
+    public void openForm(PageContext context, String action, String target) throws java.io.IOException, ServletException {
 
         if (isUploadFile())
             openForm(context, action, target, "multipart/form-data");
@@ -179,8 +182,8 @@ public class FirmaDigitalePdgVariazioniBP extends
         return toolbar;
     }
 
-    public void writeToolbar(javax.servlet.jsp.PageContext pageContext)
-            throws java.io.IOException, javax.servlet.ServletException {
+    public void writeToolbar(jakarta.servlet.jsp.PageContext pageContext)
+            throws java.io.IOException, ServletException {
         Button[] toolbar = getToolbar();
         ArchiviaStampaPdgVariazioneBulk bulk = (ArchiviaStampaPdgVariazioneBulk) getFocusedElement();
         if (bulk != null) {
@@ -324,7 +327,7 @@ public class FirmaDigitalePdgVariazioniBP extends
                 } catch (RemoteException e) {
                     throw handleException(e);
                 }
-                bulk.setPg_variazione_pdg(new Long(0));
+                bulk.setPg_variazione_pdg(Long.valueOf(0));
                 bulk.setCentro_responsabilita(cdr);
                 bulk.setCd_centro_responsabilita(CNRUserContext.getCd_cdr(context.getUserContext()));
                 bulk.setDs_variazione("VARIAZIONE PER TEST DI FIRMA DIGITALE");
@@ -347,7 +350,7 @@ public class FirmaDigitalePdgVariazioniBP extends
             ServletException {
         ArchiviaStampaPdgVariazioneBulk archiviaStampaPdgVariazioneBulk = (ArchiviaStampaPdgVariazioneBulk) getFocusedElement();
         InputStream is = null;
-        final HttpServletResponse response = ((HttpActionContext) actioncontext).getResponse();
+        final jakarta.servlet.http.HttpServletResponse response = ((HttpActionContext) actioncontext).getResponse();
         if (!isTestSession()) {
             is = pdgVariazioniService.getResource(archiviaStampaPdgVariazioneBulk.getPdgVariazioneDocument().getStorageObject());
             response.setContentType(
@@ -366,7 +369,7 @@ public class FirmaDigitalePdgVariazioniBP extends
             ServletException {
         ArchiviaStampaPdgVariazioneBulk archiviaStampaPdgVariazioneBulk = (ArchiviaStampaPdgVariazioneBulk) getFocusedElement();
         InputStream is = null;
-        final HttpServletResponse response = ((HttpActionContext) actioncontext).getResponse();
+        final jakarta.servlet.http.HttpServletResponse response = ((HttpActionContext) actioncontext).getResponse();
         if (!isTestSession()) {
             is = pdgVariazioniService
                     .getResource(archiviaStampaPdgVariazioneBulk
@@ -515,7 +518,7 @@ public class FirmaDigitalePdgVariazioniBP extends
             return null;
     }
 
-    public String getUploadFile(javax.servlet.jsp.PageContext pageContext) {
+    public String getUploadFile(jakarta.servlet.jsp.PageContext pageContext) {
         String actionExtension = pageContext.getServletConfig()
                 .getInitParameter("extension");
         if (actionExtension == null)

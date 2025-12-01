@@ -25,7 +25,7 @@ import it.cnr.jada.comp.ComponentException;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface CRUDPdgVariazioneGestionaleComponentSession extends it.cnr.contab.pdg00.ejb.PdGVariazioniComponentSession {

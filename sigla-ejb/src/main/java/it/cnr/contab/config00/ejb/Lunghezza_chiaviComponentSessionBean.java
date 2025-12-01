@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.config00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.*;
 @Stateless(name="CNRCONFIG00_EJB_Lunghezza_chiaviComponentSession")
 public class Lunghezza_chiaviComponentSessionBean extends it.cnr.jada.ejb.GenericComponentSessionBean implements Lunghezza_chiaviComponentSession {
 	private it.cnr.contab.config00.comp.Lunghezza_chiaviComponent componentObj;
@@ -30,11 +30,8 @@ public class Lunghezza_chiaviComponentSessionBean extends it.cnr.jada.ejb.Generi
 		public void ejbCreate() {
 		componentObj = new it.cnr.contab.config00.comp.Lunghezza_chiaviComponent();
 	}
-	public static 
-	Lunghezza_chiaviComponentSessionBean newInstance() throws EJBException {
-		return new Lunghezza_chiaviComponentSessionBean();
-	}
-	public java.lang.String extractCdsKey(it.cnr.jada.UserContext param0,java.lang.String param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+	public java.lang.String extractCdsKey(it.cnr.jada.UserContext param0,java.lang.String param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.lang.String result = componentObj.extractCdsKey(param0,param1);
@@ -52,7 +49,7 @@ public class Lunghezza_chiaviComponentSessionBean extends it.cnr.jada.ejb.Generi
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.lang.String extractUoKey(it.cnr.jada.UserContext param0,java.lang.String param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public java.lang.String extractUoKey(it.cnr.jada.UserContext param0,java.lang.String param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.lang.String result = componentObj.extractUoKey(param0,param1);
@@ -70,7 +67,7 @@ public class Lunghezza_chiaviComponentSessionBean extends it.cnr.jada.ejb.Generi
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.lang.String formatCapocontoKey(it.cnr.jada.UserContext param0,java.lang.String param1,java.lang.Integer param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public java.lang.String formatCapocontoKey(it.cnr.jada.UserContext param0,java.lang.String param1,java.lang.Integer param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.lang.String result = componentObj.formatCapocontoKey(param0,param1,param2);
@@ -88,7 +85,7 @@ public class Lunghezza_chiaviComponentSessionBean extends it.cnr.jada.ejb.Generi
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.lang.String formatCdrKey(it.cnr.jada.UserContext param0,java.lang.String param1,java.lang.Integer param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public java.lang.String formatCdrKey(it.cnr.jada.UserContext param0,java.lang.String param1,java.lang.Integer param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.lang.String result = componentObj.formatCdrKey(param0,param1,param2);
@@ -106,7 +103,7 @@ public class Lunghezza_chiaviComponentSessionBean extends it.cnr.jada.ejb.Generi
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.lang.String formatCdsKey(it.cnr.jada.UserContext param0,java.lang.String param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public java.lang.String formatCdsKey(it.cnr.jada.UserContext param0,java.lang.String param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.lang.String result = componentObj.formatCdsKey(param0,param1);
@@ -124,7 +121,7 @@ public class Lunghezza_chiaviComponentSessionBean extends it.cnr.jada.ejb.Generi
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.lang.String formatContoKey(it.cnr.jada.UserContext param0,java.lang.String param1,java.lang.Integer param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public java.lang.String formatContoKey(it.cnr.jada.UserContext param0,java.lang.String param1,java.lang.Integer param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.lang.String result = componentObj.formatContoKey(param0,param1,param2);
@@ -142,7 +139,7 @@ public class Lunghezza_chiaviComponentSessionBean extends it.cnr.jada.ejb.Generi
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.lang.String formatKey(it.cnr.jada.UserContext param0,java.lang.String param1,java.lang.Integer param2,java.lang.String param3,java.lang.Integer param4,java.lang.String param5) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public java.lang.String formatKey(it.cnr.jada.UserContext param0,java.lang.String param1,java.lang.Integer param2,java.lang.String param3,java.lang.Integer param4,java.lang.String param5) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.lang.String result = componentObj.formatKey(param0,param1,param2,param3,param4,param5);
@@ -160,7 +157,7 @@ public class Lunghezza_chiaviComponentSessionBean extends it.cnr.jada.ejb.Generi
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.lang.String formatLinea_attivitaKey(it.cnr.jada.UserContext param0,java.lang.String param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public java.lang.String formatLinea_attivitaKey(it.cnr.jada.UserContext param0,java.lang.String param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.lang.String result = componentObj.formatLinea_attivitaKey(param0,param1);
@@ -178,7 +175,7 @@ public class Lunghezza_chiaviComponentSessionBean extends it.cnr.jada.ejb.Generi
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.lang.String formatUoKey(it.cnr.jada.UserContext param0,java.lang.String param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public java.lang.String formatUoKey(it.cnr.jada.UserContext param0,java.lang.String param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.lang.String result = componentObj.formatUoKey(param0,param1);
@@ -196,7 +193,7 @@ public class Lunghezza_chiaviComponentSessionBean extends it.cnr.jada.ejb.Generi
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.lang.String leftPadding(java.lang.String param0,int param1) throws javax.ejb.EJBException {
+	public java.lang.String leftPadding(java.lang.String param0,int param1) throws jakarta.ejb.EJBException {
 		pre_component_invocation(null,componentObj);
 		try {
 			java.lang.String result = componentObj.leftPadding(param0,param1);

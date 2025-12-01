@@ -70,11 +70,11 @@ public class XMLBasePersistentInfo extends XMLBase {
             addAttribute(Tags.COLUMN_NAME, c.getColumnName());
             addAttribute(Tags.PROPERTY_NAME, c.getPropertyName());
             addAttribute(Tags.SQL_TYPE_NAME, c.getSqlTypeName());
-            addAttribute(Tags.COLUMN_SIZE, new Integer(size).toString());
+            addAttribute(Tags.COLUMN_SIZE, Integer.valueOf(size).toString());
             if (c.getColumnScale() > 0) {
                 addAttribute(
                         Tags.COLUMN_SCALE,
-                        new Integer(c.getColumnScale()).toString());
+                        Integer.valueOf(c.getColumnScale()).toString());
             }
             addAttribute(Tags.NULLABLE, new Boolean(c.isNullable()).toString());
             int nameLen = c.getColumnName().length();

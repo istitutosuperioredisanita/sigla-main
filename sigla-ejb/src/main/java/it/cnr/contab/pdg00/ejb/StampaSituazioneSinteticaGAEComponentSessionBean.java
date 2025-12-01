@@ -18,8 +18,8 @@
 package it.cnr.contab.pdg00.ejb;
 import java.rmi.RemoteException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.doccont00.comp.StampaSingoloContoComponent;
@@ -36,9 +36,7 @@ public class StampaSituazioneSinteticaGAEComponentSessionBean extends it.cnr.jad
 	public void ejbCreate() {
 	componentObj = new StampaSituazioneSinteticaGAEComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new StampaSituazioneSinteticaGAEComponentSessionBean();
-}
+
 public void inserisciRecord(UserContext param0, java.math.BigDecimal param1, java.util.List param2) 
 throws ComponentException,java.rmi.RemoteException{
 	pre_component_invocation(param0,componentObj);
@@ -57,7 +55,7 @@ throws ComponentException,java.rmi.RemoteException{
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public java.math.BigDecimal getPgStampa(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public java.math.BigDecimal getPgStampa(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.math.BigDecimal result = ((StampaSituazioneSinteticaGAEComponent)componentObj).getPgStampa(param0);

@@ -46,7 +46,7 @@ public class StampaSituazioneAnaliticaXGaeAction extends ParametricPrintAction {
 		super();
 	}
 	
-	public PdGPreventivoComponentSession createPdgComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public PdGPreventivoComponentSession createPdgComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		return (PdGPreventivoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPDG00_EJB_PdGPreventivoComponentSession", PdGPreventivoComponentSession.class);
 	}
 	

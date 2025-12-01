@@ -122,7 +122,7 @@
 
     <div class="Group card p-2 mb-2 sigla-mb-2" width="100%">
 	<table class="Panel w-100" width="100%">
-	<% if (model.getNr_contratti()!=null && model.getNr_contratti().compareTo(new Integer(1))==1) {
+	<% if (model.getNr_contratti()!=null && model.getNr_contratti().compareTo(Integer.valueOf(1))==1) {
 	    String nrRighe="3";
 		if (model.hasVariazioni()) nrRighe="5";%>
 		<tr>

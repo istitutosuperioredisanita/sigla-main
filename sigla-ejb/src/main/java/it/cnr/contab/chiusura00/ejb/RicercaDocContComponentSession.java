@@ -24,8 +24,8 @@ import it.cnr.jada.persistency.PersistencyException;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBException;
-import javax.ejb.Remote;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Remote;
 @Remote
 public interface RicercaDocContComponentSession extends it.cnr.jada.ejb.RicercaComponentSession {
 void callAnnullamentoDocCont(it.cnr.jada.UserContext param0,java.lang.Long param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;

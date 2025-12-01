@@ -34,8 +34,10 @@ import it.cnr.si.spring.storage.StorageException;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
-import javax.servlet.ServletException;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
@@ -101,7 +103,7 @@ public abstract class AllegatiCRUDBP<T extends AllegatoGenericoBulk, K extends A
      * Sovrascrive quello presente nelle superclassi
      *
      */
-    public void openForm(javax.servlet.jsp.PageContext context, String action, String target) throws java.io.IOException, javax.servlet.ServletException {
+    public void openForm(PageContext context, String action, String target) throws java.io.IOException, ServletException {
         openForm(context, action, target, "multipart/form-data");
     }
 

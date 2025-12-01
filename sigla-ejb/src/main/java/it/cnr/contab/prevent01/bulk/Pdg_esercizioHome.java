@@ -46,13 +46,13 @@ public class Pdg_esercizioHome extends BulkHome {
 
 	public Pdg_esercizioBulk findEsercizioPrecedente( Pdg_esercizioBulk esercizioCorrente ) throws IntrospectionException, PersistencyException
 	{
-		Pdg_esercizioBulk esercizioPrecente = (Pdg_esercizioBulk)findByPrimaryKey( new Pdg_esercizioKey( new Integer(esercizioCorrente.getEsercizio().intValue() - 1), esercizioCorrente.getCd_centro_responsabilita()));
+		Pdg_esercizioBulk esercizioPrecente = (Pdg_esercizioBulk)findByPrimaryKey( new Pdg_esercizioKey( Integer.valueOf(esercizioCorrente.getEsercizio().intValue() - 1), esercizioCorrente.getCd_centro_responsabilita()));
 		return esercizioPrecente;
 	
 	}
 	public Pdg_esercizioBulk findEsercizioSuccessivo( Pdg_esercizioBulk esercizioCorrente ) throws IntrospectionException, PersistencyException
 	{
-		return (Pdg_esercizioBulk)findByPrimaryKey( new Pdg_esercizioKey( new Integer( esercizioCorrente.getEsercizio().intValue() + 1), esercizioCorrente.getCd_centro_responsabilita()));
+		return (Pdg_esercizioBulk)findByPrimaryKey( new Pdg_esercizioKey( Integer.valueOf( esercizioCorrente.getEsercizio().intValue() + 1), esercizioCorrente.getCd_centro_responsabilita()));
 	
 	}
 

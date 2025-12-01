@@ -37,6 +37,8 @@ import it.cnr.jada.action.Config;
 import it.cnr.jada.bulk.*;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.jsp.Button;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspWriter;
 
 import java.util.Iterator;
 import java.util.Vector;
@@ -321,7 +323,7 @@ public class CRUDTransitoBeniOrdiniBP extends SimpleCRUDBP {
      *
      * @param writer <code>JspWriter</code>
      **/
-    public void writeToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException, javax.servlet.ServletException {
+    public void writeToolbar(JspWriter writer) throws java.io.IOException, ServletException {
 
         //super.writeToolbar(writer);
         openToolbar(writer);
@@ -336,7 +338,7 @@ public class CRUDTransitoBeniOrdiniBP extends SimpleCRUDBP {
      *
      * @param writer <code>JspWriter</code>
      **/
-    public void writeViewAccessoriToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException, javax.servlet.ServletException {
+    public void writeViewAccessoriToolbar(JspWriter writer) throws java.io.IOException, ServletException {
 
         if (!isSearching()) {
             openToolbar(writer);

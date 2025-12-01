@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.docamm00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.docamm00.comp.CambioComponent;
 @Stateless(name="CNRDOCAMM00_EJB_CambioComponentSession")
@@ -26,10 +26,8 @@ public class CambioComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSes
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.docamm00.comp.CambioComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new CambioComponentSessionBean();
-}
-public boolean validaCambio(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.tabrif.bulk.CambioBulk param1) throws javax.ejb.EJBException {
+
+public boolean validaCambio(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.tabrif.bulk.CambioBulk param1) throws jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		boolean result = ((CambioComponent)componentObj).validaCambio(param0,param1);

@@ -42,8 +42,6 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.PropertyNames;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.EJBCommonServices;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.representations.IDToken;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import java.io.Serializable;
@@ -143,7 +141,7 @@ public class GestioneLoginComponent
                 // Se l'utente non ha selezionato l'unità organizzativa la lista
                 // dei nodi è indipendente anche dall'esercizio;
                 cd_unita_organizzativa = "*";
-                esercizio = new Integer(0);
+                esercizio = Integer.valueOf(0);
             }
             if (cd_nodo == null)
                 cd_nodo = "0";
@@ -245,7 +243,7 @@ public class GestioneLoginComponent
             try {
                 java.sql.ResultSet rs = stm.executeQuery();
                 while (rs.next())
-                    esercizi.add(new Integer(rs.getInt(1)));
+                    esercizi.add(Integer.valueOf(rs.getInt(1)));
             } finally {
                 try {
                     stm.close();
@@ -371,11 +369,11 @@ public class GestioneLoginComponent
 				}
                 Messaggio_notificatoBulk messaggio_notificato = (Messaggio_notificatoBulk) getHome(userContext, Messaggio_notificatoBulk.class).findByPrimaryKey(new Messaggio_notificatoKey(it.cnr.contab.utenze00.bp.CNRUserContext.getUser(userContext)));
                 if (messaggio_notificato != null) {
-                    messaggio_notificato.setPg_messaggio(new Long(pg_messaggio));
+                    messaggio_notificato.setPg_messaggio(Long.valueOf(pg_messaggio));
                     updateBulk(userContext, messaggio_notificato);
                 } else {
                     messaggio_notificato = new Messaggio_notificatoBulk(it.cnr.contab.utenze00.bp.CNRUserContext.getUser(userContext));
-                    messaggio_notificato.setPg_messaggio(new Long(pg_messaggio));
+                    messaggio_notificato.setPg_messaggio(Long.valueOf(pg_messaggio));
                     messaggio_notificato.setUser(it.cnr.contab.utenze00.bp.CNRUserContext.getUser(userContext));
                     insertBulk(userContext, messaggio_notificato);
                 }
@@ -506,7 +504,7 @@ public class GestioneLoginComponent
             Integer esercizio = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext);
             if (cd_unita_organizzativa == null) {
                 cd_unita_organizzativa = "*";
-                esercizio = new Integer(0);
+                esercizio = Integer.valueOf(0);
             }
 
             it.cnr.jada.persistency.sql.SQLBuilder sql = new it.cnr.jada.persistency.sql.SQLBuilder();
@@ -643,7 +641,7 @@ public class GestioneLoginComponent
             Integer esercizio = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext);
             if (cd_unita_organizzativa == null) {
                 cd_unita_organizzativa = "*";
-                esercizio = new Integer(0);
+                esercizio = Integer.valueOf(0);
             }
             Albero_mainHome home = (Albero_mainHome) getHomeCache(userContext).getHome(Albero_mainBulk.class, "V_ALBERO_MAIN_UNITA_UTENTE");
             it.cnr.jada.persistency.sql.SQLBuilder sql = home.createSQLBuilder();
@@ -717,7 +715,7 @@ public class GestioneLoginComponent
             // verifichiamo che tipo di autenticazione è ora attiva sui parametri ente
             Parametri_enteHome enteHome = (Parametri_enteHome) getHome(userContext, Parametri_enteBulk.class);
             SQLBuilder sqlEnte = enteHome.createSQLBuilder();
-            sqlEnte.addClause("AND", "attivo", SQLBuilder.EQUALS, new Boolean(true));
+            sqlEnte.addClause("AND", "attivo", SQLBuilder.EQUALS, Boolean.TRUE);
             Parametri_enteBulk ente = (Parametri_enteBulk) getHome(userContext, Parametri_enteBulk.class).fetchAll(sqlEnte).get(0);
             UtenteHome home = null;
             UtenteBulk utenteReale = null;
@@ -992,6 +990,8 @@ public class GestioneLoginComponent
         context.setCd_cds(cds);
         context.setCd_unita_organizzativa(uo);
         UtenteBulk utenteBulk = new UtenteBulk();
+        /*
+        TODO WILDFLY
         final Optional<IDToken> idToken = Optional.ofNullable(principal)
                 .filter(KeycloakPrincipal.class::isInstance)
                 .map(KeycloakPrincipal.class::cast)
@@ -1013,6 +1013,7 @@ public class GestioneLoginComponent
                         }
                     }).orElse(Boolean.FALSE);
         }
+         */
         return Boolean.FALSE;
     }
 }

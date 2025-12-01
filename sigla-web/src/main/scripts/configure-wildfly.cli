@@ -1,0 +1,105 @@
+# Script CLI per configurare WildFly Bootable JAR
+# Sostituisce project-stages.yml
+
+# Configurazione DataSource Oracle
+/subsystem=datasources/jdbc-driver=oracle:add(driver-name=oracle, \
+    driver-module-name=com.oracle.jdbc, \
+    driver-class-name=oracle.jdbc.OracleDriver)
+
+/subsystem=datasources/data-source=SIGLA:add(jndi-name=java:/jdbc/CIR, \
+    driver-name=oracle, \
+    connection-url=${env.DB_URL:jdbc:oracle:thin:@dbtest.cedrc.cnr.it:1521:SIGLAF}, \
+    user-name=${env.DB_USER:PCIR009}, \
+    password=${env.DB_PASSWORD:dbform}, \
+    min-pool-size=10, \
+    max-pool-size=250, \
+    idle-timeout-minutes=1, \
+    query-timeout=600, \
+    use-java-context=true)
+
+# Configurazione Security Domain con Custom Realm
+/subsystem=elytron/custom-realm=sigla-combined-realm:add( \
+    class-name=it.cnr.contab.security.auth.CombinedSecurityRealm, \
+    module=it.cnr.contab.security, \
+    configuration={ \
+        ldap.url=${env.CNR_LDAP_URL:ldap://virtest1.si.cnr.it:389}, \
+        ldap.bindDN=${env.CNR_LDAP_BIND_DN:cn=mastercnrapp1,ou=account,o=cnr,c=it}, \
+        ldap.bindCredential=${env.CNR_LDAP_CREDENTIALS:changeit!}, \
+        ldap.baseCtxDN=${env.CNR_LDAP_BASE_CTX:o=cnr,c=it}, \
+        ldap.baseFilter="uid={0}", \
+        ldap.rolesCtxDN=${env.CNR_LDAP_ROLES_CTX:ou=groups,o=cnr,c=it}, \
+        ldap.roleFilter="member={1}", \
+        ldap.roleAttributeID="cn", \
+        ldap.defaultRole="default-roles-cnr", \
+        ldap.userAttributes="mail;cnrnome;cnrcognome;codicefiscale;emailcertificatoperpuk", \
+        db.dsJndiName="java:/jdbc/CIR", \
+        db.principalsQuery="SELECT PASSWORD FROM UTENTE WHERE UPPER(cd_utente)=UPPER(?) AND FL_AUTENTICAZIONE_LDAP='N'", \
+        db.rolesQuery="SELECT DISTINCT CD_RUOLO, 'Roles' FROM UTENTE_UNITA_RUOLO WHERE UPPER(cd_utente)=UPPER(?)", \
+        db.ignorePasswordCase="true" \
+    } \
+)
+
+# Crea role decoder
+/subsystem=elytron/simple-role-decoder=from-roles-attribute:add(attribute=Roles)
+
+# Crea security domain
+/subsystem=elytron/security-domain=sigla-auth:add( \
+    realms=[{realm=sigla-combined-realm, role-decoder=from-roles-attribute}], \
+    default-realm=sigla-combined-realm, \
+    permission-mapper=default-permission-mapper \
+)
+
+# Associa security domain a Undertow
+/subsystem=undertow/application-security-domain=sigla-auth:add(security-domain=sigla-auth)
+
+# Configurazione Transaction Timeout
+/subsystem=transactions:write-attribute(name=default-timeout, value=3600)
+
+# Configurazione Mail Session
+/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=sigla-smtp:add(host=${env.SMTP_HOST:smtp.amministrazione.cnr.it}, port=${env.SMTP_PORT:25})
+
+/subsystem=mail/mail-session=SIGLA:add(jndi-name=java:jboss/mail/sigla, \
+    from=${env.MAIL_FROM:sigla@cnr.it})
+
+/subsystem=mail/mail-session=SIGLA/server=smtp:add(outbound-socket-binding-ref=sigla-smtp)
+
+# Configurazione PEC Mail (opzionale)
+/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=sigla-pec-smtp:add(host=${env.PEC_SMTP_HOST:smtps.pec.aruba.it}, port=${env.PEC_SMTP_PORT:465})
+
+/subsystem=mail/mail-session=PEC:add(jndi-name=java:jboss/mail/PecMailSession, \
+    from=${env.PEC_MAIL_FROM:sisca@pec.cnr.it})
+
+/subsystem=mail/mail-session=PEC/server=smtp:add(outbound-socket-binding-ref=sigla-pec-smtp, \
+    ssl=true, \
+    username=${env.PEC_USERNAME:sisca@pec.cnr.it}, \
+    password=${env.PEC_PASSWORD:***})
+
+
+# Configurazione Management
+/core-service=management/management-interface=http-interface:write-attribute(name=console-enabled, value=true)
+
+# 1. Crea il cache container 'server' (come richiesto dal lookup JNDI)
+/subsystem=infinispan/cache-container=server:add(marshaller=PROTOSTREAM, statistics-enabled=true)
+
+# 2. Crea una cache default
+/subsystem=infinispan/cache-container=server/local-cache=default:add(statistics-enabled=true)
+
+# 3. Imposta come default
+/subsystem=infinispan/cache-container=server:write-attribute(name=default-cache, value=default)
+
+# 4. Opzionale: Aggiungi altre cache se necessario
+/subsystem=infinispan/cache-container=server/local-cache=application-cache:add(statistics-enabled=true)
+
+/subsystem=infinispan/cache-container=server/local-cache=application-cache/component=transaction:add(mode=BATCH)
+
+/subsystem=infinispan/cache-container=server/local-cache=application-cache/component=locking:add(isolation=REPEATABLE_READ)
+
+/subsystem=infinispan/cache-container=server/local-cache=application-cache/component=expiration:add(max-idle=300000)
+
+# Configurazione Keycloak (se necessario)
+# /subsystem=keycloak/secure-deployment=sigla.war:add(realm=cnr, \
+#     auth-server-url=${env.KEYCLOAK_URL:http://localhost:8110/auth}, \
+#     resource=sigla, \
+#     ssl-required=NONE, \
+#     public-client=false, \
+#     enable-basic-auth=true)

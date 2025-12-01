@@ -34,19 +34,17 @@ import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.PersistencyException;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
+import jakarta.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -65,13 +63,13 @@ public class MissioneResource implements MissioneLocal {
 	@EJB Unita_organizzativaComponentSession unita_organizzativaComponentSession;
 	
     public Response validaMassimaleSpesa(@Context HttpServletRequest request, MassimaleSpesaBulk massimaleSpesaBulk) throws Exception {
-		ResponseBuilder rb;
+		Response.ResponseBuilder rb;
     	try{
             LOGGER.debug("REST request per visualizzare la divisa per nazione" );
         	UserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
-    		Optional.ofNullable(massimaleSpesaBulk.getData()).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, data dettaglio spesa obbligatoria."));
-    		Optional.ofNullable(massimaleSpesaBulk.getImportoSpesa()).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, importo dettaglio spesa obbligatorio."));
-    		Optional.ofNullable(massimaleSpesaBulk.getDivisa()).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, divisa dettaglio spesa obbligatoria."));
+    		Optional.ofNullable(massimaleSpesaBulk.getData()).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, data dettaglio spesa obbligatoria."));
+    		Optional.ofNullable(massimaleSpesaBulk.getImportoSpesa()).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, importo dettaglio spesa obbligatorio."));
+    		Optional.ofNullable(massimaleSpesaBulk.getDivisa()).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, divisa dettaglio spesa obbligatoria."));
 
     		Timestamp dataMissione = new Timestamp(massimaleSpesaBulk.getData().getTime());
     		Missione_tipo_spesaBulk tipoSpesa = null;
@@ -83,9 +81,9 @@ public class MissioneResource implements MissioneLocal {
     			if (lista != null && !lista.isEmpty()){
     	    		tipoSpesa = (Missione_tipo_spesaBulk)lista.get(0);
     			}
-    			Optional.ofNullable(tipoSpesa).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Tipo Spesa non trovato in SIGLA."));
+    			Optional.ofNullable(tipoSpesa).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Tipo Spesa non trovato in SIGLA."));
         	} else {
-				throw new RestException(Status.BAD_REQUEST, "Errore, parametro tipo spesa obbligatorio.");
+				throw new RestException(Response.Status.BAD_REQUEST, "Errore, parametro tipo spesa obbligatorio.");
         	}
 
     		Missione_tipo_pastoBulk tipoPasto = null;
@@ -94,7 +92,7 @@ public class MissioneResource implements MissioneLocal {
     			if (lista != null && !lista.isEmpty()){
     	    		tipoPasto = (Missione_tipo_pastoBulk)lista.get(0);
     			}
-    			Optional.ofNullable(tipoPasto).orElseThrow(() -> new RestException(Status.BAD_REQUEST,  "Tipo Pasto non trovato in SIGLA."));
+    			Optional.ofNullable(tipoPasto).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST,  "Tipo Pasto non trovato in SIGLA."));
     		}
     		MissioneBulk missioneBulk = new MissioneBulk();
     		Missione_dettaglioBulk dettaglio = new Missione_dettaglioBulk();
@@ -108,9 +106,9 @@ public class MissioneResource implements MissioneLocal {
     		dettaglio.setCd_divisa_spesa(massimaleSpesaBulk.getDivisa());
         	try{
         		missioneComponentSession.validaMassimaliSpesa(userContext, missioneBulk, dettaglio);
-        	} catch (ValidationException e) {
-        		throw new RestException(Status.BAD_REQUEST, e.getMessage());
-        	} 	
+        	} catch (Exception e) {
+        		throw new RestException(Response.Status.BAD_REQUEST, e.getMessage());
+        	}
     		rb = Response.ok("OK");
     	} catch (RestException restException) {
     		rb = Response.status(restException.getStatus()).entity(Collections.singletonMap("ERROR", restException.getMessage()));
@@ -121,12 +119,12 @@ public class MissioneResource implements MissioneLocal {
     public Response insert(@Context HttpServletRequest request, MissioneBulk missioneBulk) throws Exception {
     	CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
     	Optional.ofNullable(missioneBulk.getEsercizio()).filter(x -> userContext.getEsercizio().equals(x)).
-		orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Esercizio del contesto diverso da quello della Missione"));
+		orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Esercizio del contesto diverso da quello della Missione"));
 		if (!isUoEnte(userContext)){
 	    	Optional.ofNullable(missioneBulk.getCd_cds()).filter(x -> userContext.getCd_cds().equals(x)).
-				orElseThrow(() -> new RestException(Status.BAD_REQUEST, "CdS del contesto diverso da quello della Missione"));
+				orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "CdS del contesto diverso da quello della Missione"));
 	    	Optional.ofNullable(missioneBulk.getCd_unita_organizzativa()).filter(x -> userContext.getCd_unita_organizzativa().equals(x)).
-				orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Unità Organizzativa del contesto diversa da quella della Missione"));
+				orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Unità Organizzativa del contesto diversa da quella della Missione"));
 		}
 
     	Calendar cal = Calendar.getInstance();
@@ -178,7 +176,7 @@ public class MissioneResource implements MissioneLocal {
     	missioneCreated = (MissioneBulk) missioneComponentSession.creaConBulk(userContext, missioneCreated);
     	missioneCreated.setObbligazione_scadenzario(null);
     	missioneCreated.setObbligazione_scadenzarioClone(null);
-    	return Response.status(Status.CREATED).entity(missioneCreated).build();
+    	return Response.status(Response.Status.CREATED).entity(missioneCreated).build();
     }
 
     private NazioneBulk getNazione(UserContext userContext, Long nazione) throws PersistencyException, ComponentException, RemoteException, EJBException {
@@ -200,14 +198,14 @@ public class MissioneResource implements MissioneLocal {
     public Response delete(@Context HttpServletRequest request, @PathParam("id") long idRimborsoMissione) throws Exception {
     	CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
     	Optional.ofNullable(idRimborsoMissione).
-		orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Id Rimborso missione Obbligatorio"));
+		orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Id Rimborso missione Obbligatorio"));
         LOGGER.info("Inizio Cancellazione Missione "+idRimborsoMissione);
 		try{
 
     	missioneComponentSession.cancellazioneMissioneDaGemis(userContext, idRimborsoMissione);
 			return Response.ok("OK").build();
 		}catch (Throwable e){
-			throw new RestException(Response.Status.INTERNAL_SERVER_ERROR,String.format(e.getMessage()));
+			throw new RestException(Response.Status.INTERNAL_SERVER_ERROR, String.format(e.getMessage()));
 		}
 
 

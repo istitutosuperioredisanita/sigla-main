@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_cnrHome;
@@ -109,7 +109,7 @@ public class PdgModuloCostiComponent extends CRUDComponent {
 	public OggettoBulk inizializzaBulkPerInserimento( UserContext usercontext,OggettoBulk oggettobulk)throws ComponentException {
 		Pdg_modulo_costiBulk testata = (Pdg_modulo_costiBulk)super.inizializzaBulkPerInserimento(usercontext, oggettobulk);
 		try {
-			Integer anno_precedente = new Integer(CNRUserContext.getEsercizio(usercontext).intValue() -1);
+			Integer anno_precedente = Integer.valueOf(CNRUserContext.getEsercizio(usercontext).intValue() -1);
 			Pdg_modulo_costiHome testataHome = (Pdg_modulo_costiHome)getHome(usercontext, Pdg_modulo_costiBulk.class);
 			testata.setTot_massa_spendibile_anno_prec(
 			     calcolaImporto(usercontext, testataHome.calcolaTotMassaSpendibileAnnoPrecedente(usercontext,testata,anno_precedente)).add(
@@ -148,7 +148,7 @@ public class PdgModuloCostiComponent extends CRUDComponent {
 
 	public OggettoBulk inizializzaBulkPerModifica(UserContext usercontext,OggettoBulk oggettobulk)throws ComponentException {
 		try {
-			Integer anno_precedente = new Integer(CNRUserContext.getEsercizio(usercontext).intValue() -1);
+			Integer anno_precedente = Integer.valueOf(CNRUserContext.getEsercizio(usercontext).intValue() -1);
 			Pdg_modulo_costiBulk testata = (Pdg_modulo_costiBulk)super.inizializzaBulkPerModifica(usercontext,oggettobulk);
 			Pdg_modulo_costiHome testataHome = (Pdg_modulo_costiHome)getHome(usercontext, Pdg_modulo_costiBulk.class);
 			testata.setDettagliSpese(new it.cnr.jada.bulk.BulkList(testataHome.findPdgModuloSpeseDettagli(usercontext, testata)));

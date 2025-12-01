@@ -50,7 +50,7 @@ public CostiStipendialiMensiliBP(String function) throws BusinessProcessExceptio
  * @throws EJBException	Se si verifica qualche eccezione applicativa per cui non è possibile effettuare l'operazione
  * @throws RemoteException	Se si verifica qualche eccezione di sistema per cui non è possibile effettuare l'operazione
  */
-public CostiDipendenteComponentSession createComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+public CostiDipendenteComponentSession createComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 	return (CostiDipendenteComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPDG00_EJB_CostiDipendenteComponentSession",CostiDipendenteComponentSession.class);
 }
 public it.cnr.jada.util.jsp.Button[] createToolbar() {

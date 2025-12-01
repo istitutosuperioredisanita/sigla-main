@@ -24,7 +24,7 @@ import it.cnr.test.util.TestUserContext;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.junit.Test;
 
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
@@ -42,7 +42,7 @@ public class ComunicaDatiPagamentiTest extends DeploymentsOracle {
         final MandatoComunicaDatiBulk mandatoComunicaDatiBulk = new MandatoComunicaDatiBulk();
         mandatoComunicaDatiBulk.setEsercizio(2020);
         mandatoComunicaDatiBulk.setCd_cds("035");
-        mandatoComunicaDatiBulk.setPg_mandato(new Long(3146));
+        mandatoComunicaDatiBulk.setPg_mandato(Long.valueOf(3146));
 
         List<MandatoComunicaDatiBulk> dati =
                 crudComponentSession.find(testUserContext, MandatoComunicaDatiBulk.class, "recuperoDati", testUserContext, mandatoComunicaDatiBulk, null, null);

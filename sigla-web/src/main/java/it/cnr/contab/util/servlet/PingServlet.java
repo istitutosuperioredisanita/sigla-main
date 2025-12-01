@@ -23,9 +23,9 @@ import java.sql.Connection;
 import it.cnr.contab.util00.comp.IPingMgr;
 import it.cnr.contab.util00.ejb.*;
 import it.cnr.jada.ejb.*;
-
-import javax.servlet.*;
-import javax.servlet.http.*;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Servlet di PING per il check di attivazione del server
@@ -47,7 +47,7 @@ public PingServlet() {
  * @param response Http Response
  */
  
-protected void doGet(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, java.io.IOException {
+protected void doGet(jakarta.servlet.http.HttpServletRequest request, HttpServletResponse response) throws ServletException, java.io.IOException {
 	String tipo = request.getParameter("tipo");
 	response.setHeader("Cache-Control","private"); //HTTP 1.1
 	response.setHeader("Pragma","no-cache"); //HTTP 1.0
@@ -67,9 +67,9 @@ protected void doGet(javax.servlet.http.HttpServletRequest request, javax.servle
 			}
 			Integer tipoPing;
 			if (tipo != null && tipo.equalsIgnoreCase("login"))
-				tipoPing = new Integer(IPingMgr.TIPO_PING_LOGIN_ATTIVO.intValue());
+				tipoPing = Integer.valueOf(IPingMgr.TIPO_PING_LOGIN_ATTIVO.intValue());
 			else
-				tipoPing = new Integer(IPingMgr.TIPO_PING_SERVER_ATTIVO.intValue());
+				tipoPing = Integer.valueOf(IPingMgr.TIPO_PING_SERVER_ATTIVO.intValue());
 		    if (ping.ping(hostname, tipoPing)) {
 			    response.getWriter().println("OK");
 			    return;

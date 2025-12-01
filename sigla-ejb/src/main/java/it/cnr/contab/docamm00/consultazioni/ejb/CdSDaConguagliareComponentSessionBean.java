@@ -22,8 +22,8 @@ import it.cnr.contab.docamm00.consultazioni.bulk.V_terzi_da_conguagliareBulk;
 import it.cnr.contab.docamm00.consultazioni.comp.CdSDaConguagliareComponent;
 import it.cnr.contab.docamm00.consultazioni.comp.MonitoCococoComponent;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.*;
 
 /**
  * Bean implementation class for Enterprise Bean: CNRDOCAMM00_EJB_MonitoCococoComponentSession
@@ -33,9 +33,6 @@ public class CdSDaConguagliareComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 	@PostConstruct
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.docamm00.consultazioni.comp.CdSDaConguagliareComponent();
-	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-		return new CdSDaConguagliareComponentSessionBean();
 	}
 	public List<V_terzi_da_conguagliareBulk> findTerzi(it.cnr.jada.UserContext param0, it.cnr.contab.config00.sto.bulk.CdsBulk param1) throws it.cnr.jada.comp.ComponentException{
 		pre_component_invocation(param0,componentObj);

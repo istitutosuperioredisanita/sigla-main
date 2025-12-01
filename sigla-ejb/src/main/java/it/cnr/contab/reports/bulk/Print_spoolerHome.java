@@ -50,7 +50,7 @@ public class Print_spoolerHome extends BulkHome {
 	public void initializePrimaryKeyForInsert(
 			it.cnr.jada.UserContext userContext, OggettoBulk bulk)
 			throws PersistencyException, it.cnr.jada.comp.ComponentException {
-		((Print_spoolerBulk) bulk).setPgStampa(new Long(fetchNextSequenceValue(
+		((Print_spoolerBulk) bulk).setPgStampa(Long.valueOf(fetchNextSequenceValue(
 				userContext, "PG_STAMPA").longValue()));
 	}
 

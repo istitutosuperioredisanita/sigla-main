@@ -225,20 +225,20 @@ public class Classificazione_vociBulk extends Classificazione_vociBase {
 	 */
 	public Integer getLivelloMax() {
 		if (getCd_livello7() != null)
-			return new Integer(Classificazione_vociHome.LIVELLO_SETTIMO);
+			return Integer.valueOf(Classificazione_vociHome.LIVELLO_SETTIMO);
 		else if (getCd_livello6() != null)
-			return new Integer(Classificazione_vociHome.LIVELLO_SESTO);
+			return Integer.valueOf(Classificazione_vociHome.LIVELLO_SESTO);
 		else if (getCd_livello5() != null)
-			return new Integer(Classificazione_vociHome.LIVELLO_QUINTO);
+			return Integer.valueOf(Classificazione_vociHome.LIVELLO_QUINTO);
 		else if (getCd_livello4() != null)
-			return new Integer(Classificazione_vociHome.LIVELLO_QUARTO);
+			return Integer.valueOf(Classificazione_vociHome.LIVELLO_QUARTO);
 		else if (getCd_livello3() != null)
-			return new Integer(Classificazione_vociHome.LIVELLO_TERZO);
+			return Integer.valueOf(Classificazione_vociHome.LIVELLO_TERZO);
 		else if (getCd_livello2() != null)
-			return new Integer(Classificazione_vociHome.LIVELLO_SECONDO);
+			return Integer.valueOf(Classificazione_vociHome.LIVELLO_SECONDO);
 		else if (getCd_livello1() != null)
-			return new Integer(Classificazione_vociHome.LIVELLO_PRIMO);
-		return new Integer(Classificazione_vociHome.LIVELLO_MIN);
+			return Integer.valueOf(Classificazione_vociHome.LIVELLO_PRIMO);
+		return Integer.valueOf(Classificazione_vociHome.LIVELLO_MIN);
 	}
 
 	/*

@@ -50,7 +50,7 @@ public java.lang.String getCd_unita_organizzativa() {
  * @return java.lang.Integer
  */
 public java.lang.Integer getPageNumber() {
-	return new Integer(1);
+	return Integer.valueOf(1);
 }
 /**
  * Insert the method's description here.

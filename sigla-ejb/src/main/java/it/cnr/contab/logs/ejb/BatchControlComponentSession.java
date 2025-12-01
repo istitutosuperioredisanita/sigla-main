@@ -24,8 +24,8 @@ import it.cnr.jada.comp.*;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.util.*;
 
-import javax.ejb.EJBObject;
-import javax.ejb.Remote;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.Remote;
 
 
 import java.rmi.RemoteException;

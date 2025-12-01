@@ -261,7 +261,7 @@ public class PendenzaPagopaComponent extends CRUDComponent {
 		soggettoPagatore.setAnagrafica(terzoBulk.getDenominazione_sede());
 		soggettoPagatore.setIndirizzo(terzoBulk.getVia_sede());
 		try{
-			soggettoPagatore.setCap(new Integer(terzoBulk.getCap_comune_sede()));
+			soggettoPagatore.setCap(Integer.valueOf(terzoBulk.getCap_comune_sede()));
 		} catch (NumberFormatException e ){
 		}
 		try {

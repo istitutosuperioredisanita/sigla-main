@@ -71,7 +71,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.xml.sax.InputSource;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import javax.xml.bind.*;
 import java.io.*;
 import java.math.BigDecimal;
@@ -427,7 +427,7 @@ public class IncarichiEstrazioneFpComponent extends CRUDComponent {
            				
            				incaricoComunicato.setId_incarico(csvLine[1]);
            				
-           				incaricoComunicato.setAnno_riferimento(new Integer(csvLine[2]));
+           				incaricoComunicato.setAnno_riferimento(Integer.valueOf(csvLine[2]));
 
            				if (csvLine[3].toUpperCase().equals("PRIMO SEMESTRE"))
            					incaricoComunicato.setSemestre_riferimento(1);
@@ -443,8 +443,8 @@ public class IncarichiEstrazioneFpComponent extends CRUDComponent {
            				incaricoComunicato.setDescrizione_incarico(csvLine[8]);
 	            		
            				if (csvLine[8].indexOf("(")==0) {
-	            			int esercizio_repertorio = new Integer(csvLine[8].substring(1,5)); 
-		            		Long pg_repertorio = new Long(csvLine[8].substring(6,csvLine[8].indexOf(")")));
+	            			int esercizio_repertorio = Integer.valueOf(csvLine[8].substring(1,5));
+		            		Long pg_repertorio = Long.valueOf(csvLine[8].substring(6,csvLine[8].indexOf(")")));
 		            		Incarichi_repertorioBulk incaricoRepertorio = (Incarichi_repertorioBulk)findByPrimaryKey(userContext, new Incarichi_repertorioBulk(esercizio_repertorio, pg_repertorio));
 		            		if (incaricoRepertorio!=null){ 
 			            		V_terzo_per_compensoHome home = (V_terzo_per_compensoHome)getHome(userContext, V_terzo_per_compensoBulk.class, "DISTINCT_TERZO");
@@ -489,7 +489,7 @@ public class IncarichiEstrazioneFpComponent extends CRUDComponent {
             				importoPagamento = new BigDecimal(csvLine[16].replace(".", "").replace(",", "."));
 
             			if (!csvLine[17].replace(" ","").equals(""))
-            				annoPagamento = new Integer(csvLine[17]);
+            				annoPagamento = Integer.valueOf(csvLine[17]);
             			
             			if (!csvLine[18].replace(" ","").equals("")) {
             				if (csvLine[18].toUpperCase().equals("PRIMO SEMESTRE"))

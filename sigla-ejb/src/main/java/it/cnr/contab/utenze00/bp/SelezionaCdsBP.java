@@ -111,7 +111,7 @@ public it.cnr.jada.util.RemoteIterator find(it.cnr.jada.action.ActionContext act
 	}
 }
 public UtenteComponentSession createComponentSession()
-throws javax.ejb.EJBException,
+throws jakarta.ejb.EJBException,
 		java.rmi.RemoteException,
 		BusinessProcessException {
 	return (UtenteComponentSession)createComponentSession("CNRUTENZE00_EJB_UtenteComponentSession",UtenteComponentSession.class);

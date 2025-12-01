@@ -32,9 +32,10 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.jada.util.jsp.JSPUtils;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.PageContext;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.jsp.PageContext;
 import java.io.*;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -118,7 +119,7 @@ public class LiquidazioneCoriF24EPBP extends it.cnr.jada.util.action.Selezionato
         this.file = file;
     }
 
-    public Liquid_coriComponentSession createComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+    public Liquid_coriComponentSession createComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
         return (Liquid_coriComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCORI00_EJB_Liquid_coriComponentSession", Liquid_coriComponentSession.class);
     }
 
@@ -188,8 +189,8 @@ public class LiquidazioneCoriF24EPBP extends it.cnr.jada.util.action.Selezionato
             lista = ((Liquid_coriComponentSession) createComponentSession()).EstraiListaTot(context.getUserContext(), liquid);
 
             File f = null;
-            String data_formattata = Formatta(new Integer(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.DAY_OF_MONTH)).toString(), "D", 2, "0").concat(
-                    Formatta(new Integer(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.MONTH) + 1).toString(), "D", 2, "0") +
+            String data_formattata = Formatta(Integer.valueOf(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.DAY_OF_MONTH)).toString(), "D", 2, "0").concat(
+                    Formatta(Integer.valueOf(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.MONTH) + 1).toString(), "D", 2, "0") +
                             EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.YEAR));
             if (liquidazione != null)
                 f = new File(System.getProperty("tmp.dir.SIGLAWeb") + "/tmp/",

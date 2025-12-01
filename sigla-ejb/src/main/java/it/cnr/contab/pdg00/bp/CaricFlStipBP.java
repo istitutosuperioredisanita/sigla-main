@@ -23,7 +23,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;

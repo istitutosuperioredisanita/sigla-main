@@ -50,7 +50,7 @@ public class ConsRiepilogoSiopeMandatiDettagliBP extends ConsultazioniBP {
 	public static final String LIV_BASEDETT= "DETT";
 	
 	
-	public ConsRiepilogoSiopeComponentSession createConsRiepilogoSiopeComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public ConsRiepilogoSiopeComponentSession createConsRiepilogoSiopeComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		return (ConsRiepilogoSiopeComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_ConsRiepilogoSiopeComponentSession", ConsRiepilogoSiopeComponentSession.class);
 	}
 	

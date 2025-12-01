@@ -17,7 +17,7 @@
 
 package it.cnr.contab.pdg00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface CostiDipendenteComponentSession extends it.cnr.jada.ejb.RicercaComponentSession, it.cnr.jada.ejb.PrintComponentSession {

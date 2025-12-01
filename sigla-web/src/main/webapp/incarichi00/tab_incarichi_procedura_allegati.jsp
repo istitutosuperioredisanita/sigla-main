@@ -11,7 +11,7 @@
 
 	boolean multi_incarico = false;
 
-	if (procedura!=null && procedura.getNr_contratti()!=null && procedura.getNr_contratti().compareTo(new Integer(1))==1)
+	if (procedura!=null && procedura.getNr_contratti()!=null && procedura.getNr_contratti().compareTo(Integer.valueOf(1))==1)
 		multi_incarico=true;
 
 	SimpleDetailCRUDController controller = multi_incarico?bp.getCrudArchivioAllegati():bp.getCrudArchivioAllegatiMI();

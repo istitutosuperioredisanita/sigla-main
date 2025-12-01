@@ -72,8 +72,8 @@ public class Classificazione_vociHome extends BulkHome {
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,OggettoBulk cla) throws PersistencyException {
 		try {
 			((Classificazione_vociBulk)cla).setId_classificazione(
-				new Integer(
-					((Integer)findAndLockMax( cla, "id_classificazione", new Integer(0) )).intValue()+1
+				Integer.valueOf(
+					((Integer)findAndLockMax( cla, "id_classificazione", Integer.valueOf(0) )).intValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

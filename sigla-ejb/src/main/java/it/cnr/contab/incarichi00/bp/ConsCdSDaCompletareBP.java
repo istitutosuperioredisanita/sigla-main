@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 

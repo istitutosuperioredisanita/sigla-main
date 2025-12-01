@@ -48,6 +48,8 @@ import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.SendMail;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 public class CRUDWorkpackageBP extends SimpleCRUDBP {
 	private final SimpleDetailCRUDController risultati = new SimpleDetailCRUDController("risultati",it.cnr.contab.config00.latt.bulk.RisultatoBulk.class,"risultati",this);
@@ -126,12 +128,12 @@ private void resetTabs() {
  * 
 */
 
-public void openForm(javax.servlet.jsp.PageContext context,String action,String target) throws java.io.IOException,javax.servlet.ServletException {
+public void openForm(PageContext context, String action, String target) throws java.io.IOException, ServletException {
 
 		openForm(context,action,target,"multipart/form-data");
 	
 }
-public static ProgettoRicercaPadreComponentSession getProgettoRicercaPadreComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+public static ProgettoRicercaPadreComponentSession getProgettoRicercaPadreComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 	return (ProgettoRicercaPadreComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPROGETTIRIC00_EJB_ProgettoRicercaPadreComponentSession",ProgettoRicercaPadreComponentSession.class);
 }	
 private void aggiornaGECO(UserContext userContext) {

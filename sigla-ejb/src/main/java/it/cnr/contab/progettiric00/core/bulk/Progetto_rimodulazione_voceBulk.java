@@ -167,7 +167,7 @@ public class Progetto_rimodulazione_voceBulk extends Progetto_rimodulazione_voce
 	public it.cnr.jada.util.OrderedHashtable getAnniList() {
 		OrderedHashtable list = new OrderedHashtable();
 		for (int i=this.getProgettoRimodulazione().getProgetto().getAnnoFineOf().intValue();i>=this.getProgettoRimodulazione().getProgetto().getAnnoInizioOf();i--)
-			list.put(new Integer(i), new Integer(i));
+			list.put(Integer.valueOf(i), Integer.valueOf(i));
 		if (this.getEsercizio_piano()!=null && list.get(this.getEsercizio_piano())==null)
 			list.put(this.getEsercizio_piano(), this.getEsercizio_piano());
 		list.remove(this.getProgettoRimodulazione().getProgetto().getEsercizio());

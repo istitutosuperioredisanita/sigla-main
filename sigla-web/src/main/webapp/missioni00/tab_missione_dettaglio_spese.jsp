@@ -34,7 +34,7 @@
   		<td colspan=10>
 	      <%
 	      	String[][] pages = null;
-	      	if(spesa != null && spesa.getPg_missione() != null && spesa.getPg_missione().compareTo(new Long (0)) > 0){
+	      	if(spesa != null && spesa.getPg_missione() != null && spesa.getPg_missione().compareTo(Long.valueOf (0)) > 0){
 	      		pages = new String[][] {
 	      			{ "tabDettaglioSpesa","Dettaglio Spesa","/missioni00/tab_missione_dettaglio_spesa.jsp" },
 	      			{ "tabDettaglioSpesaAllegati","Allegati","/missioni00/tab_missione_dettaglio_spesa_allegati.jsp" } };

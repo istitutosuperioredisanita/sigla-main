@@ -39,8 +39,8 @@ import java.util.Optional;
 
 public class CdrHome extends BulkHome {
 
-    public static final Integer CDR_PRIMO_LIVELLO = new Integer(1);
-    public static final Integer CDR_SECONDO_LIVELLO = new Integer(2);
+    public static final Integer CDR_PRIMO_LIVELLO = Integer.valueOf(1);
+    public static final Integer CDR_SECONDO_LIVELLO = Integer.valueOf(2);
 
     public static final String DEFAULT_DS_CDR = "CDR responsabile dell'UO";
 
@@ -535,12 +535,12 @@ public class CdrHome extends BulkHome {
         Unita_organizzativa_enteBulk uoEnte = (Unita_organizzativa_enteBulk) getHomeCache().getHome(Unita_organizzativa_enteBulk.class).findAll().get(0);
 
         if (!uoEnte.equalsByPrimaryKey(uo))
-            if (uo.getLivello().compareTo(new Integer(1)) == 0
+            if (uo.getLivello().compareTo(Integer.valueOf(1)) == 0
                     || uo.getCd_tipo_unita().equals(Tipo_unita_organizzativaHome.TIPO_UO_SAC)
                     || uo.getCd_tipo_unita().equals(Tipo_unita_organizzativaHome.TIPO_UO_AREA)) {
                 sql.addSQLClause("AND", "V_CDR_VALIDO.cd_unita_organizzativa", SQLBuilder.EQUALS, uo.getCd_unita_organizzativa());
             } else {
-                sql.addSQLClause("AND", "V_CDR_VALIDO.livello", SQLBuilder.EQUALS, new Integer(1));
+                sql.addSQLClause("AND", "V_CDR_VALIDO.livello", SQLBuilder.EQUALS, Integer.valueOf(1));
                 sql.addSQLClause("AND", "UNITA_ORGANIZZATIVA.cd_unita_padre", SQLBuilder.EQUALS, uo.getCd_unita_padre());
             }
         sql.addOrderBy("CD_CENTRO_RESPONSABILITA");

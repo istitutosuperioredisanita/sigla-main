@@ -57,7 +57,7 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 	public Buono_carico_scarico_dettBulk(java.lang.Long pg_inventario, java.lang.String ti_documento, java.lang.Integer esercizio, java.lang.Long pg_buono_c_s, java.lang.Long nr_inventario, java.lang.Integer progressivo) {
 		super(pg_inventario, ti_documento, esercizio, pg_buono_c_s, nr_inventario, progressivo);
 		setBuono_cs(new it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk(pg_inventario,  ti_documento, esercizio, pg_buono_c_s));
-		setBene(new Inventario_beniBulk(nr_inventario,pg_inventario,new Long (progressivo.longValue())));
+		setBene(new Inventario_beniBulk(nr_inventario,pg_inventario,Long.valueOf (progressivo.longValue())));
 	}
 	
 	public Inventario_beniBulk getBene() {
@@ -297,10 +297,10 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 		this.getBene().setNr_inventario(nr_inventario);
 	}
 	public Integer getProgressivo () {
-		return new Integer(this.getBene().getProgressivo().intValue());
+		return Integer.valueOf(this.getBene().getProgressivo().intValue());
 	}
 	public void setProgressivo (Integer progressivo) {
-		this.getBene().setProgressivo(new Long(progressivo.longValue()));
+		this.getBene().setProgressivo(Long.valueOf(progressivo.longValue()));
 	}
 	
 	public void setTi_documento(java.lang.String ti_documento)  {
@@ -323,7 +323,7 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 	}
 	public void CalcolaTotaleBene() { 
 
-		if (getQuantita() == null) setQuantita(new Long(1));
+		if (getQuantita() == null) setQuantita(Long.valueOf(1));
 		if (getValore_unitario() == null) setValore_unitario(new java.math.BigDecimal(0));
 	    	setTotale(new BigDecimal(getQuantita().longValue()).multiply(getValore_unitario()).setScale(2,java.math.BigDecimal.ROUND_HALF_UP));
 	    	

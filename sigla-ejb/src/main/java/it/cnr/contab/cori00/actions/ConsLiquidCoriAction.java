@@ -27,7 +27,7 @@ import it.cnr.jada.action.HookForward;
 import it.cnr.jada.util.action.BulkAction;
 import it.cnr.jada.util.action.SelezionatoreListaBP;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 import java.rmi.RemoteException;
 
 

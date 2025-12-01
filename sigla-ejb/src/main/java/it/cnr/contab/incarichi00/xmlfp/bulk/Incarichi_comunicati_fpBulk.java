@@ -96,9 +96,9 @@ public class Incarichi_comunicati_fpBulk extends Incarichi_comunicati_fpBase {
 	public static Incarichi_comunicati_fpBulk copyFrom(UserContext userContext, Comunicazione.Consulenti.NuovoIncarico nuovoIncarico) throws it.cnr.jada.comp.ApplicationException {
 		try {
 			java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("yyyy-MM-dd");
-			int esercizio_repertorio = new Integer(nuovoIncarico.getDescrizioneIncarico().substring(1,5)); 
-			Long pg_repertorio = new Long(nuovoIncarico.getDescrizioneIncarico().substring(6,nuovoIncarico.getDescrizioneIncarico().indexOf(")"))); 
-			Incarichi_comunicati_fpBulk incaricoFP = new Incarichi_comunicati_fpBulk(esercizio_repertorio,pg_repertorio, Incarichi_comunicati_fpBulk.TIPO_RECORD_INVIATO_NEW, new Long(1));
+			int esercizio_repertorio = Integer.valueOf(nuovoIncarico.getDescrizioneIncarico().substring(1,5));
+			Long pg_repertorio = Long.valueOf(nuovoIncarico.getDescrizioneIncarico().substring(6,nuovoIncarico.getDescrizioneIncarico().indexOf(")"))); 
+			Incarichi_comunicati_fpBulk incaricoFP = new Incarichi_comunicati_fpBulk(esercizio_repertorio,pg_repertorio, Incarichi_comunicati_fpBulk.TIPO_RECORD_INVIATO_NEW, Long.valueOf(1));
 			incaricoFP.setAnno_riferimento(nuovoIncarico.getAnnoRiferimento());
 			incaricoFP.setSemestre_riferimento(nuovoIncarico.getSemestreRiferimento());
 			incaricoFP.setCodice_ente(nuovoIncarico.getCodiceEnte());
@@ -135,9 +135,9 @@ public class Incarichi_comunicati_fpBulk extends Incarichi_comunicati_fpBase {
 	public static Incarichi_comunicati_fpBulk copyFrom(UserContext userContext, EsitoComunicazione.Consulenti.NuovoIncarico nuovoIncarico) throws it.cnr.jada.comp.ApplicationException {
 		try {
 			java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("yyyy-MM-dd");
-			int esercizio_repertorio = new Integer(nuovoIncarico.getDescrizioneIncarico().substring(1,5)); 
-			Long pg_repertorio = new Long(nuovoIncarico.getDescrizioneIncarico().substring(6,nuovoIncarico.getDescrizioneIncarico().indexOf(")"))); 
-			Incarichi_comunicati_fpBulk incaricoFP = new Incarichi_comunicati_fpBulk(esercizio_repertorio,pg_repertorio, Incarichi_comunicati_fpBulk.TIPO_RECORD_RICEVUTO_NEW, new Long(1));
+			int esercizio_repertorio = Integer.valueOf(nuovoIncarico.getDescrizioneIncarico().substring(1,5));
+			Long pg_repertorio = Long.valueOf(nuovoIncarico.getDescrizioneIncarico().substring(6,nuovoIncarico.getDescrizioneIncarico().indexOf(")"))); 
+			Incarichi_comunicati_fpBulk incaricoFP = new Incarichi_comunicati_fpBulk(esercizio_repertorio,pg_repertorio, Incarichi_comunicati_fpBulk.TIPO_RECORD_RICEVUTO_NEW, Long.valueOf(1));
 			incaricoFP.setId_incarico(nuovoIncarico.getIdIncarico());
 			incaricoFP.setAnno_riferimento(nuovoIncarico.getAnnoRiferimento());
 			incaricoFP.setSemestre_riferimento(nuovoIncarico.getSemestreRiferimento());
@@ -318,9 +318,9 @@ public class Incarichi_comunicati_fpBulk extends Incarichi_comunicati_fpBase {
 	public static Incarichi_comunicati_fpBulk copyFrom(UserContext userContext, it.perla.accenture.com.anagrafeprestazioni_inserimentoincarichi.ComunicazioneType nuovaComunicazione, it.perla.accenture.com.anagrafeprestazioni_inserimentoincarichi.ConsulenteType nuovoConsulente, it.perla.accenture.com.anagrafeprestazioni_inserimentoincarichi.EsitoConsulenteType nuovoConsulenteEsito) throws it.cnr.jada.comp.ApplicationException {
 		try {
 			java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("yyyy-MM-dd");
-			int esercizio_repertorio = new Integer(nuovoConsulente.getIdMittente().substring(0,4)); 
-			Long pg_repertorio = new Long(nuovoConsulente.getIdMittente().substring(5)); 
-			Incarichi_comunicati_fpBulk incaricoFP = new Incarichi_comunicati_fpBulk(esercizio_repertorio,pg_repertorio, nuovoConsulenteEsito==null?Incarichi_comunicati_fpBulk.TIPO_RECORD_INVIATO_NEW:Incarichi_comunicati_fpBulk.TIPO_RECORD_INVIATO_NEW, new Long(1));
+			int esercizio_repertorio = Integer.valueOf(nuovoConsulente.getIdMittente().substring(0,4));
+			Long pg_repertorio = Long.valueOf(nuovoConsulente.getIdMittente().substring(5)); 
+			Incarichi_comunicati_fpBulk incaricoFP = new Incarichi_comunicati_fpBulk(esercizio_repertorio,pg_repertorio, nuovoConsulenteEsito==null?Incarichi_comunicati_fpBulk.TIPO_RECORD_INVIATO_NEW:Incarichi_comunicati_fpBulk.TIPO_RECORD_INVIATO_NEW, Long.valueOf(1));
 			incaricoFP.setAnno_riferimento(nuovaComunicazione.getInserimentoIncarichi().getAnnoRiferimento().intValue());
 			incaricoFP.setSemestre_riferimento(nuovoConsulente.getIncarico().getSemestreRiferimento().intValue());
 			incaricoFP.setCodice_ente(String.valueOf(nuovaComunicazione.getInserimentoIncarichi().getCodiceEnte()));
@@ -364,8 +364,8 @@ public class Incarichi_comunicati_fpBulk extends Incarichi_comunicati_fpBase {
 	
 	public static Incarichi_comunicati_fpBulk copyFrom(UserContext userContext, it.perla.accenture.com.anagrafeprestazioni_variazioneincarichi.ComunicazioneType modificaComunicazione, it.perla.accenture.com.anagrafeprestazioni_variazioneincarichi.ConsulenteType modificaConsulente, it.perla.accenture.com.anagrafeprestazioni_variazioneincarichi.EsitoConsulenteType modificaConsulenteEsito) throws it.cnr.jada.comp.ApplicationException {
 		try {
-			int esercizio_repertorio = new Integer(modificaConsulente.getIdMittente().substring(0,4)); 
-			Long pg_repertorio = new Long(modificaConsulente.getIdMittente().substring(5)); 
+			int esercizio_repertorio = Integer.valueOf(modificaConsulente.getIdMittente().substring(0,4));
+			Long pg_repertorio = Long.valueOf(modificaConsulente.getIdMittente().substring(5)); 
 			Incarichi_comunicati_fpBulk incaricoFP = new Incarichi_comunicati_fpBulk(esercizio_repertorio, pg_repertorio, Incarichi_comunicati_fpBulk.TIPO_RECORD_INVIATO_UPD, null);
 			incaricoFP.setAttivita_economica(modificaConsulente.getIncarico().getAttivitaEconomica());
 			incaricoFP.setDescrizione_incarico(modificaConsulente.getIncarico().getDescrizioneIncarico());

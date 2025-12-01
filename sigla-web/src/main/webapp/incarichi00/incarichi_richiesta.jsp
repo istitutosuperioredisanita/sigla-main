@@ -20,7 +20,7 @@
 
 <body class="Form">
 <% bp.openFormWindow(pageContext);%>
-<% if (model.getNrContrattiAttivati().compareTo(new Integer(0))==0) {%>
+<% if (model.getNrContrattiAttivati().compareTo(Integer.valueOf(0))==0) {%>
 <table class="Panel">
     <tr><td>
 	<jsp:include page="/incarichi00/tab_incarichi_richiesta_testata.jsp"/>

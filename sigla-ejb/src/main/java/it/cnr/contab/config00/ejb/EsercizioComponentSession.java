@@ -17,7 +17,7 @@
 
 package it.cnr.contab.config00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.jada.UserContext;

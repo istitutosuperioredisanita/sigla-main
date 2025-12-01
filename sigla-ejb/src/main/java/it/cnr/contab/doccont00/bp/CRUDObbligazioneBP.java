@@ -1251,7 +1251,7 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
             if (config == null || config.getIm01() == null)
                 return;
 
-            RemoteIterator remoteiterator = find(context, null, new TerzoBulk(new Integer(config.getIm01().intValue())));
+            RemoteIterator remoteiterator = find(context, null, new TerzoBulk(Integer.valueOf(config.getIm01().intValue())));
             if (remoteiterator != null && remoteiterator.countElements() == 1) {
                 TerzoBulk terzo = (TerzoBulk) remoteiterator.nextElement();
                 EJBCommonServices.closeRemoteIterator(context, remoteiterator);

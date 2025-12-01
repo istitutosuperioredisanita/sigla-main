@@ -20,9 +20,9 @@ package it.cnr.contab.ordmag.anag00.ejb;
 import it.cnr.contab.ordmag.anag00.comp.NumerazioneOrdComponent;
 import it.cnr.jada.ejb.CRUDComponentSessionBean;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
 
 @Stateless(name="CNRORDMAG00_EJB_NumerazioneOrdComponentSession")
 public class NumerazioneOrdComponentSessionBean extends CRUDComponentSessionBean implements NumerazioneOrdComponentSession {
@@ -31,12 +31,8 @@ public class NumerazioneOrdComponentSessionBean extends CRUDComponentSessionBean
 		componentObj = new NumerazioneOrdComponent();
 	}
 	@Remove
-	public void ejbRemove() throws javax.ejb.EJBException {
+	public void ejbRemove() throws jakarta.ejb.EJBException {
 		componentObj.release();
-	}
-	
-	public static CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new NumerazioneOrdComponentSessionBean();
 	}
 
 }

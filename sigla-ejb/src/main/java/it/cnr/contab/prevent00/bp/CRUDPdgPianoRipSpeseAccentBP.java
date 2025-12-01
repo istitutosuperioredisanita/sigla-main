@@ -163,7 +163,7 @@ public class CRUDPdgPianoRipSpeseAccentBP extends it.cnr.jada.util.action.Simple
 	 * @throws EJBException	Se si verifica qualche eccezione applicativa per cui non è possibile effettuare l'operazione
 	 * @throws RemoteException	Se si verifica qualche eccezione di sistema per cui non è possibile effettuare l'operazione
 	 */
-	public Classificazione_vociComponentSession createClassificazione_vociComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException, BusinessProcessException {
+	public Classificazione_vociComponentSession createClassificazione_vociComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException, BusinessProcessException {
 		return (Classificazione_vociComponentSession)createComponentSession("CNRCONFIG00_EJB_Classificazione_vociComponentSession",Classificazione_vociComponentSession.class);
 	}
 

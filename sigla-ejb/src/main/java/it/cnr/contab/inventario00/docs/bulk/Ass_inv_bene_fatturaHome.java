@@ -45,15 +45,15 @@ public void initializePrimaryKeyForInsert(UserContext usercontext,OggettoBulk og
 		
 	Ass_inv_bene_fatturaBulk ass=new Ass_inv_bene_fatturaBulk();	
 	((Ass_inv_bene_fatturaBulk)oggettobulk).setPg_riga(
-	new Long(
-	((Long)findAndLockMax( ass, "pg_riga", new Long(0) )).longValue()+1));
+	Long.valueOf(
+	((Long)findAndLockMax( ass, "pg_riga", Long.valueOf(0) )).longValue()+1));
 	} catch(it.cnr.jada.bulk.BusyResourceException e) {
 	 throw new it.cnr.jada.comp.ApplicationException("Operazione effettuata al momento da un'altro utente, riprovare successivamente.");
 	} 
 	super.initializePrimaryKeyForInsert(usercontext, oggettobulk);
 	}
 public Long findmax(Ass_inv_bene_fatturaBulk ass) throws PersistencyException{	
-		return new Long(((Long)findMax(ass,"pg_riga",new Long(0)))).longValue()+1;
+		return Long.valueOf(((Long)findMax(ass,"pg_riga",Long.valueOf(0)))).longValue()+1;
 }
 /*
  * Permette, una volta fatte tutte le operazioni di Fattura e di Inventario,
@@ -82,13 +82,13 @@ public void makePersistentAssocia(UserContext userContext, Ass_inv_bene_fatturaB
 					nuova_associazione.setTest_buono(new Buono_carico_scaricoBulk(bene_apg.getPg_inventario(),bene_apg.getTi_documento(),bene_apg.getEsercizio(),bene_apg.getPg_buono_c_s()));
 					nuova_associazione.setUser(fattura_passiva.getUser());
 					//perchè gia' loccata in modifica
-					nuova_associazione.setPg_riga(new Long(
-							(Long)findAndLockMax( nuova_associazione, "pg_riga", new Long(0))).longValue()+1);
+					nuova_associazione.setPg_riga(Long.valueOf(
+							(Long)findAndLockMax( nuova_associazione, "pg_riga", Long.valueOf(0))).longValue()+1);
 					insert(nuova_associazione, userContext);
 					apgHome.delete(bene_apg, userContext);
 			}catch(it.cnr.jada.bulk.BusyResourceException e) {
-				nuova_associazione.setPg_riga(new Long(
-				(Long)findMax( nuova_associazione, "pg_riga", new Long(0))).longValue()+1);
+				nuova_associazione.setPg_riga(Long.valueOf(
+				(Long)findMax( nuova_associazione, "pg_riga", Long.valueOf(0))).longValue()+1);
 				insert(nuova_associazione, userContext);
 				apgHome.delete(bene_apg, userContext);
 				//throw new PersistencyException(e);
@@ -186,14 +186,14 @@ public void makePersistentAssocia(UserContext userContext, Ass_inv_bene_fatturaB
 		nuova_associazione.setProgressivo(bene_apg.getProgressivo());		
 		nuova_associazione.setTest_buono(new Buono_carico_scaricoBulk(bene_apg.getPg_inventario(),bene_apg.getTi_documento(),bene_apg.getEsercizio(),bene_apg.getPg_buono_c_s()));
 		nuova_associazione.setUser(fattura.getUser());
-		nuova_associazione.setPg_riga(new Long(
-				(Long)findAndLockMax( nuova_associazione, "pg_riga", new Long(0))).longValue()+1);
+		nuova_associazione.setPg_riga(Long.valueOf(
+				(Long)findAndLockMax( nuova_associazione, "pg_riga", Long.valueOf(0))).longValue()+1);
 		insert(nuova_associazione, userContext);
 		apgHome.delete(bene_apg, userContext);
 		}
 		catch(it.cnr.jada.bulk.BusyResourceException e) {
-			nuova_associazione.setPg_riga(new Long(
-				(Long)findMax( nuova_associazione, "pg_riga", new Long(0))).longValue()+1);
+			nuova_associazione.setPg_riga(Long.valueOf(
+				(Long)findMax( nuova_associazione, "pg_riga", Long.valueOf(0))).longValue()+1);
 				insert(nuova_associazione, userContext);
 				apgHome.delete(bene_apg, userContext);
 			//	throw new PersistencyException(e);
@@ -225,14 +225,14 @@ public void makePersistentAssocia(UserContext userContext, Ass_inv_bene_fatturaB
 		nuova_associazione.setTest_buono(new Buono_carico_scaricoBulk(bene_apg.getPg_inventario(),bene_apg.getTi_documento(),bene_apg.getEsercizio(),bene_apg.getPg_buono_c_s()));
 		nuova_associazione.setUser(doc.getUser());
 		//perchè gia' loccata in modifica
-		nuova_associazione.setPg_riga(new Long(
-				(Long)findAndLockMax( nuova_associazione, "pg_riga", new Long(0))).longValue()+1);
+		nuova_associazione.setPg_riga(Long.valueOf(
+				(Long)findAndLockMax( nuova_associazione, "pg_riga", Long.valueOf(0))).longValue()+1);
 		insert(nuova_associazione, userContext);
 		apgHome.delete(bene_apg, userContext);
 	
 	}catch(it.cnr.jada.bulk.BusyResourceException e) {
-	nuova_associazione.setPg_riga(new Long(
-		(Long)findMax( nuova_associazione, "pg_riga", new Long(0))).longValue()+1);
+	nuova_associazione.setPg_riga(Long.valueOf(
+		(Long)findMax( nuova_associazione, "pg_riga", Long.valueOf(0))).longValue()+1);
 		insert(nuova_associazione, userContext);
 		apgHome.delete(bene_apg, userContext);
 		//throw new PersistencyException(e);

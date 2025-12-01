@@ -17,35 +17,49 @@
 
 package it.cnr.contab.web.rest.local.util;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import it.cnr.contab.web.rest.config.AccessoAllowed;
 import it.cnr.contab.util.enumeration.AccessoEnum;
 import it.cnr.jada.util.ejb.EJBTracer;
 
-import javax.ejb.Local;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ejb.Local;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 @Local
 @Path("/tracers")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = "Tracer")
+@Tag(name = "Tracer")
 public interface IteratorTracersLocal {
+
     @GET
     @AccessoAllowed(value = AccessoEnum.XXXHTTPSESSIONXXXXXX)
-    @ApiOperation(value = "Resituisce gli iteratori ancori aperti",
-            notes = "Accesso consentito solo alle utenze abilitate a XXXHTTPSESSIONXXXXXX",
-            response = EJBTracer.IteratorTracer.class,
-            authorizations = @Authorization(value = "BASIC")
+    @Operation(summary = "Resituisce gli iteratori ancori aperti",
+            description = "Accesso consentito solo alle utenze abilitate a XXXHTTPSESSIONXXXXXX",
+            security = {
+                    @SecurityRequirement(name = "BASIC"),
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = EJBTracer.IteratorTracer.class)
+                            )
+                    )
+            }
     )
     Response map(@Context HttpServletRequest request) throws Exception;
 }

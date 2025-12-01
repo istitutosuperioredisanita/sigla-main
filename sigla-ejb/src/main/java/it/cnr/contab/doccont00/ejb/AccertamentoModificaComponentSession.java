@@ -23,7 +23,7 @@
  */
 package it.cnr.contab.doccont00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface AccertamentoModificaComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

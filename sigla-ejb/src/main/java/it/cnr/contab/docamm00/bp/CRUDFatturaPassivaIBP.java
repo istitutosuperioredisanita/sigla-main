@@ -30,6 +30,8 @@ import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.Config;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.jada.util.jsp.JSPUtils;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspWriter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,7 +55,7 @@ public class CRUDFatturaPassivaIBP extends CRUDFatturaPassivaBP implements IDocu
 		 * che è stata sdoppiata quando il documento non risulta essere modificabile
 		 *  
 		 */
-		public void writeFormInput(javax.servlet.jsp.JspWriter jspwriter,String s,String s1,boolean flag,String s2,String s3) throws java.io.IOException {
+		public void writeFormInput(JspWriter jspwriter,String s,String s1,boolean flag,String s2,String s3) throws java.io.IOException {
 			if (isInputReadonly()&&
 					s1.equals("ds_riga_fattura") && 
 					getModel()!=null && 
@@ -281,7 +283,7 @@ public class CRUDFatturaPassivaIBP extends CRUDFatturaPassivaBP implements IDocu
 
 		return getParent() != null && (getParent() instanceof it.cnr.contab.fondecon00.bp.FondoSpesaBP);
 	}
-	public void writeFormFieldDoc1210(javax.servlet.jsp.JspWriter out,String name) throws java.io.IOException {
+	public void writeFormFieldDoc1210(JspWriter out,String name) throws java.io.IOException {
 
 		Fattura_passivaBulk fp = (Fattura_passivaBulk)getModel();
 
@@ -297,7 +299,7 @@ public class CRUDFatturaPassivaIBP extends CRUDFatturaPassivaBP implements IDocu
 		}
 		getBulkInfo().writeFormField(out,fp,null,name,getInputPrefix(),1,1,getStatus(),isReadonly,getFieldValidationMap(), this.getParentRoot().isBootstrap());
 	}
-	public void writeFormInputDoc1210(javax.servlet.jsp.JspWriter out,String name) throws java.io.IOException {
+	public void writeFormInputDoc1210(JspWriter out, String name) throws java.io.IOException {
 
 		Fattura_passivaBulk fp = (Fattura_passivaBulk)getModel();
 
@@ -324,7 +326,7 @@ public class CRUDFatturaPassivaIBP extends CRUDFatturaPassivaBP implements IDocu
 		getBulkInfo().writeFormInput(out,fp,null,name,isReadonly,null,null,getInputPrefix(),getStatus(),getFieldValidationMap(), this.getParentRoot().isBootstrap());
 
 	}
-	public void writeFPInventarioToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException,javax.servlet.ServletException {
+	public void writeFPInventarioToolbar(JspWriter writer) throws java.io.IOException, ServletException {
 		if (!isSearching() && !isDeleting()) {
 			if (this.getParentRoot().isBootstrap()) {
 				writer.println("<!-- TOOLBAR INVENTARIO -->");
@@ -339,7 +341,7 @@ public class CRUDFatturaPassivaIBP extends CRUDFatturaPassivaBP implements IDocu
 			}
 		}
 	}
-	public void writeFPToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException,javax.servlet.ServletException {
+	public void writeFPToolbar(JspWriter writer) throws java.io.IOException,ServletException {
 
 		if (!isSearching() && !isDeleting()) {
 			if (this.getParentRoot().isBootstrap()) {
@@ -356,7 +358,7 @@ public class CRUDFatturaPassivaIBP extends CRUDFatturaPassivaBP implements IDocu
 		}
 	}
 
-	public void writeToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException,javax.servlet.ServletException {
+	public void writeToolbar(JspWriter writer) throws java.io.IOException,ServletException {
 		super.writeToolbar(writer);
 		writeFPToolbar(writer);
 		writeFPInventarioToolbar(writer);

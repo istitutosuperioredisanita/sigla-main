@@ -38,6 +38,7 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
+import jakarta.servlet.jsp.JspWriter;
 
 
 public class CRUDConfigParametriLivelliBP extends it.cnr.jada.util.action.SimpleCRUDBP {
@@ -51,7 +52,7 @@ public class CRUDConfigParametriLivelliBP extends it.cnr.jada.util.action.Simple
 	}
 	/**
 	 * Secondo costruttore della classe <code>CRUDConfigParametriCnrBP</code>.
-	 * @param String function
+	 * @param function String
 	 */
 	public CRUDConfigParametriLivelliBP(String function) {
 		super(function);
@@ -138,7 +139,7 @@ public class CRUDConfigParametriLivelliBP extends it.cnr.jada.util.action.Simple
 	 * di questa tabella con i dati presenti nel modello.
 	 */
 
-	public void writeTable(javax.servlet.jsp.JspWriter out, Parametri_livelliBulk parLiv) throws java.io.IOException, PersistencyException , it.cnr.jada.comp.ApplicationException, IntrospectionException
+	public void writeTable(JspWriter out, Parametri_livelliBulk parLiv) throws java.io.IOException, PersistencyException , it.cnr.jada.comp.ApplicationException, IntrospectionException
 	{
 
 		out.println("<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\">");
@@ -169,7 +170,7 @@ public class CRUDConfigParametriLivelliBP extends it.cnr.jada.util.action.Simple
 		out.println("</table>");
 	}
 
-	private void writeTableHeader(javax.servlet.jsp.JspWriter out, String tipo, Parametri_livelliBulk parLiv) throws java.io.IOException, PersistencyException, IntrospectionException, it.cnr.jada.comp.ApplicationException 
+	private void writeTableHeader(JspWriter out, String tipo, Parametri_livelliBulk parLiv) throws java.io.IOException, PersistencyException, IntrospectionException, it.cnr.jada.comp.ApplicationException 
 	{
 		//title
 		out.println("<tr><td colspan=3><h3><CENTER>");
@@ -215,7 +216,7 @@ public class CRUDConfigParametriLivelliBP extends it.cnr.jada.util.action.Simple
 		}
 	}
 
-	private void writeTableRow(javax.servlet.jsp.JspWriter out, String tipo, int liv, Parametri_livelliBulk parLiv ) throws java.io.IOException, PersistencyException , it.cnr.jada.comp.ApplicationException, IntrospectionException
+	private void writeTableRow(JspWriter out, String tipo, int liv, Parametri_livelliBulk parLiv ) throws java.io.IOException, PersistencyException , it.cnr.jada.comp.ApplicationException, IntrospectionException
 	{
 		if (tipo==Elemento_voceHome.GESTIONE_ENTRATE) { 
 			if (parLiv.getLung_livello_etr(liv)!=null||parLiv.getDs_livello_etr(liv)!=null||

@@ -19,7 +19,7 @@ package it.cnr.contab.pdg00.ejb;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.jada.UserContext;

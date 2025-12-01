@@ -58,6 +58,7 @@ import it.cnr.si.spring.storage.StorageException;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
 import org.apache.pdfbox.io.MemoryUsageSetting;
@@ -65,7 +66,6 @@ import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -262,7 +262,7 @@ public abstract class AbstractFirmaDigitaleDocContBP extends SelezionatoreListaB
     public void scaricaDocumenti(ActionContext actioncontext) throws Exception {
         setSelection(actioncontext);
         List<StatoTrasmissione> selectelElements = getSelectedElements(actioncontext);
-        final HttpServletResponse response = ((HttpActionContext) actioncontext).getResponse();
+        final jakarta.servlet.http.HttpServletResponse response = ((HttpActionContext) actioncontext).getResponse();
         final DocumentiContabiliService documentiContabiliService = SpringUtil.getBean("documentiContabiliService", DocumentiContabiliService.class);
         if (selectelElements == null || selectelElements.isEmpty()) {
             response.setStatus(HttpStatus.SC_NO_CONTENT);

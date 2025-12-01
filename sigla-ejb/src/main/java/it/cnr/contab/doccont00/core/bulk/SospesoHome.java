@@ -540,7 +540,7 @@ public class SospesoHome extends BulkHome {
 				if (maxSospeso.length() != 14){
 					throw new ComponentException("Esistono numerazioni di riscontro non compatibili con la numerazione automatica generata dall'interfaccia di riscontro automatica. La lunghezza del codice sospeso è diversa da 14 caratteri.");
 				}
-				Long num = new Long(maxSospeso.substring(4,14));
+				Long num = Long.valueOf(maxSospeso.substring(4,14));
 				String nextCd = SospesoBulk.RISC_PREFIX+String.format("%10s", (num+1)).replace(' ', '0');
 				return nextCd;
 			} catch (BusyResourceException e) {

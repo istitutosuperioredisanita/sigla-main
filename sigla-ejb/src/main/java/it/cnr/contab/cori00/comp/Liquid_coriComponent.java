@@ -44,7 +44,7 @@ import it.cnr.jada.persistency.sql.Query;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
@@ -225,7 +225,7 @@ public class Liquid_coriComponent extends it.cnr.jada.comp.CRUDDetailComponent
                                 "IBMUTL020.vsx_get_pg_call() }", false, this.getClass());
                 cs.registerOutParameter(1, java.sql.Types.NUMERIC);
                 cs.executeQuery();
-                pg = new Long(cs.getLong(1));
+                pg = Long.valueOf(cs.getLong(1));
 
             } catch (java.sql.SQLException e) {
                 throw handleException(e);
@@ -307,7 +307,7 @@ public class Liquid_coriComponent extends it.cnr.jada.comp.CRUDDetailComponent
                     vsx_liqid.setPg_call(pg_call);
                     vsx_liqid.completeFrom(gruppo);
                     vsx_liqid.setToBeCreated();
-                    vsx_liqid.setPar_num(new Integer(count++));
+                    vsx_liqid.setPar_num(Integer.valueOf(count++));
                     vsx_liqid.setToBeCreated();
                     home.insert(vsx_liqid, userContext);
                     //insertBulk(userContext, vsx_liqid);
@@ -430,7 +430,7 @@ public class Liquid_coriComponent extends it.cnr.jada.comp.CRUDDetailComponent
                 cs.setInt(3, liquidazione_cori.getEsercizio().intValue());
                 cs.setString(4, liquidazione_cori.getCd_unita_organizzativa());
                 cs.executeQuery();
-                pg = new Integer(cs.getInt(1));
+                pg = Integer.valueOf(cs.getInt(1));
             } catch (Throwable e) {
                 throw handleException(e);
             } finally {
@@ -442,8 +442,8 @@ public class Liquid_coriComponent extends it.cnr.jada.comp.CRUDDetailComponent
         if (pg == null)
             throw new it.cnr.jada.comp.ApplicationException("Impossibile ottenere un progressivo valido per la liquidazione CORI!");
 
-        if (pg.compareTo(new Integer(0)) == 0)
-            pg = new Integer(1);
+        if (pg.compareTo(Integer.valueOf(0)) == 0)
+            pg = Integer.valueOf(1);
         return pg;
     }
 
@@ -468,7 +468,7 @@ public class Liquid_coriComponent extends it.cnr.jada.comp.CRUDDetailComponent
 
             liquidazione_cori.setDt_da(new Timestamp(cal_da.getTime().getTime()));
             liquidazione_cori.setDt_a(new Timestamp(cal_a.getTime().getTime()));
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw handleException(e);
         }
 
@@ -864,8 +864,8 @@ public class Liquid_coriComponent extends it.cnr.jada.comp.CRUDDetailComponent
             it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession configurazione = (it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class);
             AnagraficoBulk ente = (AnagraficoBulk) getHome(userContext, AnagraficoBulk.class).findByPrimaryKey(
                     new AnagraficoBulk(
-                            new Integer(
-                                    configurazione.getIm01(userContext, new Integer(0), null, "COSTANTI", "CODICE_ANAG_ENTE").toString()
+                            Integer.valueOf(
+                                    configurazione.getIm01(userContext, Integer.valueOf(0), null, "COSTANTI", "CODICE_ANAG_ENTE").toString()
                             )
                     )
             );
@@ -880,7 +880,7 @@ public class Liquid_coriComponent extends it.cnr.jada.comp.CRUDDetailComponent
     public String getContoSpecialeEnteF24(UserContext userContext) throws it.cnr.jada.comp.ComponentException {
         try {
             it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession configurazione = (it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class);
-            return configurazione.getVal01(userContext, new Integer(0), null, "F24_EP", "CONTO_CORRENTE");
+            return configurazione.getVal01(userContext, Integer.valueOf(0), null, "F24_EP", "CONTO_CORRENTE");
         } catch (Throwable e) {
             throw handleException(e);
         }
@@ -1015,7 +1015,7 @@ public class Liquid_coriComponent extends it.cnr.jada.comp.CRUDDetailComponent
     public String getSedeInpsF24(UserContext userContext) throws it.cnr.jada.comp.ComponentException {
         try {
             it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession configurazione = (it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class);
-            return configurazione.getVal01(userContext, new Integer(0), null, "F24_EP", "SEDE_INPS");
+            return configurazione.getVal01(userContext, Integer.valueOf(0), null, "F24_EP", "SEDE_INPS");
         } catch (Throwable e) {
             throw handleException(e);
         }
@@ -1023,7 +1023,7 @@ public class Liquid_coriComponent extends it.cnr.jada.comp.CRUDDetailComponent
 
     public Configurazione_cnrBulk getSedeInailF24(UserContext userContext) throws it.cnr.jada.comp.ComponentException {
         try {
-            return Utility.createConfigurazioneCnrComponentSession().getConfigurazione(userContext, new Integer(0), null, "F24_EP", "SEDE_INAIL");
+            return Utility.createConfigurazioneCnrComponentSession().getConfigurazione(userContext, Integer.valueOf(0), null, "F24_EP", "SEDE_INAIL");
         } catch (Throwable e) {
             throw handleException(e);
         }
@@ -1032,7 +1032,7 @@ public class Liquid_coriComponent extends it.cnr.jada.comp.CRUDDetailComponent
     public String getSedeInpdapF24(UserContext userContext) throws it.cnr.jada.comp.ComponentException {
         try {
             it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession configurazione = (it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class);
-            return configurazione.getVal01(userContext, new Integer(0), null, "F24_EP", "SEDE_INPDAP");
+            return configurazione.getVal01(userContext, Integer.valueOf(0), null, "F24_EP", "SEDE_INPDAP");
         } catch (Throwable e) {
             throw handleException(e);
         }
@@ -1041,7 +1041,7 @@ public class Liquid_coriComponent extends it.cnr.jada.comp.CRUDDetailComponent
     public String getSedeInpgiF24(UserContext userContext) throws it.cnr.jada.comp.ComponentException {
         try {
             it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession configurazione = (it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class);
-            return configurazione.getVal01(userContext, new Integer(0), null, "F24_EP", "SEDE_INPGI");
+            return configurazione.getVal01(userContext, Integer.valueOf(0), null, "F24_EP", "SEDE_INPGI");
         } catch (Throwable e) {
             throw handleException(e);
         }
@@ -1110,7 +1110,7 @@ public class Liquid_coriComponent extends it.cnr.jada.comp.CRUDDetailComponent
         sql.addClause( clause );
         sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS,CNRUserContext.getEsercizio(userContext));
         sql.addSQLClause("AND", "stato", SQLBuilder.EQUALS, "L");
-        sql.addSQLClause("AND", "PG_LIQUIDAZIONE", SQLBuilder.GREATER_EQUALS,new Integer("0"));
+        sql.addSQLClause("AND", "PG_LIQUIDAZIONE", SQLBuilder.GREATER_EQUALS,Integer.valueOf("0"));
         sql.addSQLClause("AND", "CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS,((CNRUserContext) userContext).getCd_unita_organizzativa());
         sql.addOrderBy("pg_liquidazione");
         return sql;
@@ -1123,7 +1123,7 @@ public class Liquid_coriComponent extends it.cnr.jada.comp.CRUDDetailComponent
         sql.addClause( clause );
         sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS,CNRUserContext.getEsercizio(userContext));
         sql.addSQLClause("AND", "stato", SQLBuilder.EQUALS, "L");
-        sql.addSQLClause("AND", "PG_LIQUIDAZIONE", SQLBuilder.GREATER_EQUALS,new Integer("0"));
+        sql.addSQLClause("AND", "PG_LIQUIDAZIONE", SQLBuilder.GREATER_EQUALS,Integer.valueOf("0"));
         sql.addSQLClause("AND", "CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS,((CNRUserContext) userContext).getCd_unita_organizzativa());
         sql.addOrderBy("pg_liquidazione");
         return sql;

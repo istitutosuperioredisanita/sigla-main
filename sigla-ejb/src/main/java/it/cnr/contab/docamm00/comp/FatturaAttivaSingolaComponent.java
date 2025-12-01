@@ -81,7 +81,7 @@ import it.cnr.jada.util.ejb.EJBCommonServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -393,7 +393,7 @@ public class FatturaAttivaSingolaComponent
                     }
                 }
             }
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw handleException(fatturaAttiva, e);
         } catch (java.rmi.RemoteException e) {
             throw handleException(fatturaAttiva, e);
@@ -733,7 +733,7 @@ public class FatturaAttivaSingolaComponent
                     }
                 }
             }
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw handleException(fa, e);
         } catch (java.rmi.RemoteException e) {
             throw handleException(fa, e);
@@ -1255,7 +1255,7 @@ public class FatturaAttivaSingolaComponent
                 cs.registerOutParameter(1, java.sql.Types.NUMERIC);
                 //cs.setString(1, cd_cds);
                 cs.executeQuery();
-                pg = new Long(cs.getLong(1));
+                pg = Long.valueOf(cs.getLong(1));
             } catch (Throwable e) {
                 throw handleException(e);
             } finally {
@@ -1282,7 +1282,7 @@ public class FatturaAttivaSingolaComponent
             throws it.cnr.jada.comp.ComponentException {
 
         //ricavo il progressivo unico pg_stampa
-        Long pg_Stampa = new Long(0);
+        Long pg_Stampa = Long.valueOf(0);
         try {
             LoggableStatement ps = new LoggableStatement(getConnection(userContext),
                     "select IBMSEQ00_STAMPA.nextval from dual", true, this.getClass());
@@ -1290,7 +1290,7 @@ public class FatturaAttivaSingolaComponent
                 java.sql.ResultSet rs = ps.executeQuery();
                 try {
                     if (rs.next())
-                        pg_Stampa = new Long(rs.getLong(1));
+                        pg_Stampa = Long.valueOf(rs.getLong(1));
                 } finally {
                     try {
                         rs.close();
@@ -1557,7 +1557,7 @@ public class FatturaAttivaSingolaComponent
                 scadenza = (Accertamento_scadenzarioBulk) scadenze.get(scadenze.indexOfByPrimaryKey(scadenza));
             } catch (java.rmi.RemoteException e) {
                 throw handleException(scadenza, e);
-            } catch (javax.ejb.EJBException e) {
+            } catch (jakarta.ejb.EJBException e) {
                 throw handleException(scadenza, e);
             }
             return scadenza;
@@ -1625,7 +1625,7 @@ public class FatturaAttivaSingolaComponent
                 scadenza = (Accertamento_scadenzarioBulk) scadenze.get(scadenze.indexOfByPrimaryKey(scadenza));
             } catch (java.rmi.RemoteException e) {
                 throw handleException(scadenza, e);
-            } catch (javax.ejb.EJBException e) {
+            } catch (jakarta.ejb.EJBException e) {
                 throw handleException(scadenza, e);
             }
             return scadenza;
@@ -1649,7 +1649,7 @@ public class FatturaAttivaSingolaComponent
                 scadenza = (Obbligazione_scadenzarioBulk) scadenze.get(scadenze.indexOfByPrimaryKey(scadenza));
             } catch (java.rmi.RemoteException e) {
                 throw handleException(scadenza, e);
-            } catch (javax.ejb.EJBException e) {
+            } catch (jakarta.ejb.EJBException e) {
                 throw handleException(scadenza, e);
             }
             return scadenza;
@@ -3550,10 +3550,10 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
 
         String cd_euro = null;
         try {
-            cd_euro = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(userContext, new Integer(0), "*", "CD_DIVISA", "EURO");
+            cd_euro = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(userContext, Integer.valueOf(0), "*", "CD_DIVISA", "EURO");
             if (cd_euro == null)
                 throw new it.cnr.jada.comp.ApplicationException("Impossibile caricare la valuta di default! Prima di poter inserire una fattura, immettere tale valore.");
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             handleException(e);
         } catch (java.rmi.RemoteException e) {
             handleException(e);
@@ -4557,7 +4557,7 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
         if (pgProtocollazione != null)
             inserisciDatiPerProtocollazioneIva(userContext, fattura, pgProtocollazione, offSet, dataStampa);
         inserisciDatiPerStampaIva(userContext, fattura, pgStampa, offSet);
-        offSet = new Integer(offSet.intValue() + 1);
+        offSet = Integer.valueOf(offSet.intValue() + 1);
         return offSet;
     }
 
@@ -4835,7 +4835,7 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
                 }
             } catch (java.rmi.RemoteException e) {
                 throw handleException(obbligazione, e);
-            } catch (javax.ejb.EJBException e) {
+            } catch (jakarta.ejb.EJBException e) {
                 throw handleException(obbligazione, e);
             }
         }
@@ -5210,7 +5210,7 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
                     "CONTO_CORRENTE_SPECIALE",
                     "ENTE",
                     "*",
-                    new Integer(0));
+                    Integer.valueOf(0));
             it.cnr.contab.config00.bulk.Configurazione_cnrHome home = (it.cnr.contab.config00.bulk.Configurazione_cnrHome) getHome(userContext, config);
             java.util.List configurazioni = home.find(config);
             if (configurazioni != null) {
@@ -6018,7 +6018,7 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
             // Gennaro Borriello - (02/11/2004 16.48.21)
             // Fix sul controllo dello "Stato Riportato": controlla che il documento sia stato riportato DA UN ES. PRECEDENTE a quello di scrivania.
             if (documento.isRiportataInScrivania()) {
-                Integer es_prec = new Integer(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(aUC).intValue() - 1);
+                Integer es_prec = Integer.valueOf(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(aUC).intValue() - 1);
                 if (!isEsercizioCoepChiusoFor(aUC, documento, es_prec)) {
                     throw new it.cnr.jada.comp.ApplicationException("Attenzione: non è possibile eliminare il documento, poichè l'esercizio economico precedente a quello in scrivania non è chiuso.");
                 }
@@ -6786,7 +6786,7 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
         try {
             Rif_modalita_pagamentoBulk rif_mod = (Rif_modalita_pagamentoBulk) getHome(userContext, Rif_modalita_pagamentoBulk.class).findByPrimaryKey(new Rif_modalita_pagamentoBulk(modalita));
             BancaHome home = (BancaHome) getHome(userContext, BancaBulk.class);
-            SQLBuilder sql = home.selectBancaFor(rif_mod, new Integer(terzo));
+            SQLBuilder sql = home.selectBancaFor(rif_mod, Integer.valueOf(terzo));
             sql.addTableToHeader("MODALITA_PAGAMENTO");
             sql.addSQLJoin("MODALITA_PAGAMENTO.CD_TERZO", sql.EQUALS, "BANCA.CD_TERZO");
             sql.addSQLClause("AND", "MODALITA_PAGAMENTO.CD_MODALITA_PAG", sql.EQUALS, rif_mod.getCd_modalita_pag());
@@ -7833,7 +7833,7 @@ private void deleteAssociazioniInventarioWith(UserContext userContext,Fattura_at
     public Boolean isAttivoSplitPayment(UserContext aUC, Date dataFattura) throws ComponentException {
         Date dataInizio;
         try {
-            dataInizio = Utility.createConfigurazioneCnrComponentSession().getDt01(aUC, new Integer(0), null, Configurazione_cnrBulk.PK_SPLIT_PAYMENT, Configurazione_cnrBulk.SK_ATTIVA);
+            dataInizio = Utility.createConfigurazioneCnrComponentSession().getDt01(aUC, Integer.valueOf(0), null, Configurazione_cnrBulk.PK_SPLIT_PAYMENT, Configurazione_cnrBulk.SK_ATTIVA);
         } catch (ComponentException e) {
             throw new it.cnr.jada.comp.ApplicationException(e.getMessage());
         } catch (RemoteException e) {

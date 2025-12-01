@@ -95,7 +95,7 @@ public class ConsObbligazioniBP extends SelezionatoreListaBP implements SearchPr
     private CompoundFindClause addBaseClause(ActionContext actioncontext) {
         if (getBaseclause() == null && getFunction() != null) {
             CompoundFindClause compoundFindClause = new CompoundFindClause();
-            compoundFindClause.addClause("AND", "esercizio", SQLBuilder.EQUALS, new Integer(3000));
+            compoundFindClause.addClause("AND", "esercizio", SQLBuilder.EQUALS, Integer.valueOf(3000));
             setBaseclause(compoundFindClause);
         }
         return baseclause;
@@ -150,7 +150,7 @@ public class ConsObbligazioniBP extends SelezionatoreListaBP implements SearchPr
                 oggettobulk);
     }
 
-    public it.cnr.jada.ejb.CRUDComponentSession createComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException, BusinessProcessException {
+    public it.cnr.jada.ejb.CRUDComponentSession createComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException, BusinessProcessException {
 
         return (it.cnr.jada.ejb.CRUDComponentSession) createComponentSession("JADAEJB_CRUDComponentSession", it.cnr.jada.ejb.CRUDComponentSession.class);
     }

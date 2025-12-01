@@ -24,14 +24,14 @@ import it.cnr.contab.util00.bulk.HelpBulk;
 import it.cnr.contab.web.rest.local.util.HelpLocal;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.ejb.CRUDComponentSession;
+import jakarta.ws.rs.core.Response;
 import org.springframework.web.util.UriUtils;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Calendar;
@@ -51,7 +51,7 @@ public class HelpResource implements HelpLocal {
                                         return SpringUtil.getBean(UtilService.class).getHelpBaseURL();
                                     });
         UserContext userContext = new WSUserContext("HELP", null,
-                new Integer(Calendar.getInstance().get(Calendar.YEAR)),
+                Integer.valueOf(Calendar.getInstance().get(Calendar.YEAR)),
                 null, null, null);
 
         final Optional<HelpBulk> findByBPName = Optional.ofNullable(crudComponentSession.find(

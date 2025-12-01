@@ -38,7 +38,7 @@ public class SelezionatoreFattureElettronicheLiquidazioneBP extends Selezionator
             final CondizioneComplessaBulk condizioneCorrente = new CondizioneComplessaBulk();
             CondizioneSempliceBulk condizioneSempliceBulk = new CondizioneSempliceBulk(model);
             condizioneSempliceBulk.setFindFieldProperty(getBulkInfo().getFindFieldProperty("flIrregistrabile"));
-            condizioneSempliceBulk.setOperator(new Integer(8192));
+            condizioneSempliceBulk.setOperator(Integer.valueOf(8192));
             condizioneSempliceBulk.setValue("N");
             condizioneCorrente.aggiungiCondizione(condizioneSempliceBulk);
             setCondizioneCorrente(condizioneCorrente);

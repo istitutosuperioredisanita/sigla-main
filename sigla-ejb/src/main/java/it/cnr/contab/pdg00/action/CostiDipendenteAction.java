@@ -531,7 +531,7 @@ public Forward doBringBackSearchUnita_organizzativa_filter(ActionContext context
 		bp.setModel(context, bp.createComponentSession().caricaCosti_dipendente(context.getUserContext(),uo,bp.getMese()));
 		bp.setDirty(false);
 		return context.findDefaultForward(); 
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw new it.cnr.jada.action.ActionPerformingError(e);
 	} catch(java.rmi.RemoteException e) {
 		throw new it.cnr.jada.action.ActionPerformingError(e);
@@ -557,7 +557,7 @@ public Forward doBlankSearchUnita_organizzativa_filter(ActionContext context,Cos
 		CostiDipendenteBP bp = (CostiDipendenteBP)context.getBusinessProcess();
 		bp.setModel(context, bp.createComponentSession().caricaCosti_dipendente(context.getUserContext(),null,bp.getMese()));
 		return context.findDefaultForward(); 
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw new it.cnr.jada.action.ActionPerformingError(e);
 	} catch(java.rmi.RemoteException e) {
 		throw new it.cnr.jada.action.ActionPerformingError(e);

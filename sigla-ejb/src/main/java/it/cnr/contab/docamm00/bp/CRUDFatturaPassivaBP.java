@@ -63,11 +63,13 @@ import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.jsp.JspWriter;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.util.Pair;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -638,7 +640,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
                 }
             } else
                 setRiportaAvantiIndietro(false);
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             setAnnoSolareInScrivania(false);
         } catch (ComponentException e) {
             throw handleException(e);
@@ -1284,9 +1286,9 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
         return;
     }
 
-    protected void writeToolbar(javax.servlet.jsp.JspWriter writer,
+    protected void writeToolbar(JspWriter writer,
                                 it.cnr.jada.util.jsp.Button[] buttons) throws java.io.IOException,
-            javax.servlet.ServletException {
+            ServletException {
 
         it.cnr.jada.util.jsp.Button riportaAvantiButton = buttons[buttons.length - 1];
         riportaAvantiButton.setSeparator(isRiportaIndietroButtonHidden()
@@ -1561,7 +1563,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             throws BusinessProcessException {
         try {
             return Utility.createConfigurazioneCnrComponentSession().getDt01(
-                    context.getUserContext(), new Integer(0), null,
+                    context.getUserContext(), Integer.valueOf(0), null,
                     "REGISTRO_UNICO_FATPAS", "DATA_INIZIO");
         } catch (Exception e) {
             throw handleException(e);
@@ -1613,7 +1615,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
      * stato della liquidazione quando il documento non risulta essere
      * modificabile
      */
-    public void writeFormInput(javax.servlet.jsp.JspWriter jspwriter, String s,
+    public void writeFormInput(JspWriter jspwriter, String s,
                                String s1, boolean flag, String s2, String s3)
             throws java.io.IOException {
         Fattura_passivaBulk fp = null;

@@ -25,7 +25,8 @@ import it.cnr.jada.bulk.BulkInfo;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.jada.util.jsp.JSPUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 /**
@@ -87,7 +88,7 @@ public class PrintSpoolerBP extends it.cnr.jada.util.action.SelezionatoreListaBP
         }
     }
 
-    public void writeToolbar(javax.servlet.jsp.PageContext pageContext) throws java.io.IOException, javax.servlet.ServletException {
+    public void writeToolbar(jakarta.servlet.jsp.PageContext pageContext) throws java.io.IOException, ServletException {
         Button[] toolbar = getToolbar();
         Print_spoolerBulk print_spool = (Print_spoolerBulk) getFocusedElement();
         if (print_spool != null && Print_spoolerBulk.STATO_ESEGUITA.equalsIgnoreCase(print_spool.getStato()))
@@ -105,7 +106,7 @@ public class PrintSpoolerBP extends it.cnr.jada.util.action.SelezionatoreListaBP
             return (null);
     }
 
-    public String getDownloadFile(javax.servlet.jsp.PageContext pageContext) {
+    public String getDownloadFile(jakarta.servlet.jsp.PageContext pageContext) {
         Print_spoolerBulk print_spool = (Print_spoolerBulk) getFocusedElement();
         if (print_spool != null && Print_spoolerBulk.STATO_ESEGUITA.equalsIgnoreCase(print_spool.getStato()))
             return JSPUtils.buildAbsoluteUrl(

@@ -47,7 +47,7 @@ import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1.RegimeFiscaleType;
 import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1.SoggettoEmittenteType;
 import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1.TipoDocumentoType;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.Iterator;
@@ -227,7 +227,7 @@ public class CRUDFatturaPassivaElettronicaAction extends CRUDAction {
                         context,
                         new RifiutaFatturaBulk(
                                 bulk.getDocumentoEleTrasmissione().getDataRicezione(),
-                                sess.getDt01(context.getUserContext(), new Integer(0), "*", "COSTANTI", "DATA_RIFIUTO_FATTURA_SDI_MOTIVI_PREDEFINITI")
+                                sess.getDt01(context.getUserContext(), Integer.valueOf(0), "*", "COSTANTI", "DATA_RIFIUTO_FATTURA_SDI_MOTIVI_PREDEFINITI")
                         )
                 );
                 context.addHookForward("model", this, "doConfirmRifiutaFattura");

@@ -42,7 +42,7 @@ public Forward doInviaOrdine(ActionContext actioncontext) throws RemoteException
 			try {
 				dataReg = it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
 				richiesta.setDataInvio(dataReg);
-			} catch (javax.ejb.EJBException e) {
+			} catch (jakarta.ejb.EJBException e) {
 				throw new it.cnr.jada.DetailedRuntimeException(e);
 			}
 		}

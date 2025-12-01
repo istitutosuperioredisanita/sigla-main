@@ -40,8 +40,8 @@ public class Carico_familiare_anagHome extends BulkHome {
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,OggettoBulk fami) throws PersistencyException {
 		try {
 			((Carico_familiare_anagBulk)fami).setPg_carico_anag(
-				new Long(
-					((Long)findAndLockMax( fami, "pg_carico_anag", new Long(0) )).longValue()+1
+				Long.valueOf(
+					((Long)findAndLockMax( fami, "pg_carico_anag", Long.valueOf(0) )).longValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

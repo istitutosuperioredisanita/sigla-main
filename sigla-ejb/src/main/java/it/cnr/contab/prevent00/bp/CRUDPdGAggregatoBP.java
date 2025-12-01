@@ -52,7 +52,7 @@ public Pdg_aggregatoBulk caricaPdg_aggregato(ActionContext context) throws Busin
 		throw handleException(e);
 	}
 }
-public it.cnr.contab.prevent00.ejb.PdgAggregatoComponentSession createComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+public it.cnr.contab.prevent00.ejb.PdgAggregatoComponentSession createComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 	return (it.cnr.contab.prevent00.ejb.PdgAggregatoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPREVENT00_EJB_PdgAggregatoComponentSession", it.cnr.contab.prevent00.ejb.PdgAggregatoComponentSession.class);
 }
 

@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
 import java.util.Dictionary;
 import java.util.Iterator;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.bulk.Parametri_enteBulk;
 import it.cnr.contab.config00.ejb.Parametri_enteComponentSession;
@@ -78,7 +78,7 @@ public class LoginBP extends it.cnr.jada.util.action.BulkBP {
 	/**
 	 * Crea la ParametriEnteComponentSession da usare per effettuare operazioni
 	 */
-	public Parametri_enteComponentSession createParametriEnteComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public Parametri_enteComponentSession createParametriEnteComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		return (Parametri_enteComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Parametri_enteComponentSession", Parametri_enteComponentSession.class);
 	}
 	public String getLdapLinkCambioPassword(UserContext uc) throws BusinessProcessException {

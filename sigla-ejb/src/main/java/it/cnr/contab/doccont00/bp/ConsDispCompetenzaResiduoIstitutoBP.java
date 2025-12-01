@@ -114,7 +114,7 @@ public class ConsDispCompetenzaResiduoIstitutoBP extends ConsultazioniBP {
 	public static final String LIV_ENTCDSVOCECDRGAE= "GAE";
 	public static final String LIV_ENTCDSVOCECDRGAEDET= "DET";
 	
-	public ConsDispCompetenzaResiduoIstitutoComponentSession createConsDispCompetenzaResiduoIstitutoComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public ConsDispCompetenzaResiduoIstitutoComponentSession createConsDispCompetenzaResiduoIstitutoComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 			return (ConsDispCompetenzaResiduoIstitutoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_ConsDispCompetenzaResiduoIstitutoComponentSession", ConsDispCompetenzaResiduoIstitutoComponentSession.class);
 	}
 

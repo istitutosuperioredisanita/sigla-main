@@ -17,8 +17,8 @@
 
 package it.cnr.contab.config00.ejb;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.config00.bulk.ServizioPecBulk;
 import it.cnr.contab.config00.comp.Parametri_cnrComponent;
@@ -39,10 +39,8 @@ public class Parametri_enteComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.config00.comp.Parametri_enteComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new Parametri_enteComponentSessionBean();
-	}
-	public it.cnr.contab.config00.bulk.Parametri_enteBulk getParametriEnte(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public it.cnr.contab.config00.bulk.Parametri_enteBulk getParametriEnte(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.config00.bulk.Parametri_enteBulk result = ((Parametri_enteComponent)componentObj).getParametriEnte(param0);
@@ -60,7 +58,7 @@ public class Parametri_enteComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}	
-	public int getGiorniRimanenti(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public int getGiorniRimanenti(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			int result = ((Parametri_enteComponent)componentObj).getGiorniRimanenti(param0);
@@ -168,7 +166,7 @@ public class Parametri_enteComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}	
-	public boolean isProgettoPianoEconomicoEnabled(it.cnr.jada.UserContext param0, int param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException{
+	public boolean isProgettoPianoEconomicoEnabled(it.cnr.jada.UserContext param0, int param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException{
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((Parametri_enteComponent)componentObj).isProgettoPianoEconomicoEnabled(param0, param1);

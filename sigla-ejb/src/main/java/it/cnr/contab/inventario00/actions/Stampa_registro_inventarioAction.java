@@ -62,8 +62,8 @@ public it.cnr.jada.action.Forward doClickFlagUfficiale(it.cnr.jada.action.Action
     		stampa.setCategoriaForPrint(new Categoria_gruppo_inventBulk());
     		stampa.setGruppoForPrint(new Categoria_gruppo_inventBulk());
     		stampa.setTipoMovimento(new Tipo_carico_scaricoBulk());
-    		stampa.setNrInventarioFrom(new Long(0));
-    		stampa.setNrInventarioTo(new Long("9999999999"));
+    		stampa.setNrInventarioFrom(Long.valueOf(0));
+    		stampa.setNrInventarioTo(Long.valueOf("9999999999"));
     		stampa.setFl_solo_totali(true);
     	}
         return context.findDefaultForward();

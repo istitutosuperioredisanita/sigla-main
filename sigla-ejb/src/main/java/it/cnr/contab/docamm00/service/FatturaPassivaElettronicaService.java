@@ -116,7 +116,7 @@ public class FatturaPassivaElettronicaService implements InitializingBean {
 
     public void afterPropertiesSet() throws Exception {
         userContext = new WSUserContext("SDI", null,
-                new Integer(java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)),
+                Integer.valueOf(java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)),
                 null, null, null);
         this.fatturaElettronicaPassivaComponentSession = Optional.ofNullable(EJBCommonServices.createEJB("CNRDOCAMM00_EJB_FatturaElettronicaPassivaComponentSession"))
                 .filter(FatturaElettronicaPassivaComponentSession.class::isInstance)
@@ -370,7 +370,7 @@ public class FatturaPassivaElettronicaService implements InitializingBean {
                 String replyTo = getReplyTo(message);
                 List<DocumentoEleTrasmissioneBulk> documentoEleTrasmissioneBulks =
                         fatturaElettronicaPassivaComponentSession.recuperoTrasmissione(userContext,
-                                new Long(metadatiInvioFileType.getValue().getIdentificativoSdI()));
+                                Long.valueOf(metadatiInvioFileType.getValue().getIdentificativoSdI()));
                 boolean existsIdentificativo = documentoEleTrasmissioneBulks.stream()
                         .map(DocumentoEleTrasmissioneBase::getCmisNodeRef)
                         .anyMatch(s -> storeService.getChildren(s)

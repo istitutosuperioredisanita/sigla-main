@@ -20,7 +20,7 @@ package it.cnr.contab.doccont00.consultazioni.bp;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.action.ActionContext;

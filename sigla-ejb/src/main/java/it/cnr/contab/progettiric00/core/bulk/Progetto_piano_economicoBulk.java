@@ -211,7 +211,7 @@ public class Progetto_piano_economicoBulk extends Progetto_piano_economicoBase {
 		Integer annoFine = Optional.ofNullable(this.getProgettoRimodulazione()).map(el->el.getAnnoFineRimodulato())
 				.orElse(optProgetto.map(ProgettoBulk::getAnnoFineOf).orElse(9999));
 		for (int i=annoFine;i>=annoInizio;i--)
-			list.put(new Integer(i), new Integer(i));
+			list.put(Integer.valueOf(i), Integer.valueOf(i));
 		if (this.getEsercizio_piano()!=null && list.get(this.getEsercizio_piano())==null)
 			list.put(this.getEsercizio_piano(), this.getEsercizio_piano());
 		list.remove(this.getProgetto().getEsercizio());

@@ -219,7 +219,7 @@ public class Incarichi_richiestaBulk extends Incarichi_richiestaBase {
 		return getNr_risorse_da_trovare() - getNrRisorseTrovate();
 	}
 	public void validate() throws ValidationException {
-		if (getNr_risorse_da_trovare()!=null && getNr_risorse_da_trovare().compareTo(new Integer(0))!=1) 
+		if (getNr_risorse_da_trovare()!=null && getNr_risorse_da_trovare().compareTo(Integer.valueOf(0))!=1)
 			throw new ValidationException("Il numero delle risorse richieste deve essere positivo.");
 		if (getNr_risorse_trovate_si() + 
 			getNr_risorse_trovate_no() + 

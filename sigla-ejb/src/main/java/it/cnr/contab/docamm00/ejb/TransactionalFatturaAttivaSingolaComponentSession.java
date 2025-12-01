@@ -1947,7 +1947,7 @@ public List findListaCondizioneConsegnaWS(UserContext userContext, String query,
 		}
 	}
 
-	public void controlliGestioneBolloVirtuale(UserContext param0, Fattura_attivaBulk fatturaAttiva, BulkList dettaglio) throws ComponentException,java.rmi.RemoteException,javax.ejb.EJBException  {
+	public void controlliGestioneBolloVirtuale(UserContext param0, Fattura_attivaBulk fatturaAttiva, BulkList dettaglio) throws ComponentException,java.rmi.RemoteException,jakarta.ejb.EJBException  {
 		try {
 			invoke("controlliGestioneBolloVirtuale",new Object[] {param0,fatturaAttiva, dettaglio});
 		} catch(java.rmi.RemoteException e) {
@@ -1963,7 +1963,7 @@ public List findListaCondizioneConsegnaWS(UserContext userContext, String query,
 		}
 	}
 
-	public String recuperoEmailUtente(UserContext param0, Fattura_attivaBulk fatturaAttiva) throws ComponentException,java.rmi.RemoteException,javax.ejb.EJBException  {
+	public String recuperoEmailUtente(UserContext param0, Fattura_attivaBulk fatturaAttiva) throws ComponentException,java.rmi.RemoteException,jakarta.ejb.EJBException  {
 		try {
 			return (String)invoke("recuperoEmailUtente",new Object[] {param0,fatturaAttiva});
 		} catch(java.rmi.RemoteException e) {
@@ -1979,7 +1979,7 @@ public List findListaCondizioneConsegnaWS(UserContext userContext, String query,
 		}
 	}
 
-	public void gestioneAvvisoInvioMailFattureAttive(UserContext param0) throws ComponentException,java.rmi.RemoteException,javax.ejb.EJBException  {
+	public void gestioneAvvisoInvioMailFattureAttive(UserContext param0) throws ComponentException,java.rmi.RemoteException,jakarta.ejb.EJBException  {
 		try {
 			invoke("gestioneAvvisoInvioMailFattureAttive",new Object[] {param0});
 		} catch(java.rmi.RemoteException e) {

@@ -1135,7 +1135,7 @@ public class SospesoRiscontroComponent extends CRUDComponent implements ISospeso
             } else {
                 stampa.setDataFine(getDataOdierna(userContext));
             }
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw handleException(e);
         }
 
@@ -1934,7 +1934,7 @@ public class SospesoRiscontroComponent extends CRUDComponent implements ISospeso
                     }
                 }
 
-            } catch (javax.ejb.EJBException e) {
+            } catch (jakarta.ejb.EJBException e) {
                 throw handleException(e);
             }
 
@@ -2089,9 +2089,9 @@ public class SospesoRiscontroComponent extends CRUDComponent implements ISospeso
             try {
 //			ps.setString(1, "Y");
                 ps.setString(1, cd_cds);
-                ps.setObject(2, new Integer(esercizio));
-                ps.setObject(3, new Integer(esercizio_ori_accertamento));
-                ps.setObject(4, new Long(pg_accertamento));
+                ps.setObject(2, Integer.valueOf(esercizio));
+                ps.setObject(3, Integer.valueOf(esercizio_ori_accertamento));
+                ps.setObject(4, Long.valueOf(pg_accertamento));
                 ResultSet rs = ps.executeQuery();
                 try {
                     while (rs.next()) {
@@ -2229,9 +2229,9 @@ public class SospesoRiscontroComponent extends CRUDComponent implements ISospeso
             try {
 //			ps.setString(1, "Y");
                 ps.setString(1, cd_cds);
-                ps.setObject(2, new Integer(esercizio));
-                ps.setObject(3, new Integer(esercizio_ori_obbligazione));
-                ps.setObject(4, new Long(pg_obbligazione));
+                ps.setObject(2, Integer.valueOf(esercizio));
+                ps.setObject(3, Integer.valueOf(esercizio_ori_obbligazione));
+                ps.setObject(4, Long.valueOf(pg_obbligazione));
                 ResultSet rs = ps.executeQuery();
                 try {
                     while (rs.next()) {
@@ -2578,7 +2578,7 @@ public class SospesoRiscontroComponent extends CRUDComponent implements ISospeso
 
 
     }
-    public Scrittura_partita_doppiaBulk createScritturaPartitaDoppia(UserContext userContext, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws ComponentException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, RemoteException{
+    public Scrittura_partita_doppiaBulk createScritturaPartitaDoppia(UserContext userContext, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws ComponentException, jakarta.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, RemoteException{
         if (riga.isMandatoReversale()) {
             if ( riga.isMandato() && ( riga.isTipoOperazioneEseguitoRegolarizzato() || riga.isTipoOperazioneStornato())){
                 MandatoBulk man = new MandatoIBulk();

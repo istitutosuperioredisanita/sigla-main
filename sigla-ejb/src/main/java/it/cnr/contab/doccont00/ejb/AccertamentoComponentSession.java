@@ -17,7 +17,7 @@
 
 package it.cnr.contab.doccont00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.jada.bulk.PrimaryKeyHashtable;
 @Remote

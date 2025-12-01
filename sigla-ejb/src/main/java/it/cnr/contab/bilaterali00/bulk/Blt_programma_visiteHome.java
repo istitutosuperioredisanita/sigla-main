@@ -42,8 +42,8 @@ public class Blt_programma_visiteHome extends BulkHome {
 		try {
 			Blt_programma_visiteBulk oggetto=(Blt_programma_visiteBulk)bulk;
 				oggetto.setPgRecord(
-					new Long(
-						((Long)findAndLockMax( oggetto, "pgRecord", new Long(0) )).longValue()+1
+					Long.valueOf(
+						((Long)findAndLockMax( oggetto, "pgRecord", Long.valueOf(0) )).longValue()+1
 					)
 				);
 			} catch(it.cnr.jada.bulk.BusyResourceException e) {

@@ -30,9 +30,9 @@ import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
 
 @Stateless(name="CNRDOCCONT00_EJB_MagContoGiudizialeComponentSession")
@@ -42,13 +42,11 @@ public class MagContoGiudizialeComponentSessionBean extends it.cnr.jada.ejb.CRUD
 		componentObj = new MagContoGiudizialeComponent();
 	}
 	@Remove
-	public void ejbRemove() throws javax.ejb.EJBException {
+	public void ejbRemove() throws jakarta.ejb.EJBException {
 		componentObj.release();
 	}
 	
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new MagContoGiudizialeComponentSessionBean();
-	}
+	
 
 	@Override
 	public RemoteIterator findMagContoGiudiziale(UserContext userContext,String columnMapName, CompoundFindClause baseClause, CompoundFindClause findClause) throws ComponentException, RemoteException, IntrospectionException {

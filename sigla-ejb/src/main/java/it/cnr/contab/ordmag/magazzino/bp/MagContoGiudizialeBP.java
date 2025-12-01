@@ -41,7 +41,7 @@ public class MagContoGiudizialeBP extends ConsultazioniBP {
 	public MagContoGiudizialeBP() {
 		super();
 	}
-	public MagContoGiudizialeComponentSession createMagContoGiudizialeComponentSession() throws javax.ejb.EJBException, RemoteException {
+	public MagContoGiudizialeComponentSession createMagContoGiudizialeComponentSession() throws jakarta.ejb.EJBException, RemoteException {
 		return (MagContoGiudizialeComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_MagContoGiudizialeComponentSession", ConsConfrontoEntSpeComponentSession.class);
 	}
 	public RemoteIterator search(ActionContext context, CompoundFindClause compoundfindclause, OggettoBulk oggettobulk) throws BusinessProcessException {

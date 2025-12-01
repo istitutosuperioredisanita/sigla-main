@@ -18,8 +18,8 @@
 package it.cnr.contab.compensi00.ejb;
 import java.rmi.RemoteException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.compensi00.comp.GruppoCRComponent;
@@ -31,9 +31,6 @@ public class GruppoCRComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentS
 @PostConstruct
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.compensi00.comp.GruppoCRComponent();
-}
-public static CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new GruppoCRComponentSessionBean();
 }
 public void CreaperTutteUOSAC(it.cnr.jada.UserContext param0,Gruppo_crBulk param1) throws it.cnr.jada.comp.ComponentException, RemoteException {
 	pre_component_invocation(param0,componentObj);
@@ -70,7 +67,7 @@ public Gruppo_cr_detBulk completaTerzo(it.cnr.jada.UserContext param0,Gruppo_cr_
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public java.util.List findListaBanche(it.cnr.jada.UserContext param0,Gruppo_cr_detBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public java.util.List findListaBanche(it.cnr.jada.UserContext param0,Gruppo_cr_detBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.util.List result = ((GruppoCRComponent)componentObj).findListaBanche(param0,param1);
@@ -88,7 +85,7 @@ public java.util.List findListaBanche(it.cnr.jada.UserContext param0,Gruppo_cr_d
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public java.util.Collection findModalitaOptions(it.cnr.jada.UserContext param0,Gruppo_cr_detBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public java.util.Collection findModalitaOptions(it.cnr.jada.UserContext param0,Gruppo_cr_detBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.util.Collection result = ((GruppoCRComponent)componentObj).findModalitaOptions(param0,param1);

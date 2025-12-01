@@ -19,21 +19,19 @@ package it.cnr.contab.config00.ejb;
 
 import it.cnr.contab.config00.comp.PDCFinComponent;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 @Stateless(name = "CNRCONFIG00_EJB_PDCFinComponentSession")
 public class PDCFinComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements PDCFinComponentSession {
-    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-        return new PDCFinComponentSessionBean();
-    }
+    
 
     @PostConstruct
     public void ejbCreate() {
         componentObj = new it.cnr.contab.config00.comp.PDCFinComponent();
     }
 
-    public it.cnr.jada.util.OrderedHashtable loadTipologieCdsKeys(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.util.OrderedHashtable loadTipologieCdsKeys(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.util.OrderedHashtable result = ((PDCFinComponent) componentObj).loadTipologieCdsKeys(param0);
@@ -52,7 +50,7 @@ public class PDCFinComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSes
         }
     }
 
-    public java.lang.String getVoceCnr(it.cnr.jada.UserContext param0, it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk param1, it.cnr.contab.config00.latt.bulk.WorkpackageBulk param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.lang.String getVoceCnr(it.cnr.jada.UserContext param0, it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk param1, it.cnr.contab.config00.latt.bulk.WorkpackageBulk param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.lang.String result = ((PDCFinComponent) componentObj).getVoceCnr(param0, param1, param2);
@@ -71,7 +69,7 @@ public class PDCFinComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSes
         }
     }
 
-    public java.util.List findListaVociWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3, String param4, String param5) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.util.List findListaVociWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3, String param4, String param5) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.util.List result = ((PDCFinComponent) componentObj).findListaVociWS(param0, param1, param2, param3, param4, param5);
@@ -90,7 +88,7 @@ public class PDCFinComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSes
         }
     }
 
-    public java.util.List findListaVociWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3, String param4, String param5, String param6) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.util.List findListaVociWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3, String param4, String param5, String param6) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.util.List result = ((PDCFinComponent) componentObj).findListaVociWS(param0, param1, param2, param3, param4, param5, param6);
@@ -109,7 +107,7 @@ public class PDCFinComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSes
         }
     }
 
-    public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.bulk.OggettoBulk result = ((PDCFinComponent) componentObj).inizializzaBulkPerStampa(param0, param1);
@@ -128,7 +126,7 @@ public class PDCFinComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSes
         }
     }
 
-    public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.bulk.OggettoBulk result = ((PDCFinComponent) componentObj).stampaConBulk(param0, param1);

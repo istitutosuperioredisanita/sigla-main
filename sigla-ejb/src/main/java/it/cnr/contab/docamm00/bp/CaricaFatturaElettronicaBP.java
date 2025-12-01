@@ -21,8 +21,9 @@ package it.cnr.contab.docamm00.bp;
 import java.io.IOException;
 import java.util.List;
 
-import javax.servlet.ServletException;
-import javax.servlet.jsp.PageContext;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 import it.cnr.contab.docamm00.fatturapa.bulk.FileSdIConMetadatiTypeBulk;
 import it.cnr.jada.action.ActionContext;

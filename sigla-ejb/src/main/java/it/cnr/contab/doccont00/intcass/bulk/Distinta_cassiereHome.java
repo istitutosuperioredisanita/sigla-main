@@ -1754,8 +1754,8 @@ public BigDecimal calcolaTotReversaliRegSospesoCCAnnullateRitrasmesse( Distinta_
      */
 
     public void inizializzaProgressivo(it.cnr.jada.UserContext userContext, Distinta_cassiereBulk distinta) throws BusyResourceException, PersistencyException, ComponentException {
-        Long result = (Long) findMax(distinta, "pg_distinta", new Long(0), true);
-        distinta.setPg_distinta(new Long(result.longValue() + 1));
+        Long result = (Long) findMax(distinta, "pg_distinta", Long.valueOf(0), true);
+        distinta.setPg_distinta(Long.valueOf(result.longValue() + 1));
     }
 
     /**
@@ -1774,9 +1774,9 @@ public BigDecimal calcolaTotReversaliRegSospesoCCAnnullateRitrasmesse( Distinta_
             tmp.setEsercizio(distinta.getEsercizio());
             tmp.setCd_cds(distinta.getCd_cds());
             tmp.setCd_unita_organizzativa(distinta.getCd_unita_organizzativa());
-            Long result = (Long) findMax(tmp, "pg_distinta_def", new Long(0), true);
+            Long result = (Long) findMax(tmp, "pg_distinta_def", Long.valueOf(0), true);
 
-            distinta.setPg_distinta_def(new Long(result.longValue() + 1));
+            distinta.setPg_distinta_def(Long.valueOf(result.longValue() + 1));
         }
     }
 

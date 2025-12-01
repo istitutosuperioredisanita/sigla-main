@@ -19,7 +19,7 @@ package it.cnr.contab.docamm00.docs.bulk;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
 import it.cnr.contab.doccont00.core.bulk.Numerazione_doc_contBulk;
@@ -64,7 +64,7 @@ public Long getNextPg(UserContext userContext, Integer esercizio, String cd_cds,
 	//non esiste il record - segnalo errore
 	if (progressivo == null)
 		throw new it.cnr.jada.comp.ApplicationException("Non e' possibile assegnare progressivi");
-	Long pgCorrente = new Long(progressivo.getCorrente().longValue()+1);
+	Long pgCorrente = Long.valueOf(progressivo.getCorrente().longValue()+1);
 
 	progressivo.setCorrente(pgCorrente);
 	progressivo.setUser(user);
@@ -95,14 +95,14 @@ public Long getNextTempPg(UserContext userContext,Integer esercizio, String cd_c
 		progressivo.setCd_tipo_documento_amm(tipoDocTemp);
 		progressivo.setEsercizio(esercizio);
 		
-		pgCorrente = new Long(-1);
+		pgCorrente = Long.valueOf(-1);
 		progressivo.setCorrente(pgCorrente);
 		insert(progressivo, userContext);
 		
 		return pgCorrente;
 	}
 	
-	pgCorrente = new Long(progressivo.getCorrente().longValue()-1);
+	pgCorrente = Long.valueOf(progressivo.getCorrente().longValue()-1);
 	progressivo.setCorrente(pgCorrente);
 	progressivo.setUser(user);
 	lock(progressivo);

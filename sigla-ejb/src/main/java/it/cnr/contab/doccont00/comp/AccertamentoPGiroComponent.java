@@ -110,7 +110,7 @@ private void aggiornaCapitoloSaldoAccertamento (UserContext aUC,AccertamentoPGir
 		else if ( azione == CANCELLAZIONE )
 			aggiornaSaldiInModifica( aUC, 
 											 accertamento, 
-											 new Long(accertamento.getPg_ver_rec().longValue() + 1),
+											 Long.valueOf(accertamento.getPg_ver_rec().longValue() + 1),
 											 false);		
 			
 						
@@ -633,7 +633,7 @@ public AccertamentoPGiroBulk creaAccertamento(UserContext uc,ImpegnoPGiroBulk im
 			throw new ApplicationException("Configurazione CNR: manca il CODICE TERZI nella definizione del codice diversi per partite di giro");
 
 		SQLBuilder sql = getHomeCache(uc).getHome( it.cnr.contab.anagraf00.core.bulk.TerzoBulk.class ).createSQLBuilder();
-		sql.addClause("AND","cd_terzo", sql.EQUALS, new Integer(config.getIm01().intValue()));
+		sql.addClause("AND","cd_terzo", sql.EQUALS, Integer.valueOf(config.getIm01().intValue()));
 		List result = getHomeCache(uc).getHome( it.cnr.contab.anagraf00.core.bulk.TerzoBulk.class ).fetchAll( sql );
 		if ( result.size() > 0)
 			accert_pgiro.setCd_terzo( ((it.cnr.contab.anagraf00.core.bulk.TerzoBulk) result.get(0)).getCd_terzo());
@@ -1971,7 +1971,7 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
   * @param acc <code>AccertamentoPGiroBulk</code> l'accertamento su partita di giro da validare
   *
  */
-protected void verificaAccertamento(UserContext userContext, AccertamentoPGiroBulk acc ) throws it.cnr.jada.persistency.PersistencyException, ComponentException, ApplicationException, javax.ejb.EJBException
+protected void verificaAccertamento(UserContext userContext, AccertamentoPGiroBulk acc ) throws it.cnr.jada.persistency.PersistencyException, ComponentException, ApplicationException, jakarta.ejb.EJBException
 {
 	if ( acc.isToBeCreated() )
 	{
@@ -2024,7 +2024,7 @@ void verificaStatoEsercizio( UserContext userContext, Integer es, String cd_cds 
 void verificaStatoEsercizioEsPrecedente( UserContext userContext, Integer es, String cd_cds ) throws ComponentException, it.cnr.jada.persistency.PersistencyException
 {
 	EsercizioBulk esPrec = (EsercizioBulk) getHome(userContext, EsercizioBulk.class).findByPrimaryKey( 
-																									new EsercizioBulk( cd_cds, new Integer( es.intValue() - 1 )));
+																									new EsercizioBulk( cd_cds, Integer.valueOf( es.intValue() - 1 )));
 	if (esPrec != null && !esPrec.STATO_CHIUSO_DEF.equals(esPrec.getSt_apertura_chiusura()))
 			throw handleException( new ApplicationException( "Operazione impossibile: esercizio precedente non chiuso!") );
 			

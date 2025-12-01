@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.docamm00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.docamm00.comp.VoceIvaComponent;
 @Stateless(name="CNRDOCAMM00_EJB_VoceIvaComponentSession")
@@ -26,10 +26,8 @@ public class VoceIvaComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSe
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.docamm00.comp.VoceIvaComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new VoceIvaComponentSessionBean();
-}
-public it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk caricaVoceIvaDefault(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk caricaVoceIvaDefault(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk result = ((VoceIvaComponent)componentObj).caricaVoceIvaDefault(param0);
@@ -47,7 +45,7 @@ public it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk caricaVoceIvaDefault(it.c
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public boolean validaVoceIva(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk param1) throws javax.ejb.EJBException {
+public boolean validaVoceIva(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk param1) throws jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		boolean result = ((VoceIvaComponent)componentObj).validaVoceIva(param0,param1);
@@ -59,7 +57,7 @@ public boolean validaVoceIva(it.cnr.jada.UserContext param0,it.cnr.contab.docamm
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public java.util.List findListaVoceIVAWS(it.cnr.jada.UserContext param0,String param1,String param2,String param3) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public java.util.List findListaVoceIVAWS(it.cnr.jada.UserContext param0,String param1,String param2,String param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.util.List result = ((VoceIvaComponent)componentObj).findListaVoceIVAWS(param0,param1,param2,param3);

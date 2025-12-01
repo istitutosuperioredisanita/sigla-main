@@ -463,7 +463,7 @@ public class RimodulaProgettoRicercaComponent extends it.cnr.jada.comp.CRUDCompo
 				});
 			progettoRimodulazione.setPg_rimodulazione(listRimodulazioni.stream().mapToInt(Progetto_rimodulazioneBulk::getPg_rimodulazione).max().orElse(0)+1);
 			progettoRimodulazione.setPg_gen_rimodulazione(
-				new Integer(((Integer)prgRimodulazioneHome.findAndLockMax( new Progetto_rimodulazioneBulk(), "pg_gen_rimodulazione", new Integer(0) )).intValue()+1));
+				Integer.valueOf(((Integer)prgRimodulazioneHome.findAndLockMax( new Progetto_rimodulazioneBulk(), "pg_gen_rimodulazione", Integer.valueOf(0) )).intValue()+1));
 
 			progettoRimodulazione.setStato(StatoProgettoRimodulazione.STATO_PROVVISORIO.value());
 			progettoRimodulazione.setImVarFinanziato(progettoRimodulazione.getImFinanziatoRimodulato().subtract(progettoRimodulazione.getProgetto().getImFinanziato()));

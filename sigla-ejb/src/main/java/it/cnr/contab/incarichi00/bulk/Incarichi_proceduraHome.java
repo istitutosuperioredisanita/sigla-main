@@ -43,8 +43,8 @@ public class Incarichi_proceduraHome extends BulkHome {
 		try {
 			((Incarichi_proceduraBulk)bulk).setEsercizio(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
 			((Incarichi_proceduraBulk)bulk).setPg_procedura(
-					new Long(
-					((Long)findAndLockMax( bulk, "pg_procedura", new Long(0) )).longValue()+1
+					Long.valueOf(
+					((Long)findAndLockMax( bulk, "pg_procedura", Long.valueOf(0) )).longValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

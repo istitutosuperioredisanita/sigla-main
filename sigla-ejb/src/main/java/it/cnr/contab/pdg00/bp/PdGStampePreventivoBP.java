@@ -34,7 +34,7 @@ public it.cnr.jada.util.RemoteIterator find(it.cnr.jada.action.ActionContext act
 	return null;
 }
 
-public boolean isUoPrincipale(CNRUserContext userContext) throws javax.ejb.EJBException,java.rmi.RemoteException, ComponentException {
+public boolean isUoPrincipale(CNRUserContext userContext) throws jakarta.ejb.EJBException,java.rmi.RemoteException, ComponentException {
 	it.cnr.contab.pdg00.ejb.PdGPreventivoComponentSession comp = (it.cnr.contab.pdg00.ejb.PdGPreventivoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPDG00_EJB_PdGPreventivoComponentSession", it.cnr.contab.pdg00.ejb.PdGPreventivoComponentSession.class);
 	return comp.isUoPrincipale(userContext);
 	}

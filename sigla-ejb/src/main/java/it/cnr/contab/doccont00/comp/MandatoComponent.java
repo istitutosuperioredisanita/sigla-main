@@ -1528,7 +1528,7 @@ public class MandatoComponent extends ScritturaPartitaDoppiaFromDocumentoCompone
     protected void chiamaVsx(UserContext userContext,
                              MandatoAccreditamentoBulk mandato) throws ComponentException {
         try {
-            Integer last_par_num = new Integer(1);
+            Integer last_par_num = Integer.valueOf(1);
             Long pg_call = getPg_call(userContext);
             V_impegnoBulk impegno;
             for (Iterator i = mandato.getImpegniSelezionatiColl().iterator(); i
@@ -2709,7 +2709,7 @@ public class MandatoComponent extends ScritturaPartitaDoppiaFromDocumentoCompone
             documento.setIm_totale(mandato.getIm_mandato());
             DivisaBulk divisa = new DivisaBulk(
                     docGenerico_createConfigurazioneCnrComponentSession()
-                            .getVal01(userContext, new Integer(0), "*",
+                            .getVal01(userContext, Integer.valueOf(0), "*",
                                     Configurazione_cnrBulk.PK_CD_DIVISA,
                                     Configurazione_cnrBulk.SK_EURO));
             documento.setValuta(divisa);
@@ -3489,7 +3489,7 @@ public class MandatoComponent extends ScritturaPartitaDoppiaFromDocumentoCompone
                         .getClass());
                 cs.registerOutParameter(1, java.sql.Types.NUMERIC);
                 cs.executeQuery();
-                pg = new Long(cs.getLong(1));
+                pg = Long.valueOf(cs.getLong(1));
             } catch (Throwable e) {
                 throw handleException(e);
             } finally {
@@ -3962,11 +3962,11 @@ public class MandatoComponent extends ScritturaPartitaDoppiaFromDocumentoCompone
         stampa.setEsercizio(CNRUserContext.getEsercizio(userContext));
         stampa.setCd_cds(CNRUserContext.getCd_cds(userContext));
 
-        stampa.setPgInizioMand(new Long(0));
-        stampa.setPgFineMand(new Long("9999999999"));
+        stampa.setPgInizioMand(Long.valueOf(0));
+        stampa.setPgFineMand(Long.valueOf("9999999999"));
 
-        stampa.setPgInizioDist(new Long(0));
-        stampa.setPgFineDist(new Long("9999999999"));
+        stampa.setPgInizioDist(Long.valueOf(0));
+        stampa.setPgFineDist(Long.valueOf("9999999999"));
 
         String cd_uo = CNRUserContext.getCd_unita_organizzativa(userContext);
 
@@ -4006,8 +4006,8 @@ public class MandatoComponent extends ScritturaPartitaDoppiaFromDocumentoCompone
         stampa.setDataInizio(DateServices.getFirstDayOfYear(CNRUserContext
                 .getEsercizio(userContext).intValue()));
         stampa.setDataFine(getDataOdierna(userContext));
-        stampa.setPgInizio(new Long(0));
-        stampa.setPgFine(new Long("9999999999"));
+        stampa.setPgInizio(Long.valueOf(0));
+        stampa.setPgFine(Long.valueOf("9999999999"));
 
         // stampa.setUnita_organizzativa(new Unita_organizzativaBulk());
 
@@ -4085,8 +4085,8 @@ public class MandatoComponent extends ScritturaPartitaDoppiaFromDocumentoCompone
             stampa.setDataInizio(DateServices.getFirstDayOfYear(CNRUserContext
                     .getEsercizio(userContext).intValue()));
             stampa.setDataFine(getDataOdierna(userContext));
-            //stampa.setPgInizio(new Long(0));
-            //stampa.setPgFine(new Long("9999999999"));
+            //stampa.setPgInizio(Long.valueOf(0));
+            //stampa.setPgFine(Long.valueOf("9999999999"));
 
             stampa.setTerzoForPrint(new TerzoBulk());
         } catch (it.cnr.jada.persistency.PersistencyException pe) {
@@ -4338,7 +4338,7 @@ public class MandatoComponent extends ScritturaPartitaDoppiaFromDocumentoCompone
                 ps.setObject(9, impegno.getPg_ver_rec_scadenza());
                 ps.setObject(10, impegno.getIm_da_trasferire());
                 ps.setString(11, VSX_PROC_NAME);
-                ps.setObject(12, new Integer(1));
+                ps.setObject(12, Integer.valueOf(1));
                 ps.setString(13, userContext.getUser());
                 ps.setString(14, userContext.getUser());
                 Timestamp now = it.cnr.jada.util.ejb.EJBCommonServices
@@ -4348,7 +4348,7 @@ public class MandatoComponent extends ScritturaPartitaDoppiaFromDocumentoCompone
                 ps.setString(17, null);
                 ps.executeUpdate();
 
-                last_par_num = new Integer(last_par_num.intValue() + 1);
+                last_par_num = Integer.valueOf(last_par_num.intValue() + 1);
                 return last_par_num;
 
             } finally {

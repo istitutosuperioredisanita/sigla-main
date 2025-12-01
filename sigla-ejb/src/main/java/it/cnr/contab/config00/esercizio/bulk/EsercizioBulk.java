@@ -46,13 +46,13 @@ public class EsercizioBulk extends EsercizioBase {
         try {
             ESERCIZIO_INIZIO_DA_CONFIG = Integer.valueOf(Config.getHandler().getProperty(EsercizioBulk.class, "Esercizio.inizio"));
         } catch (Throwable t) {
-            ESERCIZIO_INIZIO_DA_CONFIG = new Integer(2003);
+            ESERCIZIO_INIZIO_DA_CONFIG = Integer.valueOf(2003);
         }
         Integer ESERCIZIO_FINE_DA_CONFIG;
         try {
             ESERCIZIO_FINE_DA_CONFIG = Integer.valueOf(Config.getHandler().getProperty(EsercizioBulk.class, "Esercizio.fine"));
         } catch (Throwable t) {
-            ESERCIZIO_FINE_DA_CONFIG = new Integer(2100);
+            ESERCIZIO_FINE_DA_CONFIG = Integer.valueOf(2100);
         }
         ESERCIZIO_INIZIO = ESERCIZIO_INIZIO_DA_CONFIG;
         ESERCIZIO_FINE = ESERCIZIO_FINE_DA_CONFIG;

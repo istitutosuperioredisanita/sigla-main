@@ -17,7 +17,7 @@
 
 package it.cnr.contab.ordmag.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.ordmag.anag00.NumerazioneMagBulk;
 import it.cnr.contab.ordmag.anag00.NumerazioneOrdBulk;

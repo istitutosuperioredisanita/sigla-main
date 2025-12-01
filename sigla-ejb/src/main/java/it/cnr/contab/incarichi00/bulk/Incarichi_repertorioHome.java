@@ -52,8 +52,8 @@ public class Incarichi_repertorioHome extends BulkHome {
 		try {
 			((Incarichi_repertorioBulk)bulk).setEsercizio(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
 			((Incarichi_repertorioBulk)bulk).setPg_repertorio(
-					new Long(
-					((Long)findAndLockMax( bulk, "pg_repertorio", new Long(0) )).longValue()+1
+					Long.valueOf(
+					((Long)findAndLockMax( bulk, "pg_repertorio", Long.valueOf(0) )).longValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

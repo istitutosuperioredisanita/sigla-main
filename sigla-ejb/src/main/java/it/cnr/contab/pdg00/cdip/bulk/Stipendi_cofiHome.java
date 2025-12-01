@@ -77,7 +77,7 @@ public Stipendi_cofiHome(java.sql.Connection conn) {
 				.ifPresent(stipendiCofiBulk -> {
 					try {
 						stipendiCofiBulk.setMese(
-								((Integer)findAndLockMax(oggettobulk, "mese", new Integer(0))).intValue() + 1
+								((Integer)findAndLockMax(oggettobulk, "mese", Integer.valueOf(0))).intValue() + 1
 						);
 					} catch (PersistencyException|BusyResourceException e) {
 						throw new DetailedRuntimeException(e);

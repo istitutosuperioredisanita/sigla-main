@@ -19,7 +19,7 @@ package it.cnr.contab.missioni00.ejb;
 
 import it.cnr.contab.docamm00.ejb.IDocumentoAmministrativoSpesaComponentSession;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface AnticipoComponentSession extends it.cnr.jada.ejb.CRUDComponentSession, IDocumentoAmministrativoSpesaComponentSession {

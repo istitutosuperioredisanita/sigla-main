@@ -25,7 +25,7 @@ import it.cnr.contab.progettiric00.geco.bulk.Geco_moduloIBulk;
 import it.cnr.contab.progettiric00.geco.bulk.Geco_progettoIBulk;
 import it.cnr.jada.bulk.OggettoBulk;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface ProgettoGecoComponentSession extends it.cnr.jada.ejb.CRUDComponentSession{

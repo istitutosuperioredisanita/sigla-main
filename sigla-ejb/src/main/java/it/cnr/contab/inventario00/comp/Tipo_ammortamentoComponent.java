@@ -716,7 +716,7 @@ private Tipo_ammortamentoBulk findTipoAmmortamentoPerModifica(UserContext aUC,Ti
 
 		// Cerca l'ESERCIZIO DI COMPETENZA
 		String query_esercizio = "SELECT DISTINCT(ESERCIZIO_COMPETENZA) FROM ASS_TIPO_AMM_CAT_GRUP_INV WHERE CD_TIPO_AMMORTAMENTO = ?";
-		Integer esercizio_competenza = new Integer(0);
+		Integer esercizio_competenza = Integer.valueOf(0);
 		
 		ps =new LoggableStatement(getConnection(aUC),query_esercizio,
 				true,this.getClass());
@@ -724,10 +724,10 @@ private Tipo_ammortamentoBulk findTipoAmmortamentoPerModifica(UserContext aUC,Ti
 		
 		rs = ps.executeQuery();
 		while (rs.next()){
-			esercizio_competenza = new Integer(rs.getInt("ESERCIZIO_COMPETENZA"));
+			esercizio_competenza = Integer.valueOf(rs.getInt("ESERCIZIO_COMPETENZA"));
 		}
 
-		if (esercizio_competenza.compareTo(new Integer(0))==0)
+		if (esercizio_competenza.compareTo(Integer.valueOf(0))==0)
 			esercizio_competenza = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(aUC);		
 		tipo_ammortamento.setEsercizio_competenza(esercizio_competenza);
 		
