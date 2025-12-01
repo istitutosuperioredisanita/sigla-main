@@ -55,10 +55,10 @@ public class AnagraficoResource implements AnagraficoLocal {
 	@Context
     SecurityContext securityContext;
     @EJB CRUDComponentSession crudComponentSession;
-    @Inject TerzoComponentSession terzoComponentSession;
-    @Inject AnagraficoComponentSession anagraficoComponentSession;
-    @Inject ComuneComponentSession comuneComponentSession;
-    @Inject Unita_organizzativaComponentSession unita_organizzativaComponentSession;
+    @EJB TerzoComponentSession terzoComponentSession;
+    @EJB AnagraficoComponentSession anagraficoComponentSession;
+    @EJB ComuneComponentSession comuneComponentSession;
+    @EJB Unita_organizzativaComponentSession unita_organizzativaComponentSession;
 	
     public Response insert(@Context HttpServletRequest request, AnagraficoBulk anagraficoBulk) throws Exception {
     	CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();

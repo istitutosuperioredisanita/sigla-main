@@ -50,7 +50,7 @@ public class TerzoResource implements TerzoLocal {
 	@Context
     SecurityContext securityContext;
     @EJB CRUDComponentSession crudComponentSession;
-	@Inject TerzoComponentSession terzoComponentSession;
+	@EJB TerzoComponentSession terzoComponentSession;
 
     public Response update(@Context HttpServletRequest request, TerzoBulk terzoBulk) throws Exception {
     	CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();

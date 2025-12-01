@@ -56,11 +56,11 @@ import java.util.Optional;
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class PECFattureAttiveResource implements PECFattureAttiveLocal {
     private static final Logger logger = LoggerFactory.getLogger(PECFattureAttiveResource.class);
-    @Inject
+    @EJB
     private Configurazione_cnrComponentSession configurazione_cnrComponentSession;
-    @Inject
+    @EJB
     private DocAmmFatturazioneElettronicaComponentSession docAmmFatturazioneElettronicaComponentSession;
-    @Inject
+    @EJB
     private FatturaAttivaSingolaComponentSession fatturaAttivaSingolaComponentSession;
     @EJB CRUDComponentSession crudComponentSession;
     @Context

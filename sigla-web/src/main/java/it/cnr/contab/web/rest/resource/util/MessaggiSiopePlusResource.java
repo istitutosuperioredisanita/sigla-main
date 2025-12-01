@@ -54,7 +54,7 @@ import java.util.stream.Stream;
 public class MessaggiSiopePlusResource implements MessaggiSiopePlusLocal {
     private static final Logger logger = LoggerFactory.getLogger(MessaggiSiopePlusResource.class);
 
-    @Inject
+    @EJB
     private Configurazione_cnrComponentSession configurazione_cnrComponentSession;
 
     @Override

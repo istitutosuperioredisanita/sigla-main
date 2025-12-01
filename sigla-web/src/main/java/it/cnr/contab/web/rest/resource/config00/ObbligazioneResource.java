@@ -43,7 +43,7 @@ public class ObbligazioneResource implements ObbligazioneLocal {
     SecurityContext securityContext;
     @EJB
     CRUDComponentSession crudComponentSession;
-    @Inject
+    @EJB
     @TipoObbligazione(TipoObbligazione.Tipo.BASE)
     ObbligazioneComponentSession obbligazioneComponentSession;
 
@@ -164,7 +164,7 @@ public class ObbligazioneResource implements ObbligazioneLocal {
         obbligazioneBulk.setCd_cds_origine(obbligazioneBulk.getCd_cds());
         obbligazioneBulk.setCd_uo_origine(obbligazioneBulk.getUnita_organizzativa().getCd_unita_organizzativa());
         obbligazioneBulk.setCd_tipo_documento_cont(Numerazione_doc_contBulk.TIPO_OBB);
-        obbligazioneBulk.setFl_pgiro(new Boolean(false));
+        obbligazioneBulk.setFl_pgiro(Boolean.FALSE);
         obbligazioneBulk.setRiportato("N");
         obbligazioneBulk.setFromDocAmm(Boolean.FALSE);
         obbligazioneBulk.setFl_calcolo_automatico(Boolean.FALSE);

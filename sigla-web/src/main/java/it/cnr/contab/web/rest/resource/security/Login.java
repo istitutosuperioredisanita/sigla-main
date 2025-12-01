@@ -46,7 +46,7 @@ public class Login {
     @Context
     SecurityContext securityContext;
 
-    @Inject
+    @EJB
     private AccountLocal accountLocal;
 
     @POST

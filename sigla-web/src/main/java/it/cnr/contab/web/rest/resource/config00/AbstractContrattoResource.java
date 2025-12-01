@@ -45,7 +45,7 @@ public abstract class AbstractContrattoResource {
     @Context SecurityContext securityContext;
     @EJB CRUDComponentSession crudComponentSession;
     @EJB ContrattoComponentSession contrattoComponentSession;
-    @Inject Unita_organizzativaComponentSession unita_organizzativaComponentSession;
+    @EJB Unita_organizzativaComponentSession unita_organizzativaComponentSession;
 
     private void checkRowDettaglioContrattoArticolo(DettaglioContrattoDtoBulk row){
         if (!Optional.ofNullable(row.getCdBeneServizio()).isPresent())

@@ -61,8 +61,8 @@ public class MissioneResource implements MissioneLocal {
 	@Context SecurityContext securityContext;
     @EJB
     CRUDComponentSession crudComponentSession;
-    @Inject MissioneComponentSession missioneComponentSession;
-    @Inject Unita_organizzativaComponentSession unita_organizzativaComponentSession;
+    @EJB MissioneComponentSession missioneComponentSession;
+    @EJB Unita_organizzativaComponentSession unita_organizzativaComponentSession;
 	
     public Response validaMassimaleSpesa(@Context HttpServletRequest request, MassimaleSpesaBulk massimaleSpesaBulk) throws Exception {
 		Response.ResponseBuilder rb;

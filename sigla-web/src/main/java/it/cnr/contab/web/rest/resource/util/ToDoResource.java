@@ -84,18 +84,13 @@ public class ToDoResource implements ToDoLocal {
     SecurityContext securityContext;
 
     @EJB PdGVariazioniComponentSession pdGVariazioniComponentSession;
-    @Inject
-    GestioneLoginComponentSession gestioneLoginComponentSession;
+    @EJB GestioneLoginComponentSession gestioneLoginComponentSession;
     @EJB FatturaElettronicaPassivaComponentSession fatturaElettronicaPassivaComponentSession;
     @EJB CRUDComponentSession crudComponentSession;
-    @Inject
-    UtenteComponentSession utenteComponentSession;
-    @Inject
-    MissioneComponentSession missioneComponentSession;
-    @Inject
-    Configurazione_cnrComponentSession configurazione_cnrComponentSession;
-    @Inject
-    OrdineAcqComponentSession ordineAcqComponentSession;
+    @EJB UtenteComponentSession utenteComponentSession;
+    @EJB MissioneComponentSession missioneComponentSession;
+    @EJB Configurazione_cnrComponentSession configurazione_cnrComponentSession;
+    @EJB OrdineAcqComponentSession ordineAcqComponentSession;
 
     public Response all(@Context HttpServletRequest request) {
         return Response.ok(

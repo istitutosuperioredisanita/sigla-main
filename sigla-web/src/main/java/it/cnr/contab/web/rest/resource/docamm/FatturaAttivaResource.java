@@ -93,14 +93,14 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
     @Context
     SecurityContext securityContext;
 
-    @Inject
+    @EJB
     FatturaAttivaSingolaComponentSession fatturaAttivaSingolaComponentSession;
     @EJB
     Configurazione_cnrComponentSession configurazione_cnrComponentSession;
-    @Inject
+    @EJB
     @TipoAccertamento(TipoAccertamento.Tipo.BASE)
     AccertamentoComponentSession accertamentoComponentSession;
-    @Inject
+    @EJB
     @TipoObbligazione(TipoObbligazione.Tipo.BASE)
     ObbligazioneComponentSession obbligazioneComponentSession;
 

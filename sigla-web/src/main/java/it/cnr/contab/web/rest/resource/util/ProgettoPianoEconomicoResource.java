@@ -43,7 +43,7 @@ import java.util.StringJoiner;
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class ProgettoPianoEconomicoResource implements ProgettoPianoEconomicoLocal {
     private transient static final Logger logger = LoggerFactory.getLogger(ProgettoPianoEconomicoResource.class);
-    @Inject
+    @EJB
     private SaldoComponentSession saldoComponentSession;
     @EJB CRUDComponentSession crudComponentSession;
     @Context

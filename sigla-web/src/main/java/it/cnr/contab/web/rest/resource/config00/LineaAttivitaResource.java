@@ -45,7 +45,7 @@ public class LineaAttivitaResource implements LineaAttivitaLocal {
     @Context
     SecurityContext securityContext;
     @EJB CRUDComponentSession crudComponentSession;
-    @Inject
+    @EJB
     Linea_attivitaComponentSession lineaAttivitaComponentSession;
 
     private void validateLineaAttivita(HttpServletRequest request, LineaAttivitaDto lineaAttivita){

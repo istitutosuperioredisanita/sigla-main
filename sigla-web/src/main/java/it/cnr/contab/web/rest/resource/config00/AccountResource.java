@@ -56,7 +56,7 @@ public class AccountResource implements AccountLocal {
 
     @EJB
     CRUDComponentSession crudComponentSession;
-    @Inject
+    @EJB
     private GestioneLoginComponentSession gestioneLoginComponentSession;
 
     public AccountDTO getAccountDTO(HttpServletRequest request) throws Exception {
