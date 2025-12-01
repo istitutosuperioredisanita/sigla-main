@@ -26,7 +26,7 @@ import it.cnr.jada.comp.ComponentException;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Vector;
-
+@TipoAccertamento(TipoAccertamento.Tipo.PLURIENNALE)
 public class TransactionalAccertamentoPluriennaleComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements AccertamentoPluriennaleComponentSession {
     public void aggiornaCogeCoanInDifferita(UserContext param0, it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1, java.util.Map param2) throws RemoteException, ComponentException {
         try {

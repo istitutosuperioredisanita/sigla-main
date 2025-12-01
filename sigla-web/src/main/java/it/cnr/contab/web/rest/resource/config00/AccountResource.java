@@ -31,6 +31,8 @@ import it.cnr.contab.web.rest.model.PasswordDTO;
 import it.cnr.contab.web.rest.resource.util.AbstractResource;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
@@ -38,7 +40,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Base64Utils;
 
-import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -54,8 +55,8 @@ public class AccountResource implements AccountLocal {
     SecurityContext securityContext;
 
     @EJB
-    private CRUDComponentSession crudComponentSession;
-    @EJB
+    CRUDComponentSession crudComponentSession;
+    @Inject
     private GestioneLoginComponentSession gestioneLoginComponentSession;
 
     public AccountDTO getAccountDTO(HttpServletRequest request) throws Exception {

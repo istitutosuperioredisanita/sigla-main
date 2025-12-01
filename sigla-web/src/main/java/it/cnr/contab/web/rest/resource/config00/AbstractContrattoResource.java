@@ -21,6 +21,8 @@ import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.PersistencyException;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
@@ -28,7 +30,6 @@ import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.ejb.EJB;
 import jakarta.ejb.EJBException;
 import jakarta.ejb.Stateless;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,7 +45,7 @@ public abstract class AbstractContrattoResource {
     @Context SecurityContext securityContext;
     @EJB CRUDComponentSession crudComponentSession;
     @EJB ContrattoComponentSession contrattoComponentSession;
-    @EJB Unita_organizzativaComponentSession unita_organizzativaComponentSession;
+    @Inject Unita_organizzativaComponentSession unita_organizzativaComponentSession;
 
     private void checkRowDettaglioContrattoArticolo(DettaglioContrattoDtoBulk row){
         if (!Optional.ofNullable(row.getCdBeneServizio()).isPresent())

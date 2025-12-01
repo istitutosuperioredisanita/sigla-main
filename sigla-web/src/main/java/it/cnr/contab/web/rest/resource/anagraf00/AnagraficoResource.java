@@ -34,13 +34,14 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.PersistencyException;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.ejb.EJB;
 import jakarta.ejb.EJBException;
 import jakarta.ejb.Stateless;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,11 +54,11 @@ public class AnagraficoResource implements AnagraficoLocal {
     private final Logger LOGGER = LoggerFactory.getLogger(AnagraficoResource.class);
 	@Context
     SecurityContext securityContext;
-	@EJB CRUDComponentSession crudComponentSession;
-	@EJB TerzoComponentSession terzoComponentSession;
-	@EJB AnagraficoComponentSession anagraficoComponentSession;
-	@EJB ComuneComponentSession comuneComponentSession;
-	@EJB Unita_organizzativaComponentSession unita_organizzativaComponentSession;
+    @EJB CRUDComponentSession crudComponentSession;
+    @Inject TerzoComponentSession terzoComponentSession;
+    @Inject AnagraficoComponentSession anagraficoComponentSession;
+    @Inject ComuneComponentSession comuneComponentSession;
+    @Inject Unita_organizzativaComponentSession unita_organizzativaComponentSession;
 	
     public Response insert(@Context HttpServletRequest request, AnagraficoBulk anagraficoBulk) throws Exception {
     	CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();

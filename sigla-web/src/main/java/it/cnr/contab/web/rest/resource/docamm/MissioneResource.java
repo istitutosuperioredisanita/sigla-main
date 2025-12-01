@@ -30,10 +30,12 @@ import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.local.docamm.MissioneLocal;
 import it.cnr.contab.web.rest.model.MassimaleSpesaBulk;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.PersistencyException;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
+import jakarta.validation.ValidationException;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
@@ -41,7 +43,6 @@ import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.ejb.EJB;
 import jakarta.ejb.EJBException;
 import jakarta.ejb.Stateless;
 import jakarta.servlet.http.HttpServletRequest;
@@ -58,9 +59,10 @@ import java.util.stream.Stream;
 public class MissioneResource implements MissioneLocal {
     private final Logger LOGGER = LoggerFactory.getLogger(MissioneResource.class);
 	@Context SecurityContext securityContext;
-	@EJB CRUDComponentSession crudComponentSession;
-	@EJB MissioneComponentSession missioneComponentSession;
-	@EJB Unita_organizzativaComponentSession unita_organizzativaComponentSession;
+    @EJB
+    CRUDComponentSession crudComponentSession;
+    @Inject MissioneComponentSession missioneComponentSession;
+    @Inject Unita_organizzativaComponentSession unita_organizzativaComponentSession;
 	
     public Response validaMassimaleSpesa(@Context HttpServletRequest request, MassimaleSpesaBulk massimaleSpesaBulk) throws Exception {
 		Response.ResponseBuilder rb;

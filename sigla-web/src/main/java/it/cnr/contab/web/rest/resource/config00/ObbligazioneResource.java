@@ -9,6 +9,7 @@ import it.cnr.contab.config00.pdcfin.bulk.NaturaBulk;
 import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.doccont00.ejb.ObbligazioneComponentSession;
+import it.cnr.contab.doccont00.ejb.TipoObbligazione;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.local.config00.ObbligazioneLocal;
@@ -17,6 +18,8 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.PersistencyException;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
@@ -24,7 +27,6 @@ import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -41,7 +43,8 @@ public class ObbligazioneResource implements ObbligazioneLocal {
     SecurityContext securityContext;
     @EJB
     CRUDComponentSession crudComponentSession;
-    @EJB
+    @Inject
+    @TipoObbligazione(TipoObbligazione.Tipo.BASE)
     ObbligazioneComponentSession obbligazioneComponentSession;
 
     private void validaContestoObbligazione(CNRUserContext userContext,

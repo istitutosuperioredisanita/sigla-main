@@ -54,6 +54,8 @@ import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
@@ -61,7 +63,6 @@ import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
@@ -82,21 +83,18 @@ public class ToDoResource implements ToDoLocal {
     @Context
     SecurityContext securityContext;
 
-    @EJB
-    PdGVariazioniComponentSession pdGVariazioniComponentSession;
-    @EJB
+    @EJB PdGVariazioniComponentSession pdGVariazioniComponentSession;
+    @Inject
     GestioneLoginComponentSession gestioneLoginComponentSession;
-    @EJB
-    FatturaElettronicaPassivaComponentSession fatturaElettronicaPassivaComponentSession;
-    @EJB
-    CRUDComponentSession crudComponentSession;
-    @EJB
+    @EJB FatturaElettronicaPassivaComponentSession fatturaElettronicaPassivaComponentSession;
+    @EJB CRUDComponentSession crudComponentSession;
+    @Inject
     UtenteComponentSession utenteComponentSession;
-    @EJB
+    @Inject
     MissioneComponentSession missioneComponentSession;
-    @EJB
+    @Inject
     Configurazione_cnrComponentSession configurazione_cnrComponentSession;
-    @EJB
+    @Inject
     OrdineAcqComponentSession ordineAcqComponentSession;
 
     public Response all(@Context HttpServletRequest request) {

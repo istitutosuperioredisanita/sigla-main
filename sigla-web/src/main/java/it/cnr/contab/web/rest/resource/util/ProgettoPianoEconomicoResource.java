@@ -17,35 +17,21 @@
 
 package it.cnr.contab.web.rest.resource.util;
 
-import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
-import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_IBulk;
-import it.cnr.contab.docamm00.ejb.DocAmmFatturazioneElettronicaComponentSession;
-import it.cnr.contab.docamm00.service.DocumentiCollegatiDocAmmService;
-import it.cnr.contab.docamm00.service.FatturaPassivaElettronicaService;
 import it.cnr.contab.doccont00.ejb.SaldoComponentSession;
 import it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk;
-import it.cnr.contab.pdg00.bulk.Pdg_variazioneHome;
 import it.cnr.contab.varstanz00.bulk.Var_stanz_resBulk;
-import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.contab.util.StringEncrypter;
 import it.cnr.contab.web.rest.local.util.ProgettoPianoEconomicoLocal;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.ejb.CRUDComponentSession;
-import it.cnr.jada.persistency.sql.HomeCache;
-import it.cnr.si.spring.storage.MimeTypes;
-import it.cnr.si.spring.storage.StorageDriver;
-import it.cnr.si.spring.storage.StorageObject;
-import it.cnr.si.spring.storage.config.StoragePropertyNames;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
@@ -57,10 +43,9 @@ import java.util.StringJoiner;
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class ProgettoPianoEconomicoResource implements ProgettoPianoEconomicoLocal {
     private transient static final Logger logger = LoggerFactory.getLogger(ProgettoPianoEconomicoResource.class);
-    @EJB
+    @Inject
     private SaldoComponentSession saldoComponentSession;
-    @EJB
-    CRUDComponentSession crudComponentSession;
+    @EJB CRUDComponentSession crudComponentSession;
     @Context
     SecurityContext securityContext;
 

@@ -60,6 +60,7 @@
         <version.wildfly.maven.plugin>12.0.0.Final</version.wildfly.maven.plugin>
         <version.wildfly.datasources.galleon.pack>6.0.0.Final</version.wildfly.datasources.galleon.pack>
 
+        <jacoco.version>0.8.11</jacoco.version>
 		<version.arquillian>1.2.1.Final</version.arquillian>
 		<version.arquillian-drone>2.0.1.Final</version.arquillian-drone>
 		<version.arquillian-graphene>2.3.2</version.arquillian-graphene>

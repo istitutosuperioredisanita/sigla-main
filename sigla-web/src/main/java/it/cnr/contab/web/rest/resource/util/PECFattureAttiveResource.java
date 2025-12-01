@@ -35,6 +35,8 @@ import it.cnr.si.spring.storage.MimeTypes;
 import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
@@ -43,7 +45,6 @@ import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
@@ -55,14 +56,13 @@ import java.util.Optional;
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class PECFattureAttiveResource implements PECFattureAttiveLocal {
     private static final Logger logger = LoggerFactory.getLogger(PECFattureAttiveResource.class);
-    @EJB
+    @Inject
     private Configurazione_cnrComponentSession configurazione_cnrComponentSession;
-    @EJB
+    @Inject
     private DocAmmFatturazioneElettronicaComponentSession docAmmFatturazioneElettronicaComponentSession;
-    @EJB
+    @Inject
     private FatturaAttivaSingolaComponentSession fatturaAttivaSingolaComponentSession;
-    @EJB
-    CRUDComponentSession crudComponentSession;
+    @EJB CRUDComponentSession crudComponentSession;
     @Context
     SecurityContext securityContext;
 

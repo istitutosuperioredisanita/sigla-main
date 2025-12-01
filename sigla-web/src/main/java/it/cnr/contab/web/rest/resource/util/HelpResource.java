@@ -24,10 +24,11 @@ import it.cnr.contab.util00.bulk.HelpBulk;
 import it.cnr.contab.web.rest.local.util.HelpLocal;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.ejb.CRUDComponentSession;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
 import org.springframework.web.util.UriUtils;
 
-import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
@@ -41,8 +42,7 @@ import java.util.Optional;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class HelpResource implements HelpLocal {
-    @EJB
-    CRUDComponentSession crudComponentSession;
+    @EJB CRUDComponentSession crudComponentSession;
 
     @Override
     public Response get(HttpServletRequest request, String jspName, String bpName) throws Exception {

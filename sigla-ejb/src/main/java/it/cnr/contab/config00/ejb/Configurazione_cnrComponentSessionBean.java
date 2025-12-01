@@ -36,7 +36,7 @@ import java.util.UUID;
 @Stateless(name = "CNRCONFIG00_EJB_Configurazione_cnrComponentSession")
 public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUDDetailComponentSessionBean implements Configurazione_cnrComponentSession {
     private transient final static Logger logger = LoggerFactory.getLogger(Configurazione_cnrComponentSessionBean.class);
-
+    public Configurazione_cnrComponentSessionBean() {}
     public void ejbActivate() throws EJBException {
     }
 

@@ -20,6 +20,8 @@ package it.cnr.contab.doccont00.ejb;
 import jakarta.ejb.Remote;
 
 import it.cnr.jada.bulk.PrimaryKeyHashtable;
+import jakarta.inject.Named;
+
 @Remote
 public interface AccertamentoComponentSession extends it.cnr.jada.ejb.CRUDComponentSession, it.cnr.contab.doccont00.comp.DocumentoContabileComponentSession, it.cnr.jada.ejb.PrintComponentSession {
 void aggiornaCogeCoanInDifferita(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1,java.util.Map param2) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;

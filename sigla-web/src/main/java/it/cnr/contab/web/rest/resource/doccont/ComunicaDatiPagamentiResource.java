@@ -18,12 +18,12 @@
 package it.cnr.contab.web.rest.resource.doccont;
 
 import it.cnr.contab.doccont00.core.bulk.MandatoComunicaDatiBulk;
-import it.cnr.contab.doccont00.ejb.MandatoComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.local.doccont.ComunicaDatiPagamentiLocal;
 import it.cnr.jada.ejb.CRUDComponentSession;
-import it.cnr.jada.util.DateUtils;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
@@ -32,7 +32,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -49,8 +48,7 @@ public class ComunicaDatiPagamentiResource implements ComunicaDatiPagamentiLocal
     @Context
     SecurityContext securityContext;
 
-    @EJB
-    CRUDComponentSession crudComponentSession;
+    @EJB CRUDComponentSession crudComponentSession;
 
     @Override
     public Response recuperoDatiPagamenti(@Context HttpServletRequest request, @QueryParam("esercizio") Integer esercizio,

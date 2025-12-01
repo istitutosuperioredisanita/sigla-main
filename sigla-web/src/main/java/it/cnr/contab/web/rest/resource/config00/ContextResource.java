@@ -28,6 +28,7 @@ import it.cnr.contab.web.rest.resource.util.AbstractResource;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
+import jakarta.ejb.EJB;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.core.Context;
@@ -37,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.util.Pair;
 
-import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
 import java.util.Arrays;
@@ -52,7 +52,7 @@ public class ContextResource implements ContextLocal {
     SecurityContext securityContext;
 
     @EJB
-    private CRUDComponentSession crudComponentSession;
+    CRUDComponentSession crudComponentSession;
 
     @Override
     public Response esercizi(HttpServletRequest request, String cds) throws Exception {

@@ -58,6 +58,32 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <argLine>
+                        --add-opens java.base/java.util=ALL-UNNAMED
+                        --add-opens java.base/java.lang=ALL-UNNAMED
+                    </argLine>
+                </configuration>
+            </plugin>
+
+            <!-- Aggiorna JaCoCo -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.11</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Resources Plugin - Copia module.xml -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -132,6 +158,7 @@
                 <artifactId>wildfly-jar-maven-plugin</artifactId>
                 <version>${version.wildfly.maven.plugin}</version>
                 <configuration>
+                    <jvmArguments>-Xmx2g -Xms1g -XX:MaxMetaspaceSize=512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787</jvmArguments>
                     <feature-packs>
                         <feature-pack>
                             <location>wildfly@maven(org.jboss.universe:community-universe)</location>
@@ -154,6 +181,7 @@
                         <layer>elytron-oidc-client</layer>
                         <layer>microprofile-openapi</layer>
                         <layer>elytron</layer>
+                        <layer>microprofile-config</layer>
                     </layers>
 
                     <!-- IMPORTANTE: Include il modulo custom -->
@@ -214,19 +242,11 @@
             <groupId>it.cnr.si.sigla</groupId>
             <artifactId>sigla-ejb</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>it.cnr.si</groupId>
             <artifactId>jada</artifactId>
             <version>${jada.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>it.cnr.si.sigla</groupId>
-            <artifactId>sigla-ws</artifactId>
-            <version>${project.version}</version>
-            <type>ejb</type>
         </dependency>
         <dependency>
             <groupId>it.cnr.si.sigla</groupId>
@@ -303,6 +323,17 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-oxm</artifactId>
             <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-ldap</artifactId>
+            <version>2.2.6.RELEASE</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.ws</groupId>

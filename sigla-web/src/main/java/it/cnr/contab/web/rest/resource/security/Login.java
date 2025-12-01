@@ -19,6 +19,7 @@ package it.cnr.contab.web.rest.resource.security;
 
 import it.cnr.contab.web.rest.exception.UnprocessableEntityException;
 import it.cnr.contab.web.rest.local.config00.AccountLocal;
+import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.POST;
@@ -45,7 +46,7 @@ public class Login {
     @Context
     SecurityContext securityContext;
 
-    @EJB
+    @Inject
     private AccountLocal accountLocal;
 
     @POST

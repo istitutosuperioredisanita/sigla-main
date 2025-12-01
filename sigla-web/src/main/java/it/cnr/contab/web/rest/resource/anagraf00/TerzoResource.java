@@ -29,6 +29,8 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.PersistencyException;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
@@ -36,7 +38,6 @@ import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.ejb.EJB;
 import jakarta.ejb.EJBException;
 import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
@@ -48,8 +49,8 @@ public class TerzoResource implements TerzoLocal {
     private final Logger LOGGER = LoggerFactory.getLogger(TerzoResource.class);
 	@Context
     SecurityContext securityContext;
-	@EJB CRUDComponentSession crudComponentSession;
-	@EJB TerzoComponentSession terzoComponentSession;
+    @EJB CRUDComponentSession crudComponentSession;
+	@Inject TerzoComponentSession terzoComponentSession;
 
     public Response update(@Context HttpServletRequest request, TerzoBulk terzoBulk) throws Exception {
     	CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();

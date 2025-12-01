@@ -45,6 +45,8 @@ import it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.doccont00.ejb.AccertamentoComponentSession;
 import it.cnr.contab.doccont00.ejb.ObbligazioneComponentSession;
+import it.cnr.contab.doccont00.ejb.TipoAccertamento;
+import it.cnr.contab.doccont00.ejb.TipoObbligazione;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.web.rest.config.FatturaAttivaCodiciEnum;
 import it.cnr.contab.web.rest.exception.FatturaAttivaException;
@@ -60,13 +62,14 @@ import it.cnr.jada.comp.FatturaNonTrovataException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.DateUtils;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -90,13 +93,15 @@ public class FatturaAttivaResource implements FatturaAttivaLocal {
     @Context
     SecurityContext securityContext;
 
-    @EJB
+    @Inject
     FatturaAttivaSingolaComponentSession fatturaAttivaSingolaComponentSession;
     @EJB
     Configurazione_cnrComponentSession configurazione_cnrComponentSession;
-    @EJB
+    @Inject
+    @TipoAccertamento(TipoAccertamento.Tipo.BASE)
     AccertamentoComponentSession accertamentoComponentSession;
-    @EJB
+    @Inject
+    @TipoObbligazione(TipoObbligazione.Tipo.BASE)
     ObbligazioneComponentSession obbligazioneComponentSession;
 
 

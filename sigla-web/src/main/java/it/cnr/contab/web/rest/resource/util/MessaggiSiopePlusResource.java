@@ -29,11 +29,12 @@ import it.cnr.si.siopeplus.model.Esito;
 import it.cnr.si.siopeplus.model.MessaggioXML;
 import it.cnr.si.siopeplus.model.Risultato;
 import it.cnr.si.siopeplus.service.OrdinativiSiopePlusFactory;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
@@ -52,7 +53,8 @@ import java.util.stream.Stream;
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class MessaggiSiopePlusResource implements MessaggiSiopePlusLocal {
     private static final Logger logger = LoggerFactory.getLogger(MessaggiSiopePlusResource.class);
-    @EJB
+
+    @Inject
     private Configurazione_cnrComponentSession configurazione_cnrComponentSession;
 
     @Override
