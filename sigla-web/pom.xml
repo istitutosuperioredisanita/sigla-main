@@ -161,7 +161,7 @@
                     <jvmArguments>-Xmx2g -Xms1g -XX:MaxMetaspaceSize=512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787</jvmArguments>
                     <feature-packs>
                         <feature-pack>
-                            <location>wildfly@maven(org.jboss.universe:community-universe)</location>
+                            <location>wildfly@maven(org.jboss.universe:community-universe)#${version.wildfly}</location>
                         </feature-pack>
                         <feature-pack>
                             <location>org.wildfly:wildfly-datasources-galleon-pack:${version.wildfly.datasources.galleon.pack}</location>
@@ -182,6 +182,7 @@
                         <layer>microprofile-openapi</layer>
                         <layer>elytron</layer>
                         <layer>microprofile-config</layer>
+                        <layer>web-console</layer>
                     </layers>
 
                     <!-- IMPORTANTE: Include il modulo custom -->
