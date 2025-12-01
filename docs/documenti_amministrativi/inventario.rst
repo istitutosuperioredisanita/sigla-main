@@ -8,8 +8,6 @@ L'inventariazione ha la funzione di tutelare l'integrità del patrimonio dell'En
 
 Per redigere l’inventario dell'Ente sono state sviluppate le funzionalità applicative di SIGLA di seguito illustrate.  
 
---:download:`Manuale di Gestione Inventariale</_static/MANUALE_INVENTARIO_NEW.pdf>`
-
 Funzioni per la gestione del bene
 =================================
 
