@@ -11,19 +11,18 @@
 		<columnMapping columnName="ESERCIZIO" propertyName="documentoTrasporto.esercizio" sqlTypeName="DECIMAL" columnSize="4"/>
 		<columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO" propertyName="documentoTrasporto.pgDocTrasportoRientro" sqlTypeName="DECIMAL" columnSize="10"/>
 
-		<!-- Nuovi campi di riferimento -->
-		<columnMapping columnName="TI_DOCUMENTO_RIF" propertyName="tiDocumentoRif" sqlTypeName="CHAR" columnSize="1"/>
-		<columnMapping columnName="ESERCIZIO_RIF" propertyName="esercizioRif" sqlTypeName="DECIMAL" columnSize="5"/>
-		<columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO_RIF" propertyName="pgDocTrasportoRientroRif" sqlTypeName="DECIMAL" columnSize="10"/>
+		<columnMapping columnName="ESERCIZIO_RIF" propertyName="docRientroDettRif.documentoRientro.esercizio" sqlTypeName="DECIMAL" columnSize="5"/>
+		<columnMapping columnName="TI_DOCUMENTO_RIF" propertyName="docRientroDettRif.documentoRientro.tiDocumento" sqlTypeName="CHAR" columnSize="1"/>
+		<columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO_RIF" propertyName="docRientroDettRif.documentoRientro.pgDocTrasportoRientro" sqlTypeName="DECIMAL" columnSize="10"/>
+		<columnMapping columnName="PROGRESSIVO_RIF" propertyName="docRientroDettRif.bene.progressivo" />
+		<columnMapping columnName="PG_INVENTARIO_RIF" propertyName="docRientroDettRif.bene.inventario.pg_inventario" />
+		<columnMapping columnName="NR_INVENTARIO_RIF" propertyName="docRientroDettRif.bene.nr_inventario" />
 
 	</defaultColumnMap>
 
 	<persistentProperty name="documentoTrasporto" partOfOid="true"/>
+	<persistentProperty name="docRientroDettRif"/>
 	<persistentProperty name="bene" partOfOid="true"/>
 
-	<!-- Nuove proprietà -->
-	<persistentProperty name="tiDocumentoRif"/>
-	<persistentProperty name="esercizioRif"/>
-	<persistentProperty name="pgDocTrasportoRientroRif"/>
 
 </SQLPersistentInfo>

@@ -11,9 +11,7 @@
 		<columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO" propertyName="doc_trasporto_rientro.pgDocTrasportoRientro" sqlTypeName="DECIMAL" columnSize="10"/>
 -->
 		<!-- Nuovi campi di riferimento -->
-		<columnMapping columnName="TI_DOCUMENTO_RIF" propertyName="tiDocumentoRif" sqlTypeName="CHAR" columnSize="1"/>
-		<columnMapping columnName="ESERCIZIO_RIF" propertyName="esercizioRif" sqlTypeName="DECIMAL" columnSize="5"/>
-		<columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO_RIF" propertyName="pgDocTrasportoRientroRif" sqlTypeName="DECIMAL" columnSize="10"/>
+
 
 		<columnMapping columnName="NR_INVENTARIO" propertyName="bene.nr_inventario" sqlTypeName="DECIMAL" columnSize="10"/>
 		<columnMapping columnName="PROGRESSIVO" propertyName="bene.progressivo" sqlTypeName="DECIMAL" columnSize="10"/>
@@ -24,8 +22,10 @@
 	<persistentProperty name="bene" partOfOid="true"/>
 
 	<!-- Nuove proprietà -->
+	<!--
 	<persistentProperty name="tiDocumentoRif"/>
 	<persistentProperty name="esercizioRif"/>
 	<persistentProperty name="pgDocTrasportoRientroRif"/>
+	-->
 
 </SQLPersistentInfo>

@@ -40,9 +40,73 @@
 			maxLength="10"
 			label="Numero Documento" />
 
+
+	<fieldProperty
+			name="esercizio_rif"
+			property="docRientroDettRif.documentoRientro.esercizio"
+			inputType="TEXT"
+			inputSize="4"
+			maxLength="4"
+			label="Esercizio Rif" />
+
+	<fieldProperty
+			name="pg_inventario_rif"
+			property="docRientroDettRif.bene.inventario.pg_inventario"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			label="Codice Inventario Rif" />
+
+	<fieldProperty
+			name="ti_documento_rif"
+			property="docRientroDettRif.documentoRientro.tiDocumento"
+			inputType="TEXT"
+			inputSize="1"
+			maxLength="1"
+			label="Tipo Documento Rif" />
+
+	<fieldProperty
+			name="pg_doc_trasporto_rientro_rif"
+			property="docRientroDettRif.documentoRientro.pgDocTrasportoRientro"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			label="Numero Documento Rif" />
+
+	<fieldProperty
+			name="progressivo_rif"
+			property="docRientroDettRif.bene.progressivo"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			label="pregressivo Rif" />
+
+	<fieldProperty
+			name="nr_inventario_rif"
+			property="docRientroDettRif.bene.nr_inventario"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			label="Numero Inventario Rif" />
+
 	<!-- ============================================ -->
 	<!-- CHIAVI PRIMARIE - BENE -->
 	<!-- ============================================ -->
-
+	<columnSet name="righeTrasporto">
+		<columnFieldProperty
+				name="nr_inventario"
+				style="width:80px"/>
+		<columnFieldProperty
+				name="etichetta"
+				style="width:80px"/>
+		<columnFieldProperty
+				name="progressivo"/>
+		<columnFieldProperty
+				name="ds_bene"
+				style="width:300px"/>
+		<columnFieldProperty
+				name="valore_bene"
+				style="width:80px"/>
+	</columnSet>
 
 </bulkInfo>

@@ -13,9 +13,12 @@
         <columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO" propertyName="pgDocTrasportoRientro" sqlTypeName="DECIMAL" columnSize="38" nullable="false"/>
 
         <!-- Campi di riferimento (nuovi) -->
+        <columnMapping columnName="PG_INVENTARIO_RIF" propertyName="pgInventarioRif" sqlTypeName="DECIMAL" columnSize="38" nullable="true"/>
         <columnMapping columnName="TI_DOCUMENTO_RIF" propertyName="tiDocumentoRif" sqlTypeName="CHAR" columnSize="1" nullable="true"/>
         <columnMapping columnName="ESERCIZIO_RIF" propertyName="esercizioRif" sqlTypeName="DECIMAL" columnSize="5" nullable="true"/>
         <columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO_RIF" propertyName="pgDocTrasportoRientroRif" sqlTypeName="DECIMAL" columnSize="38" nullable="true"/>
+        <columnMapping columnName="NR_INVENTARIO_RIF" propertyName="nrInventarioRif" sqlTypeName="DECIMAL" columnSize="38" nullable="true"/>
+        <columnMapping columnName="PROGRESSIVO_RIF" propertyName="progressivoRif" sqlTypeName="DECIMAL" columnSize="5" nullable="true"/>
 
         <!-- Altri campi -->
         <columnMapping columnName="NR_INVENTARIO" propertyName="nrInventario" sqlTypeName="DECIMAL" columnSize="38" nullable="false"/>
@@ -46,5 +49,12 @@
     <persistentProperty name="duva"/>
     <persistentProperty name="utuv"/>
     <persistentProperty name="pg_ver_rec"/>
+    <persistentProperty name="pgInventarioRif"/>
+    <persistentProperty name="tiDocumentoRif"/>
+    <persistentProperty name="esercizioRif"/>
+    <persistentProperty name="pgDocTrasportoRientroRif"/>
+    <persistentProperty name="nrInventarioRif"/>
+    <persistentProperty name="progressivoRif"/>
+
 
 </SQLPersistentInfo>

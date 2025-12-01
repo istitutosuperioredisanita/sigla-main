@@ -190,8 +190,9 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
         if (getNr_inventario() == null || getProgressivo() == null) {
             return "";
         }
-        java.text.DecimalFormat formato = new java.text.DecimalFormat("000");
-        return getNr_inventario().toString() + "-" + formato.format(getProgressivo());
+        return bene.getNumeroBeneCompleto();
+        //java.text.DecimalFormat formato = new java.text.DecimalFormat("000");
+       // return getNr_inventario().toString() + "-" + formato.format(getProgressivo());
     }
 
     /**

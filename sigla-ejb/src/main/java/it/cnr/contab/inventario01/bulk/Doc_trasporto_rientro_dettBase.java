@@ -9,9 +9,13 @@ import it.cnr.jada.persistency.Keyed;
 public class Doc_trasporto_rientro_dettBase extends Doc_trasporto_rientro_dettKey implements Keyed {
 
 	// Campi di riferimento (dopo la PK)
+	private Long pgInventarioRif;
 	private String tiDocumentoRif;
 	private Integer esercizioRif;
 	private Long pgDocTrasportoRientroRif;
+	private Long nrInventarioRif;
+	private Integer progressivoRif;
+
 
 	// Altri campi
 	private String intervallo;
@@ -34,11 +38,32 @@ public class Doc_trasporto_rientro_dettBase extends Doc_trasporto_rientro_dettKe
 	// ===============================
 	// CAMPI DI RIFERIMENTO
 	// ===============================
+
+	public Long getPgInventarioRif() {return pgInventarioRif;}
+
+	public void setPgInventarioRif(Long pgInventarioRif) {this.pgInventarioRif = pgInventarioRif;}
+
 	public String getTiDocumentoRif() { return tiDocumentoRif; }
 	public void setTiDocumentoRif(String tiDocumentoRif) { this.tiDocumentoRif = tiDocumentoRif; }
 
 	public Integer getEsercizioRif() { return esercizioRif; }
 	public void setEsercizioRif(Integer esercizioRif) { this.esercizioRif = esercizioRif; }
+
+	public Long getNrInventarioRif() {
+		return nrInventarioRif;
+	}
+
+	public void setNrInventarioRif(Long nrInventarioRif) {
+		this.nrInventarioRif = nrInventarioRif;
+	}
+
+	public Integer getProgressivoRif() {
+		return progressivoRif;
+	}
+
+	public void setProgressivoRif(Integer progressivoRif) {
+		this.progressivoRif = progressivoRif;
+	}
 
 	public Long getPgDocTrasportoRientroRif() { return pgDocTrasportoRientroRif; }
 	public void setPgDocTrasportoRientroRif(Long pgDocTrasportoRientroRif) { this.pgDocTrasportoRientroRif = pgDocTrasportoRientroRif; }

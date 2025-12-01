@@ -7,43 +7,11 @@
 	<!-- ============================================ -->
 	<!-- CHIAVI PRIMARIE - TESTATA (Foreign Key) -->
 	<!-- ============================================ -->
-<!--
-	<fieldProperty
-			name="pg_inventario"
-			property="doc_trasporto_rientro.inventario.pg_inventario"
-			inputType="TEXT"
-			inputSize="10"
-			maxLength="10"
-			label="Codice Inventario" />
-
-	<fieldProperty
-			name="ti_documento"
-			property="doc_trasporto_rientro.tiDocumento"
-			inputType="TEXT"
-			inputSize="1"
-			maxLength="1"
-			label="Tipo Documento" />
-
-	<fieldProperty
-			name="esercizio"
-			property="doc_trasporto_rientro.esercizio"
-			inputType="TEXT"
-			inputSize="4"
-			maxLength="4"
-			label="Esercizio" />
-
-	<fieldProperty
-			name="pg_doc_trasporto_rientro"
-			property="doc_trasporto_rientro.pgDocTrasportoRientro"
-			inputType="TEXT"
-			inputSize="10"
-			maxLength="10"
-			label="Numero Documento" />
-			-->
 
 	<!-- ============================================ -->
 	<!-- CHIAVI PRIMARIE - BENE -->
 	<!-- ============================================ -->
+
 
 	<fieldProperty
 			name="nr_inventario"
@@ -61,29 +29,7 @@
 			maxLength="3"
 			label="Progressivo" />
 
-	<fieldProperty
-			name="ti_documento_rif"
-			property="tiDocumentoRif"
-			inputType="TEXT"
-			inputSize="1"
-			maxLength="1"
-			label="Tipo Documento Rif" />
 
-	<fieldProperty
-			name="esercizio_rif"
-			property="esercizioRif"
-			inputType="TEXT"
-			inputSize="4"
-			maxLength="4"
-			label="Esercizio Rif" />
-
-	<fieldProperty
-			name="pg_doc_trasporto_rientro_rif"
-			property="pgDocTrasportoRientroRif"
-			inputType="TEXT"
-			inputSize="10"
-			maxLength="10"
-			label="Numero Documento Rif" />
 
 
 	<!-- ============================================ -->
@@ -623,41 +569,10 @@
 		<columnFieldProperty name="quantita" style="width:60px" />
 	</columnSet>
 
-	<columnSet name="righeTrasporto">
-		<columnFieldProperty
-				name="nr_inventario"
-				style="width:80px"/>
-		<columnFieldProperty
-				name="etichetta"
-				style="width:80px"/>
-		<columnFieldProperty
-				name="progressivo"/>
-		<columnFieldProperty
-				name="ds_bene"
-				style="width:300px"/>
-		<columnFieldProperty
-				name="valore_bene"
-				style="width:80px"/>
-	</columnSet>
 	<!-- ============================================ -->
 	<!-- COLUMN SET PER TRASPORTO BENI -->
 	<!-- ============================================ -->
 
-	<columnSet name="righeRientro">
-		<columnFieldProperty
-				name="nr_inventario"
-				style="width:80px"/>
-		<columnFieldProperty
-				name="etichetta"
-				style="width:80px"/>
-		<columnFieldProperty
-				name="progressivo"/>
-		<columnFieldProperty
-				name="ds_bene"
-				style="width:300px"/>
-		<columnFieldProperty
-				name="valore_bene"
-				style="width:80px"/>
-	</columnSet>
+
 
 </bulkInfo>

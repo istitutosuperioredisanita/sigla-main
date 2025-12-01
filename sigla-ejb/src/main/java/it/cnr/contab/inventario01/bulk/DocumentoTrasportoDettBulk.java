@@ -102,4 +102,5 @@ public  class DocumentoTrasportoDettBulk extends Doc_trasporto_rientro_dettBulk 
     }
 
 
+
 }

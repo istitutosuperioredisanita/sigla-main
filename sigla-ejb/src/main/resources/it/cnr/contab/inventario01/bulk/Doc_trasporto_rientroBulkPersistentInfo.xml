@@ -51,9 +51,9 @@
 	<!-- FK che fa parte della PK -->
 	<persistentProperty name="inventario" partOfOid="true" />
 
-	<!-- FK che NON fanno parte della PK -->
+	<!-- FK che NON fanno parte della PK
 	<persistentProperty name="tipoMovimento" partOfOid="false" />
 	<persistentProperty name="terzoIncRitiro" partOfOid="false" />
-	<persistentProperty name="terzoRespDip" partOfOid="false" />
-
+	<persistentProperty name="terzoRespDip" partOfOid="false" /
+	-->
 </SQLPersistentInfo>

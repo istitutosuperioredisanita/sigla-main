@@ -11,18 +11,18 @@
 		<columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO" propertyName="documentoRientro.pgDocTrasportoRientro" sqlTypeName="DECIMAL" columnSize="10"/>
 
 		<!-- Nuovi campi di riferimento -->
-<!--
-		<columnMapping columnName="ESERCIZIO_RIF" propertyName="docTrasportoDettRif.esercizio" sqlTypeName="DECIMAL" columnSize="5"/>
-		<columnMapping columnName="TI_DOCUMENTO_RIF" propertyName="docTrasportoDettRif.tiDocumento" sqlTypeName="CHAR" columnSize="1"/>
-		<columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO_RIF" propertyName="docTrasportoRif.pgDocTrasportoRientro" sqlTypeName="DECIMAL" columnSize="10"/>
-		<columnMapping columnName="PROGRESSIVO" propertyName="docTrasportoDettRif.inventario.progressivo" fetchOnly="true"/>
-		<columnMapping columnName="PG_INVENTARIO" propertyName="docTrasportoDettRif.inventario.pg_inventario" fetchOnly="true"/>
-		<columnMapping columnName="NR_INVENTARIO" propertyName="docTrasportoDettRif.inventario.nr_inventario" fetchOnly="true"/>
--->
+
+		<columnMapping columnName="ESERCIZIO_RIF" propertyName="docTrasportoDettRif.documentoTrasporto.esercizio" sqlTypeName="DECIMAL" columnSize="5"/>
+		<columnMapping columnName="TI_DOCUMENTO_RIF" propertyName="docTrasportoDettRif.documentoTrasporto.tiDocumento" sqlTypeName="CHAR" columnSize="1"/>
+		<columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO_RIF" propertyName="docTrasportoDettRif.documentoTrasporto.pgDocTrasportoRientro" sqlTypeName="DECIMAL" columnSize="10"/>
+		<columnMapping columnName="PROGRESSIVO_RIF" propertyName="docTrasportoDettRif.bene.progressivo" />
+		<columnMapping columnName="PG_INVENTARIO_RIF" propertyName="docTrasportoDettRif.documentoTrasporto.inventario.pg_inventario" />
+		<columnMapping columnName="NR_INVENTARIO_RIF" propertyName="docTrasportoDettRif.bene.nr_inventario" />
+
 	</defaultColumnMap>
 
 	<persistentProperty name="documentoRientro" partOfOid="true"/>
-	<!--<persistentProperty name="docTrasportoDettRif" partOfOid="true"/>-->
+	<persistentProperty name="docTrasportoDettRif" />
 	<persistentProperty name="bene" partOfOid="true"/>
 
 	<!-- Nuove proprietà -->
