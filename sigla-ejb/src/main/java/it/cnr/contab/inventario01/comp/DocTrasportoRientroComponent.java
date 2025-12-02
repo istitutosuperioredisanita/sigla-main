@@ -615,86 +615,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     }
 
 
-//    //todo da testare con fetch() e broker
-//    /**
-//     * Trova il dettaglio del documento di RIENTRO più recente per un bene.
-//     * Necessario per popolare i campi _RIF nel documento di TRASPORTO successivo.
-//     *
-//     * @param userContext  Contesto utente
-//     * @param bene         Bene da cercare
-//     * @param pgInventario Progressivo inventario
-//     * @return Dettaglio del doc di rientro, oppure null se non trovato
-//     */
-//    private Doc_trasporto_rientro_dettBulk trovaDettaglioRientroOriginale(
-//            UserContext userContext,
-//            Inventario_beniBulk bene,
-//            Long pgInventario)
-//            throws ComponentException {
-//
-//        try {
-//            DocumentoRientroDettHome dettHome = (DocumentoRientroDettHome)
-//                    getHome(userContext, DocumentoRientroDettBulk.class);
-//
-//            SQLBuilder sql = dettHome.createSQLBuilder();
-//
-//            // Join con DOC_TRASPORTO_RIENTRO per filtrare solo documenti FIRMATI
-//            sql.addTableToHeader("DOC_TRASPORTO_RIENTRO dr");
-//            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO", "dr.PG_INVENTARIO");
-//            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.TI_DOCUMENTO", "dr.TI_DOCUMENTO");
-//            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.ESERCIZIO", "dr.ESERCIZIO");
-//            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_DOC_TRASPORTO_RIENTRO",
-//                    "dr.PG_DOC_TRASPORTO_RIENTRO");
-//
-//            // Filtra per il bene specifico
-//            sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO",
-//                    SQLBuilder.EQUALS, pgInventario);
-//            sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO_DETT.NR_INVENTARIO",
-//                    SQLBuilder.EQUALS, bene.getNr_inventario());
-//            sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO_DETT.PROGRESSIVO",
-//                    SQLBuilder.EQUALS, bene.getProgressivo());
-//
-//            // Filtra per documenti di RIENTRO
-//            sql.addSQLClause("AND", "dr.TI_DOCUMENTO", SQLBuilder.EQUALS,
-//                    Doc_trasporto_rientroBulk.RIENTRO);
-//
-//            // Filtra per documenti FIRMATI (stato = DEF)
-//            sql.addSQLClause("AND", "dr.STATO", SQLBuilder.EQUALS,
-//                    Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
-//
-//            // Ordina per data (più recente prima)
-//            sql.addOrderBy("dr.DATA_REGISTRAZIONE DESC");
-//
-//            // ==================== USA fetchByPrimaryKey O fetch SINGOLO ====================
-//            // OPZIONE 1: Usa il metodo fetch con un broker (più efficiente)
-//            LoggableStatement stmt = sql.prepareStatement(dettHome.getConnection());
-//            try {
-//                ResultSet rs = stmt.executeQuery();
-//                SQLBroker broker = dettHome.createBroker(stmt, rs);
-//
-//                if (broker.next()) {
-//                    DocumentoRientroDettBulk risultato =
-//                            (DocumentoRientroDettBulk) broker.fetch(DocumentoRientroDettBulk.class);
-//                    broker.close();
-//                    return risultato;
-//                }
-//                broker.close();
-//                return null;
-//
-//            } finally {
-//                try {
-//                    stmt.close();
-//                } catch (java.sql.SQLException e) {
-//                    // Ignora errori di chiusura
-//                }
-//            }
-//
-//        } catch (PersistencyException e) {
-//            throw handleException(e);
-//        } catch (java.sql.SQLException e) {
-//            throw handleException(e);
-//        }
-//    }
-
     /**
      * Helper per calcolare l'intervallo progressivo
      */
@@ -742,50 +662,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
                     Doc_trasporto_rientro_dettBulk dettaglio =
                             (Doc_trasporto_rientro_dettBulk) i.next();
-
-//                    Inventario_beniBulk bene = dettaglio.getBene();
-//
-//                    // ==================== CASO 1: DOCUMENTO DI RIENTRO ====================
-//                    if (RIENTRO.equals(docT.getTiDocumento())) {
-//
-//                        // Rientro richiede SEMPRE un trasporto originale
-//                        Doc_trasporto_rientro_dettBulk dettTrasporto =
-//                                trovaDettaglioOriginale(aUC, bene,
-//                                        docT.getPgInventario(), TRASPORTO);
-//
-//                        if (dettTrasporto == null) {
-//                            throw new ApplicationException(
-//                                    "Bene " + bene.getNumeroBeneCompleto()
-//                                            + " non presente in alcun documento di TRASPORTO firmato."
-//                            );
-//                        }
-//
-//                        dettaglio.setEsercizioRif(dettTrasporto.getEsercizio());
-//                        dettaglio.setTiDocumentoRif(dettTrasporto.getTi_documento());
-//                        dettaglio.setPgDocTrasportoRientroRif(
-//                                dettTrasporto.getPg_doc_trasporto_rientro());
-//                    }
-//
-//                    // ==================== CASO 2: DOCUMENTO DI TRASPORTO ====================
-//                    else if (TRASPORTO.equals(docT.getTiDocumento())) {
-//
-//                        // Un trasporto può non avere un rientro precedente
-//                        Doc_trasporto_rientro_dettBulk dettRientro =
-//                                trovaDettaglioOriginale(aUC, bene,
-//                                        docT.getPgInventario(), RIENTRO);
-//
-//                        if (dettRientro != null) {
-//                            dettaglio.setEsercizioRif(dettRientro.getEsercizio());
-//                            dettaglio.setTiDocumentoRif(dettRientro.getTi_documento());
-//                            dettaglio.setPgDocTrasportoRientroRif(
-//                                    dettRientro.getPg_doc_trasporto_rientro());
-//                        } else {
-//                            // Se non c'è rientro precedente, i riferimenti devono stare NULL
-//                            dettaglio.setEsercizioRif(null);
-//                            dettaglio.setTiDocumentoRif(null);
-//                            dettaglio.setPgDocTrasportoRientroRif(null);
-//                        }
-//                    }
 
                     updateBulk(aUC, dettaglio);
                 }
