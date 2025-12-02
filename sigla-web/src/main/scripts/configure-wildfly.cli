@@ -99,6 +99,11 @@ echo "Configurazione JASPI..."
     name=integrated-jaspi, \
     value=false \
 )
+# ==========================================================
+# 5. MAPPATURA EJB3 LEGACY A ELYTRON
+#    Crea un security-domain EJB3 legacy che punta a un domain Elytron.
+# ==========================================================
+/subsystem=ejb3/application-security-domain=sigla-auth:add(security-domain=sigla-auth)
 
 # 13. CONFIGURAZIONE LOGGING PER DEBUG (opzionale - commentare in produzione)
 echo "Configurazione logging per debug..."
