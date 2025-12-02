@@ -144,5 +144,9 @@ public class Tipo_ruoloBulk extends Tipo_ruoloBase {
 	public void setGestore(UtenteBulk newGestore) {
 		gestore = newGestore;
 	}
-	
+
+    public void resetPrivilegi()
+    {
+        privilegi_disponibili.clear();
+    }
 }

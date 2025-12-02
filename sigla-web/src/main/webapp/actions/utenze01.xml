@@ -95,6 +95,12 @@
 		<init-param name="bulkClassName" value="it.cnr.contab.utenze00.bulk.UtenteFirmaDettaglioBulk" />
 		<init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
 		<init-param name="defaultAction" value="CRUDAction" />		
-  	</businessProcess>	
-  	
+  	</businessProcess>
+    <businessProcess
+            name="CRUDAssTipoRuoloPrivBP" className="it.cnr.contab.utenze00.bp.CRUDTipoRuoloBP">
+        <forward name="default" path="/utenze00/tipo_ruolo.jsp"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.utenze00.bulk.Tipo_ruoloBulk" />
+        <init-param name="componentSessionName" value="CNRUTENZE00_EJB_RuoloComponentSession" />
+        <init-param name="defaultAction" value="CRUDTipoRuoloAction" />
+    </businessProcess>
 </action-mappings>

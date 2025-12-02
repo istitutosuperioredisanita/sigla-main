@@ -17,14 +17,43 @@
 
 package it.cnr.contab.utenze00.bp;
 
+import it.cnr.contab.utente00.ejb.RuoloComponentSession;
 import it.cnr.contab.utenze00.bulk.*;
 import it.cnr.jada.action.*;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.action.*;
 
+import java.rmi.RemoteException;
+
 public class CRUDTipoRuoloBP extends SimpleCRUDBP {
-	private final SimpleDetailCRUDController crudPrivilegi_disponibili = new SimpleDetailCRUDController("Privilegi_disponibili",PrivilegioBulk.class,"privilegi_disponibili",this);
+	private final SimpleDetailCRUDController crudPrivilegi_disponibili = new SimpleDetailCRUDController("Privilegi_disponibili",PrivilegioBulk.class,"privilegi_disponibili",this){
+        public void setFilter(ActionContext actioncontext, CompoundFindClause compoundfindclause) {
+            compoundfindclauseAccessiDisponibili = compoundfindclause;
+            CRUDTipoRuoloBP bp = (CRUDTipoRuoloBP) actioncontext.getBusinessProcess();
+            Tipo_ruoloBulk tipo_ruolo = (Tipo_ruoloBulk) bp.getModel();
+            tipo_ruolo.resetPrivilegi();
+            try {
+                bp.setModel(actioncontext, ((RuoloComponentSession) createComponentSession()).
+                        cercaAccessiDisponibili(actioncontext.getUserContext(), tipo_ruolo, compoundfindclause));
+
+            } catch (BusinessProcessException e) {
+                handleException(e);
+            } catch (ComponentException e) {
+                handleException(e);
+            } catch (RemoteException e) {
+                handleException(e);
+            }
+            super.setFilter(actioncontext, compoundfindclause);
+        };
+
+        public boolean isFiltered() {
+            return compoundfindclauseAccessiDisponibili != null;
+        };
+    };
 	private final SimpleDetailCRUDController crudPrivilegi = new SimpleDetailCRUDController("Privilegi",PrivilegioBulk.class,"privilegi",this);
-	
+    private CompoundFindClause compoundfindclauseAccessiDisponibili = null;
 public CRUDTipoRuoloBP() throws BusinessProcessException {
 	super();
 
@@ -48,4 +77,22 @@ public final it.cnr.jada.util.action.SimpleDetailCRUDController getCrudPrivilegi
 public final it.cnr.jada.util.action.SimpleDetailCRUDController getCrudPrivilegi_disponibili() {
 	return crudPrivilegi_disponibili;
 }
+
+    @Override
+    public OggettoBulk initializeModelForInsert(ActionContext actioncontext, OggettoBulk oggettobulk) throws BusinessProcessException {
+        compoundfindclauseAccessiDisponibili = null;
+        return super.initializeModelForInsert(actioncontext, oggettobulk);
+    }
+
+    @Override
+    public OggettoBulk initializeModelForEdit(ActionContext actioncontext, OggettoBulk oggettobulk) throws BusinessProcessException {
+        compoundfindclauseAccessiDisponibili = null;
+        return super.initializeModelForEdit(actioncontext, oggettobulk);
+    }
+
+    @Override
+    public OggettoBulk initializeModelForSearch(ActionContext actioncontext, OggettoBulk oggettobulk) throws BusinessProcessException {
+        compoundfindclauseAccessiDisponibili = null;
+        return super.initializeModelForSearch(actioncontext, oggettobulk);
+    }
 }
