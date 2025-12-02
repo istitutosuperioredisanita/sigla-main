@@ -17,7 +17,10 @@
     query-timeout=600, \
     use-java-context=true)
 
-# Configurazione Security Domain con Custom Realm
+echo "=== Configurazione Elytron per SIGLA ==="
+
+# 1. CREAZIONE CUSTOM REALM
+echo "Creazione Custom Realm..."
 /subsystem=elytron/custom-realm=sigla-combined-realm:add( \
     class-name=it.cnr.contab.security.auth.CombinedSecurityRealm, \
     module=it.cnr.contab.security, \
@@ -39,18 +42,69 @@
     } \
 )
 
-# Crea role decoder
+# 2. CREAZIONE ROLE DECODER
+echo "Creazione Role Decoder..."
 /subsystem=elytron/simple-role-decoder=from-roles-attribute:add(attribute=Roles)
 
-# Crea security domain
+# 3. CREAZIONE SECURITY DOMAIN
+echo "Creazione Security Domain..."
 /subsystem=elytron/security-domain=sigla-auth:add( \
     realms=[{realm=sigla-combined-realm, role-decoder=from-roles-attribute}], \
     default-realm=sigla-combined-realm, \
     permission-mapper=default-permission-mapper \
 )
 
-# Associa security domain a Undertow
-/subsystem=undertow/application-security-domain=sigla-auth:add(security-domain=sigla-auth)
+# 4. CONFIGURAZIONE SECURITY EVENT LISTENER
+echo "Configurazione Security Event Listener..."
+/subsystem=elytron/security-domain=sigla-auth:write-attribute( \
+    name=security-event-listener, \
+    value=local-audit \
+)
+
+# 5. CREAZIONE HTTP AUTHENTICATION FACTORY (per Web)
+echo "Creazione HTTP Authentication Factory..."
+/subsystem=elytron/http-authentication-factory=sigla-http-auth:add( \
+    security-domain=sigla-auth, \
+    http-server-mechanism-factory=global, \
+    mechanism-configurations=[ \
+        {mechanism-name=BASIC, \
+         mechanism-realm-configurations=[{realm-name="SIGLA Application"}]}, \
+        {mechanism-name=FORM} \
+    ] \
+)
+
+# 7. CONFIGURAZIONE APPLICATION SECURITY DOMAIN IN UNDERTOW (Web)
+echo "Configurazione Undertow Application Security Domain..."
+/subsystem=undertow/application-security-domain=sigla-auth:add( \
+    http-authentication-factory=sigla-http-auth \
+)
+
+# 9. CONFIGURAZIONE CRUCIALE PER request.login()
+echo "Abilitazione override-deployment-config per request.login()..."
+/subsystem=undertow/application-security-domain=sigla-auth:write-attribute( \
+    name=override-deployment-config, \
+    value=true \
+)
+
+# 10. DISABILITAZIONE JACC
+echo "Configurazione JACC..."
+/subsystem=undertow/application-security-domain=sigla-auth:write-attribute( \
+    name=enable-jacc, \
+    value=false \
+)
+
+# 11. DISABILITAZIONE JASPI
+echo "Configurazione JASPI..."
+/subsystem=undertow/application-security-domain=sigla-auth:write-attribute( \
+    name=integrated-jaspi, \
+    value=false \
+)
+
+# 13. CONFIGURAZIONE LOGGING PER DEBUG (opzionale - commentare in produzione)
+echo "Configurazione logging per debug..."
+/subsystem=logging/logger=org.wildfly.security:add(level=DEBUG)
+/subsystem=logging/logger=org.jboss.security:add(level=DEBUG)
+/subsystem=logging/logger=it.cnr.contab.security:add(level=DEBUG)
 
 # Configurazione Transaction Timeout
 /subsystem=transactions:write-attribute(name=default-timeout, value=3600)

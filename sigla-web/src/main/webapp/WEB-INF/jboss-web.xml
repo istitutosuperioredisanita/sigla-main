@@ -14,11 +14,16 @@
   ~     You should have received a copy of the GNU Affero General Public License
   ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
-
 <jboss-web xmlns="http://www.jboss.com/xml/ns/javaee"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xmlns:jboss="http://www.jboss.com/xml/ns/javaee"
-           xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee https://www.jboss.org/j2ee/schema/jboss-web_5_1.xsd">
+           xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee
+           http://www.jboss.org/schema/jbossas/jboss-web_14_0.xsd"
+           version="14.0">
+
     <context-root>/SIGLA</context-root>
     <disable-audit>true</disable-audit>
+    <!-- Riferimento al Security Domain Elytron -->
+    <!-- DEVE corrispondere al nome in /subsystem=undertow/application-security-domain -->
+    <security-domain>sigla-auth</security-domain>
+
 </jboss-web>
