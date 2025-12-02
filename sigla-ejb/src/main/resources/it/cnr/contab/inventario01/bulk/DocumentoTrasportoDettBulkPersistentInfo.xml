@@ -15,8 +15,17 @@
 		<columnMapping columnName="TI_DOCUMENTO_RIF" propertyName="docRientroDettRif.documentoRientro.tiDocumento" sqlTypeName="CHAR" columnSize="1"/>
 		<columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO_RIF" propertyName="docRientroDettRif.documentoRientro.pgDocTrasportoRientro" sqlTypeName="DECIMAL" columnSize="10"/>
 		<columnMapping columnName="PROGRESSIVO_RIF" propertyName="docRientroDettRif.bene.progressivo" />
-		<columnMapping columnName="PG_INVENTARIO_RIF" propertyName="docRientroDettRif.bene.inventario.pg_inventario" />
+		<columnMapping columnName="PG_INVENTARIO_RIF" propertyName="docRientroDettRif.documentoRientro.inventario.pg_inventario" />
 		<columnMapping columnName="NR_INVENTARIO_RIF" propertyName="docRientroDettRif.bene.nr_inventario" />
+
+		<columnMapping columnName="PG_INVENTARIO" propertyName="docRientroDettRif.bene.inventario.pg_inventario" />
+		<columnMapping columnName="PG_INVENTARIO" propertyName="bene.inventario.pg_inventario" sqlTypeName="DECIMAL" columnSize="10" />
+		<columnMapping columnName="NR_INVENTARIO" propertyName="bene.nr_inventario" sqlTypeName="DECIMAL" columnSize="10"/>
+		<columnMapping columnName="PROGRESSIVO" propertyName="bene.progressivo" sqlTypeName="DECIMAL" columnSize="10"/>
+
+
+
+
 
 	</defaultColumnMap>
 

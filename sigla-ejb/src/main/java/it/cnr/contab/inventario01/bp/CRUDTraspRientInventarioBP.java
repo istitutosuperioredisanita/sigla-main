@@ -2,9 +2,7 @@ package it.cnr.contab.inventario01.bp;
 
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
-import it.cnr.contab.inventario01.bulk.AllegatoDocTraspRientroBulk;
-import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
-import it.cnr.contab.inventario01.bulk.DocumentoTrasportoDettBulk;
+import it.cnr.contab.inventario01.bulk.*;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
 import it.cnr.contab.reports.bp.OfflineReportPrintBP;
 import it.cnr.contab.reports.bulk.Print_spoolerBulk;
@@ -765,6 +763,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
         @Override
         protected RemoteIterator createRemoteIterator(ActionContext context) {
+
             if (isInserting() || isDocumentoAnnullato()) {
                 return new it.cnr.jada.util.EmptyRemoteIterator();
             }
@@ -798,10 +797,11 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     protected RemoteIterator selectEditDettaglibyClause(ActionContext context)
             throws BusinessProcessException {
         try {
+
             it.cnr.jada.persistency.sql.CompoundFindClause filters =
                     ((RemoteDetailCRUDController) getEditDettController()).getFilter();
             return getComp().selectEditDettagliTrasporto(context.getUserContext(), getDoc(),
-                    DocumentoTrasportoDettBulk.class, filters);
+                    getDocumentoClassDett(), filters);
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
         }

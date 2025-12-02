@@ -51,7 +51,7 @@
 
 	<fieldProperty
 			name="pg_inventario_rif"
-			property="docRientroDettRif.bene.inventario.pg_inventario"
+			property="docRientroDettRif.documentoRientro.inventario.pg_inventario"
 			inputType="TEXT"
 			inputSize="10"
 			maxLength="10"

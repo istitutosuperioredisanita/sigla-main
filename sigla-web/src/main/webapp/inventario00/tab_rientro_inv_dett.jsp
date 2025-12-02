@@ -61,13 +61,4 @@
         <td colspan="3"><% bp.getDettBeniController().writeFormInput(out,null,"condizioni",true,null,null); %></td>
       </tr>
     </table>
-
-    <% if (bp.isInserting()) { %>
-        <div style="margin-top:10px; padding:8px; background-color:#fff3cd; border-left:4px solid #ffc107;">
-            <span style="font-size:0.9em; color:#856404;">
-                <strong>Nota:</strong> Saranno visualizzati solo i beni presenti in documenti di trasporto firmati
-            </span>
-        </div>
-    <% } %>
-
 </div>

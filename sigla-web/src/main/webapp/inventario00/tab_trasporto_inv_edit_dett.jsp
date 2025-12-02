@@ -10,9 +10,6 @@
 
 <%
     CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP)BusinessProcess.getBusinessProcess(request);
-    Doc_trasporto_rientro_dettBulk riga = (Doc_trasporto_rientro_dettBulk)bp.getEditDettController().getModel();
-    Inventario_beniBulk bene = null;
-    if (riga != null) bene = riga.getBene();
 %>
 
 <div class="Group">

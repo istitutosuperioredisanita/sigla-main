@@ -50,7 +50,7 @@
 
 	<fieldProperty
 			name="pg_inventario_rif"
-			property="docTrasportoDettRif.bene.inventario.pg_inventario"
+			property="docTrasportoDettRif.documentoTrasporto.inventario.pg_inventario"
 			inputType="TEXT"
 			inputSize="10"
 			maxLength="10"

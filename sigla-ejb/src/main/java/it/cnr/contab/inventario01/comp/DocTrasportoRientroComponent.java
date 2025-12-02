@@ -1132,7 +1132,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         if (docTR == null || docTR.getPgDocTrasportoRientro() == null)
             return new it.cnr.jada.util.EmptyRemoteIterator();
 
-        SQLBuilder sql = getHome(userContext, DocumentoTrasportoDettBulk.class).createSQLBuilder();
+        SQLBuilder sql = getHome(userContext, ( docTR.isRientro()?DocumentoRientroDettBulk.class:DocumentoTrasportoDettBulk.class)).createSQLBuilder();
 
         sql.addSQLClause("AND", "PG_INVENTARIO", sql.EQUALS, docTR.getPgInventario());
         sql.addSQLClause("AND", "TI_DOCUMENTO", sql.EQUALS, docTR.getTiDocumento());

@@ -56,7 +56,7 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoDoc
         if ( isInserting())
             hash.put(i++, new String[]{ "tabRientroDettaglio","Dettaglio","/inventario00/tab_rientro_inv_dett.jsp"});
         else
-            hash.put(i++, new String[]{ "tabTrasportoDettaglio","Dettaglio","/inventario00/tab_rientro_inv_edit_dett.jsp"});
+            hash.put(i++, new String[]{ "tabRientroDettaglio","Dettaglio","/inventario00/tab_rientro_inv_edit_dett.jsp"});
         hash.put(i++, new String[]{"tabAllegati", "Allegati", "/util00/tab_allegati.jsp"});
 
         String[][] tabs = new String[i][3];
