@@ -4,10 +4,13 @@
  */
 package it.cnr.contab.inventario00.docs.bulk;
 
+import it.cnr.contab.inventario00.tabrif.bulk.Tipo_carico_scaricoBulk;
+import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.LoggableStatement;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
@@ -264,4 +267,23 @@ public class Ammortamento_bene_invHome extends BulkHome {
 		return  "DELETE FROM "+it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema()+"AMMORTAMENTO_BENE_INV "+
 		"WHERE  esercizio = "+esercizio+ " AND fl_storno = 'N'";
 	}
+
+    public java.util.List<Ammortamento_bene_invBulk> findAmmortamentiFor(Inventario_beniBulk inventario_beniBulk) throws it.cnr.jada.persistency.PersistencyException{
+        SQLBuilder sqlBuilder = createSQLBuilder();
+        sqlBuilder.addSQLClause(FindClause.AND, "AMMORTAMENTO_BENE_INV.PG_INVENTARIO", SQLBuilder.EQUALS, inventario_beniBulk.getPg_inventario());
+        sqlBuilder.addSQLClause(FindClause.AND, "AMMORTAMENTO_BENE_INV.NR_INVENTARIO", SQLBuilder.EQUALS, inventario_beniBulk.getNr_inventario());
+        sqlBuilder.addSQLClause(FindClause.AND, "AMMORTAMENTO_BENE_INV.PROGRESSIVO", SQLBuilder.EQUALS, inventario_beniBulk.getProgressivo());
+
+        List<Ammortamento_bene_invBulk> result = fetchAll(sqlBuilder);
+
+        SQLBuilder sqlBuilder2 = createSQLBuilder();
+        sqlBuilder2.setAutoJoins(true);
+        sqlBuilder2.generateJoin("trasf", "ASS_TRASFERIMENTO_BENI_INV");
+        sqlBuilder2.addSQLClause(FindClause.AND, "ASS_TRASFERIMENTO_BENI_INV.PG_INVENTARIO_DEST", SQLBuilder.EQUALS, inventario_beniBulk.getPg_inventario());
+        sqlBuilder2.addSQLClause(FindClause.AND, "ASS_TRASFERIMENTO_BENI_INV.NR_INVENTARIO_DEST", SQLBuilder.EQUALS, inventario_beniBulk.getNr_inventario());
+        sqlBuilder2.addSQLClause(FindClause.AND, "ASS_TRASFERIMENTO_BENI_INV.PROGRESSIVO_DEST", SQLBuilder.EQUALS, inventario_beniBulk.getProgressivo());
+
+        result.addAll(fetchAll(sqlBuilder2));
+        return result;
+    }
 }

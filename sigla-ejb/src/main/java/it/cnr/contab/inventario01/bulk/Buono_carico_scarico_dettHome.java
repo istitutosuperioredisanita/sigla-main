@@ -116,4 +116,17 @@ public class Buono_carico_scarico_dettHome extends BulkHome {
 		}
 		return null;
 	}
+    public java.util.List findBuoniCarichiFor(Inventario_beniBulk inventario_beniBulk) throws it.cnr.jada.persistency.PersistencyException{
+        SQLBuilder sqlBuilder = createSQLBuilder();
+        sqlBuilder.setAutoJoins(true);
+        sqlBuilder.generateJoin("buono_cs", "BUONO_CARICO_SCARICO");
+        sqlBuilder.generateJoin(Buono_carico_scaricoBulk.class, Tipo_carico_scaricoBulk.class, "tipoMovimento", "TIPO_CARICO_SCARICO");
+
+        sqlBuilder.addSQLClause(FindClause.AND, "TIPO_CARICO_SCARICO.FL_BUONO_PER_TRASFERIMENTO", SQLBuilder.EQUALS, "N");
+        sqlBuilder.addSQLClause(FindClause.AND, "BUONO_CARICO_SCARICO_DETT.PG_INVENTARIO", SQLBuilder.EQUALS, inventario_beniBulk.getPg_inventario());
+        sqlBuilder.addSQLClause(FindClause.AND, "BUONO_CARICO_SCARICO_DETT.NR_INVENTARIO", SQLBuilder.EQUALS, inventario_beniBulk.getNr_inventario());
+        sqlBuilder.addSQLClause(FindClause.AND, "BUONO_CARICO_SCARICO_DETT.PROGRESSIVO", SQLBuilder.EQUALS, inventario_beniBulk.getProgressivo());
+        sqlBuilder.addSQLClause(FindClause.AND, "BUONO_CARICO_SCARICO_DETT.TI_DOCUMENTO", SQLBuilder.EQUALS, Buono_carico_scaricoBulk.CARICO);
+        return fetchAll(sqlBuilder);
+    }
 }

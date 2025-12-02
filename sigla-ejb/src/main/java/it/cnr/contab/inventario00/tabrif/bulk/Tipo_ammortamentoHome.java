@@ -282,5 +282,18 @@ public void makePersistentAssTiAmm_CatBeni(it.cnr.jada.UserContext aUC, Tipo_amm
 
 		return tipoAmmortamentoDto;
 	}
+
+    public Tipo_ammortamentoBulk findByCdTipoAmmortamento(String cdTipoAmmortamento)
+            throws PersistencyException {
+
+        SQLBuilder sql = createSQLBuilder();
+        sql.addClause(FindClause.AND, "cd_tipo_ammortamento", SQLBuilder.EQUALS, cdTipoAmmortamento);
+
+        List<Tipo_ammortamentoBulk> result = fetchAll(sql);
+        if (result.isEmpty())
+            return null;
+        return result.get(0);
+
+    }
 }
 

@@ -885,6 +885,11 @@
         <dropNotNullConstraint tableName="ordine_acq_consegna_eco" columnName="cd_voce_ana" columnDataType="VARCHAR(20)"/>
     </changeSet>
 
+    <changeSet author="raffaele.pagano" id="modify_table_ordine_acq_consegna_eco_s">
+        <dropNotNullConstraint tableName="ordine_acq_consegna_eco_s" columnName="esercizio_voce_ana" columnDataType="SMALLINT"/>
+        <dropNotNullConstraint tableName="ordine_acq_consegna_eco_s" columnName="cd_voce_ana" columnDataType="VARCHAR(20)"/>
+    </changeSet>
+
     <changeSet author="raffaele.pagano" id="modify_table_ordine_acq_riga_eco">
         <dropNotNullConstraint tableName="ordine_acq_riga_eco" columnName="esercizio_voce_ana" columnDataType="SMALLINT"/>
         <dropNotNullConstraint tableName="ordine_acq_riga_eco" columnName="cd_voce_ana" columnDataType="VARCHAR(20)"/>

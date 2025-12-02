@@ -187,8 +187,8 @@ public class OrdineAcqRigaHome extends BulkHome {
 					resultConsegne.addAll(datiAnaliticiConsegna);
 					datiAnaliticiConsegna.forEach(consegnaEco->{
 						IDocumentoDetailAnaCogeBulk ordineRigaEco = result.stream()
-								.filter(rigaEco->rigaEco.getEsercizio_voce_ana().equals(consegnaEco.getEsercizio_voce_ana()))
-								.filter(rigaEco->rigaEco.getCd_voce_ana().equals(consegnaEco.getCd_voce_ana()))
+								.filter(rigaEco->Optional.ofNullable(rigaEco.getEsercizio_voce_ana()).equals(Optional.ofNullable(consegnaEco.getEsercizio_voce_ana())))
+								.filter(rigaEco->Optional.ofNullable(rigaEco.getCd_voce_ana()).equals(Optional.ofNullable(consegnaEco.getCd_voce_ana())))
 								.filter(rigaEco->rigaEco.getCd_centro_responsabilita().equals(consegnaEco.getCd_centro_responsabilita()))
 								.filter(rigaEco->rigaEco.getCd_linea_attivita().equals(consegnaEco.getCd_linea_attivita()))
 								.findAny()

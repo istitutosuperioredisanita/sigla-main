@@ -361,8 +361,8 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
 
         assertEquals("A22012", getTableColumnElement("main.Dati Analitici",0,1).getText());
         assertEquals(" ", getTableColumnElement("main.Dati Analitici",0,2).getText());
-        assertEquals(" ", getTableColumnElement("main.Dati Analitici",0,3).getText());
-        assertEquals(" ", getTableColumnElement("main.Dati Analitici",0,4).getText());
+        assertEquals("000.000.000", getTableColumnElement("main.Dati Analitici",0,3).getText());
+        assertEquals("PTEST001", getTableColumnElement("main.Dati Analitici",0,4).getText());
         assertEquals("183,00", getTableColumnElement("main.Dati Analitici",0,5).getText());
         assertThrows("Cannot find Element <tr> with tableName main.Dati Analitici and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.Dati Analitici",1));
 
@@ -374,10 +374,15 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
 
         assertEquals("A22012", getGrapheneElement("main.Righe.find_voce_ep.cd_voce_ep").getAttribute("value"));
         assertEquals("183,00", getGrapheneElement("imCostoEcoConsegne").getAttribute("value"));
-        assertEquals("0,00", getGrapheneElement("imCostoEcoRipartitoConsegne").getAttribute("value"));
+        assertEquals("183,00", getGrapheneElement("imCostoEcoRipartitoConsegne").getAttribute("value"));
         assertEquals("0,00", getGrapheneElement("imCostoEcoDaRipartireConsegne").getAttribute("value"));
 
-        assertThrows("Cannot find Element <tr> with tableName main.Righe.Dati Coge/Coan and numberRow: 0", RuntimeException.class, () -> getTableRowElement("main.Righe.Dati Coge/Coan", 0));
+        doSelectTableRow("main.Righe.Dati Coge/Coan",0);
+
+        assertEquals("PTEST001", getTableColumnElement("main.Righe.Dati Coge/Coan",0,1).getText());
+        assertEquals("000.000.000", getTableColumnElement("main.Righe.Dati Coge/Coan",0,2).getText());
+        assertEquals("183,00", getTableColumnElement("main.Righe.Dati Coge/Coan",0,3).getText());
+        assertThrows("Cannot find Element <tr> with tableName main.Righe.Dati Coge/Coan and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.Righe.Dati Coge/Coan",1));
 
         //Vado sulla tab ‘consegne’
         doClickButton("doTab('tabOrdineAcqDettagli','tabOrdineConsegna')");
@@ -975,10 +980,15 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
 
         assertEquals("A22012", getGrapheneElement("main.Righe.find_voce_ep.cd_voce_ep").getAttribute("value"));
         assertEquals("181,78", getGrapheneElement("imCostoEcoConsegne").getAttribute("value"));
-        assertEquals("0,00", getGrapheneElement("imCostoEcoRipartitoConsegne").getAttribute("value"));
+        assertEquals("181,78", getGrapheneElement("imCostoEcoRipartitoConsegne").getAttribute("value"));
         assertEquals("0,00", getGrapheneElement("imCostoEcoDaRipartireConsegne").getAttribute("value"));
 
-        assertThrows("Cannot find Element <tr> with tableName main.Righe.Dati Coge/Coan and numberRow: 0", RuntimeException.class, ()->getTableRowElement("main.Righe.Dati Coge/Coan",0));
+        doSelectTableRow("main.Righe.Dati Coge/Coan",0);
+
+        assertEquals("PTEST001", getTableColumnElement("main.Righe.Dati Coge/Coan",0,1).getText());
+        assertEquals("000.000.000", getTableColumnElement("main.Righe.Dati Coge/Coan",0,2).getText());
+        assertEquals("181,78", getTableColumnElement("main.Righe.Dati Coge/Coan",0,3).getText());
+        assertThrows("Cannot find Element <tr> with tableName main.Righe.Dati Coge/Coan and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.Righe.Dati Coge/Coan",1));
 
         //Vado sulla tab ‘consegne’
         doClickButton("doTab('tabOrdineAcqDettagli','tabOrdineConsegna')");

@@ -248,7 +248,7 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
 
         doClickButton("doSalva()");
         alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
+            assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
         alert.accept();
 
         //Verifico che la scrittura sull'ordine nr. 1 sia stata eseguita correttamente

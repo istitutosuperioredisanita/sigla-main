@@ -1330,7 +1330,7 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
     		sql.addSQLClause("AND","NUMERO_BOLLA",SQLBuilder.GREATER_EQUALS,parametri.getNumeroBolla());
     	} 
     	if (parametri.getLottoFornitore() != null ){
-    		sql.addSQLClause("AND","LOTTO_FORNITORE",SQLBuilder.GREATER_EQUALS,parametri.getLottoFornitore());
+    		sql.addSQLClause("AND","MOVIMENTI_MAG.LOTTO_FORNITORE",SQLBuilder.GREATER_EQUALS,parametri.getLottoFornitore());
     	} 
     	if (parametri.getUnitaOperativaOrdine() != null && parametri.getUnitaOperativaOrdine().getCdUnitaOperativa() != null){
     		sql.addSQLClause("AND","LOTTO_MAG.CD_UNITA_OPERATIVA",SQLBuilder.EQUALS,parametri.getUnitaOperativaOrdine().getCdUnitaOperativa());

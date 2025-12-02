@@ -26,15 +26,15 @@ import java.util.List;
 
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaIBulk;
 import it.cnr.contab.inventario00.docs.bulk.Ass_inv_bene_fatturaBulk;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
-import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
+
 public class Inventario_beni_apgHome extends BulkHome {
 	public Inventario_beni_apgHome(java.sql.Connection conn) {
 		super(Inventario_beni_apgBulk.class, conn);
@@ -126,4 +126,17 @@ public class Inventario_beni_apgHome extends BulkHome {
 		}
 	}
 
+    /*
+     * Esegue la cancellazione, dalla tabella temporanea INVENTARIO_BENI_APG,
+     *	di tutte le associazione fatte durante la transazione.
+     */
+    public void deleteTemp(UserContext userContext, String localTransactionID) throws PersistencyException, IntrospectionException {
+        SQLBuilder sql = createSQLBuilder();
+        sql.addSQLClause(FindClause.AND,"LOCAL_TRANSACTION_ID",SQLBuilder.EQUALS,localTransactionID);
+        List oggetti=fetchAll(sql);
+        for (Iterator i=oggetti.iterator();i.hasNext();){
+            Inventario_beni_apgBulk inv_provvisorio=(Inventario_beni_apgBulk)i.next();
+            delete(inv_provvisorio, userContext);
+        }
+    }
 }

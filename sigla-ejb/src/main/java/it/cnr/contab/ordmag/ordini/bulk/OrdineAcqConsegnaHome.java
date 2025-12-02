@@ -115,13 +115,17 @@ public class OrdineAcqConsegnaHome extends BulkHome {
 		try {
 			List<OrdineAcqConsegnaEcoBulk> result = new ArrayList<>();
 			if (Optional.ofNullable(aContoEconomico).isPresent() && !consegna.isStatoConsegnaEvasaForzatamente()) {
-				List<Voce_analiticaBulk> voceAnaliticaList = ((Voce_analiticaHome) getHomeCache().getHome(Voce_analiticaBulk.class)).findVoceAnaliticaList(aContoEconomico);
-				if (voceAnaliticaList.isEmpty())
-					return new ArrayList<>();
-				Voce_analiticaBulk voceAnaliticaDef = voceAnaliticaList.stream()
-						.filter(Voce_analiticaBulk::getFl_default).findAny()
-						.orElse(voceAnaliticaList.stream().findAny().orElse(null));
-
+                Fattura_passivaHome fattura_passivaHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
+                aContoEconomico = (ContoBulk) fattura_passivaHome.loadIfNeededObject(aContoEconomico);
+                Voce_analiticaBulk voceAnaliticaDef = null;
+				if (aContoEconomico.isAnaliticaEnabled()) {
+                    List<Voce_analiticaBulk> voceAnaliticaList = ((Voce_analiticaHome) getHomeCache().getHome(Voce_analiticaBulk.class)).findVoceAnaliticaList(aContoEconomico);
+                    if (voceAnaliticaList.isEmpty())
+                        return new ArrayList<>();
+                    voceAnaliticaDef = voceAnaliticaList.stream()
+                            .filter(Voce_analiticaBulk::getFl_default).findAny()
+                            .orElse(voceAnaliticaList.stream().findAny().orElse(null));
+                }
 				if (!Optional.ofNullable(consegna.getScadenzaDocumentoContabile()).isPresent()) {
 					OrdineAcqRigaHome ordineAcqRigaHome = (OrdineAcqRigaHome) getHomeCache().getHome(OrdineAcqRigaBulk.class);
 					List<IDocumentoDetailAnaCogeBulk> datiAnaliticiRiga = ordineAcqRigaHome.getDatiEconomici(consegna.getOrdineAcqRiga()).getSecond();

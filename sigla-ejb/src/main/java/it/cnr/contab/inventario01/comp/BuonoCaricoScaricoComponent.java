@@ -40,6 +40,7 @@ import it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession;
 import it.cnr.contab.inventario00.tabrif.bulk.*;
 import it.cnr.contab.inventario01.bulk.*;
 import it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession;
+import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineHome;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
@@ -63,11 +64,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.rmi.RemoteException;
-import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+
 /**
  * @author rpucciarelli
  * <p>
@@ -6929,43 +6931,12 @@ public OggettoBulk modificaConBulk (UserContext aUC,OggettoBulk bulk)
  * @param aUC lo <code>UserContext</code> che ha generato la richiesta
  * @param buonoS il <code>Buono_scaricoBulk</code> Buono di Scarico.
 **/
-public String makePersistentScarico(UserContext aUC, Buono_carico_scaricoBulk buonoS) 
-	throws ComponentException, it.cnr.jada.comp.ApplicationException 
-{
-	String msg = null;	
-	String schema = it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema();
-	LoggableStatement  cs = null;
-	try
-	{
-		cs = new LoggableStatement(getConnection( aUC ),"{call " + schema +
-				"CNRCTB400.updScaricoInventarioBeni(?,?,?,?,?,?,?,?,?,?,?)}",false,this.getClass());
-		cs.registerOutParameter( 1, java.sql.Types.VARCHAR );
-		cs.setString(1, buonoS.getLocal_transactionID()); 		// local_trans_id
-		cs.setLong(2, buonoS.getPg_inventario().longValue()); 	// pg_inventario
-		cs.setInt(3, buonoS.getEsercizio().intValue()); 		// esercizio
-		cs.setLong(4, buonoS.getPg_buono_c_s().longValue()); 		// pg_buono_carico_scarico
-		cs.setString(5, buonoS.getDs_buono_carico_scarico()); 				// ds_buono_carico_scarico
-		cs.setString(6, buonoS.getCd_tipo_carico_scarico()); 			// cd_tipo_carico_scarico
-		cs.setString(7, buonoS.getUser()); 						// utente
-		cs.setString(8, (buonoS.isByFattura())?"Y":"N"); 				// da_fattura
-		cs.setString(9,"N");									//tipo_fattura
-		cs.setTimestamp(10, buonoS.getData_registrazione()); 	// data_registrazione
-		cs.registerOutParameter(11, java.sql.Types.VARCHAR); // Eventuale Messaggio di ritorno
-	
-		cs.executeQuery();
-		msg= cs.getString(11);
-	} catch (java.sql.SQLException e) {
-		// Gestisce eccezioni SQL specifiche (errori di lock,...)
-		throw handleSQLException(e);
-	} finally {
-		try {
-			if (cs != null)
-				cs.close();
-		} catch (java.sql.SQLException e) {
-			throw handleException(e);
-		}
+public String makePersistentScarico(UserContext aUC, Buono_carico_scaricoBulk buonoS) throws ComponentException, it.cnr.jada.comp.ApplicationException {
+    try {
+        return updScaricoInventarioBeni(aUC, buonoS, "N");
+    } catch (Exception e) {
+        throw handleException(e);
 	}
-	return msg;
 }
 /** 
  *  Valida Dettagli - Non ci sono dettagli
@@ -7727,6 +7698,190 @@ public RemoteIterator cercaBeniAssociabili(UserContext userContext,Ass_inv_bene_
 		}
 	}
 
+    public String updScaricoInventarioBeni(UserContext userContext, Buono_carico_scaricoBulk buonoS, String tipoFattura) throws ComponentException, PersistencyException, IntrospectionException {
+        String aMessaggioBase = "Operazione completata con successo.";
+        StringBuilder aMessaggioBaseSegnala = new StringBuilder("Attenzione, per i seguenti beni non è stato modificato automaticamente " +
+                "l''imponibile ammortamento in quanto non risulta allineato al suo valore assestato, procedere manualmente.");
+        StringBuilder aMessaggioDettSegnala = new StringBuilder();
+
+        String localTransactionId = buonoS.getLocal_transactionID();
+        boolean isByFattura = buonoS.isByFattura();
+        Tipo_carico_scaricoBulk tipoCaricoScarico = (Tipo_carico_scaricoBulk)getHome(userContext, Tipo_carico_scaricoBulk.class).findByPrimaryKey(new Tipo_carico_scaricoBulk(buonoS.getCd_tipo_carico_scarico()));
+
+        buonoS.setToBeCreated();
+        makeBulkPersistent(userContext, buonoS);
+
+        Inventario_beni_apgHome invapgHome=(Inventario_beni_apgHome)getHome(userContext,Inventario_beni_apgBulk.class);
+        SQLBuilder sql = invapgHome.createSQLBuilder();
+        sql.addSQLClause(FindClause.AND,"LOCAL_TRANSACTION_ID",SQLBuilder.EQUALS,localTransactionId);
+        List<Inventario_beni_apgBulk> invBeneApgBulks = invapgHome.fetchAll(sql);
+
+        Map<Long, Map<Long, Map<Long, Map<Boolean, Map<BigDecimal, List<Inventario_beni_apgBulk>>>>>> mapInvBeneApg =
+                invBeneApgBulks.stream().collect(Collectors.groupingBy(Inventario_beni_apgBulk::getPg_inventario,
+                        Collectors.groupingBy(Inventario_beni_apgBulk::getNr_inventario,
+                                Collectors.groupingBy(Inventario_beni_apgBulk::getProgressivo,
+                                        Collectors.groupingBy(Inventario_beni_apgBulk::getFl_totalmente_scaricato,
+                                                Collectors.groupingBy(Inventario_beni_apgBulk::getVariazione_meno))))));
+
+        int cont = 0;
+        for (Long aPgInventario : mapInvBeneApg.keySet()) {
+            for (Long aNrInventario : mapInvBeneApg.get(aPgInventario).keySet()) {
+                for (Long aProgressivo : mapInvBeneApg.get(aPgInventario).get(aNrInventario).keySet()) {
+                    for (Boolean aFlTotalmenteScaricato : mapInvBeneApg.get(aPgInventario).get(aNrInventario).get(aProgressivo).keySet()) {
+                        for (BigDecimal aVariazioneMeno : mapInvBeneApg.get(aPgInventario).get(aNrInventario).get(aProgressivo).get(aFlTotalmenteScaricato).keySet()) {
+                            List<Inventario_beni_apgBulk> righeInvBeniApg = mapInvBeneApg.get(aPgInventario).get(aNrInventario).get(aProgressivo).get(aFlTotalmenteScaricato).get(aVariazioneMeno);
+                            BigDecimal totAlienazione = righeInvBeniApg.stream()
+                                    .map(Inventario_beni_apgBulk::getValore_alienazione)
+                                    .filter(Objects::nonNull)
+                                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                            cont++;
+                            Inventario_beniHome invHome = (Inventario_beniHome)getHome(userContext,Inventario_beniBulk.class);
+                            Inventario_beniBulk invBene = (Inventario_beniBulk)invHome.findByPrimaryKey(new Inventario_beniBulk(aNrInventario, aPgInventario, aProgressivo));
+
+                            Buono_carico_scarico_dettBulk buonoDettS = new Buono_carico_scarico_dettBulk();
+                            buonoDettS.setBuono_cs(buonoS);
+                            buonoDettS.setBene(invBene);
+                            buonoDettS.setIntervallo(cont + "-" + cont);
+                            buonoDettS.setQuantita(1L);
+                            buonoDettS.setValore_unitario(aVariazioneMeno);
+                            if (tipoCaricoScarico.isFatturabile())
+                                buonoDettS.setStato_coge(MissioneBulk.STATO_COGE_NON_PROCESSARE);
+                            else {
+                                if (!isByFattura && aFlTotalmenteScaricato)
+                                    buonoDettS.setStato_coge(tipoCaricoScarico.getFl_elabora_buono_coge()?"Y":"N");
+                                else
+                                    buonoDettS.setStato_coge("N");
+                            }
+
+                            if (invBene.getValore_ammortizzato().compareTo(BigDecimal.ZERO)!=0 &&
+                                    (tipoCaricoScarico.getFl_chiude_fondo() ||
+                                            (!tipoCaricoScarico.getFl_vendita() &&
+                                                    buonoDettS.getStato_coge().equals(MissioneBulk.STATO_COGE_NON_PROCESSARE) &&
+                                                    aFlTotalmenteScaricato)))
+                                buonoDettS.setStato_coge_quote("N");
+                            else
+                                buonoDettS.setStato_coge_quote(MissioneBulk.STATO_COGE_NON_PROCESSARE);
+
+                            buonoDettS.setToBeCreated();
+                            makeBulkPersistent(userContext, buonoDettS);
+
+                            // inserimento su tabella ASS_INV_BENE_FATTURA
+                            if (isByFattura) {
+                                for (Inventario_beni_apgBulk rigaInvBeneApg : righeInvBeniApg) {
+                                    Ass_inv_bene_fatturaBulk assInvBeneFatturaBulk = new Ass_inv_bene_fatturaBulk();
+                                    assInvBeneFatturaBulk.setTest_buono(buonoS);;
+                                    if ("F".equals(tipoFattura)) {
+                                        assInvBeneFatturaBulk.setCd_cds_fatt_att(rigaInvBeneApg.getCd_cds());
+                                        assInvBeneFatturaBulk.setCd_uo_fatt_att(rigaInvBeneApg.getCd_unita_organizzativa());
+                                        assInvBeneFatturaBulk.setEsercizio_fatt_att(rigaInvBeneApg.getEsercizio());
+                                        assInvBeneFatturaBulk.setPg_fattura_attiva(rigaInvBeneApg.getPg_fattura());
+                                        assInvBeneFatturaBulk.setProgressivo_riga_fatt_att(rigaInvBeneApg.getProgressivo_riga());
+                                    } else if ("D".equals(tipoFattura)) {
+                                        assInvBeneFatturaBulk.setCd_cds_doc_gen(rigaInvBeneApg.getCd_cds());
+                                        assInvBeneFatturaBulk.setCd_uo_doc_gen(rigaInvBeneApg.getCd_unita_organizzativa());
+                                        assInvBeneFatturaBulk.setEsercizio_doc_gen(rigaInvBeneApg.getEsercizio());
+                                        assInvBeneFatturaBulk.setPg_documento_generico(rigaInvBeneApg.getPg_fattura());
+                                        assInvBeneFatturaBulk.setProgressivo_riga_doc_gen(rigaInvBeneApg.getProgressivo_riga());
+                                        assInvBeneFatturaBulk.setCd_tipo_documento_amm(rigaInvBeneApg.getCd_tipo_documento_amm());
+                                    } else {
+                                        assInvBeneFatturaBulk.setCd_cds_fatt_pass(rigaInvBeneApg.getCd_cds());
+                                        assInvBeneFatturaBulk.setCd_uo_fatt_pass(rigaInvBeneApg.getCd_unita_organizzativa());
+                                        assInvBeneFatturaBulk.setEsercizio_fatt_pass(rigaInvBeneApg.getEsercizio());
+                                        assInvBeneFatturaBulk.setPg_fattura_passiva(rigaInvBeneApg.getPg_fattura());
+                                        assInvBeneFatturaBulk.setProgressivo_riga_fatt_pass(rigaInvBeneApg.getProgressivo_riga());
+                                    }
+                                    assInvBeneFatturaBulk.setToBeCreated();
+                                    makeBulkPersistent(userContext, assInvBeneFatturaBulk);
+                                }
+                            }
+
+                            //Aggiornamento INVENTARIO_BENI ----------------------------------------------------------
+                            if (invBene.getImponibile_ammortamento().compareTo(invBene.getValoreBene())==0) {
+                                BigDecimal totQuoteStorno = BigDecimal.ZERO;
+
+                                //inserimento gestione quote di storno
+                                if (!aFlTotalmenteScaricato && invBene.getValore_ammortizzato().compareTo(BigDecimal.ZERO)!=0 &&
+                                        invBene.getValore_ammortizzato().compareTo(invBene.getValoreBene().subtract(aVariazioneMeno))!=0 &&
+                                        tipoCaricoScarico.getFl_storno_fondo()) {
+                                    // controllo che i carichi dell'anno siano inferiori allo scarico che si vuole inserire
+                                    List<Buono_carico_scarico_dettBulk> buoniCarico = ((Buono_carico_scarico_dettHome) getHome(userContext, Buono_carico_scarico_dettBulk.class)).findBuoniCarichiFor(invBene);
+                                    BigDecimal totCarichiAnno = buoniCarico.stream()
+                                            .filter(el -> el.getEsercizio().equals(buonoS.getEsercizio()))
+                                            .map(el -> Optional.ofNullable(el.getValore_unitario()).orElse(BigDecimal.ZERO))
+                                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                                    if (totCarichiAnno.compareTo(aVariazioneMeno) < 0)
+                                        totQuoteStorno = invBene.getValore_ammortizzato().multiply(aVariazioneMeno).divide(invBene.getValoreBene(), 2, RoundingMode.HALF_UP);
+                                }
+
+                                if (totQuoteStorno.compareTo(BigDecimal.ZERO) != 0) {
+                                    List<Ammortamento_bene_invBulk> ammortamenti = ((Ammortamento_bene_invHome) getHome(userContext, Ammortamento_bene_invBulk.class)).findAmmortamentiFor(invBene);
+                                    Optional<Ammortamento_bene_invBulk> ammortamento = ammortamenti.stream().filter(el -> el.getEsercizio().compareTo(buonoS.getEsercizio()) < 0)
+                                                    .findFirst();
+
+                                    Ammortamento_bene_invBulk ammortamentoBeneInvBulk = new Ammortamento_bene_invBulk();
+                                    ammortamentoBeneInvBulk.setEsercizio(buonoS.getEsercizio());
+                                    ammortamentoBeneInvBulk.setEsercizioCompetenza(buonoS.getEsercizio());
+                                    ammortamentoBeneInvBulk.setInventarioBeni(invBene);
+                                    ammortamentoBeneInvBulk.setCdCategoriaGruppo(invBene.getCd_categoria_gruppo());
+                                    ammortamentoBeneInvBulk.setImponibileAmmortamento(invBene.getImponibile_ammortamento().subtract(aVariazioneMeno));
+                                    ammortamentoBeneInvBulk.setImMovimentoAmmort(totQuoteStorno);
+                                    ammortamentoBeneInvBulk.setCdCdsUbicazione(invBene.getCd_cds());
+                                    ammortamentoBeneInvBulk.setCdUoUbicazione(invBene.getCd_unita_organizzativa());
+                                    ammortamentoBeneInvBulk.setFlStorno(Boolean.TRUE);
+                                    ammortamentoBeneInvBulk.setPgBuonoS(buonoS.getPg_buono_c_s());
+
+                                    if (ammortamento.isPresent()) {
+                                        ammortamentoBeneInvBulk.setCdTipoAmmortamento(ammortamento.get().getCdTipoAmmortamento());
+                                        ammortamentoBeneInvBulk.setTiAmmortamento(ammortamento.get().getTiAmmortamento());
+                                        ammortamentoBeneInvBulk.setPercAmmortamento(ammortamento.get().getPercAmmortamento());
+                                        ammortamentoBeneInvBulk.setNumeroAnni(ammortamento.get().getNumeroAnni());
+                                        ammortamentoBeneInvBulk.setNumeroAnno(ammortamento.get().getNumeroAnno());
+                                        ammortamentoBeneInvBulk.setPercPrimoAnno(ammortamento.get().getPercPrimoAnno());
+                                        ammortamentoBeneInvBulk.setPercSuccessivi(ammortamento.get().getPercSuccessivi());
+                                    } else {
+                                        Tipo_ammortamentoBulk tipoAmmortamento = ((Tipo_ammortamentoHome) getHome(userContext, Tipo_ammortamentoBulk.class)).findByCdTipoAmmortamento(invBene.getCd_categoria_gruppo().substring(0, 1));
+                                        ammortamentoBeneInvBulk.setCdTipoAmmortamento(tipoAmmortamento.getCd_tipo_ammortamento());
+                                        ammortamentoBeneInvBulk.setTiAmmortamento(tipoAmmortamento.getTi_ammortamento());
+                                        ammortamentoBeneInvBulk.setPercAmmortamento(tipoAmmortamento.getPerc_primo_anno());
+                                        ammortamentoBeneInvBulk.setNumeroAnni(tipoAmmortamento.getNumero_anni());
+                                        ammortamentoBeneInvBulk.setNumeroAnno(1);
+                                        ammortamentoBeneInvBulk.setPercPrimoAnno(tipoAmmortamento.getPerc_primo_anno());
+                                        ammortamentoBeneInvBulk.setPercSuccessivi(tipoAmmortamento.getPerc_successivi());
+                                    }
+                                    ammortamentoBeneInvBulk.setToBeCreated();
+                                    makeBulkPersistent(userContext, ammortamentoBeneInvBulk);
+                                }
+
+                                invBene.setValore_ammortizzato(invBene.getValore_ammortizzato().add(totQuoteStorno));
+                                invBene.setVariazione_meno(invBene.getVariazione_meno().add(aVariazioneMeno));
+                                invBene.setImponibile_ammortamento(invBene.getImponibile_ammortamento().subtract(aVariazioneMeno));
+                                invBene.setValore_alienazione(totAlienazione);
+                                invBene.setFl_totalmente_scaricato(aFlTotalmenteScaricato);
+                                invBene.setDt_validita_variazione(buonoS.getData_registrazione());
+                                invBene.setToBeUpdated();
+                                makeBulkPersistent(userContext, invBene);
+                            } else {
+                                invBene.setVariazione_meno(invBene.getVariazione_meno().add(aVariazioneMeno));
+                                invBene.setValore_alienazione(totAlienazione);
+                                invBene.setFl_totalmente_scaricato(aFlTotalmenteScaricato);
+                                invBene.setDt_validita_variazione(buonoS.getData_registrazione());
+                                invBene.setToBeUpdated();
+                                makeBulkPersistent(userContext, invBene);
+
+                                if (invBene.getFl_ammortamento() && invBene.getImponibile_ammortamento().compareTo(BigDecimal.ZERO)!=0)
+                                    aMessaggioDettSegnala.append("Bene: ").append(aPgInventario).append("-").append(aNrInventario).append("-").append(aProgressivo).append("CHR(10)");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        ((Inventario_beni_apgHome)getHome(userContext, Inventario_beni_apgBulk.class)).deleteTemp(userContext, buonoS.getLocal_transactionID());
+
+        return aMessaggioDettSegnala.length()==0? aMessaggioBase :aMessaggioBaseSegnala.append(aMessaggioBaseSegnala).append(aMessaggioDettSegnala).toString();
+    }
 
 }
 
