@@ -147,29 +147,30 @@ echo "Configurazione logging per debug..."
 /subsystem=infinispan/cache-container=server:write-attribute(name=default-cache, value=default)
 
 # 4. Opzionale: Aggiungi altre cache se necessario
-/subsystem=infinispan/cache-container=server/local-cache=application-cache:add(statistics-enabled=true)
-/subsystem=infinispan/cache-container=server/local-cache=application-cache/component=transaction:add(mode=BATCH)
-/subsystem=infinispan/cache-container=server/local-cache=application-cache/component=locking:add(isolation=REPEATABLE_READ)
-/subsystem=infinispan/cache-container=server/local-cache=application-cache/component=expiration:add(max-idle=300000)
+/subsystem=infinispan/cache-container=server/local-cache=accessi:add(statistics-enabled=true)
+/subsystem=infinispan/cache-container=server/local-cache=accessi/component=transaction:add(mode=BATCH)
+/subsystem=infinispan/cache-container=server/local-cache=accessi/component=locking:add(isolation=REPEATABLE_READ)
+/subsystem=infinispan/cache-container=server/local-cache=accessi/component=expiration:add(max-idle=300000)
+
+/subsystem=infinispan/cache-container=server/local-cache=tree:add(statistics-enabled=true)
+/subsystem=infinispan/cache-container=server/local-cache=tree/component=transaction:add(mode=BATCH)
+/subsystem=infinispan/cache-container=server/local-cache=tree/component=locking:add(isolation=REPEATABLE_READ)
+/subsystem=infinispan/cache-container=server/local-cache=tree/component=expiration:add(max-idle=300000)
+
 
 # DISABILITA authorization solo dove c'è
-
 if (outcome == success) of /subsystem=infinispan/cache-container=ejb/authorization=authorization:read-resource()
     /subsystem=infinispan/cache-container=ejb/authorization=authorization:remove()
 end-if
-
 if (outcome == success) of /subsystem=infinispan/cache-container=web/authorization=authorization:read-resource()
     /subsystem=infinispan/cache-container=web/authorization=authorization:remove()
 end-if
-
 if (outcome == success) of /subsystem=infinispan/cache-container=hibernate/authorization=authorization:read-resource()
     /subsystem=infinispan/cache-container=hibernate/authorization=authorization:remove()
 end-if
-
 if (outcome == success) of /subsystem=infinispan/cache-container=server/authorization=authorization:read-resource()
     /subsystem=infinispan/cache-container=server/authorization=authorization:remove()
 end-if
-
 if (outcome == success) of /subsystem=infinispan/cache-container=management/authorization=authorization:read-resource()
     /subsystem=infinispan/cache-container=management/authorization=authorization:remove()
 end-if

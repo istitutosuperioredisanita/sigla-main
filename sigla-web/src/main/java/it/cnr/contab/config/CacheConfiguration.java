@@ -27,6 +27,8 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.concurrent.TimeUnit;
+
 @EnableCaching
 @Configuration
 public class CacheConfiguration {
@@ -36,9 +38,24 @@ public class CacheConfiguration {
     @Resource(lookup = "java:jboss/infinispan/container/server")
     private EmbeddedCacheManager cacheManager;
 
-
     @Bean
     public CacheManager cacheManager() {
+        // Define configuration for missing caches
+        org.infinispan.configuration.cache.Configuration config =
+                new org.infinispan.configuration.cache.ConfigurationBuilder()
+                        .memory()
+                        .maxCount(10000)
+                        .expiration()
+                        .lifespan(1, TimeUnit.HOURS)
+                        .maxIdle(30, TimeUnit.MINUTES)
+                        .encoding()
+                        .mediaType("application/x-java-object") // Use Java serialization
+                        .build();
+
+        // Define the cache if it doesn't exist
+        cacheManager.defineConfiguration("accessi", config);
+        cacheManager.defineConfiguration("tree", config);
+
         return new SpringEmbeddedCacheManager(cacheManager);
     }
 
