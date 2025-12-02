@@ -148,12 +148,31 @@ echo "Configurazione logging per debug..."
 
 # 4. Opzionale: Aggiungi altre cache se necessario
 /subsystem=infinispan/cache-container=server/local-cache=application-cache:add(statistics-enabled=true)
-
 /subsystem=infinispan/cache-container=server/local-cache=application-cache/component=transaction:add(mode=BATCH)
-
 /subsystem=infinispan/cache-container=server/local-cache=application-cache/component=locking:add(isolation=REPEATABLE_READ)
-
 /subsystem=infinispan/cache-container=server/local-cache=application-cache/component=expiration:add(max-idle=300000)
+
+# DISABILITA authorization solo dove c'è
+
+if (outcome == success) of /subsystem=infinispan/cache-container=ejb/authorization=authorization:read-resource()
+    /subsystem=infinispan/cache-container=ejb/authorization=authorization:remove()
+end-if
+
+if (outcome == success) of /subsystem=infinispan/cache-container=web/authorization=authorization:read-resource()
+    /subsystem=infinispan/cache-container=web/authorization=authorization:remove()
+end-if
+
+if (outcome == success) of /subsystem=infinispan/cache-container=hibernate/authorization=authorization:read-resource()
+    /subsystem=infinispan/cache-container=hibernate/authorization=authorization:remove()
+end-if
+
+if (outcome == success) of /subsystem=infinispan/cache-container=server/authorization=authorization:read-resource()
+    /subsystem=infinispan/cache-container=server/authorization=authorization:remove()
+end-if
+
+if (outcome == success) of /subsystem=infinispan/cache-container=management/authorization=authorization:read-resource()
+    /subsystem=infinispan/cache-container=management/authorization=authorization:remove()
+end-if
 
 # Configurazione Keycloak (se necessario)
 # /subsystem=keycloak/secure-deployment=sigla.war:add(realm=cnr, \

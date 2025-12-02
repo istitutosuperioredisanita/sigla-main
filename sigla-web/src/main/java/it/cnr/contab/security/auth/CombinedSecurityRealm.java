@@ -20,12 +20,15 @@ import org.wildfly.security.auth.SupportLevel;
 import org.wildfly.security.auth.server.RealmIdentity;
 import org.wildfly.security.auth.server.RealmUnavailableException;
 import org.wildfly.security.auth.server.SecurityRealm;
+import org.wildfly.security.authz.Attributes;
 import org.wildfly.security.authz.AuthorizationIdentity;
+import org.wildfly.security.authz.MapAttributes;
 import org.wildfly.security.credential.Credential;
 import org.wildfly.security.evidence.Evidence;
 
 import java.security.Principal;
 import java.security.spec.AlgorithmParameterSpec;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -36,7 +39,13 @@ public class CombinedSecurityRealm implements SecurityRealm {
 
     private LdapSecurityRealm ldapRealm;
     private DatabaseSecurityRealm databaseRealm;
+    private boolean resolved = false;
+    private String authenticatedBy; // NUOVO
 
+    // Aggiungi questo metodo
+    public String getAuthenticatedBy() {
+        return authenticatedBy;
+    }
     public CombinedSecurityRealm() {
         this.ldapRealm = new LdapSecurityRealm();
         this.databaseRealm = new DatabaseSecurityRealm();
@@ -88,6 +97,12 @@ public class CombinedSecurityRealm implements SecurityRealm {
         private final Principal principal;
         private RealmIdentity delegateIdentity;
         private boolean resolved = false;
+        private String authenticatedBy; // NUOVO
+
+        // Aggiungi questo metodo
+        public String getAuthenticatedBy() {
+            return authenticatedBy;
+        }
 
         public CombinedRealmIdentity(Principal principal) {
             this.principal = principal;
@@ -142,6 +157,7 @@ public class CombinedSecurityRealm implements SecurityRealm {
                 RealmIdentity ldapIdentity = ldapRealm.getRealmIdentity(principal);
                 if (ldapIdentity.exists() && ldapIdentity.verifyEvidence(evidence)) {
                     delegateIdentity = ldapIdentity;
+                    authenticatedBy = "LDAP"; // NUOVO
                     resolved = true;
                     return true;
                 }
@@ -154,6 +170,7 @@ public class CombinedSecurityRealm implements SecurityRealm {
                 RealmIdentity dbIdentity = databaseRealm.getRealmIdentity(principal);
                 if (dbIdentity.exists() && dbIdentity.verifyEvidence(evidence)) {
                     delegateIdentity = dbIdentity;
+                    authenticatedBy = "DATABASE"; // NUOVO
                     resolved = true;
                     return true;
                 }
@@ -188,7 +205,15 @@ public class CombinedSecurityRealm implements SecurityRealm {
         public AuthorizationIdentity getAuthorizationIdentity() throws RealmUnavailableException {
             resolveIdentity();
             if (delegateIdentity != null) {
-                return delegateIdentity.getAuthorizationIdentity();
+                AuthorizationIdentity baseIdentity = delegateIdentity.getAuthorizationIdentity();
+
+                // Determina quale realm è stato usato
+                String realmType = (delegateIdentity.equals(ldapRealm.getRealmIdentity(principal))) ? "LDAP" : "DATABASE";
+
+                // Crea un'identità con attributi personalizzati
+                return AuthorizationIdentity.basicIdentity(baseIdentity,
+                        new MapAttributes(Collections.singletonMap("AUTH_REALM",
+                                Collections.singletonList(realmType))));
             }
             return AuthorizationIdentity.EMPTY;
         }
@@ -228,4 +253,5 @@ public class CombinedSecurityRealm implements SecurityRealm {
             resolved = true;
         }
     }
+
 }

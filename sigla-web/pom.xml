@@ -194,13 +194,12 @@
                     <plugin-options>
                         <jboss-fork-embedded>true</jboss-fork-embedded>
                     </plugin-options>
-
                     <cli-sessions>
                         <cli-session>
                             <script-files>
                                 <script>src/main/scripts/configure-wildfly.cli</script>
                             </script-files>
-                            <resolve-expressions>true</resolve-expressions>
+                            <resolve-expressions>false</resolve-expressions>
                         </cli-session>
                     </cli-sessions>
                     <context-root>SIGLA</context-root>

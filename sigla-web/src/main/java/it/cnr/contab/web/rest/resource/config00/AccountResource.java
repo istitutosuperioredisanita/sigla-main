@@ -42,10 +42,13 @@ import org.springframework.util.Base64Utils;
 
 import jakarta.ejb.Stateless;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import org.wildfly.security.auth.server.SecurityDomain;
+import org.wildfly.security.auth.server.SecurityIdentity;
+import org.wildfly.security.authz.Attributes;
+
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Stateless
 public class AccountResource implements AccountLocal {
@@ -61,9 +64,12 @@ public class AccountResource implements AccountLocal {
 
     public AccountDTO getAccountDTO(HttpServletRequest request) throws Exception {
         CNRUserContext userContext = AbstractResource.getUserContext(securityContext, request);
-        final Optional<SIGLALDAPPrincipal> siglaldapPrincipal = Optional.ofNullable(securityContext.getUserPrincipal())
-                .filter(SIGLALDAPPrincipal.class::isInstance)
-                .map(SIGLALDAPPrincipal.class::cast);
+
+        Attributes ldapAttributes = Optional.ofNullable(SecurityDomain.getCurrent())
+                .map(SecurityDomain::getCurrentSecurityIdentity)
+                .map(SecurityIdentity::getAttributes)
+                .orElse(Attributes.EMPTY);
+
         /*
         TODO WILDFLY
         final Optional<KeycloakPrincipal> keycloakPrincipal = Optional.ofNullable(securityContext.getUserPrincipal())
@@ -73,7 +79,7 @@ public class AccountResource implements AccountLocal {
          */
 
         AccountDTO accountDTO = null;
-        if (siglaldapPrincipal.isPresent()) {
+        if (ldapAttributes.containsKey("mail")) {
             LOGGER.info("Try to find user: {}", securityContext.getUserPrincipal().getName());
             final List<UtenteBulk> findUtenteByUID = crudComponentSession.find(
                     userContext,
@@ -85,11 +91,11 @@ public class AccountResource implements AccountLocal {
             final Optional<UtenteBulk> utenteBulk1 = findUtenteByUID.stream().findFirst();
             if (utenteBulk1.isPresent()) {
                 accountDTO = new AccountDTO(utenteBulk1.get());
-                accountDTO.setLogin(siglaldapPrincipal.get().getName());
-                accountDTO.setUsers(findUtenteByUID.stream().map(utenteBulk -> new AccountDTO(utenteBulk)).collect(Collectors.toList()));
-                accountDTO.setEmail((String) siglaldapPrincipal.get().getAttribute("mail"));
-                accountDTO.setFirstName((String) siglaldapPrincipal.get().getAttribute("cnrnome"));
-                accountDTO.setLastName((String) siglaldapPrincipal.get().getAttribute("cnrcognome"));
+                accountDTO.setLogin(securityContext.getUserPrincipal().getName());
+                accountDTO.setUsers(findUtenteByUID.stream().map(AccountDTO::new).collect(Collectors.toList()));
+                accountDTO.setEmail(ldapAttributes.getFirst("mail"));
+                accountDTO.setFirstName(ldapAttributes.getFirst("cnrnome"));
+                accountDTO.setLastName(ldapAttributes.getFirst("cnrcognome"));
                 accountDTO.setLdap(Boolean.TRUE);
                 accountDTO.setAbilitatoLdap(Boolean.TRUE);
                 accountDTO.setUtenteMultiplo(findUtenteByUID.size() > 1);
@@ -141,7 +147,7 @@ public class AccountResource implements AccountLocal {
             );
             accountDTO = new AccountDTO(utenteBulk);
             accountDTO.setLogin(securityContext.getUserPrincipal().getName());
-            accountDTO.setUsers(Arrays.asList(utenteBulk).stream().map(utente -> new AccountDTO(utente)).collect(Collectors.toList()));
+            accountDTO.setUsers(Stream.of(utenteBulk).map(AccountDTO::new).collect(Collectors.toList()));
             accountDTO.setLdap(Boolean.FALSE);
             accountDTO.setAbilitatoLdap(Boolean.FALSE);
             accountDTO.setUtenteMultiplo(Boolean.FALSE);

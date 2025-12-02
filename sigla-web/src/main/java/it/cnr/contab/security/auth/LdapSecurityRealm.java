@@ -31,6 +31,7 @@ import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.*;
+import java.io.Serializable;
 import java.security.Principal;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.*;
@@ -58,17 +59,17 @@ public class LdapSecurityRealm implements SecurityRealm {
 
     public LdapSecurityRealm(Map<String, String> options) {
         if (options != null) {
-            this.providerUrl = options.getOrDefault("java.naming.provider.url", this.providerUrl);
-            this.bindDN = options.get("bindDN");
-            this.bindCredential = options.get("bindCredential");
-            this.baseCtxDN = options.getOrDefault("baseCtxDN", this.baseCtxDN);
-            this.baseFilter = options.getOrDefault("baseFilter", this.baseFilter);
-            this.rolesCtxDN = options.getOrDefault("rolesCtxDN", this.rolesCtxDN);
-            this.roleFilter = options.getOrDefault("roleFilter", this.roleFilter);
-            this.roleAttributeID = options.getOrDefault("roleAttributeID", this.roleAttributeID);
-            this.defaultRole = options.getOrDefault("defaultRole", this.defaultRole);
+            this.providerUrl = options.getOrDefault("ldap.url", this.providerUrl);
+            this.bindDN = options.get("ldap.bindDN");
+            this.bindCredential = options.get("ldap.bindCredential");
+            this.baseCtxDN = options.getOrDefault("ldap.baseCtxDN", this.baseCtxDN);
+            this.baseFilter = options.getOrDefault("ldap.baseFilter", this.baseFilter);
+            this.rolesCtxDN = options.getOrDefault("ldap.rolesCtxDN", this.rolesCtxDN);
+            this.roleFilter = options.getOrDefault("ldap.roleFilter", this.roleFilter);
+            this.roleAttributeID = options.getOrDefault("ldap.roleAttributeID", this.roleAttributeID);
+            this.defaultRole = options.getOrDefault("ldap.defaultRole", this.defaultRole);
 
-            String userAttrsStr = options.get("userAttributes");
+            String userAttrsStr = options.get("ldap.userAttributes");
             if (userAttrsStr != null) {
                 this.userAttributes = userAttrsStr.split(";");
             }
@@ -125,13 +126,25 @@ public class LdapSecurityRealm implements SecurityRealm {
         private Map<String, Object> userAttributes;
         private Set<String> roles;
 
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            LdapRealmIdentity that = (LdapRealmIdentity) o;
+            return Objects.equals(principal, that.principal);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(principal);
+        }
+
         public LdapRealmIdentity(Principal principal) {
             this.principal = principal;
         }
 
         @Override
         public Principal getRealmIdentityPrincipal() {
-            return principal;
+            return this.principal;
         }
 
         @Override
@@ -166,8 +179,7 @@ public class LdapSecurityRealm implements SecurityRealm {
 
         @Override
         public boolean verifyEvidence(Evidence evidence) throws RealmUnavailableException {
-            if (evidence instanceof PasswordGuessEvidence) {
-                PasswordGuessEvidence passwordEvidence = (PasswordGuessEvidence) evidence;
+            if (evidence instanceof PasswordGuessEvidence passwordEvidence) {
                 char[] password = passwordEvidence.getGuess();
 
                 try {
@@ -233,7 +245,6 @@ public class LdapSecurityRealm implements SecurityRealm {
                     attributes.addFirst(entry.getKey(), entry.getValue().toString());
                 }
             }
-
             return AuthorizationIdentity.basicIdentity(attributes);
         }
 
@@ -319,7 +330,8 @@ public class LdapSecurityRealm implements SecurityRealm {
                     }
                 }
             } catch (NamingException e) {
-                throw new RealmUnavailableException("Failed to load roles from LDAP", e);
+                // Nessun accesso ai ruoli
+                //throw new RealmUnavailableException("Failed to load roles from LDAP", e);
             } finally {
                 if (ctx != null) {
                     try {
