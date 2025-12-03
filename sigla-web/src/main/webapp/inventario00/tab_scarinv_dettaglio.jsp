@@ -27,7 +27,7 @@
 		</td>
 	  </tr>
 	</table>
-	<%if (bp.isAmministratore() &&!( (buonoCarico!=null && buonoCarico.getTipoMovimento()!=null && buonoCarico.getTipoMovimento().getFl_vendita().booleanValue()))){ %>
+	<%if (bp.isAmministratore() && ( (buonoCarico!=null && buonoCarico.getTipoMovimento()!=null && buonoCarico.getTipoMovimento().getFl_dismissione().booleanValue()))){ %>
 	<table>
 	<tr>
 		<td colspan="1">

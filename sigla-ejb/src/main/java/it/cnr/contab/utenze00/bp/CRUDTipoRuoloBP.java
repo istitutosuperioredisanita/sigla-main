@@ -34,7 +34,7 @@ public class CRUDTipoRuoloBP extends SimpleCRUDBP {
             CRUDTipoRuoloBP bp = (CRUDTipoRuoloBP) actioncontext.getBusinessProcess();
             Tipo_ruoloBulk tipo_ruolo = (Tipo_ruoloBulk) bp.getModel();
             tipo_ruolo.resetPrivilegi();
-            try {
+        /*    try {
                 bp.setModel(actioncontext, ((RuoloComponentSession) createComponentSession()).
                         cercaAccessiDisponibili(actioncontext.getUserContext(), tipo_ruolo, compoundfindclause));
 
@@ -45,7 +45,7 @@ public class CRUDTipoRuoloBP extends SimpleCRUDBP {
             } catch (RemoteException e) {
                 handleException(e);
             }
-            super.setFilter(actioncontext, compoundfindclause);
+            super.setFilter(actioncontext, compoundfindclause);*/
         };
 
         public boolean isFiltered() {
