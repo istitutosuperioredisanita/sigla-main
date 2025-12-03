@@ -70,7 +70,7 @@ public class CORSFilter implements Filter {
                     logger.debug("CORS Filter Origin from Request: {} ", origin);
                     return origin;
                 })
-                .filter(s -> allowOrigins.contains(s))
+                .filter(allowOrigins::contains)
                 .ifPresent(s -> {
                     httpServletResponse
                             .ifPresent(httpServletResponse1 -> {
