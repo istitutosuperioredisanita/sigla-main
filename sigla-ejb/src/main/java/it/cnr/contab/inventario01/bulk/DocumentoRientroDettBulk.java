@@ -138,7 +138,7 @@ public class DocumentoRientroDettBulk extends Doc_trasporto_rientro_dettBulk {
     }
 
     // Delega: TI_DOCUMENTO
-    public void setTi_documento(String ti_documento_rif) {
+    public void setTiDocumentoRif(String ti_documento_rif) {
         if (this.getDoc_trasporto_rientro() != null) {
             this.getDoc_trasporto_rientro().setTiDocumento(ti_documento_rif);
         }

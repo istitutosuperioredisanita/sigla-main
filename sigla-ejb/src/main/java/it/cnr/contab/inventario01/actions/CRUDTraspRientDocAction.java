@@ -109,42 +109,6 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     }
 
 
-    public Forward doOnTipoRitiroChange(ActionContext context) {
-        try {
-            CRUDTraspRientInventarioBP bp = getBP(context);
-            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
-            String oldValue = doc.getTipoRitiro();
-
-            fillModel(context);
-            String newValue = doc.getTipoRitiro();
-
-            // Se oldValue è null o i valori sono diversi, procedi con le modifiche
-            if (oldValue != null && valoreUguale(oldValue, newValue)) {
-                return context.findDefaultForward();
-            }
-
-            // Se oldValue non è null ed è diverso da newValue, elimina i beni
-            if (oldValue != null) {
-                eliminaBeniSePresenti(context, bp, doc, "Tipo ritiro modificato. Beni precedenti rimossi.");
-            }
-
-            if (Doc_trasporto_rientroBulk.TIPO_RITIRO_VETTORE.equals(newValue)) {
-                doc.setTerzoIncRitiro(null); // Pulisci dipendente incaricato
-                doc.setCdTerzoAssegnatario(null);
-            } else if (Doc_trasporto_rientroBulk.TIPO_RITIRO_INCARICATO.equals(newValue)) {
-                doc.setNominativoVettore(null); // Pulisci nominativo vettore
-            }
-
-            // Aggiorna il model nel BP
-            bp.setModel(context, doc);
-
-            return context.findDefaultForward();
-
-        } catch (Throwable e) {
-            return handleException(context, e);
-        }
-    }
-
 
     public Forward doOnDipendenteChange(ActionContext context) {
         try {
@@ -877,5 +841,108 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             return handleException(context, ex);
         }
 
+    }
+
+    @Override
+    public Forward doSalva(ActionContext context) {
+        try {
+            CRUDTraspRientInventarioBP bp = getBP(context);
+            bp.save(context);
+            return context.findDefaultForward();
+
+        } catch (Throwable e) {
+            return handleException(context, e);
+        }
+    }
+
+    /**
+     * Gestisce il cambio dell'Assegnatario Smartworking
+     * Se l'assegnatario cambia, elimina i beni precedentemente selezionati
+     */
+    public Forward doOnTerzoSmartworkingChange(ActionContext context) {
+        try {
+            CRUDTraspRientInventarioBP bp = getBP(context);
+            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
+
+            Integer oldValue = getCdTerzo(doc.getTerzoSmartworking());
+            fillModel(context);
+            Integer newValue = getCdTerzo(doc.getTerzoSmartworking());
+
+            if (valoreUguale(oldValue, newValue)) {
+                return context.findDefaultForward();
+            }
+
+            // Se cambia l'assegnatario, elimina i beni precedentemente selezionati
+            eliminaBeniSePresenti(context, bp, doc,
+                    "Assegnatario Smartworking modificato. Beni precedenti rimossi.");
+
+            bp.setModel(context, doc);
+            return context.findDefaultForward();
+        } catch (Throwable e) {
+            return handleException(context, e);
+        }
+    }
+
+
+    /**
+     * Gestisce il cambio del Tipo Ritiro (Incaricato/Vettore).
+     */
+    public Forward doOnTipoRitiroChange(ActionContext context) {
+        try {
+            CRUDTraspRientInventarioBP bp = getBP(context);
+            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
+
+            // Salva il valore precedente del Tipo Ritiro
+            String oldValue = doc.getTipoRitiro();
+
+            // Aggiorna il model con i nuovi dati dal form
+            fillModel(context);
+
+            // Recupera il nuovo valore
+            String newValue = doc.getTipoRitiro();
+
+            // Se il valore non è cambiato, esci
+            if (oldValue != null && valoreUguale(oldValue, newValue)) {
+                return context.findDefaultForward();
+            }
+
+            // Se il Tipo Ritiro è stato cambiato, elimina i beni selezionati per forzare la riselezione
+            if (oldValue != null) {
+                eliminaBeniSePresenti(
+                        context,
+                        bp,
+                        doc,
+                        "Tipo ritiro modificato. I beni precedentemente selezionati sono stati rimossi."
+                );
+            }
+
+            // Logica di pulizia dei campi dipendenti dal Tipo Ritiro
+            if (Doc_trasporto_rientroBulk.TIPO_RITIRO_VETTORE.equals(newValue)) {
+                // Modalità Vettore: Nessuna pulizia (Nominativo Vettore e Destinazione restano)
+
+            } else if (Doc_trasporto_rientroBulk.TIPO_RITIRO_INCARICATO.equals(newValue)) {
+                // Modalità Incaricato: Pulisci il Nominativo Vettore (non applicabile)
+                doc.setNominativoVettore(null);
+
+            } else {
+                // Tipo Ritiro deselezionato: Pulisci tutti i campi logistici dipendenti
+                doc.setNominativoVettore(null);
+                doc.setDestinazione(null);
+                doc.setIndirizzo(null);
+            }
+
+            // Aggiorna il model nel BP
+            bp.setModel(context, doc);
+
+            return context.findDefaultForward();
+
+        } catch (Throwable e) {
+            return handleException(context, e);
+        }
+    }
+
+
+    protected Integer getCdTerzo(it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo) {
+        return (terzo != null) ? terzo.getCd_terzo() : null;
     }
 }

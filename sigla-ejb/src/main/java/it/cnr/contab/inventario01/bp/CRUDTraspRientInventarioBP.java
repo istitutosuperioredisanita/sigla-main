@@ -272,21 +272,31 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         setFreeSearchSet(getTipo());
     }
 
+    @Override
     public OggettoBulk initializeModelForEdit(ActionContext context, OggettoBulk bulk)
             throws BusinessProcessException {
+
         try {
-            DocTrasportoRientroComponentSession session = (DocTrasportoRientroComponentSession)
-                    createComponentSession("CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession",
-                            DocTrasportoRientroComponentSession.class);
-            setAmministratore(UtenteBulk.isAmministratoreInventario(context.getUserContext()));
-        } catch (ComponentException e1) {
-            throw handleException(e1);
-        } catch (RemoteException e1) {
+            // ========== 1. INIZIALIZZAZIONE STANDARD ==========
+            createComponentSession(
+                    "CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession",
+                    DocTrasportoRientroComponentSession.class
+            );
+
+            setAmministratore(
+                    UtenteBulk.isAmministratoreInventario(context.getUserContext())
+            );
+
+            // ========== 2. CHIAMA IL METODO PADRE (include allegati) ==========
+            bulk = super.initializeModelForEdit(context, bulk);
+
+            return bulk;
+
+        } catch (ComponentException | RemoteException e1) {
             throw handleException(e1);
         }
-        bulk = super.initializeModelForEdit(context, bulk);
-        return bulk;
     }
+
 
     @Override
     public void resetForSearch(ActionContext context) throws BusinessProcessException {
@@ -371,25 +381,36 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         return getModel() != null && getDoc() != null;
     }
 
+    // Tipo Ritiro visibile SOLO se NON è Smartworking
+    public boolean isTipoRitiroVisible() {
+        return hasValidModel() && !isSmartworking();
+    }
+
+    // Assegnatario Smartworking visibile SOLO se è Smartworking
+    public boolean isTerzoSmartworkingVisible() {
+        return hasValidModel() && isSmartworking();
+    }
+
+    // Tutti gli altri campi visibili SOLO se NON è Smartworking E hanno le loro condizioni
     public boolean isDestinazioneVisible() {
-        return hasValidModel() && getDoc().hasTipoRitiroSelezionato();
+        return hasValidModel() && !isSmartworking() && getDoc().hasTipoRitiroSelezionato();
     }
 
-    /**
-     * Controlla se il campo Assegnatario/Incaricato deve essere visibile.
-     * Visibile quando il tipo di ritiro è "Incaricato".
-     */
     public boolean isAssegnatarioVisible() {
-        return hasValidModel() && getDoc().isRitiroIncaricato();
+        return hasValidModel() && !isSmartworking() && getDoc().isRitiroIncaricato();
     }
 
-    /**
-     * Controlla se il campo Nominativo Vettore deve essere visibile.
-     * Delega la logica al metodo del documento.
-     */
     public boolean isNominativoVettoreVisible() {
-        return hasValidModel() && getDoc().isNominativoVettoreVisible();
+        return hasValidModel() && !isSmartworking() && getDoc().isNominativoVettoreVisible();
     }
+
+    public boolean isNoteAbilitate() {
+        return hasValidModel()
+                && !isSmartworking()
+                && getDoc().getTipoMovimento() != null
+                && getDoc().getTipoMovimento().isAbilitaNote();
+    }
+
 
     public boolean isStatoVisible() {
         return hasValidModel() && getDoc().getStato() != null && !isInserting();
@@ -397,12 +418,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
     public boolean isNoteVisible() {
         return hasValidModel() && getDoc().isNoteRitiroEnabled();
-    }
-
-    public boolean isNoteAbilitate() {
-        return hasValidModel()
-                && getDoc().getTipoMovimento() != null
-                && getDoc().getTipoMovimento().isAbilitaNote();
     }
 
 
@@ -437,14 +452,16 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
      */
     @Override
     public boolean isDeleteButtonEnabled() {
+        // Se è definitivo, disabilita sempre
         if (isDocumentoDefinitivo()) {
-            return !isVisualizzazione();
+            return false;
         }
 
         return !isDocumentoAnnullato()
                 && !isDocumentoInviatoInFirma()
                 && !isVisualizzazione();
     }
+
 
     /**
      * Controlla se il bottone SALVA deve essere abilitato.
@@ -499,31 +516,44 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         return !isStampaDocButtonHidden() && !isVisualizzazione();
     }
 
-    /**
-     * Controlla se il bottone SALVA DEFINITIVO deve essere nascosto.
-     * In stato DEFINITIVO: DEVE ESSERE NASCOSTO
-     */
+
     public boolean isSalvaDefinitivoButtonHidden() {
         Doc_trasporto_rientroBulk doc = getDoc();
-        return doc == null
-                || doc.getPgDocTrasportoRientro() == null
-                || Doc_trasporto_rientroBulk.STATO_DEFINITIVO.equals(doc.getStato());
+
+        if (doc == null || doc.getPgDocTrasportoRientro() == null) {
+            return true; // Nascondi: documento non ancora salvato
+        }
+
+        if (Doc_trasporto_rientroBulk.STATO_DEFINITIVO.equals(doc.getStato())) {
+            return true; // Nascondi: già definitivo
+        }
+
+        if (!hasAllegatoFirmato()) {
+            return true; // Nascondi se NON c'è documento firmato
+        }
+
+        return false;
     }
 
-    /**
-     * Controlla se il bottone SALVA DEFINITIVO deve essere abilitato.
-     * In stato DEFINITIVO: DEVE ESSERE DISABILITATO (già nascosto)
-     */
     public boolean isSalvaDefinitivoButtonEnabled() {
-        if (isSalvaDefinitivoButtonHidden()) return false;
+        // Se è nascosto, non può essere abilitato
+        if (isSalvaDefinitivoButtonHidden()) {
+            return false;
+        }
 
         Doc_trasporto_rientroBulk doc = getDoc();
-        return doc != null
+
+        // ========== VALIDAZIONI ==========
+
+        boolean isValid = doc != null
                 && doc.getPgDocTrasportoRientro() != null
                 && Doc_trasporto_rientroBulk.STATO_INSERITO.equals(doc.getStato())
                 && !doc.isAnnullato()
                 && doc.hasDettagli()
+                && hasAllegatoFirmato()
                 && !isVisualizzazione();
+
+        return isValid;
     }
 
 
@@ -538,57 +568,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         return hasValidModel() && getDoc().isSmartworking();
     }
 
-    /**
-     * Controlla se i radio button del Tipo Ritiro devono essere disabilitati
-     * Se è Smartworking → disabilita i radio button
-     */
-    public boolean isTipoRitiroReadonlyPerSmartworking() {
-        return hasValidModel() && isSmartworking();
-    }
-
-    /**
-     * Override del metodo esistente per includere la logica Smartworking
-     */
-    public boolean isTipoRitiroReadOnly() {
-        if (isTipoRitiroReadonlyPerSmartworking()) {
-            return true;
-        }
-        return isCampiCriticiReadOnly();
-    }
-
-    /**
-     * Controlla se il campo Assegnatario/Incaricato deve essere readonly per Smartworking
-     */
-    public boolean isAssegnatarioReadonlyPerSmartworking() {
-        return isSmartworking();
-    }
-
-    /**
-     * Override del metodo esistente per gestire readonly con Smartworking
-     */
-    public boolean isAssegnatarioReadOnly() {
-        if (isAssegnatarioReadonlyPerSmartworking()) {
-            return true;
-        }
-        return isCampiCriticiReadOnly();
-    }
-
-    /**
-     * Controlla se il campo Nominativo Vettore deve essere readonly per Smartworking
-     */
-    public boolean isNominativoVettoreReadonlyPerSmartworking() {
-        return isSmartworking();
-    }
-
-    /**
-     * Override del metodo esistente per gestire readonly con Smartworking
-     */
-    public boolean isNominativoVettoreReadOnly() {
-        if (isNominativoVettoreReadonlyPerSmartworking()) {
-            return true;
-        }
-        return isCampiCriticiReadOnly();
-    }
 
     // ========================================
     // PRINT
@@ -1367,20 +1346,47 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         try {
             getModel().setToBeCreated();
             setModel(context, createComponentSession().creaConBulk(context.getUserContext(), getModel()));
+            archiviaAllegati(context);
+            reloadAllegati(context);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }
+
+    public void update(it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException {
+        try {
+            getModel().setToBeUpdated();
+            setModel(context, createComponentSession().modificaConBulk(context.getUserContext(), getModel()));
+            archiviaAllegati(context);
+            reloadAllegati(context);
         } catch (Exception e) {
             throw handleException(e);
         }
     }
 
 
-    public void update(it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException {
+    private void reloadAllegati(ActionContext context) throws BusinessProcessException {
         try {
-            getModel().setToBeUpdated();
-            setModel(context, createComponentSession().modificaConBulk(context.getUserContext(), getModel()));
-            //allegatoStampaDoc(context.getUserContext());
-            archiviaAllegati(context);
+            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
+
+            if (doc == null || doc.getPgDocTrasportoRientro() == null) {
+                return; // Skip reload se documento o PG non sono pronti
+            }
+
+            // ========== PULISCI LA LISTA ALLEGATI PRIMA DEL RELOAD ==========
+            // CRITICO: Svuota la lista per evitare duplicati
+            if (doc.getArchivioAllegati() != null) {
+                doc.getArchivioAllegati().clear();
+            } else {
+                doc.setArchivioAllegati(new it.cnr.jada.bulk.BulkList<>());
+            }
+
+            // ========== RICARICA DAL CMIS ==========
+            initializeModelForEditAllegati(context, doc);
+
         } catch (Exception e) {
-            throw handleException(e);
+            e.printStackTrace();
+            throw new BusinessProcessException("Errore ricaricamento allegati: " + e.getMessage());
         }
     }
 
@@ -1527,13 +1533,59 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
 
     @Override
-    protected void completeAllegato(T allegato, StorageObject storageObject) throws ApplicationException {
-        Optional.ofNullable(storageObject.<String>getPropertyValue("sigla_commons_aspect:utente_applicativo"))
-                .ifPresent(s -> allegato.setUtenteSIGLA(s));
+    protected void completeAllegato(T allegato, StorageObject storageObject)
+            throws ApplicationException {
+
+        // ========== 1. CAMPO UTENTE SIGLA (già gestito nella classe base) ==========
+        Optional.ofNullable(storageObject.<String>getPropertyValue(
+                        "sigla_commons_aspect:utente_applicativo"))
+                .ifPresent(allegato::setUtenteSIGLA);
+
+        // ========== 2. ESTRAZIONE ASPECT NAME DA CMIS ==========
+        // CRITICO: Fix per il bug dell'aspectName
+        List<String> secondaryTypes = storageObject.getPropertyValue("cmis:secondaryObjectTypeIds");
+
+        if (secondaryTypes != null && !secondaryTypes.isEmpty()) {
+
+            // ========== DETERMINA GLI ASPECT VALIDI IN BASE AL TIPO DOCUMENTO ==========
+            String aspectFirmatoAtteso = null;
+            String aspectAltroAtteso = null;
+
+            if (allegato instanceof AllegatoDocumentoTrasportoBulk) {
+                aspectFirmatoAtteso = AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
+                aspectAltroAtteso = AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_ALTRO;
+            } else if (allegato instanceof AllegatoDocumentoRientroBulk) {
+                aspectFirmatoAtteso = AllegatoDocumentoRientroBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
+                aspectAltroAtteso = AllegatoDocumentoRientroBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_ALTRO;
+            }
+
+            if (aspectFirmatoAtteso != null && aspectAltroAtteso != null) {
+
+                // ========== CERCA L'ASPECT SPECIFICO NELLA LISTA ==========
+                for (String secondaryType : secondaryTypes) {
+                    // Salta gli aspect standard
+                    if (secondaryType.equals("P:cm:titled") ||
+                            secondaryType.contains("sigla_commons_aspect")) {
+                        continue;
+                    }
+
+                    // ========== TROVA L'ASPECT SPECIFICO DEL DOCUMENTO ==========
+                    if (secondaryType.equals(aspectFirmatoAtteso)) {
+                        allegato.setAspectName(aspectFirmatoAtteso);
+                        break;
+
+                    } else if (secondaryType.equals(aspectAltroAtteso)) {
+                        allegato.setAspectName(aspectAltroAtteso);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // ========== 3. CHIAMA IL METODO PADRE ==========
         super.completeAllegato(allegato, storageObject);
-
-
     }
+
 
     public void salvaDefinitivo(ActionContext context) throws it.cnr.jada.action.BusinessProcessException {
 
@@ -1548,6 +1600,48 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             throw handleException(ex);
         }
     }
+
+
+    private boolean hasAllegatoFirmato() {
+
+        // Verifica modello valido
+        if (getModel() == null) {
+            return false;
+        }
+
+        // Recupera documento
+        Doc_trasporto_rientroBulk doc = getDoc();
+        if (doc == null || doc.getArchivioAllegati() == null) {
+            return false;
+        }
+
+        // Determina l'aspect atteso in base al tipo di documento
+        String aspectFirmatoAtteso;
+        if (doc instanceof DocumentoTrasportoBulk) {
+            aspectFirmatoAtteso = AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
+        } else if (doc instanceof DocumentoRientroBulk) {
+            aspectFirmatoAtteso = AllegatoDocumentoRientroBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
+        } else {
+            return false;
+        }
+
+        // Cerca un allegato che abbia l'aspect di documento firmato
+        for (Object obj : doc.getArchivioAllegati()) {
+            if (obj instanceof AllegatoDocTraspRientroBulk) {
+                AllegatoDocTraspRientroBulk allegato = (AllegatoDocTraspRientroBulk) obj;
+                String aspectName = allegato.getAspectName();
+
+                if (aspectName != null && aspectName.equals(aspectFirmatoAtteso)) {
+                    return true;
+                }
+            }
+        }
+
+        // Nessun allegato firmato trovato
+        return false;
+    }
+
+
 
 
 }

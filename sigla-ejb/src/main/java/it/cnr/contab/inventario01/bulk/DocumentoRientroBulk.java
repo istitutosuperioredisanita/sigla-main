@@ -11,16 +11,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * Bulk per documenti di RIENTRO beni inventariali
- */
 public class DocumentoRientroBulk extends Doc_trasporto_rientroBulk {
 
     private static final String DOC_RIENTRO_FILEFOLDER = "Doc. Rientro";
-
-    // ========================================
-    // COSTRUTTORI
-    // ========================================
 
     public DocumentoRientroBulk() {
         super();
@@ -33,22 +26,26 @@ public class DocumentoRientroBulk extends Doc_trasporto_rientroBulk {
         setTiDocumento(RIENTRO);
     }
 
-    // ========================================
-    // IMPLEMENTAZIONE STORAGE PATH
-    // ========================================
-
+    // ==================== IMPLEMENTAZIONE STORAGE PATH ====================
     @Override
     public List<String> getStorePath() {
 
-        return Collections.singletonList(Arrays.asList(
-                SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
-                DOC_RIENTRO_FILEFOLDER,
-                Optional.ofNullable(this.getEsercizio())
-                        .map(esercizio -> String.valueOf(esercizio))
-                        .orElse("0"),
-                "Documento Rientro " + this.getEsercizio().toString() + Utility.lpad(this.getPgDocTrasportoRientro().toString(), 10, '0')
-        ).stream().collect(
-                Collectors.joining(StorageDriver.SUFFIX)
-        ));
+        // ========== VALIDAZIONE ==========
+        if (getEsercizio() == null || getPgDocTrasportoRientro() == null) {
+            throw new IllegalStateException(
+                    "Documento non ancora salvato: impossibile generare lo storage path"
+            );
+        }
+
+        // ========== COSTRUZIONE PATH ==========
+        return Collections.singletonList(
+                Arrays.asList(
+                        SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
+                        DOC_RIENTRO_FILEFOLDER,
+                        String.valueOf(getEsercizio()),
+                        "Documento Rientro " + getEsercizio().toString() +
+                                Utility.lpad(getPgDocTrasportoRientro().toString(), 10, '0')
+                ).stream().collect(Collectors.joining(StorageDriver.SUFFIX))
+        );
     }
 }

@@ -85,14 +85,7 @@ function doStampaDocTraspRient() {
     <tr>
         <td><% bp.getController().writeFormLabel(out,"tipoRitiro"); %></td>
         <td colspan="3">
-            <% bp.getController().writeFormInput(
-                out,
-                null,
-                "tipoRitiro",
-                bp.isTipoRitiroReadOnly(),
-                null,
-                null
-            ); %>
+            <% bp.getController().writeFormInput(out, null, "tipoRitiro", false, null, null); %>
         </td>
     </tr>
 
@@ -114,7 +107,7 @@ function doStampaDocTraspRient() {
             <td><% bp.getController().writeFormLabel(out,"find_terzoIncRitiro"); %></td>
             <td colspan="3">
                 <% bp.getController().writeFormInput(out, null, "find_terzoIncRitiro",
-                    bp.isAssegnatarioReadOnly(), null,
+                    false, null,
                     "onChange=\"submitForm('doOnDipendenteChange')\""); %>
             </td>
         </tr>
@@ -126,7 +119,7 @@ function doStampaDocTraspRient() {
             <td><% bp.getController().writeFormLabel(out,"nominativoVettore"); %></td>
             <td colspan="3">
                 <% bp.getController().writeFormInput(out, null, "nominativoVettore",
-                    bp.isNominativoVettoreReadOnly(), null, null); %>
+                    false, null, null); %>
             </td>
         </tr>
     <% } %>

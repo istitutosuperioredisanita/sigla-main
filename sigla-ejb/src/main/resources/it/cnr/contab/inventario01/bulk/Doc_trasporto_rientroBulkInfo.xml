@@ -127,7 +127,7 @@
             inputType="RADIOGROUP"
             keysProperty="tipoRitiroKeys"
             layout="HORIZONTAL"
-            nullable="false"
+            nullable="true"
             command="doOnTipoRitiroChange"
             label="Tipo Ritiro" />
 
@@ -152,6 +152,30 @@
             maxLength="10"
             inputSize="10"
             label="Cod. Incaricato"
+            caseSensitiveSearch="false" />
+
+    <!-- ============================================ -->
+    <!-- FK: TERZO SMARTWORKING -->
+    <!-- ============================================ -->
+
+    <!-- Campo searchtool per Assegnatario Smartworking -->
+    <fieldProperty
+            name="find_terzoSmartworking"
+            property="bene.assegnatario"
+            inputType="SEARCHTOOL"
+            formName="searchtool"
+            enabledOnSearch="true"
+            enabledOnEdit="true"
+            completeOnSave="true"
+            label="Assegnatario Smartworking" />
+
+    <fieldProperty
+            name="cd_terzo_smartworking"
+            property="bene.assegnatario.cd_terzo"
+            inputType="TEXT"
+            maxLength="10"
+            inputSize="10"
+            label="Cod. Assegnatario Smartworking"
             caseSensitiveSearch="false" />
 
     <fieldProperty
@@ -230,6 +254,8 @@
     <formFieldProperty name="tipoRitiro"/>
     <formFieldProperty name="find_terzoIncRitiro" />
     <formFieldProperty name="cd_terzo_assegnatario" />
+    <formFieldProperty name="find_terzoSmartworking" />
+    <formFieldProperty name="cd_terzo_smartworking" />
     <formFieldProperty name="nominativoVettore" />
     <formFieldProperty name="note" />
     <formFieldProperty name="stato" />

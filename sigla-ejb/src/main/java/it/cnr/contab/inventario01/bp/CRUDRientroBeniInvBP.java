@@ -38,15 +38,21 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoDoc
     }
 
     @Override
-    protected String getStorePath(DocumentoRientroBulk allegatoParentBulk, boolean create) throws BusinessProcessException {
-        return null;
-    }
+    protected String getStorePath(DocumentoRientroBulk documentoRientroBulk, boolean create)
+            throws BusinessProcessException {
 
+        if (documentoRientroBulk == null) {
+            throw new BusinessProcessException("Documento di rientro non presente");
+        }
+
+        return documentoRientroBulk.getStorePath().get(0);
+    }
 
     @Override
     protected Class getAllegatoClass() {
-        return it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk.class;
+        return AllegatoDocumentoRientroBulk.class;
     }
+
 
     public String[][] getTabs() {
         TreeMap<Integer, String[]> hash = new TreeMap<>();

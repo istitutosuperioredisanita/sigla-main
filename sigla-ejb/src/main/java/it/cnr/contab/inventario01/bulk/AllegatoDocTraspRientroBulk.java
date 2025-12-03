@@ -1,20 +1,3 @@
-/*
- * Copyright (C) 2019  Consiglio Nazionale delle Ricerche
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Affero General Public License as
- *     published by the Free Software Foundation, either version 3 of the
- *     License, or (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Affero General Public License for more details.
- *
- *     You should have received a copy of the GNU Affero General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package it.cnr.contab.inventario01.bulk;
 
 import it.cnr.contab.utenze00.bp.CNRUserContext;
@@ -27,9 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AllegatoDocTraspRientroBulk extends AllegatoGenericoBulk {
+
 	private static final long serialVersionUID = 1L;
-
-
 
 	public AllegatoDocTraspRientroBulk() {
 		super();
@@ -39,16 +21,46 @@ public abstract class AllegatoDocTraspRientroBulk extends AllegatoGenericoBulk {
 		super(storageKey);
 	}
 
-	public abstract String getAspectName() ;
+	public abstract String getAspectName();
 
+	public abstract void setAspectName(String aspectName);
 
 	@StorageProperty(name="cmis:secondaryObjectTypeIds")
 	public List<String> getAspect() {
 		List<String> results = new ArrayList<String>();
 		results.add("P:cm:titled");
-		results.add(getAspectName());
+
+		if (getAspectName() != null && !getAspectName().isEmpty()) {
+			results.add(getAspectName());
+		}
+
 		return results;
 	}
+
+
+	@Override
+	@StoragePolicy(name="P:cm:titled", property=@StorageProperty(name="cm:description"))
+	public String getDescrizione() {
+		return super.getDescrizione();
+	}
+
+	@Override
+	public void setDescrizione(String descrizione) {
+		super.setDescrizione(descrizione);
+	}
+
+	@Override
+	@StorageProperty(name="cmis:name")
+	public String getNome() {
+		return super.getNome();
+	}
+
+	@Override
+	public void setNome(String nome) {
+		super.setNome(nome);
+	}
+
+
 	@StoragePolicy(
 			name = "P:sigla_commons_aspect:utente_applicativo_sigla",
 			property = @StorageProperty(name = "sigla_commons_aspect:utente_applicativo")
@@ -58,29 +70,14 @@ public abstract class AllegatoDocTraspRientroBulk extends AllegatoGenericoBulk {
 	public String getUtenteSIGLA() {
 		return utenteSIGLA;
 	}
-	@Override
-	public void complete(UserContext userContext) {
-		setUtenteSIGLA(CNRUserContext.getUser(userContext));
-		super.complete(userContext);
-	}
 
 	public void setUtenteSIGLA(String utenteSIGLA) {
 		this.utenteSIGLA = utenteSIGLA;
 	}
 
-/*
 	@Override
-	public void validate() throws ValidationException {
-		Optional.ofNullable(getAspectName())
-				.orElseThrow(() -> new ValidationException("Attenzione: selezionare la tipologia di File!"));
-		if (getAspectName().equalsIgnoreCase(P_SIGLA_FATTURE_ATTACHMENT_LIQUIDAZIONE)) {
-			Optional.ofNullable(getDataProtocollo())
-					.orElseThrow(() -> new ValidationException("Attenzione: la data protocollo è obbligatoria!"));
-			Optional.ofNullable(getNumProtocollo())
-					.orElseThrow(() -> new ValidationException("Attenzione: il numero di protocollo è obbligatorio!"));
-		}
-		super.validate();
+	public void complete(UserContext userContext) {
+		setUtenteSIGLA(CNRUserContext.getUser(userContext));
+		super.complete(userContext);
 	}
-*/
-
 }

@@ -97,20 +97,39 @@ function doStampaDocTraspRient() {
         <td colspan="4" style="border-top: 2px solid #003d7a; padding-top: 15px;"></td>
     </tr>
 
-    <!-- ==================== TIPO RITIRO (DISABILITATO SE SMARTWORKING) ==================== -->
-    <tr>
-      <td><% bp.getController().writeFormLabel(out,"tipoRitiro"); %></td>
-      <td colspan="3">
-        <% bp.getController().writeFormInput(
-            out,
-            null,
-            "tipoRitiro",
-            bp.isTipoRitiroReadOnly(),
-            null,
-            null
-        ); %>
-      </td>
-    </tr>
+        <!-- ==================== ASSEGNATARIO SMARTWORKING (VISIBILE SOLO SE SMARTWORKING) ==================== -->
+        <% if (bp.isTerzoSmartworkingVisible()) { %>
+          <tr>
+            <td><% bp.getController().writeFormLabel(out,"find_terzoSmartworking"); %></td>
+            <td colspan="3">
+              <% bp.getController().writeFormInput(
+                  out,
+                  null,
+                  "find_terzoSmartworking",
+                  false,
+                  null,
+                  "onChange=\"submitForm('doOnTerzoSmartworkingChange')\""); %>
+            </td>
+          </tr>
+        <% } %>
+
+
+    <!-- ==================== TIPO RITIRO (NASCOSTO SE SMARTWORKING) ==================== -->
+    <% if (bp.isTipoRitiroVisible()) { %>
+      <tr>
+        <td><% bp.getController().writeFormLabel(out,"tipoRitiro"); %></td>
+        <td colspan="3">
+          <% bp.getController().writeFormInput(
+              out,
+              null,
+              "tipoRitiro",
+              false,
+              null,
+              null
+          ); %>
+        </td>
+      </tr>
+    <% } %>
 
     <!-- ==================== CAMPI CONDIZIONALI ==================== -->
     <% if (bp.isDestinazioneVisible()) { %>
@@ -129,8 +148,12 @@ function doStampaDocTraspRient() {
       <tr>
         <td><% bp.getController().writeFormLabel(out,"find_terzoIncRitiro"); %></td>
         <td colspan="3">
-          <% bp.getController().writeFormInput(out, null, "find_terzoIncRitiro",
-              bp.isAssegnatarioReadOnly(), null,
+          <% bp.getController().writeFormInput(
+              out,
+              null,
+              "find_terzoIncRitiro",
+              false,
+              null,
               "onChange=\"submitForm('doOnDipendenteChange')\""); %>
         </td>
       </tr>
@@ -140,8 +163,13 @@ function doStampaDocTraspRient() {
       <tr>
         <td><% bp.getController().writeFormLabel(out,"nominativoVettore"); %></td>
         <td colspan="3">
-          <% bp.getController().writeFormInput(out, null, "nominativoVettore",
-              bp.isNominativoVettoreReadOnly(), null, null); %>
+          <% bp.getController().writeFormInput(
+              out,
+              null,
+              "nominativoVettore",
+              false,
+              null,
+              null); %>
         </td>
       </tr>
     <% } %>

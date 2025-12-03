@@ -79,6 +79,7 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     protected Tipo_trasporto_rientroBulk tipoMovimento;
     private TerzoBulk terzoIncRitiro;          // FK CD_TERZO_ASSEGNATARIO
     private TerzoBulk terzoRespDip;       // FK CD_TERZO_RESPONSABILE
+    private TerzoBulk terzoSmartworking;
 
     // Attributi NON mappati (transient - solo per uso applicativo)
     private TerzoBulk consegnatario;
@@ -208,6 +209,20 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
             setCdTerzoResponsabile(null);
         }
     }
+
+    public TerzoBulk getTerzoSmartworking() {
+        return terzoSmartworking;
+    }
+
+    public void setTerzoSmartworking(TerzoBulk terzoSmartworking) {
+        this.terzoSmartworking = terzoSmartworking;
+    }
+
+    // Metodo per verificare se il campo è visibile
+    public boolean isTerzoSmartworkingVisible() {
+        return isSmartworking();
+    }
+
 
     // Metodo per accesso diretto alla FK (usato dal framework di persistenza)
     @Override
@@ -537,7 +552,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     public boolean hasTipoRitiroSelezionato() {
         return getTipoRitiro() != null;
     }
-
     public boolean isRitiroIncaricato() {
         return TIPO_RITIRO_INCARICATO.equals(getTipoRitiro());
     }
@@ -696,42 +710,15 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
 // ========================================
 
     /**
-     * Verifica se il tipo movimento selezionato è "Smartworking"
-     * @return true se il tipo movimento è Smartworking
+     * Verifica se il documento è in modalità smartworking.
+     * - Tipo movimento = "SMARTWORKING"
      */
     public boolean isSmartworking() {
-        if (tipoMovimento == null) {
-            return false;
-        }
 
-        String dsTipo = tipoMovimento.getDsTipoTrasportoRientro();
-
-        return dsTipo != null &&
-                dsTipo.trim().equalsIgnoreCase("Smartworking");
-    }
-
-    /**
-     * Determina se i radio button del Tipo Ritiro devono essere readonly/disabilitati
-     * @return true se i radio button devono essere disabilitati
-     */
-    public boolean isTipoRitiroReadonly() {
-        return isSmartworking();
-    }
-
-    /**
-     * Determina se il campo Tipo Ritiro è obbligatorio
-     * @return true se è obbligatorio
-     */
-    public boolean isTipoRitiroRequired() {
-        return !isSmartworking();
-    }
-
-    /**
-     * Determina se i campi Assegnatario/Vettore devono essere disabilitati
-     * @return true se devono essere disabilitati
-     */
-    public boolean isCampiRitiroReadonly() {
-        return isSmartworking();
+        // Verifica tipo movimento
+        return getTipoMovimento() != null
+                && getTipoMovimento().getDsTipoTrasportoRientro() != null
+                && getTipoMovimento().getDsTipoTrasportoRientro().equalsIgnoreCase("SMARTWORKING");
     }
 
     /**
@@ -744,7 +731,14 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
                 "la Data " + (TRASPORTO.equals(getTiDocumento()) ? "Trasporto" : "Rientro"));
         validaCampoObbligatorio(getTipoMovimento(), "il Tipo Movimento");
 
-        if (!isSmartworking()) {
+        if (isSmartworking()) {
+            // Per Smartworking: richiedi il terzo selezionato
+            if (getTerzoSmartworking() == null || getTerzoSmartworking().getCd_terzo() == null) {
+                throw new ValidationException(
+                        "Per il tipo di movimento Smartworking è necessario selezionare l'Assegnatario.");
+            }
+        } else {
+            // Per altri tipi: richiedi tipo ritiro
             validaCampoObbligatorio(getTipoRitiro(), "il Tipo Ritiro (Incaricato o Vettore)");
 
             if (!Arrays.asList(TIPO_RITIRO_INCARICATO, TIPO_RITIRO_VETTORE).contains(getTipoRitiro())) {

@@ -34,6 +34,9 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoD
 
     @Override
     protected String getStorePath(DocumentoTrasportoBulk documentoTrasportoBulk, boolean create) throws BusinessProcessException {
+        if (documentoTrasportoBulk == null) {
+            throw new BusinessProcessException("Documento di trasporto non presente");
+        }
         return documentoTrasportoBulk.getStorePath().get(0);
     }
 
@@ -46,7 +49,7 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoD
     public String[][] getTabs() {
         TreeMap<Integer, String[]> hash = new TreeMap<>();
         int i=0;
-        hash.put(i++, new String[]{ "tabTrasportoTestata","Testata","/inventario00/tab_testata_doc_r.jsp" });
+        hash.put(i++, new String[]{ "tabTrasportoTestata","Testata","/inventario00/tab_testata_doc_t.jsp" });
         if ( isInserting())
             hash.put(i++, new String[]{ "tabTrasportoDettaglio","Dettaglio","/inventario00/tab_trasporto_inv_dett.jsp"});
         else
