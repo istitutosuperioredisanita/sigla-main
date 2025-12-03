@@ -17,7 +17,7 @@
 		<columnMapping columnName="NOMINATIVO_VETTORE" propertyName="nominativoVettore" sqlTypeName="VARCHAR" columnSize="100" nullable="true" />
 		<columnMapping columnName="NOTE_RITIRO" propertyName="noteRitiro" sqlTypeName="VARCHAR" columnSize="4000" nullable="true" />
 		<columnMapping columnName="NOTE" propertyName="note" sqlTypeName="VARCHAR" columnSize="4000" nullable="true" />
-		<columnMapping columnName="CD_TERZO_ASSEGNATARIO" propertyName="cdTerzoAssegnatario" sqlTypeName="DECIMAL" columnSize="38" nullable="true" />
+		<columnMapping columnName="CD_TERZO_INCARICATO" propertyName="cdTerzoIncaricato" sqlTypeName="DECIMAL" columnSize="38" nullable="true" />
 
 		<!-- Campi Firma Digitale HappySign -->
 		<columnMapping columnName="ID_FLUSSO_HAPPYSIGN" propertyName="idFlussoHappysign" sqlTypeName="VARCHAR" columnSize="100" nullable="true" />
@@ -47,14 +47,13 @@
 	<persistentProperty name="nominativoVettore" />
 	<persistentProperty name="noteRitiro" />
 	<persistentProperty name="note" />
-	<persistentProperty name="cdTerzoAssegnatario" />
 
 	<persistentProperty name="idFlussoHappysign" />
 	<persistentProperty name="statoFlusso" />
 	<persistentProperty name="dataInvioFirma" />
 	<persistentProperty name="dataFirma" />
 	<persistentProperty name="noteRifiuto" />
-	<persistentProperty name="cdTerzoResponsabile" />
+	<persistentProperty name="cdTerzoIncaricato" />
 	<persistentProperty name="dacr" />
 	<persistentProperty name="utcr" />
 	<persistentProperty name="duva" />

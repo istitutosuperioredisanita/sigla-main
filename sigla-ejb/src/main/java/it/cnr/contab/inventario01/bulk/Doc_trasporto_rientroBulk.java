@@ -180,19 +180,21 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
 
     public void setTerzoIncRitiro(TerzoBulk terzoIncRitiro) {
         this.terzoIncRitiro = terzoIncRitiro;
+    }
+    @Override
+    public Integer getCdTerzoIncaricato() {
         if (terzoIncRitiro != null) {
-            setCdTerzoAssegnatario(terzoIncRitiro.getCd_terzo());
-        } else {
-            setCdTerzoAssegnatario(null);
+            terzoIncRitiro.getCd_terzo();
         }
+        return null;
     }
 
     // Metodo per accesso diretto alla FK (usato dal framework di persistenza)
     @Override
-    public void setCdTerzoAssegnatario(Integer cdTerzoAssegnatario) {
-        super.setCdTerzoAssegnatario(cdTerzoAssegnatario);
-        if (terzoIncRitiro != null && cdTerzoAssegnatario != null) {
-            terzoIncRitiro.setCd_terzo(cdTerzoAssegnatario);
+    public void setCdTerzoIncaricato(Integer cdTerzoIncaricato) {
+        super.setCdTerzoIncaricato(cdTerzoIncaricato);
+        if (terzoIncRitiro != null && cdTerzoIncaricato != null) {
+            terzoIncRitiro.setCd_terzo(cdTerzoIncaricato);
         }
     }
 

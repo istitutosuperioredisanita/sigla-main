@@ -15,13 +15,7 @@ public class Doc_trasporto_rientro_dettBase extends Doc_trasporto_rientro_dettKe
 	private Long pgDocTrasportoRientroRif;
 	private Long nrInventarioRif;
 	private Integer progressivoRif;
-
-
-	// Altri campi
-	private String intervallo;
-	private Long quantita;
-	private java.sql.Timestamp dataEffettivaMovimentazione;
-
+	private Integer cdTerzoAssegnatario;
 
 	/**
 	 * Table name: DOC_TRASPORTO_RIENTRO_DETT
@@ -68,15 +62,11 @@ public class Doc_trasporto_rientro_dettBase extends Doc_trasporto_rientro_dettKe
 	public Long getPgDocTrasportoRientroRif() { return pgDocTrasportoRientroRif; }
 	public void setPgDocTrasportoRientroRif(Long pgDocTrasportoRientroRif) { this.pgDocTrasportoRientroRif = pgDocTrasportoRientroRif; }
 
-	// ===============================
-	// ALTRI CAMPI
-	// ===============================
-	public String getIntervallo() { return intervallo; }
-	public void setIntervallo(String intervallo) { this.intervallo = intervallo; }
+	public Integer getCdTerzoAssegnatario() {
+		return cdTerzoAssegnatario;
+	}
 
-	public Long getQuantita() { return quantita; }
-	public void setQuantita(Long quantita) { this.quantita = quantita; }
-
-	public java.sql.Timestamp getDataEffettivaMovimentazione() { return dataEffettivaMovimentazione; }
-	public void setDataEffettivaMovimentazione(java.sql.Timestamp dataEffettivaMovimentazione) { this.dataEffettivaMovimentazione = dataEffettivaMovimentazione; }
+	public void setCdTerzoAssegnatario(Integer cdTerzoAssegnatario) {
+		this.cdTerzoAssegnatario = cdTerzoAssegnatario;
+	}
 }

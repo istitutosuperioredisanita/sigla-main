@@ -22,13 +22,9 @@ import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Condizione_beneBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Ubicazione_beneBulk;
-import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.StrServ;
-
-import java.rmi.RemoteException;
 
 /**
  * Dettaglio (riga) di un documento di Trasporto/Rientro.
@@ -239,24 +235,7 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
         return this;
     }
 
-    @Override
-    public OggettoBulk initializeForInsert(it.cnr.jada.util.action.CRUDBP bp, it.cnr.jada.action.ActionContext context) {
-        // Inizializzazione per l'inserimento
-        bene = new Inventario_beniBulk();
-        bene.setTi_commerciale_istituzionale(TipoIVA.ISTITUZIONALE.value());
 
-        try {
-            // Se la gestione etichetta è attiva, imposta la quantità a 1
-            if (Utility.createConfigurazioneCnrComponentSession()
-                    .isGestioneEtichettaInventarioBeneAttivo(context.getUserContext())) {
-                setQuantita(1L);
-            }
-        } catch (RemoteException | ComponentException e) {
-            // Errore di inizializzazione, log se necessario
-        }
-
-        return this;
-    }
 
     // ========================================
     // GESTIONE ACCESSORI E ETICHETTE

@@ -51,7 +51,7 @@
             <column name="fl_vettore" remarks="Flag che indica se il ritiro è effettuato da un vettore. Dominio: Y = Si, N = No. Esclusivo con FL_INCARICATO." type="CHAR(1)" defaultValue="N">
                 <constraints nullable="false"/>
             </column>
-            <column name="cd_terzo_assegnatario" remarks="Codice del terzo che rappresenta il dipendente incaricato del ritiro. Obbligatorio quando FL_INCARICATO = Y" type="INT"/>
+            <column name="cd_terzo_incaricato" remarks="Codice del terzo incaricato del trasporto" type="INT"/>
             <column name="nominativo_vettore" remarks="Nominativo del vettore esterno. Campo abilitato quando FL_VETTORE = Y" type="VARCHAR(100)"/>
             <column name="note_ritiro" remarks="Note relative al ritiro del documento. Campo abilitato quando FL_INCARICATO o FL_VETTORE sono valorizzati a Y" type="VARCHAR(4000)"/>
             <column name="note" remarks="Note relative al documento di trasporto/rientro. Campo abilitato in base al flag FL_ABILITA_NOTE della tipologia" type="VARCHAR(4000)"/>
@@ -90,7 +90,7 @@
              PRIMARY KEY
              ======================================== -->
         <addPrimaryKey tableName="doc_trasporto_rientro"
-                       constraintName="doc_t_r_pkey"
+                       constraintName="doc_trasporto_rientro_pkey"
                        columnNames="pg_inventario,ti_documento,esercizio,pg_doc_trasporto_rientro"/>
 
         <!-- ========================================
@@ -100,7 +100,7 @@
         <!-- FK verso TIPO_TRASPORTO_RIENTRO -->
         <addForeignKeyConstraint baseTableName="doc_trasporto_rientro"
                                  baseColumnNames="cd_tipo_trasporto_rientro"
-                                 constraintName="fk_doc_t_r_tipo"
+                                 constraintName="fk_doc_trasporto_rientro01"
                                  referencedTableName="tipo_trasporto_rientro"
                                  referencedColumnNames="cd_tipo_trasporto_rientro"
                                  deferrable="false" initiallyDeferred="false"
@@ -109,7 +109,7 @@
         <!-- FK verso NUMERATORE_DOC_T_R -->
         <addForeignKeyConstraint baseTableName="doc_trasporto_rientro"
                                  baseColumnNames="pg_inventario,ti_documento,esercizio"
-                                 constraintName="fk_doc_t_r_numeratore"
+                                 constraintName="fk_doc_trasporto_rientro02"
                                  referencedTableName="numeratore_doc_t_r"
                                  referencedColumnNames="pg_inventario,ti_trasporto_rientro,esercizio"
                                  deferrable="false" initiallyDeferred="false"
@@ -117,8 +117,8 @@
 
         <!-- FK verso TERZO (assegnatario/incaricato) -->
         <addForeignKeyConstraint baseTableName="doc_trasporto_rientro"
-                                 baseColumnNames="cd_terzo_assegnatario"
-                                 constraintName="fk_doc_t_r_terzo_ass"
+                                 baseColumnNames="cd_terzo_incaricato"
+                                 constraintName="fk_doc_trasporto_rientro03"
                                  referencedTableName="terzo"
                                  referencedColumnNames="cd_terzo"
                                  deferrable="false" initiallyDeferred="false"
@@ -127,7 +127,7 @@
         <!-- FK verso TERZO (responsabile/firmatario) -->
         <addForeignKeyConstraint baseTableName="doc_trasporto_rientro"
                                  baseColumnNames="cd_terzo_responsabile"
-                                 constraintName="fk_doc_t_r_terzo_resp"
+                                 constraintName="fk_doc_trasporto_rientro04"
                                  referencedTableName="terzo"
                                  referencedColumnNames="cd_terzo"
                                  deferrable="false" initiallyDeferred="false"
@@ -136,42 +136,19 @@
         <!-- ========================================
              INDICI
              ======================================== -->
-
-        <!-- Indice su numeratore -->
-        <createIndex indexName="fx_doc_t_r_numeratore" tableName="doc_trasporto_rientro">
-            <column name="ti_documento"/>
-            <column name="pg_inventario"/>
-            <column name="esercizio"/>
-        </createIndex>
-
-        <!-- Indice su tipo movimento -->
-        <createIndex indexName="fx_doc_t_r_tipo" tableName="doc_trasporto_rientro">
-            <column name="cd_tipo_trasporto_rientro"/>
-        </createIndex>
-
-        <!-- Indice su stato -->
-        <createIndex indexName="fx_doc_t_r_stato" tableName="doc_trasporto_rientro">
-            <column name="stato"/>
-        </createIndex>
-
         <!-- Indice su terzo assegnatario -->
-        <createIndex indexName="fx_doc_t_r_terzo_ass" tableName="doc_trasporto_rientro">
-            <column name="cd_terzo_assegnatario"/>
+        <createIndex indexName="fx_doc_trasporto_rientro03" tableName="doc_trasporto_rientro">
+            <column name="cd_terzo_incaricato"/>
         </createIndex>
 
         <!-- Indice su terzo responsabile -->
-        <createIndex indexName="fx_doc_t_r_terzo_resp" tableName="doc_trasporto_rientro">
+        <createIndex indexName="fx_doc_trasporto_rientro04" tableName="doc_trasporto_rientro">
             <column name="cd_terzo_responsabile"/>
         </createIndex>
 
         <!-- Indice su ID flusso HappySign -->
         <createIndex indexName="fx_doc_t_r_flusso" tableName="doc_trasporto_rientro">
             <column name="id_flusso_happysign"/>
-        </createIndex>
-
-        <!-- Indice su stato flusso -->
-        <createIndex indexName="fx_doc_t_r_stato_flusso" tableName="doc_trasporto_rientro">
-            <column name="stato_flusso"/>
         </createIndex>
 
         <!-- Indice composito per ricerca documenti da firmare -->

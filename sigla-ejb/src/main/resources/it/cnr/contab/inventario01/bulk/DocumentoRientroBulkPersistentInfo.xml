@@ -20,6 +20,5 @@
 	</defaultColumnMap>
 
 	<persistentProperty name="inventario" partOfOid="true" />
-	<persistentProperty name="tipoMovimento" partOfOid="false" />
 
 </SQLPersistentInfo>

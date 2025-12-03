@@ -1,4 +1,5 @@
 package it.cnr.contab.inventario01.bulk;
+
 import it.cnr.jada.persistency.Keyed;
 
 public class Doc_trasporto_rientroBase extends Doc_trasporto_rientroKey implements Keyed {
@@ -15,10 +16,12 @@ public class Doc_trasporto_rientroBase extends Doc_trasporto_rientroKey implemen
 	private String indirizzo;
 	private Boolean flIncaricato=Boolean.FALSE;
 	private Boolean flVettore=Boolean.FALSE;
-	private Integer cdTerzoAssegnatario;
+	private Integer cdTerzoIncaricato;
 	private String noteRitiro;
 	private String note;
 	private String nominativoVettore;
+
+
 
 	// ========================================
 	// NUOVI CAMPI PER FIRMA DIGITALE HAPPYSIGN
@@ -150,12 +153,12 @@ public class Doc_trasporto_rientroBase extends Doc_trasporto_rientroKey implemen
 		this.flVettore = flVettore;
 	}
 
-	public Integer getCdTerzoAssegnatario() {
-		return cdTerzoAssegnatario;
+	public Integer getCdTerzoIncaricato() {
+		return cdTerzoIncaricato;
 	}
 
-	public void setCdTerzoAssegnatario(Integer cdTerzoAssegnatario) {
-		this.cdTerzoAssegnatario = cdTerzoAssegnatario;
+	public void setCdTerzoIncaricato(Integer cdTerzoIncaricato) {
+		this.cdTerzoIncaricato = cdTerzoIncaricato;
 	}
 
 	public String getNoteRitiro() {
@@ -234,27 +237,4 @@ public class Doc_trasporto_rientroBase extends Doc_trasporto_rientroKey implemen
 		this.cdTerzoResponsabile = cdTerzoResponsabile;
 	}
 
-	public String getTiDocumentoRif() {
-		return tiDocumentoRif;
-	}
-
-	public void setTiDocumentoRif(String tiDocumentoRif) {
-		this.tiDocumentoRif = tiDocumentoRif;
-	}
-
-	public Integer getEsercizioRif() {
-		return esercizioRif;
-	}
-
-	public void setEsercizioRif(Integer esercizioRif) {
-		this.esercizioRif = esercizioRif;
-	}
-
-	public Long getPgDocTrasportoRientroRif() {
-		return pgDocTrasportoRientroRif;
-	}
-
-	public void setPgDocTrasportoRientroRif(Long pgDocTrasportoRientroRif) {
-		this.pgDocTrasportoRientroRif = pgDocTrasportoRientroRif;
-	}
 }

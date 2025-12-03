@@ -22,8 +22,6 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -138,9 +136,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             // ========== AGGIUNGI QUESTO BLOCCO ==========
             // Carica il TerzoBulk assegnatario se presente
-            if (docTR.getCdTerzoAssegnatario() != null) {
+            if (docTR.getCdTerzoIncaricato() != null) {
                 TerzoBulk terzo = (TerzoBulk) getHome(aUC, TerzoBulk.class)
-                        .findByPrimaryKey(new TerzoBulk(docTR.getCdTerzoAssegnatario()));
+                        .findByPrimaryKey(new TerzoBulk(docTR.getCdTerzoIncaricato()));
                 if (terzo != null) {
                     docTR.setTerzoIncRitiro(terzo);
                 }
@@ -248,11 +246,11 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             }
 
             // ========== CARICA TERZO ASSEGNATARIO ==========
-            if (doc.getCdTerzoAssegnatario() != null) {
-                TerzoBulk terzoAssegnatario =
+            if (doc.getCdTerzoIncaricato() != null) {
+                TerzoBulk terzoIncaricato =
                         (TerzoBulk) getHome(userContext, TerzoBulk.class)
-                                .findByPrimaryKey(new TerzoBulk(doc.getCdTerzoAssegnatario()));
-                doc.setTerzoIncRitiro(terzoAssegnatario);
+                                .findByPrimaryKey(new TerzoBulk(doc.getCdTerzoIncaricato()));
+                doc.setTerzoIncRitiro(terzoIncaricato);
             }
 
             // ========== CARICA TERZO RESPONSABILE ==========
@@ -337,11 +335,11 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             }
 
             // ========== CARICA TERZO ASSEGNATARIO ==========
-            if (doc.getCdTerzoAssegnatario() != null) {
-                TerzoBulk terzoAssegnatario =
+            if (doc.getCdTerzoIncaricato() != null) {
+                TerzoBulk terzoIncaricato =
                         (TerzoBulk) getHome(userContext, TerzoBulk.class)
-                                .findByPrimaryKey(new TerzoBulk(doc.getCdTerzoAssegnatario()));
-                doc.setTerzoIncRitiro(terzoAssegnatario);
+                                .findByPrimaryKey(new TerzoBulk(doc.getCdTerzoIncaricato()));
+                doc.setTerzoIncRitiro(terzoIncaricato);
             }
 
             // ========== CARICA TERZO RESPONSABILE ==========
@@ -546,13 +544,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
 
         // Imposta campi comuni
-        dettaglio.setQuantita(1L);
-        dettaglio.setIntervallo(calcolaIntervallo(BigDecimal.valueOf(1L)));
-
-        if (beneApg.getDt_validita_variazione() != null) {
-            dettaglio.setDataEffettivaMovimentazione(beneApg.getDt_validita_variazione());
-        }
-
         dettaglio.setToBeCreated();
         return dettaglio;
     }
@@ -596,14 +587,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
         dettaglio.setDocTrasportoDettRif(docTrasportoDettRif);
         dettagliTrasportoDaAggiornare.add(docTrasportoDettRif);
-
-        // Imposta campi comuni
-        dettaglio.setQuantita(1L);
-        dettaglio.setIntervallo(calcolaIntervallo(BigDecimal.valueOf(1L)));
-
-        if (beneApg.getDt_validita_variazione() != null) {
-            dettaglio.setDataEffettivaMovimentazione(beneApg.getDt_validita_variazione());
-        }
 
         dettaglio.setToBeCreated();
         return dettaglio;
