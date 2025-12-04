@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -48,8 +49,16 @@ public class ActionDeployments extends DeploymentsH2 {
     @Drone
     protected WebDriver browser;
 
-    @ArquillianResource
+    //@ArquillianResource
     protected URL deploymentURL;
+
+    {
+        try {
+            deploymentURL = new URL("http://localhost:8080/SIGLA");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Before
     @RunAsClient

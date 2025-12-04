@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DeploymentsH2 extends Deployments {
+    /*
     @Test
     @InSequence(-1)
     @OperateOnDeployment(TEST_H2)
@@ -39,9 +40,19 @@ public class DeploymentsH2 extends Deployments {
         controller.start(CONTAINER_NAME,
                 Stream.of(
                         new AbstractMap.SimpleEntry<>("port", "12347"),
-                        new AbstractMap.SimpleEntry<>("javaVmArguments", "-agentlib:jdwp=transport=dt_socket,address=8789,server=y,suspend=n")
+                        new AbstractMap.SimpleEntry<>("javaVmArguments",
+                                "-agentlib:jdwp=transport=dt_socket,address=8789,server=y,suspend=n " +
+                                " -Xmx1024m" +
+                                " -Djava.net.preferIPv4Stack=true" +
+                                " -Dsigla.db.driver=h2" +
+                                " -Dsigla.db.url=jdbc:h2:mem:sigladb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE" +
+                                " -Dsigla.db.user=sa" +
+                                " -Dsigla.db.password=sa" +
+                                " -Dspring.profiles.active=liquibase" +
+                                " -Dliquibase.bootstrap.esercizio=2024")
                 ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
         );
         deployer.deploy(TEST_H2);
     }
+     */
 }

@@ -20,9 +20,28 @@
     <extension qualifier="selenium2">
         <property name="browserCapabilities">chrome</property>
     </extension>
-    <container qualifier="thorntail" default="true" mode="custom">
-        <protocol type="Servlet 3.0">
-            <property name="executionType">MANAGED</property>
-        </protocol>
+    <container qualifier="wildfly-bootable" default="true">
+        <configuration>
+            <!-- Path al bootable JAR -->
+            <property name="jarFile">target/sigla-bootable.jar</property>
+            <!-- Porta di gestione -->
+            <property name="managementPort">9990</property>
+            <!-- Porta HTTP -->
+            <property name="httpPort">8080</property>
+            <!-- Timeout per lo startup (ms) -->
+            <property name="startupTimeoutInSeconds">120</property>
+            <!-- JVM arguments -->
+            <property name="javaVmArguments">
+                -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787
+                -Xmx1024m
+                -Djava.net.preferIPv4Stack=true
+                -Dsigla.db.driver=h2
+                -Dsigla.db.url=jdbc:h2:mem:sigladb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+                -Dsigla.db.user=sa
+                -Dsigla.db.password=sa
+                -Dspring.profiles.active=liquibase
+                -Dliquibase.bootstrap.esercizio=2024
+            </property>
+        </configuration>
     </container>
 </arquillian>

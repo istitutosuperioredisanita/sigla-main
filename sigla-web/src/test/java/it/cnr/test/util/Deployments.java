@@ -49,10 +49,10 @@ public abstract class Deployments {
     private transient final static Logger LOGGER = LoggerFactory.getLogger(Deployments.class);
 
     public static final String TEST_H2 = "test-h2",
-            TEST_ORACLE = "test-oracle", CONTAINER_NAME="thorntail";
+            TEST_ORACLE = "test-oracle", CONTAINER_NAME="wildfly-bootable";
 
     @ArquillianResource
-    protected ContainerController controller;
+    protected static ContainerController controller;
     @ArquillianResource
     protected Deployer deployer;
 
@@ -102,15 +102,15 @@ public abstract class Deployments {
                 .addAsResource(yml, "/project-defaults.yml")
                 .addAsLibraries(pom
                         .resolve("org.liquibase:liquibase-core")
-                        .withoutTransitivity().as(JavaArchive.class))
+                        .withoutTransitivity().asFile())
                 .addAsLibraries(pom
                         .resolve("org.springframework:spring-context-support")
-                        .withTransitivity().as(JavaArchive.class))
+                        .withTransitivity().asFile())
                 .addAsLibraries(pom
                         .resolve("it.cnr.si.sigla:sigla-ws-client")
-                        .withTransitivity().as(JavaArchive.class))
+                        .withTransitivity().asFile())
                 .setWebXML(new File("src/main/webapp/WEB-INF/web.xml"));
-
+/*
         pom
                 .resolve("it.cnr.si:jada")
                 .withoutTransitivity().asSingle(JavaArchive.class)
@@ -155,7 +155,7 @@ public abstract class Deployments {
                 .forEach(archivePath -> {
                     webArchive.addAsResource(archivePath);
                 });
-
+*/
         Path resourceTestPath = Paths.get("src", "test", "resources");
         Files.walk(resourceTestPath)
                 .filter(p -> !p.toString().equals(resourceTestPath.toString()))

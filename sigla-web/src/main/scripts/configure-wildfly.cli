@@ -1,36 +1,68 @@
 # Script CLI per configurare WildFly Bootable JAR
 # Sostituisce project-stages.yml
 
-# Configurazione DataSource Oracle
-/subsystem=datasources/jdbc-driver=oracle:add(driver-name=oracle, \
-    driver-module-name=com.oracle.jdbc, \
-    driver-class-name=oracle.jdbc.OracleDriver)
+# ============================================================================
+# DRIVER JDBC
+# ============================================================================
 
-/subsystem=datasources/data-source=SIGLA:add(jndi-name=java:/jdbc/CIR, \
+# Driver Oracle
+/subsystem=datasources/jdbc-driver=oracle:add( \
     driver-name=oracle, \
-    connection-url=${env.DB_URL:jdbc:oracle:thin:@dbtest.cedrc.cnr.it:1521:SIGLAF}, \
-    user-name=${env.DB_USER:PCIR009}, \
-    password=${env.DB_PASSWORD:dbform}, \
-    min-pool-size=10, \
-    max-pool-size=250, \
-    idle-timeout-minutes=1, \
-    query-timeout=600, \
-    use-java-context=true)
+    driver-module-name=com.oracle.jdbc, \
+    driver-class-name=oracle.jdbc.OracleDriver \
+)
+
+# Driver PostgreSQL
+/subsystem=datasources/jdbc-driver=postgresql:add( \
+    driver-name=postgresql, \
+    driver-module-name=org.postgresql, \
+    driver-class-name=org.postgresql.Driver \
+)
+
+# Driver H2 (già presente di default, ma lo definiamo esplicitamente)
+/subsystem=datasources/jdbc-driver=h2:add( \
+    driver-name=h2, \
+    driver-module-name=com.h2database.h2, \
+    driver-class-name=org.h2.Driver \
+)
+
+# ============================================================================
+# DATASOURCE oracle/postgresql/h2
+# ============================================================================
+
+/subsystem=datasources/data-source=SIGLA:add( \
+    jndi-name=java:/jdbc/CIR, \
+    driver-name=${sigla.db.driver:oracle}, \
+    connection-url=${sigla.db.url:jdbc:oracle:thin:@dbtest.cedrc.cnr.it:1521:SIGLAF}, \
+    user-name=${sigla.db.user:PCIR009}, \
+    password=${sigla.db.password:dbform}, \
+    min-pool-size=${sigla.db.min-pool-size:10}, \
+    max-pool-size=${sigla.db.max-pool-size:250}, \
+    idle-timeout-minutes=${sigla.db.idle-timeout-minutes:1}, \
+    query-timeout=${sigla.db.query-timeout:600}, \
+    use-java-context=true, \
+    enabled=true \
+)
+# ============================================================================
+# Verifica DataSource
+# ============================================================================
+echo "Verifica DataSource configurato..."
+
+/subsystem=datasources/data-source=SIGLA:test-connection-in-pool
 
 echo "=== Configurazione Elytron per SIGLA ==="
-
 # 1. CREAZIONE CUSTOM REALM
 echo "Creazione Custom Realm..."
 /subsystem=elytron/custom-realm=sigla-combined-realm:add( \
     class-name=it.cnr.contab.security.auth.CombinedSecurityRealm, \
     module=it.cnr.contab.security, \
     configuration={ \
-        ldap.url=${env.CNR_LDAP_URL:ldap://virtest1.si.cnr.it:389}, \
-        ldap.bindDN=${env.CNR_LDAP_BIND_DN:cn=mastercnrapp1,ou=account,o=cnr,c=it}, \
-        ldap.bindCredential=${env.CNR_LDAP_CREDENTIALS:changeit!}, \
-        ldap.baseCtxDN=${env.CNR_LDAP_BASE_CTX:o=cnr,c=it}, \
+        ldap.url=${sigla.ldap.url:ldap://virtest1.si.cnr.it:389}, \
+        ldap.bindDN=${sigla.ldap.binddn:cn=mastercnrapp1,ou=account,o=cnr,c=it}, \
+        ldap.bindCredential=${sigla.ldap.credentials:changeit!}, \
+        ldap.baseCtxDN=${sigla.ldap.basectx:o=cnr,c=it}, \
         ldap.baseFilter="uid={0}", \
-        ldap.rolesCtxDN=${env.CNR_LDAP_ROLES_CTX:ou=groups,o=cnr,c=it}, \
+        ldap.rolesCtxDN=${sigla.ldap.rolectx:ou=groups,o=cnr,c=it}, \
         ldap.roleFilter="member={1}", \
         ldap.roleAttributeID="cn", \
         ldap.defaultRole="default-roles-cnr", \
@@ -115,23 +147,23 @@ echo "Configurazione logging per debug..."
 /subsystem=transactions:write-attribute(name=default-timeout, value=3600)
 
 # Configurazione Mail Session
-/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=sigla-smtp:add(host=${env.SMTP_HOST:smtp.amministrazione.cnr.it}, port=${env.SMTP_PORT:25})
+/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=sigla-smtp:add(host=${sigla.mail.smtp_host:smtp.amministrazione.cnr.it}, port=${sigla.mail.port:25})
 
 /subsystem=mail/mail-session=SIGLA:add(jndi-name=java:jboss/mail/sigla, \
-    from=${env.MAIL_FROM:sigla@cnr.it})
+    from=${sigla.mail.from:sigla@cnr.it})
 
 /subsystem=mail/mail-session=SIGLA/server=smtp:add(outbound-socket-binding-ref=sigla-smtp)
 
 # Configurazione PEC Mail (opzionale)
-/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=sigla-pec-smtp:add(host=${env.PEC_SMTP_HOST:smtps.pec.aruba.it}, port=${env.PEC_SMTP_PORT:465})
+/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=sigla-pec-smtp:add(host=${sigla.pec.smtp_host:smtps.pec.aruba.it}, port=${sigla.pec.port:465})
 
 /subsystem=mail/mail-session=PEC:add(jndi-name=java:jboss/mail/PecMailSession, \
-    from=${env.PEC_MAIL_FROM:sisca@pec.cnr.it})
+    from=${sigla.pec.from:sisca@pec.cnr.it})
 
 /subsystem=mail/mail-session=PEC/server=smtp:add(outbound-socket-binding-ref=sigla-pec-smtp, \
     ssl=true, \
-    username=${env.PEC_USERNAME:sisca@pec.cnr.it}, \
-    password=${env.PEC_PASSWORD:***})
+    username=${sigla.pec.username:sisca@pec.cnr.it}, \
+    password=${sigla.pec.password:***})
 
 
 # Configurazione Management
@@ -177,7 +209,7 @@ end-if
 
 # Configurazione Keycloak (se necessario)
 # /subsystem=keycloak/secure-deployment=sigla.war:add(realm=cnr, \
-#     auth-server-url=${env.KEYCLOAK_URL:http://localhost:8110/auth}, \
+#     auth-server-url=${sigla.oidc.url:http://localhost:8110/auth}, \
 #     resource=sigla, \
 #     ssl-required=NONE, \
 #     public-client=false, \

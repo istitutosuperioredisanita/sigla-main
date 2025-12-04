@@ -15,10 +15,8 @@
   ~     You should have received a copy of the GNU Affero General Public License
   ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
-
 <!-- JDBC Drivers module.xml file to configure your JDBC drivers-->
-<!-- Postgres example -->
-<module xmlns="urn:jboss:module:1.0" name="org.postgresql.postgresql">
+<module xmlns="urn:jboss:module:1.0" name="org.postgresql">
   <resources>
     <resource-root path="postgresql-9.2-1004.jdbc41.jar"/>
   </resources>

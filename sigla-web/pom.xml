@@ -33,20 +33,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-bom</artifactId>
-                <version>${version.arquillian}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap.resolver</groupId>
-                <artifactId>shrinkwrap-resolver-bom</artifactId>
-                <version>${arquillian.shrinkwrap.resolver}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
@@ -170,6 +156,7 @@
                     <layers>
                         <!-- Definisci i layer necessari -->
                         <layer>jaxrs-server</layer>
+                        <layer>cloud-server</layer>
                         <layer>ejb</layer>
                         <layer>jpa</layer>
                         <layer>datasources</layer>
@@ -518,6 +505,14 @@
             <artifactId>swagger-annotations-jakarta</artifactId>
             <version>2.2.20</version>
         </dependency>
+        <!-- JAXB API per Jakarta EE 10 -->
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>4.0.0</version>
+            <scope>provided</scope> <!-- provided perché WildFly lo fornisce -->
+        </dependency>
+
         <!--### [test dependencies] -->
         <dependency>
             <groupId>junit</groupId>
@@ -526,30 +521,38 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.arquillian.protocol</groupId>
-            <artifactId>arquillian-protocol-servlet</artifactId>
-            <scope>test</scope>
+            <groupId>org.wildfly.arquillian</groupId>
+            <artifactId>wildfly-arquillian-container-bootable</artifactId>
+            <version>${version.org.wildfly.arquillian}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-container</artifactId>
-            <scope>test</scope>
+            <version>${version.org.jboss.arquillian.junit}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-api</artifactId>
+            <version>${version.org.jboss.shrinkwrap.shrinkwrap}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-impl-base</artifactId>
+            <version>${version.org.jboss.shrinkwrap.shrinkwrap}</version>
+        </dependency>
+        <!-- ShrinkWrap Resolvers -->
         <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+            <version>${version.arquillian.shrinkwrap.resolver}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jboss.shrinkwrap.resolver</groupId>
-            <artifactId>shrinkwrap-resolver-depchain</artifactId>
-            <type>pom</type>
-            <scope>test</scope>
-        </dependency>
+        <!-- Arquillian Suite Extension -->
         <dependency>
             <groupId>org.eu.ingwar.tools</groupId>
             <artifactId>arquillian-suite-extension</artifactId>
-            <version>1.2.0</version>
+            <version>${version.arquillian.suite}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -588,6 +591,12 @@
                     <artifactId>serializer</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.12.2</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>xalan</groupId>
