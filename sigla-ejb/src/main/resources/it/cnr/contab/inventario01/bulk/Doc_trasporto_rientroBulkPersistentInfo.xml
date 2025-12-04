@@ -35,7 +35,7 @@
 				columnSize="10" />
 
 		<columnMapping
-				columnName="CD_TERZO_ASSEGNATARIO"
+				columnName="CD_TERZO_INCARICATO"
 				propertyName="terzoIncRitiro.cd_terzo"
 				sqlTypeName="DECIMAL"
 				columnSize="38" />

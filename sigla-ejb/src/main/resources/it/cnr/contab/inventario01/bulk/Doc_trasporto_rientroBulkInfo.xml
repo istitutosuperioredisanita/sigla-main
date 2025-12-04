@@ -118,7 +118,8 @@
             inputType="SELECT"
             nullable="false"
             enabledOnSearch="true"
-            label="Tipo Movimento"/>
+            label="Tipo Movimento"
+            command="doSelezionaTipoMovimento"/>
 
     <!-- Tipo Ritiro -->
     <fieldProperty
@@ -143,10 +144,11 @@
             enabledOnSearch="true"
             enabledOnEdit="true"
             completeOnSave="true"
+            command="doOnDipendenteChange"
             label="Dipendente Incaricato" />
 
     <fieldProperty
-            name="cd_terzo_assegnatario"
+            name="cd_terzo_incaricato"
             property="terzoIncRitiro.cd_terzo"
             inputType="TEXT"
             maxLength="10"
@@ -155,28 +157,32 @@
             caseSensitiveSearch="false" />
 
     <!-- ============================================ -->
-    <!-- FK: TERZO SMARTWORKING -->
+    <!-- TERZO SMARTWORKING (solo UI) -->
     <!-- ============================================ -->
 
-    <!-- Campo searchtool per Assegnatario Smartworking -->
     <fieldProperty
             name="find_terzoSmartworking"
-            property="bene.assegnatario"
+            property="terzoSmartworking"
             inputType="SEARCHTOOL"
             formName="searchtool"
             enabledOnSearch="true"
             enabledOnEdit="true"
             completeOnSave="true"
+            command="doOnTerzoSmartworkingChange"
             label="Assegnatario Smartworking" />
 
     <fieldProperty
             name="cd_terzo_smartworking"
-            property="bene.assegnatario.cd_terzo"
+            property="terzoSmartworking.cd_terzo"
             inputType="TEXT"
             maxLength="10"
             inputSize="10"
             label="Cod. Assegnatario Smartworking"
             caseSensitiveSearch="false" />
+
+    <!-- ============================================ -->
+    <!-- NOMINATIVO VETTORE -->
+    <!-- ============================================ -->
 
     <fieldProperty
             name="nominativoVettore"
@@ -186,6 +192,10 @@
             inputSize="50"
             label="Nominativo Vettore"
             nullable="true" />
+
+    <!-- ============================================ -->
+    <!-- CONSEGNATARIO, UO, DELEGATO (readonly) -->
+    <!-- ============================================ -->
 
     <!-- Consegnatario -->
     <fieldProperty
@@ -253,7 +263,7 @@
     <formFieldProperty name="indirizzo" />
     <formFieldProperty name="tipoRitiro"/>
     <formFieldProperty name="find_terzoIncRitiro" />
-    <formFieldProperty name="cd_terzo_assegnatario" />
+    <formFieldProperty name="cd_terzo_incaricato" />
     <formFieldProperty name="find_terzoSmartworking" />
     <formFieldProperty name="cd_terzo_smartworking" />
     <formFieldProperty name="nominativoVettore" />

@@ -212,10 +212,18 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         }
     }
 
+    /**
+     * Getter per Terzo Smartworking (CAMPO TRANSIENT - solo UI).
+     * NON mappato nel database.
+     */
     public TerzoBulk getTerzoSmartworking() {
         return terzoSmartworking;
     }
 
+    /**
+     * Setter per Terzo Smartworking (CAMPO TRANSIENT - solo UI).
+     * NON mappato nel database.
+     */
     public void setTerzoSmartworking(TerzoBulk terzoSmartworking) {
         this.terzoSmartworking = terzoSmartworking;
     }
@@ -697,6 +705,21 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     // VALIDAZIONE
     // ========================================
 
+    /**
+     * Validazione base del documento.
+     * Le validazioni per smartworking/tipo ritiro sono gestite dal BP.
+     */
+    @Override
+    public void validate() throws ValidationException {
+        // Solo validazioni di campi obbligatori base
+        validaCampoObbligatorio(getDsDocTrasportoRientro(), "la Descrizione del documento");
+        validaCampoObbligatorio(getDataRegistrazione(),
+                "la Data " + (TRASPORTO.equals(getTiDocumento()) ? "Trasporto" : "Rientro"));
+        validaCampoObbligatorio(getTipoMovimento(), "il Tipo Movimento");
+
+        super.validate();
+    }
+
     private void validaCampoObbligatorio(Object valore, String nomeCampo) throws ValidationException {
         if (valore == null) {
             throw new ValidationException("Indicare " + nomeCampo + ".");
@@ -705,7 +728,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
             throw new ValidationException("Indicare " + nomeCampo + ".");
         }
     }
-
 
     // ========================================
 // METODI PER GESTIONE SMARTWORKING
@@ -723,45 +745,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
                 && getTipoMovimento().getDsTipoTrasportoRientro().equalsIgnoreCase("SMARTWORKING");
     }
 
-    /**
-     * Override del metodo validate per gestire Smartworking
-     */
-    @Override
-    public void validate() throws ValidationException {
-        validaCampoObbligatorio(getDsDocTrasportoRientro(), "la Descrizione del documento");
-        validaCampoObbligatorio(getDataRegistrazione(),
-                "la Data " + (TRASPORTO.equals(getTiDocumento()) ? "Trasporto" : "Rientro"));
-        validaCampoObbligatorio(getTipoMovimento(), "il Tipo Movimento");
-
-        if (isSmartworking()) {
-            // Per Smartworking: richiedi il terzo selezionato
-            if (getTerzoSmartworking() == null || getTerzoSmartworking().getCd_terzo() == null) {
-                throw new ValidationException(
-                        "Per il tipo di movimento Smartworking è necessario selezionare l'Assegnatario.");
-            }
-        } else {
-            // Per altri tipi: richiedi tipo ritiro
-            validaCampoObbligatorio(getTipoRitiro(), "il Tipo Ritiro (Incaricato o Vettore)");
-
-            if (!Arrays.asList(TIPO_RITIRO_INCARICATO, TIPO_RITIRO_VETTORE).contains(getTipoRitiro())) {
-                throw new ValidationException("I valori possibili per Tipo Ritiro sono: Incaricato o Vettore.");
-            }
-
-            if (isRitiroIncaricato() &&
-                    (getTerzoIncRitiro() == null || getTerzoIncRitiro().getCd_anag() == null)) {
-                throw new ValidationException(
-                        "Per il ritiro tramite INCARICATO è necessario selezionare il Dipendente Incaricato.");
-            }
-
-            if (isRitiroVettore() &&
-                    (getNominativoVettore() == null || getNominativoVettore().trim().isEmpty())) {
-                throw new ValidationException(
-                        "Per il ritiro tramite VETTORE è necessario specificare il Nominativo del Vettore.");
-            }
-        }
-
-        super.validate();
-    }
 
     public String constructCMISNomeFile() {
         StringBuffer nomeFile = new StringBuffer();

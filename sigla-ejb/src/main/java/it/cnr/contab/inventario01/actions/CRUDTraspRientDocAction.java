@@ -1,5 +1,6 @@
 package it.cnr.contab.inventario01.actions;
 
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario01.bp.CRUDTraspRientInventarioBP;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
@@ -856,8 +857,8 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     }
 
     /**
-     * Gestisce il cambio dell'Assegnatario Smartworking
-     * Se l'assegnatario cambia, elimina i beni precedentemente selezionati
+     * Gestisce il cambio dell'Assegnatario Smartworking.
+     * Elimina i beni precedenti se l'assegnatario cambia.
      */
     public Forward doOnTerzoSmartworkingChange(ActionContext context) {
         try {
@@ -866,18 +867,39 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
 
             Integer oldValue = getCdTerzo(doc.getTerzoSmartworking());
             fillModel(context);
+
+            // Carica il terzo completo se presente solo il codice
+            Integer cdTerzo = doc.getTerzoSmartworking() != null ?
+                    doc.getTerzoSmartworking().getCd_terzo() : null;
+
+            if (cdTerzo != null) {
+                try {
+                    TerzoBulk terzoCompleto = (TerzoBulk) bp.createComponentSession()
+                            .findByPrimaryKey(context.getUserContext(), new TerzoBulk(cdTerzo));
+
+                    if (terzoCompleto != null) {
+                        doc.setTerzoSmartworking(terzoCompleto);
+                    }
+                } catch (Exception e) {
+                    throw new it.cnr.jada.comp.ApplicationException(
+                            "Errore nel caricamento dell'Assegnatario: " + e.getMessage()
+                    );
+                }
+            }
+
             Integer newValue = getCdTerzo(doc.getTerzoSmartworking());
 
             if (valoreUguale(oldValue, newValue)) {
                 return context.findDefaultForward();
             }
 
-            // Se cambia l'assegnatario, elimina i beni precedentemente selezionati
+            // Elimina beni precedenti se assegnatario cambia
             eliminaBeniSePresenti(context, bp, doc,
                     "Assegnatario Smartworking modificato. Beni precedenti rimossi.");
 
             bp.setModel(context, doc);
             return context.findDefaultForward();
+
         } catch (Throwable e) {
             return handleException(context, e);
         }

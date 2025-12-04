@@ -17,6 +17,7 @@
 
 package it.cnr.contab.inventario01.bulk;
 
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
@@ -52,6 +53,8 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
     private Boolean fl_accessorio_contestuale = Boolean.FALSE; // Flag se è un accessorio aggiunto in contesto
     protected Boolean fl_bene_accessorio;                     // Flag se è un bene accessorio pre-esistente
     private Categoria_gruppo_voceBulk cat_voce;
+
+    private TerzoBulk terzoAssegnatario;  // FK mappata su CD_TERZO_ASSEGNATARIO
 
 
     // ========================================
@@ -359,6 +362,44 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
         StringBuffer nomeFile = new StringBuffer();
         nomeFile = nomeFile.append(StrServ.lpad(this.getPg_doc_trasporto_rientro().toString(), 9, "0"));
         return nomeFile.toString();
+    }
+
+    /**
+     * Getter per Terzo Assegnatario.
+     * Questo campo viene popolato automaticamente dal Component:
+     * - Modalità normale: dal CD_ASSEGNATARIO del bene
+     * - Modalità smartworking: dal terzo selezionato in testata
+     */
+    public TerzoBulk getTerzoAssegnatario() {
+        return terzoAssegnatario;
+    }
+
+    public void setTerzoAssegnatario(TerzoBulk terzoAssegnatario) {
+        this.terzoAssegnatario = terzoAssegnatario;
+        if (terzoAssegnatario != null) {
+            setCdTerzoAssegnatario(terzoAssegnatario.getCd_terzo());
+        } else {
+            setCdTerzoAssegnatario(null);
+        }
+    }
+
+    @Override
+    public Integer getCdTerzoAssegnatario() {
+        if (terzoAssegnatario != null) {
+            return terzoAssegnatario.getCd_terzo();
+        }
+        return super.getCdTerzoAssegnatario();
+    }
+
+    @Override
+    public void setCdTerzoAssegnatario(Integer cdTerzoAssegnatario) {
+        super.setCdTerzoAssegnatario(cdTerzoAssegnatario);
+        if (terzoAssegnatario == null && cdTerzoAssegnatario != null) {
+            terzoAssegnatario = new TerzoBulk();
+        }
+        if (terzoAssegnatario != null && cdTerzoAssegnatario != null) {
+            terzoAssegnatario.setCd_terzo(cdTerzoAssegnatario);
+        }
     }
 
 }

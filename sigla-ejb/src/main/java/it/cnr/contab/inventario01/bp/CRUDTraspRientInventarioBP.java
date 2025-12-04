@@ -290,6 +290,13 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             // ========== 2. CHIAMA IL METODO PADRE (include allegati) ==========
             bulk = super.initializeModelForEdit(context, bulk);
 
+            // ========== 3. CONTROLLA SE DOCUMENTO È ANNULLATO ==========
+            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bulk;
+
+            if (doc != null && Doc_trasporto_rientroBulk.STATO_ANNULLATO.equals(doc.getStato())) {
+                setErrorMessage("⚠️ ATTENZIONE: Documento Annullato - Nessuna modifica consentita");
+            }
+
             return bulk;
 
         } catch (ComponentException | RemoteException e1) {
@@ -306,6 +313,35 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
     public void resetTabs() {
         setTab("tab", getMainTabName());
+    }
+
+
+    /**
+     * Override per validare i dati prima di passare al tab dei dettagli.
+     * Se la validazione fallisce, rimane sul tab corrente e mostra il messaggio di errore.
+     */
+    @Override
+    public void setTab(String tabName, String tabValue) {
+
+        // ========== INTERCETTA ACCESSO AI TAB DETTAGLI ==========
+        // I nomi dei tab sono "tabTrasportoDettaglio" e "tabRientroDettaglio"
+        if ("tab".equals(tabName) &&
+                (tabValue != null && tabValue.endsWith("Dettaglio"))) {
+
+            try {
+                // Valida solo se siamo in inserimento o modifica
+                if (isInserting() || isEditing()) {
+                    validaDatiPerDettagli();
+                }
+            } catch (BusinessProcessException e) {
+                // Se la validazione fallisce, mostra l'errore e NON cambiare tab
+                setErrorMessage(e.getMessage());
+                return; // NON chiama super.setTab() → rimane sul tab corrente
+            }
+        }
+
+        // Se la validazione passa (o non è un tab dettagli), procedi normalmente
+        super.setTab(tabName, tabValue);
     }
 
     // ========================================
@@ -633,7 +669,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     }
 
     /**
-     * Determina se il pulsante "Invia alla Firma" deve essere nascosto.
+     * Determina se il pulsante "Invia in Firma" deve essere nascosto.
      *
      * @return true = nascondi pulsante, false = mostra pulsante
      */
@@ -807,7 +843,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             Doc_trasporto_rientroBulk doc = getComp().changeStatoInInviato(context.getUserContext(), getDoc());
             setModel(context, doc);
             setStatus(VIEW);
-            setMessage("Documento predisposto alla firma. Ora in sola lettura.");
+            setMessage("Documento inviato in Firma");
         } catch (ComponentException | RemoteException e) {
             rollbackUserTransaction();
             throw handleException(e);
@@ -820,7 +856,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             Doc_trasporto_rientroBulk doc = getComp().annullaDocumento(context.getUserContext(), getDoc());
             setModel(context, doc);
             setStatus(VIEW);
-            setMessage("Documento annullato. Ora in sola lettura.");
+            setMessage("Documento annullato");
         } catch (ComponentException | RemoteException e) {
             rollbackUserTransaction();
             throw handleException(e);
@@ -829,10 +865,10 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
     private void validaStatoPerFirma() throws BusinessProcessException {
         if (isDocumentoAnnullato()) {
-            throw new BusinessProcessException("Impossibile predisporre alla firma un documento annullato");
+            throw new BusinessProcessException("Impossibile inviare in firma un documento annullato");
         }
         if (!getDoc().isInserito()) {
-            throw new BusinessProcessException("Il documento deve essere in stato 'Inserito' per essere predisposto alla firma");
+            throw new BusinessProcessException("Il documento deve essere in stato 'Inserito' per essere inviato in firma");
         }
     }
 
@@ -1641,8 +1677,66 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         return false;
     }
 
+    /**
+     * Valida i dati necessari prima di accedere al tab dei dettagli.
+     * Controlla che siano compilati tutti i campi obbligatori per la ricerca dei beni.
+     *
+     * @throws BusinessProcessException se la validazione fallisce
+     */
+    protected void validaDatiPerDettagli() throws BusinessProcessException {
+        Doc_trasporto_rientroBulk doc = getDoc();
 
+        if (doc == null) {
+            return;
+        }
 
+        // ========== VALIDAZIONE TIPO MOVIMENTO ==========
+        if (doc.getTipoMovimento() == null) {
+            throw new BusinessProcessException(
+                    "Selezionare il Tipo di Movimento prima di accedere ai dettagli."
+            );
+        }
+
+        // ========== VALIDAZIONE SMARTWORKING ==========
+        if (doc.isSmartworking()) {
+            if (doc.getTerzoSmartworking() == null ||
+                    doc.getTerzoSmartworking().getCd_terzo() == null) {
+                throw new BusinessProcessException(
+                        "Per il tipo di movimento Smartworking è necessario selezionare l'Assegnatario Smartworking " +
+                                "prima di accedere ai dettagli."
+                );
+            }
+        } else {
+            // ========== VALIDAZIONE TIPO RITIRO (NON SMARTWORKING) ==========
+            if (!doc.hasTipoRitiroSelezionato()) {
+                throw new BusinessProcessException(
+                        "Selezionare il Tipo Ritiro (Incaricato o Vettore) prima di accedere ai dettagli."
+                );
+            }
+
+            // ========== VALIDAZIONE INCARICATO ==========
+            if (doc.isRitiroIncaricato()) {
+                if (doc.getTerzoIncRitiro() == null ||
+                        doc.getTerzoIncRitiro().getCd_terzo() == null) {
+                    throw new BusinessProcessException(
+                            "Per il ritiro tramite INCARICATO è necessario selezionare il Dipendente Incaricato " +
+                                    "prima di accedere ai dettagli."
+                    );
+                }
+            }
+
+            // ========== VALIDAZIONE VETTORE ==========
+            if (doc.isRitiroVettore()) {
+                if (doc.getNominativoVettore() == null ||
+                        doc.getNominativoVettore().trim().isEmpty()) {
+                    throw new BusinessProcessException(
+                            "Per il ritiro tramite VETTORE è necessario specificare il Nominativo del Vettore " +
+                                    "prima di accedere ai dettagli."
+                    );
+                }
+            }
+        }
+    }
 
 }
 
