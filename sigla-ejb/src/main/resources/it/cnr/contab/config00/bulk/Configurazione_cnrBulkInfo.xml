@@ -125,30 +125,30 @@
 	<formFieldProperty
 		name="val01" />
 
-	<columnFieldProperty
-		name="im02" />
-	<columnFieldProperty
-		name="im01" />
-	<columnFieldProperty
-		name="dt02" />
-	<columnFieldProperty
-		name="dt01" />
-	<columnFieldProperty
-		name="esercizio" />
-	<columnFieldProperty
-		name="cd_chiave_secondaria" />
-	<columnFieldProperty
-		name="cd_unita_funzionale" />
-	<columnFieldProperty
-		name="cd_chiave_primaria" />
-	<columnFieldProperty
-		name="val04" />
-	<columnFieldProperty
-		name="val03" />
-	<columnFieldProperty
-		name="val02" />
-	<columnFieldProperty
-		name="val01" />
+    <columnFieldProperty
+            name="esercizio" />
+    <columnFieldProperty
+            name="cd_unita_funzionale" />
+    <columnFieldProperty
+            name="cd_chiave_primaria" />
+    <columnFieldProperty
+            name="cd_chiave_secondaria" />
+    <columnFieldProperty
+            name="val01" />
+    <columnFieldProperty
+            name="val02" />
+    <columnFieldProperty
+            name="val03" />
+    <columnFieldProperty
+            name="val04" />
+    <columnFieldProperty
+            name="im01" />
+    <columnFieldProperty
+            name="im02" />
+    <columnFieldProperty
+            name="dt01" />
+    <columnFieldProperty
+            name="dt02" />
 
 	<findFieldProperty
 		name="im02" />
@@ -217,6 +217,19 @@
 				formatName="date_short"
 				label = "Data"/>
 	</freeSearchSet>
+
+    <freeSearchSet name="CONS_CONF_TOTALE">
+        <findFieldProperty
+                name="cd_chiave_primaria"
+                label = "Chiave primaria"/>
+        <findFieldProperty
+                name="cd_chiave_secondaria"
+                label = "Chiave secondaria"/>
+        <findFieldProperty
+                name="cd_unita_funzionale"
+                label = "Unità funzionale"/>
+    </freeSearchSet>
+
 	<columnSet name="STEP_FINE_ANNO">
 		<columnFieldProperty
 			name="cd_chiave_secondaria"

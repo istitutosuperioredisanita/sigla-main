@@ -30,28 +30,13 @@ public ConsConfCNRBP() {
 	super();
 }
 protected void init(it.cnr.jada.action.Config config, ActionContext context) throws BusinessProcessException {
-	try { 
-
-		String cds = CNRUserContext.getCd_cds(context.getUserContext());
-		Integer esercizio = CNRUserContext.getEsercizio(context.getUserContext());
-
-		CompoundFindClause clauses = new CompoundFindClause(); 
-		if(!isUoEnte(context))	 {				
-		  clauses.addClause("AND", "cds", SQLBuilder.EQUALS, cds);
-	     }
-		else throw new ApplicationException("Consultazione non disponibile da UO ente!");
-		//clauses.addClause("AND", "esercizioContratto", SQLBuilder.EQUALS, esercizio);
-		setBaseclause(clauses);
+	try {
 		super.init(config,context);
-				
+
+        setFreeSearchSet("CONS_CONF_TOTALE");
 	}catch(Throwable e) { 
 		throw new BusinessProcessException(e);
 	}
 }
-public boolean isUoEnte(ActionContext context){	
-	Unita_organizzativaBulk uo = it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context);
-	if (uo.getCd_tipo_unita().equals(it.cnr.contab.config00.sto.bulk.Tipo_unita_organizzativaHome.TIPO_UO_ENTE))
-		return true;	
-	return false; 
-}
+
 }
