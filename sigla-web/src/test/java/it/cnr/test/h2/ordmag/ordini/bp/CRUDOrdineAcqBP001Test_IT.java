@@ -34,6 +34,16 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
+/**
+ * Test di:
+ * 1) creazione ordine con una riga di consegna di 10 beni di consumo
+ * 2) Evasione Consegne di 2 Progetto precaricati
+ * 3) registrazione fattura con riscontro valore su riga consegna di uno degli ordini di cui al punto precedente con rettifica prezzo
+ * 4) verifica scrittura economica/analitica e movimento magazzino su consegna
+ * 5) modifica riscontro a valore sostituendo la riga consegna di uno degli ordini con la riga di consegna dell'altro
+ * 6) verifica scrittura economica/analitica e movimento magazzino su consegne dei 2 ordini
+ * 7) registrazione fattura con riscontro valore su riga consegna scollegata in fase di annullamento riscontro a valore di cui al punto 5
+ */
 public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
     public static final String USERNAME = "ENTETEST";
     public static final String PASSWORD = "PASSTEST";
@@ -69,7 +79,7 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
     }
 
     /**
-     * Test Creazione Progetto
+     * 1) creazione ordine con una riga di consegna di 10 beni di consumo
      */
     @Test
     @RunAsClient
@@ -157,7 +167,7 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
     }
 
     /**
-     * Test Evasione Consegne di 2 Progetto precaricati
+     * 2) Evasione Consegne di 2 Progetto precaricati
      */
     @Test
     @RunAsClient
@@ -392,6 +402,9 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         doClickButton("doChiudiForm()");
     }
 
+    /*
+     * 3) registrazione fattura con riscontro valore su riga consegna di uno degli ordini di cui al punto precedente con rettifica prezzo
+     */
     @Test
     @RunAsClient
     @OperateOnDeployment(TEST_H2)
@@ -429,8 +442,6 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         getGrapheneElement("main.ds_fattura_passiva").writeIntoElement("RISCONTRO VALORE TEST");
 
         doClickButton("doTab('tab','tabFatturaPassivaOrdini')");
-
-        System.out.println("1 - " +browser.getPageSource().contains("Fattura Passiva - Inserimento"));
 
         doClickButton("submitForm('doSelezionaOrdini')");
 
@@ -509,6 +520,9 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Analitici' and numberRow: 0", RuntimeException.class, ()->getTableRowElement("main.Movimenti Analitici",0));
     }
 
+    /*
+     * 4) verifica scrittura economica/analitica e movimento magazzino su consegna
+     */
     @Test
     @RunAsClient
     @OperateOnDeployment(TEST_H2)
@@ -641,6 +655,9 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         assertThrows("Cannot find Element <tr> with tableName 'mainTable' and numberRow: 2", RuntimeException.class, ()->getTableRowElement("mainTable",2));
     }
 
+    /*
+     * 5) modifica riscontro a valore sostituendo la riga consegna di uno degli ordini con la riga di consegna dell'altro
+     */
     @Test
     @RunAsClient
     @OperateOnDeployment(TEST_H2)
@@ -751,6 +768,9 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Avere' and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.Movimenti Avere",2));
     }
 
+    /*
+     * 6) verifica scrittura economica/analitica e movimento magazzino su consegne dei 2 ordini
+     */
     @Test
     @RunAsClient
     @OperateOnDeployment(TEST_H2)
@@ -1033,6 +1053,9 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         assertThrows("Cannot find Element <tr> with tableName 'mainTable' and numberRow: 2", RuntimeException.class, ()->getTableRowElement("mainTable",2));
     }
 
+    /*
+     * 7) registrazione fattura con riscontro valore su riga consegna scollegata in fase di annullamento riscontro a valore di cui al punto 5
+     */
     @Test
     @RunAsClient
     @OperateOnDeployment(TEST_H2)
