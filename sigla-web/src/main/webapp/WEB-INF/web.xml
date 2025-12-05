@@ -203,6 +203,7 @@
 		<web-resource-collection>
 			<web-resource-name>HtmlAuth</web-resource-name>
 			<description>public url</description>
+            <url-pattern>/Login.do</url-pattern>
 			<url-pattern>/RicercaIncarichiRichiesta.do</url-pattern>
 			<url-pattern>/cancellaSchedulazione.do</url-pattern>
 			<url-pattern>/RicercaUOAction.do</url-pattern>
