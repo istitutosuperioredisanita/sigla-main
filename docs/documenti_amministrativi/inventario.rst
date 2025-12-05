@@ -6,9 +6,7 @@ Nell'inventario contabile sono registrati, nell'aspetto qualitativo ed in quello
 
 L'inventariazione ha la funzione di tutelare l'integrità del patrimonio dell'Ente inserendo i beni ad utilizzo pluriennale in modo dettagliato nelle pertinenti scritture contabili; inoltre soddisfa l'esigenza di individuare i beni soggetti al processo di ammortamento, consentendo la rilevazione del costo di competenza del singolo esercizio (quota di ammortamento). L’obbligo della registrazione in inventario nasce nel momento in cui il bene entra nella disponibilità dell’acquirente.
 
-Per redigere l’inventario dell'Ente sono state sviluppate le funzionalità applicative di SIGLA di seguito illustrate. E’ anche possibile consultare il “Manuale di Gestione Inventariale” per ulteriori approfondimenti ed esempi su problematiche e casi operativi di dettaglio.
-
-:download:`Manuale di Gestione Inventariale</_static/MANUALE_INVENTARIO_NEW.pdf>`
+Per redigere l’inventario dell'Ente sono state sviluppate le funzionalità applicative di SIGLA di seguito illustrate.  
 
 Funzioni per la gestione del bene
 =================================
