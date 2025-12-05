@@ -2,6 +2,8 @@ package it.cnr.contab.config00.action;
 
 import it.cnr.contab.config00.bp.SelezionatoreStepFineAnnoBP;
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
+import it.cnr.contab.cori00.bp.LiquidGruppoCentroBP;
+import it.cnr.contab.cori00.docs.bulk.Liquid_gruppo_centroBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
@@ -9,6 +11,7 @@ import it.cnr.jada.bulk.FillException;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.BulkAction;
+import it.cnr.jada.util.action.OptionBP;
 import it.cnr.jada.util.action.RemoteDetailCRUDController;
 
 import java.rmi.RemoteException;
@@ -58,6 +61,35 @@ public class SelezionatoreStepFineAnnoAction extends BulkAction {
             selezionatoreStepFineAnnoBP.setErrorMessage(validationexception.getMessage());
         } catch (Throwable throwable) {
             return handleException(context, throwable);
+        }
+        return context.findDefaultForward();
+    }
+
+    public Forward doRibaltaProgetti(ActionContext context) {
+        try{
+            return openConfirm(context,"Sei sicuro di voler ribaltare i progetti?", OptionBP.CONFIRM_YES_NO,"doConfermaRibalta");
+        } catch (BusinessProcessException e1) {
+            return handleException(context, e1);
+        }
+    }
+
+    public Forward doConfermaRibalta(ActionContext context,int option) {
+        if (option == OptionBP.YES_BUTTON)
+        {
+            try{
+                fillModel(context);
+                SelezionatoreStepFineAnnoBP bp = (SelezionatoreStepFineAnnoBP) context.getBusinessProcess();
+                try {
+                    bp.ribaltaProgetti(context);
+                } catch (BusinessProcessException e) {
+                    return handleException(context, e);
+                }
+                bp.setMessage("Operazione completata. Verificare dai log il risultato dell'operazione.");
+
+                return context.findDefaultForward();
+            } catch (it.cnr.jada.bulk.FillException e){
+                return handleException(context, e);
+            }
         }
         return context.findDefaultForward();
     }
