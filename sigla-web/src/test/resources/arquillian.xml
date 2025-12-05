@@ -20,7 +20,7 @@
     <extension qualifier="selenium2">
         <property name="browserCapabilities">chrome</property>
     </extension>
-    <container qualifier="wildfly-bootable" default="true">
+    <container qualifier="wildfly-bootable" default="true" mode="suite">
         <configuration>
             <!-- Path al bootable JAR -->
             <property name="jarFile">target/sigla-bootable.jar</property>

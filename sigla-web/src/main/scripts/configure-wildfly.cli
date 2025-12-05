@@ -57,7 +57,7 @@ echo "Creazione Custom Realm..."
     class-name=it.cnr.contab.security.auth.CombinedSecurityRealm, \
     module=it.cnr.contab.security, \
     configuration={ \
-        ldap.url=${sigla.ldap.url:ldap://virtest1.si.cnr.it:389}, \
+        ldap.url=${sigla.ldap.url:ldap://localhost:389}, \
         ldap.bindDN=${sigla.ldap.binddn:cn=mastercnrapp1,ou=account,o=cnr,c=it}, \
         ldap.bindCredential=${sigla.ldap.credentials:changeit!}, \
         ldap.baseCtxDN=${sigla.ldap.basectx:o=cnr,c=it}, \
