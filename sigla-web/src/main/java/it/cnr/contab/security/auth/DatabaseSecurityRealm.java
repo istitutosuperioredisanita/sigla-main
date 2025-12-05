@@ -177,8 +177,12 @@ public class DatabaseSecurityRealm implements SecurityRealm {
                 loadPasswordAndRoles();
 
                 // Se non c'è password memorizzata, l'autenticazione fallisce
-                if (storedPassword == null || storedPassword.isEmpty()) {
+                if (storedPassword == null) {
                     return false;
+                }
+                // Se la password è vuota significa che è il primo accesso e va cambiata
+                if (storedPassword.isEmpty()) {
+                    return true;
                 }
 
                 // Calcola l'hash della password fornita
@@ -241,7 +245,7 @@ public class DatabaseSecurityRealm implements SecurityRealm {
                 rs = ps.executeQuery();
 
                 if (rs.next()) {
-                    storedPassword = rs.getString(1);
+                    storedPassword = Optional.ofNullable(rs.getString(1)).orElse("");
                 }
 
                 rs.close();
