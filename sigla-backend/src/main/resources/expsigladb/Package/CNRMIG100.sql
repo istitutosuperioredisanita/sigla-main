@@ -209,4 +209,5 @@ procedure JOB_RIBALTAMENTO_ALTRO_PDGP(job number, pg_exec number, next_date date
 --
 procedure JOB_RIBALTAMENTO_DECIS_GEST(job number, pg_exec number, next_date date, aEs number, aCdCentroResponsabilita VARCHAR2,aCdLineaAttivita VARCHAR2 );
 
+procedure RIBALTA_PROGETTI(aEs number, aUser String);
 end;

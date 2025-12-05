@@ -1722,7 +1722,6 @@ public class TransactionalConfigurazione_cnrComponentSession extends it.cnr.jada
         }
     }
 
-
     @Override
     public Boolean isEnabledPartGiroInVarizione(UserContext userContext) throws ComponentException, RemoteException {
         try {
@@ -1740,4 +1739,22 @@ public class TransactionalConfigurazione_cnrComponentSession extends it.cnr.jada
             }
         }
     }
-}
+
+    @Override
+    public void ribaltaProgetti(UserContext userContext, int esercizio) throws ComponentException, RemoteException {
+        try {
+            invoke("ribaltaProgetti", new Object[]{
+                    userContext,
+                    esercizio});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }}
