@@ -341,8 +341,8 @@ public class LoginAction extends it.cnr.jada.util.action.BulkAction {
                 .map(HttpActionContext::getRequest)
                 .flatMap(request -> Optional.ofNullable(request.getUserPrincipal()));
         String usernameToken = null;
-        if (!principalOptional.isPresent())
-            return context.findDefaultForward();
+        if (principalOptional.isEmpty())
+            return context.findForward("home");
         try {
             if (context.getUserContext() == null)
                 context.setUserContext(new CNRUserContext("LOGIN", context.getSessionId(), null, null, null, null));
