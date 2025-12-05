@@ -3901,11 +3901,11 @@ BEGIN
         AND LIVELLO = 3
         AND (PG_PROGETTO, TIPO_FASE) NOT IN
         (SELECT PG_PROGETTO, TIPO_FASE FROM PROGETTO_SIP WHERE ESERCIZIO = aEs);
-    aMessage := 'Aggiornamento  progetti. Inseriti ';
+    aMessage := 'Aggiornamento  progetti. Inseriti ' || sql%rowcount || ' record.';
     ibmutl200.LOGINF(pg_exec,aMessage,'','');
 end;
 
-procedure AGGIORMENTO_PROGETTI(aEs number, pg_exec number) as
+procedure AGGIORNAMENTO_PROGETTI(aEs number, pg_exec number) as
    aTSNow date;
    aUser varchar2(20);
    aMessage varchar2(500);
@@ -4010,6 +4010,53 @@ begin
    aMessage := 'Aggiornamento voci su rimodulazione piano economico progetti. Inseriti '||sql%rowcount||' record.';
    ibmutl200.LOGINF(pg_exec,aMessage,'','');
 end;
+
+procedure RIBALTA_PROGETTI(aEs number, aUser String) as
+	pg_exec NUMBER;
+    pApertura CONFIGURAZIONE_CNR.val02%TYPE;
+    pChiusura CONFIGURAZIONE_CNR.val02%TYPE;
+BEGIN
+    pg_exec := ibmutl200.LOGSTART('Procedura di ribaltamento progetti - esercizio: ' ||aEs , aUser, null, null);
+
+	BEGIN
+		SELECT nvl(val02, 'N')
+		INTO pApertura
+		FROM CONFIGURAZIONE_CNR
+		WHERE ESERCIZIO = aEs
+		AND cd_unita_funzionale= '*'
+		AND cd_chiave_primaria = 'STEP_FINE_ANNO'
+		AND cd_chiave_Secondaria = '010_APERTURA_PREVISIONE';
+	EXCEPTION
+	    WHEN OTHERS THEN
+	    	pApertura := 'N';
+	END;
+
+	IF pApertura != 'Y' THEN
+	   ibmutl200.LOGINF(pg_exec,'Esercizio '||aEs||' non aperto. Aggiornamento Progetti non possibile.','','');
+	ELSE
+	   BEGIN
+	      SELECT nvl(val02, 'N')
+		  INTO pChiusura
+		  FROM CONFIGURAZIONE_CNR
+		  WHERE ESERCIZIO = aEs
+		  AND cd_unita_funzionale= '*'
+		  AND cd_chiave_primaria = 'STEP_FINE_ANNO'
+		  AND cd_chiave_Secondaria = '090_CHIUSURA_PROVVISORIA';
+	   EXCEPTION
+		  WHEN OTHERS THEN
+		     pChiusura := 'N';
+       END;
+
+	   IF pChiusura = 'Y' THEN
+		  ibmutl200.LOGINF(pg_exec,'Esercizio '||aEs||' chiuso. Aggiornamento Progetti non possibile.','','');
+	   ELSE
+	 	  ibmutl200.logInf(pg_exec,'Procedura di ribaltamento progetti - esercizio: ' ||aEs, 'Start:'||to_char(sysdate,'YYYY/MM/DD HH-MI-SS'), '');
+       	  INSERIMENTO_PROGETTI(aEs,pg_exec);
+	   	  AGGIORNAMENTO_PROGETTI(aEs,pg_exec);
+          ibmutl200.logInf(pg_exec,'Procedura di ribaltamento progetti - esercizio: ' ||aEs, 'End:'||to_char(sysdate,'YYYY/MM/DD HH-MI-SS'), '');
+	   END IF;
+	END IF;
+END;
 
 procedure INIT_RIBALTAMENTO_DECIS_GEST(aEs number, aCdCentroResponsabilita VARCHAR2,aCdLineaAttivita VARCHAR2,aPgEsec number, aMessage in out varchar2) as
 stato_fine      char(1) := 'I';
@@ -4209,7 +4256,7 @@ begin
 	    AND TABELLA IN ('VAR_STANZ_RES' , 'VAR_STANZ_RES$'));
 
 	   INIT_RIBALTAMENTO_pdgp(aEs,pg_exec,aMessage);
-	   AGGIORMENTO_PROGETTI(aEs,pg_exec);
+	   AGGIORNAMENTO_PROGETTI(aEs,pg_exec);
        INSERIMENTO_PROGETTI(aEs,pg_exec);
 
        ibmutl200.logInf(pg_exec,aMessage, '', '');
