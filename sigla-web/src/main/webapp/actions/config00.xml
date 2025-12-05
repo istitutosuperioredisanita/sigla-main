@@ -481,16 +481,14 @@
         <init-param name="defaultAction" value="CRUDCausaliContabiliAction" />
     </businessProcess>
 
-    <action
-            path="/ConsConfCNRAction" actionClass="it.cnr.contab.config00.action.ConsConfCNRAction">
-    </action>
+    <action path="/ConsultazioniAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction"/>
 
     <businessProcess
             name="ConsConfCNRBP" className="it.cnr.contab.config00.bp.ConsConfCNRBP">
-        <forward name="default" path="/config00/cons_conf_cnr.jsp"/>
+        <forward name="default" path="/consultazioni/form_lista.jsp"/>
         <init-param name="bulkClassName" value="it.cnr.contab.config00.bulk.Configurazione_cnrBulk"/>
-        <init-param name="componentSessionName" value="CNRCONFIG00_EJB_Configurazione_cnrComponentSession"/>
-        <init-param name="defaultAction" value="ConsConfCNRAction"/>
+        <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
+        <init-param name="defaultAction" value="ConsultazioniAction"/>
     </businessProcess>
 
 </action-mappings>
