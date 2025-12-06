@@ -32,16 +32,16 @@
         <addDefaultValue tableName="utente_unita_ruolo" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="utente_unita_ruolo" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/utente.csv" tableName="utente">
+        <loadData file="test/csv/utente.csv" tableName="utente">
             <column name="dt_ultima_var_password" type="${date.type}"/>
             <column name="dt_inizio_validita" type="${date.type}"/>
             <column name="dt_fine_validita" type="${date.type}"/>
         </loadData>
-        <loadData file="liquibase/csv/utente_unita_accesso.csv" tableName="utente_unita_accesso">
+        <loadData file="test/csv/utente_unita_accesso.csv" tableName="utente_unita_accesso">
             <column name="dt_inizio_validita" type="${date.type}"/>
             <column name="dt_fine_validita" type="${date.type}"/>
         </loadData>
-        <loadData file="liquibase/csv/utente_unita_ruolo.csv" tableName="utente_unita_ruolo">
+        <loadData file="test/csv/utente_unita_ruolo.csv" tableName="utente_unita_ruolo">
             <column name="dt_inizio_validita" type="${date.type}"/>
             <column name="dt_fine_validita" type="${date.type}"/>
         </loadData>
@@ -57,7 +57,7 @@
         <addDefaultValue tableName="pdg_missione" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="pdg_missione" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/pdg_missione.csv" tableName="pdg_missione"/>
+        <loadData file="test/csv/pdg_missione.csv" tableName="pdg_missione"/>
 
         <dropDefaultValue tableName="pdg_missione" columnName="dacr"/>
         <dropDefaultValue tableName="pdg_missione" columnName="duva"/>
@@ -66,7 +66,7 @@
         <addDefaultValue tableName="tipo_progetto" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="tipo_progetto" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/tipo_progetto.csv" tableName="tipo_progetto">
+        <loadData file="test/csv/tipo_progetto.csv" tableName="tipo_progetto">
         </loadData>
 
         <dropDefaultValue tableName="tipo_progetto" columnName="dacr"/>
@@ -76,7 +76,7 @@
         <addDefaultValue tableName="progetto_other_field" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="progetto_other_field" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/progetto_other_field.csv" tableName="progetto_other_field">
+        <loadData file="test/csv/progetto_other_field.csv" tableName="progetto_other_field">
         </loadData>
 
         <dropDefaultValue tableName="progetto_other_field" columnName="dacr"/>
@@ -86,7 +86,7 @@
         <addDefaultValue tableName="progetto_sip" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="progetto_sip" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/progetto_sip.csv" tableName="progetto_sip"/>
+        <loadData file="test/csv/progetto_sip.csv" tableName="progetto_sip"/>
 
         <dropDefaultValue tableName="progetto_sip" columnName="dacr"/>
         <dropDefaultValue tableName="progetto_sip" columnName="duva"/>
@@ -101,7 +101,7 @@
         <addDefaultValue tableName="esercizio" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="esercizio" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/esercizio.csv" tableName="esercizio"/>
+        <loadData file="test/csv/esercizio.csv" tableName="esercizio"/>
 
         <dropDefaultValue tableName="esercizio" columnName="dacr"/>
         <dropDefaultValue tableName="esercizio" columnName="duva"/>
@@ -110,7 +110,7 @@
         <addDefaultValue tableName="classificazione_spese" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="classificazione_spese" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/classificazione_spese.csv" tableName="classificazione_spese"/>
+        <loadData file="test/csv/classificazione_spese.csv" tableName="classificazione_spese"/>
 
         <dropDefaultValue tableName="classificazione_spese" columnName="dacr"/>
         <dropDefaultValue tableName="classificazione_spese" columnName="duva"/>
@@ -119,7 +119,7 @@
         <addDefaultValue tableName="classificazione_voci" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="classificazione_voci" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/classificazione_voci.csv" tableName="classificazione_voci"/>
+        <loadData file="test/csv/classificazione_voci.csv" tableName="classificazione_voci"/>
 
         <dropDefaultValue tableName="classificazione_voci" columnName="dacr"/>
         <dropDefaultValue tableName="classificazione_voci" columnName="duva"/>
@@ -128,7 +128,7 @@
         <addDefaultValue tableName="elemento_voce" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="elemento_voce" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/elemento_voce.csv" tableName="elemento_voce"/>
+        <loadData file="test/csv/elemento_voce.csv" tableName="elemento_voce"/>
 
         <dropDefaultValue tableName="elemento_voce" columnName="dacr"/>
         <dropDefaultValue tableName="elemento_voce" columnName="duva"/>
@@ -137,7 +137,7 @@
         <addDefaultValue tableName="classificazione_voci_ep" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="classificazione_voci_ep" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/classificazione_voci_ep.csv" tableName="classificazione_voci_ep"/>
+        <loadData file="test/csv/classificazione_voci_ep.csv" tableName="classificazione_voci_ep"/>
 
         <dropDefaultValue tableName="classificazione_voci_ep" columnName="dacr"/>
         <dropDefaultValue tableName="classificazione_voci_ep" columnName="duva"/>
@@ -146,7 +146,7 @@
         <addDefaultValue tableName="voce_ep" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="voce_ep" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/voce_ep.csv" tableName="voce_ep"/>
+        <loadData file="test/csv/voce_ep.csv" tableName="voce_ep"/>
 
         <dropDefaultValue tableName="voce_ep" columnName="dacr"/>
         <dropDefaultValue tableName="voce_ep" columnName="duva"/>
@@ -155,7 +155,7 @@
         <addDefaultValue tableName="ass_ev_voceep" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="ass_ev_voceep" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/ass_ev_voceep.csv" tableName="ass_ev_voceep"/>
+        <loadData file="test/csv/ass_ev_voceep.csv" tableName="ass_ev_voceep"/>
 
         <dropDefaultValue tableName="ass_ev_voceep" columnName="dacr"/>
         <dropDefaultValue tableName="ass_ev_voceep" columnName="duva"/>
@@ -164,7 +164,7 @@
         <addDefaultValue tableName="categoria_gruppo_invent" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="categoria_gruppo_invent" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/categoria_gruppo_invent.csv" tableName="categoria_gruppo_invent"/>
+        <loadData file="test/csv/categoria_gruppo_invent.csv" tableName="categoria_gruppo_invent"/>
 
         <dropDefaultValue tableName="categoria_gruppo_invent" columnName="dacr"/>
         <dropDefaultValue tableName="categoria_gruppo_invent" columnName="duva"/>
@@ -173,7 +173,7 @@
         <addDefaultValue tableName="bene_servizio" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="bene_servizio" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/bene_servizio.csv" tableName="bene_servizio"/>
+        <loadData file="test/csv/bene_servizio.csv" tableName="bene_servizio"/>
 
         <dropDefaultValue tableName="bene_servizio" columnName="dacr"/>
         <dropDefaultValue tableName="bene_servizio" columnName="duva"/>
@@ -182,7 +182,7 @@
         <addDefaultValue tableName="ass_catgrp_invent_voce_ep" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="ass_catgrp_invent_voce_ep" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/ass_catgrp_invent_voce_ep.csv" tableName="ass_catgrp_invent_voce_ep"/>
+        <loadData file="test/csv/ass_catgrp_invent_voce_ep.csv" tableName="ass_catgrp_invent_voce_ep"/>
 
         <dropDefaultValue tableName="ass_catgrp_invent_voce_ep" columnName="dacr"/>
         <dropDefaultValue tableName="ass_catgrp_invent_voce_ep" columnName="duva"/>
@@ -191,7 +191,7 @@
         <addDefaultValue tableName="numerazione_doc_amm" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="numerazione_doc_amm" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/numerazione_doc_amm.csv" tableName="numerazione_doc_amm"/>
+        <loadData file="test/csv/numerazione_doc_amm.csv" tableName="numerazione_doc_amm"/>
 
         <dropDefaultValue tableName="numerazione_doc_amm" columnName="dacr"/>
         <dropDefaultValue tableName="numerazione_doc_amm" columnName="duva"/>
@@ -200,7 +200,7 @@
         <addDefaultValue tableName="causale_contabile" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="causale_contabile" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/causale_contabile.csv" tableName="causale_contabile"/>
+        <loadData file="test/csv/causale_contabile.csv" tableName="causale_contabile"/>
 
         <dropDefaultValue tableName="causale_contabile" columnName="dacr"/>
         <dropDefaultValue tableName="causale_contabile" columnName="duva"/>
@@ -209,7 +209,7 @@
         <addDefaultValue tableName="ass_causale_voce_ep" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="ass_causale_voce_ep" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/ass_causale_voce_ep.csv" tableName="ass_causale_voce_ep"/>
+        <loadData file="test/csv/ass_causale_voce_ep.csv" tableName="ass_causale_voce_ep"/>
 
         <dropDefaultValue tableName="ass_causale_voce_ep" columnName="dacr"/>
         <dropDefaultValue tableName="ass_causale_voce_ep" columnName="duva"/>
@@ -218,7 +218,7 @@
         <addDefaultValue tableName="linea_attivita" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="linea_attivita" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/linea_attivita.csv" tableName="linea_attivita"/>
+        <loadData file="test/csv/linea_attivita.csv" tableName="linea_attivita"/>
 
         <dropDefaultValue tableName="linea_attivita" columnName="dacr"/>
         <dropDefaultValue tableName="linea_attivita" columnName="duva"/>
@@ -227,7 +227,7 @@
         <addDefaultValue tableName="ass_linea_attivita_esercizio" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="ass_linea_attivita_esercizio" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/ass_linea_attivita_esercizio.csv" tableName="ass_linea_attivita_esercizio"/>
+        <loadData file="test/csv/ass_linea_attivita_esercizio.csv" tableName="ass_linea_attivita_esercizio"/>
 
         <dropDefaultValue tableName="ass_linea_attivita_esercizio" columnName="dacr"/>
         <dropDefaultValue tableName="ass_linea_attivita_esercizio" columnName="duva"/>
@@ -236,7 +236,7 @@
         <addDefaultValue tableName="pdg_modulo" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="pdg_modulo" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/pdg_modulo.csv" tableName="pdg_modulo"/>
+        <loadData file="test/csv/pdg_modulo.csv" tableName="pdg_modulo"/>
 
         <dropDefaultValue tableName="pdg_modulo" columnName="dacr"/>
         <dropDefaultValue tableName="pdg_modulo" columnName="duva"/>
@@ -245,7 +245,7 @@
         <addDefaultValue tableName="pdg_modulo_costi" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="pdg_modulo_costi" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/pdg_modulo_costi.csv" tableName="pdg_modulo_costi"/>
+        <loadData file="test/csv/pdg_modulo_costi.csv" tableName="pdg_modulo_costi"/>
 
         <dropDefaultValue tableName="pdg_modulo_costi" columnName="dacr"/>
         <dropDefaultValue tableName="pdg_modulo_costi" columnName="duva"/>
@@ -254,7 +254,7 @@
         <addDefaultValue tableName="pdg_modulo_entrate" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="pdg_modulo_entrate" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/pdg_modulo_entrate.csv" tableName="pdg_modulo_entrate"/>
+        <loadData file="test/csv/pdg_modulo_entrate.csv" tableName="pdg_modulo_entrate"/>
 
         <dropDefaultValue tableName="pdg_modulo_entrate" columnName="dacr"/>
         <dropDefaultValue tableName="pdg_modulo_entrate" columnName="duva"/>
@@ -263,7 +263,7 @@
         <addDefaultValue tableName="pdg_modulo_entrate_gest" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="pdg_modulo_entrate_gest" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/pdg_modulo_entrate_gest.csv" tableName="pdg_modulo_entrate_gest"/>
+        <loadData file="test/csv/pdg_modulo_entrate_gest.csv" tableName="pdg_modulo_entrate_gest"/>
 
         <dropDefaultValue tableName="pdg_modulo_entrate_gest" columnName="dacr"/>
         <dropDefaultValue tableName="pdg_modulo_entrate_gest" columnName="duva"/>
@@ -272,7 +272,7 @@
         <addDefaultValue tableName="pdg_modulo_spese" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="pdg_modulo_spese" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/pdg_modulo_spese.csv" tableName="pdg_modulo_spese"/>
+        <loadData file="test/csv/pdg_modulo_spese.csv" tableName="pdg_modulo_spese"/>
 
         <dropDefaultValue tableName="pdg_modulo_spese" columnName="dacr"/>
         <dropDefaultValue tableName="pdg_modulo_spese" columnName="duva"/>
@@ -281,7 +281,7 @@
         <addDefaultValue tableName="pdg_modulo_spese_gest" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="pdg_modulo_spese_gest" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/pdg_modulo_spese_gest.csv" tableName="pdg_modulo_spese_gest"/>
+        <loadData file="test/csv/pdg_modulo_spese_gest.csv" tableName="pdg_modulo_spese_gest"/>
 
         <dropDefaultValue tableName="pdg_modulo_spese_gest" columnName="dacr"/>
         <dropDefaultValue tableName="pdg_modulo_spese_gest" columnName="duva"/>
@@ -290,7 +290,7 @@
         <addDefaultValue tableName="pdg_esercizio" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="pdg_esercizio" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/pdg_esercizio.csv" tableName="pdg_esercizio"/>
+        <loadData file="test/csv/pdg_esercizio.csv" tableName="pdg_esercizio"/>
 
         <dropDefaultValue tableName="pdg_esercizio" columnName="dacr"/>
         <dropDefaultValue tableName="pdg_esercizio" columnName="duva"/>
@@ -299,7 +299,7 @@
         <addDefaultValue tableName="saldi_stanziamenti" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="saldi_stanziamenti" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/saldi_stanziamenti.csv" tableName="saldi_stanziamenti"/>
+        <loadData file="test/csv/saldi_stanziamenti.csv" tableName="saldi_stanziamenti"/>
 
         <dropDefaultValue tableName="saldi_stanziamenti" columnName="dacr"/>
         <dropDefaultValue tableName="saldi_stanziamenti" columnName="duva"/>
@@ -308,7 +308,7 @@
         <addDefaultValue tableName="saldi_imp_acc" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="saldi_imp_acc" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/saldi_imp_acc.csv" tableName="saldi_imp_acc"/>
+        <loadData file="test/csv/saldi_imp_acc.csv" tableName="saldi_imp_acc"/>
 
         <dropDefaultValue tableName="saldi_imp_acc" columnName="dacr"/>
         <dropDefaultValue tableName="saldi_imp_acc" columnName="duva"/>
@@ -317,7 +317,7 @@
         <addDefaultValue tableName="saldi_pag_inc" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="saldi_pag_inc" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/saldi_pag_inc.csv" tableName="saldi_pag_inc"/>
+        <loadData file="test/csv/saldi_pag_inc.csv" tableName="saldi_pag_inc"/>
 
         <dropDefaultValue tableName="saldi_pag_inc" columnName="dacr"/>
         <dropDefaultValue tableName="saldi_pag_inc" columnName="duva"/>
@@ -326,7 +326,7 @@
         <addDefaultValue tableName="obbligazione" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="obbligazione" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/obbligazione.csv" tableName="obbligazione"/>
+        <loadData file="test/csv/obbligazione.csv" tableName="obbligazione"/>
 
         <dropDefaultValue tableName="obbligazione" columnName="dacr"/>
         <dropDefaultValue tableName="obbligazione" columnName="duva"/>
@@ -335,7 +335,7 @@
         <addDefaultValue tableName="obbligazione_scadenzario" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="obbligazione_scadenzario" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/obbligazione_scadenzario.csv" tableName="obbligazione_scadenzario"/>
+        <loadData file="test/csv/obbligazione_scadenzario.csv" tableName="obbligazione_scadenzario"/>
 
         <dropDefaultValue tableName="obbligazione_scadenzario" columnName="dacr"/>
         <dropDefaultValue tableName="obbligazione_scadenzario" columnName="duva"/>
@@ -344,7 +344,7 @@
         <addDefaultValue tableName="obbligazione_scad_voce" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="obbligazione_scad_voce" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/obbligazione_scad_voce.csv" tableName="obbligazione_scad_voce"/>
+        <loadData file="test/csv/obbligazione_scad_voce.csv" tableName="obbligazione_scad_voce"/>
 
         <dropDefaultValue tableName="obbligazione_scad_voce" columnName="dacr"/>
         <dropDefaultValue tableName="obbligazione_scad_voce" columnName="duva"/>
@@ -353,7 +353,7 @@
         <addDefaultValue tableName="documento_generico" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="documento_generico" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/documento_generico.csv" tableName="documento_generico"/>
+        <loadData file="test/csv/documento_generico.csv" tableName="documento_generico"/>
 
         <dropDefaultValue tableName="documento_generico" columnName="dacr"/>
         <dropDefaultValue tableName="documento_generico" columnName="duva"/>
@@ -362,7 +362,7 @@
         <addDefaultValue tableName="documento_generico_riga" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="documento_generico_riga" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/documento_generico_riga.csv" tableName="documento_generico_riga"/>
+        <loadData file="test/csv/documento_generico_riga.csv" tableName="documento_generico_riga"/>
 
         <dropDefaultValue tableName="documento_generico_riga" columnName="dacr"/>
         <dropDefaultValue tableName="documento_generico_riga" columnName="duva"/>
@@ -371,7 +371,7 @@
         <addDefaultValue tableName="termini_pagamento" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="termini_pagamento" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/termini_pagamento.csv" tableName="termini_pagamento"/>
+        <loadData file="test/csv/termini_pagamento.csv" tableName="termini_pagamento"/>
 
         <dropDefaultValue tableName="termini_pagamento" columnName="dacr"/>
         <dropDefaultValue tableName="termini_pagamento" columnName="duva"/>
@@ -380,7 +380,7 @@
         <addDefaultValue tableName="gruppo_iva" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="gruppo_iva" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/gruppo_iva.csv" tableName="gruppo_iva"/>
+        <loadData file="test/csv/gruppo_iva.csv" tableName="gruppo_iva"/>
 
         <dropDefaultValue tableName="gruppo_iva" columnName="dacr"/>
         <dropDefaultValue tableName="gruppo_iva" columnName="duva"/>
@@ -389,7 +389,7 @@
         <addDefaultValue tableName="voce_iva" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="voce_iva" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/voce_iva.csv" tableName="voce_iva"/>
+        <loadData file="test/csv/voce_iva.csv" tableName="voce_iva"/>
 
         <dropDefaultValue tableName="voce_iva" columnName="dacr"/>
         <dropDefaultValue tableName="voce_iva" columnName="duva"/>
@@ -398,7 +398,7 @@
         <addDefaultValue tableName="fattura_passiva" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="fattura_passiva" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/fattura_passiva.csv" tableName="fattura_passiva"/>
+        <loadData file="test/csv/fattura_passiva.csv" tableName="fattura_passiva"/>
 
         <dropDefaultValue tableName="fattura_passiva" columnName="dacr"/>
         <dropDefaultValue tableName="fattura_passiva" columnName="duva"/>
@@ -407,7 +407,7 @@
         <addDefaultValue tableName="fattura_passiva_riga" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="fattura_passiva_riga" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/fattura_passiva_riga.csv" tableName="fattura_passiva_riga"/>
+        <loadData file="test/csv/fattura_passiva_riga.csv" tableName="fattura_passiva_riga"/>
 
         <dropDefaultValue tableName="fattura_passiva_riga" columnName="dacr"/>
         <dropDefaultValue tableName="fattura_passiva_riga" columnName="duva"/>
@@ -416,7 +416,7 @@
         <addDefaultValue tableName="mandato" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="mandato" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/mandato.csv" tableName="mandato"/>
+        <loadData file="test/csv/mandato.csv" tableName="mandato"/>
 
         <dropDefaultValue tableName="mandato" columnName="dacr"/>
         <dropDefaultValue tableName="mandato" columnName="duva"/>
@@ -425,7 +425,7 @@
         <addDefaultValue tableName="mandato_riga" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="mandato_riga" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/mandato_riga.csv" tableName="mandato_riga"/>
+        <loadData file="test/csv/mandato_riga.csv" tableName="mandato_riga"/>
 
         <dropDefaultValue tableName="mandato_riga" columnName="dacr"/>
         <dropDefaultValue tableName="mandato_riga" columnName="duva"/>
@@ -434,7 +434,7 @@
         <addDefaultValue tableName="mandato_terzo" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="mandato_terzo" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData file="liquibase/csv/mandato_terzo.csv" tableName="mandato_terzo"/>
+        <loadData file="test/csv/mandato_terzo.csv" tableName="mandato_terzo"/>
 
         <dropDefaultValue tableName="mandato_terzo" columnName="dacr"/>
         <dropDefaultValue tableName="mandato_terzo" columnName="duva"/>
