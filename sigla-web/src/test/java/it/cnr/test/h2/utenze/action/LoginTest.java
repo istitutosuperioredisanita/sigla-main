@@ -24,6 +24,7 @@ import org.jboss.arquillian.junit.InSequence;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +60,6 @@ public class LoginTest extends ActionDeployments {
 
         getGrapheneElement("main.nuovaPassword").writeIntoElement(PASSWORD);
         getGrapheneElement("main.confermaPassword").writeIntoElement(PASSWORD);
-
         comandoAssegnapassword.click();
     }
 

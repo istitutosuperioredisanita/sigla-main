@@ -20,6 +20,16 @@
     <extension qualifier="selenium2">
         <property name="browserCapabilities">chrome</property>
     </extension>
+    <extension qualifier="webdriver">
+        <property name="browser">chrome</property>
+        <property name="chromeArguments">--headless=new,--no-sandbox</property>
+    </extension>
+    <!--
+    <extension qualifier="webdriver">
+        <property name="browser">htmlunit</property>
+        <property name="javascriptEnabled">false</property>
+    </extension>
+    -->
     <container qualifier="wildfly-bootable" default="true" mode="suite">
         <configuration>
             <!-- Path al bootable JAR -->

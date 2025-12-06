@@ -550,12 +550,6 @@
         </dependency>
         <!-- Arquillian Suite Extension -->
         <dependency>
-            <groupId>org.eu.ingwar.tools</groupId>
-            <artifactId>arquillian-suite-extension</artifactId>
-            <version>${version.arquillian.suite}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.arquillian.graphene</groupId>
             <artifactId>graphene-webdriver</artifactId>
             <version>${version.arquillian-graphene}</version>

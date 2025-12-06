@@ -17,7 +17,6 @@
 
 package it.cnr.test.util;
 
-import org.eu.ingwar.tools.arquillian.extension.suite.annotations.ArquillianSuiteDeployment;
 import org.jboss.arquillian.container.test.api.ContainerController;
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -43,7 +42,6 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-@ArquillianSuiteDeployment
 @RunWith(Arquillian.class)
 public abstract class Deployments {
     private transient final static Logger LOGGER = LoggerFactory.getLogger(Deployments.class);
