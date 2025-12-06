@@ -39,8 +39,8 @@
                 -Dsigla.db.url=jdbc:h2:mem:sigladb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
                 -Dsigla.db.user=sa
                 -Dsigla.db.password=sa
-                -Dspring.profiles.active=liquibase
-                -Dliquibase.bootstrap.esercizio=2024
+                -Dspring.profiles.active=liquibase-test
+                -Dliquibase.bootstrap.esercizio=2025
             </property>
         </configuration>
     </container>

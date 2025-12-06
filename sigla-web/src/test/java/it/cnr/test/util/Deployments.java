@@ -58,15 +58,15 @@ public abstract class Deployments {
 
     @Deployment(name = TEST_H2, order = 1, managed = false)
     public static WebArchive createDeploymentH2() throws Exception {
-        return createDeployment("project-h2-test.yml", TEST_H2, "it.cnr.test.h2");
+        return createDeployment(TEST_H2, "it.cnr.test.h2");
     }
 
     @Deployment(name = TEST_ORACLE, order = 2, managed = false)
     public static WebArchive createDeploymentOracle() throws Exception {
-        return createDeployment("project-oracle-test.yml", TEST_ORACLE, "it.cnr.test.oracle");
+        return createDeployment( TEST_ORACLE, "it.cnr.test.oracle");
     }
 
-    protected static WebArchive createDeployment(String yml, String name, String testPackage) throws Exception {
+    protected static WebArchive createDeployment(String name, String testPackage) throws Exception {
         LOGGER.info("Start create archive {} at {}", name, LocalDateTime.now());
         final PomEquippedResolveStage pom = Maven.configureResolver()
                 .withClassPathResolution(true)
@@ -99,7 +99,6 @@ public abstract class Deployments {
                 .addAsResource("META-INF/spring/storage.properties")
                 .addAsResource("META-INF/spring.schemas")
                 .addAsResource("META-INF/spring.handlers")
-                .addAsResource(yml, "/project-defaults.yml")
                 .addAsLibraries(pom
                         .resolve("org.liquibase:liquibase-core")
                         .withoutTransitivity().asFile())
