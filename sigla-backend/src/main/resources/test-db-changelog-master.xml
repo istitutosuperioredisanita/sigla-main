@@ -22,7 +22,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <!-- Schema iniziale-->
-    <include file="db-changelog-master.xml"/>
+    <include file="iss-db-changelog-master.xml"/>
     <!-- Dati di Test -->
     <changeSet author="test" id="create-user-test">
         <addDefaultValue tableName="utente" columnName="dacr" defaultValueDate="${now}"/>
