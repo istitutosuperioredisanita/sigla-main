@@ -20,10 +20,8 @@ package it.cnr.test.oracle;
 import it.cnr.test.util.Deployments;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.jboss.arquillian.container.test.api.TargetsContainer;
-import org.jboss.arquillian.junit.InSequence;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
 
 import java.util.AbstractMap;
 import java.util.Collections;
@@ -32,8 +30,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DeploymentsOracle extends Deployments {
-    @Test
-    @InSequence(-1)
+    @org.junit.jupiter.api.Test
+    @Order(1)
     @OperateOnDeployment(TEST_ORACLE)
     public void startupOracle() {
         controller.start(CONTAINER_NAME,

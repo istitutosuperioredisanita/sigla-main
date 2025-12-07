@@ -17,21 +17,19 @@
 
 package it.cnr.test.oracle.config00.comp;
 
-import it.cnr.contab.client.docamm.Contratto;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
 import it.cnr.contab.config00.contratto.bulk.ContrattoDatiSintesiBulk;
-import it.cnr.contab.doccont00.core.bulk.MandatoComunicaDatiBulk;
+import it.cnr.contab.util.TestUserContext;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.test.oracle.DeploymentsOracle;
-import it.cnr.test.util.TestUserContext;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.junit.Test;
 
 import jakarta.ejb.EJB;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class ContrattoDatiSintesiRestTest extends DeploymentsOracle {
 
@@ -46,7 +44,7 @@ public class ContrattoDatiSintesiRestTest extends DeploymentsOracle {
 
         List<ContrattoDatiSintesiBulk> dati =
                 crudComponentSession.find(testUserContext, ContrattoDatiSintesiBulk.class, "recuperoDati", testUserContext, contrattoDatiSintesiBulk, ContrattoBulk.NATURA_CONTABILE_PASSIVO, 63470, "123.005");
-        assertNotNull(dati);
-        assertTrue(!dati.isEmpty());
+        Assertions.assertNotNull(dati);
+        Assertions.assertEquals(Boolean.TRUE,!dati.isEmpty());
     }
 }

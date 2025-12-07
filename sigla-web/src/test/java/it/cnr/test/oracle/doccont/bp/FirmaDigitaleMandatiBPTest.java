@@ -19,25 +19,24 @@ package it.cnr.test.oracle.doccont.bp;
 
 import it.cnr.contab.doccont00.bp.FirmaDigitaleMandatiBP;
 import it.cnr.contab.doccont00.core.bulk.MandatoBulk;
-import it.cnr.contab.doccont00.intcass.bulk.StatoTrasmissione;
 import it.cnr.contab.doccont00.intcass.bulk.V_mandato_reversaleBulk;
 import it.cnr.contab.service.SpringUtil;
+import it.cnr.contab.util.TestUserContext;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
 import it.cnr.test.oracle.DeploymentsOracle;
 import it.cnr.test.util.MockActionContext;
-import it.cnr.test.util.TestUserContext;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.junit.Test;
 
 import jakarta.ejb.EJB;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.text.SimpleDateFormat;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class FirmaDigitaleMandatiBPTest extends DeploymentsOracle {
     @EJB
@@ -62,8 +61,8 @@ public class FirmaDigitaleMandatiBPTest extends DeploymentsOracle {
         final StorageObject storageObjectByPath = storeService.getStorageObjectByPath(
                 v_mandato_reversaleBulk.getStorePath().concat(StorageDriver.SUFFIX).concat(v_mandato_reversaleBulk.getCMISName())
         );
-        assertNotNull(storageObjectByPath);
-        assertEquals(MandatoBulk.STATO_TRASMISSIONE_PREDISPOSTO, Optional.ofNullable(
+        Assertions.assertNotNull(storageObjectByPath);
+        Assertions.assertEquals(MandatoBulk.STATO_TRASMISSIONE_PREDISPOSTO, Optional.ofNullable(
                         crudComponentSession.findByPrimaryKey(testUserContext,v_mandato_reversaleBulk))
                         .filter(V_mandato_reversaleBulk.class::isInstance)
                         .map(V_mandato_reversaleBulk.class::cast)

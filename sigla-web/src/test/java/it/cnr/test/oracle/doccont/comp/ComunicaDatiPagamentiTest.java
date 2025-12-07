@@ -18,17 +18,16 @@
 package it.cnr.test.oracle.doccont.comp;
 
 import it.cnr.contab.doccont00.core.bulk.MandatoComunicaDatiBulk;
+import it.cnr.contab.util.TestUserContext;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.test.oracle.DeploymentsOracle;
-import it.cnr.test.util.TestUserContext;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.junit.Test;
 
 import jakarta.ejb.EJB;
-import java.util.List;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import java.util.List;
 
 public class ComunicaDatiPagamentiTest extends DeploymentsOracle {
 
@@ -46,7 +45,7 @@ public class ComunicaDatiPagamentiTest extends DeploymentsOracle {
 
         List<MandatoComunicaDatiBulk> dati =
                 crudComponentSession.find(testUserContext, MandatoComunicaDatiBulk.class, "recuperoDati", testUserContext, mandatoComunicaDatiBulk, null, null);
-        assertNotNull(dati);
-        assertTrue(!dati.isEmpty());
+        Assertions.assertNotNull(dati);
+        Assertions.assertEquals(Boolean.TRUE, !dati.isEmpty());
     }
 }

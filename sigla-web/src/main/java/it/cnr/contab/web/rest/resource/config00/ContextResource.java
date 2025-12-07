@@ -23,8 +23,10 @@ import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.Utente_indirizzi_mailBulk;
 import it.cnr.contab.web.rest.local.config00.ContextLocal;
+import it.cnr.contab.web.rest.local.config00.ContextRemote;
 import it.cnr.contab.web.rest.model.UtenteIndirizziMailDTO;
 import it.cnr.contab.web.rest.resource.util.AbstractResource;
+import it.cnr.contab.web.rest.resource.util.VersionResource;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
@@ -46,7 +48,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Stateless
-public class ContextResource implements ContextLocal {
+public class ContextResource implements ContextLocal, ContextRemote {
     private final Logger LOGGER = LoggerFactory.getLogger(ContextResource.class);
     @Context
     SecurityContext securityContext;
@@ -227,4 +229,7 @@ public class ContextResource implements ContextLocal {
         return indirizziMail(request);
     }
 
+    public Integer getLiquibasBootstrapEsercizio() {
+        return Integer.valueOf(System.getProperty(VersionResource.LIQUIBASE_BOOTSTRAP_ESERCIZIO));
+    }
 }

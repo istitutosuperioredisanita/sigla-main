@@ -34,7 +34,8 @@ import it.cnr.test.oracle.DeploymentsOracle;
 import it.siopeplus.*;
 import jakarta.ws.rs.core.Response;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,8 +53,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static org.junit.Assert.assertEquals;
 
 public class SIOPEPlusTest extends DeploymentsOracle {
     private static final Logger logger = LoggerFactory.getLogger(SIOPEPlusTest.class);
@@ -104,18 +103,18 @@ public class SIOPEPlusTest extends DeploymentsOracle {
                                 currentFlusso.getContent().add(objectFactory.createMandato(mandato));
                                 jaxbMarshaller.marshal(currentFlusso, System.out);
 
-                                assertEquals(
+                                Assertions.assertEquals(
                                         bulk.getIm_documento_cont().setScale(2, RoundingMode.HALF_UP),
                                         BigDecimal.valueOf(mandato.getInformazioniBeneficiario()
                                                         .stream()
                                                         .collect(Collectors.summingDouble(value -> value.getImportoBeneficiario().doubleValue())))
                                                 .setScale(2, RoundingMode.HALF_UP)
                                 );
-                                assertEquals(
+                                Assertions.assertEquals(
                                         bulk.getIm_documento_cont().setScale(2, RoundingMode.HALF_UP),
                                         mandato.getImportoMandato().setScale(2, RoundingMode.HALF_UP)
                                 );
-                                assertEquals(mandato.getImportoMandato().setScale(2, RoundingMode.HALF_UP),
+                                Assertions.assertEquals(mandato.getImportoMandato().setScale(2, RoundingMode.HALF_UP),
                                 mandato
                                         .getInformazioniBeneficiario()
                                         .stream()
@@ -144,7 +143,7 @@ public class SIOPEPlusTest extends DeploymentsOracle {
                                         .map(CtFatturaSiope::getDatiFatturaSiope)
                                         .collect(Collectors.toList());
                                 if (!ctDatiFatturaSiope.isEmpty() && bulk.getIm_ritenute().compareTo(BigDecimal.ZERO) != 0) {
-                                    assertEquals(bulk.getIm_documento_cont().subtract(bulk.getIm_ritenute()).setScale(2, RoundingMode.HALF_UP),
+                                    Assertions.assertEquals(bulk.getIm_documento_cont().subtract(bulk.getIm_ritenute()).setScale(2, RoundingMode.HALF_UP),
                                             ctDatiFatturaSiope.stream()
                                                     .map(CtDatiFatturaSiope::getImportoSiope)
                                                     .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_UP));

@@ -17,174 +17,52 @@
 
 package it.cnr.test.util;
 
+import it.cnr.contab.utente00.nav.ejb.GestioneLoginComponentSession;
+import it.cnr.jada.ejb.CRUDComponentSession;
+import it.cnr.jada.ejb.GenericComponentSession;
 import org.jboss.arquillian.container.test.api.ContainerController;
 import org.jboss.arquillian.container.test.api.Deployer;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.TargetsContainer;
-import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.shrinkwrap.api.ArchivePath;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.FileAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.util.Optional;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.util.Properties;
 
-@RunWith(Arquillian.class)
+
+@ExtendWith(ArquillianExtension.class)
 public abstract class Deployments {
-    private transient final static Logger LOGGER = LoggerFactory.getLogger(Deployments.class);
-
     public static final String TEST_H2 = "test-h2",
-            TEST_ORACLE = "test-oracle", CONTAINER_NAME="wildfly-bootable";
-
+            TEST_ORACLE = "test-oracle", CONTAINER_NAME = "wildfly-bootable";
+    private final static Logger LOGGER = LoggerFactory.getLogger(Deployments.class);
     @ArquillianResource
     protected static ContainerController controller;
     @ArquillianResource
     protected Deployer deployer;
+    protected static Context context;
+    protected CRUDComponentSession crudComponentSession;
 
-    @Deployment(name = TEST_H2, order = 1, managed = false)
-    public static WebArchive createDeploymentH2() throws Exception {
-        return createDeployment(TEST_H2, "it.cnr.test.h2");
+    @BeforeAll
+    public static void setupRemoteConnection() throws Exception {
+        Properties props = new Properties();
+        props.put(Context.INITIAL_CONTEXT_FACTORY, "org.wildfly.naming.client.WildFlyInitialContextFactory");
+        props.put(Context.PROVIDER_URL, "http-remoting://localhost:8080");
+        context = new InitialContext(props);
     }
 
-    @Deployment(name = TEST_ORACLE, order = 2, managed = false)
-    public static WebArchive createDeploymentOracle() throws Exception {
-        return createDeployment( TEST_ORACLE, "it.cnr.test.oracle");
+    @BeforeEach
+    public void lookupRemoteEJBs() throws NamingException {
+        crudComponentSession = lookup("JADAEJB_CRUDComponentSession", CRUDComponentSession.class);
     }
 
-    protected static WebArchive createDeployment(String name, String testPackage) throws Exception {
-        LOGGER.info("Start create archive {} at {}", name, LocalDateTime.now());
-        final PomEquippedResolveStage pom = Maven.configureResolver()
-                .withClassPathResolution(true)
-                .withMavenCentralRepo(false)
-                .withRemoteRepo("central", new URL(
-                        Optional.ofNullable(System.getProperty("nexus.url"))
-                                .map(s -> s.concat("/content/groups/public"))
-                                .orElse("https://repo1.maven.org/maven2")
-                ), "default")
-                .loadPomFromFile("pom.xml");
-
-        WebArchive webArchive = ShrinkWrap.create(WebArchive.class, name.concat(".war"))
-                .addPackages(true, testPackage)
-                .addPackages(true, "it.cnr.contab", "it.cnr.jada", "it.cnr.si", "it.cnr.test.util")
-                .addPackages(true, "it.gov")
-                .addPackages(true, "it.siopeplus")
-                .addPackages(true, "org.apache")
-                .addPackages(true, "org.jvnet")
-                .addPackages(true, "org.bouncycastle")
-                .addPackages(true, "org.springframework")
-                .addPackages(true, "org.reactivestreams")
-                .addPackages(true, "org.openqa.selenium", "org.jboss.arquillian")
-                .addPackages(true, "com.google")
-                .addPackages(true, "feign")
-                .addPackages(true, "net.dongliu.gson")
-                .addPackages(true, "org.infinispan")
-                .addAsResource("org/springframework/web/context/ContextLoader.properties")
-                .addAsResource("org/springframework/ws/client/core/WebServiceTemplate.properties")
-                .addAsResource("META-INF/spring/filesystem.properties")
-                .addAsResource("META-INF/spring/storage.properties")
-                .addAsResource("META-INF/spring.schemas")
-                .addAsResource("META-INF/spring.handlers")
-                .addAsLibraries(pom
-                        .resolve("org.liquibase:liquibase-core")
-                        .withoutTransitivity().asFile())
-                .addAsLibraries(pom
-                        .resolve("org.springframework:spring-context-support")
-                        .withTransitivity().asFile())
-                .addAsLibraries(pom
-                        .resolve("it.cnr.si.sigla:sigla-ws-client")
-                        .withTransitivity().asFile())
-                .setWebXML(new File("src/main/webapp/WEB-INF/web.xml"));
-/*
-        pom
-                .resolve("it.cnr.si:jada")
-                .withoutTransitivity().asSingle(JavaArchive.class)
-                .getContent()
-                .keySet()
-                .stream()
-                .map(ArchivePath::get)
-                .filter(archivePath -> archivePath.endsWith(".xml") ||
-                        archivePath.endsWith(".properties"))
-                .map(s -> s.substring(1))
-                .forEach(archivePath -> webArchive.addAsResource(archivePath));
-
-        pom
-                .resolve("it.cnr.si.sigla:sigla-ejb")
-                .withoutTransitivity().asSingle(JavaArchive.class)
-                .getContent()
-                .keySet()
-                .stream()
-                .map(ArchivePath::get)
-                .filter(archivePath -> archivePath.endsWith(".xml") ||
-                        archivePath.endsWith(".properties"))
-                .map(s -> s.substring(1))
-                .forEach(archivePath -> webArchive.addAsResource(archivePath));
-
-        pom
-                .resolve("it.cnr.si.sigla:sigla-backend")
-                .withoutTransitivity()
-                .asSingle(JavaArchive.class)
-                .getContent()
-                .keySet()
-                .stream()
-                .map(ArchivePath::get)
-                .filter(archivePath ->
-                        archivePath.endsWith(".xml") ||
-                                archivePath.endsWith(".csv") ||
-                                archivePath.endsWith(".sql") ||
-                                archivePath.endsWith(".fnc") ||
-                                archivePath.endsWith(".prc") ||
-                                archivePath.endsWith(".trg")
-                )
-                .map(s -> s.substring(1))
-                .forEach(archivePath -> {
-                    webArchive.addAsResource(archivePath);
-                });
-*/
-        Path resourceTestPath = Paths.get("src", "test", "resources");
-        Files.walk(resourceTestPath)
-                .filter(p -> !p.toString().equals(resourceTestPath.toString()))
-                .filter(p -> !p.toString().contains("META-INF"))
-                .forEach((p) -> {
-                    webArchive.addAsResource(
-                            p.toString().substring(resourceTestPath.toString().length() + 1).replace("\\", "/"));
-                });
-
-        Path resourcePath = Paths.get("src", "main", "resources");
-        Files.walk(resourcePath)
-                .filter(p ->
-                        p.toString().endsWith(".xml") || p.toString().endsWith(".properties"))
-                .forEach((p) -> {
-                    webArchive.addAsResource(
-                            new FileAsset(p.toFile()),
-                            p.toString().substring(resourcePath.toString().length() + 1).replace("\\", "/"));
-                });
-
-        Path webappPath = Paths.get("src", "main", "webapp");
-        Files.walk(webappPath)
-                .filter(p ->
-                        p.toString().endsWith(".xml")
-                                || p.toString().endsWith(".jsp")
-                                || p.toString().endsWith(".js")
-                                || p.toString().endsWith(".css")
-                                || p.toString().endsWith("io.undertow.servlet.ServletExtension")
-                )
-                .forEach((p) -> webArchive.addAsWebResource(
-                        new FileAsset(p.toFile()),
-                        p.toString().substring(webappPath.toString().length() + 1).replace("\\", "/")));
-        LOGGER.info("End create archive {} at {}", name, LocalDateTime.now());
-        return webArchive;
+    protected <T extends Object> T lookup(String name, Class<T> clazz) throws NamingException {
+        return (T) context.lookup(String.format("sigla/%s!%s", name, clazz.getName()));
     }
+
 }

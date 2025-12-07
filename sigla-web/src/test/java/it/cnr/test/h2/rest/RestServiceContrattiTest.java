@@ -19,8 +19,8 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
-import org.jboss.arquillian.junit.InSequence;
-import org.junit.Test;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.FileOutputStream;
@@ -40,8 +40,8 @@ public class RestServiceContrattiTest extends ActionDeployments {
 
     @Test
     @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(1)
+    
+    @Order(1)
     public void testContrattiMaggioli()throws Exception {
 
         ObjectMapper mapper = new ObjectMapper();

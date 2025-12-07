@@ -24,16 +24,10 @@
         <property name="browser">chrome</property>
         <property name="chromeArguments">--headless=new,--no-sandbox</property>
     </extension>
-    <container qualifier="wildfly-bootable" default="true" mode="suite">
+    <container qualifier="wildfly-bootable" default="true" >
         <configuration>
             <!-- Path al bootable JAR -->
             <property name="jarFile">target/sigla-bootable.jar</property>
-            <!-- Porta di gestione -->
-            <property name="managementPort">9990</property>
-            <!-- Porta HTTP -->
-            <property name="httpPort">8080</property>
-            <!-- Timeout per lo startup (ms) -->
-            <property name="startupTimeoutInSeconds">120</property>
             <!-- JVM arguments -->
             <property name="javaVmArguments">
                 -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787

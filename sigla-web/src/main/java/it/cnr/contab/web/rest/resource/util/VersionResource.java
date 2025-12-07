@@ -19,6 +19,7 @@ package it.cnr.contab.web.rest.resource.util;
 
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.web.rest.local.util.VersionLocal;
+import jakarta.ejb.Stateless;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
 public class VersionResource implements ServletContextListener, VersionLocal {
     public static final String IMPLEMENTATION_VERSION = "Implementation-Version";
     public static final String SPECIFICATION_VERSION = "Specification-Version";
+    public static final String LIQUIBASE_BOOTSTRAP_ESERCIZIO="liquibase.bootstrap.esercizio";
     private static Map<Object, Object> ATTRIBUTES;
     private final Logger logger = LoggerFactory.getLogger(VersionResource.class);
 
@@ -67,6 +69,7 @@ public class VersionResource implements ServletContextListener, VersionLocal {
                                     .orElse(Boolean.FALSE);
                         })
                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                ATTRIBUTES.put(LIQUIBASE_BOOTSTRAP_ESERCIZIO, System.getProperty(LIQUIBASE_BOOTSTRAP_ESERCIZIO));
             }
         } catch (IOException e) {
             logger.warn("IOException", e);
@@ -74,7 +77,5 @@ public class VersionResource implements ServletContextListener, VersionLocal {
     }
 
     @Override
-    public void contextDestroyed(ServletContextEvent servletContextEvent) {
-
-    }
+    public void contextDestroyed(ServletContextEvent servletContextEvent) {}
 }

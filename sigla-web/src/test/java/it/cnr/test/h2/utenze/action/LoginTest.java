@@ -20,9 +20,12 @@ package it.cnr.test.h2.utenze.action;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.graphene.GrapheneElement;
-import org.jboss.arquillian.junit.InSequence;
-import org.junit.Assert;
-import org.junit.Test;
+import org.jboss.arquillian.junit5.ArquillianExtension;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
@@ -30,9 +33,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import static org.junit.Assert.assertEquals;
-
+@ExtendWith(ArquillianExtension.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LoginTest extends ActionDeployments {
     public static final String USERNAME = "TEST";
     public static final String PASSWORD = "TESTTEST";
@@ -43,8 +47,8 @@ public class LoginTest extends ActionDeployments {
 
     @Test
     @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(1)
+
+    @Order(1)
     public void testLogin() throws Exception {
         LOGGER.info("try to connect with user {}", USERNAME);
         doLogin(USERNAME, "");
@@ -52,11 +56,11 @@ public class LoginTest extends ActionDeployments {
 
     @Test
     @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(2)
+    
+    @Order(2)
     public void testAssegnaPassword() throws Exception {
         final WebElement comandoAssegnapassword = browser.findElement(By.name("comando.doAssegnaPassword"));
-        Assert.assertTrue(Optional.ofNullable(comandoAssegnapassword).isPresent());
+        assertEquals(Boolean.TRUE, Optional.ofNullable(comandoAssegnapassword).isPresent());
 
         getGrapheneElement("main.nuovaPassword").writeIntoElement(PASSWORD);
         getGrapheneElement("main.confermaPassword").writeIntoElement(PASSWORD);
@@ -65,8 +69,8 @@ public class LoginTest extends ActionDeployments {
 
     @Test
     @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(3)
+    
+    @Order(3)
     public void testListUO() throws Exception {
         LOGGER.info("try to connect to UO {} and CDR {}", UO, CDR);
         doLoginUO(UO, CDR);
@@ -74,17 +78,18 @@ public class LoginTest extends ActionDeployments {
 
     @Test
     @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(4)
+    
+    @Order(4)
     public void testTree() throws Exception {
-        browser.switchTo().frame("desktop");
-        browser.switchTo().frame("menu_tree");
+        switchToFrameDesktop();
+        switchToFrameMenu();
         doClickTree("apriMenu('0.CFG')");
         doClickTree("apriMenu('0.CFG.STRORG')");
         doClickTree("apriMenu('0.CFG.STRORG.UNIORG')");
         doClickTree("selezionaMenu('0.CFG.STRORG.UNIORG.M')");
+        logPageSource();
         browser.switchTo().parentFrame();
-        browser.switchTo().frame("workspace");
+        switchToFrameWorkspace();
         final Optional<WebElement> title = Optional.ofNullable(browser.findElement(By.tagName("title")));
         assertEquals(true, title.isPresent());
         assertEquals("Gestione Unità Organizzativa", title.get().getText());

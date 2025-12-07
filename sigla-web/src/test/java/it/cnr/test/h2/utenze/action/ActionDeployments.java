@@ -19,16 +19,19 @@ package it.cnr.test.h2.utenze.action;
 
 import it.cnr.test.h2.DeploymentsH2;
 import org.apache.http.HttpStatus;
+import org.jboss.arquillian.container.test.api.BeforeDeployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.graphene.GrapheneElement;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,10 +39,11 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ActionDeployments extends DeploymentsH2 {
     private transient final static Logger LOGGER = LoggerFactory.getLogger(ActionDeployments.class);
@@ -60,9 +64,9 @@ public class ActionDeployments extends DeploymentsH2 {
         }
     }
 
-    @Before
+    @BeforeEach
     @RunAsClient
-    @OperateOnDeployment(TEST_H2)
+    
     public void waitUntilApplicationStarted() throws Exception {
         /**
          * Workaround to wait application started.
@@ -94,7 +98,7 @@ public class ActionDeployments extends DeploymentsH2 {
         browser.navigate().to(deploymentURL.toString().concat("/Login.do"));
         switchToFrameDesktop();
         final WebElement comandoEntra = browser.findElement(By.name("comando.doEntra"));
-        Assert.assertTrue(Optional.ofNullable(comandoEntra).isPresent());
+        assertEquals(Boolean.TRUE, Optional.ofNullable(comandoEntra).isPresent());
 
         getGrapheneElement("j_username").writeIntoElement(user);
         getGrapheneElement("j_password").writeIntoElement(password);
@@ -136,8 +140,13 @@ public class ActionDeployments extends DeploymentsH2 {
         switchToFrame(FRAME_DESKTOP);
     }
 
-    protected void  switchToFrame(String frameId) {
-        browser.switchTo().frame(frameId);
+    public void switchToFrame(String frameNameOrId) {
+        switchToFrame(frameNameOrId, 1);
+    }
+    public void switchToFrame(String frameNameOrId, int timeoutSeconds) {
+        logPageSource();
+        WebDriverWait wait = new WebDriverWait(browser, Duration.ofSeconds(timeoutSeconds));
+        wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frameNameOrId));
     }
 
     protected void doSelezionaMenu(String menuId) {

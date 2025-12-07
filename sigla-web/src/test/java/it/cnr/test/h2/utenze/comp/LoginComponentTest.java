@@ -19,40 +19,42 @@ package it.cnr.test.h2.utenze.comp;
 
 import it.cnr.contab.utente00.nav.ejb.GestioneLoginComponentSession;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
-import it.cnr.jada.ejb.CRUDComponentSession;
-import it.cnr.test.h2.DeploymentsH2;
-import it.cnr.test.util.TestUserContext;
-import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.jboss.arquillian.junit.InSequence;
-import org.junit.Test;
+import it.cnr.contab.util.TestUserContext;
+import it.cnr.contab.web.rest.local.config00.ContextRemote;
+import it.cnr.test.util.Deployments;
+import org.jboss.arquillian.junit5.ArquillianExtension;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-import jakarta.ejb.EJB;
+import javax.naming.NamingException;
 import java.util.Optional;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-
-public class LoginComponentTest extends DeploymentsH2 {
-    @EJB
-    private CRUDComponentSession crudComponentSession;
-    @EJB
+@ExtendWith(ArquillianExtension.class)
+public class LoginComponentTest extends Deployments {
     private GestioneLoginComponentSession loginComponentSession;
+    private ContextRemote contextRemote;
+    @BeforeEach
+    public void lookupRemoteEJBs() throws NamingException {
+        super.lookupRemoteEJBs();
+        loginComponentSession = lookup("CNRUTENZE00_NAV_EJB_GestioneLoginComponentSession", GestioneLoginComponentSession.class);
+        contextRemote = lookup("ContextResource", ContextRemote.class);
+    }
 
     @Test
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(1)
+    @Order(1)
     public void testEsercizio() throws Exception {
         UtenteBulk utente = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(), new UtenteBulk("TEST")))
                 .filter(UtenteBulk.class::isInstance)
                 .map(UtenteBulk.class::cast)
                 .orElse(null);
-        assertEquals(true, Optional.ofNullable(utente).isPresent());
-        assertEquals("Utenza di TEST", utente.getDs_utente());
+        Assertions.assertEquals(Boolean.TRUE, Optional.ofNullable(utente).isPresent());
+        Assertions.assertEquals("Utenza di TEST", utente.getDs_utente());
 
         java.lang.Integer[] listaEsercizio = loginComponentSession.listaEserciziPerUtente(new TestUserContext(), utente);
-        java.lang.Integer[] espected = {
-                Integer.valueOf(System.getProperty("liquibase.bootstrap.esercizio"))
-        };
-        assertArrayEquals(espected, listaEsercizio);
+        java.lang.Integer[] espected = {contextRemote.getLiquibasBootstrapEsercizio()};
+        Assertions.assertArrayEquals(espected, listaEsercizio);
     }
 }
