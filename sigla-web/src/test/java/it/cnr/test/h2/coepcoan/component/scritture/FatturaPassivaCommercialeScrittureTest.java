@@ -32,8 +32,6 @@ import java.util.Optional;
 
 
 public class FatturaPassivaCommercialeScrittureTest extends DeploymentsH2 {
-    @EJB
-    private CRUDComponentSession crudComponentSession;
 
     /**
      * Fattura {@code Commerciale Split Payment} su mono voce con mandato di pagamento:

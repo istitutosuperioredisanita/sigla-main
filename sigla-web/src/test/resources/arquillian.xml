@@ -20,6 +20,12 @@
     <extension qualifier="selenium2">
         <property name="browserCapabilities">chrome</property>
     </extension>
+    <extension qualifier="container">
+        <property name="url">http://127.0.0.1:8080</property>
+    </extension>
+    <extension qualifier="graphene">
+        <property name="contextRoot">/SIGLA</property>
+    </extension>
     <extension qualifier="webdriver">
         <property name="browser">chrome</property>
         <property name="chromeArguments">--headless=new,--no-sandbox</property>

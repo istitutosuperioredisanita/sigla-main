@@ -55,7 +55,6 @@ public class ActionDeployments extends DeploymentsH2 {
 
     //@ArquillianResource
     protected URL deploymentURL;
-
     {
         try {
             deploymentURL = new URL("http://localhost:8080/SIGLA");
@@ -66,7 +65,7 @@ public class ActionDeployments extends DeploymentsH2 {
 
     @BeforeEach
     @RunAsClient
-    
+
     public void waitUntilApplicationStarted() throws Exception {
         /**
          * Workaround to wait application started.

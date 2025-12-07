@@ -32,8 +32,6 @@ import java.util.Optional;
 
 
 public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
-    @EJB
-    private CRUDComponentSession crudComponentSession;
 
     /**
      * Documento Generico {@code Semplice} su mono voce {@code Liquidato} mandato di pagamento:

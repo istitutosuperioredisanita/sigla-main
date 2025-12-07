@@ -30,9 +30,6 @@ import java.util.Optional;
 
 
 public class DocumentoStornoScrittureTest extends DeploymentsH2 {
-    @EJB
-    private CRUDComponentSession crudComponentSession;
-
     /**
      * Documento Generico {@code con Causale} su mono voce {@code Stornato} da altro Documento Generico:
      * <p><b>Dati Documento Generico</b>
