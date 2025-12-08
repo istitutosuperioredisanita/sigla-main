@@ -142,6 +142,7 @@ public class ActionDeployments extends DeploymentsH2 {
     public void switchToFrame(String frameNameOrId) {
         switchToFrame(frameNameOrId, 1);
     }
+
     public void switchToFrame(String frameNameOrId, int timeoutSeconds) {
         logPageSource();
         WebDriverWait wait = new WebDriverWait(browser, Duration.ofSeconds(timeoutSeconds));

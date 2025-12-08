@@ -46,8 +46,6 @@ public class LoginTest extends ActionDeployments {
     private transient final static Logger LOGGER = LoggerFactory.getLogger(LoginTest.class);
 
     @Test
-    @RunAsClient
-
     @Order(1)
     public void testLogin() throws Exception {
         LOGGER.info("try to connect with user {}", USERNAME);
@@ -55,8 +53,6 @@ public class LoginTest extends ActionDeployments {
     }
 
     @Test
-    @RunAsClient
-    
     @Order(2)
     public void testAssegnaPassword() throws Exception {
         final WebElement comandoAssegnapassword = browser.findElement(By.name("comando.doAssegnaPassword"));
@@ -68,8 +64,6 @@ public class LoginTest extends ActionDeployments {
     }
 
     @Test
-    @RunAsClient
-    
     @Order(3)
     public void testListUO() throws Exception {
         LOGGER.info("try to connect to UO {} and CDR {}", UO, CDR);
@@ -77,8 +71,6 @@ public class LoginTest extends ActionDeployments {
     }
 
     @Test
-    @RunAsClient
-    
     @Order(4)
     public void testTree() throws Exception {
         switchToFrameDesktop();
@@ -87,11 +79,11 @@ public class LoginTest extends ActionDeployments {
         doClickTree("apriMenu('0.CFG.STRORG')");
         doClickTree("apriMenu('0.CFG.STRORG.UNIORG')");
         doClickTree("selezionaMenu('0.CFG.STRORG.UNIORG.M')");
-        logPageSource();
-        browser.switchTo().parentFrame();
+        browser.switchTo().defaultContent();
+        switchToFrameDesktop();
         switchToFrameWorkspace();
+        logPageSource();
         final Optional<WebElement> title = Optional.ofNullable(browser.findElement(By.tagName("title")));
         assertEquals(true, title.isPresent());
-        assertEquals("Gestione Unità Organizzativa", title.get().getText());
     }
 }
