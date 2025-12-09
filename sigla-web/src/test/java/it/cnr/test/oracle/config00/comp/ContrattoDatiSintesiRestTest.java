@@ -33,11 +33,7 @@ import java.util.List;
 
 public class ContrattoDatiSintesiRestTest extends DeploymentsOracle {
 
-    @EJB
-    CRUDComponentSession crudComponentSession;
-
     @Test
-    @OperateOnDeployment(TEST_ORACLE)
     public void test() throws Exception {
         final TestUserContext testUserContext = new TestUserContext();
         final ContrattoDatiSintesiBulk contrattoDatiSintesiBulk = new ContrattoDatiSintesiBulk();

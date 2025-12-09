@@ -26,7 +26,7 @@
 	<parent>
 		<artifactId>archetype</artifactId>
 		<groupId>it.cnr.si</groupId>
-		<version>1.1.0</version>
+		<version>1.2.0</version>
 		<relativePath/>
 	</parent>
 	<modules>
@@ -41,17 +41,17 @@
 		<sonar.skip>true</sonar.skip>
 		<java.version>17</java.version>
 		<siopeplus.version>1.1.2</siopeplus.version>
-		<sdi.fatturapa.version>0.0.1</sdi.fatturapa.version>
-		<ws.client.version>0.0.6-SNAPSHOT</ws.client.version>
+		<version.sdi.fatturapa>1.0.2</version.sdi.fatturapa>
+		<version.sigla-ws.client>1.0.2</version.sigla-ws.client>
 		<spring.version>6.0.0</spring.version>
-		<jada.version>7.1.9-SNAPSHOT</jada.version>
+		<version.jada>8.0.0</version.jada>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.directory>target</project.build.directory>
 		<sigla.build.number>${maven.build.timestamp}</sigla.build.number>
 		<slf4j.version>1.7.21</slf4j.version>
 		<liquibase.version>3.5.3</liquibase.version>
 		<pdfbox.version>2.0.25</pdfbox.version>
-		<storage.cloud.version>2.0.24-SNAPSHOT</storage.cloud.version>
+		<version.storage.cloud>3.0.1</version.storage.cloud>
 		<jackson.version>2.10.3</jackson.version>
 		<commons-io.version>2.7</commons-io.version>
 		<git.changelog.maven.plugin.version>1.61</git.changelog.maven.plugin.version>
@@ -60,13 +60,12 @@
         <version.wildfly.maven.plugin>12.0.0.Final</version.wildfly.maven.plugin>
         <version.wildfly.datasources.galleon.pack>6.0.0.Final</version.wildfly.datasources.galleon.pack>
 
-        <jacoco.version>0.8.11</jacoco.version>
         <version.junit>5.10.1</version.junit>
         <version.org.wildfly.arquillian>6.0.0.Alpha1</version.org.wildfly.arquillian>
         <version.org.jboss.arquillian.junit>1.7.2.Final</version.org.jboss.arquillian.junit>
 
 		<version.arquillian-graphene>3.0.0-alpha.4</version.arquillian-graphene>
-		<test.exclude.package>it.cnr.test.oracle.**</test.exclude.package>
+		<test.exclude.package>it/cnr/test/oracle/**</test.exclude.package>
 	</properties>
 
     <!-- Repository necessari per le dipendenze WildFly/JBoss -->

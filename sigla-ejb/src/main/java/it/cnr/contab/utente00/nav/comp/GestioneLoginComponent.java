@@ -991,7 +991,7 @@ public class GestioneLoginComponent
         context.setCd_unita_organizzativa(uo);
         UtenteBulk utenteBulk = new UtenteBulk();
         /*
-        TODO WILDFLY
+        TODO KEYCLOAK WILDFLY
         final Optional<IDToken> idToken = Optional.ofNullable(principal)
                 .filter(KeycloakPrincipal.class::isInstance)
                 .map(KeycloakPrincipal.class::cast)

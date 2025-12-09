@@ -119,10 +119,6 @@ public class ExpireSessionServlet extends HttpServlet implements Serializable, H
 							log.error("", e);
 						}
 					});
-			SessionTraceBulk sessionTrace = (SessionTraceBulk)createCRUDComponentSession().inizializzaBulkPerModifica(new CNRUserContext("SESSIONTRACE",se.getSession().getId(),null,null,null,null), new SessionTraceBulk(se.getSession().getId()));
-			sessionTrace.setToBeDeleted();
-			createCRUDComponentSession().eliminaConBulk(new CNRUserContext("SESSIONTRACE",se.getSession().getId(),null,null,null,null), sessionTrace);
-		} catch (CRUDException e) {
 		} catch (Exception e) {
 			log.error("Delete SESSIONTRACE failed", e);
 		}

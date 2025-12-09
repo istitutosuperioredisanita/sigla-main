@@ -33,7 +33,7 @@ import java.util.List;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.Remove;
 import jakarta.ejb.Stateless;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 
 
 @Stateless(name="CNRDOCAMM00_EJB_ElaboraFileIntraComponentSession")

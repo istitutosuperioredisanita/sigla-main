@@ -17,9 +17,7 @@
 
 package it.cnr.test.util;
 
-import it.cnr.contab.utente00.nav.ejb.GestioneLoginComponentSession;
 import it.cnr.jada.ejb.CRUDComponentSession;
-import it.cnr.jada.ejb.GenericComponentSession;
 import org.jboss.arquillian.container.test.api.ContainerController;
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.junit5.ArquillianExtension;
@@ -35,17 +33,15 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.util.Properties;
 
-
 @ExtendWith(ArquillianExtension.class)
 public abstract class Deployments {
-    public static final String TEST_H2 = "test-h2",
-            TEST_ORACLE = "test-oracle", CONTAINER_NAME = "wildfly-bootable";
+
     private final static Logger LOGGER = LoggerFactory.getLogger(Deployments.class);
     @ArquillianResource
     protected static ContainerController controller;
+    protected static Context context;
     @ArquillianResource
     protected Deployer deployer;
-    protected static Context context;
     protected CRUDComponentSession crudComponentSession;
 
     @BeforeAll

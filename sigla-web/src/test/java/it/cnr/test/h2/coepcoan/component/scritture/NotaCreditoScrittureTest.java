@@ -31,8 +31,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 
 public class NotaCreditoScrittureTest extends DeploymentsH2 {
-    @EJB
-    private CRUDComponentSession crudComponentSession;
 
     /**
      * Fattura {@code Istituzionale Split Payment} di {@code Competenza} stornata da {@code Nota Credito} su mono voce:

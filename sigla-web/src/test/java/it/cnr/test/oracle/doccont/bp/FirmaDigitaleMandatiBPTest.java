@@ -39,11 +39,8 @@ import java.util.Optional;
 
 
 public class FirmaDigitaleMandatiBPTest extends DeploymentsOracle {
-    @EJB
-    private CRUDComponentSession crudComponentSession;
 
     @Test
-    @OperateOnDeployment(TEST_ORACLE)
     public void testPredisponiMandato() throws Exception {
         final TestUserContext testUserContext = new TestUserContext();
         V_mandato_reversaleBulk v_mandato_reversaleBulk =

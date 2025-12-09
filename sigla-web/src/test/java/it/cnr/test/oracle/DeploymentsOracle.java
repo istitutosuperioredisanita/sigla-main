@@ -30,16 +30,4 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DeploymentsOracle extends Deployments {
-    @org.junit.jupiter.api.Test
-    @Order(1)
-    @OperateOnDeployment(TEST_ORACLE)
-    public void startupOracle() {
-        controller.start(CONTAINER_NAME,
-                Stream.of(
-                        new AbstractMap.SimpleEntry<>("port", "12346"),
-                        new AbstractMap.SimpleEntry<>("javaVmArguments", "-agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=n")
-                ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
-        );
-        deployer.deploy(TEST_ORACLE);
-    }
 }

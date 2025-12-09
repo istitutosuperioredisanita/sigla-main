@@ -17,17 +17,11 @@
 
 package it.cnr.test.h2.utenze.action;
 
-import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.jboss.arquillian.container.test.api.RunAsClient;
-import org.jboss.arquillian.graphene.GrapheneElement;
-import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith(ArquillianExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LoginTest extends ActionDeployments {
     public static final String USERNAME = "TEST";
@@ -79,7 +72,7 @@ public class LoginTest extends ActionDeployments {
         doClickTree("apriMenu('0.CFG.STRORG')");
         doClickTree("apriMenu('0.CFG.STRORG.UNIORG')");
         doClickTree("selezionaMenu('0.CFG.STRORG.UNIORG.M')");
-        browser.switchTo().defaultContent();
+        switchTodefaultContent();
         switchToFrameDesktop();
         switchToFrameWorkspace();
         logPageSource();

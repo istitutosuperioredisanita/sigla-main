@@ -312,7 +312,7 @@ public class LoginAction extends it.cnr.jada.util.action.BulkAction {
     public Forward doLogout(ActionContext context) {
         context.invalidateSession();
         /*
-        TODO WILDFLY
+        TODO KEYCLOAK WILDFLY
         final Optional<KeycloakPrincipal> principalOptional = Optional.ofNullable(context)
                 .filter(HttpActionContext.class::isInstance)
                 .map(HttpActionContext.class::cast)

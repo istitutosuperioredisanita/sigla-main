@@ -64,7 +64,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import jakarta.ejb.EJBException;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;

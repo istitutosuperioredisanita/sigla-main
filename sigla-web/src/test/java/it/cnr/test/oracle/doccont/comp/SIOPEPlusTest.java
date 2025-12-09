@@ -20,9 +20,11 @@ package it.cnr.test.oracle.doccont.comp;
 import it.cnr.contab.doccont00.core.bulk.Numerazione_doc_contBulk;
 import it.cnr.contab.doccont00.ejb.DistintaCassiereComponentSession;
 import it.cnr.contab.doccont00.intcass.bulk.V_mandato_reversaleBulk;
+import it.cnr.contab.utente00.nav.ejb.GestioneLoginComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.enumeration.EsitoOperazione;
 import it.cnr.contab.web.rest.exception.RestException;
+import it.cnr.contab.web.rest.local.config00.ContextRemote;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.BulkLoaderIterator;
@@ -34,12 +36,16 @@ import it.cnr.test.oracle.DeploymentsOracle;
 import it.siopeplus.*;
 import jakarta.ws.rs.core.Response;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
+import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.ejb.EJB;
+
+import javax.naming.NamingException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -52,17 +58,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class SIOPEPlusTest extends DeploymentsOracle {
     private static final Logger logger = LoggerFactory.getLogger(SIOPEPlusTest.class);
-    @EJB
-    private CRUDComponentSession crudComponentSession;
-    @EJB
     private DistintaCassiereComponentSession distintaCassiereComponentSession;
 
+    @BeforeEach
+    public void lookupRemoteEJBs() throws NamingException {
+        super.lookupRemoteEJBs();
+        distintaCassiereComponentSession = lookup("CNRDOCCONT00_EJB_DistintaCassiereComponentSession", DistintaCassiereComponentSession.class);
+    }
+
+
     @Test
-    @OperateOnDeployment(TEST_ORACLE)
     public void testMandatoFlusso() throws Exception {
         final CNRUserContext testUserContext = new CNRUserContext();
         final CompoundFindClause compoundFindClause = new CompoundFindClause();

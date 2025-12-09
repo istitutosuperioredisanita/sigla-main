@@ -37,8 +37,6 @@ public class RestLineaAttivitaRestTest extends ActionDeployments {
     public String value;
 
     @Test
-    @RunAsClient
-    
     @Order(1)
     public void testLineAttivitaCreazione()throws Exception {
 
@@ -85,8 +83,6 @@ public class RestLineaAttivitaRestTest extends ActionDeployments {
     }
 
     @Test
-    @RunAsClient
-    
     @Order(2)
     public void jsonTest()throws Exception {
 

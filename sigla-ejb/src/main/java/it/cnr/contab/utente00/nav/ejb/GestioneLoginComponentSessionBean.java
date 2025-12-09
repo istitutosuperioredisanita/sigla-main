@@ -233,8 +233,8 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
     }
 
     public void unregisterUser(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
-        pre_component_invocation(param0, componentObj);
         try {
+            pre_component_invocation(param0, componentObj);
             componentObj.unregisterUser(param0);
             component_invocation_succes(param0, componentObj);
         } catch (it.cnr.jada.comp.NoRollbackException e) {
@@ -244,7 +244,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
             component_invocation_failure(param0, componentObj);
             throw e;
         } catch (RuntimeException e) {
-            throw uncaughtRuntimeException(param0, componentObj, e);
+
         } catch (Error e) {
             throw uncaughtError(param0, componentObj, e);
         }

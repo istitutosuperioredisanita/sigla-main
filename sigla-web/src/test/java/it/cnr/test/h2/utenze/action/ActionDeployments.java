@@ -90,7 +90,7 @@ public class ActionDeployments extends DeploymentsH2 {
     }
 
     protected void logPageSource() {
-        LOGGER.info(browser.getPageSource());
+        LOGGER.trace(browser.getPageSource());
     }
 
     protected void doLogin(String user, String password) throws Exception {
@@ -127,6 +127,11 @@ public class ActionDeployments extends DeploymentsH2 {
                         .orElseThrow(() -> new RuntimeException("Cannot find GrapheneElement with name "+element));
     }
 
+    protected void switchTodefaultContent() {
+        browser.switchTo().defaultContent();
+        logPageSource();
+    }
+
     protected void switchToFrameMenu() {
         switchToFrame(FRAME_MENU);
     }
@@ -140,7 +145,7 @@ public class ActionDeployments extends DeploymentsH2 {
     }
 
     public void switchToFrame(String frameNameOrId) {
-        switchToFrame(frameNameOrId, 1);
+        switchToFrame(frameNameOrId, 3);
     }
 
     public void switchToFrame(String frameNameOrId, int timeoutSeconds) {

@@ -52,11 +52,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.activation.FileDataSource;
 import jakarta.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.FileUtils;

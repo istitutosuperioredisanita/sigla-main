@@ -71,7 +71,7 @@ public class AccountResource implements AccountLocal {
                 .orElse(Attributes.EMPTY);
 
         /*
-        TODO WILDFLY
+        TODO KEYCLOAK WILDFLY
         final Optional<KeycloakPrincipal> keycloakPrincipal = Optional.ofNullable(securityContext.getUserPrincipal())
                 .filter(KeycloakPrincipal.class::isInstance)
                 .map(KeycloakPrincipal.class::cast);
@@ -105,7 +105,7 @@ public class AccountResource implements AccountLocal {
                 throw new UnprocessableEntityException("");
             }
         /*
-        TODO WILDFLY
+        TODO KEYCLOAK WILDFLY
         } else if (keycloakPrincipal.isPresent()) {
             final IDToken idToken = Optional.ofNullable(keycloakPrincipal.get().getKeycloakSecurityContext().getIdToken())
                     .orElse(keycloakPrincipal.get().getKeycloakSecurityContext().getToken());

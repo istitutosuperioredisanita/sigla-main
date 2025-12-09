@@ -85,7 +85,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import javax.activation.DataSource;
+import jakarta.activation.DataSource;
 import java.io.*;
 import java.rmi.RemoteException;
 import java.security.Principal;
@@ -313,7 +313,7 @@ public class DocumentiContabiliService extends StoreService implements Initializ
         for (String key : nodes) {
             StorageObject storageObject = getStorageObjectBykey(key);
             StorageDataSource dataSource = new StorageDataSource(storageObject);
-            email.attach(dataSource, dataSource.getName(), "", EmailAttachment.ATTACHMENT);
+            email.attach(new DataSourceAdapter(dataSource), dataSource.getName(), "", EmailAttachment.ATTACHMENT);
         }
         // send the email
         email.send();
@@ -357,7 +357,7 @@ public class DocumentiContabiliService extends StoreService implements Initializ
         for (String key : nodes) {
             StorageObject storageObject = getStorageObjectBykey(key);
             StorageDataSource dataSource = new StorageDataSource(storageObject);
-            email.attach(dataSource, dataSource.getName(), "", EmailAttachment.ATTACHMENT);
+            email.attach(new DataSourceAdapter(dataSource), dataSource.getName(), "", EmailAttachment.ATTACHMENT);
         }
         // send the email
         email.send();

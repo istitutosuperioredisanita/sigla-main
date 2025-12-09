@@ -28,7 +28,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.jsp.PageContext;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;

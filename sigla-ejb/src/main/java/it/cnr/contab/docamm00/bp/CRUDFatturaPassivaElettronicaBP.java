@@ -71,7 +71,7 @@ import org.apache.commons.mail.EmailException;
 import org.springframework.web.util.UriUtils;
 
 import jakarta.ejb.EJBException;
-import javax.mail.util.ByteArrayDataSource;
+import jakarta.mail.util.ByteArrayDataSource;
 
 import jakarta.servlet.jsp.JspWriter;
 import javax.xml.transform.Source;

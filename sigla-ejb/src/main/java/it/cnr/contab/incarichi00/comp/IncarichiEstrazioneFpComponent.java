@@ -67,12 +67,12 @@ import it.cnr.perlapa.utils.PerlaException;
 import it.cnr.si.spring.storage.StoreService;
 import it.cnr.si.spring.storage.bulk.StorageFile;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
+import jakarta.xml.bind.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.xml.sax.InputSource;
 
 import jakarta.ejb.EJBException;
-import javax.xml.bind.*;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;

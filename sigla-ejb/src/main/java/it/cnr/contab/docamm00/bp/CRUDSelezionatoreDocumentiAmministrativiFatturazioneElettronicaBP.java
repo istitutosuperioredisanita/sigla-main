@@ -66,9 +66,9 @@ import org.apache.commons.mail.EmailException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.mail.util.ByteArrayDataSource;
+import jakarta.mail.util.ByteArrayDataSource;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import java.io.*;
 import java.math.BigInteger;
 import java.rmi.RemoteException;

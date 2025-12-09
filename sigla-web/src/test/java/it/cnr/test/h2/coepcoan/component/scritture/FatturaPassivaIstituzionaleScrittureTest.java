@@ -32,9 +32,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 
 public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
-    @EJB
-    private CRUDComponentSession crudComponentSession;
-
     /**
      * Fattura {@code Istituzionale} {@code Split Payment} su mono voce con mandato di pagamento:
      * <p><b>Dati Fattura</b>

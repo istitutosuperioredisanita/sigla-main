@@ -34,8 +34,6 @@ import java.util.Optional;
 
 
 public class FatturaRicevereScrittureTest extends DeploymentsH2 {
-    @EJB
-    private CRUDComponentSession crudComponentSession;
 
     /**
      * Fattura {@code Istituzionale} {@code No Split Payment} {@code No Ordini} {@code Bene Inventariabile}

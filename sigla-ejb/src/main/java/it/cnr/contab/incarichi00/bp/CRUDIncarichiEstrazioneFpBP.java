@@ -59,7 +59,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.jsp.PageContext;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;

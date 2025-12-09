@@ -17,8 +17,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,22 +37,20 @@ public class RestServiceContrattiTest extends ActionDeployments {
     public String value;
 
     @Test
-    @RunAsClient
-    
     @Order(1)
-    public void testContrattiMaggioli()throws Exception {
+    public void testContrattiMaggioli() throws Exception {
 
         ObjectMapper mapper = new ObjectMapper();
         ContrattoDtoBulk c = new ContrattoDtoBulk();
         c.setEsercizio(2025);
-        c.setCodiceFlussoAcquisti( "PLUTO30");
+        c.setCodiceFlussoAcquisti("PLUTO30");
         c.setCd_unita_organizzativa("000.001");
         c.setCodfisPivaRupExt("RGLNLR52E69Z600O");
         c.setCodfisPivaAggiudicatarioExt("05923561004");
         //c.setCodfisPivaFirmatarioExt("ZNCMRT79E49H501E");
         //c.setTipoDettaglioContratto(EnumTipoDettaglioContratto.DETTAGLIO_CONTRATTO_ARTICOLI);
         c.setTipoDettaglioContratto(EnumTipoDettaglioContratto.DETTAGLIO_CONTRATTO_CATGRP);
-        DettaglioContrattoDtoBulk dettaglioContrattoDtoBulk= new DettaglioContrattoDtoBulk();
+        DettaglioContrattoDtoBulk dettaglioContrattoDtoBulk = new DettaglioContrattoDtoBulk();
         dettaglioContrattoDtoBulk.setCdCategoriaGruppo("0.0.3");
         //dettaglioContrattoDtoBulk.setCdBeneServizio("AA00107");
         //dettaglioContrattoDtoBulk.setPrezzoUnitario(new BigDecimal(2920));
@@ -65,12 +61,10 @@ public class RestServiceContrattiTest extends ActionDeployments {
         //dettaglioContrattoDtoBulk= new DettaglioContrattoDtoBulk();
         //dettaglioContrattoDtoBulk.setCdBeneServizio("AA00385");
         //dettaglioContrattoDtoBulk.setCdCategoriaGruppo("0.4");
-       // dettaglioContrattoDtoBulk.setPrezzoUnitario(new BigDecimal(110));
-       // dettaglioContrattoDtoBulk.setQuantitaMax(new BigDecimal(100));
-       // dettaglioContrattoDtoBulk.setQuantitaMax(new BigDecimal(2));
+        // dettaglioContrattoDtoBulk.setPrezzoUnitario(new BigDecimal(110));
+        // dettaglioContrattoDtoBulk.setQuantitaMax(new BigDecimal(100));
+        // dettaglioContrattoDtoBulk.setQuantitaMax(new BigDecimal(2));
         //c.addDettaglioContratto(dettaglioContrattoDtoBulk);
-
-
 
 
         c.setDs_atto("DECISIONE A CONTRARRE");
@@ -82,7 +76,7 @@ public class RestServiceContrattiTest extends ActionDeployments {
         //c.setCd_tipo_atto("DEL");
         //c.setCd_tipo_contratto
         //c.setCd_proc_amm();
-            //c.setCd_organo();
+        //c.setCd_organo();
         c.setCdCigExt("983e989");
         c.setCdCupExt("test");
         c.setCd_proc_amm("PA");
@@ -114,7 +108,7 @@ public class RestServiceContrattiTest extends ActionDeployments {
 
         InputStream is = this.getClass().getResourceAsStream("/contratto.pdf");
         byte[] bytes = IOUtils.toByteArray(is);
-        byte[] encoded= Base64.getEncoder().encode(bytes);
+        byte[] encoded = Base64.getEncoder().encode(bytes);
         try (FileOutputStream fos = new FileOutputStream("E:\\sigla\\contratto.txt")) {
             fos.write(encoded);
             //fos.close(); There is no more need for this line since you had created the instance of "fos" inside the try. And this will automatically close the OutputStream
@@ -128,21 +122,21 @@ public class RestServiceContrattiTest extends ActionDeployments {
         try {
             myJson = mapper.writeValueAsString(c);
         } catch (Exception ex) {
-            throw new ComponentException("Errore nella generazione del file JSON per l'esecuzione della stampa ( errore joson).",ex);
+            throw new ComponentException("Errore nella generazione del file JSON per l'esecuzione della stampa ( errore joson).", ex);
         }
         try (FileOutputStream fos = new FileOutputStream("E:\\sigla\\jsonContratto.json")) {
             fos.write(myJson.getBytes());
             //fos.close(); There is no more need for this line since you had created the instance of "fos" inside the try. And this will automatically close the OutputStream
         }
-        HttpEntity e = new StringEntity(myJson.toString());
+        HttpEntity e = new StringEntity(myJson);
         CredentialsProvider provider = new BasicCredentialsProvider();
         UsernamePasswordCredentials credentials = new UsernamePasswordCredentials("MAGGIOLI", "MAGGIOLI");
         provider.setCredentials(AuthScope.ANY, credentials);
-        HttpClient client=HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
+        HttpClient client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
         HttpPost method = new HttpPost(deploymentURL.toString().concat("/restapi/contrattoMaggioli"));
         method.addHeader("Accept-Language", Locale.getDefault().toString());
         method.setHeader("Content-Type", "application/json;charset=UTF-8");
-        method.setHeader(SIGLASecurityContext.X_SIGLA_CD_CDS,"999");
+        method.setHeader(SIGLASecurityContext.X_SIGLA_CD_CDS, "999");
         method.setHeader(SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA, "999.999");
         method.setEntity(e);
         HttpResponse response = client.execute(method);//Replace HttpPost with HttpGet if you need to perform a GET to login
@@ -155,15 +149,10 @@ public class RestServiceContrattiTest extends ActionDeployments {
         //}
 
 
-        System.out.println("Response Code :"+ statusCode);
-        System.out.println("myJson :"+ myJson);
+        System.out.println("Response Code :" + statusCode);
+        System.out.println("myJson :" + myJson);
 
     }
 
 
-
-
-
-
-
-    }
+}

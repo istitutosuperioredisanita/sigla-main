@@ -52,7 +52,7 @@
         <dependency>
             <groupId>it.cnr.si</groupId>
             <artifactId>jada</artifactId>
-            <version>${jada.version}</version>
+            <version>${version.jada}</version>
             <type>ejb</type>
             <scope>provided</scope>
             <exclusions>

@@ -20,16 +20,12 @@ package it.cnr.test.h2.progettiric00.bp;
 import it.cnr.test.h2.utenze.action.ActionDeployments;
 import it.cnr.test.h2.utenze.action.LoginTest;
 import it.cnr.test.util.AlertMessage;
-import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.jboss.arquillian.container.test.api.RunAsClient;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.Alert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TestataProgettiRicercaBPTest extends ActionDeployments {
     public static final String USERNAME = "ENTETEST";
     public static final String PASSWORD = "PASSTEST";
@@ -46,8 +42,6 @@ public class TestataProgettiRicercaBPTest extends ActionDeployments {
     private transient final static Logger LOGGER = LoggerFactory.getLogger(LoginTest.class);
 
     @Test
-    @RunAsClient
-    
     @Order(1)
     public void testLogin() throws Exception {
         doLogin(USERNAME, PASSWORD);
@@ -55,10 +49,9 @@ public class TestataProgettiRicercaBPTest extends ActionDeployments {
     }
 
     @Test
-    @RunAsClient
-    
     @Order(2)
     public void testCreaAreaProgettuale() throws Exception {
+        switchTodefaultContent();
         switchToFrameDesktop();
         switchToFrameMenu();
         doApriMenu(CFG);
@@ -66,15 +59,18 @@ public class TestataProgettiRicercaBPTest extends ActionDeployments {
         doApriMenu(CFG_PROGETTI_LIV_1);
         doSelezionaMenu(CFG_PROGETTI_LIV_1_G);
 
-        browser.switchTo().parentFrame();
+        switchTodefaultContent();
+        switchToFrameDesktop();
         switchToFrameWorkspace();
 
         getGrapheneElement("main.cd_progetto").writeIntoElement(CD_AREAPROG);
         getGrapheneElement("main.ds_progetto").writeIntoElement("Area Progettuale Generale");
 
+        doClickButton("doBlankSearch(main.find_dipartimento)");
         getGrapheneElement("main.find_dipartimento.cd_dipartimento").writeIntoElement("001");
         doClickButton("doSearch(main.find_dipartimento)");
 
+        doClickButton("doBlankSearch(main.find_programma)");
         getGrapheneElement("main.cd_programma").writeIntoElement("001");
         doClickButton("doSearch(main.find_programma)");
 
@@ -86,17 +82,18 @@ public class TestataProgettiRicercaBPTest extends ActionDeployments {
     }
 
     @Test
-    @RunAsClient
-    
     @Order(3)
     public void testCreaProgetto() throws Exception {
-        browser.switchTo().parentFrame();
+        switchTodefaultContent();
+        switchToFrameDesktop();
         switchToFrameMenu();
-
+        doApriMenu(CFG);
+        doApriMenu(CFG_PROGETTI);
         doApriMenu(CFG_PROGETTI_LIV_2);
         doSelezionaMenu(CFG_PROGETTI_LIV_2_M);
 
-        browser.switchTo().parentFrame();
+        switchTodefaultContent();
+        switchToFrameDesktop();
         switchToFrameWorkspace();
 
         getGrapheneElement("main.find_nodo_padre_area.cd_progetto").writeIntoElement(CD_AREAPROG);

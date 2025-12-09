@@ -47,12 +47,27 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
                 <configuration>
-                    <argLine>
-                        --add-opens java.base/java.util=ALL-UNNAMED
-                        --add-opens java.base/java.lang=ALL-UNNAMED
-                    </argLine>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.2.3</version> <executions>
+                <execution>
+                    <goals>
+                        <goal>integration-test</goal>
+                        <goal>verify</goal>
+                    </goals>
+                </execution>
+            </executions>
+                <configuration>
+                    <includes>
+                        <include>*Test.java</include>
+                    </includes>
+                    <excludes>${test.exclude.package}</excludes>
+                    <skipITs>false</skipITs>
                 </configuration>
             </plugin>
 
@@ -144,7 +159,7 @@
                 <artifactId>wildfly-jar-maven-plugin</artifactId>
                 <version>${version.wildfly.maven.plugin}</version>
                 <configuration>
-                    <jvmArguments>-Xmx2g -Xms1g -XX:MaxMetaspaceSize=512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787 -Dcors.allow-origin=${cors.allow-origin}</jvmArguments>
+                    <jvmArguments>-Xmx2g -Xms1g -XX:MaxMetaspaceSize=512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787 -Dcors.allow-origin=${cors.allow-origin} -Dspring.profiles.active=liquibase-iss</jvmArguments>
                     <feature-packs>
                         <feature-pack>
                             <location>wildfly@maven(org.jboss.universe:community-universe)#${version.wildfly}</location>
@@ -234,17 +249,17 @@
         <dependency>
             <groupId>it.cnr.si</groupId>
             <artifactId>jada</artifactId>
-            <version>${jada.version}</version>
+            <version>${version.jada}</version>
         </dependency>
         <dependency>
             <groupId>it.cnr.si.sigla</groupId>
             <artifactId>sigla-ws-client</artifactId>
-            <version>${ws.client.version}</version>
+            <version>${version.sigla-ws.client}</version>
         </dependency>
         <dependency>
             <groupId>it.cnr.si</groupId>
             <artifactId>sdi-fatturapa</artifactId>
-            <version>${sdi.fatturapa.version}</version>
+            <version>${version.sdi.fatturapa}</version>
         </dependency>
         <dependency>
             <groupId>it.cnr.si.sigla</groupId>
@@ -264,7 +279,7 @@
         <dependency>
             <groupId>it.cnr.si.storage</groupId>
             <artifactId>storage-cloud-filesystem</artifactId>
-            <version>${storage.cloud.version}</version>
+            <version>${version.storage.cloud}</version>
         </dependency>
         <dependency>
             <groupId>it.cnr.si</groupId>
@@ -327,16 +342,26 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- Spring WS per Jakarta EE -->
         <dependency>
             <groupId>org.springframework.ws</groupId>
             <artifactId>spring-ws-core</artifactId>
-            <version>2.4.0.RELEASE</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-webmvc</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>4.0.11</version>
+        </dependency>
+
+        <!-- Jakarta XML SOAP API -->
+        <dependency>
+            <groupId>jakarta.xml.soap</groupId>
+            <artifactId>jakarta.xml.soap-api</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
+        <!-- Implementazione SOAP (SAAJ) -->
+        <dependency>
+            <groupId>com.sun.xml.messaging.saaj</groupId>
+            <artifactId>saaj-impl</artifactId>
+            <version>3.0.4</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -405,17 +430,12 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-email</artifactId>
-            <version>1.5</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>mail</artifactId>
-                    <groupId>javax.mail</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>activation</artifactId>
-                    <groupId>javax.activation</groupId>
-                </exclusion>
-            </exclusions>
+            <version>1.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -590,7 +610,7 @@
                 <dependency>
                     <groupId>it.cnr.si.storage</groupId>
                     <artifactId>storage-cloud-cmis</artifactId>
-                    <version>${storage.cloud.version}</version>
+                    <version>${version.storage.cloud}</version>
                     <exclusions>
                         <exclusion>
                             <groupId>org.slf4j</groupId>
@@ -609,7 +629,7 @@
                 <dependency>
                     <groupId>it.cnr.si.storage</groupId>
                     <artifactId>storage-cloud-azure</artifactId>
-                    <version>${storage.cloud.version}</version>
+                    <version>${version.storage.cloud}</version>
                 </dependency>
             </dependencies>
         </profile>
@@ -619,7 +639,7 @@
                 <dependency>
                     <groupId>it.cnr.si.storage</groupId>
                     <artifactId>storage-cloud-s3</artifactId>
-                    <version>${storage.cloud.version}</version>
+                    <version>${version.storage.cloud}</version>
                 </dependency>
             </dependencies>
         </profile>

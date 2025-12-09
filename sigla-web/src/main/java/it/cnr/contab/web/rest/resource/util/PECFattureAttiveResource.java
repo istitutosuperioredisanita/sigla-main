@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
-import javax.mail.util.ByteArrayDataSource;
+import jakarta.mail.util.ByteArrayDataSource;
 import java.util.List;
 import java.util.Optional;
 

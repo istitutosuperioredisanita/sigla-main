@@ -28,28 +28,28 @@ import java.rmi.RemoteException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import javax.activation.DataHandler;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
+import jakarta.activation.DataHandler;
+import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
 import javax.mail.Message;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPConstants;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.ws.soap.SOAPFaultException;
 
 import it.cnr.jada.comp.CRUDDuplicateKeyException;
 import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1.*;
@@ -97,8 +97,6 @@ import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.StoreService;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
-import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
-
 
 @Stateless
 @WebService(endpointInterface = "it.gov.fatturapa.RicezioneFatture",

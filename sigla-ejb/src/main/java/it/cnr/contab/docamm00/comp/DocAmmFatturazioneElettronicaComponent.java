@@ -46,10 +46,10 @@ import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1.*;
 import it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.FileSdIBaseType;
 import org.springframework.util.StringUtils;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.FileDataSource;
 import jakarta.ejb.EJBException;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -547,7 +547,7 @@ public class DocAmmFatturazioneElettronicaComponent extends CRUDComponent{
 					List detailFattura = new BulkList(Utility.createFatturaPassivaComponentSession().findDettagli(userContext, fatturaPassiva));
 
 					if (fatturaPassiva.isSanMarinoConIVA()) {
-                        // TODO WILDFLY
+                        // TODO KEYCLOAK WILDFLY
 						datiGeneraliDocumento.setTipoDocumento(TipoDocumentoType.TD_23);
 					} else if (fatturaPassiva.isEstera() || fatturaPassiva.isSanMarinoSenzaIVA()) {
 						if (fatturaPassiva.isFatturaDiServizi())

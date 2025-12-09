@@ -321,7 +321,7 @@ public class GestioneUtenteAction extends it.cnr.jada.util.action.BulkAction {
         doCloseAll(context);
         context.invalidateSession();
         /*
-        TODO WILDFLY
+        TODO KEYCLOAK WILDFLY
 		final Optional<KeycloakPrincipal> principalOptional = Optional.ofNullable(context)
 				.filter(HttpActionContext.class::isInstance)
 				.map(HttpActionContext.class::cast)

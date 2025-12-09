@@ -22,6 +22,7 @@ import it.cnr.contab.util.enumeration.TipoRapportoTesoreriaEnum;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.action.AdminUserContext;
 import it.cnr.jada.comp.ComponentException;
+import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,14 +44,13 @@ public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUD
     public void ejbPassivate() throws EJBException {
     }
 
-    @Remove
-    public void ejbRemove() throws EJBException {
+    @PreDestroy
+    public void preDestroy() throws EJBException {
         try {
             shutdowHook();
-        } catch (ComponentException e) {
-            logger.error("ERROR while shutdow hook", e);
+        } catch (ComponentException|EJBException e) {
+            logger.error("ERROR while shutdow hook");
         }
-        componentObj.release();
     }
 
     @PostConstruct

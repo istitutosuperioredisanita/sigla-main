@@ -25,7 +25,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1.FatturaElettronicaType;
 
 import jakarta.ejb.Remote;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import java.rmi.RemoteException;
 import java.util.Date;
 

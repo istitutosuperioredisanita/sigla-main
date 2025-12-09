@@ -31,11 +31,7 @@ import java.util.List;
 
 public class ComunicaDatiPagamentiTest extends DeploymentsOracle {
 
-    @EJB
-    CRUDComponentSession crudComponentSession;
-
     @Test
-    @OperateOnDeployment(TEST_ORACLE)
     public void test() throws Exception {
         final TestUserContext testUserContext = new TestUserContext();
         final MandatoComunicaDatiBulk mandatoComunicaDatiBulk = new MandatoComunicaDatiBulk();
