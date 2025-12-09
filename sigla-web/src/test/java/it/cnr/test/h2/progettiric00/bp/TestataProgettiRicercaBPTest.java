@@ -87,8 +87,6 @@ public class TestataProgettiRicercaBPTest extends ActionDeployments {
         switchTodefaultContent();
         switchToFrameDesktop();
         switchToFrameMenu();
-        doApriMenu(CFG);
-        doApriMenu(CFG_PROGETTI);
         doApriMenu(CFG_PROGETTI_LIV_2);
         doSelezionaMenu(CFG_PROGETTI_LIV_2_M);
 
