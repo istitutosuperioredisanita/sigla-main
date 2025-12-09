@@ -49,7 +49,7 @@ public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUD
         try {
             shutdowHook();
         } catch (ComponentException|EJBException e) {
-            logger.error("ERROR while shutdow hook", e);
+            logger.warn("ERROR while shutdow hook error: {}", e.getMessage());
         }
     }
 

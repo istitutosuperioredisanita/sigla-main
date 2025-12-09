@@ -63,32 +63,6 @@ public class ActionDeployments extends DeploymentsH2 {
         }
     }
 
-    @BeforeEach
-    @RunAsClient
-
-    public void waitUntilApplicationStarted() throws Exception {
-        /**
-         * Workaround to wait application started.
-         */
-        Boolean pageSourceNotFound = true;
-        Integer iterate = 0;
-        URL url = new URL(deploymentURL.toString().concat("/Login.do"));
-        while (pageSourceNotFound && iterate < ITERATE_MAX) {
-            try {
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.connect();
-                pageSourceNotFound = connection.getResponseCode() == HttpStatus.SC_NOT_FOUND;
-                if (pageSourceNotFound)
-                    TimeUnit.SECONDS.sleep(5);
-                LOGGER.warn("Try to connect to url: {} iterate: {}", url.toString(), iterate);
-                iterate++;
-            } catch (IllegalStateException | ConnectException _ex) {
-                iterate++;
-            }
-        }
-    }
-
     protected void logPageSource() {
         LOGGER.trace(browser.getPageSource());
     }
