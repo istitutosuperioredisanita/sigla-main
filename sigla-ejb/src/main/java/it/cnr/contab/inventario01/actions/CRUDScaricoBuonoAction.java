@@ -18,6 +18,7 @@
 package it.cnr.contab.inventario01.actions;
 
 import java.math.BigDecimal;
+import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +38,7 @@ import it.cnr.jada.action.*;
 import it.cnr.jada.bulk.PrimaryKeyHashtable;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.comp.ApplicationException;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.*;
 public class CRUDScaricoBuonoAction extends it.cnr.jada.util.action.CRUDAction {
 	private List deletedList;
@@ -362,13 +364,28 @@ public Forward doClickFlagScaricoTotale(ActionContext context) throws it.cnr.jad
 public Forward doScaricaTutti(ActionContext context) {
 	try{
 		CRUDScaricoInventarioBP bp = (CRUDScaricoInventarioBP)getBusinessProcess(context);
-		bp.scaricaTuttiDef(context);
-		bp.getDettController().reset(context);
-		return context.findDefaultForward();
+
+		boolean accessoriPresenti = bp.isAccessoriPresenti(context);
+
+		if(accessoriPresenti){
+			return openConfirm(context,"Attenzione: sono presenti degli accessori che verrano scaricati totalmente. Vuoi continuare?",OptionBP.CONFIRM_YES_NO,"doConfirmScaricoTotale");
+		}
+		return doConfirmScaricoTotale(context,OptionBP.YES_BUTTON);
+
 	} catch(Throwable e) {
 			return handleException(context,e);
 	}
 }
+	public Forward doConfirmScaricoTotale(ActionContext context, int i) throws ComponentException, BusinessProcessException, RemoteException {
+
+		CRUDScaricoInventarioBP bp = (CRUDScaricoInventarioBP)getBusinessProcess(context);
+		if (i == OptionBP.YES_BUTTON) {
+			bp.scaricaTuttiDef(context);
+			bp.getDettController().reset(context);
+		}
+		return context.findDefaultForward();
+	}
+
 public Forward doConfirmScaricoBene(ActionContext context, OptionBP optionBP) throws it.cnr.jada.comp.ApplicationException,BusinessProcessException{
 
 	CRUDScaricoInventarioBP bp = (CRUDScaricoInventarioBP)getBusinessProcess(context);
