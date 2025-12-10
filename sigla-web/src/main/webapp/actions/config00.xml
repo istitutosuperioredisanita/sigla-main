@@ -491,4 +491,16 @@
         <init-param name="defaultAction" value="ConsultazioniAction"/>
     </businessProcess>
 
+    <action
+            path="/GestConfCNRAction" actionClass="it.cnr.contab.config00.action.GestConfCNRAction">
+    </action>
+
+    <businessProcess
+            name="GestConfCNRBP" className="it.cnr.contab.config00.bp.GestConfCNRBP">
+        <forward name="default" path="/config00/gest_conf_cnr.jsp"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.config00.bulk.Configurazione_cnrBulk"/>
+        <init-param name="componentSessionName" value="CNRCONFIG00_EJB_Configurazione_cnrComponentSession"/>
+        <init-param name="defaultAction" value="GestConfCNRAction"/>
+    </businessProcess>
+
 </action-mappings>
