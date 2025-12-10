@@ -246,4 +246,42 @@
 			formatName="date_short"
 			label = "Data"/>
 	</columnSet>
+
+	<columnSet name="CONS_CONF_TOTALE">
+		<columnFieldProperty
+				name="esercizio" />
+		<columnFieldProperty
+				name="cd_unita_funzionale"
+				label = "Unità Funzionale"/>
+		<columnFieldProperty
+				name="cd_chiave_primaria"
+				label = "Chiave Primaria"/>
+		<columnFieldProperty
+				name="cd_chiave_secondaria"
+				label = "Chiave Secondaria"/>
+		<columnFieldProperty
+				name="val01"
+				label = "Testo 1"/>
+		<columnFieldProperty
+				name="val02"
+				label = "Testo 2"/>
+		<columnFieldProperty
+				name="val03"
+				label = "Testo 3"/>
+		<columnFieldProperty
+				name="val04"
+				label = "Testo 4"/>
+		<columnFieldProperty
+				name="im01"
+				label = "Importo 1"/>
+		<columnFieldProperty
+				name="im02"
+				label = "Importo 2"/>
+		<columnFieldProperty
+				name="dt01"
+				label = "Data 1"/>
+		<columnFieldProperty
+				name="dt02"
+				label = "Data 2"/>
+	</columnSet>
 </bulkInfo>
