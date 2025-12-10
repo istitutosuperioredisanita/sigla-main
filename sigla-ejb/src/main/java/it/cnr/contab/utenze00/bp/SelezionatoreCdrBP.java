@@ -18,7 +18,7 @@
 package it.cnr.contab.utenze00.bp;
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.config00.sto.bulk.CdrBulk;
@@ -90,12 +90,12 @@ public void selezionaCdr(ActionContext context) throws ComponentException, Remot
 	context.closeBusinessProcess();
 }
 
-public GestioneLoginComponentSession getComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+public GestioneLoginComponentSession getComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 	return (GestioneLoginComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRUTENZE00_NAV_EJB_GestioneLoginComponentSession",GestioneLoginComponentSession.class);
 }
 
 public UtenteComponentSession createUtenteComponentSession()
-throws javax.ejb.EJBException,
+throws jakarta.ejb.EJBException,
 		java.rmi.RemoteException,
 		BusinessProcessException {
 	return (UtenteComponentSession)createComponentSession("CNRUTENZE00_EJB_UtenteComponentSession",UtenteComponentSession.class);

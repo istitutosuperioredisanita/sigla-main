@@ -72,7 +72,7 @@ public class V_saldi_voce_progettoHome extends BulkHome {
 		SQLBuilder sql = this.createSQLBuilder();
 
 		BigDecimal annoFrom = ((Configurazione_cnrHome)getHomeCache().getHome(Configurazione_cnrBulk.class))
-				.getConfigurazione(new Integer(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO)
+				.getConfigurazione(Integer.valueOf(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO)
 				.getIm01();
 
 		sql.addSQLClause(FindClause.AND,"PG_PROGETTO",SQLBuilder.EQUALS,pgProgetto);

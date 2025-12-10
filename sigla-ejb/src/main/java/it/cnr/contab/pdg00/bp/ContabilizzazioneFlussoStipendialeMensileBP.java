@@ -58,11 +58,11 @@ public class ContabilizzazioneFlussoStipendialeMensileBP extends it.cnr.jada.uti
      * @throws EJBException    Se si verifica qualche eccezione applicativa per cui non è possibile effettuare l'operazione
      * @throws RemoteException Se si verifica qualche eccezione di sistema per cui non è possibile effettuare l'operazione
      */
-    public CostiDipendenteComponentSession createComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+    public CostiDipendenteComponentSession createComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
         return it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPDG00_EJB_CostiDipendenteComponentSession", CostiDipendenteComponentSession.class);
     }
 
-    public FlussoStipendiComponentSession createFlussoStipendiComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+    public FlussoStipendiComponentSession createFlussoStipendiComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
         return it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPDG00_EJB_FlussoStipendiComponentSession", FlussoStipendiComponentSession.class);
     }
 

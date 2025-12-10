@@ -29,17 +29,17 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.PersistencyException;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Optional;
@@ -47,17 +47,18 @@ import java.util.Optional;
 @Stateless
 public class TerzoResource implements TerzoLocal {
     private final Logger LOGGER = LoggerFactory.getLogger(TerzoResource.class);
-	@Context SecurityContext securityContext;
-	@EJB CRUDComponentSession crudComponentSession;
+	@Context
+    SecurityContext securityContext;
+    @EJB CRUDComponentSession crudComponentSession;
 	@EJB TerzoComponentSession terzoComponentSession;
 
     public Response update(@Context HttpServletRequest request, TerzoBulk terzoBulk) throws Exception {
     	CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
-		Optional.ofNullable(terzoBulk.getCd_terzo()).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, indicare il codice terzo."));
+		Optional.ofNullable(terzoBulk.getCd_terzo()).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, indicare il codice terzo."));
     	
     	TerzoBulk terzoDB = getTerzo(userContext, terzoBulk.getCd_terzo());
-		Optional.ofNullable(terzoDB).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, il codice terzo indicato "+terzoBulk.getCd_terzo()+" non esiste"));
-		Optional.ofNullable(terzoBulk.getCodiceDestinatarioFatt()).orElseGet(() -> Optional.ofNullable(terzoBulk.getPecForRest()).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, indicare almeno la pec o il codice destinatario fattura.")));
+		Optional.ofNullable(terzoDB).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, il codice terzo indicato "+terzoBulk.getCd_terzo()+" non esiste"));
+		Optional.ofNullable(terzoBulk.getCodiceDestinatarioFatt()).orElseGet(() -> Optional.ofNullable(terzoBulk.getPecForRest()).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, indicare almeno la pec o il codice destinatario fattura.")));
     	
     	terzoDB = (TerzoBulk)terzoComponentSession.inizializzaBulkPerModifica(userContext, terzoDB);
     	terzoDB.setCodiceDestinatarioFatt(Optional.ofNullable(terzoBulk.getCodiceDestinatarioFatt()).orElse(terzoDB.getCodiceDestinatarioFatt()));
@@ -88,7 +89,7 @@ public class TerzoResource implements TerzoLocal {
     	terzoDB.setToBeUpdated();
     	
     	terzoDB = (TerzoBulk)terzoComponentSession.modificaConBulk(userContext, terzoDB);
-    	return Response.status(Status.OK).entity(terzoBulk).build();
+    	return Response.status(Response.Status.OK).entity(terzoBulk).build();
     }
 
 
@@ -97,7 +98,7 @@ public class TerzoResource implements TerzoLocal {
 	public Response get( Integer cd_terzo) throws Exception {
 		CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
 		TerzoBulk terzoDB = getTerzo(userContext, cd_terzo);
-		return Response.status(Status.OK).entity(terzoDB).build();
+		return Response.status(Response.Status.OK).entity(terzoDB).build();
 	}
 
 
@@ -105,9 +106,9 @@ public class TerzoResource implements TerzoLocal {
 	@Override
 	public Response getList( String codicefiscale) throws Exception {
 		CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
-		Optional.ofNullable(codicefiscale).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, indicare il codice fiscale."));
+		Optional.ofNullable(codicefiscale).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, indicare il codice fiscale."));
 		final List<AnagraficoBulk> anagraficoBulks = crudComponentSession.find(userContext, AnagraficoBulk.class, "findByCodiceFiscaleOrPartitaIVA", codicefiscale, null);
-		final AnagraficoBulk anagraficoBulk = anagraficoBulks.stream().findAny().orElseThrow(() -> new RestException(Status.NOT_FOUND, "Errore, nessun anagrafico trovato per il codice fiscale indicato."));
+		final AnagraficoBulk anagraficoBulk = anagraficoBulks.stream().findAny().orElseThrow(() -> new RestException(Response.Status.NOT_FOUND, "Errore, nessun anagrafico trovato per il codice fiscale indicato."));
 
 		return Response.status(Response.Status.OK).entity(
 				crudComponentSession.find(userContext, TerzoBulk.class, "findTerzi", anagraficoBulk)
@@ -118,36 +119,36 @@ public class TerzoResource implements TerzoLocal {
 	@Override
 	public Response tipoRapporto(String codicefiscale) throws Exception {
 		CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
-		Optional.ofNullable(codicefiscale).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, indicare il codice fiscale."));
+		Optional.ofNullable(codicefiscale).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, indicare il codice fiscale."));
 		final List<AnagraficoBulk> anagraficoBulks = crudComponentSession.find(userContext, AnagraficoBulk.class, "findByCodiceFiscaleOrPartitaIVA", codicefiscale, null);
-		return Response.status(Status.OK).entity(
+		return Response.status(Response.Status.OK).entity(
 			crudComponentSession.find(
 					userContext,
 					AnagraficoBulk.class,
 					"findRapporti",
-					anagraficoBulks.stream().findAny().orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, nessun anagrafico trovato per il codice fiscale indicato."))
+					anagraficoBulks.stream().findAny().orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, nessun anagrafico trovato per il codice fiscale indicato."))
 			)
 		).build();
 	}
 	public Response anagraficaInfo(String codicefiscale) throws Exception {
 		CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
-		Optional.ofNullable(codicefiscale).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, indicare il codice fiscale."));
+		Optional.ofNullable(codicefiscale).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, indicare il codice fiscale."));
 		final List<AnagraficoBulk> anagraficoBulks = crudComponentSession.find(userContext, AnagraficoBulk.class, "findByCodiceFiscaleOrPartitaIVA", codicefiscale, null);
-		final AnagraficoBulk anagraficoBulk = anagraficoBulks.stream().findAny().orElseThrow(() -> new RestException(Status.NOT_FOUND, "Errore, nessun anagrafico trovato per il codice fiscale indicato."));
-		return Response.status(Status.OK).entity(
+		final AnagraficoBulk anagraficoBulk = anagraficoBulks.stream().findAny().orElseThrow(() -> new RestException(Response.Status.NOT_FOUND, "Errore, nessun anagrafico trovato per il codice fiscale indicato."));
+		return Response.status(Response.Status.OK).entity(
 				new AnagraficaInfoDTO(anagraficoBulk)
 		).build();
 	}
 	public Response anagraficaInfoByCdTerzo(Integer cdTerzo) throws Exception {
 		CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
-		Optional.ofNullable(cdTerzo).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, indicare il codice terzo."));
+		Optional.ofNullable(cdTerzo).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, indicare il codice terzo."));
 
 		TerzoBulk terzoDB = getTerzo(userContext, cdTerzo);
-		Optional.ofNullable(terzoDB).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, il codice terzo indicato "+cdTerzo+" non esiste"));
+		Optional.ofNullable(terzoDB).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, il codice terzo indicato "+cdTerzo+" non esiste"));
 
 		final AnagraficoBulk anagraficoBulk = ( AnagraficoBulk) crudComponentSession.findByPrimaryKey(userContext, new AnagraficoBulk(terzoDB.getCd_anag()));
-		Optional.ofNullable(anagraficoBulk).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, nessun anagrafico trovato il codice terzo indicato "+cdTerzo));
-		return Response.status(Status.OK).entity(
+		Optional.ofNullable(anagraficoBulk).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, nessun anagrafico trovato il codice terzo indicato "+cdTerzo));
+		return Response.status(Response.Status.OK).entity(
 				new AnagraficaInfoDTO(anagraficoBulk)
 		).build();
 	}

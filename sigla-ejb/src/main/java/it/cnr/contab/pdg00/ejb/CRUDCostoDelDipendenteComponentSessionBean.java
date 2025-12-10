@@ -17,8 +17,8 @@
 
 package it.cnr.contab.pdg00.ejb;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.config00.comp.Classificazione_vociComponent;
 import it.cnr.contab.pdg00.comp.CRUDCostoDelDipendenteComponent;
@@ -28,10 +28,8 @@ public class CRUDCostoDelDipendenteComponentSessionBean extends it.cnr.jada.ejb.
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.pdg00.comp.CRUDCostoDelDipendenteComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new CRUDCostoDelDipendenteComponentSessionBean();
-}
-public it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiVirtualBulk caricaDettagliFiltrati(it.cnr.jada.UserContext param0,it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiVirtualBulk param1, it.cnr.jada.persistency.sql.CompoundFindClause param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiVirtualBulk caricaDettagliFiltrati(it.cnr.jada.UserContext param0,it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiVirtualBulk param1, it.cnr.jada.persistency.sql.CompoundFindClause param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiVirtualBulk result = ((CRUDCostoDelDipendenteComponent)componentObj).caricaDettagliFiltrati(param0, param1, param2);

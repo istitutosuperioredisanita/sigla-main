@@ -35,19 +35,20 @@ import it.cnr.si.spring.storage.MimeTypes;
 import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.mail.util.ByteArrayDataSource;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.mail.util.ByteArrayDataSource;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,8 +62,7 @@ public class PECFattureAttiveResource implements PECFattureAttiveLocal {
     private DocAmmFatturazioneElettronicaComponentSession docAmmFatturazioneElettronicaComponentSession;
     @EJB
     private FatturaAttivaSingolaComponentSession fatturaAttivaSingolaComponentSession;
-    @EJB
-    CRUDComponentSession crudComponentSession;
+    @EJB CRUDComponentSession crudComponentSession;
     @Context
     SecurityContext securityContext;
 

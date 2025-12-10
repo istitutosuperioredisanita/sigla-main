@@ -83,7 +83,7 @@ public SQLBuilder selectInquadramenti(Long pgInquadramento, Tipo_rapportoBulk aR
 
 
 public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,OggettoBulk bulk) throws PersistencyException {
-	try {((Rif_inquadramentoBulk)bulk).setPg_rif_inquadramento(	new Long((Long)findAndLockMax(bulk, "pg_rif_inquadramento", new Long(0))).longValue()+1);
+	try {((Rif_inquadramentoBulk)bulk).setPg_rif_inquadramento(	Long.valueOf((Long)findAndLockMax(bulk, "pg_rif_inquadramento", Long.valueOf(0))).longValue()+1);
 	} catch(it.cnr.jada.bulk.BusyResourceException e) {
 	throw new PersistencyException(e);
 	}

@@ -71,7 +71,7 @@ import it.cnr.si.spring.storage.StorageObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

@@ -25,18 +25,16 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.*;
 @Stateless(name="CNRUTENZE00_EJB_UtenteComponentSession")
 public class UtenteComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements UtenteComponentSession {
 	@PostConstruct
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.utente00.comp.UtenteComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-		return new UtenteComponentSessionBean();
-	}
-	public it.cnr.contab.utenze00.bulk.UtenteBulk cercaAccessi(it.cnr.jada.UserContext param0,it.cnr.contab.utenze00.bulk.UtenteBulk param1,it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk param2, CompoundFindClause param3) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public it.cnr.contab.utenze00.bulk.UtenteBulk cercaAccessi(it.cnr.jada.UserContext param0,it.cnr.contab.utenze00.bulk.UtenteBulk param1,it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk param2, CompoundFindClause param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.utenze00.bulk.UtenteBulk result = ((UtenteComponent)componentObj).cercaAccessi(param0,param1,param2,param3);
@@ -54,7 +52,7 @@ public class UtenteComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSes
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.utenze00.bulk.UtenteBulk cercaRuoli(it.cnr.jada.UserContext param0,it.cnr.contab.utenze00.bulk.UtenteBulk param1,it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.utenze00.bulk.UtenteBulk cercaRuoli(it.cnr.jada.UserContext param0,it.cnr.contab.utenze00.bulk.UtenteBulk param1,it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.utenze00.bulk.UtenteBulk result = ((UtenteComponent)componentObj).cercaRuoli(param0,param1,param2);
@@ -72,7 +70,7 @@ public class UtenteComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSes
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.util.Collection cercaUOAccessiPropri(it.cnr.jada.UserContext param0,it.cnr.contab.utenze00.bulk.UtenteBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public java.util.Collection cercaUOAccessiPropri(it.cnr.jada.UserContext param0,it.cnr.contab.utenze00.bulk.UtenteBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.util.Collection result = ((UtenteComponent)componentObj).cercaUOAccessiPropri(param0,param1);
@@ -90,7 +88,7 @@ public class UtenteComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSes
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.util.Collection cercaUORuoliPropri(it.cnr.jada.UserContext param0,it.cnr.contab.utenze00.bulk.UtenteBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public java.util.Collection cercaUORuoliPropri(it.cnr.jada.UserContext param0,it.cnr.contab.utenze00.bulk.UtenteBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.util.Collection result = ((UtenteComponent)componentObj).cercaUORuoliPropri(param0,param1);
@@ -108,7 +106,7 @@ public class UtenteComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSes
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.utenze00.bulk.UtenteBulk resetPassword(it.cnr.jada.UserContext param0,it.cnr.contab.utenze00.bulk.UtenteBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.utenze00.bulk.UtenteBulk resetPassword(it.cnr.jada.UserContext param0,it.cnr.contab.utenze00.bulk.UtenteBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.utenze00.bulk.UtenteBulk result = ((UtenteComponent)componentObj).resetPassword(param0,param1);
@@ -126,7 +124,7 @@ public class UtenteComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSes
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public Boolean isCdrConfiguratoreAll(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public Boolean isCdrConfiguratoreAll(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			Boolean result = ((UtenteComponent)componentObj).isCdrConfiguratoreAll(param0);
@@ -144,7 +142,7 @@ public class UtenteComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSes
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.utenze00.bulk.SelezionaCdsBulk findCds(it.cnr.jada.UserContext param0,it.cnr.contab.utenze00.bulk.SelezionaCdsBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.utenze00.bulk.SelezionaCdsBulk findCds(it.cnr.jada.UserContext param0,it.cnr.contab.utenze00.bulk.SelezionaCdsBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.utenze00.bulk.SelezionaCdsBulk result = ((UtenteComponent)componentObj).findCds(param0,param1);
@@ -162,7 +160,7 @@ public class UtenteComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSes
 			throw uncaughtError(param0,componentObj,e);
 		} 
 	}
-	public it.cnr.contab.utenze00.bulk.SelezionaCdsBulk findUo(it.cnr.jada.UserContext param0,it.cnr.contab.utenze00.bulk.SelezionaCdsBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.utenze00.bulk.SelezionaCdsBulk findUo(it.cnr.jada.UserContext param0,it.cnr.contab.utenze00.bulk.SelezionaCdsBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.utenze00.bulk.SelezionaCdsBulk result = ((UtenteComponent)componentObj).findUo(param0,param1);
@@ -180,7 +178,7 @@ public class UtenteComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSes
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.config00.sto.bulk.CdrBulk findCdrEnte(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.config00.sto.bulk.CdrBulk findCdrEnte(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.config00.sto.bulk.CdrBulk result = ((UtenteComponent)componentObj).findCdrEnte(param0);
@@ -198,7 +196,7 @@ public class UtenteComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSes
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void validaSelezionaCds(it.cnr.jada.UserContext param0,it.cnr.contab.utenze00.bulk.SelezionaCdsBulk param1, Integer param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void validaSelezionaCds(it.cnr.jada.UserContext param0,it.cnr.contab.utenze00.bulk.SelezionaCdsBulk param1, Integer param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((UtenteComponent)componentObj).validaSelezionaCds(param0,param1,param2);
@@ -216,7 +214,7 @@ public class UtenteComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSes
 		} 
 	}
 	
-	public UtenteFirmaDettaglioBulk isUtenteAbilitatoFirma(UserContext param0, AbilitatoFirma codice) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public UtenteFirmaDettaglioBulk isUtenteAbilitatoFirma(UserContext param0, AbilitatoFirma codice) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			UtenteFirmaDettaglioBulk result = ((UtenteComponent)componentObj).isUtenteAbilitatoFirma(param0, codice);

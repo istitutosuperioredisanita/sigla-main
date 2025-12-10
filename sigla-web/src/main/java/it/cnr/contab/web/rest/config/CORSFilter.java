@@ -17,13 +17,13 @@
 
 package it.cnr.contab.web.rest.config;
 
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -70,7 +70,7 @@ public class CORSFilter implements Filter {
                     logger.debug("CORS Filter Origin from Request: {} ", origin);
                     return origin;
                 })
-                .filter(s -> allowOrigins.contains(s))
+                .filter(allowOrigins::contains)
                 .ifPresent(s -> {
                     httpServletResponse
                             .ifPresent(httpServletResponse1 -> {

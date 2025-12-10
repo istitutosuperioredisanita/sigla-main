@@ -91,9 +91,9 @@ public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,Og
 			try
 			{
 				if(rs.next())
-					x = new Long(rs.getLong(1) + 1);
+					x = Long.valueOf(rs.getLong(1) + 1);
 				else
-					x = new Long(0);
+					x = Long.valueOf(0);
 			}
 			catch( SQLException e )
 			{

@@ -17,7 +17,7 @@
 
 package it.cnr.contab.config00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface Parametri_cdsComponentSession extends it.cnr.jada.ejb.CRUDComponentSession{

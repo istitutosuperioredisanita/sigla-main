@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.PreparedStatement;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
@@ -219,7 +219,7 @@ public class CRUDPdgModuloSpeseGestComponent extends it.cnr.jada.comp.CRUDCompon
 		
 		String cdNaturaReimpiego = null;
 		try {
-			cdNaturaReimpiego = Utility.createConfigurazioneCnrComponentSession().getVal01(userContext, new Integer(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_NATURA_REIMPIEGO);
+			cdNaturaReimpiego = Utility.createConfigurazioneCnrComponentSession().getVal01(userContext, Integer.valueOf(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_NATURA_REIMPIEGO);
 		} catch (RemoteException e) {
 			throw new ComponentException(e);
 		} catch (EJBException e) {

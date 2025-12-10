@@ -71,7 +71,7 @@ public class Liquidazione_iva_ripart_finBulk extends Liquidazione_iva_ripart_fin
 
 	public void caricaAnniList(ActionContext actioncontext) { 
 		for (int i=CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue()-3;i<=CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue();i++)
-			getAnniList().put(new Integer(i), new Integer(i));
+			getAnniList().put(Integer.valueOf(i), Integer.valueOf(i));
 	}
 
 	public OggettoBulk initialize(CRUDBP crudbp, ActionContext actioncontext) {

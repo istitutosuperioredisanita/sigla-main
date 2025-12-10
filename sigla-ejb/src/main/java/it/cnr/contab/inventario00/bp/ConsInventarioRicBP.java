@@ -34,7 +34,7 @@ import it.cnr.jada.util.ejb.EJBCommonServices;
 public class ConsInventarioRicBP extends BulkBP{	
 
 	
-	public ConsRegistroInventarioComponentSession createComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public ConsRegistroInventarioComponentSession createComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		return (ConsRegistroInventarioComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_ConsRegistroInventarioComponentSession", ConsRegistroInventarioComponentSession.class);
 	}
 	public it.cnr.jada.util.jsp.Button[] createToolbar() {

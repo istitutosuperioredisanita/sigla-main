@@ -57,7 +57,7 @@ public class MovimentiMagHome extends BulkHome {
 		super(MovimentiMagBulk.class, conn, persistentCache);
 	}
 	public Long recuperoProgressivoMovimento(UserContext userContext) throws PersistencyException,it.cnr.jada.comp.ComponentException {
-		return new Long(this.fetchNextSequenceValue(userContext,"CNRSEQ00_MOVIMENTI_MAG").longValue());
+		return Long.valueOf(this.fetchNextSequenceValue(userContext,"CNRSEQ00_MOVIMENTI_MAG").longValue());
 	}
 	public void initializePrimaryKeyForInsert(UserContext userContext, OggettoBulk bulk) throws PersistencyException,it.cnr.jada.comp.ComponentException {
 		MovimentiMagBulk movimento = (MovimentiMagBulk)bulk;

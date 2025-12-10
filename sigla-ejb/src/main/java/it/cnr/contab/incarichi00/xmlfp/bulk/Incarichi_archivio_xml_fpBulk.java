@@ -33,7 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 
 @SuppressWarnings({ "unchecked", "serial" })
 public class Incarichi_archivio_xml_fpBulk extends Incarichi_archivio_xml_fpBase {

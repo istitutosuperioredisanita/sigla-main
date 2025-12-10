@@ -17,9 +17,9 @@
 
 package it.cnr.contab.doccont00.ejb;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.doccont00.comp.AccertamentoResiduoComponent;
 @Stateless(name="CNRDOCCONT00_EJB_AccertamentoResiduoComponentSession")
@@ -29,14 +29,12 @@ public class AccertamentoResiduoComponentSessionBean extends it.cnr.contab.docco
 		componentObj = new it.cnr.contab.doccont00.comp.AccertamentoResiduoComponent();
 	}
 	@Remove
-	public void ejbRemove() throws javax.ejb.EJBException {
+	public void ejbRemove() throws jakarta.ejb.EJBException {
 		componentObj.release();
 	}
 
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new AccertamentoResiduoComponentSessionBean();
-	}
-	public String controllaDettagliScadenzaAccertamento(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.AccertamentoBulk param1,it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public String controllaDettagliScadenzaAccertamento(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.AccertamentoBulk param1,it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			String result = ((AccertamentoResiduoComponent)componentObj).controllaDettagliScadenzaAccertamento(param0,param1,param2);

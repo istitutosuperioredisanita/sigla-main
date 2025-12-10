@@ -19,21 +19,19 @@ package it.cnr.contab.messaggio00.ejb;
 
 import it.cnr.contab.messaggio00.comp.CRUDMessaggioComponent;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 @Stateless(name = "CNRMESSAGGIO00_EJB_CRUDMessaggioComponentSession")
 public class CRUDMessaggioComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements CRUDMessaggioComponentSession {
-    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-        return new CRUDMessaggioComponentSessionBean();
-    }
+
 
     @PostConstruct
     public void ejbCreate() {
         componentObj = new it.cnr.contab.messaggio00.comp.CRUDMessaggioComponent();
     }
 
-    public void setMessaggioVisionato(it.cnr.jada.UserContext param0, it.cnr.contab.messaggio00.bulk.MessaggioBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void setMessaggioVisionato(it.cnr.jada.UserContext param0, it.cnr.contab.messaggio00.bulk.MessaggioBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             ((CRUDMessaggioComponent) componentObj).setMessaggioVisionato(param0, param1);
@@ -51,7 +49,7 @@ public class CRUDMessaggioComponentSessionBean extends it.cnr.jada.ejb.CRUDCompo
         }
     }
 
-    public boolean isMessaggioVisionato(it.cnr.jada.UserContext param0, it.cnr.contab.messaggio00.bulk.MessaggioBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isMessaggioVisionato(it.cnr.jada.UserContext param0, it.cnr.contab.messaggio00.bulk.MessaggioBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             boolean result = ((CRUDMessaggioComponent) componentObj).isMessaggioVisionato(param0, param1);
@@ -70,7 +68,7 @@ public class CRUDMessaggioComponentSessionBean extends it.cnr.jada.ejb.CRUDCompo
         }
     }
 
-	public void deleteMessaggi(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+	public void deleteMessaggi(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			((CRUDMessaggioComponent) componentObj).deleteMessaggi(param0);

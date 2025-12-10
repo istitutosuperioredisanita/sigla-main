@@ -20,7 +20,7 @@ package it.cnr.contab.ordmag.richieste.action;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 
-import javax.persistence.PersistenceException;
+import jakarta.persistence.PersistenceException;
 
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.ordmag.anag00.UnitaMisuraBulk;

@@ -60,7 +60,7 @@ public class ConsGAEResBP extends ConsultazioniBP {
 	private String pathConsultazione;
 	private boolean flNuovoPdg = false;
 
-	public ConsGAEResComponentSession createGAEResComponentSession() throws javax.ejb.EJBException, RemoteException {
+	public ConsGAEResComponentSession createGAEResComponentSession() throws jakarta.ejb.EJBException, RemoteException {
 		
 		   return (ConsGAEResComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_ConsGAEResComponentSession",ConsGAEResComponentSession.class);
 	}

@@ -51,8 +51,8 @@ public class Pdg_vincoloHome extends BulkHome {
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,OggettoBulk pdgVincolo) throws PersistencyException {
 		try {
 			((Pdg_vincoloBulk)pdgVincolo).setPg_vincolo(
-				new Long(
-					((Long)findAndLockMax( pdgVincolo, "pg_vincolo", new Long(0) )).longValue()+1
+				Long.valueOf(
+					((Long)findAndLockMax( pdgVincolo, "pg_vincolo", Long.valueOf(0) )).longValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

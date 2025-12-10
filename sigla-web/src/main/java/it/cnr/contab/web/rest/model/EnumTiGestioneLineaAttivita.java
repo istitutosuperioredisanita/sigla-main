@@ -1,11 +1,11 @@
 package it.cnr.contab.web.rest.model;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.util.ApplicationMessageFormatException;
 import it.cnr.jada.DetailedRuntimeException;
 
-@ApiModel( "Il tipo di gestione Spesa/Entrata o Entrambe")
+@Schema(name = "Il tipo di gestione Spesa/Entrata o Entrambe")
 public enum EnumTiGestioneLineaAttivita {
     ENTRATA(WorkpackageBulk.TI_GESTIONE_ENTRATE),
     SPESA(WorkpackageBulk.TI_GESTIONE_SPESE),

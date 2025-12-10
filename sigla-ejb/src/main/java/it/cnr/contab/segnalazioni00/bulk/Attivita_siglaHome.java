@@ -42,8 +42,8 @@ public class Attivita_siglaHome extends BulkHome {
 			Attivita_siglaBulk oggetto=(Attivita_siglaBulk)bulk;
 				oggetto.setEsercizio(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
 				oggetto.setPg_attivita(
-					new Long(
-						((Long)findAndLockMax( oggetto, "pg_attivita", new Long(0) )).longValue()+1
+					Long.valueOf(
+						((Long)findAndLockMax( oggetto, "pg_attivita", Long.valueOf(0) )).longValue()+1
 					)
 				);
 			} catch(it.cnr.jada.bulk.BusyResourceException e) {

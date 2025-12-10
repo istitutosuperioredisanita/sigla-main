@@ -23,20 +23,19 @@ import java.util.Map;
 import java.util.Optional;
 
 import it.cnr.contab.web.rest.config.FatturaAttivaCodiciEnum;
-
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.Response;
 
 public class FatturaAttivaException extends RestException {
 	private static final long serialVersionUID = 1L;
 	private final FatturaAttivaCodiciEnum fatturaAttivaCodiciEnum;
 	
-	public FatturaAttivaException(Status status, String message,
-			FatturaAttivaCodiciEnum fatturaAttivaCodiciEnum) {
+	public FatturaAttivaException(Response.Status status, String message,
+                                  FatturaAttivaCodiciEnum fatturaAttivaCodiciEnum) {
 		super(status, message);
 		this.fatturaAttivaCodiciEnum = fatturaAttivaCodiciEnum;
 	}
 	
-	public static FatturaAttivaException newInstance(Status status, FatturaAttivaCodiciEnum fatturaAttivaCodiciEnum) {
+	public static FatturaAttivaException newInstance(Response.Status status, FatturaAttivaCodiciEnum fatturaAttivaCodiciEnum) {
 		return new FatturaAttivaException(status, fatturaAttivaCodiciEnum.getMessage(),fatturaAttivaCodiciEnum);
 	}
 	

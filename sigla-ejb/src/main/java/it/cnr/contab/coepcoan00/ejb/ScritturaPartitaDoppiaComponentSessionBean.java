@@ -22,21 +22,19 @@ import it.cnr.contab.coepcoan00.core.bulk.Scrittura_analiticaBulk;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.jada.UserContext;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 @Stateless(name = "CNRCOEPCOAN00_EJB_ScritturaPartitaDoppiaComponentSession")
 public class ScritturaPartitaDoppiaComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements ScritturaPartitaDoppiaComponentSession {
-    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-        return new ScritturaPartitaDoppiaComponentSessionBean();
-    }
+    
 
     @PostConstruct
     public void ejbCreate() {
         componentObj = new it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaComponent();
     }
 
-    public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.bulk.OggettoBulk result = ((ScritturaPartitaDoppiaComponent) componentObj).inizializzaBulkPerStampa(param0, param1);
@@ -55,7 +53,7 @@ public class ScritturaPartitaDoppiaComponentSessionBean extends it.cnr.jada.ejb.
         }
     }
 
-    public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.bulk.OggettoBulk result = ((ScritturaPartitaDoppiaComponent) componentObj).stampaConBulk(param0, param1);
@@ -74,7 +72,7 @@ public class ScritturaPartitaDoppiaComponentSessionBean extends it.cnr.jada.ejb.
         }
     }
 
-    public Long getNextProgressivo(UserContext param0, Scrittura_partita_doppiaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public Long getNextProgressivo(UserContext param0, Scrittura_partita_doppiaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             Long result = ((ScritturaPartitaDoppiaComponent) componentObj).getNextProgressivo(param0, param1);
@@ -93,7 +91,7 @@ public class ScritturaPartitaDoppiaComponentSessionBean extends it.cnr.jada.ejb.
         }
     }
 
-    public Long getNextProgressivo(UserContext param0, Scrittura_analiticaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public Long getNextProgressivo(UserContext param0, Scrittura_analiticaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             Long result = ((ScritturaPartitaDoppiaComponent) componentObj).getNextProgressivo(param0, param1);

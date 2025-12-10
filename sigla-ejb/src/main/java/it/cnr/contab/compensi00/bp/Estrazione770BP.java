@@ -66,7 +66,7 @@ public void doElabora770(ActionContext context) throws BusinessProcessException 
 		sess.doElabora770(context.getUserContext(), e770);
 
 
-	}catch(javax.ejb.EJBException e){
+	}catch(jakarta.ejb.EJBException e){
 		throw handleException(e);
 	} catch(java.rmi.RemoteException re){
 		throw handleException(re);

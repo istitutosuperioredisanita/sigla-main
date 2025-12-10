@@ -28,7 +28,7 @@ package it.cnr.contab.inventario00.bp;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.jada.bulk.OggettoBulk;
 
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.JspWriter;
 import java.io.IOException;
 
 public class RigheInvDaFatturaCRUDController

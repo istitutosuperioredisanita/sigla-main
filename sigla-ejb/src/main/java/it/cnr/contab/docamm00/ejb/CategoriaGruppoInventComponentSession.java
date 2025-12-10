@@ -20,7 +20,7 @@ package it.cnr.contab.docamm00.ejb;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.jada.UserContext;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface CategoriaGruppoInventComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

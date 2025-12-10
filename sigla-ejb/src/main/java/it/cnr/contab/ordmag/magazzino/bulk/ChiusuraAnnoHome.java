@@ -34,9 +34,9 @@ public class ChiusuraAnnoHome extends BulkHome {
 		try{
 			Integer tmp = (Integer)findAndLockMax(chiusura, "pgChiusura",null);
 			if (tmp==null)
-				tmp = new Integer(0);
+				tmp = Integer.valueOf(0);
 
-			return (new Integer(tmp.intValue()+1));
+			return (Integer.valueOf(tmp.intValue()+1));
 
 		}catch(it.cnr.jada.bulk.BusyResourceException ex){
 			throw new BusyResourceException();

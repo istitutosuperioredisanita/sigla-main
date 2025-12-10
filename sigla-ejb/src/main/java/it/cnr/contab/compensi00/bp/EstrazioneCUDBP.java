@@ -60,7 +60,7 @@ public void doElaboraCUD(ActionContext context) throws BusinessProcessException 
 		sess.doElaboraCUD(context.getUserContext(), cud);
 
 
-	}catch(javax.ejb.EJBException e){
+	}catch(jakarta.ejb.EJBException e){
 		throw handleException(e);
 	} catch(java.rmi.RemoteException re){
 		throw handleException(re);

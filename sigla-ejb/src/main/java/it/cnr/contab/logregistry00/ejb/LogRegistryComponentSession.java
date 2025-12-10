@@ -17,7 +17,7 @@
 
 package it.cnr.contab.logregistry00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface LogRegistryComponentSession extends it.cnr.jada.ejb.RicercaComponentSession {

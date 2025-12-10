@@ -17,82 +17,118 @@
 
 package it.cnr.contab.web.rest.local.anagraf00;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import it.cnr.contab.anagraf00.core.bulk.RapportoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.web.rest.config.SIGLARoles;
 import it.cnr.contab.web.rest.model.AnagraficaInfoDTO;
+import it.cnr.contab.web.rest.model.UtenteIndirizziMailDTO;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.Local;
+import java.util.List;
 
 @Local
 @Path("/terzo")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(SIGLARoles.TERZO)
-@Api("Terzo")
+@Tag(name = "Terzo")
 public interface TerzoLocal {
 
 	@POST
-    @ApiOperation(value = "Aggiorna un terzo",
-            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.TERZO +"'",
-            response = TerzoBulk.class,
-            authorizations = @Authorization(value = "BASIC")
+    @Operation(summary = "Aggiorna un terzo",
+            description = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.TERZO +"'",
+            security = @SecurityRequirement(name = "basicAuth"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Terzo",
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = TerzoBulk.class)))
+                    )
+            }
     )
     Response update(@Context HttpServletRequest request, TerzoBulk terzoBulk) throws Exception;
+
     @GET
     @Path("/{cd_terzo}")
-    @ApiOperation(value = "Ritorna il terzo dal codice ",
-            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.TERZO +"'",
-            response = TerzoBulk.class,
-            authorizations = @Authorization(value = "BASIC")
+    @Operation(summary = "Ritorna il terzo dal codice ",
+            description = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.TERZO +"'",
+            security = @SecurityRequirement(name = "basicAuth"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Terzo",
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = TerzoBulk.class)))
+                    )
+            }
     )
     Response get( @PathParam("cd_terzo") Integer cd_terzo) throws Exception;
 
-
     @GET
     @Path("/query")
-    @ApiOperation(value = "Ritorna i terzo associati all'angrafico con il codice fiscale passato in input ",
-            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.TERZO +"'",
-            response = TerzoBulk.class,
-            responseContainer = "List",
-            authorizations = @Authorization(value = "BASIC")
+    @Operation(summary = "Ritorna i terzo associati all'angrafico con il codice fiscale passato in input ",
+            description = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.TERZO +"'",
+            security = @SecurityRequirement(name = "basicAuth"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = List.class)))
+                    )
+            }
     )
     Response getList(@QueryParam("codicefiscale")  String codicefiscale) throws Exception;
 
 	@GET
     @Path("/tiporapporto/{codicefiscale}")
-    @ApiOperation(value = "Ritorna i rapporti associati al terzo",
-            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.TERZO +"'",
-            response = RapportoBulk.class,
-            responseContainer = "List",
-            authorizations = @Authorization(value = "BASIC")
+    @Operation(summary = "Ritorna i rapporti associati al terzo",
+            description = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.TERZO +"'",
+            security = @SecurityRequirement(name = "basicAuth"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = List.class)))
+                    )
+            }
     )
     Response tipoRapporto(@PathParam("codicefiscale") String codicefiscale) throws Exception;
 
     @GET
     @Path("/info/{codicefiscale}")
-    @ApiOperation(value = "Ritorna le informazioni anagrafiche associate al terzo",
-            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.TERZO +"'",
-            response = AnagraficaInfoDTO.class,
-            authorizations = @Authorization(value = "BASIC")
+    @Operation(summary = "Ritorna le informazioni anagrafiche associate al terzo",
+            description = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.TERZO +"'",
+            security = @SecurityRequirement(name = "basicAuth"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = AnagraficaInfoDTO.class)))
+                    )
+            }
     )
     Response anagraficaInfo(@PathParam("codicefiscale") String codicefiscale) throws Exception;
     @GET
     @Path("/infoByCdTerzo/{cd_terzo}")
-    @ApiOperation(value = "Ritorna le informazioni anagrafiche associate al terzo",
-            notes = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.TERZO +"'",
-            response = AnagraficaInfoDTO.class,
-            authorizations = @Authorization(value = "BASIC")
+    @Operation(summary = "Ritorna le informazioni anagrafiche associate al terzo",
+            description = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.TERZO +"'",
+            security = @SecurityRequirement(name = "basicAuth"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = AnagraficaInfoDTO.class)))
+                    )
+            }
     )
     Response anagraficaInfoByCdTerzo(@PathParam("cd_terzo") Integer cd_terzo) throws Exception;
 

@@ -101,7 +101,7 @@ public class Incarichi_procedura_annoBulk extends Incarichi_procedura_annoBase {
 	}
 	public void caricaAnniList(UserContext usercontext) { 
 		for (int i=CNRUserContext.getEsercizio(usercontext).intValue()+5;i>=2005;i--)
-			getAnniList().put(new Integer(i), new Integer(i));
+			getAnniList().put(Integer.valueOf(i), Integer.valueOf(i));
 	}
 	public OggettoBulk initialize(CRUDBP crudbp, ActionContext actioncontext) {
 		super.initialize(crudbp, actioncontext);

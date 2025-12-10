@@ -27,16 +27,14 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ApplicationRuntimeException;
 import it.cnr.jada.comp.ComponentException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 
 @Stateless(name = "CNRCOEPCOAN00_EJB_ProposeScritturaComponentSession")
 public class ProposeScritturaComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements ProposeScritturaComponentSession {
-    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-        return new ProposeScritturaComponentSessionBean();
-    }
+
 
     @PostConstruct
     public void ejbCreate() {

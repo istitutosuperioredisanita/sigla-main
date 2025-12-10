@@ -19,8 +19,8 @@ package it.cnr.contab.messaggio00.bp;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.jsp.PageContext;
+
+import jakarta.servlet.jsp.PageContext;
 
 import it.cnr.contab.messaggio00.bulk.MessaggioBulk;
 import it.cnr.contab.messaggio00.ejb.CRUDMessaggioComponentSession;

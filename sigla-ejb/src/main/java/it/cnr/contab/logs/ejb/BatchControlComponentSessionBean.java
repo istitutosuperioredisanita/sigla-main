@@ -25,8 +25,8 @@ import it.cnr.jada.comp.*;
 import it.cnr.jada.ejb.CRUDComponentSessionBean;
 import it.cnr.jada.util.RemoteIterator;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.*;
 import java.rmi.RemoteException;
 
 @Stateless(name="BLOGS_EJB_BatchControlComponentSession")
@@ -39,10 +39,6 @@ public class BatchControlComponentSessionBean extends CRUDComponentSessionBean i
 	public void ejbRemove() throws EJBException {
 		componentObj.release();
 	}
-	
-	public static CRUDComponentSessionBean newInstance() throws EJBException {
-        return new BatchControlComponentSessionBean();
-    }
 
     public Batch_controlBulk attivaBatch(UserContext param0, Batch_controlBulk param1)
         throws ComponentException, EJBException

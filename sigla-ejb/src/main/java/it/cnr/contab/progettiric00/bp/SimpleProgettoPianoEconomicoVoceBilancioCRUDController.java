@@ -20,7 +20,7 @@ package it.cnr.contab.progettiric00.bp;
 import java.io.IOException;
 import java.util.Optional;
 
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.JspWriter;
 
 import it.cnr.contab.progettiric00.core.bulk.Ass_progetto_piaeco_voceBulk;
 import it.cnr.contab.progettiric00.core.bulk.Progetto_piano_economicoBulk;

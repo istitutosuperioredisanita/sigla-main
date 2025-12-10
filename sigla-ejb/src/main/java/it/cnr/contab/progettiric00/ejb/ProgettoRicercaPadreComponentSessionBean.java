@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.progettiric00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.*;
 
 /**
  * Bean implementation class for Enterprise Bean: CNRPROGETTIRIC00_EJB_ProgettoRicercaPadreComponentSession
@@ -28,10 +28,8 @@ public class ProgettoRicercaPadreComponentSessionBean extends it.cnr.contab.prog
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.progettiric00.comp.ProgettoRicercaPadreComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-	return new ProgettoRicercaComponentSessionBean();
-}
-public void aggiornaGECO(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public void aggiornaGECO(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		((it.cnr.contab.progettiric00.comp.ProgettoRicercaPadreComponent)componentObj).aggiornaGECO(param0);

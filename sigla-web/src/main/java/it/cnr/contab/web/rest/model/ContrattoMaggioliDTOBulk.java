@@ -1,13 +1,14 @@
 package it.cnr.contab.web.rest.model;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+
 import java.io.Serializable;
 import java.util.List;
 
 public class ContrattoMaggioliDTOBulk extends ContrattoDtoBulk implements Serializable {
 
     @NotNull
-   AttachmentFile contrattoFile;
+    AttachmentFile contrattoFile;
 
     List<AttachmentContratto> attachments;
 

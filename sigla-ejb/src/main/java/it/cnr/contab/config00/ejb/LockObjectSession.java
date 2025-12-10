@@ -22,7 +22,7 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 @Remote
 public interface LockObjectSession extends it.cnr.jada.ejb.CRUDComponentSession{
 

@@ -512,7 +512,7 @@ public OggettoBulk initializeForInsert(it.cnr.jada.util.action.CRUDBP bp,it.cnr.
 
 public boolean isBeneAccessorio() {
 	
-	if (getProgressivo() != null && getProgressivo().compareTo(new Long (0))!=0)
+	if (getProgressivo() != null && getProgressivo().compareTo(Long.valueOf (0))!=0)
 		return true;
 		
 	return false;

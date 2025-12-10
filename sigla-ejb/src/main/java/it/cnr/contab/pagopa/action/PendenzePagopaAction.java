@@ -142,7 +142,7 @@ public Forward doElimina(ActionContext context) throws RemoteException {
 		}
 	}
 
-	private Forward visualizzaIncassoSingolo(ActionContext context) throws BusinessProcessException, RemoteException, InstantiationException, javax.ejb.RemoveException {
+	private Forward visualizzaIncassoSingolo(ActionContext context) throws BusinessProcessException, RemoteException, InstantiationException, jakarta.ejb.RemoveException {
 		CRUDPendenzaPagopaBP bp = (CRUDPendenzaPagopaBP)getBusinessProcess(context);
 		String function = bp.isEditable() ? "M" : "V";
 		if (bp.isBringBack())

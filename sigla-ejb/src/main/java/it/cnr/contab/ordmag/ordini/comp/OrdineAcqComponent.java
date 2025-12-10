@@ -30,6 +30,7 @@ import it.cnr.contab.config00.contratto.bulk.Dettaglio_contrattoBulk;
 import it.cnr.contab.config00.contratto.bulk.Procedure_amministrativeBulk;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.contratto.bulk.*;
+import it.cnr.contab.config00.contratto.bulk.*;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoHome;
 import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
@@ -73,7 +74,7 @@ import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -1093,7 +1094,7 @@ public class OrdineAcqComponent
             uoDestinazione = EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class).getVal01(userContext, CNRUserContext.getEsercizio(userContext), "*", Configurazione_cnrBulk.PK_ORDINI, Configurazione_cnrBulk.SK_ORDINE_IMPEGNO_UO_DESTINAZIONE);
             if (uoDestinazione != null && uoDestinazione.equals("Y"))
                 return true;
-        } catch (javax.ejb.EJBException | RemoteException e) {
+        } catch (jakarta.ejb.EJBException | RemoteException e) {
             throw  handleException(e);
         }
         return false;
@@ -1106,7 +1107,7 @@ public class OrdineAcqComponent
                     .map(DivisaBulk::getCd_divisa)
                     .orElseThrow(() -> new it.cnr.jada.comp.ApplicationException("Impossibile caricare la valuta di default! Prima di poter inserire un ordine, immettere tale valore."));
             return divisaDefault;
-        } catch (javax.ejb.EJBException | PersistencyException e) {
+        } catch (jakarta.ejb.EJBException | PersistencyException e) {
             throw handleException(e);
         }
     }

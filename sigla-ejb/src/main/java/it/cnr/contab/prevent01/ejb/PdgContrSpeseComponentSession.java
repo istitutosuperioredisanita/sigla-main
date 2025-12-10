@@ -28,7 +28,7 @@ import it.cnr.jada.persistency.PersistencyException;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 @Remote
 public interface PdgContrSpeseComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
     OggettoBulk inizializzaDettagliBulkPerModifica(UserContext usercontext, Contrattazione_speseVirtualBulk contr_spese, Pdg_approvato_dip_areaBulk pdg_dip_area) throws ComponentException, RemoteException;

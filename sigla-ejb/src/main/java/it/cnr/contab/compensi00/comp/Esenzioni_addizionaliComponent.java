@@ -204,7 +204,7 @@ public void eliminaConBulk(UserContext userContext, OggettoBulk bulk) throws Com
 		}
 		else
 		  super.eliminaConBulk(userContext, bulk);
-	}catch(javax.ejb.EJBException ex){
+	}catch(jakarta.ejb.EJBException ex){
 	   throw handleException(ex);
 	}catch(it.cnr.jada.persistency.PersistencyException ex){
 	   throw handleException(ex);

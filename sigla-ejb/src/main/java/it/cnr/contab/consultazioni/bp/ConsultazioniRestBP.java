@@ -42,7 +42,7 @@ public class ConsultazioniRestBP extends ConsultazioniBP {
 		super();
 	}
 
-	public ConsultazioniRestComponentSession createComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public ConsultazioniRestComponentSession createComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		return (ConsultazioniRestComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCAMM00_EJB_ConsultazioniRestComponentSession", ConsultazioniRestComponentSession.class);
 	}
 }

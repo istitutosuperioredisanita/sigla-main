@@ -14,51 +14,61 @@
  *     You should have received a copy of the GNU Affero General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 package it.cnr.contab.web.rest.config;
 
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@SwaggerDefinition(
+@OpenAPIDefinition(
         info = @Info(
                 title = "SIGLA REST API",
-                description = "A collections of SIGLA Rest API",
+                description = "A collection of SIGLA Rest API",
                 version = "1.0.0",
                 contact = @Contact(
                         name = "Marco Spasiano",
                         email = "marco.spasiano@cnr.it"
                 ),
-                license = @License(name = "GNU AFFERO GENERAL PUBLIC LICENSE", url = "https://www.gnu.org/licenses/agpl-3.0.html")
-        ),
-        schemes = {SwaggerDefinition.Scheme.HTTP, SwaggerDefinition.Scheme.HTTPS},
-        basePath = "it.cnr.contab.web.rest.local",
-        securityDefinition = @SecurityDefinition(
-                basicAuthDefinitions = @BasicAuthDefinition(key = "BASIC", description = "You can login with CNR official account"),
-                apiKeyAuthDefinitions = {
-                        @ApiKeyAuthDefinition(
-                                key = SIGLASecurityContext.X_SIGLA_ESERCIZIO,
-                                name = SIGLASecurityContext.X_SIGLA_ESERCIZIO,
-                                description = "Esercizio in scrivania",
-                                in = ApiKeyAuthDefinition.ApiKeyLocation.HEADER
-                        ),
-                        @ApiKeyAuthDefinition(
-                                key = SIGLASecurityContext.X_SIGLA_CD_CDS,
-                                name = SIGLASecurityContext.X_SIGLA_CD_CDS,
-                                description = "CdS in scrivania",
-                                in = ApiKeyAuthDefinition.ApiKeyLocation.HEADER),
-                        @ApiKeyAuthDefinition(
-                                key = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA,
-                                name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA,
-                                description = "Unità Organizzativa in scrivania",
-                                in = ApiKeyAuthDefinition.ApiKeyLocation.HEADER),
-                        @ApiKeyAuthDefinition(
-                                key = SIGLASecurityContext.X_SIGLA_CD_CDR,
-                                name = SIGLASecurityContext.X_SIGLA_CD_CDR,
-                                description = "CdR in scrivania",
-                                in = ApiKeyAuthDefinition.ApiKeyLocation.HEADER)
-                }
+                license = @License(
+                        name = "GNU AFFERO GENERAL PUBLIC LICENSE",
+                        url = "https://www.gnu.org/licenses/agpl-3.0.html"
+                )
         )
 )
-@Api
+@SecurityScheme(
+        name = "BASIC",
+        type = SecuritySchemeType.HTTP,
+        scheme = "basic"
+)
+@SecurityScheme(
+        name = SIGLASecurityContext.X_SIGLA_ESERCIZIO,
+        type = SecuritySchemeType.APIKEY,
+        in = SecuritySchemeIn.HEADER,
+        paramName = SIGLASecurityContext.X_SIGLA_ESERCIZIO
+)
+@SecurityScheme(
+        name = SIGLASecurityContext.X_SIGLA_CD_CDS,
+        type = SecuritySchemeType.APIKEY,
+        in = SecuritySchemeIn.HEADER,
+        paramName = SIGLASecurityContext.X_SIGLA_CD_CDS
+)
+@SecurityScheme(
+        name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA,
+        type = SecuritySchemeType.APIKEY,
+        in = SecuritySchemeIn.HEADER,
+        paramName = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA
+)
+@SecurityScheme(
+        name = SIGLASecurityContext.X_SIGLA_CD_CDR,
+        type = SecuritySchemeType.APIKEY,
+        in = SecuritySchemeIn.HEADER,
+        paramName = SIGLASecurityContext.X_SIGLA_CD_CDR
+)
+@Tag(name = "SIGLA REST API")
 public interface ApiConfig {
 }

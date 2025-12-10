@@ -397,7 +397,7 @@ public class TransactionalVariazioniStanziamentoResiduoComponentSession extends 
 			}
 		}
 	}
-	public boolean isVariazioneFromLiquidazioneIvaDaModificare(UserContext param0, Var_stanz_resBulk param1) throws RemoteException,it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public boolean isVariazioneFromLiquidazioneIvaDaModificare(UserContext param0, Var_stanz_resBulk param1) throws RemoteException,it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		try {
 			return ((Boolean)invoke("isVariazioneFromLiquidazioneIvaDaModificare",new Object[] {
 					param0,

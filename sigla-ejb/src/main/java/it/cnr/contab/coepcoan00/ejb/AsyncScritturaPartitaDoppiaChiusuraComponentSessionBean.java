@@ -17,8 +17,6 @@
 
 package it.cnr.contab.coepcoan00.ejb;
 
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
-import it.cnr.contab.doccont00.core.bulk.MandatoBulk;
 import it.cnr.contab.logs.bulk.Batch_log_rigaBulk;
 import it.cnr.contab.logs.bulk.Batch_log_tstaBulk;
 import it.cnr.contab.logs.ejb.BatchControlComponentSession;
@@ -29,26 +27,22 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.SendMail;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+import jakarta.ejb.Asynchronous;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.Asynchronous;
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @Stateless(name = "CNRCOEPCOAN00_EJB_AsyncScritturaPartitaDoppiaChiusuraComponentSession")
 public class AsyncScritturaPartitaDoppiaChiusuraComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements AsyncScritturaPartitaDoppiaChiusuraComponentSession {
 	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(AsyncScritturaPartitaDoppiaChiusuraComponentSessionBean.class);
 
-    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-        return new AsyncScritturaPartitaDoppiaChiusuraComponentSessionBean();
-    }
+
 
 	@Asynchronous
 	public void asyncMakeScrittureChiusura(UserContext userContext, Integer pEsercizio, boolean pIsAnnullamento, boolean pIsDefinitiva) throws ComponentException {

@@ -75,7 +75,7 @@ public OggettoBulk initializeForInsert(it.cnr.jada.util.action.CRUDBP bp,it.cnr.
 
 	super.initializeForInsert(bp, context);
 
-	setNumero(new Integer(1));
+	setNumero(Integer.valueOf(1));
 	resetImporti();
 
 	return this;

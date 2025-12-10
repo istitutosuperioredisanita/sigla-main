@@ -48,10 +48,11 @@ import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
+import jakarta.servlet.ServletException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
+
 import java.io.*;
 import java.math.BigInteger;
 import java.rmi.RemoteException;

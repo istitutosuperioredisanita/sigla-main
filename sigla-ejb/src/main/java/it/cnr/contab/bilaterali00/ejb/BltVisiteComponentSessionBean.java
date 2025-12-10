@@ -20,8 +20,8 @@ package it.cnr.contab.bilaterali00.ejb;
 import it.cnr.contab.bilaterali00.bulk.Blt_visiteBulk;
 import it.cnr.contab.bilaterali00.comp.BltVisiteComponent;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 /**
  * Bean implementation class for Enterprise Bean: CNRBILATERALI00_EJB_BltVisiteComponentSession
@@ -32,10 +32,8 @@ public class BltVisiteComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.bilaterali00.comp.BltVisiteComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new BltVisiteComponentSessionBean();
-	}
-	public it.cnr.contab.anagraf00.core.bulk.TerzoBulk findCessionarioAnticipo(it.cnr.jada.UserContext param0,Blt_visiteBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public it.cnr.contab.anagraf00.core.bulk.TerzoBulk findCessionarioAnticipo(it.cnr.jada.UserContext param0,Blt_visiteBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.anagraf00.core.bulk.TerzoBulk result = ((BltVisiteComponent)componentObj).findCessionarioAnticipo(param0,param1);
@@ -53,7 +51,7 @@ public class BltVisiteComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.anagraf00.core.bulk.TerzoBulk findCessionario(it.cnr.jada.UserContext param0,Blt_visiteBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.anagraf00.core.bulk.TerzoBulk findCessionario(it.cnr.jada.UserContext param0,Blt_visiteBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.anagraf00.core.bulk.TerzoBulk result = ((BltVisiteComponent)componentObj).findCessionario(param0,param1);
@@ -71,7 +69,7 @@ public class BltVisiteComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.util.Collection findListaBancheAnticipo(it.cnr.jada.UserContext param0,Blt_visiteBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,javax.ejb.EJBException {
+	public java.util.Collection findListaBancheAnticipo(it.cnr.jada.UserContext param0,Blt_visiteBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.util.Collection result = ((it.cnr.contab.bilaterali00.comp.BltVisiteComponent)componentObj).findListaBancheAnticipo(param0,param1);
@@ -95,7 +93,7 @@ public class BltVisiteComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.util.Collection findListaBanche(it.cnr.jada.UserContext param0,Blt_visiteBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,javax.ejb.EJBException {
+	public java.util.Collection findListaBanche(it.cnr.jada.UserContext param0,Blt_visiteBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.util.Collection result = ((it.cnr.contab.bilaterali00.comp.BltVisiteComponent)componentObj).findListaBanche(param0,param1);
@@ -119,7 +117,7 @@ public class BltVisiteComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.math.BigDecimal findRimborsoNettoPrevisto(it.cnr.jada.UserContext param0, Blt_visiteBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,javax.ejb.EJBException {
+	public java.math.BigDecimal findRimborsoNettoPrevisto(it.cnr.jada.UserContext param0, Blt_visiteBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.math.BigDecimal result = ((it.cnr.contab.bilaterali00.comp.BltVisiteComponent)componentObj).findRimborsoNettoPrevisto(param0,param1);

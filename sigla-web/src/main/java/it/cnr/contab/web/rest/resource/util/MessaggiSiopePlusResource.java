@@ -29,15 +29,16 @@ import it.cnr.si.siopeplus.model.Esito;
 import it.cnr.si.siopeplus.model.MessaggioXML;
 import it.cnr.si.siopeplus.model.Risultato;
 import it.cnr.si.siopeplus.service.OrdinativiSiopePlusFactory;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -52,6 +53,7 @@ import java.util.stream.Stream;
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class MessaggiSiopePlusResource implements MessaggiSiopePlusLocal {
     private static final Logger logger = LoggerFactory.getLogger(MessaggiSiopePlusResource.class);
+
     @EJB
     private Configurazione_cnrComponentSession configurazione_cnrComponentSession;
 
@@ -59,7 +61,7 @@ public class MessaggiSiopePlusResource implements MessaggiSiopePlusLocal {
     public Response esito(HttpServletRequest request, Esito esito, String dataDa, String dataA, Boolean download) throws Exception {
         DocumentiContabiliService documentiContabiliService = SpringUtil.getBean("documentiContabiliService", DocumentiContabiliService.class);
         UserContext userContext = new WSUserContext("SIOPEPLUS", null,
-                new Integer(Calendar.getInstance().get(Calendar.YEAR)),
+                Integer.valueOf(Calendar.getInstance().get(Calendar.YEAR)),
                 null, null, null);
         boolean annullaMandati = Boolean.FALSE, annullaReversali = Boolean.FALSE, riportaMandatoDaFirmare = Boolean.FALSE;
         try {

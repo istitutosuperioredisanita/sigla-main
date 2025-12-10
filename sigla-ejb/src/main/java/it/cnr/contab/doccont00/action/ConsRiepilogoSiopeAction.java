@@ -20,7 +20,7 @@ package it.cnr.contab.doccont00.action;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 
 import it.cnr.contab.config00.sto.bulk.CdsBulk;
 import it.cnr.contab.doccont00.bp.ConsRiepilogoSiopeMandatiBP;

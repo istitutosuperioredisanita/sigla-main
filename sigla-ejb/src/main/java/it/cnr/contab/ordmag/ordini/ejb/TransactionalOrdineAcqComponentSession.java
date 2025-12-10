@@ -71,7 +71,7 @@ public class TransactionalOrdineAcqComponentSession extends it.cnr.jada.ejb.Tran
 			}
 		}
 	}
-	public Boolean isUtenteAbilitatoOrdine(UserContext usercontext, OrdineAcqBulk ordine) throws ComponentException, PersistencyException,javax.ejb.EJBException, RemoteException{
+	public Boolean isUtenteAbilitatoOrdine(UserContext usercontext, OrdineAcqBulk ordine) throws ComponentException, PersistencyException,jakarta.ejb.EJBException, RemoteException{
 		try {
 			return (Boolean)invoke("isUtenteAbilitatoOrdine",new Object[] {
 					usercontext,
@@ -88,7 +88,7 @@ public class TransactionalOrdineAcqComponentSession extends it.cnr.jada.ejb.Tran
 			}
 		}
 	}
-	public Boolean isUtenteAbilitatoValidazioneOrdine(UserContext usercontext, OrdineAcqBulk ordine) throws ComponentException, PersistencyException,javax.ejb.EJBException, RemoteException{
+	public Boolean isUtenteAbilitatoValidazioneOrdine(UserContext usercontext, OrdineAcqBulk ordine) throws ComponentException, PersistencyException,jakarta.ejb.EJBException, RemoteException{
 		try {
 			return (Boolean)invoke("isUtenteAbilitatoValidazioneOrdine",new Object[] {
 					usercontext,

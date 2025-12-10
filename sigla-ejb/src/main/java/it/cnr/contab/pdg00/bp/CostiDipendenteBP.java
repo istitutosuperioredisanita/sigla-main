@@ -32,7 +32,10 @@ import it.cnr.jada.util.action.BulkBP;
 import it.cnr.jada.util.action.SelectionIterator;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -78,10 +81,10 @@ public class CostiDipendenteBP extends BulkBP {
 
         @Override
         public void writeHTMLToolbar(
-                javax.servlet.jsp.PageContext context,
+                PageContext context,
                 boolean reset,
                 boolean find,
-                boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+                boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
             if (!((CostiDipendenteBP) this.getParentController().getParentController()).isRipartizioneCostiModificabile()) {
                 reset = Boolean.FALSE;
@@ -123,10 +126,10 @@ public class CostiDipendenteBP extends BulkBP {
 
         @Override
         public void writeHTMLToolbar(
-                javax.servlet.jsp.PageContext context,
+                PageContext context,
                 boolean reset,
                 boolean find,
-                boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+                boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
             if (!((CostiDipendenteBP) this.getParentController().getParentController()).isRipartizioneCostiModificabile()) {
                 reset = Boolean.FALSE;
@@ -177,7 +180,7 @@ public class CostiDipendenteBP extends BulkBP {
      * @throws EJBException    Se si verifica qualche eccezione applicativa per cui non è possibile effettuare l'operazione
      * @throws RemoteException Se si verifica qualche eccezione di sistema per cui non è possibile effettuare l'operazione
      */
-    public CostiDipendenteComponentSession createComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+    public CostiDipendenteComponentSession createComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
         return (CostiDipendenteComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPDG00_EJB_CostiDipendenteComponentSession", CostiDipendenteComponentSession.class);
     }
 
@@ -403,7 +406,7 @@ public class CostiDipendenteBP extends BulkBP {
                 else
                     setMessage("Operazione effettuata. Non è stata aggiornata nessuna matricola.");
             }
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw new it.cnr.jada.action.ActionPerformingError(e);
         } catch (java.rmi.RemoteException e) {
             throw new it.cnr.jada.action.ActionPerformingError(e);
@@ -475,7 +478,7 @@ if (matricola_src.getTi_rapporto().equalsIgnoreCase(Costo_del_dipendenteBulk.TI_
                                 newAssCpdLa.setPrc_la_a2(ass_cdp_la.getPrc_la_a2());
                                 newAssCpdLa.setPrc_la_a3(ass_cdp_la.getPrc_la_a3());
                                // newAssCpdLa.setFl_dip_altra_uo(ass_cdp_la.getFl_dip_altra_uo());
-                                newAssCpdLa.setFl_dip_altra_uo(new Boolean(matricola_dest.isProvenienzaCaricato()));
+                                newAssCpdLa.setFl_dip_altra_uo(matricola_dest.isProvenienzaCaricato());
                                 newAssCpdLa.setUser(userContext.getUser());
                                 newAssCpdLa.setToBeCreated();
 
@@ -710,7 +713,7 @@ if (matricola_src.getTi_rapporto().equalsIgnoreCase(Costo_del_dipendenteBulk.TI_
                         newAssCdpLa.setGiorni_la_a1(BigDecimal.ZERO);
                         newAssCdpLa.setGiorni_la_a2(BigDecimal.ZERO);
                         newAssCdpLa.setGiorni_la_a3(BigDecimal.ZERO);
-                        newAssCdpLa.setFl_dip_altra_uo(new Boolean(matricola.isProvenienzaCaricato()));
+                        newAssCdpLa.setFl_dip_altra_uo(matricola.isProvenienzaCaricato());
 
                         newAssCdpLa.setUser(userContext.getUser());
                         newAssCdpLa.setToBeCreated();

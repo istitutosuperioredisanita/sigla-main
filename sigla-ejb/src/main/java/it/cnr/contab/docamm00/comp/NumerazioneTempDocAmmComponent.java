@@ -74,12 +74,12 @@ public Long getNextTempPG (UserContext userContext,Numerazione_doc_ammBulk progr
 			progressivo.setCd_unita_organizzativa(cdUnitaOrg);
 			progressivo.setEsercizio(es);
 			progressivo.setUser(userContext.getUser());
-			pgCorrente = new Long(-1);
+			pgCorrente = Long.valueOf(-1);
 			progressivo.setCorrente(pgCorrente);
 			home.insert(progressivo, userContext);
 			return pgCorrente;
 		}
-		pgCorrente = new Long(progressivo.getCorrente().longValue()-1);
+		pgCorrente = Long.valueOf(progressivo.getCorrente().longValue()-1);
 		progressivo.setCorrente(pgCorrente);
 		progressivo.setUser(userContext.getUser());
 		home.lock(progressivo);

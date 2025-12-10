@@ -17,7 +17,7 @@
 
 package it.cnr.contab.preventvar00.bulk;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.prevent00.bulk.*;
 import it.cnr.contab.util.Utility;

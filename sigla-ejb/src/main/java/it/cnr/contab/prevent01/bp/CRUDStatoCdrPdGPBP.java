@@ -27,7 +27,7 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.sto.bulk.CdrBulk;

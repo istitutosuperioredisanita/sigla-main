@@ -32,9 +32,10 @@ import it.cnr.jada.util.jsp.JSPUtils;
 import java.io.File;
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.PageContext;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.jsp.PageContext;
 
 
 public class Estrazione_glaBP extends AbstractEstrazioneFiscaleBP
@@ -52,7 +53,7 @@ public class Estrazione_glaBP extends AbstractEstrazioneFiscaleBP
 		
 		V_estrai_glaBulk bulk = new V_estrai_glaBulk();
 		bulk.setAnagrafico(new AnagraficoBulk());
-		bulk.setEsercizio_pagamento(new Long(CNRUserContext.getEsercizio(context.getUserContext())));
+		bulk.setEsercizio_pagamento(Long.valueOf(CNRUserContext.getEsercizio(context.getUserContext())));
 		setModel(context,bulk);
 		super.init(config,context);
 	}
@@ -81,7 +82,7 @@ public class Estrazione_glaBP extends AbstractEstrazioneFiscaleBP
 	 * 
 	*/
 
-	public void openForm(javax.servlet.jsp.PageContext context,String action,String target) throws java.io.IOException,javax.servlet.ServletException {
+	public void openForm(PageContext context,String action,String target) throws java.io.IOException, ServletException {
 			openForm(context,action,target,"multipart/form-data");	
 	}
 	public void doCarica(ActionContext context,File file) throws BusinessProcessException, ComponentException, IOException {

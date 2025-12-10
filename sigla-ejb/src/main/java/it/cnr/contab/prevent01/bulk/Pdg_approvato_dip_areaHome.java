@@ -66,9 +66,9 @@ public class Pdg_approvato_dip_areaHome extends BulkHome {
 		if (pdg_dip_area.getPg_dettaglio()==null) {
 			Integer max = (Integer)findMax(bulk, "pg_dettaglio", null);
 			if (max!=null)
-				pdg_dip_area.setPg_dettaglio(new Integer(max.intValue()+1));
+				pdg_dip_area.setPg_dettaglio(Integer.valueOf(max.intValue()+1));
 			else
-				pdg_dip_area.setPg_dettaglio(new Integer(1));
+				pdg_dip_area.setPg_dettaglio(Integer.valueOf(1));
 		}
 		super.initializePrimaryKeyForInsert(usercontext, pdg_dip_area);
 	}

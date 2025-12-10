@@ -46,6 +46,7 @@ import it.cnr.jada.bulk.PrimaryKeyHashtable;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.EmptyRemoteIterator;
 import it.cnr.jada.util.action.AbstractDetailCRUDController;
 import it.cnr.jada.util.action.RemoteDetailCRUDController;
@@ -880,7 +881,7 @@ public void modificaBeneAssociatoConBulk(ActionContext context, OggettoBulk bulk
 		throw handleException(e);
 	} catch(java.rmi.RemoteException e) {
 		throw handleException(e);
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw handleException(e);
 	} 	
 	
@@ -898,6 +899,10 @@ public java.util.List getBeniAccessoriFor(it.cnr.jada.UserContext userContext, I
 	
 	return ((BuonoCaricoScaricoComponentSession)createComponentSession()).getBeniAccessoriFor(userContext, benePrincipale);
 	
+}
+
+public boolean isAccessoriPresenti(ActionContext context) throws BusinessProcessException, ComponentException, PersistencyException, RemoteException {
+	return ((it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession)createComponentSession()).isPresentiAccessoriPerBeni(context.getUserContext(), (Buono_carico_scaricoBulk)getModel());
 }
 
 /**

@@ -18,18 +18,16 @@
 package it.cnr.contab.prevent01.ejb;
 import it.cnr.contab.prevent01.comp.PdgModuloCostiComponent;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.*;
 @Stateless(name="CNRPREVENT01_EJB_PdgModuloCostiComponentSession")
 public class PdgModuloCostiComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements PdgModuloCostiComponentSession {
 @PostConstruct
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.prevent01.comp.PdgModuloCostiComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-	return new PdgModuloCostiComponentSessionBean();
-}
-public boolean esisteBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public boolean esisteBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		boolean result = ((PdgModuloCostiComponent)componentObj).esisteBulk(param0,param1);
@@ -47,7 +45,7 @@ public boolean esisteBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.Oggett
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk calcolaPrevisioneAssestataRowByRow(it.cnr.jada.UserContext param0,it.cnr.contab.prevent01.bulk.Pdg_modulo_costiBulk param1, it.cnr.contab.prevent01.bulk.Pdg_modulo_speseBulk param2,Integer param3) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk calcolaPrevisioneAssestataRowByRow(it.cnr.jada.UserContext param0,it.cnr.contab.prevent01.bulk.Pdg_modulo_costiBulk param1, it.cnr.contab.prevent01.bulk.Pdg_modulo_speseBulk param2,Integer param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((PdgModuloCostiComponent)componentObj).calcolaPrevisioneAssestataRowByRow(param0,param1,param2,param3);
@@ -65,7 +63,7 @@ public it.cnr.jada.bulk.OggettoBulk calcolaPrevisioneAssestataRowByRow(it.cnr.ja
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk cercaPdgEsercizio(it.cnr.jada.UserContext param0,it.cnr.contab.prevent01.bulk.Pdg_moduloBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk cercaPdgEsercizio(it.cnr.jada.UserContext param0,it.cnr.contab.prevent01.bulk.Pdg_moduloBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((PdgModuloCostiComponent)componentObj).cercaPdgEsercizio(param0,param1);
@@ -83,7 +81,7 @@ public it.cnr.jada.bulk.OggettoBulk cercaPdgEsercizio(it.cnr.jada.UserContext pa
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.contab.prevent01.bulk.Pdg_modulo_speseBulk getPdgModuloSpeseBulk(it.cnr.jada.UserContext param0, it.cnr.contab.pdg01.consultazioni.bulk.V_cons_pdgp_pdgg_speBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.prevent01.bulk.Pdg_modulo_speseBulk getPdgModuloSpeseBulk(it.cnr.jada.UserContext param0, it.cnr.contab.pdg01.consultazioni.bulk.V_cons_pdgp_pdgg_speBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.prevent01.bulk.Pdg_modulo_speseBulk result = ((PdgModuloCostiComponent)componentObj).getPdgModuloSpeseBulk(param0,param1);
@@ -101,7 +99,7 @@ public it.cnr.contab.prevent01.bulk.Pdg_modulo_speseBulk getPdgModuloSpeseBulk(i
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public boolean soggettaLimite(it.cnr.jada.UserContext param0,it.cnr.contab.prevent01.bulk.Pdg_modulo_speseBulk param1,String param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public boolean soggettaLimite(it.cnr.jada.UserContext param0,it.cnr.contab.prevent01.bulk.Pdg_modulo_speseBulk param1,String param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		boolean result = ((PdgModuloCostiComponent)componentObj).soggettaLimite(param0,param1,param2);

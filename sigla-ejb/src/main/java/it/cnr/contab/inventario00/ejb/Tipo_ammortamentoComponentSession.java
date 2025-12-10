@@ -23,7 +23,7 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 

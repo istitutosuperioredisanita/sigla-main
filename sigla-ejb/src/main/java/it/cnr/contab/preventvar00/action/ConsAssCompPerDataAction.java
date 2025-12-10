@@ -18,7 +18,7 @@
 package it.cnr.contab.preventvar00.action;
 import java.rmi.RemoteException;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 
 import it.cnr.contab.doccont00.bp.ConsDispCompResDipIstBP;
 import it.cnr.contab.doccont00.bp.ConsDispCompResIstCdrGaeBP;

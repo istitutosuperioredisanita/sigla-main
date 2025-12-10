@@ -26,18 +26,16 @@ import it.cnr.jada.util.RemoteIterator;
 
 import java.rmi.RemoteException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
 @Stateless(name="CNRINCARICHI00_EJB_ConsIncarAssRicBorseStComponentSession")
 public class ConsIncarAssRicBorseStComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements ConsIncarAssRicBorseStComponentSession {
 @PostConstruct
 	public void ejbCreate() {
 	componentObj = new ConsIncarAssRicBorseStComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-	return new ConsIncarAssRicBorseStComponentSessionBean();
-}
+
 public RemoteIterator findIncarichi(UserContext param0, VIncarichiAssRicBorseStBulk param1) throws PersistencyException, IntrospectionException, ComponentException, RemoteException{
 	pre_component_invocation(param0,componentObj);
 	try {

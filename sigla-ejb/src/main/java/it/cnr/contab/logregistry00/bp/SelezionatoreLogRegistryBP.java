@@ -52,10 +52,10 @@ public class SelezionatoreLogRegistryBP
     /**
      * Crea la CRUDComponentSession da usare per effettuare le operazioni di CRUD
 	 * @return LogRegistryComponentSession
-	 * @throws javax.ejb.EJBException, java.rmi.RemoteException
+	 * @throws jakarta.ejb.EJBException, java.rmi.RemoteException
      */
     public LogRegistryComponentSession createComponentSession()
-            throws javax.ejb.EJBException, java.rmi.RemoteException {
+            throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 
         return (LogRegistryComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
                 componentSessioneName,

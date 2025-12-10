@@ -29,8 +29,8 @@ import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 @Stateless(name="CNRCOMPENSI00_EJB_BonusComponentSession")
 public class BonusComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements BonusComponentSession {
@@ -38,9 +38,7 @@ public class BonusComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.compensi00.comp.BonusComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new BonusComponentSessionBean();
-}
+
 public void checkCodiceFiscale(UserContext param0, BonusBulk param1)
 		throws ComponentException, RemoteException, SQLException {
 	pre_component_invocation(param0,componentObj);

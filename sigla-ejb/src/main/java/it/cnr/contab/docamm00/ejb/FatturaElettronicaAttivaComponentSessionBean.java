@@ -19,10 +19,10 @@ package it.cnr.contab.docamm00.ejb;
 
 import java.util.Date;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import it.cnr.contab.docamm00.comp.FatturaElettronicaAttivaComponent;
@@ -37,9 +37,7 @@ public class FatturaElettronicaAttivaComponentSessionBean extends it.cnr.jada.ej
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.docamm00.comp.FatturaElettronicaAttivaComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new FatturaElettronicaAttivaComponentSessionBean();
-	}
+	
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public Fattura_attivaBulk aggiornaFatturaRicevutaConsegnaInvioSDI(UserContext userContext, Fattura_attivaBulk fatturaAttiva, String codiceSdi, XMLGregorianCalendar dataConsegnaSdi) throws PersistencyException, ComponentException,java.rmi.RemoteException{
@@ -201,7 +199,7 @@ public class FatturaElettronicaAttivaComponentSessionBean extends it.cnr.jada.ej
             throw uncaughtError(userContext, componentObj, error);
         }
 	}
-	public void gestioneInvioMailNonRecapitabilita(UserContext param0, Fattura_attivaBulk fatturaAttiva) throws ComponentException,java.rmi.RemoteException,javax.ejb.EJBException {
+	public void gestioneInvioMailNonRecapitabilita(UserContext param0, Fattura_attivaBulk fatturaAttiva) throws ComponentException,java.rmi.RemoteException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((FatturaElettronicaAttivaComponentSession)componentObj).gestioneInvioMailNonRecapitabilita(param0,fatturaAttiva);

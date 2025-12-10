@@ -17,7 +17,7 @@
 
 package it.cnr.contab.gestiva00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface StampaRegistriIvaComponentSession extends it.cnr.jada.ejb.RicercaComponentSession {

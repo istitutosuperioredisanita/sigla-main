@@ -50,7 +50,7 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 	super(Transito_beni_ordiniBulk.class,conn,persistentCache);
 }
 	public Long recuperoId(UserContext userContext) throws PersistencyException,it.cnr.jada.comp.ComponentException {
-		return new Long(this.fetchNextSequenceValue(userContext,"CNRSEQ00_TRANSITO_BENI_ORDINI").longValue());
+		return Long.valueOf(this.fetchNextSequenceValue(userContext,"CNRSEQ00_TRANSITO_BENI_ORDINI").longValue());
 	}
 	public void initializePrimaryKeyForInsert(UserContext userContext, OggettoBulk bulk) throws PersistencyException,it.cnr.jada.comp.ComponentException {
 		Transito_beni_ordiniBulk transito = (Transito_beni_ordiniBulk)bulk;

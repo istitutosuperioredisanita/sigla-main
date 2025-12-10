@@ -26,7 +26,7 @@ package it.cnr.contab.prevent01.comp;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_cnrHome;

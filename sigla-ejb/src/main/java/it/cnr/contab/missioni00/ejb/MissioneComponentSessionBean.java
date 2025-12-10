@@ -24,13 +24,15 @@ import it.cnr.contab.missioni00.comp.MissioneComponent;
 import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
 import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
 import it.cnr.jada.UserContext;
+import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -39,10 +41,7 @@ import java.util.List;
 public class MissioneComponentSessionBean extends
         it.cnr.jada.ejb.CRUDComponentSessionBean implements
         MissioneComponentSession {
-    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance()
-            throws javax.ejb.EJBException {
-        return new MissioneComponentSessionBean();
-    }
+    
 
     @PostConstruct
     public void ejbCreate() {
@@ -52,7 +51,7 @@ public class MissioneComponentSessionBean extends
     public it.cnr.contab.missioni00.docs.bulk.MissioneBulk cancellaCompensoPhisically(
             it.cnr.jada.UserContext param0,
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk result = ((MissioneComponent) componentObj)
@@ -77,7 +76,7 @@ public class MissioneComponentSessionBean extends
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1)
             throws it.cnr.jada.comp.ComponentException,
             it.cnr.jada.persistency.PersistencyException,
-            javax.ejb.EJBException {
+            jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk result = ((MissioneComponent) componentObj)
@@ -105,7 +104,7 @@ public class MissioneComponentSessionBean extends
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1)
             throws it.cnr.jada.comp.ComponentException,
             it.cnr.jada.persistency.PersistencyException,
-            javax.ejb.EJBException {
+            jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk result = ((MissioneComponent) componentObj)
@@ -133,7 +132,7 @@ public class MissioneComponentSessionBean extends
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1)
             throws it.cnr.jada.comp.ComponentException,
             it.cnr.jada.persistency.PersistencyException,
-            javax.ejb.EJBException {
+            jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk result = ((MissioneComponent) componentObj)
@@ -159,7 +158,7 @@ public class MissioneComponentSessionBean extends
     public it.cnr.jada.util.RemoteIterator cercaObbligazioni(
             it.cnr.jada.UserContext param0,
             it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_obbligazioniVBulk param1)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.util.RemoteIterator result = ((MissioneComponent) componentObj)
@@ -183,7 +182,7 @@ public class MissioneComponentSessionBean extends
             it.cnr.jada.UserContext param0,
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1,
             it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk param2)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk result = ((MissioneComponent) componentObj)
@@ -207,7 +206,7 @@ public class MissioneComponentSessionBean extends
             it.cnr.jada.UserContext param0,
             it.cnr.jada.bulk.OggettoBulk param1,
             it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param2)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.bulk.OggettoBulk result = ((MissioneComponent) componentObj)
@@ -233,7 +232,7 @@ public class MissioneComponentSessionBean extends
             java.sql.Timestamp param2)
             throws it.cnr.jada.comp.ComponentException,
             it.cnr.jada.persistency.PersistencyException,
-            javax.ejb.EJBException {
+            jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.docamm00.tabrif.bulk.CambioBulk result = ((MissioneComponent) componentObj)
@@ -259,7 +258,7 @@ public class MissioneComponentSessionBean extends
     public java.util.Collection findInquadramenti(
             it.cnr.jada.UserContext param0,
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.util.Collection result = ((MissioneComponent) componentObj)
@@ -282,7 +281,7 @@ public class MissioneComponentSessionBean extends
     public it.cnr.contab.missioni00.docs.bulk.MissioneBulk findInquadramentiETipiTrattamento(
             it.cnr.jada.UserContext param0,
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk result = ((MissioneComponent) componentObj)
@@ -306,7 +305,7 @@ public class MissioneComponentSessionBean extends
                                                 it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1)
             throws it.cnr.jada.comp.ComponentException,
             it.cnr.jada.persistency.PersistencyException,
-            javax.ejb.EJBException {
+            jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.util.Collection result = ((MissioneComponent) componentObj)
@@ -331,7 +330,7 @@ public class MissioneComponentSessionBean extends
 
     public java.util.Collection findTipi_rapporto(
             it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.util.Collection result = ((MissioneComponent) componentObj)
@@ -353,7 +352,7 @@ public class MissioneComponentSessionBean extends
 
     public java.util.Collection findTipi_trattamento(
             it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.util.Collection result = ((MissioneComponent) componentObj)
@@ -376,7 +375,7 @@ public class MissioneComponentSessionBean extends
     public it.cnr.contab.missioni00.docs.bulk.MissioneBulk generaDiaria(
             it.cnr.jada.UserContext param0,
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk result = ((MissioneComponent) componentObj)
@@ -399,7 +398,7 @@ public class MissioneComponentSessionBean extends
     public it.cnr.contab.missioni00.docs.bulk.MissioneBulk generaRimborso(
             it.cnr.jada.UserContext param0,
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk result = ((MissioneComponent) componentObj)
@@ -421,7 +420,7 @@ public class MissioneComponentSessionBean extends
 
     public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(
             it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.bulk.OggettoBulk result = ((MissioneComponent) componentObj)
@@ -446,7 +445,7 @@ public class MissioneComponentSessionBean extends
             it.cnr.contab.missioni00.docs.bulk.Missione_dettaglioBulk param1)
             throws it.cnr.jada.comp.ComponentException,
             it.cnr.jada.persistency.PersistencyException,
-            javax.ejb.EJBException, javax.ejb.EJBException,
+            jakarta.ejb.EJBException, jakarta.ejb.EJBException,
             it.cnr.jada.bulk.ValidationException {
         pre_component_invocation(param0, componentObj);
         try {
@@ -463,7 +462,7 @@ public class MissioneComponentSessionBean extends
         } catch (it.cnr.jada.persistency.PersistencyException e) {
             component_invocation_failure(param0, componentObj);
             throw e;
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             component_invocation_failure(param0, componentObj);
             throw e;
         } catch (Error e) {
@@ -473,7 +472,7 @@ public class MissioneComponentSessionBean extends
 
     public boolean isMissioneAnnullata(it.cnr.jada.UserContext param0,
                                        it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             boolean result = ((MissioneComponent) componentObj)
@@ -496,7 +495,7 @@ public class MissioneComponentSessionBean extends
     public it.cnr.contab.missioni00.docs.bulk.MissioneBulk loadCompenso(
             it.cnr.jada.UserContext param0,
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk result = ((MissioneComponent) componentObj)
@@ -520,7 +519,7 @@ public class MissioneComponentSessionBean extends
             it.cnr.jada.UserContext param0,
             it.cnr.jada.bulk.OggettoBulk param1,
             it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param2)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.bulk.OggettoBulk result = ((MissioneComponent) componentObj)
@@ -542,7 +541,7 @@ public class MissioneComponentSessionBean extends
 
     public void rollbackToSavePoint(it.cnr.jada.UserContext param0,
                                     java.lang.String param1)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             ((MissioneComponent) componentObj).rollbackToSavePoint(param0,
@@ -565,7 +564,7 @@ public class MissioneComponentSessionBean extends
             it.cnr.jada.UserContext param0,
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1,
             it.cnr.contab.missioni00.docs.bulk.Missione_tappaBulk param2)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk result = ((MissioneComponent) componentObj)
@@ -589,7 +588,7 @@ public class MissioneComponentSessionBean extends
             it.cnr.jada.UserContext param0,
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1,
             it.cnr.contab.missioni00.docs.bulk.Missione_tappaBulk param2)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk result = ((MissioneComponent) componentObj)
@@ -611,7 +610,7 @@ public class MissioneComponentSessionBean extends
 
     public void setSavePoint(it.cnr.jada.UserContext param0,
                              java.lang.String param1)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             ((MissioneComponent) componentObj).setSavePoint(param0, param1);
@@ -631,7 +630,7 @@ public class MissioneComponentSessionBean extends
 
     public it.cnr.jada.bulk.OggettoBulk stampaConBulk(
             it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.bulk.OggettoBulk result = ((MissioneComponent) componentObj)
@@ -655,7 +654,7 @@ public class MissioneComponentSessionBean extends
                                it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1)
             throws it.cnr.jada.comp.ComponentException,
             it.cnr.jada.persistency.PersistencyException,
-            javax.ejb.EJBException {
+            jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             ((MissioneComponent) componentObj).updateAnticipo(param0, param1);
@@ -681,7 +680,7 @@ public class MissioneComponentSessionBean extends
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1)
             throws it.cnr.jada.comp.ComponentException,
             it.cnr.jada.persistency.PersistencyException,
-            javax.ejb.EJBException {
+            jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk result = ((MissioneComponent) componentObj)
@@ -707,7 +706,7 @@ public class MissioneComponentSessionBean extends
     public void validaEsercizioDataRegistrazione(
             it.cnr.jada.UserContext param0,
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             ((MissioneComponent) componentObj)
@@ -730,7 +729,7 @@ public class MissioneComponentSessionBean extends
             it.cnr.jada.UserContext param0,
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1,
             it.cnr.contab.missioni00.docs.bulk.Missione_dettaglioBulk param2)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException,
+            throws it.cnr.jada.comp.ComponentException,
             it.cnr.jada.persistency.PersistencyException,
             it.cnr.jada.bulk.ValidationException {
         pre_component_invocation(param0, componentObj);
@@ -742,16 +741,7 @@ public class MissioneComponentSessionBean extends
         } catch (it.cnr.jada.comp.NoRollbackException e) {
             component_invocation_succes(param0, componentObj);
             throw e;
-        } catch (it.cnr.jada.comp.ComponentException e) {
-            component_invocation_failure(param0, componentObj);
-            throw e;
-        } catch (javax.ejb.EJBException e) {
-            component_invocation_failure(param0, componentObj);
-            throw e;
-        } catch (it.cnr.jada.persistency.PersistencyException e) {
-            component_invocation_failure(param0, componentObj);
-            throw e;
-        } catch (it.cnr.jada.bulk.ValidationException e) {
+        } catch (ComponentException | EJBException | PersistencyException | ValidationException e) {
             component_invocation_failure(param0, componentObj);
             throw e;
         } catch (Error e) {
@@ -763,7 +753,7 @@ public class MissioneComponentSessionBean extends
             it.cnr.jada.UserContext param0,
             it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk param1,
             it.cnr.jada.bulk.OggettoBulk param2)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             ((MissioneComponent) componentObj).validaObbligazione(param0,
@@ -784,7 +774,7 @@ public class MissioneComponentSessionBean extends
 
     public void validaTerzo(it.cnr.jada.UserContext param0,
                             it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             ((MissioneComponent) componentObj).validaTerzo(param0, param1);
@@ -805,7 +795,7 @@ public class MissioneComponentSessionBean extends
     public int validaTerzo(it.cnr.jada.UserContext param0,
                            it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1,
                            boolean param2) throws it.cnr.jada.comp.ComponentException,
-            javax.ejb.EJBException {
+            jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             int result = ((MissioneComponent) componentObj).validaTerzo(param0,
@@ -827,7 +817,7 @@ public class MissioneComponentSessionBean extends
 
     public boolean isDiariaEditable(it.cnr.jada.UserContext param0,
                                     it.cnr.contab.missioni00.docs.bulk.Missione_tappaBulk param1)
-            throws javax.ejb.EJBException, it.cnr.jada.comp.ComponentException {
+            throws jakarta.ejb.EJBException, it.cnr.jada.comp.ComponentException {
         pre_component_invocation(param0, componentObj);
         try {
             boolean result = ((MissioneComponent) componentObj)
@@ -849,7 +839,7 @@ public class MissioneComponentSessionBean extends
 
     public boolean isTerzoCervellone(it.cnr.jada.UserContext param0,
                                      it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1)
-            throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+            throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             boolean result = ((MissioneComponent) componentObj)
@@ -935,7 +925,7 @@ public class MissioneComponentSessionBean extends
     }
 
     public void archiviaStampa(UserContext userContext, Date fromDate, Date untilDate, MissioneBulk missioneBulk, Integer... years) throws ComponentException,
-            javax.ejb.EJBException {
+            jakarta.ejb.EJBException {
         pre_component_invocation(userContext, componentObj);
         try {
             ((MissioneComponent) componentObj).archiviaStampa(userContext, fromDate, untilDate, missioneBulk, years);
@@ -966,7 +956,7 @@ public class MissioneComponentSessionBean extends
         } catch (it.cnr.jada.comp.ComponentException e) {
             component_invocation_failure(param0, componentObj);
             throw e;
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             component_invocation_failure(param0, componentObj);
             throw e;
         } catch (Error e) {
@@ -976,7 +966,7 @@ public class MissioneComponentSessionBean extends
 
     public java.math.BigDecimal calcolaMinutiTappa(it.cnr.jada.UserContext param0,
                                                    it.cnr.contab.missioni00.docs.bulk.Missione_tappaBulk param1) throws it.cnr.jada.comp.ComponentException,
-            javax.ejb.EJBException {
+            jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.math.BigDecimal result = ((MissioneComponent) componentObj).calcolaMinutiTappa(param0,
@@ -998,7 +988,7 @@ public class MissioneComponentSessionBean extends
 
     public java.math.BigDecimal recuperoCambio(it.cnr.jada.UserContext param0,
                                                String divisa, Timestamp dataInizioMissione) throws it.cnr.jada.comp.ComponentException,
-            javax.ejb.EJBException {
+            jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.math.BigDecimal result = ((MissioneComponent) componentObj).recuperoCambio(param0,
@@ -1030,7 +1020,7 @@ public class MissioneComponentSessionBean extends
         } catch (it.cnr.jada.comp.ComponentException e) {
             component_invocation_failure(param0, componentObj);
             throw e;
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             component_invocation_failure(param0, componentObj);
             throw e;
         } catch (Error e) {
@@ -1050,7 +1040,7 @@ public class MissioneComponentSessionBean extends
         } catch (it.cnr.jada.comp.ComponentException e) {
             component_invocation_failure(param0, componentObj);
             throw e;
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             component_invocation_failure(param0, componentObj);
             throw e;
         } catch (Error e) {
@@ -1154,7 +1144,7 @@ public class MissioneComponentSessionBean extends
         }
     }
     public MissioneBulk caricaTerzoInModificaMissione(UserContext userContext, MissioneBulk missioneBulk) throws ComponentException,
-            javax.ejb.EJBException {
+            jakarta.ejb.EJBException {
         pre_component_invocation(userContext, componentObj);
         try {
             MissioneBulk result = ((MissioneComponent) componentObj).caricaTerzoInModificaMissione(userContext, missioneBulk);
@@ -1174,7 +1164,7 @@ public class MissioneComponentSessionBean extends
 
     }
     public void cancellazioneMissioneDaGemis(UserContext userContext, Long idRimborsoMissioneGemis)  throws ComponentException,
-    javax.ejb.EJBException {
+    jakarta.ejb.EJBException {
     	pre_component_invocation(userContext, componentObj);
     	try {
     		((MissioneComponent) componentObj).cancellazioneMissioneDaGemis(userContext, idRimborsoMissioneGemis);

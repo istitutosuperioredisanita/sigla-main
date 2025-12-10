@@ -17,8 +17,8 @@
 
 package it.cnr.contab.pdg01.ejb;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.*;
 /**
  * Bean implementation class for Enterprise Bean: CNRPDG01_EJB_CRUDPdgModuloEntrateGestComponentSession
  */
@@ -28,8 +28,6 @@ public class CRUDPdgModuloEntrateGestComponentSessionBean extends it.cnr.jada.ej
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.pdg01.comp.CRUDPdgModuloEntrateGestComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-	return new CRUDPdgModuloEntrateGestComponentSessionBean();
-}
+
 }
 

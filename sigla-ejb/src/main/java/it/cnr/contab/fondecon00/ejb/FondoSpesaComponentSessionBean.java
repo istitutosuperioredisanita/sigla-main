@@ -17,8 +17,8 @@
 
 package it.cnr.contab.fondecon00.ejb;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.fondecon00.comp.FondoSpesaComponent;
 @Stateless(name="CNRFONDECON00_EJB_FondoSpesaComponentSession")
@@ -27,10 +27,8 @@ public class FondoSpesaComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.fondecon00.comp.FondoSpesaComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new FondoSpesaComponentSessionBean();
-}
-public it.cnr.contab.fondecon00.core.bulk.Fondo_spesaBulk setCitta(it.cnr.jada.UserContext param0,it.cnr.contab.fondecon00.core.bulk.Fondo_spesaBulk param1,it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public it.cnr.contab.fondecon00.core.bulk.Fondo_spesaBulk setCitta(it.cnr.jada.UserContext param0,it.cnr.contab.fondecon00.core.bulk.Fondo_spesaBulk param1,it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.fondecon00.core.bulk.Fondo_spesaBulk result = ((FondoSpesaComponent)componentObj).setCitta(param0,param1,param2);

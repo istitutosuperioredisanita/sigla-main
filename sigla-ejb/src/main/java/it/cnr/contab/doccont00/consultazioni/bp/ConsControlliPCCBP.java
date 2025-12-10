@@ -103,7 +103,7 @@ public class ConsControlliPCCBP extends SelezionatoreListaBP implements SearchPr
         esercizio = CNRUserContext.getEsercizio(context.getUserContext());
     }
 
-    public it.cnr.jada.ejb.CRUDComponentSession createComponentSession() throws javax.ejb.EJBException, RemoteException, BusinessProcessException {
+    public it.cnr.jada.ejb.CRUDComponentSession createComponentSession() throws jakarta.ejb.EJBException, RemoteException, BusinessProcessException {
         return (it.cnr.jada.ejb.CRUDComponentSession) createComponentSession("JADAEJB_CRUDComponentSession", it.cnr.jada.ejb.CRUDComponentSession.class);
     }
 

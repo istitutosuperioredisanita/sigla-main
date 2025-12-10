@@ -100,7 +100,7 @@ public class Progetto_rimodulazioneHome extends BulkHome {
 	public List<OggettoBulk> constructVariazioniBilancio(it.cnr.jada.UserContext userContext,Progetto_rimodulazioneBulk rimodulazione) throws PersistencyException {
 		List<OggettoBulk> result = new ArrayList<OggettoBulk>();
 		Configurazione_cnrHome configurazioneCnrHome = (Configurazione_cnrHome)getHomeCache().getHome(Configurazione_cnrBulk.class);
-		Configurazione_cnrBulk configCnr = configurazioneCnrHome.getConfigurazioneCnrBulk(new Integer(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO);
+		Configurazione_cnrBulk configCnr = configurazioneCnrHome.getConfigurazioneCnrBulk(Integer.valueOf(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO);
 		BigDecimal annoFrom = Optional.ofNullable(configCnr).map(Configurazione_cnrBulk::getIm01).orElse(null);
 
 		Map<Integer, List<Progetto_piano_economicoBulk>> mapEsercizio = 

@@ -530,7 +530,7 @@ public Long getNextPgScadenza()
 		if ( scadenza.getPg_obbligazione_scadenzario() != null && scadenza.getPg_obbligazione_scadenzario().longValue() > max )
 			max = scadenza.getPg_obbligazione_scadenzario().longValue();
 	}
-	return new Long( max + 1);
+	return Long.valueOf( max + 1);
 }
 /**
  * @return java.util.Collection
@@ -1663,7 +1663,7 @@ public void validateTerzo( it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo ) t
 	public void caricaAnniResidui(ActionContext actioncontext) {
 		IntStream.iterate(CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue(), i -> i - 1)
 				.limit(SpringUtil.getBean(UtilService.class).getAnniResidui())
-				.forEach(value -> anniResidui.put(new Integer(value), new Integer(value)));
+				.forEach(value -> anniResidui.put(Integer.valueOf(value), Integer.valueOf(value)));
 	}
 	/* (non-Javadoc)
 	 * @see it.cnr.jada.bulk.OggettoBulk#clone()
@@ -1770,7 +1770,7 @@ public void validateTerzo( it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo ) t
 													 osv.getEsercizio(),
 													 osv.getEsercizio_originale(),
 													 osv.getPg_obbligazione(),
-													 new Long(1),
+													 Long.valueOf(1),
 													 osv.getTi_appartenenza(),
 													 osv.getTi_gestione());
 

@@ -19,8 +19,8 @@ package it.cnr.contab.config00.ejb;
 
 import it.cnr.contab.config00.comp.CodiciSiopeComponent;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 /**
  * Bean implementation class for Enterprise Bean: CNRINCARICHI00_EJB_IncarichiProceduraComponentSession
@@ -31,7 +31,5 @@ public class CodiciSiopeComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 	public void ejbCreate() {
 		componentObj = new CodiciSiopeComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new CodiciSiopeComponentSessionBean();
-	}
+
 }

@@ -17,7 +17,7 @@
 
 package it.cnr.contab.cori00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.cori00.docs.bulk.Liquid_coriBulk;

@@ -25,15 +25,16 @@ import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.PersistencyException;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
 import java.util.Optional;
 
@@ -43,12 +44,11 @@ public class LineaAttivitaResource implements LineaAttivitaLocal {
     private final Logger LOGGER = LoggerFactory.getLogger(LineaAttivitaResource.class);
     @Context
     SecurityContext securityContext;
-    @EJB
-    CRUDComponentSession crudComponentSession;
+    @EJB CRUDComponentSession crudComponentSession;
     @EJB
     Linea_attivitaComponentSession lineaAttivitaComponentSession;
 
-    private void validateLineaAttivita( HttpServletRequest request, LineaAttivitaDto lineaAttivita){
+    private void validateLineaAttivita(HttpServletRequest request, LineaAttivitaDto lineaAttivita){
         if ( !Optional.ofNullable(lineaAttivita.getTi_gestione()).isPresent())
             throw new RestException(Response.Status.BAD_REQUEST,String.format("La tipologia di Gae ( Spesa, Entrata, Entrambe) è obbligatoria"));
         if ( !Optional.ofNullable(lineaAttivita.getEsercizio_inizio()).isPresent())

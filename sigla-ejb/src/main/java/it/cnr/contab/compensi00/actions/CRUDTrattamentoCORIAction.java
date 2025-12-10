@@ -72,7 +72,7 @@ public Forward doFreeSearchFind_contributo_ritenuta(ActionContext context) {
 		return handleException(context, ex);
 	}catch(java.rmi.RemoteException ex){
 		return handleException(context, ex);
-	}catch(javax.ejb.EJBException ex){
+	}catch(jakarta.ejb.EJBException ex){
 		return handleException(context, ex);
 	}
 }

@@ -311,8 +311,8 @@ public SQLBuilder getTotaleSpese(
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,OggettoBulk spe) throws PersistencyException {
 		try {
 			((Fondo_spesaBulk)spe).setPg_fondo_spesa(
-				new Long(
-					((Long)findAndLockMax( spe, "pg_fondo_spesa", new Long(0) )).longValue()+1
+				Long.valueOf(
+					((Long)findAndLockMax( spe, "pg_fondo_spesa", Long.valueOf(0) )).longValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

@@ -22,8 +22,8 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 @Stateless(name="CNRCONFIG00_EJB_LimiteSpesaClassComponentSession")
 public class LimiteSpesaClassComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements LimiteSpesaClassComponentSession {
@@ -31,11 +31,9 @@ public class LimiteSpesaClassComponentSessionBean extends it.cnr.jada.ejb.CRUDCo
 public void ejbCreate() {
 	componentObj = new LimiteSpesaClassComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new LimiteSpesaClassComponentSessionBean();
-}
+
 public void validaCds(UserContext param0, OggettoBulk param1)
-		throws ComponentException,javax.ejb.EJBException {
+		throws ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((LimiteSpesaClassComponent)componentObj).validaCds(param0,param1);

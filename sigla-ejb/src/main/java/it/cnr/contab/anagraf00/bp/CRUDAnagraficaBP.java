@@ -42,10 +42,22 @@ import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.jada.util.jsp.JSPUtils;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.PageContext;
+import java.io.*;
+import java.math.BigDecimal;
+import java.rmi.RemoteException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.TreeMap;
+
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.jsp.PageContext;
 import java.io.*;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -328,7 +340,7 @@ protected void validaPagamento_esterno(ActionContext context,Pagamento_esternoBu
 		if (pagamento_esterno.getTipo_rapporto() == null)
 			throw new ValidationException("Inserire il tipo di rapporto!");
 
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw new it.cnr.jada.DetailedRuntimeException(e);
 	}	
 }
@@ -392,7 +404,7 @@ protected void validaInquadramento(ActionContext context,InquadramentoBulk inqua
 				throw new ValidationException("La data di fine validità non può essere anteriore al "+FieldProperty.getFormat("date_short").format(dt_fin_validita_minima));
 			}
 		}
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw new it.cnr.jada.DetailedRuntimeException(e);
 	}
 }
@@ -404,7 +416,7 @@ protected void validaInquadramentoPerCancellazione(ActionContext context,Inquadr
 			inquadramento.getMax_dt_fin_validita_missione()!=null && inquadramento.getDt_ini_validita().before(inquadramento.getMax_dt_fin_validita_missione()))
 			//throw new ValidationException("Gli inquadramenti con data di inizio validità antecedente alla data odierna non sono eliminabili");
 			throw new ValidationException("Gli inquadramenti con data di inizio validità antecedente al "+FieldProperty.getFormat("date_short").format(inquadramento.getMax_dt_fin_validita_missione())+" non sono eliminabili");
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw new it.cnr.jada.DetailedRuntimeException(e);
 	}
 }
@@ -489,7 +501,7 @@ protected void validaRapporto(ActionContext context,RapportoBulk rapporto) throw
 				throw new ValidationException("La data di fine validità non può essere anteriore al "+FieldProperty.getFormat("date_short").format(dt_fin_validita_minima));
 			}
 		}
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw new it.cnr.jada.DetailedRuntimeException(e);
 	}
 }
@@ -502,7 +514,7 @@ protected void validaRapportoPerCancellazione(ActionContext context,RapportoBulk
 			rapporto.getDt_ini_validita() != null &&
 			rapporto.getDt_ini_validita().before(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()))
 			throw new ValidationException("I rapporti con data di inizio validità antecedente alla data odierna non sono eliminabili");
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw new it.cnr.jada.DetailedRuntimeException(e);
 	}
 }
@@ -560,7 +572,7 @@ protected void validaRapportoPerCancellazione(ActionContext context,RapportoBulk
 //				throw new ValidationException("La data di inizio e fine validità devono appartenere allo stesso esercizio.");
 //			}
 			sess.checkCaricoAlreadyExistFor(context.getUserContext(),carico.getAnagrafico(),carico);
-		} catch(javax.ejb.EJBException e) {
+		} catch(jakarta.ejb.EJBException e) {
 			throw new it.cnr.jada.DetailedRuntimeException(e);
 		}catch(it.cnr.jada.comp.ComponentException ex){
 			throw new it.cnr.jada.DetailedRuntimeException(ex);
@@ -692,7 +704,7 @@ protected void validaRapportoPerCancellazione(ActionContext context,RapportoBulk
 			  File f = new File(System.getProperty("tmp.dir.SIGLAWeb")+"/tmp/",
 					  "ECF"+it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext())+"-"+
 					  +EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.DAY_OF_MONTH)+
-					  +new Integer(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.MONTH)+1)+
+					  +Integer.valueOf(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.MONTH)+1)+
 					  +EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.YEAR)+"-"+
 					  +prog_estrazione.longValue()+".ecf");
 			  OutputStream os = (OutputStream)new FileOutputStream(f);
@@ -710,7 +722,7 @@ protected void validaRapportoPerCancellazione(ActionContext context,RapportoBulk
 		    		  throw new ApplicationException("Partita Iva o Codice Fiscale non valorizzati per l'ente!");		
 		    	  Long CodFisNum=null;
 		    	  try{
-		    		  CodFisNum =new Long(Codice_Fiscale);
+		    		  CodFisNum =Long.valueOf(Codice_Fiscale);
 		    	  }catch (NumberFormatException e) {
 		    		  CodFisNum=null;
 				 }
@@ -768,8 +780,8 @@ protected void validaRapportoPerCancellazione(ActionContext context,RapportoBulk
 		    	  bw.append("\r\n");
 		          // Fine Testata
 		          // Variabili di appoggio per il record di Riepilogo
-		          Integer Num_cliente=new Integer(0);
-		          Integer Num_forn=new Integer(0);
+		          Integer Num_cliente=Integer.valueOf(0);
+		          Integer Num_forn=Integer.valueOf(0);
 		          BigDecimal SumCL004001=new BigDecimal(0);
 		          BigDecimal SumCL004002=new BigDecimal(0);
 		          BigDecimal SumCL005001=new BigDecimal(0);
@@ -1444,6 +1456,10 @@ public SimpleDetailCRUDController getCrudAssociatiStudio() {
 	return crudAssociatiStudio;
 }
 protected void validaDichiarazione(ActionContext context,Dichiarazione_intentoBulk dic) throws ValidationException {
+	if ( !Optional.ofNullable(dic.getDt_ini_validita()).isPresent())
+		throw new ValidationException ("Inserire la data di Inizio Validità!");
+	if ( !Optional.ofNullable(dic.getDt_fin_validita()).isPresent())
+		throw new ValidationException ("Inserire la data di Fine Validità!");
 	for (java.util.Iterator i = dic.getAnagrafico().getDichiarazioni_intento().iterator();i.hasNext();) {
 		Dichiarazione_intentoBulk dic_int = (Dichiarazione_intentoBulk)i.next();
 		if (!dic.equals(dic_int) &&

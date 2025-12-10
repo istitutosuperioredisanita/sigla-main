@@ -39,7 +39,7 @@ import it.cnr.jada.persistency.*;
 import it.cnr.jada.persistency.beans.*;
 import it.cnr.jada.persistency.sql.*;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 public class Missione_rimborso_kmHome extends BulkHome implements ConsultazioniRestHome {
 	public Missione_rimborso_kmHome(java.sql.Connection conn) {
@@ -186,7 +186,7 @@ public class Missione_rimborso_kmHome extends BulkHome implements ConsultazioniR
 								operator == SQLBuilder.EQUALS){
 							NazioneHome nazionehome=(NazioneHome)getHomeCache().getHome(NazioneBulk.class);
 							Double str = (Double)clause.getValue();
-							nazioneBulk = new NazioneBulk(new Long(str.longValue()));
+							nazioneBulk = new NazioneBulk(Long.valueOf(str.longValue()));
 							nazioneBulk = (NazioneBulk)nazionehome.findByPrimaryKey(nazioneBulk);
 						}else if (clause.getPropertyName() != null && clause.getPropertyName().equals("tipoAuto") &&
 								operator == SQLBuilder.EQUALS)	{
@@ -229,7 +229,7 @@ public class Missione_rimborso_kmHome extends BulkHome implements ConsultazioniR
 		}
 		return false;
 	}
-	private MissioneComponentSession missioneComponent() throws javax.ejb.EJBException, java.rmi.RemoteException {
+	private MissioneComponentSession missioneComponent() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 		return (MissioneComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRMISSIONI00_EJB_MissioneComponentSession");
 	}
 }

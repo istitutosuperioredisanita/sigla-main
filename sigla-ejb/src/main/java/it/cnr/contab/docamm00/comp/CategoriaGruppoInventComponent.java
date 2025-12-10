@@ -348,7 +348,7 @@ private OggettoBulk validaCgi(UserContext userContext,OggettoBulk bulk) throws i
 	}
 
 	cgi.setCd_categoria_gruppo(str);
-	cgi.setLivello(new Integer(livello));
+	cgi.setLivello(Integer.valueOf(livello));
 
 	if(!cgi.getFl_gestione_inventario().booleanValue())
 		cgi.setFl_ammortamento(Boolean.FALSE);

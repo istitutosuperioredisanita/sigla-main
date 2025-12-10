@@ -35,7 +35,7 @@ import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.annotation.StorageProperty;
 import it.cnr.si.spring.storage.annotation.StorageType;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -139,7 +139,7 @@ public class Lettera_pagam_esteroBulk extends Lettera_pagam_esteroBase implement
 	}
 
 	public void completeFrom(ActionContext context) 
-			throws javax.ejb.EJBException, java.text.ParseException, ComponentException, RemoteException {
+			throws jakarta.ejb.EJBException, java.text.ParseException, ComponentException, RemoteException {
 
 		java.sql.Timestamp date = it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp();
 		int annoSolare = Fattura_passivaBulk.getDateCalendar(date).get(java.util.Calendar.YEAR);

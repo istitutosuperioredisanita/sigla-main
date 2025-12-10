@@ -67,7 +67,7 @@ public Inventario_beniBulk getBenePrincipaleFor(it.cnr.jada.UserContext userCont
 	SQLBuilder sql = createSQLBuilder();
 	sql.addSQLClause("AND","PG_INVENTARIO",sql.EQUALS,accessorio.getPg_inventario());
 	sql.addSQLClause("AND","NR_INVENTARIO",sql.EQUALS,accessorio.getNr_inventario());
-	sql.addSQLClause("AND","PROGRESSIVO",sql.EQUALS,new Integer(0));
+	sql.addSQLClause("AND","PROGRESSIVO",sql.EQUALS,Integer.valueOf(0));
 	Inventario_beniBulk principale = null;
 	SQLBroker broker = createBroker(sql);
 	if (broker.next()){
@@ -98,7 +98,7 @@ public java.util.List getBeniAccessoriFor(Inventario_beniBulk principale) throws
 		SQLBuilder sql = createSQLBuilder();
 		sql.addSQLClause("AND","PG_INVENTARIO",sql.EQUALS,principale.getPg_inventario());
 		sql.addSQLClause("AND","NR_INVENTARIO",sql.EQUALS,principale.getNr_inventario());
-		sql.addSQLClause("AND","PROGRESSIVO",sql.NOT_EQUALS,new Integer(0));
+		sql.addSQLClause("AND","PROGRESSIVO",sql.NOT_EQUALS,Integer.valueOf(0));
 		return fetchAll(sql);
 	}
 	return principale.getAccessori();
@@ -241,7 +241,7 @@ public Long getMaxNr_Inventario(Long pg_inventario)
 	Inventario_beniBulk bulk =new Inventario_beniBulk();
 	bulk.setInventario(new Id_inventarioBulk(pg_inventario));
 	bulk.setFl_migrato(false);
-	max=(Long)findMax(bulk,"nr_inventario",new Long(0));
+	max=(Long)findMax(bulk,"nr_inventario",Long.valueOf(0));
 	
 	return max;
 }
@@ -252,7 +252,7 @@ public Long getMaxProgressivo_Accessorio(Inventario_beniBulk bene_principale)
 	Inventario_beniBulk bulk =new Inventario_beniBulk();
 	bulk.setInventario(bene_principale.getInventario());
 	bulk.setNr_inventario(bene_principale.getNr_inventario());
-	max=(Long)findMax(bulk,"progressivo",new Long(0));
+	max=(Long)findMax(bulk,"progressivo",Long.valueOf(0));
 	return max;
 }
 public java.util.Collection findUtilizzatori(it.cnr.jada.UserContext userContext,Inventario_beniBulk bene)throws IntrospectionException,PersistencyException

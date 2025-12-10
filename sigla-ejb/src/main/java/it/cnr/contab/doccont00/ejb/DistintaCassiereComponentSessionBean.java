@@ -33,23 +33,21 @@ import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.RemoteIterator;
 import it.siopeplus.Mandato;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
 import java.util.List;
 
 @Stateless(name = "CNRDOCCONT00_EJB_DistintaCassiereComponentSession")
 public class DistintaCassiereComponentSessionBean extends it.cnr.jada.ejb.CRUDDetailComponentSessionBean implements DistintaCassiereComponentSession {
-    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-        return new DistintaCassiereComponentSessionBean();
-    }
+    
 
     @PostConstruct
     public void ejbCreate() {
         componentObj = new it.cnr.contab.doccont00.comp.DistintaCassiereComponent();
     }
 
-    public void annullaModificaDettagliDistinta(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.intcass.bulk.Distinta_cassiereBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void annullaModificaDettagliDistinta(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.intcass.bulk.Distinta_cassiereBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             ((DistintaCassiereComponent) componentObj).annullaModificaDettagliDistinta(param0, param1);
@@ -67,7 +65,7 @@ public class DistintaCassiereComponentSessionBean extends it.cnr.jada.ejb.CRUDDe
         }
     }
 
-    public void associaTuttiDocContabili(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.intcass.bulk.Distinta_cassiereBulk param1, it.cnr.contab.doccont00.intcass.bulk.V_mandato_reversaleBulk param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void associaTuttiDocContabili(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.intcass.bulk.Distinta_cassiereBulk param1, it.cnr.contab.doccont00.intcass.bulk.V_mandato_reversaleBulk param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             ((DistintaCassiereComponent) componentObj).associaTuttiDocContabili(param0, param1, param2);
@@ -85,7 +83,7 @@ public class DistintaCassiereComponentSessionBean extends it.cnr.jada.ejb.CRUDDe
         }
     }
 
-    public it.cnr.contab.doccont00.intcass.bulk.Distinta_cassiereBulk calcolaTotali(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.intcass.bulk.Distinta_cassiereBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.doccont00.intcass.bulk.Distinta_cassiereBulk calcolaTotali(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.intcass.bulk.Distinta_cassiereBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.doccont00.intcass.bulk.Distinta_cassiereBulk result = ((DistintaCassiereComponent) componentObj).calcolaTotali(param0, param1);
@@ -104,7 +102,7 @@ public class DistintaCassiereComponentSessionBean extends it.cnr.jada.ejb.CRUDDe
         }
     }
 
-    public it.cnr.contab.doccont00.intcass.bulk.V_ext_cassiere00Bulk caricaLogs(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.intcass.bulk.V_ext_cassiere00Bulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.doccont00.intcass.bulk.V_ext_cassiere00Bulk caricaLogs(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.intcass.bulk.V_ext_cassiere00Bulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.doccont00.intcass.bulk.V_ext_cassiere00Bulk result = ((DistintaCassiereComponent) componentObj).caricaLogs(param0, param1);
@@ -123,7 +121,7 @@ public class DistintaCassiereComponentSessionBean extends it.cnr.jada.ejb.CRUDDe
         }
     }
 
-    public it.cnr.jada.util.RemoteIterator cercaFile_Cassiere(it.cnr.jada.UserContext param0, it.cnr.jada.persistency.sql.CompoundFindClause param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.util.RemoteIterator cercaFile_Cassiere(it.cnr.jada.UserContext param0, it.cnr.jada.persistency.sql.CompoundFindClause param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.util.RemoteIterator result = ((DistintaCassiereComponent) componentObj).cercaFile_Cassiere(param0, param1);
@@ -142,7 +140,7 @@ public class DistintaCassiereComponentSessionBean extends it.cnr.jada.ejb.CRUDDe
         }
     }
 
-    public it.cnr.jada.util.RemoteIterator cercaMandatiEReversali(it.cnr.jada.UserContext param0, it.cnr.jada.persistency.sql.CompoundFindClause param1, it.cnr.contab.doccont00.intcass.bulk.V_mandato_reversaleBulk param2, it.cnr.contab.doccont00.intcass.bulk.Distinta_cassiereBulk param3) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.util.RemoteIterator cercaMandatiEReversali(it.cnr.jada.UserContext param0, it.cnr.jada.persistency.sql.CompoundFindClause param1, it.cnr.contab.doccont00.intcass.bulk.V_mandato_reversaleBulk param2, it.cnr.contab.doccont00.intcass.bulk.Distinta_cassiereBulk param3) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.util.RemoteIterator result = ((DistintaCassiereComponent) componentObj).cercaMandatiEReversali(param0, param1, param2, param3);
@@ -161,7 +159,7 @@ public class DistintaCassiereComponentSessionBean extends it.cnr.jada.ejb.CRUDDe
         }
     }
 
-    public void inizializzaDettagliDistintaPerModifica(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.intcass.bulk.Distinta_cassiereBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void inizializzaDettagliDistintaPerModifica(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.intcass.bulk.Distinta_cassiereBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             ((DistintaCassiereComponent) componentObj).inizializzaDettagliDistintaPerModifica(param0, param1);
@@ -179,7 +177,7 @@ public class DistintaCassiereComponentSessionBean extends it.cnr.jada.ejb.CRUDDe
         }
     }
 
-    public void inviaDistinte(it.cnr.jada.UserContext param0, java.util.Collection param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void inviaDistinte(it.cnr.jada.UserContext param0, java.util.Collection param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             ((DistintaCassiereComponent) componentObj).inviaDistinte(param0, param1);
@@ -197,7 +195,7 @@ public class DistintaCassiereComponentSessionBean extends it.cnr.jada.ejb.CRUDDe
         }
     }
 
-    public void modificaDettagliDistinta(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.intcass.bulk.Distinta_cassiereBulk param1, it.cnr.jada.bulk.OggettoBulk[] param2, java.util.BitSet param3, java.util.BitSet param4) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void modificaDettagliDistinta(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.intcass.bulk.Distinta_cassiereBulk param1, it.cnr.jada.bulk.OggettoBulk[] param2, java.util.BitSet param3, java.util.BitSet param4) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             ((DistintaCassiereComponent) componentObj).modificaDettagliDistinta(param0, param1, param2, param3, param4);
@@ -215,7 +213,7 @@ public class DistintaCassiereComponentSessionBean extends it.cnr.jada.ejb.CRUDDe
         }
     }
 
-    public it.cnr.contab.doccont00.intcass.bulk.V_ext_cassiere00Bulk processaFile(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.intcass.bulk.V_ext_cassiere00Bulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.doccont00.intcass.bulk.V_ext_cassiere00Bulk processaFile(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.intcass.bulk.V_ext_cassiere00Bulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.doccont00.intcass.bulk.V_ext_cassiere00Bulk result = ((DistintaCassiereComponent) componentObj).processaFile(param0, param1);
@@ -234,7 +232,7 @@ public class DistintaCassiereComponentSessionBean extends it.cnr.jada.ejb.CRUDDe
         }
     }
 
-    public it.cnr.contab.config00.bulk.Parametri_cnrBulk parametriCnr(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.config00.bulk.Parametri_cnrBulk parametriCnr(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.config00.bulk.Parametri_cnrBulk result = ((DistintaCassiereComponent) componentObj).parametriCnr(param0);

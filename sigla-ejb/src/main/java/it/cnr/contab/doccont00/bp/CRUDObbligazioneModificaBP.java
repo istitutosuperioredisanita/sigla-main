@@ -25,7 +25,7 @@ package it.cnr.contab.doccont00.bp;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 
 import it.cnr.contab.compensi00.bp.CRUDCompensoBP;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;

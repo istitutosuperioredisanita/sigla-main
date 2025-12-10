@@ -14,7 +14,7 @@ Incarichi_proceduraBulk procedura = (Incarichi_proceduraBulk)bp.getModel();
 boolean multiContratto = false;
 String widthTable="width=100%";
 if (bp.getModel()!=null &&
-    procedura.getNr_contratti().compareTo(new Integer(1))==1){
+    procedura.getNr_contratti().compareTo(Integer.valueOf(1))==1){
 	multiContratto = true;
 	widthTable="width=70%";
 }

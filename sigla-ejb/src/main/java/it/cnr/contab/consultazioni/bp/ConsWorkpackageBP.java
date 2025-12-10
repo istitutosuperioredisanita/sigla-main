@@ -185,7 +185,7 @@ public class ConsWorkpackageBP extends SelezionatoreListaBP implements SearchPro
     }
 
 
-    public StampaSituazioneSinteticaGAEComponentSession createComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException, BusinessProcessException {
+    public StampaSituazioneSinteticaGAEComponentSession createComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException, BusinessProcessException {
         return (StampaSituazioneSinteticaGAEComponentSession) createComponentSession("CNRPDG00_EJB_StampaSituazioneSinteticaGAEComponentSession", StampaSituazioneSinteticaGAEComponentSession.class);
     }
 

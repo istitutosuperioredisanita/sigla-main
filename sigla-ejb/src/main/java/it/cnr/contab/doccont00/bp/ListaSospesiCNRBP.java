@@ -56,7 +56,7 @@ public ListaSospesiCNRBP(String function) {
 /**
  * Crea la CRUDComponentSession da usare per effettuare le operazioni di CRUD
  */
-public CRUDComponentSession createComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+public CRUDComponentSession createComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 	return (CRUDComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB(componentSessioneName,CRUDComponentSession.class);
 }
 /**

@@ -20,8 +20,8 @@ package it.cnr.contab.incarichi00.ejb;
 import it.cnr.contab.incarichi00.comp.IncarichiRepertorioComponent;
 import it.cnr.jada.comp.ComponentException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 /**
  * Bean implementation class for Enterprise Bean: CNRINCARICHI00_EJB_IncarichiRepertorioComponentSession
@@ -32,10 +32,8 @@ public class IncarichiRepertorioComponentSessionBean extends it.cnr.jada.ejb.CRU
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.incarichi00.comp.IncarichiRepertorioComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new IncarichiRepertorioComponentSessionBean();
-	}
-	public java.util.Collection findTipiRapporto(it.cnr.jada.UserContext param0,it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+	public java.util.Collection findTipiRapporto(it.cnr.jada.UserContext param0,it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.util.Collection result = ((IncarichiRepertorioComponent)componentObj).findTipiRapporto(param0,param1);
@@ -53,7 +51,7 @@ public class IncarichiRepertorioComponentSessionBean extends it.cnr.jada.ejb.CRU
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk completaTerzo(it.cnr.jada.UserContext param0, it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk param1, it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk completaTerzo(it.cnr.jada.UserContext param0, it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk param1, it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk result = ((IncarichiRepertorioComponent)componentObj).completaTerzo(param0,param1,param2);
@@ -71,7 +69,7 @@ public class IncarichiRepertorioComponentSessionBean extends it.cnr.jada.ejb.CRU
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.jada.bulk.OggettoBulk stornaIncaricoPubblicato(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.jada.bulk.OggettoBulk stornaIncaricoPubblicato(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((IncarichiRepertorioComponent)componentObj).stornaIncaricoPubblicato(param0,param1);
@@ -89,7 +87,7 @@ public class IncarichiRepertorioComponentSessionBean extends it.cnr.jada.ejb.CRU
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.jada.bulk.OggettoBulk chiudiIncaricoPubblicato(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.jada.bulk.OggettoBulk chiudiIncaricoPubblicato(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((IncarichiRepertorioComponent)componentObj).chiudiIncaricoPubblicato(param0,param1);
@@ -107,7 +105,7 @@ public class IncarichiRepertorioComponentSessionBean extends it.cnr.jada.ejb.CRU
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.jada.bulk.OggettoBulk salvaDefinitivo(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.jada.bulk.OggettoBulk salvaDefinitivo(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((IncarichiRepertorioComponent)componentObj).salvaDefinitivo(param0,param1);
@@ -125,7 +123,7 @@ public class IncarichiRepertorioComponentSessionBean extends it.cnr.jada.ejb.CRU
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.math.BigDecimal calcolaUtilizzato(it.cnr.jada.UserContext param0, it.cnr.contab.incarichi00.bulk.Incarichi_repertorio_annoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public java.math.BigDecimal calcolaUtilizzato(it.cnr.jada.UserContext param0, it.cnr.contab.incarichi00.bulk.Incarichi_repertorio_annoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.math.BigDecimal result = ((IncarichiRepertorioComponent)componentObj).calcolaUtilizzato(param0,param1);
@@ -143,7 +141,7 @@ public class IncarichiRepertorioComponentSessionBean extends it.cnr.jada.ejb.CRU
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.jada.bulk.OggettoBulk annullaDefinitivo(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.jada.bulk.OggettoBulk annullaDefinitivo(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((IncarichiRepertorioComponent)componentObj).annullaDefinitivo(param0,param1);
@@ -161,7 +159,7 @@ public class IncarichiRepertorioComponentSessionBean extends it.cnr.jada.ejb.CRU
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public boolean hasVariazioneIntegrazioneIncaricoProvvisoria(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public boolean hasVariazioneIntegrazioneIncaricoProvvisoria(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((IncarichiRepertorioComponent)componentObj).hasVariazioneIntegrazioneIncaricoProvvisoria(param0,param1);
@@ -179,7 +177,7 @@ public class IncarichiRepertorioComponentSessionBean extends it.cnr.jada.ejb.CRU
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void controllaCancellazioneAssociazioneUo(it.cnr.jada.UserContext param0,it.cnr.contab.incarichi00.bulk.Ass_incarico_uoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void controllaCancellazioneAssociazioneUo(it.cnr.jada.UserContext param0,it.cnr.contab.incarichi00.bulk.Ass_incarico_uoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((IncarichiRepertorioComponent)componentObj).controllaCancellazioneAssociazioneUo(param0,param1);
@@ -196,7 +194,7 @@ public class IncarichiRepertorioComponentSessionBean extends it.cnr.jada.ejb.CRU
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void salvaDefinitivoCMIS(it.cnr.jada.UserContext param0, it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void salvaDefinitivoCMIS(it.cnr.jada.UserContext param0, it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((IncarichiRepertorioComponent)componentObj).salvaDefinitivoCMIS(param0,param1);
@@ -213,7 +211,7 @@ public class IncarichiRepertorioComponentSessionBean extends it.cnr.jada.ejb.CRU
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void annullaDefinitivoCMIS(it.cnr.jada.UserContext param0, it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void annullaDefinitivoCMIS(it.cnr.jada.UserContext param0, it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((IncarichiRepertorioComponent)componentObj).annullaDefinitivoCMIS(param0,param1);
@@ -230,7 +228,7 @@ public class IncarichiRepertorioComponentSessionBean extends it.cnr.jada.ejb.CRU
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void aggiornaDatiPerla(it.cnr.jada.UserContext param0, it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk param1,Long param2, String param3) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void aggiornaDatiPerla(it.cnr.jada.UserContext param0, it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk param1,Long param2, String param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((IncarichiRepertorioComponent)componentObj).aggiornaDatiPerla(param0,param1,param2,param3);

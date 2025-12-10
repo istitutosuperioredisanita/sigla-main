@@ -56,7 +56,7 @@ import java.sql.Timestamp;
 import java.util.BitSet;
 import java.util.List;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 	   
 
 public class RicercaDocContComponent extends it.cnr.jada.comp.RicercaComponent implements IRicercaDocContComponent
@@ -489,9 +489,9 @@ protected Integer	getLast_par_num(UserContext userContext, Long pg_call) throws 
 			try
 			{	
 				if ( rs.next() )
-					return  new Integer( rs.getInt(1) + 1) ;
+					return  Integer.valueOf( rs.getInt(1) + 1) ;
 				else
-					return  new Integer( 1 ) ;
+					return  Integer.valueOf( 1 ) ;
 			}
 			finally
 			{
@@ -532,7 +532,7 @@ protected Long	getPg_call(UserContext userContext) throws ComponentException
 				"IBMUTL020.vsx_get_pg_call() }",false,this.getClass());
 			cs.registerOutParameter( 1, java.sql.Types.NUMERIC);
 			cs.executeQuery();
-			pg = new Long(cs.getLong(1));
+			pg = Long.valueOf(cs.getLong(1));
 		} catch (Throwable e) {
 			throw handleException(e);
 		} finally {
@@ -731,7 +731,7 @@ protected Integer	inserisciVsx(UserContext userContext, V_obb_acc_xxxBulk ricerc
 			}
 			ps.setObject( 12, doc.getPg_ver_rec());			
 			ps.setString( 13, proc_name);
-			ps.setObject( 14, new Integer(1));
+			ps.setObject( 14, Integer.valueOf(1));
 			ps.setString( 15, userContext.getUser());
 			ps.setString( 16, userContext.getUser());
 			Timestamp now = it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp();
@@ -741,7 +741,7 @@ protected Integer	inserisciVsx(UserContext userContext, V_obb_acc_xxxBulk ricerc
 			ps.setObject(20, esercizio_ribaltamento);			
 			ps.executeUpdate();
 			
-			last_par_num = new Integer(last_par_num.intValue() + 1);
+			last_par_num = Integer.valueOf(last_par_num.intValue() + 1);
 			return last_par_num;
 			
 		}
@@ -892,7 +892,7 @@ public void	selectAllPerRiportaAvanti(UserContext userContext, V_obb_acc_xxxBulk
 
 	try 
 	{
-		selectAll( userContext, doc, PROC_NAME_RIPORTA_AVANTI, new Integer(((CNRUserContext)userContext).getEsercizio().intValue() + 1), selectPerRiportaAvanti( userContext, doc));
+		selectAll( userContext, doc, PROC_NAME_RIPORTA_AVANTI, Integer.valueOf(((CNRUserContext)userContext).getEsercizio().intValue() + 1), selectPerRiportaAvanti( userContext, doc));
 	}	
 	 catch(Exception e) 
 	{
@@ -919,7 +919,7 @@ public void	selectAllPerRiportaAvantiEvoluto(UserContext userContext, V_obb_acc_
 
 	try 
 	{
-		selectAll( userContext, doc, PROC_NAME_RIPORTA_AVANTI_EVOLUTO, new Integer(((CNRUserContext)userContext).getEsercizio().intValue() + 1), selectPerRiportaAvanti( userContext, doc));
+		selectAll( userContext, doc, PROC_NAME_RIPORTA_AVANTI_EVOLUTO, Integer.valueOf(((CNRUserContext)userContext).getEsercizio().intValue() + 1), selectPerRiportaAvanti( userContext, doc));
 	}	
 	 catch(Exception e) 
 	{
@@ -945,7 +945,7 @@ public void	selectAllPerRiportaIndietro(UserContext userContext, V_obb_acc_xxxBu
 
 	try 
 	{
-		selectAll( userContext, doc, PROC_NAME_RIPORTA_INDIETRO, new Integer(((CNRUserContext)userContext).getEsercizio().intValue() - 1),selectPerRiportaIndietro(userContext, doc));
+		selectAll( userContext, doc, PROC_NAME_RIPORTA_INDIETRO, Integer.valueOf(((CNRUserContext)userContext).getEsercizio().intValue() - 1),selectPerRiportaIndietro(userContext, doc));
 	}	
 	 catch(Exception e) 
 	{
@@ -1033,7 +1033,7 @@ public SQLBuilder selectNuova_voceByClause(UserContext userContext, V_obb_acc_xx
 {
 	SQLBuilder sql = getHome( userContext, Voce_fBulk.class ).createSQLBuilder();
 	sql.addClause( clauses );
-	sql.addSQLClause( "AND", "esercizio", sql.EQUALS, new Integer(((CNRUserContext)userContext).getEsercizio().intValue() + 1));
+	sql.addSQLClause( "AND", "esercizio", sql.EQUALS, Integer.valueOf(((CNRUserContext)userContext).getEsercizio().intValue() + 1));
 	sql.addSQLClause( "AND", "fl_mastrino", sql.EQUALS, "Y");	
 	sql.addSQLClause( "AND", "ti_appartenenza", sql.EQUALS, Elemento_voceHome.APPARTENENZA_CNR);
 	sql.addSQLClause( "AND", "ti_gestione", sql.EQUALS, Elemento_voceHome.GESTIONE_SPESE);
@@ -1075,7 +1075,7 @@ public SQLBuilder selectNuovo_evByClause(UserContext userContext, V_obb_acc_xxxB
 {
 	SQLBuilder sql = getHome( userContext, Elemento_voceBulk.class ).createSQLBuilder();
 	sql.addClause( clauses );
-	sql.addSQLClause( "AND", "esercizio", sql.EQUALS, new Integer(((CNRUserContext)userContext).getEsercizio().intValue() + 1));
+	sql.addSQLClause( "AND", "esercizio", sql.EQUALS, Integer.valueOf(((CNRUserContext)userContext).getEsercizio().intValue() + 1));
 	sql.addSQLClause( "AND", "ti_elemento_voce", sql.EQUALS, Elemento_voceHome.TIPO_CAPITOLO);	
 	if ( docCont.getFl_ente().booleanValue() )
 		sql.addSQLClause( "AND", "ti_appartenenza", sql.EQUALS, Elemento_voceHome.APPARTENENZA_CNR);
@@ -1492,7 +1492,7 @@ public void	setSelectionPerRiportaAvanti(UserContext userContext, V_obb_acc_xxxB
 {
 	try
 	{
-		setSelection( userContext, doc, docContabili, oldDocContabili, newDocContabili, PROC_NAME_RIPORTA_AVANTI, new Integer(((CNRUserContext)userContext).getEsercizio().intValue() + 1));
+		setSelection( userContext, doc, docContabili, oldDocContabili, newDocContabili, PROC_NAME_RIPORTA_AVANTI, Integer.valueOf(((CNRUserContext)userContext).getEsercizio().intValue() + 1));
 	} 
 	catch(Throwable e) 
 	{
@@ -1519,7 +1519,7 @@ public void	setSelectionPerRiportaAvantiEvoluto(UserContext userContext, V_obb_a
 {
 	try
 	{
-		setSelection( userContext, doc, docContabili, oldDocContabili, newDocContabili, PROC_NAME_RIPORTA_AVANTI_EVOLUTO, new Integer(((CNRUserContext)userContext).getEsercizio().intValue() + 1));
+		setSelection( userContext, doc, docContabili, oldDocContabili, newDocContabili, PROC_NAME_RIPORTA_AVANTI_EVOLUTO, Integer.valueOf(((CNRUserContext)userContext).getEsercizio().intValue() + 1));
 	} 
 	catch(Throwable e) 
 	{
@@ -1546,7 +1546,7 @@ public void	setSelectionPerRiportaIndietro(UserContext userContext, V_obb_acc_xx
 {
 	try
 	{
-		setSelection( userContext, doc, docContabili, oldDocContabili, newDocContabili, PROC_NAME_RIPORTA_INDIETRO, new Integer(((CNRUserContext)userContext).getEsercizio().intValue() - 1));
+		setSelection( userContext, doc, docContabili, oldDocContabili, newDocContabili, PROC_NAME_RIPORTA_INDIETRO, Integer.valueOf(((CNRUserContext)userContext).getEsercizio().intValue() - 1));
 	} 
 	catch(Throwable e) 
 	{

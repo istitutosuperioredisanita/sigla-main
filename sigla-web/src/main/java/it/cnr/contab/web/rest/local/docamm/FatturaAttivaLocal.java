@@ -17,72 +17,85 @@
 
 package it.cnr.contab.web.rest.local.docamm;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import it.cnr.contab.client.docamm.FatturaAttiva;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk;
 import it.cnr.contab.web.rest.config.AccessoAllowed;
 import it.cnr.contab.util.enumeration.AccessoEnum;
 import it.cnr.contab.web.rest.config.SIGLASecurityContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
-import javax.ejb.Local;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ejb.Local;
 
 @Local
 @Path("/fatturaattiva")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api("Fatturazione Attiva")
+@Tag(name = "Fatturazione Attiva")
 public interface FatturaAttivaLocal {
 	/**
      * GET  /restapi/fatturaattiva/ricerca -> return Fattura attiva
      */
     @GET
     @AccessoAllowed(value=AccessoEnum.AMMFATTURDOCSFATATTV)
-    @ApiOperation(value = "Recupera i dati della Fattura Attiva",
-            notes = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV",
-            response = FatturaAttiva.class,
-            authorizations = {
-                    @Authorization(value = "BASIC"),
-                    @Authorization(value = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDR),
+    @Operation(summary = "Recupera i dati della Fattura Attiva",
+            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV",
+            security = {
+                    @SecurityRequirement(name = "BASIC"),
+                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
+                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
+                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
+                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = FatturaAttiva.class)
+                            )
+                    )
             }
     )
-    Response ricercaFattura(@Context HttpServletRequest request, @QueryParam ("esercizio") Integer esercizio, @QueryParam ("pg") Long pg) throws Exception;
+    Response ricercaFattura(@Context HttpServletRequest request,
+                            @QueryParam("esercizio") Integer esercizio,
+                            @QueryParam ("pg") Long pg) throws Exception;
 
 	/**
 	 * POST  /restapi/fatturaattiva-> return Fattura attiva
 	 */
 	@POST
 	@AccessoAllowed(value=AccessoEnum.AMMFATTURDOCSFATATTM)
-    @ApiOperation(value = "Inserisce una o più Fatture Attive",
-            notes = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTM",
-            response = FatturaAttiva.class,
-            responseContainer = "List",
-            authorizations = {
-                    @Authorization(value = "BASIC"),
-                    @Authorization(value = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDR),
+    @Operation(summary = "Inserisce una o più Fatture Attive",
+            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTM",
+            security = {
+                    @SecurityRequirement(name = "BASIC"),
+                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
+                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
+                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
+                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = List.class)
+                            )
+                    )
             }
     )
     Response inserisciFatture(@Context HttpServletRequest request, List<FatturaAttiva> fatture) throws Exception;
-
 
 
     /**
@@ -91,19 +104,29 @@ public interface FatturaAttivaLocal {
     @POST
     @Path("/inserisciDatiPerStampa")
     @AccessoAllowed(value=AccessoEnum.AMMFATTURDOCSFATATTM)
-    @ApiOperation(value = "Inserisce i dati per la stampa IVA",
-            notes = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTM",
-            response = Long.class,
-            authorizations = {
-                    @Authorization(value = "BASIC"),
-                    @Authorization(value = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDR),
+    @Operation(summary = "Inserisce i dati per la stampa IVA",
+            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTM",
+            security = {
+                    @SecurityRequirement(name = "BASIC"),
+                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
+                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
+                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
+                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Long.class)
+                            )
+                    )
             }
-    )
-    Response inserisciDatiPerStampa(@Context HttpServletRequest request, @QueryParam ("esercizio") Integer esercizio, @QueryParam ("pg") Long pg) throws Exception;
 
+    )
+    Response inserisciDatiPerStampa(@Context HttpServletRequest request,
+                                    @QueryParam ("esercizio") Integer esercizio,
+                                    @QueryParam ("pg") Long pg) throws Exception;
 
     /**
      * GET  /restapi/fatturaattiva/ricerca -> return Fattura attiva
@@ -112,17 +135,26 @@ public interface FatturaAttivaLocal {
     @Path("/print")
     @AccessoAllowed(value=AccessoEnum.AMMFATTURDOCSFATATTV)
     @Produces("application/pdf")
-    @ApiOperation(value = "Fornisce la stampa della Fattura Attiva in pdf",
-            notes = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV",
-            response = byte[].class,
-            authorizations = {
-                    @Authorization(value = "BASIC"),
-                    @Authorization(value = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @Authorization(value = SIGLASecurityContext.X_SIGLA_CD_CDR),
+    @Operation(summary = "Fornisce la stampa della Fattura Attiva in pdf",
+            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV",
+            security = {
+                    @SecurityRequirement(name = "BASIC"),
+                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
+                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
+                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
+                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = byte[].class)
+                            )
+                    )
             }
     )
-    Response stampaFattura(@Context HttpServletRequest request, @QueryParam ("pgStampa") Long pgStampa) throws Exception;
+    Response stampaFattura(@Context HttpServletRequest request,
+                           @QueryParam ("pgStampa") Long pgStampa) throws Exception;
 
 }

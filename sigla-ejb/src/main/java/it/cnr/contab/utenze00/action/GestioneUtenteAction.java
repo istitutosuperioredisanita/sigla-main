@@ -29,10 +29,6 @@ import it.cnr.jada.action.*;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.action.OptionBP;
 import it.cnr.jada.util.action.SelezionatoreListaBP;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.adapters.RefreshableKeycloakSecurityContext;
-
-import java.security.Principal;
 import java.util.Optional;
 
 /**
@@ -48,10 +44,10 @@ public class GestioneUtenteAction extends it.cnr.jada.util.action.BulkAction {
      * Restituisce il valore della proprietà  'componentSession'
      *
      * @return Il valore della proprietà  'componentSession'
-     * @throws javax.ejb.EJBException   Se si verifica qualche eccezione applicativa per cui non è possibile effettuare l'operazione
+     * @throws jakarta.ejb.EJBException   Se si verifica qualche eccezione applicativa per cui non è possibile effettuare l'operazione
      * @throws java.rmi.RemoteException Se si verifica qualche eccezione di sistema per cui non è possibile effettuare l'operazione
      */
-    public static GestioneLoginComponentSession getComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+    public static GestioneLoginComponentSession getComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
         return (GestioneLoginComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRUTENZE00_NAV_EJB_GestioneLoginComponentSession", GestioneLoginComponentSession.class);
     }
 
@@ -324,6 +320,8 @@ public class GestioneUtenteAction extends it.cnr.jada.util.action.BulkAction {
     public Forward doLogout(ActionContext context) {
         doCloseAll(context);
         context.invalidateSession();
+        /*
+        TODO KEYCLOAK WILDFLY
 		final Optional<KeycloakPrincipal> principalOptional = Optional.ofNullable(context)
 				.filter(HttpActionContext.class::isInstance)
 				.map(HttpActionContext.class::cast)
@@ -346,6 +344,7 @@ public class GestioneUtenteAction extends it.cnr.jada.util.action.BulkAction {
 						rKSC.logout(rKSC.getDeployment());
 					});
 		}
+         */
 		return context.findForward("logout");
 	}
 	/**

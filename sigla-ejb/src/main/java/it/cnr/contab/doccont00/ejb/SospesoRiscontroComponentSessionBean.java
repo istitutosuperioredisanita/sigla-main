@@ -29,11 +29,11 @@ import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import java.rmi.RemoteException;
 
 @Stateless(name="CNRDOCCONT00_EJB_SospesoRiscontroComponentSession")
@@ -42,9 +42,7 @@ public class SospesoRiscontroComponentSessionBean extends it.cnr.jada.ejb.CRUDCo
 	public void ejbCreate() {
 	componentObj = new SospesoRiscontroComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-	return new SospesoRiscontroComponentSessionBean();
-}
+
 public void cambiaStato(UserContext param0, java.util.Collection param1, String param2, String param3) throws ComponentException, EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {

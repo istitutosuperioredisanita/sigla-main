@@ -17,8 +17,8 @@
 
 package it.cnr.contab.logs.ejb;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.*;
 
 @Stateless(name="BLOGS_EJB_TestataLogComponentSession")
 public class TestataLogComponentSessionBean extends it.cnr.jada.ejb.CRUDDetailComponentSessionBean implements TestataLogComponentSession{
@@ -26,7 +26,5 @@ public class TestataLogComponentSessionBean extends it.cnr.jada.ejb.CRUDDetailCo
 	public void ejbCreate() {
         componentObj = new it.cnr.contab.logs.comp.TestataLogComponent();
     }
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-        return new TestataLogComponentSessionBean();
-    }
+	
 }

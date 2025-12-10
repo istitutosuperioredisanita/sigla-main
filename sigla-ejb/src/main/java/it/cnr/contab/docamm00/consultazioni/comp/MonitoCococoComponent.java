@@ -125,7 +125,7 @@ public class MonitoCococoComponent extends CRUDComponent {
 				
 		java.util.List listaCompensi;
 		java.util.List listaRighe;
-		Integer terzo=new Integer(0);
+		Integer terzo=Integer.valueOf(0);
 		String denominazione = new String("");
 		int seq = 0;
 		long conta_giorni_terzo=0; 
@@ -164,14 +164,14 @@ public class MonitoCococoComponent extends CRUDComponent {
 			for (java.util.ListIterator i = listaCompensi.listIterator();i.hasNext();) {
 			  CompensoBulk compenso = (CompensoBulk)i.next();
 			  
-			  if (!terzo.equals(new Integer(0)) && !terzo.equals(compenso.getCd_terzo()))
+			  if (!terzo.equals(Integer.valueOf(0)) && !terzo.equals(compenso.getCd_terzo()))
 			   {
 				//inserisco solo se il terzo e' valorizzato
 				Monito_cococoBulk monito = new Monito_cococoBulk();
 				seq = seq + 1;
-				monito.setId_report(new Integer(prog.intValue()));
+				monito.setId_report(Integer.valueOf(prog.intValue()));
 				monito.setChiave(new String("MONITO_COCOCO"));
-				monito.setSequenza(new Integer(seq));
+				monito.setSequenza(Integer.valueOf(seq));
 				monito.setDescrizione(new String("Monitoraggio CoCoCo"));
 				monito.setDt_da_competenza_coge(lancio_monito.getDt_da_competenza_coge());
 				monito.setDt_a_competenza_coge(lancio_monito.getDt_a_competenza_coge());
@@ -184,7 +184,7 @@ public class MonitoCococoComponent extends CRUDComponent {
 				monito.setIm_cr_percipiente(tot_carico_perc_terzo);       
 				monito.setIm_cr_ente(tot_carico_ente_terzo); 
 				monito.setIm_totale_compenso_periodo(tot_compensi_periodo_terzo);
-				monito.setNumero_giorni(new Long(conta_giorni_terzo));
+				monito.setNumero_giorni(Long.valueOf(conta_giorni_terzo));
 				monito.setAttivita(lancio_monito.getAttivita());
 				monito.setToBeCreated();
 				super.creaConBulk(userContext,monito);
@@ -257,9 +257,9 @@ public class MonitoCococoComponent extends CRUDComponent {
 				//per l'ultimo inserisco
 				  Monito_cococoBulk monito = new Monito_cococoBulk();
 				  seq = seq + 1;
-				  monito.setId_report(new Integer(prog.intValue()));
+				  monito.setId_report(Integer.valueOf(prog.intValue()));
 				  monito.setChiave(new String("MONITO_COCOCO"));
-				  monito.setSequenza(new Integer(seq));
+				  monito.setSequenza(Integer.valueOf(seq));
 				  monito.setDescrizione(new String("Monitoraggio CoCoCo"));
 				  monito.setDt_da_competenza_coge(lancio_monito.getDt_da_competenza_coge());
 				  monito.setDt_a_competenza_coge(lancio_monito.getDt_a_competenza_coge());
@@ -272,7 +272,7 @@ public class MonitoCococoComponent extends CRUDComponent {
 				  monito.setIm_cr_percipiente(tot_carico_perc_terzo);       
 				  monito.setIm_cr_ente(tot_carico_ente_terzo); 
 				  monito.setIm_totale_compenso_periodo(tot_compensi_periodo_terzo);
-				  monito.setNumero_giorni(new Long(conta_giorni_terzo));
+				  monito.setNumero_giorni(Long.valueOf(conta_giorni_terzo));
 				  monito.setAttivita(lancio_monito.getAttivita());
 				  monito.setToBeCreated();
 				  super.creaConBulk(userContext,monito);
@@ -348,7 +348,7 @@ public class MonitoCococoComponent extends CRUDComponent {
 		Monito_cococoHome monitoHome = (Monito_cococoHome)getHome(userContext, Monito_cococoBulk.class);
 		SQLBuilder sql = monitoHome.createSQLBuilder();
 		
-		sql.addSQLClause("AND","ID_REPORT", sql.NOT_EQUALS, new Integer(prog.intValue()));
+		sql.addSQLClause("AND","ID_REPORT", sql.NOT_EQUALS, Integer.valueOf(prog.intValue()));
 		
 		return monitoHome.fetchAll(sql);
 	}

@@ -121,7 +121,7 @@ public class Chiusura_magazzinoHome extends Valori_magazzinoHome {
 
 		Integer esercizio=null;
 		if(esercizioParam !=null){
-			esercizio = new Integer(esercizioParam.getValoreParam());
+			esercizio = Integer.valueOf(esercizioParam.getValoreParam());
 		}
 
 		Date dataFine = null;

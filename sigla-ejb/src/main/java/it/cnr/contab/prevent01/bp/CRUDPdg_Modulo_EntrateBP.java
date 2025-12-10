@@ -25,7 +25,7 @@ package it.cnr.contab.prevent01.bp;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import javax.xml.bind.ValidationException;
 
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
@@ -122,8 +122,8 @@ public class CRUDPdg_Modulo_EntrateBP extends it.cnr.jada.util.action.SimpleCRUD
 		}
 		isPDGPEsaminatoDalCentroUP(actioncontext, getCdr());
 		anno_corrente = CNRUserContext.getEsercizio(actioncontext.getUserContext()).toString();
-		anno_successivo = new Integer(CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue() + 1).toString();
-		anno_successivo_successivo = new Integer(CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue() + 2).toString();
+		anno_successivo = Integer.valueOf(CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue() + 1).toString();
+		anno_successivo_successivo = Integer.valueOf(CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue() + 2).toString();
 		
 		setDescrizioneClassificazione(getParametriLivelli().getDs_livello_etr(parametriCnr.getLivello_pdg_decis_etr().intValue())); 
 	}

@@ -17,12 +17,13 @@
 
 package it.cnr.contab.web.rest.local.util;
 
-import javax.ejb.Local;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
+import jakarta.ejb.Local;
 
 @Local
 @Path("/todo")

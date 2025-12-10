@@ -246,9 +246,9 @@ public class Classificazione_vociComponent extends CRUDComponent implements Clon
 		if (claNew.getTi_gestione().equals(Elemento_voceHome.GESTIONE_ENTRATE)) {
 			for (int i=1; i<=Classificazione_vociHome.LIVELLO_MAX; i++){ 
 				if (claNew.getCd_livello(i) != null) {
-					if (parametri.getLivelli_entrata().compareTo(new Integer(i))==-1)
+					if (parametri.getLivelli_entrata().compareTo(Integer.valueOf(i))==-1)
 						throw new ApplicationException("Non è possibile inserire classificazioni di entrata con più di " + i + " livelli.");
-					if (parametri.getLung_livello_etr(i).compareTo(new Integer(claNew.getCd_livello(i).length()))!=0)
+					if (parametri.getLung_livello_etr(i).compareTo(Integer.valueOf(claNew.getCd_livello(i).length()))!=0)
 						throw new ApplicationException("Il codice " + parametri.getDs_livello_etr(i) + " deve avere una lunghezza di " + parametri.getLung_livello_etr(i).toString() + " caratteri.");
 				}
 			}
@@ -256,9 +256,9 @@ public class Classificazione_vociComponent extends CRUDComponent implements Clon
 		else if (claNew.getTi_gestione().equals(Elemento_voceHome.GESTIONE_SPESE)) {
 			for (int i=1; i <= Classificazione_vociHome.LIVELLO_MAX; i++){ 
 				if (claNew.getCd_livello(i) != null) {
-					if (parametri.getLivelli_spesa().compareTo(new Integer(i))==-1)
+					if (parametri.getLivelli_spesa().compareTo(Integer.valueOf(i))==-1)
 						throw new ApplicationException("Non è possibile inserire classificazioni di spesa con più di " + i + " livelli.");
-					if (parametri.getLung_livello_spe(i).compareTo(new Integer(claNew.getCd_livello(i).length()))!=0)
+					if (parametri.getLung_livello_spe(i).compareTo(Integer.valueOf(claNew.getCd_livello(i).length()))!=0)
 						throw new ApplicationException("Il codice " + parametri.getDs_livello_spe(i) + " deve avere una lunghezza di " + parametri.getLung_livello_spe(i).toString() + " caratteri.");
 				}
 			}

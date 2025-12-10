@@ -66,8 +66,11 @@ import it.cnr.jada.util.Introspector;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.jada.util.upload.UploadedFile;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.PageContext;
 
-import javax.servlet.ServletException;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -87,7 +90,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
         implements IDefferedUpdateSaldiBP, IDocumentoAmministrativoSpesaBP, IValidaDocContBP, IDocAmmAnaliticaBP, IDocAmmCogeCoanBP {
     private final SimpleDetailCRUDController tappaController = new SimpleDetailCRUDController("Tappa", Missione_tappaBulk.class, "tappeMissioneColl", this) {
         @Override
-        public void writeHTMLToolbar(javax.servlet.jsp.PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+        public void writeHTMLToolbar(PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
             super.writeHTMLToolbar(context, reset, find, delete, false);
 
             // Aggiungo alla table delle tappe il bottone di fine configurazione tappa
@@ -103,7 +106,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
     };
     private final CRUDMissione_spesaController spesaController = new CRUDMissione_spesaController("Spesa", Missione_dettaglioBulk.class, "speseMissioneColl", this) {
         @Override
-        public void writeHTMLToolbar(javax.servlet.jsp.PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+        public void writeHTMLToolbar(PageContext context, boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
             super.writeHTMLToolbar(context, reset, find, delete, false);
             // Aggiungo alla table delle spese il bottone di fine inserimento spese
             it.cnr.jada.util.jsp.JSPUtils.toolbarButton(context,
@@ -509,7 +512,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
                 return;        // se non ho ancora inserito entrambe le date non faccio controlli
 
             missione.checkValiditaInizioFineMissione();
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw new BusinessProcessException(e);
         }
     }
@@ -518,7 +521,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
      * Ogni qualvolta si conferma una spesa, tale metodo esegue la ricerca per i searchTool non completi
      */
 
-    public void completaSearchToolSpesa(ActionContext context, MissioneBulk missione, Missione_dettaglioBulk spesa) throws BusinessProcessException, it.cnr.jada.bulk.ValidationException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.comp.ComponentException, javax.ejb.EJBException, java.rmi.RemoteException, java.sql.SQLException {
+    public void completaSearchToolSpesa(ActionContext context, MissioneBulk missione, Missione_dettaglioBulk spesa) throws BusinessProcessException, it.cnr.jada.bulk.ValidationException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException, java.rmi.RemoteException, java.sql.SQLException {
         if (spesa.getTipo_spesa().getCrudStatus() != it.cnr.jada.bulk.OggettoBulk.NORMAL) {
             spesa.getTipo_spesa().setCd_ti_spesa(spesa.getCd_ti_spesa());
 
@@ -680,7 +683,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
      * proprio o altro vengono inizializzati nazione e divisa con i valori di default
      */
 
-    public void confermaTappa(ActionContext context) throws BusinessProcessException, it.cnr.jada.comp.ComponentException, java.rmi.RemoteException, javax.ejb.EJBException, it.cnr.jada.bulk.ValidationException, it.cnr.jada.persistency.PersistencyException {
+    public void confermaTappa(ActionContext context) throws BusinessProcessException, it.cnr.jada.comp.ComponentException, java.rmi.RemoteException, jakarta.ejb.EJBException, it.cnr.jada.bulk.ValidationException, it.cnr.jada.persistency.PersistencyException {
         try {
             MissioneBulk missione = (MissioneBulk) getModel();
             Missione_tappaBulk tappa = (Missione_tappaBulk) getTappaController().getModel();
@@ -694,7 +697,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
 
             // Se ho selezionato comune proprio o comune altro la divisa deve essere
             // quella di default (EURO)
-            String cd_euro = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(context.getUserContext(), new Integer(0), "*", "CD_DIVISA", "EURO");
+            String cd_euro = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(context.getUserContext(), Integer.valueOf(0), "*", "CD_DIVISA", "EURO");
             if ((!tappa.getFl_comune_estero().booleanValue()) && (!tappa.getCd_divisa_tappa().equals(cd_euro)))
                 throw new it.cnr.jada.bulk.ValidationException("La divisa non e' valida !");
 
@@ -865,11 +868,11 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
             if (isRimborsoVisible(context)) {
                 if (tappa.getDt_inizio_tappa() != null) {
                     Configurazione_cnrComponentSession sess = (Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession");
-                    if (sess.getDt01(context, new Integer(0), "*", "RIMBORSO_MISS_ESTERO", "PERIODO_VALIDITA") == null ||
-                            sess.getDt02(context, new Integer(0), "*", "RIMBORSO_MISS_ESTERO", "PERIODO_VALIDITA") == null)
+                    if (sess.getDt01(context, Integer.valueOf(0), "*", "RIMBORSO_MISS_ESTERO", "PERIODO_VALIDITA") == null ||
+                            sess.getDt02(context, Integer.valueOf(0), "*", "RIMBORSO_MISS_ESTERO", "PERIODO_VALIDITA") == null)
                         throw new ApplicationException("Configurazione CNR: non è stato impostato il periodo di validità per i rimborsi esteri (RIMBORSO_MISS_ESTERO - PERIODO_VALIDITA)");
-                    data_inizio_rimborso_miss_estero = sess.getDt01(context, new Integer(0), "*", "RIMBORSO_MISS_ESTERO", "PERIODO_VALIDITA");
-                    data_fine_rimborso_miss_estero = sess.getDt02(context, new Integer(0), "*", "RIMBORSO_MISS_ESTERO", "PERIODO_VALIDITA");
+                    data_inizio_rimborso_miss_estero = sess.getDt01(context, Integer.valueOf(0), "*", "RIMBORSO_MISS_ESTERO", "PERIODO_VALIDITA");
+                    data_fine_rimborso_miss_estero = sess.getDt02(context, Integer.valueOf(0), "*", "RIMBORSO_MISS_ESTERO", "PERIODO_VALIDITA");
 
                     //solo se è estera, non c'è diaria, la missione dura più di 24 ore e la tappa è compresa nel periodo di validità
                     if (tappa.getFl_comune_estero().booleanValue() &&
@@ -1044,7 +1047,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
         try {
             java.sql.Timestamp data_fine_diaria_miss_estero;
             Configurazione_cnrComponentSession sess = (Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession");
-            data_fine_diaria_miss_estero = sess.getDt01(context.getUserContext(), new Integer(0), "*", "DIARIA_MISS_ESTERO", "DATA_FINE");
+            data_fine_diaria_miss_estero = sess.getDt01(context.getUserContext(), Integer.valueOf(0), "*", "DIARIA_MISS_ESTERO", "DATA_FINE");
 
             MissioneBulk missione = (MissioneBulk) getModel();
 
@@ -1313,8 +1316,8 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
                 try {
                     DocumentoGenericoComponentSession session = (DocumentoGenericoComponentSession) createComponentSession("CNRDOCAMM00_EJB_DocumentoGenericoComponentSession", DocumentoGenericoComponentSession.class);
 
-                    boolean esercizioScrivaniaAperto = session.verificaStatoEsercizio(context.getUserContext(), new it.cnr.contab.config00.esercizio.bulk.EsercizioBulk(cds, new Integer(missione.getEsercizioScrivania())));
-                    boolean esercizioSuccessivoAperto = session.verificaStatoEsercizio(context.getUserContext(), new it.cnr.contab.config00.esercizio.bulk.EsercizioBulk(cds, new Integer(missione.getEsercizioScrivania() + 1)));
+                    boolean esercizioScrivaniaAperto = session.verificaStatoEsercizio(context.getUserContext(), new it.cnr.contab.config00.esercizio.bulk.EsercizioBulk(cds, Integer.valueOf(missione.getEsercizioScrivania())));
+                    boolean esercizioSuccessivoAperto = session.verificaStatoEsercizio(context.getUserContext(), new it.cnr.contab.config00.esercizio.bulk.EsercizioBulk(cds, Integer.valueOf(missione.getEsercizioScrivania() + 1)));
                     setRiportaAvantiIndietro(esercizioScrivaniaAperto && esercizioSuccessivoAperto && isRibaltato() && isSupervisore());
                 } catch (Throwable t) {
 //				handleException(t);
@@ -1323,7 +1326,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
             } else
                 setRiportaAvantiIndietro(false);
 
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             setAnnoSolareInScrivania(false);
             throw new BusinessProcessException(e);
         }
@@ -1380,7 +1383,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
      * Il metodo inizializza la divisa e il cambio della spesa con quelli di default (EURO)
      */
 
-    public MissioneBulk inizializzaDivisaCambioPerRimborsoKm(ActionContext context, Missione_dettaglioBulk aSpesa) throws it.cnr.jada.action.BusinessProcessException, it.cnr.jada.comp.ComponentException, java.rmi.RemoteException, it.cnr.jada.persistency.PersistencyException, javax.ejb.EJBException, it.cnr.jada.bulk.ValidationException {
+    public MissioneBulk inizializzaDivisaCambioPerRimborsoKm(ActionContext context, Missione_dettaglioBulk aSpesa) throws it.cnr.jada.action.BusinessProcessException, it.cnr.jada.comp.ComponentException, java.rmi.RemoteException, it.cnr.jada.persistency.PersistencyException, jakarta.ejb.EJBException, it.cnr.jada.bulk.ValidationException {
         MissioneComponentSession component = (MissioneComponentSession) createComponentSession("CNRMISSIONI00_EJB_MissioneComponentSession", MissioneComponentSession.class);
         return (component.inizializzaDivisaCambioPerRimborsoKm(context.getUserContext(), aSpesa));
     }
@@ -1630,7 +1633,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
      * Il metodo è stato sovrascritto per consentire all'utente di modificare lo stato della liquidazione
      * quando il documento non risulta essere modificabile
      */
-    public void writeFormInput(javax.servlet.jsp.JspWriter jspwriter, String s, String s1, boolean flag, String s2, String s3) throws java.io.IOException {
+    public void writeFormInput(JspWriter jspwriter, String s, String s1, boolean flag, String s2, String s3) throws java.io.IOException {
         MissioneBulk missione = null;
         if (getModel() != null)
             missione = (MissioneBulk) getModel();
@@ -1691,7 +1694,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
             return super.isPrintButtonHidden();
 
         return (super.isPrintButtonHidden() ||
-                !(missione.getPg_missione() != null && missione.getPg_missione().compareTo(new Long(0)) > 0
+                !(missione.getPg_missione() != null && missione.getPg_missione().compareTo(Long.valueOf(0)) > 0
                         && missione.getCd_cds() != null && missione.getCd_unita_organizzativa() != null
                         && missione.getCd_terzo() != null && missione.getEsercizio() != null));
     }
@@ -2432,7 +2435,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
             try {
                 java.sql.Timestamp data_fine_diaria_miss_estero;
                 Configurazione_cnrComponentSession sess = (Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession");
-                data_fine_diaria_miss_estero = sess.getDt01(context.getUserContext(), new Integer(0), "*", "DIARIA_MISS_ESTERO", "DATA_FINE");
+                data_fine_diaria_miss_estero = sess.getDt01(context.getUserContext(), Integer.valueOf(0), "*", "DIARIA_MISS_ESTERO", "DATA_FINE");
 
                 MissioneComponentSession component = (MissioneComponentSession) createComponentSession();
                 Parametri_cnrBulk parametriCnr = component.parametriCnr(context.getUserContext());
@@ -2451,9 +2454,9 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
 					/*&&
 					year == it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue())
 					*/ {
-                        tappa.setFl_no_diaria(new Boolean(true));
+                        tappa.setFl_no_diaria(Boolean.TRUE);
                     } else {
-                        tappa.setFl_no_diaria(new Boolean(false));
+                        tappa.setFl_no_diaria( Boolean.FALSE);
                     }
                 }
                 setModel(context, missione);
@@ -2507,7 +2510,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
     private java.sql.Timestamp getDataInizioObbligoRegistroUnico(it.cnr.jada.action.ActionContext context) throws BusinessProcessException {
         try {
             return Utility.createConfigurazioneCnrComponentSession().
-                    getDt01(context.getUserContext(), new Integer(0), null, "REGISTRO_UNICO_FATPAS", "DATA_INIZIO");
+                    getDt01(context.getUserContext(), Integer.valueOf(0), null, "REGISTRO_UNICO_FATPAS", "DATA_INIZIO");
         } catch (Exception e) {
             throw handleException(e);
         }
@@ -2929,7 +2932,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
                 .map(MissioneBulk.class::cast);
         if (optionalMissioneBulk
                 .filter(missioneBulk -> Optional.ofNullable(missioneBulk.getPg_missione()).isPresent())
-                .filter(missioneBulk -> missioneBulk.getPg_missione().compareTo(new Long(0)) > 0)
+                .filter(missioneBulk -> missioneBulk.getPg_missione().compareTo(Long.valueOf(0)) > 0)
                 .isPresent()
         ) {
             pages.put(i++, TAB_ALLEGATI);

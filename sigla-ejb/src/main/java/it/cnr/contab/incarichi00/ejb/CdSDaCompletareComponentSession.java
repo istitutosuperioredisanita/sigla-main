@@ -22,7 +22,7 @@ import it.cnr.contab.incarichi00.bulk.V_terzi_da_completareBulk;
 
 import java.util.List;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface CdSDaCompletareComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

@@ -94,8 +94,8 @@ public java.util.Vector getVociStipendiali(
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,OggettoBulk det_spe) throws PersistencyException {
 		try {
 			((Pdg_preventivo_spe_detBulk)det_spe).setPg_spesa(
-				new Long(
-					((Long)findAndLockMax( det_spe, "pg_spesa", new Long(0) )).longValue()+1
+				Long.valueOf(
+					((Long)findAndLockMax( det_spe, "pg_spesa", Long.valueOf(0) )).longValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

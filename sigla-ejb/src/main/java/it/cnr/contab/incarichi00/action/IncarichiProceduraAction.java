@@ -135,7 +135,7 @@ public class IncarichiProceduraAction extends it.cnr.jada.util.action.CRUDAction
 				if ((parametri==null || parametri.getLimite_dt_stipula()==null) && DateUtils.daysBetweenDates(incarico.getDt_inizio_validita(), EJBCommonServices.getServerDate())>5)
 					throw new ValidationException( "Non \350 possibile inserire una data di inizio validit\340 del contratto inferiore di 5 giorni rispetto alla data odierna.");
 				else if (parametri!=null && parametri.getLimite_dt_stipula()!=null && parametri.getLimite_dt_stipula().equals("Y")) {
-					Integer limite = new Integer(0);
+					Integer limite = Integer.valueOf(0);
 					if (parametri.getGiorni_limite_dt_stipula()!=null)
 						limite = parametri.getGiorni_limite_dt_stipula();
 					if (DateUtils.daysBetweenDates(incarico.getDt_inizio_validita(), EJBCommonServices.getServerDate())>limite.intValue())
@@ -966,7 +966,7 @@ public class IncarichiProceduraAction extends it.cnr.jada.util.action.CRUDAction
 				if ((parametri==null || parametri.getLimite_dt_stipula()==null) && DateUtils.daysBetweenDates(incarico.getDt_stipula(), EJBCommonServices.getServerDate())>5)
 					throw new ValidationException( "Non \350 possibile inserire una data di stipula inferiore di 5 giorni rispetto alla data odierna.");
 				else if (parametri!=null && parametri.getLimite_dt_stipula()!=null && parametri.getLimite_dt_stipula().equals("Y")) {
-					Integer limite = new Integer(0);
+					Integer limite = Integer.valueOf(0);
 					if (parametri.getGiorni_limite_dt_stipula()!=null)
 						limite = parametri.getGiorni_limite_dt_stipula();
 					if (DateUtils.daysBetweenDates(incarico.getDt_stipula(), EJBCommonServices.getServerDate())>limite.intValue())
@@ -1013,7 +1013,7 @@ public class IncarichiProceduraAction extends it.cnr.jada.util.action.CRUDAction
 				if ((parametri==null || parametri.getLimite_dt_stipula()==null) && DateUtils.daysBetweenDates(incaricoVar.getDt_variazione(), EJBCommonServices.getServerDate())>5)
 					throw new ValidationException( "Non \350 possibile inserire una data di stipula della variazione inferiore di 5 giorni rispetto alla data odierna.");
 				else if (parametri!=null && parametri.getLimite_dt_stipula()!=null && parametri.getLimite_dt_stipula().equals("Y")) {
-					Integer limite = new Integer(0);
+					Integer limite = Integer.valueOf(0);
 					if (parametri.getGiorni_limite_dt_stipula()!=null)
 						limite = parametri.getGiorni_limite_dt_stipula();
 					if (DateUtils.daysBetweenDates(incaricoVar.getDt_variazione(), EJBCommonServices.getServerDate())>limite.intValue())

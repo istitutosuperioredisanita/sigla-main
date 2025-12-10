@@ -17,8 +17,8 @@
 
 package it.cnr.contab.util00.ejb;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.*;
 @Stateless(name="CNRUTIL00_EJB_ProcedureComponentSession")
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class ProcedureComponentSessionBean extends it.cnr.jada.ejb.GenericComponentSessionBean implements ProcedureComponentSession {
@@ -29,15 +29,11 @@ public class ProcedureComponentSessionBean extends it.cnr.jada.ejb.GenericCompon
 		componentObj = new it.cnr.contab.util00.comp.ProcedureComponent();
 	}
 	@Remove
-	public void ejbRemove() throws javax.ejb.EJBException {
+	public void ejbRemove() throws jakarta.ejb.EJBException {
 		componentObj.release();
 	}
-	
-	public static ProcedureComponentSessionBean newInstance() throws EJBException {
-		return new ProcedureComponentSessionBean();
-	}
-	
-	public void aggiornaApprovazioneFormale(it.cnr.jada.UserContext param0, java.util.List param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+	public void aggiornaApprovazioneFormale(it.cnr.jada.UserContext param0, java.util.List param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(null,componentObj);
 		try {
 			componentObj.aggiornaApprovazioneFormale(param0, param1);
@@ -48,7 +44,7 @@ public class ProcedureComponentSessionBean extends it.cnr.jada.ejb.GenericCompon
 			throw uncaughtError(null,componentObj,e);
 		}
 	}
-	public void aggiornaApprovazioneFormale(it.cnr.jada.UserContext param0,it.cnr.jada.persistency.sql.CompoundFindClause param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void aggiornaApprovazioneFormale(it.cnr.jada.UserContext param0,it.cnr.jada.persistency.sql.CompoundFindClause param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(null,componentObj);
 		try {
 			componentObj.aggiornaApprovazioneFormale(param0, param1);
@@ -59,7 +55,7 @@ public class ProcedureComponentSessionBean extends it.cnr.jada.ejb.GenericCompon
 			throw uncaughtError(null,componentObj,e);
 		}
 	}
-	public void aggiornaApponiVisto(it.cnr.jada.UserContext param0, java.util.List param1, it.cnr.contab.config00.sto.bulk.DipartimentoBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void aggiornaApponiVisto(it.cnr.jada.UserContext param0, java.util.List param1, it.cnr.contab.config00.sto.bulk.DipartimentoBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(null,componentObj);
 		try {
 			componentObj.aggiornaApponiVisto(param0, param1, param2);
@@ -70,7 +66,7 @@ public class ProcedureComponentSessionBean extends it.cnr.jada.ejb.GenericCompon
 			throw uncaughtError(null,componentObj,e);
 		}
 	}
-	public void aggiornaApponiVisto(it.cnr.jada.UserContext param0,it.cnr.jada.persistency.sql.CompoundFindClause param1, it.cnr.contab.config00.sto.bulk.DipartimentoBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void aggiornaApponiVisto(it.cnr.jada.UserContext param0,it.cnr.jada.persistency.sql.CompoundFindClause param1, it.cnr.contab.config00.sto.bulk.DipartimentoBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(null,componentObj);
 		try {
 			componentObj.aggiornaApponiVisto(param0, param1, param2);
@@ -81,7 +77,7 @@ public class ProcedureComponentSessionBean extends it.cnr.jada.ejb.GenericCompon
 			throw uncaughtError(null,componentObj,e);
 		}
 	}
-	public it.cnr.contab.preventvar00.bulk.Var_bilancioBulk salvaDefinitivo(it.cnr.jada.UserContext param0,it.cnr.contab.preventvar00.bulk.Var_bilancioBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.preventvar00.bulk.Var_bilancioBulk salvaDefinitivo(it.cnr.jada.UserContext param0,it.cnr.contab.preventvar00.bulk.Var_bilancioBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.preventvar00.bulk.Var_bilancioBulk result = (new it.cnr.contab.preventvar00.comp.VarBilancioComponent()).salvaDefinitivo(param0,param1);

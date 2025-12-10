@@ -333,7 +333,7 @@ public Long getNextPgScadenza()
 		if ( scadenza.getPg_accertamento_scadenzario() != null && scadenza.getPg_accertamento_scadenzario().longValue() > max )
 			max = scadenza.getPg_accertamento_scadenzario().longValue();
 	}
-	return new Long( max + 1);
+	return Long.valueOf( max + 1);
 }
 public java.lang.Long getPg_doc_contabile() {
 	return getPg_accertamento();
@@ -1210,7 +1210,7 @@ public void setCd_cds(java.lang.String cd_cds) {
 	public void caricaAnniResidui(ActionContext actioncontext) {
 		IntStream.iterate(CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue(), i -> i - 1)
 				.limit(SpringUtil.getBean(UtilService.class).getAnniResidui())
-				.forEach(value -> anniResidui.put(new Integer(value), new Integer(value)));
+				.forEach(value -> anniResidui.put(Integer.valueOf(value), Integer.valueOf(value)));
 	}
 	/**
 	 * <!-- @TODO: da completare -->
@@ -1465,7 +1465,7 @@ public void setCd_cds(java.lang.String cd_cds) {
 						asv.getEsercizio(),
 						asv.getEsercizio_originale(),
 						asv.getPg_accertamento(),
-						new Long(1));
+						Long.valueOf(1));
 
 				totaleScad = (BigDecimal) prcImputazioneFinanziariaTable.get( key );
 				if ( totaleScad == null || totaleScad.compareTo(new BigDecimal(0)) == 0)

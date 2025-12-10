@@ -117,7 +117,7 @@ public it.cnr.jada.bulk.OggettoBulk initializeForSearch(
 	bulk.setTipo_stampa(TIPO_STAMPA_RIEPILOGATIVI);
 
 	bulk.setSezionaliFlag(SEZIONALI_FLAGS_ACQ);
-	bulk.setPageNumber(new Integer(1));
+	bulk.setPageNumber(Integer.valueOf(1));
 	
 	return bulk;
 }

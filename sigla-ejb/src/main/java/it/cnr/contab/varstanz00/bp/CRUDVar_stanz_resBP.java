@@ -29,8 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import javax.ejb.RemoveException;
-import javax.servlet.http.HttpSession;
+import jakarta.ejb.RemoveException;
 
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.sto.bulk.CdrBulk;
@@ -59,6 +58,7 @@ import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * @author mspasiano
@@ -256,7 +256,7 @@ public class CRUDVar_stanz_resBP extends SimpleCRUDBP {
 	protected void init(Config config, ActionContext actioncontext) throws BusinessProcessException {
 		try {
 			it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession configSession = (it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class);
-	        BigDecimal annoFrom = configSession.getIm01(actioncontext.getUserContext(), new Integer(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO);
+	        BigDecimal annoFrom = configSession.getIm01(actioncontext.getUserContext(), Integer.valueOf(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO);
 	        if (Optional.ofNullable(annoFrom).isPresent())
 	            setAnnoFromPianoEconomico(annoFrom.intValue());
 	    } catch (Throwable e) {

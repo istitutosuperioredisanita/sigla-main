@@ -31,22 +31,24 @@ import it.cnr.contab.web.rest.model.PasswordDTO;
 import it.cnr.contab.web.rest.resource.util.AbstractResource;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.util.ejb.EJBCommonServices;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.representations.IDToken;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Base64Utils;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import jakarta.ejb.Stateless;
+import jakarta.servlet.http.HttpServletRequest;
+import org.wildfly.security.auth.server.SecurityDomain;
+import org.wildfly.security.auth.server.SecurityIdentity;
+import org.wildfly.security.authz.Attributes;
+
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Stateless
 public class AccountResource implements AccountLocal {
@@ -56,21 +58,28 @@ public class AccountResource implements AccountLocal {
     SecurityContext securityContext;
 
     @EJB
-    private CRUDComponentSession crudComponentSession;
+    CRUDComponentSession crudComponentSession;
     @EJB
     private GestioneLoginComponentSession gestioneLoginComponentSession;
 
     public AccountDTO getAccountDTO(HttpServletRequest request) throws Exception {
         CNRUserContext userContext = AbstractResource.getUserContext(securityContext, request);
-        final Optional<SIGLALDAPPrincipal> siglaldapPrincipal = Optional.ofNullable(securityContext.getUserPrincipal())
-                .filter(SIGLALDAPPrincipal.class::isInstance)
-                .map(SIGLALDAPPrincipal.class::cast);
+
+        Attributes ldapAttributes = Optional.ofNullable(SecurityDomain.getCurrent())
+                .map(SecurityDomain::getCurrentSecurityIdentity)
+                .map(SecurityIdentity::getAttributes)
+                .orElse(Attributes.EMPTY);
+
+        /*
+        TODO KEYCLOAK WILDFLY
         final Optional<KeycloakPrincipal> keycloakPrincipal = Optional.ofNullable(securityContext.getUserPrincipal())
                 .filter(KeycloakPrincipal.class::isInstance)
                 .map(KeycloakPrincipal.class::cast);
 
+         */
+
         AccountDTO accountDTO = null;
-        if (siglaldapPrincipal.isPresent()) {
+        if (ldapAttributes.containsKey("mail")) {
             LOGGER.info("Try to find user: {}", securityContext.getUserPrincipal().getName());
             final List<UtenteBulk> findUtenteByUID = crudComponentSession.find(
                     userContext,
@@ -82,11 +91,11 @@ public class AccountResource implements AccountLocal {
             final Optional<UtenteBulk> utenteBulk1 = findUtenteByUID.stream().findFirst();
             if (utenteBulk1.isPresent()) {
                 accountDTO = new AccountDTO(utenteBulk1.get());
-                accountDTO.setLogin(siglaldapPrincipal.get().getName());
-                accountDTO.setUsers(findUtenteByUID.stream().map(utenteBulk -> new AccountDTO(utenteBulk)).collect(Collectors.toList()));
-                accountDTO.setEmail((String) siglaldapPrincipal.get().getAttribute("mail"));
-                accountDTO.setFirstName((String) siglaldapPrincipal.get().getAttribute("cnrnome"));
-                accountDTO.setLastName((String) siglaldapPrincipal.get().getAttribute("cnrcognome"));
+                accountDTO.setLogin(securityContext.getUserPrincipal().getName());
+                accountDTO.setUsers(findUtenteByUID.stream().map(AccountDTO::new).collect(Collectors.toList()));
+                accountDTO.setEmail(ldapAttributes.getFirst("mail"));
+                accountDTO.setFirstName(ldapAttributes.getFirst("cnrnome"));
+                accountDTO.setLastName(ldapAttributes.getFirst("cnrcognome"));
                 accountDTO.setLdap(Boolean.TRUE);
                 accountDTO.setAbilitatoLdap(Boolean.TRUE);
                 accountDTO.setUtenteMultiplo(findUtenteByUID.size() > 1);
@@ -95,6 +104,8 @@ public class AccountResource implements AccountLocal {
                 request.logout();
                 throw new UnprocessableEntityException("");
             }
+        /*
+        TODO KEYCLOAK WILDFLY
         } else if (keycloakPrincipal.isPresent()) {
             final IDToken idToken = Optional.ofNullable(keycloakPrincipal.get().getKeycloakSecurityContext().getIdToken())
                     .orElse(keycloakPrincipal.get().getKeycloakSecurityContext().getToken());
@@ -123,6 +134,8 @@ public class AccountResource implements AccountLocal {
             accountDTO.setUtenteMultiplo(findUtenteByUID.size() > 1);
             accountDTO.setLdap(Boolean.TRUE);
             accountDTO.setAbilitatoLdap(gestioneLoginComponentSession.isUtenteAbilitatoLdap(userContext, uid, Boolean.TRUE));
+
+         */
         } else {
             final UtenteBulk utenteBulk = (UtenteBulk) crudComponentSession.findByPrimaryKey(
                     userContext,
@@ -134,7 +147,7 @@ public class AccountResource implements AccountLocal {
             );
             accountDTO = new AccountDTO(utenteBulk);
             accountDTO.setLogin(securityContext.getUserPrincipal().getName());
-            accountDTO.setUsers(Arrays.asList(utenteBulk).stream().map(utente -> new AccountDTO(utente)).collect(Collectors.toList()));
+            accountDTO.setUsers(Stream.of(utenteBulk).map(AccountDTO::new).collect(Collectors.toList()));
             accountDTO.setLdap(Boolean.FALSE);
             accountDTO.setAbilitatoLdap(Boolean.FALSE);
             accountDTO.setUtenteMultiplo(Boolean.FALSE);

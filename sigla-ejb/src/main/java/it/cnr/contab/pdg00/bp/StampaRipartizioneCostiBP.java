@@ -19,7 +19,7 @@ package it.cnr.contab.pdg00.bp;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;

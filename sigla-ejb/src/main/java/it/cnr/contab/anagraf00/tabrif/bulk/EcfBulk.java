@@ -39,7 +39,7 @@ public class EcfBulk extends EcfBase {
 		if (date == null)
 			try {
 				date = it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp();
-			} catch (javax.ejb.EJBException e) {
+			} catch (jakarta.ejb.EJBException e) {
 				throw new it.cnr.jada.DetailedRuntimeException(e);
 			}
 			

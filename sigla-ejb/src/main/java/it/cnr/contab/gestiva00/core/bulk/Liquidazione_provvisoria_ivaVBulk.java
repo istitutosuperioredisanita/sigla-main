@@ -139,7 +139,7 @@ public OggettoBulk initializeForSearch(
 	
 	bulk.setTipo_report(PROVVISORIO);
 	bulk.setTipoSezionaleFlag(SEZIONALI_COMMERCIALI);
-	bulk.setPageNumber(new Integer(1));
+	bulk.setPageNumber(Integer.valueOf(1));
 
 	return bulk;
 }

@@ -50,12 +50,12 @@ public class PartitaIVAControllo extends CodiceFiscaleControllo {
 
   int aTotDispari=0;
   for(int idx=0;idx < codice.length() - 1; idx+=2)
-   aTotDispari+=(new Integer(codice.substring(idx,idx+1))).intValue();
+   aTotDispari+=(Integer.valueOf(codice.substring(idx,idx+1))).intValue();
 
   int x=0;
   int aTot=aTotDispari;
   for(int idx=1;idx < codice.length(); idx+=2) {
-   x=(new Integer(codice.substring(idx,idx+1))).intValue()*2;
+   x=(Integer.valueOf(codice.substring(idx,idx+1))).intValue()*2;
    aTot+=x/10 + x%10;
   }
 
@@ -91,16 +91,16 @@ public class PartitaIVAControllo extends CodiceFiscaleControllo {
 
   int aTotDispari=0;
   for(int idx=0;idx < codice.length() - 1; idx+=2)
-   aTotDispari+=(new Integer(codice.substring(idx,idx+1))).intValue();
+   aTotDispari+=(Integer.valueOf(codice.substring(idx,idx+1))).intValue();
 
   int x=0;
   int aTot=aTotDispari;
   for(int idx=1;idx < codice.length(); idx+=2) {
-   x=(new Integer(codice.substring(idx,idx+1))).intValue()*2;
+   x=(Integer.valueOf(codice.substring(idx,idx+1))).intValue()*2;
    aTot+=x/10 + x%10;
   }
 
-  int aCC=(new Integer(codice.substring(10,11))).intValue();
+  int aCC=(Integer.valueOf(codice.substring(10,11))).intValue();
   if ((aTot%10 == 0) && (aCC == 0))
    return;
   else if(10-aTot%10 == aCC)

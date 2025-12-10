@@ -84,11 +84,11 @@ public class ComuneHome extends BulkHome {
 
 public Long findNuovoProgressivo(ComuneBulk comune) throws BusyResourceException, PersistencyException, ValidationException{
 
-	Long maxValue = (Long)findAndLockMax(comune, "pg_comune", new Long(0));
-	Long x = new Long(maxValue.longValue()+1);
+	Long maxValue = (Long)findAndLockMax(comune, "pg_comune", Long.valueOf(0));
+	Long x = Long.valueOf(maxValue.longValue()+1);
 
 	if (x.longValue() < comune.PG_PRIMO_COMUNE_ESTERO)
-			x = new Long(comune.PG_PRIMO_COMUNE_ESTERO);
+			x = Long.valueOf(comune.PG_PRIMO_COMUNE_ESTERO);
 
 	return x;
 }

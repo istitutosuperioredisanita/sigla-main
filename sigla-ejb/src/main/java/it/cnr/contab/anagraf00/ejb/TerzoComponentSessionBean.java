@@ -26,8 +26,8 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.RemoteIterator;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 @Stateless(name="CNRANAGRAF00_EJB_TerzoComponentSession")
 public class TerzoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements TerzoComponentSession {
@@ -35,10 +35,8 @@ public class TerzoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.anagraf00.comp.TerzoComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new TerzoComponentSessionBean();
-}
-public it.cnr.jada.util.RemoteIterator cercaBanchePerTerzoCessionario(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.Modalita_pagamentoBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,javax.ejb.EJBException {
+
+public it.cnr.jada.util.RemoteIterator cercaBanchePerTerzoCessionario(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.Modalita_pagamentoBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.util.RemoteIterator result = ((TerzoComponent)componentObj).cercaBanchePerTerzoCessionario(param0,param1);
@@ -59,7 +57,7 @@ public it.cnr.jada.util.RemoteIterator cercaBanchePerTerzoCessionario(it.cnr.jad
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.util.RemoteIterator cercaModalita_pagamento_disponibiliByClause(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.TerzoBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,javax.ejb.EJBException {
+public it.cnr.jada.util.RemoteIterator cercaModalita_pagamento_disponibiliByClause(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.TerzoBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.util.RemoteIterator result = ((TerzoComponent)componentObj).cercaModalita_pagamento_disponibiliByClause(param0,param1);
@@ -80,7 +78,7 @@ public it.cnr.jada.util.RemoteIterator cercaModalita_pagamento_disponibiliByClau
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.contab.anagraf00.core.bulk.TerzoBulk cercaTerzoPerUnitaOrganizzativa(it.cnr.jada.UserContext param0,it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.anagraf00.core.bulk.TerzoBulk cercaTerzoPerUnitaOrganizzativa(it.cnr.jada.UserContext param0,it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.anagraf00.core.bulk.TerzoBulk result = ((TerzoComponent)componentObj).cercaTerzoPerUnitaOrganizzativa(param0,param1);
@@ -98,7 +96,7 @@ public it.cnr.contab.anagraf00.core.bulk.TerzoBulk cercaTerzoPerUnitaOrganizzati
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.contab.anagraf00.core.bulk.TerzoBulk inizializzaTerzoPerUnitaOrganizzativa(it.cnr.jada.UserContext param0,it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.anagraf00.core.bulk.TerzoBulk inizializzaTerzoPerUnitaOrganizzativa(it.cnr.jada.UserContext param0,it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.anagraf00.core.bulk.TerzoBulk result = ((TerzoComponent)componentObj).inizializzaTerzoPerUnitaOrganizzativa(param0,param1);
@@ -116,7 +114,7 @@ public it.cnr.contab.anagraf00.core.bulk.TerzoBulk inizializzaTerzoPerUnitaOrgan
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.contab.anagraf00.core.bulk.TerzoBulk setComune_sede(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.TerzoBulk param1,it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.anagraf00.core.bulk.TerzoBulk setComune_sede(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.TerzoBulk param1,it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.anagraf00.core.bulk.TerzoBulk result = ((TerzoComponent)componentObj).setComune_sede(param0,param1,param2);
@@ -134,7 +132,7 @@ public it.cnr.contab.anagraf00.core.bulk.TerzoBulk setComune_sede(it.cnr.jada.Us
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public java.util.List findListaTerziSIP(it.cnr.jada.UserContext param0,String param1,String param2,String param3,String param4) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public java.util.List findListaTerziSIP(it.cnr.jada.UserContext param0,String param1,String param2,String param3,String param4) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.util.List result = ((TerzoComponent)componentObj).findListaTerziSIP(param0,param1,param2,param3,param4);
@@ -152,7 +150,7 @@ public java.util.List findListaTerziSIP(it.cnr.jada.UserContext param0,String pa
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public java.util.List findNazioniIban(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.BancaBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public java.util.List findNazioniIban(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.BancaBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.util.List result = ((TerzoComponent)componentObj).findNazioniIban(param0,param1);
@@ -171,7 +169,7 @@ public java.util.List findNazioniIban(it.cnr.jada.UserContext param0,it.cnr.cont
 	}
 }
 
-public java.util.List findListaTerziSIP_rendicontazione(it.cnr.jada.UserContext param0,String param1,String param2,String param3,String param4,Timestamp param5,Timestamp param6,String param7) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public java.util.List findListaTerziSIP_rendicontazione(it.cnr.jada.UserContext param0,String param1,String param2,String param3,String param4,Timestamp param5,Timestamp param6,String param7) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.util.List result = ((TerzoComponent)componentObj).findListaTerziSIP_rendicontazione(param0,param1,param2,param3,param4,param5,param6,param7);
@@ -190,7 +188,7 @@ public java.util.List findListaTerziSIP_rendicontazione(it.cnr.jada.UserContext 
 	}
 }
 
-public it.cnr.contab.anagraf00.core.bulk.TerzoBulk completaTerzo(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.TerzoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.anagraf00.core.bulk.TerzoBulk completaTerzo(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.TerzoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.anagraf00.core.bulk.TerzoBulk result = ((TerzoComponent)componentObj).completaTerzo(param0,param1);

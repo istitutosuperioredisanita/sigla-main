@@ -104,7 +104,7 @@ public it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk getUoResp() {
  */
 public OggettoBulk initialize(it.cnr.jada.util.action.CRUDBP bp, it.cnr.jada.action.ActionContext context) {
 
-	this.setNr_inventario_iniziale(new Long(0));
+	this.setNr_inventario_iniziale(Long.valueOf(0));
 
 	return this;
 }

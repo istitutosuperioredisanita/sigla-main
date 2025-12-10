@@ -69,8 +69,8 @@ public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,Og
 	try{
 		OrdineBulk ordine = (OrdineBulk)bulk;
 
-		long pg = ((Long)findAndLockMax(ordine,"pg_ordine", new Long(0))).longValue() + 1;
-		ordine.setPg_ordine(new Long(pg));
+		long pg = ((Long)findAndLockMax(ordine,"pg_ordine", Long.valueOf(0))).longValue() + 1;
+		ordine.setPg_ordine(Long.valueOf(pg));
 
 	} catch(it.cnr.jada.bulk.BusyResourceException e) {
 		throw new it.cnr.jada.persistency.PersistencyException(e);

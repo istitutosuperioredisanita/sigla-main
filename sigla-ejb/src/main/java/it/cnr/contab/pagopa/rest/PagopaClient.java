@@ -3,19 +3,11 @@ package it.cnr.contab.pagopa.rest;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
-import feign.Response;
 import it.cnr.contab.pagopa.model.AggiornaPendenza;
 import it.cnr.contab.pagopa.model.MovimentoCassaPagopa;
 import it.cnr.contab.pagopa.model.Pendenza;
 import it.cnr.contab.pagopa.model.PendenzaResponse;
-import it.cnr.si.service.dto.anagrafica.letture.PersonaWebDto;
-import it.cnr.si.service.dto.anagrafica.scritture.PersonaDto;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 import java.util.ArrayList;
 
 @Headers({"Content-Type: application/json"})

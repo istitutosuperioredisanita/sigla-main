@@ -104,7 +104,7 @@ public void eliminaConBulk(UserContext userContext,OggettoBulk bulk) throws it.c
 				 el.getDt_ini_validita().compareTo(tratt.getDt_ini_validita())>=0 )
 				deleteBulk(userContext,el);
 		}
-	}catch(javax.ejb.EJBException ex){
+	}catch(jakarta.ejb.EJBException ex){
 		throw handleException(ex);
 	}catch(it.cnr.jada.persistency.PersistencyException ex){
 		throw handleException(ex);

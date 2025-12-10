@@ -439,7 +439,7 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 //			java.sql.Timestamp ts = it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp();
 //			nuovoRigo.setDt_da_competenza_coge((getDt_da_competenza_coge() == null)?ts : getDt_da_competenza_coge());
 //			nuovoRigo.setDt_a_competenza_coge((getDt_a_competenza_coge() == null)?ts : getDt_a_competenza_coge());
-//		} catch (javax.ejb.EJBException e) {
+//		} catch (jakarta.ejb.EJBException e) {
 //			throw new it.cnr.jada.DetailedRuntimeException(e);
 //		}	
 		nuovoRigo.setStato(OrdineAcqRigaBulk.STATO_INSERITA);
@@ -448,7 +448,7 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 			int prog = ((OrdineAcqConsegnaBulk)i.next()).getConsegna();
 			if (prog > max) max = prog;
 		}
-		nuovoRigo.setConsegna(new Integer(max+1));
+		nuovoRigo.setConsegna(Integer.valueOf(max+1));
 		righeConsegnaColl.add(nuovoRigo);
 		return righeConsegnaColl.size()-1;
 	}

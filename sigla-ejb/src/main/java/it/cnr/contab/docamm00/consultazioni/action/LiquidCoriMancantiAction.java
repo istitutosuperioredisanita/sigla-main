@@ -20,7 +20,7 @@ package it.cnr.contab.docamm00.consultazioni.action;
 import java.rmi.RemoteException;
 import java.sql.*;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 
 import it.cnr.contab.docamm00.consultazioni.bp.ConsLiquidCoriMancantiBP;
 import it.cnr.contab.docamm00.consultazioni.bulk.V_liquid_cori_mancantiBulk;

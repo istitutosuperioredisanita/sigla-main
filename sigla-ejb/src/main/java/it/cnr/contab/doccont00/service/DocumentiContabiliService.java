@@ -85,7 +85,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import javax.activation.DataSource;
+import jakarta.activation.DataSource;
 import java.io.*;
 import java.rmi.RemoteException;
 import java.security.Principal;
@@ -136,7 +136,7 @@ public class DocumentiContabiliService extends StoreService implements Initializ
     @Override
     public void afterPropertiesSet() throws Exception {
         this.userContext = new WSUserContext(SIOPEPLUS, null,
-                new Integer(Calendar.getInstance().get(Calendar.YEAR)),
+                Integer.valueOf(Calendar.getInstance().get(Calendar.YEAR)),
                 null, null, null);
         this.crudComponentSession = Optional.ofNullable(EJBCommonServices.createEJB("JADAEJB_CRUDComponentSession"))
                 .filter(CRUDComponentSession.class::isInstance)
@@ -313,7 +313,7 @@ public class DocumentiContabiliService extends StoreService implements Initializ
         for (String key : nodes) {
             StorageObject storageObject = getStorageObjectBykey(key);
             StorageDataSource dataSource = new StorageDataSource(storageObject);
-            email.attach(dataSource, dataSource.getName(), "", EmailAttachment.ATTACHMENT);
+            email.attach(new DataSourceAdapter(dataSource), dataSource.getName(), "", EmailAttachment.ATTACHMENT);
         }
         // send the email
         email.send();
@@ -357,7 +357,7 @@ public class DocumentiContabiliService extends StoreService implements Initializ
         for (String key : nodes) {
             StorageObject storageObject = getStorageObjectBykey(key);
             StorageDataSource dataSource = new StorageDataSource(storageObject);
-            email.attach(dataSource, dataSource.getName(), "", EmailAttachment.ATTACHMENT);
+            email.attach(new DataSourceAdapter(dataSource), dataSource.getName(), "", EmailAttachment.ATTACHMENT);
         }
         // send the email
         email.send();
@@ -528,7 +528,7 @@ public class DocumentiContabiliService extends StoreService implements Initializ
                 .orElseGet(() -> {
                     FlussoGiornaleDiCassaBulk flusso = new FlussoGiornaleDiCassaBulk(flussoGiornaleDiCassa.getEsercizio(), identificativoFlusso);
                     flusso.setUser(userContext.getUser());
-                    flusso.setCodiceAbiBt(new Long(flussoGiornaleDiCassa.getTestataMessaggio().getCodiceABIBT()));
+                    flusso.setCodiceAbiBt(Long.valueOf(flussoGiornaleDiCassa.getTestataMessaggio().getCodiceABIBT()));
                     flusso.setDataOraCreazioneFlusso(new Timestamp(flussoGiornaleDiCassa.getTestataMessaggio().getDataOraCreazioneFlusso().toGregorianCalendar().getTime().getTime()));
                     flusso.setDataInizioPeriodoRif(
                             Optional.ofNullable(flussoGiornaleDiCassa.getDataRiferimentoGdC())
@@ -588,7 +588,7 @@ public class DocumentiContabiliService extends StoreService implements Initializ
                                 identificativoFlusso,
                                 informazioniContoEvidenza.getContoEvidenza(),
                                 "I",
-                                new Long(index.incrementAndGet()));
+                                Long.valueOf(index.incrementAndGet()));
                         movBulk.setTipoMovimento(movimentoContoEvidenza.getTipoMovimento());
                         movBulk.setTipoDocumento(movimentoContoEvidenza.getTipoDocumento());
                         movBulk.setTipoOperazione(movimentoContoEvidenza.getTipoOperazione());

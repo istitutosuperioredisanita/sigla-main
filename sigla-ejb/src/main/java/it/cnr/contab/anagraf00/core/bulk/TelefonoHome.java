@@ -40,8 +40,8 @@ public TelefonoHome(java.sql.Connection conn,PersistentCache persistentCache) {
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,OggettoBulk tel) throws PersistencyException {
 		try {
 			((TelefonoBulk)tel).setPg_riferimento(
-				new Long(
-					((Long)findAndLockMax( tel, "pg_riferimento", new Long(0) )).longValue()+1
+				Long.valueOf(
+					((Long)findAndLockMax( tel, "pg_riferimento", Long.valueOf(0) )).longValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

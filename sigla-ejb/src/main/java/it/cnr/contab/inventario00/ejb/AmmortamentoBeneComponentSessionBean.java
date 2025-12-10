@@ -26,11 +26,11 @@ import it.cnr.jada.bulk.PrimaryKeyHashtable;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -42,13 +42,11 @@ public class AmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.CRUDCo
 		componentObj = new AmmortamentoBeneComponent();
 	}
 	@Remove
-	public void ejbRemove() throws javax.ejb.EJBException {
+	public void ejbRemove() throws jakarta.ejb.EJBException {
 		componentObj.release();
 	}
 
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new AmmortamentoBeneComponentSessionBean();
-	}
+	
 
 	@Override
 	public Boolean isExistAmmortamentoEsercizio(UserContext param0, Integer param1)  throws RemoteException, InvocationTargetException {

@@ -55,9 +55,11 @@ import it.cnr.perlapa.incarico.consulente.PercettorePf;
 import it.cnr.perlapa.incarico.consulente.PercettorePg;
 import it.cnr.si.spring.storage.StoreService;
 import it.perla.accenture.com.anagrafeprestazioni_inserimentoincarichi.ConsulenteType.Incarico.RiferimentoNormativo;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -95,7 +97,7 @@ public class CRUDIncarichiEstrazioneFpBP extends SimpleCRUDBP {
 	 * Sovrascrive quello presente nelle superclassi
 	 * 
 	*/
-	public void openForm(javax.servlet.jsp.PageContext context,String action,String target) throws java.io.IOException,javax.servlet.ServletException {
+	public void openForm(PageContext context, String action, String target) throws java.io.IOException, ServletException {
 		openForm(context,action,target,"multipart/form-data");
 	}
 
@@ -479,7 +481,7 @@ public class CRUDIncarichiEstrazioneFpBP extends SimpleCRUDBP {
 		//ANNO DI RIFERIMENTO
 		Calendar dt_inizio = Calendar.getInstance();
 		dt_inizio.setTime(incarico.getDt_inizio_validita());
-		elementNuovoIncarico.setAnnoRiferimento(new Integer(dt_inizio.get(Calendar.YEAR)).intValue());
+		elementNuovoIncarico.setAnnoRiferimento(Integer.valueOf(dt_inizio.get(Calendar.YEAR)).intValue());
 
 		//SEMESTRE DI RIFERIMENTO
 		int semestreRiferimento;
@@ -694,7 +696,7 @@ public class CRUDIncarichiEstrazioneFpBP extends SimpleCRUDBP {
 		String attivitaEconomica;
 
 		Incarichi_archivio_xml_fpBulk archivioXmlPerlaFP = (Incarichi_archivio_xml_fpBulk)getModel();
-		if (archivioXmlPerlaFP.getEsercizio().compareTo(new Integer(2010)) == 1){
+		if (archivioXmlPerlaFP.getEsercizio().compareTo(Integer.valueOf(2010)) == 1){
 			if (incarico.getIncarichi_procedura().getTipo_attivita_fp()!=null && incarico.getIncarichi_procedura().getTipo_attivita_fp().getCd_tipo_attivita()!=null)
 				attivitaEconomica=incarico.getIncarichi_procedura().getTipo_attivita_fp().getCd_tipo_attivita();
 			else
@@ -738,9 +740,9 @@ public class CRUDIncarichiEstrazioneFpBP extends SimpleCRUDBP {
 		GregorianCalendar gcds = new GregorianCalendar(), dtLimite = new GregorianCalendar();
 		
 		if (archivioXmlPerlaFP.getSemestre().equals(Incarichi_archivio_xml_fpBulk.PRIMO_SEMESTRE))
-			dtLimite = new GregorianCalendar((archivioXmlPerlaFP.getEsercizio()-1),GregorianCalendar.JULY,new Integer(1));
+			dtLimite = new GregorianCalendar((archivioXmlPerlaFP.getEsercizio()-1),GregorianCalendar.JULY,Integer.valueOf(1));
 		else
-			dtLimite = new GregorianCalendar(archivioXmlPerlaFP.getEsercizio(),GregorianCalendar.JANUARY,new Integer(1));
+			dtLimite = new GregorianCalendar(archivioXmlPerlaFP.getEsercizio(),GregorianCalendar.JANUARY,Integer.valueOf(1));
 
 		if (v_incarico.getDt_stipula().before(dtLimite.getTime()) && dtLimite.getTime().before(v_incarico.getDt_inizio_validita()))
 			gcds.setTime(dtLimite.getTime());
@@ -1203,8 +1205,8 @@ public class CRUDIncarichiEstrazioneFpBP extends SimpleCRUDBP {
 					it.perla.accenture.com.anagrafeprestazioni_inserimentoincarichi.EsitoConsulenteType nuovoConsulenteEsito = (it.perla.accenture.com.anagrafeprestazioni_inserimentoincarichi.EsitoConsulenteType) iterator.next();
 
 					if (nuovoConsulenteEsito.getEsito().equals(it.perla.accenture.com.anagrafeprestazioni_inserimentoincarichi.EsitoType.OK)) {
-						int esercizio_repertorio = new Integer(nuovoConsulenteEsito.getIdMittente().substring(0,4)); 
-						Long pg_repertorio = new Long(nuovoConsulenteEsito.getIdMittente().substring(5)); 
+						int esercizio_repertorio = Integer.valueOf(nuovoConsulenteEsito.getIdMittente().substring(0,4)); 
+						Long pg_repertorio = Long.valueOf(nuovoConsulenteEsito.getIdMittente().substring(5)); 
 						CompoundFindClause parzClause = new CompoundFindClause();
 						parzClause.setLogicalOperator(FindClause.OR);
 						parzClause.addClause(FindClause.AND,"esercizio",SQLBuilder.EQUALS,esercizio_repertorio);
@@ -1234,8 +1236,8 @@ public class CRUDIncarichiEstrazioneFpBP extends SimpleCRUDBP {
 						}
 					}
 					if (estrai) {
-						int esercizio_repertorio = new Integer(nuovoIncarico.getDescrizioneIncarico().substring(1,5)); 
-						Long pg_repertorio = new Long(nuovoIncarico.getDescrizioneIncarico().substring(6,nuovoIncarico.getDescrizioneIncarico().indexOf(")"))); 
+						int esercizio_repertorio = Integer.valueOf(nuovoIncarico.getDescrizioneIncarico().substring(1,5)); 
+						Long pg_repertorio = Long.valueOf(nuovoIncarico.getDescrizioneIncarico().substring(6,nuovoIncarico.getDescrizioneIncarico().indexOf(")"))); 
 						CompoundFindClause parzClause = new CompoundFindClause();
 						parzClause.setLogicalOperator(FindClause.OR);
 						parzClause.addClause(FindClause.AND,"esercizio",SQLBuilder.EQUALS,esercizio_repertorio);

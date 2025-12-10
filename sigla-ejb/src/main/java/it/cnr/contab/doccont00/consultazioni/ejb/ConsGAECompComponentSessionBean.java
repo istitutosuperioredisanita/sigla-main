@@ -17,8 +17,8 @@
 
 package it.cnr.contab.doccont00.consultazioni.ejb;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.doccont00.consultazioni.comp.ConsGAECompComponent;
 
@@ -29,10 +29,8 @@ public class ConsGAECompComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.doccont00.consultazioni.comp.ConsGAECompComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new ConsGAECompComponentSessionBean();
-	}
-	public it.cnr.jada.util.RemoteIterator findConsultazioneEtr(it.cnr.jada.UserContext param0, java.lang.String param1, java.lang.String param2, it.cnr.jada.persistency.sql.CompoundFindClause param3,it.cnr.jada.persistency.sql.CompoundFindClause param4) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+	public it.cnr.jada.util.RemoteIterator findConsultazioneEtr(it.cnr.jada.UserContext param0, java.lang.String param1, java.lang.String param2, it.cnr.jada.persistency.sql.CompoundFindClause param3,it.cnr.jada.persistency.sql.CompoundFindClause param4) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.util.RemoteIterator result = ((ConsGAECompComponent)componentObj).findConsultazioneEtr(param0,param1,param2,param3,param4);
@@ -50,7 +48,7 @@ public class ConsGAECompComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.jada.util.RemoteIterator findConsultazioneSpe(it.cnr.jada.UserContext param0, java.lang.String param1, java.lang.String param2, it.cnr.jada.persistency.sql.CompoundFindClause param3,it.cnr.jada.persistency.sql.CompoundFindClause param4) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.jada.util.RemoteIterator findConsultazioneSpe(it.cnr.jada.UserContext param0, java.lang.String param1, java.lang.String param2, it.cnr.jada.persistency.sql.CompoundFindClause param3,it.cnr.jada.persistency.sql.CompoundFindClause param4) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.util.RemoteIterator result = ((ConsGAECompComponent)componentObj).findConsultazioneSpe(param0,param1,param2,param3,param4);

@@ -1,11 +1,11 @@
 package it.cnr.contab.web.rest.model;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.contab.util.ApplicationMessageFormatException;
 import it.cnr.jada.DetailedRuntimeException;
 
-@ApiModel( "Il tipo di gestione Spesa/Entrata o Entrambe")
+@Schema( description = "Il tipo di gestione Spesa/Entrata o Entrambe")
 public enum EnumStatoObbligazione {
     PROVVISORIO(ObbligazioneBulk.STATO_OBB_PROVVISORIO),
     DEFINITIVO(ObbligazioneBulk.STATO_OBB_DEFINITIVO),

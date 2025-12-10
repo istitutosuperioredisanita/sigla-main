@@ -20,7 +20,7 @@ package it.cnr.contab.pdg00.consultazioni.action;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 
 import it.cnr.contab.pdg00.consultazioni.bp.ConsCostiDelPersonaleMensileBP;
 import it.cnr.contab.pdg00.consultazioni.bp.ConsCostiDelPersonaleMensileDettBP;

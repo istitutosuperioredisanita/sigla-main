@@ -21,7 +21,7 @@ package it.cnr.contab.compensi00.ejb;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.compensi00.docs.bulk.BonusBulk;
 import it.cnr.contab.compensi00.docs.bulk.Bonus_nucleo_famBulk;

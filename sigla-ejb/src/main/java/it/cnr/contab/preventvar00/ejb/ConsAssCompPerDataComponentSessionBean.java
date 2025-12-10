@@ -19,8 +19,8 @@ package it.cnr.contab.preventvar00.ejb;
 
 import java.rmi.RemoteException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.preventvar00.comp.ConsAssCompPerDataComponent;
 import it.cnr.contab.preventvar00.consultazioni.bulk.V_cons_ass_comp_per_dataBulk;
@@ -38,9 +38,7 @@ public class ConsAssCompPerDataComponentSessionBean extends it.cnr.jada.ejb.CRUD
 	public void ejbCreate() {
 		componentObj = new ConsAssCompPerDataComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new ConsAssCompPerDataComponentSessionBean();
-	}
+
 
 public it.cnr.jada.util.RemoteIterator findVariazioniDettaglio(it.cnr.jada.UserContext param0, java.lang.String param1, java.lang.String param2, it.cnr.jada.persistency.sql.CompoundFindClause param3,it.cnr.jada.persistency.sql.CompoundFindClause param4, OggettoBulk param5) 
 		throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException {

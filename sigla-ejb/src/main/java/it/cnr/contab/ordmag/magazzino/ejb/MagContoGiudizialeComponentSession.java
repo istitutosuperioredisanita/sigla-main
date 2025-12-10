@@ -27,7 +27,7 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 import java.rmi.RemoteException;
 
 @Remote

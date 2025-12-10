@@ -49,7 +49,7 @@ public AbstractEstrazioneFiscaleBP(String function) {
  * @throws RemoteException	Se si verifica qualche eccezione di sistema per cui non è possibile effettuare l'operazione
  */
 public CompensoComponentSession createComponentSession()
-	throws javax.ejb.EJBException,
+	throws jakarta.ejb.EJBException,
 			java.rmi.RemoteException,
 			BusinessProcessException {
 	return (CompensoComponentSession)createComponentSession("CNRCOMPENSI00_EJB_CompensoComponentSession",CompensoComponentSession.class);

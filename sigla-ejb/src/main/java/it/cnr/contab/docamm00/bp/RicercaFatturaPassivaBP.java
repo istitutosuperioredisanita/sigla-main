@@ -24,8 +24,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
-import javax.servlet.ServletException;
-import javax.servlet.jsp.PageContext;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
@@ -79,14 +80,14 @@ public class RicercaFatturaPassivaBP extends BusinessProcess implements Response
 	}
 	private Element generaNumeroFatture(Document xmldoc){
 		Element e = xmldoc.createElement("numris");
-		Node n = xmldoc.createTextNode(new Integer(getFatture().size()).toString());
+		Node n = xmldoc.createTextNode(Integer.valueOf(getFatture().size()).toString());
     	e.appendChild(n);
     	return e;	
 	}
-	public void generaXML(PageContext pagecontext) throws IOException, ServletException{
+	public void generaXML(PageContext pagecontext) throws IOException, ServletException {
 		try {
 			if (getNumMax()==null)
-				setNumMax(new Integer(20));
+				setNumMax(Integer.valueOf(20));
 	    	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 	    	DocumentBuilder builder = factory.newDocumentBuilder();
 	    	DOMImplementation impl = builder.getDOMImplementation();

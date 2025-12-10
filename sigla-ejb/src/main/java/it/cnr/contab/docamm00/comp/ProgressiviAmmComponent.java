@@ -21,7 +21,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
 import it.cnr.contab.docamm00.docs.bulk.*;
@@ -102,12 +102,12 @@ public Long getNextPG (UserContext userContext,Numerazione_doc_ammBulk progressi
 				progressivo.setCd_unita_organizzativa(cdUnitaOrg);
 			} 
 			progressivo.setUser(userContext.getUser());
-			pgCorrente = new Long(1);
+			pgCorrente = Long.valueOf(1);
 			progressivo.setCorrente(pgCorrente);
 			home.insert(progressivo, userContext);
 			return pgCorrente;
 		}
-		pgCorrente = new Long(progressivo.getCorrente().longValue()+1);
+		pgCorrente = Long.valueOf(progressivo.getCorrente().longValue()+1);
 		progressivo.setCorrente(pgCorrente);
 		progressivo.setUser(userContext.getUser());
 		home.lock(progressivo);

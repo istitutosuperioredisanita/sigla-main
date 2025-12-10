@@ -251,7 +251,7 @@ public class Parametri_enteComponent extends CRUDComponent {
 		try{
 			Parametri_enteBulk parametriEnte = getParametriEnte(userContext);
 			if (Optional.ofNullable(parametriEnte).map(el->el.getFl_prg_pianoeco()).orElse(Boolean.FALSE)) {
-				BigDecimal annoFrom = Utility.createConfigurazioneCnrComponentSession().getIm01(userContext, new Integer(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO);
+				BigDecimal annoFrom = Utility.createConfigurazioneCnrComponentSession().getIm01(userContext, Integer.valueOf(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO);
 				return Optional.ofNullable(annoFrom).map(BigDecimal::intValue).map(el->el.compareTo(esercizio)<=0).orElse(Boolean.FALSE);
 			}
 			return Boolean.FALSE;

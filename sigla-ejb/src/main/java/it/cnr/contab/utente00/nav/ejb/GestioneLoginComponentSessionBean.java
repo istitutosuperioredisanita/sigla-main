@@ -24,10 +24,10 @@ import it.cnr.contab.utenze00.bulk.SessionTraceBulk;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.jada.UserContext;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
 import java.security.Principal;
 import java.util.List;
 
@@ -35,21 +35,17 @@ import java.util.List;
 public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericComponentSessionBean implements GestioneLoginComponentSession {
     private it.cnr.contab.utente00.nav.comp.GestioneLoginComponent componentObj;
 
-    public static GestioneLoginComponentSessionBean newInstance() throws EJBException {
-        return new GestioneLoginComponentSessionBean();
-    }
-
     @PostConstruct
     public void ejbCreate() {
         componentObj = new it.cnr.contab.utente00.nav.comp.GestioneLoginComponent();
     }
 
     @Remove
-    public void ejbRemove() throws javax.ejb.EJBException {
+    public void ejbRemove() throws jakarta.ejb.EJBException {
         componentObj.release();
     }
 
-    public it.cnr.contab.utenze00.bulk.UtenteBulk cambiaPassword(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1, java.lang.String param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.utenze00.bulk.UtenteBulk cambiaPassword(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1, java.lang.String param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.utenze00.bulk.UtenteBulk result = componentObj.cambiaPassword(param0, param1, param2);
@@ -68,7 +64,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public boolean controllaAccesso(it.cnr.jada.UserContext param0, java.lang.String param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean controllaAccesso(it.cnr.jada.UserContext param0, java.lang.String param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             boolean result = componentObj.controllaAccesso(param0, param1);
@@ -87,7 +83,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public it.cnr.contab.utenze00.bulk.Albero_mainBulk generaAlberoPerUtente(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1, java.lang.String param2, java.lang.String param3, short param4) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.utenze00.bulk.Albero_mainBulk generaAlberoPerUtente(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1, java.lang.String param2, java.lang.String param3, short param4) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.utenze00.bulk.Albero_mainBulk result = componentObj.generaAlberoPerUtente(param0, param1, param2, param3, param4);
@@ -106,7 +102,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public void leggiMessaggi(it.cnr.jada.UserContext param0, it.cnr.contab.messaggio00.bulk.MessaggioBulk[] param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void leggiMessaggi(it.cnr.jada.UserContext param0, it.cnr.contab.messaggio00.bulk.MessaggioBulk[] param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             componentObj.leggiMessaggi(param0, param1);
@@ -124,7 +120,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public java.lang.Integer[] listaEserciziPerUtente(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.lang.Integer[] listaEserciziPerUtente(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.lang.Integer[] result = componentObj.listaEserciziPerUtente(param0, param1);
@@ -143,7 +139,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public it.cnr.jada.util.RemoteIterator listaMessaggi(it.cnr.jada.UserContext param0, java.lang.String param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.util.RemoteIterator listaMessaggi(it.cnr.jada.UserContext param0, java.lang.String param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.util.RemoteIterator result = componentObj.listaMessaggi(param0, param1);
@@ -162,7 +158,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public it.cnr.jada.util.RemoteIterator listaUOPerUtente(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1, java.lang.Integer param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.util.RemoteIterator listaUOPerUtente(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1, java.lang.Integer param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.util.RemoteIterator result = componentObj.listaUOPerUtente(param0, param1, param2);
@@ -181,7 +177,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public it.cnr.jada.util.RemoteIterator listaCdrPerUtente(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1, java.lang.Integer param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.util.RemoteIterator listaCdrPerUtente(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1, java.lang.Integer param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.util.RemoteIterator result = componentObj.listaCdrPerUtente(param0, param1, param2);
@@ -200,7 +196,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public void notificaMessaggi(it.cnr.jada.UserContext param0, java.lang.String param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void notificaMessaggi(it.cnr.jada.UserContext param0, java.lang.String param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             componentObj.notificaMessaggi(param0, param1);
@@ -218,7 +214,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public void registerUser(it.cnr.jada.UserContext param0, java.lang.String param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void registerUser(it.cnr.jada.UserContext param0, java.lang.String param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             componentObj.registerUser(param0, param1);
@@ -236,9 +232,9 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public void unregisterUser(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
-        pre_component_invocation(param0, componentObj);
+    public void unregisterUser(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         try {
+            pre_component_invocation(param0, componentObj);
             componentObj.unregisterUser(param0);
             component_invocation_succes(param0, componentObj);
         } catch (it.cnr.jada.comp.NoRollbackException e) {
@@ -248,13 +244,13 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
             component_invocation_failure(param0, componentObj);
             throw e;
         } catch (RuntimeException e) {
-            throw uncaughtRuntimeException(param0, componentObj, e);
+
         } catch (Error e) {
             throw uncaughtError(param0, componentObj, e);
         }
     }
 
-    public void unregisterUsers(java.lang.String param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void unregisterUsers(java.lang.String param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(null, componentObj);
         try {
             componentObj.unregisterUsers(param0);
@@ -266,7 +262,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public java.lang.String validaBPPerUtente(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1, java.lang.String param2, java.lang.String param3) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.lang.String validaBPPerUtente(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1, java.lang.String param2, java.lang.String param3) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.lang.String result = componentObj.validaBPPerUtente(param0, param1, param2, param3);
@@ -285,7 +281,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public java.lang.Boolean isBPEnableForUser(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1, java.lang.String param2, java.lang.String param3) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.lang.Boolean isBPEnableForUser(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1, java.lang.String param2, java.lang.String param3) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.lang.Boolean result = componentObj.isBPEnableForUser(param0, param1, param2, param3);
@@ -304,7 +300,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public it.cnr.contab.utenze00.bulk.Albero_mainBulk validaNodoPerUtente(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1, java.lang.String param2, java.lang.String param3) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.utenze00.bulk.Albero_mainBulk validaNodoPerUtente(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1, java.lang.String param2, java.lang.String param3) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.utenze00.bulk.Albero_mainBulk result = componentObj.validaNodoPerUtente(param0, param1, param2, param3);
@@ -323,7 +319,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public it.cnr.contab.utenze00.bulk.UtenteBulk validaUtente(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.utenze00.bulk.UtenteBulk validaUtente(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.utenze00.bulk.UtenteBulk result = componentObj.validaUtente(param0, param1);
@@ -342,7 +338,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public it.cnr.contab.utenze00.bulk.UtenteBulk validaUtente(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1, int param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.utenze00.bulk.UtenteBulk validaUtente(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1, int param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.utenze00.bulk.UtenteBulk result = componentObj.validaUtente(param0, param1, param2);
@@ -361,7 +357,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public java.util.List utentiMultipli(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.util.List utentiMultipli(it.cnr.jada.UserContext param0, it.cnr.contab.utenze00.bulk.UtenteBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.util.List result = componentObj.utentiMultipli(param0, param1);
@@ -380,7 +376,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public boolean isUtenteAbilitatoLdap(it.cnr.jada.UserContext param0, String param1, boolean param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isUtenteAbilitatoLdap(it.cnr.jada.UserContext param0, String param1, boolean param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             boolean result = componentObj.isUtenteAbilitatoLdap(param0, param1, param2);
@@ -399,7 +395,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public void cambiaAbilitazioneUtente(it.cnr.jada.UserContext param0, String param1, boolean param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void cambiaAbilitazioneUtente(it.cnr.jada.UserContext param0, String param1, boolean param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             componentObj.cambiaAbilitazioneUtente(param0, param1, param2);
@@ -417,7 +413,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public List<SessionTraceBulk> sessionList(UserContext param0, String param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public List<SessionTraceBulk> sessionList(UserContext param0, String param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             List<SessionTraceBulk> result = componentObj.sessionList(param0, param1);
@@ -436,7 +432,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public CdrBulk cdrDaUo(it.cnr.jada.UserContext param0, Unita_organizzativaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public CdrBulk cdrDaUo(it.cnr.jada.UserContext param0, Unita_organizzativaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             CdrBulk result = componentObj.cdrDaUo(param0, param1);
@@ -455,7 +451,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public List<PreferitiBulk> preferitiList(UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public List<PreferitiBulk> preferitiList(UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             List<PreferitiBulk> result = componentObj.preferitiList(param0);
@@ -512,7 +508,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public java.lang.Boolean isUserAccessoAllowed(UserContext param0, String... param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.lang.Boolean isUserAccessoAllowed(UserContext param0, String... param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.lang.Boolean result = componentObj.isUserAccessoAllowed(param0, param1);
@@ -531,7 +527,7 @@ public class GestioneLoginComponentSessionBean extends it.cnr.jada.ejb.GenericCo
         }
     }
 
-    public java.lang.Boolean isUserAccessoAllowed(Principal param0, Integer param1, String param2, String param3, String... param4) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.lang.Boolean isUserAccessoAllowed(Principal param0, Integer param1, String param2, String param3, String... param4) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(null, componentObj);
         try {
             java.lang.Boolean result = componentObj.isUserAccessoAllowed(param0, param1, param2, param3, param4);

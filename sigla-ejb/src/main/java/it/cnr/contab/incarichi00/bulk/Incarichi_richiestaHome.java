@@ -37,8 +37,8 @@ public class Incarichi_richiestaHome extends BulkHome {
 		try {
 			((Incarichi_richiestaBulk)bulk).setEsercizio(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
 			((Incarichi_richiestaBulk)bulk).setPg_richiesta(
-					new Long(
-					((Long)findAndLockMax( bulk, "pg_richiesta", new Long(0) )).longValue()+1
+					Long.valueOf(
+					((Long)findAndLockMax( bulk, "pg_richiesta", Long.valueOf(0) )).longValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

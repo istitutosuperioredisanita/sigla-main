@@ -31,18 +31,16 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.NoRollbackException;
 import it.cnr.jada.persistency.PersistencyException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.*;
 @Stateless(name="CNRPREVENT01_EJB_PdgContrSpeseComponentSession")
 public class PdgContrSpeseComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements PdgContrSpeseComponentSession {
 @PostConstruct
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.prevent01.comp.PdgContrSpeseComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-	return new PdgContrSpeseComponentSessionBean();
-}
-public it.cnr.jada.bulk.OggettoBulk inizializzaDettagliBulkPerModifica(it.cnr.jada.UserContext param0, Contrattazione_speseVirtualBulk param1, Pdg_approvato_dip_areaBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public it.cnr.jada.bulk.OggettoBulk inizializzaDettagliBulkPerModifica(it.cnr.jada.UserContext param0, Contrattazione_speseVirtualBulk param1, Pdg_approvato_dip_areaBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((PdgContrSpeseComponent)componentObj).inizializzaDettagliBulkPerModifica(param0,param1,param2);

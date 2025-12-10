@@ -84,18 +84,18 @@ public static final int NOVEMBRE = 11;
 public static final int DICEMBRE = 12;
 
 static {
-	meseKeys.put(new Integer(GENNAIO),"Gennaio");
-	meseKeys.put(new Integer(FEBBRAIO),"Febbraio");
-	meseKeys.put(new Integer(MARZO),"Marzo");
-	meseKeys.put(new Integer(APRILE),"Aprile");
-	meseKeys.put(new Integer(MAGGIO),"Maggio");
-	meseKeys.put(new Integer(GIUGNO),"Giugno");
-	meseKeys.put(new Integer(LUGLIO),"Luglio");
-	meseKeys.put(new Integer(AGOSTO),"Agosto");
-	meseKeys.put(new Integer(SETTEMBRE),"Settembre");
-	meseKeys.put(new Integer(OTTOBRE),"Ottobre");
-	meseKeys.put(new Integer(NOVEMBRE),"Novembre");
-	meseKeys.put(new Integer(DICEMBRE),"Dicembre");
+	meseKeys.put(Integer.valueOf(GENNAIO),"Gennaio");
+	meseKeys.put(Integer.valueOf(FEBBRAIO),"Febbraio");
+	meseKeys.put(Integer.valueOf(MARZO),"Marzo");
+	meseKeys.put(Integer.valueOf(APRILE),"Aprile");
+	meseKeys.put(Integer.valueOf(MAGGIO),"Maggio");
+	meseKeys.put(Integer.valueOf(GIUGNO),"Giugno");
+	meseKeys.put(Integer.valueOf(LUGLIO),"Luglio");
+	meseKeys.put(Integer.valueOf(AGOSTO),"Agosto");
+	meseKeys.put(Integer.valueOf(SETTEMBRE),"Settembre");
+	meseKeys.put(Integer.valueOf(OTTOBRE),"Ottobre");
+	meseKeys.put(Integer.valueOf(NOVEMBRE),"Novembre");
+	meseKeys.put(Integer.valueOf(DICEMBRE),"Dicembre");
 }
 /**
  * @param dictionary

@@ -21,7 +21,7 @@ import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.Modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 
-import javax.persistence.Transient;
+import jakarta.persistence.Transient;
 
 //Classe utilizzata per gestire la creazione automatica dei mandati/reversali
 public class DocumentoGenericoWizardBulk extends Documento_genericoBulk {

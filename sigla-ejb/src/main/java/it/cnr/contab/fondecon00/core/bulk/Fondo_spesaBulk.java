@@ -145,7 +145,7 @@ public java.sql.Timestamp getCurrentDate() {
 
 	try {
 		return it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
-	} catch (javax.ejb.EJBException e) {
+	} catch (jakarta.ejb.EJBException e) {
 		throw new it.cnr.jada.DetailedRuntimeException(e);
 	}	
 }
@@ -155,7 +155,7 @@ public static java.util.Calendar getDateCalendar(java.sql.Timestamp date) {
 	if (date == null)
 		try {
 			date = it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp();
-		} catch (javax.ejb.EJBException e) {
+		} catch (jakarta.ejb.EJBException e) {
 			throw new it.cnr.jada.DetailedRuntimeException(e);
 		}
 		

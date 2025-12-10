@@ -19,7 +19,7 @@ package it.cnr.contab.doccont00.ejb;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;

@@ -42,13 +42,10 @@ import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.util.action.FormBP;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.adapters.RefreshableKeycloakSecurityContext;
-import org.keycloak.representations.IDToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.rmi.RemoteException;
 import java.security.Principal;
 import java.text.ParseException;
@@ -80,7 +77,7 @@ public class LoginAction extends it.cnr.jada.util.action.BulkAction {
      * @throws EJBException    Se si verifica qualche eccezione applicativa per cui non è possibile effettuare l'operazione
      * @throws RemoteException Se si verifica qualche eccezione di sistema per cui non è possibile effettuare l'operazione
      */
-    public static GestioneLoginComponentSession getComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+    public static GestioneLoginComponentSession getComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
         return (GestioneLoginComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRUTENZE00_NAV_EJB_GestioneLoginComponentSession", GestioneLoginComponentSession.class);
     }
 
@@ -314,6 +311,8 @@ public class LoginAction extends it.cnr.jada.util.action.BulkAction {
 
     public Forward doLogout(ActionContext context) {
         context.invalidateSession();
+        /*
+        TODO KEYCLOAK WILDFLY
         final Optional<KeycloakPrincipal> principalOptional = Optional.ofNullable(context)
                 .filter(HttpActionContext.class::isInstance)
                 .map(HttpActionContext.class::cast)
@@ -329,6 +328,7 @@ public class LoginAction extends it.cnr.jada.util.action.BulkAction {
                         rKSC.logout(rKSC.getDeployment());
                     });
         }
+         */
         return context.findForward("logout");
     }
 
@@ -340,8 +340,9 @@ public class LoginAction extends it.cnr.jada.util.action.BulkAction {
                 .map(HttpActionContext.class::cast)
                 .map(HttpActionContext::getRequest)
                 .flatMap(request -> Optional.ofNullable(request.getUserPrincipal()));
-        if (!principalOptional.isPresent())
-            return context.findDefaultForward();
+        String usernameToken = null;
+        if (principalOptional.isEmpty())
+            return context.findForward("home");
         try {
             if (context.getUserContext() == null)
                 context.setUserContext(new CNRUserContext("LOGIN", context.getSessionId(), null, null, null, null));
@@ -361,20 +362,35 @@ public class LoginAction extends it.cnr.jada.util.action.BulkAction {
             if (ui.getLdap_userid() != null) {
                 utente.setCd_utente_uid(ui.getLdap_userid());
             }
-            final Optional<IDToken> idToken = principalOptional
-                    .filter(KeycloakPrincipal.class::isInstance)
-                    .map(KeycloakPrincipal.class::cast)
-                    .map(KeycloakPrincipal::getKeycloakSecurityContext)
-                    .map(keycloakSecurityContext -> {
-                        return Optional.ofNullable(keycloakSecurityContext.getIdToken())
-                                .orElse(keycloakSecurityContext.getToken());
-                    });
-            if (idToken.isPresent()) {
-                final String username_cnr = idToken
-                        .flatMap(t -> Optional.ofNullable(t.getOtherClaims().get(SpringUtil.getBean(UtilService.class).getPreferredUsername())).map(String::valueOf))
-                        .orElse(idToken.get().getPreferredUsername());
-                utente.setCd_utente(username_cnr);
-                utente.setCd_utente_uid(username_cnr);
+            String authHeader = Optional.ofNullable(context)
+                    .filter(HttpActionContext.class::isInstance)
+                    .map(HttpActionContext.class::cast)
+                    .map(HttpActionContext::getRequest)
+                    .map(request -> request.getHeader("Authorization"))
+                    .orElse(null);
+
+            // 1) Try Bearer token (JWT)
+            if (authHeader != null && authHeader.toLowerCase().startsWith("bearer ")) {
+                String bearer = authHeader.substring(7).trim();
+                try {
+                    com.nimbusds.jwt.SignedJWT signedJWT = com.nimbusds.jwt.SignedJWT.parse(bearer);
+                    com.nimbusds.jwt.JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
+
+                    // prima prova a leggere la claim custom USERNAME_CNR
+                    Object usernameCnrObj = claims.getClaim("username_cnr");
+                    if (usernameCnrObj instanceof String) {
+                        usernameToken = (String) usernameCnrObj;
+                    } else {
+                        usernameToken = claims.getStringClaim("preferred_username");
+                    }
+
+                    if (usernameToken != null) {
+                        utente.setCd_utente(usernameToken);
+                        utente.setCd_utente_uid(usernameToken);
+                    }
+                } catch (java.text.ParseException e) {
+                    log.warn("Errore parsing JWT", e);
+                }
             }
             utente.setUtente_multiplo(ui.getUtente_multiplo());
             ui.setUtente(utente);
@@ -394,7 +410,7 @@ public class LoginAction extends it.cnr.jada.util.action.BulkAction {
             }
 
             if (utente == null) {
-                if (idToken.isPresent()) {
+                if (usernameToken != null) {
                     return context.findForward("unauthorized");
                 } else {
                     setErrorMessage(context, "Nome utente o password sbagliati.");
@@ -428,26 +444,22 @@ public class LoginAction extends it.cnr.jada.util.action.BulkAction {
             return context.findForward("password_scaduta_ldap");
         } catch (it.cnr.contab.utente00.nav.comp.UtenteNonValidoException e) {
             setErrorMessage(context, "Utente non più valido o con data di validità scaduta. Contattare l'amministratore utenti di SIGLA");
-            return principalOptional
-                    .filter(KeycloakPrincipal.class::isInstance)
+            return Optional.ofNullable(usernameToken)
                     .map(principal -> context.findForward("unauthorized"))
                     .orElse(context.findDefaultForward());
         } catch (it.cnr.contab.utente00.nav.comp.UtenteInDisusoException e) {
             setErrorMessage(context, "Utente non utilizzato da più di sei mesi.");
-            return principalOptional
-                    .filter(KeycloakPrincipal.class::isInstance)
+            return Optional.ofNullable(usernameToken)
                     .map(principal -> context.findForward("unauthorized"))
                             .orElse(context.findDefaultForward());
         } catch (it.cnr.contab.utente00.nav.comp.UtenteLdapException e) {
             setErrorMessage(context, "Utente non più valido. Utilizzare l'utente di accesso ufficiale di tipo \"nome.cognome\"");
-            return principalOptional
-                    .filter(KeycloakPrincipal.class::isInstance)
+            return Optional.ofNullable(usernameToken)
                     .map(principal -> context.findForward("unauthorized"))
                     .orElse(context.findDefaultForward());
         } catch (it.cnr.contab.utente00.nav.comp.UtenteLdapNonUtenteSiglaException e) {
             setErrorMessage(context, "Utente valido ma che non possiede nessun profilo/abilitazione in SIGLA. Contattare l'amministratore delle utenze Sigla dell'Istituto.");
-            return principalOptional
-                    .filter(KeycloakPrincipal.class::isInstance)
+            return Optional.ofNullable(usernameToken)
                     .map(principal -> context.findForward("unauthorized"))
                     .orElse(context.findDefaultForward());
         } catch (Throwable e) {
@@ -455,7 +467,7 @@ public class LoginAction extends it.cnr.jada.util.action.BulkAction {
         }
     }
 
-    public CRUDComponentSession createCRUDComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+    public CRUDComponentSession createCRUDComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
         return (CRUDComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("JADAEJB_CRUDComponentSession");
     }
 
@@ -502,7 +514,7 @@ public class LoginAction extends it.cnr.jada.util.action.BulkAction {
         }
     }
 
-    private Forward initializeWorkspace(ActionContext context) throws java.text.ParseException, javax.ejb.EJBException, java.rmi.RemoteException, it.cnr.jada.comp.ComponentException, BusinessProcessException {
+    private Forward initializeWorkspace(ActionContext context) throws java.text.ParseException, jakarta.ejb.EJBException, java.rmi.RemoteException, it.cnr.jada.comp.ComponentException, BusinessProcessException {
         CNRUserInfo ui = (CNRUserInfo) context.getUserInfo();
         LoginBP loginBP = (LoginBP) context.getBusinessProcess();
 
@@ -603,12 +615,12 @@ public class LoginAction extends it.cnr.jada.util.action.BulkAction {
             bp.cercaCds(context);
         else
             bp.cercaUnitaOrganizzative(context);
-        final Optional<Principal> principalOptional = Optional.ofNullable(context)
+        final Optional<String> principalOptional = Optional.ofNullable(context)
                 .filter(HttpActionContext.class::isInstance)
                 .map(HttpActionContext.class::cast)
                 .map(HttpActionContext::getRequest)
-                .flatMap(request -> Optional.ofNullable(request.getUserPrincipal()))
-                .filter(KeycloakPrincipal.class::isInstance);
+                .flatMap(request -> Optional.ofNullable(request.getHeader("Authorization")))
+                .filter(s -> s.toLowerCase().startsWith("bearer "));
         if (principalOptional.isPresent()) {
             return context.findForward("home");
         }
@@ -706,12 +718,12 @@ public class LoginAction extends it.cnr.jada.util.action.BulkAction {
             context.setUserContext(userContext);
             return context.findDefaultForward();
         } catch (NoSuchSessionException _ex) {
-            final Optional<Principal> principalOptional = Optional.ofNullable(context)
+            final Optional<String> principalOptional = Optional.ofNullable(context)
                     .filter(HttpActionContext.class::isInstance)
                     .map(HttpActionContext.class::cast)
                     .map(HttpActionContext::getRequest)
-                    .flatMap(request -> Optional.ofNullable(request.getUserPrincipal()))
-                    .filter(KeycloakPrincipal.class::isInstance);
+                    .flatMap(request -> Optional.ofNullable(request.getHeader("Authorization")))
+                    .filter(s -> s.toLowerCase().startsWith("bearer "));
             if (principalOptional.isPresent()) {
                 return doDefaultNG(context);
             }

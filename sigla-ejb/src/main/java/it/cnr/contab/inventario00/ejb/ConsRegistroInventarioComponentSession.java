@@ -19,7 +19,7 @@ package it.cnr.contab.inventario00.ejb;
 
 import it.cnr.contab.inventario00.consultazioni.bulk.VInventarioRicognizioneBulk;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface ConsRegistroInventarioComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

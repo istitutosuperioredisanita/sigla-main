@@ -19,7 +19,7 @@ package it.cnr.contab.incarichi00.ejb;
 
 import java.util.List;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.incarichi00.bulk.Incarichi_proceduraBulk;
 import it.cnr.jada.UserContext;

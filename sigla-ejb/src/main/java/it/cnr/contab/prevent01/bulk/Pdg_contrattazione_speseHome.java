@@ -60,9 +60,9 @@ public class Pdg_contrattazione_speseHome extends BulkHome {
 		if (pdg_contrattazione_spese.getPg_dettaglio()==null) {
 			Integer max = (Integer)findMax(bulk, "pg_dettaglio", null);
 			if (max!=null)
-				pdg_contrattazione_spese.setPg_dettaglio(new Integer(max.intValue()+1));
+				pdg_contrattazione_spese.setPg_dettaglio(Integer.valueOf(max.intValue()+1));
 			else
-				pdg_contrattazione_spese.setPg_dettaglio(new Integer(1));
+				pdg_contrattazione_spese.setPg_dettaglio(Integer.valueOf(1));
 		}
 
 		super.initializePrimaryKeyForInsert(usercontext, pdg_contrattazione_spese);

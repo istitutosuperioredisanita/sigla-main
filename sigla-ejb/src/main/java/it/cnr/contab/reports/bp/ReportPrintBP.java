@@ -20,6 +20,7 @@ package it.cnr.contab.reports.bp;
 import it.cnr.contab.reports.bulk.Print_spooler_paramBulk;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.util.action.AbstractPrintBP;
+import jakarta.servlet.ServletException;
 
 public class ReportPrintBP extends AbstractPrintBP {
 	private java.util.Properties printProps;
@@ -76,8 +77,8 @@ public java.lang.String getReportName() {
 /**
  * @see it.cnr.jada.util.action.AbstractPrintBP
  */
-public void print(javax.servlet.jsp.PageContext pageContext) throws javax.servlet.ServletException, java.io.IOException, it.cnr.jada.action.BusinessProcessException {
-	String appRoot = it.cnr.jada.util.JSPUtils.getAppRoot((javax.servlet.http.HttpServletRequest)pageContext.getRequest());
+public void print(jakarta.servlet.jsp.PageContext pageContext) throws ServletException, java.io.IOException, it.cnr.jada.action.BusinessProcessException {
+	String appRoot = it.cnr.jada.util.JSPUtils.getAppRoot((jakarta.servlet.http.HttpServletRequest)pageContext.getRequest());
 	pageContext.getOut().println("<applet code=\"com.seagatesoftware.img.ReportViewer.ReportViewer\"");
 	pageContext.getOut().print("  codebase=\"");
 	pageContext.getOut().print(appRoot);
@@ -88,7 +89,7 @@ public void print(javax.servlet.jsp.PageContext pageContext) throws javax.servle
 	pageContext.getOut().print(':');	
 	pageContext.getOut().print(pageContext.getRequest().getServerPort());
 	pageContext.getOut().print(appRoot);
-	pageContext.getOut().print(it.cnr.jada.action.BusinessProcess.encodeUrl((javax.servlet.http.HttpServletRequest)pageContext.getRequest(),"report"));
+	pageContext.getOut().print(it.cnr.jada.action.BusinessProcess.encodeUrl((jakarta.servlet.http.HttpServletRequest)pageContext.getRequest(),"report"));
 	pageContext.getOut().println("&\" >");
 	pageContext.getOut().println("	<param name=HasGroupTree value=true>");
 	pageContext.getOut().println("	<param name=ShowGroupTree value=true>");

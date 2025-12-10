@@ -17,8 +17,8 @@
 
 package it.cnr.contab.config00.ejb;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.config00.comp.Parametri_livelli_epComponent;
 /**
@@ -30,10 +30,8 @@ public class Parametri_livelli_epComponentSessionBean extends it.cnr.jada.ejb.CR
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.config00.comp.Parametri_livelli_epComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new Parametri_livelli_epComponentSessionBean();
-	}
-	public boolean isParametriLivelliEnabled(it.cnr.jada.UserContext param0, it.cnr.contab.config00.pdcep.cla.bulk.Parametri_livelli_epBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public boolean isParametriLivelliEnabled(it.cnr.jada.UserContext param0, it.cnr.contab.config00.pdcep.cla.bulk.Parametri_livelli_epBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((Parametri_livelli_epComponent)componentObj).isParametriLivelliEnabled(param0,param1);
@@ -51,7 +49,7 @@ public class Parametri_livelli_epComponentSessionBean extends it.cnr.jada.ejb.CR
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.config00.pdcep.cla.bulk.Parametri_livelli_epBulk getParametriLivelli(it.cnr.jada.UserContext param0, java.lang.Integer param1, java.lang.String param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.config00.pdcep.cla.bulk.Parametri_livelli_epBulk getParametriLivelli(it.cnr.jada.UserContext param0, java.lang.Integer param1, java.lang.String param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.config00.pdcep.cla.bulk.Parametri_livelli_epBulk result = ((Parametri_livelli_epComponent)componentObj).getParametriLivelli(param0,param1,param2);
@@ -69,7 +67,7 @@ public class Parametri_livelli_epComponentSessionBean extends it.cnr.jada.ejb.CR
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public String getDescrizioneLivello(it.cnr.jada.UserContext param0, java.lang.Integer param1, java.lang.String param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public String getDescrizioneLivello(it.cnr.jada.UserContext param0, java.lang.Integer param1, java.lang.String param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			String result = ((Parametri_livelli_epComponent)componentObj).getDescrizioneLivello(param0, param1, param2);

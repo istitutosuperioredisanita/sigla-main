@@ -34,10 +34,10 @@ public class SpringInitializerEnvProperty implements ApplicationContextInitializ
             /**
              * workaround for env property with wildfly 10
              */
-            PropertySource ps = new ResourcePropertySource(new ClassPathResource("repository.properties"));
+            PropertySource ps = new ResourcePropertySource(new ClassPathResource("./application.properties"));
             ctx.getEnvironment().getPropertySources().addLast(ps);
         } catch (IOException e) {
-            LOGGER.warn("Cannot find repository.properties in classpath");
+            LOGGER.warn("Cannot find application.properties in classpath");
         }
     }
 }

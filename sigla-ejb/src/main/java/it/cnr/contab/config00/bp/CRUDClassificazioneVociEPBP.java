@@ -42,7 +42,7 @@ import it.cnr.jada.util.action.FormController;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 /**
  * @author rpagano

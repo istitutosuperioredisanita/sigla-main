@@ -67,8 +67,8 @@ public void completeFrom(Liquidazione_ivaBulk liqDef) {
 
 	java.util.Calendar cal = java.util.GregorianCalendar.getInstance();
 	cal.setTime(new java.util.Date(getData_da().getTime()));
-	Integer meseNum = new Integer(cal.get(java.util.Calendar.MONTH)+1);
-	if (meseNum.intValue() > 10) meseNum = new Integer(-1);
+	Integer meseNum = Integer.valueOf(cal.get(java.util.Calendar.MONTH)+1);
+	if (meseNum.intValue() > 10) meseNum = Integer.valueOf(-1);
 	setMese((String)getInt_mesi().get(meseNum));
 }
 
@@ -185,7 +185,7 @@ public OggettoBulk initializeForSearch(
 	bulk.setTipoSezionaleFlag(SEZIONALI_COMMERCIALI);
 	bulk.setLiquidazione_commerciale(true);
 	bulk.setTipoImpegnoFlag(IMPEGNI_COMPETENZA);
-	bulk.setPageNumber(new Integer(1));
+	bulk.setPageNumber(Integer.valueOf(1));
 	
 	return bulk;
 }

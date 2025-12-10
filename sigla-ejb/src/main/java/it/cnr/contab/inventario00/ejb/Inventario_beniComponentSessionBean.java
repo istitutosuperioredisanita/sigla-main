@@ -16,10 +16,10 @@
  */
 
 package it.cnr.contab.inventario00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.inventario00.comp.Inventario_beniComponent;
@@ -39,10 +39,8 @@ public class Inventario_beniComponentSessionBean extends it.cnr.jada.ejb.CRUDCom
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.inventario00.comp.Inventario_beniComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new Inventario_beniComponentSessionBean();
-}
-public it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk caricaInventario(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,javax.ejb.EJBException {
+
+public it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk caricaInventario(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk result = ((Inventario_beniComponent)componentObj).caricaInventario(param0);
@@ -66,7 +64,7 @@ public it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk caricaInventario
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public java.util.Collection findTipiAmmortamento(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,javax.ejb.EJBException {
+public java.util.Collection findTipiAmmortamento(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.util.Collection result = ((Inventario_beniComponent)componentObj).findTipiAmmortamento(param0,param1);
@@ -90,7 +88,7 @@ public java.util.Collection findTipiAmmortamento(it.cnr.jada.UserContext param0,
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public java.lang.String getLocalTransactionID(it.cnr.jada.UserContext param0,boolean param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,javax.ejb.EJBException {
+public java.lang.String getLocalTransactionID(it.cnr.jada.UserContext param0,boolean param1) throws it.cnr.jada.comp.ComponentException,it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.lang.String result = ((Inventario_beniComponent)componentObj).getLocalTransactionID(param0,param1);
@@ -114,7 +112,7 @@ public java.lang.String getLocalTransactionID(it.cnr.jada.UserContext param0,boo
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((Inventario_beniComponent)componentObj).inizializzaBulkPerStampa(param0,param1);
@@ -132,7 +130,7 @@ public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserCon
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.util.RemoteIterator selectBeniAccessoriFor(it.cnr.jada.UserContext param0,it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.util.RemoteIterator selectBeniAccessoriFor(it.cnr.jada.UserContext param0,it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.util.RemoteIterator result = ((Inventario_beniComponent)componentObj).selectBeniAccessoriFor(param0,param1);
@@ -150,7 +148,7 @@ public it.cnr.jada.util.RemoteIterator selectBeniAccessoriFor(it.cnr.jada.UserCo
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.util.RemoteIterator selectBuonoFor(it.cnr.jada.UserContext param0,it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.util.RemoteIterator selectBuonoFor(it.cnr.jada.UserContext param0,it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.util.RemoteIterator result = ((Inventario_beniComponent)componentObj).selectBuonoFor(param0,param1);
@@ -169,7 +167,7 @@ public it.cnr.jada.util.RemoteIterator selectBuonoFor(it.cnr.jada.UserContext pa
 	}
 }
 
-public it.cnr.jada.util.RemoteIterator selectFatturaFor(it.cnr.jada.UserContext param0,it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.util.RemoteIterator selectFatturaFor(it.cnr.jada.UserContext param0,it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.util.RemoteIterator result = ((Inventario_beniComponent)componentObj).selectFatturaFor(param0,param1);
@@ -188,7 +186,7 @@ public it.cnr.jada.util.RemoteIterator selectFatturaFor(it.cnr.jada.UserContext 
 	}
 }
 
-public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((Inventario_beniComponent)componentObj).stampaConBulk(param0,param1);
@@ -206,7 +204,7 @@ public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public Boolean isContab(it.cnr.jada.UserContext param0,it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public Boolean isContab(it.cnr.jada.UserContext param0,it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		Boolean result = ((Inventario_beniComponent)componentObj).isContab(param0,param1);
@@ -224,7 +222,7 @@ public Boolean isContab(it.cnr.jada.UserContext param0,it.cnr.contab.inventario0
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-	public HashMap<Obbligazione_scadenzarioBulk, Boolean> creaUtilizzatori(UserContext param0, Obbligazione_scadenzarioBulk obbligazione_scadenzarioBulk, Buono_carico_scarico_dettBulk buono) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public HashMap<Obbligazione_scadenzarioBulk, Boolean> creaUtilizzatori(UserContext param0, Obbligazione_scadenzarioBulk obbligazione_scadenzarioBulk, Buono_carico_scarico_dettBulk buono) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			HashMap<Obbligazione_scadenzarioBulk, Boolean> result = ((Inventario_beniComponent)componentObj).creaUtilizzatori(param0, obbligazione_scadenzarioBulk,  buono);

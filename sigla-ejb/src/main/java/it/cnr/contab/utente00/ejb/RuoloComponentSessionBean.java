@@ -21,22 +21,20 @@ import it.cnr.contab.utente00.comp.RuoloComponent;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
 
 @Stateless(name = "CNRUTENZE00_EJB_RuoloComponentSession")
 public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements RuoloComponentSession {
-    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-        return new RuoloComponentSessionBean();
-    }
+    
 
     @PostConstruct
     public void ejbCreate() {
         componentObj = new it.cnr.contab.utente00.comp.RuoloComponent();
     }
 
-    public boolean isCapoCommessa(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isCapoCommessa(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             boolean result = ((RuoloComponent) componentObj).isCapoCommessa(param0);
@@ -55,7 +53,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
         }
     }
 
-    public boolean isAbilitatoApprovazioneBilancio(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isAbilitatoApprovazioneBilancio(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             boolean result = ((RuoloComponent) componentObj).isAbilitatoApprovazioneBilancio(param0);
@@ -74,7 +72,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
         }
     }
 
-    public boolean isAmministratoreInventario(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isAmministratoreInventario(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             boolean result = ((RuoloComponent) componentObj).isAmministratoreInventario(param0);
@@ -93,7 +91,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
         }
     }
 
-    public boolean isAbilitatoCancellazioneMissioneGemis(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isAbilitatoCancellazioneMissioneGemis(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             boolean result = ((RuoloComponent) componentObj).isAbilitatoCancellazioneMissioneGemis(param0);
@@ -112,7 +110,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
         }
     }
 
-    public boolean isAbilitatoFirmaFatturazioneElettronica(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isAbilitatoFirmaFatturazioneElettronica(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             boolean result = ((RuoloComponent) componentObj).isAbilitatoFirmaFatturazioneElettronica(param0);
@@ -131,7 +129,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
         }
     }
 
-    public boolean isAbilitatoStampeRendProgetto(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isAbilitatoStampeRendProgetto(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             boolean result = ((RuoloComponent) componentObj).isAbilitatoStampeRendProgetto(param0);
@@ -150,7 +148,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
         }
     }
 
-    public boolean isInventarioUfficiale(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isInventarioUfficiale(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         try {
             boolean result = ((RuoloComponent) componentObj).isInventarioUfficiale(param0);
             component_invocation_succes(param0, componentObj);
@@ -168,7 +166,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
         }
     }
 
-    public boolean isGestoreIstatSiope(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isGestoreIstatSiope(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             boolean result = ((RuoloComponent) componentObj).isGestoreIstatSiope(param0);
@@ -188,7 +186,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
 
     }
 
-    public boolean isAbilitatoECF(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isAbilitatoECF(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         try {
             boolean result = ((RuoloComponent) componentObj).isAbilitatoECF(param0);
             component_invocation_succes(param0, componentObj);
@@ -206,7 +204,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
         }
     }
 
-    public boolean isAbilitatoModificaModPag(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isAbilitatoModificaModPag(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             boolean result = ((RuoloComponent) componentObj).isAbilitatoModificaModPag(param0);
@@ -226,7 +224,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
 
     }
 
-    public boolean isAbilitatoF24EP(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isAbilitatoF24EP(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         try {
             boolean result = ((RuoloComponent) componentObj).isAbilitatoF24EP(param0);
             component_invocation_succes(param0, componentObj);
@@ -245,7 +243,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
     }
 
 
-    public boolean isAbilitatoPubblicazioneSito(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isAbilitatoPubblicazioneSito(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         try {
             boolean result = ((RuoloComponent) componentObj).isAbilitatoPubblicazioneSito(param0);
             component_invocation_succes(param0, componentObj);
@@ -263,7 +261,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
         }
     }
 
-    public boolean isAbilitatoFunzioniIncarichi(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isAbilitatoFunzioniIncarichi(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         try {
             boolean result = ((RuoloComponent) componentObj).isAbilitatoFunzioniIncarichi(param0);
             component_invocation_succes(param0, componentObj);
@@ -281,7 +279,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
         }
     }
 
-    public boolean isSuperUtenteFunzioniIncarichi(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isSuperUtenteFunzioniIncarichi(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         try {
             boolean result = ((RuoloComponent) componentObj).isSuperUtenteFunzioniIncarichi(param0);
             component_invocation_succes(param0, componentObj);
@@ -299,7 +297,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
         }
     }
 
-    public boolean isAbilitatoSospensioneCori(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isAbilitatoSospensioneCori(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         try {
             boolean result = ((RuoloComponent) componentObj).isAbilitatoSospensioneCori(param0);
             component_invocation_succes(param0, componentObj);
@@ -317,7 +315,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
         }
     }
 
-    public boolean isAbilitatoModificaDescVariazioni(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isAbilitatoModificaDescVariazioni(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         try {
             boolean result = ((RuoloComponent) componentObj).isAbilitatoModificaDescVariazioni(param0);
             component_invocation_succes(param0, componentObj);
@@ -335,7 +333,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
         }
     }
 
-    public boolean isAbilitatoAllTrattamenti(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException, IntrospectionException {
+    public boolean isAbilitatoAllTrattamenti(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException, IntrospectionException {
         try {
             boolean result = ((RuoloComponent) componentObj).isAbilitatoAllTrattamenti(param0);
             component_invocation_succes(param0, componentObj);
@@ -353,7 +351,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
         }
     }
 
-    public boolean isAbilitatoAutorizzareDiaria(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isAbilitatoAutorizzareDiaria(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         try {
             boolean result = ((RuoloComponent) componentObj).isAbilitatoAutorizzareDiaria(param0);
             component_invocation_succes(param0, componentObj);
@@ -371,7 +369,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
         }
     }
 
-    public it.cnr.contab.utenze00.bulk.RuoloBulk cercaAccessiDisponibili(it.cnr.jada.UserContext param0,it.cnr.contab.utenze00.bulk.RuoloBulk param1, CompoundFindClause param3) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+    public it.cnr.contab.utenze00.bulk.RuoloBulk cercaAccessiDisponibili(it.cnr.jada.UserContext param0,it.cnr.contab.utenze00.bulk.RuoloBulk param1, CompoundFindClause param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
         pre_component_invocation(param0,componentObj);
         try {
             it.cnr.contab.utenze00.bulk.RuoloBulk result = ((RuoloComponent)componentObj).cercaAccessiDisponibili(param0,param1,param3);
@@ -390,7 +388,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
         }
     }
 
-    public boolean isAbilitatoReversaleIncasso(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isAbilitatoReversaleIncasso(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         try {
             boolean result = ((RuoloComponent) componentObj).isAbilitatoReversaleIncasso(param0);
             component_invocation_succes(param0, componentObj);
@@ -408,7 +406,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
         }
     }
 
-    public boolean isAbilitatoSbloccoImpegni(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean isAbilitatoSbloccoImpegni(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             boolean result = ((RuoloComponent) componentObj).isAbilitatoSbloccoImpegni(param0);
@@ -427,7 +425,7 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
         }
     }
 
-    public boolean controlloAbilitazione(it.cnr.jada.UserContext param0, String tipoAbilitazione) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean controlloAbilitazione(it.cnr.jada.UserContext param0, String tipoAbilitazione) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             boolean result = ((RuoloComponent) componentObj).controlloAbilitazione(param0, tipoAbilitazione);

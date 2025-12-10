@@ -294,7 +294,7 @@ public class CRUDLinea_attivitaAction extends it.cnr.jada.util.action.CRUDAction
 
 
             if (progetto != null) {
-                if (progetto.getLivello() == null || !progetto.getLivello().equals(new Integer("3"))) {
+                if (progetto.getLivello() == null || !progetto.getLivello().equals(Integer.valueOf("3"))) {
                     setErrorMessage(context, "Attenzione: il valore immesso in " + columnDescription + " non è valido!");
                     return context.findDefaultForward();
                 }
@@ -326,7 +326,7 @@ public class CRUDLinea_attivitaAction extends it.cnr.jada.util.action.CRUDAction
                 columnDescription = property.getLabel();
 
             if (progetto != null) {
-                if (progetto.getLivello() == null || !progetto.getLivello().equals(new Integer("3"))) {
+                if (progetto.getLivello() == null || !progetto.getLivello().equals(Integer.valueOf("3"))) {
                     setErrorMessage(context, "Attenzione: il valore immesso in " + columnDescription + " non è valido!");
                     return context.findDefaultForward();
                 }
@@ -361,7 +361,7 @@ public class CRUDLinea_attivitaAction extends it.cnr.jada.util.action.CRUDAction
                 columnDescription = property.getLabel();
 
             if (progetto != null) {
-                if (progetto.getLivello() == null || !progetto.getLivello().equals(new Integer("2"))) {
+                if (progetto.getLivello() == null || !progetto.getLivello().equals(Integer.valueOf("2"))) {
                     setErrorMessage(context, "Attenzione: il valore immesso in " + columnDescription + " non è valido!");
                     return context.findDefaultForward();
                 }

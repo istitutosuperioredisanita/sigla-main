@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.compensi00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.compensi00.comp.TipoContributoRitenutaComponent;
 @Stateless(name="CNRCOMPENSI00_EJB_TipoContributoRitenutaComponentSession")
@@ -26,10 +26,8 @@ public class TipoContributoRitenutaComponentSessionBean extends it.cnr.jada.ejb.
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.compensi00.comp.TipoContributoRitenutaComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new TipoContributoRitenutaComponentSessionBean();
-}
-public java.util.List caricaIntervalli(it.cnr.jada.UserContext param0,it.cnr.contab.compensi00.tabrif.bulk.Tipo_contributo_ritenutaBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public java.util.List caricaIntervalli(it.cnr.jada.UserContext param0,it.cnr.contab.compensi00.tabrif.bulk.Tipo_contributo_ritenutaBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.util.List result = ((TipoContributoRitenutaComponent)componentObj).caricaIntervalli(param0,param1);
@@ -47,7 +45,7 @@ public java.util.List caricaIntervalli(it.cnr.jada.UserContext param0,it.cnr.con
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public boolean isUltimoIntervallo(it.cnr.jada.UserContext param0,it.cnr.contab.compensi00.tabrif.bulk.Tipo_contributo_ritenutaBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public boolean isUltimoIntervallo(it.cnr.jada.UserContext param0,it.cnr.contab.compensi00.tabrif.bulk.Tipo_contributo_ritenutaBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		boolean result = ((TipoContributoRitenutaComponent)componentObj).isUltimoIntervallo(param0,param1);
@@ -65,7 +63,7 @@ public boolean isUltimoIntervallo(it.cnr.jada.UserContext param0,it.cnr.contab.c
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public java.util.Collection loadClassificazioneCori(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public java.util.Collection loadClassificazioneCori(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.util.Collection result = ((TipoContributoRitenutaComponent)componentObj).loadClassificazioneCori(param0);
@@ -83,7 +81,7 @@ public java.util.Collection loadClassificazioneCori(it.cnr.jada.UserContext para
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public java.util.Collection loadClassificazioneMontanti(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public java.util.Collection loadClassificazioneMontanti(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.util.Collection result = ((TipoContributoRitenutaComponent)componentObj).loadClassificazioneMontanti(param0);

@@ -26,8 +26,8 @@ package it.cnr.contab.docamm00.consultazioni.bp;
 import java.io.IOException;
 import java.util.BitSet;
 
-import javax.servlet.ServletException;
-import javax.servlet.jsp.JspWriter;
+
+import jakarta.servlet.jsp.JspWriter;
 
 import it.cnr.contab.docamm00.consultazioni.bulk.Monito_cococoBulk;
 import it.cnr.contab.docamm00.consultazioni.ejb.MonitoCococoComponentSession;
@@ -69,7 +69,7 @@ public class MonitoCococoBP extends it.cnr.jada.util.action.BulkBP {
 		return toolbar;
 	}
 
-	public it.cnr.jada.ejb.CRUDComponentSession createComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException, BusinessProcessException {
+	public it.cnr.jada.ejb.CRUDComponentSession createComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException, BusinessProcessException {
 	
 		return (it.cnr.jada.ejb.CRUDComponentSession)createComponentSession("CNRDOCAMM00_EJB_MonitoCococoComponentSession", MonitoCococoComponentSession.class);
 	}

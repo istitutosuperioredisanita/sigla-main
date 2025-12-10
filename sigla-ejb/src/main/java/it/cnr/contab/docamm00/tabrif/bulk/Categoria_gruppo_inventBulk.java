@@ -85,7 +85,7 @@ public OggettoBulk initializeForInsert(it.cnr.jada.util.action.CRUDBP bp,it.cnr.
 	super.initializeForInsert(bp,context);
 
 	
-	setLivello(new Integer(1));
+	setLivello(Integer.valueOf(1));
 	if(getFl_ammortamento()==null)
 		setFl_ammortamento(Boolean.FALSE);
 	if (getFl_gestione_inventario()==null)

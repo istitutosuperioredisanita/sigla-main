@@ -31,6 +31,11 @@ import it.cnr.jada.persistency.sql.HomeCache;
 
 import java.util.Locale;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -38,7 +43,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 
-public class OfflineReportServlet extends javax.servlet.http.HttpServlet {
+public class OfflineReportServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	/**
@@ -47,7 +52,7 @@ public class OfflineReportServlet extends javax.servlet.http.HttpServlet {
 	public OfflineReportServlet() {
 		super();
 	}
-	public void doGet(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, java.io.IOException {
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, java.io.IOException {
 		try {
 			HttpActionContext context = new HttpActionContext(this,request,response);
 			if (context.getBusinessProcessRoot(false) == null ||
@@ -64,11 +69,11 @@ public class OfflineReportServlet extends javax.servlet.http.HttpServlet {
 			String pg = request.getParameter("pg");
 			Long pg_stampa=null;
 			if (pg!=null)
-				pg_stampa = new Long(pg);
+				pg_stampa = Long.valueOf(pg);
 			if (pg_stampa==null) {
 				String sign_pg_stampa = (String) request.getSession().getAttribute("sign_pg_stampa");
 				if (sign_pg_stampa!=null)
-					pg_stampa = new Long(sign_pg_stampa);
+					pg_stampa = Long.valueOf(sign_pg_stampa);
 			}
 
 			java.sql.Connection conn = it.cnr.jada.util.ejb.EJBCommonServices.getConnection();
@@ -104,7 +109,7 @@ public class OfflineReportServlet extends javax.servlet.http.HttpServlet {
 						response.setContentType("application/pdf");
 						//response.setContentLength(method.getContentLength());
 						response.setDateHeader("Expires", 0);
-						javax.servlet.ServletOutputStream os = response.getOutputStream();
+						ServletOutputStream os = response.getOutputStream();
 						byte[] buffer = new byte[response.getBufferSize()];
 						int buflength;
 						while ((buflength = is.read(buffer)) > 0) {
@@ -181,8 +186,8 @@ public class OfflineReportServlet extends javax.servlet.http.HttpServlet {
 			throw new ApplicationException(e);
 		}
 	}
-	private void unauthorized(javax.servlet.http.HttpServletRequest request,javax.servlet.http.HttpServletResponse response) throws java.io.IOException {
-		response.setStatus(javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED);
+	private void unauthorized(HttpServletRequest request, HttpServletResponse response) throws java.io.IOException {
+		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		response.getWriter().println("Impossibile aprire il file pdf.<BR>");
 		response.getWriter().println("Consultare il <a href=\"http://contab.cnr.it/manuali/000%20-%2001%20requisiti%20browser.doc\">Manuale della Procedura di Contabilità</a> e verificare le Impostazioni del Browser.");
 		response.flushBuffer();

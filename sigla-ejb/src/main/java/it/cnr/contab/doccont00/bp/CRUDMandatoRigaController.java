@@ -26,6 +26,8 @@ import it.cnr.jada.action.HttpActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 import java.util.Optional;
 
 public class CRUDMandatoRigaController extends it.cnr.jada.util.action.SimpleDetailCRUDController {
@@ -101,7 +103,7 @@ public class CRUDMandatoRigaController extends it.cnr.jada.util.action.SimpleDet
             Mandato_rigaIBulk rigaDaCancellare = (Mandato_rigaIBulk) detail;
             Mandato_rigaIBulk row = null;
             int len = getDetails().size();
-            Long pg_fattura_passiva = new Long(0);
+            Long pg_fattura_passiva = Long.valueOf(0);
             //ricerco il progressivo della fattura passiva da cui la nota di debito/credito dipende
             int index;
             for (index = len - 1; index >= 0; index--) {
@@ -131,10 +133,10 @@ public class CRUDMandatoRigaController extends it.cnr.jada.util.action.SimpleDet
      */
     @Override
     public void writeHTMLToolbar(
-            javax.servlet.jsp.PageContext context,
+            PageContext context,
             boolean reset,
             boolean find,
-            boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+            boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
         super.writeHTMLToolbar(context, reset, find, delete, false);
 

@@ -20,20 +20,15 @@ package it.cnr.test.h2.ordmag.ordini.bp;
 import it.cnr.test.h2.utenze.action.ActionDeployments;
 import it.cnr.test.util.AlertMessage;
 import it.cnr.test.util.SharedResource;
-import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.jboss.arquillian.container.test.api.RunAsClient;
+import org.jboss.arquillian.container.test.api.BeforeDeployment;
 import org.jboss.arquillian.graphene.GrapheneElement;
-import org.jboss.arquillian.junit.InSequence;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
+import org.wildfly.common.Assert;
 
 import java.util.Optional;
-
-import static org.junit.Assert.*;
 
 /**
  * Test di:
@@ -91,16 +86,14 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
 
     public static final String DATA_ODIERNA = "25/10/2025";
 
-    @BeforeClass
+    @BeforeDeployment
     public static void initClass() {
         if (sharedResource == null)
             sharedResource = new SharedResource();
     }
 
     @Test
-    @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(1)
+    @Order(1)
     public void testLogin() throws Exception {
         doLogin(USERNAME, PASSWORD);
         doLoginUO(UO, CDR);
@@ -111,9 +104,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
      * 1) creazione ordine con 1 riga consegna con bene inventariale
      */
     @Test
-    @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(2)
+    @Order(2)
     public void testCreaOrdine() {
         switchToFrameDesktop();
         switchToFrameMenu();
@@ -142,7 +133,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
 
         //Passo sulla tab ‘Fornitore’ ed il terzo è proposto in automatico
         doClickButton("doTab('tab','tabOrdineFornitore')");
-        assertEquals("101", getGrapheneElement("main.findFornitore.cd_terzo").getAttribute("value"));
+        Assertions.assertEquals("101", getGrapheneElement("main.findFornitore.cd_terzo").getAttribute("value"));
 
         //Passo sulla tab ‘Dettaglio’
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
@@ -159,14 +150,14 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         doClickButton("doOnDspQuantitaChange");
 
         //Lascio gli importi proposti (Totale ordine: 183,00 – 	Imponibile 150,00 	IVA:33,00)
-        assertEquals("150,000000", getGrapheneElement("main.Righe.prezzoUnitario").getAttribute("value"));
+        Assertions.assertEquals("150,000000", getGrapheneElement("main.Righe.prezzoUnitario").getAttribute("value"));
 
         // Indico tipo consegna: Magazzino
         Select select = new Select(getGrapheneElement("main.Righe.tipoConsegna"));
         select.selectByValue("MAG");
 
         //Lascio la ‘Data prevista consegna’
-        assertNotNull(getGrapheneElement("main.Righe.dtPrevConsegna").getText());
+        Assertions.assertNotNull(getGrapheneElement("main.Righe.dtPrevConsegna").getText());
 
         //Indico il codice magazzino: PT
         doClickButton("doBlankSearch(main.Righe.findMagazzino)");
@@ -178,10 +169,10 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         doClickButton("doTab('tabOrdineAcqDettagli','tabDatiCogeCoan')");
 
         //Verifico che il conto di costo è quello legato alla categoria gruppo del mio articolo (8.1) ed è: A22012.
-        assertEquals("A22012", getGrapheneElement("main.Righe.find_voce_ep.cd_voce_ep").getAttribute("value"));
+        Assertions.assertEquals("A22012", getGrapheneElement("main.Righe.find_voce_ep.cd_voce_ep").getAttribute("value"));
 
         // L’analitica correttamente non c’è perchè trattasi di conto patrimoniale
-        assertEquals("183,00",getGrapheneElement("imCostoEcoDaRipartire").getAttribute("value"));
+        Assertions.assertEquals("183,00",getGrapheneElement("imCostoEcoDaRipartire").getAttribute("value"));
 
         //Ritorno sulla prima tab ‘ordine d’acquisto’
         doClickButton("doTab('tab','tabOrdineAcq')");
@@ -191,7 +182,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
 
         //Restituisce messaggio di creazione eseguita
         Alert alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
+        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
         alert.accept();
 
         String pgOrdineCreated = getGrapheneElement("main.numero").getAttribute("value");
@@ -206,7 +197,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
 
         //Restituisce messaggio di salvataggio eseguito
         alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), alert.getText());
+        Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), alert.getText());
         alert.accept();
 
         //modifico lo stato portandolo ‘Definitivo’
@@ -217,7 +208,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
 
         //Restituisce messaggio di assenza obbligazione
         alert = browser.switchTo().alert();
-        assertEquals("Sulla consegna 2025/"+CD_NUMERATORE+"/"+pgOrdineCreated+"/1/1 non è indicata l'obbligazione", alert.getText());
+        Assertions.assertEquals("Sulla consegna 2025/"+CD_NUMERATORE+"/"+pgOrdineCreated+"/1/1 non è indicata l'obbligazione", alert.getText());
         alert.accept();
 
         //Ritorno sulla tab delle righe ordine
@@ -253,7 +244,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         doClickButton("doSalva()");
 
         alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), alert.getText());
+        Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), alert.getText());
         alert.accept();
     }
 
@@ -261,9 +252,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
      * 2) evasione riga consegna
      */
     @Test
-    @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(3)
+    @Order(3)
     public void testEvasioneConsegna001() {
         browser.switchTo().parentFrame();
         switchToFrameMenu();
@@ -304,9 +293,9 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         else if (getTableColumnElement("main.ConsegneDaEvadere", 1, 1).getText().equals("2025/" + CD_NUMERATORE + "/" + pgOrdineCreated + "/1/1"))
             rowElement1 = getTableRowElement("main.ConsegneDaEvadere", 1);
         else
-            Assert.fail("Riga consegna 1 non individuata");
+            Assertions.fail("Riga consegna 1 non individuata");
 
-        assertThrows("Cannot find Element <tr> with tableName main.ConsegneDaEvadere and numberRow: 1", RuntimeException.class, () -> getTableRowElement("main.ConsegneDaEvadere", 1));
+        Assertions.assertThrows(RuntimeException.class, () -> getTableRowElement("main.ConsegneDaEvadere", 1),"Cannot find Element <tr> with tableName main.ConsegneDaEvadere and numberRow: 1");
 
         //Scelgo la prima consegna
         rowElement1.click();
@@ -315,7 +304,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         //Salvo
         doClickButton("doSalva()");
         Alert alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
+        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
         alert.accept();
     }
 
@@ -323,9 +312,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
      * 3) verifica scrittura economica/analitica su consegna
      */
     @Test
-    @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(4)
+    @Order(4)
     public void testVerificaScritturaOrdine001() {
         //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
         browser.switchTo().parentFrame();
@@ -352,19 +339,19 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
 
         doClickButton("doCerca()");
         Alert alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
         alert.accept();
 
         //Vado sul dettaglio analitico a livello di Ordine
         doClickButton("doTab('tab','tabOrdineResultDetailEcoCoge')");
         doSelectTableRow("main.Dati Analitici",0);
 
-        assertEquals("A22012", getTableColumnElement("main.Dati Analitici",0,1).getText());
-        assertEquals(" ", getTableColumnElement("main.Dati Analitici",0,2).getText());
-        assertEquals("000.000.000", getTableColumnElement("main.Dati Analitici",0,3).getText());
-        assertEquals("PTEST001", getTableColumnElement("main.Dati Analitici",0,4).getText());
-        assertEquals("183,00", getTableColumnElement("main.Dati Analitici",0,5).getText());
-        assertThrows("Cannot find Element <tr> with tableName main.Dati Analitici and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.Dati Analitici",1));
+        Assertions.assertEquals("A22012", getTableColumnElement("main.Dati Analitici",0,1).getText());
+        Assertions.assertEquals(" ", getTableColumnElement("main.Dati Analitici",0,2).getText());
+        Assertions.assertEquals("000.000.000", getTableColumnElement("main.Dati Analitici",0,3).getText());
+        Assertions.assertEquals("PTEST001", getTableColumnElement("main.Dati Analitici",0,4).getText());
+        Assertions.assertEquals("183,00", getTableColumnElement("main.Dati Analitici",0,5).getText());
+        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Dati Analitici",1),"Cannot find Element <tr> with tableName main.Dati Analitici and numberRow: 1");
 
         //Vado sul dettaglio a livello riga Ordine
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
@@ -372,17 +359,17 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
 
         doClickButton("doTab('tabOrdineAcqDettagli','tabOrdineRigaResultDetailEcoCoge')");
 
-        assertEquals("A22012", getGrapheneElement("main.Righe.find_voce_ep.cd_voce_ep").getAttribute("value"));
-        assertEquals("183,00", getGrapheneElement("imCostoEcoConsegne").getAttribute("value"));
-        assertEquals("183,00", getGrapheneElement("imCostoEcoRipartitoConsegne").getAttribute("value"));
-        assertEquals("0,00", getGrapheneElement("imCostoEcoDaRipartireConsegne").getAttribute("value"));
+        Assertions.assertEquals("A22012", getGrapheneElement("main.Righe.find_voce_ep.cd_voce_ep").getAttribute("value"));
+        Assertions.assertEquals("183,00", getGrapheneElement("imCostoEcoConsegne").getAttribute("value"));
+        Assertions.assertEquals("183,00", getGrapheneElement("imCostoEcoRipartitoConsegne").getAttribute("value"));
+        Assertions.assertEquals("0,00", getGrapheneElement("imCostoEcoDaRipartireConsegne").getAttribute("value"));
 
         doSelectTableRow("main.Righe.Dati Coge/Coan",0);
 
-        assertEquals("PTEST001", getTableColumnElement("main.Righe.Dati Coge/Coan",0,1).getText());
-        assertEquals("000.000.000", getTableColumnElement("main.Righe.Dati Coge/Coan",0,2).getText());
-        assertEquals("183,00", getTableColumnElement("main.Righe.Dati Coge/Coan",0,3).getText());
-        assertThrows("Cannot find Element <tr> with tableName main.Righe.Dati Coge/Coan and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.Righe.Dati Coge/Coan",1));
+        Assertions.assertEquals("PTEST001", getTableColumnElement("main.Righe.Dati Coge/Coan",0,1).getText());
+        Assertions.assertEquals("000.000.000", getTableColumnElement("main.Righe.Dati Coge/Coan",0,2).getText());
+        Assertions.assertEquals("183,00", getTableColumnElement("main.Righe.Dati Coge/Coan",0,3).getText());
+        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Righe.Dati Coge/Coan",1),"Cannot find Element <tr> with tableName main.Righe.Dati Coge/Coan and numberRow: 1");
 
         //Vado sulla tab ‘consegne’
         doClickButton("doTab('tabOrdineAcqDettagli','tabOrdineConsegna')");
@@ -394,11 +381,11 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         else if (getTableColumnElement("main.Righe.Consegne",1, 1).getText().equals("1"))
             rowElement1 = getTableRowElement("main.Righe.Consegne",1);
         else
-            Assert.fail("Riga consegna 1 non individuata");
+            Assertions.fail("Riga consegna 1 non individuata");
 
         //Verifico che la riga consegna n. 1 sia in stato ‘EVASA’ e la consegna n. 2 ancora in stato INSERITA. Entrambe ‘Non Associate’.
-        assertEquals("Evasa", getTableColumnElement(rowElement1,5).getText());
-        assertEquals("Non Associata", getTableColumnElement(rowElement1,6).getText());
+        Assertions.assertEquals("Evasa", getTableColumnElement(rowElement1,5).getText());
+        Assertions.assertEquals("Non Associata", getTableColumnElement(rowElement1,6).getText());
 
         //Mi posiziono sulla prima consegna
         rowElement1.click();
@@ -406,28 +393,28 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         //Entro su ‘scrittura economica’.
         doClickButton("submitForm('doVisualizzaEconomica');");
 
-        assertEquals("Si", getGrapheneElement("main.attiva").getText());
-        assertEquals("183,00", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
-        assertEquals("183,00", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
+        Assertions.assertEquals("Si", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("183,00", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
+        Assertions.assertEquals("183,00", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 
         //Nella sezione ‘Dare’ è presente correttamente il conto di costo: C13003
         doClickButton("doTab('tab','tabDare')");
-        assertEquals("A22012", getTableColumnElement("main.MovimentiDare",0,1).getText());
-        assertEquals("183,00", getTableColumnElement("main.MovimentiDare",0,5).getText());
-        assertThrows("Cannot find Element <tr> with tableName main.MovimentiDare and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.MovimentiDare",1));
+        Assertions.assertEquals("A22012", getTableColumnElement("main.MovimentiDare",0,1).getText());
+        Assertions.assertEquals("183,00", getTableColumnElement("main.MovimentiDare",0,5).getText());
+        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.MovimentiDare",1),"Cannot find Element <tr> with tableName main.MovimentiDare and numberRow: 1");
 
         //Nella sezione ‘Avere’ è presente correttamente il conto fatture da ricevere: P00047.
         doClickButton("doTab('tab','tabAvere')");
-        assertEquals("P00047", getTableColumnElement("main.MovimentiAvere",0,1).getText());
-        assertEquals("183,00", getTableColumnElement("main.MovimentiAvere",0,5).getText());
-        assertThrows("Cannot find Element <tr> with tableName main.MovimentiAvere and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.MovimentiAvere",1));
+        Assertions.assertEquals("P00047", getTableColumnElement("main.MovimentiAvere",0,1).getText());
+        Assertions.assertEquals("183,00", getTableColumnElement("main.MovimentiAvere",0,5).getText());
+        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.MovimentiAvere",1),"Cannot find Element <tr> with tableName main.MovimentiAvere and numberRow: 1");
 
         doClickButton("doChiudiForm()");
         doClickButton("submitForm('doVisualizzaAnalitica');");
 
         //Restituisce messaggio di "Scrittura Analitica non presente!"
         alert = browser.switchTo().alert();
-        assertEquals("Scrittura Analitica non presente!", alert.getText());
+        Assertions.assertEquals("Scrittura Analitica non presente!", alert.getText());
         alert.accept();
 
         doClickButton("doChiudiForm()");
@@ -437,9 +424,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
      * 4) verifica inserimento bene in transito
      */
     @Test
-    @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(5)
+    @Order(5)
     public void testVerificaBeneInTransito001() {
         //Verifico che il bene sia in transito
         browser.switchTo().parentFrame();
@@ -457,13 +442,13 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         //Ricerco l’unico bene in transito
         doClickButton("doCerca()");
         Alert alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
         alert.accept();
 
-        assertEquals("Inserito", getGrapheneElement("main.stato").getAttribute("value"));
+        Assertions.assertEquals("Inserito", getGrapheneElement("main.stato").getAttribute("value"));
 
         String pgOrdineCreated = sharedResource.getVal01();
-        assertEquals("2025/" + CD_NUMERATORE + "/" + pgOrdineCreated + "/1/1", getGrapheneElement("main.ordine").getAttribute("value"));
+        Assertions.assertEquals("2025/" + CD_NUMERATORE + "/" + pgOrdineCreated + "/1/1", getGrapheneElement("main.ordine").getAttribute("value"));
 
         //Modifico il campo condizioni bene mettendolo a Ottimo (0)
         Select select = new Select(getGrapheneElement("main.condizioni"));
@@ -482,11 +467,11 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         //Salvo
         doClickButton("doSalva()");
         alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), alert.getText());
+        Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), alert.getText());
         alert.accept();
 
         //Il transito del bene deve acquisita stato "Completo"
-        assertEquals("Completo", getGrapheneElement("main.stato").getAttribute("value"));
+        Assertions.assertEquals("Completo", getGrapheneElement("main.stato").getAttribute("value"));
 
         doClickButton("doChiudiForm()");
     }
@@ -495,9 +480,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
      * 5) annullamento evasione riga consegna
      */
     @Test
-    @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(6)
+    @Order(6)
     public void testAnnullaEvasioneConsegna001() {
         browser.switchTo().parentFrame();
         switchToFrameMenu();
@@ -558,9 +541,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
      * 6) verifica annullamento bene in transito
      */
     @Test
-    @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(7)
+    @Order(7)
     public void testVerificaBeneInTransito002() {
         //Verifico che il bene sia in transito
         browser.switchTo().parentFrame();
@@ -573,7 +554,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         //Ricerco l’unico bene in transito
         doClickButton("doCerca()");
         Alert alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.MESSAGE_RICERCA_NO_RECORD.value(), alert.getText());
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_NO_RECORD.value(), alert.getText());
         alert.accept();
 
         doClickButton("doChiudiForm()");
@@ -583,9 +564,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
      * 7) nuova evasione riga consegna
      */
     @Test
-    @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(8)
+    @Order(8)
     public void testEvasioneConsegna002() {
         browser.switchTo().parentFrame();
         switchToFrameMenu();
@@ -626,9 +605,9 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         else if (getTableColumnElement("main.ConsegneDaEvadere", 1, 1).getText().equals("2025/" + CD_NUMERATORE + "/" + pgOrdineCreated + "/1/1"))
             rowElement1 = getTableRowElement("main.ConsegneDaEvadere", 1);
         else
-            Assert.fail("Riga consegna 1 non individuata");
+            Assertions.fail("Riga consegna 1 non individuata");
 
-        assertThrows("Cannot find Element <tr> with tableName main.ConsegneDaEvadere and numberRow: 1", RuntimeException.class, () -> getTableRowElement("main.ConsegneDaEvadere", 1));
+        Assertions.assertThrows(RuntimeException.class, () -> getTableRowElement("main.ConsegneDaEvadere", 1),"Cannot find Element <tr> with tableName main.ConsegneDaEvadere and numberRow: 1");
 
         //Scelgo la prima consegna
         rowElement1.click();
@@ -637,7 +616,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         //Salvo
         doClickButton("doSalva()");
         Alert alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
+        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
         alert.accept();
     }
 
@@ -645,9 +624,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
      * 8) verifica inserimento bene in transito e completamento per successiva inventariazione
      */
     @Test
-    @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(9)
+    @Order(9)
     public void testCompletaBeneInTransito001() {
         //Verifico che il bene sia in transito
         browser.switchTo().parentFrame();
@@ -660,13 +637,13 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         //Ricerco l’unico bene in transito
         doClickButton("doCerca()");
         Alert alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
         alert.accept();
 
-        assertEquals("Inserito", getGrapheneElement("main.stato").getAttribute("value"));
+        Assertions.assertEquals("Inserito", getGrapheneElement("main.stato").getAttribute("value"));
 
         String pgOrdineCreated = sharedResource.getVal01();
-        assertEquals("2025/" + CD_NUMERATORE + "/" + pgOrdineCreated + "/1/1", getGrapheneElement("main.ordine").getAttribute("value"));
+        Assertions.assertEquals("2025/" + CD_NUMERATORE + "/" + pgOrdineCreated + "/1/1", getGrapheneElement("main.ordine").getAttribute("value"));
 
         //Modifico il campo condizioni bene mettendolo a Ottimo (0)
         Select select = new Select(getGrapheneElement("main.condizioni"));
@@ -685,11 +662,11 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         //Salvo
         doClickButton("doSalva()");
         alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), alert.getText());
+        Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), alert.getText());
         alert.accept();
 
         //Il transito del bene deve acquisita stato "Completo"
-        assertEquals("Completo", getGrapheneElement("main.stato").getAttribute("value"));
+        Assertions.assertEquals("Completo", getGrapheneElement("main.stato").getAttribute("value"));
 
         doClickButton("doChiudiForm()");
     }
@@ -698,9 +675,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
      * 9) verifica inserimento bene in transito e completamento per successiva inventariazione
      */
     @Test
-    @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(10)
+    @Order(10)
     public void testInventariazioneBeneInTransito001() {
         //Verifico che il bene sia in transito
         browser.switchTo().parentFrame();
@@ -746,7 +721,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         doClickButton("doSalva()");
 
         Alert alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
+        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
         alert.accept();
 
         doClickButton("doChiudiForm()");
@@ -757,9 +732,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
      * 10) annullamento evasione riga consegna non consentita per bene inventariato
      */
     @Test
-    @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(11)
+    @Order(11)
     public void testAnnullaEvasioneConsegna002() {
         browser.switchTo().parentFrame();
         switchToFrameMenu();
@@ -810,7 +783,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         doClickButton("submitForm('doAnnullaMovimenti');");
 
         Alert alert = browser.switchTo().alert();
-        assertEquals("Operazione non possibile! Il bene associato al movimento " + getTableColumnElement(element.get(), 1).getText() + " risulta essere inventariato.", alert.getText());
+        Assertions.assertEquals("Operazione non possibile! Il bene associato al movimento " + getTableColumnElement(element.get(), 1).getText() + " risulta essere inventariato.", alert.getText());
         alert.accept();
 
         //Chiudo la form (2 volte perchè sono 2 BP aperti)
@@ -819,9 +792,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
     }
 
     @Test
-    @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(12)
+    @Order(12)
     public void testRiscontroValore001() {
         browser.switchTo().parentFrame();
         switchToFrameMenu();
@@ -840,7 +811,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
 
         doClickButton("doCerca()");
         Alert alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
         alert.accept();
 
         //Clicco sul pulsante ‘Compila fattura’;
@@ -901,13 +872,13 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         doClickButton("submitForm('doConfermaRiscontroAValore')");
 
         alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
+        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
         alert.accept();
 
         doClickButton("doSalva()");
 
         alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
+        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
         alert.accept();
 
         //Vado sulla tab principale
@@ -919,30 +890,28 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
 
         //Vado sulla tab economica per controllare scrittura
         doClickButton("doTab('tab','tabEconomica')");
-        assertEquals("P00047", getTableColumnElement("main.Movimenti Dare",0,1).getText());
-        assertEquals("181,78", getTableColumnElement("main.Movimenti Dare",0,5).getText());
+        Assertions.assertEquals("P00047", getTableColumnElement("main.Movimenti Dare",0,1).getText());
+        Assertions.assertEquals("181,78", getTableColumnElement("main.Movimenti Dare",0,5).getText());
 
-        assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Dare' and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.Movimenti Dare",1));
+        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Movimenti Dare",1),"Cannot find Element <tr> with tableName 'main.Movimenti Dare' and numberRow: 1");
 
-        assertEquals("P22012", getTableColumnElement("main.Movimenti Avere",0,1).getText());
-        assertEquals("149,00", getTableColumnElement("main.Movimenti Avere",0,5).getText());
+        Assertions.assertEquals("P22012", getTableColumnElement("main.Movimenti Avere",0,1).getText());
+        Assertions.assertEquals("149,00", getTableColumnElement("main.Movimenti Avere",0,5).getText());
 
-        assertEquals("P71012I", getTableColumnElement("main.Movimenti Avere",1,1).getText());
-        assertEquals("32,78", getTableColumnElement("main.Movimenti Avere",1,5).getText());
+        Assertions.assertEquals("P71012I", getTableColumnElement("main.Movimenti Avere",1,1).getText());
+        Assertions.assertEquals("32,78", getTableColumnElement("main.Movimenti Avere",1,5).getText());
 
-        assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Avere' and numberRow: 2", RuntimeException.class, ()->getTableRowElement("main.Movimenti Avere",2));
+        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Movimenti Avere",2),"Cannot find Element <tr> with tableName 'main.Movimenti Avere' and numberRow: 2");
 
         //Vado sulla tab analitica per controllare scrittura che non deve esistere dato che la movimentazione avviene sulla consegna
         doClickButton("doTab('tab','tabAnalitica')");
-        assertThrows("Cannot find Element <tr> with tableName 'main.Movimenti Analitici' and numberRow: 0", RuntimeException.class, ()->getTableRowElement("main.Movimenti Analitici",0));
+        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Movimenti Analitici",0),"Cannot find Element <tr> with tableName 'main.Movimenti Analitici' and numberRow: 0");
 
         doClickButton("doChiudiForm()");
     }
 
     @Test
-    @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(13)
+    @Order(13)
     public void testVerificaScritturaOrdine002() {
         //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
         browser.switchTo().parentFrame();
@@ -969,7 +938,7 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
 
         doClickButton("doCerca()");
         Alert alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
         alert.accept();
 
         //Vado sul dettaglio
@@ -978,17 +947,17 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
 
         doClickButton("doTab('tabOrdineAcqDettagli','tabOrdineRigaResultDetailEcoCoge')");
 
-        assertEquals("A22012", getGrapheneElement("main.Righe.find_voce_ep.cd_voce_ep").getAttribute("value"));
-        assertEquals("181,78", getGrapheneElement("imCostoEcoConsegne").getAttribute("value"));
-        assertEquals("181,78", getGrapheneElement("imCostoEcoRipartitoConsegne").getAttribute("value"));
-        assertEquals("0,00", getGrapheneElement("imCostoEcoDaRipartireConsegne").getAttribute("value"));
+        Assertions.assertEquals("A22012", getGrapheneElement("main.Righe.find_voce_ep.cd_voce_ep").getAttribute("value"));
+        Assertions.assertEquals("181,78", getGrapheneElement("imCostoEcoConsegne").getAttribute("value"));
+        Assertions.assertEquals("181,78", getGrapheneElement("imCostoEcoRipartitoConsegne").getAttribute("value"));
+        Assertions.assertEquals("0,00", getGrapheneElement("imCostoEcoDaRipartireConsegne").getAttribute("value"));
 
         doSelectTableRow("main.Righe.Dati Coge/Coan",0);
 
-        assertEquals("PTEST001", getTableColumnElement("main.Righe.Dati Coge/Coan",0,1).getText());
-        assertEquals("000.000.000", getTableColumnElement("main.Righe.Dati Coge/Coan",0,2).getText());
-        assertEquals("181,78", getTableColumnElement("main.Righe.Dati Coge/Coan",0,3).getText());
-        assertThrows("Cannot find Element <tr> with tableName main.Righe.Dati Coge/Coan and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.Righe.Dati Coge/Coan",1));
+        Assertions.assertEquals("PTEST001", getTableColumnElement("main.Righe.Dati Coge/Coan",0,1).getText());
+        Assertions.assertEquals("000.000.000", getTableColumnElement("main.Righe.Dati Coge/Coan",0,2).getText());
+        Assertions.assertEquals("181,78", getTableColumnElement("main.Righe.Dati Coge/Coan",0,3).getText());
+        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Righe.Dati Coge/Coan",1),"Cannot find Element <tr> with tableName main.Righe.Dati Coge/Coan and numberRow: 1");
 
         //Vado sulla tab ‘consegne’
         doClickButton("doTab('tabOrdineAcqDettagli','tabOrdineConsegna')");
@@ -1000,11 +969,11 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         else if (getTableColumnElement("main.Righe.Consegne",1, 1).getText().equals("1"))
             rowElement1 = getTableRowElement("main.Righe.Consegne",1);
         else
-            Assert.fail("Riga consegna 1 non individuata");
+            Assertions.fail("Riga consegna 1 non individuata");
 
         //Verifico che le righe di consegna n. 1 sia in stato ‘EVASA’ e ‘Associata Totalmente’ a Fattura.
-        assertEquals("Evasa", getTableColumnElement(rowElement1,5).getText());
-        assertEquals("Associata Totalmente", getTableColumnElement(rowElement1,6).getText());
+        Assertions.assertEquals("Evasa", getTableColumnElement(rowElement1,5).getText());
+        Assertions.assertEquals("Associata Totalmente", getTableColumnElement(rowElement1,6).getText());
 
         rowElement1.click();
 
@@ -1014,19 +983,19 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         //Seleziono l'ultima scrittura che dovrebbe essere la rettifica valore
         getTableRowElement("mainTable",2).click();
 
-        assertEquals("Si", getGrapheneElement("main.attiva").getText());
-        assertEquals("1,22", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
-        assertEquals("1,22", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
+        Assertions.assertEquals("Si", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("1,22", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
+        Assertions.assertEquals("1,22", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 
         doClickButton("doTab('tab','tabDare')");
-        assertEquals("P00047", getTableColumnElement("main.MovimentiDare",0,1).getText());
-        assertEquals("1,22", getTableColumnElement("main.MovimentiDare",0,5).getText());
-        assertThrows("Cannot find Element <tr> with tableName main.MovimentiDare and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.MovimentiDare",1));
+        Assertions.assertEquals("P00047", getTableColumnElement("main.MovimentiDare",0,1).getText());
+        Assertions.assertEquals("1,22", getTableColumnElement("main.MovimentiDare",0,5).getText());
+        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.MovimentiDare",1),"Cannot find Element <tr> with tableName main.MovimentiDare and numberRow: 1");
 
         doClickButton("doTab('tab','tabAvere')");
-        assertEquals("A22012", getTableColumnElement("main.MovimentiAvere",0,1).getText());
-        assertEquals("1,22", getTableColumnElement("main.MovimentiAvere",0,5).getText());
-        assertThrows("Cannot find Element <tr> with tableName main.MovimentiAvere and numberRow: 1", RuntimeException.class, ()->getTableRowElement("main.MovimentiAvere",1));
+        Assertions.assertEquals("A22012", getTableColumnElement("main.MovimentiAvere",0,1).getText());
+        Assertions.assertEquals("1,22", getTableColumnElement("main.MovimentiAvere",0,5).getText());
+        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.MovimentiAvere",1),"Cannot find Element <tr> with tableName main.MovimentiAvere and numberRow: 1");
 
         doClickButton("doChiudiForm()");
 
@@ -1034,20 +1003,20 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         doClickButton("submitForm('doVisualizzaFattura');");
 
         String pgFatturaCreated = sharedResource.getVal02();
-        assertEquals(pgFatturaCreated, getGrapheneElement("main.pg_fattura_passiva").getAttribute("value"));
+        Assertions.assertEquals(pgFatturaCreated, getGrapheneElement("main.pg_fattura_passiva").getAttribute("value"));
 
         doClickButton("doChiudiForm()");
 
         //Passo alla ‘visualizzazione dei movimenti’
         doClickButton("submitForm('doVisualizzaMovimento');");
 
-        assertEquals("C01", getTableColumnElement("mainTable",0,3).getText());
-        assertEquals("183", getTableColumnElement("mainTable",0,9).getText());
+        Assertions.assertEquals("C01", getTableColumnElement("mainTable",0,3).getText());
+        Assertions.assertEquals("183", getTableColumnElement("mainTable",0,9).getText());
 
-        assertEquals("C20", getTableColumnElement("mainTable",1,3).getText());
-        assertEquals("1,22", getTableColumnElement("mainTable",1,9).getText());
+        Assertions.assertEquals("C20", getTableColumnElement("mainTable",1,3).getText());
+        Assertions.assertEquals("1,22", getTableColumnElement("mainTable",1,9).getText());
 
-        assertThrows("Cannot find Element <tr> with tableName 'mainTable' and numberRow: 2", RuntimeException.class, ()->getTableRowElement("mainTable",2));
+        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("mainTable",2),"Cannot find Element <tr> with tableName 'mainTable' and numberRow: 2");
 
         doClickButton("doChiudiForm()");
     }

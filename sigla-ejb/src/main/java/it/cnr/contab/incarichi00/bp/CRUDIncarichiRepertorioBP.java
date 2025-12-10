@@ -38,6 +38,8 @@ import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.jada.util.upload.UploadedFile;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 import java.rmi.RemoteException;
 import java.util.Iterator;
@@ -129,7 +131,6 @@ public class CRUDIncarichiRepertorioBP extends it.cnr.jada.util.action.SimpleCRU
 
 	/**
 	 * Secondo costruttore della classe <code>CRUDIncarichiRepertorioBP</code>.
-	 * @param String function
 	 */
 	public CRUDIncarichiRepertorioBP(String function) {
 		super(function);
@@ -172,7 +173,7 @@ public class CRUDIncarichiRepertorioBP extends it.cnr.jada.util.action.SimpleCRU
 			incarico.setUtenteCollegatoUoEnte(isUoEnte());
 			
 			return incarico;
-		} catch(javax.ejb.EJBException ejbe){
+		} catch(jakarta.ejb.EJBException ejbe){
 			throw handleException(ejbe);
 		} 
 	}
@@ -298,7 +299,7 @@ public class CRUDIncarichiRepertorioBP extends it.cnr.jada.util.action.SimpleCRU
 	 * Sovrascrive quello presente nelle superclassi
 	 * 
 	*/
-	public void openForm(javax.servlet.jsp.PageContext context,String action,String target) throws java.io.IOException,javax.servlet.ServletException {
+	public void openForm(PageContext context, String action, String target) throws java.io.IOException, ServletException {
 	  if (getTab("tab").equals("tabIncarichi_repertorio_allegati"))
 		openForm(context,action,target,"multipart/form-data");
 	  else

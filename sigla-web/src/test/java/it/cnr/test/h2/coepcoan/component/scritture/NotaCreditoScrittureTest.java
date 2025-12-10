@@ -21,25 +21,17 @@ import it.cnr.contab.coepcoan00.core.bulk.*;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_IBulk;
 import it.cnr.contab.docamm00.docs.bulk.Nota_di_creditoBulk;
+import it.cnr.contab.util.TestUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.bulk.BulkList;
-import it.cnr.jada.ejb.CRUDComponentSession;
+import org.junit.jupiter.api.*;
 import it.cnr.test.h2.DeploymentsH2;
-import it.cnr.test.util.TestUserContext;
-import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.jboss.arquillian.junit.InSequence;
-import org.junit.Test;
 
-import javax.ejb.EJB;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
-
 public class NotaCreditoScrittureTest extends DeploymentsH2 {
-    @EJB
-    private CRUDComponentSession crudComponentSession;
 
     /**
      * Fattura {@code Istituzionale Split Payment} di {@code Competenza} stornata da {@code Nota Credito} su mono voce:
@@ -80,8 +72,7 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
      * </pre>
      */
     @Test
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(1)
+    @Order(1)
     public void testNotaCredito001() throws Exception {
         //Registrazione fattura
         {
@@ -97,42 +88,42 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
 
             //CONTROLLO ECONOMICA
             {
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getIm_scrittura).orElse(null));
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getImTotaleDare).orElse(null));
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getImTotaleAvere).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiDare = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiDareColl)
                         .orElse(new BulkList<>());
-                assertEquals(1, movimentiDare.size());
+                Assertions.assertEquals(1, movimentiDare.size());
 
                 Optional<Movimento_cogeBulk> rigaTipoAttivita = movimentiDare.stream().filter(Movimento_cogeBulk::isRigaTipoAttivita).findAny();
-                assertTrue("Riga tipo attivita non presente.", rigaTipoAttivita.isPresent());
-                assertEquals("A22010", rigaTipoAttivita.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("18.67"), rigaTipoAttivita.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoAttivita.isPresent(),"Riga tipo attivita non presente.");
+                Assertions.assertEquals("A22010", rigaTipoAttivita.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("18.67"), rigaTipoAttivita.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiAvere = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiAvereColl)
                         .orElse(new BulkList<>());
-                assertEquals(2, movimentiAvere.size());
+                Assertions.assertEquals(2, movimentiAvere.size());
 
                 Optional<Movimento_cogeBulk> rigaTipoDebito = movimentiAvere.stream().filter(Movimento_cogeBulk::isRigaTipoDebito).findAny();
-                assertTrue("Riga tipo debito non presente.", rigaTipoDebito.isPresent());
-                assertEquals("P22010", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("16.97"), rigaTipoDebito.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoDebito.isPresent(),"Riga tipo debito non presente.");
+                Assertions.assertEquals("P22010", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("16.97"), rigaTipoDebito.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 Optional<Movimento_cogeBulk> rigaTipoIva = movimentiAvere.stream().filter(Movimento_cogeBulk::isRigaTipoIvaAcquistoSplit).findAny();
-                assertTrue("Riga tipo iva non presente.", rigaTipoIva.isPresent());
-                assertEquals("P71012I", rigaTipoIva.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("1.70"), rigaTipoIva.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoIva.isPresent(),"Riga tipo iva non presente.");
+                Assertions.assertEquals("P71012I", rigaTipoIva.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("1.70"), rigaTipoIva.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
             }
 
             //CONTROLLO ANALITICA
             {
-                assertFalse("Scrittura analitica presente.", Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent());
+                Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
             }
 
             Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
@@ -151,42 +142,42 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
 
             //CONTROLLO ECONOMICA
             {
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getIm_scrittura).orElse(null));
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getImTotaleDare).orElse(null));
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getImTotaleAvere).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiAvere = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiAvereColl)
                         .orElse(new BulkList<>());
-                assertEquals(1, movimentiAvere.size());
+                Assertions.assertEquals(1, movimentiAvere.size());
 
                 Optional<Movimento_cogeBulk> rigaTipoAttivita = movimentiAvere.stream().filter(Movimento_cogeBulk::isRigaTipoAttivita).findAny();
-                assertTrue("Riga tipo attivita non presente.", rigaTipoAttivita.isPresent());
-                assertEquals("A22010", rigaTipoAttivita.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("18.67"), rigaTipoAttivita.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoAttivita.isPresent(),"Riga tipo attivita non presente.");
+                Assertions.assertEquals("A22010", rigaTipoAttivita.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("18.67"), rigaTipoAttivita.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiDare = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiDareColl)
                         .orElse(new BulkList<>());
-                assertEquals(2, movimentiDare.size());
+                Assertions.assertEquals(2, movimentiDare.size());
 
                 Optional<Movimento_cogeBulk> rigaTipoDebito = movimentiDare.stream().filter(Movimento_cogeBulk::isRigaTipoDebito).findAny();
-                assertTrue("Riga tipo debito non presente.", rigaTipoDebito.isPresent());
-                assertEquals("P22010", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("16.97"), rigaTipoDebito.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoDebito.isPresent(),"Riga tipo debito non presente.");
+                Assertions.assertEquals("P22010", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("16.97"), rigaTipoDebito.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 Optional<Movimento_cogeBulk> rigaTipoIva = movimentiDare.stream().filter(Movimento_cogeBulk::isRigaTipoIvaAcquistoSplit).findAny();
-                assertTrue("Riga tipo iva non presente.", rigaTipoIva.isPresent());
-                assertEquals("P71012I", rigaTipoIva.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("1.70"), rigaTipoIva.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoIva.isPresent(),"Riga tipo iva non presente.");
+                Assertions.assertEquals("P71012I", rigaTipoIva.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("1.70"), rigaTipoIva.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
             }
 
             //CONTROLLO ANALITICA
             {
-                assertFalse("Scrittura analitica presente.", Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent());
+                Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
             }
         }
     }
@@ -232,8 +223,7 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
      * </pre>
      */
     @Test
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(2)
+    @Order(2)
     public void testNotaCredito002() throws Exception {
         //Registrazione fattura
         {
@@ -248,66 +238,66 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
                     fatturaPassivaBulk);
             //CONTROLLO ECONOMICA
             {
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getIm_scrittura).orElse(null));
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getImTotaleDare).orElse(null));
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getImTotaleAvere).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiDare = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiDareColl)
                         .orElse(new BulkList<>());
-                assertEquals(1, movimentiDare.size());
+                Assertions.assertEquals(1, movimentiDare.size());
 
                 Optional<Movimento_cogeBulk> rigaTipoCosto = movimentiDare.stream().filter(Movimento_cogeBulk::isRigaTipoCosto).findAny();
-                assertTrue("Riga tipo costo non presente.", rigaTipoCosto.isPresent());
-                assertEquals("C00066", rigaTipoCosto.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("18.67"), rigaTipoCosto.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoCosto.isPresent(),"Riga tipo costo non presente.");
+                Assertions.assertEquals("C00066", rigaTipoCosto.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("18.67"), rigaTipoCosto.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiAvere = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiAvereColl)
                         .orElse(new BulkList<>());
-                assertEquals(2, movimentiAvere.size());
+                Assertions.assertEquals(2, movimentiAvere.size());
 
                 Optional<Movimento_cogeBulk> rigaTipoDebito = movimentiAvere.stream().filter(Movimento_cogeBulk::isRigaTipoDebito).findAny();
-                assertTrue("Riga tipo debito non presente.", rigaTipoDebito.isPresent());
-                assertEquals("P43001", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("16.97"), rigaTipoDebito.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoDebito.isPresent(),"Riga tipo debito non presente.");
+                Assertions.assertEquals("P43001", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("16.97"), rigaTipoDebito.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 Optional<Movimento_cogeBulk> rigaTipoIva = movimentiAvere.stream().filter(Movimento_cogeBulk::isRigaTipoIvaAcquistoSplit).findAny();
-                assertTrue("Riga tipo iva non presente.", rigaTipoIva.isPresent());
-                assertEquals("P71012I", rigaTipoIva.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("1.70"), rigaTipoIva.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoIva.isPresent(),"Riga tipo iva non presente.");
+                Assertions.assertEquals("P71012I", rigaTipoIva.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("1.70"), rigaTipoIva.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
             }
 
             //CONTROLLO ANALITICA
             {
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getIm_scrittura).orElse(null));
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getImTotaleDare).orElse(null));
-                assertEquals(new BigDecimal("0"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
+                Assertions.assertEquals(new BigDecimal("0"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getImTotaleAvere).orElse(null));
 
                 List<Movimento_coanBulk> movimentiDare = Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getMovimentiDareColl)
                         .orElse(new BulkList<>());
-                assertEquals(1, movimentiDare.size());
+                Assertions.assertEquals(1, movimentiDare.size());
 
                 Optional<Movimento_coanBulk> rigaDare = movimentiDare.stream().findAny();
-                assertTrue("Riga analitica dare non presente.", rigaDare.isPresent());
-                assertEquals("C00066", rigaDare.map(Movimento_coanBulk::getCd_voce_ana).orElse(null));
-                assertEquals("000.000.000", rigaDare.map(Movimento_coanBulk::getCd_centro_responsabilita).orElse(null));
-                assertEquals("PTEST003", rigaDare.map(Movimento_coanBulk::getCd_linea_attivita).orElse(null));
-                assertEquals(new BigDecimal("18.67"), rigaDare.map(Movimento_coanBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaDare.isPresent(),"Riga analitica dare non presente.");
+                Assertions.assertEquals("C00066", rigaDare.map(Movimento_coanBulk::getCd_voce_ana).orElse(null));
+                Assertions.assertEquals("000.000.000", rigaDare.map(Movimento_coanBulk::getCd_centro_responsabilita).orElse(null));
+                Assertions.assertEquals("PTEST003", rigaDare.map(Movimento_coanBulk::getCd_linea_attivita).orElse(null));
+                Assertions.assertEquals(new BigDecimal("18.67"), rigaDare.map(Movimento_coanBulk::getIm_movimento).orElse(null));
 
                 List<Movimento_coanBulk> movimentiAvere = Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getMovimentiAvereColl)
                         .orElse(new BulkList<>());
-                assertEquals(0, movimentiAvere.size());
+                Assertions.assertEquals(0, movimentiAvere.size());
             }
         }
         //Registrazione nota credito
@@ -324,64 +314,64 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
 
             //CONTROLLO ECONOMICA
             {
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getIm_scrittura).orElse(null));
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getImTotaleDare).orElse(null));
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getImTotaleAvere).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiAvere = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiAvereColl)
                         .orElse(new BulkList<>());
-                assertEquals(1, movimentiAvere.size());
+                Assertions.assertEquals(1, movimentiAvere.size());
 
                 Optional<Movimento_cogeBulk> rigaTipoCosto = movimentiAvere.stream().filter(Movimento_cogeBulk::isRigaTipoCosto).findAny();
-                assertTrue("Riga tipo costo non presente.", rigaTipoCosto.isPresent());
-                assertEquals("C00066", rigaTipoCosto.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("18.67"), rigaTipoCosto.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoCosto.isPresent(),"Riga tipo costo non presente.");
+                Assertions.assertEquals("C00066", rigaTipoCosto.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("18.67"), rigaTipoCosto.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiDare = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiDareColl)
                         .orElse(new BulkList<>());
-                assertEquals(2, movimentiDare.size());
+                Assertions.assertEquals(2, movimentiDare.size());
 
                 Optional<Movimento_cogeBulk> rigaTipoDebito = movimentiDare.stream().filter(Movimento_cogeBulk::isRigaTipoDebito).findAny();
-                assertTrue("Riga tipo debito non presente.", rigaTipoDebito.isPresent());
-                assertEquals("P43001", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("16.97"), rigaTipoDebito.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoDebito.isPresent(),"Riga tipo debito non presente.");
+                Assertions.assertEquals("P43001", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("16.97"), rigaTipoDebito.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 Optional<Movimento_cogeBulk> rigaTipoIva = movimentiDare.stream().filter(Movimento_cogeBulk::isRigaTipoIvaAcquistoSplit).findAny();
-                assertTrue("Riga tipo iva non presente.", rigaTipoIva.isPresent());
-                assertEquals("P71012I", rigaTipoIva.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("1.70"), rigaTipoIva.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoIva.isPresent(),"Riga tipo iva non presente.");
+                Assertions.assertEquals("P71012I", rigaTipoIva.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("1.70"), rigaTipoIva.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
             }
 
             //CONTROLLO ANALITICA
             {
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getIm_scrittura).orElse(null));
-                assertEquals(new BigDecimal("0"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
+                Assertions.assertEquals(new BigDecimal("0"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getImTotaleDare).orElse(null));
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getImTotaleAvere).orElse(null));
 
                 List<Movimento_coanBulk> movimentiDare = Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getMovimentiDareColl)
                         .orElse(new BulkList<>());
-                assertEquals(0, movimentiDare.size());
+                Assertions.assertEquals(0, movimentiDare.size());
 
                 List<Movimento_coanBulk> movimentiAvere = Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getMovimentiAvereColl)
                         .orElse(new BulkList<>());
-                assertEquals(1, movimentiAvere.size());
+                Assertions.assertEquals(1, movimentiAvere.size());
 
                 Optional<Movimento_coanBulk> rigaAvere = movimentiAvere.stream().findAny();
-                assertTrue("Riga analitica avere non presente.", rigaAvere.isPresent());
-                assertEquals("C00066", rigaAvere.map(Movimento_coanBulk::getCd_voce_ana).orElse(null));
-                assertEquals("000.000.000", rigaAvere.map(Movimento_coanBulk::getCd_centro_responsabilita).orElse(null));
-                assertEquals("PTEST003", rigaAvere.map(Movimento_coanBulk::getCd_linea_attivita).orElse(null));
-                assertEquals(new BigDecimal("18.67"), rigaAvere.map(Movimento_coanBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaAvere.isPresent(),"Riga analitica avere non presente.");
+                Assertions.assertEquals("C00066", rigaAvere.map(Movimento_coanBulk::getCd_voce_ana).orElse(null));
+                Assertions.assertEquals("000.000.000", rigaAvere.map(Movimento_coanBulk::getCd_centro_responsabilita).orElse(null));
+                Assertions.assertEquals("PTEST003", rigaAvere.map(Movimento_coanBulk::getCd_linea_attivita).orElse(null));
+                Assertions.assertEquals(new BigDecimal("18.67"), rigaAvere.map(Movimento_coanBulk::getIm_movimento).orElse(null));
             }
         }
     }
@@ -448,8 +438,7 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
      * </pre>
      */
     @Test
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(3)
+    @Order(3)
     public void testNotaCredito003() throws Exception {
         //Registrazione fattura
         {
@@ -465,52 +454,52 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
 
             //CONTROLLO ECONOMICA
             {
-                assertEquals(new BigDecimal("28.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("28.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getIm_scrittura).orElse(null));
-                assertEquals(new BigDecimal("28.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("28.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getImTotaleDare).orElse(null));
-                assertEquals(new BigDecimal("28.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("28.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getImTotaleAvere).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiDare = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiDareColl)
                         .orElse(new BulkList<>());
-                assertEquals(2, movimentiDare.size());
+                Assertions.assertEquals(2, movimentiDare.size());
 
                 Optional<Movimento_cogeBulk> rigaTipoAttivita1 = movimentiDare.stream().filter(el -> "A22012".equals(el.getCd_voce_ep())).findAny();
-                assertTrue("Conto A22012 non presente.", rigaTipoAttivita1.isPresent());
-                assertTrue("Riga tipo attivita non presente.", rigaTipoAttivita1.filter(Movimento_cogeBulk::isRigaTipoAttivita).isPresent());
-                assertEquals(new BigDecimal("18.67"), rigaTipoAttivita1.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoAttivita1.isPresent(),"Conto A22012 non presente.");
+                Assertions.assertTrue(rigaTipoAttivita1.filter(Movimento_cogeBulk::isRigaTipoAttivita).isPresent(),"Riga tipo attivita non presente.");
+                Assertions.assertEquals(new BigDecimal("18.67"), rigaTipoAttivita1.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 Optional<Movimento_cogeBulk> rigaTipoAttivita2 = movimentiDare.stream().filter(el -> "A22010".equals(el.getCd_voce_ep())).findAny();
-                assertTrue("Conto A22010 non presente.", rigaTipoAttivita2.isPresent());
-                assertTrue("Riga tipo attivita non presente.", rigaTipoAttivita2.filter(Movimento_cogeBulk::isRigaTipoAttivita).isPresent());
-                assertEquals(new BigDecimal("10.00"), rigaTipoAttivita2.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoAttivita2.isPresent(),"Conto A22010 non presente.");
+                Assertions.assertTrue(rigaTipoAttivita2.filter(Movimento_cogeBulk::isRigaTipoAttivita).isPresent(),"Riga tipo attivita non presente.");
+                Assertions.assertEquals(new BigDecimal("10.00"), rigaTipoAttivita2.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiAvere = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiAvereColl)
                         .orElse(new BulkList<>());
-                assertEquals(3, movimentiAvere.size());
+                Assertions.assertEquals(3, movimentiAvere.size());
 
                 Optional<Movimento_cogeBulk> rigaTipoDebito1 = movimentiAvere.stream().filter(el -> "P22012".equals(el.getCd_voce_ep())).findAny();
-                assertTrue("Conto P22012 non presente.", rigaTipoDebito1.isPresent());
-                assertTrue("Riga tipo debito non presente.", rigaTipoDebito1.filter(Movimento_cogeBulk::isRigaTipoDebito).isPresent());
-                assertEquals(new BigDecimal("16.97"), rigaTipoDebito1.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoDebito1.isPresent(),"Conto P22012 non presente.");
+                Assertions.assertTrue(rigaTipoDebito1.filter(Movimento_cogeBulk::isRigaTipoDebito).isPresent(),"Riga tipo debito non presente.");
+                Assertions.assertEquals(new BigDecimal("16.97"), rigaTipoDebito1.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 Optional<Movimento_cogeBulk> rigaTipoDebito2 = movimentiAvere.stream().filter(el -> "P22010".equals(el.getCd_voce_ep())).findAny();
-                assertTrue("Conto P22010 non presente.", rigaTipoDebito2.isPresent());
-                assertTrue("Riga tipo debito non presente.", rigaTipoDebito2.filter(Movimento_cogeBulk::isRigaTipoDebito).isPresent());
-                assertEquals(new BigDecimal("10.00"), rigaTipoDebito2.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoDebito2.isPresent(),"Conto P22010 non presente.");
+                Assertions.assertTrue(rigaTipoDebito2.filter(Movimento_cogeBulk::isRigaTipoDebito).isPresent(),"Riga tipo debito non presente.");
+                Assertions.assertEquals(new BigDecimal("10.00"), rigaTipoDebito2.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 Optional<Movimento_cogeBulk> rigaTipoIva = movimentiAvere.stream().filter(Movimento_cogeBulk::isRigaTipoIvaAcquistoSplit).findAny();
-                assertTrue("Riga tipo iva non presente.", rigaTipoIva.isPresent());
-                assertEquals("P71012I", rigaTipoIva.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("1.70"), rigaTipoIva.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoIva.isPresent(),"Riga tipo iva non presente.");
+                Assertions.assertEquals("P71012I", rigaTipoIva.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("1.70"), rigaTipoIva.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
             }
 
             //CONTROLLO ANALITICA
             {
-                assertFalse("Scrittura analitica presente.", Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent());
+                Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
             }
 
             Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
@@ -529,42 +518,42 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
 
             //CONTROLLO ECONOMICA
             {
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getIm_scrittura).orElse(null));
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getImTotaleDare).orElse(null));
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getImTotaleAvere).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiAvere = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiAvereColl)
                         .orElse(new BulkList<>());
-                assertEquals(1, movimentiAvere.size());
+                Assertions.assertEquals(1, movimentiAvere.size());
 
                 Optional<Movimento_cogeBulk> rigaTipoAttivita = movimentiAvere.stream().filter(Movimento_cogeBulk::isRigaTipoAttivita).findAny();
-                assertTrue("Riga tipo attività non presente.", rigaTipoAttivita.isPresent());
-                assertEquals("A22012", rigaTipoAttivita.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("18.67"), rigaTipoAttivita.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoAttivita.isPresent(),"Riga tipo attività non presente.");
+                Assertions.assertEquals("A22012", rigaTipoAttivita.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("18.67"), rigaTipoAttivita.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiDare = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiDareColl)
                         .orElse(new BulkList<>());
-                assertEquals(2, movimentiDare.size());
+                Assertions.assertEquals(2, movimentiDare.size());
 
                 Optional<Movimento_cogeBulk> rigaTipoDebito = movimentiDare.stream().filter(Movimento_cogeBulk::isRigaTipoDebito).findAny();
-                assertTrue("Riga tipo debito non presente.", rigaTipoDebito.isPresent());
-                assertEquals("P22012", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("16.97"), rigaTipoDebito.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoDebito.isPresent(),"Riga tipo debito non presente.");
+                Assertions.assertEquals("P22012", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("16.97"), rigaTipoDebito.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 Optional<Movimento_cogeBulk> rigaTipoIva = movimentiDare.stream().filter(Movimento_cogeBulk::isRigaTipoIvaAcquistoSplit).findAny();
-                assertTrue("Riga tipo iva non presente.", rigaTipoIva.isPresent());
-                assertEquals("P71012I", rigaTipoIva.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("1.70"), rigaTipoIva.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoIva.isPresent(),"Riga tipo iva non presente.");
+                Assertions.assertEquals("P71012I", rigaTipoIva.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("1.70"), rigaTipoIva.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
             }
 
             //CONTROLLO ANALITICA
             {
-                assertFalse("Scrittura analitica presente.", Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent());
+                Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
             }
         }
         //Registrazione nota credito riga 2
@@ -581,37 +570,37 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
 
             //CONTROLLO ECONOMICA
             {
-                assertEquals(new BigDecimal("10.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("10.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getIm_scrittura).orElse(null));
-                assertEquals(new BigDecimal("10.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("10.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getImTotaleDare).orElse(null));
-                assertEquals(new BigDecimal("10.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("10.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getImTotaleAvere).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiAvere = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiAvereColl)
                         .orElse(new BulkList<>());
-                assertEquals(1, movimentiAvere.size());
+                Assertions.assertEquals(1, movimentiAvere.size());
 
                 Optional<Movimento_cogeBulk> rigaTipoAttivita = movimentiAvere.stream().filter(Movimento_cogeBulk::isRigaTipoAttivita).findAny();
-                assertTrue("Riga tipo attività non presente.", rigaTipoAttivita.isPresent());
-                assertEquals("A22010", rigaTipoAttivita.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("10.00"), rigaTipoAttivita.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoAttivita.isPresent(),"Riga tipo attività non presente.");
+                Assertions.assertEquals("A22010", rigaTipoAttivita.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("10.00"), rigaTipoAttivita.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiDare = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiDareColl)
                         .orElse(new BulkList<>());
-                assertEquals(1, movimentiDare.size());
+                Assertions.assertEquals(1, movimentiDare.size());
 
                 Optional<Movimento_cogeBulk> rigaTipoDebito = movimentiDare.stream().filter(Movimento_cogeBulk::isRigaTipoDebito).findAny();
-                assertTrue("Riga tipo debito non presente.", rigaTipoDebito.isPresent());
-                assertEquals("P22010", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("10.00"), rigaTipoDebito.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoDebito.isPresent(),"Riga tipo debito non presente.");
+                Assertions.assertEquals("P22010", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("10.00"), rigaTipoDebito.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
             }
 
             //CONTROLLO ANALITICA
             {
-                assertFalse("Scrittura analitica presente.", Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent());
+                Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
             }
         }
     }
@@ -656,8 +645,7 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
      * </pre>
      */
     @Test
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(1)
+    @Order(4)
     public void testNotaCredito004() throws Exception {
         //Registrazione fattura
         {
@@ -673,64 +661,64 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
 
             //CONTROLLO ECONOMICA
             {
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getIm_scrittura).orElse(null));
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getImTotaleDare).orElse(null));
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getImTotaleAvere).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiDare = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiDareColl)
                         .orElse(new BulkList<>());
-                assertEquals(1, movimentiDare.size());
+                Assertions.assertEquals(1, movimentiDare.size());
 
                 Optional<Movimento_cogeBulk> rigaTipoCosto = movimentiDare.stream().filter(Movimento_cogeBulk::isRigaTipoCosto).findAny();
-                assertTrue("Riga tipo costo non presente.", rigaTipoCosto.isPresent());
-                assertEquals("C13024", rigaTipoCosto.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("18.67"), rigaTipoCosto.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoCosto.isPresent(),"Riga tipo costo non presente.");
+                Assertions.assertEquals("C13024", rigaTipoCosto.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("18.67"), rigaTipoCosto.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiAvere = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiAvereColl)
                         .orElse(new BulkList<>());
-                assertEquals(2, movimentiAvere.size());
+                Assertions.assertEquals(2, movimentiAvere.size());
 
                 Optional<Movimento_cogeBulk> rigaTipoDebito = movimentiAvere.stream().filter(Movimento_cogeBulk::isRigaTipoDebito).findAny();
-                assertTrue("Riga tipo debito non presente.", rigaTipoDebito.isPresent());
-                assertEquals("P13024", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("16.97"), rigaTipoDebito.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoDebito.isPresent(),"Riga tipo debito non presente.");
+                Assertions.assertEquals("P13024", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("16.97"), rigaTipoDebito.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 Optional<Movimento_cogeBulk> rigaTipoIva = movimentiAvere.stream().filter(Movimento_cogeBulk::isRigaTipoIvaAcquistoSplit).findAny();
-                assertTrue("Riga tipo iva non presente.", rigaTipoIva.isPresent());
-                assertEquals("P71012I", rigaTipoIva.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("1.70"), rigaTipoIva.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoIva.isPresent(),"Riga tipo iva non presente.");
+                Assertions.assertEquals("P71012I", rigaTipoIva.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("1.70"), rigaTipoIva.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
             }
 
             //CONTROLLO ANALITICA
             {
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getIm_scrittura).orElse(null));
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getImTotaleDare).orElse(null));
-                assertEquals(new BigDecimal("0"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
+                Assertions.assertEquals(new BigDecimal("0"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getImTotaleAvere).orElse(null));
 
                 List<Movimento_coanBulk> movimentiDare = Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getMovimentiDareColl)
                         .orElse(new BulkList<>());
-                assertEquals(1, movimentiDare.size());
+                Assertions.assertEquals(1, movimentiDare.size());
 
                 Optional<Movimento_coanBulk> rigaDare = movimentiDare.stream().findAny();
-                assertTrue("Riga dare analitica non presente.", rigaDare.isPresent());
-                assertEquals("C13024", rigaDare.map(Movimento_coanBulk::getCd_voce_ana).orElse(null));
-                assertEquals("000.000.000", rigaDare.map(Movimento_coanBulk::getCd_centro_responsabilita).orElse(null));
-                assertEquals("PTEST002", rigaDare.map(Movimento_coanBulk::getCd_linea_attivita).orElse(null));
-                assertEquals(new BigDecimal("18.67"), rigaDare.map(Movimento_coanBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaDare.isPresent(),"Riga dare analitica non presente.");
+                Assertions.assertEquals("C13024", rigaDare.map(Movimento_coanBulk::getCd_voce_ana).orElse(null));
+                Assertions.assertEquals("000.000.000", rigaDare.map(Movimento_coanBulk::getCd_centro_responsabilita).orElse(null));
+                Assertions.assertEquals("PTEST002", rigaDare.map(Movimento_coanBulk::getCd_linea_attivita).orElse(null));
+                Assertions.assertEquals(new BigDecimal("18.67"), rigaDare.map(Movimento_coanBulk::getIm_movimento).orElse(null));
 
                 List<Movimento_coanBulk> movimentiAvere = Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getMovimentiAvereColl)
                         .orElse(new BulkList<>());
-                assertEquals(0, movimentiAvere.size());
+                Assertions.assertEquals(0, movimentiAvere.size());
             }
 
             Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
@@ -749,64 +737,64 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
 
             //CONTROLLO ECONOMICA
             {
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                     .map(Scrittura_partita_doppiaBulk::getIm_scrittura).orElse(null));
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getImTotaleDare).orElse(null));
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getImTotaleAvere).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiAvere = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiAvereColl)
                         .orElse(new BulkList<>());
-                assertEquals(1, movimentiAvere.size());
+                Assertions.assertEquals(1, movimentiAvere.size());
 
                 Optional<Movimento_cogeBulk> rigaTipoCosto = movimentiAvere.stream().filter(Movimento_cogeBulk::isRigaTipoCosto).findAny();
-                assertTrue("Riga tipo costo non presente.", rigaTipoCosto.isPresent());
-                assertEquals("C13024", rigaTipoCosto.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("18.67"), rigaTipoCosto.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoCosto.isPresent(),"Riga tipo costo non presente.");
+                Assertions.assertEquals("C13024", rigaTipoCosto.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("18.67"), rigaTipoCosto.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiDare = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiDareColl)
                         .orElse(new BulkList<>());
-                assertEquals(2, movimentiDare.size());
+                Assertions.assertEquals(2, movimentiDare.size());
 
                 Optional<Movimento_cogeBulk> rigaTipoDebito = movimentiDare.stream().filter(Movimento_cogeBulk::isRigaTipoDebito).findAny();
-                assertTrue("Riga tipo debito non presente.", rigaTipoDebito.isPresent());
-                assertEquals("P13024", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("16.97"), rigaTipoDebito.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoDebito.isPresent(),"Riga tipo debito non presente.");
+                Assertions.assertEquals("P13024", rigaTipoDebito.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("16.97"), rigaTipoDebito.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 Optional<Movimento_cogeBulk> rigaTipoIva = movimentiDare.stream().filter(Movimento_cogeBulk::isRigaTipoIvaAcquistoSplit).findAny();
-                assertTrue("Riga tipo iva non presente.", rigaTipoIva.isPresent());
-                assertEquals("P71012I", rigaTipoIva.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
-                assertEquals(new BigDecimal("1.70"), rigaTipoIva.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaTipoIva.isPresent(),"Riga tipo iva non presente.");
+                Assertions.assertEquals("P71012I", rigaTipoIva.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
+                Assertions.assertEquals(new BigDecimal("1.70"), rigaTipoIva.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
             }
 
             //CONTROLLO ANALITICA
             {
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getIm_scrittura).orElse(null));
-                assertEquals(new BigDecimal("0"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
+                Assertions.assertEquals(new BigDecimal("0"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getImTotaleDare).orElse(null));
-                assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
+                Assertions.assertEquals(new BigDecimal("18.67"), Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getImTotaleAvere).orElse(null));
 
                 List<Movimento_coanBulk> movimentiDare = Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getMovimentiDareColl)
                         .orElse(new BulkList<>());
-                assertEquals(0, movimentiDare.size());
+                Assertions.assertEquals(0, movimentiDare.size());
 
                 List<Movimento_coanBulk> movimentiAvere = Optional.ofNullable(result.getScritturaAnaliticaBulk())
                         .map(Scrittura_analiticaBulk::getMovimentiAvereColl)
                         .orElse(new BulkList<>());
-                assertEquals(1, movimentiAvere.size());
+                Assertions.assertEquals(1, movimentiAvere.size());
 
                 Optional<Movimento_coanBulk> rigaAvere = movimentiAvere.stream().findAny();
-                assertTrue("Riga avere analitica non presente.", rigaAvere.isPresent());
-                assertEquals("C13024", rigaAvere.map(Movimento_coanBulk::getCd_voce_ana).orElse(null));
-                assertEquals("000.000.000", rigaAvere.map(Movimento_coanBulk::getCd_centro_responsabilita).orElse(null));
-                assertEquals("PTEST002", rigaAvere.map(Movimento_coanBulk::getCd_linea_attivita).orElse(null));
-                assertEquals(new BigDecimal("18.67"), rigaAvere.map(Movimento_coanBulk::getIm_movimento).orElse(null));
+                Assertions.assertTrue(rigaAvere.isPresent(),"Riga avere analitica non presente.");
+                Assertions.assertEquals("C13024", rigaAvere.map(Movimento_coanBulk::getCd_voce_ana).orElse(null));
+                Assertions.assertEquals("000.000.000", rigaAvere.map(Movimento_coanBulk::getCd_centro_responsabilita).orElse(null));
+                Assertions.assertEquals("PTEST002", rigaAvere.map(Movimento_coanBulk::getCd_linea_attivita).orElse(null));
+                Assertions.assertEquals(new BigDecimal("18.67"), rigaAvere.map(Movimento_coanBulk::getIm_movimento).orElse(null));
             }
         }
     }

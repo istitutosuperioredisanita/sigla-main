@@ -20,9 +20,9 @@ package it.cnr.contab.docamm00.client;
 import it.cnr.contab.docamm00.docs.bulk.TrovatoBulk;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.jada.comp.ApplicationException;
+import jakarta.ws.rs.client.*;
+import jakarta.ws.rs.core.Response;
 
-import javax.ws.rs.client.*;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -111,7 +111,7 @@ public class RicercaTrovato {
 
     private void valorizzaTrovato(TrovatoBulk trovatoBulk,
                                   TrovatoRest trovatoBean) {
-        trovatoBulk.setPg_trovato(new Long(trovatoBean.getNsrif()));
+        trovatoBulk.setPg_trovato(Long.valueOf(trovatoBean.getNsrif()));
         trovatoBulk.setInventore(trovatoBean.getInventore());
         trovatoBulk.setTitolo(trovatoBean.getTitolo());
     }

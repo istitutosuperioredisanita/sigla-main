@@ -24,9 +24,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.cnr.si.spring.storage.annotation.StorageProperty;
 import it.cnr.jada.persistency.Keyed;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-
 public class ContrattoBase extends ContrattoKey implements Keyed {
 //    ESERCIZIO_PADRE DECIMAL(4,0)
 	private java.lang.Integer esercizio_padre;

@@ -20,7 +20,7 @@ package it.cnr.contab.prevent01.ejb;
 import it.cnr.contab.prevent01.bulk.Pdg_modulo_speseBulk;
 import it.cnr.jada.UserContext;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface PdgModuloCostiComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

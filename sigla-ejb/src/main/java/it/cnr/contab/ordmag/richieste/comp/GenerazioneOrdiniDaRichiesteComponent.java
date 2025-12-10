@@ -125,7 +125,7 @@ public RichiestaUopRigaBulk selezionaRichiestaPerOrdine (UserContext aUC,VRichie
 		throw handleException( richiesta, e )	;
 	}
 }
-public OrdineAcqBulk generaOrdine(it.cnr.jada.UserContext userContext, OrdineAcqBulk ordine) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public OrdineAcqBulk generaOrdine(it.cnr.jada.UserContext userContext, OrdineAcqBulk ordine) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	List<VRichiestaPerOrdiniBulk> lista = ordine.getRichiesteDaTrasformareInOrdineColl();
 	for (VRichiestaPerOrdiniBulk richiestaPerOrdini : lista){
 		RichiestaUopRigaBulk rigaRichiesta = selezionaRichiestaPerOrdine(userContext, richiestaPerOrdini);
@@ -137,7 +137,7 @@ public OrdineAcqBulk generaOrdine(it.cnr.jada.UserContext userContext, OrdineAcq
 	}
 	return ordine;
 }
-private void creaRigaOrdine(it.cnr.jada.UserContext userContext, OrdineAcqBulk ordine, RichiestaUopRigaBulk rigaRichiesta) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+private void creaRigaOrdine(it.cnr.jada.UserContext userContext, OrdineAcqBulk ordine, RichiestaUopRigaBulk rigaRichiesta) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	boolean trovataRiga = false;
 	OrdineAcqRigaBulk rigaOrdine = null;
 	for (Object objectRiga : ordine.getRigheOrdineColl()){

@@ -27,7 +27,7 @@ import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.FormController;
 import it.cnr.jada.util.jsp.TableCustomizer;
 
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.JspWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collections;

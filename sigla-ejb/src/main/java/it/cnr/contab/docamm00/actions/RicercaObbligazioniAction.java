@@ -91,7 +91,7 @@ public Forward doBringBackOpenObbligazioniWindow(ActionContext context) {
  * Al business process viene anche chiesto l'elenco delle colonne da
  * visualizzare.
  */
-public Forward doCerca(ActionContext context) throws java.rmi.RemoteException,InstantiationException,javax.ejb.RemoveException {
+public Forward doCerca(ActionContext context) throws java.rmi.RemoteException,InstantiationException,jakarta.ejb.RemoveException {
 
 	try {
 		fillModel(context);
@@ -106,8 +106,8 @@ public Forward doCerca(ActionContext context) throws java.rmi.RemoteException,In
 /*		}
 		else if (ri.countElements() == 1) {
 			OggettoBulk bulk = (OggettoBulk)ri.nextElement();
-			if (ri instanceof javax.ejb.EJBObject)
-				((javax.ejb.EJBObject)ri).remove();
+			if (ri instanceof jakarta.ejb.EJBObject)
+				((jakarta.ejb.EJBObject)ri).remove();
 			bp.setMessage("La ricerca ha fornito un solo risultato.");
 			bp.edit(context,bulk);
 			return context.findDefaultForward();*/
@@ -289,7 +289,7 @@ public Forward doOpenObbligazioniWindow(ActionContext context) {
 		java.sql.Timestamp dataReg = null;
 		try {
 			dataReg = it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
-		} catch (javax.ejb.EJBException e) {
+		} catch (jakarta.ejb.EJBException e) {
 			return handleException(context, e);
 		}
 		java.util.Calendar calendar = java.util.GregorianCalendar.getInstance();

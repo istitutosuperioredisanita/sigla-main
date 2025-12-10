@@ -19,10 +19,10 @@ package it.cnr.contab.doccont00.ejb;
 
 import java.rmi.RemoteException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.doccont00.comp.ConsDispCompetenzaResiduoIstitutoComponent;
 import it.cnr.jada.comp.ComponentException;

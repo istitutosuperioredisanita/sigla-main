@@ -62,7 +62,7 @@ public class RicercaMandatoReversaleAction extends it.cnr.jada.util.action.CRUDA
      * Al business process viene anche chiesto l'elenco delle colonne da
      * visualizzare.
      */
-    public Forward doCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, javax.ejb.RemoveException {
+    public Forward doCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, jakarta.ejb.RemoveException {
         String setCol = null;
         try {
             fillModel(context);

@@ -19,10 +19,10 @@ package it.cnr.contab.segnalazioni00.ejb;
 
 import java.rmi.RemoteException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.pdg00.ejb.PdGVariazioniComponentSessionBean;
 import it.cnr.contab.segnalazioni00.bulk.Stampa_attivita_siglaBulk;
@@ -48,12 +48,10 @@ public class StampaConfrontoSiglaDwhComponentSessionBean extends it.cnr.jada.ejb
 	}
 	
 	
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new StampaConfrontoSiglaDwhComponentSessionBean();
-	}
 	
 	
-	public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	
 		pre_component_invocation(param0,componentObj);
 		try {
@@ -73,7 +71,7 @@ public class StampaConfrontoSiglaDwhComponentSessionBean extends it.cnr.jada.ejb
 		}
 	}
 	
-	public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((StampaConfrontoSiglaDwhComponent)componentObj).stampaConBulk(param0,param1);

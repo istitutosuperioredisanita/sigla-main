@@ -23,11 +23,11 @@ import it.cnr.contab.web.rest.local.config00.ContrattoLocal;
 import it.cnr.contab.web.rest.local.config00.DefaultContrattoLocal;
 import it.cnr.contab.web.rest.model.ContrattoDtoBulk;
 import it.cnr.jada.comp.ComponentException;
+import jakarta.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.Stateless;
-import javax.ws.rs.core.Response.Status;
+import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
 import java.util.Optional;
 
@@ -39,7 +39,7 @@ public class ContrattoResource extends AbstractContrattoResource implements Cont
     public void validateContratto(ContrattoDtoBulk contrattoBulk, CNRUserContext userContext, DefaultContrattoLocal.ApiVersion apiVersion) throws RemoteException, ComponentException {
         Optional.ofNullable(contrattoBulk.getAttachments()).
                 ifPresent(e->{
-                   throw new RestException(Status.BAD_REQUEST,String.format("Per tale integrazione non sono previsti gli allegati"));
+                   throw new RestException(Response.Status.BAD_REQUEST,String.format("Per tale integrazione non sono previsti gli allegati"));
                 });
         super.validateContratto(contrattoBulk, userContext, apiVersion);
     }

@@ -25,23 +25,21 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
 import java.text.ParseException;
 
 @Stateless(name = "CNRDOCCONT00_EJB_ReversaleComponentSession")
 public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements ReversaleComponentSession {
-    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-        return new ReversaleComponentSessionBean();
-    }
+    
 
     @PostConstruct
     public void ejbCreate() {
         componentObj = new it.cnr.contab.doccont00.comp.ReversaleComponent();
     }
 
-    public it.cnr.contab.doccont00.core.bulk.ReversaleBulk aggiungiDocAttivi(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1, java.util.List param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.doccont00.core.bulk.ReversaleBulk aggiungiDocAttivi(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1, java.util.List param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.doccont00.core.bulk.ReversaleBulk result = ((ReversaleComponent) componentObj).aggiungiDocAttivi(param0, param1, param2);
@@ -60,7 +58,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public boolean isChiudibileReversaleProvvisoria(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException {
+    public boolean isChiudibileReversaleProvvisoria(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException {
         pre_component_invocation(param0, componentObj);
         try {
             boolean result = ((ReversaleComponent) componentObj).isChiudibileReversaleProvvisoria(param0, param1);
@@ -79,7 +77,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public boolean isRevProvvLiquidCoriCentroAperta(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException {
+    public boolean isRevProvvLiquidCoriCentroAperta(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException {
         pre_component_invocation(param0, componentObj);
         try {
             boolean result = ((ReversaleComponent) componentObj).isRevProvvLiquidCoriCentroAperta(param0, param1);
@@ -98,7 +96,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public it.cnr.contab.doccont00.core.bulk.ReversaleBulk annullaReversale(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.doccont00.core.bulk.ReversaleBulk annullaReversale(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.doccont00.core.bulk.ReversaleBulk result = ((ReversaleComponent) componentObj).annullaReversale(param0, param1);
@@ -117,7 +115,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public it.cnr.contab.doccont00.core.bulk.ReversaleBulk annullaReversale(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1, boolean param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.doccont00.core.bulk.ReversaleBulk annullaReversale(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1, boolean param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.doccont00.core.bulk.ReversaleBulk result = ((ReversaleComponent) componentObj).annullaReversale(param0, param1, param2);
@@ -136,7 +134,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public void annullaReversaleDiIncassoIVA(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void annullaReversaleDiIncassoIVA(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             ((ReversaleComponent) componentObj).annullaReversaleDiIncassoIVA(param0, param1);
@@ -154,7 +152,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public void annullaReversaleDiRegolarizzazione(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void annullaReversaleDiRegolarizzazione(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             ((ReversaleComponent) componentObj).annullaReversaleDiRegolarizzazione(param0, param1);
@@ -172,7 +170,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public void annullaReversaleDiTrasferimento(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void annullaReversaleDiTrasferimento(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             ((ReversaleComponent) componentObj).annullaReversaleDiTrasferimento(param0, param1);
@@ -190,7 +188,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public it.cnr.jada.util.RemoteIterator cercaSospesi(it.cnr.jada.UserContext param0, it.cnr.jada.persistency.sql.CompoundFindClause param1, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.util.RemoteIterator cercaSospesi(it.cnr.jada.UserContext param0, it.cnr.jada.persistency.sql.CompoundFindClause param1, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.util.RemoteIterator result = ((ReversaleComponent) componentObj).cercaSospesi(param0, param1, param2);
@@ -209,7 +207,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public it.cnr.contab.doccont00.core.bulk.ReversaleBulk creaReversaleDiIncassoIVA(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.MandatoBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.doccont00.core.bulk.ReversaleBulk creaReversaleDiIncassoIVA(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.MandatoBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.doccont00.core.bulk.ReversaleBulk result = ((ReversaleComponent) componentObj).creaReversaleDiIncassoIVA(param0, param1);
@@ -228,7 +226,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public it.cnr.contab.doccont00.core.bulk.ReversaleBulk creaReversaleDiRegolarizzazione(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.MandatoBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.doccont00.core.bulk.ReversaleBulk creaReversaleDiRegolarizzazione(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.MandatoBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.doccont00.core.bulk.ReversaleBulk result = ((ReversaleComponent) componentObj).creaReversaleDiRegolarizzazione(param0, param1);
@@ -247,7 +245,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public it.cnr.contab.doccont00.core.bulk.ReversaleBulk creaReversaleDiTrasferimento(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.MandatoAccreditamentoBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.doccont00.core.bulk.ReversaleBulk creaReversaleDiTrasferimento(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.MandatoAccreditamentoBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.doccont00.core.bulk.ReversaleBulk result = ((ReversaleComponent) componentObj).creaReversaleDiTrasferimento(param0, param1);
@@ -266,7 +264,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.bulk.OggettoBulk result = ((ReversaleComponent) componentObj).inizializzaBulkPerStampa(param0, param1);
@@ -285,7 +283,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public it.cnr.contab.doccont00.core.bulk.ReversaleBulk listaDocAttivi(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.doccont00.core.bulk.ReversaleBulk listaDocAttivi(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.doccont00.core.bulk.ReversaleBulk result = ((ReversaleComponent) componentObj).listaDocAttivi(param0, param1);
@@ -304,7 +302,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.bulk.OggettoBulk result = ((ReversaleComponent) componentObj).stampaConBulk(param0, param1);
@@ -323,7 +321,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public java.lang.Boolean isCollegamentoSiopeCompleto(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.lang.Boolean isCollegamentoSiopeCompleto(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.lang.Boolean result = ((ReversaleComponent) componentObj).isCollegamentoSiopeCompleto(param0, param1);
@@ -342,7 +340,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public it.cnr.contab.doccont00.core.bulk.ReversaleBulk setCodiciSIOPECollegabili(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.doccont00.core.bulk.ReversaleBulk setCodiciSIOPECollegabili(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.doccont00.core.bulk.ReversaleBulk result = ((ReversaleComponent) componentObj).setCodiciSIOPECollegabili(param0, param1);
@@ -361,7 +359,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public it.cnr.contab.doccont00.core.bulk.Reversale_rigaBulk setCodiciSIOPECollegabili(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.Reversale_rigaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.doccont00.core.bulk.Reversale_rigaBulk setCodiciSIOPECollegabili(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.Reversale_rigaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.doccont00.core.bulk.Reversale_rigaBulk result = ((ReversaleComponent) componentObj).setCodiciSIOPECollegabili(param0, param1);
@@ -442,7 +440,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public java.lang.Boolean esisteAnnullodaRiemettereNonCollegato(UserContext param0, Integer param1, String param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.lang.Boolean esisteAnnullodaRiemettereNonCollegato(UserContext param0, Integer param1, String param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.lang.Boolean result = ((ReversaleComponent) componentObj).esisteAnnullodaRiemettereNonCollegato(param0, param1, param2);
@@ -461,7 +459,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public java.lang.Boolean isReversaleCollegataAnnullodaRiemettere(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.lang.Boolean isReversaleCollegataAnnullodaRiemettere(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.lang.Boolean result = ((ReversaleComponent) componentObj).isReversaleCollegataAnnullodaRiemettere(param0, param1);
@@ -480,7 +478,7 @@ public class ReversaleComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
         }
     }
 
-    public java.lang.Boolean isReversaleCORINonAssociataMandato(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.lang.Boolean isReversaleCORINonAssociataMandato(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ReversaleBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.lang.Boolean result = ((ReversaleComponent) componentObj).isReversaleCORINonAssociataMandato(param0, param1);

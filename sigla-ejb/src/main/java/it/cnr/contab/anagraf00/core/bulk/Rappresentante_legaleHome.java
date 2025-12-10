@@ -40,8 +40,8 @@ public class Rappresentante_legaleHome extends BulkHome {
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,it.cnr.jada.bulk.OggettoBulk rapp) throws it.cnr.jada.persistency.PersistencyException {
 		try {
 			((Rappresentante_legaleBulk)rapp).setPg_rapp_legale(
-				new Long(
-					((Long)findAndLockMax( rapp, "pg_rapp_legale", new Long(0) )).longValue()+1
+				Long.valueOf(
+					((Long)findAndLockMax( rapp, "pg_rapp_legale", Long.valueOf(0) )).longValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

@@ -16,11 +16,11 @@
 	java.io.StringWriter sw = new java.io.StringWriter();
 	Throwable e = (Throwable)request.getAttribute("uncaughtException");
 	if (e == null)
-		e = (Throwable)request.getAttribute("javax.servlet.jsp.jspException");
+		e = (Throwable)request.getAttribute("jakarta.servlet.jsp.jspException");
 	if (e != null)
 		e.printStackTrace(new java.io.PrintWriter(sw));
-    if (e != null && e instanceof javax.servlet.ServletException && ((javax.servlet.ServletException)e).getRootCause() != null)
-        ((javax.servlet.ServletException)e).getRootCause().printStackTrace(new java.io.PrintWriter(sw));
+    if (e != null && e instanceof ServletException && ((ServletException)e).getRootCause() != null)
+        ((ServletException)e).getRootCause().printStackTrace(new java.io.PrintWriter(sw));
     if (e != null && e.getCause() != null)
         e.getCause().printStackTrace(new java.io.PrintWriter(sw));
 

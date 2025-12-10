@@ -17,8 +17,8 @@
 
 package it.cnr.contab.doccont00.ejb;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.doccont00.comp.MandatoAutomaticoComponent;
@@ -28,10 +28,8 @@ public class MandatoAutomaticoComponentSessionBean extends MandatoComponentSessi
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.doccont00.comp.MandatoAutomaticoComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new MandatoAutomaticoComponentSessionBean();
-}
-public java.util.List<BancaBulk> findBancaOptions(it.cnr.jada.UserContext param0, Integer param1, String param2) throws it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public java.util.List<BancaBulk> findBancaOptions(it.cnr.jada.UserContext param0, Integer param1, String param2) throws it.cnr.jada.persistency.PersistencyException,it.cnr.jada.persistency.IntrospectionException,it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.util.List<BancaBulk> result = ((MandatoAutomaticoComponent)componentObj).findBancaOptions(param0,param1,param2);
@@ -55,7 +53,7 @@ public java.util.List<BancaBulk> findBancaOptions(it.cnr.jada.UserContext param0
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.contab.doccont00.core.bulk.MandatoAutomaticoWizardBulk listaImpegniTerzo (it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.MandatoAutomaticoWizardBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.doccont00.core.bulk.MandatoAutomaticoWizardBulk listaImpegniTerzo (it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.MandatoAutomaticoWizardBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.doccont00.core.bulk.MandatoAutomaticoWizardBulk result = ((MandatoAutomaticoComponent)componentObj).listaImpegniTerzo(param0,param1);
@@ -73,7 +71,7 @@ public it.cnr.contab.doccont00.core.bulk.MandatoAutomaticoWizardBulk listaImpegn
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk inizializzaMappaAutomatismo(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk inizializzaMappaAutomatismo(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 	pre_component_invocation(param0, componentObj);
 	try
 	{
@@ -92,7 +90,7 @@ public it.cnr.jada.bulk.OggettoBulk inizializzaMappaAutomatismo(it.cnr.jada.User
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk creaMandatoAutomatico(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk creaMandatoAutomatico(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 	pre_component_invocation(param0, componentObj);
 	try
 	{

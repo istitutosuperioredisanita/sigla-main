@@ -728,7 +728,7 @@ private void loadInventarioConsegnatario(UserContext aUC,Inventario_ap_chBulk in
 	}
 
 	invApCh.setInventarioConsegnatario(consegnatario);
-	} catch (javax.ejb.EJBException e){
+	} catch (jakarta.ejb.EJBException e){
 		throw new ComponentException(e);
 	}	
 }

@@ -20,13 +20,13 @@ package it.cnr.contab.web.rest.resource.util;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.web.rest.local.util.IteratorTracersLocal;
 import it.cnr.jada.util.ejb.EJBTracer;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.Stateless;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
+import jakarta.ejb.Stateless;
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
 import java.util.Collection;

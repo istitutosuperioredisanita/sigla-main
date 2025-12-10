@@ -22,8 +22,8 @@ import it.cnr.jada.comp.ComponentException;
 import java.math.BigInteger;
 import java.util.Date;
 
-import javax.activation.DataHandler;
-import javax.ejb.Local;
+import jakarta.activation.DataHandler;
+import jakarta.ejb.Local;
 import javax.mail.Message;
 @Local
 public interface RicezioneFatturePA {

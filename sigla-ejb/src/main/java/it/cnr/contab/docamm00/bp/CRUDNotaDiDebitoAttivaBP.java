@@ -26,6 +26,8 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.ObjectReplacer;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspWriter;
 
 /**
  * Insert the type's description here.
@@ -254,7 +256,7 @@ public void setDocumentiContabiliModificati(it.cnr.jada.bulk.PrimaryKeyHashMap a
 	
 	documentiContabiliModificati = aMap;
 }
-public void writeFPInventarioToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException,javax.servlet.ServletException {
+public void writeFPInventarioToolbar(JspWriter writer) throws java.io.IOException, ServletException {
 
 	if (!isSearching() && !isDeleting()) {
 		openToolbar(writer);
@@ -262,7 +264,7 @@ public void writeFPInventarioToolbar(javax.servlet.jsp.JspWriter writer) throws 
 		closeToolbar(writer);
 	}
 }
-public void writeToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException,javax.servlet.ServletException {
+public void writeToolbar(JspWriter writer) throws java.io.IOException,ServletException {
 
 	super.writeToolbar(writer);
 	//writeFPInventarioToolbar(writer);

@@ -27,7 +27,7 @@ import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Iterator;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.latt.bulk.CostantiTi_gestione;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceHome;

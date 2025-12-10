@@ -23,8 +23,8 @@ import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.pdcep.bulk.Voce_analiticaBulk;
 import it.cnr.jada.UserContext;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 /**
  * Bean implementation class for Enterprise Bean: CNRCONFIG00_EJB_PDCContoAnaliticoComponentSession
@@ -35,11 +35,8 @@ public class PDCContoAnaliticoComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 	public void ejbCreate() {
 		componentObj = new PDCContoAnaliticoComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new PDCContoAnaliticoComponentSessionBean();
-	}
 
-	public java.util.List<ContoBulk> findContiAnaliticiAssociatiList(UserContext userContext, Voce_analiticaBulk voceAnalitica) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public java.util.List<ContoBulk> findContiAnaliticiAssociatiList(UserContext userContext, Voce_analiticaBulk voceAnalitica) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(userContext,componentObj);
 		try {
 			java.util.List<ContoBulk> result = ((PDCContoAnaliticoComponent)componentObj).findContiAnaliticiAssociatiList(userContext,voceAnalitica);

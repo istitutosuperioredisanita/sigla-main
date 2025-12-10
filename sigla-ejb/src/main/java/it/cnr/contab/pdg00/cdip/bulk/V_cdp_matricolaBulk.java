@@ -148,7 +148,7 @@ public Ass_cdp_uoBulk removeFromCostiScaricatiAltraUO(int index) {
  */
 public int addToCostiScaricati(Ass_cdp_laBulk ass_cdp_la) {
 	costiScaricati.add(ass_cdp_la);
-	ass_cdp_la.setMese(new Integer(getMese()));
+	ass_cdp_la.setMese(Integer.valueOf(getMese()));
 	return costiScaricati.size()-1;
 }
 /**
@@ -159,7 +159,7 @@ public int addToCostiScaricati(Ass_cdp_laBulk ass_cdp_la) {
  */
 public int addToCostiScaricatiAltraUO(Ass_cdp_uoBulk ass_cdp_uo) {
 	costiScaricatiAltraUO.add(ass_cdp_uo);
-	ass_cdp_uo.setMese(new Integer(getMese()));
+	ass_cdp_uo.setMese(Integer.valueOf(getMese()));
 	return costiScaricatiAltraUO.size()-1;
 }
 /**

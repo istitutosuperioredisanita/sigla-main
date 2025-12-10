@@ -20,7 +20,7 @@ package it.cnr.contab.docamm00.consultazioni.action;
 import java.rmi.RemoteException;
 import java.sql.*;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 
 import it.cnr.contab.docamm00.consultazioni.bulk.Monito_cococoBulk;
 import it.cnr.contab.gestiva00.ejb.*;

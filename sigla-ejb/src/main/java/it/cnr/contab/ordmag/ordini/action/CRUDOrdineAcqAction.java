@@ -67,7 +67,7 @@ import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.*;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
-import javax.persistence.PersistenceException;
+import jakarta.persistence.PersistenceException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.rmi.RemoteException;
@@ -713,7 +713,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                 java.sql.Timestamp dataReg = null;
                 try {
                     dataReg = it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
-                } catch (javax.ejb.EJBException e) {
+                } catch (jakarta.ejb.EJBException e) {
                     throw new it.cnr.jada.DetailedRuntimeException(e);
                 }
 
@@ -729,7 +729,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                         java.sql.Timestamp dataReg = null;
                         try {
                             dataReg = it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
-                        } catch (javax.ejb.EJBException e) {
+                        } catch (jakarta.ejb.EJBException e) {
                             throw new it.cnr.jada.DetailedRuntimeException(e);
                         }
 

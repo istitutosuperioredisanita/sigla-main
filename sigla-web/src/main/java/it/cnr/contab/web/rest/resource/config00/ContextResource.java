@@ -17,45 +17,44 @@
 
 package it.cnr.contab.web.rest.resource.config00;
 
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.messaggio00.bulk.MessaggioBulk;
 import it.cnr.contab.service.ContextService;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.Utente_indirizzi_mailBulk;
 import it.cnr.contab.web.rest.local.config00.ContextLocal;
-import it.cnr.contab.web.rest.model.PreferitiDTOBulk;
+import it.cnr.contab.web.rest.local.config00.ContextRemote;
 import it.cnr.contab.web.rest.model.UtenteIndirizziMailDTO;
 import it.cnr.contab.web.rest.resource.util.AbstractResource;
+import it.cnr.contab.web.rest.resource.util.VersionResource;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
+import jakarta.ejb.EJB;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.util.Pair;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Stateless
-public class ContextResource implements ContextLocal {
+public class ContextResource implements ContextLocal, ContextRemote {
     private final Logger LOGGER = LoggerFactory.getLogger(ContextResource.class);
     @Context
     SecurityContext securityContext;
 
     @EJB
-    private CRUDComponentSession crudComponentSession;
+    CRUDComponentSession crudComponentSession;
 
     @Override
     public Response esercizi(HttpServletRequest request, String cds) throws Exception {
@@ -230,4 +229,7 @@ public class ContextResource implements ContextLocal {
         return indirizziMail(request);
     }
 
+    public Integer getLiquibasBootstrapEsercizio() {
+        return Integer.valueOf(System.getProperty(VersionResource.LIQUIBASE_BOOTSTRAP_ESERCIZIO));
+    }
 }

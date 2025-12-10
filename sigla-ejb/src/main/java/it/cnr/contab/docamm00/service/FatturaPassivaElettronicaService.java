@@ -24,6 +24,7 @@ import it.cnr.contab.docamm00.fatturapa.bulk.*;
 import it.cnr.contab.pdd.ws.client.FatturazioneElettronicaClient;
 import it.cnr.contab.spring.service.UtilService;
 import it.cnr.contab.utenze00.bp.WSUserContext;
+import it.cnr.contab.util.DataSourceAdapter;
 import it.cnr.contab.util.StringEncrypter;
 import it.cnr.contab.util.StringEncrypter.EncryptionException;
 import it.cnr.jada.DetailedRuntimeException;
@@ -49,8 +50,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.oxm.XmlMappingException;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
 import javax.activation.MimetypesFileTypeMap;
 import javax.mail.*;
 import javax.mail.internet.MimeBodyPart;
@@ -58,7 +59,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 import javax.mail.search.*;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
@@ -116,7 +117,7 @@ public class FatturaPassivaElettronicaService implements InitializingBean {
 
     public void afterPropertiesSet() throws Exception {
         userContext = new WSUserContext("SDI", null,
-                new Integer(java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)),
+                Integer.valueOf(java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)),
                 null, null, null);
         this.fatturaElettronicaPassivaComponentSession = Optional.ofNullable(EJBCommonServices.createEJB("CNRDOCAMM00_EJB_FatturaElettronicaPassivaComponentSession"))
                 .filter(FatturaElettronicaPassivaComponentSession.class::isInstance)
@@ -370,7 +371,7 @@ public class FatturaPassivaElettronicaService implements InitializingBean {
                 String replyTo = getReplyTo(message);
                 List<DocumentoEleTrasmissioneBulk> documentoEleTrasmissioneBulks =
                         fatturaElettronicaPassivaComponentSession.recuperoTrasmissione(userContext,
-                                new Long(metadatiInvioFileType.getValue().getIdentificativoSdI()));
+                                Long.valueOf(metadatiInvioFileType.getValue().getIdentificativoSdI()));
                 boolean existsIdentificativo = documentoEleTrasmissioneBulks.stream()
                         .map(DocumentoEleTrasmissioneBase::getCmisNodeRef)
                         .anyMatch(s -> storeService.getChildren(s)
@@ -647,7 +648,7 @@ public class FatturaPassivaElettronicaService implements InitializingBean {
                             if (!listaMessageIdAlreadyScanned.contains(messageIDWithUser)) {
                                 logger.info(messageIDWithUser);
                                 try {
-                                    DataHandler data = message.getDataHandler();
+                                    javax.activation.DataHandler data = message.getDataHandler();
                                     estraiBodyPart(data.getContent(), false);
                                     listaMessageIdAlreadyScanned.add(messageIDWithUser);
                                     logger.info("Message Added");
@@ -1063,7 +1064,7 @@ public class FatturaPassivaElettronicaService implements InitializingBean {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         fatturazioneElettronicaClient.getMarshaller().marshal(notificaEsitoCommittenteType, new StreamResult(outputStream));
         DataSource byteArrayDataSource = new UploadedFileDataSourceOutputStream(outputStream);
-        email.attach(byteArrayDataSource, bulk.getNomeFile("EC"), "", EmailAttachment.ATTACHMENT);
+        email.attach(new DataSourceAdapter(byteArrayDataSource), bulk.getNomeFile("EC"), "", EmailAttachment.ATTACHMENT);
         // send the email
         email.send();
         logger.info("Inviata notifica di esito per IdentificativoSdi:" + bulk.getIdentificativoSdi());
@@ -1088,7 +1089,7 @@ public class FatturaPassivaElettronicaService implements InitializingBean {
         email.setFrom(userName, userName);
         email.setSubject(pecSDISubjectFatturaAttivaInvioTerm + " " + idFattura);
         email.setMsg("Invio Fattura Elettronica. " + idFattura);
-        email.attach(fatturaAttivaSigned, idFattura, "");
+        email.attach(new DataSourceAdapter(fatturaAttivaSigned), idFattura, "");
         // send the email
         email.send();
     }
@@ -1108,7 +1109,7 @@ public class FatturaPassivaElettronicaService implements InitializingBean {
         email.setFrom(userName, userName);
         email.setSubject(subject);
         email.setMsg(msg);
-        email.attach(attach, filename, "");
+        email.attach(new DataSourceAdapter(attach), filename, "");
         // send the email
         email.send();
     }

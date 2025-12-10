@@ -53,6 +53,8 @@ import it.cnr.jada.util.upload.UploadedFile;
 import it.cnr.si.spring.storage.StorageException;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -62,9 +64,9 @@ import org.apache.poi.util.RecordFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJBException;
-import javax.ejb.RemoveException;
-import javax.servlet.ServletException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.RemoveException;
+
 import java.io.*;
 import java.math.BigInteger;
 import java.rmi.RemoteException;
@@ -371,7 +373,7 @@ public class CRUDConfigAnagContrattoBP extends SimpleCRUDBP {
 	 * Sovrascrive quello presente nelle superclassi
 	 * 
 	*/
-	public void openForm(javax.servlet.jsp.PageContext context,String action,String target) throws java.io.IOException,javax.servlet.ServletException {
+	public void openForm(PageContext context, String action, String target) throws java.io.IOException, ServletException {
 		openForm(context,action,target,"multipart/form-data");
 	}
 

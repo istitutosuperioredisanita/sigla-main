@@ -17,19 +17,22 @@
 
 package it.cnr.contab.web.rest.local.doccont;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
-import it.cnr.contab.doccont00.core.bulk.MandatoComunicaDatiBulk;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import it.cnr.contab.web.rest.config.SIGLARoles;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.Local;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
 import java.util.List;
 
 @Local
@@ -37,15 +40,22 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(SIGLARoles.PORTALE)
-@Api("Comunicazione Dati Pagamenti")
+@Tag(name = "Comunicazione Dati Pagamenti")
 public interface ComunicaDatiPagamentiLocal {
 
     @GET
-    @ApiOperation(value = "Recupera i dati dei pagamenti",
-            notes = "Accesso consentito solo alle utenze abilitate al ruolo PORTALE",
-            response = MandatoComunicaDatiBulk.class,
-            responseContainer = "List",
-            authorizations = @Authorization(value = "BASIC")
+    @Operation(summary = "Recupera i dati dei pagamenti",
+            description = "Accesso consentito solo alle utenze abilitate al ruolo PORTALE",
+            security = @SecurityRequirement(name = "basicAuth"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = List.class)
+                            )
+                    )
+            }
     )
     Response recuperoDatiPagamenti(@Context HttpServletRequest request,
                                    @QueryParam("esercizio") Integer esercizio,

@@ -500,7 +500,7 @@ public OggettoBulk initializeForInsert(it.cnr.jada.util.action.CRUDBP bp,it.cnr.
 
 	super.initializeForInsert(bp,context);
 
-	setNumero_giorni(new Integer(0));
+	setNumero_giorni(Integer.valueOf(0));
 	
 	setTi_anagrafico(Tipo_rapportoBulk.ALTRO);
 	resetImporti();
@@ -579,7 +579,7 @@ public boolean isROTerzo()
 {
 	//	Se sono in modifica del conguaglio devono essere disabilitati
 	//	tutti i dati del terzo
-	return getPg_conguaglio()!=null && (getPg_conguaglio().compareTo(new Long(0)) > 0);
+	return getPg_conguaglio()!=null && (getPg_conguaglio().compareTo(Long.valueOf(0)) > 0);
 }
 public boolean isStatoAbilitaConguaglio(){
 
@@ -892,12 +892,12 @@ public void validaDataPerChiusura(java.sql.Timestamp ts) throws it.cnr.jada.comp
 	{
 		throw new ApplicationException("Errore nella validazione della data!");		
 	}
-	catch(javax.ejb.EJBException e)
+	catch(jakarta.ejb.EJBException e)
 	{
 		throw new ApplicationException("Errore nella validazione della data!");				
 	}
 }
-public void validaDate() throws ApplicationException, javax.ejb.EJBException, java.text.ParseException
+public void validaDate() throws ApplicationException, jakarta.ejb.EJBException, java.text.ParseException
 {
 	if (getDt_registrazione() == null)
 		throw new ApplicationException("Inserire la data registrazione");
@@ -988,7 +988,7 @@ public void validaTerzo() throws ApplicationException{
 	if (getDt_registrazione().compareTo(getTipoTrattamento().getDt_ini_validita())<0 || getDt_registrazione().compareTo(getTipoTrattamento().getDt_fin_validita())>0)
 		throw new ApplicationException("Il tipo trattamento selezionato non è valido alla Data Registrazione del conguaglio");
 }
-public void validaTestata() throws ApplicationException, java.text.ParseException, javax.ejb.EJBException
+public void validaTestata() throws ApplicationException, java.text.ParseException, jakarta.ejb.EJBException
 {
 	// Validazione Date
 	validaDate();

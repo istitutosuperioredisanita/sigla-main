@@ -21,8 +21,8 @@ import it.cnr.contab.progettiric00.consultazioni.bulk.V_saldi_piano_econom_progc
 import it.cnr.contab.progettiric00.consultazioni.comp.ConsProgEcoVociGaeComponent;
 import it.cnr.jada.UserContext;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 @Stateless(name="CNRPROGETTIRIC00_EJB_ConsProgEcoVociGaeComponentSession")
 public class ConsProgEcoVociGaeComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements ConsProgEcoVociGaeComponentSession {
@@ -30,10 +30,8 @@ public class ConsProgEcoVociGaeComponentSessionBean extends it.cnr.jada.ejb.CRUD
 	public void ejbCreate() {
 		componentObj = new ConsProgEcoVociGaeComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new ConsProgEcoVociGaeComponentSessionBean();
-	}
-	public it.cnr.jada.util.RemoteIterator findProgetti(UserContext param0, V_saldi_piano_econom_progcdrBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException{
+
+	public it.cnr.jada.util.RemoteIterator findProgetti(UserContext param0, V_saldi_piano_econom_progcdrBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException{
 		pre_component_invocation(param0,componentObj);
 		try {
  			it.cnr.jada.util.RemoteIterator result = ((ConsProgEcoVociGaeComponent)componentObj).findProgetti(param0,param1);

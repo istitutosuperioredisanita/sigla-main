@@ -117,9 +117,9 @@ public class CRUDProgettoAction extends CRUDAbstractProgettoAction {
 				progetto.setTipo(progetto_padre.getTipo());
 				progetto.setStato(progetto_padre.getStato());
 				progetto.setDt_inizio(progetto_padre.getDt_inizio());
-				progetto.setLivello(new Integer(progetto_padre.getLivello().intValue() + 1));
+				progetto.setLivello(Integer.valueOf(progetto_padre.getLivello().intValue() + 1));
 				// se il padre è una commessa proponiamo anche i seguenti:
-				if (progetto_padre.getLivello().equals(new Integer(2))) {
+				if (progetto_padre.getLivello().equals(Integer.valueOf(2))) {
 					progetto.setDt_fine(progetto_padre.getDt_fine());
 					progetto.setDurata_progetto(progetto_padre.getDurata_progetto());
 				}

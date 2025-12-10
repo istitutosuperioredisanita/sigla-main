@@ -21,23 +21,21 @@ import it.cnr.contab.utenze00.comp.AssBpAccessoComponent;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
 import java.util.Map;
 
 @Stateless(name = "CNRUTENZE00_EJB_AssBpAccessoComponentSession")
 public class AssBpAccessoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements AssBpAccessoComponentSession {
-    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-        return new AssBpAccessoComponentSessionBean();
-    }
+    
 
     @PostConstruct
     public void ejbCreate() {
         componentObj = new AssBpAccessoComponent();
     }
 
-    public java.util.List findAccessoByBP(it.cnr.jada.UserContext param0, String param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.util.List findAccessoByBP(it.cnr.jada.UserContext param0, String param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             java.util.List result = ((AssBpAccessoComponent) componentObj).findAccessoByBP(param0, param1);
@@ -56,7 +54,7 @@ public class AssBpAccessoComponentSessionBean extends it.cnr.jada.ejb.CRUDCompon
         }
     }
 
-    public it.cnr.contab.utenze00.bulk.AssBpAccessoBulk finAssBpAccesso(it.cnr.jada.UserContext param0, String param1, String param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.utenze00.bulk.AssBpAccessoBulk finAssBpAccesso(it.cnr.jada.UserContext param0, String param1, String param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.contab.utenze00.bulk.AssBpAccessoBulk result = ((AssBpAccessoComponent) componentObj).finAssBpAccesso(param0, param1, param2);
@@ -76,7 +74,7 @@ public class AssBpAccessoComponentSessionBean extends it.cnr.jada.ejb.CRUDCompon
     }
 
     @Override
-    public Map<String, String> findDescrizioneBP(UserContext param0) throws ComponentException, javax.ejb.EJBException {
+    public Map<String, String> findDescrizioneBP(UserContext param0) throws ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             Map<String, String> result = ((AssBpAccessoComponent) componentObj).findDescrizioneBP(param0);

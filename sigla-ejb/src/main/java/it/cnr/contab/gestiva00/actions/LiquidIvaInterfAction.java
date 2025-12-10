@@ -20,7 +20,7 @@ package it.cnr.contab.gestiva00.actions;
 import java.rmi.RemoteException;
 import java.sql.*;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 
 import it.cnr.contab.gestiva00.ejb.*;
 import it.cnr.contab.gestiva00.core.bulk.*;

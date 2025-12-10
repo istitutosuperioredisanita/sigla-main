@@ -259,13 +259,13 @@ public class RicostruzioneResiduiComponent extends CRUDComponent implements Clon
 		// se la UO in scrivania è di tipo Ente l'utente deve vedere tutti i record
 		if (!isUOScrivaniaEnte(userContext)) {
 			// se il cdr è di livello 1 oppure il cdr è di tipo SAC o AREA l'utente vede se quel cdr altrimenti vede il suo afferente
-			if (cdrUoCds.getLivello().equals(new Integer("1"))
+			if (cdrUoCds.getLivello().equals(Integer.valueOf("1"))
 				|| aUO.getCd_tipo_unita().equals(Tipo_unita_organizzativaHome.TIPO_UO_SAC) 
 				|| aUO.getCd_tipo_unita().equals(Tipo_unita_organizzativaHome.TIPO_UO_AREA)) {
 				sql.addClause("AND", "cd_centro_responsabilita", sql.EQUALS, cdrUoCds.getCd_centro_responsabilita());
 			}
 			else {	
-				sql.addClause("AND", "livello", sql.EQUALS, new Integer("1"));
+				sql.addClause("AND", "livello", sql.EQUALS, Integer.valueOf("1"));
 				CdrBulk cdrAffer = null;
 				try {
 					cdrAffer = (CdrBulk)getHome(userContext, CdrBulk.class).find(new CdrBulk(cdrUoCds.getCd_centro_responsabilita())).get(0);
@@ -435,7 +435,7 @@ public class RicostruzioneResiduiComponent extends CRUDComponent implements Clon
 		try
 		{
 			Integer esercizio = ((it.cnr.contab.utenze00.bp.CNRUserContext)userContext).getEsercizio();
-			esercizio = new Integer(esercizio.intValue()-1);
+			esercizio = Integer.valueOf(esercizio.intValue()-1);
 			BigDecimal disp_cassa = getMassaSpendibile( userContext, esercizio, esercizio, CNRUserContext.getCd_cds(userContext), null );
 			residuo.setIm_massa_spendibile(disp_cassa);
 			return residuo;		
@@ -507,9 +507,9 @@ public class RicostruzioneResiduiComponent extends CRUDComponent implements Clon
 	private MessaggioBulk generaMessaggio(UserContext userContext, UtenteBulk utente, Pdg_residuoBulk residuo, String tipo) throws ComponentException, PersistencyException{
 		MessaggioHome messHome = (MessaggioHome)getHome(userContext,MessaggioBulk.class);
 		MessaggioBulk messaggio = new MessaggioBulk();
-		messaggio.setPg_messaggio(new Long(messHome.fetchNextSequenceValue(userContext,"CNRSEQ00_PG_MESSAGGIO").longValue()));
+		messaggio.setPg_messaggio(Long.valueOf(messHome.fetchNextSequenceValue(userContext,"CNRSEQ00_PG_MESSAGGIO").longValue()));
 		messaggio.setCd_utente(utente.getCd_utente());
-		messaggio.setPriorita(new Integer(1));
+		messaggio.setPriorita(Integer.valueOf(1));
 		if (tipo == null){
 			messaggio.setDs_messaggio("È stato aperto in modifica la ricostruzione del residuo relativo al CdR "+residuo.getCd_centro_responsabilita());
 		}
@@ -594,7 +594,7 @@ public class RicostruzioneResiduiComponent extends CRUDComponent implements Clon
 			stampa.setCdrUtente(cdrUtente);
 			//stampa.setCdrForPrint(cdrUtente);
 	
-		//stampa.setPgInizioMand(new Long(0));
+		//stampa.setPgInizioMand(Long.valueOf(0));
 		//String cd_uo = CNRUserContext.getCd_unita_organizzativa(userContext);
 		
 		/*try{

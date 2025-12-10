@@ -20,11 +20,6 @@
  * Date 28/06/2017
  */
 package it.cnr.contab.ordmag.ordini.bulk;
-import java.sql.Connection;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoHome;
@@ -41,6 +36,12 @@ import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
+
+import java.sql.Connection;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 public class OrdineAcqHome extends BulkHome {
 	public OrdineAcqHome(Connection conn) {
 		super(OrdineAcqBulk.class, conn);

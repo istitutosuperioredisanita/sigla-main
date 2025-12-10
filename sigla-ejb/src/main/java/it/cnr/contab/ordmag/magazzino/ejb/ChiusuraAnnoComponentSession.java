@@ -32,7 +32,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.RemoteIterator;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.text.ParseException;

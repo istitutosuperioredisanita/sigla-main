@@ -18,7 +18,7 @@
 
 package it.cnr.contab.progettiric00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.prevent01.bulk.Pdg_esercizioBulk;
 import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;

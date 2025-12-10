@@ -21,7 +21,9 @@ import it.cnr.contab.doccont00.core.bulk.AccertamentoBulk;
 import it.cnr.contab.doccont00.core.bulk.Accertamento_pluriennaleBulk;
 import it.cnr.jada.UserContext;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
+import jakarta.inject.Named;
+
 import java.rmi.RemoteException;
 import java.util.List;
 

@@ -54,7 +54,7 @@ protected it.cnr.jada.util.jsp.Button[] createToolbar() {
 }
 
 public Liquid_coriComponentSession createComponentSession()
-	throws javax.ejb.EJBException,
+	throws jakarta.ejb.EJBException,
 			java.rmi.RemoteException,
 			BusinessProcessException {
 	return (Liquid_coriComponentSession)createComponentSession("CNRCORI00_EJB_Liquid_coriComponentSession",Liquid_coriComponentSession.class);
@@ -65,7 +65,7 @@ public void doEseguiLiquidMassaCori(ActionContext context,Liquidazione_massa_cor
 		Liquid_coriComponentSession sess = (Liquid_coriComponentSession)createComponentSession();
 		setModel(context,sess.eseguiLiquidazioneMassaCori(context.getUserContext(), eMassa));
 
-	}catch(javax.ejb.EJBException e){
+	}catch(jakarta.ejb.EJBException e){
 		throw handleException(e);
 	} catch(java.rmi.RemoteException re){
 		throw handleException(re);
@@ -99,7 +99,7 @@ public void doCercaBatch(ActionContext context,Liquidazione_massa_coriBulk eMass
 		eMassa.setDa_esercizio_precedente(null);			
 		Liquid_coriComponentSession sess = (Liquid_coriComponentSession)createComponentSession();
 		setModel(context,sess.cercaBatch(context.getUserContext(), eMassa));
-	}catch(javax.ejb.EJBException e){
+	}catch(jakarta.ejb.EJBException e){
 		throw handleException(e);
 	} catch(java.rmi.RemoteException re){
 		throw handleException(re);

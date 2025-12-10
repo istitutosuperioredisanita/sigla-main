@@ -85,9 +85,9 @@ public java.lang.String getCd_cds() {
 	public Integer getCdTerzoForPrint() {
 
 		if (getTerzo()==null)
-			return new Integer(0);
+			return Integer.valueOf(0);
 		if (getTerzo().getCd_terzo()==null)
-			return new Integer(0);
+			return Integer.valueOf(0);
 
 		return getTerzo().getCd_terzo();
 	}

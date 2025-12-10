@@ -22,7 +22,7 @@ import it.cnr.contab.inventario00.docs.bulk.V_ammortamento_beniBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.List;

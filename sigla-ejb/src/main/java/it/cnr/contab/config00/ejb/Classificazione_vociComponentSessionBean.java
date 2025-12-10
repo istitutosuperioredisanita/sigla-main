@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.config00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.config00.comp.Classificazione_vociComponent;
 /**
@@ -29,10 +29,8 @@ public class Classificazione_vociComponentSessionBean extends it.cnr.jada.ejb.CR
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.config00.comp.Classificazione_vociComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new Classificazione_vociComponentSessionBean();
-	}
-	public it.cnr.contab.config00.pdcfin.cla.bulk.Parametri_livelliBulk findParametriLivelli(it.cnr.jada.UserContext param0, java.lang.Integer param1)  throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public it.cnr.contab.config00.pdcfin.cla.bulk.Parametri_livelliBulk findParametriLivelli(it.cnr.jada.UserContext param0, java.lang.Integer param1)  throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.config00.pdcfin.cla.bulk.Parametri_livelliBulk result = ((Classificazione_vociComponent)componentObj).findParametriLivelli(param0, param1);
@@ -50,7 +48,7 @@ public class Classificazione_vociComponentSessionBean extends it.cnr.jada.ejb.CR
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.jada.util.RemoteIterator getChildren(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException{
+	public it.cnr.jada.util.RemoteIterator getChildren(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException{
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.util.RemoteIterator result = ((Classificazione_vociComponent)componentObj).getChildren(param0,param1);
@@ -68,7 +66,7 @@ public class Classificazione_vociComponentSessionBean extends it.cnr.jada.ejb.CR
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.jada.bulk.OggettoBulk getParent(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.jada.bulk.OggettoBulk getParent(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((Classificazione_vociComponent)componentObj).getParent(param0,param1);
@@ -86,7 +84,7 @@ public class Classificazione_vociComponentSessionBean extends it.cnr.jada.ejb.CR
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public boolean isLeaf(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public boolean isLeaf(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((Classificazione_vociComponent)componentObj).isLeaf(param0,param1);
@@ -104,7 +102,7 @@ public class Classificazione_vociComponentSessionBean extends it.cnr.jada.ejb.CR
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.config00.pdcfin.cla.bulk.Classificazione_vociBulk caricaClassVociAssociate(it.cnr.jada.UserContext param0,it.cnr.contab.config00.pdcfin.cla.bulk.Classificazione_vociBulk param1, it.cnr.jada.persistency.sql.CompoundFindClause param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.config00.pdcfin.cla.bulk.Classificazione_vociBulk caricaClassVociAssociate(it.cnr.jada.UserContext param0,it.cnr.contab.config00.pdcfin.cla.bulk.Classificazione_vociBulk param1, it.cnr.jada.persistency.sql.CompoundFindClause param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.config00.pdcfin.cla.bulk.Classificazione_vociBulk result = ((Classificazione_vociComponent)componentObj).caricaClassVociAssociate(param0, param1, param2);
@@ -122,7 +120,7 @@ public class Classificazione_vociComponentSessionBean extends it.cnr.jada.ejb.CR
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.config00.pdcfin.cla.bulk.Classificazione_vociBulk caricaPdgPianoRipartoSpese(it.cnr.jada.UserContext param0,it.cnr.contab.config00.pdcfin.cla.bulk.Classificazione_vociBulk param1, it.cnr.jada.persistency.sql.CompoundFindClause param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.config00.pdcfin.cla.bulk.Classificazione_vociBulk caricaPdgPianoRipartoSpese(it.cnr.jada.UserContext param0,it.cnr.contab.config00.pdcfin.cla.bulk.Classificazione_vociBulk param1, it.cnr.jada.persistency.sql.CompoundFindClause param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.config00.pdcfin.cla.bulk.Classificazione_vociBulk result = ((Classificazione_vociComponent)componentObj).caricaPdgPianoRipartoSpese(param0, param1, param2);
@@ -140,7 +138,7 @@ public class Classificazione_vociComponentSessionBean extends it.cnr.jada.ejb.CR
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.lang.String getDsLivelloClassificazione(it.cnr.jada.UserContext param0,it.cnr.contab.config00.pdcfin.cla.bulk.Classificazione_vociBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public java.lang.String getDsLivelloClassificazione(it.cnr.jada.UserContext param0,it.cnr.contab.config00.pdcfin.cla.bulk.Classificazione_vociBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.lang.String result = ((Classificazione_vociComponent)componentObj).getDsLivelloClassificazione(param0, param1);
@@ -158,7 +156,7 @@ public class Classificazione_vociComponentSessionBean extends it.cnr.jada.ejb.CR
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.lang.String getDsLivelloClassificazione(it.cnr.jada.UserContext param0,java.lang.Integer param1,java.lang.String param2, java.lang.Integer param3) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public java.lang.String getDsLivelloClassificazione(it.cnr.jada.UserContext param0,java.lang.Integer param1,java.lang.String param2, java.lang.Integer param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.lang.String result = ((Classificazione_vociComponent)componentObj).getDsLivelloClassificazione(param0, param1, param2, param3);

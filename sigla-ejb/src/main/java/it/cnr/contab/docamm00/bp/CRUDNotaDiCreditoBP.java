@@ -33,6 +33,8 @@ import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.CollapsableDetailCRUDController;
 import it.cnr.jada.util.action.SearchProvider;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspWriter;
 
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -312,7 +314,7 @@ public class CRUDNotaDiCreditoBP
 
 		documentiContabiliModificati = aMap;
 	}
-	public void writeFPInventarioToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException,javax.servlet.ServletException {
+	public void writeFPInventarioToolbar(JspWriter writer) throws java.io.IOException, ServletException {
 
 		if (!isSearching() && !isDeleting()) {
 			openToolbar(writer);
@@ -320,7 +322,7 @@ public class CRUDNotaDiCreditoBP
 			closeToolbar(writer);
 		}
 	}
-	public void writeToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException,javax.servlet.ServletException {
+	public void writeToolbar(JspWriter writer) throws java.io.IOException,ServletException {
 
 		super.writeToolbar(writer);
 		writeFPInventarioToolbar(writer);

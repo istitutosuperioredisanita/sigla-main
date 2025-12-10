@@ -36,8 +36,8 @@ public class Var_stanz_res_rigaHome extends BulkHome {
 	public void initializePrimaryKeyForInsert(UserContext usercontext,OggettoBulk oggettobulk)throws PersistencyException, ComponentException {
 		try {
 			((Var_stanz_res_rigaBulk)oggettobulk).setPg_riga(
-				new Long(
-					((Long)findAndLockMax( oggettobulk, "pg_riga", new Long(0) )).longValue()+1
+				Long.valueOf(
+					((Long)findAndLockMax( oggettobulk, "pg_riga", Long.valueOf(0) )).longValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

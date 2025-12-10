@@ -26,7 +26,7 @@ import it.cnr.jada.util.action.FormAction;
 import it.cnr.jada.util.action.OptionBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.rmi.RemoteException;
 
 public class CancellaSchedulazioneAction extends FormAction{
@@ -35,7 +35,7 @@ public class CancellaSchedulazioneAction extends FormAction{
 	public Forward doDefault(ActionContext actioncontext) throws RemoteException {
 		if(((HttpActionContext)actioncontext).getParameter("pgStampa")== null)
 			return super.doDefault(actioncontext);
-		Long pgStampa = new Long(((HttpActionContext)actioncontext).getParameter("pgStampa").substring(2));
+		Long pgStampa = Long.valueOf(((HttpActionContext)actioncontext).getParameter("pgStampa").substring(2));
 		String indirizzoEMail = ((HttpActionContext)actioncontext).getParameter("indirizzoEMail");
 		BusinessProcess bp = actioncontext.getBusinessProcess();
 		bp.setResource("pgStampa", String.valueOf(pgStampa));
@@ -59,7 +59,7 @@ public class CancellaSchedulazioneAction extends FormAction{
 		BusinessProcess bp = actioncontext.getBusinessProcess();
 		if (option.getOption() == it.cnr.jada.util.action.OptionBP.YES_BUTTON) {
 			try {
-				geComponent(actioncontext).cancellaSchedulazione(userContext, new Long(bp.getResource("pgStampa")), bp.getResource("indirizzoEMail"));
+				geComponent(actioncontext).cancellaSchedulazione(userContext, Long.valueOf(bp.getResource("pgStampa")), bp.getResource("indirizzoEMail"));
 				openMessage(actioncontext, "La cancellazione è stata effettuata.");
 			} catch (Exception e) {
 				handleException(actioncontext, e);

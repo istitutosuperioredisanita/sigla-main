@@ -99,7 +99,7 @@ public it.cnr.jada.bulk.OggettoBulk initializeForSearch(
 	bulk.setTipo_stampa(TIPO_STAMPA_RIEPILOGATIVI_CENTRO);
 
 	bulk.setSezionaliFlag(SEZIONALI_FLAGS_SEZ);
-	bulk.setPageNumber(new Integer(1));
+	bulk.setPageNumber(Integer.valueOf(1));
 
 	//In questo modo cancello l'impostazione dell'attributo settato nel super.initializeForSearch
 	bulk.setTipoSezionaleFlag(null);

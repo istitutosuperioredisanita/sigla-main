@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 
 import it.cnr.contab.doccont00.bp.ConsRiscontriEtrBP;
 import it.cnr.contab.doccont00.bp.ConsRiscontriUscBP;

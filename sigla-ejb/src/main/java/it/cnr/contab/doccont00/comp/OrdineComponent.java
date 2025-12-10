@@ -205,7 +205,7 @@ public OggettoBulk inizializzaBulkPerInserimento(UserContext userContext,Oggetto
 	{
 		ordine.setDt_registrazione(DateServices.getDt_valida( userContext));
 	}
-	catch ( javax.ejb.EJBException e )
+	catch ( jakarta.ejb.EJBException e )
 	{
 		throw handleException( e );
 	}		
@@ -293,8 +293,8 @@ private void inizializzaBulkPerStampa(UserContext userContext, Stampa_ordineBulk
 	stampa.setEsercizio(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
 	stampa.setCd_cds(it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext));
 
-	stampa.setPgInizio(new Integer(0));
-	stampa.setPgFine(new Integer(999999999));
+	stampa.setPgInizio(Integer.valueOf(0));
+	stampa.setPgFine(Integer.valueOf(999999999));
 	
 	try{
 		String cd_uo_scrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_unita_organizzativa(userContext);
@@ -453,7 +453,7 @@ protected void validaCreaModificaConBulk(UserContext userContext,OggettoBulk bul
 		   									java.text.DateFormat.getDateInstance().format( lastDayOfTheYear ));					
 
 	}
-	catch ( javax.ejb.EJBException e )
+	catch ( jakarta.ejb.EJBException e )
 	{
 		throw handleException( e );
 	}		

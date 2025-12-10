@@ -19,8 +19,8 @@ package it.cnr.contab.doccont00.ejb;
 
 import java.rmi.RemoteException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.doccont00.comp.ConsSospesiEntSpeComponent;
 import it.cnr.jada.UserContext;
@@ -39,9 +39,7 @@ public class ConsSospesiEntSpeComponentSessionBean extends it.cnr.jada.ejb.CRUDC
 		componentObj = new ConsSospesiEntSpeComponent();
 	}
 	
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new ConsSospesiEntSpeComponentSessionBean();
-	}
+
 	
 	
 	public it.cnr.jada.util.RemoteIterator findConsSospesiSpesa(UserContext param0,String param1,String param2,CompoundFindClause param3,CompoundFindClause param4) 

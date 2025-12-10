@@ -22,7 +22,7 @@ import it.cnr.jada.bulk.BusyResourceException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface AsyncAmmortamentoBeneComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

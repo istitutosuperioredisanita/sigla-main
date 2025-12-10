@@ -83,7 +83,7 @@ public class ConsStatoInvioBP extends SelezionatoreListaBP implements SearchProv
         openIterator(context);
     }
 
-    public it.cnr.jada.ejb.CRUDComponentSession createComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException, BusinessProcessException {
+    public it.cnr.jada.ejb.CRUDComponentSession createComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException, BusinessProcessException {
         return (it.cnr.jada.ejb.CRUDComponentSession) createComponentSession("JADAEJB_CRUDComponentSession", it.cnr.jada.ejb.CRUDComponentSession.class);
     }
 

@@ -229,7 +229,7 @@ public class Stampa_pdg_variazione_riepilogoBulk extends OggettoBulk {
 	}
 	
 	public Integer getCur() {
-		   return new Integer(0);
+		   return Integer.valueOf(0);
 	   }
 	   
 	public java.sql.Date getDataApprovazione_da() {

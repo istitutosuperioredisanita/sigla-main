@@ -488,9 +488,9 @@ private Long recuperaNuovoProgressivo(UserContext userContext, Var_bilancioBulk 
 	try{
 		Long tmp = (Long)getHome(userContext, varBilancio).findAndLockMax(varBilancio, "pg_variazione",null);
 		if (tmp==null)
-			tmp = new Long(0);
+			tmp = Long.valueOf(0);
 
-		return (new Long(tmp.intValue()+1));
+		return (Long.valueOf(tmp.intValue()+1));
 
 	}catch(it.cnr.jada.bulk.BusyResourceException ex){
 		throw handleException(varBilancio, ex);

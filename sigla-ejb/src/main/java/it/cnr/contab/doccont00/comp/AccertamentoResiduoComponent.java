@@ -177,13 +177,13 @@ public class AccertamentoResiduoComponent extends AccertamentoComponent {
 														 osv.getEsercizio(),
 														 osv.getEsercizio_originale(),
 														 osv.getPg_accertamento(),
-														 new Long(1));
+														 Long.valueOf(1));
 
 					key.setAccertamento_scadenzario(new Accertamento_scadenzarioBulk(osv.getCd_cds(),
 							  														 osv.getEsercizio(),
 																					 osv.getEsercizio_originale(),
 																					 osv.getPg_accertamento(),
-																					 new Long(1)));
+																					 Long.valueOf(1)));
 
 					key.getAccertamento_scadenzario().setAccertamento(new AccertamentoBulk(osv.getCd_cds(),
 								 														   osv.getEsercizio(),

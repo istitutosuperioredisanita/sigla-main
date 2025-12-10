@@ -23,20 +23,20 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <property name="now" value="sysdate" dbms="oracle"/>
-    <property name="now" value="now()" dbms="postgresql"/>
+    <property name="now" value="now()" dbms="postgresql,h2"/>
 
     <property name="esercizio_corrente" value="to_number(to_char(SYSDATE, 'YYYY'))" dbms="oracle"/>
     <property name="esercizio_corrente" value="date_part('year', now())" dbms="postgresql"/>
     <property name="esercizio_corrente" value="YEAR(CURRENT_DATE)" dbms="h2"/>
 
     <property name="date.type" value="DATE" dbms="oracle"/>
-    <property name="date.type" value="DATETIME" dbms="postgresql"/>
+    <property name="date.type" value="DATETIME" dbms="postgresql,h2"/>
 
     <property name="firstday" value="to_Date('0101${liquibase.bootstrap.esercizio}','ddmmyyyy')" dbms="oracle"/>
-    <property name="firstday" value="timestamp '${liquibase.bootstrap.esercizio}-01-01'" dbms="postgresql"/>
+    <property name="firstday" value="timestamp '${liquibase.bootstrap.esercizio}-01-01'" dbms="postgresql,h2"/>
 
     <property name="lastday" value="to_Date('3112${liquibase.bootstrap.esercizio}','ddmmyyyy')" dbms="oracle"/>
-    <property name="lastday" value="timestamp '${liquibase.bootstrap.esercizio}-12-31'" dbms="postgresql"/>
+    <property name="lastday" value="timestamp '${liquibase.bootstrap.esercizio}-12-31'" dbms="postgresql,h2"/>
 
     <!-- Inizio schema iniziale-->
     <include file="bootstrap/tables.xml"/>

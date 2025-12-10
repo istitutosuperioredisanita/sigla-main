@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.latt.bulk.CostantiTi_gestione;
 import it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk;
@@ -126,7 +126,7 @@ public class SelezionatoreAssestatoBP extends ConsultazioniBP{
 	/**
 	 * Crea la CRUDComponentSession da usare per effettuare le operazioni di CRUD
 	 */
-	public CRUDComponentSession createComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public CRUDComponentSession createComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		if (getBulkCaller() instanceof Pdg_variazioneBulk) 
 			return (CRUDPdgVariazioneGestionaleComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPDG01_EJB_CRUDPdgVariazioneGestionaleComponentSession",CRUDPdgVariazioneGestionaleComponentSession.class);
 		else
@@ -471,7 +471,7 @@ public class SelezionatoreAssestatoBP extends ConsultazioniBP{
 				
 			if (modalitaMappa.equals(this.MODALITA_INSERIMENTO_IMPORTI) ||
 			    modalitaMappa.equals(this.MODALITA_INSERIMENTO_PERCENTUALI)) {
-				String val1 = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(actioncontext.getUserContext(), new Integer(0), "*", "DOCUMENTI_CONTABILI", "ATTIVA_SELEZIONE_ASSESTATO");
+				String val1 = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(actioncontext.getUserContext(), Integer.valueOf(0), "*", "DOCUMENTI_CONTABILI", "ATTIVA_SELEZIONE_ASSESTATO");
 				if (val1!=null && val1.equals("N"))
 					modalitaMappa=this.MODALITA_INSERIMENTO_SEMPLICE;
 			}

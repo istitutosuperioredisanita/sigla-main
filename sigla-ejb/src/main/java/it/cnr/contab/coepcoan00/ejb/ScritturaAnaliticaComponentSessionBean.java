@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.coepcoan00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 @Stateless(name="CNRCOEPCOAN00_EJB_ScritturaAnaliticaComponentSession")
 public class ScritturaAnaliticaComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements ScritturaAnaliticaComponentSession {
@@ -25,7 +25,5 @@ public class ScritturaAnaliticaComponentSessionBean extends it.cnr.jada.ejb.CRUD
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.coepcoan00.comp.ScritturaAnaliticaComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new ScritturaAnaliticaComponentSessionBean();
-}
+
 }

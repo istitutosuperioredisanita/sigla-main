@@ -34,10 +34,10 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+import jakarta.ejb.Asynchronous;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.Asynchronous;
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -50,9 +50,7 @@ import java.util.List;
 public class AsyncAmmortamentoBeneComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements AsyncAmmortamentoBeneComponentSession {
     private final static org.slf4j.Logger logger = LoggerFactory.getLogger(AsyncAmmortamentoBeneComponentSessionBean.class);
 
-    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-        return new AsyncAmmortamentoBeneComponentSessionBean();
-    }
+    
 
     private final BigDecimal MENO_UNO = new BigDecimal(-1);
     private final BigDecimal CENTO = new BigDecimal(100);

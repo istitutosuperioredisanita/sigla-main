@@ -108,7 +108,7 @@ private void aggiornaCapitoloSaldoObbligazione (UserContext aUC,ImpegnoResiduoBu
 		else if ( azione == CANCELLAZIONE )
 			aggiornaSaldiInModifica( aUC, 
 											 obbligazione, 
-											 new Long(obbligazione.getPg_ver_rec().longValue() + 1));		
+											 Long.valueOf(obbligazione.getPg_ver_rec().longValue() + 1));
 
 	}
 	catch ( Exception e )
@@ -501,7 +501,7 @@ public OggettoBulk inizializzaBulkPerModifica (UserContext aUC,OggettoBulk bulk)
 		//se im_associato doc amm > 0 esiste certamente un doc amm. associato, ne imposto uno fittizio
 		//per flaggare l'impegno e non consentire la modifiac del terzo
 		if ( obblig_scad.getIm_associato_doc_amm().compareTo( new BigDecimal(0)) > 0 )
-			obblig_scad.setPg_doc_passivo( new Long(1)); 
+			obblig_scad.setPg_doc_passivo( Long.valueOf(1));
 		/*
 		//carico l'eventuale doc.amministrativo legato alla scadenza
 		V_doc_passivo_obbligazioneBulk docPassivo = obblig_scadHome.findDoc_passivo( obblig_scad );
@@ -795,7 +795,7 @@ void verificaStatoEsercizio( UserContext userContext, Integer es, String cd_cds 
 			throw handleException( new ApplicationException( "Operazione impossibile: esercizio non aperto!") );
 
 	EsercizioBulk esPrec = (EsercizioBulk) getHome(userContext, EsercizioBulk.class).findByPrimaryKey( 
-																									new EsercizioBulk( cd_cds, new Integer( es.intValue() - 1 )));
+																									new EsercizioBulk( cd_cds, Integer.valueOf( es.intValue() - 1 )));
 	if (esPrec != null && !esPrec.STATO_CHIUSO_DEF.equals(esPrec.getSt_apertura_chiusura()))
 			throw handleException( new ApplicationException( "Operazione impossibile: esercizio precedente non chiuso!") );
 

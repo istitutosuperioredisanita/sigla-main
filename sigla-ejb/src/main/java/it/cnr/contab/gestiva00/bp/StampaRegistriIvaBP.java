@@ -20,7 +20,7 @@ package it.cnr.contab.gestiva00.bp;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.gestiva00.core.bulk.IPrintable;
@@ -81,7 +81,7 @@ public Stampa_registri_ivaVBulk aggiornaRegistriStampati(
  * @throws RemoteException	Se si verifica qualche eccezione di sistema per cui non è possibile effettuare l'operazione
  */
 public StampaRegistriIvaComponentSession createComponentSession()
-	throws javax.ejb.EJBException,
+	throws jakarta.ejb.EJBException,
 			java.rmi.RemoteException,
 			BusinessProcessException {
 	return (StampaRegistriIvaComponentSession)createComponentSession("CNRGESTIVA00_EJB_StampaRegistriIvaComponentSession",StampaRegistriIvaComponentSession.class);

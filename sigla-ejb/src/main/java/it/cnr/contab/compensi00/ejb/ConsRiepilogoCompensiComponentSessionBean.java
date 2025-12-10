@@ -18,9 +18,9 @@
 package it.cnr.contab.compensi00.ejb;
 import java.rmi.RemoteException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.compensi00.comp.ConsRiepilogoCompensiComponent;
 import it.cnr.contab.docamm00.consultazioni.bulk.VConsRiepCompensiBulk;
@@ -34,9 +34,6 @@ public class ConsRiepilogoCompensiComponentSessionBean extends it.cnr.jada.ejb.C
 @PostConstruct
 	public void ejbCreate() {
 	componentObj = new ConsRiepilogoCompensiComponent();
-}
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-	return new ConsRiepilogoCompensiComponentSessionBean();
 }
 public RemoteIterator findRiepilogoCompensi(UserContext param0, VConsRiepCompensiBulk param1) throws PersistencyException, IntrospectionException, ComponentException, RemoteException{
 	pre_component_invocation(param0,componentObj);

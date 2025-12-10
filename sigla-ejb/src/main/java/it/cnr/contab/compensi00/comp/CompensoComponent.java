@@ -246,7 +246,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 					}
 				}
 			}
-		} catch (javax.ejb.EJBException e) {
+		} catch (jakarta.ejb.EJBException e) {
 			throw handleException(compenso, e);
 		} catch (java.rmi.RemoteException e) {
 			throw handleException(compenso, e);
@@ -527,7 +527,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 					}
 				}
 			}
-		} catch (javax.ejb.EJBException e) {
+		} catch (jakarta.ejb.EJBException e) {
 			throw handleException(compenso, e);
 		} catch (java.rmi.RemoteException e) {
 			throw handleException(compenso, e);
@@ -564,7 +564,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 					compenso);
 			return progressiviSession.getNextPG(userContext, numerazione);
 
-		} catch (javax.ejb.EJBException ex) {
+		} catch (jakarta.ejb.EJBException ex) {
 			throw handleException(compenso, ex);
 		} catch (RemoteException ex) {
 			throw handleException(compenso, ex);
@@ -601,7 +601,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 			Numerazione_doc_ammBulk numerazione = new Numerazione_doc_ammBulk(
 					compenso);
 			return session.getNextTempPG(userContext, numerazione);
-		} catch (javax.ejb.EJBException ex) {
+		} catch (jakarta.ejb.EJBException ex) {
 			throw handleException(compenso, ex);
 		} catch (RemoteException ex) {
 			throw handleException(compenso, ex);
@@ -1902,7 +1902,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 				cs.setObject(2, compenso.getCd_unita_organizzativa());
 				cs.setObject(3, compenso.getEsercizio());
 				cs.setObject(4, compenso.getPg_compenso());
-				cs.setObject(5, new Integer(result));
+				cs.setObject(5, Integer.valueOf(result));
 				cs.registerOutParameter(5, java.sql.Types.INTEGER);
 				cs.execute();
 				result = cs.getInt(5);
@@ -2203,10 +2203,10 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 				if (data_da.get(GregorianCalendar.YEAR) == data_a
 						.get(GregorianCalendar.YEAR)) {
 					if (a.getFl_cervellone()
-							&& !(new Integer(data_da
+							&& !(Integer.valueOf(data_da
 									.get(GregorianCalendar.YEAR)).compareTo(a
 									.getAnno_inizio_res_fis().intValue()) < 0)
-							&& !(new Integer(data_da
+							&& !(Integer.valueOf(data_da
 									.get(GregorianCalendar.YEAR)).compareTo(a
 									.getAnno_fine_agevolazioni().intValue()) > 0)) {
 						filtro.setFlAgevolazioniCervelli(new Boolean(a
@@ -2218,10 +2218,10 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 				// cavallo
 				if (compenso.getFl_compenso_conguaglio()
 						&& a.getFl_cervellone()
-						&& !(new Integer(data_da.get(GregorianCalendar.YEAR))
+						&& !(Integer.valueOf(data_da.get(GregorianCalendar.YEAR))
 								.compareTo(a.getAnno_inizio_res_fis()
 										.intValue()) < 0)
-						&& !(new Integer(data_da.get(GregorianCalendar.YEAR))
+						&& !(Integer.valueOf(data_da.get(GregorianCalendar.YEAR))
 								.compareTo(a.getAnno_fine_agevolazioni()
 										.intValue()) > 0)) {
 					filtro.setFlAgevolazioniCervelli(new Boolean(a
@@ -3456,10 +3456,10 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 				if (data_da.get(GregorianCalendar.YEAR) == data_a
 						.get(GregorianCalendar.YEAR)) {
 					if (a.getFl_cervellone()
-							&& !(new Integer(data_da
+							&& !(Integer.valueOf(data_da
 									.get(GregorianCalendar.YEAR)).compareTo(a
 									.getAnno_inizio_res_fis().intValue()) < 0)
-							&& !(new Integer(data_da
+							&& !(Integer.valueOf(data_da
 									.get(GregorianCalendar.YEAR)).compareTo(a
 									.getAnno_fine_agevolazioni().intValue()) > 0)) {
 						filtro.setFlAgevolazioniCervelli(new Boolean(a
@@ -3471,10 +3471,10 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 				// cavallo
 				if (compenso.getFl_compenso_conguaglio()
 						&& a.getFl_cervellone()
-						&& !(new Integer(data_da.get(GregorianCalendar.YEAR))
+						&& !(Integer.valueOf(data_da.get(GregorianCalendar.YEAR))
 								.compareTo(a.getAnno_inizio_res_fis()
 										.intValue()) < 0)
-						&& !(new Integer(data_da.get(GregorianCalendar.YEAR))
+						&& !(Integer.valueOf(data_da.get(GregorianCalendar.YEAR))
 								.compareTo(a.getAnno_fine_agevolazioni()
 										.intValue()) > 0)) {
 					filtro.setFlAgevolazioniCervelli(new Boolean(a
@@ -3800,10 +3800,10 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 				if (data_da.get(GregorianCalendar.YEAR) == data_a
 						.get(GregorianCalendar.YEAR)) {
 					if (a.getFl_cervellone()
-							&& !(new Integer(data_da
+							&& !(Integer.valueOf(data_da
 									.get(GregorianCalendar.YEAR)).compareTo(a
 									.getAnno_inizio_res_fis().intValue()) < 0)
-							&& !(new Integer(data_da
+							&& !(Integer.valueOf(data_da
 									.get(GregorianCalendar.YEAR)).compareTo(a
 									.getAnno_fine_agevolazioni().intValue()) > 0)) {
 						filtro.setFlAgevolazioniCervelli(new Boolean(a
@@ -3815,10 +3815,10 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 				// cavallo
 				if (compenso.getFl_compenso_conguaglio()
 						&& a.getFl_cervellone()
-						&& !(new Integer(data_da.get(GregorianCalendar.YEAR))
+						&& !(Integer.valueOf(data_da.get(GregorianCalendar.YEAR))
 								.compareTo(a.getAnno_inizio_res_fis()
 										.intValue()) < 0)
-						&& !(new Integer(data_da.get(GregorianCalendar.YEAR))
+						&& !(Integer.valueOf(data_da.get(GregorianCalendar.YEAR))
 								.compareTo(a.getAnno_fine_agevolazioni()
 										.intValue()) > 0)) {
 					filtro.setFlAgevolazioniCervelli(new Boolean(a
@@ -4195,7 +4195,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 			return sess.getVal01(userContext, compenso.getEsercizio(), null,
 					"ELEMENTO_VOCE_SPECIALE", "RECUPERO_CREDITI_DA_TERZI");
 
-		} catch (javax.ejb.EJBException ex) {
+		} catch (jakarta.ejb.EJBException ex) {
 			throw handleException(ex);
 		} catch (RemoteException ex) {
 			throw handleException(ex);
@@ -4330,7 +4330,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 			return session.riportaAvanti(userContext, docAmm, status);
 		} catch (java.rmi.RemoteException e) {
 			throw handleException(e);
-		} catch (javax.ejb.EJBException e) {
+		} catch (jakarta.ejb.EJBException e) {
 			throw handleException(e);
 		}
 	}
@@ -5101,7 +5101,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 		try {
 	
 			compenso.setDataInizioObbligoRegistroUnico(Utility.createConfigurazioneCnrComponentSession().
-				getDt01(userContext, new Integer(0), null,"REGISTRO_UNICO_FATPAS", "DATA_INIZIO"));
+				getDt01(userContext, Integer.valueOf(0), null,"REGISTRO_UNICO_FATPAS", "DATA_INIZIO"));
 			compenso.validaTestata();
 		} catch (RemoteException e) {
 			throw handleException(e);
@@ -5109,7 +5109,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 			throw handleException(e);
 		} catch (java.text.ParseException ex) {
 			throw handleException(ex);
-		} catch (javax.ejb.EJBException ex) {
+		} catch (jakarta.ejb.EJBException ex) {
 			throw handleException(ex);
 		}
 
@@ -5127,13 +5127,13 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 						.createEJB(
 								"CNRCONFIG00_EJB_Configurazione_cnrComponentSession",
 								it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class))
-						.getDt01(userContext, new Integer(0), "*", "COSTANTI",
+						.getDt01(userContext, Integer.valueOf(0), "*", "COSTANTI",
 								"LIMITE_CREAZIONE_FATT_PASS_ES_DIF");
 				data_limite_sup = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices
 						.createEJB(
 								"CNRCONFIG00_EJB_Configurazione_cnrComponentSession",
 								it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class))
-						.getDt02(userContext, new Integer(0), "*", "COSTANTI",
+						.getDt02(userContext, Integer.valueOf(0), "*", "COSTANTI",
 								"LIMITE_CREAZIONE_FATT_PASS_ES_DIF");				
 			} catch (RemoteException e) {
 				throw handleException(e);
@@ -5386,7 +5386,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 			throw handleException(e);
 		} catch (java.text.ParseException ex) {
 			throw handleException(ex);
-		} catch (javax.ejb.EJBException ex) {
+		} catch (jakarta.ejb.EJBException ex) {
 			throw handleException(ex);
 		}
 
@@ -5660,7 +5660,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 
 		try {
 			if (compenso.isRiportataInScrivania()) {
-				Integer es_prec = new Integer(
+				Integer es_prec = Integer.valueOf(
 						it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(
 								userContext).intValue() - 1);
 
@@ -6200,45 +6200,45 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 			Configurazione_cnrComponentSession sess = (Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices
 					.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession");
 
-			if (sess.getIm01(userContext, new Integer(0), null,
+			if (sess.getIm01(userContext, Integer.valueOf(0), null,
 					"ADEGUAMENTI_ART35_DL223", "LIMITE1") == null
-					|| sess.getDt01(userContext, new Integer(0), null,
+					|| sess.getDt01(userContext, Integer.valueOf(0), null,
 							"ADEGUAMENTI_ART35_DL223", "LIMITE1") == null
-					|| sess.getDt02(userContext, new Integer(0), null,
+					|| sess.getDt02(userContext, Integer.valueOf(0), null,
 							"ADEGUAMENTI_ART35_DL223", "LIMITE1") == null
-					|| sess.getIm01(userContext, new Integer(0), null,
+					|| sess.getIm01(userContext, Integer.valueOf(0), null,
 							"ADEGUAMENTI_ART35_DL223", "LIMITE2") == null
-					|| sess.getDt01(userContext, new Integer(0), null,
+					|| sess.getDt01(userContext, Integer.valueOf(0), null,
 							"ADEGUAMENTI_ART35_DL223", "LIMITE2") == null
-					|| sess.getDt02(userContext, new Integer(0), null,
+					|| sess.getDt02(userContext, Integer.valueOf(0), null,
 							"ADEGUAMENTI_ART35_DL223", "LIMITE2") == null
-					|| sess.getIm01(userContext, new Integer(0), null,
+					|| sess.getIm01(userContext, Integer.valueOf(0), null,
 							"ADEGUAMENTI_ART35_DL223", "LIMITE3") == null
-					|| sess.getDt01(userContext, new Integer(0), null,
+					|| sess.getDt01(userContext, Integer.valueOf(0), null,
 							"ADEGUAMENTI_ART35_DL223", "LIMITE3") == null
-					|| sess.getDt02(userContext, new Integer(0), null,
+					|| sess.getDt02(userContext, Integer.valueOf(0), null,
 							"ADEGUAMENTI_ART35_DL223", "LIMITE3") == null)
 
 				throw new ApplicationException(
 						"Configurazione CNR: non sono stati impostati i valori per la gestione dell'Art.35 DL n.223/2006");
 
-			importo1 = sess.getIm01(userContext, new Integer(0), null,
+			importo1 = sess.getIm01(userContext, Integer.valueOf(0), null,
 					"ADEGUAMENTI_ART35_DL223", "LIMITE1");
-			data_da1 = sess.getDt01(userContext, new Integer(0), null,
+			data_da1 = sess.getDt01(userContext, Integer.valueOf(0), null,
 					"ADEGUAMENTI_ART35_DL223", "LIMITE1");
-			data_a1 = sess.getDt02(userContext, new Integer(0), null,
+			data_a1 = sess.getDt02(userContext, Integer.valueOf(0), null,
 					"ADEGUAMENTI_ART35_DL223", "LIMITE1");
-			importo2 = sess.getIm01(userContext, new Integer(0), null,
+			importo2 = sess.getIm01(userContext, Integer.valueOf(0), null,
 					"ADEGUAMENTI_ART35_DL223", "LIMITE2");
-			data_da2 = sess.getDt01(userContext, new Integer(0), null,
+			data_da2 = sess.getDt01(userContext, Integer.valueOf(0), null,
 					"ADEGUAMENTI_ART35_DL223", "LIMITE2");
-			data_a2 = sess.getDt02(userContext, new Integer(0), null,
+			data_a2 = sess.getDt02(userContext, Integer.valueOf(0), null,
 					"ADEGUAMENTI_ART35_DL223", "LIMITE2");
-			importo3 = sess.getIm01(userContext, new Integer(0), null,
+			importo3 = sess.getIm01(userContext, Integer.valueOf(0), null,
 					"ADEGUAMENTI_ART35_DL223", "LIMITE3");
-			data_da3 = sess.getDt01(userContext, new Integer(0), null,
+			data_da3 = sess.getDt01(userContext, Integer.valueOf(0), null,
 					"ADEGUAMENTI_ART35_DL223", "LIMITE3");
-			data_a3 = sess.getDt02(userContext, new Integer(0), null,
+			data_a3 = sess.getDt02(userContext, Integer.valueOf(0), null,
 					"ADEGUAMENTI_ART35_DL223", "LIMITE3");
 
 			java.sql.Timestamp data_emis_mand = it.cnr.jada.util.ejb.EJBCommonServices
@@ -6261,7 +6261,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 
 			return false;
 
-		} catch (javax.ejb.EJBException e) {
+		} catch (jakarta.ejb.EJBException e) {
 			throw handleException(compenso, e);
 		} catch (java.rmi.RemoteException e) {
 			throw handleException(compenso, e);
@@ -6351,7 +6351,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 			} else
 				return true;
 
-		} catch (javax.ejb.EJBException e) {
+		} catch (jakarta.ejb.EJBException e) {
 			throw handleException(compenso, e);
 		} catch (java.rmi.RemoteException e) {
 			throw handleException(compenso, e);
@@ -6775,7 +6775,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 									.negate());
 			BigDecimal impConfronto = new BigDecimal(0);
 			if (compenso.isDaMinicarriera()
-					&& compenso.getPg_compenso().compareTo(new Long(0)) == -1)
+					&& compenso.getPg_compenso().compareTo(Long.valueOf(0)) == -1)
 				impConfronto = compenso.getIm_totale_compenso();
 
 			if (differenza.compareTo(impConfronto) == -1)
@@ -6834,7 +6834,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 
 			return utilizzato;
 
-		} catch (javax.ejb.EJBException e) {
+		} catch (jakarta.ejb.EJBException e) {
 			throw handleException(e);
 		} catch (java.rmi.RemoteException e) {
 			throw handleException(e);
@@ -7113,7 +7113,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 			} else
 				return false;
 
-		} catch (javax.ejb.EJBException e) {
+		} catch (jakarta.ejb.EJBException e) {
 			throw handleException(compenso, e);
 		} catch (java.rmi.RemoteException e) {
 			throw handleException(compenso, e);
@@ -7371,7 +7371,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 					.getEsercizio(userContext), null,
 					Configurazione_cnrBulk.PK_FATTURAZIONE_ELETTRONICA, Configurazione_cnrBulk.SK_PASSIVA);
 
-		} catch (javax.ejb.EJBException ex) {
+		} catch (jakarta.ejb.EJBException ex) {
 			throw handleException(ex);
 		} catch (RemoteException ex) {
 			throw handleException(ex);

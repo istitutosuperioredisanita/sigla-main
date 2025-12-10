@@ -50,8 +50,9 @@ import java.rmi.RemoteException;
 import java.text.ParseException;
 import java.util.*;
 
-import javax.servlet.ServletException;
-import javax.servlet.jsp.PageContext;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -109,7 +110,7 @@ public class RicercaIncarichiRichiestaBP extends SelezionatoreListaBP implements
 			size=getIncarichi().size();
 		else
 			size=0;
-		Node n = xmldoc.createTextNode(new Integer(size).toString());
+		Node n = xmldoc.createTextNode(Integer.valueOf(size).toString());
     	e.appendChild(n);
     	return e;	
 	}
@@ -120,7 +121,7 @@ public class RicercaIncarichiRichiestaBP extends SelezionatoreListaBP implements
 			size=this.getIterator().countElements();
 		else
 			size=0;
-		Node n = xmldoc.createTextNode(new Integer(size).toString());
+		Node n = xmldoc.createTextNode(Integer.valueOf(size).toString());
     	e.appendChild(n);
     	return e;	
 	}
@@ -131,7 +132,7 @@ public class RicercaIncarichiRichiestaBP extends SelezionatoreListaBP implements
 			size=this.getCurrentPage()+1;
 		else
 			size=0;
-		Node n = xmldoc.createTextNode(new Integer(size).toString());
+		Node n = xmldoc.createTextNode(Integer.valueOf(size).toString());
     	e.appendChild(n);
     	return e;	
 	}
@@ -881,10 +882,10 @@ public class RicercaIncarichiRichiestaBP extends SelezionatoreListaBP implements
 		}
 		return elementRichiesta;
 	}
-    public void generaXML(PageContext pagecontext) throws IOException, ServletException{
+    public void generaXML(PageContext pagecontext) throws IOException, ServletException {
 		try {
 			if (getNumMax()==null)
-				setNumMax(new Integer(100));
+				setNumMax(Integer.valueOf(100));
 	    	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 	    	DocumentBuilder builder = factory.newDocumentBuilder();
 	    	DOMImplementation impl = builder.getDOMImplementation();
@@ -962,7 +963,7 @@ public class RicercaIncarichiRichiestaBP extends SelezionatoreListaBP implements
 		}
 		if(anno!=null){
 			try{
-				esercizio = new Integer(anno);
+				esercizio = Integer.valueOf(anno);
 			} catch(Exception e) {
 				codiceErrore = Constants.ERRORE_INC_104;
 				return;
@@ -1013,7 +1014,7 @@ public class RicercaIncarichiRichiestaBP extends SelezionatoreListaBP implements
 
 		if(getPage()!=null){
 			try{
-				setCurrentPage(new Integer(getPage())-1);
+				setCurrentPage(Integer.valueOf(getPage())-1);
 			} catch(Exception e) {
 				codiceErrore = Constants.ERRORE_INC_104;
 				return;

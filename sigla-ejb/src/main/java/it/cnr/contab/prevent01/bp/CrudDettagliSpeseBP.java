@@ -26,8 +26,8 @@ package it.cnr.contab.prevent01.bp;
 import java.io.IOException;
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBException;
-import javax.servlet.jsp.JspWriter;
+import jakarta.ejb.EJBException;
+import jakarta.servlet.jsp.JspWriter;
 
 import it.cnr.contab.prevent01.bulk.Pdg_modulo_speseBulk;
 import it.cnr.contab.util.Utility;

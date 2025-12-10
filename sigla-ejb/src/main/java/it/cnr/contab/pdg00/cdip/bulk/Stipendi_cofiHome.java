@@ -79,7 +79,7 @@ public Stipendi_cofiHome(java.sql.Connection conn) {
 				.ifPresent(stipendiCofiBulk -> {
 					try {
 						stipendiCofiBulk.setMese(
-								((Integer)findAndLockMax(oggettobulk, "mese", new Integer(0))).intValue() + 1
+								((Integer)findAndLockMax(oggettobulk, "mese", Integer.valueOf(0))).intValue() + 1
 						);
 						if ( !Optional.ofNullable(stipendiCofiBulk.getProg_flusso()).isPresent()
 						||stipendiCofiBulk.getProg_flusso().compareTo(stipendiCofiBulk.getMese_reale())==0)

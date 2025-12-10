@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Optional;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
@@ -131,7 +131,7 @@ public class WorkpackageHome extends BulkHome implements ConsultazioniRestHome {
 
 				linea_attivita.setCd_linea_attivita(aSuffix+linea_attivita.getCd_linea_attivita().substring(1,linea_attivita.getCd_linea_attivita().length()));
 			}
-		} catch(javax.ejb.EJBException e) {
+		} catch(jakarta.ejb.EJBException e) {
 			throw new it.cnr.jada.comp.ComponentException(e);
 		} catch(java.rmi.RemoteException e) {
 			throw new it.cnr.jada.comp.ComponentException(e);

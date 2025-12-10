@@ -17,30 +17,45 @@
 
 package it.cnr.contab.web.rest.local.util;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
+import jakarta.ejb.Local;
 
-import javax.ejb.Local;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
 import java.net.URI;
-import java.util.Map;
 
 @Local
 @Path("/help")
 @Produces(MediaType.MEDIA_TYPE_WILDCARD)
-@Api("Help")
+@Tag(name = "Help")
 public interface HelpLocal {
 
     @GET
-    @ApiOperation(value = "Restituisce la URL dell'Help associata al BusinessProcess o alla pagina",
-            notes = "Nel caso che non sia definita resitituisce la pagina iniziale",
-            response = URI.class
+    @Operation(summary = "Restituisce la URL dell'Help associata al BusinessProcess o alla pagina",
+            description = "Nel caso che non sia definita resitituisce la pagina iniziale",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = URI.class)
+                            )
+                    )
+            }
     )
-    Response get(@Context HttpServletRequest request, @QueryParam("jspName") String jspName, @QueryParam("bpName") String bpName) throws Exception;
+    Response get(@Context HttpServletRequest request,
+                 @QueryParam("jspName") String jspName,
+                 @QueryParam("bpName") String bpName) throws Exception;
 
 }

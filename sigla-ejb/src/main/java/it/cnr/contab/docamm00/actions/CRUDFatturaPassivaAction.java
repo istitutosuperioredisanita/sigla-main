@@ -80,7 +80,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.util.Pair;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -446,7 +446,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
      * Al business process viene anche chiesto l'elenco delle colonne da
      * visualizzare.
      */
-    protected Forward basicDoCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, javax.ejb.RemoveException {
+    protected Forward basicDoCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, jakarta.ejb.RemoveException {
         try {
             fillModel(context);
             CRUDBP bp = getBusinessProcess(context);
@@ -659,7 +659,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
             int annoSolare = fp.getDateCalendar(date).get(java.util.Calendar.YEAR);
             if (annoSolare != esercizioScrivania.intValue())
                 throw new it.cnr.jada.comp.ApplicationException("Non è possibile inserire note di debito in esercizi non corrispondenti all'anno solare!");
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             return handleException(context, e);
         }
 
@@ -1234,7 +1234,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
         if (fattura_passiva.getDt_fattura_fornitore() != null) {
             java.util.GregorianCalendar gc = (java.util.GregorianCalendar) java.util.GregorianCalendar.getInstance();
             gc.setTime(new java.util.Date(fattura_passiva.getDt_fattura_fornitore().getTime()));
-            Integer year = new Integer(gc.get(java.util.GregorianCalendar.YEAR));
+            Integer year = Integer.valueOf(gc.get(java.util.GregorianCalendar.YEAR));
             fattura_passiva.setEsercizio_fattura_fornitore(year);
         } else
             fattura_passiva.setEsercizio_fattura_fornitore(null);
@@ -2333,7 +2333,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
      * Al business process viene anche chiesto l'elenco delle colonne da
      * visualizzare.
      */
-    public Forward doCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, javax.ejb.RemoveException {
+    public Forward doCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, jakarta.ejb.RemoveException {
 
         CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) context.getBusinessProcess();
         if (bp instanceof IDocumentoAmministrativoSpesaBP && ((IDocumentoAmministrativoSpesaBP) bp).isSpesaBP())
@@ -3023,7 +3023,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                 java.util.GregorianCalendar tsOdiernoGregorian = new GregorianCalendar();
                 tsOdiernoGregorian.setTime(new Date(competenzaA.getTime()));
 
-                Integer esercizioCompetenzaA = new Integer(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
+                Integer esercizioCompetenzaA = Integer.valueOf(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
                 String cds = fattura.getCd_cds();
 
                 if (competenzaA != null && competenzaDa != null)
@@ -3080,7 +3080,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                 java.util.GregorianCalendar tsOdiernoGregorian = new GregorianCalendar();
                 tsOdiernoGregorian.setTime(new Date(competenzaDa.getTime()));
 
-                Integer esercizioCompetenzaDa = new Integer(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
+                Integer esercizioCompetenzaDa = Integer.valueOf(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
                 String cds = fattura.getCd_cds();
 
                 if (competenzaA != null && competenzaDa != null)
@@ -5990,10 +5990,10 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                                 java.sql.Timestamp ts = it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp();
                                 rigaPerNotaCredito.setDt_da_competenza_coge((fatturaPassiva.getDt_da_competenza_coge() == null) ? ts : fatturaPassiva.getDt_da_competenza_coge());
                                 rigaPerNotaCredito.setDt_a_competenza_coge((fatturaPassiva.getDt_a_competenza_coge() == null) ? ts : fatturaPassiva.getDt_a_competenza_coge());
-                            } catch (javax.ejb.EJBException e) {
+                            } catch (jakarta.ejb.EJBException e) {
                                 throw new it.cnr.jada.DetailedRuntimeException(e);
                             }
-                            rigaPerNotaCredito.setProgressivo_riga(new Long(listaRigheFattura.size() + 1));
+                            rigaPerNotaCredito.setProgressivo_riga(Long.valueOf(listaRigheFattura.size() + 1));
                         }
                         rigaPerNotaCredito.setBene_servizio(fatturaOrdineBulk.getOrdineAcqConsegna().getOrdineAcqRiga().getBeneServizio());
                         rigaPerNotaCredito.setVoce_iva(getVoceIvaOrdini(fatturaOrdineBulk));

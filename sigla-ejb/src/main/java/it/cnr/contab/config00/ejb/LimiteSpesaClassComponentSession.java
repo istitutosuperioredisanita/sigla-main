@@ -20,7 +20,7 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface LimiteSpesaClassComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

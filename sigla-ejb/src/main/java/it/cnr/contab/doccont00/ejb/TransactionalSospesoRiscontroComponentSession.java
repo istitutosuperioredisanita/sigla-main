@@ -23,7 +23,7 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.rmi.RemoteException;
 
 public class TransactionalSospesoRiscontroComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements SospesoRiscontroComponentSession {
@@ -324,7 +324,7 @@ public it.cnr.jada.util.RemoteIterator cercaSospesiPerStato(it.cnr.jada.UserCont
 		}
 	}
 }
- 	public Integer caricamentoRigaGiornaleCassa(it.cnr.jada.UserContext param0, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws RemoteException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException,it.cnr.jada.comp.ComponentException {
+ 	public Integer caricamentoRigaGiornaleCassa(it.cnr.jada.UserContext param0, boolean tesoreriaUnica, EnteBulk cdsEnte, MovimentoContoEvidenzaBulk riga) throws RemoteException, jakarta.ejb.EJBException, it.cnr.jada.persistency.PersistencyException,it.cnr.jada.comp.ComponentException {
 		try {
 			return (Integer) invoke("caricamentoRigaGiornaleCassa",new Object[] {
 					param0,

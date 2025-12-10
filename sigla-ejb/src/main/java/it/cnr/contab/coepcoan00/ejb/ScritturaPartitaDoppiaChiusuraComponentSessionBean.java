@@ -23,24 +23,22 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 import java.util.List;
 
 @Stateless(name = "CNRCOEPCOAN00_EJB_ScritturaPartitaDoppiaChiusuraComponentSession")
 public class ScritturaPartitaDoppiaChiusuraComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements ScritturaPartitaDoppiaChiusuraComponentSession {
 	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(ScritturaPartitaDoppiaChiusuraComponentSessionBean.class);
 
-    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-        return new ScritturaPartitaDoppiaChiusuraComponentSessionBean();
-    }
+    
 
     @PostConstruct
     public void ejbCreate() {
         componentObj = new ScritturaPartitaDoppiaChiusuraComponent();
     }
 
-	public void makeScrittureChiusura(UserContext param0, Integer esercizio, boolean isAnnullamento, boolean isDefinitiva) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void makeScrittureChiusura(UserContext param0, Integer esercizio, boolean isAnnullamento, boolean isDefinitiva) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			((ScritturaPartitaDoppiaChiusuraComponent) componentObj).makeScrittureChiusura(param0, esercizio, isAnnullamento, isDefinitiva);

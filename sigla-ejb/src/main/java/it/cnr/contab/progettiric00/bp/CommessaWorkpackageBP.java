@@ -57,7 +57,7 @@ public CommessaWorkpackageBP( String function ) throws BusinessProcessException 
 	super( function );
 	initWPTable();
 }
-public static ProgettoRicercaPadreComponentSession getProgettoRicercaPadreComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+public static ProgettoRicercaPadreComponentSession getProgettoRicercaPadreComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 	return (ProgettoRicercaPadreComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPROGETTIRIC00_EJB_ProgettoRicercaPadreComponentSession",ProgettoRicercaPadreComponentSession.class);
 }	
 private void aggiornaGECO(UserContext userContext) {

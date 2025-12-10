@@ -48,7 +48,7 @@ public class ConsFileCassiereBP extends ConsultazioniBP {
 
     private String pathConsultazione;
 
-    public ConsFileCassiereComponentSession createFileCassiereComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+    public ConsFileCassiereComponentSession createFileCassiereComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
         return (ConsFileCassiereComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_ConsFileCassiereComponentSession", ConsFileCassiereComponentSession.class);
     }
 

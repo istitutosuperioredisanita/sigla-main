@@ -17,74 +17,91 @@
 
 package it.cnr.contab.web.rest.local.util;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
-import it.cnr.contab.client.docamm.FatturaAttiva;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import it.cnr.contab.web.rest.config.AccessoAllowed;
 import it.cnr.contab.util.enumeration.AccessoEnum;
 import it.cnr.contab.web.rest.config.SIGLASecurityContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
-import javax.ejb.Local;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ejb.Local;
 import java.util.List;
 
 @Local
 @Path("/fatture-attive")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api("Fatturazione Attiva Elettronica")
+@Tag(name = "Fatturazione Attiva Elettronica")
 public interface PECFattureAttiveLocal {
 
     @GET
     @Path("/reinvia-pec")
     @AccessoAllowed(value= AccessoEnum.XXXHTTPSESSIONXXXXXX)
-    @ApiOperation(value = "Reinvia tramite PEC l'xml della fattura attiva a SDI",
-            notes = "Accesso consentito solo alle utenze abilitate con accesso XXXHTTPSESSIONXXXXXX",
-            response = Void.class,
-            authorizations = {
-                    @Authorization(value = "BASIC")
+    @Operation(summary = "Reinvia tramite PEC l'xml della fattura attiva a SDI",
+            description = "Accesso consentito solo alle utenze abilitate con accesso XXXHTTPSESSIONXXXXXX",
+            security = {
+                    @SecurityRequirement(name = "BASIC")
             }
     )
-    Response reinviaPEC(@Context HttpServletRequest request, @QueryParam("esercizio") Integer esercizio, @QueryParam("pgFatturaAttiva") Long pgFatturaAttiva) throws Exception;
+    Response reinviaPEC(@Context HttpServletRequest request,
+                        @QueryParam("esercizio") Integer esercizio,
+                        @QueryParam("pgFatturaAttiva") Long pgFatturaAttiva) throws Exception;
 
     @GET
     @Path("/aggiorna-nome-file")
     @AccessoAllowed(value= AccessoEnum.XXXHTTPSESSIONXXXXXX)
-    @ApiOperation(value = "Aggiorna il nome del file su tutte le fatture attive con stato INV",
-            notes = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV",
-            response = Void.class,
-            authorizations = {
-                    @Authorization(value = "BASIC")
+    @Operation(summary = "Aggiorna il nome del file su tutte le fatture attive con stato INV",
+            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV",
+            security = {
+                    @SecurityRequirement(name = "BASIC")
             }
+
     )
     Response aggiornaNomeFile(@Context HttpServletRequest request) throws Exception;
 
     @GET
     @Path("/aggiorna-metadati")
     @AccessoAllowed(value= AccessoEnum.XXXHTTPSESSIONXXXXXX)
-    @ApiOperation(value = "Aggiorna i metadati della fattura attiva sul documentale",
-            notes = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV",
-            response = Void.class,
-            authorizations = {
-                    @Authorization(value = "BASIC")
+    @Operation(summary = "Aggiorna i metadati della fattura attiva sul documentale",
+            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV",
+            security = {
+                    @SecurityRequirement(name = "BASIC")
             }
     )
-    Response aggiornaMetadati(@Context HttpServletRequest request, @QueryParam("esercizio") Integer esercizio, @QueryParam("cdCds") String cdCds, @QueryParam("pgFatturaAttiva") Long pgFatturaAttiva) throws Exception;
+    Response aggiornaMetadati(@Context HttpServletRequest request,
+                              @QueryParam("esercizio") Integer esercizio,
+                              @QueryParam("cdCds") String cdCds,
+                              @QueryParam("pgFatturaAttiva") Long pgFatturaAttiva) throws Exception;
 
     @GET
     @Path("/reinvia-notifica-ko")
     @AccessoAllowed(value= AccessoEnum.XXXHTTPSESSIONXXXXXX)
-    @ApiOperation(value = "Reinvia la notifica di esito negativo a tutte le utenza configurate a ricevere la notifica e all'utenza che ha creato la fattura",
-            notes = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV",
-            response = List.class,
-            authorizations = {
-                    @Authorization(value = "BASIC")
+    @Operation(summary = "Reinvia la notifica di esito negativo a tutte le utenza configurate a ricevere la notifica e all'utenza che ha creato la fattura",
+            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV",
+            security = {
+                    @SecurityRequirement(name = "BASIC")
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = List.class)
+                            )
+                    )
             }
     )
-    Response reinviaNotifica(@Context HttpServletRequest request, @QueryParam("esercizio") Integer esercizio, @QueryParam("cdCds") String cdCds, @QueryParam("cdUnitaOrganizzativa")String cdUnitaOrganizzativa, @QueryParam("pgFatturaAttiva") Long pgFatturaAttiva) throws Exception;
+    Response reinviaNotifica(@Context HttpServletRequest request,
+                             @QueryParam("esercizio") Integer esercizio,
+                             @QueryParam("cdCds") String cdCds,
+                             @QueryParam("cdUnitaOrganizzativa")String cdUnitaOrganizzativa,
+                             @QueryParam("pgFatturaAttiva") Long pgFatturaAttiva) throws Exception;
 }

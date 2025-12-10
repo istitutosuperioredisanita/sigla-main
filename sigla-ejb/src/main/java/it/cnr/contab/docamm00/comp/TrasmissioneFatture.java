@@ -23,25 +23,24 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.List;
 
-import javax.activation.DataHandler;
-import javax.ejb.Stateless;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
+import jakarta.activation.DataHandler;
+import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPConstants;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPFault;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.ws.soap.SOAPFaultException;
 
 import it.cnr.contab.docamm00.docs.bulk.VDocammElettroniciAttiviBulk;
+import jakarta.ejb.Stateless;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -577,8 +576,7 @@ public class TrasmissioneFatture implements it.cnr.contab.docamm00.ejb.Trasmissi
     }
 
     private UserContext createUserContext() {
-        UserContext userContext = new WSUserContext("SDI", null, new Integer(java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)), null, null, null);
-        return userContext;
+        return new WSUserContext("SDI", null, java.util.Calendar.getInstance().get(java.util.Calendar.YEAR), null, null, null);
     }
 
     private JAXBElement<?> getJAXBElement(DataHandler data) throws ComponentException {

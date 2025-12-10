@@ -40,8 +40,8 @@ public class Pdg_variazione_archivioHome extends BulkHome {
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,OggettoBulk pdg_archive) throws PersistencyException {
 		try {
 			((Pdg_variazione_archivioBulk)pdg_archive).setProgressivo_riga(
-				new Long(
-					((Long)findAndLockMax( pdg_archive, "progressivo_riga", new Long(0) )).longValue()+1
+				Long.valueOf(
+					((Long)findAndLockMax( pdg_archive, "progressivo_riga", Long.valueOf(0) )).longValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

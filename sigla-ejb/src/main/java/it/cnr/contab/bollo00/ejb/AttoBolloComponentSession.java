@@ -17,7 +17,7 @@
 
 package it.cnr.contab.bollo00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 /**
  * Remote interface for Enterprise Bean: CNRBOLLO00_EJB_AttoBolloComponentSession

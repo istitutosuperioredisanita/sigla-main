@@ -31,8 +31,8 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.RemoteIterator;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -44,9 +44,7 @@ public class MovimentiMagComponentSessionBean extends it.cnr.jada.ejb.CRUDCompon
 	public void ejbCreate() {
 	componentObj = new MovimentiMagComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new MovimentiMagComponentSessionBean();
-}
+
 public MovimentiMagBulk caricoDaOrdine(UserContext userContext, OrdineAcqConsegnaBulk consegna, EvasioneOrdineRigaBulk evasioneOrdineRiga) 
 		throws ComponentException, PersistencyException, RemoteException, ApplicationException{
 	pre_component_invocation(userContext,componentObj);
@@ -183,7 +181,7 @@ public AbilitazioneMagazzinoBulk initializeAbilitazioneMovimentiMagazzino(UserCo
 	}
 }
 
-public RemoteIterator preparaQueryBolleScaricoDaVisualizzare(UserContext userContext, List<BollaScaricoMagBulk> bolle)throws ComponentException,javax.ejb.EJBException {
+public RemoteIterator preparaQueryBolleScaricoDaVisualizzare(UserContext userContext, List<BollaScaricoMagBulk> bolle)throws ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(userContext,componentObj);
 	try {
 		RemoteIterator result = ((MovimentiMagComponent)componentObj).preparaQueryBolleScaricoDaVisualizzare(userContext, bolle);
@@ -201,7 +199,7 @@ public RemoteIterator preparaQueryBolleScaricoDaVisualizzare(UserContext userCon
 		throw uncaughtError(userContext,componentObj,e);
 	}
 }
-public RemoteIterator ricercaMovimenti(UserContext userContext, ParametriSelezioneMovimentiBulk parametri) throws ComponentException,javax.ejb.EJBException {
+public RemoteIterator ricercaMovimenti(UserContext userContext, ParametriSelezioneMovimentiBulk parametri) throws ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(userContext,componentObj);
 	try {
 		RemoteIterator result = ((MovimentiMagComponent)componentObj).ricercaMovimenti(userContext, parametri);
@@ -278,9 +276,8 @@ public void annullaMovimento(UserContext userContext, MovimentiMagBulk movimenti
 		}
 
 	}
-
     @Override
-	public MovimentiMagBulk creaMovimentoRettificaValoreOrdine(UserContext userContext, FatturaOrdineBulk fatturaOrdineBulk) throws ComponentException,javax.ejb.EJBException {
+	public MovimentiMagBulk creaMovimentoRettificaValoreOrdine(UserContext userContext, FatturaOrdineBulk fatturaOrdineBulk) throws ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(userContext,componentObj);
 		try {
 			MovimentiMagBulk result = ((MovimentiMagComponent)componentObj).creaMovimentoRettificaValoreOrdine(userContext, fatturaOrdineBulk);
@@ -300,7 +297,7 @@ public void annullaMovimento(UserContext userContext, MovimentiMagBulk movimenti
 	}
 
     @Override
-    public MovimentiMagBulk creaMovimentoRettificaValoreOrdine(UserContext userContext, OrdineAcqConsegnaBulk ordineAcqConsegnaBulk, ImportoOrdine importoCns, ImportoOrdine importoRet) throws ComponentException,javax.ejb.EJBException {
+    public MovimentiMagBulk creaMovimentoRettificaValoreOrdine(UserContext userContext, OrdineAcqConsegnaBulk ordineAcqConsegnaBulk, ImportoOrdine importoCns, ImportoOrdine importoRet) throws ComponentException,jakarta.ejb.EJBException {
         pre_component_invocation(userContext,componentObj);
         try {
             MovimentiMagBulk result = ((MovimentiMagComponent)componentObj).creaMovimentoRettificaValoreOrdine(userContext, ordineAcqConsegnaBulk, importoCns, importoRet);

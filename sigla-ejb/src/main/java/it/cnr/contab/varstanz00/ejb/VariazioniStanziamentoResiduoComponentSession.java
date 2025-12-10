@@ -22,7 +22,7 @@ import it.cnr.contab.varstanz00.bulk.Var_stanz_res_rigaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 /**
  * Remote interface for Enterprise Bean: CNRVARSTANZ00_EJB_VariazioniStanziamentoResiduoComponentSession

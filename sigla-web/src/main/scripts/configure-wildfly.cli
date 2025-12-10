@@ -1,0 +1,216 @@
+# Script CLI per configurare WildFly Bootable JAR
+# Sostituisce project-stages.yml
+
+# ============================================================================
+# DRIVER JDBC
+# ============================================================================
+
+# Driver Oracle
+/subsystem=datasources/jdbc-driver=oracle:add( \
+    driver-name=oracle, \
+    driver-module-name=com.oracle.jdbc, \
+    driver-class-name=oracle.jdbc.OracleDriver \
+)
+
+# Driver PostgreSQL
+/subsystem=datasources/jdbc-driver=postgresql:add( \
+    driver-name=postgresql, \
+    driver-module-name=org.postgresql, \
+    driver-class-name=org.postgresql.Driver \
+)
+
+# Driver H2 (già presente di default, ma lo definiamo esplicitamente)
+/subsystem=datasources/jdbc-driver=h2:add( \
+    driver-name=h2, \
+    driver-module-name=com.h2database.h2, \
+    driver-class-name=org.h2.Driver \
+)
+
+# ============================================================================
+# DATASOURCE oracle/postgresql/h2
+# ============================================================================
+
+/subsystem=datasources/data-source=SIGLA:add( \
+    jndi-name=java:/jdbc/CIR, \
+    driver-name=${sigla.db.driver:oracle}, \
+    connection-url=${sigla.db.url:jdbc:oracle:thin:@dbtest.cedrc.cnr.it:1521:SIGLAF}, \
+    user-name=${sigla.db.user:PCIR009}, \
+    password=${sigla.db.password:dbform}, \
+    min-pool-size=${sigla.db.min-pool-size:10}, \
+    max-pool-size=${sigla.db.max-pool-size:250}, \
+    idle-timeout-minutes=${sigla.db.idle-timeout-minutes:1}, \
+    query-timeout=${sigla.db.query-timeout:600}, \
+    use-java-context=true, \
+    enabled=true \
+)
+# ============================================================================
+# Verifica DataSource
+# ============================================================================
+echo "Verifica DataSource configurato..."
+
+/subsystem=datasources/data-source=SIGLA:test-connection-in-pool
+
+echo "=== Configurazione Elytron per SIGLA ==="
+# 1. CREAZIONE CUSTOM REALM
+echo "Creazione Custom Realm..."
+/subsystem=elytron/custom-realm=sigla-combined-realm:add( \
+    class-name=it.cnr.contab.security.auth.CombinedSecurityRealm, \
+    module=it.cnr.contab.security, \
+    configuration={ \
+        ldap.url=${sigla.ldap.url:ldap://localhost:389}, \
+        ldap.bindDN=${sigla.ldap.binddn:cn=mastercnrapp1,ou=account,o=cnr,c=it}, \
+        ldap.bindCredential=${sigla.ldap.credentials:changeit!}, \
+        ldap.baseCtxDN=${sigla.ldap.basectx:o=cnr,c=it}, \
+        ldap.baseFilter="uid={0}", \
+        ldap.rolesCtxDN=${sigla.ldap.rolectx:ou=groups,o=cnr,c=it}, \
+        ldap.roleFilter="member={1}", \
+        ldap.roleAttributeID="cn", \
+        ldap.defaultRole="default-roles-cnr", \
+        ldap.userAttributes="mail;cnrnome;cnrcognome;codicefiscale;emailcertificatoperpuk", \
+        db.dsJndiName="java:/jdbc/CIR", \
+        db.principalsQuery="SELECT PASSWORD FROM UTENTE WHERE UPPER(cd_utente)=UPPER(?) AND FL_AUTENTICAZIONE_LDAP='N'", \
+        db.rolesQuery="SELECT DISTINCT CD_RUOLO, 'Roles' FROM UTENTE_UNITA_RUOLO WHERE UPPER(cd_utente)=UPPER(?)", \
+        db.ignorePasswordCase="true" \
+    } \
+)
+
+# 2. CREAZIONE ROLE DECODER
+echo "Creazione Role Decoder..."
+/subsystem=elytron/simple-role-decoder=from-roles-attribute:add(attribute=Roles)
+
+# 3. CREAZIONE SECURITY DOMAIN
+echo "Creazione Security Domain..."
+/subsystem=elytron/security-domain=sigla-auth:add( \
+    realms=[{realm=sigla-combined-realm, role-decoder=from-roles-attribute}], \
+    default-realm=sigla-combined-realm, \
+    permission-mapper=default-permission-mapper \
+)
+
+# 4. CONFIGURAZIONE SECURITY EVENT LISTENER
+echo "Configurazione Security Event Listener..."
+/subsystem=elytron/security-domain=sigla-auth:write-attribute( \
+    name=security-event-listener, \
+    value=local-audit \
+)
+
+# 5. CREAZIONE HTTP AUTHENTICATION FACTORY (per Web)
+echo "Creazione HTTP Authentication Factory..."
+/subsystem=elytron/http-authentication-factory=sigla-http-auth:add( \
+    security-domain=sigla-auth, \
+    http-server-mechanism-factory=global, \
+    mechanism-configurations=[ \
+        {mechanism-name=BASIC, \
+         mechanism-realm-configurations=[{realm-name="SIGLA Application"}]}, \
+        {mechanism-name=FORM} \
+    ] \
+)
+
+# 7. CONFIGURAZIONE APPLICATION SECURITY DOMAIN IN UNDERTOW (Web)
+echo "Configurazione Undertow Application Security Domain..."
+/subsystem=undertow/application-security-domain=sigla-auth:add( \
+    http-authentication-factory=sigla-http-auth \
+)
+
+# 9. CONFIGURAZIONE CRUCIALE PER request.login()
+echo "Abilitazione override-deployment-config per request.login()..."
+/subsystem=undertow/application-security-domain=sigla-auth:write-attribute( \
+    name=override-deployment-config, \
+    value=true \
+)
+
+# 10. DISABILITAZIONE JACC
+echo "Configurazione JACC..."
+/subsystem=undertow/application-security-domain=sigla-auth:write-attribute( \
+    name=enable-jacc, \
+    value=false \
+)
+
+# 11. DISABILITAZIONE JASPI
+echo "Configurazione JASPI..."
+/subsystem=undertow/application-security-domain=sigla-auth:write-attribute( \
+    name=integrated-jaspi, \
+    value=false \
+)
+# ==========================================================
+# 5. MAPPATURA EJB3 LEGACY A ELYTRON
+#    Crea un security-domain EJB3 legacy che punta a un domain Elytron.
+# ==========================================================
+/subsystem=ejb3/application-security-domain=sigla-auth:add(security-domain=sigla-auth)
+
+# 13. CONFIGURAZIONE LOGGING PER DEBUG (opzionale - commentare in produzione)
+echo "Configurazione logging per debug..."
+/subsystem=logging/logger=org.wildfly.security:add(level=DEBUG)
+/subsystem=logging/logger=org.jboss.security:add(level=DEBUG)
+/subsystem=logging/logger=it.cnr.contab.security:add(level=DEBUG)
+
+# Configurazione Transaction Timeout
+/subsystem=transactions:write-attribute(name=default-timeout, value=3600)
+
+# Configurazione Mail Session
+/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=sigla-smtp:add(host=${sigla.mail.smtp_host:smtp.amministrazione.cnr.it}, port=${sigla.mail.port:25})
+
+/subsystem=mail/mail-session=SIGLA:add(jndi-name=java:jboss/mail/sigla, \
+    from=${sigla.mail.from:sigla@cnr.it})
+
+/subsystem=mail/mail-session=SIGLA/server=smtp:add(outbound-socket-binding-ref=sigla-smtp)
+
+# Configurazione PEC Mail (opzionale)
+/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=sigla-pec-smtp:add(host=${sigla.pec.smtp_host:smtps.pec.aruba.it}, port=${sigla.pec.port:465})
+
+/subsystem=mail/mail-session=PEC:add(jndi-name=java:jboss/mail/PecMailSession, \
+    from=${sigla.pec.from:sisca@pec.cnr.it})
+
+/subsystem=mail/mail-session=PEC/server=smtp:add(outbound-socket-binding-ref=sigla-pec-smtp, \
+    ssl=true, \
+    username=${sigla.pec.username:sisca@pec.cnr.it}, \
+    password=${sigla.pec.password:***})
+
+
+# Configurazione Management
+/core-service=management/management-interface=http-interface:write-attribute(name=console-enabled, value=true)
+
+# 1. Crea il cache container 'server' (come richiesto dal lookup JNDI)
+/subsystem=infinispan/cache-container=server:add(marshaller=PROTOSTREAM, statistics-enabled=true)
+
+# 2. Crea una cache default
+/subsystem=infinispan/cache-container=server/local-cache=default:add(statistics-enabled=true)
+
+# 3. Imposta come default
+/subsystem=infinispan/cache-container=server:write-attribute(name=default-cache, value=default)
+
+# 4. Opzionale: Aggiungi altre cache se necessario
+/subsystem=infinispan/cache-container=server/local-cache=accessi:add(statistics-enabled=true)
+/subsystem=infinispan/cache-container=server/local-cache=accessi/component=transaction:add(mode=BATCH)
+/subsystem=infinispan/cache-container=server/local-cache=accessi/component=locking:add(isolation=REPEATABLE_READ)
+/subsystem=infinispan/cache-container=server/local-cache=accessi/component=expiration:add(max-idle=300000)
+
+/subsystem=infinispan/cache-container=server/local-cache=tree:add(statistics-enabled=true)
+/subsystem=infinispan/cache-container=server/local-cache=tree/component=transaction:add(mode=BATCH)
+/subsystem=infinispan/cache-container=server/local-cache=tree/component=locking:add(isolation=REPEATABLE_READ)
+/subsystem=infinispan/cache-container=server/local-cache=tree/component=expiration:add(max-idle=300000)
+
+
+# DISABILITA authorization solo dove c'è
+if (outcome == success) of /subsystem=infinispan/cache-container=ejb/authorization=authorization:read-resource()
+    /subsystem=infinispan/cache-container=ejb/authorization=authorization:remove()
+end-if
+if (outcome == success) of /subsystem=infinispan/cache-container=web/authorization=authorization:read-resource()
+    /subsystem=infinispan/cache-container=web/authorization=authorization:remove()
+end-if
+if (outcome == success) of /subsystem=infinispan/cache-container=hibernate/authorization=authorization:read-resource()
+    /subsystem=infinispan/cache-container=hibernate/authorization=authorization:remove()
+end-if
+if (outcome == success) of /subsystem=infinispan/cache-container=server/authorization=authorization:read-resource()
+    /subsystem=infinispan/cache-container=server/authorization=authorization:remove()
+end-if
+if (outcome == success) of /subsystem=infinispan/cache-container=management/authorization=authorization:read-resource()
+    /subsystem=infinispan/cache-container=management/authorization=authorization:remove()
+end-if
+
+# Configurazione Keycloak (se necessario)
+# /subsystem=keycloak/secure-deployment=sigla.war:add(realm=cnr, \
+#     auth-server-url=${sigla.oidc.url:http://localhost:8110/auth}, \
+#     resource=sigla, \
+#     ssl-required=NONE, \
+#     public-client=false, \
+#     enable-basic-auth=true)

@@ -17,7 +17,7 @@
 
 package it.cnr.contab.config00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface Classificazione_vociComponentSession extends it.cnr.jada.ejb.CRUDComponentSession 

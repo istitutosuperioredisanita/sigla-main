@@ -6,7 +6,7 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface CambiaVocePGiroComponentSession extends CRUDComponentSession {

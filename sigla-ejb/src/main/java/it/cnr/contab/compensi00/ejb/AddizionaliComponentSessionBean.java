@@ -18,9 +18,9 @@
 package it.cnr.contab.compensi00.ejb;
 import java.rmi.RemoteException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.compensi00.comp.AddizionaliComponent;
 import it.cnr.contab.compensi00.tabrif.bulk.AddizionaliBulk;
@@ -32,13 +32,10 @@ public class AddizionaliComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 		componentObj = new it.cnr.contab.compensi00.comp.AddizionaliComponent();
 	}
 	@Remove
-	public void ejbRemove() throws javax.ejb.EJBException {
+	public void ejbRemove() throws jakarta.ejb.EJBException {
 		componentObj.release();
 	}
 
-	public static CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new AddizionaliComponentSessionBean();
-	}
 	public AddizionaliBulk verifica_aggiornamento(it.cnr.jada.UserContext param0,AddizionaliBulk param1) throws it.cnr.jada.comp.ComponentException, RemoteException {
 		pre_component_invocation(param0,componentObj);
 		try {

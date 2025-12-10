@@ -114,8 +114,7 @@ public class EsercizioHome extends BulkHome {
      * precedente.
      */
     public EsercizioBulk findEsercizioPrecedente(EsercizioBulk esercizioCorrente) throws IntrospectionException, PersistencyException {
-        return (EsercizioBulk) findByPrimaryKey(new EsercizioBulk(esercizioCorrente.getCd_cds(), esercizioCorrente.getEsercizio() - 1));
-
+        return (EsercizioBulk) findByPrimaryKey(new EsercizioBulk(esercizioCorrente.getCd_cds(), Integer.valueOf(esercizioCorrente.getEsercizio().intValue() - 1)));
     }
 
     /**
@@ -127,7 +126,7 @@ public class EsercizioHome extends BulkHome {
      * successivo.
      */
     public EsercizioBulk findEsercizioSuccessivo(EsercizioBulk esercizioCorrente) throws IntrospectionException, PersistencyException {
-        return (EsercizioBulk) findByPrimaryKey(new EsercizioBulk(esercizioCorrente.getCd_cds(), esercizioCorrente.getEsercizio() + 1));
+        return (EsercizioBulk) findByPrimaryKey(new EsercizioBulk(esercizioCorrente.getCd_cds(), Integer.valueOf(esercizioCorrente.getEsercizio().intValue() + 1)));
 
     }
 
@@ -141,7 +140,7 @@ public class EsercizioHome extends BulkHome {
      */
     public List findEserciziSuccessivi(EsercizioBulk esercizioCorrente) throws IntrospectionException, PersistencyException {
         SQLBuilder sql = createSQLBuilder();
-        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.GREATER, esercizioCorrente.getEsercizio());
+        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.GREATER, Integer.valueOf(esercizioCorrente.getEsercizio()));
         sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, esercizioCorrente.getCd_cds());
         sql.addClause(FindClause.AND, "st_apertura_chiusura", SQLBuilder.EQUALS, EsercizioBulk.STATO_APERTO);
         return fetchAll(sql);
@@ -271,7 +270,7 @@ public class EsercizioHome extends BulkHome {
      */
     public boolean verificaEsercizi2AnniPrecedenti(EsercizioBulk esercizioCorrente) throws IntrospectionException, PersistencyException {
         SQLBuilder sql = createSQLBuilder();
-        sql.addClause("AND", "esercizio", sql.EQUALS, new Integer(esercizioCorrente.getEsercizio().intValue() - 2));
+        sql.addClause("AND", "esercizio", sql.EQUALS, Integer.valueOf(esercizioCorrente.getEsercizio().intValue() - 2));
         sql.addClause("AND", "st_apertura_chiusura", sql.NOT_EQUALS, EsercizioBulk.STATO_CHIUSO_DEF);
         try {
             int result = sql.executeCountQuery(getConnection());

@@ -54,19 +54,18 @@ import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -84,22 +83,14 @@ public class ToDoResource implements ToDoLocal {
     @Context
     SecurityContext securityContext;
 
-    @EJB
-    PdGVariazioniComponentSession pdGVariazioniComponentSession;
-    @EJB
-    GestioneLoginComponentSession gestioneLoginComponentSession;
-    @EJB
-    FatturaElettronicaPassivaComponentSession fatturaElettronicaPassivaComponentSession;
-    @EJB
-    CRUDComponentSession crudComponentSession;
-    @EJB
-    UtenteComponentSession utenteComponentSession;
-    @EJB
-    MissioneComponentSession missioneComponentSession;
-    @EJB
-    Configurazione_cnrComponentSession configurazione_cnrComponentSession;
-    @EJB
-    OrdineAcqComponentSession ordineAcqComponentSession;
+    @EJB PdGVariazioniComponentSession pdGVariazioniComponentSession;
+    @EJB GestioneLoginComponentSession gestioneLoginComponentSession;
+    @EJB FatturaElettronicaPassivaComponentSession fatturaElettronicaPassivaComponentSession;
+    @EJB CRUDComponentSession crudComponentSession;
+    @EJB UtenteComponentSession utenteComponentSession;
+    @EJB MissioneComponentSession missioneComponentSession;
+    @EJB Configurazione_cnrComponentSession configurazione_cnrComponentSession;
+    @EJB OrdineAcqComponentSession ordineAcqComponentSession;
 
     public Response all(@Context HttpServletRequest request) {
         return Response.ok(

@@ -19,8 +19,8 @@ package it.cnr.contab.bollo00.ejb;
 
 import java.sql.Timestamp;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.bollo00.comp.TipoAttoBolloComponent;
 import it.cnr.contab.bollo00.tabrif.bulk.Tipo_atto_bolloBulk;
@@ -34,11 +34,9 @@ public class TipoAttoBolloComponentSessionBean extends it.cnr.jada.ejb.CRUDCompo
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.bollo00.comp.TipoAttoBolloComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new TipoAttoBolloComponentSessionBean();
-	}
 
-    public Tipo_atto_bolloBulk getTipoAttoBollo(it.cnr.jada.UserContext param0, Timestamp data, java.lang.String codiceTipoAttoBollo) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+
+    public Tipo_atto_bolloBulk getTipoAttoBollo(it.cnr.jada.UserContext param0, Timestamp data, java.lang.String codiceTipoAttoBollo) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
         	Tipo_atto_bolloBulk result = ((TipoAttoBolloComponent)componentObj).getTipoAttoBollo(param0, data, codiceTipoAttoBollo);

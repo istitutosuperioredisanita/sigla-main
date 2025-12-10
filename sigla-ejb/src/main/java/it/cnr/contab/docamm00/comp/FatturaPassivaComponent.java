@@ -89,7 +89,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.util.Pair;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import javax.naming.OperationNotSupportedException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -592,7 +592,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                     }
                 }
             }
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw handleException(fatturaPassiva, e);
         } catch (java.rmi.RemoteException e) {
             throw handleException(fatturaPassiva, e);
@@ -960,7 +960,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                     }
                 }
             }
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw handleException(fp, e);
         } catch (java.rmi.RemoteException e) {
             throw handleException(fp, e);
@@ -1739,7 +1739,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                 scadenza = (Accertamento_scadenzarioBulk) scadenze.get(scadenze.indexOfByPrimaryKey(scadenza));
             } catch (java.rmi.RemoteException e) {
                 throw handleException(scadenza, e);
-            } catch (javax.ejb.EJBException e) {
+            } catch (jakarta.ejb.EJBException e) {
                 throw handleException(scadenza, e);
             }
             return scadenza;
@@ -1762,7 +1762,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                 scadenza = (Obbligazione_scadenzarioBulk) scadenze.get(scadenze.indexOfByPrimaryKey(scadenza));
             } catch (java.rmi.RemoteException e) {
                 throw handleException(scadenza, e);
-            } catch (javax.ejb.EJBException e) {
+            } catch (jakarta.ejb.EJBException e) {
                 throw handleException(scadenza, e);
             }
             return scadenza;
@@ -4667,7 +4667,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             return EJBCommonServices.createEJB(
                     "CNRDOCAMM00_EJB_AutoFatturaComponentSession",
                     AutoFatturaComponentSession.class);
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw handleException(e);
         }
     }
@@ -4749,7 +4749,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             cd_euro = EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", Configurazione_cnrComponentSession.class).getVal01(userContext, Integer.valueOf(0), "*", "CD_DIVISA", "EURO");
             if (cd_euro == null)
                 throw new it.cnr.jada.comp.ApplicationException("Impossibile caricare la valuta di default! Prima di poter inserire una fattura, immettere tale valore.");
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             handleException(e);
         } catch (java.rmi.RemoteException e) {
             handleException(e);
@@ -6051,7 +6051,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
                 }
             } catch (java.rmi.RemoteException e) {
                 throw handleException(accertamento, e);
-            } catch (javax.ejb.EJBException e) {
+            } catch (jakarta.ejb.EJBException e) {
                 throw handleException(accertamento, e);
             }
         }
@@ -6076,7 +6076,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
                 }
             } catch (java.rmi.RemoteException e) {
                 throw handleException(buonoCS, e);
-            } catch (javax.ejb.EJBException e) {
+            } catch (jakarta.ejb.EJBException e) {
                 throw handleException(buonoCS, e);
             }
         }
@@ -6100,7 +6100,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
                 }
             } catch (java.rmi.RemoteException e) {
                 throw handleException(obbligazione, e);
-            } catch (javax.ejb.EJBException e) {
+            } catch (jakarta.ejb.EJBException e) {
                 throw handleException(obbligazione, e);
             }
         }
@@ -8406,7 +8406,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
                             .getEsercizio(userContext), null,
                     Configurazione_cnrBulk.PK_FATTURAZIONE_ELETTRONICA, Configurazione_cnrBulk.SK_PASSIVA);
 
-        } catch (javax.ejb.EJBException ex) {
+        } catch (jakarta.ejb.EJBException ex) {
             throw handleException(ex);
         } catch (RemoteException ex) {
             throw handleException(ex);
@@ -8423,7 +8423,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             return sess.getDt01(userContext, 0, null,
                     Configurazione_cnrBulk.PK_SPLIT_PAYMENT, Configurazione_cnrBulk.SK_PASSIVA);
 
-        } catch (javax.ejb.EJBException ex) {
+        } catch (jakarta.ejb.EJBException ex) {
             throw handleException(ex);
         } catch (RemoteException ex) {
             throw handleException(ex);
@@ -8440,7 +8440,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             return sess.getDt02(userContext, 0, null,
                     Configurazione_cnrBulk.PK_SPLIT_PAYMENT, Configurazione_cnrBulk.SK_PASSIVA);
 
-        } catch (javax.ejb.EJBException ex) {
+        } catch (jakarta.ejb.EJBException ex) {
             throw handleException(ex);
         } catch (RemoteException ex) {
             throw handleException(ex);
@@ -9041,7 +9041,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             else
                 throw new ApplicationException("Configurazione registrazione tardiva mancante.");
 
-        } catch (javax.ejb.EJBException ex) {
+        } catch (jakarta.ejb.EJBException ex) {
             throw handleException(ex);
         } catch (RemoteException ex) {
             throw handleException(ex);
@@ -9077,7 +9077,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             return sess.getDt01(userContext, 0, null,
                     Configurazione_cnrBulk.PK_SPLIT_PAYMENT, Configurazione_cnrBulk.SK_PASSIVA_PROF);
 
-        } catch (javax.ejb.EJBException ex) {
+        } catch (jakarta.ejb.EJBException ex) {
             throw handleException(ex);
         } catch (RemoteException ex) {
             throw handleException(ex);
@@ -9094,7 +9094,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             return sess.getDt02(userContext, 0, null,
                     Configurazione_cnrBulk.PK_SPLIT_PAYMENT, Configurazione_cnrBulk.SK_PASSIVA_PROF);
 
-        } catch (javax.ejb.EJBException ex) {
+        } catch (jakarta.ejb.EJBException ex) {
             throw handleException(ex);
         } catch (RemoteException ex) {
             throw handleException(ex);
@@ -9520,7 +9520,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
                     }
                 }
             }
-        } catch (javax.ejb.EJBException|RemoteException|PersistencyException e) {
+        } catch (jakarta.ejb.EJBException|RemoteException|PersistencyException e) {
             handleException(e);
 
         }

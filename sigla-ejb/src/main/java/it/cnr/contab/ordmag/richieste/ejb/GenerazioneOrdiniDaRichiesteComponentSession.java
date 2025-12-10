@@ -19,8 +19,8 @@ package it.cnr.contab.ordmag.richieste.ejb;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBException;
-import javax.ejb.Remote;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk;
 import it.cnr.jada.UserContext;

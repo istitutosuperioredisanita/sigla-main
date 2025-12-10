@@ -27,8 +27,8 @@ import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v2.DatiFatturaType;
 
 import java.util.List;
 
-import javax.ejb.Remote;
-import javax.xml.bind.JAXBElement;
+import jakarta.ejb.Remote;
+import jakarta.xml.bind.JAXBElement;
 
 @Remote
 public interface ElaboraFileIntraComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

@@ -32,8 +32,9 @@ import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.BulkBP;
 
-import javax.servlet.ServletException;
-import javax.servlet.jsp.PageContext;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.UnmarshalException;
@@ -90,7 +91,7 @@ public class CaricaFileGiornalieraBP extends BulkBP {
 
             FlussoGiornaleDiCassaBulk flusso = new FlussoGiornaleDiCassaBulk(b.getEsercizio(), b.getIdentificativoFlusso());
             flusso.setUser(actioncontext.getUserContext().getUser());
-            flusso.setCodiceAbiBt(new Long(b.getCodiceABIBT()));
+            flusso.setCodiceAbiBt(Long.valueOf(b.getCodiceABIBT()));
             flusso.setIdentificativoFlusso(b.getIdentificativoFlusso());
             flusso.setDataOraCreazioneFlusso(new Timestamp(b.getDataOraCreazioneFlusso().toGregorianCalendar().getTime().getTime()));
             flusso.setDataInizioPeriodoRif(new Timestamp(b.getDataInizioPeriodoRiferimento().toGregorianCalendar().getTime().getTime()));
@@ -109,7 +110,7 @@ public class CaricaFileGiornalieraBP extends BulkBP {
                 infoBulk.setSaldoFinaleContoEvidenza(info.getSaldoFinaleContoEvidenza());
                 for (int progressivoMov = 0; progressivoMov < info.getMovimentoContoEvidenza().size(); progressivoMov++) {
                     MovimentoContoEvidenza mov = info.getMovimentoContoEvidenza().get(progressivoMov);
-                    MovimentoContoEvidenzaBulk movBulk = new MovimentoContoEvidenzaBulk(flusso.getEsercizio(), flusso.getIdentificativoFlusso(), info.getContoEvidenza(), "I", new Long(progressivoMov + 1));
+                    MovimentoContoEvidenzaBulk movBulk = new MovimentoContoEvidenzaBulk(flusso.getEsercizio(), flusso.getIdentificativoFlusso(), info.getContoEvidenza(), "I", Long.valueOf(progressivoMov + 1));
                     movBulk.setTipoMovimento(mov.getTipoMovimento());
                     movBulk.setTipoDocumento(mov.getTipoDocumento());
                     movBulk.setTipoOperazione(mov.getTipoOperazione());

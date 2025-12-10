@@ -17,7 +17,7 @@
 
 package it.cnr.contab.bilaterali00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 /**
  * Remote interface for Enterprise Bean: CNRBILATERALI00_EJB_BltAccordiComponentSession

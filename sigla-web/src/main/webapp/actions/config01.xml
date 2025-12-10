@@ -41,10 +41,6 @@
     </action>
 
     <action
-            path="/Macro" actionClass="it.cnr.contab.config00.action.MacroAction"
-            needExistingSession="false">
-    </action>
-    <action
             path="/RicercaTerziAction" actionClass="it.cnr.contab.config00.action.RicercaTerziAction"
             needExistingSession="false">
     </action>

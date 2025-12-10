@@ -19,7 +19,7 @@ package it.cnr.contab.doccont00.bp;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.docamm00.bp.*;

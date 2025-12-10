@@ -18,8 +18,8 @@
 package it.cnr.contab.compensi00.ejb;
 import java.rmi.RemoteException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.compensi00.comp.Esenzioni_addizionaliComponent;
 import it.cnr.contab.compensi00.tabrif.bulk.Esenzioni_addizionaliBulk;
@@ -29,9 +29,6 @@ public class Esenzioni_addizionaliComponentSessionBean extends it.cnr.jada.ejb.C
 @PostConstruct
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.compensi00.comp.Esenzioni_addizionaliComponent();
-}
-public static CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new Esenzioni_addizionaliComponentSessionBean();
 }
 public Esenzioni_addizionaliBulk verifica_aggiornamento(it.cnr.jada.UserContext param0,Esenzioni_addizionaliBulk param1) throws it.cnr.jada.comp.ComponentException, RemoteException {
 	pre_component_invocation(param0,componentObj);

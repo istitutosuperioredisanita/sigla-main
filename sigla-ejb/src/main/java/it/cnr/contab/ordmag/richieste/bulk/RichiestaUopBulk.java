@@ -257,7 +257,7 @@ public class RichiestaUopBulk extends RichiestaUopBase implements AllegatoParent
 //			java.sql.Timestamp ts = it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp();
 //			nuovoRigo.setDt_da_competenza_coge((getDt_da_competenza_coge() == null)?ts : getDt_da_competenza_coge());
 //			nuovoRigo.setDt_a_competenza_coge((getDt_a_competenza_coge() == null)?ts : getDt_a_competenza_coge());
-//		} catch (javax.ejb.EJBException e) {
+//		} catch (jakarta.ejb.EJBException e) {
 //			throw new it.cnr.jada.DetailedRuntimeException(e);
 //		}	
 		nuovoRigo.setStato(RichiestaUopRigaBulk.STATO_INSERITO);
@@ -266,7 +266,7 @@ public class RichiestaUopBulk extends RichiestaUopBase implements AllegatoParent
 			int prog = ((RichiestaUopRigaBulk)i.next()).getRiga();
 			if (prog > max) max = prog;
 		}
-		nuovoRigo.setRiga(new Integer(max+1));
+		nuovoRigo.setRiga(Integer.valueOf(max+1));
 		righeRichiestaColl.add(nuovoRigo);
 		return righeRichiestaColl.size()-1;
 	}
@@ -312,7 +312,7 @@ public class RichiestaUopBulk extends RichiestaUopBase implements AllegatoParent
 		java.sql.Timestamp dataReg = null;
 		try {
 			dataReg = it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
-		} catch (javax.ejb.EJBException e) {
+		} catch (jakarta.ejb.EJBException e) {
 			throw new it.cnr.jada.DetailedRuntimeException(e);
 		}
 		setCdCds(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context).getCd_unita_padre());

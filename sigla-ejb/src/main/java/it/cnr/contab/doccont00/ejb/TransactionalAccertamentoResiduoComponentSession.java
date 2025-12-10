@@ -24,7 +24,7 @@ import it.cnr.jada.comp.ComponentException;
 
 import java.rmi.RemoteException;
 import java.util.Vector;
-
+@TipoAccertamento(TipoAccertamento.Tipo.RESIDUO)
 public class TransactionalAccertamentoResiduoComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements AccertamentoResiduoComponentSession {
     public void aggiornaCogeCoanInDifferita(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1, java.util.Map param2) throws RemoteException, it.cnr.jada.comp.ComponentException {
         try {

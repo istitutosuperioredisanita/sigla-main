@@ -29,18 +29,18 @@ import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.persistency.Persistent;
 public class Param_cons_costi_personaleBulk extends OggettoBulk implements Persistent{
 
-	public static final Integer MESE_1 = new Integer(1);
-	public static final Integer MESE_2 = new Integer(2);
-	public static final Integer MESE_3 = new Integer(3);
-	public static final Integer MESE_4 = new Integer(4);
-	public static final Integer MESE_5 = new Integer(5);
-	public static final Integer MESE_6 = new Integer(6);
-	public static final Integer MESE_7 = new Integer(7);
-	public static final Integer MESE_8 = new Integer(8);
-	public static final Integer MESE_9 = new Integer(9);
-	public static final Integer MESE_10= new Integer(10);
-	public static final Integer MESE_11= new Integer(11);
-	public static final Integer MESE_12= new Integer(12);
+	public static final Integer MESE_1 = Integer.valueOf(1);
+	public static final Integer MESE_2 = Integer.valueOf(2);
+	public static final Integer MESE_3 = Integer.valueOf(3);
+	public static final Integer MESE_4 = Integer.valueOf(4);
+	public static final Integer MESE_5 = Integer.valueOf(5);
+	public static final Integer MESE_6 = Integer.valueOf(6);
+	public static final Integer MESE_7 = Integer.valueOf(7);
+	public static final Integer MESE_8 = Integer.valueOf(8);
+	public static final Integer MESE_9 = Integer.valueOf(9);
+	public static final Integer MESE_10= Integer.valueOf(10);
+	public static final Integer MESE_11= Integer.valueOf(11);
+	public static final Integer MESE_12= Integer.valueOf(12);
 	
 	public static final String SOMME_RIPARTITE = "Somme ripartite";
 	public static final String SOMME_NON_RIPARTITE = "Somme non ripartite";

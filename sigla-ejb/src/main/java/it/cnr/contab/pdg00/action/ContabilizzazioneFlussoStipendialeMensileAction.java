@@ -42,8 +42,8 @@ import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.FormBP;
 import it.cnr.jada.util.action.SelezionatoreListaBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+import jakarta.validation.ValidationException;
 
-import javax.validation.ValidationException;
 import java.rmi.RemoteException;
 import java.util.Optional;
 

@@ -28,6 +28,8 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.jsp.Button;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -108,7 +110,7 @@ public class CRUDEsenzioni_addizionaliBP extends SimpleCRUDBP {
 		return bulk != null && bulk.getDettagli() != null && !bulk.getDettagli().isEmpty();
 	}
 
-    public void openForm(javax.servlet.jsp.PageContext context, String action, String target) throws java.io.IOException, javax.servlet.ServletException {
+    public void openForm(PageContext context, String action, String target) throws java.io.IOException, ServletException {
 
         openForm(context, action, target, "multipart/form-data");
     }
@@ -156,7 +158,7 @@ public class CRUDEsenzioni_addizionaliBP extends SimpleCRUDBP {
                 if (!((codcat != null && comune != null && prov != null && imp.compareTo(new BigDecimal(-1)) != 0) ||
                         ((codcat == null && comune == null && prov == null && imp.compareTo(new BigDecimal(-1)) == 0))))
                     if (i != 0)
-                        throw new ApplicationException("Formato file non valido! Riga: " + new Integer(i + 1));
+                        throw new ApplicationException("Formato file non valido! Riga: " + Integer.valueOf(i + 1));
                     else
                         throw new ApplicationException("Formato file non valido!");
             }

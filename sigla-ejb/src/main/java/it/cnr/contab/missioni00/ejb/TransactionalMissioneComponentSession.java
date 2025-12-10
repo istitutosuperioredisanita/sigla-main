@@ -596,7 +596,7 @@ public class TransactionalMissioneComponentSession extends
             it.cnr.contab.missioni00.docs.bulk.Missione_dettaglioBulk param1)
             throws RemoteException, it.cnr.jada.comp.ComponentException,
             it.cnr.jada.persistency.PersistencyException,
-            javax.ejb.EJBException, java.rmi.RemoteException,
+            jakarta.ejb.EJBException, java.rmi.RemoteException,
             it.cnr.jada.bulk.ValidationException {
         try {
             return (it.cnr.contab.missioni00.docs.bulk.MissioneBulk) invoke(
@@ -611,7 +611,7 @@ public class TransactionalMissioneComponentSession extends
                 throw ex;
             } catch (it.cnr.jada.persistency.PersistencyException ex) {
                 throw ex;
-            } catch (javax.ejb.EJBException ex) {
+            } catch (jakarta.ejb.EJBException ex) {
                 throw ex;
             } catch (java.rmi.RemoteException ex) {
                 throw ex;
@@ -889,7 +889,7 @@ public class TransactionalMissioneComponentSession extends
             it.cnr.contab.missioni00.docs.bulk.MissioneBulk param1,
             it.cnr.contab.missioni00.docs.bulk.Missione_dettaglioBulk param2)
             throws RemoteException, it.cnr.jada.comp.ComponentException,
-            javax.ejb.EJBException,
+            jakarta.ejb.EJBException,
             it.cnr.jada.persistency.PersistencyException,
             java.rmi.RemoteException, it.cnr.jada.bulk.ValidationException {
         try {
@@ -903,7 +903,7 @@ public class TransactionalMissioneComponentSession extends
                 throw e.getTargetException();
             } catch (it.cnr.jada.comp.ComponentException ex) {
                 throw ex;
-            } catch (javax.ejb.EJBException ex) {
+            } catch (jakarta.ejb.EJBException ex) {
                 throw ex;
             } catch (it.cnr.jada.persistency.PersistencyException ex) {
                 throw ex;

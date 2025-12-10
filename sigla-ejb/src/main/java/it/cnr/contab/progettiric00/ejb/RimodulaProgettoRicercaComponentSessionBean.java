@@ -19,9 +19,9 @@ package it.cnr.contab.progettiric00.ejb;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.progettiric00.comp.RimodulaProgettoRicercaComponent;
 import it.cnr.contab.progettiric00.core.bulk.Progetto_rimodulazioneBulk;
@@ -33,11 +33,9 @@ public class RimodulaProgettoRicercaComponentSessionBean extends it.cnr.jada.ejb
 		componentObj = new it.cnr.contab.progettiric00.comp.RimodulaProgettoRicercaComponent();
 	}
 
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-		return new RimodulaProgettoRicercaComponentSessionBean();
-	}
+	
 
-	public Progetto_rimodulazioneBulk salvaDefinitivo(it.cnr.jada.UserContext param0,Progetto_rimodulazioneBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public Progetto_rimodulazioneBulk salvaDefinitivo(it.cnr.jada.UserContext param0,Progetto_rimodulazioneBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			Progetto_rimodulazioneBulk result = ((RimodulaProgettoRicercaComponent)componentObj).salvaDefinitivo(param0,param1);
@@ -55,7 +53,7 @@ public class RimodulaProgettoRicercaComponentSessionBean extends it.cnr.jada.ejb
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}	
-	public Progetto_rimodulazioneBulk approva(it.cnr.jada.UserContext param0,Progetto_rimodulazioneBulk param1,OggettoBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public Progetto_rimodulazioneBulk approva(it.cnr.jada.UserContext param0,Progetto_rimodulazioneBulk param1,OggettoBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			Progetto_rimodulazioneBulk result = ((RimodulaProgettoRicercaComponent)componentObj).approva(param0,param1,param2);
@@ -73,7 +71,7 @@ public class RimodulaProgettoRicercaComponentSessionBean extends it.cnr.jada.ejb
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}	
-	public Progetto_rimodulazioneBulk respingi(it.cnr.jada.UserContext param0,Progetto_rimodulazioneBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public Progetto_rimodulazioneBulk respingi(it.cnr.jada.UserContext param0,Progetto_rimodulazioneBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			Progetto_rimodulazioneBulk result = ((RimodulaProgettoRicercaComponent)componentObj).respingi(param0,param1);
@@ -91,7 +89,7 @@ public class RimodulaProgettoRicercaComponentSessionBean extends it.cnr.jada.ejb
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public Progetto_rimodulazioneBulk valida(it.cnr.jada.UserContext param0,Progetto_rimodulazioneBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public Progetto_rimodulazioneBulk valida(it.cnr.jada.UserContext param0,Progetto_rimodulazioneBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			Progetto_rimodulazioneBulk result = ((RimodulaProgettoRicercaComponent)componentObj).valida(param0,param1);
@@ -109,7 +107,7 @@ public class RimodulaProgettoRicercaComponentSessionBean extends it.cnr.jada.ejb
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public List<OggettoBulk> constructVariazioniBilancio(it.cnr.jada.UserContext param0,Progetto_rimodulazioneBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public List<OggettoBulk> constructVariazioniBilancio(it.cnr.jada.UserContext param0,Progetto_rimodulazioneBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			List<OggettoBulk> result = ((RimodulaProgettoRicercaComponent)componentObj).constructVariazioniBilancio(param0,param1);
@@ -127,7 +125,7 @@ public class RimodulaProgettoRicercaComponentSessionBean extends it.cnr.jada.ejb
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public Progetto_rimodulazioneBulk rebuildRimodulazione(it.cnr.jada.UserContext param0,Progetto_rimodulazioneBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public Progetto_rimodulazioneBulk rebuildRimodulazione(it.cnr.jada.UserContext param0,Progetto_rimodulazioneBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			Progetto_rimodulazioneBulk result = ((RimodulaProgettoRicercaComponent)componentObj).rebuildRimodulazione(param0,param1);
@@ -145,7 +143,7 @@ public class RimodulaProgettoRicercaComponentSessionBean extends it.cnr.jada.ejb
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public Progetto_rimodulazioneBulk riportaDefinitivo(it.cnr.jada.UserContext param0,Progetto_rimodulazioneBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public Progetto_rimodulazioneBulk riportaDefinitivo(it.cnr.jada.UserContext param0,Progetto_rimodulazioneBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			Progetto_rimodulazioneBulk result = ((RimodulaProgettoRicercaComponent)componentObj).riportaDefinitivo(param0,param1);
@@ -163,7 +161,7 @@ public class RimodulaProgettoRicercaComponentSessionBean extends it.cnr.jada.ejb
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public Progetto_rimodulazioneBulk riportaProvvisorio(it.cnr.jada.UserContext param0,Progetto_rimodulazioneBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public Progetto_rimodulazioneBulk riportaProvvisorio(it.cnr.jada.UserContext param0,Progetto_rimodulazioneBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			Progetto_rimodulazioneBulk result = ((RimodulaProgettoRicercaComponent)componentObj).riportaProvvisorio(param0,param1);

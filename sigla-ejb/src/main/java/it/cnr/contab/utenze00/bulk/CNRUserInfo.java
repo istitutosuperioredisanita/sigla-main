@@ -17,7 +17,7 @@
 
 package it.cnr.contab.utenze00.bulk;
 //import java.sql.SQLException;
-//import javax.ejb.EJBException;
+//import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.sto.bulk.DipartimentoBulk;
 import it.cnr.jada.bulk.FieldValidationMap;

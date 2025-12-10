@@ -53,7 +53,7 @@ public it.cnr.jada.action.Forward doBringBackSearchFind_nodo_padre(ActionContext
 
         if (cgiPadre != null) {
 	        //controlla che venga selezionata una categoria
-            if (cgiPadre.getLivello().equals(new Integer(1))) {
+            if (cgiPadre.getLivello().equals(Integer.valueOf(1))) {
                 setErrorMessage(context, "Il nodo padre selezionato non è valido.La struttura può avere solo due livelli!");
                 return context.findDefaultForward();
             }

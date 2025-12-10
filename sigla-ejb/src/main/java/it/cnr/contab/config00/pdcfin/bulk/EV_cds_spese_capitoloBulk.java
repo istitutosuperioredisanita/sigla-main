@@ -30,6 +30,8 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.OrderedHashtable;
+import jakarta.servlet.jsp.JspWriter;
+
 /**
  * Elemento_voceBulk che rappresenta i capitoli di spesa del CDS
  */
@@ -56,7 +58,7 @@ public EV_cds_spese_capitoloBulk(java.lang.String cd_elemento_voce,java.lang.Int
  * 
  */
 
-public boolean fillFromHttpRequest(javax.servlet.http.HttpServletRequest request,String prefix,int status, FieldValidationMap aFVM) throws FillException {
+public boolean fillFromHttpRequest(jakarta.servlet.http.HttpServletRequest request,String prefix,int status, FieldValidationMap aFVM) throws FillException {
 	boolean dirty = false;
 	try
 	{
@@ -158,9 +160,9 @@ public it.cnr.jada.util.OrderedHashtable getTipiCds() {
  */
 public OggettoBulk initializeForInsert(it.cnr.jada.util.action.CRUDBP bp,it.cnr.jada.action.ActionContext context) {
 	super.initializeForInsert(bp, context);
-	setFl_limite_ass_obblig(new Boolean(true));
-	setFl_voce_personale( new Boolean(false));
-	setFl_partita_giro( new Boolean(false));
+	setFl_limite_ass_obblig(Boolean.TRUE);
+	setFl_voce_personale(Boolean.FALSE);
+	setFl_partita_giro(Boolean.FALSE);
 	return this;
 }
 /**
@@ -182,7 +184,7 @@ public void setTipiCds(it.cnr.jada.util.OrderedHashtable newTipiCds) {
 	tipiCds = newTipiCds;
 }
 
-private void writeCheckBox(javax.servlet.jsp.JspWriter out, String key, boolean value ) throws java.io.IOException, PersistencyException , it.cnr.jada.comp.ApplicationException, IntrospectionException
+private void writeCheckBox(JspWriter out, String key, boolean value ) throws java.io.IOException, PersistencyException , it.cnr.jada.comp.ApplicationException, IntrospectionException
 {
 
 	try 
@@ -206,7 +208,7 @@ private void writeCheckBox(javax.servlet.jsp.JspWriter out, String key, boolean 
  * di questa tabella con i dati presenti nel modello.
  */
 
-public void writeTable(javax.servlet.jsp.JspWriter out, Map model ) throws java.io.IOException, PersistencyException , it.cnr.jada.comp.ApplicationException, IntrospectionException
+public void writeTable(JspWriter out, Map model ) throws java.io.IOException, PersistencyException , it.cnr.jada.comp.ApplicationException, IntrospectionException
 {
 	out.println("<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\">");
 	int columnsNr = getTipiCds().size();
@@ -220,11 +222,11 @@ public void writeTable(javax.servlet.jsp.JspWriter out, Map model ) throws java.
 	}	
 	out.println("</table>");
 }
-private void writeTableHeader(javax.servlet.jsp.JspWriter out, int columnNr) throws java.io.IOException, PersistencyException, IntrospectionException, it.cnr.jada.comp.ApplicationException 
+private void writeTableHeader(JspWriter out, int columnNr) throws java.io.IOException, PersistencyException, IntrospectionException, it.cnr.jada.comp.ApplicationException 
 {
 	//title
 	out.println("<tr><td colspan=");
-	out.println( (new Integer(columnNr + 1)).toString() );
+	out.println( (Integer.valueOf(columnNr + 1)).toString() );
 	out.println("><h3><CENTER>Piano dei conti Economico Finanziario</CENTER></h3></td>");
 	//column header
 	out.print("<tr>");
@@ -239,7 +241,7 @@ private void writeTableHeader(javax.servlet.jsp.JspWriter out, int columnNr) thr
 	out.println("</tr>");
 
 }
-private void writeTableRow(javax.servlet.jsp.JspWriter out, java.util.Iterator i, Map model, int columnsNr ) throws java.io.IOException, PersistencyException , it.cnr.jada.comp.ApplicationException, IntrospectionException
+private void writeTableRow(JspWriter out, java.util.Iterator i, Map model, int columnsNr ) throws java.io.IOException, PersistencyException , it.cnr.jada.comp.ApplicationException, IntrospectionException
 {
 	String key, funzione, tipo;
 	

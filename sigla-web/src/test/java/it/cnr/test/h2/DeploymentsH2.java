@@ -18,30 +18,6 @@
 package it.cnr.test.h2;
 
 import it.cnr.test.util.Deployments;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.jboss.arquillian.container.test.api.TargetsContainer;
-import org.jboss.arquillian.junit.InSequence;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
-
-import java.util.AbstractMap;
-import java.util.Collections;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class DeploymentsH2 extends Deployments {
-    @Test
-    @InSequence(-1)
-    @OperateOnDeployment(TEST_H2)
-    public void startupH2() {
-        controller.start(CONTAINER_NAME,
-                Stream.of(
-                        new AbstractMap.SimpleEntry<>("port", "12347"),
-                        new AbstractMap.SimpleEntry<>("javaVmArguments", "-agentlib:jdwp=transport=dt_socket,address=8789,server=y,suspend=n")
-                ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
-        );
-        deployer.deploy(TEST_H2);
-    }
 }

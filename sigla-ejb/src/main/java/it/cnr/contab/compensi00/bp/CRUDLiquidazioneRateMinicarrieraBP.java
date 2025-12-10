@@ -23,6 +23,9 @@ import it.cnr.contab.compensi00.docs.bulk.*;
 import it.cnr.jada.action.*;
 import it.cnr.jada.comp.*;
 import it.cnr.jada.util.action.*;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
+
 /**
  * Insert the type's description here.
  * Creation date: (24/12/2002 11.39.09)
@@ -32,7 +35,7 @@ public class CRUDLiquidazioneRateMinicarrieraBP extends it.cnr.jada.util.action.
 
 	private final SimpleDetailCRUDController rateCRUDController = new SimpleDetailCRUDController("rateCRUDController",Liquidazione_rate_minicarrieraBulk.class,"rate",this, true){
 		@Override
-		public void writeHTMLToolbar(javax.servlet.jsp.PageContext context,	boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException
+		public void writeHTMLToolbar(PageContext context,	boolean reset, boolean find, boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException
 		{
 			super.writeHTMLToolbar(context, reset, find, delete, false);
 			writeExtraHTMLToolbar(context);
@@ -110,7 +113,7 @@ public Voce_fBulk findVoceF(ActionContext context) throws BusinessProcessExcepti
 
 	}catch(ComponentException ex){
 		throw handleException(ex);
-	}catch(javax.ejb.EJBException ex){
+	}catch(jakarta.ejb.EJBException ex){
 		throw handleException(ex);
 	}catch(java.rmi.RemoteException ex){
 		throw handleException(ex);
@@ -144,7 +147,7 @@ public void reset(it.cnr.jada.action.ActionContext context) throws it.cnr.jada.a
 public void resetTabs(ActionContext context) {
 	setTab("tab","tabFiltroRate");
 }
-public void writeExtraHTMLToolbar(javax.servlet.jsp.PageContext context) throws javax.servlet.ServletException, java.io.IOException{
+public void writeExtraHTMLToolbar(PageContext context) throws ServletException, java.io.IOException{
 
 	if(isViewing())
 		it.cnr.jada.util.jsp.JSPUtils.toolbarButton(context, "img/history16.gif",null,false,"Liquida rate",

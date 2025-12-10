@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.Iterator;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 import org.apache.poi.hssf.usermodel.*;
 import it.cnr.contab.compensi00.ejb.AddizionaliComponentSession;
 import it.cnr.contab.compensi00.tabrif.bulk.AddizionaliBulk;
@@ -80,7 +83,7 @@ public class CRUDAddizionaliBP extends SimpleCRUDBP{
 		  return true;
 		return false;
 	}
-	public void openForm(javax.servlet.jsp.PageContext context,String action,String target) throws java.io.IOException,javax.servlet.ServletException {
+	public void openForm(PageContext context, String action, String target) throws java.io.IOException, ServletException {
 
 		openForm(context,action,target,"multipart/form-data");
 	}

@@ -36,7 +36,7 @@ public class Geco_progetto_operativoBulk extends Geco_progetto_operativoBase imp
 		super(id_prog, esercizio, fase);
 	}
 	public void aggiornaProgettoSIP(Progetto_sipBulk progetto_sip){
-		if (!getId_prog_padre().equals(new Long(progetto_sip.getPg_progetto_padre()))){
+		if (!getId_prog_padre().equals(Long.valueOf(progetto_sip.getPg_progetto_padre()))){
 			progetto_sip.setProgettopadre(new Progetto_sipBulk(getEsercizio().intValue(),getId_prog_padre().intValue(),getFase()));
 			progetto_sip.setToBeUpdated();
 		}
@@ -49,13 +49,13 @@ public class Geco_progetto_operativoBulk extends Geco_progetto_operativoBase imp
 			progetto_sip.setToBeUpdated();
 		}
 		/*if (getCod_tip() != null){
-			if (getCod_tip().equals(new Long(1)) && (progetto_sip.getCd_tipo_progetto() == null || !progetto_sip.getCd_tipo_progetto().equals("PS"))){
+			if (getCod_tip().equals(Long.valueOf(1)) && (progetto_sip.getCd_tipo_progetto() == null || !progetto_sip.getCd_tipo_progetto().equals("PS"))){
 				progetto_sip.setTipo(new Tipo_progettoBulk("PS"));
 				progetto_sip.setToBeUpdated();
-			}else if (getCod_tip().equals(new Long(2)) && (progetto_sip.getCd_tipo_progetto() == null ||!progetto_sip.getCd_tipo_progetto().equals("SC"))){
+			}else if (getCod_tip().equals(Long.valueOf(2)) && (progetto_sip.getCd_tipo_progetto() == null ||!progetto_sip.getCd_tipo_progetto().equals("SC"))){
 				progetto_sip.setTipo(new Tipo_progettoBulk("SC"));
 				progetto_sip.setToBeUpdated();
-			}else if (getCod_tip().equals(new Long(3)) && (progetto_sip.getCd_tipo_progetto() == null ||!progetto_sip.getCd_tipo_progetto().equals("MG"))){
+			}else if (getCod_tip().equals(Long.valueOf(3)) && (progetto_sip.getCd_tipo_progetto() == null ||!progetto_sip.getCd_tipo_progetto().equals("MG"))){
 				progetto_sip.setTipo(new Tipo_progettoBulk("MG"));
 				progetto_sip.setToBeUpdated();
 			}
@@ -65,7 +65,7 @@ public class Geco_progetto_operativoBulk extends Geco_progetto_operativoBase imp
 			progetto_sip.setToBeUpdated();
 		}
 		if (getCod_3rzo_resp() != null && progetto_sip.getCd_responsabile_terzo() != null && !getCod_3rzo_resp().equals(progetto_sip.getCd_responsabile_terzo().toString())){
-			progetto_sip.setResponsabile(new TerzoBulk(new Integer(getCod_3rzo_resp())));
+			progetto_sip.setResponsabile(new TerzoBulk(Integer.valueOf(getCod_3rzo_resp())));
 			progetto_sip.setToBeUpdated();
 		}
 		if (getData_inizio_attivita() != null && !getData_inizio_attivita().equals(progetto_sip.getDt_inizio())){
@@ -73,10 +73,10 @@ public class Geco_progetto_operativoBulk extends Geco_progetto_operativoBase imp
 			progetto_sip.setToBeUpdated();
 		}
 		if (getEsito_negoz() != null){
-			if (getEsito_negoz().equals(new Integer(2)) && !progetto_sip.getStato().equals(ProgettoBulk.TIPO_STATO_PROPOSTA)){
+			if (getEsito_negoz().equals(Integer.valueOf(2)) && !progetto_sip.getStato().equals(ProgettoBulk.TIPO_STATO_PROPOSTA)){
 				progetto_sip.setStato(ProgettoBulk.TIPO_STATO_PROPOSTA);
 				progetto_sip.setToBeUpdated();
-			}else if (!getEsito_negoz().equals(new Integer(2)) && !progetto_sip.getStato().equals(ProgettoBulk.TIPO_STATO_APPROVATO)){
+			}else if (!getEsito_negoz().equals(Integer.valueOf(2)) && !progetto_sip.getStato().equals(ProgettoBulk.TIPO_STATO_APPROVATO)){
 				progetto_sip.setStato(ProgettoBulk.TIPO_STATO_APPROVATO);
 				progetto_sip.setToBeUpdated();
 			}

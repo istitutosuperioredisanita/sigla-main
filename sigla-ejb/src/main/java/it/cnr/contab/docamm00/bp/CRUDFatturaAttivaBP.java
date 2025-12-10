@@ -55,10 +55,12 @@ import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.jsp.JspWriter;
 
-import javax.ejb.EJBException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.ejb.EJBException;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -441,8 +443,8 @@ public abstract class CRUDFatturaAttivaBP
                 String cds = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(context.getUserContext());
                 try {
                     FatturaAttivaSingolaComponentSession session = (FatturaAttivaSingolaComponentSession) createComponentSession();
-                    boolean esercizioScrivaniaAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, new Integer(esercizioScrivania)));
-                    boolean esercizioSuccessivoAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, new Integer(esercizioScrivania + 1)));
+                    boolean esercizioScrivaniaAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, Integer.valueOf(esercizioScrivania)));
+                    boolean esercizioSuccessivoAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, Integer.valueOf(esercizioScrivania + 1)));
                     esercizioChiuso = session.isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioScrivania, CNRUserContext.getCd_cds(context.getUserContext()));
                     setRiportaAvantiIndietro(esercizioScrivaniaAperto && esercizioSuccessivoAperto && isRibaltato() && isSupervisore());
                 } catch (Throwable t) {
@@ -947,7 +949,7 @@ public abstract class CRUDFatturaAttivaBP
         return;
     }
 
-    protected void writeToolbar(javax.servlet.jsp.JspWriter writer, it.cnr.jada.util.jsp.Button[] buttons) throws java.io.IOException, javax.servlet.ServletException {
+    protected void writeToolbar(JspWriter writer, it.cnr.jada.util.jsp.Button[] buttons) throws java.io.IOException, ServletException {
 
         it.cnr.jada.util.jsp.Button riportaAvantiButton = buttons[buttons.length - 1];
         riportaAvantiButton.setSeparator(isRiportaIndietroButtonHidden() && !isRiportaAvantiButtonHidden());

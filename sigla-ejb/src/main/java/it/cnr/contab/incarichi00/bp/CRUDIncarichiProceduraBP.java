@@ -30,10 +30,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import javax.servlet.ServletException;
+
 
 import it.cnr.jada.comp.ApplicationRuntimeException;
 import it.cnr.jada.util.action.Selection;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,10 +116,10 @@ public class CRUDIncarichiProceduraBP extends it.cnr.jada.util.action.SimpleCRUD
 	private SimpleDetailCRUDController crudArchivioAllegati = new Incarichi_archivioCRUDController( "ProceduraArchivioAllegati", Incarichi_procedura_archivioBulk.class, "archivioAllegati", this){
 		@Override
 	    public void writeHTMLToolbar(
-				javax.servlet.jsp.PageContext context,
+				PageContext context,
 				boolean reset,
 				boolean find,
-				boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+				boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
 			Incarichi_proceduraBulk procedura = (Incarichi_proceduraBulk)getParentModel();
 			boolean isFromBootstrap = HttpActionContext.isFromBootstrap(context);
@@ -287,10 +289,10 @@ public class CRUDIncarichiProceduraBP extends it.cnr.jada.util.action.SimpleCRUD
 		}
 		@Override
 		public void writeHTMLToolbar(
-				javax.servlet.jsp.PageContext context,
+				PageContext context,
 				boolean reset,
 				boolean find,
-				boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+				boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
 			Incarichi_proceduraBulk procedura = (Incarichi_proceduraBulk)getParentModel();
 			Incarichi_parametriBulk parametri = null;
@@ -595,10 +597,10 @@ public class CRUDIncarichiProceduraBP extends it.cnr.jada.util.action.SimpleCRUD
 		}
 		@Override
 		public void writeHTMLToolbar(
-				javax.servlet.jsp.PageContext context,
+				PageContext context,
 				boolean reset,
 				boolean find,
-				boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+				boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
 			CRUDIncarichiProceduraBP bp = (CRUDIncarichiProceduraBP)getParentController();
 			Incarichi_proceduraBulk  procedura = (Incarichi_proceduraBulk)bp.getModel();
@@ -690,10 +692,10 @@ public class CRUDIncarichiProceduraBP extends it.cnr.jada.util.action.SimpleCRUD
 	private SimpleDetailCRUDController crudIncarichiArchivioAllegati = new Incarichi_archivioCRUDController( "IncarichiArchivioAllegati", Incarichi_repertorio_archivioBulk.class, "archivioAllegati", incarichiColl){
 		@Override
 	    public void writeHTMLToolbar(
-				javax.servlet.jsp.PageContext context,
+				PageContext context,
 				boolean reset,
 				boolean find,
-				boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+				boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
 			Incarichi_repertorioBulk incarico  = (Incarichi_repertorioBulk)getParentModel();
 			Incarichi_parametriBulk parametri = null;
@@ -959,10 +961,10 @@ public class CRUDIncarichiProceduraBP extends it.cnr.jada.util.action.SimpleCRUD
 		}
 		@Override
 		public void writeHTMLToolbar(
-				javax.servlet.jsp.PageContext context,
+				PageContext context,
 				boolean reset,
 				boolean find,
-				boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+				boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
 			Incarichi_repertorio_varBulk incaricoVar = (Incarichi_repertorio_varBulk)getModel();
 
@@ -1191,7 +1193,7 @@ public class CRUDIncarichiProceduraBP extends it.cnr.jada.util.action.SimpleCRUD
 			procedura.setUtenteCollegatoSuperUtente(isSuperUtente());
 
 			return procedura;
-		} catch(javax.ejb.EJBException ejbe){
+		} catch(jakarta.ejb.EJBException ejbe){
 			throw handleException(ejbe);
 		}
 	}
@@ -1337,7 +1339,7 @@ public class CRUDIncarichiProceduraBP extends it.cnr.jada.util.action.SimpleCRUD
 			setUtenteAbilitatoPubblicazioneSito(UtenteBulk.isAbilitatoPubblicazioneSito(context.getUserContext()));
 			setUtenteAbilitatoFunzioniIncarichi(UtenteBulk.isAbilitatoFunzioniIncarichi(context.getUserContext()));
 			setSuperUtente(UtenteBulk.isSuperUtenteFunzioniIncarichi(context.getUserContext()));
-			setDtLimiteVariazione(((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession")).getDt01(context.getUserContext(), new Integer(0), "*", "PROCEDURA_CONFERIMENTO_INCARICHI", "DATA_LIMITE_VARIAZIONE"));
+			setDtLimiteVariazione(((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession")).getDt01(context.getUserContext(), Integer.valueOf(0), "*", "PROCEDURA_CONFERIMENTO_INCARICHI", "DATA_LIMITE_VARIAZIONE"));
 			setUtenteAbilitatoInvioMail(context.getUserContext().getUser().equals("raffaele.pagano")||
 					context.getUserContext().getUser().equals("roberto.tatarelli")||
 					context.getUserContext().getUser().equals("matilde.durso")||
@@ -1347,10 +1349,10 @@ public class CRUDIncarichiProceduraBP extends it.cnr.jada.util.action.SimpleCRUD
 					context.getUserContext().getUser().equals("rosangela.pucciarelli")||
 					context.getUserContext().getUser().equals("mario.incarnato"));
 
-			String value = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession")).getVal01(context.getUserContext(), new Integer(0), "*", Configurazione_cnrBulk.PK_INCARICHI_MODIFICA_ALLEGATI, Configurazione_cnrBulk.SK_INCARICHI_MOD_CONTRATTO);
+			String value = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession")).getVal01(context.getUserContext(), Integer.valueOf(0), "*", Configurazione_cnrBulk.PK_INCARICHI_MODIFICA_ALLEGATI, Configurazione_cnrBulk.SK_INCARICHI_MOD_CONTRATTO);
 			setUtenteAbilitatoModificaAllegatoContratto(value!=null && "Y".equals(value));
 
-			String value2 = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession")).getVal01(context.getUserContext(), new Integer(0), "*", Configurazione_cnrBulk.PK_INCARICHI_MODIFICA_ALLEGATI, Configurazione_cnrBulk.SK_INCARICHI_MOD_CURRICULUM);
+			String value2 = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession")).getVal01(context.getUserContext(), Integer.valueOf(0), "*", Configurazione_cnrBulk.PK_INCARICHI_MODIFICA_ALLEGATI, Configurazione_cnrBulk.SK_INCARICHI_MOD_CURRICULUM);
 			setUtenteAbilitatoModificaAllegatoCurriculum(value2!=null && "Y".equals(value2));
 			
 			if (getModel()!=null && getModel() instanceof Incarichi_proceduraBulk)
@@ -1410,7 +1412,7 @@ public class CRUDIncarichiProceduraBP extends it.cnr.jada.util.action.SimpleCRUD
 	 * Sovrascrive quello presente nelle superclassi
 	 *
 	*/
-	public void openForm(javax.servlet.jsp.PageContext context,String action,String target) throws java.io.IOException,javax.servlet.ServletException {
+	public void openForm(PageContext context, String action, String target) throws java.io.IOException, ServletException {
 		if (getTab("tab").equals("tabIncarichi_procedura_allegati") ||
 				getTab("tab").equals("tabIncarichi_procedura_variazioni") ||
 				(getTab("tab").equals("tabIncarichi_procedura_rapporti") &&
@@ -2325,7 +2327,7 @@ public class CRUDIncarichiProceduraBP extends it.cnr.jada.util.action.SimpleCRUD
 						if ((parametri==null || parametri.getLimite_dt_stipula()==null) && DateUtils.daysBetweenDates(incaricoVar.getDt_variazione(), EJBCommonServices.getServerDate())>5)
 							throw new it.cnr.jada.comp.ApplicationException("Non \350 possibile effettuare l'operazione perchè dalla data di stipula della variazione del contratto risultano trascorsi piu' di 5 giorni.");
 						else if (parametri!=null && parametri.getLimite_dt_stipula()!=null && parametri.getLimite_dt_stipula().equals("Y")) {
-							Integer limite = new Integer(0);
+							Integer limite = Integer.valueOf(0);
 							if (parametri.getGiorni_limite_dt_stipula()!=null)
 								limite = parametri.getGiorni_limite_dt_stipula();
 							if (DateUtils.daysBetweenDates(incaricoVar.getDt_variazione(), EJBCommonServices.getServerDate())>limite.intValue())
@@ -2459,10 +2461,10 @@ public class CRUDIncarichiProceduraBP extends it.cnr.jada.util.action.SimpleCRUD
 		this.incarichiRappDetColl = incarichiRappDetColl;
 	}
 	public void validateSearchProcedura_amministrativa(ActionContext context, Incarichi_proceduraBulk procedura, Procedure_amministrativeBulk procamm) throws ValidationException {
-		if (procedura != null && procedura.getNr_contratti()!=null &&procedura.getNr_contratti().compareTo(new Integer(1))==1) {
+		if (procedura != null && procedura.getNr_contratti()!=null &&procedura.getNr_contratti().compareTo(Integer.valueOf(1))==1) {
 			if (procamm != null &&
 					procamm.getIncarico_ric_giorni_pubbl() != null &&
-					procamm.getIncarico_ric_giorni_pubbl().compareTo(new Integer(0))==0)
+					procamm.getIncarico_ric_giorni_pubbl().compareTo(Integer.valueOf(0))==0)
 				throw new ValidationException( "Procedura Ammininistrativa non selezionabile per un processo che prevede l'attivazione di più contratti.");
 		}
 
@@ -2658,7 +2660,7 @@ public class CRUDIncarichiProceduraBP extends it.cnr.jada.util.action.SimpleCRUD
     public void scaricaAllegato(ActionContext actioncontext) throws IOException, ServletException, ApplicationException {
 		boolean multi_incarico = false;
 		Incarichi_proceduraBulk procedura = ((Incarichi_proceduraBulk)getModel());
-		if (procedura!=null && procedura.getNr_contratti()!=null && procedura.getNr_contratti().compareTo(new Integer(1))==1)
+		if (procedura!=null && procedura.getNr_contratti()!=null && procedura.getNr_contratti().compareTo(Integer.valueOf(1))==1)
 			multi_incarico=true;
 		SimpleDetailCRUDController controller = multi_incarico?getCrudArchivioAllegati():getCrudArchivioAllegatiMI();
 		Incarichi_archivioBulk allegato;

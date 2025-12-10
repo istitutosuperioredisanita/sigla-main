@@ -51,7 +51,7 @@ public class ConsConfrontoEntSpeTotBP extends ConsultazioniBP {
 	private boolean flNuovoPdg = false;
 	
 	
-	public ConsConfrontoEntSpeTotComponentSession createConsConfrontoEntSpeTotComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public ConsConfrontoEntSpeTotComponentSession createConsConfrontoEntSpeTotComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		return (ConsConfrontoEntSpeTotComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_ConsConfrontoEntSpeTotComponentSession", ConsConfrontoEntSpeTotComponentSession.class);
 }
 	

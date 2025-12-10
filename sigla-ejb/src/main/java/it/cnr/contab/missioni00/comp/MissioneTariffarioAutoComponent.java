@@ -114,7 +114,7 @@ public void eliminaConBulk (UserContext userContext, OggettoBulk bulk) throws Co
 	    	updateBulk(userContext, tariffario);
 		}
 
-	}catch(javax.ejb.EJBException ex){
+	}catch(jakarta.ejb.EJBException ex){
 		throw handleException(bulk, ex);
 	}catch(it.cnr.jada.persistency.PersistencyException ex){
 		throw handleException(bulk, ex);

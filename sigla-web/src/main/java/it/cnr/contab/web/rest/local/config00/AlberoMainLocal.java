@@ -17,19 +17,20 @@
 
 package it.cnr.contab.web.rest.local.config00;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import it.cnr.contab.web.rest.config.AllUserAllowedWithoutAbort;
-import it.cnr.contab.web.rest.config.SIGLASecurityContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
-import javax.annotation.security.PermitAll;
-import javax.ejb.Local;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ejb.Local;
 import java.util.Map;
 
 @Local
@@ -37,16 +38,23 @@ import java.util.Map;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @AllUserAllowedWithoutAbort
-@Api("Albero delle funzioni")
+@Tag(name = "Albero delle funzioni")
 public interface AlberoMainLocal {
 
     @DELETE
-    @ApiOperation(value = "Elimina la cache e ricalcola l'albero delle funzioni abilitate",
-            notes = "Accesso consentito a tutte le utenze registrate",
-            response = Map.class,
-            responseContainer = "Map",
-            authorizations = {
-                    @Authorization(value = "BASIC")
+    @Operation(summary = "Elimina la cache e ricalcola l'albero delle funzioni abilitate",
+            description = "Accesso consentito a tutte le utenze registrate",
+            security = {
+                    @SecurityRequirement(name = "BASIC")
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Map.class)
+                            )
+                    )
             }
     )
     Response evictCacheTree(@Context HttpServletRequest request) throws Exception;
@@ -55,13 +63,22 @@ public interface AlberoMainLocal {
      * GET  /restapi/tree -> return Albero delle funzioni
      */
     @GET
-    @ApiOperation(value = "Fornisce l'albero delle funzioni abilitate",
-            notes = "Accesso consentito a tutte le utenze registrate",
-            response = Map.class,
-            responseContainer = "Map",
-            authorizations = {
-                    @Authorization(value = "BASIC")
+    @Operation(summary = "Fornisce l'albero delle funzioni abilitate",
+            description = "Accesso consentito a tutte le utenze registrate",
+            security = {
+                    @SecurityRequirement(name = "BASIC")
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Map.class)
+                            )
+                    )
             }
     )
-    Response tree(@Context HttpServletRequest request, @QueryParam("esercizio") Integer esercizio, @QueryParam("uo") String uo) throws Exception;
+    Response tree(@Context HttpServletRequest request,
+                  @QueryParam("esercizio") Integer esercizio,
+                  @QueryParam("uo") String uo) throws Exception;
 }

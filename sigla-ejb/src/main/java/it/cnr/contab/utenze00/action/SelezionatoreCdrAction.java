@@ -26,7 +26,7 @@ import it.cnr.jada.action.*;
 import it.cnr.jada.bulk.*;
 import it.cnr.jada.comp.ComponentException;
 
-import javax.servlet.http.HttpSessionBindingEvent;
+import jakarta.servlet.http.HttpSessionBindingEvent;
 
 public class SelezionatoreCdrAction extends it.cnr.jada.util.action.SelezionatoreListaAction {
 public SelezionatoreCdrAction() {
@@ -41,7 +41,7 @@ public Forward basicDoBringBack(ActionContext context) throws BusinessProcessExc
 		return handleException(context,e);
 	}
 }
-public static GestioneLoginComponentSession getComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+public static GestioneLoginComponentSession getComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 	return (GestioneLoginComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRUTENZE00_NAV_EJB_GestioneLoginComponentSession",GestioneLoginComponentSession.class);
 }
 }

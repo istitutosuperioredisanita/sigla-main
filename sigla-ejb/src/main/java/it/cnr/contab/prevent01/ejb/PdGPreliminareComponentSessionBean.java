@@ -18,18 +18,16 @@
 package it.cnr.contab.prevent01.ejb;
 import it.cnr.contab.prevent01.comp.PdGPreliminareComponent;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.*;
 @Stateless(name="CNRPREVENT01_EJB_PdGPreliminareComponentSession")
 public class PdGPreliminareComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements PdGPreliminareComponentSession{
 @PostConstruct
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.prevent01.comp.PdGPreliminareComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-	return new PdGPreliminareComponentSessionBean();
-}
-public it.cnr.jada.bulk.OggettoBulk cambiaStatoConBulk(it.cnr.jada.UserContext param0,it.cnr.contab.prevent01.bulk.Pdg_esercizioBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public it.cnr.jada.bulk.OggettoBulk cambiaStatoConBulk(it.cnr.jada.UserContext param0,it.cnr.contab.prevent01.bulk.Pdg_esercizioBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((PdGPreliminareComponent)componentObj).cambiaStatoConBulk(param0,param1);
@@ -47,7 +45,7 @@ public it.cnr.jada.bulk.OggettoBulk cambiaStatoConBulk(it.cnr.jada.UserContext p
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk riportaStatoPrecedenteConBulk(it.cnr.jada.UserContext param0,it.cnr.contab.prevent01.bulk.Pdg_esercizioBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk riportaStatoPrecedenteConBulk(it.cnr.jada.UserContext param0,it.cnr.contab.prevent01.bulk.Pdg_esercizioBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((PdGPreliminareComponent)componentObj).riportaStatoPrecedenteConBulk(param0,param1);

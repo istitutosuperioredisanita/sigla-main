@@ -29,11 +29,12 @@ import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
-import javax.ejb.EJBException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.PageContext;
+import jakarta.ejb.EJBException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.jsp.PageContext;
 
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
@@ -128,7 +129,7 @@ public void doElaboraFile(ActionContext context,VSpesometroBulk dett) throws Bus
 			   f = new File(System.getProperty("tmp.dir.SIGLAWeb")+"/tmp/",
 				   ente.getCodice_fiscale()+"_"+//codice fiscale
 				   Formatta((CNRUserContext.getEsercizio(context.getUserContext())).toString().substring(2),"D",2,"0")+		   
-				   "M"+Formatta(new Integer(dett.getMese()).toString(),"D",2,"0")+
+				   "M"+Formatta(Integer.valueOf(dett.getMese()).toString(),"D",2,"0")+
 				   ".ccf");
 			else
 				f = new File(System.getProperty("tmp.dir.SIGLAWeb")+"/tmp/",
@@ -143,7 +144,7 @@ public void doElaboraFile(ActionContext context,VSpesometroBulk dett) throws Bus
 	      AnagraficoBulk resp=null; 
     if (!lista.isEmpty()){
   		try {
-  			resp = (AnagraficoBulk)sess.findByPrimaryKey(context.getUserContext(), new AnagraficoBulk(new Integer(config.getVal03())));
+  			resp = (AnagraficoBulk)sess.findByPrimaryKey(context.getUserContext(), new AnagraficoBulk(Integer.valueOf(config.getVal03())));
   		} catch (RemoteException e) {
   			throw new ComponentException(e);
   		} catch (EJBException e) {
@@ -229,7 +230,7 @@ public void doElaboraFile(ActionContext context,VSpesometroBulk dett) throws Bus
     	    
     	   bw.append((CNRUserContext.getEsercizio(context.getUserContext())).toString());
     		if (dett.getMese()!=null)
-    			bw.append(Formatta(new Integer(dett.getMese()).toString(),"D",2,"0"));//Mese (Da valorizzare solo per se presenti ACQUISTI DA SAN MARINO
+    			bw.append(Formatta(Integer.valueOf(dett.getMese()).toString(),"D",2,"0"));//Mese (Da valorizzare solo per se presenti ACQUISTI DA SAN MARINO
     		else	
     			bw.append(Formatta(null,"D",2,"0"));
     	    // Da verificare
@@ -242,9 +243,9 @@ public void doElaboraFile(ActionContext context,VSpesometroBulk dett) throws Bus
 //		   bw.append(resp.getTi_sesso());//sesso rappresentante     ???????????????
 //		   GregorianCalendar dataNascita = new GregorianCalendar();
 //		   dataNascita.setTime(new Date(resp.getDt_nascita().getTime()));
-//		   bw.append(Formatta(new Integer(dataNascita.get(GregorianCalendar.DAY_OF_MONTH)).toString(),"D",2,"0"));
-//		   bw.append(Formatta(new Integer(dataNascita.get(GregorianCalendar.MONTH)+1).toString(),"D",2,"0"));
-//		   bw.append(Formatta(new Integer(dataNascita.get(GregorianCalendar.YEAR)).toString(),"D",4,"0"));
+//		   bw.append(Formatta(Integer.valueOf(dataNascita.get(GregorianCalendar.DAY_OF_MONTH)).toString(),"D",2,"0"));
+//		   bw.append(Formatta(Integer.valueOf(dataNascita.get(GregorianCalendar.MONTH)+1).toString(),"D",2,"0"));
+//		   bw.append(Formatta(Integer.valueOf(dataNascita.get(GregorianCalendar.YEAR)).toString(),"D",4,"0"));
 //		   ComuneBulk comune = (ComuneBulk)sess.findByPrimaryKey(context.getUserContext(), new ComuneBulk(resp.getComune_nascita().getPg_comune()));
 //		   if(comune==null)
 //			   throw new ApplicationException("Dati anagrafici del rappresentante non completi!");     
@@ -306,9 +307,9 @@ public void doElaboraFile(ActionContext context,VSpesometroBulk dett) throws Bus
 							   num_col=Formatta(det.getNome(),"S",16," ",bw,"BL001002",num_col);
 							   num_col=Formatta(null,"D",8," ",bw,"BL001003",num_col);//completamento 16 caratteri non necessari per data
 							   dataNascita.setTime(new Date(det.getDtNascita().getTime()));
-							   bw.append(Formatta(new Integer(dataNascita.get(GregorianCalendar.DAY_OF_MONTH)).toString(),"D",2,"0"));
-							   bw.append(Formatta(new Integer(dataNascita.get(GregorianCalendar.MONTH)+1).toString(),"D",2,"0"));
-							   bw.append(Formatta(new Integer(dataNascita.get(GregorianCalendar.YEAR)).toString(),"D",4,"0"));
+							   bw.append(Formatta(Integer.valueOf(dataNascita.get(GregorianCalendar.DAY_OF_MONTH)).toString(),"D",2,"0"));
+							   bw.append(Formatta(Integer.valueOf(dataNascita.get(GregorianCalendar.MONTH)+1).toString(),"D",2,"0"));
+							   bw.append(Formatta(Integer.valueOf(dataNascita.get(GregorianCalendar.YEAR)).toString(),"D",4,"0"));
 							   num_col=Formatta(det.getStatoNascita(),"S",16," ",bw,"BL001004",num_col);
 							   num_col=Formatta(det.getProvincia(),"S",16," ",bw,"BL001005",num_col);
 							   num_col=Formatta(det.getCodiceStatoEstero(),"D",16," ",bw,"BL001006",num_col);
@@ -441,7 +442,7 @@ public void doElaboraFile(ActionContext context,VSpesometroBulk dett) throws Bus
 	    		if(lista!=null && lista.size()!=0){
 	    			bw.append("TA003001");
 	    			// numero contraparti blacklist BL002002
-	    			bw.append(Formatta(new Integer(lista.size()).toString(),"D",16," "));
+	    			bw.append(Formatta(Integer.valueOf(lista.size()).toString(),"D",16," "));
 	    			num_col++;
 	    		} 
 	    	}
@@ -472,7 +473,7 @@ public void doElaboraFile(ActionContext context,VSpesometroBulk dett) throws Bus
 		   bw.append("Z"); // tipo record
 		   bw.append(Formatta(null,"S",14," "));// Filler
 		   bw.append(Formatta("1","D",9,"0"));// N° record tipo B
-		  // bw.append(Formatta(new Integer(lista.size()).toString(),"D",9,"0"));// N° record tipo C
+		  // bw.append(Formatta(Integer.valueOf(lista.size()).toString(),"D",9,"0"));// N° record tipo C
 		   bw.append(Formatta(conta.toString(),"D",9,"0"));// N° record tipo C
 		   bw.append(Formatta("0","D",9,"0"));// N° record tipo D
 		   bw.append(Formatta("1","D",9,"0"));// N° record tipo E

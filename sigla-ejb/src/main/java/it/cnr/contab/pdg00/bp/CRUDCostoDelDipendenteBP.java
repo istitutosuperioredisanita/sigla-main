@@ -57,7 +57,7 @@ protected void init(it.cnr.jada.action.Config config,it.cnr.jada.action.ActionCo
 public OggettoBulk initializeModelForSearch(ActionContext context,OggettoBulk bulk) throws BusinessProcessException {
 	V_dipendenteBulk dipendente = (V_dipendenteBulk)super.initializeModelForSearch(context,bulk);
 	if (!mensile)
-		dipendente.setMese(new Integer(0));
+		dipendente.setMese(Integer.valueOf(0));
 	return dipendente;
 }
 public boolean isDeleteButtonHidden() {

@@ -226,7 +226,7 @@ protected void init(it.cnr.jada.action.Config config,it.cnr.jada.action.ActionCo
 		Timestamp today = it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
 		java.util.Calendar calendar = java.util.GregorianCalendar.getInstance();
 		calendar.setTime( today );
-		Integer solaris = new Integer(calendar.get(java.util.Calendar.YEAR));
+		Integer solaris = Integer.valueOf(calendar.get(java.util.Calendar.YEAR));
 		Integer esercizioScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext());
 		setRibaltato(initRibaltato(context));
 		setAnnoSolareInScrivania(solaris.compareTo(esercizioScrivania)==0);
@@ -237,7 +237,7 @@ protected void init(it.cnr.jada.action.Config config,it.cnr.jada.action.ActionCo
 			{
 				ObbligazioneComponentSession session = createObbligazioneComponentSession();
 				EsercizioBulk es = session.verificaStatoEsercizio(context.getUserContext(), cds, esercizioScrivania);
-				EsercizioBulk esSucc = session.verificaStatoEsercizio(context.getUserContext(), cds, new Integer(esercizioScrivania.intValue()+1));
+				EsercizioBulk esSucc = session.verificaStatoEsercizio(context.getUserContext(), cds, Integer.valueOf(esercizioScrivania.intValue()+1));
 
 				setSelectedAnnoPrec(es.getSt_apertura_chiusura().equals(es.STATO_APERTO) &&
 						esSucc.getSt_apertura_chiusura().equals(es.STATO_APERTO));
@@ -255,7 +255,7 @@ protected void init(it.cnr.jada.action.Config config,it.cnr.jada.action.ActionCo
 		}
 		else
 			setRiportaAvantiIndietro(false);
-	} catch (javax.ejb.EJBException e) 
+	} catch (jakarta.ejb.EJBException e)
 	{
 		setAnnoSolareInScrivania(false);
 	} catch (ComponentException e) {

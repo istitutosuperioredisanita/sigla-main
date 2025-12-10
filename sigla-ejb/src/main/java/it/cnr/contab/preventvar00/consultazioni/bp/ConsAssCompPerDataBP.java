@@ -51,11 +51,11 @@ public class ConsAssCompPerDataBP extends BulkBP
 	public static final String LIV_BASEVARMENO= "VARMENO";
 	
 	
-	public ConsAssCompPerDataComponentSession createConsAssCompPerDataComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public ConsAssCompPerDataComponentSession createConsAssCompPerDataComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		return (ConsAssCompPerDataComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPREVENTVAR00_EJB_ConsAssCompPerDataComponentSession", ConsAssCompPerDataComponentSession.class);
 	}
 	
-	public ConsAssCompPerDataComponentSession createComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public ConsAssCompPerDataComponentSession createComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		return (ConsAssCompPerDataComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPREVENTVAR00_EJB_ConsAssCompPerDataComponentSession", ConsAssCompPerDataComponentSession.class);
 	}
 	

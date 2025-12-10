@@ -161,7 +161,7 @@ public class Chiusura_anno_inventarioBulk extends Chiusura_anno_inventarioBase {
 	}
 	public void caricaAnniList(UserContext usercontext) {
 		for (int i = CNRUserContext.getEsercizio(usercontext).intValue(); i>=2023; i--)
-			getAnniList().put(new Integer(i), new Integer(i));
+			getAnniList().put(Integer.valueOf(i), Integer.valueOf(i));
 	}
 
 

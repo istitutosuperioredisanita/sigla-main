@@ -51,8 +51,8 @@ public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,Og
 	try{
 		Ordine_dettBulk dett = (Ordine_dettBulk)bulk;
 
-		long pg = ((Long)findAndLockMax(dett,"pg_dettaglio",new Long(0))).longValue() + 1;
-		dett.setPg_dettaglio(new Long(pg));
+		long pg = ((Long)findAndLockMax(dett,"pg_dettaglio",Long.valueOf(0))).longValue() + 1;
+		dett.setPg_dettaglio(Long.valueOf(pg));
 
 	} catch(it.cnr.jada.bulk.BusyResourceException e) {
 		throw new it.cnr.jada.persistency.PersistencyException(e);

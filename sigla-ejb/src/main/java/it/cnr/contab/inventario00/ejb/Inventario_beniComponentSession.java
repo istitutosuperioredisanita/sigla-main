@@ -23,10 +23,8 @@ import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.persistency.PersistencyException;
 
-import javax.ejb.Remote;
-import javax.xml.registry.infomodel.User;
+import jakarta.ejb.Remote;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 

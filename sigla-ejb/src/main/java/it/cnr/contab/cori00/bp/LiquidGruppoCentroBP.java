@@ -52,7 +52,7 @@ public it.cnr.jada.util.jsp.Button[] createToolbar() {
 /**
  * Crea la CRUDComponentSession da usare per effettuare le operazioni di CRUD
  */
-public CRUDComponentSession createComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+public CRUDComponentSession createComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 	return (CRUDComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB(componentSessioneName,CRUDComponentSession.class);
 }
 public it.cnr.jada.util.RemoteIterator find(it.cnr.jada.action.ActionContext context, it.cnr.jada.persistency.sql.CompoundFindClause clause, it.cnr.jada.bulk.OggettoBulk model) throws it.cnr.jada.action.BusinessProcessException {
@@ -110,7 +110,7 @@ public void ribalta(ActionContext context,Liquid_gruppo_centroBulk liquid) throw
 				break;
 			}
 		}
-	}catch(javax.ejb.EJBException e){
+	}catch(jakarta.ejb.EJBException e){
 		throw handleException(e);
 	} catch(java.rmi.RemoteException re){
 		throw handleException(re);
@@ -146,7 +146,7 @@ public void cambiaStato(ActionContext context,Liquid_gruppo_centroBulk liquid) t
 				break;
 			}
 		}
-	}catch(javax.ejb.EJBException e){
+	}catch(jakarta.ejb.EJBException e){
 		throw handleException(e);
 	} catch(java.rmi.RemoteException re){
 		throw handleException(re);
@@ -158,7 +158,7 @@ public boolean esisteRiga(ActionContext context,Liquid_gruppo_centroBulk liquid)
 	try{
 		Liquid_coriComponentSession sess = (Liquid_coriComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCORI00_EJB_Liquid_coriComponentSession",Liquid_coriComponentSession.class);
 		return sess.esisteRiga(context.getUserContext(), liquid);
-	}catch(javax.ejb.EJBException e){
+	}catch(jakarta.ejb.EJBException e){
 		throw handleException(e);
 	} catch(java.rmi.RemoteException re){
 		throw handleException(re);

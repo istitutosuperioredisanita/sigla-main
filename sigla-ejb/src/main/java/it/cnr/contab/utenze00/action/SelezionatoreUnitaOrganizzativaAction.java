@@ -27,7 +27,7 @@ import it.cnr.jada.bulk.*;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
-import javax.servlet.http.HttpSessionBindingEvent;
+import jakarta.servlet.http.HttpSessionBindingEvent;
 
 /**
  * Action di gestione della selezione di unità organizzative di scrivania
@@ -91,7 +91,7 @@ public Forward doSelezionaEsercizio(ActionContext context) {
  * @throws EJBException	Se si verifica qualche eccezione applicativa per cui non è possibile effettuare l'operazione
  * @throws RemoteException	Se si verifica qualche eccezione di sistema per cui non è possibile effettuare l'operazione
  */
-public static GestioneLoginComponentSession getComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+public static GestioneLoginComponentSession getComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 	return (GestioneLoginComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRUTENZE00_NAV_EJB_GestioneLoginComponentSession",GestioneLoginComponentSession.class);
 }
 }

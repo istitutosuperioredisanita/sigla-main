@@ -17,8 +17,8 @@
 
 package it.cnr.contab.pdg00.ejb;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 @Stateless(name="CNRPDG00_EJB_PdGCostiAltruiComponentSession")
 public class PdGCostiAltruiComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements PdGCostiAltruiComponentSession {
@@ -26,7 +26,5 @@ public class PdGCostiAltruiComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.pdg00.comp.PdGCostiAltruiComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new PdGCostiAltruiComponentSessionBean();
-}
+
 }

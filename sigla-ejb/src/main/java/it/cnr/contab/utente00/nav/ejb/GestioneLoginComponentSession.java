@@ -24,7 +24,7 @@ import it.cnr.contab.utenze00.bulk.SessionTraceBulk;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.jada.UserContext;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 import java.rmi.RemoteException;
 import java.security.Principal;
 import java.util.List;

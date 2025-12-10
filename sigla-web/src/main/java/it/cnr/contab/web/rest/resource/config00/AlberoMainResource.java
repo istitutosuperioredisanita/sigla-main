@@ -21,19 +21,17 @@ import it.cnr.contab.service.AccessoService;
 import it.cnr.contab.service.AlberoMainService;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.local.config00.AlberoMainLocal;
 import it.cnr.contab.web.rest.resource.util.AbstractResource;
-import it.cnr.jada.UserContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.Stateless;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ejb.Stateless;
 import java.util.Optional;
 
 @Stateless

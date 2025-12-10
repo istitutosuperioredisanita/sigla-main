@@ -22,7 +22,7 @@ import it.cnr.contab.anagraf00.core.bulk.Modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.jada.bulk.*;
 
-import javax.persistence.Transient;
+import jakarta.persistence.Transient;
 import java.util.*;
 
 public class V_obbligazioneBulk extends V_obbligazioneBase {
@@ -93,7 +93,7 @@ public java.lang.Integer getPriorita() {
 public java.util.Dictionary getPrioritaKeys() {
 	it.cnr.jada.util.OrderedHashtable prioritaKeys = new it.cnr.jada.util.OrderedHashtable();
 	for ( int i = 1; i <= nrImpegni; i ++ )
-		prioritaKeys.put( new Integer( i ),new Integer( i ) );
+		prioritaKeys.put( Integer.valueOf( i ),Integer.valueOf( i ) );
 	return prioritaKeys;
 }
 /**

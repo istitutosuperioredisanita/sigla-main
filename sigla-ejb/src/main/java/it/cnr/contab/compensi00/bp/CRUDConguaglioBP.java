@@ -479,7 +479,7 @@ public void doValidaDatiEsterni(ActionContext context) throws ApplicationExcepti
 		    }
 		    */
 		    if (conguaglio.getNumero_giorni_esterno()!= null &&
-		    	conguaglio.getNumero_giorni_esterno().compareTo(new Long(365))>0)
+		    	conguaglio.getNumero_giorni_esterno().compareTo(Long.valueOf(365))>0)
 		    {
 		    	throw new it.cnr.jada.comp.ApplicationException("Dati Esterni: Il numero dei giorni di spettanza non può essere superiore a 365.");
 		    }

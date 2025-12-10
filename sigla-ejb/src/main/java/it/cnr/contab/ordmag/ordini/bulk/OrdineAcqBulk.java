@@ -1006,7 +1006,7 @@ public class OrdineAcqBulk extends OrdineAcqBase
         java.sql.Timestamp dataReg = null;
         try {
             dataReg = it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw new it.cnr.jada.DetailedRuntimeException(e);
         }
         setCdCds(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context).getCd_unita_padre());
@@ -1114,7 +1114,7 @@ public class OrdineAcqBulk extends OrdineAcqBase
             int prog = ((OrdineAcqRigaBulk) i.next()).getRiga();
             if (prog > max) max = prog;
         }
-        nuovoRigo.setRiga(new Integer(max + 1));
+        nuovoRigo.setRiga(Integer.valueOf(max + 1));
         righeOrdineColl.add(nuovoRigo);
         return righeOrdineColl.size() - 1;
     }

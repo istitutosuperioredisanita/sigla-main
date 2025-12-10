@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.pdg00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.anagraf00.comp.AnagraficoComponent;
 import it.cnr.contab.cori00.comp.Liquid_coriComponent;
@@ -34,10 +34,8 @@ public class ElaboraFileStipendiComponentSessionBean extends it.cnr.jada.ejb.CRU
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.pdg00.comp.ElaboraFileStipendiComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new ElaboraFileStipendiComponentSessionBean();
-	}
-	public V_stipendi_cofi_dettBulk cercaFileStipendi(it.cnr.jada.UserContext param0,V_stipendi_cofi_dettBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+	public V_stipendi_cofi_dettBulk cercaFileStipendi(it.cnr.jada.UserContext param0,V_stipendi_cofi_dettBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			V_stipendi_cofi_dettBulk result = ((ElaboraFileStipendiComponent)componentObj).cercaFileStipendi(param0,param1);
@@ -55,7 +53,7 @@ public class ElaboraFileStipendiComponentSessionBean extends it.cnr.jada.ejb.CRU
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public V_stipendi_cofi_dettBulk elaboraFile(it.cnr.jada.UserContext param0,V_stipendi_cofi_dettBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public V_stipendi_cofi_dettBulk elaboraFile(it.cnr.jada.UserContext param0,V_stipendi_cofi_dettBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			V_stipendi_cofi_dettBulk result = ((ElaboraFileStipendiComponent)componentObj).elaboraFile(param0,param1);
@@ -73,7 +71,7 @@ public class ElaboraFileStipendiComponentSessionBean extends it.cnr.jada.ejb.CRU
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public V_stipendi_cofi_dettBulk annullaElaborazione(it.cnr.jada.UserContext param0,V_stipendi_cofi_dettBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public V_stipendi_cofi_dettBulk annullaElaborazione(it.cnr.jada.UserContext param0,V_stipendi_cofi_dettBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			V_stipendi_cofi_dettBulk result = ((ElaboraFileStipendiComponent)componentObj).annullaElaborazione(param0,param1);
@@ -91,7 +89,7 @@ public class ElaboraFileStipendiComponentSessionBean extends it.cnr.jada.ejb.CRU
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.jada.bulk.OggettoBulk cercaBatch(it.cnr.jada.UserContext param0,V_stipendi_cofi_dettBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.jada.bulk.OggettoBulk cercaBatch(it.cnr.jada.UserContext param0,V_stipendi_cofi_dettBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 			try {
 				it.cnr.jada.bulk.OggettoBulk result = ((ElaboraFileStipendiComponent)componentObj).cercaBatch(param0,param1);
@@ -109,7 +107,7 @@ public class ElaboraFileStipendiComponentSessionBean extends it.cnr.jada.ejb.CRU
 				throw uncaughtError(param0,componentObj,e);
 			}
 	}
-	public V_cnr_estrazione_coriBulk cercaCnrEstrazioneCori(it.cnr.jada.UserContext param0,V_cnr_estrazione_coriBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public V_cnr_estrazione_coriBulk cercaCnrEstrazioneCori(it.cnr.jada.UserContext param0,V_cnr_estrazione_coriBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			V_cnr_estrazione_coriBulk result = ((ElaboraFileStipendiComponent)componentObj).cercaCnrEstrazioneCori(param0,param1);
@@ -127,7 +125,7 @@ public class ElaboraFileStipendiComponentSessionBean extends it.cnr.jada.ejb.CRU
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public V_cnr_estrazione_coriBulk elaboraStralcioMensile(it.cnr.jada.UserContext param0,V_cnr_estrazione_coriBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public V_cnr_estrazione_coriBulk elaboraStralcioMensile(it.cnr.jada.UserContext param0,V_cnr_estrazione_coriBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			V_cnr_estrazione_coriBulk result = ((ElaboraFileStipendiComponent)componentObj).elaboraStralcioMensile(param0,param1);
@@ -145,7 +143,7 @@ public class ElaboraFileStipendiComponentSessionBean extends it.cnr.jada.ejb.CRU
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public boolean esisteStralcioNegativo(it.cnr.jada.UserContext param0,V_cnr_estrazione_coriBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public boolean esisteStralcioNegativo(it.cnr.jada.UserContext param0,V_cnr_estrazione_coriBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((ElaboraFileStipendiComponent)componentObj).esisteStralcioNegativo(param0,param1);

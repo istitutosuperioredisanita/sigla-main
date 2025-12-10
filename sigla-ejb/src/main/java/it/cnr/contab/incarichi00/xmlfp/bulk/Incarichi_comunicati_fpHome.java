@@ -42,8 +42,8 @@ public class Incarichi_comunicati_fpHome extends BulkHome {
 		try {
 			if (((Incarichi_comunicati_fpBulk)bulk).getPg_record()==null) {
 				((Incarichi_comunicati_fpBulk)bulk).setPg_record(
-						new Long(
-						((Long)findAndLockMax( bulk, "pg_record", new Long(0) )).longValue()+1
+						Long.valueOf(
+						((Long)findAndLockMax( bulk, "pg_record", Long.valueOf(0) )).longValue()+1
 					)
 				);
 			}

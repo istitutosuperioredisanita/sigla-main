@@ -17,8 +17,8 @@
 
 package it.cnr.contab.ordmag.ejb;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.ordmag.anag00.NumerazioneMagBulk;
 import it.cnr.contab.ordmag.anag00.NumerazioneOrdBulk;
@@ -30,10 +30,8 @@ public class NumeratoriOrdMagComponentSessionBean extends it.cnr.jada.ejb.CRUDCo
 	public void ejbCreate() {
 		componentObj = new NumeratoriOrdMagComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new NumeratoriOrdMagComponentSessionBean();
-	}
-	public java.lang.Long getNextPG(it.cnr.jada.UserContext param0,NumerazioneMagBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public java.lang.Long getNextPG(it.cnr.jada.UserContext param0,NumerazioneMagBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.lang.Long result = ((NumeratoriOrdMagComponent)componentObj).getNextPG(param0,param1);
@@ -51,7 +49,7 @@ public class NumeratoriOrdMagComponentSessionBean extends it.cnr.jada.ejb.CRUDCo
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.lang.Integer getNextPG(it.cnr.jada.UserContext param0,NumerazioneOrdBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public java.lang.Integer getNextPG(it.cnr.jada.UserContext param0,NumerazioneOrdBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.lang.Integer result = ((NumeratoriOrdMagComponent)componentObj).getNextPG(param0,param1);

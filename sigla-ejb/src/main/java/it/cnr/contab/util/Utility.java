@@ -64,6 +64,7 @@ import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.ejb.AdminSession;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+import jakarta.servlet.ServletException;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,8 +72,8 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 
-import javax.ejb.EJBException;
-import javax.servlet.ServletException;
+import jakarta.ejb.EJBException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -323,7 +324,7 @@ public final class Utility {
 		return new Timestamp(cal.getTime().getTime());
 	}
 
-	public static synchronized void loadPersistentInfos() throws ServletException{
+	public static synchronized void loadPersistentInfos() throws jakarta.servlet.ServletException {
 		ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(true);
 		provider.addIncludeFilter(new AssignableTypeFilter(OggettoBulk.class));
 		AdminSession adminSession = (AdminSession) EJBCommonServices.createEJB("JADAEJB_AdminSession");
@@ -493,7 +494,7 @@ public final class Utility {
 	public static Parametri_cnrComponentSession createParametriCnrComponentSession()throws EJBException, RemoteException {
 		return (Parametri_cnrComponentSession)EJBCommonServices.createEJB("CNRCONFIG00_EJB_Parametri_cnrComponentSession", Parametri_cnrComponentSession.class);
 	}
-	public static Classificazione_vociComponentSession createClassificazioneVociComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public static Classificazione_vociComponentSession createClassificazioneVociComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		return (Classificazione_vociComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Classificazione_vociComponentSession",Classificazione_vociComponentSession.class);
 	}
 	/**
@@ -514,53 +515,53 @@ public final class Utility {
 	/**
 	 * Crea la CdrComponentSession da usare per effettuare operazioni
 	 */
-	public static it.cnr.contab.config00.ejb.CDRComponentSession createCdrComponentSession() throws javax.ejb.EJBException{
+	public static it.cnr.contab.config00.ejb.CDRComponentSession createCdrComponentSession() throws jakarta.ejb.EJBException{
 		return (it.cnr.contab.config00.ejb.CDRComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_CDRComponentSession", it.cnr.contab.config00.ejb.CDRComponentSession.class);
 	}
 	/**
 	 * Crea la CdrComponentSession da usare per effettuare operazioni
 	 */
-	public static PdgAggregatoModuloComponentSession createPdgAggregatoModuloComponentSession() throws javax.ejb.EJBException {
+	public static PdgAggregatoModuloComponentSession createPdgAggregatoModuloComponentSession() throws jakarta.ejb.EJBException {
 		return (PdgAggregatoModuloComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPREVENT01_EJB_PdgAggregatoModuloComponentSession", PdgAggregatoModuloComponentSession.class);
 	}
 
 	/**
 	 * Crea la PdgContrSpeseComponentSession da usare per effettuare operazioni
 	 */
-	public static PdgContrSpeseComponentSession createPdgContrSpeseComponentSession() throws javax.ejb.EJBException{
+	public static PdgContrSpeseComponentSession createPdgContrSpeseComponentSession() throws jakarta.ejb.EJBException{
 		return (PdgContrSpeseComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPREVENT01_EJB_PdgContrSpeseComponentSession", PdgContrSpeseComponentSession.class);
 	}
 	/**
 	 * Crea la Local CdrComponentSession da usare per effettuare operazioni
 	 */
-	public static PdGVariazioniComponentSession createPdGVariazioniComponentSession() throws javax.ejb.EJBException{
+	public static PdGVariazioniComponentSession createPdGVariazioniComponentSession() throws jakarta.ejb.EJBException{
 		return (PdGVariazioniComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPDG00_EJB_PdGVariazioniComponentSession", PdGVariazioniComponentSession.class);
 	}
 	/**
 	 * Crea la Local MandatoComponentSession da usare per effettuare operazioni
 	 */
-	public static MandatoComponentSession createMandatoComponentSession() throws javax.ejb.EJBException{
+	public static MandatoComponentSession createMandatoComponentSession() throws jakarta.ejb.EJBException{
 		return (MandatoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_MandatoComponentSession", MandatoComponentSession.class);
 	}
 	/**
 	 * Crea la Local ReversaleComponentSession da usare per effettuare operazioni
 	 */
-	public static ReversaleComponentSession createReversaleComponentSession() throws javax.ejb.EJBException{
+	public static ReversaleComponentSession createReversaleComponentSession() throws jakarta.ejb.EJBException{
 		return (ReversaleComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_ReversaleComponentSession", ReversaleComponentSession.class);
 	}
 	/**
 	 * Crea la Local Unita_organizzativaComponentSession da usare per effettuare operazioni
 	 */
-	public static Unita_organizzativaComponentSession createUnita_organizzativaComponentSession() throws javax.ejb.EJBException{
+	public static Unita_organizzativaComponentSession createUnita_organizzativaComponentSession() throws jakarta.ejb.EJBException{
 		return (Unita_organizzativaComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Unita_organizzativaComponentSession", Unita_organizzativaComponentSession.class);
 	}
-	public static UtenteComponentSession createUtenteComponentSession() throws javax.ejb.EJBException{
+	public static UtenteComponentSession createUtenteComponentSession() throws jakarta.ejb.EJBException{
 		return (UtenteComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRUTENZE00_EJB_UtenteComponentSession", UtenteComponentSession.class);
 	}
 	/**
 	 * Crea la Local TerzoComponentSession da usare per effettuare operazioni
 	 */
-	public static TerzoComponentSession createTerzoComponentSession() throws javax.ejb.EJBException{
+	public static TerzoComponentSession createTerzoComponentSession() throws jakarta.ejb.EJBException{
 		return (TerzoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRANAGRAF00_EJB_TerzoComponentSession", TerzoComponentSession.class);
 	}
 	/**
@@ -584,13 +585,13 @@ public final class Utility {
 	/**
 	 * Crea la Remote ProgettoGecoComponentSession da usare per effettuare operazioni
 	 */
-	public static ProgettoGecoComponentSession createProgettoGecoComponentSession() throws javax.ejb.EJBException{
+	public static ProgettoGecoComponentSession createProgettoGecoComponentSession() throws jakarta.ejb.EJBException{
 		return (ProgettoGecoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPROGETTIRIC00_EJB_GECO_ProgettoGecoComponentSession");
 	}
 	public static Parametri_cdsComponentSession createParametriCdsComponentSession()throws EJBException, RemoteException {
 		return (Parametri_cdsComponentSession)EJBCommonServices.createEJB("CNRCONFIG00_EJB_Parametri_cdsComponentSession", Parametri_cdsComponentSession.class);
 	}
-	public static it.cnr.contab.anagraf00.ejb.AbiCabComponentSession createAbiCabComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public static it.cnr.contab.anagraf00.ejb.AbiCabComponentSession createAbiCabComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		return (it.cnr.contab.anagraf00.ejb.AbiCabComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRANAGRAF00_EJB_AbiCabComponentSession", it.cnr.contab.anagraf00.ejb.AbiCabComponentSession.class);
 	}
 	public static Parametri_enteComponentSession createParametriEnteComponentSession()throws EJBException, RemoteException {
@@ -605,131 +606,131 @@ public final class Utility {
 	/**
 	 * Crea la Local ReversaleComponentSession da usare per effettuare operazioni
 	 */
-	public static DistintaCassiereComponentSession createDistintaCassiereComponentSession() throws javax.ejb.EJBException{
+	public static DistintaCassiereComponentSession createDistintaCassiereComponentSession() throws jakarta.ejb.EJBException{
 		return (DistintaCassiereComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_DistintaCassiereComponentSession", DistintaCassiereComponentSession.class);
 	}
-	public static LiquidIvaInterfComponentSession createLiquidIvaInterfComponentSession() throws javax.ejb.EJBException{
+	public static LiquidIvaInterfComponentSession createLiquidIvaInterfComponentSession() throws jakarta.ejb.EJBException{
 		return (LiquidIvaInterfComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRGESTIVA00_EJB_LiquidIvaInterfComponentSession", LiquidIvaInterfComponentSession.class);
 	}
-	public static ProgettoRicercaComponentSession createProgettoRicercaComponentSession() throws javax.ejb.EJBException{
+	public static ProgettoRicercaComponentSession createProgettoRicercaComponentSession() throws jakarta.ejb.EJBException{
 		return (ProgettoRicercaComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPROGETTIRIC00_EJB_ProgettoRicercaComponentSession", ProgettoRicercaComponentSession.class);
 	}
-	public static VariazioniStanziamentoResiduoComponentSession createVariazioniStanziamentoResiduoComponentSession() throws javax.ejb.EJBException{
+	public static VariazioniStanziamentoResiduoComponentSession createVariazioniStanziamentoResiduoComponentSession() throws jakarta.ejb.EJBException{
 		return (VariazioniStanziamentoResiduoComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRVARSTANZ00_EJB_VariazioniStanziamentoResiduoComponentSession", VariazioniStanziamentoResiduoComponentSession.class);
 	}
-	public static MovimentiMagComponentSession createMovimentiMagComponentSession() throws javax.ejb.EJBException{
+	public static MovimentiMagComponentSession createMovimentiMagComponentSession() throws jakarta.ejb.EJBException{
 		return (MovimentiMagComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRORDMAG00_EJB_MovimentiMagComponentSession", MovimentiMagComponentSession.class);
 	}
-	public static OrdineAcqComponentSession createOrdineAcqComponentSession() throws javax.ejb.EJBException{
+	public static OrdineAcqComponentSession createOrdineAcqComponentSession() throws jakarta.ejb.EJBException{
 		return (OrdineAcqComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRORDMAG00_EJB_OrdineAcqComponentSession", OrdineAcqComponentSession.class);
 	}
-	public static TransitoBeniOrdiniComponentSession createTransitoBeniOrdiniComponentSession() throws javax.ejb.EJBException{
+	public static TransitoBeniOrdiniComponentSession createTransitoBeniOrdiniComponentSession() throws jakarta.ejb.EJBException{
 		return (TransitoBeniOrdiniComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_TransitoBeniOrdiniComponentSession", TransitoBeniOrdiniComponentSession.class);
 	}
-	public static NumeratoriOrdMagComponentSession createNumeratoriOrdMagComponentSession() throws javax.ejb.EJBException{
+	public static NumeratoriOrdMagComponentSession createNumeratoriOrdMagComponentSession() throws jakarta.ejb.EJBException{
 		return (NumeratoriOrdMagComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRORDMAG_EJB_NumeratoriOrdMagComponentSession", NumeratoriOrdMagComponentSession.class);
 	}
-	public static AttoBolloComponentSession createAttoBolloComponentSession() throws javax.ejb.EJBException{
+	public static AttoBolloComponentSession createAttoBolloComponentSession() throws jakarta.ejb.EJBException{
 		return (AttoBolloComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRBOLLO00_EJB_AttoBolloComponentSession", AttoBolloComponentSession.class);
 	}
-	public static TipoAttoBolloComponentSession createTipoAttoBolloComponentSession() throws javax.ejb.EJBException{
+	public static TipoAttoBolloComponentSession createTipoAttoBolloComponentSession() throws jakarta.ejb.EJBException{
 		return (TipoAttoBolloComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRBOLLO00_EJB_TipoAttoBolloComponentSession", TipoAttoBolloComponentSession.class);
 	}
-	public static RuoloComponentSession getRuoloComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public static RuoloComponentSession getRuoloComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 		return (RuoloComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRUTENZE00_EJB_RuoloComponentSession",RuoloComponentSession.class);
 	}
-	public static CRUDConfigAssEvoldEvnewComponentSession createCRUDConfigAssEvoldEvnewComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public static CRUDConfigAssEvoldEvnewComponentSession createCRUDConfigAssEvoldEvnewComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 		return (CRUDConfigAssEvoldEvnewComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_CRUDConfigAssEvoldEvnewComponentSession",CRUDConfigAssEvoldEvnewComponentSession.class);
 	}
-	public static RimodulaProgettoRicercaComponentSession createRimodulaProgettoRicercaComponentSession() throws javax.ejb.EJBException{
+	public static RimodulaProgettoRicercaComponentSession createRimodulaProgettoRicercaComponentSession() throws jakarta.ejb.EJBException{
 		return (RimodulaProgettoRicercaComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPROGETTIRIC00_EJB_RimodulaProgettoRicercaComponentSession", RimodulaProgettoRicercaComponentSession.class);
 	}
-	public static IncarichiEstrazioneFpComponentSession createIncarichiEstrazioneFpComponentSession() throws javax.ejb.EJBException{
+	public static IncarichiEstrazioneFpComponentSession createIncarichiEstrazioneFpComponentSession() throws jakarta.ejb.EJBException{
 		return (IncarichiEstrazioneFpComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINCARICHI00_EJB_IncarichiEstrazioneFpComponentSession", IncarichiEstrazioneFpComponentSession.class);
 	}
-	public static ScritturaPartitaDoppiaComponentSession createScritturaPartitaDoppiaComponentSession() throws javax.ejb.EJBException{
+	public static ScritturaPartitaDoppiaComponentSession createScritturaPartitaDoppiaComponentSession() throws jakarta.ejb.EJBException{
 		return (ScritturaPartitaDoppiaComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOEPCOAN00_EJB_ScritturaPartitaDoppiaComponentSession", ScritturaPartitaDoppiaComponentSession.class);
 	}
-	public static ScritturaAnaliticaComponentSession createScritturaAnaliticaComponentSession() throws javax.ejb.EJBException{
+	public static ScritturaAnaliticaComponentSession createScritturaAnaliticaComponentSession() throws jakarta.ejb.EJBException{
 		return (ScritturaAnaliticaComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOEPCOAN00_EJB_ScritturaAnaliticaComponentSession", ScritturaAnaliticaComponentSession.class);
 	}
-	public static ProposeScritturaComponentSession createProposeScritturaComponentSession() throws javax.ejb.EJBException{
+	public static ProposeScritturaComponentSession createProposeScritturaComponentSession() throws jakarta.ejb.EJBException{
 		return (ProposeScritturaComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOEPCOAN00_EJB_ProposeScritturaComponentSession", ProposeScritturaComponentSession.class);
 	}
-	public static CompensoComponentSession createCompensoComponentSession() throws javax.ejb.EJBException{
+	public static CompensoComponentSession createCompensoComponentSession() throws jakarta.ejb.EJBException{
 		return (CompensoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOMPENSI00_EJB_CompensoComponentSession", CompensoComponentSession.class);
 	}
-	public static CRUDPdgVariazioneGestionaleComponentSession createCRUDPdgVariazioneGestionaleComponentSession() throws javax.ejb.EJBException{
+	public static CRUDPdgVariazioneGestionaleComponentSession createCRUDPdgVariazioneGestionaleComponentSession() throws jakarta.ejb.EJBException{
 		return (CRUDPdgVariazioneGestionaleComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPDG01_EJB_CRUDPdgVariazioneGestionaleComponentSession", CRUDPdgVariazioneGestionaleComponentSession.class);
 	}
-	public static CRUDPdgVariazioneRigaGestComponentSession createCRUDPdgVariazioneRigaGestComponentSession() throws javax.ejb.EJBException{
+	public static CRUDPdgVariazioneRigaGestComponentSession createCRUDPdgVariazioneRigaGestComponentSession() throws jakarta.ejb.EJBException{
 		return (CRUDPdgVariazioneRigaGestComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPDG01_EJB_CRUDPdgVariazioneRigaGestComponentSession", CRUDPdgVariazioneRigaGestComponentSession.class);
 	}
-	public static DocumentoGenericoComponentSession createDocumentoGenericoComponentSession() throws javax.ejb.EJBException{
+	public static DocumentoGenericoComponentSession createDocumentoGenericoComponentSession() throws jakarta.ejb.EJBException{
 		return (DocumentoGenericoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCAMM00_EJB_DocumentoGenericoComponentSession", DocumentoGenericoComponentSession.class);
 	}
-	public static ObbligazioneComponentSession createObbligazioneComponentSession() throws javax.ejb.EJBException{
+	public static ObbligazioneComponentSession createObbligazioneComponentSession() throws jakarta.ejb.EJBException{
 		return (ObbligazioneComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_ObbligazioneComponentSession", ObbligazioneComponentSession.class);
 	}
-	public static AccertamentoPGiroComponentSession createAccertamentoPGiroComponentSession() throws javax.ejb.EJBException{
+	public static AccertamentoPGiroComponentSession createAccertamentoPGiroComponentSession() throws jakarta.ejb.EJBException{
 		return (AccertamentoPGiroComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_AccertamentoPGiroComponentSession", AccertamentoPGiroComponentSession.class);
 	}
-	public static ObbligazionePGiroComponentSession createObbligazionePGiroComponentSession() throws javax.ejb.EJBException{
+	public static ObbligazionePGiroComponentSession createObbligazionePGiroComponentSession() throws jakarta.ejb.EJBException{
 		return (ObbligazionePGiroComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_ObbligazionePGiroComponentSession", ObbligazionePGiroComponentSession.class);
 	}
-	public static ScritturaPartitaDoppiaFromDocumentoComponentSession createScritturaPartitaDoppiaFromDocumentoComponentSession() throws javax.ejb.EJBException{
+	public static ScritturaPartitaDoppiaFromDocumentoComponentSession createScritturaPartitaDoppiaFromDocumentoComponentSession() throws jakarta.ejb.EJBException{
 		return (ScritturaPartitaDoppiaFromDocumentoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOEPCOAN00_EJB_ScritturaPartitaDoppiaFromDocumentoComponentSession", ScritturaPartitaDoppiaFromDocumentoComponentSession.class);
 	}
-	public static AsyncScritturaPartitaDoppiaFromDocumentoComponentSession createAsyncScritturaPartitaDoppiaFromDocumentoComponentSession() throws javax.ejb.EJBException{
+	public static AsyncScritturaPartitaDoppiaFromDocumentoComponentSession createAsyncScritturaPartitaDoppiaFromDocumentoComponentSession() throws jakarta.ejb.EJBException{
 		return (AsyncScritturaPartitaDoppiaFromDocumentoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOEPCOAN00_EJB_AsyncScritturaPartitaDoppiaFromDocumentoComponentSession", ScritturaPartitaDoppiaFromDocumentoComponentSession.class);
 	}
-	public static AutoFatturaComponentSession createAutoFatturaComponentSession() throws javax.ejb.EJBException{
+	public static AutoFatturaComponentSession createAutoFatturaComponentSession() throws jakarta.ejb.EJBException{
 		return (AutoFatturaComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCAMM00_EJB_AutoFatturaComponentSession", AutoFatturaComponentSession.class);
 	}
-	public static AsyncPluriennaliComponentSession createAsyncPluriennaliComponentSession() throws javax.ejb.EJBException{
+	public static AsyncPluriennaliComponentSession createAsyncPluriennaliComponentSession() throws jakarta.ejb.EJBException{
 		return (AsyncPluriennaliComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOEPCOAN00_EJB_AsyncPluriennaliComponentSession", AsyncPluriennaliComponentSession.class);
 	}
 
-	public static ObbligazionePluriennaleComponentSession createObbligazionePluriennaleComponentSession() throws javax.ejb.EJBException{
+	public static ObbligazionePluriennaleComponentSession createObbligazionePluriennaleComponentSession() throws jakarta.ejb.EJBException{
 		return (ObbligazionePluriennaleComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_ObbligazionePluriennaleComponentSession", ObbligazionePluriennaleComponentSession.class);
 	}
-	public static AccertamentoPluriennaleComponentSession createAccertamentoPluriennaleComponentSession() throws javax.ejb.EJBException{
+	public static AccertamentoPluriennaleComponentSession createAccertamentoPluriennaleComponentSession() throws jakarta.ejb.EJBException{
 		return (AccertamentoPluriennaleComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_AccertamentoPluriennaleComponentSession", AccertamentoPluriennaleComponentSession.class);
 	}
-	public static AsyncScritturaPartitaDoppiaChiusuraComponentSession createAsyncScritturaPartitaDoppiaChiusuraComponentSession() throws javax.ejb.EJBException{
+	public static AsyncScritturaPartitaDoppiaChiusuraComponentSession createAsyncScritturaPartitaDoppiaChiusuraComponentSession() throws jakarta.ejb.EJBException{
 		return (AsyncScritturaPartitaDoppiaChiusuraComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOEPCOAN00_EJB_AsyncScritturaPartitaDoppiaChiusuraComponentSession", AsyncScritturaPartitaDoppiaChiusuraComponentSession.class);
 	}
-	public static ScritturaPartitaDoppiaChiusuraComponentSession createScritturaPartitaDoppiaChiusuraComponentSession() throws javax.ejb.EJBException{
+	public static ScritturaPartitaDoppiaChiusuraComponentSession createScritturaPartitaDoppiaChiusuraComponentSession() throws jakarta.ejb.EJBException{
 		return (ScritturaPartitaDoppiaChiusuraComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOEPCOAN00_EJB_ScritturaPartitaDoppiaChiusuraComponentSession", ScritturaPartitaDoppiaChiusuraComponentSession.class);
 	}
-	public static AmmortamentoBeneComponentSession createAmmortamentoBeneComponentSession() throws javax.ejb.EJBException{
+	public static AmmortamentoBeneComponentSession createAmmortamentoBeneComponentSession() throws jakarta.ejb.EJBException{
 		return (AmmortamentoBeneComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_AmmortamentoBeneComponentSession", AmmortamentoBeneComponentSession.class);
 	}
-	public static Inventario_beniComponentSession createInventario_beniComponentSession() throws javax.ejb.EJBException{
+	public static Inventario_beniComponentSession createInventario_beniComponentSession() throws jakarta.ejb.EJBException{
 		return (Inventario_beniComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_Inventario_beniComponentSession", Inventario_beniComponentSession.class);
 	}
-	public static V_AmmortamentoBeniComponentSession createV_AmmortamentoBeniComponentSession() throws javax.ejb.EJBException{
+	public static V_AmmortamentoBeniComponentSession createV_AmmortamentoBeniComponentSession() throws jakarta.ejb.EJBException{
 		return (V_AmmortamentoBeniComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_V_AmmortamentoBeniComponentSession", V_AmmortamentoBeniComponentSession.class);
 	}
-	public static Tipo_ammortamentoComponentSession createTipo_ammortamentoComponentSession() throws javax.ejb.EJBException{
+	public static Tipo_ammortamentoComponentSession createTipo_ammortamentoComponentSession() throws jakarta.ejb.EJBException{
 		return (Tipo_ammortamentoComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_Tipo_ammortamentoComponentSession", Tipo_ammortamentoComponentSession.class);
 	}
-	public static V_InventarioBeneDetComponentSession createV_InventarioBeneDetComponentSession() throws javax.ejb.EJBException{
+	public static V_InventarioBeneDetComponentSession createV_InventarioBeneDetComponentSession() throws jakarta.ejb.EJBException{
 		return (V_InventarioBeneDetComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_V_InventarioBeneDetComponentSession", V_InventarioBeneDetComponentSession.class);
 	}
-	public static V_AmmortamentoBeniDetComponentSession createV_AmmortamentoBeniDetComponentSession() throws javax.ejb.EJBException{
+	public static V_AmmortamentoBeniDetComponentSession createV_AmmortamentoBeniDetComponentSession() throws jakarta.ejb.EJBException{
 		return (V_AmmortamentoBeniDetComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_V_AmmortamentoBeniDetComponentSession", V_AmmortamentoBeniDetComponentSession.class);
 	}
-	public static AsyncAmmortamentoBeneComponentSession createAsyncAmmortamentoBeneComponentSession() throws javax.ejb.EJBException{
+	public static AsyncAmmortamentoBeneComponentSession createAsyncAmmortamentoBeneComponentSession() throws jakarta.ejb.EJBException{
 		return (AsyncAmmortamentoBeneComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_AsyncAmmortamentoBeneComponentSession", AsyncAmmortamentoBeneComponentSession.class);
 	}
-	public static ChiusuraAnnoComponentSession createChiusuraAnnoComponentSession() throws javax.ejb.EJBException{
+	public static ChiusuraAnnoComponentSession createChiusuraAnnoComponentSession() throws jakarta.ejb.EJBException{
 		return (ChiusuraAnnoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRORDMAG00_EJB_ChiusuraAnnoComponentSession", ChiusuraAnnoComponentSession.class);
 	}
-	public static AsyncConsSostitutivaComponentSession createAsyncConsSostitutivaComponentSession() throws javax.ejb.EJBException{
+	public static AsyncConsSostitutivaComponentSession createAsyncConsSostitutivaComponentSession() throws jakarta.ejb.EJBException{
 		return (AsyncConsSostitutivaComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOEPCOAN00_EJB_ConsSostitutivaComponentSession", AsyncConsSostitutivaComponentSession.class);
 	}
-    public static PDCContoAnaliticoComponentSession createPDCContoAnaliticoComponentSession() throws javax.ejb.EJBException{
+    public static PDCContoAnaliticoComponentSession createPDCContoAnaliticoComponentSession() throws jakarta.ejb.EJBException{
 		return (PDCContoAnaliticoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_PDCContoAnaliticoComponentSession", PDCContoAnaliticoComponentSession.class);
 	}
 }

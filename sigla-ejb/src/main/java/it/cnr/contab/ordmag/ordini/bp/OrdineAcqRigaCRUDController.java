@@ -24,6 +24,8 @@ import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.HttpActionContext;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 import java.util.Optional;
 
@@ -79,10 +81,10 @@ public class OrdineAcqRigaCRUDController extends it.cnr.jada.util.action.SimpleD
 
     @Override
     public void writeHTMLToolbar(
-            javax.servlet.jsp.PageContext context,
+            PageContext context,
             boolean reset,
             boolean find,
-            boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+            boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
         super.writeHTMLToolbar(context, reset, find, delete, false);
 

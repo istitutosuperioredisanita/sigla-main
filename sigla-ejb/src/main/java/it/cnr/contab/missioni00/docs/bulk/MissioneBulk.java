@@ -461,9 +461,9 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 				maxDel = prog;
 		}
 		if(max>=maxDel)
-			return new Long(max+1);
+			return Long.valueOf(max+1);
 		else
-			return new Long(maxDel+1);
+			return Long.valueOf(maxDel+1);
 	}
 	/**
 	 * Il metodo calcola tutti gli importi necessari per il consuntivo delle spese,
@@ -853,7 +853,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 				{
 					//java.sql.Timestamp data_fine_diaria_miss_estero;
 					//Configurazione_cnrComponentSession sess = (Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession");
-				    //data_fine_diaria_miss_estero = sess.getDt01(userContext, new Integer(0), "*", "DIARIA_MISS_ESTERO", "DATA_FINE");
+				    //data_fine_diaria_miss_estero = sess.getDt01(userContext, Integer.valueOf(0), "*", "DIARIA_MISS_ESTERO", "DATA_FINE");
 					//java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
 					//data_fine_diaria_miss_estero =  new java.sql.Timestamp(sdf.parse("30/05/2010").getTime());
 						if ((newTappa.getDt_inizio_tappa().compareTo(data_fine_diaria_miss_estero)>0))
@@ -2029,7 +2029,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * - la missione non e' associata ad anticipo rimborsato
 	 */
 
-	public void isDataRegistrazioneModificabile() throws it.cnr.jada.comp.ApplicationException, java.text.ParseException, javax.ejb.EJBException
+	public void isDataRegistrazioneModificabile() throws it.cnr.jada.comp.ApplicationException, java.text.ParseException, jakarta.ejb.EJBException
 	{
 		isCompensoModificabile();
 
@@ -2302,7 +2302,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	{
 		return 	v_terzo == null || v_terzo.getCrudStatus() == NORMAL || 
 				(	getPg_missione() != null && 
-				getPg_missione().compareTo(new Long(0))>0 && 
+				getPg_missione().compareTo(Long.valueOf(0))>0 && 
 				isMissioneConDocumenti() &&
 				!isEditable()
 						);
@@ -2320,7 +2320,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		//  Se la missione e' in modifica e ho dei documenti associati non posso
 		//	modificare il terzo
 		return	getPg_missione() != null && 
-				getPg_missione().compareTo(new Long(0))>0 && 
+				getPg_missione().compareTo(Long.valueOf(0))>0 && 
 				isMissioneConDocumenti() &&
 				!isEditable();
 	} 

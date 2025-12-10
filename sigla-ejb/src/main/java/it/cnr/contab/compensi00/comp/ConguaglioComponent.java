@@ -24,7 +24,7 @@ import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.GregorianCalendar;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.anagraf00.core.bulk.*;
 import it.cnr.contab.anagraf00.ejb.AnagraficoComponentSession;
@@ -104,7 +104,7 @@ private CompensoBulk aggiornaCompenso(UserContext userContext, CompensoBulk comp
 		CompensoComponentSession session = (CompensoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCOMPENSI00_EJB_CompensoComponentSession", CompensoComponentSession.class);
 		return session.inserisciCompenso(userContext, compenso);
 
-	}catch(javax.ejb.EJBException ex){
+	}catch(jakarta.ejb.EJBException ex){
 		throw handleException(ex);
 	}catch(java.rmi.RemoteException ex){
 		throw handleException(ex);
@@ -132,7 +132,7 @@ private Long assegnaProgressivo(UserContext userContext, ConguaglioBulk conguagl
 		Numerazione_doc_ammBulk numerazione = new Numerazione_doc_ammBulk(conguaglio);
 		return progressiviSession.getNextPG(userContext, numerazione);
 
-	}catch(javax.ejb.EJBException ex){
+	}catch(jakarta.ejb.EJBException ex){
 		throw handleException(conguaglio, ex);
 	}catch(java.rmi.RemoteException ex){
 		throw handleException(conguaglio, ex);
@@ -161,7 +161,7 @@ private Long assegnaProgressivoTemporaneo(UserContext userContext, ConguaglioBul
 		Numerazione_doc_ammBulk numerazione = new Numerazione_doc_ammBulk(conguaglio);
 		return session.getNextTempPG(userContext, numerazione);
 
-	}catch(javax.ejb.EJBException ex){
+	}catch(jakarta.ejb.EJBException ex){
 		throw handleException(conguaglio, ex);
 	}catch(java.rmi.RemoteException ex){
 		throw handleException(conguaglio, ex);
@@ -457,7 +457,7 @@ public ConguaglioBulk doCreaCompensoConguaglio(UserContext userContext, Conguagl
 		creaCompensoConguaglio(userContext, conguaglio);
 		return reloadConguaglio(userContext, conguaglio);
 
-	}catch(javax.ejb.EJBException ex){
+	}catch(jakarta.ejb.EJBException ex){
 		throw handleException(ex);
 	}catch(java.rmi.RemoteException ex){
 		throw handleException(ex);
@@ -765,7 +765,7 @@ private int getTipoCancellazione (UserContext aUC, OggettoBulk bulk) throws Comp
 			cs.setObject( 4, conguaglio.getEsercizio()              );
 			cs.setObject( 5, conguaglio.getPg_conguaglio()          );
 			cs.setObject( 6, conguaglio.getUser()          );			
-       		cs.setObject( 7, new Integer(rc));
+       		cs.setObject( 7, Integer.valueOf(rc));
 	        cs.registerOutParameter(7, java.sql.Types.INTEGER);
 
 			cs.executeQuery();
@@ -1229,7 +1229,7 @@ private void validaConguaglio(UserContext userContext, ConguaglioBulk conguaglio
 	try{conguaglio.validaTestata();
 	controlloRiduzioneCuneo32020(userContext, conguaglio);}
 	catch(java.text.ParseException ex){throw handleException(ex);}
-	catch(javax.ejb.EJBException ex){throw handleException(ex);}		
+	catch(jakarta.ejb.EJBException ex){throw handleException(ex);}
 
 	// Controllo Terzo
 	validaTerzo(userContext, conguaglio);
@@ -1268,7 +1268,7 @@ private void validaConguaglioPerCalcolo(UserContext userContext, ConguaglioBulk 
 	// Controllo Testata Conguaglio
 	try{conguaglio.validaTestata();}
 	catch(java.text.ParseException ex){throw handleException(ex);}
-	catch(javax.ejb.EJBException ex){throw handleException(ex);}		
+	catch(jakarta.ejb.EJBException ex){throw handleException(ex);}
 
 	// Controllo Terzo
 	validaTerzo(userContext, conguaglio);
@@ -1307,7 +1307,7 @@ private void validaCreaCompensoConguaglio(UserContext userContext, ConguaglioBul
 	// Controllo Testata Conguaglio
 	try{conguaglio.validaTestata();}
 	catch(java.text.ParseException ex){throw handleException(ex);}
-	catch(javax.ejb.EJBException ex){throw handleException(ex);}		
+	catch(jakarta.ejb.EJBException ex){throw handleException(ex);}
 
 	// Controllo Terzo
 	validaTerzo(userContext, conguaglio);
@@ -1317,7 +1317,7 @@ private void validaCreaCompensoConguaglio(UserContext userContext, ConguaglioBul
 public void validaAltriDatiEsterni(UserContext userContext, ConguaglioBulk conguaglio) throws ComponentException
 {
 	try {
-		AnagraficoBulk cnrAnag = (AnagraficoBulk)getHome(userContext,AnagraficoBulk.class).findByPrimaryKey(new AnagraficoBulk(new Integer(1)));
+		AnagraficoBulk cnrAnag = (AnagraficoBulk)getHome(userContext,AnagraficoBulk.class).findByPrimaryKey(new AnagraficoBulk(Integer.valueOf(1)));
 		if (conguaglio.getCodice_fiscale_esterno()!=null &&
 			 (conguaglio.getCodice_fiscale_esterno().equals(cnrAnag.getCodice_fiscale())||
 			  conguaglio.getCodice_fiscale_esterno().equals(cnrAnag.getPartita_iva())))

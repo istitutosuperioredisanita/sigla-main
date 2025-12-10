@@ -37,8 +37,8 @@ public class Tipologie_istatHome extends BulkHome {
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,OggettoBulk cla) throws PersistencyException {
 		try {
 			((Tipologie_istatBulk)cla).setPg_tipologia(
-				new Integer(
-					((Integer)findAndLockMax( cla, "pg_tipologia", new Integer(0) )).intValue()+1
+				Integer.valueOf(
+					((Integer)findAndLockMax( cla, "pg_tipologia", Integer.valueOf(0) )).intValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

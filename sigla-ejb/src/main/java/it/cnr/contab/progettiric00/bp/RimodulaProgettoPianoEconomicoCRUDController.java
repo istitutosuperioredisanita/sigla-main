@@ -34,6 +34,8 @@ import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationRuntimeException;
 import it.cnr.jada.util.action.SelectionIterator;
 import it.cnr.jada.util.jsp.Button;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 public class RimodulaProgettoPianoEconomicoCRUDController extends SimpleProgettoPianoEconomicoCRUDController {
 	public RimodulaProgettoPianoEconomicoCRUDController(String name, Class modelClass, String listPropertyName, it.cnr.jada.util.action.FormController parent) {
@@ -100,10 +102,10 @@ public class RimodulaProgettoPianoEconomicoCRUDController extends SimpleProgetto
 
     @Override
     public void writeHTMLToolbar(
-            javax.servlet.jsp.PageContext context,
+            PageContext context,
             boolean reset,
             boolean find,
-            boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+            boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
         super.writeHTMLToolbar(context, reset, find, delete, false);
 

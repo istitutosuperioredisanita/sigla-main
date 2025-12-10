@@ -336,7 +336,7 @@ public Forward doStampaUOCapitolo(ActionContext context) {
 		OfflineReportPrintBP printbp = (OfflineReportPrintBP)context.createBusinessProcess(bp.getPrintbp());
 		printbp.setReportName("/preventivo/pdg/pdguo_voce_funzione_natura.rpt");
 		Pdg_preventivoBulk preventivo = (Pdg_preventivoBulk)bp.getModel();
-        if((new Integer(preventivo.getCentro_responsabilita().getCd_proprio_cdr())).intValue() != 0) {
+        if((Integer.valueOf(preventivo.getCentro_responsabilita().getCd_proprio_cdr())).intValue() != 0) {
 		 setMessage(context,0, "Stampa non permessa sul CDR selezionato");
 	     return context.findDefaultForward();
 	    } else {
@@ -361,7 +361,7 @@ public Forward doStampaUOFunzione(ActionContext context) {
 		OfflineReportPrintBP printbp = (OfflineReportPrintBP)context.createBusinessProcess(bp.getPrintbp());
 		printbp.setReportName("/preventivo/pdg/pdguo_voce_funzione_natura.rpt");
 		Pdg_preventivoBulk preventivo = (Pdg_preventivoBulk)bp.getModel();
-        if((new Integer(preventivo.getCentro_responsabilita().getCd_proprio_cdr())).intValue() != 0) {
+        if((Integer.valueOf(preventivo.getCentro_responsabilita().getCd_proprio_cdr())).intValue() != 0) {
 		 setMessage(context,0, "Stampa non permessa sul CDR selezionato");
 	     return context.findDefaultForward();
 	    } else {
@@ -386,7 +386,7 @@ public Forward doStampaUONatura(ActionContext context) {
 		OfflineReportPrintBP printbp = (OfflineReportPrintBP)context.createBusinessProcess(bp.getPrintbp());
 		printbp.setReportName("/preventivo/pdg/pdguo_voce_funzione_natura.rpt");
 		Pdg_preventivoBulk preventivo = (Pdg_preventivoBulk)bp.getModel();
-        if((new Integer(preventivo.getCentro_responsabilita().getCd_proprio_cdr())).intValue() != 0) {
+        if((Integer.valueOf(preventivo.getCentro_responsabilita().getCd_proprio_cdr())).intValue() != 0) {
 		 setMessage(context,0, "Stampa non permessa sul CDR selezionato");
 	     return context.findDefaultForward();
 	    } else {

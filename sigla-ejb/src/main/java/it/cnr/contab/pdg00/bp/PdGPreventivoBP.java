@@ -56,7 +56,7 @@ public void caricaPdg(it.cnr.jada.action.ActionContext context,it.cnr.contab.con
 	/**
 	 * Crea la PdGComponentSession da usare per effettuare operazioni
 	 */
-	public it.cnr.contab.pdg00.ejb.PdGPreventivoComponentSession createPdGPreventivoComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+	public it.cnr.contab.pdg00.ejb.PdGPreventivoComponentSession createPdGPreventivoComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 		return (it.cnr.contab.pdg00.ejb.PdGPreventivoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPDG00_EJB_PdGPreventivoComponentSession", it.cnr.contab.pdg00.ejb.PdGPreventivoComponentSession.class);
 	}
 

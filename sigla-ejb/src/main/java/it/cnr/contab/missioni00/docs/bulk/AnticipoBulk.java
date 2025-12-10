@@ -1391,7 +1391,7 @@ public class AnticipoBulk extends AnticipoBase implements IDefferUpdateSaldi, ID
      * Il metodo valida la data di registrazione. Essa deve essere nell'esercizio corrente e non può essere futura
      */
 
-    public void validaDataRegistrazione(ActionContext context) throws it.cnr.jada.comp.ApplicationException, javax.ejb.EJBException {
+    public void validaDataRegistrazione(ActionContext context) throws it.cnr.jada.comp.ApplicationException, jakarta.ejb.EJBException {
         if (getDt_registrazione() == null)
             return;
 

@@ -138,7 +138,7 @@ public class ParametriSelezioneOrdiniAcqAction extends BulkAction {
         return context.findDefaultForward();
     }
 
-    public Forward doCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, javax.ejb.RemoveException {
+	public Forward doCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, jakarta.ejb.RemoveException {
 
         ParametriSelezioneOrdiniAcqBP bp = (ParametriSelezioneOrdiniAcqBP) context.getBusinessProcess();
     	try {

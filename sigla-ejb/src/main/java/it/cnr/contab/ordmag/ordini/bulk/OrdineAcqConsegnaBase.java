@@ -453,7 +453,7 @@ public class OrdineAcqConsegnaBase extends OrdineAcqConsegnaKey implements Keyed
 			java.sql.Timestamp oggi = null;
 			try {
 				oggi = it.cnr.jada.util.ejb.EJBCommonServices.getServerDate();
-			} catch (javax.ejb.EJBException e) {
+			} catch (jakarta.ejb.EJBException e) {
 				throw new it.cnr.jada.DetailedRuntimeException(e);
 			}
 			Calendar cal = Calendar.getInstance();

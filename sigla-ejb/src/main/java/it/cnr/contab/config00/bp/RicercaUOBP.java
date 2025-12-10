@@ -23,6 +23,8 @@ import it.cnr.contab.config00.util.Constants;
 import it.cnr.jada.action.BusinessProcess;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.comp.ComponentException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMImplementation;
@@ -30,8 +32,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import javax.servlet.ServletException;
-import javax.servlet.jsp.PageContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -73,7 +73,7 @@ public class RicercaUOBP extends BusinessProcess implements ResponseXMLBP {
 
     private Element generaNumeroUO(Document xmldoc) {
         Element e = xmldoc.createElement("numris");
-        Node n = xmldoc.createTextNode(new Integer(getUO().size()).toString());
+        Node n = xmldoc.createTextNode(Integer.valueOf(getUO().size()).toString());
         e.appendChild(n);
         return e;
     }
@@ -105,7 +105,7 @@ public class RicercaUOBP extends BusinessProcess implements ResponseXMLBP {
     public void generaXML(PageContext pagecontext) throws IOException, ServletException {
         try {
             if (getNumMax() == null)
-                setNumMax(new Integer(20));
+                setNumMax(Integer.valueOf(20));
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             DOMImplementation impl = builder.getDOMImplementation();

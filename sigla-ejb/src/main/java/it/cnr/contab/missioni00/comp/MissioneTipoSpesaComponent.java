@@ -108,7 +108,7 @@ public void eliminaConBulk (UserContext aUC,OggettoBulk bulk) throws ComponentEx
 	 	   	updateBulk(aUC, tipoSpesa);
 		}
  
-	}catch (javax.ejb.EJBException ex){
+	}catch (jakarta.ejb.EJBException ex){
 	   throw handleException(ex);
 	}catch (it.cnr.jada.persistency.PersistencyException ex){
 	   throw handleException(ex);
@@ -151,7 +151,7 @@ private DivisaBulk findDivisa(UserContext userContext, String tipoNazione) throw
 
 	}catch(it.cnr.jada.persistency.PersistencyException ex){
 		throw handleException(ex);
-	}catch(javax.ejb.EJBException ex){
+	}catch(jakarta.ejb.EJBException ex){
 		throw handleException(ex);
 	}
 }

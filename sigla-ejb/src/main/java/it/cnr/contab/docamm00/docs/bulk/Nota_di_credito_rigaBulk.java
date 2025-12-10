@@ -92,7 +92,7 @@ public void copyFrom(Fattura_passiva_rigaIBulk dettaglio)
 	setDt_da_competenza_coge(dettaglio.getDt_da_competenza_coge());
 	setDt_a_competenza_coge(dettaglio.getDt_a_competenza_coge());
 	setTi_istituz_commerc(dettaglio.getTi_istituz_commerc());
-	setProgressivo_riga(new Long(getNotaDiCredito().getFattura_passiva_dettColl().size() + 1));
+	setProgressivo_riga(Long.valueOf(getNotaDiCredito().getFattura_passiva_dettColl().size() + 1));
 
 	setBene_servizio(dettaglio.getBene_servizio());
 	setVoce_iva(dettaglio.getVoce_iva());

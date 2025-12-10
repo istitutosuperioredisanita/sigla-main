@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.missioni00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.missioni00.comp.MissioneRimborsoKmComponent;
 @Stateless(name="CNRMISSIONI00_EJB_MissioneRimborsoKmComponentSession")
@@ -26,10 +26,8 @@ public class MissioneRimborsoKmComponentSessionBean extends it.cnr.jada.ejb.CRUD
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.missioni00.comp.MissioneRimborsoKmComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new MissioneRimborsoKmComponentSessionBean();
-}
-public it.cnr.contab.missioni00.tabrif.bulk.Missione_rimborso_kmBulk gestioneNazione(it.cnr.jada.UserContext param0,it.cnr.contab.missioni00.tabrif.bulk.Missione_rimborso_kmBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public it.cnr.contab.missioni00.tabrif.bulk.Missione_rimborso_kmBulk gestioneNazione(it.cnr.jada.UserContext param0,it.cnr.contab.missioni00.tabrif.bulk.Missione_rimborso_kmBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.missioni00.tabrif.bulk.Missione_rimborso_kmBulk result = ((MissioneRimborsoKmComponent)componentObj).gestioneNazione(param0,param1);

@@ -20,16 +20,12 @@ package it.cnr.test.h2.progettiric00.bp;
 import it.cnr.test.h2.utenze.action.ActionDeployments;
 import it.cnr.test.h2.utenze.action.LoginTest;
 import it.cnr.test.util.AlertMessage;
-import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.jboss.arquillian.container.test.api.RunAsClient;
-import org.jboss.arquillian.junit.InSequence;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.Alert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
-
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TestataProgettiRicercaBPTest extends ActionDeployments {
     public static final String USERNAME = "ENTETEST";
     public static final String PASSWORD = "PASSTEST";
@@ -46,19 +42,16 @@ public class TestataProgettiRicercaBPTest extends ActionDeployments {
     private transient final static Logger LOGGER = LoggerFactory.getLogger(LoginTest.class);
 
     @Test
-    @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(1)
+    @Order(1)
     public void testLogin() throws Exception {
         doLogin(USERNAME, PASSWORD);
         doLoginUO(UO, CDR);
     }
 
     @Test
-    @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(2)
+    @Order(2)
     public void testCreaAreaProgettuale() throws Exception {
+        switchTodefaultContent();
         switchToFrameDesktop();
         switchToFrameMenu();
         doApriMenu(CFG);
@@ -66,37 +59,39 @@ public class TestataProgettiRicercaBPTest extends ActionDeployments {
         doApriMenu(CFG_PROGETTI_LIV_1);
         doSelezionaMenu(CFG_PROGETTI_LIV_1_G);
 
-        browser.switchTo().parentFrame();
+        switchTodefaultContent();
+        switchToFrameDesktop();
         switchToFrameWorkspace();
 
         getGrapheneElement("main.cd_progetto").writeIntoElement(CD_AREAPROG);
         getGrapheneElement("main.ds_progetto").writeIntoElement("Area Progettuale Generale");
 
+        doClickButton("doBlankSearch(main.find_dipartimento)");
         getGrapheneElement("main.find_dipartimento.cd_dipartimento").writeIntoElement("001");
         doClickButton("doSearch(main.find_dipartimento)");
 
+        doClickButton("doBlankSearch(main.find_programma)");
         getGrapheneElement("main.cd_programma").writeIntoElement("001");
         doClickButton("doSearch(main.find_programma)");
 
         doClickButton("doSalva()");
         final Alert alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
+        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
         alert.accept();
 
     }
 
     @Test
-    @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    @InSequence(3)
+    @Order(3)
     public void testCreaProgetto() throws Exception {
-        browser.switchTo().parentFrame();
+        switchTodefaultContent();
+        switchToFrameDesktop();
         switchToFrameMenu();
-
         doApriMenu(CFG_PROGETTI_LIV_2);
         doSelezionaMenu(CFG_PROGETTI_LIV_2_M);
 
-        browser.switchTo().parentFrame();
+        switchTodefaultContent();
+        switchToFrameDesktop();
         switchToFrameWorkspace();
 
         getGrapheneElement("main.find_nodo_padre_area.cd_progetto").writeIntoElement(CD_AREAPROG);
@@ -108,7 +103,7 @@ public class TestataProgettiRicercaBPTest extends ActionDeployments {
         getGrapheneElement("main.tipo.cd_tipo_progetto").writeIntoElement("001");
         doClickButton("doSearch(main.tipo)");
 
-        assertEquals(UO, getGrapheneElement("main.cd_unita_organizzativa").getAttribute("value"));
+        Assertions.assertEquals(UO, getGrapheneElement("main.cd_unita_organizzativa").getAttribute("value"));
 
         doClickButton("doBlankSearch(main.responsabile)");
         getGrapheneElement("main.responsabile.cd_terzo").writeIntoElement("1");
@@ -117,7 +112,7 @@ public class TestataProgettiRicercaBPTest extends ActionDeployments {
         doClickButton("doSalva()");
 
         Alert alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.MESSAGE_INDICARE_FASE_PROGETTO.value(), alert.getText());
+        Assertions.assertEquals(AlertMessage.MESSAGE_INDICARE_FASE_PROGETTO.value(), alert.getText());
         alert.accept();
 
         getGrapheneElement("main.fl_previsione").click();
@@ -125,7 +120,8 @@ public class TestataProgettiRicercaBPTest extends ActionDeployments {
         doClickButton("doSalva()");
 
         alert = browser.switchTo().alert();
-        assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
+        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
+
         alert.accept();
     }
 }

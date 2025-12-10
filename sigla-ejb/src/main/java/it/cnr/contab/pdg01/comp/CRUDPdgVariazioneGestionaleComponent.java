@@ -85,7 +85,7 @@ import it.cnr.jada.util.ejb.EJBCommonServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import java.math.BigDecimal;
@@ -990,9 +990,9 @@ private void aggiornaLimiteSpesa(UserContext userContext,Pdg_variazioneBulk pdg)
 		  String cds_var_bil = cs.getString(4);
 		  if (cds_var_bil != null ){
 			  pdgVar.setCds_var_bil(cds_var_bil);
-			  pdgVar.setEs_var_bil(new Integer(cs.getString(5)));
+			  pdgVar.setEs_var_bil(Integer.valueOf(cs.getString(5)));
 			  pdgVar.setTi_app_var_bil(new Character(cs.getString(6).charAt(0)));
-			  pdgVar.setPg_var_bil(new Integer(cs.getString(7)));
+			  pdgVar.setPg_var_bil(Integer.valueOf(cs.getString(7)));
 		  }
 		}catch (Throwable e) {
 			throw handleException(e);

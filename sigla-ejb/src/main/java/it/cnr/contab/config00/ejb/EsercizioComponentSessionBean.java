@@ -16,9 +16,9 @@
  */
 
 package it.cnr.contab.config00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.config00.comp.EsercizioComponent;
 import it.cnr.jada.UserContext;
@@ -32,10 +32,8 @@ public class EsercizioComponentSessionBean extends it.cnr.jada.ejb.CRUDComponent
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.config00.comp.EsercizioComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new EsercizioComponentSessionBean();
-}
-public it.cnr.contab.config00.esercizio.bulk.EsercizioBulk apriPianoDiGestione(it.cnr.jada.UserContext param0,it.cnr.contab.config00.esercizio.bulk.EsercizioBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public it.cnr.contab.config00.esercizio.bulk.EsercizioBulk apriPianoDiGestione(it.cnr.jada.UserContext param0,it.cnr.contab.config00.esercizio.bulk.EsercizioBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.config00.esercizio.bulk.EsercizioBulk result = ((EsercizioComponent)componentObj).apriPianoDiGestione(param0,param1);
@@ -53,7 +51,7 @@ public it.cnr.contab.config00.esercizio.bulk.EsercizioBulk apriPianoDiGestione(i
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.contab.config00.esercizio.bulk.EsercizioBulk cambiaStatoConBulk(it.cnr.jada.UserContext param0,it.cnr.contab.config00.esercizio.bulk.EsercizioBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.config00.esercizio.bulk.EsercizioBulk cambiaStatoConBulk(it.cnr.jada.UserContext param0,it.cnr.contab.config00.esercizio.bulk.EsercizioBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.config00.esercizio.bulk.EsercizioBulk result = ((EsercizioComponent)componentObj).cambiaStatoConBulk(param0,param1);
@@ -89,7 +87,7 @@ public boolean isEsercizioChiuso(it.cnr.jada.UserContext param0) throws it.cnr.j
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.contab.config00.esercizio.bulk.EsercizioBulk getLastEsercizioOpen(it.cnr.jada.UserContext param0 ) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.config00.esercizio.bulk.EsercizioBulk getLastEsercizioOpen(it.cnr.jada.UserContext param0 ) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.config00.esercizio.bulk.EsercizioBulk result = ((EsercizioComponent)componentObj).getLastEsercizioOpen(param0);
@@ -125,7 +123,7 @@ public boolean isEsercizioAperto(it.cnr.jada.UserContext param0) throws it.cnr.j
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.contab.config00.esercizio.bulk.EsercizioBulk getEsercizio(it.cnr.jada.UserContext param0 ) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.config00.esercizio.bulk.EsercizioBulk getEsercizio(it.cnr.jada.UserContext param0 ) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.config00.esercizio.bulk.EsercizioBulk result = ((EsercizioComponent)componentObj).getEsercizio(param0);

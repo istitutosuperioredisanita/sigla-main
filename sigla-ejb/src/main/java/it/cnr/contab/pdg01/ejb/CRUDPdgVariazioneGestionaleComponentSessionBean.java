@@ -29,19 +29,17 @@ import it.cnr.contab.preventvar00.comp.VarBilancioComponent;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 @Stateless(name="CNRPDG01_EJB_CRUDPdgVariazioneGestionaleComponentSession")
 public class CRUDPdgVariazioneGestionaleComponentSessionBean extends it.cnr.contab.pdg00.ejb.PdGVariazioniComponentSessionBean implements CRUDPdgVariazioneGestionaleComponentSession {
 @PostConstruct
 	public void ejbCreate() {
 	componentObj = new CRUDPdgVariazioneGestionaleComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new CRUDPdgVariazioneGestionaleComponentSessionBean();
-}
 
-public void aggiungiDettaglioVariazione(it.cnr.jada.UserContext param0, it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk param1, it.cnr.contab.prevent00.bulk.V_assestatoBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public void aggiungiDettaglioVariazione(it.cnr.jada.UserContext param0, it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk param1, it.cnr.contab.prevent00.bulk.V_assestatoBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		((CRUDPdgVariazioneGestionaleComponent)componentObj).aggiungiDettaglioVariazione(param0,param1,param2);
@@ -58,7 +56,7 @@ public void aggiungiDettaglioVariazione(it.cnr.jada.UserContext param0, it.cnr.c
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk generaVariazioneBilancio(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk generaVariazioneBilancio(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((CRUDPdgVariazioneGestionaleComponent)componentObj).generaVariazioneBilancio(param0,param1);
@@ -76,7 +74,7 @@ public it.cnr.jada.bulk.OggettoBulk generaVariazioneBilancio(it.cnr.jada.UserCon
 		throw uncaughtError(param0,componentObj,e);
 	}
 }	
-public it.cnr.jada.bulk.OggettoBulk esitaVariazioneBilancio(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk esitaVariazioneBilancio(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((CRUDPdgVariazioneGestionaleComponent)componentObj).esitaVariazioneBilancio(param0,param1);
@@ -97,7 +95,7 @@ public it.cnr.jada.bulk.OggettoBulk esitaVariazioneBilancio(it.cnr.jada.UserCont
 		throw uncaughtError(param0,componentObj,e);
 	}
 }	
-public it.cnr.contab.prevent00.bulk.V_assestatoBulk trovaAssestato(it.cnr.jada.UserContext param0,it.cnr.contab.pdg01.bulk.Pdg_variazione_riga_gestBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.prevent00.bulk.V_assestatoBulk trovaAssestato(it.cnr.jada.UserContext param0,it.cnr.contab.pdg01.bulk.Pdg_variazione_riga_gestBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.prevent00.bulk.V_assestatoBulk result = ((CRUDPdgVariazioneGestionaleComponent)componentObj).trovaAssestato(param0,param1);
@@ -115,7 +113,7 @@ public it.cnr.contab.prevent00.bulk.V_assestatoBulk trovaAssestato(it.cnr.jada.U
 		throw uncaughtError(param0,componentObj,e);
 	}
 }	
-public void allineaSaldiVariazioneApprovata(UserContext param0, Ass_pdg_variazione_cdrBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException,RemoteException {
+public void allineaSaldiVariazioneApprovata(UserContext param0, Ass_pdg_variazione_cdrBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException,RemoteException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		((CRUDPdgVariazioneGestionaleComponent)componentObj).allineaSaldiVariazioneApprovata(param0,param1);
@@ -132,7 +130,7 @@ public void allineaSaldiVariazioneApprovata(UserContext param0, Ass_pdg_variazio
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-	public Pdg_variazioneBulk generaVariazioneAutomaticaDaObbligazione(it.cnr.jada.UserContext param0,ObbligazioneBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public Pdg_variazioneBulk generaVariazioneAutomaticaDaObbligazione(it.cnr.jada.UserContext param0,ObbligazioneBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			Pdg_variazioneBulk result = ((CRUDPdgVariazioneGestionaleComponent)componentObj).generaVariazioneAutomaticaDaObbligazione(param0,param1);
@@ -150,7 +148,7 @@ public void allineaSaldiVariazioneApprovata(UserContext param0, Ass_pdg_variazio
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk salvaDefinitivo(it.cnr.jada.UserContext param0,it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk param1, boolean param3) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk salvaDefinitivo(it.cnr.jada.UserContext param0,it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk param1, boolean param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk result = ((CRUDPdgVariazioneGestionaleComponent)componentObj).salvaDefinitivo(param0,param1,param3);
@@ -168,7 +166,7 @@ public void allineaSaldiVariazioneApprovata(UserContext param0, Ass_pdg_variazio
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk approva(it.cnr.jada.UserContext param0,it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk param1, boolean param3) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk approva(it.cnr.jada.UserContext param0,it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk param1, boolean param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk result = ((CRUDPdgVariazioneGestionaleComponent)componentObj).approva(param0,param1,param3);

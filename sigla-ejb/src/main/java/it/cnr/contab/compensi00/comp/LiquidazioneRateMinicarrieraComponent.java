@@ -91,7 +91,7 @@ private Long callGetPgPerLiquidazioneRateMinicarriera(UserContext userContext) t
 					+ "IBMUTL020.vsx_get_pg_call() }",false,this.getClass());
 			cs.registerOutParameter( 1, java.sql.Types.NUMERIC);
 			cs.executeQuery();
-			pg = new Long(cs.getLong(1));
+			pg = Long.valueOf(cs.getLong(1));
 		} catch (Throwable e) {
 			throw handleException(e);
 		} finally {
@@ -214,7 +214,7 @@ public void liquidaRate(UserContext userContext, Liquidazione_rate_minicarrieraB
 
 			Vsx_liquidazione_rateBulk vsx_liqid = new Vsx_liquidazione_rateBulk();
 			vsx_liqid.setPg_call(pg_call);
-			vsx_liqid.setPar_num(new Integer(count++));
+			vsx_liqid.setPar_num(Integer.valueOf(count++));
 			vsx_liqid.setEsercizio_competenza(CNRUserContext.getEsercizio(userContext));
 			vsx_liqid.completeFrom(rata);
 			vsx_liqid.setToBeCreated();

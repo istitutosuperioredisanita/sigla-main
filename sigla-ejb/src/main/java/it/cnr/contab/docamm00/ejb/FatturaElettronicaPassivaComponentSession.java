@@ -27,8 +27,8 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 
-import javax.ejb.EJBException;
-import javax.ejb.Remote;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Remote;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Calendar;

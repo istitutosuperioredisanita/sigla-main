@@ -42,40 +42,33 @@ import it.cnr.contab.util.servlet.JSONRequest.Clause;
 import it.cnr.contab.util.servlet.JSONRequest.OrderBy;
 import it.cnr.contab.web.rest.config.BasicAuthentication;
 import it.cnr.contab.web.rest.config.RESTSecurityInterceptor;
-import it.cnr.jada.UserContext;
 import it.cnr.jada.action.*;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.UserInfo;
-import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.OrderConstants;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.ConsultazioniBP;
 
-import it.cnr.jada.util.ejb.EJBCommonServices;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.representations.IDToken;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJBException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.DatatypeConverter;
+import jakarta.ejb.EJBException;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.rmi.RemoteException;
-import java.security.Principal;
 import java.util.*;
 
-public class RESTServlet extends HttpServlet{
+public class RESTServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 	private static final Integer MAX_ITEMS_PER_PAGE = 5000;
     public static final String AUTHORIZATION = "Authorization";
@@ -124,38 +117,49 @@ public class RESTServlet extends HttpServlet{
                 throw new ServletException("Action not found ["+action+"]");
             UtenteBulk utente = null;
     		try {
-    			if (actionmapping.needExistingSession()) {
-					Optional<Principal> principalOptional = Optional.ofNullable(req.getUserPrincipal());
-					final Optional<IDToken> idToken = principalOptional
-							.filter(KeycloakPrincipal.class::isInstance)
-							.map(KeycloakPrincipal.class::cast)
-							.map(KeycloakPrincipal::getKeycloakSecurityContext)
-							.map(keycloakSecurityContext -> {
-								return Optional.ofNullable(keycloakSecurityContext.getIdToken())
-										.orElse(keycloakSecurityContext.getToken());
-							});
-					if (idToken.isPresent()) {
-						utente = BasicAuthentication.findUtenteBulk(
-								idToken
-										.flatMap(idToken1 -> Optional.ofNullable(idToken1.getOtherClaims()))
-										.flatMap(stringObjectMap -> Optional.ofNullable(stringObjectMap.get(RESTSecurityInterceptor.USERNAME_CNR)))
-										.filter(String.class::isInstance)
-										.map(String.class::cast)
-										.orElse(idToken.get().getPreferredUsername())
-						);
-					} else {
-						try {
-							utente = BasicAuthentication.authenticateUtenteMultiplo(req.getHeader(AUTHORIZATION), null);
-						} catch (UtenteMultiploException _ex) {
-							utente = BasicAuthentication.authenticateUtenteMultiplo(req.getHeader(AUTHORIZATION),
-									Optional.ofNullable(req.getParameterValues("utente-multiplo"))
-											.filter(strings -> strings.length == 1)
-											.map(strings -> strings[0])
-											.orElse(null)
-							);
-						}
-					}
-				}
+                if (actionmapping.needExistingSession()) {
+                    UtenteBulk found = null;
+
+                    // 1) Try Bearer token (JWT)
+                    String authHeader = req.getHeader(AUTHORIZATION);
+                    if (authHeader != null && authHeader.toLowerCase().startsWith("bearer ")) {
+                        String bearer = authHeader.substring(7).trim();
+                        try {
+                            com.nimbusds.jwt.SignedJWT signedJWT = com.nimbusds.jwt.SignedJWT.parse(bearer);
+                            com.nimbusds.jwt.JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
+
+                            // prima prova a leggere la claim custom USERNAME_CNR
+                            Object usernameCnrObj = claims.getClaim(RESTSecurityInterceptor.USERNAME_CNR);
+                            String username = null;
+                            if (usernameCnrObj instanceof String) {
+                                username = (String) usernameCnrObj;
+                            } else {
+                                username = claims.getStringClaim("preferred_username");
+                            }
+
+                            if (username != null) {
+                                found = BasicAuthentication.findUtenteBulk(username);
+                            }
+                        } catch (java.text.ParseException e) {
+                            logger.warn("Errore parsing JWT", e);
+                        }
+                    }
+
+                    // 2) se non trovato con JWT, fallback su Basic auth (come oggi)
+                    if (found == null) {
+                        try {
+                            found = BasicAuthentication.authenticateUtenteMultiplo(req.getHeader(AUTHORIZATION), null);
+                        } catch (UtenteMultiploException _ex) {
+                            found = BasicAuthentication.authenticateUtenteMultiplo(req.getHeader(AUTHORIZATION),
+                                    Optional.ofNullable(req.getParameterValues("utente-multiplo"))
+                                            .filter(strings -> strings.length == 1)
+                                            .map(strings -> strings[0])
+                                            .orElse(null)
+                            );
+                        }
+                    }
+                    utente = found;
+                }
     			if (utente != null || !actionmapping.needExistingSession()) {
     				JSONRequest jsonRequest = null;
     	            HttpActionContext httpactioncontext = new HttpActionContext(this, req, resp);
@@ -470,13 +474,13 @@ public class RESTServlet extends HttpServlet{
             throw new ServletException("Action mappings configuration exception", actionmappingsconfigurationexception);
         }		
 	}
-	public static AssBpAccessoComponentSession assBpAccessoComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public static AssBpAccessoComponentSession assBpAccessoComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 		return (AssBpAccessoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRUTENZE00_EJB_AssBpAccessoComponentSession");
 	}
-	public static GestioneLoginComponentSession loginComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public static GestioneLoginComponentSession loginComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 		return (GestioneLoginComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRUTENZE00_NAV_EJB_GestioneLoginComponentSession");
 	}
-	public static Unita_organizzativaComponentSession uoComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public static Unita_organizzativaComponentSession uoComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 		return (Unita_organizzativaComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Unita_organizzativaComponentSession");
 	}
 }

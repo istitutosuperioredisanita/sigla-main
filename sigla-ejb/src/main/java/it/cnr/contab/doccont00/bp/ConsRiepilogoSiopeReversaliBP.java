@@ -48,11 +48,11 @@ public class ConsRiepilogoSiopeReversaliBP extends BulkBP {
 	public static final String LIV_BASEDETT= "DETT";
 	
 		
-		public ConsRiepilogoSiopeComponentSession createConsInviatoSiopeComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+		public ConsRiepilogoSiopeComponentSession createConsInviatoSiopeComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 			return (ConsRiepilogoSiopeComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_ConsRiepilogoSiopeComponentSession", ConsRiepilogoSiopeComponentSession.class);
 		}
 		
-		public ConsRiepilogoSiopeComponentSession createComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
+		public ConsRiepilogoSiopeComponentSession createComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException {
 			return (ConsRiepilogoSiopeComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_ConsRiepilogoSiopeComponentSession", ConsRiepilogoSiopeComponentSession.class);
 		}
 		

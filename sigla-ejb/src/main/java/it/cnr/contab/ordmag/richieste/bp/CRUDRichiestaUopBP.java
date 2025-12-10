@@ -46,8 +46,9 @@ import it.cnr.si.spring.storage.MimeTypes;
 import it.cnr.si.spring.storage.StorageException;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
+import jakarta.servlet.ServletException;
 
-import javax.servlet.ServletException;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
@@ -431,7 +432,7 @@ public class CRUDRichiestaUopBP extends AllegatiCRUDBP<AllegatoRichiestaBulk, Ri
             print.addParam("cds",richiesta.getCdCds(), String.class);
             print.addParam("cd_unita_operativa",richiesta.getCdUnitaOperativa(), String.class);
             print.addParam("cd_numeratore",richiesta.getCdNumeratore(), String.class);
-            print.addParam("numero",new Long(richiesta.getNumero()), Long.class);
+            print.addParam("numero",Long.valueOf(richiesta.getNumero()), Long.class);
             Report report = SpringUtil.getBean("printService",PrintService.class).executeReport(userContext,print);
 
             FileOutputStream f = new FileOutputStream(output);

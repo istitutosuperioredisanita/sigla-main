@@ -25,7 +25,7 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.util.action.BulkAction;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 import java.rmi.RemoteException;
 
 

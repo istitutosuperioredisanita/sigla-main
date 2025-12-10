@@ -29,7 +29,7 @@ import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1.FatturaElettronicaTy
 import java.rmi.RemoteException;
 import java.util.Date;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 
 public class TransactionalDocAmmFatturazioneElettronicaComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements DocAmmFatturazioneElettronicaComponentSession {
 

@@ -27,77 +27,194 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>io.thorntail</groupId>
-                <artifactId>bom-all</artifactId>
-                <version>${version.thorntail}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>io.thorntail</groupId>
-                <artifactId>build-parent</artifactId>
-                <version>${version.thorntail}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-bom</artifactId>
-                <version>${version.arquillian}</version>
+                <groupId>org.wildfly.bom</groupId>
+                <artifactId>wildfly-ee-with-tools</artifactId>
+                <version>${version.wildfly}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap.resolver</groupId>
-                <artifactId>shrinkwrap-resolver-bom</artifactId>
-                <version>${arquillian.shrinkwrap.resolver}</version>
-                <scope>import</scope>
-                <type>pom</type>
             </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
         <finalName>sigla</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
-                <groupId>io.thorntail</groupId>
-                <artifactId>thorntail-maven-plugin</artifactId>
-                <version>${version.thorntail}</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.2.3</version> <executions>
+                <execution>
+                    <goals>
+                        <goal>integration-test</goal>
+                        <goal>verify</goal>
+                    </goals>
+                </execution>
+            </executions>
+                <configuration>
+                    <includes>
+                        <include>*Test.java</include>
+                    </includes>
+                    <excludes>${test.exclude.package}</excludes>
+                    <skipITs>false</skipITs>
+                </configuration>
+            </plugin>
+
+            <!-- Aggiorna JaCoCo -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.11</version>
                 <executions>
                     <execution>
-                        <id>package</id>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Resources Plugin - Copia module.xml -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-module-xml</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/modules</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/modules</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Compiler Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+
+            <!-- WAR Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+            <!-- JAR Plugin - Crea JAR separato per le classi di security -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>create-security-jar</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>security</classifier>
+                            <includes>
+                                <include>it/cnr/contab/security/auth/*.class</include>
+                                <include>it/cnr/contab/security/auth/**/*.class</include>
+                            </includes>
+                            <outputDirectory>${project.build.directory}/modules/modules/system/layers/base/it/cnr/contab/security/main</outputDirectory>
+                            <finalName>sigla</finalName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-jar-maven-plugin</artifactId>
+                <version>${version.wildfly.maven.plugin}</version>
+                <configuration>
+                    <jvmArguments>-Xmx2g -Xms1g -XX:MaxMetaspaceSize=512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787 -Dcors.allow-origin=${cors.allow-origin} -Dspring.profiles.active=liquibase-iss</jvmArguments>
+                    <feature-packs>
+                        <feature-pack>
+                            <location>wildfly@maven(org.jboss.universe:community-universe)#${version.wildfly}</location>
+                        </feature-pack>
+                        <feature-pack>
+                            <location>org.wildfly:wildfly-datasources-galleon-pack:${version.wildfly.datasources.galleon.pack}</location>
+                        </feature-pack>
+                    </feature-packs>
+                    <layers>
+                        <!-- Definisci i layer necessari -->
+                        <layer>jaxrs-server</layer>
+                        <layer>cloud-server</layer>
+                        <layer>ejb</layer>
+                        <layer>jpa</layer>
+                        <layer>datasources</layer>
+                        <layer>management</layer>
+                        <layer>cdi</layer>
+                        <layer>jms-activemq</layer>
+                        <layer>mail</layer>
+                        <layer>webservices</layer>
+                        <layer>elytron-oidc-client</layer>
+                        <layer>microprofile-openapi</layer>
+                        <layer>elytron</layer>
+                        <layer>microprofile-config</layer>
+                        <layer>web-console</layer>
+                        <layer>remoting</layer>
+                    </layers>
+
+                    <!-- IMPORTANTE: Include il modulo custom -->
+                    <extra-server-content-dirs>
+                        <extra-content>${project.build.directory}/modules</extra-content>
+                        <extra-content>src/main/resources/extra-content</extra-content>
+                    </extra-server-content-dirs>
+
+                    <plugin-options>
+                        <jboss-fork-embedded>true</jboss-fork-embedded>
+                    </plugin-options>
+                    <cli-sessions>
+                        <cli-session>
+                            <script-files>
+                                <script>src/main/scripts/configure-wildfly.cli</script>
+                            </script-files>
+                            <resolve-expressions>false</resolve-expressions>
+                        </cli-session>
+                    </cli-sessions>
+                    <context-root>SIGLA</context-root>
+                    <output-file-name>sigla-bootable.jar</output-file-name>
+                </configuration>
+                <executions>
+                    <execution>
                         <goals>
                             <goal>package</goal>
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <hollow>false</hollow>
-                    <bundleDependencies>false</bundleDependencies>
-                    <properties>
-                        <java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
-                    </properties>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.3</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**com.steadystate*</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M4</version>
-                <configuration>
-                    <excludes>
-                        <exclude>${test.exclude.package}</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
         <pluginManagement>
@@ -112,159 +229,37 @@
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <configuration>
-                        <archive>
-                            <manifest>
-                                <addClasspath>false</addClasspath>
-                            </manifest>
-                            <manifestEntries>
-                                <Dependencies>
-                                    org.dom4j,
-                                    javax.mail.api,
-                                    com.oracle.jdbc,
-                                    org.postgresql.postgresql,
-                                    org.apache.xerces,
-                                    org.apache.commons.collections,
-                                    org.codehaus.jackson.jackson-mapper-asl,
-                                    com.fasterxml.jackson.core.jackson-annotations,
-                                    com.fasterxml.jackson.core.jackson-core,
-                                    com.fasterxml.jackson.core.jackson-databind,
-                                    org.apache.commons.codec,
-                                    org.apache.commons.io,
-                                    org.jboss.resteasy.resteasy-jaxrs,
-                                    com.informix.jdbc,
-                                    org.wildfly.extension.undertow,
-                                    io.undertow.core,
-                                    io.undertow.servlet,
-                                    org.apache.cxf,
-                                    it.cnr.sigla.configuration,
-                                    org.bouncycastle,
-                                    javax.activation.api,
-                                    org.apache.httpcomponents,
-                                    org.keycloak.keycloak-adapter-spi,
-                                    org.keycloak.keycloak-adapter-core,
-                                    org.keycloak.keycloak-common,
-                                    org.keycloak.keycloak-core
-                                </Dependencies>
-                                <Specification-Title>${project.name}</Specification-Title>
-                                <Specification-Version>${project.version}</Specification-Version>
-                                <Implementation-Version>${project.version}-${sigla.build.number}</Implementation-Version>
-                            </manifestEntries>
-                        </archive>
-                        <failOnMissingWebXml>false</failOnMissingWebXml>
-                        <overlays>
-                            <overlay>
-                                <classifier>thorntail</classifier>
-                            </overlay>
-                        </overlays>
-                    </configuration>
-                </plugin>
             </plugins>
         </pluginManagement>
     </build>
     <dependencies>
+        <!-- Jakarta EE 10 API (per WildFly 31+) -->
         <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>7.0</version>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
+            <version>10.0.0</version>
             <scope>provided</scope>
-        </dependency>
-        <!-- WildFly Swarm Fractions -->
-        <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>datasources</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>ejb</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>ejb-remote</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>transactions</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>jaxrs</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>mail</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>cdi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>webservices</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>logging</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>swagger</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>swagger-webapp</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.picketbox</groupId>
-            <artifactId>picketbox</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>management</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>management-console</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>keycloak</artifactId>
         </dependency>
         <!-- SIGLA  dependency-->
         <dependency>
             <groupId>it.cnr.si.sigla</groupId>
             <artifactId>sigla-ejb</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>it.cnr.si</groupId>
             <artifactId>jada</artifactId>
-            <version>${jada.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>it.cnr.si.sigla</groupId>
-            <artifactId>sigla-ws</artifactId>
-            <version>${project.version}</version>
-            <type>ejb</type>
+            <version>${version.jada}</version>
         </dependency>
         <dependency>
             <groupId>it.cnr.si.sigla</groupId>
             <artifactId>sigla-ws-client</artifactId>
-            <version>${ws.client.version}</version>
+            <version>${version.sigla-ws.client}</version>
         </dependency>
         <dependency>
             <groupId>it.cnr.si</groupId>
             <artifactId>sdi-fatturapa</artifactId>
-            <version>${sdi.fatturapa.version}</version>
+            <version>${version.sdi.fatturapa}</version>
         </dependency>
         <dependency>
             <groupId>it.cnr.si.sigla</groupId>
@@ -284,7 +279,7 @@
         <dependency>
             <groupId>it.cnr.si.storage</groupId>
             <artifactId>storage-cloud-filesystem</artifactId>
-            <version>${storage.cloud.version}</version>
+            <version>${version.storage.cloud}</version>
         </dependency>
         <dependency>
             <groupId>it.cnr.si</groupId>
@@ -299,6 +294,10 @@
                 <exclusion>
                     <groupId>commons-io</groupId>
                     <artifactId>commons-io</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -333,15 +332,36 @@
             <version>${spring.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.ws</groupId>
-            <artifactId>spring-ws-core</artifactId>
-            <version>2.4.0.RELEASE</version>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-ldap</artifactId>
+            <version>2.2.6.RELEASE</version>
             <exclusions>
                 <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-webmvc</artifactId>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <!-- Spring WS per Jakarta EE -->
+        <dependency>
+            <groupId>org.springframework.ws</groupId>
+            <artifactId>spring-ws-core</artifactId>
+            <version>4.0.11</version>
+        </dependency>
+
+        <!-- Jakarta XML SOAP API -->
+        <dependency>
+            <groupId>jakarta.xml.soap</groupId>
+            <artifactId>jakarta.xml.soap-api</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
+        <!-- Implementazione SOAP (SAAJ) -->
+        <dependency>
+            <groupId>com.sun.xml.messaging.saaj</groupId>
+            <artifactId>saaj-impl</artifactId>
+            <version>3.0.4</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -357,11 +377,6 @@
             <groupId>org.reactivestreams</groupId>
             <artifactId>reactive-streams</artifactId>
             <version>1.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>2.12.2</version>
         </dependency>
         <!-- Spring Infinispan -->
         <dependency>
@@ -380,17 +395,6 @@
             <version>3.9</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.sun.xml.ws</groupId>
-            <artifactId>jaxws-rt</artifactId>
-            <version>2.3.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.sun.xml.messaging.saaj</groupId>
-                    <artifactId>saaj-impl</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
@@ -426,27 +430,12 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-email</artifactId>
-            <version>1.5</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>mail</artifactId>
-                    <groupId>javax.mail</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>activation</artifactId>
-                    <groupId>javax.activation</groupId>
-                </exclusion>
-            </exclusions>
+            <version>1.6.0</version>
         </dependency>
         <dependency>
-            <groupId>xml-security</groupId>
-            <artifactId>xmlsec</artifactId>
-            <version>1.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcmail-jdk15on</artifactId>
-            <version>1.52</version>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -484,51 +473,9 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>javax.servlet.jsp</groupId>
-            <artifactId>jsp-api</artifactId>
-            <version>2.1</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.4</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.ejb</groupId>
-            <artifactId>ejb-api</artifactId>
-            <version>3.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>persistence-api</artifactId>
-            <version>1.0</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>jsr250-api</artifactId>
-            <version>1.0</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.transaction</groupId>
-            <artifactId>jta</artifactId>
-            <version>1.1</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>[4.5.13,)</version>
-            <type>jar</type>
+            <groupId>org.wildfly.security</groupId>
+            <artifactId>wildfly-elytron</artifactId>
+            <version>2.7.0.Final</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -561,45 +508,68 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>9.31</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcmail-jdk15on</artifactId>
+            <version>1.52</version>
+        </dependency>
+        <!-- Swagger Jakarta (invece di javax) -->
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-jaxrs2-jakarta</artifactId>
+            <version>2.2.20</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations-jakarta</artifactId>
+            <version>2.2.20</version>
+        </dependency>
+        <!-- JAXB API per Jakarta EE 10 -->
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>4.0.0</version>
+            <scope>provided</scope> <!-- provided perché WildFly lo fornisce -->
+        </dependency>
+
         <!--### [test dependencies] -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
             <version>${version.junit}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>arquillian</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${version.junit}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.arquillian.protocol</groupId>
-            <artifactId>arquillian-protocol-servlet</artifactId>
-            <scope>test</scope>
+            <groupId>org.wildfly.arquillian</groupId>
+            <artifactId>wildfly-arquillian-container-bootable</artifactId>
+            <version>${version.org.wildfly.arquillian}</version>
         </dependency>
         <dependency>
-            <groupId>org.jboss.arquillian.junit</groupId>
-            <artifactId>arquillian-junit-container</artifactId>
-            <scope>test</scope>
+            <groupId>org.jboss.arquillian.junit5</groupId>
+            <artifactId>arquillian-junit5-container</artifactId>
+            <version>${version.org.jboss.arquillian.junit}</version>
         </dependency>
+
         <dependency>
-            <groupId>org.jboss.shrinkwrap.resolver</groupId>
-            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-client-all</artifactId>
+            <version>${version.wildfly}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jboss.shrinkwrap.resolver</groupId>
-            <artifactId>shrinkwrap-resolver-depchain</artifactId>
-            <type>pom</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eu.ingwar.tools</groupId>
-            <artifactId>arquillian-suite-extension</artifactId>
-            <version>1.2.0</version>
-            <scope>test</scope>
-        </dependency>
+
+        <!-- Arquillian Suite Extension -->
         <dependency>
             <groupId>org.jboss.arquillian.graphene</groupId>
             <artifactId>graphene-webdriver</artifactId>
@@ -625,42 +595,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
-            <version>2.7.2</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>xalan</groupId>
-                    <artifactId>serializer</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>xalan</groupId>
-            <artifactId>serializer</artifactId>
-            <version>2.7.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>fluent-hc</artifactId>
-            <scope>test</scope>
-            <version>${fluent-hc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
-            <scope>test</scope>
-            <version>1.4.01</version>
-        </dependency>
 
     </dependencies>
     <profiles>
@@ -676,7 +610,7 @@
                 <dependency>
                     <groupId>it.cnr.si.storage</groupId>
                     <artifactId>storage-cloud-cmis</artifactId>
-                    <version>${storage.cloud.version}</version>
+                    <version>${version.storage.cloud}</version>
                     <exclusions>
                         <exclusion>
                             <groupId>org.slf4j</groupId>
@@ -695,7 +629,7 @@
                 <dependency>
                     <groupId>it.cnr.si.storage</groupId>
                     <artifactId>storage-cloud-azure</artifactId>
-                    <version>${storage.cloud.version}</version>
+                    <version>${version.storage.cloud}</version>
                 </dependency>
             </dependencies>
         </profile>
@@ -705,7 +639,7 @@
                 <dependency>
                     <groupId>it.cnr.si.storage</groupId>
                     <artifactId>storage-cloud-s3</artifactId>
-                    <version>${storage.cloud.version}</version>
+                    <version>${version.storage.cloud}</version>
                 </dependency>
             </dependencies>
         </profile>

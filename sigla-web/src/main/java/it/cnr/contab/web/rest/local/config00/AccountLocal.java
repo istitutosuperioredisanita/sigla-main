@@ -17,56 +17,83 @@
 
 package it.cnr.contab.web.rest.local.config00;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import it.cnr.contab.web.rest.config.AllUserAllowedWithoutAbort;
 import it.cnr.contab.web.rest.model.AccountDTO;
 import it.cnr.contab.web.rest.model.PasswordDTO;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
-import javax.ejb.Local;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ejb.Local;
 
 @Local
 @Path("/account")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @AllUserAllowedWithoutAbort
-@Api("Account")
+@Tag(name = "Account")
 public interface AccountLocal {
 
     @GET
-    @ApiOperation(value = "Fornisce le informazioni dell'account",
-            notes = "Accesso consentito a tutte le utenze registrate",
-            response = AccountDTO.class,
-            authorizations = {
-                    @Authorization(value = "BASIC")
+    @Operation(summary = "Fornisce le informazioni dell'account",
+            description = "Accesso consentito a tutte le utenze registrate",
+            security = {
+                    @SecurityRequirement(name = "BASIC"),
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = AccountDTO.class)
+                            )
+                    )
             }
     )
     Response get(@Context HttpServletRequest request) throws Exception;
 
     @GET
     @Path("/{username}")
-    @ApiOperation(value = "Fornisce le informazioni dell'account in base allo username",
-            notes = "Accesso consentito a tutte le utenze registrate",
-            response = AccountDTO.class,
-            authorizations = {
-                    @Authorization(value = "BASIC")
+    @Operation(summary = "Fornisce le informazioni dell'account in base allo username",
+            description = "Accesso consentito a tutte le utenze registrate",
+            security = {
+                    @SecurityRequirement(name = "BASIC"),
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = AccountDTO.class)
+                            )
+                    )
             }
     )
     Response getUsername(@Context HttpServletRequest request, @PathParam("username") String username) throws Exception;
 
     @POST
     @Path("/change-password")
-    @ApiOperation(value = "Cambia la passwod dell'utente collegato",
-            notes = "Accesso consentito a tutte le utenze registrate",
-            response = AccountDTO.class,
-            authorizations = {
-                    @Authorization(value = "BASIC")
+    @Operation(summary = "Cambia la passwod dell'utente collegato",
+            description = "Accesso consentito a tutte le utenze registrate",
+            security = {
+                    @SecurityRequirement(name = "BASIC"),
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = AccountDTO.class)
+                            )
+                    )
             }
     )
     Response changePassword(@Context HttpServletRequest request, PasswordDTO passwordDTO) throws Exception;

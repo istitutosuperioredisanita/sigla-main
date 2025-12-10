@@ -18,7 +18,7 @@
 package it.cnr.contab.inventario01.ejb;
 import java.rmi.RemoteException;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaIBulk;
@@ -35,6 +35,7 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDDetailComponentSession;
+import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
 
@@ -98,4 +99,5 @@ public interface BuonoCaricoScaricoComponentSession	extends CRUDDetailComponentS
 		void scaricaTuttiBeniDef(UserContext userContext,Buono_carico_scaricoBulk buonoS) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 		Ass_inv_bene_fatturaBulk sdoppiaAssociazioneFor (UserContext userContext,Fattura_passiva_rigaBulk riga_fattura,Fattura_passiva_rigaBulk riga_fattura_new) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 		boolean checkEtichettaBeneAlreadyExist(UserContext userContext,Buono_carico_scarico_dettBulk dett) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+		boolean isPresentiAccessoriPerBeni(UserContext userContext,Buono_carico_scaricoBulk buonoCs) throws RemoteException, ComponentException, PersistencyException;
 }

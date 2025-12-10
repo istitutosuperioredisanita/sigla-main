@@ -322,7 +322,7 @@ public class SospesoBulk extends SospesoBase {
 
         //converto l'ultimo codice in stringa
 
-        String tmp = (new Integer(last)).toString();
+        String tmp = (Integer.valueOf(last)).toString();
 
         //padding con 0 a sx
         String codice = "";

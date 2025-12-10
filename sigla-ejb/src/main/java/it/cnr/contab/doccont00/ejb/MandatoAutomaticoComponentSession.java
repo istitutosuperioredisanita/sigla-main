@@ -17,7 +17,7 @@
 
 package it.cnr.contab.doccont00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface MandatoAutomaticoComponentSession extends MandatoComponentSession {

@@ -95,9 +95,9 @@ public Long creaNuovoProgressivo(UserContext userContext,Integer esercizio,Strin
 			numerazione.setCd_massimo("99999999");
 			numerazione.setCd_corrente("1");
 			home.insert(numerazione, userContext);
-			return new Long(1);
+			return Long.valueOf(1);
 		}
-		Long cd_corrente = new Long(Long.parseLong(numerazione.getCd_corrente())+1);
+		Long cd_corrente = Long.valueOf(Long.parseLong(numerazione.getCd_corrente())+1);
 		long cd_massimo = Long.parseLong(numerazione.getCd_massimo());
 		if (cd_corrente.longValue() >= cd_massimo)
 			throw new NumerazioneEsauritaException();
@@ -130,9 +130,9 @@ public Long creaNuovoProgressivoTemp(UserContext userContext,Integer esercizio,S
 			numerazione.setCd_massimo("-99999999");
 			numerazione.setCd_corrente("-1");
 			home.insert(numerazione, userContext);
-			return new Long(1);
+			return Long.valueOf(1);
 		}
-		Long cd_corrente = new Long(Long.parseLong(numerazione.getCd_corrente())-1);
+		Long cd_corrente = Long.valueOf(Long.parseLong(numerazione.getCd_corrente())-1);
 		long cd_massimo = Long.parseLong(numerazione.getCd_massimo());
 		if (cd_corrente.longValue() <= cd_massimo)
 			throw new NumerazioneEsauritaException();

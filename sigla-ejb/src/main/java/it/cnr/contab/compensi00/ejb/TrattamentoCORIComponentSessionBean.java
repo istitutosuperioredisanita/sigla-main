@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.compensi00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.compensi00.comp.TrattamentoCORIComponent;
 @Stateless(name="CNRCOMPENSI00_EJB_TrattamentoCORIComponentSession")
@@ -26,10 +26,8 @@ public class TrattamentoCORIComponentSessionBean extends it.cnr.jada.ejb.CRUDCom
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.compensi00.comp.TrattamentoCORIComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new TrattamentoCORIComponentSessionBean();
-}
-public it.cnr.contab.compensi00.tabrif.bulk.Trattamento_coriBulk fillAllRows(it.cnr.jada.UserContext param0,it.cnr.contab.compensi00.tabrif.bulk.Trattamento_coriBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public it.cnr.contab.compensi00.tabrif.bulk.Trattamento_coriBulk fillAllRows(it.cnr.jada.UserContext param0,it.cnr.contab.compensi00.tabrif.bulk.Trattamento_coriBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.compensi00.tabrif.bulk.Trattamento_coriBulk result = ((TrattamentoCORIComponent)componentObj).fillAllRows(param0,param1);

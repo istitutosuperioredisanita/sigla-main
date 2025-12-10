@@ -59,80 +59,80 @@ public class CodiceFiscaleControllo {
    MapVocaliAccentate.put("í".toUpperCase(),"I");	 
 
    MapCCDispari = new Hashtable();
-   MapCCDispari.put("A", new Integer(1));
-   MapCCDispari.put("0", new Integer(1));
-   MapCCDispari.put("B", new Integer(0));
-   MapCCDispari.put("1", new Integer(0));
-   MapCCDispari.put("C", new Integer(5));
-   MapCCDispari.put("2", new Integer(5));
-   MapCCDispari.put("D", new Integer(7));
-   MapCCDispari.put("3", new Integer(7));
-   MapCCDispari.put("E", new Integer(9));
-   MapCCDispari.put("4", new Integer(9));
-   MapCCDispari.put("F", new Integer(13));
-   MapCCDispari.put("5", new Integer(13));
-   MapCCDispari.put("G", new Integer(15));
-   MapCCDispari.put("6", new Integer(15));
-   MapCCDispari.put("H", new Integer(17));
-   MapCCDispari.put("7", new Integer(17));
-   MapCCDispari.put("I", new Integer(19));
-   MapCCDispari.put("8", new Integer(19));
-   MapCCDispari.put("J", new Integer(21));
-   MapCCDispari.put("9", new Integer(21));
-   MapCCDispari.put("K", new Integer(2));
-   MapCCDispari.put("L", new Integer(4));
-   MapCCDispari.put("M", new Integer(18));
-   MapCCDispari.put("N", new Integer(20));
-   MapCCDispari.put("O", new Integer(11));
-   MapCCDispari.put("P", new Integer(3));
-   MapCCDispari.put("Q", new Integer(6));
-   MapCCDispari.put("R", new Integer(8));
-   MapCCDispari.put("S", new Integer(12));
-   MapCCDispari.put("T", new Integer(14));
-   MapCCDispari.put("U", new Integer(16));
-   MapCCDispari.put("V", new Integer(10));
-   MapCCDispari.put("W", new Integer(22));
-   MapCCDispari.put("X", new Integer(25));
-   MapCCDispari.put("Y", new Integer(24));
-   MapCCDispari.put("Z", new Integer(23));
+   MapCCDispari.put("A", Integer.valueOf(1));
+   MapCCDispari.put("0", Integer.valueOf(1));
+   MapCCDispari.put("B", Integer.valueOf(0));
+   MapCCDispari.put("1", Integer.valueOf(0));
+   MapCCDispari.put("C", Integer.valueOf(5));
+   MapCCDispari.put("2", Integer.valueOf(5));
+   MapCCDispari.put("D", Integer.valueOf(7));
+   MapCCDispari.put("3", Integer.valueOf(7));
+   MapCCDispari.put("E", Integer.valueOf(9));
+   MapCCDispari.put("4", Integer.valueOf(9));
+   MapCCDispari.put("F", Integer.valueOf(13));
+   MapCCDispari.put("5", Integer.valueOf(13));
+   MapCCDispari.put("G", Integer.valueOf(15));
+   MapCCDispari.put("6", Integer.valueOf(15));
+   MapCCDispari.put("H", Integer.valueOf(17));
+   MapCCDispari.put("7", Integer.valueOf(17));
+   MapCCDispari.put("I", Integer.valueOf(19));
+   MapCCDispari.put("8", Integer.valueOf(19));
+   MapCCDispari.put("J", Integer.valueOf(21));
+   MapCCDispari.put("9", Integer.valueOf(21));
+   MapCCDispari.put("K", Integer.valueOf(2));
+   MapCCDispari.put("L", Integer.valueOf(4));
+   MapCCDispari.put("M", Integer.valueOf(18));
+   MapCCDispari.put("N", Integer.valueOf(20));
+   MapCCDispari.put("O", Integer.valueOf(11));
+   MapCCDispari.put("P", Integer.valueOf(3));
+   MapCCDispari.put("Q", Integer.valueOf(6));
+   MapCCDispari.put("R", Integer.valueOf(8));
+   MapCCDispari.put("S", Integer.valueOf(12));
+   MapCCDispari.put("T", Integer.valueOf(14));
+   MapCCDispari.put("U", Integer.valueOf(16));
+   MapCCDispari.put("V", Integer.valueOf(10));
+   MapCCDispari.put("W", Integer.valueOf(22));
+   MapCCDispari.put("X", Integer.valueOf(25));
+   MapCCDispari.put("Y", Integer.valueOf(24));
+   MapCCDispari.put("Z", Integer.valueOf(23));
 
    MapCCPari = new Hashtable();
-   MapCCPari.put("A", new Integer(0));
-   MapCCPari.put("0", new Integer(0));
-   MapCCPari.put("B", new Integer(1));
-   MapCCPari.put("1", new Integer(1));
-   MapCCPari.put("C", new Integer(2));
-   MapCCPari.put("2", new Integer(2));
-   MapCCPari.put("D", new Integer(3));
-   MapCCPari.put("3", new Integer(3));
-   MapCCPari.put("E", new Integer(4));
-   MapCCPari.put("4", new Integer(4));
-   MapCCPari.put("F", new Integer(5));
-   MapCCPari.put("5", new Integer(5));
-   MapCCPari.put("G", new Integer(6));
-   MapCCPari.put("6", new Integer(6));
-   MapCCPari.put("H", new Integer(7));
-   MapCCPari.put("7", new Integer(7));
-   MapCCPari.put("I", new Integer(8));
-   MapCCPari.put("8", new Integer(8));
-   MapCCPari.put("J", new Integer(9));
-   MapCCPari.put("9", new Integer(9));
-   MapCCPari.put("K", new Integer(10));
-   MapCCPari.put("L", new Integer(11));
-   MapCCPari.put("M", new Integer(12));
-   MapCCPari.put("N", new Integer(13));
-   MapCCPari.put("O", new Integer(14));
-   MapCCPari.put("P", new Integer(15));
-   MapCCPari.put("Q", new Integer(16));
-   MapCCPari.put("R", new Integer(17));
-   MapCCPari.put("S", new Integer(18));
-   MapCCPari.put("T", new Integer(19));
-   MapCCPari.put("U", new Integer(20));
-   MapCCPari.put("V", new Integer(21));
-   MapCCPari.put("W", new Integer(22));
-   MapCCPari.put("X", new Integer(23));
-   MapCCPari.put("Y", new Integer(24));
-   MapCCPari.put("Z", new Integer(25)); 
+   MapCCPari.put("A", Integer.valueOf(0));
+   MapCCPari.put("0", Integer.valueOf(0));
+   MapCCPari.put("B", Integer.valueOf(1));
+   MapCCPari.put("1", Integer.valueOf(1));
+   MapCCPari.put("C", Integer.valueOf(2));
+   MapCCPari.put("2", Integer.valueOf(2));
+   MapCCPari.put("D", Integer.valueOf(3));
+   MapCCPari.put("3", Integer.valueOf(3));
+   MapCCPari.put("E", Integer.valueOf(4));
+   MapCCPari.put("4", Integer.valueOf(4));
+   MapCCPari.put("F", Integer.valueOf(5));
+   MapCCPari.put("5", Integer.valueOf(5));
+   MapCCPari.put("G", Integer.valueOf(6));
+   MapCCPari.put("6", Integer.valueOf(6));
+   MapCCPari.put("H", Integer.valueOf(7));
+   MapCCPari.put("7", Integer.valueOf(7));
+   MapCCPari.put("I", Integer.valueOf(8));
+   MapCCPari.put("8", Integer.valueOf(8));
+   MapCCPari.put("J", Integer.valueOf(9));
+   MapCCPari.put("9", Integer.valueOf(9));
+   MapCCPari.put("K", Integer.valueOf(10));
+   MapCCPari.put("L", Integer.valueOf(11));
+   MapCCPari.put("M", Integer.valueOf(12));
+   MapCCPari.put("N", Integer.valueOf(13));
+   MapCCPari.put("O", Integer.valueOf(14));
+   MapCCPari.put("P", Integer.valueOf(15));
+   MapCCPari.put("Q", Integer.valueOf(16));
+   MapCCPari.put("R", Integer.valueOf(17));
+   MapCCPari.put("S", Integer.valueOf(18));
+   MapCCPari.put("T", Integer.valueOf(19));
+   MapCCPari.put("U", Integer.valueOf(20));
+   MapCCPari.put("V", Integer.valueOf(21));
+   MapCCPari.put("W", Integer.valueOf(22));
+   MapCCPari.put("X", Integer.valueOf(23));
+   MapCCPari.put("Y", Integer.valueOf(24));
+   MapCCPari.put("Z", Integer.valueOf(25)); 
  };
 /**
  * Calcola la parte di CF corrispondente al cognome
@@ -296,12 +296,12 @@ public static String calcolaCodNome(String aS) {
   aCdFiscale+=calcolaCodCognome(cognome);	
   aCdFiscale+=calcolaCodNome(nome);	
   aCdFiscale+=annoNascita;	
-  aCdFiscale+=CodificaMesi[new Integer(meseNascita).intValue() - 1];
+  aCdFiscale+=CodificaMesi[Integer.valueOf(meseNascita).intValue() - 1];
   
   if(sesso.equals("M")) { // x i maschi
    aCdFiscale+=StrServ.lpad(giornoNascita,2,"0");
   } else { // x le femmine
-   aCdFiscale+=(new Integer(new Integer(giornoNascita).intValue() + 40)).toString();
+   aCdFiscale+=(Integer.valueOf(Integer.valueOf(giornoNascita).intValue() + 40)).toString();
   }
   
   aCdFiscale+=cdComuneNascita;
@@ -407,13 +407,13 @@ public static String calcolaCodNome(String aS) {
 		codice += annoNascita;
 
 		 //Mese di nascita
-		codice += CodificaMesi[new Integer(meseNascita).intValue()];
+		codice += CodificaMesi[Integer.valueOf(meseNascita).intValue()];
 
 		//Giorno di nascita-sesso
 		if(sesso.equals("M")) // x i maschi
 			codice += giornoNascita;
 		else // x le femmine
-			codice += (new Integer(new Integer(giornoNascita).intValue() + 40)).toString();
+			codice += (Integer.valueOf(Integer.valueOf(giornoNascita).intValue() + 40)).toString();
 
 		try {
 			//Comune di nascita
@@ -501,17 +501,17 @@ public static String calcolaCodNome(String aS) {
 
  //Controllo mese di nascita
 
-  if(!CodificaMesi[new Integer(meseNascita).intValue()].equals(aCodMeseNascita.substring(0,1)))
+  if(!CodificaMesi[Integer.valueOf(meseNascita).intValue()].equals(aCodMeseNascita.substring(0,1)))
    throw new ExCodiceFiscale(CODICE_NON_VALIDO + "mese!");
 
  //Controllo giorno di nascita-sesso
 // Err. 783 - BORRIELLO: gestita l'eccezione NumberFormatException, che viene generata nel caso in cui nel giorno sia presente una lettera al posto di un numero. 
   try{
 	  if(sesso.equals("M")) { // x i maschi
-	   if(!new Integer(giornoNascita).equals(new Integer(aCodGiornoNascita)))
+	   if(!Integer.valueOf(giornoNascita).equals(Integer.valueOf(aCodGiornoNascita)))
 		throw new ExCodiceFiscale(CODICE_NON_VALIDO + "giorno di nascita o sesso non corretti!");
 	  } else { // x le femmine
-	   if(!new Integer(new Integer(giornoNascita).intValue() + 40).equals(new Integer(aCodGiornoNascita)))
+	   if(!Integer.valueOf(Integer.valueOf(giornoNascita).intValue() + 40).equals(Integer.valueOf(aCodGiornoNascita)))
 		throw new ExCodiceFiscale(CODICE_NON_VALIDO + "giorno di nascita o sesso non corretti!");
 	  }
   } catch (NumberFormatException nfe){

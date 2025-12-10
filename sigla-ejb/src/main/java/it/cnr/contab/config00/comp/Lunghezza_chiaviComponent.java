@@ -41,8 +41,8 @@ public class Lunghezza_chiaviComponent extends GenericComponent implements ILung
 
 	static final String  VOCE_EP_TABELLA = "VOCE_EP";
 	static final String  VOCE_EP_CD_COLONNA = "CD_VOCE_EP";
-	static final Integer LIVELLO_CAPOCONTO = new Integer(2);
-	static final Integer LIVELLO_CONTO = new Integer(3);	
+	static final Integer LIVELLO_CAPOCONTO = Integer.valueOf(2);
+	static final Integer LIVELLO_CONTO = Integer.valueOf(3);
 
 	static final String CDS_TABELLA =  "UNITA_ORGANIZZATIVA" ;
 	static final String CDS_CD_COLONNA =  "CD_UNITA_ORGANIZZATIVA" ;	
@@ -186,7 +186,7 @@ public String formatLinea_attivitaKey(UserContext userContext,String key) throws
 {
 	if (key == null || key.length() == 0 )
 		return key;
-	java.math.BigDecimal len = getLunghezza( userContext,LATT_TABELLA,new Integer(1),LATT_CD_COLONNA);
+	java.math.BigDecimal len = getLunghezza( userContext,LATT_TABELLA,Integer.valueOf(1),LATT_CD_COLONNA);
 	if (key.length() > len.intValue())
 		throw handleException(new ApplicationException("Il codice non può essere più lungo di " + len.toString() + " caratteri oppure numerazione automatica esaurita"));	
 	return leftPadding(key,len.intValue());
@@ -244,7 +244,7 @@ private java.math.BigDecimal getLunghezza( UserContext userContext,Integer eserc
  */
 private java.math.BigDecimal getLunghezza( UserContext userContext, String tabella, Integer livello, String attributo) throws it.cnr.jada.comp.ComponentException
 {
- return getLunghezza(userContext,new Integer(0), tabella, livello, attributo);
+ return getLunghezza(userContext,Integer.valueOf(0), tabella, livello, attributo);
 }
 /**
   *  normale

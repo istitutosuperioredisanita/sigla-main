@@ -642,11 +642,11 @@ particolare lo sviluppo ha riguardato:
     import java.util.List;
     import java.util.Map;
     import java.util.StringTokenizer;
-    import javax.ejb.EJBException;
-    import javax.servlet.ServletException;
-    import javax.servlet.http.HttpServlet;
-    import javax.servlet.http.HttpServletRequest;
-    import javax.servlet.http.HttpServletResponse;
+    import jakarta.ejb.EJBException;
+
+    import jakarta.servlet.http.HttpServlet;
+    import jakarta.servlet.http.HttpServletRequest;
+    import jakarta.servlet.http.HttpServletResponse;
     import javax.xml.bind.DatatypeConverter;
     import org.codehaus.jackson.JsonFactory;
     import org.codehaus.jackson.JsonGenerationException;
@@ -779,8 +779,8 @@ particolare lo sviluppo ha riguardato:
 
 
 Tecnicamente quindi una servlet non è altro che una classe che estende
-la classe *javax.servlet.http.HttpServlet* ed implementa l'interfaccia
-*javax.servlet.Servlet*.
+la classe *jakarta.servlet.http.HttpServlet* ed implementa l'interfaccia
+*jakarta.servlet.Servlet*.
 
 Questo fa sì che possiamo, e dobbiamo, ridefinire due funzioni:
 

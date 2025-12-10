@@ -40,8 +40,8 @@ public class ContattoHome extends BulkHome {
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,OggettoBulk contatto) throws PersistencyException {
 		try {
 			((ContattoBulk)contatto).setPg_contatto(
-				new Long(
-					((Long)findAndLockMax( contatto, "pg_contatto", new Long(0) )).longValue()+1
+				Long.valueOf(
+					((Long)findAndLockMax( contatto, "pg_contatto", Long.valueOf(0) )).longValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

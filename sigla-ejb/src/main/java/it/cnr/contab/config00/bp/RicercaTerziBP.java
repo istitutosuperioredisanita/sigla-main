@@ -28,8 +28,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import javax.servlet.ServletException;
-import javax.servlet.jsp.PageContext;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
@@ -120,7 +121,7 @@ public class RicercaTerziBP extends BusinessProcess implements ResponseXMLBP{
 			 e = xmldoc.createElement("numris"); 
 			else
 			 e = xmldoc.createElement("cercaterzi:numris");
-		Node n = xmldoc.createTextNode(new Integer(getTerzi().size()).toString());
+		Node n = xmldoc.createTextNode(Integer.valueOf(getTerzi().size()).toString());
     	e.appendChild(n);
     	return e;	
 	}
@@ -179,11 +180,11 @@ public class RicercaTerziBP extends BusinessProcess implements ResponseXMLBP{
 		
 		return elementTerzo;
 	}
-    public void generaXML(PageContext pagecontext) throws IOException, ServletException{
+    public void generaXML(PageContext pagecontext) throws IOException, ServletException {
 		try {
 
 				if (getNumMax()==null)
-					setNumMax(new Integer(20));
+					setNumMax(Integer.valueOf(20));
 		    	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		    	DocumentBuilder builder = factory.newDocumentBuilder();
 		    	DOMImplementation impl = builder.getDOMImplementation();
@@ -454,7 +455,7 @@ public class RicercaTerziBP extends BusinessProcess implements ResponseXMLBP{
 		}else{
 			if (getDominio().equalsIgnoreCase("matricola")){
 				try{
-				Long l=new Long(query);
+				Long l=Long.valueOf(query);
 				}catch (NumberFormatException e){
 					codiceErrore = Constants.ERRORE_SIP_119;
 					return;
@@ -536,8 +537,8 @@ public class RicercaTerziBP extends BusinessProcess implements ResponseXMLBP{
 		anagrafico.setVia_fiscale(getVia());
 		anagrafico.setNum_civico_fiscale(getCivico());
 		anagrafico.setCap_comune_fiscale(getCap());
-		anagrafico.setNazionalita(new NazioneBulk(new Long(getNazione())));
-		anagrafico.setComune_fiscale(new ComuneBulk(new Long(getComune())));
+		anagrafico.setNazionalita(new NazioneBulk(Long.valueOf(getNazione())));
+		anagrafico.setComune_fiscale(new ComuneBulk(Long.valueOf(getComune())));
 		anagrafico.setFl_occasionale(Boolean.FALSE);
 		anagrafico.setFl_fatturazione_differita(Boolean.FALSE);
 		anagrafico.setTi_entita_persona_struttura(AnagraficoBulk.ENTITA_PERSONA);
@@ -549,7 +550,7 @@ public class RicercaTerziBP extends BusinessProcess implements ResponseXMLBP{
 			anagrafico.setNome(getNome());
 			anagrafico.setCodice_fiscale(getCodice_fiscale().toUpperCase());
 			anagrafico.setDt_nascita(new Timestamp(new SimpleDateFormat("yyyy/MM/dd").parse(getData_nascita()).getTime()));
-			anagrafico.setComune_nascita(new ComuneBulk(new Long(getComune_nascita())));
+			anagrafico.setComune_nascita(new ComuneBulk(Long.valueOf(getComune_nascita())));
 			anagrafico.setTi_sesso(getSesso().toUpperCase());			
 		}else if (getTipoterzo().equalsIgnoreCase("giuridica")){
 			anagrafico.setTi_entita_giuridica(AnagraficoBulk.ALTRO);
@@ -580,7 +581,7 @@ public class RicercaTerziBP extends BusinessProcess implements ResponseXMLBP{
 			codiceErrore = Constants.ERRORE_SIP_107;
 			return;
 		}
-		TerzoBulk terzo = new TerzoBulk(new Integer(getCd_terzo()));
+		TerzoBulk terzo = new TerzoBulk(Integer.valueOf(getCd_terzo()));
 		try {
 			RemoteIterator iterator = EJBCommonServices.openRemoteIterator(context, ((TerzoComponentSession)createComponentSession("CNRANAGRAF00_EJB_TerzoComponentSession",TerzoComponentSession.class))
                     .cerca(context.getUserContext(false),null,terzo));
@@ -625,8 +626,8 @@ public class RicercaTerziBP extends BusinessProcess implements ResponseXMLBP{
 		anagrafico.setVia_fiscale(getVia());
 		anagrafico.setNum_civico_fiscale(getCivico());
 		anagrafico.setCap_comune_fiscale(getCap());
-		anagrafico.setNazionalita(new NazioneBulk(new Long(getNazione())));
-		anagrafico.setComune_fiscale(new ComuneBulk(new Long(getComune())));
+		anagrafico.setNazionalita(new NazioneBulk(Long.valueOf(getNazione())));
+		anagrafico.setComune_fiscale(new ComuneBulk(Long.valueOf(getComune())));
 		anagrafico.getComune_fiscale().setNazione(anagrafico.getNazionalita());
 		anagrafico.setFl_occasionale(Boolean.FALSE);
 		anagrafico.setFl_fatturazione_differita(Boolean.FALSE);
@@ -639,7 +640,7 @@ public class RicercaTerziBP extends BusinessProcess implements ResponseXMLBP{
 			anagrafico.setNome(getNome());
 			anagrafico.setCodice_fiscale(getCodice_fiscale().toUpperCase());
 			anagrafico.setDt_nascita(new Timestamp(new SimpleDateFormat("yyyy/MM/dd").parse(getData_nascita()).getTime()));
-			anagrafico.setComune_nascita(new ComuneBulk(new Long(getComune_nascita())));
+			anagrafico.setComune_nascita(new ComuneBulk(Long.valueOf(getComune_nascita())));
 			anagrafico.setTi_sesso(getSesso().toUpperCase());			
 		}else if (getTipoterzo().equalsIgnoreCase("giuridica")){
 			anagrafico.setTi_entita_giuridica(AnagraficoBulk.ALTRO);

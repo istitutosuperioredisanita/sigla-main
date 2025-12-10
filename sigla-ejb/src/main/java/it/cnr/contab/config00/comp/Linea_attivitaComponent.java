@@ -511,23 +511,23 @@ public OggettoBulk inizializzaBulkPerModifica(UserContext userContext,OggettoBul
 		it.cnr.jada.bulk.BulkList<Ass_linea_attivita_esercizioBulk> assGaeEsercizioList = new it.cnr.jada.bulk.BulkList(testataHome.findDettagliEsercizio(aLA));
 		for (Iterator i = assGaeEsercizioList.iterator(); i.hasNext();) {
 			Ass_linea_attivita_esercizioBulk assGaeEsercizio = (Ass_linea_attivita_esercizioBulk) i.next();
-			if (assGaeEsercizio.getEsercizio().compareTo(new Integer(2016))==-1) {
-				int annoProgetto = CNRUserContext.getEsercizio(userContext).compareTo(new Integer(2016))!=-1?new Integer(2015):CNRUserContext.getEsercizio(userContext);
+			if (assGaeEsercizio.getEsercizio().compareTo(Integer.valueOf(2016))==-1) {
+				int annoProgetto = CNRUserContext.getEsercizio(userContext).compareTo(Integer.valueOf(2016))!=-1?Integer.valueOf(2015):CNRUserContext.getEsercizio(userContext);
 				aLA.setModulo2015((ProgettoBulk)progettoHome.findByPrimaryKey(new ProgettoBulk(annoProgetto, assGaeEsercizio.getPg_progetto(), ProgettoBulk.TIPO_FASE_NON_DEFINITA)));
 				if (aLA.getModulo2015()==null)
 					throw new ApplicationException("Attenzione! E'' stato indicato sulla linea di attivita'' un progetto (" + assGaeEsercizio.getPg_progetto() + ") inesistente.");					
 				//Aggiorno l'anno anche sul progetto padre
-				if (CNRUserContext.getEsercizio(userContext).compareTo(new Integer(2016))!=-1 && aLA.getModulo2015().getEsercizio_progetto_padre()==null )
+				if (CNRUserContext.getEsercizio(userContext).compareTo(Integer.valueOf(2016))!=-1 && aLA.getModulo2015().getEsercizio_progetto_padre()==null )
 					aLA.getModulo2015().setEsercizio_progetto_padre(annoProgetto);
 			} else { 
-				int annoProgetto = CNRUserContext.getEsercizio(userContext).compareTo(new Integer(2016))==-1?new Integer(2016):CNRUserContext.getEsercizio(userContext);
+				int annoProgetto = CNRUserContext.getEsercizio(userContext).compareTo(Integer.valueOf(2016))==-1?Integer.valueOf(2016):CNRUserContext.getEsercizio(userContext);
 				aLA.setProgetto2016((ProgettoBulk)progettoHome.findByPrimaryKey(new ProgettoBulk(annoProgetto, assGaeEsercizio.getPg_progetto(), ProgettoBulk.TIPO_FASE_NON_DEFINITA)));
 				if (aLA.getProgetto2016()!=null && aLA.getProgetto2016().getPg_progetto()!=null)
 					aLA.getProgetto2016().setOtherField((Progetto_other_fieldBulk)progetto_other_fieldHome.findByPrimaryKey(new Progetto_other_fieldBulk(aLA.getProgetto2016().getPg_progetto())));
 				if (aLA.getProgetto2016()==null)
 					throw new ApplicationException("Attenzione! E'' stato indicato sulla linea di attivita'' un progetto (" + assGaeEsercizio.getPg_progetto() + ") inesistente.");					
 				//Aggiorno l'anno anche sul progetto padre
-				if (CNRUserContext.getEsercizio(userContext).compareTo(new Integer(2016))==-1 && aLA.getProgetto2016().getEsercizio_progetto_padre()==null )
+				if (CNRUserContext.getEsercizio(userContext).compareTo(Integer.valueOf(2016))==-1 && aLA.getProgetto2016().getEsercizio_progetto_padre()==null )
 					aLA.getProgetto2016().setEsercizio_progetto_padre(annoProgetto);
 			}
 		}
@@ -560,7 +560,7 @@ public OggettoBulk inizializzaBulkPerModifica(UserContext userContext,OggettoBul
  */
 public WorkpackageBulk inizializzaNaturaPerInsieme(UserContext userContext,WorkpackageBulk linea_attivita) throws it.cnr.jada.comp.ComponentException {
 	try {
-		String cdNaturaReimpiego = Utility.createConfigurazioneCnrComponentSession().getVal01(userContext, new Integer(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_NATURA_REIMPIEGO);
+		String cdNaturaReimpiego = Utility.createConfigurazioneCnrComponentSession().getVal01(userContext, Integer.valueOf(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_NATURA_REIMPIEGO);
 		if (WorkpackageBulk.TI_GESTIONE_SPESE.equals(linea_attivita.getTi_gestione()) &&
 			linea_attivita.getInsieme_la() != null &&
 			linea_attivita.getCentro_responsabilita() != null &&
@@ -695,7 +695,7 @@ public OggettoBulk modificaConBulk(UserContext userContext,OggettoBulk bulk) thr
 		Ass_linea_attivita_esercizioBulk assGaeEsercizio2015 = null, assGaeEsercizio2016 = null;
 		for (Iterator i = assGaeEsercizioList.iterator(); i.hasNext();) {
 			Ass_linea_attivita_esercizioBulk assGaeEsercizio = (Ass_linea_attivita_esercizioBulk) i.next();
-			if (assGaeEsercizio.getEsercizio().compareTo(new Integer(2016))==-1) {
+			if (assGaeEsercizio.getEsercizio().compareTo(Integer.valueOf(2016))==-1) {
 				assGaeEsercizio2015 = assGaeEsercizio;
 				if (linea_attivita.getModulo2015()==null || linea_attivita.getModulo2015().getPg_progetto()==null)
 					assGaeEsercizio2015.setToBeDeleted();

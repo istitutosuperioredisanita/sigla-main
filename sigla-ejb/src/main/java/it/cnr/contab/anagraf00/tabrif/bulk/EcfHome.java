@@ -40,8 +40,8 @@ public class EcfHome extends BulkHome {
 		EcfBulk ecf= (EcfBulk)oggettobulk;
 		try {
 		((EcfBulk)oggettobulk).setProg(
-		new Long(
-		((Long)findAndLockMax( ecf, "prog", new Long(0) )).longValue()+1));
+		Long.valueOf(
+		((Long)findAndLockMax( ecf, "prog", Long.valueOf(0) )).longValue()+1));
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {
 		 throw new it.cnr.jada.comp.ApplicationException("Operazione effettuata al momento da un'altro utente, riprovare successivamente.");
 		} 
@@ -51,7 +51,7 @@ public class EcfHome extends BulkHome {
 		  
 		Long Max_prog=null;
 		EcfBulk bulk =new EcfBulk();	
-		Max_prog = ((Long) findMax(bulk,"prog_estrazione",new Long(0))).longValue()+1;
+		Max_prog = ((Long) findMax(bulk,"prog_estrazione",Long.valueOf(0))).longValue()+1;
 		
 		return Max_prog;
 	}

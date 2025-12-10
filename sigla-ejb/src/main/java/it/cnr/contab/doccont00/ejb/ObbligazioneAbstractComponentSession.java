@@ -19,7 +19,7 @@ package it.cnr.contab.doccont00.ejb;
 
 import java.sql.Timestamp;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.doccont00.core.DatiFinanziariScadenzeDTO;
 

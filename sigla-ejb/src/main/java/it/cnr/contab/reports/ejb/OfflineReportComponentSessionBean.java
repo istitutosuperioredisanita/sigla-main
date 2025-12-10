@@ -26,8 +26,8 @@ import it.cnr.contab.utente00.comp.RuoloComponent;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.*;
 @Stateless(name="BREPORTS_EJB_OfflineReportComponentSession")
 public class OfflineReportComponentSessionBean extends it.cnr.jada.ejb.GenericComponentSessionBean implements OfflineReportComponentSession {
 	private it.cnr.contab.reports.comp.OfflineReportComponent componentObj;
@@ -39,10 +39,8 @@ public class OfflineReportComponentSessionBean extends it.cnr.jada.ejb.GenericCo
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.reports.comp.OfflineReportComponent();
 	}
-	public static OfflineReportComponentSessionBean newInstance() throws EJBException {
-		return new OfflineReportComponentSessionBean();
-	}
-	public void addJob(it.cnr.jada.UserContext param0,it.cnr.contab.reports.bulk.Print_spoolerBulk param1,it.cnr.jada.bulk.BulkList param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+	public void addJob(it.cnr.jada.UserContext param0,it.cnr.contab.reports.bulk.Print_spoolerBulk param1,it.cnr.jada.bulk.BulkList param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			componentObj.addJob(param0,param1,param2);
@@ -59,7 +57,7 @@ public class OfflineReportComponentSessionBean extends it.cnr.jada.ejb.GenericCo
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void cancellaSchedulazione(it.cnr.jada.UserContext param0, Long param1, String param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void cancellaSchedulazione(it.cnr.jada.UserContext param0, Long param1, String param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			componentObj.cancellaSchedulazione(param0,param1,param2);
@@ -76,7 +74,7 @@ public class OfflineReportComponentSessionBean extends it.cnr.jada.ejb.GenericCo
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void deleteJobs(it.cnr.jada.UserContext param0,it.cnr.contab.reports.bulk.Print_spoolerBulk[] param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void deleteJobs(it.cnr.jada.UserContext param0,it.cnr.contab.reports.bulk.Print_spoolerBulk[] param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			componentObj.deleteJobs(param0,param1);
@@ -93,7 +91,7 @@ public class OfflineReportComponentSessionBean extends it.cnr.jada.ejb.GenericCo
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public Print_spoolerBulk findPrintSpooler(it.cnr.jada.UserContext param0, Long param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public Print_spoolerBulk findPrintSpooler(it.cnr.jada.UserContext param0, Long param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			Print_spoolerBulk result = componentObj.findPrintSpooler(param0,param1);
@@ -111,7 +109,7 @@ public class OfflineReportComponentSessionBean extends it.cnr.jada.ejb.GenericCo
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.jada.util.RemoteIterator queryJobs(it.cnr.jada.UserContext param0,java.lang.String param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.jada.util.RemoteIterator queryJobs(it.cnr.jada.UserContext param0,java.lang.String param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.util.RemoteIterator result = componentObj.queryJobs(param0,param1);
@@ -130,7 +128,7 @@ public class OfflineReportComponentSessionBean extends it.cnr.jada.ejb.GenericCo
 		}
 	}
 	
-	public String getLastServerActive(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public String getLastServerActive(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			String result = componentObj.getLastServerActive(param0);

@@ -17,7 +17,7 @@
 
 package it.cnr.contab.incarichi00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 /**
  * Remote interface for Enterprise Bean: CNRINCARICHI00_EJB_AssegniRicercaProceduraComponentSession

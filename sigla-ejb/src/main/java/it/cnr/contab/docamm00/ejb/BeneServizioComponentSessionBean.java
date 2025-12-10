@@ -16,9 +16,9 @@
  */
 
 package it.cnr.contab.docamm00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.docamm00.comp.BeneServizioComponent;
 @Stateless(name="CNRDOCAMM00_EJB_BeneServizioComponentSession")
@@ -28,14 +28,12 @@ public class BeneServizioComponentSessionBean extends it.cnr.jada.ejb.CRUDCompon
 		componentObj = new it.cnr.contab.docamm00.comp.BeneServizioComponent();
 	}
 	@Remove
-	public void ejbRemove() throws javax.ejb.EJBException {
+	public void ejbRemove() throws jakarta.ejb.EJBException {
 		componentObj.release();
 	}
 	
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new BeneServizioComponentSessionBean();
-	}
-	public it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk completaElementoVoceOf(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+	public it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk completaElementoVoceOf(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk result = ((BeneServizioComponent)componentObj).completaElementoVoceOf(param0,param1);

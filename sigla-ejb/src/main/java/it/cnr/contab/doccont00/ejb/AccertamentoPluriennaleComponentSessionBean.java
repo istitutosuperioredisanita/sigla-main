@@ -23,10 +23,10 @@ import it.cnr.contab.doccont00.core.bulk.Accertamento_pluriennaleBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -36,9 +36,7 @@ public class AccertamentoPluriennaleComponentSessionBean extends AccertamentoCom
 	public void ejbCreate() {
 	componentObj = new AccertamentoPluriennaleComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new AccertamentoPluriennaleComponentSessionBean();
-}
+
 
 	@Override
 	public List<Accertamento_pluriennaleBulk> findAccertamentiPluriennali(UserContext uc, int esercizio) throws ComponentException, RemoteException {

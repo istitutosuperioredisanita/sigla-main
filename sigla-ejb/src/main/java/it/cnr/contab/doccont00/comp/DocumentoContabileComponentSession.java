@@ -22,7 +22,7 @@ import it.cnr.jada.*;
 
 import java.util.*;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 /**
  * Insert the type's description here.
  * Creation date: (2/8/2002 1:09:44 PM)

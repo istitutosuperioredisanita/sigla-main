@@ -35,7 +35,7 @@ import it.cnr.jada.util.action.FormBP;
 import it.cnr.jada.util.action.FormField;
 import it.cnr.jada.util.action.OptionBP;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 import javax.swing.text.html.Option;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;

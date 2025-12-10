@@ -185,7 +185,7 @@ public java.lang.String leftPadding(java.lang.String param0,int param1) throws R
 	try {
 		return (java.lang.String)invoke("leftPadding",new Object[] {
 			param0,
-			new Integer(param1) });
+			Integer.valueOf(param1) });
 	} catch(java.rmi.RemoteException e) {
 		throw e;
 	} catch(java.lang.reflect.InvocationTargetException e) {

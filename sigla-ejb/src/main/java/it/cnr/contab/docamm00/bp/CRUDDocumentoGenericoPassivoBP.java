@@ -46,8 +46,10 @@ import it.cnr.jada.util.action.FormController;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.jada.util.jsp.JSPUtils;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspWriter;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.stream.Stream;
@@ -473,8 +475,8 @@ public class CRUDDocumentoGenericoPassivoBP
             if (!isAnnoSolareInScrivania()) {
                 String cds = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(context.getUserContext());
                 try {
-                    boolean esercizioScrivaniaAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, new Integer(esercizioScrivania)));
-                    boolean esercizioSuccessivoAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, new Integer(esercizioScrivania + 1)));
+                    boolean esercizioScrivaniaAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, Integer.valueOf(esercizioScrivania)));
+                    boolean esercizioSuccessivoAperto = session.verificaStatoEsercizio(context.getUserContext(), new EsercizioBulk(cds, Integer.valueOf(esercizioScrivania + 1)));
                     setRiportaAvantiIndietro(esercizioScrivaniaAperto && esercizioSuccessivoAperto && isRibaltato() && isSupervisore());
                 } catch (Throwable t) {
                     handleException(t);
@@ -907,7 +909,7 @@ public class CRUDDocumentoGenericoPassivoBP
         return;
     }
 
-    protected void writeToolbar(javax.servlet.jsp.JspWriter writer, it.cnr.jada.util.jsp.Button[] buttons) throws java.io.IOException, javax.servlet.ServletException {
+    protected void writeToolbar(JspWriter writer, it.cnr.jada.util.jsp.Button[] buttons) throws java.io.IOException, ServletException {
 
         it.cnr.jada.util.jsp.Button riportaAvantiButton = buttons[buttons.length - 1];
         riportaAvantiButton.setSeparator(isRiportaIndietroButtonHidden() && !isRiportaAvantiButtonHidden());
@@ -931,7 +933,7 @@ public class CRUDDocumentoGenericoPassivoBP
         ribaltato = b;
     }
 
-    public void writeInventarioToolbar(javax.servlet.jsp.JspWriter writer) throws java.io.IOException, javax.servlet.ServletException {
+    public void writeInventarioToolbar(JspWriter writer) throws java.io.IOException, ServletException {
 
         if (!isSearching() && !isDeleting()) {
             if (this.getParentRoot().isBootstrap()) {
@@ -1013,7 +1015,7 @@ public class CRUDDocumentoGenericoPassivoBP
      * Il metodo è stato sovrascritto per consentire all'utente di modificare lo stato della liquidazione
      * quando il documento non risulta essere modificabile
      */
-    public void writeFormInput(javax.servlet.jsp.JspWriter jspwriter, String s, String s1, boolean flag, String s2, String s3) throws java.io.IOException {
+    public void writeFormInput(JspWriter jspwriter, String s, String s1, boolean flag, String s2, String s3) throws java.io.IOException {
         Documento_genericoBulk doc = null;
         if (getModel() != null)
             doc = (Documento_genericoBulk) getModel();
@@ -1039,7 +1041,7 @@ public class CRUDDocumentoGenericoPassivoBP
             super.writeFormInput(jspwriter, s, s1, flag, s2, s3);
     }
 
-    public void writeFormFieldDoc1210(javax.servlet.jsp.JspWriter out, String name) throws java.io.IOException {
+    public void writeFormFieldDoc1210(JspWriter out, String name) throws java.io.IOException {
 
         Documento_genericoBulk dg = (Documento_genericoBulk) getModel();
 

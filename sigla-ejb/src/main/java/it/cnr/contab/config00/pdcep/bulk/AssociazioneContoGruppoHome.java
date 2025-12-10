@@ -37,7 +37,7 @@ import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 public class AssociazioneContoGruppoHome extends BulkHome {
 

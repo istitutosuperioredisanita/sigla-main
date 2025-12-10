@@ -100,7 +100,7 @@ public class CRUDCompensoAction extends EconomicaAction {
      * Al business process viene anche chiesto l'elenco delle colonne da
      * visualizzare.
      */
-    protected Forward basicDoCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, javax.ejb.RemoveException {
+    protected Forward basicDoCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, jakarta.ejb.RemoveException {
         try {
             fillModel(context);
             it.cnr.jada.util.action.CRUDBP bp = getBusinessProcess(context);
@@ -503,7 +503,7 @@ public class CRUDCompensoAction extends EconomicaAction {
      * Al business process viene anche chiesto l'elenco delle colonne da
      * visualizzare.
      */
-    public Forward doCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, javax.ejb.RemoveException {
+    public Forward doCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, jakarta.ejb.RemoveException {
 
         CRUDCompensoBP bp = (CRUDCompensoBP) context.getBusinessProcess();
 
@@ -996,7 +996,7 @@ public class CRUDCompensoAction extends EconomicaAction {
 
                 OptionBP option = openConfirm(context, msg, OptionBP.CONFIRM_YES_NO, "doConfermaModificaDataCompetenzaCoge");
                 option.addAttribute("oldDataCompCoge", oldDataCompCoge);
-                option.addAttribute("errorCodeTerzo", new Integer(errorCodeTerzo));
+                option.addAttribute("errorCodeTerzo", Integer.valueOf(errorCodeTerzo));
                 return option;
             }
 
@@ -1008,7 +1008,7 @@ public class CRUDCompensoAction extends EconomicaAction {
             java.util.GregorianCalendar tsOdiernoGregorian = new GregorianCalendar();
             tsOdiernoGregorian.setTime(new Date(CompetenzaA.getTime()));
 
-            Integer esercizioCompetenzaA = new Integer(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
+            Integer esercizioCompetenzaA = Integer.valueOf(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
             String cds = compenso.getCd_cds();
 
             if (((CompensoComponentSession) bp.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaA, cds))
@@ -1069,7 +1069,7 @@ public class CRUDCompensoAction extends EconomicaAction {
 
                 OptionBP option = openConfirm(context, msg, OptionBP.CONFIRM_YES_NO, "doConfermaModificaDataCompetenzaCoge");
                 option.addAttribute("oldDataCompCoge", oldDataCompCoge);
-                option.addAttribute("errorCodeTerzo", new Integer(errorCodeTerzo));
+                option.addAttribute("errorCodeTerzo", Integer.valueOf(errorCodeTerzo));
                 return option;
             }
 
@@ -1082,7 +1082,7 @@ public class CRUDCompensoAction extends EconomicaAction {
             java.util.GregorianCalendar tsOdiernoGregorian = new GregorianCalendar();
             tsOdiernoGregorian.setTime(new Date(CompetenzaDa.getTime()));
 
-            Integer esercizioCompetenzaDa = new Integer(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
+            Integer esercizioCompetenzaDa = Integer.valueOf(tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR));
             String cds = compenso.getCd_cds();
 
             if (((CompensoComponentSession) bp.createComponentSession()).isEsercizioChiusoPerDataCompetenza(context.getUserContext(), esercizioCompetenzaDa, cds))
@@ -1131,7 +1131,7 @@ public class CRUDCompensoAction extends EconomicaAction {
 
                 OptionBP option = openConfirm(context, msg, OptionBP.CONFIRM_YES_NO, "doConfermaModificaDataRegistrazione");
                 option.addAttribute("dataReg", oldDataReg);
-                option.addAttribute("errorCodeTerzo", new Integer(errorCodeTerzo));
+                option.addAttribute("errorCodeTerzo", Integer.valueOf(errorCodeTerzo));
                 return option;
             }
 
@@ -1200,8 +1200,8 @@ public class CRUDCompensoAction extends EconomicaAction {
             CRUDCompensoBP bp = (CRUDCompensoBP) getBusinessProcess(context);
             CompensoBulk compenso = (CompensoBulk) bp.getModel();
             if (compenso.getFl_liquidazione_differita() && compenso.getDt_fattura_fornitore() != null) {
-                java.sql.Timestamp data_limite = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getDt01(context.getUserContext(), new Integer(0), "*", "COSTANTI", "LIMITE_CREAZIONE_FATT_PASS_ES_DIF");
-                java.sql.Timestamp data_limite_sup = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getDt02(context.getUserContext(), new Integer(0), "*", "COSTANTI", "LIMITE_CREAZIONE_FATT_PASS_ES_DIF");
+                java.sql.Timestamp data_limite = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getDt01(context.getUserContext(), Integer.valueOf(0), "*", "COSTANTI", "LIMITE_CREAZIONE_FATT_PASS_ES_DIF");
+                java.sql.Timestamp data_limite_sup = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getDt02(context.getUserContext(), Integer.valueOf(0), "*", "COSTANTI", "LIMITE_CREAZIONE_FATT_PASS_ES_DIF");
                 if (compenso.getDt_fattura_fornitore().compareTo(data_limite) < 0 || compenso.getDt_fattura_fornitore().compareTo(data_limite_sup) > 0) {
                     compenso.setFl_liquidazione_differita(false);
                     setMessage(context, it.cnr.jada.util.action.FormBP.WARNING_MESSAGE, "Non è possibile indicare la liquidazione differita con la data fattura fornitore indicata.");

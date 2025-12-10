@@ -59,11 +59,11 @@ public class Incarichi_proceduraBulk extends Incarichi_proceduraBase {
 	final public static String APPLICAZIONE_NORMA_YES = "Y";
 	final public static String APPLICAZIONE_NORMA_NO = "N";
 	
-	final public static Integer FASE_INSERIMENTO_INCARICO = new Integer(0);
-	final public static Integer FASE_PUBBLICAZIONE = new Integer(1);
-	final public static Integer FASE_INSERIMENTO_CONTRATTO = new Integer(2);
-	final public static Integer FASE_INVIO_CORTE_CONTI = new Integer(3);
-	final public static Integer FASE_DEFINITIVA = new Integer(4);
+	final public static Integer FASE_INSERIMENTO_INCARICO = Integer.valueOf(0);
+	final public static Integer FASE_PUBBLICAZIONE = Integer.valueOf(1);
+	final public static Integer FASE_INSERIMENTO_CONTRATTO = Integer.valueOf(2);
+	final public static Integer FASE_INVIO_CORTE_CONTI = Integer.valueOf(3);
+	final public static Integer FASE_DEFINITIVA = Integer.valueOf(4);
 	
 	final public static String STATO_PROVVISORIO = "PP";
 	final public static String STATO_PUBBLICATA = "PU";
@@ -697,7 +697,7 @@ public class Incarichi_proceduraBulk extends Incarichi_proceduraBase {
 		return this != null &&
 			   this.getProcedura_amministrativa() != null &&
 			   this.getProcedura_amministrativa().getIncarico_ric_giorni_pubbl() != null &&
-			   this.getProcedura_amministrativa().getIncarico_ric_giorni_pubbl().compareTo(new Integer(0))==1;
+			   this.getProcedura_amministrativa().getIncarico_ric_giorni_pubbl().compareTo(Integer.valueOf(0))==1;
 	}
 	@Override
 	public void insertedUsing(Persister persister, UserContext userContext) {

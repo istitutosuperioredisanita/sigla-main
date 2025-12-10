@@ -339,7 +339,7 @@ public Forward doOnDtACompetenzaCogeChange(ActionContext context) {
 				
 			OptionBP option = openConfirm(context, msg , OptionBP.CONFIRM_YES_NO,"doConfermaModificaDataCompetenzaCoge");
 			option.addAttribute("oldDataCompCoge", oldDataCompCoge);
-			option.addAttribute("errorCodeTerzo", new Integer(errorCodeTerzo));
+			option.addAttribute("errorCodeTerzo", Integer.valueOf(errorCodeTerzo));
 			return option;
 		}
 		bp.findTipiRapporto(context);
@@ -385,7 +385,7 @@ public Forward doOnDtRegistrazioneChange(ActionContext context) {
 				
 			OptionBP option = openConfirm(context, msg , OptionBP.CONFIRM_YES_NO,"doConfermaModificaDataRegistrazione");
 			option.addAttribute("dataReg", oldDataReg);
-			option.addAttribute("errorCodeTerzo", new Integer(errorCodeTerzo));
+			option.addAttribute("errorCodeTerzo", Integer.valueOf(errorCodeTerzo));
 			return option;
 		}
 

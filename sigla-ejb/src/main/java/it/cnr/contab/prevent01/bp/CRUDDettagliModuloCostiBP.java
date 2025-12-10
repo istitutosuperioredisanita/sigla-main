@@ -30,9 +30,11 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.JspWriter;
+
+import jakarta.servlet.http.HttpSession;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspWriter;
 
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_enteBulk;
@@ -145,9 +147,9 @@ public class CRUDDettagliModuloCostiBP extends SimpleCRUDBP {
 	protected void initialize(ActionContext actioncontext) throws BusinessProcessException {
 		
 		anno_corrente = CNRUserContext.getEsercizio(actioncontext.getUserContext()).toString();
-		anno_precedente = new Integer(CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue() - 1).toString();
-		anno_successivo = new Integer(CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue() + 1).toString();
-		anno_successivo_successivo = new Integer(CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue() + 2).toString();
+		anno_precedente = Integer.valueOf(CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue() - 1).toString();
+		anno_successivo = Integer.valueOf(CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue() + 1).toString();
+		anno_successivo_successivo = Integer.valueOf(CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue() + 2).toString();
 
 		Pdg_modulo_costiBulk pdg_modulo = new Pdg_modulo_costiBulk(getPdg_modulo());
 		PdgModuloCostiComponentSession session = (PdgModuloCostiComponentSession)createComponentSession();
@@ -265,7 +267,7 @@ public class CRUDDettagliModuloCostiBP extends SimpleCRUDBP {
 	public void setPdg_modulo(Pdg_moduloBulk bulk) {
 		pdg_modulo = bulk;
 	}
-	public static CostiDipendenteComponentSession getCostiDipendenteComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public static CostiDipendenteComponentSession getCostiDipendenteComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 		return (CostiDipendenteComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPDG00_EJB_CostiDipendenteComponentSession",CostiDipendenteComponentSession.class);
 	}
     public boolean isCostiDipendenteRipartiti(ActionContext actioncontext) throws BusinessProcessException{

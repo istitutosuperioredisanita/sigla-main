@@ -30,9 +30,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.*;
-import javax.servlet.ServletException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.PageContext;
 
 /**
  * BusinessProecess che presenta i Progetti sotto forma di Albero
@@ -64,7 +65,7 @@ public boolean isBringBackButtonEnabled()
 	if (getFocusedElement()!=null) {
 		ProgettoBulk rec = (ProgettoBulk) getFocusedElement();
 		Integer livello = rec.getLivello();
-		Integer livellobp = new Integer(((IProgettoBP)this.getParent()).getLivelloProgetto()-1);
+		Integer livellobp = Integer.valueOf(((IProgettoBP)this.getParent()).getLivelloProgetto()-1);
 		if (livello.compareTo(livellobp)==0)
 			return true;
 	}
@@ -79,7 +80,7 @@ public boolean isExpandButtonEnabled()
 	if (getFocusedElement()!=null) {
 		ProgettoBulk rec = (ProgettoBulk) getFocusedElement();
 		Integer livello = rec.getLivello();
-		Integer livellobp = new Integer(((IProgettoBP)this.getParent()).getLivelloProgetto()-1);
+		Integer livellobp = Integer.valueOf(((IProgettoBP)this.getParent()).getLivelloProgetto()-1);
 		if (livello.compareTo(livellobp)<0)
 			return true;
 	}

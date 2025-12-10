@@ -26,9 +26,9 @@ import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
 
 @Stateless(name = "CNRGESTIVA00_EJB_ConsRegIvaComponentSession")
@@ -39,12 +39,8 @@ public class ConsRegIvaComponentSessionBean extends it.cnr.jada.ejb.RicercaCompo
     }
 
     @Remove
-    public void ejbRemove() throws javax.ejb.EJBException {
+    public void ejbRemove() throws jakarta.ejb.EJBException {
         componentObj.release();
-    }
-
-    public static it.cnr.jada.ejb.RicercaComponentSessionBean newInstance() throws javax.ejb.EJBException {
-        return new ConsRegIvaComponentSessionBean();
     }
 
 }

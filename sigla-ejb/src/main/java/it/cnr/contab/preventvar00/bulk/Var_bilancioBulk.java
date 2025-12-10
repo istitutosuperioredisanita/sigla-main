@@ -167,8 +167,8 @@ public java.util.Dictionary getEsercizio_importiKeys() {
 	}
 	aD.put(bilancio.getEsercizio(),bilancio.getEsercizio());
     if(bilancio.getTi_appartenenza().equals(it.cnr.contab.config00.pdcfin.bulk.Elemento_voceHome.APPARTENENZA_CNR)) {
- 	 Integer aA2=new Integer((bilancio.getEsercizio().intValue()+1));
-	 Integer aA3=new Integer((bilancio.getEsercizio().intValue()+2));
+ 	 Integer aA2=Integer.valueOf((bilancio.getEsercizio().intValue()+1));
+	 Integer aA3=Integer.valueOf((bilancio.getEsercizio().intValue()+2));
 	 aD.put(aA2,aA2);
 	 aD.put(aA3,aA3);
     }

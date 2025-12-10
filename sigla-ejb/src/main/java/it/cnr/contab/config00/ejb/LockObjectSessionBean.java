@@ -24,8 +24,8 @@ import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 @Stateless(name="CNRCONFIG00_EJB_LockObjectSession")
 public class LockObjectSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements LockObjectSession{
@@ -34,7 +34,7 @@ public class LockObjectSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionB
 		componentObj = new LockObjectComponent();
 	}
 	
-	public OggettoBulk riempiListaUtenti(it.cnr.jada.UserContext param0, OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException{
+	public OggettoBulk riempiListaUtenti(it.cnr.jada.UserContext param0, OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException{
 		pre_component_invocation(param0,componentObj);
 		try {
 			OggettoBulk result = ((LockObjectComponent)componentObj).riempiListaUtenti(param0,param1);
@@ -53,7 +53,7 @@ public class LockObjectSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionB
 		}
 	}
 
-	public OggettoBulk riempiListaOggetti(it.cnr.jada.UserContext param0, OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException{
+	public OggettoBulk riempiListaOggetti(it.cnr.jada.UserContext param0, OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException{
 		pre_component_invocation(param0,componentObj);
 		try {
 			OggettoBulk result = ((LockObjectComponent)componentObj).riempiListaOggetti(param0,param1);

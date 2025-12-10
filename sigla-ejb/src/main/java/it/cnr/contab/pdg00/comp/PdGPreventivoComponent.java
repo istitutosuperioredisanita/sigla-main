@@ -2709,7 +2709,7 @@ private boolean isStatoCompatibile (String statoAttuale, int livello, String nuo
 		try {
 			Configurazione_cnrComponentSession configurazione = (Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession",Configurazione_cnrComponentSession.class);
 			return voce.getCd_elemento_voce().equals(configurazione.getVal01(userContext, voce.getEsercizio(),null,"ELEMENTO_VOCE_SPECIALE","PRESTAZIONI_DA_STRUTTURE_DELL_ENTE"));
-		} catch(javax.ejb.EJBException e) {
+		} catch(jakarta.ejb.EJBException e) {
 			throw handleException(e);
 		} catch(java.rmi.RemoteException e) {
 			throw handleException(e);
@@ -3053,8 +3053,8 @@ public OggettoBulk modificaStatoPdG (UserContext userContext, Pdg_preventivoBulk
 				cdrUtente,
 				pdg,
 				oldPdg,
-				new Integer(livelloResponsabilitaUtente),
-				new Integer(livelloResponsabilitaPdg)
+				Integer.valueOf(livelloResponsabilitaUtente),
+				Integer.valueOf(livelloResponsabilitaPdg)
 			});
 
 		oldPdg.setStato(nuovoStato);
@@ -4750,9 +4750,9 @@ private MessaggioBulk generaMessaggio(UserContext userContext, UtenteBulk utente
 	MessaggioHome messHome = (MessaggioHome)getHome(userContext,MessaggioBulk.class);
 	MessaggioBulk messaggio = new MessaggioBulk();
 	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-	messaggio.setPg_messaggio(new Long(messHome.fetchNextSequenceValue(userContext,"CNRSEQ00_PG_MESSAGGIO").longValue()));
+	messaggio.setPg_messaggio(Long.valueOf(messHome.fetchNextSequenceValue(userContext,"CNRSEQ00_PG_MESSAGGIO").longValue()));
 	messaggio.setCd_utente(utente.getCd_utente());
-	messaggio.setPriorita(new Integer(1));
+	messaggio.setPriorita(Integer.valueOf(1));
 	messaggio.setDs_messaggio(sdf.format(EJBCommonServices.getServerTimestamp()) + " - È stata raggiunta la quota di "+ etr_spe +" assegnata alla Variazione");
 	messaggio.setCorpo("Numero variazione:"+pdg.getPg_variazione_pdg());
 	messaggio.setCorpo(messaggio.getCorpo() + "\n" + "Il CdR :"+ass_pdg.getCentro_responsabilita().getCd_ds_cdr()+" ha coperto la quota assegnata.");

@@ -23,7 +23,7 @@
  */
 package it.cnr.contab.util00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 /**
  * @author mincarnato

@@ -35,9 +35,10 @@ import it.cnr.jada.util.action.SelezionatoreListaBP;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.jada.util.jsp.TableCustomizer;
 
-import javax.servlet.ServletException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.PageContext;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -149,7 +150,7 @@ public class ConsultazioneMastrinoContoBP<T extends ContoBulk> extends Seleziona
         setMultiSelection(!this.getMapFilter().getDetail());
     }
 
-    public it.cnr.jada.ejb.CRUDComponentSession createComponentSession() throws javax.ejb.EJBException, RemoteException, BusinessProcessException {
+    public it.cnr.jada.ejb.CRUDComponentSession createComponentSession() throws jakarta.ejb.EJBException, RemoteException, BusinessProcessException {
         return (it.cnr.jada.ejb.CRUDComponentSession) createComponentSession("JADAEJB_CRUDComponentSession", it.cnr.jada.ejb.CRUDComponentSession.class);
     }
 

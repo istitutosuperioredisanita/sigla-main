@@ -34,17 +34,17 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.PersistencyException;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
+import jakarta.servlet.http.HttpServletRequest;
 import java.rmi.RemoteException;
 import java.util.GregorianCalendar;
 import java.util.Optional;
@@ -52,26 +52,27 @@ import java.util.Optional;
 @Stateless
 public class AnagraficoResource implements AnagraficoLocal {
     private final Logger LOGGER = LoggerFactory.getLogger(AnagraficoResource.class);
-	@Context SecurityContext securityContext;
-	@EJB CRUDComponentSession crudComponentSession;
-	@EJB TerzoComponentSession terzoComponentSession;
-	@EJB AnagraficoComponentSession anagraficoComponentSession;
-	@EJB ComuneComponentSession comuneComponentSession;
-	@EJB Unita_organizzativaComponentSession unita_organizzativaComponentSession;
+	@Context
+    SecurityContext securityContext;
+    @EJB CRUDComponentSession crudComponentSession;
+    @EJB TerzoComponentSession terzoComponentSession;
+    @EJB AnagraficoComponentSession anagraficoComponentSession;
+    @EJB ComuneComponentSession comuneComponentSession;
+    @EJB Unita_organizzativaComponentSession unita_organizzativaComponentSession;
 	
     public Response insert(@Context HttpServletRequest request, AnagraficoBulk anagraficoBulk) throws Exception {
     	CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
-		Optional.ofNullable(anagraficoBulk.getCognome()).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, indicare il cognome."));
-		Optional.ofNullable(anagraficoBulk.getNome()).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, indicare il nome."));
-		Optional.ofNullable(anagraficoBulk.getDt_nascita()).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, indicare la data di nascita."));
-		Optional.ofNullable(anagraficoBulk.getVia_fiscale()).orElseThrow(() -> new RestException(Status.BAD_REQUEST, "Errore, indicare l'indirizzo di residenza."));
+		Optional.ofNullable(anagraficoBulk.getCognome()).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, indicare il cognome."));
+		Optional.ofNullable(anagraficoBulk.getNome()).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, indicare il nome."));
+		Optional.ofNullable(anagraficoBulk.getDt_nascita()).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, indicare la data di nascita."));
+		Optional.ofNullable(anagraficoBulk.getVia_fiscale()).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, indicare l'indirizzo di residenza."));
 
 
 		NazioneBulk nazioneNascita = null;
 		if (anagraficoBulk.getPg_comune_nascita() == null){
 			ComuneBulk comune = anagraficoBulk.getComune_nascita();
 			if (isComuneDaNonInserire(comune)){
-				new RestException(Status.BAD_REQUEST, "Errore, indicare il comune di nascita.");
+				new RestException(Response.Status.BAD_REQUEST, "Errore, indicare il comune di nascita.");
 			} else {
 				nazioneNascita = getNazione(userContext, comune.getNazione().getPg_nazione());
 				if (nazioneNascita != null && !nazioneNascita.getTi_nazione().equals(NazioneBulk.ITALIA)){
@@ -82,7 +83,7 @@ public class AnagraficoResource implements AnagraficoLocal {
 		} else {
 			ComuneBulk comuneNascita = getComune(userContext, anagraficoBulk.getPg_comune_nascita());
 			if (comuneNascita == null){
-				throw  new RestException(Status.BAD_REQUEST, "Errore, comune di nascita non corretto.");
+				throw  new RestException(Response.Status.BAD_REQUEST, "Errore, comune di nascita non corretto.");
 			} else {
 				anagraficoBulk.setComune_nascita(comuneNascita);
 			}
@@ -91,7 +92,7 @@ public class AnagraficoResource implements AnagraficoLocal {
 		if (anagraficoBulk.getPg_comune_fiscale() == null){
 			ComuneBulk comune = anagraficoBulk.getComune_fiscale();
 			if (isComuneDaNonInserire(comune)){
-				new RestException(Status.BAD_REQUEST, "Errore, indicare il comune di residenza.");
+				new RestException(Response.Status.BAD_REQUEST, "Errore, indicare il comune di residenza.");
 			} else {
 				NazioneBulk nazioneResidenza = getNazione(userContext, comune.getNazione().getPg_nazione());
 				if (nazioneResidenza != null && !nazioneResidenza.getTi_nazione().equals(NazioneBulk.ITALIA)){
@@ -103,7 +104,7 @@ public class AnagraficoResource implements AnagraficoLocal {
 		} else {
 			ComuneBulk comuneResidenza = getComune(userContext, anagraficoBulk.getPg_comune_fiscale());
 			if (comuneResidenza == null){
-				throw  new RestException(Status.BAD_REQUEST, "Errore, comune di residenza non corretto.");
+				throw  new RestException(Response.Status.BAD_REQUEST, "Errore, comune di residenza non corretto.");
 			} else {
 				NazioneBulk nazioneResidenza = getNazione(userContext, comuneResidenza.getPg_nazione());
 				if (nazioneResidenza != null){
@@ -140,7 +141,7 @@ public class AnagraficoResource implements AnagraficoLocal {
     	terzoBulk.setToBeCreated();
     	
     	terzoBulk = (TerzoBulk)terzoComponentSession.creaConBulk(userContext, terzoBulk);
-    	return Response.status(Status.OK).entity(terzoBulk).build();
+    	return Response.status(Response.Status.OK).entity(terzoBulk).build();
     }
 
 	private ComuneBulk getComune(UserContext userContext, Long pg_comune) throws PersistencyException, ComponentException, RemoteException, EJBException {

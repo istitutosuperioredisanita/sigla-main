@@ -87,7 +87,7 @@ public class LiquidIvaInterfComponent extends CRUDComponent {
 			for (java.util.ListIterator i = listaUoCds.listIterator();i.hasNext();) {
 				Unita_organizzativaBulk uo = (Unita_organizzativaBulk)i.next();
 				for (Enumeration j = liquid_iva.getTIPI_LIQ().keys();j.hasMoreElements();) {					
-					Liquid_iva_interfBulk liquid = new Liquid_iva_interfBulk(new Integer(0),it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext),it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext),uo.getCd_unita_organizzativa(),liquid_iva.getDt_fine(),liquid_iva.getDt_inizio(),(String)j.nextElement());
+					Liquid_iva_interfBulk liquid = new Liquid_iva_interfBulk(Integer.valueOf(0),it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext),it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext),uo.getCd_unita_organizzativa(),liquid_iva.getDt_fine(),liquid_iva.getDt_inizio(),(String)j.nextElement());
 					liquid.setFl_gia_eleborata(new Boolean(false));	
 					liquid.setIva_credito(new BigDecimal("0"));
 					liquid.setIva_debito(new BigDecimal("0"));	

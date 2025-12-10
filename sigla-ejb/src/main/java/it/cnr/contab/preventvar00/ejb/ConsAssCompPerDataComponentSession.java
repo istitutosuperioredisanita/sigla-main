@@ -19,7 +19,7 @@ package it.cnr.contab.preventvar00.ejb;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.preventvar00.consultazioni.bulk.V_cons_ass_comp_per_dataBulk;
 import it.cnr.jada.UserContext;

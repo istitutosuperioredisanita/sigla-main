@@ -251,7 +251,7 @@ private void aggiornaSaldi(
 				}
 			}
 		}
-	} catch (javax.ejb.EJBException e) {
+	} catch (jakarta.ejb.EJBException e) {
 		throw handleException(carriera, e);
 	} catch (java.rmi.RemoteException e) {
 		throw handleException(carriera, e);
@@ -296,7 +296,7 @@ private Long assegnaProgressivo(
 		Numerazione_doc_ammBulk numerazione = new Numerazione_doc_ammBulk(carriera);
 		return progressiviSession.getNextPG(userContext, numerazione);
 
-	}catch(javax.ejb.EJBException ex){
+	}catch(jakarta.ejb.EJBException ex){
 		throw handleException(carriera, ex);
 	}catch(RemoteException ex){
 		throw handleException(carriera, ex);
@@ -314,7 +314,7 @@ private Long assegnaProgressivoTemporaneo(
 		Numerazione_doc_ammBulk numerazione = new Numerazione_doc_ammBulk(carriera);
 		numerazione.setEsercizio(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
 		return session.getNextTempPG(userContext, numerazione);
-	}catch(javax.ejb.EJBException ex){
+	}catch(jakarta.ejb.EJBException ex){
 		throw handleException(carriera, ex);
 	}catch(RemoteException ex){
 		throw handleException(carriera, ex);
@@ -1116,8 +1116,8 @@ public java.util.Collection findTipiTrattamento(UserContext userContext, Minicar
 				AnagraficoBulk a = (AnagraficoBulk)aHome.findByPrimaryKey(aKey);
 				
 				if (a.getFl_cervellone()&& 
-					!(new Integer(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_inizio_res_fis().intValue()) < 0) &&
-					!(new Integer(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_fine_agevolazioni().intValue()) > 0))
+					!(Integer.valueOf(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_inizio_res_fis().intValue()) < 0) &&
+					!(Integer.valueOf(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_fine_agevolazioni().intValue()) > 0))
 				{
 					filtro.setFlAgevolazioniCervelli(new Boolean(a.getFl_cervellone()));
 				}
@@ -1446,8 +1446,8 @@ private boolean isTipoTrattamentoValido(UserContext userContext, MinicarrieraBul
 				AnagraficoBulk a = (AnagraficoBulk)aHome.findByPrimaryKey(aKey);
 				
 				if (a.getFl_cervellone()&& 
-					!(new Integer(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_inizio_res_fis().intValue()) < 0) &&
-					!(new Integer(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_fine_agevolazioni().intValue()) > 0))
+					!(Integer.valueOf(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_inizio_res_fis().intValue()) < 0) &&
+					!(Integer.valueOf(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_fine_agevolazioni().intValue()) > 0))
 				{
 					filtro.setFlAgevolazioniCervelli(new Boolean(a.getFl_cervellone()));
 				}
@@ -1569,8 +1569,8 @@ private void loadTipoTrattamento(UserContext userContext, MinicarrieraBulk carri
 				AnagraficoBulk a = (AnagraficoBulk)aHome.findByPrimaryKey(aKey);
 				
 				if (a.getFl_cervellone()&& 
-					!(new Integer(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_inizio_res_fis().intValue()) < 0) &&
-					!(new Integer(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_fine_agevolazioni().intValue()) > 0))
+					!(Integer.valueOf(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_inizio_res_fis().intValue()) < 0) &&
+					!(Integer.valueOf(data_da.get(GregorianCalendar.YEAR)).compareTo(a.getAnno_fine_agevolazioni().intValue()) > 0))
 				{
 					filtro.setFlAgevolazioniCervelli(new Boolean(a.getFl_cervellone()));
 				}

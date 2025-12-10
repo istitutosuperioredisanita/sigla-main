@@ -17,8 +17,8 @@
 
 package it.cnr.contab.util00.ejb;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.*;
 @Stateless(name="CNRUTIL00_EJB_PingComponentSession")
 public class PingComponentSessionBean extends it.cnr.jada.ejb.GenericComponentSessionBean  implements PingComponentSession{
 	private it.cnr.contab.util00.comp.PingComponent componentObj;
@@ -30,10 +30,7 @@ public class PingComponentSessionBean extends it.cnr.jada.ejb.GenericComponentSe
 	public void ejbRemove() throws EJBException {
 		componentObj.release();
 	}
-	public static PingComponentSessionBean newInstance() throws EJBException {
-		return new PingComponentSessionBean();
-	}
-	public boolean ping(String param0, Integer param1) throws javax.ejb.EJBException {
+	public boolean ping(String param0, Integer param1) throws jakarta.ejb.EJBException {
 		pre_component_invocation(null,componentObj);
 		try {
 			boolean result = componentObj.ping(param0, param1);

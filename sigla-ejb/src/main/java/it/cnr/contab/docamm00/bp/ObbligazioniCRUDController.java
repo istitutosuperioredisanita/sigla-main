@@ -22,6 +22,8 @@ import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_IBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaBulk;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
 import it.cnr.jada.action.HttpActionContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 /**
  * Insert the type's description here.
@@ -86,10 +88,10 @@ public class ObbligazioniCRUDController extends it.cnr.jada.util.action.SimpleDe
     }
     @Override
     public void writeHTMLToolbar(
-            javax.servlet.jsp.PageContext context,
+            PageContext context,
             boolean reset,
             boolean find,
-            boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+            boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
         super.writeHTMLToolbar(context, reset, find, delete, false);
 

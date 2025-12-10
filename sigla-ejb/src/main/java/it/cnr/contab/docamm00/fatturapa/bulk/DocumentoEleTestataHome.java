@@ -31,12 +31,12 @@ import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.util.*;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.ejb.EJBException;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.ejb.EJBException;
 import javax.mail.AuthenticationFailedException;
 import javax.mail.PasswordAuthentication;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.transform.stream.StreamResult;
 
 import it.cnr.contab.anagraf00.core.bulk.*;
@@ -182,7 +182,7 @@ public class DocumentoEleTestataHome extends BulkHome {
 	public PasswordAuthentication getAuthenticatorPecSdi(UserContext userContext) throws ComponentException {
 		Configurazione_cnrBulk email;
 		try {
-			email = Utility.createConfigurazioneCnrComponentSession().getConfigurazione(userContext, new Integer(0),null,Configurazione_cnrBulk.PK_EMAIL_PEC, Configurazione_cnrBulk.SK_SDI);
+			email = Utility.createConfigurazioneCnrComponentSession().getConfigurazione(userContext, Integer.valueOf(0),null,Configurazione_cnrBulk.PK_EMAIL_PEC, Configurazione_cnrBulk.SK_SDI);
 		} catch (RemoteException e) {
 			throw new ApplicationException(e);
 		} catch (EJBException e) {

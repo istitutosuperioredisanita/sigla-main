@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.pdg00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.pdg00.comp.RicostruzioneResiduiComponent;
 
@@ -30,10 +30,8 @@ public class RicostruzioneResiduiComponentSessionBean extends it.cnr.jada.ejb.CR
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.pdg00.comp.RicostruzioneResiduiComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new RicostruzioneResiduiComponentSessionBean();
-	}
-	public it.cnr.contab.config00.sto.bulk.CdrBulk findCdrUo(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public it.cnr.contab.config00.sto.bulk.CdrBulk findCdrUo(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.config00.sto.bulk.CdrBulk result = ((RicostruzioneResiduiComponent)componentObj).findCdrUo(param0);
@@ -51,7 +49,7 @@ public class RicostruzioneResiduiComponentSessionBean extends it.cnr.jada.ejb.CR
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.config00.sto.bulk.CdrBulk findCdr(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.config00.sto.bulk.CdrBulk findCdr(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.config00.sto.bulk.CdrBulk result = ((RicostruzioneResiduiComponent)componentObj).findCdr(param0);
@@ -69,7 +67,7 @@ public class RicostruzioneResiduiComponentSessionBean extends it.cnr.jada.ejb.CR
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public boolean isUOScrivaniaEnte(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public boolean isUOScrivaniaEnte(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((RicostruzioneResiduiComponent)componentObj).isUOScrivaniaEnte(param0);
@@ -87,7 +85,7 @@ public class RicostruzioneResiduiComponentSessionBean extends it.cnr.jada.ejb.CR
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.pdg00.bulk.Pdg_residuoBulk calcolaDispCassaPerCds (it.cnr.jada.UserContext param0, it.cnr.contab.pdg00.bulk.Pdg_residuoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.pdg00.bulk.Pdg_residuoBulk calcolaDispCassaPerCds (it.cnr.jada.UserContext param0, it.cnr.contab.pdg00.bulk.Pdg_residuoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.pdg00.bulk.Pdg_residuoBulk result = ((RicostruzioneResiduiComponent)componentObj).calcolaDispCassaPerCds(param0,param1);
@@ -105,7 +103,7 @@ public class RicostruzioneResiduiComponentSessionBean extends it.cnr.jada.ejb.CR
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public boolean isCdrSAC(it.cnr.jada.UserContext param0, it.cnr.contab.config00.sto.bulk.CdrBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException {
+	public boolean isCdrSAC(it.cnr.jada.UserContext param0, it.cnr.contab.config00.sto.bulk.CdrBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException, it.cnr.jada.persistency.PersistencyException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((RicostruzioneResiduiComponent)componentObj).isCdrSAC(param0,param1);
@@ -123,7 +121,7 @@ public class RicostruzioneResiduiComponentSessionBean extends it.cnr.jada.ejb.CR
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.pdg00.bulk.Pdg_residuoBulk caricaDettagliFiltrati(it.cnr.jada.UserContext param0, it.cnr.jada.persistency.sql.CompoundFindClause param1, it.cnr.contab.pdg00.bulk.Pdg_residuoBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.pdg00.bulk.Pdg_residuoBulk caricaDettagliFiltrati(it.cnr.jada.UserContext param0, it.cnr.jada.persistency.sql.CompoundFindClause param1, it.cnr.contab.pdg00.bulk.Pdg_residuoBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.pdg00.bulk.Pdg_residuoBulk result = ((RicostruzioneResiduiComponent)componentObj).caricaDettagliFiltrati(param0,param1,param2);
@@ -141,7 +139,7 @@ public class RicostruzioneResiduiComponentSessionBean extends it.cnr.jada.ejb.CR
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((RicostruzioneResiduiComponent)componentObj).inizializzaBulkPerStampa(param0,param1);
@@ -159,7 +157,7 @@ public class RicostruzioneResiduiComponentSessionBean extends it.cnr.jada.ejb.CR
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((RicostruzioneResiduiComponent)componentObj).stampaConBulk(param0,param1);

@@ -42,7 +42,7 @@ public class MessaggioHome extends BulkHome {
     public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext, OggettoBulk bulk) throws PersistencyException, it.cnr.jada.comp.ComponentException {
         MessaggioBulk messaggio = (MessaggioBulk) bulk;
         if (messaggio.getPg_messaggio() == null)
-            messaggio.setPg_messaggio(new Long(this.fetchNextSequenceValue(userContext, "CNRSEQ00_PG_MESSAGGIO").longValue()));
+            messaggio.setPg_messaggio(Long.valueOf(this.fetchNextSequenceValue(userContext, "CNRSEQ00_PG_MESSAGGIO").longValue()));
     }
 
     /**

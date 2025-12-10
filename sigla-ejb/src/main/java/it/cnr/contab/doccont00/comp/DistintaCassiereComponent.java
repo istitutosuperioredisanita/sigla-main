@@ -79,7 +79,7 @@ import it.cnr.si.spring.storage.config.StoragePropertyNames;
 import it.siopeplus.*;
 import org.apache.commons.io.IOUtils;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -2353,7 +2353,7 @@ public class DistintaCassiereComponent extends
             aggiornaStatoDocContabile(userContext, docContabile,
                     MandatoBulk.STATO_TRASMISSIONE_INSERITO);
 
-            last_pg_dettaglio = new Long(last_pg_dettaglio.longValue() + 1);
+            last_pg_dettaglio = Long.valueOf(last_pg_dettaglio.longValue() + 1);
 
             return last_pg_dettaglio;
 
@@ -4234,7 +4234,7 @@ public class DistintaCassiereComponent extends
                         "CONTO_CORRENTE_SPECIALE",
                         "ENTE",
                         "*",
-                        new Integer(0));
+                        Integer.valueOf(0));
                 Configurazione_cnrHome home = (Configurazione_cnrHome) getHome(userContext, config);
                 List configurazioni = home.find(config);
                 if ((configurazioni != null) && (configurazioni.size() == 1)) {
@@ -4536,8 +4536,8 @@ public class DistintaCassiereComponent extends
                 if (tesoreriaUnica(userContext, distinta)) {
                     Configurazione_cnrComponentSession sess = (Configurazione_cnrComponentSession) EJBCommonServices
                             .createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession");
-                    if (sess.getVal01(userContext, new Integer(0), null, "COSTANTI", "BLOCCO_UNICITA_PG_MANREV") != null &&
-                            sess.getVal01(userContext, new Integer(0), null, "COSTANTI", "BLOCCO_UNICITA_PG_MANREV").compareTo("S") == 0) {
+                    if (sess.getVal01(userContext, Integer.valueOf(0), null, "COSTANTI", "BLOCCO_UNICITA_PG_MANREV") != null &&
+                            sess.getVal01(userContext, Integer.valueOf(0), null, "COSTANTI", "BLOCCO_UNICITA_PG_MANREV").compareTo("S") == 0) {
                         if (distinta.getFl_flusso().booleanValue()) {
                             for (Iterator iter = lista.iterator(); iter.hasNext(); ) {
                                 V_mandato_reversaleBulk copia = (V_mandato_reversaleBulk) iter.next();
@@ -5147,7 +5147,7 @@ public class DistintaCassiereComponent extends
                             }
                             for (Iterator it = infover.getSospeso().iterator(); it.hasNext(); ) {
                                 Reversale.InformazioniVersante.Sospeso presente = (Reversale.InformazioniVersante.Sospeso) it.next();
-                                Long l = new Long(doc.getCdSospeso().substring(0, doc.getCdSospeso().indexOf(".")).replace(" ", "")).longValue();
+                                Long l = Long.valueOf(doc.getCdSospeso().substring(0, doc.getCdSospeso().indexOf(".")).replace(" ", "")).longValue();
                                 if (l.compareTo(presente.getNumeroProvvisorio()) == 0) {
                                     presente.setImportoProvvisorio(presente.getImportoProvvisorio().add(doc.getImAssociato()));
                                     sospesoTrovato = true;
@@ -5157,7 +5157,7 @@ public class DistintaCassiereComponent extends
                             if (!sospesoTrovato) {
                                 Reversale.InformazioniVersante.Sospeso sosp = objectFactory.createReversaleInformazioniVersanteSospeso();
                                 try {
-                                    sosp.setNumeroProvvisorio(new Long(
+                                    sosp.setNumeroProvvisorio(Long.valueOf(
                                             doc.getCdSospeso()
                                                     .substring(
                                                             0,
@@ -5568,7 +5568,7 @@ public class DistintaCassiereComponent extends
                             if  (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.BONIFICOESTEROEURO)) {
                                 //gestione invio SEPA da concordare con la banca al momento non gestito
                                 sepa.setBic(Optional.ofNullable(docContabile.getBic())
-                                        //.filter(s -> Optional.ofNullable(docContabile.getCodiceIban()).isPresent())
+                                        .filter(s -> Optional.ofNullable(docContabile.getCodiceIban()).isPresent())
                                         .filter(s -> patternBic.matcher(s).find())
                                         .orElseThrow(() -> new ApplicationMessageFormatException("Impossibile generare il flusso, codice BIC: {0} non valido " +
                                                 "sul Mandato {1}/{2}/{3}",
@@ -5671,7 +5671,7 @@ public class DistintaCassiereComponent extends
                                 for (Iterator it = infoben.getSospeso().iterator(); it.hasNext(); ) {
                                     Mandato.InformazioniBeneficiario.Sospeso presente =
                                             (Mandato.InformazioniBeneficiario.Sospeso) it.next();
-                                    Long l = new Long(doc.getCdSospeso().substring(0, doc.getCdSospeso().indexOf(".")).replace(" ", "")).longValue();
+                                    Long l = Long.valueOf(doc.getCdSospeso().substring(0, doc.getCdSospeso().indexOf(".")).replace(" ", "")).longValue();
                                     if (l.compareTo(presente.getNumeroProvvisorio()) == 0) {
                                         presente.setImportoProvvisorio(presente.getImportoProvvisorio().add(doc.getImAssociato()));
                                         sospesoTrovato = true;
@@ -5681,7 +5681,7 @@ public class DistintaCassiereComponent extends
                                 if (!sospesoTrovato) {
                                     sosp = objectFactory.createMandatoInformazioniBeneficiarioSospeso();
                                     try {
-                                        sosp.setNumeroProvvisorio(new Long(
+                                        sosp.setNumeroProvvisorio(Long.valueOf(
                                                 doc.getCdSospeso()
                                                         .substring(
                                                                 0,
@@ -6123,7 +6123,7 @@ public class DistintaCassiereComponent extends
                             if (doc.getCdSospeso() != null) {
                                 for (Iterator it = infoben.getSospeso().iterator(); it.hasNext(); ) {
                                     Mandato.InformazioniBeneficiario.Sospeso presente = (Mandato.InformazioniBeneficiario.Sospeso) it.next();
-                                    Long l = new Long(doc.getCdSospeso().substring(0, doc.getCdSospeso().indexOf(".")).replace(" ", "")).longValue();
+                                    Long l = Long.valueOf(doc.getCdSospeso().substring(0, doc.getCdSospeso().indexOf(".")).replace(" ", "")).longValue();
                                     if (l.compareTo(presente.getNumeroProvvisorio()) == 0) {
                                         presente.setImportoProvvisorio(presente.getImportoProvvisorio().add(doc.getImAssociato()));
                                         sospesoTrovato = true;
@@ -6133,7 +6133,7 @@ public class DistintaCassiereComponent extends
                                 if (!sospesoTrovato) {
                                     sosp = objectFactory.createMandatoInformazioniBeneficiarioSospeso();
                                     try {
-                                        sosp.setNumeroProvvisorio(new Long(
+                                        sosp.setNumeroProvvisorio(Long.valueOf(
                                                 doc.getCdSospeso()
                                                         .substring(
                                                                 0,
@@ -6742,7 +6742,7 @@ public class DistintaCassiereComponent extends
             return Optional.ofNullable(movimentoContoEvidenzaHome.findMax(movimentoContoEvidenzaBulk, "progressivo"))
                     .filter(Long.class::isInstance)
                     .map(Long.class::cast)
-                    .orElse(new Long(0));
+                    .orElse(Long.valueOf(0));
         } catch (PersistencyException e) {
            throw handleException(e);
         }

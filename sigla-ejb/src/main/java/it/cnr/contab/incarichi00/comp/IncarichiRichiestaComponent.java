@@ -66,7 +66,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 public class IncarichiRichiestaComponent extends CRUDComponent {
 	public OggettoBulk inizializzaBulkPerInserimento(UserContext usercontext, OggettoBulk oggettobulk) throws ComponentException {

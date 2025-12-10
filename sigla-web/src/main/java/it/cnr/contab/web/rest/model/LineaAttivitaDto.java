@@ -7,8 +7,8 @@ import it.cnr.contab.config00.latt.bulk.Insieme_laKey;
 import it.cnr.contab.config00.pdcfin.bulk.FunzioneKey;
 import it.cnr.contab.config00.pdcfin.bulk.NaturaKey;
 import it.cnr.contab.prevent01.bulk.Pdg_missioneKey;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 public class LineaAttivitaDto extends LineaAttivitaKeyDto implements Serializable {

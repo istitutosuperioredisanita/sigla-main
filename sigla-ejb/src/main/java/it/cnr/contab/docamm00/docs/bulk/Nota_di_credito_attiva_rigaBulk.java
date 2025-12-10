@@ -86,7 +86,7 @@ public class Nota_di_credito_attiva_rigaBulk extends Fattura_attiva_rigaBulk {
 		setDt_a_competenza_coge(dettaglio.getDt_a_competenza_coge());
 		setTariffario(dettaglio.getTariffario());
 		setTi_promiscuo(dettaglio.getTi_promiscuo());
-		setProgressivo_riga(new Long(getNotaDiCredito().getFattura_attiva_dettColl().size() + 1));
+		setProgressivo_riga(Long.valueOf(getNotaDiCredito().getFattura_attiva_dettColl().size() + 1));
 
 		setVoce_iva(dettaglio.getVoce_iva());
 		setBene_servizio(dettaglio.getBene_servizio());

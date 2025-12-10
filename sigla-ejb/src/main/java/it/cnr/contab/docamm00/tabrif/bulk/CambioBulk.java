@@ -26,7 +26,7 @@ public class CambioBulk extends CambioBase {
 	protected DivisaBulk divisa;
 	protected boolean cambioDefault;
 	protected String cd_divisa;
-	//final static protected java.sql.Timestamp fineinfinito=new java.sql.Timestamp(new Long("7289568000000").longValue());
+	//final static protected java.sql.Timestamp fineinfinito=new java.sql.Timestamp(Long.valueOf("7289568000000").longValue());
 	
 public CambioBulk() {
 	super();
@@ -150,7 +150,7 @@ public void validate() throws ValidationException {
 	java.util.Calendar gc = java.util.Calendar.getInstance();
 	try {
 		gc.setTime(it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp());
-	} catch (javax.ejb.EJBException e) {
+	} catch (jakarta.ejb.EJBException e) {
 		throw new it.cnr.jada.DetailedRuntimeException(e);
 	}
 

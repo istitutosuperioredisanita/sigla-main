@@ -37,11 +37,11 @@ import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
+import jakarta.ejb.Asynchronous;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.Asynchronous;
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -61,9 +61,8 @@ import java.util.zip.ZipOutputStream;
 public class AsyncConsSostitutivaComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements AsyncConsSostitutivaComponentSession {
 	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(AsyncConsSostitutivaComponentSessionBean.class);
 
-    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-        return new AsyncConsSostitutivaComponentSessionBean();
-    }
+
+
 	@Asynchronous
 	@Override
 	public void asyncConsSostitutiva(UserContext userContext, Integer esercizio) throws ComponentException, PersistencyException, RemoteException {

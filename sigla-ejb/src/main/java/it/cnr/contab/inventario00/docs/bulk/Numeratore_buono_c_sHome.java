@@ -50,7 +50,7 @@ public Long getNextPg(
 		insert(numeratore, userContext);		
 	}
 	else{
-		numeratore.setCorrente(numeratore.getCorrente() + 1);
+		numeratore.setCorrente(Long.valueOf(numeratore.getCorrente().longValue()+1));
 		lock(numeratore);
 		update(numeratore, userContext);
 	}
@@ -86,8 +86,8 @@ public Long getNextTempPg(
 		progressivo.setEsercizio(esercizio);
 		progressivo.setPg_inventario(progressivoInventario);
 		progressivo.setTi_carico_scarico(tipoDocTemp);
-		progressivo.setIniziale((long) -1);
-		pgCorrente = progressivo.getIniziale();
+		progressivo.setIniziale(Long.valueOf(-1));
+		pgCorrente = Long.valueOf(progressivo.getIniziale().longValue());
 		progressivo.setCorrente(pgCorrente);
 		progressivo.setUser(user);
 		insert(progressivo, userContext);
@@ -96,15 +96,15 @@ public Long getNextTempPg(
 				progressivo_def.setEsercizio(esercizio);
 				progressivo_def.setPg_inventario(progressivoInventario);
 				progressivo_def.setTi_carico_scarico(tipoDocumento);
-				progressivo_def.setIniziale(0L);
-				progressivo_def.setCorrente(progressivo_def.getIniziale());
+				progressivo_def.setIniziale(Long.valueOf(1));
+				progressivo_def.setCorrente(progressivo_def.getIniziale().longValue());
 				progressivo_def.setUser(user);
 				insert(progressivo_def, userContext);
 			}
 		return pgCorrente;
 	}
 	
-	pgCorrente = progressivo.getCorrente() - 1;
+	pgCorrente = Long.valueOf(progressivo.getCorrente().longValue()-1);
 	progressivo.setCorrente(pgCorrente);
 	progressivo.setUser(user);
 	lock(progressivo);

@@ -41,7 +41,7 @@ public class HelpHome extends BulkHome {
 			it.cnr.jada.UserContext userContext, OggettoBulk bulk)
 			throws PersistencyException, it.cnr.jada.comp.ComponentException {
 		try {
-			((HelpBulk) bulk).setId((Integer)findMax(bulk, "id", new Long(0), true) + 1);
+			((HelpBulk) bulk).setId((Integer)findMax(bulk, "id", Long.valueOf(0), true) + 1);
 		} catch (BusyResourceException e) {
 			throw new ComponentException(e);
 		}

@@ -45,7 +45,7 @@ import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.RemoteIterator;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -377,7 +377,7 @@ private Integer findBuonoCarico(UserContext aUC,Inventario_beniBulk bene)
 	
 	it.cnr.jada.persistency.Broker broker = home.createBroker(sql);
     while(broker.next())
-    	Nr_Buono=new Integer(((V_cons_registro_inventarioBulk) broker.fetch(V_cons_registro_inventarioBulk.class)).getPg_buono_c_s().intValue());
+    	Nr_Buono=Integer.valueOf(((V_cons_registro_inventarioBulk) broker.fetch(V_cons_registro_inventarioBulk.class)).getPg_buono_c_s().intValue());
     broker.close();
 	  return Nr_Buono; 
 }
@@ -657,8 +657,8 @@ private void inizializzaBulkPerStampa(UserContext userContext, Stampa_registro_i
 		stampa.setCategoriaForPrint(new Categoria_gruppo_inventBulk());
 		stampa.setGruppoForPrint(new Categoria_gruppo_inventBulk());
 	
-		stampa.setNrInventarioFrom(new Long(0));
-		stampa.setNrInventarioTo(new Long("9999999999"));
+		stampa.setNrInventarioFrom(Long.valueOf(0));
+		stampa.setNrInventarioTo(Long.valueOf("9999999999"));
 	
 
 		Tipo_carico_scaricoHome tipo_carico_scaricoHome = (Tipo_carico_scaricoHome)getHome(userContext, it.cnr.contab.inventario00.tabrif.bulk.Tipo_carico_scaricoBulk.class);
@@ -974,7 +974,7 @@ public RemoteIterator selectBeniAccessoriFor(
 	SQLBuilder sql = getHome(userContext, Inventario_beniBulk.class).createSQLBuilder();
 	sql.addSQLClause("AND","PG_INVENTARIO", sql.EQUALS, bene.getPg_inventario());
 	sql.addSQLClause("AND","NR_INVENTARIO",sql.EQUALS,bene.getNr_inventario());
-	sql.addSQLClause("AND","PROGRESSIVO", sql.NOT_EQUALS, new Long(0));
+	sql.addSQLClause("AND","PROGRESSIVO", sql.NOT_EQUALS, Long.valueOf(0));
 	sql.addSQLClause("AND","FL_TOTALMENTE_SCARICATO", sql.EQUALS, Inventario_beniBulk.ISNOTTOTALMENTESCARICATO);
 	it.cnr.jada.util.RemoteIterator ri = iterator(userContext,sql,Inventario_beniBulk.class,null);
 	return ri;
@@ -1628,7 +1628,7 @@ private void validaUtilizzatori (UserContext aUC,Inventario_beniBulk bene)
 										it.cnr.contab.inventario00.docs.bulk.Inventario_utilizzatori_laBulk new_utilizzatore_la
 												= new it.cnr.contab.inventario00.docs.bulk.Inventario_utilizzatori_laBulk(linea_att.getCd_linea_attivita(), linea_att.getCd_centro_responsabilita(),
 												buono.getNr_inventario(),
-												buono.getPg_inventario(), new Long(buono.getProgressivo().longValue()));
+												buono.getPg_inventario(), Long.valueOf(buono.getProgressivo().longValue()));
 										BigDecimal perc_cdr = (cdraggr.getImporto().multiply(new BigDecimal(100)).divide(dett.getObbligazione_scadenzario().getIm_scadenza(), 2, 6));
 										tot_perc_cdr = tot_perc_cdr.add(perc_cdr);
 										tot_perc_la = tot_perc_la.add(((dett.getPrc()).multiply(new BigDecimal(100))).divide(perc_cdr, 2, 6));
@@ -1642,7 +1642,7 @@ private void validaUtilizzatori (UserContext aUC,Inventario_beniBulk bene)
 											Inventario_utilizzatori_laHome Inventario_utilizzatore_laHome = (Inventario_utilizzatori_laHome) getHome(userContext, Inventario_utilizzatori_laBulk.class);
 											Inventario_utilizzatori_laBulk utilizzatore = (Inventario_utilizzatori_laBulk) Inventario_utilizzatore_laHome.findByPrimaryKey(new Inventario_utilizzatori_laBulk(linea_att.getCd_linea_attivita(), linea_att.getCd_centro_responsabilita(),
 													buono.getNr_inventario(),
-													buono.getPg_inventario(), new Long(buono.getProgressivo().longValue())));
+													buono.getPg_inventario(), Long.valueOf(buono.getProgressivo().longValue())));
 											if (!new_utilizzatore_la.equalsByPrimaryKey(utilizzatore))
 												super.insertBulk(userContext, new_utilizzatore_la, true);
 										}

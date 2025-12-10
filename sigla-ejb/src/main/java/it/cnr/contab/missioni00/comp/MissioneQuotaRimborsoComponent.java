@@ -109,7 +109,7 @@ public void eliminaConBulk (UserContext userContext,OggettoBulk bulk) throws Com
 	    	updateBulk(userContext, aRimborso);
 		}
 
-	}catch(javax.ejb.EJBException ex){
+	}catch(jakarta.ejb.EJBException ex){
 	   throw handleException(ex);
 	}catch(it.cnr.jada.persistency.PersistencyException ex){
 	   throw handleException(ex);

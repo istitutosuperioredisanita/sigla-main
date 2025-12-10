@@ -18,8 +18,8 @@
 package it.cnr.contab.docamm00.consultazioni.ejb;
 import it.cnr.contab.docamm00.consultazioni.comp.MonitoCococoComponent;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.*;
 
 /**
  * Bean implementation class for Enterprise Bean: CNRDOCAMM00_EJB_MonitoCococoComponentSession
@@ -30,10 +30,7 @@ public class MonitoCococoComponentSessionBean extends it.cnr.jada.ejb.CRUDCompon
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.docamm00.consultazioni.comp.MonitoCococoComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
-		return new MonitoCococoComponentSessionBean();
-	}
-	public void inserisciRighe(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.consultazioni.bulk.Monito_cococoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void inserisciRighe(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.consultazioni.bulk.Monito_cococoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((MonitoCococoComponent)componentObj).inserisciRighe(param0,param1);

@@ -176,7 +176,7 @@ public void clearSelection(it.cnr.jada.action.ActionContext context) throws it.c
 		throw handleException(e);
 	} catch(java.rmi.RemoteException e) {
 		throw handleException(e);
-	} catch(javax.ejb.EJBException ejbe){
+	} catch(jakarta.ejb.EJBException ejbe){
 		throw handleException(ejbe);
 	} 
 }
@@ -228,7 +228,7 @@ private void eliminaBeniAssociatiConBulk(ActionContext context) throws it.cnr.ja
 		throw handleException(e);
 	} catch(java.rmi.RemoteException e) {
 		throw handleException(e);
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw handleException(e);
 	} catch (Throwable t){
 		throw handleException(t);
@@ -246,7 +246,7 @@ private void eliminaBuoniAssociatiConBulk(ActionContext context) throws it.cnr.j
 		throw handleException(e);
 	} catch(java.rmi.RemoteException e) {
 		throw handleException(e);
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw handleException(e);
 	} catch (Throwable t){
 		throw handleException(t);
@@ -265,7 +265,7 @@ private void eliminaBuoniAssociatiConBulk(ActionContext context,it.cnr.jada.bulk
 		throw handleException(e);
 	} catch(java.rmi.RemoteException e) {
 		throw handleException(e);
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw handleException(e);
 	}
 	
@@ -292,7 +292,7 @@ private void eliminaBeniAssociatiConBulk(ActionContext context,it.cnr.jada.bulk.
 		throw handleException(e);
 	} catch(java.rmi.RemoteException e) {
 		throw handleException(e);
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw handleException(e);
 	}
 	
@@ -372,7 +372,7 @@ public it.cnr.jada.util.RemoteIterator getListaBeni(
 		
 		return ((BuonoCaricoScaricoComponentSession)createComponentSession()).getListaBeni(userContext, (Ass_inv_bene_fatturaBulk)this.getModel(), no_accessori,beni_da_escludere, clauses);
 		
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw handleException(e);
 	} catch(java.rmi.RemoteException e) {
 		throw handleException(e);
@@ -443,7 +443,7 @@ public void initializeSelection(it.cnr.jada.action.ActionContext context) throws
 		throw handleException(e);
 	} catch(java.rmi.RemoteException e) {
 		throw handleException(e);
-	} catch(javax.ejb.EJBException ejbe) {
+	} catch(jakarta.ejb.EJBException ejbe) {
 		throw handleException(ejbe);
 	}
 }
@@ -507,7 +507,7 @@ public void modificaBeneAssociatoConBulk(ActionContext context, OggettoBulk bulk
 		throw handleException(e);
 	} catch(java.rmi.RemoteException e) {
 		throw handleException(e);
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw handleException(e);
 	} 	
 	
@@ -550,7 +550,7 @@ public void selectAll(it.cnr.jada.action.ActionContext context, CompoundFindClau
 		throw handleException(e);
 	} catch(java.rmi.RemoteException e) {
 		throw handleException(e);
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw handleException(e);
 	} catch(ValidationException e) {
 		throw handleException(e);
@@ -608,7 +608,7 @@ private it.cnr.jada.util.RemoteIterator selectBeniAssociatibyClause(ActionContex
 		throw handleException(e);
 	} catch(java.rmi.RemoteException e) {
 		throw handleException(e);
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw handleException(e);
 	}
 }
@@ -622,7 +622,7 @@ public void setModel(ActionContext context,OggettoBulk newModel) throws Business
 			BuonoCaricoScaricoComponentSession component = createComponentSession();
 			if (getModel() == null)
 				associaBulk.setInventario(component.caricaInventario(context.getUserContext()));
-		} catch(javax.ejb.EJBException e) {
+		} catch(jakarta.ejb.EJBException e) {
 			throw handleException(e);
 		} catch(java.rmi.RemoteException e) {
 			throw handleException(e);
@@ -669,7 +669,7 @@ public java.util.BitSet setSelection(it.cnr.jada.action.ActionContext context, i
 		throw handleException(e);
 	} catch(java.rmi.RemoteException e) {
 		throw handleException(e);
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw handleException(e);
 	} catch (ValidationException e){
 		throw handleException(e);
@@ -718,7 +718,7 @@ public String getLocalTransactionID(it.cnr.jada.UserContext aUC, boolean force) 
 			
 			return ((BuonoCaricoScaricoComponentSession)createComponentSession()).getLocalTransactionID(aUC, force);
 			
-		} catch(javax.ejb.EJBException e) {
+		} catch(jakarta.ejb.EJBException e) {
 			throw handleException(e);
 		} catch(java.rmi.RemoteException e) {
 			throw handleException(e);
@@ -789,7 +789,7 @@ private it.cnr.jada.util.RemoteIterator selectBeniAssociatiDocbyClause(ActionCon
 		throw handleException(e);
 	} catch(java.rmi.RemoteException e) {
 		throw handleException(e);
-	} catch(javax.ejb.EJBException e) {
+	} catch(jakarta.ejb.EJBException e) {
 		throw handleException(e);
 	}
 }

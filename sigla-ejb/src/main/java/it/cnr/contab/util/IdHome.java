@@ -45,11 +45,11 @@ public class IdHome<T extends IdKey> extends BulkHome {
                 .ifPresent(t -> {
                     try {
                         t.setId(
-                                Optional.ofNullable(findAndLockMax(t, t.getKeyName(), new Long(0)))
+                                Optional.ofNullable(findAndLockMax(t, t.getKeyName(), Long.valueOf(0)))
                                         .filter(Long.class::isInstance)
                                         .map(Long.class::cast)
                                         .map(aLong -> aLong + 1)
-                                        .orElse(new Long(0))
+                                        .orElse(Long.valueOf(0))
                         );
                     } catch (PersistencyException| BusyResourceException e) {
                         throw new DetailedRuntimeException(e);

@@ -1,11 +1,13 @@
 # DOCKER-VERSION 17.10.0-ce
-FROM eclipse-temurin:8-jdk-alpine
+FROM eclipse-temurin:17-jdk-alpine
 LABEL maintainer="Marco Spasiano <marco.spasiano@cnr.it>"
 
-COPY sigla-web/target/sigla-thorntail.jar /opt/sigla-thorntail.jar
+COPY sigla-web/target/sigla-bootable.jar /opt/sigla-bootable.jar
 
 ENV ESERCIZIO=2024
+ENV JBOSS_BIND_ADDRESS=0.0.0.0
+ENV ALLOW_ORIGIN=http://localhost:9000
 
 EXPOSE 8080
 
-CMD java -Dliquibase.bootstrap.esercizio=$ESERCIZIO -Djava.security.egd=file:/dev/./urandom -Dremote.maven.repo=https://repository.jboss.org/nexus/content/groups/public/,https://maven.repository.redhat.com/earlyaccess/all -jar /opt/sigla-thorntail.jar
+CMD java -Dliquibase.bootstrap.esercizio=$ESERCIZIO -Dcors.allow-origin=$ALLOW_ORIGIN -Djava.security.egd=file:/dev/./urandom -jar /opt/sigla-bootable.jar

@@ -17,45 +17,42 @@
 
 package it.cnr.contab.web.rest.config;
 
+import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.spring.service.UtilService;
 import it.cnr.contab.utenze00.bp.RESTUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
+import it.cnr.contab.util.servlet.RESTServlet;
 import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.exception.UnauthorizedException;
 import it.cnr.contab.web.rest.resource.util.AbstractResource;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.representations.IDToken;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.container.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
+import jakarta.ws.rs.ext.Providers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import javax.annotation.security.DenyAll;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJBException;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.container.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
-import javax.ws.rs.ext.Providers;
+import jakarta.annotation.security.DenyAll;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.EJBException;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Provider
-public class RESTSecurityInterceptor implements ContainerRequestFilter, ContainerResponseFilter , ExceptionMapper<Exception> {
+public class RESTSecurityInterceptor implements ContainerRequestFilter, ContainerResponseFilter, ExceptionMapper<Exception> {
 
 	public static final String ACCOUNT = "/account";
 	public static final String TREE = "/tree";
@@ -77,11 +74,11 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter, Containe
 	private static final String AUTHENTICATION_SCHEME = "Basic";
 
 	@Override
-	public void filter(ContainerRequestContext requestContext) {	
+	public void filter(ContainerRequestContext requestContext) {
 
 		final Method method = resourceInfo.getResourceMethod();
 		final Class<?> declaring = resourceInfo.getResourceClass();
-		UtilService us = (UtilService) WebApplicationContextUtils.getRequiredWebApplicationContext(httpServletRequest .getServletContext()).getBean(UtilService.class);
+		UtilService us = SpringUtil.getBean(UtilService.class);
 		String[] rolesAllowed = null;
 		boolean denyAll;
 		boolean permitAll;
@@ -99,50 +96,58 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter, Containe
 
 		
 		denyAll = (declaring.isAnnotationPresent(DenyAll.class)
-				&& method.isAnnotationPresent(RolesAllowed.class) == false
-				&& method.isAnnotationPresent(PermitAll.class) == false) || method.isAnnotationPresent(DenyAll.class);
+				&& !method.isAnnotationPresent(RolesAllowed.class)
+				&& !method.isAnnotationPresent(PermitAll.class)) || method.isAnnotationPresent(DenyAll.class);
 
-		permitAll = (declaring.isAnnotationPresent(PermitAll.class) == true
-				&& method.isAnnotationPresent(RolesAllowed.class) == false
-				&& method.isAnnotationPresent(DenyAll.class) == false) || method.isAnnotationPresent(PermitAll.class);
+		permitAll = (declaring.isAnnotationPresent(PermitAll.class)
+				&& !method.isAnnotationPresent(RolesAllowed.class)
+				&& !method.isAnnotationPresent(DenyAll.class)) || method.isAnnotationPresent(PermitAll.class);
 		
 		UtenteBulk utenteBulk = null;		
 		if (rolesAllowed != null || accessoAllowed != null || allUserAllowedWithoutAbort) {
 			final MultivaluedMap<String, String> headers = requestContext.getHeaders();
 			final List<String> authorization = headers.get(AUTHORIZATION_PROPERTY);
-			if (!Optional.ofNullable(authorization).filter(s -> !s.isEmpty()).isPresent() && allUserAllowedWithoutAbort) {
+			if (Optional.ofNullable(authorization).filter(s -> !s.isEmpty()).isEmpty() && allUserAllowedWithoutAbort) {
 				try {
 					AbstractResource.getUserContext(requestContext.getSecurityContext(), httpServletRequest);
 					return;
 				} catch (BadRequestException e) {
-					requestContext.abortWith(Response.status(Status.UNAUTHORIZED).build());
+					requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
 					return;
 				}
 			}
 			try {
-				final Optional<Principal> principalOptional = Optional.ofNullable(requestContext.getSecurityContext().getUserPrincipal());
-				final Optional<IDToken> idToken = principalOptional
-						.filter(KeycloakPrincipal.class::isInstance)
-						.map(KeycloakPrincipal.class::cast)
-						.map(KeycloakPrincipal::getKeycloakSecurityContext)
-						.map(keycloakSecurityContext -> {
-							return Optional.ofNullable(keycloakSecurityContext.getIdToken())
-									.orElse(keycloakSecurityContext.getToken());
-						});
-				if (idToken.isPresent()) {
-					utenteBulk = BasicAuthentication.findUtenteBulk(
-							idToken
-									.flatMap(idToken1 -> Optional.ofNullable(idToken1.getOtherClaims()))
-									.flatMap(stringObjectMap -> Optional.ofNullable(stringObjectMap.get(us.getPreferredUsername())))
-									.filter(String.class::isInstance)
-									.map(String.class::cast)
-									.orElse(idToken.get().getPreferredUsername())
-					);
-				} else {
+                String username = null;
+                // 1) Try Bearer token (JWT)
+                String authHeader = requestContext.getHeaderString(RESTServlet.AUTHORIZATION);
+                if (authHeader != null && authHeader.toLowerCase().startsWith("bearer ")) {
+                    String bearer = authHeader.substring(7).trim();
+                    try {
+                        com.nimbusds.jwt.SignedJWT signedJWT = com.nimbusds.jwt.SignedJWT.parse(bearer);
+                        com.nimbusds.jwt.JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
+
+                        // prima prova a leggere la claim custom USERNAME_CNR
+                        Object usernameCnrObj = claims.getClaim(RESTSecurityInterceptor.USERNAME_CNR);
+                        username = null;
+                        if (usernameCnrObj instanceof String) {
+                            username = (String) usernameCnrObj;
+                        } else {
+                            username = claims.getStringClaim("preferred_username");
+                        }
+
+                        if (username != null) {
+                            utenteBulk = BasicAuthentication.findUtenteBulk(username);
+                        }
+                    } catch (java.text.ParseException e) {
+                        LOGGER.warn("Errore parsing JWT", e);
+                    }
+                }
+
+				if(utenteBulk == null) {
 					utenteBulk = BasicAuthentication.authenticate(httpServletRequest, authorization);
 				}
 				if (utenteBulk == null && !requestContext.getUriInfo().getPath().startsWith(ACCOUNT)){
-					if (idToken.isPresent())
+					if (username != null)
 						requestContext.abortWith(
 								Response.status(Response.Status.UNAUTHORIZED)
 										.build());
@@ -160,17 +165,17 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter, Containe
 					requestContext.setSecurityContext(new SIGLASecurityContext(requestContext, utenteBulk.getCd_utente()));
 			} catch (UnauthorizedException e) {
 				LOGGER.error("ERROR for REST SERVICE", e);
-				requestContext.abortWith(Response.status(Status.UNAUTHORIZED).build());
+				requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
 				return;
 			} catch (Exception e) {
 				LOGGER.error("ERROR for REST SERVICE", e);
-				requestContext.abortWith(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
+				requestContext.abortWith(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build());
 				return;
 			}			
 		}		
 		if (rolesAllowed != null || denyAll || permitAll) {
 			if (denyAll) {
-				requestContext.abortWith(Response.status(Status.FORBIDDEN).entity(UNAUTHORIZED_MAP).build());
+				requestContext.abortWith(Response.status(Response.Status.FORBIDDEN).entity(UNAUTHORIZED_MAP).build());
 				return;
 			}
 			if (permitAll) return;
@@ -181,11 +186,11 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter, Containe
 					if (!isUserAllowed(utenteBulk, rolesSet)) {
 						final String message = "User " + utenteBulk.getCd_utente() + " doesn't have the following roles: " + rolesSet;
 						LOGGER.warn(message);
-						requestContext.abortWith(Response.status(Status.FORBIDDEN).entity(Collections.singletonMap("ERROR", message)).build());
+						requestContext.abortWith(Response.status(Response.Status.FORBIDDEN).entity(Collections.singletonMap("ERROR", message)).build());
 						return;
 					}
 				} catch (Exception e) {
-					requestContext.abortWith(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
+					requestContext.abortWith(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build());
 				}		    	
 		    }			
 		}
@@ -198,10 +203,10 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter, Containe
 						accessi.toArray(new String[accessi.size()]))) {
 					final String message = "User " + userPrincipal.getUser() + " doesn't have the following access: " + accessi;
 					LOGGER.warn(message);
-					requestContext.abortWith(Response.status(Status.FORBIDDEN).entity(Collections.singletonMap("ERROR", message)).build());
+					requestContext.abortWith(Response.status(Response.Status.FORBIDDEN).entity(Collections.singletonMap("ERROR", message)).build());
 				}
 			} catch (ComponentException|RemoteException|EJBException e) {
-				requestContext.abortWith(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
+				requestContext.abortWith(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build());
 			}
 		}
 	}
@@ -225,7 +230,7 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter, Containe
 		if (exception.getCause() instanceof RestException)
 			return Response.status(((RestException)exception.getCause()).getStatus()).entity(((RestException)exception.getCause()).getErrorMap()).build();			
 		LOGGER.error("ERROR for REST SERVICE", exception);
-		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(exception).build();
+		return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(exception).build();
 	}
 
 	@Override
@@ -236,7 +241,7 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter, Containe
 				.orElse(Collections.emptyList());
 		Optional.ofNullable(containerRequestContext.getHeaders())
 				.flatMap(s -> Optional.ofNullable(s.getFirst(CORSFilter.ORIGIN)))
-				.filter(s -> allowOrigins.contains(s))
+				.filter(allowOrigins::contains)
 				.ifPresent(s -> {
 					containerResponseContext.getHeaders().add(CORSFilter.ACCESS_CONTROL_ALLOW_ORIGIN, s);
 					containerResponseContext.getHeaders().add(CORSFilter.ACCESS_CONTROL_ALLOW_HEADERS, CORSFilter.ORIGIN_CONTENT_TYPE_ACCEPT_AUTHORIZATION);

@@ -23,7 +23,7 @@ package it.cnr.contab.ordmag.anag00;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk;
 import it.cnr.contab.anagraf00.tabter.bulk.ComuneHome;
@@ -44,7 +44,7 @@ public class LuogoConsegnaMagHome extends BulkHome {
 
 	public SQLBuilder selectComuneItalianoByClause(it.cnr.jada.UserContext userContext, LuogoConsegnaMagBulk luogoConsegnaMagBulk, ComuneHome comuneHome,ComuneBulk comune,CompoundFindClause clause)  throws ComponentException, EJBException, RemoteException {
 		SQLBuilder sql = comuneHome.createSQLBuilder();
-		Long pg_nazione=new Long(1);
+		Long pg_nazione=Long.valueOf(1);
 		if (luogoConsegnaMagBulk.getNazione()!=null && luogoConsegnaMagBulk.getNazione().getPg_nazione()!=null && luogoConsegnaMagBulk.getNazione().getPg_nazione()>0)
 			pg_nazione=luogoConsegnaMagBulk.getNazione().getPg_nazione();
 

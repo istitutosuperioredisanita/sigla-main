@@ -9,9 +9,9 @@ import it.cnr.jada.ejb.CRUDComponentSessionBean;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
 
 @Stateless(name="CNRDOCCONT00_EJB_CambiaVocePGiroComponentSession")
@@ -21,7 +21,7 @@ public class CambiaVocePGiroComponentSessionBean extends CRUDComponentSessionBea
         componentObj = new it.cnr.contab.doccont00.comp.CambiaVocePGiroComponent();
     }
     @Remove
-    public void ejbRemove() throws javax.ejb.EJBException {
+    public void ejbRemove() throws jakarta.ejb.EJBException {
         componentObj.release();
     }
 

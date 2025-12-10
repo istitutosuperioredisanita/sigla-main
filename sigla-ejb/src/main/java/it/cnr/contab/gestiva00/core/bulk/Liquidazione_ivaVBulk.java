@@ -265,33 +265,33 @@ protected static void initializeHashes() {
 	
 
 	MESI_INT = new OrderedHashtable();
-	MESI_INT.put(DICEMBRE, new Integer(-1));
-	MESI_INT.put(GENNAIO, new Integer(1));
-	MESI_INT.put(FEBBRAIO, new Integer(2));
-	MESI_INT.put(MARZO, new Integer(3));
-	MESI_INT.put(APRILE, new Integer(4));
-	MESI_INT.put(MAGGIO, new Integer(5));
-	MESI_INT.put(GIUGNO, new Integer(6));
-	MESI_INT.put(LUGLIO, new Integer(7));
-	MESI_INT.put(AGOSTO, new Integer(8));
-	MESI_INT.put(SETTEMBRE, new Integer(9));
-	MESI_INT.put(OTTOBRE, new Integer(10));
-	MESI_INT.put(NOVEMBRE, new Integer(11));
+	MESI_INT.put(DICEMBRE, Integer.valueOf(-1));
+	MESI_INT.put(GENNAIO, Integer.valueOf(1));
+	MESI_INT.put(FEBBRAIO, Integer.valueOf(2));
+	MESI_INT.put(MARZO, Integer.valueOf(3));
+	MESI_INT.put(APRILE, Integer.valueOf(4));
+	MESI_INT.put(MAGGIO, Integer.valueOf(5));
+	MESI_INT.put(GIUGNO, Integer.valueOf(6));
+	MESI_INT.put(LUGLIO, Integer.valueOf(7));
+	MESI_INT.put(AGOSTO, Integer.valueOf(8));
+	MESI_INT.put(SETTEMBRE, Integer.valueOf(9));
+	MESI_INT.put(OTTOBRE, Integer.valueOf(10));
+	MESI_INT.put(NOVEMBRE, Integer.valueOf(11));
 	
 	
 	INT_MESI = new OrderedHashtable();
-	INT_MESI.put(new Integer(-1), DICEMBRE);
-	INT_MESI.put(new Integer(1), GENNAIO);
-	INT_MESI.put(new Integer(2), FEBBRAIO);
-	INT_MESI.put(new Integer(3), MARZO);
-	INT_MESI.put(new Integer(4), APRILE);
-	INT_MESI.put(new Integer(5), MAGGIO);
-	INT_MESI.put(new Integer(6), GIUGNO);
-	INT_MESI.put(new Integer(7), LUGLIO);
-	INT_MESI.put(new Integer(8), AGOSTO);
-	INT_MESI.put(new Integer(9), SETTEMBRE);
-	INT_MESI.put(new Integer(10), OTTOBRE);
-	INT_MESI.put(new Integer(11), NOVEMBRE);
+	INT_MESI.put(Integer.valueOf(-1), DICEMBRE);
+	INT_MESI.put(Integer.valueOf(1), GENNAIO);
+	INT_MESI.put(Integer.valueOf(2), FEBBRAIO);
+	INT_MESI.put(Integer.valueOf(3), MARZO);
+	INT_MESI.put(Integer.valueOf(4), APRILE);
+	INT_MESI.put(Integer.valueOf(5), MAGGIO);
+	INT_MESI.put(Integer.valueOf(6), GIUGNO);
+	INT_MESI.put(Integer.valueOf(7), LUGLIO);
+	INT_MESI.put(Integer.valueOf(8), AGOSTO);
+	INT_MESI.put(Integer.valueOf(9), SETTEMBRE);
+	INT_MESI.put(Integer.valueOf(10), OTTOBRE);
+	INT_MESI.put(Integer.valueOf(11), NOVEMBRE);
 	
 }
 /**

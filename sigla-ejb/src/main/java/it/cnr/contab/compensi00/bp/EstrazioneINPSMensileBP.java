@@ -59,7 +59,7 @@ public void doElaboraINPSMensile(ActionContext context) throws BusinessProcessEx
 		sess.doElaboraINPSMensile(context.getUserContext(), inps);
 
 
-	}catch(javax.ejb.EJBException e){
+	}catch(jakarta.ejb.EJBException e){
 		throw handleException(e);
 	} catch(java.rmi.RemoteException re){
 		throw handleException(re);

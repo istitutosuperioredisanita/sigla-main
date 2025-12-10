@@ -179,7 +179,7 @@ public Forward doBringBackSearchFind_categoria_bene(ActionContext context, Inven
 			CRUDInventarioBeniBP bp = (CRUDInventarioBeniBP)getBusinessProcess(context);						
 			String cd_pubblicazioni = null;
 			
-			cd_pubblicazioni = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(context.getUserContext(), new Integer(0), "*", "CD_CATEGORIA_GRUPPO_SPECIALE", "PUBBLICAZIONI");
+			cd_pubblicazioni = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(context.getUserContext(), Integer.valueOf(0), "*", "CD_CATEGORIA_GRUPPO_SPECIALE", "PUBBLICAZIONI");
 			if(cd_pubblicazioni != null)
 				//bp.setIsPubblicazione(cat_gruppo.getCd_categoria_padre().equalsIgnoreCase(cd_pubblicazioni));
 				bene.setPubblicazione(cat_gruppo.getCd_categoria_padre().equalsIgnoreCase(cd_pubblicazioni));

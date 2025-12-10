@@ -96,7 +96,7 @@ public class Procedure_amministrativeBulk extends Procedure_amministrativeBase i
 		return getFl_ricerca_incarico()!=null && 
 	       	   getFl_ricerca_incarico().booleanValue() &&
 			   getIncarico_ric_giorni_pubbl()!=null &&
-		  	   getIncarico_ric_giorni_pubbl().compareTo(new Integer(0))==0;
+		  	   getIncarico_ric_giorni_pubbl().compareTo(Integer.valueOf(0))==0;
 	}
 	public boolean isMeramenteOccasionaleEnabled(){
 		return getFl_meramente_occasionale()!=null && 

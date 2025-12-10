@@ -20,7 +20,7 @@ package it.cnr.contab.bollo00.ejb;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.bollo00.tabrif.bulk.Tipo_atto_bolloBulk;
 

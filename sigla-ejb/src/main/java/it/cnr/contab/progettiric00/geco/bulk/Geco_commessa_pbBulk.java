@@ -36,7 +36,7 @@ public class Geco_commessa_pbBulk extends Geco_commessa_pbBase implements Geco_c
 		super(id_comm, esercizio, fase);
 	}
 	public void aggiornaProgettoSIP(Progetto_sipBulk progetto_sip){
-		if (!getId_prog().equals(new Long(progetto_sip.getPg_progetto_padre()))){
+		if (!getId_prog().equals(Long.valueOf(progetto_sip.getPg_progetto_padre()))){
 			progetto_sip.setProgettopadre(new Progetto_sipBulk(getEsercizio().intValue(),getId_prog().intValue(),getFase()));
 			progetto_sip.setToBeUpdated();
 		}
@@ -54,7 +54,7 @@ public class Geco_commessa_pbBulk extends Geco_commessa_pbBase implements Geco_c
 			progetto_sip.setToBeUpdated();
 		}
 		if (getCod_3rzo_resp() != null && progetto_sip.getCd_responsabile_terzo() != null && !getCod_3rzo_resp().equals(progetto_sip.getCd_responsabile_terzo().toString())){
-			progetto_sip.setResponsabile(new TerzoBulk(new Integer(getCod_3rzo_resp())));
+			progetto_sip.setResponsabile(new TerzoBulk(Integer.valueOf(getCod_3rzo_resp())));
 			progetto_sip.setToBeUpdated();
 		}
 		if (getData_inizio_attivita() != null && !getData_inizio_attivita().equals(progetto_sip.getDt_inizio())){
@@ -62,10 +62,10 @@ public class Geco_commessa_pbBulk extends Geco_commessa_pbBase implements Geco_c
 			progetto_sip.setToBeUpdated();
 		}
 		if (getEsito_negoz() != null){ 
-			if (getEsito_negoz().equals(new Integer(2)) && !progetto_sip.getStato().equals(ProgettoBulk.TIPO_STATO_PROPOSTA)){
+			if (getEsito_negoz().equals(Integer.valueOf(2)) && !progetto_sip.getStato().equals(ProgettoBulk.TIPO_STATO_PROPOSTA)){
 				progetto_sip.setStato(ProgettoBulk.TIPO_STATO_PROPOSTA);
 				progetto_sip.setToBeUpdated();
-			}else if (!getEsito_negoz().equals(new Integer(2)) && !progetto_sip.getStato().equals(ProgettoBulk.TIPO_STATO_APPROVATO)){
+			}else if (!getEsito_negoz().equals(Integer.valueOf(2)) && !progetto_sip.getStato().equals(ProgettoBulk.TIPO_STATO_APPROVATO)){
 				progetto_sip.setStato(ProgettoBulk.TIPO_STATO_APPROVATO);
 				progetto_sip.setToBeUpdated();
 			}

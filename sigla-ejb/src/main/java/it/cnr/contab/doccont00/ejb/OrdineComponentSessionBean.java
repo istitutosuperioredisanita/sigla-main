@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.doccont00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.doccont00.comp.OrdineComponent;
 @Stateless(name="CNRDOCCONT00_EJB_OrdineComponentSession")
@@ -26,10 +26,8 @@ public class OrdineComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSes
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.doccont00.comp.OrdineComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new OrdineComponentSessionBean();
-}
-public it.cnr.contab.doccont00.ordine.bulk.OrdineBulk completaTerzo(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.ordine.bulk.OrdineBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public it.cnr.contab.doccont00.ordine.bulk.OrdineBulk completaTerzo(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.ordine.bulk.OrdineBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.doccont00.ordine.bulk.OrdineBulk result = ((OrdineComponent)componentObj).completaTerzo(param0,param1);
@@ -47,7 +45,7 @@ public it.cnr.contab.doccont00.ordine.bulk.OrdineBulk completaTerzo(it.cnr.jada.
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public java.util.List findListabanche(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.ordine.bulk.OrdineBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public java.util.List findListabanche(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.ordine.bulk.OrdineBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.util.List result = ((OrdineComponent)componentObj).findListabanche(param0,param1);
@@ -65,7 +63,7 @@ public java.util.List findListabanche(it.cnr.jada.UserContext param0,it.cnr.cont
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((OrdineComponent)componentObj).inizializzaBulkPerStampa(param0,param1);
@@ -83,7 +81,7 @@ public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserCon
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.jada.bulk.OggettoBulk result = ((OrdineComponent)componentObj).stampaConBulk(param0,param1);

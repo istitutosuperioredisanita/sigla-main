@@ -323,8 +323,8 @@ public class LiquidazioneDefinitivaIvaAction extends StampaAction {
             }
             java.util.Calendar cal = java.util.GregorianCalendar.getInstance();
             cal.setTime(new java.util.Date(bulk.getData_a().getTime()));
-            Integer meseNum = new Integer(cal.get(java.util.Calendar.MONTH) + 1);
-            Integer esercizioNum = new Integer(cal.get(java.util.Calendar.YEAR));
+            Integer meseNum = Integer.valueOf(cal.get(java.util.Calendar.MONTH) + 1);
+            Integer esercizioNum = Integer.valueOf(cal.get(java.util.Calendar.YEAR));
             CompoundFindClause clause = new CompoundFindClause();
             clause.addClause("AND", "esercizio", SQLBuilder.EQUALS, esercizioNum);
             clause.addClause("AND", "cdCds", SQLBuilder.EQUALS, bulk.getCd_cds());

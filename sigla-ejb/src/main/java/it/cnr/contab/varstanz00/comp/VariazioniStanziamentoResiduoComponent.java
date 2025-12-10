@@ -81,7 +81,7 @@ import it.cnr.jada.util.ejb.EJBCommonServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import java.io.Serializable;
@@ -1134,9 +1134,9 @@ public class VariazioniStanziamentoResiduoComponent extends CRUDComponent implem
 	private MessaggioBulk inizializzaMessaggio(UserContext userContext, UtenteBulk utente) throws ComponentException, PersistencyException{
 		MessaggioHome messHome = (MessaggioHome)getHome(userContext,MessaggioBulk.class);
 		MessaggioBulk messaggio = new MessaggioBulk();
-		messaggio.setPg_messaggio(new Long(messHome.fetchNextSequenceValue(userContext,"CNRSEQ00_PG_MESSAGGIO").longValue()));
+		messaggio.setPg_messaggio(Long.valueOf(messHome.fetchNextSequenceValue(userContext,"CNRSEQ00_PG_MESSAGGIO").longValue()));
 		messaggio.setCd_utente(utente.getCd_utente());
-		messaggio.setPriorita(new Integer(1));
+		messaggio.setPriorita(Integer.valueOf(1));
 		return messaggio;
 	}
 	private MessaggioBulk generaMessaggio(UserContext userContext, UtenteBulk utente, Var_stanz_resBulk var_stanz_res, String tipo) throws ComponentException, PersistencyException{
@@ -1456,9 +1456,9 @@ public class VariazioniStanziamentoResiduoComponent extends CRUDComponent implem
 		  String cds_var_bil = cs.getString(4);
 		  if (cds_var_bil != null ){
 			  var_stanz_res.setCds_var_bil(cds_var_bil);
-			  var_stanz_res.setEs_var_bil(new Integer(cs.getString(5)));
+			  var_stanz_res.setEs_var_bil(Integer.valueOf(cs.getString(5)));
 			  var_stanz_res.setTi_app_var_bil(new Character(cs.getString(6).charAt(0)));
-			  var_stanz_res.setPg_var_bil(new Integer(cs.getString(7)));
+			  var_stanz_res.setPg_var_bil(Integer.valueOf(cs.getString(7)));
 		  }
 		}catch (Throwable e) {
 			throw handleException(e);
@@ -1593,7 +1593,7 @@ public class VariazioniStanziamentoResiduoComponent extends CRUDComponent implem
 		}
 		return false;
 	}
-	public Var_stanz_res_rigaBulk recuperoRigaLiquidazioneIva(it.cnr.jada.UserContext userContext, Var_stanz_resBulk bulk) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public Var_stanz_res_rigaBulk recuperoRigaLiquidazioneIva(it.cnr.jada.UserContext userContext, Var_stanz_resBulk bulk) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 			/**
 			 * Recupero la linea di attività dell'IVA C20
 			 */
@@ -1616,7 +1616,7 @@ public class VariazioniStanziamentoResiduoComponent extends CRUDComponent implem
 			}
 			return null;
 	}
-	private boolean isRigaLiquidazioneIva(it.cnr.jada.UserContext userContext, Var_stanz_res_rigaBulk bulk) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	private boolean isRigaLiquidazioneIva(it.cnr.jada.UserContext userContext, Var_stanz_res_rigaBulk bulk) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		/**
 		 * Recupero la linea di attività dell'IVA C20
 		 */
@@ -1646,13 +1646,13 @@ public class VariazioniStanziamentoResiduoComponent extends CRUDComponent implem
 	private void controllaRimodulazioneProgetto(UserContext userContext, Var_stanz_resBulk varStanzRes) throws it.cnr.jada.comp.ComponentException {
 		try {
    	   		it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession configSession = (it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class);
-   	   		BigDecimal annoFrom = configSession.getIm01(userContext, new Integer(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO);
+   	   		BigDecimal annoFrom = configSession.getIm01(userContext, Integer.valueOf(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO);
 
    	   		//Se la variazione residua è su un anno precedente all'attivazione dei progetti non faccio alcun controllo
    	   		if (varStanzRes.getEsercizio_residuo().compareTo(annoFrom.intValue())<0)
    	   			return;
 			
-   	   		String cdNaturaReimpiego = configSession.getVal01(userContext, new Integer(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_NATURA_REIMPIEGO);
+   	   		String cdNaturaReimpiego = configSession.getVal01(userContext, Integer.valueOf(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_NATURA_REIMPIEGO);
 
    	   		List<CtrlVarPianoEco> listCtrlVarPianoEco = new ArrayList<CtrlVarPianoEco>();
             Var_stanz_resHome detHome = (Var_stanz_resHome) getHome(userContext, Var_stanz_resBulk.class);

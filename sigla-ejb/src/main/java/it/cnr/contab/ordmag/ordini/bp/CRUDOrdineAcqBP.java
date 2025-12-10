@@ -70,11 +70,12 @@ import it.cnr.si.spring.storage.StorageException;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
+import jakarta.servlet.ServletException;
 import org.apache.commons.io.IOUtils;
 
 import javax.activation.MimetypesFileTypeMap;
-import javax.servlet.ServletException;
-import javax.servlet.jsp.PageContext;
+
+import jakarta.servlet.jsp.PageContext;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -997,7 +998,7 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 				}
 			} else
 				setRiportaAvantiIndietro(false);
-		} catch (javax.ejb.EJBException e) {
+		} catch (jakarta.ejb.EJBException e) {
 			setAnnoSolareInScrivania(false);
 		} catch (ComponentException | RemoteException e) {
             throw new RuntimeException(e);

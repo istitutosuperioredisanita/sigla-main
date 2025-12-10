@@ -55,9 +55,9 @@ public class ProgettoGecoComponent extends CRUDComponent {
 			SQLBuilder sql = gecoProgettoHome.createSQLBuilder();
 			if (progetto!=null){
 				if (progetto.getEsercizio() != null)
-					gecoProgettoDummy.setEsercizio(new Long(progetto.getEsercizio()));
+					gecoProgettoDummy.setEsercizio(Long.valueOf(progetto.getEsercizio()));
 				if (progetto.getPg_progetto() != null)
-					gecoProgettoDummy.setId_prog(new Long(progetto.getPg_progetto()));
+					gecoProgettoDummy.setId_prog(Long.valueOf(progetto.getPg_progetto()));
 				if (progetto.getTipo_fase() != null)
 					gecoProgettoDummy.setFase(progetto.getTipo_fase());
 			}
@@ -78,9 +78,9 @@ public class ProgettoGecoComponent extends CRUDComponent {
 			SQLBuilder sql = gecoCommessaHome.createSQLBuilder();
 			if (progetto!=null){
 				if (progetto.getEsercizio() != null)
-					gecoCommessaDummy.setEsercizio(new Long(progetto.getEsercizio()));
+					gecoCommessaDummy.setEsercizio(Long.valueOf(progetto.getEsercizio()));
 				if (progetto.getPg_progetto() != null)
-					gecoCommessaDummy.setId_comm(new Long(progetto.getPg_progetto()));
+					gecoCommessaDummy.setId_comm(Long.valueOf(progetto.getPg_progetto()));
 				if (progetto.getTipo_fase() != null)
 					gecoCommessaDummy.setFase(progetto.getTipo_fase());
 			}
@@ -117,9 +117,9 @@ public class ProgettoGecoComponent extends CRUDComponent {
 		SQLBuilder sql = home.createSQLBuilder();
 		if (progetto!=null){
 			if (progetto.getEsercizio() != null)
-				gecoModuloDummy.setEsercizio(new Long(progetto.getEsercizio()));
+				gecoModuloDummy.setEsercizio(Long.valueOf(progetto.getEsercizio()));
 			if (progetto.getPg_progetto() != null)
-				gecoModuloDummy.setId_mod(new Long(progetto.getPg_progetto()));
+				gecoModuloDummy.setId_mod(Long.valueOf(progetto.getPg_progetto()));
 			if (progetto.getTipo_fase() != null)
 				gecoModuloDummy.setFase(progetto.getTipo_fase());
 		}

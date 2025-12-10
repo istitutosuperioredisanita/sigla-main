@@ -30,9 +30,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import javax.ejb.RemoveException;
-import javax.servlet.ServletException;
-import javax.servlet.jsp.PageContext;
+import jakarta.ejb.RemoveException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
@@ -165,7 +166,7 @@ public class CRUDPdGAggregatoModuloBP extends it.cnr.jada.util.action.SimpleCRUD
 		setPgModulo(pg_modulo);
 		new CRUDPdGAggregatoModuloBP(function);
 	}
-	public static ProgettoRicercaPadreComponentSession getProgettoRicercaPadreComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public static ProgettoRicercaPadreComponentSession getProgettoRicercaPadreComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 		return (ProgettoRicercaPadreComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRPROGETTIRIC00_EJB_ProgettoRicercaPadreComponentSession",ProgettoRicercaPadreComponentSession.class);
 	}	
 	public void aggiornaGECO(ActionContext context){
@@ -196,7 +197,7 @@ public class CRUDPdGAggregatoModuloBP extends it.cnr.jada.util.action.SimpleCRUD
 				aggiornaGECO(context);
 			
 			it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession configSession = (it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class);
-	   		BigDecimal annoFrom = configSession.getIm01(context.getUserContext(), new Integer(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO);
+	   		BigDecimal annoFrom = configSession.getIm01(context.getUserContext(), Integer.valueOf(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO);
 	   		if (Optional.ofNullable(annoFrom).isPresent())
 	   			setAnnoFromPianoEconomico(annoFrom.intValue());
 		} catch (ComponentException e1) {

@@ -16,8 +16,8 @@
  */
 
 package it.cnr.contab.config00.ejb;
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 import it.cnr.contab.config00.comp.CDRComponent;
 @Stateless(name="CNRCONFIG00_EJB_CDRComponentSession")
@@ -26,10 +26,8 @@ public class CDRComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessio
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.config00.comp.CDRComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-	return new CDRComponentSessionBean();
-}
-public boolean isCdrEnte(it.cnr.jada.UserContext param0,it.cnr.contab.config00.sto.bulk.CdrBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+
+public boolean isCdrEnte(it.cnr.jada.UserContext param0,it.cnr.contab.config00.sto.bulk.CdrBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		boolean result = ((CDRComponent)componentObj).isCdrEnte(param0,param1);
@@ -47,7 +45,7 @@ public boolean isCdrEnte(it.cnr.jada.UserContext param0,it.cnr.contab.config00.s
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public boolean isEnte(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public boolean isEnte(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		boolean result = ((CDRComponent)componentObj).isEnte(param0);
@@ -65,7 +63,7 @@ public boolean isEnte(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.Co
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.contab.config00.sto.bulk.CdrBulk cdrFromUserContext(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.config00.sto.bulk.CdrBulk cdrFromUserContext(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.config00.sto.bulk.CdrBulk result = ((CDRComponent)componentObj).cdrFromUserContext(param0);
@@ -83,7 +81,7 @@ public it.cnr.contab.config00.sto.bulk.CdrBulk cdrFromUserContext(it.cnr.jada.Us
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public it.cnr.contab.config00.sto.bulk.CdrBulk getCdrEnte(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public it.cnr.contab.config00.sto.bulk.CdrBulk getCdrEnte(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		it.cnr.contab.config00.sto.bulk.CdrBulk result = ((CDRComponent)componentObj).getCdrEnte(param0);
@@ -101,7 +99,7 @@ public it.cnr.contab.config00.sto.bulk.CdrBulk getCdrEnte(it.cnr.jada.UserContex
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-public java.util.List findListaCDRWS(it.cnr.jada.UserContext param0,String param1,String param2,String param3,String param4) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public java.util.List findListaCDRWS(it.cnr.jada.UserContext param0,String param1,String param2,String param3,String param4) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		java.util.List result = ((CDRComponent)componentObj).findListaCDRWS(param0,param1,param2,param3,param4);

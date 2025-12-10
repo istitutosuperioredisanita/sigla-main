@@ -64,7 +64,7 @@ public class RicercaDocumentiAmministrativiFatturazioneElettronicaAction extends
      * Al business process viene anche chiesto l'elenco delle colonne da
      * visualizzare.
      */
-    public Forward doCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, javax.ejb.RemoveException {
+    public Forward doCerca(ActionContext context) throws java.rmi.RemoteException, InstantiationException, jakarta.ejb.RemoveException {
 
         DocumentiAmministrativiFatturazioneElettronicaBP bp = (DocumentiAmministrativiFatturazioneElettronicaBP) context.getBusinessProcess();
         try {

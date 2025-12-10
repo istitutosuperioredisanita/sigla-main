@@ -48,6 +48,8 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -97,10 +99,10 @@ public class CRUDPdgVariazioneRigaGestBP extends SimpleCRUDBP {
          */
         @Override
         public void writeHTMLToolbar(
-                javax.servlet.jsp.PageContext context,
+                PageContext context,
                 boolean reset,
                 boolean find,
-                boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+                boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
             super.writeHTMLToolbar(context, reset, find, delete, false);
 
@@ -153,10 +155,10 @@ public class CRUDPdgVariazioneRigaGestBP extends SimpleCRUDBP {
          */
         @Override
         public void writeHTMLToolbar(
-                javax.servlet.jsp.PageContext context,
+                PageContext context,
                 boolean reset,
                 boolean find,
-                boolean delete, boolean closedToolbar) throws java.io.IOException, javax.servlet.ServletException {
+                boolean delete, boolean closedToolbar) throws java.io.IOException, ServletException {
 
             super.writeHTMLToolbar(context, reset, find, delete, false);
 
@@ -374,7 +376,6 @@ public class CRUDPdgVariazioneRigaGestBP extends SimpleCRUDBP {
     /**
      * Ritorna TRUE se il CDR assegnatario appartiene ad una UO di tipo Area
      *
-     * @param Pdg_variazione_riga_gestBulk La riga di variazione
      * @return boolean
      */
     public boolean isUoArea() {

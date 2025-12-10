@@ -41,8 +41,8 @@ public class Codici_cpaHome extends BulkHome {
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext, OggettoBulk bulk) throws PersistencyException {
 		try {
 			((Codici_cpaBulk)bulk).setId_cpa(
-					new Long(
-					((Long)findAndLockMax( bulk, "id_cpa", new Long(0) )).longValue()+1
+					Long.valueOf(
+					((Long)findAndLockMax( bulk, "id_cpa", Long.valueOf(0) )).longValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

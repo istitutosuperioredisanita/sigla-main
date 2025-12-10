@@ -17,8 +17,8 @@
 
 package it.cnr.contab.bilaterali00.ejb;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 
 /**
  * Bean implementation class for Enterprise Bean: CNRBILATERALI00_EJB_BltAccordiComponentSession
@@ -29,10 +29,8 @@ public class BltAccordiComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 	public void ejbCreate() {
 		componentObj = new it.cnr.contab.bilaterali00.comp.BltAccordiComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new BltAccordiComponentSessionBean();
-	}
-	public it.cnr.contab.bilaterali00.bulk.Blt_autorizzatiBulk setComuneEnteDiAppartenenza(it.cnr.jada.UserContext param0,it.cnr.contab.bilaterali00.bulk.Blt_autorizzatiBulk param1,it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public it.cnr.contab.bilaterali00.bulk.Blt_autorizzatiBulk setComuneEnteDiAppartenenza(it.cnr.jada.UserContext param0,it.cnr.contab.bilaterali00.bulk.Blt_autorizzatiBulk param1,it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.bilaterali00.bulk.Blt_autorizzatiBulk result = ((it.cnr.contab.bilaterali00.comp.BltAccordiComponent)componentObj).setComuneEnteDiAppartenenza(param0,param1,param2);
@@ -50,7 +48,7 @@ public class BltAccordiComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.bilaterali00.bulk.Blt_progettiBulk setComuneEnteResponsIta(it.cnr.jada.UserContext param0,it.cnr.contab.bilaterali00.bulk.Blt_progettiBulk param1,it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.bilaterali00.bulk.Blt_progettiBulk setComuneEnteResponsIta(it.cnr.jada.UserContext param0,it.cnr.contab.bilaterali00.bulk.Blt_progettiBulk param1,it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.bilaterali00.bulk.Blt_progettiBulk result = ((it.cnr.contab.bilaterali00.comp.BltAccordiComponent)componentObj).setComuneEnteResponsIta(param0,param1,param2);

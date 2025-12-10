@@ -77,7 +77,7 @@ public Fondo_economaleBulk getFondoForPrint() {
  * @return java.lang.String
  */
 public Integer getTc() {
-	return new Integer(0);
+	return Integer.valueOf(0);
 }
 /**
  * Insert the method's description here.

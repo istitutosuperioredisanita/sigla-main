@@ -593,7 +593,7 @@ public class IncarichiRepertorioComponent extends CRUDComponent {
                         else if (incarico.getFl_inviato_corte_conti() && incarico.getDt_inizio_validita() != null && DateUtils.daysBetweenDates(incarico.getDt_inizio_validita(), EJBCommonServices.getServerDate()) > 5)
                             throw handleException(new ApplicationException("Non \350 possibile effettuare l'operazione perch\350 dalla data di inizio validit\340 del contratto risultano trascorsi piu' di 5 giorni."));
                     } else if (parametri != null && parametri.getLimite_dt_stipula() != null && parametri.getLimite_dt_stipula().equals("Y")) {
-                        Integer limite = new Integer(0);
+                        Integer limite = Integer.valueOf(0);
                         if (parametri.getGiorni_limite_dt_stipula() != null)
                             limite = parametri.getGiorni_limite_dt_stipula();
                         if (!incarico.getFl_inviato_corte_conti() && DateUtils.daysBetweenDates(incarico.getDt_stipula(), EJBCommonServices.getServerDate()) > limite.intValue())

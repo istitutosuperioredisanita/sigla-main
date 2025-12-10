@@ -156,8 +156,8 @@ public class TerzoComponent extends UtilitaAnagraficaComponent implements ICRUDM
             it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession configurazione = (it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class);
             AnagraficoBulk ente = (AnagraficoBulk) getHome(userContext, AnagraficoBulk.class).findByPrimaryKey(
                     new AnagraficoBulk(
-                            new Integer(
-                                    configurazione.getIm01(userContext, new Integer(0), null, "COSTANTI", "CODICE_ANAG_ENTE").toString()
+                            Integer.valueOf(
+                                    configurazione.getIm01(userContext, Integer.valueOf(0), null, "COSTANTI", "CODICE_ANAG_ENTE").toString()
                             )
                     )
             );
@@ -581,7 +581,7 @@ public class TerzoComponent extends UtilitaAnagraficaComponent implements ICRUDM
             super.validaModificaConBulk(userContext, bulk);
         } catch (java.rmi.RemoteException re) {
             throw handleException(re);
-        } catch (javax.ejb.EJBException ejbe) {
+        } catch (jakarta.ejb.EJBException ejbe) {
             throw handleException(ejbe);
         } catch (it.cnr.jada.persistency.PersistencyException e) {
             throw handleException(e);
@@ -638,7 +638,7 @@ public class TerzoComponent extends UtilitaAnagraficaComponent implements ICRUDM
             }
         } catch (java.rmi.RemoteException re) {
             throw handleException(re);
-        } catch (javax.ejb.EJBException ejbe) {
+        } catch (jakarta.ejb.EJBException ejbe) {
             throw handleException(ejbe);
         } catch (it.cnr.jada.persistency.PersistencyException e) {
             throw handleException(e);
@@ -1145,7 +1145,7 @@ public class TerzoComponent extends UtilitaAnagraficaComponent implements ICRUDM
             if (dominio.equalsIgnoreCase("cd_terzo"))
                 sql.addSQLClause("AND", "CD_TERZO", SQLBuilder.EQUALS, query);
             else if (dominio.equalsIgnoreCase("matricola")) {
-                sql.addSQLClause("AND", "MATRICOLA", SQLBuilder.EQUALS, new Long(query));
+                sql.addSQLClause("AND", "MATRICOLA", SQLBuilder.EQUALS, Long.valueOf(query));
             } else if (dominio.equalsIgnoreCase("denominazione")) {
                 if (tipoterzo.equalsIgnoreCase("fisica")) {
                     sql.openParenthesis("AND");

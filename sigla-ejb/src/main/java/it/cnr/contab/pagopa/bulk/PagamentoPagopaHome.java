@@ -50,7 +50,7 @@ public class PagamentoPagopaHome extends BulkHome {
 		try {
 			PagamentoPagopaBulk PagamentoPagopaBulk = (PagamentoPagopaBulk)oggettobulk;
 			PagamentoPagopaBulk.setId(
-					new Long(((Long)findAndLockMax( oggettobulk, "id", new Long(0) )).intValue()+1));
+					Long.valueOf(((Long)findAndLockMax( oggettobulk, "id", Long.valueOf(0) )).intValue()+1));
 			super.initializePrimaryKeyForInsert(usercontext, PagamentoPagopaBulk);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {
 			throw new PersistencyException(e);

@@ -46,7 +46,7 @@ public class Ass_contratto_ditteHome extends BulkHome {
 		try {
 			Ass_contratto_ditteBulk ass = (Ass_contratto_ditteBulk)oggettobulk;
 			ass.setPg_dettaglio(
-					new Integer(((Integer)findAndLockMax( oggettobulk, "pg_dettaglio", new Integer(0) )).intValue()+1));
+					Integer.valueOf(((Integer)findAndLockMax( oggettobulk, "pg_dettaglio", Integer.valueOf(0) )).intValue()+1));
 			super.initializePrimaryKeyForInsert(usercontext, ass);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {
 			throw new PersistencyException(e);

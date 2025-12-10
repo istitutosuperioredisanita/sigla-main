@@ -64,7 +64,7 @@ public Forward doPrint(ActionContext context) {
 			}
 		}
 		// Ora viene gestito dalla componente tramite la tabella PRINT_PRIORITY
-		//bp.getModel().setPriorita_server(new Integer(bp.getServerPriority()));
+		//bp.getModel().setPriorita_server(Integer.valueOf(bp.getServerPriority()));
 
 		// (02/07/2002 15:41:13) CNRADM
 		// Ora viene gestito dalla componente tramite la tabella PRINT_PRIORITY

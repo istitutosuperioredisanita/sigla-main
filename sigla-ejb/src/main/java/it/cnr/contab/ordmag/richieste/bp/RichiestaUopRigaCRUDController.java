@@ -18,7 +18,7 @@
 package it.cnr.contab.ordmag.richieste.bp;
 import java.io.IOException;
 
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.JspWriter;
 
 import it.cnr.contab.docamm00.ejb.*;
 import it.cnr.contab.docamm00.docs.bulk.*;

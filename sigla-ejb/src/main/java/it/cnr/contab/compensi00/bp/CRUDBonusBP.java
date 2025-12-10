@@ -30,9 +30,10 @@ import java.sql.SQLException;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.PageContext;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.jsp.PageContext;
 
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.EcfBulk;
@@ -246,8 +247,8 @@ public class CRUDBonusBP extends it.cnr.jada.util.action.SimpleCRUDBP {
 	  	  Integer conta_det=0;
 	  	  Integer altro=0;
 	  	  Integer mod=1;
-	      String data_formattata=Formatta(new Integer(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.DAY_OF_MONTH)).toString(),"D",2,"0").concat(
-	    		 Formatta(new Integer(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.MONTH)+1).toString(),"D",2,"0")+
+	      String data_formattata=Formatta(Integer.valueOf(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.DAY_OF_MONTH)).toString(),"D",2,"0").concat(
+	    		 Formatta(Integer.valueOf(EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.MONTH)+1).toString(),"D",2,"0")+
 	    				 EcfBulk.getDateCalendar(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate()).get(java.util.Calendar.YEAR));
 	      if(lista!=null && !lista.isEmpty() && lista.size()!=0)
 	    	  f = new File(System.getProperty("tmp.dir.SIGLAWeb")+"/tmp/","Bonus-"+data_formattata+".rbs");
@@ -308,8 +309,8 @@ public class CRUDBonusBP extends it.cnr.jada.util.action.SimpleCRUDBP {
 		    	  // data nascita
 		    	  GregorianCalendar dataNascita = new GregorianCalendar();
 		  		  dataNascita.setTime(new java.util.Date( bonus.getDt_nascita().getTime()));
-		    	  String data_nasc_form =Formatta(new Integer(dataNascita.get(java.util.Calendar.DAY_OF_MONTH)).toString(),"D",2,"0").concat(
-		    	    		 Formatta(new Integer(dataNascita.get(java.util.Calendar.MONTH)+1).toString(),"D",2,"0")+
+		    	  String data_nasc_form =Formatta(Integer.valueOf(dataNascita.get(java.util.Calendar.DAY_OF_MONTH)).toString(),"D",2,"0").concat(
+		    	    		 Formatta(Integer.valueOf(dataNascita.get(java.util.Calendar.MONTH)+1).toString(),"D",2,"0")+
 		    	    		 dataNascita.get(java.util.Calendar.YEAR));
 		    	  bw.append(Formatta(data_nasc_form,"S",8,"0"));
 		    	  // comune
@@ -355,7 +356,7 @@ public class CRUDBonusBP extends it.cnr.jada.util.action.SimpleCRUDBP {
 		    	  else 
 		    		  bw.append("0");
 		    	  
-		    	  if(bonus.getEsercizio_imposta().compareTo(new Integer("2007"))==0){
+		    	  if(bonus.getEsercizio_imposta().compareTo(Integer.valueOf("2007"))==0){
 			    	  // anno 2007
 		    		  bw.append("1");
 			    	  // anno 2008
@@ -370,8 +371,8 @@ public class CRUDBonusBP extends it.cnr.jada.util.action.SimpleCRUDBP {
 		    	//data richiesta
 		    	  GregorianCalendar dataRichiesta = new GregorianCalendar();
 		    	  dataRichiesta.setTime(new java.util.Date( bonus.getDt_richiesta().getTime()));
-		    	  String data_ric =Formatta(new Integer(dataRichiesta.get(java.util.Calendar.DAY_OF_MONTH)).toString(),"D",2,"0").concat(
-		    	    		 Formatta(new Integer(dataRichiesta.get(java.util.Calendar.MONTH)+1).toString(),"D",2,"0")+
+		    	  String data_ric =Formatta(Integer.valueOf(dataRichiesta.get(java.util.Calendar.DAY_OF_MONTH)).toString(),"D",2,"0").concat(
+		    	    		 Formatta(Integer.valueOf(dataRichiesta.get(java.util.Calendar.MONTH)+1).toString(),"D",2,"0")+
 		    	    		 dataRichiesta.get(java.util.Calendar.YEAR));
 		    	  bw.append(Formatta(data_ric,"S",8,"0"));
 		    	  //firma
@@ -474,7 +475,7 @@ public class CRUDBonusBP extends it.cnr.jada.util.action.SimpleCRUDBP {
 	    	  //record coda
 	    	  bw.append("Z");
 	    	  bw.append(Formatta(null,"S",14," "));
-	    	  bw.append(Formatta(new Integer(lista.size()).toString(),"D",9,"0"));
+	    	  bw.append(Formatta(Integer.valueOf(lista.size()).toString(),"D",9,"0"));
 	    	  bw.append(Formatta(conta_det.toString(),"D",9,"0"));
 	    	  bw.append(Formatta(null,"S",1864," "));
 	    	  

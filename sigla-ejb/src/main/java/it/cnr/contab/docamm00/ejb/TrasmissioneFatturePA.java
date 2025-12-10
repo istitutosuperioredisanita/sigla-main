@@ -23,8 +23,8 @@ import java.util.Date;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 
-import javax.activation.DataHandler;
-import javax.ejb.Local;
+import jakarta.activation.DataHandler;
+import jakarta.ejb.Local;
 @Local
 public interface TrasmissioneFatturePA {
 	public void notificaFatturaAttivaRicevutaConsegna(UserContext userContext, String nomeFile, DataHandler data) throws ComponentException;

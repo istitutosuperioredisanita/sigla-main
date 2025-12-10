@@ -30,10 +30,10 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -43,16 +43,14 @@ import java.util.List;
 
 @Stateless(name = "CNRDOCAMM00_EJB_FatturaAttivaSingolaComponentSession")
 public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements FatturaAttivaSingolaComponentSession {
-    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-        return new FatturaAttivaSingolaComponentSessionBean();
-    }
+
 
     @PostConstruct
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.docamm00.comp.FatturaAttivaSingolaComponent();
     }
 
-    public it.cnr.contab.docamm00.docs.bulk.Nota_di_debito_attivaBulk addebitaDettagli(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Nota_di_debito_attivaBulk param1, java.util.List param2, java.util.Hashtable param3) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.docamm00.docs.bulk.Nota_di_debito_attivaBulk addebitaDettagli(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Nota_di_debito_attivaBulk param1, java.util.List param2, java.util.Hashtable param3) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.contab.docamm00.docs.bulk.Nota_di_debito_attivaBulk result = ((FatturaAttivaSingolaComponent) componentObj).addebitaDettagli(param0, param1, param2, param3);
@@ -71,7 +69,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public void aggiornaStatoDocumentiAmministrativi(it.cnr.jada.UserContext param0, java.lang.String param1, java.lang.String param2, java.lang.String param3, java.lang.Integer param4, java.lang.Long param5, java.lang.String param6) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void aggiornaStatoDocumentiAmministrativi(it.cnr.jada.UserContext param0, java.lang.String param1, java.lang.String param2, java.lang.String param3, java.lang.Integer param4, java.lang.Long param5, java.lang.String param6) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             ((FatturaAttivaSingolaComponent) componentObj).aggiornaStatoDocumentiAmministrativi(param0, param1, param2, param3, param4, param5, param6);
@@ -89,7 +87,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public void annullaSelezionePerStampa(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void annullaSelezionePerStampa(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             ((FatturaAttivaSingolaComponent) componentObj).annullaSelezionePerStampa(param0, param1);
@@ -107,7 +105,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk calcoloConsuntivi(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk calcoloConsuntivi(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk result = ((FatturaAttivaSingolaComponent) componentObj).calcoloConsuntivi(param0, param1);
@@ -126,7 +124,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.lang.Long callGetPgPerProtocolloIVA(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.lang.Long callGetPgPerProtocolloIVA(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.lang.Long result = ((FatturaAttivaSingolaComponent) componentObj).callGetPgPerProtocolloIVA(param0);
@@ -163,7 +161,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.lang.Long callGetPgPerStampa(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.lang.Long callGetPgPerStampa(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.lang.Long result = ((FatturaAttivaSingolaComponent) componentObj).callGetPgPerStampa(param0);
@@ -182,7 +180,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public void cancellaDatiPerProtocollazioneIva(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1, java.lang.Long param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void cancellaDatiPerProtocollazioneIva(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1, java.lang.Long param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             ((FatturaAttivaSingolaComponent) componentObj).cancellaDatiPerProtocollazioneIva(param0, param1, param2);
@@ -200,7 +198,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public void cancellaDatiPerStampaIva(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1, java.lang.Long param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void cancellaDatiPerStampaIva(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1, java.lang.Long param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             ((FatturaAttivaSingolaComponent) componentObj).cancellaDatiPerStampaIva(param0, param1, param2);
@@ -218,7 +216,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.jada.util.RemoteIterator cercaAccertamenti(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_accertamentiVBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.util.RemoteIterator cercaAccertamenti(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_accertamentiVBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.jada.util.RemoteIterator result = ((FatturaAttivaSingolaComponent) componentObj).cercaAccertamenti(param0, param1);
@@ -237,7 +235,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk cercaCambio(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk cercaCambio(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk result = ((FatturaAttivaSingolaComponent) componentObj).cercaCambio(param0, param1);
@@ -256,7 +254,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.jada.util.RemoteIterator cercaDettagliFatturaPerNdC(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_IBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.util.RemoteIterator cercaDettagliFatturaPerNdC(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_IBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.jada.util.RemoteIterator result = ((FatturaAttivaSingolaComponent) componentObj).cercaDettagliFatturaPerNdC(param0, param1);
@@ -275,7 +273,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.jada.util.RemoteIterator cercaDettagliFatturaPerNdD(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_IBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.util.RemoteIterator cercaDettagliFatturaPerNdD(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_IBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.jada.util.RemoteIterator result = ((FatturaAttivaSingolaComponent) componentObj).cercaDettagliFatturaPerNdD(param0, param1);
@@ -294,7 +292,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.jada.util.RemoteIterator cercaFatturaPerNdC(it.cnr.jada.UserContext param0, CompoundFindClause compoundfindclause, it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.util.RemoteIterator cercaFatturaPerNdC(it.cnr.jada.UserContext param0, CompoundFindClause compoundfindclause, it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.jada.util.RemoteIterator result = ((FatturaAttivaSingolaComponent) componentObj).cercaFatturaPerNdC(param0, compoundfindclause, param1);
@@ -313,7 +311,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.jada.util.RemoteIterator cercaFatturaPerNdD(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Nota_di_debito_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.util.RemoteIterator cercaFatturaPerNdD(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Nota_di_debito_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.jada.util.RemoteIterator result = ((FatturaAttivaSingolaComponent) componentObj).cercaFatturaPerNdD(param0, param1);
@@ -332,7 +330,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attivaBulk completaCliente(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attivaBulk completaCliente(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attivaBulk result = ((FatturaAttivaSingolaComponent) componentObj).completaCliente(param0, param1);
@@ -351,7 +349,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk completaTerzo(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1, it.cnr.contab.anagraf00.core.bulk.TerzoBulk param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk completaTerzo(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1, it.cnr.contab.anagraf00.core.bulk.TerzoBulk param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk result = ((FatturaAttivaSingolaComponent) componentObj).completaTerzo(param0, param1, param2);
@@ -370,7 +368,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk contabilizzaDettagliSelezionati(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1, java.util.Collection param2, it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk param3) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk contabilizzaDettagliSelezionati(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1, java.util.Collection param2, it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk param3) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk result = ((FatturaAttivaSingolaComponent) componentObj).contabilizzaDettagliSelezionati(param0, param1, param2, param3);
@@ -389,7 +387,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public void controllaQuadraturaAccertamenti(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void controllaQuadraturaAccertamenti(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             ((FatturaAttivaSingolaComponent) componentObj).controllaQuadraturaAccertamenti(param0, param1);
@@ -407,7 +405,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.jada.bulk.OggettoBulk creaConBulk(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1, it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.bulk.OggettoBulk creaConBulk(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1, it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.jada.bulk.OggettoBulk result = ((FatturaAttivaSingolaComponent) componentObj).creaConBulk(param0, param1, param2);
@@ -426,7 +424,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public void eliminaRiga(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void eliminaRiga(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             ((FatturaAttivaSingolaComponent) componentObj).eliminaRiga(param0, param1);
@@ -444,7 +442,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public boolean esistonoDatiPerProtocollazioneIva(it.cnr.jada.UserContext param0, java.lang.Long param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, javax.ejb.EJBException {
+    public boolean esistonoDatiPerProtocollazioneIva(it.cnr.jada.UserContext param0, java.lang.Long param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             boolean result = ((FatturaAttivaSingolaComponent) componentObj).esistonoDatiPerProtocollazioneIva(param0, param1);
@@ -466,7 +464,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public boolean esistonoDatiPerStampaIva(it.cnr.jada.UserContext param0, java.lang.Long param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, javax.ejb.EJBException {
+    public boolean esistonoDatiPerStampaIva(it.cnr.jada.UserContext param0, java.lang.Long param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             boolean result = ((FatturaAttivaSingolaComponent) componentObj).esistonoDatiPerStampaIva(param0, param1);
@@ -488,7 +486,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.util.Vector estraeSezionali(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.util.Vector estraeSezionali(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.util.Vector result = ((FatturaAttivaSingolaComponent) componentObj).estraeSezionali(param0, param1);
@@ -507,7 +505,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.util.Vector estraeSezionaliPerRistampa(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1, java.util.Vector param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.util.Vector estraeSezionaliPerRistampa(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1, java.util.Vector param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.util.Vector result = ((FatturaAttivaSingolaComponent) componentObj).estraeSezionaliPerRistampa(param0, param1, param2);
@@ -526,7 +524,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.jada.util.RemoteIterator findAccertamentiFor(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1, java.math.BigDecimal param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.util.RemoteIterator findAccertamentiFor(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1, java.math.BigDecimal param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.jada.util.RemoteIterator result = ((FatturaAttivaSingolaComponent) componentObj).findAccertamentiFor(param0, param1, param2);
@@ -545,7 +543,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.util.List findDettagli(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException, javax.ejb.EJBException {
+    public java.util.List findDettagli(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.util.List result = ((FatturaAttivaSingolaComponent) componentObj).findDettagli(param0, param1);
@@ -570,7 +568,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.util.Collection findListabanche(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, javax.ejb.EJBException {
+    public java.util.Collection findListabanche(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.util.Collection result = ((FatturaAttivaSingolaComponent) componentObj).findListabanche(param0, param1);
@@ -592,7 +590,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.util.Vector findListabancheuo(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, javax.ejb.EJBException {
+    public java.util.Vector findListabancheuo(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.util.Vector result = ((FatturaAttivaSingolaComponent) componentObj).findListabancheuo(param0, param1);
@@ -614,7 +612,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.jada.util.RemoteIterator findNotaDiCreditoFor(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_IBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.util.RemoteIterator findNotaDiCreditoFor(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_IBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.jada.util.RemoteIterator result = ((FatturaAttivaSingolaComponent) componentObj).findNotaDiCreditoFor(param0, param1);
@@ -633,7 +631,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.jada.util.RemoteIterator findNotaDiDebitoFor(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_IBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.util.RemoteIterator findNotaDiDebitoFor(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_IBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.jada.util.RemoteIterator result = ((FatturaAttivaSingolaComponent) componentObj).findNotaDiDebitoFor(param0, param1);
@@ -652,7 +650,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.contab.docamm00.tabrif.bulk.TariffarioBulk findTariffario(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaBulk param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException, javax.ejb.EJBException {
+    public it.cnr.contab.docamm00.tabrif.bulk.TariffarioBulk findTariffario(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaBulk param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.contab.docamm00.tabrif.bulk.TariffarioBulk result = ((FatturaAttivaSingolaComponent) componentObj).findTariffario(param0, param1);
@@ -677,7 +675,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public boolean hasFatturaAttivaARowNotInventoried(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean hasFatturaAttivaARowNotInventoried(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             boolean result = ((FatturaAttivaSingolaComponent) componentObj).hasFatturaAttivaARowNotInventoried(param0, param1);
@@ -696,7 +694,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public void inizializzaSelezionePerStampa(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void inizializzaSelezionePerStampa(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             ((FatturaAttivaSingolaComponent) componentObj).inizializzaSelezionePerStampa(param0, param1);
@@ -714,7 +712,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public void inserisciRiga(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void inserisciRiga(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             ((FatturaAttivaSingolaComponent) componentObj).inserisciRiga(param0, param1);
@@ -732,7 +730,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.jada.bulk.OggettoBulk modificaConBulk(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1, it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.bulk.OggettoBulk modificaConBulk(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1, it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.jada.bulk.OggettoBulk result = ((FatturaAttivaSingolaComponent) componentObj).modificaConBulk(param0, param1, param2);
@@ -751,7 +749,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.lang.Integer modificaSelezionePerStampa(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1, it.cnr.jada.bulk.OggettoBulk[] param2, java.util.BitSet param3, java.util.BitSet param4, java.lang.Long param5, java.lang.Integer param6, java.lang.Long param7, java.sql.Timestamp param8) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.lang.Integer modificaSelezionePerStampa(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1, it.cnr.jada.bulk.OggettoBulk[] param2, java.util.BitSet param3, java.util.BitSet param4, java.lang.Long param5, java.lang.Integer param6, java.lang.Long param7, java.sql.Timestamp param8) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.lang.Integer result = ((FatturaAttivaSingolaComponent) componentObj).modificaSelezionePerStampa(param0, param1, param2, param3, param4, param5, param6, param7, param8);
@@ -770,7 +768,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public void protocolla(it.cnr.jada.UserContext param0, java.sql.Timestamp param1, java.lang.Long param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void protocolla(it.cnr.jada.UserContext param0, java.sql.Timestamp param1, java.lang.Long param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             ((FatturaAttivaSingolaComponent) componentObj).protocolla(param0, param1, param2);
@@ -788,7 +786,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk riportaAvanti(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk param1, it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk riportaAvanti(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk param1, it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk result = ((FatturaAttivaSingolaComponent) componentObj).riportaAvanti(param0, param1, param2);
@@ -807,7 +805,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk riportaIndietro(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk riportaIndietro(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk result = ((FatturaAttivaSingolaComponent) componentObj).riportaIndietro(param0, param1);
@@ -826,7 +824,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public void rollbackToSavePoint(it.cnr.jada.UserContext param0, java.lang.String param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void rollbackToSavePoint(it.cnr.jada.UserContext param0, java.lang.String param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             ((FatturaAttivaSingolaComponent) componentObj).rollbackToSavePoint(param0, param1);
@@ -844,7 +842,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_doc_amm_protocollabileVBulk selezionaTuttiPerStampa(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_doc_amm_protocollabileVBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_doc_amm_protocollabileVBulk selezionaTuttiPerStampa(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_doc_amm_protocollabileVBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_doc_amm_protocollabileVBulk result = ((FatturaAttivaSingolaComponent) componentObj).selezionaTuttiPerStampa(param0, param1);
@@ -863,7 +861,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_doc_amm_ristampabileVBulk selezionaTuttiPerStampa(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_doc_amm_ristampabileVBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_doc_amm_ristampabileVBulk selezionaTuttiPerStampa(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_doc_amm_ristampabileVBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_doc_amm_ristampabileVBulk result = ((FatturaAttivaSingolaComponent) componentObj).selezionaTuttiPerStampa(param0, param1);
@@ -882,7 +880,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk setContoEnteIn(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1, java.util.List param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk setContoEnteIn(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1, java.util.List param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk result = ((FatturaAttivaSingolaComponent) componentObj).setContoEnteIn(param0, param1, param2);
@@ -901,7 +899,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public void setSavePoint(it.cnr.jada.UserContext param0, java.lang.String param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void setSavePoint(it.cnr.jada.UserContext param0, java.lang.String param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             ((FatturaAttivaSingolaComponent) componentObj).setSavePoint(param0, param1);
@@ -919,7 +917,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attivaBulk stornaDettagli(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attivaBulk param1, java.util.List param2, java.util.Hashtable param3) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attivaBulk stornaDettagli(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attivaBulk param1, java.util.List param2, java.util.Hashtable param3) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attivaBulk result = ((FatturaAttivaSingolaComponent) componentObj).stornaDettagli(param0, param1, param2, param3);
@@ -938,7 +936,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk update(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk update(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk result = ((FatturaAttivaSingolaComponent) componentObj).update(param0, param1);
@@ -957,7 +955,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk updateImportoAssociatoDocAmm(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk updateImportoAssociatoDocAmm(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk result = ((FatturaAttivaSingolaComponent) componentObj).updateImportoAssociatoDocAmm(param0, param1);
@@ -976,7 +974,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public void validaFattura(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void validaFattura(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             ((FatturaAttivaSingolaComponent) componentObj).validaFattura(param0, param1);
@@ -994,7 +992,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public void validaRiga(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void validaRiga(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             ((FatturaAttivaSingolaComponent) componentObj).validaRiga(param0, param1);
@@ -1012,7 +1010,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public void verificaEsistenzaEdAperturaInventario(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void verificaEsistenzaEdAperturaInventario(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             ((FatturaAttivaSingolaComponent) componentObj).verificaEsistenzaEdAperturaInventario(param0, param1);
@@ -1030,7 +1028,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public boolean verificaStatoEsercizio(it.cnr.jada.UserContext param0, it.cnr.contab.config00.esercizio.bulk.EsercizioBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public boolean verificaStatoEsercizio(it.cnr.jada.UserContext param0, it.cnr.contab.config00.esercizio.bulk.EsercizioBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             boolean result = ((FatturaAttivaSingolaComponent) componentObj).verificaStatoEsercizio(param0, param1);
@@ -1050,7 +1048,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
     }
 
     //aggiunto per testare l'esercizio della data competenza da/a
-    public boolean isEsercizioChiusoPerDataCompetenza(it.cnr.jada.UserContext param0, Integer param1, java.lang.String param2) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, javax.ejb.EJBException {
+    public boolean isEsercizioChiusoPerDataCompetenza(it.cnr.jada.UserContext param0, Integer param1, java.lang.String param2) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             boolean result = (((FatturaAttivaSingolaComponent) componentObj).isEsercizioChiusoPerDataCompetenza(param0, param1, param2));
@@ -1069,7 +1067,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public Boolean ha_beniColl(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public Boolean ha_beniColl(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             Boolean result = ((FatturaAttivaSingolaComponent) componentObj).ha_beniColl(param0, param1);
@@ -1088,7 +1086,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public void rimuoviDaAssociazioniInventario(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaIBulk param1, it.cnr.contab.inventario00.docs.bulk.Ass_inv_bene_fatturaBulk param2) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public void rimuoviDaAssociazioniInventario(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaIBulk param1, it.cnr.contab.inventario00.docs.bulk.Ass_inv_bene_fatturaBulk param2) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             ((FatturaAttivaSingolaComponent) componentObj).rimuoviDaAssociazioniInventario(param0, param1, param2);
@@ -1106,7 +1104,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.jada.util.RemoteIterator selectBeniFor(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.util.RemoteIterator selectBeniFor(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.jada.util.RemoteIterator result = ((FatturaAttivaSingolaComponent) componentObj).selectBeniFor(param0, param1);
@@ -1125,7 +1123,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.jada.bulk.OggettoBulk rebuildDocumento(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.bulk.OggettoBulk rebuildDocumento(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.jada.bulk.OggettoBulk result = ((FatturaAttivaSingolaComponent) componentObj).rebuildDocumento(param0, param1);
@@ -1144,7 +1142,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public it.cnr.jada.util.RemoteIterator cercaObbligazioni(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_obbligazioniVBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.util.RemoteIterator cercaObbligazioni(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Filtro_ricerca_obbligazioniVBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             it.cnr.jada.util.RemoteIterator result = ((FatturaAttivaSingolaComponent) componentObj).cercaObbligazioni(param0, param1);
@@ -1163,7 +1161,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
         }
     }
 
-    public byte[] lanciaStampa(it.cnr.jada.UserContext param0, Long pg_stampa) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException {
+    public byte[] lanciaStampa(it.cnr.jada.UserContext param0, Long pg_stampa) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException, it.cnr.jada.persistency.PersistencyException {
         pre_component_invocation(param0, componentObj);
 	try {
             byte[] result = ((FatturaAttivaSingolaComponent) componentObj).lanciaStampa(param0, pg_stampa);
@@ -1201,7 +1199,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public boolean verificaDuplicati(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException {
+    public boolean verificaDuplicati(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attivaBulk param1) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException, it.cnr.jada.persistency.PersistencyException {
         pre_component_invocation(param0, componentObj);
 	try {
             boolean result = ((FatturaAttivaSingolaComponent) componentObj).VerificaDuplicati(param0, param1);
@@ -1220,7 +1218,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.util.List findListaModalitaPagamentoWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3, String param4) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.util.List findListaModalitaPagamentoWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3, String param4) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.util.List result = ((FatturaAttivaSingolaComponent) componentObj).findListaModalitaPagamentoWS(param0, param1, param2, param3, param4);
@@ -1239,7 +1237,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.util.List findListaBancheWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3, String param4, String param5) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.util.List findListaBancheWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3, String param4, String param5) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.util.List result = ((FatturaAttivaSingolaComponent) componentObj).findListaBancheWS(param0, param1, param2, param3, param4, param5);
@@ -1259,7 +1257,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
     }
 
     public java.util.List findListaRigheperNCWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3, String param4, String param5,
-                                                String param6, String param7) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+                                                String param6, String param7) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.util.List result = ((FatturaAttivaSingolaComponent) componentObj).findListaRigheperNCWS(param0, param1, param2, param3, param4, param5, param6, param7);
@@ -1373,7 +1371,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
  }
 
-    public java.util.List findManRevRigaCollegati(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaBulk param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException, javax.ejb.EJBException {
+    public java.util.List findManRevRigaCollegati(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaBulk param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.util.List result = ((FatturaAttivaSingolaComponent) componentObj).findManRevRigaCollegati(param0, param1);
@@ -1398,7 +1396,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.util.List findListaBeneServizioWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3, String param4) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.util.List findListaBeneServizioWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3, String param4) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.util.List result = ((FatturaAttivaSingolaComponent) componentObj).findListaBeneServizioWS(param0, param1, param2, param3, param4);
@@ -1417,7 +1415,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.util.List findListaModalitaIncassoWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.util.List findListaModalitaIncassoWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.util.List result = ((FatturaAttivaSingolaComponent) componentObj).findListaModalitaIncassoWS(param0, param1, param2, param3);
@@ -1436,7 +1434,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.util.List findListaModalitaErogazioneWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.util.List findListaModalitaErogazioneWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.util.List result = ((FatturaAttivaSingolaComponent) componentObj).findListaModalitaErogazioneWS(param0, param1, param2, param3);
@@ -1455,7 +1453,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.util.List findListaCodiciCpaWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.util.List findListaCodiciCpaWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.util.List result = ((FatturaAttivaSingolaComponent) componentObj).findListaCodiciCpaWS(param0, param1, param2, param3);
@@ -1474,7 +1472,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.util.List findListaNazioneWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.util.List findListaNazioneWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.util.List result = ((FatturaAttivaSingolaComponent) componentObj).findListaNazioneWS(param0, param1, param2, param3);
@@ -1493,7 +1491,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.util.List findListaNomenclaturaCombinataWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.util.List findListaNomenclaturaCombinataWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.util.List result = ((FatturaAttivaSingolaComponent) componentObj).findListaNomenclaturaCombinataWS(param0, param1, param2, param3);
@@ -1512,7 +1510,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.util.List findListaNaturaTransazioneWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.util.List findListaNaturaTransazioneWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.util.List result = ((FatturaAttivaSingolaComponent) componentObj).findListaNaturaTransazioneWS(param0, param1, param2, param3);
@@ -1531,7 +1529,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.util.List findListaCondizioneConsegnaWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.util.List findListaCondizioneConsegnaWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.util.List result = ((FatturaAttivaSingolaComponent) componentObj).findListaCondizioneConsegnaWS(param0, param1, param2, param3);
@@ -1550,7 +1548,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.util.List findListaModalitaTrasportoWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.util.List findListaModalitaTrasportoWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.util.List result = ((FatturaAttivaSingolaComponent) componentObj).findListaModalitaTrasportoWS(param0, param1, param2, param3);
@@ -1569,7 +1567,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public java.util.List findListaProvinciaWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public java.util.List findListaProvinciaWS(it.cnr.jada.UserContext param0, String param1, String param2, String param3) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.util.List result = ((FatturaAttivaSingolaComponent) componentObj).findListaProvinciaWS(param0, param1, param2, param3);
@@ -1589,7 +1587,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public java.lang.Long inserisciDatiPerStampaIva(it.cnr.jada.UserContext param0, Long esercizio, String cd_cds, String cd_unita_organizzativa, Long pg_fattura) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException {
+    public java.lang.Long inserisciDatiPerStampaIva(it.cnr.jada.UserContext param0, Long esercizio, String cd_cds, String cd_unita_organizzativa, Long pg_fattura) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException, it.cnr.jada.persistency.PersistencyException {
         pre_component_invocation(param0, componentObj);
 	try {
             java.lang.Long result = ((FatturaAttivaSingolaComponent) componentObj).inserisciDatiPerStampaIva(param0, esercizio, cd_cds, cd_unita_organizzativa, pg_fattura);
@@ -1960,7 +1958,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public boolean isAttivoSplitPayment(UserContext param0, Timestamp param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, javax.ejb.EJBException {
+    public boolean isAttivoSplitPayment(UserContext param0, Timestamp param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             boolean result = (((FatturaAttivaSingolaComponent) componentObj).isAttivoSplitPayment(param0, param1));
@@ -2022,7 +2020,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 
     }
 
-    public void controlliGestioneBolloVirtuale(UserContext param0, Fattura_attivaBulk fatturaAttiva, BulkList dettaglio) throws ComponentException, java.rmi.RemoteException, javax.ejb.EJBException {
+    public void controlliGestioneBolloVirtuale(UserContext param0, Fattura_attivaBulk fatturaAttiva, BulkList dettaglio) throws ComponentException, java.rmi.RemoteException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             ((FatturaAttivaSingolaComponent) componentObj).controlliGestioneBolloVirtuale(param0, fatturaAttiva, dettaglio);
@@ -2040,7 +2038,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public String recuperoEmailUtente(UserContext param0, Fattura_attivaBulk fatturaAttiva) throws ComponentException, java.rmi.RemoteException, javax.ejb.EJBException {
+    public String recuperoEmailUtente(UserContext param0, Fattura_attivaBulk fatturaAttiva) throws ComponentException, java.rmi.RemoteException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             String res = ((FatturaAttivaSingolaComponent) componentObj).recuperoEmailUtente(param0, fatturaAttiva);
@@ -2059,7 +2057,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
 	}
     }
 
-    public void gestioneAvvisoInvioMailFattureAttive(UserContext param0) throws ComponentException, java.rmi.RemoteException, javax.ejb.EJBException {
+    public void gestioneAvvisoInvioMailFattureAttive(UserContext param0) throws ComponentException, java.rmi.RemoteException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
 	try {
             ((FatturaAttivaSingolaComponent) componentObj).gestioneAvvisoInvioMailFattureAttive(param0);
@@ -2078,7 +2076,7 @@ public class FatturaAttivaSingolaComponentSessionBean extends it.cnr.jada.ejb.CR
     }
 
     @Override
-    public List<String> sendMailForNotificationKo(UserContext param0, Fattura_attivaBulk param1) throws ComponentException, java.rmi.RemoteException, javax.ejb.EJBException {
+    public List<String> sendMailForNotificationKo(UserContext param0, Fattura_attivaBulk param1) throws ComponentException, java.rmi.RemoteException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             final List<String> strings = ((FatturaAttivaSingolaComponent) componentObj).sendMailForNotificationKo(param0, param1);

@@ -39,7 +39,7 @@ public class Dettaglio_contrattoHome extends BulkHome {
 		super(Dettaglio_contrattoBulk.class, conn, persistentCache);
 	}
 	Long recuperoProgressivoDettaglio(UserContext userContext) throws PersistencyException,it.cnr.jada.comp.ComponentException {
-		return new Long(this.fetchNextSequenceValue(userContext,"CNRSEQ00_DETTAGLIO_CONTRATTO").longValue());
+		return Long.valueOf(this.fetchNextSequenceValue(userContext,"CNRSEQ00_DETTAGLIO_CONTRATTO").longValue());
 	}
 	public void initializePrimaryKeyForInsert(UserContext userContext, OggettoBulk bulk) throws PersistencyException,it.cnr.jada.comp.ComponentException {
 		Dettaglio_contrattoBulk dettaglio = (Dettaglio_contrattoBulk)bulk;

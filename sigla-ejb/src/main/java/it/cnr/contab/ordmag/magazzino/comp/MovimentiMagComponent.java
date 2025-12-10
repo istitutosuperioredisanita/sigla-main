@@ -1087,7 +1087,7 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
     				.map(DivisaBulk::getCd_divisa)
     				.orElseThrow(()->new ApplicationException("Impossibile caricare la valuta di default! Prima di poter inserire un ordine, immettere tale valore."));
     		return divisaDefault;
-    	} catch (javax.ejb.EJBException|PersistencyException e) {
+    	} catch (jakarta.ejb.EJBException|PersistencyException e) {
     		handleException(e);
     	}
     	return null;

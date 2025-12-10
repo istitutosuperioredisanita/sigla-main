@@ -146,7 +146,7 @@ public void inserisciSottoArticoliCategoria1(UserContext userContext, Voce_f_cnr
            sottoarticolo.setCd_parte(articolo.getCd_parte());
            sottoarticolo.setDs_voce(uo.getCds_area_ricerca().getDs_unita_organizzativa());
            sottoarticolo.setCd_funzione(articolo.getCd_funzione());
-           sottoarticolo.setLivello(new Integer(Voce_fHome.LIVELLO_SOTTOARTICOLO_SPESE_CNR));
+           sottoarticolo.setLivello(Integer.valueOf(Voce_fHome.LIVELLO_SOTTOARTICOLO_SPESE_CNR));
            sottoarticolo.setFl_mastrino(new Boolean(true));
            sottoarticolo.setCd_categoria(articolo.getCd_categoria());
            sottoarticolo.setCd_natura(articolo.getCd_natura());

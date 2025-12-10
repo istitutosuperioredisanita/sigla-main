@@ -25,7 +25,7 @@ package it.cnr.contab.utenze00.bulk;
 import java.rmi.RemoteException;
 import java.util.Base64;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 
 
@@ -219,7 +219,7 @@ public class UtenteBulk extends UtenteBase {
 	public static boolean isAbilitatoECF(it.cnr.jada.UserContext param0) throws ComponentException, RemoteException{
 		return getRuoloComponentSession().isAbilitatoECF(param0);
 	}
-	public static RuoloComponentSession getRuoloComponentSession() throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public static RuoloComponentSession getRuoloComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 		return (RuoloComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRUTENZE00_EJB_RuoloComponentSession",RuoloComponentSession.class);
 	}
 	public it.cnr.jada.bulk.BulkList getUtente_indirizzi_mail() {

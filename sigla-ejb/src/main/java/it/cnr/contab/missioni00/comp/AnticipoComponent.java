@@ -111,7 +111,7 @@ public class AnticipoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
                     }
                 }
             }
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw handleException(anticipo, e);
         } catch (java.rmi.RemoteException e) {
             throw handleException(anticipo, e);
@@ -325,7 +325,7 @@ public class AnticipoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
                     }
                 }
             }
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw handleException(anticipo, e);
         } catch (java.rmi.RemoteException e) {
             throw handleException(anticipo, e);
@@ -785,7 +785,7 @@ public class AnticipoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
      * @param    aUC    lo UserContext che ha generato la richiesta
      */
 
-    private DivisaBulk findDivisaDefault(UserContext aUC) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, RemoteException {
+    private DivisaBulk findDivisaDefault(UserContext aUC) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException, it.cnr.jada.persistency.PersistencyException, RemoteException {
         DivisaHome divisaHome = (DivisaHome) getHome(aUC, DivisaBulk.class);
         DivisaBulk divisaDefault = divisaHome.getDivisaDefault(aUC);
 
@@ -901,7 +901,7 @@ public class AnticipoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
                 anticipo.setDivisa(findDivisaDefault(aUC));
         } catch (RemoteException e) {
             throw handleException(anticipo, e);
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             throw handleException(anticipo, e);
         }
 
@@ -1948,7 +1948,7 @@ public class AnticipoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 
         try {
             if (anticipo.isRiportataInScrivania()) {
-                Integer es_prec = new Integer(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext).intValue() - 1);
+                Integer es_prec = Integer.valueOf(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext).intValue() - 1);
 
                 cs = new LoggableStatement(getConnection(userContext), "{ ? = call " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() + "CNRCTB200.isChiusuraCoepDef(?,?)}", false, this.getClass());
                 cs.registerOutParameter(1, java.sql.Types.VARCHAR);

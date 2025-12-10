@@ -23,9 +23,9 @@ import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
 import java.util.Vector;
 
@@ -36,14 +36,12 @@ public class AutoFatturaComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 		componentObj = new it.cnr.contab.docamm00.comp.AutoFatturaComponent();
 	}
 	@Remove
-	public void ejbRemove() throws javax.ejb.EJBException {
+	public void ejbRemove() throws jakarta.ejb.EJBException {
 		componentObj.release();
 	}
 
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new AutoFatturaComponentSessionBean();
-	}
-	public void aggiornaStatoDocumentiAmministrativi(it.cnr.jada.UserContext param0,java.lang.String param1,java.lang.String param2,java.lang.String param3,java.lang.Integer param4,java.lang.Long param5,java.lang.String param6) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	
+	public void aggiornaStatoDocumentiAmministrativi(it.cnr.jada.UserContext param0,java.lang.String param1,java.lang.String param2,java.lang.String param3,java.lang.Integer param4,java.lang.Long param5,java.lang.String param6) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((AutoFatturaComponent)componentObj).aggiornaStatoDocumentiAmministrativi(param0,param1,param2,param3,param4,param5,param6);
@@ -60,7 +58,7 @@ public class AutoFatturaComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk calcoloConsuntivi(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk calcoloConsuntivi(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk result = ((AutoFatturaComponent)componentObj).calcoloConsuntivi(param0,param1);
@@ -78,7 +76,7 @@ public class AutoFatturaComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.jada.bulk.OggettoBulk creaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1,it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.jada.bulk.OggettoBulk creaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1,it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((AutoFatturaComponent)componentObj).creaConBulk(param0,param1,param2);
@@ -96,7 +94,7 @@ public class AutoFatturaComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public java.util.Vector estraeSezionali(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.docs.bulk.AutofatturaBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public java.util.Vector estraeSezionali(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.docs.bulk.AutofatturaBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			java.util.Vector result = ((AutoFatturaComponent)componentObj).estraeSezionali(param0,param1);
@@ -114,7 +112,7 @@ public class AutoFatturaComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.jada.bulk.OggettoBulk modificaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1,it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.jada.bulk.OggettoBulk modificaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1,it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.jada.bulk.OggettoBulk result = ((AutoFatturaComponent)componentObj).modificaConBulk(param0,param1,param2);
@@ -132,7 +130,7 @@ public class AutoFatturaComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void protocolla(it.cnr.jada.UserContext param0,java.sql.Timestamp param1,java.lang.Long param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void protocolla(it.cnr.jada.UserContext param0,java.sql.Timestamp param1,java.lang.Long param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((AutoFatturaComponent)componentObj).protocolla(param0,param1,param2);
@@ -149,7 +147,7 @@ public class AutoFatturaComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk riportaAvanti(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk param1,it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param2) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk riportaAvanti(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk param1,it.cnr.contab.doccont00.core.bulk.OptionRequestParameter param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk result = ((AutoFatturaComponent)componentObj).riportaAvanti(param0,param1,param2);
@@ -167,7 +165,7 @@ public class AutoFatturaComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk riportaIndietro(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk riportaIndietro(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk result = ((AutoFatturaComponent)componentObj).riportaIndietro(param0,param1);
@@ -185,7 +183,7 @@ public class AutoFatturaComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void rollbackToSavePoint(it.cnr.jada.UserContext param0,java.lang.String param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void rollbackToSavePoint(it.cnr.jada.UserContext param0,java.lang.String param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((AutoFatturaComponent)componentObj).rollbackToSavePoint(param0,param1);
@@ -202,7 +200,7 @@ public class AutoFatturaComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public void setSavePoint(it.cnr.jada.UserContext param0,java.lang.String param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public void setSavePoint(it.cnr.jada.UserContext param0,java.lang.String param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			((AutoFatturaComponent)componentObj).setSavePoint(param0,param1);
@@ -219,7 +217,7 @@ public class AutoFatturaComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk update(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk update(it.cnr.jada.UserContext param0,it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoRigaBulk result = ((AutoFatturaComponent)componentObj).update(param0,param1);
@@ -237,7 +235,7 @@ public class AutoFatturaComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk updateImportoAssociatoDocAmm(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk updateImportoAssociatoDocAmm(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk result = ((AutoFatturaComponent)componentObj).updateImportoAssociatoDocAmm(param0,param1);
@@ -255,7 +253,7 @@ public class AutoFatturaComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
-	public boolean verificaStatoEsercizio(it.cnr.jada.UserContext param0,it.cnr.contab.config00.esercizio.bulk.EsercizioBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+	public boolean verificaStatoEsercizio(it.cnr.jada.UserContext param0,it.cnr.contab.config00.esercizio.bulk.EsercizioBulk param1) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
 			boolean result = ((AutoFatturaComponent)componentObj).verificaStatoEsercizio(param0,param1);

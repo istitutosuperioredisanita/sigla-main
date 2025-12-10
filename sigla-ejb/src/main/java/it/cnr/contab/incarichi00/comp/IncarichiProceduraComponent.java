@@ -67,7 +67,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.activation.MimetypesFileTypeMap;
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -1156,7 +1156,7 @@ public class IncarichiProceduraComponent extends CRUDComponent {
 
 				if (procedura.getProcedura_amministrativa() != null &&
 					procedura.getProcedura_amministrativa().getIncarico_ric_giorni_pubbl() != null &&
-					procedura.getProcedura_amministrativa().getIncarico_ric_giorni_pubbl().compareTo(new Integer(0)) == 1){
+					procedura.getProcedura_amministrativa().getIncarico_ric_giorni_pubbl().compareTo(Integer.valueOf(0)) == 1){
 					java.util.GregorianCalendar gc_data_pubblicazione = getGregorianCalendar();
 					gc_data_pubblicazione.setTime(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate());
 					procedura.setDt_pubblicazione(new Timestamp(gc_data_pubblicazione.getTime().getTime()));
@@ -1168,7 +1168,7 @@ public class IncarichiProceduraComponent extends CRUDComponent {
 				}	
 				if (procedura.getProcedura_amministrativa() != null &&
 					procedura.getProcedura_amministrativa().getIncarico_ric_giorni_scad() != null &&
-					procedura.getProcedura_amministrativa().getIncarico_ric_giorni_scad().compareTo(new Integer(0)) == 1){
+					procedura.getProcedura_amministrativa().getIncarico_ric_giorni_scad().compareTo(Integer.valueOf(0)) == 1){
 					java.util.GregorianCalendar gc_data_scadenza = getGregorianCalendar();
 					gc_data_scadenza.setTime(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate());
 					gc_data_scadenza.add(java.util.Calendar.DAY_OF_YEAR,procedura.getProcedura_amministrativa().getIncarico_ric_giorni_pubbl()+procedura.getProcedura_amministrativa().getIncarico_ric_giorni_scad());
@@ -1642,14 +1642,14 @@ public class IncarichiProceduraComponent extends CRUDComponent {
 		if (clause == null) 
 		    clause = tipo_attivita_fp.buildFindClauses(null);
 		SQLBuilder sql = getHome(userContext, tipo_attivita_fp).createSQLBuilder();
-		sql.addSQLClause(FindClause.AND, "LIVELLO", SQLBuilder.EQUALS, new Integer(0));
+		sql.addSQLClause(FindClause.AND, "LIVELLO", SQLBuilder.EQUALS, Integer.valueOf(0));
 		sql.addSQLClause(FindClause.AND, "FL_CANCELLATO", SQLBuilder.EQUALS, "N");
 		if (bulk instanceof Incarichi_proceduraBulk && ((Incarichi_proceduraBulk)bulk).getTipo_attivita_fp1()!=null &&
 			((Incarichi_proceduraBulk)bulk).getTipo_attivita_fp1().getCd_tipo_attivita_padre()!=null) {
 			sql.addSQLClause(FindClause.AND, "CD_TIPO_ATTIVITA", SQLBuilder.EQUALS, ((Incarichi_proceduraBulk)bulk).getTipo_attivita_fp1().getCd_tipo_attivita_padre());
 		}else if (bulk instanceof Incarichi_proceduraBulk && ((Incarichi_proceduraBulk)bulk).getTipo_attivita_fp()!=null &&
 			((Incarichi_proceduraBulk)bulk).getTipo_attivita_fp().getCd_tipo_attivita()!=null) {
-			sql.addSQLClause(FindClause.AND, "LIVELLO", SQLBuilder.EQUALS, new Integer(-1));
+			sql.addSQLClause(FindClause.AND, "LIVELLO", SQLBuilder.EQUALS, Integer.valueOf(-1));
 		}
 		if (clause != null) 
 		  sql.addClause(clause);
@@ -1664,7 +1664,7 @@ public class IncarichiProceduraComponent extends CRUDComponent {
 		SQLBuilder sql = getHome(userContext, tipo_attivita_fp).createSQLBuilder();
 		if (bulk instanceof Incarichi_proceduraBulk && ((Incarichi_proceduraBulk)bulk).getTipo_attivita_fp0()!=null &&
 			((Incarichi_proceduraBulk)bulk).getTipo_attivita_fp0().getCd_tipo_attivita()!=null) {
-			sql.addSQLClause(FindClause.AND, "LIVELLO", SQLBuilder.EQUALS, new Integer(1));
+			sql.addSQLClause(FindClause.AND, "LIVELLO", SQLBuilder.EQUALS, Integer.valueOf(1));
 			sql.addSQLClause(FindClause.AND, "CD_TIPO_ATTIVITA_PADRE", SQLBuilder.EQUALS, ((Incarichi_proceduraBulk)bulk).getTipo_attivita_fp0().getCd_tipo_attivita());
 			sql.addSQLClause(FindClause.AND, "FL_CANCELLATO", SQLBuilder.EQUALS, "N");
 			if (bulk instanceof Incarichi_proceduraBulk && ((Incarichi_proceduraBulk)bulk).getTipo_attivita_fp()!=null &&
@@ -1675,7 +1675,7 @@ public class IncarichiProceduraComponent extends CRUDComponent {
 			((Incarichi_proceduraBulk)bulk).getTipo_attivita_fp().getCd_tipo_attivita_padre()!=null) {
 			sql.addSQLClause(FindClause.AND, "CD_TIPO_ATTIVITA", SQLBuilder.EQUALS, ((Incarichi_proceduraBulk)bulk).getTipo_attivita_fp().getCd_tipo_attivita_padre());
 		} else {
-			sql.addSQLClause(FindClause.AND, "LIVELLO", SQLBuilder.EQUALS, new Integer(-1));
+			sql.addSQLClause(FindClause.AND, "LIVELLO", SQLBuilder.EQUALS, Integer.valueOf(-1));
 		}
 		if (clause != null) 
 		  sql.addClause(clause);
@@ -1690,12 +1690,12 @@ public class IncarichiProceduraComponent extends CRUDComponent {
 		SQLBuilder sql = getHome(userContext, tipo_attivita_fp).createSQLBuilder();
 		if (bulk instanceof Incarichi_proceduraBulk && ((Incarichi_proceduraBulk)bulk).getTipo_attivita_fp1()!=null &&
 			((Incarichi_proceduraBulk)bulk).getTipo_attivita_fp1().getCd_tipo_attivita()!=null) {
-			sql.addSQLClause(FindClause.AND, "LIVELLO", SQLBuilder.EQUALS, new Integer(2));
+			sql.addSQLClause(FindClause.AND, "LIVELLO", SQLBuilder.EQUALS, Integer.valueOf(2));
 			sql.addSQLClause(FindClause.AND, "CD_TIPO_ATTIVITA_PADRE", SQLBuilder.EQUALS, ((Incarichi_proceduraBulk)bulk).getTipo_attivita_fp1().getCd_tipo_attivita());
 			sql.addSQLClause(FindClause.AND, "FL_CANCELLATO", SQLBuilder.EQUALS, "N");
 
 		} else {
-			sql.addSQLClause(FindClause.AND, "LIVELLO", SQLBuilder.EQUALS, new Integer(-1));
+			sql.addSQLClause(FindClause.AND, "LIVELLO", SQLBuilder.EQUALS, Integer.valueOf(-1));
 		}
 		if (clause != null) 
 		  sql.addClause(clause);

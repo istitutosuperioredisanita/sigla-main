@@ -36,7 +36,7 @@ public class TerzoBulk extends TerzoBase {
     public final static String DEBITORE = "D";
     public final static String CREDITORE = "C";
     public final static String ENTRAMBI = "E";
-    public final static Integer TERZO_NULLO = new Integer(0);
+    public final static Integer TERZO_NULLO = Integer.valueOf(0);
     public static String ACCESSO_PER_CANCELLAZIONE_BANCA = "CFGANAGCFCOREDELBANM";
 
     static {

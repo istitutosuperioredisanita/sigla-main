@@ -53,7 +53,7 @@ public class Tipo_atto_bolloHome extends BulkHome {
 		try {
 			Tipo_atto_bolloBulk tipoAtto = (Tipo_atto_bolloBulk)oggettobulk;
 			tipoAtto.setId(
-					new Integer(((Integer)findAndLockMax( oggettobulk, "id", new Integer(0) )).intValue()+1));
+					Integer.valueOf(((Integer)findAndLockMax( oggettobulk, "id", Integer.valueOf(0) )).intValue()+1));
 			super.initializePrimaryKeyForInsert(usercontext, tipoAtto);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {
 			throw new PersistencyException(e);

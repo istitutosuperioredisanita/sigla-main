@@ -19,8 +19,9 @@ package it.cnr.contab.doccont00.bp;
 
 import it.cnr.jada.action.HttpActionContext;
 
-import javax.servlet.ServletException;
-import javax.servlet.jsp.PageContext;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.PageContext;
 import java.io.IOException;
 
 /**

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.config00.bulk.*;
@@ -555,7 +555,7 @@ public class ProgettoHome extends BulkHome {
 		for (Iterator<Geco_progettoIBulk> iterator = progettiGeco.iterator(); iterator.hasNext();) {
 			Geco_progettoIBulk geco_progetto = iterator.next();
 			Progetto_sipHome progetto_sip_home =  (Progetto_sipHome)getHomeCache().getHome(Progetto_sipBulk.class);
-			Progetto_sipBulk progetto_sip = (Progetto_sipBulk)progetto_sip_home.findByPrimaryKey(new Progetto_sipBulk(new Integer(geco_progetto.getEsercizio().intValue()),new Integer(geco_progetto.getId_prog().intValue()),geco_progetto.getFase()));
+			Progetto_sipBulk progetto_sip = (Progetto_sipBulk)progetto_sip_home.findByPrimaryKey(new Progetto_sipBulk(Integer.valueOf(geco_progetto.getEsercizio().intValue()),Integer.valueOf(geco_progetto.getId_prog().intValue()),geco_progetto.getFase()));
 			if (progetto_sip != null){
 				geco_progetto.aggiornaProgettoSIP(progetto_sip);
 				if (progetto_sip.isToBeUpdated()){
@@ -563,7 +563,7 @@ public class ProgettoHome extends BulkHome {
 					progetto_sip_home.update(progetto_sip, userContext);
 				}
 			}else{
-				progetto_sip = new Progetto_sipBulk(new Integer(geco_progetto.getEsercizio().intValue()),new Integer(geco_progetto.getId_prog().intValue()),geco_progetto.getFase());
+				progetto_sip = new Progetto_sipBulk(Integer.valueOf(geco_progetto.getEsercizio().intValue()),Integer.valueOf(geco_progetto.getId_prog().intValue()),geco_progetto.getFase());
 				progetto_sip.setCd_progetto(geco_progetto.getCod_prog());
 				progetto_sip.setDs_progetto(geco_progetto.getDescr_prog());
 				progetto_sip.setDipartimento((DipartimentoBulk)((DipartimentoHome)getHomeCache().getHome(DipartimentoBulk.class)).findByIdDipartimento(geco_progetto.getId_dip().intValue()));
@@ -585,25 +585,25 @@ public class ProgettoHome extends BulkHome {
 		for (Iterator<Geco_commessaIBulk> iterator = commesseGeco.iterator(); iterator.hasNext();) {
 			Geco_commessaIBulk geco_commessa = iterator.next();
 			Progetto_sipHome progetto_sip_home =  (Progetto_sipHome)getHomeCache().getHome(Progetto_sipBulk.class);
-			Progetto_sipBulk progetto_sip = (Progetto_sipBulk)progetto_sip_home.findByPrimaryKey(new Progetto_sipBulk(new Integer(geco_commessa.getEsercizio().intValue()),new Integer(geco_commessa.getId_comm().intValue()),geco_commessa.getFase()));
+			Progetto_sipBulk progetto_sip = (Progetto_sipBulk)progetto_sip_home.findByPrimaryKey(new Progetto_sipBulk(Integer.valueOf(geco_commessa.getEsercizio().intValue()),Integer.valueOf(geco_commessa.getId_comm().intValue()),geco_commessa.getFase()));
 			if (progetto_sip != null){
-				progetto_sip.setProgettopadre((Progetto_sipBulk)progetto_sip_home.findByPrimaryKey(new Progetto_sipBulk(new Integer(geco_commessa.getEsercizio().intValue()),new Integer(geco_commessa.getId_prog_padre().intValue()),geco_commessa.getFase())));
+				progetto_sip.setProgettopadre((Progetto_sipBulk)progetto_sip_home.findByPrimaryKey(new Progetto_sipBulk(Integer.valueOf(geco_commessa.getEsercizio().intValue()),Integer.valueOf(geco_commessa.getId_prog_padre().intValue()),geco_commessa.getFase())));
 				geco_commessa.aggiornaProgettoSIP(progetto_sip);				
 				if (progetto_sip.isToBeUpdated()){
 					progetto_sip.setUser(CNRUserContext.getUser(userContext));
 					progetto_sip_home.update(progetto_sip, userContext);
 				}
 			}else{
-				progetto_sip = new Progetto_sipBulk(new Integer(geco_commessa.getEsercizio().intValue()),new Integer(geco_commessa.getId_comm().intValue()),geco_commessa.getFase());
+				progetto_sip = new Progetto_sipBulk(Integer.valueOf(geco_commessa.getEsercizio().intValue()),Integer.valueOf(geco_commessa.getId_comm().intValue()),geco_commessa.getFase());
 				progetto_sip.setProgettopadre(new Progetto_sipBulk(geco_commessa.getEsercizio().intValue(),geco_commessa.getId_prog_padre().intValue(),geco_commessa.getFase()));
 				progetto_sip.setCd_progetto(geco_commessa.getCod_comm());
 				progetto_sip.setDs_progetto(geco_commessa.getDescr_comm());
 				progetto_sip.setUnita_organizzativa((Unita_organizzativaBulk)getHomeCache().getHome(Unita_organizzativaBulk.class).findByPrimaryKey(new Unita_organizzativaBulk(geco_commessa.getCds()+"."+geco_commessa.getSede_svol_uo())));
 				if (Optional.ofNullable(geco_commessa.getCod_3rzo_resp()).filter(s -> s.length() > 0).isPresent())
-					progetto_sip.setResponsabile((TerzoBulk)getHomeCache().getHome(TerzoBulk.class).findByPrimaryKey(new TerzoBulk(new Integer(geco_commessa.getCod_3rzo_resp()))));				
+					progetto_sip.setResponsabile((TerzoBulk)getHomeCache().getHome(TerzoBulk.class).findByPrimaryKey(new TerzoBulk(Integer.valueOf(geco_commessa.getCod_3rzo_resp()))));
 				progetto_sip.setDt_inizio(geco_commessa.getData_inizio_attivita());
 				if (geco_commessa.getEsito_negoz() != null)
-					progetto_sip.setStato(geco_commessa.getEsito_negoz().equals(new Integer(2))?ProgettoBulk.TIPO_STATO_PROPOSTA:ProgettoBulk.TIPO_STATO_APPROVATO);
+					progetto_sip.setStato(geco_commessa.getEsito_negoz().equals(Integer.valueOf(2))?ProgettoBulk.TIPO_STATO_PROPOSTA:ProgettoBulk.TIPO_STATO_APPROVATO);
 				else
 					progetto_sip.setStato(ProgettoBulk.TIPO_STATO_APPROVATO);
 				progetto_sip.setImporto_progetto(Utility.ZERO);
@@ -631,7 +631,7 @@ public class ProgettoHome extends BulkHome {
                     progetto_other_fieldHome.insert(progetto_other_fieldBulk, userContext);
                 }
 
-				progetto_sip = (Progetto_sipBulk)progetto_sip_home.findByPrimaryKey(new Progetto_sipBulk(new Integer(geco_commessa.getEsercizio().intValue()),new Integer(geco_commessa.getId_comm().intValue()),geco_commessa.getFase()));
+				progetto_sip = (Progetto_sipBulk)progetto_sip_home.findByPrimaryKey(new Progetto_sipBulk(Integer.valueOf(geco_commessa.getEsercizio().intValue()),Integer.valueOf(geco_commessa.getId_comm().intValue()),geco_commessa.getFase()));
 				progetto_sip.setOtherField(progetto_other_fieldBulk);
 				progetto_sip.setToBeUpdated();
 				progetto_sip_home.update(progetto_sip, userContext);
@@ -644,28 +644,28 @@ public class ProgettoHome extends BulkHome {
 		for (Iterator<Geco_moduloIBulk> iterator = moduliGeco.iterator(); iterator.hasNext();) {
 			Geco_moduloIBulk geco_modulo = iterator.next();
 			Progetto_sipHome progetto_sip_home =  (Progetto_sipHome)getHomeCache().getHome(Progetto_sipBulk.class);
-			Progetto_sipBulk progetto_sip = (Progetto_sipBulk)progetto_sip_home.findByPrimaryKey(new Progetto_sipBulk(new Integer(geco_modulo.getEsercizio().intValue()),new Integer(geco_modulo.getId_mod().intValue()),geco_modulo.getFase()));
+			Progetto_sipBulk progetto_sip = (Progetto_sipBulk)progetto_sip_home.findByPrimaryKey(new Progetto_sipBulk(Integer.valueOf(geco_modulo.getEsercizio().intValue()),Integer.valueOf(geco_modulo.getId_mod().intValue()),geco_modulo.getFase()));
 			if (progetto_sip != null){
-				progetto_sip.setProgettopadre((Progetto_sipBulk)progetto_sip_home.findByPrimaryKey(new Progetto_sipBulk(new Integer(geco_modulo.getEsercizio().intValue()),new Integer(geco_modulo.getId_comm().intValue()),geco_modulo.getFase())));
+				progetto_sip.setProgettopadre((Progetto_sipBulk)progetto_sip_home.findByPrimaryKey(new Progetto_sipBulk(Integer.valueOf(geco_modulo.getEsercizio().intValue()),Integer.valueOf(geco_modulo.getId_comm().intValue()),geco_modulo.getFase())));
 				geco_modulo.aggiornaProgettoSIP(progetto_sip);				
 				if (progetto_sip.isToBeUpdated()){
 					progetto_sip.setUser(CNRUserContext.getUser(userContext));
 					progetto_sip_home.update(progetto_sip, userContext);
 				}
 			}else{
-				progetto_sip = new Progetto_sipBulk(new Integer(geco_modulo.getEsercizio().intValue()),new Integer(geco_modulo.getId_mod().intValue()),geco_modulo.getFase());
+				progetto_sip = new Progetto_sipBulk(Integer.valueOf(geco_modulo.getEsercizio().intValue()),Integer.valueOf(geco_modulo.getId_mod().intValue()),geco_modulo.getFase());
 				progetto_sip.setProgettopadre(new Progetto_sipBulk(geco_modulo.getEsercizio().intValue(),geco_modulo.getId_comm().intValue(),geco_modulo.getFase()));
 				progetto_sip.setCd_progetto(geco_modulo.getCod_mod());
 				progetto_sip.setDs_progetto(geco_modulo.getDescr_mod());
 				/*if (geco_modulo.getCod_tip() != null)
-					progetto_sip.setStato(geco_modulo.getCod_tip().equals(new Long(1))?"PS":geco_modulo.getCod_tip().equals(new Long(2))?"SC":null);
+					progetto_sip.setStato(geco_modulo.getCod_tip().equals(Long.valueOf(1))?"PS":geco_modulo.getCod_tip().equals(Long.valueOf(2))?"SC":null);
 					*/
 				progetto_sip.setUnita_organizzativa((Unita_organizzativaBulk)getHomeCache().getHome(Unita_organizzativaBulk.class).findByPrimaryKey(new Unita_organizzativaBulk(geco_modulo.getSede_princ_cdsuo())));
 				if (Optional.ofNullable(geco_modulo.getCod_3rzo_gest()).filter(s -> s.length() > 0).isPresent())
-					progetto_sip.setResponsabile((TerzoBulk)getHomeCache().getHome(TerzoBulk.class).findByPrimaryKey(new TerzoBulk(new Integer(geco_modulo.getCod_3rzo_gest()))));				
+					progetto_sip.setResponsabile((TerzoBulk)getHomeCache().getHome(TerzoBulk.class).findByPrimaryKey(new TerzoBulk(Integer.valueOf(geco_modulo.getCod_3rzo_gest()))));
 				progetto_sip.setDt_inizio(geco_modulo.getData_inizio_attivita());
 				if (geco_modulo.getEsito_negoz() != null)
-					progetto_sip.setStato(geco_modulo.getEsito_negoz().equals(new Integer(2))?ProgettoBulk.TIPO_STATO_PROPOSTA:ProgettoBulk.TIPO_STATO_APPROVATO);
+					progetto_sip.setStato(geco_modulo.getEsito_negoz().equals(Integer.valueOf(2))?ProgettoBulk.TIPO_STATO_PROPOSTA:ProgettoBulk.TIPO_STATO_APPROVATO);
 				else
 					progetto_sip.setStato(ProgettoBulk.TIPO_STATO_APPROVATO);
 				progetto_sip.setImporto_progetto(Utility.ZERO);
@@ -673,7 +673,7 @@ public class ProgettoHome extends BulkHome {
 				progetto_sip.setDurata_progetto(ProgettoBulk.DURATA_PROGETTO_PLURIENNALE);
 				progetto_sip.setLivello(ProgettoBulk.LIVELLO_PROGETTO_TERZO);
 				// stato att contab '0' terminato - '1' attivo 
-				if ((geco_modulo.getStato_att_contab() != null && geco_modulo.getStato_att_contab().equals(new Long(0))))
+				if ((geco_modulo.getStato_att_contab() != null && geco_modulo.getStato_att_contab().equals(Long.valueOf(0))))
 					progetto_sip.setFl_utilizzabile(Boolean.FALSE);
 				else
 					progetto_sip.setFl_utilizzabile(Boolean.TRUE);

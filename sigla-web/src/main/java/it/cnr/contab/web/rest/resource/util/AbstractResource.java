@@ -18,10 +18,10 @@
 package it.cnr.contab.web.rest.resource.util;
 
 import it.cnr.contab.utenze00.bp.CNRUserContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.core.SecurityContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.core.SecurityContext;
 import java.util.Optional;
 
 public final class AbstractResource {

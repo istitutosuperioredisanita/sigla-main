@@ -149,7 +149,7 @@ public void eliminaConBulk (UserContext userContext,OggettoBulk bulk) throws Com
 		}
 
 	}
-	catch(javax.ejb.EJBException ex)
+	catch(jakarta.ejb.EJBException ex)
 	{
 		throw handleException(ex);
 	}	

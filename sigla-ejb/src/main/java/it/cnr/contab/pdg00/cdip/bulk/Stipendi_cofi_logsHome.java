@@ -51,6 +51,6 @@ public class Stipendi_cofi_logsHome extends BulkHome {
 		if (value != null)
 		    return (Long)value;
 		else
-			return new Long(0);
+			return Long.valueOf(0);
 	}	
 }

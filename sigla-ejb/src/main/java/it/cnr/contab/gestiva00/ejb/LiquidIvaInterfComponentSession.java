@@ -17,7 +17,7 @@
 
 package it.cnr.contab.gestiva00.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface LiquidIvaInterfComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

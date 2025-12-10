@@ -23,7 +23,7 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.Vector;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 import it.cnr.contab.utenze00.bulk.SessionTraceBulk;
 import it.cnr.jada.action.ActionContext;

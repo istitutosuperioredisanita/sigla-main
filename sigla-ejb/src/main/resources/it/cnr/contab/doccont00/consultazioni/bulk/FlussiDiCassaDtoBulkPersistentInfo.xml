@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.doccont00.consultazioni.bulk.FlussiDiCassaDtoBulk"
+	homeClassName="it.cnr.contab.doccont00.consultazioni.bulk.FlussiDiCassaDtoHome" >
+	<defaultColumnMap
+			tableName="V_CONS_SIOPE_MANDATI">
+
+		<columnMapping
+				columnName="CLASSIFICAZIONE"
+				propertyName="classificazione"
+				sqlTypeName="VARCHAR"
+				columnSize="30"
+				nullable="false" />
+		<columnMapping
+				columnName="DS_CLASSIFICAZIONE"
+				propertyName="dsClassificazione"
+				sqlTypeName="VARCHAR"
+				columnSize="250"
+				nullable="false" />
+		<columnMapping
+				columnName="IMP_PRIMO_TRIMESTRE"
+				propertyName="impPrimoTrimestre"
+				sqlTypeName="DECIMAL"
+				columnSize="22"
+				columnScale="2"
+				nullable="false" />
+		<columnMapping
+				columnName="IMP_SECONDO_TRIMESTRE"
+				propertyName="impSecondoTrimestre"
+				sqlTypeName="DECIMAL"
+				columnSize="22"
+				columnScale="2"
+				nullable="false" />
+		<columnMapping
+				columnName="IMP_TERZO_TRIMESTRE"
+				propertyName="impTerzoTrimestre"
+				sqlTypeName="DECIMAL"
+				columnSize="22"
+				columnScale="2"
+				nullable="false" />
+		<columnMapping
+				columnName="IMP_QUARTO_TRIMESTRE"
+				propertyName="impQuartoTrimestre"
+				sqlTypeName="DECIMAL"
+				columnSize="22"
+				columnScale="2"
+				nullable="false" />
+	</defaultColumnMap>
+	<columnMap
+			name="FLUSSO_REVERSALI"
+			tableName="V_CONS_SIOPE_REVERSALI"
+			extends="default">
+	</columnMap>
+	<columnMap
+			name="FLUSSO_MANDATI"
+			tableName="V_CONS_SIOPE_MANDATI"
+			extends="default">
+	</columnMap>
+
+	<persistentProperty
+			name="classificazione" />
+	<persistentProperty
+			name="dsClassificazione" />
+	<persistentProperty
+			name="impPrimoTrimestre" />
+	<persistentProperty
+			name="impSecondoTrimestre" />
+	<persistentProperty
+			name="impTerzoTrimestre" />
+	<persistentProperty
+			name="impQuartoTrimestre" />
+
+
+</SQLPersistentInfo>

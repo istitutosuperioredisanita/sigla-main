@@ -42,8 +42,8 @@ public class Incarichi_repertorio_varHome extends BulkHome {
 	public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext,OggettoBulk incarico_archive) throws PersistencyException {
 		try {
 			((Incarichi_repertorio_varBulk)incarico_archive).setProgressivo_riga(
-				new Long(
-					((Long)findAndLockMax( incarico_archive, "progressivo_riga", new Long(0) )).longValue()+1
+				Long.valueOf(
+					((Long)findAndLockMax( incarico_archive, "progressivo_riga", Long.valueOf(0) )).longValue()+1
 				)
 			);
 		} catch(it.cnr.jada.bulk.BusyResourceException e) {

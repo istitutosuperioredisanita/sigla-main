@@ -63,7 +63,7 @@ public LiquidIvaInterfBP(String function) {
 		//Per recuperare il mese dalla data
 		java.util.Calendar cal = java.util.GregorianCalendar.getInstance();
 		cal.setTime(new java.util.Date(liquid_iva.getDt_inizio().getTime()));
-		liquid_iva.setMese((String)Liquid_iva_interfBulk.INT_MESI.get(new Integer(cal.get(java.util.Calendar.MONTH)+1)));
+		liquid_iva.setMese((String)Liquid_iva_interfBulk.INT_MESI.get(Integer.valueOf(cal.get(java.util.Calendar.MONTH)+1)));
 		//il metodo basicEdit scatta solo se la query restituisce i dati
 		liquid_iva.setVisualizzaDati(true); 
 		if (liquid_iva.getFl_gia_eleborata().booleanValue() == true)

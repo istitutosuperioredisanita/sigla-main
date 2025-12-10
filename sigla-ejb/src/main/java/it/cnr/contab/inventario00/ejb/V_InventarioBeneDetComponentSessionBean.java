@@ -24,9 +24,9 @@ import it.cnr.contab.inventario00.dto.NormalizzatoreAmmortamentoDto;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Remove;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateless;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -37,13 +37,11 @@ public class V_InventarioBeneDetComponentSessionBean extends it.cnr.jada.ejb.CRU
 		componentObj = new V_InventarioBeneDetComponent();
 	}
 	@Remove
-	public void ejbRemove() throws javax.ejb.EJBException {
+	public void ejbRemove() throws jakarta.ejb.EJBException {
 		componentObj.release();
 	}
 
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new V_InventarioBeneDetComponentSessionBean();
-	}
+
 
 
 	@Override

@@ -16,7 +16,7 @@
  */
 
 package it.cnr.contab.compensi00.ejb;
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 import it.cnr.contab.compensi00.tabrif.bulk.AddizionaliBulk;
 import it.cnr.jada.UserContext;

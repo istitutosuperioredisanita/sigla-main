@@ -28,7 +28,7 @@ import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.jada.util.action.RemoteDetailCRUDController;
 import it.cnr.jada.util.jsp.Button;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Optional;

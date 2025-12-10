@@ -19,26 +19,33 @@ package it.cnr.test.h2.utenze.action;
 
 import it.cnr.test.h2.DeploymentsH2;
 import org.apache.http.HttpStatus;
+import org.jboss.arquillian.container.test.api.BeforeDeployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.graphene.GrapheneElement;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ActionDeployments extends DeploymentsH2 {
     private transient final static Logger LOGGER = LoggerFactory.getLogger(ActionDeployments.class);
@@ -48,44 +55,25 @@ public class ActionDeployments extends DeploymentsH2 {
     @Drone
     protected WebDriver browser;
 
-    @ArquillianResource
+    //@ArquillianResource
     protected URL deploymentURL;
-
-    @Before
-    @RunAsClient
-    @OperateOnDeployment(TEST_H2)
-    public void waitUntilApplicationStarted() throws Exception {
-        /**
-         * Workaround to wait application started.
-         */
-        boolean pageSourceNotFound = true;
-        int iterate = 0;
-        URL url = new URL(deploymentURL.toString().concat("/Login.do"));
-        while (pageSourceNotFound && iterate < ITERATE_MAX) {
-            try {
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.connect();
-                pageSourceNotFound = connection.getResponseCode() == HttpStatus.SC_NOT_FOUND;
-                if (pageSourceNotFound)
-                    TimeUnit.SECONDS.sleep(5);
-                LOGGER.warn("Try to connect to url: {} iterate: {}", url, iterate);
-                iterate++;
-            } catch (IllegalStateException | ConnectException _ex) {
-                iterate++;
-            }
+    {
+        try {
+            deploymentURL = new URL("http://localhost:8080/SIGLA");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
         }
     }
 
     protected void logPageSource() {
-        LOGGER.info(browser.getPageSource());
+        LOGGER.trace(browser.getPageSource());
     }
 
-    protected void doLogin(String user, String password) {
+    protected void doLogin(String user, String password) throws Exception {
         browser.navigate().to(deploymentURL.toString().concat("/Login.do"));
         switchToFrameDesktop();
         final WebElement comandoEntra = browser.findElement(By.name("comando.doEntra"));
-        Assert.assertTrue(Optional.ofNullable(comandoEntra).isPresent());
+        assertEquals(Boolean.TRUE, Optional.ofNullable(comandoEntra).isPresent());
 
         getGrapheneElement("j_username").writeIntoElement(user);
         getGrapheneElement("j_password").writeIntoElement(password);
@@ -130,6 +118,11 @@ public class ActionDeployments extends DeploymentsH2 {
                 .collect(Collectors.toList());
     }
 
+    protected void switchTodefaultContent() {
+        browser.switchTo().defaultContent();
+        logPageSource();
+    }
+
     protected void switchToFrameMenu() {
         switchToFrame(FRAME_MENU);
     }
@@ -142,8 +135,14 @@ public class ActionDeployments extends DeploymentsH2 {
         switchToFrame(FRAME_DESKTOP);
     }
 
-    protected void switchToFrame(String frameId) {
-        browser.switchTo().frame(frameId);
+    public void switchToFrame(String frameNameOrId) {
+        switchToFrame(frameNameOrId, 3);
+    }
+
+    public void switchToFrame(String frameNameOrId, int timeoutSeconds) {
+        logPageSource();
+        WebDriverWait wait = new WebDriverWait(browser, Duration.ofSeconds(timeoutSeconds));
+        wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frameNameOrId));
     }
 
     protected void doSelezionaMenu(String menuId) {

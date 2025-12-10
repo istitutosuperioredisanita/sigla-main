@@ -27,9 +27,9 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.BitSet;
 
-import javax.ejb.EJBException;
-import javax.servlet.ServletException;
-import javax.servlet.jsp.JspWriter;
+import jakarta.ejb.EJBException;
+
+import jakarta.servlet.jsp.JspWriter;
 
 import it.cnr.contab.config00.sto.bulk.CdrBulk;
 import it.cnr.contab.prevent00.bulk.V_assestato_residuoBulk;
@@ -106,7 +106,7 @@ public class SelezionatoreAssestatoResiduoBP extends ConsultazioniBP{
 	 * Crea la CRUDComponentSession da usare per effettuare le operazioni di CRUD
 	 * @throws BusinessProcessException 
 	 */
-	public CRUDComponentSession createComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException, BusinessProcessException {
+	public CRUDComponentSession createComponentSession() throws jakarta.ejb.EJBException,java.rmi.RemoteException, BusinessProcessException {
 		return (CRUDComponentSession)super.createComponentSession(componentSessioneName,VariazioniStanziamentoResiduoComponentSession.class);
 	}
 	/** 

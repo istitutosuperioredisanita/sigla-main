@@ -46,10 +46,10 @@ import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1.*;
 import it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.FileSdIBaseType;
 import org.springframework.util.StringUtils;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-import javax.ejb.EJBException;
-import javax.xml.bind.JAXBElement;
+import jakarta.activation.DataHandler;
+import jakarta.activation.FileDataSource;
+import jakarta.ejb.EJBException;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -330,7 +330,7 @@ public class DocAmmFatturazioneElettronicaComponent extends CRUDComponent{
 	public Configurazione_cnrBulk getAuthenticatorPecSdi(UserContext userContext) throws ComponentException {
 		Configurazione_cnrBulk email;
 		try {
-			email = Utility.createConfigurazioneCnrComponentSession().getConfigurazione(userContext, new Integer(0),null,Configurazione_cnrBulk.PK_EMAIL_PEC, Configurazione_cnrBulk.SK_SDI);
+			email = Utility.createConfigurazioneCnrComponentSession().getConfigurazione(userContext, Integer.valueOf(0),null,Configurazione_cnrBulk.PK_EMAIL_PEC, Configurazione_cnrBulk.SK_SDI);
 			if (email != null)
 				return email;
 				throw new ApplicationException("Confiurazione PEC non trovata, contattare il servizio di HelpDesk!");
@@ -547,7 +547,8 @@ public class DocAmmFatturazioneElettronicaComponent extends CRUDComponent{
 					List detailFattura = new BulkList(Utility.createFatturaPassivaComponentSession().findDettagli(userContext, fatturaPassiva));
 
 					if (fatturaPassiva.isSanMarinoConIVA()) {
-						datiGeneraliDocumento.setTipoDocumento(TipoDocumentoType.TD_28);
+                        // TODO KEYCLOAK WILDFLY
+						datiGeneraliDocumento.setTipoDocumento(TipoDocumentoType.TD_23);
 					} else if (fatturaPassiva.isEstera() || fatturaPassiva.isSanMarinoSenzaIVA()) {
 						if (fatturaPassiva.isFatturaDiServizi())
 							datiGeneraliDocumento.setTipoDocumento(TipoDocumentoType.TD_17);

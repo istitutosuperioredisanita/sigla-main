@@ -77,7 +77,7 @@ public class CRUDClassificazioneVociBP extends SimpleCRUDBP {
 				
 				for (int i = 0; i<getParametriLivelli().getLivelli_spesa().intValue(); i++){
 					tabs[i] = new String[]{ "tabLivello"+(i+1),getParametriLivelli().getDs_livello_spe(i+1),"/config00/tab_classificazione_voci.jsp" };
-//					setField("cd_livello".concat((new Integer(i+1)).toString()), getParametriLivelli().getDs_livello_spe(i+1), getParametriLivelli().getLung_livello_spe(i+1).intValue(), i+1);
+//					setField("cd_livello".concat((Integer.valueOf(i+1)).toString()), getParametriLivelli().getDs_livello_spe(i+1), getParametriLivelli().getLung_livello_spe(i+1).intValue(), i+1);
 				}
 			}
 			else
@@ -86,14 +86,14 @@ public class CRUDClassificazioneVociBP extends SimpleCRUDBP {
 				FieldProperty formfieldproperty;				
 				for (int i = 0; i<getParametriLivelli().getLivelli_entrata().intValue(); i++){
 					tabs[i] = new String[]{ "tabLivello"+(i+1),getParametriLivelli().getDs_livello_etr(i+1),"/config00/tab_classificazione_voci.jsp" };    	    			
-//					setField("cd_livello".concat((new Integer(i+1)).toString()), getParametriLivelli().getDs_livello_etr(i+1), getParametriLivelli().getLung_livello_etr(i+1).intValue(), i+1);
+//					setField("cd_livello".concat((Integer.valueOf(i+1)).toString()), getParametriLivelli().getDs_livello_etr(i+1), getParametriLivelli().getLung_livello_etr(i+1).intValue(), i+1);
 				}
 			}
 		} catch(it.cnr.jada.comp.ComponentException e) {
 			throw handleException(e);
 		} catch(java.rmi.RemoteException e) {
 			throw handleException(e);
-		} catch(javax.ejb.EJBException ejbe){
+		} catch(jakarta.ejb.EJBException ejbe){
 			throw handleException(ejbe);
 		} 
 	}
@@ -195,7 +195,7 @@ public class CRUDClassificazioneVociBP extends SimpleCRUDBP {
 	}
 
 	public Integer getTabCorrente(){
-		return new Integer(getTab("tab").substring("tabLivello".length()));
+		return Integer.valueOf(getTab("tab").substring("tabLivello".length()));
 	}
 
 	public String getNameDsClassificazioniPre(int liv){

@@ -30,8 +30,8 @@ import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.RemoteIterator;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
@@ -44,11 +44,9 @@ public class PendenzaPagopaComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
 	public void ejbCreate() {
 		componentObj = new PendenzaPagopaComponent();
 	}
-	public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
-		return new PendenzaPagopaComponentSessionBean();
-	}
+	
 
-    public PendenzaPagopaBulk generaPosizioneDebitoria(UserContext userContext, IDocumentoAmministrativoBulk documentoAmministrativoBulk, Timestamp dataScadenza, String descrizione, BigDecimal importoScadenza, TerzoBulk terzoBulk) throws ComponentException, javax.ejb.EJBException{
+    public PendenzaPagopaBulk generaPosizioneDebitoria(UserContext userContext, IDocumentoAmministrativoBulk documentoAmministrativoBulk, Timestamp dataScadenza, String descrizione, BigDecimal importoScadenza, TerzoBulk terzoBulk) throws ComponentException, jakarta.ejb.EJBException{
         pre_component_invocation(userContext, componentObj);
         try {
             PendenzaPagopaBulk result = ((PendenzaPagopaComponent)componentObj).generaPosizioneDebitoria(userContext, documentoAmministrativoBulk, dataScadenza, descrizione, importoScadenza, terzoBulk);
@@ -66,7 +64,7 @@ public class PendenzaPagopaComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
             throw uncaughtError(userContext, componentObj, e);
         }
     }
-    public byte[] stampaAvviso(UserContext userContext, PendenzaPagopaBulk pendenzaPagopaBulk) throws  ComponentException, javax.ejb.EJBException{
+    public byte[] stampaAvviso(UserContext userContext, PendenzaPagopaBulk pendenzaPagopaBulk) throws  ComponentException, jakarta.ejb.EJBException{
     pre_component_invocation(userContext, componentObj);
         try {
         byte[] result = ((PendenzaPagopaComponent)componentObj).stampaAvviso(userContext, pendenzaPagopaBulk);
@@ -84,7 +82,7 @@ public class PendenzaPagopaComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
         throw uncaughtError(userContext, componentObj, e);
     }
 }
-    public byte[] stampaRt(UserContext userContext, PendenzaPagopaBulk pendenzaPagopaBulk) throws  ComponentException, javax.ejb.EJBException{
+    public byte[] stampaRt(UserContext userContext, PendenzaPagopaBulk pendenzaPagopaBulk) throws  ComponentException, jakarta.ejb.EJBException{
         pre_component_invocation(userContext, componentObj);
         try {
             byte[] result = ((PendenzaPagopaComponent)componentObj).stampaRt(userContext, pendenzaPagopaBulk);
@@ -102,7 +100,7 @@ public class PendenzaPagopaComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
             throw uncaughtError(userContext, componentObj, e);
         }
     }
-    public Pendenza getPendenza(UserContext userContext, String numeroAvviso) throws ComponentException, IntrospectionException, PersistencyException, javax.ejb.EJBException {
+    public Pendenza getPendenza(UserContext userContext, String numeroAvviso) throws ComponentException, IntrospectionException, PersistencyException, jakarta.ejb.EJBException {
         pre_component_invocation(userContext, componentObj);
         try {
             Pendenza result = ((PendenzaPagopaComponent)componentObj).getPendenza(userContext, numeroAvviso);
@@ -120,7 +118,7 @@ public class PendenzaPagopaComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
             throw uncaughtError(userContext, componentObj, e);
         }
     }
-    public NotificaPagamento notificaPagamento(UserContext userContext, NotificaPagamento notificaPagamento, String iuv) throws ComponentException, IntrospectionException, PersistencyException, javax.ejb.EJBException {
+    public NotificaPagamento notificaPagamento(UserContext userContext, NotificaPagamento notificaPagamento, String iuv) throws ComponentException, IntrospectionException, PersistencyException, jakarta.ejb.EJBException {
             pre_component_invocation(userContext, componentObj);
             try {
                 NotificaPagamento result = ((PendenzaPagopaComponent)componentObj).notificaPagamento(userContext, notificaPagamento, iuv);
@@ -138,7 +136,7 @@ public class PendenzaPagopaComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
                 throw uncaughtError(userContext, componentObj, e);
             }
         }
-        public RemoteIterator cercaPagamenti(UserContext userContext, PendenzaPagopaBulk pendenzaPagopaBulk)  throws ComponentException, javax.ejb.EJBException {
+        public RemoteIterator cercaPagamenti(UserContext userContext, PendenzaPagopaBulk pendenzaPagopaBulk)  throws ComponentException, jakarta.ejb.EJBException {
             pre_component_invocation(userContext, componentObj);
             try {
                 RemoteIterator result = ((PendenzaPagopaComponent)componentObj).cercaPagamenti(userContext, pendenzaPagopaBulk);
@@ -157,7 +155,7 @@ public class PendenzaPagopaComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
             }
         }
 
-    public PendenzaPagopaBulk riconciliaIncassoPagopa(UserContext userContext, MovimentoContoEvidenzaBulk movimentoContoEvidenzaBulk)  throws ComponentException, javax.ejb.EJBException {
+    public PendenzaPagopaBulk riconciliaIncassoPagopa(UserContext userContext, MovimentoContoEvidenzaBulk movimentoContoEvidenzaBulk)  throws ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(userContext, componentObj);
         try {
             PendenzaPagopaBulk result = ((PendenzaPagopaComponent)componentObj).riconciliaIncassoPagopa(userContext, movimentoContoEvidenzaBulk);
