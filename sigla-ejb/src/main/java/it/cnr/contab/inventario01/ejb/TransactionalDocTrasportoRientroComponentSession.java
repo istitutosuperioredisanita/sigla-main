@@ -874,4 +874,34 @@ public class TransactionalDocTrasportoRientroComponentSession
             }
         }
     }
+
+    /**
+     * Cerca gli accessori presenti nel trasporto originale
+     */
+    @Override
+    public List cercaBeniAccessoriPresentinelTrasportoOriginale(
+            UserContext userContext,
+            Inventario_beniBulk beneRientro,
+            Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException {
+
+        try {
+            return (List) invoke("cercaBeniAccessoriPresentinelTrasportoOriginale", new Object[]{
+                    userContext,
+                    beneRientro,
+                    doc
+            });
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaught exception", ex);
+            }
+        }
+
+    }
 }

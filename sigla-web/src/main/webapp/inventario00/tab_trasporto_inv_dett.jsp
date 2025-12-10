@@ -10,7 +10,6 @@
 
 <%
     CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP)BusinessProcess.getBusinessProcess(request);
-    Doc_trasporto_rientroBulk docTrasporto = (Doc_trasporto_rientroBulk)bp.getModel();
 %>
 
 <div class="Group">

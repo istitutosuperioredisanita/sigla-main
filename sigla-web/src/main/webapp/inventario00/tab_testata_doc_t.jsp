@@ -80,16 +80,8 @@ function doStampaDocTraspRient() {
     </tr>
 
     <tr>
-      <td><% bp.getController().writeFormLabel(out, "dsDocTrasportoRientro"); %></td>
-      <td colspan="3">
-        <% bp.getController().writeFormInput(
-            out,
-            null,
-            "dsDocTrasportoRientro",
-            bp.isInputReadonly(),
-            null,
-            "style='width:100%'"); %>
-      </td>
+        <td><% bp.getController().writeFormLabel(out,"dsDocTrasportoRientro"); %></td>
+        <td colspan="3"><% bp.getController().writeFormInput(out,"dsDocTrasportoRientro"); %></td>
     </tr>
 
     <!-- ==================== SEPARATORE ==================== -->
@@ -97,22 +89,16 @@ function doStampaDocTraspRient() {
         <td colspan="4" style="border-top: 2px solid #003d7a; padding-top: 15px;"></td>
     </tr>
 
-        <!-- ==================== ASSEGNATARIO SMARTWORKING (VISIBILE SOLO SE SMARTWORKING) ==================== -->
-        <% if (bp.isTerzoSmartworkingVisible()) { %>
-          <tr>
-            <td><% bp.getController().writeFormLabel(out,"find_terzoSmartworking"); %></td>
-            <td colspan="3">
-              <% bp.getController().writeFormInput(
-                  out,
-                  null,
-                  "find_terzoSmartworking",
-                  false,
-                  null,
-                  "onChange=\"submitForm('doOnTerzoSmartworkingChange')\""); %>
-            </td>
-          </tr>
-        <% } %>
-
+    <!-- ==================== ASSEGNATARIO SMARTWORKING (VISIBILE SOLO SE SMARTWORKING) ==================== -->
+    <% if (bp.isTerzoSmartworkingVisible()) { %>
+      <tr>
+        <td><% bp.getController().writeFormLabel(out,"findAnagSmartworking"); %></td>
+        <td colspan="3">
+          <% bp.getController().writeFormInput(out, null, "findAnagSmartworking",
+              false, null, "onChange=\"submitForm('doOnTerzoSmartworkingChange')\""); %>
+        </td>
+      </tr>
+    <% } %>
 
     <!-- ==================== TIPO RITIRO (NASCOSTO SE SMARTWORKING) ==================== -->
     <% if (bp.isTipoRitiroVisible()) { %>
@@ -146,15 +132,10 @@ function doStampaDocTraspRient() {
 
     <% if (bp.isAssegnatarioVisible()) { %>
       <tr>
-        <td><% bp.getController().writeFormLabel(out,"find_terzoIncRitiro"); %></td>
+        <td><% bp.getController().writeFormLabel(out,"findAnagIncRitiro"); %></td>
         <td colspan="3">
-          <% bp.getController().writeFormInput(
-              out,
-              null,
-              "find_terzoIncRitiro",
-              false,
-              null,
-              "onChange=\"submitForm('doOnDipendenteChange')\""); %>
+          <% bp.getController().writeFormInput(out, null, "findAnagIncRitiro",
+              false, null, "onChange=\"submitForm('doOnDipendenteChange')\""); %>
         </td>
       </tr>
     <% } %>

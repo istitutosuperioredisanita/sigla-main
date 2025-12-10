@@ -10,7 +10,6 @@
 
 <%
     CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP)BusinessProcess.getBusinessProcess(request);
-    DocumentoRientroBulk docRientro = (DocumentoRientroBulk)bp.getModel();
 %>
 
 <div class="Group">

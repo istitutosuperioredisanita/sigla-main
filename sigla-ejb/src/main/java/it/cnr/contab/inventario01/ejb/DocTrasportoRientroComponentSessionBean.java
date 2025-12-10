@@ -25,6 +25,7 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
@@ -81,7 +82,7 @@ public class DocTrasportoRientroComponentSessionBean
             throw uncaughtRuntimeException(userContext, componentObj, e);
         } catch (Error e) {
             throw uncaughtError(userContext, componentObj, e);
-        } catch (PersistencyException e) {
+        } catch (PersistencyException | IntrospectionException e) {
             throw new RuntimeException(e);
         }
     }
@@ -707,6 +708,35 @@ public class DocTrasportoRientroComponentSessionBean
             throw uncaughtRuntimeException(param0,componentObj,e);
         } catch(Error e) {
             throw uncaughtError(param0,componentObj,e);
+        }
+    }
+
+    /**
+     * Cerca gli accessori presenti nel trasporto originale
+     */
+    @Override
+    public List cercaBeniAccessoriPresentinelTrasportoOriginale(
+            UserContext userContext,
+            Inventario_beniBulk beneRientro,
+            Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException {
+
+        pre_component_invocation(userContext, componentObj);
+        try {
+            List result = ((DocTrasportoRientroComponent) componentObj)
+                    .cercaBeniAccessoriPresentinelTrasportoOriginale(userContext, beneRientro, doc);
+            component_invocation_succes(userContext, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+        } catch (it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
         }
     }
 }

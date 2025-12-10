@@ -56,7 +56,11 @@
             maxLength="100"
             inputSize="100"
             label="Descrizione"
-            nullable="false" />
+            nullable="false"
+            enabledOnInsert="true"
+            enabledOnEdit="true"
+            enabledOnSearch="true"
+            enabledOnFreeSearch="true" />
 
     <fieldProperty
             name="dataRegistrazione"
@@ -133,52 +137,62 @@
             label="Tipo Ritiro" />
 
     <!-- ============================================ -->
-    <!-- FK: TERZO_ASSEGNATARIO (Incaricato Ritiro) -->
+    <!-- INCARICATO RITIRO - tramite VIEW DIPENDENTI -->
     <!-- ============================================ -->
 
     <fieldProperty
-            name="find_terzoIncRitiro"
-            property="terzoIncRitiro"
+            name="findAnagIncRitiro"
+            property="anagIncRitiro"
             inputType="SEARCHTOOL"
-            formName="searchtool"
+            formName="searchtool_dipendenti"
             enabledOnSearch="true"
             enabledOnEdit="true"
-            completeOnSave="true"
-            command="doOnDipendenteChange"
             label="Dipendente Incaricato" />
 
     <fieldProperty
-            name="cd_terzo_incaricato"
-            property="terzoIncRitiro.cd_terzo"
+            name="cdAnagIncaricato"
+            property="anagIncRitiro.cd_anag"
             inputType="TEXT"
-            maxLength="10"
-            inputSize="10"
-            label="Cod. Incaricato"
+            maxLength="8"
+            inputSize="8"
+            label="Cod. Anagrafico Incaricato"
             caseSensitiveSearch="false" />
 
+    <fieldProperty
+            name="dsAnagIncaricato"
+            property="ds_anag_incaricato"
+            inputType="ROTEXT"
+            inputSize="50"
+            label="Nominativo Incaricato" />
+
     <!-- ============================================ -->
-    <!-- TERZO SMARTWORKING (solo UI) -->
+    <!-- ASSEGNATARIO SMARTWORKING - tramite VIEW DIPENDENTI -->
     <!-- ============================================ -->
 
     <fieldProperty
-            name="find_terzoSmartworking"
-            property="terzoSmartworking"
+            name="findAnagSmartworking"
+            property="anagSmartworking"
             inputType="SEARCHTOOL"
-            formName="searchtool"
+            formName="searchtool_dipendenti"
             enabledOnSearch="true"
             enabledOnEdit="true"
-            completeOnSave="true"
-            command="doOnTerzoSmartworkingChange"
             label="Assegnatario Smartworking" />
 
     <fieldProperty
-            name="cd_terzo_smartworking"
-            property="terzoSmartworking.cd_terzo"
+            name="cdAnagSmartworking"
+            property="anagSmartworking.cd_anag"
             inputType="TEXT"
-            maxLength="10"
-            inputSize="10"
-            label="Cod. Assegnatario Smartworking"
+            maxLength="8"
+            inputSize="8"
+            label="Cod. Anagrafico Smartworking"
             caseSensitiveSearch="false" />
+
+    <fieldProperty
+            name="dsAnagSmartworking"
+            property="ds_anag_smartworking"
+            inputType="ROTEXT"
+            inputSize="50"
+            label="Nominativo Assegnatario" />
 
     <!-- ============================================ -->
     <!-- NOMINATIVO VETTORE -->
@@ -262,10 +276,15 @@
     <formFieldProperty name="destinazione" />
     <formFieldProperty name="indirizzo" />
     <formFieldProperty name="tipoRitiro"/>
-    <formFieldProperty name="find_terzoIncRitiro" />
-    <formFieldProperty name="cd_terzo_incaricato" />
-    <formFieldProperty name="find_terzoSmartworking" />
-    <formFieldProperty name="cd_terzo_smartworking" />
+
+    <formFieldProperty name="findAnagIncRitiro" />
+    <formFieldProperty name="cdAnagIncaricato" />
+    <formFieldProperty name="dsAnagIncaricato" />
+
+    <formFieldProperty name="findAnagSmartworking" />
+    <formFieldProperty name="cdAnagSmartworking" />
+    <formFieldProperty name="dsAnagSmartworking" />
+
     <formFieldProperty name="nominativoVettore" />
     <formFieldProperty name="note" />
     <formFieldProperty name="stato" />

@@ -30,38 +30,6 @@
 			label="Progressivo" />
 
 
-
-
-	<!-- ============================================ -->
-	<!-- CAMPI BASE DEL DETTAGLIO -->
-	<!-- ============================================ -->
-
-	<fieldProperty
-			name="intervallo"
-			property="intervallo"
-			inputType="TEXT"
-			inputSize="20"
-			maxLength="20"
-			caseSensitiveSearch="false"
-			label="Gruppo" />
-
-	<fieldProperty
-			name="quantita"
-			property="quantita"
-			inputType="TEXT"
-			inputSize="22"
-			maxLength="22"
-			label="Quantità" />
-
-	<fieldProperty
-			name="data_effettiva_movimentazione"
-			property="dataEffettivaMovimentazione"
-			inputType="TEXT"
-			maxLength="10"
-			inputSize="10"
-			formatName="date_short"
-			label="Data Movimentazione" />
-
 	<!-- ============================================ -->
 	<!-- INFORMAZIONI SUL BENE (delegate al bene) -->
 	<!-- ============================================ -->
@@ -474,9 +442,6 @@
 	<formFieldProperty name="pg_doc_trasporto_rientro" />
 	<formFieldProperty name="nr_inventario" />
 	<formFieldProperty name="progressivo" />
-	<formFieldProperty name="intervallo" />
-	<formFieldProperty name="quantita" />
-	<formFieldProperty name="data_effettiva_movimentazione" />
 	<formFieldProperty name="gruppi" />
 	<formFieldProperty name="fl_dismesso" />
 	<formFieldProperty name="dt_dismesso" />
@@ -531,7 +496,6 @@
 	<findFieldProperty name="ds_bene" />
 	<findFieldProperty name="ds_documento" />
 	<findFieldProperty name="pg_doc_trasporto_rientro" />
-	<findFieldProperty name="data_effettiva_movimentazione" />
 	<findFieldProperty name="cd_barre" />
 	<findFieldProperty name="seriale" />
 	<findFieldProperty name="etichetta" />
@@ -547,7 +511,6 @@
 	<columnFieldProperty name="ds_bene" style="width:250px" />
 	<columnFieldProperty name="pg_doc_trasporto_rientro" />
 	<columnFieldProperty name="ds_documento" style="width:250px" />
-	<columnFieldProperty name="quantita" />
 	<columnFieldProperty name="seriale" />
 
 	<!-- ============================================ -->
@@ -558,7 +521,6 @@
 		<columnFieldProperty name="cod_bene" style="width:100px" />
 		<columnFieldProperty name="ds_bene" style="width:300px" />
 		<columnFieldProperty name="ti_istituzionale_commerciale" style="width:80px" />
-		<columnFieldProperty name="quantita" style="width:60px" />
 	</columnSet>
 
 	<columnSet name="righeSetConCodice">
@@ -566,7 +528,6 @@
 		<columnFieldProperty name="etichetta" style="width:80px" />
 		<columnFieldProperty name="ds_bene" style="width:300px" />
 		<columnFieldProperty name="ti_istituzionale_commerciale" />
-		<columnFieldProperty name="quantita" style="width:60px" />
 	</columnSet>
 
 	<!-- ============================================ -->

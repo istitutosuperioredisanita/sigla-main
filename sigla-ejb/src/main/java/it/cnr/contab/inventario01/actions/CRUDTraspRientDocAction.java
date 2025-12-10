@@ -77,39 +77,6 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     // GESTIONE CAMBI TESTATA (comune a entrambi)
     // =======================================================
 
-    public Forward doSelezionaTipoMovimento(ActionContext context) {
-        try {
-            CRUDTraspRientInventarioBP bp = getBP(context);
-            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
-
-            // Salva il tipo movimento corrente
-            it.cnr.contab.inventario00.tabrif.bulk.Tipo_trasporto_rientroBulk tipoOld = doc.getTipoMovimento();
-            // Aggiorna il model con i dati dal form
-            fillModel(context);
-
-            // Ricarica la lista dei tipi movimento in base a tiDocumento (T/R)
-            try {
-                DocTrasportoRientroComponentSession session = getComponentSession(bp);
-                // Chiama il metodo che filtra per tipo documento
-                session.initializeKeysAndOptionsInto(context.getUserContext(), doc);
-            } catch (Exception e) {
-                throw new BusinessProcessException("Errore ricaricamento tipi movimento", e);
-            }
-
-            // Verifica se ci sono già beni associati
-            if (hasBeniInDettaglio(doc)) {
-                // Ripristina il tipo movimento precedente
-                doc.setTipoMovimento(tipoOld);
-                bp.setMessage("Impossibile cambiare Tipo Movimento: eliminare prima i beni.");
-            }
-            bp.setModel(context, doc);
-            return context.findDefaultForward();
-        } catch (Throwable e) {
-            return handleException(context, e);
-        }
-    }
-
-
 
     public Forward doOnDipendenteChange(ActionContext context) {
         try {
@@ -905,9 +872,76 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
+    /**
+     * Gestisce il cambio del Tipo Movimento.
+     * COMPORTAMENTO CORRETTO:
+     * 1. Reset SEMPRE dei beni (con o senza messaggio a seconda del caso)
+     * 2. Reset SEMPRE del dipendente appropriato:
+     *    - Se cambio DA Smartworking: reset terzoSmartworking + anagraficoDipSW
+     *    - Se cambio VERSO Smartworking: reset terzoIncRitiro + anagraficoDipIncRit
+     *    - Se cambio tra NON-Smartworking: reset terzoIncRitiro + anagraficoDipIncRit
+     */
+    public Forward doSelezionaTipoMovimento(ActionContext context) {
+        try {
+            CRUDTraspRientInventarioBP bp = getBP(context);
+            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
+
+            // Salva lo stato precedente
+            boolean wasSmartworking = doc.isSmartworking();
+
+            // Aggiorna il model con i dati dal form
+            fillModel(context);
+
+            // Ricarica la lista dei tipi movimento in base a tiDocumento (T/R)
+            try {
+                DocTrasportoRientroComponentSession session = getComponentSession(bp);
+                session.initializeKeysAndOptionsInto(context.getUserContext(), doc);
+            } catch (Exception e) {
+                throw new BusinessProcessException("Errore ricaricamento tipi movimento", e);
+            }
+
+            // Verifica il nuovo stato
+            boolean isSmartworking = doc.isSmartworking();
+
+            // ========== RESET BENI ==========
+            if (wasSmartworking != isSmartworking) {
+                // Da/A Smartworking: reset SILENZIOSO
+                resetBeniSilenzioso(context, bp, doc);
+            } else {
+                // Tra tipi dello stesso gruppo: reset CON messaggio
+                eliminaBeniSePresenti(context, bp, doc, "Tipo Movimento modificato. Beni precedenti rimossi.");
+            }
+
+            // ========== RESET DIPENDENTE/ASSEGNATARIO ==========
+            if (wasSmartworking && !isSmartworking) {
+                // DA Smartworking → Altro: reset campi smartworking
+                doc.setTerzoSmartworking(null);
+                doc.setAnagSmartworking(null);
+
+            } else if (!wasSmartworking && isSmartworking) {
+                // DA Altro → Smartworking: reset campi incaricato
+                doc.setTerzoIncRitiro(null);
+                doc.setAnagIncRitiro(null);
+
+            } else if (!wasSmartworking && !isSmartworking) {
+                // Tra NON-Smartworking: reset campi incaricato
+                doc.setTerzoIncRitiro(null);
+                doc.setAnagIncRitiro(null);
+            }
+
+            bp.setModel(context, doc);
+            return context.findDefaultForward();
+
+        } catch (Throwable e) {
+            return handleException(context, e);
+        }
+    }
 
     /**
      * Gestisce il cambio del Tipo Ritiro (Incaricato/Vettore).
+     * COMPORTAMENTO CORRETTO:
+     * 1. Reset SEMPRE dei beni con messaggio
+     * 2. Reset SEMPRE del dipendente incaricato quando si cambia tipo ritiro
      */
     public Forward doOnTipoRitiroChange(ActionContext context) {
         try {
@@ -928,38 +962,69 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                 return context.findDefaultForward();
             }
 
-            // Se il Tipo Ritiro è stato cambiato, elimina i beni selezionati per forzare la riselezione
-            if (oldValue != null) {
-                eliminaBeniSePresenti(
-                        context,
-                        bp,
-                        doc,
-                        "Tipo ritiro modificato. I beni precedentemente selezionati sono stati rimossi."
-                );
+            // ========== RESET BENI ==========
+            String messaggio = null;
+
+            if (Doc_trasporto_rientroBulk.TIPO_RITIRO_VETTORE.equals(oldValue) &&
+                    Doc_trasporto_rientroBulk.TIPO_RITIRO_INCARICATO.equals(newValue)) {
+                messaggio = "Cambio da Vettore a Incaricato. Beni precedenti rimossi.";
+
+            } else if (Doc_trasporto_rientroBulk.TIPO_RITIRO_INCARICATO.equals(oldValue) &&
+                    Doc_trasporto_rientroBulk.TIPO_RITIRO_VETTORE.equals(newValue)) {
+                messaggio = "Cambio da Incaricato a Vettore. Beni precedenti rimossi.";
+
+            } else if (oldValue != null) {
+                messaggio = "Tipo Ritiro modificato. Beni precedenti rimossi.";
             }
 
-            // Logica di pulizia dei campi dipendenti dal Tipo Ritiro
+            if (messaggio != null) {
+                eliminaBeniSePresenti(context, bp, doc, messaggio);
+            }
+
+            // ========== RESET DIPENDENTE INCARICATO ==========
+            // Qualsiasi cambio di tipo ritiro resetta il dipendente incaricato
+            doc.setTerzoIncRitiro(null);
+            doc.setAnagIncRitiro(null);
+
+            // ========== PULIZIA CAMPI DIPENDENTI ==========
             if (Doc_trasporto_rientroBulk.TIPO_RITIRO_VETTORE.equals(newValue)) {
-                // Modalità Vettore: Nessuna pulizia (Nominativo Vettore e Destinazione restano)
+                // Modalità Vettore: mantieni nominativo e destinazione
 
             } else if (Doc_trasporto_rientroBulk.TIPO_RITIRO_INCARICATO.equals(newValue)) {
-                // Modalità Incaricato: Pulisci il Nominativo Vettore (non applicabile)
+                // Modalità Incaricato: pulisci nominativo vettore
                 doc.setNominativoVettore(null);
 
             } else {
-                // Tipo Ritiro deselezionato: Pulisci tutti i campi logistici dipendenti
+                // Tipo Ritiro deselezionato: pulisci tutto
                 doc.setNominativoVettore(null);
                 doc.setDestinazione(null);
                 doc.setIndirizzo(null);
             }
 
-            // Aggiorna il model nel BP
             bp.setModel(context, doc);
-
             return context.findDefaultForward();
 
         } catch (Throwable e) {
             return handleException(context, e);
+        }
+    }
+
+// ============================================================
+// METODI HELPER PER RESET
+// ============================================================
+
+    /**
+     * Resetta SOLO i beni SENZA mostrare messaggi.
+     * Usato quando si cambia da/a Smartworking.
+     */
+    private void resetBeniSilenzioso(ActionContext context,
+                                     CRUDTraspRientInventarioBP bp,
+                                     Doc_trasporto_rientroBulk doc) throws Exception {
+        SimpleBulkList selezionati = getComponentSession(bp).selezionati(context.getUserContext(), doc);
+        if (!selezionati.isEmpty()) {
+            bp.getDettBeniController().removeAll(context);
+            doc.getDoc_trasporto_rientro_dettColl().clear();
+            // NESSUN messaggio
         }
     }
 

@@ -257,4 +257,10 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
 
     Doc_trasporto_rientroBulk salvaDefinitivo(UserContext userContext, Doc_trasporto_rientroBulk docTR)
             throws ComponentException, RemoteException;
+
+    List cercaBeniAccessoriPresentinelTrasportoOriginale(
+            UserContext userContext,
+            Inventario_beniBulk beneRientro,
+            Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException;
 }

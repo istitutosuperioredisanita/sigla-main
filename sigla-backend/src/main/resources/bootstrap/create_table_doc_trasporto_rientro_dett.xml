@@ -28,7 +28,6 @@
                 <constraints nullable="false"/>
             </column>
             <column name="cd_terzo_assegnatario" remarks="Codice del terzo asseganatario del bene" type="INT">
-                <constraints nullable="false"/>
             </column>
 
 

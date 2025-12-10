@@ -1,5 +1,6 @@
 package it.cnr.contab.inventario01.bulk;
 
+import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.core.bulk.V_persona_fisicaBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
@@ -80,6 +81,15 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     private TerzoBulk terzoIncRitiro;          // FK CD_TERZO_ASSEGNATARIO
     private TerzoBulk terzoRespDip;       // FK CD_TERZO_RESPONSABILE
     private TerzoBulk terzoSmartworking;
+    /**
+     * Dipendente incaricato al ritiro (usa VIEW dipendenti attivi)
+     */
+    private AnagraficoBulk anagIncRitiro = new AnagraficoBulk();
+
+    /**
+     * Dipendente assegnatario smartworking (usa VIEW dipendenti attivi)
+     */
+    private AnagraficoBulk anagSmartworking = new AnagraficoBulk();
 
     // Attributi NON mappati (transient - solo per uso applicativo)
     private TerzoBulk consegnatario;
@@ -118,12 +128,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         super(pg_inventario, ti_documento, esercizio, pg_doc_trasporto_rientro);
         setInventario(new Id_inventarioBulk(pg_inventario));
     }
-
-    // ========================================
-    // GETTER E SETTER - ALLEGATI (UNICA GESTIONE)
-    // ========================================
-
-
 
     // ========================================
     // GETTER E SETTER - Altri attributi
@@ -173,7 +177,15 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         return tipoMovimento.getCdTipoTrasportoRientro();
     }
 
-    // =========== FK: TERZO_ASSEGNATARIO (Incaricato Ritiro) ===========
+
+    // ========================================
+    // GETTER/SETTER - ANAGRAFICO INCARICATO
+    // ========================================
+
+    public AnagraficoBulk getAnagIncRitiro() {
+        return anagIncRitiro;
+    }
+
     public TerzoBulk getTerzoIncRitiro() {
         return terzoIncRitiro;
     }
@@ -184,12 +196,11 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     @Override
     public Integer getCdTerzoIncaricato() {
         if (terzoIncRitiro != null) {
-            terzoIncRitiro.getCd_terzo();
+            return terzoIncRitiro.getCd_terzo();
         }
-        return null;
+        return super.getCdTerzoIncaricato();
     }
 
-    // Metodo per accesso diretto alla FK (usato dal framework di persistenza)
     @Override
     public void setCdTerzoIncaricato(Integer cdTerzoIncaricato) {
         super.setCdTerzoIncaricato(cdTerzoIncaricato);
@@ -198,7 +209,10 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         }
     }
 
-    // =========== FK: TERZO_RESPONSABILE (Firmatario) ===========
+    // ========================================
+// GETTER/SETTER - TERZO RESPONSABILE (Firmatario)
+// ========================================
+
     public TerzoBulk getTerzoRespDip() {
         return terzoRespDip;
     }
@@ -212,18 +226,90 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         }
     }
 
+    public void setAnagIncRitiro(AnagraficoBulk anagIncRitiro) {
+        this.anagIncRitiro = anagIncRitiro;
+    }
+
+
     /**
-     * Getter per Terzo Smartworking (CAMPO TRANSIENT - solo UI).
-     * NON mappato nel database.
+     * Getter per CD_ANAG (usato dal mapping SQL)
      */
+    public Integer getCdAnagIncaricato() {
+        if (anagIncRitiro != null) {
+            return anagIncRitiro.getCd_anag();
+        }
+        return null;
+    }
+
+    /**
+     * Setter per CD_ANAG (usato dal framework di persistenza)
+     */
+    public void setCdAnagIncaricato(Integer cdAnag) {
+        if (this.anagIncRitiro == null && cdAnag != null) {
+            this.anagIncRitiro = new AnagraficoBulk();
+        }
+        if (this.anagIncRitiro != null) {
+            this.anagIncRitiro.setCd_anag(cdAnag);
+        }
+    }
+
+    public String getDs_anag_incaricato() {
+        if (anagIncRitiro != null && anagIncRitiro.getCognome() != null) {
+            return anagIncRitiro.getCognome() + " " +
+                    (anagIncRitiro.getNome() != null ? anagIncRitiro.getNome() : "");
+        }
+        return "";
+    }
+
+
+    public AnagraficoBulk getAnagSmartworking() {
+        return anagSmartworking;
+    }
+
+    public void setAnagSmartworking(AnagraficoBulk anagSmartworking) {
+        this.anagSmartworking = anagSmartworking;
+    }
+
+
+    /**
+     * Getter per CD_ANAG (usato dal mapping SQL)
+     */
+    public Integer getCdAnagSmartworking() {
+        if (anagSmartworking != null) {
+            return anagSmartworking.getCd_anag();
+        }
+        return null;
+    }
+
+    /**
+     * Setter per CD_ANAG (usato dal framework di persistenza)
+     */
+    public void setCdAnagSmartworking(Integer cdAnag) {
+        if (this.anagSmartworking == null && cdAnag != null) {
+            this.anagSmartworking = new AnagraficoBulk();
+        }
+        if (this.anagSmartworking != null) {
+            this.anagSmartworking.setCd_anag(cdAnag);
+        }
+    }
+
+    public String getDs_anag_smartworking() {
+        if (anagSmartworking != null && anagSmartworking.getCognome() != null) {
+            return anagSmartworking.getCognome() + " " +
+                    (anagSmartworking.getNome() != null ? anagSmartworking.getNome() : "");
+        }
+        return "";
+    }
+
+
+    // ========================================
+    // GETTER/SETTER - TERZO SMARTWORKING
+    // ========================================
+
     public TerzoBulk getTerzoSmartworking() {
         return terzoSmartworking;
     }
 
-    /**
-     * Setter per Terzo Smartworking (CAMPO TRANSIENT - solo UI).
-     * NON mappato nel database.
-     */
     public void setTerzoSmartworking(TerzoBulk terzoSmartworking) {
         this.terzoSmartworking = terzoSmartworking;
     }
@@ -784,5 +870,16 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         }
 
         return clauses;
+    }
+
+    // ========================================
+// HELPER PER ANAGRAFICO
+// ========================================
+
+    /**
+     * Recupera il CD_ANAG dall'anagrafico incaricato
+     */
+    private Integer getCdAnag(AnagraficoBulk anag) {
+        return anag != null ? anag.getCd_anag() : null;
     }
 }

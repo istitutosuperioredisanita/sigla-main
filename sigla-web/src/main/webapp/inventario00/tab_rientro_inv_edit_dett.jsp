@@ -64,15 +64,4 @@
       </tr>
     </table>
 
-    <table>
-      <tr>
-       <td><% bp.getEditDettController().writeFormLabel(out,"quantita"); %></td>
-       <td><% bp.getEditDettController().writeFormInput(out,null,"quantita",true,null,null); %></td>
-      </tr>
-      <tr>
-       <td><% bp.getEditDettController().writeFormLabel(out,"data_effettiva_movimentazione"); %></td>
-       <td colspan="3"><% bp.getEditDettController().writeFormInput(out,null,"data_effettiva_movimentazione",true,null,null); %></td>
-      </tr>
-    </table>
-
 </div>
