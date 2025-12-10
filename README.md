@@ -2,24 +2,23 @@
 # [![Sistema Informativo Gestione Linee di Attività](https://github.com/consiglionazionaledellericerche/sigla-main/blob/master/docs/logo-git.png)](https://contab.cnr.it/SIGLANG)
 
 [![license](https://img.shields.io/badge/License-AGPL%20v3-blue.svg?logo=gnu&style=for-the-badge)](https://github.com/consiglionazionaledellericerche/sigla-main/blob/master/LICENSE)
-[![Supported JVM Versions](https://img.shields.io/badge/JVM-8-brightgreen.svg?style=for-the-badge&logo=Java)](https://openjdk.java.net/install/)
-[![maven central](https://img.shields.io/maven-central/v/it.cnr.si.sigla/sigla-parent.svg?logo=apache-maven&style=for-the-badge)](https://mvnrepository.com/artifact/it.cnr.si.sigla/sigla-parent)
+[![Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk&style=for-the-badge)](https://adoptium.net/)
 [![contributors](https://img.shields.io/github/contributors/consiglionazionaledellericerche/sigla-main.svg?logo=github&style=for-the-badge)](https://github.com/consiglionazionaledellericerche/sigla-main/contributors/)
-[![Docker Stars](https://img.shields.io/docker/stars/consiglionazionalericerche/sigla-main.svg?logo=docker&style=for-the-badge)](https://hub.docker.com/r/consiglionazionalericerche/sigla-main/)
-[![Docker Pulls](https://img.shields.io/docker/pulls/consiglionazionalericerche/sigla-main.svg?logo=docker&style=for-the-badge)](https://hub.docker.com/r/consiglionazionalericerche/sigla-main/)
-
-[![<Build doc Status>](https://circleci.com/gh/consiglionazionaledellericerche/sigla-main.svg?style=svg)](https://app.circleci.com/pipelines/github/consiglionazionaledellericerche/sigla-main)
-[![<docs>](https://circleci.com/gh/consiglionazionaledellericerche/sigla-main.svg?style=shield)](https://consiglionazionaledellericerche.github.io/sigla-main)
+[![GitHub release](https://img.shields.io/github/v/release/istitutosuperioredisanita/sigla-main?logo=github&style=for-the-badge)](https://github.com/istitutosuperioredisanita/sigla-main/releases)
+[![GitHub Container Size](https://ghcr-badge.egpl.dev/istitutosuperioredisanita/sigla-main/size?tag=latest&label=Container%20Size&style=for-the-badge)](https://github.com/istitutosuperioredisanita/sigla-main/pkgs/container/sigla-main%2Fsigla-wildfly)
+[![Release Packages](https://github.com/istitutosuperioredisanita/sigla-main/actions/workflows/release.yml/badge.svg)](https://github.com/istitutosuperioredisanita/sigla-main/actions/workflows/release.yml)
+[![sphinx docs](https://github.com/istitutosuperioredisanita/sigla-main/actions/workflows/docs.yml/badge.svg)](https://github.com/istitutosuperioredisanita/sigla-main/actions/workflows/docs.yml)
 
 ## MAVEN dependency
-|Artifact| Version |
-|---|---|
-|[thorntail.io](https://thorntail.io/)| ![Maven Central](https://img.shields.io/maven-central/v/io.thorntail/bom-all/2.7.0.Final.svg?style=for-the-badge)|
-|[Spring.io](https://spring.io/)| ![Maven Central with version prefix filter](https://img.shields.io/maven-central/v/org.springframework/spring-context/5.1.8.RELEASE.svg?logo=spring&style=for-the-badge) |
-|[Liquibase](https://www.liquibase.org/) | ![Maven Central](https://img.shields.io/maven-central/v/org.liquibase/liquibase-core/3.5.3.svg?style=for-the-badge)|
-|[SIOPE+](https://github.com/consiglionazionaledellericerche/siopeplus) | ![Maven Central](https://img.shields.io/maven-central/v/it.cnr.si/siopeplus.svg?style=for-the-badge)|
-|[Storage Cloud](https://github.com/consiglionazionaledellericerche/storage-cloud) | ![Maven Central](https://img.shields.io/maven-central/v/it.cnr.si.storage/storage-cloud/2.0.2.svg?style=for-the-badge)|
-|[JADA JEE Framework](https://github.com/consiglionazionaledellericerche/jada) | ![Maven Central](https://img.shields.io/maven-central/v/it.cnr.si/jada.svg?style=for-the-badge)|
+| Artifact                             | Version                                                                                                                                                                  |
+|--------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [Wildfly](https://www.wildfly.org/)  | [![WildFly](https://img.shields.io/badge/WildFly-32.0.0.Final-green?logo=apache-maven&style=for-the-badge)](https://mvnrepository.com/artifact/org.wildfly/wildfly-parent/32.0.0.Final)|
+| [Wildfly JAR Plugin](https://docs.wildfly.org/bootablejar/) | [![WildFly JAR Plugin](https://img.shields.io/maven-central/v/org.wildfly.plugins/wildfly-jar-maven-plugin?logo=apache-maven&style=for-the-badge&label=Bootable%20JAR%20Plugin)](https://mvnrepository.com/artifact/org.wildfly.plugins/wildfly-jar-maven-plugin)|
+| [Spring.io](https://spring.io/)                                                   | ![Maven Central with version prefix filter](https://img.shields.io/maven-central/v/org.springframework/spring-context/6.0.0.svg?logo=spring&style=for-the-badge) |
+| [Liquibase](https://www.liquibase.org/)                                           | ![Maven Central](https://img.shields.io/maven-central/v/org.liquibase/liquibase-core/3.5.3.svg?style=for-the-badge)                                                      |
+| [SIOPE+](https://github.com/consiglionazionaledellericerche/siopeplus)            | ![Maven Central](https://img.shields.io/maven-central/v/it.cnr.si/siopeplus.svg?style=for-the-badge)                                                                     |
+| [Storage Cloud](https://github.com/consiglionazionaledellericerche/storage-cloud) | ![Maven Central](https://img.shields.io/maven-central/v/it.cnr.si.storage/storage-cloud/2.0.2.svg?style=for-the-badge)                                                   |
+| [JADA JEE Framework](https://github.com/consiglionazionaledellericerche/jada)     | ![Maven Central](https://img.shields.io/maven-central/v/it.cnr.si/jada.svg?style=for-the-badge)                                                                          |
  
 ## Introduzione
 Al fine di fornire elementi generali della Soluzione applicativa, evidenziamo informazioni di sintesi sul Sistema Contabile SIGLA, di proprietà del CNR, che si occupa di processi amministrativi e contabili, di previsione, gestione e di rendicontazione. Il Sistema si rivolge ad Enti pubblici, in particolare Enti di ricerca, che operano in regime di Contabilità Finanziaria, con obbligo di adozione, in aggiunta, del sistema di contabilità basato su rilevazione dei fatti di gestione in termini economici, patrimoniali ed analitici.
@@ -80,11 +79,6 @@ Le componenti funzionali del Sistema coprono aspetti contabili e aspetti amminis
     • Gestione degli Incarichi di collaborazione;
     • Gestione dell’Inventario.
 
-## Applicazioni on line
-
-* [SIGLA - CNR](https://contab.cnr.it/SIGLANG)
-* [SIGLA - ISIN](https://isin.cnr.it)
-
 ## 👏 Come Contribuire 
 
 Lo scopo principale di questo repository è continuare ad evolvere SIGLA. Vogliamo contribuire a questo progetto nel modo più semplice e trasparente possibile e siamo grati alla comunità per ogni contribuito a correggere bug e miglioramenti.
@@ -95,11 +89,11 @@ SIGLA è concesso in licenza GNU AFFERO GENERAL PUBLIC LICENSE, come si trova ne
 
 [l]: https://github.com/consiglionazionaledellericerche/cool-jconon/blob/master/LICENSE
 
-# <img src="https://www.docker.com/sites/default/files/d8/2019-07/Moby-logo.png" width=80> Startup
+# 🐳 Startup Docker
 
 #### _Per avviare una istanza di SIGLA con h2 in memoria_ 
 ```
-docker run -p 8080:8080  -e THORNTAIL_PROJECT_STAGE="demo-h2" -ti consiglionazionalericerche/sigla-main:release
+docker run -p 8080:8080 -e SIGLA_DB_DRIVER=h2 -e SIGLA_DB_URL=jdbc:h2:mem:sigladb -e SIGLA_DB_USER=sa -e SIGLA_DB_PASSWORD=sa -e SPRING_PROFILES_ACTIVE=liquibase-iss -ti ghcr.io/istitutosuperioredisanita/sigla-main
 ```
 
 ![Startup](docs/screenshot/startup_h2.png)
@@ -109,14 +103,14 @@ docker run -p 8080:8080  -e THORNTAIL_PROJECT_STAGE="demo-h2" -ti consiglionazio
 git clone git@github.com:consiglionazionaledellericerche/sigla-main.git
 cd sigla-main
 docker run -d --name sigla-oracle -v $PWD/sigla-backend/initdb-oracle:/opt/oracle/scripts/startup/ container-registry.oracle.com/database/express:21.3.0-xe
-docker run -p 8080:8080 --link sigla-oracle:db -e LC_ALL="it_IT.UTF-8" -e LANG="it_IT.UTF-8" -e LANGUAGE="it_IT:it" -e THORNTAIL_DATASOURCES_DATA-SOURCES_SIGLA_CONNECTION-URL="jdbc:oracle:thin:@db:1521/XEPDB1" -e THORNTAIL_PROJECT_STAGE="demo-oracle" -ti consiglionazionalericerche/sigla-main:release
+docker run -p 8080:8080 --link sigla-oracle:db -e LC_ALL="it_IT.UTF-8" -e LANG="it_IT.UTF-8" -e LANGUAGE="it_IT:it" -e SIGLA_DB_DRIVER=oracle -e SIGLA_DB_URL="jdbc:oracle:thin:@db:1521/XEPDB1" -e SIGLA_DB_USER=SIGLA -e SIGLA_DB_PASSWORD=siglapw -ti ghcr.io/istitutosuperioredisanita/sigla-main
 ```
 #### _Per avviare una istanza di SIGLA con postgres locale_
 ```
 git clone git@github.com:consiglionazionaledellericerche/sigla-main.git
 cd sigla-main
 docker run --name sigla-postgres -v $PWD/sigla-backend/init-user-postgres-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh -e POSTGRES_PASSWORD=mysecretpassword -d postgres:9.6
-docker run -p 8080:8080 --link sigla-postgres:db -e LC_ALL="it_IT.UTF-8" -e LANG="it_IT.UTF-8" -e LANGUAGE="it_IT:it" -e THORNTAIL_DATASOURCES_DATA-SOURCES_SIGLA_CONNECTION-URL="jdbc:postgresql://db:5432/sigladb?schema=public" -e THORNTAIL_PROJECT_STAGE="demo-postgres" -ti consiglionazionalericerche/sigla-main:release
+docker run -p 8080:8080 --link sigla-postgres:db -e LC_ALL="it_IT.UTF-8" -e LANG="it_IT.UTF-8" -e LANGUAGE="it_IT:it" -e SIGLA_DB_DRIVER=postgresql -e SIGLA_DB_URL="jdbc:postgresql://db:5432/sigladb?schema=public" -e SIGLA_DB_USER=SIGLA -e SIGLA_DB_PASSWORD=mysecretpassword -ti ghcr.io/istitutosuperioredisanita/sigla-main
 ```
 
 Collegarsi a http://localhost:8080/SIGLA/Login.do username: _ENTE_ password da impostare al primo login. 
