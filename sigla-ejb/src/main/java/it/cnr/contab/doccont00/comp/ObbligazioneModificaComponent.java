@@ -28,6 +28,7 @@ import java.sql.Timestamp;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.Optional;
 
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_cnrHome;
@@ -261,5 +262,27 @@ public class ObbligazioneModificaComponent extends it.cnr.jada.comp.CRUDComponen
 		{
 			throw handleException( e )	;
 		}	
+	}
+
+	@Override
+	public void eliminaConBulk(UserContext usercontext, OggettoBulk oggettobulk) throws ComponentException {
+		/**
+		 * Prima di eliminare la modifica devo aggiornare l'obbligazione di riferimento
+		 */
+		try {
+			Optional<Obbligazione_modificaBulk> obbMod = Optional.ofNullable(oggettobulk)
+					.filter(Obbligazione_modificaBulk.class::isInstance)
+					.map(Obbligazione_modificaBulk.class::cast);
+			if (obbMod.isPresent()) {
+				ObbligazioneBulk obbligazione = obbMod.get().getObbligazione();
+
+			}
+
+			super.eliminaConBulk(usercontext, oggettobulk);
+		}
+		catch ( Exception e )
+		{
+			throw handleException( e )	;
+		}
 	}
 }
