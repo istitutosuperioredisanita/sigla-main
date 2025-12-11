@@ -118,20 +118,24 @@ public class ActionDeployments extends DeploymentsH2 {
                 .collect(Collectors.toList());
     }
 
-    protected void switchTodefaultContent() {
+    private void switchToDefaultContent() {
         browser.switchTo().defaultContent();
         logPageSource();
     }
 
     protected void switchToFrameMenu() {
+        switchToDefaultContent();
+        switchToFrameDesktop();
         switchToFrame(FRAME_MENU);
     }
 
     protected void switchToFrameWorkspace() {
+        switchToDefaultContent();
+        switchToFrameDesktop();
         switchToFrame(FRAME_WORKSPACE);
     }
 
-    protected void switchToFrameDesktop() {
+    private void switchToFrameDesktop() {
         switchToFrame(FRAME_DESKTOP);
     }
 

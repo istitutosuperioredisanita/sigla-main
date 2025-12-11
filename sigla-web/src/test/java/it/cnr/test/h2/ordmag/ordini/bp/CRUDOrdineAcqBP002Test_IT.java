@@ -42,7 +42,7 @@ import java.util.Optional;
  * 8) registrazione nota credito di annullamento totale fattura creata
  */
 public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
-    private static SharedResource sharedResource;
+    private static final SharedResource sharedResource = new SharedResource();
 
     public static final String USERNAME = "ENTETEST";
     public static final String PASSWORD = "PASSTEST";
@@ -79,12 +79,6 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
 
     public static final String DATA_ODIERNA = "25/10/2025";
 
-    @BeforeDeployment
-    public static void initClass() {
-        if (sharedResource == null)
-            sharedResource = new SharedResource();
-    }
-
     @Test
     @Order(1)
     public void testLogin() throws Exception {
@@ -98,13 +92,11 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
     @Test
     @Order(2)
     public void testCreaOrdine() {
-        switchToFrameDesktop();
         switchToFrameMenu();
         doApriMenu(ORD);
         doApriMenu(ORD_ORDACQ);
         doSelezionaMenu(ORD_ORDACQ_M);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Indico Unità Operativa: DRUE
@@ -272,11 +264,9 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
     @Test
     @Order(3)
     public void testEvasioneConsegna001() {
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doSelezionaMenu(ORD_EVAORD);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Scelgo Unità operativa: DRUE
@@ -338,12 +328,9 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
     @Order(4)
     public void testVerificaScritturaOrdine001() {
         //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
-
         doSelezionaMenu(ORD_ORDACQ_M);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Ricerco l’ordine
@@ -432,7 +419,7 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
         doClickButton("doChiudiForm()");
         doClickButton("submitForm('doVisualizzaAnalitica');");
 
-        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("244,00", getGrapheneElement("main.imTotaleMov").getAttribute("value"));
 
         doClickButton("doTab('tab','tabMovimenti')");
@@ -452,13 +439,11 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
     @Test
     @Order(5)
     public void testAnnullaEvasioneConsegna() {
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doApriMenu(MAG);
         doApriMenu(MAG_ANNULLAMENTO);
         doSelezionaMenu(MAG_ANNULLAMENTO_M);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Scelgo Unità operativa: DRUE
@@ -511,12 +496,9 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
     @Order(6)
     public void testVerificaScritturaOrdine002() {
         //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
-
         doSelezionaMenu(ORD_ORDACQ_M);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Ricerco l’ordine
@@ -575,11 +557,9 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
     @Order(7)
     public void testEvasioneConsegna002() {
         //Rifaccio l’evasione come al testEvasioneConsegna001
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doSelezionaMenu(ORD_EVAORD);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Scelgo Unità operativa: DRUE
@@ -644,12 +624,9 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
     @Order(8)
     public void testVerificaScritturaOrdine003() {
         //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
-
         doSelezionaMenu(ORD_ORDACQ_M);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Ricerco l’ordine
@@ -754,7 +731,7 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
 
         //Seleziono la prima scrittura che deve essere annullata dopo l'annullamento dell'evasione
         getTableRowElement("mainTable",0).click();
-        Assertions.assertEquals("N", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("N", getGrapheneElement("main.attiva").getAttribute("value"));
 
         doClickButton("doChiudiForm()");
 
@@ -764,7 +741,7 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
         //Seleziono la seconda scrittura nata con la successiva evasione
         getTableRowElement("mainTable",1).click();
 
-        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("244,00", getGrapheneElement("main.imTotaleMov").getAttribute("value"));
 
         doClickButton("doTab('tab','tabMovimenti')");
@@ -782,12 +759,10 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
     @Order(9)
     public void testControlloDatiEvasioneConsegna001() {
         //Rifaccio l’evasione come al testEvasioneConsegna001
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doApriMenu(ORD_CON);
         doSelezionaMenu(ORD_CON_VISORDCONSEGNA);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Scelgo Unità operativa: DRUE
@@ -867,11 +842,9 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
     @Order(10)
     public void testEvasioneConsegna003() {
         //Rifaccio l’evasione come al testEvasioneConsegna001
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doSelezionaMenu(ORD_EVAORD);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Scelgo Unità operativa: DRUE
@@ -926,11 +899,9 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
     @Order(11)
     public void testVerificaScritturaOrdine004() {
         //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doSelezionaMenu(ORD_ORDACQ_M);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Ricerco l’ordine
@@ -1019,7 +990,7 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
         doClickButton("doChiudiForm()");
         doClickButton("submitForm('doVisualizzaAnalitica');");
 
-        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("244,00", getGrapheneElement("main.imTotaleMov").getAttribute("value"));
 
         doClickButton("doTab('tab','tabMovimenti')");
@@ -1036,14 +1007,12 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
     @Test
     @Order(12)
     public void testRiscontroValore001() {
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doApriMenu(AMM);
         doApriMenu(AMM_FATTUR);
         doApriMenu(AMM_FATTUR_FATPAS);
         doSelezionaMenu(AMM_FATTUR_FATPAS_ELE);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Ricerco la fattura SDI: 90000000002
@@ -1211,12 +1180,9 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
     @Order(13)
     public void testVerificaScritturaOrdine005() {
         //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
-
         doSelezionaMenu(ORD_ORDACQ_M);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Ricerco l’ordine
@@ -1296,11 +1262,9 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
     @Test
     @Order(14)
     public void testAnnullaRiscontroValore() {
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doSelezionaMenu(AMM_FATTUR_FATPAS_M);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         doClickButton("doNuovaRicerca()");
@@ -1410,11 +1374,9 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
     @Test
     @Order(15)
     public void testAssociaNotaCredito001() {
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doSelezionaMenu(AMM_FATTUR_FATPAS_ELE);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Ricerco la fattura SDI: 90000000003 - Nota Credito

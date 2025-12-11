@@ -18,20 +18,32 @@
 package it.cnr.test.h2.coepcoan.component.scritture;
 
 import it.cnr.contab.coepcoan00.core.bulk.*;
+import it.cnr.contab.coepcoan00.ejb.ProposeScritturaComponentSession;
+import it.cnr.contab.coepcoan00.ejb.ScritturaPartitaDoppiaFromDocumentoComponentSession;
 import it.cnr.contab.doccont00.core.bulk.MandatoBulk;
 import it.cnr.contab.doccont00.core.bulk.MandatoIBulk;
 import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
 import it.cnr.contab.util.TestUserContext;
-import it.cnr.contab.util.Utility;
 import it.cnr.jada.bulk.BulkList;
 import org.junit.jupiter.api.*;
 import it.cnr.test.h2.DeploymentsH2;
 
+import javax.naming.NamingException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 public class MissioneScrittureTest extends DeploymentsH2 {
+    private ProposeScritturaComponentSession proposeScritturaComponentSession;
+    private ScritturaPartitaDoppiaFromDocumentoComponentSession scritturaPartitaDoppiaFromDocumentoComponentSession;
+
+    @BeforeEach
+    public void lookupRemoteEJBs() throws NamingException {
+        super.lookupRemoteEJBs();
+        proposeScritturaComponentSession = lookup("CNRCOEPCOAN00_EJB_ProposeScritturaComponentSession", ProposeScritturaComponentSession.class);
+        scritturaPartitaDoppiaFromDocumentoComponentSession = lookup("CNRCOEPCOAN00_EJB_ScritturaPartitaDoppiaFromDocumentoComponentSession", ScritturaPartitaDoppiaFromDocumentoComponentSession.class);
+    }
+    
     /**
      * Missione
      * <p><b>Dati Missione</b>
@@ -66,7 +78,7 @@ public class MissioneScrittureTest extends DeploymentsH2 {
                     .filter(MissioneBulk.class::isInstance)
                     .map(MissioneBulk.class::cast)
                     .orElse(null);
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     missioneBulk);
 
@@ -133,7 +145,7 @@ public class MissioneScrittureTest extends DeploymentsH2 {
                     .filter(MissioneBulk.class::isInstance)
                     .map(MissioneBulk.class::cast)
                     .orElse(null);
-            Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), missioneBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), missioneBulk);
         }
         {
             MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
@@ -142,7 +154,7 @@ public class MissioneScrittureTest extends DeploymentsH2 {
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     mandatoBulk);
 

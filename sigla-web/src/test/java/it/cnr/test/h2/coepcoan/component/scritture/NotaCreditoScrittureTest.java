@@ -18,21 +18,32 @@
 package it.cnr.test.h2.coepcoan.component.scritture;
 
 import it.cnr.contab.coepcoan00.core.bulk.*;
+import it.cnr.contab.coepcoan00.ejb.ProposeScritturaComponentSession;
+import it.cnr.contab.coepcoan00.ejb.ScritturaPartitaDoppiaFromDocumentoComponentSession;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_IBulk;
 import it.cnr.contab.docamm00.docs.bulk.Nota_di_creditoBulk;
 import it.cnr.contab.util.TestUserContext;
-import it.cnr.contab.util.Utility;
 import it.cnr.jada.bulk.BulkList;
 import org.junit.jupiter.api.*;
 import it.cnr.test.h2.DeploymentsH2;
 
+import javax.naming.NamingException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 public class NotaCreditoScrittureTest extends DeploymentsH2 {
+    private ProposeScritturaComponentSession proposeScritturaComponentSession;
+    private ScritturaPartitaDoppiaFromDocumentoComponentSession scritturaPartitaDoppiaFromDocumentoComponentSession;
 
+    @BeforeEach
+    public void lookupRemoteEJBs() throws NamingException {
+        super.lookupRemoteEJBs();
+        proposeScritturaComponentSession = lookup("CNRCOEPCOAN00_EJB_ProposeScritturaComponentSession", ProposeScritturaComponentSession.class);
+        scritturaPartitaDoppiaFromDocumentoComponentSession = lookup("CNRCOEPCOAN00_EJB_ScritturaPartitaDoppiaFromDocumentoComponentSession", ScritturaPartitaDoppiaFromDocumentoComponentSession.class);
+    }
+    
     /**
      * Fattura {@code Istituzionale Split Payment} di {@code Competenza} stornata da {@code Nota Credito} su mono voce:
      * <p><b>Dati Fattura</b>
@@ -82,7 +93,7 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
                     .map(Fattura_passivaBulk.class::cast)
                     .orElse(null);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     fatturaPassivaBulk);
 
@@ -126,7 +137,7 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
                 Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
             }
 
-            Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
         }
         //Registrazione nota credito
         {
@@ -136,7 +147,7 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
                     .map(Nota_di_creditoBulk.class::cast)
                     .orElse(null);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     notaCreditoBulk);
 
@@ -233,7 +244,7 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
                     .map(Fattura_passivaBulk.class::cast)
                     .orElse(null);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     fatturaPassivaBulk);
             //CONTROLLO ECONOMICA
@@ -270,7 +281,7 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
                 Assertions.assertEquals("P71012I", rigaTipoIva.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
                 Assertions.assertEquals(new BigDecimal("1.70"), rigaTipoIva.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
-                Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
+                scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
             }
 
             //CONTROLLO ANALITICA
@@ -308,7 +319,7 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
                     .map(Nota_di_creditoBulk.class::cast)
                     .orElse(null);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     notaCreditoBulk);
 
@@ -448,7 +459,7 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
                     .map(Fattura_passivaBulk.class::cast)
                     .orElse(null);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     fatturaPassivaBulk);
 
@@ -502,7 +513,7 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
                 Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
             }
 
-            Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
         }
         //Registrazione nota credito riga 1
         {
@@ -512,7 +523,7 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
                     .map(Nota_di_creditoBulk.class::cast)
                     .orElse(null);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     notaCreditoBulk);
 
@@ -564,7 +575,7 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
                     .map(Nota_di_creditoBulk.class::cast)
                     .orElse(null);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     notaCreditoBulk);
 
@@ -655,7 +666,7 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
                     .map(Fattura_passivaBulk.class::cast)
                     .orElse(null);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     fatturaPassivaBulk);
 
@@ -721,7 +732,7 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
                 Assertions.assertEquals(0, movimentiAvere.size());
             }
 
-            Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
         }
         //Registrazione nota credito
         {
@@ -731,7 +742,7 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
                     .map(Nota_di_creditoBulk.class::cast)
                     .orElse(null);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     notaCreditoBulk);
 

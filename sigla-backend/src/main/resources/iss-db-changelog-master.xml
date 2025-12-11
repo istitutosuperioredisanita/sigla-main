@@ -49,10 +49,10 @@
 
     <!-- Attenzione inserire i changeset prima della compilazione degli invalidi-->
 
+    <include file="liquibase/function-h2.xml"/>
     <include file="liquibase/views.xml"/>
     <include file="liquibase/oracle-sql4.xml"/>
     <include file="liquibase/function-postgres.xml"/>
-    <include file="liquibase/function-h2.xml"/>
     <include file="liquibase/oracle_compile_objects.xml"/>
     <include file="iss/views.xml"/>
     <include file="iss/oracle-sql4.xml"/>

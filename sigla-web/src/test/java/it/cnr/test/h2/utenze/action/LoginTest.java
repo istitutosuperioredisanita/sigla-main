@@ -17,17 +17,13 @@
 
 package it.cnr.test.h2.utenze.action;
 
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LoginTest extends ActionDeployments {
@@ -49,7 +45,7 @@ public class LoginTest extends ActionDeployments {
     @Order(2)
     public void testAssegnaPassword() throws Exception {
         final WebElement comandoAssegnapassword = browser.findElement(By.name("comando.doAssegnaPassword"));
-        assertEquals(Boolean.TRUE, Optional.ofNullable(comandoAssegnapassword).isPresent());
+        Assertions.assertEquals(Boolean.TRUE, Optional.ofNullable(comandoAssegnapassword).isPresent());
 
         getGrapheneElement("main.nuovaPassword").writeIntoElement(PASSWORD);
         getGrapheneElement("main.confermaPassword").writeIntoElement(PASSWORD);
@@ -66,17 +62,15 @@ public class LoginTest extends ActionDeployments {
     @Test
     @Order(4)
     public void testTree() throws Exception {
-        switchToFrameDesktop();
         switchToFrameMenu();
         doClickTree("apriMenu('0.CFG')");
         doClickTree("apriMenu('0.CFG.STRORG')");
         doClickTree("apriMenu('0.CFG.STRORG.UNIORG')");
         doClickTree("selezionaMenu('0.CFG.STRORG.UNIORG.M')");
-        switchTodefaultContent();
-        switchToFrameDesktop();
+
         switchToFrameWorkspace();
         logPageSource();
         final Optional<WebElement> title = Optional.ofNullable(browser.findElement(By.tagName("title")));
-        assertEquals(true, title.isPresent());
+        Assertions.assertTrue(title.isPresent());
     }
 }

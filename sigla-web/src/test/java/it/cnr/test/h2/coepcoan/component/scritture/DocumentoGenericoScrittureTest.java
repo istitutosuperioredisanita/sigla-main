@@ -19,21 +19,32 @@ package it.cnr.test.h2.coepcoan.component.scritture;
 
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaNotEnabledException;
 import it.cnr.contab.coepcoan00.core.bulk.*;
+import it.cnr.contab.coepcoan00.ejb.ProposeScritturaComponentSession;
+import it.cnr.contab.coepcoan00.ejb.ScritturaPartitaDoppiaFromDocumentoComponentSession;
 import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
 import it.cnr.contab.doccont00.core.bulk.MandatoBulk;
 import it.cnr.contab.doccont00.core.bulk.MandatoIBulk;
 import it.cnr.contab.util.TestUserContext;
-import it.cnr.contab.util.Utility;
 import it.cnr.jada.bulk.BulkList;
 import org.junit.jupiter.api.*;
 import it.cnr.test.h2.DeploymentsH2;
 import org.junit.jupiter.api.Order;
 
+import javax.naming.NamingException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
+    private ProposeScritturaComponentSession proposeScritturaComponentSession;
+    private ScritturaPartitaDoppiaFromDocumentoComponentSession scritturaPartitaDoppiaFromDocumentoComponentSession;
+
+    @BeforeEach
+    public void lookupRemoteEJBs() throws NamingException {
+        super.lookupRemoteEJBs();
+        proposeScritturaComponentSession = lookup("CNRCOEPCOAN00_EJB_ProposeScritturaComponentSession", ProposeScritturaComponentSession.class);
+        scritturaPartitaDoppiaFromDocumentoComponentSession = lookup("CNRCOEPCOAN00_EJB_ScritturaPartitaDoppiaFromDocumentoComponentSession", ScritturaPartitaDoppiaFromDocumentoComponentSession.class);
+    }
 
     /**
      * Documento Generico {@code Semplice} su mono voce {@code Liquidato} mandato di pagamento:
@@ -66,7 +77,7 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
                 .filter(Documento_genericoBulk.class::isInstance)
                 .map(Documento_genericoBulk.class::cast)
                 .orElse(null);
-        ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+        ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                 new TestUserContext(),
                 documentoCogeBulk);
 
@@ -108,7 +119,7 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
             Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
         }
 
-        Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), documentoCogeBulk);
+        scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), documentoCogeBulk);
 
         MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
                         new MandatoIBulk("000",2025,1L)))
@@ -116,7 +127,7 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
                 .map(MandatoBulk.class::cast)
                 .orElse(null);
 
-        result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+        result = proposeScritturaComponentSession.proposeScrittureContabili(
                 new TestUserContext(),
                 mandatoBulk);
 
@@ -199,7 +210,7 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
                     .filter(Documento_genericoBulk.class::isInstance)
                     .map(Documento_genericoBulk.class::cast)
                     .orElse(null);
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     documentoCogeBulk);
 
@@ -260,7 +271,7 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
                 Assertions.assertEquals(0, movimentiAvere.size());
             }
 
-            Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), documentoCogeBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), documentoCogeBulk);
         }
         {
             MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
@@ -269,7 +280,7 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     mandatoBulk);
 
@@ -343,7 +354,7 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
                     .map(Documento_genericoBulk.class::cast)
                     .orElse(null);
 
-            Assertions.assertThrows(ScritturaPartitaDoppiaNotEnabledException.class, () ->Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            Assertions.assertThrows(ScritturaPartitaDoppiaNotEnabledException.class, () ->proposeScritturaComponentSession.proposeScrittureContabili(
                         new TestUserContext(),
                         documentoCogeBulk),
                     "Scrittura Economica non generabile/modificabile. L'esercizio contabile 2023 per il cds 000 risulta essere non aperto.");
@@ -355,7 +366,7 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     mandatoBulk);
 

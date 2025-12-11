@@ -20,21 +20,33 @@ package it.cnr.test.h2.coepcoan.component.scritture;
 import it.cnr.contab.coepcoan00.core.bulk.Movimento_cogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
+import it.cnr.contab.coepcoan00.ejb.ProposeScritturaComponentSession;
+import it.cnr.contab.coepcoan00.ejb.ScritturaPartitaDoppiaFromDocumentoComponentSession;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_IBulk;
 import it.cnr.contab.doccont00.core.bulk.MandatoBulk;
 import it.cnr.contab.doccont00.core.bulk.MandatoIBulk;
 import it.cnr.contab.util.TestUserContext;
 
-import it.cnr.contab.util.Utility;
 import it.cnr.jada.bulk.BulkList;
 import org.junit.jupiter.api.*;
 import it.cnr.test.h2.DeploymentsH2;
 
+import javax.naming.NamingException;
 import java.math.BigDecimal;
 import java.util.Optional;
 
 public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
+    private ProposeScritturaComponentSession proposeScritturaComponentSession;
+    private ScritturaPartitaDoppiaFromDocumentoComponentSession scritturaPartitaDoppiaFromDocumentoComponentSession;
+
+    @BeforeEach
+    public void lookupRemoteEJBs() throws NamingException {
+        super.lookupRemoteEJBs();
+        proposeScritturaComponentSession = lookup("CNRCOEPCOAN00_EJB_ProposeScritturaComponentSession", ProposeScritturaComponentSession.class);
+        scritturaPartitaDoppiaFromDocumentoComponentSession = lookup("CNRCOEPCOAN00_EJB_ScritturaPartitaDoppiaFromDocumentoComponentSession", ScritturaPartitaDoppiaFromDocumentoComponentSession.class);
+    }
+    
     /**
      * Fattura {@code Istituzionale} {@code Split Payment} su mono voce con mandato di pagamento:
      * <p><b>Dati Fattura</b>
@@ -76,7 +88,7 @@ public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
                     .map(Fattura_passivaBulk.class::cast)
                     .orElse(null);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     fatturaPassivaBulk);
 
@@ -120,7 +132,7 @@ public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
                 Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
             }
 
-            Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
         }
         //Registrazione mandato
         {
@@ -130,7 +142,7 @@ public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     mandatoBulk);
 
@@ -209,7 +221,7 @@ public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
                     .map(Fattura_passivaBulk.class::cast)
                     .orElse(null);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     fatturaPassivaBulk);
 
@@ -248,7 +260,7 @@ public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
                 Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
             }
 
-            Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
         }
         //Registrazione mandato
         {
@@ -258,7 +270,7 @@ public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     mandatoBulk);
 
@@ -351,7 +363,7 @@ public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
                     .map(Fattura_passivaBulk.class::cast)
                     .orElse(null);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     fatturaPassivaBulk);
 
@@ -405,7 +417,7 @@ public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
                 Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
             }
 
-            Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
         }
         //Registrazione mandato
         {
@@ -415,7 +427,7 @@ public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     mandatoBulk);
 

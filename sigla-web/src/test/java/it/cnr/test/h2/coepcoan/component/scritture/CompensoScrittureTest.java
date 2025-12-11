@@ -18,20 +18,34 @@
 package it.cnr.test.h2.coepcoan.component.scritture;
 
 import it.cnr.contab.coepcoan00.core.bulk.*;
+import it.cnr.contab.coepcoan00.ejb.ProposeScritturaComponentSession;
+import it.cnr.contab.coepcoan00.ejb.ScritturaPartitaDoppiaFromDocumentoComponentSession;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
+import it.cnr.contab.compensi00.ejb.CompensoComponentSession;
 import it.cnr.contab.doccont00.core.bulk.MandatoBulk;
 import it.cnr.contab.doccont00.core.bulk.MandatoIBulk;
 import it.cnr.contab.util.TestUserContext;
-import it.cnr.contab.util.Utility;
 import it.cnr.jada.bulk.BulkList;
 import org.junit.jupiter.api.*;
 import it.cnr.test.h2.DeploymentsH2;
 
+import javax.naming.NamingException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 public class CompensoScrittureTest extends DeploymentsH2 {
+    private ProposeScritturaComponentSession proposeScritturaComponentSession;
+    private ScritturaPartitaDoppiaFromDocumentoComponentSession scritturaPartitaDoppiaFromDocumentoComponentSession;
+    private CompensoComponentSession compensoComponentSession;
+    @BeforeEach
+    public void lookupRemoteEJBs() throws NamingException {
+        super.lookupRemoteEJBs();
+        proposeScritturaComponentSession = lookup("CNRCOEPCOAN00_EJB_ProposeScritturaComponentSession", ProposeScritturaComponentSession.class);
+        scritturaPartitaDoppiaFromDocumentoComponentSession = lookup("CNRCOEPCOAN00_EJB_ScritturaPartitaDoppiaFromDocumentoComponentSession", ScritturaPartitaDoppiaFromDocumentoComponentSession.class);
+        compensoComponentSession = lookup("CNRCOMPENSI00_EJB_CompensoComponentSession", CompensoComponentSession.class);
+    }
+    
     /**
      * Compenso occasionale
      * <p><b>Dati Compenso</b>
@@ -68,9 +82,9 @@ public class CompensoScrittureTest extends DeploymentsH2 {
                     .filter(CompensoBulk.class::isInstance)
                     .map(CompensoBulk.class::cast)
                     .orElse(null);
-            compensoBulk = Utility.createCompensoComponentSession().loadContributiERitenute(new TestUserContext(), compensoBulk);
+            compensoBulk = compensoComponentSession.loadContributiERitenute(new TestUserContext(), compensoBulk);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     compensoBulk);
 
@@ -137,8 +151,8 @@ public class CompensoScrittureTest extends DeploymentsH2 {
                     .filter(CompensoBulk.class::isInstance)
                     .map(CompensoBulk.class::cast)
                     .orElse(null);
-            compensoBulk = Utility.createCompensoComponentSession().loadContributiERitenute(new TestUserContext(), compensoBulk);
-            Utility.createScritturaPartitaDoppiaFromDocumentoComponentSession().modificaConBulk(new TestUserContext(), compensoBulk);
+            compensoBulk = compensoComponentSession.loadContributiERitenute(new TestUserContext(), compensoBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), compensoBulk);
         }
         {
             MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
@@ -147,7 +161,7 @@ public class CompensoScrittureTest extends DeploymentsH2 {
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
 
-            ResultScrittureContabili result = Utility.createProposeScritturaComponentSession().proposeScrittureContabili(
+            ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
                     new TestUserContext(),
                     mandatoBulk);
 

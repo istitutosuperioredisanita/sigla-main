@@ -44,7 +44,7 @@ import java.util.Optional;
  * 10) annullamento evasione riga consegna non consentita per bene inventariato
  */
 public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
-    private static SharedResource sharedResource;
+    private static final SharedResource sharedResource = new SharedResource();
 
     public static final String USERNAME = "ENTETEST";
     public static final String PASSWORD = "PASSTEST";
@@ -86,12 +86,6 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
 
     public static final String DATA_ODIERNA = "25/10/2025";
 
-    @BeforeDeployment
-    public static void initClass() {
-        if (sharedResource == null)
-            sharedResource = new SharedResource();
-    }
-
     @Test
     @Order(1)
     public void testLogin() throws Exception {
@@ -99,20 +93,17 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
         doLoginUO(UO, CDR);
     }
 
-
     /**
      * 1) creazione ordine con 1 riga consegna con bene inventariale
      */
     @Test
     @Order(2)
     public void testCreaOrdine() {
-        switchToFrameDesktop();
         switchToFrameMenu();
         doApriMenu(ORD);
         doApriMenu(ORD_ORDACQ);
         doSelezionaMenu(ORD_ORDACQ_M);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Indico Unità Operativa: DRUE
@@ -254,11 +245,9 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
     @Test
     @Order(3)
     public void testEvasioneConsegna001() {
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doSelezionaMenu(ORD_EVAORD);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Scelgo Unità operativa: DRUE
@@ -315,12 +304,9 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
     @Order(4)
     public void testVerificaScritturaOrdine001() {
         //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
-
         doSelezionaMenu(ORD_ORDACQ_M);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Ricerco l’ordine
@@ -427,16 +413,12 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
     @Order(5)
     public void testVerificaBeneInTransito001() {
         //Verifico che il bene sia in transito
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
-
         doApriMenu(AMM);
         doApriMenu(AMM_INVENT);
         doApriMenu(AMM_INVENT_ORDINI);
-
         doSelezionaMenu(AMM_INVENT_ORDINI_TRANSITO);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Ricerco l’unico bene in transito
@@ -482,13 +464,11 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
     @Test
     @Order(6)
     public void testAnnullaEvasioneConsegna001() {
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doApriMenu(MAG);
         doApriMenu(MAG_ANNULLAMENTO);
         doSelezionaMenu(MAG_ANNULLAMENTO_M);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Scelgo Unità operativa: DRUE
@@ -544,11 +524,9 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
     @Order(7)
     public void testVerificaBeneInTransito002() {
         //Verifico che il bene sia in transito
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doSelezionaMenu(AMM_INVENT_ORDINI_TRANSITO);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Ricerco l’unico bene in transito
@@ -566,11 +544,9 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
     @Test
     @Order(8)
     public void testEvasioneConsegna002() {
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doSelezionaMenu(ORD_EVAORD);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Scelgo Unità operativa: DRUE
@@ -627,11 +603,9 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
     @Order(9)
     public void testCompletaBeneInTransito001() {
         //Verifico che il bene sia in transito
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doSelezionaMenu(AMM_INVENT_ORDINI_TRANSITO);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Ricerco l’unico bene in transito
@@ -678,11 +652,9 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
     @Order(10)
     public void testInventariazioneBeneInTransito001() {
         //Verifico che il bene sia in transito
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doSelezionaMenu(AMM_INVENT_ORDINI_INVENTARIAZIONE);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         String pgOrdineCreated = sharedResource.getVal01();
@@ -734,11 +706,9 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
     @Test
     @Order(11)
     public void testAnnullaEvasioneConsegna002() {
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doSelezionaMenu(MAG_ANNULLAMENTO_M);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Scelgo Unità operativa: DRUE
@@ -794,13 +764,11 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
     @Test
     @Order(12)
     public void testRiscontroValore001() {
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doApriMenu(AMM_FATTUR);
         doApriMenu(AMM_FATTUR_FATPAS);
         doSelezionaMenu(AMM_FATTUR_FATPAS_ELE);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Ricerco la fattura SDI: 90000000002
@@ -914,12 +882,9 @@ public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
     @Order(13)
     public void testVerificaScritturaOrdine002() {
         //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
-
         doSelezionaMenu(ORD_ORDACQ_M);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Ricerco l’ordine

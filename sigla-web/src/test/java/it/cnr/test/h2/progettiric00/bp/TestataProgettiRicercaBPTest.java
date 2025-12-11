@@ -51,16 +51,12 @@ public class TestataProgettiRicercaBPTest extends ActionDeployments {
     @Test
     @Order(2)
     public void testCreaAreaProgettuale() throws Exception {
-        switchTodefaultContent();
-        switchToFrameDesktop();
         switchToFrameMenu();
         doApriMenu(CFG);
         doApriMenu(CFG_PROGETTI);
         doApriMenu(CFG_PROGETTI_LIV_1);
         doSelezionaMenu(CFG_PROGETTI_LIV_1_G);
 
-        switchTodefaultContent();
-        switchToFrameDesktop();
         switchToFrameWorkspace();
 
         getGrapheneElement("main.cd_progetto").writeIntoElement(CD_AREAPROG);
@@ -84,14 +80,10 @@ public class TestataProgettiRicercaBPTest extends ActionDeployments {
     @Test
     @Order(3)
     public void testCreaProgetto() throws Exception {
-        switchTodefaultContent();
-        switchToFrameDesktop();
         switchToFrameMenu();
         doApriMenu(CFG_PROGETTI_LIV_2);
         doSelezionaMenu(CFG_PROGETTI_LIV_2_M);
 
-        switchTodefaultContent();
-        switchToFrameDesktop();
         switchToFrameWorkspace();
 
         getGrapheneElement("main.find_nodo_padre_area.cd_progetto").writeIntoElement(CD_AREAPROG);

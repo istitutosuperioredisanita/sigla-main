@@ -39,7 +39,8 @@ import java.util.Optional;
  * 6) verifica scrittura economica/analitica e movimento magazzino su consegne dei 2 ordini
  * 7) registrazione fattura con riscontro valore su riga consegna scollegata in fase di annullamento riscontro a valore di cui al punto 5
  */
-public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class CRUDOrdineAcqBP001Test extends ActionDeployments {
     public static final String USERNAME = "ENTETEST";
     public static final String PASSWORD = "PASSTEST";
 
@@ -76,14 +77,12 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
      */
     @Test
     @Order(2)
-    public void testCreaProgetto() {
-        switchToFrameDesktop();
+    public void testCreaOrdine() {
         switchToFrameMenu();
         doApriMenu(ORD);
         doApriMenu(ORD_ORDACQ);
         doSelezionaMenu(ORD_ORDACQ_M);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         getGrapheneElement("main.findUnitaOperativaOrd.cdUnitaOperativa").writeIntoElement(CD_UNITA_OPERATIVA);
@@ -163,11 +162,9 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
     @Test
     @Order(3)
     public void testEvasioneConsegna() {
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doSelezionaMenu(ORD_EVAORD);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         doClickButton("doBlankSearch(main.findUnitaOperativaOrd)");
@@ -181,7 +178,7 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         GregorianCalendar dataBollaConsegna = (GregorianCalendar) GregorianCalendar.getInstance();
         dataBollaConsegna.set(Calendar.DAY_OF_MONTH,3);
         dataBollaConsegna.set(Calendar.MONTH,Calendar.JANUARY);
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("ddMMyyyy");
 
         getGrapheneElement("main.dataBolla").writeIntoElement(sdf.format(dataBollaConsegna.getTime().getTime()));
         doClickButton("doOnDtBollaChange");
@@ -251,12 +248,9 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         alert.accept();
 
         //Verifico che la scrittura sull'ordine nr. 1 sia stata eseguita correttamente
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
-
         doSelezionaMenu(ORD_ORDACQ_M);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         doClickButton("doNuovaRicerca()");
@@ -294,7 +288,7 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
 
         doClickButton("submitForm('doVisualizzaEconomica');");
 
-        Assertions.assertEquals("Si", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 
@@ -311,7 +305,7 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         doClickButton("doChiudiForm()");
         doClickButton("submitForm('doVisualizzaAnalitica');");
 
-        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleMov").getAttribute("value"));
 
         doClickButton("doTab('tab','tabMovimenti')");
@@ -360,7 +354,7 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
 
         doClickButton("submitForm('doVisualizzaEconomica');");
 
-        Assertions.assertEquals("Si", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 
@@ -377,7 +371,7 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         doClickButton("doChiudiForm()");
         doClickButton("submitForm('doVisualizzaAnalitica');");
 
-        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleMov").getAttribute("value"));
 
         doClickButton("doTab('tab','tabMovimenti')");
@@ -397,14 +391,12 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
     @Test
     @Order(4)
     public void testRiscontroValore001() {
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doApriMenu(AMM);
         doApriMenu(AMM_FATTUR);
         doApriMenu(AMM_FATTUR_FATPAS);
         doSelezionaMenu(AMM_FATTUR_FATPAS_ELE);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         getGrapheneElement("main.identificativoSdi").writeIntoElement("90000000000");
@@ -514,12 +506,9 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
     @Order(5)
     public void testVerificaScrittureOrdine() {
         //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
-
         doSelezionaMenu(ORD_ORDACQ_M);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         doClickButton("doNuovaRicerca()");
@@ -558,7 +547,7 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         doClickButton("submitForm('doVisualizzaEconomica');");
         getTableRowElement("mainTable",0).click();
 
-        Assertions.assertEquals("Si", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 
@@ -577,7 +566,7 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         doClickButton("submitForm('doVisualizzaEconomica');");
         getTableRowElement("mainTable",1).click();
 
-        Assertions.assertEquals("Si", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("1,22", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
         Assertions.assertEquals("1,22", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 
@@ -601,7 +590,7 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         doClickButton("submitForm('doVisualizzaAnalitica');");
         getTableRowElement("mainTable",0).click();
 
-        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleMov").getAttribute("value"));
 
         doClickButton("doTab('tab','tabMovimenti')");
@@ -617,7 +606,7 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         doClickButton("submitForm('doVisualizzaAnalitica');");
         getTableRowElement("mainTable",1).click();
 
-        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("1,22", getGrapheneElement("main.imTotaleMov").getAttribute("value"));
 
         doClickButton("doTab('tab','tabMovimenti')");
@@ -646,11 +635,9 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
     @Test
     @Order(6)
     public void testModificaRiscontroValore() {
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doSelezionaMenu(AMM_FATTUR_FATPAS_ELE);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         getGrapheneElement("main.identificativoSdi").writeIntoElement("90000000000");
@@ -758,12 +745,9 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
     @Order(7)
     public void testVerificaScrittureOrdineBis() {
         //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
-
         doSelezionaMenu(ORD_ORDACQ_M);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         //Cerco l'ordine DSA/1/1/1 per verificare che l'annullamento del riscontro a valore abbia rimesso i valori corretti
@@ -808,7 +792,7 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         //Seleziono la prima scrittura nata in fase di evasione che deve essere rimasta costante
         getTableRowElement("mainTable",0).click();
 
-        Assertions.assertEquals("Si", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 
@@ -857,7 +841,7 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         //Seleziono la prima scrittura nata in fase di evasione che deve essere rimasta costante
         getTableRowElement("mainTable",0).click();
 
-        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleMov").getAttribute("value"));
 
         doClickButton("doTab('tab','tabMovimenti')");
@@ -875,7 +859,7 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         //Seleziono la seconda scrittura nata in fase di riscontro a valore che deve essere stata annullata dopo lo scollegamento dalla fattura
         getTableRowElement("mainTable",1).click();
 
-        Assertions.assertEquals("N", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("N", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("1,22", getGrapheneElement("main.imTotaleMov").getAttribute("value"));
 
         doClickButton("doTab('tab','tabMovimenti')");
@@ -944,7 +928,7 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         //Seleziono la prima scrittura nata in fase di evasione che deve essere rimasta costante
         getTableRowElement("mainTable",0).click();
 
-        Assertions.assertEquals("Si", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 
@@ -966,7 +950,7 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         //Seleziono la seconda scrittura nata in fase di riscontro a valore
         getTableRowElement("mainTable",1).click();
 
-        Assertions.assertEquals("Si", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("1,22", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
         Assertions.assertEquals("1,22", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 
@@ -993,7 +977,7 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         //Seleziono la prima scrittura nata in fase di evasione che deve essere rimasta costante
         getTableRowElement("mainTable",0).click();
 
-        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleMov").getAttribute("value"));
 
         doClickButton("doTab('tab','tabMovimenti')");
@@ -1011,7 +995,7 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
         //Seleziono la seconda scrittura nata in fase di riscontro a valore
         getTableRowElement("mainTable",1).click();
 
-        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("1,22", getGrapheneElement("main.imTotaleMov").getAttribute("value"));
 
         doClickButton("doTab('tab','tabMovimenti')");
@@ -1040,11 +1024,9 @@ public class CRUDOrdineAcqBP001Test_IT extends ActionDeployments {
     @Test
     @Order(8)
     public void testRiscontroValore002() {
-        browser.switchTo().parentFrame();
         switchToFrameMenu();
         doSelezionaMenu(AMM_FATTUR_FATPAS_ELE);
 
-        browser.switchTo().parentFrame();
         switchToFrameWorkspace();
 
         getGrapheneElement("main.identificativoSdi").writeIntoElement("90000000001");
