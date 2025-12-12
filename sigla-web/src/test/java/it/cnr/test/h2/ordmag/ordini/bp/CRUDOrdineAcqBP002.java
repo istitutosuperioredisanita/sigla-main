@@ -195,9 +195,9 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         doClickButton("doSalva()");
 
         //Restituisce messaggio di creazione eseguita
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), handleTextAlert(browser));
+
 
         String pgOrdineCreated = getGrapheneElement("main.numero").getAttribute("value");
         sharedResource.setVal01(pgOrdineCreated);
@@ -210,9 +210,7 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         doClickButton("doSalva()");
 
         //Restituisce messaggio di salvataggio eseguito
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), alert.getText());
-        alert.accept();
+        Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), handleTextAlert(browser));
 
         //modifico lo stato portandolo ‘Definitivo’
         select.selectByValue("DEF");
@@ -221,9 +219,7 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         doClickButton("doSalva()");
 
         //Restituisce messaggio di assenza obbligazione
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals("Sulla consegna 2025/"+CD_NUMERATORE+"/"+pgOrdineCreated+"/1/1 non è indicata l'obbligazione", alert.getText());
-        alert.accept();
+        Assertions.assertEquals("Sulla consegna 2025/"+CD_NUMERATORE+"/"+pgOrdineCreated+"/1/1 non è indicata l'obbligazione", handleTextAlert(browser));
 
         //Ritorno sulla tab delle righe ordine
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
@@ -257,9 +253,8 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         //Salvo l'ordine
         doClickButton("doSalva()");
 
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), alert.getText());
-        alert.accept();
+        Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), handleTextAlert(browser));
+
     }
 
     @Test
@@ -320,9 +315,9 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
 
         //Salvo
         doClickButton("doSalva()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
+
     }
 
     @Test
@@ -349,9 +344,9 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         getGrapheneElement("main.numero").writeIntoElement(pgOrdineCreated);
 
         doClickButton("doCerca()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
+
 
         //Vado sul dettaglio
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
@@ -517,9 +512,9 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         getGrapheneElement("main.numero").writeIntoElement(pgOrdineCreated);
 
         doClickButton("doCerca()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
+
 
         //Vado sul dettaglio
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
@@ -614,9 +609,9 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
 
         //Salvo
         doClickButton("doSalva()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
+
 
         doClickButton("doChiudiForm()");
     }
@@ -645,9 +640,9 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         getGrapheneElement("main.numero").writeIntoElement(pgOrdineCreated);
 
         doClickButton("doCerca()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
+
 
         //Vado sul dettaglio
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
@@ -889,9 +884,9 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
 
         //Salvo
         doClickButton("doSalva()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
+
 
         doClickButton("doChiudiForm()");
     }
@@ -920,9 +915,9 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         getGrapheneElement("main.numero").writeIntoElement(pgOrdineCreated);
 
         doClickButton("doCerca()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
+
 
         //Vado sul dettaglio
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
@@ -1023,9 +1018,9 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         select.selectByValue("");
 
         doClickButton("doCerca()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
+
 
         //Clicco sul pulsante ‘Compila fattura’;
         doClickButton("submitForm('doCompilaFattura')");
@@ -1105,9 +1100,9 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         //Digito ‘Fine riscontro a valore’ e mi sposto sulla tab ‘dettaglio’ dove mi è stato creato il dettaglio pari alla riga ordine (200 imponibile + 44 IVA).
         doClickButton("submitForm('doConfermaRiscontroAValore')");
 
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals("Attenzione ci sono dettagli di fattura da contabilizzare.", alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals("Attenzione ci sono dettagli di fattura da contabilizzare.", handleTextAlert(browser));
+
 
         doSelectTableRow("main.Dettaglio",1);
 
@@ -1117,9 +1112,9 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
 
         doClickButton("doSalva()");
 
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals("Inserire il CIG o il motivo di assenza dello stesso!", alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals("Inserire il CIG o il motivo di assenza dello stesso!", handleTextAlert(browser));
+
 
         //Vado sulla tab obbligazioni
         doClickButton("doTab('tab','tabFatturaPassivaObbligazioni')");
@@ -1133,9 +1128,9 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
 
         doClickButton("doSalva()");
 
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), handleTextAlert(browser));
+
 
         //Vado sulla tab principale
         doClickButton("doTab('tab','tabFatturaPassiva')");
@@ -1201,9 +1196,9 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         getGrapheneElement("main.numero").writeIntoElement(pgOrdineCreated);
 
         doClickButton("doCerca()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
-        alert.accept();
+
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
+
 
         //Vado sul dettaglio
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
@@ -1275,9 +1270,9 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
 
         doClickButton("doCerca()");
 
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
+
 
         doClickButton("doTab('tab','tabFatturaPassivaOrdini')");
 
@@ -1288,9 +1283,9 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
 
         doClickButton("doSalva()");
 
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals("Squadratura dettagli IVA con la fattura elettronica per le aliquote IVA: 22.00!", alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals("Squadratura dettagli IVA con la fattura elettronica per le aliquote IVA: 22.00!", handleTextAlert(browser));
+
 
         //Vado sulla tab ‘Dettaglio’
         doClickButton("doTab('tab','tabFatturaPassivaDettaglio')");
@@ -1302,9 +1297,9 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         //Vado sulla testata fattura e
         doClickButton("doTab('tab','tabFatturaPassiva')");
 
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals("Attenzione: il totale dei dettagli di 0.00 (Imponibile + IVA) non corrisponde al totale di 249.00 EUR della testata fattura!", alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals("Attenzione: il totale dei dettagli di 0.00 (Imponibile + IVA) non corrisponde al totale di 249.00 EUR della testata fattura!", handleTextAlert(browser));
+
 
         //Indico che è ‘non da ordini’.
         getGrapheneElement("main.flDaOrdini").click();
@@ -1335,9 +1330,9 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
 
         doClickButton("doSalva()");
 
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), handleTextAlert(browser));
+
 
         //La scrittura contabile riporta (correttamente):
         doClickButton("doTab('tab','tabEconomica')");
@@ -1387,9 +1382,9 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         select.selectByValue("");
 
         doClickButton("doCerca()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
+
 
         //Clicco sul pulsante ‘Compila fattura’;
         doClickButton("submitForm('doCompilaFattura')");
@@ -1430,9 +1425,9 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
 
         doClickButton("doSalva()");
 
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), handleTextAlert(browser));
+
 
         //Vado sulla tab principale
         doClickButton("doTab('tab','tabFatturaPassiva')");

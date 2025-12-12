@@ -22,7 +22,6 @@
     </extension>
     <extension qualifier="webdriver">
         <property name="browser">chrome</property>
-        <property name="implicitWait">5000</property>
         <property name="chromeArguments">
             --headless=new,
             --no-sandbox,

@@ -71,9 +71,8 @@ public class TestataProgettiRicercaBPTest extends ActionDeployments {
         doClickButton("doSearch(main.find_programma)");
 
         doClickButton("doSalva()");
-        final Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
-        alert.accept();
+        String textAlert = handleTextAlert(browser);
+        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), textAlert);
 
     }
 
@@ -103,17 +102,14 @@ public class TestataProgettiRicercaBPTest extends ActionDeployments {
 
         doClickButton("doSalva()");
 
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_INDICARE_FASE_PROGETTO.value(), alert.getText());
-        alert.accept();
+        String textAlert = handleTextAlert(browser);
+        Assertions.assertEquals(AlertMessage.MESSAGE_INDICARE_FASE_PROGETTO.value(), textAlert);
 
         getGrapheneElement("main.fl_previsione").click();
 
         doClickButton("doSalva()");
 
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
-
-        alert.accept();
+        textAlert = handleTextAlert(browser);
+        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), textAlert);
     }
 }

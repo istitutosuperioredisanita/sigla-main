@@ -144,9 +144,9 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
 
         //Salvo
         doClickButton("doSalva()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
+
     }
 
     /**
@@ -178,9 +178,9 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         getGrapheneElement("main.numero").writeIntoElement("1");
 
         doClickButton("doCerca()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
+
 
         //Vado sul dettaglio analitico a livello di Ordine
         doClickButton("doTab('tab','tabOrdineResultDetailEcoCoge')");
@@ -388,9 +388,9 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
 
         //Salvo
         doClickButton("doSalva()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
+
     }
 
     /**
@@ -419,9 +419,9 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         getGrapheneElement("main.numero").writeIntoElement("1");
 
         doClickButton("doCerca()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
+
 
         //Vado sul dettaglio analitico a livello di Ordine
         doClickButton("doTab('tab','tabOrdineResultDetailEcoCoge')");
@@ -509,9 +509,9 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         select.selectByValue("");
 
         doClickButton("doCerca()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
+
 
         //Clicco sul pulsante ‘Compila fattura’;
         doClickButton("submitForm('doCompilaFattura')");
@@ -561,15 +561,15 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         //Digito ‘Fine riscontro a valore’
         doClickButton("submitForm('doConfermaRiscontroAValore')");
 
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
+
 
         doClickButton("doSalva()");
 
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), handleTextAlert(browser));
+
 
         //Vado sulla tab principale
         doClickButton("doTab('tab','tabFatturaPassiva')");
@@ -618,9 +618,9 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         select.selectByValue("");
 
         doClickButton("doCerca()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
+
 
         //Clicco sul pulsante ‘Compila fattura’;
         doClickButton("submitForm('doCompilaFattura')");
@@ -670,15 +670,15 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         //Digito ‘Fine riscontro a valore’
         doClickButton("submitForm('doConfermaRiscontroAValore')");
 
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
+
 
         doClickButton("doSalva()");
 
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), handleTextAlert(browser));
+
 
         //Vado sulla tab principale
         doClickButton("doTab('tab','tabFatturaPassiva')");
@@ -734,9 +734,9 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         getGrapheneElement("main.numero").writeIntoElement("1");
 
         doClickButton("doCerca()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
+
 
         //Vado sul dettaglio analitico a livello di Ordine
         doClickButton("doTab('tab','tabOrdineResultDetailEcoCoge')");
@@ -802,18 +802,18 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
 
         //Mi ritorna "Scrittura Economica non presente!" perchè avvenuta in periodo precedente
         //dove l'evasione non ha generato scritture
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals("Scrittura Economica non presente!", alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals("Scrittura Economica non presente!", handleTextAlert(browser));
+
 
         //Entro su ‘scrittura analitica’.
         doClickButton("submitForm('doVisualizzaAnalitica');");
 
         //Mi ritorna "Scrittura Analitica non presente!" perchè avvenuta in periodo precedente
         //dove l'evasione non ha generato scritture
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals("Scrittura Analitica non presente!", alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals("Scrittura Analitica non presente!", handleTextAlert(browser));
+
 
         //Mi posiziono sulla consegna 3
         rowElement2.click();

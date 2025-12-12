@@ -173,9 +173,9 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         doClickButton("doSalva()");
 
         //Restituisce messaggio di creazione eseguita
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), handleTextAlert(browser));
+
 
         String pgOrdineCreated = getGrapheneElement("main.numero").getAttribute("value");
         sharedResource.setVal01(pgOrdineCreated);
@@ -188,9 +188,9 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         doClickButton("doSalva()");
 
         //Restituisce messaggio di salvataggio eseguito
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), handleTextAlert(browser));
+
 
         //modifico lo stato portandolo ‘Definitivo’
         select.selectByValue("DEF");
@@ -199,9 +199,9 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         doClickButton("doSalva()");
 
         //Restituisce messaggio di assenza obbligazione
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals("Sulla consegna 2025/"+CD_NUMERATORE+"/"+pgOrdineCreated+"/1/1 non è indicata l'obbligazione", alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals("Sulla consegna 2025/"+CD_NUMERATORE+"/"+pgOrdineCreated+"/1/1 non è indicata l'obbligazione", handleTextAlert(browser));
+
 
         //Ritorno sulla tab delle righe ordine
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
@@ -235,9 +235,9 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         //Salvo l'ordine
         doClickButton("doSalva()");
 
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), handleTextAlert(browser));
+
     }
 
     /**
@@ -293,9 +293,9 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
 
         //Salvo
         doClickButton("doSalva()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
+
     }
 
     /**
@@ -325,9 +325,9 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         getGrapheneElement("main.numero").writeIntoElement(pgOrdineCreated);
 
         doClickButton("doCerca()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
+
 
         //Vado sul dettaglio analitico a livello di Ordine
         doClickButton("doTab('tab','tabOrdineResultDetailEcoCoge')");
@@ -400,9 +400,9 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         doClickButton("submitForm('doVisualizzaAnalitica');");
 
         //Restituisce messaggio di "Scrittura Analitica non presente!"
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals("Scrittura Analitica non presente!", alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals("Scrittura Analitica non presente!", handleTextAlert(browser));
+
 
         doClickButton("doChiudiForm()");
     }
@@ -424,9 +424,9 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
 
         //Ricerco l’unico bene in transito
         doClickButton("doCerca()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
+
 
         Assertions.assertEquals("Inserito", getGrapheneElement("main.stato").getAttribute("value"));
 
@@ -449,9 +449,9 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
 
         //Salvo
         doClickButton("doSalva()");
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), handleTextAlert(browser));
+
 
         //Il transito del bene deve acquisita stato "Completo"
         Assertions.assertEquals("Completo", getGrapheneElement("main.stato").getAttribute("value"));
@@ -532,9 +532,9 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
 
         //Ricerco l’unico bene in transito
         doClickButton("doCerca()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_NO_RECORD.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_NO_RECORD.value(), handleTextAlert(browser));
+
 
         doClickButton("doChiudiForm()");
     }
@@ -592,9 +592,9 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
 
         //Salvo
         doClickButton("doSalva()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
+
     }
 
     /**
@@ -611,9 +611,9 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
 
         //Ricerco l’unico bene in transito
         doClickButton("doCerca()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
+
 
         Assertions.assertEquals("Inserito", getGrapheneElement("main.stato").getAttribute("value"));
 
@@ -636,9 +636,9 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
 
         //Salvo
         doClickButton("doSalva()");
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), handleTextAlert(browser));
+
 
         //Il transito del bene deve acquisita stato "Completo"
         Assertions.assertEquals("Completo", getGrapheneElement("main.stato").getAttribute("value"));
@@ -693,9 +693,9 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         //Salvo
         doClickButton("doSalva()");
 
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), handleTextAlert(browser));
+
 
         doClickButton("doChiudiForm()");
         doClickButton("doChiudiForm()");
@@ -753,9 +753,9 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         //Digito il pulsante ‘Annulla Movimenti Selezionati’.
         doClickButton("submitForm('doAnnullaMovimenti');");
 
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals("Operazione non possibile! Il bene associato al movimento " + getTableColumnElement(element.get(), 1).getText() + " risulta essere inventariato.", alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals("Operazione non possibile! Il bene associato al movimento " + getTableColumnElement(element.get(), 1).getText() + " risulta essere inventariato.", handleTextAlert(browser));
+
 
         //Chiudo la form (2 volte perchè sono 2 BP aperti)
         doClickButton("doChiudiForm()");
@@ -779,9 +779,9 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         select.selectByValue("");
 
         doClickButton("doCerca()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
+
 
         //Clicco sul pulsante ‘Compila fattura’;
         doClickButton("submitForm('doCompilaFattura')");
@@ -840,15 +840,15 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         //Digito ‘Fine riscontro a valore’ e mi sposto sulla tab ‘dettaglio’ dove mi è stato creato il dettaglio pari alla riga ordine (200 imponibile + 44 IVA).
         doClickButton("submitForm('doConfermaRiscontroAValore')");
 
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
+
 
         doClickButton("doSalva()");
 
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), handleTextAlert(browser));
+
 
         //Vado sulla tab principale
         doClickButton("doTab('tab','tabFatturaPassiva')");
@@ -903,9 +903,9 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         getGrapheneElement("main.numero").writeIntoElement(pgOrdineCreated);
 
         doClickButton("doCerca()");
-        Alert alert = browser.switchTo().alert();
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), alert.getText());
-        alert.accept();
+        
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
+
 
         //Vado sul dettaglio
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
