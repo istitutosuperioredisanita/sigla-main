@@ -20,7 +20,7 @@ package it.cnr.contab.config00.bp;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 
-public class GestConfCNRBP extends it.cnr.jada.util.action.ConsultazioniBP {
+public class GestConfCNRBP extends it.cnr.jada.util.action.SimpleCRUDBP {
 public GestConfCNRBP() {
 	super();
 }
@@ -28,11 +28,20 @@ protected void init(it.cnr.jada.action.Config config, ActionContext context) thr
 	try {
 		super.init(config,context);
 
-        setFreeSearchSet("CONS_CONF_TOTALE");
-		setColumns(getBulkInfo().getColumnFieldPropertyDictionary("CONS_CONF_TOTALE"));
+        //setFreeSearchSet("CONS_CONF_TOTALE");
+		//setColumns(getBulkInfo().getColumnFieldPropertyDictionary("CONS_CONF_TOTALE"));
 	}catch(Throwable e) { 
 		throw new BusinessProcessException(e);
 	}
 }
 
+    @Override
+    public boolean isDeleteButtonHidden() {
+        return true;
+    }
+
+    @Override
+    public boolean isNewButtonHidden() {
+        return true;
+    }
 }
