@@ -17,6 +17,25 @@
 
 package it.cnr.contab.doccont00.action;
 
+import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.action.Forward;
+import it.cnr.jada.util.action.CRUDBP;
+
+import java.rmi.RemoteException;
+
 public class CRUDObbligazioneModificaAction extends it.cnr.jada.util.action.CRUDAction {
 
+    public Forward doElimina(ActionContext actioncontext)
+            throws RemoteException {
+        try {
+            fillModel(actioncontext);
+            CRUDBP crudbp = getBusinessProcess(actioncontext);
+            crudbp.delete(actioncontext);
+            crudbp.reset(actioncontext);
+            crudbp.setMessage("Cancellazione effettuata");
+            return actioncontext.closeBusinessProcess();
+        } catch (Throwable throwable) {
+            return handleException(actioncontext, throwable);
+        }
+    }
 }
