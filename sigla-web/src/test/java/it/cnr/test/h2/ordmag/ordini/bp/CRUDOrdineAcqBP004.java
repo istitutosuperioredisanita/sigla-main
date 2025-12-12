@@ -20,7 +20,6 @@ package it.cnr.test.h2.ordmag.ordini.bp;
 import it.cnr.test.h2.utenze.action.ActionDeployments;
 import it.cnr.test.util.AlertMessage;
 import it.cnr.test.util.SharedResource;
-import org.jboss.arquillian.container.test.api.BeforeDeployment;
 import org.jboss.arquillian.graphene.GrapheneElement;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.Alert;
@@ -39,7 +38,8 @@ import java.util.Optional;
  * 5) verifica scrittura economica/analitica su consegna
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CRUDOrdineAcqBP004Test_IT extends ActionDeployments {
+@Order(4)
+public class CRUDOrdineAcqBP004 extends ActionDeployments {
     private static final SharedResource sharedResource = new SharedResource();
 
     public static final String USERNAME = "ENTETEST";

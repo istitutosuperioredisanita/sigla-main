@@ -27,9 +27,7 @@ import org.jboss.arquillian.graphene.GrapheneElement;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -218,5 +216,21 @@ public class ActionDeployments extends DeploymentsH2 {
         Optional.ofNullable(rowElement.findElement(By.name(name)))
                 .orElseThrow(() -> new RuntimeException("Cannot find Element selection in Element <tr> with name " + elementName))
                 .click();
+    }
+
+    public String handleTextAlert(WebDriver driver) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+
+            String alertText = alert.getText();
+
+            alert.accept(); // Clicca OK
+
+            return alertText;
+        } catch (NoAlertPresentException | TimeoutException e) {
+            LOGGER.error("Nessun alert presente");
+            return null;
+        }
     }
 }

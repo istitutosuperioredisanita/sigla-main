@@ -41,7 +41,8 @@ import java.util.Optional;
  * 8) registrazione nota credito di annullamento totale fattura creata
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CRUDOrdineAcqBP002Test extends ActionDeployments {
+@Order(2)
+public class CRUDOrdineAcqBP002 extends ActionDeployments {
     private static final SharedResource sharedResource = new SharedResource();
 
     public static final String USERNAME = "ENTETEST";

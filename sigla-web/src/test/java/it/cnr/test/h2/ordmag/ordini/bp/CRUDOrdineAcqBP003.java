@@ -43,7 +43,8 @@ import java.util.Optional;
  * 10) annullamento evasione riga consegna non consentita per bene inventariato
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CRUDOrdineAcqBP003Test_IT extends ActionDeployments {
+@Order(3)
+public class CRUDOrdineAcqBP003 extends ActionDeployments {
     private static final SharedResource sharedResource = new SharedResource();
 
     public static final String USERNAME = "ENTETEST";

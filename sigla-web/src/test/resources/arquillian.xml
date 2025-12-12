@@ -22,7 +22,16 @@
     </extension>
     <extension qualifier="webdriver">
         <property name="browser">chrome</property>
-        <property name="chromeArguments">--headless=new,--no-sandbox</property>
+        <property name="implicitWait">5000</property>
+        <property name="chromeArguments">
+            --headless=new,
+            --no-sandbox,
+            --disable-gpu,
+            --disable-dev-shm-usage,
+            --disable-extensions,
+            --disable-software-rasterizer,
+            --window-size=1920,1080
+        </property>
     </extension>
     <container qualifier="wildfly-bootable" default="true" >
         <configuration>

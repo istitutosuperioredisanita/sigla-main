@@ -40,7 +40,8 @@ import java.util.Optional;
  * 7) registrazione fattura con riscontro valore su riga consegna scollegata in fase di annullamento riscontro a valore di cui al punto 5
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CRUDOrdineAcqBP001Test extends ActionDeployments {
+@Order(1)
+public class CRUDOrdineAcqBP001 extends ActionDeployments {
     public static final String USERNAME = "ENTETEST";
     public static final String PASSWORD = "PASSTEST";
 
@@ -137,9 +138,8 @@ public class CRUDOrdineAcqBP001Test extends ActionDeployments {
 
         doClickButton("doSalva()");
 
-        alert = browser.switchTo().alert();
-        Assertions.assertEquals("Sulla consegna 2025/"+CD_NUMERATORE+"/"+pgProgetto+"/1/1 non è indicata l'obbligazione", alert.getText());
-        alert.accept();
+        String textAlert = handleTextAlert(browser);
+        Assertions.assertEquals("Sulla consegna 2025/"+CD_NUMERATORE+"/"+pgProgetto+"/1/1 non è indicata l'obbligazione", textAlert);
 
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
 
