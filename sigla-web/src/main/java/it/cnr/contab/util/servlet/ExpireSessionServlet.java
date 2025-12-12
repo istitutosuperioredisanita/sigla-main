@@ -102,25 +102,25 @@ public class ExpireSessionServlet extends HttpServlet implements Serializable, H
 			sessionTrace.setToBeCreated();
 			createCRUDComponentSession().creaConBulk(new CNRUserContext("SESSIONTRACE",se.getSession().getId(),null,null,null,null), sessionTrace);
 		} catch (Exception e) {
+			log.trace("Session Created failed", e);
 		}
 		sessionObjects.put(se.getSession().getId(),se.getSession());
 	}
+
 	public void sessionDestroyed(HttpSessionEvent se) {
 		UserContext userContext = (UserContext) se.getSession().getAttribute("UserContext");
 		try {
 			Optional.ofNullable(userContext)
 					.ifPresent(userContext1 -> {
 						try {
-							StringBuffer infoUser = new StringBuffer();
-							infoUser.append("LogOut User:"+userContext1.getUser());
-							log.warn(infoUser.toString());
+                            log.warn("LogOut User:" + userContext1.getUser());
 							createGestioneLoginComponentSession().unregisterUser(userContext1);
 						} catch (ComponentException|RemoteException e) {
-							log.error("", e);
+							log.trace("", e);
 						}
 					});
 		} catch (Exception e) {
-			log.error("Delete SESSIONTRACE failed", e);
+			log.trace("Delete SESSIONTRACE failed", e);
 		}
 		HttpEJBCleaner httpejbcleaner = (HttpEJBCleaner)se.getSession().getAttribute("it.cnr.jada.util.ejb.HttpEJBCleaner");
 		if (httpejbcleaner != null)
