@@ -20,7 +20,6 @@ package it.cnr.test.h2.ordmag.ordini.bp;
 import it.cnr.test.h2.utenze.action.ActionDeployments;
 import it.cnr.test.util.AlertMessage;
 import it.cnr.test.util.SharedResource;
-import org.jboss.arquillian.container.test.api.BeforeDeployment;
 import org.jboss.arquillian.graphene.GrapheneElement;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.Alert;
@@ -41,7 +40,8 @@ import java.util.Optional;
  * 7) modifica fattura con annullamento riscontro valore
  * 8) registrazione nota credito di annullamento totale fattura creata
  */
-public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class CRUDOrdineAcqBP002Test extends ActionDeployments {
     private static final SharedResource sharedResource = new SharedResource();
 
     public static final String USERNAME = "ENTETEST";
@@ -77,7 +77,7 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
 
     public static final String BENE_SERVIZIO_CODICE_01 = "191202";
 
-    public static final String DATA_ODIERNA = "25/10/2025";
+    public static final String DATA_ODIERNA = "25102025";
 
     @Test
     @Order(1)
@@ -1040,8 +1040,8 @@ public class CRUDOrdineAcqBP002Test_IT extends ActionDeployments {
         select = new Select(getGrapheneElement("main.causale"));
         select.selectByValue("ATTNC");
 
-        //Indico ‘fattura da Ordini =Si
-        getGrapheneElement("main.flDaOrdini").click();
+        //Verifico che fattura da Ordini=Si
+        Assertions.assertTrue(getGrapheneElement("main.flDaOrdini").isSelected());
 
         getGrapheneElement("main.ds_fattura_passiva").writeIntoElement("RISCONTRO VALORE TEST");
 

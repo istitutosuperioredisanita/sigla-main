@@ -38,6 +38,7 @@ import java.util.Optional;
  * 4) nuova evasione riga consegna
  * 5) verifica scrittura economica/analitica su consegna
  */
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CRUDOrdineAcqBP004Test_IT extends ActionDeployments {
     private static final SharedResource sharedResource = new SharedResource();
 
@@ -79,7 +80,7 @@ public class CRUDOrdineAcqBP004Test_IT extends ActionDeployments {
 
     public static final String BENE_SERVIZIO_CODICE_01 = "19001";
 
-    public static final String DATA_ODIERNA = "25/10/2025";
+    public static final String DATA_ODIERNA = "25102025";
 
     @Test
     @Order(1)
@@ -522,8 +523,8 @@ public class CRUDOrdineAcqBP004Test_IT extends ActionDeployments {
         select = new Select(getGrapheneElement("main.stato_liquidazione"));
         select.selectByValue("LIQ");
 
-        //Indico ‘fattura da Ordini =Si
-        getGrapheneElement("main.flDaOrdini").click();
+        //Verifico che fattura da Ordini=Si
+        Assertions.assertTrue(getGrapheneElement("main.flDaOrdini").isSelected());
 
         getGrapheneElement("main.ds_fattura_passiva").writeIntoElement("RISCONTRO VALORE TEST ORDINE EVASO ANNO PRECEDENTE");
 
@@ -631,8 +632,8 @@ public class CRUDOrdineAcqBP004Test_IT extends ActionDeployments {
         select = new Select(getGrapheneElement("main.stato_liquidazione"));
         select.selectByValue("LIQ");
 
-        //Indico ‘fattura da Ordini =Si
-        getGrapheneElement("main.flDaOrdini").click();
+        //Verifico che fattura da Ordini=Si
+        Assertions.assertTrue(getGrapheneElement("main.flDaOrdini").isSelected());
 
         getGrapheneElement("main.ds_fattura_passiva").writeIntoElement("RISCONTRO VALORE TEST ORDINE EVASO ANNO PRECEDENTE");
 

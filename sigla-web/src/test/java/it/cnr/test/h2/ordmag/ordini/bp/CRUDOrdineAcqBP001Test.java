@@ -416,7 +416,8 @@ public class CRUDOrdineAcqBP001Test extends ActionDeployments {
         select = new Select(getGrapheneElement("main.stato_liquidazione"));
         select.selectByValue("LIQ");
 
-        getGrapheneElement("main.flDaOrdini").click();
+        //Verifico che fattura da Ordini=Si
+        Assertions.assertTrue(getGrapheneElement("main.flDaOrdini").isSelected());
 
         getGrapheneElement("main.ds_fattura_passiva").writeIntoElement("RISCONTRO VALORE TEST");
 
@@ -814,7 +815,7 @@ public class CRUDOrdineAcqBP001Test extends ActionDeployments {
         //Seleziono la seconda scrittura nata in fase di riscontro a valore che deve essere stata annullata dopo lo scollegamento dalla fattura
         getTableRowElement("mainTable",1).click();
 
-        Assertions.assertEquals("No", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("N", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("1,22", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
         Assertions.assertEquals("1,22", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 
@@ -1045,15 +1046,14 @@ public class CRUDOrdineAcqBP001Test extends ActionDeployments {
 
         getGrapheneElement("comando.doYes").click();
 
-        System.out.println("1 - " +browser.getPageSource().contains("Fattura Passiva - Inserimento"));
-
         select = new Select(getGrapheneElement("main.stato_liquidazione"));
         select.selectByValue("NOLIQ");
 
         select = new Select(getGrapheneElement("main.causale"));
         select.selectByValue("ATTNC");
 
-        getGrapheneElement("main.flDaOrdini").click();
+        //Verifico che fattura da Ordini=Si
+        Assertions.assertTrue(getGrapheneElement("main.flDaOrdini").isSelected());
 
         getGrapheneElement("main.ds_fattura_passiva").writeIntoElement("RISCONTRO VALORE TEST");
 
