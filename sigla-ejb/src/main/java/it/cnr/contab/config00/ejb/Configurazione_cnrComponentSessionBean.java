@@ -1274,7 +1274,6 @@ public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUD
         }
     }
 
-
     @Override
     public Boolean isEnabledPartGiroInVarizione(UserContext userContext) throws ComponentException, RemoteException {
         try {
@@ -1294,4 +1293,20 @@ public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUD
         }
     }
 
-}
+    @Override
+    public void ribaltaProgetti(UserContext userContext, int esercizio) throws ComponentException, RemoteException {
+        try {
+            ((Configurazione_cnrComponent)componentObj).ribaltaProgetti(userContext, esercizio);
+            component_invocation_succes(userContext, componentObj);
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+        } catch (ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }}

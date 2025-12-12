@@ -1,7 +1,14 @@
 package it.cnr.contab.config00.bp;
 
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
+import it.cnr.contab.config00.comp.Configurazione_cnrComponent;
+import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
+import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
+import it.cnr.contab.cori00.docs.bulk.Liquid_gruppo_centroBulk;
+import it.cnr.contab.cori00.ejb.Liquid_coriComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.util.Utility;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.ActionPerformingError;
 import it.cnr.jada.action.BusinessProcessException;
@@ -12,6 +19,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.RicercaComponentSession;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
+import it.cnr.jada.persistency.sql.LoggableStatement;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.OrderConstants;
 import it.cnr.jada.util.RemoteIterator;
@@ -20,6 +28,7 @@ import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.jada.util.action.RemoteDetailCRUDController;
 import it.cnr.jada.util.jsp.Button;
 
+import javax.ejb.EJBException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Optional;
@@ -119,7 +128,8 @@ public class SelezionatoreStepFineAnnoBP extends BulkBP {
     protected Button[] createToolbar() {
         final Properties properties = it.cnr.jada.util.Config.getHandler().getProperties(CRUDBP.class);
         return Stream.of(
-                        new Button(properties, "CRUDToolbar.save")
+                        new Button(properties, "CRUDToolbar.save"),
+                        new Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()), "CRUDToolbar.ribaltaProgetti")
                 ).toArray(Button[]::new);
     }
 
@@ -136,5 +146,14 @@ public class SelezionatoreStepFineAnnoBP extends BulkBP {
                 )
                 .map(configurazioneCnrBulk -> "STEP_FINE_ANNO_ONLY_DATE")
                 .orElse(Configurazione_cnrBulk.PK_STEP_FINE_ANNO);
+    }
+
+    public void ribaltaProgetti(ActionContext context) throws BusinessProcessException {
+        try{
+            Configurazione_cnrComponentSession sess = Utility.createConfigurazioneCnrComponentSession();
+            sess.ribaltaProgetti(context.getUserContext(), CNRUserContext.getEsercizio(context.getUserContext()));
+        }catch(EJBException | RemoteException | ComponentException e){
+            throw handleException(e);
+        }
     }
 }

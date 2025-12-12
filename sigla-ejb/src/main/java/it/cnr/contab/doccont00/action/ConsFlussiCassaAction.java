@@ -46,9 +46,9 @@ public class ConsFlussiCassaAction extends BulkAction{
 
 				ri = it.cnr.jada.util.ejb.EJBCommonServices.openRemoteIterator(context,ri);
 				if (ri.countElements() == 0) {
+					it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context,ri);
 					throw new it.cnr.jada.comp.ApplicationException("Attenzione: Nessun dato disponibile");
 				}
-				it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context,ri);
 				SelezionatoreListaBP selezionatorelistabp = (SelezionatoreListaBP) context.createBusinessProcess("Selezionatore");
 				selezionatorelistabp.setIterator(context, ri);
 				selezionatorelistabp.setBulkInfo(it.cnr.jada.bulk.BulkInfo.getBulkInfo(FlussiDiCassaDtoBulk.class));
@@ -57,9 +57,6 @@ public class ConsFlussiCassaAction extends BulkAction{
 						
 			} catch (Exception e) {
 					return handleException(context,e); 
-			}finally {
-				if (Optional.ofNullable(ri).isPresent())
-					it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context,ri);
 			}
 	}
 
