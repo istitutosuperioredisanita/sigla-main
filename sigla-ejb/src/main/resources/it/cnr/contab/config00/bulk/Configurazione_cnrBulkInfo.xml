@@ -20,16 +20,19 @@
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xmlns="https://contab.cnr.it/schema/SIGLA" 
 		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+    <fieldProperty
+            name="im01"
+            property="im01"
+            inputType="TEXT"
+            label="im01"
+            enabledOnSearch="true"
+            enabledOnFreeSearch="true"
+    />
 	<fieldProperty
 		name="im02"
 		property="im02"
 		inputType="TEXT"
 		label="im02" />
-	<fieldProperty
-		name="im01"
-		property="im01"
-		inputType="TEXT"
-		label="im01" />
 	<fieldProperty
 		name="dt02"
 		property="dt02"

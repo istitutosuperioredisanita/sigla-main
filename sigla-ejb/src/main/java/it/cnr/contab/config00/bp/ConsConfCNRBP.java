@@ -26,7 +26,8 @@ import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
 public class ConsConfCNRBP extends it.cnr.jada.util.action.ConsultazioniBP {
-public ConsConfCNRBP() {
+
+    public ConsConfCNRBP() {
 	super();
 }
 protected void init(it.cnr.jada.action.Config config, ActionContext context) throws BusinessProcessException {
@@ -35,6 +36,7 @@ protected void init(it.cnr.jada.action.Config config, ActionContext context) thr
 
         setFreeSearchSet("CONS_CONF_TOTALE");
 		setColumns(getBulkInfo().getColumnFieldPropertyDictionary("CONS_CONF_TOTALE"));
+
 	}catch(Throwable e) { 
 		throw new BusinessProcessException(e);
 	}
