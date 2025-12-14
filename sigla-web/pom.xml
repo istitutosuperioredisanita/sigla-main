@@ -160,7 +160,7 @@
                 <artifactId>wildfly-jar-maven-plugin</artifactId>
                 <version>${version.wildfly.maven.plugin}</version>
                 <configuration>
-                    <jvmArguments>-Xmx2g -Xms1g -XX:MaxMetaspaceSize=512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787 -Dcors.allow-origin=${cors.allow-origin} -Dspring.profiles.active=${spring.profiles.active}</jvmArguments>
+                    <jvmArguments>-Xmx2g -Xms1g -XX:MaxMetaspaceSize=512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787 -Dcors.allow-origin=${cors.allow-origin}</jvmArguments>
                     <feature-packs>
                         <feature-pack>
                             <location>wildfly@maven(org.jboss.universe:community-universe)#${version.wildfly}</location>
