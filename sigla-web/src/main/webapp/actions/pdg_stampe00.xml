@@ -392,4 +392,15 @@
    	<action
 		path="/StampaSituazioneSinteticaXProgettoAction" actionClass="it.cnr.contab.pdg00.action.StampaSituazioneSinteticaXProgettoAction">
 	</action>
+
+	<businessProcess name="ConsRendicontoFlussiCassaBP"
+					 className="it.cnr.contab.doccont00.bp.ConsFlussiCassaBP">
+		<forward name="default" path="/doccont00/cons_flussi_cassa.jsp" />
+		<init-param name="bulkClassName"
+					value="it.cnr.contab.doccont00.consultazioni.bulk.FlussiDiCassaDtoBulk" />
+		<init-param name="componentSessionName"
+					value="CNRDOCCONT00_EJB_ConsRiepilogoSiopeComponentSession" />
+		<init-param name="defaultAction" value="ConsFlussiCassaAction" />
+		<init-param name="RENDICONTO" value="true"/>
+	</businessProcess>
 </action-mappings>
