@@ -38,7 +38,6 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Base64Utils;
 
 import jakarta.ejb.Stateless;
 import jakarta.servlet.http.HttpServletRequest;
@@ -203,7 +202,7 @@ public class AccountResource implements AccountLocal {
             for (int j = 0;j < buser.length;j++)
                 bpassword[i] ^= buser[j] ^ h;
         }
-        utente.setPassword( Base64Utils.encodeToString(bpassword));
+        utente.setPassword( Base64.getEncoder().encodeToString(bpassword));
         utente.setDt_ultima_var_password(EJBCommonServices.getServerTimestamp());
         utente.setToBeUpdated();
         crudComponentSession.modificaConBulk(userContext, utente);
