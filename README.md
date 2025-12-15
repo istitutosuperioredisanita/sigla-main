@@ -89,6 +89,16 @@ SIGLA è concesso in licenza GNU AFFERO GENERAL PUBLIC LICENSE, come si trova ne
 
 [l]: https://github.com/consiglionazionaledellericerche/cool-jconon/blob/master/LICENSE
 
+# Startup
+Per avviare l'applicazione SIGLA in locale, bisogna prima compilare i sorgenti senza far eseguire i test
+```
+mvn clean package -DskipTests
+```
+Successivamente si può avviare l'applicazione con H2 in memoria avendo anche cura di cambiare la password di admin nello script [management-admin-user.cli](sigla-web/src/main/scripts/management-admin-user.cli#L8)
+```
+java -jar sigla-web/target/sigla-bootable.jar --properties=sigla-web/src/main/resources/application-h2.properties --cli-script=sigla-web/src/main/scripts/management-admin-user.cli
+```
+
 # 🐳 Startup Docker
 
 #### _Per avviare una istanza di SIGLA con h2 in memoria_ 

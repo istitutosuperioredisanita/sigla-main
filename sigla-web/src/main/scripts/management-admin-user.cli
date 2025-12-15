@@ -1,0 +1,10 @@
+# ============================================================================
+# CONFIGURAZIONE AUTENTICAZIONE MANAGEMENT CONSOLE
+# ============================================================================
+
+echo "=== Configurazione Management Console Authentication ==="
+
+# Cambiata la password dell'utente admin
+/subsystem=elytron/filesystem-realm=ManagementFsRealm:set-password(identity=admin, clear={password="pippo"})
+
+echo "Management Console authentication configurata."

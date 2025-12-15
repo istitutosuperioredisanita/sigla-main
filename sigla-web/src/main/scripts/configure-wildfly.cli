@@ -2,6 +2,54 @@
 # Sostituisce project-stages.yml
 
 # ============================================================================
+# CONFIGURAZIONE AUTENTICAZIONE MANAGEMENT CONSOLE (SEMPLIFICATA)
+# ============================================================================
+
+echo "=== Configurazione Management Console Authentication ==="
+
+# 1. Crea solo il Filesystem Realm
+/subsystem=elytron/filesystem-realm=ManagementFsRealm:add( \
+    path=management-realm-users, \
+    relative-to=jboss.server.config.dir \
+)
+
+# 2. Aggiungi utente admin
+/subsystem=elytron/filesystem-realm=ManagementFsRealm:add-identity(identity=admin)
+/subsystem=elytron/filesystem-realm=ManagementFsRealm:set-password(identity=admin, clear={password="admin"})
+/subsystem=elytron/filesystem-realm=ManagementFsRealm:add-identity-attribute(identity=admin, name=Roles, value=["Administrator","SuperUser"])
+
+# 3. Crea un nuovo Security Domain dedicato
+/subsystem=elytron/security-domain=ManagementCustomDomain:add( \
+    realms=[{realm=ManagementFsRealm, role-decoder=groups-to-roles}], \
+    default-realm=ManagementFsRealm, \
+    permission-mapper=default-permission-mapper \
+)
+
+# 4. Crea HTTP Authentication Factory custom
+/subsystem=elytron/http-authentication-factory=management-custom-http-auth:add( \
+    security-domain=ManagementCustomDomain, \
+    http-server-mechanism-factory=global, \
+    mechanism-configurations=[ \
+        {mechanism-name=DIGEST, \
+         mechanism-realm-configurations=[{realm-name=ManagementRealm}]}, \
+        {mechanism-name=BASIC, \
+         mechanism-realm-configurations=[{realm-name=ManagementRealm}]} \
+    ] \
+)
+
+# 5. Applica alla management interface
+/core-service=management/management-interface=http-interface:write-attribute( \
+    name=http-authentication-factory, \
+    value=management-custom-http-auth \
+)
+
+# 6. Abilita console
+/core-service=management/management-interface=http-interface:write-attribute( \
+    name=console-enabled, \
+    value=true \
+)
+
+# ============================================================================
 # DRIVER JDBC
 # ============================================================================
 
