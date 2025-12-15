@@ -24,6 +24,8 @@ import org.jboss.arquillian.graphene.GrapheneElement;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 import org.wildfly.common.Assert;
 
@@ -380,7 +382,7 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         //Entro su ‘scrittura economica’.
         doClickButton("submitForm('doVisualizzaEconomica');");
 
-        Assertions.assertEquals("Si", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("183,00", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
         Assertions.assertEquals("183,00", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 
@@ -402,7 +404,6 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         //Restituisce messaggio di "Scrittura Analitica non presente!"
         
         Assertions.assertEquals("Scrittura Analitica non presente!", handleTextAlert(browser));
-
 
         doClickButton("doChiudiForm()");
     }
@@ -489,26 +490,16 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         doClickButton("doCerca");
 
         //Seleziono la prima riga ordini
-        Optional<GrapheneElement> element = browser.findElements(By.tagName("tr"))
-                .stream()
-                .filter(GrapheneElement.class::isInstance)
-                .map(GrapheneElement.class::cast)
-                .filter(rowElement -> {
-                    try {
-                        return getTableColumnElement(rowElement, 17).getText().contains("2025") &&
-                                CD_NUMERATORE.equals(getTableColumnElement(rowElement, 18).getText()) &&
-                                pgOrdineCreated.equals(getTableColumnElement(rowElement, 19).getText()) &&
-                                "1".equals(getTableColumnElement(rowElement, 20).getText()) &&
-                                "1".equals(getTableColumnElement(rowElement, 21).getText());
-                    } catch (java.lang.RuntimeException ex) {
-                        return false;
-                    }
-                })
-                .findAny();
+        By locator = By.xpath("//tr" +
+                "[contains(normalize-space(td[18]//span),'2025') " +
+                "and normalize-space(td[19]//span)='" + CD_NUMERATORE + "' " +
+                "and normalize-space(td[20]//span)='" + pgOrdineCreated + "' " +
+                "and normalize-space(td[21]//span)='1' " +
+                "and normalize-space(td[22]//span)='1']");
 
-        Assert.assertTrue(element.isPresent());
+        GrapheneElement rowElement = getGrapheneElement(locator);
 
-        element.get().findElement(By.name("mainTable.selection")).click();
+        rowElement.findElement(By.name("mainTable.selection")).click();
 
         //Digito il pulsante ‘Annulla Movimenti Selezionati’.
         doClickButton("submitForm('doAnnullaMovimenti');");
@@ -661,26 +652,16 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         String pgOrdineCreated = sharedResource.getVal01();
 
         //Seleziono il bene messo in transito dalla consegna n. 1
-        Optional<GrapheneElement> element = browser.findElements(By.tagName("tr"))
-                .stream()
-                .filter(GrapheneElement.class::isInstance)
-                .map(GrapheneElement.class::cast)
-                .filter(rowElement -> {
-                    try {
-                        return getTableColumnElement(rowElement, 12).getText().contains("2025") &&
-                                CD_NUMERATORE.equals(getTableColumnElement(rowElement, 13).getText()) &&
-                                pgOrdineCreated.equals(getTableColumnElement(rowElement, 14).getText()) &&
-                                "1".equals(getTableColumnElement(rowElement, 15).getText()) &&
-                                "1".equals(getTableColumnElement(rowElement, 16).getText());
-                    } catch (java.lang.RuntimeException ex) {
-                        return false;
-                    }
-                })
-                .findAny();
+        By locator = By.xpath("//tr" +
+                "[contains(normalize-space(td[13]//span),'2025') " +
+                "and normalize-space(td[14]//span)='" + CD_NUMERATORE + "' " +
+                "and normalize-space(td[15]//span)='" + pgOrdineCreated + "' " +
+                "and normalize-space(td[16]//span)='1' " +
+                "and normalize-space(td[17]//span)='1']");
 
-        Assert.assertTrue(element.isPresent());
+        GrapheneElement rowElement = getGrapheneElement(locator);
 
-        element.get().findElement(By.name("mainTable.selection")).click();
+        rowElement.findElement(By.name("mainTable.selection")).click();
 
         doClickButton("doInventaria");
 
@@ -693,9 +674,7 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         //Salvo
         doClickButton("doSalva()");
 
-        
         Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), handleTextAlert(browser));
-
 
         doClickButton("doChiudiForm()");
         doClickButton("doChiudiForm()");
@@ -729,33 +708,23 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         doClickButton("doCerca");
 
         //Seleziono la prima riga ordini
-        Optional<GrapheneElement> element = browser.findElements(By.tagName("tr"))
-                .stream()
-                .filter(GrapheneElement.class::isInstance)
-                .map(GrapheneElement.class::cast)
-                .filter(rowElement -> {
-                    try {
-                        return getTableColumnElement(rowElement, 17).getText().contains("2025") &&
-                                CD_NUMERATORE.equals(getTableColumnElement(rowElement, 18).getText()) &&
-                                pgOrdineCreated.equals(getTableColumnElement(rowElement, 19).getText()) &&
-                                "1".equals(getTableColumnElement(rowElement, 20).getText()) &&
-                                "1".equals(getTableColumnElement(rowElement, 21).getText());
-                    } catch (java.lang.RuntimeException ex) {
-                        return false;
-                    }
-                })
-                .findAny();
+        By locator = By.xpath("//tr" +
+                "[contains(normalize-space(td[18]//span),'2025') " +
+                "and normalize-space(td[19]//span)='" + CD_NUMERATORE + "' " +
+                "and normalize-space(td[20]//span)='" + pgOrdineCreated + "' " +
+                "and normalize-space(td[21]//span)='1' " +
+                "and normalize-space(td[22]//span)='1']");
 
-        Assert.assertTrue(element.isPresent());
+        GrapheneElement rowElement = getGrapheneElement(locator);
 
-        element.get().findElement(By.name("mainTable.selection")).click();
+        rowElement.findElement(By.name("mainTable.selection")).click();
+
+        String numMovimento = getTableColumnElement(rowElement, 1).getText();
 
         //Digito il pulsante ‘Annulla Movimenti Selezionati’.
         doClickButton("submitForm('doAnnullaMovimenti');");
 
-        
-        Assertions.assertEquals("Operazione non possibile! Il bene associato al movimento " + getTableColumnElement(element.get(), 1).getText() + " risulta essere inventariato.", handleTextAlert(browser));
-
+        Assertions.assertEquals("Operazione non possibile! Il bene associato al movimento " + numMovimento + " risulta essere inventariato.", handleTextAlert(browser));
 
         //Chiudo la form (2 volte perchè sono 2 BP aperti)
         doClickButton("doChiudiForm()");
@@ -807,26 +776,16 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         String pgOrdineCreated = sharedResource.getVal01();
 
         //Seleziono l'ordine creato
-        Optional<GrapheneElement> element = browser.findElements(By.tagName("tr"))
-                .stream()
-                .filter(GrapheneElement.class::isInstance)
-                .map(GrapheneElement.class::cast)
-                .filter(rowElement -> {
-                    try {
-                        return getTableColumnElement(rowElement, 3).getText().contains("2025") &&
-                                CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
-                                pgOrdineCreated.equals(getTableColumnElement(rowElement, 5).getText()) &&
-                                "1".equals(getTableColumnElement(rowElement, 6).getText()) &&
-                                "1".equals(getTableColumnElement(rowElement, 7).getText());
-                    } catch (java.lang.RuntimeException ex) {
-                        return false;
-                    }
-                })
-                .findAny();
+        By locator = By.xpath("//tr" +
+                "[contains(normalize-space(td[4]//span),'2025') " +
+                "and normalize-space(td[5]//span)='" + CD_NUMERATORE + "' " +
+                "and normalize-space(td[6]//span)='" + pgOrdineCreated + "' " +
+                "and normalize-space(td[7]//span)='1' " +
+                "and normalize-space(td[8]//span)='1']");
 
-        Assert.assertTrue(element.isPresent());
+        GrapheneElement rowElement = getGrapheneElement(locator);
 
-        element.get().findElement(By.name("mainTable.selection")).click();
+        rowElement.findElement(By.name("mainTable.selection")).click();
 
         doClickButton("submitForm('doMultipleSelection')");
 
@@ -840,15 +799,11 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         //Digito ‘Fine riscontro a valore’ e mi sposto sulla tab ‘dettaglio’ dove mi è stato creato il dettaglio pari alla riga ordine (200 imponibile + 44 IVA).
         doClickButton("submitForm('doConfermaRiscontroAValore')");
 
-        
         Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
-
 
         doClickButton("doSalva()");
 
-        
         Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), handleTextAlert(browser));
-
 
         //Vado sulla tab principale
         doClickButton("doTab('tab','tabFatturaPassiva')");
@@ -906,7 +861,6 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
 
-
         //Vado sul dettaglio
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
         doSelectTableRow("main.Righe",0);
@@ -949,7 +903,7 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         //Seleziono l'ultima scrittura che dovrebbe essere la rettifica valore
         getTableRowElement("mainTable",2).click();
 
-        Assertions.assertEquals("Si", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getText());
         Assertions.assertEquals("1,22", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
         Assertions.assertEquals("1,22", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 

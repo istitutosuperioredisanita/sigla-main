@@ -195,9 +195,7 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         doClickButton("doSalva()");
 
         //Restituisce messaggio di creazione eseguita
-        
         Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), handleTextAlert(browser));
-
 
         String pgOrdineCreated = getGrapheneElement("main.numero").getAttribute("value");
         sharedResource.setVal01(pgOrdineCreated);
@@ -317,7 +315,6 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         doClickButton("doSalva()");
         
         Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
-
     }
 
     @Test
@@ -346,7 +343,6 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         doClickButton("doCerca()");
         
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
-
 
         //Vado sul dettaglio
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
@@ -396,7 +392,7 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         //Entro su ‘scrittura economica’.
         doClickButton("submitForm('doVisualizzaEconomica');");
 
-        Assertions.assertEquals("Si", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("244,00", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
         Assertions.assertEquals("244,00", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 
@@ -459,26 +455,16 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         doClickButton("doCerca");
 
         //Seleziono la prima riga ordini
-        Optional<GrapheneElement> element = browser.findElements(By.tagName("tr"))
-                .stream()
-                .filter(GrapheneElement.class::isInstance)
-                .map(GrapheneElement.class::cast)
-                .filter(rowElement -> {
-                    try {
-                        return getTableColumnElement(rowElement, 17).getText().contains("2025") &&
-                                CD_NUMERATORE.equals(getTableColumnElement(rowElement, 18).getText()) &&
-                                pgOrdineCreated.equals(getTableColumnElement(rowElement, 19).getText()) &&
-                                "1".equals(getTableColumnElement(rowElement, 20).getText()) &&
-                                "1".equals(getTableColumnElement(rowElement, 21).getText());
-                    } catch (java.lang.RuntimeException ex) {
-                        return false;
-                    }
-                })
-                .findAny();
+        By locator = By.xpath("//tr" +
+                "[contains(normalize-space(td[18]//span),'2025') " +
+                "and normalize-space(td[19]//span)='" + CD_NUMERATORE + "' " +
+                "and normalize-space(td[20]//span)='" + pgOrdineCreated + "' " +
+                "and normalize-space(td[21]//span)='1' " +
+                "and normalize-space(td[22]//span)='1']");
 
-        Assertions.assertTrue(element.isPresent());
+        GrapheneElement rowElement = getGrapheneElement(locator);
 
-        element.get().findElement(By.name("mainTable.selection")).click();
+        rowElement.findElement(By.name("mainTable.selection")).click();
 
         //Digito il pulsante ‘Annulla Movimenti Selezionati’.
         doClickButton("submitForm('doAnnullaMovimenti');");
@@ -514,7 +500,6 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         doClickButton("doCerca()");
         
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
-
 
         //Vado sul dettaglio
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
@@ -612,7 +597,6 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         
         Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
 
-
         doClickButton("doChiudiForm()");
     }
 
@@ -642,7 +626,6 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         doClickButton("doCerca()");
         
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
-
 
         //Vado sul dettaglio
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
@@ -694,7 +677,7 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
 
         //Seleziono la prima scrittura che deve essere annullata dopo l'annullamento dell'evasione
         getTableRowElement("mainTable",0).click();
-        Assertions.assertEquals("No", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("N", getGrapheneElement("main.attiva").getAttribute("value"));
 
         doClickButton("doChiudiForm()");
 
@@ -704,7 +687,7 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         //Seleziono la seconda scrittura nata con la successiva evasione
         getTableRowElement("mainTable",1).click();
 
-        Assertions.assertEquals("Si", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("244,00", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
         Assertions.assertEquals("244,00", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 
@@ -918,7 +901,6 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
 
-
         //Vado sul dettaglio
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
         doSelectTableRow("main.Righe",0);
@@ -967,7 +949,7 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         //Entro su ‘scrittura economica’.
         doClickButton("submitForm('doVisualizzaEconomica');");
 
-        Assertions.assertEquals("Si", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("244,00", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
         Assertions.assertEquals("244,00", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 
@@ -1021,7 +1003,6 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
 
-
         //Clicco sul pulsante ‘Compila fattura’;
         doClickButton("submitForm('doCompilaFattura')");
 
@@ -1050,43 +1031,26 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         String pgOrdineCreated = sharedResource.getVal01();
 
         //Seleziono la consegna n. 2
-        Optional<GrapheneElement> element = browser.findElements(By.tagName("tr"))
-                .stream()
-                .filter(GrapheneElement.class::isInstance)
-                .map(GrapheneElement.class::cast)
-                .filter(rowElement -> {
-                    try {
-                        return getTableColumnElement(rowElement, 3).getText().contains("2025") &&
-                                CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
-                                pgOrdineCreated.equals(getTableColumnElement(rowElement, 5).getText()) &&
-                                "1".equals(getTableColumnElement(rowElement, 6).getText()) &&
-                                "2".equals(getTableColumnElement(rowElement, 7).getText());
-                    } catch (java.lang.RuntimeException ex) {
-                        return false;
-                    }
-                })
-                .findAny();
+        By locator = By.xpath("//tr" +
+                "[contains(normalize-space(td[4]//span),'2025') " +
+                "and normalize-space(td[5]//span)='" + CD_NUMERATORE + "' " +
+                "and normalize-space(td[6]//span)='" + pgOrdineCreated + "' " +
+                "and normalize-space(td[7]//span)='1' " +
+                "and normalize-space(td[8]//span)='2']");
 
-        Assert.assertTrue(element.isPresent());
+        GrapheneElement rowElement = getGrapheneElement(locator);
 
-        element.get().findElement(By.name("mainTable.selection")).click();
+        rowElement.findElement(By.name("mainTable.selection")).click();
 
         //Verifico che esiste anche l'altra consegna
-        Assert.assertTrue(browser.findElements(By.tagName("tr"))
-                .stream()
-                .filter(GrapheneElement.class::isInstance)
-                .map(GrapheneElement.class::cast)
-                .anyMatch(rowElement -> {
-                    try {
-                        return getTableColumnElement(rowElement, 3).getText().contains("2025") &&
-                                CD_NUMERATORE.equals(getTableColumnElement(rowElement, 4).getText()) &&
-                                pgOrdineCreated.equals(getTableColumnElement(rowElement, 5).getText()) &&
-                                "1".equals(getTableColumnElement(rowElement, 6).getText()) &&
-                                "1".equals(getTableColumnElement(rowElement, 7).getText());
-                    } catch (java.lang.RuntimeException ex) {
-                        return false;
-                    }
-                }));
+        locator = By.xpath("//tr" +
+                "[contains(normalize-space(td[4]//span),'2025') " +
+                "and normalize-space(td[5]//span)='" + CD_NUMERATORE + "' " +
+                "and normalize-space(td[6]//span)='" + pgOrdineCreated + "' " +
+                "and normalize-space(td[7]//span)='1' " +
+                "and normalize-space(td[8]//span)='1']");
+
+        Assert.assertTrue(getGrapheneElement(locator).isPresent());
 
         doClickButton("submitForm('doMultipleSelection')");
 
@@ -1100,9 +1064,7 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         //Digito ‘Fine riscontro a valore’ e mi sposto sulla tab ‘dettaglio’ dove mi è stato creato il dettaglio pari alla riga ordine (200 imponibile + 44 IVA).
         doClickButton("submitForm('doConfermaRiscontroAValore')");
 
-        
         Assertions.assertEquals("Attenzione ci sono dettagli di fattura da contabilizzare.", handleTextAlert(browser));
-
 
         doSelectTableRow("main.Dettaglio",1);
 
@@ -1112,9 +1074,7 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
 
         doClickButton("doSalva()");
 
-        
         Assertions.assertEquals("Inserire il CIG o il motivo di assenza dello stesso!", handleTextAlert(browser));
-
 
         //Vado sulla tab obbligazioni
         doClickButton("doTab('tab','tabFatturaPassivaObbligazioni')");
@@ -1128,9 +1088,7 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
 
         doClickButton("doSalva()");
 
-        
         Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), handleTextAlert(browser));
-
 
         //Vado sulla tab principale
         doClickButton("doTab('tab','tabFatturaPassiva')");
@@ -1198,7 +1156,6 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         doClickButton("doCerca()");
 
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
-
 
         //Vado sul dettaglio
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
@@ -1270,9 +1227,7 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
 
         doClickButton("doCerca()");
 
-        
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
-
 
         doClickButton("doTab('tab','tabFatturaPassivaOrdini')");
 
@@ -1283,9 +1238,7 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
 
         doClickButton("doSalva()");
 
-        
         Assertions.assertEquals("Squadratura dettagli IVA con la fattura elettronica per le aliquote IVA: 22.00!", handleTextAlert(browser));
-
 
         //Vado sulla tab ‘Dettaglio’
         doClickButton("doTab('tab','tabFatturaPassivaDettaglio')");
@@ -1297,9 +1250,7 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         //Vado sulla testata fattura e
         doClickButton("doTab('tab','tabFatturaPassiva')");
 
-        
         Assertions.assertEquals("Attenzione: il totale dei dettagli di 0.00 (Imponibile + IVA) non corrisponde al totale di 249.00 EUR della testata fattura!", handleTextAlert(browser));
-
 
         //Indico che è ‘non da ordini’.
         getGrapheneElement("main.flDaOrdini").click();
@@ -1330,9 +1281,7 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
 
         doClickButton("doSalva()");
 
-        
         Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), handleTextAlert(browser));
-
 
         //La scrittura contabile riporta (correttamente):
         doClickButton("doTab('tab','tabEconomica')");
@@ -1385,7 +1334,6 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
         
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
 
-
         //Clicco sul pulsante ‘Compila fattura’;
         doClickButton("submitForm('doCompilaFattura')");
 
@@ -1425,9 +1373,7 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
 
         doClickButton("doSalva()");
 
-        
         Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), handleTextAlert(browser));
-
 
         //Vado sulla tab principale
         doClickButton("doTab('tab','tabFatturaPassiva')");
