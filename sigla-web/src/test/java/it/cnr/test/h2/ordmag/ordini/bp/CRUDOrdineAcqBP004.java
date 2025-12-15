@@ -242,7 +242,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         doClickButton("submitForm('doVisualizzaEconomica');");
 
         Assertions.assertEquals("2025", getGrapheneElement("main.esercizio").getAttribute("value"));
-        Assertions.assertEquals("Si", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 
@@ -824,7 +824,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         //Seleziono la prima scrittura nata con la prima evasione che è stata annullata
         getTableRowElement("mainTable",0).click();
 
-        Assertions.assertEquals("No", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("N", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 
@@ -846,7 +846,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         //Seleziono la seconda scrittura nata in fase di seconda evasione che deve essere valida
         getTableRowElement("mainTable",1).click();
 
-        Assertions.assertEquals("Si", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
         Assertions.assertEquals("122,00", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 

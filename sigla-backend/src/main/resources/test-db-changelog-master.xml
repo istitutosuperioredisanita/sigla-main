@@ -837,6 +837,12 @@
             DELETE TERZO
             WHERE CD_TERZO = 19
         </sql>
+        <sql>
+            update configurazione_cnr
+            set val01='N'
+            where cd_chiave_primaria='INVENTARIO'
+            and cd_chiave_secondaria='GESTIONE_ETICHETTA_BENE'
+        </sql>
     </changeSet>
 
     <changeSet author="test" id="create-unita-operativa-ord">

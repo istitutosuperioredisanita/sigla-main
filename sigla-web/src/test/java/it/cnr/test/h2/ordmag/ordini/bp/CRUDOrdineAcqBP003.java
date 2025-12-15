@@ -380,7 +380,7 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         //Entro su ‘scrittura economica’.
         doClickButton("submitForm('doVisualizzaEconomica');");
 
-        Assertions.assertEquals("Si", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("183,00", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
         Assertions.assertEquals("183,00", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 
@@ -402,7 +402,6 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         //Restituisce messaggio di "Scrittura Analitica non presente!"
         
         Assertions.assertEquals("Scrittura Analitica non presente!", handleTextAlert(browser));
-
 
         doClickButton("doChiudiForm()");
     }
@@ -693,9 +692,7 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         //Salvo
         doClickButton("doSalva()");
 
-        
         Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), handleTextAlert(browser));
-
 
         doClickButton("doChiudiForm()");
         doClickButton("doChiudiForm()");
