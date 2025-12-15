@@ -24,6 +24,7 @@ import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.graphene.GrapheneElement;
+import static org.jboss.arquillian.graphene.Graphene.waitGui;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -164,13 +165,27 @@ public class ActionDeployments extends DeploymentsH2 {
                 .orElseThrow(() -> new RuntimeException("Cannot find element " + onclick)).click();
     }
 
-    protected void doClickButton(String onclick) {
-        browser.findElements(By.tagName("button"))
-                .stream()
-                .filter(webElement -> Optional.ofNullable(webElement.getAttribute("onclick")).filter(s -> !s.isEmpty()).isPresent())
-                .filter(webElement -> webElement.getAttribute("onclick").contains(onclick))
-                .findAny()
-                .orElseThrow(() -> new RuntimeException("Cannot find element " + onclick)).click();
+    public void doClickButton(String onclick) {
+        By buttonLocator = By.xpath("//button[contains(@onclick, \"" + onclick + "\")]");
+
+        // Aspetta che l'elemento sia presente (non ritorna l'elemento)
+        waitGui()
+                .until()
+                .element(buttonLocator)
+                .is()
+                .present();
+
+        // Ora trova l'elemento
+        WebElement button = browser.findElement(buttonLocator);
+
+        // Aspetta che sia cliccabile
+        waitGui()
+                .until()
+                .element(button)
+                .is()
+                .clickable();
+
+        button.click();
     }
 
     protected GrapheneElement getTableRowElement(String tableName, int numberRow) {
