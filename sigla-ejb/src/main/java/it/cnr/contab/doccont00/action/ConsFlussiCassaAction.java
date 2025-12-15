@@ -27,21 +27,25 @@ import it.cnr.jada.util.action.SelezionatoreListaBP;
 
 import javax.ejb.RemoveException;
 import java.rmi.RemoteException;
+import java.util.Optional;
 
 public class ConsFlussiCassaAction extends BulkAction{
 
 	public Forward doCercaFlussiCassa(ActionContext context) throws RemoteException, InstantiationException, RemoveException{
+		it.cnr.jada.util.RemoteIterator ri =null;
 			try {
 
 				ConsFlussiCassaBP bp = (ConsFlussiCassaBP) context.getBusinessProcess();
 				FlussiDiCassaDtoBulk flussoCassa = (FlussiDiCassaDtoBulk)bp.getModel();
 				flussoCassa.setCdCds(flussoCassa.getCds().getCd_unita_organizzativa());
+				if(bp.isRendiconto()){
+					flussoCassa.setLivello(FlussiDiCassaDtoBulk.TERZO);
+				}
 				bp.fillModel(context);
-
 				bp.validaRichiestaFlussi(flussoCassa);
 
-				it.cnr.jada.util.RemoteIterator ri = bp.createComponentSession().findFlussiCassa(context.getUserContext(),flussoCassa);
-			
+				ri = bp.createComponentSession().findFlussiCassa(context.getUserContext(), flussoCassa);
+
 				ri = it.cnr.jada.util.ejb.EJBCommonServices.openRemoteIterator(context,ri);
 				if (ri.countElements() == 0) {
 					it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context,ri);
@@ -50,9 +54,12 @@ public class ConsFlussiCassaAction extends BulkAction{
 				SelezionatoreListaBP selezionatorelistabp = (SelezionatoreListaBP) context.createBusinessProcess("Selezionatore");
 				selezionatorelistabp.setIterator(context, ri);
 				selezionatorelistabp.setBulkInfo(it.cnr.jada.bulk.BulkInfo.getBulkInfo(FlussiDiCassaDtoBulk.class));
+				if(!bp.isRendiconto()) {
+					selezionatorelistabp.setColumns(selezionatorelistabp.getBulkInfo().getColumnFieldPropertyDictionary("FLUSSO_CASSA"));
+				}else{
+					selezionatorelistabp.setColumns(it.cnr.jada.bulk.BulkInfo.getBulkInfo(FlussiDiCassaDtoBulk.class).getColumnFieldPropertyDictionary("RENDICONTO"));
+				}
 				return context.addBusinessProcess(selezionatorelistabp);
-
-						
 			} catch (Exception e) {
 					return handleException(context,e); 
 			}

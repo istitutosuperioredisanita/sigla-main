@@ -43,15 +43,10 @@ import java.text.ParseException;
 public class ConsFlussiCassaBP extends BulkBP {
 	
 	public Parametri_livelliBulk parametriLivelli;
-	private String descrizioneClassificazione;
-	private String livelloConsultazione;
-	private String pathConsultazione;
 	private CdsBulk cds_scrivania;
+	private boolean rendiconto=false;
 	
-	public static final String LIV_BASE= "BASE";
-	public static final String LIV_BASEDETT= "DETT";
-	
-		
+
 		public ConsRiepilogoSiopeComponentSession createConsInviatoSiopeComponentSession() throws javax.ejb.EJBException,java.rmi.RemoteException {
 			return (ConsRiepilogoSiopeComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRDOCCONT00_EJB_ConsRiepilogoSiopeComponentSession", ConsRiepilogoSiopeComponentSession.class);
 		}
@@ -67,38 +62,52 @@ public class ConsFlussiCassaBP extends BulkBP {
 			return toolbar;
 		}
 
+
+
 		protected void init(Config config, ActionContext context) throws BusinessProcessException {
 
-				FlussiDiCassaDtoBulk bulk = new FlussiDiCassaDtoBulk();
-				CompoundFindClause clauses = new CompoundFindClause();
-				Integer esercizio = CNRUserContext.getEsercizio(context.getUserContext());
-			    String cds = CNRUserContext.getCd_cds(context.getUserContext());
-			    bulk.setROFindCds(false);
+			FlussiDiCassaDtoBulk bulk = new FlussiDiCassaDtoBulk();
+			CompoundFindClause clauses = new CompoundFindClause();
+			Integer esercizio = CNRUserContext.getEsercizio(context.getUserContext());
+			String cds = CNRUserContext.getCd_cds(context.getUserContext());
+			bulk.setROFindCds(false);
 
-				if(!isUoEnte(context))	 {
-					clauses.addClause("AND", "esercizio", SQLBuilder.EQUALS, esercizio);
-					clauses.addClause("AND", "cds",SQLBuilder.EQUALS, cds);
-					bulk.setCds(new CdsBulk(cds));
-					try {
-						completeSearchTool(context,bulk,bulk.getBulkInfo().getFieldProperty("find_cds"));
-					} catch (ValidationException e) {
-						e.printStackTrace();
-					}
-					bulk.setROFindCds(true);
+			if(!isUoEnte(context))	 {
+				clauses.addClause("AND", "esercizio", SQLBuilder.EQUALS, esercizio);
+				clauses.addClause("AND", "cds",SQLBuilder.EQUALS, cds);
+				bulk.setCds(new CdsBulk(cds));
+				try {
+					completeSearchTool(context,bulk,bulk.getBulkInfo().getFieldProperty("find_cds"));
+				} catch (ValidationException e) {
+					e.printStackTrace();
 				}
-			    
-			    if (isUoEnte(context))
-					clauses.addClause("AND", "esercizio", SQLBuilder.EQUALS, esercizio);
-			    				
-				setModel(context,bulk);
-				bulk.setEsercizio(esercizio);
+				bulk.setROFindCds(true);
+			}
+
+			if (isUoEnte(context))
+				clauses.addClause("AND", "esercizio", SQLBuilder.EQUALS, esercizio);
+
+			if(this.getMapping().getConfig().getInitParameter("RENDICONTO") != null) {
+				this.setRendiconto(true);
+				bulk.setEstrazioneRendiconto(true);
+			}
+			setModel(context,bulk);
+			bulk.setEsercizio(esercizio);
+
+
 
 			super.init(config, context);
 		}
-		
-		   
-		   
-		public boolean isUoEnte(ActionContext context){	
+
+	public boolean isRendiconto() {
+		return rendiconto;
+	}
+
+	public void setRendiconto(boolean rendiconto) {
+		this.rendiconto = rendiconto;
+	}
+
+	public boolean isUoEnte(ActionContext context){
 			Unita_organizzativaBulk uo = it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context);
 			if (uo.getCd_tipo_unita().equals(it.cnr.contab.config00.sto.bulk.Tipo_unita_organizzativaHome.TIPO_UO_ENTE))
 				return true;	
@@ -106,12 +115,14 @@ public class ConsFlussiCassaBP extends BulkBP {
 		}	
 	 
 		public void setTitle() {
-			
-			   String title=null;
-			   		   title = "Consultazione Flussi di cassa";
-			
-				getBulkInfo().setShortDescription(title);
-			}	
+
+			if(this.getMapping().getConfig().getInitParameter("RENDICONTO") == null) {
+				this.getBulkInfo().setShortDescription("Consultazione Flussi di cassa");
+			}else{
+				this.getBulkInfo().setShortDescription("Rendiconto Flussi di cassa");
+			}
+
+		}
 
 		public boolean isRicercaButtonEnabled()
 		{
@@ -121,6 +132,7 @@ public class ConsFlussiCassaBP extends BulkBP {
 
 		public RemoteIterator find(ActionContext actionContext, CompoundFindClause clauses, OggettoBulk bulk, OggettoBulk context, String property) throws BusinessProcessException {
 			try {
+
 				return it.cnr.jada.util.ejb.EJBCommonServices.openRemoteIterator(actionContext,createComponentSession().cerca(actionContext.getUserContext(),clauses,bulk,context,property));
 			} catch(Exception e) {
 				throw new BusinessProcessException(e);
@@ -140,18 +152,20 @@ public class ConsFlussiCassaBP extends BulkBP {
 			if(flussoCassa.getEsercizio() == null){
 				throw new ApplicationException("Attenzione!Impostare esercizio");
 			}
-			if(flussoCassa.getTrimestre() == null){
-				throw new ApplicationException("Attenzione!Impostare un Trimestre");
-			}
-			else{
-				impostaDataEmissioneDaTrimestre(flussoCassa);
+			if(!isRendiconto()) {
+				if (flussoCassa.getTrimestre() == null) {
+					throw new ApplicationException("Attenzione!Impostare un Trimestre");
+				} else {
+					impostaDataEmissioneDaTrimestre(flussoCassa);
+				}
+				if(flussoCassa.getLivello()== null){
+					throw new ApplicationException("Attenzione!Impostare un Livello di estrazione");
+				}
 			}
 			if(flussoCassa.getTipoFlusso() == null){
 				throw new ApplicationException("Attenzione!Impostare una tipologia di Flusso");
 			}
-			if(flussoCassa.getLivello()== null){
-				throw new ApplicationException("Attenzione!Impostare un Livello di estrazione");
-			}
+
 
 		}
 		private void impostaDataEmissioneDaTrimestre(FlussiDiCassaDtoBulk flussoCassa) throws ApplicationException {
