@@ -18,30 +18,21 @@
 package it.cnr.test.h2.utenze.action;
 
 import it.cnr.test.h2.DeploymentsH2;
-import org.apache.http.HttpStatus;
-import org.jboss.arquillian.container.test.api.BeforeDeployment;
-import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.graphene.GrapheneElement;
 import static org.jboss.arquillian.graphene.Graphene.waitGui;
-import org.jboss.arquillian.test.api.ArquillianResource;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.time.Duration;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -90,31 +81,27 @@ public class ActionDeployments extends DeploymentsH2 {
         doClickButton("submitForm('doSelezionaCds')");
     }
 
-    protected WebElement getWebElement(String element) {
-        List<WebElement> webElements = getWebElements(element);
-        if (webElements.size()>1)
-            throw new RuntimeException("Find more than one WebElement with name "+element);
-        return webElements.stream().findAny()
-                .orElseThrow(()->new RuntimeException("Cannot find WebElement with name "+element));
+    protected WebElement getWebElement(By elementLocator) {
+        // Aspetta che l'elemento sia presente (non ritorna l'elemento)
+        waitGui()
+                .ignoring(StaleElementReferenceException.class)
+                .until()
+                .element(elementLocator)
+                .is()
+                .present();
+
+        return browser.findElement(elementLocator);
     }
 
-    protected List<WebElement> getWebElements(String element) {
-        return browser.findElements(By.name(element));
+    protected GrapheneElement getGrapheneElement(By elementLocator) {
+        return Optional.ofNullable(getWebElement(elementLocator))
+                .filter(GrapheneElement.class::isInstance)
+                .map(GrapheneElement.class::cast)
+                .orElseThrow(()->new RuntimeException("Cannot find GrapheneElement with elementLocator "+elementLocator.toString()));
     }
 
     protected GrapheneElement getGrapheneElement(String element) {
-        List<GrapheneElement> grapheneElements = getGrapheneElements(element);
-        if (grapheneElements.size()>1)
-            throw new RuntimeException("Find more than one GrapheneElement with name "+element);
-        return grapheneElements.stream().findAny()
-                .orElseThrow(()->new RuntimeException("Cannot find GrapheneElement with name "+element));
-    }
-
-    protected List<GrapheneElement> getGrapheneElements(String element) {
-        return getWebElements(element).stream()
-                .filter(GrapheneElement.class::isInstance)
-                .map(GrapheneElement.class::cast)
-                .collect(Collectors.toList());
+        return this.getGrapheneElement(By.name(element));
     }
 
     private void switchToDefaultContent() {
@@ -157,29 +144,20 @@ public class ActionDeployments extends DeploymentsH2 {
     }
 
     protected void doClickTree(String onclick) {
-        browser.findElements(By.tagName("span"))
-                .stream()
-                .filter(webElement -> Optional.ofNullable(webElement.getAttribute("onclick")).filter(s -> !s.isEmpty()).isPresent())
-                .filter(webElement -> webElement.getAttribute("onclick").contains(onclick))
-                .findAny()
-                .orElseThrow(() -> new RuntimeException("Cannot find element " + onclick)).click();
+        this.findAndClickButton(By.xpath("//span[contains(@onclick, \"" + onclick + "\")]"));
     }
 
     public void doClickButton(String onclick) {
-        By buttonLocator = By.xpath("//button[contains(@onclick, \"" + onclick + "\")]");
+        this.findAndClickButton(By.xpath("//button[contains(@onclick, \"" + onclick + "\")]"));
+    }
 
-        // Aspetta che l'elemento sia presente (non ritorna l'elemento)
-        waitGui()
-                .until()
-                .element(buttonLocator)
-                .is()
-                .present();
-
+    private void findAndClickButton(By buttonLocator) {
         // Ora trova l'elemento
-        WebElement button = browser.findElement(buttonLocator);
+        WebElement button = this.getWebElement(buttonLocator);
 
         // Aspetta che sia cliccabile
         waitGui()
+                .ignoring(StaleElementReferenceException.class)
                 .until()
                 .element(button)
                 .is()
@@ -190,12 +168,9 @@ public class ActionDeployments extends DeploymentsH2 {
 
     protected GrapheneElement getTableRowElement(String tableName, int numberRow) {
         String onclick = "javascript:select('"+tableName+"',"+numberRow+")";
-        return browser.findElements(By.tagName("tr"))
-                .stream()
+        return Optional.ofNullable(this.getWebElement(By.xpath("//tr[contains(@onclick, \"" + onclick + "\")]")))
                 .filter(GrapheneElement.class::isInstance)
                 .map(GrapheneElement.class::cast)
-                .filter(el -> onclick.equals(el.getAttribute("onclick")))
-                .findAny()
                 .orElseThrow(() -> new RuntimeException("Cannot find Element <tr> with tableName " + tableName +
                         " and numberRow: " + numberRow));
     }
@@ -236,7 +211,8 @@ public class ActionDeployments extends DeploymentsH2 {
     public String handleTextAlert(WebDriver driver) {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-            Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+            Alert alert = wait.ignoring(UnhandledAlertException.class)
+                    .until(ExpectedConditions.alertIsPresent());
 
             String alertText = alert.getText();
 
