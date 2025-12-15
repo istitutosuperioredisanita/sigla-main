@@ -62,6 +62,13 @@
 				columnSize="22"
 				columnScale="2"
 				nullable="false" />
+		<columnMapping
+				columnName="IMPORTO_TOTALE"
+				propertyName="importoTotale"
+				sqlTypeName="DECIMAL"
+				columnSize="22"
+				columnScale="2"
+				nullable="false" />
 	</defaultColumnMap>
 	<columnMap
 			name="FLUSSO_REVERSALI"
@@ -86,6 +93,8 @@
 			name="impTerzoTrimestre" />
 	<persistentProperty
 			name="impQuartoTrimestre" />
+	<persistentProperty
+			name="importoTotale" />
 
 
 </SQLPersistentInfo>
