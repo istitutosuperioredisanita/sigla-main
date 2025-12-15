@@ -903,7 +903,7 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         //Seleziono l'ultima scrittura che dovrebbe essere la rettifica valore
         getTableRowElement("mainTable",2).click();
 
-        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getText());
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
         Assertions.assertEquals("1,22", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
         Assertions.assertEquals("1,22", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
 
