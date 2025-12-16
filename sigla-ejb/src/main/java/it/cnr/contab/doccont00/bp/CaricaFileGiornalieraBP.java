@@ -35,9 +35,9 @@ import it.cnr.jada.util.action.BulkBP;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.jsp.PageContext;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.UnmarshalException;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.UnmarshalException;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;

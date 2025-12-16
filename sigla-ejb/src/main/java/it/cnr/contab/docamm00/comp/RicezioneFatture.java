@@ -32,7 +32,7 @@ import jakarta.activation.DataHandler;
 import jakarta.jws.WebService;
 import jakarta.jws.soap.SOAPBinding;
 import javax.mail.Message;
-import javax.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;
 import jakarta.xml.soap.MessageFactory;
@@ -120,6 +120,7 @@ public class RicezioneFatture implements it.cnr.contab.docamm00.ejb.RicezioneFat
     public RispostaRiceviFattureType riceviFatture(FileSdIConMetadatiType parametersIn, String replyTo) {
         RispostaRiceviFattureType risposta = new RispostaRiceviFattureType();
         try {
+            it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1.ObjectFactory objectFactory;
             JAXBContext jc = JAXBContext.newInstance("it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1");
             byte[] bytesMetadata = IOUtils.toByteArray(parametersIn.getMetadati().getInputStream());
             if (Base64.isArrayByteBase64(bytesMetadata))

@@ -25,7 +25,7 @@
 
 package it.cnr.contab.incarichi00.xmlfp;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 
 /**

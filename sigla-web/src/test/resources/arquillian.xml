@@ -47,6 +47,7 @@
                 -Dsigla.db.password=sa
                 -Dspring.profiles.active=liquibase-test
                 -Dliquibase.bootstrap.esercizio=2025
+                -Dcors.allow-origin=http://localhost:9000
                 "-Dquery.timestamp=SELECT '2025-10-25 00:00:00.000'"
                 "-Dquery.date=SELECT DATE_TRUNC('DAY', '2025-10-25')"
             </property>

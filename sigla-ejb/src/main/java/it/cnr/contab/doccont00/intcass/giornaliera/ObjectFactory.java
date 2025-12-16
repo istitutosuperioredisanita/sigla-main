@@ -27,7 +27,7 @@ package it.cnr.contab.doccont00.intcass.giornaliera;
 
 import it.cnr.contab.doccont00.intcass.xmlbnl.AnyTAG;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 
 /**

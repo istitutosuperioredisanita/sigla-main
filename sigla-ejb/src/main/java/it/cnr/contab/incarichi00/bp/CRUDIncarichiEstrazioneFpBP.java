@@ -58,9 +58,9 @@ import it.perla.accenture.com.anagrafeprestazioni_inserimentoincarichi.Consulent
 import jakarta.servlet.ServletException;
 import jakarta.servlet.jsp.PageContext;
 
-import javax.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import java.io.*;

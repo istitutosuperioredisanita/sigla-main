@@ -50,7 +50,7 @@ import jakarta.activation.DataHandler;
 import jakarta.activation.FileDataSource;
 import jakarta.ejb.EJBException;
 import jakarta.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;

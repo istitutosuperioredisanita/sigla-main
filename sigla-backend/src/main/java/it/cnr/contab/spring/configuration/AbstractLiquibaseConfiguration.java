@@ -29,6 +29,7 @@ import org.springframework.context.annotation.Bean;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Optional;
 
 public abstract class AbstractLiquibaseConfiguration {
     @Value("${liquibase.bootstrap.esercizio:0}")
@@ -40,7 +41,8 @@ public abstract class AbstractLiquibaseConfiguration {
         Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
 
         Liquibase liquibase = new Liquibase(getDbChangelogMaster(), new GzipClassLoaderResourceAccessor(), database);
-        liquibase.getChangeLogParameters().set("liquibase.bootstrap.esercizio", esercizio);
+        liquibase.getChangeLogParameters().set("liquibase.bootstrap.esercizio",
+                Optional.ofNullable(System.getenv("LIQUIBASE_BOOTSTRAP_ESERCIZIO")).map(Integer::valueOf).orElse(esercizio));
         liquibase.update(new Contexts(), new LabelExpression());
         return liquibase;
     }

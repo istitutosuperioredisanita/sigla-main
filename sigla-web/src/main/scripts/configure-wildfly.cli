@@ -191,7 +191,7 @@ echo "Configurazione logging per debug..."
 /subsystem=logging/logger=org.jboss.security:add(level=DEBUG)
 /subsystem=logging/logger=it.cnr.contab.security:add(level=DEBUG)
 
-/subsystem=logging/logger=org.jboss.as.ejb3:add(level=ERROR)
+/subsystem=logging/logger=io.smallrye.openapi.runtime.scanner.dataobject:add(level=TRACE, filter-spec="deny")
 /subsystem=logging/logger=org.jboss.as.ejb3.invocation:add(level=SEVERE, filter-spec="deny")
 /subsystem=logging/logger=com.arjuna.ats.jta:add(level=ERROR, filter-spec="deny")
 /subsystem=logging/logger=org.jboss.as.server.deployment:add(level=ERROR)

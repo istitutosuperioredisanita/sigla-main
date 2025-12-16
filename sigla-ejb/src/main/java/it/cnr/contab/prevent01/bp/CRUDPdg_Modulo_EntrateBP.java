@@ -26,7 +26,7 @@ package it.cnr.contab.prevent01.bp;
 import java.rmi.RemoteException;
 
 import jakarta.ejb.EJBException;
-import javax.xml.bind.ValidationException;
+import jakarta.xml.bind.ValidationException;
 
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_enteBulk;

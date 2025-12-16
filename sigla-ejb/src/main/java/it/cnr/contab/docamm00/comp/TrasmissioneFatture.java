@@ -27,7 +27,7 @@ import java.util.Date;
 import jakarta.activation.DataHandler;
 import jakarta.jws.WebService;
 import jakarta.jws.soap.SOAPBinding;
-import javax.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.soap.MessageFactory;
 import jakarta.xml.soap.Name;

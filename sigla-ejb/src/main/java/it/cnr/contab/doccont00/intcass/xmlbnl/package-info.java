@@ -22,5 +22,5 @@
 // Generated on: 2010.03.12 at 02:57:51 PM CET 
 //
 
-//@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.w3.org/2001/XMLSchema", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
+//@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.w3.org/2001/XMLSchema", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
 package it.cnr.contab.doccont00.intcass.xmlbnl;

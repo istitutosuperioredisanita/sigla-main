@@ -40,11 +40,11 @@
 		<maven.javadoc.skip>true</maven.javadoc.skip>
 		<sonar.skip>true</sonar.skip>
 		<java.version>21</java.version>
-		<siopeplus.version>1.1.2</siopeplus.version>
+		<siopeplus.version>2.0.0</siopeplus.version>
 		<version.sdi.fatturapa>1.0.2</version.sdi.fatturapa>
 		<version.sigla-ws.client>1.0.2</version.sigla-ws.client>
 		<spring.version>7.0.2</spring.version>
-		<version.jada>8.0.1</version.jada>
+		<version.jada>8.0.2</version.jada>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.directory>target</project.build.directory>
 		<sigla.build.number>${maven.build.timestamp}</sigla.build.number>

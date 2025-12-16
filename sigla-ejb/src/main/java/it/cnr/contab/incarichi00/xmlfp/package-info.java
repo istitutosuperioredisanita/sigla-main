@@ -22,5 +22,5 @@
 // Generated on: 2010.03.12 at 02:57:51 PM CET 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.anagrafeprestazioni.it/comunicazionexml", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.anagrafeprestazioni.it/comunicazionexml", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package it.cnr.contab.incarichi00.xmlfp;

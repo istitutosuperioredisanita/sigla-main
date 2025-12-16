@@ -25,7 +25,7 @@
 
 package it.cnr.contab.incarichi00.xmlfp;
 
-import javax.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlEnum;
 
 
 /**
