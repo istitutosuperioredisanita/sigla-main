@@ -54,8 +54,7 @@ import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
-import jakarta.ejb.EJB;
-import jakarta.inject.Inject;
+import jakarta.ejb.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
@@ -63,9 +62,6 @@ import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -155,7 +151,11 @@ public class ToDoResource implements ToDoLocal {
                                 } catch (ComponentException | RemoteException e) {
                                     throw new RestException(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
                                 } finally {
-                                    iterator.ejbRemove();
+                                    try {
+                                        iterator.ejbRemove();
+                                    } catch (NoSuchEJBException _ex) {
+                                        LOGGER.warn("TODOResource::NoSuchEJBException");
+                                    }
                                 }
                             });
                     break;
@@ -189,8 +189,11 @@ public class ToDoResource implements ToDoLocal {
                                 } catch (ComponentException | RemoteException e) {
                                     throw new RestException(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
                                 } finally {
-                                    iterator.ejbRemove();
-                                }
+                                    try {
+                                        iterator.ejbRemove();
+                                    } catch (NoSuchEJBException _ex) {
+                                        LOGGER.warn("TODOResource::NoSuchEJBException");
+                                    }                                }
                             });
                     if (Optional.ofNullable(utenteComponentSession.isUtenteAbilitatoFirma(userContext, AbilitatoFirma.DOCCONT)).isPresent()) {
                         v_mandato_reversaleBulk.setStato_trasmissione("P");
@@ -220,7 +223,11 @@ public class ToDoResource implements ToDoLocal {
                                     } catch (ComponentException | RemoteException e) {
                                         throw new RestException(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
                                     } finally {
-                                        iterator.ejbRemove();
+                                        try {
+                                            iterator.ejbRemove();
+                                        } catch (NoSuchEJBException _ex) {
+                                            LOGGER.warn("TODOResource::NoSuchEJBException");
+                                        }
                                     }
                                 });
                     }
@@ -255,7 +262,11 @@ public class ToDoResource implements ToDoLocal {
                                 } catch (ComponentException | RemoteException e) {
                                     throw new RestException(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
                                 } finally {
-                                    iterator.ejbRemove();
+                                    try {
+                                        iterator.ejbRemove();
+                                    } catch (NoSuchEJBException _ex) {
+                                        LOGGER.warn("TODOResource::NoSuchEJBException");
+                                    }
                                 }
                             });
                     if (Optional.ofNullable(utenteComponentSession.isUtenteAbilitatoFirma(userContext, AbilitatoFirma.DOC_1210)).isPresent()) {
@@ -286,7 +297,11 @@ public class ToDoResource implements ToDoLocal {
                                     } catch (ComponentException | RemoteException e) {
                                         throw new RestException(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
                                     } finally {
-                                        iterator.ejbRemove();
+                                        try {
+                                            iterator.ejbRemove();
+                                        } catch (NoSuchEJBException _ex) {
+                                            LOGGER.warn("TODOResource::NoSuchEJBException");
+                                        }
                                     }
                                 });
                     }
@@ -322,7 +337,11 @@ public class ToDoResource implements ToDoLocal {
                                 } catch (ComponentException | RemoteException e) {
                                     throw new RestException(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
                                 } finally {
-                                    iterator.ejbRemove();
+                                    try {
+                                        iterator.ejbRemove();
+                                    } catch (NoSuchEJBException _ex) {
+                                        LOGGER.warn("TODOResource::NoSuchEJBException");
+                                    }
                                 }
                             });
                     documentoEleTestata.setStatoDocumento(StatoDocumentoEleEnum.COMPLETO.name());
@@ -351,7 +370,11 @@ public class ToDoResource implements ToDoLocal {
                                 } catch (ComponentException | RemoteException e) {
                                     throw new RestException(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
                                 } finally {
-                                    iterator.ejbRemove();
+                                    try {
+                                        iterator.ejbRemove();
+                                    } catch (NoSuchEJBException _ex) {
+                                        LOGGER.warn("TODOResource::NoSuchEJBException");
+                                    }
                                 }
                             });
                     break;
@@ -388,7 +411,11 @@ public class ToDoResource implements ToDoLocal {
                                 } catch (ComponentException | RemoteException e) {
                                     throw new RestException(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
                                 } finally {
-                                    iterator.ejbRemove();
+                                    try {
+                                        iterator.ejbRemove();
+                                    } catch (NoSuchEJBException _ex) {
+                                        LOGGER.warn("TODOResource::NoSuchEJBException");
+                                    }
                                 }
                             });
                     break;
@@ -426,7 +453,11 @@ public class ToDoResource implements ToDoLocal {
                                     } catch (ComponentException | RemoteException e) {
                                         throw new RestException(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
                                     } finally {
-                                        iterator.ejbRemove();
+                                        try {
+                                            iterator.ejbRemove();
+                                        } catch (NoSuchEJBException _ex) {
+                                            LOGGER.warn("TODOResource::NoSuchEJBException");
+                                        }
                                     }
                                 });
                     }
@@ -461,7 +492,11 @@ public class ToDoResource implements ToDoLocal {
                                 } catch (ComponentException | RemoteException e) {
                                     throw new RestException(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
                                 } finally {
-                                    iterator.ejbRemove();
+                                    try {
+                                        iterator.ejbRemove();
+                                    } catch (NoSuchEJBException _ex) {
+                                        LOGGER.warn("TODOResource::NoSuchEJBException");
+                                    }
                                 }
                             });
                     break;
@@ -503,7 +538,11 @@ public class ToDoResource implements ToDoLocal {
                                 } catch (ComponentException | RemoteException e) {
                                     throw new RestException(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
                                 } finally {
-                                    iterator.ejbRemove();
+                                    try {
+                                        iterator.ejbRemove();
+                                    } catch (NoSuchEJBException _ex) {
+                                        LOGGER.warn("TODOResource::NoSuchEJBException");
+                                    }
                                 }
                             });
                     break;
@@ -544,7 +583,11 @@ public class ToDoResource implements ToDoLocal {
                                 } catch (ComponentException | RemoteException e) {
                                     throw new RestException(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
                                 } finally {
-                                    iterator.ejbRemove();
+                                    try {
+                                        iterator.ejbRemove();
+                                    } catch (NoSuchEJBException _ex) {
+                                        LOGGER.warn("TODOResource::NoSuchEJBException");
+                                    }
                                 }
                             });
                     break;
@@ -577,7 +620,11 @@ public class ToDoResource implements ToDoLocal {
                                 } catch (ComponentException | RemoteException e) {
                                     throw new RestException(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
                                 } finally {
-                                    iterator.ejbRemove();
+                                    try {
+                                        iterator.ejbRemove();
+                                    } catch (NoSuchEJBException _ex) {
+                                        LOGGER.warn("TODOResource::NoSuchEJBException");
+                                    }
                                 }
                             });
                     break;

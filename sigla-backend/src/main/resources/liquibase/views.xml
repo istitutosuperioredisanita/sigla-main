@@ -3187,4 +3187,15 @@
     <changeSet author="ciro.salvio" runOnChange="true" id="create-view-V_CONS_SALDI_RESIDUI_SPE_DET">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_CONS_SALDI_RESIDUI_SPE_DET.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_MANDATO_REVERSALE_PRE_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_MANDATO_REVERSALE_PRE.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_MANDATO_REVERSALE_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_MANDATO_REVERSALE.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+
+    <changeSet author="sigla" runOnChange="true" id="create-view-VP_PDG_VARIAZIONE_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/VP_PDG_VARIAZIONE.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
 </databaseChangeLog>
