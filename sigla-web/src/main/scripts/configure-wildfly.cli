@@ -91,6 +91,9 @@ echo "=== Configurazione Management Console Authentication ==="
     use-java-context=true, \
     enabled=true \
 )
+# Abilito le statistiche sul DataSource
+/subsystem=datasources/data-source=SIGLA:write-attribute(name=statistics-enabled,value=true)
+
 # ============================================================================
 # Verifica DataSource
 # ============================================================================
