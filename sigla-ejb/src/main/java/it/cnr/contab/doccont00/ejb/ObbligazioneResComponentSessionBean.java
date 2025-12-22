@@ -23,6 +23,7 @@ import jakarta.ejb.Stateless;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.doccont00.comp.ObbligazioneComponent;
 import it.cnr.contab.doccont00.comp.ObbligazioneResComponent;
+
 @Stateless(name="CNRDOCCONT00_EJB_ObbligazioneResComponentSession")
 public class ObbligazioneResComponentSessionBean extends ObbligazioneComponentSessionBean implements ObbligazioneResComponentSession {
 @PostConstruct
@@ -66,7 +67,7 @@ public void cancellaObbligazioneModTemporanea(it.cnr.jada.UserContext param0, it
 	}
 }
 
-	public void aggiornaImportoObbligazione(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk param1, java.math.BigDecimal param2, WorkpackageBulk param3, String param4) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+	public void aggiornaImportoObbligazione(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk param1, java.math.BigDecimal param2, WorkpackageBulk param3, String param4) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			((ObbligazioneResComponent) componentObj).aggiornaImportoObbligazione(param0, param1, param2, param3, param4);
