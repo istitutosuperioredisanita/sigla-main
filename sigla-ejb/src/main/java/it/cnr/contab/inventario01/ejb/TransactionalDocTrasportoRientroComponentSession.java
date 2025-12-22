@@ -237,6 +237,7 @@ public class TransactionalDocTrasportoRientroComponentSession
             return (RemoteIterator) invoke("cercaBeniTrasportabili", new Object[]{
                     userContext,
                     doc,
+                    beni_da_escludere,
                     clauses
             });
         } catch (java.rmi.RemoteException e) {
