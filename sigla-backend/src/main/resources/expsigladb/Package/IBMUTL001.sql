@@ -153,7 +153,7 @@ TYPE V_ARR IS VARRAY(20) OF VARCHAR2(20);
  function isNumeric(aStr varchar2) return char;
 
   -- Restituisce il LOCAL_TRANSACTION_ID
- function getLocalTransactionID(createTransaction BOOLEAN) return VARCHAR2;
+ function getLocalTransactionID(createTransaction number) return VARCHAR2;
 
  -- Ritorna la stringa epurata delle occorrenze del pattern aPattern
  function strip(aStr varchar2, aPattern varchar2) return varchar2;
