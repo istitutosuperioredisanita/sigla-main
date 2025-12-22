@@ -123,6 +123,14 @@
 		formatName="it.cnr.contab.util.EuroFormat"
 		label="Quarto Trimestre" />
 	<fieldProperty
+		name="importoTotale"
+		property="importoTotale"
+		inputType="TEXT"
+		inputSize="22"
+		maxLength="22"
+		formatName="it.cnr.contab.util.EuroFormat"
+		label="importo Totale" />
+	<fieldProperty
 		name="trimestre"
 		property="trimestre"
 		inputType="RADIOGROUP"
@@ -166,6 +174,8 @@
 	<formFieldProperty
 		name="impQuartoTrimestre" />
 	<formFieldProperty
+			name="importoTotale" />
+	<formFieldProperty
 		name="trimestre" />
 	<formFieldProperty
 		name="livello" />
@@ -187,20 +197,29 @@
 	<findFieldProperty
 		name="livello" />
 
-
-
-	<columnFieldProperty
-		name="classificazione" />
-	<columnFieldProperty
-		name="dsClassificazione" />
-	<columnFieldProperty
-		name="impPrimoTrimestre" />
-	<columnFieldProperty
-		name="impSecondoTrimestre" />
-	<columnFieldProperty
-		name="impTerzoTrimestre" />
-	<columnFieldProperty
-		name="impQuartoTrimestre" />
-
+	<columnSet
+			name="FLUSSO_CASSA">
+		<columnFieldProperty
+			name="classificazione" />
+		<columnFieldProperty
+			name="dsClassificazione" />
+		<columnFieldProperty
+			name="impPrimoTrimestre" />
+		<columnFieldProperty
+			name="impSecondoTrimestre" />
+		<columnFieldProperty
+			name="impTerzoTrimestre" />
+		<columnFieldProperty
+			name="impQuartoTrimestre" />
+	</columnSet>
+	<columnSet
+			name="RENDICONTO">
+		<columnFieldProperty
+				name="classificazione" />
+		<columnFieldProperty
+				name="dsClassificazione" />
+		<columnFieldProperty
+				name="importoTotale" />
+	</columnSet>
 
 </bulkInfo>
