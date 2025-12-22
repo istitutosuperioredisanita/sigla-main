@@ -3373,7 +3373,7 @@ public OggettoBulk modificaConBulk (UserContext aUC,OggettoBulk bulk) throws Com
 		Pdg_variazioneBulk pdgVariazioneObbl = null;
 
 		//Aggiorno la variazione se legata
-		if (Utility.createConfigurazioneCnrComponentSession().isVariazioneAutomaticaSpesa(aUC)) {
+		if (obbligazione.isCompetenza() && Utility.createConfigurazioneCnrComponentSession().isVariazioneAutomaticaSpesa(aUC)) {
 			try {
 				pdgVariazioneObbl = Utility.createCRUDPdgVariazioneGestionaleComponentSession().generaVariazioneAutomaticaDaObbligazione(aUC, obbligazione);
 			} catch (Exception e) {
@@ -5607,33 +5607,6 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 		} catch (PersistencyException e) {
 			throw handleException( e );
 		}
-	}
-
-	public void aggiornaImportoObbligazione(UserContext userContext, ObbligazioneBulk obbligazioneBulk, BigDecimal importo, WorkpackageBulk gae) throws ComponentException {
-		/**
-		 * Nel caso in cui l'importo è negativo e quindi devo aumentare l'impegno recupero
-		 * l'ultima scadenza sulla eventuale GAE passata in input la duplico assegnando il nuovo importo
-		 */
-		obbligazioneBulk = (ObbligazioneBulk) inizializzaBulkPerModifica(userContext, obbligazioneBulk);
-		Optional<Obbligazione_scadenzarioBulk> optObbligazione_scadenzarioBulk = obbligazioneBulk
-				.getObbligazione_scadenzarioColl()
-				.stream()
-				.filter(osb -> {
-					boolean nonAssociatoDocAmm = osb.getIm_associato_doc_amm().equals(BigDecimal.ZERO);
-					return Optional.ofNullable(gae).map(workpackageBulk -> osb.getObbligazione_scad_voceColl()
-							.stream()
-							.anyMatch(osvb -> osvb.getLinea_attivita().equalsByPrimaryKey(workpackageBulk)) &&
-							nonAssociatoDocAmm).orElseGet(() -> nonAssociatoDocAmm);
-				}).max((t1, t2) -> t1.getDt_scadenza().compareTo(t2.getDt_scadenza()));
-		if (optObbligazione_scadenzarioBulk.isPresent()) {
-			obbligazioneBulk.setIm_obbligazione(obbligazioneBulk.getIm_obbligazione().subtract(importo));
-			sdoppiaScadenzaInAutomatico(userContext, optObbligazione_scadenzarioBulk.get(), optObbligazione_scadenzarioBulk.get().getIm_scadenza().subtract(importo));
-		}
-		throw new ApplicationException(
-				Optional.ofNullable(gae)
-						.map(workpackageBulk -> String.format("Non esistono scadenze utili da poter utilizzare con la GAE %s", workpackageBulk.getCd_linea_attivita()))
-						.orElseGet(() -> "Non esistono scadenze utili da poter utilizzare!")
-		);
 	}
 
 	/*

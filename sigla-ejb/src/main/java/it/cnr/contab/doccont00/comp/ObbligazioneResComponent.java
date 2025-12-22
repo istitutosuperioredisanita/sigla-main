@@ -26,11 +26,7 @@ package it.cnr.contab.doccont00.comp;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Enumeration;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.Optional;
+import java.util.*;
 
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_cdsBulk;
@@ -239,10 +235,13 @@ public class ObbligazioneResComponent extends ObbligazioneComponent {
 
 				if (!UtenteBulk.isAbilitatoSbloccoImpegni(aUC))
 					Utility.createSaldoComponentSession().checkBloccoImpegniNatfin(aUC, latt, obbligazione.getElemento_voce(), obbligazione.isObbligazioneResiduo()?ObbligazioneBulk.TIPO_RESIDUO_PROPRIO:ObbligazioneBulk.TIPO_RESIDUO_IMPROPRIO);
-
-				//se aumento l'importo del residuo devo controllare che il progetto non sia scaduto
+				/**
+				 * se aumento l'importo del residuo devo controllare che il progetto non sia scaduto
+				 * oppure che provenga dall'eliminazione di una modifica all'impegno stesso
+				 */
 				if (totaleScad.compareTo((BigDecimal)prcImputazioneFinanziariaTable.get( key ))>0 &&
-					Utility.createParametriEnteComponentSession().isProgettoPianoEconomicoEnabled(aUC, CNRUserContext.getEsercizio(aUC))) {
+					Utility.createParametriEnteComponentSession().isProgettoPianoEconomicoEnabled(aUC, CNRUserContext.getEsercizio(aUC)) &&
+					!obbligazione.isFromModifica()) {
 					ProgettoBulk progetto = latt.getProgetto();
 					Optional.ofNullable(progetto.getOtherField())
 							.filter(el->el.isStatoApprovato()||el.isStatoChiuso())
@@ -442,5 +441,75 @@ public class ObbligazioneResComponent extends ObbligazioneComponent {
 			throw handleException( e );
 		}		
 
+	}
+
+	public void aggiornaImportoObbligazione(UserContext userContext, ObbligazioneBulk obbligazioneBulk, BigDecimal importo, WorkpackageBulk gae, String descrizione) throws ComponentException {
+		obbligazioneBulk = (ObbligazioneBulk) inizializzaBulkPerModifica(userContext, obbligazioneBulk);
+		Optional<Obbligazione_scadenzarioBulk> optObbligazione_scadenzarioBulk = obbligazioneBulk
+				.getObbligazione_scadenzarioColl()
+				.stream()
+				.filter(osb -> {
+					boolean nonAssociatoDocAmm = osb.getIm_associato_doc_amm().equals(BigDecimal.ZERO);
+					return Optional.ofNullable(gae).map(workpackageBulk -> osb.getObbligazione_scad_voceColl()
+							.stream()
+							.anyMatch(osvb -> osvb.getLinea_attivita().equalsByPrimaryKey(workpackageBulk)) &&
+							nonAssociatoDocAmm).orElseGet(() -> nonAssociatoDocAmm);
+				}).max(Comparator
+						.comparing(Obbligazione_scadenzarioBulk::getDt_scadenza)
+						.thenComparing(Comparator.comparing(Obbligazione_scadenzarioBulk::getIm_scadenza).reversed())
+				);
+		if (optObbligazione_scadenzarioBulk.isPresent()) {
+			obbligazioneBulk.setIm_obbligazione(obbligazioneBulk.getIm_obbligazione().subtract(importo));
+			optObbligazione_scadenzarioBulk.get().setToBeUpdated();
+			optObbligazione_scadenzarioBulk.get().setIm_scadenza(optObbligazione_scadenzarioBulk.get().getIm_scadenza().subtract(importo));
+			optObbligazione_scadenzarioBulk.get()
+					.getObbligazione_scad_voceColl().stream()
+					.findFirst()
+					.ifPresent(obbligazioneScadVoceBulk -> {
+						obbligazioneScadVoceBulk.setToBeUpdated();
+						obbligazioneScadVoceBulk.setIm_voce(obbligazioneScadVoceBulk.getIm_voce().subtract(importo));
+					});
+			obbligazioneBulk.setFromModifica(true);
+			obbligazioneBulk.setCheckDisponibilitaContrattoEseguito(true);
+			obbligazioneBulk.setCheckDisponibilitaCdrGAEEseguito(true);
+			obbligazioneBulk.setCheckDisponibilitaCassaEseguito(true);
+			obbligazioneBulk.setCheckDisponibilitaIncaricoRepertorioEseguito(true);
+			modificaConBulk(userContext, obbligazioneBulk);
+		} else {
+			/**
+			 * Nel caso in cui l'importo è negativo e non trovo la scadenza la creo
+			 */
+			if(importo.compareTo(BigDecimal.ZERO) < 0) {
+				obbligazioneBulk.setIm_obbligazione(obbligazioneBulk.getIm_obbligazione().subtract(importo));
+
+				Obbligazione_scadenzarioBulk scadenzaNuova = new Obbligazione_scadenzarioBulk();
+				obbligazioneBulk.addToObbligazione_scadenzarioColl(scadenzaNuova);
+				scadenzaNuova.setDt_scadenza(EJBCommonServices.getServerDate());
+				scadenzaNuova.setDs_scadenza(descrizione);
+				scadenzaNuova.setIm_scadenza(importo.abs());
+				generaDettagliScadenzaObbligazione(userContext, obbligazioneBulk, scadenzaNuova, false);
+				scadenzaNuova.getObbligazione_scad_voceColl()
+						.stream()
+						.findAny()
+						.ifPresent(obbligazioneScadVoceBulk -> {
+							obbligazioneScadVoceBulk.setObbligazione_scadenzario(scadenzaNuova);
+							obbligazioneScadVoceBulk.setIm_voce(importo.abs());
+						});
+				scadenzaNuova.setToBeCreated();
+
+				obbligazioneBulk.setFromModifica(true);
+				obbligazioneBulk.setCheckDisponibilitaContrattoEseguito(true);
+				obbligazioneBulk.setCheckDisponibilitaCdrGAEEseguito(true);
+				obbligazioneBulk.setCheckDisponibilitaCassaEseguito(true);
+				obbligazioneBulk.setCheckDisponibilitaIncaricoRepertorioEseguito(true);
+				modificaConBulk(userContext, obbligazioneBulk);
+			} else {
+				throw new ApplicationException(
+						Optional.ofNullable(gae)
+								.map(workpackageBulk -> String.format("Non esistono scadenze utili da poter utilizzare con la GAE %s", workpackageBulk.getCd_linea_attivita()))
+								.orElseGet(() -> "Non esistono scadenze utili da poter utilizzare!")
+				);
+			}
+		}
 	}
 }
