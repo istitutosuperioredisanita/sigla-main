@@ -959,4 +959,5 @@ public void callRiportaIndietroRequiresNew(it.cnr.jada.UserContext param0,it.cnr
 			}
 		}
 	}
+
 }

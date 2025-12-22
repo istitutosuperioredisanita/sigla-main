@@ -134,8 +134,9 @@ public class ObbligazioneBulk extends ObbligazioneBase implements Cloneable, IDo
 	private boolean fromDocAmm = false;
 
 	private BulkList<Obbligazione_pluriennaleBulk> obbligazioniPluriennali = new BulkList<Obbligazione_pluriennaleBulk>();
+	private Boolean fromModifica;
 
-public ObbligazioneBulk() {
+	public ObbligazioneBulk() {
 	super();
 }
 public ObbligazioneBulk(java.lang.String cd_cds,java.lang.Integer esercizio,java.lang.Integer esercizio_originale,java.lang.Long pg_obbligazione) {
@@ -2033,6 +2034,11 @@ public void validateTerzo( it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo ) t
 		this.gaeDestinazioneFinale = gaeDestinazioneFinale;
 	}
 
+	public Boolean isFromModifica() {
+		return Optional.ofNullable(this.fromModifica).orElse(Boolean.FALSE);
+	}
 
-
+    public void setFromModifica(Boolean fromModifica) {
+		this.fromModifica = fromModifica;
+    }
 }

@@ -20,7 +20,10 @@ package it.cnr.contab.doccont00.ejb;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.Stateless;
 
+import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
+import it.cnr.contab.doccont00.comp.ObbligazioneComponent;
 import it.cnr.contab.doccont00.comp.ObbligazioneResComponent;
+
 @Stateless(name="CNRDOCCONT00_EJB_ObbligazioneResComponentSession")
 public class ObbligazioneResComponentSessionBean extends ObbligazioneComponentSessionBean implements ObbligazioneResComponentSession {
 @PostConstruct
@@ -63,5 +66,24 @@ public void cancellaObbligazioneModTemporanea(it.cnr.jada.UserContext param0, it
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
+
+	public void aggiornaImportoObbligazione(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk param1, java.math.BigDecimal param2, WorkpackageBulk param3, String param4) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
+		pre_component_invocation(param0, componentObj);
+		try {
+			((ObbligazioneResComponent) componentObj).aggiornaImportoObbligazione(param0, param1, param2, param3, param4);
+			component_invocation_succes(param0, componentObj);
+		} catch (it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(param0, componentObj);
+			throw e;
+		} catch (it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(param0, componentObj);
+			throw e;
+		} catch (RuntimeException e) {
+			throw uncaughtRuntimeException(param0, componentObj, e);
+		} catch (Error e) {
+			throw uncaughtError(param0, componentObj, e);
+		}
+	}
+
 }
 

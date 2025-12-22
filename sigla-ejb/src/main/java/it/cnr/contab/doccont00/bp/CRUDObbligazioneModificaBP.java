@@ -24,21 +24,22 @@
 package it.cnr.contab.doccont00.bp;
 
 import java.rmi.RemoteException;
+import java.util.Optional;
 
 import jakarta.ejb.RemoveException;
 
 import it.cnr.contab.compensi00.bp.CRUDCompensoBP;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
+import it.cnr.contab.config00.ejb.EsercizioComponentSession;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.doccont00.core.bulk.AccertamentoPGiroBulk;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_mod_voceBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_modificaBulk;
+import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.prevent00.bulk.Voce_f_saldi_cmpBulk;
 import it.cnr.contab.utenze00.bulk.CNRUserInfo;
+import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
@@ -51,6 +52,9 @@ public class CRUDObbligazioneModificaBP extends it.cnr.jada.util.action.SimpleCR
 	private final SimpleDetailCRUDController dettagliModifica = new SimpleDetailCRUDController("DettagliModifica",Obbligazione_mod_voceBulk.class,"obbligazione_mod_voceColl",this);
 	private ObbligazioneBulk obbligazione;
 	private String tipoAccesso;
+	private Boolean supervisore;
+	private Boolean esercizioChiuso;
+	private it.cnr.contab.doccont00.core.bulk.OptionRequestParameter userConfirm = null;
 
 	/**
 	 * Metodo con cui si ottiene il valore della variabile <code>dettagliModifica</code>
@@ -101,6 +105,11 @@ public class CRUDObbligazioneModificaBP extends it.cnr.jada.util.action.SimpleCR
 				setModel(context, obbMod);
 				cerca(context);
 			}
+			supervisore =  ((CNRUserInfo) context.getUserInfo()).getUtente().isSupervisore();
+			esercizioChiuso = (((EsercizioComponentSession) EJBCommonServices
+					.createEJB("CNRCONFIG00_EJB_EsercizioComponentSession",
+							EsercizioComponentSession.class))
+					.isEsercizioChiuso(context.getUserContext()));
 		} catch(Exception e) {
 			throw handleException(e);
 		}
@@ -152,5 +161,24 @@ public class CRUDObbligazioneModificaBP extends it.cnr.jada.util.action.SimpleCR
 
 	public void setTipoAccesso(String tipoAccesso) {
 		this.tipoAccesso = tipoAccesso;
+	}
+
+	/**
+	 * La cancellazione è abilitata solo per i supervisori se l'esercizio in scrivani non è chiuso e
+	 * se la modifica si riferisce ad un impegno residuo
+	 * @return
+	 */
+	@Override
+	public boolean isDeleteButtonEnabled() {
+		if (supervisore && !esercizioChiuso && Optional.ofNullable(getModel())
+				.map(Obbligazione_modificaBulk.class::cast)
+				.filter(omb -> Optional.ofNullable(omb.getEsercizio()).isPresent() &&
+						Optional.ofNullable(omb.getEsercizio_originale()).isPresent())
+				.map(omb -> !omb.getEsercizio().equals(omb.getEsercizio_originale())).orElse(Boolean.FALSE)) return true;
+		return super.isDeleteButtonEnabled();
+	}
+
+	public void setUserConfirm(OptionRequestParameter userConfirmation) {
+		userConfirmation = userConfirmation;
 	}
 }
