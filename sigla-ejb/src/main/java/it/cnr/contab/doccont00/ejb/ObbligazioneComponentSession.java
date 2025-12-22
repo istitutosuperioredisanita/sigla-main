@@ -67,5 +67,4 @@ ObbligazioneBulk findObbligazione(UserContext uc, ObbligazioneBulk obbligazione)
 ObbligazioneBulk creaObbligazioneWs(UserContext uc, ObbligazioneBulk obbligazione) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 ObbligazioneBulk updateObbligazioneWs(UserContext uc, ObbligazioneBulk obbligazione) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 Boolean deleteObbligazioneWs(UserContext uc,String cd_cds,Integer esercizio,Long pg_obbligazione,Integer esercizio_originale) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException,it.cnr.jada.persistency.PersistencyException;
-void aggiornaImportoObbligazione(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk param1, java.math.BigDecimal param2, WorkpackageBulk param3) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 }

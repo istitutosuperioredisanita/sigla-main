@@ -268,9 +268,9 @@ public class ObbligazioneModificaComponent extends it.cnr.jada.comp.CRUDComponen
 		 * Prima di eliminare la modifica devo aggiornare l'obbligazione di riferimento
 		 */
 		try {
-			ObbligazioneComponentSession obbligazioneSession =
-					(ObbligazioneComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
-							"CNRDOCCONT00_EJB_ObbligazioneComponentSession", ObbligazioneComponentSession.class);
+			ObbligazioneResComponentSession obbligazioneSession =
+					(ObbligazioneResComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
+							"CNRDOCCONT00_EJB_ObbligazioneResComponentSession", ObbligazioneResComponentSession.class);
 			Optional<Obbligazione_modificaBulk> obbMod = Optional.ofNullable(oggettobulk)
 					.filter(Obbligazione_modificaBulk.class::isInstance)
 					.map(Obbligazione_modificaBulk.class::cast);
@@ -280,7 +280,9 @@ public class ObbligazioneModificaComponent extends it.cnr.jada.comp.CRUDComponen
 							userContext,
 							omvb.getObbligazione_modifica().getObbligazione(),
 							omvb.getIm_modifica(),
-							omvb.getLinea_attivita());
+							omvb.getLinea_attivita(),
+							omvb.getObbligazione_modifica().getDs_modifica()
+					);
 				}
 			}
 

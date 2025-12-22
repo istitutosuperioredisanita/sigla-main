@@ -17,11 +17,16 @@
 
 package it.cnr.contab.doccont00.action;
 
+import it.cnr.contab.doccont00.bp.CRUDObbligazioneModificaBP;
+import it.cnr.contab.doccont00.bp.CRUDObbligazioneResBP;
+import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
+import it.cnr.contab.doccont00.core.bulk.Obbligazione_modificaBulk;
 import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.action.BusinessProcess;
 import it.cnr.jada.action.Forward;
-import it.cnr.jada.util.action.CRUDBP;
 
 import java.rmi.RemoteException;
+import java.util.Optional;
 
 public class CRUDObbligazioneModificaAction extends it.cnr.jada.util.action.CRUDAction {
 
@@ -29,11 +34,19 @@ public class CRUDObbligazioneModificaAction extends it.cnr.jada.util.action.CRUD
             throws RemoteException {
         try {
             fillModel(actioncontext);
-            CRUDBP crudbp = getBusinessProcess(actioncontext);
-            crudbp.delete(actioncontext);
-            crudbp.reset(actioncontext);
-            crudbp.setMessage("Cancellazione effettuata");
-            return actioncontext.closeBusinessProcess();
+            CRUDObbligazioneModificaBP crudObbligazioneModificaBP = (CRUDObbligazioneModificaBP)getBusinessProcess(actioncontext);
+            Optional<ObbligazioneBulk> obbligazioneBulk = Optional.ofNullable(crudObbligazioneModificaBP.getModel())
+                    .map(Obbligazione_modificaBulk.class::cast)
+                    .map(Obbligazione_modificaBulk::getObbligazione);
+            crudObbligazioneModificaBP.delete(actioncontext);
+            crudObbligazioneModificaBP.setMessage("Cancellazione effettuata");
+            BusinessProcess businessProcess = actioncontext.closeBusinessProcess();
+            if (getBusinessProcess(actioncontext) instanceof CRUDObbligazioneResBP) {
+                CRUDObbligazioneResBP crudObbligazioneResBP = (CRUDObbligazioneResBP) getBusinessProcess(actioncontext);
+                crudObbligazioneResBP.commitUserTransaction();
+                crudObbligazioneResBP.basicEdit(actioncontext, obbligazioneBulk.orElse(null), true);
+            }
+            return businessProcess;
         } catch (Throwable throwable) {
             return handleException(actioncontext, throwable);
         }

@@ -32,10 +32,7 @@ import it.cnr.contab.compensi00.bp.CRUDCompensoBP;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.config00.ejb.EsercizioComponentSession;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.doccont00.core.bulk.AccertamentoPGiroBulk;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_mod_voceBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_modificaBulk;
+import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.prevent00.bulk.Voce_f_saldi_cmpBulk;
 import it.cnr.contab.utenze00.bulk.CNRUserInfo;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
@@ -57,7 +54,7 @@ public class CRUDObbligazioneModificaBP extends it.cnr.jada.util.action.SimpleCR
 	private String tipoAccesso;
 	private Boolean supervisore;
 	private Boolean esercizioChiuso;
-
+	private it.cnr.contab.doccont00.core.bulk.OptionRequestParameter userConfirm = null;
 
 	/**
 	 * Metodo con cui si ottiene il valore della variabile <code>dettagliModifica</code>
@@ -179,5 +176,9 @@ public class CRUDObbligazioneModificaBP extends it.cnr.jada.util.action.SimpleCR
 						Optional.ofNullable(omb.getEsercizio_originale()).isPresent())
 				.map(omb -> !omb.getEsercizio().equals(omb.getEsercizio_originale())).orElse(Boolean.FALSE)) return true;
 		return super.isDeleteButtonEnabled();
+	}
+
+	public void setUserConfirm(OptionRequestParameter userConfirmation) {
+		userConfirmation = userConfirmation;
 	}
 }
