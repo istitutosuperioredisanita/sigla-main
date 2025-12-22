@@ -1017,13 +1017,14 @@ public void callRiportaIndietroRequiresNew(it.cnr.jada.UserContext param0,it.cnr
 	}
 
 	@Override
-	public void aggiornaImportoObbligazione(UserContext param0, ObbligazioneBulk param1, BigDecimal param2, WorkpackageBulk param3) throws ComponentException, RemoteException {
+	public void aggiornaImportoObbligazione(UserContext param0, ObbligazioneBulk param1, BigDecimal param2, WorkpackageBulk param3, String param4) throws ComponentException, RemoteException {
 		try {
 			invoke("aggiornaImportoObbligazione",new Object[] {
 					param0,
 					param1,
 					param2,
-					param3
+					param3,
+					param4
 			});
 		} catch(java.rmi.RemoteException e) {
 			throw e;
