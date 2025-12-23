@@ -3352,35 +3352,35 @@ public java.util.List getBeniAccessoriFor(UserContext userContext, Inventario_be
  *
  * @return local_transaction_id <code>String</code> l'ID di transazione richiesto.
 **/
-public String getLocalTransactionID(UserContext aUC, boolean force) 
-	throws ComponentException,
-	it.cnr.jada.persistency.PersistencyException,
-	it.cnr.jada.persistency.IntrospectionException 
+public String getLocalTransactionID(UserContext aUC, boolean force)
+		throws ComponentException,
+		it.cnr.jada.persistency.PersistencyException,
+		it.cnr.jada.persistency.IntrospectionException
 {
 	String localTransactionID;
-    LoggableStatement cs = null;
+	LoggableStatement cs = null;
 	try
 	{
-        cs = new LoggableStatement(getConnection( aUC ),PropertyNames.getProperty("package.ibmutl001.getLocalTransactionID"),false,this.getClass());
-        cs.setBoolean(1, force?Boolean.TRUE:Boolean.FALSE);
+		cs = new LoggableStatement(getConnection( aUC ),PropertyNames.getProperty("package.ibmutl001.getLocalTransactionID"),false,this.getClass());
+		cs.registerOutParameter( 1, java.sql.Types.VARCHAR );
+		cs.setInt(2, force?1:0);
 
-        cs.registerOutParameter( 1, java.sql.Types.VARCHAR );
-        cs.executeQuery();
+		cs.executeQuery();
 
 		localTransactionID = cs.getString(1);
-	} catch (Throwable e) 
+	} catch (Throwable e)
 	{
 		throw handleException(e);
 	} finally {
 		try {
 			if (cs != null)
-                cs.close();
+				cs.close();
 		} catch (java.sql.SQLException e) {
 			throw handleException(e);
 		}
 	}
 	return localTransactionID;
-	
+
 }
 /** 
  *  Aggiorna un bene.

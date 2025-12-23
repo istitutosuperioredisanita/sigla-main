@@ -22,12 +22,8 @@ import it.cnr.test.util.AlertMessage;
 import it.cnr.test.util.SharedResource;
 import org.jboss.arquillian.graphene.GrapheneElement;
 import org.junit.jupiter.api.*;
-import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
-import org.wildfly.common.Assert;
-
-import java.util.Optional;
 
 /**
  * Test di:
@@ -36,6 +32,8 @@ import java.util.Optional;
  * 3) annullamento evasione riga consegna
  * 4) nuova evasione riga consegna
  * 5) verifica scrittura economica/analitica su consegna
+ * 6) registrazione fattura con riscontro valore su riga consegna nr.1 evasa in anni precedenti
+ * 7) registrazione fattura con riscontro valore su riga consegna nr.2 evasa in anno corrente
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Order(4)
@@ -670,6 +668,9 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         doClickButton("doChiudiForm()");
     }
 
+    /**
+     * 8) verifica scrittura economica/analitica su consegna
+     */
     @Test
     @Order(9)
     public void testVerificaScritturaOrdine003() {
@@ -697,7 +698,6 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         doClickButton("doCerca()");
         
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
-
 
         //Vado sul dettaglio analitico a livello di Ordine
         doClickButton("doTab('tab','tabOrdineResultDetailEcoCoge')");
@@ -763,20 +763,16 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
 
         //Mi ritorna "Scrittura Economica non presente!" perchè avvenuta in periodo precedente
         //dove l'evasione non ha generato scritture
-        
         Assertions.assertEquals("Scrittura Economica non presente!", handleTextAlert(browser));
-
 
         //Entro su ‘scrittura analitica’.
         doClickButton("submitForm('doVisualizzaAnalitica');");
 
         //Mi ritorna "Scrittura Analitica non presente!" perchè avvenuta in periodo precedente
         //dove l'evasione non ha generato scritture
-        
         Assertions.assertEquals("Scrittura Analitica non presente!", handleTextAlert(browser));
 
-
-        //Mi posiziono sulla consegna 3
+        //Mi posiziono sulla consegna 2
         rowElement2.click();
 
         //Entro su ‘scrittura economica’.

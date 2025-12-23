@@ -275,12 +275,13 @@ FUNCTION spezzaGruppiDi3(numero VARCHAR2) RETURN V_ARR IS
  end;
 
  -- Restituisce il LOCAL_TRANSACTION_ID
- function getLocalTransactionID(createTransaction BOOLEAN) return VARCHAR2 is
- errMsg varchar2(200);
- id_transazione varchar2(200);
+ function getLocalTransactionID(createTransaction number) return VARCHAR2 is
+    errMsg varchar2(200);
  begin
- 	  id_transazione := dbms_transaction.local_transaction_id(createTransaction);
-	  return id_transazione;
+	If createTransaction=1 Then
+	    return dbms_transaction.local_transaction_id(true);
+    end if;
+    return dbms_transaction.local_transaction_id(false);
  exception
      when others then
           errMsg := substr(SQLERRM, 1, 200);
