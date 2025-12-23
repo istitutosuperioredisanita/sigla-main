@@ -65,8 +65,8 @@ public class Login {
             )
     )
     public Response postLogin(@Context HttpServletRequest request,
-                              @QueryParam("j_username") @FormParam("j_username") String username,
-                              @QueryParam("j_password") @FormParam("j_password") String password) throws Exception {
+                              @FormParam("j_username") String username,
+                              @FormParam("j_password") String password) throws Exception {
         try {
             if (Optional.ofNullable(securityContext.getUserPrincipal()).isEmpty())
                 request.login(username, password);
