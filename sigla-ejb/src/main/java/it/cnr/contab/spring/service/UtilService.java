@@ -27,10 +27,13 @@ import it.cnr.jada.util.mail.SimplePECMail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Component
@@ -39,6 +42,8 @@ public class UtilService implements InitializingBean {
     private transient final static Logger LOGGER = LoggerFactory.getLogger(UtilService.class);
     private CRUDMessaggioComponentSession crudMessaggioComponentSession;
     private ProgettoRicercaPadreComponentSession progettoRicercaPadreComponentSession;
+    @Autowired
+    Environment env;
 
     @Value("${doccont.max.anni.residui}")
     private Integer anniResidui;
@@ -82,6 +87,8 @@ public class UtilService implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        LOGGER.warn("Profili attivi di SPRING :: {}", Arrays.toString(env.getActiveProfiles()));
+
         this.crudMessaggioComponentSession = Optional.ofNullable(EJBCommonServices.createEJB("CNRMESSAGGIO00_EJB_CRUDMessaggioComponentSession"))
                 .filter(CRUDMessaggioComponentSession.class::isInstance)
                 .map(CRUDMessaggioComponentSession.class::cast)

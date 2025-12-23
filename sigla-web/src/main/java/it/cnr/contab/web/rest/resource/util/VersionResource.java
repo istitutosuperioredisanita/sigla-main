@@ -69,7 +69,11 @@ public class VersionResource implements ServletContextListener, VersionLocal {
                                     .orElse(Boolean.FALSE);
                         })
                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-                ATTRIBUTES.put(LIQUIBASE_BOOTSTRAP_ESERCIZIO, System.getProperty(LIQUIBASE_BOOTSTRAP_ESERCIZIO));
+                ATTRIBUTES.put(
+                        LIQUIBASE_BOOTSTRAP_ESERCIZIO,
+                        Optional.ofNullable(System.getProperty(LIQUIBASE_BOOTSTRAP_ESERCIZIO))
+                                .orElse(System.getenv("LIQUIBASE_BOOTSTRAP_ESERCIZIO"))
+                );
             }
         } catch (IOException e) {
             logger.warn("IOException", e);
