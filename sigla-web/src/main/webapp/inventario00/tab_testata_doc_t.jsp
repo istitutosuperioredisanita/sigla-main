@@ -40,7 +40,7 @@ function doStampaDocTraspRient() {
 
     <tr>
         <td><% bp.getController().writeFormLabel(out,"dataRegistrazione"); %></td>
-        <td><% bp.getController().writeFormInput(out,null,"dataRegistrazione",bp.isEditing(),null,null); %></td>
+        <td><% bp.getController().writeFormInput(out,null,"dataRegistrazione",!bp.isInserting() || !bp.isEditing(),null,null); %></td>
         <td colspan="2"></td>
     </tr>
 
@@ -74,14 +74,14 @@ function doStampaDocTraspRient() {
       <td><% bp.getController().writeFormLabel(out,"tipoMovimento"); %></td>
       <td colspan="3">
         <% bp.getController().writeFormInput(out, null, "tipoMovimento",
-            bp.isTipoMovimentoReadOnly(), null,
-            bp.isTipoMovimentoReadOnly() ? null : "onChange=\"submitForm('doSelezionaTipoMovimento')\""); %>
+            !bp.isInserting(), null,
+            bp.isInserting() || bp.isEditing() ? "onChange=\"submitForm('doSelezionaTipoMovimento')\"" : null); %>
       </td>
     </tr>
 
     <tr>
         <td><% bp.getController().writeFormLabel(out,"dsDocTrasportoRientro"); %></td>
-        <td colspan="3"><% bp.getController().writeFormInput(out,"dsDocTrasportoRientro"); %></td>
+        <td colspan="3"><% bp.getController().writeFormInput(out, null, "dsDocTrasportoRientro", !bp.isInserting(), null, null); %></td>
     </tr>
 
     <!-- ==================== SEPARATORE ==================== -->
@@ -95,7 +95,8 @@ function doStampaDocTraspRient() {
         <td><% bp.getController().writeFormLabel(out,"findAnagSmartworking"); %></td>
         <td colspan="3">
           <% bp.getController().writeFormInput(out, null, "findAnagSmartworking",
-              false, null, "onChange=\"submitForm('doOnTerzoSmartworkingChange')\""); %>
+              bp.isAnagraficiReadonly(), null,
+              bp.isAnagraficiReadonly() ? null : "onChange=\"submitForm('doOnTerzoSmartworkingChange')\""); %>
         </td>
       </tr>
     <% } %>
@@ -109,7 +110,7 @@ function doStampaDocTraspRient() {
               out,
               null,
               "tipoRitiro",
-              false,
+              bp.isAnagraficiReadonly(),
               null,
               null
           ); %>

@@ -1,6 +1,7 @@
 package it.cnr.contab.inventario01.bp;
 
 import it.cnr.contab.inventario01.bulk.AllegatoDocumentoRientroBulk;
+import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.bulk.DocumentoRientroBulk;
 import it.cnr.contab.inventario01.bulk.DocumentoRientroDettBulk;
 import it.cnr.jada.action.ActionContext;
@@ -142,7 +143,7 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoDoc
     }
 
     @Override
-    Class getDocumentoClassDett() {
+    public Class getDocumentoClassDett() {
         return DocumentoRientroDettBulk.class;
     }
 

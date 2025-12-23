@@ -1,9 +1,6 @@
 package it.cnr.contab.inventario01.bp;
 
-import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
-import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
-import it.cnr.contab.docamm00.ejb.FatturaPassivaComponentSession;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario01.bulk.*;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
@@ -25,6 +22,7 @@ import it.cnr.jada.action.Config;
 import it.cnr.jada.action.HttpActionContext;
 import it.cnr.jada.bulk.FillException;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
@@ -35,7 +33,6 @@ import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.AbstractPrintBP;
 import it.cnr.jada.util.action.RemoteDetailCRUDController;
 import it.cnr.jada.util.action.SelectionListener;
-import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.si.spring.storage.StorageObject;
 
@@ -334,26 +331,36 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     @Override
     public void setTab(String tabName, String tabValue) {
 
-        // ========== INTERCETTA ACCESSO AI TAB DETTAGLI ==========
-        // I nomi dei tab sono "tabTrasportoDettaglio" e "tabRientroDettaglio"
-        if ("tab".equals(tabName) &&
-                (tabValue != null && tabValue.endsWith("Dettaglio"))) {
+        // intercetta SOLO il cambio tab reale
+        if ("tab".equals(tabName) && tabValue != null) {
 
-            try {
-                // Valida solo se siamo in inserimento o modifica
-                if (isInserting() || isEditing()) {
-                    validaDatiPerDettagli();
+            Doc_trasporto_rientroBulk doc = getDoc();
+
+            // ======= TAB DETTAGLI / ALLEGATI =======
+            boolean isTabDettagli = tabValue.endsWith("Dettaglio") || tabValue.endsWith("Allegati");
+
+            if (isTabDettagli) {
+
+                // ======= FASE DI RICERCA =======
+                if (doc != null && doc.getCrudStatus() == OggettoBulk.UNDEFINED) {
+                    setErrorMessage("Non è possibile cambiare tab: in questa fase è consentita solo la ricerca.");
+                    return;
                 }
-            } catch (BusinessProcessException e) {
-                // Se la validazione fallisce, mostra l'errore e NON cambiare tab
-                setErrorMessage(e.getMessage());
-                return; // NON chiama super.setTab() → rimane sul tab corrente
+
+                // ======= ALTRE FASI: VALIDAZIONE =======
+                try {
+                    validaDatiPerDettagli();
+                } catch (ApplicationException e) {
+                    setErrorMessage(e.getMessage());
+                    return;
+                }
             }
         }
 
-        // Se la validazione passa (o non è un tab dettagli), procedi normalmente
         super.setTab(tabName, tabValue);
     }
+
+
 
 
 
@@ -524,8 +531,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         }
 
         // ========== ALTRI STATI (INSERITO, INVIATO) ==========
-        return !isDocumentoAnnullato()
-                && !isDocumentoInviatoInFirma();
+        return !isDocumentoNonModificabile();
     }
 
 
@@ -572,9 +578,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     @Override
     public boolean isSaveButtonEnabled() {
 
-        return !isDocumentoAnnullato()
-                && !isDocumentoInviatoInFirma()
-                && !isVisualizzazione();
+        return !isDocumentoNonModificabile();
     }
 
     /**
@@ -625,8 +629,8 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
         return doc == null
                 || doc.getPgDocTrasportoRientro() == null
-                || isDocumentoDefinitivo()
-                || isDocumentoAnnullato();
+                || isDocumentoNonModificabile();
+
     }
 
     /**
@@ -782,7 +786,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
         return !isGestioneInvioInFirmaAttiva()
                 || getModel() == null
-                || isDocumentoAnnullato()
+                || isDocumentoNonModificabile()
                 || (status != OggettoBulk.NORMAL && status != OggettoBulk.TO_BE_UPDATED)
                 || doc == null
                 || doc.getStato() == null
@@ -817,17 +821,20 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
         @Override
         public void removeAll(ActionContext context) throws ValidationException, BusinessProcessException {
-            if (isDocumentoAnnullato()) {
-                throw new ValidationException("Impossibile modificare un documento annullato");
+            if (isDocumentoNonModificabile()) {
+                throw new ValidationException("Impossibile modificare un documento " + getDoc().getStato());
             }
+
             eliminaDettagliConBulk(context);
             reset(context);
         }
 
         @Override
-        public void removeDetails(ActionContext context, OggettoBulk[] details) throws BusinessProcessException {
-            if (isDocumentoAnnullato()) {
-                throw new BusinessProcessException("Impossibile modificare un documento annullato");
+        public void removeDetails(ActionContext context, OggettoBulk[] details)
+                throws BusinessProcessException {
+
+            if (isDocumentoNonModificabile()) {
+                throw new BusinessProcessException("Impossibile modificare un documento " + getDoc().getStato());
             }
 
             try {
@@ -866,7 +873,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         }
     };
 
-    abstract Class getDocumentoClassDett();
+    public abstract Class getDocumentoClassDett();
 
     protected final RemoteDetailCRUDController editDettController = new RemoteDetailCRUDController(
             "editDettController",
@@ -895,6 +902,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             return new EmptyRemoteIterator();
         }
     };
+
 
 
     // ==================== GESTIONE DETTAGLI ====================
@@ -929,7 +937,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         }
     }
 
-    protected RemoteIterator selectDettaglibyClause(ActionContext context)
+    public RemoteIterator selectDettaglibyClause(ActionContext context)
             throws BusinessProcessException {
         try {
             return getComp().selectBeniAssociatiByClause(
@@ -1003,7 +1011,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
     @Override
     public void initializeSelection(ActionContext context) throws BusinessProcessException {
-        if (isDocumentoAnnullato()) return;
+        if (isDocumentoNonModificabile()) return;
         try {
             inizializzaSelezioneComponente(context);
         } catch (ComponentException | RemoteException e) {
@@ -1013,12 +1021,27 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
     @Override
     public void selectAll(ActionContext context) throws BusinessProcessException {
-        if (isDocumentoAnnullato()) {
-            throw new BusinessProcessException("Impossibile modificare un documento annullato");
+        if (isDocumentoNonModificabile()) {
+            throw new BusinessProcessException("Impossibile modificare il documento");
         }
+
         try {
-            selezionaTuttiBeniComponente(context);
+            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
+
+            // ========== CHIAMA IL COMPONENT ==========
+            ((DocTrasportoRientroComponentSession) createComponentSession())
+                    .selezionaTuttiBeni(
+                            context.getUserContext(),
+                            doc,
+                            getClauses()  // Passa i filtri applicati dall'utente
+                    );
+
             setClauses(null);
+
+            // ========== RESET DEL CONTROLLER PER RICARICARE I DATI ==========
+            getDettBeniController().reset(context);
+            getDettBeniController().addDetail(doc);
+
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
         }
@@ -1034,8 +1057,8 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                                BitSet oldSelection, BitSet newSelection)
             throws BusinessProcessException {
 
-        if (isDocumentoAnnullato()) {
-            throw new BusinessProcessException("Impossibile modificare un documento annullato");
+        if (isDocumentoNonModificabile()) {
+            throw new BusinessProcessException("Impossibile modificare documento");
         }
 
         try {
@@ -1816,55 +1839,51 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
      *
      * @throws BusinessProcessException se la validazione fallisce
      */
-    protected void validaDatiPerDettagli() throws BusinessProcessException {
+    public void validaDatiPerDettagli() throws ApplicationException {
         Doc_trasporto_rientroBulk doc = getDoc();
 
         if (doc == null) {
             return;
         }
 
-        // ========== VALIDAZIONE TIPO MOVIMENTO ==========
         if (doc.getTipoMovimento() == null) {
-            throw new BusinessProcessException(
-                    "Selezionare il Tipo di Movimento prima di accedere ai dettagli."
+            throw new ApplicationException(
+                    "Selezionare il Tipo di Movimento prima di accedere ai tab Dettagli e Allegati."
             );
         }
 
-        // ========== VALIDAZIONE SMARTWORKING ==========
         if (doc.isSmartworking()) {
             if (doc.getAnagSmartworking() == null ||
                     doc.getAnagSmartworking().getCd_anag() == null) {
-                throw new BusinessProcessException(
-                        "Per il tipo di movimento Smartworking è necessario selezionare l'Assegnatario Smartworking " +
-                                "prima di accedere ai dettagli."
+
+                throw new ApplicationException(
+                        "Per il tipo di movimento Smartworking è necessario selezionare l'Assegnatario Smartworking."
                 );
             }
         } else {
-            // ========== VALIDAZIONE TIPO RITIRO (NON SMARTWORKING) ==========
+
             if (!doc.hasTipoRitiroSelezionato()) {
-                throw new BusinessProcessException(
-                        "Selezionare il Tipo Ritiro (Incaricato o Vettore) prima di accedere ai dettagli."
+                throw new ApplicationException(
+                        "Selezionare il Tipo Ritiro (Incaricato o Vettore)."
                 );
             }
 
-            // ========== VALIDAZIONE INCARICATO ==========
             if (doc.isRitiroIncaricato()) {
                 if (doc.getAnagIncRitiro() == null ||
                         doc.getAnagIncRitiro().getCd_anag() == null) {
-                    throw new BusinessProcessException(
-                            "Per il ritiro tramite INCARICATO è necessario selezionare il Dipendente Incaricato " +
-                                    "prima di accedere ai dettagli."
+
+                    throw new ApplicationException(
+                            "Selezionare il Dipendente Incaricato."
                     );
                 }
             }
 
-            // ========== VALIDAZIONE VETTORE ==========
             if (doc.isRitiroVettore()) {
                 if (doc.getNominativoVettore() == null ||
                         doc.getNominativoVettore().trim().isEmpty()) {
-                    throw new BusinessProcessException(
-                            "Per il ritiro tramite VETTORE è necessario specificare il Nominativo del Vettore " +
-                                    "prima di accedere ai dettagli."
+
+                    throw new ApplicationException(
+                            "Specificare il Nominativo del Vettore."
                     );
                 }
             }
@@ -1873,12 +1892,15 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
 
 
-//    /**
-//     * Determina se i campi anagrafico devono essere readonly
-//     */
-//    public boolean isAnagraficiReadonly() {
-//        return isInputReadonly();
-//    }
+
+    /**
+     * Determina se i campi anagrafico (Smartworking, Incaricato, ecc.) devono essere readonly
+     */
+    public boolean isAnagraficiReadonly() {
+        return isDocumentoNonModificabile()
+                || isVisualizzazione()
+                || (!isInserting() && !isEditing());
+    }
 
 
 

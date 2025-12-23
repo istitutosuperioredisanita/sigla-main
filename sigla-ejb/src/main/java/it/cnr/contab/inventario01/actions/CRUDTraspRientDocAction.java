@@ -1,9 +1,12 @@
 package it.cnr.contab.inventario01.actions;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.compensi00.bp.CRUDCompensoBP;
+import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario01.bp.CRUDTraspRientInventarioBP;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
+import it.cnr.contab.inventario01.bulk.DocumentoTrasportoDettBulk;
 import it.cnr.contab.inventario01.bulk.Stampa_doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
 import it.cnr.contab.inventario01.service.DocTraspRientFirmatariService;
@@ -15,11 +18,13 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.action.HookForward;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
+import it.cnr.jada.util.action.FormBP;
 import it.cnr.jada.util.action.OptionBP;
 import it.cnr.jada.util.action.RicercaLiberaBP;
 import it.cnr.jada.util.action.SelezionatoreListaBP;
@@ -100,7 +105,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         try {
             CRUDTraspRientInventarioBP bp = getBP(context);
             bp.getDettBeniController().removeAll(context);
-            bp.getEditDettController().removeAll(context);
+//            bp.getEditDettController().removeAll(context);
             fillModel(context);
             Doc_trasporto_rientroBulk model=(Doc_trasporto_rientroBulk)bp.getModel();
             bp.setModel(context,model);
@@ -110,6 +115,32 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
+    @Override
+    public Forward doTab(ActionContext context, String tabName, String pageName) {
+
+        try {
+            fillModel(context);
+
+            CRUDTraspRientInventarioBP bp = getBP(context);
+            Doc_trasporto_rientroBulk doc = bp.getDoc();
+
+            // Creazione SOLO in inserimento reale
+            if (doc != null && doc.getCrudStatus() == OggettoBulk.TO_BE_CREATED) {
+
+                if ("tabTrasportoTestata".equalsIgnoreCase(bp.getTab(tabName))) {
+                    bp.validaDatiPerDettagli();
+                    getComponentSession(bp).creaConBulk(context.getUserContext(), doc);
+                }
+            }
+
+            return super.doTab(context, tabName, pageName);
+
+        } catch (Throwable e) {
+            return handleException(context, e);
+        }
+    }
+
+
     // =======================================================
     // AGGIUNTA BENI - SELEZIONATORE (comune con hook point)
     // =======================================================
@@ -118,6 +149,11 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         try {
             fillModel(context);
             CRUDTraspRientInventarioBP bp = getBP(context);
+            if (bp.isDocumentoNonModificabile()) {
+                bp.setMessage("Impossibile modificare un documento " +
+                        bp.getDoc().getStato());
+                return context.findDefaultForward();
+            }
             Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
             validaTestataDocumento(doc);
             bp.getDettBeniController().validate(context);
@@ -165,9 +201,8 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     }
 
 
-
     /**
-     * ✅ VERSIONE CORRETTA: Gestisce correttamente SI/NO/ANNULLA per ogni bene
+     * Gestisce correttamente SI/NO/ANNULLA per ogni bene
      *
      * COMPORTAMENTO CORRETTO:
      * - SI (AGGIUNTA/ELIMINAZIONE): Elabora bene principale + accessori
@@ -219,9 +254,10 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             // Aggiorna vista
             if (!isEliminazione) {
                 bp.getDettBeniController().reset(context);
-            } else {
-                bp.getEditDettController().reset(context);
             }
+//            else {
+//                bp.getEditDettController().reset(context);
+//            }
 
             // Step successivo
             int nextIndex = index + 1;
@@ -243,6 +279,12 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         try {
             CRUDTraspRientInventarioBP bp = getBP(context);
 
+            if (bp.isDocumentoNonModificabile()) {
+                bp.setMessage("Impossibile modificare un documento " +
+                        bp.getDoc().getStato());
+                return context.findDefaultForward();
+            }
+
             bp.getDettBeniController().remove(context);
 
             if (bp.getPendingDelete() == null) {
@@ -251,7 +293,6 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
 
             // Elimina beni semplici
             if (!bp.getPendingDelete().getPrincipaliSenza().isEmpty()) {
-
                 for (Inventario_beniBulk beneSemplice : bp.getPendingDelete().getPrincipaliSenza()) {
                     try {
                         bp.getComp().eliminaBeniAssociati(
@@ -263,17 +304,14 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                         throw bp.handleException(e);
                     }
                 }
-
                 bp.getDettBeniController().reset(context);
             }
 
             // Beni con accessori → avvia flusso ricorsivo
             if (!bp.getPendingDelete().getPrincipaliConAccessori().isEmpty()) {
-
                 List<Inventario_beniBulk> beniConAccessori = new ArrayList<>(
                         bp.getPendingDelete().getPrincipaliConAccessori().keySet()
                 );
-
                 return apriFlussoRicorsivoGenerico(context, bp, true, beniConAccessori, 0);
             }
 
@@ -303,30 +341,31 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                 return context.findDefaultForward();
             }
 
-            // Aggiungi SUBITO i beni semplici (principali senza accessori + accessori standalone)
-            // Questi NON richiedono conferma, quindi li elaboriamo prima del flusso ricorsivo
+            // Aggiungi SUBITO i beni semplici
             aggiungiImmediatamenteBeniSemplici(context, bp);
 
-            // Crea una lista SOLO dei beni principali CON accessori (che richiedono conferma)
+            // Crea lista beni con accessori da confermare
             List<Inventario_beniBulk> beniConAccessoriDaConfermare = new ArrayList<>(
                     bp.getPendingAdd().getPrincipaliConAccessori().keySet()
             );
 
             // Se non ci sono beni con accessori, finisci subito
             if (beniConAccessoriDaConfermare.isEmpty()) {
+                // ========== FIX: RESET CONTROLLER PER MOSTRARE I NUOVI BENI ==========
                 bp.getDettBeniController().reset(context);
                 bp.setMessage("Aggiunta beni completata con successo");
                 bp.resetOperazione(false);
                 return context.findDefaultForward();
             }
 
-            //  3: Avvia il flusso ricorsivo SOLO per i beni con accessori
+            // Avvia il flusso ricorsivo per i beni con accessori
             return apriFlussoRicorsivoGenerico(context, bp, false, beniConAccessoriDaConfermare, 0);
 
         } catch (Throwable e) {
             return handleException(context, e);
         }
     }
+
 
     /**
      * Aggiunge immediatamente i beni semplici senza chiedere conferma
@@ -740,8 +779,9 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     }
 
     protected void eliminaBeniSePresenti(ActionContext context, CRUDTraspRientInventarioBP bp, Doc_trasporto_rientroBulk doc, String messaggio) throws Exception {
-        SimpleBulkList selezionati = getComponentSession(bp).selezionati(context.getUserContext(), doc);
-        if (!selezionati.isEmpty()) {
+        RemoteIterator selezionati = bp.selectDettaglibyClause(context);
+
+        if (selezionati.countElements()>0) {
             bp.getDettBeniController().removeAll(context);
             doc.getDoc_trasporto_rientro_dettColl().clear();
             bp.setMessage(messaggio);
@@ -814,6 +854,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     @Override
     public Forward doSalva(ActionContext context) {
         try {
+            fillModel(context);
             CRUDTraspRientInventarioBP bp = getBP(context);
             bp.save(context);
             return context.findDefaultForward();
@@ -908,8 +949,10 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                 // Da/A Smartworking: reset SILENZIOSO
                 resetBeniSilenzioso(context, bp, doc);
             } else {
-                // Tra tipi dello stesso gruppo: reset CON messaggio
-                eliminaBeniSePresenti(context, bp, doc, "Tipo Movimento modificato. Beni precedenti rimossi.");
+                if(doc.getCrudStatus()!=OggettoBulk.TO_BE_CREATED){
+                    // Tra tipi dello stesso gruppo: reset CON messaggio
+                    eliminaBeniSePresenti(context, bp, doc, "Tipo Movimento modificato. Beni precedenti rimossi.");
+                }
             }
 
             // ========== RESET DIPENDENTE/ASSEGNATARIO ==========

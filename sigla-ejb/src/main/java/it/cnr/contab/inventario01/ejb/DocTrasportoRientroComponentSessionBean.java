@@ -20,6 +20,7 @@ package it.cnr.contab.inventario01.ejb;
 import it.cnr.contab.doccont00.comp.OrdineComponent;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.contab.inventario01.comp.DocTrasportoRientroComponent;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -82,8 +83,6 @@ public class DocTrasportoRientroComponentSessionBean
             throw uncaughtRuntimeException(userContext, componentObj, e);
         } catch (Error e) {
             throw uncaughtError(userContext, componentObj, e);
-        } catch (PersistencyException | IntrospectionException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -727,6 +726,26 @@ public class DocTrasportoRientroComponentSessionBean
                     .cercaBeniAccessoriPresentinelTrasportoOriginale(userContext, beneRientro, doc);
             component_invocation_succes(userContext, componentObj);
             return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+        } catch (it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
+
+    @Override
+    public void selezionaTuttiBeni(UserContext userContext, Doc_trasporto_rientroBulk doc, CompoundFindClause clauses) throws ComponentException, RemoteException {
+        pre_component_invocation(userContext, componentObj);
+        try {
+            ((DocTrasportoRientroComponent) componentObj)
+                    .selezionaTuttiBeni(userContext, doc, clauses);
+            component_invocation_succes(userContext, componentObj);
         } catch (it.cnr.jada.comp.NoRollbackException e) {
             component_invocation_succes(userContext, componentObj);
             throw e;

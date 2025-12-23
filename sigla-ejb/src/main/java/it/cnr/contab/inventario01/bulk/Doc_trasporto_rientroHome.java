@@ -1,5 +1,6 @@
 package it.cnr.contab.inventario01.bulk;
 
+import it.cnr.contab.doccont00.intcass.bulk.Distinta_cassiereBulk;
 import it.cnr.contab.inventario00.docs.bulk.Numeratore_doc_t_rBulk;
 import it.cnr.contab.inventario00.docs.bulk.Numeratore_doc_t_rHome;
 import it.cnr.contab.inventario00.tabrif.bulk.Tipo_trasporto_rientroBulk;
@@ -7,6 +8,7 @@ import it.cnr.contab.inventario00.tabrif.bulk.Tipo_trasporto_rientroHome;
 import it.cnr.contab.inventario01.ejb.NumerazioneTempDocTRComponentSession;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.bulk.BusyResourceException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
@@ -89,6 +91,15 @@ public class Doc_trasporto_rientroHome extends BulkHome {
 		sqlbuilder.addOrderBy("ESERCIZIO desc,PG_DOC_TRASPORTO_RIENTRO desc");
 
 		return sqlbuilder;
+	}
+
+	/**
+	 * Imposta il progressivo di un documento
+	 */
+
+	public void inizializzaProgressivo(it.cnr.jada.UserContext userContext, Doc_trasporto_rientroBulk doc) throws BusyResourceException, PersistencyException, ComponentException {
+		Long result = (Long) findMax(doc, "pgDocTrasportoRientro", new Long(0), true);
+		doc.setPgDocTrasportoRientro(new Long(result.longValue() + 1));
 	}
 
 

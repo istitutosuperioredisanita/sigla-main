@@ -57,23 +57,22 @@ function doStampaDocTraspRient() {
         <td><% bp.getController().writeFormLabel(out,"pgInventario"); %></td>
         <td><% bp.getController().writeFormInput(out,"pgInventario"); %></td>
         <td><% bp.getController().writeFormLabel(out,"dataRegistrazione"); %></td>
-        <td><% bp.getController().writeFormInput(out,null,"dataRegistrazione",bp.isEditing(),null,null); %></td>
+        <td><% bp.getController().writeFormInput(out,null,"dataRegistrazione",!bp.isInserting() || !bp.isEditing(),null,null); %></td>
     </tr>
 
     <!-- ==================== TIPO MOVIMENTO ==================== -->
     <tr>
-        <td><% bp.getController().writeFormLabel(out,"tipoMovimento"); %></td>
-        <td colspan="3">
-            <% bp.getController().writeFormInput(out, null, "tipoMovimento",
-                bp.isTipoMovimentoReadOnly(), null,
-                bp.isTipoMovimentoReadOnly() ? null : "onChange=\"submitForm('doSelezionaTipoMovimento')\""); %>
-        </td>
+      <td><% bp.getController().writeFormLabel(out,"tipoMovimento"); %></td>
+      <td colspan="3">
+        <% bp.getController().writeFormInput(out, null, "tipoMovimento",
+            !bp.isInserting(), null,
+            bp.isInserting() || bp.isEditing() ? "onChange=\"submitForm('doSelezionaTipoMovimento')\"" : null); %>
+      </td>
     </tr>
 
-    <!-- ==================== DESCRIZIONE ==================== -->
     <tr>
         <td><% bp.getController().writeFormLabel(out,"dsDocTrasportoRientro"); %></td>
-        <td colspan="3"><% bp.getController().writeFormInput(out,"dsDocTrasportoRientro"); %></td>
+        <td colspan="3"><% bp.getController().writeFormInput(out, null, "dsDocTrasportoRientro", !bp.isInserting(), null, null); %></td>
     </tr>
 
     <!-- ==================== SEPARATORE ==================== -->

@@ -393,20 +393,69 @@ public class Inventario_beniHome extends BulkHome {
         }
     }
 
-//
-//    @Override
-//    public Persistent findByPrimaryKey(UserContext userContext, Persistent persistent) throws PersistencyException {
-//        Inventario_beni_apgBulk invBeniApg = ((Inventario_beni_apgBulk) persistent);
-//        Inventario_beniBulk invBeni = new Inventario_beniBulk();
-//        invBeni.setInventario(new Id_inventarioBulk());
-//
-//        if (invBeniApg.getPg_inventario() != null) {
-//            invBeni.setPg_inventario(invBeniApg.getPg_inventario());
-//        }
-//        if (invBeniApg.getNr_inventario() != null)
-//            invBeni.setNr_inventario(invBeniApg.getNr_inventario());
-//        if (invBeniApg.getProgressivo() != null)
-//            invBeni.setProgressivo(invBeniApg.getProgressivo());
-//        return super.findByPrimaryKey(invBeni);
-//    }
+
+
+    public SQLBuilder findBeniUnificato(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            CompoundFindClause clausesUtente) throws IntrospectionException {
+
+        SQLBuilder sql = createSQLBuilder();
+
+        // ==================== FROM SENZA ALIAS ==================
+        StringBuffer from = new StringBuffer();
+        from.append("INVENTARIO_BENI ")
+                .append("INNER JOIN TERZO TZ ON INVENTARIO_BENI.CD_ASSEGNATARIO = TZ.CD_TERZO ")
+                .append("INNER JOIN ANAGRAFICO AG ON TZ.CD_ANAG = AG.CD_ANAG ")
+                .append("LEFT OUTER JOIN DOC_TRASPORTO_RIENTRO_DETT dett ON ( ")
+                .append("  dett.PG_INVENTARIO = INVENTARIO_BENI.PG_INVENTARIO AND ")
+                .append("  dett.NR_INVENTARIO = INVENTARIO_BENI.NR_INVENTARIO AND ")
+                .append("  dett.PROGRESSIVO = INVENTARIO_BENI.PROGRESSIVO ) ")
+                .append("LEFT OUTER JOIN DOC_TRASPORTO_RIENTRO t ON ( ")
+                .append("  t.PG_INVENTARIO = dett.PG_INVENTARIO AND ")
+                .append("  t.TI_DOCUMENTO = dett.TI_DOCUMENTO AND ")
+                .append("  t.ESERCIZIO = dett.ESERCIZIO AND ")
+                .append("  t.PG_DOC_TRASPORTO_RIENTRO = dett.PG_DOC_TRASPORTO_RIENTRO ) ");
+
+        sql.setFromClause(from);
+
+        // ==================== FILTRI BASE COMUNI ====================
+        applicaFiltriBaseComuni(sql, doc, userContext);
+
+        return sql;
+    }
+
+    private void applicaFiltriBaseComuni(
+            SQLBuilder sql,
+            Doc_trasporto_rientroBulk doc,
+            UserContext userContext) {
+
+        // Filtro dismissione
+        sql.addSQLClause(FindClause.AND, "INVENTARIO_BENI.FL_DISMESSO", SQLBuilder.EQUALS, "N");
+
+        // Filtro inventario
+        sql.addSQLClause(FindClause.AND, "INVENTARIO_BENI.PG_INVENTARIO", SQLBuilder.EQUALS,
+                doc.getInventario().getPg_inventario());
+
+        // Filtro scarico
+        sql.openParenthesis(FindClause.AND);
+        sql.addSQLClause(FindClause.AND, "INVENTARIO_BENI.FL_TOTALMENTE_SCARICATO", SQLBuilder.ISNULL, null);
+        sql.addSQLClause(FindClause.OR, "INVENTARIO_BENI.FL_TOTALMENTE_SCARICATO", SQLBuilder.EQUALS, "N");
+        sql.closeParenthesis();
+
+        // Filtro data validità variazione
+        sql.addSQLClause(FindClause.AND, "INVENTARIO_BENI.DT_VALIDITA_VARIAZIONE",
+                SQLBuilder.LESS_EQUALS, doc.getDataRegistrazione());
+
+        // Filtro esercizio carico
+        sql.addSQLClause(FindClause.AND, "INVENTARIO_BENI.ESERCIZIO_CARICO_BENE",
+                SQLBuilder.LESS_EQUALS,
+                CNRUserContext.getEsercizio(userContext));
+
+        // Filtro UO
+        sql.addSQLClause(FindClause.AND, "AG.CD_UNITA_ORGANIZZATIVA",
+                SQLBuilder.EQUALS,
+                CNRUserContext.getCd_unita_organizzativa(userContext));
+    }
+
 }

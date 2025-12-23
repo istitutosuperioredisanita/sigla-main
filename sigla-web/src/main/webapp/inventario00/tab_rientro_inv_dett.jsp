@@ -19,9 +19,9 @@
           <% bp.getDettBeniController().writeHTMLTable(
                 pageContext,
                 "righeRientro",
-                bp.isInserting(),
+                true,
                 false,
-                bp.isInserting(),
+                true,
                 null,
                 "100px",
                 true); %>

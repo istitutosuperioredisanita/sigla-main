@@ -19,6 +19,7 @@ package it.cnr.contab.inventario01.ejb;
 
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
+import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.SimpleBulkList;
@@ -237,6 +238,7 @@ public class TransactionalDocTrasportoRientroComponentSession
             return (RemoteIterator) invoke("cercaBeniTrasportabili", new Object[]{
                     userContext,
                     doc,
+                    beni_da_escludere,
                     clauses
             });
         } catch (java.rmi.RemoteException e) {
@@ -903,5 +905,26 @@ public class TransactionalDocTrasportoRientroComponentSession
             }
         }
 
+    }
+
+    @Override
+    public void selezionaTuttiBeni(UserContext userContext, Doc_trasporto_rientroBulk doc, CompoundFindClause clauses) throws ComponentException, RemoteException {
+        try {
+            invoke("selezionaTuttiBeni", new Object[]{
+                    userContext,
+                    doc,
+                    clauses
+            });
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaught exception", ex);
+            }
+        }
     }
 }
