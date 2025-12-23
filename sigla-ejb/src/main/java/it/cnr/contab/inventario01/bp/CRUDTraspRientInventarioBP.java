@@ -826,7 +826,8 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             }
 
             eliminaDettagliConBulk(context);
-            reset(context);
+            getDettBeniController().reset(context);
+            getDettBeniController().resync(context);
         }
 
         @Override
@@ -1021,6 +1022,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
     @Override
     public void selectAll(ActionContext context) throws BusinessProcessException {
+
         if (isDocumentoNonModificabile()) {
             throw new BusinessProcessException("Impossibile modificare il documento");
         }
@@ -1028,19 +1030,14 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         try {
             Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
 
-            // ========== CHIAMA IL COMPONENT ==========
-            ((DocTrasportoRientroComponentSession) createComponentSession())
-                    .selezionaTuttiBeni(
-                            context.getUserContext(),
-                            doc,
-                            getClauses()  // Passa i filtri applicati dall'utente
-                    );
+            // ========== CHIAMA IL METODO BATCH ==========
+            getComp().selezionaTuttiBeni(context.getUserContext(), doc, getClauses());
 
             setClauses(null);
 
-            // ========== RESET DEL CONTROLLER PER RICARICARE I DATI ==========
+            // ========== RICARICA LA TABELLA ==========
             getDettBeniController().reset(context);
-            getDettBeniController().addDetail(doc);
+            getDettBeniController().resync(context);
 
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);

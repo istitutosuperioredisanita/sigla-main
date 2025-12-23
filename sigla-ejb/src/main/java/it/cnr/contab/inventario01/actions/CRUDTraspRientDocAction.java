@@ -154,17 +154,17 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                         bp.getDoc().getStato());
                 return context.findDefaultForward();
             }
-            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
-            validaTestataDocumento(doc);
-            bp.getDettBeniController().validate(context);
-            SimpleBulkList selezionati = getComponentSession(bp).selezionati(context.getUserContext(), doc);
-            RemoteIterator ri = getListaBeni(context, bp, doc, selezionati, null);
-            ri = EJBCommonServices.openRemoteIterator(context, ri);
-            if (ri.countElements() == 0) {
-                bp.setMessage(getMessageNoResults());
-                EJBCommonServices.closeRemoteIterator(context, ri);
-                return context.findDefaultForward();
-            }
+//            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
+//            validaTestataDocumento(doc);
+//            bp.getDettBeniController().validate(context);
+//            SimpleBulkList selezionati = getComponentSession(bp).selezionati(context.getUserContext(), doc);
+//            RemoteIterator ri = getListaBeni(context, bp, doc, selezionati, null);
+//            ri = EJBCommonServices.openRemoteIterator(context, ri);
+//            if (ri.countElements() == 0) {
+//                bp.setMessage(getMessageNoResults());
+//                EJBCommonServices.closeRemoteIterator(context, ri);
+//                return context.findDefaultForward();
+//            }
             RicercaLiberaBP rlbp = (RicercaLiberaBP) context.createBusinessProcess("RicercaLibera");
             rlbp.setCanPerformSearchWithoutClauses(false);
             rlbp.setPrototype(new Inventario_beniBulk());

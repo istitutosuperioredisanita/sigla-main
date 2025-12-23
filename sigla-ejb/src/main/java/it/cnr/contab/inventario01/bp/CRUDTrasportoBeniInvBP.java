@@ -26,11 +26,11 @@ import java.util.TreeMap;
 public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoDocumentoTrasportoBulk, DocumentoTrasportoBulk>{
 
     public CRUDTrasportoBeniInvBP() {
-        super();
+        super("Tn");
     }
 
     public CRUDTrasportoBeniInvBP(String function) {
-        super(function);
+        super(function + "Tn");
     }
 
     @Override

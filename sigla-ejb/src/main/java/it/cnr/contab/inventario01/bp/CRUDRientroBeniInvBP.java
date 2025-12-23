@@ -31,11 +31,11 @@ import java.util.TreeMap;
 public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoDocumentoRientroBulk, DocumentoRientroBulk> {
 
     public CRUDRientroBeniInvBP() {
-        super();
+        super("Tn");
     }
 
     public CRUDRientroBeniInvBP(String function) {
-        super(function);
+        super(function + "Tn");
     }
 
     @Override

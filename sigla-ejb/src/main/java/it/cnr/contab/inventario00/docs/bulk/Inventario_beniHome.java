@@ -420,7 +420,12 @@ public class Inventario_beniHome extends BulkHome {
         sql.setFromClause(from);
 
         // ==================== FILTRI BASE COMUNI ====================
-        applicaFiltriBaseComuni(sql, doc, userContext);
+        // Verifica se è smartworking PRIMA di applicare i filtri
+        boolean isSmartworking = doc.isSmartworking() &&
+                doc.getAnagSmartworking() != null &&
+                doc.getAnagSmartworking().getCd_anag() != null;
+
+        applicaFiltriBaseComuni(sql, doc, userContext, isSmartworking);
 
         return sql;
     }
@@ -428,7 +433,8 @@ public class Inventario_beniHome extends BulkHome {
     private void applicaFiltriBaseComuni(
             SQLBuilder sql,
             Doc_trasporto_rientroBulk doc,
-            UserContext userContext) {
+            UserContext userContext,
+            boolean isSmartworking) {
 
         // Filtro dismissione
         sql.addSQLClause(FindClause.AND, "INVENTARIO_BENI.FL_DISMESSO", SQLBuilder.EQUALS, "N");
@@ -452,10 +458,12 @@ public class Inventario_beniHome extends BulkHome {
                 SQLBuilder.LESS_EQUALS,
                 CNRUserContext.getEsercizio(userContext));
 
-        // Filtro UO
-        sql.addSQLClause(FindClause.AND, "AG.CD_UNITA_ORGANIZZATIVA",
-                SQLBuilder.EQUALS,
-                CNRUserContext.getCd_unita_organizzativa(userContext));
+        // ========== FILTRO UO: NON APPLICARE IN SMARTWORKING ==========
+        if (!isSmartworking) {
+            sql.addSQLClause(FindClause.AND, "AG.CD_UNITA_ORGANIZZATIVA",
+                    SQLBuilder.EQUALS,
+                    CNRUserContext.getCd_unita_organizzativa(userContext));
+        }
     }
 
 }

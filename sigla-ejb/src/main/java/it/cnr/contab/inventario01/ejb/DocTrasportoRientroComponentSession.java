@@ -19,11 +19,9 @@ package it.cnr.contab.inventario01.ejb;
 
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
-import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.SimpleBulkList;
-import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDDetailComponentSession;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
@@ -266,6 +264,6 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
             throws ComponentException, RemoteException;
 
 
-    void selezionaTuttiBeni(it.cnr.jada.UserContext param0,it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk param1,it.cnr.jada.persistency.sql.CompoundFindClause param3) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+    void selezionaTuttiBeni(UserContext param0, Doc_trasporto_rientroBulk param1, CompoundFindClause param3) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 
 }

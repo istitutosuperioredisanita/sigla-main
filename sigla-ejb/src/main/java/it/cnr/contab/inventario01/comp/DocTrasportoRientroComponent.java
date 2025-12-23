@@ -31,13 +31,13 @@ import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 
-import static it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk.RIENTRO;
-import static it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk.TRASPORTO;
+import static it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk.*;
 import static it.cnr.jada.bulk.OggettoBulk.isNullOrEmpty;
 
 /**
@@ -452,7 +452,8 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
      *    - TRASPORTO: cerca eventuale RIENTRO precedente e imposta riferimento opzionale
      *    - RIENTRO: cerca TRASPORTO originale (obbligatorio) e imposta riferimento
      * 5. Salva il documento con tutti i dettagli
-     * 6. Solo per RIENTRO: aggiorna i dettagli del TRASPORTO con riferimenti inversi bidirezionali*
+     * 6. Solo per RIENTRO: aggiorna i dettagli del TRASPORTO con riferimenti inversi bidirezionali
+     *
      * GESTIONE RIFERIMENTI BIDIREZIONALI:
      * - TRASPORTO → RIENTRO: riferimento opzionale (null se primo trasporto del bene)
      * - RIENTRO → TRASPORTO: riferimento obbligatorio (errore se trasporto non trovato)
@@ -474,6 +475,17 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             generaProgressivoDocumento(userContext, docT);
             verificaDocumentoNonEsistente(userContext, docT);
             validaDoc(userContext, docT);
+            // ==================== 4. LEGGI BENI DA INVENTARIO_BENI_APG ====================
+            List beniApg = caricaBeniDaTabellaTempoanea(userContext, docT);
+
+            if (docT.getCrudStatus() == OggettoBulk.TO_BE_CREATED && beniApg.isEmpty()) {
+
+                // salva SOLO la testata
+                docT.setToBeCreated();
+                docT.setStato(STATO_INSERITO);
+                insertBulk(userContext, docT);
+                return docT;
+            }
 
             // ==================== 2. RECUPERA TERZO DA ANAGRAFICO INCARICATO ====================
             if (docT.getAnagIncRitiro() != null &&
@@ -518,17 +530,11 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 }
             }
 
-            List beniApg = new ArrayList();
-            boolean isRientro = Boolean.FALSE;
-            SimpleBulkList dettagliList = new SimpleBulkList();
-            List<DocumentoTrasportoDettBulk> dettagliTrasportoDaAggiornare = new ArrayList<>();
-
-            if (docT.getCrudStatus() != OggettoBulk.TO_BE_CREATED) {
-                // ==================== 4. LEGGI BENI DA INVENTARIO_BENI_APG ====================
-                beniApg = caricaBeniDaTabellaTempoanea(userContext, docT);
 
             // ==================== 5. CREA I DETTAGLI ====================
-            isRientro = docT instanceof DocumentoRientroBulk;
+            boolean isRientro = docT instanceof DocumentoRientroBulk;
+            SimpleBulkList dettagliList = new SimpleBulkList();
+            List<DocumentoTrasportoDettBulk> dettagliTrasportoDaAggiornare = new ArrayList<>();
 
             Inventario_beniHome invBeniHome = (Inventario_beniHome)
                     getHome(userContext, Inventario_beniBulk.class);
@@ -562,7 +568,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                     dettagliList.add(dettaglio);
                 }
             }
-        }
 
             // ==================== 6. IMPOSTA CD_TERZO_INCARICATO IN TESTATA ====================
             if (docT.isSmartworking()) {
@@ -580,7 +585,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             // ==================== 7. SALVA IL DOCUMENTO ====================
             docT.setDoc_trasporto_rientro_dettColl(dettagliList);
             docT.setToBeCreated();
-            docT.setStato(Doc_trasporto_rientroBulk.STATO_INSERITO);
+            docT.setStato(STATO_INSERITO);
             docT = (Doc_trasporto_rientroBulk) super.creaConBulk(userContext, docT);
 
             // ==================== 8. AGGIORNA RIFERIMENTI BIDIREZIONALI (solo per RIENTRO) ====================
@@ -600,6 +605,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             throw handleException(e);
         }
     }
+
 
 // ==================== METODI DI SUPPORTO ====================
 
@@ -648,10 +654,13 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
         List beniApg = apgHome.fetchAll(sqlApg);
 
-        if (beniApg == null || beniApg.isEmpty()) {
-            throw new ApplicationException(
-                    "Attenzione: è necessario specificare almeno un bene!");
+        if(docT.getCrudStatus()!=TO_BE_CREATED){
+            if (beniApg == null || beniApg.isEmpty()) {
+                throw new ApplicationException(
+                        "Attenzione: è necessario specificare almeno un bene!");
+            }
         }
+
 
         return beniApg;
     }
@@ -1450,14 +1459,15 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
 
     /**
-     * Elimina uno o più beni dalla tabella di appoggio INVENTARIO_BENI_APG.
+     * Elimina uno o più beni specifici dalla tabella di appoggio INVENTARIO_BENI_APG.
+     * VERSIONE OTTIMIZZATA: usa DELETE SQL diretta con IN clause.
      * <p>
      * I beni vengono sempre eliminati SOLO da INVENTARIO_BENI_APG.
      * Non tocca i dettagli DOC_TRASPORTO_RIENTRO_DETT.
      *
-     * @param userContext contesto utente
-     * @param doc         documento di trasporto/rientro
-     * @param beni        array di beni da eliminare
+     * @param userContext Contesto utente
+     * @param doc Documento di trasporto/rientro
+     * @param beni Array di beni da eliminare
      */
     public void eliminaBeniAssociati(
             UserContext userContext,
@@ -1465,35 +1475,62 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             OggettoBulk[] beni)
             throws ComponentException {
 
-        if (beni == null || beni.length == 0) return;
+        if (beni == null || beni.length == 0) {
+            return ;
+        }
+
+        PreparedStatement pstmt = null;
 
         try {
-            Inventario_beni_apgHome apgHome = (Inventario_beni_apgHome)
-                    getHome(userContext, Inventario_beni_apgBulk.class);
+            // ========== COSTRUISCI LA IN CLAUSE ==========
+            StringBuilder inClause = new StringBuilder();
 
-            for (OggettoBulk o : beni) {
-                Inventario_beniBulk bene = (Inventario_beniBulk) o;
+            for (int i = 0; i < beni.length; i++) {
+                Inventario_beniBulk bene = (Inventario_beniBulk) beni[i];
 
-                SQLBuilder sql = apgHome.createSQLBuilder();
-                sql.addSQLClause("AND", "LOCAL_TRANSACTION_ID", SQLBuilder.EQUALS, doc.getLocal_transactionID());
-                sql.addSQLClause("AND", "PG_INVENTARIO", SQLBuilder.EQUALS, doc.getPgInventario());
-                sql.addSQLClause("AND", "NR_INVENTARIO", SQLBuilder.EQUALS, bene.getNr_inventario());
-                sql.addSQLClause("AND", "PROGRESSIVO", SQLBuilder.EQUALS, bene.getProgressivo());
-
-                List apgBeni = apgHome.fetchAll(sql);
-                for (Iterator it = apgBeni.iterator(); it.hasNext(); ) {
-                    Inventario_beni_apgBulk apg = (Inventario_beni_apgBulk) it.next();
-                    apg.setToBeDeleted();
-                    super.eliminaConBulk(userContext, apg);
+                if (i > 0) {
+                    inClause.append(",");
                 }
+
+                inClause.append("(")
+                        .append(bene.getNr_inventario())
+                        .append(",")
+                        .append(bene.getProgressivo())
+                        .append(")");
             }
-        } catch (PersistencyException pe) {
-            throw handleException(pe);
+
+            // ========== DELETE DIRETTA CON SQL ==========
+            String deleteSQL =
+                    "DELETE FROM INVENTARIO_BENI_APG " +
+                            "WHERE LOCAL_TRANSACTION_ID = ? " +
+                            "  AND PG_INVENTARIO = ? " +
+                            "  AND (NR_INVENTARIO, PROGRESSIVO) IN (" + inClause + ")";
+
+            pstmt = getConnection(userContext).prepareStatement(deleteSQL);
+            pstmt.setString(1, doc.getLocal_transactionID());
+            pstmt.setLong(2, doc.getPgInventario());
+
+            int recordEliminati = pstmt.executeUpdate();
+
+            System.out.println("Eliminati " + recordEliminati +
+                    " record specifici da INVENTARIO_BENI_APG");
+
+        } catch (java.sql.SQLException e) {
+            throw new ComponentException(
+                    "Errore eliminazione beni specifici da INVENTARIO_BENI_APG: " +
+                            e.getMessage(), e);
+        } finally {
+            try {
+                if (pstmt != null) pstmt.close();
+            } catch (java.sql.SQLException e) {
+                System.out.println("Errore chiusura statement: "+e);
+            }
         }
     }
 
     /**
      * Elimina TUTTI i beni dalla tabella di appoggio INVENTARIO_BENI_APG.
+     * VERSIONE OTTIMIZZATA: usa DELETE SQL diretta invece di eliminaConBulk iterativo.
      * <p>
      * I beni vengono sempre eliminati SOLO da INVENTARIO_BENI_APG.
      * Non tocca i dettagli DOC_TRASPORTO_RIENTRO_DETT.
@@ -1503,21 +1540,32 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             Doc_trasporto_rientroBulk doc)
             throws ComponentException {
 
+        PreparedStatement pstmt = null;
+
         try {
-            Inventario_beni_apgHome apgHome = (Inventario_beni_apgHome)
-                    getHome(userContext, Inventario_beni_apgBulk.class);
+            // ========== DELETE DIRETTA CON SQL ==========
+            String deleteSQL =
+                    "DELETE FROM INVENTARIO_BENI_APG " +
+                            "WHERE LOCAL_TRANSACTION_ID = ?";
 
-            SQLBuilder sql = apgHome.createSQLBuilder();
-            sql.addSQLClause("AND", "LOCAL_TRANSACTION_ID", SQLBuilder.EQUALS, doc.getLocal_transactionID());
+            pstmt = getConnection(userContext).prepareStatement(deleteSQL);
+            pstmt.setString(1, doc.getLocal_transactionID());
 
-            List beniApg = apgHome.fetchAll(sql);
-            for (Iterator it = beniApg.iterator(); it.hasNext(); ) {
-                Inventario_beni_apgBulk apg = (Inventario_beni_apgBulk) it.next();
-                apg.setToBeDeleted();
-                super.eliminaConBulk(userContext, apg);
+            int recordEliminati = pstmt.executeUpdate();
+
+            System.out.println("Eliminati " + recordEliminati +
+                    " record da INVENTARIO_BENI_APG per transazione " +
+                    doc.getLocal_transactionID());
+
+        } catch (java.sql.SQLException e) {
+            throw new ComponentException(
+                    "Errore eliminazione beni da INVENTARIO_BENI_APG: " + e.getMessage(), e);
+        } finally {
+            try {
+                if (pstmt != null) pstmt.close();
+            } catch (java.sql.SQLException e) {
+                System.out.println("Errore chiusura statement: "+e);
             }
-        } catch (PersistencyException pe) {
-            throw handleException(pe);
         }
     }
 
@@ -2568,9 +2616,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
 // ==================== METODI PRIVATI - FILTRI SPECIFICI ====================
 
-    /**
-     * Applica i filtri specifici per TRASPORTO.
-     */
     private void applicaFiltriTrasporto(SQLBuilder sql, Doc_trasporto_rientroBulk doc, UserContext userContext)
             throws ComponentException, PersistencyException, IntrospectionException {
 
@@ -2587,15 +2632,12 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
 
         if (doc.isSmartworking() && terzo != null && terzo.getCd_terzo() != null) {
-            // Filtro per cd_assegnatario SOLO se anagrafico smartworking è valorizzato
+            // Filtro per cd_assegnatario (il filtro UO è già stato escluso in applicaFiltriBaseComuni)
             sql.addSQLClause(FindClause.AND, "INVENTARIO_BENI.CD_ASSEGNATARIO",
                     SQLBuilder.EQUALS, terzo.getCd_terzo());
-        } else {
-            // Altrimenti filtra per UO
-            filtroPerUnitaOrganizzativaUtente(sql, doc, userContext);
         }
 
-        // ========== ESCLUDI BENI IN DOCUMENTI DI TRASPORTO CON STATO INSERITO ==========
+        // ========== ESCLUDI BENI IN ALTRI DOCUMENTI DI TRASPORTO CON STATO INSERITO ==========
         sql.openParenthesis(FindClause.AND);
 
         sql.addSQLClause(FindClause.AND, "t.PG_DOC_TRASPORTO_RIENTRO", SQLBuilder.ISNULL, null);
@@ -2681,36 +2723,22 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     private void escludiBeniGiaSelezionati(
             SQLBuilder sql,
             Doc_trasporto_rientroBulk doc,
-            SimpleBulkList beniEsclusi) {
+            SimpleBulkList beni_da_escludere) {
 
-        if (beniEsclusi == null || beniEsclusi.isEmpty()) {
-            return;
-        }
-
-        java.util.List<Inventario_beniBulk> listaBeniEsclusi = new java.util.ArrayList<>();
-
-        for (Object obj : beniEsclusi) {
-            if (obj instanceof Doc_trasporto_rientro_dettBulk) {
-                Inventario_beniBulk bene = ((Doc_trasporto_rientro_dettBulk) obj).getBene();
-                if (bene != null) {
-                    listaBeniEsclusi.add(bene);
-                }
-            } else if (obj instanceof Inventario_beniBulk) {
-                listaBeniEsclusi.add((Inventario_beniBulk) obj);
-            }
-        }
-
-        if (listaBeniEsclusi.isEmpty()) {
+        if (beni_da_escludere == null || beni_da_escludere.isEmpty()) {
             return;
         }
 
         StringBuilder exclusionList = new StringBuilder();
 
-        for (Inventario_beniBulk bene : listaBeniEsclusi) {
+        for (Object obj : beni_da_escludere) {
+            Inventario_beniBulk bene = (Inventario_beniBulk) obj;
+
             if (bene.getNr_inventario() != null && bene.getProgressivo() != null) {
                 if (exclusionList.length() > 0) {
                     exclusionList.append(",");
                 }
+
                 exclusionList.append("(")
                         .append(bene.getNr_inventario())
                         .append(",")
@@ -2719,18 +2747,16 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             }
         }
 
-        // ========== AGGIUNGI CLAUSOLA NOT IN SENZA ALIAS ==========
         if (exclusionList.length() > 0) {
-            sql.addSQLClause(FindClause.AND,
-                    "(INVENTARIO_BENI.NR_INVENTARIO, INVENTARIO_BENI.PROGRESSIVO) NOT IN ("
-                            + exclusionList + ")");
+            sql.addSQLClause("AND",
+                    "(INVENTARIO_BENI.NR_INVENTARIO, INVENTARIO_BENI.PROGRESSIVO) NOT IN (" +
+                            exclusionList + ")");
         }
     }
 
-
     /**
-     * Seleziona tutti i beni filtrati e li aggiunge alla tabella temporanea INVENTARIO_BENI_APG.
-     * Metodo chiamato dal BP quando l'utente clicca "Seleziona tutti" nel selezionatore.
+     * Seleziona tutti i beni filtrati e li aggiunge in BATCH alla tabella temporanea INVENTARIO_BENI_APG.
+     * VERSIONE OTTIMIZZATA FINALE: pre-genera tutti i PG_RIGA in un unico lock, poi INSERT batch.
      *
      * @param userContext Contesto utente
      * @param doc Documento di trasporto/rientro
@@ -2743,39 +2769,201 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             CompoundFindClause clauses)
             throws ComponentException {
 
+        PreparedStatement pstmt = null;
+
         try {
             // ========== DETERMINA SE È TRASPORTO O RIENTRO ==========
             boolean isTrasporto = doc instanceof DocumentoTrasportoBulk;
 
-            // ========== CERCA I BENI CON I FILTRI APPLICATI ==========
-            RemoteIterator ri = cercaBeniUnificato(
+            // ========== COSTRUISCI LA QUERY CON fetchAll() ==========
+            List<Inventario_beniBulk> beniFiltrati = caricaBeniConFetchAll(
                     userContext,
                     doc,
-                    null,  // beniEsclusi = null (vogliamo tutti i beni)
                     clauses,
                     isTrasporto
             );
 
+            if (beniFiltrati.isEmpty()) {
+                System.out.println("Nessun bene da inserire");
+                return;
+            }
+
+            System.out.println("Caricati " + beniFiltrati.size() + " beni, inizio INSERT batch...");
+
+            // ========== PRE-GENERA TUTTI I PG_RIGA IN UN UNICO LOCK ==========
+            Long pgRigaIniziale = preGeneraPgRiga(userContext, beniFiltrati.size());
+
+            // ========== PREPARA DATI DI AUDIT ==========
+            String userId = userContext.getUser();
+            java.sql.Timestamp now = new java.sql.Timestamp(System.currentTimeMillis());
+
+            // ========== PREPARA INSERT BATCH CON TUTTI I CAMPI OBBLIGATORI ==========
+            String insertSQL =
+                    "INSERT INTO INVENTARIO_BENI_APG " +
+                            "(PG_RIGA, LOCAL_TRANSACTION_ID, PG_INVENTARIO, NR_INVENTARIO, PROGRESSIVO, " +
+                            " DT_VALIDITA_VARIAZIONE, TI_DOCUMENTO, PG_BUONO_C_S, " +
+                            " VARIAZIONE_MENO, FL_TOTALMENTE_SCARICATO, " +
+                            " DACR, UTCR, DUVA, UTUV, PG_VER_REC) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            pstmt = getConnection(userContext).prepareStatement(insertSQL);
+
+            int batchSize = 0;
+            int totalInserted = 0;
+            final int BATCH_LIMIT = 1000;
+            long pgRigaCorrente = pgRigaIniziale;
+
+            // ========== ITERA SULLA LISTA (IN MEMORIA, VELOCE) ==========
+            for (Inventario_beniBulk bene : beniFiltrati) {
+
+                pstmt.setLong(1, pgRigaCorrente++);  // PG_RIGA pre-generato
+                pstmt.setString(2, doc.getLocal_transactionID());  // LOCAL_TRANSACTION_ID
+                pstmt.setLong(3, bene.getPg_inventario());  // PG_INVENTARIO
+                pstmt.setLong(4, bene.getNr_inventario());  // NR_INVENTARIO
+                pstmt.setLong(5, bene.getProgressivo());  // PROGRESSIVO
+                pstmt.setTimestamp(6, new java.sql.Timestamp(bene.getDt_validita_variazione().getTime()));  // DT_VALIDITA_VARIAZIONE
+                pstmt.setString(7, doc.getTiDocumento());  // TI_DOCUMENTO
+                pstmt.setLong(8, doc.getPgDocTrasportoRientro());  // PG_BUONO_C_S
+                pstmt.setBigDecimal(9, new java.math.BigDecimal(0));  // VARIAZIONE_MENO
+                pstmt.setString(10, "N");  // FL_TOTALMENTE_SCARICATO
+
+                // ========== CAMPI DI AUDIT (NOT NULL) ==========
+                pstmt.setTimestamp(11, now);  // DACR
+                pstmt.setString(12, userId);  // UTCR
+                pstmt.setTimestamp(13, now);  // DUVA
+                pstmt.setString(14, userId);  // UTUV
+                pstmt.setLong(15, 1L);  // PG_VER_REC
+
+                pstmt.addBatch();
+                batchSize++;
+
+                if (batchSize >= BATCH_LIMIT) {
+                    int[] results = pstmt.executeBatch();
+                    totalInserted += results.length;
+                    batchSize = 0;
+                    System.out.println("Inseriti " + totalInserted + " / " + beniFiltrati.size() + " beni...");
+                }
+            }
+
+            // ========== ESEGUI BATCH RIMANENTE ==========
+            if (batchSize > 0) {
+                int[] results = pstmt.executeBatch();
+                totalInserted += results.length;
+            }
+
+            System.out.println("INSERT BATCH completato: inseriti " + totalInserted + " beni");
+
+        } catch (java.sql.SQLException e) {
+            throw new ComponentException("Errore INSERT batch: " + e.getMessage(), e);
+        } finally {
+            try {
+                if (pstmt != null) pstmt.close();
+            } catch (java.sql.SQLException e) {
+                System.out.println("Errore chiusura statement: "+e);
+            }
+        }
+    }
+
+    /**
+     * Pre-genera TUTTI i PG_RIGA necessari in un unico lock.
+     * Riserva un range di N progressivi atomicamente.
+     *
+     * @param userContext Contesto utente
+     * @param numeroRecord Quanti record verranno inseriti
+     * @return Il primo PG_RIGA del range riservato
+     * @throws ComponentException in caso di errore
+     */
+    private Long preGeneraPgRiga(UserContext userContext, int numeroRecord)
+            throws ComponentException {
+
+        LoggableStatement cs = null;
+
+        try {
+            // ========== CREA UN BULK TEMPORANEO ==========
+            Inventario_beni_apgBulk tempBulk = new Inventario_beni_apgBulk();
+
+            // ========== USA findAndLockMax PER OTTENERE IL MASSIMO CON LOCK ==========
             Inventario_beni_apgHome apgHome = (Inventario_beni_apgHome)
                     getHome(userContext, Inventario_beni_apgBulk.class);
 
-            // ========== AGGIUNGI TUTTI I BENI ALLA TABELLA TEMPORANEA ==========
-            while (ri.hasMoreElements()) {
-                Inventario_beniBulk bene = (Inventario_beniBulk) ri.nextElement();
+            Long maxPgRiga = (Long) apgHome.findAndLockMax(
+                    tempBulk,
+                    "pg_riga",
+                    new Long(0)
+            );
 
-                // Crea record in INVENTARIO_BENI_APG
-                Inventario_beni_apgBulk apg = new Inventario_beni_apgBulk();
-                apg.setPg_inventario(bene.getPg_inventario());
-                apg.setNr_inventario(bene.getNr_inventario());
-                apg.setProgressivo(bene.getProgressivo());
-                apg.setDt_validita_variazione(bene.getDt_validita_variazione());
-                apg.setLocal_transaction_id(doc.getLocal_transactionID());
-                apg.setTi_documento(doc.getTiDocumento());
-                apg.setPg_buono_c_s(doc.getPgDocTrasportoRientro());
-                apg.setToBeCreated();
+            // Il prossimo disponibile
+            Long pgRigaIniziale = maxPgRiga + 1;
 
-                super.creaConBulk(userContext, apg);
+            System.out.println("Riservato range PG_RIGA: da " + pgRigaIniziale +
+                    " a " + (pgRigaIniziale + numeroRecord - 1) +
+                    " (" + numeroRecord + " record)");
+
+            return pgRigaIniziale;
+
+        } catch (it.cnr.jada.bulk.BusyResourceException e) {
+            throw new ComponentException("Risorsa occupata durante generazione PG_RIGA: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new ComponentException("Errore generazione range PG_RIGA: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Carica TUTTI i beni con fetchAll() dalla Home.
+     * [IL RESTO DEL CODICE RIMANE INVARIATO]
+     */
+    private List<Inventario_beniBulk> caricaBeniConFetchAll(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            CompoundFindClause clauses,
+            boolean isTrasporto)
+            throws ComponentException {
+
+        try {
+            Inventario_beniHome invHome = (Inventario_beniHome)
+                    getHome(userContext, Inventario_beniBulk.class);
+
+            SQLBuilder sql = invHome.findBeniUnificato(userContext, doc, clauses);
+
+            if (isTrasporto) {
+                applicaFiltriTrasporto(sql, doc, userContext);
+            } else {
+                applicaFiltriRientro(sql, doc);
             }
+
+            Inventario_beni_apgHome apgHome = (Inventario_beni_apgHome)
+                    getHome(userContext, Inventario_beni_apgBulk.class);
+
+            SQLBuilder sqlEsclusiApg = apgHome.createSQLBuilder();
+            sqlEsclusiApg.addTableToHeader("INVENTARIO_BENI_APG", "APG");
+            sqlEsclusiApg.resetColumns();
+            sqlEsclusiApg.addColumn("APG.PG_INVENTARIO");
+            sqlEsclusiApg.addColumn("APG.NR_INVENTARIO");
+            sqlEsclusiApg.addColumn("APG.PROGRESSIVO");
+            sqlEsclusiApg.addColumn("APG.DT_VALIDITA_VARIAZIONE");
+
+            sqlEsclusiApg.addSQLClause("AND", "APG.LOCAL_TRANSACTION_ID",
+                    SQLBuilder.EQUALS, doc.getLocal_transactionID());
+            sqlEsclusiApg.addSQLClause("AND", "APG.TI_DOCUMENTO",
+                    SQLBuilder.EQUALS, doc.getTiDocumento());
+            sqlEsclusiApg.addSQLClause("AND", "APG.PG_BUONO_C_S",
+                    SQLBuilder.EQUALS, doc.getPgDocTrasportoRientro());
+
+            sqlEsclusiApg.addSQLJoin("APG.PG_INVENTARIO", SQLBuilder.EQUALS,
+                    "INVENTARIO_BENI.PG_INVENTARIO");
+            sqlEsclusiApg.addSQLJoin("APG.NR_INVENTARIO", SQLBuilder.EQUALS,
+                    "INVENTARIO_BENI.NR_INVENTARIO");
+            sqlEsclusiApg.addSQLJoin("APG.PROGRESSIVO", SQLBuilder.EQUALS,
+                    "INVENTARIO_BENI.PROGRESSIVO");
+            sqlEsclusiApg.addSQLJoin("APG.DT_VALIDITA_VARIAZIONE", SQLBuilder.EQUALS,
+                    "INVENTARIO_BENI.DT_VALIDITA_VARIAZIONE");
+
+            sql.addSQLNotExistsClause("AND", sqlEsclusiApg);
+            sql.addOrderBy("INVENTARIO_BENI.NR_INVENTARIO, INVENTARIO_BENI.PROGRESSIVO");
+
+            List risultati = invHome.fetchAll(sql);
+
+            return risultati != null ? risultati : java.util.Collections.emptyList();
 
         } catch (Exception e) {
             throw handleException(e);
