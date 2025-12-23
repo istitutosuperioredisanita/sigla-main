@@ -17,12 +17,12 @@
 
 package it.cnr.contab.web.rest.local.config00;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import it.cnr.contab.config00.contratto.bulk.ContrattoDatiSintesiBulk;
 import it.cnr.contab.web.rest.config.SIGLARoles;
 import it.cnr.contab.web.rest.config.SIGLASecurityContext;
@@ -45,10 +45,8 @@ import jakarta.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(SIGLARoles.CONTRATTO)
-@Tag(name = "Contratti")
+@Tag(name = "Contratti Maggioli")
 public interface ContrattoMaggioliLocal extends DefaultContrattoLocal{
-
-
 
     /**
      * PUT  /restapi/contratto -> return Contratto
@@ -56,47 +54,39 @@ public interface ContrattoMaggioliLocal extends DefaultContrattoLocal{
     @POST
     @Valid
     @Operation(summary = "Inserisce un contratto",
-            description = "Accesso consentito solo alle utenze abilitate al ruolo CONTRATTO",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ContrattoDtoBulk.class)
-                            )
-                    )
-            }
+            description = "Accesso consentito solo alle utenze abilitate al ruolo CONTRATTO"
     )
-    public Response insertContratto(@Context HttpServletRequest request, @Valid ContrattoDtoBulk contrattoMaggioliBulk ) throws Exception;
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ContrattoDtoBulk.class)
+            )
+    )
+    Response insertContratto(@Context HttpServletRequest request, @Valid ContrattoDtoBulk contrattoMaggioliBulk ) throws Exception;
 
     @POST
     @Valid
     @Path("/v2.0")
     @Operation(summary = "Inserisce un contratto",
-            description = "Accesso consentito solo alle utenze abilitate al ruolo CONTRATTO",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ContrattoDtoBulk.class)
-                            )
-                    )
-            }
+            description = "Accesso consentito solo alle utenze abilitate al ruolo CONTRATTO"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ContrattoDtoBulk.class)
+            )
     )
     Response insertContrattoV2(@Context HttpServletRequest request, @Valid ContrattoDtoBulk contrattoMaggioliBulk ) throws Exception;
 
@@ -106,19 +96,20 @@ public interface ContrattoMaggioliLocal extends DefaultContrattoLocal{
     @GET
     @PermitAll
     @Operation(summary = "Recupera i dati dei contratti",
-            description = "Accesso consentito solo alle utenze abilitate al ruolo CONTRATTO",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ContrattoDatiSintesiBulk.class)
-                            )
-                    )
-            }    )
+            description = "Accesso consentito solo alle utenze abilitate al ruolo CONTRATTO"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ContrattoDatiSintesiBulk.class)
+            )
+    )
     Response recuperoDatiContratto(@Context HttpServletRequest request,
                                    @QueryParam("uo") String uo,
                                    @QueryParam("cdTerzo") Integer cdTerzo) throws Exception;

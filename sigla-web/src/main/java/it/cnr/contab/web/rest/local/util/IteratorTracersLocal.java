@@ -17,12 +17,12 @@
 
 package it.cnr.contab.web.rest.local.util;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import it.cnr.contab.web.rest.config.AccessoAllowed;
 import it.cnr.contab.util.enumeration.AccessoEnum;
 import it.cnr.jada.util.ejb.EJBTracer;
@@ -42,24 +42,21 @@ import jakarta.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "Tracer")
+@SecurityRequirement(name = "BASIC")
 public interface IteratorTracersLocal {
 
     @GET
     @AccessoAllowed(value = AccessoEnum.XXXHTTPSESSIONXXXXXX)
     @Operation(summary = "Resituisce gli iteratori ancori aperti",
-            description = "Accesso consentito solo alle utenze abilitate a XXXHTTPSESSIONXXXXXX",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = EJBTracer.IteratorTracer.class)
-                            )
-                    )
-            }
+            description = "Accesso consentito solo alle utenze abilitate a XXXHTTPSESSIONXXXXXX"
+
+    )
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = EJBTracer.IteratorTracer.class)
+            )
     )
     Response map(@Context HttpServletRequest request) throws Exception;
 }

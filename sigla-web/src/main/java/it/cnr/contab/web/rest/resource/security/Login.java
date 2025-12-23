@@ -19,16 +19,19 @@ package it.cnr.contab.web.rest.resource.security;
 
 import it.cnr.contab.web.rest.exception.UnprocessableEntityException;
 import it.cnr.contab.web.rest.local.config00.AccountLocal;
+import it.cnr.contab.web.rest.model.AccountDTO;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
-import jakarta.ws.rs.FormParam;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +44,7 @@ import java.util.Optional;
 @Path("login")
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
+@Tag(name = "Security")
 public class Login {
     private final Logger LOGGER = LoggerFactory.getLogger(Login.class);
     @Context
@@ -50,9 +54,19 @@ public class Login {
     private AccountLocal accountLocal;
 
     @POST
+    @Operation(summary = "Effettua il login applicativo",
+            description = "Restituisce le informazioni sull'utenza"
+    )
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = AccountDTO.class)
+            )
+    )
     public Response postLogin(@Context HttpServletRequest request,
-                              @FormParam("j_username") String username,
-                              @FormParam("j_password") String password) throws Exception {
+                              @QueryParam("j_username") @FormParam("j_username") String username,
+                              @QueryParam("j_password") @FormParam("j_password") String password) throws Exception {
         try {
             if (Optional.ofNullable(securityContext.getUserPrincipal()).isEmpty())
                 request.login(username, password);

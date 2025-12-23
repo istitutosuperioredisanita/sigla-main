@@ -17,12 +17,12 @@
 
 package it.cnr.contab.web.rest.local.config00;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import it.cnr.contab.web.rest.config.AllUserAllowedWithoutAbort;
 import it.cnr.contab.web.rest.model.AccountDTO;
 import it.cnr.contab.web.rest.model.PasswordDTO;
@@ -40,64 +40,49 @@ import jakarta.ejb.Local;
 @Produces(MediaType.APPLICATION_JSON)
 @AllUserAllowedWithoutAbort
 @Tag(name = "Account")
+@SecurityRequirement(name = "BASIC")
 public interface AccountLocal {
 
     @GET
     @Operation(summary = "Fornisce le informazioni dell'account",
-            description = "Accesso consentito a tutte le utenze registrate",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = AccountDTO.class)
-                            )
-                    )
-            }
+            description = "Accesso consentito a tutte le utenze registrate"
+    )
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = AccountDTO.class)
+            )
     )
     Response get(@Context HttpServletRequest request) throws Exception;
 
     @GET
     @Path("/{username}")
     @Operation(summary = "Fornisce le informazioni dell'account in base allo username",
-            description = "Accesso consentito a tutte le utenze registrate",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = AccountDTO.class)
-                            )
-                    )
-            }
+            description = "Accesso consentito a tutte le utenze registrate"
+    )
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = AccountDTO.class)
+            )
     )
     Response getUsername(@Context HttpServletRequest request, @PathParam("username") String username) throws Exception;
 
     @POST
     @Path("/change-password")
     @Operation(summary = "Cambia la passwod dell'utente collegato",
-            description = "Accesso consentito a tutte le utenze registrate",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = AccountDTO.class)
-                            )
-                    )
-            }
+            description = "Accesso consentito a tutte le utenze registrate"
+    )
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = AccountDTO.class)
+            )
     )
     Response changePassword(@Context HttpServletRequest request, PasswordDTO passwordDTO) throws Exception;
-
 
     AccountDTO getAccountDTO(HttpServletRequest request) throws Exception;
 }

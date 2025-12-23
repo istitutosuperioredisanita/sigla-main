@@ -1,6 +1,6 @@
 package it.cnr.contab.web.rest.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.util.ApplicationMessageFormatException;
 import it.cnr.jada.DetailedRuntimeException;

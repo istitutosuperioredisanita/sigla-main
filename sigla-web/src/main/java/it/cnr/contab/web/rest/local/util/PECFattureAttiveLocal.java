@@ -17,12 +17,12 @@
 
 package it.cnr.contab.web.rest.local.util;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import it.cnr.contab.web.rest.config.AccessoAllowed;
 import it.cnr.contab.util.enumeration.AccessoEnum;
 import it.cnr.contab.web.rest.config.SIGLASecurityContext;
@@ -46,11 +46,9 @@ public interface PECFattureAttiveLocal {
     @Path("/reinvia-pec")
     @AccessoAllowed(value= AccessoEnum.XXXHTTPSESSIONXXXXXX)
     @Operation(summary = "Reinvia tramite PEC l'xml della fattura attiva a SDI",
-            description = "Accesso consentito solo alle utenze abilitate con accesso XXXHTTPSESSIONXXXXXX",
-            security = {
-                    @SecurityRequirement(name = "BASIC")
-            }
+            description = "Accesso consentito solo alle utenze abilitate con accesso XXXHTTPSESSIONXXXXXX"
     )
+    @SecurityRequirement(name = "BASIC")
     Response reinviaPEC(@Context HttpServletRequest request,
                         @QueryParam("esercizio") Integer esercizio,
                         @QueryParam("pgFatturaAttiva") Long pgFatturaAttiva) throws Exception;
@@ -59,23 +57,18 @@ public interface PECFattureAttiveLocal {
     @Path("/aggiorna-nome-file")
     @AccessoAllowed(value= AccessoEnum.XXXHTTPSESSIONXXXXXX)
     @Operation(summary = "Aggiorna il nome del file su tutte le fatture attive con stato INV",
-            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV",
-            security = {
-                    @SecurityRequirement(name = "BASIC")
-            }
-
+            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV"
     )
+    @SecurityRequirement(name = "BASIC")
     Response aggiornaNomeFile(@Context HttpServletRequest request) throws Exception;
 
     @GET
     @Path("/aggiorna-metadati")
     @AccessoAllowed(value= AccessoEnum.XXXHTTPSESSIONXXXXXX)
     @Operation(summary = "Aggiorna i metadati della fattura attiva sul documentale",
-            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV",
-            security = {
-                    @SecurityRequirement(name = "BASIC")
-            }
+            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV"
     )
+    @SecurityRequirement(name = "BASIC")
     Response aggiornaMetadati(@Context HttpServletRequest request,
                               @QueryParam("esercizio") Integer esercizio,
                               @QueryParam("cdCds") String cdCds,
@@ -85,19 +78,15 @@ public interface PECFattureAttiveLocal {
     @Path("/reinvia-notifica-ko")
     @AccessoAllowed(value= AccessoEnum.XXXHTTPSESSIONXXXXXX)
     @Operation(summary = "Reinvia la notifica di esito negativo a tutte le utenza configurate a ricevere la notifica e all'utenza che ha creato la fattura",
-            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV",
-            security = {
-                    @SecurityRequirement(name = "BASIC")
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = List.class)
-                            )
-                    )
-            }
+            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = List.class)
+            )
     )
     Response reinviaNotifica(@Context HttpServletRequest request,
                              @QueryParam("esercizio") Integer esercizio,

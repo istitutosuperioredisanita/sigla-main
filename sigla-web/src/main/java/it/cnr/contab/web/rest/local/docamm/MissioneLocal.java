@@ -17,12 +17,12 @@
 
 package it.cnr.contab.web.rest.local.docamm;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
 import it.cnr.contab.web.rest.config.SIGLARoles;
 import it.cnr.contab.web.rest.config.SIGLASecurityContext;
@@ -49,23 +49,19 @@ public interface MissioneLocal {
     @POST
     @Path(value = "/validaMassimaleSpesa")
     @Operation(summary = "Verifica se la spesa è consentina in funzione dei massimali presenti",
-            description = "Accesso consentito solo alle utenze abilitate al ruolo MISSIONI",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = String.class)
-                            )
-                    )
-            }
+            description = "Accesso consentito solo alle utenze abilitate al ruolo MISSIONI"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = String.class)
+            )
     )
     Response validaMassimaleSpesa(@Context HttpServletRequest request, MassimaleSpesaBulk massimaleSpesaBulk) throws Exception;
 
@@ -74,23 +70,19 @@ public interface MissioneLocal {
      */
     @PUT
     @Operation(summary = "Inserisce una missione.",
-            description = "Accesso consentito solo alle utenze abilitate al ruolo MISSIONI",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = MissioneBulk.class)
-                            )
-                    )
-            }
+            description = "Accesso consentito solo alle utenze abilitate al ruolo MISSIONI"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = MissioneBulk.class)
+            )
     )
     Response insert(@Context HttpServletRequest request, MissioneBulk missioneBulk) throws Exception;
 
@@ -100,23 +92,19 @@ public interface MissioneLocal {
     @DELETE
     @Path("{id}")
     @Operation(summary = "Elimina una missione.",
-            description = "Accesso consentito solo alle utenze abilitate al ruolo MISSIONI",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = String.class)
-                            )
-                    )
-            }
+            description = "Accesso consentito solo alle utenze abilitate al ruolo MISSIONI"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = String.class)
+            )
     )
     Response delete(@Context HttpServletRequest request, @PathParam("id") long idRimborsoMissione) throws Exception;
 }

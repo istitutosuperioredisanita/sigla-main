@@ -24,11 +24,13 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import jakarta.ejb.Local;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 @Local
 @Path("/todo")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Tag(name = "TODO", description = "Servizi di utilità che mostrano le operazioni da fare")
 public interface ToDoLocal {
     public enum ToDoBP {
         FirmaDigitalePdgVariazioniBP("PRVFIRMAVARIAZIONE"),

@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
-//import io.swagger.v3.oas.annotations.media.Schema;
+//import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 public class Riscossione {
   

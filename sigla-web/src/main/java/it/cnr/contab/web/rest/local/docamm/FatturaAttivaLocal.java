@@ -17,12 +17,12 @@
 
 package it.cnr.contab.web.rest.local.docamm;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import it.cnr.contab.client.docamm.FatturaAttiva;
 import it.cnr.contab.web.rest.config.AccessoAllowed;
 import it.cnr.contab.util.enumeration.AccessoEnum;
@@ -49,23 +49,19 @@ public interface FatturaAttivaLocal {
     @GET
     @AccessoAllowed(value=AccessoEnum.AMMFATTURDOCSFATATTV)
     @Operation(summary = "Recupera i dati della Fattura Attiva",
-            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = FatturaAttiva.class)
-                            )
-                    )
-            }
+            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = FatturaAttiva.class)
+            )
     )
     Response ricercaFattura(@Context HttpServletRequest request,
                             @QueryParam("esercizio") Integer esercizio,
@@ -77,26 +73,21 @@ public interface FatturaAttivaLocal {
 	@POST
 	@AccessoAllowed(value=AccessoEnum.AMMFATTURDOCSFATATTM)
     @Operation(summary = "Inserisce una o più Fatture Attive",
-            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTM",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = List.class)
-                            )
-                    )
-            }
+            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTM"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = List.class)
+            )
     )
     Response inserisciFatture(@Context HttpServletRequest request, List<FatturaAttiva> fatture) throws Exception;
-
 
     /**
      * GET  /restapi/fatturaattiva/ricerca -> return Fattura attiva
@@ -105,24 +96,19 @@ public interface FatturaAttivaLocal {
     @Path("/inserisciDatiPerStampa")
     @AccessoAllowed(value=AccessoEnum.AMMFATTURDOCSFATATTM)
     @Operation(summary = "Inserisce i dati per la stampa IVA",
-            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTM",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = Long.class)
-                            )
-                    )
-            }
-
+            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTM"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Long.class)
+            )
     )
     Response inserisciDatiPerStampa(@Context HttpServletRequest request,
                                     @QueryParam ("esercizio") Integer esercizio,
@@ -136,23 +122,19 @@ public interface FatturaAttivaLocal {
     @AccessoAllowed(value=AccessoEnum.AMMFATTURDOCSFATATTV)
     @Produces("application/pdf")
     @Operation(summary = "Fornisce la stampa della Fattura Attiva in pdf",
-            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = byte[].class)
-                            )
-                    )
-            }
+            description = "Accesso consentito solo alle utenze abilitate con accesso AMMFATTURDOCSFATATTV"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = byte[].class)
+            )
     )
     Response stampaFattura(@Context HttpServletRequest request,
                            @QueryParam ("pgStampa") Long pgStampa) throws Exception;

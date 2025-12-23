@@ -17,12 +17,12 @@
 
 package it.cnr.contab.web.rest.local.anagraf00;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.web.rest.config.SIGLARoles;
 import it.cnr.contab.web.rest.config.SIGLASecurityContext;
@@ -48,23 +48,19 @@ public interface AnagraficoLocal {
 
 	@PUT
     @Operation(summary = "Inserisce un anagrafico ed un terzo",
-            description = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.ANAGRAFICO +"'",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = AnagraficoBulk.class)
-                            )
-                    )
-            }
+            description = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.ANAGRAFICO +"'"
     )
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = AnagraficoBulk.class)
+            )
+    )
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
     Response insert(@Context HttpServletRequest request, AnagraficoBulk anagraficoBulk) throws Exception;
 }

@@ -17,12 +17,12 @@
 
 package it.cnr.contab.web.rest.local.doccont;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import it.cnr.contab.web.rest.config.SIGLARoles;
 
 import jakarta.annotation.security.RolesAllowed;
@@ -45,17 +45,15 @@ public interface ComunicaDatiPagamentiLocal {
 
     @GET
     @Operation(summary = "Recupera i dati dei pagamenti",
-            description = "Accesso consentito solo alle utenze abilitate al ruolo PORTALE",
-            security = @SecurityRequirement(name = "basicAuth"),
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = List.class)
-                            )
-                    )
-            }
+            description = "Accesso consentito solo alle utenze abilitate al ruolo PORTALE"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = List.class)
+            )
     )
     Response recuperoDatiPagamenti(@Context HttpServletRequest request,
                                    @QueryParam("esercizio") Integer esercizio,

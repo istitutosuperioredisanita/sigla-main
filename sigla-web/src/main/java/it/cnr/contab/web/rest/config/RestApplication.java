@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+ * Copyright (C) 2019  Consiglio Nazionale delle Ricerche
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Affero General Public License as
@@ -14,16 +14,19 @@
  *     You should have received a copy of the GNU Affero General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 package it.cnr.contab.web.rest.config;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.info.Contact;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.info.License;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
+import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn;
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType;
+import org.eclipse.microprofile.openapi.annotations.info.Contact;
+import org.eclipse.microprofile.openapi.annotations.info.Info;
+import org.eclipse.microprofile.openapi.annotations.info.License;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 @OpenAPIDefinition(
         info = @Info(
@@ -41,34 +44,37 @@ import io.swagger.v3.oas.annotations.tags.Tag;
         )
 )
 @SecurityScheme(
-        name = "BASIC",
+        securitySchemeName = "BASIC",
         type = SecuritySchemeType.HTTP,
-        scheme = "basic"
+        scheme = "basic",
+        description = "Autenticazione HTTP Basic"
 )
 @SecurityScheme(
-        name = SIGLASecurityContext.X_SIGLA_ESERCIZIO,
+        securitySchemeName = SIGLASecurityContext.X_SIGLA_ESERCIZIO,
         type = SecuritySchemeType.APIKEY,
         in = SecuritySchemeIn.HEADER,
-        paramName = SIGLASecurityContext.X_SIGLA_ESERCIZIO
+        apiKeyName = SIGLASecurityContext.X_SIGLA_ESERCIZIO
 )
 @SecurityScheme(
-        name = SIGLASecurityContext.X_SIGLA_CD_CDS,
+        securitySchemeName = SIGLASecurityContext.X_SIGLA_CD_CDS,
         type = SecuritySchemeType.APIKEY,
         in = SecuritySchemeIn.HEADER,
-        paramName = SIGLASecurityContext.X_SIGLA_CD_CDS
+        apiKeyName = SIGLASecurityContext.X_SIGLA_CD_CDS
 )
 @SecurityScheme(
-        name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA,
+        securitySchemeName = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA,
         type = SecuritySchemeType.APIKEY,
         in = SecuritySchemeIn.HEADER,
-        paramName = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA
+        apiKeyName = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA
 )
 @SecurityScheme(
-        name = SIGLASecurityContext.X_SIGLA_CD_CDR,
+        securitySchemeName = SIGLASecurityContext.X_SIGLA_CD_CDR,
         type = SecuritySchemeType.APIKEY,
         in = SecuritySchemeIn.HEADER,
-        paramName = SIGLASecurityContext.X_SIGLA_CD_CDR
+        apiKeyName = SIGLASecurityContext.X_SIGLA_CD_CDR
 )
 @Tag(name = "SIGLA REST API")
-public interface ApiConfig {
+@ApplicationPath("/restapi")
+public class RestApplication extends Application {
+
 }

@@ -17,12 +17,12 @@
 
 package it.cnr.contab.web.rest.local.config00;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import it.cnr.contab.web.rest.config.SIGLARoles;
 import it.cnr.contab.web.rest.config.SIGLASecurityContext;
 import it.cnr.contab.web.rest.model.ContrattoDtoBulk;
@@ -51,27 +51,21 @@ public interface ContrattoLocal {
      */
     @PUT
     @Operation(summary = "Inserisce un contratto",
-            description = "Accesso consentito solo alle utenze abilitate al ruolo CONTRATTO",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ContrattoDtoBulk.class)
-                            )
-                    )
-            }
-
-
+            description = "Accesso consentito solo alle utenze abilitate al ruolo CONTRATTO"
     )
-    public Response insertContratto(@Context HttpServletRequest request, ContrattoDtoBulk contrattoBulk) throws Exception;
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ContrattoDtoBulk.class)
+            )
+    )
+    Response insertContratto(@Context HttpServletRequest request, ContrattoDtoBulk contrattoBulk) throws Exception;
 
     /**
      * GET  /restapi/contratto -> return Contratto
@@ -79,23 +73,19 @@ public interface ContrattoLocal {
     @GET
     @RolesAllowed({SIGLARoles.CONTRATTO,SIGLARoles.PARCO_AUTO})
     @Operation(summary = "Recupera i dati dei contratti",
-            description = "Accesso consentito solo alle utenze abilitate al ruolo REST_PARCO_AUTO",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = List.class)
-                            )
-                    )
-            }
+            description = "Accesso consentito solo alle utenze abilitate al ruolo REST_PARCO_AUTO"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = List.class)
+            )
     )
     Response recuperoDatiContratto(@Context HttpServletRequest request,
                                    @QueryParam("uo") String uo,

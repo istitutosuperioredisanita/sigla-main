@@ -26,11 +26,13 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 @Local
 @Path("/progetto")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Tag(name = "Piano Economico", description = "Servizi di utilità per la verifica del piano economico di un progetto")
 public interface ProgettoPianoEconomicoLocal {
 
     @GET

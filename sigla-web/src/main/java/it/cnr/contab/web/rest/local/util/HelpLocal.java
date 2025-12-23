@@ -19,11 +19,11 @@ package it.cnr.contab.web.rest.local.util;
 
 import jakarta.ejb.Local;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -32,6 +32,8 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
+import org.eclipse.microprofile.openapi.annotations.info.Info;
 
 import java.net.URI;
 
@@ -43,16 +45,14 @@ public interface HelpLocal {
 
     @GET
     @Operation(summary = "Restituisce la URL dell'Help associata al BusinessProcess o alla pagina",
-            description = "Nel caso che non sia definita resitituisce la pagina iniziale",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = URI.class)
-                            )
-                    )
-            }
+            description = "Nel caso che non sia definita resitituisce la pagina iniziale"
+    )
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = URI.class)
+            )
     )
     Response get(@Context HttpServletRequest request,
                  @QueryParam("jspName") String jspName,

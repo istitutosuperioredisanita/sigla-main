@@ -17,12 +17,12 @@
 
 package it.cnr.contab.web.rest.local.config00;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import it.cnr.contab.web.rest.config.SIGLARoles;
 import it.cnr.contab.web.rest.config.SIGLASecurityContext;
 import it.cnr.contab.web.rest.model.ObbligazioneDto;
@@ -45,46 +45,38 @@ public interface ObbligazioneLocal {
 
 	@POST
     @Operation(summary = "Crea un'obbligazione",
-            description = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.OBBLIGAZIONE +"'",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ObbligazioneDto.class)
-                            )
-                    )
-            }
+            description = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.OBBLIGAZIONE +"'"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ObbligazioneDto.class)
+            )
     )
     Response insert(@Context HttpServletRequest request, ObbligazioneDto obbligazioneDto) throws Exception;
 
     @GET
     @Path("/{cd_cds}/{esercizio}/{pg_obbligazione}/{esercizio_originale}")
     @Operation(summary = "Ritorna un'obbligazione",
-            description = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.OBBLIGAZIONE +"'",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ObbligazioneDto.class)
-                            )
-                    )
-            }
+            description = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.OBBLIGAZIONE +"'"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ObbligazioneDto.class)
+            )
     )
     Response get(@PathParam("cd_cds") String cd_cds,
                  @PathParam("esercizio") Integer esercizio,
@@ -94,23 +86,19 @@ public interface ObbligazioneLocal {
     @DELETE
     @Path("/{cd_cds}/{esercizio}/{pg_obbligazione}/{esercizio_originale}")
     @Operation(summary = "Elimina un'obbligazione'",
-            description = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.OBBLIGAZIONE +"'",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = String.class)
-                            )
-                    )
-            }
+            description = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.OBBLIGAZIONE +"'"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = String.class)
+            )
     )
     Response delete(@PathParam("cd_cds") String cd_cds,
                     @PathParam("esercizio") Integer esercizio,
@@ -120,24 +108,19 @@ public interface ObbligazioneLocal {
     @PATCH
     @Path("/{cd_cds}/{esercizio}/{pg_obbligazione}/{esercizio_originale}")
     @Operation(summary = "Modifica un'obbligazione",
-            description = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.OBBLIGAZIONE +"'",
-            security = {
-                    @SecurityRequirement(name = "BASIC"),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA),
-                    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ObbligazioneDto.class)
-                            )
-                    )
-            }
-
+            description = "Accesso consentito solo alle utenze abilitate e con ruolo '" + SIGLARoles.OBBLIGAZIONE +"'"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ObbligazioneDto.class)
+            )
     )
     Response update(@PathParam("cd_cds") String cd_cds,
                     @PathParam("esercizio") Integer esercizio,
