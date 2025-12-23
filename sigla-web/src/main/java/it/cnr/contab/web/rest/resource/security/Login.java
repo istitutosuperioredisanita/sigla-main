@@ -28,8 +28,11 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.slf4j.Logger;
@@ -54,8 +57,16 @@ public class Login {
     private AccountLocal accountLocal;
 
     @POST
-    @Operation(summary = "Effettua il login applicativo",
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Operation(
+            summary = "Effettua il login applicativo",
             description = "Restituisce le informazioni sull'utenza"
+    )
+    @RequestBody(
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_FORM_URLENCODED,
+                    schema = @Schema(implementation = LoginForm.class)
+            )
     )
     @APIResponse(
             responseCode = "200",
@@ -65,18 +76,18 @@ public class Login {
             )
     )
     public Response postLogin(@Context HttpServletRequest request,
-                              @FormParam("j_username") String username,
-                              @FormParam("j_password") String password) throws Exception {
+                              @BeanParam LoginForm loginForm) throws Exception {
         try {
             if (Optional.ofNullable(securityContext.getUserPrincipal()).isEmpty())
-                request.login(username, password);
+                request.login(loginForm.getUsername(), loginForm.getPassword());
             return Response.ok(accountLocal.getAccountDTO(request)).build();
         } catch (ServletException e) {
-            LOGGER.trace("Login error for user:{} password:{}", username, password, e);
+            LOGGER.trace("Login error for user:{} password:{}", loginForm.getUsername(), loginForm.getPassword(), e);
             return Response.status(Response.Status.UNAUTHORIZED) .build();
         } catch (UnprocessableEntityException e) {
-            LOGGER.trace("Login error for user:{} password:{}", username, password, e);
+            LOGGER.trace("Login error for user:{} password:{}", loginForm.getUsername(), loginForm.getPassword(), e);
             return Response.status(Response.Status.NOT_ACCEPTABLE) .build();
         }
     }
+
 }
