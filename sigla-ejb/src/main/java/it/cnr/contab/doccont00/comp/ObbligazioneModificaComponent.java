@@ -25,9 +25,7 @@ package it.cnr.contab.doccont00.comp;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.Enumeration;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
+import java.util.*;
 
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_cnrHome;
@@ -44,6 +42,7 @@ import it.cnr.contab.doccont00.core.bulk.Obbligazione_modificaHome;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_modificaBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scad_voceBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
+import it.cnr.contab.doccont00.ejb.ObbligazioneAbstractComponentSession;
 import it.cnr.contab.doccont00.ejb.ObbligazioneComponentSession;
 import it.cnr.contab.doccont00.ejb.ObbligazioneResComponentSession;
 import it.cnr.contab.doccont00.ejb.SaldoComponentSession;
@@ -261,5 +260,37 @@ public class ObbligazioneModificaComponent extends it.cnr.jada.comp.CRUDComponen
 		{
 			throw handleException( e )	;
 		}	
+	}
+
+	@Override
+	public void eliminaConBulk(UserContext userContext, OggettoBulk oggettobulk) throws ComponentException {
+		/**
+		 * Prima di eliminare la modifica devo aggiornare l'obbligazione di riferimento
+		 */
+		try {
+			ObbligazioneResComponentSession obbligazioneSession =
+					(ObbligazioneResComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
+							"CNRDOCCONT00_EJB_ObbligazioneResComponentSession", ObbligazioneResComponentSession.class);
+			Optional<Obbligazione_modificaBulk> obbMod = Optional.ofNullable(oggettobulk)
+					.filter(Obbligazione_modificaBulk.class::isInstance)
+					.map(Obbligazione_modificaBulk.class::cast);
+			if (obbMod.isPresent()) {
+				for (Obbligazione_mod_voceBulk omvb: obbMod.get().getObbligazione_mod_voceColl()) {
+					obbligazioneSession.aggiornaImportoObbligazione(
+							userContext,
+							omvb.getObbligazione_modifica().getObbligazione(),
+							omvb.getIm_modifica(),
+							omvb.getLinea_attivita(),
+							omvb.getObbligazione_modifica().getDs_modifica()
+					);
+				}
+			}
+
+			super.eliminaConBulk(userContext, oggettobulk);
+		}
+		catch ( Exception e )
+		{
+			throw handleException( e )	;
+		}
 	}
 }

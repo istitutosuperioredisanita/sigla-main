@@ -92,11 +92,11 @@ public class Obbligazione_modificaBulk extends Obbligazione_modificaBase {
 		this.getCds().setCd_unita_organizzativa(cd_cds);
 	}
 
-	public BulkList getObbligazione_mod_voceColl() {
+	public BulkList<Obbligazione_mod_voceBulk> getObbligazione_mod_voceColl() {
 		return obbligazione_mod_voceColl;
 	}
 
-	public void setObbligazione_mod_voceColl(BulkList obbligazione_mod_voceColl) {
+	public void setObbligazione_mod_voceColl(BulkList<Obbligazione_mod_voceBulk> obbligazione_mod_voceColl) {
 		this.obbligazione_mod_voceColl = obbligazione_mod_voceColl;
 	}
 

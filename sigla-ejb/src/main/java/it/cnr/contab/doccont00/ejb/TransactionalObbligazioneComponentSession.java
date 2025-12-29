@@ -17,6 +17,7 @@
 
 package it.cnr.contab.doccont00.ejb;
 
+import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.doccont00.core.DatiFinanziariScadenzeDTO;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.jada.UserContext;
@@ -24,7 +25,9 @@ import it.cnr.jada.bulk.PrimaryKeyHashtable;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
+import java.util.Optional;
 
 public class TransactionalObbligazioneComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements ObbligazioneComponentSession {
 public void aggiornaCogeCoanInDifferita(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1,java.util.Map param2) throws RemoteException,it.cnr.jada.comp.ComponentException {
@@ -959,4 +962,5 @@ public void callRiportaIndietroRequiresNew(it.cnr.jada.UserContext param0,it.cnr
 			}
 		}
 	}
+
 }
