@@ -1285,7 +1285,8 @@ public class CRUDObbligazioneAction extends CRUDAbstractObbligazioneAction {
                     && obbligazione.getStato_obbligazione() != null && obbligazione.getStato_obbligazione().equals(ObbligazioneBulk.STATO_OBB_PROVVISORIO))
                 throw new ApplicationException("Non e' possibile modificare un'impegno residuo con gara di appalto in corso di espletamento, si prega di riportarlo indietro dall'esercizio precedente e di renderlo definitivo.");
             CRUDObbligazioneModificaBP newbp = null;
-            newbp = (CRUDObbligazioneModificaBP) context.getUserInfo().createBusinessProcess(context, "CRUDObbligazioneModificaBP", new Object[]{"V", obbligazione, CRUDObbligazioneModificaBP.TIPO_ACCESSO_VISUALIZZAZIONE});
+            String function = bp.isSupervisore() && !bp.isEsercizioChiuso() ? "Tr" : "V";
+            newbp = (CRUDObbligazioneModificaBP) context.getUserInfo().createBusinessProcess(context, "CRUDObbligazioneModificaBP", new Object[]{function, obbligazione, CRUDObbligazioneModificaBP.TIPO_ACCESSO_VISUALIZZAZIONE});
             context.addBusinessProcess(newbp);
             return doCerca(context);
 

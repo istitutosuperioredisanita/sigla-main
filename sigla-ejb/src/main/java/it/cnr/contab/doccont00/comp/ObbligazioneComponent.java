@@ -3373,7 +3373,7 @@ public OggettoBulk modificaConBulk (UserContext aUC,OggettoBulk bulk) throws Com
 		Pdg_variazioneBulk pdgVariazioneObbl = null;
 
 		//Aggiorno la variazione se legata
-		if (Utility.createConfigurazioneCnrComponentSession().isVariazioneAutomaticaSpesa(aUC)) {
+		if (obbligazione.isCompetenza() && Utility.createConfigurazioneCnrComponentSession().isVariazioneAutomaticaSpesa(aUC)) {
 			try {
 				pdgVariazioneObbl = Utility.createCRUDPdgVariazioneGestionaleComponentSession().generaVariazioneAutomaticaDaObbligazione(aUC, obbligazione);
 			} catch (Exception e) {
@@ -5608,6 +5608,7 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 			throw handleException( e );
 		}
 	}
+
 	/*
 	 * Pre-post-conditions:
 	 * 
