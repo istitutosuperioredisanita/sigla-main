@@ -22,7 +22,6 @@ import it.cnr.jada.action.Config;
 import it.cnr.jada.action.HttpActionContext;
 import it.cnr.jada.bulk.FillException;
 import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
@@ -191,15 +190,13 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
     protected abstract String getEditDettagliControllerName();
 
-    protected abstract String getMainTabName();
+    public abstract String getMainTabName();
 
     public abstract String getLabelData_registrazione();
 
     protected abstract void inizializzaSelezioneComponente(ActionContext context) throws ComponentException, RemoteException;
 
     protected abstract void annullaModificaComponente(ActionContext context) throws ComponentException, RemoteException;
-
-    protected abstract void selezionaTuttiBeniComponente(ActionContext context) throws ComponentException, RemoteException;
 
     public abstract void modificaBeniConAccessoriComponente(ActionContext context, OggettoBulk[] bulks, BitSet oldSelection, BitSet newSelection) throws ComponentException, RemoteException, BusinessProcessException;
 
@@ -361,9 +358,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     }
 
 
-
-
-
     // ========================================
     // GETTER E SETTER
     // ========================================
@@ -504,7 +498,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
     /**
      * Controlla se il bottone ELIMINA deve essere abilitato.
-     *
+     * <p>
      * LOGICA:
      * - RIENTRO DEFINITIVO: sempre DISABILITATO
      * - TRASPORTO DEFINITIVO: DISABILITATO solo se ha UN rientro associato
@@ -825,10 +819,12 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                 throw new ValidationException("Impossibile modificare un documento " + getDoc().getStato());
             }
 
-            eliminaDettagliConBulk(context);
+            // ========== SEMPRE SU DETTAGLIO ==========
+            eliminaTuttiBeniDaDettagli(context);
             getDettBeniController().reset(context);
             getDettBeniController().resync(context);
         }
+
 
         @Override
         public void removeDetails(ActionContext context, OggettoBulk[] details)
@@ -842,13 +838,15 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                 PendingSelection ps = new PendingSelection();
                 ps.bulks = details;
 
+                // ========== CLASSIFICA I BENI ==========
                 for (OggettoBulk o : details) {
                     Inventario_beniBulk bene = (Inventario_beniBulk) o;
 
                     if (bene.isBeneAccessorio()) {
                         ps.accessori.add(bene);
                     } else {
-                        List<Inventario_beniBulk> found = getComp().cercaBeniAccessoriAssociatiInDettaglio(
+                        // ========== CERCA ACCESSORI NEI DETTAGLI SALVATI ==========
+                        List<Inventario_beniBulk> found = getComp().cercaBeniAccessoriNeiDettagliSalvati(
                                 context.getUserContext(),
                                 getDoc(),
                                 bene
@@ -862,9 +860,12 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                     }
                 }
 
+                // ========== GESTIONE ELIMINAZIONE ==========
                 if (ps.principaliConAccessori.isEmpty()) {
-                    eliminaDettagliConBulk(context, details);
+                    // Nessun accessorio → elimina direttamente DAI DETTAGLI
+                    eliminaBeniDaDettagli(context, details);
                 } else {
+                    // Ci sono accessori → avvia flusso ricorsivo
                     pendingDelete = ps;
                 }
 
@@ -872,6 +873,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                 throw handleException(e);
             }
         }
+
     };
 
     public abstract Class getDocumentoClassDett();
@@ -905,25 +907,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     };
 
 
-
     // ==================== GESTIONE DETTAGLI ====================
-
-    protected void eliminaDettagliConBulk(ActionContext context, OggettoBulk[] details)
-            throws BusinessProcessException {
-        try {
-            getComp().eliminaBeniAssociati(context.getUserContext(), getDoc(), details);
-        } catch (ComponentException | RemoteException e) {
-            throw handleException(e);
-        }
-    }
-
-    protected void eliminaDettagliConBulk(ActionContext context) throws BusinessProcessException {
-        try {
-            getComp().eliminaTuttiBeniAssociati(context.getUserContext(), getDoc());
-        } catch (Throwable e) {
-            throw handleException(e);
-        }
-    }
 
     protected RemoteIterator selectEditDettaglibyClause(ActionContext context)
             throws BusinessProcessException {
@@ -1059,6 +1043,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         }
 
         try {
+            fillModel(context);
             PendingSelection ps = new PendingSelection();
             ps.bulks = bulks;
             ps.oldSel = oldSelection != null ? (BitSet) oldSelection.clone() : new BitSet();
@@ -1111,7 +1096,9 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
                 if (!ps.isEmpty()) {
                     modificaBeniConAccessoriComponente(context, bulks, oldSelection, newSelection);
+                    setModel(context, getDoc());
                     getDettBeniController().reset(context);
+                    getDettBeniController().resync(context);
                 }
 
                 return newSelection;
@@ -1122,6 +1109,8 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
+        } catch (FillException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -1224,32 +1213,32 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     }
 
 
-    private void eliminaBeneCorrente(ActionContext context) throws BusinessProcessException {
-        Inventario_beniBulk bene = getBenePrincipaleCorrente(true);
-        List<Inventario_beniBulk> accessori = getAccessoriCorrente(true);
-
-        if (bene != null && accessori != null) {
-            try {
-                getComp().eliminaBeniPrincipaleConAccessori(context.getUserContext(), getDoc(), bene, accessori);
-
-            } catch (ComponentException | RemoteException e) {
-                throw handleException(e);
-            }
-        }
-    }
-
-    private void eliminaBenePrincipaleSenzaAccessori(ActionContext context) throws BusinessProcessException {
-        Inventario_beniBulk bene = getBenePrincipaleCorrente(true);
-
-        if (bene != null) {
-            try {
-                OggettoBulk[] soloIlPrincipale = new OggettoBulk[]{bene};
-                getComp().eliminaBeniAssociati(context.getUserContext(), getDoc(), soloIlPrincipale);
-            } catch (ComponentException | RemoteException e) {
-                throw handleException(e);
-            }
-        }
-    }
+//    private void eliminaBeneCorrente(ActionContext context) throws BusinessProcessException {
+//        Inventario_beniBulk bene = getBenePrincipaleCorrente(true);
+//        List<Inventario_beniBulk> accessori = getAccessoriCorrente(true);
+//
+//        if (bene != null && accessori != null) {
+//            try {
+//                getComp().eliminaBeniPrincipaleConAccessori(context.getUserContext(), getDoc(), bene, accessori);
+//
+//            } catch (ComponentException | RemoteException e) {
+//                throw handleException(e);
+//            }
+//        }
+//    }
+//
+//    private void eliminaBenePrincipaleSenzaAccessori(ActionContext context) throws BusinessProcessException {
+//        Inventario_beniBulk bene = getBenePrincipaleCorrente(true);
+//
+//        if (bene != null) {
+//            try {
+//                OggettoBulk[] soloIlPrincipale = new OggettoBulk[]{bene};
+//                getComp().eliminaBeniAssociati(context.getUserContext(), getDoc(), soloIlPrincipale);
+//            } catch (ComponentException | RemoteException e) {
+//                throw handleException(e);
+//            }
+//        }
+//    }
 
     /**
      * Aggiunge il bene principale corrente con o senza accessori.
@@ -1433,7 +1422,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     public void setUltimaOperazioneEliminazione(boolean value) {
         this.ultimaOperazioneEliminazione = value;
     }
-
 
 
     // ========================= STAMPA DOCUMENTO =========================
@@ -1668,13 +1656,15 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                                             boolean includiAccessori) throws BusinessProcessException {
         try {
             if (includiAccessori) {
-                // Elimina principale + accessori
+                // Elimina principale + accessori DAI DETTAGLI
                 List<Inventario_beniBulk> accessori = pendingDelete.principaliConAccessori.get(beneCorrente);
-                getComp().eliminaBeniPrincipaleConAccessori(context.getUserContext(), getDoc(), beneCorrente, accessori);
+                getComp().eliminaBeniPrincipaleConAccessoriDaDettagli(
+                        context.getUserContext(), getDoc(), beneCorrente, accessori);
             } else {
-                // Elimina SOLO il principale
+                // Elimina SOLO il principale DAI DETTAGLI
                 OggettoBulk[] soloIlPrincipale = new OggettoBulk[]{beneCorrente};
-                getComp().eliminaBeniAssociati(context.getUserContext(), getDoc(), soloIlPrincipale);
+                getComp().eliminaDettagliSalvati(
+                        context.getUserContext(), getDoc(), soloIlPrincipale);
             }
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
@@ -1828,8 +1818,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     }
 
 
-
-
     /**
      * Valida i dati necessari prima di accedere al tab dei dettagli.
      * Controlla che siano compilati tutti i campi obbligatori per la ricerca dei beni.
@@ -1888,8 +1876,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     }
 
 
-
-
     /**
      * Determina se i campi anagrafico (Smartworking, Incaricato, ecc.) devono essere readonly
      */
@@ -1899,6 +1885,92 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                 || (!isInserting() && !isEditing());
     }
 
+
+//    /**
+//     * Elimina TUTTI i beni dalla tabella temporanea INVENTARIO_BENI_APG.
+//     * Usato durante INSERIMENTO.
+//     */
+//    protected void eliminaTuttiBeniDaTabellaTempo(ActionContext context)
+//            throws BusinessProcessException {
+//        try {
+//            getComp().eliminaTuttiBeniAssociati(context.getUserContext(), getDoc());
+//        } catch (Throwable e) {
+//            throw handleException(e);
+//        }
+//    }
+
+    /**
+     * Elimina TUTTI i beni dai dettagli salvati DOC_TRASPORTO_RIENTRO_DETT.
+     * Usato durante MODIFICA.
+     */
+    protected void eliminaTuttiBeniDaDettagli(ActionContext context)
+            throws BusinessProcessException {
+        try {
+            getComp().eliminaTuttiDettagliSalvati(context.getUserContext(), getDoc());
+        } catch (Throwable e) {
+            throw handleException(e);
+        }
+    }
+
+//    /**
+//     * Elimina beni specifici dalla tabella temporanea INVENTARIO_BENI_APG.
+//     * Usato durante INSERIMENTO.
+//     */
+//    protected void eliminaBeniDaTabellaTempo(ActionContext context, OggettoBulk[] details)
+//            throws BusinessProcessException {
+//        try {
+//            getComp().eliminaBeniAssociati(context.getUserContext(), getDoc(), details);
+//        } catch (ComponentException | RemoteException e) {
+//            throw handleException(e);
+//        }
+//    }
+
+    /**
+     * Elimina beni specifici dai dettagli salvati DOC_TRASPORTO_RIENTRO_DETT.
+     * Usato durante MODIFICA.
+     */
+    public void eliminaBeniDaDettagli(ActionContext context, OggettoBulk[] details)
+            throws BusinessProcessException {
+        try {
+            getComp().eliminaDettagliSalvati(context.getUserContext(), getDoc(), details);
+        } catch (ComponentException | RemoteException e) {
+            throw handleException(e);
+        }
+    }
+
+    private void eliminaBeneCorrente(ActionContext context) throws BusinessProcessException {
+        Inventario_beniBulk bene = getBenePrincipaleCorrente(true);
+        List<Inventario_beniBulk> accessori = getAccessoriCorrente(true);
+
+        if (bene != null && accessori != null) {
+            try {
+                // ========== SEMPRE SU DETTAGLIO ==========
+                getComp().eliminaBeniPrincipaleConAccessoriDaDettagli(
+                        context.getUserContext(), getDoc(), bene, accessori);
+
+            } catch (ComponentException | RemoteException e) {
+                throw handleException(e);
+            }
+        }
+    }
+
+    private void eliminaBenePrincipaleSenzaAccessori(ActionContext context)
+            throws BusinessProcessException {
+        Inventario_beniBulk bene = getBenePrincipaleCorrente(true);
+
+        if (bene != null) {
+            try {
+                OggettoBulk[] soloIlPrincipale = new OggettoBulk[]{bene};
+
+                // ========== SEMPRE SU DETTAGLIO ==========
+                getComp().eliminaDettagliSalvati(
+                        context.getUserContext(), getDoc(), soloIlPrincipale);
+
+            } catch (ComponentException | RemoteException e) {
+                throw handleException(e);
+            }
+        }
+    }
 
 
 }

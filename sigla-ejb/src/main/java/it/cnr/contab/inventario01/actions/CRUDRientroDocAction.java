@@ -74,6 +74,11 @@ public class CRUDRientroDocAction extends CRUDTraspRientDocAction {
         return "data rientro";
     }
 
+    @Override
+    protected String getTabTestataName() {
+        return "tabRientroTestata";
+    }
+
     // =======================================================
     // CALLBACK SPECIFICI (richiamano metodi generici)
     // =======================================================

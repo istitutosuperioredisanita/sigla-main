@@ -26,11 +26,11 @@ import java.util.TreeMap;
 public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoDocumentoTrasportoBulk, DocumentoTrasportoBulk>{
 
     public CRUDTrasportoBeniInvBP() {
-        super("Tn");
+        super();
     }
 
     public CRUDTrasportoBeniInvBP(String function) {
-        super(function + "Tn");
+        super(function);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoD
     }
 
     @Override
-    protected String getMainTabName() {
+    public String getMainTabName() {
         return "tabTrasportoTestata";
     }
 
@@ -87,48 +87,37 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoD
     @Override
     protected void inizializzaSelezioneComponente(ActionContext context)
             throws ComponentException, RemoteException {
-        try {
-            getComp().inizializzaBeniDaTrasportare(context.getUserContext());
-        } catch (BusinessProcessException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override
     protected void annullaModificaComponente(ActionContext context)
             throws ComponentException, RemoteException {
-        try {
-            getComp().annullaModificaTrasportoBeni(context.getUserContext());
-        } catch (BusinessProcessException e) {
-            throw new RuntimeException(e);
-        }
     }
 
-    @Override
-    protected void selezionaTuttiBeniComponente(ActionContext context)
-            throws ComponentException, RemoteException {
-        try {
-            getComp().trasportaTuttiBeni(context.getUserContext(), getDoc(), getClauses());
-        } catch (BusinessProcessException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Override
     public void modificaBeniConAccessoriComponente(
             ActionContext context,
             OggettoBulk[] bulks,
             BitSet oldSelection,
-            BitSet newSelection) throws ComponentException, RemoteException {
+            BitSet newSelection)
+            throws ComponentException, RemoteException, BusinessProcessException {
+
         try {
-            getComp().modificaBeniTrasportatiConAccessori(
+            // ✅ RICEVI IL DOCUMENTO AGGIORNATO
+            Doc_trasporto_rientroBulk docAggiornato = getComp().modificaBeniTrasportatiConAccessori(
                     context.getUserContext(),
                     getDoc(),
                     bulks,
                     oldSelection,
-                    newSelection);
-        } catch (BusinessProcessException e) {
-            throw new RuntimeException(e);
+                    newSelection
+            );
+
+            // ✅ AGGIORNA IL MODEL NEL BP
+            setModel(context, docAggiornato);
+
+        } catch (ComponentException | RemoteException e) {
+            throw handleException(e);
         }
     }
 

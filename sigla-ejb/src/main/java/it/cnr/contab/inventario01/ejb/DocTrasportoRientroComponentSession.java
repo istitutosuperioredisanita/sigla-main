@@ -27,7 +27,6 @@ import it.cnr.jada.ejb.CRUDDetailComponentSession;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
 
-import javax.ejb.EJBException;
 import javax.ejb.Remote;
 import java.rmi.RemoteException;
 import java.util.BitSet;
@@ -39,6 +38,8 @@ import java.util.List;
  */
 @Remote
 public interface DocTrasportoRientroComponentSession extends CRUDDetailComponentSession,it.cnr.jada.ejb.PrintComponentSession {
+
+
 
     // ========================================
     // GESTIONE ELIMINAZIONE BENI
@@ -84,12 +85,6 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
 
     it.cnr.jada.util.RemoteIterator selectBeniAssociatiByClause(it.cnr.jada.UserContext param0, Doc_trasporto_rientroBulk param2, java.lang.Class param3) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 
-    void annullaModificaTrasportoBeni(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, EJBException, RemoteException;
-
-    void inizializzaBeniDaTrasportare(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
-
-    void trasportaTuttiBeni(it.cnr.jada.UserContext param0,it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk param1,it.cnr.jada.persistency.sql.CompoundFindClause param3) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
-
     // ========================================
     // GESTIONE BENI ACCESSORI [NUOVI METODI]
     // ========================================
@@ -102,52 +97,20 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
             Inventario_beniBulk benePrincipale)
             throws ComponentException, RemoteException;
 
-    /**
-     * Elimina uno o più beni dalla tabella di appoggio INVENTARIO_BENI_APG.
-     */
-    void eliminaBeniAssociati(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            OggettoBulk[] beni)
-            throws ComponentException, RemoteException;
-
-    /**
-     * Elimina TUTTI i beni dalla tabella di appoggio INVENTARIO_BENI_APG.
-     */
-    void eliminaTuttiBeniAssociati(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc)
-            throws ComponentException, RemoteException;
-
-    /**
-     * Cerca gli accessori associati a un bene principale nel dettaglio del documento.
-     */
-    List cercaBeniAccessoriAssociatiInDettaglio(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            Inventario_beniBulk benePrincipale)
-            throws ComponentException, RemoteException;
 
     /**
      * Modifica i beni trasportati con opzione di includere gli accessori
+     *
+     * @return
      */
-    void modificaBeniTrasportatiConAccessori(
+    Doc_trasporto_rientroBulk modificaBeniTrasportatiConAccessori(
             UserContext userContext,
             Doc_trasporto_rientroBulk docT,
             OggettoBulk[] beni,
-            java.util.BitSet old_ass,
-            java.util.BitSet ass)
+            BitSet old_ass,
+            BitSet ass)
             throws ComponentException, RemoteException;
 
-    /**
-     * Elimina il bene principale E tutti gli accessori associati dalla tabella di appoggio.
-     */
-    void eliminaBeniPrincipaleConAccessori(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            Inventario_beniBulk benePrincipale,
-            List beniAccessori)
-            throws ComponentException, RemoteException;
 
     /**
      * Annulla logicamente il documento cambiando solo lo stato.
@@ -161,21 +124,6 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
 
 
     /**
-     * Seleziona i dettagli del documento di rientro per modifica
-     * @param userContext Contesto utente
-     * @param doc Documento
-     * @param bulkClass Classe bulk
-     * @param filters Filtri da applicare
-     * @return Iterator sui dettagli
-     */
-    RemoteIterator selectEditDettagliRientro(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            Class bulkClass,
-            CompoundFindClause filters
-    ) throws ComponentException, RemoteException;
-
-    /**
      * Ottiene la lista dei beni disponibili per il rientro
      * @param userContext Contesto utente
      * @param doc Documento rientro
@@ -187,34 +135,6 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
             SimpleBulkList beniEsclusi,
-            CompoundFindClause clauses
-    ) throws ComponentException, RemoteException;
-
-    /**
-     * Annulla le modifiche sui beni in rientro
-     * @param userContext Contesto utente
-     */
-    void annullaModificaRientroBeni(
-            UserContext userContext
-    ) throws ComponentException, RemoteException;
-
-    /**
-     * Inizializza la selezione dei beni da far rientrare
-     * @param userContext Contesto utente
-     */
-    void inizializzaBeniDaFarRientrare(
-            UserContext userContext
-    ) throws ComponentException, RemoteException;
-
-    /**
-     * Fa rientrare tutti i beni filtrati
-     * @param userContext Contesto utente
-     * @param doc Documento rientro
-     * @param clauses Filtri
-     */
-    void rientraTuttiBeni(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
             CompoundFindClause clauses
     ) throws ComponentException, RemoteException;
 
@@ -266,4 +186,53 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
 
     void selezionaTuttiBeni(UserContext param0, Doc_trasporto_rientroBulk param1, CompoundFindClause param3) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 
+
+    // ========================================
+// NUOVI METODI - ELIMINAZIONE DA DETTAGLI SALVATI
+// ========================================
+
+    /**
+     * Elimina TUTTI i dettagli salvati di un documento.
+     * Usato durante MODIFICA per "Elimina tutti".
+     */
+    void eliminaTuttiDettagliSalvati(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException;
+
+    /**
+     * Elimina dettagli specifici salvati di un documento.
+     * Usato durante MODIFICA per eliminazione selettiva.
+     */
+    void eliminaDettagliSalvati(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            OggettoBulk[] beni)
+            throws ComponentException, RemoteException;
+
+    /**
+     * Cerca accessori di un bene principale NEI DETTAGLI SALVATI.
+     * Usato durante MODIFICA per verificare accessori già persistiti.
+     */
+    List cercaBeniAccessoriNeiDettagliSalvati(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            Inventario_beniBulk benePrincipale)
+            throws ComponentException, RemoteException;
+
+    /**
+     * Elimina il bene principale E tutti gli accessori DAI DETTAGLI SALVATI.
+     * Usato durante MODIFICA per eliminazione ricorsiva.
+     */
+    void eliminaBeniPrincipaleConAccessoriDaDettagli(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            Inventario_beniBulk benePrincipale,
+            List beniAccessori)
+            throws ComponentException, RemoteException;
+
+    List getDetailsFor(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException;
 }

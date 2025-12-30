@@ -69,6 +69,11 @@ public class CRUDTrasportoDocAction extends CRUDTraspRientDocAction {
         return "data trasporto";
     }
 
+    @Override
+    protected String getTabTestataName() {
+        return "tabTrasportoTestata";
+    }
+
     // =======================================================
     // CALLBACK SPECIFICI (richiamano metodi generici)
     // =======================================================

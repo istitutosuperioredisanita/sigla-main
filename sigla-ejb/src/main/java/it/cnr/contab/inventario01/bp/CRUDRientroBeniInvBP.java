@@ -31,11 +31,11 @@ import java.util.TreeMap;
 public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoDocumentoRientroBulk, DocumentoRientroBulk> {
 
     public CRUDRientroBeniInvBP() {
-        super("Tn");
+        super();
     }
 
     public CRUDRientroBeniInvBP(String function) {
-        super(function + "Tn");
+        super(function);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoDoc
     }
 
     @Override
-    protected String getMainTabName() {
+    public String getMainTabName() {
         return "tabRientroTestata";
     }
 
@@ -97,31 +97,13 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoDoc
     @Override
     protected void inizializzaSelezioneComponente(ActionContext context)
             throws ComponentException, RemoteException {
-        try {
-            getComp().inizializzaBeniDaFarRientrare(context.getUserContext());
-        } catch (BusinessProcessException e) {
-            throw new RuntimeException(e);
-        }
+
     }
 
     @Override
     protected void annullaModificaComponente(ActionContext context)
             throws ComponentException, RemoteException {
-        try {
-            getComp().annullaModificaRientroBeni(context.getUserContext());
-        } catch (BusinessProcessException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
-    @Override
-    protected void selezionaTuttiBeniComponente(ActionContext context)
-            throws ComponentException, RemoteException {
-        try {
-            getComp().rientraTuttiBeni(context.getUserContext(), getDoc(), getClauses());
-        } catch (BusinessProcessException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override

@@ -27,6 +27,7 @@ import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
 
 import java.rmi.RemoteException;
+import java.util.BitSet;
 import java.util.List;
 
 /**
@@ -363,58 +364,6 @@ public class TransactionalDocTrasportoRientroComponentSession
 
     }
 
-    public void annullaModificaTrasportoBeni(UserContext param0) throws RemoteException, it.cnr.jada.comp.ComponentException {
-        try {
-            invoke("annullaModificaTrasportoBeni", new Object[]{
-                    param0});
-        } catch (java.rmi.RemoteException e) {
-            throw e;
-        } catch (java.lang.reflect.InvocationTargetException e) {
-            try {
-                throw e.getTargetException();
-            } catch (it.cnr.jada.comp.ComponentException ex) {
-                throw ex;
-            } catch (Throwable ex) {
-                throw new java.rmi.RemoteException("Uncaugth exception", ex);
-            }
-        }
-    }
-
-    public void inizializzaBeniDaTrasportare(it.cnr.jada.UserContext param0) throws RemoteException, it.cnr.jada.comp.ComponentException {
-        try {
-            invoke("inizializzaBeniDaTrasportare", new Object[]{
-                    param0});
-        } catch (java.rmi.RemoteException e) {
-            throw e;
-        } catch (java.lang.reflect.InvocationTargetException e) {
-            try {
-                throw e.getTargetException();
-            } catch (it.cnr.jada.comp.ComponentException ex) {
-                throw ex;
-            } catch (Throwable ex) {
-                throw new java.rmi.RemoteException("Uncaugth exception", ex);
-            }
-        }
-    }
-
-    public void trasportaTuttiBeni(it.cnr.jada.UserContext param0, it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk param1, it.cnr.jada.persistency.sql.CompoundFindClause param3) throws RemoteException, it.cnr.jada.comp.ComponentException {
-        try {
-            invoke("trasportaTuttiBeni", new Object[]{
-                    param0,
-                    param1,
-                    param3});
-        } catch (java.rmi.RemoteException e) {
-            throw e;
-        } catch (java.lang.reflect.InvocationTargetException e) {
-            try {
-                throw e.getTargetException();
-            } catch (it.cnr.jada.comp.ComponentException ex) {
-                throw ex;
-            } catch (Throwable ex) {
-                throw new java.rmi.RemoteException("Uncaugth exception", ex);
-            }
-        }
-    }
 
 
     @Override
@@ -441,92 +390,20 @@ public class TransactionalDocTrasportoRientroComponentSession
         }
     }
 
-    @Override
-    public void eliminaBeniAssociati(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            OggettoBulk[] beni)
-            throws ComponentException, RemoteException {
 
-        try {
-            invoke("eliminaBeniAssociati", new Object[]{
-                    userContext,
-                    doc,
-                    beni
-            });
-        } catch (java.rmi.RemoteException e) {
-            throw e;
-        } catch (java.lang.reflect.InvocationTargetException e) {
-            try {
-                throw e.getTargetException();
-            } catch (ComponentException ex) {
-                throw ex;
-            } catch (Throwable ex) {
-                throw new RemoteException("Uncaught exception", ex);
-            }
-        }
-    }
-
-    @Override
-    public void eliminaTuttiBeniAssociati(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc)
-            throws ComponentException, RemoteException {
-
-        try {
-            invoke("eliminaTuttiBeniAssociati", new Object[]{
-                    userContext,
-                    doc
-            });
-        } catch (java.rmi.RemoteException e) {
-            throw e;
-        } catch (java.lang.reflect.InvocationTargetException e) {
-            try {
-                throw e.getTargetException();
-            } catch (ComponentException ex) {
-                throw ex;
-            } catch (Throwable ex) {
-                throw new RemoteException("Uncaught exception", ex);
-            }
-        }
-    }
-
-    @Override
-    public List cercaBeniAccessoriAssociatiInDettaglio(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            Inventario_beniBulk benePrincipale)
-            throws ComponentException, RemoteException {
-
-        try {
-            return (List) invoke("cercaBeniAccessoriAssociatiInDettaglio", new Object[]{
-                    userContext,
-                    doc,
-                    benePrincipale
-            });
-        } catch (java.rmi.RemoteException e) {
-            throw e;
-        } catch (java.lang.reflect.InvocationTargetException e) {
-            try {
-                throw e.getTargetException();
-            } catch (ComponentException ex) {
-                throw ex;
-            } catch (Throwable ex) {
-                throw new RemoteException("Uncaught exception", ex);
-            }
-        }
-    }
 
     /**
      * [AGGIUNGI] Modifica i beni trasportati con opzione di includere gli accessori
+     *
+     * @return
      */
     @Override
-    public void modificaBeniTrasportatiConAccessori(
+    public Doc_trasporto_rientroBulk modificaBeniTrasportatiConAccessori(
             UserContext userContext,
             Doc_trasporto_rientroBulk docT,
             OggettoBulk[] beni,
-            java.util.BitSet old_ass,
-            java.util.BitSet ass)
+            BitSet old_ass,
+            BitSet ass)
             throws ComponentException, RemoteException {
 
         try {
@@ -548,36 +425,8 @@ public class TransactionalDocTrasportoRientroComponentSession
                 throw new RemoteException("Uncaught exception", ex);
             }
         }
+        return docT;
     }
-
-    @Override
-    public void eliminaBeniPrincipaleConAccessori(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            Inventario_beniBulk benePrincipale,
-            List beniAccessori)
-            throws ComponentException, RemoteException {
-
-        try {
-            invoke("eliminaBeniPrincipaleConAccessori", new Object[]{
-                    userContext,
-                    doc,
-                    benePrincipale,
-                    beniAccessori
-            });
-        } catch (java.rmi.RemoteException e) {
-            throw e;
-        } catch (java.lang.reflect.InvocationTargetException e) {
-            try {
-                throw e.getTargetException();
-            } catch (ComponentException ex) {
-                throw ex;
-            } catch (Throwable ex) {
-                throw new RemoteException("Uncaught exception", ex);
-            }
-        }
-    }
-
     /**
      * Annulla logicamente il documento cambiando solo lo stato.
      * NON tocca i dettagli associati.
@@ -608,38 +457,6 @@ public class TransactionalDocTrasportoRientroComponentSession
     }
 
 
-
-
-    /**
-     * Seleziona i dettagli del documento di rientro per modifica
-     */
-    @Override
-    public RemoteIterator selectEditDettagliRientro(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            Class bulkClass,
-            CompoundFindClause filters)
-            throws ComponentException, RemoteException {
-
-        try {
-            return (RemoteIterator) invoke("selectEditDettagliRientro", new Object[]{
-                    userContext,
-                    doc,
-                    bulkClass,
-                    filters
-            });
-        } catch (java.rmi.RemoteException e) {
-            throw e;
-        } catch (java.lang.reflect.InvocationTargetException e) {
-            try {
-                throw e.getTargetException();
-            } catch (ComponentException ex) {
-                throw ex;
-            } catch (Throwable ex) {
-                throw new RemoteException("Uncaught exception", ex);
-            }
-        }
-    }
 
     /**
      * Ottiene la lista dei beni disponibili per il rientro
@@ -672,82 +489,7 @@ public class TransactionalDocTrasportoRientroComponentSession
         }
     }
 
-    /**
-     * Annulla le modifiche sui beni in rientro
-     */
-    @Override
-    public void annullaModificaRientroBeni(UserContext userContext)
-            throws ComponentException, RemoteException {
 
-        try {
-            invoke("annullaModificaRientroBeni", new Object[]{
-                    userContext
-            });
-        } catch (java.rmi.RemoteException e) {
-            throw e;
-        } catch (java.lang.reflect.InvocationTargetException e) {
-            try {
-                throw e.getTargetException();
-            } catch (ComponentException ex) {
-                throw ex;
-            } catch (Throwable ex) {
-                throw new RemoteException("Uncaught exception", ex);
-            }
-        }
-    }
-
-    /**
-     * Inizializza la selezione dei beni da far rientrare
-     */
-    @Override
-    public void inizializzaBeniDaFarRientrare(UserContext userContext)
-            throws ComponentException, RemoteException {
-
-        try {
-            invoke("inizializzaBeniDaFarRientrare", new Object[]{
-                    userContext
-            });
-        } catch (java.rmi.RemoteException e) {
-            throw e;
-        } catch (java.lang.reflect.InvocationTargetException e) {
-            try {
-                throw e.getTargetException();
-            } catch (ComponentException ex) {
-                throw ex;
-            } catch (Throwable ex) {
-                throw new RemoteException("Uncaught exception", ex);
-            }
-        }
-    }
-
-    /**
-     * Fa rientrare tutti i beni filtrati
-     */
-    @Override
-    public void rientraTuttiBeni(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            CompoundFindClause clauses)
-            throws ComponentException, RemoteException {
-
-        try {
-            invoke("rientraTuttiBeni", new Object[]{
-                    userContext,
-                    doc,
-                    clauses
-            });
-        } catch (java.rmi.RemoteException e) {
-            throw e;
-        } catch (java.lang.reflect.InvocationTargetException e) {
-            try {
-                throw e.getTargetException();
-            } catch (ComponentException ex) {
-                throw ex;
-            } catch (Throwable ex) {
-                throw new RemoteException("Uncaught exception", ex);
-            }
-        }
-    }
 
     /**
      * Modifica i beni rientrati gestendo gli accessori
@@ -913,6 +655,139 @@ public class TransactionalDocTrasportoRientroComponentSession
                     userContext,
                     doc,
                     clauses
+            });
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaught exception", ex);
+            }
+        }
+    }
+
+
+    // ========================================
+// NUOVI METODI - ELIMINAZIONE DA DETTAGLI SALVATI
+// ========================================
+
+    @Override
+    public void eliminaTuttiDettagliSalvati(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException {
+
+        try {
+            invoke("eliminaTuttiDettagliSalvati", new Object[]{
+                    userContext,
+                    doc
+            });
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaught exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public void eliminaDettagliSalvati(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            OggettoBulk[] beni)
+            throws ComponentException, RemoteException {
+
+        try {
+            invoke("eliminaDettagliSalvati", new Object[]{
+                    userContext,
+                    doc,
+                    beni
+            });
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaught exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public List cercaBeniAccessoriNeiDettagliSalvati(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            Inventario_beniBulk benePrincipale)
+            throws ComponentException, RemoteException {
+
+        try {
+            return (List) invoke("cercaBeniAccessoriNeiDettagliSalvati", new Object[]{
+                    userContext,
+                    doc,
+                    benePrincipale
+            });
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaught exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public void eliminaBeniPrincipaleConAccessoriDaDettagli(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            Inventario_beniBulk benePrincipale,
+            List beniAccessori)
+            throws ComponentException, RemoteException {
+
+        try {
+            invoke("eliminaBeniPrincipaleConAccessoriDaDettagli", new Object[]{
+                    userContext,
+                    doc,
+                    benePrincipale,
+                    beniAccessori
+            });
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaught exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public List getDetailsFor(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException {
+
+        try {
+            return (List) invoke("getDetailsFor", new Object[]{
+                    userContext,
+                    doc
             });
         } catch (java.rmi.RemoteException e) {
             throw e;

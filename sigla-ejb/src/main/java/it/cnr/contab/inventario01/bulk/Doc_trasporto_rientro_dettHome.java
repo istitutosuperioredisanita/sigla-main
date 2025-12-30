@@ -145,4 +145,56 @@ public class Doc_trasporto_rientro_dettHome extends BulkHome {
 		sql.addSQLNotExistsClause("AND", subquery);
 	}
 
+
+	/**
+	 * Restituisce la MAX(dt_validita_variazione) tra tutti i beni
+	 * presenti nei dettagli del documento.
+	 *
+	 * @param doc il documento di trasporto/rientro
+	 * @return la data di validità più recente, null se non ci sono dettagli
+	 */
+	public java.sql.Timestamp getMaxDataValiditaVariazione(Doc_trasporto_rientroBulk doc)
+			throws PersistencyException {
+
+		try {
+			// Query per trovare MAX(dt_validita_variazione) con JOIN a INVENTARIO_BENI
+			String sql =
+					"SELECT MAX(IB.DT_VALIDITA_VARIAZIONE) " +
+							"FROM DOC_TRASPORTO_RIENTRO_DETT DETT " +
+							"INNER JOIN INVENTARIO_BENI IB ON ( " +
+							"  DETT.PG_INVENTARIO = IB.PG_INVENTARIO AND " +
+							"  DETT.NR_INVENTARIO = IB.NR_INVENTARIO AND " +
+							"  DETT.PROGRESSIVO = IB.PROGRESSIVO " +
+							") " +
+							"WHERE DETT.PG_INVENTARIO = ? " +
+							"  AND DETT.TI_DOCUMENTO = ? " +
+							"  AND DETT.ESERCIZIO = ? " +
+							"  AND DETT.PG_DOC_TRASPORTO_RIENTRO = ?";
+
+			java.sql.PreparedStatement ps = getConnection().prepareStatement(sql);
+			try {
+				ps.setLong(1, doc.getPgInventario());
+				ps.setString(2, doc.getTiDocumento());
+				ps.setInt(3, doc.getEsercizio());
+				ps.setLong(4, doc.getPgDocTrasportoRientro());
+
+				java.sql.ResultSet rs = ps.executeQuery();
+				try {
+					if (rs.next()) {
+						return rs.getTimestamp(1);
+					}
+					return null;
+
+				} finally {
+					rs.close();
+				}
+			} finally {
+				ps.close();
+			}
+
+		} catch (java.sql.SQLException e) {
+			throw new PersistencyException(e);
+		}
+	}
+
 }

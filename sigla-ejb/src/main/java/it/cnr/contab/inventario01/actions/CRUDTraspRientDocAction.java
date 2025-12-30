@@ -6,6 +6,7 @@ import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario01.bp.CRUDTraspRientInventarioBP;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
+import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.contab.inventario01.bulk.DocumentoTrasportoDettBulk;
 import it.cnr.contab.inventario01.bulk.Stampa_doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
@@ -78,6 +79,8 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
 
     protected abstract String getDataLabel();
 
+    protected abstract String getTabTestataName();
+
     // =======================================================
     // GESTIONE CAMBI TESTATA (comune a entrambi)
     // =======================================================
@@ -117,19 +120,64 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
 
     @Override
     public Forward doTab(ActionContext context, String tabName, String pageName) {
-
         try {
             fillModel(context);
-
             CRUDTraspRientInventarioBP bp = getBP(context);
             Doc_trasporto_rientroBulk doc = bp.getDoc();
 
-            // Creazione SOLO in inserimento reale
-            if (doc != null && doc.getCrudStatus() == OggettoBulk.TO_BE_CREATED) {
+            // ========== BLOCCO ACCESSO AL TAB ALLEGATI ==========
+            if (pageName != null && pageName.contains("Allegati")) {
 
-                if ("tabTrasportoTestata".equalsIgnoreCase(bp.getTab(tabName))) {
+                boolean puoAccedere = false;
+
+                // Verifica che ci siano dettagli con stato NORMAL (salvati con doSalva)
+                if (doc != null &&
+                        doc.getCrudStatus() != OggettoBulk.TO_BE_CREATED &&
+                        doc.getDoc_trasporto_rientro_dettColl() != null &&
+                        !doc.getDoc_trasporto_rientro_dettColl().isEmpty()) {
+
+                    // Cerca almeno un dettaglio NORMAL
+                    for (Object obj : doc.getDoc_trasporto_rientro_dettColl()) {
+                        Doc_trasporto_rientro_dettBulk dett =
+                                (Doc_trasporto_rientro_dettBulk) obj;
+
+                        if (dett.getCrudStatus() == OggettoBulk.NORMAL) {
+                            puoAccedere = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!puoAccedere) {
+                    bp.setMessage("Impossibile accedere agli allegati: salvare il documento con almeno un bene.");
+                    return context.findDefaultForward();
+                }
+            }
+
+            // ========== CREAZIONE DOCUMENTO SOLO AL PRIMO ACCESSO AI DETTAGLI ==========
+            if (doc != null && doc.getCrudStatus() == OggettoBulk.TO_BE_CREATED) {
+                boolean staiAndandoVersoDettagli = pageName != null &&
+                        pageName.contains("Dettaglio");
+
+                if (staiAndandoVersoDettagli) {
                     bp.validaDatiPerDettagli();
-                    getComponentSession(bp).creaConBulk(context.getUserContext(), doc);
+
+                    // ========== CREA SOLO TESTATA (senza dettagli) ==========
+                    doc = (Doc_trasporto_rientroBulk) getComponentSession(bp)
+                            .creaConBulk(context.getUserContext(), doc);
+
+                    bp.setModel(context, doc);
+
+                    if (doc.getDoc_trasporto_rientro_dettColl() == null) {
+                        doc.setDoc_trasporto_rientro_dettColl(new SimpleBulkList());
+                    }
+
+                    // ✅ CAMBIA LO STATO A TO_BE_UPDATED
+                    doc.setCrudStatus(OggettoBulk.TO_BE_UPDATED);
+
+                    System.out.println("=== DOCUMENTO CREATO ===");
+                    System.out.println("PG_DOC: " + doc.getPgDocTrasportoRientro());
+                    System.out.println("STATO: TO_BE_UPDATED");
                 }
             }
 
@@ -138,6 +186,16 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         } catch (Throwable e) {
             return handleException(context, e);
         }
+    }
+
+    /**
+     /**
+     * Alla selezione del bottone "Nuovo" il sistema visualizza sempre il Tab Testata
+     */
+    @Override
+    public Forward doNuovo(ActionContext context) {
+        super.doTab(context, "tab", getTabTestataName());
+        return super.doNuovo(context);
     }
 
 
@@ -149,28 +207,38 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         try {
             fillModel(context);
             CRUDTraspRientInventarioBP bp = getBP(context);
+
             if (bp.isDocumentoNonModificabile()) {
-                bp.setMessage("Impossibile modificare un documento " +
-                        bp.getDoc().getStato());
+                bp.setMessage("Impossibile modificare un documento " + bp.getDoc().getStato());
                 return context.findDefaultForward();
             }
-//            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
-//            validaTestataDocumento(doc);
-//            bp.getDettBeniController().validate(context);
-//            SimpleBulkList selezionati = getComponentSession(bp).selezionati(context.getUserContext(), doc);
-//            RemoteIterator ri = getListaBeni(context, bp, doc, selezionati, null);
-//            ri = EJBCommonServices.openRemoteIterator(context, ri);
-//            if (ri.countElements() == 0) {
-//                bp.setMessage(getMessageNoResults());
-//                EJBCommonServices.closeRemoteIterator(context, ri);
-//                return context.findDefaultForward();
-//            }
+
+            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
+            validaTestataDocumento(doc);
+            bp.getDettBeniController().validate(context);
+
+            // ✅ USA LA VERSIONE OTTIMIZZATA (SOLO CHIAVI, NO JOIN)
+            SimpleBulkList selezionati = getComponentSession(bp)
+                    .selezionati(context.getUserContext(), doc);
+
+            RemoteIterator ri = getListaBeni(context, bp, doc, selezionati, null);
+            ri = EJBCommonServices.openRemoteIterator(context, ri);
+
+            if (ri.countElements() == 0) {
+                bp.setMessage(getMessageNoResults());
+                EJBCommonServices.closeRemoteIterator(context, ri);
+                return context.findDefaultForward();
+            }
+
             RicercaLiberaBP rlbp = (RicercaLiberaBP) context.createBusinessProcess("RicercaLibera");
             rlbp.setCanPerformSearchWithoutClauses(false);
             rlbp.setPrototype(new Inventario_beniBulk());
+
             context.addHookForward("searchResult", this, getBringBackMethod());
             context.addHookForward("filter", this, getBringBackMethod());
+
             return context.addBusinessProcess(rlbp);
+
         } catch (Throwable e) {
             return handleException(context, e);
         }
@@ -291,20 +359,19 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                 return context.findDefaultForward();
             }
 
-            // Elimina beni semplici
             if (!bp.getPendingDelete().getPrincipaliSenza().isEmpty()) {
-                for (Inventario_beniBulk beneSemplice : bp.getPendingDelete().getPrincipaliSenza()) {
-                    try {
-                        bp.getComp().eliminaBeniAssociati(
-                                context.getUserContext(),
-                                bp.getDoc(),
-                                new it.cnr.jada.bulk.OggettoBulk[]{beneSemplice}
-                        );
-                    } catch (Exception e) {
-                        throw bp.handleException(e);
-                    }
+                try {
+                    // Converti la lista in array
+                    OggettoBulk[] beniDaEliminare = bp.getPendingDelete().getPrincipaliSenza()
+                            .toArray(new OggettoBulk[0]);
+
+                    // Usa il metodo del BP che chiama il Component corretto
+                    bp.eliminaBeniDaDettagli(context, beniDaEliminare);
+                    bp.getDettBeniController().reset(context);
+
+                } catch (Exception e) {
+                    throw bp.handleException(e);
                 }
-                bp.getDettBeniController().reset(context);
             }
 
             // Beni con accessori → avvia flusso ricorsivo
@@ -927,13 +994,9 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             CRUDTraspRientInventarioBP bp = getBP(context);
             Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
 
-            // Salva lo stato precedente
             boolean wasSmartworking = doc.isSmartworking();
-
-            // Aggiorna il model con i dati dal form
             fillModel(context);
 
-            // Ricarica la lista dei tipi movimento in base a tiDocumento (T/R)
             try {
                 DocTrasportoRientroComponentSession session = getComponentSession(bp);
                 session.initializeKeysAndOptionsInto(context.getUserContext(), doc);
@@ -941,33 +1004,22 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                 throw new BusinessProcessException("Errore ricaricamento tipi movimento", e);
             }
 
-            // Verifica il nuovo stato
             boolean isSmartworking = doc.isSmartworking();
 
-            // ========== RESET BENI ==========
-            if (wasSmartworking != isSmartworking) {
-                // Da/A Smartworking: reset SILENZIOSO
-                resetBeniSilenzioso(context, bp, doc);
-            } else {
-                if(doc.getCrudStatus()!=OggettoBulk.TO_BE_CREATED){
-                    // Tra tipi dello stesso gruppo: reset CON messaggio
-                    eliminaBeniSePresenti(context, bp, doc, "Tipo Movimento modificato. Beni precedenti rimossi.");
-                }
+            // ========== RESET BENI (SEMPRE CON MESSAGGIO O SEMPRE SILENZIOSO) ==========
+            if (doc.getCrudStatus() != OggettoBulk.TO_BE_CREATED) {
+                // Documento già creato: reset con messaggio
+                eliminaBeniSePresenti(context, bp, doc, "Tipo Movimento modificato. Beni precedenti rimossi.");
             }
 
             // ========== RESET DIPENDENTE/ASSEGNATARIO ==========
             if (wasSmartworking && !isSmartworking) {
-                // DA Smartworking → Altro: reset campi smartworking
                 doc.setTerzoSmartworking(null);
                 doc.setAnagSmartworking(null);
-
             } else if (!wasSmartworking && isSmartworking) {
-                // DA Altro → Smartworking: reset campi incaricato
                 doc.setTerzoIncRitiro(null);
                 doc.setAnagIncRitiro(null);
-
             } else if (!wasSmartworking && !isSmartworking) {
-                // Tra NON-Smartworking: reset campi incaricato
                 doc.setTerzoIncRitiro(null);
                 doc.setAnagIncRitiro(null);
             }
@@ -979,6 +1031,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             return handleException(context, e);
         }
     }
+
 
     /**
      * Gestisce il cambio del Tipo Ritiro (Incaricato/Vettore).
@@ -1055,21 +1108,6 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
 // ============================================================
 // METODI HELPER PER RESET
 // ============================================================
-
-    /**
-     * Resetta SOLO i beni SENZA mostrare messaggi.
-     * Usato quando si cambia da/a Smartworking.
-     */
-    private void resetBeniSilenzioso(ActionContext context,
-                                     CRUDTraspRientInventarioBP bp,
-                                     Doc_trasporto_rientroBulk doc) throws Exception {
-        SimpleBulkList selezionati = getComponentSession(bp).selezionati(context.getUserContext(), doc);
-        if (!selezionati.isEmpty()) {
-            bp.getDettBeniController().removeAll(context);
-            doc.getDoc_trasporto_rientro_dettColl().clear();
-            // NESSUN messaggio
-        }
-    }
 
 
     protected Integer getCdTerzo(it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo) {
