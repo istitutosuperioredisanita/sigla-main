@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 import jakarta.activation.DataHandler;
 import jakarta.jws.WebService;
 import jakarta.jws.soap.SOAPBinding;
-import javax.mail.Message;
+import jakarta.mail.Message;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;

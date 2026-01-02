@@ -38,8 +38,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import javax.mail.*;
-import javax.mail.search.*;
+import jakarta.mail.*;
+import jakarta.mail.search.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -252,10 +252,10 @@ public class PdgVariazioniService extends DocumentiContabiliService {
     }
 
     public void executeDeletePECMessage() {
-        final javax.mail.Session session = javax.mail.Session.getInstance(pecMailConf);
+        final jakarta.mail.Session session = jakarta.mail.Session.getInstance(pecMailConf);
         URLName urlName = new URLName(String.valueOf(pecMailConf.get("pec.url.name")));
         Store store = null;
-        javax.mail.Folder folder = null;
+        jakarta.mail.Folder folder = null;
         try {
             store = session.getStore(urlName);
             store.connect(pecVariazioniUsername, pecVariazioniPassword);

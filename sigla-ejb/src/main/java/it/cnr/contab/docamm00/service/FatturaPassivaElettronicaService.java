@@ -53,12 +53,12 @@ import org.springframework.oxm.XmlMappingException;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 import javax.activation.MimetypesFileTypeMap;
-import javax.mail.*;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.internet.MimeUtility;
-import javax.mail.search.*;
+import jakarta.mail.*;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.internet.MimeUtility;
+import jakarta.mail.search.*;
 import jakarta.xml.bind.JAXBElement;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -648,7 +648,7 @@ public class FatturaPassivaElettronicaService implements InitializingBean {
                             if (!listaMessageIdAlreadyScanned.contains(messageIDWithUser)) {
                                 logger.info(messageIDWithUser);
                                 try {
-                                    javax.activation.DataHandler data = message.getDataHandler();
+                                    DataHandler data = message.getDataHandler();
                                     estraiBodyPart(data.getContent(), false);
                                     listaMessageIdAlreadyScanned.add(messageIDWithUser);
                                     logger.info("Message Added");

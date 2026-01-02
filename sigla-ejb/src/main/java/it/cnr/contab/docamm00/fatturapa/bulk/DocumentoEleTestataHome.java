@@ -34,8 +34,8 @@ import java.util.*;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 import jakarta.ejb.EJBException;
-import javax.mail.AuthenticationFailedException;
-import javax.mail.PasswordAuthentication;
+import jakarta.mail.AuthenticationFailedException;
+import jakarta.mail.PasswordAuthentication;
 import jakarta.xml.bind.JAXBElement;
 import javax.xml.transform.stream.StreamResult;
 

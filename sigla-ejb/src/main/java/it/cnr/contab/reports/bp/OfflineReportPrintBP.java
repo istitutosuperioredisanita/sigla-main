@@ -26,8 +26,8 @@ import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.jsp.Button;
 import jakarta.servlet.jsp.JspWriter;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import java.util.StringTokenizer;
 /**
  * Insert the type's description here.

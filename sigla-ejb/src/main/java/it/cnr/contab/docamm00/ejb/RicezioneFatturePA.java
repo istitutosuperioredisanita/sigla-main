@@ -24,7 +24,7 @@ import java.util.Date;
 
 import jakarta.activation.DataHandler;
 import jakarta.ejb.Local;
-import javax.mail.Message;
+import jakarta.mail.Message;
 @Local
 public interface RicezioneFatturePA {
 	public void riceviFatturaSIGLA(BigInteger identificativoSdI, String nomeFile, String replyTo, DataHandler file, String nomeFileMetadati,DataHandler metadati) throws ComponentException;
