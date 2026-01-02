@@ -2803,7 +2803,7 @@ begin
 	   				  LUNG_LIVELLO6,DS_LIVELLO6,
 	   				  LUNG_LIVELLO7,DS_LIVELLO7,
 	   				  LUNG_LIVELLO8,DS_LIVELLO8,
-				      DACR,UTCR,DUVA,UTUV,PG_VER_REC)
+				      DACR,UTCR,DUVA,UTUV,PG_VER_REC,TIPO)
 		select aEsDest, LIVELLI,
 	   	  LUNG_LIVELLO1,DS_LIVELLO1,
 	   	  LUNG_LIVELLO2,DS_LIVELLO2,
@@ -2813,7 +2813,7 @@ begin
 	   	  LUNG_LIVELLO6,DS_LIVELLO6,
 	   	  LUNG_LIVELLO7,DS_LIVELLO7,
 	   	  LUNG_LIVELLO8,DS_LIVELLO8,
-		  Sysdate,cgUtente,sysdate,cgUtente,1
+		  Sysdate,cgUtente,sysdate,cgUtente,1,TIPO
 		from PARAMETRI_LIVELLI_EP
 		where ESERCIZIO = aEsOrig;
 	Exception when DUP_VAL_ON_INDEX then
