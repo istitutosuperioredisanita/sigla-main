@@ -17,7 +17,10 @@
 
 package it.cnr.test.util;
 
+import it.cnr.contab.util.TestUserContext;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.ejb.CRUDComponentSession;
+import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.container.test.api.ContainerController;
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.junit5.ArquillianExtension;
@@ -37,11 +40,13 @@ import java.util.Properties;
 public abstract class Deployments {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(Deployments.class);
+    public static final int ESERCIZIO = 2025;
     @ArquillianResource
     protected static ContainerController controller;
     protected static Context context;
     @ArquillianResource
     protected Deployer deployer;
+
     protected CRUDComponentSession crudComponentSession;
 
     @BeforeAll
@@ -59,6 +64,10 @@ public abstract class Deployments {
 
     protected <T extends Object> T lookup(String name, Class<T> clazz) throws NamingException {
         return (T) context.lookup(String.format("sigla/%s!%s", name, clazz.getName()));
+    }
+
+    protected UserContext getUserContext() {
+        return new TestUserContext(ESERCIZIO);
     }
 
 }

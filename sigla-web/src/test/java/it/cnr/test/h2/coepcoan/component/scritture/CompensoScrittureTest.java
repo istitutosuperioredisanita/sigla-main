@@ -77,15 +77,15 @@ public class CompensoScrittureTest extends DeploymentsH2 {
     @Order(1)
     public void testCompenso001() throws Exception {
         {
-            CompensoBulk compensoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            CompensoBulk compensoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new CompensoBulk("000", "000.000", 2025, 1L)))
                     .filter(CompensoBulk.class::isInstance)
                     .map(CompensoBulk.class::cast)
                     .orElse(null);
-            compensoBulk = compensoComponentSession.loadContributiERitenute(new TestUserContext(), compensoBulk);
+            compensoBulk = compensoComponentSession.loadContributiERitenute(getUserContext(), compensoBulk);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     compensoBulk);
 
             //CONTROLLO ECONOMICA
@@ -146,23 +146,23 @@ public class CompensoScrittureTest extends DeploymentsH2 {
             }
 
             //Richiamo il compenso perchè aggiunto valore voce_ep su testata
-            compensoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            compensoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new CompensoBulk("000", "000.000", 2025, 1L)))
                     .filter(CompensoBulk.class::isInstance)
                     .map(CompensoBulk.class::cast)
                     .orElse(null);
-            compensoBulk = compensoComponentSession.loadContributiERitenute(new TestUserContext(), compensoBulk);
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), compensoBulk);
+            compensoBulk = compensoComponentSession.loadContributiERitenute(getUserContext(), compensoBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), compensoBulk);
         }
         {
-            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MandatoIBulk("000",2025,11L)))
                     .filter(MandatoBulk.class::isInstance)
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     mandatoBulk);
 
             //CONTROLLO ECONOMICA

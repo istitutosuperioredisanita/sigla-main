@@ -87,14 +87,14 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
     public void testNotaCredito001() throws Exception {
         //Registrazione fattura
         {
-            Fattura_passivaBulk fatturaPassivaBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Fattura_passivaBulk fatturaPassivaBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Fattura_passiva_IBulk("000", "000.000", 2025, 5L)))
                     .filter(Fattura_passivaBulk.class::isInstance)
                     .map(Fattura_passivaBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     fatturaPassivaBulk);
 
             //CONTROLLO ECONOMICA
@@ -137,18 +137,18 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
                 Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
             }
 
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), fatturaPassivaBulk);
         }
         //Registrazione nota credito
         {
-            Nota_di_creditoBulk notaCreditoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Nota_di_creditoBulk notaCreditoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Nota_di_creditoBulk("000", "000.000", 2025, 6L)))
                     .filter(Nota_di_creditoBulk.class::isInstance)
                     .map(Nota_di_creditoBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     notaCreditoBulk);
 
             //CONTROLLO ECONOMICA
@@ -238,14 +238,14 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
     public void testNotaCredito002() throws Exception {
         //Registrazione fattura
         {
-            Fattura_passivaBulk fatturaPassivaBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Fattura_passivaBulk fatturaPassivaBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Fattura_passiva_IBulk("000", "000.000", 2025, 7L)))
                     .filter(Fattura_passivaBulk.class::isInstance)
                     .map(Fattura_passivaBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     fatturaPassivaBulk);
             //CONTROLLO ECONOMICA
             {
@@ -281,7 +281,7 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
                 Assertions.assertEquals("P71012I", rigaTipoIva.map(Movimento_cogeBulk::getCd_voce_ep).orElse(null));
                 Assertions.assertEquals(new BigDecimal("1.70"), rigaTipoIva.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
-                scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
+                scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), fatturaPassivaBulk);
             }
 
             //CONTROLLO ANALITICA
@@ -313,14 +313,14 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
         }
         //Registrazione nota credito
         {
-            Nota_di_creditoBulk notaCreditoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Nota_di_creditoBulk notaCreditoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Nota_di_creditoBulk("000", "000.000", 2025, 8L)))
                     .filter(Nota_di_creditoBulk.class::isInstance)
                     .map(Nota_di_creditoBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     notaCreditoBulk);
 
             //CONTROLLO ECONOMICA
@@ -453,14 +453,14 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
     public void testNotaCredito003() throws Exception {
         //Registrazione fattura
         {
-            Fattura_passivaBulk fatturaPassivaBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Fattura_passivaBulk fatturaPassivaBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Fattura_passiva_IBulk("000", "000.000", 2025, 11L)))
                     .filter(Fattura_passivaBulk.class::isInstance)
                     .map(Fattura_passivaBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     fatturaPassivaBulk);
 
             //CONTROLLO ECONOMICA
@@ -513,18 +513,18 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
                 Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
             }
 
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), fatturaPassivaBulk);
         }
         //Registrazione nota credito riga 1
         {
-            Nota_di_creditoBulk notaCreditoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Nota_di_creditoBulk notaCreditoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Nota_di_creditoBulk("000", "000.000", 2025, 12L)))
                     .filter(Nota_di_creditoBulk.class::isInstance)
                     .map(Nota_di_creditoBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     notaCreditoBulk);
 
             //CONTROLLO ECONOMICA
@@ -569,14 +569,14 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
         }
         //Registrazione nota credito riga 2
         {
-            Nota_di_creditoBulk notaCreditoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Nota_di_creditoBulk notaCreditoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Nota_di_creditoBulk("000", "000.000", 2025, 13L)))
                     .filter(Nota_di_creditoBulk.class::isInstance)
                     .map(Nota_di_creditoBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     notaCreditoBulk);
 
             //CONTROLLO ECONOMICA
@@ -660,14 +660,14 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
     public void testNotaCredito004() throws Exception {
         //Registrazione fattura
         {
-            Fattura_passivaBulk fatturaPassivaBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Fattura_passivaBulk fatturaPassivaBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Fattura_passiva_IBulk("000", "000.000", 2025, 16L)))
                     .filter(Fattura_passivaBulk.class::isInstance)
                     .map(Fattura_passivaBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     fatturaPassivaBulk);
 
             //CONTROLLO ECONOMICA
@@ -732,18 +732,18 @@ public class NotaCreditoScrittureTest extends DeploymentsH2 {
                 Assertions.assertEquals(0, movimentiAvere.size());
             }
 
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), fatturaPassivaBulk);
         }
         //Registrazione nota credito
         {
-            Nota_di_creditoBulk notaCreditoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Nota_di_creditoBulk notaCreditoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Nota_di_creditoBulk("000", "000.000", 2025, 17L)))
                     .filter(Nota_di_creditoBulk.class::isInstance)
                     .map(Nota_di_creditoBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     notaCreditoBulk);
 
             //CONTROLLO ECONOMICA

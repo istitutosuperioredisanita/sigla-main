@@ -1,5 +1,6 @@
 package it.cnr.contab.util;
 
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -7,6 +8,12 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 public class TestUserContext implements UserContext {
+    Hashtable<String, Serializable> attributes = new Hashtable<>();
+
+    public TestUserContext(Integer esercizio) {
+        attributes.put(CNRUserContext.ESERCIZIO, esercizio);
+    }
+
     @Override
     public String getSessionId() {
         return null;
@@ -39,6 +46,6 @@ public class TestUserContext implements UserContext {
 
     @Override
     public Hashtable<String, Serializable> getAttributes() {
-        return null;
+        return attributes;
     }
 }

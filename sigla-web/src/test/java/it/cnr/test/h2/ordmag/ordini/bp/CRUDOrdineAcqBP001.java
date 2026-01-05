@@ -172,6 +172,7 @@ public class CRUDOrdineAcqBP001 extends ActionDeployments {
         GregorianCalendar dataBollaConsegna = (GregorianCalendar) GregorianCalendar.getInstance();
         dataBollaConsegna.set(Calendar.DAY_OF_MONTH,3);
         dataBollaConsegna.set(Calendar.MONTH,Calendar.JANUARY);
+        dataBollaConsegna.set(Calendar.YEAR, 2025);
         java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("ddMMyyyy");
 
         getGrapheneElement("main.dataBolla").writeIntoElement(sdf.format(dataBollaConsegna.getTime().getTime()));

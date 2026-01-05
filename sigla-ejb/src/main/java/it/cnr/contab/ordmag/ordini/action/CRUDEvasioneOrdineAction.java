@@ -19,7 +19,9 @@ package it.cnr.contab.ordmag.ordini.action;
 
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import it.cnr.contab.ordmag.anag00.MagazzinoBulk;
@@ -282,7 +284,11 @@ public class CRUDEvasioneOrdineAction extends it.cnr.jada.util.action.CRUDAction
 				int esScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext()).intValue();
 
 				if (annoCompetenza != esScrivania)
-					throw new ApplicationException("La \"Data Consegna\" deve ricadere nell'esercizio selezionato!");
+					throw new ApplicationException(
+						String.format(
+							"La \"Data Consegna %s\" deve ricadere nell'esercizio selezionato %s!",
+							new SimpleDateFormat("dd/MM/yyyy", Locale.ITALIAN).format(evasioneOrdine.getDataConsegna()), esScrivania
+					));
 				validaDateEvasione(evasioneOrdine);
 			}
 			return context.findDefaultForward();

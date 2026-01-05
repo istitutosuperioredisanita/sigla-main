@@ -75,13 +75,13 @@ public class AnticipoMissioneRimborsoScrittureTest extends DeploymentsH2 {
     @Order(1)
     public void testMissioneSenzaAnticipo001() throws Exception {
         {
-            MissioneBulk missioneBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            MissioneBulk missioneBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MissioneBulk("000", "000.000", 2025, 1L)))
                     .filter(MissioneBulk.class::isInstance)
                     .map(MissioneBulk.class::cast)
                     .orElse(null);
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     missioneBulk);
 
             //CONTROLLO ECONOMICA
@@ -143,22 +143,22 @@ public class AnticipoMissioneRimborsoScrittureTest extends DeploymentsH2 {
             }
 
             //Richiamo l'anticipo perchè aggiunto valore voce_ep su testata
-            missioneBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            missioneBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MissioneBulk("000", "000.000", 2025, 1L)))
                     .filter(MissioneBulk.class::isInstance)
                     .map(MissioneBulk.class::cast)
                     .orElse(null);
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), missioneBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), missioneBulk);
         }
         {
-            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MandatoIBulk("000",2025,13L)))
                     .filter(MandatoBulk.class::isInstance)
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     mandatoBulk);
 
             Assertions.assertEquals(new BigDecimal("100.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
@@ -247,13 +247,13 @@ public class AnticipoMissioneRimborsoScrittureTest extends DeploymentsH2 {
     @Order(2)
     public void testMissioneConAnticipo001() throws Exception {
         {
-            AnticipoBulk anticipoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            AnticipoBulk anticipoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new AnticipoBulk("000", "000.000", 2025, 1L)))
                     .filter(AnticipoBulk.class::isInstance)
                     .map(AnticipoBulk.class::cast)
                     .orElse(null);
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     anticipoBulk);
 
             //CONTROLLO ECONOMICA
@@ -292,22 +292,22 @@ public class AnticipoMissioneRimborsoScrittureTest extends DeploymentsH2 {
             }
 
             //Richiamo l'anticipo perchè aggiunto valore voce_ep su testata
-            anticipoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            anticipoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new AnticipoBulk("000", "000.000", 2025, 1L)))
                     .filter(AnticipoBulk.class::isInstance)
                     .map(AnticipoBulk.class::cast)
                     .orElse(null);
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), anticipoBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), anticipoBulk);
         }
         {
-            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MandatoIBulk("000",2025,12L)))
                     .filter(MandatoBulk.class::isInstance)
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     mandatoBulk);
 
             Assertions.assertEquals(new BigDecimal("100.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
@@ -338,13 +338,13 @@ public class AnticipoMissioneRimborsoScrittureTest extends DeploymentsH2 {
             Assertions.assertEquals(new BigDecimal("100.00"), rigaTipoTesoreria.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
         }
         {
-            MissioneBulk missioneBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            MissioneBulk missioneBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MissioneBulk("000", "000.000", 2025, 2L)))
                     .filter(MissioneBulk.class::isInstance)
                     .map(MissioneBulk.class::cast)
                     .orElse(null);
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     missioneBulk);
             //CONTROLLO ECONOMICA
             {
@@ -424,22 +424,22 @@ public class AnticipoMissioneRimborsoScrittureTest extends DeploymentsH2 {
             }
 
             //Richiamo l'anticipo perchè aggiunto valore voce_ep su testata
-            missioneBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            missioneBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MissioneBulk("000", "000.000", 2025, 1L)))
                     .filter(MissioneBulk.class::isInstance)
                     .map(MissioneBulk.class::cast)
                     .orElse(null);
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), missioneBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), missioneBulk);
         }
         {
-            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MandatoIBulk("000",2025,14L)))
                     .filter(MandatoBulk.class::isInstance)
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     mandatoBulk);
 
             Assertions.assertEquals(new BigDecimal("200.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
@@ -522,13 +522,13 @@ public class AnticipoMissioneRimborsoScrittureTest extends DeploymentsH2 {
     @Order(3)
     public void testMissioneConAnticipoRimborso002() throws Exception {
         {
-            AnticipoBulk anticipoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            AnticipoBulk anticipoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new AnticipoBulk("000", "000.000", 2025, 2L)))
                     .filter(AnticipoBulk.class::isInstance)
                     .map(AnticipoBulk.class::cast)
                     .orElse(null);
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     anticipoBulk);
 
             //CONTROLLO ECONOMICA
@@ -566,22 +566,22 @@ public class AnticipoMissioneRimborsoScrittureTest extends DeploymentsH2 {
             }
 
             //Richiamo l'anticipo perchè aggiunto valore voce_ep su testata
-            anticipoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            anticipoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new AnticipoBulk("000", "000.000", 2025, 2L)))
                     .filter(AnticipoBulk.class::isInstance)
                     .map(AnticipoBulk.class::cast)
                     .orElse(null);
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), anticipoBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), anticipoBulk);
         }
         {
-            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MandatoIBulk("000",2025,15L)))
                     .filter(MandatoBulk.class::isInstance)
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     mandatoBulk);
 
             Assertions.assertEquals(new BigDecimal("300.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
@@ -612,13 +612,13 @@ public class AnticipoMissioneRimborsoScrittureTest extends DeploymentsH2 {
             Assertions.assertEquals(new BigDecimal("300.00"), rigaTipoTesoreria.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
         }
         {
-            MissioneBulk missioneBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            MissioneBulk missioneBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MissioneBulk("000", "000.000", 2025, 3L)))
                     .filter(MissioneBulk.class::isInstance)
                     .map(MissioneBulk.class::cast)
                     .orElse(null);
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     missioneBulk);
             //CONTROLLO ECONOMICA
             {
@@ -688,23 +688,23 @@ public class AnticipoMissioneRimborsoScrittureTest extends DeploymentsH2 {
                 Assertions.assertEquals(0, movimentiAvere.size());
             }
             //Richiamo l'anticipo perchè aggiunto valore voce_ep su testata
-            missioneBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            missioneBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MissioneBulk("000", "000.000", 2025, 3L)))
                     .filter(MissioneBulk.class::isInstance)
                     .map(MissioneBulk.class::cast)
                     .orElse(null);
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), missioneBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), missioneBulk);
         }
         /*
         {
-            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MandatoIBulk("000",2025,16L)))
                     .filter(MandatoBulk.class::isInstance)
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     mandatoBulk);
 
             Assertions.assertEquals(new BigDecimal("200.00"), Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())

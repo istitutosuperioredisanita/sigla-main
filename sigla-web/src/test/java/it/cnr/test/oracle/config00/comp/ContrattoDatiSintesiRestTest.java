@@ -32,11 +32,10 @@ public class ContrattoDatiSintesiRestTest extends DeploymentsOracle {
 
     @Test
     public void test() throws Exception {
-        final TestUserContext testUserContext = new TestUserContext();
         final ContrattoDatiSintesiBulk contrattoDatiSintesiBulk = new ContrattoDatiSintesiBulk();
 
         List<ContrattoDatiSintesiBulk> dati =
-                crudComponentSession.find(testUserContext, ContrattoDatiSintesiBulk.class, "recuperoDati", testUserContext, contrattoDatiSintesiBulk, ContrattoBulk.NATURA_CONTABILE_PASSIVO, 63470, "123.005");
+                crudComponentSession.find(getUserContext(), ContrattoDatiSintesiBulk.class, "recuperoDati", getUserContext(), contrattoDatiSintesiBulk, ContrattoBulk.NATURA_CONTABILE_PASSIVO, 63470, "123.005");
         Assertions.assertNotNull(dati);
         Assertions.assertEquals(Boolean.TRUE,!dati.isEmpty());
     }

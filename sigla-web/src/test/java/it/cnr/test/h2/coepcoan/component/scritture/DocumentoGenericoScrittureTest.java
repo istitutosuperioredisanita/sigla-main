@@ -71,14 +71,14 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
     @Test
     @Order(1)
     public void testDocumentoGenerico001() throws Exception {
-        Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+        Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                         new Documento_genericoBulk("000","GENERICO_S","000.000",2025,
                                 1L)))
                 .filter(Documento_genericoBulk.class::isInstance)
                 .map(Documento_genericoBulk.class::cast)
                 .orElse(null);
         ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                new TestUserContext(),
+                getUserContext(),
                 documentoCogeBulk);
 
         //CONTROLLO ECONOMICA
@@ -119,16 +119,16 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
             Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
         }
 
-        scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), documentoCogeBulk);
+        scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), documentoCogeBulk);
 
-        MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+        MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                         new MandatoIBulk("000",2025,1L)))
                 .filter(MandatoBulk.class::isInstance)
                 .map(MandatoBulk.class::cast)
                 .orElse(null);
 
         result = proposeScritturaComponentSession.proposeScrittureContabili(
-                new TestUserContext(),
+                getUserContext(),
                 mandatoBulk);
 
         //CONTROLLO ECONOMICA
@@ -204,14 +204,14 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
     @Order(2)
     public void testDocumentoGenerico002() throws Exception {
         {
-            Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Documento_genericoBulk("000", "GENERICO_S", "000.000", 2025,
                                     2L)))
                     .filter(Documento_genericoBulk.class::isInstance)
                     .map(Documento_genericoBulk.class::cast)
                     .orElse(null);
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     documentoCogeBulk);
 
             //CONTROLLO ECONOMICA
@@ -271,17 +271,17 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
                 Assertions.assertEquals(0, movimentiAvere.size());
             }
 
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), documentoCogeBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), documentoCogeBulk);
         }
         {
-            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MandatoIBulk("000", 2025, 5L)))
                     .filter(MandatoBulk.class::isInstance)
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     mandatoBulk);
 
             //CONTROLLO ECONOMICA
@@ -347,7 +347,7 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
     @Order(3)
     public void testDocumentoGenerico003() throws Exception {
         {
-            Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Documento_genericoBulk("000", "GENERICO_S", "000.000", 2024,
                                     1L)))
                     .filter(Documento_genericoBulk.class::isInstance)
@@ -355,19 +355,19 @@ public class DocumentoGenericoScrittureTest extends DeploymentsH2 {
                     .orElse(null);
 
             Assertions.assertThrows(ScritturaPartitaDoppiaNotEnabledException.class, () ->proposeScritturaComponentSession.proposeScrittureContabili(
-                        new TestUserContext(),
+                        getUserContext(),
                         documentoCogeBulk),
                     "Scrittura Economica non generabile/modificabile. L'esercizio contabile 2023 per il cds 000 risulta essere non aperto.");
         }
         {
-            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MandatoIBulk("000", 2025, 6L)))
                     .filter(MandatoBulk.class::isInstance)
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     mandatoBulk);
 
             //CONTROLLO ECONOMICA

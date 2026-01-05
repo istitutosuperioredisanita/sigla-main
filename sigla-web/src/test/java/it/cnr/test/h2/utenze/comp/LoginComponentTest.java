@@ -46,14 +46,14 @@ public class LoginComponentTest extends Deployments {
     @Test
     @Order(1)
     public void testEsercizio() throws Exception {
-        UtenteBulk utente = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(), new UtenteBulk("TEST")))
+        UtenteBulk utente = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(), new UtenteBulk("TEST")))
                 .filter(UtenteBulk.class::isInstance)
                 .map(UtenteBulk.class::cast)
                 .orElse(null);
         Assertions.assertEquals(Boolean.TRUE, Optional.ofNullable(utente).isPresent());
         Assertions.assertEquals("Utenza di TEST", utente.getDs_utente());
 
-        java.lang.Integer[] listaEsercizio = loginComponentSession.listaEserciziPerUtente(new TestUserContext(), utente);
+        java.lang.Integer[] listaEsercizio = loginComponentSession.listaEserciziPerUtente(getUserContext(), utente);
         java.lang.Integer[] espected = {contextRemote.getLiquibasBootstrapEsercizio()};
         Assertions.assertArrayEquals(espected, listaEsercizio);
     }

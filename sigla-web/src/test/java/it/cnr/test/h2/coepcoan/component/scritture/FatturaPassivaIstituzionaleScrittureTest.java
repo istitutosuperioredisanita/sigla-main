@@ -82,14 +82,14 @@ public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
     public void testIstituzionale001() throws Exception {
         //Registrazione fattura
         {
-            Fattura_passivaBulk fatturaPassivaBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Fattura_passivaBulk fatturaPassivaBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Fattura_passiva_IBulk("000", "000.000", 2025, 1L)))
                     .filter(Fattura_passivaBulk.class::isInstance)
                     .map(Fattura_passivaBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     fatturaPassivaBulk);
 
             //CONTROLLO ECONOMICA
@@ -132,18 +132,18 @@ public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
                 Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
             }
 
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), fatturaPassivaBulk);
         }
         //Registrazione mandato
         {
-            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MandatoIBulk("000", 2025, 2L)))
                     .filter(MandatoBulk.class::isInstance)
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     mandatoBulk);
 
             //CONTROLLO ECONOMICA
@@ -215,14 +215,14 @@ public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
     public void testIstituzionale002() throws Exception {
         //Registrazione fattura
         {
-            Fattura_passivaBulk fatturaPassivaBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Fattura_passivaBulk fatturaPassivaBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Fattura_passiva_IBulk("000", "000.000", 2025, 2L)))
                     .filter(Fattura_passivaBulk.class::isInstance)
                     .map(Fattura_passivaBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     fatturaPassivaBulk);
 
             //CONTROLLO ECONOMICA
@@ -260,18 +260,18 @@ public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
                 Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
             }
 
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), fatturaPassivaBulk);
         }
         //Registrazione mandato
         {
-            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MandatoIBulk("000", 2025, 3L)))
                     .filter(MandatoBulk.class::isInstance)
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     mandatoBulk);
 
             //CONTROLLO ECONOMICA
@@ -357,14 +357,14 @@ public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
     public void testIstituzionale003() throws Exception {
         //Registrazione fattura
         {
-            Fattura_passivaBulk fatturaPassivaBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Fattura_passivaBulk fatturaPassivaBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Fattura_passiva_IBulk("000", "000.000", 2025, 9L)))
                     .filter(Fattura_passivaBulk.class::isInstance)
                     .map(Fattura_passivaBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     fatturaPassivaBulk);
 
             //CONTROLLO ECONOMICA
@@ -417,18 +417,18 @@ public class FatturaPassivaIstituzionaleScrittureTest extends DeploymentsH2 {
                 Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
             }
 
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), fatturaPassivaBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), fatturaPassivaBulk);
         }
         //Registrazione mandato
         {
-            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MandatoIBulk("000", 2025, 8L)))
                     .filter(MandatoBulk.class::isInstance)
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     mandatoBulk);
 
             //CONTROLLO ECONOMICA

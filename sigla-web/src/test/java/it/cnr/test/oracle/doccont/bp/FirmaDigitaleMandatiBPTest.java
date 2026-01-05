@@ -42,17 +42,16 @@ public class FirmaDigitaleMandatiBPTest extends DeploymentsOracle {
 
     @Test
     public void testPredisponiMandato() throws Exception {
-        final TestUserContext testUserContext = new TestUserContext();
         V_mandato_reversaleBulk v_mandato_reversaleBulk =
                 Optional.ofNullable(
-                        crudComponentSession.findByPrimaryKey(testUserContext,
+                        crudComponentSession.findByPrimaryKey(getUserContext(),
                                 new V_mandato_reversaleBulk(2019, "MAN", "000", Long.valueOf(1)))
                 )
                         .filter(V_mandato_reversaleBulk.class::isInstance)
                         .map(V_mandato_reversaleBulk.class::cast)
                         .orElse(null);
         FirmaDigitaleMandatiBP firmaDigitaleMandatiBP = new FirmaDigitaleMandatiBP();
-        firmaDigitaleMandatiBP.predisponi(new MockActionContext(new TestUserContext()), v_mandato_reversaleBulk, new SimpleDateFormat("yyyy/MM/dd"));
+        firmaDigitaleMandatiBP.predisponi(new MockActionContext(getUserContext()), v_mandato_reversaleBulk, new SimpleDateFormat("yyyy/MM/dd"));
 
         StoreService storeService = SpringUtil.getBean("storeService", StoreService.class);
         final StorageObject storageObjectByPath = storeService.getStorageObjectByPath(
@@ -60,7 +59,7 @@ public class FirmaDigitaleMandatiBPTest extends DeploymentsOracle {
         );
         Assertions.assertNotNull(storageObjectByPath);
         Assertions.assertEquals(MandatoBulk.STATO_TRASMISSIONE_PREDISPOSTO, Optional.ofNullable(
-                        crudComponentSession.findByPrimaryKey(testUserContext,v_mandato_reversaleBulk))
+                        crudComponentSession.findByPrimaryKey(getUserContext(),v_mandato_reversaleBulk))
                         .filter(V_mandato_reversaleBulk.class::isInstance)
                         .map(V_mandato_reversaleBulk.class::cast)
                         .orElse(null).getStato_trasmissione());

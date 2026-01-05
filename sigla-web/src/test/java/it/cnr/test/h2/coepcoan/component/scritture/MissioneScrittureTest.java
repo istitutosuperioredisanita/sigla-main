@@ -73,13 +73,13 @@ public class MissioneScrittureTest extends DeploymentsH2 {
     @Order(1)
     public void testMissione001() throws Exception {
         {
-            MissioneBulk missioneBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            MissioneBulk missioneBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MissioneBulk("000", "000.000", 2025, 1L)))
                     .filter(MissioneBulk.class::isInstance)
                     .map(MissioneBulk.class::cast)
                     .orElse(null);
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     missioneBulk);
 
             //CONTROLLO ECONOMICA
@@ -140,22 +140,22 @@ public class MissioneScrittureTest extends DeploymentsH2 {
             }
 
             //Richiamo la missione perchè aggiunto valore voce_ep su testata
-            missioneBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            missioneBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MissioneBulk("000", "000.000", 2025, 1L)))
                     .filter(MissioneBulk.class::isInstance)
                     .map(MissioneBulk.class::cast)
                     .orElse(null);
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), missioneBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), missioneBulk);
         }
         {
-            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            MandatoBulk mandatoBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new MandatoIBulk("000",2025,13L)))
                     .filter(MandatoBulk.class::isInstance)
                     .map(MandatoBulk.class::cast)
                     .orElse(null);
 
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     mandatoBulk);
 
             //CONTROLLO ECONOMICA

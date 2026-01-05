@@ -664,52 +664,52 @@
     <changeSet author="test" id="sql-attivazione-economica">
         <sql>
             update configurazione_cnr
-            set val01='CONTO'
+            set esercizio = 2025, val01='CONTO'
             where cd_chiave_primaria='ECONOMICO_PATRIMONIALE'
             and cd_chiave_secondaria='ASSOCIAZIONE_CONTI';
         </sql>
         <sql>
             update configurazione_cnr
-            set val01='PARALLELA',val02='Y'
+            set esercizio = 2025, val01='PARALLELA',val02='Y'
             where cd_chiave_primaria='ECONOMICO_PATRIMONIALE'
             and cd_chiave_secondaria='TIPO_ECONOMICO_PATRIMONIALE';
         </sql>
         <sql>
             update configurazione_cnr
-            set val01='A00053'
+            set esercizio = 2025, val01='A00053'
             where cd_chiave_primaria='VOCEEP_SPECIALE'
             and cd_chiave_secondaria='BANCA';
         </sql>
         <sql>
             update configurazione_cnr
-            set val01='P00047'
+            set esercizio = 2025, val01='P00047'
             where cd_chiave_primaria='VOCEEP_SPECIALE'
             and cd_chiave_secondaria='FATTURE_DA_RICEVERE';
         </sql>
         <sql>
             update configurazione_cnr
-            set val02='PTEST003'
+            set esercizio = 2025, val02='PTEST003'
             where cd_chiave_primaria='VOCEEP_SPECIALE'
             and cd_chiave_secondaria='COSTO_DOC_NON_LIQUIDABILE'
             and ESERCIZIO >= 2023;
         </sql>
         <sql>
             update configurazione_cnr
-            set val03='Y'
+            set esercizio = 2025, val03='Y'
             where cd_chiave_primaria='ECONOMICO_PATRIMONIALE'
             and cd_chiave_secondaria='TIPO_ECONOMICO_PATRIMONIALE'
             and ESERCIZIO >= 2023;
         </sql>
         <sql>
             update configurazione_cnr
-            set val03='PTEST002'
+            set esercizio = 2025, val03='PTEST002'
             where cd_chiave_primaria='VOCEEP_SPECIALE'
             and cd_chiave_secondaria='CREDITO_DEBITO_ANTICIPO'
             and ESERCIZIO >= 2023;
         </sql>
         <sql>
             update configurazione_cnr
-            set val01='Y'
+            set esercizio = 2025, val01='Y'
             where cd_chiave_primaria='ORDINI'
             and cd_chiave_secondaria='GESTIONE'
             and ESERCIZIO >= 2023;

@@ -48,6 +48,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -408,7 +409,12 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 			int esScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext).intValue();
 
 			if (annoCompetenza != esScrivania) {
-				throw new ApplicationException("La \"Data Consegna\" deve ricadere nell'esercizio selezionato!");
+				throw new ApplicationException(
+					String.format(
+						"La \"Data Consegna %s\" deve ricadere nell'esercizio selezionato %s!",
+						new SimpleDateFormat("dd/MM/yyyy", Locale.ITALIAN).format(evasioneOrdine.getDataConsegna()), esScrivania
+					)
+				);
 			}
 
 			if(evasioneOrdine.getDataBolla() != null && evasioneOrdine.getDataBolla().compareTo(evasioneOrdine.getDataConsegna()) > 0){

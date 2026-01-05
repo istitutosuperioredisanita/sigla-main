@@ -83,14 +83,14 @@ public class DocumentoStornoScrittureTest extends DeploymentsH2 {
     @Order(1)
     public void testDocumentoGenericoStorno001() throws Exception {
         {
-            Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Documento_genericoBulk("000", "GENERICO_S", "000.000", 2025,
                                     3L)))
                     .filter(Documento_genericoBulk.class::isInstance)
                     .map(Documento_genericoBulk.class::cast)
                     .orElse(null);
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     documentoCogeBulk);
 
             //CONTROLLO ECONOMICA
@@ -150,18 +150,18 @@ public class DocumentoStornoScrittureTest extends DeploymentsH2 {
                 Assertions.assertEquals(0, movimentiAvere.size());
             }
 
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), documentoCogeBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), documentoCogeBulk);
         }
         //DOCUMENTO DI STORNO
         {
-            Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Documento_genericoBulk("000", "GENERICO_S", "000.000", 2025,
                                     4L)))
                     .filter(Documento_genericoBulk.class::isInstance)
                     .map(Documento_genericoBulk.class::cast)
                     .orElse(null);
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     documentoCogeBulk);
 
             //CONTROLLO ECONOMICA
@@ -221,7 +221,7 @@ public class DocumentoStornoScrittureTest extends DeploymentsH2 {
                 Assertions.assertEquals(new BigDecimal("1000.00"), rigaAvere.map(Movimento_coanBulk::getIm_movimento).orElse(null));
             }
 
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), documentoCogeBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), documentoCogeBulk);
         }
     }
 
@@ -312,14 +312,14 @@ public class DocumentoStornoScrittureTest extends DeploymentsH2 {
     @Order(2)
     public void testDocumentoGenericoStorno002() throws Exception {
         {
-            Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Documento_genericoBulk("000", "GENERICO_S", "000.000", 2025,
                                     5L)))
                     .filter(Documento_genericoBulk.class::isInstance)
                     .map(Documento_genericoBulk.class::cast)
                     .orElse(null);
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     documentoCogeBulk);
 
             //CONTROLLO ECONOMICA
@@ -367,17 +367,17 @@ public class DocumentoStornoScrittureTest extends DeploymentsH2 {
                 Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
             }
 
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), documentoCogeBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), documentoCogeBulk);
         }
         {
-            Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Documento_genericoBulk("000", "GENERICO_S", "000.000", 2025,
                                     6L)))
                     .filter(Documento_genericoBulk.class::isInstance)
                     .map(Documento_genericoBulk.class::cast)
                     .orElse(null);
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     documentoCogeBulk);
 
             //CONTROLLO ECONOMICA
@@ -415,17 +415,17 @@ public class DocumentoStornoScrittureTest extends DeploymentsH2 {
                 Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
             }
 
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), documentoCogeBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), documentoCogeBulk);
         }
         {
-            Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Documento_genericoBulk("000", "GENERICO_S", "000.000", 2025,
                                     7L)))
                     .filter(Documento_genericoBulk.class::isInstance)
                     .map(Documento_genericoBulk.class::cast)
                     .orElse(null);
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     documentoCogeBulk);
 
             //CONTROLLO ECONOMICA
@@ -473,17 +473,17 @@ public class DocumentoStornoScrittureTest extends DeploymentsH2 {
                 Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
             }
 
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), documentoCogeBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), documentoCogeBulk);
         }
         {
-            Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(new TestUserContext(),
+            Documento_genericoBulk documentoCogeBulk = Optional.ofNullable(crudComponentSession.findByPrimaryKey(getUserContext(),
                             new Documento_genericoBulk("000", "GENERICO_S", "000.000", 2025,
                                     8L)))
                     .filter(Documento_genericoBulk.class::isInstance)
                     .map(Documento_genericoBulk.class::cast)
                     .orElse(null);
             ResultScrittureContabili result = proposeScritturaComponentSession.proposeScrittureContabili(
-                    new TestUserContext(),
+                    getUserContext(),
                     documentoCogeBulk);
 
             //CONTROLLO ECONOMICA
@@ -521,7 +521,7 @@ public class DocumentoStornoScrittureTest extends DeploymentsH2 {
                 Assertions.assertFalse(Optional.ofNullable(result.getScritturaAnaliticaBulk()).isPresent(),"Scrittura analitica presente.");
             }
 
-            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(new TestUserContext(), documentoCogeBulk);
+            scritturaPartitaDoppiaFromDocumentoComponentSession.modificaConBulk(getUserContext(), documentoCogeBulk);
         }
     }
 }

@@ -33,14 +33,13 @@ public class ComunicaDatiPagamentiTest extends DeploymentsOracle {
 
     @Test
     public void test() throws Exception {
-        final TestUserContext testUserContext = new TestUserContext();
         final MandatoComunicaDatiBulk mandatoComunicaDatiBulk = new MandatoComunicaDatiBulk();
         mandatoComunicaDatiBulk.setEsercizio(2020);
         mandatoComunicaDatiBulk.setCd_cds("035");
         mandatoComunicaDatiBulk.setPg_mandato(Long.valueOf(3146));
 
         List<MandatoComunicaDatiBulk> dati =
-                crudComponentSession.find(testUserContext, MandatoComunicaDatiBulk.class, "recuperoDati", testUserContext, mandatoComunicaDatiBulk, null, null);
+                crudComponentSession.find(getUserContext(), MandatoComunicaDatiBulk.class, "recuperoDati", getUserContext(), mandatoComunicaDatiBulk, null, null);
         Assertions.assertNotNull(dati);
         Assertions.assertEquals(Boolean.TRUE, !dati.isEmpty());
     }
