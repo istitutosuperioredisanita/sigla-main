@@ -29,6 +29,8 @@ import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.LoggableStatement;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.persistency.sql.SQLExceptionHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -42,6 +44,7 @@ import java.util.Calendar;
  */
 public class EsercizioHome extends BulkHome {
     public final static java.sql.Timestamp DATA_INFINITO;
+    private final static Logger logger = LoggerFactory.getLogger(EsercizioHome.class);
 
     static {
         // (29/10/2002 17:29:52) CNRADM
@@ -317,8 +320,10 @@ public class EsercizioHome extends BulkHome {
             return EsercizioBulk.STATO_CHIUSO_DEF;
 
         EsercizioBulk esercizio = (EsercizioBulk)findByPrimaryKey(new EsercizioBulk(aCdCds, aEs));
-        if (esercizio==null)
-            throw new ComponentException("Esercizio contabile " + aEs + " non definito per il CdS " + aCdCds);
+        if (esercizio==null) {
+            logger.warn("Esercizio contabile {} non definito per il CdS: {}", aEs, aCdCds);
+            return EsercizioBulk.STATO_INIZIALE;
+        }
         return esercizio.getSt_apertura_chiusura();
     }
 }
