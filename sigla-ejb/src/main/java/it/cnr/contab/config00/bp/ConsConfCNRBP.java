@@ -37,7 +37,7 @@ protected void init(it.cnr.jada.action.Config config, ActionContext context) thr
         setFreeSearchSet("CONS_CONF_TOTALE");
 		setColumns(getBulkInfo().getColumnFieldPropertyDictionary("CONS_CONF_TOTALE"));
 
-	}catch(Throwable e) { 
+	}catch(Throwable e) {
 		throw new BusinessProcessException(e);
 	}
 }
