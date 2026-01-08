@@ -21,6 +21,7 @@ import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.util.Config;
+import it.cnr.jada.util.action.FormField;
 import it.cnr.jada.util.jsp.Button;
 
 import java.util.Optional;
@@ -35,6 +36,7 @@ protected void init(it.cnr.jada.action.Config config, ActionContext context) thr
 		super.init(config,context);
 
         setFreeSearchSet("SEARCH_FORM");
+        setSearchResultColumnSet("CONS_CONF_TOTALE");
 
         //setFreeSearchSet("CONS_CONF_TOTALE");
 		//setColumns(getBulkInfo().getColumnFieldPropertyDictionary("CONS_CONF_TOTALE"));
@@ -42,6 +44,12 @@ protected void init(it.cnr.jada.action.Config config, ActionContext context) thr
 		throw new BusinessProcessException(e);
 	}
 }
+
+    @Override
+    public FormField getFormField(String s) {
+        return super.getFormField(s);
+    }
+
     @Override
     protected Button[] createToolbar() {
         Button[] abutton = new Button[5];
