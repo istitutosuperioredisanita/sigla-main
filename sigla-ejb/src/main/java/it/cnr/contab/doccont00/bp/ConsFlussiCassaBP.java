@@ -21,10 +21,9 @@ package it.cnr.contab.doccont00.bp;
 import it.cnr.contab.config00.pdcfin.cla.bulk.Parametri_livelliBulk;
 import it.cnr.contab.config00.sto.bulk.CdsBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.doccont00.dto.FlussiDiCassaDtoBulk;
+import it.cnr.contab.doccont00.consultazioni.bulk.FlussiDiCassaDtoBulk;
 import it.cnr.contab.doccont00.ejb.ConsRiepilogoSiopeComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
@@ -36,7 +35,6 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.BulkBP;
 
-import javax.servlet.ServletException;
 import java.text.ParseException;
 
 
