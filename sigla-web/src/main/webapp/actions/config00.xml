@@ -497,11 +497,10 @@
 
     <businessProcess
             name="GestConfCNRBP" className="it.cnr.contab.config00.bp.GestConfCNRBP">
-        <!--<forward name="default" path="/config00/gest_conf_cnr.jsp"/>-->
-        <forward name="default" path="/util/form.jsp"/>
+        <forward name="default" path="/config00/gest_conf_cnr.jsp"/>
         <init-param name="bulkClassName" value="it.cnr.contab.config00.bulk.Configurazione_cnrBulk"/>
         <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>
-        <!-- <init-param name="defaultAction" value="GestConfCNRAction"/> -->
+        <init-param name="defaultAction" value="CRUDAction"/>
     </businessProcess>
 
 </action-mappings>
