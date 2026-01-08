@@ -27,6 +27,7 @@ import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcep.bulk.*;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
+import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
 import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk;
@@ -536,6 +537,12 @@ public class CompensoHome extends BulkHome implements
                         .orElse(voceAnaliticaList.stream().findAny().orElse(null));
 
                 Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
+
+                //Carico i contributi se non presenti
+                if (compenso.getContributi()==null || compenso.getContributi().isEmpty()) {
+                    Contributo_ritenutaHome home = (Contributo_ritenutaHome) getHomeCache().getHome(Contributo_ritenutaBulk.class);
+                    compenso.setContributi(home.loadContributiRitenute(compenso));
+                }
                 if (Optional.ofNullable(compenso.getObbligazioneScadenzario()).isPresent()) {
                     Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(compenso.getObbligazioneScadenzario());
 
@@ -581,5 +588,22 @@ public class CompensoHome extends BulkHome implements
         ContoBulk aContoEconomico = this.getContoEconomicoDefault(compenso);
         List<IDocumentoDetailAnaCogeBulk> aContiAnalitici = this.getDatiAnaliticiDefault(userContext, compenso, aContoEconomico);
         return Pair.of(aContoEconomico, aContiAnalitici);
+    }
+
+    public String callVerificaStatoRiporto(UserContext userContext, CompensoBulk compenso, boolean isInScrivania) throws PersistencyException {
+        Unita_organizzativa_enteBulk ente = (Unita_organizzativa_enteBulk) getHomeCache().getHome(Unita_organizzativa_enteBulk.class).findAll().get(0);
+        String aCdCdsEnte = ente.getUnita_padre().getCd_unita_organizzativa();
+
+        Optional<Integer> aEsObblig = Optional.ofNullable(compenso.getEsercizio_obbligazione());
+
+        if (aEsObblig.isEmpty())
+            return IDocumentoAmministrativoBulk.NON_RIPORTATO;
+        else {
+            int aEsScr = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext);
+            int aEs = compenso.getEsercizio();
+            if (isInScrivania)
+                return IDocumentoAmministrativoBulk.getStatoRiportoInScrivania(aEs,aEsScr,aEsObblig.get(),IDocumentoAmministrativoBulk.COMPLETAMENTE_RIPORTATO);
+            return IDocumentoAmministrativoBulk.getStatoRiporto(aEs,aEsScr,aEsObblig.get(),IDocumentoAmministrativoBulk.COMPLETAMENTE_RIPORTATO);
+        }
     }
 }

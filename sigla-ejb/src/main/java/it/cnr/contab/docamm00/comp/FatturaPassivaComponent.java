@@ -4999,6 +4999,13 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
                 throw new it.cnr.jada.comp.ApplicationException("Impossibile inserire una fattura passiva per un esercizio non aperto!");
             java.sql.Timestamp date = fHome.getServerDate();
             int annoSolare = Fattura_passivaBulk.getDateCalendar(date).get(java.util.Calendar.YEAR);
+            int annoScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext);
+
+            if (annoSolare != annoScrivania) {
+                GregorianCalendar dataFine = (GregorianCalendar)GregorianCalendar.getInstance();
+                dataFine.setTime((new GregorianCalendar(annoScrivania, Calendar.DECEMBER, 31)).getTime());
+                date = new Timestamp(dataFine.getTimeInMillis());
+            }
 //            if (annoSolare != it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext).intValue())
 //                throw new it.cnr.jada.comp.ApplicationException("Non è possibile inserire " + fattura.getDescrizioneEntitaPlurale() + " in esercizi non corrispondenti all'anno solare!");
             fattura.setDt_registrazione(date);

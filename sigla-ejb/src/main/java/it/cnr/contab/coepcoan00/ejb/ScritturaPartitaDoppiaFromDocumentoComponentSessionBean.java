@@ -81,7 +81,7 @@ public class ScritturaPartitaDoppiaFromDocumentoComponentSessionBean extends it.
     }
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createScritturaRequiresNew(UserContext param0, IDocumentoCogeBulk param1, boolean loadAnalitica) throws ComponentException, RemoteException {
+	public void createScritturaRequiresNew(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, RemoteException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			((ScritturaPartitaDoppiaFromDocumentoComponent) componentObj).createScrittura(param0, param1);

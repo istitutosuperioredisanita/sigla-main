@@ -206,4 +206,39 @@ public interface IDocumentoAmministrativoBulk extends IDocumentoCogeBulk {
     void setIsDeleting(boolean deletingStatus);
 
     boolean isAnnullato();
+
+    static String getStatoRiporto(int aEs, int aEsScr, int aEsDocCont, String ripParzRip) {
+        // 1. Es = EsScr = aEsDocCont
+        if (aEs == aEsScr && aEsScr == aEsDocCont)
+            return IDocumentoAmministrativoBulk.NON_RIPORTATO;
+            // 2. Es = aEsDocCont < aEsScr
+            //caso non significativo, il documento non è comunque modificabile
+        else if (aEs == aEsDocCont && aEsDocCont < aEsScr)
+            return IDocumentoAmministrativoBulk.NON_RIPORTATO;
+            // 3. Es < EsScr = aEsDocCont
+        else if (aEs < aEsScr && aEsScr == aEsDocCont)
+            return IDocumentoAmministrativoBulk.NON_RIPORTATO;
+            // 4. Es = EsScr < aEsDocCont
+        else if (aEs == aEsScr && aEsScr < aEsDocCont)
+            return ripParzRip;
+            // 5. Es < aEsDocCont < EsScr
+            // caso non significativo, il documento  non è comunque modificabile
+        else if (aEs < aEsDocCont && aEsDocCont < aEsScr)
+            return IDocumentoAmministrativoBulk.NON_RIPORTATO;
+            // 6. Es < EsScr < aEsDocCont
+        else if (aEs < aEsScr && aEsScr < aEsDocCont)
+            return ripParzRip;
+        return IDocumentoAmministrativoBulk.NON_RIPORTATO;
+    }
+
+    static String getStatoRiportoInScrivania(int aEs, int aEsScr, int aEsDocCont, String ripParzRip) {
+        if (aEsDocCont == aEsScr) {
+            if (aEs == aEsDocCont)
+                // documento mai riportato
+                return IDocumentoAmministrativoBulk.NON_RIPORTATO;
+            else
+                return ripParzRip;
+        } else
+            return IDocumentoAmministrativoBulk.NON_RIPORTATO;
+    }
 }

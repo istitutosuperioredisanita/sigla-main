@@ -729,7 +729,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			String mySezione = importo.compareTo(BigDecimal.ZERO)<0?Movimento_cogeBulk.getControSezione(sezione):sezione;
 			BigDecimal myImporto = importo.abs();
 			String myTipoDettaglio;
-			if (!Optional.ofNullable(tipoDettaglio).isPresent() ||
+			if (Optional.ofNullable(tipoDettaglio).isEmpty() ||
 					Optional.of(tipoDettaglio).filter(el->el.equals(Movimento_cogeBulk.TipoRiga.CREDITO.value()) || el.equals(Movimento_cogeBulk.TipoRiga.DEBITO.value()) ||
 							el.equals(Movimento_cogeBulk.TipoRiga.COSTO.value()) || el.equals(Movimento_cogeBulk.TipoRiga.RICAVO.value())).isPresent()) {
 				myTipoDettaglio = getTipoDettaglioByConto(userContext, conto);
@@ -1116,7 +1116,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 					if (!((AnticipoBulk)doccoge).isAnnullato())
 						throw new ScritturaPartitaDoppiaNotEnabledException("L'anticipo non risulta in stato annullato. Annullamento scrittura partita doppia non possibile!");
 					Optional<Scrittura_partita_doppiaBulk> scritturaOpt = this.getScritturaPartitaDoppia(userContext, doccoge);
-					if (!scritturaOpt.isPresent())
+					if (scritturaOpt.isEmpty())
 						throw new ScritturaPartitaDoppiaNotEnabledException("L'anticipo non risulta ancora collegato ad una scrittura partita doppia. Annullamento scrittura partita doppia non possibile!");
 					return new ResultScrittureContabili(doccoge, this.proposeStornoScritturaPartitaDoppia(userContext, scritturaOpt.get(), ((AnticipoBulk) doccoge).getDt_cancellazione()));
 				}
@@ -1134,7 +1134,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 	private ResultScrittureContabili proposeScritturaPartitaDoppiaDocumento(UserContext userContext, IDocumentoAmministrativoBulk docamm, boolean makeAnalitica) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, RemoteException, IntrospectionException, PersistencyException {
         List<TestataPrimaNota> testataPrimaNotaList = this.proposeTestataPrimaNotaDocumento(userContext, docamm);
-        List<TestataPrimaNota> testataPrimaNotaDocPrincList = testataPrimaNotaList.stream().filter(el->!Optional.ofNullable(el.getDoccoge()).isPresent()).collect(Collectors.toList());
+        List<TestataPrimaNota> testataPrimaNotaDocPrincList = testataPrimaNotaList.stream().filter(el-> Optional.ofNullable(el.getDoccoge()).isEmpty()).collect(Collectors.toList());
         ResultScrittureContabili resultScrittureContabili = this.generaScritture(userContext, docamm, testataPrimaNotaDocPrincList, Boolean.TRUE, makeAnalitica);
         Optional<Scrittura_partita_doppiaBulk> spd = Optional.ofNullable(resultScrittureContabili.getScritturaPartitaDoppiaBulk());
         Optional<Scrittura_analiticaBulk> sa = Optional.ofNullable(resultScrittureContabili.getScritturaAnaliticaBulk());

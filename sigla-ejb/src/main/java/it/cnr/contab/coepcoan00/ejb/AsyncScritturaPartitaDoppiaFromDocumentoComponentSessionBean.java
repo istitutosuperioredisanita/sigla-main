@@ -46,8 +46,6 @@ import java.util.Optional;
 public class AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements AsyncScritturaPartitaDoppiaFromDocumentoComponentSession {
 	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean.class);
 
-    
-
 	@Asynchronous
 	public void asyncLoadScritturePatrimoniali(UserContext param0, Integer pEsercizio, String pCdCds) throws ComponentException {
 		String subjectError = "Errore caricamento scritture patrimoniali";
@@ -74,7 +72,6 @@ public class AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean extend
 			List<Batch_log_rigaBulk> listLogRighe = new ArrayList<>();
 
 			try {
-				List<String> listCdCds = new ArrayList<>();
 				List<IDocumentoCogeBulk> allDocuments;
 				try {
 					allDocuments = session.getAllDocumentiCogeDaContabilizzare(param0, pEsercizio, pCdCds.equals("*")?null:pCdCds);
@@ -99,8 +96,7 @@ public class AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean extend
 								documentoCoge.getTipoDocumentoEnum().getValue() +" - Numero: "+
 								documentoCoge.getPg_doc());
                         logger.info("Documento in elaborazione: {}/{}/{}/{}", documentoCoge.getEsercizio(), documentoCoge.getCd_uo(), documentoCoge.getCd_tipo_doc(), documentoCoge.getPg_doc());
-						boolean loadAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(param0, documentoCoge.getEsercizio());
-						session.createScritturaRequiresNew(param0, documentoCoge, loadAnalitica);
+						session.createScritturaRequiresNew(param0, documentoCoge);
 						listInsert.add("X");
 					} catch (Throwable e) {
 						listError.add("X");

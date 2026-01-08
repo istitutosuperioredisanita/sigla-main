@@ -26,7 +26,7 @@ import it.cnr.contab.doccont00.core.bulk.ReversaleIBulk;
 import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
 import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
 import it.cnr.contab.missioni00.docs.bulk.RimborsoBulk;
-import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
+import it.cnr.contab.ordmag.ordini.bulk.*;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.DetailedRuntimeException;
@@ -76,7 +76,6 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
 
     private Optional<Scrittura_partita_doppiaBulk> getScritturaAnnullo(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk) throws ComponentException {
         try {
-            Optional<Scrittura_partita_doppiaBulk> scritturaOpt = Optional.empty();
             Scrittura_partita_doppiaHome partitaDoppiaHome = Optional.ofNullable(getHome(userContext, Scrittura_partita_doppiaBulk.class))
                     .filter(Scrittura_partita_doppiaHome.class::isInstance)
                     .map(Scrittura_partita_doppiaHome.class::cast)
@@ -140,7 +139,19 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
     }
 
     public ResultScrittureContabili createScrittura(UserContext usercontext, IDocumentoCogeBulk documentoCoge) throws ComponentException {
-        return createScrittura(usercontext, documentoCoge, Optional.ofNullable(documentoCoge).map(IDocumentoCogeBulk::getEsercizio).orElse(CNRUserContext.getEsercizio(usercontext)));
+        try {
+            if (documentoCoge instanceof OrdineAcqConsegnaBulk) {
+                EvasioneOrdineRigaHome evasioneRigaHome = (EvasioneOrdineRigaHome) getHome(usercontext, EvasioneOrdineRigaBulk.class);
+                EvasioneOrdineRigaBulk evasioneRiga = ((OrdineAcqConsegnaBulk) documentoCoge).getEvasioneOrdineRigaBulk();
+                if (evasioneRiga==null)
+                    evasioneRiga = evasioneRigaHome.findByConsegna(((OrdineAcqConsegnaBulk) documentoCoge));
+                if (evasioneRiga!=null)
+                    return createScrittura(usercontext, documentoCoge, evasioneRiga.getEsercizio());
+            }
+            return createScrittura(usercontext, documentoCoge, Optional.ofNullable(documentoCoge).map(IDocumentoCogeBulk::getEsercizio).orElse(CNRUserContext.getEsercizio(usercontext)));
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        }
     }
 
     private ResultScrittureContabili createScrittura(UserContext usercontext, IDocumentoCogeBulk documentoCoge, Integer esercizioScritture) throws ComponentException {
@@ -268,6 +279,37 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
 
     public List<IDocumentoCogeBulk> getAllDocumentiCogeDaContabilizzare(UserContext userContext, Integer esercizio, String cdCds) throws PersistencyException, ComponentException {
         List<IDocumentoCogeBulk> allDocuments = new ArrayList<>();
+        {
+            Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHome(userContext,Fattura_passivaBulk.class);
+            PersistentHome ordineAcqConsegnaHome = getHome(userContext, OrdineAcqConsegnaBulk.class);
+            SQLBuilder sql = ordineAcqConsegnaHome.createSQLBuilder();
+            Optional.ofNullable(cdCds).ifPresent(el -> sql.addSQLClause(FindClause.AND, "ORDINE_ACQ_CONSEGNA.cd_cds", SQLBuilder.EQUALS, el));
+
+            sql.addTableToHeader("EVASIONE_ORDINE_RIGA");
+            sql.addSQLJoin("EVASIONE_ORDINE_RIGA.CD_CDS_ORDINE", "ORDINE_ACQ_CONSEGNA.CD_CDS");
+            sql.addSQLJoin("EVASIONE_ORDINE_RIGA.CD_UNITA_OPERATIVA", "ORDINE_ACQ_CONSEGNA.CD_UNITA_OPERATIVA");
+            sql.addSQLJoin("EVASIONE_ORDINE_RIGA.ESERCIZIO_ORDINE", "ORDINE_ACQ_CONSEGNA.ESERCIZIO");
+            sql.addSQLJoin("EVASIONE_ORDINE_RIGA.CD_NUMERATORE_ORDINE", "ORDINE_ACQ_CONSEGNA.CD_NUMERATORE");
+            sql.addSQLJoin("EVASIONE_ORDINE_RIGA.NUMERO_ORDINE", "ORDINE_ACQ_CONSEGNA.NUMERO");
+            sql.addSQLJoin("EVASIONE_ORDINE_RIGA.RIGA_ORDINE", "ORDINE_ACQ_CONSEGNA.RIGA");
+            sql.addSQLJoin("EVASIONE_ORDINE_RIGA.CONSEGNA", "ORDINE_ACQ_CONSEGNA.CONSEGNA");
+
+            sql.addSQLClause(FindClause.AND, "EVASIONE_ORDINE_RIGA.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
+            sql.openParenthesis(FindClause.AND);
+            sql.addSQLClause(FindClause.OR, "ORDINE_ACQ_CONSEGNA.stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_N);
+            sql.addSQLClause(FindClause.OR, "ORDINE_ACQ_CONSEGNA.stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_R);
+            sql.closeParenthesis();
+
+            List<OrdineAcqConsegnaBulk> result = ordineAcqConsegnaHome.fetchAll(sql);
+            EvasioneOrdineRigaHome evasioneRigaHome = (EvasioneOrdineRigaHome) getHome(userContext, EvasioneOrdineRigaBulk.class);
+            //carico evasione ordine perchè i dati per la contabilizzazione vengono da li
+            for (OrdineAcqConsegnaBulk consegna : result) {
+                EvasioneOrdineRigaBulk evasioneRiga = evasioneRigaHome.findByConsegna(consegna);
+                evasioneRiga.setEvasioneOrdine((EvasioneOrdineBulk) fatpasHome.loadIfNeededObject(evasioneRiga.getEvasioneOrdine()));
+                consegna.setEvasioneOrdineRigaBulk(evasioneRiga);
+            }
+            allDocuments.addAll(result);
+        }
         {
             PersistentHome anticipoHome = getHome(userContext, AnticipoBulk.class);
             SQLBuilder sql = anticipoHome.createSQLBuilder();

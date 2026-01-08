@@ -3168,6 +3168,21 @@
     <changeSet author="sigla" runOnChange="true" id="create-view-V_CONS_REGISTRO_INVENTARIO_H2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_CONS_REGISTRO_INVENTARIO_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_BATCH_CONTROL_JOBS_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_BATCH_CONTROL_JOBS_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_MANDATO_TERZO_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_MANDATO_TERZO.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_MANDATO_RIGA_DP_SOSP_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_MANDATO_RIGA_DP_SOSP.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_ASS_DOC_CONTABILI_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_ASS_DOC_CONTABILI.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_TERZO_PER_COMPENSO_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_TERZO_PER_COMPENSO_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
     <changeSet author="valentina.tomada" runOnChange="true" id="create-view-V_AMMORTAMENTO_BENI_DET">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_AMMORTAMENTO_BENI_DET.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
