@@ -21,8 +21,12 @@ import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.ApplicationMessageFormatException;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
+import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.util.OrderedHashtable;
+import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import java.rmi.RemoteException;
@@ -279,6 +283,9 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
         put("T", "Totale");
     }};
 
+    private it.cnr.jada.util.OrderedHashtable esercizioList = new it.cnr.jada.util.OrderedHashtable();
+
+
     public enum StepFineAnno {
         APERTURA_PREVISIONE("010_APERTURA_PREVISIONE"),
         ESERCIZIO_APERTO("020_ESERCIZIO_APERTO"),
@@ -366,4 +373,33 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
             throw new BusinessProcessException(e);
         }
     }
+
+    public OrderedHashtable getEsercizioList() {
+        return esercizioList;
+    }
+
+    public void setEsercizioList(OrderedHashtable esercizioList) {
+        this.esercizioList = esercizioList;
+    }
+
+    public void caricaEsercizioList(ActionContext actioncontext) {
+
+        getEsercizioList().put(new Integer(0), new Integer(0));
+        Integer e = CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue();
+        getEsercizioList().put(e, e);
+    }
+
+    @Override
+    public OggettoBulk initialize(CRUDBP crudbp, ActionContext actioncontext) {
+        super.initialize(crudbp, actioncontext);
+        caricaEsercizioList(actioncontext);
+        return this;
+    }
+    @Override
+    public OggettoBulk initializeForEdit(CRUDBP crudbp, ActionContext actioncontext) {
+        caricaEsercizioList(actioncontext);
+        return super.initializeForEdit(crudbp, actioncontext);
+    }
+
+
 }

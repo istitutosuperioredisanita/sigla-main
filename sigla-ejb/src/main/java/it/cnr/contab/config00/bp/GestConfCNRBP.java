@@ -17,8 +17,14 @@
 
 package it.cnr.contab.config00.bp;
 
+import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.util.Config;
+import it.cnr.jada.util.jsp.Button;
+
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public class GestConfCNRBP extends it.cnr.jada.util.action.SimpleCRUDBP {
 public GestConfCNRBP() {
@@ -28,20 +34,40 @@ protected void init(it.cnr.jada.action.Config config, ActionContext context) thr
 	try {
 		super.init(config,context);
 
+        setFreeSearchSet("SEARCH_FORM");
+
         //setFreeSearchSet("CONS_CONF_TOTALE");
 		//setColumns(getBulkInfo().getColumnFieldPropertyDictionary("CONS_CONF_TOTALE"));
 	}catch(Throwable e) { 
 		throw new BusinessProcessException(e);
 	}
 }
-
     @Override
-    public boolean isDeleteButtonHidden() {
-        return true;
+    protected Button[] createToolbar() {
+        Button[] abutton = new Button[5];
+        int i = 0;
+        abutton[i++] = new Button(Config.getHandler().getProperties(this.getClass()), "CRUDToolbar.search");
+        abutton[i++] = new Button(Config.getHandler().getProperties(this.getClass()), "CRUDToolbar.startSearch");
+        abutton[i++] = new Button(Config.getHandler().getProperties(this.getClass()), "CRUDToolbar.freeSearch");
+        abutton[i++] = new Button(Config.getHandler().getProperties(this.getClass()), "CRUDToolbar.startLastSearch");
+        abutton[i++] = new Button(Config.getHandler().getProperties(this.getClass()), "CRUDToolbar.save");
+
+        return abutton;
     }
 
-    @Override
-    public boolean isNewButtonHidden() {
-        return true;
+
+
+    public String getFormName() {
+        return "SEARCH_FORM";
     }
+
+//    @Override
+//    public boolean isDeleteButtonHidden() {
+//        return true;
+//    }
+
+//    @Override
+//    public boolean isNewButtonHidden() {
+//        return true;
+//    }
 }
