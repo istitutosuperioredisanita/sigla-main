@@ -24,12 +24,14 @@ import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 
 import it.cnr.contab.doccont00.comp.ConsRiepilogoSiopeComponent;
+import it.cnr.contab.doccont00.consultazioni.bulk.FlussiDiCassaDtoBulk;
 import it.cnr.contab.preventvar00.comp.ConsAssCompPerDataComponent;
 import it.cnr.contab.preventvar00.ejb.ConsAssCompPerDataComponentSessionBean;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
+import it.cnr.jada.util.RemoteIterator;
 
 /**
  * Bean implementation class for Enterprise Bean: CNRDOCCONT00_EJB_ConsRiepilogoSiopeComponentSession
@@ -126,5 +128,25 @@ public class ConsRiepilogoSiopeComponentSessionBean extends it.cnr.jada.ejb.CRUD
 				throw uncaughtError(param0,componentObj,e);
 			}
 		}
+
+	@Override
+	public RemoteIterator findFlussiCassa(UserContext param0, FlussiDiCassaDtoBulk param1) throws ComponentException, RemoteException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			it.cnr.jada.util.RemoteIterator result = ((ConsRiepilogoSiopeComponent)componentObj).findFlussiCassa(param0,param1);
+			component_invocation_succes(param0,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(param0,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(param0,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
 
 }
