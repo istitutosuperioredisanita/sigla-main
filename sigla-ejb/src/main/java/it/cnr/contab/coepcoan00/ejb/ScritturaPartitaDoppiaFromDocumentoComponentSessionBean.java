@@ -21,6 +21,7 @@ import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaFromDocumentoComponen
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
+import it.cnr.contab.coepcoan00.core.bulk.V_documenti_da_contabilizzareBulk;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
@@ -81,7 +82,7 @@ public class ScritturaPartitaDoppiaFromDocumentoComponentSessionBean extends it.
     }
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createScritturaRequiresNew(UserContext param0, IDocumentoCogeBulk param1) throws ComponentException, RemoteException {
+	public void createScritturaRequiresNew(UserContext param0, V_documenti_da_contabilizzareBulk param1) throws ComponentException, RemoteException {
 		pre_component_invocation(param0, componentObj);
 		try {
 			((ScritturaPartitaDoppiaFromDocumentoComponent) componentObj).createScrittura(param0, param1);
@@ -116,10 +117,10 @@ public class ScritturaPartitaDoppiaFromDocumentoComponentSessionBean extends it.
 		}
 	}
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public List<IDocumentoCogeBulk> getAllDocumentiCogeDaContabilizzare(UserContext param0, Integer param1, String param2) throws ComponentException, PersistencyException {
+	public List<V_documenti_da_contabilizzareBulk> getAllDocumentiCogeDaContabilizzare(UserContext param0, Integer param1, String param2) throws ComponentException, PersistencyException {
 		pre_component_invocation(param0, componentObj);
 		try {
-			List<IDocumentoCogeBulk>  result = ((ScritturaPartitaDoppiaFromDocumentoComponent) componentObj).getAllDocumentiCogeDaContabilizzare(param0, param1, param2);
+			List<V_documenti_da_contabilizzareBulk>  result = ((ScritturaPartitaDoppiaFromDocumentoComponent) componentObj).getAllDocumentiCogeDaContabilizzare(param0, param1, param2);
 			component_invocation_succes(param0, componentObj);
 			return result;
 		} catch (it.cnr.jada.comp.NoRollbackException e) {

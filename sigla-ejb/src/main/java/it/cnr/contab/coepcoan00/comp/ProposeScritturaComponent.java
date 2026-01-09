@@ -4538,7 +4538,10 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 		//Se è attiva l'economica per l'esercizio del documento allora leggo la scrittura, altrimenti ritorno ciò  che proporrei dato che negli anni dove
 		//l'economica non è attiva la scrittura è diversa.
-		boolean isAttivaEconomica = ((Configurazione_cnrHome)getHome(userContext, Configurazione_cnrBulk.class)).isAttivaEconomica(docamm.getEsercizio());
+		//L'economica è attiva èper gli ordini anche se imputato correttamente il valore corrispondente
+		boolean isAttivaEconomica = ((Configurazione_cnrHome)getHome(userContext, Configurazione_cnrBulk.class)).isAttivaEconomica(docamm.getEsercizio())
+				&& (!docamm.getTipoDocumentoEnum().isConsegnaOrdineAcquisto() ||
+				((Configurazione_cnrHome)getHome(userContext, Configurazione_cnrBulk.class)).isAttivaEconomicaSuOrdini(docamm.getEsercizio()));
 		if (isAttivaEconomica) {
 			final Optional<Scrittura_partita_doppiaBulk> scritturaOpt = partitaDoppiaHome.findByDocumentoAmministrativo(docamm);
 			if (scritturaOpt.isPresent()) {
