@@ -87,19 +87,19 @@
 		name="cd_voce" />
 
 	<columnFieldProperty
+			name="esercizio" />
+	<columnFieldProperty
 		name="ti_appartenenza" />
+	<columnFieldProperty
+			name="ti_gestione" />
+	<columnFieldProperty
+			name="cd_voce" />
 	<columnFieldProperty
 		name="ti_appartenenza_clg" />
 	<columnFieldProperty
+			name="ti_gestione_clg" />
+	<columnFieldProperty
 		name="cd_voce_clg" />
-	<columnFieldProperty
-		name="esercizio" />
-	<columnFieldProperty
-		name="ti_gestione_clg" />
-	<columnFieldProperty
-		name="ti_gestione" />
-	<columnFieldProperty
-		name="cd_voce" />
 
 	<findFieldProperty
 		name="ti_appartenenza" />
@@ -116,4 +116,23 @@
 	<findFieldProperty
 		name="cd_voce" />
 
+	<freeSearchSet
+			name="ASS_ENTRATE_USCITE">
+		<findFieldProperty
+				name="cd_voce" label ="Voce di entrata"/>
+		<findFieldProperty
+				name="cd_voce_clg" label = "Voce di spesa"/>
+	</freeSearchSet>
+	<columnSet name="ASS_ENTRATE_USCITE">
+		<columnFieldProperty
+				name="esercizio" label ="Esercizio" />
+		<columnFieldProperty
+				name="ti_gestione" label ="Gestione"/>
+		<columnFieldProperty
+				name="cd_voce" label ="Voce di Entrata"/>
+		<columnFieldProperty
+				name="ti_gestione_clg" label ="Gestione" />
+		<columnFieldProperty
+				name="cd_voce_clg" label ="Voce di Spesa"/>
+	</columnSet>
 </bulkInfo>
