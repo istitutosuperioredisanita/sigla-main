@@ -281,8 +281,7 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
         put("T", "Totale");
     }};
 
-    private it.cnr.jada.util.OrderedHashtable esercizioList = new it.cnr.jada.util.OrderedHashtable();
-
+    private static it.cnr.jada.util.OrderedHashtable esercizioList = new it.cnr.jada.util.OrderedHashtable();
 
     public enum StepFineAnno {
         APERTURA_PREVISIONE("010_APERTURA_PREVISIONE"),
@@ -382,9 +381,13 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
 
     public void caricaEsercizioList(ActionContext actioncontext) {
 
-        getEsercizioList().put(new Integer(0), new Integer(0));
+        // Lista statica , devo annullare e ricreare ogni volta
+        esercizioList = null;
+        esercizioList=new it.cnr.jada.util.OrderedHashtable();
+
+        this.getEsercizioList().put(new Integer(0), new Integer(0));
         Integer e = CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue();
-        getEsercizioList().put(e, e);
+        this.getEsercizioList().put(e, e);
     }
 
     @Override
@@ -398,6 +401,7 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
         caricaEsercizioList(actioncontext);
         return super.initializeForEdit(crudbp, actioncontext);
     }
+
 
 
 }
