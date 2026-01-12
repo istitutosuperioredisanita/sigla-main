@@ -22,8 +22,6 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
-import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
@@ -567,16 +565,5 @@ public class Configurazione_cnrHome extends BulkHome {
         return configurazioneCdS.map(Configurazione_cnrBase::getDt01).orElse(
                 Timestamp.valueOf(LocalDateTime.of(esercizio - 1, 3, 1, 0, 0, 0, 0))
         );
-    }
-
-    public SQLBuilder selectByClause(UserContext usercontext, CompoundFindClause compoundfindclause) throws PersistencyException
-    {
-        SQLBuilder sql = super.selectByClause(usercontext, compoundfindclause);
-        sql.openParenthesis(FindClause.AND);
-        sql.addSQLClause(FindClause.OR,"ESERCIZIO",SQLBuilder.EQUALS,CNRUserContext.getEsercizio(usercontext));
-        sql.addSQLClause(FindClause.OR,"ESERCIZIO",SQLBuilder.EQUALS,0);
-        sql.closeParenthesis();
-
-        return sql;
     }
 }
