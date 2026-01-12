@@ -6280,4 +6280,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_accesso_stampa_accertamenti_pluriennali_voci.xml"/>
     <!-- Autore : Stefano Lucattini - Nuova voce di menu per la gestione della tabella configurazione CNR-->
     <include file="bootstrap/add_accesso_gestione_configurazione_cnr.xml"/>
+    <!-- Autore : Valentina Tomada - Modifica colonna TI_FUNZIONE di ASS_BP_ACCESSO x la gestione della tabella configurazione CNR-->
+    <include file="bootstrap/update_bp_accesso_gest_conf_cnr.xml"/>
+
 </databaseChangeLog>

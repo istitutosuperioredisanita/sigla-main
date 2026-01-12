@@ -25,115 +25,100 @@
             name="esercizio"
             property="esercizio"
             inputType="TEXT"
-            enabledOnEdit="false"
-            enabledOnSearch="true"
-            enabledOnFreeSearch="true"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
             label="esercizio" />
-    <fieldProperty
-            name="esercizioSelect"
-            property="esercizio"
-            optionsProperty="esercizioList"
-            inputType="SELECT"
-            enabledOnEdit="false"
-            enabledOnSearch="true"
-            enabledOnFreeSearch="true"
-            label="esercizio" />
-    <fieldProperty
+	<fieldProperty
+			name="esercizioSelect"
+			property="esercizio"
+			layout="HORIZONTAL"
+			inputType="SELECT"
+			keysProperty="esercizioList"
+			label = "Esercizio"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
+			nullable="false"/>
+      <fieldProperty
             name="cd_chiave_primaria"
             property="cd_chiave_primaria"
             maxLength="50"
             inputSize="50"
             inputType="TEXT"
-            enabledOnEdit="false"
-            enabledOnSearch="true"
-            enabledOnFreeSearch="true"
-            label="cd_chiave_primaria"
-            caseSensitiveSearch="false" />
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
+			label="cd_chiave_primaria"/>
     <fieldProperty
             name="cd_chiave_secondaria"
             property="cd_chiave_secondaria"
             maxLength="100"
             inputSize="100"
             inputType="TEXT"
-            enabledOnEdit="false"
-            enabledOnSearch="true"
-            enabledOnFreeSearch="true"
-            label="cd_chiave_secondaria"
-            caseSensitiveSearch="false" />
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
+			label="cd_chiave_secondaria"/>
     <fieldProperty
             name="cd_unita_funzionale"
             property="cd_unita_funzionale"
             maxLength="30"
             inputSize="30"
             inputType="TEXT"
-            enabledOnEdit="true"
-            enabledOnSearch="true"
-            enabledOnFreeSearch="true"
-            label="cd_unita_funzionale"
-            caseSensitiveSearch="false" />
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
+			label="cd_unita_funzionale"/>
     <fieldProperty
-            name="val01"
-            property="val01"
-            maxLength="100"
-            inputSize="100"
-            inputType="TEXT"
-            label="val01"
-            enabledOnEdit="true"
-            enabledOnSearch="false"
-            enabledOnFreeSearch="false" />
+			name="val01"
+			property="val01"
+			maxLength="100"
+			inputSize="100"
+			inputType="TEXT"
+			label="val01"
+			caseSensitiveSearch="false"/>
     <fieldProperty
-            name="val02"
-            property="val02"
-            maxLength="100"
-            inputSize="100"
-            inputType="TEXT"
-            label="val02"
-            enabledOnEdit="true"
-            enabledOnSearch="false"
-            enabledOnFreeSearch="false" />
+			name="val02"
+			property="val02"
+			maxLength="100"
+			inputSize="100"
+			inputType="TEXT"
+			label="val02"
+			caseSensitiveSearch="false"/>
     <fieldProperty
-            name="val03"
-            property="val03"
-            maxLength="100"
-            inputSize="100"
-            inputType="TEXT"
-            label="val03"
-            enabledOnEdit="true"
-            enabledOnSearch="false"
-            enabledOnFreeSearch="false" />
+			name="val03"
+			property="val03"
+			maxLength="100"
+			inputSize="100"
+			inputType="TEXT"
+			label="val03"
+			caseSensitiveSearch="false" />
     <fieldProperty
-            name="val04"
-            property="val04"
-            maxLength="100"
-            inputSize="100"
-            inputType="TEXT"
-            label="val04"
-            enabledOnEdit="true"
-            enabledOnSearch="false"
-            enabledOnFreeSearch="false" />
+			name="val04"
+			property="val04"
+			maxLength="100"
+			inputSize="100"
+			inputType="TEXT"
+			label="val04"
+			caseSensitiveSearch="false" />
     <fieldProperty
-            name="im01"
-            property="im01"
-            inputType="TEXT"
-            label="im01"
-            enabledOnSearch="true"
-            enabledOnFreeSearch="true"  />
+			name="im01"
+			property="im01"
+			inputType="TEXT"
+			label="im01"   />
 	<fieldProperty
-		name="im02"
-		property="im02"
-		inputType="TEXT"
-		label="im02" />
+			name="im02"
+			property="im02"
+			inputType="TEXT"
+			label="im02" />
     <fieldProperty
-            name="dt01"
-            property="dt01"
-            formatName="date_short"
-            inputType="TEXT"
-            label="dt01" />
+			name="dt01"
+			property="dt01"
+			formatName="date_short"
+			inputType="TEXT"
+			label="dt01" />
 	<fieldProperty
-		name="dt02"
-		property="dt02"
-		inputType="TEXT"
-		label="dt02" />
+			name="dt02"
+			property="dt02"
+			inputType="TEXT"
+			formatName="date_short"
+			label="dt02"/>
 
 
 	<formFieldProperty
@@ -214,14 +199,127 @@
 
     <form name="SEARCH_FORM">
         <formFieldProperty
-                name="esercizio"
-                layout="HORIZONTAL"
-                inputType="SELECT"
-                keysProperty="ti_esercizio"
-                label = "Esercizio"/>
+                name="esercizioSelect"
+				property="esercizio"
+				enabledOnEdit="false"
+				enabledOnSearch="true"
+				enabledOnFreeSearch="true"
+				nullable="false"/>
+		<formFieldProperty
+				name="cd_chiave_primaria"
+				maxLength="50"
+				inputSize="50"
+				inputType="TEXT"
+				enabledOnEdit="false"
+				caseSensitiveSearch="false"
+				label = "Chiave Primaria"/>
+		<formFieldProperty
+				name="cd_chiave_secondaria"
+				maxLength="100"
+				inputSize="100"
+				inputType="TEXT"
+				enabledOnEdit="false"
+				caseSensitiveSearch="false"
+				label = "Chiave Secondaria"/>
+		<formFieldProperty
+				name="cd_unita_funzionale"
+				maxLength="30"
+				inputSize="30"
+				inputType="TEXT"
+				enabledOnEdit="true"
+				caseSensitiveSearch="false"
+				label = "Unità Funzionale"/>
+		<formFieldProperty
+				name="val01"
+				maxLength="100"
+				inputSize="100"
+				inputType="TEXT"
+				label="Valore 1"
+				enabledOnEdit="true"
+				enabledOnSearch="false"
+				enabledOnFreeSearch="false" />
+		<formFieldProperty
+				name="val02"
+				maxLength="100"
+				inputSize="100"
+				inputType="TEXT"
+				label="Valore 2"
+				enabledOnEdit="true"
+				enabledOnSearch="false"
+				enabledOnFreeSearch="false" />
+		<formFieldProperty
+				name="val03"
+				maxLength="100"
+				inputSize="100"
+				inputType="TEXT"
+				label="Valore 3"
+				enabledOnEdit="true"
+				enabledOnSearch="false"
+				enabledOnFreeSearch="false" />
+		<formFieldProperty
+				name="val04"
+				maxLength="100"
+				inputSize="100"
+				inputType="TEXT"
+				label="Valore 4"
+				enabledOnEdit="true"
+				enabledOnSearch="false"
+				enabledOnFreeSearch="false" />
+		<formFieldProperty
+				name="im01"
+				inputType="TEXT"
+				label="Importo 1"
+				enabledOnEdit="true"
+				enabledOnSearch="false"
+				enabledOnFreeSearch="false" />
+		<formFieldProperty
+				name="im02"
+				inputType="TEXT"
+				label="Importo 2"
+				enabledOnEdit="true"
+				enabledOnSearch="false"
+				enabledOnFreeSearch="false"/>
+		<formFieldProperty
+				name="dt01"
+				formatName="date_short"
+				inputType="TEXT"
+				label="Data 1"
+				enabledOnEdit="true"
+				enabledOnSearch="false"
+				enabledOnFreeSearch="false"/>
+		<formFieldProperty
+				name="dt02"
+				inputType="TEXT"
+				formatName="date_short"
+				label="Data 2"
+				enabledOnEdit="true"
+				enabledOnSearch="false"
+				enabledOnFreeSearch="false"/>
 
     </form>
+	<columnFieldProperty
+			name="cd_unita_funzionale" />
+	<columnFieldProperty
+			name="cd_chiave_primaria" />
+	<columnFieldProperty
+			name="cd_chiave_secondaria" />
 
+	<freeSearchSet name="SEARCH_FORM">
+		<findFieldProperty
+				name="esercizio"
+				inputType="SELECT"
+				keysProperty="esercizioList"
+				label = "Esercizio"/>
+		<findFieldProperty
+				name="cd_chiave_primaria"
+				label = "Chiave Primaria"/>
+		<findFieldProperty
+				name="cd_chiave_secondaria"
+				label = "Chiave Secondaria"/>
+		<findFieldProperty
+				name="cd_unita_funzionale"
+				label = "Unità Funzionale"/>
+	</freeSearchSet>
 
 	<form name="STEP_FINE_ANNO">
 		<formFieldProperty
@@ -266,21 +364,6 @@
 				label = "Data"/>
 	</freeSearchSet>
 
-    <freeSearchSet name="GEST_CONF_CNR">
-        <findFieldProperty
-                name="esercizio"
-                label = "Esercizio"/>
-        <findFieldProperty
-                name="cd_chiave_primaria"
-                label = "Chiave primaria"/>
-        <findFieldProperty
-                name="cd_chiave_secondaria"
-                label = "Chiave secondaria"/>
-        <findFieldProperty
-                name="cd_unita_funzionale"
-                label = "Unità funzionale"/>
-    </freeSearchSet>
-
     <freeSearchSet name="CONS_CONF_TOTALE">
         <findFieldProperty
                 name="cd_chiave_primaria"
@@ -308,5 +391,43 @@
 			name="dt01"
 			formatName="date_short"
 			label = "Data"/>
+	</columnSet>
+
+	<columnSet name="CONS_CONF_TOTALE">
+		<columnFieldProperty
+				name="esercizio" />
+		<columnFieldProperty
+				name="cd_unita_funzionale"
+				label = "Unità Funzionale"/>
+		<columnFieldProperty
+				name="cd_chiave_primaria"
+				label = "Chiave Primaria"/>
+		<columnFieldProperty
+				name="cd_chiave_secondaria"
+				label = "Chiave Secondaria"/>
+		<columnFieldProperty
+				name="val01"
+				label = "Testo 1"/>
+		<columnFieldProperty
+				name="val02"
+				label = "Testo 2"/>
+		<columnFieldProperty
+				name="val03"
+				label = "Testo 3"/>
+		<columnFieldProperty
+				name="val04"
+				label = "Testo 4"/>
+		<columnFieldProperty
+				name="im01"
+				label = "Importo 1"/>
+		<columnFieldProperty
+				name="im02"
+				label = "Importo 2"/>
+		<columnFieldProperty
+				name="dt01"
+				label = "Data 1"/>
+		<columnFieldProperty
+				name="dt02"
+				label = "Data 2"/>
 	</columnSet>
 </bulkInfo>
