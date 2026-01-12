@@ -25,13 +25,27 @@
             name="esercizio"
             property="esercizio"
             inputType="TEXT"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
             label="esercizio" />
+	<fieldProperty
+			name="esercizioSelect"
+			property="esercizio"
+			layout="HORIZONTAL"
+			inputType="SELECT"
+			keysProperty="esercizioList"
+			label = "Esercizio"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
+			nullable="false"/>
       <fieldProperty
             name="cd_chiave_primaria"
             property="cd_chiave_primaria"
             maxLength="50"
             inputSize="50"
             inputType="TEXT"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
 			label="cd_chiave_primaria"/>
     <fieldProperty
             name="cd_chiave_secondaria"
@@ -39,6 +53,8 @@
             maxLength="100"
             inputSize="100"
             inputType="TEXT"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
 			label="cd_chiave_secondaria"/>
     <fieldProperty
             name="cd_unita_funzionale"
@@ -46,6 +62,8 @@
             maxLength="30"
             inputSize="30"
             inputType="TEXT"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
 			label="cd_unita_funzionale"/>
     <fieldProperty
 			name="val01"
@@ -99,6 +117,7 @@
 			name="dt02"
 			property="dt02"
 			inputType="TEXT"
+			formatName="date_short"
 			label="dt02"/>
 
 
@@ -180,12 +199,8 @@
 
     <form name="SEARCH_FORM">
         <formFieldProperty
-                name="esercizio"
+                name="esercizioSelect"
 				property="esercizio"
-                layout="HORIZONTAL"
-                inputType="SELECT"
-                keysProperty="esercizioList"
-                label = "Esercizio"
 				enabledOnEdit="false"
 				enabledOnSearch="true"
 				enabledOnFreeSearch="true"
@@ -196,8 +211,6 @@
 				inputSize="50"
 				inputType="TEXT"
 				enabledOnEdit="false"
-				enabledOnSearch="true"
-				enabledOnFreeSearch="true"
 				caseSensitiveSearch="false"
 				label = "Chiave Primaria"/>
 		<formFieldProperty
@@ -206,8 +219,6 @@
 				inputSize="100"
 				inputType="TEXT"
 				enabledOnEdit="false"
-				enabledOnSearch="true"
-				enabledOnFreeSearch="true"
 				caseSensitiveSearch="false"
 				label = "Chiave Secondaria"/>
 		<formFieldProperty
@@ -216,8 +227,6 @@
 				inputSize="30"
 				inputType="TEXT"
 				enabledOnEdit="true"
-				enabledOnSearch="true"
-				enabledOnFreeSearch="true"
 				caseSensitiveSearch="false"
 				label = "Unità Funzionale"/>
 		<formFieldProperty
@@ -281,6 +290,7 @@
 		<formFieldProperty
 				name="dt02"
 				inputType="TEXT"
+				formatName="date_short"
 				label="Data 2"
 				enabledOnEdit="true"
 				enabledOnSearch="false"

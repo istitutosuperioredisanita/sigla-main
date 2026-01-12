@@ -28,15 +28,27 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class GestConfCNRBP extends it.cnr.jada.util.action.SimpleCRUDBP {
+
 public GestConfCNRBP() {
 	super();
 }
-protected void init(it.cnr.jada.action.Config config, ActionContext context) throws BusinessProcessException {
+
+    public GestConfCNRBP(String s) {
+        super(s);
+    }
+
+    protected void init(it.cnr.jada.action.Config config, ActionContext context) throws BusinessProcessException {
 	try {
 		super.init(config,context);
+		this.setStatus(this.SEARCH);
 
         setFreeSearchSet("SEARCH_FORM");
         setSearchResultColumnSet("CONS_CONF_TOTALE");
+
+        Configurazione_cnrBulk bulk = (Configurazione_cnrBulk)this.getModel();
+        if(bulk!=null){
+            bulk.setEsercizio(new Integer(0));
+        }
 
         //setFreeSearchSet("CONS_CONF_TOTALE");
 		//setColumns(getBulkInfo().getColumnFieldPropertyDictionary("CONS_CONF_TOTALE"));
